@@ -402,9 +402,26 @@ def split_attribution(text: str) -> tuple[str, str | None]:
     return text.rstrip(), None
 
 
+#: Closing marks that may stand between a sentence's own punctuation and the
+#: attribution after it. Haydock quotes constantly -- a version's rendering,
+#: a Father's words -- and a quotation carries its full stop INSIDE the
+#: quotation marks, so the head of `"man and his arms to the water." Haydock`
+#: ends on a quote and not on the period. Reading that as an open clause cost
+#: 2,167 notes their signature, 2,002 of them to this one character.
+_CLOSERS = "\"'”’)]"
+
+
 def _closes_sentence(head: str) -> bool:
     """Whether an attribution may follow `head` -- i.e. nothing is left, or
-    what is left ends its own clause."""
+    what is left ends its own clause.
+
+    The closers are stepped over rather than accepted: `…water."` closes
+    because the period under the quote does, and `Heb. "cord"` still does not,
+    because stripping the quote leaves a bare word. That is the distinction the
+    guard exists for -- it is what keeps "Mauduit here represents the word:"
+    from reading as an author -- and it was never about quotation.
+    """
+    head = head.rstrip(_CLOSERS)
     return not head or head[-1] in ".?!—:;,"
 
 
@@ -550,12 +567,39 @@ def split_paragraphs(body: str) -> tuple[list[str], bool]:
         if not chunk.strip():
             continue
         pending = f"{pending}\n\n{chunk}" if pending else chunk
-        if pending.count("_") % 2 == 0:
+        if not _continues(pending):
             out.append(pending)
             pending = ""
     if pending:
         out.append(pending)
     return out, bool(pending)
+
+
+def _continues(pending: str) -> bool:
+    """Whether the blank line after `pending` is a line break and not a break.
+
+    TWO SIGNALS, AND BOTH ARE THE SOURCE'S PUNCTUATION RATHER THAN OUR
+    JUDGMENT.
+
+    An OPEN EMPHASIS RUN: `_` is this format's only italic delimiter, an
+    anchor is `_(#1)_` and contributes two, and `__Notes:__` has already been
+    split off by the caller, so odd parity means a lemma spans the break.
+
+    AN OPEN CLAUSE: a segment ending on `,` `:` or `;` has not finished its
+    sentence, so what follows is the rest of it. Genesis 1:4 is the case that
+    reads worst -- `_Good;_ beautiful and convenient:` alone is not a note,
+    it is the first half of Calmet's, whose second half glosses the next
+    phrase of the verse and carries the signature for both. Split, the reader
+    gets an unattributed fragment ending in a colon. It is 108 segments in
+    45,824, and about half of them are the lines of a verse quotation, which
+    the same rule reassembles: Judges 15:4 filed a Latin hexameter as seven
+    separate notes.
+
+    A segment that ends on a full stop and still continues is indistinguishable
+    from one that does not, and is left alone. This reads punctuation, not
+    sense.
+    """
+    return pending.count("_") % 2 == 1 or pending.rstrip()[-1:] in ",:;"
 
 
 def number_anchors(text: str) -> str:
