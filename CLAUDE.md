@@ -888,7 +888,7 @@ reverse-chronological. Seven things about it will bite before the design will.
   rest. **Check the merge against every document it touches, not against the archetype.**
 - **The subject facet is a CLOUD, and that is what retired the truncation.** 58 stacked rows
   is ~1,390px in a 17rem aside, so the list showed eighteen behind a "Show all"; flowing the
-  terms inline and saying each one's weight with its size fits the whole vocabulary in ~600px.
+  terms inline and saying each one's weight with its size fits the whole vocabulary in ~480px.
   More than the truncated list took, far less than the full one, and the aside already
   scrolls. **Size follows the LIVE count**, so every click resizes every chip — the accepted
   cost, and alphabetical order is what pays it: widths move, the sequence never does, so a
@@ -898,8 +898,29 @@ reverse-chronological. Seven things about it will bite before the design will.
   click the largest survivor may hold nine. The range is taken over **positive counts only**,
   since two selected terms sharing no document leave both at 0 and a zero minimum drags the
   floor down and inflates everything against it. And `CLOUD_SIZE_MAX` is the one constant to
-  turn down if the reflow reads badly — height barely responds to it, because chip count
-  dominates, so it is a legibility knob and not a size one.
+  turn if the cloud reads badly — height barely responds to it, because chip count dominates,
+  so it is a BALANCE knob and not a size one: at 0.95rem the average chip is 15.0px against the
+  panel's own 15.3px body, so the cloud sits just under what surrounds it, and the heaviest
+  subject reaches 17.1px. It was 1.15rem for an afternoon, which put the big terms above every
+  author row and section heading beside them. **Shrink it from the top only** —
+  `CLOUD_SIZE_MIN` is `--font-size-min` and the CSS clamps to that token, so lowering it does
+  not render smaller, it flattens every term below the floor onto it, and 23 of the 58 hold
+  nine documents or fewer.
+- **COLOUR is the second channel, and it exists because the first one is capped.** A 1.27x size
+  spread is not much to read across 58 terms, and widening it makes the cloud outgrow the panel
+  — so the same `weight` also mixes the chip's colour from `--color-text-muted` up to
+  `--color-text`. It costs no space. Two things about it: both channels come off ONE number, so
+  they cannot disagree; and it mixes **between two tokens, never toward a literal black**,
+  because in dark mode `--color-text` is the light one — toward black, a heavier term would
+  have DISAPPEARED in half the themes.
+- **The cloud chips carry NO border, and the row chips still do.** 58 outlined pills is 58
+  boxes, and at that count the chrome is what the eye reads first — it competes with the words
+  it is drawn around, which is the opposite of what a cloud is for. So the cloud rhymes with
+  the facet ROWS above it instead (same hover ground, same solid accent when on), while
+  `.doc-tag` keeps its outline, because three or four chips sitting inside a paragraph do need
+  an edge to be picked out of it and 58 in a column do not. What the border was also doing is
+  saying "this is a control", so the hover now has to: `:focus-visible` is the global outline
+  in `base.css` and survives, but at rest an unbordered chip is a word.
 - **The terms are NOT translated and render verbatim.** A closed list could carry an i18n
   key each, the way `document_kind` does in `document-labels.ts`, but that is 58 terms
   times however many dictionaries there are — near two thousand strings at the current

@@ -199,6 +199,7 @@
 							class:on={isOn}
 							aria-pressed={isOn}
 							style:--cloud-size={`${item.fontSize}rem`}
+							style:--cloud-weight={item.weight}
 							onclick={() => onToggle('tags', item.value)}
 							>{item.label}<span class="visually-hidden"
 								>, {item.count} {t('colophon.countDocuments')}</span
@@ -340,17 +341,25 @@
 		border-color: var(--color-accent);
 	}
 
-	/* The subject cloud. Its visual language is `.doc-tag`'s over on the
-	   document rows — same border, same radius, same accent fill when on — so
-	   that a subject reads as the same kind of thing in the sidebar and on the
-	   row it filters to. What it adds is the size, and `align-items: baseline`
-	   is what keeps mixed sizes sitting on a line rather than looking like a
-	   ransom note. */
+	/* The subject cloud, and it is UNBORDERED on purpose. 58 outlined pills is
+	   58 boxes, and at that count the boxes are what the eye reads first — the
+	   chrome competes with the words it is drawn around, which is the opposite
+	   of what a cloud is for. Without them the terms read as a run of words
+	   whose size is the only thing being said.
+
+	   So it rhymes with the facet ROWS above it rather than with `.doc-tag` on
+	   the document rows: same hover (accent on an elevated ground), same solid
+	   accent when on. The row chips keep their borders, because three or four
+	   of them sitting inside a paragraph do need an edge to be picked out of
+	   it — 58 in a column do not.
+
+	   `align-items: baseline` is what keeps the mixed sizes sitting on a line
+	   rather than looking like a ransom note. */
 	.tag-cloud {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 0.3rem 0.35rem;
+		gap: 0.15rem 0.25rem;
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -362,26 +371,45 @@
 		   scale's own floor is the same number; this is the guarantee, and if
 		   the token ever moves the token wins. */
 		font-size: max(var(--font-size-min), var(--cloud-size));
-		line-height: 1.3;
-		/* em, not rem: padding and corner have to grow with the chip they are
-		   on, or the small terms end up looking like buttons and the large ones
-		   like text. */
-		padding: 0.2em 0.5em;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
+		line-height: 1.35;
+		/* em, not rem: the padding has to grow with the chip it is on, both so
+		   the selected fill sits evenly around any size and so the space
+		   between two words scales with them. It is most of the separation
+		   now that no border draws an edge, which is why `gap` is small. */
+		padding: 0.14em 0.36em;
+		border: none;
+		border-radius: var(--radius-sm);
 		background: none;
-		color: var(--color-text-muted);
+		/* THE SECOND CHANNEL, and it is free where the first one is not. The
+		   size range cannot widen much without the cloud outgrowing the panel
+		   around it, so a 1.27x spread is all the weight size can carry across
+		   58 terms; colour adds a whole axis and costs no space at all. Both
+		   are read off the same `weight`, so they cannot disagree.
+
+		   Mixed BETWEEN TWO TOKENS rather than toward a literal black, which is
+		   what keeps it true in every theme: in dark mode `--color-text` is the
+		   light one, so "heavier is closer to the text colour" still means
+		   heavier stands out. Toward black it would have meant heavier
+		   DISAPPEARS. */
+		color: color-mix(
+			in srgb,
+			var(--color-text) calc(var(--cloud-weight) * 100%),
+			var(--color-text-muted)
+		);
 		cursor: pointer;
 	}
 
+	/* With no border there is nothing to say "this is a control" at rest, so
+	   the hover has to do it — the same ground the facet rows use, so pointing
+	   at either reads the same. `:focus-visible` is the global outline in
+	   `base.css`, which survives the border going. */
 	.tag-chip:hover {
 		color: var(--color-accent);
-		border-color: var(--color-accent);
+		background: var(--color-bg-elevated);
 	}
 
 	.tag-chip.on {
 		background: var(--color-accent);
-		border-color: var(--color-accent);
 		color: var(--color-accent-contrast);
 	}
 
@@ -394,7 +422,6 @@
 			forced-color-adjust: none;
 			background: Highlight;
 			color: HighlightText;
-			border-color: HighlightText;
 		}
 	}
 
@@ -405,7 +432,6 @@
 			transition:
 				font-size 140ms ease,
 				background-color 120ms ease,
-				border-color 120ms ease,
 				color 120ms ease;
 		}
 	}

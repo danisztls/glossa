@@ -77,6 +77,36 @@ describe('buildTagCloud', () => {
 		}
 	});
 
+	/* Size and colour are both read off `weight`, so a disagreement between the
+	   two channels is not expressible. */
+	it('reports a weight that spans 0 to 1 and tracks the size', () => {
+		const cloud = buildTagCloud([tag('a', 3), tag('b', 12), tag('c', 42)]);
+		expect(sizeOf(cloud, 'a')).toBe(CLOUD_SIZE_MIN);
+		expect(cloud.find((e) => e.label === 'a')!.weight).toBe(0);
+		expect(cloud.find((e) => e.label === 'c')!.weight).toBe(1);
+		const mid = cloud.find((e) => e.label === 'b')!;
+		expect(mid.weight).toBeGreaterThan(0);
+		expect(mid.weight).toBeLessThan(1);
+		for (const entry of cloud) {
+			expect(entry.fontSize).toBeCloseTo(
+				CLOUD_SIZE_MIN + (CLOUD_SIZE_MAX - CLOUD_SIZE_MIN) * entry.weight,
+				10
+			);
+		}
+	});
+
+	it('gives a zero count the lightest weight, not a negative one', () => {
+		const cloud = buildTagCloud([tag('dead', 0), tag('a', 3), tag('b', 42)]);
+		expect(cloud.find((e) => e.label === 'dead')!.weight).toBe(0);
+	});
+
+	it('puts the flat case at half weight', () => {
+		for (const entry of buildTagCloud([tag('a', 9), tag('b', 9)])) {
+			expect(entry.weight).toBe(0.5);
+		}
+		expect(buildTagCloud([tag('only', 17)])[0].weight).toBe(0.5);
+	});
+
 	it('honours an overridden range', () => {
 		const cloud = buildTagCloud([tag('a', 3), tag('b', 42)], { minRem: 1, maxRem: 2 });
 		expect(sizeOf(cloud, 'a')).toBe(1);

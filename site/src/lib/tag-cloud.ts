@@ -41,14 +41,36 @@
  *  so if the token moves, the token wins and this stays the design intent. */
 export const CLOUD_SIZE_MIN = 0.75;
 /** rem. Measured against the 17rem aside: the range barely moves the cloud's
- *  height (chip COUNT dominates that), so it is chosen for legibility. Above
- *  roughly 1.2rem the largest terms start to shout in a 272px column. */
-export const CLOUD_SIZE_MAX = 1.15;
+ *  height (chip COUNT dominates that), so it is chosen for BALANCE and not for
+ *  compactness. The panel's own body size is 0.85rem and its section headings
+ *  are 0.8rem, so a ceiling above about 1rem puts the heaviest subjects above
+ *  everything around them and the cloud stops reading as part of the sidebar.
+ *  At 0.95 the average chip is 15.0px against that 15.3px body — the cloud
+ *  sits just under the panel it lives in — and the heaviest term reaches
+ *  17.1px. The 1.27x spread left is close to the floor of what still reads as
+ *  weight; below about 0.9 the cloud is a list of words in one size.
+ *
+ *  THE OTHER END CANNOT MOVE. `CLOUD_SIZE_MIN` is `--font-size-min`, and the
+ *  CSS clamps to that token, so a smaller value here would not render smaller
+ *  — it would flatten every term below the floor onto it. Twenty-three of the
+ *  58 hold nine documents or fewer, so that is exactly where the distinctions
+ *  are worth keeping. Shrink the cloud from the top.
+ *
+ *  THIS IS ALSO WHY COLOUR CARRIES THE WEIGHT TOO. A 1.27x spread is not much
+ *  to see across a 58-term panel, and the range cannot widen without the cloud
+ *  outgrowing the sidebar around it — so `weight` drives a second channel that
+ *  costs no space at all. */
+export const CLOUD_SIZE_MAX = 0.95;
 
 export interface CloudTag {
 	value: string;
 	label: string;
 	count: number;
+	/** Where this term sits between the cloud's lightest and heaviest, 0 to 1.
+	 *  Both channels are read off it, which is the point: size and colour say
+	 *  the same thing, so they cannot disagree. The CSS mixes the text colour
+	 *  with it — see `DocumentFilters.svelte`. */
+	weight: number;
 	/** rem, within `[CLOUD_SIZE_MIN, CLOUD_SIZE_MAX]`. */
 	fontSize: number;
 }
@@ -75,25 +97,21 @@ export function buildTagCloud(
 	const min = live.length > 0 ? Math.min(...live) : 0;
 	const max = live.length > 0 ? Math.max(...live) : 0;
 
-	/* Nothing to encode: one term, or every term tied. The midpoint rather than
-	   the maximum, because drawing a lone chip at full size states a prominence
-	   that nothing in the data supports. */
-	const flat = (minRem + maxRem) / 2;
 	const span = Math.sqrt(max) - Math.sqrt(min);
 
-	return tags.map((tag) => ({
-		value: tag.value,
-		label: tag.label,
-		count: tag.count,
-		fontSize:
-			span === 0
-				? flat
-				: clamp(
-						minRem + (maxRem - minRem) * ((Math.sqrt(tag.count) - Math.sqrt(min)) / span),
-						minRem,
-						maxRem
-					)
-	}));
+	return tags.map((tag) => {
+		/* Nothing to encode — one term, or every term tied — puts everything at
+		   the midpoint rather than at the maximum, because drawing a lone chip
+		   at full weight states a prominence nothing in the data supports. */
+		const weight = span === 0 ? 0.5 : clamp((Math.sqrt(tag.count) - Math.sqrt(min)) / span, 0, 1);
+		return {
+			value: tag.value,
+			label: tag.label,
+			count: tag.count,
+			weight,
+			fontSize: minRem + (maxRem - minRem) * weight
+		};
+	});
 }
 
 function clamp(value: number, low: number, high: number): number {

@@ -2109,7 +2109,7 @@ the list went flat and reverse-chronological.
 truncation.** 58 stacked rows is about 1,390px in a 17rem aside, so the list showed eighteen
 of them behind a "Show all" — a workaround for a list being the wrong shape for 58 short
 labels, not a considered design. Flowing the terms inline and saying each one's weight with
-its type size fits the whole vocabulary in roughly 600px: more than the truncated list took,
+its type size fits the whole vocabulary in roughly 480px: more than the truncated list took,
 far less than the full one, and the aside is already `overflow-y: auto` under a sticky
 max-height, so the extra height is absorbed rather than new. The measurements that decided the
 shape are worth keeping, because two of them are counter-intuitive.
@@ -2131,10 +2131,38 @@ shape are worth keeping, because two of them are counter-intuitive.
 - **Square root, and the curve is pinned by a test.** Measured over the real distribution,
   linear crowds half the vocabulary into the bottom third of the range and log over-expands
   the low end, spending most of the scale separating terms that differ by two documents.
-- **The size range is a legibility knob, not a compactness one.** Sweeping it from 0.75–1.35rem
+- **The size range is a balance knob, not a compactness one.** Sweeping it from 0.75–1.35rem
   down to 0.75–1.00rem moves the cloud's height by only ~185px, because chip COUNT dominates.
-  So `CLOUD_SIZE_MAX` should be chosen by how the largest terms read in a 272px column —
-  0.75–1.15rem — and turned down if they shout, without worrying about the space it saves.
+  So `CLOUD_SIZE_MAX` is chosen by what the cloud has to sit beside, not by the space it saves:
+  the panel's body is 0.85rem and its section headings 0.8rem, so at **0.75–0.95rem** the
+  average chip is 15.0px against that 15.3px body — the cloud sitting just under the panel it
+  lives in — and the heaviest subject reaches 17.1px. It shipped at 1.15rem for an afternoon
+  and the big terms out-shouted every author row and heading around them. **Only the top of
+  the range is adjustable.** `CLOUD_SIZE_MIN` is `--font-size-min` and the CSS clamps to that
+  token, so setting it lower does not draw anything smaller — it flattens every term that
+  would fall below the floor onto it, and 23 of the 58 hold nine documents or fewer, which is
+  where the distinctions are worth most. The remaining 1.27x spread is near the floor of what
+  reads as weight at all; below about 0.9rem the cloud is a list of words in one size.
+- **Which is why colour carries the weight as well.** The size channel is capped by the panel
+  it sits in, and 1.27x across 58 terms is thin; colour adds a second axis for nothing, since
+  it costs no space. The same `weight` that sets the size mixes the chip's colour from
+  `--color-text-muted` at the lightest to `--color-text` at the heaviest, so a term holding
+  three documents is grey and one holding forty-two is as dark as the page's own prose. Both
+  channels are read off one number, which is the reason they cannot drift apart — a size table
+  beside a colour table is two things to keep in agreement. And the mix runs **between two
+  tokens rather than toward a literal black**: in dark mode `--color-text` is the light one, so
+  "heavier is nearer the text colour" stays true, where "heavier is nearer black" would have
+  made the most important terms vanish into the background in half the themes.
+- **The cloud chips carry no border; the document-row chips still do.** 58 outlined pills is 58
+  boxes, and past a certain count the chrome is what the eye reads first — it competes with the
+  words it is drawn around, which is the opposite of what a cloud is for. Removing it also
+  changed what the cloud rhymes with: not `.doc-tag` on the rows any more, but the facet ROWS
+  directly above it, sharing their hover ground and their solid accent fill. `.doc-tag` keeps
+  its outline on purpose, and the difference is the setting rather than inconsistency — three
+  or four chips inside a paragraph need an edge to be picked out of the prose; 58 in a column
+  need to be left alone. The one thing the border was carrying besides decoration is the signal
+  that a chip is a control, so the hover state now carries it; keyboard focus was never the
+  border's job and is the global `:focus-visible` outline in `base.css`.
 - **Pruning zero-count terms matters more here than it did in the list.** A dead term has no
   weight to draw, so it renders at the floor and is indistinguishable from the smallest live
   term: a chip that looks available and does nothing.
