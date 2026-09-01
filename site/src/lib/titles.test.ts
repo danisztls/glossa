@@ -524,3 +524,53 @@ describe('normalizeCase — roman numerals that are words', () => {
 		expect(normalizeCase('ОБЕЩАНИЙ ИИ', 'ru')).toBe('Обещаний ИИ');
 	});
 });
+
+describe("the Compendium's four PDF editions", () => {
+	// Added 2026-09-01 with the Byelorussian, Indonesian, Lithuanian and
+	// Russian Compendium. Russian's KIND_PREFIXES entry was `{}` until then --
+	// the language had chrome but neither Catechism nor Compendium -- and the
+	// other three were not in `LANGS` at all.
+	it('strips a Cyrillic division label', () => {
+		// THE REGRESSION THIS PINS: the prefix was anchored with `\b`, which in
+		// JavaScript is ASCII-only, so no boundary exists after a Cyrillic
+		// ordinal and the label was never stripped. It failed silently -- the
+		// title simply rendered with its own label in front of it -- and no
+		// edition could reach it until a Cyrillic one had a prefix table.
+		expect(displayTitle(node('part', 1, 'ЧАСТЬ ПЕРВАЯ Исповедание веры'), 'ru')).toEqual({
+			ordinal: '1.',
+			title: 'Исповедание веры'
+		});
+		expect(displayTitle(node('chapter', 3, 'ГЛАВА ТРЕТЬЯ ОТВЕТ ЧЕЛОВЕКА БОГУ'), 'ru')).toEqual({
+			ordinal: '3.',
+			title: 'Ответ Человека Богу'
+		});
+		expect(displayTitle(node('part', 1, 'ЧАСТКА ПЕРШАЯ ВЫЗНАННЕ ВЕРЫ'), 'be')).toEqual({
+			ordinal: '1.',
+			title: 'Вызнанне Веры'
+		});
+	});
+
+	it('reads the ordinal before the noun where the language puts it there', () => {
+		// Russian is the one edition of the fourteen that does both: the
+		// ordinal follows ЧАСТЬ and ГЛАВА but precedes РАЗДЕЛ.
+		expect(
+			displayTitle(node('section', 2, 'ВТОРОЙ РАЗДЕЛ ИСПОВЕДАНИЕ ХРИСТИАНСКОЙ ВЕРЫ'), 'ru')
+		).toEqual({ ordinal: '2.', title: 'Исповедание Христианской Веры' });
+		// Lithuanian sets its divisions in sentence case, not capitals, and
+		// declines the ordinal to the noun's gender (dalis is feminine).
+		expect(displayTitle(node('part', 1, 'Pirma dalis TIKĖJIMO IŠPAŽINIMAS'), 'lt')).toEqual({
+			ordinal: '1.',
+			title: 'Tikėjimo Išpažinimas'
+		});
+	});
+
+	it('counts Indonesian divisions with cardinals', () => {
+		expect(displayTitle(node('part', 1, 'BAGIAN SATU PENGAKUAN IMAN'), 'id')).toEqual({
+			ordinal: '1.',
+			title: 'Pengakuan Iman'
+		});
+		expect(
+			displayTitle(node('chapter', 2, 'BAB DUA ALLAH DATANG UNTUK MENJUMPAI MANUSIA'), 'id')
+		).toEqual({ ordinal: '2.', title: 'Allah Datang Untuk Menjumpai Manusia' });
+	});
+});

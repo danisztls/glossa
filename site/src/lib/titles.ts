@@ -70,12 +70,15 @@ export interface DisplayTitle {
 const LANGS = [
 	'en',
 	'pt',
+	'be',
 	'de',
 	'es',
 	'fr',
 	'hu',
+	'id',
 	'it',
 	'la',
+	'lt',
 	'mg',
 	'pl',
 	'ro',
@@ -515,15 +518,26 @@ const LA_SMALL_WORDS = new Set([
 // reach the pass at all.
 const MG_SMALL_WORDS = new Set<string>([]);
 
+// Empty for the same reason as Malagasy: these four editions print their
+// division titles in capitals or in sentence case already, so the title-case
+// pass has nothing to lower. A word list written from a dictionary rather
+// than from the corpus would be a guess about usage nobody here can check.
+const BE_SMALL_WORDS = new Set<string>([]);
+const ID_SMALL_WORDS = new Set<string>([]);
+const LT_SMALL_WORDS = new Set<string>([]);
+
 const SMALL_WORDS: Record<Lang, ReadonlySet<string>> = {
 	en: EN_SMALL_WORDS,
 	pt: PT_SMALL_WORDS,
+	be: BE_SMALL_WORDS,
 	de: DE_SMALL_WORDS,
 	es: ES_SMALL_WORDS,
 	fr: FR_SMALL_WORDS,
 	hu: HU_SMALL_WORDS,
+	id: ID_SMALL_WORDS,
 	it: IT_SMALL_WORDS,
 	la: LA_SMALL_WORDS,
+	lt: LT_SMALL_WORDS,
 	mg: MG_SMALL_WORDS,
 	pl: PL_SMALL_WORDS,
 	ro: RO_SMALL_WORDS,
@@ -762,12 +776,15 @@ export function inlineTitleNodes(
 const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> = {
 	en: { part: 'Part', section: 'Section', chapter: 'Ch.', article: 'Art.' },
 	pt: { part: 'Parte', section: 'Secção', chapter: 'Cap.', article: 'Art.' },
+	be: { part: 'Частка', section: 'Раздзел', chapter: 'Гл.' },
 	de: { part: 'Teil', section: 'Abschnitt', chapter: 'Kap.', article: 'Art.' },
 	es: { part: 'Parte', section: 'Sección', chapter: 'Cap.', article: 'Art.' },
 	fr: { part: 'Partie', section: 'Section', chapter: 'Ch.', article: 'Art.' },
 	hu: { part: 'rész', section: 'szakasz', chapter: 'fejezet' },
+	id: { part: 'Bagian', section: 'Seksi', chapter: 'Bab' },
 	it: { part: 'Parte', section: 'Sezione', chapter: 'Cap.', article: 'Art.' },
 	la: { part: 'Pars', section: 'Sectio', chapter: 'Cap.', article: 'Art.' },
+	lt: { part: 'dalis', section: 'skyrius', chapter: 'poskyris' },
 	mg: { part: 'Fizarana', section: 'Sampana', chapter: 'Toko', article: 'And.' },
 	pl: { part: 'Część', section: 'Sekcja', chapter: 'Rozdz.' },
 	ro: { part: 'Partea', section: 'Secțiunea', chapter: 'Cap.' },
@@ -785,7 +802,7 @@ const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> 
  * the six languages it is not published in. It was absent from all eight
  * until 2026-08-26, when the Catechism stopped being en/pt.
  */
-const NUMBER_FIRST: ReadonlySet<Lang> = new Set<Lang>(['hu']);
+const NUMBER_FIRST: ReadonlySet<Lang> = new Set<Lang>(['hu', 'lt']);
 
 /**
  * `"Ch. 3"`, or null when the node has no number or no label for its kind
@@ -1061,6 +1078,73 @@ interface KindPrefix {
  * NOUNS ARE AS PRINTED, which for Swedish means the definite form its
  * headings actually use — "FÖRSTA DELEN", not "DEL".
  */
+/*
+ * The four PDF editions of the Compendium, added 2026-09-01. Written in the
+ * FOLDED form `foldCodePoints` compares against, which strips a combining
+ * mark from its letter: Belarusian ЧАЦВЁРТАЯ and Russian ЧЕТВЁРТАЯ lose the
+ * diaeresis, and Russian's masculine ordinals lose the breve from Й, so
+ * ПЕРВЫЙ is written ПЕРВЫИ. Lithuanian loses its caron, ogonek and macron the
+ * same way — TREČIA is TRECIA. Spelling any of them the way the language
+ * actually writes them matches nothing, silently: the label simply is not
+ * stripped and the heading renders with its own label repeated in front of it.
+ */
+const BE_ORDINAL_FEM: Record<number, string> = {
+	1: 'ПЕРШАЯ',
+	2: 'ДРУГАЯ',
+	3: 'ТРЭЦЯЯ',
+	4: 'ЧАЦВЕРТАЯ',
+	5: 'ПЯТАЯ'
+};
+
+const BE_ORDINAL_MASC: Record<number, string> = {
+	1: 'ПЕРШЫ',
+	2: 'ДРУГІ',
+	3: 'ТРЭЦІ',
+	4: 'ЧАЦВЕРТЫ',
+	5: 'ПЯТЫ'
+};
+
+const RU_ORDINAL_FEM: Record<number, string> = {
+	1: 'ПЕРВАЯ',
+	2: 'ВТОРАЯ',
+	3: 'ТРЕТЬЯ',
+	4: 'ЧЕТВЕРТАЯ',
+	5: 'ПЯТАЯ'
+};
+
+const RU_ORDINAL_MASC: Record<number, string> = {
+	1: 'ПЕРВЫИ',
+	2: 'ВТОРОИ',
+	3: 'ТРЕТИИ',
+	4: 'ЧЕТВЕРТЫИ',
+	5: 'ПЯТЫИ'
+};
+
+/** Indonesian counts with cardinals, and they do not decline. */
+const ID_CARDINAL: Record<number, string> = {
+	1: 'SATU',
+	2: 'DUA',
+	3: 'TIGA',
+	4: 'EMPAT',
+	5: 'LIMA'
+};
+
+const LT_ORDINAL_FEM: Record<number, string> = {
+	1: 'PIRMA',
+	2: 'ANTRA',
+	3: 'TRECIA',
+	4: 'KETVIRTA',
+	5: 'PENKTA'
+};
+
+const LT_ORDINAL_MASC: Record<number, string> = {
+	1: 'PIRMAS',
+	2: 'ANTRAS',
+	3: 'TRECIAS',
+	4: 'KETVIRTAS',
+	5: 'PENKTAS'
+};
+
 const KIND_PREFIXES: Record<
 	Lang,
 	Partial<Record<StructureNode['kind'], KindPrefix | KindPrefix[]>>
@@ -1076,6 +1160,11 @@ const KIND_PREFIXES: Record<
 		section: { noun: 'SECCAO', ordinals: PT_ORDINAL_FEM, ordinalFirst: true },
 		chapter: { noun: 'CAPITULO', ordinals: PT_ORDINAL_MASC, ordinalFirst: false },
 		article: { noun: 'ARTIGO', ordinals: 'digits', ordinalFirst: false }
+	},
+	be: {
+		part: { noun: 'ЧАСТКА', ordinals: BE_ORDINAL_FEM, ordinalFirst: false },
+		section: { noun: 'РАЗДЗЕЛ', ordinals: BE_ORDINAL_MASC, ordinalFirst: false },
+		chapter: { noun: 'ГЛАВА', ordinals: BE_ORDINAL_FEM, ordinalFirst: false }
 	},
 	de: {
 		part: { noun: 'TEIL', ordinals: DE_ORDINAL_MASC, ordinalFirst: true },
@@ -1128,7 +1217,24 @@ const KIND_PREFIXES: Record<
 	// there is nothing to strip, and the entries are empty rather than
 	// absent because the map is total over `Lang`.
 	pl: {},
-	ru: {},
+	// Russian puts the ordinal AFTER the noun for its parts and chapters and
+	// BEFORE it for its sections — the only edition of the fourteen that does
+	// both. Empty until its Compendium was read from PDF on 2026-09-01.
+	ru: {
+		part: { noun: 'ЧАСТЬ', ordinals: RU_ORDINAL_FEM, ordinalFirst: false },
+		section: { noun: 'РАЗДЕЛ', ordinals: RU_ORDINAL_MASC, ordinalFirst: true },
+		chapter: { noun: 'ГЛАВА', ordinals: RU_ORDINAL_FEM, ordinalFirst: false }
+	},
+	id: {
+		part: { noun: 'BAGIAN', ordinals: ID_CARDINAL, ordinalFirst: false },
+		section: { noun: 'SEKSI', ordinals: ID_CARDINAL, ordinalFirst: false },
+		chapter: { noun: 'BAB', ordinals: ID_CARDINAL, ordinalFirst: false }
+	},
+	lt: {
+		part: { noun: 'DALIS', ordinals: LT_ORDINAL_FEM, ordinalFirst: true },
+		section: { noun: 'SKYRIUS', ordinals: LT_ORDINAL_MASC, ordinalFirst: true },
+		chapter: { noun: 'POSKYRIS', ordinals: LT_ORDINAL_MASC, ordinalFirst: true }
+	},
 	ro: {
 		part: { noun: 'PARTEA', ordinals: RO_ORDINAL_FEM, ordinalFirst: false },
 		section: { noun: 'SECTIUNEA', ordinals: RO_ORDINAL_FEM, ordinalFirst: false },
@@ -1224,15 +1330,20 @@ function stripKindPrefix(
 	// alternative is tried and the first that matches wins. They cannot both
 	// match: a title opens with one prefix or the other.
 	for (const words of kindPrefixWords(kind, n, lang)) {
-		// `\b` after a digit token (article) is what stops n=1's prefix from
-		// also matching the start of an n=10/n=11 title — \b only holds between
-		// a word character and a non-word character, so "1" directly followed
-		// by another digit ("10…") never satisfies it. Word tokens (ONE, PARTE,
-		// CAPITULO…) get the same boundary for free, and folding has already
-		// reduced every one of them to ASCII letters, which is the alphabet
-		// `\b` knows.
+		// The trailing assertion after a digit token (article) is what stops
+		// n=1's prefix from also matching the start of an n=10/n=11 title, and
+		// it gives word tokens (ONE, PARTE, CAPITULO…) the same boundary.
+		//
+		// A LOOKAHEAD RATHER THAN `\b`, because `\b` is ASCII-only. This read
+		// `\b` and said so, on the premise that folding reduces every label to
+		// ASCII letters — true of all fourteen labels until the Compendium's
+		// Russian and Byelorussian editions arrived on 2026-09-01 with ЧАСТЬ,
+		// РАЗДЗЕЛ and ГЛАВА. A Cyrillic letter is not a `\b` word character, so
+		// no boundary exists after ПЕРВАЯ and the prefix silently failed to
+		// match: the label was simply never stripped, and the heading rendered
+		// with its own label repeated in front of the title.
 		const pattern = words.map((word) => word.split(' ').map(esc).join('\\s+')).join('\\s+');
-		const match = folded.match(new RegExp('^' + pattern + '\\b'));
+		const match = folded.match(new RegExp('^' + pattern + '(?![\\p{L}\\p{N}])', 'u'));
 		if (match) return afterPrefix(chars.slice([...match[0]].length));
 	}
 	return null;
