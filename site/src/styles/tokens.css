@@ -28,28 +28,28 @@
 
 :root {
 	/*
-	 * NAMED FACES FIRST, THEN A SYSTEM LADDER, THEN A GENERIC. Each entry is a
-	 * script EB Garamond does not carry, resolved per glyph: Amiri sets the
-	 * Arabic editions, and the two Hebrew families set the two Hebrew ones
-	 * (vatii.nostra-aetate.he and exhortation.ecclesia-in-medio-oriente.he)
-	 * plus the Hebrew chrome added on 2026-08-31.
+	 * NAMED FACES FIRST, THEN A SYSTEM LADDER, THEN A GENERIC. Each vendored
+	 * entry is a script EB Garamond does not carry, resolved per glyph: Amiri
+	 * sets the Arabic editions, Frank Ruhl Libre the two Hebrew ones
+	 * (vatii.nostra-aetate.he, exhortation.ecclesia-in-medio-oriente.he) and
+	 * the Hebrew chrome added on 2026-08-31.
 	 *
-	 * Hebrew is NOT vendored the way Amiri is, and that is a considered
-	 * difference rather than an omission. Amiri is 109 KB of self-hosted file
-	 * because Arabic is a reading language here — 24 editions, one of them
-	 * 250k characters — and the way Naskh is set is part of reading it. Hebrew
-	 * is two documents and a menu, and every desktop and mobile system ships a
-	 * competent Hebrew serif; naming the good ones costs nothing and falls to
-	 * the generic below if none is present. Revisit if Hebrew ever becomes a
-	 * reading language here, and vendor Frank Ruhl Libre (SIL OFL) if so.
+	 * BOTH ARE VENDORED, and for one day Hebrew was not — it named `Frank Ruhl
+	 * Libre` and `David Libre` here and shipped no file, which resolved only on
+	 * machines that happen to have Google Fonts installed. Windows has `David`
+	 * and `FrankRuehl` under different names, macOS has neither. The argument
+	 * for not vendoring was that Hebrew is two documents and a menu against
+	 * Arabic's 24 editions; the measurement killed it, because the Hebrew
+	 * subset is 6.7 KB per weight against Amiri's 109 KB and `unicode-range`
+	 * means nobody else fetches it. See fonts.css for the rest of the reasoning.
 	 *
 	 * Order matters only within a script: a Latin glyph is answered by EB
 	 * Garamond before anything below it can be consulted, which is why adding
 	 * families here cannot change how Latin is set.
 	 */
 	--font-serif:
-		'EB Garamond Variable', 'Amiri', 'Frank Ruhl Libre', 'David Libre', 'Iowan Old Style',
-		'Palatino Linotype', Palatino, Georgia, serif;
+		'EB Garamond Variable', 'Amiri', 'Frank Ruhl Libre', 'Iowan Old Style', 'Palatino Linotype',
+		Palatino, Georgia, serif;
 	/* Two call sites, and only two: the `.drop-cap-letter` rule near the bottom
 	   of this file, and the wordmark (`components/Wordmark.svelte`). Both are single
 	   large glyphs or a short display lockup in the one weight the subset

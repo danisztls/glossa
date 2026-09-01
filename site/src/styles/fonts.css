@@ -1,7 +1,8 @@
 /*
  * THE FACES, AND NOTHING ELSE. Eleven `@font-face` blocks over six scripts:
  * EB Garamond (the text face, in six unicode-range subsets), Amiri for
- * Arabic, Source Sans 3 for the interface, and the two drop-cap faces.
+ * Arabic, Frank Ruhl Libre for Hebrew, Source Sans 3 for the interface, and
+ * the two drop-cap faces.
  *
  * The largest file here and the one least often opened — it is data, not
  * design. Every rule that USES a face names `--font-serif` / `--font-sans`
@@ -40,9 +41,10 @@
  *               only downloads if one appears. Declared for the same reason
  *               `vietnamese` is: the cost of being wrong is tofu.
  *
- * `greek-ext` remains the only omission. Arabic is not a subset question at
- * all — EB Garamond has no Arabic, so the Arabic edition is served by Amiri
- * through `--font-serif`'s fallback chain. See the Amiri block below.
+ * `greek-ext` remains the only omission. Arabic and Hebrew are not subset
+ * questions at all — EB Garamond has neither, so those editions are served by
+ * Amiri and Frank Ruhl Libre through `--font-serif`'s fallback chain. See
+ * their blocks below.
  *
  * Declaring a subset is close to free: `unicode-range` means the browser only
  * downloads a file when a character in its range is actually on the page. A
@@ -254,6 +256,65 @@
 		U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
 		U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
 }
+
+/*
+ * Frank Ruhl Libre for Hebrew, and it is the Amiri argument again with the
+ * numbers in its favour.
+ *
+ * EB Garamond has no Hebrew, so the two Hebrew editions in the corpus --
+ * `vatii.nostra-aetate.he` and `exhortation.ecclesia-in-medio-oriente.he` --
+ * and the Hebrew chrome added on 2026-08-31 all resolve through
+ * `--font-serif`'s fallback chain. FOR ONE DAY THAT CHAIN NAMED SYSTEM
+ * FAMILIES AND VENDORED NOTHING, on the reasoning that Hebrew here is two
+ * documents and a menu while Arabic is 24 editions. Two things were wrong
+ * with it. The families named -- Frank Ruhl Libre, David Libre -- are Google
+ * Fonts names and not system fonts: Windows has `David` and `FrankRuehl`,
+ * macOS has `Arial Hebrew` and `New Peninim MT`, and neither has these. So the
+ * chain resolved on the machine it was written on and fell to a generic
+ * `serif` everywhere else, which is the "works for me" failure this file is
+ * otherwise careful about. And Hebrew is a READING language here, not a
+ * chrome-only one like the four scripts in direction.css: Nostra Aetate is
+ * the Council's declaration on the Church's relation to non-Christian
+ * religions, and its Hebrew edition is not a page to set in whatever the
+ * browser happens to pick.
+ *
+ * THE COST ARGUMENT COLLAPSED ON MEASUREMENT. The Hebrew subset is 6.7 KB per
+ * weight against Amiri's 109 KB, because Hebrew is 27 letters and their final
+ * forms rather than a cursive script needing four contextual shapes per
+ * letter. `unicode-range` means only a reader who meets a Hebrew character
+ * downloads it. Two static weights, like Amiri: the family ships an axis, but
+ * the chrome uses 400 and 600-700, and two subsets at this size are smaller
+ * than one variable file.
+ *
+ * Rafael Frank cut Frank-Ruehl in 1908 for the Berlin foundry C. F. Rühl, and
+ * it became the Hebrew book face -- the face Hebrew literature is set in, the
+ * way a Garamond is for Latin. Frank Ruhl Libre is the open revival (SIL OFL).
+ * That is the same kind of choice Amiri is, a specific historical face rather
+ * than a contemporary drawing, which is why it sits beside EB Garamond
+ * without arguing.
+ *
+ * The `unicode-range` is copied verbatim from the package's `400.css` -- do
+ * not hand-edit it. It carries the Hebrew block, the presentation forms
+ * (U+FB1D-FB4F, where the pointed ligatures live) and the two combining dots
+ * Hebrew shares with Latin.
+ */
+@font-face {
+	font-family: 'Frank Ruhl Libre';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/frank-ruhl-libre-hebrew-400-normal.woff2') format('woff2');
+	unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+@font-face {
+	font-family: 'Frank Ruhl Libre';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('/fonts/frank-ruhl-libre-hebrew-700-normal.woff2') format('woff2');
+	unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
 /*
  * SOURCE SANS 3, the interface face — and the only face here that revives
  * nothing.
@@ -302,9 +363,9 @@
  *               glyphs. One word in a serif inside a sans row, not tofu —
  *               the same bet this file already takes on sidebar titles, and
  *               the same cheap fix if it ever looks wrong.
- *   hebrew      No face here at all, deliberately. Hebrew resolves through
- *               `--font-serif`'s chain to a system family; the argument is
- *               written out beside that token in tokens.css.
+ *   hebrew      Not a gap in THIS face either: Hebrew chrome resolves through
+ *               `--font-serif` to Frank Ruhl Libre, vendored below, the same
+ *               way Arabic chrome has always resolved to Amiri.
  *
  * `greek-ext` and `cyrillic-ext` remain genuinely unreached: Byelorussian
  * spells `Біблія` and `Пяцікніжжа` inside the plain `cyrillic` range, and its
