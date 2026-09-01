@@ -123,6 +123,11 @@ from common import (
     require_corpus,
     write_stamped_json,
 )
+from compendium_pdf import (
+    PDF_EDITIONS,
+    process_pdf_body,
+    read_edition,
+)
 
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
@@ -1188,6 +1193,22 @@ _SV_ORDINALS = {
     "FEMTE": 5,
 }
 
+#: Both genders in one table: the ordinal agrees with the division noun, and
+#: `label_matcher` looks the captured word up without knowing which noun it
+#: stood before.
+_LT_ORDINALS = {
+    "PIRMA": 1,
+    "PIRMAS": 1,
+    "ANTRA": 2,
+    "ANTRAS": 2,
+    "TRECIA": 3,
+    "TRECIAS": 3,
+    "KETVIRTA": 4,
+    "KETVIRTAS": 4,
+    "PENKTA": 5,
+    "PENKTAS": 5,
+}
+
 _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
     "en": (
         _EN_ORDINALS,
@@ -1274,6 +1295,22 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
             ("part", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+DEL\b"),
             ("section", r"^(PRVI|DRUGI|TRETJI|CETRTI|PETI)\s+ODDELEK\b"),
             ("chapter", r"^(PRVO|DRUGO|TRETJE|CETRTO|PETO)\s+POGLAVJE\b"),
+        ],
+    ),
+    # Lithuanian is the first PDF edition, and the first whose divisions are
+    # NOT set in capitals -- `fold` uppercases, so the table reads the same as
+    # the others and nothing here has to know that. Its ordinal precedes the
+    # noun and agrees with it, which is why `dalis` (feminine) takes PIRMA
+    # where `skyrius` and `poskyris` (masculine) take PIRMAS. The three-level
+    # scheme maps straight onto the work's: dalis/skyrius/poskyris are its
+    # part, section and chapter, confirmed against EXPECTED_SKELETON rather
+    # than by translating the nouns.
+    "lt": (
+        _LT_ORDINALS,
+        [
+            ("part", r"^(PIRMA|ANTRA|TRECIA|KETVIRTA|PENKTA)\s+DALIS\b"),
+            ("section", r"^(PIRMAS|ANTRAS|TRECIAS|KETVIRTAS|PENKTAS)\s+SKYRIUS\b"),
+            ("chapter", r"^(PIRMAS|ANTRAS|TRECIAS|KETVIRTAS|PENKTAS)\s+POSKYRIS\b"),
         ],
     ),
     "sv": (
@@ -1479,12 +1516,40 @@ LANG_CONFIG = {
         "title": "Katolska Kyrkans lilla katekes",
         "short_title": "Lilla katekesen",
     },
+    # ---- the PDF editions -------------------------------------------------
+    # No `start`/`end`: those bound a region of HTML, and a PDF has no
+    # markup to find them in. The body is bounded instead by the question
+    # numbers themselves -- everything before Q1 is front matter and
+    # everything after Q598 is the Appendix, which these editions print the
+    # same way the ten do and which is out of scope here as it is there.
+    "lt": {
+        "pdf": PDF_EDITIONS["lt"],
+        "notes": (
+            (
+                "Published as a PDF by the Lithuanian Bishops' Conference, not as HTML "
+                "on vatican.va, and read with MuPDF. The CCC cross-references are set "
+                "in the outer margin rather than inline, so they are separated by "
+                "x-coordinate and matched to a question by y; the extracted values "
+                "agree with the Italian edition's on 584 of 598, and several of the "
+                "rest are misprints in the Italian."
+            ),
+            (
+                "Divisions are set in title case rather than capitals, and the running "
+                "head repeats them on every page at 9pt against a 10pt body. The size "
+                "is what tells a heading from the running head."
+            ),
+        ),
+        "title": "Katalikų Bažnyčios katekizmo santrauka",
+        "short_title": "Santrauka",
+        "edition": "2007, Lietuvos Vyskupų Konferencija (PDF)",
+    },
 }
 
 for _lang, _cfg in LANG_CONFIG.items():
     _cfg["url"] = source_url(_lang)
     _cfg["work_id"] = f"compendium.{_lang}"
     _cfg["match_label"] = MATCH_LABEL[_lang]
+    _cfg.setdefault("pdf", None)
     _cfg.setdefault("at_block", False)
     _cfg.setdefault("refs_after", False)
     _cfg.setdefault("italic_quotes", False)
@@ -1561,6 +1626,8 @@ def region(html_text: str, cfg: dict, lang: str) -> str:
 def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = make_fetcher(RAW_ROOT)
+    if cfg["pdf"] is not None:
+        return run_scrape_pdf(lang, cfg, fetcher), fetcher
     html_text = fetcher.fetch_str(cfg["url"], raw_name(lang))
     state_corrections = load_corrections(cfg["work_id"])
     html_text, applied = apply_corrections(html_text, state_corrections, lang)
@@ -1571,6 +1638,29 @@ def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     state.corrections_applied = applied
     process_body(body, cfg, state)
     return state, fetcher
+
+
+def run_scrape_pdf(lang: str, cfg: dict, fetcher: Fetcher) -> ScrapeState:
+    """The PDF path: the same state machine, fed from a page geometry.
+
+    The file is already in `raw/` -- `--capture` has taken all four since
+    August -- so this reads it off disk rather than through the fetcher, and
+    a missing one is an error rather than a fetch, the same way an offline
+    parse behaves everywhere else.
+    """
+    path = RAW_ROOT / raw_name(lang)
+    if not path.is_file():
+        raise SystemExit(f"{path} is not in the corpus; run `--capture {lang}` first")
+    pages = read_edition(path, cfg["pdf"])
+    state = ScrapeState(refs_after=cfg["refs_after"])
+    state.corrections = load_corrections(cfg["work_id"])
+    # Corrections against extracted text are not wired up yet; none is filed
+    # for a PDF edition, and `require_all_applied` in `validate` is what will
+    # say so loudly if one ever is.
+    state.corrections_applied = []
+    process_pdf_body(pages, cfg, state)
+    state.finalize_current()
+    return state
 
 
 # --------------------------------------------------------------------------

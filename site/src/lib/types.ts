@@ -104,7 +104,8 @@ export type ContentLang =
 	| 'sw'
 	| 'vi'
 	| 'be'
-	| 'he';
+	| 'he'
+	| 'lt';
 
 interface WorkManifestBase {
 	id: string;

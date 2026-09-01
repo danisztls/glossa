@@ -588,7 +588,8 @@ const LANGUAGE_NAMES: Record<string, string> = {
 	sw: 'Kiswahili',
 	vi: 'Tiếng Việt',
 	be: 'Беларуская',
-	he: 'עברית'
+	he: 'עברית',
+	lt: 'Lietuvių'
 };
 
 /**
