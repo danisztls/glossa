@@ -92,10 +92,27 @@ export class Menu {
 	 * rather than to a backdrop element, so the rest of the page stays
 	 * clickable: unlike `JumpBox`'s modal dialog, these are lightweight menus,
 	 * not dialogs that should block interaction with the page behind them.
+	 *
+	 * A CONTROL THAT REMOVES ITSELF ON CLICK IS NOT AN OUTSIDE CLICK, and
+	 * `contains()` alone cannot tell the difference. Svelte 5 delegates
+	 * `click` and flushes the update before the event finishes bubbling, so
+	 * by the time this runs the clicked element may already be out of the
+	 * document — and a detached node is contained by nothing, which reads here
+	 * as "the reader clicked the page" and closes the panel.
+	 *
+	 * `LanguageMenu`'s "+ more" is the first: it is rendered only while there
+	 * is more to show, so clicking it destroys it and the panel it had just
+	 * expanded shut itself. `isConnected` is the discriminator — the click
+	 * happened while the element was still in the tree, so whether it was
+	 * inside was decided then, and a node that is no longer anywhere cannot
+	 * be judged now. The alternative was `stopPropagation` at that one call
+	 * site, which fixes the instance and leaves the trap for the next menu
+	 * with a row that disappears when it is taken.
 	 */
 	onWindowClick = (e: MouseEvent) => {
 		if (!this.open) return;
-		if (this.containerEl && e.target instanceof Node && !this.containerEl.contains(e.target)) {
+		if (!(e.target instanceof Node) || !e.target.isConnected) return;
+		if (this.containerEl && !this.containerEl.contains(e.target)) {
 			this.close();
 		}
 	};

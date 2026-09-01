@@ -123,6 +123,26 @@
 	}
 
 	/**
+	 * "+ more" hands focus back to the box, which is not a nicety.
+	 *
+	 * The button renders only while there is more to show, so taking it
+	 * destroys it — and focus with it, to `<body>`, where neither the box's
+	 * keydown handler nor the list's can see an Escape. The reader would then
+	 * be in an open panel that only a click could close. Returning focus to
+	 * the box restores that, and is where a reader who has just asked for
+	 * twenty-two more languages most likely wants to be anyway.
+	 *
+	 * The self-destruction has a second consequence, and it is handled once
+	 * for every menu in `menu.svelte.ts`: a detached element is contained by
+	 * nothing, so the outside-click check read this as a click on the page and
+	 * shut the panel it had just expanded.
+	 */
+	function expandAll() {
+		expanded = true;
+		filterEl?.focus();
+	}
+
+	/**
 	 * Enter in the box takes the only row left, and does nothing when there is
 	 * more than one.
 	 *
@@ -209,7 +229,7 @@
 				</ul>
 			{/if}
 			{#if showMore}
-				<button type="button" class="menu-more" onclick={() => (expanded = true)}>
+				<button type="button" class="menu-more" onclick={expandAll}>
 					+ {t('lang.more')} ({hidden})
 				</button>
 			{/if}
