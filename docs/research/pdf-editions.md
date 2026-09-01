@@ -161,6 +161,34 @@ The second oracle is `audit.py balance`, and it is what §7 step 4 predicted: it
 
 So all four ship, unswitched. `site/unpublished.json` stays empty of them. The rule the survey was reaching for is sharper than it guessed: a PDF-sourced edition ships where **something in it can be checked against a sibling** — which need not be its prose, and here is its apparatus.
 
+## 8b. What the four editions do NOT carry (2026-09-01)
+
+Recorded so nobody re-derives it. None of this fails `validate`; all four editions pass, and every number below was measured against `compendium.it`, which is the reference throughout.
+
+**Epigraphs and run-in sub-headings are partial, and precise where they exist.** The work closes many answers with a patristic epigraph and heads runs of questions with an italic or capitalised sub-heading. Both were folded into the answers' prose until this pass.
+
+|                             | quote blocks | attributed | matching `it` | false positives | `sub` nodes |
+| --------------------------- | ------------ | ---------- | ------------- | --------------- | ----------- |
+| `compendium.it` (reference) | 24           | —          | —             | —               | 82          |
+| `compendium.lt`             | 17           | 17         | 17            | 0               | 18          |
+| `compendium.be`             | 16           | 16         | 16            | 0               | 17          |
+| `compendium.id`             | 5            | 5          | 5             | 0               | 14          |
+| `compendium.ru`             | 0            | 0          | 0             | 0               | 0           |
+
+**Precision is total and recall is not**, which is the right way round for a corpus: every block emitted is one the Italian also marks. What is missed is an epigraph these editions set in roman, or one whose lines the reader did not group into a single run. The Indonesian is the weakest because it centres each line of an epigraph separately.
+
+Three things about the discriminator are worth keeping, because each was arrived at by being wrong first:
+
+- **Italic alone over-detects by more than twice** — 59 blocks against 24 — because these editions also italicise Latin phrases inside a sentence (`Fiat mihi secundum Verbum tuum`), liturgical incipits, and the run-in sub-headings themselves.
+- **Position is most of the answer.** All 24 of the Italian's quote blocks are the LAST block of their answer; an italic run anywhere else is emphasis. But a trailing sub-heading sits after the epigraph where a chapter has both, so the headings have to come off first or they push the epigraph out of last place — that alone lost nine of the Indonesian's.
+- **Neither quotation marks nor final punctuation separates an epigraph from a heading. Length does.** The Creed's article headings quote the Creed, so `„Amen“` carries marks and is a heading; three of the work's headings are questions ending in `?`. The Italian's shortest epigraph is 40 characters and every run-in heading is shorter, so the rule is length **and** marks together.
+
+**The Russian carries neither**, and it is a limit of the reader rather than of the book. It sets its epigraphs in italic like the other three — `BPCABA+MSTT31c666` against the body's `BPCBHO+MSTT31c658` — but `pdftotext -bbox-layout` reports no font at all, and its quotation indent is identical to its paragraph first-line indent (137.5 against a 123.3 measure), so nothing left in the stream separates them. The fix is a backend that reports a face: `pdftohtml -xml` gives a font id per run **and its own page dimensions**, which would also retire the `/Rotate` special case in `page_boxes`. It would replace `-bbox-layout` here rather than supplement it, and the risk is re-tuning the two-up split and the furniture strip against a different coordinate space.
+
+**`sub` nodes are 14–18 against the Italian's 82.** Only the italic and fully-capitalised headings are found; most of this work's sub-headings are set some other way in these editions. The tree is correct as far as it goes — `validate`'s skeleton check passes and the part/section/chapter spine is complete in all four — but it is not the Italian's tree.
+
+**Two smaller residues.** The Lithuanian is missing 24 of its 598 `ccc_refs`: its right margin edge wanders more than the other three, and this was tuned rather than solved — raising `ANCHOR_BANDS` from 2 to 8 made it _worse_ (438 refs), because a page whose own measurement puts the edge a few points wide swallows the margin into the body. And the Russian's small-caps repair leaves `МЫ ВЕРУЕМ` as `МЫВЕРУЕМ` where a heading is set entirely in small capitals rather than with a single raised initial.
+
 ## 9. What is left
 
 The four Compendia are done. Still deferred, with the measurements taken 2026-08-31:
