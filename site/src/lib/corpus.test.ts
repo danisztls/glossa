@@ -386,6 +386,20 @@ describe('preferred edition', () => {
 		expect(resolveEditionTag(['en', 'fr', 'la'], 'mg')).toBe('fr');
 	});
 
+	// The `mg` case again in another family, added when the interface became a
+	// superset of the corpus: Slovak has one work, Czech has fifteen, and a
+	// Slovak reader falls back on nearly every address.
+	it('routes Slovak through Czech before English', () => {
+		expect(resolveEditionTag(['cs', 'en', 'la'], 'sk')).toBe('cs');
+	});
+
+	// And NOT the reverse, which is the asymmetry the row is chosen on rather
+	// than a gap: Czech comprehension of Slovak is the weaker direction, and
+	// Slovak holds one document a Czech reader could not already have.
+	it('does not route Czech through Slovak', () => {
+		expect(resolveEditionTag(['sk', 'en', 'la'], 'cs')).toBe('en');
+	});
+
 	it('falls through a neighbour that does not have the address', () => {
 		// No French Summa exists, so `mg`'s row runs on to its tail rather than
 		// stopping at the neighbour.

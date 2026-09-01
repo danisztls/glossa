@@ -285,19 +285,70 @@ export function listEditions(type: WorkType): WorkManifest[] {
  *     are close enough to read across.
  *   - `ar: ['fr', …]` and `hu: ['de', …]`: the second language those readers
  *     are likeliest to already have.
+ *   - `sk: ['cs', …]`, added 2026-08-31 and the `mg` case again in a different
+ *     family. Slovak has ONE work in the corpus, so a Slovak reader falls back
+ *     on nearly every address; Czech has fifteen, and Czech is the one
+ *     language in Europe a Slovak reader can be assumed to read without
+ *     having learned it — a shared state until 1993, and Czech has stayed the
+ *     dominant publishing and dubbing language in Slovakia since. The
+ *     comprehension is famously ASYMMETRIC, which is why the reverse row does
+ *     not exist: Czech readers under forty follow Slovak markedly less well
+ *     than the other way round, and `cs: ['sk', …]` would move exactly one
+ *     document out of English for them.
  *
  * ONE NEIGHBOUR PER ROW AT MOST, deliberately. A longer row reads as a
  * ranking of languages by how close they are, which is an argument nobody
  * wins and which the corpus cannot settle; one neighbour is a claim about a
- * specific readership, and each of the four above is defensible on its own.
+ * specific readership, and each of the five above is defensible on its own.
  * The rows that name none are not gaps — a German, Polish, Slovenian,
  * Swedish or Russian reader who cannot have their own language is better
  * served by English than by a language they are being guessed into.
  *
- * KEYED ON CONTENT LANGUAGE, all fifteen (see `ContentLang` in types.ts), of
- * which fourteen are also interface languages. An unlisted tag gets the tail
- * alone, so a language ingested before its row is written degrades to the old
- * global behaviour rather than to nothing.
+ * SIZE IS A TIEBREAKER AND NEVER THE CRITERION, which is worth stating
+ * because the measurement invites the opposite. Ranking every language by how
+ * many works a row would move out of English recommends Italian to everybody
+ * — it is the second-largest corpus here, so it "wins" for Dutch, Danish,
+ * Croatian, Finnish and Hebrew alike, none of whose readers read it. The
+ * readership question is asked first and the count only chooses among the
+ * languages that survive it. Measured 2026-08-31, the five rows move 19, 33,
+ * 53, 134, 110, 90, 45 and 15 works respectively; `it: ['es', …]` moves two,
+ * and is kept because an Italian reader has 240 works and the row is a
+ * rounding error either way.
+ *
+ * ELEVEN CONTENT LANGUAGES DELIBERATELY HAVE NO ROW — `nl`, `da`, `cs`, `hr`,
+ * `fi`, `lv`, `sw`, `vi`, `be`, `he` and the eight reach languages beside
+ * them. Three near-misses are worth recording so they are not re-proposed:
+ *
+ *   - `da: ['sv', …]` and `fi: ['sv', …]`. Written Danish and Swedish are
+ *     close, and Swedish is co-official in Finland. Both fail on the same
+ *     fact: Danish and Finnish readers' English is stronger than their
+ *     Swedish, and Swedish here is one work — the Compendium.
+ *   - `uk: ['ru', …]` and `lv: ['ru', …]`. Both would move real work out of
+ *     English (10 and 9). Neither is a language its readership wants to be
+ *     guessed into, which is the readership test failing in the one direction
+ *     a size ranking cannot see.
+ *   - `nl: ['de', …]`, `vi: ['fr', …]` and `sw: ['fr', …]` are the three that
+ *     would also ELECT A DIFFERENT CATECHISM (see below). None survives the
+ *     readership test: Dutch readers have the highest English proficiency
+ *     measured anywhere, French among Vietnamese Catholics is generational,
+ *     and Swahili's readership is split between anglophone East Africa and
+ *     francophone Central Africa, so English serves the larger half.
+ *
+ * A ROW ALSO ELECTS THE CATECHISM, which is the cost that is easy to miss.
+ * `ONE_EDITION_AUTOMATIC` fills the first edition in the chain that has one,
+ * and `catechismPairLang` renders `/catechismus` in the first chain language
+ * carrying either work — so `nl: ['de', …]` would not merely re-rank a
+ * fallback, it would give every Dutch reader a German Catechism, downloaded
+ * uninvited. Check a proposed row against `ccc.*` and `compendium.*` before
+ * arguing it on readership alone: of the candidates weighed on 2026-08-31,
+ * every one that changed the elected edition was also one the readership test
+ * rejected, and that convergence is luck rather than a rule.
+ *
+ * KEYED ON CONTENT LANGUAGE, of which there are twenty-six (see `ContentLang`
+ * in types.ts) — all of them interface languages since the superset flip, and
+ * sixteen of them without a row. An unlisted tag gets the tail alone, so a
+ * language ingested before its row is written degrades to the old global
+ * behaviour rather than to nothing.
  */
 export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> = {
 	en: ['en', 'la'],
@@ -314,7 +365,8 @@ export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> 
 	hu: ['de', 'en', 'la'],
 	ro: ['it', 'en', 'la'],
 	sl: ['en', 'la'],
-	sv: ['en', 'la']
+	sv: ['en', 'la'],
+	sk: ['cs', 'en', 'la']
 };
 
 /** The tail every row ends in, and what an unlisted language falls back to. */
