@@ -331,10 +331,17 @@
 
 	/* Smaller and muted, so the row is read as a name first. Tabular figures
 	   because the years then line up down the column, which is most of what
-	   makes a list of twelve reigns legible at a glance. */
+	   makes a list of twelve reigns legible at a glance.
+
+	   DELIBERATELY BELOW `--font-size-min`, which is the only place on the
+	   site that is. The floor is set for prose, and this is nine tabular
+	   digits and a dash with no lowercase in it — the shapes that survive
+	   being set small — sitting beside a name that carries the row. Read it
+	   as the size the annotation has to be to stay an annotation: at the
+	   floor it competed with the count, which is a different fact. */
 	.facet-note {
 		font-variant-numeric: tabular-nums;
-		font-size: 0.72rem;
+		font-size: 0.65rem;
 		color: var(--color-text-muted);
 		white-space: nowrap;
 	}
