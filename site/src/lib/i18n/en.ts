@@ -288,8 +288,6 @@ export const en: Dictionary = {
 	// 'search titles' — and it is what makes the 53-term subject facet
 	// safe to have cut down from 232 (site/document-tags.json).
 	'document.filter.search': 'Search documents',
-	'document.filter.showAll': 'Show all',
-	'document.filter.showFewer': 'Show fewer',
 	'document.filter.clear': 'Clear',
 	'document.filter.results': 'Documents shown',
 	'document.filter.noResults': 'No document matches these filters.',

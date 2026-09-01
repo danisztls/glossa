@@ -805,9 +805,11 @@ reverse-chronological. Seven things about it will bite before the design will.
   back**: the subject counts are taken against the FULLY filtered set, itself included,
   so a term's number is exactly what survives the click (the other two exclude themselves,
   or every unselected author would read 0); and `liveTags` drops the terms that reach 0
-  rather than greying them, because one selection zeroes most of a 58-term vocabulary and
-  eighteen dead rows would hide the ~30 that still narrow. A selected term is always live,
-  so filtering can never make a filter unreachable.
+  rather than greying them, because one selection zeroes most of a 58-term vocabulary. That
+  pruning matters MORE now the facet is a cloud: a dead term has no weight to draw, so it
+  would render at the floor size and read as the smallest live term — a chip that looks
+  available and does nothing. A selected term is always live, so filtering can never make a
+  filter unreachable.
 - **The search reads a document's WHOLE metadata** — title, author, kind, description,
   tags — and is AND-ed with the three facets. It sits at the head of the panel because it
   is the coarse instrument, and because it is what makes the small subject vocabulary
@@ -867,9 +869,24 @@ reverse-chronological. Seven things about it will bite before the design will.
   clergy, `consecration` into `Marian devotion` made the consecration to the Sacred Heart
   Marian. Each was defensible on the commonest document carrying the term and wrong on the
   rest. **Check the merge against every document it touches, not against the archetype.**
+- **The subject facet is a CLOUD, and that is what retired the truncation.** 58 stacked rows
+  is ~1,390px in a 17rem aside, so the list showed eighteen behind a "Show all"; flowing the
+  terms inline and saying each one's weight with its size fits the whole vocabulary in ~600px.
+  More than the truncated list took, far less than the full one, and the aside already
+  scrolls. **Size follows the LIVE count**, so every click resizes every chip — the accepted
+  cost, and alphabetical order is what pays it: widths move, the sequence never does, so a
+  term stays findable by scanning. Three things will bite. The scale must **renormalise
+  against the current extremes** (`src/lib/tag-cloud.ts`), because pinning it to the
+  unfiltered 3–42 collapses the cloud to the floor the moment a filter narrows it — after one
+  click the largest survivor may hold nine. The range is taken over **positive counts only**,
+  since two selected terms sharing no document leave both at 0 and a zero minimum drags the
+  floor down and inflates everything against it. And `CLOUD_SIZE_MAX` is the one constant to
+  turn down if the reflow reads badly — height barely responds to it, because chip count
+  dominates, so it is a legibility knob and not a size one.
 - **The terms are NOT translated and render verbatim.** A closed list could carry an i18n
-  key each, the way `document_kind` does in `document-labels.ts`, but 58 terms is 812
-  strings across the fourteen dictionaries and nobody has asked for them.
+  key each, the way `document_kind` does in `document-labels.ts`, but that is 58 terms
+  times however many dictionaries there are — near two thousand strings at the current
+  count — and nobody has asked for them.
 - **`DocumentFilters.svelte` is rendered TWICE on the page** — the aside above 80rem, a
   `<details>` above the list below it — which is why its options are `aria-pressed`
   buttons and not checkboxes, and why the search text is a PROP rather than local state.

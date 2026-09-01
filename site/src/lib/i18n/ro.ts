@@ -173,8 +173,6 @@ export const ro: Dictionary = {
 	'document.filter.kind': 'Tip',
 	'document.filter.subject': 'Subiect',
 	'document.filter.search': 'Caută documente',
-	'document.filter.showAll': 'Arată toate',
-	'document.filter.showFewer': 'Arată mai puține',
 	'document.filter.clear': 'Șterge',
 	'document.filter.results': 'Documente afișate',
 	'document.filter.noResults': 'Niciun document nu corespunde acestor filtre.',

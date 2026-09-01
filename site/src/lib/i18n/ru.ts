@@ -170,8 +170,6 @@ export const ru: Dictionary = {
 	'document.filter.kind': 'Тип',
 	'document.filter.subject': 'Тема',
 	'document.filter.search': 'Поиск документов',
-	'document.filter.showAll': 'Показать все',
-	'document.filter.showFewer': 'Показать меньше',
 	'document.filter.clear': 'Сбросить',
 	'document.filter.results': 'Показано документов',
 	'document.filter.noResults': 'Ни один документ не соответствует этим фильтрам.',

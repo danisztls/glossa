@@ -2103,9 +2103,46 @@ the list went flat and reverse-chronological.
 - **A subject that reaches 0 is dropped from the panel, not greyed out.** One selection
   zeroes most of a 58-term vocabulary, and eighteen dead rows would hide the thirty that
   still narrow; a disabled row is only worth showing where it is one of a few. A selected
-  term counts as live whatever its number, so filtering can never make a filter
-  unreachable, and the order is the corpus-wide one throughout — options drop out, they
-  never move past one another under the cursor.
+  term counts as live whatever its number, so filtering can never make a filter unreachable.
+
+**The subject facet became a tag cloud on 2026-08-31, and that is what retired the
+truncation.** 58 stacked rows is about 1,390px in a 17rem aside, so the list showed eighteen
+of them behind a "Show all" — a workaround for a list being the wrong shape for 58 short
+labels, not a considered design. Flowing the terms inline and saying each one's weight with
+its type size fits the whole vocabulary in roughly 600px: more than the truncated list took,
+far less than the full one, and the aside is already `overflow-y: auto` under a sticky
+max-height, so the extra height is absorbed rather than new. The measurements that decided the
+shape are worth keeping, because two of them are counter-intuitive.
+
+- **Size follows the LIVE count, not a corpus-wide total**, so the cloud is a picture of what
+  is currently left. The cost is that every click resizes every chip and the cloud reflows.
+  **Alphabetical order is what pays for that**, and it is why the order changed at the same
+  time: widths move, but the sequence never does, so a term stays findable by scanning the way
+  an index is. Ranking by a number that also moves would have sent the chips past one another
+  as well. The fallback, if the reflow proves unreadable, is sizing from a corpus-wide total,
+  which needs a `total` field on `Facet` and about three lines.
+- **The scale renormalises against the current extremes.** Pinning it to the unfiltered 3–42
+  would collapse every chip to the floor as soon as a filter narrowed the corpus — after one
+  click the largest surviving term may hold nine documents, not forty-two.
+- **The range is taken over positive counts only.** Two selected terms that share no document
+  leave both at 0, and a zero minimum drags the floor of the scale down, silently inflating
+  every other chip against it. Terms at 0 clamp to the smallest size instead, which is what
+  they should read as.
+- **Square root, and the curve is pinned by a test.** Measured over the real distribution,
+  linear crowds half the vocabulary into the bottom third of the range and log over-expands
+  the low end, spending most of the scale separating terms that differ by two documents.
+- **The size range is a legibility knob, not a compactness one.** Sweeping it from 0.75–1.35rem
+  down to 0.75–1.00rem moves the cloud's height by only ~185px, because chip COUNT dominates.
+  So `CLOUD_SIZE_MAX` should be chosen by how the largest terms read in a 272px column —
+  0.75–1.15rem — and turned down if they shout, without worrying about the space it saves.
+- **Pruning zero-count terms matters more here than it did in the list.** A dead term has no
+  weight to draw, so it renders at the floor and is indistinguishable from the smallest live
+  term: a chip that looks available and does nothing.
+- **The count moved into a visually-hidden label** rather than staying a visible column, since
+  size is what carries it now. That span is load-bearing — size is invisible to a screen
+  reader — and it reuses `colophon.countDocuments`, which every dictionary already has, so the
+  change cost no new strings in any language. Deleting the two "Show all/fewer" keys made it a
+  net removal.
 - **The filters are not in the URL, and that is a decision rather than an omission.**
   Nothing in this app reads or writes the client-side URL: the address grammar is
   pathname-only, `worker.ts` decides a page's status from the pathname alone, and the
@@ -2201,8 +2238,8 @@ decides it.
 - **What the open vocabulary could not do is translate**, and the closed one still does not.
   Every coinage would have been fourteen inventions rather than fourteen lookups — the cost
   `route-titles.mjs`'s `CHROME_KEYS` warns about, paid per tagged document. A closed 58-term
-  list could carry an i18n key each, the way `document_kind` does; that is 812 strings and
-  nobody has asked for them. The terms render verbatim and only the panel is translated.
+  list could carry an i18n key each, the way `document_kind` does; that is 58 strings per
+  dictionary, near two thousand at the current count, and nobody has asked for them. The terms render verbatim and only the panel is translated.
 
 **Three things about that file fail the sync rather than warning.** A tag outside the
 vocabulary — a typo, or a synonym of a listed term, which splits a term's documents in two

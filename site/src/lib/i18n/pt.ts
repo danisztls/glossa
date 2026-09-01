@@ -193,8 +193,6 @@ export const pt: Dictionary = {
 	'document.filter.kind': 'Tipo',
 	'document.filter.subject': 'Assunto',
 	'document.filter.search': 'Buscar documentos',
-	'document.filter.showAll': 'Ver todos',
-	'document.filter.showFewer': 'Ver menos',
 	'document.filter.clear': 'Limpar',
 	'document.filter.results': 'Documentos exibidos',
 	'document.filter.noResults': 'Nenhum documento corresponde a estes filtros.',

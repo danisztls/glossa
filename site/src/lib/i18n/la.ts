@@ -207,8 +207,6 @@ export const la: Dictionary = {
 	'document.filter.kind': 'Genus',
 	'document.filter.subject': 'Argumentum',
 	'document.filter.search': 'Documenta quaerere',
-	'document.filter.showAll': 'Omnia ostendere',
-	'document.filter.showFewer': 'Pauciora ostendere',
 	'document.filter.clear': 'Delere',
 	'document.filter.results': 'Documenta ostensa',
 	'document.filter.noResults': 'Nullum documentum his condicionibus respondet.',

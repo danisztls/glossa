@@ -172,8 +172,6 @@ export const fr: Dictionary = {
 	'document.filter.kind': 'Type',
 	'document.filter.subject': 'Sujet',
 	'document.filter.search': 'Rechercher un document',
-	'document.filter.showAll': 'Tout afficher',
-	'document.filter.showFewer': 'Afficher moins',
 	'document.filter.clear': 'Effacer',
 	'document.filter.results': 'Documents affichés',
 	'document.filter.noResults': 'Aucun document ne correspond à ces filtres.',

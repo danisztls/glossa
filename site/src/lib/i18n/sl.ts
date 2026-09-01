@@ -172,8 +172,6 @@ export const sl: Dictionary = {
 	'document.filter.kind': 'Vrsta',
 	'document.filter.subject': 'Tema',
 	'document.filter.search': 'Iskanje dokumentov',
-	'document.filter.showAll': 'Prikaži vse',
-	'document.filter.showFewer': 'Prikaži manj',
 	'document.filter.clear': 'Počisti',
 	'document.filter.results': 'Prikazani dokumenti',
 	'document.filter.noResults': 'Noben dokument ne ustreza tem filtrom.',

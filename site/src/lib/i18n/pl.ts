@@ -170,8 +170,6 @@ export const pl: Dictionary = {
 	'document.filter.kind': 'Rodzaj',
 	'document.filter.subject': 'Temat',
 	'document.filter.search': 'Szukaj dokumentów',
-	'document.filter.showAll': 'Pokaż wszystkie',
-	'document.filter.showFewer': 'Pokaż mniej',
 	'document.filter.clear': 'Wyczyść',
 	'document.filter.results': 'Wyświetlone dokumenty',
 	'document.filter.noResults': 'Żaden dokument nie odpowiada tym filtrom.',

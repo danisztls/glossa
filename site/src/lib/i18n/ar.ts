@@ -168,8 +168,6 @@ export const ar: Dictionary = {
 	'document.filter.kind': 'النوع',
 	'document.filter.subject': 'الموضوع',
 	'document.filter.search': 'بحث في الوثائق',
-	'document.filter.showAll': 'عرض الكل',
-	'document.filter.showFewer': 'عرض أقل',
 	'document.filter.clear': 'مسح',
 	'document.filter.results': 'الوثائق المعروضة',
 	'document.filter.noResults': 'لا توجد وثيقة تطابق عوامل التصفية هذه.',

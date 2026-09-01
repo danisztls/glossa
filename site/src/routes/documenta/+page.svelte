@@ -339,13 +339,22 @@
 	   has to promise, and a term sharing no document with the current selection
 	   reads 0. The other two exclude themselves for the mirror-image reason —
 	   adding a second author only ever widens, so counting one against the
-	   authors already chosen would print 0 beside every one of them. */
+	   authors already chosen would print 0 beside every one of them.
+
+	   ALPHABETICAL, where the other two rank by recency and by count, because
+	   the panel draws this one as a cloud and the size already says the weight.
+	   What ordering has to buy instead is the thing size cannot: a term the
+	   reader already has in mind, found by scanning. It is also the most stable
+	   order there is, which matters here more than anywhere — the chips resize
+	   on every click, so their widths move; ranking them by a number that also
+	   moves would send them past one another as well. The keys are lower-cased,
+	   so a plain compare is already the case-insensitive one. */
 	const tagFacets = $derived(
 		buildFacet(
 			visible,
 			(row) => row.tagKeys,
 			(key) => tagLabels.get(key) ?? key,
-			([ka, a], [kb, b]) => b - a || ka.localeCompare(kb)
+			([ka], [kb]) => ka.localeCompare(kb)
 		)
 	);
 </script>

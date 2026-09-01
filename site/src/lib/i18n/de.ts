@@ -172,8 +172,6 @@ export const de: Dictionary = {
 	'document.filter.kind': 'Art',
 	'document.filter.subject': 'Thema',
 	'document.filter.search': 'Dokumente suchen',
-	'document.filter.showAll': 'Alle anzeigen',
-	'document.filter.showFewer': 'Weniger anzeigen',
 	'document.filter.clear': 'Zurücksetzen',
 	'document.filter.results': 'Angezeigte Dokumente',
 	'document.filter.noResults': 'Kein Dokument entspricht diesen Filtern.',

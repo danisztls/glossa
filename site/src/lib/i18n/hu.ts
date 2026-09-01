@@ -175,8 +175,6 @@ export const hu: Dictionary = {
 	'document.filter.kind': 'Típus',
 	'document.filter.subject': 'Téma',
 	'document.filter.search': 'Dokumentumok keresése',
-	'document.filter.showAll': 'Összes megjelenítése',
-	'document.filter.showFewer': 'Kevesebb megjelenítése',
 	'document.filter.clear': 'Törlés',
 	'document.filter.results': 'Megjelenített dokumentumok',
 	'document.filter.noResults': 'Egyetlen dokumentum sem felel meg ezeknek a szűrőknek.',

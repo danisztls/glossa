@@ -172,8 +172,6 @@ export const sv: Dictionary = {
 	'document.filter.kind': 'Typ',
 	'document.filter.subject': 'Ämne',
 	'document.filter.search': 'Sök dokument',
-	'document.filter.showAll': 'Visa alla',
-	'document.filter.showFewer': 'Visa färre',
 	'document.filter.clear': 'Rensa',
 	'document.filter.results': 'Visade dokument',
 	'document.filter.noResults': 'Inget dokument matchar dessa filter.',
