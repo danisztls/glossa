@@ -342,7 +342,21 @@
 	.facet-note {
 		font-variant-numeric: tabular-nums;
 		font-size: 0.65rem;
-		color: var(--color-text-muted);
+		/* A step past `--color-text-muted`, which the count beside it uses, so
+		   the two secondary facts on the row are not the same grey.
+
+		   MIXED TOWARD `--color-bg` AND NOT TOWARD A LITERAL, for the reason
+		   the tag cloud mixes between two tokens: in dark mode the background
+		   is the dark one, so fading toward it is fading in every theme
+		   rather than in half of them.
+
+		   90% IS A CEILING, NOT A TASTE. At this size WCAG AA wants 4.5:1,
+		   and the token starts at 5.78:1 in the light theme — 90% spends
+		   almost all of that (4.63:1) and 88% is already under. Sepia is the
+		   exception and it is not this rule's fault: `--color-text-muted`
+		   there is 4.45:1 before anything is mixed into it, so every muted
+		   string in that theme is already below the line. */
+		color: color-mix(in srgb, var(--color-text-muted) 90%, var(--color-bg));
 		white-space: nowrap;
 	}
 
