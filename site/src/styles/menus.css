@@ -230,6 +230,99 @@
 }
 
 /* ---------------------------------------------------------------------------
+   A panel with a search box in it
+
+   Two of the six dropdowns outgrew being a list — thirty-four interface
+   languages, up to twenty-four editions of a work — and a search box is what
+   they grew instead (`menu-filter.ts` holds the decisions; this holds the
+   look). Shared here rather than scoped twice for the reason `.edition-lang`
+   above is: `EditionMenu`, `ComparisonEditionMenu` and `LanguageMenu` would
+   otherwise carry three identical copies, and the third would be taken from
+   the second.
+
+   THE PANEL STOPS SCROLLING AND THE LIST STARTS. `.menu-panel` is the
+   scroller everywhere else, which would carry the search box up out of sight
+   the moment a reader scrolled the very list they were filtering. So a
+   filtered panel is a column that clips, with the input and the "+ more"
+   button fixed at its two ends and `.menu-list` taking the overflow. It is
+   also a `<div>` rather than the `<ul>` the unfiltered panels are — an input
+   is not a list item — which is why `role="menu"` moves down onto the list.
+   --------------------------------------------------------------------------- */
+
+.menu-panel-filtered {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	/* Beats `.menu-panel`'s `auto`: the panel is the frame now. */
+	overflow: hidden;
+}
+
+.menu-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	/* A flex item's floor is its content, so without this the list refuses to
+	   shrink and the panel grows past its own `max-height` instead of
+	   scrolling. */
+	min-block-size: 0;
+}
+
+/* Sized and coloured like `/documenta`'s `.doc-search`, which is the site's
+   other search box and the one a reader will have met first. */
+.menu-filter {
+	inline-size: 100%;
+	box-sizing: border-box;
+	flex: none;
+	padding-block: 0.3rem;
+	padding-inline: 0.45rem;
+	font: inherit;
+	font-size: 0.85rem;
+	color: var(--color-text);
+	background: var(--color-bg-elevated);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+}
+
+.menu-filter:focus-visible {
+	border-color: var(--color-accent);
+}
+
+/*
+ * "+ more", and the count is the point of it. A disclosure that says only
+ * "more" asks the reader to click to find out whether it was worth clicking;
+ * one that says how many are behind it answers that first.
+ */
+.menu-more {
+	flex: none;
+	inline-size: 100%;
+	padding-block: 0.35rem;
+	padding-inline: 0.4rem;
+	border: none;
+	border-radius: var(--radius-md);
+	background: transparent;
+	color: var(--color-text-muted);
+	font: inherit;
+	font-size: 0.8rem;
+	text-align: start;
+	cursor: pointer;
+}
+
+.menu-more:hover {
+	background: var(--color-bg-elevated);
+	color: var(--color-text);
+}
+
+/* An empty panel with a search box in it reads as broken rather than as
+   answered, so the answer is written out. */
+.menu-empty {
+	padding-block: 0.5rem;
+	padding-inline: 0.4rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------------------
    Modal dialogs: the bare shell, and the full-viewport sheet
 
    The `.menu-*` primitive above is the dropdown; this is what a panel becomes

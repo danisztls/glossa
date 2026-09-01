@@ -85,6 +85,8 @@ export const la: Dictionary = {
 	'edition.label': 'Editio',
 	'edition.select': 'Editionem elige',
 	'edition.current': 'Editio praesens',
+	'edition.filter': 'Editiones quaerere',
+	'menu.noMatches': 'Nihil inventum',
 	'unitNav.previous': 'Prius',
 	'unitNav.next': 'Sequens',
 	'bible.prevChapter': 'Caput prius',
@@ -302,6 +304,8 @@ export const la: Dictionary = {
 	'copyright.sourceTitle': 'Aperi paginam fontis',
 	'copyright.sourceLabel': 'Fons',
 	'lang.label': 'Lingua',
+	'lang.filter': 'Linguas quaerere',
+	'lang.more': 'linguae aliae',
 	'notFound.title': 'Nihil hac in inscriptione',
 	'notFound.lede': 'Pagina quam petisti hic non est.',
 	'notFound.body':

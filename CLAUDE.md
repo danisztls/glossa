@@ -1780,15 +1780,52 @@ rather than breaking — which means correcting these needs no coordination and 
 permission. The two keys that cannot simply be deleted are anything in
 `CHROME_KEYS` and the nine `bible.group.*`; both fail the build instead.
 
-**Adding a language means five places, and only four of them are guarded.**
+**Adding a language means five places, and all five are guarded now.**
 `ui-langs.ts` (plus `RTL_LANGS` if it is right to left), the dictionary itself,
-`app.html`'s pre-paint copy, `usage-schema.ts`'s `UI_TAGS` — and
-`LanguageMenu.svelte`'s `OPTIONS`, which **no test guards**: a language missing
-there is still reachable by URL and by negotiation, so everything works except
-that nobody can find it. It is redundant (every `short` is the uppercased code,
-every label is already in `LANGUAGE_NAMES`) and should be derived. The
-dictionary file itself needs no registration — `i18n.svelte.ts` globs the
-directory.
+`app.html`'s pre-paint copy, `usage-schema.ts`'s `UI_TAGS` — and the language's
+own name, which was `LanguageMenu.svelte`'s `OPTIONS` array and **no test
+guarded it**: a language missing there stayed reachable by URL and by
+negotiation, so everything worked except that nobody could find it. It is
+`UI_LANG_NAMES` in `menu-filter.ts` since 2026-09-01, a `Record<UiLang, string>`
+— so an omission is a TYPE ERROR rather than a test someone has to write, which
+is the cheapest guard there is and the reason the fix was to move the table
+rather than to derive it. Deriving it from `LANGUAGE_NAMES` was the obvious
+plan and is not possible: that table is keyed on CONTENT language and
+deliberately does not name the eight reach tags. `menu-filter.test.ts` asserts
+the two agree wherever both name a language. The dictionary file itself needs
+no registration — `i18n.svelte.ts` globs the directory.
+
+**THE TWO LANGUAGE PICKERS HAVE A SEARCH BOX, AND THE LANGUAGE MENU HAS A FOLD**
+(2026-09-01). Thirty-four interface languages and up to twenty-four editions of a
+work are both past what a list of rows serves, so `LanguageMenu`, `EditionMenu`
+and `ComparisonEditionMenu` filter; `src/lib/menu-filter.ts` holds everything in
+that which is not markup, and `.menu-filter`/`.menu-list`/`.menu-more` are in
+`menus.css` beside `.edition-lang`, for the reason that rule records. Three
+things about it.
+
+- **Matching is `highlight.ts`'s `matchesQuery`, never a fresh one** — the rule
+  `/documenta`'s search box already established. What it buys here is the FOLD,
+  not the tiers: `Čeština` is reachable by typing `cestina` and `Tiếng Việt` by
+  `tieng viet`, and a language whose name a reader cannot type is a language
+  they can only scroll to. The third surface the box reads is
+  `Intl.DisplayNames`, so an English reader finds German by typing "German" and
+  a Portuguese one by typing "alemão" — the only one of the three that nobody
+  here maintains, since a table of 34 names in 34 languages is 1,156 strings for
+  a search box.
+- **The fold's first tier is DERIVED FROM THE CORPUS**, not from an editorial
+  list: the twelve languages this site holds the most editions in, which today
+  is en, pt, la, de, es, fr, it, hu, pl, lv, be, ar. It needs no maintenance,
+  and it puts the reach tier (`tl`, `zh`, `ko`, `id`, `ig`, `uk`, `ml`, `hi` —
+  the languages the corpus holds nothing in) behind "+ more", which is honest
+  rather than unkind: those readers are served English content either way, and
+  `app.html` negotiates them into their own chrome before any module runs, so
+  the menu is not how they arrive. Membership moves with the corpus; ORDER does
+  not — it is always `UI_LANGS`'s, so a reader never has to re-find a language
+  whose position they had learned.
+- **Typing ignores the fold entirely**, and that is what makes the guess
+  tolerable. A twelve-of-thirty-four guess is only cheap if being wrong costs
+  three keystrokes; a filtered list that silently omitted matches below the fold
+  would be the one failure neither half could recover from.
 
 **A counterexample in a test will be overtaken.** Four tests used "a language
 the interface does not have" as an assertion, spelled `mg`, then `sw`, then

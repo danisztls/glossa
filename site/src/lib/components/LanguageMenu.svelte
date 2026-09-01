@@ -22,75 +22,95 @@
 	codes stay in the Latin alphabet even for the languages that do not use
 	one — a two-letter code is an identifier, and `AR` is what the reader will
 	have seen on vatican.va's own language bar.
+
+	## Thirty-four languages, a search box, and a fold
+
+	The list tripled on 2026-08-31 and the two-column grid that had absorbed
+	fourteen did not absorb thirty-four: the panel became a scroller, which is
+	the state the grid was introduced to end. The comment left here said the
+	real answer was a filter box or grouping and that patching would not do.
+	This is that answer, and it is both — a search box over every language, and
+	a fold under which the ones this corpus is not written in wait behind
+	"+ more". `menu-filter.ts` holds the two decisions in it that are not
+	markup: what the tier is derived FROM, and what the box reads.
+
+	The two halves cover for each other. The fold is a guess about which
+	twelve of thirty-four a reader wants, and a guess is only tolerable where
+	being wrong is cheap; the box is what makes it cheap, since a language
+	below the fold is three keystrokes away rather than a scroll and a hunt.
+	Typing therefore searches ALL of them and ignores the fold entirely —
+	a filtered list that silently omitted matches would be the one failure
+	neither half could recover from.
 -->
 <script lang="ts">
 	import { i18n, t } from '$lib/i18n.svelte';
-	import type { UiLang } from '$lib/i18n.svelte';
+	import { UI_LANGS, type UiLang } from '$lib/ui-langs';
+	import { listWorks } from '$lib/corpus';
+	import { matchesQuery } from '$lib/highlight';
+	import {
+		langWeights,
+		primaryUiLangs,
+		uiLangSearchText,
+		UI_LANG_NAMES as NAMES
+	} from '$lib/menu-filter';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
 
-	// Each label is written in its OWN language, not translated into the
-	// current one: a reader who has landed on the wrong interface language
-	// needs to recognize their language in the list, and "Portuguese" is no
-	// help to someone who only reads Portuguese. That was worth stating with
-	// two entries and is the whole usability of the control at thirty-four.
-	//
-	// Order matches `UI_LANGS` (ui-langs.ts), which is not alphabetical:
-	// English, Portuguese and Latin lead because they are what the corpus is
-	// in, and the rest follow by their own names — which is why Magyar sits
-	// between Malagasy and Polski rather than where `hu` would sort.
-	//
-	// THIS ARRAY IS THE ONE COPY OF `UI_LANGS` NO TEST GUARDS, and it is the
-	// one whose omission is invisible: a language missing here is still
-	// reachable by URL and by browser negotiation, so everything works except
-	// that nobody can find it. Deriving it from `UI_LANGS` + `LANGUAGE_NAMES`
-	// is the obvious fix and is worth doing before this list grows further.
-	//
-	// `Latina` is the label rather than `Lingua Latina` for the same reason
-	// `Deutsch` is not `Deutsche Sprache` — and it is what `corpus.ts`'s
-	// `LANGUAGE_NAMES` already calls the Clementine's language in the edition
-	// menu, which sits two triggers away in the same header.
-	const OPTIONS: { code: UiLang; short: string; label: string }[] = [
-		{ code: 'en', short: 'EN', label: 'English' },
-		{ code: 'pt', short: 'PT', label: 'Português' },
-		{ code: 'la', short: 'LA', label: 'Latina' },
-		{ code: 'de', short: 'DE', label: 'Deutsch' },
-		{ code: 'es', short: 'ES', label: 'Español' },
-		{ code: 'fr', short: 'FR', label: 'Français' },
-		{ code: 'it', short: 'IT', label: 'Italiano' },
-		{ code: 'mg', short: 'MG', label: 'Malagasy' },
-		{ code: 'hu', short: 'HU', label: 'Magyar' },
-		{ code: 'pl', short: 'PL', label: 'Polski' },
-		{ code: 'ro', short: 'RO', label: 'Română' },
-		{ code: 'sl', short: 'SL', label: 'Slovenščina' },
-		{ code: 'sv', short: 'SV', label: 'Svenska' },
-		{ code: 'ru', short: 'RU', label: 'Русский' },
-		{ code: 'nl', short: 'NL', label: 'Nederlands' },
-		{ code: 'da', short: 'DA', label: 'Dansk' },
-		{ code: 'cs', short: 'CS', label: 'Čeština' },
-		{ code: 'sk', short: 'SK', label: 'Slovenčina' },
-		{ code: 'hr', short: 'HR', label: 'Hrvatski' },
-		{ code: 'fi', short: 'FI', label: 'Suomi' },
-		{ code: 'lv', short: 'LV', label: 'Latviešu' },
-		{ code: 'sw', short: 'SW', label: 'Kiswahili' },
-		{ code: 'vi', short: 'VI', label: 'Tiếng Việt' },
-		{ code: 'be', short: 'BE', label: 'Беларуская' },
-		{ code: 'tl', short: 'TL', label: 'Tagalog' },
-		{ code: 'id', short: 'ID', label: 'Bahasa Indonesia' },
-		{ code: 'ig', short: 'IG', label: 'Igbo' },
-		{ code: 'uk', short: 'UK', label: 'Українська' },
-		{ code: 'zh', short: 'ZH', label: '中文' },
-		{ code: 'ko', short: 'KO', label: '한국어' },
-		{ code: 'ml', short: 'ML', label: 'മലയാളം' },
-		{ code: 'hi', short: 'HI', label: 'हिन्दी' },
-		{ code: 'ar', short: 'AR', label: 'العربية' },
-		{ code: 'he', short: 'HE', label: 'עברית' }
-	];
-
 	const menu = new Menu();
 
-	const current = $derived(OPTIONS.find((o) => o.code === i18n.lang) ?? OPTIONS[0]);
+	let query = $state('');
+	let expanded = $state(false);
+	let filterEl: HTMLInputElement | undefined = $state();
+
+	// The corpus does not change under a running page, so the weights are read
+	// once rather than per keystroke; the fold moves when the corpus is
+	// re-synced and a deploy is what delivers that.
+	const weights = langWeights(listWorks());
+
+	// The haystack is rebuilt when the INTERFACE language changes, because one
+	// of its three surfaces is the language's name as this reader reads it
+	// (`Intl.DisplayNames`) — a Portuguese reader should find German by typing
+	// "alemão". The other two, the code and the native name, are constant.
+	const rows = $derived(
+		UI_LANGS.map((code) => ({
+			code,
+			name: NAMES[code],
+			haystack: uiLangSearchText(code, NAMES[code], i18n.lang)
+		}))
+	);
+
+	const primary = $derived(new Set(primaryUiLangs(weights, i18n.lang)));
+
+	// Typing searches everything; the fold applies only to an untouched box.
+	// `expanded` is not consulted while filtering for the same reason: a
+	// reader who has typed has already said what they are looking for, and
+	// answering with a subset of the matches would be a lie the panel tells
+	// silently.
+	const visible = $derived(
+		query.trim()
+			? rows.filter((row) => matchesQuery(row.haystack, query))
+			: expanded
+				? rows
+				: rows.filter((row) => primary.has(row.code))
+	);
+
+	const hidden = $derived(rows.length - visible.length);
+	const showMore = $derived(!query.trim() && !expanded && hidden > 0);
+
+	const current = $derived(NAMES[i18n.lang]);
+	const currentShort = $derived(i18n.lang.toUpperCase());
+
+	// The box is what the panel is for at this size, so it takes focus on open
+	// — a reader who already knows their language types three letters and is
+	// done, and one who does not still sees the list under it.
+	$effect(() => {
+		if (menu.open) filterEl?.focus();
+		else {
+			query = '';
+			expanded = false;
+		}
+	});
 
 	// Awaited because `i18n.set` fetches the language's dictionary first (see
 	// i18n.svelte.ts): the menu closes once the interface can actually be in
@@ -100,6 +120,26 @@
 	async function choose(code: UiLang) {
 		await i18n.set(code);
 		menu.closeAndRefocus();
+	}
+
+	/**
+	 * Enter in the box takes the only row left, and does nothing when there is
+	 * more than one.
+	 *
+	 * The reader has narrowed thirty-four to one and the only remaining act is
+	 * to click it; asking for the click is asking them to move a hand they had
+	 * already put on the keyboard. It is deliberately not "take the first
+	 * match" — with two rows on screen a first-match Enter picks one of them
+	 * for reasons the reader cannot see, which in a control that changes the
+	 * whole interface is the wrong way to be wrong.
+	 */
+	function onFilterKeydown(event: KeyboardEvent) {
+		// Composes, as `onPanelKeydown`'s own docblock promises: it acts on
+		// Escape alone and leaves everything else to whatever runs after it.
+		menu.onPanelKeydown(event);
+		if (event.key !== 'Enter' || visible.length !== 1) return;
+		event.preventDefault();
+		choose(visible[0].code);
 	}
 </script>
 
@@ -112,41 +152,68 @@
 		class="menu-trigger lang-trigger"
 		aria-haspopup="menu"
 		aria-expanded={menu.open}
-		aria-label={`${t('lang.label')}: ${current.label}`}
+		aria-label={`${t('lang.label')}: ${current}`}
 		title={t('lang.label')}
 		onclick={menu.toggle}
 	>
-		{current.short}
+		{currentShort}
 	</button>
 	{#if menu.open}
-		<ul
-			class="panel-surface menu-panel lang-panel"
-			use:keepInViewport
-			role="menu"
-			aria-label={t('lang.label')}
-			onkeydown={menu.onPanelKeydown}
-		>
-			{#each OPTIONS as opt (opt.code)}
-				{@const isCurrent = i18n.lang === opt.code}
-				<li role="none">
-					<button
-						type="button"
-						role="menuitemradio"
-						aria-checked={isCurrent}
-						class="menu-item"
-						class:current={isCurrent}
-						onclick={() => choose(opt.code)}
-					>
-						<span class="menu-item-main">
-							<span class="check-slot"
-								>{#if isCurrent}<Icon name="check" />{/if}</span
+		<!-- A `<div>`, not the `<ul>` the unfiltered panels are: an input is not
+		     a list item, so `role="menu"` moves down onto the list. Escape is
+		     handled on the box and on the list rather than on this wrapper,
+		     which is where it would read as an interactive element with no
+		     role — those two are the only things in here focus can be in. -->
+		<div class="panel-surface menu-panel menu-panel-filtered lang-panel" use:keepInViewport>
+			<!-- `type="search"` for the clear affordance browsers give it; the
+			     accessible name is an `aria-label` because a visible label in a
+			     panel this size would only repeat the placeholder. -->
+			<input
+				type="search"
+				class="menu-filter"
+				bind:this={filterEl}
+				bind:value={query}
+				onkeydown={onFilterKeydown}
+				placeholder={t('lang.filter')}
+				aria-label={t('lang.filter')}
+			/>
+			{#if visible.length === 0}
+				<p class="menu-empty">{t('menu.noMatches')}</p>
+			{:else}
+				<ul
+					class="menu-list lang-list"
+					role="menu"
+					aria-label={t('lang.label')}
+					onkeydown={menu.onPanelKeydown}
+				>
+					{#each visible as row (row.code)}
+						{@const isCurrent = i18n.lang === row.code}
+						<li role="none">
+							<button
+								type="button"
+								role="menuitemradio"
+								aria-checked={isCurrent}
+								class="menu-item"
+								class:current={isCurrent}
+								onclick={() => choose(row.code)}
 							>
-							<span lang={opt.code}>{opt.label}</span>
-						</span>
-					</button>
-				</li>
-			{/each}
-		</ul>
+								<span class="menu-item-main">
+									<span class="check-slot"
+										>{#if isCurrent}<Icon name="check" />{/if}</span
+									>
+									<span lang={row.code}>{row.name}</span>
+								</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			{#if showMore}
+				<button type="button" class="menu-more" onclick={() => (expanded = true)}>
+					+ {t('lang.more')} ({hidden})
+				</button>
+			{/if}
+		</div>
 	{/if}
 </div>
 
@@ -169,6 +236,10 @@
 		letter-spacing: 0.03em;
 	}
 
+	.lang-panel {
+		min-width: min(18.5rem, 90vw);
+	}
+
 	/*
 	 * TWO COLUMNS, BECAUSE THIS MENU IS A NAME LIST AND THE OTHERS ARE NOT.
 	 *
@@ -185,25 +256,25 @@
 	 * so the language a reader wants can be below the fold of a menu whose
 	 * whole job is to be looked at once. Two columns absorbed fourteen.
 	 *
-	 * THEY DO NOT ABSORB THIRTY-FOUR (2026-08-31), and this is now a scrolling
-	 * panel, which is the state the two-column layout was introduced to end.
-	 * `auto-fit` will take a third column where there is width for one, so a
-	 * desktop reader is served; a phone is not. The real answer is a filter
-	 * box or grouping by script, and it is deliberately not attempted here —
-	 * this control needs designing at the new size rather than patching.
+	 * They did not absorb thirty-four, and that is what the fold above them is
+	 * for rather than a third column: twelve names in two columns is six rows,
+	 * which is the shape this grid was measured for in the first place. The
+	 * grid still matters at the "+ more" size — thirty-four rows is a scroll
+	 * either way, and half as tall a scroll is half the hunt.
 	 *
 	 * `auto-fit` rather than a hard `repeat(2, …)`: the panel is capped at
 	 * `90vw`, so on a narrow phone there is not room for two columns of names,
 	 * and the grid drops to one on its own rather than crushing "Slovenščina"
-	 * into six characters and an ellipsis. `min-width` is `min(…, 90vw)` for
-	 * the same reason — a bare `18rem` would win over the shared `max-width`
-	 * (min beats max in CSS) and hang the panel off the side of a 320px screen.
+	 * into six characters and an ellipsis. The panel's `min-width` is
+	 * `min(…, 90vw)` for the same reason — a bare `18.5rem` would win over the
+	 * shared `max-width` (min beats max in CSS) and hang the panel off the side
+	 * of a 320px screen.
 	 */
-	.lang-panel {
+	.lang-list {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 		gap: 0.1rem;
-		min-width: min(18.5rem, 90vw);
+		align-content: start;
 	}
 
 	/*

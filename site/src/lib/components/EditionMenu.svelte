@@ -55,6 +55,8 @@
 		languageDisplayName
 	} from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
+	import { matchesQuery } from '$lib/highlight';
+	import { editionSearchText, FILTER_MIN_ROWS } from '$lib/menu-filter';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
@@ -219,6 +221,37 @@
 
 	const menu = new Menu();
 
+	/**
+	 * A SEARCH BOX ONCE THE LIST IS LONG ENOUGH TO SCROLL, and not before.
+	 *
+	 * This picker is contextual, so its length is too: three editions under
+	 * `/scriptura`, two under `/doctores/summa`, and then eight, ten, twelve
+	 * and twenty-four as the route moves to the Catechism, the Compendium, the
+	 * `/catechismus` pair and the prayers. `FILTER_MIN_ROWS` is where a panel
+	 * stops fitting on a phone; below it a box is one more thing to look past
+	 * on the way to a list already entirely visible.
+	 *
+	 * The query resets when the panel closes rather than persisting: this menu
+	 * re-renders against a different work on every navigation, so a query left
+	 * behind would be a filter over a list the reader has not seen yet.
+	 */
+	let query = $state('');
+	let filterEl: HTMLInputElement | undefined = $state();
+
+	const showFilter = $derived(editions.length >= FILTER_MIN_ROWS);
+	const visible = $derived(
+		showFilter && query.trim()
+			? editions.filter((edition) =>
+					matchesQuery(editionSearchText(edition, languageDisplayName(edition.language)), query)
+				)
+			: editions
+	);
+
+	$effect(() => {
+		if (menu.open) filterEl?.focus();
+		else query = '';
+	});
+
 	function choose(workId: string) {
 		if (!ctx) return;
 		if (ctx.kind === 'document') content.setDocument(ctx.slug, workId);
@@ -270,42 +303,64 @@
 			<span class="trigger-label">{triggerLabel}</span>
 		</button>
 		{#if menu.open}
-			<ul
-				class="panel-surface menu-panel"
-				use:keepInViewport
-				role="menu"
-				aria-label={t('edition.label')}
-				onkeydown={menu.onPanelKeydown}
-			>
-				{#each editions as edition (edition.id)}
-					{@const current = edition.id === currentWorkId}
-					<li role="none">
-						<button
-							type="button"
-							role="menuitemradio"
-							aria-checked={current}
-							class="menu-item"
-							class:current
-							onclick={() => choose(edition.id)}
-						>
-							<span class="menu-item-main">
-								{#if current}<Icon name="check" />{/if}
-								<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span>
-								<!-- The FULL tag, not `baseLang`: `prayer.common.en` and
+			<!-- A `<div>` wrapping a `<ul>`, not the bare `<ul>` this used to be:
+			     an input is not a list item, so `role="menu"` moves down onto the
+			     list. The wrapper is used at every length — a three-edition Bible
+			     menu with no box in it is the same box with one child. -->
+			<div class="panel-surface menu-panel menu-panel-filtered" use:keepInViewport>
+				{#if showFilter}
+					<input
+						type="search"
+						class="menu-filter"
+						bind:this={filterEl}
+						bind:value={query}
+						onkeydown={menu.onPanelKeydown}
+						placeholder={t('edition.filter')}
+						aria-label={t('edition.filter')}
+					/>
+				{/if}
+				{#if visible.length === 0}
+					<p class="menu-empty">{t('menu.noMatches')}</p>
+				{:else}
+					<ul
+						class="menu-list"
+						role="menu"
+						aria-label={t('edition.label')}
+						onkeydown={menu.onPanelKeydown}
+					>
+						{#each visible as edition (edition.id)}
+							{@const current = edition.id === currentWorkId}
+							<li role="none">
+								<button
+									type="button"
+									role="menuitemradio"
+									aria-checked={current}
+									class="menu-item"
+									class:current
+									onclick={() => choose(edition.id)}
+								>
+									<span class="menu-item-main">
+										{#if current}<Icon name="check" />{/if}
+										<span
+											>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span
+										>
+										<!-- The FULL tag, not `baseLang`: `prayer.common.en` and
 								     `prayer.common.en-gb` are both "EN" under the bare subtag, so
 								     the badge that exists to tell rows apart printed the same
 								     two letters beside "English" and "English (UK)". -->
-								<span class="edition-lang">{edition.language.toUpperCase()}</span>
-							</span>
-							{#if editionStyle}
-								<span class="menu-item-meta"
-									>{edition.short_title} &middot; {copyrightLabel(edition)}</span
-								>
-							{/if}
-						</button>
-					</li>
-				{/each}
-			</ul>
+										<span class="edition-lang">{edition.language.toUpperCase()}</span>
+									</span>
+									{#if editionStyle}
+										<span class="menu-item-meta"
+											>{edition.short_title} &middot; {copyrightLabel(edition)}</span
+										>
+									{/if}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
 		{/if}
 	</div>
 {/if}

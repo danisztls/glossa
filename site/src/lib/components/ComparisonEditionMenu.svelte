@@ -36,6 +36,8 @@
 <script lang="ts">
 	import { baseLang, languageDisplayName } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
+	import { matchesQuery } from '$lib/highlight';
+	import { editionSearchText, FILTER_MIN_ROWS } from '$lib/menu-filter';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
@@ -65,6 +67,27 @@
 
 	const menu = new Menu();
 
+	/** Same box, same threshold and same reset as `EditionMenu`'s — that
+	 *  component's docblock is where the reasoning is written down. This list
+	 *  is always one shorter than its (the caller removes the primary column's
+	 *  own edition), so it crosses `FILTER_MIN_ROWS` one edition later. */
+	let query = $state('');
+	let filterEl: HTMLInputElement | undefined = $state();
+
+	const showFilter = $derived(editions.length >= FILTER_MIN_ROWS);
+	const visible = $derived(
+		showFilter && query.trim()
+			? editions.filter((edition) =>
+					matchesQuery(editionSearchText(edition, languageDisplayName(edition.language)), query)
+				)
+			: editions
+	);
+
+	$effect(() => {
+		if (menu.open) filterEl?.focus();
+		else query = '';
+	});
+
 	function choose(workId: string) {
 		onselect(workId);
 		menu.closeAndRefocus();
@@ -91,38 +114,55 @@
 		<span class="trigger-label">{triggerLabel}</span>
 	</button>
 	{#if menu.open}
-		<ul
-			class="panel-surface menu-panel"
-			use:keepInViewport
-			role="menu"
-			aria-label={t('edition.label')}
-			onkeydown={menu.onPanelKeydown}
-		>
-			{#each editions as edition (edition.id)}
-				{@const isCurrent = edition.id === current}
-				<li role="none">
-					<button
-						type="button"
-						role="menuitemradio"
-						aria-checked={isCurrent}
-						class="menu-item"
-						class:current={isCurrent}
-						onclick={() => choose(edition.id)}
-					>
-						<span class="menu-item-main">
-							{#if isCurrent}<Icon name="check" />{/if}
-							<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span>
-							<span class="edition-lang">{baseLang(edition.language).toUpperCase()}</span>
-						</span>
-						{#if editionStyle}
-							<span class="menu-item-meta">
-								{edition.short_title} &middot; {copyrightLabel(edition)}
-							</span>
-						{/if}
-					</button>
-				</li>
-			{/each}
-		</ul>
+		<div class="panel-surface menu-panel menu-panel-filtered" use:keepInViewport>
+			{#if showFilter}
+				<input
+					type="search"
+					class="menu-filter"
+					bind:this={filterEl}
+					bind:value={query}
+					onkeydown={menu.onPanelKeydown}
+					placeholder={t('edition.filter')}
+					aria-label={t('edition.filter')}
+				/>
+			{/if}
+			{#if visible.length === 0}
+				<p class="menu-empty">{t('menu.noMatches')}</p>
+			{:else}
+				<ul
+					class="menu-list"
+					role="menu"
+					aria-label={t('edition.label')}
+					onkeydown={menu.onPanelKeydown}
+				>
+					{#each visible as edition (edition.id)}
+						{@const isCurrent = edition.id === current}
+						<li role="none">
+							<button
+								type="button"
+								role="menuitemradio"
+								aria-checked={isCurrent}
+								class="menu-item"
+								class:current={isCurrent}
+								onclick={() => choose(edition.id)}
+							>
+								<span class="menu-item-main">
+									{#if isCurrent}<Icon name="check" />{/if}
+									<span>{editionStyle ? edition.title : languageDisplayName(edition.language)}</span
+									>
+									<span class="edition-lang">{baseLang(edition.language).toUpperCase()}</span>
+								</span>
+								{#if editionStyle}
+									<span class="menu-item-meta">
+										{edition.short_title} &middot; {copyrightLabel(edition)}
+									</span>
+								{/if}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+		</div>
 	{/if}
 </div>
 

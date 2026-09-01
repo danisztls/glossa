@@ -57,6 +57,8 @@ export const es: Dictionary = {
 	'edition.label': 'Edición',
 	'edition.select': 'Elegir edición',
 	'edition.current': 'Edición actual',
+	'edition.filter': 'Buscar ediciones',
+	'menu.noMatches': 'Sin resultados',
 	'unitNav.previous': 'Anterior',
 	'unitNav.next': 'Siguiente',
 	'bible.prevChapter': 'Capítulo anterior',
@@ -258,6 +260,8 @@ export const es: Dictionary = {
 	'ccc.noParagraphNumber': 'Sin número de párrafo en este corpus',
 	'copyright.sourceTitle': 'Abrir la página de origen',
 	'lang.label': 'Lengua',
+	'lang.filter': 'Buscar lenguas',
+	'lang.more': 'más lenguas',
 	'notFound.title': 'No hay nada en esta dirección',
 	'notFound.lede': 'La página que pediste no está aquí.',
 	'notFound.body':

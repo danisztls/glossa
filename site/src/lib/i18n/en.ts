@@ -114,6 +114,10 @@ export const en: Dictionary = {
 	'edition.label': 'Edition',
 	'edition.select': 'Choose edition',
 	'edition.current': 'Current edition',
+	// The search box the edition and language pickers grow once they are long
+	// enough to scroll — see menu-filter.ts for where that threshold is and why.
+	'edition.filter': 'Search editions',
+	'menu.noMatches': 'No matches',
 
 	// The only words the prev/next row at the foot of a reading page
 	// PRINTS, in every route and every language. What is being stepped
@@ -410,6 +414,8 @@ export const en: Dictionary = {
 	'copyright.sourceTitle': 'Open the original source page',
 	'copyright.sourceLabel': 'Source',
 	'lang.label': 'Language',
+	'lang.filter': 'Search languages',
+	'lang.more': 'more languages',
 
 	// Static 404 — routes/404/+page.svelte, an ordinary SPA route (there is
 	// no build/404.html any more — the build emits only index.html and the

@@ -76,6 +76,8 @@ export const pt: Dictionary = {
 	'edition.label': 'Edição',
 	'edition.select': 'Escolher edição',
 	'edition.current': 'Edição atual',
+	'edition.filter': 'Buscar edições',
+	'menu.noMatches': 'Nenhum resultado',
 
 	'unitNav.previous': 'Anterior',
 	'unitNav.next': 'Próximo',
@@ -286,6 +288,8 @@ export const pt: Dictionary = {
 	'copyright.sourceTitle': 'Abrir a página de origem',
 	'copyright.sourceLabel': 'Fonte',
 	'lang.label': 'Idioma',
+	'lang.filter': 'Buscar idiomas',
+	'lang.more': 'mais idiomas',
 
 	'notFound.title': 'Nada neste endereço',
 	'notFound.lede': 'A página que pediu não está aqui.',
