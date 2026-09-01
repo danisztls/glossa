@@ -811,7 +811,7 @@ npm run deploy      # build -> preflight -> wrangler deploy
 Replaced the pontificate table of contents on 2026-08-31 (`docs/decisions.md` §The site).
 272 documents is past what a list of anchors helps with, so the aside is now a **search box
 over a facet panel** — author, kind and subject — and the list is flat and
-reverse-chronological. Seven things about it will bite before the design will.
+reverse-chronological. What follows will bite before the design will.
 
 - **Author and kind ADD, subject SUBTRACTS, and that asymmetry is the field's arity.**
   A document has exactly one author and exactly one kind, so AND-ing two of either is an
@@ -827,6 +827,15 @@ reverse-chronological. Seven things about it will bite before the design will.
   would render at the floor size and read as the smallest live term — a chip that looks
   available and does nothing. A selected term is always live, so filtering can never make a
   filter unreachable.
+- **The author facet's years come from `src/lib/pontificates.ts`, a TABLE.** Deriving the
+  span from the documents is the obvious shortcut and is wrong in a way that looks right —
+  first and last `promulgated` gives Leo XIII 1878–1902 and Benedict XV 1914–1921, short at
+  the end by the years each wrote nothing this corpus holds. The corpus is what CHECKS the
+  table instead: every author's document span falls inside its reign. `to: null` is the
+  reigning pope and renders as a trailing en dash, deliberately not the word "present",
+  which would be a chrome string in thirty-four dictionaries. The lookup is `Object.hasOwn`
+  because the key is corpus data, and an unknown name gets no years rather than a guess.
+  `Facet.note` is the generic slot it renders through; only this facet fills one.
 - **The search reads a document's WHOLE metadata** — title, author, kind, description,
   tags — and is AND-ed with the three facets. It sits at the head of the panel because it
   is the coarse instrument, and because it is what makes the small subject vocabulary

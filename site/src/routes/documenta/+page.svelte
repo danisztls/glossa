@@ -72,6 +72,7 @@
 	import { documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import { pontificate } from '$lib/pontificates';
 	import type { DocumentManifest } from '$lib/types';
 
 	interface Row {
@@ -301,13 +302,18 @@
 		return latest;
 	});
 
+	/* The years each author held office, attached after the fact rather than
+	   threaded through `buildFacet`: the other two facets have no note, and a
+	   parameter only one of three callers passes is a parameter that will be
+	   forgotten by the fourth. `pontificates.ts` says why the span is a table
+	   and not something derived from these very documents. */
 	const authorFacets = $derived(
 		buildFacet(
 			rows.filter((row) => byKind(row) && byTag(row) && bySearch(row)),
 			(row) => [row.manifest.pontiff_or_council],
 			(key) => key,
 			([a], [b]) => (authorRecency.get(b) ?? '').localeCompare(authorRecency.get(a) ?? '')
-		)
+		).map((facet) => ({ ...facet, note: pontificate(facet.value) }))
 	);
 
 	const kindFacets = $derived(

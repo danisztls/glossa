@@ -2105,6 +2105,31 @@ the list went flat and reverse-chronological.
   still narrow; a disabled row is only worth showing where it is one of a few. A selected
   term counts as live whatever its number, so filtering can never make a filter unreachable.
 
+**The author facet prints each pontificate's years, from a table and not from the
+documents** (2026-09-01). Twelve regnal names in reverse-chronological order asks the reader
+to know the modern papacy by heart to make sense of the order they are in, let alone to
+choose from it; `Leo XIII 1878–1903` places itself. The years are set smaller and muted, so
+the row still reads as a name first, and they are the one label on this page that needs no
+translator — digits and an en dash are the same in all thirty-four dictionaries, which is
+also why an office still held ends in a bare dash rather than in the word _present_.
+
+Two things about it are worth keeping.
+
+- **Deriving the span from the corpus would have been wrong in a way that looks right.**
+  First and last `promulgated` under a name is the obvious source and needs no table at all;
+  it gives Leo XIII as 1878–1902 and Benedict XV as 1914–1921, each short at the end by the
+  years in which the pope wrote nothing this corpus happens to hold. A pontificate is a fact
+  about the world, not about a document, and nothing upstream publishes it —
+  `pontiff_or_council` is a string vatican.va's index prints. So `src/lib/pontificates.ts`
+  is a table, and what the corpus is used for is CHECKING it: every author's document span
+  falls inside its reign, which is what catches a mistyped year.
+- **The council is in the table, and the table is `Object.hasOwn`.** _Second Vatican
+  Council_ is one of the twelve values a reader chooses between, and a single gap in a
+  column of years reads as an omission rather than as a distinction, so it carries its own
+  session years. The lookup is guarded because the key is corpus data: a bare index into an
+  object literal answers for `constructor` and `toString`, and the test that says so failed
+  on the first run.
+
 **The subject facet became a tag cloud on 2026-08-31, and that is what retired the
 truncation.** 58 stacked rows is about 1,390px in a 17rem aside, so the list showed eighteen
 of them behind a "Show all" — a workaround for a list being the wrong shape for 58 short

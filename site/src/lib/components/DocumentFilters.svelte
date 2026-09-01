@@ -13,6 +13,11 @@
 		 *  was written for a subject. */
 		label: string;
 		count: number;
+		/** A quiet second line of type beside the label, for a fact about the
+		 *  VALUE rather than about the filtering — the author facet fills it
+		 *  with the pontificate's years. Optional because only that facet has
+		 *  one: a kind and a subject are their own whole description. */
+		note?: string;
 	}
 </script>
 
@@ -170,6 +175,13 @@
 							onclick={() => onToggle(facet, item.value)}
 						>
 							<span class="facet-label">{item.label}</span>
+							{#if item.note}
+								<!-- `dir="ltr"` because the string is entirely neutral
+								     characters and digits: in an Arabic or Hebrew interface
+								     the bidi algorithm resolves the dash between two number
+								     runs to the paragraph direction and prints 1903-1878. -->
+								<span class="facet-note" dir="ltr">{item.note}</span>
+							{/if}
 							<span class="facet-count">{item.count}</span>
 						</button>
 					</li>
@@ -274,7 +286,10 @@
 	.facet-option {
 		display: flex;
 		align-items: baseline;
-		gap: 0.5rem;
+		/* Only ever seen between a label and its note — the count takes the end
+		   of the row with an auto margin — so it is set for that pair, which
+		   has to read as one thing. */
+		gap: 0.4rem;
 		width: 100%;
 		background: none;
 		border: none;
@@ -307,17 +322,32 @@
 		cursor: default;
 	}
 
+	/* Deliberately NOT `flex: 1`. The note follows the label and has to read
+	   as part of it, so the label takes the width it needs and no more, and
+	   the count claims the end of the row on its own. */
 	.facet-label {
-		flex: 1;
+		min-width: 0;
+	}
+
+	/* Smaller and muted, so the row is read as a name first. Tabular figures
+	   because the years then line up down the column, which is most of what
+	   makes a list of twelve reigns legible at a glance. */
+	.facet-note {
+		font-variant-numeric: tabular-nums;
+		font-size: 0.72rem;
+		color: var(--color-text-muted);
+		white-space: nowrap;
 	}
 
 	.facet-count {
+		margin-inline-start: auto;
 		font-variant-numeric: tabular-nums;
 		font-size: 0.75rem;
 		color: var(--color-text-muted);
 	}
 
-	.facet-option.on .facet-count {
+	.facet-option.on .facet-count,
+	.facet-option.on .facet-note {
 		color: inherit;
 	}
 
