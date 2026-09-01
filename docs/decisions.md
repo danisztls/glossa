@@ -883,6 +883,31 @@ panel that switches it on, opened from its own mark, set in a card carrying its 
 `lang`. So the gate was refusing the reader of the Clementine a commentary on the Latin in
 front of her, to prevent a confusion the design had already ruled out.
 
+**A commentary's marks sit at the words its notes quote, and it is offered only beside the
+edition it annotates** (2026-09-01). The mark named the verse, on the reasoning that a
+lemma quotes one text and a mark keyed to it would vanish beside the Clementine or the
+CPDV — true, and answered by paying for it rather than by avoiding it: `commentariesAt`
+takes a work id again, Haydock is the Douay-Rheims's, and a reader of another edition is
+no longer offered it. That is a real cost, accepted because the alternative is half an
+apparatus anchored in the text on one edition and the whole of it heaped at the verse's
+end on the others.
+
+**The order of the notes is what makes the placement safe rather than merely mostly
+right.** A verse repeats its own words, so 1,939 of Haydock's headwords occur more than
+once in the verse they annotate and a search cannot say which is meant. A catena is
+printed in reading order, so the search carries a cursor and each note is found at or
+after the end of the last: 1,930 of the 1,939 resolve, and the nine that do not — with
+237 whose headwords run backwards — are refused rather than guessed. Anchoring reaches
+24,805 of 45,662 notes, 54.3%.
+
+**And the notes with no place in the text keep the mark they always had.** 40% of the
+apparatus carries no headword at all, which is Haydock's own way of saying a note is a
+remark on the whole verse rather than on a phrase of it. Those stay behind a mark at the
+verse's end, so the two sets partition the verse's notes: 9,349 verses take inline marks
+only, 1,846 a trailing mark only, 9,594 both. No note is behind two marks and none behind
+none — which is the property to check, since a leak would lose a fifth of the apparatus
+with nothing erroring.
+
 **It sets nothing in the margin, at any width, which is where the _Glossa Ordinaria_
 arrangement stops.** That arrangement assumes an apparatus smaller than the text it hangs
 on; Haydock annotates 20,814 verses and a chapter of him runs to 4,690 characters at the

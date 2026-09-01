@@ -100,9 +100,15 @@
 		    have said which chapter it meant. */
 		osis: string;
 		chapter: number;
+		/** Called when this mark's panel opens or closes, so the verse can light
+		    the words these notes quote while it is. `Sidenote`'s, and for its
+		    reason. Absent on the TRAILING mark, whose notes have no words in the
+		    text — which is also why this is a callback rather than a binding:
+		    there is nothing for that mark to report to. */
+		onopen?: (open: boolean) => void;
 	}
 
-	let { notes, lang, work, title, osis, chapter }: Props = $props();
+	let { notes, lang, work, title, osis, chapter, onopen }: Props = $props();
 
 	const label = $derived(`${t('apparatus.commentary')}: ${title}`);
 
@@ -126,6 +132,16 @@
 	/** The apparatus of a heavily-annotated verse, centred over the page rather
 	    than anchored beside its mark. `Sidenote`'s dialog, verbatim. */
 	const full = new NoteDialog();
+
+	/* See `onopen`. Two effects for the reason `Sidenote` gives: the first
+	   reports every change, the second covers a mark destroyed while open,
+	   which never reports a close of its own. */
+	$effect(() => {
+		onopen?.(card.open || full.rendered);
+	});
+	$effect(() => () => {
+		onopen?.(false);
+	});
 
 	function hrefFor(seg: RefSegment): string | undefined {
 		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang, work });

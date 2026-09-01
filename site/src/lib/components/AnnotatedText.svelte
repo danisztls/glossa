@@ -37,12 +37,15 @@
 	 * ends with the lemma of the marker at `i + 1`, so the same number that
 	 * finds the words finds the note, and `openNotes` needs no key of its own.
 	 */
-	import type { VerseNote } from '$lib/types';
+	import type { CommentaryNote, VerseNote, WorkManifest } from '$lib/types';
 	import { splitMarkers } from '$lib/inline-markers';
 	import { splitDropCap } from '$lib/dropcap';
 	import { splitLemma, type LemmaSplit } from '$lib/lemma';
+	import { anchorCommentary, type CommentaryAnchor } from '$lib/commentary-anchors';
+	import { buildSegments } from '$lib/annotated-segments';
 	import { noteLetter } from '$lib/sidenotes.svelte';
 	import Sidenote from '$lib/components/Sidenote.svelte';
+	import CommentaryGloss from '$lib/components/CommentaryGloss.svelte';
 
 	interface Props {
 		/** The unit's plain text — what is shown. */
@@ -63,9 +66,30 @@
 		    printed labels run a, b, c… down the page rather than restarting at
 		    every verse. See `noteLetter`. */
 		noteOffset?: number;
+		/** The commentaries switched on at this address, with their notes on
+		    THIS unit — rendered here rather than after it by the caller,
+		    because a commentary's marks now sit at the words its notes quote
+		    and only this component can cut the text. Absent while comparing and
+		    on a heading, which no commentary annotates. */
+		commentary?: { work: WorkManifest; notes: CommentaryNote[] }[];
+		/** The unit's own address, for a commentary's citation grammar — see
+		    `CommentaryGloss`'s `osis`/`chapter` and `RefsOpts.sameChapter`. */
+		osis?: string;
+		chapter?: number;
 	}
 
-	let { text, textMarked, notes, lang, work, dropCap = false, noteOffset = 0 }: Props = $props();
+	let {
+		text,
+		textMarked,
+		notes,
+		lang,
+		work,
+		dropCap = false,
+		noteOffset = 0,
+		commentary,
+		osis,
+		chapter
+	}: Props = $props();
 
 	const pieces = $derived(splitMarkers(text, textMarked));
 
@@ -169,8 +193,45 @@
 		return at < 0 ? marker : noteLetter(noteOffset + at);
 	}
 
+	/**
+	 * Every commentary's notes on this unit, placed against the text.
+	 *
+	 * Flattened across works because the SEGMENTS are one sequence: two
+	 * commentaries anchoring at the same words would otherwise each want to cut
+	 * the run, and the order they are set in has to be the order the works are
+	 * listed. Each entry keeps its own work, since the mark's label and the
+	 * grammar its citations resolve under are the work's, not the edition's.
+	 */
+	const placed = $derived.by(() =>
+		(commentary ?? []).flatMap((entry) => {
+			const { anchors, trailing } = anchorCommentary(text, entry.notes);
+			return [
+				...anchors.map((anchor) => ({ ...entry, anchor })),
+				...(trailing.length ? [{ ...entry, notes: trailing, anchor: undefined }] : [])
+			];
+		})
+	);
+
+	/** In text order, so the cuts below can be made in one pass. */
+	const inline = $derived(
+		placed
+			.flatMap((p, i) => (p.anchor ? [{ ...p, anchor: p.anchor as CommentaryAnchor, at: i }] : []))
+			.sort((a, b) => a.anchor.from - b.anchor.from)
+	);
+
+	/** The notes no words in the text carry — the mark at the unit's end. */
+	const trailing = $derived(placed.filter((p) => !p.anchor));
+
+	/** See `buildSegments` — the arithmetic lives outside the component so it
+	 *  can be tested, which is the only way anything in a `.svelte` file gets
+	 *  tested in this repository. */
+	const segments = $derived(buildSegments(text, pieces, marked, inline));
+
 	/** The first text run, which is the only one a drop cap can apply to. */
-	const firstTextIndex = $derived(pieces.findIndex((piece) => 'text' in piece));
+	const firstTextIndex = $derived(segments.findIndex((seg) => seg.kind === 'text'));
+
+	/** Which inline commentary marks are open, by their index in `placed`. */
+	let openMarks: (boolean | undefined)[] = $state([]);
 </script>
 
 <!-- THE MARK ON THE LEMMA IS A `<span>` AND NOT A `<mark>`. `<mark>` means
@@ -180,28 +241,44 @@
      screen reader is given (the marker's `aria-expanded` and the card's
      `role="note"`). So the element is there always and says nothing, and the
      class is what lights. -->
-{#each pieces as piece, i (i)}{#if 'marker' in piece}<Sidenote
-			bind:open={openNotes[i]}
-			lemmaMarked={marked.has(i - 1)}
-			label={labelOf(piece.marker)}
-			note={byMarker.get(piece.marker)}
+{#snippet gloss(entry: (typeof placed)[number], mark: number | undefined)}
+	<CommentaryGloss
+		notes={entry.notes}
+		lang={entry.work.language}
+		work={entry.work.id}
+		title={entry.work.short_title || entry.work.title}
+		osis={osis ?? ''}
+		chapter={chapter ?? 0}
+		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
+	/>
+{/snippet}
+
+{#each segments as seg, i (i)}{#if seg.kind === 'note'}<Sidenote
+			onopen={(on: boolean) => (openNotes[seg.piece] = on)}
+			lemmaMarked={marked.has(seg.piece - 1)}
+			label={labelOf(seg.marker)}
+			note={byMarker.get(seg.marker)}
 			{lang}
 			{work}
-		/>{:else}{@const lemma = marked.get(i)}{@const body = lemma
-			? lemma.head
-			: piece.text}{@const cap =
-			dropCap && i === firstTextIndex ? splitDropCap(body) : undefined}{#if cap?.first}<span
-				class="drop-cap-letter"
+		/>{:else if seg.kind === 'mark'}{@render gloss(
+			placed[seg.mark],
+			seg.mark
+		)}{:else if seg.kind === 'lemma'}<span
+			class="note-lemma"
+			class:highlighted={openNotes[seg.note]}>{seg.text}</span
+		>{:else if seg.kind === 'quoted'}<span
+			class="note-lemma"
+			class:highlighted={openMarks[seg.mark]}>{seg.text}</span
+		>{:else if dropCap && i === firstTextIndex}{@const cap = splitDropCap(
+			seg.text
+		)}{#if cap.first}<span class="drop-cap-letter"
 				>{#if cap.lead}<span class="drop-cap-lead">{cap.lead}</span>{/if}{cap.first}</span
-			>{cap.rest}{:else}{body}{/if}{#if lemma}<span
-				class="note-lemma"
-				class:highlighted={openNotes[i + 1]}>{lemma.lemma}</span
-			>{/if}{/if}{/each}{#each unanchored as note, i (`${note.marker}-${i}`)}<Sidenote
+			>{cap.rest}{:else}{seg.text}{/if}{:else}{seg.text}{/if}{/each}{#each unanchored as note, i (`${note.marker}-${i}`)}<Sidenote
 		label={labelOf(note.marker)}
 		{note}
 		{lang}
 		{work}
-	/>{/each}
+	/>{/each}{#each trailing as entry, i (i)}{@render gloss(entry, undefined)}{/each}
 
 <style>
 	/*

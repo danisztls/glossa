@@ -46,7 +46,6 @@
 	import { commentariesAt } from '$lib/corpus';
 	import { notesFor } from '$lib/commentary.svelte';
 	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
-	import CommentaryGloss from '$lib/components/CommentaryGloss.svelte';
 	import type { CommentaryNote, Verse, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -223,21 +222,23 @@
 	 * `commentariesAt` is synchronous, off the index tier, so the panel's rows
 	 * are settled before the page paints — a control that appears after a fetch
 	 * lands is one that moves under the reader's cursor. It is keyed on the
-	 * ADDRESS and not on the edition, so the same commentary is offered
-	 * whichever text the reader has open; `commentariesAt` says at length why
-	 * the anchor is what made that safe.
+	 * ADDRESS AND THE EDITION: a commentary's marks now sit at the words its
+	 * notes quote, and a headword quotes one text, so it is offered only beside
+	 * the edition it annotates. Switching edition therefore empties the panel's
+	 * commentary section, which is the honest reading of what is available.
 	 */
-	const commentaries = $derived(commentariesAt(data.osis, data.chapterN));
+	const commentaries = $derived(commentariesAt(data.osis, data.chapterN, current?.work.id));
 	/**
 	 * Whether an enabled commentary already CONTAINS the edition's own notes,
 	 * which is what makes the edition's default flip to off.
 	 *
-	 * `annotates` IS CHECKED HERE and nowhere else. `commentariesAt` offers a
-	 * commentary at any edition of the address, because a verse anchor asks
-	 * nothing of the text beside it — but "this already contains the edition's
-	 * notes" is a claim about ONE edition, the one the commentary was written
-	 * on. Haydock absorbs Challoner's notes and says nothing whatever about
-	 * Straubinger's. See `CommentaryManifest.subsumes_notes`.
+	 * `annotates` is checked here as well as in `commentariesAt`, and the two
+	 * questions are not the same one: that one asks whether the commentary
+	 * belongs beside this edition at all, this one whether it already CONTAINS
+	 * the edition's own notes. They happen to agree today, since Haydock is the
+	 * only commentary in the corpus and `subsumes_notes` is true of it; a
+	 * commentary that annotated an edition without absorbing its notes would
+	 * pass the first and fail this. See `CommentaryManifest.subsumes_notes`.
 	 */
 	const notesSubsumed = $derived(
 		commentaries.some(
@@ -858,14 +859,10 @@
 								work={current.work.id}
 								dropCap={i === 0 && headingsBefore(verse.n).length === 0}
 								noteOffset={noteOffsets.get(`v${verse.n}`) ?? 0}
-							/>{#each commentaryByVerse.get(verse.n) ?? [] as entry (entry.work.id)}<CommentaryGloss
-									notes={entry.notes}
-									lang={entry.work.language}
-									work={entry.work.id}
-									title={entry.work.short_title || entry.work.title}
-									osis={data.osis}
-									chapter={data.chapterN}
-								/>{/each}
+								commentary={commentaryByVerse.get(verse.n)}
+								osis={data.osis}
+								chapter={data.chapterN}
+							/>
 						</span>
 					{/each}
 				</div>

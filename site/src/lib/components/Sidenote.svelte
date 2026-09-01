@@ -90,35 +90,35 @@
 		    unanchored note, which has no place in the text to be marked at, and
 		    for the editions that refuse (`lemma.ts`). */
 		lemmaMarked?: boolean;
-		/** Whether this note is open, reported UPWARD so the verse can light the
-		    words it is about while it is.
+		/** Called when this note opens or closes, so the verse can light the words
+		    it is about while it is.
 		 *
-		 *  A BINDING AND NOT A SHARED STORE, which was the first shape and the
+		 *  A CALLBACK AND NOT A SHARED STORE, which was the first shape and the
 		 *  wrong one. The pairing is between one unit and its own notes — the
 		 *  parent already knows which run of text holds which note's lemma — so a
 		 *  page-wide field would have been a singleton standing in for something
-		 *  local, and would have needed a key the two components agreed on to
-		 *  address it by. `sidenoteRoom` in particular is the MARGIN's object,
-		 *  and this has nothing to do with the margin: it is the same question
-		 *  answered in the text.
+		 *  local, addressed by a key the two components had to agree on.
+		 *  `sidenoteRoom` in particular is the MARGIN's object, and this has
+		 *  nothing to do with the margin: it is the same question answered in the
+		 *  text.
 		 *
-		 *  At most one is true at a time, which comes free rather than by
+		 *  AND NOT `$bindable` EITHER, which was the second shape and threw.
+		 *  `open = $bindable(false)` raises `props_invalid_value` the moment a
+		 *  parent binds a slot that is still undefined, which is every note on
+		 *  the page before its first effect runs — `AnnotatedText` binds out of a
+		 *  deliberately SPARSE array. Dropping the fallback fixes that and leaves
+		 *  two idioms for one job, since `CommentaryGloss` cannot bind at all:
+		 *  its trailing mark has no lemma in the text to light. A callback fits
+		 *  both, has no third state to explain, and cannot be handed an undefined
+		 *  it has to interpret.
+		 *
+		 *  At most one note is open at a time, which comes free rather than by
 		 *  policing: a card is a `popover="auto"`, so opening one dismisses the
-		 *  last, and a dialog is modal.
-		 *
-		 *  NO FALLBACK, AND THAT IS NOT A STYLE CHOICE. `$bindable(false)` throws
-		 *  `props_invalid_value` the moment a parent binds a slot that is still
-		 *  undefined, which is every note on the page before its first effect
-		 *  has run: `AnnotatedText` binds `openNotes[i]` out of a deliberately
-		 *  SPARSE array, since only marker positions are ever written. Svelte
-		 *  refuses a fallback plus an undefined binding because it cannot tell
-		 *  which of the two the parent meant. So the third state is real and is
-		 *  named — `undefined` is "this note has not reported yet", which reads
-		 *  as not open, which is what it is. */
-		open?: boolean;
+		 *  last, and a dialog is modal. */
+		onopen?: (open: boolean) => void;
 	}
 
-	let { label, note, lang, work, lemmaMarked = false, open = $bindable() }: Props = $props();
+	let { label, note, lang, work, lemmaMarked = false, onopen }: Props = $props();
 
 	/**
 	 * A GLOSS NAMES OTHER PLACES IN THE BOOK, and that is most of what a gloss
@@ -170,7 +170,7 @@
 	 * nothing.
 	 */
 	$effect(() => {
-		open = card.open || full.rendered;
+		onopen?.(card.open || full.rendered);
 	});
 
 	/* And a note leaving the page takes its highlight with it, which the effect
@@ -178,7 +178,7 @@
 	   open never closes. `NoteCard`'s constructor carries the same pair for the
 	   card's own teardown, and for the same reason. */
 	$effect(() => () => {
-		open = false;
+		onopen?.(false);
 	});
 </script>
 

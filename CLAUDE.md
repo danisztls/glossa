@@ -694,12 +694,14 @@ the difference from the default rather than the state; storing the state makes
 "never touched the panel" and "switched everything off" the same value, and
 the next work ingested arrives silently off for the first of them.
 
-**The mark is anchored to the VERSE, and getting a dagger to draw cost a font
-file.** The obvious anchor is the lemma and it fails twice: of 45,824 notes only
-27,201 carry a lemma at all and 25,078 of those quote the Douay verbatim, so a
-lemma-matched token would anchor 55% of the apparatus and only on
-`bible.douay-rheims.en`. A marker run with holes is worse than none, so the mark
-names the verse, which every edition has. **`†` is NOT in either text family's
+**THE MARK NAMES THE WORDS SINCE 2026-09-01, AND IT NAMED THE VERSE BEFORE.**
+The verse anchor was chosen because a lemma-matched one would reach about half
+the apparatus and only on `bible.douay-rheims.en`, and a marker run with holes is
+worse than none. Both halves of that turned out to be answerable —
+`commentary-anchors.ts` places **24,805 of 45,662 notes (54.3%)** and the rest
+keep a mark at the end of the verse, so the run has no holes; the edition
+restriction is paid for rather than dodged (below). Getting a dagger to draw
+still cost a font file. **`†` is NOT in either text family's
 `latin` subset** — Google files U+2020 under `latin-ext`, so one dagger would
 pull 158 KB of Source Sans 3 for a reader who needs it for nothing else, and
 would pull it for the English reader too, since a commentary is switched on
@@ -739,18 +741,20 @@ overrides `.note-marker` in exactly two declarations — the face that draws
 U+2020, and a hair more lead-in, because a footnote marker follows a word and
 this one follows a full stop.
 
-**A COMMENTARY IS OFFERED AT EVERY EDITION OF ITS ADDRESS, and the gate that was
-there for a day was answering the wrong question.** `commentariesAt` took a work
-id, on `docs/decisions.md`'s argument about Challoner and the CPDV: attaching an
-apparatus to a translation it was not written on is an editorial act. That
-argument is about a note the reader cannot tell apart from the edition's own —
-Challoner's notes ship INSIDE `bible.douay-rheims`. Nothing here is silent: a
-separate work, named in the panel that switches it on, opened from its own mark,
-set in a card with its own `lang`. What made the gate unnecessary is the ANCHOR:
-keyed to a lemma it really would be undisplayable beside another edition, since
-the words it quotes are not there; keyed to the VERSE it asks only that the
-address exist, and every edition here is versified the same way. `annotates` is
-still read — by `subsumes_notes`, which is a claim about one edition only.
+**A COMMENTARY IS OFFERED AT THE EDITION IT ANNOTATES, AND THE ARGUMENT WENT
+ROUND TWICE.** `commentariesAt` took a work id, then took only an address for a
+week, and takes one again. The gate was dropped because a VERSE anchor asks
+nothing of the text beside it — every edition here is versified alike — so
+refusing the Clementine's reader a commentary on the Latin she is reading was
+protecting her from a confusion the design had already ruled out. The docblock
+recorded the condition on that: "a commentary keyed to a lemma really would be
+undisplayable beside another edition, since the words it quotes are not there."
+That is the arrangement now, so the gate is back, and `annotates` is what it
+reads. **WHAT IT COSTS IS REAL**: a reader of the CPDV or the Clementine is no
+longer offered Haydock at all. The alternative is half the apparatus in the text
+on one edition and all of it heaped at the verse's end on the others.
+`subsumes_notes` is still asked separately, because "already contains the
+edition's own notes" is a narrower claim than "belongs beside this edition".
 
 **HAYDOCK CONTAINS CHALLONER, so both apparatuses on printed most of one of them
 twice.** Measured over the built corpus: 1,399 of the Douay-Rheims's 1,916 notes
@@ -903,10 +907,43 @@ wraps them, `sidenoteRoom.highlighted` lights them while the note is open, and
   suppresses the headword — one prop, so the two can never disagree and no note
   can quietly lose its headword. A design that dropped the
   headword unconditionally would have deleted 18,658 of the corpus's 22,310.
-- **`CommentaryGloss` KEEPS ITS LEMMAS, for two independent reasons.** Its mark
-  is at the END of the verse, so there is nothing to match backwards from; and
-  its card holds the verse's whole apparatus, up to twenty-nine notes, where the
-  lemma is what divides one authority's remark from the next.
+- **`CommentaryGloss` KEEPS ITS LEMMAS**, even now that its marks sit at the
+  words: its card may hold several notes, where the headword is what divides one
+  authority's remark from the next, and the trailing mark's notes have no words
+  in the text at all.
+
+**A COMMENTARY'S MARKS SIT AT THE WORDS ITS NOTES QUOTE** (2026-09-01,
+`commentary-anchors.ts`). Five things.
+
+- **THE ORDER OF THE NOTES IS THE DISAMBIGUATOR.** A verse repeats its own words,
+  so 1,939 of Haydock's headwords occur more than once in the verse they
+  annotate and a search alone cannot say which is meant. A catena is printed in
+  reading order, so the search carries a CURSOR and each note is found at or
+  after the end of the last — **1,930 of the 1,939 resolve**. The nine that do
+  not, and the 237 whose headwords run backwards, are refused rather than
+  guessed. This is what took anchoring from 50.6% to **54.3%** and made it safe
+  at the same time.
+- **THE INLINE MARKS AND THE TRAILING MARK PARTITION THE VERSE'S NOTES.** 40% of
+  the apparatus has no headword at all — which is Haydock's own way of saying a
+  note is a remark on the whole verse — so 9,349 verses get inline marks only,
+  1,846 a trailing mark only, and 9,594 get both. No note is behind two marks
+  and none is behind none; a test pins that, because a leak would lose a fifth
+  of the apparatus with nothing erroring.
+- **`buildSegments` IS A MODULE BECAUSE IT HAD TO BE TESTABLE.** Three separate
+  cuts now run through one verse — the edition's markers, the words an edition
+  note quotes, the words a commentary note quotes — and any of them off by a
+  character silently drops or repeats a word of Scripture. The round-trip
+  property (`segmentText(segments) === text`) is checked in vitest and was run
+  over all 20,789 annotated verses of the real corpus.
+- **AN ANCHOR THAT STRADDLES A CUT IS DROPPED to the trailing mark**, so two
+  apparatuses never nest. That is **0 anchors in the default state** — enabling
+  Haydock flips Challoner's notes off (`subsumes_notes`), leaving one uncut run
+  — and 1,568 for a reader who turns both on, none of them lost.
+- **`commentary-anchors.ts` IMPORTS `./lemma.ts` WITH THE EXTENSION**, like
+  `route-manifest.ts` writes `./address.ts`: the anchoring is measured against
+  the real corpus from a plain Node script, and the type-stripping loader will
+  not resolve an extensionless relative specifier. Vite resolves it either way,
+  so tidying it away breaks the measurement silently and not the site.
 
 **THE OPEN STATE IS A BINDING, NOT A FIELD ON `sidenoteRoom`.** It was one for
 an hour, on the argument that "which note has the reader named" is one question
@@ -919,17 +956,18 @@ address it by. `AnnotatedText` binds `Sidenote`'s `open` instead, and the
 pairing runs on the PIECE INDEX alone: the text run at `i` ends with the lemma
 of the marker at `i + 1`. `sidenoteRoom.highlighted` keeps its one writer.
 
-**AND THAT BINDING MUST DECLARE NO FALLBACK.** `open = $bindable(false)` threw
-`props_invalid_value` on every annotated chapter at hydration: `openNotes` is a
-deliberately SPARSE array — only marker positions are ever written — so a parent
-binds a slot that is still `undefined`, and Svelte refuses a fallback plus an
-undefined binding because it cannot tell which of the two was meant. `$bindable()`
-with no argument is the fix, and the third state is real rather than tolerated:
-`undefined` is "this note has not reported yet", which reads as not open, which
-is what it is. Filling the array to length ahead of the bindings is the other
-fix and a worse one — an effect writing state derived from `pieces` on every
-unit, to close a hole that already reads correctly. It is a RUNTIME error, so
-nothing in `npm test`, `npm run check` or the build sees it.
+**IT IS AN `onopen` CALLBACK, AND IT WAS `$bindable` FOR AN HOUR.**
+`open = $bindable(false)` threw `props_invalid_value` on every annotated chapter
+at hydration: `openNotes` is a deliberately SPARSE array — only marker positions
+are ever written — so a parent binds a slot that is still `undefined`, and Svelte
+refuses a fallback plus an undefined binding because it cannot tell which of the
+two was meant. Dropping the fallback fixes that and leaves two idioms for one
+job, since `CommentaryGloss` cannot bind at all: its TRAILING mark has no words
+in the text to light, so there is nothing to bind to. A callback fits both, has
+no third state to explain, and cannot be handed an undefined it must interpret.
+**The `$bindable` failure is a RUNTIME error**, so nothing in `npm test`,
+`npm run check` or the build sees it — which is the part worth remembering the
+next time something binds into a sparse array.
 
 **A 44px tap target on a mouse is a bug, and the dagger is where it showed.**
 `.note-trigger::after` grows the mark to the accessibility floor as a

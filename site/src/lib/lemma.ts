@@ -59,13 +59,15 @@
  * carrying one is quoting two ends of a phrase with the middle left out, so
  * there is no single run of the verse it names.
  */
-const ELIDED = /\.\.\.|…|\bec\.|\betc\.|&c\./u;
+export const ELIDED = /\.\.\.|…|\bec\.|\betc\.|&c\./u;
 
 /** A letter or digit in any script — the only characters the comparison keeps,
- *  and the test the word-boundary guard uses. */
-const WORD = /[\p{L}\p{N}]/u;
+ *  and the test the word-boundary guards use. Exported with `fold` and `ELIDED`
+ *  because `commentary-anchors.ts` asks the same question of the same corpus
+ *  and two definitions of "comparable" would drift within a week. */
+export const WORD = /[\p{L}\p{N}]/u;
 
-interface Folded {
+export interface Folded {
 	/** The comparable text: letters and digits, lowercased and stripped of
 	 *  diacritics, with everything else gone. */
 	text: string;
@@ -97,7 +99,7 @@ interface Folded {
  * match a verse with any words at all between those pieces — a catchword
  * silently marking a span it does not name. It is refused before this runs.
  */
-function fold(text: string): Folded {
+export function fold(text: string): Folded {
 	let out = '';
 	const at: number[] = [];
 	let i = 0;
