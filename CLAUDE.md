@@ -316,6 +316,23 @@ decides _when_ something runs.
   (checked 2026-08-31 by hashing every work's `sections.json` and `appendix.json`), and
   it is a table anyway, because what produced it was the origin's index rather than
   anything here.
+- **A document's title is MANUFACTURED from its slug, and `SLUG_TITLES` is where that
+  breaks.** `rerum-novarum` becomes `Rerum Novarum` because vatican.va names an
+  encyclical's file after its incipit — a habit of the origin's file naming, true of 234
+  of 256 documents, and not a rule. Measured 2026-08-31 against each raw page's own
+  `<title>`, in three kinds. Fifteen slugs are TRUNCATIONS of the incipit (`mater`,
+  `pacem`, `populorum`; `orientales` is the one that also misleads, since
+  `orientales-omnes-ecclesias` is a different encyclical seven years older), six cannot
+  carry the title's apostrophe, accent or comma (`vi-e-ben-noto`, `laudato-si`), and
+  **one names something else entirely** — Francis's 2023 exhortation is filed under the
+  saint it commemorates and is called _C'est la confiance_, which is also the only
+  document of the 256 whose `<title>` does not contain its slug's words at all. The
+  entry records what the document's OWN language prints where the editions disagree.
+  `ideal-film` is deliberately absent: its editions disagree about the NAME —
+  `Il Film Ideale` against `The Ideal Film` — and a work with no incipit gives the
+  table nothing to choose on. A stale key fails silently — the manufactured title is only reached when
+  the table misses — so a full `--exhortations` run with no filter reports keys that
+  matched no discovered document.
 - Source defects go through `pipeline/corrections/` with locator, exact
   before/after, reason and evidence — never a code special-case, and never
   invented text. A defect with no known correct value gets documented, not

@@ -4658,6 +4658,86 @@ INDEX_DUPLICATE_SLUGS = {
 }
 
 
+#: Documents whose title is not their slug, mapped to the title the source
+#: prints. Everywhere else the title is MANUFACTURED from the URL slug --
+#: `rerum-novarum` -> `Rerum Novarum` -- because vatican.va names an
+#: encyclical's file after its incipit, and that holds for 234 of the 256
+#: documents here. It is not a rule, though: it is a habit of the origin's
+#: file naming, and the table is where it breaks.
+#:
+#: Measured 2026-08-31 by taking each raw page's own `<title>`, cutting it
+#: at the date parenthesis, and comparing the head against the manufactured
+#: title in every language captured. Three kinds of break turned up, and
+#: the one that started this is the first:
+#:
+#:   * THE SLUG NAMES SOMETHING ELSE. Exactly one document, and the only one
+#:     of 256 whose `<title>` does not contain its slug's words at all:
+#:     Francis's 2023 exhortation is filed under the saint it commemorates
+#:     (`20231015-santateresa-delbambinogesu.html`) and titled from Therese's
+#:     own words. All eleven editions print `C'est la confiance`; the Latin
+#:     adds its own incipit, `Est utique fiducia`, which belongs to that
+#:     edition and not to the work.
+#:   * THE SLUG IS A TRUNCATION. Fifteen, all pre-conciliar or conciliar-era
+#:     encyclicals filed under the first word or two of the incipit --
+#:     `mater`, `pacem`, `populorum`. `orientales` is the one that also
+#:     misleads: the corpus holds `orientales-omnes-ecclesias` (1945) too, so
+#:     the truncated title of the 1952 encyclical read as a shortening of its
+#:     neighbour's.
+#:   * THE SLUG CANNOT CARRY THE CHARACTERS. Six, where a hyphenated ASCII
+#:     filename has dropped an apostrophe, an accent or a comma:
+#:     `vi-e-ben-noto` for `Vi e ben noto`, `laudato-si` for `Laudato si'`.
+#:
+#: The value is what the document's OWN language prints where the editions
+#: differ (`Vi e ben noto` is Italian and the Italian edition is lowercase;
+#: the others title-case it), and Title Case for a Latin incipit, which is
+#: what the manufactured titles use for the 234 this table does not touch.
+#:
+#: What is deliberately NOT here: `ideal-film`. Its slug does name the
+#: document, and the editions disagree about the name -- `The Ideal Film`,
+#: `Il Film Ideale`, `La pelicula ideal` -- so filling it in would pick one
+#: edition's language for a work that has no incipit to be titled by, which
+#: is a judgement this table has no evidence for. `dilexi-te` and
+#: `magnifica-humanitas` are not here either: their manufactured titles are
+#: right, and only the source's `<title>` is verbose.
+SLUG_TITLES = {
+    # The slug names something else.
+    "santateresa-delbambinogesu": "C’est la confiance",
+    # The slug is a truncation of the incipit.
+    "ad-petri": "Ad Petri Cathedram",
+    "aeterna-dei": "Aeterna Dei Sapientia",
+    "arcanum": "Arcanum Divinae",
+    "eccl-de-euch": "Ecclesia de Eucharistia",
+    "ecclesiam": "Ecclesiam Suam",
+    "mater": "Mater et Magistra",
+    "mysterium": "Mysterium Fidei",
+    "orientales": "Orientales Ecclesias",
+    "pacem": "Pacem in Terris",
+    "paenitentiam": "Paenitentiam Agere",
+    "pastoralis": "Pastoralis Vigilantiae",
+    "populorum": "Populorum Progressio",
+    "princeps": "Princeps Pastorum",
+    "sacerdotalis": "Sacerdotalis Caelibatus",
+    "sacerdotii": "Sacerdotii Nostri Primordia",
+    # The slug cannot carry the title's own characters.
+    "apostolico-seggio": "Dall’alto dell’Apostolico Seggio",
+    "fummo-chiamati": "Allorché fummo chiamati",
+    "laudato-si": "Laudato si’",
+    "le-pelerinage-de-lourdes": "Le Pèlerinage de Lourdes",
+    "pacem-dei-munus-pulcherrimum": "Pacem, Dei Munus Pulcherrimum",
+    "vi-e-ben-noto": "Vi è ben noto",
+}
+
+
+def document_title(slug: str) -> str:
+    """The title to store for an encyclical or exhortation slug.
+
+    One function because the manufactured title is computed in two places --
+    `run_phase2` passes it into the parse, `parse_and_write` falls back to it
+    for callers that do not -- and two copies of a default are what drift.
+    See `SLUG_TITLES` for why the table exists at all."""
+    return SLUG_TITLES.get(slug) or slug.replace("-", " ").title()
+
+
 def _encyclical_refs_from_index(
     fetcher: Fetcher, pontiff_slug: str, display_name: str, lang: str
 ) -> tuple[dict[str, DocRef], list[str]]:
@@ -6740,7 +6820,7 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
         result["error"] = f"correction entries never matched during parse: {missing}"
         return result
 
-    title = title_hint or ref.slug.replace("-", " ").title()
+    title = title_hint or document_title(ref.slug)
     structure = build_structure(parse.state, title)
 
     # Post-parse overrides. Applied before `validate_document`, which reads
@@ -7115,6 +7195,8 @@ def run_phase2(
     # a key would merge two documents' lines.
     awaiting: dict[int, dict] = {}
     n_submitted = 0
+    # Every slug this run submitted, for the `SLUG_TITLES` rot check below.
+    seen_slugs: set[str] = set()
 
     def report(tag, r: dict) -> None:
         idx, lang = tag
@@ -7170,7 +7252,8 @@ def run_phase2(
             "have": {},
             "quiet": quiet,
         }
-        title = ref.slug.replace("-", " ").title()
+        seen_slugs.add(ref.slug)
+        title = document_title(ref.slug)
         for lang in langs:
             if fetch_only:
                 pool.submit_done((idx, lang), cache_page(fetcher, ref, lang))
@@ -7236,6 +7319,28 @@ def run_phase2(
                     submit_doc(ref, quiet=True)
                     touch_crawl_lock(lock_path)
                     drain()
+        # A `SLUG_TITLES` entry for a slug the origin no longer publishes is
+        # dead weight that nothing else would ever report -- the manufactured
+        # title is only consulted when the table misses, so a stale key fails
+        # by being silently unused. Reported and not raised, and only after a
+        # run that saw every document: any filter or early stop leaves slugs
+        # unsubmitted, and calling those keys stale would be wrong. Note the
+        # narrow gate is also what makes it correct to key the table by slug
+        # alone -- `report` warns that a slug is not unique across
+        # pontificates, and a full run is where a collision would show up as
+        # two documents wearing one title.
+        if (
+            not pontiff_slugs
+            and doc_slugs is None
+            and limit is None
+            and include_exhortations
+        ):
+            stale = sorted(set(SLUG_TITLES) - seen_slugs)
+            if stale:
+                print(
+                    f"  [titles] {len(stale)} SLUG_TITLES entries match no "
+                    f"discovered document: {', '.join(stale)}"
+                )
         return results
     finally:
         # Every early `return` above lands here first. Work whose page is
