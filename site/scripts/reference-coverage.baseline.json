@@ -189,14 +189,14 @@
 		},
 		"compendium": {
 			"citations": {
-				"total": 5949,
-				"linkable": 5949,
+				"total": 8309,
+				"linkable": 8309,
 				"recognized": 0,
 				"nothing": 0
 			},
 			"prose": {
-				"blocks": 12199,
-				"scripture": 1502,
+				"blocks": 16983,
+				"scripture": 1774,
 				"document": 0,
 				"stored": 0
 			},
@@ -657,8 +657,8 @@
 		}
 	},
 	"crossWork": {
-		"pairedDivisions": 2560,
+		"pairedDivisions": 3520,
 		"condensedQuestions": 598,
-		"condensedParagraphs": 2735
+		"condensedParagraphs": 2734
 	}
 }

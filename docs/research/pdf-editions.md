@@ -2,7 +2,7 @@
 
 Survey conducted 2026-08-29 (Claude, read-only against files already in `glossa-corpus/raw/`, plus one live probe fetch of the English _Amoris Laetitia_ PDF). Companion to `vatican-documents.md` and `catholic-growth-and-catechism-languages.md`. Written because the ten-language Magisterium ingestion turned up a class of absence the corpus had no vocabulary for: **an edition that exists and that we cannot read.**
 
-**Scope note**: nothing here is ingested. `pipeline/` gains no PDF reader in this pass — this document is the plan, deliberately written down before any of it is built, so the decision about whether to build it is made with the measurements in view rather than mid-implementation.
+**Status, 2026-09-01**: the four Compendia are **built and shipping** — `compendium.{be,id,lt,ru}`, 598 questions each, all four passing `validate`. The Catechism's Arabic and Chinese editions and the six documents are still deferred. §5 and §8 below were the two decisions this survey said had to be made first; both were made differently from the recommendation here, and §§5a and 8a record what actually decided them. Everything above those sections is the original survey and still stands.
 
 ## TL;DR
 
@@ -82,6 +82,31 @@ Roughly 10,000 addressable units. For comparison, the entire ten-language Magist
 
 Four of these are **new content languages** (`zh`, `id`, `be`, and arguably `lt`), which by the rule in `CLAUDE.md` means a line in `LANGUAGE_NAMES` in the same commit, and by the rule in `refs-grammar.ts` means measuring what the English fallback reads in them before shipping — the `1 Joh` lesson, where three editions had every First-John citation resolve to the Gospel.
 
+## 5a. What was actually decided (2026-09-01)
+
+**§5's recommendation was not followed, and the reason is that no single library can read these four files.** The measurement that settles it is the one §3 could not reach, because it probed only first pages with one tool:
+
+- The **Indonesian** file still carries the ITALIAN original as invisible text. poppler emits it, interleaved with the Indonesian — page 19 reads `1. Qual è il disegno di Dio per l'uomo?` woven through `Apa rencana Allah untuk manusia?`. MuPDF honours the render mode and never sees it. There is no optional-content group, so nothing declares the layer hidden.
+- The **Russian** file's fonts carry no `ToUnicode` map. MuPDF refuses every glyph and answers U+FFFD; poppler passes the underlying byte through, and the custom encoding turns out to be **cp1251**, so the text is fully recoverable by re-decoding.
+
+Pinning one library would therefore have shipped a bilingual Indonesian corpus or no Russian one. **The backend is a per-edition declared value** (`PDF_EDITIONS` in `pipeline/scrapers/ccc/compendium_pdf.py`), and both readers are system binaries invoked through `common/binaries.py`.
+
+**The reproducibility concern §5 raised is real and is closed differently.** `rebuild.py` gained a `readers` fingerprint: `Stage.binaries` names the external programs a stage shells out to, and their identity — the **content hash of the resolved executable**, not a `--version` string, which a distribution can leave unchanged while rebuilding the package — is folded into `--changed-only`. A poppler or MuPDF upgrade now reports as `readers` moved, exactly as an edited parser reports `code`. `dore`'s `avifenc` had the identical unguarded exposure and was retrofitted in the same change.
+
+**What the spike would not have caught.** §5 proposed proving one library on three pages. Every bug this reader actually had was invisible at that scale, and each produced plausible output rather than damage:
+
+| Defect                                                  | What it looked like                                                                                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Merging line fragments before splitting the columns     | the margin glued onto the body — they sit 4.1pt apart, closer than the spaces inside a line — costing 118 of 288 questions their references |
+| Grouping rows by bounding-box top instead of baseline   | "Krikščioniškojo slėpinio šventimas" as "kščionišk ėp Kri ojo sl inio šventimas"                                                            |
+| Bounding the body at the first `1.`                     | the preface numbers its own paragraphs 1–6, so the work opened at question 7                                                                |
+| A 2pt kerning gap after a drop cap read as a word space | "Pirmas poskyris" as "P irmas poskyris"; the heading stopped matching and the work lost a chapter                                           |
+| The Decalogue printed as a numbered list                | a second Q1 after Q357                                                                                                                      |
+| A symmetric head/foot furniture strip                   | the Indonesian runs text to a tenth of the page bottom; answers ended mid-phrase                                                            |
+| Assuming the text block mirrors by page **parity**      | true of the Lithuanian, false of the Byelorussian, whose front matter has a different leaf count                                            |
+
+What caught them was not a spike but the two oracles in §7 step 4, which is the part of this survey that held up best.
+
 ## 5. The decision that has to be made first
 
 **Extraction must be reproducible, and `pdftotext` from `PATH` is not.**
@@ -118,3 +143,28 @@ Visible in the _Amoris Laetitia_ probe, and each of these is ordinary work rathe
 **Is a PDF-sourced edition publishable on equal terms with an HTML one, or does it land switched off in `site/unpublished.json` until someone has read it?**
 
 Not resolved here. The English _Amoris Laetitia_ is what forces it: withholding it keeps the corpus's standard, and publishing it fills the most visible hole in the English shelf. The honest position is probably that a PDF-sourced edition ships only where a sibling edition exists to check it against — which is true for all six documents and for both Catechisms, and false for exactly the four Compendia in languages nobody here reads.
+
+## 8a. How it resolved (2026-09-01)
+
+**The last clause was wrong, and pleasantly so: the four Compendia have the strongest sibling check in the corpus.** "A language nobody here reads" is not the same as "an edition nothing can check", because the Compendium's cross-reference apparatus is language-independent. Question N is the same question in all fourteen editions, so the CCC paragraph numbers printed in the margin must agree digit for digit with what the ten HTML editions already store as `ccc_refs`:
+
+| Edition         | Questions | `ccc_refs` present | Agreeing with `compendium.it` |
+| --------------- | --------- | ------------------ | ----------------------------- |
+| `compendium.be` | 598       | 598                | 584                           |
+| `compendium.id` | 598       | 590                | 572                           |
+| `compendium.lt` | 598       | 574                | 565                           |
+| `compendium.ru` | 598       | 598                | 573                           |
+
+Some of the disagreement is the **Italian's**, not ours: five questions have no reference line in that edition at all (Q361 and Q563–Q566, a defect already recorded in its own `LANG_CONFIG` notes), and four more are Italian misprints the new editions read correctly — `1198-1999` for 1198-1199 at Q245, `2617; 2018` for 2617-2618 at Q546, `2050-2051` for 2650-2651 at Q557, `2658` for 2758 at Q577.
+
+The second oracle is `audit.py balance`, and it is what §7 step 4 predicted: it caught the Compendium's full-page art plates being absorbed into the last question of each part, which made Q217, Q356 and Q533 six to eight times longer than the same answer in every other edition. **All four editions now sit inside the same skew band as the ten HTML ones, with no outliers.**
+
+So all four ship, unswitched. `site/unpublished.json` stays empty of them. The rule the survey was reaching for is sharper than it guessed: a PDF-sourced edition ships where **something in it can be checked against a sibling** — which need not be its prose, and here is its apparatus.
+
+## 9. What is left
+
+The four Compendia are done. Still deferred, with the measurements taken 2026-08-31:
+
+- **The Chinese Catechism** — 43 files, each filename declaring its own paragraph range, which is a free coverage assertion. A naive scan finds 2,859 of 2,865, and **all six gaps are now explained**: §2256 and §2554 run the number into the previous line (parser tolerance); §1224 and §1478 omit the period after the number and §2835 is **printed `3835`** (three source defects for `pipeline/corrections/`); and **§1725 is genuinely absent from the edition** — the `撮要` (IN BRIEF) heading sits exactly where it belongs and the sequence runs 1724 → 撮要 → 1726, so it is a source omission to document, not to fix. It prints **no footnote apparatus at all** — no markers, no note blocks, no `PG`/`DV`/`LG` anywhere, and only two font sizes, 12pt body and 10.98pt inset quotation — so `citations: []` by construction. It folds Scripture into the running text (`創 10:5`, `希 1:1-2`), so publishing it needs a `zh` book table in `refs-grammar.ts`, and no CJK webfont is shipped. **It is the easiest of the six to extract and the hardest to publish**; keep those two judgements apart when it is picked up.
+- **The Arabic Catechism** — 5 files mapping onto the Prologue and the four Parts. 2,852 of 2,865 paragraph numbers once the regex tolerates a combining mark or `«` between the bidi controls and the number, leaving 13 to read individually. **poppler only**: MuPDF fragments RTL lines, splitting single words across three. Also prints no footnote apparatus. §3's "does not round-trip" finding is confirmed and quantified — the Allah ligature decomposes in visual order, giving **2,312 occurrences of `هللا` for `الله` and 2,561 of `هلل`, against 30 correct spellings**. The text's commonest word is mis-spelled roughly 4,900 times before any normalisation, which is why it is deferred and why its normalisation must stay separable from extraction.
+- **The six documents**, including the English _Amoris Laetitia_. Untouched by this pass. §7 step 3 still reads correctly, and the `common/pdf.py` it wanted now exists.
