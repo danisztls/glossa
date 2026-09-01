@@ -160,22 +160,42 @@
 	}
 
 	/*
-	 * NOTHING ON PAPER OPENS A DIALOG, so the clamp would not shorten a gloss
-	 * here but lose its tail outright. The tail is in the document for exactly
-	 * this — `splitNodes` cuts the gloss in two and `.note-tail` is hidden on
-	 * screen, not dropped — so a sheet gets the whole note back by turning one
-	 * declaration around. A sheet also has no floated gutter to overrun (the
-	 * rule above has already put the note in the flow), which is the only
-	 * thing the clamp was protecting.
+	 * NOTHING ON PAPER OPENS ANYTHING, which is why an edition's gloss prints
+	 * from its CARD.
+	 *
+	 * `Sidenote` set a copy in the margin until 2026-09-01 and the rule above
+	 * is what printed it. With the gloss out of the gutter, the only copy left
+	 * in the document is the popover — closed, and so `display: none` by the
+	 * UA's own rule — and a printed chapter would have carried a column of
+	 * markers pointing at nothing. So it is set back into the flow here, under
+	 * the line that raised it, in the same shape `.margin-note` prints in:
+	 * a block, set off by a rule rather than by position.
+	 *
+	 * `Sidenote` RENDERS THIS ONE UNCONDITIONALLY FOR THIS RULE'S SAKE, long
+	 * notes included, since a `<dialog>` holds nothing until it is opened.
+	 * `.citation-popover` is deliberately not here: a citation still has its
+	 * margin copy and would otherwise print its source twice.
+	 *
+	 * A COMMENTARY STILL PRINTS NOTHING, and that is unchanged rather than
+	 * overlooked — `CommentaryGloss` renders its card only when the mark does
+	 * not open a dialog, and a chapter of Haydock runs to 52,496 characters of
+	 * apparatus over the Scripture it annotates.
 	 */
-	.note-tail {
-		display: inline !important;
-	}
-
-	/* And with the whole note printed, the ellipsis marks a cut that is not
-	   there and points at a dialog that cannot open. */
-	.note-more {
-		display: none !important;
+	.note-popover {
+		display: block !important;
+		position: static !important;
+		visibility: visible !important;
+		max-inline-size: none !important;
+		max-block-size: none !important;
+		overflow: visible !important;
+		margin-block: 0.5rem;
+		padding: 0 0 0 0.75rem;
+		border: 0;
+		border-inline-start: 2px solid #000;
+		border-radius: 0;
+		background: none !important;
+		box-shadow: none !important;
+		color: #000 !important;
 	}
 
 	/* Back into the flow with it: there is no margin to hang off, and left
@@ -188,8 +208,7 @@
 	/* A highlight says "the one you just clicked", which is a fact about a
 	   session and not about the page. */
 	.margin-note.highlighted,
-	.citation-marker.highlighted,
-	.note-marker.highlighted {
+	.citation-marker.highlighted {
 		background: none !important;
 		outline: none !important;
 		padding-inline: 0 !important;

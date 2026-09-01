@@ -9,7 +9,6 @@ import {
 	decodeTextRun,
 	linkifyInline,
 	splitLines,
-	splitNodes,
 	type InlineNode
 } from './inline-html';
 import { linkifyProse } from './refs';
@@ -344,76 +343,5 @@ describe('splitLines', () => {
 		// cut — rewriting the corpus's markup rather than reading it.
 		const lines = splitLines(parseInlineHtml('<i>a<br />b</i>'));
 		expect(lines).toHaveLength(1);
-	});
-});
-
-/*
- * The margin's clamp, made in the node tree rather than by the browser. What
- * these pin is the property `-webkit-line-clamp` had and a naive truncation
- * would lose: the tail is still there, so `print.css` can put it back on a
- * sheet that opens nothing.
- */
-describe('splitNodes', () => {
-	const text = (t: string): InlineNode => ({ kind: 'text', text: t });
-
-	it('gives back every character it was handed', () => {
-		const nodes = [text('The quick brown fox jumps over the lazy dog and keeps going')];
-		const { head, tail } = splitNodes(nodes, 20);
-		expect(inlineText(head) + inlineText(tail)).toBe(inlineText(nodes));
-	});
-
-	it('cuts on a word, not inside one', () => {
-		const { head } = splitNodes([text('The quick brown fox jumps')], 13);
-		expect(inlineText(head)).toBe('The quick');
-	});
-
-	// A note whose opening is one very long word — a Greek quotation, a URL —
-	// would otherwise be clamped to nothing at all.
-	it('cuts mid-word rather than throw away most of the budget', () => {
-		const { head } = splitNodes([text('a ' + 'x'.repeat(60))], 20);
-		expect(inlineText(head)).toHaveLength(20);
-	});
-
-	// Half a link points nowhere, so a reference that does not fit goes whole
-	// to the tail rather than being cut through.
-	it('never cuts through a reference', () => {
-		const nodes: InlineNode[] = [
-			text('See '),
-			{
-				kind: 'ref',
-				seg: { kind: 'ccc', n: 1212, raw: 'CCC 1212' },
-				children: [text('CCC 1212')]
-			},
-			text(' and onwards')
-		];
-		const { head, tail } = splitNodes(nodes, 6);
-		expect(head).toEqual([text('See')]);
-		expect(tail[0].kind).toBe('ref');
-		expect(inlineText(head) + ' ' + inlineText(tail)).toBe(inlineText(nodes));
-	});
-
-	// An emphasis is a span of the sentence, and a sentence is what this cuts:
-	// it is reopened on the other side rather than pushed whole to the tail.
-	it('splits an emphasis and reopens it', () => {
-		const nodes: InlineNode[] = [
-			{ kind: 'emphasis', tag: 'i', children: [text('one two three four')] }
-		];
-		const { head, tail } = splitNodes(nodes, 8);
-		expect(head).toEqual([{ kind: 'emphasis', tag: 'i', children: [text('one two')] }]);
-		expect(tail).toEqual([{ kind: 'emphasis', tag: 'i', children: [text(' three four')] }]);
-	});
-
-	// The ellipsis button is set immediately after the head, so a trailing
-	// space would push it off the last word it belongs to. The tail keeps its
-	// own leading space, so nothing is lost.
-	it('trims the head so the ellipsis sits tight', () => {
-		const { head, tail } = splitNodes([text('one two three')], 8);
-		expect(inlineText(head)).toBe('one two');
-		expect(inlineText(tail)).toBe(' three');
-	});
-
-	it('sets a note shorter than the budget open, with an empty tail', () => {
-		const nodes = [text('A short gloss.')];
-		expect(splitNodes(nodes, 170)).toEqual({ head: nodes, tail: [] });
 	});
 });

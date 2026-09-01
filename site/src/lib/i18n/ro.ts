@@ -255,7 +255,6 @@ export const ro: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Notă',
 	'bible.noteMissing': 'Această notă lipsește din corpus',
-	'bible.readMore': 'Citiți mai mult',
 	'bible.chapterArgument': 'Argument',
 	'ccc.readFullChapter': 'Citiți capitolul întreg',
 	'ccc.noParagraphNumber': 'Fără număr de paragraf în acest corpus',

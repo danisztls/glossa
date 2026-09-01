@@ -792,22 +792,40 @@ scroll. It moves 9.3% of Haydock's annotated verses, 8.2% of Martini's notes,
 4.4% of Straubinger's, 0.7% of Allioli's, 0.3% of Challoner's and none of
 Matos Soares's, which is the argument for a threshold rather than a
 per-apparatus rule: the same edition prints both a phrase and an essay. It is
-NOT `MARGIN_CLAMP_CHARS` and the two must not converge — that one asks what a
-17rem gutter sets before a float outruns its line, this one what a panel holds
-before it covers the text it points at. A test pins them four times apart.
+now the ONLY length threshold: `MARGIN_CLAMP_CHARS` (170) asked what a 17rem
+gutter set before a float outran its line, the two were pinned four times
+apart by a test so they could not converge, and the question stopped being
+asked when the gloss left the gutter — below.
 
-**The margin's clamp is a cut in the NODE TREE now, and the tail is kept.**
-`-webkit-line-clamp` was replaced on 2026-09-01 because a UA ellipsis is
-painted rather than built: it is not an element, cannot carry a handler and
-cannot be named, so the way to the rest of the note had to be a separate
-"Read more" line under it — a line of the gutter spent on two words for every
-clamped note, in exactly the editions that clamp most of them. `splitNodes`
-makes the cut and the ellipsis between the halves is a real button.
-**`.note-tail` is `display: none`, NOT dropped**, because that is the one
-property the CSS clamp had that was worth keeping: `print.css` turns it back
-on, and paper opens nothing. `splitNodes` never cuts through a `ref` or a
-`marker` — half a link points nowhere — and splits an `emphasis`, which is a
-span of the sentence being cut.
+**AN EDITION'S GLOSS LEFT THE MARGIN ON 2026-09-01, AND THE APPARATUSES NOW
+BEHAVE ALIKE.** `Sidenote` set its note in the gutter beside the line that
+raised it — the _Glossa Ordinaria_ arrangement the project is named for — and
+what retired it is the same measurement that had already kept Haydock out
+(above): Straubinger's notes run 248/814 and Martini's 361/1,051 with single
+notes at 4,830 and 10,243, so the column ran past the chapter and the gloss was
+neither beside its line nor bounded by it. The mark opens a card, or a dialog
+past `CARD_MAX_CHARS`, at every width. What went with it: `MARGIN_CLAMP_CHARS`,
+`marginOverflows`, `--sidenote-clamp`, `splitNodes` and its node-tree cut, the
+ellipsis button, `.note-tail`, `bible.readMore` in fourteen dictionaries, and
+`.note-marker.highlighted` — a mark with no gutter copy has nothing across the
+page to pair with. Three things about what STAYED:
+
+- **`CitationDisclosure` KEEPS ITS MARGIN COPY**, so `sidenoteRoom`,
+  `.margin-note`, `--margin-lane` and `CompareGrid`'s claim are all live. A
+  footnote's source is 26 characters — a remark, which is what the arrangement
+  was calibrated for and what it still sets whole. The lane is declared on
+  every reading page whether or not anything occupies it, which is what keeps
+  the reading column on the page's midline.
+- **PAPER IS WHY `Sidenote` RENDERS ITS POPOVER UNCONDITIONALLY**, long notes
+  included. A closed popover is `display: none` and a closed `<dialog>` holds
+  nothing at all (`NoteDialog.rendered`), so once the margin copy was gone that
+  card was the only copy of the apparatus left in the document — and a printed
+  chapter would have carried a column of markers pointing at nothing.
+  `print.css` sets `.note-popover` back into the flow in the shape
+  `.margin-note` prints in. Gating it on `!card.asModal` prints the short notes
+  and drops the long ones, which is the worse half of both answers.
+- **A COMMENTARY STILL PRINTS NOTHING**, unchanged rather than overlooked:
+  `CommentaryGloss` renders its card only when the mark does not open a dialog.
 
 **A 44px tap target on a mouse is a bug, and the dagger is where it showed.**
 `.note-trigger::after` grows the mark to the accessibility floor as a

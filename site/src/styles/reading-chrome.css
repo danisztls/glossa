@@ -168,19 +168,24 @@
 }
 
 /*
- * A NOTE SET IN THE MARGIN — the arrangement `Sidenote` gives an annotated
- * edition's gloss and `CitationDisclosure` a numbered footnote's source, once
- * `sidenotes.svelte.ts` says there is room for it. The two are different
- * apparatuses over different texts, and this is deliberately ONE treatment
- * for both: a reader who has learned what hangs in the margin of a Catechism
- * paragraph should not have to learn it again in the Douay-Rheims.
+ * A NOTE SET IN THE MARGIN — the arrangement `CitationDisclosure` gives a
+ * numbered footnote's source, once `sidenotes.svelte.ts` says there is room
+ * for it.
  *
- * Global rather than scoped for the reason `.reading-layout` is — two
- * components want the identical block and Svelte's per-component style
- * scoping has no mechanism to share one across files. What each of them keeps
- * is what genuinely differs: what the marker left in the text IS (a plain
- * reference here, a disclosure button below the breakpoint), and what the
- * note falls back to where there is no margin to set it in.
+ * IT WAS TWO APPARATUSES UNTIL 2026-09-01, and `Sidenote` was the other: an
+ * annotated edition's gloss hung here too, deliberately in one treatment, so
+ * that a reader who had learned what hangs in the margin of a Catechism
+ * paragraph did not have to learn it again in the Douay-Rheims. What ended
+ * that is length rather than taste — see `Sidenote`'s own header, and
+ * `SidenoteRoom`. WHAT IS LEFT HERE IS A REMARK, 26 characters on average,
+ * which is what the arrangement was calibrated for.
+ *
+ * Global rather than scoped even with one caller, because it is read together
+ * with `.margin-note-label` and the print rules that undo it, and because the
+ * pairing above may come back the day a third apparatus is short enough for
+ * the gutter. What the component keeps is what is genuinely its own: what the
+ * marker left in the text IS, and what the note falls back to where there is
+ * no margin to set it in.
  *
  * Sans, smaller, and in the muted colour: three signals at once that this is
  * apparatus and not text, because any one of them alone is the kind of
@@ -297,11 +302,13 @@
 }
 
 /*
- * THE MARK THE READER JUST NAMED — the two marks that have a copy in the
- * margin to pair with, and only those two. A commentary's dagger is absent on
- * purpose: it sets nothing in the gutter at any width, so there is nothing
- * across the page to pair it with and a click on it opens its card instead
- * (`NoteCard`'s `margin: false`).
+ * THE MARK THE READER JUST NAMED — the one mark that has a copy in the margin
+ * to pair with, and only that one. A commentary's dagger and an edition's
+ * lettered note are both absent on purpose: neither sets anything in the
+ * gutter at any width, so there is nothing across the page to pair them with
+ * and a click on either opens a card or a dialog instead (`NoteCard`'s
+ * `margin: false`). `.note-marker` was in this selector until 2026-09-01,
+ * when the gloss left the margin.
  *
  * AND AN OUTLINE, NOT PADDING, which is `.margin-note.highlighted`'s reason
  * one step further on. The marker sits INSIDE running text, so padding on it
@@ -314,8 +321,7 @@
  * unlike a spread `box-shadow` does not paint under the background where two
  * translucent layers would stack.
  */
-.citation-marker.highlighted,
-.note-marker.highlighted {
+.citation-marker.highlighted {
 	background: color-mix(in srgb, var(--color-accent) 18%, transparent);
 	outline: 0.15em solid color-mix(in srgb, var(--color-accent) 18%, transparent);
 	border-radius: var(--radius-sm);
@@ -594,10 +600,10 @@
 
 /*
  * A NOTE IN FULL, CENTRED OVER THE PAGE — the panel BOTH apparatuses open for
- * a gloss past the shape that was going to hold it. `Sidenote` opens it from
- * the ellipsis at the end of a clamped margin note and from a marker whose
- * gloss outruns a card; `CommentaryGloss` opens it from its dagger for the
- * same second reason. It was scoped to `Sidenote.svelte` while it had one
+ * a gloss past the shape that was going to hold it, `Sidenote` from its
+ * lettered mark and `CommentaryGloss` from its dagger, on the one question
+ * they both ask: is this note longer than a card holds (`CARD_MAX_CHARS`)?
+ * It was scoped to `Sidenote.svelte` while it had one
  * user, and a class name borrowed across a Svelte component boundary is
  * silently unstyled rather than an error — the failure this move prevents is
  * an unstyled `<dialog>` that still opens, which looks like a bug in the

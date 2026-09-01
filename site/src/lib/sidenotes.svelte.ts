@@ -5,33 +5,25 @@ import { AnchoredPanel } from './floating.svelte';
 /**
  * Whether the reader's viewport has room to set notes in the margin.
  *
- * TWO APPARATUSES USE IT, and they are different kinds of note. `Sidenote`
- * sets an annotated edition's GLOSS there — Challoner at the length of a
- * sentence — and `CitationDisclosure` a numbered footnote's SOURCE, which is
- * shorter (26 characters on average across the Catechism's 3,698, 53 at the
- * ninetieth percentile) and far commoner. Both are apparatus over a text
- * rather than the text, both are wanted beside the line that raises them, and
- * once there is a margin to put them in neither has any reason to be a
- * disclosure. So the arrangement is one arrangement — `.margin-note` in
- * app.css — and this module is what decides, for both, that it applies.
+ * ONE APPARATUS USES IT, AND IT USED TO BE TWO. `CitationDisclosure` sets a
+ * numbered footnote's SOURCE there — 26 characters on average across the
+ * Catechism's 3,698, 53 at the ninetieth percentile, and far commoner than a
+ * gloss. `Sidenote` set an annotated edition's gloss there too until
+ * 2026-09-01, and what retired that is length: the continental editions gloss
+ * a verse in an essay, so the gutter column ran past the chapter and the note
+ * was no longer beside the line that raised it. See `Sidenote`'s own header.
+ * WHAT IS LEFT IN THE MARGIN IS A REMARK, which is what the arrangement was
+ * calibrated for and what it still holds whole.
  *
  * WHY THIS IS JAVASCRIPT AND NOT PURELY A MEDIA QUERY. The CSS could place
- * the notes on its own; what it cannot do is tell the marker what to say
- * about itself. A margin note is *already visible*, so `Sidenote`'s marker is
- * not a disclosure control there and must not claim to be one —
- * `aria-expanded` on a button whose content is on screen regardless is a lie
- * to a screen reader, and the reverse (no state at all on a phone, where the
- * gloss really is hidden until tapped) is a control with no state. The two
- * layouts genuinely differ in what that marker IS, so the breakpoint has to
- * be legible to the markup and not only to the stylesheet.
- *
- * `CitationDisclosure` reads the same value for a different question, and it
- * is the plainer of the two: its marker opens a popover at every width, so
- * only whether the margin ALSO gets a copy is in doubt. The two apparatuses
- * agree on where a note goes and disagree about what a second route to it is
- * worth — a gloss beside its line is read there and wants nothing further,
- * where a citation's column narrows with the reader's text and stacks up
- * beside a densely-cited paragraph.
+ * the note on its own; what it cannot do is tell the marker what to say about
+ * itself. A margin note is *already visible*, so the marker beside it is not a
+ * disclosure control there and must not claim to be one — `aria-expanded` on a
+ * button whose content is on screen regardless is a lie to a screen reader,
+ * and the reverse (no state at all on a phone, where the source really is
+ * hidden until tapped) is a control with no state. The two layouts genuinely
+ * differ in what that marker IS, so the breakpoint has to be legible to the
+ * markup and not only to the stylesheet.
  *
  * `MARGIN_QUERY` is deliberately wider than `.reading-layout`'s own 80rem
  * grid breakpoint. At exactly 80rem the reading column and the navigation
@@ -177,73 +169,6 @@ class SidenoteRoom {
 export const sidenoteRoom = new SidenoteRoom();
 
 /**
- * How much gloss the margin sets open before it becomes a preview, counted in
- * characters of the note as stored.
- *
- * THE ARRANGEMENT WAS CALIBRATED ON AN EDITION THAT NO LONGER REPRESENTS THE
- * CORPUS. `.margin-note` was written for Challoner — a gloss at the length of
- * a sentence, 126 characters at the median and 343 at the ninetieth
- * percentile — and for a numbered footnote's source, shorter again at 26. The
- * continental annotated editions print an apparatus of another order
- * entirely: Straubinger's notes run 248/814 and Martini's 361/1,051, with
- * single notes at 4,830 and 10,243. Per chapter their apparatus comes to as
- * many characters as the Scripture beside it — 1.03 and 1.90 times the verse
- * text at the median, 3.0 and 5.7 at the ninetieth percentile, 46 in the
- * Song of Songs — and the gloss column sets about 43 characters a line
- * against the reading measure's 62.4, so parity of characters is already
- * something near half again the height.
- *
- * WHAT THAT BREAKS IS THE ARRANGEMENT'S OWN PREMISE, not merely the look of
- * the page. `.margin-note` floats with `clear: inline-start`, so each note
- * begins below wherever the last one ended: at these lengths the eighth
- * verse's gloss is pages below the line that raises it, and a gloss BESIDE
- * its line is the whole of what the margin is for. Clamping is what keeps the
- * column anchored to the text rather than merely shorter.
- *
- * SO THE LONG ONES ARE CLAMPED AND THE READER IS GIVEN A WAY TO THE REST. 170
- * characters is about four lines of the gloss column, which is
- * `--sidenote-clamp` in `layout.css`: the two numbers are one decision written
- * twice and have to move together. It is deliberately short — a margin holds a
- * remark, and a gloss the reader has to scroll past to reach the next one has
- * stopped being one. At four lines a citation's source is still set whole
- * (every one of the Catechism's 3,698), 59% of Challoner's notes and 76% of
- * Matos Soares's are, and the essayists are cut to an incipit: 35% of
- * Straubinger's notes set open, 16% of Martini's.
- *
- * IT MOVED WITH THE COLUMN, NOT ON ITS OWN (2026-08-29, 130 → 170). The four
- * LINES have not changed and are the decision; the count is only those lines
- * measured, and the gloss column went from 13rem to the aside's 17rem when
- * the two margins were made mirror images (`--sidenote-width`). Leaving the
- * count where it was would have printed "Read more" under notes the four
- * lines set whole — which is the failure this pair exists to prevent, arriving
- * from the other side: a clamp shorter than the count cuts a note off with
- * nothing under it to open, and a count shorter than the clamp offers a rest
- * that is not there. The line count itself has come down twice — twelve, then
- * six — each time because the gutter column was still running past the chapter
- * it hangs beside.
- */
-export const MARGIN_CLAMP_CHARS = 170;
-
-/**
- * Whether a gloss this long is more than the margin will set open.
- *
- * COUNTED, NOT MEASURED. Whether a note overflows is a question for layout —
- * `scrollHeight > clientHeight` — and a character count is deterministic,
- * costs no layout read, and needs no width to have been resolved:
- * `--sidenote-width` narrows with the reader's text size, so there is no one
- * width to measure against in any case. It is wrong only at the boundary,
- * where it decides between a note set open and a note set open to within a
- * line of its end.
- *
- * The lemma counts because it is set in the same column, in bold, ahead of
- * the gloss.
- */
-export function marginOverflows(note: { lemma?: string; text?: string } | undefined): boolean {
-	if (!note) return false;
-	return (note.lemma?.length ?? 0) + (note.text?.length ?? 0) > MARGIN_CLAMP_CHARS;
-}
-
-/**
  * How much apparatus a floating card holds before it stops being one.
  *
  * THE THRESHOLD IS THE CARD'S OWN ARITHMETIC, not a taste. `.note-popover`
@@ -262,11 +187,12 @@ export function marginOverflows(note: { lemma?: string; text?: string } | undefi
  * per-apparatus rule: what decides is how long THIS note is, and the same
  * edition prints both a phrase and an essay.
  *
- * IT IS NOT `MARGIN_CLAMP_CHARS`, and the two must not be merged. That one
- * asks how much a 17rem gutter column sets before a float outruns the line
- * that raised it; this one asks how much a card holds before it covers the
- * text it points at. Different columns, different questions, and the answers
- * are five times apart.
+ * IT IS THE ONLY LENGTH THRESHOLD LEFT, and it inherited a job. There was a
+ * second — `MARGIN_CLAMP_CHARS`, 170 — which asked how much of a gloss a 17rem
+ * gutter column sets before a float outruns the line that raised it. The two
+ * were kept five times apart on purpose, because they asked different
+ * questions about different columns; the margin question stopped being asked
+ * on 2026-09-01, when an edition's gloss left the gutter for good.
  */
 export const CARD_MAX_CHARS = 900;
 
@@ -308,9 +234,9 @@ export function overflowsCard(chars: number): boolean {
 export const COMMENTARY_MARKER = '\u2020';
 
 /**
- * The whole of a note the column could only set the head of.
+ * The whole of a note that is past what a card holds.
  *
- * BOTH APPARATUSES CLAMP NOW, so the dialog they open is one object rather
+ * BOTH LONG-NOTE APPARATUSES OPEN ONE, so the dialog is one object rather
  * than two copies of six lines — `Sidenote` for an edition's own gloss,
  * `CommentaryGloss` for a commentary's. It is `NoteCard`'s argument one shape
  * further down: a `.svelte.ts` module can hold reactive state on a
@@ -407,15 +333,19 @@ export class NoteCard extends AnchoredPanel {
 	 * Whether this note ALSO appears in the margin, which every gate below
 	 * turns on.
 	 *
-	 * Two of the three apparatuses set a copy beside the line when there is
-	 * room, so their marker means one thing above the breakpoint and another
-	 * below it. A COMMENTARY SETS NO COPY AT ANY WIDTH: Haydock annotates
-	 * 20,814 verses and a chapter of him runs to 52,496 characters, so a
-	 * gutter column of it stopped being apparatus beside a text and became a
-	 * text with Scripture in the margin. Its mark therefore opens the card
-	 * everywhere, and every question below — does a click open something, does
-	 * the pointer, is `aria-expanded` a claim we can keep, is there a note in
-	 * the gutter to light — has the same answer at every width.
+	 * ONE OF THE THREE APPARATUSES DOES, and it is the one whose note is a
+	 * remark: `CitationDisclosure`, where a footnote's source runs 26
+	 * characters. Its marker therefore means one thing above the breakpoint and
+	 * another below it.
+	 *
+	 * THE OTHER TWO SET NO COPY AT ANY WIDTH, and both arrived here by the same
+	 * measurement. Haydock annotates 20,814 verses and a chapter of him runs to
+	 * 52,496 characters; Straubinger and Martini gloss a verse at 4,830 and
+	 * 10,243. A gutter column of either stopped being apparatus beside a text
+	 * and became a text with Scripture in the margin, so their marks open a
+	 * card or a dialog everywhere, and every question below — does a click open
+	 * something, does the pointer, is `aria-expanded` a claim we can keep, is
+	 * there a note in the gutter to light — has the same answer at every width.
 	 */
 	#marginCopy: boolean;
 
@@ -450,14 +380,13 @@ export class NoteCard extends AnchoredPanel {
 	 * length it stops being any of those — it covers the verse it points at,
 	 * and it scrolls, which is a card pretending to be a page. The site
 	 * already had the answer for a panel that has stopped being anchored to
-	 * anything, and it was already reachable from a long note in the margin:
-	 * the "read more" dialog. This is the same dialog, reached from the
-	 * marker, for a reader with no margin to read the head of the note in.
+	 * anything — `.dialog-bare` and the `.sheet-*` chrome in `menus.css` — and
+	 * this is that panel, reached from the mark.
 	 *
 	 * FALSE WHEREVER THERE IS A MARGIN COPY, because there the marker is not a
 	 * disclosure at all — the note is already beside the line and a click
-	 * lights it (`onClick`). The way to a long note's whole text there is the
-	 * ellipsis at the end of the clamped copy, which is the same dialog again.
+	 * lights it (`onClick`). Only `CitationDisclosure` has one, and it passes
+	 * no `modal` thunk, so this is false there twice over.
 	 */
 	get asModal(): boolean {
 		return !this.#inMargin && (this.#tooLong?.() ?? false);

@@ -255,7 +255,6 @@ export const fr: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Note',
 	'bible.noteMissing': 'Cette note manque dans le corpus',
-	'bible.readMore': 'Lire la suite',
 	'bible.chapterArgument': 'Argument',
 	'ccc.readFullChapter': 'Lire tout le chapitre',
 	'ccc.noParagraphNumber': 'Pas de numéro de paragraphe dans ce corpus',

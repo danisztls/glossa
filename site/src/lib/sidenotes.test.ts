@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
 	chapterNoteOffsets,
 	COMMENTARY_MARKER,
-	marginOverflows,
-	MARGIN_CLAMP_CHARS,
 	noteLetter,
 	overflowsCard,
 	CARD_MAX_CHARS
@@ -69,53 +67,7 @@ describe('chapterNoteOffsets', () => {
 	});
 });
 
-describe('marginOverflows', () => {
-	const note = (chars: number, lemma?: string) => ({
-		marker: '1',
-		lemma,
-		text: 'x'.repeat(chars)
-	});
-
-	// What the margin was written for: a citation's source is 26 characters and
-	// Challoner glosses a verse in a sentence. Clamping a remark would be the
-	// change costing something and buying nothing.
-	it('sets a remark-length gloss open', () => {
-		expect(marginOverflows(note(26))).toBe(false);
-		expect(marginOverflows(note(100))).toBe(false);
-	});
-
-	// And the one it was not: Straubinger's median note is 248 characters, its
-	// ninetieth percentile 814, its longest 4,830.
-	it('clamps an essay-length one', () => {
-		expect(marginOverflows(note(248))).toBe(true);
-		expect(marginOverflows(note(4830))).toBe(true);
-	});
-
-	// The lemma is set in the same column, in bold, ahead of the gloss — so a
-	// note just under the limit with a long lemma is over it.
-	it('counts the lemma, which is set in the same column', () => {
-		expect(marginOverflows(note(MARGIN_CLAMP_CHARS))).toBe(false);
-		expect(marginOverflows(note(MARGIN_CLAMP_CHARS, 'And the judgment:'))).toBe(true);
-	});
-
-	// A token with no note behind it is a corpus bug the component renders a
-	// message for; there is nothing to clamp and nothing to disclose.
-	it('has nothing to say about a note that is not there', () => {
-		expect(marginOverflows(undefined)).toBe(false);
-	});
-});
-
 describe('overflowsCard', () => {
-	// The two thresholds answer different questions about different columns and
-	// must not converge: the margin asks how much a 17rem gutter sets before a
-	// float outruns the line that raised it, the card how much fits before a
-	// panel covers the text it points at. Five times apart, and a change that
-	// made them equal would silently turn every clamped margin note into a
-	// modal.
-	it('is far above the margin clamp', () => {
-		expect(CARD_MAX_CHARS).toBeGreaterThan(MARGIN_CLAMP_CHARS * 4);
-	});
-
 	// A card is a shape for a paragraph. Challoner's median note is 146
 	// characters and his ninety-ninth percentile 728; Haydock's median
 	// annotated verse is 245.

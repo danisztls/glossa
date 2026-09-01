@@ -888,9 +888,11 @@ arrangement stops.** That arrangement assumes an apparatus smaller than the text
 on; Haydock annotates 20,814 verses and a chapter of him runs to 4,690 characters at the
 median against 52,496 at its worst, so the gutter column was neither beside the text nor
 bounded by it — and below the breakpoint, in the flow, it made the Scripture an
-interruption in the commentary. The mark opens a card instead, at every width. This is not
-a retreat from the arrangement the site is named for: an edition's own notes and a
-citation's source still take the margin, because those are remarks and this is a book.
+interruption in the commentary. The mark opens a card instead, at every width. That looked
+at the time like the exception rather than the rule — an edition's own notes and a
+citation's source still took the margin, because those were remarks and this was a book.
+Two days later the same measurement caught up with an edition's own notes, and only the
+citation's source is left there (below, 2026-09-01).
 
 **The one thing a second apparatus must not do is print the first one twice.** Haydock
 published Challoner's text with Challoner's notes absorbed into his catena: 1,399 of the
@@ -1914,6 +1916,39 @@ know is whether to render a way to the rest at all. `--sidenote-width` narrows w
 reader's text size, so there is no one width to have measured against in any case. A
 character count is wrong only at the boundary, where it decides between a note set open
 and a note set open to within a line of its end.
+
+**An edition's gloss left the margin, and the two apparatuses over a Bible now behave
+alike** (2026-09-01). Everything above about the clamp is history, and what dated it is
+the corpus rather than a change of taste: `.margin-note` was calibrated on Challoner at
+the length of a sentence, and the editions ingested since gloss a verse in an essay. The
+clamp kept the column anchored by cutting most of the apparatus to an incipit — 65% of
+Straubinger's notes and 84% of Martini's set only their first four lines — so the gutter
+held a page of openings, each with a way to the rest of itself. That is not the _Glossa
+Ordinaria_ arrangement with long notes in it; it is a table of contents for an apparatus.
+Haydock's catena had already been kept out of the gutter for the same measurement, which
+left one apparatus over the Bible arranged one way and the next arranged another. So the
+gloss is reached the way the commentary is: the mark opens a card, or a dialog past
+`CARD_MAX_CHARS`, at every width. What that buys beyond the page being quieter is that the
+marker means ONE thing everywhere — `aria-expanded` is always a claim we can keep, a click
+always opens something, and there is no second control (the ellipsis) and no second state
+(the lit note) to explain.
+
+**A citation's source stays in the margin, and that asymmetry is the whole of the
+argument.** The reasoning above for putting it there is untouched: 26 characters on
+average across the Catechism's 3,698, wanted beside the line that quotes it, costing the
+text nothing and never clamped. What broke was never the arrangement — it was applying it
+to an apparatus longer than the text it hangs on. So `sidenoteRoom`, `.margin-note` and
+`CompareGrid`'s claim on the lane all stay, and the lane itself is still declared on every
+reading page, occupied or not, because that is what centres the reading column.
+
+**And the card is rendered even for a note that opens a dialog, because of PAPER.** A
+closed popover is `display: none` and a closed `<dialog>` holds nothing at all, so once
+the margin copy was gone the card was the only copy of the apparatus left in the document
+— and a printed chapter would have carried a column of markers pointing at nothing, which
+is exactly the silent loss `print.css` exists to prevent. It is set back into the flow
+under the line that raised it, in the shape `.margin-note` printed in. Rendering it only
+for the short notes would print most of the apparatus and drop the essays, which is the
+worse half of both answers.
 
 **An apparatus must not move the text, and that includes the apparatus saying "this
 one".** The highlight lit on a marker was a background plus `padding-inline`, which is

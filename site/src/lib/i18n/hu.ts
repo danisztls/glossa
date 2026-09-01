@@ -257,7 +257,6 @@ export const hu: Dictionary = {
 	'bible.verseAbbrev': 'v.',
 	'bible.note': 'Jegyzet',
 	'bible.noteMissing': 'Ez a jegyzet hiányzik a korpuszból',
-	'bible.readMore': 'Bővebben',
 	'bible.chapterArgument': 'Tartalom',
 	'ccc.readFullChapter': 'A teljes fejezet elolvasása',
 	'ccc.noParagraphNumber': 'Ebben a korpuszban nincs szakaszszám',

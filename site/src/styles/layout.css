@@ -77,9 +77,11 @@
 	/*
 	 * The margin the apparatus is set in — `.margin-note` below, which floats
 	 * a note out of the reading column by exactly
-	 * `--sidenote-width + --sidenote-gap`. An annotated edition's gloss
-	 * (`Sidenote.svelte`) and a numbered footnote's source
-	 * (`CitationDisclosure.svelte`) both go there.
+	 * `--sidenote-width + --sidenote-gap`. A numbered footnote's source
+	 * (`CitationDisclosure.svelte`) goes there; an annotated edition's gloss
+	 * did too until 2026-09-01, and the lane is declared whether or not the
+	 * page has anything to put in it, which is what keeps the reading column
+	 * on the page's midline everywhere.
 	 *
 	 * INLINE-START, so it does not fight `.reading-aside` for the end margin.
 	 * Held here rather than in the component because the width is a fact about
@@ -221,26 +223,16 @@
 	);
 
 	/*
-	 * HOW MANY LINES OF A GLOSS THE MARGIN SETS BEFORE IT IS A PREVIEW — the
-	 * clamp `Sidenote.svelte` applies, and the same decision as
-	 * `MARGIN_CLAMP_CHARS` in `sidenotes.svelte.ts` written in the other unit.
-	 * 170 characters is about four lines of this column (17rem of 0.78rem sans
-	 * is near 43 characters a line), and the two numbers have to move
-	 * together: the count decides whether the note renders a way to its rest,
-	 * the lines decide what the reader sees, and a clamp shorter than the
-	 * count cuts a note off with nothing under it to open. It was 130 against
-	 * a 13rem column, and widening the column without moving it would have put
-	 * a "Read more" under notes the four lines now set whole.
-	 *
-	 * FOUR, AFTER TWELVE AND THEN SIX. A margin holds a remark; a gloss the
-	 * reader has to scroll past to reach the next one has stopped being one,
-	 * and at these editions' lengths each larger number still ran the gutter
-	 * column past the chapter it hangs beside. The tail is one press away.
-	 *
-	 * Here rather than in the component because the arithmetic behind it is
-	 * this file's — it is the width above, read as a measure.
+	 * THERE IS NO `--sidenote-clamp` HERE ANY MORE, and its absence is worth a
+	 * line. It said how many lines of a gloss the margin set before the note
+	 * became a preview — four, after twelve and then six, each cut because the
+	 * gutter column was still running past the chapter it hung beside — paired
+	 * with `MARGIN_CLAMP_CHARS` in `sidenotes.svelte.ts`, the same decision
+	 * written as a character count. On 2026-09-01 the gloss left the margin
+	 * altogether and the pair went with it. What is left in the lane is a
+	 * citation's source, which the four lines always set whole: every one of
+	 * the Catechism's 3,698.
 	 */
-	--sidenote-clamp: 4;
 }
 
 /* Index pages use the same wide-screen grid as readers, but their full

@@ -30,6 +30,11 @@
 	`aria-expanded` is always a claim we can keep, and there is never a note in
 	the gutter to light.
 
+	IT WAS THE ONLY APPARATUS ARRANGED THIS WAY FOR TWO DAYS. `Sidenote` took
+	the same measurement on 2026-09-01 — Straubinger and Martini gloss a verse
+	in an essay too — and an edition's own notes left the gutter after this one
+	did. The margin now holds a citation's source and nothing else.
+
 	THE LABEL AT THE HEAD OF EACH NOTE IS THE ATTRIBUTION, NOT A LETTER.
 	`Sidenote` letters its notes a, b, c down the chapter (`noteLetter`), and a
 	second lettered run would print two different "a"s with nothing to say which
