@@ -77,6 +77,12 @@ all eleven entry points offline and diffing the corpus byte for byte.
 from __future__ import annotations
 
 from .absent import AbsentSources
+from .binaries import (
+    BinaryMissingError,
+    binary_identity,
+    binary_path,
+    run_binary,
+)
 from .book_forms import BOOK_FORMS_PATH, book_form_pattern, book_forms
 from .captured import captured_at, record_capture, source_captured_at
 from .corrections import (
@@ -149,6 +155,7 @@ __all__ = [
     "PARSE_BASELINE_PATH",
     "TRANSLATIONS_CHECKED_PATH",
     "AbsentSources",
+    "BinaryMissingError",
     "CorrectionDriftError",
     "FetchError",
     "FetchPolicy",
@@ -157,6 +164,8 @@ __all__ = [
     "WholesaleDivergence",
     "apply_overrides",
     "apply_verse_corrections",
+    "binary_identity",
+    "binary_path",
     "book_form_pattern",
     "book_forms",
     "build_root",
@@ -184,6 +193,7 @@ __all__ = [
     "require_all_applied",
     "require_corpus",
     "roman_to_int",
+    "run_binary",
     "sample_run_writes_nothing",
     "source_captured_at",
     "to_vulgate",

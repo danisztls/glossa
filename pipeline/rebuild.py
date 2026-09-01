@@ -52,8 +52,8 @@ of the recipe, which is a weaker guarantee than it looks: `--offline` is one
 field on `common.Fetcher` and adding the flag to a scraper that lacks it is a
 few lines. Until then, the counter each stage prints is the evidence.
 
-WHAT `--changed-only` COVERS. A stage is skipped when four fingerprints all
-match the ones recorded the last time it ran and exited 0:
+WHAT `--changed-only` COVERS. A stage is skipped when every fingerprint
+matches the one recorded the last time it ran and exited 0:
 
   - `code`: the exact import closure of its script, by CONTENT. Computed by
     reading the imports, not by a table -- `bible/cpdv.py` reaches
@@ -68,6 +68,12 @@ match the ones recorded the last time it ran and exited 0:
   - `outputs`: the size and mtime of everything under this stage's own work
     directories, so a `build/` that was deleted, edited or half-written by an
     interrupted run cannot be skipped over.
+  - `readers`: the CONTENT of every external program the stage shells out to
+    (`Stage.binaries` -- `avifenc` for dore, poppler and MuPDF for the
+    Compendium's PDF editions). Only stages that name one carry this part.
+    A system binary is an input none of the four above can see, and unlike
+    the PEP 723 case below it is upgraded by the package manager rather than
+    deliberately, so nobody is present to think "that changed a parse".
 
 WHAT IT DOES NOT COVER: the Python environment. `uv` resolves each script's
 PEP 723 header at run time, and a `bs4` or `httpx` upgrade can change a parse
@@ -153,7 +159,7 @@ SCRAPERS = PIPELINE / "scrapers"
 sys.path.insert(0, str(SCRAPERS))
 
 import vatican_docs as V  # noqa: E402
-from common import build_root, corpus_dir, raw_root  # noqa: E402
+from common import binary_identity, build_root, corpus_dir, raw_root  # noqa: E402
 
 #: Every language `vatican_docs` has division labels for. Derived rather than
 #: listed; see PHASE 2'S LANGUAGES above.
@@ -199,6 +205,13 @@ class Stage:
     #: to ask for over a corpus that already holds the annotated edition, and
     #: the scraper itself dies with the path it tried when it does not.
     needs: tuple[str, ...] = field(default_factory=tuple)
+    #: External programs this stage's parse depends on, by name on PATH.
+    #: Folded into the fingerprint as `readers`, because a system binary is
+    #: an input none of the other four can see and is upgraded by the package
+    #: manager rather than deliberately -- so unlike the PEP 723 case that
+    #: `--force` covers, nobody is present to think "that changed a parse".
+    #: See `common/binaries.py` for why identity is the file's content.
+    binaries: tuple[str, ...] = field(default_factory=tuple)
 
     def argv(self, *, images: bool) -> list[str]:
         args = list(self.args) + (list(self.heavy) if images else [])
@@ -211,7 +224,13 @@ class Stage:
 # With --jobs that order is a preference rather than a schedule; see `plan`.
 STAGES: tuple[Stage, ...] = (
     Stage("ccc", "catechism", "ccc/ccc.py", outputs=("ccc.*",)),
-    Stage("compendium", "catechism", "ccc/compendium.py", outputs=("compendium.*",)),
+    Stage(
+        "compendium",
+        "catechism",
+        "ccc/compendium.py",
+        outputs=("compendium.*",),
+        binaries=("mutool", "pdftotext"),
+    ),
     Stage("prayers", "prayers", "prayers.py", outputs=("prayer.*",)),
     Stage("cpdv", "bible", "bible/cpdv.py", ("--offline",), ("bible.cpdv.*",)),
     Stage(
@@ -288,7 +307,14 @@ STAGES: tuple[Stage, ...] = (
         ("encyclical.*", "exhortation.*"),
     ),
     # `plates.json` alone is under a second; --derive is the image pipeline.
-    Stage("dore", "images", "dore/dore.py", outputs=("dore.*",), heavy=("--derive",)),
+    Stage(
+        "dore",
+        "images",
+        "dore/dore.py",
+        outputs=("dore.*",),
+        heavy=("--derive",),
+        binaries=("avifenc",),
+    ),
 )
 
 
@@ -435,13 +461,20 @@ def outputs_digest(stage: Stage, root: Path) -> str:
 
 
 def fingerprint(stage: Stage, images: bool, shared: dict[str, str]) -> dict[str, str]:
-    """The four parts, named so that `-v` can say which one moved."""
-    return {
+    """The parts, named so that `-v` can say which one moved.
+
+    `readers` is absent for a stage that shells out to nothing, which is most
+    of them -- a constant empty digest on every stage would be noise in `-v`.
+    """
+    prints = {
         **shared,
         "code": content_digest(import_closure(SCRAPERS / stage.script)),
         "argv": _digest([" ".join(stage.argv(images=images))]),
         "outputs": outputs_digest(stage, build_root()),
     }
+    if stage.binaries:
+        prints["readers"] = _digest(binary_identity(b) for b in stage.binaries)
+    return prints
 
 
 def shared_inputs() -> dict[str, str]:
