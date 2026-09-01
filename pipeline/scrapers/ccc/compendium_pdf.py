@@ -69,6 +69,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from common import CorrectionDriftError
 from common.pdf import (
     Line,
     body_columns,
@@ -121,6 +122,14 @@ class PdfEdition:
     #: them. Where a thing is printed is a fact about the page; how big it is
     #: happens to correlate.
     furniture_strip: float = 0.09
+    #: Rejoin an initial the reader split off. poppler tokenises by spacing,
+    #: and this edition sets its chapter headings with a large capital
+    #: followed by small capitals, so the gap after the initial reads as a
+    #: word break: "ГЛАВА ПЕРВАЯ" arrives as "Г ЛАВА ПЕРВАЯ" and stops
+    #: matching the division table. Applied only to a line that is entirely
+    #: uppercase -- a heading -- so ordinary prose, where a one-letter Russian
+    #: preposition really does precede a word, is untouched.
+    repair_small_caps: bool = False
     #: The same at the FOOT, and zero by default because both editions read so
     #: far put every piece of furniture at the top. It was symmetric with the
     #: head for one revision, and the cost was silent: the Indonesian runs its
@@ -156,6 +165,23 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
     # and once it is that the line-final ones are ordinary soft hyphens that
     # `dehyphenate` closes up and the rest are ordinary dashes.
     "be": PdfEdition(backend="mupdf", furniture_strip=0.085, glyphs={"\ufffd": "-"}),
+    # THE ONLY POPPLER EDITION, and the only two-up one. Its fonts carry no
+    # `ToUnicode` map: MuPDF refuses every glyph and answers U+FFFD, while
+    # poppler passes the underlying byte through, and the custom encoding is
+    # cp1251 -- so the text is recovered by re-decoding rather than lost.
+    # poppler reports no font metadata, which is why nothing here may require
+    # `weight` or `size`.
+    #
+    # It is also imposed two pages to a sheet, so its 109 sheets are 218 book
+    # pages; read as sheets its running heads come out as "24 ... 25" on one
+    # line and half its questions disappear.
+    "ru": PdfEdition(
+        backend="poppler",
+        decode=_cp1251,
+        two_up=True,
+        furniture_strip=0.17,
+        repair_small_caps=True,
+    ),
 }
 
 
@@ -192,6 +218,18 @@ MARGIN_REF_RE = re.compile(r"^\d[\d,;:.‐‑–—\s-]*$")
 MAX_HEADING_WORDS = 4
 
 
+#: A single letter standing alone before a word, in a line that is all
+#: capitals -- the signature of a small-capped initial the reader split off.
+_SMALL_CAP_SPLIT = re.compile(r"\b(\w) (\w{2,})")
+
+
+def _rejoin_initial(text: str) -> str:
+    stripped = text.strip()
+    if not stripped or stripped != stripped.upper():
+        return text
+    return _SMALL_CAP_SPLIT.sub(r"\1\2", text)
+
+
 @dataclass
 class PdfPage:
     n: int
@@ -208,12 +246,14 @@ def read_edition(path: Path, ed: PdfEdition) -> list[PdfPage]:
     lines = read_lines(path, ed.backend)
     if ed.decode is not None:
         lines = [ln.with_text(ed.decode(ln.text)) for ln in lines]
+    if ed.repair_small_caps:
+        lines = [ln.with_text(_rejoin_initial(ln.text)) for ln in lines]
     lines = remap(lines, ed.glyphs)
+    boxes = page_boxes(path)
+    height = boxes[0].height
     if ed.two_up:
-        boxes = {b.page: b.width / 2 for b in page_boxes(path)}
-        lines = split_pages(lines, boxes)
+        lines = split_pages(lines, {b.page: b.width / 2 for b in boxes})
     bands = body_columns(lines)
-    height = page_boxes(path)[0].height
     pages: list[PdfPage] = []
     for n in sorted({ln.page for ln in lines}):
         on_page = [ln for ln in lines if ln.page == n]
@@ -222,6 +262,37 @@ def read_edition(path: Path, ed: PdfEdition) -> list[PdfPage]:
         margin = merge_runs([ln for ln in on_page if in_margin(ln, bands)])
         pages.append(PdfPage(n, body, _refs_only(margin, height, ed)))
     return pages
+
+
+def apply_pdf_corrections(
+    pages: list[PdfPage], corrections: list[dict], lang: str
+) -> list[dict]:
+    """Pre-parse corrections against reconstructed lines.
+
+    The same contract the HTML path holds itself to -- exact substring, and
+    drift is fatal -- moved to the only string a PDF edition has: a line, once
+    the reader has run and the columns are split. An entry carrying a
+    `resolution` is documented rather than applied.
+    """
+    applied: list[dict] = []
+    for c in corrections:
+        if c.get("resolution"):
+            continue
+        if c.get("field") != "extracted_text":
+            continue
+        hits = 0
+        for page in pages:
+            for i, line in enumerate(page.body):
+                if c["from"] in line.text:
+                    page.body[i] = line.with_text(line.text.replace(c["from"], c["to"]))
+                    hits += 1
+        if not hits:
+            raise CorrectionDriftError(
+                f"{lang}: correction {c['id']}: `from` text not found in the "
+                "extracted page -- the reader changed, or the correction is wrong"
+            )
+        applied.append(c)
+    return applied
 
 
 def _label_of(line: Line, match_label) -> tuple[str, int | None] | None:
@@ -488,6 +559,10 @@ def _refs_for(
 #: verbatim into `notice`, which is free text. Nothing is dropped and no
 #: schema moves.
 PDF_COPYRIGHT: dict[str, str] = {
+    "ru": (
+        "© Copyright 2005 — Libreria Editrice Vaticana; "
+        "© Культурный центр «Духовная библиотека», 2007"
+    ),
     "be": (
         "© Copyright 2005 — Libreria Editrice Vaticana; "
         "© Канферэнцыя Каталіцкіх Біскупаў у Беларусі, 2010"

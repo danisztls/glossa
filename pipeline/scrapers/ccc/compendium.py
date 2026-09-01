@@ -125,6 +125,8 @@ from common import (
 )
 from compendium_pdf import (
     PDF_EDITIONS,
+    apply_pdf_corrections,
+    pdf_copyright,
     process_pdf_body,
     read_edition,
 )
@@ -1217,6 +1219,30 @@ _LT_ORDINALS = {
     "PENKTAS": 5,
 }
 
+#: Russian, like Byelorussian, declines the ordinal to its noun -- ЧАСТЬ and
+#: ГЛАВА feminine, РАЗДЕЛ masculine -- and is the one edition of the fourteen
+#: that puts the ordinal BEFORE the noun for its sections and after it for
+#: its parts and chapters.
+#:
+#: WRITTEN IN THE FOLDED FORM, which for Russian removes two diacritics and
+#: not one: `fold` strips the diaeresis from Ё (ЧЕТВЁРТАЯ -> ЧЕТВЕРТАЯ) and
+#: also the breve from Й, so ПЕРВЫЙ compares as ПЕРВЫИ. Spelling the masculine
+#: ordinals the way Russian actually writes them matched nothing at all, and
+#: the failure was quiet: the parts and chapters still came out, and only the
+#: eight sections were missing from the tree.
+_RU_ORDINALS = {
+    "ПЕРВАЯ": 1,
+    "ПЕРВЫИ": 1,
+    "ВТОРАЯ": 2,
+    "ВТОРОИ": 2,
+    "ТРЕТЬЯ": 3,
+    "ТРЕТИИ": 3,
+    "ЧЕТВЕРТАЯ": 4,
+    "ЧЕТВЕРТЫИ": 4,
+    "ПЯТАЯ": 5,
+    "ПЯТЫИ": 5,
+}
+
 #: Byelorussian declines its ordinal to the division noun: ЧАСТКА and ГЛАВА
 #: are feminine, РАЗДЗЕЛ masculine. Written in the folded form `label_matcher`
 #: compares against, which is why ЧАЦВЁРТАЯ appears here as ЧАЦВЕРТАЯ -- `fold`
@@ -1357,6 +1383,14 @@ _ORDINAL_LABELS: dict[str, tuple[dict[str, int], list[tuple[str, str]]]] = {
             ("part", r"^(PIRMA|ANTRA|TRECIA|KETVIRTA|PENKTA)\s+DALIS\b"),
             ("section", r"^(PIRMAS|ANTRAS|TRECIAS|KETVIRTAS|PENKTAS)\s+SKYRIUS\b"),
             ("chapter", r"^(PIRMAS|ANTRAS|TRECIAS|KETVIRTAS|PENKTAS)\s+POSKYRIS\b"),
+        ],
+    ),
+    "ru": (
+        _RU_ORDINALS,
+        [
+            ("part", r"^ЧАСТЬ\s+(ПЕРВАЯ|ВТОРАЯ|ТРЕТЬЯ|ЧЕТВЕРТАЯ|ПЯТАЯ)\b"),
+            ("section", r"^(ПЕРВЫИ|ВТОРОИ|ТРЕТИИ|ЧЕТВЕРТЫИ|ПЯТЫИ)\s+РАЗДЕЛ\b"),
+            ("chapter", r"^ГЛАВА\s+(ПЕРВАЯ|ВТОРАЯ|ТРЕТЬЯ|ЧЕТВЕРТАЯ|ПЯТАЯ)\b"),
         ],
     ),
     "sv": (
@@ -1577,6 +1611,21 @@ LANG_CONFIG = {
         "short_title": "Кампендый",
         "edition": "2010, Канферэнцыя Каталіцкіх Біскупаў у Беларусі (PDF)",
     },
+    "ru": {
+        "pdf": PDF_EDITIONS["ru"],
+        "notes": (
+            (
+                "Published as a PDF by the Cultural Centre 'Spiritual Library', not as "
+                "HTML on vatican.va. The only edition read with poppler and the only one "
+                "imposed two pages to a sheet: its fonts carry no ToUnicode map, so MuPDF "
+                "refuses every glyph while poppler passes the byte through, and the "
+                "custom encoding is cp1251."
+            ),
+        ),
+        "title": "Компендиум Катехизиса Католической Церкви",
+        "short_title": "Компендиум",
+        "edition": "2007, Культурный центр «Духовная библиотека» (PDF)",
+    },
     "id": {
         "pdf": PDF_EDITIONS["id"],
         "notes": (
@@ -1638,7 +1687,14 @@ for _lang, _cfg in LANG_CONFIG.items():
 #: the mirror actually served (CLAUDE.md, corrections vs overrides); the field
 #: names what kind of text the edit is against, so a correction cannot quietly
 #: be applied somewhere its evidence does not cover.
-_CORRECTION_FIELDS = frozenset({"heading_html", "refs_html"})
+#: `extracted_text` is the PDF path's analogue of the two HTML fields, and it
+#: is applied at a later point than they are: an HTML edition is one fetched
+#: string that can be edited before anything looks at it, while a PDF has no
+#: such string until the reader has run and the columns are split. So a
+#: correction's `from` is matched against a reconstructed LINE, which is
+#: downstream of this scraper's own joining and dehyphenation -- keep those
+#: rules stable, or a filed correction goes stale without the source moving.
+_CORRECTION_FIELDS = frozenset({"heading_html", "refs_html", "extracted_text"})
 
 
 def apply_corrections(
@@ -1726,12 +1782,11 @@ def run_scrape_pdf(lang: str, cfg: dict, fetcher: Fetcher) -> ScrapeState:
     if not path.is_file():
         raise SystemExit(f"{path} is not in the corpus; run `--capture {lang}` first")
     pages = read_edition(path, cfg["pdf"])
+    corrections = load_corrections(cfg["work_id"])
+    applied = apply_pdf_corrections(pages, corrections, lang)
     state = ScrapeState(refs_after=cfg["refs_after"], from_markup=False)
-    state.corrections = load_corrections(cfg["work_id"])
-    # Corrections against extracted text are not wired up yet; none is filed
-    # for a PDF edition, and `require_all_applied` in `validate` is what will
-    # say so loudly if one ever is.
-    state.corrections_applied = []
+    state.corrections = corrections
+    state.corrections_applied = applied
     process_pdf_body(pages, cfg, state)
     state.finalize_current()
     return state
@@ -2011,8 +2066,15 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
         "sources": [{"url": cfg["url"], "retrieved_at": retrieved_at}],
         "copyright": {
             "status": "copyrighted",
+            # The holder stays the Libreria Editrice Vaticana, which is what
+            # the whole corpus attributes to and what `static/works.json` and
+            # the JSON-LD `copyrightHolder` each carry exactly one of. The
+            # four PDF editions were made by a national bishops' conference
+            # under licence and print BOTH notices with their own ISBN and
+            # year, so the translator's notice goes verbatim into `notice`,
+            # which is free text. Nothing is dropped and no schema moves.
             "holder": COPYRIGHT_HOLDER,
-            "notice": COPYRIGHT_NOTICE,
+            "notice": pdf_copyright(lang, COPYRIGHT_NOTICE),
         },
         "notes": " ".join(notes),
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),

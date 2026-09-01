@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.ru-586-missing-period",
+    "locator": {
+      "question": 586
+    },
+    "field": "extracted_text",
+    "from": "586 Что означают слова",
+    "to": "586. Что означают слова",
+    "reason": "The printed edition omits the period after the question number, which every other question in this edition and every other edition prints. Without it the line is not a question at all and question 586 is absent from the parse.",
+    "evidence": "Page 186 of the PDF sets `586 Что означают слова «Сущий на небесах»?` between `585. В духе какого общения...` and `587. Какова структура...`, both of which carry the period. Only the punctuation is supplied; no word is added or changed.",
+    "added": "2026-09-01"
+  }
+]

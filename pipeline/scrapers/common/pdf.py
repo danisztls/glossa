@@ -240,13 +240,25 @@ def page_boxes(path: Path) -> list[PageBox]:
     raw = run_binary(["mutool", "pages", str(path)])
     text = _C0.sub("", raw.decode("utf-8", errors="replace"))
     boxes: list[PageBox] = []
-    for n, m in enumerate(
-        re.finditer(
-            r'<CropBox l="([\d.-]+)" b="([\d.-]+)" r="([\d.-]+)" t="([\d.-]+)"', text
+    for n, block in enumerate(text.split("<page ")[1:]):
+        m = re.search(
+            r'<CropBox l="([\d.-]+)" b="([\d.-]+)" r="([\d.-]+)" t="([\d.-]+)"', block
         )
-    ):
+        if not m:
+            continue
         left, bottom, right, top = (float(g) for g in m.groups())
-        boxes.append(PageBox(n, abs(right - left), abs(top - bottom)))
+        width, height = abs(right - left), abs(top - bottom)
+        # HONOUR /Rotate, because the two readers disagree without it.
+        # `mutool pages` prints the box as stored; poppler reports coordinates
+        # in the RENDERED space, with the rotation already applied. The
+        # Russian Compendium is stored 595x842 with `Rotate 270`, so it is
+        # really 842 wide -- and a two-up split taken at half the stored width
+        # falls at 297 in a spread whose gutter is at 421, cutting one book
+        # page in half lengthwise instead of separating two.
+        rotate = re.search(r'<Rotate v="(-?\d+)"', block)
+        if rotate and abs(int(rotate.group(1))) % 180 == 90:
+            width, height = height, width
+        boxes.append(PageBox(n, width, height))
     return boxes
 
 
@@ -410,38 +422,36 @@ def split_pages(lines: list[Line], at: dict[int, float]) -> list[Line]:
     for line in lines:
         cut = at.get(line.page)
         if cut is None:
-            out.append(
-                Line(
-                    line.page * 2,
-                    line.x0,
-                    line.y0,
-                    line.x1,
-                    line.y1,
-                    line.text,
-                    line.font,
-                    line.weight,
-                    line.style,
-                    line.size,
-                )
-            )
+            out.append(_moved(line, line.page * 2, 0.0))
             continue
         right = line.x0 >= cut
         shift = cut if right else 0.0
-        out.append(
-            Line(
-                line.page * 2 + (1 if right else 0),
-                line.x0 - shift,
-                line.y0,
-                line.x1 - shift,
-                line.y1,
-                line.text,
-                line.font,
-                line.weight,
-                line.style,
-                line.size,
-            )
-        )
+        out.append(_moved(line, line.page * 2 + (1 if right else 0), shift))
     return sorted(out, key=_reading_order)
+
+
+def _moved(line: Line, page: int, shift: float) -> Line:
+    """The same line on another page, shifted in x.
+
+    A helper rather than two `Line(...)` literals, because those were written
+    positionally and silently dropped `baseline` -- the field is last and
+    defaults to 0.0, so every split line claimed to sit at the top of its
+    page, the furniture strip swallowed the entire book, and the Russian
+    parsed to nothing at all without one error being raised.
+    """
+    return Line(
+        page=page,
+        x0=line.x0 - shift,
+        y0=line.y0,
+        x1=line.x1 - shift,
+        y1=line.y1,
+        text=line.text,
+        font=line.font,
+        weight=line.weight,
+        style=line.style,
+        size=line.size,
+        baseline=line.baseline,
+    )
 
 
 def body_column(lines: list[Line], *, quantile: float = 0.5) -> tuple[float, float]:
