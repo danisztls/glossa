@@ -315,9 +315,10 @@
  * focus event, two indicators, two hues, 2px apart.
  *
  * So it is RELOCATED and not removed — ultramarine border plus a soft halo of
- * the same colour, 8.49:1 against the field on light. `.doc-search` keeps the
- * global ring and this is not a divergence from it: that box is never
- * autofocused, so there the ring really is a response to a click.
+ * the same colour, 8.49:1 against the field on light. `.doc-search` took the
+ * same four declarations once the doubling was seen there too, which makes
+ * this the rule for a bordered text field rather than an exception: the
+ * autofocus argument above is what is special here, the double frame is not.
  *
  * The transparent outline is not decoration. `forced-colors` paints an
  * `outline` in the system focus colour, so high-contrast mode keeps a real

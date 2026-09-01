@@ -388,8 +388,28 @@
 		border-radius: var(--radius-md);
 	}
 
+	/*
+	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
+	 * field on this site now does — `JumpBox`'s and `.menu-filter`'s
+	 * (styles/menus.css) are the same four declarations, and that one records
+	 * the arithmetic. An offset rectangle drawn around an already-bordered
+	 * rounded field stacks into a double frame; this rule reddening the border
+	 * underneath the global ring made it two frames in two hues, 2px apart.
+	 *
+	 * WHAT DOES NOT CARRY OVER IS THE AUTOFOCUS ARGUMENT. The other two are
+	 * focused the moment their panel opens, so for them the ring is a resting
+	 * state; this box is focused by a click, and the ring really would be a
+	 * response. The doubling is the half that reaches it, since that is about
+	 * the field's own border and not about how focus arrived.
+	 *
+	 * The transparent outline is not decoration: `forced-colors` repaints an
+	 * `outline` in the system focus colour, where the halo below is dropped.
+	 */
 	.doc-search:focus-visible {
-		border-color: var(--color-accent);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		border-color: var(--color-apparatus);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
 	}
 
 	/* The subject cloud, and it is UNBORDERED on purpose. 58 outlined pills is

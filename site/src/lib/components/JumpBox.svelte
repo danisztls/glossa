@@ -626,8 +626,10 @@
 	}
 
 	/*
-	 * THE FOCUS INDICATOR MOVES INTO THE BORDER HERE, and this is the one place
-	 * on the site where overriding the global ring is right.
+	 * THE FOCUS INDICATOR MOVES INTO THE BORDER HERE, which is what every
+	 * bordered text field on the site does — `.menu-filter` (styles/menus.css)
+	 * and `/documenta`'s `.doc-search` carry these same four declarations.
+	 * This was written as the only such place and is now the first of three.
 	 *
 	 * `app.css`'s `:focus-visible` is a 2px outline at a 2px offset. That is
 	 * correct for buttons and links, which are focused in RESPONSE to the
