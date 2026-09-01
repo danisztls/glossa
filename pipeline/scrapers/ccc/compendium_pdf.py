@@ -122,6 +122,17 @@ class PdfEdition:
     #: them. Where a thing is printed is a fact about the page; how big it is
     #: happens to correlate.
     furniture_strip: float = 0.09
+    #: How this edition marks a quotation. The Compendium closes many answers
+    #: with a patristic or scriptural epigraph, and the ten HTML editions
+    #: store it as a `quote` block with its attribution split off; without
+    #: this it is folded into the answer's prose and the block is lost.
+    #:
+    #: "italic" is the signal in all three MuPDF editions -- measured, and the
+    #: only one available: the quote's indent is the SAME as the paragraph
+    #: first-line indent in every one of them, so geometry cannot tell them
+    #: apart. Empty means the edition's quotes are not detectable, which is
+    #: the Russian's case and is explained at its entry.
+    quote_style: str = ""
     #: Rejoin an initial the reader split off. poppler tokenises by spacing,
     #: and this edition sets its chapter headings with a large capital
     #: followed by small capitals, so the gap after the initial reads as a
@@ -144,7 +155,7 @@ class PdfEdition:
 #: today; the other three are declared so that the shape of what each needs
 #: is written down where the next person will look for it.
 PDF_EDITIONS: dict[str, PdfEdition] = {
-    "lt": PdfEdition(backend="mupdf"),
+    "lt": PdfEdition(backend="mupdf", quote_style="italic"),
     # MuPDF is not a preference here, it is the only reader that gives the
     # Indonesian text at all. This file still carries the ITALIAN original as
     # invisible text, and poppler emits it: page 19 comes out as "1. Qual e il
@@ -156,7 +167,7 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
     # Its running head sits at 9.2% of the page against Lithuanian's 6.8%, and
     # it reads "Bagian Satu", which is exactly what the part pattern matches;
     # left in, every page opened Part One again.
-    "id": PdfEdition(backend="mupdf", furniture_strip=0.10),
+    "id": PdfEdition(backend="mupdf", furniture_strip=0.10, quote_style="italic"),
     # ONE GLYPH IN ITS FONTS HAS NO USABLE MAPPING, and the two readers
     # disagree about how to say so: poppler writes U+0018 in the body face and
     # `%` in the italic, MuPDF writes U+FFFD in both -- 2,818 of them, 1,422
@@ -164,7 +175,12 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
     # embedded Type1C charset names the glyph `hyphenminus`, so it is U+002D,
     # and once it is that the line-final ones are ordinary soft hyphens that
     # `dehyphenate` closes up and the rest are ordinary dashes.
-    "be": PdfEdition(backend="mupdf", furniture_strip=0.085, glyphs={"\ufffd": "-"}),
+    "be": PdfEdition(
+        backend="mupdf",
+        furniture_strip=0.085,
+        glyphs={"\ufffd": "-"},
+        quote_style="italic",
+    ),
     # THE ONLY POPPLER EDITION, and the only two-up one. Its fonts carry no
     # `ToUnicode` map: MuPDF refuses every glyph and answers U+FFFD, while
     # poppler passes the underlying byte through, and the custom encoding is
@@ -181,6 +197,17 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
         two_up=True,
         furniture_strip=0.17,
         repair_small_caps=True,
+        # NO QUOTE STYLE, and it is a limit of the reader rather than of the
+        # edition. This book sets its epigraphs in italic like the other
+        # three, in `BPCABA+MSTT31c666` against the body's
+        # `BPCBHO+MSTT31c658` -- but `pdftotext -bbox-layout` reports no font
+        # at all, and the quote's indent is identical to the paragraph
+        # first-line indent (137.5 against a 123.3 measure), so nothing left
+        # in the stream distinguishes them. Its ~24 epigraphs are therefore
+        # stored as prose, which loses the block kind and the attribution but
+        # no text. The fix is a backend that reports a face: `pdftohtml -xml`
+        # gives a font id per run and its own page dimensions, and would
+        # replace `-bbox-layout` here rather than supplement it.
     ),
 }
 
@@ -397,11 +424,54 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
     #: while the line boundary is still there, which is why the join happens
     #: here and not in `common/pdf.py`.
     buffer: list[str] = []
+    #: True while `buffer` holds a quotation rather than running prose.
+    quoting = [False]
+    #: The current answer's blocks, held back until it closes.
+    parts: list[tuple[str, str]] = []
 
     def flush() -> None:
-        if buffer and state.current is not None:
-            state.add_prose(_join_prose(buffer))
+        """Close the run of lines in hand, as one block."""
+        if buffer:
+            parts.append(("quote" if quoting[0] else "prose", _join_prose(buffer)))
         buffer.clear()
+
+    def emit() -> None:
+        """Hand the finished answer to `ScrapeState`.
+
+        ONLY A CLOSING QUOTATION IS A QUOTE BLOCK. Italic marks more than an
+        epigraph in these editions -- a Latin phrase inside a sentence
+        (`Fiat mihi secundum Verbum tuum`), a liturgical incipit, an
+        italic run-in sub-heading -- and taking every italic run gave the
+        Lithuanian 59 quote blocks against the Italian's 24. What separates
+        them is not the typography but the position: an epigraph CLOSES its
+        answer, and all 24 of the Italian's are the last block of theirs. An
+        italic run anywhere else is emphasis inside the prose, and goes back
+        into it -- `add_prose` merges consecutive prose blocks, so it rejoins
+        the sentence it came from.
+        """
+        flush()
+        # TRAILING HEADINGS COME OFF FIRST. What sits at the foot of an
+        # answer is often not part of it: the work's run-in SUB-HEADINGS
+        # ("Dangus ir žemė", "KAMI PERCAYA") introduce the questions that
+        # follow, and the HTML editions read them from `align="center"` and
+        # store them as `sub` nodes -- the Italian has 82. They also sit
+        # AFTER an epigraph where a chapter has both, so leaving them in
+        # demoted the epigraph out of last place and lost it: nine of the
+        # Indonesian's thirteen went that way.
+        subs: list[str] = []
+        while parts and _looks_like_sub(*parts[-1]):
+            subs.insert(0, parts.pop()[1])
+        for i, (kind, text) in enumerate(parts):
+            if state.current is None:
+                break
+            if kind != "quote" or i != len(parts) - 1 or not _starts_cleanly(text):
+                state.add_prose(text)
+            else:
+                state.add_quote(text)
+        parts.clear()
+        quoting[0] = False
+        for title in subs:
+            state.push_heading("sub", None, title)
 
     for page in pages:
         lines = page.body
@@ -422,7 +492,7 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
         # Flush rather than merely skip: the answer before the plate is
         # finished, and its text must not be joined to whatever follows.
         if not questions and not headings:
-            flush()
+            emit()
             continue
         i = 0
         while i < len(lines):
@@ -430,13 +500,13 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
             label = _label_of(line, match_label)
             if label is not None:
                 kind, n = label
-                flush()
+                emit()
                 title, i = _heading_title(lines, i)
                 state.push_heading(kind, n, title)
                 continue
             m = QUESTION_RE.match(line.text) if id(line) in starts else None
             if m:
-                flush()
+                emit()
                 # Collapse internal whitespace the same way the HTML path
                 # gets it for free: a run of spaces between two fragments is
                 # typography, not text, and `validate` rejects a stored
@@ -450,9 +520,104 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
                 i += 1
                 continue
             if state.current is not None:
+                quote = _is_quote(line, cfg["pdf"], buffer, quoting[0])
+                if quote != quoting[0]:
+                    flush()
+                    quoting[0] = quote
                 buffer.append(line.text.rstrip())
             i += 1
-    flush()
+    emit()
+
+
+#: A line that is nothing but a parenthesised phrase -- "(Santo Agustinus)",
+#: "(sv. Augustinas)". The editions set the epigraph in italic and its
+#: attribution in roman on the line after, so the attribution has to be pulled
+#: into the quote or `split_attribution` never sees it.
+_BARE_ATTRIBUTION = re.compile(r"^\s*[(\[][^()\[\]]{2,60}[)\]][.,;]?\s*$")
+
+#: What tells an epigraph from a run-in sub-heading, both of which these
+#: editions set in italic at the end of an answer: an epigraph is a QUOTATION
+#: and carries the marks to prove it. All 24 of the Italian edition's quote
+#: blocks contain one; none of its 82 sub-headings does.
+_QUOTE_MARKS = "«»„“”\u201c\u201d\u201e\u2039\u203a\"'"
+
+
+def _is_quotation(text: str) -> bool:
+    return any(c in text for c in _QUOTE_MARKS)
+
+
+#: A heading names a thing; an epigraph says something. LENGTH is what
+#: separates them, and the floor is the Italian edition's own: the shortest of
+#: its 24 quote blocks is 40 characters, and every run-in heading in this work
+#: is shorter than that.
+#:
+#: Quotation marks do NOT separate them, which is the trap: the Creed's
+#: article headings quote the Creed, so `„Amen“` and `Tikiu „šventųjų
+#: bendravimą“` carry marks and are headings all the same. Nor does final
+#: punctuation -- three of this work's sub-headings are questions ("Kaip ją
+#: švęsti?", "Kada ją švęsti?", "Kur ją švęsti?").
+_SUB_MAX_CHARS = 39
+
+
+def _looks_like_sub(kind: str, text: str) -> bool:
+    """Whether a block at the foot of an answer is really a run-in heading.
+
+    Two shapes, both the source's own typography: a short ITALIC run, or a
+    short line set entirely in CAPITALS. See `_SUB_MAX_CHARS` for why the
+    length is the discriminator and the two more obvious signals are not.
+    """
+    stripped = text.strip()
+    if not stripped:
+        return False
+    if kind == "quote":
+        # An italic run is an epigraph only if it is BOTH long enough and
+        # actually a quotation. Either test alone lets a heading through: the
+        # Creed's article headings carry marks ("Amen", "Tikiu „šventųjų
+        # bendravimą“") and three of the work's headings are longer than the
+        # floor ("Bažnyčia yra viena, šventa, visuotinė ir apaštališka").
+        return len(stripped) <= _SUB_MAX_CHARS or not _is_quotation(stripped)
+    if len(stripped) > _SUB_MAX_CHARS:
+        return False
+    return stripped == stripped.upper() and any(c.isalpha() for c in stripped)
+
+
+def _starts_cleanly(text: str) -> bool:
+    """Whether a run begins where a quotation or heading could begin.
+
+    `merge_runs` gives a line ONE style, taken from its widest fragment, so a
+    line that is half roman and half italic reads as whichever half is longer.
+    Where a quotation opens mid-line that is right; where it merely continues
+    one, the boundary falls inside a word and the block opens on a fragment --
+    Lithuanian Q435 came out as "šus į jį: Mylėk savo artimą...", the tail of
+    a hyphenated word. A real quotation or heading opens with an opening mark
+    or a capital.
+    """
+    head = text.lstrip()[:1]
+    return bool(head) and (head in _QUOTE_MARKS or head.isupper() or head.isdigit())
+
+
+def _is_quote(line: Line, ed: PdfEdition, buffer: list[str], quoting: bool) -> bool:
+    """Whether this line belongs to a quotation rather than to running prose.
+
+    Italic is the whole test where a font is reported, because the indent is
+    not available: these editions indent a quotation exactly as far as they
+    indent a paragraph's first line, so the two are geometrically identical.
+
+    THE ROMAN TAIL IS THE PART THAT NEEDS A RULE. A quotation's last line
+    carries the attribution and the editions set that line upright -- the
+    Byelorussian breaks a word across the boundary ("...знойдзе спа-" then
+    "кой у Табе» (св. Аўгустын)."), the Indonesian puts the attribution on a
+    line of its own. So a non-italic line continues an open quotation when the
+    quotation is unfinished (the previous line broke mid-word) or when the
+    line is nothing but a parenthesised name. Anything else ends it.
+    """
+    if not ed.quote_style:
+        return False
+    if line.italic:
+        return True
+    if not quoting or not buffer:
+        return False
+    return buffer[-1].rstrip().endswith("-") or bool(_BARE_ATTRIBUTION.match(line.text))
 
 
 def _join_prose(lines: list[str]) -> str:
