@@ -44,7 +44,6 @@ export const zh: Dictionary = {
 	'nav.socialDoctrine': '社会训导',
 	'socialDoctrine.landing.title': '教会社会训导汇编',
 	'socialDoctrine.landing.tagline': '教会关于社会生活的训导，共583个编号段落。',
-	'socialDoctrine.appendix': '附录',
 	'nav.prayers': '祈祷文',
 	'nav.bookmarks': '书签',
 	'nav.menu': '菜单',

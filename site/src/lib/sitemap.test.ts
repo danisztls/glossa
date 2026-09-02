@@ -19,7 +19,6 @@ const manifest: RouteManifest = {
 	compendiumChapters: [1],
 	socialDoctrine: [1],
 	socialDoctrineChapters: [1],
-	socialDoctrineAppendix: false,
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
 	summa: { i: [1, 2], suppl: [77] }

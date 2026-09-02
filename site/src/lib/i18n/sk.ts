@@ -38,7 +38,6 @@ export const sk: Dictionary = {
 	'nav.socialDoctrine': 'Sociálna náuka',
 	'socialDoctrine.landing.title': 'Kompendium sociálnej náuky Cirkvi',
 	'socialDoctrine.landing.tagline': 'Čo Cirkev učí o živote v spoločnosti, v 583 číslach.',
-	'socialDoctrine.appendix': 'Dodatok',
 	'nav.prayers': 'Modlitby',
 	'nav.bookmarks': 'Záložky',
 	'nav.menu': 'Ponuka',

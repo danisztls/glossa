@@ -958,6 +958,14 @@ export interface DocumentSection {
 	n: number;
 	blocks: CccBlock[];
 	citations: CccCitation[];
+	/** Unnumbered blocks the source prints ABOVE this section's number and
+	 *  under a heading of its own — the Compendium of the Social Doctrine's
+	 *  three part epigraphs and nothing else in the corpus today
+	 *  (docs/corpus-schema.md §Compendium of the Social Doctrine). They are
+	 *  not this paragraph's words, so they are a field of their own rather
+	 *  than the first of its `blocks`, which is where the parser had been
+	 *  putting them — at the END of the paragraph BEFORE the part. */
+	epigraph?: CccBlock[];
 	// No `related` (no marginal cross-reference apparatus in any document
 	// family sampled) and no `in_brief` (a CCC-only summarization device) --
 	// both deliberately absent rather than carried as permanently-empty

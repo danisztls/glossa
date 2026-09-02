@@ -20,7 +20,6 @@ export const de: Dictionary = {
 	'socialDoctrine.landing.title': 'Kompendium der Soziallehre der Kirche',
 	'socialDoctrine.landing.tagline':
 		'Was die Kirche über das Leben in der Gesellschaft lehrt, in 583 Nummern.',
-	'socialDoctrine.appendix': 'Anhang',
 	'nav.prayers': 'Gebete',
 	'nav.bookmarks': 'Lesezeichen',
 	'nav.menu': 'Menü',

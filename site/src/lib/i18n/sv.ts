@@ -19,7 +19,6 @@ export const sv: Dictionary = {
 	'nav.socialDoctrine': 'Sociallära',
 	'socialDoctrine.landing.title': 'Kompendium över kyrkans sociallära',
 	'socialDoctrine.landing.tagline': 'Vad kyrkan lär om livet i samhället, i 583 nummer.',
-	'socialDoctrine.appendix': 'Bilaga',
 	'nav.prayers': 'Böner',
 	'nav.bookmarks': 'Bokmärken',
 	'nav.menu': 'Meny',

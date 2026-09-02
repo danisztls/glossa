@@ -19,7 +19,6 @@ export const sl: Dictionary = {
 	'nav.socialDoctrine': 'Družbeni nauk',
 	'socialDoctrine.landing.title': 'Kompendij družbenega nauka Cerkve',
 	'socialDoctrine.landing.tagline': 'Kaj Cerkev uči o življenju v družbi, v 583 številkah.',
-	'socialDoctrine.appendix': 'Dodatek',
 	'nav.prayers': 'Molitve',
 	'nav.bookmarks': 'Zaznamki',
 	'nav.menu': 'Meni',

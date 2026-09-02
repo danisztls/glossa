@@ -45,7 +45,6 @@ export const uk: Dictionary = {
 	'socialDoctrine.landing.title': 'Компендіум соціального вчення Церкви',
 	'socialDoctrine.landing.tagline':
 		'Чого Церква вчить про життя в суспільстві — 583 пронумеровані розділи.',
-	'socialDoctrine.appendix': 'Додаток',
 	'nav.prayers': 'Молитви',
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',

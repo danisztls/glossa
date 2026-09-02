@@ -20,7 +20,6 @@ export const hu: Dictionary = {
 	'socialDoctrine.landing.title': 'Az Egyház társadalmi tanításának kompendiuma',
 	'socialDoctrine.landing.tagline':
 		'Amit az Egyház a társadalmi életről tanít, 583 számozott pontban.',
-	'socialDoctrine.appendix': 'Függelék',
 	'nav.prayers': 'Imádságok',
 	'nav.bookmarks': 'Könyvjelzők',
 	'nav.menu': 'Menü',

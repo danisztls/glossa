@@ -20,7 +20,6 @@ export const fr: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium de la doctrine sociale de l’Église',
 	'socialDoctrine.landing.tagline':
 		'Ce que l’Église enseigne sur la vie en société, en 583 numéros.',
-	'socialDoctrine.appendix': 'Annexe',
 	'nav.prayers': 'Prières',
 	'nav.bookmarks': 'Signets',
 	'nav.menu': 'Menu',

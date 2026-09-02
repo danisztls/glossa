@@ -23,7 +23,6 @@ export const en: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium of the Social Doctrine of the Church',
 	'socialDoctrine.landing.tagline':
 		'What the Church teaches about life in society, in 583 numbered paragraphs.',
-	'socialDoctrine.appendix': 'Appendix',
 	'nav.prayers': 'Prayers',
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',

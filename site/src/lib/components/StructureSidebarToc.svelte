@@ -213,6 +213,24 @@
 		 *  sidebar and distinguished nothing. The page that knows every row is
 		 *  borrowed says so in words instead (`summa.titlesFromEdition`). */
 		borrowedTitleLabel?: (lang: string) => string;
+		/**
+		 * Whether a printed division label may be replaced by the short form
+		 * whose NUMBER is derived from position — `CHAPTER FIVE` → `Ch. 5`.
+		 *
+		 * On by default, because that abbreviation is what makes a labelled
+		 * document tree fit a 17rem column (see THE ORDINAL MARKER above). Off
+		 * for the Compendium of the Social Doctrine, where it is not an
+		 * abbreviation but a different number: that work runs its twelve
+		 * chapters straight through three parts, so Chapter Five — the first
+		 * child of Part Two — came out `Ch. 1`, and its seven siblings were
+		 * numbered 1 to 7 under a heading that names none of them. Position
+		 * among tree siblings is the right basis wherever a part restarts its
+		 * chapter numbering (Gaudium et Spes does) and the wrong one wherever
+		 * it does not, and nothing in the tree says which. Where it is known,
+		 * the caller says so, and the label is printed as the source prints
+		 * it.
+		 */
+		deriveMarkers?: boolean;
 		/** Rows the PAGE renders a heading for even though they bound no
 		 *  numbered unit — a document's tail matter, whose text is unnumbered
 		 *  (docs/corpus-schema.md §appendix.json). Without this they fall to
@@ -233,7 +251,8 @@
 		outlineKinds,
 		anchorFor,
 		borrowedTitleLabel,
-		linkableAnchors
+		linkableAnchors,
+		deriveMarkers = true
 	}: Props = $props();
 
 	const roots = $derived(structure.filter((row) => row.depth === 0).map((row) => row.node));
@@ -280,7 +299,7 @@
 	<ol class="sidebar-toc-list toc-level">
 		{#each nodes as node, i (node.anchor ?? node.title + node.paragraphs.join('-'))}
 			{@const dt = displayTitle(node, lang)}
-			{@const label = marker(node, lang, nodes, i)}
+			{@const label = deriveMarkers ? marker(node, lang, nodes, i) : marker(node, lang)}
 			{@const anchor = node.paragraphs[0]}
 			{@const kids = outlineChildren(node, outlineKinds)}
 			{@const raw = rowState(node, currentN, outlineKinds)}

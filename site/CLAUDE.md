@@ -491,8 +491,8 @@ is reachable by hand; check the edge with `curl` and no headers at all.
 
 `type: 'social-doctrine'` (2026-09-02, §The Compendium of the Social Doctrine).
 That sentence is the whole specification: `sync-corpus.mjs`'s branch writes what
-the DOCUMENT branch writes (chunked `sections/`, `structure.json`,
-`appendix.json`, at paths the document readers already resolve) and registers
+the DOCUMENT branch writes (chunked `sections/` and `structure.json`, at paths
+the document readers already resolve) and registers
 what the CATECHISM branch registers (a number set, chapter anchors, an existence
 check). No second content tier, no second chunk stride, no second reader.
 
@@ -507,8 +507,28 @@ check). No second content tier, no second chunk stride, no second reader.
 - **`socialDoctrineOutline` drops the unanchored rows and a document's outline
   does not.** `buildDocumentOutline` gives a heading with no `before` a sentinel
   past the last paragraph (`documentTailNumber`) so a whole-work page can scroll
-  to it; routed rather than anchored, that sentinel is a link to a 404. The back
-  matter is on the landing page, where no address is implied.
+  to it; routed rather than anchored, that sentinel is a link to a 404. Nothing
+  shows that matter now — see the appendix bullet below.
+- **Every outline of this work leads into the CHAPTER, and only a paragraph
+  NUMBER leads to a paragraph** (`socialDoctrineNav.ts`, 2026-09-02). The index,
+  both sidebars and both breadcrumbs went four different ways before that
+  module: a reader following a table of contents is going somewhere to read, and
+  `/doctrina-socialis/{n}` is one paragraph out of a chapter of sixty. On the
+  index that is the row's TITLE; the range beside it keeps the citation address,
+  which is what a range is for.
+- **`socialDoctrineHeadingHref` omits `#s{n}` at a division's own start.** The
+  chapter page puts `id="s{n}"` on its INNER headings; the one that opens the
+  division is the page's `<h1>` and carries no such id, so the fragment would
+  name nothing and the browser would leave the reader at the previous page's
+  scroll offset.
+- **`marker()`'s short form (`Ch. 5`) is wrong for this work, and the sidebar
+  passes `deriveMarkers={false}`.** That form numbers a labelled heading by its
+  position among its TREE siblings; the Compendium runs its twelve chapters
+  straight through three parts, so Chapter Five — the first child of Part Two —
+  read `Ch. 1`, and its six siblings were numbered 2 to 7 in a table of contents.
+  Position is right wherever a part restarts its chapter numbering (Gaudium et
+  Spes does) and wrong wherever it does not, and nothing in the tree says which:
+  the caller that knows says so, and the label prints as the source prints it.
 - **The widest division opening at a chapter anchor is NOT the chapter.** The
   source prints `PART ONE` on a page of its own with no name beside it, opening
   at the same paragraph as Chapter One and running three times as far — so
@@ -522,16 +542,19 @@ check). No second content tier, no second chunk stride, no second reader.
   could never match. Neither failed: both took the `?? 0` fallback, so the
   landing page listed every chapter with one child repeating its own title and
   the chapter page printed its `<h1>` again as the first `<h2>` of its body.
-  `socialDoctrineDivisions` returns the depth now, and
-  `socialDoctrineOutlineWithDivisions` returns the tree and its divisions from
-  one build for the caller that needs both.
-- **`/doctrina-socialis/appendix` is the one address in this work with no
-  number in it**, because the letter of transmittal and the presentation carry
-  none. So `RouteManifest.socialDoctrineAppendix` is a boolean rather than a
-  list, and `parseHref` matches the literal before the numbered forms. It is a
-  reading address and NOT a `CHROME_PATH`: every word on the page is the
-  edition's, published in ten languages, and a chrome path would declare a
-  fourteen-language `hreflang` cluster over text that does not exist.
+  `socialDoctrineDivisions` returns the depth now.
+- **The front matter has no page and `appendix.json` is not shipped.**
+  `/doctrina-socialis/appendix` existed for a few hours on 2026-09-02 — the
+  letter of transmittal and the presentation, the one address in this work with
+  no number in it. It went because two prefatory documents are not what a reader
+  arrives at this work for. The corpus still holds them; the sync's branch says
+  why it leaves them there, and shipping the asset anyway would be a fetchable
+  file no route reads.
+- **The parts' epigraphs are on the section each part OPENS at, not on a
+  structure node** (`DocumentSection.epigraph`, docs/corpus-schema.md). Half the
+  editions have no part row to hang one on, so the chapter page tests its own
+  first paragraph for the field — true on exactly the three pages that open a
+  part, and it renders above the `<h1>`, which is where the book prints it.
 - **A new work must be added to `EditionMenu`'s `context()` or it has no
   edition picker, silently.** The Compendium of the Social Doctrine was a
   `WorkTypeKey`, `listEditions` answered for it, the store and the fallback

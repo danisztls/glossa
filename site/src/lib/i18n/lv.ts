@@ -41,7 +41,6 @@ export const lv: Dictionary = {
 	'nav.socialDoctrine': 'Sociālā mācība',
 	'socialDoctrine.landing.title': 'Baznīcas sociālās mācības kompendijs',
 	'socialDoctrine.landing.tagline': 'Ko Baznīca māca par dzīvi sabiedrībā, 583 numuros.',
-	'socialDoctrine.appendix': 'Pielikums',
 	'nav.prayers': 'Lūgšanas',
 	'nav.bookmarks': 'Grāmatzīmes',
 	'nav.menu': 'Izvēlne',

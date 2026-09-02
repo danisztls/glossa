@@ -17,26 +17,23 @@
 	 * whose job is to get a reader into the text". Folded away behind a
 	 * chevron, all five levels cost nothing.
 	 *
-	 * The unnumbered matter follows the outline: the letter of transmittal,
-	 * the presentation, the index of references, and whichever of the two
-	 * abbreviation tables this edition prints. None of that has an address —
-	 * it is what `appendix.json` holds — so this page is where it has a
-	 * reader.
+	 * EVERY ROW IS TWO DESTINATIONS. The title opens the division in
+	 * continuous prose and the range beside it opens the paragraph the row
+	 * starts at — `socialDoctrineNav.ts` carries the reasoning; in short, a
+	 * reader following a table of contents is going somewhere to READ, and a
+	 * page holding one paragraph out of a chapter of sixty is the citation
+	 * view, not that.
 	 */
 	import BookText from '@lucide/svelte/icons/book-text';
-	import {
-		getWork,
-		socialDoctrineAppendixUnits,
-		socialDoctrineOutlineWithDivisions,
-		socialDoctrineWorkId
-	} from '$lib/corpus';
+	import { getWork, socialDoctrineOutline, socialDoctrineWorkId } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import { DOCUMENT_OUTLINE_KINDS, workLink } from '$lib/components/indexToc';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
+	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
+	import { documentHeadingParts } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { StructureNode } from '$lib/types';
 
@@ -44,46 +41,33 @@
 	const workId = $derived(socialDoctrineWorkId(lang));
 	const work = $derived(getWork(workId));
 
-	/** The tree and its division rows together, so a row can be recognised as
-	 *  a division by identity — see that function's docblock for why two
-	 *  separate calls could not be. */
-	const outline = $derived(socialDoctrineOutlineWithDivisions(lang));
-	const divisionSpans = $derived(
-		new Map(outline.divisions.map((division) => [division.node, division]))
-	);
+	const outline = $derived(socialDoctrineOutline(lang));
 
 	/**
-	 * WHERE A ROW POINTS, which is not uniform — the same distinction
-	 * `catechismRows.ts` draws for the Catechism. A DIVISION opens a page of
-	 * its own (`/doctrina-socialis/caput/{n}`, the whole chapter in continuous
-	 * prose) and its chip carries the division's span, which is the span the
-	 * page actually renders. Every other heading is a heading INSIDE such a
-	 * page rather than a page, so it is addressed as the paragraph it opens at
-	 * — the same address the old list gave its second level, and the reading
-	 * page's own canonical one.
+	 * THE RANGE IS THE CITATION ADDRESS. Every chip opens the paragraph its
+	 * row starts at, whatever the row is: `¶20–59` beside a chapter and
+	 * `¶20–208` beside the part above it both lead to `/doctrina-socialis/20`,
+	 * because that is what a paragraph number means here. The extent is what
+	 * the chip is FOR — it says how much of the book the row covers — and the
+	 * number it opens with is the address it goes to.
 	 *
-	 * A `PART` row is deliberately in the second group even though it opens
-	 * where its first chapter does: the chapter page at that address covers
-	 * the chapter, not the part, and the chip beside it says so by carrying
-	 * the part's much wider range (CLAUDE.md — the widest division opening at
-	 * a chapter anchor is not the chapter).
+	 * The row's OWN span, never a division's: a `PART` row outruns the chapter
+	 * that opens where it does, and saying so is the point (CLAUDE.md — the
+	 * widest division opening at a chapter anchor is not the chapter).
 	 */
-	const links = $derived((node: StructureNode) => {
-		const division = divisionSpans.get(node);
-		const workTitle = t('socialDoctrine.landing.title');
-		return [
-			division
-				? workLink([division.from, division.to], {
-						href: (n) => hrefFor({ kind: 'socialDoctrineChapter', n }),
-						unit: '¶',
-						workTitle
-					})
-				: workLink(node.paragraphs, {
-						href: (n) => hrefFor({ kind: 'socialDoctrine', n }),
-						unit: '¶',
-						workTitle
-					})
-		];
+	const links = $derived((node: StructureNode) => [
+		workLink(node.paragraphs, {
+			href: (n) => hrefFor({ kind: 'socialDoctrine', n }),
+			unit: '¶',
+			workTitle: t('socialDoctrine.landing.title')
+		})
+	]);
+
+	/** And the title is the READING address: the chapter this heading is
+	 *  printed in, scrolled to the heading. */
+	const titleHref = $derived((node: StructureNode) => {
+		const at = node.paragraphs[0];
+		return Number.isFinite(at) ? socialDoctrineHeadingHref(lang, at as number) : undefined;
 	});
 
 	/**
@@ -115,11 +99,6 @@
 	};
 
 	const workColumns = $derived([{ label: t('nav.socialDoctrine'), icon: BookText }]);
-
-	/** Whether this edition prints the letter and the presentation at all —
-	 *  `csdc.sw` prints neither, and a row leading to an empty page is worse
-	 *  than no row. */
-	const hasAppendix = $derived(socialDoctrineAppendixUnits(lang) > 0);
 </script>
 
 <svelte:head>
@@ -141,39 +120,24 @@
 		<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
 	{/if}
 
-	{#if outline.roots.length > 0}
+	{#if outline.length > 0}
 		<StructureIndex
-			tree={outline.roots}
+			tree={outline}
 			{lang}
 			{links}
 			{workColumns}
 			{rank}
 			{heading}
+			{titleHref}
 			kinds={DOCUMENT_OUTLINE_KINDS}
 		/>
-	{/if}
-
-	<!-- THE LAST ROW OF THE TABLE OF CONTENTS, after Part Three. The source
-	     prints the letter and the presentation BEFORE its first paragraph, and
-	     they are shown after it here on purpose: a reader arriving at a work
-	     wants its shape first, and two prefatory documents standing between
-	     them and Part One is what the printed book can afford and a landing
-	     page cannot. Set as its own row rather than as a node in the tree,
-	     because it is not one — it bounds no paragraph and would have no range
-	     to put in the column. -->
-	{#if hasAppendix}
-		<a class="appendix-row" href={hrefFor({ kind: 'socialDoctrineAppendix' })}>
-			<span class="name">{t('socialDoctrine.appendix')}</span>
-			<span class="arrow" aria-hidden="true">→</span>
-		</a>
 	{/if}
 </div>
 
 <style>
 	/* Wider than `--content-width`, which is a measure for PROSE. This page is
 	   a table like `/catechismus`'s: its width is what its columns need, and
-	   the description above it keeps its own measure. The back matter below is
-	   the exception in the other direction — it is prose, and says so. */
+	   the description above it keeps its own measure. */
 	.index-column {
 		max-width: 52rem;
 		margin-inline: auto;
@@ -191,43 +155,5 @@
 
 	.copyright-notice {
 		margin: 0 0 1.5rem;
-	}
-
-	/* Its own measure, because the column around it is no longer one. The
-	   letter of transmittal and the presentation are continuous prose, and the
-	   52rem this page needs for a table of ranges is half again the line a
-	   reader can follow — `--content-width` is that line, computed from
-	   characters per line rather than picked. The rule and the heading still
-	   run the column's full width, so the section reads as a division of the
-	   page and only its text is narrowed. */
-	/* The same band a part opens (`StructureIndex`'s `.rank-part`), because it
-	   reads as the row after the last one: a rule across the full width, the
-	   name in the text face, and the arrow where the ranges are. It carries no
-	   range because it has none — nothing in it is numbered. */
-	.appendix-row {
-		display: flex;
-		align-items: baseline;
-		gap: 0.5rem;
-		border-top: 1px solid var(--color-border);
-		padding-block: 1.1rem 0.3rem;
-		text-decoration: none;
-	}
-
-	.appendix-row .name {
-		font-family: var(--font-serif);
-		font-size: 1.2rem;
-		font-weight: 700;
-		color: var(--color-text);
-	}
-
-	.appendix-row:hover .name,
-	.appendix-row:focus-visible .name {
-		text-decoration: underline;
-		text-underline-offset: 0.2em;
-	}
-
-	.appendix-row .arrow {
-		margin-inline-start: auto;
-		color: var(--color-text-muted);
 	}
 </style>

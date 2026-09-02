@@ -44,7 +44,6 @@ export const ko: Dictionary = {
 	'nav.socialDoctrine': '사회교리',
 	'socialDoctrine.landing.title': '교회의 사회교리 편람',
 	'socialDoctrine.landing.tagline': '교회가 사회생활에 관하여 가르치는 바, 583개 항으로.',
-	'socialDoctrine.appendix': '부록',
 	'nav.prayers': '기도문',
 	'nav.bookmarks': '책갈피',
 	'nav.menu': '메뉴',

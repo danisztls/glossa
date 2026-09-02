@@ -181,7 +181,6 @@ import {
 	documentChunkStartFor,
 	documentSectionNumbers,
 	socialDoctrineAbbreviations,
-	socialDoctrineAppendixUnitCounts,
 	socialDoctrineChapterStarts,
 	socialDoctrineSectionNumbers,
 	fixtureBibleBooks,
@@ -2686,12 +2685,6 @@ export function getAdjacentSocialDoctrineNumber(
 	return direction === 'prev' ? numbers[i - 1] : numbers[i + 1];
 }
 
-/** How many unnumbered units this edition prints — the letter of
- *  transmittal, the presentation, the index of references. */
-export function socialDoctrineAppendixUnits(lang: string): number {
-	return socialDoctrineAppendixUnitCounts[socialDoctrineWorkId(lang)] ?? 0;
-}
-
 /** This edition's own printed sigla table, or `[]` where it prints none.
  *  Four of the ten do; the file is written only where there are rows. */
 export function getSocialDoctrineAbbreviations(lang: string): CccAbbreviation[] {
@@ -2761,13 +2754,6 @@ export async function getSocialDoctrineRangeAsync(
 		.sort((a, b) => a.n - b.n);
 }
 
-/** The edition's unnumbered matter, in source order. */
-export async function getSocialDoctrineAppendixAsync(
-	lang: string
-): Promise<DocumentAppendixUnit[]> {
-	return getDocumentAppendixAsync(socialDoctrineWorkId(lang));
-}
-
 /**
  * The edition's outline, as the sidebar's row model.
  *
@@ -2815,36 +2801,20 @@ export function flattenSocialDoctrineOutline(
  * paragraph as Chapter One and outruns it by three chapters.
  *
  * IT HANDS BACK THE NODE'S DEPTH BECAUSE THE CALLER CANNOT RECOVER IT.
- * Both pages need to know which outline rows sit INSIDE the division —
- * the landing page to list them, the chapter page to print them as inner
- * headings — and both used to find the depth by scanning their own
- * `flattenSocialDoctrineOutline` for the node by identity. That scan could
- * never match: `buildDocumentOutline` maps the stored `DocumentNode[]` into
- * FRESH `StructureNode` objects on every call, so a tree built here and a
- * tree built in a caller's `$derived` share no object at all. Both sites
- * silently took their `?? 0` fallback, which put every division at the top
- * level: the landing page listed each chapter with a single child that
- * repeated its own title, and the chapter page printed its `<h1>` again as
- * the first `<h2>` of its own body. Returning the depth from the one call
- * that has the row in hand removes the comparison rather than repairing it —
- * an identity test across two derivations of the same tree has no correct
- * form.
+ * The chapter page needs to know which outline rows sit INSIDE the division,
+ * so it can print them as its inner headings, and it used to find the depth
+ * by scanning its own `flattenSocialDoctrineOutline` for the node by
+ * identity. That scan could never match: `buildDocumentOutline` maps the
+ * stored `DocumentNode[]` into FRESH `StructureNode` objects on every call,
+ * so a tree built here and a tree built in a caller's `$derived` share no
+ * object at all. It silently took its `?? 0` fallback, which put every
+ * division at the top level, and the page printed its `<h1>` again as the
+ * first `<h2>` of its own body. Returning the depth from the one call that
+ * has the row in hand removes the comparison rather than repairing it — an
+ * identity test across two derivations of the same tree has no correct form.
  */
 export function socialDoctrineDivisions(lang: string): SocialDoctrineDivision[] {
-	return divisionsIn(lang, flattenSocialDoctrineOutline(lang));
-}
-
-export interface SocialDoctrineDivision {
-	from: number;
-	to: number;
-	node: StructureNode;
-	depth: number;
-}
-
-function divisionsIn(
-	lang: string,
-	rows: { node: StructureNode; depth: number }[]
-): SocialDoctrineDivision[] {
+	const rows = flattenSocialDoctrineOutline(lang);
 	return listSocialDoctrineChapters(lang).flatMap(([from, to]) => {
 		const here = rows.filter(({ node }) => node.paragraphs[0] === from);
 		const found = here.find(({ node }) => node.label) ?? here[0];
@@ -2852,25 +2822,11 @@ function divisionsIn(
 	});
 }
 
-/**
- * The outline AND the division rows inside it, from one build of the tree.
- *
- * The landing page needs both and needs them to be the same objects: it
- * renders the whole outline and has to know, per row, whether that row is a
- * division (so its range links to `/doctrina-socialis/caput/{n}`) or a
- * heading inside one (so it links to the paragraph). Nothing about a node
- * says so on its own — three or four rows can open at a division's first
- * paragraph, and which of them the chapter page is TITLED after is
- * `divisionsIn`'s rule, not a property (see `socialDoctrineDivisions`). Two
- * separate calls cannot be compared, since each builds fresh nodes; one call
- * that returns both can.
- */
-export function socialDoctrineOutlineWithDivisions(lang: string): {
-	roots: StructureNode[];
-	divisions: SocialDoctrineDivision[];
-} {
-	const roots = socialDoctrineOutline(lang);
-	return { roots, divisions: divisionsIn(lang, flattenTree(roots)) };
+export interface SocialDoctrineDivision {
+	from: number;
+	to: number;
+	node: StructureNode;
+	depth: number;
 }
 
 /** Fetches the edition's outline into `document-structures.svelte.ts`, which

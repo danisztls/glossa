@@ -32,11 +32,6 @@ export interface RouteManifest {
 	compendiumChapters: number[];
 	socialDoctrine: number[];
 	socialDoctrineChapters: number[];
-	/** Whether any edition prints front matter — the letter and the
-	 *  presentation. A boolean and not a list: the address carries no number,
-	 *  and `csdc.sw` has no appendix at all, so the page can be genuinely
-	 *  absent. */
-	socialDoctrineAppendix: boolean;
 	documents: string[];
 	prayers: string[];
 	/** Part slug -> question numbers, unioned across editions. */
@@ -192,8 +187,6 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 			return manifest.socialDoctrine.includes(address.n);
 		case 'socialDoctrineChapter':
 			return manifest.socialDoctrineChapters.includes(address.n);
-		case 'socialDoctrineAppendix':
-			return manifest.socialDoctrineAppendix;
 		case 'document':
 			return manifest.documents.includes(address.slug);
 		case 'prayer':

@@ -797,16 +797,6 @@ export const socialDoctrineSectionNumbers: Record<string, number[]> = USE_REAL_C
 		)
 	: {};
 
-/** How many unnumbered units each edition has -- its letter of transmittal,
- *  its presentation and its index of references. */
-export const socialDoctrineAppendixUnitCounts: Record<string, number> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexSocialDoctrine) ?? {})
-				.filter(([, v]) => v.appendixUnits)
-				.map(([workId, v]) => [workId, v.appendixUnits as number])
-		)
-	: {};
-
 /** The paragraph each reading division opens at, unioned across editions --
  *  see `socialDoctrineChapterStarts` in `scripts/sync-corpus.mjs` for why this
  *  is one list for the work rather than one per edition, which is what every

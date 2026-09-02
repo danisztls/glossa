@@ -18,7 +18,6 @@ export const pt: Dictionary = {
 	'socialDoctrine.landing.title': 'Compêndio da Doutrina Social da Igreja',
 	'socialDoctrine.landing.tagline':
 		'O que a Igreja ensina sobre a vida em sociedade, em 583 números.',
-	'socialDoctrine.appendix': 'Apêndice',
 	'nav.prayers': 'Orações',
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',

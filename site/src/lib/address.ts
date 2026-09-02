@@ -66,7 +66,6 @@ export type Address =
 	 *  cited: "CSDC 160" names a paragraph. */
 	| { kind: 'socialDoctrine'; n: number }
 	| { kind: 'socialDoctrineChapter'; n: number }
-	| { kind: 'socialDoctrineAppendix' }
 	/** A document, or one numbered section of it. `n` absent is the whole
 	 *  document: a section is a FRAGMENT on the document's single page
 	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
@@ -320,15 +319,6 @@ export function hrefFor(a: Address): string {
 			return `/doctrina-socialis/${a.n}`;
 		case 'socialDoctrineChapter':
 			return `/doctrina-socialis/caput/${a.n}`;
-		// THE ONE ADDRESS IN THIS WORK THAT CARRIES NO NUMBER, because what it
-		// names carries none: the letter of transmittal and the presentation
-		// are printed before §1 and the source numbers neither. It is a
-		// reading address rather than a `CHROME_PATH` even so — every word on
-		// the page is the edition's, translated ten ways, and a chrome path
-		// would declare a fourteen-language `hreflang` cluster over text that
-		// exists in ten.
-		case 'socialDoctrineAppendix':
-			return '/doctrina-socialis/appendix';
 		case 'document':
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
 		// Nested under `/doctores`, the shelf for the Fathers and Doctors of the
@@ -367,7 +357,6 @@ const COMPENDIUM_RE = /^\/catechismus\/compendium\/(\d+)$/;
 // is free.
 const SOCIAL_DOCTRINE_CHAPTER_RE = /^\/doctrina-socialis\/caput\/(\d+)$/;
 const SOCIAL_DOCTRINE_RE = /^\/doctrina-socialis\/(\d+)$/;
-const SOCIAL_DOCTRINE_APPENDIX_PATH = '/doctrina-socialis/appendix';
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
 const SUMMA_RE = /^\/doctores\/summa\/([a-z-]+)\/(\d+)$/;
@@ -464,11 +453,6 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 
 	const compendium = COMPENDIUM_RE.exec(path);
 	if (compendium) return numbered('compendium', compendium[1]);
-
-	// BEFORE the numbered form, which cannot match it, and before the document
-	// prefix, which is a different shelf. Its own line because it is a literal
-	// and not a pattern.
-	if (path === SOCIAL_DOCTRINE_APPENDIX_PATH) return { kind: 'socialDoctrineAppendix' };
 
 	const socialDoctrineChapter = SOCIAL_DOCTRINE_CHAPTER_RE.exec(path);
 	if (socialDoctrineChapter) return numbered('socialDoctrineChapter', socialDoctrineChapter[1]);

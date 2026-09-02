@@ -20,7 +20,6 @@ export const ru: Dictionary = {
 	'socialDoctrine.landing.title': 'Компендиум социального учения Церкви',
 	'socialDoctrine.landing.tagline':
 		'Чему Церковь учит о жизни в обществе — 583 пронумерованных раздела.',
-	'socialDoctrine.appendix': 'Приложение',
 	'nav.prayers': 'Молитвы',
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',

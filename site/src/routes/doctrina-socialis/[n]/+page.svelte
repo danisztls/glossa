@@ -33,7 +33,8 @@
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { displayDocumentTitle } from '$lib/titles';
+	import { socialDoctrineHeadingHref, socialDoctrineTrail } from '$lib/socialDoctrineNav';
+	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection } from '$lib/types';
 	import type { PageData } from './$types';
@@ -52,6 +53,18 @@
 	const workId = $derived(editions.current?.work.id);
 
 	const structure = $derived(flattenSocialDoctrineOutline(editions.lang));
+
+	/**
+	 * Every heading standing over this paragraph, outermost first — the trail
+	 * `/catechismus/[n]` gets from its own loader and this page has to derive,
+	 * because a document's outline carries no breadcrumb field.
+	 *
+	 * It printed ONE crumb until 2026-09-02, the division, so a reader looking
+	 * at `CSDC 310` was told it is in Human Work and not that Human Work is in
+	 * Part Two, nor which of that chapter's seven sections they had landed in.
+	 * The Catechism's five crumbs are the shape to match.
+	 */
+	const trail = $derived(socialDoctrineTrail(editions.lang, data.n));
 
 	/** The division this paragraph is in, with its own name — the "read the
 	 *  whole chapter" card. `socialDoctrineDivisions` names it from the node
@@ -107,12 +120,20 @@
 	<!-- Written once and rendered twice: the desktop sidebar, and the reading
 	     bar's panel at the widths where that sidebar is hidden (`TocMenu`). -->
 	{#snippet tocList()}
+		<!-- EVERY ROW LANDS IN THE CHAPTER, at the heading it names, rather
+		     than on that heading's own first paragraph — see
+		     `socialDoctrineNav.ts`. The fragment comes back from `routeHref`
+		     rather than from `anchorFor`, because which heading is addressable
+		     is a fact about this work's chapter page and not about the row: the
+		     one that OPENS a division is the page's `<h1>` and carries no
+		     `s{n}` id at all. -->
 		<StructureSidebarToc
 			{structure}
 			currentN={data.n}
 			lang={editions.lang}
 			heading={t('document.tableOfContents')}
-			routeHref={(n) => hrefFor({ kind: 'socialDoctrine', n })}
+			routeHref={(n) => socialDoctrineHeadingHref(editions.lang, n)}
+			deriveMarkers={false}
 		/>
 	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
@@ -120,13 +141,30 @@
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/doctrina-socialis">{t('nav.socialDoctrine')}</a>
-					{#if division}
+					{#each trail as crumb (crumb.node.anchor ?? crumb.node.title)}
+						{@const dt = documentHeadingParts(crumb.node.title, editions.lang)}
+						{@const at = crumb.node.paragraphs[0]}
 						<span class="sep">›</span>
-						<a href={hrefFor({ kind: 'socialDoctrineChapter', n: division.from })}>
-							{#if division.node.label}<span class="ordinal">{division.node.label}</span>{/if}
-							{displayDocumentTitle(division.node.title, editions.lang).title}
+						<!-- THE LABEL VERBATIM, and set as the identifier it is rather
+						     than run into the name. `marker()`'s abbreviated form
+						     (`Ch. 6`) is not available here: it derives the number from
+						     the row's position among its TREE siblings, and this work
+						     numbers its twelve chapters straight through three parts —
+						     Chapter Five is the first child of Part Two, so that form
+						     reads `Ch. 1`. A long label is a cost; a wrong number is a
+						     lie. A heading with no label carries its own list marker at
+						     the head of its title (`I.`, `a)`), split off by
+						     `documentHeadingParts` and left in the running face because
+						     that is how the source prints it. -->
+						<a
+							href={Number.isFinite(at)
+								? socialDoctrineHeadingHref(editions.lang, at as number)
+								: undefined}
+						>
+							{#if crumb.node.label}<span class="ordinal label-micro">{crumb.node.label}</span
+								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}{dt.title}
 						</a>
-					{/if}
+					{/each}
 				</nav>
 			</div>
 
@@ -188,8 +226,16 @@
 					<a href={`${hrefFor({ kind: 'socialDoctrineChapter', n: division.from })}#p${data.n}`}>
 						<span class="label">{t('ccc.readFullChapter')}</span>
 						<span class="chapter-name">
-							{#if division.node.label}{division.node.label}{/if}
-							{displayDocumentTitle(division.node.title, editions.lang).title}
+							<!-- The division's printed label, set as the identifier it is
+							     rather than run into the name. `CHAPTER ONE God's Plan of
+							     Love for Humanity` in one serif line reads as a title
+							     beginning with two shouted words; the Catechism's version
+							     of this card has the same two parts and only ever puts a
+							     bare `1.` in the first, which is why the difference did
+							     not show until this work took the card. -->
+							{#if division.node.label}<span class="chapter-label label-micro"
+									>{division.node.label}</span
+								>{/if}{displayDocumentTitle(division.node.title, editions.lang).title}
 						</span>
 						<span class="chapter-range">¶{division.from}–{division.to}</span>
 					</a>
@@ -256,6 +302,10 @@
 	.read-chapter .chapter-name {
 		font-family: var(--font-serif);
 		color: var(--color-text);
+	}
+
+	.read-chapter .chapter-label {
+		margin-inline-end: 0.5em;
 	}
 
 	.read-chapter .chapter-range {

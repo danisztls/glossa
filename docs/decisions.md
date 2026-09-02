@@ -3101,8 +3101,8 @@ cannot be `/doctrina-socialis/160` fails at the one thing 583 numbered paragraph
 
 So `type: "social-doctrine"` is **the Catechism's addresses over a document's files**, and
 that sentence is the whole specification. `sync-corpus.mjs`'s branch writes exactly what
-the document branch writes — the same chunked `sections/`, the same `structure.json`, the
-same `appendix.json`, at paths the document readers already resolve — and registers
+the document branch writes — the same chunked `sections/` and the same `structure.json`, at
+paths the document readers already resolve — and registers
 exactly what the Catechism branch registers: a number set, a set of chapter anchors, an
 existence check. There is no second content tier, no second chunk stride, and no second
 copy of any reader. **A work type is a statement about addressing, not about storage**, and
@@ -3138,6 +3138,47 @@ of sections with hundreds of orphaned blocks; `sacrosanctum-concilium.cs` went f
 sections to 130. Nothing had reported this, because `vatii` had exited nonzero on every
 run it had ever had (the symmetry check, which is FAIL by design) and so nobody was
 reading its exit code. Both document stages exit 0 now.
+
+**Its reading surfaces were built twice on 2026-09-02, and the second pass is
+where the work's shape was actually settled.** The first gave it the Catechism's index
+grid, addresses for its front matter, and an edition picker. Three of those decisions did
+not survive a reading of the result:
+
+- **An appendix page was the wrong answer to "this text has nowhere to go."** The letter
+  of transmittal and the presentation are real text in ten languages, and that made an
+  address for them look obligatory. It is not: a reader arriving at a work numbered 1 to
+  583 is not arriving for two prefatory documents, and a page that exists because the data
+  does is a page nothing links to. The corpus keeps them; the site does not ship them.
+- **Where a table of contents POINTS is a decision about what a reader is doing.** Four
+  surfaces answered it four ways — the index sent a division to the chapter view and every
+  heading inside it to a paragraph page, both sidebars sent everything to paragraph pages,
+  and the breadcrumb printed one crumb where the Catechism's prints five. The rule
+  (`socialDoctrineNav.ts`) is that following an outline is going somewhere to READ, so
+  every row lands in the chapter at the heading it names, and the paragraph page is
+  reached by its number — which is the form a citation takes anyway. Two destinations per
+  row, and the reader can see which is which: the title, and the range beside it.
+- **A derived number is a claim, and this work falsifies it.** The sidebar abbreviates a
+  printed division label to a short form whose number comes from the row's position among
+  its tree siblings — `CHAPTER FIVE` → `Ch. 5` — because a 17rem column has no room for
+  the words. The Compendium numbers its twelve chapters straight through three parts, so
+  Chapter Five is the FIRST child of Part Two and read `Ch. 1`, with its six siblings
+  numbered 2 to 7 in a table of contents. Position is the right basis wherever a part
+  restarts its chapter numbering (Gaudium et Spes does) and the wrong one wherever it does
+  not, and nothing in a document's tree says which. So the caller that knows says so
+  (`deriveMarkers={false}`) and the label prints as the source prints it: **a long label is
+  a cost, a wrong number is a lie.**
+
+**The parts' epigraphs were in the corpus all along, at the end of the wrong paragraph.**
+The source prints `PART TWO`, a quotation from Centesimus Annus, then `CHAPTER FIVE`.
+`reclaim_mid_body_prose` hands prose buffered under a heading back to the section that
+heading interrupted — the right rule for an encyclical's mid-paragraph subheading, and the
+wrong one here — so §19, §208 and §520 each ended with the NEXT part's epigraph as their
+closing sentence, in every edition, and nothing could have reported it: the text was
+present, the round trip was clean, and only reading the page shows it. What recovers it is
+a count rather than a pattern: a numbered paragraph of this work is exactly one block, and
+those three sections were the only ones in nine of ten editions with more. The markup
+could not have decided it — `align="right"` covers the whole quotation in English, the
+attribution alone in Hungarian, and nothing at all in Polish.
 
 **The reference coverage fell in two families and the fall is the fix.** `vatii` prose
 scripture 6,995 → 5,896, prose sigla 950 → 847 — against citations 6,626 → 9,998 and

@@ -40,6 +40,7 @@
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
+	import { socialDoctrineHeadingHref, socialDoctrineTrail } from '$lib/socialDoctrineNav';
 	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection, StructureNode } from '$lib/types';
@@ -62,6 +63,32 @@
 	const heading = $derived(
 		division ? displayDocumentTitle(division.node.title, editions.lang).title : ''
 	);
+
+	/**
+	 * The headings above this division, and the division itself as the last
+	 * crumb — cut at its own depth, because the trail runs all the way down to
+	 * whatever section opens at the same paragraph and those are the page's
+	 * own body.
+	 *
+	 * The crumb row was `Social Doctrine › Human Work` until 2026-09-02, which
+	 * left the part the chapter belongs to nowhere on the page.
+	 */
+	const trail = $derived(
+		division ? socialDoctrineTrail(editions.lang, division.from).slice(0, division.depth + 1) : []
+	);
+
+	/**
+	 * The quotation from Centesimus Annus the source prints under `PART TWO`,
+	 * on the page that opens that part and nowhere else.
+	 *
+	 * It sits ABOVE the chapter's title, which is where the book prints it:
+	 * part, epigraph, chapter. It is stored on the section the part opens at
+	 * (`csdc.lift_part_epigraphs`; docs/corpus-schema.md) rather than on a
+	 * structure node, because half the editions have no part row to hang it
+	 * on — so the test is whether this page's first paragraph carries one,
+	 * which is true exactly on the three pages that open a part.
+	 */
+	const epigraph = $derived(editions.current?.paragraphs[0]?.epigraph ?? []);
 
 	/**
 	 * The division's own inner headings, keyed by the paragraph each opens at.
@@ -151,12 +178,16 @@
 	{@const from = editions.current.span[0]}
 	{@const to = editions.current.span[1]}
 	{#snippet tocList()}
+		<!-- Into the chapter and at the heading, the same as every other outline
+		     of this work (`socialDoctrineNav.ts`) — which on this page is
+		     usually a jump within the page the reader is already on. -->
 		<StructureSidebarToc
 			structure={rows}
 			currentN={spy.current ?? from}
 			lang={editions.lang}
 			heading={t('document.tableOfContents')}
-			routeHref={(n) => hrefFor({ kind: 'socialDoctrine', n })}
+			routeHref={(n) => socialDoctrineHeadingHref(editions.lang, n)}
+			deriveMarkers={false}
 		/>
 	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
@@ -164,8 +195,32 @@
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/doctrina-socialis">{t('nav.socialDoctrine')}</a>
-					<span class="sep">›</span>
-					<a href={undefined} aria-current="page">{heading}</a>
+					{#each trail as crumb, i (crumb.node.anchor ?? crumb.node.title)}
+						{@const dt = documentHeadingParts(crumb.node.title, editions.lang)}
+						{@const at = crumb.node.paragraphs[0]}
+						{@const last = i === trail.length - 1}
+						<!-- THE LABEL VERBATIM, and set as the identifier it is rather
+						     than run into the name. `marker()`'s abbreviated form
+						     (`Ch. 6`) is not available here: it derives the number from
+						     the row's position among its TREE siblings, and this work
+						     numbers its twelve chapters straight through three parts —
+						     Chapter Five is the first child of Part Two, so that form
+						     reads `Ch. 1`. A long label is a cost; a wrong number is a
+						     lie. A heading with no label carries its own list marker at
+						     the head of its title (`I.`, `a)`), split off by
+						     `documentHeadingParts` and left in the running face because
+						     that is how the source prints it. -->
+						<span class="sep">›</span>
+						<a
+							href={last || !Number.isFinite(at)
+								? undefined
+								: socialDoctrineHeadingHref(editions.lang, at as number)}
+							aria-current={last ? 'page' : undefined}
+						>
+							{#if crumb.node.label}<span class="ordinal label-micro">{crumb.node.label}</span
+								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}{dt.title}
+						</a>
+					{/each}
 				</nav>
 			</div>
 
@@ -217,6 +272,24 @@
 					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />
 				</div>
 			{:else}
+				{#if epigraph.length > 0}
+					<!-- Above the title, because that is the order the book prints it
+					     in and the order the trail above already says: the part, the
+					     words it opens with, then the chapter. -->
+					<blockquote class="part-epigraph reading-text" lang={editions.current.work.language}>
+						<!-- Through `ProseBlocks` like every other run of blocks on the
+						     site, and not `{@html}`: these blocks carry the source's
+						     italics and its printed line breaks, and the attribution at
+						     the foot of each is a citation `linkifyProse` can resolve
+						     (`Centesimus Annus, 54`). `citations: []` because an
+						     epigraph has no footnote apparatus of its own. -->
+						<ProseBlocks
+							unit={{ blocks: epigraph, citations: [] }}
+							lang={editions.lang}
+							work={workId}
+						/>
+					</blockquote>
+				{/if}
 				{@render divisionTitle(division?.node.label, heading)}
 				<p class="range">¶{from}–{to}</p>
 
@@ -324,6 +397,28 @@
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--color-text-muted);
+	}
+
+	/* THE PART'S EPIGRAPH, set as the source sets it: ranged right, in the
+	   reading face, smaller than the text it stands over. It is not this
+	   chapter's words — it is the part's — so it is quieter than the title
+	   below it rather than louder, and the rule beneath separates it from the
+	   division it introduces. */
+	.part-epigraph {
+		margin: 0 0 1.5rem;
+		padding: 0 0 1.25rem;
+		border-bottom: 1px solid var(--color-border);
+		font-family: var(--font-serif);
+		font-size: 0.9rem;
+		font-style: italic;
+		color: var(--color-text-muted);
+		text-align: end;
+	}
+
+	/* `:global`, because the paragraphs are `ProseBlocks`'s and Svelte's
+	   scoping stops at this component's own markup. */
+	.part-epigraph :global(p) {
+		margin: 0;
 	}
 
 	.range {

@@ -727,7 +727,7 @@ const documentIndex = {}; // workId -> { sectionNumbers, appendixUnits? } -- key
 // count and its own structure tree -- there is no single "the document tree
 // for English" the way there's a single CCC tree for English.
 const socialDoctrineAbbreviations = {}; // lang -> the edition's own printed sigla table
-const socialDoctrineIndex = {}; // workId -> { sectionNumbers, appendixUnits? } -- keyed by WORK
+const socialDoctrineIndex = {}; // workId -> { sectionNumbers } -- keyed by WORK
 // ID like the documents', because that is the shape of the content: one
 // `csdc.{lang}` per edition, each with its own outline in the content tier.
 const socialDoctrineNumbers = []; // canonical URL existence, unioned across editions
@@ -1679,14 +1679,9 @@ for (const workId of workIds) {
 		const lang = workId.split('.').pop();
 		const structure = readJson(path.join(workDir, 'structure.json'));
 		const sections = readJson(path.join(workDir, 'sections.json'));
-		const appendixPath = path.join(workDir, 'appendix.json');
-		const appendix = existsSync(appendixPath) ? readJson(appendixPath) : null;
 		const sectionNumbers = sections.map((s) => s.n).sort((a, b) => a - b);
 
-		socialDoctrineIndex[workId] = {
-			sectionNumbers,
-			...(appendix ? { appendixUnits: appendix.length } : {})
-		};
+		socialDoctrineIndex[workId] = { sectionNumbers };
 		socialDoctrineNumbers.push(...sectionNumbers);
 		socialDoctrineEditions.push({ lang, work: workId, sections, structure });
 
@@ -1716,21 +1711,14 @@ for (const workId of workIds) {
 				bytes: byteLength(frontMatter)
 			});
 		}
-		// The letter of transmittal, the presentation and the index of
-		// references. One asset, not chunked: it has no citable address, so
-		// nothing links into the middle of it and the page that shows it
-		// shows all of it — the argument `CEILING_EXEMPT_KINDS` records for a
-		// document's appendix, which this is the same file as.
-		if (appendix) {
-			const relPath = `content/${workId}/appendix.json`;
-			writeJson(path.join(destDir, relPath), appendix);
-			contentManifest.push({
-				workId,
-				kind: 'social-doctrine-appendix',
-				relPath,
-				bytes: byteLength(appendix)
-			});
-		}
+		// `appendix.json` IS NOT SHIPPED. The corpus holds it — Cardinal
+		// Sodano's letter of transmittal and Cardinal Martino's presentation,
+		// printed before §1 — and the site had a page for it at
+		// `/doctrina-socialis/appendix` for a few hours on 2026-09-02. It has
+		// none now: two prefatory documents are not what a reader arrives at
+		// this work for, and an address that exists only because the data does
+		// is an address nothing links to. Shipping the asset anyway would be a
+		// fetchable file no route reads.
 		// The edition's own printed sigla table, in the INDEX tier beside the
 		// Catechism's: it is small (95 rows at most), and `refs-grammar.ts`
 		// wants it without a work in hand.
@@ -1956,15 +1944,9 @@ if (publishedDefeats.length > 0) {
  *  `vatii.gaudium-et-spes.ar` keeps its 118 entries in a 313 KB appendix,
  *  which is simply how long that document is in Arabic.
  *
- *  `social-doctrine-appendix` is the same file under another name, and the
- *  same argument holds with one thing added. It is the letter of transmittal,
- *  the presentation and the INDEX OF REFERENCES — 213 KB in Polish, 208 in
- *  Hungarian — none of it addressable, and chunking it would mean inventing
- *  an address for a book name in an index. What is added is that nothing
- *  fetches it on arrival: `/doctrina-socialis` puts it behind a disclosure and
- *  starts the request when the reader opens it, so the two big editions cost
- *  a reader who never asks for them nothing at all. */
-const CEILING_EXEMPT_KINDS = new Set(['document-appendix', 'social-doctrine-appendix']);
+ *  The Compendium of the Social Doctrine's own appendix was exempt here too
+ *  until 2026-09-02 and is no longer shipped at all — see the branch above. */
+const CEILING_EXEMPT_KINDS = new Set(['document-appendix']);
 
 const oversized = contentManifest
 	.filter(
@@ -2568,14 +2550,6 @@ const routeManifest = {
 	// languages is an address.
 	socialDoctrine: [...new Set(socialDoctrineNumbers)].sort((a, b) => a - b),
 	socialDoctrineChapters: socialDoctrineChapterStarts,
-	// A BOOLEAN, because the address carries no number: `/doctrina-socialis/appendix`
-	// is the letter of transmittal and the presentation, which the source prints
-	// before section 1 and numbers neither. True when ANY edition has them, the
-	// same union the lists above take -- `csdc.sw` prints none, and a reader on
-	// that edition is shown the page in the language the fallback chain reaches.
-	socialDoctrineAppendix: Object.values(socialDoctrineIndex).some(
-		(value) => (value.appendixUnits ?? 0) > 0
-	),
 	// From `manifests`, so a document the corpus knows about is an address even
 	// when this build has none of its text: `/documenta/{slug}` redirects that
 	// reader to the source page (docs/decisions.md §Posture), and it needs

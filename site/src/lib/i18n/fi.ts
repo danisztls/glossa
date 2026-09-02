@@ -41,7 +41,6 @@ export const fi: Dictionary = {
 	'nav.socialDoctrine': 'Sosiaalioppi',
 	'socialDoctrine.landing.title': 'Kirkon sosiaaliopin kompendium',
 	'socialDoctrine.landing.tagline': 'Mitä kirkko opettaa yhteiskuntaelämästä, 583 numerossa.',
-	'socialDoctrine.appendix': 'Liite',
 	'nav.prayers': 'Rukoukset',
 	'nav.bookmarks': 'Kirjanmerkit',
 	'nav.menu': 'Valikko',

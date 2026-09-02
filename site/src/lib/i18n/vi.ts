@@ -43,7 +43,6 @@ export const vi: Dictionary = {
 	'nav.socialDoctrine': 'Học thuyết xã hội',
 	'socialDoctrine.landing.title': 'Tóm lược Học thuyết Xã hội của Giáo hội',
 	'socialDoctrine.landing.tagline': 'Điều Giáo hội dạy về đời sống xã hội, trong 583 số.',
-	'socialDoctrine.appendix': 'Phụ lục',
 	'nav.prayers': 'Kinh nguyện',
 	'nav.bookmarks': 'Dấu trang',
 	'nav.menu': 'Trình đơn',

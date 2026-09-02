@@ -38,7 +38,6 @@ export const da: Dictionary = {
 	'nav.socialDoctrine': 'Sociallære',
 	'socialDoctrine.landing.title': 'Kompendium over Kirkens sociallære',
 	'socialDoctrine.landing.tagline': 'Hvad Kirken lærer om livet i samfundet, i 583 numre.',
-	'socialDoctrine.appendix': 'Tillæg',
 	'nav.prayers': 'Bønner',
 	'nav.bookmarks': 'Bogmærker',
 	'nav.menu': 'Menu',

@@ -42,7 +42,6 @@ export const be: Dictionary = {
 	'socialDoctrine.landing.title': 'Кампендыум сацыяльнага вучэння Царквы',
 	'socialDoctrine.landing.tagline':
 		'Чаму Царква вучыць пра жыццё ў грамадстве — 583 пранумараваныя раздзелы.',
-	'socialDoctrine.appendix': 'Дадатак',
 	'nav.prayers': 'Малітвы',
 	'nav.bookmarks': 'Закладкі',
 	'nav.menu': 'Меню',

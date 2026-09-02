@@ -425,7 +425,6 @@ const WORK_OF: Record<Address['kind'], { key: string; href: string }> = {
 	document: { key: 'document', href: '/documenta' },
 	socialDoctrine: { key: 'socialDoctrine', href: '/doctrina-socialis' },
 	socialDoctrineChapter: { key: 'socialDoctrine', href: '/doctrina-socialis' },
-	socialDoctrineAppendix: { key: 'socialDoctrine', href: '/doctrina-socialis' },
 	prayer: { key: 'prayer', href: '/preces' },
 	summa: { key: 'summa', href: '/doctores/summa' }
 };
@@ -640,25 +639,6 @@ function bodyHead(
 				]
 			};
 		}
-
-		// The letter of transmittal and the presentation. NAMED IN THE
-		// INTERFACE'S WORDS and not the source's, because the source has ten
-		// sets of them and no heading in any edition names the pair — the same
-		// reason `socialDoctrine.backMatter` had to be a string of our own.
-		case 'socialDoctrineAppendix':
-			return {
-				title: `Appendix — ${SOCIAL_DOCTRINE}`,
-				description: `Cardinal Sodano's letter of transmittal and Cardinal Martino's presentation, printed before the first paragraph of the Compendium of the Social Doctrine of the Church.`,
-				canonical: pathname,
-				noindex: false,
-				alternates: [],
-				crumbs: [
-					ROOT,
-					{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' },
-					{ name: 'Appendix', href: pathname }
-				],
-				links: [{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' }]
-			};
 
 		case 'socialDoctrineChapter': {
 			const name = titles.socialDoctrineChapterNames[address.n] ?? `Paragraphs from ${address.n}`;

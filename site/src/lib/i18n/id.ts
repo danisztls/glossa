@@ -45,7 +45,6 @@ export const id: Dictionary = {
 	'socialDoctrine.landing.title': 'Kompendium Ajaran Sosial Gereja',
 	'socialDoctrine.landing.tagline':
 		'Yang diajarkan Gereja tentang hidup bermasyarakat, dalam 583 nomor.',
-	'socialDoctrine.appendix': 'Lampiran',
 	'nav.prayers': 'Doa',
 	'nav.bookmarks': 'Penanda',
 	'nav.menu': 'Menu',

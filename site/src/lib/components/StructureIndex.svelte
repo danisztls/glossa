@@ -131,6 +131,20 @@
 		 * their work, and a row cannot be told which it is.
 		 */
 		heading?: (node: StructureNode, lang: string) => { marker: string | null; title: string };
+		/**
+		 * Where the row's TITLE goes, for an index whose title has somewhere to
+		 * go. Omitted, the title is text — see NO MAIN LINK above, which is the
+		 * Catechism's case and the reason this is a prop rather than a default:
+		 * that page draws two works side by side and linking the title to one
+		 * of them would answer a question the reader has not asked.
+		 *
+		 * The Compendium of the Social Doctrine has one work in it, so the
+		 * question does not arise, and the two destinations are instead the two
+		 * ways of reading it: the title opens the division in continuous prose
+		 * and the range beside it opens the paragraph it starts at
+		 * (`socialDoctrineNav.ts`).
+		 */
+		titleHref?: (node: StructureNode) => string | undefined;
 	}
 
 	let {
@@ -151,7 +165,8 @@
 		heading = (node, lang) => ({
 			marker: marker(node, lang),
 			title: displayTitle(node, lang).title
-		})
+		}),
+		titleHref
 	}: Props = $props();
 
 	/**
@@ -243,6 +258,7 @@
 			{@const isOpen = openAt(rowKey(row.node), row.depth)}
 			{@const rowRank = rank(row.node, row.depth)}
 			{@const stacked = STACKED_RANKS.has(rowRank) && !!label}
+			{@const href = titleHref?.(row.node)}
 			{#if visible(row)}
 				<li
 					class={`row rank-${rowRank}`}
@@ -252,20 +268,21 @@
 				>
 					<span class="row-mark">
 						{@render disclosure(row, dt.title, isOpen)}
-						<!-- Text, not a link. Which of the two works a reader wants is
-						     the choice the columns are there to offer, and a title that
-						     quietly picked one would make the other look like a
-						     footnote. -->
+						<!-- Text unless the caller gave it somewhere to go — see
+						     `titleHref`, and NO MAIN LINK in the docblock for why that
+						     is the default. -->
 						{#if stacked}
 							<span class="kind-label label-micro">{label}</span>
 						{:else}
-							<span class="row-title">
+							<svelte:element this={href ? 'a' : 'span'} {href} class="row-title">
 								{#if label}<span class="kind-label label-micro">{label}</span>{/if}{dt.title}
-							</span>
+							</svelte:element>
 						{/if}
 					</span>
 					{#if stacked}
-						<span class="row-title">{dt.title}</span>
+						<svelte:element this={href ? 'a' : 'span'} {href} class="row-title"
+							>{dt.title}</svelte:element
+						>
 					{/if}
 
 					{#each links(row.node) as link, slot (slot)}
@@ -420,6 +437,21 @@
 		font-family: var(--font-serif);
 		min-width: 0;
 		overflow-wrap: break-word;
+	}
+
+	/* A LINKED title reads as the page's own text until the pointer is on it —
+	   the same promotion `.breadcrumb a` and every list-shaped link here make.
+	   A hundred underlined serif rows is a page of blue, and the column of
+	   ranges beside them is already carrying the link colour. */
+	a.row-title {
+		color: inherit;
+		text-decoration: none;
+	}
+	a.row-title:hover,
+	a.row-title:focus-visible {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
 	}
 	/* Sized in `rem`, not `em`: the numbering is chrome and stays one size
 	   down the page, where `0.72em` inside a 1.2rem part title made "PART 1"
