@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 import {
 	editionSearchText,
 	langWeights,
-	primaryUiLangs,
+	orderByLangChain,
+	orderUiLangs,
 	uiLangSearchText,
 	UI_LANG_NAMES
 } from './menu-filter';
 import { matchesQuery } from './highlight';
-import { languageDisplayName } from './corpus';
+import { contentLangChain, languageDisplayName } from './corpus';
 import { UI_LANGS, type UiLang } from './ui-langs';
 import type { WorkManifest } from './types';
 
@@ -54,34 +55,143 @@ describe('langWeights', () => {
 	});
 });
 
-describe('primaryUiLangs', () => {
+describe('orderUiLangs', () => {
 	const weights = new Map(Object.entries({ en: 264, it: 238, la: 199, pt: 138, be: 31 }));
+	const none: UiLang[] = [];
 
-	it('takes the corpus’s heaviest languages', () => {
-		expect(primaryUiLangs(weights, 'en', 4)).toEqual(['en', 'pt', 'la', 'it']);
+	it('takes the corpus’s heaviest languages when the browser names none', () => {
+		expect(orderUiLangs(none, weights, 'en', 4).primary).toEqual(['en', 'pt', 'la', 'it']);
 	});
 
-	it('lists them in UI_LANGS order, not in weight order', () => {
-		const shown = primaryUiLangs(weights, 'en');
+	it('lists the filler in UI_LANGS order, not in weight order', () => {
+		const shown = orderUiLangs(none, weights, 'en').primary;
 		const positions = shown.map((lang) => UI_LANGS.indexOf(lang));
 		expect(positions).toEqual([...positions].sort((a, b) => a - b));
 	});
 
 	// The one row the panel must never hide is the one carrying the tick.
 	it('always shows the current language, however light', () => {
-		expect(primaryUiLangs(weights, 'hi', 4)).toContain('hi');
+		expect(orderUiLangs(none, weights, 'hi', 4).primary).toContain('hi');
 	});
 
 	// A corpus with nothing in it — the fixtures, a build with `CORPUS_DIR`
 	// pointing nowhere — must still produce a stable tier rather than whatever
 	// `sort` does with an all-zero key.
 	it('falls back to UI_LANGS order when nothing is weighted', () => {
-		expect(primaryUiLangs(new Map(), 'en', 3)).toEqual(['en', 'pt', 'la']);
+		expect(orderUiLangs(none, new Map(), 'en', 3).primary).toEqual(['en', 'pt', 'la']);
 	});
 
-	it('never exceeds the count by more than the current language', () => {
-		expect(primaryUiLangs(weights, 'en', 12)).toHaveLength(12);
-		expect(primaryUiLangs(weights, 'hi', 12)).toHaveLength(13);
+	// The whole point: `ko` and `tl` weigh nothing at all, so the corpus
+	// ranking buried them — under the very readers whose chrome is in them.
+	it('leads with the browser’s languages, in the browser’s order', () => {
+		const { primary } = orderUiLangs(['ko', 'tl'], weights, 'ko', 4);
+		expect(primary.slice(0, 2)).toEqual(['ko', 'tl']);
+		expect(primary).toHaveLength(4);
+	});
+
+	it('puts the current language after the browser’s when it is not one of them', () => {
+		const { primary } = orderUiLangs(['ko'], weights, 'pt', 4);
+		expect(primary.slice(0, 2)).toEqual(['ko', 'pt']);
+	});
+
+	// `count` is a floor for the pinned block. Dropping a language the reader
+	// told their browser they read is the one thing this ordering exists to
+	// stop, so the tier grows instead.
+	it('overflows the count rather than folding a browser language away', () => {
+		const browser: UiLang[] = ['ko', 'tl', 'vi', 'id', 'hi'];
+		const { primary } = orderUiLangs(browser, weights, 'ko', 3);
+		expect(primary).toEqual(browser);
+	});
+
+	it('never repeats a language the browser named twice over', () => {
+		const { primary } = orderUiLangs(['en', 'en'], weights, 'en', 4);
+		expect(primary.filter((lang) => lang === 'en')).toHaveLength(1);
+	});
+
+	// The panel concatenates the two, so between them they have to BE the list
+	// — a leak here silently drops a language from the menu entirely.
+	it('partitions UI_LANGS between primary and rest', () => {
+		const { primary, rest } = orderUiLangs(['ko', 'tl'], weights, 'hi');
+		expect([...primary, ...rest].toSorted()).toEqual([...UI_LANGS].toSorted());
+		expect(new Set([...primary, ...rest]).size).toBe(UI_LANGS.length);
+	});
+
+	it('leaves the rest in UI_LANGS order', () => {
+		const { rest } = orderUiLangs(['ko'], weights, 'ko');
+		const positions = rest.map((lang) => UI_LANGS.indexOf(lang));
+		expect(positions).toEqual([...positions].sort((a, b) => a - b));
+	});
+});
+
+describe('orderByLangChain', () => {
+	const editions = [
+		work('ccc.de', 'de'),
+		work('ccc.en', 'en'),
+		work('ccc.es', 'es'),
+		work('ccc.fr', 'fr'),
+		work('ccc.la', 'la'),
+		work('ccc.pt', 'pt')
+	];
+	const langs = (list: readonly WorkManifest[]) => list.map((w) => w.language);
+
+	// `pt` → `['es', 'en', 'la']`, so this is the reader's own language, its
+	// one real neighbour, and the tail every row ends in.
+	it('leads with the reader’s language and its fallback chain', () => {
+		expect(langs(orderByLangChain(editions, contentLangChain('pt')))).toEqual([
+			'pt',
+			'es',
+			'en',
+			'la',
+			'de',
+			'fr'
+		]);
+	});
+
+	// Hungarian has no Catechism, and `hu` → `['de', 'en', 'la']`: the panel
+	// leads with what this reader would actually be shown.
+	it('leads with the neighbours when the reader’s own language has no edition', () => {
+		expect(langs(orderByLangChain(editions, contentLangChain('hu')))).toEqual([
+			'de',
+			'en',
+			'la',
+			'es',
+			'fr',
+			'pt'
+		]);
+	});
+
+	it('leaves everything off the chain in the order it arrived', () => {
+		const shuffled = [work('ccc.fr', 'fr'), work('ccc.de', 'de'), work('ccc.en', 'en')];
+		expect(langs(orderByLangChain(shuffled, contentLangChain('en')))).toEqual(['en', 'fr', 'de']);
+	});
+
+	// The sort has to be stable, because ties inside one language were already
+	// decided by `PREFERRED_EDITION` in `listEditions` and must not be redecided.
+	it('keeps two editions of one language in the order they arrived', () => {
+		const bibles = [
+			work('bible.clementina.la', 'la'),
+			work('bible.douay-rheims.en', 'en'),
+			work('bible.cpdv.en', 'en')
+		];
+		expect(orderByLangChain(bibles, contentLangChain('en')).map((w) => w.id)).toEqual([
+			'bible.douay-rheims.en',
+			'bible.cpdv.en',
+			'bible.clementina.la'
+		]);
+	});
+
+	it('ranks a regional tag by its base language', () => {
+		const prayers = [work('prayer.common.pt', 'pt'), work('prayer.common.en-gb', 'en-GB')];
+		expect(orderByLangChain(prayers, contentLangChain('en')).map((w) => w.id)).toEqual([
+			'prayer.common.en-gb',
+			'prayer.common.pt'
+		]);
+	});
+
+	it('returns a new array rather than sorting its argument', () => {
+		const input = [work('ccc.pt', 'pt'), work('ccc.en', 'en')];
+		orderByLangChain(input, contentLangChain('en'));
+		expect(input.map((w) => w.language)).toEqual(['pt', 'en']);
 	});
 });
 

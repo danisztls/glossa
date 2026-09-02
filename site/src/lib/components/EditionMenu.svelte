@@ -47,6 +47,7 @@
 	import { page } from '$app/state';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
 	import {
+		contentLangChain,
 		currentPrayerEditionId,
 		getDocumentGroup,
 		listEditions,
@@ -56,11 +57,11 @@
 	} from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import { matchesQuery } from '$lib/highlight';
-	import { editionSearchText, FILTER_MIN_ROWS } from '$lib/menu-filter';
+	import { editionSearchText, FILTER_MIN_ROWS, orderByLangChain } from '$lib/menu-filter';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import type { DocumentManifest, WorkManifest } from '$lib/types';
 
 	/**
@@ -175,9 +176,34 @@
 					)
 			: []
 	);
-	const editions = $derived(
+	const contextEditions = $derived(
 		ctx?.kind === 'document' ? documentEditions : ctx?.kind === 'pair' ? pairEditions : typeEditions
 	);
+
+	/**
+	 * THE READER'S OWN LANGUAGE FIRST, THEN ITS NEIGHBOURS, THEN THE REST.
+	 *
+	 * Every list above arrives sorted alphabetically by base language tag —
+	 * `listEditions`' own rule, which `pairEditions` and `documentEditions`
+	 * copy so the menus agree. That is a stable order and an arbitrary one: it
+	 * put the Catechism's eight editions in the same sequence for every reader
+	 * on earth, with Portuguese last of eight for the Portuguese one, and it is
+	 * not even alphabetical by the NAME each row prints (`de` is "Deutsch",
+	 * `mg` is "Malagasy").
+	 *
+	 * `contentLangChain` is what replaces it as the FIRST key, and it is not a
+	 * new idea of nearness: it is `CONTENT_LANG_FALLBACK`, the table that
+	 * already decides which edition this page renders. So the top of the panel
+	 * is the set of editions this reader can actually read, in the order the
+	 * site itself would have picked one — including the `en`/`la` tail every
+	 * row ends in, which floats for everyone because that is the honest answer
+	 * to what a reader with no edition in their language falls through to.
+	 *
+	 * The alphabetical sorts stay exactly where they are and become the
+	 * tie-break inside one language, which is what keeps the Bible's two
+	 * English editions in `PREFERRED_EDITION`'s order.
+	 */
+	const editions = $derived(orderByLangChain(contextEditions, contentLangChain(i18n.lang)));
 
 	// The content store is the only source of truth for every context now —
 	// no URL anywhere carries an edition, so there is nothing for it to

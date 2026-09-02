@@ -30,9 +30,15 @@
 	the state the grid was introduced to end. The comment left here said the
 	real answer was a filter box or grouping and that patching would not do.
 	This is that answer, and it is both — a search box over every language, and
-	a fold under which the ones this corpus is not written in wait behind
-	"+ more". `menu-filter.ts` holds the two decisions in it that are not
-	markup: what the tier is derived FROM, and what the box reads.
+	a fold under which the rest wait behind "+ more". `menu-filter.ts` holds the
+	two decisions in it that are not markup: what leads the list, and what the
+	box reads.
+
+	WHAT LEADS IT IS THE READER'S OWN LANGUAGES, from `navigator.languages`,
+	in the order the reader put them in — the same list `app.html` negotiated
+	the chrome out of before this component existed. Corpus weight fills the
+	tier out below them. It used to BE the tier, which meant a Korean reader
+	already reading Korean chrome had to open "+ more" to find Korean.
 
 	The two halves cover for each other. The fold is a guess about which
 	twelve of thirty-four a reader wants, and a guess is only tolerable where
@@ -44,12 +50,12 @@
 -->
 <script lang="ts">
 	import { i18n, t } from '$lib/i18n.svelte';
-	import { UI_LANGS, type UiLang } from '$lib/ui-langs';
+	import { navigatorUiLangs, type UiLang } from '$lib/ui-langs';
 	import { listWorks } from '$lib/corpus';
 	import { matchesQuery } from '$lib/highlight';
 	import {
 		langWeights,
-		primaryUiLangs,
+		orderUiLangs,
 		uiLangSearchText,
 		UI_LANG_NAMES as NAMES
 	} from '$lib/menu-filter';
@@ -63,24 +69,29 @@
 	let expanded = $state(false);
 	let filterEl: HTMLInputElement | undefined = $state();
 
-	// The corpus does not change under a running page, so the weights are read
-	// once rather than per keystroke; the fold moves when the corpus is
-	// re-synced and a deploy is what delivers that.
+	// Neither of these changes under a running page, so both are read once
+	// rather than per keystroke: the corpus moves when it is re-synced and a
+	// deploy is what delivers that, and a browser's language list is a setting
+	// the reader leaves the site to change.
 	const weights = langWeights(listWorks());
+	const browser = navigatorUiLangs();
+
+	// ONE ORDER, whether folded, expanded or filtered. `primary` is what shows
+	// before "+ more" and `rest` is the remainder, so concatenating them is the
+	// sequence the panel always reads in — a filtered list that reordered
+	// itself would make the box and the fold two different menus.
+	const ordered = $derived(orderUiLangs(browser, weights, i18n.lang));
 
 	// The haystack is rebuilt when the INTERFACE language changes, because one
 	// of its three surfaces is the language's name as this reader reads it
 	// (`Intl.DisplayNames`) — a Portuguese reader should find German by typing
 	// "alemão". The other two, the code and the native name, are constant.
-	const rows = $derived(
-		UI_LANGS.map((code) => ({
-			code,
-			name: NAMES[code],
-			haystack: uiLangSearchText(code, NAMES[code], i18n.lang)
-		}))
-	);
-
-	const primary = $derived(new Set(primaryUiLangs(weights, i18n.lang)));
+	const rowFor = (code: UiLang) => ({
+		code,
+		name: NAMES[code],
+		haystack: uiLangSearchText(code, NAMES[code], i18n.lang)
+	});
+	const rows = $derived([...ordered.primary, ...ordered.rest].map(rowFor));
 
 	// Typing searches everything; the fold applies only to an untouched box.
 	// `expanded` is not consulted while filtering for the same reason: a
@@ -92,7 +103,7 @@
 			? rows.filter((row) => matchesQuery(row.haystack, query))
 			: expanded
 				? rows
-				: rows.filter((row) => primary.has(row.code))
+				: rows.slice(0, ordered.primary.length)
 	);
 
 	const hidden = $derived(rows.length - visible.length);

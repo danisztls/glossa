@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { detectUiLang, dictionaryFor, isRtl, UI_LANGS } from './i18n.svelte';
+import { browserUiLangs, detectUiLang, dictionaryFor, isRtl, UI_LANGS } from './i18n.svelte';
 
 describe('detectUiLang', () => {
 	it('uses the first supported browser preference', () => {
@@ -49,6 +49,39 @@ describe('detectUiLang', () => {
 	it('negotiates Latin like any other interface language', () => {
 		expect(detectUiLang(['la'])).toBe('la');
 		expect(detectUiLang(['ja-JP', 'la'])).toBe('la');
+	});
+});
+
+/**
+ * `detectUiLang` is this function's head, which is the point: the language the
+ * site negotiates and the languages `LanguageMenu` leads with have to be one
+ * reading of `navigator.languages`, not two that can drift apart.
+ */
+describe('browserUiLangs', () => {
+	it('keeps every supported language, in the browser’s order', () => {
+		expect(browserUiLangs(['ko-KR', 'en-US', 'pt-BR'])).toEqual(['ko', 'en', 'pt']);
+	});
+
+	it('walks past what the interface does not have', () => {
+		expect(browserUiLangs(['is-IS', 'et-EE', 'de-AT'])).toEqual(['de']);
+	});
+
+	// `en-GB, en-US` is an ordinary browser setting, and the menu offers one
+	// row per language — listing English twice would push a real language off
+	// the tier.
+	it('folds regions together rather than repeating a language', () => {
+		expect(browserUiLangs(['en-GB', 'en-US', 'en'])).toEqual(['en']);
+	});
+
+	it('answers nothing rather than English when the browser names nothing', () => {
+		expect(browserUiLangs([])).toEqual([]);
+		expect(browserUiLangs(undefined)).toEqual([]);
+		expect(browserUiLangs(['is-IS'])).toEqual([]);
+	});
+
+	it('agrees with detectUiLang on the head', () => {
+		const languages = ['ja-JP', 'ru-RU', 'en-US'];
+		expect(browserUiLangs(languages)[0]).toBe(detectUiLang(languages));
 	});
 });
 

@@ -2127,8 +2127,9 @@ no registration — `i18n.svelte.ts` globs the directory.
 work are both past what a list of rows serves, so `LanguageMenu`, `EditionMenu`
 and `ComparisonEditionMenu` filter; `src/lib/menu-filter.ts` holds everything in
 that which is not markup, and `.menu-filter`/`.menu-list`/`.menu-more` are in
-`menus.css` beside `.edition-lang`, for the reason that rule records. Three
-things about it.
+`menus.css` beside `.edition-lang`, for the reason that rule records. Both
+also ORDER themselves around the reader, which they did not on the day the
+boxes shipped. Four things about it.
 
 - **Matching is `highlight.ts`'s `matchesQuery`, never a fresh one** — the rule
   `/documenta`'s search box already established. What it buys here is the FOLD,
@@ -2139,20 +2140,42 @@ things about it.
   a Portuguese one by typing "alemão" — the only one of the three that nobody
   here maintains, since a table of 34 names in 34 languages is 1,156 strings for
   a search box.
-- **The fold's first tier is DERIVED FROM THE CORPUS**, not from an editorial
-  list: the twelve languages this site holds the most editions in, which today
-  is en, pt, la, de, es, fr, it, hu, pl, lv, be, ar. It needs no maintenance,
-  and it puts the reach tier (`tl`, `zh`, `ko`, `id`, `ig`, `uk`, `ml`, `hi` —
-  the languages the corpus holds nothing in) behind "+ more", which is honest
-  rather than unkind: those readers are served English content either way, and
-  `app.html` negotiates them into their own chrome before any module runs, so
-  the menu is not how they arrive. Membership moves with the corpus; ORDER does
-  not — it is always `UI_LANGS`'s, so a reader never has to re-find a language
-  whose position they had learned.
+- **The fold leads with `navigator.languages`, and corpus weight is only the
+  filler.** It was corpus weight alone for one day — the twelve languages this
+  site holds the most editions in — which put the reach tier (`tl`, `zh`, `ko`,
+  `id`, `ig`, `uk`, `ml`, `hi`, the languages the corpus holds nothing in)
+  behind "+ more" and so buried Korean under the Korean reader, whose chrome
+  `app.html` had already negotiated out of the very list the menu was ignoring.
+  `orderUiLangs` pins the reader's own languages in the browser's own order,
+  plus whatever they last chose by hand, then tops the tier up to twelve by
+  weight. **`PRIMARY_UI_LANG_COUNT` is a FLOOR for the pinned block, not a
+  ceiling**: six browser languages show six, because folding away a language the
+  reader explicitly configured is the one thing this ordering exists to stop.
+- **Ordering by the browser does not break the stability rule; ordering by
+  weight would.** The rule is that membership may move with the corpus but the
+  SEQUENCE may not, so nobody re-finds a language whose position they had
+  learned — and it still governs everything below the pinned block, which is in
+  `UI_LANGS` order. What it forbids is a value that changes UNDER a reader, and
+  corpus weight is exactly that: it moves on every deploy. `navigator.languages`
+  is the reader's own setting, fixed for them and different only between them.
+- **The edition pickers lead with `contentLangChain`, WHOLE.** They were
+  alphabetical by base language tag — `listEditions`' rule, copied by
+  `pairEditions` and `documentEditions` — which is stable, arbitrary, and not
+  even alphabetical by the name each row prints (`de` is "Deutsch"). The new
+  first key is `CONTENT_LANG_FALLBACK`, the table that already decides which
+  edition a page RENDERS, so the top of the panel is what this reader can read
+  in the order the site would have picked it. Every row of that table ends in
+  `en, la`, so those float for every reader — deliberately, since it is the
+  site's own answer to what a reader falls through to. The three alphabetical
+  sorts stay and become the tie-break, which is what keeps the Bible's two
+  English editions in `PREFERRED_EDITION`'s order; `orderByLangChain`'s sort is
+  stable for that reason alone. `suggest.ts`'s `orderedBibleWorkIds` was the
+  precedent and is left where it is — it ranks work ids for a matcher.
 - **Typing ignores the fold entirely**, and that is what makes the guess
   tolerable. A twelve-of-thirty-four guess is only cheap if being wrong costs
   three keystrokes; a filtered list that silently omitted matches below the fold
-  would be the one failure neither half could recover from.
+  would be the one failure neither half could recover from. The order is the
+  same folded, expanded and filtered, for the same reason.
 
 **A counterexample in a test will be overtaken.** Four tests used "a language
 the interface does not have" as an assertion, spelled `mg`, then `sw`, then

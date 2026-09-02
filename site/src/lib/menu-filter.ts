@@ -105,6 +105,9 @@ export const FILTER_MIN_ROWS = 8;
  * Twelve is six rows of the panel's two-column grid — about what fitted
  * before the list tripled on 2026-08-31, and what the two-column layout was
  * introduced to hold.
+ *
+ * It is a FLOOR and not a ceiling, because the reader's own languages come
+ * first and are never folded away: see `orderUiLangs`.
  */
 export const PRIMARY_UI_LANG_COUNT = 12;
 
@@ -124,50 +127,98 @@ export function langWeights(works: readonly WorkManifest[]): Map<string, number>
 }
 
 /**
- * The interface languages shown above the fold, in `UI_LANGS` order.
+ * The interface languages in the order the menu lists them, cut at the fold.
  *
- * THE TIER IS DERIVED FROM THE CORPUS, not from an editorial list, and the
- * criterion is the one this site can actually defend: the first tier is the
- * languages it is WRITTEN IN, most-published first. That answers the question
- * "which of thirty-four is a reader most likely to want" with a fact rather
- * than with a ranking of nations, it needs no maintenance — ingest thirty
- * Byelorussian editions and Byelorussian rises on its own — and it puts the
- * reach tier (`tl`, `zh`, `ko`, `id`, `ig`, `uk`, `ml`, `hi`, which the corpus
- * holds nothing in) below the fold, which is the honest place for a language
- * whose reader will be served English content either way.
+ * THE READER'S OWN LANGUAGES LEAD, IN THE BROWSER'S OWN ORDER.
+ * `navigator.languages` is an ordered preference list the reader configured
+ * themselves, and the site has been reading it since before first paint —
+ * `app.html` negotiates the chrome out of it — while the menu went on offering
+ * a ranking of the corpus. A Korean reader already IN Korean chrome had to
+ * open "+ more" to find Korean, because the corpus holds nothing in it. That
+ * is the ranking answering a question nobody asked: which languages this site
+ * is written in, rather than which languages this reader reads.
  *
- * BURYING THE REACH TIER COSTS LESS THAN IT LOOKS, because the menu is not how
- * those readers arrive. `app.html` negotiates against `navigator.languages`
- * before any module runs, so a Filipino reader opens the site already in
- * Tagalog — and the current language is always in this tier, so they never
- * meet it hidden. The menu is for a reader CHANGING language, and one who is
- * changing to a language the corpus has nothing in has typed its name.
+ * CORPUS WEIGHT IS NOW THE FILLER, and it is unchanged in what it does — it
+ * tops the tier up to `count` from the languages the corpus holds most
+ * editions in. A reader who has told their browser about one language still
+ * sees eleven more, and they are the eleven most likely to have something in
+ * them. What it no longer does is outrank the reader.
  *
- * ORDER IS `UI_LANGS`'S, NOT THE WEIGHT'S. The same argument the subject cloud
- * makes for staying alphabetical: membership moves with the corpus, so if the
- * sequence moved as well a reader would have to re-find a language they had
- * already learned the position of. Weight decides who is in; the list decides
- * where.
+ * `count` IS A FLOOR FOR THE PINNED BLOCK, NOT A CEILING. A reader with six
+ * browser languages sees all six, because hiding a language the reader has
+ * explicitly said they read is the single thing this ordering exists to stop.
  *
- * `current` is always included even when it is nowhere near the top, because
- * the one row this panel must never hide is the one with the tick on it.
+ * WHY THIS DOES NOT BREAK THE STABILITY RULE the corpus ranking is subject to.
+ * That rule — membership may move, sequence may not, so a reader never has to
+ * re-find a language whose position they had learned — is about a value that
+ * changes UNDER the reader: corpus weight moves on every deploy, and would
+ * shuffle the panel for someone who changed nothing. `navigator.languages` is
+ * that reader's own setting. The order it produces is fixed for them and
+ * differs only between them, which is the same kind of fact as which language
+ * the chrome is already in. Everything below the pinned block is still in
+ * `UI_LANGS` order, for exactly the old reason.
+ *
+ * `current` is pinned beside them even when it is nowhere near the top,
+ * because the one row this panel must never hide is the one with the tick on
+ * it — a reader who picked a language by hand has said more about it than any
+ * ranking can.
  */
-export function primaryUiLangs(
+export function orderUiLangs(
+	browser: readonly UiLang[],
 	weights: Map<string, number>,
 	current: UiLang,
 	count = PRIMARY_UI_LANG_COUNT
-): UiLang[] {
-	const ranked = [...UI_LANGS]
+): { primary: UiLang[]; rest: UiLang[] } {
+	const pinned = [...new Set<UiLang>([...browser, current])];
+	const filler = [...UI_LANGS]
 		.map((lang, index) => ({ lang, index, weight: weights.get(lang) ?? 0 }))
+		.filter((entry) => !pinned.includes(entry.lang))
 		// Ties by `UI_LANGS` position, so a corpus that holds nothing at all
 		// (the test fixtures, a site built without one) still yields a stable
 		// tier rather than whatever `sort` happens to do with equal keys.
 		.sort((a, b) => b.weight - a.weight || a.index - b.index)
-		.slice(0, count)
+		.slice(0, Math.max(0, count - pinned.length))
 		.map((entry) => entry.lang);
-	const shown = new Set<UiLang>(ranked);
-	shown.add(current);
-	return UI_LANGS.filter((lang) => shown.has(lang));
+	const shown = new Set<UiLang>(filler);
+	const primary = [...pinned, ...UI_LANGS.filter((lang) => shown.has(lang))];
+	const inPrimary = new Set<UiLang>(primary);
+	return { primary, rest: UI_LANGS.filter((lang) => !inPrimary.has(lang)) };
+}
+
+/**
+ * Editions in the order the reader in front of them can read: their own
+ * content language first, then its neighbours, then everything else.
+ *
+ * `chain` is `contentLangChain(lang)` — `CONTENT_LANG_FALLBACK`, the same
+ * table that decides which edition a page actually RENDERS. That is the whole
+ * argument for using it here rather than inventing a second notion of
+ * nearness: the top of the menu becomes the editions this reader can read, in
+ * the order the site itself would have chosen one of them. The chain is used
+ * whole, `en`/`la` tail included, so those float for every reader — which is
+ * the site's own answer to what a reader falls through to, printed rather than
+ * hidden.
+ *
+ * `suggest.ts`'s `orderedBibleWorkIds` is this comparator with a Bible-shaped
+ * tie-break on top (`PREFERRED_EDITION`), and its docblock is where the
+ * reasoning was first written down. It is left where it is: it ranks work IDS
+ * for a matcher, this ranks MANIFESTS for a panel, and the one thing they
+ * share is the two-line rank below.
+ *
+ * THE SORT IS STABLE AND THAT IS LOAD-BEARING. Everything reaching this is
+ * already sorted — `listEditions` by language, then default region, then id —
+ * so ties inside one language keep an answer that was decided deliberately
+ * elsewhere. The Bible's two English editions must stay in `PREFERRED_EDITION`
+ * order, and re-deciding it here would be a second place for it to be true.
+ */
+export function orderByLangChain<T extends { language: string }>(
+	editions: readonly T[],
+	chain: readonly string[]
+): T[] {
+	const rank = (edition: T) => {
+		const position = chain.indexOf(baseLang(edition.language));
+		return position === -1 ? chain.length : position;
+	};
+	return [...editions].sort((a, b) => rank(a) - rank(b));
 }
 
 /**

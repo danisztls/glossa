@@ -21,9 +21,17 @@ import { readStoredString, writeStoredString } from './storage';
  * the app already reaches for them, and a second import path would be a second
  * answer to the same question.
  */
-import { UI_LANGS, RTL_LANGS, isUiLang, isRtl, type UiLang } from './ui-langs.ts';
+import {
+	UI_LANGS,
+	RTL_LANGS,
+	isUiLang,
+	isRtl,
+	browserUiLangs,
+	navigatorUiLangs,
+	type UiLang
+} from './ui-langs.ts';
 
-export { UI_LANGS, RTL_LANGS, isUiLang, isRtl, type UiLang };
+export { UI_LANGS, RTL_LANGS, isUiLang, isRtl, browserUiLangs, navigatorUiLangs, type UiLang };
 
 /**
  * Put the chosen language on the document element, where CSS and the browser
@@ -141,11 +149,13 @@ function readStored(): UiLang | null {
 /**
  * Pick the first browser-preferred language that the interface supports.
  *
- * Browser locale tags are normally regional (`pt-BR`, `en-US`, `de-AT`) while
- * the interface has one locale per language. Matching the primary subtag
- * gives every variant the right UI without pretending that we have separate
- * regional translations. Unknown locales fall back to English, the site's
- * existing no-preference default.
+ * THE HEAD OF `browserUiLangs`, which is where the matching itself now lives
+ * — browser tags are normally regional (`pt-BR`, `en-US`, `de-AT`) while the
+ * interface has one locale per language, so the primary subtag is what
+ * matches. This function is the whole of what negotiation needs; the rest of
+ * that list is what `LanguageMenu` leads with, and the two must not be two
+ * readings. Unknown locales fall back to English, the site's existing
+ * no-preference default.
  *
  * Latin is negotiable here like any other — `la` in `navigator.languages`
  * gets a Latin interface — but no operating system offers it as a display
@@ -154,17 +164,11 @@ function readStored(): UiLang | null {
  * a browser will actually ask for.
  */
 export function detectUiLang(languages: readonly string[] | undefined): UiLang {
-	for (const language of languages ?? []) {
-		const primary = language.trim().toLowerCase().split('-', 1)[0] ?? '';
-		if (isUiLang(primary)) return primary;
-	}
-	return DEFAULT_LANG;
+	return browserUiLangs(languages)[0] ?? DEFAULT_LANG;
 }
 
 function browserLanguage(): UiLang {
-	if (typeof navigator === 'undefined') return DEFAULT_LANG;
-	const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
-	return detectUiLang(languages);
+	return navigatorUiLangs()[0] ?? DEFAULT_LANG;
 }
 
 /**

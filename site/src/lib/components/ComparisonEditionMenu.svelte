@@ -34,11 +34,11 @@
 	than teaching this component to inspect `page.url.pathname` itself.
 -->
 <script lang="ts">
-	import { baseLang, languageDisplayName } from '$lib/corpus';
+	import { baseLang, contentLangChain, languageDisplayName } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import { matchesQuery } from '$lib/highlight';
-	import { editionSearchText, FILTER_MIN_ROWS } from '$lib/menu-filter';
-	import { t } from '$lib/i18n.svelte';
+	import { editionSearchText, FILTER_MIN_ROWS, orderByLangChain } from '$lib/menu-filter';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
@@ -55,6 +55,13 @@
 	}
 
 	let { editions, current, onselect, editionStyle = false }: Props = $props();
+
+	/** Reader's language first, then its neighbours — `EditionMenu`'s matching
+	 *  `$derived` is where the reasoning is written down. Ordered HERE rather
+	 *  than by the caller for the same reason this component filters here: the
+	 *  routes that build `otherEditions` are deciding what may be offered, and
+	 *  what order to offer it in is the panel's own business. */
+	const rows = $derived(orderByLangChain(editions, contentLangChain(i18n.lang)));
 
 	const currentEdition = $derived(editions.find((e) => e.id === current));
 	const triggerLabel = $derived(
@@ -74,13 +81,13 @@
 	let query = $state('');
 	let filterEl: HTMLInputElement | undefined = $state();
 
-	const showFilter = $derived(editions.length >= FILTER_MIN_ROWS);
+	const showFilter = $derived(rows.length >= FILTER_MIN_ROWS);
 	const visible = $derived(
 		showFilter && query.trim()
-			? editions.filter((edition) =>
+			? rows.filter((edition) =>
 					matchesQuery(editionSearchText(edition, languageDisplayName(edition.language)), query)
 				)
-			: editions
+			: rows
 	);
 
 	$effect(() => {

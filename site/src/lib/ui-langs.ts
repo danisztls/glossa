@@ -107,6 +107,47 @@ export function isUiLang(tag: string): tag is UiLang {
 }
 
 /**
+ * Every interface language the browser names, in the browser's own order.
+ *
+ * `navigator.languages` is an ORDERED preference list, and until now only its
+ * head was ever read — `detectUiLang` in `i18n.svelte.ts` is this loop with a
+ * `return` where this one pushes, and is now written in terms of it. The rest
+ * of the list is what `LanguageMenu` leads with: a reader who has told their
+ * browser they read Korean and English should not have to look for either.
+ *
+ * Browser tags are normally regional (`pt-BR`, `en-US`) while the interface
+ * has one locale per language, so the primary subtag is what matches and
+ * `en-GB, en-US` collapses to one entry rather than listing English twice.
+ *
+ * HERE RATHER THAN IN `i18n.svelte.ts` for the reason this module exists: that
+ * one constructs its store at module scope, so importing it reads
+ * `localStorage` and instantiates `$state`. Everything about a language tag
+ * that is not a store belongs on this side of that line.
+ */
+export function browserUiLangs(languages: readonly string[] | undefined): UiLang[] {
+	const found: UiLang[] = [];
+	for (const language of languages ?? []) {
+		const primary = language.trim().toLowerCase().split('-', 1)[0] ?? '';
+		if (isUiLang(primary) && !found.includes(primary)) found.push(primary);
+	}
+	return found;
+}
+
+/**
+ * The same list, read off the live `navigator`.
+ *
+ * The guards are the ones `i18n.svelte.ts`'s `browserLanguage` carried: no
+ * `navigator` at all in Node and in the Worker, and `navigator.languages`
+ * empty in a few older browsers where `navigator.language` is the whole
+ * answer. Kept in ONE place so the language the site negotiates and the
+ * languages the menu leads with can never come from different readings.
+ */
+export function navigatorUiLangs(): UiLang[] {
+	if (typeof navigator === 'undefined') return [];
+	return browserUiLangs(navigator.languages?.length ? navigator.languages : [navigator.language]);
+}
+
+/**
  * The interface languages written right to left.
  *
  * A list rather than a lookup against `Intl`, which has no stable API for
