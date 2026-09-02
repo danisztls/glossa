@@ -623,9 +623,65 @@ and the reason each exists is the gap in the one before it.
   by paragraph span. The one check that is not per-unit, and therefore the only one that
   can see a division that never got built: it is what found English carrying 59 in-brief
   divisions where three other editions carried 81.
+- **Reference apparatus** (`audit.py refs`, added 2026-09-02) — the Catechism paragraph
+  numbers each Compendium question prints beside itself, compared across all fourteen
+  editions. It is the only check here that may take a **vote**, and the reason is that
+  what it compares is not written in any language: question N is the same question
+  everywhere, so the editions are not fourteen renderings of an assertion but fourteen
+  copies of it, and a copy can simply be wrong. Everything else in this list compares
+  prose length, typography or structure, which an edition is entitled to differ about, so
+  the strongest any of them may say is "an edition alone against the rest is a lead".
 - **Hand-read oracles** — a person reads the source page and writes down its table of
   contents (`audit.py toc`), or a note's lemma is checked against the verse it quotes.
   These are the only checks that can see something the parser never produced at all.
+
+**THE SHAPE OF A DISAGREEMENT NAMES ITS CULPRIT, WHICH IS WHY `refs` REPORTS A
+CLASSIFICATION AND NOT A COUNT.** A ref-set is compared to the modal one by how it stands
+to it, and the classes mean different things. A **subset or superset**, held consistently,
+is the edition: the German prints only the first of the two ranges at 170 of 598 questions
+and its own raw page says so at every one, and the Slovenian prints a wider apparatus at 82. Led with counts, those two would have buried everything else. **Overlapping or
+disjoint** is a misprint — no printing convention produces a set that crosses the others
+without containing them — and **a displaced pair** is a reading attached to the wrong unit.
+The first run classified 98 leads; 38 were filed as corrections and the rest are the two
+editions being themselves.
+
+**A LONE COINCIDENCE IS NOT A DISPLACEMENT, AND THAT CLASS WAS WRONG FOR A DAY.** It began
+as "a set equal to a neighbour's modal set", on the reasoning that such a coincidence is
+unlikely. Checked against the raw pages, 14 of the 17 it flagged sit in the right slot on
+their own source page and merely name a range a neighbouring question also names — because
+these editions draw their ranges differently from each other to begin with. A real
+displacement leaves a **pair**, so the unit it was displaced from must deviate too. That
+took the class from 17 to 3, and the only real one in the corpus is the German exchanging
+questions 248 and 249.
+
+**THE EDITIONS ARE NOT INDEPENDENT WITNESSES, AND A VOTE QUIETLY ASSUMES THEY ARE.** German
+and Slovenian carry the identical departure at six questions; Italian and French carry the
+identical impossible range `1198-1999` at another. Two editions agreeing on a wrong value
+is evidence of a shared exemplar, not of two observations — so "one against thirteen" is a
+real standard and "two against twelve" is not the same claim with a smaller number. That
+rule kept three questions out of `pipeline/corrections/` that the count alone would have
+corrected.
+
+**SO A VOTE PROPOSES AND SOMETHING ELSE DECIDES**, and every one of the 38 corrections
+carries a witness independent of the count. Three were available and all three were
+measured rather than assumed. The apparatus's groups **ascend**, in 375 of 375 modal sets
+with more than one group, so a set running backwards is impossible on its face. Its last
+group is the article's **In Brief**, in 357 of 375, while the first group is in one in 0 of
+375 — a fact about the Catechism's own structure tree and nothing to do with the vote,
+though it is a heuristic and not a rule, and it fires the wrong way at Italian 557 where
+the wrong value happens to sit inside an In Brief. And the decisive one is simply **reading
+the Catechism paragraph**: Compendium 382 asks what fortitude is, CCC 1837 is "Fortitude
+ensures firmness in difficulties" and CCC 1838 is temperance. Counting a value proposes a
+candidate; reading the sentence is what decides it — the `Пар.` lesson, in a fourth family.
+
+**THE CATECHISM IS NOT IN THIS AUDIT AND HAS NO APPARATUS TO PUT IN IT.** `related`, the
+field that would be exactly this shape, is empty in all 22,920 paragraphs of all eight
+editions, because the vatican.va mirrors do not print the margin — `ccc.py` says so in
+every manifest. What it has is `citations`, which are prose, and three of the eight
+editions fold them into the sentence and print no footnote at all, so a cross-edition count
+measures the convention rather than the parse. There is one narrower comparison worth
+making and `docs/research/ccc-citation-apparatus.md` records it, along with the 71
+paragraphs it finds.
 
 **A metric that ignores one of the places body text is stored reports relocation as
 loss.** That lesson has been learned three times — the masthead, the appendix, the

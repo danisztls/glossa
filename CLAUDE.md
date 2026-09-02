@@ -818,9 +818,9 @@ Four things about it:
   title happens to end in a period — `S. Aug. ep. 119. 16.`, `Grot. Jur. ii.
 
 21. 4.`, `Bible de Vence Max. 9. 5. 2.`, `Josep. Ant. 1. 6.`Under the
-  tightest filter that still admits Genesis 1:1 (an ordinary prose word before
-  the run) six of the seven survivors are still wrong. Nothing in the string
-  distinguishes`matter.`from`Prolegom.`, so it stays text.
+tightest filter that still admits Genesis 1:1 (an ordinary prose word before
+the run) six of the seven survivors are still wrong. Nothing in the string
+distinguishes`matter.`from`Prolegom.`, so it stays text.
 
 **The coverage meter had to be taught the same address, and the gate is
 `family === 'commentary'`.** `reference-coverage.mjs` buckets prose as bare
@@ -2036,6 +2036,66 @@ edition against seven (2026-08-26):
 375 outliers became 56. **Read the count, not the list**: what identified all
 three was one edition sitting far outside a band the other seven agreed on,
 and the remaining 56 are editions being editions.
+
+**`audit.py refs` IS THE ONE ORACLE ALLOWED TO VOTE, AND ONLY BECAUSE ITS
+SUBJECT IS NOT WRITTEN IN ANY LANGUAGE** (2026-09-02). Every Compendium edition
+prints, beside each question, the Catechism paragraphs that question condenses;
+question N is the same question in all fourteen, so those numbers are fourteen
+COPIES of one assertion rather than fourteen renderings of it. The modal set is
+therefore an oracle where `balance`'s and `divisions`' strongest claim is "an
+edition alone against the rest is a lead". Its first run classified **98 defect
+leads, 38 of which became corrections** — the Italian's `1198-1999` for
+`1198-1199` and `2050-2051` for `2650-2651`, the Portuguese printing `971` at
+three consecutive questions, the Swedish's fifteen single-digit slips, the
+German exchanging questions 248 and 249. Five things will bite before the
+design will.
+
+- **READ THE SHAPE, NOT THE COUNT.** A consistent subset or superset is the
+  EDITION — German prints only the first of two ranges at 170 of 598 questions
+  and its raw page says so at every one, Slovenian prints a wider apparatus at
+  82 — and leading with counts buries everything else under them. Overlapping
+  and disjoint sets are misprints; no convention produces a set that crosses the
+  others without containing it.
+- **TWO EDITIONS AGREEING ON A WRONG VALUE ARE ONE WITNESS, NOT TWO.** German
+  and Slovenian carry the identical departure at six questions and Italian and
+  French the identical `1198-1999` at another, which is a shared exemplar rather
+  than two observations. "One against thirteen" is a standard; "two against
+  twelve" is a different claim. It kept three questions out of `corrections/`.
+- **THE VOTE PROPOSES; SOMETHING ELSE DECIDES.** Every one of the 38 carries a
+  witness independent of the count. The apparatus's groups ascend (375 of 375),
+  its last group is the article's In Brief (357 of 375) while its first never is
+  (0 of 375), and — the decisive one — the Catechism paragraph itself can be
+  read: Compendium 382 asks what fortitude is, CCC 1837 is "Fortitude ensures
+  firmness in difficulties", CCC 1838 is temperance. **The In Brief test is a
+  heuristic and fires backwards at Italian 557**, where the wrong value happens
+  to sit inside one.
+- **A CORRECTION IS A GLOBAL SUBSTRING REPLACEMENT, SO A SWAP CANNOT BE TWO OF
+  THEM.** `<p>1205-1206</p>` → `<p>1209</p>` followed by `<p>1209</p>` →
+  `<p>1205-1206</p>` undoes itself exactly, and the audit reported the German
+  pair still broken after both had "applied". Each half quotes its own question
+  heading now. Relatedly, **entries apply in FILE ORDER and one may quote the
+  page as an earlier entry leaves it** — Swedish 591 has two independent defects
+  in one `<p>` and neither can quote a substring unique to itself — so the files
+  are ordered by question and then by the date the entry was FILED.
+- **A PDF EDITION'S MARGIN NEEDED A FOURTH CORRECTION FIELD.** `extracted_text`
+  matches a body line by substring, and a margin number recurs down a page: the
+  Russian sets `141` twice on page 24 and the Indonesian `1434-1439` twice on
+  page 109, and in both cases the duplicate IS the defect. `margin_refs` is
+  matched by EQUALITY against the assembled reference string of one question and
+  located by that question — the only unique address a margin number has — and a
+  filed entry whose question the walk never reaches is fatal rather than silent.
+
+**THE CATECHISM IS DELIBERATELY NOT IN THAT AUDIT.** `related`, the field that
+would be exactly this shape, is empty in all 22,920 paragraphs of all eight
+editions: the mirrors do not print the margin apparatus, and `ccc.py` records
+the absence in every manifest. Its `citations` are prose, and `ccc.de`, `ccc.fr`
+and `ccc.es` fold every reference into the sentence and print no footnote at
+all, so counting across editions measures the CONVENTION — `ccc.en` and
+`ccc.pt` capture inline parenthesised scripture as a citation and deviate 908
+and 785 times for that reason alone. Restricted to the three that share a
+convention (`it`, `la`, `mg`) it is worth **71 paragraphs**, with Malagasy the
+low edition in 60 of them. `docs/research/ccc-citation-apparatus.md` has the
+measurements and the sharper instrument that would replace it.
 
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text
