@@ -204,13 +204,13 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 35573,
-				"linkable": 13033,
-				"recognized": 6232,
-				"nothing": 16308
+				"total": 36246,
+				"linkable": 13476,
+				"recognized": 6321,
+				"nothing": 16449
 			},
 			"prose": {
-				"blocks": 39759,
+				"blocks": 39758,
 				"scripture": 20121,
 				"document": 290,
 				"stored": 0
@@ -218,7 +218,7 @@
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 304,
+					"count": 309,
 					"example": "Ibid."
 				},
 				{
@@ -278,7 +278,7 @@
 				},
 				{
 					"key": "ibid. n.",
-					"count": 69,
+					"count": 70,
 					"example": "Ibid., n. 14."
 				},
 				{
@@ -337,18 +337,18 @@
 					"example": "Romano Guardini, Religiöse Gestalten in Dostojewskijs Werk, Mainz/Paderborn 1989, S. 236f."
 				},
 				{
-					"key": "ibíd.",
-					"count": 48,
-					"example": "Ibíd."
+					"key": "ibid. t.",
+					"count": 49,
+					"example": "Ibid. t. X, p. 471; cf. t. V pp. 29, 59, 65, t. X, p. 446s."
 				}
 			]
 		},
 		"exhortation": {
 			"citations": {
-				"total": 37916,
-				"linkable": 11181,
-				"recognized": 6258,
-				"nothing": 20477
+				"total": 37964,
+				"linkable": 11190,
+				"recognized": 6269,
+				"nothing": 20505
 			},
 			"prose": {
 				"blocks": 30964,
@@ -424,7 +424,7 @@
 				},
 				{
 					"key": "ibidem.",
-					"count": 106,
+					"count": 112,
 					"example": "Ibidem."
 				},
 				{
