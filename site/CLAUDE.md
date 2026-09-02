@@ -46,8 +46,9 @@ and is unit-tested.
 Canonical reader URLs are Latin and do not vary with interface language:
 `/scriptura/{book}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
 `/catechismus/compendium/{n}`, `/catechismus/compendium/caput/{n}`,
-`/documenta/{slug}`, `/doctores/summa/{part}/{question}`, `/preces/{slug}`,
-`/colophon`.
+`/documenta/{slug}`, `/doctrina-socialis/{n}`,
+`/doctrina-socialis/caput/{n}`, `/doctores/summa/{part}/{question}`,
+`/preces/{slug}`, `/colophon`.
 
 **`{book}` is a Latin slug since 2026-09-02, not an OSIS id** —
 `/scriptura/iosue/1`, `/scriptura/i-samuel/3` (§Addresses and editions):
@@ -78,7 +79,7 @@ Canonical reader URLs are Latin and do not vary with interface language:
 is replaced in the bar with the bare path by
 `routes/[uilang=uilang]/[...rest]/+page.ts`. It canonicalizes to the bare
 path, is in no sitemap and declares no alternates; `parseLangEntry` in
-`route-manifest.ts` is the edge half. The eight `CHROME_PATHS` are unchanged
+`route-manifest.ts` is the edge half. The nine `CHROME_PATHS` are unchanged
 (published prefix, self-canonicalizing, `hreflang` cluster), so
 `parseChromePath` is tried first everywhere. Two traps: `parseLangEntry` must
 never be `noindex` (a `noindex` beside a canonical naming another URL can
@@ -309,11 +310,11 @@ Added 2026-08-28 (§The site). `ssr = false` means one document answers every
 address, so everything a non-rendering consumer learns comes from
 `src/worker.ts`, which rewrites the shell's `<head>` per address.
 
-**Eight pages take a language prefix and the rest do not, and the line is not
+**Nine pages take a language prefix and the rest do not, and the line is not
 cosmetic.** `CHROME_PATHS` in `route-manifest.ts` lists them (`/`,
-`/scriptura`, `/catechismus`, `/documenta`, `/doctores`, `/doctores/summa`,
-`/preces`, `/colophon`) — the pages whose every word IS the interface, so the
-Portuguese one is a different page. A reading address names a citation, the
+`/scriptura`, `/catechismus`, `/documenta`, `/doctrina-socialis`, `/doctores`,
+`/doctores/summa`, `/preces`, `/colophon`) — the pages whose every word IS the
+interface, so the Portuguese one is a different page. A reading address names a citation, the
 same in every language, and takes no published prefix: prefixing them would
 declare `hreflang` alternates serving byte-identical text through
 `CONTENT_LANG_FALLBACK` (§The site; the entry-point redirect above is the
@@ -476,6 +477,44 @@ HEAD) gates the worker, **`isCanonicalPath` alone decides the status**, and
 vs the asset binding's answer — which is what keeps an un-negated `static/`
 file served rather than 404ed). A browser always sends both, so neither bug
 is reachable by hand; check the edge with `curl` and no headers at all.
+
+## The Compendium of the Social Doctrine: the Catechism's addresses over a document's files
+
+`type: 'social-doctrine'` (2026-09-02, §The Compendium of the Social Doctrine).
+That sentence is the whole specification: `sync-corpus.mjs`'s branch writes what
+the DOCUMENT branch writes (chunked `sections/`, `structure.json`,
+`appendix.json`, at paths the document readers already resolve) and registers
+what the CATECHISM branch registers (a number set, chapter anchors, an existence
+check). No second content tier, no second chunk stride, no second reader.
+
+- **A new work type must be added to `CONTENT_TYPES` in `sync-corpus.mjs`, or
+  the sync excludes it and only warns.** That guard is right and it caught this
+  during a rebase: without the entry, all ten editions were skipped and the
+  build still exited 0.
+- **`content/{workId}/structure.json` is `{ header?, nodes }`, not a bare
+  array** — `getDocumentStructure` reads a document's and this one's through one
+  parser and returns `.nodes`. A bare array does not degrade; the first
+  `.filter` on `undefined` throws, on every page of the work.
+- **`socialDoctrineOutline` drops the unanchored rows and a document's outline
+  does not.** `buildDocumentOutline` gives a heading with no `before` a sentinel
+  past the last paragraph (`documentTailNumber`) so a whole-work page can scroll
+  to it; routed rather than anchored, that sentinel is a link to a 404. The back
+  matter is on the landing page, where no address is implied.
+- **The widest division opening at a chapter anchor is NOT the chapter.** The
+  source prints `PART ONE` on a page of its own with no name beside it, opening
+  at the same paragraph as Chapter One and running three times as far — so
+  `shell-head.ts` carries `socialDoctrineChapterNames`, read off the nodes that
+  produced the anchors, and the chapter page does not use `widestAt`.
+  `socialDoctrineDivisions` is the same rule for the pages.
+- **The chapter anchors are unioned across the editions that print a label**,
+  and the seven that do agree exactly. §1 is added for the Introduction, which
+  carries none; the CONCLUSION carries none either and reads as the tail of the
+  last chapter's span — its paragraphs are addressable, its chapter page is
+  titled Chapter Twelve's. A known cost, not an oversight.
+- **The back matter is labelled in the SOURCE's own words wherever it can be.**
+  Each sigla table's disclosure takes the heading the edition prints over it
+  (`CccAbbreviation.section`), so six editions cost no new strings; only the
+  appendix as a whole needed one, because no heading in any edition names it.
 
 ## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
 

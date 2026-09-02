@@ -41,6 +41,11 @@ export const tl: Dictionary = {
 	'nav.ccc': 'Katesismo',
 	'nav.compendium': 'Kompendyo',
 	'nav.magisterium': 'Magisterium',
+	'nav.socialDoctrine': 'Aral panlipunan',
+	'socialDoctrine.landing.title': 'Kompendyo ng Panlipunang Aral ng Simbahan',
+	'socialDoctrine.landing.tagline':
+		'Ang itinuturo ng Simbahan tungkol sa buhay sa lipunan, sa 583 bilang.',
+	'socialDoctrine.backMatter': 'Panimulang bahagi at mga indeks',
 	'nav.prayers': 'Mga Panalangin',
 	'nav.bookmarks': 'Mga Bookmark',
 	'nav.menu': 'Menu',

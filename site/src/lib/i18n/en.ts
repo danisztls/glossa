@@ -19,6 +19,11 @@ export const en: Dictionary = {
 	// and `/documents` stays accurate as encyclicals/exhortations/CDF
 	// documents join the 16 Vatican II texts already here).
 	'nav.magisterium': 'Magisterium',
+	'nav.socialDoctrine': 'Social Doctrine',
+	'socialDoctrine.landing.title': 'Compendium of the Social Doctrine of the Church',
+	'socialDoctrine.landing.tagline':
+		'What the Church teaches about life in society, in 583 numbered paragraphs.',
+	'socialDoctrine.backMatter': 'Front matter and indices',
 	'nav.prayers': 'Prayers',
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',

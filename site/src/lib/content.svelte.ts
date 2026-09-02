@@ -62,8 +62,16 @@ import { readStoredJson, writeStoredJson } from './storage';
  * Thomisticum by default rather than by override, and the Supplementum still
  * falls back to English per address, because that fallback was never a
  * property of this store.
+ *
+ * `'social-doctrine'` joins on the Compendium's terms — one canonical work per
+ * language, ten of them — and is the member whose absence is likeliest, since
+ * twenty-four interface languages have no edition of it. That costs nothing
+ * here either: `defaultWorkId` walks `CONTENT_LANG_FALLBACK` and answers
+ * English, which is what every other work type already does for a reader the
+ * corpus cannot meet in their own language.
  */
-export type WorkTypeKey = 'bible' | 'catechism' | 'compendium' | 'prayer' | 'summa';
+export type WorkTypeKey =
+	'bible' | 'catechism' | 'compendium' | 'prayer' | 'social-doctrine' | 'summa';
 
 interface Override {
 	workId: string;

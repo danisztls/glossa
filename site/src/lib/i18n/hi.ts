@@ -45,6 +45,11 @@ export const hi: Dictionary = {
 	'nav.ccc': 'धर्मशिक्षा',
 	'nav.compendium': 'संक्षेप',
 	'nav.magisterium': 'कलीसिया का शिक्षण',
+	'nav.socialDoctrine': 'सामाजिक शिक्षा',
+	'socialDoctrine.landing.title': 'कलीसिया की सामाजिक शिक्षा का संग्रह',
+	'socialDoctrine.landing.tagline':
+		'समाज में जीवन के विषय में कलीसिया की शिक्षा, 583 क्रमांकित अनुच्छेदों में।',
+	'socialDoctrine.backMatter': 'आरंभिक पृष्ठ और अनुक्रमणिकाएँ',
 	'nav.prayers': 'प्रार्थनाएँ',
 	'nav.bookmarks': 'चिह्न',
 	'nav.menu': 'मेन्यू',

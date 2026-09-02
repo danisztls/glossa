@@ -16,6 +16,11 @@ export const de: Dictionary = {
 	'nav.ccc': 'Katechismus',
 	'nav.compendium': 'Kompendium',
 	'nav.magisterium': 'Lehramt',
+	'nav.socialDoctrine': 'Soziallehre',
+	'socialDoctrine.landing.title': 'Kompendium der Soziallehre der Kirche',
+	'socialDoctrine.landing.tagline':
+		'Was die Kirche über das Leben in der Gesellschaft lehrt, in 583 Nummern.',
+	'socialDoctrine.backMatter': 'Vorspann und Register',
 	'nav.prayers': 'Gebete',
 	'nav.bookmarks': 'Lesezeichen',
 	'nav.menu': 'Menü',

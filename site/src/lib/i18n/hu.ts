@@ -16,6 +16,11 @@ export const hu: Dictionary = {
 	'nav.ccc': 'Katekizmus',
 	'nav.compendium': 'Kompendium',
 	'nav.magisterium': 'Tanítóhivatal',
+	'nav.socialDoctrine': 'Társadalmi tanítás',
+	'socialDoctrine.landing.title': 'Az Egyház társadalmi tanításának kompendiuma',
+	'socialDoctrine.landing.tagline':
+		'Amit az Egyház a társadalmi életről tanít, 583 számozott pontban.',
+	'socialDoctrine.backMatter': 'Előzéklapok és mutatók',
 	'nav.prayers': 'Imádságok',
 	'nav.bookmarks': 'Könyvjelzők',
 	'nav.menu': 'Menü',

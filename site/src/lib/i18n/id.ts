@@ -41,6 +41,11 @@ export const id: Dictionary = {
 	'nav.ccc': 'Katekismus',
 	'nav.compendium': 'Kompendium',
 	'nav.magisterium': 'Magisterium',
+	'nav.socialDoctrine': 'Ajaran sosial',
+	'socialDoctrine.landing.title': 'Kompendium Ajaran Sosial Gereja',
+	'socialDoctrine.landing.tagline':
+		'Yang diajarkan Gereja tentang hidup bermasyarakat, dalam 583 nomor.',
+	'socialDoctrine.backMatter': 'Halaman awal dan indeks',
 	'nav.prayers': 'Doa',
 	'nav.bookmarks': 'Penanda',
 	'nav.menu': 'Menu',

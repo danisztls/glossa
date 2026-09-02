@@ -1008,11 +1008,62 @@ PARA_NUM_RE = re.compile(
 # one after the alternation closes.
 
 
+#: A paragraph number printed with NO PERIOD, alone inside its own emphasis
+#: run: `<p><b>1 </b><i>La Chiesa...`. A FIFTH numbering convention, and the
+#: only one whose number is not punctuated at all.
+#:
+#: WHY THIS IS SAFE WHERE A BARE `^\d+\s` WOULD NOT BE. `PARA_NUM_RE` requires
+#: the period for a reason that has not changed -- a paragraph opening "20
+#: years after Rerum Novarum" begins with a numeral and is prose. What makes
+#: this readable is that the emphasis run holds the number AND NOTHING ELSE:
+#: the source is not emphasising a word that happens to start with a digit,
+#: it is setting the number apart as a label, which is exactly what the other
+#: four conventions do with a period.
+#:
+#: MEASURED BEFORE IT WAS WRITTEN, over all 2,081 cached pages: 26 carry a
+#: block this claims and `PARA_NUM_RE` does not, and 22 of them are a
+#: document's whole numbering. SIXTEEN ARE THE CZECH VATICAN II EDITIONS,
+#: which is the half of this worth knowing -- every one of the sixteen prints
+#: its sections this way, and every one of them parsed as a handful of
+#: sections with hundreds of orphan blocks (`sacrosanctum-concilium.cs`: 9
+#: sections captured, 249 blocks orphaned). Four more pages gain a section or
+#: two each at a number they were missing: `dei-verbum.la` §10 and §16,
+#: `sacrosanctum-concilium.la`, `pacem.pt` §3. Not one page gains a number
+#: that is not part of an ascending run.
+#: The number may be wrapped in its own deep-link anchor inside the emphasis
+#: -- `<p><b> <a name="1">1</a> </b><i>La Iglesia...`, which is how the
+#: Spanish edition prints all 583 of its paragraphs. The anchor is a
+#: navigation target and not content, so it changes nothing about the claim
+#: this pattern makes: the run still holds the number and nothing else.
+_SELF_ANCHOR = r"(?:<a\s[^>]*?name=[\"']?\d{1,4}[\"']?[^>]*>|</a>)?"
+#: An emphasis pair with nothing in it -- `<b>254 <i>&nbsp;&nbsp;</i></b>`,
+#: which is how the Albanian edition pads two of its 583 numbers into the
+#: text column. Empty is the whole of the tolerance: a tag with words in it
+#: would be part of the paragraph, and admitting one would make this pattern
+#: claim a bold lead-in to prose.
+#: Non-capturing throughout, and the open and close tags are not required to
+#: be the same one: a backreference inside a fragment that is interpolated
+#: twice into a larger pattern numbers its group differently at each site,
+#: and `\1` there resolved to the emphasis run this sits INSIDE.
+_INLINE_TAG = r"(?:i|b|em|strong)"
+_EMPTY_PAIR = (
+    rf"(?:<{_INLINE_TAG}\b[^>]*>(?:\s|&nbsp;)*</{_INLINE_TAG}\s*>(?:\s|&nbsp;)*)*"
+)
+BOLD_BARE_NUM_RE = re.compile(
+    rf"^(?:\s|&nbsp;)*<\s*(b|strong)\b[^>]*>(?:\s|&nbsp;)*{_EMPTY_PAIR}"
+    rf"{_SELF_ANCHOR}(?:\s|&nbsp;)*(?P<n>\d{{1,4}})(?:\s|&nbsp;)*{_SELF_ANCHOR}"
+    rf"(?:\s|&nbsp;)*{_EMPTY_PAIR}"
+    r"</\s*\1\s*>(?:\s|&nbsp;)*",
+    re.IGNORECASE,
+)
+
+
 def match_para_num(inner_html: str) -> tuple[int, int] | None:
     """Returns (number, end_offset_into_inner_html) or None."""
     m = PARA_NUM_RE.match(inner_html)
     if not m:
-        return None
+        bold = BOLD_BARE_NUM_RE.match(inner_html)
+        return (int(bold.group("n")), bold.end()) if bold else None
     n = m.group("anchor_dot_n") or m.group("anchor_n") or m.group("bare_n")
     # `bare_n` may carry tags BETWEEN its digits -- Humanae Vitae EN prints
     # paragraph 14 as `1<b>4.</b>`, opening the bold run between the digits
@@ -1077,13 +1128,25 @@ _PAREN_MARKER_RE = re.compile(
 
 
 _BRACKET_MARKER_RE = re.compile(
-    rf"\[(?:{_MARKER_INLINE_TAG})*(\d{{1,3}}\*?)(?:{_MARKER_INLINE_TAG})*\]"
+    rf"\[(?:{_MARKER_INLINE_TAG})*(\d{{1,4}}\*?)(?:{_MARKER_INLINE_TAG})*\]"
 )
+# FOUR DIGITS HERE AND THREE IN THE PAREN FORM ABOVE, and the difference is
+# the evidence, not an oversight. The cap above is defended by a page that
+# parenthesizes a YEAR in prose ("We traveled to Latin America (1960)"),
+# which is a habit of ordinary writing; a bracketed year attached to the word
+# before it is not. Measured 2026-09-02 over every cached vatican.va page
+# this parser reads the bracket template on -- 54 of them -- the only
+# four-digit attached brackets in the whole corpus are the Compendium of the
+# Social Doctrine's own markers 1000 to 1232, 202 of them. At three digits
+# they were not markers at all: the inline references were left as literal
+# text and 233 of that work's 1,232 footnotes resolved to nothing, silently,
+# because a marker nobody detects raises no dangling-citation problem either.
+#
 # Attached to the word or punctuation it follows -- `"one."[1]`, `head,[4]`.
 # That attachment is the discriminator against an editorial `[1]` standing on
 # its own, and the count threshold below is the second: a document really
 # using this convention has dozens.
-_BRACKET_ATTACHED_RE = re.compile(r"[^\s>]\[\d{1,3}\*?\]")
+_BRACKET_ATTACHED_RE = re.compile(r"[^\s>]\[\d{1,4}\*?\]")
 _BRACKET_MIN = 3
 
 
@@ -1239,6 +1302,9 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
         candidates.append(
             (tag_start if tag_start != -1 else m.start(), "definition anchor")
         )
+    start = find_footnote_run_start(html)
+    if start is not None:
+        candidates.append((start, "numbered definition run"))
     hrs = list(_HR_RE.finditer(html))
     if hrs:
         candidates.append((hrs[-1].start(), "last <hr>"))
@@ -1246,6 +1312,88 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
         return None, "no signal"
     candidates.sort()
     return candidates[0]
+
+
+#: How many consecutive definitions it takes to be a footnote LIST. Three is
+#: the smallest run that cannot be a coincidence: one paragraph opening `[1]`
+#: is a stray, two could be a quoted pair, and a body paragraph that opens
+#: with a bracketed numeral is already rare enough that the marker detector
+#: requires `_BRACKET_MIN` of them before it will read brackets at all.
+_FN_RUN_MIN = 3
+
+#: What share of the paragraphs from the run's start to the end of the page
+#: the run itself has to be. THIS IS THE HALF THAT MATTERS, and the run
+#: length alone is not enough without it: Familiaris Consortio EN prints
+#: `1) forming a community of persons;` through `4) sharing in the life and
+#: mission of the Church.` as four one-line paragraphs in the middle of its
+#: body -- an enumeration of the family's four tasks, indistinguishable from
+#: a footnote list by any rule over those four paragraphs. Taking it as the
+#: boundary cut the document from 86 sections to 17.
+#:
+#: A footnote list is not merely a run: it is WHAT THE REST OF THE PAGE IS.
+#: Past its first entry there is almost nothing else -- a continuation
+#: paragraph here, a colophon there -- while past a body enumeration there
+#: are hundreds of paragraphs of document. One half leaves generous room for
+#: notes that run to two paragraphs and for whatever an edition prints after
+#: them, and still rejects the body case by two orders of magnitude.
+#:
+#: DELIBERATELY NOT MADE CLEVERER. Four of the Compendium of the Social
+#: Doctrine's editions defeat it -- their notes wrap across `<br>`, or carry
+#: continuation lines that read as labels of their own -- and each attempt to
+#: widen it for them broke a page it had been reading correctly. What those
+#: editions get instead is `parse_document`'s `footnote_start`: their scraper
+#: knows where their body ENDS, which no general rule over one page does.
+_FN_RUN_SHARE = 0.5
+
+
+def find_footnote_run_start(html: str) -> int | None:
+    """The offset of a footnote list that announces itself only by BEING one:
+    a paragraph labelled `1`, followed by `2`, `3`, and so on.
+
+    The three signals above are a heading, a definition anchor, and -- failing
+    both -- the last `<hr>`. The last of those is a guess about page furniture
+    rather than a reading of the apparatus, and it is wrong wherever a page
+    prints anything after its notes. It was wrong on the whole Compendium of
+    the Social Doctrine: that page's notes are followed by a rule and then the
+    edition's reprint line, ISBN and copyright, so the last `<hr>` sits BELOW
+    all 1,232 definitions. The region came out empty, every section's
+    `citations` was `[]`, and the notes themselves -- 340 KB of bibliography --
+    were swallowed as body prose onto the final numbered section. Silently:
+    nothing checks that a document whose prose carries markers also has
+    definitions to match them.
+
+    So this reads the list instead of guessing at its lid, using the same
+    label shapes `parse_footnote_entry` already knows: a paragraph labelled
+    1, then 2, then 3, running to the end of the page rather than into more
+    document (`_FN_RUN_SHARE`, which is where the real discrimination is).
+    Candidates are sorted, so a page that also prints a heading still
+    boundaries on the heading -- this only ever answers where nothing better
+    did."""
+    # Named here rather than at module scope: all three regexes are defined
+    # further down the file, and a tuple built at import time would be reading
+    # them before they exist.
+    label_res = (_FN_BRACKET_RE, _FN_PAREN_RE, _FN_TRAILING_PAREN_RE)
+    paras = list(_TOC_PARA_RE.finditer(html))
+    labels: list[tuple[int, int]] = []  # (paragraph index, marker as int)
+    for i, para in enumerate(paras):
+        text = strip_tags(para.group(2))
+        for label_re in label_res:
+            m = label_re.match(text)
+            if m and m.group(1).isdigit():
+                labels.append((i, int(m.group(1))))
+                break
+    by_para = dict(labels)
+    for i, n in labels:
+        if n != 1:
+            continue
+        run = 0
+        while by_para.get(i + run) == run + 1:
+            run += 1
+        if run < _FN_RUN_MIN:
+            continue
+        if run >= _FN_RUN_SHARE * (len(paras) - i):
+            return paras[i].start()
+    return None
 
 
 _FN_ANCHOR_DEF_RE = re.compile(
@@ -2213,6 +2361,18 @@ def mark_and_split(raw: str, marker_template: str) -> tuple[str, str, str]:
     m = _NUM_PREFIX_TEXT_RE.match(text)
     if m:
         return text, text[m.end() :], strip_leading_number_html(html)
+    # The period-less form (`BOLD_BARE_NUM_RE`). Stripped from BOTH sides
+    # here rather than through `strip_leading_number_html`, which gates on the
+    # text form matching and so cannot see this one: the number reaches the
+    # text as a bare digit and a space, which is only a paragraph number
+    # because the markup said so. Leaving it unstripped would print the
+    # number twice on every page -- once in the margin as `§n` and once at
+    # the head of its own first sentence.
+    bold = BOLD_BARE_NUM_RE.match(html)
+    if bold:
+        rest_html = html[bold.end() :]
+        prefix = re.match(rf"^\s*{bold.group('n')}(?:\s|\xa0)*", text)
+        return text, text[prefix.end() :] if prefix else text, rest_html
     return text, text, html
 
 
@@ -2225,10 +2385,25 @@ _NUM_PREFIX_TEXT_RE = re.compile(r"^(\d{1,4})\s*\.\s*")
 # period then swallowed a leading `&quot;` -- 359 sections lost an opening
 # quotation mark, caught by the round-trip check.
 _PREFIX_FILLER = r"(?:<[^>]+>|\s|&nbsp;|&#160;|&#[xX]0*[aA]0;)*"
+# WHAT MAY FOLLOW THE NUMBER'S PERIOD IS NARROWER THAN WHAT MAY PRECEDE IT,
+# and the asymmetry is the whole of this comment. Before the number a source
+# may open any wrapper it likes (`<b>`, `<font size="3">`, `<i>`) and all of
+# it belongs to the number; after the period only the CLOSE of those wrappers
+# does. `<b> 1. </b><i>The Church moves further...` is `<b>`, the number, and
+# then the paragraph's own italic lead sentence -- and a filler that admits
+# any tag ate the `<i>` along with the `</b>`, leaving the block opening in
+# roman with an unmatched `</i>` somewhere in the middle of it.
+#
+# Measured on the Compendium of the Social Doctrine, which sets the opening
+# thesis of most of its paragraphs in italics as an editorial convention: 481
+# of its 586 blocks came out with unbalanced markup, against 0 for Rerum
+# Novarum and Lumen Gentium and 1 for Centesimus Annus. Rare enough elsewhere
+# to have gone unnoticed, and total on a work built that way.
+_CLOSE_FILLER = r"(?:</[^>]+>|\s|&nbsp;|&#160;|&#[xX]0*[aA]0;)*"
 # Same tags-between-digits tolerance as PARA_NUM_RE's `bare_n`, so a number
 # that IS recognised is also stripped rather than left in the stored html.
 _NUM_PREFIX_HTML_RE = re.compile(
-    rf"^{_PREFIX_FILLER}\d(?:(?:<[^>]+>)*\d){{0,3}}{_PREFIX_FILLER}\.{_PREFIX_FILLER}"
+    rf"^{_PREFIX_FILLER}\d(?:(?:<[^>]+>)*\d){{0,3}}{_PREFIX_FILLER}\.{_CLOSE_FILLER}"
 )
 
 
@@ -2423,7 +2598,16 @@ def _compile_labels(spec: Divisions) -> list[tuple[str, re.Pattern]]:
     # table had ordinals, and waiting precisely where the next language lands,
     # since the cheapest useful entry is nouns alone (`_NUMERAL` already
     # covers `CAPUT III` and `III CAPUT` with no vocabulary at all).
-    tail = f"{_NUMERAL}|{after}" if after else _NUMERAL
+    # THE SPELLED NUMBER IS TRIED FIRST, and the order is load-bearing where a
+    # language writes its ordinal as more than one word. Albanian heads a
+    # chapter `KAPITULLI I PARË`, and with `_NUMERAL` leading the alternation
+    # the `I` matches as a Roman numeral, the label ends there, and `PARË` is
+    # left over -- so `bare_division_label`, which asks whether the label is
+    # the WHOLE line, says no and the chapter's name never merges with it.
+    # `_alt` already sorts its own entries longest-first for the same reason
+    # one alternative must not shadow a longer one sharing its prefix; this is
+    # that rule applied across the two halves.
+    tail = f"{after}|{_NUMERAL}" if after else _NUMERAL
     # `\.?` because a noun can be printed abbreviated, with its full stop
     # between it and the number: Byelorussian heads a Vatican II article
     # `Арт. 1` where Czech spells it `ARTIKUL 1`. Whitespace is still
@@ -2459,9 +2643,38 @@ DIVISIONS: dict[str, Divisions] = {
             "FIRST": 1, "SECOND": 2, "THIRD": 3, "FOURTH": 4, "FIFTH": 5,
             "SIXTH": 6, "SEVENTH": 7, "EIGHTH": 8, "NINTH": 9, "TENTH": 10,
         },
+        # ELEVEN AND TWELVE ARE HERE BECAUSE A WORK REACHED THEM. Ten was
+        # never a rule, only the longest document the table had met: the
+        # Compendium of the Social Doctrine has twelve chapters, and its
+        # eleventh and twelfth were the only two of the twelve whose label
+        # this table could not read -- so `CHAPTER ELEVEN` and its title
+        # stayed two separate outline rows anchored to one paragraph while
+        # the other ten merged. Read `ordinals` and `cardinals` as a counting
+        # vocabulary that ends where the corpus stops counting, and extend it
+        # when something counts further.
         cardinals={
             "ONE": 1, "TWO": 2, "THREE": 3, "FOUR": 4, "FIVE": 5,
             "SIX": 6, "SEVEN": 7, "EIGHT": 8, "NINE": 9, "TEN": 10,
+            "ELEVEN": 11, "TWELVE": 12,
+        },
+        numeral_first=False,
+    ),
+    # Albanian, and the first entry read off a work other than the two big
+    # magisterial families: the Compendium of the Social Doctrine is the only
+    # thing this corpus holds in it. All fifteen labels below are the page's
+    # own, transcribed rather than declined from a grammar -- Albanian marks
+    # the ordinal with a definite article that agrees with its noun, `PJESA E
+    # PARË` against `KAPITULLI I PARË`, so both articles are part of the form.
+    "sq": Divisions(
+        nouns={
+            "part": ("PJESA",),
+            "chapter": ("KAPITULLI",),
+        },
+        ordinals={
+            "I PARË": 1, "E PARË": 1, "I DYTË": 2, "E DYTË": 2,
+            "I TRETË": 3, "E TRETË": 3, "I KATËRT": 4, "I PESTË": 5,
+            "I GJASHTË": 6, "I SHTATË": 7, "I TETË": 8, "I NËNTË": 9,
+            "I DHJETË": 10, "I NJËMBËDHJETË": 11, "I DYMBËDHJETË": 12,
         },
         numeral_first=False,
     ),
@@ -3161,6 +3374,7 @@ def merge_heading_lines(
             and blocks[j].is_heading
             and toc_level.get(i) is not None
             and toc_level.get(j) == toc_level.get(i)
+            and not opens_with_enumerator(blocks[j].text)
         ):
             absorbed.append(j)
             j += 1
@@ -3187,6 +3401,33 @@ def merge_heading_lines(
         out += 1
     blocks[:] = [b for k, b in enumerate(blocks) if k not in dropped]
     return {shift[k]: v for k, v in toc_level.items() if k in shift}, merged
+
+
+_ENUMERATOR_RE = re.compile(r"^\s*(?:\d{1,3}|[IVXLCDM]{1,7}|[A-Za-z])\s*[.)\]]\s+\S")
+
+
+def opens_with_enumerator(text: str) -> bool:
+    """Does this heading number ITSELF -- `I. Biblical aspects`, `3) Doveri`,
+    `a. God's gratuitous presence`?
+
+    A DIVISION'S SUBTITLE IS NOT ENUMERATED. That is what separates a second
+    title line from the division's own first sub-section, and it is the
+    generalisation of the case `merge_heading_lines` already documents: Ad
+    Petri Cathedram's `Aos bispos` is a sub-section rather than a subtitle,
+    and it was told apart only because that page prints no table of contents
+    to vouch for it. The Compendium of the Social Doctrine prints one, and
+    its table sets `CHAPTER ONE`, the chapter's title and `I. GOD'S
+    LIBERATING ACTION IN THE HISTORY OF ISRAEL` at one level -- the page
+    distinguishes them by centring, which the outline reader does not read --
+    so the vouching was real and wrong, and ten of that work's twelve
+    chapters lost their section I into a subtitle while II, III and IV stayed
+    rows of their own.
+
+    Deliberately narrow: an enumerator, a separator, and then more text. A
+    heading that IS a bare label (`CHAPTER ONE`) has nothing after the
+    numeral and is not this; `bare_division_label` already refuses those one
+    line above."""
+    return bool(_ENUMERATOR_RE.match(text))
 
 
 def _norm_heading(text: str) -> str:
@@ -3334,9 +3575,49 @@ def toc_link_span(body_html: str) -> tuple[int, int] | None:
     start = _extend_toc_head(body_html, start)
     end = _extend_toc_tail(body_html, end)
     for para in _TOC_PARA_RE.finditer(body_html[start:end]):
-        if match_para_num(para.group(2)):
+        if match_para_num(para.group(2)) and not _is_toc_row(para.group(2)):
             return None
     return start, end
+
+
+def _is_toc_row(inner_html: str) -> bool:
+    """Is this numbered paragraph a table-of-contents ROW rather than a
+    numbered section that happens to sit inside the candidate span?
+
+    The guard above states a true thing -- a body is made of numbered
+    paragraphs and a table of contents is not -- and then reads it one step
+    too literally, because a table of contents may LIST a numbered series.
+    The Compendium of the Social Doctrine's does: its Chapter Twelve entry
+    ends with a `<blockquote>` holding `1. Service to the human person`
+    through `4. Service in politics`, four links in one paragraph, which is
+    the outline naming four sub-sections and not the document's paragraph 1.
+    That single row disqualified the whole span, so the page's 47 KB table of
+    contents stayed in the body and became the opening of section 1.
+
+    The discriminator is that a table-of-contents row is MADE of its links:
+    every word it prints is a title it points at, and the only text outside
+    them is the enumerator and the punctuation between entries -- the same
+    two things `_emphasis_covers` already tolerates outside a heading's
+    emphasis, read here against the anchors instead. A numbered section
+    paragraph is prose, so its text is overwhelmingly outside any link it
+    happens to contain, and it keeps disqualifying the span exactly as
+    before.
+
+    Requires a link, so a paragraph with none is never a row: an outline
+    printed as plain text is carried by the span it sits inside (see the
+    docstring above), never by this."""
+    links = list(_INPAGE_LINK_RE.finditer(inner_html))
+    if not links:
+        return False
+    gaps = [inner_html[: links[0].start()]]
+    gaps += [inner_html[a.end() : b.start()] for a, b in itertools.pairwise(links)]
+    gaps.append(inner_html[links[-1].end() :])
+    return all(
+        _BLANK_OUTSIDE_RE.match(text)
+        or _PUNCT_OUTSIDE_RE.match(text)
+        or _ENUM_OUTSIDE_RE.match(text)
+        for text in (strip_tags(gap) for gap in gaps)
+    )
 
 
 def _printed_lines_from(body_html: str, pos: int) -> set[str]:
@@ -3551,17 +3832,17 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
             deeper = (
                 is_full_italic(balanced_i) or para_indented or indent >= _TOC_INDENT_MIN
             )
-            level = 1 if is_full_bold(balanced_b) else (3 if deeper else 2)
-            # A <blockquote> is the one indent that is RELATIVE. The other two
+            level = _toc_entry_level(attrs, balanced_b, deeper)
+            # A <blockquote> is the one indent that is RELATIVE. The other
             # cues name an absolute tier -- italic is the sub-section style
             # wherever it appears -- but nesting only says "below the line
             # above me", so it is read as a floor under the typographic level
             # rather than as a tier of its own. Both halves are load-bearing.
             # `querida-amazonia.pt` emphasises nothing at all, so its chapters
-            # and their sections both read 2 and the floor is what separates
-            # them; `verbum-domini.en` bolds its chapters and wraps most of
-            # their sections in a <blockquote> but not all of them -- so a
-            # third tier read off the wrapper alone would put fifteen sections
+            # and their sections both read the same and the floor is what
+            # separates them; `verbum-domini.en` bolds its chapters and wraps
+            # most of their sections in a <blockquote> but not all of them --
+            # so a tier read off the wrapper alone would put fifteen sections
             # under the one sibling the source forgot to wrap.
             if quoted:
                 level = max(level, last_unquoted + 1)
@@ -3590,6 +3871,42 @@ def extract_toc_outline(body_html: str) -> list[tuple[str, int]]:
         clamped.append((title, level))
         prev = level
     return clamped
+
+
+#: A table of contents' emphasis, from most to least, as levels. The base
+#: shift and the clamp below turn these into contiguous depths, so what
+#: matters is the ORDER and not the numbers.
+#:
+#: THREE OF THESE FIVE TIERS SPLIT WHAT USED TO BE ONE. Bold alone was level
+#: 1, and on a table that emphasises everything structural in bold it says
+#: nothing: the Compendium of the Social Doctrine's table sets `PART ONE`,
+#: `CHAPTER ONE` and `I. GOD'S LIBERATING ACTION IN THE HISTORY OF ISRAEL`
+#: all in bold and tells them apart by CENTRING and by font size -- which a
+#: reader sees and this function did not read -- so its 79 parts, chapters
+#: and sections came out as one flat tier.
+#:
+#: The split cannot disturb the three documents that had a table of contents
+#: before this one: measured 2026-09-02, not one of their entries is centred,
+#: so every bold entry of theirs lands in the same tier it always did and the
+#: base shift restores the old numbers exactly.
+_TOC_LEVEL_BOLD_CENTERED_LARGE = 1
+_TOC_LEVEL_BOLD_CENTERED = 2
+_TOC_LEVEL_BOLD = 3
+_TOC_LEVEL_PLAIN = 4
+_TOC_LEVEL_DEEPER = 5
+#: `<font size>` above the html default, which is what a compositor reaches
+#: for over a table's outermost division and nothing else.
+_TOC_LARGE_FONT = _HTML_DEFAULT_FONT_SIZE + 1
+
+
+def _toc_entry_level(attrs: str, balanced_bold: str, deeper: bool) -> int:
+    if not is_full_bold(balanced_bold):
+        return _TOC_LEVEL_DEEPER if deeper else _TOC_LEVEL_PLAIN
+    if not _CENTERED_RE.search(attrs):
+        return _TOC_LEVEL_BOLD
+    if heading_font_size(balanced_bold) >= _TOC_LARGE_FONT:
+        return _TOC_LEVEL_BOLD_CENTERED_LARGE
+    return _TOC_LEVEL_BOLD_CENTERED
 
 
 def apply_toc_outline(
@@ -3967,7 +4284,7 @@ _PAGE_TRAILER_RE = re.compile(r"^COPYRIGHT\b")
 # page shell, which is what gave the cause away.
 _LANG_CODE = r"[A-Za-z]{2}(?:_[A-Za-z]{2})?"
 _LANG_BAR_PREFIX_RE = re.compile(
-    rf"^\s*\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?\s*"
+    rf"^\s*\[?\s*{_LANG_CODE}\s*(?:[-,]\s*{_LANG_CODE}\s*)+\]?\s*"
 )
 
 
@@ -4317,8 +4634,19 @@ def has_words(text: str) -> bool:
 # numeral has. `sacerdotii.en`, `grata-recordatio.en` and `princeps.en` lost
 # the same `II`, and in each the effect was worse than a missing heading: the
 # flat structure array had no boundary at all where that part began.
-_LANG_BAR_ONE_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)*\]?$")
-_LANG_BAR_RE = re.compile(rf"^\[?\s*{_LANG_CODE}\s*(?:-\s*{_LANG_CODE}\s*)+\]?$")
+#
+# THE SEPARATOR IS A CLASS, not a hyphen. Every page in the two document
+# families writes `EN - FR - IT - LA`, and the Compendium of the Social
+# Doctrine's own bar writes `[BE, EL, EN, ES, ...]` -- 17 codes, commas. Read
+# with hyphens alone it matched nothing, survived `drop_page_furniture`, and
+# became the first block of that work's section 1.
+_LANG_BAR_SEP = r"[-,]"
+_LANG_BAR_ONE_RE = re.compile(
+    rf"^\[?\s*{_LANG_CODE}\s*(?:{_LANG_BAR_SEP}\s*{_LANG_CODE}\s*)*\]?$"
+)
+_LANG_BAR_RE = re.compile(
+    rf"^\[?\s*{_LANG_CODE}\s*(?:{_LANG_BAR_SEP}\s*{_LANG_CODE}\s*)+\]?$"
+)
 _PAPAL_SIGNATURE_RE = re.compile(
     r"^(?:PAPA\s+)?"
     r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
@@ -5198,7 +5526,21 @@ def parse_document(
     fetched_url: str,
     slug: str = "",
     pontiff: str = "",
+    footnote_start: int | None = None,
 ) -> ParseResult:
+    """`footnote_start`, when given, is an offset into the CONTENT REGION at
+    which this page's footnote list begins, and it overrides every signal
+    below.
+
+    THE CALLER MAY KNOW SOMETHING NO RULE OVER ONE PAGE DOES. Every signal
+    here reads the page in isolation and asks what a footnote list looks
+    like; a scraper written for one work knows where that work's body ENDS,
+    which settles the question outright. Four editions of the Compendium of
+    the Social Doctrine need it -- their notes wrap across `<br>`, or open
+    with a year in brackets, so no reading of the notes themselves separates
+    them from the document above -- and `csdc.py` supplies it by finding the
+    run of a thousand definitions that follows the work's last numbered
+    paragraph. Nothing else passes it, and the default is unchanged."""
     html = strip_transparent_spans(html)
     testo_m = re.search(r'class="testo"', html)
     if testo_m:
@@ -5234,7 +5576,10 @@ def parse_document(
             f"{STUB_CONTENT_MIN_CHARS}) -- translation stub, not a real document page"
         )
 
-    fn_start, evidence = find_footnote_region_start(region)
+    if footnote_start is not None:
+        fn_start, evidence = footnote_start, "supplied by the caller"
+    else:
+        fn_start, evidence = find_footnote_region_start(region)
     if fn_start is None:
         body_html, foot_html = region, ""
     else:

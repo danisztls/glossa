@@ -214,6 +214,24 @@ const DOCUMENT_CHUNK_SIZE = 25;
  *  51 KB raw (measured 2026-08-25). */
 const COMPENDIUM_CHUNK_SIZE = 100;
 
+/** The Compendium of the Social Doctrine is chunked at the DOCUMENTS' stride
+ *  and by the same `documentChunkStartFor`, which is not laziness but the
+ *  consequence of its content files being a document's byte for byte: its
+ *  chunks land at `content/csdc.{lang}/sections/NNNN-NNNN.json`, which is the
+ *  path `corpus-index.ts` already reads into `documentChunkLocationsByWork`.
+ *  A stride of its own would mean a second location map over the same files
+ *  and a second literal to keep in step with this one, and the failure that
+ *  causes is silent -- a lookup returning `undefined` for a chunk that was
+ *  written.
+ *
+ *  Measured 2026-09-02 over the English edition (median paragraph 1.4 KB, p90
+ *  2.2 KB, worst 3.9 KB): 24 chunks, worst 50 KB raw. That is a THIRD of what
+ *  a Catechism reader already pays to open one paragraph (136 KB for a
+ *  100-paragraph chunk), and the widest chapter span (§209-254) needs two
+ *  chunks. Both numbers are better at 25 than they would be at 50 for the
+ *  read this work is actually put to, which is one paragraph at a time. */
+const SOCIAL_DOCTRINE_CHUNK_SIZE = DOCUMENT_CHUNK_SIZE;
+
 /** Bible books, chunked by CHAPTER on the same fixed-stride rule again
  *  (`bibleChapterChunkFor` in `corpus-index.ts`).
  *
@@ -708,6 +726,12 @@ const documentIndex = {}; // workId -> { sectionNumbers, appendixUnits? } -- key
 // (`{family}.{slug}.{lang}`) is its own independent work with its own section
 // count and its own structure tree -- there is no single "the document tree
 // for English" the way there's a single CCC tree for English.
+const socialDoctrineAbbreviations = {}; // lang -> the edition's own printed sigla table
+const socialDoctrineIndex = {}; // workId -> { sectionNumbers, appendixUnits? } -- keyed by WORK
+// ID like the documents', because that is the shape of the content: one
+// `csdc.{lang}` per edition, each with its own outline in the content tier.
+const socialDoctrineNumbers = []; // canonical URL existence, unioned across editions
+const socialDoctrineEditions = []; // [{ lang, work, sections, structure }] -- the xref pass and the chapter pass
 const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG, matching the Compendium
 // (one canonical work per language), per the task brief's own instruction to
 // follow that shape rather than the Documents one above: today there is
@@ -1040,7 +1064,8 @@ const CONTENT_TYPES = new Set([
 	'commentary',
 	'prayer',
 	'summa',
-	'document'
+	'document',
+	'social-doctrine'
 ]);
 
 const hasContentBranch = (workId, manifest) =>
@@ -1645,6 +1670,94 @@ for (const workId of workIds) {
 		continue;
 	}
 
+	// The Compendium of the Social Doctrine (docs/corpus-schema.md §Compendium
+	// of the Social Doctrine). Its content files are a document's and its
+	// ADDRESSES are the Catechism's, which is the whole reason it has a type
+	// of its own -- so this branch writes what the document branch below
+	// writes, and registers what the Catechism branch above registers.
+	if (manifest.type === 'social-doctrine') {
+		const lang = workId.split('.').pop();
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const sections = readJson(path.join(workDir, 'sections.json'));
+		const appendixPath = path.join(workDir, 'appendix.json');
+		const appendix = existsSync(appendixPath) ? readJson(appendixPath) : null;
+		const sectionNumbers = sections.map((s) => s.n).sort((a, b) => a - b);
+
+		socialDoctrineIndex[workId] = {
+			sectionNumbers,
+			...(appendix ? { appendixUnits: appendix.length } : {})
+		};
+		socialDoctrineNumbers.push(...sectionNumbers);
+		socialDoctrineEditions.push({ lang, work: workId, sections, structure });
+
+		for (const section of sections) {
+			mark({ kind: 'socialDoctrine', n: section.n }, section, workId, manifest.language);
+		}
+
+		// The outline goes to the CONTENT tier, exactly as a document's does
+		// and for the same arithmetic: ten editions carry ~2,700 nodes
+		// between them, wanted only by the page already reading one of them.
+		//
+		// `{ header, nodes }` AND NOT A BARE ARRAY, because `getDocumentStructure`
+		// reads both this and a document's through one parser and returns
+		// `.nodes`. A bare array here does not degrade -- it returns `undefined`
+		// and the first `.filter` on it throws, on every page of this work.
+		{
+			const relPath = `content/${workId}/structure.json`;
+			const frontMatter = {
+				...(manifest.header ? { header: manifest.header } : {}),
+				nodes: structure
+			};
+			writeJson(path.join(destDir, relPath), frontMatter);
+			contentManifest.push({
+				workId,
+				kind: 'social-doctrine-structure',
+				relPath,
+				bytes: byteLength(frontMatter)
+			});
+		}
+		// The letter of transmittal, the presentation and the index of
+		// references. One asset, not chunked: it has no citable address, so
+		// nothing links into the middle of it and the page that shows it
+		// shows all of it — the argument `CEILING_EXEMPT_KINDS` records for a
+		// document's appendix, which this is the same file as.
+		if (appendix) {
+			const relPath = `content/${workId}/appendix.json`;
+			writeJson(path.join(destDir, relPath), appendix);
+			contentManifest.push({
+				workId,
+				kind: 'social-doctrine-appendix',
+				relPath,
+				bytes: byteLength(appendix)
+			});
+		}
+		// The edition's own printed sigla table, in the INDEX tier beside the
+		// Catechism's: it is small (95 rows at most), and `refs-grammar.ts`
+		// wants it without a work in hand.
+		const abbrevPath = path.join(workDir, 'abbreviations.json');
+		if (existsSync(abbrevPath)) {
+			const abbreviations = readJson(abbrevPath);
+			if (abbreviations.length > 0) socialDoctrineAbbreviations[lang] = abbreviations;
+		}
+
+		const maxN = sectionNumbers.length ? sectionNumbers[sectionNumbers.length - 1] : 0;
+		for (let start = 1; start <= maxN; start += SOCIAL_DOCTRINE_CHUNK_SIZE) {
+			const end = start + SOCIAL_DOCTRINE_CHUNK_SIZE - 1;
+			const chunk = sections.filter((s) => s.n >= start && s.n <= end);
+			if (chunk.length === 0) continue;
+			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+			const relPath = `content/${workId}/sections/${chunkName}.json`;
+			writeJson(path.join(destDir, relPath), chunk);
+			contentManifest.push({
+				workId,
+				kind: 'social-doctrine-chunk',
+				relPath,
+				bytes: byteLength(chunk)
+			});
+		}
+		continue;
+	}
+
 	// encyclical/apost-exhort/apost-const/cdf later per the schema), but
 	// every one of them is `type: "document"` and shares one content shape,
 	// so there's exactly one branch to maintain as more families land.
@@ -1841,8 +1954,17 @@ if (publishedDefeats.length > 0) {
  *  theoretical on 2026-08-29, when the magisterial documents were taken in
  *  ten languages and 328 of the new editions turned out to be unnumbered:
  *  `vatii.gaudium-et-spes.ar` keeps its 118 entries in a 313 KB appendix,
- *  which is simply how long that document is in Arabic. */
-const CEILING_EXEMPT_KINDS = new Set(['document-appendix']);
+ *  which is simply how long that document is in Arabic.
+ *
+ *  `social-doctrine-appendix` is the same file under another name, and the
+ *  same argument holds with one thing added. It is the letter of transmittal,
+ *  the presentation and the INDEX OF REFERENCES — 213 KB in Polish, 208 in
+ *  Hungarian — none of it addressable, and chunking it would mean inventing
+ *  an address for a book name in an index. What is added is that nothing
+ *  fetches it on arrival: `/doctrina-socialis` puts it behind a disclosure and
+ *  starts the request when the reader opens it, so the two big editions cost
+ *  a reader who never asks for them nothing at all. */
+const CEILING_EXEMPT_KINDS = new Set(['document-appendix', 'social-doctrine-appendix']);
 
 const oversized = contentManifest
 	.filter(
@@ -2087,6 +2209,57 @@ writeJson(
 	path.join(indexDir, 'document-index.json'),
 	mapValues(documentIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
 );
+/**
+ * The Compendium of the Social Doctrine's reading divisions, as the paragraph
+ * each opens at.
+ *
+ * UNIONED ACROSS EDITIONS, and it has to be. Every other work's chapter spans
+ * come from one edition's own outline, because that outline names a KIND
+ * (`CCC_CHAPTER_KINDS`). A document's outline names no kinds -- it carries
+ * only an observed depth, read off how the page paints a heading -- and this
+ * work's ten editions are ten differently painted pages, so `level` means
+ * something different in each: the twelve chapters sit at level 2 in English
+ * and level 1 in French, and Hungarian, Swahili and Vietnamese produce no
+ * level that isolates them at all.
+ *
+ * What the editions DO agree on is the division LABEL: seven of the ten print
+ * `CHAPTER ONE`/`CAPITOLO 1`/`KAPITULLI I PARË` above the chapter's name, the
+ * scraper stores it as `label`, and the seven agree exactly on all twelve
+ * anchors -- 20, 60, 105, 160, 209, 255, 323, 377, 428, 451, 488, 521. The
+ * three that print none contribute nothing rather than contradicting; an
+ * anchor is taken when any edition labels it, because a label is a statement
+ * and its absence is only silence.
+ *
+ * §1 is added because the Introduction carries no label either, and without
+ * it the work's first nineteen paragraphs would sit in no division at all.
+ * The CONCLUSION (§575) likewise carries none, so it is read as the tail of
+ * Chapter Twelve's span -- the reader still meets its heading where the
+ * edition prints it, and it still has its own paragraph addresses.
+ */
+const socialDoctrineChapterStarts = [
+	...new Set([
+		1,
+		...socialDoctrineEditions.flatMap(({ structure }) =>
+			structure.filter((node) => node.label && node.before !== null).map((node) => node.before)
+		)
+	])
+].sort((a, b) => a - b);
+
+for (const { work, sections } of socialDoctrineEditions) {
+	const lang = manifests[work].language;
+	for (const [i, from] of socialDoctrineChapterStarts.entries()) {
+		const to = (socialDoctrineChapterStarts[i + 1] ?? Infinity) - 1;
+		const span = sections.filter((s) => s.n >= from && s.n <= to);
+		if (span.length > 0) mark({ kind: 'socialDoctrineChapter', n: from }, span, work, lang);
+	}
+}
+
+writeJson(
+	path.join(indexDir, 'social-doctrine-index.json'),
+	mapValues(socialDoctrineIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
+);
+writeJson(path.join(indexDir, 'social-doctrine-chapters.json'), socialDoctrineChapterStarts);
+writeJson(path.join(indexDir, 'social-doctrine-abbreviations.json'), socialDoctrineAbbreviations);
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
 writeJson(path.join(indexDir, 'plates-credit.json'), platesCredit);
 writeJson(
@@ -2389,6 +2562,12 @@ const routeManifest = {
 			)
 		)
 	].sort((a, b) => a - b),
+	// Unioned across editions like `bible` and `summa`: not every edition
+	// numbers all 583 paragraphs (eight are missing across three of them, each
+	// tabled in `csdc.KNOWN_GAPS`), and an address the corpus carries in nine
+	// languages is an address.
+	socialDoctrine: [...new Set(socialDoctrineNumbers)].sort((a, b) => a - b),
+	socialDoctrineChapters: socialDoctrineChapterStarts,
 	// From `manifests`, so a document the corpus knows about is an address even
 	// when this build has none of its text: `/documenta/{slug}` redirects that
 	// reader to the source page (docs/decisions.md §Posture), and it needs
@@ -2427,6 +2606,8 @@ const routeTitles = buildRouteTitles({
 	compendiumIndex,
 	summaIndex,
 	prayerIndex,
+	socialDoctrineEditions,
+	socialDoctrineChapterStarts,
 	// The interface's own strings, for the seven chrome pages that take a
 	// language prefix. Read from the dictionaries so the head a searcher
 	// matches on is the sentence the page shows them — see CHROME_KEYS.

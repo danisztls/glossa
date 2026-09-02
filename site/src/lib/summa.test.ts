@@ -171,6 +171,8 @@ describe('addresses', () => {
 			cccChapters: [],
 			compendium: [],
 			compendiumChapters: [],
+			socialDoctrine: [],
+			socialDoctrineChapters: [],
 			documents: [],
 			prayers: [],
 			summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }

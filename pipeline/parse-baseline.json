@@ -52,10 +52,6 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "encyclical.caritas-in-veritate.ar": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "encyclical.centesimus-annus.fr": {
       "status": "validation-failed",
       "problems": 44
@@ -95,10 +91,6 @@
     "encyclical.deus-caritas-est.vi": {
       "status": "validation-failed",
       "problems": 1
-    },
-    "encyclical.dilexit-nos.be": {
-      "status": "validation-failed",
-      "problems": 131
     },
     "encyclical.dilexit-nos.pt": {
       "status": "validation-failed",
@@ -250,7 +242,7 @@
     },
     "encyclical.fratelli-tutti.vi": {
       "status": "validation-failed",
-      "problems": 180
+      "problems": 1
     },
     "encyclical.humanae-vitae.fr": {
       "status": "validation-failed",
@@ -572,10 +564,6 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "encyclical.spe-salvi.vi": {
-      "status": "validation-failed",
-      "problems": 25
-    },
     "encyclical.spiritus-paraclitus.en": {
       "status": "validation-failed",
       "problems": 1
@@ -728,10 +716,6 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "exhortation.evangelii-nuntiandi.la": {
-      "status": "validation-failed",
-      "problems": 51
-    },
     "exhortation.evangelii-nuntiandi.lv": {
       "status": "validation-failed",
       "problems": 2
@@ -757,10 +741,6 @@
       "problems": 1
     },
     "exhortation.gaudete-in-domino.es": {
-      "status": "validation-failed",
-      "problems": 1
-    },
-    "exhortation.gaudete-in-domino.la": {
       "status": "validation-failed",
       "problems": 1
     },
@@ -860,59 +840,35 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.ad-gentes.be": {
+    "vatii.ad-gentes.cs": {
       "status": "validation-failed",
       "problems": 37
     },
-    "vatii.ad-gentes.cs": {
-      "status": "validation-failed",
-      "problems": 36
-    },
     "vatii.ad-gentes.de": {
       "status": "validation-failed",
-      "problems": 43
+      "problems": 16
     },
     "vatii.ad-gentes.fr": {
       "status": "validation-failed",
       "problems": 2
     },
-    "vatii.ad-gentes.it": {
-      "status": "validation-failed",
-      "problems": 39
-    },
     "vatii.apostolicam-actuositatem.ar": {
       "status": "validation-failed",
-      "problems": 7
-    },
-    "vatii.apostolicam-actuositatem.be": {
-      "status": "validation-failed",
-      "problems": 27
+      "problems": 3
     },
     "vatii.apostolicam-actuositatem.cs": {
       "status": "validation-failed",
-      "problems": 26
+      "problems": 27
     },
     "vatii.apostolicam-actuositatem.de": {
       "status": "validation-failed",
-      "problems": 23
+      "problems": 3
     },
     "vatii.apostolicam-actuositatem.fr": {
       "status": "validation-failed",
       "problems": 2
     },
-    "vatii.apostolicam-actuositatem.it": {
-      "status": "validation-failed",
-      "problems": 27
-    },
-    "vatii.christus-dominus.be": {
-      "status": "validation-failed",
-      "problems": 18
-    },
     "vatii.christus-dominus.cs": {
-      "status": "validation-failed",
-      "problems": 6
-    },
-    "vatii.christus-dominus.de": {
       "status": "validation-failed",
       "problems": 16
     },
@@ -928,43 +884,23 @@
       "status": "validation-failed",
       "problems": 3
     },
-    "vatii.christus-dominus.it": {
-      "status": "validation-failed",
-      "problems": 18
-    },
     "vatii.dei-verbum.ar": {
       "status": "validation-failed",
       "problems": 16
     },
     "vatii.dei-verbum.be": {
       "status": "validation-failed",
-      "problems": 21
+      "problems": 1
     },
     "vatii.dei-verbum.cs": {
       "status": "validation-failed",
-      "problems": 18
+      "problems": 19
     },
     "vatii.dei-verbum.de": {
       "status": "validation-failed",
-      "problems": 24
-    },
-    "vatii.dei-verbum.hu": {
-      "status": "validation-failed",
-      "problems": 1
-    },
-    "vatii.dei-verbum.la": {
-      "status": "validation-failed",
-      "problems": 19
-    },
-    "vatii.dignitatis-humanae.be": {
-      "status": "validation-failed",
-      "problems": 9
+      "problems": 6
     },
     "vatii.dignitatis-humanae.cs": {
-      "status": "validation-failed",
-      "problems": 9
-    },
-    "vatii.dignitatis-humanae.de": {
       "status": "validation-failed",
       "problems": 9
     },
@@ -972,25 +908,17 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.dignitatis-humanae.it": {
-      "status": "validation-failed",
-      "problems": 10
-    },
     "vatii.dignitatis-humanae.la": {
       "status": "validation-failed",
-      "problems": 9
+      "problems": 1
     },
     "vatii.gaudium-et-spes.ar": {
       "status": "validation-failed",
       "problems": 56
     },
-    "vatii.gaudium-et-spes.be": {
-      "status": "validation-failed",
-      "problems": 59
-    },
     "vatii.gaudium-et-spes.de": {
       "status": "validation-failed",
-      "problems": 58
+      "problems": 38
     },
     "vatii.gaudium-et-spes.es": {
       "status": "validation-failed",
@@ -1000,17 +928,13 @@
       "status": "validation-failed",
       "problems": 2
     },
-    "vatii.gaudium-et-spes.hu": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "vatii.gaudium-et-spes.it": {
       "status": "validation-failed",
-      "problems": 13
+      "problems": 3
     },
     "vatii.gaudium-et-spes.la": {
       "status": "validation-failed",
-      "problems": 8
+      "problems": 3
     },
     "vatii.gaudium-et-spes.sw": {
       "status": "validation-failed",
@@ -1020,25 +944,21 @@
       "status": "validation-failed",
       "problems": 13
     },
-    "vatii.gravissimum-educationis.be": {
-      "status": "validation-failed",
-      "problems": 13
-    },
     "vatii.gravissimum-educationis.cs": {
       "status": "validation-failed",
-      "problems": 13
+      "problems": 12
     },
     "vatii.gravissimum-educationis.de": {
       "status": "validation-failed",
-      "problems": 13
+      "problems": 1
     },
     "vatii.gravissimum-educationis.it": {
       "status": "validation-failed",
-      "problems": 14
+      "problems": 1
     },
     "vatii.gravissimum-educationis.la": {
       "status": "validation-failed",
-      "problems": 14
+      "problems": 2
     },
     "vatii.inter-mirifica.be": {
       "status": "validation-failed",
@@ -1068,14 +988,6 @@
       "status": "validation-failed",
       "problems": 4
     },
-    "vatii.lumen-gentium.be": {
-      "status": "validation-failed",
-      "problems": 56
-    },
-    "vatii.lumen-gentium.de": {
-      "status": "validation-failed",
-      "problems": 53
-    },
     "vatii.lumen-gentium.en": {
       "status": "validation-failed",
       "problems": 2
@@ -1084,25 +996,13 @@
       "status": "validation-failed",
       "problems": 2
     },
-    "vatii.lumen-gentium.hu": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "vatii.lumen-gentium.it": {
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.lumen-gentium.la": {
-      "status": "validation-failed",
-      "problems": 56
-    },
     "vatii.lumen-gentium.pt": {
       "status": "validation-failed",
       "problems": 1
-    },
-    "vatii.nostra-aetate.be": {
-      "status": "validation-failed",
-      "problems": 5
     },
     "vatii.nostra-aetate.cs": {
       "status": "validation-failed",
@@ -1110,7 +1010,7 @@
     },
     "vatii.nostra-aetate.de": {
       "status": "validation-failed",
-      "problems": 6
+      "problems": 1
     },
     "vatii.nostra-aetate.fr": {
       "status": "validation-failed",
@@ -1122,23 +1022,19 @@
     },
     "vatii.nostra-aetate.it": {
       "status": "validation-failed",
-      "problems": 7
+      "problems": 1
     },
     "vatii.nostra-aetate.la": {
       "status": "validation-failed",
-      "problems": 7
-    },
-    "vatii.optatam-totius.be": {
-      "status": "validation-failed",
-      "problems": 20
+      "problems": 1
     },
     "vatii.optatam-totius.cs": {
       "status": "validation-failed",
-      "problems": 20
+      "problems": 19
     },
     "vatii.optatam-totius.de": {
       "status": "validation-failed",
-      "problems": 19
+      "problems": 1
     },
     "vatii.optatam-totius.hu": {
       "status": "validation-failed",
@@ -1146,17 +1042,9 @@
     },
     "vatii.optatam-totius.it": {
       "status": "validation-failed",
-      "problems": 20
-    },
-    "vatii.orientalium-ecclesiarum.be": {
-      "status": "validation-failed",
-      "problems": 28
+      "problems": 1
     },
     "vatii.orientalium-ecclesiarum.cs": {
-      "status": "validation-failed",
-      "problems": 27
-    },
-    "vatii.orientalium-ecclesiarum.de": {
       "status": "validation-failed",
       "problems": 27
     },
@@ -1170,7 +1058,7 @@
     },
     "vatii.perfectae-caritatis.cs": {
       "status": "validation-failed",
-      "problems": 1
+      "problems": 2
     },
     "vatii.perfectae-caritatis.de": {
       "status": "validation-failed",
@@ -1180,41 +1068,25 @@
       "status": "validation-failed",
       "problems": 2
     },
-    "vatii.presbyterorum-ordinis.be": {
-      "status": "validation-failed",
-      "problems": 22
-    },
     "vatii.presbyterorum-ordinis.cs": {
       "status": "validation-failed",
       "problems": 22
-    },
-    "vatii.presbyterorum-ordinis.de": {
-      "status": "validation-failed",
-      "problems": 21
     },
     "vatii.presbyterorum-ordinis.fr": {
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.presbyterorum-ordinis.it": {
-      "status": "validation-failed",
-      "problems": 23
-    },
     "vatii.sacrosanctum-concilium.ar": {
       "status": "validation-failed",
       "problems": 20
     },
-    "vatii.sacrosanctum-concilium.be": {
-      "status": "validation-failed",
-      "problems": 19
-    },
     "vatii.sacrosanctum-concilium.cs": {
       "status": "validation-failed",
-      "problems": 5
+      "problems": 18
     },
     "vatii.sacrosanctum-concilium.de": {
       "status": "validation-failed",
-      "problems": 17
+      "problems": 1
     },
     "vatii.sacrosanctum-concilium.fr": {
       "status": "validation-failed",
@@ -1222,27 +1094,15 @@
     },
     "vatii.sacrosanctum-concilium.hu": {
       "status": "validation-failed",
-      "problems": 2
+      "problems": 1
     },
     "vatii.sacrosanctum-concilium.it": {
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.sacrosanctum-concilium.la": {
-      "status": "validation-failed",
-      "problems": 19
-    },
-    "vatii.unitatis-redintegratio.be": {
-      "status": "validation-failed",
-      "problems": 11
-    },
     "vatii.unitatis-redintegratio.cs": {
       "status": "validation-failed",
       "problems": 10
-    },
-    "vatii.unitatis-redintegratio.de": {
-      "status": "validation-failed",
-      "problems": 9
     },
     "vatii.unitatis-redintegratio.fr": {
       "status": "validation-failed",
@@ -1254,7 +1114,7 @@
     },
     "vatii.unitatis-redintegratio.it": {
       "status": "validation-failed",
-      "problems": 11
+      "problems": 1
     }
   }
 }

@@ -131,6 +131,7 @@ import type {
 	CommentaryNote,
 	CompendiumQuestion,
 	DocumentManifest,
+	CccAbbreviation,
 	DocumentAppendixUnit,
 	DocumentSection,
 	Prayer,
@@ -177,7 +178,12 @@ import {
 	documentAppendixLocation,
 	documentAppendixUnits,
 	documentChunkLocations,
+	documentChunkStartFor,
 	documentSectionNumbers,
+	socialDoctrineAbbreviations,
+	socialDoctrineAppendixUnitCounts,
+	socialDoctrineChapterStarts,
+	socialDoctrineSectionNumbers,
 	fixtureBibleBooks,
 	fixtureCccParagraphsByLang,
 	fixtureCompendiumQuestionsByLang,
@@ -2621,4 +2627,206 @@ export function summaDivisionsText(divisions: SummaDivision[]): string {
 		.join(' ')
 		.replace(/\s+/g, ' ')
 		.trim();
+}
+
+// --- The Compendium of the Social Doctrine (docs/corpus-schema.md) ---------
+//
+// ADDRESSED LIKE THE CATECHISM, STORED LIKE A DOCUMENT, and every function
+// here is one or the other of those two things. Existence, adjacency and the
+// division a paragraph sits in are the Catechism's questions and are answered
+// from this work's own index; reading a paragraph, an outline or the
+// unnumbered matter is a document's question and is answered by the document
+// readers above, unchanged, because the files are at the paths they already
+// read (`content/csdc.{lang}/sections/…`).
+//
+// So there is no second content tier and no second chunk stride. What there
+// is instead is `socialDoctrineWorkId`, and every function below goes through
+// it rather than composing the id itself.
+
+/** `'en'` -> `'csdc.en'`. One place, so a language that is not an edition
+ *  fails to find content rather than finding someone else's. */
+export function socialDoctrineWorkId(lang: string): string {
+	return `csdc.${lang}`;
+}
+
+const socialDoctrineNumberSets: Record<string, Set<number>> = Object.fromEntries(
+	Object.entries(socialDoctrineSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
+);
+
+/** The languages this corpus carries an edition in, sorted. Ten today; two
+ *  more exist on vatican.va and are withheld with the measurement that put
+ *  them there (`csdc.WITHHELD`). */
+export function socialDoctrineLangs(): string[] {
+	return Object.keys(socialDoctrineSectionNumbers)
+		.map((workId) => workId.slice('csdc.'.length))
+		.sort();
+}
+
+/** Whether paragraph `n` exists in this edition — index-backed, no fetch,
+ *  the same role `cccParagraphExists` plays. */
+export function socialDoctrineParagraphExists(lang: string, n: number): boolean {
+	return socialDoctrineNumberSets[socialDoctrineWorkId(lang)]?.has(n) ?? false;
+}
+
+/** The next or previous paragraph this edition actually carries.
+ *
+ *  Reads the edition's own numbers rather than stepping by one, because three
+ *  editions do not carry all 583: `csdc.pl` has no §35, `csdc.hu` no §116,
+ *  `csdc.pt` no §553 (the source prints each inside the paragraph before it —
+ *  `csdc.KNOWN_GAPS`). Stepping by one would send a Polish reader from §34 to
+ *  a page with nothing on it. */
+export function getAdjacentSocialDoctrineNumber(
+	lang: string,
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	const numbers = socialDoctrineSectionNumbers[socialDoctrineWorkId(lang)] ?? [];
+	const i = numbers.indexOf(n);
+	if (i === -1) return undefined;
+	return direction === 'prev' ? numbers[i - 1] : numbers[i + 1];
+}
+
+/** How many unnumbered units this edition prints — the letter of
+ *  transmittal, the presentation, the index of references. */
+export function socialDoctrineAppendixUnits(lang: string): number {
+	return socialDoctrineAppendixUnitCounts[socialDoctrineWorkId(lang)] ?? 0;
+}
+
+/** This edition's own printed sigla table, or `[]` where it prints none.
+ *  Four of the ten do; the file is written only where there are rows. */
+export function getSocialDoctrineAbbreviations(lang: string): CccAbbreviation[] {
+	return socialDoctrineAbbreviations[lang] ?? [];
+}
+
+/** Every reading division, as `[from, to]` paragraph spans covering 1..last.
+ *
+ *  Derived from `socialDoctrineChapterStarts`, which is the work's own list
+ *  rather than this edition's: the anchors are the same paragraph numbers in
+ *  every language, because the editions are translations of one numbered
+ *  text. `to` comes from the NEXT start, so a span never has to be stored and
+ *  cannot drift from the text — the same reasoning `docs/corpus-schema.md`
+ *  gives for a document's heading ranges. */
+export function listSocialDoctrineChapters(lang: string): [number, number][] {
+	const numbers = socialDoctrineSectionNumbers[socialDoctrineWorkId(lang)] ?? [];
+	if (numbers.length === 0) return [];
+	const last = numbers[numbers.length - 1];
+	const starts = socialDoctrineChapterStarts.filter((n) => n <= last);
+	return starts.map((from, i) => [from, (starts[i + 1] ?? last + 1) - 1]);
+}
+
+/** The division containing paragraph `n`, or undefined for a number outside
+ *  every span. */
+export function socialDoctrineChapterFor(lang: string, n: number): [number, number] | undefined {
+	return listSocialDoctrineChapters(lang).find(([from, to]) => n >= from && n <= to);
+}
+
+/** Whether `n` opens a division — what `/doctrina-socialis/caput/{n}` is
+ *  addressed by. */
+export function socialDoctrineChapterExists(n: number): boolean {
+	return socialDoctrineChapterStarts.includes(n);
+}
+
+/** One paragraph. One chunk, not the whole edition — see `COARSE FETCH,
+ *  NARROW RETURN` in this module's docblock. */
+export async function getSocialDoctrineParagraphAsync(
+	lang: string,
+	n: number
+): Promise<DocumentSection | undefined> {
+	if (!socialDoctrineParagraphExists(lang, n)) return undefined;
+	const workId = socialDoctrineWorkId(lang);
+	const chunk = await fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []);
+	return chunk.find((section) => section.n === n);
+}
+
+/** A run of paragraphs, for the division reading view. Fetches only the
+ *  chunks the span touches — one or two at this stride, never the edition. */
+export async function getSocialDoctrineRangeAsync(
+	lang: string,
+	from: number,
+	to: number
+): Promise<DocumentSection[]> {
+	const workId = socialDoctrineWorkId(lang);
+	const starts = new Set<number>();
+	for (const n of socialDoctrineSectionNumbers[workId] ?? []) {
+		if (n >= from && n <= to) starts.add(documentChunkStartFor(n));
+	}
+	const chunks = await Promise.all(
+		[...starts]
+			.sort((a, b) => a - b)
+			.map((n) => fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []))
+	);
+	return chunks
+		.flat()
+		.filter((section) => section.n >= from && section.n <= to)
+		.sort((a, b) => a.n - b.n);
+}
+
+/** The edition's unnumbered matter, in source order. */
+export async function getSocialDoctrineAppendixAsync(
+	lang: string
+): Promise<DocumentAppendixUnit[]> {
+	return getDocumentAppendixAsync(socialDoctrineWorkId(lang));
+}
+
+/**
+ * The edition's outline, as the sidebar's row model.
+ *
+ * `documentOutline` is the same derivation over the same file, with one
+ * difference that matters here: THE UNANCHORED HEADINGS ARE DROPPED. A
+ * document's sidebar links to `#s{n}` fragments of a page that renders the
+ * whole work, so a heading standing over no numbered paragraph — the letter
+ * of transmittal, the presentation, the 90 book names of the index of
+ * references — still has somewhere to point. This work is addressed a
+ * paragraph at a time, and `buildDocumentOutline` gives such a row a
+ * SENTINEL number past the last real one (`documentTailNumber`, positional
+ * and never an address); routed rather than anchored, that sentinel would
+ * become `/doctrina-socialis/584`, which is a link to a 404. The unnumbered
+ * matter is on the landing page instead, where it has a reader and no
+ * address is implied.
+ *
+ * 59 of `csdc.en`'s 305 rows go, and every one of them is back matter.
+ */
+export function socialDoctrineOutline(lang: string): StructureNode[] {
+	const workId = socialDoctrineWorkId(lang);
+	const numbers = socialDoctrineSectionNumbers[workId] ?? [];
+	return buildDocumentOutline(
+		getDocumentStructure(workId).filter((row) => row.before !== null && row.before !== undefined),
+		numbers.length > 0 ? numbers[numbers.length - 1] : null
+	);
+}
+
+/** `socialDoctrineOutline` in `StructureSidebarToc`'s row shape. The walk is
+ *  over `children`, so only the roots are read from this array — the same
+ *  contract `flattenCccStructure` has. */
+export function flattenSocialDoctrineOutline(
+	lang: string
+): { node: StructureNode; depth: number }[] {
+	return flattenTree(socialDoctrineOutline(lang));
+}
+
+/**
+ * The reading divisions with their names — what the landing page lists and
+ * what `/doctrina-socialis/caput/{n}` is titled.
+ *
+ * The name is READ OFF THE NODE THAT PRODUCED THE ANCHOR, not off the widest
+ * division opening there, for the reason `shell-head.ts`'s
+ * `socialDoctrineChapterNames` records: the source prints `PART ONE` on a
+ * page of its own with no name beside it, and that divider opens at the same
+ * paragraph as Chapter One and outruns it by three chapters.
+ */
+export function socialDoctrineDivisions(
+	lang: string
+): { from: number; to: number; node: StructureNode }[] {
+	const rows = flattenSocialDoctrineOutline(lang);
+	return listSocialDoctrineChapters(lang).flatMap(([from, to]) => {
+		const here = rows.filter(({ node }) => node.paragraphs[0] === from);
+		const found = here.find(({ node }) => node.label) ?? here[0];
+		return found ? [{ from, to, node: found.node }] : [];
+	});
+}
+
+/** Fetches the edition's outline into `document-structures.svelte.ts`, which
+ *  is where `socialDoctrineOutline` reads it from. */
+export async function loadSocialDoctrineOutline(lang: string): Promise<void> {
+	await loadDocumentStructure(socialDoctrineWorkId(lang));
 }

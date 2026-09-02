@@ -16,6 +16,8 @@ const manifest: RouteManifest = {
 	cccChapters: [1, 10],
 	compendium: [1, 2],
 	compendiumChapters: [1],
+	socialDoctrine: [1, 2, 583],
+	socialDoctrineChapters: [1, 20],
 	documents: ['lumen-gentium'],
 	prayers: ['our-father'],
 	summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }

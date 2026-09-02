@@ -383,6 +383,32 @@ const realIndexDocuments = import.meta.glob('./corpus-data/index/document-index.
 	import: 'default'
 }) as Record<string, DocumentIndexFile>;
 
+/**
+ * The Compendium of the Social Doctrine's three index files.
+ *
+ * ITS CONTENT TIER NEEDS NO ENTRY OF ITS OWN, and that is the point of the
+ * work having a document's content shape: its chunks, outline and appendix
+ * land at `content/csdc.{lang}/sections/…`, `…/structure.json` and
+ * `…/appendix.json`, which are the paths the document matchers below already
+ * read into `documentChunkLocationsByWork`, `documentStructureLocations` and
+ * `documentAppendixLocations`. Only the ADDRESS side is new, and that is what
+ * these three carry.
+ */
+const realIndexSocialDoctrine = import.meta.glob('./corpus-data/index/social-doctrine-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, Record<string, { sectionNumbers: number[]; appendixUnits?: number }>>;
+
+const realIndexSocialDoctrineChapters = import.meta.glob(
+	'./corpus-data/index/social-doctrine-chapters.json',
+	{ eager: true, import: 'default' }
+) as Record<string, number[]>;
+
+const realIndexSocialDoctrineAbbreviations = import.meta.glob(
+	'./corpus-data/index/social-doctrine-abbreviations.json',
+	{ eager: true, import: 'default' }
+) as Record<string, Record<string, CccAbbreviation[]>>;
+
 const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json', {
 	eager: true,
 	import: 'default'
@@ -757,6 +783,42 @@ export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
 				expandRun(v.sectionNumbers)
 			])
 		)
+	: {};
+
+/** Section numbers present per `csdc.{lang}` work id -- the same role
+ *  `documentSectionNumbers` plays, and keyed the same way, because an edition
+ *  is a work here rather than a language of one work. */
+export const socialDoctrineSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexSocialDoctrine) ?? {}).map(([workId, v]) => [
+				workId,
+				expandRun(v.sectionNumbers)
+			])
+		)
+	: {};
+
+/** How many unnumbered units each edition has -- its letter of transmittal,
+ *  its presentation and its index of references. */
+export const socialDoctrineAppendixUnitCounts: Record<string, number> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexSocialDoctrine) ?? {})
+				.filter(([, v]) => v.appendixUnits)
+				.map(([workId, v]) => [workId, v.appendixUnits as number])
+		)
+	: {};
+
+/** The paragraph each reading division opens at, unioned across editions --
+ *  see `socialDoctrineChapterStarts` in `scripts/sync-corpus.mjs` for why this
+ *  is one list for the work rather than one per edition, which is what every
+ *  other work's chapter list is. */
+export const socialDoctrineChapterStarts: number[] = USE_REAL_CORPUS
+	? (single(realIndexSocialDoctrineChapters) ?? [])
+	: [];
+
+/** Each edition's own printed sigla table, keyed by bare LANG, in the same
+ *  shape and for the same consumers as `cccAbbreviations`. */
+export const socialDoctrineAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORPUS
+	? (single(realIndexSocialDoctrineAbbreviations) ?? {})
 	: {};
 
 /**

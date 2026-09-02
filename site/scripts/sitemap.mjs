@@ -103,6 +103,9 @@ export function sitemapPaths(manifest) {
 	for (const n of manifest.compendiumChapters)
 		paths.push(hrefFor({ kind: 'compendiumChapter', n }));
 	for (const n of manifest.compendium) paths.push(hrefFor({ kind: 'compendium', n }));
+	for (const n of manifest.socialDoctrineChapters)
+		paths.push(hrefFor({ kind: 'socialDoctrineChapter', n }));
+	for (const n of manifest.socialDoctrine) paths.push(hrefFor({ kind: 'socialDoctrine', n }));
 	for (const slug of manifest.documents) paths.push(hrefFor({ kind: 'document', slug }));
 	for (const slug of manifest.prayers) paths.push(hrefFor({ kind: 'prayer', slug }));
 	for (const [part, questions] of Object.entries(manifest.summa)) {

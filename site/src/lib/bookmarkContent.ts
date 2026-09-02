@@ -104,6 +104,8 @@ function sortKey(target: Address): [number, number, number] {
 		case 'cccChapter':
 		case 'compendium':
 		case 'compendiumChapter':
+		case 'socialDoctrine':
+		case 'socialDoctrineChapter':
 			return [target.n, 0, 0];
 		// The whole document sorts to the top of its own section, ahead of every
 		// section of it.
@@ -157,10 +159,18 @@ export function bookmarkGroup(target: Address): { key: string; order: number } {
 			return { key: 'compendium', order: 2 };
 		case 'summa':
 			return { key: 'summa', order: 3 };
+		// Beside the two catechetical works rather than inside the document
+		// library, because it is not a document: it has its own address space
+		// and a reader marks a numbered paragraph of it exactly as they mark
+		// CCC 1. Order 4 pushes prayers and documents down one, on the same
+		// reasoning the Summa's note above records.
+		case 'socialDoctrine':
+		case 'socialDoctrineChapter':
+			return { key: 'socialDoctrine', order: 4 };
 		case 'prayer':
-			return { key: 'prayers', order: 4 };
+			return { key: 'prayers', order: 5 };
 		// A section and the whole document file together, under the document.
 		case 'document':
-			return { key: `document:${target.slug}`, order: 5 };
+			return { key: `document:${target.slug}`, order: 6 };
 	}
 }

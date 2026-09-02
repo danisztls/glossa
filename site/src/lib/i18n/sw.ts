@@ -40,6 +40,11 @@ export const sw: Dictionary = {
 	'nav.ccc': 'Katekisimu',
 	'nav.compendium': 'Muhtasari',
 	'nav.magisterium': 'Mafundisho ya Kanisa',
+	'nav.socialDoctrine': 'Mafundisho ya kijamii',
+	'socialDoctrine.landing.title': 'Muhtasari wa Mafundisho ya Kijamii ya Kanisa',
+	'socialDoctrine.landing.tagline':
+		'Kile Kanisa linafundisha kuhusu maisha ya kijamii, katika aya 583.',
+	'socialDoctrine.backMatter': 'Kurasa za mwanzo na fahirisi',
 	'nav.prayers': 'Sala',
 	'nav.bookmarks': 'Alamisho',
 	'nav.menu': 'Menyu',

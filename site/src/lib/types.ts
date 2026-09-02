@@ -30,6 +30,7 @@ export type WorkType =
 	| 'compendium'
 	| 'document'
 	| 'prayer'
+	| 'social-doctrine'
 	| 'summa';
 
 /**
@@ -106,7 +107,11 @@ export type ContentLang =
 	| 'be'
 	| 'he'
 	| 'id'
-	| 'lt';
+	| 'lt'
+	// Albanian, and the first content language that arrived from a work
+	// other than the Magisterium's two big families: vatican.va publishes
+	// the Compendium of the Social Doctrine in it and nothing else here.
+	| 'sq';
 
 interface WorkManifestBase {
 	id: string;
@@ -360,6 +365,34 @@ export interface CommentaryManifest extends WorkManifestBase {
 	books: string[];
 }
 
+/**
+ * The *Compendium of the Social Doctrine of the Church* — `csdc.{lang}`, one
+ * work, 583 numbered paragraphs, twelve editions.
+ *
+ * WHY IT IS NOT A `DocumentManifest`, given that it carries every field one
+ * does and its content files are a document's. The difference is the ADDRESS.
+ * A document is one page, `/documenta/{slug}`, and its sections are fragments
+ * on it; this work is cited by paragraph the way the Catechism is — "CSDC
+ * 160" is a place, not a position inside an encyclical — so each of its
+ * paragraphs is an address of its own at `/doctrina-socialis/{n}`. The
+ * corpus-side fields are the document's because the source page is a
+ * document's; the type is separate because everything that decides where a
+ * unit LIVES branches on it (`route-manifest.ts`, `shell-head.ts`,
+ * `sync-corpus.mjs`).
+ */
+export interface SocialDoctrineManifest extends WorkManifestBase {
+	type: 'social-doctrine';
+	document_kind: DocumentKind;
+	/** The dicastery that issued it: "Pontifical Council for Justice and
+	 *  Peace". The field names the body that speaks, which everywhere else in
+	 *  this corpus is a pope or a council. */
+	pontiff_or_council: string;
+	promulgated: IsoDate;
+	/** No `header` here, for the reason `DocumentManifest` gives above: the
+	 *  masthead is content and this type is the boot index. It rides this
+	 *  work's content-tier front matter, read through `getDocumentHeader`. */
+}
+
 export type WorkManifest =
 	| BibleManifest
 	| BibleIntroManifest
@@ -368,6 +401,7 @@ export type WorkManifest =
 	| CompendiumManifest
 	| DocumentManifest
 	| PrayerManifest
+	| SocialDoctrineManifest
 	| SummaManifest;
 
 export interface VerseNote {

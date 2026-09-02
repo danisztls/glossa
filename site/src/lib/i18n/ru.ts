@@ -16,6 +16,11 @@ export const ru: Dictionary = {
 	'nav.ccc': 'Катехизис',
 	'nav.compendium': 'Компендиум',
 	'nav.magisterium': 'Учительство',
+	'nav.socialDoctrine': 'Социальное учение',
+	'socialDoctrine.landing.title': 'Компендиум социального учения Церкви',
+	'socialDoctrine.landing.tagline':
+		'Чему Церковь учит о жизни в обществе — 583 пронумерованных раздела.',
+	'socialDoctrine.backMatter': 'Вводные материалы и указатели',
 	'nav.prayers': 'Молитвы',
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',

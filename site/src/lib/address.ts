@@ -59,6 +59,13 @@ export type Address =
 	| { kind: 'cccChapter'; n: number }
 	| { kind: 'compendium'; n: number }
 	| { kind: 'compendiumChapter'; n: number }
+	/** A paragraph of the Compendium of the Social Doctrine of the Church,
+	 *  or one of its chapters by the paragraph it opens at. Addressed per
+	 *  paragraph rather than as one page with fragments — the way the
+	 *  Catechism is and unlike a document — because that is how the work is
+	 *  cited: "CSDC 160" names a paragraph. */
+	| { kind: 'socialDoctrine'; n: number }
+	| { kind: 'socialDoctrineChapter'; n: number }
 	/** A document, or one numbered section of it. `n` absent is the whole
 	 *  document: a section is a FRAGMENT on the document's single page
 	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
@@ -302,6 +309,16 @@ export function hrefFor(a: Address): string {
 			return `/catechismus/compendium/${a.n}`;
 		case 'compendiumChapter':
 			return `/catechismus/compendium/caput/${a.n}`;
+		// `doctrina socialis` is the work's own Latin name for its subject, and
+		// the shelf is the work: nothing else in the corpus belongs under it
+		// today, and a second social-teaching compendium would be an edition
+		// of this one rather than a peer. Unnested for that reason — the
+		// Compendium of the Catechism sits under `/catechismus` because the
+		// Catechism it condenses is there to sit under.
+		case 'socialDoctrine':
+			return `/doctrina-socialis/${a.n}`;
+		case 'socialDoctrineChapter':
+			return `/doctrina-socialis/caput/${a.n}`;
 		case 'document':
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
 		// Nested under `/doctores`, the shelf for the Fathers and Doctors of the
@@ -336,6 +353,10 @@ const CCC_RE = /^\/catechismus\/(\d+)$/;
 // digits after `/catechismus/`) and the order these are tried in is free.
 const COMPENDIUM_CHAPTER_RE = /^\/catechismus\/compendium\/caput\/(\d+)$/;
 const COMPENDIUM_RE = /^\/catechismus\/compendium\/(\d+)$/;
+// Anchored like the Compendium's pair above, so the order they are tried in
+// is free.
+const SOCIAL_DOCTRINE_CHAPTER_RE = /^\/doctrina-socialis\/caput\/(\d+)$/;
+const SOCIAL_DOCTRINE_RE = /^\/doctrina-socialis\/(\d+)$/;
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
 const SUMMA_RE = /^\/doctores\/summa\/([a-z-]+)\/(\d+)$/;
@@ -433,6 +454,12 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 	const compendium = COMPENDIUM_RE.exec(path);
 	if (compendium) return numbered('compendium', compendium[1]);
 
+	const socialDoctrineChapter = SOCIAL_DOCTRINE_CHAPTER_RE.exec(path);
+	if (socialDoctrineChapter) return numbered('socialDoctrineChapter', socialDoctrineChapter[1]);
+
+	const socialDoctrine = SOCIAL_DOCTRINE_RE.exec(path);
+	if (socialDoctrine) return numbered('socialDoctrine', socialDoctrine[1]);
+
 	const document = DOCUMENT_RE.exec(path);
 	if (document) {
 		const anchor = SECTION_ANCHOR_RE.exec(url.hash);
@@ -461,7 +488,13 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 }
 
 function numbered(
-	kind: 'ccc' | 'cccChapter' | 'compendium' | 'compendiumChapter',
+	kind:
+		| 'ccc'
+		| 'cccChapter'
+		| 'compendium'
+		| 'compendiumChapter'
+		| 'socialDoctrine'
+		| 'socialDoctrineChapter',
 	segment: string
 ): Address | undefined {
 	const n = canonicalNumber(segment, 1);

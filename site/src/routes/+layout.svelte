@@ -87,7 +87,13 @@
 		// The canonical route is Latin while the displayed label is
 		// "Magisterium" — URL identity and localised display language are
 		// intentionally independent.
-		{ href: '/documenta', key: 'nav.magisterium' }
+		{ href: '/documenta', key: 'nav.magisterium' },
+		// Beside the Magisterium and not inside it: the Compendium of the
+		// Social Doctrine is a work with its own address space, not one more
+		// document in the library, which is why it has a work type of its own
+		// (docs/corpus-schema.md). Last, because it is the one shelf here
+		// holding a single work.
+		{ href: '/doctrina-socialis', key: 'nav.socialDoctrine' }
 		// NO `/doctores` ENTRY, and that is deliberate (2026-08-28). The Summa
 		// moved off this bar and under the shelf for the Fathers and Doctors of
 		// the Church, where it belongs by category: the four above are the

@@ -3041,8 +3041,9 @@ long tail of three quota failures or one unserved book is the entire value.
 ## Scope
 
 **In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all
-pontificates, the 16 Vatican II documents, apostolic exhortations, the prayers, and the
-Summa (EN + LA).
+pontificates, the 16 Vatican II documents, apostolic exhortations, the prayers, the
+Summa (EN + LA), and the Compendium of the Social Doctrine of the Church (ten
+languages, see below).
 
 **Every encyclical the Holy See publishes is on the site in some language** — English
 where it exists, otherwise the language it does exist in. Discovery consults the Italian
@@ -3100,6 +3101,73 @@ under-reports by a factor of six and cannot be used as an index of what exists.
   between two witnesses produces a text no page prints, whose provenance is a rule rather
   than a URL. `prayer.common.la` therefore takes one witness's characters and only the
   other's _segmentation_, which the base witness does not carry and cannot be wrong about.
+
+### The Compendium of the Social Doctrine, and what a work type is for
+
+Taken in on 2026-09-02, in ten of the twelve languages vatican.va publishes it as
+HTML. It is the first work since the Summa to be a work rather than an edition of
+something already here, and the first ever to need a `type` of its own.
+
+**It could have been shelved as a document, and the choice against that was about the
+ADDRESS.** Structurally it is one: `vatican_docs.py`'s discovery would have found it, its
+sections are `html` blocks with `<sup data-fn="N">` markers, its ten editions would have
+grouped under `/documenta/compendio-dott-soc` like any other slug, and the whole ingestion
+would have been a table entry. What that gives up is the thing the work is used for. A
+document is addressed as a document — one page, `#s{n}` within it — because a reader
+cites an encyclical by name and reads it through. This work is cited the way the Catechism
+is: **`CSDC 160`, a number and nothing else**, in every language, and its own index of
+references is 90 book names each pointing at a run of paragraph numbers. An address that
+cannot be `/doctrina-socialis/160` fails at the one thing 583 numbered paragraphs are for.
+
+So `type: "social-doctrine"` is **the Catechism's addresses over a document's files**, and
+that sentence is the whole specification. `sync-corpus.mjs`'s branch writes exactly what
+the document branch writes — the same chunked `sections/`, the same `structure.json`, the
+same `appendix.json`, at paths the document readers already resolve — and registers
+exactly what the Catechism branch registers: a number set, a set of chapter anchors, an
+existence check. There is no second content tier, no second chunk stride, and no second
+copy of any reader. **A work type is a statement about addressing, not about storage**, and
+this is the case that made the difference visible.
+
+**Two editions are withheld with the measurement that put them there.** Indonesian,
+because vatican.va publishes only that edition's table of contents — 22,573 characters
+against English's 846,980, and a page of headings is not a text. Dutch, because its
+footnotes are interleaved through the body and numbered per group, so pooling them into
+one apparatus resolves a citation to the wrong note: not a hole, which is honest, but a
+wrong answer, which is not. Five further languages exist as PDF alone and are captured to
+`raw/` for nothing to read, on the terms `ccc.py` set for Arabic and Chinese.
+
+**The one that is worth the space is the failure the scraper exists to prevent.** Cardinal
+Sodano's letter of transmittal stands above the document and numbers its own five
+paragraphs in exactly the form the document numbers its 583. Handed the whole page, the
+walker took the letter's numbers as sections 1–5, rejected the document's own 1–4 as
+backwards-running false positives, folded them into §5, and resynchronised at §10. **It
+reported 583 sections, no gaps, range 1..583.** Every check this project has — the range,
+the gap list, the section count, the cross-edition comparison — passed, because every one
+of them asks whether the numbers are well formed and none asks whose numbers they are.
+That is the standing shape of the dangerous defect here, and it is why `csdc.py` splits
+the page by reading the numbers rather than by counting the `<hr>` rules the markup
+offers: four of the ten editions do not print them.
+
+**Reading it required nine changes to `vatican_docs.py`, which is the argument for doing
+it in a scraper beside that file rather than inside it.** Each change was measured across
+the whole corpus before it was kept, and together they improved 58 existing works — most
+of them nothing to do with this one. `BOLD_BARE_NUM_RE` is the one to know about: a fifth
+paragraph-numbering convention (`<b>1 </b>`, no period) that turns out to be how all
+sixteen Czech Vatican II editions print their numbers. They had been parsing as a handful
+of sections with hundreds of orphaned blocks; `sacrosanctum-concilium.cs` went from 9
+sections to 130. Nothing had reported this, because `vatii` had exited nonzero on every
+run it had ever had (the symmetry check, which is FAIL by design) and so nobody was
+reading its exit code. Both document stages exit 0 now.
+
+**The reference coverage fell in two families and the fall is the fix.** `vatii` prose
+scripture 6,995 → 5,896, prose sigla 950 → 847 — against citations 6,626 → 9,998 and
+linkable citations 3,046 → 5,114. The references did not go anywhere: they moved out of
+`linkifyProse`, which scans running text because an edition with no footnote apparatus has
+nowhere else to keep its sources, and into the apparatus, where `parseRefs` attaches each
+one to the marker that raises it. Net +866 linked references in `vatii`, +422 in
+`encyclical`, +40 in `exhortation`. The general rule the preflight gate encodes still
+holds and is not weakened by this: **a coverage drop is a question, and the answer is only
+ever "accept" when the citation column has risen to meet it.**
 
 ## Process
 

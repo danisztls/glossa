@@ -30,6 +30,8 @@ export interface RouteManifest {
 	cccChapters: number[];
 	compendium: number[];
 	compendiumChapters: number[];
+	socialDoctrine: number[];
+	socialDoctrineChapters: number[];
 	documents: string[];
 	prayers: string[];
 	/** Part slug -> question numbers, unioned across editions. */
@@ -54,6 +56,7 @@ export const CHROME_PATHS = [
 	'/',
 	'/scriptura',
 	'/catechismus',
+	'/doctrina-socialis',
 	'/documenta',
 	// The shelf and the one work on it. Both are chrome by the same test as
 	// the rest: every word on either page is the interface. `/doctores/summa`
@@ -136,6 +139,7 @@ const STATIC_PATHS = new Set([
 	// because the Catechism's presents both works a row at a time
 	// (`CatechismIndex.svelte`, 2026-08-28). It is a path segment that groups
 	// addresses rather than a page, exactly as `/catechismus/caput` is.
+	'/doctrina-socialis',
 	'/documenta',
 	'/doctores',
 	'/doctores/summa',
@@ -179,6 +183,10 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 			return manifest.compendium.includes(address.n);
 		case 'compendiumChapter':
 			return manifest.compendiumChapters.includes(address.n);
+		case 'socialDoctrine':
+			return manifest.socialDoctrine.includes(address.n);
+		case 'socialDoctrineChapter':
+			return manifest.socialDoctrineChapters.includes(address.n);
 		case 'document':
 			return manifest.documents.includes(address.slug);
 		case 'prayer':

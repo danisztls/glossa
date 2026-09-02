@@ -39,9 +39,12 @@ import {
 	documentSectionText,
 	documentSectionExists,
 	getCompendiumChapterFor,
+	getSocialDoctrineParagraphAsync,
 	getSummaQuestionAsync,
 	isUnpublished,
 	listCccChapters,
+	socialDoctrineChapterFor,
+	socialDoctrineWorkId,
 	summaDivisionsText,
 	summaWorkIdFor
 } from './corpus';
@@ -118,6 +121,10 @@ function cacheKey(target: PreviewTarget): string | undefined {
 			return `compendium:${content.langFor('compendium')}:${target.n}`;
 		case 'compendiumChapter':
 			return `compendiumChapter:${content.langFor('compendium')}:${target.n}`;
+		case 'socialDoctrine':
+			return `socialDoctrine:${content.langFor('social-doctrine')}:${target.n}`;
+		case 'socialDoctrineChapter':
+			return `socialDoctrineChapter:${content.langFor('social-doctrine')}:${target.n}`;
 		case 'document': {
 			const workId = content.documentWorkIdFor(target.slug);
 			if (!workId) return undefined;
@@ -238,6 +245,27 @@ async function resolveCompendiumChapter(n: number): Promise<ResolvedUnit | undef
 	};
 }
 
+/**
+ * One paragraph of the Compendium of the Social Doctrine, or the opening of
+ * one of its chapters.
+ *
+ * A DOCUMENT'S TEXT AT THE CATECHISM'S ADDRESS, which is what this work is
+ * throughout: the excerpt comes from `documentSectionText` the way an
+ * encyclical section's does, and the citation is the bare number the way
+ * `CCC 1` is, because that is what the address names. The chapter branch
+ * previews its first paragraph rather than the whole span, the same choice
+ * `resolveCccChapter` makes and for the same reason.
+ */
+async function resolveSocialDoctrine(n: number, chapter: boolean) {
+	const lang = content.langFor('social-doctrine');
+	if (isUnpublished(socialDoctrineWorkId(lang))) return undefined;
+	const span = chapter ? socialDoctrineChapterFor(lang, n) : undefined;
+	if (chapter && (!span || span[0] !== n)) return undefined;
+	const section = await getSocialDoctrineParagraphAsync(lang, n);
+	if (!section) return undefined;
+	return { title: `CSDC ${n}`, text: documentSectionText(section) };
+}
+
 async function resolveDocument(
 	target: Extract<PreviewTarget, { kind: 'document' }>
 ): Promise<ResolvedUnit | undefined> {
@@ -321,6 +349,10 @@ async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | un
 			return resolveCompendiumChapter(target.n);
 		case 'document':
 			return resolveDocument(target);
+		case 'socialDoctrine':
+			return resolveSocialDoctrine(target.n, false);
+		case 'socialDoctrineChapter':
+			return resolveSocialDoctrine(target.n, true);
 		case 'summa':
 			return resolveSummaUnit(target);
 	}

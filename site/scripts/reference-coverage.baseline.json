@@ -10,7 +10,7 @@
 			},
 			"prose": {
 				"blocks": 83383,
-				"scripture": 20596,
+				"scripture": 20595,
 				"document": 0,
 				"stored": 0
 			},
@@ -34,8 +34,8 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 15036,
-				"recognized": 3080,
+				"linkable": 15110,
+				"recognized": 3006,
 				"nothing": 1417
 			},
 			"prose": {
@@ -202,28 +202,169 @@
 			},
 			"residue": []
 		},
-		"encyclical": {
+		"csdc": {
 			"citations": {
-				"total": 36246,
-				"linkable": 13476,
-				"recognized": 6321,
-				"nothing": 16449
+				"total": 9824,
+				"linkable": 6445,
+				"recognized": 1684,
+				"nothing": 1695
 			},
 			"prose": {
-				"blocks": 39758,
-				"scripture": 20121,
-				"document": 290,
+				"blocks": 6270,
+				"scripture": 3270,
+				"document": 215,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "r. catechismo",
+					"count": 168,
+					"example": "Cfr. Catechismo della Chiesa Cattolica, 1789; 1970; 2510."
+				},
+				{
+					"key": "john paul",
+					"count": 133,
+					"example": "John Paul II, Address at General Audience (19 October 1983), 2: L'Osservatore Romano, Engl"
+				},
+				{
+					"key": "catecismo de",
+					"count": 126,
+					"example": "Catecismo de la Iglesia Católica, 2419."
+				},
+				{
+					"key": "catéchisme de",
+					"count": 126,
+					"example": "Catéchisme de l'Église Catholique, 2419."
+				},
+				{
+					"key": "x. giáo",
+					"count": 91,
+					"example": "x. Giáo lý Giáo hội Công giáo, 1789, 1970, 2510."
+				},
+				{
+					"key": "catechismo della",
+					"count": 82,
+					"example": "Catechismo della Chiesa Cattolica, 2419."
+				},
+				{
+					"key": "joão paulo",
+					"count": 75,
+					"example": "João Paulo II, Alocução na Audiência Geral (19 de Outubro de 1983), 2: L’Osservatore Roman"
+				},
+				{
+					"key": "giovanni paolo",
+					"count": 66,
+					"example": "Giovanni Paolo II, Discorso all'Udienza generale (19 ottobre 1983), 2: Insegnamenti di Gio"
+				},
+				{
+					"key": "jean-paul ii",
+					"count": 65,
+					"example": "Jean-Paul II, Discours à l'Audience générale (19 octobre 1983), 2: L'Osservatore Romano, é"
+				},
+				{
+					"key": "congregation for",
+					"count": 60,
+					"example": "Congregation for Catholic Education, Guidelines for the Study and Teaching of the Church's"
+				},
+				{
+					"key": "juan pablo",
+					"count": 46,
+					"example": "Juan Pablo II, Audiencia general (19 de octubre de 1983), 2: L'Osservatore Romano, edición"
+				},
+				{
+					"key": "gioan phaolô",
+					"count": 43,
+					"example": "Gioan Phaolô II, Diễn văn tại buổi triều yết chung ngày 19-10-1983, số 2: L’Osservatore Ro"
+				},
+				{
+					"key": "congregazione per",
+					"count": 42,
+					"example": "Congregazione per l'Educazione Cattolica, Orientamenti per lo studio e l'insegnamento dell"
+				},
+				{
+					"key": "congregação para",
+					"count": 31,
+					"example": "Congregação para a Educação Católica, Orientações para o estudo e o ensino da Doutrina Soc"
+				},
+				{
+					"key": "congregación para",
+					"count": 30,
+					"example": "Congregación para la Educación Católica, Orientaciones para el estudio y enseñanza de la d"
+				},
+				{
+					"key": "ibid.",
+					"count": 30,
+					"example": "Ibid."
+				},
+				{
+					"key": "congrégation pour",
+					"count": 29,
+					"example": "Congrégation pour l'Éducation Catholique, Orientations pour l'étude et l'enseignement de l"
+				},
+				{
+					"key": "x. gioan",
+					"count": 27,
+					"example": "x. Gioan Phaolô II, Diễn văn gửi Ngoại giao Đoàn (09-01-1988), 7-8: L’Osservatore Romano, "
+				},
+				{
+					"key": "r. giovanni",
+					"count": 26,
+					"example": "Cfr. Giovanni Paolo II, Discorso agli Officiali e Avvocati del Tribunale della Rota Romana"
+				},
+				{
+					"key": "giáo lý",
+					"count": 24,
+					"example": "Giáo lý Giáo hội Công giáo, 2419."
+				},
+				{
+					"key": "pontifical council",
+					"count": 20,
+					"example": "Cf. Pontifical Council for Justice and Peace, Towards a Better Distribution of Land. The C"
+				},
+				{
+					"key": "bộ giáo",
+					"count": 19,
+					"example": "Bộ Giáo dục Công giáo, Hướng dẫn Học tập và Giảng dạy Học thuyết Xã hội của Giáo Hội trong"
+				},
+				{
+					"key": "r. congregazione",
+					"count": 18,
+					"example": "Cfr. Congregazione per l'Educazione Cattolica, Orientamenti per lo studio e l'insegnamento"
+				},
+				{
+					"key": "santa sede",
+					"count": 15,
+					"example": "Cf. Santa Sede, Carta de los derechos de la familia, Preámbulo, D-E, Tipografía Políglota "
+				},
+				{
+					"key": "r. pontificio",
+					"count": 14,
+					"example": "Cfr. Pontificio Consiglio della Giustizia e della Pace, Per una migliore distribuzione del"
+				}
+			]
+		},
+		"encyclical": {
+			"citations": {
+				"total": 36800,
+				"linkable": 14171,
+				"recognized": 6441,
+				"nothing": 16188
+			},
+			"prose": {
+				"blocks": 39757,
+				"scripture": 20114,
+				"document": 257,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 309,
+					"count": 317,
 					"example": "Ibid."
 				},
 				{
 					"key": ". cf.",
-					"count": 198,
+					"count": 197,
 					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
 				},
 				{
@@ -272,18 +413,13 @@
 					"example": "] Ep., lib. 2, ep. 74, apud Migne, Patr. lat., t. 148, col. 425. ["
 				},
 				{
-					"key": "] i",
-					"count": 70,
-					"example": "] I Ioan. III, 23. ["
-				},
-				{
 					"key": "ibid. n.",
 					"count": 70,
 					"example": "Ibid., n. 14."
 				},
 				{
 					"key": "] s.",
-					"count": 63,
+					"count": 62,
 					"example": "] S. Cypr. « Florentio cui et Puppiano ep. 66 (al. 69) ». ["
 				},
 				{
@@ -292,24 +428,19 @@
 					"example": "المرجع نفسه، 61."
 				},
 				{
-					"key": "] cf.",
-					"count": 62,
-					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
-				},
-				{
 					"key": "] in",
 					"count": 61,
 					"example": "] In Epist. ad Ephes., III. ["
 				},
 				{
+					"key": "] cf.",
+					"count": 55,
+					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
+				},
+				{
 					"key": ". \"katolinen",
 					"count": 53,
 					"example": ". \"Katolinen kirkko ja kristittyjen ykseys\", 1."
-				},
-				{
-					"key": "i cor.",
-					"count": 52,
-					"example": "I Cor., II, 9"
 				},
 				{
 					"key": "خطاب البابا",
@@ -340,26 +471,36 @@
 					"key": "ibid. t.",
 					"count": 49,
 					"example": "Ibid. t. X, p. 471; cf. t. V pp. 29, 59, 65, t. X, p. 446s."
+				},
+				{
+					"key": "ibíd.",
+					"count": 48,
+					"example": "Ibíd."
+				},
+				{
+					"key": "conc. trid.",
+					"count": 47,
+					"example": "Conc. Trid., sess.22, c.2."
 				}
 			]
 		},
 		"exhortation": {
 			"citations": {
-				"total": 37964,
-				"linkable": 11190,
-				"recognized": 6269,
-				"nothing": 20505
+				"total": 38177,
+				"linkable": 11309,
+				"recognized": 6294,
+				"nothing": 20574
 			},
 			"prose": {
-				"blocks": 30964,
-				"scripture": 22564,
+				"blocks": 30963,
+				"scripture": 22449,
 				"document": 302,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 981,
+					"count": 983,
 					"example": "Ibid."
 				},
 				{
@@ -529,7 +670,7 @@
 			},
 			"prose": {
 				"blocks": 52989,
-				"scripture": 8763,
+				"scripture": 8760,
 				"document": 0,
 				"stored": 5174
 			},
@@ -537,22 +678,27 @@
 		},
 		"vatii": {
 			"citations": {
-				"total": 6626,
-				"linkable": 3317,
-				"recognized": 1344,
-				"nothing": 1965
+				"total": 9998,
+				"linkable": 5161,
+				"recognized": 1996,
+				"nothing": 2841
 			},
 			"prose": {
-				"blocks": 7612,
-				"scripture": 6995,
-				"document": 950,
+				"blocks": 7580,
+				"scripture": 5894,
+				"document": 847,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "] cf.",
-					"count": 199,
+					"count": 201,
 					"example": "] Cf. Ibid., n. 12. ["
+				},
+				{
+					"key": "пар. 1",
+					"count": 57,
+					"example": "Пар. 1 П 1, 23."
 				},
 				{
 					"key": "sal. vatikāna",
@@ -563,6 +709,26 @@
 					"key": "sal. 1",
 					"count": 46,
 					"example": "Sal. 1 Pēt 1, 23."
+				},
+				{
+					"key": "conc. vat.",
+					"count": 44,
+					"example": "Cf. CONC. VAT. II, Decr. sul rinnovamento della vita religiosa, n. 8: [pag. 419ss]."
+				},
+				{
+					"key": "missale romanum",
+					"count": 42,
+					"example": "Missale romanum, praefatio festi Christi Regis."
+				},
+				{
+					"key": "пар. ян",
+					"count": 38,
+					"example": "Пар. Ян 11, 52."
+				},
+				{
+					"key": "пар. эф",
+					"count": 38,
+					"example": "Пар. Эф 1, 10."
 				},
 				{
 					"key": "sal. ef",
@@ -578,6 +744,11 @@
 					"key": "r. conc.",
 					"count": 36,
 					"example": "Cfr. Conc. Vat. II, ibid., n.° 36-38."
+				},
+				{
+					"key": "пар. 2",
+					"count": 35,
+					"example": "Пар. 2 Кар 5, 19."
 				},
 				{
 					"key": "sal. jņ",
@@ -600,6 +771,11 @@
 					"example": "Cfr. S. Pio X, aloc. à Associação católica da juventude francesa acerca da piedade, ciénci"
 				},
 				{
+					"key": "пар. conc.",
+					"count": 34,
+					"example": "Пар. CONC. VAT. I, Const. dogm. I, de Ecclesia Christi, Pastor aeternus, cap. 3, DENZ. 828"
+				},
+				{
 					"key": "sal. 2",
 					"count": 33,
 					"example": "Sal. 2 Kor 5, 19."
@@ -610,9 +786,19 @@
 					"example": "Taz. 2Kor 5:19."
 				},
 				{
+					"key": "pius xii",
+					"count": 32,
+					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
+				},
+				{
 					"key": "] conc.",
 					"count": 31,
 					"example": "] Conc. Vat. I, Const. dogm. De fide cath., chap. 3, sur la foi: Denz. 1789 (3008). ["
+				},
+				{
+					"key": "пар. дз",
+					"count": 30,
+					"example": "Пар. Дз 1, 8."
 				},
 				{
 					"key": "taz. conc.",
@@ -628,51 +814,6 @@
 					"key": "taz. 1kor",
 					"count": 28,
 					"example": "Taz. 1Kor 9:16."
-				},
-				{
-					"key": "taz. mdo",
-					"count": 27,
-					"example": "Taz. Mdo 1:8."
-				},
-				{
-					"key": "pius xii",
-					"count": 26,
-					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
-				},
-				{
-					"key": "taz. rum",
-					"count": 22,
-					"example": "Taz. Rum 12:6."
-				},
-				{
-					"key": "missale romanum",
-					"count": 22,
-					"example": "Missale romanum, Utangulizi wa Sherehe ya Yesu Kristo Mfalme."
-				},
-				{
-					"key": "conc. vat.",
-					"count": 21,
-					"example": "Cf. CONC. VAT. II, Decr. De accommodata renovatione vitae religiosae, n. 8."
-				},
-				{
-					"key": "taz. mt.",
-					"count": 21,
-					"example": "Taz. Mt. Thomas, In I Ethic., Lec. 1."
-				},
-				{
-					"key": "sal. sv.",
-					"count": 19,
-					"example": "Sal. sv. Akvīnas Toms, I Ethic., lect. 1."
-				},
-				{
-					"key": "] ibid.",
-					"count": 15,
-					"example": "] Ibid. ["
-				},
-				{
-					"key": "sal. turpat",
-					"count": 12,
-					"example": "Sal. turpat, 23, 36."
 				}
 			]
 		}

@@ -33,6 +33,8 @@ const manifest: RouteManifest = {
 	cccChapters: [1, 325],
 	compendium: [1, 45, 598],
 	compendiumChapters: [1],
+	socialDoctrine: [1, 160],
+	socialDoctrineChapters: [1, 160],
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
 	summa: { i: [1, 2], suppl: [77] }
@@ -56,6 +58,10 @@ function chromeFixture(): RouteTitles['chrome'] {
 			'Doctrine in 2,865 paragraphs.'
 		],
 		'/documenta': ['Magisterium — Glossa Catholica', 'Encyclicals and conciliar documents.'],
+		'/doctrina-socialis': [
+			'Compendium of the Social Doctrine of the Church — Glossa Catholica',
+			'What the Church teaches about life in society.'
+		],
 		'/doctores': ['Doctors of the Church — Glossa Catholica', 'The Fathers and Doctors.'],
 		'/doctores/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
 		'/preces': ['Common Prayers — Glossa Catholica', 'Prayers with the Latin alongside.'],
@@ -87,6 +93,16 @@ const titles: RouteTitles = {
 		[325, 349, 'Heaven and Earth'],
 		[325, 421, 'I Believe in God the Father']
 	],
+	socialDoctrineSpans: [
+		[1, 19, 'Introduction'],
+		[20, 59, "God's Plan of Love for Humanity"],
+		[160, 208, "Principles of the Church's Social Doctrine"]
+	],
+	socialDoctrineChapterNames: {
+		1: 'Introduction',
+		20: "God's Plan of Love for Humanity",
+		160: "Principles of the Church's Social Doctrine"
+	},
 	compendiumSpans: [
 		[1, 217, 'The Profession of Faith'],
 		[1, 32, '“I believe” – “We believe”'],
@@ -525,6 +541,8 @@ describe('the chrome table the build actually ships', () => {
 			compendiumIndex: {},
 			summaIndex: {},
 			prayerIndex: {},
+			socialDoctrineEditions: [],
+			socialDoctrineChapterStarts: [],
 			dictionaries: await readDictionaries()
 		});
 		for (const lang of UI_LANGS) {
@@ -542,6 +560,8 @@ describe('the chrome table the build actually ships', () => {
 			compendiumIndex: {},
 			summaIndex: {},
 			prayerIndex: {},
+			socialDoctrineEditions: [],
+			socialDoctrineChapterStarts: [],
 			dictionaries: await readDictionaries()
 		});
 		for (const lang of UI_LANGS) {

@@ -38,6 +38,11 @@ export const be: Dictionary = {
 	'nav.ccc': 'Катэхізіс',
 	'nav.compendium': 'Кампендыум',
 	'nav.magisterium': 'Настаўніцтва Касцёла',
+	'nav.socialDoctrine': 'Сацыяльнае вучэнне',
+	'socialDoctrine.landing.title': 'Кампендыум сацыяльнага вучэння Царквы',
+	'socialDoctrine.landing.tagline':
+		'Чаму Царква вучыць пра жыццё ў грамадстве — 583 пранумараваныя раздзелы.',
+	'socialDoctrine.backMatter': 'Уводныя матэрыялы і паказальнікі',
 	'nav.prayers': 'Малітвы',
 	'nav.bookmarks': 'Закладкі',
 	'nav.menu': 'Меню',

@@ -23,14 +23,15 @@ describe('bookmarkGroup', () => {
 	// The Summa files with the doctrinal works rather than after them: the
 	// document library grows without bound, so appending a new work at the end
 	// would have buried it under every encyclical a reader had marked.
-	it('orders scripture, catechism, compendium, summa, prayers, then documents', () => {
+	it('orders scripture, catechism, compendium, summa, social doctrine, prayers, documents', () => {
 		expect([
 			at('/scriptura/genesis/1').order,
 			at('/catechismus/1').order,
 			at('/catechismus/compendium/1').order,
 			at('/doctores/summa/i/1').order,
+			at('/doctrina-socialis/160').order,
 			at('/preces/our-father').order,
 			at('/documenta/lumen-gentium').order
-		]).toEqual([0, 1, 2, 3, 4, 5]);
+		]).toEqual([0, 1, 2, 3, 4, 5, 6]);
 	});
 });

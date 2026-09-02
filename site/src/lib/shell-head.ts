@@ -81,6 +81,22 @@ export interface RouteTitles {
 	books: Record<string, string>;
 	cccSpans: TitledSpan[];
 	compendiumSpans: TitledSpan[];
+	/** The Compendium of the Social Doctrine's divisions. Derived from a
+	 *  DOCUMENT's flat outline rather than a tree, so its spans are
+	 *  computed rather than stored — see `documentSpans` in
+	 *  scripts/route-titles.mjs. */
+	socialDoctrineSpans: TitledSpan[];
+	/** Chapter anchor -> the division that page renders.
+	 *
+	 *  A TABLE RATHER THAN `widestAt` OVER THE SPANS ABOVE, because the widest
+	 *  span opening at a chapter anchor is not the chapter: the source prints
+	 *  `PART ONE` on a page of its own, with no name beside it, and that
+	 *  divider opens at §20 and runs to §208 — three times Chapter One's span.
+	 *  The anchors are derived in `sync-corpus.mjs` from the nodes that carry a
+	 *  `label`, so the names are read off the same nodes rather than off a
+	 *  geometry that happens to agree everywhere except the three places a Part
+	 *  begins. */
+	socialDoctrineChapterNames: Record<string, string>;
 	/** slug -> `[title, author, year]`. */
 	documents: Record<string, [string, string, string]>;
 	prayers: Record<string, string>;
@@ -156,6 +172,7 @@ const COMPENDIUM = 'Compendium of the Catechism';
 const SUMMA = 'Summa Theologiae';
 const DOCTORES = 'Doctors of the Church';
 const MAGISTERIUM = 'Documents of the Magisterium';
+const SOCIAL_DOCTRINE = 'Compendium of the Social Doctrine';
 const PRAYERS = 'Prayers';
 
 const ROOT: Crumb = { name: SITE_NAME, href: '/' };
@@ -406,6 +423,8 @@ const WORK_OF: Record<Address['kind'], { key: string; href: string }> = {
 	compendium: { key: 'compendium', href: '/catechismus' },
 	compendiumChapter: { key: 'compendium', href: '/catechismus' },
 	document: { key: 'document', href: '/documenta' },
+	socialDoctrine: { key: 'socialDoctrine', href: '/doctrina-socialis' },
+	socialDoctrineChapter: { key: 'socialDoctrine', href: '/doctrina-socialis' },
 	prayer: { key: 'prayer', href: '/preces' },
 	summa: { key: 'summa', href: '/doctores/summa' }
 };
@@ -421,6 +440,8 @@ function unitOf(address: Address): { name: string; position?: number } | undefin
 			return { name: `Paragraph ${address.n}`, position: address.n };
 		case 'compendium':
 			return { name: `Question ${address.n}`, position: address.n };
+		case 'socialDoctrine':
+			return { name: `Paragraph ${address.n}`, position: address.n };
 		case 'summa':
 			return { name: `Question ${address.question}`, position: address.question };
 		default:
@@ -593,6 +614,46 @@ function bodyHead(
 				alternates: [],
 				crumbs: [ROOT, { name: CATECHISM, href: '/catechismus' }, { name, href: pathname }],
 				links: [{ name: CATECHISM, href: '/catechismus' }]
+			};
+		}
+
+		case 'socialDoctrine': {
+			const where = innermost(titles.socialDoctrineSpans, address.n);
+			const [prev, next] = neighbours(manifest.socialDoctrine, address.n);
+			const label = `CSDC ${address.n}`;
+			return {
+				title: clip(where ? `${label} · ${where}` : label, 60) + ` — ${SITE_NAME}`,
+				description: `Paragraph ${address.n} of the Compendium of the Social Doctrine of the Church${where ? `, in “${clip(where, 70)}”` : ''} — with its footnotes and every Scripture it cites.`,
+				canonical: pathname,
+				noindex: false,
+				alternates: [],
+				crumbs: [
+					ROOT,
+					{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' },
+					{ name: label, href: pathname }
+				],
+				links: [
+					{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' },
+					...numberLink('CSDC', '/doctrina-socialis', prev),
+					...numberLink('CSDC', '/doctrina-socialis', next)
+				]
+			};
+		}
+
+		case 'socialDoctrineChapter': {
+			const name = titles.socialDoctrineChapterNames[address.n] ?? `Paragraphs from ${address.n}`;
+			return {
+				title: `${clip(name, 58)} — ${SOCIAL_DOCTRINE}`,
+				description: `“${clip(name, 90)}” in the Compendium of the Social Doctrine of the Church, from paragraph ${address.n}.`,
+				canonical: pathname,
+				noindex: false,
+				alternates: [],
+				crumbs: [
+					ROOT,
+					{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' },
+					{ name, href: pathname }
+				],
+				links: [{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' }]
 			};
 		}
 

@@ -16,6 +16,11 @@ export const ro: Dictionary = {
 	'nav.ccc': 'Catehism',
 	'nav.compendium': 'Compendiu',
 	'nav.magisterium': 'Magisteriu',
+	'nav.socialDoctrine': 'Doctrina socială',
+	'socialDoctrine.landing.title': 'Compendiul doctrinei sociale a Bisericii',
+	'socialDoctrine.landing.tagline':
+		'Ce învață Biserica despre viața în societate, în 583 de numere.',
+	'socialDoctrine.backMatter': 'Pagini preliminare și indici',
 	'nav.prayers': 'Rugăciuni',
 	'nav.bookmarks': 'Semne de carte',
 	'nav.menu': 'Meniu',

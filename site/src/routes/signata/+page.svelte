@@ -59,6 +59,7 @@
 		if (key === 'catechism') return t('nav.ccc');
 		if (key === 'compendium') return t('nav.compendium');
 		if (key === 'summa') return t('nav.summa');
+		if (key === 'socialDoctrine') return t('nav.socialDoctrine');
 		if (key === 'prayers') return t('nav.prayers');
 		return documentGroupTitle(key.slice('document:'.length));
 	}

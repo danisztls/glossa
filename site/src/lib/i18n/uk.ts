@@ -41,6 +41,11 @@ export const uk: Dictionary = {
 	'nav.ccc': 'Катехизм',
 	'nav.compendium': 'Компендіум',
 	'nav.magisterium': 'Учительство Церкви',
+	'nav.socialDoctrine': 'Соціальне вчення',
+	'socialDoctrine.landing.title': 'Компендіум соціального вчення Церкви',
+	'socialDoctrine.landing.tagline':
+		'Чого Церква вчить про життя в суспільстві — 583 пронумеровані розділи.',
+	'socialDoctrine.backMatter': 'Вступні матеріали та покажчики',
 	'nav.prayers': 'Молитви',
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',

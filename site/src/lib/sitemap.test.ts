@@ -17,6 +17,8 @@ const manifest: RouteManifest = {
 	cccChapters: [1, 27],
 	compendium: [1, 598],
 	compendiumChapters: [1],
+	socialDoctrine: [1],
+	socialDoctrineChapters: [1],
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
 	summa: { i: [1, 2], suppl: [77] }
@@ -31,12 +33,13 @@ describe('sitemapPaths', () => {
 
 	it('covers every address in the manifest exactly once', () => {
 		const paths = sitemapPaths(manifest);
-		// 280 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
-		// + 2 compendium + 1 document + 1 prayer + 3 summa.
+		// 315 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
+		// + 2 compendium + 1 socialDoctrineChapter + 1 socialDoctrine
+		// + 1 document + 1 prayer + 3 summa.
 		//
-		// The chrome is EIGHT PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
-		// (2026-08-28): eight unprefixed, which are the cluster's `x-default`,
-		// and eight under each of the THIRTY-FOUR tags in `UI_LANGS` — fourteen
+		// The chrome is NINE PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
+		// (2026-08-28): nine unprefixed, which are the cluster's `x-default`,
+		// and nine under each of the THIRTY-FOUR tags in `UI_LANGS` — fourteen
 		// until 2026-08-31, when the twelve content languages with no chrome
 		// gained one and eight reach languages were added on top, which is why
 		// this number moves whenever that list does. It was seven
@@ -44,7 +47,7 @@ describe('sitemapPaths', () => {
 		// shelf and its one work and took nothing away. Still no Compendium
 		// landing page -- the Catechism's index presents both works
 		// (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(280 + 17);
+		expect(paths).toHaveLength(315 + 19);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 
@@ -52,7 +55,8 @@ describe('sitemapPaths', () => {
 	 *  language, so it is listed once and takes no prefix. */
 	it('prefixes the chrome pages and nothing else', () => {
 		const prefixed = sitemapPaths(manifest).filter((p) => /^\/(pt|ar|la)(\/|$)/.test(p));
-		expect(prefixed).toHaveLength(24);
+		// Nine chrome pages times the three prefixes this fixture filters for.
+		expect(prefixed).toHaveLength(27);
 		// Every prefixed path is a chrome page and nothing else. Depth is no
 		// longer the discriminator: `/pt/doctores/summa` is three segments and
 		// is chrome, so the test asks what the path IS rather than how long it

@@ -35,6 +35,11 @@ export const nl: Dictionary = {
 	'nav.ccc': 'Catechismus',
 	'nav.compendium': 'Compendium',
 	'nav.magisterium': 'Leergezag',
+	'nav.socialDoctrine': 'Sociale leer',
+	'socialDoctrine.landing.title': 'Compendium van de sociale leer van de Kerk',
+	'socialDoctrine.landing.tagline':
+		'Wat de Kerk leert over het leven in de samenleving, in 583 nummers.',
+	'socialDoctrine.backMatter': 'Voorwerk en registers',
 	'nav.prayers': 'Gebeden',
 	'nav.bookmarks': 'Bladwijzers',
 	'nav.menu': 'Menu',

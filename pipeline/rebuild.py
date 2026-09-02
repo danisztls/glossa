@@ -306,6 +306,19 @@ STAGES: tuple[Stage, ...] = (
         ),
         ("encyclical.*", "exhortation.*"),
     ),
+    # The Compendium of the Social Doctrine. `--langs all` is spelled out
+    # rather than left to the script's default, which is English alone: the
+    # default is what a person iterating on one edition wants and a rebuild
+    # is not that. Ten of the twelve editions vatican.va publishes as HTML are
+    # written; the other two are in `csdc.WITHHELD` with the measurement that
+    # put them there.
+    Stage(
+        "csdc",
+        "documents",
+        "csdc.py",
+        ("--langs", "all", "--offline"),
+        ("csdc.*",),
+    ),
     # `plates.json` alone is under a second; --derive is the image pipeline.
     Stage(
         "dore",

@@ -14,6 +14,11 @@ export const pt: Dictionary = {
 	'nav.ccc': 'Catecismo',
 	'nav.compendium': 'Compêndio',
 	'nav.magisterium': 'Magistério',
+	'nav.socialDoctrine': 'Doutrina social',
+	'socialDoctrine.landing.title': 'Compêndio da Doutrina Social da Igreja',
+	'socialDoctrine.landing.tagline':
+		'O que a Igreja ensina sobre a vida em sociedade, em 583 números.',
+	'socialDoctrine.backMatter': 'Páginas preliminares e índices',
 	'nav.prayers': 'Orações',
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',

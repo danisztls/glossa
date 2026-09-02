@@ -33,7 +33,7 @@ import { CHROME_PATHS, parseChromePath } from '../src/lib/route-manifest.ts';
 import { UI_LANGS } from '../src/lib/ui-langs.ts';
 import { summaQuestionLabel } from '../src/lib/summa-titles.ts';
 import { SITE_NAME, headFor } from '../src/lib/shell-head.ts';
-import { displayTitle } from '../src/lib/titles.ts';
+import { displayDocumentTitle, displayTitle } from '../src/lib/titles.ts';
 import { SITEMAP_LANGS } from './lastmod.mjs';
 
 /** Bumped when the shape changes, so a worker isolate holding an older file
@@ -106,6 +106,78 @@ function titledSpans(nodes, lang) {
 }
 
 /**
+ * The same thing for a DOCUMENT's outline, which is flat rather than a tree.
+ *
+ * `structure.json` for a document is a list of `{ level, title, before }` rows
+ * in reading order (docs/corpus-schema.md §Documents): `before` is the
+ * paragraph the heading is printed above, and a heading's reach is everything
+ * up to the next heading at its own level or shallower. So the spans are
+ * COMPUTED here, where `titledSpans` reads them off a tree that already
+ * carries them.
+ *
+ * Two rows are dropped and one is repaired, each for something the corpus
+ * really contains:
+ *
+ * - **A row with no `before` anchors nothing.** The Compendium of the Social
+ *   Doctrine ends in an index of references whose 90 headings are book names,
+ *   printed after the last numbered paragraph; they name no stretch of text a
+ *   reader can arrive in.
+ * - **Two headings may share one anchor**, because the source prints a part
+ *   divider and the chapter opening under it on the same page — and so may two
+ *   consecutive rows at the same level, which makes the first one's span end
+ *   before it starts. `Math.max` keeps it to the single paragraph it opens
+ *   rather than emitting an inverted span that matches nothing.
+ *
+ * @param {{ level: number, title: string, before: number | null }[]} nodes
+ * @param {number} last the work's highest paragraph number
+ * @param {string} lang
+ * @returns {[number, number, string][]}
+ */
+function documentSpans(nodes, last, lang) {
+	/** @type {[number, number, string][]} */
+	const spans = [];
+	for (const [i, node] of nodes.entries()) {
+		const from = node.before;
+		if (typeof from !== 'number' || !Number.isFinite(from)) continue;
+		const next = nodes
+			.slice(i + 1)
+			.find((other) => other.level <= node.level && typeof other.before === 'number');
+		const to = Math.max(from, (next ? Number(next.before) : last + 1) - 1);
+		const { title } = displayDocumentTitle(node.title, lang);
+		if (title) spans.push([from, to, title]);
+	}
+	return spans;
+}
+
+/**
+ * Chapter anchor -> the name of the division that opens there.
+ *
+ * READ OFF THE NODES THAT PRODUCED THE ANCHORS. `sync-corpus.mjs` derives the
+ * anchor set from the rows carrying a `label` (`CHAPTER ONE`, `CAPITOLO
+ * PRIMO`), plus §1 for the introduction, which carries none; this takes the
+ * name from the same row. Choosing by span width instead would title
+ * `/doctrina-socialis/caput/20` `Part One` — the unnamed divider the source
+ * prints on its own page, which opens at the same paragraph and outruns the
+ * chapter by three chapters.
+ *
+ * @param {{ level: number, title: string, before: number | null, label?: string }[]} nodes
+ * @param {readonly number[]} starts
+ * @param {string} lang
+ */
+function documentChapterNames(nodes, starts, lang) {
+	/** @type {Record<string, string>} */
+	const names = {};
+	for (const start of starts) {
+		const here = nodes.filter((node) => node.before === start);
+		const node = here.find((candidate) => candidate.label) ?? here[0];
+		if (!node) continue;
+		const { title } = displayDocumentTitle(node.title, lang);
+		if (title) names[start] = title;
+	}
+	return names;
+}
+
+/**
  * Names for everything `sitemapPaths` enumerates.
  *
  * @param {object} input
@@ -115,6 +187,8 @@ function titledSpans(nodes, lang) {
  * @param {Record<string, any>} input.compendiumIndex lang -> { structure }
  * @param {Record<string, any>} input.summaIndex lang -> { questions }
  * @param {Record<string, any>} input.prayerIndex lang -> { prayers }
+ * @param {{ lang: string, work: string, sections: { n: number }[], structure: any[] }[]} input.socialDoctrineEditions
+ * @param {readonly number[]} input.socialDoctrineChapterStarts
  * @param {Record<string, Record<string, string>>} input.dictionaries lang -> strings
  */
 export function buildRouteTitles({
@@ -124,14 +198,23 @@ export function buildRouteTitles({
 	compendiumIndex,
 	summaIndex,
 	prayerIndex,
+	socialDoctrineEditions,
+	socialDoctrineChapterStarts,
 	dictionaries
 }) {
+	const csdc = servedDocumentEdition(socialDoctrineEditions);
 	return {
 		version: ROUTE_TITLES_VERSION,
 		chrome: chromeNames(dictionaries),
 		books: bookNames(manifests, bibleIndex),
 		cccSpans: structureSpans(cccIndex),
 		compendiumSpans: structureSpans(compendiumIndex),
+		socialDoctrineSpans: csdc
+			? documentSpans(csdc.structure, Math.max(...csdc.sections.map((s) => s.n)), csdc.lang)
+			: [],
+		socialDoctrineChapterNames: csdc
+			? documentChapterNames(csdc.structure, socialDoctrineChapterStarts, csdc.lang)
+			: {},
 		documents: documentNames(manifests),
 		prayers: prayerNames(prayerIndex),
 		summa: summaNames(summaIndex)
@@ -161,6 +244,25 @@ function bookNames(manifests, bibleIndex) {
 	const books = {};
 	for (const book of bibleIndex[chosen]?.books ?? []) books[book.osis] = book.name;
 	return books;
+}
+
+/**
+ * The edition of a multi-language DOCUMENT a crawler is served.
+ *
+ * `servedEdition` above answers the same question from a manifest map; this
+ * answers it from the records `sync-corpus.mjs` already holds, which carry the
+ * language and the structure together. Same rule, same fall-through: an
+ * edition in neither English nor Latin is still a real page.
+ *
+ * @template {{ lang: string, work: string }} T
+ * @param {readonly T[]} editions
+ * @returns {T | undefined}
+ */
+function servedDocumentEdition(editions) {
+	const lang = servedLang(editions.map((edition) => edition.lang));
+	return editions
+		.filter((edition) => edition.lang === lang)
+		.sort((a, b) => a.work.localeCompare(b.work))[0];
 }
 
 /** @param {Record<string, any>} index lang -> { structure } */
@@ -346,6 +448,10 @@ const CHROME_KEYS = {
 	'/scriptura': { title: 'bible.landing.title', description: 'bible.landing.tagline' },
 	'/catechismus': { title: 'ccc.landing.title', description: 'ccc.landing.tagline' },
 	'/documenta': { title: 'nav.magisterium', description: 'document.library.tagline' },
+	'/doctrina-socialis': {
+		title: 'socialDoctrine.landing.title',
+		description: 'socialDoctrine.landing.tagline'
+	},
 	'/doctores': { title: 'doctores.landing.title', description: 'doctores.landing.tagline' },
 	'/doctores/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
 	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },

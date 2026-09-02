@@ -682,6 +682,16 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	// magisterium wave has no document text offline either, so an outline
 	// downloaded ahead of it would index nothing.
 	'document-structure': 'magisterium',
+	// The Compendium of the Social Doctrine, whose three kinds are a
+	// document's three under different names — see `docs/corpus-schema.md`.
+	// In `magisterium` and not `essentials` for its size: one edition is
+	// ~850 KB raw against the whole essentials wave's ~150 KB gzipped, and it
+	// is a work a reader chooses rather than one the app cannot work without.
+	// The outline and the back matter go with the text for the reason the
+	// document's outline does — ahead of it they would index nothing.
+	'social-doctrine-chunk': 'magisterium',
+	'social-doctrine-appendix': 'magisterium',
+	'social-doctrine-structure': 'magisterium',
 	'summa-question': 'summa'
 };
 

@@ -51,6 +51,11 @@ export const mg: Dictionary = {
 	'nav.ccc': 'Katesizy',
 	'nav.compendium': 'Famintinana',
 	'nav.magisterium': 'Fampianaran’ny Fiangonana',
+	'nav.socialDoctrine': 'Fampianarana sosialy',
+	'socialDoctrine.landing.title': "Fintina ny Fampianarana Sosialin'ny Fiangonana",
+	'socialDoctrine.landing.tagline':
+		"Izay ampianarin'ny Fiangonana momba ny fiainana iarahana, ao anatin'ny laharana 583.",
+	'socialDoctrine.backMatter': 'Pejy fampidirana sy fanondroana',
 	'nav.prayers': 'Vavaka',
 	'nav.bookmarks': 'Fanamarihana',
 	'nav.menu': 'Karazana',

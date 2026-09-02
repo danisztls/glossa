@@ -349,6 +349,43 @@ edition: read the array in order and use `kind`. **Both tables feed the site's
 grammar**, where the collision mattered — see `site/CLAUDE.md` §Reference
 grammar.
 
+## The Compendium of the Social Doctrine numbers a letter the way it numbers itself
+
+`csdc.{lang}`, ten of the twelve editions vatican.va publishes as HTML
+(2026-09-02, `docs/decisions.md` §Scope, `docs/corpus-schema.md` §Compendium of
+the Social Doctrine).
+
+- **The page is split by READING the numbers, not by counting `<hr>` rules.**
+  Sodano's letter of transmittal numbers its own paragraphs in the form the
+  document numbers its 583: handed the whole page, `parse_document` took the
+  letter as §§1–5, rejected the document's own 1–4 as backwards-running, and
+  resynchronised at §10 — reporting 583 sections, no gaps, range 1..583. Every
+  check here asks whether numbers are well formed and none asks whose they are.
+  Four editions print no `<hr>` at all, so the markup could not have decided it.
+- **A change to `vatican_docs.py` for one work is measured over all of them
+  before it is kept.** The nine this needed improved 58 existing works —
+  `BOLD_BARE_NUM_RE` (a bare bold numeral, no period) is how every Czech
+  Vatican II edition prints its paragraph numbers, and
+  `sacrosanctum-concilium.cs` went from 9 sections to 130.
+- **A drop in one direction is not a regression if the other rose.** Reading
+  this work moved references out of `linkifyProse`'s running-text scan and into
+  the footnote apparatus, so `vatii` prose scripture fell while its linkable
+  citations rose by more. Accept a coverage floor only when the citation column
+  has risen to meet the fall (§The Compendium of the Social Doctrine).
+- **After a rebase that touches this file, re-parse before reading a coverage
+  number.** The corpus on disk was produced by the OLD parser; the report is
+  measured over it, so a merged fix shows up as a loss until `rebuild.py` runs.
+  Cost one wrong diagnosis on 2026-09-02.
+- **Two editions are withheld with the measurement in `csdc.WITHHELD`**: `id`
+  publishes only a table of contents, `nl` interleaves per-group-numbered
+  footnotes so pooling resolves citations to the wrong notes.
+- **`KNOWN_GAPS` and `KNOWN_DANGLING` are tables, not silence.** Eight
+  paragraphs have no address (the source puts two numbered paragraphs in one
+  `<p>`; the second's text is stored under the first's number, nothing lost) and
+  nine markers resolve to no note. Hungarian's five are phantoms from a
+  quotation's `(1)`–`(5)` — its real markers are bare digits glued to the
+  preceding word and are unreadable.
+
 ## The Summa is the exception to two rules at once
 
 Ingested 2026-08-23 (`docs/decisions.md`, `docs/corpus-schema.md` §Summa). It
