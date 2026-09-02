@@ -1,4 +1,5 @@
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
+import { bookFromLegacySlug, bookFromSlug, bookSlug } from '$lib/address';
 import { baseLang, getBookIntro, getChapter, getWork, listBibleWorks } from '$lib/corpus';
 import type { BibleBookMeta } from '$lib/corpus-index';
 import type { BibleIntro, Chapter, WorkManifest } from '$lib/types';
@@ -54,27 +55,43 @@ interface BiblePageData {
  * costs a single small fetch; the shape is what keeps adding Portuguese from
  * being a route change.
  */
-export const load: PageLoad = async ({ params }): Promise<BiblePageData> => {
+export const load: PageLoad = async ({ params, url }): Promise<BiblePageData> => {
 	const chapterN = Number(params.chapter);
+
+	// THE SEGMENT IS A LATIN SLUG AND THE CORPUS IS KEYED ON OSIS, so it is
+	// translated once, here, and every reader below is handed the osis. The
+	// route matches `[book]` with no matcher, so this is also where a segment
+	// naming no book at all becomes a 404 rather than an empty page.
+	const osis = bookFromSlug(params.book);
+	if (osis === undefined) {
+		// The OSIS spelling this address used before 2026-09-02. The edge 301s
+		// it, but a CLIENT-SIDE arrival — an old bookmark, a link in a page
+		// already open — never reaches the edge, so the same redirect has to
+		// exist on this side. `bookmarks.svelte.ts` migrates its own store, so
+		// what lands here is chiefly a link someone else saved.
+		const legacy = bookFromLegacySlug(params.book);
+		if (legacy) redirect(301, `/scriptura/${bookSlug(legacy)}/${params.chapter}${url.search}`);
+		error(404, 'No such book of the Bible');
+	}
 
 	if (chapterN === 0) {
 		const introByLang: Record<string, BibleIntro> = {};
 		for (const manifest of listBibleWorks()) {
 			const lang = baseLang(manifest.language);
 			if (introByLang[lang]) continue;
-			const intro = await getBookIntro(lang, params.book);
+			const intro = await getBookIntro(lang, osis);
 			if (intro) introByLang[lang] = intro;
 		}
 		// 404 only when NO language introduces this book — the same rule the
 		// edition loop below uses, one level up. Genesis has an introduction and
 		// 4 Kings does not (Challoner prints one preface for both volumes), so
-		// `/scriptura/2kgs/0` is genuinely not an address; the edge already
+		// `/scriptura/ii-reges/0` is genuinely not an address; the edge already
 		// refuses it too, since `corpus-routes.json` only carries a 0 for books
 		// that have one.
 		if (Object.keys(introByLang).length === 0) {
 			error(404, 'This book has no introduction');
 		}
-		return { osis: params.book, chapterN, byWorkId: {}, introByLang };
+		return { osis, chapterN, byWorkId: {}, introByLang };
 	}
 
 	const byWorkId: Record<string, BibleEditionData> = {};
@@ -84,7 +101,7 @@ export const load: PageLoad = async ({ params }): Promise<BiblePageData> => {
 		// `getChapter` reads the whole book (content tier, cached per book — see
 		// corpus.ts's docblock) but returns only book METADATA plus this one
 		// chapter's verses, keeping route data chapter-sized.
-		const found = await getChapter(manifest.id, params.book, chapterN);
+		const found = await getChapter(manifest.id, osis, chapterN);
 		if (!found) continue; // absent in this edition; another may still have it
 		byWorkId[manifest.id] = { work, book: found.book, chapter: found.chapter };
 	}
@@ -97,5 +114,5 @@ export const load: PageLoad = async ({ params }): Promise<BiblePageData> => {
 		error(404, 'This chapter does not exist in any edition of the Bible');
 	}
 
-	return { osis: params.book, chapterN, byWorkId };
+	return { osis, chapterN, byWorkId };
 };

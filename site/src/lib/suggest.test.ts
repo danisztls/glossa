@@ -67,19 +67,19 @@ describe('suggest', () => {
 
 	describe('books', () => {
 		it('completes a partly-typed book to its first chapter', () => {
-			expect(hrefs('gene')).toContain('/scriptura/gen/1');
+			expect(hrefs('gene')).toContain('/scriptura/genesis/1');
 		});
 
 		it('completes an abbreviation the edition prints', () => {
 			// `gn` is Genesis in the Portuguese edition's `abbrevs` and in the
 			// English one's; either tier reaches the same book.
-			expect(hrefs('gn')).toContain('/scriptura/gen/1');
+			expect(hrefs('gn')).toContain('/scriptura/genesis/1');
 		});
 
 		it('offers the introduction beside chapter 1 when one book is left standing', () => {
 			// Only when the book is unambiguous: a second row per book would be
 			// clutter across six of them.
-			expect(hrefs('genesis')).toEqual(['/scriptura/gen/1', '/scriptura/gen/0']);
+			expect(hrefs('genesis')).toEqual(['/scriptura/genesis/1', '/scriptura/genesis/0']);
 		});
 
 		it('names the book as the reader’s own edition names it', () => {
@@ -93,7 +93,7 @@ describe('suggest', () => {
 
 	describe('chapters and verses', () => {
 		it('takes an exact chapter first', () => {
-			expect(hrefs('john 3')).toEqual(['/scriptura/john/3']);
+			expect(hrefs('john 3')).toEqual(['/scriptura/ioannes/3']);
 		});
 
 		it('completes a verse in progress, the finished reading first', () => {
@@ -101,10 +101,10 @@ describe('suggest', () => {
 			// start of 10..21. The expansion is capped: a reader who has typed one
 			// digit has said almost nothing.
 			expect(hrefs('john 3:1')).toEqual([
-				'/scriptura/john/3#v1',
-				'/scriptura/john/3#v10',
-				'/scriptura/john/3#v11',
-				'/scriptura/john/3#v12'
+				'/scriptura/ioannes/3#v1',
+				'/scriptura/ioannes/3#v10',
+				'/scriptura/ioannes/3#v11',
+				'/scriptura/ioannes/3#v12'
 			]);
 		});
 
@@ -122,7 +122,7 @@ describe('suggest', () => {
 		});
 
 		it('reads a complete citation as one address', () => {
-			expect(hrefs('john 3:16-18')[0]).toBe('/scriptura/john/3?v=16-18#v16');
+			expect(hrefs('john 3:16-18')[0]).toBe('/scriptura/ioannes/3?v=16-18#v16');
 		});
 	});
 
@@ -367,7 +367,7 @@ describe('suggest', () => {
 			// Joshua, Jonah AND John, and only John is reached by rearranging the
 			// letters that were actually typed. All three are offered; the
 			// rearrangement leads.
-			expect(suggest('jonh', { lang: 'en' })[0]?.href).toBe('/scriptura/john/1');
+			expect(suggest('jonh', { lang: 'en' })[0]?.href).toBe('/scriptura/ioannes/1');
 		});
 
 		it('reads a substitution and a deletion', () => {
@@ -391,7 +391,7 @@ describe('suggest', () => {
 			// A token that reads is never also a near-miss of something else.
 			const rows = suggest('joh', { lang: 'en' }).filter((row) => row.kind === 'bible');
 			expect(rows.length).toBeGreaterThan(0);
-			for (const row of rows) expect(row.href).toMatch(/^\/scriptura\/john\b/);
+			for (const row of rows) expect(row.href).toMatch(/^\/scriptura\/ioannes\//);
 		});
 
 		it('is refused by the shapes that promise an exact address', () => {
@@ -462,8 +462,8 @@ describe('suggest', () => {
 			// The whole of why fuzzy sits in its own band: it may add rows below
 			// what something actually read, never reorder them.
 			for (const [query, first] of [
-				['gen', '/scriptura/gen/1'],
-				['john 3:16', '/scriptura/john/3#v16'],
+				['gen', '/scriptura/genesis/1'],
+				['john 3:16', '/scriptura/ioannes/3#v16'],
 				['ccc 27', '/catechismus/27'],
 				['catech', '/catechismus'],
 				['ii-ii 184', '/doctores/summa/ii-ii/184']

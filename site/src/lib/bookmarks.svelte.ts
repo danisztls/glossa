@@ -24,7 +24,7 @@
  */
 
 import { readStoredJson, writeStoredJson } from './storage';
-import { parseHref, type Address } from './address';
+import { bookFromLegacySlug, bookSlug, parseHref, type Address } from './address';
 
 const STORAGE_KEY = 'glossa:bookmarks';
 
@@ -57,10 +57,38 @@ function readStored(): BookmarkMap {
 		if (!row || typeof row !== 'object') continue;
 		const addedAt = (row as Bookmark).addedAt;
 		if (typeof addedAt !== 'string') continue;
-		if (!parseHref(href)) continue;
-		out[href] = { href, addedAt };
+		const migrated = migrateBibleHref(href);
+		if (!parseHref(migrated)) continue;
+		out[migrated] = { href: migrated, addedAt };
 	}
 	return out;
+}
+
+/**
+ * The OSIS book spelling a Bible address used before 2026-09-02.
+ *
+ * WITHOUT THIS EVERY BIBLE BOOKMARK VANISHES SILENTLY, which is what makes it
+ * worth the twelve lines: this store is keyed by the raw href and `readStored`
+ * drops anything the current grammar rejects -- deliberately, because that is
+ * how a hand-edited row or a retired address costs one entry instead of the
+ * library. A grammar change is the one case where that tolerance is wrong,
+ * and the Compendium's and the Summa's moves both simply accepted the loss.
+ * The set here is far larger, and the rewrite is mechanical.
+ *
+ * It reads `bookFromLegacySlug` for the same reason `src/worker.ts` does: the
+ * old vocabulary lives OUTSIDE `parseHref`, so the grammar keeps exactly one
+ * spelling per address and only the two doormats know a second.
+ *
+ * The migrated map is written back on the next mutation, not eagerly -- a
+ * reader who never touches a bookmark again keeps the old rows on disk and
+ * reads them through this on every load, which costs one regex per row and
+ * never a write they did not ask for.
+ */
+export function migrateBibleHref(href: string): string {
+	const m = /^(\/scriptura\/)([a-z0-9]+)(\/\d+(?:[?#].*)?)$/.exec(href);
+	if (!m) return href;
+	const osis = bookFromLegacySlug(m[2]);
+	return osis === undefined ? href : `${m[1]}${bookSlug(osis)}${m[3]}`;
 }
 
 class BookmarkStore {

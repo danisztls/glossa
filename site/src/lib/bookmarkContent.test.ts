@@ -25,7 +25,7 @@ describe('bookmarkGroup', () => {
 	// would have buried it under every encyclical a reader had marked.
 	it('orders scripture, catechism, compendium, summa, prayers, then documents', () => {
 		expect([
-			at('/scriptura/gen/1').order,
+			at('/scriptura/genesis/1').order,
 			at('/catechismus/1').order,
 			at('/catechismus/compendium/1').order,
 			at('/doctores/summa/i/1').order,

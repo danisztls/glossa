@@ -61,7 +61,7 @@ describe('sitemapPaths', () => {
 	});
 
 	it('lists a book introduction as chapter 0, like any other chapter', () => {
-		expect(sitemapPaths(manifest)).toContain('/scriptura/gen/0');
+		expect(sitemapPaths(manifest)).toContain('/scriptura/genesis/0');
 	});
 
 	it('addresses a Summa question, not its articles — an article is a fragment', () => {

@@ -1,5 +1,7 @@
 import type { Apparatus } from './lib/apparatus';
+import { bookFromLegacySlug, bookSlug } from './lib/address';
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
+import { isUiLang } from './lib/ui-langs';
 import {
 	headFor,
 	headHtml,
@@ -206,6 +208,35 @@ export function wantsHtml(request: Request): boolean {
 	return request.headers.get('accept')?.includes('text/html') === true;
 }
 
+/**
+ * The Bible's books took Latin slugs on 2026-09-02; this is the 301 off the
+ * OSIS spelling that preceded them (`/scriptura/josh/1` -> `/scriptura/iosue/1`).
+ *
+ * THE ONLY PLACE THE OLD VOCABULARY IS READ, together with the one-shot
+ * bookmark migration in `bookmarks.svelte.ts`. Both run BEFORE the grammar:
+ * `parseHref` and `isCanonicalPath` know Latin and nothing else, so the site
+ * still has exactly one spelling per address and "there is no compatibility
+ * layer" stays true of the addresses themselves. What has a compatibility
+ * layer is the doormat.
+ *
+ * A language prefix is carried through rather than dropped, so
+ * `/es/scriptura/josh/1` lands on `/es/scriptura/iosue/1` and the entry point
+ * then strips itself as usual. One redirect, not two hops through a language
+ * the reader would lose on the way.
+ *
+ * Returns the new pathname, or undefined when there is nothing to redirect.
+ */
+export function legacyBiblePath(pathname: string): string | undefined {
+	const m = /^(\/[a-z]{2})?(\/scriptura\/)([a-z0-9]+)(\/\d+)$/.exec(pathname);
+	if (!m) return undefined;
+	if (m[1] && !isUiLang(m[1].slice(1))) return undefined;
+	const osis = bookFromLegacySlug(m[3]);
+	// A book already spelled in Latin is not legacy, and neither is a segment
+	// naming no book at all -- that one is a 404 and must stay one.
+	if (osis === undefined) return undefined;
+	return `${m[1] ?? ''}${m[2]}${bookSlug(osis)}${m[4]}`;
+}
+
 /** Fetch the SPA shell without changing the reader-visible address. */
 function shellRequest(request: Request): Request {
 	const url = new URL(request.url);
@@ -314,6 +345,24 @@ export default {
 
 		const manifest = await getManifest(request, env.ASSETS);
 		if (!manifest) return env.ASSETS.fetch(request);
+
+		// The OSIS book spelling, which stopped being an address on 2026-09-02.
+		//
+		// 301 and not 308: the method is GET or HEAD by this line, so there is no
+		// body a downgrade could lose, and 301 is the one a search engine
+		// consolidates link equity through.
+		//
+		// GATED ON THE TARGET EXISTING, which is why it reads the manifest first.
+		// `/scriptura/gen/99` names no chapter in either spelling, and answering
+		// it with a redirect to a 404 would publish a second dead address for
+		// every dead one — a link checker follows the hop and reports the wrong
+		// URL. A path that does not survive the rewrite falls through and 404s
+		// where it stands, since the legacy spelling no longer parses.
+		const relocated = legacyBiblePath(url.pathname);
+		if (relocated && isCanonicalPath(relocated, manifest)) {
+			url.pathname = relocated;
+			return Response.redirect(url, 301);
+		}
 
 		const canonical = isCanonicalPath(url.pathname, manifest);
 		// A path that names no address, asked for by a client that did not ask for

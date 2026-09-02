@@ -22,9 +22,14 @@
  * that every cache in front of it keys by URL alone.
  */
 
-import { parseHref, summaPartFromSlug, type Address } from './address.ts';
+import { bookSlug, parseHref, summaPartFromSlug, type Address } from './address.ts';
 import { relatedLinks, type Apparatus, type WorkImprint } from './apparatus.ts';
-import { CHROME_PATHS, parseChromePath, type RouteManifest } from './route-manifest.ts';
+import {
+	CHROME_PATHS,
+	parseChromePath,
+	parseLangEntry,
+	type RouteManifest
+} from './route-manifest.ts';
 import { isRtl, UI_LANGS, type UiLang } from './ui-langs.ts';
 
 /**
@@ -277,6 +282,26 @@ export function headFor(
 	if (prefixed) return chromeHead(prefixed.path, prefixed.lang as UiLang, titles);
 	if ((CHROME_PATHS as readonly string[]).includes(pathname)) {
 		return chromeHead(pathname, undefined, titles);
+	}
+
+	// A language entry point on a READING address: the citation's own head, so
+	// that a pasted link unfurls with the passage's real name, but pointing at
+	// the bare path it is about to be replaced by.
+	//
+	// CANONICAL AND DELIBERATELY NOT `noindex`. The two together are an
+	// anti-pattern -- a `noindex` on a page whose canonical names another can
+	// carry the directive to the target, and the target here is the real
+	// address. A canonical alone is what consolidates a duplicate, and the
+	// client redirect means a crawler that renders ends up there anyway. So
+	// `noindex` stays what it was: `/signata` and `/404`.
+	//
+	// `lang` is set because `htmlAttrs` reads it, and an Arabic or Hebrew entry
+	// point that painted left-to-right and flipped at hydration is the same
+	// defect `app.html`'s pre-paint block exists to prevent.
+	const entry = parseLangEntry(pathname, manifest);
+	if (entry) {
+		const bare = headFor(entry.path, manifest, titles, apparatus);
+		return bare && { ...bare, lang: entry.lang as UiLang, alternates: [] };
 	}
 
 	const fixed = STATIC_HEADS[pathname];
@@ -634,7 +659,10 @@ function chapterLink(book: string, osis: string, chapter: number | undefined): C
 	return [
 		{
 			name: chapter === 0 ? `${book}: introduction` : `${book} ${chapter}`,
-			href: `/scriptura/${osis}/${chapter}`
+			// `bookSlug`, not the osis: the crumb is a link, and the address is
+			// spelled in Latin (`address.ts`). Building it by hand here is what
+			// made this the one place the two disagreed.
+			href: `/scriptura/${bookSlug(osis)}/${chapter}`
 		}
 	];
 }

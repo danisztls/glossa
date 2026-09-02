@@ -1,10 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import { hrefFor, parseHref, pontiffAnchor, previewTarget, type Address } from './address';
+import {
+	bookFromLegacySlug,
+	bookFromSlug,
+	bookSlug,
+	hrefFor,
+	parseHref,
+	pontiffAnchor,
+	previewTarget,
+	type Address
+} from './address';
+import { BOOK_GROUPS } from './bible-groups';
 
 describe('parseHref', () => {
 	describe('bible', () => {
 		it('parses a bare chapter link with no verse', () => {
-			expect(parseHref('/scriptura/john/1')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1
@@ -12,7 +22,7 @@ describe('parseHref', () => {
 		});
 
 		it('parses a single-verse anchor (#v{n}, no ?v=)', () => {
-			expect(parseHref('/scriptura/john/1#v1')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1#v1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -22,7 +32,7 @@ describe('parseHref', () => {
 		});
 
 		it('parses a cited span (?v=from-to#v{first})', () => {
-			expect(parseHref('/scriptura/john/1?v=1-7#v1')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1?v=1-7#v1')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -35,7 +45,7 @@ describe('parseHref', () => {
 			// The span is the more informative of the two, so it should win
 			// rather than the parser picking whichever happens to be checked
 			// first for no principled reason.
-			expect(parseHref('/scriptura/gen/1?v=3-9#v1')).toEqual({
+			expect(parseHref('/scriptura/genesis/1?v=3-9#v1')).toEqual({
 				kind: 'bible',
 				osis: 'gen',
 				chapter: 1,
@@ -48,7 +58,7 @@ describe('parseHref', () => {
 		it('keeps an anchor that is not the span start', () => {
 			// What `refHref` emits for an unsorted comma list: "Jn 1:7,1" spans
 			// 1-7 but is about verse 7.
-			expect(parseHref('/scriptura/john/1?v=1-7#v7')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1?v=1-7#v7')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -59,7 +69,7 @@ describe('parseHref', () => {
 		});
 
 		it('supports multi-character OSIS codes (numbered books)', () => {
-			expect(parseHref('/scriptura/1cor/13')).toEqual({
+			expect(parseHref('/scriptura/i-corinthii/13')).toEqual({
 				kind: 'bible',
 				osis: '1cor',
 				chapter: 13
@@ -67,7 +77,7 @@ describe('parseHref', () => {
 		});
 
 		it('falls back to the anchor when ?v= is malformed', () => {
-			expect(parseHref('/scriptura/john/1?v=nonsense#v3')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1?v=nonsense#v3')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -77,7 +87,7 @@ describe('parseHref', () => {
 		});
 
 		it('falls back to the anchor when ?v= is reversed (to <= from)', () => {
-			expect(parseHref('/scriptura/john/1?v=7-1#v7')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1?v=7-1#v7')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1,
@@ -87,7 +97,7 @@ describe('parseHref', () => {
 		});
 
 		it('ignores an unrelated query string / hash', () => {
-			expect(parseHref('/scriptura/john/1?utm=x#somewhere-else')).toEqual({
+			expect(parseHref('/scriptura/ioannes/1?utm=x#somewhere-else')).toEqual({
 				kind: 'bible',
 				osis: 'john',
 				chapter: 1
@@ -95,7 +105,7 @@ describe('parseHref', () => {
 		});
 
 		it('admits chapter 0, which is a book introduction', () => {
-			expect(parseHref('/scriptura/gen/0')).toEqual({ kind: 'bible', osis: 'gen', chapter: 0 });
+			expect(parseHref('/scriptura/genesis/0')).toEqual({ kind: 'bible', osis: 'gen', chapter: 0 });
 		});
 	});
 
@@ -210,8 +220,8 @@ describe('parseHref', () => {
 			'/catechismus/caput/01',
 			'/catechismus/compendium/007',
 			'/catechismus/compendium/0',
-			'/scriptura/gen/00',
-			'/scriptura/gen/01'
+			'/scriptura/genesis/00',
+			'/scriptura/genesis/01'
 		])('declines %s', (href) => {
 			expect(parseHref(href)).toBeUndefined();
 		});
@@ -274,14 +284,14 @@ describe('parseHref', () => {
  */
 describe('hrefFor / parseHref round trip', () => {
 	const cases: Array<[string, Address]> = [
-		['/scriptura/john/1', { kind: 'bible', osis: 'john', chapter: 1 }],
-		['/scriptura/gen/0', { kind: 'bible', osis: 'gen', chapter: 0 }],
-		['/scriptura/john/1#v5', { kind: 'bible', osis: 'john', chapter: 1, from: 5, to: 5 }],
-		['/scriptura/john/1?v=1-7#v1', { kind: 'bible', osis: 'john', chapter: 1, from: 1, to: 7 }],
+		['/scriptura/ioannes/1', { kind: 'bible', osis: 'john', chapter: 1 }],
+		['/scriptura/genesis/0', { kind: 'bible', osis: 'gen', chapter: 0 }],
+		['/scriptura/ioannes/1#v5', { kind: 'bible', osis: 'john', chapter: 1, from: 5, to: 5 }],
+		['/scriptura/ioannes/1?v=1-7#v1', { kind: 'bible', osis: 'john', chapter: 1, from: 1, to: 7 }],
 		[
 			// An unsorted verse list: the extent starts at 1, the citation is
 			// about verse 7.
-			'/scriptura/john/1?v=1-7#v7',
+			'/scriptura/ioannes/1?v=1-7#v7',
 			{ kind: 'bible', osis: 'john', chapter: 1, from: 1, to: 7, anchor: 7 }
 		],
 		['/catechismus/1234', { kind: 'ccc', n: 1234 }],
@@ -344,7 +354,7 @@ describe('previewTarget', () => {
 	});
 
 	it('accepts a verse', () => {
-		expect(previewTarget('/scriptura/exod/3#v12')).toEqual({
+		expect(previewTarget('/scriptura/exodus/3#v12')).toEqual({
 			kind: 'bible',
 			osis: 'exod',
 			chapter: 3,
@@ -379,5 +389,74 @@ describe('pontiffAnchor', () => {
 	it('collapses runs of punctuation and trims the hyphens off both ends', () => {
 		expect(pontiffAnchor('  John Paul II  ')).toBe('pontiff-john-paul-ii');
 		expect(pontiffAnchor('Benedict XVI (emeritus)')).toBe('pontiff-benedict-xvi-emeritus');
+	});
+});
+
+/**
+ * The Latin book slugs (2026-09-02). These are the ONE irreversible half of
+ * that change — every published Bible address and every reader's bookmarks are
+ * spelled by this table — so it is checked whole rather than by sample.
+ */
+describe('Bible book slugs', () => {
+	const osisIds = BOOK_GROUPS.flatMap((g) => g.osis);
+
+	it('names every book of the corpus, and each exactly once', () => {
+		expect(osisIds).toHaveLength(73);
+		const slugs = osisIds.map(bookSlug);
+		expect(new Set(slugs).size).toBe(slugs.length);
+	});
+
+	it('round-trips every book', () => {
+		for (const osis of osisIds) expect(bookFromSlug(bookSlug(osis))).toBe(osis);
+	});
+
+	it('spells every slug in the shape BIBLE_RE admits', () => {
+		// `[a-z-]` with NO digits: the number is a lower-cased Roman numeral, and
+		// that is what makes the OSIS spelling fail the grammar outright instead
+		// of half-matching it.
+		for (const osis of osisIds) expect(bookSlug(osis)).toMatch(/^[a-z]+(?:-[a-z]+)*$/);
+	});
+
+	it('throws for a book that is not one, and answers undefined for a slug that is not', () => {
+		expect(() => bookSlug('3macc')).toThrow();
+		expect(bookFromSlug('josh')).toBeUndefined();
+		expect(bookFromSlug('nonesuch')).toBeUndefined();
+	});
+
+	it('is Latin where the English-derived id differed most', () => {
+		expect(bookSlug('rev')).toBe('apocalypsis');
+		expect(bookSlug('song')).toBe('canticum-canticorum');
+		expect(bookSlug('sir')).toBe('ecclesiasticus');
+		expect(bookSlug('hos')).toBe('osee');
+		expect(bookSlug('obad')).toBe('abdias');
+	});
+
+	/** The Clementine prints `Joannes`; `BOOK_VARIANTS_LA` — the citation table
+	 *  checked against the Latin Catechism's own sigla — reads `Io`. */
+	it('folds J to I', () => {
+		expect(bookSlug('john')).toBe('ioannes');
+		expect(bookSlug('josh')).toBe('iosue');
+		expect(bookSlug('job')).toBe('iob');
+		expect(osisIds.map(bookSlug).filter((s) => s.includes('j'))).toEqual([]);
+	});
+
+	/** The old vocabulary is readable, and deliberately NOT by the grammar:
+	 *  only the edge's 301 and the bookmark migration know it. */
+	it('reads the OSIS spelling only through bookFromLegacySlug', () => {
+		expect(bookFromLegacySlug('josh')).toBe('josh');
+		expect(bookFromLegacySlug('1kgs')).toBe('1kgs');
+		expect(bookFromLegacySlug('iosue')).toBeUndefined();
+		expect(bookFromLegacySlug('nonesuch')).toBeUndefined();
+		// The grammar itself refuses it, which is what keeps one spelling per
+		// address rather than two.
+		expect(parseHref('/scriptura/josh/1')).toBeUndefined();
+		expect(parseHref('/scriptura/1kgs/1')).toBeUndefined();
+	});
+
+	it('writes the slug into every href it emits', () => {
+		expect(hrefFor({ kind: 'bible', osis: '1sam', chapter: 3 })).toBe('/scriptura/i-samuel/3');
+		expect(hrefFor({ kind: 'bible', osis: 'rev', chapter: 22, from: 20, to: 21 })).toBe(
+			'/scriptura/apocalypsis/22?v=20-21#v20'
+		);
 	});
 });

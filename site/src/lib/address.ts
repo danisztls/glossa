@@ -102,6 +102,148 @@ export function summaPartFromSlug(slug: string): string | undefined {
 }
 
 /**
+ * The Bible's books, as they appear in a URL: OSIS id -> Latin slug.
+ *
+ * A reader URL is edition-free and Latin, and the book segment was the one
+ * part of it that was neither -- `/scriptura/rev/22` addressed the Apocalypse
+ * by an English-derived interchange id on a site whose every other path
+ * segment is Latin. This table is the same arrangement `SUMMA_PART_SLUGS`
+ * above already has, and for the same reason: the corpus keys everything on
+ * the OSIS id (content file paths, `corpus-routes.json`, the apparatus, the
+ * cross-reference index), so the Latin spelling is converted at the address
+ * boundary and nowhere else. `parseHref` still hands back an `osis`.
+ *
+ * DERIVED, NOT INVENTED. Every name is `bible.clementina.la`'s own -- the
+ * Latin edition in the corpus carries a `name` for each of its 73 books -- with
+ * `ae` for `æ`, spaces hyphenated, and `J` folded to `I`. The fold is the one
+ * departure, and it is one internal authority against another: the Clementine
+ * prints `Joannes` and `Josue`, while `BOOK_VARIANTS_LA` in `refs-grammar.ts`
+ * -- the citation table, corroborated against the Latin Catechism's own printed
+ * sigla -- reads `Io` and `Ios` throughout. The checked table wins.
+ *
+ * So a name judged wrong here is a CORPUS defect and is fixed in
+ * `pipeline/corrections/`, not by hand-editing this table: the URL says what
+ * the Latin book list on the page says, which is the whole point of it.
+ */
+const BIBLE_BOOK_SLUGS: Record<string, string> = {
+	// pentateuch
+	gen: 'genesis',
+	exod: 'exodus',
+	lev: 'leviticus',
+	num: 'numeri',
+	deut: 'deuteronomium',
+	// historical
+	josh: 'iosue',
+	judg: 'iudices',
+	ruth: 'ruth',
+	'1sam': 'i-samuel',
+	'2sam': 'ii-samuel',
+	'1kgs': 'i-reges',
+	'2kgs': 'ii-reges',
+	'1chr': 'i-paralipomenon',
+	'2chr': 'ii-paralipomenon',
+	ezra: 'esdras',
+	neh: 'nehemias',
+	tob: 'tobias',
+	jdt: 'iudith',
+	esth: 'esther',
+	'1macc': 'i-machabaeus',
+	'2macc': 'ii-machabaeus',
+	// wisdom
+	job: 'iob',
+	ps: 'psalmi',
+	prov: 'proverbia',
+	eccl: 'ecclesiastes',
+	song: 'canticum-canticorum',
+	wis: 'sapientia',
+	sir: 'ecclesiasticus',
+	// prophetic
+	isa: 'isaias',
+	jer: 'ieremias',
+	lam: 'lamentationes',
+	bar: 'baruch',
+	ezek: 'ezechiel',
+	dan: 'daniel',
+	hos: 'osee',
+	joel: 'ioel',
+	amos: 'amos',
+	obad: 'abdias',
+	jonah: 'ionas',
+	mic: 'michaeas',
+	nah: 'nahum',
+	hab: 'habacuc',
+	zeph: 'sophonias',
+	hag: 'aggaeus',
+	zech: 'zacharias',
+	mal: 'malachias',
+	// gospels
+	matt: 'matthaeus',
+	mark: 'marcus',
+	luke: 'lucas',
+	john: 'ioannes',
+	// acts
+	acts: 'actus-apostolorum',
+	// pauline
+	rom: 'romani',
+	'1cor': 'i-corinthii',
+	'2cor': 'ii-corinthii',
+	gal: 'galatae',
+	eph: 'ephesii',
+	phil: 'philippenses',
+	col: 'colossenses',
+	'1thess': 'i-thessalonicenses',
+	'2thess': 'ii-thessalonicenses',
+	'1tim': 'i-timotheus',
+	'2tim': 'ii-timotheus',
+	titus: 'titus',
+	phlm: 'philemon',
+	heb: 'hebraei',
+	// catholicLetters
+	jas: 'iacobus',
+	'1pet': 'i-petrus',
+	'2pet': 'ii-petrus',
+	'1john': 'i-ioannes',
+	'2john': 'ii-ioannes',
+	'3john': 'iii-ioannes',
+	jude: 'iudas',
+	// revelation
+	rev: 'apocalypsis'
+};
+
+/** Lazily inverted, because `bookFromSlug` runs on every address the edge
+ *  worker validates and a 73-key linear scan per request is not free. */
+let BIBLE_SLUG_TO_OSIS: Record<string, string> | undefined;
+
+export function bookSlug(osis: string): string {
+	const slug = BIBLE_BOOK_SLUGS[osis];
+	if (!slug) throw new Error(`unknown Bible book ${JSON.stringify(osis)}`);
+	return slug;
+}
+
+/** The inverse of `bookSlug`; `undefined` for anything not a book. */
+export function bookFromSlug(slug: string): string | undefined {
+	if (!BIBLE_SLUG_TO_OSIS) {
+		BIBLE_SLUG_TO_OSIS = {};
+		for (const [osis, s] of Object.entries(BIBLE_BOOK_SLUGS)) BIBLE_SLUG_TO_OSIS[s] = osis;
+	}
+	return BIBLE_SLUG_TO_OSIS[slug];
+}
+
+/**
+ * The OSIS spelling a URL used before the Latin slugs (2026-09-02).
+ *
+ * The ONLY reader of the old vocabulary, and it is deliberately not part of
+ * the grammar: `parseHref` and `isCanonicalPath` know Latin and nothing else,
+ * so `/scriptura/josh/1` is not an address by any reading. What consumes this
+ * is the edge's 301 and the one-shot bookmark migration -- both of which run
+ * BEFORE the grammar, which is what keeps "there is no compatibility layer"
+ * true of the addresses themselves.
+ */
+export function bookFromLegacySlug(slug: string): string | undefined {
+	return slug in BIBLE_BOOK_SLUGS ? slug : undefined;
+}
+
+/**
  * The id of a pontificate's section on `/documenta`, from the manifest's
  * `pontiff_or_council` string ("Leo XIII" -> `pontiff-leo-xiii`).
  *
@@ -144,7 +286,7 @@ export function hrefFor(a: Address): string {
 			// Edition-free (docs/decisions.md #2, which the Bible now follows
 			// too): which edition renders here is the reader's standing
 			// preference, never the link's to decide.
-			return `/scriptura/${a.osis}/${a.chapter}${query}${hash}`;
+			return `/scriptura/${bookSlug(a.osis)}/${a.chapter}${query}${hash}`;
 		}
 		case 'ccc':
 			return `/catechismus/${a.n}`;
@@ -184,7 +326,10 @@ export function hrefFor(a: Address): string {
 // to reject it).
 const INTERNAL_BASE = 'https://glossa.internal.invalid';
 
-const BIBLE_RE = /^\/scriptura\/([a-z0-9]+)\/(\d+)$/;
+// `[a-z-]`, with no digits: every Latin slug spells its number as a lower-cased
+// Roman numeral (`i-samuel`), so dropping `0-9` makes the OSIS spelling fail the
+// grammar outright rather than half-matching it. The two vocabularies cannot blur.
+const BIBLE_RE = /^\/scriptura\/([a-z-]+)\/(\d+)$/;
 const CCC_CHAPTER_RE = /^\/catechismus\/caput\/(\d+)$/;
 const CCC_RE = /^\/catechismus\/(\d+)$/;
 // Both are anchored, so neither can be reached by CCC_RE (which admits only
@@ -248,7 +393,8 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 	if (bible) {
 		const chapter = canonicalNumber(bible[2], 0);
 		if (chapter === undefined) return undefined;
-		const osis = bible[1];
+		const osis = bookFromSlug(bible[1]);
+		if (osis === undefined) return undefined;
 
 		const anchorMatch = VERSE_ANCHOR_RE.exec(url.hash);
 		const anchorVerse = anchorMatch ? canonicalNumber(anchorMatch[1], 1) : undefined;

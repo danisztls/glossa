@@ -135,7 +135,7 @@ describe('parseDevice', () => {
 describe('classifyEntry', () => {
 	it('names a search engine referral', () => {
 		expect(
-			classifyEntry('/scriptura/gen/1', 'https://www.google.com/', 'glossacatholica.org')
+			classifyEntry('/scriptura/genesis/1', 'https://www.google.com/', 'glossacatholica.org')
 		).toBe('search');
 		expect(classifyEntry('/', 'https://duckduckgo.com/?q=x', 'glossacatholica.org')).toBe('search');
 	});
@@ -183,7 +183,7 @@ describe('classifyDevice', () => {
 
 describe('refKindFor', () => {
 	it('reads the family off the address', () => {
-		expect(refKindFor('/scriptura/gen/1')).toBe('scripture');
+		expect(refKindFor('/scriptura/genesis/1')).toBe('scripture');
 		expect(refKindFor('/catechismus/2357')).toBe('ccc');
 		expect(refKindFor('/catechismus/compendium/12')).toBe('ccc');
 		expect(refKindFor('/documenta/lumen-gentium')).toBe('document');
@@ -198,7 +198,7 @@ describe('refKindFor', () => {
 describe('sectionFor', () => {
 	it('names the canonical sections and nothing else', () => {
 		expect(sectionFor('/')).toBe('home');
-		expect(sectionFor('/scriptura/gen/1')).toBe('scriptura');
+		expect(sectionFor('/scriptura/genesis/1')).toBe('scriptura');
 		expect(sectionFor('/doctores/summa')).toBe('summa');
 		expect(sectionFor('/catechismus/1234')).toBe('catechismus');
 		// The Compendium is not its path's first segment; it keeps its own

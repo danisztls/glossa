@@ -163,11 +163,11 @@ describe('headFor, static pages', () => {
 
 describe('headFor, the corpus', () => {
 	it('names a Bible chapter by its book', () => {
-		expect(head('/scriptura/gen/1')?.title).toBe('Genesis 1 — Glossa Catholica');
+		expect(head('/scriptura/genesis/1')?.title).toBe('Genesis 1 — Glossa Catholica');
 	});
 
 	it('reads chapter 0 as the book introduction it is', () => {
-		expect(head('/scriptura/gen/0')?.title).toBe('Genesis: introduction — Glossa Catholica');
+		expect(head('/scriptura/genesis/0')?.title).toBe('Genesis: introduction — Glossa Catholica');
 	});
 
 	/** The narrowest containing division is the most specific heading true of
@@ -219,10 +219,10 @@ describe('headFor, the corpus', () => {
 	});
 
 	it('breadcrumbs from the site root down to the address', () => {
-		expect(head('/scriptura/gen/1')?.crumbs.map((c) => c.href)).toEqual([
+		expect(head('/scriptura/genesis/1')?.crumbs.map((c) => c.href)).toEqual([
 			'/',
 			'/scriptura',
-			'/scriptura/gen/1'
+			'/scriptura/genesis/1'
 		]);
 	});
 
@@ -245,7 +245,7 @@ describe('headFor, the corpus', () => {
 	/** A well-formed address for something the tables do not name: the caller
 	 *  serves the shell unaltered rather than titling the page after nothing. */
 	it('returns undefined for an address it has no name for', () => {
-		expect(head('/scriptura/tob/1')).toBeUndefined();
+		expect(head('/scriptura/tobias/1')).toBeUndefined();
 		expect(head('/documenta/no-such-document')).toBeUndefined();
 		expect(head('/not-an-address-at-all')).toBeUndefined();
 	});
@@ -268,9 +268,9 @@ describe('assertNamed', () => {
 
 	it('refuses two addresses sharing one title', () => {
 		const collide = { ...titles, books: { gen: 'Genesis', ps: 'Genesis' } };
-		expect(() => assertNamed(['/scriptura/gen/1', '/scriptura/ps/1'], manifest, collide)).toThrow(
-			/shared by more than one address/
-		);
+		expect(() =>
+			assertNamed(['/scriptura/genesis/1', '/scriptura/psalmi/1'], manifest, collide)
+		).toThrow(/shared by more than one address/);
 	});
 });
 
@@ -481,8 +481,30 @@ describe('the interface-language cluster', () => {
 
 	it('refuses a language the interface does not have', () => {
 		expect(head('/xx/doctores')).toBeUndefined();
-		// A reading address takes no prefix, whatever language is named.
-		expect(head('/pt/catechismus/330')).toBeUndefined();
+		expect(head('/xx/catechismus/330')).toBeUndefined();
+	});
+
+	/**
+	 * A reading address under a prefix is an entry point, not a published page
+	 * (2026-09-02, `parseLangEntry`). It carries the citation's own name so a
+	 * pasted link unfurls properly, and points at the bare path it is about to
+	 * be replaced by.
+	 */
+	it('gives a language entry point the citation head and the bare canonical', () => {
+		const entry = head('/pt/catechismus/330')!;
+		const bare = head('/catechismus/330')!;
+		expect(entry.title).toBe(bare.title);
+		expect(entry.canonical).toBe('/catechismus/330');
+		// No cluster: it is one citation, not a page translated fourteen times.
+		expect(entry.alternates).toEqual([]);
+		// NOT `noindex`. Paired with a canonical naming another URL, the
+		// directive can carry to the target — here, the real address.
+		expect(entry.noindex).toBe(false);
+	});
+
+	it('sets lang and dir on an entry point, so a right-to-left page does not flip', () => {
+		expect(htmlAttrs(head('/ar/catechismus/330')!)).toEqual({ lang: 'ar', dir: 'rtl' });
+		expect(htmlAttrs(head('/pt/catechismus/330')!)).toEqual({ lang: 'pt', dir: 'ltr' });
 	});
 });
 
@@ -611,7 +633,7 @@ describe('the apparatus', () => {
 	 */
 	it('links a paragraph to what it cites and to what condenses it', () => {
 		const hrefs = withApparatus('/catechismus/330').links.map((l) => l.href);
-		expect(hrefs).toContain('/scriptura/gen/1');
+		expect(hrefs).toContain('/scriptura/genesis/1');
 		expect(hrefs).toContain('/catechismus/compendium/45');
 		expect(hrefs).toContain('/documenta/rerum-novarum');
 		// The structural links are not displaced by the apparatus.
@@ -625,7 +647,7 @@ describe('the apparatus', () => {
 	 *  link, which is what all 272 of them were. */
 	it('links a document to the Scripture it cites', () => {
 		const hrefs = withApparatus('/documenta/rerum-novarum').links.map((l) => l.href);
-		expect(hrefs).toContain('/scriptura/gen/1');
+		expect(hrefs).toContain('/scriptura/genesis/1');
 	});
 
 	/**
@@ -635,13 +657,13 @@ describe('the apparatus', () => {
 	 * other, which is the opposite of what an apparatus is for.
 	 */
 	it('never lets one kind of link starve another', () => {
-		const links = withApparatus('/scriptura/gen/1').links;
+		const links = withApparatus('/scriptura/genesis/1').links;
 		expect(links.some((l) => l.href.startsWith('/catechismus/'))).toBe(true);
 		expect(links.some((l) => l.href.startsWith('/documenta/'))).toBe(true);
 	});
 
 	it('links a chapter of Scripture to its citers', () => {
-		const hrefs = withApparatus('/scriptura/gen/1').links.map((l) => l.href);
+		const hrefs = withApparatus('/scriptura/genesis/1').links.map((l) => l.href);
 		expect(hrefs).toContain('/catechismus/330');
 		expect(hrefs).toContain('/documenta/rerum-novarum');
 	});

@@ -35,13 +35,13 @@ describe('CompareStore.active / target', () => {
 describe('CompareStore.syncFromUrl', () => {
 	it('leaves the preference untouched when the URL has no `compare` param — absence is not "off"', () => {
 		compare.set('bible.matos-soares.pt');
-		compare.syncFromUrl(new URL('https://example.test/scriptura/john/2'));
+		compare.syncFromUrl(new URL('https://example.test/scriptura/ioannes/2'));
 		expect(compare.target).toBe('bible.matos-soares.pt');
 	});
 
 	it('`?compare=0` is the only spelling that explicitly turns compare off', () => {
 		compare.set('bible.matos-soares.pt');
-		compare.syncFromUrl(new URL('https://example.test/scriptura/john/2?compare=0'));
+		compare.syncFromUrl(new URL('https://example.test/scriptura/ioannes/2?compare=0'));
 		expect(compare.target).toBeUndefined();
 	});
 
@@ -57,7 +57,7 @@ describe('CompareStore.syncFromUrl', () => {
 
 	it('a shared link overrides whatever the reader had stored, and becomes the new preference', () => {
 		compare.set('bible.matos-soares.pt');
-		compare.syncFromUrl(new URL('https://example.test/scriptura/john/1?compare=bible.cpdv.en'));
+		compare.syncFromUrl(new URL('https://example.test/scriptura/ioannes/1?compare=bible.cpdv.en'));
 		expect(compare.target).toBe('bible.cpdv.en');
 	});
 });

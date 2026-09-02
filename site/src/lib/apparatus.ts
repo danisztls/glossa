@@ -27,7 +27,7 @@
  * them twice is how two tables come to disagree.
  */
 
-import type { Address } from './address.ts';
+import { bookSlug, type Address } from './address.ts';
 import type { Crumb, RouteTitles } from './shell-head.ts';
 
 /** Bumped when the shape changes, so a worker isolate holding an older file
@@ -198,7 +198,10 @@ function bibleLink(key: string, titles: RouteTitles): Crumb | undefined {
 	const chapter = Number(key.slice(split + 1));
 	const book = titles.books[osis];
 	if (!book || !Number.isFinite(chapter)) return undefined;
-	return { name: `${book} ${chapter}`, href: `/scriptura/${osis}/${chapter}` };
+	// `bookSlug`, because the apparatus stores the OSIS key and the address is
+	// Latin. The table above already refused an unknown book, so this cannot
+	// throw on corpus data.
+	return { name: `${book} ${chapter}`, href: `/scriptura/${bookSlug(osis)}/${chapter}` };
 }
 
 function documentLink(slug: string, titles: RouteTitles): Crumb | undefined {

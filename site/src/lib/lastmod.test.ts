@@ -178,16 +178,16 @@ describe('resolveLastmod', () => {
 	it('does not depend on the order editions happen to be read in', () => {
 		const one = resolveLastmod({
 			fingerprints: build([
-				['/scriptura/gen/1', { text: 'cpdv' }],
-				['/scriptura/gen/1', { text: 'douay' }]
+				['/scriptura/genesis/1', { text: 'cpdv' }],
+				['/scriptura/genesis/1', { text: 'douay' }]
 			]),
 			ledger: {},
 			today: TODAY
 		});
 		const other = resolveLastmod({
 			fingerprints: build([
-				['/scriptura/gen/1', { text: 'douay' }],
-				['/scriptura/gen/1', { text: 'cpdv' }]
+				['/scriptura/genesis/1', { text: 'douay' }],
+				['/scriptura/genesis/1', { text: 'cpdv' }]
 			]),
 			ledger: {},
 			today: TODAY
@@ -221,17 +221,17 @@ describe('resolveLastmod', () => {
 	});
 
 	it('takes the latest English edition where two answer at one address', () => {
-		// The CPDV and the Douay-Rheims both answer at /scriptura/gen/1 and the
+		// The CPDV and the Douay-Rheims both answer at /scriptura/genesis/1 and the
 		// edition menu offers both there, so the address is as new as the newer.
 		const resolved = resolveLastmod({
 			fingerprints: build([
-				['/scriptura/gen/1', { text: 'cpdv' }, '2026-08-23', 'en'],
-				['/scriptura/gen/1', { text: 'douay' }, '2026-08-24', 'en']
+				['/scriptura/genesis/1', { text: 'cpdv' }, '2026-08-23', 'en'],
+				['/scriptura/genesis/1', { text: 'douay' }, '2026-08-24', 'en']
 			]),
 			ledger: {},
 			today: TODAY
 		});
-		expect(resolved.dates['/scriptura/gen/1']).toBe('2026-08-24');
+		expect(resolved.dates['/scriptura/genesis/1']).toBe('2026-08-24');
 	});
 
 	it('counts an address it could not seed, so a non-git corpus is visible', () => {

@@ -20,7 +20,7 @@ The earlier version of this file asked you to cite the source rather than this a
 Every reading address is a citation. The vocabulary is Latin, the address does not vary with the reader's language, and which edition renders there is the reader's own preference — so there is exactly one URL per unit, not one per language.
 
 ```
-/scriptura/{book}/{chapter}             /scriptura/gen/1
+/scriptura/{book}/{chapter}             /scriptura/genesis/1
 /catechismus/{n}                        /catechismus/330
 /catechismus/caput/{n}                  /catechismus/caput/26
 /catechismus/compendium/{n}             /catechismus/compendium/60
@@ -30,10 +30,16 @@ Every reading address is a citation. The vocabulary is Latin, the address does n
 /preces/{slug}                          /preces/act-of-contrition
 ```
 
-- `{book}` is a lowercase OSIS identifier: `gen`, `exod`, `1sam`, `ps`, `matt`, `rev`. `{chapter}` is the chapter number as printed. Chapter `0`, where a book has one, is that book's introduction rather than a chapter of Scripture.
+- `{book}` is the book's Latin name, lowercased and hyphenated, as the Clementine Vulgate prints it and with `I` for `J`: `genesis`, `exodus`, `i-samuel`, `psalmi`, `matthaeus`, `apocalypsis`, `canticum-canticorum`, `actus-apostolorum`. `{chapter}` is the chapter number as printed. Chapter `0`, where a book has one, is that book's introduction rather than a chapter of Scripture.
 - `{n}` is the paragraph number the work itself prints — the Catechism's 1 to 2865, the Compendium's 1 to 598. `caput` addresses a titled division rather than a paragraph.
 - `{slug}` is the document's Latin incipit, lowercased and hyphenated.
 - `{part}` is one of `i`, `i-ii`, `ii-ii`, `iii`, `suppl`.
+
+Until 2026-09-02 `{book}` was a lowercase OSIS identifier — `gen`, `josh`, `1kgs`, `rev`. Those addresses now answer `301` to the Latin spelling and are not canonical; if you hold one, follow the redirect and record what it names.
+
+A reading address may be prefixed with an interface-language tag — `/es/scriptura/genesis/1` — which sets the language the *interface* is rendered in and then redirects to the address itself. **It is an entry point, not an address**: it canonicalizes to the unprefixed path, appears in no sitemap, and declares no `hreflang` alternates. Cite the unprefixed form. The eight interface pages (`/`, `/scriptura`, `/catechismus`, `/documenta`, `/doctores`, `/doctores/summa`, `/preces`, `/colophon`) are the exception — there the prefixed address is a real page in that language and does carry an `hreflang` cluster.
+
+Note that the interface language is not the content language: which edition renders at a citation is decided by a fallback chain, so `/hu/catechismus/330` shows Hungarian navigation around an English paragraph.
 
 These addresses are canonical and are not rewritten. `https://glossacatholica.org/sitemap.xml` enumerates all of them, with a `lastmod` per address that moves only when that unit's own text changes. An address that is not one of these gets a real 404 rather than a page, so a link built from the grammar above is either right or visibly wrong — never quietly a different text.
 

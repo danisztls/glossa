@@ -120,7 +120,7 @@ describe('pickComparisonEdition', () => {
 
 describe('withCompareParam', () => {
 	it('sets the param to the given target, without touching existing params', () => {
-		const url = new URL('https://example.test/scriptura/john/1?v=1-3');
+		const url = new URL('https://example.test/scriptura/ioannes/1?v=1-3');
 		const next = withCompareParam(url, 'bible.matos-soares.pt');
 		expect(next.searchParams.get('compare')).toBe('bible.matos-soares.pt');
 		expect(next.searchParams.get('v')).toBe('1-3');

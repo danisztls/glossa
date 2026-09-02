@@ -1525,14 +1525,14 @@ describe('refHref', () => {
 				{ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			)
-		).toBe('/scriptura/gen/1#v1');
+		).toBe('/scriptura/genesis/1#v1');
 
 		expect(
 			refHref(
 				{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			)
-		).toBe('/scriptura/john/3#v16');
+		).toBe('/scriptura/ioannes/3#v16');
 	});
 
 	it('omits the verse anchor for a whole-chapter reference', () => {
@@ -1541,7 +1541,7 @@ describe('refHref', () => {
 				{ kind: 'scripture', osis: 'john', chapter: 3, verses: [], raw: 'John 3' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			)
-		).toBe('/scriptura/john/3');
+		).toBe('/scriptura/ioannes/3');
 	});
 
 	describe('multi-verse passages carry their extent', () => {
@@ -1559,7 +1559,7 @@ describe('refHref', () => {
 					},
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/john/1?v=1-7#v1');
+			).toBe('/scriptura/ioannes/1?v=1-7#v1');
 		});
 
 		it('adds nothing for a single-verse reference', () => {
@@ -1569,7 +1569,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [5], raw: 'Jn 1:5' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/john/1#v5');
+			).toBe('/scriptura/ioannes/1#v5');
 		});
 
 		it('spans an unsorted verse list by its min and max', () => {
@@ -1580,7 +1580,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'john', chapter: 1, verses: [7, 1, 4], raw: 'Jn 1:7,1,4' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/john/1?v=1-7#v7');
+			).toBe('/scriptura/ioannes/1?v=1-7#v7');
 		});
 
 		it('clamps the extent to verses that exist in this edition', () => {
@@ -1597,7 +1597,7 @@ describe('refHref', () => {
 					},
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/gen/1?v=11-13#v11');
+			).toBe('/scriptura/genesis/1?v=11-13#v11');
 		});
 
 		it('converts the extent for a divergent book rather than dropping it', () => {
@@ -1609,7 +1609,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14, 15, 16], raw: 'Ps 22:14-16' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/ps/21?v=14-16#v14');
+			).toBe('/scriptura/psalmi/21?v=14-16#v14');
 		});
 	});
 
@@ -1653,7 +1653,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [14], raw: 'Ps 22:14' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/ps/21#v14');
+			).toBe('/scriptura/psalmi/21#v14');
 		});
 
 		it('converts Malachi across the chapter 3/4 split (ccc678: "Mal 3: 19" -> Vulgate 4:1)', () => {
@@ -1662,7 +1662,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'mal', chapter: 3, verses: [19], raw: 'Mal 3: 19' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/mal/4#v1');
+			).toBe('/scriptura/malachias/4#v1');
 		});
 
 		it('converts Joel across the chapter 2/3 fold ("Joel 3:1-5" -> Vulgate 2:28)', () => {
@@ -1677,7 +1677,7 @@ describe('refHref', () => {
 					},
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/joel/2?v=28-32#v28');
+			).toBe('/scriptura/ioel/2?v=28-32#v28');
 		});
 
 		it('never leaves a whole-chapter Joel 3 pointing at the literal (unconverted, WRONG) Vulgate chapter 3, which trivially "exists" but means Hebrew Joel 4', () => {
@@ -1685,7 +1685,7 @@ describe('refHref', () => {
 				{ kind: 'scripture', osis: 'joel', chapter: 3, verses: [], raw: 'Joel 3' },
 				{ bibleWorkId: 'bible.cpdv.en' }
 			);
-			expect(href).toBe('/scriptura/joel/2');
+			expect(href).toBe('/scriptura/ioel/2');
 			expect(href).not.toContain('/joel/3');
 		});
 
@@ -1696,7 +1696,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 22, verses: [9999], raw: 'Ps 22:9999' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/ps/21');
+			).toBe('/scriptura/psalmi/21');
 		});
 
 		it('omits the anchor for a whole-chapter Psalm reference that is not a split psalm', () => {
@@ -1705,7 +1705,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 51, verses: [], raw: 'Ps 51' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/ps/50');
+			).toBe('/scriptura/psalmi/50');
 		});
 
 		it('picks the first half for a whole-chapter reference to a split psalm (Ps 116 -> Vulg 114)', () => {
@@ -1714,7 +1714,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 116, verses: [], raw: 'Ps 116' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/ps/114');
+			).toBe('/scriptura/psalmi/114');
 		});
 
 		it('leaves non-divergent books unaffected by the versification path', () => {
@@ -1723,7 +1723,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'john', chapter: 3, verses: [16], raw: 'Jn 3:16' },
 					{ bibleWorkId: 'bible.cpdv.en' }
 				)
-			).toBe('/scriptura/john/3#v16');
+			).toBe('/scriptura/ioannes/3#v16');
 		});
 
 		it('returns undefined rather than a wrong link when the divergent book is absent from the edition', () => {
@@ -1762,12 +1762,12 @@ describe('refHref', () => {
 					lang: 'en',
 					work: 'commentary.haydock.en'
 				})
-			).toBe('/scriptura/ps/103#v3');
+			).toBe('/scriptura/psalmi/103#v3');
 		});
 
 		it('still converts the same segment when no work is named — the Catechism default', () => {
 			expect(refHref(PS_CIII, { bibleWorkId: 'bible.cpdv.en', lang: 'en' })).toBe(
-				'/scriptura/ps/102#v3'
+				'/scriptura/psalmi/102#v3'
 			);
 		});
 
@@ -1778,7 +1778,7 @@ describe('refHref', () => {
 			['bible.martini.it', 'it']
 		])('opts %s out of conversion too', (work, lang) => {
 			expect(refHref(PS_CIII, { bibleWorkId: 'bible.cpdv.en', lang, work })).toBe(
-				'/scriptura/ps/103#v3'
+				'/scriptura/psalmi/103#v3'
 			);
 		});
 
@@ -1788,7 +1788,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 103, verses: [3, 4, 5], raw: 'Ps. ciii. 3-5' },
 					{ bibleWorkId: 'bible.cpdv.en', lang: 'en', work: 'commentary.haydock.en' }
 				)
-			).toBe('/scriptura/ps/103?v=3-5#v3');
+			).toBe('/scriptura/psalmi/103?v=3-5#v3');
 		});
 
 		it('degrades to a chapter-only link for the residue, rather than resolving it elsewhere', () => {
@@ -1802,7 +1802,7 @@ describe('refHref', () => {
 					{ kind: 'scripture', osis: 'ps', chapter: 10, verses: [16], raw: 'Ps. x. 16' },
 					{ bibleWorkId: 'bible.cpdv.en', lang: 'en', work: 'commentary.haydock.en' }
 				)
-			).toBe('/scriptura/ps/10');
+			).toBe('/scriptura/psalmi/10');
 		});
 
 		it('leaves a non-divergent book alone under either reading', () => {

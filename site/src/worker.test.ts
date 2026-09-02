@@ -118,8 +118,8 @@ describe('navigation', () => {
 		const paths = [
 			'/',
 			'/catechismus',
-			'/scriptura/gen/1',
-			'/scriptura/gen/0',
+			'/scriptura/genesis/1',
+			'/scriptura/genesis/0',
 			'/catechismus/330',
 			'/catechismus/caput/325',
 			'/catechismus/compendium/45',
@@ -155,21 +155,84 @@ describe('navigation', () => {
 	});
 
 	it('404s a well-formed address the corpus does not carry, on both methods', async () => {
-		for (const path of ['/catechismus/9999', '/scriptura/gen/99', '/documenta/no-such-thing']) {
+		for (const path of ['/catechismus/9999', '/scriptura/genesis/99', '/documenta/no-such-thing']) {
 			expect((await navigate(path, 'GET')).status, path).toBe(404);
 			expect((await navigate(path, 'HEAD')).status, `HEAD ${path}`).toBe(404);
 		}
 	});
 
-	/** Seven chrome pages times fourteen interface languages. A reading address
-	 *  takes no prefix — it names a citation, not a page of interface. */
-	it('serves the language-prefixed chrome pages and nothing else under a prefix', async () => {
+	/** The chrome pages times the interface languages. These KEEP their prefix:
+	 *  they are published in every language and declare an `hreflang` cluster. */
+	it('serves the language-prefixed chrome pages', async () => {
 		for (const path of ['/pt', '/ar/catechismus', '/la/doctores/summa', '/sv/colophon']) {
 			expect((await navigate(path)).status, path).toBe(200);
 		}
-		for (const path of ['/xx', '/xx/catechismus', '/pt/catechismus/330', '/pt/signata']) {
+	});
+
+	/** A reading address under a prefix is an ENTRY POINT (2026-09-02): served,
+	 *  so the language can be taken and stored, and then stripped in the bar by
+	 *  `[uilang=uilang]/[...rest]`. It was a 404 until then, which is the form a
+	 *  reader extrapolates from `/pt/catechismus` and so the defect this closed. */
+	it('serves a reading address under a language prefix', async () => {
+		for (const path of ['/pt/catechismus/330', '/es/scriptura/genesis/1']) {
+			expect((await navigate(path)).status, path).toBe(200);
+		}
+	});
+
+	it('refuses a prefix that is not a language, a doubled one, and a bad address under a good prefix', async () => {
+		for (const path of [
+			'/xx',
+			'/xx/catechismus',
+			'/xx/catechismus/330',
+			// One prefix, never two: `parseLangEntry` peels exactly one segment,
+			// or an address would have 34 x 34 spellings.
+			'/es/pt/catechismus/330',
+			'/pt/catechismus/9999',
+			'/pt/scriptura/nonesuch/1',
+			// `/signata` is `noindex` and outside `CHROME_PATHS`, but it is still
+			// a real path, so a prefix on it is an entry point like any other.
+			'/pt/signata/1'
+		]) {
 			expect((await navigate(path)).status, path).toBe(404);
 		}
+	});
+
+	/**
+	 * The Bible's books took Latin slugs on 2026-09-02, and the OSIS spelling
+	 * they replaced gets a 301 here — the ONLY place the old vocabulary is read
+	 * besides the bookmark migration. Both run before the grammar, so
+	 * `parseHref` still knows exactly one spelling per address.
+	 */
+	describe('the OSIS book spelling', () => {
+		it('301s to the Latin slug, keeping the query', async () => {
+			const res = await navigate('/scriptura/gen/1');
+			expect(res.status).toBe(301);
+			expect(res.headers.get('location')).toBe('https://glossacatholica.org/scriptura/genesis/1');
+
+			const span = await navigate('/scriptura/gen/1?v=1-3');
+			expect(span.headers.get('location')).toBe(
+				'https://glossacatholica.org/scriptura/genesis/1?v=1-3'
+			);
+		});
+
+		it('carries a language prefix through rather than dropping it', async () => {
+			const res = await navigate('/es/scriptura/gen/1');
+			expect(res.status).toBe(301);
+			expect(res.headers.get('location')).toBe(
+				'https://glossacatholica.org/es/scriptura/genesis/1'
+			);
+		});
+
+		/** A redirect to a 404 publishes a second dead address for every dead
+		 *  one, and a link checker then reports the wrong URL. */
+		it('404s where it stands when the target does not exist either', async () => {
+			expect((await navigate('/scriptura/gen/99')).status).toBe(404);
+			expect((await navigate('/scriptura/nonesuch/1')).status).toBe(404);
+		});
+
+		it('leaves an address already spelled in Latin alone', async () => {
+			expect((await navigate('/scriptura/genesis/1')).status).toBe(200);
+		});
 	});
 
 	it('404s an address the grammar does not recognise at all', async () => {

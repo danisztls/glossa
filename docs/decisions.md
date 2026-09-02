@@ -805,6 +805,55 @@ language: `/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput
 `/preces/{slug}`, `/signata`, `/colophon`. The English roots deliberately resolve as
 invalid; there is no compatibility layer.
 
+**The book segment became Latin on 2026-09-02, and the sentence above was half
+false until it did.** Every path word here is Latin — `scriptura`, `catechismus`,
+`doctores`, `preces` — and the one segment naming a book of the Bible was a lowercased
+OSIS id, so a Vulgate-canonical library addressed the Apocalypse as `rev`, the Canticle
+as `song` and Ecclesiasticus as `sir`. `/scriptura/iosue/1` now, and `BIBLE_BOOK_SLUGS`
+in `address.ts` is the table.
+
+**Derived from the corpus, not invented.** `bible.clementina.la` carries its own Latin
+`name` for each of its 73 books; folding `æ` to `ae`, lowercasing and hyphenating gives
+73 slugs with no collisions. The one departure is `J` → `I`, and it is one internal
+authority against another: the Clementine prints `Joannes` and `Josue`, while
+`BOOK_VARIANTS_LA` — the citation table, corroborated against the Latin Catechism's own
+printed sigla — reads `Io` and `Ios` throughout. The checked table wins. So a name judged
+wrong is a CORPUS defect, fixed in `pipeline/corrections/` and re-derived: the URL says
+what the Latin book list on the page says, which is the whole point of it.
+
+The Vulgate's own titles are NOT used where the corpus normalizes them — `i-corinthii`
+rather than _ad Corinthios_, `i-machabaeus` rather than _Machabaeorum_, `i-reges` for
+1 Kings rather than _III Regum_. That last one is worth reading as a feature: the
+Clementine's names follow the MODERN division, so `i-samuel` and `i-reges` are
+unambiguous, where the Vulgate's I–IV Regum numbering would have made `i-regum` mean 1
+Samuel to one reader and 1 Kings to another. An address that needs a tradition to
+disambiguate it is not an address.
+
+**It costs a compatibility layer, which is the first, and the exception is precise.**
+The rule two paragraphs up — the English roots resolve as invalid, there is no
+compatibility layer — was paid in full twice, by the Compendium's move and the Summa's,
+each of which knowingly dropped every reader's bookmarks. This is 1,405 published
+addresses and the bulk of the sitemap, so the OSIS spelling gets a `301` instead. What
+keeps the exception small is WHERE it lives: `parseHref` and `isCanonicalPath` learn
+Latin and nothing else, so the grammar still has exactly one spelling per address and
+`/scriptura/josh/1` is not an address by any reading. Two doormats know the old
+vocabulary, both running before the grammar — `legacyBiblePath` in `src/worker.ts`, and
+`migrateBibleHref` in `bookmarks.svelte.ts`, without which every reader's Bible
+bookmarks would have vanished with nothing said. The compatibility layer is on the
+doormat, not in the address space.
+
+**The edge redirect is gated on the TARGET existing**, which is why it reads the route
+manifest first. `/scriptura/gen/99` names no chapter in either spelling, and answering it
+with a redirect to a 404 publishes a second dead address for every dead one — a link
+checker follows the hop and then reports the wrong URL. A path that does not survive the
+rewrite 404s where it stands.
+
+**`scripts/lastmod.json`'s 1,405 Bible entries were re-keyed rather than left to
+expire**, exactly as the Summa's move re-keyed its 611: `<lastmod>` means "when the text
+last changed", and the text did not change. The sync confirms it — `5836 addresses — 0
+changed, 0 new, 0 withdrawn` — which is also the check that the table is complete, since
+a book the slug map missed would have shown up as a withdrawal and a new address.
+
 **The route tree is that grammar and not a translation of it** (2026-08-29). The
 directories under `src/routes/` were named in English with the Latin ones as thin
 re-exports, which left `/ccc/1` answering 404 at the edge — `isCanonicalPath` has never
@@ -1705,6 +1754,42 @@ one level down. It would also take 5,811 addresses to 81,368, force a `<sitemapi
 and contradict the "canonical reader URLs do not vary with interface language" rule that
 `hrefFor` exists to enforce. **The addressable-content-language question is untouched by
 this** and remains where §Languages leaves it.
+
+**A reading address takes a prefix as an ENTRY POINT since 2026-09-02, and the refusal
+above is unchanged.** Every objection in it is about PUBLICATION — a false `hreflang`
+claim, 5,811 addresses becoming 81,368, a forced `<sitemapindex>`, `hrefFor` losing its
+monopoly on the spelling of an address. None of them reaches an address that is never
+published. `/es/scriptura/genesis/1` is served, sets and persists Spanish exactly as the
+switcher does, and is then replaced in the bar by `/scriptura/genesis/1`. It
+canonicalizes to that bare path, is in no sitemap, and declares no alternates. The eight
+chrome pages are untouched: theirs is published, self-canonicalizes, and keeps its
+cluster.
+
+**What forced it is that the site teaches the prefix and then refuses it.** A reader who
+has seen `/pt/catechismus` writes `/pt/catechismus/330`, and that answered 404 —
+extrapolating the rule was the natural move and the site punished it. The principle
+separating chrome from citation is real, but it was being expressed as an error rather
+than as a redirect.
+
+**`?lang=es` was the cheaper answer and was refused.** It needs no edge work at all:
+`ShellHead.canonical` is path-only by design, so a param already emits the right
+canonical and `isCanonicalPath` never sees it. Nor would it be a new category, which is
+the objection that first suggested itself and is wrong — `?compare=` is already read and
+written on the client and already seeds a persisted preference, which is exactly the
+shape `?lang=` would have. What refuses it is that it leaves `/pt/scriptura/…` a 404 and
+answers the question with a THIRD way of naming a language. Twenty lines at the edge is
+the price of one rule.
+
+**Canonical, and deliberately not `noindex`.** The two together are an anti-pattern: a
+`noindex` on a page whose canonical names another URL can carry the directive to the
+target, and the target here is the real address. A canonical alone is what consolidates a
+duplicate, and the client redirect means a crawler that renders ends up there anyway.
+`noindex` stays what it was — `/signata` and `/404`.
+
+**One prefix, never two.** `parseLangEntry` calls `isCanonicalPath`, which calls back
+into it, so `/es/pt/catechismus/330` would otherwise peel a segment per round and answer
+200 — an address with 34 x 34 spellings, which is the exact multiplication the
+unprefixed reading addresses exist to avoid.
 
 **Fifteen members per cluster, and every one of them declares the whole cluster.** Fourteen
 prefixed pages plus the unprefixed path, which is `x-default`. The unprefixed path is not

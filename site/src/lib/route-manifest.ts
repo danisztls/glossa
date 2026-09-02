@@ -83,6 +83,51 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
 	return CHROME_PATH_SET.has(path) ? { lang, path } : undefined;
 }
 
+/**
+ * `/es/scriptura/iosue/1` -> `{ lang: 'es', path: '/scriptura/iosue/1' }`.
+ *
+ * A LANGUAGE ENTRY POINT, WHICH IS NOT A PUBLISHED ADDRESS. The eight
+ * `CHROME_PATHS` above take a prefix and KEEP it: they are real pages in
+ * fourteen languages, they self-canonicalize, and they declare an `hreflang`
+ * cluster. A reading address prefixed this way is a doorway instead -- it is
+ * served, it sets and persists the language exactly as the switcher does, and
+ * then `[uilang=uilang]/[...rest]` replaces it in the bar with the citation it
+ * names. It canonicalizes to that bare path, appears in no sitemap, and
+ * declares no alternates.
+ *
+ * WHY IT EXISTS AT ALL, given that prefixing reading addresses was refused
+ * (docs/decisions.md §The site): every objection there is about PUBLICATION --
+ * `hreflang` alternates that would be a false claim, 5,811 addresses becoming
+ * 81,368, a forced `<sitemapindex>`, `hrefFor` losing its monopoly on the
+ * spelling of an address. None of them reaches an address that is never
+ * published. What forced the question is that the site teaches
+ * `/pt/catechismus`, so `/pt/catechismus/330` is the form a reader
+ * extrapolates, and it answered 404.
+ *
+ * `parseChromePath` is tried FIRST by every caller: a chrome page's prefix is
+ * published and must not be stripped.
+ */
+export function parseLangEntry(
+	pathname: string,
+	manifest: RouteManifest
+): { lang: string; path: string } | undefined {
+	const slash = pathname.indexOf('/', 1);
+	if (slash === -1) return undefined; // `/pt` alone is the chrome home page
+	const lang = pathname.slice(1, slash);
+	if (!isUiLang(lang)) return undefined;
+	const path = pathname.slice(slash);
+	// A chrome page keeps its prefix, so it is not an entry point in this sense
+	// even though it parses as one.
+	if (CHROME_PATH_SET.has(path)) return undefined;
+	// ONE prefix, never two. `isCanonicalPath` calls back into this function, so
+	// without this line `/es/pt/scriptura/iosue/1` would peel a segment per
+	// round and answer 200 -- an address with 34 x 34 spellings, which is the
+	// exact multiplication the unprefixed reading addresses exist to avoid.
+	const next = path.indexOf('/', 1);
+	if (isUiLang(path.slice(1, next === -1 ? undefined : next))) return undefined;
+	return isCanonicalPath(path, manifest) ? { lang, path } : undefined;
+}
+
 const STATIC_PATHS = new Set([
 	'/',
 	'/scriptura',
@@ -114,6 +159,11 @@ const STATIC_PATHS = new Set([
 export function isCanonicalPath(pathname: string, manifest: RouteManifest): boolean {
 	if (STATIC_PATHS.has(pathname)) return true;
 	if (parseChromePath(pathname)) return true;
+	// A language entry point exists (200) but is nobody's address: it
+	// canonicalizes to the bare path and the client strips it. Recursion is
+	// bounded at one level, because `parseLangEntry` splits exactly one segment
+	// and `isUiLang` never accepts a Latin path word.
+	if (parseLangEntry(pathname, manifest)) return true;
 
 	const address = parseHref(pathname);
 	if (!address) return false;

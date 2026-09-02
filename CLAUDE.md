@@ -1050,10 +1050,47 @@ canonical path gets the shell, an invalid reference-shaped one gets the shell
 with a 404. `src/lib/route-manifest.ts` holds that grammar and is unit-tested.
 
 Canonical reader URLs are Latin and do not vary with interface language:
-`/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
+`/scriptura/{book}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,
 `/catechismus/compendium/{n}`, `/catechismus/compendium/caput/{n}`,
 `/documenta/{slug}`, `/doctores/summa/{part}/{question}`, `/preces/{slug}`,
-`/colophon`. The English roots (`/bible`, `/ccc`, `/documents`, `/prayers`)
+`/colophon`.
+
+**`{book}` IS A LATIN SLUG SINCE 2026-09-02, NOT AN OSIS ID** — `/scriptura/iosue/1`,
+`/scriptura/apocalypsis/22`, `/scriptura/i-samuel/3` (`docs/decisions.md` §Addresses and
+editions). Four things:
+
+- **`BIBLE_BOOK_SLUGS` in `address.ts` is the boundary and the ONLY one.** The corpus is
+  still keyed on the OSIS id everywhere — content paths, `corpus-routes.json`,
+  `route-titles.json`, `apparatus.json`'s `{osis}.{chapter}` keys, the xref index — and
+  `parseHref` still hands back an `osis`. That is why the change touched neither the
+  pipeline nor the sync: it is `summaPartSlug`'s arrangement, one level down.
+- **The table is DERIVED from `bible.clementina.la`'s own `name` field**, with `ae` for
+  `æ` and `J` folded to `I` (the Clementine prints `Joannes`; `BOOK_VARIANTS_LA`, which
+  was checked against the Latin Catechism's printed sigla, reads `Io`). A slug judged
+  wrong is a corpus defect — fix `pipeline/corrections/` and re-derive, do not hand-edit
+  the table, or the URL stops saying what the page says.
+- **Anything building a `/scriptura/` href by hand must call `bookSlug`.** Two did, and
+  both were invisible until a test caught them: `chapterLink` in `shell-head.ts` and
+  `bibleLink` in `apparatus.ts`. Prefer `hrefFor`.
+- **The OSIS spelling 301s, and that vocabulary lives OUTSIDE the grammar.**
+  `bookFromLegacySlug` is read by exactly two doormats that run before `parseHref` —
+  `legacyBiblePath` in `src/worker.ts` (gated on the target existing, so a dead address
+  404s where it stands rather than redirecting to a 404) and `migrateBibleHref` in
+  `bookmarks.svelte.ts`, without which every reader's Bible bookmarks vanish silently
+  because the store is keyed by raw href and drops what the grammar rejects.
+
+**A READING ADDRESS TAKES A LANGUAGE PREFIX AS AN ENTRY POINT** (2026-09-02).
+`/es/scriptura/iosue/1` is served, sets and persists Spanish as the switcher does, and is
+then replaced in the bar with `/scriptura/iosue/1` by
+`routes/[uilang=uilang]/[...rest]/+page.ts`. It canonicalizes to the bare path, is in no
+sitemap and declares no alternates — `parseLangEntry` in `route-manifest.ts` is the edge
+half. It was a 404 until then, which is exactly what a reader extrapolates from
+`/pt/catechismus` and so the defect it closed. **The eight `CHROME_PATHS` are
+unchanged**: their prefix is published, self-canonicalizes, and keeps its `hreflang`
+cluster, so `parseChromePath` is tried first everywhere. Two traps: it must never be
+`noindex` (a `noindex` beside a canonical naming another URL can carry to the target),
+and `parseLangEntry` must refuse a doubled prefix — it calls `isCanonicalPath`, which
+calls back, so `/es/pt/…` would otherwise peel one segment per round. The English roots (`/bible`, `/ccc`, `/documents`, `/prayers`)
 deliberately resolve as invalid — there is no compatibility layer, and
 **`/compendium/{n}` and `/summa/{part}/{question}` both joined them on
 2026-08-28**, when the Compendium moved under the Catechism it condenses and the
@@ -1419,10 +1456,13 @@ reverse-chronological. What follows will bite before the design will.
   Two checkbox facets are two elements claiming one `id`, and two independent search
   boxes are one control that forgets what it was told when the viewport changes.
 
-**The filters are deliberately not in the URL.** Nothing in this app reads or writes the
-client-side URL, and `?auctor=` would be the first query string in a system whose sitemap,
-route manifest, worker and usage beacon all model paths and nothing else. Adding it is a
-change to four things, not one.
+**The filters are deliberately not in the URL**, and `?auctor=` would be a change to the
+sitemap, the route manifest, the worker and the usage beacon — all of which model paths
+and nothing else — rather than to one thing. What this used to say beside that, and what
+is NOT true, is that nothing in this app reads or writes the client-side URL: `?compare=`
+is read by `compare-pref.svelte.ts` and set and deleted by `compare.ts`, and `?v=` is
+read by `address.ts` and the chapter route. A query param here would be a fourth, not a
+first. The argument against it is the cost above, not novelty.
 
 ## The edge writes the head, from names and never from text
 
