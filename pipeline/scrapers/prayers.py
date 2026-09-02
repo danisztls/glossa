@@ -111,9 +111,11 @@ from __future__ import annotations
 
 import argparse
 import html as ihtml
+import json
 import re
 import sys
 import unicodedata
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -143,6 +145,14 @@ CCC_EN_CREDO_RAW = RAW_ROOT / "ccc-en" / "__P13.HTM"
 CCC_PT_CREDO_RAW = RAW_ROOT / "ccc-pt" / "p1s1c3_142-184_po.html"
 CCC_EN_OUR_FATHER_RAW = RAW_ROOT / "ccc-en" / "__P9V.HTM"
 CCC_PT_OUR_FATHER_RAW = RAW_ROOT / "ccc-pt" / "p4s2_2759-2865_po.html"
+# vatican.va SPELLS LATIN `lt` IN THE CATECHISM'S URLS -- `catechism_lt` is
+# *latine*, not Lithuanian (CLAUDE.md, and `ccc.py`'s own EDITIONS docblock).
+# Latin has no IntraText mirror, so there is no counterpart to English's
+# standalone "The Credo" page: the two Creeds sit in a SYMBOLUM FIDEI table
+# inside the ordinary body page for Part One, Section One, Chapter Three,
+# Article Two, and the Our Father is the blockquote at 2759.
+CCC_LA_CREDO_RAW = RAW_ROOT / "ccc-la" / "p1s1c3a2_lt.htm"
+CCC_LA_OUR_FATHER_RAW = RAW_ROOT / "ccc-la" / "p4s2_lt.htm"
 LITANY_EN_RAW = RAW_ROOT / "rosary-en" / "litanie-lauretane_en.html"
 LITANY_PT_RAW = RAW_ROOT / "rosary-pt" / "litanie-lauretane_po.html"
 ROSARY_MYSTERY_FILES = (
@@ -162,24 +172,95 @@ CCC_EN_OUR_FATHER_URL = "https://www.vatican.va/archive/ENG0015/__P9V.HTM"
 CCC_PT_OUR_FATHER_URL = (
     "https://www.vatican.va/archive/cathechism_po/index_new/p4s2_2759-2865_po.html"
 )
+
+CCC_LA_BASE_URL = "https://www.vatican.va/archive/catechism_lt/"
+CCC_LA_CREDO_URL = CCC_LA_BASE_URL + "p1s1c3a2_lt.htm"
+CCC_LA_OUR_FATHER_URL = CCC_LA_BASE_URL + "p4s2_lt.htm"
+
 LITANY_EN_URL = (
     "https://www.vatican.va/special/rosary/documents/litanie-lauretane_en.html"
 )
 LITANY_PT_URL = (
     "https://www.vatican.va/special/rosary/documents/litanie-lauretane_po.html"
 )
-ROSARY_MYSTERY_URLS = {
-    lang: [
-        f"https://www.vatican.va/special/rosary/documents/{name}_{lang}.html"
-        for name in ROSARY_MYSTERY_FILES
-    ]
-    for lang in ("en", "po")
+ROSARY_BASE = "https://www.vatican.va/special/rosary/documents/"
+
+#: The Holy Rosary micro-site's filename suffix per language, keyed by the
+#: mirror's OWN code. Read off the micro-site's own language switcher, never
+#: guessed -- the switcher on the cached English pages names exactly six
+#: languages and no more, which is why `LangSpec.rosary_mysteries` is `None`
+#: for every other one.
+#:
+#: TWO TRAPS, BOTH THE MIRROR'S. The codes are the archive mirror's rather
+#: than ISO -- German is `ge`, Spanish `sp`, Portuguese `po`, the same family
+#: of trap as `catechism_lt` being Latin. And ITALIAN IS THE MIRROR'S UNMARKED
+#: DEFAULT on the mystery pages: the switcher lists `misteri_en`, `_fr`, `_ge`,
+#: `_po`, `_sp` and then a bare `misteri.html`, which is the Italian one. It is
+#: NOT consistent even within the micro-site -- the Litany is spelled
+#: `litanie-lauretane_it.html`, suffix and all -- so Italian gets candidates
+#: tried in order rather than one guess, and `capture_raw_pages` records which
+#: answered.
+ROSARY_MYSTERY_SUFFIXES = {
+    "en": ("_en",),
+    "po": ("_po",),
+    "ge": ("_ge",),
+    "sp": ("_sp",),
+    "fr": ("_fr",),
+    # Bare first: that is what the switcher points at. The suffixed form is a
+    # fallback in case the four detail pages follow the Litany's convention
+    # instead of the index's.
+    "it": ("", "_it"),
 }
+
+#: The Litany's suffix is simply the mirror code, Italian included.
+LITANY_SUFFIXES = {code: (f"_{code}",) for code in ROSARY_MYSTERY_SUFFIXES}
+
+
+def rosary_mystery_urls(code: str, name: str) -> list[str]:
+    """Candidate URLs for one mystery page, best first. See
+    `ROSARY_MYSTERY_SUFFIXES` for why Italian has two."""
+    return [f"{ROSARY_BASE}{name}{sfx}.html" for sfx in ROSARY_MYSTERY_SUFFIXES[code]]
+
+
+def litany_urls(code: str) -> list[str]:
+    return [
+        f"{ROSARY_BASE}litanie-lauretane{sfx}.html" for sfx in LITANY_SUFFIXES[code]
+    ]
+
 
 # Both raw files were fetched by compendium.py on this date; re-parsing
 # them here is not a new retrieval event, so the manifest carries the
 # original date rather than today's.
 RETRIEVED_AT = "2026-08-14"
+
+
+def captured_at(path: Path, fallback: str) -> str:
+    """The day `path` was actually fetched, from its directory's
+    `captured-at.json`.
+
+    THAT FILE IS THE AUTHORITY AND A CONSTANT HERE IS NOT. `Fetcher` writes it
+    at the moment it writes the page -- the only point where the answer is
+    certain, since a cache hit never reaches it -- and CLAUDE.md records that
+    the manifests' own dates were coarser and wrong for 354 works, carrying
+    one date per work where the real fetches were spread over days.
+
+    This scraper had the same defect in miniature: `CCC_RETRIEVED_AT` claimed
+    2026-08-15 for the Catechism's Credo and Lord's Prayer pages, which
+    `raw/ccc-en/captured-at.json` records as fetched on 2026-08-14. Reading
+    the ledger fixes that by construction rather than by anyone noticing.
+
+    `fallback` covers a raw directory captured before `Fetcher` began writing
+    the ledger, so a missing entry degrades to the date the constant asserted
+    rather than to nothing."""
+    ledger = path.parent / "captured-at.json"
+    if not ledger.exists():
+        return fallback
+    try:
+        return json.loads(ledger.read_text()).get(path.name, fallback)
+    except (OSError, ValueError):
+        return fallback
+
+
 CCC_RETRIEVED_AT = "2026-08-15"
 LITANY_RETRIEVED_AT = "2026-08-18"
 ROSARY_MYSTERIES_RETRIEVED_AT = "2026-08-18"
@@ -229,6 +310,19 @@ APPENDIX_SLUGS = [
 ]
 SLUGS = CREED_AND_LORDS_PRAYER_SLUGS + APPENDIX_SLUGS + [LITANY_SLUG]
 
+#: Spanish prints a 25th entry the other mirrors leave to the Catechism's own
+#: page: the Our Father, between the Glory be and the Hail Mary. So its
+#: appendix IS the collection's Our Father, and `LangSpec.our_father` is
+#: `None` for Spanish -- not because the text is missing but because it is
+#: already here. Derived by position rather than retyped, so reordering
+#: `APPENDIX_SLUGS` cannot silently move it.
+ES_APPENDIX_SLUGS = [
+    *APPENDIX_SLUGS[: APPENDIX_SLUGS.index("hail-mary")],
+    "our-father",
+    *APPENDIX_SLUGS[APPENDIX_SLUGS.index("hail-mary") :],
+]
+assert len(ES_APPENDIX_SLUGS) == 25
+
 # Vatican's source pages print no Latin companion for the three CCC texts,
 # the Litany, or the three Eastern-rite Appendix A prayers (the latter are
 # explicit empty "&nbsp;" cells in EN) -- genuine source absences, not gaps.
@@ -241,9 +335,18 @@ NO_LATIN_SLUGS = {
 }
 LATIN_SLUGS = [s for s in SLUGS if s not in NO_LATIN_SLUGS]
 
+#: The three the Compendium prints no Latin for and the LATIN CATECHISM does.
+#: They are not part of `LATIN_SLUGS`, which is about the appendix's own Latin
+#: column, and they never gain a `latin` FIELD on a vernacular prayer -- they
+#: reach `prayer.common.la` as whole prayers read off a Latin page. Which is
+#: why the Latin edition is 24 of 28 while every vernacular edition still
+#: reports 21 Latin companions.
+LATIN_FROM_CATECHISM_SLUGS = ["apostles-creed", "nicene-creed", "our-father"]
+
 assert len(APPENDIX_SLUGS) == 24
 assert len(SLUGS) == 28
 assert len(LATIN_SLUGS) == 21
+assert len(LATIN_SLUGS) + len(LATIN_FROM_CATECHISM_SLUGS) == 24
 
 
 # --------------------------------------------------------------------------
@@ -254,6 +357,26 @@ _TAG_RE = re.compile(r"<[^>]+>")
 _WS_RE = re.compile(r"\s+")
 _BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 _DOUBLE_BR_RE = re.compile(r"(?:<br\s*/?>\s*){2,}", re.IGNORECASE)
+
+# A DOUBLE-ENCODING ARTIFACT OF THE MIRROR, removed in the decoder rather than
+# filed as a correction -- the same call `martini.py` makes for `<em<`, and for
+# the same reason: it changes nothing the source SAID, only whether a stray
+# character survives into the text. `Â` here is not a letter the page prints;
+# it is the first byte of a UTF-8 sequence that was read as Latin-1 and then
+# entity-encoded, so the mirror emits `&Acirc;&#x2013;` where it means an en
+# dash. Measured across all ten Compendium pages: en 24, es 40, pt 68, ro 1228,
+# fr 203, and none in de/hu/it/sl/sv.
+#
+# THE GUARD IS THAT THE NEXT CHARACTER IS PUNCTUATION, AND IT IS LOAD-BEARING.
+# French's 203 and most of Romanian's are `Â` followed by a LETTER, and every
+# one of those is real text the page means -- "LA GRÂCE", "DE TOUTE TON ÂME",
+# "avec son Âme et sa divinité". Stripping `Â` wherever it appeared would
+# silently mutilate French. So only the punctuation-glued form goes, which is
+# never a word in any of the ten languages: en/es lose it before quotes, dashes
+# and an ellipsis, ro before its own `„`/`”` quotation marks.
+_STRAY_ACIRC_RE = re.compile(
+    "\u00c2(?=[\u2013\u2014\u2018\u2019\u201c\u201d\u201e\u2026])"
+)
 
 
 def flatten(raw: str) -> str:
@@ -268,6 +391,7 @@ def flatten(raw: str) -> str:
     s = _BR_RE.sub(" ", raw)
     s = _TAG_RE.sub("", s)
     s = ihtml.unescape(s)
+    s = _STRAY_ACIRC_RE.sub("", s)
     return _WS_RE.sub(" ", s).strip()
 
 
@@ -353,31 +477,80 @@ def capture_raw_pages(pages: list[tuple[str, Path]]) -> None:
             raise RuntimeError(f"Vatican fetch failed: {exc}") from exc
 
 
-def capture_litany_raw() -> None:
-    """Capture the two explicitly requested Litany source pages once."""
-    capture_raw_pages([(LITANY_EN_URL, LITANY_EN_RAW), (LITANY_PT_URL, LITANY_PT_RAW)])
+def capture_first_available(candidates: list[str], out_dir: Path) -> Path | None:
+    """Fetch the first of `candidates` that answers, into `out_dir` under the
+    URL's own basename. Returns the path written or already present.
+
+    CANDIDATES EXIST FOR ONE REASON AND IT IS ITALIAN -- see
+    `ROSARY_MYSTERY_SUFFIXES`. Everything else has exactly one, so this
+    degenerates to "fetch it" for five of the six languages.
+
+    A candidate already on disk wins without a request, which is what keeps
+    the cache write-once. Exhausting the list is not an error here: the caller
+    is a capture, and a language the micro-site does not publish is a fact to
+    report rather than a run to fail."""
+    paths = [out_dir / url.rsplit("/", 1)[-1] for url in candidates]
+    for path in paths:
+        if path.exists():
+            return path
+    fetcher = Fetcher(RAW_ROOT, VATICAN_POLICY)
+    for url, path in zip(candidates, paths, strict=True):
+        try:
+            fetcher.fetch_bytes(url, str(path.relative_to(RAW_ROOT)))
+            return path
+        except FetchError:
+            continue
+    return None
 
 
 def rosary_mystery_raw(lang: str) -> list[Path]:
-    source_lang = "en" if lang == "en" else "po"
-    return [
-        RAW_ROOT / f"rosary-{lang}" / f"{name}_{source_lang}.html"
-        for name in ROSARY_MYSTERY_FILES
-    ]
+    """The four mystery pages for `lang`, preferring whichever candidate a
+    capture actually landed. Falls back to the preferred name so an error
+    message can say what is missing."""
+    code = LANG_CONFIG[lang].rosary_mysteries
+    if code is None:
+        return []
+    out: list[Path] = []
+    for name in ROSARY_MYSTERY_FILES:
+        cands = [
+            RAW_ROOT / f"rosary-{lang}" / url.rsplit("/", 1)[-1]
+            for url in rosary_mystery_urls(code, name)
+        ]
+        out.append(next((p for p in cands if p.exists()), cands[0]))
+    return out
 
 
-def capture_rosary_mysteries_raw() -> None:
-    """Capture the four full-mystery pages for each published language once."""
-    pages = [
-        (url, path)
-        for lang in ("en", "pt")
-        for url, path in zip(
-            ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"],
-            rosary_mystery_raw(lang),
-            strict=True,
-        )
-    ]
-    capture_raw_pages(pages)
+def capture_companions(langs: list[str]) -> None:
+    """Capture the Holy Rosary micro-site pages -- the Litany and the four
+    mystery pages -- for every requested language that the micro-site
+    publishes.
+
+    THIS IS AN ACQUISITION, NOT A PUBLISHING DECISION, which is the whole
+    reason it is a flag rather than part of a parse. It is the same posture
+    `--fetch-only` records for vatican_docs.py: a page captured today can be
+    re-parsed for years, and the value of having captured it usually shows up
+    later. Five pages per language, sequential, at the host's own two-second
+    crawl delay.
+
+    A language whose page does not answer is REPORTED and skipped, not fatal:
+    the micro-site's switcher is evidence, not a promise, and a collection
+    without a Litany is a shorter collection (see `LangSpec`)."""
+    for lang in langs:
+        code = LANG_CONFIG[lang].rosary_mysteries
+        if code is None:
+            continue
+        out_dir = RAW_ROOT / f"rosary-{lang}"
+        wanted: list[tuple[str, list[str]]] = [
+            ("litany", litany_urls(code)),
+            *((name, rosary_mystery_urls(code, name)) for name in ROSARY_MYSTERY_FILES),
+        ]
+        for label, candidates in wanted:
+            got = capture_first_available(candidates, out_dir)
+            if got is None:
+                print(
+                    f"  {lang}: no page answered for {label} ({', '.join(candidates)})",
+                    file=sys.stderr,
+                )
 
 
 # A prayer cell/chunk opens with its title in one of two shapes, tried in
@@ -410,14 +583,37 @@ def split_title(chunk_html: str) -> tuple[str, str]:
 
 
 @dataclass
+class Invocation:
+    """One line of a litany, under the response its block holds.
+
+    `response_printed` marks the ONE the source printed the response after --
+    every other invocation carries it by implication, which is exactly what a
+    litany is. Storing the flag rather than repeating the response is what
+    keeps the corpus saying what the page says: the Litany of Loreto prints
+    "pray for us." once and fifty-two invocations under it."""
+
+    text: str
+    response_printed: bool = False
+
+    def to_dict(self) -> dict:
+        d: dict = {"text": self.text}
+        if self.response_printed:
+            d["response_printed"] = True
+        return d
+
+
+@dataclass
 class BlockOut:
-    kind: str  # "prose" | "versicle" | "response"
+    kind: str  # "prose" | "versicle" | "response" | "petitions"
     text: str
     label: str | None = None  # verbatim printed prefix: "V." | "R." | "D." | "C."
     #: The block's printed LINES, joined by `<br />`, when it has more than
     #: one -- see `line_html`. Absent otherwise, and `text` always carries the
     #: same words either way.
     html: str | None = None
+    #: `petitions` only: the response held over `invocations`, stored ONCE.
+    response: str | None = None
+    invocations: list[Invocation] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         # Omitted when "prose" -- see vatican_docs.py's BlockOut for why, and
@@ -431,6 +627,13 @@ class BlockOut:
             d["html"] = self.html
         if self.label:
             d["label"] = self.label
+        # `text` and `html` stay alongside for a petitions block, so every
+        # consumer that predates the kind -- search, plain text, the existing
+        # renderers -- reads it as the lines the source printed and is
+        # unaffected. The structure is additive.
+        if self.kind == "petitions":
+            d["response"] = self.response
+            d["invocations"] = [i.to_dict() for i in self.invocations]
         return d
 
 
@@ -494,6 +697,50 @@ _WEEKDAY_STEMS = {
         "sunday",
     ),
     "pt": ("segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"),
+    "es": ("lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"),
+    "it": (
+        "lunedi",
+        "martedi",
+        "mercoledi",
+        "giovedi",
+        "venerdi",
+        "sabato",
+        "domenica",
+    ),
+    "de": (
+        "montag",
+        "dienstag",
+        "mittwoch",
+        "donnerstag",
+        "freitag",
+        "samstag",
+        "sonntag",
+    ),
+    # The Latin appendix heads its mystery groups "in feria secunda et
+    # sabbato" and the like -- the Church's own ferial numbering, in which
+    # feria secunda is MONDAY, not Tuesday. Present so that the trailing Latin
+    # block's four group headings can be told from the prayer titles around
+    # them (`mystery_heading_indexes`); nothing reads `days` off a Latin
+    # rubric, because the Latin edition carries no mystery groups.
+    "fr": (
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi",
+        "dimanche",
+    ),
+    "la": ("secunda", "tertia", "quarta", "quinta", "sexta", "sabbato", "dominica"),
+    "hu": (
+        "hetfo",
+        "kedd",
+        "szerda",
+        "csutortok",
+        "pentek",
+        "szombat",
+        "vasarnap",
+    ),
 }
 
 
@@ -879,6 +1126,1095 @@ def build_prayers_en(html_text: str) -> list[Prayer]:
 
 
 # --------------------------------------------------------------------------
+# The Latin Catechism -- the three prayers the Compendium prints no Latin for
+# --------------------------------------------------------------------------
+#
+# `prayer.common.la` held 21 of 28 because the Compendium's appendix prints a
+# Latin companion for 21 of its 24 entries and none at all for the two Creeds,
+# the Our Father or the Litany. Four of those seven are genuinely absent
+# everywhere. THE OTHER THREE ARE NOT: the Latin Catechism prints all of them,
+# on pages already in `raw/`, and nothing had ever read them -- the same
+# re-parse-never-re-crawl move `build_creeds_en` already makes against the
+# English Catechism, one language further along.
+#
+# THIS IS A THIRD KIND OF PROVENANCE and `witnesses.json` had no word for it.
+# The other 21 are DERIVED -- English's Latin column for the text, Portuguese's
+# for where the stanzas break. These three are not derived from anything: they
+# are Latin read off a Latin page. `text_from` says `ccc-la` for them, and the
+# reconciliation machinery is not run over them at all, because there is only
+# one witness to reconcile.
+
+_SUP_RE = re.compile(r"<sup[^>]*>.*?</sup>", re.IGNORECASE | re.DOTALL)
+_SYMBOLUM_TABLE_RE = re.compile(
+    r'name="SYMBOLUM FIDEI".*?<table[^>]*>(.*?)</table>', re.IGNORECASE | re.DOTALL
+)
+_LA_OUR_FATHER_RE = re.compile(
+    r"<blockquote>\s*<p[^>]*>(.*?)</p>\s*</blockquote>", re.IGNORECASE | re.DOTALL
+)
+
+
+def build_creeds_la(html_text: str) -> list[Prayer]:
+    """The Apostles' and Nicene Creeds, from the Latin Catechism's own
+    SYMBOLUM FIDEI table -- two columns, one Creed each, twelve rows of which
+    the first is the pair of headings."""
+    m = _SYMBOLUM_TABLE_RE.search(html_text)
+    if m is None:
+        raise RuntimeError("LA: could not locate the SYMBOLUM FIDEI table")
+    rows = [
+        [c.group(1) for c in _TD_RE.finditer(r.group(1))]
+        for r in _TR_RE.finditer(m.group(1))
+    ]
+    rows = [r for r in rows if len(r) == 2]
+    if len(rows) != 12:
+        raise RuntimeError(f"LA: expected 12 Creed rows, found {len(rows)}")
+    # The heading cells carry the Catechism's own footnote references
+    # (`<sup>198</sup>`), which are apparatus for the CCC's notes and not part
+    # of either Creed's name.
+    header = [_SUP_RE.sub("", c) for c in rows[0]]
+    body = rows[1:]
+    prayers: list[Prayer] = []
+    for column, slug in enumerate(("apostles-creed", "nicene-creed")):
+        lines = [line for row in body for line in br_segments(row[column])]
+        if not lines:
+            raise RuntimeError(f"LA: {slug} column is empty")
+        prayers.append(
+            Prayer(
+                n=column + 1,
+                slug=slug,
+                title=flatten(header[column]),
+                blocks=[BlockOut("prose", " ".join(lines), html=line_html(lines))],
+            )
+        )
+    return prayers
+
+
+def build_our_father_la(html_text: str) -> Prayer:
+    """The Our Father, from the blockquote the Latin Catechism prints at 2759.
+
+    The first blockquote on that page IS the prayer -- the section opens by
+    saying the liturgy kept Matthew's text and then prints it. Every other
+    occurrence of "Pater noster" in the Latin Catechism is commentary quoting
+    a phrase, which is why this matches the blockquote rather than the words.
+    """
+    m = _LA_OUR_FATHER_RE.search(html_text)
+    if m is None or "Pater noster" not in flatten(m.group(1)):
+        raise RuntimeError("LA: could not locate the Our Father blockquote at 2759")
+    lines = br_segments(m.group(1))
+    return Prayer(
+        n=1,
+        slug="our-father",
+        title="Pater Noster",
+        blocks=[BlockOut("prose", " ".join(lines), html=line_html(lines))],
+    )
+
+
+# --------------------------------------------------------------------------
+# The other table families -- Spanish and Swedish
+# --------------------------------------------------------------------------
+#
+# ENGLISH IS NOT THE ONLY TABLE, AND THE OTHER TWO DIFFER IN WAYS THAT ARE
+# FACTS ABOUT THE SOURCE. Spanish prints a 25-row table; Swedish prints a
+# three-cell one. Neither is a variation on `extract_en_rows` worth
+# parameterizing, because what differs is not the cell count but WHICH
+# PRAYERS ARE THERE -- and that is the part a shared reader would have had to
+# assert away.
+#
+# WHY THE TITLE IS READ POSITIONALLY HERE AND NOT BY `split_title`. Both
+# mirrors wrap a title in emphasis AND colour, in either nesting order
+# (`<b><font>` and `<font><b>` both occur, sometimes within one row), and
+# Spanish splits one Latin title across two separate wrappers to typeset its
+# ligature (`Ave, Marí` + `æ`). `split_title`'s regexes match a specific tag
+# order and fail on 22 of Spanish's 25 rows. The structural fact both mirrors
+# DO respect is simpler and needs no tag vocabulary: the title, and a rubric
+# where there is one, sit before the cell's first `<p>`.
+
+_FIRST_P_RE = re.compile(r"<p[\s>]", re.IGNORECASE)
+
+
+def split_cell_head(cell_html: str) -> tuple[str, str | None, str]:
+    """A table cell as `(title, rubric, body_html)`.
+
+    The head is everything before the first `<p>`; its `<br/>`-separated
+    segments are the title and, where the source prints one, the rubric --
+    which is how the three Eastern-rite prayers name their tradition
+    ("(Tradición copta)") on their own line under the title.
+
+    A PARENTHETICAL ON THE TITLE'S OWN LINE STAYS IN THE TITLE. Spanish
+    prints "Regina Caeli (en tiempo pascual)" as one line and
+    "Oración del incienso" / "(Tradición copta)" as two; splitting the first
+    would be reading a rubric the source did not set apart, so the `<br/>` is
+    taken as the whole of the signal."""
+    m = _FIRST_P_RE.search(cell_html)
+    head, body = (
+        (cell_html[: m.start()], cell_html[m.start() :]) if m else (cell_html, "")
+    )
+    segs = br_segments(head)
+    if not segs:
+        raise ValueError(f"no title before the body in cell: {cell_html[:120]!r}")
+    return segs[0], (segs[1] if len(segs) > 1 else None), body
+
+
+def extract_table_rows(
+    html_text: str, start_anchor: str, end_anchor: str, cells_per_row: int, lang: str
+) -> list[list[str]]:
+    """The appendix's prayer rows, for a mirror that typesets it as a table.
+
+    `cells_per_row` is 2 for Spanish (vernacular | Latin) and 3 for Swedish,
+    which puts an empty spacer column between the two. Rows with any other
+    cell count are the heading rows."""
+    start, end = html_text.find(start_anchor), html_text.find(end_anchor)
+    if start == -1 or end == -1 or end <= start:
+        raise RuntimeError(
+            f"{lang}: could not locate appendix boundaries (start={start}, "
+            f"end={end}) -- source page structure may have changed"
+        )
+    rows: list[list[str]] = []
+    for m in _TR_RE.finditer(html_text[start:end]):
+        cells = [c.group(1) for c in _TD_RE.finditer(m.group(1))]
+        if len(cells) != cells_per_row:
+            continue
+        if not any(flatten(c) for c in cells):
+            continue  # the trailing spacer row
+        rows.append(cells)
+    return rows
+
+
+# A mystery group, for the mirrors whose Rosary cell `parse_rosary_body`
+# cannot read. That function keys on "wholly emphasized AND carrying a `<br/>`",
+# which is a statement about MARKUP, and the markup is what varies:
+#
+#   - Spanish emphasizes the whole heading but prints one of its four rubrics
+#     on the same line, with no `<br/>` -- "Misterios luminosos (jueves)" --
+#     so three groups match and the fourth silently does not.
+#   - Swedish emphasizes only the RUBRIC, leaving the name outside the tag
+#     ("Gl&auml;djens mysterier<i><br />(m&aring;ndag och l&ouml;rdag)</i>"),
+#     so none of its four match at all.
+#   - Spanish numbers its five mysteries "1." to "5."; Swedish numbers none.
+#
+# THE RULE HERE IS STRUCTURAL AND SURVIVES ALL OF THAT: a mystery group is a
+# short heading whose NEXT paragraph is the list of five mysteries, one per
+# printed line. Five is the doctrinally settled count, which is what makes it
+# safe to key on -- and it is also what rejects the two paragraphs that keep
+# fooling markup rules, the "Oremos"/"L&aring;t oss bedja" heading over the
+# concluding prayer and the "Oraci&oacute;n tras el rosario" title above it:
+# both are short and emphasized, and neither is followed by five lines.
+_TRAILING_PAREN_RE = re.compile(r"^(.*?)\s*(\([^()]*\))\s*$", re.DOTALL)
+
+#: A heading is short. Guards against a long prose paragraph that happens to
+#: precede a five-line prayer being read as a mystery group.
+_GROUP_HEADING_MAX = 100
+
+
+def split_group_heading(raw: str) -> tuple[str, str | None]:
+    """A mystery group's printed name and its weekday rubric.
+
+    The source sets them apart with a `<br/>` where it can and with nothing
+    but a parenthesis where it cannot, so both are read -- the `<br/>` first,
+    because that is the explicit signal, and a trailing parenthesis only when
+    there is no `<br/>` to go on."""
+    segs = br_segments(raw)
+    if len(segs) > 1:
+        return segs[0], segs[1]
+    m = _TRAILING_PAREN_RE.match(segs[0]) if segs else None
+    return (m.group(1).strip(), m.group(2)) if m else (segs[0], None)
+
+
+def parse_rosary_body_marked(
+    paragraphs: list[str],
+) -> tuple[list[MysteryGroup], list[BlockOut]]:
+    """`parse_rosary_body` for the mirrors whose group headings vary. See the
+    comment above for why the discriminator is the FOLLOWING paragraph's shape
+    rather than this one's markup."""
+    live = [raw for raw in paragraphs if flatten(raw)]
+    groups: list[MysteryGroup] = []
+    consumed = 0
+    i = 0
+    while i < len(live) - 1 and len(groups) < 4:
+        heading, following = live[i], live[i + 1]
+        items = br_segments(following)
+        # Five mysteries per group -- see `parse_rosary_body` on why a sixth
+        # segment is a wrapped fifth item rather than a sixth mystery.
+        if len(flatten(heading)) > _GROUP_HEADING_MAX or not 5 <= len(items) <= 6:
+            i += 1
+            continue
+        if len(items) > 5:
+            items = [*items[:4], " ".join(items[4:])]
+        name, rubric = split_group_heading(heading)
+        groups.append(
+            MysteryGroup(
+                name, rubric, [MysteryItem(title=item, meditation="") for item in items]
+            )
+        )
+        i += 2
+        consumed = i
+    trailer: list[BlockOut] = []
+    for raw in live[consumed:]:
+        process_paragraph(raw, trailer)
+    return groups, trailer
+
+
+ES_START_ANCHOR = 'name="ORACIONES COMUNES"'
+# The double space between FORMULAS and DE is the source's, and it is what
+# makes this string unique in the file -- verified by count, not assumed.
+ES_END_ANCHOR = 'name="F&Oacute;RMULAS  DE DOCTRINA CAT&Oacute;LICA"'
+
+
+def build_prayers_table(
+    html_text: str,
+    *,
+    lang: str,
+    start_anchor: str,
+    end_anchor: str,
+    slugs: list[str],
+    cells_per_row: int = 2,
+) -> list[Prayer]:
+    """Appendix A from a mirror that typesets it as a table.
+
+    `slugs` IS THE WHOLE PER-LANGUAGE STATEMENT and is checked against the row
+    count: Spanish's is 25 entries because it prints an Our Father the others
+    leave to the Catechism, Swedish's is 22 because it prints neither the
+    Syro-Maronite nor the Byzantine prayer. Both are facts about those pages,
+    so a count that stops matching means the parse moved, not the source.
+
+    Swedish sets an empty spacer column between the vernacular and the Latin,
+    so the Latin is the LAST cell rather than the second."""
+    rows = extract_table_rows(html_text, start_anchor, end_anchor, cells_per_row, lang)
+    if len(rows) != len(slugs):
+        raise RuntimeError(
+            f"{lang}: expected {len(slugs)} prayer rows, found {len(rows)}"
+        )
+    prayers: list[Prayer] = []
+    for i, cells in enumerate(rows):
+        slug = slugs[i]
+        vern_html, latin_html = cells[0], cells[-1]
+        title, rubric, body = split_cell_head(vern_html)
+        if slug == "rosary":
+            groups, blocks = parse_rosary_body_marked(top_paragraphs(body))
+        else:
+            blocks, _ = parse_simple_body(top_paragraphs(body))
+            groups = []
+        latin = None
+        if flatten(latin_html):
+            latin_title, _, latin_body = split_cell_head(latin_html)
+            latin = LatinText(latin_title, latin_blocks_en(latin_body))
+        prayers.append(
+            Prayer(
+                n=i + 1,
+                slug=slug,
+                title=title,
+                rubric=rubric,
+                blocks=blocks,
+                latin=latin,
+                groups=groups,
+            )
+        )
+    return prayers
+
+
+def build_prayers_es(html_text: str) -> list[Prayer]:
+    """Spanish: a two-cell table like English, 25 rows -- the extra one is the
+    Our Father (`ES_APPENDIX_SLUGS`), which also gives this edition a Latin
+    *Pater Noster* the English and Portuguese appendices do not print."""
+    return build_prayers_table(
+        html_text,
+        lang="es",
+        start_anchor=ES_START_ANCHOR,
+        end_anchor=ES_END_ANCHOR,
+        slugs=ES_APPENDIX_SLUGS,
+    )
+
+
+# Swedish carries no `name=` anchors at all, so the appendix is bounded on its
+# printed headings. Both strings are matched WITH their surrounding markup,
+# which is what makes them unique: the bare heading text also appears in the
+# table of contents near the top of the file.
+SV_START_ANCHOR = (
+    '<p align="center"><b><font color="#663300">A) VANLIGA B&Ouml;NER</font></b></p>'
+)
+SV_END_ANCHOR = '<font color="#663300"><b>B) KATOLSKA L&Auml;ROFORMULERINGAR</b></fon'
+
+#: Swedish prints neither the Syro-Maronite farewell nor the Byzantine prayer
+#: for the deceased -- it keeps the Coptic one and goes straight from it to the
+#: Acts. Measured against the page, not inferred from a short row count.
+SV_ABSENT = frozenset(
+    {"syro-maronite-farewell-to-the-altar", "byzantine-prayer-for-the-deceased"}
+)
+SV_APPENDIX_SLUGS = [s for s in APPENDIX_SLUGS if s not in SV_ABSENT]
+
+
+def build_prayers_sv(html_text: str) -> list[Prayer]:
+    """Swedish: a THREE-cell table -- vernacular, an empty spacer, Latin."""
+    return build_prayers_table(
+        html_text,
+        lang="sv",
+        start_anchor=SV_START_ANCHOR,
+        end_anchor=SV_END_ANCHOR,
+        slugs=SV_APPENDIX_SLUGS,
+        cells_per_row=3,
+    )
+
+
+# --------------------------------------------------------------------------
+# The paragraph-stream mirrors -- German and Hungarian
+# --------------------------------------------------------------------------
+#
+# These lay the appendix out the way Portuguese does -- a flat run of `<p>`,
+# the vernacular prayers first and then a trailing block of Latin ones -- but
+# neither can use `split_pt_chunks`, whose `_TITLE_RE` demands that a
+# paragraph OPEN with `<b`. German wraps its titles `<font><b>` about as often
+# as `<b><font>`, and matching a tag order finds a minority of them.
+#
+# A TITLE IS A PARAGRAPH THAT IS NOTHING BUT ITS EMPHASIS. That rule needs no
+# tag vocabulary and no ordering: flatten the paragraph, flatten everything
+# inside its `<b>`/`<i>` spans, and a title is where the two are equal. A body
+# line that merely contains bold does not qualify, which is what separates a
+# real heading from an emphasized phrase inside a prayer.
+#
+# THAT LEAVES SEVEN FALSE POSITIVES IN GERMAN AND THEY ARE OF TWO KINDS.
+# Four are the Rosary's own mystery-group headings, which are titles in every
+# sense except that they head a section of one prayer rather than a prayer;
+# those are recognized structurally, by being followed by their five
+# mysteries, exactly as `parse_rosary_body_marked` recognizes them. The other
+# three are liturgical directions and a cross-reference that this mirror
+# happens to emphasize in one place and not in another -- "Lasset uns beten."
+# is emphasized inside the Angelus and plain inside the Regina caeli and the
+# Rosary; "Ehre sei dem Vater ..." with a trailing ellipsis is a POINTER to
+# the prayer whose real title, without the ellipsis, sits eleven paragraphs
+# earlier. No markup tells those apart from a heading, because in this mirror
+# there is no difference in the markup; they are listed, with that evidence,
+# the way `INDEX_DUPLICATE_SLUGS` lists the encyclical vatican.va indexes
+# twice.
+
+_EMPHASIS_SPAN_RE = re.compile(r"<(b|i)[^>]*>(.*?)</\1>", re.IGNORECASE | re.DOTALL)
+
+
+def is_title_paragraph(raw: str) -> bool:
+    """Whether this paragraph is nothing but its own emphasis."""
+    text = flatten(raw)
+    if not text:
+        return False
+    spans = [flatten(m.group(2)) for m in _EMPHASIS_SPAN_RE.finditer(raw)]
+    return bool(spans) and flatten(" ".join(spans)) == text
+
+
+def mystery_heading_indexes(paragraphs: list[str], lang: str) -> set[int]:
+    """Indexes of the paragraphs that head a Rosary mystery group.
+
+    TWO CONDITIONS, AND THE SECOND IS WHAT MAKES IT SAFE. A heading is
+    followed by its five mysteries on five printed lines -- and it NAMES THE
+    WEEKDAYS the set is prayed on, which is the part that tells it from a
+    prayer title. "Five following lines" alone is not enough and quietly ate
+    two German prayers: the Gloria Patri and the prayer to one's guardian
+    angel are each five printed lines long, so their titles looked like
+    mystery headings and their prayers vanished from the collection.
+
+    The weekday vocabulary is `_WEEKDAY_STEMS`, which the Rosary's own
+    `days` field already depends on, so this adds no table that was not
+    already being maintained -- only a Latin entry, for the trailing Latin
+    block's "in feria secunda et sabbato"."""
+    stems = _WEEKDAY_STEMS.get(lang)
+    if stems is None:
+        return set()
+    out: set[int] = set()
+    for i in range(len(paragraphs) - 1):
+        if not is_title_paragraph(paragraphs[i]):
+            continue
+        if not 5 <= len(br_segments(paragraphs[i + 1])) <= 6:
+            continue
+        if parse_rubric_days(flatten(paragraphs[i]), lang):
+            out.add(i)
+    return out
+
+
+def _has_leading_title(raw: str) -> bool:
+    """Whether this paragraph OPENS with a title, body following in the same
+    paragraph -- the Portuguese/Hungarian Latin shape."""
+    try:
+        split_title(raw)
+    except ValueError:
+        return False
+    return True
+
+
+def build_prayers_stream(
+    html_text: str,
+    *,
+    lang: str,
+    start_anchor: str,
+    end_anchor: str,
+    slugs: list[str],
+    not_titles: frozenset[str] = frozenset(),
+    latin_slugs: list[str] | None = None,
+    latin_shape: str = "block",
+) -> list[Prayer]:
+    """Appendix A from a mirror that prints it as a paragraph stream."""
+    start, end = html_text.find(start_anchor), html_text.find(end_anchor)
+    if start == -1 or end == -1 or end <= start:
+        raise RuntimeError(
+            f"{lang}: could not locate appendix boundaries (start={start}, end={end})"
+        )
+    region = [q for q in top_paragraphs(html_text[start:end]) if flatten(q)]
+    latin_at = next(
+        (k for k, q in enumerate(region) if flatten(q).startswith("Signum Crucis")),
+        None,
+    )
+    if latin_at is None:
+        raise RuntimeError(f"{lang}: could not locate the trailing Latin block")
+    vern, latin_paras = region[:latin_at], region[latin_at:]
+
+    # THE LATIN BLOCK'S SHAPE IS ITS OWN AND THE TWO MIRRORS DIFFER. German
+    # gives each Latin prayer a title paragraph and then its body in further
+    # paragraphs -- 87 paragraphs for 21 entries. Hungarian prints the
+    # Portuguese way, title and body together in ONE paragraph, with only the
+    # Rosary's mystery groups and the Acts spilling into extra ones -- 52
+    # paragraphs for the same 21. Reading either with the other's rule
+    # miscounts by a factor and reports a boundary problem.
+    #
+    # `inline` therefore chunks on "this paragraph opens with a title", which
+    # `split_title` already answers and which lands on exactly 21 of
+    # Hungarian's 52; `block` chunks on "this paragraph IS a title".
+    expected_latin = latin_slugs if latin_slugs is not None else LATIN_SLUGS
+    if latin_shape == "inline":
+        latin_title_at = [k for k, q in enumerate(latin_paras) if _has_leading_title(q)]
+    else:
+        latin_mysteries = mystery_heading_indexes(latin_paras, "la")
+        latin_title_at = [
+            k
+            for k, q in enumerate(latin_paras)
+            if is_title_paragraph(q)
+            and k not in latin_mysteries
+            and flatten(q) not in LATIN_NOT_TITLES
+        ]
+    if len(latin_title_at) != len(expected_latin):
+        found = [flatten(latin_paras[k])[:40] for k in latin_title_at]
+        raise RuntimeError(
+            f"{lang}: expected {len(expected_latin)} Latin entries, "
+            f"found {len(latin_title_at)}: {found}"
+        )
+    latin_by_slug: dict[str, LatinText] = {}
+    for i, k in enumerate(latin_title_at):
+        stop = (
+            latin_title_at[i + 1] if i + 1 < len(latin_title_at) else len(latin_paras)
+        )
+        if latin_shape == "inline":
+            title, first_body = split_title(latin_paras[k])
+            rest = [first_body, *latin_paras[k + 1 : stop]]
+        else:
+            title, rest = flatten(latin_paras[k]), list(latin_paras[k + 1 : stop])
+        latin_by_slug[expected_latin[i]] = LatinText(
+            title,
+            [
+                BlockOut("prose", flatten(q), html=line_html(br_segments(q)))
+                for q in rest
+                if flatten(q)
+            ],
+        )
+
+    mysteries = mystery_heading_indexes(vern, lang)
+    title_at = [
+        k
+        for k, q in enumerate(vern)
+        if is_title_paragraph(q) and k not in mysteries and flatten(q) not in not_titles
+    ]
+    if len(title_at) != len(slugs):
+        found = [flatten(vern[k])[:40] for k in title_at]
+        raise RuntimeError(
+            f"{lang}: expected {len(slugs)} prayer titles, found {len(title_at)}: {found}"
+        )
+
+    prayers: list[Prayer] = []
+    for i, k in enumerate(title_at):
+        slug = slugs[i]
+        stop = title_at[i + 1] if i + 1 < len(title_at) else len(vern)
+        title = flatten(vern[k])
+        body = vern[k + 1 : stop]
+        if slug == "rosary":
+            groups, blocks = parse_rosary_body_marked(body)
+        else:
+            blocks, _ = parse_simple_body(body)
+            groups = []
+        prayers.append(
+            Prayer(
+                n=i + 1,
+                slug=slug,
+                title=title,
+                blocks=blocks,
+                latin=latin_by_slug.get(slug),
+                groups=groups,
+            )
+        )
+    return prayers
+
+
+#: Emphasized paragraphs in the trailing LATIN block that are not prayer
+#: titles. Shared rather than per-language: every mirror prints the same Latin
+#: appendix, so these are the same three strings wherever it appears --
+#: "Oremus." heads a collect inside the Angelus, the Regina caeli and the
+#: Rosary, and "Oratio ad finem Rosarii dicenda" heads the Rosary's own
+#: concluding prayer. The four "Mysteria ..." group headings are excluded
+#: structurally instead, by naming their ferial weekdays.
+LATIN_NOT_TITLES = frozenset({"Oremus.", "Oratio ad finem Rosarii dicenda"})
+
+
+DE_START_ANCHOR = '<font color="#663300"><b> A) ALLGEMEINE GEBETE</b></font>'
+DE_END_ANCHOR = (
+    '<p align="center"><font color="#663300"><b>B) FORMELN DER KATHOLISCHEN LEHRE</b>'
+    "</font>"
+)
+
+#: Emphasized paragraphs in the German appendix that are not prayer titles.
+#: See the section comment above for the evidence on each.
+DE_NOT_TITLES = frozenset(
+    {
+        "Lasset uns beten.",  # a direction, inside the Angelus
+        "Ehre sei dem Vater \u2026",  # a pointer to the prayer at index 2
+        "Schlussgebet",  # the Rosary's own concluding-prayer heading
+    }
+)
+
+
+def build_prayers_de(html_text: str) -> list[Prayer]:
+    return build_prayers_stream(
+        html_text,
+        lang="de",
+        start_anchor=DE_START_ANCHOR,
+        end_anchor=DE_END_ANCHOR,
+        slugs=APPENDIX_SLUGS,
+        not_titles=DE_NOT_TITLES,
+    )
+
+
+HU_START_ANCHOR = '<p align="center">A) ALAPVET&#x150; IM&Aacute;DS&Aacute;GOK</p>'
+HU_END_ANCHOR = (
+    '<font color="#663300" size="4">B) A KATOLIKUS TAN&Iacute;T&Aacute;S '
+    "FORMUL&Aacute;I</font>"
+)
+
+
+def build_prayers_hu(html_text: str) -> list[Prayer]:
+    return build_prayers_stream(
+        html_text,
+        lang="hu",
+        start_anchor=HU_START_ANCHOR,
+        end_anchor=HU_END_ANCHOR,
+        slugs=APPENDIX_SLUGS,
+        latin_shape="inline",
+    )
+
+
+# --------------------------------------------------------------------------
+# FR: alternating vernacular and Latin blocks
+# --------------------------------------------------------------------------
+#
+# THE START ANCHOR IS `APPENDICE` AND NOT `A) PRIERES COMMUNES`, which is the
+# trap this mirror sets. Both anchors exist and both are unique, but the one
+# that names the section sits about 34 KB INTO it -- after the first five
+# prayers and their Latin, in front of the Angelus. Anchoring on it the way
+# English and Italian do silently drops the Sign of the Cross, the Doxology,
+# the Hail Mary, the prayer to one's guardian angel and the Eternal Rest, and
+# the parse still succeeds, just nineteen prayers long.
+#
+# THE LAYOUT IS NEITHER A TABLE NOR ONE VERNACULAR RUN FOLLOWED BY ONE LATIN
+# RUN. French alternates: a few prayers in French, the same few in Latin, a
+# few more in French, and so on. The block sizes are irregular and are a
+# property of this page, so they are stated here and asserted rather than
+# inferred -- 24 vernacular prayers in ten blocks, and the same blocks again
+# in Latin except the Eastern-rite three, for which no mirror prints any.
+#
+# POSITION IS THE ONLY THING THAT DISAMBIGUATES, which is why the walk cannot
+# be replaced by matching title text. Six French titles are printed in
+# untranslated Latin -- MAGNIFICAT, BENEDICTUS, TE DEUM, REGINA CAELI, SALVE
+# REGINA, SUB TUUM -- and are byte-identical to the Latin entries' own titles
+# a few paragraphs later. Only which block they fall in tells them apart.
+FR_START_ANCHOR = 'name="APPENDICE"'
+FR_END_ANCHOR = 'name="B) FORMULES DE LA DOCTRINE CATHOLIQUE"'
+
+#: Prayers per alternating block, in print order. The Latin side repeats these
+#: except for the Eastern-rite block, which has no Latin at all.
+FR_BLOCKS = (5, 2, 2, 2, 1, 1, 2, 2, 3, 4)
+FR_EASTERN_BLOCK = 8
+
+#: Emphasized paragraphs that are not prayer titles. "A) PRIERES COMMUNES" is
+#: the misplaced section heading described above, emphasized like a title in
+#: the middle of the run; the two ellipsis forms are POINTERS to prayers
+#: printed in full earlier ("Gloire au Pere..." inside the Angelus); "Prions."
+#: and "Oremus." head the collect that closes the Rosary in each language.
+FR_NOT_TITLES = frozenset(
+    {
+        "A) PRIÈRES COMMUNES",
+        "Gloire au Père...",
+        "Glória Patri...",
+        "Prions.",
+        "Orémus.",
+    }
+)
+
+
+def build_prayers_fr(html_text: str) -> list[Prayer]:
+    start, end = html_text.find(FR_START_ANCHOR), html_text.find(FR_END_ANCHOR)
+    if start == -1 or end == -1 or end <= start:
+        raise RuntimeError(
+            f"FR: could not locate appendix boundaries (start={start}, end={end})"
+        )
+    paras = [q for q in top_paragraphs(html_text[start:end]) if flatten(q)]
+
+    # Collect entries as (title, rubric, body paragraphs). A title paragraph
+    # that merely opens a parenthesis is the previous title's RUBRIC -- the
+    # three Eastern-rite prayers name their tradition on a line of their own,
+    # emphasized exactly like a heading.
+    entries: list[tuple[str, str | None, list[str]]] = []
+    for raw in paras:
+        text = flatten(raw)
+        if not is_title_paragraph(raw) or text in FR_NOT_TITLES:
+            if entries:
+                entries[-1][2].append(raw)
+            continue
+        if text.startswith("(") and entries and entries[-1][1] is None:
+            entries[-1] = (entries[-1][0], text, entries[-1][2])
+            continue
+        entries.append((text, None, []))
+
+    wanted = len(APPENDIX_SLUGS) + len(LATIN_SLUGS)
+    if len(entries) != wanted:
+        raise RuntimeError(
+            f"FR: expected {wanted} entries (24 French + 21 Latin), "
+            f"found {len(entries)}: {[e[0][:28] for e in entries]}"
+        )
+
+    # Walk the alternating blocks, handing each entry to the vernacular or the
+    # Latin side. Both sides consume their slugs in the appendix's own order.
+    vern: list[tuple[str, str | None, list[str]]] = []
+    latin: list[tuple[str, str | None, list[str]]] = []
+    at = 0
+    for i, size in enumerate(FR_BLOCKS):
+        vern += entries[at : at + size]
+        at += size
+        if i == FR_EASTERN_BLOCK:
+            continue  # no Latin for the Eastern-rite prayers
+        latin += entries[at : at + size]
+        at += size
+    if at != len(entries):
+        raise RuntimeError(f"FR: block sizes consumed {at} of {len(entries)} entries")
+
+    latin_by_slug = {
+        slug: LatinText(
+            title,
+            [
+                BlockOut("prose", flatten(q), html=line_html(br_segments(q)))
+                for q in body
+                if flatten(q)
+            ],
+        )
+        for slug, (title, _, body) in zip(LATIN_SLUGS, latin, strict=True)
+    }
+
+    prayers: list[Prayer] = []
+    for i, (slug, (title, rubric, body)) in enumerate(
+        zip(APPENDIX_SLUGS, vern, strict=True)
+    ):
+        if slug == "rosary":
+            groups, blocks = parse_rosary_grouped_paragraphs(body)
+        else:
+            blocks, _ = parse_simple_body(body)
+            groups = []
+        prayers.append(
+            Prayer(
+                n=i + 1,
+                slug=slug,
+                title=title,
+                rubric=rubric,
+                blocks=blocks,
+                latin=latin_by_slug.get(slug),
+                groups=groups,
+            )
+        )
+    return prayers
+
+
+# --------------------------------------------------------------------------
+# The interleaved mirrors -- Slovenian and Romanian
+# --------------------------------------------------------------------------
+#
+# These alternate one prayer at a time rather than in blocks: the vernacular
+# entry, then the same prayer in Latin, then the next. That is French's shape
+# with every block size 1, and it would need no table of its own -- except
+# that neither page is regular, and the irregularities are content:
+#
+#   - Slovenian prints NO Eastern-rite prayers at all, and prints the Acts of
+#     Faith, Hope and Love in LATIN ONLY, with a blank cell where the
+#     Slovenian would be. Only the Act of Contrition has both.
+#   - Romanian prints two wordings for each Act, one "(din Catehismul mic)"
+#     and one "(Din cartile de rugaciuni)", separated by a printed `/*/`.
+#
+# So the sequence is stated per language as (slug, has vernacular, has Latin)
+# and walked. A prayer with no vernacular is not carried by the vernacular
+# edition at all -- `prayer.common.la` already holds that Latin, and an
+# edition of Slovenian prayers whose Act of Faith is in Latin would be
+# offering a reader something they did not ask for.
+_SEPARATOR_RE = re.compile(r"^[\s/*]+$")
+
+
+def parse_rosary_any(
+    paragraphs: list[str],
+) -> tuple[list[MysteryGroup], list[BlockOut]]:
+    """The Rosary, whichever of the two paragraph shapes this mirror uses.
+
+    Slovenian gives a mystery group's heading its own paragraph and its five
+    mysteries the next one; Romanian puts the heading and all five into one.
+    Both readers are structural and neither matches the other's shape, so
+    whichever finds the four groups is the right one -- and if neither does,
+    the marked reader's answer stands, which is the Rosary as flowing text."""
+    groups, trailer = parse_rosary_grouped_paragraphs(paragraphs)
+    if len(groups) == 4:
+        return groups, trailer
+    return parse_rosary_body_marked(paragraphs)
+
+
+def build_prayers_interleaved(
+    html_text: str,
+    *,
+    lang: str,
+    start_anchor: str,
+    end_anchor: str,
+    sequence: list[tuple[str, bool, bool]],
+    not_titles: frozenset[str] = frozenset(),
+) -> list[Prayer]:
+    start, end = html_text.find(start_anchor), html_text.find(end_anchor)
+    if start == -1 or end == -1 or end <= start:
+        raise RuntimeError(
+            f"{lang}: could not locate appendix boundaries (start={start}, end={end})"
+        )
+    paras = [q for q in top_paragraphs(html_text[start:end]) if flatten(q)]
+    skip = not_titles | LATIN_NOT_TITLES
+    entries: list[tuple[str, list[str]]] = []
+    rubrics: dict[int, str] = {}
+    for raw in paras:
+        text = flatten(raw)
+        if is_title_paragraph(raw) and text not in skip:
+            # A "title" that merely opens a parenthesis is the previous
+            # title's RUBRIC -- the three Eastern-rite prayers name their
+            # tradition on a line of their own, emphasized like a heading.
+            if text.startswith("(") and entries:
+                rubrics.setdefault(len(entries) - 1, text)
+                continue
+            entries.append((text, []))
+        elif entries:
+            entries[-1][1].append(raw)
+
+    wanted = sum(bool(v) + bool(la) for _, v, la in sequence)
+    if len(entries) != wanted:
+        raise RuntimeError(
+            f"{lang}: expected {wanted} entries, found {len(entries)}: "
+            f"{[e[0][:26] for e in entries]}"
+        )
+
+    prayers: list[Prayer] = []
+    at = 0
+    n = 0
+    for slug, has_vern, has_latin in sequence:
+        vern = entries[at] if has_vern else None
+        at += 1 if has_vern else 0
+        latin_entry = entries[at] if has_latin else None
+        at += 1 if has_latin else 0
+        if vern is None:
+            continue  # Latin-only here; `prayer.common.la` carries it
+        title, body = vern
+        rubric = rubrics.get(entries.index(vern))
+        # The printed `/*/` between Romanian's two wordings is a separator,
+        # not text. The rubric paragraphs around it stay, because they are
+        # what say which wording is which.
+        body = [q for q in body if not _SEPARATOR_RE.match(flatten(q))]
+        if slug == "rosary":
+            groups, blocks = parse_rosary_any(body)
+        else:
+            blocks, _ = parse_simple_body(body)
+            groups = []
+        latin = None
+        if latin_entry is not None:
+            latin = LatinText(
+                latin_entry[0],
+                [
+                    BlockOut("prose", flatten(q), html=line_html(br_segments(q)))
+                    for q in latin_entry[1]
+                    if flatten(q)
+                ],
+            )
+        n += 1
+        prayers.append(
+            Prayer(
+                n=n,
+                slug=slug,
+                title=title,
+                rubric=rubric,
+                blocks=blocks,
+                latin=latin,
+                groups=groups,
+            )
+        )
+    return prayers
+
+
+SL_START_ANCHOR = (
+    '<p align="center"><b><font color="#663300" size="4">A) SPLO&#x160;NE MOLITVE'
+    "</font></b></p>"
+)
+SL_END_ANCHOR = (
+    '<p align="center"><font color="#663300" size="4"><b>B) OBRAZCI '
+    "KATOLI&#x160;KEGA NAUKA</b></font></p>"
+)
+
+#: Slovenian prints no Eastern-rite prayers, and prints the first three Acts
+#: in Latin only.
+SL_ABSENT = frozenset(
+    {
+        "coptic-incense-prayer",
+        "syro-maronite-farewell-to-the-altar",
+        "byzantine-prayer-for-the-deceased",
+    }
+)
+SL_LATIN_ONLY = frozenset({"act-of-faith", "act-of-hope", "act-of-love"})
+SL_SEQUENCE = [
+    (slug, slug not in SL_LATIN_ONLY, True)
+    for slug in APPENDIX_SLUGS
+    if slug not in SL_ABSENT
+]
+SL_NOT_TITLES = frozenset(
+    {
+        "A) SPLOŠNE MOLITVE",
+        "Prosi za nas sveta božja Porodnica.",
+        "Ora pro nobis, sancta Dei génetrix.",
+    }
+)
+
+
+def build_prayers_sl(html_text: str) -> list[Prayer]:
+    return build_prayers_interleaved(
+        html_text,
+        lang="sl",
+        start_anchor=SL_START_ANCHOR,
+        end_anchor=SL_END_ANCHOR,
+        sequence=SL_SEQUENCE,
+        not_titles=SL_NOT_TITLES,
+    )
+
+
+RO_START_ANCHOR = "<p>A) Rug&#x103;ciuni obi&#x15f;nuite</p>"
+RO_END_ANCHOR = (
+    "<p>B) Formule de &icirc;nv&#x103;&#x163;&#x103;tur&#x103; catolic&#x103;</p>"
+)
+RO_SEQUENCE = [(slug, True, slug not in NO_LATIN_SLUGS) for slug in APPENDIX_SLUGS]
+#: The Rosary's own concluding-prayer heading, which sits between the Rosary
+#: and its Latin counterpart and is emphasized exactly like a prayer title --
+#: the Romanian counterpart of `LATIN_NOT_TITLES`' "Oratio ad finem Rosarii
+#: dicenda".
+RO_NOT_TITLES = frozenset({"Rugăciune la sfârşitul sfântului Rozariu"})
+
+
+def build_prayers_ro(html_text: str) -> list[Prayer]:
+    return build_prayers_interleaved(
+        html_text,
+        lang="ro",
+        start_anchor=RO_START_ANCHOR,
+        end_anchor=RO_END_ANCHOR,
+        sequence=RO_SEQUENCE,
+        not_titles=RO_NOT_TITLES,
+    )
+
+
+IT_START_ANCHOR = 'name="A) PREGHIERE COMUNI"'
+IT_END_ANCHOR = 'name="B) FORMULE DI DOTTRINA CATTOLICA"'
+
+#: Italian prints all three Eastern-rite prayers inside ONE `<p>`, separated
+#: by a doubled `<br/>` and each headed by its own `<b>` title and `<i>`
+#: rubric -- where every other mirror gives each its own paragraph. So the
+#: Italian appendix is 22 top-level paragraphs holding 24 prayers, and a
+#: paragraph walk alone reads the three as one entry with a fourteen-hundred
+#: character body under the Coptic title.
+#: The rubric each of the three names its tradition with. THE LANDMARK IS THE
+#: RUBRIC AND NOT THE `<b>` TITLE, because Italian's bold tags in this
+#: paragraph are unbalanced -- three `<b>` opens whose closes land after the
+#: body, so splitting on them yields thirteen pieces rather than three. The
+#: rubric is a plain parenthesis in running text and appears exactly three
+#: times, once per prayer.
+_IT_TRADITION_RE = re.compile(r"\(Tradizione[^)]*\)", re.IGNORECASE)
+
+
+def split_italian_eastern(raw: str) -> list[tuple[str, str | None, str]]:
+    """The merged Eastern-rite paragraph as its three prayers.
+
+    Each prayer is a title, a `(Tradizione ...)` rubric and a body. The title
+    runs from the preceding stanza gap -- a doubled `<br/>`, which is what
+    separates the three -- up to the rubric, and the body runs from the rubric
+    to the next prayer's title."""
+    rubrics = list(_IT_TRADITION_RE.finditer(raw))
+    if len(rubrics) != 3:
+        raise RuntimeError(
+            f"IT: expected 3 Eastern-rite tradition rubrics, found {len(rubrics)}"
+        )
+    gaps = [m.end() for m in _DOUBLE_BR_RE.finditer(raw)]
+    starts = [max([g for g in gaps if g < m.start()], default=0) for m in rubrics]
+    out: list[tuple[str, str | None, str]] = []
+    for k, m in enumerate(rubrics):
+        title = flatten(raw[starts[k] : m.start()])
+        body_end = starts[k + 1] if k + 1 < len(starts) else len(raw)
+        out.append((title, m.group(0), raw[m.end() : body_end]))
+    return out
+
+
+#: A group heading's rubric line, which is what marks a heading in a Rosary
+#: printed as ONE paragraph: a line whose next line opens a parenthesis.
+_RUBRIC_LINE_RE = re.compile(r"^\s*\(")
+
+
+def parse_rosary_grouped_paragraphs(
+    paragraphs: list[str],
+) -> tuple[list[MysteryGroup], list[BlockOut]]:
+    """The Rosary for a mirror that gives each mystery group ONE paragraph.
+
+    French prints a group's name, its weekday rubric and all five mysteries as
+    a single run of seven `<br/>`-separated lines, where German and Spanish
+    give the heading its own paragraph and Italian gives the whole Rosary one.
+    The signal is the same in every case -- a name, then a parenthesized
+    rubric, then the five mysteries -- so what varies is only where the
+    paragraph breaks fall.
+
+    The closing prayer's own paragraph is what this must not match, and does
+    not: it opens "Priere a la fin du Rosaire" and its second line is the
+    versicle, not a parenthesis."""
+    groups: list[MysteryGroup] = []
+    trailer: list[BlockOut] = []
+    for raw in paragraphs:
+        segs = br_segments(raw)
+        if (
+            len(groups) < 4
+            and len(segs) >= 3
+            and _RUBRIC_LINE_RE.match(segs[1])
+            and 5 <= len(segs) - 2 <= 6
+        ):
+            items = segs[2:]
+            if len(items) > 5:
+                items = [*items[:4], " ".join(items[4:])]
+            groups.append(
+                MysteryGroup(
+                    segs[0],
+                    segs[1],
+                    [MysteryItem(title=item, meditation="") for item in items],
+                )
+            )
+            continue
+        process_paragraph(raw, trailer)
+    return groups, trailer
+
+
+def parse_rosary_lines(body_html: str) -> tuple[list[MysteryGroup], list[BlockOut]]:
+    """The Rosary for a mirror that prints the whole entry as one `<p>`.
+
+    Italian gives its Rosary no internal paragraphs at all -- name, rubric,
+    the twenty mysteries and the concluding prayer are one run of `<br/>`
+    lines -- so there is nothing for a paragraph walk to walk. The heading is
+    a line whose FOLLOWING line opens a parenthesis, which is the weekday
+    rubric.
+
+    ITEMS ARE MERGED UNTIL THEY END ON A FULL STOP. The Luminous mysteries
+    wrap three of their five titles across two printed lines each
+    ("L'auto-rivelazione di Gesu" / "alle nozze di Cana."), so counting lines
+    gives eight items where the source names five. Every mystery title ends on
+    a period; a continuation line does not."""
+    lines = br_segments(body_html)
+    groups: list[MysteryGroup] = []
+    i = 0
+    while i < len(lines) - 1 and len(groups) < 4:
+        if not _RUBRIC_LINE_RE.match(lines[i + 1]):
+            i += 1
+            continue
+        name, rubric = lines[i], lines[i + 1]
+        items: list[str] = []
+        buf: list[str] = []
+        k = i + 2
+        while k < len(lines) and len(items) < 5:
+            buf.append(lines[k])
+            if lines[k].endswith("."):
+                items.append(" ".join(buf))
+                buf = []
+            k += 1
+        groups.append(
+            MysteryGroup(
+                name, rubric, [MysteryItem(title=item, meditation="") for item in items]
+            )
+        )
+        i = k
+    trailer: list[BlockOut] = []
+    tail = lines[i:]
+    if tail:
+        trailer.append(BlockOut("prose", " ".join(tail), html=line_html(tail)))
+    return groups, trailer
+
+
+def build_prayers_it(html_text: str) -> list[Prayer]:
+    """Italian: a paragraph stream in which each prayer is ONE `<p>` holding
+    its title and its body, then a trailing block of 21 Latin entries in the
+    same shape -- the Portuguese layout with the title not split off into its
+    own paragraph."""
+    start, end = html_text.find(IT_START_ANCHOR), html_text.find(IT_END_ANCHOR)
+    if start == -1 or end == -1 or end <= start:
+        raise RuntimeError(
+            f"IT: could not locate appendix boundaries (start={start}, end={end})"
+        )
+    region = [q for q in top_paragraphs(html_text[start:end]) if flatten(q)]
+    latin_at = next(
+        (k for k, q in enumerate(region) if flatten(q).startswith("Signum Crucis")),
+        None,
+    )
+    if latin_at is None:
+        raise RuntimeError("IT: could not locate the trailing Latin block")
+    vern, latin_paras = region[:latin_at], region[latin_at:]
+    if len(latin_paras) != len(LATIN_SLUGS):
+        raise RuntimeError(
+            f"IT: expected {len(LATIN_SLUGS)} Latin entries, found {len(latin_paras)}"
+        )
+    latin_by_slug: dict[str, LatinText] = {}
+    for slug, raw in zip(LATIN_SLUGS, latin_paras, strict=True):
+        latin_title, latin_body = split_title(raw)
+        latin_by_slug[slug] = LatinText(latin_title, latin_blocks_pt(latin_body))
+
+    # Expand the merged Eastern-rite paragraph in place, so what follows walks
+    # one entry per prayer exactly as every other mirror does.
+    expanded: list[tuple[str, str | None, str]] = []
+    for raw in vern:
+        title, body = split_title(raw)
+        if _IT_TRADITION_RE.search(raw):
+            expanded += split_italian_eastern(raw)
+        else:
+            expanded.append((title, None, body))
+    if len(expanded) != len(APPENDIX_SLUGS):
+        raise RuntimeError(
+            f"IT: expected {len(APPENDIX_SLUGS)} prayers, found {len(expanded)}"
+        )
+
+    prayers: list[Prayer] = []
+    for i, (title, rubric, body) in enumerate(expanded):
+        slug = APPENDIX_SLUGS[i]
+        paragraphs = top_paragraphs(body) or [body]
+        if slug == "rosary":
+            groups, blocks = parse_rosary_lines(body)
+        else:
+            blocks, _ = parse_simple_body(paragraphs)
+            groups = []
+        prayers.append(
+            Prayer(
+                n=i + 1,
+                slug=slug,
+                title=title,
+                rubric=rubric,
+                blocks=blocks,
+                latin=latin_by_slug.get(slug),
+                groups=groups,
+            )
+        )
+    return prayers
+
+
+# --------------------------------------------------------------------------
 # PT: sequential-paragraph extraction (vernacular), then a second pass for
 # the trailing Latin block
 # --------------------------------------------------------------------------
@@ -1157,6 +2493,103 @@ def build_our_father_pt(html_text: str) -> Prayer:
     )
 
 
+# --------------------------------------------------------------------------
+# The Litany of Loreto
+# --------------------------------------------------------------------------
+#
+# A LITANY IS INVOCATIONS UNDER A HELD RESPONSE, AND THE SOURCE SAYS SO IN
+# BOLD. Both mirrors mark the response with `<b>` and mark nothing else with
+# it: English prints "<b>pray for us.</b>" once, on its own line, and then
+# fifty-two more invocations under it; Portuguese bolds the response inline at
+# the end of the line instead ("Cordeiro de Deus, ... <b>ouvi-nos, Senhor.</b>").
+# The Kyrie and the closing collect carry no bold at all, and are prose.
+#
+# NONE OF THAT SURVIVED `flatten`, which strips every tag before anything sees
+# it -- so the whole litany was stored as nine undifferentiated prose blocks,
+# one of them a single paragraph holding all fifty-three Marian invocations
+# with the response buried on its second line. Reading the bold RECOVERS what
+# the source states; it does not impose a reading. What would be inventing
+# text is printing "pray for us" fifty-three times, which the source
+# deliberately does not do and which `Invocation.response_printed` exists to
+# avoid.
+#
+# TWO THINGS THE MIRRORS DO NOT AGREE ON, both handled here:
+#   - English glues the closing versicle and response into one paragraph;
+#     Portuguese gives them two. So a paragraph that is nothing but a response
+#     attaches to the invocation the previous paragraph ended on.
+#   - English closes with a collect ("Let us pray. / Grant, we beseech
+#     thee, ..."); the Portuguese page simply ends after the closing response
+#     and prints no collect at all. That is the source, not a truncated parse
+#     -- verified against the raw HTML, which closes its last `<p>` and then
+#     its table. `LITANY_LAST` is therefore per language.
+
+_BOLD_RUN_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.IGNORECASE | re.DOTALL)
+
+
+def _split_bold_tail(segment_html: str) -> tuple[str, str | None]:
+    """A printed line as `(plain part, bolded response)`.
+
+    A BOLD RUN MUST HAVE TEXT IN IT. The English page contains
+    `Mother of Mercy,<b><br /> </b>Mother of divine grace,` -- a bold wrapping
+    nothing but a line break, one of the mirror's droppings. Read as a
+    response it would cut the Marian run in half and invent a second held
+    response of empty string."""
+    bolds = [m for m in _BOLD_RUN_RE.finditer(segment_html) if flatten(m.group(1))]
+    if not bolds:
+        return flatten(segment_html), None
+    last = bolds[-1]
+    if segment_html[last.end() :].strip(" &nbsp;"):
+        # Bold in the middle of a line is emphasis, not a response.
+        return flatten(segment_html), None
+    return flatten(segment_html[: last.start()]), flatten(last.group(1))
+
+
+def _litany_blocks(paragraph_html: str) -> list[BlockOut]:
+    """One litany paragraph as blocks.
+
+    A run of invocations sharing one response becomes a `petitions` block; a
+    lone invocation with its own response is an ordinary versicle/response
+    pair, which is what the Kyrie's Agnus Dei lines and the closing couplet
+    are; a paragraph with no bold at all stays prose."""
+    segments = _BR_RE.split(paragraph_html)
+    invocations: list[Invocation] = []
+    response: str | None = None
+    for seg in segments:
+        plain, bold = _split_bold_tail(seg)
+        if plain:
+            invocations.append(Invocation(plain))
+        if bold and response is None:
+            response = bold
+            if invocations:
+                invocations[-1].response_printed = True
+    lines = [i.text for i in invocations]
+    if response is None:
+        text = flatten(paragraph_html)
+        return [BlockOut("prose", text, html=line_html(br_segments(paragraph_html)))]
+    printed = [*lines]
+    if not invocations:
+        # A paragraph that is nothing but the response (Portuguese's closing).
+        return [BlockOut("response", response)]
+    if len(invocations) == 1:
+        return [
+            BlockOut("versicle", invocations[0].text),
+            BlockOut("response", response),
+        ]
+    idx = next(
+        (k for k, i in enumerate(invocations) if i.response_printed), len(printed)
+    )
+    printed = [*lines[: idx + 1], response, *lines[idx + 1 :]]
+    return [
+        BlockOut(
+            "petitions",
+            " ".join(printed),
+            html=line_html(printed),
+            response=response,
+            invocations=invocations,
+        )
+    ]
+
+
 def _litany_paragraphs(
     html_text: str, first: str, last: str, lang: str
 ) -> list[BlockOut]:
@@ -1167,36 +2600,68 @@ def _litany_paragraphs(
             f"{lang}: expected one Litany opening paragraph, found {len(starts)}"
         )
     blocks: list[BlockOut] = []
+    done = False
     for raw in paragraphs[starts[0] :]:
         text = flatten(raw)
         if text:
-            blocks.append(BlockOut("prose", text, html=line_html(br_segments(raw))))
+            blocks += _litany_blocks(raw)
         if text.startswith(last):
-            return blocks
-    raise RuntimeError(f"{lang}: could not locate the Litany closing paragraph")
+            done = True
+            break
+    if not done:
+        raise RuntimeError(f"{lang}: could not locate the Litany closing paragraph")
+
+    # A lone response paragraph belongs to the line before it -- see the
+    # section comment on the two mirrors' paragraphing.
+    merged: list[BlockOut] = []
+    for block in blocks:
+        if (
+            block.kind == "response"
+            and merged
+            and merged[-1].kind == "prose"
+            and "\n" not in merged[-1].text
+            and merged[-1].html is None
+        ):
+            merged[-1] = BlockOut("versicle", merged[-1].text)
+        merged.append(block)
+    return merged
 
 
-def build_litany_en(html_text: str) -> Prayer:
-    return Prayer(
-        0,
-        LITANY_SLUG,
-        "The Litany of Loreto",
-        _litany_paragraphs(html_text, "Lord have mercy.", "Let us pray.", "EN"),
-    )
-
-
-def build_litany_pt(html_text: str) -> Prayer:
-    return Prayer(
-        0,
-        LITANY_SLUG,
+#: Each mirror's Litany page, as (title, first paragraph, last paragraph).
+#: The two markers bound the prayer inside a page that also carries a language
+#: bar and two headings; the title is the one the page prints over it, in that
+#: page's own wording. English and Portuguese keep the titles they shipped
+#: with, which are the pages' headings in ordinary case rather than the
+#: all-caps they are set in.
+LITANY_PAGES = {
+    "en": ("The Litany of Loreto", "Lord have mercy.", "Let us pray."),
+    "pt": (
         "Ladainha de Nossa Senhora",
-        _litany_paragraphs(
-            html_text,
-            "Senhor, tende piedade de nós",
-            "Para que sejamos dignos das promessas de Cristo.",
-            "PT",
-        ),
-    )
+        "Senhor, tende piedade de nós",
+        "Para que sejamos dignos das promessas de Cristo.",
+    ),
+    "de": ("Lauretanische Litanei", "Herr, erbarme dich.", "Gütiger Gott"),
+    "es": ("Letanías de la Virgen", "Señor, ten piedad", "ORACIÓN."),
+    "fr": ("Litanies de Lorette", "Seigneur, prends pitié.", "Prions,"),
+    "it": ("Litanie Lauretane", "Signore, pietà", "Concedi ai tuoi fedeli"),
+}
+
+
+def build_litany(lang: str) -> Callable[[str], list[Prayer]]:
+    """A `Source.reader` for `lang`'s Litany page."""
+    title, first, last = LITANY_PAGES[lang]
+
+    def read(html_text: str) -> list[Prayer]:
+        return [
+            Prayer(
+                0,
+                LITANY_SLUG,
+                title,
+                _litany_paragraphs(html_text, first, last, lang.upper()),
+            )
+        ]
+
+    return read
 
 
 # The four Vatican mystery pages have a deliberately regular layout: five
@@ -1204,9 +2669,32 @@ def build_litany_pt(html_text: str) -> Prayer:
 # by a Scripture meditation paragraph plus the recurring decade-prayer line.
 # The latter is captured once as the Rosary's instructions, rather than being
 # needlessly repeated in each of twenty items.
-_ROSARY_MYSTERY_CELL_RE = re.compile(
-    r'<td\s+width="584">(.*?)</td>', re.IGNORECASE | re.DOTALL
-)
+#: THE CELL WIDTH IS NOT A CONSTANT ACROSS THE MICRO-SITE. English and
+#: Spanish set their five mystery cells at `width="584"`; Italian sets the
+#: same five at `width="457"`. Hardcoding 584 finds zero cells on the Italian
+#: pages and reports "expected 5, found 0", which reads like a missing capture
+#: rather than a layout difference.
+#:
+#: So the width is DISCOVERED: of the widths this page uses, exactly one is
+#: used five times, and that is the mystery cell. The outer container (769 on
+#: every page seen) wraps them and is used once. Finding no such width, or
+#: more than one, is a real failure and says so.
+_ROSARY_TD_WIDTH_RE = re.compile(r'<td\s+width="(\d+)"', re.IGNORECASE)
+
+
+def rosary_mystery_cells(html_text: str) -> list[str]:
+    """The five mystery cells, at whatever width this page sets them."""
+    counts: dict[str, int] = {}
+    for m in _ROSARY_TD_WIDTH_RE.finditer(html_text):
+        counts[m.group(1)] = counts.get(m.group(1), 0) + 1
+    widths = [w for w, n in counts.items() if n == 5]
+    if len(widths) != 1:
+        return []
+    return re.findall(
+        rf'<td\s+width="{widths[0]}">(.*?)</td>', html_text, re.IGNORECASE | re.DOTALL
+    )
+
+
 _ROSARY_MYSTERY_TITLE_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.IGNORECASE | re.DOTALL)
 _ROSARY_SCRIPTURE_CITATION_RE = re.compile(r"\s*\(([^()]*)\)([.!])?\s*$")
 
@@ -1234,7 +2722,7 @@ def split_rosary_meditation_citation(
 def parse_rosary_mystery_page(
     html_text: str, lang: str, expected_filename: str
 ) -> list[MysteryItem]:
-    cells = _ROSARY_MYSTERY_CELL_RE.findall(html_text)
+    cells = rosary_mystery_cells(html_text)
     if len(cells) != 5:
         raise RuntimeError(
             f"{lang} {expected_filename}: expected 5 Rosary mystery cells, found {len(cells)}"
@@ -1247,15 +2735,47 @@ def parse_rosary_mystery_page(
             raise RuntimeError(
                 f"{lang} {expected_filename}: incomplete Rosary mystery cell"
             )
+        title = flatten(title_match.group(1))
+        # THE MEDITATION IS NOT ALWAYS THE FIRST PARAGRAPH. Spanish's Luminous
+        # page prints the title TWICE in its opening cell -- once as the bold
+        # heading and again as an ordinary paragraph beneath it -- where its
+        # own four other pages, and every English and Portuguese page, print
+        # the meditation there. Reading `paragraphs[0]` blindly gets the title,
+        # which then fails for having no Scripture locator on the end of it.
+        #
+        # Dropping a paragraph that merely repeats the heading is narrow and
+        # says exactly what the defect is; skipping to "the first paragraph
+        # with a citation" would also swallow a genuinely uncited meditation,
+        # which is a thing worth failing on rather than working around.
+        body = [text for text in paragraphs if text != title]
+        if not body:
+            raise RuntimeError(
+                f"{lang} {expected_filename}: mystery cell {title!r} has no meditation"
+            )
         meditation, citation = split_rosary_meditation_citation(
-            paragraphs[0], lang, expected_filename
+            body[0], lang, expected_filename
         )
-        items.append(MysteryItem(flatten(title_match.group(1)), meditation, citation))
+        items.append(MysteryItem(title, meditation, citation))
     return items
 
 
+#: The micro-site's own heading over the "how to pray" directions, per
+#: language. Matched EXACTLY (`flatten(raw) == heading`), so it is the page's
+#: printed wording rather than a translation of ours -- a language whose page
+#: heads the section differently gets a clear failure naming the count, not a
+#: silently empty `instructions`.
+ROSARY_INSTRUCTIONS_HEADING = {
+    "en": "How to pray the Rosary?",
+    "pt": "Como recitar o Rosário",
+    "es": "¿Cómo se reza el Rosario?",
+    "it": "Come si recita il Rosario?",
+    "de": "Wie betet man den Rosenkranz?",
+    "fr": "Comment se récite le chapelet?",
+}
+
+
 def parse_rosary_instructions(html_text: str, lang: str) -> PrayerInstructions:
-    heading = "How to pray the Rosary?" if lang == "en" else "Como recitar o Rosário"
+    heading = ROSARY_INSTRUCTIONS_HEADING[lang]
     paragraphs = top_paragraphs(html_text)
     matches = [i for i, raw in enumerate(paragraphs) if flatten(raw) == heading]
     if len(matches) != 1:
@@ -1286,7 +2806,7 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
         if not path.exists():
             raise RuntimeError(
                 f"{lang}: full Rosary-mystery raw source not found at {path}; "
-                "capture it with --fetch-rosary-mysteries before parsing"
+                "capture it with --fetch-companions before parsing"
             )
         group.items = parse_rosary_mystery_page(
             path.read_text(encoding="cp1252", errors="replace"), lang, path.name
@@ -1481,7 +3001,15 @@ def apply_corrections(prayers: list[Prayer], corrections: list[dict]) -> list[di
 # Validation
 # --------------------------------------------------------------------------
 
-_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³", "Â"]
+_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³"]
+
+#: `Â` IS A REAL FRENCH LETTER AND WAS ON THE LIST ABOVE, which made the check
+#: fire on "Âme du Christ" -- the Anima Christi's own French title. It is only
+#: mojibake when it is not doing a letter's job, so what is flagged is a `Â`
+#: NOT followed by a letter. The punctuation-glued form the mirror actually
+#: emits is already removed in `flatten` (`_STRAY_ACIRC_RE`); this is the
+#: check that would notice a new one, without condemning French.
+_STRAY_ACIRC_CHECK_RE = re.compile("\u00c2(?![^\\W\\d_])")
 
 
 def collect_texts(p: Prayer) -> list[str]:
@@ -1521,10 +3049,15 @@ def check_source_coverage() -> list[str]:
     Reads the constants, not parsed output, so it holds whether or not a
     parse ran."""
     problems: list[str] = []
-    for lang in ("en", "pt"):
+    for lang in LANG_CONFIG:
+        spec = LANG_CONFIG[lang]
         declared = {src["url"] for src in build_manifest(lang, [], [])["sources"]}
         claimed = {src["url"] for slug in SLUGS for src in prayer_sources(slug, lang)}
-        claimed |= set(ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"])
+        if spec.rosary_mysteries:
+            claimed |= {
+                rosary_mystery_urls(spec.rosary_mysteries, name)[0]
+                for name in ROSARY_MYSTERY_FILES
+            }
         if claimed - declared:
             problems.append(
                 f"{lang}: prayer sources not in the manifest: {sorted(claimed - declared)}"
@@ -1536,78 +3069,112 @@ def check_source_coverage() -> list[str]:
     return problems
 
 
-def validate(en: list[Prayer], pt: list[Prayer]) -> tuple[bool, list[str]]:
-    problems: list[str] = check_source_coverage()
+def validate_prayers(lang: str, prayers: list[Prayer]) -> list[str]:
+    """One edition against what its own sources should have produced.
 
-    if len(en) != len(SLUGS):
-        problems.append(f"EN: expected {len(SLUGS)} prayers, got {len(en)}")
-    if len(pt) != len(SLUGS):
-        problems.append(f"PT: expected {len(SLUGS)} prayers, got {len(pt)}")
+    PER LANGUAGE, NOT PER PAIR. This was `validate(en, pt)`, which asserted a
+    28-slug collection twice and compared the two -- a shape that says nothing
+    true about an edition whose mirror prints no Litany, and that FAILED
+    outright the moment a third language existed, reporting the whole slug set
+    as a mismatch against two empty lists. What survives is every check that
+    was doing real work: the expected slug set and its ORDER (a parser that
+    drops or duplicates a row desyncs it), the Latin companions, the Rosary's
+    shape, and the text hygiene sweep."""
+    spec = LANG_CONFIG[lang]
+    problems: list[str] = []
+    expected = spec.expected_slugs()
+    got = [p.slug for p in prayers]
+    if got != expected:
+        missing, extra = set(expected) - set(got), set(got) - set(expected)
+        if missing or extra:
+            problems.append(
+                f"{lang}: slug set mismatch -- missing {sorted(missing)}, "
+                f"unexpected {sorted(extra)}"
+            )
+        else:
+            problems.append(f"{lang}: slug ORDER differs from the source's print order")
 
-    en_slugs = [p.slug for p in en]
-    pt_slugs = [p.slug for p in pt]
-    if set(en_slugs) != set(SLUGS):
-        problems.append(f"EN slug set mismatch: {set(en_slugs) ^ set(SLUGS)}")
-    if set(pt_slugs) != set(SLUGS):
-        problems.append(f"PT slug set mismatch: {set(pt_slugs) ^ set(SLUGS)}")
-    # The free QA oracle (CLAUDE.md): a work published in two languages
-    # must expose the same address space in both. Slugs are assigned
-    # positionally from one shared list, so this is a real check on
-    # whether both languages actually produced 24 rows/chunks each, not
-    # a tautology -- a parser bug that silently dropped or duplicated a
-    # row would desync the two lists' lengths/order and be caught here.
-    if en_slugs != pt_slugs:
+    latin_missing = {p.slug for p in prayers if p.latin is None}
+    if latin_missing != spec.expected_no_latin():
         problems.append(
-            "EN and PT slug ORDER differs (should be identical by construction)"
+            f"{lang}: Latin companions differ from the source -- unexpected gaps "
+            f"{sorted(latin_missing - spec.expected_no_latin())}, unexpected Latin "
+            f"{sorted(spec.expected_no_latin() - latin_missing)}"
         )
 
-    en_by_slug = {p.slug: p for p in en}
-    pt_by_slug = {p.slug: p for p in pt}
-
-    en_latin_missing = {s for s, p in en_by_slug.items() if p.latin is None}
-    pt_latin_missing = {s for s, p in pt_by_slug.items() if p.latin is None}
-    if en_latin_missing != NO_LATIN_SLUGS:
-        problems.append(f"EN: Latin missing for unexpected slugs: {en_latin_missing}")
-    if pt_latin_missing != NO_LATIN_SLUGS:
-        problems.append(f"PT: Latin missing for unexpected slugs: {pt_latin_missing}")
-
-    for lang, prayers in (("EN", en), ("PT", pt)):
-        for p in prayers:
-            if not p.title.strip():
-                problems.append(f"{lang} {p.slug}: empty title")
-            if not p.blocks and not p.groups and not p.variants:
-                problems.append(
-                    f"{lang} {p.slug}: no content blocks, groups, or variants"
-                )
-            if p.slug == "rosary" and len(p.groups) != 4:
+    for p in prayers:
+        if not p.title.strip():
+            problems.append(f"{lang} {p.slug}: empty title")
+        if not p.blocks and not p.groups and not p.variants:
+            problems.append(f"{lang} {p.slug}: no content blocks, groups, or variants")
+        # Only an edition whose mirror publishes the mystery pages can have
+        # groups and instructions; without them the Rosary is the bare
+        # Appendix A entry, which is a shorter entry and not a broken one.
+        if p.slug == "rosary" and spec.rosary_mysteries:
+            if len(p.groups) != 4:
                 problems.append(
                     f"{lang} rosary: expected 4 mystery groups, got {len(p.groups)}"
                 )
-            if p.slug == "rosary" and p.instructions is None:
+            if p.instructions is None:
                 problems.append(f"{lang} rosary: missing sourced instructions")
-            for g in p.groups:
-                if len(g.items) != 5:
+        for g in p.groups:
+            if len(g.items) != 5:
+                problems.append(
+                    f"{lang} {p.slug}: mystery group {g.name!r} has "
+                    f"{len(g.items)} items, expected 5"
+                )
+            for item in g.items:
+                if not item.title:
+                    problems.append(f"{lang} {p.slug}: untitled mystery in {g.name!r}")
+                # A meditation and its citation come from the micro-site; the
+                # bare Compendium entry names the five mysteries and no more.
+                if spec.rosary_mysteries and (
+                    not item.meditation or item.citation is None
+                ):
                     problems.append(
-                        f"{lang} {p.slug}: mystery group {g.name!r} has {len(g.items)} items, expected 5"
+                        f"{lang} {p.slug}: incomplete mystery in {g.name!r}"
                     )
-                for item in g.items:
-                    if not item.title or not item.meditation or item.citation is None:
-                        problems.append(
-                            f"{lang} {p.slug}: incomplete mystery in {g.name!r}"
-                        )
-            for text in collect_texts(p):
-                if "<" in text or ">" in text:
-                    problems.append(
-                        f"{lang} {p.slug}: leftover markup in {text[:60]!r}"
-                    )
-                if "�" in text:
-                    problems.append(f"{lang} {p.slug}: replacement character present")
-                for pat in _MOJIBAKE_PATTERNS:
-                    if pat in text:
-                        problems.append(f"{lang} {p.slug}: mojibake pattern {pat!r}")
-                if "  " in text:
-                    problems.append(f"{lang} {p.slug}: double space in {text[:60]!r}")
+        for text in collect_texts(p):
+            if "<" in text or ">" in text:
+                problems.append(f"{lang} {p.slug}: leftover markup in {text[:60]!r}")
+            if "\ufffd" in text:
+                problems.append(f"{lang} {p.slug}: replacement character present")
+            for pat in _MOJIBAKE_PATTERNS:
+                if pat in text:
+                    problems.append(f"{lang} {p.slug}: mojibake pattern {pat!r}")
+            if _STRAY_ACIRC_CHECK_RE.search(text):
+                problems.append(f"{lang} {p.slug}: stray 'Â' outside a word")
+            if "  " in text:
+                problems.append(f"{lang} {p.slug}: double space in {text[:60]!r}")
+    return problems
 
+
+def validate(results: dict[str, list[Prayer]]) -> tuple[bool, list[str]]:
+    """Every parsed edition, plus what only comparing them can show.
+
+    THE CROSS-LANGUAGE ORACLE IS NARROWED, AND THIS IS THE NARROWING
+    `docs/corpus-schema.md` NOW RECORDS. It used to read "the two vernacular
+    collections' slug sets must match exactly", which was true while there
+    were two and is false with ten: the collections are 28, 25, 24 and fewer
+    entries long, for reasons that are all facts about the sources. What still
+    holds -- and is still a real check rather than a tautology, because each
+    mirror is parsed by its own reader -- is that where two editions BOTH
+    print a prayer, both must have produced text for it."""
+    problems = check_source_coverage()
+    for lang in sorted(results):
+        problems += validate_prayers(lang, results[lang])
+
+    empty: dict[str, list[str]] = {}
+    for lang, prayers in results.items():
+        for p in prayers:
+            if not collect_texts(p):
+                empty.setdefault(p.slug, []).append(lang)
+    for slug, langs in sorted(empty.items()):
+        others = sorted(other for other in results if other not in langs)
+        if others:
+            problems.append(
+                f"{slug}: empty in {sorted(langs)} but has text in {others}"
+            )
     return (len(problems) == 0), problems
 
 
@@ -1702,13 +3269,16 @@ def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
 
     A GROUP LISTS ONLY THE PRAYERS THIS EDITION ACTUALLY HAS, and an edition
     that has none of a group's prayers does not get an empty heading for it.
-    That is `prayer.common.la`: the two Creeds, the Our Father, the three
-    Eastern prayers and the Litany of Loreto are printed with no Latin
-    companion anywhere in the source, so the Latin edition genuinely has
-    nothing under "Symbola et Oratio Dominica" and says so by not printing
-    the heading. The vernacular editions carry every slug and so are
-    unaffected -- this is not a filter they pass through, it is a filter that
-    never fires for them.
+
+    THE EXAMPLE THIS USED TO GIVE HAS EXPIRED, and usefully. It said the Latin
+    edition prints no "Symbola et Oratio Dominica" heading because the two
+    Creeds and the Our Father have no Latin anywhere in the source. That was
+    true of the Compendium's appendix and false of the corpus: the Latin
+    Catechism prints all three, and reading them (`LATIN_FROM_CATECHISM_SLUGS`)
+    made the heading appear here with no change to this function at all --
+    which is what being data-driven is for. The filter still fires: Latin
+    prints no Eastern-rite prayers and no Litany, and Slovenian and Swedish
+    each drop a different part of the Eastern-rite group.
     """
     by_slug = {p.slug: p for p in prayers}
     nodes = []
@@ -2000,10 +3570,34 @@ def _resegment(base: list[BlockOut], donor: list[BlockOut]) -> list[BlockOut] | 
     return out
 
 
+#: `witnesses.json`'s third provenance value. The other two name a vernacular
+#: edition whose Latin COLUMN was read; this one names a Latin page read
+#: directly, so `text_from` and `segmentation_from` are both it and the
+#: divergence column is empty by construction.
+LATIN_CATECHISM_WITNESS = "ccc-la"
+
+
+def read_latin_catechism_prayers() -> list[Prayer]:
+    """The two Creeds and the Our Father, from the Latin Catechism."""
+    out: list[Prayer] = []
+    for path, reader in (
+        (CCC_LA_CREDO_RAW, build_creeds_la),
+        (CCC_LA_OUR_FATHER_RAW, lambda html: [build_our_father_la(html)]),
+    ):
+        if not path.exists():
+            raise RuntimeError(
+                f"la: raw Latin Catechism source not found at {path} -- this "
+                "script never fetches during a parse; it belongs to ccc.py"
+            )
+        out += reader(path.read_text(encoding="cp1252", errors="replace"))
+    return out
+
+
 def build_latin_edition(
     en: list[Prayer], pt: list[Prayer]
 ) -> tuple[list[Prayer], list[dict]]:
-    """`prayer.common.la`, derived from both witnesses -- see the docblock.
+    """`prayer.common.la`: three prayers read off the Latin Catechism, then
+    twenty-one derived from both vernacular witnesses -- see the docblock.
 
     The report returned alongside is the audit trail: one row per prayer
     saying which witness supplied the text, which supplied the breaks, and
@@ -2014,6 +3608,24 @@ def build_latin_edition(
     by_slug_pt = {p.slug: p for p in pt}
     out: list[Prayer] = []
     report: list[dict] = []
+
+    # THE CATECHISM'S OWN THREE COME FIRST, in the collection's print order,
+    # and take no part in the reconciliation below: there is one witness to
+    # them, not two, so there is nothing to re-segment and nothing that could
+    # diverge. See `LATIN_FROM_CATECHISM_SLUGS`.
+    for prayer in read_latin_catechism_prayers():
+        out.append(replace(prayer, n=len(out) + 1))
+        report.append(
+            {
+                "slug": prayer.slug,
+                "text_from": LATIN_CATECHISM_WITNESS,
+                "segmentation_from": LATIN_CATECHISM_WITNESS,
+                "blocks": len(prayer.blocks),
+                "blocks_en": None,
+                "blocks_pt": None,
+                "divergence": None,
+            }
+        )
 
     for source in en:
         latin = source.latin
@@ -2069,23 +3681,308 @@ def build_latin_edition(
 # Output
 # --------------------------------------------------------------------------
 
-LANG_CONFIG = {
-    "en": {
-        "raw_path": EN_RAW,
-        "url": EN_URL,
-        "work_id": "prayer.common.en",
-        "title": "Common Prayers",
-        "short_title": "Common Prayers",
-        "builder": build_prayers_en,
-    },
-    "pt": {
-        "raw_path": PT_RAW,
-        "url": PT_URL,
-        "work_id": "prayer.common.pt",
-        "title": "Orações Comuns",
-        "short_title": "Orações Comuns",
-        "builder": build_prayers_pt,
-    },
+
+@dataclass(frozen=True)
+class Source:
+    """One page an edition draws on, with the reader that turns it into
+    prayers.
+
+    Every reader returns a LIST, including the two that can only ever produce
+    one prayer. That is what lets `run` treat "this language has no Litany
+    page" and "this language has one" as the same shape rather than as a
+    branch -- an absent source contributes an empty list, and the collection
+    is simply shorter. See `LANG_CONFIG` below for why that had to stop being
+    a branch."""
+
+    path: Path
+    url: str
+    retrieved_at: str
+    reader: Callable[[str], list[Prayer]]
+
+
+@dataclass(frozen=True)
+class LangSpec:
+    """What one language's collection is made of.
+
+    THE COLLECTION IS ASSEMBLED FROM THREE UNRELATED SOURCE FAMILIES, and only
+    the first is published in every language. The Compendium's Appendix A is
+    on disk for all ten languages it was ever parsed in; the Catechism's own
+    "Credo" and Lord's Prayer pages exist only where vatican.va publishes a
+    CCC in that language; and the Holy Rosary micro-site -- which is where the
+    Litany of Loreto and the twenty mysteries come from -- publishes six
+    languages and no more.
+
+    So a `None` here is a fact about the source, not a gap to fill later, and
+    it is the same fact `prayer.common.la` has always expressed by carrying 21
+    of 28 prayers: `build_structure` omits a group whose prayers an edition
+    lacks, and `CONTENT_LANG_FALLBACK` reaches another edition for the rest.
+
+    This replaced a chain of `if lang == "en" else <pt>` branches in `run`,
+    which is the shape that cannot survive a third language -- each new one
+    would have been another arm on six separate conditionals."""
+
+    work_id: str
+    title: str
+    short_title: str
+    #: The Compendium's Appendix A. The one source every edition has.
+    appendix: Source
+    #: The Catechism's own pages: both Creeds on one, the Our Father on the
+    #: other. Absent where vatican.va publishes no CCC in this language --
+    #: and absent for Spanish for a different reason, since the Spanish
+    #: appendix prints its own Padre nuestro (see `build_prayers_es`).
+    creeds: Source | None = None
+    our_father: Source | None = None
+    #: The Holy Rosary micro-site's Litany page.
+    litany: Source | None = None
+    #: That micro-site's own code for this language, naming the four
+    #: mystery pages the Rosary entry is enriched from. `None` leaves the
+    #: Rosary as the bare Appendix A entry the Compendium prints -- its
+    #: title, rubric and concluding prayer, with no mysteries and no
+    #: directions. NOT the corpus tag: the mirror spells German `ge`,
+    #: Spanish `sp`, Portuguese `po`, and Italian not at all (see
+    #: `rosary_mystery_raw`).
+    rosary_mysteries: str | None = None
+    #: This mirror's Appendix A print order. Spanish's is its own because it
+    #: prints a 25th entry (`ES_APPENDIX_SLUGS`).
+    appendix_slugs: list[str] = field(default_factory=lambda: APPENDIX_SLUGS)
+    #: Appendix A entries this mirror does not print AT ALL -- a fact about
+    #: the source, asserted so that a parser silently losing a row cannot be
+    #: mistaken for one. Swedish omits two of the three Eastern-rite prayers
+    #: and Slovenian all three.
+    absent: frozenset[str] = frozenset()
+    #: This edition's own copyright notice, where the page prints one that is
+    #: not the shared LEV line. Only Romanian does: its Compendium is
+    #: published in Romania by Editura Presa Buna under a LEV grant, and the
+    #: page carries both that grant and the publisher's own imprint with an
+    #: ISBN. Recording it is the whole point of `docs/research/copyright.md`'s
+    #: posture -- the notice we print is the one the source prints.
+    copyright_notice: str | None = None
+    copyright_note: str | None = None
+    #: Entries this mirror HEADS AND LEAVES BLANK -- it prints the title and
+    #: then goes straight on to the next prayer. Distinct from `absent`, which
+    #: is not printed at all: here the heading is real evidence the editors
+    #: meant to include it, and only the words are missing. Dropped from the
+    #: edition rather than shipped, because a prayer with a title and no text
+    #: is not something a reader can use and `CONTENT_LANG_FALLBACK` will
+    #: reach an edition that has it. Asserted to be genuinely empty, so that a
+    #: mirror later filling one in fails here instead of staying dropped.
+    headed_but_empty: frozenset[str] = frozenset()
+    #: Entries whose Latin companion this mirror leaves empty. Defaults to the
+    #: shared `NO_LATIN_SLUGS`; Spanish prints a Latin *Pater Noster* beside
+    #: its own Our Father and so takes one fewer.
+    no_latin: frozenset[str] | None = None
+
+    def expected_slugs(self) -> list[str]:
+        """Exactly the prayers this edition's sources can produce, in the
+        order `run` assembles them.
+
+        THIS REPLACED A GLOBAL `SLUGS` COMPARISON, which asserted that every
+        vernacular edition carries all 28 -- true of English and Portuguese
+        and of nothing else. Four mirrors print no Litany because the Holy
+        Rosary micro-site has no edition in their language, four print no
+        Creeds because vatican.va publishes no Catechism in it, and two omit
+        Eastern-rite prayers outright. Deriving the expectation from the same
+        table the parse reads keeps the check sharp: it still fails on a
+        dropped or duplicated row, which is what it was always for."""
+        order: list[str] = []
+        if self.creeds:
+            order += [s for s in CREED_AND_LORDS_PRAYER_SLUGS if s != "our-father"]
+        if self.our_father:
+            order.append("our-father")
+        order += [
+            s
+            for s in self.appendix_slugs
+            if s not in self.absent and s not in self.headed_but_empty
+        ]
+        if self.litany:
+            order.append(LITANY_SLUG)
+        return order
+
+    def expected_no_latin(self) -> frozenset[str]:
+        base = NO_LATIN_SLUGS if self.no_latin is None else self.no_latin
+        return frozenset(base) & set(self.expected_slugs())
+
+
+def _one(reader: Callable[[str], Prayer]) -> Callable[[str], list[Prayer]]:
+    """A single-prayer reader as a `Source.reader`. See `Source`."""
+    return lambda html_text: [reader(html_text)]
+
+
+COMPENDIUM_DOCUMENTS_URL = "https://www.vatican.va/archive/compendium_ccc/documents/"
+
+#: The Compendium page each language's Appendix A is read from. MIRRORS
+#: `EDITIONS` in `ccc/compendium.py`, which is the authority and the scraper
+#: that captured every one of these -- the filenames are the archive mirror's
+#: own codes, so German is `_ge`, Spanish `_sp` and Portuguese `_po`. Repeated
+#: rather than imported because that file is a `uv run --script` program in a
+#: sibling package, not a library; a name that drifts here fails loudly at
+#: `read_source`, naming the path it looked for.
+COMPENDIUM_FILES = {
+    "de": "archive_2005_compendium-ccc_ge.html",
+    "en": "archive_2005_compendium-ccc_en.html",
+    "es": "archive_2005_compendium-ccc_sp.html",
+    "fr": "archive_2005_compendium-ccc_fr.html",
+    "hu": "archive_2005_compendium-ccc_hu.html",
+    "it": "archive_2005_compendium-ccc_it.html",
+    "pt": "archive_2005_compendium-ccc_po.html",
+    "ro": "archive_2005_compendium-ccc_ro.html",
+    "sl": "archive_2005_compendium-ccc_sl.html",
+    "sv": "archive_2005_compendium-ccc_sv.html",
+}
+
+
+def litany_source(lang: str, code: str) -> Source:
+    """The Holy Rosary micro-site's Litany page for `lang`."""
+    url = litany_urls(code)[0]
+    path = RAW_ROOT / f"rosary-{lang}" / url.rsplit("/", 1)[-1]
+    return Source(path, url, captured_at(path, LITANY_RETRIEVED_AT), build_litany(lang))
+
+
+def compendium_source(lang: str, reader: Callable[[str], list[Prayer]]) -> Source:
+    """The Appendix A source for `lang`, dated from `raw/`'s own ledger."""
+    name = COMPENDIUM_FILES[lang]
+    path = RAW_ROOT / f"compendium-{lang}" / name
+    return Source(
+        path, COMPENDIUM_DOCUMENTS_URL + name, captured_at(path, RETRIEVED_AT), reader
+    )
+
+
+LANG_CONFIG: dict[str, LangSpec] = {
+    "en": LangSpec(
+        work_id="prayer.common.en",
+        title="Common Prayers",
+        short_title="Common Prayers",
+        appendix=compendium_source("en", build_prayers_en),
+        creeds=Source(
+            CCC_EN_CREDO_RAW,
+            CCC_EN_CREDO_URL,
+            captured_at(CCC_EN_CREDO_RAW, CCC_RETRIEVED_AT),
+            build_creeds_en,
+        ),
+        our_father=Source(
+            CCC_EN_OUR_FATHER_RAW,
+            CCC_EN_OUR_FATHER_URL,
+            captured_at(CCC_EN_OUR_FATHER_RAW, CCC_RETRIEVED_AT),
+            _one(build_our_father_en),
+        ),
+        litany=Source(
+            LITANY_EN_RAW,
+            LITANY_EN_URL,
+            captured_at(LITANY_EN_RAW, LITANY_RETRIEVED_AT),
+            build_litany("en"),
+        ),
+        rosary_mysteries="en",
+    ),
+    "de": LangSpec(
+        work_id="prayer.common.de",
+        title="Allgemeine Gebete",
+        short_title="Allgemeine Gebete",
+        appendix=compendium_source("de", build_prayers_de),
+        rosary_mysteries="ge",
+        litany=litany_source("de", "ge"),
+    ),
+    "es": LangSpec(
+        work_id="prayer.common.es",
+        title="Oraciones Comunes",
+        short_title="Oraciones Comunes",
+        appendix=compendium_source("es", build_prayers_es),
+        # No `our_father`: the Spanish appendix prints its own, as its 25th
+        # row (see `ES_APPENDIX_SLUGS`) -- with a Latin *Pater Noster* beside
+        # it, which is why `no_latin` is one shorter than everyone else's.
+        rosary_mysteries="sp",
+        litany=litany_source("es", "sp"),
+        appendix_slugs=ES_APPENDIX_SLUGS,
+        no_latin=NO_LATIN_SLUGS - {"our-father"},
+    ),
+    "ro": LangSpec(
+        work_id="prayer.common.ro",
+        title="Rugăciuni obişnuite",
+        short_title="Rugăciuni obişnuite",
+        appendix=compendium_source("ro", build_prayers_ro),
+        copyright_notice=(
+            "Copyright © 2005 - Libreria Editrice Vaticana pentru folosirea în "
+            "România a traducerii în limba română"
+        ),
+        copyright_note=(
+            "The Romanian Compendium is published in Romania by Editura Presa "
+            "Bună (Iaşi), under the Libreria Editrice Vaticana grant its own "
+            "page prints; the page carries that grant, the publisher's imprint "
+            "and an ISBN, where every other edition carries only the LEV line. "
+            "Both are recorded rather than normalised away."
+        ),
+    ),
+    "sl": LangSpec(
+        work_id="prayer.common.sl",
+        title="Splošne molitve",
+        short_title="Splošne molitve",
+        appendix=compendium_source("sl", build_prayers_sl),
+        appendix_slugs=[s for s in APPENDIX_SLUGS if s not in SL_ABSENT],
+        absent=SL_ABSENT | SL_LATIN_ONLY,
+    ),
+    "sv": LangSpec(
+        work_id="prayer.common.sv",
+        title="Vanliga böner",
+        short_title="Vanliga böner",
+        appendix=compendium_source("sv", build_prayers_sv),
+        # The Holy Rosary micro-site publishes six languages and Swedish is
+        # not one of them, and vatican.va publishes no Swedish Catechism --
+        # so no Litany, no Creeds, no Our Father, and a Rosary that is the
+        # bare Appendix A entry.
+        appendix_slugs=SV_APPENDIX_SLUGS,
+        absent=SV_ABSENT,
+    ),
+    "fr": LangSpec(
+        work_id="prayer.common.fr",
+        title="Prières Communes",
+        short_title="Prières Communes",
+        appendix=compendium_source("fr", build_prayers_fr),
+        rosary_mysteries="fr",
+        litany=litany_source("fr", "fr"),
+    ),
+    "hu": LangSpec(
+        work_id="prayer.common.hu",
+        title="Alapvető imádságok",
+        short_title="Alapvető imádságok",
+        appendix=compendium_source("hu", build_prayers_hu),
+        # The Hungarian appendix prints "Jöjj, Szentlélek Istenünk" as a bold
+        # heading and then moves straight to the next prayer -- the Veni
+        # Sancte Spiritus has no text in this edition. It is the same kind of
+        # gap as its Rosary, which prints two of the four mystery groups.
+        headed_but_empty=frozenset({"veni-sancte-spiritus"}),
+    ),
+    "it": LangSpec(
+        work_id="prayer.common.it",
+        title="Preghiere Comuni",
+        short_title="Preghiere Comuni",
+        appendix=compendium_source("it", build_prayers_it),
+        rosary_mysteries="it",
+        litany=litany_source("it", "it"),
+    ),
+    "pt": LangSpec(
+        work_id="prayer.common.pt",
+        title="Orações Comuns",
+        short_title="Orações Comuns",
+        appendix=compendium_source("pt", build_prayers_pt),
+        creeds=Source(
+            CCC_PT_CREDO_RAW,
+            CCC_PT_CREDO_URL,
+            captured_at(CCC_PT_CREDO_RAW, CCC_RETRIEVED_AT),
+            build_creeds_pt,
+        ),
+        our_father=Source(
+            CCC_PT_OUR_FATHER_RAW,
+            CCC_PT_OUR_FATHER_URL,
+            captured_at(CCC_PT_OUR_FATHER_RAW, CCC_RETRIEVED_AT),
+            _one(build_our_father_pt),
+        ),
+        litany=Source(
+            LITANY_PT_RAW,
+            LITANY_PT_URL,
+            captured_at(LITANY_PT_RAW, LITANY_RETRIEVED_AT),
+            build_litany("pt"),
+        ),
+        rosary_mysteries="po",
+    ),
 }
 
 
@@ -2131,6 +4028,12 @@ def prayer_sources(slug: str, lang: str) -> list[dict]:
 
     Not the mysteries or the instructions -- those carry their own `source`,
     because they come from pages this entry's surrounding text does not."""
+    if lang == "la" and slug in LATIN_FROM_CATECHISM_SLUGS:
+        # Read off the Latin Catechism itself, not derived from either
+        # vernacular witness -- so neither Compendium page is its provenance.
+        url = CCC_LA_OUR_FATHER_URL if slug == "our-father" else CCC_LA_CREDO_URL
+        path = CCC_LA_OUR_FATHER_RAW if slug == "our-father" else CCC_LA_CREDO_RAW
+        return [{"url": url, "retrieved_at": captured_at(path, CCC_RETRIEVED_AT)}]
     if lang == "la":
         # A DERIVED edition (see `build_latin_edition`): its text is the
         # `latin` field of both vernacular witnesses, which are two cells on
@@ -2141,29 +4044,27 @@ def prayer_sources(slug: str, lang: str) -> list[dict]:
             {"url": EN_URL, "retrieved_at": RETRIEVED_AT},
             {"url": PT_URL, "retrieved_at": RETRIEVED_AT},
         ]
-    en = lang == "en"
-    if slug in ("apostles-creed", "nicene-creed"):
-        return [
-            {
-                "url": CCC_EN_CREDO_URL if en else CCC_PT_CREDO_URL,
-                "retrieved_at": CCC_RETRIEVED_AT,
-            }
-        ]
-    if slug == "our-father":
-        return [
-            {
-                "url": CCC_EN_OUR_FATHER_URL if en else CCC_PT_OUR_FATHER_URL,
-                "retrieved_at": CCC_RETRIEVED_AT,
-            }
-        ]
-    if slug == LITANY_SLUG:
-        return [
-            {
-                "url": LITANY_EN_URL if en else LITANY_PT_URL,
-                "retrieved_at": LITANY_RETRIEVED_AT,
-            }
-        ]
-    return [{"url": EN_URL if en else PT_URL, "retrieved_at": RETRIEVED_AT}]
+    # READ OFF THE SAME TABLE THE PARSE READ, so the two cannot disagree.
+    # This was three `if lang == "en" else <pt>` conditionals restating what
+    # `LangSpec` now says once; with ten languages that is ten chances for a
+    # prayer to claim a page it was not parsed from, and the only thing that
+    # would catch it is `check_source_coverage` -- which compares this against
+    # a manifest built from the same wrong constants.
+    #
+    # SPANISH IS WHY THIS MATTERS RATHER THAN BEING MERELY TIDIER. Its Our
+    # Father is the appendix's own 25th row, not the Catechism's page, so the
+    # slug-to-source answer genuinely differs per language and cannot be
+    # written as one rule about slugs.
+    spec = LANG_CONFIG[lang]
+    if slug in ("apostles-creed", "nicene-creed") and spec.creeds:
+        source = spec.creeds
+    elif slug == "our-father" and spec.our_father:
+        source = spec.our_father
+    elif slug == LITANY_SLUG and spec.litany:
+        source = spec.litany
+    else:
+        source = spec.appendix
+    return [{"url": source.url, "retrieved_at": source.retrieved_at}]
 
 
 def attach_sources(prayers: list[Prayer], lang: str) -> None:
@@ -2175,10 +4076,17 @@ def attach_sources(prayers: list[Prayer], lang: str) -> None:
     the answer differs by edition -- the regional edition's five prayers are
     the English page's UK column, the Latin edition's text is neither page's
     vernacular. Idempotent: re-running it overwrites rather than appends."""
-    mystery_urls = ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"]
+    code = LANG_CONFIG[lang].rosary_mysteries if lang in LANG_CONFIG else None
+    mystery_urls = (
+        [rosary_mystery_urls(code, name)[0] for name in ROSARY_MYSTERY_FILES]
+        if code
+        else []
+    )
     for prayer in prayers:
         prayer.sources = prayer_sources(prayer.slug, lang)
-        if prayer.slug != "rosary" or lang == "la":
+        # An edition whose mirror publishes no mystery pages has a Rosary with
+        # no `groups` to attribute -- the bare Appendix A entry (see `run`).
+        if prayer.slug != "rosary" or lang == "la" or not mystery_urls:
             # The Latin Rosary has no mysteries and no instructions: the
             # Compendium prints Latin for the entry, and the micro-site
             # pages are vernacular only. Nothing to attribute.
@@ -2203,7 +4111,7 @@ def build_manifest(
     `prayers` because by the time a manifest is written the wording has already
     been resolved into one edition or the other and no `variants` array
     survives -- see `build_base_edition`."""
-    cfg = LANG_CONFIG[lang]
+    spec = LANG_CONFIG[lang]
     n_with_latin = sum(1 for p in prayers if p.latin)
     varied = varied or []
     notes = [
@@ -2297,42 +4205,45 @@ def build_manifest(
             "same posture docs/corpus-schema.md already takes for CCC "
             "inline emphasis -- recorded here rather than fixed."
         )
+    if spec.copyright_note:
+        notes.append(spec.copyright_note)
     if applied_corrections:
         notes.append(
             f"{len(applied_corrections)} correction(s) applied from "
-            f"pipeline/corrections/{cfg['work_id']}.json -- see "
+            f"pipeline/corrections/{spec.work_id}.json -- see "
             "corrections-applied.json for the receipt."
         )
+    # DERIVED FROM THE SAME TABLE `prayer_sources` READS, which is what keeps
+    # `check_source_coverage`'s two-way assertion meaningful: it checks that no
+    # prayer claims a page the manifest does not declare and that no declared
+    # page goes unclaimed, and that check is worth nothing if both sides are
+    # built from the same hand-written pair of conditionals.
+    sources = [{"url": spec.appendix.url, "retrieved_at": spec.appendix.retrieved_at}]
+    for companion in (spec.creeds, spec.our_father, spec.litany):
+        if companion:
+            sources.append(
+                {"url": companion.url, "retrieved_at": companion.retrieved_at}
+            )
+    if spec.rosary_mysteries:
+        sources += [
+            {
+                "url": rosary_mystery_urls(spec.rosary_mysteries, name)[0],
+                "retrieved_at": ROSARY_MYSTERIES_RETRIEVED_AT,
+            }
+            for name in ROSARY_MYSTERY_FILES
+        ]
     return {
-        "id": cfg["work_id"],
+        "id": spec.work_id,
         "type": "prayer",
-        "title": cfg["title"],
-        "short_title": cfg["short_title"],
+        "title": spec.title,
+        "short_title": spec.short_title,
         "language": lang,
         "edition": "Compendium of the CCC (2005) Appendix A + Catechism texts and Vatican Rosary pages",
-        "sources": [
-            {"url": cfg["url"], "retrieved_at": RETRIEVED_AT},
-            {
-                "url": CCC_EN_CREDO_URL if lang == "en" else CCC_PT_CREDO_URL,
-                "retrieved_at": CCC_RETRIEVED_AT,
-            },
-            {
-                "url": CCC_EN_OUR_FATHER_URL if lang == "en" else CCC_PT_OUR_FATHER_URL,
-                "retrieved_at": CCC_RETRIEVED_AT,
-            },
-            {
-                "url": LITANY_EN_URL if lang == "en" else LITANY_PT_URL,
-                "retrieved_at": LITANY_RETRIEVED_AT,
-            },
-            *[
-                {"url": url, "retrieved_at": ROSARY_MYSTERIES_RETRIEVED_AT}
-                for url in ROSARY_MYSTERY_URLS["en" if lang == "en" else "po"]
-            ],
-        ],
+        "sources": sources,
         "copyright": {
             "status": "copyrighted",
             "holder": COPYRIGHT_HOLDER,
-            "notice": COPYRIGHT_NOTICE,
+            "notice": spec.copyright_notice or COPYRIGHT_NOTICE,
         },
         "notes": " ".join(notes),
         "generated_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -2346,8 +4257,8 @@ def write_outputs(
     applied_corrections: list[dict],
     varied: list[str] | None = None,
 ) -> None:
-    cfg = LANG_CONFIG[lang]
-    out_dir = BUILD_ROOT / cfg["work_id"]
+    spec = LANG_CONFIG[lang]
+    out_dir = BUILD_ROOT / spec.work_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
     attach_sources(prayers, lang)
@@ -2401,10 +4312,21 @@ def build_latin_manifest(prayers: list[Prayer], report: list[dict]) -> dict:
         "title": LATIN_TITLE,
         "short_title": LATIN_TITLE,
         "language": "la",
-        "edition": "Compendium of the CCC (2005) Appendix A, Latin columns",
+        "edition": (
+            "Compendium of the CCC (2005) Appendix A, Latin columns, with the "
+            "Creeds and the Lord's Prayer from the Catechism's Latin edition"
+        ),
         "sources": [
             {"url": EN_URL, "retrieved_at": RETRIEVED_AT},
             {"url": PT_URL, "retrieved_at": RETRIEVED_AT},
+            {
+                "url": CCC_LA_CREDO_URL,
+                "retrieved_at": captured_at(CCC_LA_CREDO_RAW, CCC_RETRIEVED_AT),
+            },
+            {
+                "url": CCC_LA_OUR_FATHER_URL,
+                "retrieved_at": captured_at(CCC_LA_OUR_FATHER_RAW, CCC_RETRIEVED_AT),
+            },
         ],
         "copyright": {
             "status": "copyrighted",
@@ -2414,14 +4336,22 @@ def build_latin_manifest(prayers: list[Prayer], report: list[dict]) -> dict:
         "notes": " ".join(
             [
                 (
-                    f"Derived, not separately scraped: the {len(prayers)} prayers the "
-                    "Compendium of the CCC prints with a Latin companion, lifted out "
-                    "of the `latin` field the two vernacular editions already carry. "
-                    "The other 7 entries of those editions (the Apostles' and Nicene "
-                    "Creeds, the Our Father, the three Eastern prayers and the Litany "
-                    "of Loreto) are printed with no Latin anywhere in the source and "
-                    "so are absent here -- a property of the source, not a gap to "
-                    "fill. The per-prayer `latin` field remains in both vernacular "
+                    f"Assembled from two kinds of source, {len(prayers)} prayers in "
+                    f"all. {len(LATIN_SLUGS)} are DERIVED, not separately scraped: "
+                    "the prayers the Compendium of the CCC prints with a Latin "
+                    "companion, lifted out of the `latin` field the vernacular "
+                    f"editions already carry. {len(LATIN_FROM_CATECHISM_SLUGS)} are "
+                    "read directly off the Catechism's own Latin edition -- the "
+                    "Apostles' and Nicene Creeds from its SYMBOLUM FIDEI table and "
+                    "the Our Father from the text it prints at 2759 -- because the "
+                    "Compendium's appendix prints no Latin for them and the "
+                    "Catechism does. `witnesses.json` marks those three `ccc-la`, "
+                    "and they take no part in the two-witness reconciliation "
+                    "described below, there being one witness to them. The four "
+                    "still absent (the three Eastern prayers and the Litany of "
+                    "Loreto) are printed with no Latin anywhere in the source -- a "
+                    "property of the source, not a gap to fill. The per-prayer "
+                    "`latin` field remains in both vernacular "
                     "editions: it is what the source prints and what this edition is "
                     "derived from."
                 ),
@@ -2495,15 +4425,26 @@ def validate_latin(
     every character of it still folds to what the English witness printed.
     """
     problems: list[str] = []
-    expected = [p.slug for p in en if p.latin]
+    # THE EDITION IS NOW TWO DERIVATIONS, NOT ONE, and only the second has an
+    # English witness to fold against. The three from the Latin Catechism are
+    # read off a Latin page; there is no `en.latin` for them, and asserting
+    # one is what this used to do -- it crashed rather than reporting, because
+    # the assert ran before any check could describe the problem.
+    expected = LATIN_FROM_CATECHISM_SLUGS + [p.slug for p in en if p.latin]
     got = [p.slug for p in latin]
     if got != expected:
         problems.append(f"slug set/order drifted: {got} != {expected}")
 
     en_by_slug = {p.slug: p for p in en}
     for prayer in latin:
+        if prayer.slug in LATIN_FROM_CATECHISM_SLUGS:
+            if not any(b.text.strip() for b in prayer.blocks):
+                problems.append(f"{prayer.slug}: no Latin text from the Catechism")
+            continue
         source = en_by_slug[prayer.slug].latin
-        assert source is not None
+        if source is None:
+            problems.append(f"{prayer.slug}: no English witness to fold against")
+            continue
         want = [c for _, c in _fold_stream(" ".join(b.text for b in source.blocks))]
         have = [c for _, c in _fold_stream(" ".join(b.text for b in prayer.blocks))]
         if want != have:
@@ -2512,7 +4453,9 @@ def validate_latin(
             problems.append(f"{prayer.slug}: empty block")
 
     pt_slugs = {p.slug for p in pt if p.latin}
-    missing = [s for s in got if s not in pt_slugs]
+    missing = [
+        s for s in got if s not in pt_slugs and s not in LATIN_FROM_CATECHISM_SLUGS
+    ]
     if missing:
         # Not a failure: a prayer only one page prints Latin for is legitimate.
         # Reported so it is never a silent asymmetry.
@@ -2547,49 +4490,68 @@ def print_summary(
 # --------------------------------------------------------------------------
 
 
-def run(lang: str) -> tuple[list[Prayer], list[dict]]:
-    cfg = LANG_CONFIG[lang]
-    if not cfg["raw_path"].exists():
+def read_source(lang: str, source: Source) -> list[Prayer]:
+    """One source's prayers, or a hard failure naming the file.
+
+    A source NAMED in a `LangSpec` and missing from disk is an error, never a
+    silent skip: the way a language contributes nothing is by having `None`
+    there, which is a statement about the mirror. A missing file instead means
+    somebody has to go and get it -- with `--fetch-companions` if it is a
+    micro-site page, or by running the scraper that owns it."""
+    if not source.path.exists():
         raise RuntimeError(
-            f"{lang}: raw file not found at {cfg['raw_path']} -- this script never "
-            "fetches over the network (see module docstring); if this file is "
-            "genuinely missing, that's a decision for whoever runs compendium.py, "
-            "not for this script to work around."
+            f"{lang}: raw source not found at {source.path} -- this script never "
+            "fetches during a parse (see module docstring). A micro-site page is "
+            "captured with --fetch-companions; a Compendium or Catechism page "
+            "belongs to compendium.py or ccc.py, not to a workaround here."
         )
-    html_text = cfg["raw_path"].read_text(encoding="cp1252", errors="replace")
-    appendix_prayers = cfg["builder"](html_text)
-    credo_path = CCC_EN_CREDO_RAW if lang == "en" else CCC_PT_CREDO_RAW
-    our_father_path = CCC_EN_OUR_FATHER_RAW if lang == "en" else CCC_PT_OUR_FATHER_RAW
-    litany_path = LITANY_EN_RAW if lang == "en" else LITANY_PT_RAW
-    for path in (credo_path, our_father_path, litany_path):
-        if not path.exists():
-            raise RuntimeError(
-                f"{lang}: raw CCC source not found at {path} -- this script never fetches over the network"
-            )
-    credo_html = credo_path.read_text(encoding="cp1252", errors="replace")
-    our_father_html = our_father_path.read_text(encoding="cp1252", errors="replace")
-    litany_html = litany_path.read_text(encoding="cp1252", errors="replace")
-    creeds = (
-        build_creeds_en(credo_html) if lang == "en" else build_creeds_pt(credo_html)
-    )
-    our_father = (
-        build_our_father_en(our_father_html)
-        if lang == "en"
-        else build_our_father_pt(our_father_html)
-    )
-    litany = (
-        build_litany_en(litany_html) if lang == "en" else build_litany_pt(litany_html)
-    )
+    return source.reader(source.path.read_text(encoding="cp1252", errors="replace"))
+
+
+def run(lang: str) -> tuple[list[Prayer], list[dict]]:
+    spec = LANG_CONFIG[lang]
+    appendix_prayers = read_source(lang, spec.appendix)
+
+    # THE ROSARY IS ENRICHED ONLY WHERE THE MICRO-SITE PUBLISHES IT. Without
+    # those four pages the Appendix A entry stands as the Compendium prints
+    # it -- a title, a rubric and the concluding prayer -- which is a shorter
+    # entry, not a broken one.
     rosary = next(
         (prayer for prayer in appendix_prayers if prayer.slug == "rosary"), None
     )
     if rosary is None:
         raise RuntimeError(f"{lang}: Appendix A parser produced no Rosary entry")
-    enrich_rosary_with_full_mysteries(rosary, lang)
-    prayers = [*creeds, our_father, *appendix_prayers, litany]
+    if spec.rosary_mysteries:
+        enrich_rosary_with_full_mysteries(rosary, lang)
+
+    # The order the collection is published in: the Catechism's three texts
+    # first, then the appendix in its own print order, then the Litany. A
+    # language missing any of them simply contributes nothing there -- and
+    # Spanish prints its own Our Father INSIDE the appendix, so it arrives in
+    # the middle rather than at the front. `n` is print order within one
+    # language and the slug is the address, so that is a difference the schema
+    # already allows for (docs/corpus-schema.md §Prayers).
+    prayers = [
+        *(read_source(lang, spec.creeds) if spec.creeds else []),
+        *(read_source(lang, spec.our_father) if spec.our_father else []),
+        *appendix_prayers,
+        *(read_source(lang, spec.litany) if spec.litany else []),
+    ]
+    # Drop the prayers this mirror heads and leaves blank, checking first that
+    # they really are blank -- see `LangSpec.headed_but_empty`.
+    if spec.headed_but_empty:
+        for prayer in prayers:
+            has_body = prayer.blocks or prayer.groups or prayer.variants
+            if prayer.slug in spec.headed_but_empty and has_body:
+                raise RuntimeError(
+                    f"{lang}: {prayer.slug} is listed as headed-but-empty and now "
+                    "has text -- the source has changed, so remove it from the list"
+                )
+        prayers = [p for p in prayers if p.slug not in spec.headed_but_empty]
+
     for n, prayer in enumerate(prayers, start=1):
         prayer.n = n
-    corrections = load_corrections(cfg["work_id"])
+    corrections = load_corrections(spec.work_id)
     applied = apply_corrections(prayers, corrections) if corrections else []
     return prayers, applied
 
@@ -2696,25 +4658,30 @@ def print_latin_summary(prayers: list[Prayer], report: list[dict]) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--lang", choices=["en", "pt", "both"], default="both")
+    # `all` IS THE DEFAULT AND THAT IS LOAD-BEARING, not a convenience. It was
+    # `both`, meaning en+pt, and `pipeline/rebuild.py` invokes this script with
+    # no arguments at all -- so a language added to `LANG_CONFIG` behind a
+    # default that did not cover it would parse for whoever typed its name and
+    # for nobody else, silently, exactly the way `--exhortations` left 33
+    # documents unparsed for months (CLAUDE.md, "The Magisterium is ten
+    # languages"). Derived from the table so a new entry needs no edit here.
+    ap.add_argument("--lang", choices=[*sorted(LANG_CONFIG), "all"], default="all")
     ap.add_argument(
-        "--fetch-litany",
+        "--fetch-companions",
         action="store_true",
-        help="capture the requested Vatican Litany of Loreto EN/PT pages into the write-once raw cache",
-    )
-    ap.add_argument(
-        "--fetch-rosary-mysteries",
-        action="store_true",
-        help="capture the full Vatican Rosary-mystery pages EN/PT into the write-once raw cache",
+        help=(
+            "capture the Holy Rosary micro-site pages (the Litany of Loreto and "
+            "the four mystery pages) for the requested languages into the "
+            "write-once raw cache. An acquisition, not a parse -- see "
+            "capture_companions()"
+        ),
     )
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
-    if args.fetch_litany:
-        capture_litany_raw()
-    if args.fetch_rosary_mysteries:
-        capture_rosary_mysteries_raw()
-    langs = ["en", "pt"] if args.lang == "both" else [args.lang]
+    langs = sorted(LANG_CONFIG) if args.lang == "all" else [args.lang]
+    if args.fetch_companions:
+        capture_companions(langs)
 
     results: dict[str, list[Prayer]] = {}
     applied_by_lang: dict[str, list[dict]] = {}
@@ -2746,15 +4713,15 @@ def main() -> int:
     else:
         regional_ok, regional_problems = True, []
 
+    # `results` here holds the UNSPLIT parses -- the cross-language oracle is
+    # about the address space each source publishes, not about the collection
+    # and regional edition we cut the English one into.
+    ok, problems = validate(results)
+
     if "en" in results and "pt" in results:
-        ok, problems = validate(en, pt)
-        # `en` here is the UNSPLIT parse -- the cross-language oracle is about
-        # the address space the source publishes, which is one English
-        # appendix against one Portuguese one, not about the collection and
-        # regional edition we cut the former into.
         # The Latin edition needs BOTH witnesses -- the English for its text,
         # the Portuguese for where five prayers break into stanzas -- so it is
-        # built only on a full run, never on `--lang en` alone. Writing it
+        # built only when both ran, never on `--lang en` alone. Writing it
         # from one witness would silently produce a differently-segmented
         # edition under the same work id.
         latin, witnesses = build_latin_edition(en, pt)
@@ -2763,13 +4730,6 @@ def main() -> int:
         ok = ok and latin_ok
         problems = problems + latin_problems
         print_latin_summary(latin, witnesses)
-    else:
-        # single-language run: validate what we have against itself, with
-        # the other side's slug set standing in (only the per-language
-        # checks that don't need a cross-language peer actually run
-        # meaningfully; the slug-order-match check is trivially true).
-        only = en or pt
-        ok, problems = validate(only, only)
     ok = ok and regional_ok
     problems = problems + regional_problems
     overall_ok = ok

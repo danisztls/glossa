@@ -195,7 +195,7 @@
 				"nothing": 0
 			},
 			"prose": {
-				"blocks": 16983,
+				"blocks": 17019,
 				"scripture": 1774,
 				"document": 0,
 				"stored": 0
@@ -486,18 +486,39 @@
 		},
 		"prayer": {
 			"citations": {
-				"total": 40,
-				"linkable": 40,
+				"total": 120,
+				"linkable": 116,
 				"recognized": 0,
-				"nothing": 0
+				"nothing": 4
 			},
 			"prose": {
-				"blocks": 301,
+				"blocks": 1188,
 				"scripture": 0,
 				"document": 0,
 				"stored": 0
 			},
-			"residue": []
+			"residue": [
+				{
+					"key": "1 39-40.",
+					"count": 1,
+					"example": "1,39-40. 41b-42.45"
+				},
+				{
+					"key": "2 1.4a.6-7",
+					"count": 1,
+					"example": "2,1.4a.6-7"
+				},
+				{
+					"key": "2 22b.25a.27-28",
+					"count": 1,
+					"example": "2, 22b.25a.27-28"
+				},
+				{
+					"key": "24 1-6a.9",
+					"count": 1,
+					"example": "24, 1-6a.9"
+				}
+			]
 		},
 		"summa": {
 			"citations": {
