@@ -210,6 +210,8 @@ export const sl: Dictionary = {
 		'Brez sledilnih skriptov, brez kode tretjih oseb, brez piškotkov. Le anonimna štetja uporabe, nič, kar bi vas identificiralo.',
 	'colophon.pointOffline':
 		'Zgrajeno tako, da po enem obisku deluje tudi brez povezave, da slaba povezava ne bi bila ovira za branje.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica je zasebna pobuda laiških vernikov. Nima nobene cerkvene odobritve in ne govori z lastno avtoriteto.',
 	'colophon.textsTitle': 'Besedila',
 	'colophon.textsBody':
 		'Vsako besedilo prihaja iz imenovanega vira, vsako delo pa beleži svojo izdajo, izvorno stran in datum prevzema. Sveto pismo uporablja prevode v javni lasti; katekizem, kompendij in dokumenti učiteljstva prihajajo iz besedil, ki jih je objavil Sveti sedež sam.',

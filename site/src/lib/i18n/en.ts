@@ -344,6 +344,24 @@ export const en: Dictionary = {
 		'No tracking scripts, no third-party code, no cookies. Anonymous usage counts only, with nothing that identifies you.',
 	'colophon.pointOffline':
 		'Built to keep working offline once you have visited it, so a poor connection need not be a barrier to reading.',
+	// The site's canonical standing, stated where a reader asks what this is
+	// rather than in the copyright section — that section is addressed to a
+	// rights holder, and this is addressed to the reader. Can. 216 CIC
+	// reserves the name "Catholic" to undertakings holding the consent of
+	// competent ecclesiastical authority; this site holds none, and the whole
+	// point of the paragraph is that nobody should have to guess.
+	//
+	// WHAT IT DELIBERATELY DOES NOT SAY IS WHAT IS OURS. There is prose here
+	// that is not the publishers': descriptions.json holds 385 editorial
+	// descriptions written here, rendered on /documenta and in the shell head.
+	// A sentence on this page claiming them was drafted and removed. A reader
+	// meets that prose beside a document, not on the colophon, so the claim
+	// belongs in the reading interface and marked per item — which is a
+	// mechanism nobody has built yet. Until it exists this is a KNOWN GAP,
+	// left open on purpose rather than papered over with a paragraph most
+	// readers never reach.
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica is a private undertaking of the lay faithful. It carries no ecclesiastical approbation and speaks with no authority of its own.',
 	'colophon.textsTitle': 'The texts',
 	'colophon.textsBody':
 		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts.',

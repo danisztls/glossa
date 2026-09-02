@@ -212,6 +212,8 @@ export const it: Dictionary = {
 		'Nessuno script di tracciamento, nessun codice di terze parti, nessun cookie. Solo conteggi d’uso anonimi, nulla che ti identifichi.',
 	'colophon.pointOffline':
 		'Costruito per continuare a funzionare offline una volta che l’hai visitato, così che una connessione scarsa non sia un ostacolo alla lettura.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica è un’iniziativa privata di fedeli laici. Non ha alcuna approvazione ecclesiastica e non parla con autorità propria.',
 	'colophon.textsTitle': 'I testi',
 	'colophon.textsBody':
 		'Ogni testo proviene da una fonte dichiarata, e ogni opera registra la sua edizione, la sua pagina d’origine e la data in cui è stata recuperata. La Scrittura usa traduzioni di pubblico dominio; il Catechismo, il Compendio e i documenti del Magistero vengono dai testi pubblicati dalla Santa Sede stessa.',

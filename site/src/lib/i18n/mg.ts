@@ -20,13 +20,17 @@
  * (faith) are its own division headings. Where this file guesses instead, it
  * omits the key — see below.
  *
- * DELIBERATELY PARTIAL, and not as a placeholder. The long colophon prose is
- * absent, so it renders in English through `t()`'s per-key fallback: it is the
- * page explaining how carefully this site handles other people's words, and a
- * machine translation of it would be the one page whose form contradicts its
- * content. Anything else missing here is a phrase this file was not confident
- * enough about to print to a reader who would know better. Filling those in
- * is welcome; guessing at them is not.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -118,5 +122,51 @@ export const mg: Dictionary = {
 	'bookmark.empty': 'Mbola tsy misy nomarihina.',
 	'colophon.title': 'Kôlôfôna',
 	'colophon.lede':
-		'Ny amin’ity tranonkala ity, ny niavian’ny soratra ao aminy, ary ny toerana ijoroanay amin’ny famerenana azy ireo.'
+		'Ny amin’ity tranonkala ity, ny niavian’ny soratra ao aminy, ary ny toerana ijoroanay amin’ny famerenana azy ireo.',
+	'colophon.whatThisIs': 'Inona ity',
+	'colophon.whatThisIsBody':
+		"Ny Glossa Catholica dia tranonkala famakiana ny Soratra Masina, ny Katesizin'ny Fiangonana Katôlika, ny Famintinana ary ireo antontan-taratasin'ny Fampianarana Ofisialy, amin'ny teny anglisy, portogey ary latina. Misy izy mba hovakiana, ary tsy misy zavatra hafa angatahina aminao mba hamakiana azy:",
+	'colophon.pointFree':
+		'Maimaim-poana, ary maimaim-poana mandrakariva. Tsy misy rindrina fandoavam-bola, tsy misy famandrihana andoavam-bola, tsy misy zavatra amidy.',
+	'colophon.pointNoAds':
+		'Tsy misy dokam-barotra, ary tsy misy fametrahana voatohana vola na inona na inona.',
+	'colophon.pointNoAccounts': 'Tsy misy kaonty. Tsy misy hisoratana anarana, tsy misy hidirana.',
+	'colophon.pointNoTracking':
+		"Tsy misy script fanaraha-dia, tsy misy kaody avy amin'ny hafa, tsy misy cookie. Isa tsy manonona anarana momba ny fampiasana ihany, ka tsy misy manondro anao.",
+	'colophon.pointOffline':
+		"Namboarina mba hanohy hiasa na dia tsy misy fifandraisana aza rehefa avy nitsidika ianao, mba tsy ho sakana amin'ny famakiana ny fifandraisana malemy.",
+	'colophon.whatThisIsStanding':
+		"Ny Glossa Catholica dia hetsika manokana ataon'ny kristianina laika. Tsy manana fankatoavana ara-piangonana izy ary tsy miteny amin'ny fahefany manokana.",
+	'colophon.textsTitle': 'Ireo lahatsoratra',
+	'colophon.textsBody':
+		"Ny lahatsoratra tsirairay dia avy amin'ny loharano voatonona anarana, ary ny asa soratra tsirairay dia mirakitra ny fanontany, ny pejy niaviany ary ny daty nakana azy. Ny Soratra Masina dia mampiasa fandikan-teny efa an'ny besinimaro; ny Katesizy, ny Famintinana ary ireo antontan-taratasin'ny Fampianarana Ofisialy dia avy amin'ny lahatsoratra navoakan'ny Fiketrahana Masina ihany.",
+	'colophon.textsFidelity':
+		"Tsy fohezina mihitsy ny lahatsoratra, tsy averina lazaina amin'ny teny hafa mihitsy, tsy soratana indray mihitsy, ary tsy apetraka eo akaikin'ny dokam-barotra mihitsy. Amboarinay kosa ny kilema miharihary — teny latsaka, teny nalaina simba, marika nitelina andalana — mankany amin'izay atontan'ny loharano ihany foana, fa tsy mankany amin'izay heverinay tokony holazainy.",
+	'colophon.countBible': 'fanontana Baiboly',
+	'colophon.countDocuments': "antontan-taratasin'ny Fampianarana Ofisialy",
+	'colophon.copyrightTitle': "Zon'ny mpamorona",
+	'colophon.copyrightBody1':
+		"Ny Katesizy, ny Famintinana ary ireo antontan-taratasin'ny Fampianarana Ofisialy dia fananan'ireo tompon'ny zo aminy — indrindra ny Libreria Editrice Vaticana sy ny Dikasteria momba ny Fifandraisana.",
+	'colophon.copyrightBody2':
+		"Ny asa soratra tsirairay dia mampiseho ny fanambaran'ny tompon'ny zo momba ny zon'ny mpamorona, araka ny teniny ihany, ary mampifandray amin'ny pejy nangalana azy.",
+	'colophon.copyrightBody3':
+		"Raha manana zo amin'ny lahatsoratra rehetra eto ianao ka aleonao tsy havoaka izany, dia soratanao aminay.",
+	'colophon.contactTitle': 'Fifandraisana',
+	'colophon.contactBody': "Ho an'ny zavatra rehetra, anisan'izany ireo voalaza etsy ambony:",
+	'colophon.contactPending':
+		'Mbola tsy voapetraka ny adiresy fifandraisana. Tsy tokony hampahafantarina ampahibemaso ity tranonkala ity raha tsy efa manana izany — tsy misy dikany ny fanoloran-tena etsy ambony raha tsy misy fomba hahatratrarana anay.',
+	'colophon.illustrationsTitle': 'Ireo sary',
+	'colophon.illustrationsBody':
+		"Mitondra ny sary sokitr'i Gustave Doré ny Baiboly, ka ny tsirairay dia apetraka eo amin'ny andininy asehony — ny farany sy ny lehibe indrindra amin'ireo andiany momba ny Baiboly nataony, nosokirina tamin'ny hazo avy amin'ny sariny ary natonta niaraka tamin'ny lahatsoratra fa tsy nangonina tany aoriana.",
+	'colophon.illustrationsRights':
+		"An'ny besinimaro izy ireo, araka ny asehon'ireo daty etsy ambany, ary ny sary nalaina marina tamin'ny sary sokitra an'ny besinimaro dia tsy mitondra zon'ny mpamorona vaovao manokana.",
+	'colophon.countPlates': 'sary sokitra',
+	'colophon.countPlateChapters': 'toko misy sary',
+	'colophon.typeTitle': 'Ny endri-tsoratra',
+	'colophon.typeBody':
+		"Natonta tamin'ny EB Garamond, famelomana indray nataon'i Georg Duffner sy Octavio Pardo ireo endri-tsoratra nosokirin'i Claude Garamont tamin'ny taona 1590 — ilay fomban-drazana maha-olona izay anontan'ny Fiangonana hatramin'ny Renaissance. Ny sorany sirilika dia avy amin'ny tanana mitovy nefa tsy mamelona na inona na inona: tsy nisy Garamond sirilika nosokirina mihitsy, ka natonta tamin'ny endrika nosarina mba hipetraka eo akaikin'ny sisa ny teny rosiana.",
+	'colophon.typeArabic':
+		"Ny teny arabo dia lavitra tanteraka izany, ka natonta tamin'ny Amiri — famelomana indray nataon'i Khaled Hosny ilay naskh nosokirina ho an'ny fanontam-pirinty Bulaq tao Kairo tamin'ny 1905, nofidina noho ny antony mitovy amin'ny endri-tsoratry ny lahatsoratra: endri-tsoratra ara-tantara manokana fa tsy sary vaovao ankehitriny.",
+	'colophon.typeInitials':
+		"Ireo litera fanombohana dia Pirata One, endri-tsoratra gôtika izay mbola vakiana tsara ny litera lehibeny amin'ny habe ilain'ny litera voalohany, ary — ho an'ny teny rosiana — Ponomar, izay mamerina ny endri-tsoratra slavôna am-piangonana an'ny Fanontam-pirinty Sinôdaly. Ny Ponomar dia manonta ny litera voalohany fa tsy ny lahatsoratra mihitsy: ny ansiklika maoderina natonta manontolo tamin'ny endri-tsoratra sinôdaly dia hilaza zavatra tsy marina momba izay maha-izy azy. Samy nomena alalana amin'ny SIL Open Font License izy rehetra ary avy amin'ity tranonkala ity no anomezana azy fa tsy avy amin'ny hafa, ka ny famakiana pejy dia tsy mangataka na inona na inona amin'ny mpizara an'olon-kafa."
 };

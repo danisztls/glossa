@@ -73,6 +73,24 @@
 		<li>{t('colophon.pointOffline')}</li>
 	</ul>
 
+	<!--
+		Where this site stands, closing the section that says what it is —
+		before "The texts", because a reader who has just been told what is
+		offered is owed the standing it is offered on, and after the list,
+		because the list is a set of promises about reading and this is not.
+
+		Not its own <h2>: a heading would need a name in fourteen dictionaries
+		for a term of art none of them has a settled word for, and the claim
+		belongs to "what this is" anyway.
+
+		One paragraph, and the second one it briefly had is gone on purpose —
+		see the key's own note in i18n/en.ts. Saying what is OURS rather than
+		the publishers' is a claim about provenance, and a provenance claim
+		belongs beside the prose it is about, marked per item in the reading
+		interface. Nothing here does that yet. The gap is deliberate.
+	-->
+	<p>{t('colophon.whatThisIsStanding')}</p>
+
 	<h2 class="label-micro">{t('colophon.textsTitle')}</h2>
 	<p>{t('colophon.textsBody')}</p>
 	<!--

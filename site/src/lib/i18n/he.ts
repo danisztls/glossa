@@ -10,10 +10,17 @@
  * them inside English chrome, which is the combination `../ui-langs.ts` says
  * the interface list should never leave standing.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback: it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content. What is
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive. What is
  * here is the chrome -- including every key `CHROME_KEYS` requires, since an
  * unnamed chrome page fails the sync rather than falling back.
  *
@@ -74,5 +81,48 @@ export const he: Dictionary = {
 	'prayers.landing.title': 'תפילות נפוצות',
 	'prayers.landing.tagline': 'תפילות עם הטקסט הלטיני לצדן.',
 	'colophon.title': 'קולופון',
-	'colophon.lede': 'מהו אתר זה, מהיכן באים הטקסטים שלו, ומהי עמדתנו בנוגע לשעתוקם.'
+	'colophon.lede': 'מהו אתר זה, מהיכן באים הטקסטים שלו, ומהי עמדתנו בנוגע לשעתוקם.',
+	'colophon.whatThisIs': 'מה זה',
+	'colophon.whatThisIsBody':
+		'Glossa Catholica הוא אתר לקריאת כתבי הקודש, הקטכיזם, התמצית ומסמכי המגיסטריום, באנגלית, בפורטוגזית ובלטינית. הוא קיים כדי שייקרא, ולא נדרש ממך דבר נוסף כדי לקרוא בו:',
+	'colophon.pointFree': 'חינם, ותמיד חינם. אין חומת תשלום, אין מנוי, אין דבר למכירה.',
+	'colophon.pointNoAds': 'אין פרסומות, ואין מיקום ממומן מכל סוג שהוא.',
+	'colophon.pointNoAccounts': 'אין חשבונות. אין להירשם לדבר, אין להתחבר לדבר.',
+	'colophon.pointNoTracking':
+		'אין סקריפטים למעקב, אין קוד של צד שלישי, אין עוגיות. רק ספירות שימוש אנונימיות, בלי דבר שמזהה אותך.',
+	'colophon.pointOffline':
+		'נבנה כך שימשיך לפעול גם ללא חיבור לאחר שביקרת בו, כדי שחיבור לקוי לא יהיה מכשול לקריאה.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica הוא מפעל פרטי של מאמינים הדיוטות. אין לו כל אישור כנסייתי והוא אינו מדבר בשום סמכות משל עצמו.',
+	'colophon.textsTitle': 'הטקסטים',
+	'colophon.textsBody':
+		'כל טקסט בא ממקור נקוב בשם, וכל יצירה רושמת את מהדורתה, את עמוד המקור שלה ואת התאריך שבו הובאה. כתבי הקודש משתמשים בתרגומים שברשות הרבים; הקטכיזם, התמצית ומסמכי המגיסטריום באים מן הטקסטים שהכס הקדוש עצמו פרסם.',
+	'colophon.textsFidelity':
+		'הטקסט לעולם אינו מקוצר, לעולם אינו מנוסח מחדש, לעולם אינו נכתב מחדש, ולעולם אינו מוצב לצד פרסומת. אנו כן מתקנים פגמים גלויים — מילה שנשמטה, ציטוט שנפגם, תגיות שבלעו פסקה — תמיד לכיוון מה שהמקור עצמו מדפיס, לעולם לא לכיוון מה שנראה לנו שהיה צריך לומר.',
+	'colophon.countBible': 'מהדורות של המקרא',
+	'colophon.countDocuments': 'מסמכי מגיסטריום',
+	'colophon.copyrightTitle': 'זכויות יוצרים',
+	'colophon.copyrightBody1':
+		'הקטכיזם, התמצית ומסמכי המגיסטריום הם רכושם של בעלי הזכויות בהם — בעיקר Libreria Editrice Vaticana והדיקסטריה לתקשורת.',
+	'colophon.copyrightBody2':
+		'כל יצירה מציגה את הודעת זכויות היוצרים של בעל הזכויות שלה, בניסוחו שלו, ומקשרת אל העמוד שממנו נלקחה.',
+	'colophon.copyrightBody3': 'אם יש בידך זכויות בטקסט כלשהו כאן ואתה מעדיף שלא יפורסם, כתוב לנו.',
+	'colophon.contactTitle': 'יצירת קשר',
+	'colophon.contactBody': 'לכל דבר שהוא, ובכלל זה האמור לעיל:',
+	'colophon.contactPending':
+		'עדיין לא נקבעה כתובת ליצירת קשר. אין לפרסם אתר זה לציבור עד שתהיה לו אחת — ההתחייבות שלעיל חסרת משמעות בלי דרך להגיע אלינו.',
+	'colophon.illustrationsTitle': 'האיורים',
+	'colophon.illustrationsBody':
+		'המקרא נושא את תחריטיו של גוסטב דורה, כל אחד מוצב אצל הפסוק שהוא מתאר — האחרון והגדול שבמחזורי המקרא שלו, חתוך בעץ על פי רישומיו ומודפס יחד עם הטקסט ולא מקובץ בסוף.',
+	'colophon.illustrationsRights':
+		'הם ברשות הרבים, כפי שמראים התאריכים שלהלן, ושעתוק צילומי נאמן של תחריט שברשות הרבים אינו נושא זכות יוצרים חדשה משלו.',
+	'colophon.countPlates': 'תחריטים',
+	'colophon.countPlateChapters': 'פרקים מאוירים',
+	'colophon.typeTitle': 'הגופן',
+	'colophon.typeBody':
+		'סודר בגופן EB Garamond, החייאתם של גאורג דופנר ואוקטביו פרדו לאותיות שחתך קלוד גארמון בשנות ה-1590 — המסורת ההומניסטית שבה מדפיסה הכנסייה מאז הרנסנס. הכתב הקירילי שלו הוא מאותן ידיים אך אינו מחיה דבר: גארמון קירילי מעולם לא נחתך, ולכן הרוסית מסודרת בצורה שצוירה כדי לעמוד לצד השאר.',
+	'colophon.typeArabic':
+		"הערבית מצויה מחוץ להישג ידו לחלוטין, והיא מסודרת בגופן Amiri — החייאתו של ח'אלד חוסני לכתב הנסח' שנחתך עבור בית הדפוס בולאק בקהיר בשנת 1905, שנבחר מאותו נימוק כמו גופן הטקסט: כתב ספר היסטורי מסוים ולא רישום בן זמננו.",
+	'colophon.typeInitials':
+		'אותיות הפתיחה הן Pirata One, כתב גותי שאותיותיו הגדולות נותרות קריאות בגודל שאות פתיחה דורשת, ו— עבור הרוסית — Ponomar, המשחזר את הכתב הסלאבי-כנסייתי של דפוס הסינוד. Ponomar מסדר את אות הפתיחה ולעולם לא את הטקסט: אנציקליקה מודרנית שתסודר כולה בכתב הסינוד תאמר דבר שאינו נכון על מה שהיא. כולם מורשים תחת SIL Open Font License ומוגשים מאתר זה ולא מצד שלישי, כך שקריאת עמוד אינה מבקשת דבר משרת של אחר.'
 };

@@ -10,12 +10,19 @@
  * them inside English chrome, which is the combination `../ui-langs.ts` says
  * the interface list should never leave standing.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback: it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content. What is
- * here is the chrome -- including every key `CHROME_KEYS` requires, since an
- * unnamed chrome page fails the sync rather than falling back.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive. Deleting a
+ * doubtful line is a valid fix -- it falls back to English.
+ * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
+ * the sync rather than falling back.
  *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
@@ -66,5 +73,50 @@ export const sk: Dictionary = {
 	'prayers.landing.tagline': 'Modlitby s latinským textom vedľa.',
 	'colophon.title': 'Tiráž',
 	'colophon.lede':
-		'Čo je táto stránka, odkiaľ pochádzajú jej texty a aký je náš postoj k ich reprodukovaniu.'
+		'Čo je táto stránka, odkiaľ pochádzajú jej texty a aký je náš postoj k ich reprodukovaniu.',
+	'colophon.whatThisIs': 'Čo to je',
+	'colophon.whatThisIsBody':
+		'Glossa Catholica je čitateľská stránka pre Písmo, Katechizmus, Kompendium a dokumenty magistéria, v angličtine, portugalčine a latinčine. Existuje preto, aby sa čítala, a na jej čítanie sa od vás nežiada nič iné:',
+	'colophon.pointFree':
+		'Zadarmo, a vždy zadarmo. Žiadna platená stena, žiadne predplatné, nič na kúpu.',
+	'colophon.pointNoAds': 'Žiadna reklama a žiadne sponzorované umiestnenie akéhokoľvek druhu.',
+	'colophon.pointNoAccounts': 'Žiadne účty. Nie je sa kam registrovať, nie je sa kam prihlasovať.',
+	'colophon.pointNoTracking':
+		'Žiadne sledovacie skripty, žiadny kód tretích strán, žiadne cookies. Iba anonymné počty použití, bez čohokoľvek, čo by vás identifikovalo.',
+	'colophon.pointOffline':
+		'Vytvorené tak, aby po prvej návšteve fungovalo aj bez pripojenia, aby slabé spojenie nemuselo byť prekážkou v čítaní.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica je súkromná iniciatíva laických veriacich. Nemá žiadne cirkevné schválenie a nehovorí so žiadnou vlastnou autoritou.',
+	'colophon.textsTitle': 'Texty',
+	'colophon.textsBody':
+		'Každý text pochádza z uvedeného zdroja a každé dielo zaznamenáva svoje vydanie, svoju zdrojovú stránku a dátum, kedy bolo získané. Písmo používa preklady vo verejnom vlastníctve; Katechizmus, Kompendium a dokumenty magistéria pochádzajú z vlastných publikovaných textov Svätej stolice.',
+	'colophon.textsFidelity':
+		'Text nie je nikdy skracovaný, nikdy parafrázovaný, nikdy prepisovaný a nikdy umiestňovaný vedľa reklamy. Zjavné chyby opravujeme — vypadnuté slovo, poškodenú citáciu, značkovanie, ktoré pohltilo odsek — vždy smerom k tomu, čo tlačí sám zdroj, nikdy smerom k tomu, čo si myslíme, že by mal hovoriť.',
+	'colophon.countBible': 'vydaní Biblie',
+	'colophon.countDocuments': 'dokumentov magistéria',
+	'colophon.copyrightTitle': 'Autorské práva',
+	'colophon.copyrightBody1':
+		'Katechizmus, Kompendium a dokumenty magistéria sú majetkom svojich držiteľov práv — predovšetkým Libreria Editrice Vaticana a Dikastéria pre komunikáciu.',
+	'colophon.copyrightBody2':
+		'Každé dielo zobrazuje vlastnú výhradu autorských práv svojho držiteľa, v jeho znení, a odkazuje na stránku, z ktorej bolo prevzaté.',
+	'colophon.copyrightBody3':
+		'Ak držíte práva k akémukoľvek textu tu a boli by ste radšej, aby zverejnený nebol, napíšte nám.',
+	'colophon.contactTitle': 'Kontakt',
+	'colophon.contactBody': 'Pre čokoľvek, vrátane vyššie uvedeného:',
+	'colophon.contactPending':
+		'Kontaktná adresa zatiaľ nebola nastavená. Táto stránka by nemala byť zverejnená, kým ju nemá — záväzok vyššie nemá zmysel bez spôsobu, ako nás zastihnúť.',
+	'colophon.illustrationsTitle': 'Ilustrácie',
+	'colophon.illustrationsBody':
+		'Biblia nesie rytiny Gustava Dorého, každú umiestnenú pri verši, ktorý zobrazuje — poslednú a najväčšiu z jeho biblických cyklov, rezanú do dreva podľa jeho kresieb a tlačenú spolu s textom, nie zhromaždenú vzadu.',
+	'colophon.illustrationsRights':
+		'Sú vo verejnom vlastníctve, ako ukazujú dátumy nižšie, a verná fotografická reprodukcia rytiny vo verejnom vlastníctve nenesie žiadne nové vlastné autorské právo.',
+	'colophon.countPlates': 'rytín',
+	'colophon.countPlateChapters': 'ilustrovaných kapitol',
+	'colophon.typeTitle': 'Písmo',
+	'colophon.typeBody':
+		'Sadzané písmom EB Garamond, obnovou Georga Duffnera a Octavia Parda typov, ktoré Claude Garamont rezal v 90. rokoch 16. storočia — humanistickej tradície, v ktorej Cirkev tlačí od renesancie. Jeho cyrilika je od tých istých rúk, ale neobnovuje nič: žiadna garamondovská cyrilika nebola nikdy rezaná, takže ruština je sadzaná tvarom nakresleným tak, aby stál vedľa ostatných.',
+	'colophon.typeArabic':
+		'Arabčina je celkom mimo jeho dosahu a je sadzaná písmom Amiri — obnovou Khaleda Hosnyho nashí rezaného pre tlačiareň Búláq v Káhire v roku 1905, zvolenou z tej istej úvahy ako textové písmo: konkrétne historické knižné písmo namiesto súčasnej kresby.',
+	'colophon.typeInitials':
+		'Úvodné iniciály sú Pirata One, lomené písmo, ktorého verzálky zostávajú čitateľné vo veľkosti, akú iniciála vyžaduje, a — pre ruštinu — Ponomar, ktorý reprodukuje cirkevnoslovanské písmo Synodálnej tlačiarne. Ponomar sadzí iniciálu a nikdy text: moderná encyklika vysadzaná celá synodálnym písmom by hovorila niečo nepravdivé o tom, čím je. Všetky sú licencované pod SIL Open Font License a poskytované z tejto stránky, nie od tretej strany, takže čítanie stránky nežiada nič od cudzieho servera.'
 };

@@ -2249,17 +2249,30 @@ content behind a language they do not read.
 enforces is `CHROME_KEYS` (`scripts/route-titles.mjs`) — `assertNamed` throws
 on an unnamed chrome page, because that breaks the `hreflang` cluster — and
 `bible-groups.test.ts`, which demands all nine group names rather than
-tolerating a partial set. The long colophon prose is deliberately omitted from
-every new dictionary: it is the page explaining how carefully this site handles
-other people's words, and a machine translation of it is the one page whose
-form would contradict its content.
+tolerating a partial set.
+
+**THE COLOPHON IS THE ONE PAGE THAT WAS DELIBERATELY LEFT UNTRANSLATED, AND ON
+2026-09-02 THAT WAS REVERSED.** The rule was that a machine translation of the
+page explaining how carefully this site handles other people's words is the one
+page whose form would contradict its content — so twenty dictionaries carried
+`colophon.title` and `colophon.lede` and let the other 29 keys fall back. What
+overturned it is that the argument proves too much: a reader who cannot read the
+page cannot weigh it either, so an English wall is not more honest than a
+translation, it is only more silent. All 34 dictionaries carry all 31 colophon
+keys now, and a parity check over `src/lib/i18n/*.ts` is what says so. The
+honesty the old rule was reaching for lives in each file's header instead, which
+names its own confidence tier — that is the part to keep.
 
 **TWENTY OF THE THIRTY-FOUR DICTIONARIES HAVE NEVER BEEN READ BY A NATIVE
 SPEAKER**, and that is the single most important thing to know about them. Every
 language added on 2026-08-31 was translated by an LLM in one sitting. The
-exposure is bounded on purpose — each is ~45 chrome keys, not the full 245, and
-the long colophon prose is omitted so it falls back to English — but bounded is
-not the same as verified. Each dictionary states its own tier in its header:
+exposure was bounded on purpose — each is ~45 chrome keys, not the full 245 —
+but bounded is not the same as verified, and **it is less bounded since
+2026-09-02**, when the colophon's 29 remaining keys were translated into all
+twenty (above). That page states the site's canonical standing under Can. 216
+and tells a rights holder how to reach us, so its `whatThisIsStanding` and
+`copyrightBody3` are the two strings in these files where a mistranslation
+costs something real rather than reading oddly. They are the first to check. Each dictionary states its own tier in its header:
 
 - **Grounded**: `mg`'s core terms alone, read off `ccc.mg`'s own manifest and
   division headings (`Katesizin'ny Fiangonana Katôlika`, `Toko`, `Fizarana`,

@@ -2664,6 +2664,69 @@ it, so that page fetches it — the same arrangement the translated descriptions
 it merged onto the manifests, which would write the same strings into all ten editions of
 Laudato Si' and put them in the index after all.
 
+### The colophon states the site's canonical standing, and deliberately not its provenance
+
+Added 2026-09-02. **Can. 216 CIC** reserves the name _Catholic_ to undertakings holding the
+consent of competent ecclesiastical authority — _nullum tamen inceptum nomen catholicum sibi
+vindicet, nisi consensus accesserit competentis auctoritatis ecclesiasticae_. This site is
+named `Glossa Catholica`, holds no such consent, and until this day said nothing anywhere
+about its standing. `colophon.whatThisIsStanding` says it now: a private undertaking of the
+lay faithful, no ecclesiastical approbation, no authority of its own.
+
+**The word is not the exposure; the absence of a disclaimer was.** The commentary tradition
+reads _vindicare_ narrowly — what is forbidden is claiming the name so as to imply the
+undertaking acts in the Church's name — and on the facts here that reading was the
+unfavourable one. A site that reproduces the Catechism, the Compendium and the magisterial
+documents verbatim and adds no visible byline presents as an organ of the Holy See's own
+texts. That confusion is the whole _ratio legis_, and it existed independently of the title.
+Compare c. 808 on universities, which concedes that a thing may _be_ Catholic in fact and
+still not be entitled to the _title_: the canon regulates the name, so being manifestly
+orthodox is not a defence.
+
+**It sits in "What this is", not in the copyright section.** The copyright section is
+addressed to a rights holder; standing is addressed to the reader, and belongs where a reader
+asks what this is. It is not its own `<h2>` because a heading would need a name in fourteen
+dictionaries for a term of art none of them has a settled word for.
+
+**What it does NOT say is what is ours, and that omission is deliberate.** A second paragraph
+was drafted the same day claiming the arrangement and the editorial descriptions, and removed.
+There is real prose here that is not the publishers' — `descriptions.json` holds 385 works'
+descriptions, written here by reading a document — but a reader meets that prose _beside a
+document_, not on the colophon, so a paragraph on a page most readers never open is the wrong
+instrument for it: it cannot mark the individual item, which is the only place the question
+actually arises. Provenance belongs in the reading interface, per item. That is `PLAN.md` gap
+16, and until it exists the colophon claims nothing rather than claiming it in the weakest
+available place.
+
+**AND THE PAGE IS TRANSLATED NOW, WHICH REVERSED A STANDING RULE.** The long
+colophon prose had been withheld from every dictionary written on 2026-08-31, on
+the argument that a machine translation of the page explaining how carefully this
+site handles other people's words would be the one page whose form contradicts its
+content. That argument proves too much. The page's job is to be _weighed_ by the
+reader it is addressed to, and a reader who cannot read it cannot weigh it — an
+English wall is not more honest than a translation, only more silent. The
+asymmetry is what settles it: an unread page protects nobody, while a translated
+one is wrong only where a translator was wrong, and says so in its own header.
+All 34 dictionaries carry all 31 colophon keys as of 2026-09-02.
+
+**What the old rule was really protecting is kept, and moved.** Each dictionary
+states its own confidence tier, and the twenty added on 2026-08-31 say plainly
+that no native speaker has read them. Two of the colophon's strings are singled
+out there because they are OPERATIVE rather than descriptive — the canonical
+standing statement above, and `copyrightBody3`, which tells a rights holder how to
+object. Everywhere else on the page a bad translation reads oddly; in those two it
+would misstate what this site claims about itself, or lose someone the only
+sentence written for them. Deleting a doubtful line remains the right fix: `t()`
+falls back per key, so removal costs English rather than nothing.
+
+**Two canons bite harder than 216 and are not addressed by any of this**, recorded here so
+nobody reads the colophon paragraph as having settled them. **C. 826 §3**: collections of
+prayers for the public or private use of the faithful are not to be published except with the
+permission of the local ordinary — `/preces` is exactly that, with no interpretive room.
+**C. 825 §1**: Scripture may not be published without the approval of the Apostolic See or the
+conference of bishops; Challoner and the Clementine carry historical approbations, and
+`bible.cpdv.en` carries none at all.
+
 ## Usage measurement
 
 **Nothing measured usage until 2026-08-27, and the reason it had to change is the

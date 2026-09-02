@@ -13,10 +13,17 @@
  * the alternative is not better content, it is the same content behind a
  * language they do not read.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback -- it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -75,5 +82,51 @@ export const ig: Dictionary = {
 	'prayers.landing.title': 'Ekpere Nkịtị',
 	'prayers.landing.tagline': 'Ekpere ya na ederede Latin n’akụkụ ya.',
 	'colophon.title': 'Kọlọfọn',
-	'colophon.lede': 'Ihe saịtị a bụ, ebe ederede ya si bịa, na ebe anyị guzo banyere ịmegharị ha.'
+	'colophon.lede': 'Ihe saịtị a bụ, ebe ederede ya si bịa, na ebe anyị guzo banyere ịmegharị ha.',
+	'colophon.whatThisIs': 'Gịnị ka nke a bụ',
+	'colophon.whatThisIsBody':
+		"Glossa Catholica bụ saịtị ọgụgụ maka Akwụkwọ Nsọ, Katekizim, Nchịkọta, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị, n'asụsụ Bekee, Portuguese na Latin. Ọ dị ka a gụọ ya, ọ dịghịkwa ihe ọzọ a na-arịọ gị iji gụọ ya:",
+	'colophon.pointFree':
+		"N'efu, mgbe niile n'efu. Ọ dịghị mgbidi ụgwọ, ọ dịghị ndenye aha akwụ ụgwọ, ọ dịghị ihe a na-ere.",
+	'colophon.pointNoAds': "Ọ dịghị mgbasa ozi, ọ dịghịkwa idobe ihe ọ bụla a kwadoro site n'ego.",
+	'colophon.pointNoAccounts':
+		'Ọ dịghị akaụntụ. Ọ dịghị ihe ị ga-edebanye aha na ya, ọ dịghị ihe ị ga-abanye na ya.',
+	'colophon.pointNoTracking':
+		'Ọ dịghị script nnyocha, ọ dịghị koodu ndị ọzọ, ọ dịghị kuki. Naanị ọnụọgụ ojiji na-akpọghị aha, ọ dịghị ihe ọ bụla na-egosi onye ị bụ.',
+	'colophon.pointOffline':
+		"E wuru ya ka ọ nọgide na-arụ ọrụ n'enweghị njikọ mgbe ị gaachaala ya otu ugboro, ka njikọ na-adịghị ike ghara ịbụ ihe mgbochi ọgụgụ.",
+	'colophon.whatThisIsStanding':
+		"Glossa Catholica bụ ọrụ nkeonwe nke ndị kwere ekwe na-abụghị ndị ụkọchukwu. O nweghị nkwado ọ bụla nke Chọọchị, ọ naghịkwa ekwu okwu site n'ikike nke aka ya.",
+	'colophon.textsTitle': 'Ederede ndị ahụ',
+	'colophon.textsBody':
+		"Ederede ọ bụla si n'ebe a kpọrọ aha ya, akwụkwọ ọ bụla na-edekwa mbipụta ya, ibe si na ya bịa, na ụbọchị e wetara ya. Akwụkwọ Nsọ na-eji nsụgharị ndị dị n'aka ọha; Katekizim, Nchịkọta, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị si n'ederede ndị Oche Nsọ n'onwe ya bipụtara.",
+	'colophon.textsFidelity':
+		"A naghị ebelata ederede ma ọlị, a naghị akọwa ya n'okwu ọzọ ma ọlị, a naghị edegharị ya ma ọlị, a naghịkwa etinye ya n'akụkụ mgbasa ozi ma ọlị. Anyị na-edozi ntụpọ ndị doro anya — okwu dapụrụ, ntụaka mebiri emebi, akara loro otu paragraf — mgbe niile n'ụzọ ihe ebe ahụ n'onwe ya bipụtara, ọ bụghị mgbe ọ bụla n'ụzọ ihe anyị chere na ọ kwesịrị ikwu.",
+	'colophon.countBible': 'mbipụta Baịbụl',
+	'colophon.countDocuments': 'akwụkwọ Ọrụ Nkuzi Chọọchị',
+	'colophon.copyrightTitle': 'Ikike nwe ederede',
+	'colophon.copyrightBody1':
+		'Katekizim, Nchịkọta, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị bụ ihe ndị nwe ikike ha — karịsịa Libreria Editrice Vaticana na Dikasteri maka Nkwurịta Okwu.',
+	'colophon.copyrightBody2':
+		"Akwụkwọ ọ bụla na-egosi ọkwa ikike nwe ederede nke onye nwe ya, n'okwu ha, ma jikọọ na ibe ebe e si were ya.",
+	'colophon.copyrightBody3':
+		"Ọ bụrụ na ị nwere ikike n'ederede ọ bụla dị ebe a ma ị chọrọ ka a ghara ibipụta ya, degara anyị akwụkwọ.",
+	'colophon.contactTitle': 'Kpọtụrụ anyị',
+	'colophon.contactBody': "Maka ihe ọ bụla, tinyere ihe ndị e kwuru n'elu:",
+	'colophon.contactPending':
+		"A ka edobebeghị adreesị nkwurịta okwu. Ekwesịghị ime saịtị a ka ọha mara tupu o nwee otu — nkwa dị n'elu enweghị isi ma ọ bụrụ na o nweghị ụzọ e si eru anyị aka.",
+	'colophon.illustrationsTitle': 'Ihe osise ndị ahụ',
+	'colophon.illustrationsBody':
+		"Baịbụl na-ebu ihe ọkpụkpụ Gustave Doré, e debere nke ọ bụla n'akụkụ amaokwu ọ na-egosi — nke ikpeazụ na nke kacha ukwuu n'usoro Baịbụl ya, a pịrị ya n'osisi site n'eserese ya, e bipụtara ya na ederede kama ịchịkọta ya n'azụ.",
+	'colophon.illustrationsRights':
+		"Ha dị n'aka ọha, dịka ụbọchị ndị dị n'okpuru na-egosi, foto e sere nke ọma nke ihe ọkpụkpụ dị n'aka ọha adịghịkwa ebute ikike ọhụrụ nke aka ya.",
+	'colophon.countPlates': 'ihe ọkpụkpụ',
+	'colophon.countPlateChapters': 'isi nwere ihe osise',
+	'colophon.typeTitle': 'Ụdị mkpụrụedemede',
+	'colophon.typeBody':
+		"E ji EB Garamond dee ya, nke bụ mweghachi Georg Duffner na Octavio Pardo nke mkpụrụedemede Claude Garamont pịrị n'afọ ndị 1590 — omenala mmadụ ahụ Chọọchị ji na-ebipụta kemgbe Renaissance. Mkpụrụedemede Cyrillic ya sitere n'otu aka ahụ mana ọ naghị eweghachi ihe ọ bụla: a pịbeghị Garamond Cyrillic mgbe ọ bụla, ya mere e ji ụdị e sere ka o guzo n'akụkụ ndị ọzọ dee asụsụ Rọshịa.",
+	'colophon.typeArabic':
+		"Asụsụ Arabik dị kpamkpam n'èzí ike ya, e jikwa Amiri dee ya — mweghachi Khaled Hosny nke naskh a pịrị maka ụlọ obibi akwụkwọ Bulaq na Cairo n'afọ 1905, nke a họọrọ n'otu ihe kpatara e ji họrọ ụdị ederede: otu ụdị akwụkwọ akụkọ ihe mere eme kama eserese nke oge a.",
+	'colophon.typeInitials':
+		"Mkpụrụedemede mmalite bụ Pirata One, ụdị Gothic nke mkpụrụedemede ukwu ya ka na-apụta ìhè n'ogo mkpụrụedemede mmalite chọrọ, na — maka asụsụ Rọshịa — Ponomar, nke na-eweghachi ụdị Slavonic Chọọchị nke Ụlọ Obibi Akwụkwọ Sinod. Ponomar na-ede mkpụrụedemede mmalite, ọ naghị ede ederede ma ọlị: akwụkwọ ozi ndị ukwu nke oge a e ji ụdị Sinod dee ya niile ga-ekwu ihe na-abụghị eziokwu banyere ihe ọ bụ. E nyere ha niile ikike n'okpuru SIL Open Font License, e si na saịtị a nye ha kama isi n'aka onye ọzọ, ya mere ịgụ otu ibe adịghị arịọ ihe ọ bụla n'aka sava onye ọzọ."
 };

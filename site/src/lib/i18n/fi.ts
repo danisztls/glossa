@@ -10,12 +10,17 @@
  * them inside English chrome, which is the combination `../ui-langs.ts` says
  * the interface list should never leave standing.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback: it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content. What is
- * here is the chrome -- including every key `CHROME_KEYS` requires, since an
- * unnamed chrome page fails the sync rather than falling back.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -73,5 +78,51 @@ export const fi: Dictionary = {
 	'prayers.landing.tagline': 'Rukoukset latinankielisen tekstin rinnalla.',
 	'colophon.title': 'Kolofoni',
 	'colophon.lede':
-		'Mikä tämä sivusto on, mistä sen tekstit ovat peräisin ja mikä on kantamme niiden toisintamiseen.'
+		'Mikä tämä sivusto on, mistä sen tekstit ovat peräisin ja mikä on kantamme niiden toisintamiseen.',
+	'colophon.whatThisIs': 'Mikä tämä on',
+	'colophon.whatThisIsBody':
+		'Glossa Catholica on lukusivusto Raamatulle, Katekismukselle, Kompendiumille ja opetusviran asiakirjoille, englanniksi, portugaliksi ja latinaksi. Se on olemassa luettavaksi, eikä sinulta pyydetä mitään muuta sen lukemiseksi:',
+	'colophon.pointFree':
+		'Ilmainen, ja aina ilmainen. Ei maksumuuria, ei tilausta, ei mitään ostettavaa.',
+	'colophon.pointNoAds': 'Ei mainoksia eikä minkäänlaista sponsoroitua sijoittelua.',
+	'colophon.pointNoAccounts':
+		'Ei tilejä. Ei mitään mihin rekisteröityä, ei mitään mihin kirjautua.',
+	'colophon.pointNoTracking':
+		'Ei seurantaskriptejä, ei kolmannen osapuolen koodia, ei evästeitä. Vain nimettömiä käyttölaskureita, ilman mitään sinut tunnistavaa.',
+	'colophon.pointOffline':
+		'Rakennettu toimimaan yhä ilman verkkoyhteyttä ensimmäisen käynnin jälkeen, jottei heikko yhteys olisi este lukemiselle.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica on maallikkouskovien yksityinen hanke. Sillä ei ole kirkollista hyväksyntää eikä se puhu millään omalla auktoriteetilla.',
+	'colophon.textsTitle': 'Tekstit',
+	'colophon.textsBody':
+		'Jokainen teksti tulee nimetystä lähteestä, ja jokainen teos kirjaa laitoksensa, lähdesivunsa ja päivän, jona se noudettiin. Raamattu käyttää vapaassa käytössä olevia käännöksiä; Katekismus, Kompendium ja opetusviran asiakirjat tulevat Pyhän istuimen omista julkaistuista teksteistä.',
+	'colophon.textsFidelity':
+		'Tekstiä ei koskaan lyhennetä, koskaan mukailla, koskaan kirjoiteta uudelleen eikä koskaan aseteta mainosten viereen. Ilmeiset viat kyllä korjaamme — pudonneen sanan, turmeltuneen viitteen, merkkauksen joka nieli kappaleen — aina kohti sitä mitä lähde itse painaa, ei koskaan kohti sitä mitä mielestämme sen pitäisi sanoa.',
+	'colophon.countBible': 'raamatunlaitosta',
+	'colophon.countDocuments': 'opetusviran asiakirjaa',
+	'colophon.copyrightTitle': 'Tekijänoikeus',
+	'colophon.copyrightBody1':
+		'Katekismus, Kompendium ja opetusviran asiakirjat ovat oikeudenhaltijoidensa omaisuutta — ennen muuta Libreria Editrice Vaticanan ja viestinnän dikasterion.',
+	'colophon.copyrightBody2':
+		'Jokainen teos näyttää oikeudenhaltijansa oman tekijänoikeusilmoituksen heidän sanamuodossaan ja linkittää sivulle, jolta se on otettu.',
+	'colophon.copyrightBody3':
+		'Jos sinulla on oikeuksia johonkin täällä olevaan tekstiin etkä soisi sen olevan julkaistuna, kirjoita meille.',
+	'colophon.contactTitle': 'Yhteystiedot',
+	'colophon.contactBody': 'Mitä tahansa varten, myös yllä olevaa:',
+	'colophon.contactPending':
+		'Yhteysosoitetta ei ole vielä asetettu. Tätä sivustoa ei pitäisi julkistaa ennen kuin sellainen on — yllä oleva sitoumus ei merkitse mitään ilman tapaa tavoittaa meidät.',
+	'colophon.illustrationsTitle': 'Kuvitukset',
+	'colophon.illustrationsBody':
+		'Raamattu kantaa Gustave Dorén kaiverruksia, kukin sijoitettuna sen jakeen kohdalle jota se kuvaa — viimeinen ja laajin hänen raamattusarjoistaan, puuhun leikattu hänen piirustustensa mukaan ja painettu tekstin lomaan eikä koottu loppuun.',
+	'colophon.illustrationsRights':
+		'Ne ovat vapaassa käytössä, kuten alla olevat vuosiluvut osoittavat, eikä uskollinen valokuvajäljennös vapaassa käytössä olevasta kaiverruksesta kanna mitään uutta omaa tekijänoikeutta.',
+	'colophon.countPlates': 'kaiverrusta',
+	'colophon.countPlateChapters': 'kuvitettua lukua',
+	'colophon.typeTitle': 'Kirjasin',
+	'colophon.typeBody':
+		'Ladottu EB Garamondilla, Georg Duffnerin ja Octavio Pardon herätyksellä kirjasimista jotka Claude Garamont leikkasi 1590-luvulla — humanistisesta perinteestä jossa Kirkko on painanut renessanssista asti. Sen kyrillinen on samojen käsien työtä mutta ei herätä mitään: kyrillistä Garamondia ei koskaan leikattu, joten venäjä on ladottu muodolla joka on piirretty seisomaan muun rinnalla.',
+	'colophon.typeArabic':
+		'Arabia on sen ulottumattomissa kokonaan ja on ladottu Amirilla — Khaled Hosnyn herätyksellä naskhista joka leikattiin Bulaqin kirjapainolle Kairossa 1905, valittuna samalla perusteella kuin tekstikirjasin: tietty historiallinen kirjatyyppi eikä nykyaikainen piirros.',
+	'colophon.typeInitials':
+		'Aloitusalkukirjaimet ovat Pirata One, fraktuura jonka versaalit pysyvät luettavina siinä koossa jota anfangi vaatii, ja — venäjää varten — Ponomar, joka toistaa Synodaalipainon kirkkoslaavilaisen kirjasimen. Ponomar latoo alkukirjaimen eikä koskaan tekstiä: nykyaikainen kiertokirje ladottuna kauttaaltaan synodaalikirjasimella sanoisi jotain epätotta siitä mikä se on. Kaikki ovat lisensoituja SIL Open Font Licensen alla ja tarjoillaan tältä sivustolta eikä kolmannelta osapuolelta, joten sivun lukeminen ei pyydä mitään kenenkään muun palvelimelta.'
 };

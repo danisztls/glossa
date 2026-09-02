@@ -208,6 +208,8 @@ export const pl: Dictionary = {
 		'Bez skryptów śledzących, bez kodu osób trzecich, bez ciasteczek. Wyłącznie anonimowe liczniki użycia, nic, co pozwoliłoby Cię zidentyfikować.',
 	'colophon.pointOffline':
 		'Zbudowana tak, by po odwiedzeniu działała dalej bez połączenia, aby słabe łącze nie było przeszkodą w czytaniu.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica jest prywatną inicjatywą wiernych świeckich. Nie posiada żadnej aprobaty kościelnej i nie przemawia własnym autorytetem.',
 	'colophon.textsTitle': 'Teksty',
 	'colophon.textsBody':
 		'Każdy tekst pochodzi z wskazanego źródła, a każde dzieło odnotowuje swoje wydanie, stronę źródłową i datę pobrania. Pismo Święte korzysta z przekładów w domenie publicznej; Katechizm, Kompendium i dokumenty Magisterium pochodzą z tekstów opublikowanych przez samą Stolicę Apostolską.',

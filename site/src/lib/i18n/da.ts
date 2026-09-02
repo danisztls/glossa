@@ -10,12 +10,19 @@
  * them inside English chrome, which is the combination `../ui-langs.ts` says
  * the interface list should never leave standing.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback: it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content. What is
- * here is the chrome -- including every key `CHROME_KEYS` requires, since an
- * unnamed chrome page fails the sync rather than falling back.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive. Deleting a
+ * doubtful line is a valid fix -- it falls back to English.
+ * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
+ * the sync rather than falling back.
  *
  * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
  * their own language on purpose and are not translated here.
@@ -67,5 +74,50 @@ export const da: Dictionary = {
 	'prayers.landing.tagline': 'Bønner med den latinske tekst ved siden af.',
 	'colophon.title': 'Kolofon',
 	'colophon.lede':
-		'Hvad dette websted er, hvor teksterne kommer fra, og hvor vi står med hensyn til at gengive dem.'
+		'Hvad dette websted er, hvor teksterne kommer fra, og hvor vi står med hensyn til at gengive dem.',
+	'colophon.whatThisIs': 'Hvad dette er',
+	'colophon.whatThisIsBody':
+		'Glossa Catholica er et læsested for Skriften, Katekismen, Kompendiet og Læreembedets dokumenter, på engelsk, portugisisk og latin. Det findes for at blive læst, og der bedes ikke om andet af dig for at læse det:',
+	'colophon.pointFree':
+		'Gratis, og altid gratis. Ingen betalingsmur, intet abonnement, intet at købe.',
+	'colophon.pointNoAds': 'Ingen reklamer og ingen sponsoreret placering af nogen art.',
+	'colophon.pointNoAccounts': 'Ingen konti. Intet at tilmelde sig, intet at logge ind på.',
+	'colophon.pointNoTracking':
+		'Ingen sporingsscripts, ingen tredjepartskode, ingen cookies. Kun anonyme brugstællinger, uden noget der identificerer dig.',
+	'colophon.pointOffline':
+		'Bygget til at blive ved med at virke offline, når du først har besøgt det, så en dårlig forbindelse ikke behøver være en hindring for læsningen.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica er et privat foretagende af lægfolk. Det bærer ingen kirkelig godkendelse og taler med ingen myndighed af sig selv.',
+	'colophon.textsTitle': 'Teksterne',
+	'colophon.textsBody':
+		'Hver tekst kommer fra en navngiven kilde, og hvert værk angiver sin udgave, sin kildeside og datoen, hvor den blev hentet. Skriften bruger oversættelser i det offentlige domæne; Katekismen, Kompendiet og Læreembedets dokumenter kommer fra Den Hellige Stols egne udgivne tekster.',
+	'colophon.textsFidelity':
+		'Teksten forkortes aldrig, parafraseres aldrig, omskrives aldrig og placeres aldrig ved siden af reklamer. Vi udbedrer dog åbenlyse fejl — et bortfaldet ord, en forvansket henvisning, opmærkning der slugte et afsnit — altid i retning af hvad kilden selv trykker, aldrig i retning af hvad vi mener den burde sige.',
+	'colophon.countBible': 'bibeludgaver',
+	'colophon.countDocuments': 'dokumenter fra Læreembedet',
+	'colophon.copyrightTitle': 'Ophavsret',
+	'colophon.copyrightBody1':
+		'Katekismen, Kompendiet og Læreembedets dokumenter tilhører deres rettighedshavere — først og fremmest Libreria Editrice Vaticana og Dikasteriet for Kommunikation.',
+	'colophon.copyrightBody2':
+		'Hvert værk viser sin rettighedshavers egen ophavsretsmeddelelse, med deres ordlyd, og henviser til den side, det er taget fra.',
+	'colophon.copyrightBody3':
+		'Hvis du har rettigheder til nogen tekst her og hellere så, at den ikke blev offentliggjort, så skriv til os.',
+	'colophon.contactTitle': 'Kontakt',
+	'colophon.contactBody': 'For hvad som helst, herunder ovenstående:',
+	'colophon.contactPending':
+		'Der er endnu ikke oprettet en kontaktadresse. Dette websted bør ikke offentliggøres, før det har en — forpligtelsen ovenfor betyder intet uden en måde at nå os på.',
+	'colophon.illustrationsTitle': 'Illustrationerne',
+	'colophon.illustrationsBody':
+		'Bibelen bærer Gustave Dorés stik, hvert placeret ved det vers, det skildrer — den sidste og største af hans bibelcyklusser, skåret i træ efter hans tegninger og trykt sammen med teksten frem for samlet bagest.',
+	'colophon.illustrationsRights':
+		'De er i det offentlige domæne, som datoerne nedenfor viser, og en tro fotografisk gengivelse af et stik i det offentlige domæne bærer ingen ny ophavsret af sig selv.',
+	'colophon.countPlates': 'stik',
+	'colophon.countPlateChapters': 'illustrerede kapitler',
+	'colophon.typeTitle': 'Skriften',
+	'colophon.typeBody':
+		'Sat med EB Garamond, Georg Duffner og Octavio Pardos genoplivning af de typer, Claude Garamont skar i 1590erne — den humanistiske tradition, Kirken har trykt i siden renæssancen. Dens kyrilliske er af de samme hænder, men genopliver intet: der blev aldrig skåret en kyrillisk Garamond, så russisk er sat i en form tegnet til at stå ved siden af resten.',
+	'colophon.typeArabic':
+		'Arabisk er helt uden for dens rækkevidde og er sat med Amiri — Khaled Hosnys genoplivning af den naskh, der blev skåret til Bulaq-trykkeriet i Kairo i 1905, valgt ud fra samme ræsonnement som tekstskriften: en bestemt historisk bogtype frem for en nutidig tegning.',
+	'colophon.typeInitials':
+		'Åbningsinitialerne er Pirata One, en gotisk skrift hvis versaler forbliver læselige i den størrelse, en initial kræver, og — for russisk — Ponomar, som gengiver Synodaltrykkeriets kirkeslaviske type. Ponomar sætter initialen og aldrig teksten: en moderne encyklika sat helt igennem med synodaltype ville sige noget usandt om, hvad den er. Alle er licenseret under SIL Open Font License og leveres fra dette websted frem for fra en tredjepart, så det at læse en side ikke beder om noget fra en andens server.'
 };

@@ -214,6 +214,8 @@ export const hu: Dictionary = {
 		'Nincsenek nyomkövető szkriptek, nincs harmadik féltől származó kód, nincsenek sütik. Csak névtelen használati számlálók, semmi, ami azonosítaná Önt.',
 	'colophon.pointOffline':
 		'Úgy készült, hogy egyetlen látogatás után kapcsolat nélkül is működjön, így a gyenge internet ne legyen akadálya az olvasásnak.',
+	'colophon.whatThisIsStanding':
+		'A Glossa Catholica világi hívek magánkezdeményezése. Nem rendelkezik egyházi jóváhagyással, és nem szól saját tekintéllyel.',
 	'colophon.textsTitle': 'A szövegek',
 	'colophon.textsBody':
 		'Minden szöveg megnevezett forrásból származik, és minden mű rögzíti a kiadását, a forrásoldalát és a letöltés dátumát. A Szentírás közkincsű fordításokat használ; a Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a Szentszék saját közzétett szövegeiből valók.',

@@ -10,12 +10,17 @@
  * them inside English chrome, which is the combination `../ui-langs.ts` says
  * the interface list should never leave standing.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback: it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content. What is
- * here is the chrome -- including every key `CHROME_KEYS` requires, since an
- * unnamed chrome page fails the sync rather than falling back.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -72,5 +77,51 @@ export const be: Dictionary = {
 	'prayers.landing.tagline': 'Малітвы з лацінскім тэкстам побач.',
 	'colophon.title': 'Калафон',
 	'colophon.lede':
-		'Чым з’яўляецца гэты сайт, адкуль паходзяць яго тэксты і якая наша пазіцыя адносна іх узнаўлення.'
+		'Чым з’яўляецца гэты сайт, адкуль паходзяць яго тэксты і якая наша пазіцыя адносна іх узнаўлення.',
+	'colophon.whatThisIs': 'Што гэта такое',
+	'colophon.whatThisIsBody':
+		'Glossa Catholica — сайт для чытання Пісання, Катэхізіса, Кампендыюма і дакументаў Магістэрыюма на англійскай, партугальскай і лацінскай мовах. Ён існуе, каб яго чыталі, і нічога іншага ад вас за чытанне не патрабуецца:',
+	'colophon.pointFree':
+		'Бясплатна, і заўсёды бясплатна. Ніякай платнай сцяны, ніякай падпіскі, нічога на продаж.',
+	'colophon.pointNoAds': 'Ніякай рэкламы і ніякага спонсарскага размяшчэння любога роду.',
+	'colophon.pointNoAccounts':
+		'Ніякіх уліковых запісаў. Няма дзе рэгістравацца, няма куды ўваходзіць.',
+	'colophon.pointNoTracking':
+		'Ніякіх сцяжэнных скрыптоў, ніякага староннага кода, ніякіх кукі. Толькі ананімныя падлікі выкарыстання, без нічога, што вас ідэнтыфікуе.',
+	'colophon.pointOffline':
+		'Зроблены так, каб працягваць працаваць па-за сеткай пасля першага наведвання, каб слабае злучэнне не мусіла быць перашкодай чытанню.',
+	'colophon.whatThisIsStanding':
+		'Glossa Catholica — прыватная ініцыятыва вернікаў свецкіх. Яна не мае ніякага царкоўнага ўхвалення і не гаворыць ніякай уласнай уладай.',
+	'colophon.textsTitle': 'Тэксты',
+	'colophon.textsBody':
+		'Кожны тэкст паходзіць з названай крыніцы, і кожны твор запісвае сваё выданне, сваю зыходную старонку і дату, калі быў атрыманы. Пісанне выкарыстоўвае пераклады ў грамадскім набытку; Катэхізіс, Кампендыюм і дакументы Магістэрыюма паходзяць з уласных апублікаваных тэкстаў Святога Пасаду.',
+	'colophon.textsFidelity':
+		'Тэкст ніколі не скарачаецца, ніколі не пераказваецца, ніколі не перапісваецца і ніколі не змяшчаецца побач з рэкламай. Відавочныя хібы мы выпраўляем — выпалае слова, пашкоджаную спасылку, разметку, якая праглынула абзац — заўсёды ў бок таго, што друкуе сама крыніца, ніколі ў бок таго, што, на нашу думку, яна мусіла б казаць.',
+	'colophon.countBible': 'выданняў Бібліі',
+	'colophon.countDocuments': 'дакументаў Магістэрыюма',
+	'colophon.copyrightTitle': 'Аўтарскае права',
+	'colophon.copyrightBody1':
+		'Катэхізіс, Кампендыюм і дакументы Магістэрыюма з’яўляюцца ўласнасцю сваіх праваўладальнікаў — найперш Libreria Editrice Vaticana і Дыкастэрыі камунікацыі.',
+	'colophon.copyrightBody2':
+		'Кожны твор паказвае ўласную заяву аб аўтарскім праве свайго праваўладальніка, у іх фармулёўцы, і спасылаецца на старонку, з якой ён узяты.',
+	'colophon.copyrightBody3':
+		'Калі вы валодаеце правамі на які-небудзь тэкст тут і хацелі б, каб ён не быў апублікаваны, напішыце нам.',
+	'colophon.contactTitle': 'Кантакт',
+	'colophon.contactBody': 'Па любым пытанні, у тым ліку па вышэйсказаным:',
+	'colophon.contactPending':
+		'Кантактны адрас яшчэ не ўсталяваны. Гэты сайт не павінен быць абнародаваны, пакуль яго няма — абавязацельства вышэй не мае сэнсу без спосабу да нас звярнуцца.',
+	'colophon.illustrationsTitle': 'Ілюстрацыі',
+	'colophon.illustrationsBody':
+		'Біблія нясе гравюры Гюстава Дарэ, кожную змешчаную пры тым вершы, які яна адлюстроўвае — апошні і найбуйнейшы з яго біблейскіх цыклаў, разьбяны ў дрэве паводле яго малюнкаў і надрукаваны разам з тэкстам, а не сабраны ў канцы.',
+	'colophon.illustrationsRights':
+		'Яны знаходзяцца ў грамадскім набытку, як паказваюць даты ніжэй, і дакладнае фатаграфічнае ўзнаўленне гравюры ў грамадскім набытку не нясе ніякага новага ўласнага аўтарскага права.',
+	'colophon.countPlates': 'гравюр',
+	'colophon.countPlateChapters': 'ілюстраваных раздзелаў',
+	'colophon.typeTitle': 'Шрыфт',
+	'colophon.typeBody':
+		'Набрана шрыфтам EB Garamond, адраджэннем Георга Дуфнера і Актавіа Парда тых літар, якія Клод Гарамон разаў у 1590-я гады — гуманістычнай традыцыі, у якой Царква друкуе з часоў Рэнесансу. Яго кірыліца — той жа рукі, але не адраджае нічога: кірылічны Гарамон ніколі не быў разаны, таму руская мова набрана формай, намаляванай так, каб стаяць побач з астатнім.',
+	'colophon.typeArabic':
+		'Арабская мова цалкам па-за яго межамі і набрана шрыфтом Amiri — адраджэннем Халеда Хосні насха, разанага для друкарні Булак у Каіры ў 1905 годзе, абраным па той жа развазе, што і тэкставы шрыфт: пэўны гістарычны кніжны шрыфт, а не сучасны малюнак.',
+	'colophon.typeInitials':
+		'Пачатковыя ініцыялы — Pirata One, гатычны шрыфт, чые вялікія літары застаюцца чытэльнымі ў тым памеры, якога патрабуе буквіца, і — для рускай мовы — Ponomar, які ўзнаўляе царкоўнаславянскі шрыфт Сінадальнай друкарні. Ponomar набірае ініцыял і ніколі тэкст: сучасная энцыкліка, набраная цалкам сінадальным шрыфтам, сказала б няпраўду пра тое, чым яна ёсць. Усе яны ліцэнзаваны паводле SIL Open Font License і падаюцца з гэтага сайта, а не ад трэцяга боку, так што чытанне старонкі нічога не патрабуе ад чужога сервера.'
 };

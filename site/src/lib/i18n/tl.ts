@@ -13,10 +13,17 @@
  * the alternative is not better content, it is the same content behind a
  * language they do not read.
  *
- * DELIBERATELY PARTIAL. The long colophon prose is absent and renders in
- * English through `t()`'s per-key fallback -- it is the page explaining how
- * carefully this site handles other people's words, and a machine translation
- * of it would be the one page whose form contradicts its content.
+ * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
+ * deliberately omitted when this file was written: a machine translation of the
+ * page explaining how carefully this site handles other people's words would be
+ * the one page whose form contradicts its content. That was reversed on the
+ * judgement that a reader who cannot read the page cannot weigh it either, and
+ * that an English wall is not more honest than a translation -- see
+ * `docs/decisions.md`. The confidence note below governs
+ * the colophon too.
+ * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
+ * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
+ * two to check first: both are operative rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -72,5 +79,51 @@ export const tl: Dictionary = {
 	'prayers.landing.tagline': 'Mga panalangin na may katabing tekstong Latin.',
 	'colophon.title': 'Kolopon',
 	'colophon.lede':
-		'Kung ano ang sityong ito, kung saan nanggaling ang mga teksto nito, at ang aming paninindigan sa paglalathala ng mga ito.'
+		'Kung ano ang sityong ito, kung saan nanggaling ang mga teksto nito, at ang aming paninindigan sa paglalathala ng mga ito.',
+	'colophon.whatThisIs': 'Ano ito',
+	'colophon.whatThisIsBody':
+		'Ang Glossa Catholica ay isang pook-sapot na babasahin para sa Kasulatan, sa Katesismo, sa Kompendyo, at sa mga dokumento ng Magisterio, sa Ingles, Portuges at Latin. Umiiral ito upang basahin, at wala nang ibang hinihingi sa inyo upang mabasa ito:',
+	'colophon.pointFree':
+		'Libre, at laging libre. Walang bayad na hadlang, walang suskrisyon, walang binebenta.',
+	'colophon.pointNoAds': 'Walang patalastas, at walang anumang uri ng bayad na paglalagay.',
+	'colophon.pointNoAccounts':
+		'Walang account. Walang paglalagdaan, walang paglalagyan ng password.',
+	'colophon.pointNoTracking':
+		'Walang sumusubaybay na script, walang code mula sa ibang panig, walang cookies. Bilang na walang pangalan lamang ng paggamit, na walang anumang nagpapakilala sa inyo.',
+	'colophon.pointOffline':
+		'Ginawa upang magpatuloy kahit walang koneksyon matapos ninyong dalawin, upang ang mahinang koneksyon ay hindi maging sagabal sa pagbabasa.',
+	'colophon.whatThisIsStanding':
+		'Ang Glossa Catholica ay isang pribadong pagsisikap ng mga layko. Wala itong anumang pagsang-ayon ng Simbahan at hindi nagsasalita sa anumang sariling awtoridad.',
+	'colophon.textsTitle': 'Ang mga teksto',
+	'colophon.textsBody':
+		'Bawat teksto ay nagmumula sa isang pinangalanang pinagkunan, at bawat akda ay nagtatala ng edisyon nito, ng pahina ng pinagkunan nito, at ng petsang kinuha ito. Ang Kasulatan ay gumagamit ng mga saling nasa pambayang ari; ang Katesismo, ang Kompendyo at ang mga dokumento ng Magisterio ay nagmumula sa mismong mga tekstong inilathala ng Banal na Sede.',
+	'colophon.textsFidelity':
+		'Ang teksto ay hindi kailanman pinapaikli, hindi kailanman ibinubuod sa ibang salita, hindi kailanman muling isinusulat, at hindi kailanman inilalagay sa tabi ng patalastas. Inaayos nga namin ang malinaw na mga depekto — isang nalaglag na salita, isang nasirang sipi, isang markang lumamon ng talata — laging patungo sa kung ano ang inilimbag mismo ng pinagkunan, hindi kailanman patungo sa inaakala naming dapat nitong sabihin.',
+	'colophon.countBible': 'edisyon ng Bibliya',
+	'colophon.countDocuments': 'dokumento ng Magisterio',
+	'colophon.copyrightTitle': 'Karapatang-ari',
+	'colophon.copyrightBody1':
+		'Ang Katesismo, ang Kompendyo at ang mga dokumento ng Magisterio ay pag-aari ng mga may hawak ng karapatan sa mga ito — pangunahin ang Libreria Editrice Vaticana at ang Dikasteryo para sa Komunikasyon.',
+	'colophon.copyrightBody2':
+		'Ipinapakita ng bawat akda ang sariling paunawa ng karapatang-ari ng may hawak nito, sa kanilang sariling pananalita, at nag-uugnay sa pahinang pinagkunan nito.',
+	'colophon.copyrightBody3':
+		'Kung may hawak kayong karapatan sa alinmang teksto rito at mas nanaisin ninyong huwag itong ilathala, sumulat kayo sa amin.',
+	'colophon.contactTitle': 'Ugnayan',
+	'colophon.contactBody': 'Para sa anumang bagay, kabilang ang nasa itaas:',
+	'colophon.contactPending':
+		"Wala pang naitatakdang tirahan para sa ugnayan. Hindi dapat ilathala sa publiko ang pook-sapot na ito hangga't wala nito — ang pangakong nasa itaas ay walang kabuluhan kung walang paraan upang kami ay maabot.",
+	'colophon.illustrationsTitle': 'Ang mga larawan',
+	'colophon.illustrationsBody':
+		"Taglay ng Bibliya ang mga ukit ni Gustave Doré, bawat isa'y nakalagay sa talatang inilalarawan nito — ang huli at pinakamalaki sa kanyang mga siklo sa Bibliya, inukit sa kahoy mula sa kanyang mga guhit at inilimbag kasama ng teksto sa halip na tipunin sa likuran.",
+	'colophon.illustrationsRights':
+		'Nasa pambayang ari ang mga ito, gaya ng ipinapakita ng mga petsa sa ibaba, at ang tapat na larawang kopya ng isang ukit na nasa pambayang ari ay walang dalang bagong sariling karapatang-ari.',
+	'colophon.countPlates': 'ukit',
+	'colophon.countPlateChapters': 'kabanatang may larawan',
+	'colophon.typeTitle': 'Ang letra',
+	'colophon.typeBody':
+		'Nakahanay sa EB Garamond, ang muling pagbuhay nina Georg Duffner at Octavio Pardo sa mga letrang inukit ni Claude Garamont noong dekada 1590 — ang tradisyong humanista na pinaglilimbagan ng Simbahan mula pa noong Renasimyento. Ang Sirilikong letra nito ay mula sa parehong mga kamay ngunit walang binubuhay: walang Sirilikong Garamond na naukit kailanman, kaya ang Ruso ay nakahanay sa isang anyong iginuhit upang tumabi sa iba.',
+	'colophon.typeArabic':
+		'Ang Arabe ay lubos na lampas dito, at nakahanay sa Amiri — ang muling pagbuhay ni Khaled Hosny sa naskh na inukit para sa palimbagang Bulaq sa Cairo noong 1905, pinili sa parehong dahilan gaya ng letra ng teksto: isang tiyak na makasaysayang letra ng aklat sa halip na isang kasalukuyang guhit.',
+	'colophon.typeInitials':
+		'Ang mga pambungad na inisyal ay Pirata One, isang letrang gotiko na ang malalaking titik ay nananatiling mababasa sa sukat na hinihingi ng isang malaking unang titik, at — para sa Ruso — Ponomar, na muling gumagawa ng letrang Slavoniko ng Simbahan ng Palimbagang Sinodal. Ang Ponomar ay naghahanay ng inisyal at hindi kailanman ng teksto: ang isang makabagong ensiklika na buong nakahanay sa letrang Sinodal ay magsasabi ng isang bagay na hindi totoo tungkol sa kung ano ito. Lahat ay lisensiyado sa ilalim ng SIL Open Font License at inihahain mula sa pook-sapot na ito sa halip na mula sa ibang panig, kaya ang pagbabasa ng isang pahina ay walang hinihingi sa server ng iba.'
 };
