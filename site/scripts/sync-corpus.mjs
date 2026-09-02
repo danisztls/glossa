@@ -99,12 +99,22 @@ import {
 	writeLedger
 } from './lastmod.mjs';
 import {
+	BASELINE_PATH,
 	CoverageMeter,
+	REPORT_PATH,
 	compareCoverage,
 	readBaseline,
 	summarize,
 	writeReport
 } from './reference-coverage.mjs';
+import {
+	contentDigest,
+	importClosure,
+	loadState,
+	moved,
+	saveState,
+	treeDigest
+} from './incremental.mjs';
 
 const siteRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const corpusDir = path.resolve(siteRoot, process.env.CORPUS_DIR ?? '../../glossa-corpus');
@@ -384,6 +394,104 @@ function compactRun(nums) {
 	return nums.length;
 }
 
+const buildSrc = path.join(corpusDir, 'build');
+
+/**
+ * The inputs this run reads and the outputs it writes, fingerprinted. See
+ * scripts/incremental.mjs for the two digests and why each set gets the one it
+ * gets; the parts are kept separate rather than merged into one hash so a run
+ * can say WHICH of them moved.
+ *
+ * `dictionaries` IS ITS OWN PART BECAUSE THE CLOSURE CANNOT SEE IT.
+ * `route-titles.mjs`'s `readDictionaries` loads them with a template-literal
+ * `await import(...)` over `UI_LANGS`, which no static walk of import
+ * statements will ever resolve. Fold it into `code` and editing a dictionary
+ * silently keeps serving the previous `route-titles.json`.
+ *
+ * `ledger` IS BOTH AN INPUT AND AN OUTPUT, and content-hashing it is what makes
+ * that harmless. `resolveLastmod` is a pure function of the previous ledger,
+ * this run's address fingerprints and the date, and over an unchanged corpus it
+ * reproduces the file byte for byte -- that is the property the ledger exists
+ * for. Hashing it also means a `lastmod.json` arriving from a `git pull`
+ * correctly forces a run, since the file on disk no longer matches this
+ * script's own last output.
+ *
+ * There is no `readers` part: nothing here shells out to a binary whose version
+ * could change an answer. The `git` spawns in `corpusDateFor` only seed the date
+ * of an address the ledger has never seen, and a new address means new files
+ * under `build/`, which `corpus` already catches.
+ */
+function syncFingerprint() {
+	const i18nDir = path.join(siteRoot, 'src/lib/i18n');
+	return {
+		code: contentDigest(importClosure(fileURLToPath(import.meta.url)), siteRoot),
+		dictionaries: contentDigest(
+			(existsSync(i18nDir) ? readdirSync(i18nDir) : [])
+				.filter((f) => f.endsWith('.ts'))
+				.map((f) => path.join(i18nDir, f)),
+			siteRoot
+		),
+		editorial: contentDigest(
+			[
+				path.join(siteRoot, 'unpublished.json'),
+				path.join(siteRoot, 'descriptions.json'),
+				path.join(siteRoot, 'document-tags.json'),
+				BASELINE_PATH
+			],
+			siteRoot
+		),
+		ledger: contentDigest([lastmodPath], siteRoot),
+		corpus: treeDigest([buildSrc], corpusDir),
+		outputs: treeDigest(
+			[
+				destDir,
+				routeManifestPath,
+				routeTitlesPath,
+				apparatusPath,
+				worksPath,
+				sitemapPath,
+				REPORT_PATH
+			],
+			siteRoot
+		)
+	};
+}
+
+const statePath = path.join(siteRoot, 'scripts/.sync-corpus-state.json');
+const changedOnly = process.argv.includes('--changed-only');
+const forced = process.argv.includes('--force');
+
+/*
+ * ASKED BEFORE THE WIPE BELOW, which is the whole reason this block sits here
+ * rather than anywhere more convenient: the `outputs` part is a claim about
+ * what is on disk, and the next statement deletes it.
+ *
+ * OPT-IN, and `prebuild` does not opt in -- only `predev` does (package.json).
+ * `docs/decisions.md` §Parsing settles the general question against skipping by
+ * default, and the argument there is about the pipeline, where a stale parse is
+ * invisible and flows downstream. This one fails differently: its output is the
+ * page in the browser, and the recovery is `--force` and thirteen seconds. What
+ * makes the split safe is that a deploy never takes it, so a fingerprint that
+ * missed an input cannot reach a reader.
+ *
+ * A run RECORDS its fingerprint only where it exits 0 (the end of this file),
+ * so every gate below -- the lastmod ceiling, PARSER DEFEATED, the content-size
+ * ceiling, `assertNamed`, `assertApparatus` -- has already passed over these
+ * exact bytes before any skip of them is possible. Skipping is not skipping
+ * validation; it is declining to re-derive a result already proven valid.
+ */
+if (changedOnly && !forced) {
+	const drift = moved(syncFingerprint(), loadState(statePath));
+	if (drift.length === 0) {
+		console.log(
+			`[sync-corpus] --changed-only: nothing moved since the last successful sync — skipping. ` +
+				`Re-run with --force to rebuild anyway.`
+		);
+		process.exit(0);
+	}
+	console.log(`[sync-corpus] --changed-only: ${drift.join(', ')} moved — rebuilding.`);
+}
+
 /*
  * THE DESTINATION STARTS EMPTY, so that a content file whose work has been
  * withdrawn cannot survive into a build.
@@ -417,8 +525,6 @@ for (const entry of existsSync(destDir) ? readdirSync(destDir) : []) {
 	if (entry === PLATES_DIR) continue;
 	rmSync(path.join(destDir, entry), { recursive: true, force: true });
 }
-
-const buildSrc = path.join(corpusDir, 'build');
 
 if (!existsSync(buildSrc)) {
 	// A fixture build must never inherit a real corpus's route manifest from a
@@ -2334,3 +2440,24 @@ console.log(
 		`Tags: ${taggedDocuments} document(s), ${distinctTags} distinct term(s). ` +
 		`Works: ${registeredWorkIds.join(', ')}`
 );
+
+/*
+ * RECORDED HERE AND NOWHERE EARLIER, because reaching this line is the whole
+ * claim: every gate above exits nonzero rather than returning, so a fingerprint
+ * written at the top would be a record that a broken run had succeeded, and the
+ * next `--changed-only` would skip over it. `rebuild.py` records a stage only
+ * when it exits 0 for the same reason.
+ *
+ * `outputs` is RE-READ rather than carried down from the check above: this run
+ * has rewritten every one of those files since, and the state has to describe
+ * what is on disk now, not what was there before.
+ *
+ * WRITTEN BY EVERY RUN THAT GETS HERE, not only by `--changed-only` ones. What
+ * the record claims is "these inputs derived this output successfully", which
+ * is as true of a plain `npm run sync-corpus` as of a flagged one -- and gating
+ * it would mean `prebuild` taught the next `npm run dev` nothing, leaving it to
+ * re-derive a corpus the build had just finished deriving. The early exit for a
+ * missing corpus returns above this line, so a fixture-fallback run records
+ * nothing.
+ */
+saveState(statePath, syncFingerprint());

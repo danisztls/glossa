@@ -1070,7 +1070,34 @@ both why the mismatch survived a year and why removing it was safe.
 cd site
 npm run dev                                          # or npm run build
 CORPUS_DIR=/path/to/glossa-corpus npm run dev        # corpus kept elsewhere
+npm run sync-corpus                                  # full derivation, ~13.3s
+npm run sync-corpus:changed                          # skip if nothing moved, ~0.3s
+node scripts/sync-corpus.mjs --changed-only --force  # ignore the cache
 ```
+
+**`npm run dev` DOES NOT RE-DERIVE THE CORPUS ANY MORE** (2026-09-01,
+`docs/decisions.md` §Process). `predev` passes `--changed-only`, so a dev
+restart over an unchanged corpus costs ~0.27s instead of 13.3s and reaches
+`ready` in about two seconds. `sync-corpus.mjs` fingerprints six input sets —
+`code` (its own 21-file import closure), `dictionaries`, `editorial`, `ledger`,
+`corpus`, `outputs` — into `site/scripts/.sync-corpus-state.json` (untracked),
+and records them only where the run reaches its last line, so a run that trips
+any gate is never skipped over. Four things:
+
+- **`prebuild` deliberately does NOT pass it.** A deploy always derives in full,
+  which is what keeps the general rule in `docs/decisions.md` (a run that skips
+  is only as good as its list of inputs) from having any way to reach a reader.
+  Do not "make it consistent".
+- **The run says which part moved** — `--changed-only: corpus, ledger moved —
+rebuilding` — so a skip you did not expect is diagnosable without reading the
+  fingerprint.
+- **What it cannot see is `npm install`.** A dependency that changes a parse
+  changes no byte this reads, which is the same gap `rebuild.py` documents for
+  `uv`. `--force` is the answer, and it still records state afterwards.
+- **Deleting the state file costs one full sync, never a wrong one.** Same for
+  a corpus `git checkout`: `corpus` and `outputs` are `size:mtime_ns` digests,
+  so restoring identical bytes under new mtimes forces one needless rebuild —
+  the only direction this is allowed to err in.
 
 **The worktree trap shrank but did not vanish** (see the corpus section
 above). The default is now `../../glossa-corpus`, resolved from `site/`, so a

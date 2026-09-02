@@ -12,6 +12,12 @@ node_modules
 # scripts/sync-corpus.mjs and README.md "Corpus data"). Never hand-edit.
 /src/lib/corpus-data
 
+# What the last successful sync-corpus run's inputs looked like, for
+# --changed-only (scripts/incremental.mjs). Untracked and safe to delete:
+# losing it costs one full sync, never a wrong one, because a run records this
+# only where it exits 0.
+/scripts/.sync-corpus-state.json
+
 # Generated alongside corpus-data by sync-corpus. The edge worker reads this
 # compact route manifest before serving the SPA shell; it is deploy output,
 # not an editorial source file.

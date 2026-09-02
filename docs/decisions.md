@@ -2784,3 +2784,36 @@ with curly quotes is the content, not a homoglyph attack).
 judgment call to make mid-task. If you are delegating, name the deletable set and the
 protected set explicitly — a brief that only says what to _fix_ leaves deletion as an
 unstated judgment call, and it will get taken.
+
+**The site's sync grew the same staleness check, and `predev` is the one caller that
+takes it** (2026-09-01). `sync-corpus.mjs` wiped `src/lib/corpus-data/` and re-derived
+all 8,431 files on every invocation — 13.3 s, paid by `predev` on every `npm run dev`,
+for a corpus that during app work never moved. The mechanism is `pipeline/rebuild.py`'s,
+deliberately rather than a second design: `code` (the script's real import closure, 21
+files, read off its import statements and content-hashed), `dictionaries`, `editorial`,
+`ledger`, `corpus` and `outputs`, in `site/scripts/.sync-corpus-state.json`, recorded
+only where the run reaches its last line. The two large trees get `size:mtime_ns` and
+the small hand-edited sets get content, for the reason `raw/` already had: hashing 460
+MB costs more than the parse it saves, and erring toward an unnecessary run is the only
+direction this may err in. Measured: 13.3 s to 0.27 s, and `npm run dev` to first
+`ready` from ~15.3 s to 2.0 s.
+
+**The entry above says `--changed-only` is opt-in and stays opt-in, and `predev` opts
+in.** That is a departure and needs its argument on the record. The rule is about the
+pipeline, where a stale parse is invisible and flows into everything downstream with
+nothing to show it; this one fails in front of you, since its output is the page in the
+browser, and the recovery is `--force`. What makes it safe is the split rather than the
+reasoning: **`prebuild` does not pass the flag**, so no deploy can take a skip, and a
+fingerprint that missed an input cannot reach a reader. `dictionaries` is a separate
+part for the failure that would otherwise be silent — `readDictionaries` loads them with
+a template-literal `import()` over `UI_LANGS`, which no walk of import statements
+resolves, so folding it into `code` would keep serving a stale `route-titles.json` after
+a translation was edited.
+
+**A `size:mtime_ns` digest needs a bigint stat, and getting that wrong degrades it
+silently.** `mtimeNs` exists only on `statSync(p, { bigint: true })`; on an ordinary
+stat it is `undefined`, which hashes identically for every file and quietly reduces the
+whole thing to a size-only check that misses any edit preserving a file's length. It was
+written that way first, and what caught it was a test asserting the digest moves when
+mtime moves — not any run of the real thing, which skipped and rebuilt exactly when it
+looked like it should.

@@ -5,8 +5,9 @@
 	"type": "module",
 	"scripts": {
 		"sync-corpus": "node scripts/sync-corpus.mjs",
+		"sync-corpus:changed": "node scripts/sync-corpus.mjs --changed-only",
 		"security-txt": "node scripts/write-security-txt.mjs",
-		"predev": "npm run sync-corpus && npm run security-txt",
+		"predev": "npm run sync-corpus:changed && npm run security-txt",
 		"dev": "vite dev",
 		"prebuild": "npm run sync-corpus && npm run security-txt",
 		"build": "vite build",
