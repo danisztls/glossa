@@ -157,7 +157,10 @@
 	/* Only labels that actually shorten something get the affordance, so the
 	   dotted underline means "there is more to read here" rather than
 	   decorating every row. Same signal as `.address-absent` above and
-	   `RefText`'s `.ref-unresolved`. */
+	   `SiglumGloss`'s `.siglum-trigger` -- which is where this rule was applied
+	   on 2026-09-02, `RefText` having drawn it over every unlinkable segment
+	   until then. Note what those two still are and this is not: a `title`,
+	   which never fires on a tap. */
 	.source-label.named {
 		cursor: help;
 		text-decoration: underline dotted;

@@ -284,6 +284,33 @@ export function refHref(
 }
 
 /**
+ * The decoder-ring line a siglum discloses -- `AAS — Acta Apostolicae Sedis` --
+ * and `undefined` for a segment with nothing to disclose.
+ *
+ * ONE FUNCTION FOR THE TEXT AND FOR WHETHER THERE IS A CUE AT ALL, which is
+ * the whole reason it is here rather than inline in `RefText`. A cue that
+ * opens nothing is the bug this was written for: a dotted underline and a
+ * `cursor: help` were drawn over every unlinkable segment, so an unresolvable
+ * scripture reference promised a reader something and then answered with its
+ * own words repeated back. `CitedBy` already states the rule -- only a label
+ * that shortens something gets the affordance -- and returning `undefined`
+ * here is what keeps the two halves of it from drifting apart.
+ *
+ * `expansion` IS NON-NULL ONLY FOR A SIGLUM. A document named by its
+ * spelled-out title explains itself (`refs-grammar.ts`'s `document` variant),
+ * so `via: 'title'` never carries one and never draws a cue.
+ *
+ * ASKED OF THE SEGMENT AND NOT OF THE LINK, deliberately: a siglum that
+ * resolves carries its expansion just the same, and it is `RefText` that
+ * prefers the link -- a reader who can be taken to the document does not need
+ * to be told what its initials stand for.
+ */
+export function glossOf(seg: RefSegment): string | undefined {
+	if (seg.kind !== 'document' || !seg.expansion) return undefined;
+	return `${seg.label} — ${seg.expansion}`;
+}
+
+/**
  * The `{from, to}` span of a verse list, put through the caller's `resolve`
  * (conversion, or the identity for a work that already cites in Vulgate
  * numbering) and clamped to verses that actually exist in the reader's

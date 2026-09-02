@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
 	expandIbidem,
+	glossOf,
 	linkifyProse,
 	normalizeCitationSpacing,
 	parseRefs,
@@ -2053,5 +2054,40 @@ describe('hasBookAbbrevs', () => {
 
 	it('reads a regional tag as its base language', () => {
 		expect(hasBookAbbrevs('en-GB')).toBe(true);
+	});
+});
+
+/**
+ * What a siglum discloses, and -- by answering `undefined` -- whether a cue is
+ * drawn over it at all. Both halves are one function so a reader can never
+ * meet a dotted underline that opens nothing, which is what the `title` it
+ * replaced did on every touch screen (`SiglumGloss.svelte`).
+ */
+describe('glossOf', () => {
+	const documentSeg = (segs: RefSegment[], label: string) =>
+		segs.find((s) => s.kind === 'document' && s.label === label)!;
+
+	it('discloses a siglum that names no ingested document', () => {
+		const seg = documentSeg(parseRefs('Cf. ibid., 11: AAS 58 (1966), 1033-1034.'), 'AAS');
+		expect(glossOf(seg)).toMatch(/^AAS — Acta Apostolicae Sedis/);
+	});
+
+	it("discloses a siglum that DOES resolve, since the link is the caller's choice", () => {
+		const seg = documentSeg(parseRefs('GS 19 # 1.'), 'GS');
+		expect(seg).toMatchObject({ slug: 'gaudium-et-spes' });
+		expect(glossOf(seg)).toMatch(/^GS — Gaudium et Spes/);
+	});
+
+	it('says nothing for a document named by its title, which explains itself', () => {
+		const segs = parseRefs('Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', { lang: 'pt' });
+		const title = segs.find((s) => s.kind === 'document' && s.via === 'title')!;
+		expect(title).toMatchObject({ expansion: null });
+		expect(glossOf(title)).toBeUndefined();
+	});
+
+	it('says nothing for a scripture segment or for plain text', () => {
+		const segs = parseRefs('Cf. Gen 9:16.');
+		expect(glossOf(segs.find((s) => s.kind === 'scripture')!)).toBeUndefined();
+		expect(glossOf(segs.find((s) => s.kind === 'text')!)).toBeUndefined();
 	});
 });

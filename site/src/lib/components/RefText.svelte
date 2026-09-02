@@ -25,10 +25,20 @@
 	 * `ProseBlocks.svelte`). This component assumes the *whole* string
 	 * is citation-shaped, which is true for a footnote or a `ccc_refs`
 	 * string but not for running prose.
+	 *
+	 * THREE PRESENTATIONS, NOT TWO. A segment that resolves is a link; one that
+	 * does not but has something to disclose is a `SiglumGloss`, the card that
+	 * says what `AAS` stands for; and everything else is the plain text the
+	 * source printed. That third branch used to carry the cue as well -- a
+	 * dotted underline, `cursor: help` and a `title` -- over segments where the
+	 * `title` merely repeated the words under it, and a cue that opens nothing
+	 * is what `CitedBy` means by drawing the affordance only on a label that
+	 * shortens something. `glossOf` decides both halves, so they cannot drift.
 	 */
-	import { normalizeCitationSpacing, parseRefs, refHref, type RefSegment } from '$lib/refs';
+	import { glossOf, normalizeCitationSpacing, parseRefs, refHref } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { i18n } from '$lib/i18n.svelte';
+	import SiglumGloss from './SiglumGloss.svelte';
 
 	interface Props {
 		text: string;
@@ -50,26 +60,18 @@
 		parseRefs(normalizeCitationSpacing(text), { lang: effectiveLang, work })
 	);
 	const bibleWorkId = $derived(content.workIdFor('bible'));
-
-	/** Tooltip for an unresolved segment: the document expansion when we have one, otherwise just the raw citation text (better than nothing, no worse than the plain text it sits next to). */
-	function tooltipFor(seg: RefSegment): string {
-		return seg.kind === 'document' && seg.expansion
-			? `${seg.label} — ${seg.expansion}`
-			: seg.kind === 'text'
-				? ''
-				: seg.raw;
-	}
 </script>
 
 <span class={className}>
 	{#each segments as seg, i (i)}
 		{#if seg.kind === 'text'}{seg.text}{:else}
 			{@const href = refHref(seg, { bibleWorkId, lang: effectiveLang, work })}
+			{@const gloss = glossOf(seg)}
 			{#if href}
 				<a class="ref-link" {href}>{seg.raw}</a>
-			{:else}
-				<span class="ref-unresolved" title={tooltipFor(seg)}>{seg.raw}</span>
-			{/if}
+			{:else if gloss}
+				<SiglumGloss label={seg.raw} {gloss} lang={effectiveLang} />
+			{:else}{seg.raw}{/if}
 		{/if}
 	{/each}
 </span>
@@ -100,10 +102,5 @@
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
 		border-radius: 2px;
-	}
-
-	.ref-unresolved {
-		cursor: help;
-		border-bottom: 1px dotted var(--color-text-muted);
 	}
 </style>
