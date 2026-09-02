@@ -186,7 +186,9 @@ export class CoverageMeter {
 			// `question` is prose the reader meets BEFORE the answer — eight
 			// questions quote a verse and print its locator. `notes[].text` is
 			// an annotated Bible edition's commentary, which cites Scripture
-			// 435 times across the two editions that carry it.
+			// 20,596 times across the seven editions that carry an apparatus
+			// (435 when Challoner and Matos Soares were the only two, before
+			// the 2026-08-28 capture added five more).
 			//
 			// All three were walked past until 2026-08-26, and all three were
 			// rendered as inert text on the page until the same day. That is
