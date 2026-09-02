@@ -67,8 +67,14 @@
 
 		// A restored scroll position (back/forward, a reload mid-chapter) is in
 		// place before this ever runs, so the first measurement cannot wait for
-		// the reader to move.
-		measure();
+		// the reader to move -- but it must not be taken SYNCHRONOUSLY either.
+		// `measure()` here read `scrollY` and `innerHeight` at the bottom of the
+		// effect, immediately after mount had invalidated the DOM, which forces a
+		// full synchronous layout of the page: Lighthouse attributed 43-45 ms of
+		// forced reflow to this one line on the home page, inside the window TBT
+		// measures. `schedule()` takes the same reading one frame later, off the
+		// layout the browser was going to do anyway.
+		schedule();
 		window.addEventListener('scroll', schedule, { passive: true });
 		// Resizing changes the threshold itself, not just the offset compared
 		// against it — on a phone that is every time the URL bar collapses.
