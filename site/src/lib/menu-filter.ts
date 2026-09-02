@@ -19,7 +19,7 @@
  * language in this menu whose name a reader cannot type is a language they
  * would otherwise have to scroll for.
  */
-import { baseLang } from './corpus';
+import { baseLang, contentLangChain } from './corpus';
 import { UI_LANGS, type UiLang } from './ui-langs';
 import type { WorkManifest } from './types';
 
@@ -183,6 +183,44 @@ export function orderUiLangs(
 	const primary = [...pinned, ...UI_LANGS.filter((lang) => shown.has(lang))];
 	const inPrimary = new Set<UiLang>(primary);
 	return { primary, rest: UI_LANGS.filter((lang) => !inPrimary.has(lang)) };
+}
+
+/**
+ * The content languages this reader is likeliest to want, in order.
+ *
+ * THREE SOURCES, AND THE ORDER BETWEEN THEM IS THE WHOLE DECISION:
+ *
+ * 1. **The interface language.** Either the reader chose it by hand, which is
+ *    the strongest statement anyone makes on this site, or it was negotiated
+ *    off the head of the browser's own list — so it outranks that list either
+ *    way and can never contradict it.
+ * 2. **The rest of the browser's languages**, in the reader's own order. This
+ *    is the half `contentLangChain` alone could not know: a Hungarian reader
+ *    whose browser also names English is asking for English before German,
+ *    and the fallback table can only ever answer with German, because it is a
+ *    statement about languages rather than about people.
+ * 3. **The fallback chain's neighbours** — `CONTENT_LANG_FALLBACK`, which is
+ *    what remains when the reader has told us nothing else. `hu → de` is a
+ *    good guess about a Hungarian reader and a bad one about the Hungarian
+ *    reader who reads English.
+ *
+ * `browser` IS THE RAW BROWSER LIST, not `browserUiLangs`. Filtering it
+ * through `UI_LANGS` first would be filtering the languages someone can READ
+ * through the languages we have CHROME in — two lists this repository keeps
+ * apart on purpose. It happens to lose nothing today, and that is exactly the
+ * kind of coincidence that stops being true without anything failing.
+ *
+ * WHAT THIS DOES NOT DO IS DECIDE WHAT RENDERS. `editionInLang` still resolves
+ * the default edition through `CONTENT_LANG_FALLBACK` alone, so on a work with
+ * no edition in the interface language the top row of the menu and the column
+ * on the page can name different languages — the tick says which one is
+ * showing. Ranking a panel is a suggestion and can be reader-shaped; choosing
+ * the text a citation resolves to is not, and is deliberately left keyed to
+ * the language alone.
+ */
+export function readerLangChain(uiLang: string, browser: readonly string[]): string[] {
+	const [own, ...neighbours] = contentLangChain(uiLang);
+	return [...new Set([own, ...browser.map(baseLang), ...neighbours])];
 }
 
 /**

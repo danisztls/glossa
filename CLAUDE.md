@@ -2129,7 +2129,7 @@ and `ComparisonEditionMenu` filter; `src/lib/menu-filter.ts` holds everything in
 that which is not markup, and `.menu-filter`/`.menu-list`/`.menu-more` are in
 `menus.css` beside `.edition-lang`, for the reason that rule records. Both
 also ORDER themselves around the reader, which they did not on the day the
-boxes shipped. Four things about it.
+boxes shipped. Six things about it.
 
 - **Matching is `highlight.ts`'s `matchesQuery`, never a fresh one** — the rule
   `/documenta`'s search box already established. What it buys here is the FOLD,
@@ -2158,19 +2158,42 @@ boxes shipped. Four things about it.
   `UI_LANGS` order. What it forbids is a value that changes UNDER a reader, and
   corpus weight is exactly that: it moves on every deploy. `navigator.languages`
   is the reader's own setting, fixed for them and different only between them.
-- **The edition pickers lead with `contentLangChain`, WHOLE.** They were
-  alphabetical by base language tag — `listEditions`' rule, copied by
-  `pairEditions` and `documentEditions` — which is stable, arbitrary, and not
-  even alphabetical by the name each row prints (`de` is "Deutsch"). The new
-  first key is `CONTENT_LANG_FALLBACK`, the table that already decides which
-  edition a page RENDERS, so the top of the panel is what this reader can read
-  in the order the site would have picked it. Every row of that table ends in
-  `en, la`, so those float for every reader — deliberately, since it is the
-  site's own answer to what a reader falls through to. The three alphabetical
-  sorts stay and become the tie-break, which is what keeps the Bible's two
-  English editions in `PREFERRED_EDITION`'s order; `orderByLangChain`'s sort is
-  stable for that reason alone. `suggest.ts`'s `orderedBibleWorkIds` was the
-  precedent and is left where it is — it ranks work ids for a matcher.
+- **The edition pickers rank on `readerLangChain`: interface language, then the
+  browser's, then the neighbours.** They were alphabetical by base language tag
+  — `listEditions`' rule, copied by `pairEditions` and `documentEditions` —
+  which is stable, arbitrary, and not even alphabetical by the name each row
+  prints (`de` is "Deutsch"). Neither source that replaced it is new:
+  `CONTENT_LANG_FALLBACK` already decides which edition a page RENDERS, and
+  `navigator.languages` is what `app.html` negotiates the chrome from. **The
+  browser sits ABOVE the neighbours because that is the half a table cannot
+  know** — `hu → de` is a good guess about a Hungarian reader and a bad one
+  about the Hungarian reader whose browser also says English. The interface
+  language stays on top of both: it was either chosen by hand or negotiated off
+  the head of that same list, so it can never contradict it. The chain is used
+  whole, `en, la` tail included, since that is the site's own answer to what a
+  reader falls through to. The three alphabetical sorts stay and become the
+  tie-break, which is what keeps the Bible's two English editions in
+  `PREFERRED_EDITION`'s order; `orderByLangChain`'s sort is stable for that
+  reason alone. `suggest.ts`'s `orderedBibleWorkIds` was the precedent and is
+  left where it is — it ranks work ids for a matcher.
+- **RANKING A PANEL IS READER-SHAPED; RESOLVING AN ADDRESS IS NOT.**
+  `editionInLang` still walks `CONTENT_LANG_FALLBACK` alone, so on a work with
+  no edition in the interface language the menu's top row and the column on the
+  page can name different languages — a Hungarian reader with English in the
+  browser is offered English first and still shown German. The tick says which
+  is showing. That is deliberate: a suggestion may follow the person, but which
+  text a citation resolves to must be a property of the language, or the same
+  address gives two readers two documents. Feeding the browser into resolution
+  would also put `navigator` inside `corpus.ts`, which the build scripts import
+  from Node.
+- **`browserLangs` is the RAW list and `browserUiLangs` filters it**, because
+  the two menus filter it against different things: the language menu wants the
+  languages there is chrome in, the edition menus want the languages there is a
+  text in. Filtering once against `UI_LANGS` would have leant on the interface
+  being a superset of the corpus — true today, and the one relationship
+  `ui-langs.ts` says never to derive from. `navigatorLangs`/`navigatorUiLangs`
+  hold the `typeof navigator` guard so the negotiation and both menus can never
+  be three readings of one list.
 - **Typing ignores the fold entirely**, and that is what makes the guess
   tolerable. A twelve-of-thirty-four guess is only cheap if being wrong costs
   three keystrokes; a filtered list that silently omitted matches below the fold

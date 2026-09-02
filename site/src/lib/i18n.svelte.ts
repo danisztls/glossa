@@ -26,12 +26,24 @@ import {
 	RTL_LANGS,
 	isUiLang,
 	isRtl,
+	browserLangs,
 	browserUiLangs,
+	navigatorLangs,
 	navigatorUiLangs,
 	type UiLang
 } from './ui-langs.ts';
 
-export { UI_LANGS, RTL_LANGS, isUiLang, isRtl, browserUiLangs, navigatorUiLangs, type UiLang };
+export {
+	UI_LANGS,
+	RTL_LANGS,
+	isUiLang,
+	isRtl,
+	browserLangs,
+	browserUiLangs,
+	navigatorLangs,
+	navigatorUiLangs,
+	type UiLang
+};
 
 /**
  * Put the chosen language on the document element, where CSS and the browser

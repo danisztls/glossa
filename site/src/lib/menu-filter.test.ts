@@ -4,6 +4,7 @@ import {
 	langWeights,
 	orderByLangChain,
 	orderUiLangs,
+	readerLangChain,
 	uiLangSearchText,
 	UI_LANG_NAMES
 } from './menu-filter';
@@ -123,6 +124,39 @@ describe('orderUiLangs', () => {
 	});
 });
 
+describe('readerLangChain', () => {
+	it('leads with the interface language, then the browser, then the neighbours', () => {
+		expect(readerLangChain('pt', ['pt-BR', 'en-US'])).toEqual(['pt', 'en', 'es', 'la']);
+	});
+
+	// The half `CONTENT_LANG_FALLBACK` cannot know. `hu → de` is a good guess
+	// about a Hungarian reader and a bad one about this Hungarian reader.
+	it('puts a browser language ahead of the table’s guess', () => {
+		expect(readerLangChain('hu', ['hu', 'en'])).toEqual(['hu', 'en', 'de', 'la']);
+		expect(readerLangChain('hu', [])).toEqual(['hu', 'de', 'en', 'la']);
+	});
+
+	it('never demotes the interface language, whatever the browser says', () => {
+		expect(readerLangChain('la', ['en-GB', 'fr'])[0]).toBe('la');
+	});
+
+	it('names no language twice', () => {
+		const chain = readerLangChain('es', ['es-MX', 'pt-BR', 'en']);
+		expect(new Set(chain).size).toBe(chain.length);
+	});
+
+	// A browser language the corpus has nothing in costs a dead entry and no
+	// more — `orderByLangChain` simply never matches it.
+	it('keeps a browser language the corpus does not have', () => {
+		expect(readerLangChain('en', ['ja-JP'])).toEqual(['en', 'ja', 'la']);
+	});
+
+	it('folds a region down to its base language', () => {
+		expect(readerLangChain('en', ['pt-BR'])).toContain('pt');
+		expect(readerLangChain('en', ['pt-BR'])).not.toContain('pt-br');
+	});
+});
+
 describe('orderByLangChain', () => {
 	const editions = [
 		work('ccc.de', 'de'),
@@ -186,6 +220,13 @@ describe('orderByLangChain', () => {
 			'prayer.common.en-gb',
 			'prayer.common.pt'
 		]);
+	});
+
+	// The pairing is the product: a Hungarian reader whose browser also names
+	// English is offered English before the German the table would have picked.
+	it('ranks a menu by the reader chain, browser language included', () => {
+		const ranked = orderByLangChain(editions, readerLangChain('hu', ['hu', 'en']));
+		expect(ranked.map((w) => w.language)).toEqual(['en', 'de', 'la', 'es', 'fr', 'pt']);
 	});
 
 	it('returns a new array rather than sorting its argument', () => {

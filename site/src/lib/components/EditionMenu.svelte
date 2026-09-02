@@ -47,7 +47,6 @@
 	import { page } from '$app/state';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
 	import {
-		contentLangChain,
 		currentPrayerEditionId,
 		getDocumentGroup,
 		listEditions,
@@ -57,11 +56,17 @@
 	} from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
 	import { matchesQuery } from '$lib/highlight';
-	import { editionSearchText, FILTER_MIN_ROWS, orderByLangChain } from '$lib/menu-filter';
+	import {
+		editionSearchText,
+		FILTER_MIN_ROWS,
+		orderByLangChain,
+		readerLangChain
+	} from '$lib/menu-filter';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import { navigatorLangs } from '$lib/ui-langs';
 	import type { DocumentManifest, WorkManifest } from '$lib/types';
 
 	/**
@@ -118,6 +123,11 @@
 	}
 
 	const ctx = $derived(context(page.url.pathname));
+
+	/** Read once: a browser's language list is a setting the reader leaves the
+	 *  site to change. Raw rather than `navigatorUiLangs`, because what is
+	 *  being ranked is editions and not chrome — see `readerLangChain`. */
+	const browser = navigatorLangs();
 
 	/**
 	 * PRAYERS ARE THE ONE TYPE WHOSE EDITIONS DO NOT ALL HOLD EVERY ADDRESS,
@@ -181,7 +191,7 @@
 	);
 
 	/**
-	 * THE READER'S OWN LANGUAGE FIRST, THEN ITS NEIGHBOURS, THEN THE REST.
+	 * THE INTERFACE LANGUAGE, THEN THE BROWSER'S, THEN THE NEIGHBOURS.
 	 *
 	 * Every list above arrives sorted alphabetically by base language tag —
 	 * `listEditions`' own rule, which `pairEditions` and `documentEditions`
@@ -191,19 +201,20 @@
 	 * not even alphabetical by the NAME each row prints (`de` is "Deutsch",
 	 * `mg` is "Malagasy").
 	 *
-	 * `contentLangChain` is what replaces it as the FIRST key, and it is not a
-	 * new idea of nearness: it is `CONTENT_LANG_FALLBACK`, the table that
-	 * already decides which edition this page renders. So the top of the panel
-	 * is the set of editions this reader can actually read, in the order the
-	 * site itself would have picked one — including the `en`/`la` tail every
-	 * row ends in, which floats for everyone because that is the honest answer
-	 * to what a reader with no edition in their language falls through to.
+	 * `readerLangChain` is what replaces it as the FIRST key, and the argument
+	 * for each of its three tiers is written down there. Neither of the two it
+	 * reads is new: `CONTENT_LANG_FALLBACK` is the table that already decides
+	 * which edition this page RENDERS, and `navigator.languages` is the list
+	 * `app.html` negotiated the chrome out of before this component existed.
+	 * What is new is asking them in that order, so a reader whose interface
+	 * language this work has no edition in is offered a language they actually
+	 * told their browser about, rather than the one a table guessed for them.
 	 *
 	 * The alphabetical sorts stay exactly where they are and become the
 	 * tie-break inside one language, which is what keeps the Bible's two
 	 * English editions in `PREFERRED_EDITION`'s order.
 	 */
-	const editions = $derived(orderByLangChain(contextEditions, contentLangChain(i18n.lang)));
+	const editions = $derived(orderByLangChain(contextEditions, readerLangChain(i18n.lang, browser)));
 
 	// The content store is the only source of truth for every context now —
 	// no URL anywhere carries an edition, so there is nothing for it to

@@ -107,30 +107,46 @@ export function isUiLang(tag: string): tag is UiLang {
 }
 
 /**
- * Every interface language the browser names, in the browser's own order.
+ * The browser's language preference list, folded to base tags and deduped.
  *
- * `navigator.languages` is an ORDERED preference list, and until now only its
- * head was ever read — `detectUiLang` in `i18n.svelte.ts` is this loop with a
- * `return` where this one pushes, and is now written in terms of it. The rest
- * of the list is what `LanguageMenu` leads with: a reader who has told their
- * browser they read Korean and English should not have to look for either.
+ * `navigator.languages` is an ORDERED preference list, and until 2026-09-01
+ * only its head was ever read — `detectUiLang` in `i18n.svelte.ts` was this
+ * loop with a `return` where this one pushes, and is written in terms of it
+ * now. The rest of the list is what both pickers lead with: a reader who has
+ * told their browser they read Korean and English should not have to look for
+ * either of them.
  *
- * Browser tags are normally regional (`pt-BR`, `en-US`) while the interface
- * has one locale per language, so the primary subtag is what matches and
- * `en-GB, en-US` collapses to one entry rather than listing English twice.
+ * Browser tags are normally regional (`pt-BR`, `en-US`) while both of this
+ * site's language lists hold one entry per language, so the primary subtag is
+ * what survives and `en-GB, en-US` collapses to one entry rather than putting
+ * English in the answer twice.
+ *
+ * NOT FILTERED AGAINST EITHER LIST, because its two callers filter against
+ * DIFFERENT ones — `browserUiLangs` wants the languages there is chrome in,
+ * and `EditionMenu` wants the languages there is a text in. Filtering here
+ * against `UI_LANGS` and calling it done would have leant on the interface
+ * being a superset of the corpus, which is true today and is the one thing
+ * `ui-langs.ts`'s own docblock says never to derive from.
  *
  * HERE RATHER THAN IN `i18n.svelte.ts` for the reason this module exists: that
  * one constructs its store at module scope, so importing it reads
  * `localStorage` and instantiates `$state`. Everything about a language tag
- * that is not a store belongs on this side of that line.
+ * that is not a store belongs on this side of that line — and this module
+ * imports nothing at all, which is what lets the edge worker have it.
  */
-export function browserUiLangs(languages: readonly string[] | undefined): UiLang[] {
-	const found: UiLang[] = [];
+export function browserLangs(languages: readonly string[] | undefined): string[] {
+	const found: string[] = [];
 	for (const language of languages ?? []) {
 		const primary = language.trim().toLowerCase().split('-', 1)[0] ?? '';
-		if (isUiLang(primary) && !found.includes(primary)) found.push(primary);
+		if (primary && !found.includes(primary)) found.push(primary);
 	}
 	return found;
+}
+
+/** Those of them the interface is available in — what `LanguageMenu` leads
+ *  with, and whose head is the language the site negotiates. */
+export function browserUiLangs(languages: readonly string[] | undefined): UiLang[] {
+	return browserLangs(languages).filter(isUiLang);
 }
 
 /**
@@ -139,12 +155,17 @@ export function browserUiLangs(languages: readonly string[] | undefined): UiLang
  * The guards are the ones `i18n.svelte.ts`'s `browserLanguage` carried: no
  * `navigator` at all in Node and in the Worker, and `navigator.languages`
  * empty in a few older browsers where `navigator.language` is the whole
- * answer. Kept in ONE place so the language the site negotiates and the
- * languages the menu leads with can never come from different readings.
+ * answer. Kept in ONE place so the language the site negotiates, the languages
+ * the language menu leads with, and the languages the edition menus rank by
+ * can never come from three different readings.
  */
-export function navigatorUiLangs(): UiLang[] {
+export function navigatorLangs(): string[] {
 	if (typeof navigator === 'undefined') return [];
-	return browserUiLangs(navigator.languages?.length ? navigator.languages : [navigator.language]);
+	return browserLangs(navigator.languages?.length ? navigator.languages : [navigator.language]);
+}
+
+export function navigatorUiLangs(): UiLang[] {
+	return navigatorLangs().filter(isUiLang);
 }
 
 /**

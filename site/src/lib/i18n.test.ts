@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { browserUiLangs, detectUiLang, dictionaryFor, isRtl, UI_LANGS } from './i18n.svelte';
+import {
+	browserLangs,
+	browserUiLangs,
+	detectUiLang,
+	dictionaryFor,
+	isRtl,
+	isUiLang,
+	UI_LANGS
+} from './i18n.svelte';
 
 describe('detectUiLang', () => {
 	it('uses the first supported browser preference', () => {
@@ -82,6 +90,33 @@ describe('browserUiLangs', () => {
 	it('agrees with detectUiLang on the head', () => {
 		const languages = ['ja-JP', 'ru-RU', 'en-US'];
 		expect(browserUiLangs(languages)[0]).toBe(detectUiLang(languages));
+	});
+});
+
+/**
+ * The unfiltered list under it, which the edition menus rank by: the languages
+ * a reader can READ are not the languages there is chrome in, and filtering
+ * the one through the other would lean on the interface being a superset of
+ * the corpus — true today, and the one relationship this repository refuses to
+ * derive from.
+ */
+describe('browserLangs', () => {
+	it('keeps a language the interface does not have', () => {
+		expect(browserLangs(['ja-JP', 'en-US'])).toEqual(['ja', 'en']);
+	});
+
+	it('is what browserUiLangs filters', () => {
+		const languages = ['ja-JP', 'is-IS', 'pt-BR', 'en-US'];
+		expect(browserUiLangs(languages)).toEqual(browserLangs(languages).filter(isUiLang));
+	});
+
+	it('folds regions and drops repeats', () => {
+		expect(browserLangs(['en-GB', 'en-US', 'EN'])).toEqual(['en']);
+	});
+
+	it('answers nothing for nothing', () => {
+		expect(browserLangs(undefined)).toEqual([]);
+		expect(browserLangs([' '])).toEqual([]);
 	});
 });
 
