@@ -11,7 +11,7 @@ glossa-corpus/               # a separate PRIVATE repository, sibling of this on
     matos-soares/ ...
     vulgate1914/ ...
     ccc-en/ ...
-  works/
+  build/                     # parsed output, UNTRACKED — was works/ until 2026-08-27; rebuilt by pipeline/rebuild.py
     bible.cpdv.en/
       manifest.json
       books/gen.json … rev.json     # one file per book, lowercase OSIS code
@@ -24,6 +24,10 @@ glossa-corpus/               # a separate PRIVATE repository, sibling of this on
     commentary.haydock.en/
       manifest.json
       books/…                       # notes ADDRESSING bible.douay-rheims.en, no verses
+    dore.tours/
+      manifest.json                 # type "plates", language null
+      plates.json                   # the 241 engravings; verse anchors from pipeline/dore-anchors.json
+      images/…                      # AVIF ladder per plate
     ccc.en/
       manifest.json
       structure.json
@@ -65,7 +69,7 @@ stored — see "Cross-references" below.
 ```jsonc
 {
   "id": "bible.cpdv.en",
-  "type": "bible", // "bible" | "bible-intro" | "catechism" | "compendium" | "prayer" | "summa" | "document" | "commentary"
+  "type": "bible", // "bible" | "bible-intro" | "catechism" | "compendium" | "prayer" | "summa" | "document" | "commentary" | "plates"
   "title": "Catholic Public Domain Version",
   "short_title": "CPDV",
   "language": "en", // BCP 47
@@ -84,10 +88,11 @@ stored — see "Cross-references" below.
   "notes": "free text: edition diagnostics, known issues",
   "generated_at": "2026-08-14T12:00:00Z",
   // bible-only:
-  "psalm_numbering": "vulgate", // all three editions use Vulgate/Septuagint numbering
+  "psalm_numbering": "vulgate", // per edition: "vulgate" | "hebrew" (bible.crampon.fr is hebrew; the rest Vulgate/Septuagint)
   "books": ["gen", "exod", "…"], // the 73 lowercase OSIS codes in this work's canonical order
   // commentary-only, and REQUIRED there:
   "annotates": "bible.douay-rheims.en", // the work whose addresses this one's units name
+  // plates-only (dore.tours): "language" is null, and "credit" names the digitization source
 }
 ```
 
@@ -373,7 +378,7 @@ Both tables carry misprints, corrected pre-parse under the `abbreviation_html` f
 
 ## Compendium — `questions.json`
 
-The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each printed with a reference to the CCC paragraphs it condenses. Work IDs `compendium.{lang}`; manifest `type: "compendium"`. **Ten editions as of 2026-08-25** — `de`, `en`, `es`, `fr`, `hu`, `it`, `pt`, `ro`, `sl`, `sv` — which is every language vatican.va publishes it in as HTML; the four it publishes only as PDF (`be`, `id`, `lt`, `ru`) are captured in `raw/` and parsed by nothing. This is the first work with more than three editions, and the first to bring content languages the interface does not have. Array ordered by `n`:
+The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each printed with a reference to the CCC paragraphs it condenses. Work IDs `compendium.{lang}`; manifest `type: "compendium"`. **Fourteen editions** — `de`, `en`, `es`, `fr`, `hu`, `it`, `pt`, `ro`, `sl`, `sv` parsed from HTML (2026-08-25, every language vatican.va publishes as HTML), and the four it publishes only as PDF (`be`, `id`, `lt`, `ru`) parsed by `ccc/compendium_pdf.py` since 2026-09-02. This was the first work with more than three editions, and the first to bring content languages the interface did not then have. Array ordered by `n`:
 
 ```jsonc
 {
@@ -510,7 +515,7 @@ Per-edition invariants are what fail a run: question numbers inside their part's
 
 v2, scoped 2026-08-15 — see `decisions.md` §Scope for what's in/out and why, and `research/vatican-documents.md` for the underlying survey (citation-frequency tables, per-pontificate EN/PT coverage audit, numbering tests — cited by locator below, not restated here). Covers Vatican II's 16 constitutions/decrees/declarations, papal encyclicals, apostolic exhortations, and CDF/DDF declarations — one schema shape for all of them, since every family sampled shares the same numbering/citation/quotation structure (`vatican-documents.md` §3).
 
-Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` | `apost-exhort` | `apost-const` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`.
+Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vatii` | `encyclical` | `exhortation` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema; `cdf` is declared in `vatican_docs.py` but no `cdf.*` work has been ingested yet). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `exhortation.amoris-laetitia.pt`.
 
 `manifest.json`: same shape as the Catechism/Compendium manifest, `"type": "document"`, plus document-only fields:
 

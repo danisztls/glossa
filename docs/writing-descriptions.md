@@ -12,8 +12,8 @@ matters; everything after it is mechanics.
 **A description is written by reading the document in the corpus. Never from
 recollection of what a document with that title probably says.**
 
-This is not a stylistic preference. The corpus holds ~450 documents, most of
-them obscure — Leo XIII alone wrote dozens of encyclicals that almost nobody
+This is not a stylistic preference. The corpus holds ~290 distinct documents
+in ~1,240 editions across ten languages, most of them obscure — Leo XIII alone wrote dozens of encyclicals that almost nobody
 has read. Asked to describe one from memory, a language model does not fail
 loudly by drawing a blank; it produces a fluent, confident, specifically wrong
 paragraph, because the title is Latin and suggestive and the genre is
@@ -169,8 +169,10 @@ genuinely undivided numbered prose, verified at raw level. Recording the empty
 result is what stops the next person re-deriving it.
 
 **An edition that prints no paragraph numbers declares `"numbered": false`**
-beside `work`/`read_on`/`source`. Eight editions in the corpus are typeset as
-continuous prose with no inline numbering at all; their text lives in
+beside `work`/`read_on`/`source`. At least seventeen editions in the corpus
+are typeset as continuous prose with no inline numbering at all (a lower
+bound — oracle coverage is partial, and the count grew with each language
+expansion); their text lives in
 `appendix.json` rather than `sections.json`, and every heading's `before` is
 null. Null already meant something else — "trailing matter the numbered flow
 never reaches" — so without the flag a reader cannot tell "there is no number
@@ -290,6 +292,15 @@ multiply the one field in it that is prose. Translations ship separately, one
 but a translation is prose about the document and serves whichever edition a
 reader is shown.
 
+**A reading also feeds `site/document-tags.json`** (since 2026-08-31): the
+`/documenta` subject facet, a CLOSED vocabulary of 58 terms keyed by document
+slug, derived from the `origin: "read"` descriptions and enforced by
+`sync-corpus.mjs` (exit 1 on a term outside the `vocabulary` array, a slug
+naming no document, or a malformed tag). When recording a new description,
+consider whether the document belongs under existing terms — the vocabulary is
+widened only deliberately, and never with a term that names what a document
+DOES rather than what it is about (`docs/decisions.md` §The site).
+
 ### 6. Report defects; fix parsers only deliberately
 
 A defect found in step 2 is reported with the description. Fixing it means
@@ -317,7 +328,7 @@ for resuming an interrupted crawl; passing it here would silently do nothing
 to a document that already exists, which is every document you would be
 fixing.
 
-**A parser change is never local.** `vatican_docs.py` parses ~450 documents
+**A parser change is never local.** `vatican_docs.py` parses ~1,240 editions
 across several page templates, so measure the blast radius rather than
 assuming it:
 

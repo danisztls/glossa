@@ -1731,8 +1731,8 @@ export interface DocumentGroup {
 	 *  `/documents/{slug}` URLs address (docs/decisions.md #2's URL
 	 *  convention, extended to documents). */
 	slug: string;
-	/** Publishing family (`vatii`, `encyclical`, future `apost-exhort`/
-	 *  `apost-const`/`cdf`, docs/corpus-schema.md §Documents) — carried for
+	/** Publishing family (`vatii`, `encyclical`, `exhortation`, future
+	 *  `cdf`, docs/corpus-schema.md §Documents) — carried for
 	 *  grouping/future per-family styling, not otherwise interpreted here. */
 	family: string;
 	/** This document's manifest per bare language it's available in. */

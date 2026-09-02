@@ -43,7 +43,8 @@ crawlable is the one readers will cite.
 off; its addresses then redirect to the source page rather than explaining themselves.
 The mechanism was built for rights and is used for **quality** — a damaged parse is
 worse than an absence, because a reader cannot see what is missing. Entries are meant to
-be temporary; the file ships empty.
+be temporary; the file shipped empty, and holds 25 works today — all quality
+switch-offs from the 2026-08-29 language expansions, each with its measured defect.
 
 **There is no whole-site lever, and that is a real gap.** Nearly the whole corpus is
 Libreria Editrice Vaticana material under one notice, so the request the posture
@@ -204,11 +205,13 @@ safe and is checked rather than assumed — French prints a real Â in "GRÂCE"
 and "ton ÂME", and a rule reading Â alone would eat it.
 
 **Capture is cheap; re-crawling is not, so capture every edition the source has.**
-vatican.va publishes the Compendium in fourteen languages; we parse two. All fourteen
-are in `raw/` regardless — ten HTML, four PDF-only — because the marginal cost was
-twelve requests once, and the alternative is that the day a third language is wanted,
-someone crawls that server again. This is the same insurance the rule above states, paid
-before the loss rather than after. It scales by judgment, not by rule: the whole
+vatican.va publishes the Compendium in fourteen languages; we parsed two when this was
+written. All fourteen were in `raw/` regardless — ten HTML, four PDF-only — because the
+marginal cost was twelve requests once, and the alternative is that the day a third
+language is wanted, someone crawls that server again. This is the same insurance the
+rule above states, paid before the loss rather than after — and it paid out on
+2026-09-02, when all fourteen came to parse, the PDF four through
+`ccc/compendium_pdf.py`, with no request to anyone. It scales by judgment, not by rule: the whole
 Compendium is 68 MB, of which 51 MB is one Indonesian PDF, and a work with hundreds of
 per-chapter pages per language would deserve a different answer.
 
@@ -380,8 +383,9 @@ references in the Summa, because nothing in the citation string distinguishes
 them and the grammar could not see the work.
 
 It can now: `RefsOpts` carries an optional work id, `configFor` consults
-`WORK_CONFIGS` before the language table, and three works are listed there —
-`summa.en`, `encyclical.aeterni-patris.en`, `encyclical.diuturnum.en`. Two
+`WORK_CONFIGS` before the language table, and three works were listed there at first —
+`summa.en`, `encyclical.aeterni-patris.en`, `encyclical.diuturnum.en`; the annotated
+Bible editions and Haydock joined as their notes were linkified, seven entries today. Two
 things about the shape were deliberate. **Modern is the default and Douay is
 the opt-in**, which is the measurement rather than a preference about
 traditions: thirteen references in `ccc.en` and one apiece in the Compendium
@@ -492,7 +496,7 @@ parse does not validate and 67 stub pages. The answerable question is whether a 
 worse than what was already written down, which is the shape the site's reference-coverage
 baseline already uses. Two existing ledgers answer first — `absent-sources.json` for a
 fetch failure the origin explained, `translations-checked.json` for a page that is a CMS
-slot nobody filled — and `pipeline/parse-baseline.json` holds the 311 works those cannot
+slot nobody filled — and `pipeline/parse-baseline.json` holds the 312 works those cannot
 speak for, as a status and a problem count. Symmetry is now printed as the report it
 always was. The limit is stated where the code is: the baseline is a floor under the
 parse's addresses and not its structure, since `validate_document` never reads
@@ -524,7 +528,7 @@ of times while one parser is being worked on. Three changes took it to nineteen,
 the ordering of them matters more than the number.
 
 The enabling one is that **each stage now declares the work-id globs it writes, and
-those globs are a partition of `build/`** — 1,447 works, each claimed by exactly one
+those globs are a partition of `build/`** — 1,469 works at last count, each claimed by exactly one
 stage, none twice and none unclaimed. That is what makes running stages concurrently
 safe rather than merely faster, and it is what keeps the `wrote` column honest under
 `--jobs`, since a snapshot of the whole corpus taken around one of four concurrent
@@ -900,9 +904,9 @@ category that was missing.
 `/doctores` and not `/patres` or `/traditio`. `patres` excludes Aquinas, who is a Doctor
 and not a Father; `traditio` is the elegant one and the wrong one, because it would label
 a private theologian's writings with the name of a source of revelation. `doctores` also
-has an established translation in all fourteen interface languages, which matters because
-`chromeNames` does not fall back to English — a coined category would have meant
-commissioning fourteen inventions rather than looking up fourteen terms. The realistic
+has an established translation in every interface language (fourteen then; thirty-four
+now), which matters because `chromeNames` does not fall back to English — a coined
+category would have meant commissioning inventions rather than looking up terms. The realistic
 patristic ingest (Augustine, Jerome, Ambrose, Gregory, Chrysostom, Damascene) are all
 Doctors as well as Fathers, so the name covers the shelf it will hold.
 
@@ -910,7 +914,7 @@ The nested spelling, `/doctores/summa/{part}/{question}`, rather than renaming t
 existing prefix: the shelf and the work have to be different addresses, or the second work
 on the shelf has nowhere to go. `/doctores` is a shelf like `/documenta`, and
 `/doctores/summa` is a work index like `/catechismus`. Both are chrome — every word on
-either is the interface — so both take the fourteen language prefixes, and
+either is the interface — so both take every language prefix, and
 `/doctores/summa` is the first two-segment member of `CHROME_PATHS`. The cost is the same
 one the Compendium's move accepted three paragraphs up and is accepted for the same
 reason: every saved Summa bookmark is dropped, and there is no compatibility layer.
@@ -1064,7 +1068,8 @@ silently switched off for the first of them.
 **A commentary is anchored to the VERSE, by one mark, and each note is labelled by its
 author.** It cannot be anchored the way a footnote is: a footnote has a token inside the
 edition's own text, and a commentary has none to be given. The obvious substitute is the
-lemma, and it was measured before it was rejected — of 45,824 notes only 27,201 carry one
+lemma, and it was measured before it was rejected — of 45,824 notes (counted before
+later corrections; 45,747 today) only 27,201 carry one
 and 25,078 of those quote the Douay verbatim, so a lemma-matched token would anchor 55% of
 the apparatus and only on the one edition whose words it quotes. A marker run with holes
 in it is worse than no run. A verse is something every edition has, so one dagger sits at
@@ -1098,7 +1103,8 @@ once in the verse they annotate and a search cannot say which is meant. A catena
 printed in reading order, so the search carries a cursor and each note is found at or
 after the end of the last: 1,930 of the 1,939 resolve, and the nine that do not — with
 237 whose headwords run backwards — are refused rather than guessed. Anchoring reaches
-24,805 of 45,662 notes, 54.3%.
+24,805 of 45,662 notes, 54.3% (that denominator, like the one above, predates later
+corrections; the total is 45,747 today).
 
 **And the notes with no place in the text keep the mark they always had.** 40% of the
 apparatus carries no headword at all, which is Haydock's own way of saying a note is a
@@ -1144,7 +1150,8 @@ lesson in another family.
 hatch. One switch, fewer surprising states; the override sleeps and wakes on the UI
 language it was made under.
 
-**`UiLang` and `ContentLang` are two sets, fourteen tags against fifteen.** They answer
+**`UiLang` and `ContentLang` are two sets** — fourteen tags against fifteen when this
+was written, thirty-four against twenty-eight today. They answer
 different questions — a content language arrives when someone ingests a text, an interface
 language when someone writes a dictionary — and either moves alone: they were equal at
 ten, separated when the Compendium's editions brought `hu`, `ro`, `sl` and `sv` in with no
@@ -1157,7 +1164,9 @@ a defect to hide** (2026-08-26). A Malagasy reader has the whole Catechism, 2,86
 paragraphs, inside an English interface; by the rule the four Compendium languages
 established that is a dictionary owed, and it is owed to a language nobody working here
 reads. Until someone who does writes it, `CONTENT_LANG_FALLBACK` is what keeps the rest of
-the corpus navigable around it. What the asymmetry must NOT do is leave the edition
+the corpus navigable around it. (Superseded 2026-08-31: `i18n/mg.ts` was written — the
+first dictionary for a language nobody working here reads, grounded in `ccc.mg`'s own
+headings — when the interface became a superset of the content languages.) What the asymmetry must NOT do is leave the edition
 unnamed: a content language is named in its own language by `LANGUAGE_NAMES` in
 `corpus.ts`, which is keyed on `ContentLang` and not on the interface list, and an
 unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as
@@ -1170,13 +1179,16 @@ first. It is now a row per content language. English then Latin ends every row a
 invariant a test asserts: English is the only language the whole corpus exists in and
 Latin is complete wherever it exists, so a chain ending in the two can always answer.
 
-Four rows name a neighbour ahead of that tail, each on a claim about a specific
-readership rather than on a general ranking of languages by distance: `mg → fr` (French is
+Four rows named a neighbour ahead of that tail when this was written (eleven do today —
+`fr → it`, `it → es`, `ro → it`, `sk → cs` and `be → pl` joined as their languages
+arrived), each on a claim about a specific readership rather than on a general ranking of
+languages by distance: `mg → fr` (French is
 co-official in Madagascar and the language the Church there works in alongside Malagasy,
 and `mg` has one work, so it is a reader who falls back constantly), `la → it` (the
 closest living language to the one the reader chose, and the Holy See's working language),
-`es → pt` and `pt → es` (where the fallback buys the most — Portuguese carries 112 works to
-Spanish's three, and the two read across), plus `ar → fr` and `hu → de` for the second
+`es → pt` and `pt → es` (where the fallback buys the most — Portuguese carried 112 works
+to Spanish's three, a gap the ten-language Magisterium expansion has since closed, and the
+two read across), plus `ar → fr` and `hu → de` for the second
 language those readers are likeliest to already have. **One neighbour at most, deliberately:**
 a longer row is a ranking of languages by closeness, which is an argument nobody wins and
 the corpus cannot settle. A row that names none is not a gap — a German or Polish reader is
@@ -1212,7 +1224,8 @@ existence check — `Joel 3:1-5` resolves to real but wrong text.
 The Summa ships EN + LA; symmetry checks assert the shape rather than symmetry, and the
 cross-language oracle runs only over the parts both editions carry.
 
-**Nine interface languages the corpus has one work in is the intended state**, not debt.
+**A tail of interface languages the corpus has one work in — nine when this was
+written — is the intended state**, not debt.
 A reader in any of them gets English content nearly everywhere through the fallback
 chain, and the alternative is a reader who _can_ read Magnifica Humanitas in their own
 language having to navigate to it in someone else's. Latin is the mirror image: two whole
@@ -1225,8 +1238,9 @@ interface, which is a worse state than the seven single-work languages ever were
 (English chrome around English content is at least consistent). The four dictionaries
 were written for that reason, and the rule they encode is about coverage, not counts: a
 dictionary is owed where the corpus can already fill a reader's language, not wherever a
-tag exists. Russian is the standing counter-case — chrome since Magnifica Humanitas, and
-a Compendium that exists only as a PDF nothing parses.
+tag exists. Russian was the standing counter-case — chrome since Magnifica Humanitas,
+with a Compendium that existed only as a PDF nothing parsed — until
+`ccc/compendium_pdf.py` parsed it on 2026-09-02.
 
 **A division label is read in the language it was printed in.** `titles.ts` strips the
 label a source prints on top of a structure title (`PART ONE`, `ERSTER ABSCHNITT`),
@@ -1316,7 +1330,7 @@ exactly this and held 125 records, all Portuguese encyclicals, while 619 pages s
 `raw/` carrying the same answer for nine languages — fetched in August, classified by the
 parser on every run since, reported in each run summary, and forgotten when the run ended.
 `pipeline/scrapers/record_translations.py` reads them off cache and writes them down; the
-file holds 629 records and cost no requests. It is a separate script rather than a flag on
+file held 629 records and cost no requests (635 today). It is a separate script rather than a flag on
 the scraper because a status is established deliberately, never as a side effect of a
 parse — a scraper that appends to its own input turns one bad run into a permanent record
 — and it writes nothing at all for a page that PARSES, because that would be a parse we
@@ -1378,7 +1392,10 @@ build-time default edition or every edition at once. The build is two HTML docum
 per byte** (2026-08-26). With `ssr = false` nothing paints until the client bundle has
 downloaded, parsed and mounted, so whatever the boot index carries sits in front of first
 paint on every route — including the routes that never read a byte of it. Three cuts took
-it from 2.32 MB raw / 305 KB brotli to 1.34 MB / 170 KB. What decides whether a registry
+it from 2.32 MB raw / 305 KB brotli to 1.34 MB / 170 KB. (Those are 2026-08-26 numbers
+at 383 works; at 1,469 works the boot index is ~5.2 MB raw / ~480 KB brotli —
+re-measured 2026-09-02, recorded in `corpus-index.ts`'s docblock, and compressing it was
+measured to buy nothing. The per-registry pricing below is the part that holds.) What decides whether a registry
 boots with the app is the QUESTION IT ANSWERS, not its size: "does this address exist" is
 asked with no work in hand and stays eager, while a document's outline is only ever wanted
 by the page already reading that document — so all 354 of them became content-tier assets,
@@ -1472,7 +1489,8 @@ answers ("did the update land?") is asked while looking at a page that might be 
 about that page.
 
 **The background fill is per-language, ordered, and opt-in past the Catechism.** The
-corpus is 82.6 MB raw / ~26 MB gzipped across fifteen languages, and a reader speaks one
+corpus was 82.6 MB raw / ~26 MB gzipped across fifteen languages when this was designed
+(~298 MB raw across twenty-eight languages today), and a reader speaks one
 or two of them. The worker plans waves over the reader's own language chain and takes only
 the three cheapest without being asked — the next chunk of what is open, the small whole
 works, the Catechism, together about 1.2 MB gzipped. Scripture, the Magisterium and the
@@ -1657,7 +1675,8 @@ and both have answers.
 
 **The boundary.** `wrangler.jsonc` says the worker "is not an application server and never
 reads or transforms corpus text", and it still doesn't. What it reads is a second
-generated file, `static/route-titles.json` — 62 KB of **names**: book names, document
+generated file, `static/route-titles.json` — ~107 KB of **names**, a size that scales
+with `UI_LANGS`: book names, document
 titles with their author and year, prayer titles, Summa question titles, and the paragraph
 spans of every titled division in the Catechism and the Compendium. A name is the imprint
 of a work, the same class of fact `sitemap.xml` already publishes an address for. No
@@ -1730,13 +1749,14 @@ shared one title but for a number.
 **Two generated files left the reader's install precache in the same pass.**
 `sw-policy.ts` takes everything in `static/` unless a list refuses it, and
 `corpus-routes.json` (27 KB, read only by the edge worker) and `reference-coverage.json`
-(12 KB, read only by `preflight-deploy.mjs`) had been precached since the partition
+(~19 KB, read only by `preflight-deploy.mjs`) had been precached since the partition
 existed. Neither is fetched by anything that runs in a browser. `INFRASTRUCTURE_FILES` is
 a third list beside `HOST_CONFIG_FILES` and `CRAWLER_FILES` because the reason differs
 again: those are read by a stranger's machine, these by ours.
 
-**The interface has addresses; the corpus does not** (2026-08-28). Seven pages now answer
-under an interface-language prefix — `/pt/catechismus`, `/ar/summa`, `/la/preces` — and
+**The interface has addresses; the corpus does not** (2026-08-28). Eight pages now answer
+under an interface-language prefix — `/pt/catechismus`, `/ar/doctores/summa`,
+`/la/preces` — and
 ~5,800 reading addresses deliberately do not. The line between them is the one the whole
 URL grammar rests on. A reading address names a **citation**, which is the same citation
 in every language; which edition renders there is the reader's standing preference, and
@@ -1750,7 +1770,8 @@ keeping. Interface language is not content language: a Hungarian reader at
 `CONTENT_LANG_FALLBACK`, so `/hu/…` and `/en/…` would be byte-identical in the only part a
 crawler weighs and differ in the navigation labels. Publishing that as an `hreflang`
 alternate is a false claim of the same shape the `lastmod` ledger already refused to make
-one level down. It would also take 5,811 addresses to 81,368, force a `<sitemapindex>`,
+one level down. It would also take 5,811 addresses to 81,368 (the arithmetic at fourteen
+interface languages; worse at thirty-four), force a `<sitemapindex>`,
 and contradict the "canonical reader URLs do not vary with interface language" rule that
 `hrefFor` exists to enforce. **The addressable-content-language question is untouched by
 this** and remains where §Languages leaves it.
@@ -1791,8 +1812,9 @@ into it, so `/es/pt/catechismus/330` would otherwise peel a segment per round an
 200 — an address with 34 x 34 spellings, which is the exact multiplication the
 unprefixed reading addresses exist to avoid.
 
-**Fifteen members per cluster, and every one of them declares the whole cluster.** Fourteen
-prefixed pages plus the unprefixed path, which is `x-default`. The unprefixed path is not
+**Thirty-five members per cluster (fifteen when this was written), and every one of them
+declares the whole cluster.** One prefixed page per interface language plus the
+unprefixed path, which is `x-default`. The unprefixed path is not
 "the English page" — it NEGOTIATES (`app.html`'s pre-paint block, then `I18nStore`), which
 is a different claim, and `x-default` is the tag for exactly that. `/en/catechismus` exists
 separately because pinning English is a different thing from negotiating and happening to
@@ -1802,12 +1824,12 @@ would ask to be de-indexed, leaving a cluster of one and no purpose.
 **Not one new translated string was written.** `CHROME_KEYS` in `scripts/route-titles.mjs`
 maps each chrome page to keys the dictionaries already carry — `ccc.landing.title`,
 `bible.landing.tagline`, `colophon.lede` — so the head a Portuguese searcher matches on is
-the sentence the page then shows them. All fourteen dictionaries carry all seven, which a
+the sentence the page then shows them. All thirty-four dictionaries carry all eight, which a
 test asserts. The home page is the one exception, having no tagline: its description is
 composed from the five translated section names, which is both what the page is and what
 someone searching for any of those works would type. Inventing a `meta.description` key
-would have been thirteen sentences needing thirteen speakers, and CLAUDE.md's Malagasy note
-records what happens when that is guessed at.
+would have been thirty-three sentences needing thirty-three speakers, and CLAUDE.md's
+Malagasy note records what happens when that is guessed at.
 
 **`chromeNames` has no fallback to English, unlike `t()`.** A cluster whose Portuguese
 member is described in English tells a search engine the page is Portuguese and then shows
@@ -2992,7 +3014,7 @@ so `new` is over-counted by about one session per device per year (0.3% of a dai
 reader's sessions, 8% of a monthly one's).
 
 **EU readers are a real secondary exposure and the design is left at the stricter
-reading.** The interface is in fourteen languages, most of them European, which is the
+reading.** The interface is in thirty-four languages, most of them European, which is the
 kind of evidence GDPR Art. 3(2) treats as offering a service into the Union; ePrivacy's
 consent rule is stricter than anything above. Nothing here was relaxed on discovering that
 the LGPD is the primary law — the point of recording it is to know which argument answers
@@ -3018,7 +3040,7 @@ long tail of three quota failures or one unserved book is the entire value.
 
 ## Scope
 
-**In**: the Bible (four editions), the CCC, the Compendium, all encyclicals across all
+**In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all
 pontificates, the 16 Vatican II documents, apostolic exhortations, the prayers, and the
 Summa (EN + LA).
 
