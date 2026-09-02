@@ -714,6 +714,29 @@ def _has_book_forms(lang: str) -> bool:
 # --------------------------------------------------------------------------
 
 
+def _front_cut(blocks: list[re.Match], skip: set[int]) -> int:
+    """The last block index that is front-of-book apparatus rather than front
+    MATTER, or -1 when the region has no such boundary to read.
+
+    THE GUARD IS NOT A FUDGE. `csdc.vi` prints its one sigla table as the
+    LAST block of the region -- nothing follows it there at all -- so cutting
+    at it would delete that edition's whole front matter, which is a
+    translator's copyright note and the only thing it prints. An edition
+    whose tables end the region printed no letter after them, so there is
+    nothing the cut could be protecting; it returns -1 and the region is read
+    exactly as it was.
+    """
+    if not skip:
+        return -1
+    last = max(skip)
+    for m in blocks[last + 1 :]:
+        inner, _ = vd.block_kind(m)
+        text = vd.strip_tags(inner).strip()
+        if text and vd.has_words(text):
+            return last
+    return -1
+
+
 def front_units(front_html: str, marker_template: str, skip: set[int]) -> list[dict]:
     """The letter of transmittal and the presentation, in `appendix.json`'s
     shape -- `{title?, blocks, citations}`, the same one `parse_document`
@@ -734,15 +757,44 @@ def front_units(front_html: str, marker_template: str, skip: set[int]) -> list[d
     matter after the last paragraph -- the dedication (`TO HIS HOLINESS POPE
     JOHN PAUL II, MASTER OF SOCIAL DOCTRINE...`) is a heading with no body
     and is the only thing on its page.
+
+    AND THE TABLES ARE ALSO THE BOUNDARY, which is what `_front_cut` reads
+    them as. `split_page` can only excise the table of contents where
+    `toc_link_span` recognises one, and it recognises one by its links
+    pointing forward -- so on the four editions whose contents list is plain
+    text (`hu`, `pl`, `vi`, and any that joins them) it returns `None`,
+    `toc_start`/`toc_end` collapse to `(0, 0)`, and this region opens at the
+    language bar with the whole contents list inside it. Hungarian shipped 64
+    units of its own outline ahead of the letter that way, 207 KB of it.
+
+    The page family fixes the order (see this module's docblock, region 3):
+    the sigla tables are the last thing printed before the letter. So a block
+    at or before the last one the sigla reader took cannot be the letter or
+    the presentation, whatever it is -- title page, contents list, or the
+    tables themselves -- and the cut states that rather than trying to
+    recognise a contents list a second way.
     """
+    blocks = list(vd._BLOCK_RE.finditer(front_html))
+    cut = _front_cut(blocks, skip)
     units: list[dict] = []
     open_unit: dict | None = None
-    for i, m in enumerate(vd._BLOCK_RE.finditer(front_html)):
+    for i, m in enumerate(blocks):
+        if i <= cut:
+            continue
         inner, kind = vd.block_kind(m)
         text = vd.strip_tags(inner).strip()
         if i in skip:
             if open_unit is not None:
                 open_unit["emptied"] = True
+                # AND THE UNIT IS CLOSED, not merely marked. Marking alone
+                # left it open, so the next block that was not itself a
+                # heading joined the heading whose table had just been taken
+                # -- which is how `csdc.fr` shipped Cardinal Sodano's letter
+                # under the title `ABRÉVIATIONS BIBLIQUES` (its first block
+                # reads `SECRÉTAIRERIE D'ÉTAT`). English never showed it
+                # because its letter opens with a full-bold heading, which
+                # starts a unit of its own either way; French's does not.
+                open_unit = None
             continue
         if not text or not vd.has_words(text):
             # An ornament, not a block. The page sets `***` between the
@@ -1188,10 +1240,24 @@ def parse_edition(lang: str, html: str, write: bool = True) -> EditionResult:
     # immediately above INTRODUCTION -- so it found none and 583 sections
     # shipped with an empty `header`.
     header = read_masthead(regions.masthead)
-    # Document order: the letter and the presentation are printed before the
-    # first paragraph, the index of references after the last, and
-    # `appendix.json` is an ordered array.
-    appendix = front + parse.state.appendix_out
+    # THE FRONT MATTER ONLY. `parse.state.appendix_out` is region 5 -- the
+    # index of references -- and it stopped being appended here on 2026-09-02
+    # for two reasons that point the same way. It is not PROSE: it is a
+    # concordance keyed to this work's own paragraph numbers ("1:26-27 26,
+    # 36, 428"), so rendering it as unnumbered text gives a reader a wall of
+    # digits and gives the corpus nothing it can resolve. And what was
+    # captured was a fraction of it anyway -- the English edition's runs to
+    # ~195 KB of text in `raw/` and 19 KB reached `appendix.json`, stopping
+    # mid-block after Revelation 21:3 and losing the Ecumenical Councils, the
+    # Papal Documents and everything after them outright.
+    #
+    # So `appendix.json` is what the source prints BEFORE section 1 -- the
+    # letter of transmittal and the presentation -- and the index of
+    # references is to be parsed as references rather than stored as text.
+    # Until that parser exists the index is not written anywhere, which is
+    # the honest state: a truncated concordance nobody can query is not a
+    # smaller version of the thing, it is a different and useless one.
+    appendix = front
 
     structure = drop_repeated_masthead(vd.build_structure(parse.state, TITLE), header)
     sections_out = [

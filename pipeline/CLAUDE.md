@@ -376,6 +376,27 @@ the Social Doctrine).
   number.** The corpus on disk was produced by the OLD parser; the report is
   measured over it, so a merged fix shows up as a loss until `rebuild.py` runs.
   Cost one wrong diagnosis on 2026-09-02.
+- **`appendix.json` is the front matter and nothing else.** It carried the
+  index of references too until 2026-09-02, and carried it badly: 19 KB of the
+  English edition's ~195 KB reached it, stopping mid-block after Revelation
+  21:3 and losing the Ecumenical Councils and the Papal Documents outright. It
+  is a concordance keyed to this work's own paragraph numbers, not prose, so
+  it is to be parsed as references — a truncated concordance nobody can query
+  is not a smaller version of the thing.
+- **The sigla tables are the boundary of the front matter, and reading them as
+  one is what fixed four editions.** `split_page` can only excise the contents
+  list where `toc_link_span` recognises one, and it recognises one by its links
+  pointing forward — so on `hu`, `pl` and `vi`, whose contents list is plain
+  text, it returns `None`, the region opens at the language bar, and Hungarian
+  shipped 64 units of its own outline (207 KB) ahead of the letter. The page
+  family fixes the order, so a block at or before the last one the sigla reader
+  took cannot be the letter (`_front_cut`). The guard matters: `vi` prints its
+  one table LAST, and cutting there would have deleted its whole front matter.
+- **A unit whose table the sigla reader took must be CLOSED, not just marked.**
+  Left open, the next block that was not itself a heading joined it — which is
+  how `csdc.fr` shipped Sodano's letter titled `ABRÉVIATIONS BIBLIQUES`.
+  English never showed it because its letter opens full-bold and starts a unit
+  either way.
 - **Two editions are withheld with the measurement in `csdc.WITHHELD`**: `id`
   publishes only a table of contents, `nl` interleaves per-group-numbered
   footnotes so pooling resolves citations to the wrong notes.
