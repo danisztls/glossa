@@ -303,6 +303,17 @@ a:focus-visible {
 	outline-offset: 2px;
 }
 
+/*
+ * A CONTROL WRITING `font: inherit` MUST RESTATE `line-height` IF IT THEN
+ * CHANGES `font-size`. The shorthand takes the parent's COMPUTED
+ * `line-height`, which a browser has already resolved to a length — 24px,
+ * from `body`'s 1.5 at the body's own 1rem — so a `font-size` after it does
+ * not rescale it, and the control comes out 1.5 line-heights of the BODY tall
+ * rather than of itself. Ordinary inheritance passes the RATIO and has no
+ * such problem, which is why the two declarations here are safe and the
+ * shorthand is not. It cost five rules before it was named (2026-09-01);
+ * `.menu-filter` in styles/menus.css carries the measurement.
+ */
 button,
 input {
 	font-family: inherit;

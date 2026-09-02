@@ -118,13 +118,19 @@
 	   this bar, so it should look like the thing to press. */
 	.apply {
 		flex: none;
-		padding: 0.35rem 0.9rem;
+		/* 0.425rem rather than 0.35 holds the button at the height it had
+		   while it was being sized by the body's line box, which is what keeps
+		   it level with `.dismiss` beside it. */
+		padding: 0.425rem 0.9rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg);
 		color: var(--color-text);
 		font: inherit;
 		font-size: 0.9rem;
+		/* Restated because `font: inherit` above leaves a length, not a ratio
+		   — styles/base.css says why. */
+		line-height: 1.5;
 		cursor: pointer;
 	}
 

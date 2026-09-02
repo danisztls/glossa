@@ -257,6 +257,11 @@
 		padding: 0;
 		font: inherit;
 		font-size: 0.8rem;
+		/* Restated because `font: inherit` above leaves a length, not a ratio
+		   — styles/base.css says why. No padding here to hold a height with,
+		   and none wanted: the row is `align-items: baseline`, so this moves
+		   the box and not the word. */
+		line-height: 1.5;
 		color: var(--color-accent);
 		cursor: pointer;
 	}
@@ -379,9 +384,14 @@
 		width: 100%;
 		box-sizing: border-box;
 		margin-bottom: 1rem;
-		padding: 0.35rem 0.5rem;
+		/* 0.45rem rather than 0.35 holds the field at the height it had while
+		   it was being sized by the body's line box — 2.175rem against 2.2. */
+		padding: 0.45rem 0.5rem;
 		font: inherit;
 		font-size: 0.85rem;
+		/* Restated because `font: inherit` above leaves a length, not a ratio
+		   — styles/base.css says why. */
+		line-height: 1.5;
 		color: var(--color-text);
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);

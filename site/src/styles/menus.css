@@ -339,7 +339,9 @@
 .menu-more {
 	flex: none;
 	inline-size: 100%;
-	padding-block: 0.35rem;
+	/* 0.5rem rather than 0.35 holds the row at the height it had while it was
+	   being sized by the body's line box, so this moves nothing in the panel. */
+	padding-block: 0.5rem;
 	padding-inline: 0.4rem;
 	border: none;
 	border-radius: var(--radius-md);
@@ -347,6 +349,9 @@
 	color: var(--color-text-muted);
 	font: inherit;
 	font-size: 0.8rem;
+	/* Restated because `font: inherit` above leaves a length, not a ratio —
+	   styles/base.css says why, `.menu-filter` carries the measurement. */
+	line-height: 1.5;
 	text-align: start;
 	cursor: pointer;
 }
