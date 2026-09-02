@@ -19,7 +19,7 @@ export const pl: Dictionary = {
 	'nav.socialDoctrine': 'Nauka społeczna',
 	'socialDoctrine.landing.title': 'Kompendium nauki społecznej Kościoła',
 	'socialDoctrine.landing.tagline': 'Czego Kościół naucza o życiu społecznym, w 583 numerach.',
-	'socialDoctrine.backMatter': 'Materiały wstępne i indeksy',
+	'socialDoctrine.appendix': 'Dodatek',
 	'nav.prayers': 'Modlitwy',
 	'nav.bookmarks': 'Zakładki',
 	'nav.menu': 'Menu',

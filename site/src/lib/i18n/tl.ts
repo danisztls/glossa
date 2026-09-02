@@ -45,7 +45,7 @@ export const tl: Dictionary = {
 	'socialDoctrine.landing.title': 'Kompendyo ng Panlipunang Aral ng Simbahan',
 	'socialDoctrine.landing.tagline':
 		'Ang itinuturo ng Simbahan tungkol sa buhay sa lipunan, sa 583 bilang.',
-	'socialDoctrine.backMatter': 'Panimulang bahagi at mga indeks',
+	'socialDoctrine.appendix': 'Apendiks',
 	'nav.prayers': 'Mga Panalangin',
 	'nav.bookmarks': 'Mga Bookmark',
 	'nav.menu': 'Menu',

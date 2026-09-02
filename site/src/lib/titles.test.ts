@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { displayTitle, kindOrdinalLabel, normalizeCase, normalizeCaseRuns } from './titles';
+import {
+	displayDocumentTitle,
+	documentHeadingParts,
+	displayTitle,
+	kindOrdinalLabel,
+	normalizeCase,
+	normalizeCaseRuns
+} from './titles';
 import type { StructureNode } from './types';
 
 function node(kind: StructureNode['kind'], n: number | null, title: string) {
@@ -572,5 +579,42 @@ describe("the Compendium's four PDF editions", () => {
 		expect(
 			displayTitle(node('chapter', 2, 'BAB DUA ALLAH DATANG UNTUK MENJUMPAI MANUSIA'), 'id')
 		).toEqual({ ordinal: '2.', title: 'Allah Datang Untuk Menjumpai Manusia' });
+	});
+});
+
+// Real headings from the ten Social Doctrine editions. The marker is the
+// source's own, so its punctuation is not normalised: seven editions print
+// `a)` where English prints `a.`.
+describe('documentHeadingParts', () => {
+	it('splits a roman-numeral marker from the name it stands over', () => {
+		expect(
+			documentHeadingParts("I. GOD'S LIBERATING ACTION IN THE HISTORY OF ISRAEL", 'en')
+		).toEqual({ ordinal: 'I.', title: "God's Liberating Action in the History of Israel" });
+		expect(documentHeadingParts('IV. HUMAN RIGHTS', 'en').ordinal).toBe('IV.');
+	});
+
+	it('splits a lettered marker in both punctuations, verbatim', () => {
+		expect(documentHeadingParts('a. God\u2019s gratuitous presence', 'en').ordinal).toBe('a.');
+		expect(documentHeadingParts('a) All\u2019alba del terzo millennio', 'it').ordinal).toBe('a)');
+		expect(documentHeadingParts('A. THE UNITY OF THE PERSON', 'en')).toEqual({
+			ordinal: 'A.',
+			title: 'The Unity of the Person'
+		});
+	});
+
+	// A heading that is only a name, and one that is only an identifier: the
+	// source prints `PART ONE` on a page of its own with nothing beside it, so
+	// there is nothing to split off and splitting would leave an empty row.
+	it('leaves a heading alone when it is not a marker and a name', () => {
+		for (const title of ['INTRODUCTION', 'PART ONE', 'ELS\u0150 R\u00c9SZ', 'SURA YA KUMI']) {
+			expect(documentHeadingParts(title, 'en')).toEqual(displayDocumentTitle(title, 'en'));
+		}
+	});
+
+	// `Az` opens a Hungarian heading and is not a marker: a single letter only
+	// counts when the very next character is its own punctuation.
+	it('does not read a word\u2019s first letter as a marker', () => {
+		const hu = 'Az Egyh\u00e1z t\u00e1rsadalmi tan\u00edt\u00e1s\u00e1nak kompendiuma';
+		expect(documentHeadingParts(hu, 'hu').ordinal).toBeNull();
 	});
 });

@@ -40,7 +40,7 @@
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { displayDocumentTitle } from '$lib/titles';
+	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
@@ -72,19 +72,29 @@
 	 * is the order this already-depth-first array gives.
 	 *
 	 * The division's OWN node is excluded: it is the page's `<h1>`, and the
-	 * source prints it once.
+	 * source prints it once. `division.depth` comes back from
+	 * `socialDoctrineDivisions` rather than being looked up here by node
+	 * identity, which never matched — see that function's docblock; until it
+	 * did, the excluded node was the only one this printed twice.
 	 */
 	const innerHeadings = $derived.by(() => {
 		const span = editions.current?.span;
-		const byParagraph = new Map<number, StructureNode[]>();
+		const byParagraph = new Map<number, { node: StructureNode; level: number }[]>();
 		if (!span || !division) return byParagraph;
-		const outerDepth = rows.find((row) => row.node === division.node)?.depth ?? 0;
+		const outerDepth = division.depth;
 		for (const { node, depth } of rows) {
 			const at = node.paragraphs[0];
 			if (depth <= outerDepth || !Number.isFinite(at)) continue;
 			const key = at as number;
 			if (key < span[0] || key > span[1]) continue;
-			byParagraph.set(key, [...(byParagraph.get(key) ?? []), node]);
+			// RELATIVE to the division, not absolute: the same roman-numeral
+			// section is at tree depth 2 under a chapter and depth 1 under the
+			// Introduction, and it is the same kind of heading on both pages.
+			// Capped at 4 so a fifth level does not emit an `<h5>` nothing
+			// styles — it takes the fourth's setting, which is already the
+			// smallest.
+			const level = Math.min(depth - outerDepth + 1, 4);
+			byParagraph.set(key, [...(byParagraph.get(key) ?? []), { node, level }]);
 		}
 		return byParagraph;
 	});
@@ -232,18 +242,34 @@
 			{:else}
 				<div class="reading-text chapter-body" lang={editions.current.work.language}>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
-						{#each innerHeadings.get(paragraph.n) ?? [] as node, h (node.anchor ?? node.title)}
+						{#each innerHeadings.get(paragraph.n) ?? [] as row, h (row.node.anchor ?? row.node.title)}
+							{@const dt = documentHeadingParts(row.node.title, editions.lang)}
 							<!-- `id` on the first heading of a run only: they share a
 							     paragraph, so they would share an anchor, and it is the
-							     outermost one anything addresses. -->
-							<h2 class="inner-heading" id={h === 0 ? `s${paragraph.n}` : undefined}>
-								{#if node.label}<span class="ordinal">{node.label}</span>{/if}<HeadingText
-									title={displayDocumentTitle(node.title, editions.lang).title}
-									{node}
+							     outermost one anything addresses.
+
+							     THE TAG IS THE HEADING'S OWN LEVEL. Every one of these was
+							     an `<h2>` until 2026-09-02, so a chapter's roman-numeral
+							     sections and the lettered subsections inside them were the
+							     same size on the page and the same rank to a screen reader
+							     — the document said Economic Life had a dozen peers where
+							     it has five. -->
+							<svelte:element
+								this={`h${row.level}`}
+								class={`inner-heading level-${row.level}`}
+								id={h === 0 ? `s${paragraph.n}` : undefined}
+							>
+								<!-- The division label the source prints (`CHAPTER SEVEN`) or
+								     the list marker it prints instead (`I.`, `a)`) — never
+								     both, because no heading carries both. -->
+								{#if row.node.label}<span class="ordinal">{row.node.label}</span
+									>{:else if dt.ordinal}<span class="marker">{dt.ordinal}</span>{/if}<HeadingText
+									title={dt.title}
+									node={row.node}
 									lang={editions.lang}
 									work={workId}
 								/>
-							</h2>
+							</svelte:element>
 						{/each}
 						<section
 							class="para"
@@ -311,12 +337,72 @@
 		margin: 0 0 1.5rem;
 	}
 
+	/* THE SOURCE'S OWN FOUR LEVELS, set apart. A chapter's roman-numeral
+	   sections, the lettered subsections under them and anything deeper were
+	   all one size until 2026-09-02, which made a page of Economic Life read
+	   as a dozen equal headings rather than five sections with parts inside
+	   them. Each step down takes a size and the space above it with it, so
+	   the gap itself says which level is opening. */
 	.inner-heading {
 		font-family: var(--font-serif);
 		margin: 2.5rem 0 1rem;
 	}
 
+	.inner-heading.level-2 {
+		font-size: max(var(--font-size-min), 1.25em);
+	}
+
+	.inner-heading.level-3 {
+		font-size: max(var(--font-size-min), 1.05em);
+		font-weight: 600;
+		margin: 1.9rem 0 0.75rem;
+	}
+
+	.inner-heading.level-4 {
+		font-size: max(var(--font-size-min), 0.95em);
+		font-weight: 600;
+		margin: 1.4rem 0 0.6rem;
+	}
+
+	/* A heading directly under the one that opened its space: the gap is
+	   already there, and a second full one reads as a missing paragraph. */
+	.inner-heading + .inner-heading {
+		margin-top: 0.75rem;
+	}
+
+	/* Never above the division's opening paragraph — the `h1` is right there,
+	   and the gap would read as a missing heading rather than as space. */
+	.inner-heading:first-child {
+		margin-top: 0;
+	}
+
 	.inner-heading .ordinal {
 		display: block;
+	}
+
+	/* The source's own list marker (`I.`, `a)`), split off the name by
+	   `documentHeadingParts`. It stays on the heading's line and in the
+	   heading's face — unlike `.ordinal` above, which is a division LABEL
+	   standing over the name on a line of its own. It is what the reader
+	   scans the column by, so it is not muted into apparatus. */
+	.inner-heading .marker {
+		margin-inline-end: 0.45em;
+	}
+
+	/* THE CONTAINING BLOCK FOR THE MARGIN NUMBER, and without it there were no
+	   numbers on this page at all. `.reference-number.margin` is
+	   `position: absolute` at `inset-inline-start: -3.25rem`
+	   (`ReferenceNumber.svelte`), so it hangs off its nearest POSITIONED
+	   ancestor — which, with no rule here, was whatever the app shell happened
+	   to offer, putting every paragraph's number in one pile off the top of the
+	   layout rather than one in each paragraph's margin. This route was written
+	   from `/catechismus/caput/[n]`, whose `.para` carries the same two
+	   declarations for the same reason; only the comment above them travelled.
+	   The `margin-bottom` is that rule's other half: the numbers are what
+	   separate one paragraph from the next here, so the gap between them has to
+	   be larger than the gap between lines inside one. */
+	.para {
+		position: relative;
+		margin-bottom: 1.1rem;
 	}
 </style>

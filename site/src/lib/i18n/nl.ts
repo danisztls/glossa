@@ -39,7 +39,7 @@ export const nl: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium van de sociale leer van de Kerk',
 	'socialDoctrine.landing.tagline':
 		'Wat de Kerk leert over het leven in de samenleving, in 583 nummers.',
-	'socialDoctrine.backMatter': 'Voorwerk en registers',
+	'socialDoctrine.appendix': 'Bijlage',
 	'nav.prayers': 'Gebeden',
 	'nav.bookmarks': 'Bladwijzers',
 	'nav.menu': 'Menu',

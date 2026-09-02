@@ -48,7 +48,7 @@ export const ml: Dictionary = {
 	'nav.socialDoctrine': 'സാമൂഹിക പ്രബോധനം',
 	'socialDoctrine.landing.title': 'സഭയുടെ സാമൂഹിക പ്രബോധന സംഗ്രഹം',
 	'socialDoctrine.landing.tagline': 'സമൂഹജീവിതത്തെക്കുറിച്ചു സഭ പഠിപ്പിക്കുന്നത്, 583 ഖണ്ഡികകളിൽ.',
-	'socialDoctrine.backMatter': 'ആമുഖ ഭാഗങ്ങളും സൂചികകളും',
+	'socialDoctrine.appendix': 'അനുബന്ധം',
 	'nav.prayers': 'പ്രാർഥനകൾ',
 	'nav.bookmarks': 'ബുക്ക്‌മാർക്കുകൾ',
 	'nav.menu': 'മെനു',

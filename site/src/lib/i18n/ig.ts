@@ -48,7 +48,7 @@ export const ig: Dictionary = {
 	'nav.socialDoctrine': 'Ozizi mmekọrịta',
 	'socialDoctrine.landing.title': 'Nchịkọta Ozizi Mmekọrịta nke Chọọchị',
 	'socialDoctrine.landing.tagline': "Ihe Chọọchị na-akụzi banyere ndụ n'obodo, n'ime nkeji 583.",
-	'socialDoctrine.backMatter': 'Ihe mmalite na ndeksi',
+	'socialDoctrine.appendix': 'Mgbakwunye',
 	'nav.prayers': 'Ekpere',
 	'nav.bookmarks': 'Akara akwụkwọ',
 	'nav.menu': 'Menu',

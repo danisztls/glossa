@@ -44,7 +44,7 @@ export const sw: Dictionary = {
 	'socialDoctrine.landing.title': 'Muhtasari wa Mafundisho ya Kijamii ya Kanisa',
 	'socialDoctrine.landing.tagline':
 		'Kile Kanisa linafundisha kuhusu maisha ya kijamii, katika aya 583.',
-	'socialDoctrine.backMatter': 'Kurasa za mwanzo na fahirisi',
+	'socialDoctrine.appendix': 'Kiambatisho',
 	'nav.prayers': 'Sala',
 	'nav.bookmarks': 'Alamisho',
 	'nav.menu': 'Menyu',

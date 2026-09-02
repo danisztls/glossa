@@ -17,12 +17,37 @@ export const INDEX_OUTLINE_KINDS = new Set<StructureNode['kind']>([
 	'article'
 ]);
 
-export function isIndexOutline(node: StructureNode): boolean {
-	return INDEX_OUTLINE_KINDS.has(node.kind);
+/**
+ * The same floor for a work whose outline came out of a DOCUMENT's flat
+ * `{level, title, before}` rows — the Compendium of the Social Doctrine.
+ *
+ * It is `sub` and nothing else because `buildDocumentOutline` (corpus.ts)
+ * stamps every node it builds `kind: 'sub'`: a document heading carries no
+ * structured kind at all, deliberately (`types.ts`'s `DocumentNode`
+ * docblock — judging what a heading *means* is what mis-nested chapters
+ * inside sections in Gaudium et Spes). So the whole outline is one kind, the
+ * spine/detail split `indexDetailChildren` draws does not describe it, and
+ * "the numbered spine" and "everything" are the same set.
+ *
+ * Passing it is what lets `indexRows` walk that tree at all: filtered against
+ * `INDEX_OUTLINE_KINDS` it selects no root and returns nothing.
+ */
+export const DOCUMENT_OUTLINE_KINDS = new Set<StructureNode['kind']>(['sub']);
+
+/** Whether `node` is on the spine `kinds` describes. The default is the
+ *  Catechism's and its Compendium's. */
+export function isIndexOutline(
+	node: StructureNode,
+	kinds: Set<StructureNode['kind']> = INDEX_OUTLINE_KINDS
+): boolean {
+	return kinds.has(node.kind);
 }
 
-export function indexOutlineChildren(node: StructureNode): StructureNode[] {
-	return (node.children ?? []).filter(isIndexOutline);
+export function indexOutlineChildren(
+	node: StructureNode,
+	kinds: Set<StructureNode['kind']> = INDEX_OUTLINE_KINDS
+): StructureNode[] {
+	return (node.children ?? []).filter((child) => isIndexOutline(child, kinds));
 }
 
 /** A source can print an unnumbered `sub` heading. It is a row like any
@@ -69,6 +94,12 @@ export function runLabel(from: number, to: number | null | undefined, unit: stri
  *
  * `maxDepth` is exclusive of the level it names: 1 is the top level alone, 2
  * adds its children.
+ *
+ * `kinds` is which kinds the spine is made of, defaulting to the Catechism's
+ * (`INDEX_OUTLINE_KINDS`). The Social Doctrine passes
+ * `DOCUMENT_OUTLINE_KINDS` — an outline built from a document's headings is
+ * all one kind, so it is the whole tree, and the `sub` detail pass is skipped
+ * rather than walking every row a second time.
  */
 export interface IndexRow {
 	node: StructureNode;
@@ -87,19 +118,29 @@ export function rowKey(node: StructureNode): string {
 
 export function indexRows(
 	tree: StructureNode[],
-	opts: { maxDepth?: number; subsections?: boolean } = {}
+	opts: { maxDepth?: number; subsections?: boolean; kinds?: Set<StructureNode['kind']> } = {}
 ): IndexRow[] {
 	const maxDepth = opts.maxDepth ?? Number.POSITIVE_INFINITY;
+	// Which kinds are the spine. `INDEX_OUTLINE_KINDS` for the Catechism and
+	// its Compendium; `DOCUMENT_OUTLINE_KINDS` for an outline derived from a
+	// document's headings, whose nodes are all one kind.
+	const kinds = opts.kinds ?? INDEX_OUTLINE_KINDS;
 	// A `sub` is a row at the next depth down, not something hung off the row
 	// above it — so an overview drops it by not walking into it at all. Merged
 	// in paragraph order rather than appended: the one section that prints both
 	// a sub-heading and chapters prints the sub-heading first.
-	const childrenOf = (node: StructureNode) =>
-		opts.subsections === false
-			? indexOutlineChildren(node)
-			: [...indexOutlineChildren(node), ...indexDetailChildren(node)].sort(
-					(a, b) => (a.paragraphs[0] ?? 0) - (b.paragraphs[0] ?? 0)
-				);
+	//
+	// The detail pass is skipped entirely when `sub` is ITSELF the spine, or
+	// the whole tree would be walked twice and every row rendered twice.
+	const detailOf = (node: StructureNode) =>
+		opts.subsections === false || kinds.has('sub') ? [] : indexDetailChildren(node);
+	const childrenOf = (node: StructureNode) => {
+		const spine = indexOutlineChildren(node, kinds);
+		const detail = detailOf(node);
+		return detail.length === 0
+			? spine
+			: [...spine, ...detail].sort((a, b) => (a.paragraphs[0] ?? 0) - (b.paragraphs[0] ?? 0));
+	};
 	const rows: IndexRow[] = [];
 	const walk = (nodes: StructureNode[], depth: number, ancestors: string[]) => {
 		for (const node of nodes) {
@@ -108,7 +149,11 @@ export function indexRows(
 			if (kids.length > 0) walk(kids, depth + 1, [...ancestors, rowKey(node)]);
 		}
 	};
-	walk(tree.filter(isIndexOutline), 0, []);
+	walk(
+		tree.filter((node) => isIndexOutline(node, kinds)),
+		0,
+		[]
+	);
 	return rows;
 }
 

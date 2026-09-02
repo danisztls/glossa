@@ -38,7 +38,7 @@ export const cs: Dictionary = {
 	'nav.socialDoctrine': 'Sociální nauka',
 	'socialDoctrine.landing.title': 'Kompendium sociální nauky církve',
 	'socialDoctrine.landing.tagline': 'Co církev učí o životě ve společnosti, v 583 číslech.',
-	'socialDoctrine.backMatter': 'Úvodní části a rejstříky',
+	'socialDoctrine.appendix': 'Dodatek',
 	'nav.prayers': 'Modlitby',
 	'nav.bookmarks': 'Záložky',
 	'nav.menu': 'Nabídka',

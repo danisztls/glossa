@@ -1,6 +1,13 @@
 <script lang="ts">
 	/**
-	 * Readable outline for the Catechism and its Compendium.
+	 * Readable outline for the Catechism and its Compendium — and, since
+	 * 2026-09-02, for the Compendium of the Social Doctrine, which had a
+	 * hand-written list of its own and now takes this one with a single work
+	 * column. Two props carry the whole difference: `kinds`, because that
+	 * work's outline is derived from a document's headings and so is all one
+	 * kind, and `rank`, because a stylesheet keyed on that kind could not tell
+	 * its parts from its subsections. Everything below — the grid, the
+	 * disclosures, the sticky header, the ranges — is the same for all three.
 	 *
 	 * IT IS ONE GRID, and every row is a `subgrid` of it. The page crosses two
 	 * variables — a division of the outline, and what each of the two works has
@@ -42,6 +49,21 @@
 	import { indexRows, rowKey, type RowLink } from './indexToc';
 	import { marker } from './structureToc';
 
+	/**
+	 * A row's typographic RANK — which of the six sizes/weights below it is
+	 * set in. It is a separate vocabulary from `StructureNode['kind']`,
+	 * though the default reads one straight off the other, and the split is
+	 * what lets a second work use this component at all: the Compendium of
+	 * the Social Doctrine's outline is derived from a document's headings, so
+	 * every node in it is `kind: 'sub'` (`buildDocumentOutline`, corpus.ts)
+	 * and a kind-keyed stylesheet would set its parts, chapters and
+	 * roman-numeral sections all at 0.9rem with nothing to tell them apart.
+	 * That work supplies a rank from DEPTH instead — the same substitution
+	 * `StructureSidebarToc` makes for the same trees, where hierarchy comes
+	 * from weight and indentation rather than from a kind that isn't there.
+	 */
+	type IndexRank = 'prologue' | 'part' | 'section' | 'chapter' | 'article' | 'sub';
+
 	interface Props {
 		tree: StructureNode[];
 		lang: string;
@@ -65,8 +87,16 @@
 		 * a grid has no way to get at all.
 		 */
 		workColumns: { label: string; icon: Component }[];
-		/** Shown in a cell the work has no counterpart for. */
-		noCounterpartLabel: string;
+		/** Shown in a cell the work has no counterpart for.
+		 *
+		 *  OPTIONAL, BECAUSE A ONE-COLUMN INDEX HAS NO COUNTERPART TO BE ABSENT
+		 *  FROM. "No counterpart in the other work" is a true sentence only
+		 *  where there is another work; on the Social Doctrine's index, which
+		 *  carries one column, it would name something that does not exist. An
+		 *  absent slot then draws an empty cell instead of a dash — and never
+		 *  does, since that work's outline drops its unanchored rows upstream
+		 *  (`socialDoctrineOutline`, corpus.ts). */
+		noCounterpartLabel?: string;
 		/** Outline levels to render: 1 is the top level alone, 2 adds its
 		 *  children. Everything, by default. */
 		maxDepth?: number;
@@ -78,6 +108,29 @@
 		 *  parts, eight sections and twenty chapters — the shape of the book —
 		 *  with the sixty-seven articles folded away. */
 		openDepth?: number;
+		/** Which kinds the spine is made of, handed straight to `indexRows`.
+		 *  Defaults there to `INDEX_OUTLINE_KINDS`; the Social Doctrine passes
+		 *  `DOCUMENT_OUTLINE_KINDS`. */
+		kinds?: Set<StructureNode['kind']>;
+		/** How a row is SET, as against what it is — see `IndexRank`. Reads the
+		 *  node's own kind unless a work whose outline carries no kinds
+		 *  supplies its own rule. */
+		rank?: (node: StructureNode, depth: number) => IndexRank;
+		/**
+		 * How a row's printed marker and its name are read out of the node —
+		 * the two are rendered in different faces, so something has to decide
+		 * where one ends.
+		 *
+		 * INJECTED RATHER THAN DERIVED, because the split is per-WORK and not
+		 * per-node. The Catechism reconstructs its marker from `kind`/`n`
+		 * (`marker()`, structureToc.ts) and deliberately leaves a `sub`'s
+		 * printed roman numeral inside its title (`normalizeCase`'s docblock);
+		 * the Social Doctrine has no `kind`/`n` to reconstruct from and its
+		 * markers are the only thing distinguishing its levels, so it splits
+		 * them off (`documentHeadingParts`, titles.ts). Both are right for
+		 * their work, and a row cannot be told which it is.
+		 */
+		heading?: (node: StructureNode, lang: string) => { marker: string | null; title: string };
 	}
 
 	let {
@@ -88,7 +141,17 @@
 		noCounterpartLabel,
 		maxDepth = Number.POSITIVE_INFINITY,
 		subsections = true,
-		openDepth = 2
+		openDepth = 2,
+		kinds,
+		// `in-brief` is the one kind with no rank of its own, and no row ever
+		// carries it: it is reading content, excluded from the spine
+		// (`INDEX_OUTLINE_KINDS`) and from the detail pass (`sub` only). It
+		// maps rather than casts so the default stays total.
+		rank = (node) => (node.kind === 'in-brief' ? 'sub' : node.kind),
+		heading = (node, lang) => ({
+			marker: marker(node, lang),
+			title: displayTitle(node, lang).title
+		})
 	}: Props = $props();
 
 	/**
@@ -101,7 +164,7 @@
 	 * A row stacks only when it HAS a marker to put on the first line —
 	 * otherwise the line would hold a disclosure arrow and nothing else.
 	 */
-	const STACKED_KINDS = new Set<StructureNode['kind']>(['prologue', 'part', 'section']);
+	const STACKED_RANKS = new Set<IndexRank>(['prologue', 'part', 'section']);
 
 	/**
 	 * WHAT IS STORED IS THE DEVIATION FROM THE DEFAULT, not the open set. A row
@@ -113,7 +176,7 @@
 	 */
 	let toggled = $state(new SvelteSet<string>());
 
-	const rows = $derived(indexRows(tree, { maxDepth, subsections }));
+	const rows = $derived(indexRows(tree, { maxDepth, subsections, kinds }));
 
 	function openAt(key: string, depth: number): boolean {
 		const byDefault = depth < openDepth;
@@ -174,14 +237,15 @@
 	     and this is the markup carrying the outline now that the table is gone. -->
 	<ul class="index-rows" role="list">
 		{#each rows as row (rowKey(row.node))}
-			{@const dt = displayTitle(row.node, lang)}
+			{@const dt = heading(row.node, lang)}
 			{@const anchor = row.node.paragraphs[0]}
-			{@const label = marker(row.node, lang)}
+			{@const label = dt.marker}
 			{@const isOpen = openAt(rowKey(row.node), row.depth)}
-			{@const stacked = STACKED_KINDS.has(row.node.kind) && !!label}
+			{@const rowRank = rank(row.node, row.depth)}
+			{@const stacked = STACKED_RANKS.has(rowRank) && !!label}
 			{#if visible(row)}
 				<li
-					class={`row kind-${row.node.kind}`}
+					class={`row rank-${rowRank}`}
 					class:stacked
 					style={`--depth:${row.depth}`}
 					id={row.depth === 0 && Number.isFinite(anchor) ? `toc-${anchor}` : undefined}
@@ -213,7 +277,7 @@
 								<a class="row-link" href={link.href} title={link.title} aria-label={link.title}>
 									{link.range}
 								</a>
-							{:else}
+							{:else if noCounterpartLabel}
 								<span class="no-counterpart" title={noCounterpartLabel}>
 									<span aria-hidden="true">—</span>
 									<span class="visually-hidden">{noCounterpartLabel}</span>
@@ -370,19 +434,19 @@
 		margin-inline-end: 0;
 	}
 
-	.kind-part .row-title,
-	.kind-prologue .row-title {
+	.rank-part .row-title,
+	.rank-prologue .row-title {
 		font-size: 1.2rem;
 		font-weight: 700;
 	}
-	.kind-section .row-title {
+	.rank-section .row-title {
 		font-size: 1.05rem;
 		font-weight: 600;
 	}
-	.kind-chapter .row-title {
+	.rank-chapter .row-title {
 		font-weight: 600;
 	}
-	.kind-article .row-title {
+	.rank-article .row-title {
 		font-size: 0.95rem;
 	}
 
@@ -390,8 +454,8 @@
 	   than under the title alone, which is what tells a reader scanning the
 	   two right-hand columns where one part ended — free now that the row is
 	   one box instead of three cells. */
-	.kind-part,
-	.kind-prologue {
+	.rank-part,
+	.rank-prologue {
 		border-top: 1px solid var(--color-border);
 		padding-top: 1.1rem;
 	}
@@ -431,10 +495,10 @@
 	   unbolded, and with its numeral in the running face because the source
 	   prints it as part of the heading ("I. The Desire for God") rather than as
 	   a division number. */
-	.kind-sub .row-title {
+	.rank-sub .row-title {
 		font-size: 0.9rem;
 	}
-	.kind-sub .kind-label {
+	.rank-sub .kind-label {
 		font-family: inherit;
 		font-size: inherit;
 		text-transform: none;

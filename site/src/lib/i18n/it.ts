@@ -19,7 +19,7 @@ export const it: Dictionary = {
 	'nav.socialDoctrine': 'Dottrina sociale',
 	'socialDoctrine.landing.title': 'Compendio della Dottrina Sociale della Chiesa',
 	'socialDoctrine.landing.tagline': 'Ciò che la Chiesa insegna sulla vita sociale, in 583 numeri.',
-	'socialDoctrine.backMatter': 'Pagine preliminari e indici',
+	'socialDoctrine.appendix': 'Appendice',
 	'nav.prayers': 'Preghiere',
 	'nav.bookmarks': 'Segnalibri',
 	'nav.menu': 'Menu',

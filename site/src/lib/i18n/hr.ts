@@ -38,7 +38,7 @@ export const hr: Dictionary = {
 	'nav.socialDoctrine': 'Socijalni nauk',
 	'socialDoctrine.landing.title': 'Kompendij socijalnog nauka Crkve',
 	'socialDoctrine.landing.tagline': 'Što Crkva uči o životu u društvu, u 583 broja.',
-	'socialDoctrine.backMatter': 'Uvodni dijelovi i kazala',
+	'socialDoctrine.appendix': 'Dodatak',
 	'nav.prayers': 'Molitve',
 	'nav.bookmarks': 'Oznake',
 	'nav.menu': 'Izbornik',

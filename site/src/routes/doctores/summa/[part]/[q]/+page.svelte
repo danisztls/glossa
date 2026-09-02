@@ -584,7 +584,13 @@
 		color: var(--color-text-muted);
 	}
 
+	/* `position` is not decoration here: the article's margin number is
+	   `position: absolute` (`.reference-number.margin`, `ReferenceNumber.svelte`)
+	   and hangs off its nearest positioned ancestor, so without this every
+	   article's number left the column entirely for the initial containing
+	   block — the same omission `/doctrina-socialis/caput/[n]` carried. */
 	.article {
+		position: relative;
 		margin-top: 2.5rem;
 	}
 

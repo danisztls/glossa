@@ -1385,6 +1385,48 @@ export function displayDocumentTitle(title: string, lang: string): DisplayTitle 
 	return { ordinal: null, title: finalize(normalizeCase(title, normLang(lang))) };
 }
 
+/**
+ * The LIST MARKER a document heading prints in front of its name — `I.`,
+ * `a.`, `a)`, `A.` — split off so the two can be set apart, the way every
+ * other numbered division on the site already is.
+ *
+ * `displayDocumentTitle` above deliberately splits nothing, on the grounds
+ * that a document node carries no `kind`/`n` to reconstruct an ordinal from.
+ * That reasoning is about RECONSTRUCTING one and does not reach a marker the
+ * source itself printed: `I. GOD'S LIBERATING ACTION IN THE HISTORY OF
+ * ISRAEL` is a numeral and a name, and running them together is why the
+ * Social Doctrine's table of contents read as one long line where the
+ * Catechism's reads as a column.
+ *
+ * IT IS A SEPARATE FUNCTION AND NOT A CHANGE TO `displayTitle`, because the
+ * Catechism's `sub` nodes are the same shape (`I. The Desire for God`) and
+ * `normalizeCase`'s docblock records the decision to leave those alone —
+ * "the marker is part of the title rather than a redundant echo of `n`".
+ * Reversing that for every work at once is not this function's business.
+ *
+ * THE MARKER IS KEPT VERBATIM, punctuation included. Seven of the ten
+ * editions print `a)` where English prints `a.`, and normalising one to the
+ * other would make the page say something the source does not — the same
+ * rule the printed division labels take (`marker()`, structureToc.ts).
+ *
+ * Anything that is not a single letter or a roman numeral followed by `.` or
+ * `)` and then a name is left exactly as it was, which covers every heading
+ * that is only a name (`INTRODUCTION`), only an identifier (`PART ONE`,
+ * `ELSŐ RÉSZ` — the source prints those with no name beside them at all) and
+ * the Swahili edition, which marks nothing.
+ */
+const HEADING_MARKER_RE = /^(?:[IVXL]+|\p{L})[.)](?=\s)/u;
+
+export function documentHeadingParts(title: string, lang: string): DisplayTitle {
+	const head = title.trimStart();
+	const match = head.match(HEADING_MARKER_RE);
+	const rest = match ? head.slice(match[0].length).trim() : '';
+	// A marker with nothing after it is not a marker — it is the whole
+	// heading, and splitting it would leave a row with no text.
+	if (!match || !rest) return displayDocumentTitle(title, lang);
+	return { ordinal: match[0], title: finalize(normalizeCase(rest, normLang(lang))) };
+}
+
 export function displayTitle(
 	node: Pick<StructureNode, 'kind' | 'n' | 'title'>,
 	lang: string

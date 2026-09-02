@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { StructureNode } from '../types';
 import {
+	DOCUMENT_OUTLINE_KINDS,
 	INDEX_OUTLINE_KINDS,
 	indexDetailChildren,
 	indexOutlineChildren,
@@ -121,6 +122,57 @@ describe('indexRows', () => {
 		expect(indexRows(tree, { subsections: false }).some((row) => row.node.kind === 'sub')).toBe(
 			false
 		);
+	});
+});
+
+// The Social Doctrine's outline is built from a document's headings, so every
+// node in it is a `sub` (`buildDocumentOutline`, corpus.ts) and the default
+// spine selects none of them. `DOCUMENT_OUTLINE_KINDS` is what makes the tree
+// walkable; the shape below is the real one, four levels of it — a part, its
+// chapter, the chapter's roman-numeral section, and a lettered subsection.
+describe('indexRows over a document-derived outline', () => {
+	const tree = [
+		node(
+			'sub',
+			null,
+			'PART ONE',
+			[20, 104],
+			[
+				node(
+					'sub',
+					null,
+					"GOD'S PLAN OF LOVE FOR HUMANITY",
+					[20, 59],
+					[
+						node(
+							'sub',
+							null,
+							'I. GOD\u2019S LIBERATING ACTION',
+							[20, 27],
+							[node('sub', null, "a. God's gratuitous presence", [20, 25], [])]
+						)
+					]
+				)
+			]
+		)
+	];
+
+	it('selects nothing under the default spine', () => {
+		expect(indexRows(tree)).toEqual([]);
+	});
+
+	it('walks every level once when `sub` is the spine', () => {
+		expect(indexRows(tree, { kinds: DOCUMENT_OUTLINE_KINDS }).map((row) => row.depth)).toEqual([
+			0, 1, 2, 3
+		]);
+	});
+
+	// The detail pass exists to pull `sub` children up beside a spine that
+	// excludes them. With `sub` as the spine they are already there, and
+	// running it too would render the whole tree twice.
+	it('does not walk a row twice when it is both spine and detail', () => {
+		const rows = indexRows(tree, { kinds: DOCUMENT_OUTLINE_KINDS });
+		expect(rows).toHaveLength(new Set(rows.map((row) => rowKey(row.node))).size);
 	});
 });
 

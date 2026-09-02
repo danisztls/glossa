@@ -20,7 +20,7 @@ export const ro: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendiul doctrinei sociale a Bisericii',
 	'socialDoctrine.landing.tagline':
 		'Ce învață Biserica despre viața în societate, în 583 de numere.',
-	'socialDoctrine.backMatter': 'Pagini preliminare și indici',
+	'socialDoctrine.appendix': 'Anexă',
 	'nav.prayers': 'Rugăciuni',
 	'nav.bookmarks': 'Semne de carte',
 	'nav.menu': 'Meniu',

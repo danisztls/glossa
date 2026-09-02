@@ -19,7 +19,7 @@ export const ar: Dictionary = {
 	'nav.socialDoctrine': 'التعليم الاجتماعي',
 	'socialDoctrine.landing.title': 'موجز عقيدة الكنيسة الاجتماعية',
 	'socialDoctrine.landing.tagline': 'ما تعلّمه الكنيسة عن الحياة في المجتمع، في ٥٨٣ فقرة مرقّمة.',
-	'socialDoctrine.backMatter': 'المقدمات والفهارس',
+	'socialDoctrine.appendix': 'ملحق',
 	'nav.prayers': 'الصلوات',
 	'nav.bookmarks': 'العلامات',
 	'nav.menu': 'القائمة',

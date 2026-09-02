@@ -5,7 +5,15 @@
 	it, not decoration.
 
 	`placement="margin"` is for independently-addressable blocks in a continuous
-	reader; `placement="inline"` keeps Bible verse numbers in the prose flow;
+	reader, AND IT ASKS SOMETHING OF ITS CALLER: the number is
+	`position: absolute` at a negative inline start, so the block it belongs to
+	must be `position: relative` or it hangs off the initial containing block
+	instead — every number on the page piling up off the top-left corner, out of
+	the viewport, with no error anywhere. Two routes were written from a third
+	and took the markup without that one declaration
+	(`/doctrina-socialis/caput/[n]`, `/doctores/summa/[part]/[q]`), and both
+	rendered their whole text with no numbers at all until 2026-09-02.
+	`placement="inline"` keeps Bible verse numbers in the prose flow;
 	`placement="gutter"` is compare mode's, where the number sits in the track
 	BETWEEN the two columns and rides the divider running down it (see
 	`.compare-gutter` in app.css, and `CompareUnit` in `$lib/compare.ts` for why

@@ -6,7 +6,8 @@
 	Contextual by route: lists Bible editions under `/scriptura`, Catechism
 	editions under `/catechismus`, Compendium editions under `/catechismus/compendium`, prayer
 	collection editions under `/preces` (same one-canonical-work-per-language
-	shape as the Compendium), this ONE document's editions under
+	shape as the Compendium), Social Doctrine editions under
+	`/doctrina-socialis`, this ONE document's editions under
 	`/documenta/{slug}`, and renders nothing anywhere else (`context()` below
 	returns undefined for e.g. the home page, where no work is in view).
 
@@ -103,6 +104,19 @@
 		}
 		if (pathname === '/preces' || pathname.startsWith('/preces/')) {
 			return { kind: 'type', type: 'prayer' };
+		}
+		// The Compendium of the Social Doctrine, whose ten editions were
+		// unreachable from the pages that read them until 2026-09-02: the work
+		// was already a `WorkTypeKey` and `listEditions` already answered for
+		// it, so the store, the fallback chain and every consumer of
+		// `content.langFor('social-doctrine')` were complete — this map was the
+		// only thing that had not been told the route exists, and the bar
+		// rendered the trigger for no work at all. THAT is the failure mode to
+		// watch for when a work is added: nothing here throws, the picker is
+		// simply absent, and the page reads correctly in whichever edition the
+		// fallback happened to pick.
+		if (pathname === '/doctrina-socialis' || pathname.startsWith('/doctrina-socialis/')) {
+			return { kind: 'type', type: 'social-doctrine' };
 		}
 		// The Summa's menu offers English and Latin and no Portuguese, which
 		// is the work's permanent shape rather than a gap (docs/decisions.md

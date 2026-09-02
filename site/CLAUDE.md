@@ -506,6 +506,29 @@ check). No second content tier, no second chunk stride, no second reader.
   `shell-head.ts` carries `socialDoctrineChapterNames`, read off the nodes that
   produced the anchors, and the chapter page does not use `widestAt`.
   `socialDoctrineDivisions` is the same rule for the pages.
+- **Two calls to `socialDoctrineOutline` share no node, so nothing may compare
+  them by identity.** `buildDocumentOutline` maps the stored `DocumentNode[]`
+  into fresh `StructureNode`s every call, and both pages looked a division's
+  depth up by scanning their own outline for `division.node` — a `===` that
+  could never match. Neither failed: both took the `?? 0` fallback, so the
+  landing page listed every chapter with one child repeating its own title and
+  the chapter page printed its `<h1>` again as the first `<h2>` of its body.
+  `socialDoctrineDivisions` returns the depth now, and
+  `socialDoctrineOutlineWithDivisions` returns the tree and its divisions from
+  one build for the caller that needs both.
+- **`/doctrina-socialis/appendix` is the one address in this work with no
+  number in it**, because the letter of transmittal and the presentation carry
+  none. So `RouteManifest.socialDoctrineAppendix` is a boolean rather than a
+  list, and `parseHref` matches the literal before the numbered forms. It is a
+  reading address and NOT a `CHROME_PATH`: every word on the page is the
+  edition's, published in ten languages, and a chrome path would declare a
+  fourteen-language `hreflang` cluster over text that does not exist.
+- **A new work must be added to `EditionMenu`'s `context()` or it has no
+  edition picker, silently.** The Compendium of the Social Doctrine was a
+  `WorkTypeKey`, `listEditions` answered for it, the store and the fallback
+  chain were complete — and its ten editions were unreachable from every page
+  that read them for as long as that map had no branch, because the bar renders
+  the trigger for no work at all rather than failing.
 - **The chapter anchors are unioned across the editions that print a label**,
   and the seven that do agree exactly. §1 is added for the Introduction, which
   carries none; the CONCLUSION carries none either and reads as the tail of the

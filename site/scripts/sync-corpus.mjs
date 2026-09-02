@@ -2568,6 +2568,14 @@ const routeManifest = {
 	// languages is an address.
 	socialDoctrine: [...new Set(socialDoctrineNumbers)].sort((a, b) => a - b),
 	socialDoctrineChapters: socialDoctrineChapterStarts,
+	// A BOOLEAN, because the address carries no number: `/doctrina-socialis/appendix`
+	// is the letter of transmittal and the presentation, which the source prints
+	// before section 1 and numbers neither. True when ANY edition has them, the
+	// same union the lists above take -- `csdc.sw` prints none, and a reader on
+	// that edition is shown the page in the language the fallback chain reaches.
+	socialDoctrineAppendix: Object.values(socialDoctrineIndex).some(
+		(value) => (value.appendixUnits ?? 0) > 0
+	),
 	// From `manifests`, so a document the corpus knows about is an address even
 	// when this build has none of its text: `/documenta/{slug}` redirects that
 	// reader to the source page (docs/decisions.md §Posture), and it needs

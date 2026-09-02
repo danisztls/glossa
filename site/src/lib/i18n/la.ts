@@ -30,7 +30,7 @@ export const la: Dictionary = {
 	'nav.socialDoctrine': 'Doctrina socialis',
 	'socialDoctrine.landing.title': 'Compendium doctrinae socialis Ecclesiae',
 	'socialDoctrine.landing.tagline': 'Quae Ecclesia de vita sociali docet, 583 numeris digesta.',
-	'socialDoctrine.backMatter': 'Prolegomena et indices',
+	'socialDoctrine.appendix': 'Appendix',
 	'nav.prayers': 'Preces',
 	'nav.bookmarks': 'Signata',
 	'nav.menu': 'Index',

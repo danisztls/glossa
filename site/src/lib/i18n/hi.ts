@@ -49,7 +49,7 @@ export const hi: Dictionary = {
 	'socialDoctrine.landing.title': 'कलीसिया की सामाजिक शिक्षा का संग्रह',
 	'socialDoctrine.landing.tagline':
 		'समाज में जीवन के विषय में कलीसिया की शिक्षा, 583 क्रमांकित अनुच्छेदों में।',
-	'socialDoctrine.backMatter': 'आरंभिक पृष्ठ और अनुक्रमणिकाएँ',
+	'socialDoctrine.appendix': 'परिशिष्ट',
 	'nav.prayers': 'प्रार्थनाएँ',
 	'nav.bookmarks': 'चिह्न',
 	'nav.menu': 'मेन्यू',

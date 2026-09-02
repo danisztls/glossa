@@ -47,7 +47,7 @@ export const he: Dictionary = {
 	'nav.socialDoctrine': 'תורה חברתית',
 	'socialDoctrine.landing.title': 'קומפנדיום התורה החברתית של הכנסייה',
 	'socialDoctrine.landing.tagline': 'מה שהכנסייה מלמדת על החיים בחברה, ב־583 סעיפים ממוספרים.',
-	'socialDoctrine.backMatter': 'עמודי הפתיחה והמפתחות',
+	'socialDoctrine.appendix': 'נספח',
 	'nav.prayers': 'תפילות',
 	'nav.bookmarks': 'סימניות',
 	'nav.menu': 'תפריט',

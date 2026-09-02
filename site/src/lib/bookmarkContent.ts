@@ -107,6 +107,10 @@ function sortKey(target: Address): [number, number, number] {
 		case 'socialDoctrine':
 		case 'socialDoctrineChapter':
 			return [target.n, 0, 0];
+		// Ahead of paragraph 1, which is where the source prints it: the letter
+		// and the presentation come before the numbered text.
+		case 'socialDoctrineAppendix':
+			return [0, 0, 0];
 		// The whole document sorts to the top of its own section, ahead of every
 		// section of it.
 		case 'document':
@@ -166,6 +170,7 @@ export function bookmarkGroup(target: Address): { key: string; order: number } {
 		// reasoning the Summa's note above records.
 		case 'socialDoctrine':
 		case 'socialDoctrineChapter':
+		case 'socialDoctrineAppendix':
 			return { key: 'socialDoctrine', order: 4 };
 		case 'prayer':
 			return { key: 'prayers', order: 5 };
