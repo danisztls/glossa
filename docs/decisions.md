@@ -2817,3 +2817,72 @@ whole thing to a size-only check that misses any edit preserving a file's length
 written that way first, and what caught it was a test asserting the digest moves when
 mtime moves — not any run of the real thing, which skipped and rebuilt exactly when it
 looked like it should.
+
+**HMR was measured and left alone, and the measurement is the point of this entry**
+(2026-09-01). The dev loop's remaining complaint after `--changed-only` was edit-to-see
+latency, and the answer turned out to be that HMR is not slow — it is _absent_ for half
+the files being edited. Measured by connecting to the dev server's HMR websocket as a
+protocol client (`ws://localhost:5173`, subprotocol `vite-hmr`) and timing a write to
+the payload it provokes, with the module graph first populated over HTTP the way a
+browser populates it:
+
+| edit                                      | payload         |
+| ----------------------------------------- | --------------- |
+| `components/Sidenote.svelte`              | update, 9 ms    |
+| `components/Icon.svelte`                  | update, 7 ms    |
+| `scriptura/[book]/[chapter]/+page.svelte` | update, 40 ms   |
+| `styles/base.css`                         | update, 1 ms    |
+| `i18n/pt.ts`                              | **full reload** |
+| `corpus-index.ts`                         | **full reload** |
+
+**A Svelte component is its own HMR boundary and a `.ts` module is not.** Vite walks up
+the import graph looking for a module that called `import.meta.hot.accept`; the Svelte
+plugin injects one into every component, and there are **zero** such calls anywhere in
+`src/`, so an edit to any plain module walks to the root unaccepted and reloads the
+page. That is the whole mechanism, and it is not a misconfiguration.
+
+**The obvious fix is wrong in a way worth writing down.** A bare
+`import.meta.hot.accept()` in `i18n.svelte.ts` does stop the reload — by re-executing
+the module, which builds a new `loaded = $state({ en })` proxy while every rendered
+component still holds the old one. The page then keeps showing the old strings with
+nothing saying so: an edit that appears to do nothing, which is worse than the reload it
+replaced. The shape that would work keeps the module's identity and assigns into the
+ORIGINAL proxy, which is what components are already reactive to — and cannot use
+`hot.accept(deps, cb)` to do it, because that takes static specifiers and the
+dictionaries arrive through `import.meta.glob`.
+
+**Not doing it, and the conditions are recorded rather than the refusal.** It is the
+largest single bucket — `src/lib/i18n/*.ts` took 480 file-touches over 43 commits spread
+across 8 separate days, so it is a standing pattern and not the one-sitting dictionary
+expansion — but it is 480 of ~876 reload-causing touches, and the other 396
+(`corpus.ts` 55, `types.ts` 37, `corpus-index.ts` 26, `refs-grammar.ts` 21) hold real
+module state and would each need their own state-transfer answer. Against that: it adds
+a silent-staleness mode to a project whose documentation exists to prevent them, it
+would be the first `import.meta.hot` here and so the pattern others copy, and it cannot
+be unit-tested — there is no component harness, and HMR is a property of a running
+server. It is worth revisiting only with both mitigations: the handler falling back to
+`location.reload()` on any error, so the worst case degrades to today, and the websocket
+probe checked in as its guard, so a Vite upgrade that changes propagation does not
+silently restore full reloads. Note also that 213 of the `src/lib` touches were
+`.test.ts` files, which never reach the dev server at all.
+
+**73.8% OF EVERY BYTE THE DEV SERVER SENDS IS AN INLINE SOURCEMAP**, and three attempts
+to turn that off all failed. The graph is 411 modules and 18.78 MB, of which 13.85 MB is
+base64 `sourceMappingURL` payload; `content-manifest.json` alone is served as 8,552,054
+bytes of which **7,062,454 (82.6%) is its map**, against 1,331,016 bytes on disk.
+`refs-grammar.ts` is 68% map, `corpus.ts` 66%, SvelteKit's client runtime 81%. What did
+not work, all reverted: a `enforce: 'post'` plugin returning `map: { mappings: '' }` for
+corpus-data JSON (Vite composes the map across the whole transform chain, so one plugin
+declining contributes nothing); `dev: { sourcemap: { js: false } }`; and
+`environments: { client: { dev: { sourcemap: { js: false } } } }`. The option is real —
+`DevEnvironmentOptions.sourcemap` in Vite 8's types — and marked `@experimental`; whether
+SvelteKit overrides it or rolldown-vite has not wired it up is unresolved and is a
+question for upstream's source rather than for guessing. `json: { stringify: false }` was
+also measured and rejected: 8.55 MB to 6.91 MB, only 19%, and it would move the
+production boot chunk as well as dev.
+
+**Read that 73.8% as bytes and not as seconds.** A browser downloads an inline sourcemap
+as part of the module text but does not parse it unless devtools is open, and this is all
+over localhost. The browser-side reload cost was NOT measured — doing so needs a real
+browser, which this project deliberately does not drive — so no claim about wall-clock is
+made here. The server-side numbers above are the measured ones.

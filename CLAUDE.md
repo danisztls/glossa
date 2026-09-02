@@ -1099,6 +1099,33 @@ rebuilding` — so a skip you did not expect is diagnosable without reading the
   so restoring identical bytes under new mtimes forces one needless rebuild —
   the only direction this is allowed to err in.
 
+**EDITING A `.ts` MODULE RELOADS THE PAGE, EDITING A COMPONENT DOES NOT, AND
+THAT IS NOT A MISCONFIGURATION** (measured 2026-09-01, `docs/decisions.md`
+§Process). A `.svelte` file hot-updates in 7–40 ms and a stylesheet in 1 ms,
+because the Svelte plugin makes every component its own HMR boundary. There are
+**zero `import.meta.hot` calls in `src/`**, so an edit to any plain module —
+`i18n/pt.ts`, `corpus-index.ts`, anything under `src/lib` — walks the import
+graph to the root unaccepted and Vite issues a full reload. Three things before
+anyone decides to "fix" it:
+
+- **A bare `import.meta.hot.accept()` is the wrong fix and fails silently.** It
+  re-executes the module, building a new `$state` proxy while every rendered
+  component still holds the old one, so the page keeps showing the old strings
+  with nothing erroring. The reload it replaced was at least honest. The
+  argument, and the shape that would actually work, are in `docs/decisions.md`.
+- **Re-measure with the websocket, never by eye.** Connect to
+  `ws://localhost:5173` with subprotocol `vite-hmr`, populate the module graph
+  by fetching modules over HTTP first (Vite records a module's imports when it
+  transforms it, so a GET is enough — no browser needed), then write to a file
+  and read the payload's `type`. `full-reload` against `update` is the whole
+  measurement, and it is not visible from watching a page.
+- **73.8% of what the dev server sends is inline sourcemaps** — 13.85 MB of an
+  18.78 MB graph, and `content-manifest.json` is served as 8.5 MB of which 82.6%
+  is its map. Turning that off is NOT a config toggle: three documented attempts
+  failed and are listed in `docs/decisions.md` so nobody spends the afternoon
+  again. Read it as bytes, not as seconds — a browser does not parse an inline
+  map unless devtools is open, and the browser-side cost was never measured.
+
 **The worktree trap shrank but did not vanish** (see the corpus section
 above). The default is now `../../glossa-corpus`, resolved from `site/`, so a
 worktree created _beside_ the main checkout finds the corpus without help. A
