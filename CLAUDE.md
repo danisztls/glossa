@@ -2097,6 +2097,78 @@ convention (`it`, `la`, `mg`) it is worth **71 paragraphs**, with Malagasy the
 low edition in 60 of them. `docs/research/ccc-citation-apparatus.md` has the
 measurements and the sharper instrument that would replace it.
 
+**`audit.py apparatus` IS THE SEVENTH AUDIT AND THE FIRST TO LOOK AT THE
+MAGISTERIAL DOCUMENTS' FOOTNOTES** (2026-09-02). Nothing had: `coverage` cuts
+the raw page at the footnote boundary and `stored_text_len` counts no
+citations, so the apparatus sat outside its universe on BOTH sides of the
+division, and `balance`/`divisions` are per-unit and per-heading. The corpus
+stores 92,519 citations and **24,154 notes the source prints reach no reader**.
+It is three questions rather than one because they share a walk and nothing
+else — RECALL is ours, SERIES is arithmetic on the source, the VOTE is the
+source judged by its own translations — and reporting them apart is what stops
+a note we dropped and a misprint we faithfully kept from reading as one thing.
+Six things will bite before the design will.
+
+- **TWO EXACT MEASURES BEAT ONE HEURISTIC, and the heuristic was written
+  first.** A hole in the marker run `1..N` cannot be made honest here: a stray
+  `(302)` in prose is stored as marker 302, Vatican II RESTARTS its numbering
+  per chapter, and where the run ends has to be guessed — the largest real step
+  inside a run is 19 and the smallest false one is 31, an 11-wide band to hang
+  a constant in. Reading the source's own footnote list with the parser's own
+  reader (`split_region` + `build_footnote_table`) asks both halves exactly and
+  needs no constant at all: a stored citation whose marker reached no note, and
+  a note in the list no citation carries.
+- **THE TWO TOTAL FAILURES POINT IN OPPOSITE DIRECTIONS**, and were one bucket
+  until the corpus was read. `list-unread` is **123 editions** whose markers
+  were all found and whose footnote LIST was not, so the apparatus is a set of
+  markers pointing at nothing (`vatii.gaudium-et-spes.la`, 345 of them).
+  `markers-unread` is **97 editions** where the list was read whole and not one
+  marker matched — `exhortation.vita-consecrata.la` stores 0 citations against
+  427 notes, its template sniffed as `sup` where the body prints `(N)`, and
+  **only the Portuguese edition of that document has an apparatus at all**.
+  `partial` is the remaining 199 and the smallest at 1,698 notes.
+- **A VOLUME OF THE ACTA IS ITS YEAR MINUS A CONSTANT, so a reference convicts
+  itself** — the only check in the file that needs no second edition, which is
+  why it reaches every edition rather than the 24 the vote can compare. The
+  constants are DERIVED and not looked up: 98.71% of 19,782 AAS references
+  satisfy `volume == year - 1908`, and the 304 that fail are transpositions —
+  `AAS 38 (1991)` for 83 (_Centesimus annus_; the Slovenian copied the section
+  number printed immediately before it), `AAS 191 (2009)` for 101, `AAS 11
+(2019)` for 111. **ASS takes its own offset and ceased in 1908**, so an ASS
+  reference to a later year is the other series' name misspelled: 45 of them.
+- **READ THE COLUMN, NOT THE ROW** — `refs`' rule arriving in another family.
+  The French Vatican II edition prints the CITED document's paragraph number
+  where the volume goes (`Lumen gentium : AAS 2 (1965), p. 5-6` is LG 2) at 33
+  of its 76 references. That is the edition speaking, and ranking individual
+  references rather than editions would have opened the report with it.
+- **HERE THE VOTE IS THE SUPPLEMENT, WHICH IS THE EXACT INVERSE OF THE
+  COMPENDIUM'S `refs`** — and what differs is the precondition, not the
+  technique. There the fourteen editions were fourteen COPIES of one apparatus.
+  Here they are different apparatus: `ad-caeli-reginam` prints 53 notes in
+  Italian, 62 in Latin and 63 in Portuguese and English, the Portuguese
+  splitting the Latin's last note in two. So footnote _k_ is footnote _k_ only
+  where the marker sets are identical — **24 documents of 271, holding 38% of
+  the corpus's series references**. What it ADDS is the page, which arithmetic
+  cannot judge: `AAS 95 (2003), 47-48` where seven editions read 447-448.
+- **AN EDITION THAT CITES THE FIRST PAGE OF A RANGE IS NOT MISPRINTING IT.**
+  The vote classifies its departures the way `refs` classifies sets, and the
+  Byelorussian prints a NARROWER span ten times out of ten — a convention, and
+  a fifth of the leads if it were not separated out. `SERIES_DEFECT_SHAPES` is
+  the four that no convention produces (`series`, `volume`, `year`, `page`);
+  `page-narrower`, `page-wider` and `count` are the editions being editions.
+
+**THE FIRST RUN'S TOP LEAD IS A PARSER FIX, NOT A CORRECTION, AND ITS SHAPE IS
+THE ONE `_FNPAIR_REF_RE` ALREADY DOCUMENTS.** `exhortation.sacramentum-caritatis.fr`
+stores 212 of the source's 256 notes; the raw list is complete and 44 body
+markers are written `(<font size="3">6</font>)`, the parenthesis and the digit
+separated by a tag where `_PAREN_MARKER_RE` needs them adjacent.
+`encyclical.eccl-de-euch.hr` (47 of 103) and `encyclical.deus-caritas-est.hr`
+(17 of 36) are the same defect in its other spelling, `(</font><font ...>N)`.
+That is 119 notes in three works and the class is CLOSED — checked across every
+raw document page, no other file carries either shape — but `partial` reports
+1,698 notes over 199 editions, so it is 7% of that state and the rest still
+need reading one at a time.
+
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text
 `bible.cpdv.en` was translated from, so where the three disagree about verse

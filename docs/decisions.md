@@ -728,6 +728,52 @@ it. Arabic is the interesting case, because it shares no surface form, no letter
 and not even the comma with any other edition: its chapter/verse mark is U+060C, and a
 grammar built on "," reads none of its 62 references.
 
+**The magisterial documents' FOOTNOTES had no oracle at all until 2026-09-02, and
+`audit.py apparatus` is three of them.** `coverage` cuts the raw page at the footnote
+boundary and `stored_text_len` counts no citations, so the apparatus was outside its
+universe on both sides of the division; `balance` is per-unit and `divisions` per
+heading. The corpus stores 92,519 citations and **24,154 notes the source prints reach
+no reader**. Four things about it are worth keeping.
+
+**Two exact measures beat one heuristic, and the heuristic was written first.** The
+obvious check is a hole in the marker run 1..N, and it cannot be made honest here: a
+stray `(302)` in prose is stored as marker 302, Vatican II restarts its numbering per
+chapter, and where the run ends therefore has to be guessed. Reading the source's own
+footnote list with the parser's own reader asks both halves exactly instead — a stored
+citation whose marker reached no note, and a note in the list no citation carries — and
+needs no constant.
+
+**The two total failures point in opposite directions and were one bucket until the
+corpus was read.** `list-unread` is 123 editions whose markers were all found and whose
+footnote LIST was not, so the apparatus is a set of markers pointing at nothing.
+`markers-unread` is 97 editions where the list was read whole and not one marker
+matched: `exhortation.vita-consecrata.la` stores 0 citations against 427 notes, its
+template sniffed as `sup` where the body prints `(N)`, and only the Portuguese edition
+of that document has an apparatus at all. Reported together as "notes missing" they are
+one number; separated they are two bugs in two functions.
+
+**A volume of the Acta is its year minus a constant, so a reference convicts itself.**
+That is the only check in the file needing no second edition, and it therefore reaches
+every edition of every document rather than the 24 the vote can compare. The constants
+are DERIVED, not looked up: 98.71% of the corpus's 19,782 AAS references satisfy
+`volume == year - 1908`, and the 304 that fail are transpositions — `AAS 38 (1991)` for
+83, which is _Centesimus annus_, the Slovenian having copied the section number printed
+immediately before it. Acta Sanctae Sedis takes its own offset and ceased in 1908, so an
+ASS reference to a later year is the other series' name misspelled, which is 45 of them.
+
+**And here the cross-language vote is the SUPPLEMENT, which is the exact inverse of the
+Compendium's `refs`.** There the fourteen editions were fourteen copies of one
+apparatus. Here they are different apparatus — `ad-caeli-reginam` prints 53 notes in
+Italian, 62 in Latin and 63 in Portuguese and English, the Portuguese splitting the
+Latin's last note in two — so footnote _k_ is footnote _k_ only where the marker sets
+are identical, which is 24 documents holding 38% of the corpus's series references. What
+it adds is the PAGE, which arithmetic cannot judge: `AAS 95 (2003), 47-48` where seven
+editions read 447-448. Its shapes are classified for the reason `refs` classifies sets —
+an edition citing the first page of a range rather than the range prints a NARROWER span
+consistently, and the Byelorussian does it ten times out of ten. **A vote is only ever
+as good as its precondition, and the precondition is what differs between the two
+audits, not the technique.**
+
 ## Addresses and editions
 
 **A canonical URL selects a reference; the reader's preference selects the edition.**

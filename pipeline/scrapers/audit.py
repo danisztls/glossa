@@ -173,13 +173,84 @@ a cross-edition count measures the convention. There is one comparison there
 worth making and it is narrower than this; docs/research/ccc-citation-
 apparatus.md records it and the measurements behind it.
 
+THE SEVENTH AUDIT, `apparatus`, is the first to look at the magisterial
+documents' FOOTNOTES, and it is three questions rather than one because they
+share a walk and nothing else: RECALL is about our parser, SERIES is
+arithmetic on the source, and the VOTE is the source judged by its own
+translations. They are reported together so that a note missing from an
+edition and a misprint inside one are never read as the same kind of thing.
+
+Nothing had ever looked here. `coverage` cuts the page at `fn_start` and
+`stored_text_len` counts no citations, so the apparatus is outside its
+universe by construction on both sides of the division; `balance` and
+`divisions` are per-unit and per-heading. The corpus stores 92,519 citations
+and 24,154 notes that the source prints are in none of them.
+
+RECALL IS TWO EXACT MEASURES AND NO HEURISTIC, which took a wrong turn first
+and is the part worth reading. The obvious check is a hole in the marker run
+1..N, and it cannot be made honest: a stray `(302)` in prose is stored as
+marker 302, Vatican II restarts its numbering per chapter, and the run's end
+therefore has to be guessed. Both halves can be asked exactly instead, by
+reading the source's own footnote list with the parser's own reader --
+
+  - **empty** is a stored citation whose marker reached no note.
+  - **unreached** is a note in the source's list that no citation carries.
+
+-- and the two are not degrees of one failure, they are opposite ones.
+`list-unread` is 123 editions whose markers were all found and whose footnote
+LIST was not, so the apparatus is a set of markers pointing at nothing
+(`vatii.gaudium-et-spes.la`, 345 of them). `markers-unread` is 97 editions
+where the list was read whole and not one marker matched
+(`exhortation.vita-consecrata.la` stores 0 citations against 427 notes; its
+template sniffed as `sup` where the body prints `(N)`, and only the
+Portuguese edition of that document has an apparatus at all). `partial` is
+the remaining 199, and it is the smallest of the three at 1,698 notes.
+NEITHER MEASURE NEEDS A SIBLING EDITION, which is why this reaches the 19
+documents the corpus holds in a single language and the 36 whose apparatus
+survives in one edition only.
+
+SERIES IS THE ONLY CHECK IN THIS FILE THAT CONVICTS WITHOUT A SECOND
+EDITION. A volume of the Acta is its year minus a constant, so
+`AAS 63 (1971)` carries its own proof and `AAS 38 (1991)` -- which is
+`Centesimus annus`, AAS 83, the Slovenian edition having copied the section
+number printed immediately before it -- is impossible on its face. The
+constants are DERIVED and not looked up: 98.71% of the corpus's 19,782 AAS
+references satisfy `volume == year - 1908` and the exceptions are
+transpositions. Acta Sanctae Sedis takes its own offset and ceased in 1908,
+so an ASS reference to a later year is the other series' name misspelled,
+which is 45 of the 304 findings.
+
+READ THE COLUMN, NOT THE ROW -- the same rule `refs` states for a subset.
+The French Vatican II edition prints the CITED document's paragraph number
+where the volume goes (`Lumen gentium : AAS 2 (1965), p. 5-6` is LG 2) at 33
+of its 76 references. That is the edition speaking, and a report that ranked
+individual references rather than editions would have opened with it.
+
+THE VOTE IS THE SUPPLEMENT HERE AND NOT THE INSTRUMENT, which is the exact
+inverse of `refs`, and the reason is a precondition rather than a preference.
+There the fourteen editions were fourteen copies of one apparatus; here they
+are different apparatus -- `ad-caeli-reginam` prints 53 notes in Italian, 62
+in Latin and 63 in Portuguese and English, the Portuguese splitting the
+Latin's last note in two -- so footnote k is only footnote k where the marker
+sets are identical, which is 24 of 271 documents -- 15 of them with anything
+to report. 62% of the corpus's series references are in documents it can
+never reach.
+
+What it adds is the PAGE, which arithmetic cannot judge: `AAS 95 (2003),
+47-48` where seven editions read 447-448. Its shapes are classified for the
+same reason `refs` classifies sets -- an edition that cites the first page of
+a range rather than the range prints a NARROWER span consistently, and the
+Byelorussian does it ten times out of ten, which is a convention and would
+otherwise have been a fifth of the leads.
+
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
   ./audit.py toc                 # parsed structure vs the read oracle
   ./audit.py balance             # cross-language text-length symmetry
   ./audit.py divisions           # cross-language structure-tree symmetry
   ./audit.py refs                # cross-language reference-apparatus symmetry
-  ./audit.py all                 # all six; exit 1 if any gates
+  ./audit.py apparatus           # the documents' footnotes: recall, arithmetic, vote
+  ./audit.py all                 # all seven; exit 1 if any gates
 """
 
 from __future__ import annotations
@@ -207,13 +278,21 @@ DEFAULT_MIN_COVERAGE = 0.50
 DEFEAT_MARKER = "PARSER DEFEATED"
 
 
-def body_region(html: str) -> str:
-    """The document's body, delimited exactly as `parse_document` delimits it.
+def split_region(html: str) -> tuple[str, str]:
+    """The document's body and its footnote list, delimited exactly as
+    `parse_document` delimits them.
 
     Kept in step with `parse_document` by copying its shell sniff rather than
     calling it: the parser raises on stub pages and does a great deal of work
     we do not want here. If the two ever drift, coverage reads low across the
     board rather than subtly -- the failure is loud.
+
+    Both halves are returned from one function because two audits now need
+    opposite sides of the same cut, and a second copy of the sniff is a second
+    thing to keep in step. The footnote half is empty when no boundary was
+    found at all, which is a real state and not an error: some pages print no
+    apparatus, and on some the boundary sniff is defeated -- `apparatus` is
+    what tells those two apart.
     """
     html = V.strip_transparent_spans(html)
     testo = re.search(r'class="testo"', html)
@@ -227,7 +306,13 @@ def body_region(html: str) -> str:
     else:
         region = html[V.find_content_start_old_shell(html) :]
     fn_start, _evidence = V.find_footnote_region_start(region)
-    return region if fn_start is None else region[:fn_start]
+    if fn_start is None:
+        return region, ""
+    return region[:fn_start], region[fn_start:]
+
+
+def body_region(html: str) -> str:
+    return split_region(html)[0]
 
 
 def stored_text_len(work: Path) -> int:
@@ -711,16 +796,27 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
     return None
 
 
-def language_groups(corpus: Path) -> dict[str, dict[str, Path]]:
-    """`base work id -> {language tag: work directory}`, for the comparable
-    types only. The language is the last dot-component of the work id and
-    may carry a region (`prayer.common.en-gb`)."""
+def language_groups(
+    corpus: Path,
+    types: tuple[str, ...] = BALANCE_TYPES,
+    min_editions: int = 2,
+) -> dict[str, dict[str, Path]]:
+    """`base work id -> {language tag: work directory}`. The language is the
+    last dot-component of the work id and may carry a region
+    (`prayer.common.en-gb`).
+
+    `types` defaults to the comparable ones because every caller but
+    `apparatus` is a cross-language check and `document` is exactly what
+    those cannot compare. `min_editions` is 1 for the two apparatus checks
+    that convict an edition on its own evidence -- a grouping that drops
+    single-edition works is right for a comparison and silently wrong for
+    an audit that does not need a comparison."""
     groups: dict[str, dict[str, Path]] = collections.defaultdict(dict)
     for work in sorted((common.build_root(corpus)).iterdir()):
         manifest = work / "manifest.json"
         if not work.is_dir() or not manifest.exists():
             continue
-        if json.loads(manifest.read_text()).get("type") not in BALANCE_TYPES:
+        if json.loads(manifest.read_text()).get("type") not in types:
             continue
         if (work / "witnesses.json").exists():
             # A DERIVED edition: built from the other editions of this same
@@ -735,7 +831,7 @@ def language_groups(corpus: Path) -> dict[str, dict[str, Path]]:
         base, _, lang = work.name.rpartition(".")
         if base and lang:
             groups[base][lang] = work
-    return {base: langs for base, langs in groups.items() if len(langs) > 1}
+    return {base: langs for base, langs in groups.items() if len(langs) >= min_editions}
 
 
 def balance_pair(a_texts: dict, b_texts: dict) -> dict | None:
@@ -1243,6 +1339,520 @@ def report_refs(rows: list[dict], limit: int) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# The magisterial documents' footnote apparatus
+# --------------------------------------------------------------------------
+
+#: `document` is the one type left out of every cross-language check above,
+#: for the reason the module docstring gives: a section number is not the
+#: same section in two editions. Its APPARATUS is a different subject, and
+#: two of the three questions below are not cross-language at all.
+APPARATUS_TYPES = ("document",)
+
+
+def source_notes(foot_html: str) -> dict[str, str]:
+    """The footnote list as the SOURCE prints it, read with the parser's own
+    reader so that what this compares against is what the parser would have
+    had -- never a second implementation of the same sniff.
+
+    The `SUPPLEMENTARY NOTES` split is `parse_document`'s and is copied for
+    the same reason `split_region` copies the shell sniff: without it Lumen
+    Gentium's second, star-marked series is read as part of the primary one
+    and every entry after the heading is counted as a note nothing reaches."""
+    if not foot_html:
+        return {}
+    star = re.search(r"SUPPLEMENTARY NOTES", foot_html, re.IGNORECASE)
+    primary = foot_html[: star.start()] if star else foot_html
+    flat, _chapter_scoped = V.build_footnote_table(primary)
+    return flat
+
+
+def stored_citations(work: Path) -> list[dict]:
+    """Every citation the build stored for one edition, in document order.
+
+    Sections and appendix both, because an unnumbered edition's whole text is
+    in the appendix (`stored_text_len` had to learn the same thing) and its
+    notes go with it."""
+    out = []
+    for name in ("sections.json", "appendix.json"):
+        path = work / name
+        if not path.exists():
+            continue
+        for unit in json.loads(path.read_text()):
+            out.extend(unit.get("citations") or [])
+    return out
+
+
+def measure_apparatus_recall(corpus: Path) -> list[dict]:
+    """Per edition: how much of the source's own footnote list we kept.
+
+    TWO EXACT MEASURES AND NO HEURISTIC, which is the whole design. An
+    earlier draft looked for holes in the marker run 1..N and had to guess
+    where the run ended, because a stray `(302)` in prose is stored as
+    marker 302 and Vatican II restarts its numbering per chapter. Both
+    questions can be asked exactly instead, and they name different culprits:
+
+      - **empty** is a stored citation whose marker reached no note. Either
+        the footnote LIST was not read -- the boundary sniff missed, and then
+        every citation in the edition is empty -- or the marker was never a
+        marker.
+      - **unreached** is a note in the source's list that no stored citation
+        carries. The list was read and the MARKER in the body was not, so the
+        note is on the page and in no reader's apparatus.
+
+    Neither needs a sibling edition, which is why this reaches the 19
+    documents held in a single language, and the cross-language vote does
+    not."""
+    rows = []
+    for work_id, page in raw_pages(corpus).items():
+        work = common.build_root(corpus) / work_id
+        if not (work / "sections.json").exists():
+            continue
+        cites = stored_citations(work)
+        _body, foot_html = split_region(
+            page.read_text(encoding="utf-8", errors="replace")
+        )
+        notes = source_notes(foot_html)
+        if not cites and not notes:
+            # No apparatus on either side. The overwhelming majority of the
+            # unnumbered editions, and not a finding about anything.
+            continue
+        carried = {str(c.get("marker")) for c in cites}
+        empty = [c for c in cites if not (c.get("text") or "").strip()]
+        unreached = sorted(set(notes) - carried, key=_marker_sort)
+        rows.append(
+            {
+                "work": work_id,
+                "state": apparatus_state(len(cites), len(empty), notes, carried),
+                "stored": len(cites),
+                "empty": len(empty),
+                "source_notes": len(notes),
+                "unreached": unreached,
+            }
+        )
+    rows.sort(key=lambda r: -(r["empty"] + len(r["unreached"])))
+    return rows
+
+
+#: The three ways an edition's apparatus goes missing, in the order a fix
+#: would take them. They are states of one edition and not severities: an
+#: edition is in exactly one, and which one names the half of the parser to
+#: look at.
+APPARATUS_STATES = ("list-unread", "markers-unread", "partial")
+
+
+def apparatus_state(
+    stored: int, empty: int, notes: dict[str, str], carried: set[str]
+) -> str:
+    """Which half of the parse failed, or `ok`.
+
+    THE TWO TOTAL FAILURES POINT IN OPPOSITE DIRECTIONS and were one bucket
+    until the corpus was read. `list-unread` is a page whose markers were all
+    found and whose footnote LIST was not, so the apparatus is a set of
+    markers pointing at nothing -- 123 editions, every citation empty,
+    `vatii.gaudium-et-spes.la` at 345 of them. `markers-unread` is the
+    mirror: the list read whole and not one marker matched, so nothing points
+    at any of it -- `exhortation.vita-consecrata.la` stores 0 citations
+    against a source list of 427, its template sniffed as `sup` where the
+    body prints `(N)`. Reporting those two together as "notes missing" hides
+    that they are different bugs in different functions."""
+    if notes and not (carried & set(notes)):
+        return "markers-unread"
+    if not notes and empty:
+        return "list-unread"
+    if empty or set(notes) - carried:
+        return "partial"
+    return "ok"
+
+
+def _marker_sort(marker: str) -> tuple[int, int | str]:
+    return (0, int(marker)) if marker.isdigit() else (1, marker)
+
+
+# --------------------------------------------------------------------------
+
+#: `AAS 63 (1971), 416-417`. The volume and the year are digits in every
+#: language, which is what makes the series reference the one part of a
+#: footnote that can be checked at all: the rest is the edition's own
+#: bibliography, and a German footnote citing the German L'Osservatore
+#: Romano is doing its job.
+#:
+#: The page group is deliberately loose about what sits between the year and
+#: the numbers -- `p.`, `pp.`, `S.`, `s.`, `lpp.`, `str.` are six spellings
+#: of "page" across these editions, and a pattern that admitted only the
+#: Latin one read every German reference as having no pages at all and
+#: reported 387 leads that were one abbreviation.
+SERIES_RE = re.compile(
+    r"\b(AAS|ASS)\s*\.?\s*(\d{1,3})\s*\(\s*(\d{4})\s*\)"
+    r"[^\d]{0,12}(\d{1,4}(?:\s*[-\u2010\u2011\u2013\u2014]\s*\d{1,4})?)?"
+)
+
+#: A volume of the Acta is its year minus a constant, so a reference carries
+#: its own check and needs no second edition to contradict it. DERIVED, not
+#: looked up: 98.71% of the corpus's 19,782 AAS references satisfy the first
+#: of these and the exceptions are transpositions (`AAS 38 (1991)` for 83,
+#: `AAS 191 (2009)` for 101), and 11 of the 13 distinct ASS volumes in range
+#: satisfy the second.
+SERIES_OFFSET = {"AAS": 1908, "ASS": 1867}
+
+#: Acta Sanctae Sedis ceased with volume 41 in 1908 and Acta Apostolicae
+#: Sedis began in 1909, so an ASS reference to a later year is not a wrong
+#: volume, it is the other series' name. The corpus prints ~50 of them and
+#: every one is arithmetically perfect read as AAS.
+SERIES_ASS_LAST_YEAR = 1908
+
+#: The Acta Sanctae Sedis' first volumes span two years apiece and the offset
+#: does not hold across them. The corpus holds two such references, which is
+#: too few to found a table on and too few to be worth reporting as leads.
+SERIES_ASS_IRREGULAR_BELOW = 4
+
+
+def series_fault(name: str, volume: int, year: int) -> str | None:
+    """What is impossible about one series reference, or None."""
+    if name == "ASS":
+        if year > SERIES_ASS_LAST_YEAR:
+            return "aas-misspelled"
+        if volume < SERIES_ASS_IRREGULAR_BELOW:
+            return None
+    return None if volume == year - SERIES_OFFSET[name] else "volume-year"
+
+
+def series_refs(text: str) -> list[dict]:
+    out = []
+    for name, volume, year, pages in SERIES_RE.findall(text or ""):
+        out.append(
+            {
+                "series": name,
+                "volume": int(volume),
+                "year": int(year),
+                "pages": re.sub(r"\s*[-\u2010\u2011\u2013\u2014]\s*", "-", pages),
+            }
+        )
+    return out
+
+
+def measure_apparatus_series(corpus: Path) -> list[dict]:
+    """Per edition: the series references that cannot be what they say.
+
+    THE ONLY CHECK HERE THAT CONVICTS ON ITS OWN. `balance`, `divisions` and
+    `refs` all need a sibling edition to have an opinion at all; this one
+    needs nothing but arithmetic, so it reaches every edition of every
+    document including the 105 the corpus holds in one language.
+
+    READ THE COLUMN, NOT THE ROW. A consistent violation is a convention:
+    the French Vatican II edition prints the CITED DOCUMENT's paragraph
+    number where the volume goes -- `Lumen gentium : AAS 2 (1965), p. 5-6` is
+    LG 2 -- at 46 references, and it is the edition speaking exactly as the
+    German Compendium's short apparatus was. A scattered one is a misprint."""
+    rows = []
+    for base, langs in sorted(
+        language_groups(corpus, APPARATUS_TYPES, min_editions=1).items()
+    ):
+        for lang, work in sorted(langs.items()):
+            faults = []
+            total = 0
+            for cite in stored_citations(work):
+                for ref in series_refs(cite.get("text") or ""):
+                    total += 1
+                    fault = series_fault(ref["series"], ref["volume"], ref["year"])
+                    if fault:
+                        faults.append(
+                            {**ref, "fault": fault, "marker": str(cite.get("marker"))}
+                        )
+            if total:
+                # EVERY edition that prints one, not only the faulty ones, so
+                # the denominator is in the measurement rather than in the
+                # report's head. A rate needs both halves stored or the next
+                # reader of the JSON reconstructs it from the wrong total --
+                # the faulty editions' references are 8,406 of the corpus's
+                # 19,887, so the two answers differ by more than a factor of
+                # two.
+                rows.append({"work": f"{base}.{lang}", "refs": total, "faults": faults})
+    rows.sort(key=lambda r: -len(r["faults"]))
+    return rows
+
+
+# --------------------------------------------------------------------------
+
+
+#: How one edition's series reference stands to the one the rest print --
+#: the same instrument `classify` is for the Compendium, and here for the
+#: same reason. A translating conference that cites the first page of a
+#: range rather than the range prints a NARROWER span, everywhere,
+#: consistently; nothing decides to print 154 where the page is 145. Leading
+#: with a count would bury the second under the first, which is exactly what
+#: the first run of this did: the Byelorussian edition alone accounts for a
+#: third of the leads and every one of them is its own page convention.
+SERIES_DEFECT_SHAPES = ("series", "volume", "year", "page")
+
+
+def _page_span(pages: str) -> tuple[int, int] | None:
+    parts = [int(p) for p in pages.split("-") if p.isdigit()]
+    if not parts:
+        return None
+    return (parts[0], parts[-1])
+
+
+def series_shape(mine: tuple, modal: tuple) -> str:
+    """The first field on which two readings of the same footnote disagree.
+
+    Field order is the diagnosis's order: a wrong series name is a different
+    publication, a wrong volume or year is a different book, and only once
+    those agree is a page difference about the page."""
+    if len(mine) != len(modal):
+        return "count"
+    for (name, volume, year, pages), (m_name, m_volume, m_year, m_pages) in zip(
+        mine, modal, strict=True
+    ):
+        if name != m_name:
+            return "series"
+        if volume != m_volume:
+            return "volume"
+        if year != m_year:
+            return "year"
+        if pages == m_pages:
+            continue
+        span, m_span = _page_span(pages), _page_span(m_pages)
+        if span is None or m_span is None:
+            return "page"
+        if m_span[0] <= span[0] and span[1] <= m_span[1]:
+            return "page-narrower"
+        if span[0] <= m_span[0] and m_span[1] <= span[1]:
+            return "page-wider"
+        return "page"
+    return "same"
+
+
+def measure_apparatus_vote(corpus: Path) -> list[dict]:
+    """Per document: series references one edition prints differently from
+    the rest.
+
+    THE PRECONDITION IS MARKER IDENTITY, AND IT IS RARE. Footnote k has to be
+    footnote k in every edition compared, and these editions do not agree
+    about that: `ad-caeli-reginam` prints 53 notes in Italian, 62 in Latin
+    and 63 in Portuguese and English, the Portuguese splitting the Latin's
+    last note in two. So this runs over the documents whose editions carry
+    identical marker sets and is silent about the rest -- 24 documents of
+    271, holding 38% of the corpus's series references, which is why the
+    arithmetic above is the instrument and this is the supplement.
+
+    WHAT IT ADDS is the page number, which arithmetic cannot judge: 154 for
+    145, or `AAS 72 (1980), 72` where the page repeats the volume and every
+    other edition reads 926. Findings whose odd value is ALSO arithmetically
+    impossible are marked, because those are already in the section above and
+    counting them twice would overstate what the vote is worth."""
+    rows = []
+    for base, langs in sorted(
+        language_groups(corpus, APPARATUS_TYPES, min_editions=3).items()
+    ):
+        cited = {}
+        for lang, work in langs.items():
+            notes = {
+                str(c.get("marker")): (c.get("text") or "")
+                for c in stored_citations(work)
+            }
+            if notes:
+                cited[lang] = notes
+        if len(cited) < 3 or len({frozenset(n) for n in cited.values()}) != 1:
+            # Not a comparable set of editions. Reported nowhere: a document
+            # whose translations carry different apparatus is the normal case
+            # here, not a defect, and saying so 140 times is noise.
+            continue
+        findings = []
+        markers = sorted(next(iter(cited.values())), key=_marker_sort)
+        for marker in markers:
+            printed = {
+                lang: tuple(
+                    (r["series"], r["volume"], r["year"], r["pages"])
+                    for r in series_refs(notes[marker])
+                )
+                for lang, notes in cited.items()
+            }
+            printed = {lang: refs for lang, refs in printed.items() if refs}
+            if len(printed) < 3:
+                continue
+            votes = collections.Counter(printed.values())
+            modal, support = votes.most_common(1)[0]
+            odd = {lang: refs for lang, refs in printed.items() if refs != modal}
+            if not odd or len(odd) > 2 or support < 3:
+                continue
+            findings.append(
+                {
+                    "marker": marker,
+                    "modal": [list(r) for r in modal],
+                    "support": support,
+                    "of": len(printed),
+                    "odd": {
+                        lang: [list(r) for r in refs] for lang, refs in odd.items()
+                    },
+                    "shapes": {
+                        lang: series_shape(refs, modal) for lang, refs in odd.items()
+                    },
+                    "also_impossible": sorted(
+                        lang
+                        for lang, refs in odd.items()
+                        if any(series_fault(r[0], r[1], r[2]) for r in refs)
+                    ),
+                }
+            )
+        # Every document COMPARED, findings or none -- the same reason the
+        # series rows keep their clean editions. "15 documents have leads" and
+        # "15 documents could be compared at all" are different claims, and
+        # storing only the first makes the second unrecoverable.
+        rows.append({"work": base, "editions": sorted(cited), "findings": findings})
+    rows.sort(key=lambda r: -len(r["findings"]))
+    return rows
+
+
+def measure_apparatus(corpus: Path) -> dict:
+    return {
+        "recall": measure_apparatus_recall(corpus),
+        "series": measure_apparatus_series(corpus),
+        "vote": measure_apparatus_vote(corpus),
+    }
+
+
+def report_apparatus(measured: dict, limit: int) -> int:
+    recall, series, vote = measured["recall"], measured["series"], measured["vote"]
+    lost = sum(r["empty"] + len(r["unreached"]) for r in recall)
+    print(
+        f"{len(recall)} document edition(s) with an apparatus; "
+        f"{lost:,} note(s) on the page and not in the corpus.\n"
+        "Three questions about one apparatus, and each names a different "
+        "culprit: RECALL is ours,\nSERIES is arithmetic on the source, and the "
+        "VOTE is the source judged by its own\ntranslations. Reports only; "
+        "never gates."
+    )
+    _report_recall(recall, limit)
+    _report_series(series, limit)
+    _report_vote(vote, limit)
+    # Not gated, for the reason `refs` is not: every finding here is either a
+    # source misprint to file or a parser to fix, and neither is a thing a
+    # build should stop for. What gates a document is `coverage`'s floor.
+    return 0
+
+
+def _report_recall(recall: list[dict], limit: int) -> None:
+    by_state = {
+        state: [r for r in recall if r["state"] == state] for state in APPARATUS_STATES
+    }
+    print("\n  RECALL -- ours. Notes the source prints and the corpus does not.")
+    for state in APPARATUS_STATES:
+        rows = by_state[state]
+        notes = sum(r["empty"] + len(r["unreached"]) for r in rows)
+        print(f"    {state:16}{len(rows):5} edition(s){notes:8,} note(s)")
+    # A SHARE OF THE LIMIT PER STATE, not the worst rows overall. The three
+    # states are ranked by size in the same order every run -- an edition
+    # whose whole list went unread has lost more notes than one missing four
+    # markers, always -- so a single ranked table shows `list-unread` and
+    # nothing else, and the state that is actually one bug away from a fix is
+    # never on screen.
+    each = max(3, limit // len(APPARATUS_STATES))
+    for state in APPARATUS_STATES:
+        rows = by_state[state]
+        if not rows:
+            continue
+        print(
+            f"\n    {state} -- {'markers found, list not' if state == 'list-unread' else 'list found, markers not' if state == 'markers-unread' else 'some of each'}"
+        )
+        print(
+            f"      {'edition':44}{'stored':>7}{'empty':>7}{'source':>8}{'unreached':>10}"
+        )
+        for row in rows[:each]:
+            print(
+                f"      {row['work']:44}{row['stored']:7}{row['empty']:7}"
+                f"{row['source_notes']:8}{len(row['unreached']):10}"
+            )
+        if len(rows) > each:
+            print(f"      ... {len(rows) - each} more (raise --limit, or --json)")
+
+
+def _report_series(series: list[dict], limit: int) -> None:
+    faulty = [r for r in series if r["faults"]]
+    faults = sum(len(r["faults"]) for r in faulty)
+    scanned = sum(r["refs"] for r in series)
+    print(
+        f"\n  SERIES -- the source. {faults} of {scanned:,} reference(s) cannot be "
+        f"what they say,\n  in {len(faulty)} of {len(series)} edition(s) that print "
+        "one: a volume of the Acta is its year minus\n  a constant, so each carries "
+        "its own check and no sibling edition is needed.\n  A consistent column is a "
+        "convention, not a misprint."
+    )
+    print(f"    {'edition':44}{'bad':>5}{'of':>7}  kinds and an example")
+    for row in faulty[:limit]:
+        kinds = collections.Counter(f["fault"] for f in row["faults"])
+        first = row["faults"][0]
+        print(
+            f"    {row['work']:44}{len(row['faults']):5}{row['refs']:7}  "
+            f"{', '.join(f'{k} {v}' for k, v in sorted(kinds.items()))}"
+            f"  e.g. fn{first['marker']} {first['series']} {first['volume']} "
+            f"({first['year']})"
+        )
+    if len(faulty) > limit:
+        print(f"    ... {len(faulty) - limit} more (raise --limit, or --json)")
+
+
+def _report_vote(vote: list[dict], limit: int) -> None:
+    shapes = collections.Counter()
+    per_edition = collections.defaultdict(collections.Counter)
+    for row in vote:
+        for find in row["findings"]:
+            for lang, shape in find["shapes"].items():
+                shapes[shape] += 1
+                per_edition[lang][shape] += 1
+    leads = sum(v for k, v in shapes.items() if k in SERIES_DEFECT_SHAPES)
+    print(
+        f"\n  VOTE -- the source, judged by its own translations. "
+        f"{len(vote)} document(s) whose editions\n  carry identical marker sets and "
+        f"can be compared at all, {sum(shapes.values())} departure(s) from the\n  "
+        f"modal reading, {leads} of them a shape no printing convention produces."
+    )
+    print(f"    {'edition':10}" + "".join(f"{s:>15}" for s in sorted(shapes)))
+    for lang in sorted(per_edition, key=lambda x: -sum(per_edition[x].values())):
+        counts = per_edition[lang]
+        print(
+            f"    {lang:10}" + "".join(f"{counts.get(s, 0):15}" for s in sorted(shapes))
+        )
+    # ROUND-ROBIN OVER THE DOCUMENTS, not document by document. `vote` is
+    # ranked by how many departures a document has and the leading one has
+    # nine times the next, so a straight walk fills the whole limit with
+    # Evangelii Gaudium and never names the other fourteen.
+    queues = [
+        [
+            (row["work"], find, lang, shape)
+            for find in row["findings"]
+            for lang, shape in sorted(find["shapes"].items())
+            if shape in SERIES_DEFECT_SHAPES
+        ]
+        for row in vote
+    ]
+    shown = 0
+    if leads and limit:
+        print("\n  defect leads, edition against the rest:")
+    for item in itertools.chain.from_iterable(itertools.zip_longest(*queues)):
+        if item is None:
+            continue
+        if shown >= limit:
+            break
+        work, find, lang, shape = item
+        flag = " (also impossible)" if lang in find["also_impossible"] else ""
+        print(
+            f"    {work:38} fn{find['marker']:<5}{lang:4}"
+            f"{shape:8}{_series_text(find['odd'][lang]):26} vs "
+            f"{find['support']:2}x {_series_text(find['modal'])}{flag}"
+        )
+        shown += 1
+    if leads > shown:
+        print(f"    ... {leads - shown} more (raise --limit, or --json)")
+
+
+def _series_text(refs: list) -> str:
+    return "; ".join(
+        f"{name} {volume} ({year}){', ' + pages if pages else ''}"
+        for name, volume, year, pages in refs
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -1254,6 +1864,7 @@ def main() -> int:
             "balance",
             "divisions",
             "refs",
+            "apparatus",
             "all",
         ],
         default="all",
@@ -1272,7 +1883,12 @@ def main() -> int:
     corpus = common.require_corpus()
     # `balance` and `divisions` read no raw pages and no document works, so
     # neither pays for the coverage measurement it never looks at.
-    rows = measure(corpus) if args.check not in ("balance", "divisions", "refs") else []
+    # `balance`, `divisions` and `refs` read no raw pages and no document
+    # works, so none pays for the coverage measurement it never looks at.
+    # `apparatus` reads raw pages but not the body region, and computes its
+    # own.
+    skips_coverage = ("balance", "divisions", "refs", "apparatus")
+    rows = measure(corpus) if args.check not in skips_coverage else []
 
     if args.json:
         if args.check == "balance":
@@ -1281,6 +1897,8 @@ def main() -> int:
             json.dump(measure_divisions(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "refs":
             json.dump(measure_refs(corpus), sys.stdout, indent=2, default=str)
+        elif args.check == "apparatus":
+            json.dump(measure_apparatus(corpus), sys.stdout, indent=2, default=str)
         else:
             json.dump(rows, sys.stdout, indent=2)
         print()
@@ -1308,6 +1926,10 @@ def main() -> int:
         if args.check == "all":
             print()
         status |= report_refs(measure_refs(corpus), args.limit)
+    if args.check in ("apparatus", "all"):
+        if args.check == "all":
+            print()
+        status |= report_apparatus(measure_apparatus(corpus), args.limit)
     return status
 
 
