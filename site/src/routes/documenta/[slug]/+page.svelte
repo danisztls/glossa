@@ -55,6 +55,7 @@
 	import {
 		compareColumnLabel,
 		flattenDocumentStructure,
+		getDocumentHeader,
 		documentOutline,
 		documentTailNumber,
 		getDocumentCitations,
@@ -402,12 +403,21 @@
 	 *  for a document with no sections, which is also a document with no grid
 	 *  to put a band in. */
 	const firstSectionN = $derived(current?.sections[0]?.n);
-	const hasMasthead = $derived(
-		Boolean(
-			current?.work.header ||
-			(secondaryLang ? data.manifestsByLang[secondaryLang]?.header : undefined)
-		)
+	/**
+	 * The document's own first page, per edition.
+	 *
+	 * READ FROM THE CONTENT TIER, NOT FROM THE MANIFEST, since 2026-09-02 --
+	 * `getDocumentHeader` travels with the outline in
+	 * `content/{workId}/structure.json`. It costs no request either edition was
+	 * not already making: `+page.ts` awaits the embedded edition's front matter
+	 * before this page renders, and `secondaryStructureRows` above asks for the
+	 * comparison edition's under exactly the same condition.
+	 */
+	const masthead = $derived(current ? getDocumentHeader(current.work.id) : undefined);
+	const secondaryMasthead = $derived(
+		secondaryWorkId && compareActive ? getDocumentHeader(secondaryWorkId) : undefined
 	);
+	const hasMasthead = $derived(Boolean(masthead || secondaryMasthead));
 
 	// Part/Section headings read as the document's own top-level divisions;
 	// Chapter/Article/Sub nest progressively smaller. `h1` is the document
@@ -632,16 +642,15 @@
 	heading that also opens there.
 -->
 {#snippet compareHeadingsLeft(n: number)}
-	{#if current?.work.header && n === firstSectionN}
-		<div class="document-masthead">{@html current.work.header}</div>
+	{#if masthead && n === firstSectionN}
+		<div class="document-masthead">{@html masthead}</div>
 	{/if}
 	{@render structureHeadings(headingsByStart.get(n) ?? [], lang, true)}
 {/snippet}
 
 {#snippet compareHeadingsRight(n: number)}
-	{@const secondaryHeader = secondaryLang ? data.manifestsByLang[secondaryLang]?.header : undefined}
-	{#if secondaryHeader && n === firstSectionN}
-		<div class="document-masthead">{@html secondaryHeader}</div>
+	{#if secondaryMasthead && n === firstSectionN}
+		<div class="document-masthead">{@html secondaryMasthead}</div>
 	{/if}
 	{@render structureHeadings(secondaryHeadingsByStart.get(n) ?? [], secondaryLang ?? lang, false)}
 {/snippet}
@@ -728,9 +737,9 @@
 				     the scraper's closed tag allowlist (i/b/br/sup/blockquote), not
 				     passed through from the source -- see `narrow_html` in
 				     pipeline/scrapers/vatican_docs.py. -->
-				{#if current?.work.header}
+				{#if masthead && current}
 					<div class="document-masthead" lang={current.work.language}>
-						{@html current.work.header}
+						{@html masthead}
 					</div>
 				{/if}
 			{/if}

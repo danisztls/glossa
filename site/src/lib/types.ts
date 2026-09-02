@@ -301,17 +301,13 @@ export interface DocumentManifest extends WorkManifestBase {
 	/** The document's own promulgation date (ISO 8601 date) -- distinct from `sources[].retrieved_at`. */
 	promulgated: IsoDate;
 	/**
-	 * The masthead the source page itself prints above the text -- the kind of
-	 * document, its title, the promulgating pontiff, the date -- as narrowed
-	 * html (`docs/corpus-schema.md`, amended 2026-08-21), with vatican.va's
-	 * language selector stripped. This is real content, not chrome: it is what
-	 * the printed edition puts on its first page. Kept out of `structure.json`
-	 * because it is not a heading -- left in the block stream it became a
-	 * phantom top-level node, and Rerum Novarum's entire two-node "outline"
-	 * was its own title and subtitle. Absent for a work whose page prints
-	 * none; render nothing rather than a placeholder.
+	 * THE MASTHEAD IS NOT ON THE MANIFEST. It moved to the work's content-tier
+	 * front matter on 2026-09-02 -- `DocumentFrontMatter.header`, read through
+	 * `getDocumentHeader` -- because it is real content and this type is the
+	 * boot index every reader downloads before the first paint. It was 240 KB
+	 * across 1,450 works, a fifth of `manifests.json`, so a reader who opened a
+	 * Bible chapter paid for the first page of 305 documents they had not.
 	 */
-	header?: string;
 	/**
 	 * One-line summary of what the document is about, shown in the
 	 * `/documents` list. Optional and currently absent from every manifest in
@@ -681,6 +677,33 @@ export interface DocumentNode {
 	 * time`). `title` stays the plain form and the two must agree.
 	 */
 	title_html?: string;
+}
+
+/**
+ * A document's content-tier front matter: what its first page prints, and how
+ * the rest of it is divided. One asset per work, `content/{workId}/structure.json`,
+ * fetched by the page reading that document and by nothing else.
+ *
+ * IT WAS A BARE `DocumentNode[]` UNTIL 2026-09-02, and the masthead was on the
+ * manifest. Both halves of that were wrong in the same direction: the outline
+ * had already been moved here for being content rather than metadata (see
+ * `document-structures.svelte.ts`), and `header` is the same kind of thing --
+ * the kind of document, its title, the promulgating pontiff, the date, as
+ * narrowed html (`docs/corpus-schema.md`, amended 2026-08-21), with
+ * vatican.va's language selector stripped. It is what the printed edition puts
+ * on its first page.
+ *
+ * They travel together rather than in two assets because they are one fact
+ * about one document, wanted by one page, at one moment, in one download wave.
+ */
+export interface DocumentFrontMatter {
+	/** Absent where the source page prints no masthead, which is most works.
+	 *  Render nothing rather than a placeholder. */
+	header?: string;
+	/** The outline. FLAT and in document order -- see `DocumentNode`. Written
+	 *  even when empty, so an absent FILE means the work was never built while
+	 *  an empty `nodes` means it has no headings. */
+	nodes: DocumentNode[];
 }
 
 export interface CccCitation {

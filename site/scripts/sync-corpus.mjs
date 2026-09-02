@@ -1089,6 +1089,25 @@ for (const workId of workIds) {
 		...manifest,
 		notes: '',
 		...(manifest.sources ? { sources: manifest.sources.slice(0, 1) } : {}),
+		// THE MASTHEAD IS NOT HERE, since 2026-09-02. `header` is the document's
+		// own first page -- the kind, the title, the pontiff, the date, as
+		// narrowed html -- so it is real content and not metadata, and across the
+		// corpus's 1,450 works it was 240 KB, a fifth of this file. This file is
+		// downloaded whole before the first paint, so every reader of a Bible
+		// chapter, a Compendium question or a prayer paid for the mastheads of
+		// 305 documents they had not opened.
+		//
+		// It rides the work's content-tier structure asset instead (the document
+		// branch below), on exactly the rule already stated twice further down
+		// this file, for the translated descriptions and for the subject tags:
+		// the boot index answers "does this address exist", and a masthead
+		// answers neither existence nor address. The outline it now travels with
+		// has the same single consumer, the same lifetime and the same download
+		// wave, which is why it needed no asset of its own.
+		//
+		// `undefined` rather than a destructure so the omission is greppable from
+		// the shape itself; `JSON.stringify` drops the key on the way out.
+		header: undefined,
 		description: ownLanguageDescription(workId, manifest.language) ?? manifest.description ?? null
 	};
 
@@ -1625,12 +1644,24 @@ for (const workId of workIds) {
 			// makes, and the one `documentStructures.svelte.ts` relies on to
 			// tell a real miss from a document that simply has no outline.
 			const relPath = `content/${workId}/structure.json`;
-			writeJson(path.join(destDir, relPath), structure);
+			// `{ header, nodes }` since 2026-09-02, where it was a bare array. The
+			// masthead joined the outline here rather than taking an asset of its
+			// own because the two are the same fact about one document -- what its
+			// first page prints and how the rest of it is divided -- wanted by the
+			// same page, at the same moment, in the same download wave. A second
+			// file would have doubled the requests a document page makes to save
+			// nothing. `header` is omitted rather than written null for the works
+			// whose source page prints no masthead, which is most of them.
+			const frontMatter = {
+				...(manifest.header ? { header: manifest.header } : {}),
+				nodes: structure
+			};
+			writeJson(path.join(destDir, relPath), frontMatter);
 			contentManifest.push({
 				workId,
 				kind: 'document-structure',
 				relPath,
-				bytes: byteLength(structure)
+				bytes: byteLength(frontMatter)
 			});
 		}
 		if (appendix) {

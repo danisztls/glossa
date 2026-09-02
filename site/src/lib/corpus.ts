@@ -149,7 +149,11 @@ import { condensingRun, reverseCondensation } from './condensation';
 // Imported rather than re-exported straight through, because this module's own
 // `flattenDocumentStructure`/`documentOutline` call it; the `export` that makes
 // it public again is beside those, in the Documents section.
-import { getDocumentStructure, loadDocumentStructure } from './document-structures.svelte';
+import {
+	getDocumentHeader,
+	getDocumentStructure,
+	loadDocumentStructure
+} from './document-structures.svelte';
 import { summaPartSlug } from './route-manifest';
 import { summaHeadingTitle, summaQuestionLabel } from './summa-titles';
 import {
@@ -1831,7 +1835,7 @@ export function getDocumentManifest(workId: string): DocumentManifest | undefine
  * the same behaviour: empty until the tree lands, then correct, with the
  * `$derived` callers re-running of their own accord.
  */
-export { getDocumentStructure, loadDocumentStructure };
+export { getDocumentHeader, getDocumentStructure, loadDocumentStructure };
 
 /**
  * Document structure is already flat and in document order

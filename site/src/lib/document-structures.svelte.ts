@@ -33,9 +33,12 @@
  */
 
 import { USE_REAL_CORPUS, documentStructureLocation } from './corpus-index';
-import type { DocumentNode } from './types';
+import type { DocumentFrontMatter, DocumentNode } from './types';
 
-const EMPTY: DocumentNode[] = [];
+const EMPTY_NODES: DocumentNode[] = [];
+/** The miss, and the failure. Shared so every empty answer is the same
+ *  reference and a `$derived` reading it does not re-run on identity alone. */
+const EMPTY: DocumentFrontMatter = { nodes: EMPTY_NODES };
 
 /**
  * Held in an object rather than a bare `let` so the value can be replaced from
@@ -48,7 +51,7 @@ const EMPTY: DocumentNode[] = [];
  * `$derived` re-runs over a map of at most two or three work ids in a session
  * — the reader's document, and its comparison edition.
  */
-const store = $state<{ byWork: Record<string, DocumentNode[]> }>({ byWork: {} });
+const store = $state<{ byWork: Record<string, DocumentFrontMatter> }>({ byWork: {} });
 
 /** Work ids whose fetch has been started, so a miss re-read on every
  *  `$derived` re-run does not issue the request again. Outside `$state` on
@@ -64,6 +67,27 @@ const started = new Set<string>();
  * both triggers the load and arranges for the re-run.
  */
 export function getDocumentStructure(workId: string): DocumentNode[] {
+	return frontMatter(workId).nodes;
+}
+
+/**
+ * The masthead a document's own source page prints above its text, or
+ * `undefined` where it prints none -- which is most works.
+ *
+ * Beside `getDocumentStructure` and not on the manifest since 2026-09-02: it
+ * is content, it travels in the same asset as the outline, and it is read the
+ * same way, from inside a `$derived` that re-runs when the fetch lands. The
+ * document route awaits `loadDocumentStructure` for the edition it embeds, so
+ * on the common path this is already in hand and the masthead does not appear
+ * a beat after the text it heads.
+ */
+export function getDocumentHeader(workId: string): string | undefined {
+	return frontMatter(workId).header;
+}
+
+/** The one read both getters go through, so they can never disagree about
+ *  when a fetch starts or what a miss looks like. */
+function frontMatter(workId: string): DocumentFrontMatter {
 	const loaded = store.byWork[workId];
 	if (loaded) return loaded;
 	// Started, never awaited, and — the part that matters — `loadDocumentStructure`
@@ -95,7 +119,7 @@ export async function loadDocumentStructure(workId: string): Promise<void> {
 	// branch runs BEFORE the first `await` — synchronously inside whichever
 	// `$derived` asked — and writing `$state` there is `state_unsafe_mutation`.
 	if (!location) return;
-	let structure: DocumentNode[];
+	let front: DocumentFrontMatter;
 	try {
 		// A plain fetch rather than `corpus.ts`'s `readContent`, for two
 		// reasons. It would be an import cycle — `corpus.ts` re-exports this
@@ -109,12 +133,12 @@ export async function loadDocumentStructure(workId: string): Promise<void> {
 		// `readContent` offered.
 		const res = await fetch(location.url);
 		if (!res.ok) throw new Error(`failed to fetch ${location.url} (${res.status})`);
-		structure = (await res.json()) as DocumentNode[];
+		front = (await res.json()) as DocumentFrontMatter;
 	} catch (err) {
-		console.error(`[document-structures] failed to load the outline for ${workId}`, err);
-		structure = EMPTY;
+		console.error(`[document-structures] failed to load the front matter for ${workId}`, err);
+		front = EMPTY;
 	}
 	// Replaced, not mutated: `$state` tracks the property, and every reader is
 	// holding a dependency on `byWork` itself.
-	store.byWork = { ...store.byWork, [workId]: structure };
+	store.byWork = { ...store.byWork, [workId]: front };
 }
