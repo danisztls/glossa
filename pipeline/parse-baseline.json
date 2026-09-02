@@ -86,7 +86,7 @@
     },
     "encyclical.deus-caritas-est.hr": {
       "status": "validation-failed",
-      "problems": 4
+      "problems": 7
     },
     "encyclical.deus-caritas-est.hu": {
       "status": "validation-failed",
@@ -170,7 +170,7 @@
     },
     "encyclical.eccl-de-euch.hr": {
       "status": "validation-failed",
-      "problems": 1
+      "problems": 4
     },
     "encyclical.eccl-de-euch.pt": {
       "status": "validation-failed",
@@ -295,6 +295,10 @@
     "encyclical.iucunda-sane.en": {
       "status": "validation-failed",
       "problems": 6
+    },
+    "encyclical.iucunda-sane.it": {
+      "status": "validation-failed",
+      "problems": 1
     },
     "encyclical.iucunda-sane.la": {
       "status": "validation-failed",

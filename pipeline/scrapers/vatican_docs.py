@@ -1035,7 +1035,36 @@ _FTNREF_RE = re.compile(
     r"\s*(?:\((\d+)\)|\[(\d+)\])?\.?",
     re.IGNORECASE | re.DOTALL,
 )
-_PAREN_MARKER_RE = re.compile(r"\((\d{1,3}\*?)\)")
+# The delimiter and the digits are NOT always adjacent, and the three
+# templates disagree about it: "sup" has stripped inner tags since it was
+# written (`strip_tags(m.group(1))`) and these two required a literal
+# `(N)`/`[N]`, so a Word export that opened a <font> between the bracket and
+# the number lost every marker it touched -- and with the marker goes the
+# note, since a citation is only stored where something in the body points at
+# it. 731 markers on 24 pages, and the two worst are total: `dives-in-
+# misericordia.pt` printed all 140 of its markers as `[<a name="-1"
+# href="#%241">1</a>]` and stored ZERO citations against a note list that
+# parsed perfectly, and `sacerdotalis.it` 152 the same way.
+#
+# The class is closed and the tag list is what closes it: `font`, `a` and `i`
+# are the three that actually occur, and the rest are here because an inline
+# formatting tag is an inline formatting tag. No BLOCK tag is admitted, so a
+# match can never cross a paragraph.
+_MARKER_INLINE_TAG = r"</?(?:font|sup|b|i|span|a|em|strong|small)\b[^>]*>"
+_MARKER_INLINE_TAG_RE = re.compile(_MARKER_INLINE_TAG)
+
+# WHITESPACE IS DELIBERATELY NOT TOLERATED, which is a measurement and not an
+# oversight. Admitting `( N)`/`(N )` gains 12 markers across six pages and
+# costs two false ones, both in `iucunda-sane`, where the running text cites
+# an epistle's variant numbering: `Ibid. v, 58 (53 ) ad Virgil, episcop.`
+# reads as footnote 53. The tag forms gain 591 and cost one -- the same
+# document's `<i>36 </i>(<i>28</i>)` -- so the two ratios are 6:1 against
+# 591:1, and a false marker is worse than a missing one either way: it takes
+# the printed number out of the reader's prose and puts a footnote in a place
+# the source never marked.
+_PAREN_MARKER_RE = re.compile(
+    rf"\((?:{_MARKER_INLINE_TAG})*(\d{{1,3}}\*?)(?:{_MARKER_INLINE_TAG})*\)"
+)
 # Capped at 3 digits, not 4 (confirmed live: Populorum Progressio EN --
 # "...We traveled to Latin America (1960) and Africa (1962)..." -- ordinary
 # prose parenthetically citing a YEAR, not a footnote marker at all, was
@@ -1047,7 +1076,9 @@ _PAREN_MARKER_RE = re.compile(r"\((\d{1,3}\*?)\)")
 # excluding every plausible year (1000-2999) a papal document could cite.
 
 
-_BRACKET_MARKER_RE = re.compile(r"\[(\d{1,3}\*?)\]")
+_BRACKET_MARKER_RE = re.compile(
+    rf"\[(?:{_MARKER_INLINE_TAG})*(\d{{1,3}}\*?)(?:{_MARKER_INLINE_TAG})*\]"
+)
 # Attached to the word or punctuation it follows -- `"one."[1]`, `head,[4]`.
 # That attachment is the discriminator against an editorial `[1]` standing on
 # its own, and the count threshold below is the second: a document really
@@ -1133,12 +1164,25 @@ def mark_footnotes(inner_html: str, template: str) -> str:
 
         return _FTNREF_RE.sub(sub_ftnref, inner_html)
     if template == "bracket":
-        return _BRACKET_MARKER_RE.sub(
-            lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html
-        )
-    return _PAREN_MARKER_RE.sub(
-        lambda m: f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}", inner_html
-    )
+        return _BRACKET_MARKER_RE.sub(sub_delimited, inner_html)
+    return _PAREN_MARKER_RE.sub(sub_delimited, inner_html)
+
+
+def sub_delimited(m: re.Match) -> str:
+    """A `(N)` or `[N]` marker replaced by the mark token, KEEPING whatever
+    inline tags sat between the delimiters and the digits.
+
+    Dropping them is the obvious substitution and unbalances the markup: the
+    two shapes in the corpus are `(<font size="3">6</font>)`, whose tags are
+    balanced within the match, and `(</font><font ...>6)`, whose are not --
+    that one closes an element opened earlier and opens one closed later, so
+    deleting the pair leaves the paragraph with an unclosed <font>. Harmless
+    for <font>, which is outside the stored allowlist and loses its markup
+    anyway, and NOT harmless for the four `(</i>N)` markers, where an
+    unclosed <i> italicizes the rest of the block. Keeping the tags costs an
+    empty element and cannot unbalance anything."""
+    tags = "".join(_MARKER_INLINE_TAG_RE.findall(m.group(0)))
+    return f"{MARK_OPEN}{m.group(1)}{MARK_CLOSE}{tags}"
 
 
 # --------------------------------------------------------------------------
@@ -1390,8 +1434,21 @@ def build_footnote_table_anchor(region_html: str) -> dict[str, str]:
             # flat dict by a later, wrong entry sharing that recycled
             # code -- corrupting even the early, correctly-keyed entries,
             # not just the late ones.
+            # THE ECHOED NUMBER IS TAG-SPLIT TOO, and by the same export
+            # habit that splits the inline markers (see _MARKER_INLINE_TAG).
+            # `ecclesiam.la` prints its list as `<a name="fn577"></a>(<a
+            # href="#fnref57">57</a>) Mt 7,6` -- an empty anchor whose code
+            # is a typo for 57, and the real number one element further in,
+            # so a `\((\d+)\)` alternative reads neither and the note was
+            # keyed under the typo. It is the ONLY entry of the corpus's 465
+            # anchor-keyed ones whose code and printed number disagree, and
+            # it is broken markup rather than a source defect, so it is
+            # repaired here rather than in `pipeline/corrections/`
+            # (CLAUDE.md: a mangled tag changes nothing a reader reads).
             echo_m = re.match(
-                r"^\s*(?:\((\d+)\)|\[(\d+)\]|(?:</?[a-z][^>]*>)*\s*(\d{1,4})\s*(?:</[a-z][^>]*>)?\s*\.)",
+                rf"^\s*(?:\((?:{_MARKER_INLINE_TAG})*(\d+)(?:{_MARKER_INLINE_TAG})*\)"
+                rf"|\[(?:{_MARKER_INLINE_TAG})*(\d+)(?:{_MARKER_INLINE_TAG})*\]"
+                rf"|(?:</?[a-z][^>]*>)*\s*(\d{{1,4}})\s*(?:</[a-z][^>]*>)?\s*\.)",
                 chunk,
                 re.IGNORECASE,
             )
@@ -1401,7 +1458,9 @@ def build_footnote_table_anchor(region_html: str) -> dict[str, str]:
                 else code
             )
         chunk = re.sub(
-            rf"^\s*(?:\({re.escape(marker)}\)|\[{re.escape(marker)}\]|(?:</?[a-z][^>]*>)*\s*{re.escape(marker)}\s*(?:</[a-z][^>]*>)?\s*\.)?\s*",
+            rf"^\s*(?:\((?:{_MARKER_INLINE_TAG})*{re.escape(marker)}(?:{_MARKER_INLINE_TAG})*\)"
+            rf"|\[(?:{_MARKER_INLINE_TAG})*{re.escape(marker)}(?:{_MARKER_INLINE_TAG})*\]"
+            rf"|(?:</?[a-z][^>]*>)*\s*{re.escape(marker)}\s*(?:</[a-z][^>]*>)?\s*\.)?\s*",
             "",
             chunk,
             flags=re.IGNORECASE,

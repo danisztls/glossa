@@ -774,6 +774,28 @@ consistently, and the Byelorussian does it ten times out of ten. **A vote is onl
 as good as its precondition, and the precondition is what differs between the two
 audits, not the technique.**
 
+**Its first act was a parser fix worth 730 notes, and the rule it turned on was chosen by
+measuring both candidates.** A `(N)` or `[N]` footnote marker's delimiter and digits are
+not always adjacent — a Word export opens a `<font>` or an `<a>` between them — and of the
+three marker templates only `sup` tolerated it, having stripped its inner tags since it
+was written. Widening the other two to admit inline TAGS gains 591 markers and costs one
+false; also admitting bare WHITESPACE gains 12 more and costs two, both in `iucunda-sane`,
+whose prose cites an epistle's variant numbering (`Ibid. v, 58 (53 ) ad Virgil, episcop.`).
+So tags are admitted and whitespace is not: **a false marker is worse than a missing one**
+in a way the counts do not show, because it takes the printed number out of the reader's
+prose and puts a footnote where the source marked nothing. Eight editions went from no
+apparatus at all to a complete one, and the effect was confirmed by parsing the whole
+document corpus both ways and diffing all 1,209 editions — exactly the 20 works a scan of
+`raw/` predicted, and no others.
+
+**A RECALL FIX SCORES AS A REGRESSION IN A CHECKER THAT COUNTS INCIDENTS**, which is worth
+knowing before reading `parse-baseline.json`'s verdict on one. `eccl-de-euch.hr` went from
+47 citations to 100 and from 46 resolved to 96, and the baseline recorded it as
+`1 -> 4 problems`: finding more markers on a page whose note list only partly resolves
+necessarily finds more unresolved ones. The two numbers have to be read together, and what
+the pair actually exposed is a different defect that was there all along — those markers'
+notes are all present in the source's own table, so the lookup is missing them.
+
 ## Addresses and editions
 
 **A canonical URL selects a reference; the reader's preference selects the edition.**

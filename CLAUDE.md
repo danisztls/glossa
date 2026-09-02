@@ -2157,17 +2157,58 @@ Six things will bite before the design will.
   the four that no convention produces (`series`, `volume`, `year`, `page`);
   `page-narrower`, `page-wider` and `count` are the editions being editions.
 
-**THE FIRST RUN'S TOP LEAD IS A PARSER FIX, NOT A CORRECTION, AND ITS SHAPE IS
-THE ONE `_FNPAIR_REF_RE` ALREADY DOCUMENTS.** `exhortation.sacramentum-caritatis.fr`
-stores 212 of the source's 256 notes; the raw list is complete and 44 body
-markers are written `(<font size="3">6</font>)`, the parenthesis and the digit
-separated by a tag where `_PAREN_MARKER_RE` needs them adjacent.
-`encyclical.eccl-de-euch.hr` (47 of 103) and `encyclical.deus-caritas-est.hr`
-(17 of 36) are the same defect in its other spelling, `(</font><font ...>N)`.
-That is 119 notes in three works and the class is CLOSED — checked across every
-raw document page, no other file carries either shape — but `partial` reports
-1,698 notes over 199 editions, so it is 7% of that state and the rest still
-need reading one at a time.
+**THE FIRST RUN'S TOP LEAD WAS A PARSER FIX AND IT IS APPLIED: 730 NOTES BACK,
+IN THE SHAPE `_FNPAIR_REF_RE` ALREADY DOCUMENTED.** The delimiter and the digits
+of a `(N)`/`[N]` marker are not always adjacent — a Word export opens a `<font>`
+or an `<a>` between them — and of the three marker templates only `sup` was
+tolerant, because it had stripped its inner tags since it was written.
+`_MARKER_INLINE_TAG` widens the other two, and the substitution KEEPS the tags
+it matched: dropping them is the obvious move and unbalances the markup, which
+is harmless for `<font>` (outside the stored allowlist) and italicises the rest
+of the block on the four `(</i>N)` markers. Seven things.
+
+- **+730 citations and +720 with resolved text, in exactly the 20 works a scan
+  over `raw/` predicted and no others** — verified by parsing the whole document
+  corpus both ways and diffing all 1,209 editions. **Eight went from no
+  apparatus at all to a complete one**: `sacerdotalis.it` 0→152,
+  `dives-in-misericordia.pt` 0→140, `populorum.la` 0→69, `ecclesiam.la` 0→67,
+  `pacem.la` 0→59, `divino-afflante-spiritu.pt` 0→48, `humanae-vitae.la` 0→41,
+  `musicae-sacrae.pt` 0→27. `sacramentum-caritatis.fr` went 212→256, complete.
+- **WHITESPACE IS DELIBERATELY NOT TOLERATED**, and that is the measurement the
+  fix turns on. `( N)`/`(N )` gains 12 markers and costs two false ones — both
+  in `iucunda-sane`, whose running text cites an epistle's variant numbering
+  (`Ibid. v, 58 (53 ) ad Virgil, episcop.`) — against the tag forms' 591 for
+  one. A false marker is worse than a missing one in a way the counts do not
+  show: it takes the printed number out of the reader's prose and puts a
+  footnote in a place the source never marked.
+- **The one it costs is `iucunda-sane.it`'s `<i>36 </i>(<i>28</i>)`**, which is
+  identical in shape to real markers in `aeterna-dei.en` and `mysterium.fr` and
+  has no local discriminator. It is recorded in `pipeline/parse-baseline.json`
+  rather than hidden, and named here so it is not rediscovered as a mystery.
+- **THE FOOTNOTE LIST NEEDED THE SAME WIDENING ONE LAYER DOWN.**
+  `build_footnote_table_anchor` reads an empty anchor's number from the text
+  echoed after it, with the same `\((\d+)\)`, and `ecclesiam.la` prints
+  `<a name="fn577"></a>(<a href="#fnref57">57</a>)` — an anchor name that is a
+  typo for 57 with the real number one element further in, so the note was
+  filed under `577` and the recovered marker resolved to nothing. It is the
+  ONLY one of the corpus's 465 anchor-keyed entries whose code and printed
+  number disagree, and it is broken markup, so it is repaired in code.
+- **Vatican II is untouched — 0 of 202 works changed**, checked by parsing
+  `phase1` both ways rather than assumed. Worth knowing because the first
+  rebuild after the change reported 307 vatii files written and none of it was
+  this: **the corpus on disk was stale against `HEAD`'s parser before any of
+  this began**, which is the argument for `rebuild.py --force` before reading a
+  `wrote` column as a diff.
+- **A RECALL FIX SCORES AS A REGRESSION IN A CHECKER THAT COUNTS INCIDENTS.**
+  `eccl-de-euch.hr` went 47→100 citations and 46→96 resolved, and the baseline
+  recorded it as `1 -> 4 problems`; `deus-caritas-est.hr` 17→36 and 13→29, as
+  `4 -> 7`. Finding more markers on a page whose list only partly resolves
+  necessarily finds more unresolved ones. Read the two numbers together.
+- **What those two exposed is a SEPARATE, pre-existing defect**: their
+  unresolved markers are all present in the source's own note table (10, 13,
+  29, 42 of 103; 5, 11, 14, 18, 23, 25, 35 of 36), so the note exists and the
+  lookup misses it. Not this change's, not fixed here, and now visible on more
+  markers than before. `audit.py apparatus` reports it under `partial`.
 
 **The Bible is the exception to reading asymmetry as a defect**, and adding the
 Latin sharpened rather than blurred that. `bible.clementina.la` is the text
