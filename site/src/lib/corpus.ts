@@ -460,6 +460,23 @@ export function contentLangChain(lang: string): string[] {
  * one rename away from silently becoming the default. Which translation a
  * reader meets first is an editorial decision and now reads as one.
  *
+ * AND ON 2026-09-01 THAT DECISION WAS MADE THE OTHER WAY. English is the one
+ * language whose default was not a received edition — every other Bible here
+ * is an approved translation with a history (Clementina 1592, Martini,
+ * Allioli, Káldi-Tárkányi, Crampon, Straubinger, Matos Soares) and the CPDV is
+ * one man's, self-published, unreviewed by his own choice, which its manifest
+ * says and `docs/research/bible-texts.md` assesses. What decided it was the
+ * apparatus rather than the provenance: the CPDV carries NO notes, and Haydock
+ * annotates the Douay-Rheims, so `ApparatusMenu`'s trigger did not render at
+ * all for the reader who chose nothing — on a site named for the *Glossa
+ * Ordinaria*. The Douay-Rheims brings Challoner's 1,916 notes, his 1,307
+ * chapter arguments and Haydock's 45,747. THE COST IS THE REGISTER, and it is
+ * paid by the readers least able to afford it: every `CONTENT_LANG_FALLBACK`
+ * row ends in `en, la` and only eight of thirty-four interface languages have
+ * a Bible of their own, so this is what most of the world reads here, mostly
+ * as non-native English. It is bounded — the CPDV is one click away in the
+ * edition menu and the choice persists — and that is why it was accepted.
+ *
  * THE BIBLE IS THE ONLY TYPE HERE, and by expectation the only one that ever
  * will be: everywhere else an "edition" is a language (see `editionStyle` in
  * EditionMenu.svelte and the compare-column fork below, which fork on the same
@@ -478,7 +495,7 @@ export function contentLangChain(lang: string): string[] {
  * That is the check a third English Bible has to walk past.
  */
 export const PREFERRED_EDITION: Record<string, string> = {
-	'bible:en': 'bible.cpdv.en',
+	'bible:en': 'bible.douay-rheims.en',
 	'bible:pt': 'bible.matos-soares.pt',
 	'bible:la': 'bible.clementina.la'
 };

@@ -352,17 +352,21 @@ describe('compare column labels', () => {
 });
 
 describe('preferred edition', () => {
-	it('gives an English reader the CPDV, not whichever id sorts first', () => {
-		// Both English Bibles are in the fixtures precisely so this can fail.
+	it('gives an English reader the Douay-Rheims, not whichever id sorts first', () => {
+		// Both English Bibles are in the fixtures precisely so this can fail —
+		// and since 2026-09-01 this finally asserts what its name says. While
+		// the answer was `bible.cpdv.en` it was also the answer sort order gave
+		// (`c` before `d`), so the test agreed with the accident it was written
+		// to catch. `bible.douay-rheims.en` is the one sort order would not.
 		expect(listEditions('bible').filter((w) => w.language === 'en')).toHaveLength(2);
-		expect(defaultWorkId('bible', 'en')).toBe('bible.cpdv.en');
+		expect(defaultWorkId('bible', 'en')).toBe('bible.douay-rheims.en');
 	});
 
 	it("carries the choice into the fallback languages, not just the reader's own", () => {
 		// A German reader has no German Bible and lands on English by
 		// CONTENT_LANG_FALLBACK — which must arrive at the same edition an
 		// English reader gets, rather than re-deciding by sort order.
-		expect(defaultWorkId('bible', 'de')).toBe('bible.cpdv.en');
+		expect(defaultWorkId('bible', 'de')).toBe('bible.douay-rheims.en');
 	});
 
 	it('ends every fallback row in English then Latin', () => {

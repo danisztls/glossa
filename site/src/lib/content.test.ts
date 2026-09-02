@@ -4,7 +4,7 @@ import { i18n } from './i18n.svelte';
 
 // Both stores are module-level singletons, so tests must not leak state into
 // each other — same reasoning as `theme.test.ts`.
-const EN = 'bible.cpdv.en';
+const EN = 'bible.douay-rheims.en';
 const PT = 'bible.matos-soares.pt';
 const LA = 'bible.clementina.la';
 

@@ -6,7 +6,7 @@ import { resolveBookToken } from './book-token';
 // module exists for: CPDV records `gen|ge|gn` / `jn|joh|john`, Matos Soares
 // records one abbreviation each (`gn`, `jo`) and leaves its full names
 // ("Gênesis", "São João") reachable only through `name`.
-const EN = 'bible.cpdv.en';
+const CPDV = 'bible.cpdv.en';
 const PT = 'bible.matos-soares.pt';
 const DR = 'bible.douay-rheims.en';
 
@@ -40,7 +40,7 @@ describe('resolveBookToken', () => {
 		// "gênesis" is exactly the PT edition's name, so it resolves there even
 		// with the English edition preferred — the accent the reader typed is
 		// evidence, not noise.
-		expect(resolveBookToken('gênesis', { preferWorkId: EN })?.workId).toBe(PT);
+		expect(resolveBookToken('gênesis', { preferWorkId: CPDV })?.workId).toBe(PT);
 		// And the reverse: "genesis" is an exact English reading — the
 		// Douay-Rheims prints it as an abbreviation, the CPDV as its display
 		// name — so it wins in English even with Portuguese preferred, rather
@@ -54,9 +54,11 @@ describe('resolveBookToken', () => {
 		// the OSIS code nor anything Portuguese carries, so nothing about the
 		// token separates the two and the answer used to be registry order. It
 		// is now PREFERRED_EDITION, the same table that decides which Bible the
-		// reader opens. (An OSIS code like "gen" would NOT show this: every
+		// reader opens — so this moved with it on 2026-09-01 and is the one
+		// test outside `corpus.test.ts` that reads the table's value rather
+		// than a work id. (An OSIS code like "gen" would NOT show this: every
 		// edition matches it, so the reader's own wins first, as it should.)
-		expect(resolveBookToken('joh', { preferWorkId: PT })?.workId).toBe(EN);
+		expect(resolveBookToken('joh', { preferWorkId: PT })?.workId).toBe(DR);
 	});
 
 	it('breaks a tie between editions in favour of the reader’s own', () => {
@@ -64,7 +66,7 @@ describe('resolveBookToken', () => {
 		// is what decides genuinely divergent tokens like "jn" (John in
 		// English, Jonas in Portuguese) against the full corpus.
 		expect(resolveBookToken('gn', { preferWorkId: PT })?.workId).toBe(PT);
-		expect(resolveBookToken('gn', { preferWorkId: EN })?.workId).toBe(EN);
+		expect(resolveBookToken('gn', { preferWorkId: CPDV })?.workId).toBe(CPDV);
 	});
 
 	it('ignores a preference naming an edition that is not present', () => {

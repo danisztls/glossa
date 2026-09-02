@@ -756,6 +756,16 @@ on one edition and all of it heaped at the verse's end on the others.
 `subsumes_notes` is still asked separately, because "already contains the
 edition's own notes" is a narrower claim than "belongs beside this edition".
 
+**AND THAT COST IS WHAT MOVED THE ENGLISH DEFAULT the same day.** The CPDV
+carries no notes of its own either, so with the gate back the reader who chose
+nothing got neither apparatus AND no control saying one existed —
+`ApparatusMenu`'s trigger renders only when there is an annotated edition or a
+commentary. `PREFERRED_EDITION['bible:en']` is `bible.douay-rheims.en` now, and
+`docs/decisions.md` §Addresses and editions holds the argument and the price.
+The general shape is worth keeping: **an edition gate on an apparatus is also a
+claim about which edition the default reader is on**, and the two have to be
+decided together or the apparatus is built for nobody.
+
 **HAYDOCK CONTAINS CHALLONER, so both apparatuses on printed most of one of them
 twice.** Measured over the built corpus: 1,399 of the Douay-Rheims's 1,916 notes
 appear again in the catena (1,249 at >=0.9 similarity) and 1,300 paragraphs are

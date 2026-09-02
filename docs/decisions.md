@@ -778,6 +778,33 @@ region within a language, and a test refuses two editions sharing a tag with no 
 An English reader got the CPDV because `c` sorts before `d` — right by accident, and one
 rename from changing.
 
+**An English reader gets the Douay-Rheims since 2026-09-01, and the argument was the
+apparatus rather than the provenance.** The provenance was already on the record and was
+not enough on its own: the CPDV is the one Bible here that is not a received edition —
+one man's, self-published, unreviewed by his own choice, with a doctrinally motivated
+`donec` → "yet" at Matt 1:25 — where every other language's default is an approved
+translation with a history behind it (Clementina 1592, Martini, Allioli, Káldi-Tárkányi,
+Crampon, Straubinger, Matos Soares). What actually decided it is that **the CPDV carries
+no notes at all**, and Haydock annotates the Douay-Rheims, so `commentariesAt` returned
+nothing and `ApparatusMenu`'s trigger did not render: the reader who chose nothing was
+handed a bare text and no control saying an apparatus existed, on a site named for the
+_Glossa Ordinaria_. The Douay-Rheims brings Challoner's 1,916 notes, his 1,307 chapter
+arguments and Haydock's 45,747, and it is what the corpus already leaned on in English
+anyway — `bible-intro.en` is Challoner's prefaces, shipped to CPDV readers all along;
+Doré's plate anchors were decided against it; it prints Esther in the sixteen chapters
+the corpus canonicalizes on, where the CPDV's fifteen leave a Douay-style "Esther 16" —
+the form the magisterial corpus itself prints — unresolvable in the default edition.
+
+**The cost is the register, and it falls on the readers least able to afford it.** "The
+Lord ruleth me: and I shall want nothing" against "The Lord directs me, and nothing will
+be lacking to me." Every `CONTENT_LANG_FALLBACK` row ends in `en, la` and only eight of
+the thirty-four interface languages have a Bible of their own, so the English default is
+what most of this site's readers meet — mostly as non-native English. It is accepted
+because it is bounded: the CPDV is one click away in the edition menu, and the choice
+persists. What is NOT settled by this is whether the CPDV should be one of the two
+English editions at all; that is a different question from which one a reader meets
+first, and it stays open.
+
 **The fallback chain resolves per address, not per work**: the reader's language, then
 English, then Latin (`CONTENT_LANG_FALLBACK`). It has to, because the Summa's two
 editions cover different parts — a citation to `Suppl q. 77` must reach English even for

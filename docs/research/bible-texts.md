@@ -6,12 +6,53 @@ Research conducted 2026-08-13/14; extended to the interface languages 2026-08-28
 
 Initial lineup (expand later):
 
-- **English: CPDV** (Catholic Public Domain Version, 2009) — modern English, public domain.
+- **English: CPDV** (Catholic Public Domain Version, 2009) — modern English, public domain. **Reversed 2026-09-01: the default English edition is the Douay-Rheims** (see §The English default, below). The CPDV remains in the corpus as the second English edition.
 - **Portuguese: Matos Soares (1956 edition)** — modern Portuguese, under copyright until 31 Dec 2027 (accepted exposure, see `copyright.md` §4–5).
 
 Candidates for later expansion: Douay-Rheims Challoner (traditional EN), Clementine Vulgate (parallel Latin), Figueiredo 1950 edition (traditional PT — text only, **never the notes**, which were placed on the Index in 1795). The first two have since been ingested; §One Bible per interface language takes the question to the other eleven interface languages.
 
 Rejected: **WEB Catholic Edition** — its Luke 1:28 reads "Rejoice, you highly favored one!", failing the doctrinal-fidelity criterion at the litmus verse (see appendix).
+
+## The English default (reversed 2026-09-01)
+
+`PREFERRED_EDITION['bible:en']` names `bible.douay-rheims.en`. The criteria at the top of
+this file are unchanged and the CPDV still passes them — what changed is that the
+criteria were about the **text** alone, and by 2026-09-01 the choice was no longer only
+about text.
+
+**The deciding argument is the apparatus.** The CPDV has **no notes** — no verse in any of
+its 73 book files carries a `notes` key — and `commentary.haydock.en` declares
+`annotates: bible.douay-rheims.en`, so `commentariesAt` returned nothing for it and the
+apparatus control did not render at all. The reader who expressed no preference got a bare
+text with nothing saying an apparatus existed. The Douay-Rheims offers Challoner's 1,916
+notes, his 1,307 chapter arguments, and Haydock's 45,747-note catena.
+
+**The supporting arguments, in the order they carry weight:**
+
+- **It is the only default in the corpus that is not a received edition.** Every other
+  language's Bible here is an approved translation with a history — Clementina 1592,
+  Martini, Allioli, Káldi-Tárkányi, Crampon, Straubinger, Matos Soares. The assessment
+  below stands: the CPDV's risks are provenance, and the provenance is a self-published,
+  deliberately unreviewed translation by one man.
+- **The corpus already leaned Douay in English.** `bible-intro.en` is Challoner's own
+  prefaces and has been shipped to CPDV readers since the introductions landed
+  (`introductions.py`'s docstring argues the graft); Doré's plate anchors were decided
+  against the Douay-Rheims; `WORK_CONFIGS` carries its Douay book-naming.
+- **Esther.** The Douay-Rheims prints the sixteen-chapter Vulgate arrangement the corpus
+  canonicalizes on. The CPDV's fifteen mean a Douay-style "Esther 16" — the form the
+  magisterial corpus prints — does not resolve in the default edition.
+
+**What it costs, and why it was accepted.** The register: "The Lord ruleth me: and I shall
+want nothing" against "The Lord directs me, and nothing will be lacking to me." Every
+`CONTENT_LANG_FALLBACK` row ends in `en, la` and only eight of the thirty-four interface
+languages have a Bible of their own, so the English default is what most readers of this
+site meet, mostly as non-native English readers — which is exactly where archaism is
+hardest. It is bounded: the CPDV stays in the edition menu one click away, and the choice
+persists per interface language.
+
+**Left open**: whether the CPDV should be one of the two English editions at all. The
+assessment below is the argument about that, and it is a different question from which
+edition a reader meets first.
 
 ## CPDV assessment
 
