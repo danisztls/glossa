@@ -1228,6 +1228,26 @@ Content-hashed data the app fetches on demand but that is not corpus text — th
 tables, the translated descriptions — is content tier too, and deliberately not in the
 install precache.
 
+**The worker is registered by a BUILD and never by the dev server** (2026-09-01).
+SvelteKit injects `navigator.serviceWorker.register(...)` into the page it serves and did
+so under `vite dev` too, so an ordinary dev session installed the real worker against
+`localhost`. Both properties above then work exactly against the person editing: the
+worker is cache-first on the shell, and not calling `skipWaiting()` means it keeps control
+until every tab on the origin closes — serving a shell captured from an earlier session.
+The symptom was `Pre-transform error: The file does not exist at
+.../node_modules/.vite/deps/runtime-DcmRJ03G.js`, repeating, surviving `rm -rf
+node_modules/.vite` and every restart, because nothing on the SERVER ever referenced that
+name; the cached shell did, and the chunks that existed were the same base names under
+different hashes (`runtime-DZSEjbWK.js`) after a dep re-optimization moved them. **The log
+line was never the cost.** A worker holding an old shell serves old CODE, so an edit can
+appear not to take — the silent stale answer this project keeps meeting, wearing the
+costume of a broken hot reload, and the one failure that would discredit the HMR
+measurements in §Process. `vite.config.ts` keys it off `command`: `serve` registers
+nothing, `build` registers, so `index.html` carries it and both `npm run preview` and a
+deploy serve it — preview is itself `serve`, which does not matter, since it ships the
+document the build already wrote. A worker installed before this landed is not removed by
+it and must be unregistered once per browser profile.
+
 **Not calling `skipWaiting()` obliges us to offer the update instead.** The browser's own
 rule for when a waiting worker takes over ("once every client on the old version is gone")
 is not something a reader can act on: a plain reload does not release the old worker, and

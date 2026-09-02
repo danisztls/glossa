@@ -1136,6 +1136,26 @@ anyone decides to "fix" it:
   again. Read it as bytes, not as seconds — a browser does not parse an inline
   map unless devtools is open, and the browser-side cost was never measured.
 
+**`npm run dev` REGISTERS NO SERVICE WORKER; a build does** (2026-09-01,
+`docs/decisions.md` §The site). `vite.config.ts` keys `serviceWorker.register`
+off `command`, so `serve` registers nothing and `build` bakes the registration
+into `index.html` — which is what both `npm run preview` and a deploy then serve.
+SvelteKit registers in dev by default, and here that installed the real worker
+against `localhost`: cache-first on the shell and never calling `skipWaiting()`,
+so it kept control until every tab closed and went on serving a shell from an
+earlier session. It presents as `Pre-transform error: The file does not exist at
+.../node_modules/.vite/deps/runtime-<hash>.js`, repeating, and **surviving both
+`rm -rf node_modules/.vite` and a dev-server restart** — which is the tell that
+the request is coming from the client and not from anything the server knows.
+Two things:
+
+- **The log line is the harmless part.** A worker on an old shell serves old
+  CODE, so an edit can look like it did not take. If HMR ever seems broken,
+  check for a controlling worker before believing it.
+- **This does not evict a worker already installed.** Unregister once per
+  browser profile (DevTools → Application → Service Workers), or confirm the
+  diagnosis in seconds by loading the site in a private window, which has none.
+
 **The worktree trap shrank but did not vanish** (see the corpus section
 above). The default is now `../../glossa-corpus`, resolved from `site/`, so a
 worktree created _beside_ the main checkout finds the corpus without help. A
