@@ -276,6 +276,11 @@ export interface PrayerMeta {
 	kind: 'simple' | 'dialogic' | 'group';
 	hasLatin: boolean;
 	hasGroups: boolean;
+	/** The prayer's opening words, for the listing to be recognizable by more
+	 *  than its title. Derived in `scripts/sync-corpus.mjs` (`incipitOf`),
+	 *  which is also where the one prayer that has none is explained: a
+	 *  `group` prayer's first block is not its opening. */
+	incipit?: string;
 }
 /** Keyed by bare LANG, matching `CccIndexFile`/`CompendiumIndexFile` above --
  *  not by work id like `DocumentIndexFile`: today's corpus has exactly one

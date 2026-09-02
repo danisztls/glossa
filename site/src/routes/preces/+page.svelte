@@ -56,6 +56,15 @@
 							<a class="prayer-link" href={hrefFor({ kind: 'prayer', slug: meta.slug })}>
 								{meta.title}
 							</a>
+							<!-- A prayer is recognized by its opening words far more than by
+							     its title, and twenty-eight titles down a page gave a reader
+							     nothing to recognize. Not a link: the title above it already
+							     is one, and a second target for the same address would double
+							     every row's tab stop. The Rosary carries none -- see
+							     `incipitOf` in scripts/sync-corpus.mjs. -->
+							{#if meta.incipit}
+								<p class="prayer-incipit">{meta.incipit}</p>
+							{/if}
 						</li>
 					{/each}
 				</ul>
@@ -99,5 +108,22 @@
 	.prayer-link:focus-visible {
 		text-decoration: underline;
 		text-underline-offset: 0.15em;
+	}
+
+	/* The same treatment `/documenta` gives a document's description and
+	   `/signata` its excerpt: muted, a step down in size, clamped to one line
+	   so a long opening cannot turn the list back into a wall. Italic because
+	   this is the prayer's own words quoted inside a listing, not chrome
+	   describing it. */
+	.prayer-incipit {
+		margin: 0.25rem 0 0;
+		font-family: var(--font-serif);
+		font-style: italic;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+		max-width: 60ch;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 </style>

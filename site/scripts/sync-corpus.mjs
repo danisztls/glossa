@@ -1429,6 +1429,45 @@ for (const workId of workIds) {
 	// three cases above, for the same reason the document branch below does:
 	// the middle segment (`common` today) is meant to vary once a second
 	// collection ships, and `type: "prayer"` is what's actually invariant.
+	/**
+	 * A prayer's opening words -- its first printed line.
+	 *
+	 * A PRAYER IS KNOWN BY ITS INCIPIT AND NOT BY ITS TITLE. Nobody looks for
+	 * "The Hail Mary"; they look for "Hail, Mary, full of grace". `/preces` lists
+	 * twenty-eight titles and, until this existed, gave a reader nothing to
+	 * recognize them by.
+	 *
+	 * THE ROSARY IS THE EXCEPTION AND IT HAS TO BE, because a `group` prayer's
+	 * `blocks[0]` is not its opening at all -- the corpus stores the Rosary's
+	 * CONCLUDING prayer there, under the heading "Prayer concluding the Rosary",
+	 * with the twenty mysteries in `groups` and the opening words in
+	 * `instructions`. Deriving blindly prints that heading as the Rosary's first
+	 * words, which is not merely useless but wrong. It gets no incipit instead:
+	 * the one prayer on the page whose title everybody already knows.
+	 *
+	 * Taken from the FIRST PRINTED LINE (`html`, split on `<br>`) rather than the
+	 * whole block, because the block is the whole prayer and the line is the
+	 * opening. Capped so the eagerly-inlined index tier does not carry a stanza
+	 * per prayer per language; the page clamps what is left.
+	 */
+	const INCIPIT_MAX = 120;
+
+	function incipitOf(prayer) {
+		if (prayer.kind === 'group') return undefined;
+		const block = prayer.blocks && prayer.blocks[0];
+		if (!block) return undefined;
+		const first = String(block.html || block.text || '')
+			.split(/<br\s*\/?>/i)[0]
+			.replace(/<[^>]+>/g, '')
+			.replace(/\s+/g, ' ')
+			.trim();
+		if (!first) return undefined;
+		if (first.length <= INCIPIT_MAX) return first;
+		const cut = first.slice(0, INCIPIT_MAX);
+		const space = cut.lastIndexOf(' ');
+		return `${(space > 40 ? cut.slice(0, space) : cut).trimEnd()}…`;
+	}
+
 	if (manifest.type === 'prayer') {
 		const lang = workId.split('.').pop();
 		const structure = readJson(path.join(workDir, 'structure.json'));
@@ -1445,7 +1484,8 @@ for (const workId of workIds) {
 				title: p.title,
 				kind: p.kind,
 				hasLatin: Boolean(p.latin),
-				hasGroups: Boolean(p.groups && p.groups.length > 0)
+				hasGroups: Boolean(p.groups && p.groups.length > 0),
+				incipit: incipitOf(p)
 			}))
 		};
 
