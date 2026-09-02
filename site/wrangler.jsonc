@@ -51,6 +51,30 @@
 	// up in this file's history.
 	"cache": { "enabled": false },
 
+	// Workers Logs, ON, and absent until 2026-09-02. What that absence cost was
+	// measured rather than imagined: a Lighthouse run on 2026-09-01 caught this
+	// site answering a navigation with a 500 whose markup is SvelteKit's own
+	// default error template, and there was nothing to look at afterwards.
+	// `wrangler tail` only streams live, so it cannot reach a failure that has
+	// already happened, and with no block here no per-invocation log is
+	// retained at all. The dashboard's aggregate metrics can say that errors
+	// occurred and not one word about which request or why.
+	//
+	// `invocation_logs` is the half that makes a request which THREW
+	// distinguishable from one that was never received -- the question the 500
+	// above still has no answer to.
+	//
+	// No `head_sampling_rate`: it defaults to 1, and this Worker runs once per
+	// navigation rather than once per asset (that is what the `!` negations
+	// below are for), so there is no volume here worth sampling away. Sampling
+	// a rare failure is how it stays invisible.
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		}
+	},
+
 	// The site answers on one hostname, and it is this one. `workers_dev`
 	// defaults to true, which would keep glossa.me-f65.workers.dev serving the
 	// same corpus from a second address -- harmless while the site asked not to
