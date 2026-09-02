@@ -1619,7 +1619,10 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		expansion: 'Unitatis Redintegratio (Vatican II, Decree on Ecumenism)',
 		slug: 'unitatis-redintegratio'
 	},
-	CT: { expansion: 'Catechesi Tradendae (John Paul II, apostolic exhortation on catechesis)' },
+	CT: {
+		expansion: 'Catechesi Tradendae (John Paul II, apostolic exhortation on catechesis)',
+		slug: 'catechesi-tradendae'
+	},
 	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
 	CIC: { expansion: 'Codex Iuris Canonici (Code of Canon Law)' },
 	CCEO: {
@@ -1707,14 +1710,32 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	CIV: { expansion: 'Caritas in Veritate (Benedict XVI encyclical)', slug: 'caritas-in-veritate' },
 	// `SS` (Spe Salvi, 2 citations) is deliberately absent: "Festo SS. Apost."
 	// and "C.SS. Rituum" would claim it ten times over.
-	// Apostolic exhortations and letters, recognized for the tooltip; none is
-	// ingested (docs/corpus-schema.md §Documents lists the families that are).
-	FC: { expansion: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)' },
-	RP: { expansion: 'Reconciliatio et Paenitentia (John Paul II, apostolic exhortation)' },
-	EN: { expansion: 'Evangelii Nuntiandi (Paul VI, apostolic exhortation on evangelization)' },
-	MC: { expansion: 'Marialis Cultus (Paul VI, apostolic exhortation)' },
+	// Apostolic exhortations. THESE CARRIED NO SLUG UNTIL 2026-09-02, on the
+	// stated ground that "none is ingested" — true when it was written and
+	// false since the exhortation sweep landed 33 of them (§Languages). The
+	// six below are in `build/`; `MD` and `LC` stay slugless because they are
+	// an apostolic letter and a CDF instruction, and neither family is held.
+	FC: {
+		expansion: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)',
+		slug: 'familiaris-consortio'
+	},
+	RP: {
+		expansion: 'Reconciliatio et Paenitentia (John Paul II, apostolic exhortation)',
+		slug: 'reconciliatio-et-paenitentia'
+	},
+	EN: {
+		expansion: 'Evangelii Nuntiandi (Paul VI, apostolic exhortation on evangelization)',
+		slug: 'evangelii-nuntiandi'
+	},
+	MC: {
+		expansion: 'Marialis Cultus (Paul VI, apostolic exhortation)',
+		slug: 'marialis-cultus'
+	},
 	MD: { expansion: 'Mulieris Dignitatem (John Paul II, apostolic letter)' },
-	CL: { expansion: 'Christifideles Laici (John Paul II, apostolic exhortation)' },
+	CL: {
+		expansion: 'Christifideles Laici (John Paul II, apostolic exhortation)',
+		slug: 'christifideles-laici'
+	},
 	GCD: { expansion: 'General Catechetical Directory' },
 	GIRM: { expansion: 'General Instruction of the Roman Missal' },
 	GILH: { expansion: 'General Instruction of the Liturgy of the Hours' },
@@ -1855,9 +1876,16 @@ const CONCILIAR_SIGLA: Record<string, SiglumEntry> = {
 };
 
 /**
- * Papal documents by siglum. The ingested ones carry a slug; the
- * exhortations and letters do not, because the corpus holds no exhortation
- * family (docs/corpus-schema.md §Documents), and are here for the expansion.
+ * Papal documents by siglum. The ingested ones carry a slug; the rest are
+ * here for the expansion alone.
+ *
+ * THE EXHORTATIONS WERE IN THE SECOND GROUP UNTIL 2026-09-02, and the reason
+ * given was "the corpus holds no exhortation family". That was true when it
+ * was written and stopped being true when the sweep landed 33 of them
+ * (§Languages) — the works arrived, the claim about them did not, and a
+ * siglum with no slug renders as a card that names a document the reader is
+ * one tap away from. `MD` and `SPF` stay slugless: an apostolic letter and a
+ * profession of faith, neither family held.
  *
  * `CA` is deliberately NOT here — see this section's docblock.
  */
@@ -1873,13 +1901,13 @@ const PAPAL_SIGLA: Record<string, SiglumEntry> = {
 	PP: { expansion: 'Populorum progressio', slug: 'populorum' },
 	PT: { expansion: 'Pacem in terris', slug: 'pacem' },
 	MM: { expansion: 'Mater et magistra', slug: 'mater' },
-	CT: { expansion: 'Catechesi tradendae' },
-	EN: { expansion: 'Evangelii nuntiandi' },
-	FC: { expansion: 'Familiaris consortio' },
-	RP: { expansion: 'Reconciliatio et paenitentia' },
-	MC: { expansion: 'Marialis cultus' },
+	CT: { expansion: 'Catechesi tradendae', slug: 'catechesi-tradendae' },
+	EN: { expansion: 'Evangelii nuntiandi', slug: 'evangelii-nuntiandi' },
+	FC: { expansion: 'Familiaris consortio', slug: 'familiaris-consortio' },
+	RP: { expansion: 'Reconciliatio et paenitentia', slug: 'reconciliatio-et-paenitentia' },
+	MC: { expansion: 'Marialis cultus', slug: 'marialis-cultus' },
 	MD: { expansion: 'Mulieris dignitatem' },
-	CL: { expansion: 'Christifideles laici' },
+	CL: { expansion: 'Christifideles laici', slug: 'christifideles-laici' },
 	SPF: { expansion: 'Sollemnis Professio fidei (Credo of the People of God)' }
 };
 
@@ -3094,7 +3122,23 @@ function findWorkTitleAt(clause: string, pos: number): WorkTitleMatch | null {
  * demonstrably uses for something else.
  */
 const COMMENTARY_TITLE_RE =
-	/(?:\bIn|\.\s*in|\bMoralia\s+in|\b(?:Hist|Expos|Expl|Comm|Tract|Adv)\.|\b(?:interpretation|Commentary|Commentaries|Homilies|Homily|Tractates?|Expositions?|Sermons?)\s+(?:on|of)|\bComent[áa]rios?\b[^.;:]{0,40})\s*$/;
+	/(?:\bIn|\.\s*in|\b(?:Moralia|Enarrat\w*)\s+in|\b(?:Hist|Expos|Expl|Comm|Tract|Adv)\.|\bsec(?:undum)?\.|\b(?:interpretation|Commentary|Commentaries|Homilies|Homily|Tractates?|Expositions?|Sermons?)\s+(?:on|of)|\bComent[áa]rios?\b[^.;:]{0,40})\s*$/;
+// `Enarrat\w*` joins `Moralia` for the same reason and in the same shape: a
+// title word carrying no abbreviating full stop, so the `\.\s*in` branch
+// cannot see the "in" after it. Augustine's *Enarratio in Psalmum 85, 24* is
+// section 24 of the 85th enarration, and the editions that spell the word out
+// (`lv`, and the Latin where it is not abbreviated) resolved it to Ps 85:24 —
+// while every edition writing `Enarr. in Ps.` was already refused. Lower-case
+// "in" cannot be blocked on its own: "Is 7:14 (LXX), quoted in Mt 1:23" is
+// the real reference this whole pattern was measured against.
+// "sec." is "secundum", and `Expos. Evang. sec. Luc.` is Ambrose's
+// *Expositio Evangelii secundum Lucam* — a commentary's title, where the
+// genre word sits too far left for the `Expos.` branch to reach it. The whole
+// corpus prints 10 distinct citations with "sec." directly before a Gospel
+// name (measured 2026-09-02) and every one is Ambrose or Origen; none is a
+// citation of the Gospel. `Expos. Evang. sec. Luc. IV, 49` had resolved to
+// Luke 4:49 since long before `BOOK_CHAPTER_GAP_RE`, which only added the
+// comma'd spelling of the same mistake.
 // "Adv." joined the abbreviated genres when the prose scan reached the
 // Portuguese council documents: "Tertuliano, Adv. Marc. 3, 7" is Adversus
 // Marcionem, and "Adv. Haer." Adversus haereses — a work AGAINST a person,
@@ -3127,10 +3171,34 @@ const COMMENTARY_TITLE_RE =
  */
 const ROMAN_CATECHISM_RE = /\bCat\.?\s*$/;
 
-/** A book match that is really part of a longer title — see the two patterns above. */
+/**
+ * `Ad Rom.`, `Ad Eph.`, `Ad Cor.` — a patristic LETTER TO a church, not the
+ * apostle's letter to it. Ignatius to the Romans is not Romans.
+ *
+ * MEASURED over every citation in every edition, 2026-09-02: 406 distinct
+ * citations put `Ad` directly before a book abbreviation. 296 carry an
+ * explicit patristic marker in the same string (Ignatius, Clement, Polycarp,
+ * `Apostolic Fathers`, a `PG`/`SCh` volume, Lightfoot, Funk). The other 110
+ * were read one by one, and NOT ONE is a citation of the epistle: they are
+ * Aquinas's commentaries (`Comm. in Ep. ad Eph.`, `In Epistulam ad Romanos`),
+ * letters to a person (`Ad Cornelium`, `Ad Magnum`, `Ad Galliarum
+ * episcopos`), and the liturgical `ad Magnificat`. So the form is a title
+ * here and never a locator, which is what earns a blanket block rather than
+ * a per-osis one.
+ *
+ * IT IS OLDER THAN THE COMMA. `Ad Eph. 5, 1` already resolved to Ephesians
+ * before `BOOK_CHAPTER_GAP_RE` existed — the comma spelling merely joined it.
+ * Lower case is included because `ad Magnificat` is the same false lead and
+ * the corpus prints it both ways.
+ */
+const PATRISTIC_LETTER_RE = /\bad\.?\s*$/i;
+
+/** A book match that is really part of a longer title — see the patterns above. */
 function precededByFalseLead(prefix: string, osis: string): boolean {
 	if (COMMENTARY_TITLE_RE.test(prefix)) return true;
-	return osis === 'rom' && ROMAN_CATECHISM_RE.test(prefix);
+	if (PATRISTIC_LETTER_RE.test(prefix)) return true;
+	// `S. Clem. Rom.` is Clement OF ROME; the epithet is not the epistle.
+	return osis === 'rom' && (ROMAN_CATECHISM_RE.test(prefix) || /\bClem\.?\s*$/.test(prefix));
 }
 
 /** True if a "cf."/"Cf." token sits directly before `pos` — the fallback for `Cf.` appearing mid-clause rather than at its start. */
@@ -3233,6 +3301,39 @@ interface ClauseState {
  * Parse one clause into segments that reproduce the clause's exact original text
  * with any recognized reference woven in as a non-text segment.
  */
+/**
+ * What may sit between a book name and its chapter in a STORED citation:
+ * spaces, an abbreviating full stop, and at most one comma.
+ *
+ * THE FULL STOP IS HERE BECAUSE THE COMMA PUT IT HERE. `Col.` and `Col` are
+ * both book variants, and against `Col., I, 18` the matcher takes the
+ * period-less one — so the gap this has to step over is `., `, not `, `.
+ * `Col, I, 18` and `Acts, XX, 28` need only the comma; `Col., I, 18` and
+ * `I Cor., XII, 13` need both. It widens nothing on its own: a period after
+ * a book name was already consumed by the variant wherever the variant won.
+ *
+ * IT WAS SPACES ALONE UNTIL 2026-09-02, and that is what made the older
+ * encyclicals' whole scripture apparatus inert. They punctuate a citation
+ * the way a pre-conciliar printer did — `I Cor., XII, 13`, `Acts, XX, 28`,
+ * `Col., I, 18` — and the comma after the book name is the only thing the
+ * grammar could not step over. Everything else about the shape already
+ * worked: the Roman chapter is read here (`parseRefNumbers`'s fourth
+ * argument is `true` on this path), and `,` is already a chapter–verse
+ * separator in `CONFIG_EN`, so `I Cor. XII, 13` had always resolved and
+ * `I Cor., XII, 13` never had. Measured over the corpus's stored citations,
+ * that one comma accounted for 800+ unread scripture references, 140 of them
+ * in `mystici-corporis-christi` alone.
+ *
+ * ONE COMMA, AND ONLY ON THE CLAUSE PATH. Not in `linkifyProse`, which walks
+ * running text where a book name followed by a comma is usually a sentence
+ * ("John, who was with him, wrote 5 letters") rather than a locator, and
+ * where nothing in the corpus was measured to need it. The guards that make
+ * it safe here are the ones already in place and not relaxed: a chapter must
+ * parse, it must be within `MAX_CHAPTER` for the book, and
+ * `precededByFalseLead` still refuses a commentary title.
+ */
+const BOOK_CHAPTER_GAP_RE = /^ *\.? *,? */;
+
 function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): RefSegment[] {
 	if (rawClause === '') return [];
 
@@ -3246,7 +3347,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	while (true) {
 		const bm = findBookAt(cfg, rawClause, searchPos);
 		if (!bm) break;
-		const spaceAfter = /^ */.exec(rawClause.slice(bm.matchEnd))![0];
+		const spaceAfter = BOOK_CHAPTER_GAP_RE.exec(rawClause.slice(bm.matchEnd))![0];
 		const afterBook = bm.matchEnd + spaceAfter.length;
 		const cv = parseRefNumbers(rawClause.slice(afterBook), cfg, bm.osis, true);
 		if (cv.chapter === null) {

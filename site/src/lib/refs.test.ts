@@ -121,7 +121,11 @@ const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = 
 	// that print sigla in prose use most (850 occurrences), and AA is the one
 	// that collides with the Summa's own "articles" shorthand.
 	'lumen-gentium': { en: [12, 20, 30, 56], de: [12, 20, 30, 56] },
-	'apostolicam-actuositatem': { en: [2, 3] }
+	'apostolicam-actuositatem': { en: [2, 3] },
+	// An apostolic exhortation, present because the exhortation sigla carried
+	// an expansion and no slug until 2026-09-02 — the table said the corpus
+	// held no exhortation family long after the sweep that ingested 33.
+	'familiaris-consortio': { en: [16, 84] }
 };
 
 /**
@@ -140,7 +144,8 @@ const mockDocumentTitles: Record<string, string> = {
 	'sacrosanctum-concilium': 'Sacrosanctum Concilium',
 	'centesimus-annus': 'Centesimus Annus',
 	'lumen-gentium': 'Lumen Gentium',
-	'apostolicam-actuositatem': 'Apostolicam Actuositatem'
+	'apostolicam-actuositatem': 'Apostolicam Actuositatem',
+	'familiaris-consortio': 'Familiaris Consortio'
 };
 
 vi.mock('./corpus', () => ({
@@ -349,6 +354,50 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		expect(refs).toEqual([
 			{ kind: 'scripture', osis: '1cor', chapter: 2, verses: [8], cf: true, raw: 'I Cor 2:8' }
 		]);
+	});
+
+	// The pre-conciliar printers' punctuation: the book, a comma, then a Roman
+	// chapter. `I Cor. XII, 13` always resolved and `I Cor., XII, 13` never
+	// did — one comma, and it was the whole scripture apparatus of the older
+	// encyclicals. See `BOOK_CHAPTER_GAP_RE`.
+	it('reads a comma between the book name and its chapter', () => {
+		for (const [text, osis, chapter, verses] of [
+			['I Cor., XII, 13.', '1cor', 12, [13]],
+			['Acts, XX, 28.', 'acts', 20, [28]],
+			['Col., I, 18.', 'col', 1, [18]],
+			['Matth., XVI, 18.', 'matt', 16, [18]],
+			['John, III, 16.', 'john', 3, [16]],
+			// Arabic too — the comma was the defect, not the numeral.
+			['Rom., 12, 5.', 'rom', 12, [5]]
+		] as const) {
+			const match = parseRefs(text).find((s) => s.kind === 'scripture');
+			expect(match, text).toBeTruthy();
+			expect([match!.osis, match!.chapter, match!.verses], text).toEqual([osis, chapter, verses]);
+		}
+	});
+
+	// `MAX_CHAPTER` used to hide this: Ignatius's `Ad Eph. 19` is refused only
+	// because Ephesians stops at 6, and `Ad Rom. 6` — a chapter Romans really
+	// has — went straight through. See `PATRISTIC_LETTER_RE`.
+	it('does not read a patristic letter TO a church as the epistle to it', () => {
+		for (const text of [
+			'St. Ignatius of Antioch, Ad Rom. 6, 1-2: Apostolic Fathers, II/2, 217-220.',
+			'St. Ignatius of Antioch, Ad Rom., 6, 1-2: Apostolic Fathers, II/2, 217-220.',
+			'Ad Rom., 7: PG 5, 694.',
+			'St. Clement of Rome, Ad Cor. 42, 44: PG 1, 291-300.',
+			'S. Clem. Rom., 1. c., 42, 3-4.'
+		]) {
+			expect(
+				parseRefs(text).some((s) => s.kind === 'scripture'),
+				text
+			).toBe(false);
+		}
+	});
+
+	it('resolves an apostolic exhortation siglum to its ingested slug', () => {
+		expect(parseRefs('Cf. FC 16.')).toContainEqual(
+			expect.objectContaining({ kind: 'document', label: 'FC', slug: 'familiaris-consortio' })
+		);
 	});
 
 	it("treats a single-chapter book's bare number as a verse, not a chapter", () => {
