@@ -397,6 +397,24 @@ the Social Doctrine).
   how `csdc.fr` shipped Sodano's letter titled `ABRÉVIATIONS BIBLIQUES`.
   English never showed it because its letter opens full-bold and starts a unit
   either way.
+- **A part's epigraph belonged to the paragraph BEFORE it, and the count of
+  blocks is what recovers it.** The source prints `PART TWO`, a quotation from
+  Centesimus Annus, then `CHAPTER FIVE`; `reclaim_mid_body_prose` hands prose
+  buffered under a heading back to the section that heading interrupted — right
+  for an encyclical's mid-paragraph subheading, wrong here — so §19, §208 and
+  §520 each ended with the NEXT part's epigraph as their last sentence. A
+  numbered paragraph of this work is exactly ONE block, and §19/§208/§520 were
+  the only sections in nine of ten editions carrying more, so
+  `lift_part_epigraphs` moves the trailing blocks onto the section the part
+  opens at. It reads the count and not the markup because the markup differs in
+  every edition: `align="right"` on the whole quotation in English, on the
+  attribution alone in Hungarian, on nothing at all in Polish.
+- **`PART_STARTS` is a constant because no edition can be asked.** The parts
+  open at §20, §209 and §521 in all ten — they are translations of one numbered
+  text — while the editions disagree about whether the part heading reaches
+  their outline at all: `csdc.fr` emits no part row, `csdc.es` one, and
+  `csdc.sw` read two of its own epigraphs AS headings (which is why it lifts
+  one epigraph and not three).
 - **Two editions are withheld with the measurement in `csdc.WITHHELD`**: `id`
   publishes only a table of contents, `nl` interleaves per-group-numbered
   footnotes so pooling resolves citations to the wrong notes.

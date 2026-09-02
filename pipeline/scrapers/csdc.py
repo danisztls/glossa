@@ -912,6 +912,7 @@ class EditionResult:
     citations: int = 0
     abbreviations: int = 0
     appendix: int = 0
+    epigraphs: int = 0
     error: str = ""
 
 
@@ -955,6 +956,69 @@ KNOWN_GAPS: dict[str, dict[int, str]] = {
         "embolden -- `<p>553 A promoção` against `<p><b>552 </b>`",
     },
 }
+
+
+#: The paragraph each of the work's three parts opens at. A constant, and a
+#: fact about the WORK rather than about any edition: the ten editions are
+#: translations of one numbered text, so the parts fall at the same three
+#: numbers in all of them (the same fact `socialDoctrineChapterStarts` rests
+#: on, site-side).
+#:
+#: It is not read off `structure` because the editions disagree about whether
+#: the part heading reaches their outline at all -- `csdc.fr` emits no part
+#: rows, `csdc.es` one, and `csdc.sw` read two of the epigraphs below AS
+#: headings. There is nothing to key on there that is true ten times.
+PART_STARTS = (20, 209, 521)
+
+
+def lift_part_epigraphs(sections: list[dict]) -> int:
+    """Move each part's epigraph off the paragraph before it and onto the
+    paragraph it stands over. Returns how many were moved.
+
+    THE SOURCE PRINTS `PART TWO`, A QUOTATION FROM CENTESIMUS ANNUS, AND THEN
+    `CHAPTER FIVE`. `parse_document` reads that quotation as prose buffered
+    under a heading and hands it back to the section the heading interrupted
+    (`reclaim_mid_body_prose`: "the heading interrupted a paragraph, and the
+    prose beneath is the rest of that paragraph") -- which is right for an
+    encyclical's mid-paragraph subheading and wrong here. So §19 ended with
+    Part One's epigraph, §208 with Part Two's and §520 with Part Three's, and
+    a reader finishing a part read the NEXT part's epigraph as its last
+    sentence.
+
+    A NUMBERED PARAGRAPH OF THIS WORK IS EXACTLY ONE BLOCK, which is what
+    makes the trailing blocks readable as the epigraph rather than guessed
+    at: across the ten editions, §19, §208 and §520 are the only sections in
+    nine of them that carry more than one, and every extra block is one of
+    these three quotations. So this moves what is trailing rather than trying
+    to recognise the quotation, whose markup is different in every edition --
+    `align="right"` on the whole quotation in English, on the attribution
+    alone in Hungarian, on nothing at all in Polish.
+
+    Where it lands is the section the part OPENS at, not a structure node,
+    for `PART_STARTS`' reason: half the editions have no part row to hang it
+    on. `docs/corpus-schema.md` carries the field.
+    """
+    by_n = {s["n"]: s for s in sections}
+    moved = 0
+    for start in PART_STARTS:
+        opening = by_n.get(start)
+        if opening is None:
+            continue
+        before = [n for n in by_n if n < start]
+        if not before:
+            continue
+        previous = by_n[max(before)]
+        # Everything after the paragraph's own first block. An edition that
+        # lost its epigraph into a heading (`csdc.sw` at §19 and §520) has
+        # one block here and nothing moves, which is the honest outcome:
+        # there is no epigraph in that edition's text to place.
+        epigraph = previous["blocks"][1:]
+        if not epigraph:
+            continue
+        del previous["blocks"][1:]
+        opening["epigraph"] = epigraph
+        moved += 1
+    return moved
 
 
 def validate(lang: str, state, structure: list[dict]) -> tuple[bool, list[str]]:
@@ -1273,6 +1337,10 @@ def parse_edition(lang: str, html: str, write: bool = True) -> EditionResult:
         res.error = str(exc)
         return res
 
+    # After the overrides, so an override that repairs a block still sees
+    # the shape the parse produced.
+    res.epigraphs = lift_part_epigraphs(sections_out)
+
     ok, problems = validate(lang, parse.state, structure)
     res.problems = problems
     res.notes = notes
@@ -1398,7 +1466,8 @@ def main() -> int:
         if r.status in ("validated", "validation-failed"):
             print(
                 f"  sections {r.sections}  citations {r.citations}  "
-                f"abbreviations {r.abbreviations}  appendix units {r.appendix}"
+                f"abbreviations {r.abbreviations}  appendix units {r.appendix}  "
+                f"part epigraphs {r.epigraphs}/{len(PART_STARTS)}"
             )
         for note in r.notes:
             print(f"  [note] {note}")
