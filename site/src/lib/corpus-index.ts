@@ -21,12 +21,33 @@
  *
  * Two sources, chosen the same way `corpus.ts` always has:
  *   - Real corpus: `import.meta.glob(..., { eager: true })` over
- *     `corpus-data/index/*.json` — small (well under 500 KB total at real
- *     scale, see the build report this shipped with), so eager-inlining
- *     costs less than a `+layout.ts` fetch round-trip would, and it's
- *     needed synchronously by components that read it outside any `load()`
- *     (`BookChapterPicker`, `JumpBox`, the CCC/Compendium TOC pages — see
- *     each's own corpus.ts imports).
+ *     `corpus-data/index/*.json`, one glob per file, so what is eager is a
+ *     LIST and not a wildcard. It is needed synchronously by components that
+ *     read it outside any `load()` (`BookChapterPicker`, `JumpBox`, the
+ *     CCC/Compendium TOC pages — see each's own corpus.ts imports), which is
+ *     what buys eager-inlining over a `+layout.ts` fetch round-trip.
+ *
+ *     THIS SAID "SMALL — WELL UNDER 500 KB TOTAL AT REAL SCALE" UNTIL
+ *     2026-09-02, and the twelve inlined files measured 2,579,725 bytes: five
+ *     times the premise the paragraph was arguing from. Nothing re-measured it
+ *     as the corpus went from 383 works to 1,468, and the number is
+ *     load-bearing — this is parsed before the first paint on EVERY route, so
+ *     it is most of what Lighthouse bills as TBT. Re-measure it rather than
+ *     quoting this sentence; `sync-corpus.mjs`'s `indexBytes` prints the
+ *     per-file sizes on every run, and `manifests.json` is half the total.
+ *
+ *     DO NOT TRY TO COMPRESS IT — that was measured too, and it does not work.
+ *     `copyright` is fifteen distinct objects across 1,468 works, one of them
+ *     on 1,411 of them, so deduping it into a table is the obvious win: it took
+ *     `manifests.json` down 18% and the boot chunk down 180 KB raw. Over the
+ *     wire it saved 3,116 bytes — 0.58% — because gzip had already collapsed
+ *     the repetition, and the reverted commit is in the history if the
+ *     arithmetic is wanted again. The conclusion generalises to the whole tier:
+ *     what is left in these files is ENTROPY rather than redundancy, so no
+ *     encoding buys anything a reader would feel. The only lever on this cost
+ *     is not shipping it eagerly — making the index lazy, or splitting it per
+ *     route so a Bible reader does not parse the Summa's and the Compendium's
+ *     registries to read Genesis 1.
  *   - Fixtures (`src/lib/fixtures/`, always used under vitest — see
  *     `corpus.ts`'s `VITEST` guard): hand-authored, already small, imported
  *     directly and reduced to the same registry shapes below so both
