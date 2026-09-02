@@ -253,6 +253,7 @@ export const it: Dictionary = {
 	'colophon.typeInitials':
 		'I capilettera sono in Pirata One, una gotica le cui maiuscole restano leggibili alla dimensione che un capolettera richiede, e — per il russo — in Ponomar, che riproduce il carattere slavo ecclesiastico della Stamperia sinodale. Ponomar compone il capolettera e mai il testo: un’enciclica moderna composta interamente in carattere sinodale direbbe di sé qualcosa di falso. Tutti sono sotto licenza SIL Open Font License e serviti da questo sito anziché da terzi, così che leggere una pagina non chieda nulla al server di nessun altro.',
 	'refs.citedIn': 'Citato in',
+	'refs.externalVolume': 'Volume {volume} su {host} — PDF scansionato',
 	'bible.cccAbbrev': 'CCC',
 	'bible.wholeChapter': 'Questo capitolo',
 	'bible.verseNotInEdition':

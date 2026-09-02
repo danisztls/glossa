@@ -252,6 +252,7 @@ export const sv: Dictionary = {
 	'colophon.typeInitials':
 		'Anfangerna är Pirata One, en frakturstil vars versaler förblir läsbara i den storlek en anfang kräver, och — för ryskan — Ponomar, som återger Synodaltryckeriets kyrkslaviska stil. Ponomar sätter anfangen och aldrig texten: en modern encyklika satt helt i synodalstil skulle säga något osant om sig själv. Alla är licensierade under SIL Open Font License och levereras från den här sajten och inte från tredje part, så att läsa en sida begär ingenting av någon annans server.',
 	'refs.citedIn': 'Citeras i',
+	'refs.externalVolume': 'Band {volume} på {host} — skannad PDF',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Detta kapitel',
 	'bible.verseNotInEdition':

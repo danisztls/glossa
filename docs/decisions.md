@@ -3018,6 +3018,79 @@ five — not because a count of three is dangerous but because a single-reader c
 you to read a person into it — and deliberately does NOT suppress diagnostics, where a
 long tail of three quota failures or one unserved book is the entire value.
 
+## Linking out
+
+Until 2026-09-02 every link this site made pointed at a locus inside its own corpus, and
+`llms.txt` said as much: **cite the publisher for the words, link here for the locus**.
+An outbound link is therefore a new kind of object here, not a new field, and it arrived
+for one citation only — Acta Apostolicae Sedis.
+
+**AAS is a venue, not a work, which is why it is linked and not ingested.**
+`AAS 86 (1994), 386-387` addresses a page in a printed volume; this corpus's whole address
+grammar is unit-based and a page number has no unit to become. The Holy See publishes it
+only as scanned OCR PDFs, which nothing in the pipeline reads. And the citation is a
+provenance note in the first place — the reader wants the _document_, and AAS only says
+where it was promulgated. It is simultaneously the most-cited absent source in the corpus
+(23,245 references, measured 2026-09-02) and the one with the least to gain from a parse.
+
+**A derived href, never a table of rows.** An outbound URL table is this project's known
+failure shape — the silent stale answer, unverifiable at build time without network. The
+volume is in the citation string, so the address is computed from it, and a derivation
+cannot rot one entry at a time the way a typed row can. The same reasoning applies to any
+outbound source later: prefer a derivation wherever the citation carries the key, and
+where a row is unavoidable hold it to the `absent-sources.json` standard — verified once
+by a real fetch, recorded, re-checked on a schedule rather than in the build.
+
+**The printed year is a CHECK, not an input, and that is the load-bearing part.** AAS
+volume _n_ is the year 1908 + _n_ without exception, so the citation states the same fact
+twice and both must agree before anything is linked. Deriving the year instead would be
+one line shorter and quietly wrong, because a long tail of pre-conciliar citations reads
+`Leo XIII, "Immortale Dei", 1 Nov. 1885: AAS 18 (1885)` — AAS did not exist in 1885, and
+that is volume 18 of the **Acta Sanctae Sedis**, its 1865–1908 predecessor, written under
+the later siglum out of habit. Derived, each of those becomes a confident link to a real
+volume forty years wrong, which is exactly this project's standing failure mode; checked,
+1908 + 18 ≠ 1885 and the reader is told nothing instead. Of the 22,885 AAS references
+carrying a volume, 22,417 print a year and 256 of those disagree — the ASS citations plus
+OCR wreckage (`AAS 4433 (1941)`). Two independent tokens, both must agree.
+
+**What is linked, and what the ceiling is made of.** 16,531 references (71.1%) resolve to
+a volume PDF. The largest refusal is not a gap in the code: volumes 95 (2003) onward are
+published one PDF per _month_ under an Italian month name, and a citation gives volume and
+page and never a month, so those 5,524 are unresolvable in principle. The rest are the
+year check doing its work, two volumes bound in two parts (the page decides which, and
+this grammar does not read pages), and citations with no volume at all. The 92 addresses
+the derivation builds were each confirmed 200 and `application/pdf` by HEAD on 2026-09-02.
+
+**The chrome goes inside the disclosure, not on the siglum.** The obvious affordance is an
+external-link glyph beside every `AAS 58` — and there are thousands of them, in a column
+that is already mostly apparatus. A siglum already opens a card that says what its letters
+stand for (`SiglumGloss`); where the volume can be read is the same kind of answer, so it
+rides in that card, behind the same press. The link's own treatment is
+`CopyrightNotice`'s, unchanged, because it is the same promise and a second outbound style
+would read as a second kind of promise. It says "scanned PDF" for two reasons: the reader
+is owed the format before the tap, and on a page being read offline the link is dead and
+this is the only warning of that there can be.
+
+**Containment: it is not a slug and must never become one.** `slug` stays null, `refHref`
+still declines the segment, and nothing that resolves addresses on this site
+(`corpus-routes.json`, `sitemapPaths`, `assertNamed`, `suggest`) sees an AAS volume as one
+of them — the reference-coverage table is byte-identical across the change, which is the
+check that says so. An external address is a separate optional field for that reason
+rather than a nullable slug, and a held siglum's link here always wins.
+
+**It strengthens the rights position rather than straining it.** `llms.txt` already says
+to cite the publisher for the words; an external-link line pointing at vatican.va is that
+sentence made clickable.
+
+**Still not linked out, deliberately.** The Code of Canon Law (the citation carries a
+canon, which is a real locus, but the per-book URLs need a range table) and the papal minor
+magisterium — addresses, homilies, messages, motu proprios, roughly 2,000 citations, every
+one of them on vatican.va at an address the citation does not derive. That family needs a
+discovery crawl of the pontificate indexes, which is most of the work of _ingesting_ it;
+so for it the question is not "link or parse" but how much the site wants to be, and that
+is not a technical decision. Denzinger, Migne and Sources Chrétiennes have no link to give
+at all.
+
 ## Scope
 
 **In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all

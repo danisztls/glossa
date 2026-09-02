@@ -35,8 +35,24 @@
 	 * the lines above and below and swallows their taps -- the collision
 	 * `reading-chrome.css` records fixing for the dagger. A word is already a
 	 * finger-sized target.
+	 *
+	 * THE OUTBOUND LINK IS INSIDE THE CARD, WHICH IS THE POINT OF PUTTING IT
+	 * HERE AT ALL (docs/decisions.md §Linking out). An AAS citation names a
+	 * volume the corpus does not hold and vatican.va does, and the obvious
+	 * chrome for that -- an external-link glyph on the siglum itself -- would
+	 * draw a mark beside every one of the thousands of AAS references in the
+	 * apparatus, in a column that is already mostly apparatus. The expansion is
+	 * a disclosure the reader has to ask for, and where the volume can be read
+	 * is the same kind of answer: it belongs behind the same press, not in
+	 * front of it. The trigger's cue therefore does not change, and `help`
+	 * stays right -- what opens is still an explanation, which now happens to
+	 * contain a destination.
 	 */
+	import Icon from './Icon.svelte';
 	import { NoteCard } from '$lib/sidenotes.svelte';
+	import { hostOf } from '$lib/copyright';
+	import { i18n, t } from '$lib/i18n.svelte';
+	import type { ExternalSource } from '$lib/refs';
 
 	interface Props {
 		/** The siglum as the source printed it. */
@@ -45,12 +61,22 @@
 		    stands for. Never empty: an empty one is `glossOf`'s way of saying no
 		    cue should have been drawn at all. */
 		gloss: string;
+		/** Where the thing cited can be read on its publisher's own site, for
+		    the sigla that have such an address (`ExternalSource`). */
+		external?: ExternalSource;
 		/** The citation's content language. The card sits in the top layer,
 		    outside every `lang` the page has declared, so it says its own. */
 		lang?: string;
 	}
 
-	let { label, gloss, lang }: Props = $props();
+	let { label, gloss, external, lang }: Props = $props();
+
+	const host = $derived(external && hostOf(external.href));
+	const sourceLine = $derived(
+		external && host
+			? t('refs.externalVolume').replace('{volume}', external.label).replace('{host}', host)
+			: undefined
+	);
 
 	// See `Sidenote` on why these are bare top-level declarations: `NoteCard`
 	// declares the effects that own the card's lifetime, and a rune outside
@@ -83,7 +109,21 @@
 	ontoggle={card.onToggle}
 	onpointerenter={card.onPointerEnter}
 	onpointerleave={card.onPointerLeave}
-	class="panel-surface floating-panel siglum-card">{gloss}</span
+	class="panel-surface floating-panel siglum-card"
+	>{gloss}{#if external && sourceLine}<!--
+		`lang` of its own, and the reverse of the panel's: the expansion above is
+		content, in the language the citation is printed in, and this sentence is
+		interface text in the language the reader chose. `target="_blank"` and
+		`rel="external noopener"` are `CopyrightNotice`'s, unchanged -- this is
+		the same promise (you are leaving for the publisher's own site) and it
+		should not read as a second kind of outbound link.
+	--><a
+			class="siglum-source"
+			href={external.href}
+			target="_blank"
+			rel="external noopener"
+			lang={i18n.lang}>{sourceLine}<Icon name="external-link" class="ext" /></a
+		>{/if}</span
 >
 
 <style>
@@ -143,5 +183,48 @@
 		line-height: 1.5;
 		color: var(--color-text-muted);
 		overflow-wrap: break-word;
+	}
+
+	/*
+	 * ITS OWN LINE, because it is a different statement from the expansion
+	 * above it -- what the letters mean, then where the volume can be read --
+	 * and because it is the card's only tap target: run in with the sentence
+	 * before it and the reader is aiming at a phrase mid-paragraph.
+	 *
+	 * The treatment is `CopyrightNotice`'s `.source-link` to the pixel, and for
+	 * the same reason the glyph is reused rather than invented: a reader who
+	 * has met the dotted-underline-plus-arrow at the foot of a work has learned
+	 * that it means "this leaves the site", and a second outbound style would
+	 * read as a second kind of promise.
+	 */
+	.siglum-source {
+		display: block;
+		margin-block-start: 0.35rem;
+		color: inherit;
+		text-decoration-line: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.15em;
+	}
+
+	.siglum-source:hover,
+	.siglum-source:focus-visible {
+		color: var(--color-accent);
+		text-decoration-style: solid;
+	}
+
+	.siglum-source:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
+	/* See `CopyrightNotice`'s note on these four numbers: an inline <svg> sits
+	   its box on the baseline, and lucide's viewBox insets the glyph, so it
+	   needs shrinking and dropping to centre against the x-height. */
+	.siglum-source :global(.ext) {
+		width: 0.85em;
+		height: 0.85em;
+		margin-inline-start: 0.28em;
+		vertical-align: -0.18em;
 	}
 </style>

@@ -34,6 +34,13 @@
 	 * `title` merely repeated the words under it, and a cue that opens nothing
 	 * is what `CitedBy` means by drawing the affordance only on a label that
 	 * shortens something. `glossOf` decides both halves, so they cannot drift.
+	 *
+	 * STILL THREE once a siglum can also name something on the publisher's own
+	 * site (`seg.external`, today an AAS volume): that address rides inside the
+	 * gloss card rather than becoming a fourth presentation with chrome of its
+	 * own -- `SiglumGloss` says why. The ordering above is unchanged and the
+	 * priority with it: a siglum this corpus can answer is answered here, and
+	 * only one it cannot offers the way out.
 	 */
 	import { glossOf, normalizeCitationSpacing, parseRefs, refHref } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
@@ -70,7 +77,12 @@
 			{#if href}
 				<a class="ref-link" {href}>{seg.raw}</a>
 			{:else if gloss}
-				<SiglumGloss label={seg.raw} {gloss} lang={effectiveLang} />
+				<SiglumGloss
+					label={seg.raw}
+					{gloss}
+					external={seg.kind === 'document' ? seg.external : undefined}
+					lang={effectiveLang}
+				/>
 			{:else}{seg.raw}{/if}
 		{/if}
 	{/each}

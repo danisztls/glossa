@@ -1934,7 +1934,7 @@ describe('parseRefs — documents named by title', () => {
 
 	it('is not shadowed by an unlinkable siglum appearing LATER in the clause', () => {
 		// Regression: nearly every PT citation ends in an "AAS 58 (1966) 818"
-		// volume reference, and AAS is recognized but never linkable. Matching
+		// volume reference, and AAS never resolves to an address here. Matching
 		// sigla first let that trailing AAS beat the linkable title earlier in
 		// the same clause — for most of the Portuguese corpus, silently.
 		const segs = parseRefs('Const. dogm. Dei Verbum, 2: AAS 58 (1966) 818.', { lang: 'pt' });
@@ -2138,5 +2138,108 @@ describe('glossOf', () => {
 		const segs = parseRefs('Cf. Gen 9:16.');
 		expect(glossOf(segs.find((s) => s.kind === 'scripture')!)).toBeUndefined();
 		expect(glossOf(segs.find((s) => s.kind === 'text')!)).toBeUndefined();
+	});
+});
+
+/**
+ * The one address this grammar answers with a link that leaves the site: an
+ * AAS volume, on the Holy See's own server. See the AAS section in
+ * `refs-grammar.ts` for why it is derived rather than tabulated, and why the
+ * printed year is a CHECK and not an input.
+ */
+describe('external sources — AAS volumes', () => {
+	const aas = (text: string, lang = 'en') =>
+		parseRefs(normalizeCitationSpacing(text), { lang }).find(
+			(s) => s.kind === 'document' && s.label === 'AAS'
+		) as Extract<RefSegment, { kind: 'document' }> | undefined;
+
+	it('builds the volume PDF when the citation states volume and year and they agree', () => {
+		expect(aas('Cf. ibid., 11: AAS 58 (1966), 1033-1034.')?.external).toEqual({
+			href: 'https://www.vatican.va/archive/aas/documents/AAS-58-1966-ocr.pdf',
+			label: '58 (1966)'
+		});
+	});
+
+	it('pads a single-digit volume, which is the Vatican’s own spelling', () => {
+		expect(aas('S. Pius X, Haerent animo, 4 Aug. 1908: AAS 4 (1912), 237.')?.external?.href).toBe(
+			'https://www.vatican.va/archive/aas/documents/AAS-04-1912-ocr.pdf'
+		);
+	});
+
+	// THE TRAP THE YEAR CHECK EXISTS FOR. AAS began in 1909, so a citation
+	// dated 1885 is volume 18 of the ACTA SANCTAE SEDIS, its predecessor,
+	// written under the later siglum out of habit. Deriving the year from the
+	// volume would send the reader to AAS 18 (1926) — a real volume, forty
+	// years wrong, and nothing downstream could tell.
+	it('refuses a volume whose printed year says Acta Sanctae Sedis', () => {
+		const seg = aas('Cf. Leo XIII, encycl. "Immortale Dei", Nov. 1, 1885: AAS 18 (1885) p. 161.');
+		// Still recognized, still glossed — it is only the way out that is
+		// withheld, because there is no way of knowing which gazette this is.
+		expect(seg).toMatchObject({ locus: '18' });
+		expect(seg?.external).toBeUndefined();
+	});
+
+	it('refuses a volume and year that disagree for any other reason', () => {
+		// Both are the corpus's own: an OCR'd volume, and a source's slip.
+		expect(
+			aas('Pius XII, Radiovēstījums 1941: AAS 4433 (1941), 199.', 'lv')?.external
+		).toBeUndefined();
+		expect(
+			aas('Instr. Eucharisticum Mysterium (25 May 1967), 3: AAS 57 (1967), 540.')?.external
+		).toBeUndefined();
+	});
+
+	it('refuses a citation that prints no year to check the volume against', () => {
+		expect(aas('AAS 14, 449ss.')?.external).toBeUndefined();
+		expect(aas('Pius XII AAS 1953, 799.')?.external).toBeUndefined();
+	});
+
+	// 95 (2003) onward is published one PDF per month under an Italian month
+	// name; a citation gives volume and page and never a month, so there is no
+	// address to derive rather than one nobody has written yet.
+	it('refuses a volume published monthly', () => {
+		expect(
+			aas('Franciscus, Evangelii gaudium, 1: AAS 105 (2013), 1019.')?.external
+		).toBeUndefined();
+	});
+
+	// Volume 9 and volume 75 are each bound in two parts, and the part is
+	// decided by the page number, which this grammar does not read.
+	it('refuses the two volumes published in two parts', () => {
+		const bound = aas('AAS 75 (1983), 165.');
+		expect(bound).toMatchObject({ locus: '75' });
+		expect(bound?.external).toBeUndefined();
+		const wartime = aas('Benedictus XV, Cum biblia sacra, 1917: AAS 9 (1917), 5.');
+		expect(wartime).toMatchObject({ locus: '9' });
+		expect(wartime?.external).toBeUndefined();
+	});
+
+	it('leaves every other siglum alone', () => {
+		const segs = parseRefs('Cf. Council of Trent (1546): DS 1514.');
+		const ds = segs.find((s) => s.kind === 'document' && s.label === 'DS') as
+			Extract<RefSegment, { kind: 'document' }> | undefined;
+		expect(ds?.locus).toBe('1514');
+		expect(ds?.external).toBeUndefined();
+	});
+
+	// The outbound address is not a slug and must never be mistaken for one:
+	// `refHref` still declines the segment, so nothing that resolves addresses
+	// on THIS site sees an AAS volume as one of them.
+	it('still resolves to no address on this site', () => {
+		const seg = aas('Cf. ibid., 11: AAS 58 (1966), 1033-1034.')!;
+		expect(seg.slug).toBeNull();
+		expect(refHref(seg, { lang: 'en' })).toBeUndefined();
+		expect(glossOf(seg)).toMatch(/^AAS — Acta Apostolicae Sedis/);
+	});
+
+	it('reads the same volume in running prose', () => {
+		const segs = linkifyProse('The text was promulgated (AAS 58 (1966), 1033) that autumn.', {
+			lang: 'en'
+		});
+		const seg = segs.find((s) => s.kind === 'document' && s.label === 'AAS') as
+			Extract<RefSegment, { kind: 'document' }> | undefined;
+		expect(seg?.external?.href).toBe(
+			'https://www.vatican.va/archive/aas/documents/AAS-58-1966-ocr.pdf'
+		);
 	});
 });

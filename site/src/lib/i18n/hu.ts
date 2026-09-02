@@ -256,6 +256,7 @@ export const hu: Dictionary = {
 	'colophon.typeInitials':
 		'A kezdőbetűk Pirata One betűvel készültek: ez egy gót betűtípus, amelynek nagybetűi olvashatók maradnak abban a méretben, amelyet az iniciálé megkíván — az oroszhoz pedig Ponomar, amely a Szinodális Nyomda egyházi szláv betűjét adja vissza. A Ponomar csak az iniciálét szedi, a szöveget soha: egy mai enciklika végig szinodális betűvel szedve valótlant állítana önmagáról. Mind SIL Open Font License alatt áll, és erről az oldalról érkezik, nem harmadik féltől, így egy oldal elolvasása senki más kiszolgálójától nem kér semmit.',
 	'refs.citedIn': 'Idézi',
+	'refs.externalVolume': '{volume}. kötet a(z) {host} oldalon — szkennelt PDF',
 	'bible.cccAbbrev': 'KEK',
 	'bible.wholeChapter': 'Ez a fejezet',
 	'bible.verseNotInEdition':

@@ -255,6 +255,7 @@ export const de: Dictionary = {
 	'colophon.typeInitials':
 		'Die Initialen sind Pirata One, eine gebrochene Schrift, deren Versalien in der Größe, die eine Initiale verlangt, lesbar bleiben, und — für das Russische — Ponomar, die die kirchenslawische Type der Synodaldruckerei wiedergibt. Ponomar setzt die Initiale und nie den Text: Eine moderne Enzyklika, durchgehend in Synodaltype gesetzt, würde etwas Unwahres über sie sagen. Alle stehen unter der SIL Open Font License und werden von dieser Seite ausgeliefert und nicht von Dritten, sodass das Lesen einer Seite von niemandes Server sonst etwas verlangt.',
 	'refs.citedIn': 'Zitiert in',
+	'refs.externalVolume': 'Band {volume} auf {host} — gescanntes PDF',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Dieses Kapitel',
 	'bible.verseNotInEdition':

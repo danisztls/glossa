@@ -254,6 +254,7 @@ export const fr: Dictionary = {
 	'colophon.typeInitials':
 		'Les lettrines sont en Pirata One, une gothique dont les capitales restent lisibles à la taille qu’exige une lettrine, et — pour le russe — en Ponomar, qui reproduit le caractère slavon de l’Imprimerie synodale. Ponomar ne compose que la lettrine et jamais le texte : une encyclique moderne composée entièrement en caractère synodal dirait d’elle quelque chose de faux. Toutes sont sous licence SIL Open Font License et servies depuis ce site plutôt que par un tiers, de sorte que lire une page ne demande rien au serveur de personne d’autre.',
 	'refs.citedIn': 'Cité dans',
+	'refs.externalVolume': 'Volume {volume} sur {host} — PDF numérisé',
 	'bible.cccAbbrev': 'CEC',
 	'bible.wholeChapter': 'Ce chapitre',
 	'bible.verseNotInEdition':

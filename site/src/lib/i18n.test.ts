@@ -145,16 +145,22 @@ describe('UI_LANGS and the dictionaries', () => {
 	// stood for — a sentence with no language name in it, or a plate's control
 	// labelled "Enlarge" with nothing said about which plate.
 	it('keeps each placeholder wherever English has one', async () => {
-		const placeholders: Record<string, string> = {
-			'summa.titleFromEdition': '{lang}',
-			'summa.noEditionInYourLanguage': '{lang}',
-			'plates.enlarge': '{title}'
+		// A list per key, not one placeholder: `refs.externalVolume` carries
+		// two, and a translation that keeps only the volume drops the host —
+		// the half of the sentence that says where the reader is being sent.
+		const placeholders: Record<string, string[]> = {
+			'summa.titleFromEdition': ['{lang}'],
+			'summa.noEditionInYourLanguage': ['{lang}'],
+			'plates.enlarge': ['{title}'],
+			'refs.externalVolume': ['{volume}', '{host}']
 		};
-		for (const [key, placeholder] of Object.entries(placeholders)) {
-			expect((await dictionaryFor('en'))[key], `en: ${key}`).toContain(placeholder);
-			for (const lang of UI_LANGS) {
-				const value = (await dictionaryFor(lang))[key];
-				if (value !== undefined) expect(value, `${lang}: ${key}`).toContain(placeholder);
+		for (const [key, expected] of Object.entries(placeholders)) {
+			for (const placeholder of expected) {
+				expect((await dictionaryFor('en'))[key], `en: ${key}`).toContain(placeholder);
+				for (const lang of UI_LANGS) {
+					const value = (await dictionaryFor(lang))[key];
+					if (value !== undefined) expect(value, `${lang}: ${key}`).toContain(placeholder);
+				}
 			}
 		}
 	});

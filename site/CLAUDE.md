@@ -768,6 +768,29 @@ from the sync's edition records, `reference-coverage.mjs` buckets per work,
 **`prose.document` is the counter that guards the sigla scan** — counted per
 family, with preflight refusing a 3% drop, same as prose scripture.
 
+## One siglum links off the site, and the year is what makes it safe
+
+`AAS` is the only citation the grammar answers with an address outside the
+corpus (2026-09-02, §Linking out): a `RefSegment`'s optional `external`, built
+by `aasVolume` in `refs-grammar.ts` and rendered inside `SiglumGloss`'s card —
+never as a glyph on the siglum, which would mark thousands of references in a
+column that is already apparatus.
+
+- **The printed year is a CHECK, never an input.** Volume _n_ is 1908 + _n_,
+  so the citation says it twice and both must agree. A long tail of sources
+  write pre-1909 documents as `AAS 18 (1885)`, meaning volume 18 of the **Acta
+  Sanctae Sedis** — deriving the year sends each to a real AAS volume forty
+  years wrong, and nothing downstream can see it. Refusing the mismatch costs
+  256 links and prevents 256 confident lies.
+- **`slug` stays null and `refHref` still declines it.** An external address is
+  a separate field for exactly that reason: nothing that resolves addresses
+  HERE (`corpus-routes.json`, `sitemapPaths`, `assertNamed`, `suggest`) may
+  ever see one. The proof is that the reference-coverage table did not move.
+- **The volume list is read off the Vatican's own index**, not guessed: 1–94
+  are single PDFs (9 and 75 in two parts, so both are skipped), 95 onward are
+  monthly and a citation names no month. That ceiling is 23.8% of AAS
+  references and is a fact about the publisher, not a gap to close.
+
 ## Haydock on the page: the commentary's site half
 
 `commentary.haydock.en`'s units ADDRESS `bible.douay-rheims.en` rather than

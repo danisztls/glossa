@@ -100,6 +100,25 @@
 // Public types
 // --------------------------------------------------------------------------
 
+/**
+ * Where a citation points OUTSIDE this corpus — the first and, as of
+ * 2026-09-02, only such address the grammar produces (`aasVolume`).
+ *
+ * A DIFFERENT KIND OF OBJECT FROM EVERY OTHER LINK HERE, and deliberately not
+ * spelled like one. `slug` names something the corpus holds and `refHref`
+ * turns it into a path on this site; this names a file on the publisher's
+ * own, and nothing resolves it — the URL is already the answer. Keeping the
+ * two fields apart is what stops an external entry from leaking into the
+ * surfaces that assume every document has an address here (`corpus-routes`,
+ * `sitemapPaths`, `assertNamed`, `suggest`), which all read `slug`.
+ */
+export interface ExternalSource {
+	/** The address, on the publisher's own site. */
+	href: string;
+	/** What it opens, as the citation and the URL agree it is — `58 (1966)`. */
+	label: string;
+}
+
 export type RefSegment =
 	| { kind: 'text'; text: string }
 	| {
@@ -154,6 +173,11 @@ export type RefSegment =
 			 *  time, not re-derived in `refAddress`, so there's one place that
 			 *  decides "is this a document we have," not two that could drift. */
 			slug: string | null;
+			/** Set only where the citation names something the corpus does not
+			 *  hold and the PUBLISHER does — today, an AAS volume. Absent on
+			 *  every other segment, and never an alternative to `slug`: a
+			 *  siglum that resolves here is linked here. */
+			external?: ExternalSource;
 			raw: string;
 	  };
 
@@ -1542,6 +1566,10 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // appearance) has nothing in the corpus to link to, so the point of
 // recognizing THOSE is a quiet, informative non-link (sigla + locus +
 // expansion tooltip) instead of the sigla vanishing into unstyled text.
+// AAS is the one that is no longer only that: it still resolves to no address
+// here — `slug` stays null and `refHref` still declines it — but the volume it
+// names is a file on vatican.va, so the card its expansion opens carries a
+// link out to it as well. See the AAS section by `findDocumentAt`.
 //
 // This table is a decoder ring built by counting `\bTOKEN\b` occurrences in
 // the corpus's citations and confirming each entry's meaning against its
@@ -3002,12 +3030,98 @@ interface DocumentMatch {
 	consumedEnd: number;
 	locus: string | null;
 	slug: string | null;
+	external: ExternalSource | null;
 }
 
 /** A locus is digits, comma/dot-chained and dash-ranged, plus an optional "# N" subsection — display-only text, not parsed further (document segments never resolve to a link). */
 const LOCUS_RE = new RegExp(
 	`^\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*[,.]\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*(?:\\s*#\\s*\\d+)?`
 );
+
+// --------------------------------------------------------------------------
+// Acta Apostolicae Sedis — the one address this grammar answers with a link
+// that LEAVES the site (docs/decisions.md §Linking out).
+//
+// AAS is a venue, not a work: "AAS 86 (1994), 386-387" names a page in a
+// printed volume, and a page number has no unit for this corpus's
+// address grammar to become. So it is not ingested and never will be. What
+// the Holy See publishes instead is the bound volume as one scanned PDF at a
+// fully predictable address, which makes this a DERIVED href and not a table
+// of typed rows — the failure shape a URL table has here is the silent stale
+// row, and a derivation cannot rot one entry at a time.
+//
+// THE PRINTED YEAR IS A CHECK, NOT AN INPUT, and that is the whole design.
+// Volume n is the year 1908 + n without exception, so the citation states the
+// same fact twice and the two have to agree before anything is linked. Of the
+// 22,885 AAS citations carrying a volume (measured 2026-09-02 over `build/`),
+// 22,417 print the year and 270 of those disagree with the volume beside it.
+// Those 270 are not noise to be tolerated — they are the trap:
+//
+//   Leo XIII, "Immortale Dei", 1 Nov. 1885: AAS 18 (1885)
+//
+// AAS did not exist in 1885. That is volume 18 of the ACTA SANCTAE SEDIS, its
+// 1865-1908 predecessor, which the sources cite under the later siglum out of
+// habit; the corpus does it for Pascendi, Divinum illud, Immortale Dei and a
+// long tail of others. Derive the year from the volume and every one of them
+// becomes a confident link to the wrong gazette, forty years out — a real
+// page, so nothing downstream could ever flag it. Requiring the citation's
+// own year refuses all of them, because 1908 + 18 is not 1885. The rest of
+// the 270 are OCR (`AAS 4433 (1941)`, `AAS 57 (1067)`) and the same rule
+// declines them for the same reason: two independent tokens, both must agree,
+// one slip in either and the reader is told nothing rather than something
+// false. The remaining 468 print no year at all -- mangled parentheses,
+// `AAS 1953, 799` with no volume, ASS's straddling `(1895-96)` -- and are
+// likewise left alone.
+//
+// THE VOLUME LIST IS READ OFF THE VATICAN'S OWN INDEX (`/archive/aas/`), not
+// guessed: volumes 1-94 are single files, 95 onward are published one PDF per
+// month under an Italian month name with inconsistent spelling
+// (`gennaio 2003.pdf`, `luglio2005.pdf`) — and a citation gives volume and
+// page, never a month, so those are unresolvable in principle rather than
+// merely unimplemented. Volumes 9 and 75 are the two published in two parts,
+// and the part is decided by the page number, which this grammar does not
+// read; they are skipped rather than pointed at half of themselves. Every one
+// of the 92 addresses this builds was confirmed 200 and `application/pdf` by
+// HEAD on 2026-09-02 (1.7-9.6 MB, median 4.1).
+// --------------------------------------------------------------------------
+
+/** The year in parentheses immediately after the volume, and nothing between. */
+const AAS_YEAR_RE = /^ *\((\d{4})\)/;
+/** Volume 1 is 1909. */
+const AAS_YEAR_ZERO = 1908;
+/** 95 (2003) onward is a PDF per month, addressable only by month. */
+const AAS_LAST_BOUND_VOLUME = 94;
+/** Published in two parts, and the citation's page decides which. */
+const AAS_SPLIT_VOLUMES = new Set([9, 75]);
+
+function aasVolume(locus: string | null, after: string): ExternalSource | null {
+	// `LOCUS_RE` chains on commas, so "AAS 14, 449" reads as one locus; a
+	// volume is a bare integer and anything else is not one.
+	if (locus === null || !/^\d+$/.test(locus)) return null;
+	const volume = Number(locus);
+	const printed = AAS_YEAR_RE.exec(after);
+	if (!printed) return null;
+	const year = Number(printed[1]);
+	if (year !== AAS_YEAR_ZERO + volume) return null;
+	if (volume < 1 || volume > AAS_LAST_BOUND_VOLUME) return null;
+	if (AAS_SPLIT_VOLUMES.has(volume)) return null;
+	// Zero-padded through volume 9, which is the Vatican's own spelling.
+	const file = `AAS-${String(volume).padStart(2, '0')}-${year}-ocr.pdf`;
+	return {
+		href: `https://www.vatican.va/archive/aas/documents/${file}`,
+		label: `${volume} (${year})`
+	};
+}
+
+/** The siglum's address on its publisher's site, where it has one. Keyed by
+ *  siglum so a second such source joins as a row, not as a code path. */
+function externalSourceFor(
+	sigla: string,
+	locus: string | null,
+	after: string
+): ExternalSource | null {
+	return sigla === 'AAS' ? aasVolume(locus, after) : null;
+}
 
 function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatch | null {
 	cfg.documentRe.lastIndex = start;
@@ -3032,7 +3146,10 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 		matchStart: m.index,
 		consumedEnd,
 		locus,
-		slug
+		slug,
+		// Read past the locus, because the corroborating year is printed
+		// there and the segment stops before it — see the AAS section.
+		external: externalSourceFor(m[0], locus, s.slice(consumedEnd))
 	};
 }
 
@@ -3429,7 +3546,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	//    only ordering that doesn't let one shadow the other by accident. It
 	//    is not a hypothetical: nearly every Portuguese citation ends in an
 	//    "AAS 58 (1966) 818" volume reference, and AAS is a recognized (but
-	//    never linkable, `slug: null`) siglum. Trying sigla first meant that
+	//    never linkable HERE, `slug: null`) siglum. Trying sigla first meant that
 	//    trailing AAS beat the spelled-out "Const. dogm. Dei Verbum, 2"
 	//    earlier in the same clause, so the segment that CAN link lost to one
 	//    that never can — silently, and for most of the PT corpus.
@@ -3500,6 +3617,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			locus: dm.locus,
 			expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 			slug: dm.slug,
+			...(dm.external ? { external: dm.external } : {}),
 			raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
 		});
 		if (dm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(dm.consumedEnd)));
@@ -3881,6 +3999,7 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 					locus: dm.locus,
 					expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 					slug: dm.slug,
+					...(dm.external ? { external: dm.external } : {}),
 					raw: text.slice(dm.matchStart, dm.consumedEnd)
 				}
 			]

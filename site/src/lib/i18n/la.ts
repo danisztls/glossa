@@ -291,6 +291,7 @@ export const la: Dictionary = {
 	'colophon.typeInitials':
 		'Litterae initiales sunt Pirata One, forma Gothica cuius capitales etiam ea magnitudine quam littera initialis poscit legi possunt, et — pro Russicis — Ponomar, quae typum Slavonicum ecclesiasticum Officinae Synodalis refert. Ponomar litteram initialem tantum, numquam textum, componit: encyclica nostrae aetatis tota typo Synodali composita falsum aliquid de se diceret. Omnes sub licentia SIL Open Font License dantur et ex hac ipsa sede mittuntur, non ex aliena, ne pagina legenda quicquam ab alterius machina petat.',
 	'refs.citedIn': 'Ubi affertur',
+	'refs.externalVolume': 'Volumen {volume} apud {host} — imagines photographicae (PDF)',
 	// The Latin editio typica is `Catechismus Catholicae Ecclesiae`, so the
 	// siglum is CCE — as in French. `refparse.ts` still reads only `ccc`;
 	// this key names the work in prose, it does not decide what the search

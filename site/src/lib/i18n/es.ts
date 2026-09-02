@@ -253,6 +253,7 @@ export const es: Dictionary = {
 	'colophon.typeInitials':
 		'Las iniciales son Pirata One, una letra gótica cuyas mayúsculas siguen siendo legibles al tamaño que exige una capitular, y —para el ruso— Ponomar, que reproduce el tipo eslavo eclesiástico de la Imprenta Sinodal. Ponomar compone la inicial y nunca el texto: una encíclica moderna compuesta entera en tipo sinodal diría algo falso sobre lo que es. Todas están licenciadas bajo la SIL Open Font License y se sirven desde este sitio y no desde un tercero, de modo que leer una página no pide nada al servidor de nadie más.',
 	'refs.citedIn': 'Citado en',
+	'refs.externalVolume': 'Volumen {volume} en {host} — PDF escaneado',
 	'bible.cccAbbrev': 'CIC',
 	'bible.wholeChapter': 'Este capítulo',
 	'bible.verseNotInEdition':

@@ -418,6 +418,13 @@ export const en: Dictionary = {
 	// everything citing it sits beside it. Each entry carries its own
 	// work's name, so the heading names no work at all.
 	'refs.citedIn': 'Cited in',
+	// The one line in the apparatus that sends the reader off this site: an
+	// AAS citation names a volume of the Holy See's gazette, which this corpus
+	// does not hold and vatican.va publishes as a scanned PDF. It says so —
+	// the reader is owed the format before the tap, not after it, and on a
+	// page being read offline the link is dead and this is the only warning of
+	// that there can be. `{volume}` is "58 (1966)", `{host}` "vatican.va".
+	'refs.externalVolume': 'Volume {volume} at {host} — scanned PDF',
 	'bible.cccAbbrev': 'CCC',
 	'bible.wholeChapter': 'This chapter',
 	'bible.verseNotInEdition':

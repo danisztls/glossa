@@ -249,6 +249,7 @@ export const pl: Dictionary = {
 	'colophon.typeInitials':
 		'Inicjały to Pirata One, gotyk, którego wersaliki pozostają czytelne w rozmiarze, jakiego wymaga inicjał, oraz — dla rosyjskiego — Ponomar, odtwarzający cerkiewnosłowiański krój Drukarni Synodalnej. Ponomar składa inicjał, nigdy tekst: nowoczesna encyklika złożona w całości krojem synodalnym mówiłaby o sobie nieprawdę. Wszystkie są na licencji SIL Open Font License i serwowane z tej strony, a nie przez osoby trzecie, więc czytanie strony niczego nie wymaga od cudzego serwera.',
 	'refs.citedIn': 'Cytowane w',
+	'refs.externalVolume': 'Tom {volume} na {host} — skan PDF',
 	'bible.cccAbbrev': 'KKK',
 	'bible.wholeChapter': 'Ten rozdział',
 	'bible.verseNotInEdition':

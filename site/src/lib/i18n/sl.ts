@@ -251,6 +251,7 @@ export const sl: Dictionary = {
 	'colophon.typeInitials':
 		'Začetnice so Pirata One, gotica, katere verzalke ostanejo berljive v velikosti, ki jo zahteva inicialka, za ruščino pa Ponomar, ki povzema cerkvenoslovansko črko Sinodalne tiskarne. Ponomar stavi inicialko in nikoli besedila: sodobna okrožnica, v celoti stavljena v sinodalni črki, bi o sebi povedala nekaj neresničnega. Vse so pod licenco SIL Open Font License in jih streže to spletišče, ne tretja oseba, tako da branje strani ne zahteva ničesar od strežnika kogar koli drugega.',
 	'refs.citedIn': 'Navedeno v',
+	'refs.externalVolume': 'Zvezek {volume} na {host} — skenirani PDF',
 	'bible.cccAbbrev': 'KKC',
 	'bible.wholeChapter': 'To poglavje',
 	'bible.verseNotInEdition': 'Te številke vrstice v tej izdaji ni — glejte opombo v viru strani',
