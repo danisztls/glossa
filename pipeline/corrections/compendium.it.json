@@ -1,5 +1,29 @@
 [
   {
+    "id": "compendium.it-120-refs-620-for-621",
+    "locator": {
+      "question": 120
+    },
+    "field": "refs_html",
+    "from": "<p>610-611<br />620</p>",
+    "to": "<p>610-611<br />621</p>",
+    "reason": "The margin apparatus prints 620 where 11 of the other thirteen editions print 621. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 621 is the paragraph this question condenses; CCC 620 is not. Compendium 120 asks \"How is Jesus’ offering expressed at the Last Supper?\"  --  CCC 621: \"Jesus freely offered himself for our salvation. Beforehand, during the Last Supper, he both symbolized this of…\"  against CCC 620: \"Our salvation flows from God's initiative of love for us, because \"he loved us and sent his Son to be the expi…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.it-245-refs-1198-1999-for-1198-1199",
+    "locator": {
+      "question": 245
+    },
+    "field": "refs_html",
+    "from": "1198-1999",
+    "to": "1198-1199",
+    "reason": "The margin apparatus prints 1198-1999 where 9 of the other thirteen editions print 1198-1199. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "A range of 802 paragraphs is not a reference block: the largest in the work is 19. The second group of this question's apparatus is the article's In Brief, CCC 1197-1199. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.it-534-refs-2505-for-2565",
     "locator": {
       "question": 534
@@ -24,6 +48,18 @@
     "added": "2026-08-28"
   },
   {
+    "id": "compendium.it-546-refs-2018-for-2618",
+    "locator": {
+      "question": 546
+    },
+    "field": "refs_html",
+    "from": "2617; 2018",
+    "to": "2617; 2618",
+    "reason": "The margin apparatus prints 2018 where 10 of the other thirteen editions print 2618. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 2018 as 2618 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.it-556-refs-2043-for-2643",
     "locator": {
       "question": 556
@@ -34,5 +70,29 @@
     "reason": "The reference line for question 556 prints '2639-2043 2649', which its second number is smaller than its first, so the range is empty. Eight editions print '2639-2643' and this edition's own start already agrees; the printed '0' stands for '6'. No reference is added or removed.",
     "evidence": "The other 9 editions carrying a reference line for question 556 print: DE '2639-2643 2649', EN '2639-2643 2649', ES '2639-2643 2649', FR '2639-2643 2649', HU '2639-2643 2649', PT '2639 – 2643 2649', RO '2639‑2643 2649', SL '2639-2643 2649', SV '2639-3643, 2649'. One of three identical '0'-for-'6' slips in this edition's section on prayer (534, 544, 556).",
     "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.it-557-refs-2050-2051-for-2650-2651",
+    "locator": {
+      "question": 557
+    },
+    "field": "refs_html",
+    "from": "2050-2051",
+    "to": "2650-2651",
+    "reason": "The margin apparatus prints 2050-2051 where 11 of the other thirteen editions print 2650-2651. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 2650-2651 is the paragraph this question condenses; CCC 2050-2051 is not. Compendium 557 asks \"What is the importance of Tradition in regard to prayer?\"  --  CCC 2650-2651: \"Prayer cannot be reduced to the spontaneous outpouring of interior impulse: in order to pray, one must have th…\"  against CCC 2050-2051: \"The Roman Pontiff and the bishops, as authentic teachers, preach to the People of God the faith which is to be…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.it-577-refs-2658-for-2758",
+    "locator": {
+      "question": 577
+    },
+    "field": "refs_html",
+    "from": "<p>2604<br />2746-2751<br />2658</p>",
+    "to": "<p>2604<br />2746-2751<br />2758</p>",
+    "reason": "The margin apparatus prints 2658 where 13 of the other thirteen editions print 2758. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 2658 as 2758 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
   }
 ]

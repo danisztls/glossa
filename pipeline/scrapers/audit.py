@@ -128,12 +128,58 @@ It reports and never fails, for the same reason `balance` does not: the band
 that would clear the legitimate divergences is wide enough to have missed the
 finding.
 
+THE SIXTH AUDIT, `refs`, is the same idea applied to the one apparatus that is
+not written in any language: the Catechism paragraph numbers each Compendium
+question prints beside itself. Question N is the same question in all fourteen
+editions, so those numbers are not fourteen translations of an assertion, they
+are fourteen copies of it -- and a copy can simply be wrong.
+
+That is what lets this one vote where `balance` and `divisions` may only rank.
+Both of those compare things an edition is entitled to differ about, so the
+strongest they can say is "an edition alone against the rest is a lead". Here
+thirteen editions reading 1198-1199 where the Italian reads `1198-1999` is not
+a difference of convention, and the modal set is an oracle.
+
+READ THE SHAPE, NOT THE COUNT. Sets are classified by how they stand to the
+modal one, and the classes mean different things:
+
+  - **subset / superset** is the edition, when it is consistent. The German
+    prints only the first of the two ranges at 170 of 598 questions and its
+    own raw page says so at each; the Slovenian prints a wider apparatus at
+    82. Neither is a defect and a report that led with counts would bury
+    everything else under them.
+  - **overlap / disjoint** is a misprint. No convention produces a set that
+    crosses the others without containing them. All four the Italian carries
+    are in its raw HTML verbatim (`1198-1999`, `2617; 2018`, `2658`, `620`),
+    and the Portuguese prints `971` at three consecutive questions where the
+    other thirteen read 891, 893 and 971.
+  - **shifted** is a displaced PAIR -- a swap, or a run -- and it is reported
+    separately because it names a different culprit: an apparatus read
+    correctly and attached to the wrong unit. A lone set that merely happens
+    to equal a neighbour's is NOT one, which was learned by checking: of the
+    17 a match-a-neighbour test flagged, 14 sit in the right slot on their own
+    raw page. The German exchanging questions 248 and 249 is the only real
+    one in the corpus.
+  - **silent** is a question where we stored no apparatus and the others did.
+    It is the only class that is a straight recall number.
+
+WHY THE CATECHISM IS NOT HERE, given that it is the other work with eight
+editions and would seem the obvious second candidate: it has no apparatus of
+addresses. Its `related` field is the right shape and is empty in all 22,920
+paragraphs of all eight editions, because the mirrors do not print the margin
+apparatus at all. Its `citations` are prose in the edition's own language, and
+three of the eight fold them into the sentence rather than footnoting them, so
+a cross-edition count measures the convention. There is one comparison there
+worth making and it is narrower than this; docs/research/ccc-citation-
+apparatus.md records it and the measurements behind it.
+
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
   ./audit.py toc                 # parsed structure vs the read oracle
   ./audit.py balance             # cross-language text-length symmetry
   ./audit.py divisions           # cross-language structure-tree symmetry
-  ./audit.py all                 # all five; exit 1 if any gates
+  ./audit.py refs                # cross-language reference-apparatus symmetry
+  ./audit.py all                 # all six; exit 1 if any gates
 """
 
 from __future__ import annotations
@@ -880,11 +926,336 @@ def report_divisions(rows: list[dict], limit: int) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# Cross-language reference apparatus
+# --------------------------------------------------------------------------
+
+#: The types carrying an apparatus of ADDRESSES rather than of prose. Only
+#: the Compendium has one today: every edition prints, beside each question,
+#: the Catechism paragraphs that question condenses.
+#:
+#: The CCC is deliberately absent and it is worth saying why, because it looks
+#: like the obvious second candidate. Its `related` field -- the printed
+#: margin apparatus, which WOULD be exactly this shape -- is empty in all
+#: 22,920 paragraphs of all eight editions, because vatican.va's mirrors do
+#: not print it (`ccc.py` says so in every manifest). What the CCC does carry
+#: is `citations`, and those are PROSE: a work title in the edition's own
+#: language, and three of the eight editions fold their references into the
+#: sentence and print no footnote at all. Counting them across editions
+#: measures which convention an edition follows, not whether we read it --
+#: see docs/research/ccc-citation-apparatus.md for the measurement and for
+#: the one comparison in it that is worth making.
+REFS_TYPES = ("compendium",)
+
+#: Ranges are written with any of five dashes across the fourteen editions,
+#: and the extractors leave a space on one or both sides of some of them.
+_DASHES = "-‐‑–—"
+
+#: A ref is at most four digits: the Catechism ends at 2865. The ceiling is
+#: what stops a mangled range from expanding into tens of thousands of
+#: integers, and it is the parse's only sanity gate.
+REF_MAX = 2865
+
+
+def parse_refs(raw: str) -> tuple[frozenset[int], tuple[str, ...]]:
+    """A stored `ccc_refs` string as the set of paragraphs it names, plus the
+    tokens that were not paragraph numbers.
+
+    COMPARED AS A SET, NOT AS A STRING, because every edition punctuates the
+    same apparatus differently and none of it carries meaning: `1-25` and
+    `1 - 25`, `84, 91-94, 99` and `84 91-94 99` and `84.91 94.99` are one
+    apparatus in four hands. Normalizing to integers is what makes a
+    fourteen-way comparison possible at all; it is also why the second half of
+    the return value exists, since a token this cannot read is invisible to a
+    set comparison and is usually the interesting one (`787-786` reversed,
+    `1655-1558` for `1655-1658`).
+
+    The full stop is a SEPARATOR here and not a sentence end. Italian
+    typographic convention writes a list of single paragraphs as `96.98`, and
+    the Portuguese and Spanish mirrors inherit it; reading the dot as anything
+    else turns two references into one impossible one."""
+    text = re.sub(rf"\s*[{_DASHES}]\s*", "-", (raw or "").strip())
+    out: set[int] = set()
+    unreadable: list[str] = []
+    for token in re.split(r"[;,.\s]+", text):
+        if not token:
+            continue
+        span = re.fullmatch(r"(\d+)-(\d+)", token)
+        if span:
+            first, last = int(span.group(1)), int(span.group(2))
+            if first <= last <= REF_MAX:
+                out.update(range(first, last + 1))
+            else:
+                unreadable.append(token)
+        elif token.isdigit() and int(token) <= REF_MAX:
+            out.add(int(token))
+        else:
+            unreadable.append(token)
+    return frozenset(out), tuple(unreadable)
+
+
+def unit_refs(work: Path, work_type: str) -> dict | None:
+    """Addressable unit -> the raw apparatus string stored under it, for the
+    units that have one. A unit with no apparatus is absent from the map
+    rather than present and empty, so "we read nothing here" and "the source
+    prints nothing here" stay one question this audit can ask."""
+    if work_type != "compendium":
+        return None
+    return {
+        q["n"]: q["ccc_refs"]
+        for q in json.loads((work / "questions.json").read_text())
+        if q.get("ccc_refs")
+    }
+
+
+def classify(mine: frozenset[int], modal: frozenset[int]) -> str:
+    """How one edition's ref-set stands to the set the others agree on.
+
+    THE SHAPE IS THE DIAGNOSIS, and it is the whole reason this reports a
+    classification rather than a count. A translating conference that decides
+    to print less of the apparatus prints a SUBSET, everywhere, consistently;
+    one that decides to print more prints a SUPERSET the same way. Neither is
+    a defect and both are common -- the German edition omits the In Brief
+    range at 170 of 598 questions and its own raw page says so at every one.
+
+    But no printing convention produces a set that overlaps the others'
+    without containing or being contained by it, and none produces a disjoint
+    one. Those are misprints and misreads, which is why they are what the
+    report leads with."""
+    if mine == modal:
+        return "same"
+    if mine < modal:
+        return "subset"
+    if mine > modal:
+        return "superset"
+    return "overlap" if mine & modal else "disjoint"
+
+
+def measure_refs(corpus: Path) -> list[dict]:
+    """One row per work, holding every edition's departures from the modal
+    apparatus.
+
+    THE MODAL SET IS THE ORACLE, and a vote is legitimate here in a way it
+    would never be over text. Question N is the same question in every
+    edition, and what it stores is a list of Catechism paragraph NUMBERS --
+    so the editions are not expressing the same thing differently, they are
+    asserting the same arithmetic, and thirteen of them saying 1198-1199
+    where one says 1198-1999 is not a matter of style. `balance` and
+    `divisions` both stop at "an edition alone against the rest is a lead"
+    for exactly the reason this one can go further: they compare prose length
+    and typography, which an edition is entitled to differ about."""
+    rows = []
+    for base, langs in sorted(language_groups(corpus).items()):
+        work_type = json.loads(
+            (next(iter(langs.values())) / "manifest.json").read_text()
+        )["type"]
+        if work_type not in REFS_TYPES:
+            continue
+        raw = {}
+        for lang, work in langs.items():
+            got = unit_refs(work, work_type)
+            if got is not None:
+                raw[lang] = got
+        if len(raw) < 3:
+            # Two editions can disagree but cannot outvote each other, and a
+            # tie reported as a finding is a coin toss with a table around it.
+            continue
+        parsed = {
+            lang: {n: parse_refs(s) for n, s in units.items()}
+            for lang, units in raw.items()
+        }
+        units = sorted({n for units in parsed.values() for n in units})
+        modal: dict[int, tuple[frozenset[int], int]] = {}
+        for n in units:
+            votes = collections.Counter(p[n][0] for p in parsed.values() if n in p)
+            modal[n] = votes.most_common(1)[0]
+        findings = collections.defaultdict(list)
+        counts = {lang: collections.Counter() for lang in parsed}
+        for lang, units_parsed in parsed.items():
+            shapes: dict[int, str] = {}
+            entries: dict[int, dict] = {}
+            for n in units:
+                agreed, votes = modal[n]
+                if n not in units_parsed:
+                    shapes[n] = "silent"
+                    entries[n] = {"unit": n, "raw": "", "votes": votes}
+                    continue
+                mine, unreadable = units_parsed[n]
+                if unreadable:
+                    counts[lang]["unreadable"] += 1
+                    findings[lang].append(
+                        {
+                            "unit": n,
+                            "shape": "unreadable",
+                            "raw": raw[lang][n],
+                            "votes": votes,
+                            "tokens": list(unreadable),
+                        }
+                    )
+                shape = classify(mine, agreed)
+                if shape == "same":
+                    continue
+                shapes[n] = shape
+                entries[n] = {
+                    "unit": n,
+                    "raw": raw[lang][n],
+                    "votes": votes,
+                    "agreed": sorted(agreed),
+                    "matches_modal_of": next(
+                        (
+                            n + step
+                            for step in (1, -1)
+                            if modal.get(n + step, (None,))[0] == mine
+                        ),
+                        None,
+                    ),
+                }
+            # SECOND PASS, because a displacement is a claim about a PAIR.
+            #
+            # This class was written to catch our own misalignment -- an
+            # apparatus read correctly and attached to the wrong question --
+            # on the reasoning that a set equal to a neighbour's modal set is
+            # unlikely to be a coincidence. Against the raw pages that
+            # reasoning failed: 14 of the 17 it flagged sit in the right slot
+            # on their own source page, and merely happen to name a range a
+            # neighbouring question also names, because these editions draw
+            # their ranges differently from one another to begin with.
+            #
+            # What a real displacement leaves is a PAIR -- a swap, or a run --
+            # so the unit it was displaced from must deviate too. That is the
+            # rule now, and it takes the class from 17 to 3: the German
+            # exchanges questions 248 and 249, which its own page confirms,
+            # and nothing else in the corpus is displaced at all.
+            for n, shape in shapes.items():
+                partner = entries[n].get("matches_modal_of") if n in entries else None
+                if partner is not None and partner in shapes:
+                    step = partner - n
+                    shape = f"shifted{step:+d}"
+                counts[lang][shape] += 1
+                findings[lang].append({**entries[n], "shape": shape})
+            findings[lang].sort(key=lambda f: f["unit"])
+        rows.append(
+            {
+                "work": base,
+                "units": len(units),
+                "editions": sorted(parsed),
+                "unanimous": sum(1 for n in units if modal[n][1] == len(parsed)),
+                "weakest": min(modal[n][1] for n in units) if units else 0,
+                "counts": {lang: dict(c) for lang, c in counts.items()},
+                "findings": dict(findings),
+                "modal": {n: sorted(modal[n][0]) for n in units},
+            }
+        )
+    return rows
+
+
+#: The shapes no printing convention produces, and which therefore name a
+#: defect rather than an edition. `shifted` is ours; the other three are
+#: usually the source's, and the report does not try to tell those apart --
+#: that is what reading the raw page is for.
+REFS_DEFECT_SHAPES = ("shifted+1", "shifted-1", "disjoint", "overlap", "unreadable")
+
+
+def _span(numbers: list[int]) -> str:
+    """A ref-set printed back as ranges, so a finding can be read against the
+    edition's own string without counting integers."""
+    if not numbers:
+        return "-"
+    parts, start, prev = [], numbers[0], numbers[0]
+    for value in [*numbers[1:], None]:
+        if value == prev + 1:
+            prev = value
+            continue
+        parts.append(str(start) if start == prev else f"{start}-{prev}")
+        if value is None:
+            break
+        start = prev = value
+    return " ".join(parts)
+
+
+def report_refs(rows: list[dict], limit: int) -> int:
+    leads = sum(
+        1
+        for row in rows
+        for finds in row["findings"].values()
+        for f in finds
+        if f["shape"] in REFS_DEFECT_SHAPES
+    )
+    print(
+        f"{len(rows)} work(s) with a cross-language reference apparatus, "
+        f"{leads} defect lead(s).\n"
+        "A margin reference is an ADDRESS, so the editions assert the same "
+        "arithmetic and the\nmodal set is an oracle rather than an opinion. "
+        "Subset and superset are what a translating\nconference decides; "
+        "overlapping, disjoint and shifted sets are what nobody decides.\n"
+        "Reports only; never gates."
+    )
+    for row in rows:
+        print(
+            f"\n{row['work']}  {len(row['editions'])} editions, "
+            f"{row['units']:,} units with an apparatus, "
+            f"modal set unanimous in {row['unanimous']:,}, "
+            f"weakest support {row['weakest']}/{len(row['editions'])}"
+        )
+        order = sorted(
+            row["counts"],
+            key=lambda lang: (
+                -sum(
+                    v for k, v in row["counts"][lang].items() if k in REFS_DEFECT_SHAPES
+                )
+            ),
+        )
+        print(
+            f"    {'edition':10}{'silent':>7}{'subset':>7}{'superset':>9}"
+            f"{'overlap':>8}{'disjoint':>9}{'shifted':>8}{'unread':>7}"
+        )
+        for lang in order:
+            c = row["counts"][lang]
+            shifted = c.get("shifted+1", 0) + c.get("shifted-1", 0)
+            print(
+                f"    {lang:10}{c.get('silent', 0):7}{c.get('subset', 0):7}"
+                f"{c.get('superset', 0):9}{c.get('overlap', 0):8}"
+                f"{c.get('disjoint', 0):9}{shifted:8}{c.get('unreadable', 0):7}"
+            )
+        found = [
+            (lang, find)
+            for lang in order
+            for find in row["findings"][lang]
+            if find["shape"] in REFS_DEFECT_SHAPES
+        ]
+        if found and limit:
+            print("\n  defect leads, edition against the rest:")
+        shown = 0
+        for lang, find in found:
+            if shown >= limit:
+                break
+            agreed = _span(find.get("agreed", []))
+            print(
+                f"    {lang:10} q{find['unit']:<4} {find['shape']:10} "
+                f"{find['raw']!r:28} vs {find['votes']:2}x {agreed!r}"
+            )
+            shown += 1
+        if len(found) > shown:
+            print(f"    ... {len(found) - shown} more (raise --limit, or --json)")
+    # Not gated, for the reason `balance` is not: a lead is a source misprint
+    # to file or a reader to fix, and neither is a thing a build should stop
+    # for. What gates the Compendium is `validate`'s absolute 598.
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
         "check",
-        choices=["coverage", "withheld", "toc", "balance", "divisions", "all"],
+        choices=[
+            "coverage",
+            "withheld",
+            "toc",
+            "balance",
+            "divisions",
+            "refs",
+            "all",
+        ],
         default="all",
         nargs="?",
     )
@@ -901,13 +1272,15 @@ def main() -> int:
     corpus = common.require_corpus()
     # `balance` and `divisions` read no raw pages and no document works, so
     # neither pays for the coverage measurement it never looks at.
-    rows = measure(corpus) if args.check not in ("balance", "divisions") else []
+    rows = measure(corpus) if args.check not in ("balance", "divisions", "refs") else []
 
     if args.json:
         if args.check == "balance":
             json.dump(measure_balance(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "divisions":
             json.dump(measure_divisions(corpus), sys.stdout, indent=2, default=str)
+        elif args.check == "refs":
+            json.dump(measure_refs(corpus), sys.stdout, indent=2, default=str)
         else:
             json.dump(rows, sys.stdout, indent=2)
         print()
@@ -931,6 +1304,10 @@ def main() -> int:
         if args.check == "all":
             print()
         status |= report_divisions(measure_divisions(corpus), args.limit)
+    if args.check in ("refs", "all"):
+        if args.check == "all":
+            print()
+        status |= report_refs(measure_refs(corpus), args.limit)
     return status
 
 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "compendium.id-302-refs-1434-1439-for-1440-1449",
+    "locator": {
+      "question": 302
+    },
+    "field": "margin_refs",
+    "from": "1434-1439",
+    "to": "1440-1449",
+    "reason": "The margin prints question 301's reference block a second time beside question 302. Twelve editions read 1440-1449 here, and the Indonesian itself reads 1434-1439 at 301. A Catechism reference is an ADDRESS, not a translation, so a lone reading among fourteen editions is a misprint rather than a variant.",
+    "evidence": "Page 109 of the PDF draws `1434-1439` twice, at two distinct baselines (403 and 494) in the same margin column, so both are printed entries rather than one entry read twice. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.id-369-refs-1656-for-1756",
+    "locator": {
+      "question": 369
+    },
+    "field": "margin_refs",
+    "from": "1656, 1761",
+    "to": "1756, 1761",
+    "reason": "The margin prints 1656 where eleven editions print 1756 -- one digit. CCC 1756 is the paragraph this question condenses; CCC 1656 is not. A Catechism reference is an ADDRESS, not a translation, so a lone reading among fourteen editions is a misprint rather than a variant.",
+    "evidence": "Compendium 369 asks \"Are there acts which are always illicit?\"  --  CCC 1756: \"It is therefore an error to judge the morality of human acts by considering only the intention that inspires them or the circumstances\", against CCC 1656, which is about the family as a domestic church. The second group, 1761, is the article's In Brief and is unchanged. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  }
+]

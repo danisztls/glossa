@@ -12,6 +12,42 @@
     "added": "2026-08-28"
   },
   {
+    "id": "compendium.de-232-refs-1131-for-1130",
+    "locator": {
+      "question": 232
+    },
+    "field": "refs_html",
+    "from": "<p>1131</p>",
+    "to": "<p>1130</p>",
+    "reason": "The margin apparatus prints 1131 where 13 of the other thirteen editions print 1130. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1130 is the paragraph this question condenses; CCC 1131 is not. Compendium 232 asks \"What is the relationship between the sacraments and everlasting life?\"  --  CCC 1130: \"The Church celebrates the mystery of her Lord \"until he comes,\" when God will be \"everything to everyone.\" Sin…\"  against CCC 1131: \"The sacraments are efficacious signs of grace, instituted by Christ and entrusted to the Church, by which divi…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.de-248-refs-1205-1206-for-1209",
+    "locator": {
+      "question": 248
+    },
+    "field": "refs_html",
+    "from": "<b>248. Welches Kriterium sichert die Einheit in der Vielfalt?</b></p> <p>1205-1206</p>",
+    "to": "<b>248. Welches Kriterium sichert die Einheit in der Vielfalt?</b></p> <p>1209</p>",
+    "reason": "The margin apparatus prints 1205-1206 where 13 of the other thirteen editions print 1209. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition EXCHANGES the apparatus of questions 248 and 249. CCC 1209 states the criterion assuring unity amid diversity of liturgical traditions, which is what 248 asks; CCC 1205-1206 is what 249 asks. It is the only displaced pair in the corpus. Found by `audit.py refs` (2026-09-02). The two entries are a SWAP and each therefore quotes its own question heading: a correction is a global substring replacement, so `<p>1205-1206</p>` -> `<p>1209</p>` followed by `<p>1209</p>` -> `<p>1205-1206</p>` undoes itself exactly.",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.de-249-refs-1209-for-1205-1206",
+    "locator": {
+      "question": 249
+    },
+    "field": "refs_html",
+    "from": "<b>249. Ist in der Liturgie alles unver&auml;nderlich?</b></p> <p>1209</p>",
+    "to": "<b>249. Ist in der Liturgie alles unver&auml;nderlich?</b></p> <p>1205-1206</p>",
+    "reason": "The margin apparatus prints 1209 where 13 of the other thirteen editions print 1205-1206. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition EXCHANGES the apparatus of questions 248 and 249. CCC 1209 states the criterion assuring unity amid diversity of liturgical traditions, which is what 248 asks; CCC 1205-1206 is what 249 asks. It is the only displaced pair in the corpus. Found by `audit.py refs` (2026-09-02). The two entries are a SWAP and each therefore quotes its own question heading: a correction is a global substring replacement, so `<p>1205-1206</p>` -> `<p>1209</p>` followed by `<p>1209</p>` -> `<p>1205-1206</p>` undoes itself exactly.",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.de-339-refs-0608-for-1608",
     "locator": {
       "question": 339

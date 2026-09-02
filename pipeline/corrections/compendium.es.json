@@ -1,0 +1,26 @@
+[
+  {
+    "id": "compendium.es-33-refs-199-for-192",
+    "locator": {
+      "question": 33
+    },
+    "field": "refs_html",
+    "from": "199.197",
+    "to": "192.197",
+    "reason": "The margin apparatus prints 199 where 13 of the other thirteen editions print 192. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 199 as 192 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.es-382-refs-1838-for-1837",
+    "locator": {
+      "question": 382
+    },
+    "field": "refs_html",
+    "from": "<p align=\"left\">1808<br /> 1838</p>",
+    "to": "<p align=\"left\">1808<br /> 1837</p>",
+    "reason": "The margin apparatus prints 1838 where 13 of the other thirteen editions print 1837. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1837 is the paragraph this question condenses; CCC 1838 is not. Compendium 382 asks \"What is fortitude?\"  --  CCC 1837: \"Fortitude ensures firmness in difficulties and constancy in the pursuit of the good.\"  against CCC 1838: \"Temperance moderates the attraction of the pleasures of the senses and provides balance in the use of created …\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  }
+]

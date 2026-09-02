@@ -24,6 +24,66 @@
     "added": "2026-08-28"
   },
   {
+    "id": "compendium.pt-70-refs-383-for-382",
+    "locator": {
+      "question": 70
+    },
+    "field": "refs_html",
+    "from": "<p>366-368 <br />383</p>",
+    "to": "<p>366-368 <br />382</p>",
+    "reason": "The margin apparatus prints 383 where 11 of the other thirteen editions print 382. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 382 is the paragraph this question condenses; CCC 383 is not. Compendium 70 asks \"Where does the soul come from?\"  --  CCC 382: \"\"Man, though made of body and soul, is a unity\" (GS 14 # 1). the doctrine of the faith affirms that the spirit…\"  against CCC 383: \"\"God did not create man a solitary being. From the beginning, \"male and female he created them\" (Gen 1:27). Th…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.pt-180-refs-878-for-877",
+    "locator": {
+      "question": 180
+    },
+    "field": "refs_html",
+    "from": "<p>878</p>",
+    "to": "<p>877</p>",
+    "reason": "The margin apparatus prints 878 where 12 of the other thirteen editions print 877. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 877 is the paragraph this question condenses; CCC 878 is not. Compendium 180 asks \"How is the collegial dimension of Church ministry carried out?\"  --  CCC 877: \"Likewise, it belongs to the sacramental nature of ecclesial ministry that it have a collegial character. In fa…\"  against CCC 878: \"Finally, it belongs to the sacramental nature of ecclesial ministry that it have a personal character. Althoug…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.pt-185-refs-971-for-891",
+    "locator": {
+      "question": 185
+    },
+    "field": "refs_html",
+    "from": "<p>&nbsp;971</p>",
+    "to": "<p>&nbsp;891</p>",
+    "reason": "The margin apparatus prints 971 where 10 of the other thirteen editions print 891. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition prints the same value at the neighbouring question, so one of the two is a duplicated line rather than a reference. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.pt-186-refs-971-for-893",
+    "locator": {
+      "question": 186
+    },
+    "field": "refs_html",
+    "from": "<p>971</p> <p>Os Bispos",
+    "to": "<p>893</p> <p>Os Bispos",
+    "reason": "The margin apparatus prints 971 where 13 of the other thirteen editions print 893. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition prints the same value at the neighbouring question, so one of the two is a duplicated line rather than a reference. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.pt-260-refs-1266-for-1256",
+    "locator": {
+      "question": 260
+    },
+    "field": "refs_html",
+    "from": "<p>1266. <br />1284</p>",
+    "to": "<p>1256. <br />1284</p>",
+    "reason": "The margin apparatus prints 1266 where 11 of the other thirteen editions print 1256. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1256 is the paragraph this question condenses; CCC 1266 is not. Compendium 260 asks \"Who can baptize?\"  --  CCC 1256: \"The ordinary ministers of Baptism are the bishop and priest and, in the Latin Church, also the deacon. In case…\"  against CCC 1266: \"The Most Holy Trinity gives the baptized sanctifying grace, the grace of justification: - enabling them to bel…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.pt-319-refs-15120-for-1520",
     "locator": {
       "question": 319
@@ -83,6 +143,30 @@
     "reason": "The reference line for question 411 prints '1928-133  1943-1944', which its second number is smaller than its first, so the range is empty. All nine other editions print '1928-1933'; a '9' is missing from the second number. No reference is added or removed.",
     "evidence": "The other 9 editions carrying a reference line for question 411 print: DE '1928-1933 1943-1944', EN '1928-1933 1943-1944', ES '1928-1933 1943-1944', FR '1928-1933 1943-1944', HU '1928-1933 1943-1944', IT '1928-1933 1943-1944', RO '1928‑1933 1943‑1944', SL '1928-1933 1943-1944', SV '1928-1933, 1943-1944'.",
     "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.pt-423-refs-201-for-2021",
+    "locator": {
+      "question": 423
+    },
+    "field": "refs_html",
+    "from": "2005 201",
+    "to": "2005 2021",
+    "reason": "The margin apparatus prints 201 where 12 of the other thirteen editions print 2021. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 201 as 2021 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.pt-507-refs-257-for-2457",
+    "locator": {
+      "question": 507
+    },
+    "field": "refs_html",
+    "from": "<p>2416-2418 <br />257</p>",
+    "to": "<p>2416-2418 <br />2457</p>",
+    "reason": "The margin apparatus prints 257 where 11 of the other thirteen editions print 2457. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 257 as 2457 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
   },
   {
     "id": "compendium.pt-577-refs-275-for-2751",

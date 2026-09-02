@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.fr-245-refs-1198-1999-for-1198-1199",
+    "locator": {
+      "question": 245
+    },
+    "field": "refs_html",
+    "from": "1198-1999",
+    "to": "1198-1199",
+    "reason": "The margin apparatus prints 1198-1999 where 9 of the other thirteen editions print 1198-1199. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "A range of 802 paragraphs is not a reference block: the largest in the work is 19. The second group of this question's apparatus is the article's In Brief, CCC 1197-1199. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  }
+]

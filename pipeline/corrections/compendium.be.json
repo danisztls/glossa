@@ -1,0 +1,14 @@
+[
+  {
+    "id": "compendium.be-155-refs-787-786-for-783-786",
+    "locator": {
+      "question": 155
+    },
+    "field": "margin_refs",
+    "from": "787-786",
+    "to": "783-786",
+    "reason": "The margin prints a range whose end is BELOW its start, which is not a reference: 787 is where the next question's block begins (question 156 reads 787-791 805-806), so the first number has picked up its neighbour's. Thirteen editions read 783-786. A Catechism reference is an ADDRESS, not a translation, so a lone reading among fourteen editions is a misprint rather than a variant.",
+    "evidence": "Page 62 of the PDF sets `787-786` in the outer margin beside question 155; question 154 ends at 782 and question 156 opens at 787, so 783-786 is the only run left unclaimed. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  }
+]

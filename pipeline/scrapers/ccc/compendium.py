@@ -1670,6 +1670,7 @@ LANG_CONFIG = {
 
 for _lang, _cfg in LANG_CONFIG.items():
     _cfg["url"] = source_url(_lang)
+    _cfg["lang"] = _lang
     _cfg["work_id"] = f"compendium.{_lang}"
     _cfg["match_label"] = MATCH_LABEL[_lang]
     _cfg.setdefault("pdf", None)
@@ -1694,7 +1695,26 @@ for _lang, _cfg in LANG_CONFIG.items():
 #: correction's `from` is matched against a reconstructed LINE, which is
 #: downstream of this scraper's own joining and dehyphenation -- keep those
 #: rules stable, or a filed correction goes stale without the source moving.
-_CORRECTION_FIELDS = frozenset({"heading_html", "refs_html", "extracted_text"})
+#: `margin_refs` is the fourth and is applied later still, for a reason the
+#: other three do not have. A PDF edition prints its Catechism references in
+#: the outer margin as a column of bare numbers, and the same number recurs
+#: down a page: the Russian sets `141` twice on page 24 and the Indonesian
+#: `1434-1439` twice on page 109, which is the defect in both cases. A
+#: substring replacement over lines cannot say which of the two it means, and
+#: neither can a page number, so the correction is matched against the
+#: ASSEMBLED reference string of one question and located by that question --
+#: the addressable unit, and the only thing in reach that is unique. Matching
+#: is by EQUALITY rather than substring, which makes the drift check stricter
+#: than the other three rather than weaker.
+_CORRECTION_FIELDS = frozenset(
+    {"heading_html", "refs_html", "extracted_text", "margin_refs"}
+)
+
+#: The two applied to the fetched page. The other two belong to the PDF path
+#: and are applied by `compendium_pdf`; a run over an HTML edition must not
+#: substring-replace them into the markup, which is what filtering here rather
+#: than merely validating the name prevents.
+_HTML_CORRECTION_FIELDS = frozenset({"heading_html", "refs_html"})
 
 
 def apply_corrections(
@@ -1707,6 +1727,17 @@ def apply_corrections(
     wrong, and both are worse than a failed run. An entry carrying a
     `resolution` is documented rather than applied -- the policy for a defect
     with no known correct value (docs/decisions.md).
+
+    ENTRIES APPLY IN FILE ORDER, and one may quote the page as an earlier
+    entry leaves it. That is not a convenience: two independent defects can
+    share one element, and the Swedish question 591 has both -- a range
+    printed without its hyphen (`28222827`) and a wrong In Brief number in
+    the same `<p>`. Neither correction can quote a substring unique to
+    itself, so the second quotes the first's output. The files are therefore
+    ordered by question and then by the date the entry was FILED, which is
+    the direction the dependency can only run in; the drift check is what
+    makes the coupling safe, since removing the first makes the second fail
+    loudly rather than silently miss.
     """
     applied: list[dict] = []
     for c in corrections:
@@ -1715,6 +1746,8 @@ def apply_corrections(
         field = c.get("field")
         if field not in _CORRECTION_FIELDS:
             raise ValueError(f"{lang}: correction {c['id']}: unknown field {field!r}")
+        if field not in _HTML_CORRECTION_FIELDS:
+            continue
         if c["from"] not in html_text:
             raise CorrectionDriftError(
                 f"{lang}: correction {c['id']}: `from` text not found in the "

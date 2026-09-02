@@ -25,6 +25,78 @@
     "added": "2026-08-25"
   },
   {
+    "id": "compendium.sv-22-refs-128-130-140-for-124-127-139",
+    "locator": {
+      "question": 22
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 128-130, 140)</p> <p>&nbsp;</p> <p><b>23.",
+    "to": "<p>(KKK 124-127, 139)</p> <p>&nbsp;</p> <p><b>23.",
+    "reason": "The margin apparatus prints 128-130, 140 where 12 of the other thirteen editions print 124-127, 139. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition prints the same value at the neighbouring question, so one of the two is a duplicated line rather than a reference. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-43-refs-329-for-229",
+    "locator": {
+      "question": 43
+    },
+    "field": "refs_html",
+    "from": "222-227, 329",
+    "to": "222-227, 229",
+    "reason": "The margin apparatus prints 329 where 12 of the other thirteen editions print 229. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 229 is the paragraph this question condenses; CCC 329 is not. Compendium 43 asks \"What does it mean to believe in only one God?\"  --  CCC 229: \"Faith in God leads us to turn to him alone as our first origin and our ultimate goal, and neither to prefer an…\"  against CCC 329: \"St. Augustine says: \"'Angel' is the name of their office, not of their nature. If you seek the name of their n…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-61-refs-332-for-352",
+    "locator": {
+      "question": 61
+    },
+    "field": "refs_html",
+    "from": "334-336, 332",
+    "to": "334-336, 352",
+    "reason": "The margin apparatus prints 332 where 12 of the other thirteen editions print 352. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 332 as 352 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-98-refs-303-for-503",
+    "locator": {
+      "question": 98
+    },
+    "field": "refs_html",
+    "from": "496-498, 303",
+    "to": "496-498, 503",
+    "reason": "The margin apparatus prints 303 where 11 of the other thirteen editions print 503. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 303 as 503 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-119-refs-619-for-620",
+    "locator": {
+      "question": 119
+    },
+    "field": "refs_html",
+    "from": "606-609, 619",
+    "to": "606-609, 620",
+    "reason": "The margin apparatus prints 619 where 12 of the other thirteen editions print 620. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "This edition prints the same value at the neighbouring question, so one of the two is a duplicated line rather than a reference. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-161-refs-806-for-866",
+    "locator": {
+      "question": 161
+    },
+    "field": "refs_html",
+    "from": "813-815, 806",
+    "to": "813-815, 866",
+    "reason": "The margin apparatus prints 806 where 10 of the other thirteen editions print 866. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 806 as 866 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.sv-205-refs-9992-for-992",
     "locator": {
       "question": 205
@@ -35,6 +107,18 @@
     "reason": "The reference line for question 205 prints '(KKK 9992-1004, 1016-1018)', which its first number is larger than its second, so the range is empty. Eight editions print '992-1004' and this edition's own range end already agrees; the leading '9' is doubled. No reference is added or removed.",
     "evidence": "The other 8 editions carrying a reference line for question 205 print: DE '992-1004', EN '992-1004 1016-1018', FR '992-1004 1016-1018', HU '992-1004 1016-1018', IT '992-1004 1016-1018', PT '992 – 1004; 1016 –1018', RO '992‑1004 1016‑1018', SL '992-1004 1016-1018'.",
     "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-223-refs-112-for-1112",
+    "locator": {
+      "question": 223
+    },
+    "field": "refs_html",
+    "from": "1091-1109, 112",
+    "to": "1091-1109, 1112",
+    "reason": "The margin apparatus prints 112 where 12 of the other thirteen editions print 1112. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 112 as 1112 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
   },
   {
     "id": "compendium.sv-238-refs-155-for-1155",
@@ -49,6 +133,66 @@
     "added": "2026-08-28"
   },
   {
+    "id": "compendium.sv-245-refs-1118-for-1181",
+    "locator": {
+      "question": 245
+    },
+    "field": "refs_html",
+    "from": "1118, 1198-1199",
+    "to": "1181, 1198-1199",
+    "reason": "The margin apparatus prints 1118 where 9 of the other thirteen editions print 1181. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1181 is the paragraph this question condenses; CCC 1118 is not. Compendium 245 asks \"What are sacred buildings?\"  --  CCC 1181: \"A church, \"a house of prayer in which the Eucharist is celebrated and reserved, where the faithful assemble, a…\"  against CCC 1118: \"The sacraments are \"of the Church\" in the double sense that they are \"by her\" and \"for her.\" They are \"by the …\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-260-refs-1264-for-1284",
+    "locator": {
+      "question": 260
+    },
+    "field": "refs_html",
+    "from": "1256, 1264",
+    "to": "1256, 1284",
+    "reason": "The margin apparatus prints 1264 where 11 of the other thirteen editions print 1284. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1284 is the paragraph this question condenses; CCC 1264 is not. Compendium 260 asks \"Who can baptize?\"  --  CCC 1284: \"In case of necessity, any person can baptize provided that he have the intention of doing that which the Churc…\"  against CCC 1264: \"Yet certain temporal consequences of sin remain in the baptized, such as suffering, illness, death, and such f…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-264-refs-1256-1259-1267-for-2156-2159-2167",
+    "locator": {
+      "question": 264
+    },
+    "field": "refs_html",
+    "from": "1256-1259. 1267",
+    "to": "2156-2159. 2167",
+    "reason": "The margin apparatus prints 1256-1259. 1267 where 11 of the other thirteen editions print 2156-2159. 2167. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 2156-2159. 2167 is the paragraph this question condenses; CCC 1256-1259. 1267 is not. Compendium 264 asks \"What is the meaning of the Christian name received at Baptism?\"  --  CCC 2156-2159. 2167: \"The sacrament of Baptism is conferred \"in the name of the Father and of the Son and of the Holy Spirit.\" In Ba…\"  against CCC 1256-1259. 1267: \"The ordinary ministers of Baptism are the bishop and priest and, in the Latin Church, also the deacon. In case…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-314-refs-1903-1905-for-1503-1505",
+    "locator": {
+      "question": 314
+    },
+    "field": "refs_html",
+    "from": "1903-1905",
+    "to": "1503-1505",
+    "reason": "The margin apparatus prints 1903-1905 where 13 of the other thirteen editions print 1503-1505. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1503-1505 is the paragraph this question condenses; CCC 1903-1905 is not. Compendium 314 asks \"What is the significance of Jesus’ compassion for the sick?\"  --  CCC 1503-1505: \"Christ's compassion toward the sick and his many healings of every kind of infirmity are a resplendent sign th…\"  against CCC 1903-1905: \"Authority is exercised legitimately only when it seeks the common good of the group concerned and if it employ…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-325-refs-1534-for-1554",
+    "locator": {
+      "question": 325
+    },
+    "field": "refs_html",
+    "from": "1534, 1593",
+    "to": "1554, 1593",
+    "reason": "The margin apparatus prints 1534 where 13 of the other thirteen editions print 1554. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1554 is the paragraph this question condenses; CCC 1534 is not. Compendium 325 asks \"What are the degrees that make up the sacrament of Holy Orders?\"  --  CCC 1554: \"\"The divinely instituted ecclesiastical ministry is exercised in different degrees by those who even from anci…\"  against CCC 1534: \"Two other sacraments, Holy Orders and Matrimony, are directed towards the salvation of others; if they contrib…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.sv-357-refs-198-for-1698",
     "locator": {
       "question": 357
@@ -59,6 +203,30 @@
     "reason": "The reference line for question 357 prints '(KKK 1691-198)', which its second number is smaller than its first, so the question's only reference names nothing. All eight other editions print '1691-1698' and this edition's own start already agrees; a '6' is missing from the second number. No reference is added or removed.",
     "evidence": "The other 9 editions carrying a reference line for question 357 print: DE '1691-1698', EN '1691-1698', ES '1691-1698', FR '1691-1698', HU '1691-1698', IT '1691-1698', PT '1691 – 1698', RO '1691‑1698', SL '1691-1698'.",
     "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-369-refs-1751-for-1761",
+    "locator": {
+      "question": 369
+    },
+    "field": "refs_html",
+    "from": "1756, 1751",
+    "to": "1756, 1761",
+    "reason": "The margin apparatus prints 1751 where 10 of the other thirteen editions print 1761. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "The stored apparatus RUNS BACKWARDS, which no reference block in this work does: across all 598 questions the modal set's groups ascend in 375 of 375 cases with more than one group. Reading 1751 as 1761 restores the order. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.sv-390-refs-1812-for-1832",
+    "locator": {
+      "question": 390
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 1812)</p>",
+    "to": "<p>(KKK 1832)</p>",
+    "reason": "The margin apparatus prints 1812 where 13 of the other thirteen editions print 1832. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 1832 is the paragraph this question condenses; CCC 1812 is not. Compendium 390 asks \"What are the fruits of the Holy Spirit?\"  --  CCC 1832: \"The fruits of the Spirit are perfections that the Holy Spirit forms in us as the first fruits of eternal glory…\"  against CCC 1812: \"The human virtues are rooted in the theological virtues, which adapt man's faculties for participation in the …\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
   },
   {
     "id": "compendium.sv-538-refs-2880-for-2580",
@@ -97,6 +265,18 @@
     "added": "2026-08-28"
   },
   {
+    "id": "compendium.sv-569-refs-2723-for-2722",
+    "locator": {
+      "question": 569
+    },
+    "field": "refs_html",
+    "from": "2700-2704, 2723",
+    "to": "2700-2704, 2722",
+    "reason": "The margin apparatus prints 2723 where 13 of the other thirteen editions print 2722. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 2722 is the paragraph this question condenses; CCC 2723 is not. Compendium 569 asks \"How can vocal prayer be described?\"  --  CCC 2722: \"Vocal prayer, founded on the union of body and soul in human nature, associates the body with the interior pra…\"  against CCC 2723: \"Meditation is a prayerful quest engaging thought, imagination, emotion, and desire. Its goal is to make our ow…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.sv-575-refs-274-for-2741",
     "locator": {
       "question": 575
@@ -119,6 +299,18 @@
     "reason": "The reference line for question 591 prints '(KKK 28222827, 2861)', which two paragraph numbers run together with no hyphen, so eight digits read as one number that names nothing. All nine other editions print '2822-2827'. No digit is changed; only the hyphen is restored. No reference is added or removed.",
     "evidence": "The other 9 editions carrying a reference line for question 591 print: DE '2822-2827 2860', EN '2822-2827 2860', ES '2822-2827 2860', FR '2822-2827 2860', HU '2822-2827 2860', IT '2822-2827 2860', PT '2822-2827 2860', RO '2822‑2827 2860', SL '2822-2827 2860'. This edition also prints '2861' where the other nine print '2860'. That is left alone deliberately: it is a well-formed reference to a real paragraph, so it is an edition disagreement for the cross-edition vote to settle, not a token that names nothing. Only the malformed half is corrected here.",
     "added": "2026-08-28"
+  },
+  {
+    "id": "compendium.sv-591-refs-2861-for-2860",
+    "locator": {
+      "question": 591
+    },
+    "field": "refs_html",
+    "from": "<p>(KKK 2822-2827, 2861)</p>",
+    "to": "<p>(KKK 2822-2827, 2860)</p>",
+    "reason": "The margin apparatus prints 2861 where 13 of the other thirteen editions print 2860. A Catechism reference is an ADDRESS, not a translation, so the editions of one question assert the same arithmetic and a lone reading is a misprint rather than a variant. Only the digits change; no word is touched.",
+    "evidence": "CCC 2860 is the paragraph this question condenses; CCC 2861 is not. Compendium 591 asks \"Why pray “Thy will be done on earth as it is in heaven”?\"  --  CCC 2860: \"In the third petition, we ask our Father to unite our will to that of his Son, so as to fulfill his plan of sa…\"  against CCC 2861: \"In the fourth petition, by saying \"give us,\" we express in communion with our brethren our filial trust in our…\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
   },
   {
     "id": "compendium.sv-593-refs-missing-hyphen",

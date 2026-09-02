@@ -1,5 +1,29 @@
 [
   {
+    "id": "compendium.ru-23-refs-128-130-141-for-128-130-140",
+    "locator": {
+      "question": 23
+    },
+    "field": "margin_refs",
+    "from": "128-130 141",
+    "to": "128-130 140",
+    "reason": "The margin prints 141 beside both question 23 and question 24; 141 belongs to 24 (131-133 141) and twelve editions read 140 at 23. A Catechism reference is an ADDRESS, not a translation, so a lone reading among fourteen editions is a misprint rather than a variant.",
+    "evidence": "Page 24 of the PDF sets `141` twice in the same margin column, at baselines 358.3 and 425.9, below the single run `128-130` at 350.3. CCC 140 opens \"The unity of the two Testaments proceeds from the unity of God's plan\", which is what question 23 asks. Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
+    "id": "compendium.ru-120-refs-610-611-612-for-610-611-621",
+    "locator": {
+      "question": 120
+    },
+    "field": "margin_refs",
+    "from": "610-611 612",
+    "to": "610-611 621",
+    "reason": "The margin prints 612 where eleven editions print 621 -- the two digits transposed. CCC 621 is the paragraph this question condenses; CCC 612 is not. A Catechism reference is an ADDRESS, not a translation, so a lone reading among fourteen editions is a misprint rather than a variant.",
+    "evidence": "Page 50 of the PDF sets `612` at baseline 426.0 under `610-611` at 417.9. CCC 621: \"Jesus freely offered himself for our salvation. Beforehand, during the Last Supper, he both symbolized this offering and made it really present\", against question 120 \"How is Jesus' offering expressed at the Last Supper?\". Found by `audit.py refs` (2026-09-02).",
+    "added": "2026-09-02"
+  },
+  {
     "id": "compendium.ru-586-missing-period",
     "locator": {
       "question": 586

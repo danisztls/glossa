@@ -322,6 +322,54 @@ def apply_pdf_corrections(
     return applied
 
 
+def margin_corrections(corrections: list[dict], lang: str) -> dict[int, dict]:
+    """`question number -> correction`, for the margin reference apparatus.
+
+    Keyed by the question because that is the only unique address a margin
+    number has -- see the note on `_CORRECTION_FIELDS` in `compendium.py`. A
+    second entry for the same question is a filing mistake and is refused
+    here rather than silently losing one of them.
+    """
+    out: dict[int, dict] = {}
+    for c in corrections:
+        if c.get("resolution") or c.get("field") != "margin_refs":
+            continue
+        n = (c.get("locator") or {}).get("question")
+        if not isinstance(n, int):
+            raise ValueError(
+                f"{lang}: correction {c['id']}: a margin_refs correction needs "
+                "an integer `locator.question`"
+            )
+        if n in out:
+            raise ValueError(
+                f"{lang}: corrections {out[n]['id']} and {c['id']} both claim "
+                f"question {n}"
+            )
+        out[n] = c
+    return out
+
+
+def correct_refs(
+    n: int, refs: str, pending: dict[int, dict], applied: list[dict], lang: str
+) -> str:
+    """One question's assembled reference string, corrected if one is filed.
+
+    EQUALITY, not substring: the whole apparatus for the question is what the
+    correction quotes, so a run that reads differently for any reason -- a
+    column boundary moved, a run reassigned to its neighbour -- is drift, and
+    drift is fatal exactly as it is on the HTML path."""
+    c = pending.pop(n, None)
+    if c is None:
+        return refs
+    if refs != c["from"]:
+        raise CorrectionDriftError(
+            f"{lang}: correction {c['id']}: question {n} reads {refs!r}, not "
+            f"{c['from']!r} -- the reader changed, or the correction is wrong"
+        )
+    applied.append(c)
+    return c["to"]
+
+
 def _label_of(line: Line, match_label) -> tuple[str, int | None] | None:
     """The division this line heads, or None if it merely mentions one."""
     stripped = line.text.strip()
@@ -413,7 +461,13 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
     machine over `(kind, n, title)` and `(n, text)` and has never cared where
     those came from; everything below reuses it unchanged.
     """
+    lang = cfg["lang"]
     match_label = cfg["match_label"]
+    # Corrections to the margin apparatus, consumed as their questions are
+    # reached and asserted empty at the end: a correction naming a question
+    # the walk never visits has silently done nothing, which is the one
+    # failure this layer must not have.
+    pending_refs = margin_corrections(state.corrections, lang)
     pages = _numbered_range(pages, match_label)
     starts = _question_starts(pages)
     #: Lines of the answer being read, flushed as one block when it closes.
@@ -514,7 +568,13 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
                 state.start_question(
                     int(m.group(1)), re.sub(r"\s+", " ", m.group(2)).strip()
                 )
-                refs = _refs_for(page, line, questions, headings)
+                refs = correct_refs(
+                    int(m.group(1)),
+                    _refs_for(page, line, questions, headings),
+                    pending_refs,
+                    state.corrections_applied,
+                    lang,
+                )
                 if refs:
                     state.set_refs(refs)
                 i += 1
@@ -527,6 +587,12 @@ def process_pdf_body(pages: list[PdfPage], cfg: dict, state) -> None:
                 buffer.append(line.text.rstrip())
             i += 1
     emit()
+    if pending_refs:
+        raise CorrectionDriftError(
+            f"{lang}: correction(s) "
+            + ", ".join(c["id"] for c in pending_refs.values())
+            + " name questions this parse never reached"
+        )
 
 
 #: A line that is nothing but a parenthesised phrase -- "(Santo Agustinus)",
