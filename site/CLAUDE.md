@@ -145,18 +145,27 @@ what the dev server sends is inline sourcemaps — three documented attempts to
 turn that off failed and are listed in `docs/decisions.md`; read it as bytes,
 not seconds.
 
-**`npm run dev` registers no service worker; a build does** (2026-09-01, §The
-site). `vite.config.ts` keys `serviceWorker.register` off `command`. SvelteKit
-registers in dev by default, and here that installed the real worker against
-`localhost` — cache-first on the shell, never `skipWaiting()` — serving a
-shell from an earlier session. It presents as a repeating `Pre-transform
-error: The file does not exist at .../node_modules/.vite/deps/runtime-<hash>.js`
-**surviving both `rm -rf node_modules/.vite` and a restart** — the tell that
-the request comes from the client, not the server. A worker on an old shell
-serves old CODE, so if HMR ever seems broken, check for a controlling worker
-before believing it. Nothing evicts one already installed: unregister once per
-profile (DevTools → Application), or confirm the diagnosis in a private
-window.
+**`optimizeDeps.include` PINS EVERY DEPENDENCY REACHED ONLY BY A DYNAMIC
+IMPORT, and `fuzzysort` is the one that taught us** (2026-09-02, §Process).
+`JumpBox.svelte` loads it with `await import('fuzzysort')` — deliberately, it
+is 7.5 KB the layout should not pay for — and Vite's dep scanner does not
+find it, so it is discovered while the page is already loading. Vite then
+rewrites `node_modules/.vite/deps/` under fresh hashes and forces a reload,
+and every request still in flight against the old names 404s as `Pre-transform
+error: The file does not exist at .../node_modules/.vite/deps/<name>-<hash>.js`.
+With this graph — 411 modules, 18.78 MB, most of it sourcemap — a reload is
+long enough for that to tear the page rather than just delay it.
+
+**That error string has been misread once already.** It was read as a service
+worker serving a stale shell, and `vite dev` was stopped from registering one
+(2026-09-01, reverted 2026-09-02): the worker is a real hazard — the `fetch`
+handler's `navigate` case is cache-first on the shell — but it was not this,
+and `register: false` cannot evict a worker already installed anyway. **The
+cache being swapped is the SERVER'S, not the browser's.** Tell them apart by
+where the answer comes from: `/usr/bin/rm -rf node_modules/.vite`, load one
+page, and read the dev log — `dependency optimized: <name>` followed by
+`optimized dependencies changed. reloading` is this, and nothing in the
+browser is involved. Add the dep to `include` and neither line appears.
 
 **The worktree trap shrank but did not vanish.** The default is
 `../../glossa-corpus` resolved from `site/`, so a worktree beside the main

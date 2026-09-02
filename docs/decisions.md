@@ -1418,26 +1418,6 @@ Content-hashed data the app fetches on demand but that is not corpus text — th
 tables, the translated descriptions — is content tier too, and deliberately not in the
 install precache.
 
-**The worker is registered by a BUILD and never by the dev server** (2026-09-01).
-SvelteKit injects `navigator.serviceWorker.register(...)` into the page it serves and did
-so under `vite dev` too, so an ordinary dev session installed the real worker against
-`localhost`. Both properties above then work exactly against the person editing: the
-worker is cache-first on the shell, and not calling `skipWaiting()` means it keeps control
-until every tab on the origin closes — serving a shell captured from an earlier session.
-The symptom was `Pre-transform error: The file does not exist at
-.../node_modules/.vite/deps/runtime-DcmRJ03G.js`, repeating, surviving `rm -rf
-node_modules/.vite` and every restart, because nothing on the SERVER ever referenced that
-name; the cached shell did, and the chunks that existed were the same base names under
-different hashes (`runtime-DZSEjbWK.js`) after a dep re-optimization moved them. **The log
-line was never the cost.** A worker holding an old shell serves old CODE, so an edit can
-appear not to take — the silent stale answer this project keeps meeting, wearing the
-costume of a broken hot reload, and the one failure that would discredit the HMR
-measurements in §Process. `vite.config.ts` keys it off `command`: `serve` registers
-nothing, `build` registers, so `index.html` carries it and both `npm run preview` and a
-deploy serve it — preview is itself `serve`, which does not matter, since it ships the
-document the build already wrote. A worker installed before this landed is not removed by
-it and must be unregistered once per browser profile.
-
 **Not calling `skipWaiting()` obliges us to offer the update instead.** The browser's own
 rule for when a waiting worker takes over ("once every client on the old version is gone")
 is not something a reader can act on: a plain reload does not release the old worker, and
@@ -3274,6 +3254,36 @@ server. It is worth revisiting only with both mitigations: the handler falling b
 probe checked in as its guard, so a Vite upgrade that changes propagation does not
 silently restore full reloads. Note also that 213 of the `src/lib` touches were
 `.test.ts` files, which never reach the dev server at all.
+
+**A DEP REACHED ONLY BY A DYNAMIC IMPORT IS PINNED IN `optimizeDeps.include`, AND THE
+ONE THAT WAS NOT COST A MISDIAGNOSIS** (2026-09-02). `JumpBox.svelte` loads `fuzzysort`
+with `await import('fuzzysort')`, on purpose — it is 7.5 KB the layout should not pay for
+— and Vite's dep scanner does not see it. So it is discovered while the page is already
+loading: Vite pre-bundles it then, rewrites `node_modules/.vite/deps/` under fresh
+hashes, and forces a reload. Requests still in flight against the old names 404, and the
+dev server prints `Pre-transform error: The file does not exist at
+.../node_modules/.vite/deps/<name>-<hash>.js`. Reproduced from cold in one page load:
+`dependency optimized: fuzzysort`, then `optimized dependencies changed. reloading`.
+Against the graph two entries up — 411 modules, 18.78 MB, most of it sourcemap — a
+forced reload is long enough for the swap to tear the module graph rather than merely
+delay it, which is what "the site goes into a broken state after some changes" was.
+
+**The lesson is not the pin, it is which cache was suspected.** The same error string was
+read the day before as a service worker serving a stale shell, and `vite dev` was made to
+register none (`serviceWorker.register` keyed off `command`); it was reverted on
+2026-09-02 having fixed nothing, because the person reporting it had a worker installed
+from before the change and `register: false` does not evict one — the change could only
+ever have helped a profile that never had the problem. It also lost the one property
+worth keeping, which is that dev and production run the same registration path. The
+worker IS a real hazard here — `service-worker.ts`'s `fetch` handler is cache-first on
+the shell and `navigate` can hand back a document captured in an earlier session — and
+that is exactly what made the wrong answer plausible. **Both caches produce a stale
+answer; only one of them is on this machine's disk.** Settle it by deleting the server's:
+`rm -rf node_modules/.vite`, load one page, read the log. If the two optimizer lines
+appear, no browser was involved. The earlier report claimed the symptom survived that
+deletion, which — now that the mechanism is understood — it cannot, since the deletion is
+what provokes the re-optimization; the observation was of a second cold start, not of a
+cache that had been left alone.
 
 **73.8% OF EVERY BYTE THE DEV SERVER SENDS IS AN INLINE SOURCEMAP**, and three attempts
 to turn that off all failed. The graph is 411 modules and 18.78 MB, of which 13.85 MB is

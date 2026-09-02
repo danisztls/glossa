@@ -136,9 +136,43 @@ function devContentUrls(): Plugin {
 	};
 }
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
 	define: {
 		__CORPUS_DATA_DIR__: JSON.stringify(corpusDataDir)
+	},
+	optimizeDeps: {
+		/*
+		 * EVERY DEPENDENCY REACHED ONLY BY A DYNAMIC IMPORT BELONGS HERE, and
+		 * this list is not an optimization — it is what keeps the dev server
+		 * from swapping its own dep cache out from under a page that is still
+		 * loading.
+		 *
+		 * Vite's scanner walks the module graph from the HTML entry to find
+		 * what to pre-bundle. It does not find `fuzzysort`, which `JumpBox`
+		 * loads as `await import('fuzzysort')` — deliberately, since it is
+		 * 7.5 KB the layout should not pay for (see that component). So the
+		 * dep is discovered LATE, on first render rather than at startup:
+		 * Vite pre-bundles it then, rewrites `node_modules/.vite/deps/` under
+		 * fresh hashes, and forces a reload. Requests already in flight for
+		 * the old names 404, which surfaces as a repeating
+		 *
+		 *   Pre-transform error: The file does not exist at
+		 *   .../node_modules/.vite/deps/<name>-<hash>.js
+		 *
+		 * and against this graph — 411 modules, 18.78 MB, most of it inline
+		 * sourcemap (docs/decisions.md §Process) — the reload is slow enough
+		 * to tear the module graph rather than merely delay it. The page ends
+		 * up in a state no reload fixes.
+		 *
+		 * That error string was once read as a service worker serving a stale
+		 * shell, and `vite dev` was stopped from registering one; it fixed
+		 * nothing and was reverted (§Process, 2026-09-02). The cache being
+		 * swapped is the SERVER'S. To check this list is still complete:
+		 * `rm -rf node_modules/.vite`, load one page, and confirm the log
+		 * shows neither `dependency optimized:` nor `optimized dependencies
+		 * changed. reloading`.
+		 */
+		include: ['fuzzysort']
 	},
 	build: {
 		/*
@@ -177,47 +211,6 @@ export default defineConfig(({ command }) => ({
 			// See `buildId` above for why this is not SvelteKit's default
 			// timestamp, and why dropping either half of it breaks something.
 			version: { name: buildId() },
-
-			/*
-			 * REGISTERED BY A BUILD, NEVER BY THE DEV SERVER, and the asymmetry
-			 * is the point rather than a saving.
-			 *
-			 * SvelteKit injects `navigator.serviceWorker.register(...)` into the
-			 * page it serves, and it did so in `vite dev` too — so an ordinary
-			 * dev session installed the real worker against `localhost`. That
-			 * worker is cache-first on the shell (`service-worker.ts`'s `fetch`)
-			 * and deliberately does NOT call `skipWaiting()`, because a reader
-			 * mid-chapter must not have assets swapped under an open tab. Both
-			 * are right in production and both are wrong here: the consequence
-			 * is a worker that keeps control until every tab on the origin
-			 * closes, serving a shell captured from an earlier session.
-			 *
-			 * What that looked like was `Pre-transform error: The file does not
-			 * exist at .../node_modules/.vite/deps/runtime-DcmRJ03G.js`, on
-			 * repeat, surviving a `rm -rf node_modules/.vite` and every dev
-			 * server restart — because nothing on the SERVER ever referenced
-			 * that name. The cached shell did. The existing chunks were the same
-			 * base names under different hashes (`runtime-DZSEjbWK.js`), which is
-			 * the tell: a dep re-optimization had moved them and the old document
-			 * was still asking for where they used to be.
-			 *
-			 * The real cost was never the log line. It is that a worker holding
-			 * an old shell serves old CODE, so an edit can appear not to take —
-			 * the silent stale answer this project keeps meeting, wearing the
-			 * costume of a broken hot reload.
-			 *
-			 * `command` is the discriminator and it covers all three entry
-			 * points: `vite dev` is `serve` and registers nothing; `vite build`
-			 * is `build`, so `index.html` carries the registration and BOTH
-			 * `npm run preview` and a deploy serve it. Preview is itself
-			 * `serve`, which does not matter — it ships the document the build
-			 * already wrote.
-			 *
-			 * A worker installed before this landed is not removed by it.
-			 * Unregister those once, per browser profile.
-			 */
-			serviceWorker: command === 'build' ? { register: true } : { register: false },
-
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
@@ -244,4 +237,4 @@ export default defineConfig(({ command }) => ({
 			}
 		})
 	]
-}));
+});
