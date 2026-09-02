@@ -1026,6 +1026,32 @@ function syncPlates(workId, workDir, manifest) {
 	);
 }
 
+/**
+ * The work types the switch below knows how to write content for.
+ *
+ * MIRRORS THE BRANCH CONDITIONS AND HAS TO, INCLUDING THE TWO THAT ARE
+ * PREFIXES: `bible.` and `ccc.`/`compendium.` still branch on the work id
+ * rather than on `manifest.type` (their comments say why), so a set of types
+ * alone would call `ccc.la` unknown and withhold the Catechism.
+ */
+const CONTENT_TYPES = new Set([
+	'plates',
+	'bible-intro',
+	'commentary',
+	'prayer',
+	'summa',
+	'document'
+]);
+
+const hasContentBranch = (workId, manifest) =>
+	workId.startsWith('bible.') ||
+	workId.startsWith('ccc.') ||
+	workId.startsWith('compendium.') ||
+	CONTENT_TYPES.has(manifest.type);
+
+/** Unknown `manifest.type` → the work ids carrying it, reported after the loop. */
+const unknownTyped = new Map();
+
 for (const workId of workIds) {
 	const workDir = path.join(buildSrc, workId);
 	const manifestPath = path.join(workDir, 'manifest.json');
@@ -1052,6 +1078,34 @@ for (const workId of workIds) {
 	 */
 	if (manifest.type === 'plates') {
 		syncPlates(workId, workDir, manifest);
+		continue;
+	}
+
+	/*
+	 * A WORK TYPE WITH NO CONTENT BRANCH IS EXCLUDED WHOLE, AND SAID SO ALOUD.
+	 *
+	 * Registration happens immediately below and content is written by the
+	 * switch after it, so a type nothing matches used to be REGISTERED and
+	 * SILENT: its manifest reached `manifests.json`, `listWorks()` returned a
+	 * work with no text, no route and no address, and neither the build nor
+	 * any check said a word — the failure a reader meets as a work that
+	 * renders nowhere and 404s nowhere. Skipping here is what keeps the two
+	 * halves in step: nothing enters `manifests`, `mark()` is never called for
+	 * it, and it is therefore absent from `corpus-routes.json`, the sitemap,
+	 * `route-titles.json`, `works.json`, the content manifest and every count
+	 * quoting them.
+	 *
+	 * NOT `process.exit(1)`, deliberately. `build/` is shared with whatever
+	 * branch or worktree last wrote it, so an experiment's work type is a
+	 * thing that shows up in a corpus main knows nothing about — and dying
+	 * there would block a deploy of the whole known corpus over a work that is
+	 * not part of it. Excluded and loud is the only combination that neither
+	 * ships a phantom work nor holds the rest hostage to one.
+	 */
+	if (!hasContentBranch(workId, manifest)) {
+		const ids = unknownTyped.get(manifest.type) ?? [];
+		ids.push(workId);
+		unknownTyped.set(manifest.type, ids);
 		continue;
 	}
 
@@ -1711,10 +1765,23 @@ for (const workId of workIds) {
 		continue;
 	}
 
-	// Any other work type this script doesn't yet know the content shape of:
-	// manifest only, so `listWorks()` keeps seeing it without this script
-	// needing to know its content shape. Matches the pre-2026-08-15
-	// glob-everything behaviour, which never filtered by work type either.
+	// Nothing reaches here: `hasContentBranch` above admits exactly the work
+	// types the branches between it and this line handle, and a work it does
+	// not admit was skipped before registration rather than falling through to
+	// a manifest with no content behind it.
+}
+
+if (unknownTyped.size > 0) {
+	for (const type of [...unknownTyped.keys()].sort()) {
+		const ids = unknownTyped.get(type).sort();
+		console.warn(
+			`[sync-corpus] WARNING: work type ${JSON.stringify(type)} has no content branch — ` +
+				`${ids.length} work(s) EXCLUDED from this build: ${ids.join(', ')}. ` +
+				`They are in ${buildSrc} and in no synced output: no manifest, no content, no ` +
+				`routes. Teach this script the type (copy the \`manifest.type === 'commentary'\` ` +
+				`branch) or leave them out on purpose.`
+		);
+	}
 }
 
 /*

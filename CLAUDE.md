@@ -498,10 +498,14 @@ Haydock wrote an apparatus on the Challoner text, not a translation of it.
   name** — none of the address-grammar machinery (`hrefFor`,
   `isCanonicalPath`, `WORK_OF`, `assertNamed`) had to learn about it. That is
   the cheap fork of the two `docs/research/haydock.md` left open.
-- **`sync-corpus.mjs`'s type chain has NO fallback**: an unhandled
-  `manifest.type` registers its manifest and emits no content, no routes and
-  no error — the work exists in `listWorks()`, renders nowhere, and 404s
-  nowhere either. The branch to copy is `if (manifest.type === 'commentary')`.
+- **`sync-corpus.mjs` SKIPS an unhandled `manifest.type` and says so**
+  (`hasContentBranch`): it registered the manifest and emitted no content, no
+  routes and no error until 2026-09-02, so the work existed in `listWorks()`,
+  rendered nowhere and 404ed nowhere. Now it enters no synced output at all and
+  the run warns per unknown type, naming the work ids — a warning and not an
+  exit, because `build/` is shared and another branch's experiment must not
+  block a deploy of the known corpus. The branch to copy is
+  `if (manifest.type === 'commentary')`.
 - **The content path shape is the Bible's on purpose**
   (`content/{workId}/books/{osis}/{start}-{end}.json`, packed by the same
   `BIBLE_CHAPTER_CHUNK_TARGET_BYTES`), so
