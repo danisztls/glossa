@@ -245,10 +245,30 @@ describe('linkifyInline', () => {
 
 	it('keeps the italic half italic while linking across the boundary', () => {
 		const nodes = link('(<i>Ezek </i>47:7-9).');
-		// The emphasis node survives and now holds a ref inside it.
-		const em = nodes.find((n) => n.kind === 'emphasis');
-		expect(em).toBeDefined();
-		expect(em && em.kind === 'emphasis' && em.children[0].kind).toBe('ref');
+		// One link over the whole citation, with the emphasis inside it.
+		const ref = nodes.find((n) => n.kind === 'ref');
+		expect(ref).toBeDefined();
+		expect(ref && ref.kind === 'ref' && ref.children[0].kind).toBe('emphasis');
+		expect(ref && inlineText([ref])).toBe('Ezek 47:7-9');
+	});
+
+	it('draws one link for a citation, never one per markup run', () => {
+		// What this looked like on the page when it was two: `Prov` and
+		// `10:4` as separate underlined links to the same verse.
+		// csdc.en, verbatim from the corpus.
+		const nodes = link('the sluggard (<i>Prov </i>10:4), and');
+		expect(refs(nodes)).toHaveLength(1);
+		expect(inlineText(nodes)).toBe('the sluggard (Prov 10:4), and');
+	});
+
+	it('keeps a footnote marker out of the link it touches', () => {
+		const nodes = linkifyInline(parseInlineMarked('as Jn 3:16\u27e614\u27e7 says'), (t) =>
+			linkifyProse(t, { lang: 'en' })
+		);
+		const ref = refs(nodes)[0];
+		expect(ref).toBeDefined();
+		expect(inlineText([ref])).toBe('Jn 3:16');
+		expect(ref.kind === 'ref' && ref.children.some((c) => c.kind === 'marker')).toBe(false);
 	});
 
 	it('loses no words', () => {

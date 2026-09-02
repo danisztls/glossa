@@ -293,11 +293,14 @@ export function inlineText(nodes: InlineNode[]): string {
  * "an emphasis tag is not a word boundary" (`decisions.md` §Storage).
  * Markup describes how the words look; it does not divide them.
  *
- * So: flatten to text, linkify once, then split the tree back apart at the
- * segment boundaries. A reference that spans an emphasis boundary yields two
- * adjacent `ref` nodes sharing one segment — each keeps its own emphasis, and
- * they render as touching links, which is right both visually and
- * semantically (the italic half really is italic in the source).
+ * So: flatten to text, linkify once, then rebuild the tree around the segment
+ * boundaries. ONE REFERENCE IS ONE LINK, whatever markup runs through it: the
+ * emphasis is split and the link wraps the pieces (`<a><em>Prov </em>10:4</a>`),
+ * rather than the link being split and each piece keeping its own emphasis.
+ * That was the first shape this took, and it read on the page as a citation
+ * cited twice — `Prov` and `10:4` as two touching links, two underlines, two
+ * hover targets for one address. An anchor may contain an `<em>`; the words
+ * still look exactly as the source set them.
  */
 export function linkifyInline(
 	nodes: InlineNode[],
@@ -310,70 +313,121 @@ export function linkifyInline(
 
 	// Segment boundaries as absolute offsets. `linkifyProse` returns segments
 	// whose text concatenates back to the input, so lengths give positions.
-	const spans: { start: number; end: number; seg: RefSegment }[] = [];
+	const spans: RefSpan[] = [];
 	let at = 0;
 	for (const seg of linkify(flat)) {
 		const raw = seg.kind === 'text' ? seg.text : seg.raw;
-		if (seg.kind !== 'text') spans.push({ start: at, end: at + raw.length, seg });
+		if (seg.kind !== 'text' && raw) spans.push({ start: at, end: at + raw.length, seg });
 		at += raw.length;
 	}
-	if (spans.length === 0) return nodes;
 
-	let pos = 0;
-	const walk = (ns: InlineNode[]): InlineNode[] => {
-		const out: InlineNode[] = [];
-		for (const node of ns) {
-			if (node.kind === 'text') {
-				const start = pos;
-				pos += node.text.length;
-				out.push(...splitRun(node.text, start, spans));
-			} else if (node.kind === 'break') {
-				pos += 1;
-				out.push(node);
-			} else if (node.kind === 'emphasis') {
-				out.push({ ...node, children: walk(node.children) });
-			} else if (node.kind === 'ref') {
-				// A reference the CORPUS stated (`<a data-ref>`, parsed before
-				// this ever runs) is already resolved, so its interior is not
-				// re-linkified — but `pos` must still advance past its text, or
-				// every span after it in the block lands at the wrong offset.
-				// `inlineText` counts a `ref`'s children; this walk did not,
-				// which was harmless only while no `ref` could exist yet.
-				pos += inlineText([node]).length;
-				out.push(node);
-			} else {
-				out.push(node);
-			}
-		}
-		return out;
-	};
-	return walk(nodes);
+	// A reference the CORPUS stated (`<a data-ref>`, parsed before this ever
+	// runs) is already resolved, so a found span touching one is dropped
+	// whole rather than linking whichever half of it falls outside — which
+	// would put the two links back, by the other route.
+	const stated = statedRanges(nodes, 0);
+	const found = spans.filter((s) => !stated.some((r) => r.start < s.end && s.start < r.end));
+	if (found.length === 0) return nodes;
+
+	return applySpans(nodes, 0, found);
 }
 
-/** One text run cut at every reference boundary crossing it. */
-function splitRun(
-	text: string,
-	start: number,
-	spans: { start: number; end: number; seg: RefSegment }[]
-): InlineNode[] {
-	const end = start + text.length;
-	const cuts = new Set<number>([0, text.length]);
-	for (const s of spans) {
-		if (s.end <= start || s.start >= end) continue;
-		cuts.add(Math.max(0, s.start - start));
-		cuts.add(Math.min(text.length, s.end - start));
-	}
-	const points = [...cuts].sort((a, b) => a - b);
-	const out: InlineNode[] = [];
-	for (let i = 0; i < points.length - 1; i++) {
-		const from = points[i];
-		const to = points[i + 1];
-		if (to === from) continue;
-		const piece = text.slice(from, to);
-		const abs = start + from;
-		const span = spans.find((s) => s.start <= abs && abs < s.end);
-		const child: InlineNode = { kind: 'text', text: piece };
-		out.push(span ? { kind: 'ref', seg: span.seg, children: [child] } : child);
+interface RefSpan {
+	start: number;
+	end: number;
+	seg: RefSegment;
+}
+
+/** The flattened-text length of one node — `inlineText`'s own accounting, so
+ *  that a `break` counts its space and a marker counts nothing. */
+function flatLength(nodes: InlineNode[]): number {
+	return inlineText(nodes).length;
+}
+
+/** Every reference the corpus stated, as flattened-text offsets. */
+function statedRanges(nodes: InlineNode[], start: number): { start: number; end: number }[] {
+	const out: { start: number; end: number }[] = [];
+	let pos = start;
+	for (const node of nodes) {
+		const end = pos + flatLength([node]);
+		if (node.kind === 'ref') out.push({ start: pos, end });
+		else if (node.kind === 'emphasis') out.push(...statedRanges(node.children, pos));
+		pos = end;
 	}
 	return out;
+}
+
+/** `nodes` with each span's extent lifted into a single `ref` node. */
+function applySpans(nodes: InlineNode[], start: number, spans: RefSpan[]): InlineNode[] {
+	const out: InlineNode[] = [];
+	let rest = nodes;
+	let pos = start;
+
+	while (rest.length) {
+		const end = pos + flatLength(rest);
+		const span = spans.find((s) => s.start >= pos && s.start < end);
+		if (!span) break;
+
+		const [before, from] = cutNodes(rest, pos, span.start);
+		const stop = Math.min(span.end, end);
+		const [inside, after] = cutNodes(from, span.start, stop);
+
+		// A footnote marker on the boundary has no width, so a cut cannot
+		// place it. Keep it out of the link: a `<sup data-fn>` becomes a
+		// disclosure button, and one nested inside an anchor is a control
+		// inside a link.
+		const lead: InlineNode[] = [];
+		while (inside.length && flatLength([inside[0]]) === 0) lead.push(inside.shift() as InlineNode);
+		const trail: InlineNode[] = [];
+		while (inside.length && flatLength([inside[inside.length - 1]]) === 0)
+			trail.unshift(inside.pop() as InlineNode);
+
+		out.push(...before, ...lead);
+		if (inside.length) out.push(wrapRef(inside, span.seg));
+		out.push(...trail);
+		rest = after;
+		pos = stop;
+	}
+	out.push(...rest);
+	return out;
+}
+
+/** One reference's extent as a single link. An extent that is exactly one
+ *  emphasis element keeps that element OUTSIDE the link, because nothing was
+ *  split and `<em><a>` is the closer reading of the source; anything else
+ *  takes the markup inside the link, which is what makes a citation
+ *  straddling an emphasis boundary one link and not two. */
+function wrapRef(inside: InlineNode[], seg: RefSegment): InlineNode {
+	const only = inside.length === 1 ? inside[0] : undefined;
+	if (only?.kind === 'emphasis') {
+		return { ...only, children: [{ kind: 'ref', seg, children: only.children }] };
+	}
+	return { kind: 'ref', seg, children: inside };
+}
+
+/** A sibling list cut in two at an absolute offset into the flattened text,
+ *  splitting whatever node straddles it — an emphasis becomes two of itself,
+ *  one on each side, so the words keep the look the source gave them. An
+ *  indivisible node (a `break`, a stated `ref`) is never split. */
+function cutNodes(nodes: InlineNode[], start: number, at: number): [InlineNode[], InlineNode[]] {
+	const left: InlineNode[] = [];
+	const right: InlineNode[] = [];
+	let pos = start;
+	for (const node of nodes) {
+		const end = pos + flatLength([node]);
+		if (end <= at) left.push(node);
+		else if (pos >= at) right.push(node);
+		else if (node.kind === 'text') {
+			left.push({ kind: 'text', text: node.text.slice(0, at - pos) });
+			right.push({ kind: 'text', text: node.text.slice(at - pos) });
+		} else if (node.kind === 'emphasis') {
+			const [a, b] = cutNodes(node.children, pos, at);
+			if (a.length) left.push({ ...node, children: a });
+			if (b.length) right.push({ ...node, children: b });
+		} else {
+			left.push(node);
+		}
+		pos = end;
+	}
+	return [left, right];
 }

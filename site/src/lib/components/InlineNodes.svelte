@@ -53,9 +53,10 @@
 		{:else if node.kind === 'ref'}
 			{@const href = hrefFor?.(node.seg)}
 			<!-- A reference split across an emphasis boundary (`<i>Ezek </i>47:7`)
-			     arrives as two adjacent `ref` nodes sharing one segment — each
-			     keeps its own emphasis and they render as touching links, which is
-			     right both visually and semantically. See `linkifyInline`. -->
+			     arrives as ONE `ref` node holding the split emphasis, so it draws
+			     one link and not two touching ones — the anchor is outside the
+			     `<em>` here, which is why this walk has to keep nesting. See
+			     `linkifyInline`. -->
 			{#if href}<a class="inline-ref" {href}>{@render walk(node.children, node.seg.kind)}</a
 				>{:else}{@render walk(node.children, hrefFor ? node.seg.kind : within)}{/if}
 		{:else if node.kind === 'break'}
