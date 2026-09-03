@@ -3155,8 +3155,14 @@ not survive a reading of the result:
   and the breadcrumb printed one crumb where the Catechism's prints five. The rule
   (`socialDoctrineNav.ts`) is that following an outline is going somewhere to READ, so
   every row lands in the chapter at the heading it names, and the paragraph page is
-  reached by its number — which is the form a citation takes anyway. Two destinations per
-  row, and the reader can see which is which: the title, and the range beside it.
+  reached by its number — which is the form a citation takes anyway. The index was first
+  built with TWO destinations per row, the title to the chapter and the range to the
+  paragraph it opens at, and that is one destination too many: the two are a hundred rows
+  of choosing between them, two tab stops apiece, and a distinction nobody asked for. One
+  link per row now — the title's anchor stretched over the row — and the range states how
+  much of the book the row covers, which is a fact about the row rather than a second
+  place to go. The Catechism's index keeps two chips, because it genuinely has two works
+  and linking the title to one of them would answer a question the reader has not asked.
 - **A derived number is a claim, and this work falsifies it.** The sidebar abbreviates a
   printed division label to a short form whose number comes from the row's position among
   its tree siblings — `CHAPTER FIVE` → `Ch. 5` — because a 17rem column has no room for

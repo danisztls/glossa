@@ -17,12 +17,13 @@
 	 * whose job is to get a reader into the text". Folded away behind a
 	 * chevron, all five levels cost nothing.
 	 *
-	 * EVERY ROW IS TWO DESTINATIONS. The title opens the division in
-	 * continuous prose and the range beside it opens the paragraph the row
-	 * starts at — `socialDoctrineNav.ts` carries the reasoning; in short, a
-	 * reader following a table of contents is going somewhere to READ, and a
-	 * page holding one paragraph out of a chapter of sixty is the citation
-	 * view, not that.
+	 * EVERY ROW IS ONE LINK, to the division it names read in continuous prose
+	 * — `socialDoctrineNav.ts` carries the reasoning; in short, a reader
+	 * following a table of contents is going somewhere to READ, and a page
+	 * holding one paragraph out of a chapter of sixty is the citation view,
+	 * not that. The range at the far edge is inside that link rather than
+	 * being one of its own: it says how much of the book the row covers, which
+	 * is a fact about the row and not a second place to go.
 	 */
 	import BookText from '@lucide/svelte/icons/book-text';
 	import { getWork, socialDoctrineOutline, socialDoctrineWorkId } from '$lib/corpus';
@@ -31,7 +32,6 @@
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import { DOCUMENT_OUTLINE_KINDS, workLink } from '$lib/components/indexToc';
 	import { content } from '$lib/content.svelte';
-	import { hrefFor } from '$lib/address';
 	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
 	import { documentHeadingParts } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
@@ -44,28 +44,21 @@
 	const outline = $derived(socialDoctrineOutline(lang));
 
 	/**
-	 * THE RANGE IS THE CITATION ADDRESS. Every chip opens the paragraph its
-	 * row starts at, whatever the row is: `¶20–59` beside a chapter and
-	 * `¶20–208` beside the part above it both lead to `/doctrina-socialis/20`,
-	 * because that is what a paragraph number means here. The extent is what
-	 * the chip is FOR — it says how much of the book the row covers — and the
-	 * number it opens with is the address it goes to.
+	 * THE EXTENT, AND NO ADDRESS OF ITS OWN — `workLink` with no `href`. The
+	 * row is already a link and the chip is inside it, so a second anchor here
+	 * would be a second tab stop leading to the same page.
 	 *
 	 * The row's OWN span, never a division's: a `PART` row outruns the chapter
 	 * that opens where it does, and saying so is the point (CLAUDE.md — the
 	 * widest division opening at a chapter anchor is not the chapter).
 	 */
 	const links = $derived((node: StructureNode) => [
-		workLink(node.paragraphs, {
-			href: (n) => hrefFor({ kind: 'socialDoctrine', n }),
-			unit: '¶',
-			workTitle: t('socialDoctrine.landing.title')
-		})
+		workLink(node.paragraphs, { unit: '¶', workTitle: t('socialDoctrine.landing.title') })
 	]);
 
-	/** And the title is the READING address: the chapter this heading is
-	 *  printed in, scrolled to the heading. */
-	const titleHref = $derived((node: StructureNode) => {
+	/** Where the row goes: the chapter this heading is printed in, scrolled to
+	 *  the heading. */
+	const rowHref = $derived((node: StructureNode) => {
 		const at = node.paragraphs[0];
 		return Number.isFinite(at) ? socialDoctrineHeadingHref(lang, at as number) : undefined;
 	});
@@ -128,7 +121,7 @@
 			{workColumns}
 			{rank}
 			{heading}
-			{titleHref}
+			{rowHref}
 			kinds={DOCUMENT_OUTLINE_KINDS}
 		/>
 	{/if}

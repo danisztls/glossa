@@ -509,13 +509,17 @@ check). No second content tier, no second chunk stride, no second reader.
   past the last paragraph (`documentTailNumber`) so a whole-work page can scroll
   to it; routed rather than anchored, that sentinel is a link to a 404. Nothing
   shows that matter now — see the appendix bullet below.
-- **Every outline of this work leads into the CHAPTER, and only a paragraph
-  NUMBER leads to a paragraph** (`socialDoctrineNav.ts`, 2026-09-02). The index,
-  both sidebars and both breadcrumbs went four different ways before that
-  module: a reader following a table of contents is going somewhere to read, and
-  `/doctrina-socialis/{n}` is one paragraph out of a chapter of sixty. On the
-  index that is the row's TITLE; the range beside it keeps the citation address,
-  which is what a range is for.
+- **Every outline of this work leads into the CHAPTER, and one row is one
+  link** (`socialDoctrineNav.ts`, 2026-09-02). The index, both sidebars and both
+  breadcrumbs went four different ways before that module: a reader following a
+  table of contents is going somewhere to read, and `/doctrina-socialis/{n}` is
+  one paragraph out of a chapter of sixty. The index briefly gave each row TWO
+  destinations — the title to the chapter, the range to the paragraph it opens
+  at — which is two tab stops and a distinction no reader asked for. The range
+  states the extent and goes where the row goes: `StructureIndex`'s `rowHref`
+  stretches the title's anchor over the whole row, and `RowLink.href` is omitted
+  so the chip renders as a `<span>`. The Catechism's index keeps two chips
+  because it genuinely has two works.
 - **`socialDoctrineHeadingHref` omits `#s{n}` at a division's own start.** The
   chapter page puts `id="s{n}"` on its INNER headings; the one that opens the
   division is the page's `<h1>` and carries no such id, so the fragment would

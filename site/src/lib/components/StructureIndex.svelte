@@ -132,19 +132,24 @@
 		 */
 		heading?: (node: StructureNode, lang: string) => { marker: string | null; title: string };
 		/**
-		 * Where the row's TITLE goes, for an index whose title has somewhere to
-		 * go. Omitted, the title is text — see NO MAIN LINK above, which is the
+		 * THE WHOLE ROW AS ONE LINK, for an index with one destination per row.
+		 * Omitted, the title is text — see NO MAIN LINK above, which is the
 		 * Catechism's case and the reason this is a prop rather than a default:
 		 * that page draws two works side by side and linking the title to one
 		 * of them would answer a question the reader has not asked.
 		 *
 		 * The Compendium of the Social Doctrine has one work in it, so the
-		 * question does not arise, and the two destinations are instead the two
-		 * ways of reading it: the title opens the division in continuous prose
-		 * and the range beside it opens the paragraph it starts at
-		 * (`socialDoctrineNav.ts`).
+		 * question does not arise. It had the title and the range pointing at
+		 * two different addresses for a few hours on 2026-09-02 — the chapter
+		 * and the paragraph it opens at — which is two links a row and a
+		 * distinction no reader asked for. One destination now, the chapter, and
+		 * the range states the extent rather than offering a second address.
+		 *
+		 * It is the TITLE that carries the anchor, stretched over the row (see
+		 * `.row.linked` below), so the link has the row's own words as its
+		 * accessible name and the range beside it is still inside the target.
 		 */
-		titleHref?: (node: StructureNode) => string | undefined;
+		rowHref?: (node: StructureNode) => string | undefined;
 	}
 
 	let {
@@ -166,7 +171,7 @@
 			marker: marker(node, lang),
 			title: displayTitle(node, lang).title
 		}),
-		titleHref
+		rowHref
 	}: Props = $props();
 
 	/**
@@ -258,11 +263,12 @@
 			{@const isOpen = openAt(rowKey(row.node), row.depth)}
 			{@const rowRank = rank(row.node, row.depth)}
 			{@const stacked = STACKED_RANKS.has(rowRank) && !!label}
-			{@const href = titleHref?.(row.node)}
+			{@const href = rowHref?.(row.node)}
 			{#if visible(row)}
 				<li
 					class={`row rank-${rowRank}`}
 					class:stacked
+					class:linked={!!href}
 					style={`--depth:${row.depth}`}
 					id={row.depth === 0 && Number.isFinite(anchor) ? `toc-${anchor}` : undefined}
 				>
@@ -291,9 +297,22 @@
 								<!-- `aria-label` as well as `title`: without `scope="col"` to
 								     deliver the work's name with the cell, a bare range would
 								     be announced as a number belonging to nothing. -->
-								<a class="row-link" href={link.href} title={link.title} aria-label={link.title}>
+								<!-- An `<a>` only where the chip is an address of its own. On a
+								     one-destination index it is a `<span>` inside the row's own
+								     link (`rowHref`), because a second anchor to the same page
+								     is a second tab stop and a second thing to choose between.
+								     `aria-label` where it IS a link: without `scope="col"` to
+								     deliver the work's name with the cell, a bare range would
+								     be announced as a number belonging to nothing. -->
+								<svelte:element
+									this={link.href ? 'a' : 'span'}
+									class="row-link"
+									href={link.href}
+									title={link.title}
+									aria-label={link.href ? link.title : undefined}
+								>
 									{link.range}
-								</a>
+								</svelte:element>
 							{:else if noCounterpartLabel}
 								<span class="no-counterpart" title={noCounterpartLabel}>
 									<span aria-hidden="true">—</span>
@@ -439,19 +458,46 @@
 		overflow-wrap: break-word;
 	}
 
-	/* A LINKED title reads as the page's own text until the pointer is on it —
-	   the same promotion `.breadcrumb a` and every list-shaped link here make.
-	   A hundred underlined serif rows is a page of blue, and the column of
-	   ranges beside them is already carrying the link colour. */
+	/* THE ROW IS THE LINK, and the title's anchor is what carries it: an
+	   overlay pseudo-element covers the whole row box, so the range at the far
+	   edge and the space between lead where the title leads. The alternative —
+	   an anchor wrapping the row — cannot be written here, because the
+	   disclosure button sits inside the row and an interactive element may not
+	   nest inside a link. The button is lifted back above the overlay below.
+
+	   It reads as the page's own text until the pointer is on it, the same
+	   promotion `.breadcrumb a` and every list-shaped link on the site make: a
+	   hundred underlined serif rows is a page of blue. */
+	.row.linked {
+		position: relative;
+	}
 	a.row-title {
 		color: inherit;
 		text-decoration: none;
 	}
-	a.row-title:hover,
+	.row.linked a.row-title::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+	.row.linked .toggle {
+		position: relative;
+		z-index: 1;
+	}
+	.row.linked:hover a.row-title,
 	a.row-title:focus-visible {
 		color: var(--color-accent);
 		text-decoration: underline;
 		text-underline-offset: 0.15em;
+	}
+	/* The chip is inside the row's target area and is not a link of its own, so
+	   it takes the muted colour of the apparatus it is — and the row's accent
+	   with everything else when the pointer is anywhere on the row. */
+	span.row-link {
+		color: var(--color-text-muted);
+	}
+	.row.linked:hover span.row-link {
+		color: var(--color-accent);
 	}
 	/* Sized in `rem`, not `em`: the numbering is chrome and stays one size
 	   down the page, where `0.72em` inside a 1.2rem part title made "PART 1"

@@ -63,7 +63,7 @@ describe('a row addresses each work the way that work is addressable', () => {
 		const [ccc, compendium] = links(find(tree, 'chapter'));
 		expect(ccc?.range.startsWith('¶')).toBe(true);
 		expect(ccc?.title).toBe('Catechism — ¶27–49');
-		expect(ccc?.href.startsWith('/catechismus/caput/')).toBe(true);
+		expect(ccc?.href?.startsWith('/catechismus/caput/')).toBe(true);
 		expect(compendium?.range.startsWith('Q')).toBe(true);
 		expect(compendium?.title.startsWith('Compendium — Q')).toBe(true);
 	});

@@ -175,7 +175,14 @@ export function indexRows(
  * kept in `title`, which is both the hover and the accessible name.
  */
 export interface RowLink {
-	href: string;
+	/** Where the chip goes on its own. ABSENT ON A ONE-DESTINATION INDEX:
+	 *  where the whole row is a single link (`StructureIndex`'s `rowHref`) the
+	 *  chip sits inside that link's target area, so an `<a>` of its own would
+	 *  be a second link to the same page — which is what the Compendium of the
+	 *  Social Doctrine's index had, one going to the chapter and one to a
+	 *  paragraph. The chip then states the extent and nothing else, which is
+	 *  the only thing it was carrying that the title does not. */
+	href?: string;
 	/** Its extent in its OWN numbering — `¶198–421`, `Q36–95`. Set in tabular
 	 *  numerals so a column of them lines up. */
 	range: string;
@@ -196,8 +203,9 @@ export interface RowLink {
 export function workLink(
 	span: readonly [number | null, number | null] | undefined,
 	opts: {
-		/** The address of the span's first unit, from `hrefFor`. */
-		href: (n: number) => string;
+		/** The address of the span's first unit, from `hrefFor`. Omitted where
+		 *  the row itself is the link — see `RowLink.href`. */
+		href?: (n: number) => string;
 		unit: string;
 		workTitle: string;
 	}
@@ -207,7 +215,7 @@ export function workLink(
 	if (!Number.isFinite(from)) return undefined;
 	const range = runLabel(from as number, to, opts.unit);
 	return {
-		href: opts.href(from as number),
+		...(opts.href ? { href: opts.href(from as number) } : {}),
 		range,
 		title: `${opts.workTitle} — ${range}`
 	};
