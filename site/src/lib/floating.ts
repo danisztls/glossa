@@ -118,7 +118,7 @@ export function keepInViewport(node: HTMLElement) {
 	};
 
 	apply();
-	// The panel's own size can change while it is open (`AppearanceMenu`'s
+	// The panel's own size can change while it is open (`SettingsMenu`'s
 	// stepper reflows as the reading grows), and its max-width is a share of
 	// the viewport, so both ends are observed.
 	const observer = new ResizeObserver(apply);

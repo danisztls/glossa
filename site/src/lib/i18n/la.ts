@@ -49,7 +49,7 @@ export const la: Dictionary = {
 	'jumpbox.hint': 'Preme / vel Ctrl+K ut ad locum adeas',
 	'jumpbox.noMatch': 'Nihil inventum',
 	'jumpbox.suggestions': 'Proposita',
-	'appearance.label': 'Species',
+	'settings.label': 'Optiones',
 	'darkMode.label': 'Modus obscurus',
 	// Latin has no yes/no pair, so the three cells say WHEN rather than
 	// whether: of its own accord / always / never. That reads as one
@@ -69,6 +69,13 @@ export const la: Dictionary = {
 	'mono.label': 'Unicolor',
 	'mono.hint':
 		'Totam paginam uno colore cano pingit, ne quid colore solo distinguatur. Sepia interim cessat.',
+	'advanced.label': 'Provecta',
+	'offline.label': 'Modus sine rete',
+	'offline.hint':
+		'Rete omnino non utitur: nihil transfertur, nulla renovatio quaeritur, nihil metitur. Soli textus in hoc instrumento iam praesentes aperiuntur.',
+	'offline.notDownloaded': 'In hoc instrumento non praesens',
+	'offline.turnOff': 'Modum sine rete claudere',
+
 	'fontSize.label': 'Magnitudo textus',
 	'fontSize.larger': 'Litterae maiores',
 	'fontSize.smaller': 'Litterae minores',

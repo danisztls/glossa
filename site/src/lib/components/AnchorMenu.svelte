@@ -11,7 +11,7 @@
 	the plain left click is intercepted (see `ReferenceNumber.svelte`).
 
 	The panel does NOT close on copy or on bookmark — the reader needs to see
-	the confirmation and the changed state, the same reasoning `AppearanceMenu`
+	the confirmation and the changed state, the same reasoning `SettingsMenu`
 	records for staying open while a reader watches the page change. `Open` is
 	an ordinary link and closes by navigating.
 

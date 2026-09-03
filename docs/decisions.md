@@ -2860,6 +2860,66 @@ permission of the local ordinary — `/preces` is exactly that, with no interpre
 conference of bishops; Challoner and the Clementine carry historical approbations, and
 `bible.cpdv.en` carries none at all.
 
+**OFFLINE MODE, 2026-09-02: the reader may switch the network off entirely.** The site was
+already offline-FIRST — the shell precached, content stored on first read, the library
+fillable ahead of time — and every one of those mechanisms is about coping with a network
+that went away. This is the other direction: the network is there, and the reader has asked
+that nothing touch it. A metered plan abroad, a flight, a rationed connection, or simply not
+wanting a reading device to talk to a server. Off by default, one switch in the settings
+panel (`SettingsMenu.svelte`, which is what `AppearanceMenu` became when it stopped holding
+only appearance).
+
+**It shipped behind a fold on the same day it was built, and the reason is worth keeping.**
+Asked what the switch actually buys, the answer was smaller than it looked: the automatic
+waves put the shell, the prayers, the Compendium and one Catechism edition on the device
+(`AUTOMATIC_WAVES`), and the three large waves — Scripture, magisterium, Summa, 23-28 MB each
+— are reachable only by a `CACHE_WAVE` that no UI sends. So a reader who turns offline mode
+on has what they have already read and little more, and the case that would make anyone reach
+for it — fill my library, then go dark — has no door. The half that IS served is real and
+needs nothing further: the reader who does not want a reading device phoning home. That is a
+narrower audience than a front-row control implies, so the control moved behind
+`+ Advanced` rather than being widened or removed. **This is the second half of a feature
+whose first half is unbuilt**, and everything the first half needs — `requestWave`,
+`requestWork`, `WaveProgress`, the per-wave byte counts `planWaves` computes precisely so a
+UI can price a download before committing to it — is already written and unused.
+
+**A hidden switch that is ON must not stay hidden**: the fold opens itself whenever offline
+mode is enabled, one-way within a session. Otherwise the reader who cannot find the control
+is the reader who cannot explain why nothing loads.
+
+**It is three gates and not one, because there are three mechanisms and no single
+chokepoint.** `sw.svelte.ts` stops the update check, the offer and every download message the
+page sends; `usage.ts` withholds the beacon; `service-worker.ts` serves cache-only, which is
+the only half that can hold for a request no application code issues — a font, an image, the
+document of a cold start. Gating any two of the three leaves the third talking.
+
+**The worker's copy has to be PERSISTED, and that is the non-obvious part.** A service worker
+has no `localStorage` and is killed and restarted freely, and the request that matters most —
+the navigation that boots the app — is answered before any page script exists to tell it
+anything. So the flag is mirrored into a cache of its own (`glossa-prefs`), which is the only
+storage a page and a worker share; the page re-posts it on every start as a correction, never
+as the source. A design that only posted the flag would have worked in every manual test and
+failed exactly once per cold start.
+
+**A miss is REFUSED, not fetched, and that is the whole feature.** `cacheOnly` answers 504
+rather than falling through — including when the cache itself throws, since an unreadable
+cache is not permission to make the request. What the reader sees is `NotDownloaded`, which
+carries the switch that undoes it, distinguished from a genuine 404 by the status alone
+(every deliberate refusal in a `load` is `error(404, …)`; a content read that threw is a 500).
+
+**Two things it cannot stop, and both are the browser's.** The periodic byte-check of the
+worker script, which the browser schedules on its own, and the `install` that follows if that
+check finds a new version. The precache is deliberately NOT gated: a worker that activates
+with an empty shell cache is an app that cannot boot at all, which is a far worse answer to
+"make no requests" than one 157 KB install nobody asked for.
+
+**It made two latent bugs reachable, and both were fixed with it.** `corpus.ts` memoized
+REJECTED reads, so one failure poisoned a file for the life of the page — harmless while the
+only cause was a network already gone, fatal to a switch whose entire purpose is to be turned
+back off and retried. And `LinkPreview` had no `catch` on its resolve, so a failed read left
+the card in `loading` for ever and the rejection reached nothing. Both are the same shape: a
+failure path that was only ever reached by accident, and became ordinary.
+
 ## Usage measurement
 
 **Nothing measured usage until 2026-08-27, and the reason it had to change is the

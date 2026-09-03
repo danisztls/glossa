@@ -425,7 +425,7 @@
 
 .reading-text {
 	font-family: var(--font-serif);
-	/* Multiplied by the reader's fine-adjustment (AppearanceMenu.svelte /
+	/* Multiplied by the reader's fine-adjustment (SettingsMenu.svelte /
 	   prefs.svelte.ts), never applied to chrome — this custom property is
 	   only ever read here, so nothing outside the reading column resizes
 	   when the reader adjusts text size. The `, 1` fallback covers the

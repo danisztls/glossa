@@ -610,6 +610,55 @@ check). No second content tier, no second chunk stride, no second reader.
   (`CccAbbreviation.section`), so six editions cost no new strings; only the
   appendix as a whole needed one, because no heading in any edition names it.
 
+## Offline mode: three gates, and the one the worker has to remember
+
+Added 2026-09-02 (§The site). Off by default, and **behind the `+ Advanced`
+fold** at the foot of `SettingsMenu.svelte` — which is what `AppearanceMenu`
+was called until it stopped holding only appearance.
+`src/lib/offline.svelte.ts` is the feature's docblock.
+
+- **The fold is a measurement, not modesty.** The automatic waves put the
+  shell, the prayers, the Compendium and ONE Catechism edition on the device
+  and nothing else; Scripture, magisterium and Summa are reachable only by a
+  `CACHE_WAVE` that **no UI sends**. So the switch buys a reader what they
+  have already read and little more until a library-fill panel exists, and
+  `requestWave`, `requestWork`, `serviceWorker.progress` and `planWaves`'
+  byte counts are all written and unused, waiting for it. **Build that before
+  promoting this control.**
+- **The fold opens itself when the switch is on**, one-way within a session.
+  A hidden control that is silently ON is a reader who cannot explain why
+  nothing loads.
+
+- **Three gates because there are three mechanisms**: `sw.svelte.ts` (update
+  check, offer, apply, and every download message — the gate sits in `#send`,
+  the chokepoint), `usage.ts` (`#send` withholds the beacon; the session goes
+  on counting locally), and `service-worker.ts` (cache-only, the only half
+  that holds for a request no application code issues). Gating two of the
+  three leaves the third talking.
+- **The worker's copy is PERSISTED, in a cache of its own** (`glossa-prefs`):
+  it has no `localStorage`, it is restarted freely, and the navigation that
+  boots the app is answered before any page script runs. The page re-posts
+  `OFFLINE_MODE` on every start as a correction, never as the source — a
+  posted-only flag passes every manual test and fails once per cold start.
+  `#post` exists because that one message must go THROUGH the gate in `#send`
+  rather than obey it.
+- **A miss is refused, never fetched** — `cacheOnly` answers 504 even when the
+  cache itself throws, since an unreadable cache is not permission to make the
+  request. `NotDownloaded` is what the reader sees, told apart from a real 404
+  by the STATUS (`error(404, …)` is deliberate; a content read that threw is a
+  500).
+- **`install` is deliberately NOT gated**, and it is the one download the mode
+  cannot refuse. A worker activating with an empty shell cache cannot boot at
+  all. The browser's own byte-check of the worker script is likewise outside
+  our reach; both are named in `service-worker.ts`'s header rather than
+  quietly ignored.
+- **It made two latent bugs reachable**, both fixed with it: `corpus.ts`
+  memoized rejected reads (one failure poisoned a file for the life of the
+  page — fatal to a switch whose point is to be turned off and retried), and
+  `LinkPreview` had no `catch`, leaving the card in `loading` for ever. A
+  failure path only ever reached by accident becomes ordinary here; look for
+  the next one the same way.
+
 ## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
 
 Added 2026-08-27 (§Usage measurement). First-party, bucketed, no identifier.

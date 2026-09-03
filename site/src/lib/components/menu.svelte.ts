@@ -7,7 +7,7 @@
  * and returning focus to the trigger — which until now was hand-rolled,
  * identically, in all five menu components (theme, font size, edition,
  * comparison edition, language). Theme and font size have since merged into
- * one `AppearanceMenu`, so there are four — plus `AnchorMenu`, the popover a
+ * one `SettingsMenu`, so there are four — plus `AnchorMenu`, the popover a
  * unit number opens, which is the first consumer whose trigger is an anchor
  * rather than a button and the first whose panel needs measured positioning
  * (`floating.ts`) because it hangs off arbitrary points in flowing prose
@@ -23,7 +23,7 @@
  * panels are `position: absolute` inside their triggers.
  *
  * WHY IT WAS DUPLICATED, AND WHY THAT NO LONGER APPLIES. `ThemeMenu`'s
- * docblock (now `AppearanceMenu`'s) recorded the reason: "Svelte has no
+ * docblock (now `SettingsMenu`'s) recorded the reason: "Svelte has no
  * cross-file scoped style or behavior sharing below a full component." That
  * was true of the Svelte 4 component model, where the only unit of reuse was
  * a component, and wrapping
@@ -38,7 +38,7 @@
  * WHAT DELIBERATELY DID NOT MOVE: the `choose` handlers. Every menu closes and
  * refocuses after a pick — that shared step is `closeAndRefocus` below — but
  * WHAT a pick does differs per menu (a theme, a font scale, a reading edition,
- * a compare target), and `AppearanceMenu` deliberately does not close on a
+ * a compare target), and `SettingsMenu` deliberately does not close on a
  * pick at all, because a reader adjusting how the page looks wants to keep
  * clicking and watching it change. A shared "choose" would have had to take
  * that behavior as a flag, which is the shape this module exists to avoid.
@@ -119,7 +119,7 @@ export class Menu {
 
 	/**
 	 * Escape closes the panel and restores focus. Menus with their own
-	 * additional keys (`AppearanceMenu`'s arrows) call this first and then
+	 * additional keys (`SettingsMenu`'s arrows) call this first and then
 	 * handle the rest — this only ever acts on Escape, so it composes.
 	 */
 	onPanelKeydown = (e: KeyboardEvent) => {

@@ -43,7 +43,7 @@ export const en: Dictionary = {
 	// inside it is a second widget and owes its own name.
 	'jumpbox.suggestions': 'Suggestions',
 
-	// Appearance menu — AppearanceMenu.svelte is the consumer; the dark-mode
+	// Appearance menu — SettingsMenu.svelte is the consumer; the dark-mode
 	// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.
 	// `sepia.lightOnly` is shown only while dark mode is actually active, to
 	// explain why the sepia switch beside it is greyed out — it shares that
@@ -63,7 +63,11 @@ export const en: Dictionary = {
 	// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
 	// full-width segmented control inside a ~13rem panel, set uppercase at
 	// 0.68rem, so a long word in any language pushes the panel wider.
-	'appearance.label': 'Appearance',
+	// SETTINGS AND NOT APPEARANCE SINCE OFFLINE MODE joined the panel
+	// (`SettingsMenu.svelte` argues the rename). The trigger's icon did not
+	// change with it: the sliders glyph reads as "settings" already, which is
+	// half the reason the wider name fits.
+	'settings.label': 'Settings',
 	// The panel choosing what is set BESIDE the text — an edition's own
 	// footnotes, and any commentary written on it. "Apparatus" is the word the
 	// trade uses and the word this site's own prose uses throughout
@@ -85,6 +89,24 @@ export const en: Dictionary = {
 	'mono.label': 'Monochrome',
 	'mono.hint':
 		'Sets the whole page in a single grey, so nothing is told apart by colour. Sepia turns off while it is on.',
+	// OFFLINE MODE — `SettingsMenu.svelte`'s last row, and
+	// `NotDownloaded.svelte` when it has refused something. `offline.hint` is
+	// the tooltip on the switch AND the body of that page, deliberately: they
+	// are one sentence, and a reader who read it in the panel should recognise
+	// it when it comes true. It names the price ("only texts already here")
+	// rather than the mechanism, which is why it mentions neither the service
+	// worker, nor the cache, nor the beacon.
+	// The fold's label, `LanguageMenu`'s "+ more" idiom. One word: the panel is
+	// ~11rem wide and the row it uncovers already says "Offline mode", so
+	// naming the subject again ("Advanced network") would buy width and no
+	// information.
+	'advanced.label': 'Advanced',
+	'offline.label': 'Offline mode',
+	'offline.hint':
+		'Uses no network at all: nothing is downloaded, no update is checked for, nothing is measured. Only texts already on this device will open.',
+	'offline.notDownloaded': 'Not on this device',
+	'offline.turnOff': 'Turn off offline mode',
+
 	'fontSize.label': 'Text size',
 	'fontSize.larger': 'Larger text',
 	'fontSize.smaller': 'Smaller text',

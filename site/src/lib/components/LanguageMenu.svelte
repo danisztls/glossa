@@ -2,7 +2,7 @@
 	UI language switch.
 
 	Now a dropdown on the same `.menu`/`.menu-trigger`/`.menu-panel`
-	primitives as AppearanceMenu/EditionMenu, rather than the
+	primitives as SettingsMenu/EditionMenu, rather than the
 	side-by-side EN|PT segmented control it used to be. The earlier shape was
 	argued for on the grounds that UI language drives content language
 	(i18n.svelte.ts) and so deserved to look different from the "reading

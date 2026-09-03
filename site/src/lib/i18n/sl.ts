@@ -33,7 +33,7 @@ export const sl: Dictionary = {
 	'jumpbox.hint': 'Pritisnite / ali Ctrl+K za skok na navedbo',
 	'jumpbox.noMatch': 'Ni zadetkov',
 	'jumpbox.suggestions': 'Predlogi',
-	'appearance.label': 'Videz',
+	'settings.label': 'Nastavitve',
 	'darkMode.label': 'Temni način',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Vklop',
@@ -46,6 +46,13 @@ export const sl: Dictionary = {
 	'mono.label': 'Enobarvno',
 	'mono.hint':
 		'Vso stran postavi v en sam sivi ton, tako da barva ničesar ne loči. Dokler je vklopljeno, je sepija izklopljena.',
+	'advanced.label': 'Napredno',
+	'offline.label': 'Način brez povezave',
+	'offline.hint':
+		'Sploh ne uporablja omrežja: nič se ne prenese, posodobitve se ne preverjajo, nič se ne meri. Odprejo se samo besedila, ki so že v tej napravi.',
+	'offline.notDownloaded': 'Ni v tej napravi',
+	'offline.turnOff': 'Izklopi način brez povezave',
+
 	'fontSize.label': 'Velikost besedila',
 	'fontSize.larger': 'Večje besedilo',
 	'fontSize.smaller': 'Manjše besedilo',

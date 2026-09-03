@@ -34,7 +34,7 @@ export const ro: Dictionary = {
 	'jumpbox.hint': 'Apăsați / sau Ctrl+K pentru a sări la o referință',
 	'jumpbox.noMatch': 'Nicio potrivire',
 	'jumpbox.suggestions': 'Sugestii',
-	'appearance.label': 'Aspect',
+	'settings.label': 'Setări',
 	'darkMode.label': 'Mod întunecat',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Pornit',
@@ -47,6 +47,13 @@ export const ro: Dictionary = {
 	'mono.label': 'Monocrom',
 	'mono.hint':
 		'Așază toată pagina într-un singur gri, astfel încât nimic nu se deosebește prin culoare. Cât timp este pornit, sepia se oprește.',
+	'advanced.label': 'Avansat',
+	'offline.label': 'Mod offline',
+	'offline.hint':
+		'Nu folosește deloc rețeaua: nu se descarcă nimic, nu se caută actualizări, nu se măsoară nimic. Se deschid doar textele aflate deja pe acest dispozitiv.',
+	'offline.notDownloaded': 'Nu se află pe acest dispozitiv',
+	'offline.turnOff': 'Dezactivează modul offline',
+
 	'fontSize.label': 'Mărimea textului',
 	'fontSize.larger': 'Text mai mare',
 	'fontSize.smaller': 'Text mai mic',

@@ -73,7 +73,7 @@ export const mg: Dictionary = {
 	'jumpbox.hint': 'Tsindrio / na Ctrl+K hankany amin’ny fanondroana',
 	'jumpbox.noMatch': 'Tsy misy mifanaraka',
 	'jumpbox.suggestions': 'Soso-kevitra',
-	'appearance.label': 'Endrika',
+	'settings.label': 'Fandrindrana',
 	'darkMode.label': 'Endrika maizina',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Mandeha',

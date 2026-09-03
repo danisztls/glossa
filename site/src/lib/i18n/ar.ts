@@ -33,7 +33,7 @@ export const ar: Dictionary = {
 	'jumpbox.hint': 'اضغط / أو Ctrl+K للانتقال إلى موضع',
 	'jumpbox.noMatch': 'لا نتيجة',
 	'jumpbox.suggestions': 'اقتراحات',
-	'appearance.label': 'المظهر',
+	'settings.label': 'الإعدادات',
 	'darkMode.label': 'الوضع الداكن',
 	'darkMode.auto': 'تلقائي',
 	'darkMode.on': 'تشغيل',
@@ -46,6 +46,13 @@ export const ar: Dictionary = {
 	'mono.label': 'أحادي اللون',
 	'mono.hint':
 		'يضبط الصفحة كاملة بدرجة رمادية واحدة، فلا يُميَّز شيء باللون. يُطفأ السيبيا أثناء تفعيله.',
+	'advanced.label': 'خيارات متقدمة',
+	'offline.label': 'وضع بلا اتصال',
+	'offline.hint':
+		'لا يستخدم الشبكة إطلاقًا: لا يُنزَّل شيء، ولا يُبحث عن تحديثات، ولا يُقاس شيء. لا تُفتح إلا النصوص الموجودة بالفعل على هذا الجهاز.',
+	'offline.notDownloaded': 'غير موجود على هذا الجهاز',
+	'offline.turnOff': 'إيقاف وضع بلا اتصال',
+
 	'fontSize.label': 'حجم النصّ',
 	'fontSize.larger': 'نصّ أكبر',
 	'fontSize.smaller': 'نصّ أصغر',

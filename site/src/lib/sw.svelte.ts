@@ -44,10 +44,19 @@
  * `requestWave` and `requestWork` are the explicit forms, for a UI that offers
  * "make this available offline" against a real byte count. See `planWaves` in
  * `sw-policy.ts` for the order and where the automatic line falls.
+ *
+ * OFFLINE MODE stops both jobs at their source — no `registration.update()`,
+ * no offer, no apply, and no message that would make the worker fetch
+ * anything. The listeners are still wired, because an event listener costs
+ * nothing and re-attaching a set of them on a toggle is a lifecycle to get
+ * wrong; what is gated is every point that reaches the network or moves the
+ * ground under the reader. `$lib/offline.svelte.ts` has the argument, and the
+ * worker's own half of it.
  */
 
 import { contentLangChain, lastContentRead } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
+import { offline, setOfflineObserver } from './offline.svelte';
 import { usage } from './usage';
 import type { WaveId } from './sw-policy';
 
@@ -149,6 +158,15 @@ class ServiceWorkerStore {
 			signal
 		});
 
+		// The reader's switch, to the one place that cannot read it for itself.
+		// Sent on every start and not only on a change: the worker keeps its own
+		// copy in a cache, but a copy is a thing that can go stale (storage
+		// cleared, a browser that dropped the entry), and a page is the cheapest
+		// possible correction. `#post` and not `#send` — this message is the one
+		// that must go THROUGH offline mode rather than being stopped by it.
+		this.#post({ type: 'OFFLINE_MODE', on: offline.enabled });
+		setOfflineObserver((on) => this.#onOfflineChange(on));
+
 		// A worker that calls skipWaiting hands control to this page mid-life.
 		// Every route to that is one of the three moments in the docblock, so
 		// the right response is always to go to the new version now — either
@@ -159,6 +177,11 @@ class ServiceWorkerStore {
 			.then((registration) => {
 				if (cancelled) return;
 				this.#registration = registration;
+				// Again, now that there certainly is a worker. The call above
+				// runs before the first one is claimed, where there is no
+				// controller to post to and the message is dropped — which is
+				// every reader's first visit.
+				this.#post({ type: 'OFFLINE_MODE', on: offline.enabled });
 				this.#watchForUpdate(registration, signal);
 				this.checkForUpdate();
 			})
@@ -185,6 +208,7 @@ class ServiceWorkerStore {
 
 		return () => {
 			cancelled = true;
+			setOfflineObserver(undefined);
 			window.clearTimeout(timer);
 			controller.abort();
 		};
@@ -225,6 +249,10 @@ class ServiceWorkerStore {
 	 *  on every tab focus, and an unthrottled check would be a request per
 	 *  alt-tab. */
 	checkForUpdate(): void {
+		// The one request this file makes on its own initiative, so it is the
+		// first thing offline mode has to stop. A reader who turns the switch off
+		// gets a check immediately — see `#onOfflineChange`.
+		if (offline.enabled) return;
 		if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
 		const now = Date.now();
 		if (now - this.#lastCheck < UPDATE_CHECK_INTERVAL_MS) return;
@@ -238,6 +266,11 @@ class ServiceWorkerStore {
 	 *  the offer, or the tab went to the background. The worker takes over,
 	 *  `controllerchange` fires, and `#land` reloads onto the new version. */
 	applyUpdate(): void {
+		// Unreachable from the banner while offline mode is on (it never goes
+		// up), but this is also the hidden-tab path in `start()`, and a shell
+		// swap is exactly the kind of thing a reader asks a standing app not to
+		// do. Cheap to state here rather than to reason about from two callers.
+		if (offline.enabled) return;
 		const waiting = this.#registration?.waiting;
 		if (!waiting) {
 			// Raced away (another tab accepted first, or the worker activated on
@@ -304,15 +337,25 @@ class ServiceWorkerStore {
 		this.#send({ type: 'CACHE_CONTENT', workId });
 	}
 
-	/** Forget the whole offline library. */
+	/** Forget the whole offline library.
+	 *
+	 *  `#post` and not `#send`, for two reasons that point the same way: this
+	 *  is a DELETION, so the gate that stops downloads has no business
+	 *  stopping it — a reader freeing space on a metered connection is exactly
+	 *  who has offline mode on — and the worker returns before it reads the
+	 *  reader vocabulary `#send` attaches, so sending it was only ever waste. */
 	clear(): void {
-		this.#send({ type: 'CLEAR_CONTENT' });
+		this.#post({ type: 'CLEAR_CONTENT' });
 	}
 
 	#send(message: Record<string, unknown>): void {
-		const controller = navigator.serviceWorker?.controller;
-		if (!controller) return;
-		controller.postMessage({
+		// EVERY message that goes through here makes the worker fetch something,
+		// which is why the gate is at the chokepoint rather than at each of the
+		// three callers. The worker refuses them as well (a tab opened before the
+		// switch is still sending); this is the half that means nothing is even
+		// asked for.
+		if (offline.enabled) return;
+		this.#post({
 			...message,
 			// Sent with every request rather than read by the worker, which has
 			// no access to the reader's stored preferences: language lives in
@@ -323,11 +366,49 @@ class ServiceWorkerStore {
 		});
 	}
 
+	/** Post to the worker, with no gate and none of the download vocabulary —
+	 *  for the one message that CARRIES the gate rather than obeying it. */
+	#post(message: Record<string, unknown>): void {
+		// No controller means no worker is running this page yet, so there is
+		// nobody to tell and nothing it could be doing wrong. The next start
+		// posts again, and the worker's own cached copy answers meanwhile.
+		const controller = navigator.serviceWorker?.controller;
+		if (!controller) return;
+		controller.postMessage(message);
+	}
+
+	/**
+	 * The switch moved. Tell the worker, and undo or redo what it suppresses.
+	 *
+	 * Turning it ON also takes down a banner that is already up: an offer the
+	 * reader can no longer accept (`#offerUpdate` and `applyUpdate` are both
+	 * gated) must not keep sitting on the page as if they could.
+	 *
+	 * Turning it OFF resumes both jobs at once rather than waiting for the next
+	 * tab focus and the next mount — the reader has just said the network is
+	 * available again, and the two things they were denied are a check and a
+	 * fill.
+	 */
+	#onOfflineChange(on: boolean): void {
+		this.#post({ type: 'OFFLINE_MODE', on });
+		if (on) {
+			this.updateReady = false;
+			return;
+		}
+		this.checkForUpdate();
+		this.requestAutomatic();
+	}
+
 	/** Raise the banner, and record that an offer was made. The counter behind
 	 *  `usage`'s `behind` bucket asks whether `UpdateBanner` actually moves
 	 *  anyone off a superseded shell, which needs to know an offer happened —
 	 *  not merely that one was pending somewhere. */
 	#offerUpdate(): void {
+		// Nothing here needs the network — the worker is already installed and
+		// waiting — but taking it swaps the shell, and a reader who has asked the
+		// app to stand still has asked for that too. It stays waiting; the switch
+		// coming off is what lets it through.
+		if (offline.enabled) return;
 		this.updateReady = true;
 		if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
 			// Moment 1. Deliberately WITHOUT `noteUpdateOffered`: `behind`

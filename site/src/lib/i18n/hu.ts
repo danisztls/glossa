@@ -34,7 +34,7 @@ export const hu: Dictionary = {
 	'jumpbox.hint': 'Nyomja meg a / vagy a Ctrl+K billentyűt a hivatkozásra ugráshoz',
 	'jumpbox.noMatch': 'Nincs találat',
 	'jumpbox.suggestions': 'Javaslatok',
-	'appearance.label': 'Megjelenés',
+	'settings.label': 'Beállítások',
 	'darkMode.label': 'Sötét mód',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Be',
@@ -47,6 +47,13 @@ export const hu: Dictionary = {
 	'mono.label': 'Monokróm',
 	'mono.hint':
 		'Az egész oldalt egyetlen szürke árnyalatba állítja, így semmit sem a szín különböztet meg. Amíg be van kapcsolva, a szépia kikapcsol.',
+	'advanced.label': 'Speciális',
+	'offline.label': 'Kapcsolat nélküli mód',
+	'offline.hint':
+		'Egyáltalán nem használ hálózatot: nem tölt le semmit, nem keres frissítést, nem mér semmit. Csak azok a szövegek nyílnak meg, amelyek már ezen az eszközön vannak.',
+	'offline.notDownloaded': 'Nincs ezen az eszközön',
+	'offline.turnOff': 'Kapcsolat nélküli mód kikapcsolása',
+
 	'fontSize.label': 'Betűméret',
 	'fontSize.larger': 'Nagyobb betű',
 	'fontSize.smaller': 'Kisebb betű',

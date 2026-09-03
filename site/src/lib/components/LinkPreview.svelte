@@ -195,15 +195,26 @@
 		// inside it, and pointing `aria-describedby` at it would both be a lie
 		// and put interactive content inside a `role="tooltip"`.
 		if (!openedByTap) attachDescribedBy(el);
-		resolvePreview(matchedTarget).then((r) => {
-			if (anchorEl !== el) return; // the pointer moved on while this was in flight
-			if (!r) {
-				onMissing();
-				return;
-			}
-			resolved = r;
-			phase = 'shown';
-		});
+		resolvePreview(matchedTarget)
+			.then((r) => {
+				if (anchorEl !== el) return; // the pointer moved on while this was in flight
+				if (!r) {
+					onMissing();
+					return;
+				}
+				resolved = r;
+				phase = 'shown';
+			})
+			// A READ THAT THREW IS A PREVIEW THAT RESOLVED TO NOTHING, and the
+			// two want the same answer: dismiss on hover, navigate on tap — at
+			// which point the route says what happened. Without this the card
+			// sits in `loading` for ever and the rejection reaches nothing.
+			// Rare while the only cause was a network already gone; routine
+			// since offline mode, where hovering a citation to a chapter this
+			// device does not hold is an ordinary thing to do.
+			.catch(() => {
+				if (anchorEl === el) onMissing();
+			});
 	}
 
 	function beginShow(el: HTMLAnchorElement, matchedTarget: PreviewTarget) {

@@ -209,6 +209,57 @@ export async function cacheFirst(
 }
 
 /**
+ * The status a request refused by offline mode answers with.
+ *
+ * 504 and not 503: the reader's own switch is a gateway that declines to make
+ * the upstream request, which is exactly what a gateway timeout says, and it
+ * keeps this distinguishable from `handleNavigate`'s 503 (the worker has
+ * nothing cached AND no network — a different failure with a different fix).
+ * Nothing in the app branches on the number today; the header below is the
+ * signal a caller should read, and the status is what makes `res.ok` false so
+ * an unchanged caller fails rather than parsing an empty body.
+ */
+export const OFFLINE_STATUS = 504;
+
+/** Marks a response as the reader's own choice rather than a broken network. */
+export const OFFLINE_HEADER = 'X-Glossa-Offline';
+
+/** The refusal itself. A body would be read by nobody: every consumer of a
+ *  content URL parses JSON and checks `ok` first. */
+export function offlineRefusal(): Response {
+	return new Response(null, {
+		status: OFFLINE_STATUS,
+		statusText: 'Offline mode',
+		headers: { [OFFLINE_HEADER]: '1' }
+	});
+}
+
+/**
+ * Serve from one cache and NEVER reach the network — the offline-mode form of
+ * `cacheFirst` and `cacheFirstAndStore` both.
+ *
+ * A miss is refused rather than fetched, which is the whole point: the reader
+ * has asked for no traffic, and quietly fetching "just this one" is the
+ * failure this mode exists to prevent. There is nothing to store either, since
+ * nothing was fetched — so one function replaces both of the above.
+ */
+export async function cacheOnly(
+	env: CacheEnv,
+	request: Request,
+	cacheName: string
+): Promise<Response> {
+	try {
+		const cached = await (await env.caches.open(cacheName)).match(request);
+		return cached ?? offlineRefusal();
+	} catch {
+		// Storage refused (private browsing, a browser blocking site data).
+		// Refuse rather than fall through to the network: an unreadable cache
+		// is not permission to make the request.
+		return offlineRefusal();
+	}
+}
+
+/**
  * Like `cacheFirst`, but stores what it fetches. Used only for corpus content,
  * where "read it once, keep it forever" is the whole caching story: the URLs
  * are content-hashed and the text is immutable, so there is nothing to

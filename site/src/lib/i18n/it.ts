@@ -33,7 +33,7 @@ export const it: Dictionary = {
 	'jumpbox.hint': 'Premi / o Ctrl+K per andare a un riferimento',
 	'jumpbox.noMatch': 'Nessuna corrispondenza',
 	'jumpbox.suggestions': 'Suggerimenti',
-	'appearance.label': 'Aspetto',
+	'settings.label': 'Impostazioni',
 	'darkMode.label': 'Modo scuro',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Sì',
@@ -46,6 +46,13 @@ export const it: Dictionary = {
 	'mono.label': 'Monocromatico',
 	'mono.hint':
 		'Compone l’intera pagina in un unico grigio, così nulla si distingue per il colore. Il seppia si spegne mentre è attivo.',
+	'advanced.label': 'Avanzate',
+	'offline.label': 'Modalità offline',
+	'offline.hint':
+		'Non usa affatto la rete: non scarica nulla, non cerca aggiornamenti, non misura nulla. Si aprono soltanto i testi già presenti su questo dispositivo.',
+	'offline.notDownloaded': 'Non presente su questo dispositivo',
+	'offline.turnOff': 'Disattiva la modalità offline',
+
 	'fontSize.label': 'Dimensione del testo',
 	'fontSize.larger': 'Testo più grande',
 	'fontSize.smaller': 'Testo più piccolo',

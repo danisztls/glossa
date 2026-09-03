@@ -2,7 +2,7 @@
 	Which apparatus is set beside the text: the edition's own notes, and any
 	commentary written on it.
 
-	A PANEL RATHER THAN A MENU, on `AppearanceMenu`'s template and for the
+	A PANEL RATHER THAN A MENU, on `SettingsMenu`'s template and for the
 	argument its docblock already makes — several controls answering one
 	question ("what is set beside this text?") want a panel, not a row of
 	icons or a list of alternatives. What makes it a panel here specifically is
@@ -138,7 +138,7 @@
 	 * them. What stays here is the panel's own two decisions: how tall a row is
 	 * and how much air the stack sits in.
 	 *
-	 * BOTH MATCH `AppearanceMenu`'s deliberately. They are the two panels the
+	 * BOTH MATCH `SettingsMenu`'s deliberately. They are the two panels the
 	 * reading bar and the header open, a reader meets them within a click of
 	 * each other, and rows of two different heights would read as two different
 	 * kinds of control for what is the same kind of choice.

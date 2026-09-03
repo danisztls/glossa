@@ -3,7 +3,10 @@ import {
 	cacheAssets,
 	cacheFirst,
 	cacheFirstAndStore,
+	cacheOnly,
 	navigable,
+	OFFLINE_HEADER,
+	OFFLINE_STATUS,
 	precacheShell,
 	sweepOrphanedContent,
 	sweepShellCaches,
@@ -349,6 +352,43 @@ describe('cacheFirstAndStore', () => {
 		const response = await cacheFirstAndStore(env, new Request(`${ORIGIN}/text.json`), 'content');
 		expect(response.status).toBe(404);
 		expect((await storage.open('content')).store.size).toBe(0);
+	});
+});
+
+/**
+ * OFFLINE MODE's whole mechanism at this layer. The failure it guards against
+ * is the quiet one: a cache-only path that falls through to the network on any
+ * unexpected condition still works, still looks right, and silently breaks the
+ * only promise the switch makes.
+ */
+describe('cacheOnly', () => {
+	it('serves the cached copy', async () => {
+		await (await storage.open('content')).put('/text.json', new Response('cached'));
+		const response = await cacheOnly(env, new Request(`${ORIGIN}/text.json`), 'content');
+		expect(await response.text()).toBe('cached');
+		expect(fetched).toEqual([]);
+	});
+
+	it('refuses a miss instead of fetching it', async () => {
+		const response = await cacheOnly(env, new Request(`${ORIGIN}/text.json`), 'content');
+		expect(response.status).toBe(OFFLINE_STATUS);
+		expect(response.headers.get(OFFLINE_HEADER)).toBe('1');
+		expect(response.ok).toBe(false);
+		expect(fetched).toEqual([]);
+	});
+
+	/** An unreadable cache is not permission to make the request — the one
+	 *  direction this must never fail in. */
+	it('refuses rather than falling through when storage throws', async () => {
+		env = {
+			...makeEnv(),
+			caches: {
+				open: () => Promise.reject(new Error('storage denied'))
+			} as unknown as CacheStorage
+		};
+		const response = await cacheOnly(env, new Request(`${ORIGIN}/text.json`), 'content');
+		expect(response.status).toBe(OFFLINE_STATUS);
+		expect(fetched).toEqual([]);
 	});
 });
 

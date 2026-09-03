@@ -1021,9 +1021,21 @@ async function readContent<T>(location: ContentLocation): Promise<T> {
 	}
 	let pending = contentCache.get(location.relPath) as Promise<T> | undefined;
 	if (!pending) {
-		pending = import.meta.env.SSR
-			? readContentFromDisk<T>(location.relPath)
-			: readContentFromNetwork<T>(location.url);
+		pending = (
+			import.meta.env.SSR
+				? readContentFromDisk<T>(location.relPath)
+				: readContentFromNetwork<T>(location.url)
+		).catch((err: unknown) => {
+			// A FAILED READ IS NOT MEMOIZED. The map exists to collapse
+			// concurrent reads of one file, and a rejection kept in it makes the
+			// failure permanent for the life of the page: every later route
+			// asking for the same book is handed the same dead promise without
+			// ever trying again. Harmless while the only cause was a network
+			// that had already gone away; not harmless since offline mode, where
+			// the reader turns the switch off precisely in order to retry.
+			contentCache.delete(location.relPath);
+			throw err;
+		});
 		contentCache.set(location.relPath, pending);
 	}
 	return pending;

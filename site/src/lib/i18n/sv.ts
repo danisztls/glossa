@@ -33,7 +33,7 @@ export const sv: Dictionary = {
 	'jumpbox.hint': 'Tryck / eller Ctrl+K för att gå till en hänvisning',
 	'jumpbox.noMatch': 'Ingen träff',
 	'jumpbox.suggestions': 'Förslag',
-	'appearance.label': 'Utseende',
+	'settings.label': 'Inställningar',
 	'darkMode.label': 'Mörkt läge',
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'På',
@@ -46,6 +46,13 @@ export const sv: Dictionary = {
 	'mono.label': 'Monokrom',
 	'mono.hint':
 		'Sätter hela sidan i en enda grå ton, så att ingenting skiljs åt med färg. Sepia stängs av så länge det är på.',
+	'advanced.label': 'Avancerat',
+	'offline.label': 'Offlineläge',
+	'offline.hint':
+		'Använder inget nätverk alls: inget hämtas, ingen uppdatering söks, inget mäts. Endast texter som redan finns på den här enheten öppnas.',
+	'offline.notDownloaded': 'Finns inte på den här enheten',
+	'offline.turnOff': 'Stäng av offlineläget',
+
 	'fontSize.label': 'Textstorlek',
 	'fontSize.larger': 'Större text',
 	'fontSize.smaller': 'Mindre text',

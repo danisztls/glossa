@@ -5,7 +5,7 @@
 	import { page } from '$app/state';
 	import JumpBox from '$lib/components/JumpBox.svelte';
 	import LanguageMenu from '$lib/components/LanguageMenu.svelte';
-	import AppearanceMenu from '$lib/components/AppearanceMenu.svelte';
+	import SettingsMenu from '$lib/components/SettingsMenu.svelte';
 	import InstallButton from '$lib/components/InstallButton.svelte';
 	import InstallHint from '$lib/components/InstallHint.svelte';
 	import { install } from '$lib/install.svelte';
@@ -305,7 +305,7 @@
 					<Icon name="bookmark" />
 				</a>
 				<LanguageMenu />
-				<AppearanceMenu />
+				<SettingsMenu />
 				<Shortcuts />
 				<!-- Renders nothing unless the browser has actually offered an
 				     install, so on most visits the row is unchanged. -->

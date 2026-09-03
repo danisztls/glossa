@@ -34,7 +34,7 @@ export const ru: Dictionary = {
 	'jumpbox.hint': 'Нажмите / или Ctrl+K, чтобы перейти к ссылке',
 	'jumpbox.noMatch': 'Ничего не найдено',
 	'jumpbox.suggestions': 'Подсказки',
-	'appearance.label': 'Оформление',
+	'settings.label': 'Настройки',
 	'darkMode.label': 'Тёмный режим',
 	'darkMode.auto': 'Авто',
 	'darkMode.on': 'Вкл',
@@ -47,6 +47,13 @@ export const ru: Dictionary = {
 	'mono.label': 'Монохром',
 	'mono.hint':
 		'Набирает всю страницу одним оттенком серого, так что ничто не различается по цвету. Сепия отключается, пока режим включён.',
+	'advanced.label': 'Дополнительно',
+	'offline.label': 'Автономный режим',
+	'offline.hint':
+		'Совсем не использует сеть: ничего не загружается, обновления не проверяются, ничего не измеряется. Открываются только тексты, уже сохранённые на этом устройстве.',
+	'offline.notDownloaded': 'Нет на этом устройстве',
+	'offline.turnOff': 'Выключить автономный режим',
+
 	'fontSize.label': 'Размер текста',
 	'fontSize.larger': 'Крупнее',
 	'fontSize.smaller': 'Мельче',

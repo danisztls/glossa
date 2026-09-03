@@ -15,6 +15,9 @@
  * the device (`usage-device.ts`) so that only a range ever leaves it. What the
  * colophon promises is what this sends.
  *
+ * OFFLINE MODE WITHHOLDS IT ENTIRELY — see `offline.svelte.ts`, and `#send`
+ * for why the answer is "do not send" rather than "send later".
+ *
  * ONE BEACON PER SESSION, AND ONLY FOR A READER. Nothing is sent until the
  * session has had `ENGAGEMENT_MIN_MS` of *visible* time and at least one real
  * interaction. That gate is not politeness — it is the bot defence. A
@@ -31,6 +34,7 @@ import { compare } from './compare-pref.svelte';
 import { setContentReadObserver } from './corpus';
 import { listContentAssets } from './corpus-assets';
 import { i18n } from './i18n.svelte';
+import { offline } from './offline.svelte';
 import { readStoredJson, readStoredString, writeStoredJson, writeStoredString } from './storage';
 import {
 	SCHEMA_VERSION,
@@ -413,6 +417,18 @@ class UsageSession {
 	#send(): void {
 		if (this.#sent) return;
 		if (this.#visibleMs < ENGAGEMENT_MIN_MS || !this.#interacted) return;
+		// OFFLINE MODE PAUSES THE BEACON, and pauses is the exact word: the
+		// session goes on being counted on the device, and `#sent` is left
+		// false, so a reader who switches back before leaving reports the whole
+		// session rather than the tail of it. Nothing is queued for later — a
+		// stored payload that went out on some future visit would be a beacon
+		// the reader could not decline by any means available to them, which is
+		// the opposite of what the switch says.
+		//
+		// This is a gate and not a reason to skip `start()`: the device record,
+		// the staleness counter and every bucket below are local, and a session
+		// that stopped counting itself would corrupt the NEXT one's numbers.
+		if (offline.enabled) return;
 		this.#sent = true;
 
 		// Carry this session's answer forward for the next one's `behind`.

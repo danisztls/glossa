@@ -33,7 +33,7 @@ export const pt: Dictionary = {
 	'jumpbox.noMatch': 'Nenhum resultado',
 	'jumpbox.suggestions': 'Sugestões',
 
-	'appearance.label': 'Aparência',
+	'settings.label': 'Definições',
 	'apparatus.label': 'Aparato',
 	'apparatus.editionNotes': 'Notas desta edição',
 	'apparatus.commentary': 'Comentário',
@@ -53,6 +53,13 @@ export const pt: Dictionary = {
 	'mono.label': 'Monocromático',
 	'mono.hint':
 		'Compõe a página inteira num único cinzento, para que nada se distinga pela cor. O sépia desliga-se enquanto estiver ativo.',
+
+	'advanced.label': 'Avançado',
+	'offline.label': 'Modo offline',
+	'offline.hint':
+		'Não usa a rede de todo: não transfere nada, não procura atualizações, não mede nada. Só abrem os textos que já estão neste dispositivo.',
+	'offline.notDownloaded': 'Não está neste dispositivo',
+	'offline.turnOff': 'Desativar o modo offline',
 
 	'fontSize.label': 'Tamanho do texto',
 	'fontSize.larger': 'Aumentar texto',

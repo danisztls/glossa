@@ -37,6 +37,17 @@
  * There is no separate page tier: the SPA has one shell. A reader who goes
  * offline gets that cached shell plus whatever is in CONTENT_CACHE, and the
  * client router renders the requested canonical path from there.
+ *
+ * OFFLINE MODE is the reader asking for that state deliberately while the
+ * network is still there — see the block on it below, and
+ * `$lib/offline.svelte.ts` for the whole feature. Two things it cannot stop,
+ * and both belong to the browser rather than to this file: the periodic
+ * byte-check of this script (the browser makes it on its own schedule, on
+ * navigation), and the `install` below, which runs if that check finds a new
+ * version. The precache is deliberately NOT gated on the flag: a worker that
+ * activates with an empty shell cache is an app that cannot boot at all, which
+ * is a far worse answer to "make no requests" than one 157 KB install the
+ * reader did not ask for.
  */
 
 /// <reference types="@sveltejs/kit" />
@@ -59,6 +70,8 @@ import {
 	cacheAssets,
 	cacheFirst,
 	cacheFirstAndStore,
+	cacheOnly,
+	offlineRefusal,
 	precacheShell,
 	sweepOrphanedContent,
 	sweepShellCaches,
@@ -73,6 +86,61 @@ const env: CacheEnv = { caches, fetch: (input, init) => fetch(input, init) };
 
 const CONTENT_CACHE = 'glossa-content';
 const SHELL_CACHE = `glossa-shell-${version}`;
+
+// ============================================================================
+// OFFLINE MODE — the reader's switch, mirrored where the worker can read it
+// ============================================================================
+//
+// `$lib/offline.svelte.ts` holds the preference; this is the half that stops
+// the requests no application code issues. When it is on, every branch of the
+// fetch handler below serves cache-only and every download message is dropped.
+//
+// IT HAS TO BE PERSISTED, AND NOT MERELY POSTED. A worker is killed and
+// restarted freely, and the request that matters most — the document of a cold
+// start — is answered BEFORE any page script runs to tell it anything. So the
+// flag lives in a cache of its own: `caches` is the only storage a service
+// worker and a page both have, `localStorage` being absent here. Its own cache
+// and not a key in one of the two tiers, because `activate` sweeps both and a
+// preference is neither shell nor content.
+//
+// The read is a promise resolved once per worker instance; `isOffline()` is
+// what every branch awaits, so the answer costs one microtask after the first
+// request. `offlineMode` is also read directly, in the one place that has to
+// decide synchronously — see the `passthrough` branch.
+const PREF_CACHE = 'glossa-prefs';
+/** Never fetched: a cache key is a URL, and this one names no asset. */
+const OFFLINE_FLAG_URL = `${base}/__offline-mode`;
+
+let offlineMode = false;
+
+const offlineReady: Promise<void> = (async () => {
+	try {
+		const cache = await caches.open(PREF_CACHE);
+		offlineMode = (await cache.match(OFFLINE_FLAG_URL)) !== undefined;
+	} catch {
+		// Storage refused. Off is the safe direction: the reader keeps a
+		// working site rather than an inexplicably empty one.
+	}
+})();
+
+async function isOffline(): Promise<boolean> {
+	await offlineReady;
+	return offlineMode;
+}
+
+/** Record the reader's switch. In memory first, so the very next request in
+ *  this event loop already obeys it, and in the cache for the next worker. */
+async function setOfflineMode(on: boolean): Promise<void> {
+	offlineMode = on;
+	try {
+		const cache = await caches.open(PREF_CACHE);
+		if (on) await cache.put(OFFLINE_FLAG_URL, new Response('1'));
+		else await cache.delete(OFFLINE_FLAG_URL);
+	} catch {
+		// The in-memory flag still holds for the life of this worker; what is
+		// lost is the answer a restarted one starts from.
+	}
+}
 
 // ============================================================================
 // CONTENT TIER POLICY — read this before changing what goes in CONTENT_CACHE
@@ -336,32 +404,62 @@ sw.addEventListener('activate', (event) => {
  * refuse a genuinely-cached page just because it can't re-validate it.
  */
 async function handleNavigate(request: Request): Promise<Response> {
+	// Offline mode makes the network attempt itself the thing to avoid, so the
+	// cached shell is served outright rather than after a failure. Same answer,
+	// no request — and no multi-second wait on a connection that is up but
+	// which the reader has asked us not to use.
+	if (await isOffline()) return cachedShell();
 	try {
 		return await fetch(request);
 	} catch {
-		const shell = await caches.match(partition.shellDocumentUrl);
-		if (shell) return shell;
-		const offline = await caches.match(partition.offlineFallbackUrl);
-		if (offline) return offline;
-		// Both precache candidates missing (a badly failed install) — this is
-		// the only place this file constructs a response by hand rather than
-		// serving a cached one.
-		return new Response('Offline, and no cached copy of Glossa Catholica is available.', {
-			status: 503,
-			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-		});
+		return cachedShell();
 	}
+}
+
+/** The boot document, from the cache. What every offline navigation lands on:
+ *  the app starts and its own router renders the address out of
+ *  CONTENT_CACHE. */
+async function cachedShell(): Promise<Response> {
+	const shell = await caches.match(partition.shellDocumentUrl);
+	if (shell) return shell;
+	const fallback = await caches.match(partition.offlineFallbackUrl);
+	if (fallback) return fallback;
+	// Both precache candidates missing (a badly failed install) — this is
+	// the only place this file constructs a response by hand rather than
+	// serving a cached one.
+	return new Response('Offline, and no cached copy of Glossa Catholica is available.', {
+		status: 503,
+		headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+	});
+}
+
+/** Content, and in offline mode nothing but what is already here. */
+async function handleContent(request: Request): Promise<Response> {
+	if (await isOffline()) return cacheOnly(env, request, CONTENT_CACHE);
+	// Serve from CONTENT_CACHE, and store on first read so ordinary reading
+	// builds up an offline library without the reader doing anything.
+	return cacheFirstAndStore(env, request, CONTENT_CACHE);
+}
+
+/** The shell. A miss here is close to impossible — everything in this tier was
+ *  precached at install — so what offline mode changes is the ONE case that
+ *  matters: a file this build references that install never managed to store,
+ *  which must not become a silent request. */
+async function handleShell(request: Request): Promise<Response> {
+	if (await isOffline()) return cacheOnly(env, request, SHELL_CACHE);
+	return cacheFirst(env, request, SHELL_CACHE);
 }
 
 sw.addEventListener('fetch', (event) => {
 	const { request } = event;
 	const url = new URL(request.url);
+	const sameOrigin = url.origin === sw.location.origin;
 
 	switch (
 		routeFor(
 			{
 				method: request.method,
-				sameOrigin: url.origin === sw.location.origin,
+				sameOrigin,
 				pathname: url.pathname,
 				mode: request.mode
 			},
@@ -369,25 +467,45 @@ sw.addEventListener('fetch', (event) => {
 		)
 	) {
 		case 'content':
-			// Serve from CONTENT_CACHE, and store on first read so ordinary
-			// reading builds up an offline library without the reader doing
-			// anything.
-			event.respondWith(cacheFirstAndStore(env, request, CONTENT_CACHE));
+			event.respondWith(handleContent(request));
 			return;
 		case 'shell':
-			event.respondWith(cacheFirst(env, request, SHELL_CACHE));
+			event.respondWith(handleShell(request));
 			return;
 		case 'navigate':
 			event.respondWith(handleNavigate(request));
 			return;
 		case 'passthrough':
+			// THE ONLY BRANCH THAT READS THE FLAG SYNCHRONOUSLY, because it is
+			// the only one that has to decide whether to intercept at all:
+			// `respondWith` cannot be called after this handler returns, and
+			// awaiting the flag first would mean intercepting every passthrough
+			// request forever after — including the cross-origin ones this
+			// worker has never touched.
+			//
+			// What it catches is the same-origin request nothing above claims:
+			// the usage beacon's POST (already withheld by `usage.ts`, this is
+			// the half that holds if a page from before the toggle is still
+			// open), and any same-origin asset that entered the page after this
+			// build's manifest was written. The window in which `offlineMode`
+			// is still `false` because `offlineReady` has not resolved is the
+			// first few milliseconds of a worker's life, and everything the
+			// reader actually reads goes through a branch above that awaits it.
+			if (sameOrigin && offlineMode) event.respondWith(offlineRefusal());
 			return;
 	}
 });
 
 /**
- * Messages from the page. Four of them:
+ * Messages from the page. Five of them:
  *
+ *   OFFLINE_MODE   — `{ on }`. The reader's switch, from
+ *                    `$lib/offline.svelte.ts`. Sent on every page start as
+ *                    well as on every change, because a worker that was
+ *                    restarted in between has only what it read out of
+ *                    PREF_CACHE and a page is the cheapest thing to hear it
+ *                    from. Everything below it here is a download, and while
+ *                    it is on none of them run.
  *   CACHE_CONTENT  — `{ langs, current?, chosen?, workId? }`. With a `workId`,
  *                    take that one work (this is the explicit request that
  *                    reaching outside the reader's own language requires).
@@ -407,6 +525,8 @@ sw.addEventListener('fetch', (event) => {
  */
 interface CacheMessage {
 	type?: string;
+	/** OFFLINE_MODE only. */
+	on?: boolean;
 	langs?: string[];
 	workId?: string;
 	wave?: WaveId;
@@ -427,10 +547,36 @@ sw.addEventListener('message', (event) => {
 	}
 
 	if (data.type === 'CLEAR_CONTENT') {
+		// Not gated on offline mode, deliberately: forgetting the library is a
+		// local deletion, and a reader freeing space on a metered connection is
+		// exactly who has the switch on.
 		event.waitUntil(caches.delete(CONTENT_CACHE));
 		return;
 	}
 
+	if (data.type === 'OFFLINE_MODE') {
+		event.waitUntil(setOfflineMode(data.on === true));
+		return;
+	}
+
+	// EVERYTHING BELOW DOWNLOADS, so offline mode ends the handler here. The
+	// page already declines to send these (`sw.svelte.ts`'s `#send`); this is
+	// the half that holds for a page still open from before the switch, and for
+	// a second tab that has not heard about it.
+	//
+	// Asynchronous, unlike the fetch handler's `passthrough` branch: a message
+	// has nothing to answer synchronously, so it can afford the true answer.
+	event.waitUntil(
+		isOffline().then((off) => {
+			if (!off) fill(event, data);
+		})
+	);
+});
+
+/** The download half of the message handler, reached only while offline mode
+ *  is off. Split out so the gate above is one expression rather than a flag
+ *  threaded through three branches. */
+function fill(event: ExtendableMessageEvent, data: CacheMessage): void {
 	// Every cache message carries the reader's language chain (`sw.svelte.ts`
 	// sends it with all of them, because the worker cannot read localStorage),
 	// which is the only chance this worker gets to know which scripts the
@@ -510,4 +656,4 @@ sw.addEventListener('message', (event) => {
 			})()
 		);
 	}
-});
+}

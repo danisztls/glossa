@@ -1,6 +1,6 @@
 /*
  * THE CHROME'S OWN CONTROLS — the icon-button + dropdown-panel primitive
- * shared by AppearanceMenu, LanguageMenu, EditionMenu and the header's nav
+ * shared by SettingsMenu, LanguageMenu, EditionMenu and the header's nav
  * toggle, the measured floating panel underneath them, and the dialog and
  * phone sheet those panels become.
  *
@@ -9,7 +9,7 @@
  */
 
 /*
- * Icon-button + dropdown-panel primitive shared by AppearanceMenu, LanguageMenu
+ * Icon-button + dropdown-panel primitive shared by SettingsMenu, LanguageMenu
  * and EditionMenu (and reused by the header's nav toggle in +layout.svelte)
  * — defined globally once here rather than duplicated in each component's
  * scoped <style>, since Svelte's per-component style scoping has no
@@ -513,10 +513,10 @@
  * switch that is the commonest of those controls.
  *
  * Global for the reason the primitive above is: two components render this
- * shape now -- `AppearanceMenu` (dark mode, sepia, OLED, monochrome, reading
+ * shape now -- `SettingsMenu` (dark mode, sepia, OLED, monochrome, reading
  * size) and `ApparatusMenu` (which apparatus is set beside the text) -- and
  * Svelte's per-component scoping has no way to share a block, so the
- * alternative is two copies of it that drift. They were `AppearanceMenu`'s
+ * alternative is two copies of it that drift. They were `SettingsMenu`'s
  * own until 2026-09-01, which meant the second panel to reuse the class
  * names rendered with none of the styles and nothing said so: an unknown
  * class is not an error in CSS or in Svelte.
