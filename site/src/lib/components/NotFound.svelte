@@ -15,6 +15,10 @@
 		{ href: '/scriptura', key: 'nav.bible' },
 		{ href: '/catechismus', key: 'nav.ccc' },
 		{ href: '/preces', key: 'nav.prayers' },
+		// The one page here whose subject is not a text: the liturgical
+		// calendar is computed in the browser from the date of Easter and a
+		// table of celebrations, with no content tier behind it.
+		{ href: '/calendarium', key: 'nav.calendar' },
 		{ href: '/documenta', key: 'nav.magisterium' }
 	] as const;
 </script>

@@ -26,6 +26,59 @@ Each stated as: what it is, why it matters, what it depends on, and sizing.
 | 17  | **A site-wide subject vocabulary** (topical entry across every work)                | `site/document-tags.json` holds a closed, curated vocabulary — 58 terms on 2026-09-03 — keyed by document SLUG, and it facets `/documenta` alone. Extending it across CCC divisions, canons and Compendium questions would give the site its first TOPICAL entry, which is the only surface that serves the two readers `docs/research/audiences.md` ranks largest (§1 the layperson, §5 the OCIA candidate) without waiting for gap 2. It is also gap 5 generalised: the print Catechism's own answer to "what else belongs here", derived rather than scraped. `docs/research/organization.md` §What this deliberately excludes records why it is its own project and not part of the navigation redesign                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | The vocabulary discipline that already governs `document-tags.json` — `sync-corpus.mjs` exits 1 on a term outside the list, a slug naming nothing, a case-duplicate or a padded tag — has to extend to whatever new key space the terms attach to. Curation is by reading, not counting (`site/CLAUDE.md` §`/documenta` filters), and a merge is a semantic act checked against every item it touches                                                                                                                                                                                                                                                                                                                                                                        | Not sized. The machinery is small; assigning terms to the CCC's paragraphs and the Code's canons is the work, and it is editorial rather than mechanical                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | 18  | **A liturgical calendar, and a lectionary of references** (the by-date entry)       | `docs/research/audiences.md` §2 is the one reader the site cannot answer AT ALL — the priest arrives with a date, and nothing maps a Sunday to its readings (`dates.ts` is `promulgated` formatting and says so in its header). Scope taken 2026-09-03 in `docs/research/organization.md` §Liturgical scope: the **calendar is in** (computed, not scraped — dates and feast names are facts, so no rights position, and it is a pure function of the year, which is the good direction of the Doré lesson in `CLAUDE.md`); a **lectionary is in as REFERENCES**, rendered through this site's own Bible editions and never as licensed reading text; the **Missal is out and stated** (ICEL/conference/LEV rights, no scrapeable source, and a Missal that looked usable _at_ Mass edges toward the approbation `/colophon` disclaims — `audiences.md` §9). The GIRM is takeable as an ordinary Magisterium document. It is also the only **daily-return** surface the site would have; every other use is episodic                                                                                                                                                                                                                                                                                                                                                                                   | Nothing new on the resolver side — `refparse.ts`, `refs-grammar.ts`, the book tables and `versification.ts` already turn a pericope list into linked text, including the Neo-Vulgate/Clementina Psalm divergence that is otherwise the hardest part. Needs one editorial choice (the General Roman Calendar, or a national one — the Brazilian propers diverge, which matters given the language weighting) and one sourcing check (the facts are not copyrightable; a compiled DATASET of them can carry its own licence). The reference table is `oracles/`-shaped, not `raw/`-shaped: tracked, write-once, nothing regenerates it                                                                                                                                         | Calendar small and self-contained (`site/src/lib/`, no corpus involvement). Lectionary table not sized — the schedule is the work, rendering it is existing machinery. Two new chrome paths either way                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
+## Loose ends from the liturgical calendar (landed 2026-09-03)
+
+The calendar itself shipped: `site/src/lib/calendar/` computes any day of any
+year and `oracle.test.ts` checks 27 calendars — three years, eight transfer
+variants, plus Brazil — day by day against GCatholic (`docs/decisions.md` §The
+liturgical calendar). What follows is what that work located and deliberately
+did not do.
+
+### Decisions only the person directing the work can take
+
+- **The Roman Martyrology as a second layer.** GCatholic publishes every saint
+  and blessed indexed by date of death — the Martyrology's ~7,000 against the
+  General Roman Calendar's ~190 — at `gcatholic.org/saints/dates-of-death`.
+  Ruled out of scope on 2026-09-03 so that the calendar could be judged first.
+  It is a genuinely different feature: orders of magnitude more data, a
+  different provenance question (the Martyrology is a book with a publisher,
+  where a table of dates and ranks is fact), and it would belong in the corpus
+  rather than in the site bundle. Depends on nothing; wants deciding on its own
+  terms rather than as an extension.
+- **More national calendars.** The layer is built and Brazil proves it works
+  with real data; `NationalCalendar` is a data file with no code, and GCatholic
+  publishes ~100 countries at a deterministic URL. Portugal and the USA are the
+  obvious next two on the site's audiences. Each costs its own propers, its own
+  elevations, and its own oracle years — call it a day each, most of it
+  transcription and checking rather than engineering.
+
+### Known limits, stated rather than fixed
+
+- **Brazil's Sunday transfers run out after 2027.** `sundayTransfers` is a
+  table of years and not a rule, because the evidence rules every rule out:
+  Peter and Paul went backward from a Monday in 2026 and forward from a Tuesday
+  in 2027. Outside the listed years the solemnity keeps its own date. Fixing
+  this properly means reading the CNBB's Ordo each year, which is an annual
+  chore and not a piece of code; the alternative — guessing a direction — puts
+  a solemnity on a date nobody chose.
+- **The oracle covers 2025–2027 and nothing else.** That is GCatholic's iCal
+  window (measured; its HTML tables reach 2024–2028). The rare cases live
+  outside it and are covered by hand-written tests in `year.test.ts` instead —
+  Easter on 25 March in 2035, a transferred Epiphany landing on 7 January, a
+  Christmas that is itself a Sunday. **One rule in the engine the oracle cannot
+  confirm**: Saint Joseph is anticipated rather than deferred when 19 March
+  falls in Holy Week, which rests on the published practice of 2008 because 19
+  March is outside Holy Week in all three oracle years.
+- **The lectionary is absent by choice.** The cycle letters are stated; the
+  readings are not, because their citations are a work this corpus does not
+  hold. Adding them is not a calendar problem — it is deciding whether to
+  ingest a lectionary.
+- **Latin, English and Portuguese only.** The interface is thirty-four
+  languages and every other one falls through `CONTENT_LANG_FALLBACK` to
+  English and then to Latin. That is the same posture the corpus takes for a
+  work it does not hold in a reader's language, and a translator adding a
+  language adds three name columns to `grc.ts`, not a mechanism.
+
 ## Loose ends from the 2026-08-28 Bible capture (gap #15)
 
 Eight editions were captured on 2026-08-28 (`docs/research/bible-texts.md`

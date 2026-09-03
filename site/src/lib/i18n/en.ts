@@ -588,5 +588,54 @@ export const en: Dictionary = {
 	'shortcuts.title': 'Keyboard shortcuts',
 	'shortcuts.betweenDocuments': 'Between documents',
 	'shortcuts.withinDocument': 'Within the document',
-	'shortcuts.show': 'Show this list'
+	'shortcuts.show': 'Show this list',
+	// ---------------------------------------------------------- Calendar
+	// The liturgical calendar is computed, not read: `$lib/calendar` derives
+	// every day from the date of Easter and a table of the Church's fixed
+	// celebrations. These are the only words on the page that are not a
+	// celebration's own name.
+	'nav.calendar': 'Calendar',
+	'calendar.title': 'Liturgical Calendar',
+	'calendar.tagline':
+		'The General Roman Calendar, computed for any day — its season, its rank, its colour.',
+	'calendar.date': 'Date',
+	'calendar.calendar': 'Calendar',
+	'calendar.which.general': 'General Roman Calendar',
+	'calendar.which.br': 'Brazil',
+	'calendar.previousDay': 'Previous day',
+	'calendar.today': 'Today',
+	'calendar.nextDay': 'Next day',
+	'calendar.noSuchDay': 'No liturgical day is computed for that date.',
+	'calendar.yearHeading': 'Liturgical year',
+	'calendar.yearNote':
+		'From the First Sunday of Advent to the Saturday before the next. Weekdays with nothing appointed are omitted.',
+	'calendar.week': 'week',
+	'calendar.alsoToday': 'Also kept today',
+	'calendar.obligation': 'Holy day of obligation',
+	// Names the canon rather than asserting the fact on its own authority —
+	// the Code is in the corpus in seven languages and the link goes to it.
+	'calendar.obligationCanon': 'CIC c. 1246',
+	'calendar.sundayCycle': 'Sunday cycle',
+	'calendar.weekdayCycle': 'Weekday cycle',
+	'calendar.psalterWeek': 'Psalter week',
+	'calendar.transferredFrom': 'Transferred from',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Christmas Time',
+	'calendar.season.lent': 'Lent',
+	'calendar.season.triduum': 'Paschal Triduum',
+	'calendar.season.easter': 'Easter Time',
+	'calendar.season.ordinary': 'Ordinary Time',
+	'calendar.colour.white': 'White',
+	'calendar.colour.red': 'Red',
+	'calendar.colour.green': 'Green',
+	'calendar.colour.violet': 'Violet',
+	'calendar.colour.rose': 'Rose',
+	'calendar.colour.black': 'Black',
+	'calendar.rank.solemnity': 'Solemnity',
+	'calendar.rank.feast': 'Feast',
+	'calendar.rank.memorial': 'Memorial',
+	'calendar.rank.optional-memorial': 'Optional memorial',
+	'calendar.rank.commemoration': 'Commemoration',
+	'calendar.rank.sunday': 'Sunday',
+	'calendar.rank.weekday': 'Weekday'
 };

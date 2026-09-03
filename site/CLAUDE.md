@@ -1632,6 +1632,52 @@ a runtime error nothing in `npm test`, `npm run check` or the build sees.
 A callback fits both consumers (`CommentaryGloss`'s trailing mark has nothing
 in the text to bind to) and has no third state to explain.
 
+## The liturgical calendar is computed, and checked against someone else's
+
+`$lib/calendar/` derives every day of any liturgical year from the date of
+Easter and a table of fixed celebrations; `/calendarium` renders it. No content
+tier, no manifest, no download wave — it is the only page whose subject is not
+a text (§The liturgical calendar).
+
+**The table is ours because the Holy See publishes no calendar.** _Mysterii
+Paschalis_ is on vatican.va; the _Universal Norms_ and the _Calendarium Romanum
+Generale_ it approves are not, and `liturgical_year/` is six descriptive pages
+with no dated list. So `grc.ts` sits here rather than in the corpus, on
+`pontificates.ts`'s precedent — a fact about the world that nothing upstream
+states.
+
+**What makes it trustworthy is `oracle.test.ts`, not care.** It compares every
+day of three years in all eight transfer variants plus Brazil — 27 calendars —
+against calendars GCatholic computed independently (`pipeline/CLAUDE.md`). Six
+rules came out of it that reading the Norms had got wrong; the two worth
+carrying here because they generalise:
+
+- **An optional memorial never takes the day**, though line 12 of n. 59 sits
+  above line 13. Reading the precedence table as a plain sort made every ferial
+  Tuesday with a saint on it disappear into that saint — 100 days of 2026.
+- **RANK AND PRECEDENCE ARE DIFFERENT FIELDS AND MUST STAY SO.** A feast of the
+  Lord is line 5 and a feast of a saint line 7, with a Sunday in Ordinary Time
+  between them; both are `rank: 'feast'`. Comparing on rank gets the
+  Transfiguration-on-a-Sunday case backwards and reads plausibly doing it.
+
+**The oracle files under `src/lib/calendar/oracle/` are 2.7 MB and are read
+with `node:fs`, never imported.** That is deliberate and is what keeps them out
+of the bundle — nothing globs them, so the trap at the head of this file does
+not apply. `npm run build`'s inlined-corpus audit is the standing check; if they
+ever become an `import`, they land in the boot chunk every route preloads.
+
+**A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
+names no citation, so it is not a reading address; as a chrome path it would put
+an unbounded set of URLs into the sitemap for pages that are pure computation.
+
+**Adding a country is a data file and no code.** `NationalCalendar` is a layer —
+propers, elevations, transfers, and general celebrations kept on another day —
+because that is what Universal Norms nn. 48–55 describe. `national/br.ts` is the
+worked example, and its `sundayTransfers` is a table of YEARS rather than a
+rule: Brazil moved Peter and Paul backward from a Monday in 2026 and forward
+from a Tuesday in 2027, so no rule fits and inventing one produces a date nobody
+chose.
+
 ## Languages: the interface is a superset of the content
 
 Thirty-four interface tags against twenty-eight content languages — it was

@@ -148,6 +148,11 @@ pipeline/scrapers/
                      `walk_vatican_i` is the one forked walk, its
                      docstring saying why.
   prayers.py
+  calendar.py        the General Roman Calendar, fetched from GCatholic as an
+                     ORACLE. Writes nothing to `build/` and produces no work:
+                     the site COMPUTES the calendar and this is what proves it
+                     right. Its output is tracked in this repository, not the
+                     corpus -- see below.
   audit.py census.py apply_sweep.py   tools over already-written output
 ```
 
@@ -1188,6 +1193,41 @@ The site's half (rendering, preferences, anchors) is in `site/CLAUDE.md`.
   is open; the safety measurement is that not one of 20,814 records has an odd
   number of underscores overall, and the anomaly report is for the record that
   would prove that stale.
+
+## `calendar.py` fetches an oracle, and writes no work at all
+
+The one scraper here that produces nothing for `build/`. It fetches GCatholic's
+iCal calendars into `raw/gcatholic-calendar/` and parses them to
+`site/src/lib/calendar/oracle/`, where the site's own computed calendar is
+checked against them day by day (`site/CLAUDE.md`, `docs/decisions.md` §The
+liturgical calendar). Nothing it writes is served to a reader; it decides
+whether the code that decides days is right.
+
+- **The oracle is tracked in THIS repository, not the corpus**, because the
+  corpus is a separate private checkout a test run cannot assume is present.
+  The fetched feeds stay in `raw/` as usual, so widening the parse is a
+  re-parse and never a re-crawl — demonstrated: the slimming pass that took the
+  output from 7.1 MB to 2.7 MB cost 0 requests and 78 cache hits.
+- **Only the anchor language's names are written out.** Every language is still
+  fetched and parsed, because the cross-language agreement check is what caught
+  GCatholic emitting 22 June's two optional memorials in one order in Latin and
+  the other in English — so **the index inside a UID is that language's
+  POSITION, not the celebration's identity**, and joining on it silently gives
+  Paulinus the name of Fisher and More. The other languages are dropped from
+  the oracle because nothing could assert them: this project's vernaculars are
+  the Missal's and GCatholic's are its house style.
+- **`ics/{year}-{lang}-{calendar}.ics` is deterministic**, which is what makes
+  the country dimension free — `General-{A..H}` for the eight transfer variants,
+  or an ISO country code for one of ~100 national calendars. `CALENDARS` names
+  what is fetched and a country is a row.
+- **The feeds cover 2025–2027 only** (measured 2026-09-03 by asking; the HTML
+  tables cover 2024–2028). The iCal is still what is read, because its `SUMMARY`
+  carries the liturgical COLOUR and the rank as machine-readable tokens the HTML
+  only paints in CSS — a whole column is worth more than two Easters. Years
+  outside the window are covered by hand-written tests instead.
+- **Conduct**: `robots.txt` opens `/calendar/` to `*`; no `Crawl-delay` is
+  stated, so the 2.0s floor is chosen rather than commanded, on the principle
+  that an unstated limit is not a licence. The whole crawl is 78 files.
 
 ## Work that spans languages
 

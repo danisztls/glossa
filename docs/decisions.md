@@ -3660,6 +3660,150 @@ so for it the question is not "link or parse" but how much the site wants to be,
 is not a technical decision. Denzinger, Migne and Sources Chrétiennes have no link to give
 at all.
 
+## The liturgical calendar
+
+Taken in on 2026-09-03. The General Roman Calendar, computed rather than stored:
+`site/src/lib/calendar/` derives every day of any year from the date of Easter and a
+table of the Church's fixed celebrations, and `/calendarium` renders it. It is the
+first thing on this site whose subject is not a text, and the first content that is
+**ours** rather than reproduced — both of which needed deciding rather than assuming.
+
+### The Holy See does not publish the calendar, and that decided the architecture
+
+The _Universal Norms on the Liturgical Year and the Calendar_ and the _Calendarium
+Romanum Generale_ were promulgated together by Paul VI's motu proprio _Mysterii
+Paschalis_ of 14 February 1969. vatican.va publishes **the motu proprio and neither of
+the documents it approves**: the page carries the letter, ends at _Datum Romae_, and
+the Norms and the Calendar are printed in the Roman Missal after the General
+Instruction. Checked 2026-09-03, and the near misses are worth recording so nobody
+re-runs the search: vatican.va's own `liturgical_year/` section is six descriptive
+pages on the seasons with no dated list behind any of them, and the Congregation for
+Divine Worship's _Notificazione su alcuni aspetti dei calendari e dei testi liturgici
+propri_ gives norms for **drawing up** a particular calendar rather than the general
+one's contents.
+
+So the corpus could not hold this. There is no page to fetch, therefore nothing for
+`raw/` to keep write-once, therefore no work. The table lives in **this** repository as
+`grc.ts`, and `pontificates.ts` is the precedent with the same argument: a fact about
+the world that nothing upstream states, kept beside the code that needs it.
+
+### An oracle is not a source, and the difference is the whole design
+
+A liturgical calendar is the one kind of output where being wrong looks exactly like
+being right. A mis-parsed encyclical is visible in its own text; an Ordinary Time week
+numbered one too high is invisible until a reader who knows the year happens to notice.
+And the cases that break an implementation are chosen for their rarity — an
+Annunciation falling inside Holy Week, a transferred Epiphany landing on 7 January, the
+week Ordinary Time resumes at after Pentecost.
+
+GCatholic publishes the General Roman Calendar as iCal, per year, in the eight variants
+that correspond exactly to the three transfers a conference may make, and in Latin as
+well as the vernaculars. `pipeline/scrapers/calendar.py` fetches those into
+`raw/gcatholic-calendar/` and parses them to `site/src/lib/calendar/oracle/`, where
+`oracle.test.ts` compares **every day of three years in all eight variants, plus
+Brazil** — 27 calendars — against what this project computes.
+
+**Nothing from the oracle is served to a reader.** It decides no day at runtime; it
+decides whether the code that decides days is right. That is what makes it an oracle in
+the corpus's own sense of the word rather than a source, and it is why a scraper that
+writes nothing to `build/` belongs in `pipeline/` at all.
+
+**It earned its place before the first test ran.** Reading it to calibrate found two
+rules that had been written from the Norms and were wrong: the eight days of the Octave
+of Easter are ranked as **solemnities** (n. 24), and the reduction of a memorial to a
+commemoration is not the Lenten thing n. 14 describes it as — it happens on the
+privileged weekdays of 17–24 December and inside the Christmas octave too. Four more
+came out of running it:
+
+- **An optional memorial never takes the day.** Line 12 of the Table of Liturgical Days
+  sits above line 13, and reading the table as a plain sort makes every ferial Tuesday
+  with a saint on it disappear into that saint — 100 days of 2026 alone. The table
+  ranks what happens when two celebrations _must_ be resolved; an optional memorial is
+  by definition one that may be observed or not.
+- **A commemoration takes the season's colour, not the saint's.** It is the Lenten
+  weekday's own Mass with the saint's collect inside it, so a martyr commemorated on a
+  Lenten Friday is violet and never red. This was wrong on every commemoration in the
+  year.
+- **The Saturday memorial of Our Lady is not offered on a Saturday that is already
+  hers.** 12 September 2026 is a Saturday and the Most Holy Name of Mary.
+- **The calendar is not a constant.** John Henry Newman was inscribed on 9 October
+  between 2025 and 2026, so a table with no dates in it quietly claims the calendar
+  never changed. `SINCE` is the answer, and a removal will want an `until` beside it.
+
+### Rank and precedence are separate fields
+
+The single most load-bearing decision in the module. A feast of the Lord is line 5 of
+n. 59 and a feast of a saint is line 7, with a Sunday in Ordinary Time between them at
+line 6 — so the Transfiguration displaces a Sunday and Saint Lawrence does not, though
+both are `rank: 'feast'`. Every Sunday of Advent, Lent and Easter is line 2, above every
+solemnity, while a Sunday in Ordinary Time is line 6, below them; both are
+`rank: 'sunday'`. **Comparing on rank gets these backwards and reads plausibly doing
+it.** So the class from the table is stated per celebration and comparison is on the
+number alone.
+
+### An impeded solemnity does not always move forward
+
+n. 60 sends a solemnity impeded by a higher class to "the closest day not listed under
+nn. 1–8", and _closest_ is not one direction. The Annunciation impeded by Holy Week goes
+**forward**, past the whole Octave of Easter, to the Monday after the Second Sunday —
+25 March 2027 is Holy Thursday and the oracle confirms it lands on 5 April. Saint
+Joseph impeded by Holy Week is **anticipated**, to the free day before, as 19 March was
+in 2008. 2035 is the year that needs both at once, because Easter falls on 25 March: a
+single forward queue gives Joseph the Annunciation's day and pushes the Annunciation a
+fortnight past it. The direction is therefore a property of the celebration and not a
+rule read off the season — and Joseph's is the one rule here the oracle cannot confirm,
+since 19 March is outside Holy Week in all three of its years.
+
+### Brazil, and a rule that turned out not to exist
+
+A national calendar is modelled as a **layer** over the general one — propers, rank
+elevations, transfers, and the general celebrations it keeps on another day — because
+that is what nn. 48–55 describe. A country is then a data file with no code, and the
+general calendar cannot drift out from under it.
+
+Brazil's Sunday transfers are the interesting part, because the attempt to find the
+rule behind them failed and the failure is the finding. Measured across the three oracle
+years: Saints Peter and Paul moved from a **Monday backward** to the preceding Sunday in
+2026 and from a **Tuesday forward** to the following Sunday in 2027; All Saints moved
+forward from a Monday in 2027 and did not move at all from a Saturday in 2025. Neither
+"nearest Sunday" nor "following Sunday" fits all six. So `sundayTransfers` is a table of
+years rather than a rule, and outside the years listed the solemnity keeps its own
+date — the general calendar's answer, which is at least not a date nobody chose.
+
+Two smaller facts of the same kind. A move is **conditional on the displacing day being
+kept**: 5 October 2025 is a Sunday, so São Benedito is not observed, so nothing
+displaces Faustina and she does not move to the 6th. And a move can **begin** in a given
+year — Brazil omitted Pontian and Hippolytus outright in 2025 and has kept them on 12
+August since 2026.
+
+### What the calendar deliberately does not say
+
+**The lectionary.** The cycle letters (A/B/C, I/II) are stated as facts about the year,
+and the page stops there. The readings themselves are a work this corpus does not hold,
+and printing citations for them would be asserting a table nobody here has sourced.
+
+**The day's colour as the page's colour.** The liturgical colours are vestment colours,
+and four of them are also this interface's background in one theme or another. A named
+swatch says the same thing without the page pretending to be the sanctuary.
+
+**Thirty-four languages' worth of saints.** The Calendarium is a Latin book, so the
+Latin name is the celebration's own and Latin is complete. English and Portuguese — the
+site's two stated audiences — are written; every other interface language falls through
+`CONTENT_LANG_FALLBACK` to English and then to Latin, exactly as it does for a work the
+corpus does not hold in that language. A national calendar's propers have no Latin at
+all, and that is correct rather than a gap: they were approved in the vernacular by the
+conference that has them, and composing a Latin name for them would be the invented
+text §Scope refuses.
+
+### The date is a query parameter, not a path segment
+
+`/calendarium?d=2026-04-05`. The URL grammar divides addresses in two — a reading
+address names a citation and takes no language prefix, a chrome path names a page whose
+every word is the interface and does — and a date is neither. It names no citation,
+because there is no text at `2026-04-05`; and as a chrome path it would multiply by
+every date in history and put an unbounded set of URLs into the sitemap for pages that
+are pure computation.
+
 ## Scope
 
 **In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all

@@ -91,6 +91,10 @@
 		// treatment as everything else rather than being reachable only from
 		// the home page's own Prayers section.
 		{ href: '/preces', key: 'nav.prayers' },
+		// The one page here whose subject is not a text: the liturgical
+		// calendar is computed in the browser from the date of Easter and a
+		// table of celebrations, with no content tier behind it.
+		{ href: '/calendarium', key: 'nav.calendar' },
 		// The canonical route is Latin while the displayed label is
 		// "Magisterium" — URL identity and localised display language are
 		// intentionally independent.

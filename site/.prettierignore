@@ -2,3 +2,11 @@
 build
 node_modules
 package-lock.json
+
+# Written by pipeline/scrapers/calendar.py through common's write_stamped_json,
+# which spells the corpus's one JSON form (indent 2, real UTF-8, trailing
+# newline). Prettier would reformat it and then fight the writer on every
+# re-parse -- the same reason pipeline/corrections/ and pipeline/overrides/ are
+# out of the hook's scope (root CLAUDE.md, "Linting"). It is an oracle read by
+# tests, never source anyone edits by hand.
+src/lib/calendar/oracle/
