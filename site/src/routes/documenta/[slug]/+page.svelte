@@ -62,6 +62,7 @@
 		getDocumentSectionsAsync,
 		getDocumentAppendixAsync
 	} from '$lib/corpus';
+	import { splitUnnumbered } from '$lib/document-unnumbered';
 	import { t } from '$lib/i18n.svelte';
 	import type {
 		Citer,
@@ -177,62 +178,6 @@
 		fetchedIsCurrent ? fetched!.appendix : (data.embeddedAppendix ?? [])
 	);
 
-	const normTitle = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-
-	/**
-	 * The document's tail: headings that anchor no numbered section, paired
-	 * with the unnumbered text under each.
-	 *
-	 * Both halves already exist and neither could reach the reader alone. The
-	 * heading is in `structure.json` with `before: null`, which is why both
-	 * tables of contents rendered it as unlinked text — there was no `h{i}` in
-	 * the body to link to, because `headingsByStart` only emits a heading that
-	 * opens a numbered section. The text is in `appendix.json`, which knows
-	 * its own title but not which structure row that title came from.
-	 * Rejoining them here restores the ordinary anchor (`#h{i}`) rather than
-	 * inventing a second scheme, so the TOC rows need no special href.
-	 *
-	 * Matched on title, first unclaimed row wins, so a document that prints
-	 * the same tail heading twice still pairs them in order. A unit whose
-	 * title matches nothing (the untitled run that can open an appendix)
-	 * still renders, with no heading of its own.
-	 */
-	const tailRows = $derived.by(() => {
-		const rows = structureRows;
-		let lastAnchored = -1;
-		rows.forEach((row, i) => {
-			if (Number.isFinite(row.node.before)) lastAnchored = i;
-		});
-		const tail = rows
-			.map((row, i) => ({ row, i }))
-			.filter(({ row, i }) => i > lastAnchored && !Number.isFinite(row.node.before));
-		const claimed = new Set<number>();
-		const out: { anchor?: string; node?: DocumentNode; unit?: DocumentAppendixUnit }[] = [];
-		for (const { row } of tail) {
-			const key = normTitle(row.node.title);
-			const hit = appendixUnits.findIndex(
-				(u, ui) => !claimed.has(ui) && key !== '' && normTitle(u.title) === key
-			);
-			if (hit >= 0) claimed.add(hit);
-			out.push({
-				anchor: row.anchor,
-				node: row.node,
-				unit: hit >= 0 ? appendixUnits[hit] : undefined
-			});
-		}
-		// Anything the tail headings did not claim, in corpus order.
-		appendixUnits.forEach((unit, ui) => {
-			if (!claimed.has(ui)) out.push({ unit });
-		});
-		return out;
-	});
-
-	/** Structure rows the body renders a heading for, so the two tables of
-	 *  contents can link exactly those and leave the rest as plain text. */
-	const linkableAnchors = $derived(
-		new Set(tailRows.map((r) => r.anchor).filter((a): a is string => Boolean(a)))
-	);
-
 	const metaManifest = $derived(current?.work);
 
 	/** The work id of the edition being read, handed to every surface that
@@ -246,6 +191,22 @@
 	// "Documents" section), so unlike `current.sections` this needs no
 	// `+page.ts` load step: it's read reactively here.
 	const structureRows = $derived(current ? flattenDocumentStructure(current.work.id) : []);
+
+	/**
+	 * The document's unnumbered matter, split into what renders before its
+	 * numbered sections and what renders after, each paired with its heading.
+	 * See `splitUnnumbered` — the pairing is a pure function so it can be
+	 * checked without a browser, which is the only part of this page that can.
+	 */
+	const unnumbered = $derived(splitUnnumbered(structureRows, appendixUnits));
+	const leadRows = $derived(unnumbered.lead);
+	const tailRows = $derived(unnumbered.tail);
+
+	/** Structure rows the body renders a heading for, so the two tables of
+	 *  contents can link exactly those and leave the rest as plain text. */
+	const linkableAnchors = $derived(
+		new Set([...leadRows, ...tailRows].map((r) => r.anchor).filter((a): a is string => Boolean(a)))
+	);
 
 	// The shared sidebar walks `children` and reads `paragraphs`, so it gets
 	// the derived nested outline rather than the flat corpus rows the inline
@@ -873,6 +834,29 @@
 						<p class="compare-note">{t('compare.loading')}</p>
 					{/if}
 					<div class="reading-text document-body" lang={current.work.language}>
+						<!-- Matter the source prints with no number on it BEFORE its
+						     numbered flow — the First Vatican Council and nothing else.
+						     Same shape and same treatment as the tail below, in the
+						     place the printed edition puts it: Dei Filius's four
+						     doctrinal chapters stand over the canons that anathematize
+						     the denial of what they teach, and after them they would
+						     read backwards. Empty for every other document. -->
+						{#each leadRows as row, i (row.anchor ?? `l${i}`)}
+							{#if row.node && row.anchor}
+								{@render structureHeadings(
+									[{ node: row.node, depth: row.node.level - 1, anchor: row.anchor }],
+									lang,
+									true
+								)}
+							{/if}
+							{#if row.unit}
+								<section class="section appendix-unit">
+									<div class="section-text">
+										<ProseBlocks unit={row.unit} {lang} work={workId} dropCap={i === 0} />
+									</div>
+								</section>
+							{/if}
+						{/each}
 						{#each current.sections as section, i (section.n)}
 							{@render structureHeadings(headingsByStart.get(section.n) ?? [], lang, true)}
 							{@const sectionHref = hrefFor({ kind: 'document', slug: data.slug, n: section.n })}
@@ -901,7 +885,7 @@
 										unit={section}
 										{lang}
 										work={workId}
-										dropCap={i === 0 || divisionStarts.has(section.n)}
+										dropCap={(i === 0 && leadRows.length === 0) || divisionStarts.has(section.n)}
 									/>
 								</div>
 							</section>

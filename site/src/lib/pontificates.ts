@@ -40,11 +40,17 @@ interface Reign {
 /* Keyed on the raw `pontiff_or_council` string, which is corpus data and
    never translated — the same key the author facet filters on.
 
-   The council is in the table for the same reason it is in the facet: it is
-   one of the twelve values a reader chooses between, and a single gap in a
-   column of years reads as an omission rather than as a distinction. Its
-   years are the council's own, first session to closing. */
+   The two councils are in the table for the same reason they are in the
+   facet: each is one of the values a reader chooses between, and a single gap
+   in a column of years reads as an omission rather than as a distinction.
+   Their years are the council's own, not a pontiff's. */
 const REIGNS: Record<string, Reign> = {
+	// Its own years, first session to suspension — the Council never closed
+	// in form: the Italian army entered Rome in September 1870 and Pius IX
+	// adjourned it indefinitely, and it was only formally closed in 1960, by
+	// John XXIII, so that the Second could be convoked. 1870 is the year it
+	// last sat and promulgated, which is what this column is for.
+	'First Vatican Council': { from: 1869, to: 1870 },
 	'Leo XIII': { from: 1878, to: 1903 },
 	'Pius X': { from: 1903, to: 1914 },
 	'Benedict XV': { from: 1914, to: 1922 },

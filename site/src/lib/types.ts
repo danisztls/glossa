@@ -711,6 +711,20 @@ export interface DocumentNode {
 	 * time`). `title` stays the plain form and the two must agree.
 	 */
 	title_html?: string;
+	/**
+	 * `"leading"` where the source prints this heading's unnumbered text
+	 * BEFORE its numbered flow rather than after it. Absent everywhere else,
+	 * and `before: null` keeps meaning what it always has — trailing matter
+	 * the numbered flow never reaches.
+	 *
+	 * Only the First Vatican Council needs it, and it is the whole of that
+	 * council. `Dei Filius` teaches in four unnumbered `CAPUT`s and then
+	 * anathematizes the denial of what they taught in eighteen numbered
+	 * canons; render the chapters after the canons and the constitution reads
+	 * backwards. Every other appendix in the corpus really is back matter, so
+	 * this says the one thing `appendix.json` could not otherwise express.
+	 */
+	position?: 'leading';
 }
 
 /**
@@ -945,11 +959,27 @@ export interface CccCitationXref {
  *  Gentium's Nota Explicativa Praevia, Laudato Si's two closing prayers — and
  *  the ENTIRE text of an edition that numbers nothing anywhere, of which this
  *  corpus has eight. Both are text with no citable address, so both render the
- *  same way and neither gets a `§n` in the margin. */
+ *  same way and neither gets a `§n` in the margin.
+ *
+ *  A THIRD ARRIVED WITH THE FIRST VATICAN COUNCIL: unnumbered text a document
+ *  prints BEFORE its numbered flow. See `position`. */
 export interface DocumentAppendixUnit {
 	/** The heading the source prints above this run. Empty when the run opens
 	 *  the appendix with no heading of its own. */
 	title?: string;
+	/** The division label printed above that title — `CAPUT I` — where the
+	 *  source prints the two apart. Same split as `DocumentNode.label`. */
+	label?: string;
+	/** `"leading"` where the source prints this run BEFORE its numbered flow.
+	 *  Absent on every unit that is genuinely back matter, which is all of
+	 *  them but Vatican I's — see `DocumentNode.position`.
+	 *
+	 *  It rides on the UNIT and not only on the structure row because the
+	 *  first leading run has no heading to carry it: `Dei Filius` opens with
+	 *  its address to the Church, above the first `CAPUT` and under no
+	 *  heading of its own. Pairing by title cannot place that run; the field
+	 *  can. */
+	position?: 'leading';
 	blocks: CccBlock[];
 	citations: CccCitation[];
 }
