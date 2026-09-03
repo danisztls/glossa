@@ -48,6 +48,15 @@ export const fr: Dictionary = {
 	'mono.hint':
 		'Compose toute la page dans un seul gris, de sorte que rien ne se distingue par la couleur. Le sépia s’éteint tant qu’il est actif.',
 	'advanced.label': 'Avancé',
+	'library.title': 'Bibliothèque hors ligne',
+	'library.lede': 'Les textes conservés sur cet appareil s’ouvrent sans aucun réseau.',
+	'library.essentials': 'Prières et Abrégé',
+	'library.other': 'Autres textes',
+	'library.download': 'Télécharger',
+	'library.downloaded': 'Sur cet appareil',
+	'library.offlineNote': 'Désactivez le mode hors ligne pour télécharger.',
+	'library.forget': 'Supprimer les téléchargements',
+	'library.forgetConfirm': 'Tout supprimer ?',
 	'offline.label': 'Mode hors ligne',
 	'offline.hint':
 		'N’utilise aucun réseau : rien n’est téléchargé, aucune mise à jour n’est recherchée, rien n’est mesuré. Seuls les textes déjà présents sur cet appareil s’ouvrent.',

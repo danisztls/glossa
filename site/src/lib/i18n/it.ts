@@ -47,6 +47,15 @@ export const it: Dictionary = {
 	'mono.hint':
 		'Compone l’intera pagina in un unico grigio, così nulla si distingue per il colore. Il seppia si spegne mentre è attivo.',
 	'advanced.label': 'Avanzate',
+	'library.title': 'Biblioteca offline',
+	'library.lede': 'I testi tenuti su questo dispositivo si aprono senza alcuna rete.',
+	'library.essentials': 'Preghiere e Compendio',
+	'library.other': 'Altri testi',
+	'library.download': 'Scarica',
+	'library.downloaded': 'Su questo dispositivo',
+	'library.offlineNote': 'Disattiva la modalità offline per scaricare.',
+	'library.forget': 'Rimuovi i download',
+	'library.forgetConfirm': 'Rimuovere tutto?',
 	'offline.label': 'Modalità offline',
 	'offline.hint':
 		'Non usa affatto la rete: non scarica nulla, non cerca aggiornamenti, non misura nulla. Si aprono soltanto i testi già presenti su questo dispositivo.',

@@ -101,6 +101,20 @@ export const en: Dictionary = {
 	// naming the subject again ("Advanced network") would buy width and no
 	// information.
 	'advanced.label': 'Advanced',
+	// THE OFFLINE LIBRARY — `LibrarySheet.svelte`. The wave names are NOT here:
+	// five of the seven reuse keys the translators have already written
+	// (`nav.ccc`, `nav.bible`, `nav.magisterium`, `summa.landing.title`), which
+	// is the cheap way to add a surface. Only the two the interface had no word
+	// for are below.
+	'library.title': 'Offline library',
+	'library.lede': 'Texts kept on this device open with no network at all.',
+	'library.essentials': 'Prayers and Compendium',
+	'library.other': 'Other texts',
+	'library.download': 'Download',
+	'library.downloaded': 'On this device',
+	'library.offlineNote': 'Turn offline mode off to download anything.',
+	'library.forget': 'Remove downloads',
+	'library.forgetConfirm': 'Remove everything?',
 	'offline.label': 'Offline mode',
 	'offline.hint':
 		'Uses no network at all: nothing is downloaded, no update is checked for, nothing is measured. Only texts already on this device will open.',

@@ -58,7 +58,7 @@ import { contentLangChain, lastContentRead } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
 import { offline, setOfflineObserver } from './offline.svelte';
 import { usage } from './usage';
-import type { WaveId } from './sw-policy';
+import type { WaveId, WavePlanInput } from './sw-policy';
 
 /** How long to wait between `registration.update()` checks. Six hours: long
  *  enough that a reader with the app open all day costs one or two requests,
@@ -119,6 +119,24 @@ export function carriesUpdate(nav: PendingNavigation): boolean {
 	return nav.from.pathname !== nav.to.pathname || nav.from.search !== nav.to.search;
 }
 
+/**
+ * Everything the worker cannot work out for itself: the reader's language
+ * chain, what they have open, and the editions they picked.
+ *
+ * EXPORTED BECAUSE TWO CALLERS MUST AGREE. `#send` puts it on every download
+ * message, and `library.svelte.ts` plans the same waves on this side in order
+ * to PRICE them. If the two ever computed it differently the panel would show
+ * a reader one number and the worker would fetch another set of files — a
+ * disagreement with no symptom beyond a size that is quietly wrong.
+ */
+export function readerPlan(): WavePlanInput {
+	return {
+		langs: contentLangChain(readerLang()),
+		current: lastContentRead(),
+		chosen: chosenEditions()
+	};
+}
+
 export interface WaveProgress {
 	wave: WaveId;
 	count: number;
@@ -132,6 +150,16 @@ class ServiceWorkerStore {
 	updateReady = $state(false);
 	/** Most recent wave progress report, for an offline-library UI. */
 	progress = $state<WaveProgress | undefined>();
+	/** Bumped once per `CACHE_CONTENT:done`. A COUNTER and not a boolean,
+	 *  because what a consumer wants is "something finished, look again" and
+	 *  two fills in a session must be two signals — `LibrarySheet` re-measures
+	 *  the cache off this. */
+	completed = $state(0);
+	/** Whether a worker is actually driving this page. The library panel is
+	 *  offered only where a download would do something: `npm run dev`
+	 *  registers no worker at all (`vite.config.ts` says why), and a control
+	 *  that silently does nothing there is worse than an absent one. */
+	controlled = $state(false);
 
 	#registration: ServiceWorkerRegistration | undefined;
 	#lastCheck = 0;
@@ -164,6 +192,7 @@ class ServiceWorkerStore {
 		// cleared, a browser that dropped the entry), and a page is the cheapest
 		// possible correction. `#post` and not `#send` — this message is the one
 		// that must go THROUGH offline mode rather than being stopped by it.
+		this.controlled = !!navigator.serviceWorker.controller;
 		this.#post({ type: 'OFFLINE_MODE', on: offline.enabled });
 		setOfflineObserver((on) => this.#onOfflineChange(on));
 
@@ -182,6 +211,9 @@ class ServiceWorkerStore {
 				// controller to post to and the message is dropped — which is
 				// every reader's first visit.
 				this.#post({ type: 'OFFLINE_MODE', on: offline.enabled });
+				// A first visit reaches `start()` before `clients.claim()` has
+				// made this worker the controller, so the flag above was false.
+				this.controlled = !!navigator.serviceWorker.controller;
 				this.#watchForUpdate(registration, signal);
 				this.checkForUpdate();
 			})
@@ -355,15 +387,10 @@ class ServiceWorkerStore {
 		// switch is still sending); this is the half that means nothing is even
 		// asked for.
 		if (offline.enabled) return;
-		this.#post({
-			...message,
-			// Sent with every request rather than read by the worker, which has
-			// no access to the reader's stored preferences: language lives in
-			// localStorage and the worker cannot see it.
-			langs: contentLangChain(readerLang()),
-			current: lastContentRead(),
-			chosen: chosenEditions()
-		});
+		// The reader vocabulary is sent with every request rather than read by
+		// the worker, which has no access to their stored preferences:
+		// language lives in localStorage and the worker cannot see it.
+		this.#post({ ...message, ...readerPlan() });
 	}
 
 	/** Post to the worker, with no gate and none of the download vocabulary —
@@ -425,6 +452,13 @@ class ServiceWorkerStore {
 		const data = event.data as { type?: string; reason?: string } & Partial<WaveProgress>;
 		if (data?.type === 'SW:install-failed') {
 			usage.noteSwFailure(typeof data.reason === 'string' ? data.reason : 'other');
+			return;
+		}
+		if (data?.type === 'CACHE_CONTENT:done') {
+			// Down, not left showing 100%: the run is over, and a bar that
+			// stays full is indistinguishable from one that stalled there.
+			this.progress = undefined;
+			this.completed += 1;
 			return;
 		}
 		if (data?.type === 'CACHE_CONTENT:progress' && data.wave) {

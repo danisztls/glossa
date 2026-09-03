@@ -55,6 +55,15 @@ export const pt: Dictionary = {
 		'Compõe a página inteira num único cinzento, para que nada se distinga pela cor. O sépia desliga-se enquanto estiver ativo.',
 
 	'advanced.label': 'Avançado',
+	'library.title': 'Biblioteca offline',
+	'library.lede': 'Os textos guardados neste dispositivo abrem sem rede nenhuma.',
+	'library.essentials': 'Orações e Compêndio',
+	'library.other': 'Outros textos',
+	'library.download': 'Transferir',
+	'library.downloaded': 'Neste dispositivo',
+	'library.offlineNote': 'Desative o modo offline para transferir.',
+	'library.forget': 'Remover transferências',
+	'library.forgetConfirm': 'Remover tudo?',
 	'offline.label': 'Modo offline',
 	'offline.hint':
 		'Não usa a rede de todo: não transfere nada, não procura atualizações, não mede nada. Só abrem os textos que já estão neste dispositivo.',

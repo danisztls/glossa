@@ -48,6 +48,15 @@ export const ro: Dictionary = {
 	'mono.hint':
 		'Așază toată pagina într-un singur gri, astfel încât nimic nu se deosebește prin culoare. Cât timp este pornit, sepia se oprește.',
 	'advanced.label': 'Avansat',
+	'library.title': 'Bibliotecă offline',
+	'library.lede': 'Textele păstrate pe acest dispozitiv se deschid fără nicio rețea.',
+	'library.essentials': 'Rugăciuni și Compendiu',
+	'library.other': 'Alte texte',
+	'library.download': 'Descarcă',
+	'library.downloaded': 'Pe acest dispozitiv',
+	'library.offlineNote': 'Dezactivează modul offline pentru a descărca.',
+	'library.forget': 'Șterge descărcările',
+	'library.forgetConfirm': 'Ștergi tot?',
 	'offline.label': 'Mod offline',
 	'offline.hint':
 		'Nu folosește deloc rețeaua: nu se descarcă nimic, nu se caută actualizări, nu se măsoară nimic. Se deschid doar textele aflate deja pe acest dispozitiv.',

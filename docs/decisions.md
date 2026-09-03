@@ -2878,10 +2878,24 @@ on has what they have already read and little more, and the case that would make
 for it — fill my library, then go dark — has no door. The half that IS served is real and
 needs nothing further: the reader who does not want a reading device phoning home. That is a
 narrower audience than a front-row control implies, so the control moved behind
-`+ Advanced` rather than being widened or removed. **This is the second half of a feature
-whose first half is unbuilt**, and everything the first half needs — `requestWave`,
-`requestWork`, `WaveProgress`, the per-wave byte counts `planWaves` computes precisely so a
-UI can price a download before committing to it — is already written and unused.
+`+ Advanced` rather than being widened or removed.
+
+**Then the first half was built, on the same day and into the same fold** — `LibrarySheet`,
+a panel of the reader's waves priced before they commit to any of them, which is the consumer
+`planWaves`' byte counts had been waiting for since the corpus was split. The two rows sit in
+the fold in the order the reader needs them: the library first, because offline mode turns
+downloading off, and a reader who meets the switch before the shelf meets them backwards.
+That ordering is the whole of what the pairing had been missing.
+
+**The panel plans the waves on the client, which is not a second planner.** The worker plans
+in order to fetch; this plans in order to PRICE, and a price is asked for before the download
+exists for the worker to be asked about. `readerPlan()` moved out of `sw.svelte.ts`'s `#send`
+and became exported for exactly this: two callers that must plan from the same input, because
+a divergence would show the reader one number while the worker fetched a different set of
+files, with no symptom on either side. What is NOT duplicated is the measurement — held bytes
+are read back from the cache every time, never accumulated from the progress messages, for
+the reason `measureLibrary` already gives: progress covers only the fills this page watched,
+and the reader whose library was filled last week is the one the panel must be right about.
 
 **A hidden switch that is ON must not stay hidden**: the fold opens itself whenever offline
 mode is enabled, one-way within a session. Otherwise the reader who cannot find the control

@@ -47,6 +47,15 @@ export const sl: Dictionary = {
 	'mono.hint':
 		'Vso stran postavi v en sam sivi ton, tako da barva ničesar ne loči. Dokler je vklopljeno, je sepija izklopljena.',
 	'advanced.label': 'Napredno',
+	'library.title': 'Knjižnica brez povezave',
+	'library.lede': 'Besedila, shranjena v tej napravi, se odprejo povsem brez omrežja.',
+	'library.essentials': 'Molitve in Kompendij',
+	'library.other': 'Druga besedila',
+	'library.download': 'Prenesi',
+	'library.downloaded': 'V tej napravi',
+	'library.offlineNote': 'Izklopite način brez povezave za prenos.',
+	'library.forget': 'Odstrani prenose',
+	'library.forgetConfirm': 'Odstranim vse?',
 	'offline.label': 'Način brez povezave',
 	'offline.hint':
 		'Sploh ne uporablja omrežja: nič se ne prenese, posodobitve se ne preverjajo, nič se ne meri. Odprejo se samo besedila, ki so že v tej napravi.',

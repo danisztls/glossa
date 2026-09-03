@@ -48,6 +48,15 @@ export const es: Dictionary = {
 	'mono.hint':
 		'Compone toda la página en un solo gris, de modo que nada se distinga por el color. El sepia se apaga mientras está activo.',
 	'advanced.label': 'Avanzado',
+	'library.title': 'Biblioteca sin conexión',
+	'library.lede': 'Los textos guardados en este dispositivo se abren sin red alguna.',
+	'library.essentials': 'Oraciones y Compendio',
+	'library.other': 'Otros textos',
+	'library.download': 'Descargar',
+	'library.downloaded': 'En este dispositivo',
+	'library.offlineNote': 'Desactiva el modo sin conexión para descargar.',
+	'library.forget': 'Eliminar descargas',
+	'library.forgetConfirm': '¿Eliminar todo?',
 	'offline.label': 'Modo sin conexión',
 	'offline.hint':
 		'No usa la red en absoluto: no descarga nada, no busca actualizaciones, no mide nada. Solo se abren los textos que ya están en este dispositivo.',

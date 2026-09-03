@@ -81,6 +81,8 @@
 <script lang="ts">
 	import { appearance, DARK_MODES } from '$lib/theme.svelte';
 	import { offline } from '$lib/offline.svelte';
+	import { library } from '$lib/library.svelte';
+	import { serviceWorker } from '$lib/sw.svelte';
 	import { fontScale, MIN_FONT_SCALE, MAX_FONT_SCALE } from '$lib/prefs.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
@@ -253,6 +255,29 @@
 			     this is a second one. -->
 			<div class="advanced" role="none">
 				{#if advancedOpen}
+					<!-- FIRST, because it is the prerequisite: offline mode below
+					     turns downloads OFF, so a reader who meets the switch
+					     before the shelf meets it in the wrong order. Offered
+					     only where a download would do something —
+					     `serviceWorker.controlled` is false under `npm run dev`,
+					     which registers no worker at all. -->
+					{#if serviceWorker.controlled}
+						<div class="field" role="none">
+							<button
+								type="button"
+								role="menuitem"
+								aria-haspopup="dialog"
+								class="menu-more"
+								onclick={() => {
+									library.open = true;
+									menu.close();
+								}}
+							>
+								{t('library.title')}…
+							</button>
+						</div>
+					{/if}
+
 					<div class="field" role="none">
 						<span class="field-label label-micro">{t('offline.label')}</span>
 						<div class="field-control" role="none">

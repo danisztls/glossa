@@ -619,15 +619,49 @@ was called until it stopped holding only appearance.
 
 - **The fold is a measurement, not modesty.** The automatic waves put the
   shell, the prayers, the Compendium and ONE Catechism edition on the device
-  and nothing else; Scripture, magisterium and Summa are reachable only by a
-  `CACHE_WAVE` that **no UI sends**. So the switch buys a reader what they
-  have already read and little more until a library-fill panel exists, and
-  `requestWave`, `requestWork`, `serviceWorker.progress` and `planWaves`'
-  byte counts are all written and unused, waiting for it. **Build that before
-  promoting this control.**
+  and nothing else; Scripture, magisterium and Summa (23-28 MB each) arrive
+  only if the reader asks. Offline mode alone is therefore a switch for the
+  reader who wants no phone-home, not for the one filling a library — which
+  is why it is folded rather than in the front row.
 - **The fold opens itself when the switch is on**, one-way within a session.
   A hidden control that is silently ON is a reader who cannot explain why
   nothing loads.
+- **The library panel is the fold's OTHER row, and it comes first** —
+  `LibrarySheet.svelte`, opened through `library.open`. Offline mode turns
+  downloads off, so a reader meeting the switch before the shelf meets them in
+  the wrong order.
+
+## The library panel: waves priced before the reader commits
+
+Added 2026-09-02 with offline mode's second half (§The site). It is the
+consumer `planWaves`' byte counts were written for and had never had.
+
+- **The rows are WAVES, not works.** A wave is every edition of a kind in the
+  reader's chain, so "Bible" can be two editions and 24 MB. `requestWork` and
+  `assetsForWork` exist for the finer grain and are still unused; that is a
+  second level in this list, not new machinery.
+- **It plans the waves on the CLIENT, and that is not duplication.** The
+  worker plans to fetch; this plans to PRICE, before the download exists for
+  the worker to be asked about. `readerPlan()` is exported from
+  `sw.svelte.ts` precisely so both sides plan from the same input — if they
+  ever diverge, the panel shows one number and the worker fetches another set
+  of files, with no symptom.
+- **Held bytes are read back from the cache, never accumulated from progress
+  messages** (`usage.ts`'s `measureLibrary` gives the reason: progress only
+  covers fills this page watched). The comparison is `ContentEntry.path`
+  against a cache key's pathname — `heldPaths` exists because comparing an
+  absolute href to a pathname matches nothing and reports an empty library
+  without erring.
+- **`serviceWorker.completed` is a COUNTER**, bumped per `CACHE_CONTENT:done`,
+  because two fills in a session must be two signals; the sheet re-measures
+  off it.
+- **The panel is a `<dialog>`, deliberately not a route.** An address would
+  cost the whole grammar in `route-manifest.ts` (`corpus-routes.json`,
+  sitemap, `route-titles.json`, `assertNamed`, an `hreflang` cluster) for a
+  control surface with nothing to index.
+- **The sizes shown are RAW bytes**, per `Wave.bytes`' own docblock —
+  `content-length` is knowable only after fetching, which is too late to ask.
+  It over-states the transfer by roughly three, which is the safe direction.
 
 - **Three gates because there are three mechanisms**: `sw.svelte.ts` (update
   check, offer, apply, and every download message — the gate sits in `#send`,

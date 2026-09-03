@@ -47,6 +47,15 @@ export const sv: Dictionary = {
 	'mono.hint':
 		'Sätter hela sidan i en enda grå ton, så att ingenting skiljs åt med färg. Sepia stängs av så länge det är på.',
 	'advanced.label': 'Avancerat',
+	'library.title': 'Offlinebibliotek',
+	'library.lede': 'Texter som finns på den här enheten öppnas helt utan nätverk.',
+	'library.essentials': 'Böner och Kompendiet',
+	'library.other': 'Övriga texter',
+	'library.download': 'Hämta',
+	'library.downloaded': 'På den här enheten',
+	'library.offlineNote': 'Stäng av offlineläget för att hämta.',
+	'library.forget': 'Ta bort hämtningar',
+	'library.forgetConfirm': 'Ta bort allt?',
 	'offline.label': 'Offlineläge',
 	'offline.hint':
 		'Använder inget nätverk alls: inget hämtas, ingen uppdatering söks, inget mäts. Endast texter som redan finns på den här enheten öppnas.',

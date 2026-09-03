@@ -48,6 +48,15 @@ export const de: Dictionary = {
 	'mono.hint':
 		'Setzt die ganze Seite in ein einziges Grau, sodass nichts an der Farbe zu erkennen ist. Sepia wird ausgeschaltet, solange es an ist.',
 	'advanced.label': 'Erweitert',
+	'library.title': 'Offline-Bibliothek',
+	'library.lede': 'Texte auf diesem Gerät öffnen sich ganz ohne Netz.',
+	'library.essentials': 'Gebete und Kompendium',
+	'library.other': 'Weitere Texte',
+	'library.download': 'Laden',
+	'library.downloaded': 'Auf diesem Gerät',
+	'library.offlineNote': 'Schalten Sie den Offline-Modus aus, um etwas zu laden.',
+	'library.forget': 'Downloads entfernen',
+	'library.forgetConfirm': 'Alles entfernen?',
 	'offline.label': 'Offline-Modus',
 	'offline.hint':
 		'Verwendet überhaupt kein Netz: nichts wird heruntergeladen, nicht nach Aktualisierungen gesucht, nichts gemessen. Nur Texte, die bereits auf diesem Gerät sind, lassen sich öffnen.',

@@ -47,6 +47,15 @@ export const pl: Dictionary = {
 	'mono.hint':
 		'Składa całą stronę w jednym odcieniu szarości, więc nic nie jest rozróżniane kolorem. Sepia jest wyłączona, gdy tryb działa.',
 	'advanced.label': 'Zaawansowane',
+	'library.title': 'Biblioteka offline',
+	'library.lede': 'Teksty zapisane na tym urządzeniu otwierają się zupełnie bez sieci.',
+	'library.essentials': 'Modlitwy i Kompendium',
+	'library.other': 'Inne teksty',
+	'library.download': 'Pobierz',
+	'library.downloaded': 'Na tym urządzeniu',
+	'library.offlineNote': 'Wyłącz tryb offline, aby pobierać.',
+	'library.forget': 'Usuń pobrane',
+	'library.forgetConfirm': 'Usunąć wszystko?',
 	'offline.label': 'Tryb offline',
 	'offline.hint':
 		'W ogóle nie korzysta z sieci: nic nie jest pobierane, aktualizacje nie są sprawdzane, nic nie jest mierzone. Otwierają się tylko teksty, które są już na tym urządzeniu.',

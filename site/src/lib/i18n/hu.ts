@@ -48,6 +48,15 @@ export const hu: Dictionary = {
 	'mono.hint':
 		'Az egész oldalt egyetlen szürke árnyalatba állítja, így semmit sem a szín különböztet meg. Amíg be van kapcsolva, a szépia kikapcsol.',
 	'advanced.label': 'Speciális',
+	'library.title': 'Kapcsolat nélküli könyvtár',
+	'library.lede': 'Az ezen az eszközön tárolt szövegek hálózat nélkül is megnyílnak.',
+	'library.essentials': 'Imádságok és Kompendium',
+	'library.other': 'További szövegek',
+	'library.download': 'Letöltés',
+	'library.downloaded': 'Ezen az eszközön',
+	'library.offlineNote': 'A letöltéshez kapcsolja ki a kapcsolat nélküli módot.',
+	'library.forget': 'Letöltések törlése',
+	'library.forgetConfirm': 'Törli az összeset?',
 	'offline.label': 'Kapcsolat nélküli mód',
 	'offline.hint':
 		'Egyáltalán nem használ hálózatot: nem tölt le semmit, nem keres frissítést, nem mér semmit. Csak azok a szövegek nyílnak meg, amelyek már ezen az eszközön vannak.',

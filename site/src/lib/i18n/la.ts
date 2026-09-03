@@ -70,6 +70,15 @@ export const la: Dictionary = {
 	'mono.hint':
 		'Totam paginam uno colore cano pingit, ne quid colore solo distinguatur. Sepia interim cessat.',
 	'advanced.label': 'Provecta',
+	'library.title': 'Bibliotheca sine rete',
+	'library.lede': 'Textus in hoc instrumento servati sine ulla rete aperiuntur.',
+	'library.essentials': 'Preces et Compendium',
+	'library.other': 'Alii textus',
+	'library.download': 'Transferre',
+	'library.downloaded': 'In hoc instrumento',
+	'library.offlineNote': 'Modum sine rete claude ut quid transferas.',
+	'library.forget': 'Translata tollere',
+	'library.forgetConfirm': 'Omnia tollere?',
 	'offline.label': 'Modus sine rete',
 	'offline.hint':
 		'Rete omnino non utitur: nihil transfertur, nulla renovatio quaeritur, nihil metitur. Soli textus in hoc instrumento iam praesentes aperiuntur.',
