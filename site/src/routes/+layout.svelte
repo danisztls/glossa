@@ -400,11 +400,13 @@
 	-->
 	<footer class="site-footer">
 		<!--
-			The mark and the lines are ONE centred group, which is why they need a
-			wrapper at all: the footer centres its contents, and a flex row is what
-			makes "cross, then text" a single thing for it to centre. Written in
-			reading order and never positioned, so RTL needs nothing — in Arabic and
-			Hebrew the row reverses itself and the mark lands on the right.
+			The mark and the lines are ONE centred group in TWO grid columns, which
+			is why they need a wrapper at all: the footer centres its contents, and
+			the grid is what makes "cross, then text" a single thing for it to
+			centre. Two tracks rather than one row is what keeps the mark from ever
+			reaching the text — it sits beside the lines and can never reflow them.
+			Written in reading order and never positioned, so RTL needs nothing: in
+			Arabic and Hebrew the columns reverse and the mark lands on the right.
 
 			This replaced an absolutely-positioned mark in the inline-start lane,
 			which is why `.site-footer` has no outsized inline padding any more: that
@@ -687,14 +689,20 @@
 	}
 
 	/*
-	 * `wrap` is the only concession to width here, and it degrades the way the
-	 * old media query used to on purpose: where the row will not fit, the mark
-	 * takes its own line and stays centred above the text. Nothing has to
-	 * measure anything.
+	 * TWO COLUMNS, AND THE POINT IS THAT THE MARK CANNOT REACH THE TEXT. Each
+	 * sits in a track of its own, so the cross is beside the lines without
+	 * being in with them: it cannot reflow them, wrap around them, or shift the
+	 * one it happens to sit level with. A flex row did this until it did not —
+	 * `flex-wrap` let the mark drop onto the text's line at narrow widths,
+	 * which is exactly the interference two tracks rule out.
+	 *
+	 * `justify-content: center` centres the PAIR of tracks rather than
+	 * stretching them, which is what keeps the group on the footer's midline
+	 * while each column stays the width of its own content.
 	 */
 	.imprint {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: auto auto;
 		align-items: center;
 		justify-content: center;
 		gap: 0.9rem;
@@ -713,7 +721,6 @@
 	 * this is the mark's floor rather than a preference.
 	 */
 	.site-footer :global(.footer-cross) {
-		flex-shrink: 0;
 		font-size: 2.5rem;
 		color: var(--color-text);
 	}

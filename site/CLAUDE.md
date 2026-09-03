@@ -1120,13 +1120,16 @@ five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
 in the Order of the Holy Sepulchre's arrangement, because a mark drifting
 toward a specific body's ARMS would contradict the sentence beside it.
 
-**The mark and the lines are ONE centred group** (`.imprint`, a flex row), and
-that is why they need a wrapper: the footer centres its contents, and the row
-is what makes "cross, then text" a single thing to centre. It is written in
-reading order and never positioned, so **RTL needs nothing** — the row reverses
-itself and the mark lands on the right in Arabic and Hebrew. `flex-wrap` is the
-only concession to width: where the row will not fit, the mark takes its own
-line above the text, and nothing measures anything.
+**The mark and the lines are ONE centred group in TWO GRID COLUMNS**
+(`.imprint`), and the two tracks are the point: the mark is beside the text
+without being in with it, so it cannot reflow the lines or shift the one it
+sits level with. A flex row did this for one revision and `flex-wrap` let the
+mark drop onto the text's line at narrow widths — exactly the interference two
+tracks rule out. `justify-content: center` centres the PAIR of tracks rather
+than stretching them, which is what holds the group on the footer's midline
+while each column stays its own content's width. Written in reading order and
+never positioned, so **RTL needs nothing** — the columns reverse and the mark
+lands on the right in Arabic and Hebrew.
 
 **It was absolutely positioned in the inline-start lane for one revision**, and
 the cost was a trick worth not reintroducing: `.site-footer` needed outsized
