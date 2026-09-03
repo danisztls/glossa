@@ -1,5 +1,6 @@
 <!--
-	The Jerusalem Cross: a cross potent with a crosslet in each quadrant.
+	The Jerusalem Cross: a cross potent with a crosslet in each quadrant, drawn
+	as an outline.
 
 	A MARK, NOT AN ICON, which is why it is its own file rather than an entry in
 	`Icon.svelte`'s map. That component's docblock states it is the only file in
@@ -15,8 +16,8 @@
 	read `prefers-color-scheme`, which covers one axis and gets
 	`data-theme='light'` on a dark-preferring OS exactly backwards — the trap
 	tokens.css records where it explains why the palette follows the attribute
-	rather than the media query. Drawn inline, `fill: currentColor` follows all
-	four for free, and there is no request to make.
+	rather than the media query. Drawn inline, `currentColor` follows all four
+	for free, and there is no request to make.
 
 	DRAW THE PLAIN FIVE-CROSS FIGURE AND NOTHING ELSE. No crown, no motto ring,
 	no red-on-white in the Equestrian Order of the Holy Sepulchre's arrangement.
@@ -26,9 +27,9 @@
 	contradict the sentence it sits next to. Making it look "more official" is
 	therefore a decision someone has to take deliberately, not a tidy-up.
 
-	Decorative, so `aria-hidden` and no `<title>`: the motto and the standing
-	statement beside it carry every word this says. Sized in `em` off whatever
-	sets its font-size, the same rule `Icon.svelte` applies to every glyph.
+	Decorative, so `aria-hidden` and no `<title>`: the lines beside it carry
+	every word this says. Sized in `em` off whatever sets its font-size, the
+	same rule `Icon.svelte` applies to every glyph.
 -->
 
 <script lang="ts">
@@ -51,48 +52,52 @@
 		[0, 43],
 		[43, 43]
 	] as const;
+
+	/**
+	 * THE PERIMETER OF THE CROSS POTENT, TRACED CLOCKWISE FROM THE TOP BAR'S
+	 * LEFT CORNER — and it has to be a perimeter rather than the six
+	 * overlapping rectangles this was built from first. Those unioned cleanly
+	 * under a `fill`; STROKED, every internal edge draws, and the mark comes
+	 * out as a lattice of boxes instead of a cross. There is no way to stroke
+	 * an outline you have not actually computed.
+	 *
+	 * Read it against the shape it encloses: arms 8 units thick spanning
+	 * 14..50, each capped by a bar 8 thick and 18 long, on a 64-unit field
+	 * centred at (32, 32). Every turn below is one of those edges meeting the
+	 * next, so a wrong number shows up as a notch rather than as anything
+	 * subtle.
+	 */
+	const POTENT =
+		'M23 14 H41 V22 H36 V28 H42 V23 H50 V41 H42 V36 H36 V42 H41 V50 ' +
+		'H23 V42 H28 V36 H22 V41 H14 V23 H22 V28 H28 V22 H23 Z';
+
+	/** One crosslet: a Greek cross 5 thick and 13 long, centred at (10.5, 10.5). */
+	const CROSSLET = 'M8 4 H13 V8 H17 V13 H13 V17 H8 V13 H4 V8 H8 Z';
 </script>
 
 <!--
-	A 64-unit field centred on (32, 32). Rectangles rather than one computed
-	outline: the parts overlap and a fill unions them, so the geometry stays
-	numbers a person can read and correct instead of a path nobody will touch.
+	`stroke-linejoin: miter` (the default, named anyway because it is a choice):
+	round joins pull every corner of the crosslets into a blob at the size this
+	is actually set. `stroke-width: 3` was picked by rasterizing at the footer's
+	~36px, not by eye at full size — 2.5 goes spindly there and 3.5 begins to
+	close the crosslets' counters. Re-render before changing it.
 
-	  central arms  8 units thick, spanning 14..50
-	  potent bars   8 thick, 18 long, capping each arm
-	  crosslet      5 thick, 13 long, centred at (10.5, 10.5) before translation
-
-	The figure spans 4..60 in both axes, so it carries its own margin inside the
-	viewBox and needs no padding from whatever places it.
-
-	THE PROPORTIONS WERE RASTERIZED, NOT ESTIMATED. A first pass drew a thinner
-	central cross with the crosslets at (11, 11); that is a correct Jerusalem
-	Cross and it reads badly — the crosslets hug the corners of the field and
-	leave a wide diagonal void, and their thinner arms close up at the ~36px the
-	footer actually sets this at. The numbers above leave a clean six-unit gap
-	on both axes between each crosslet and the arm beside it. Re-render before
-	changing any of them.
+	The stroke is centred on the path, so the figure spans 2.5..61.5 rather than
+	the geometry's 4..60, and still carries its own margin inside the viewBox.
 -->
 <svg
 	viewBox="0 0 64 64"
 	width="1em"
 	height="1em"
-	fill="currentColor"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="3"
+	stroke-linejoin="miter"
 	aria-hidden="true"
 	class={className}
 >
-	<!-- The cross potent: two arms, then the bar across the end of each. -->
-	<rect x="28" y="14" width="8" height="36" />
-	<rect x="14" y="28" width="36" height="8" />
-	<rect x="23" y="14" width="18" height="8" />
-	<rect x="23" y="42" width="18" height="8" />
-	<rect x="14" y="23" width="8" height="18" />
-	<rect x="42" y="23" width="8" height="18" />
-
+	<path d={POTENT} />
 	{#each QUADRANTS as [dx, dy] (`${dx},${dy}`)}
-		<g transform="translate({dx} {dy})">
-			<rect x="8" y="4" width="5" height="13" />
-			<rect x="4" y="8" width="13" height="5" />
-		</g>
+		<path d={CROSSLET} transform="translate({dx} {dy})" />
 	{/each}
 </svg>

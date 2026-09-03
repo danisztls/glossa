@@ -100,7 +100,7 @@ export const id: Dictionary = {
 		'Dibangun agar tetap berfungsi luring setelah Anda mengunjunginya, sehingga koneksi yang buruk tidak perlu menjadi penghalang untuk membaca.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica adalah usaha pribadi kaum awam beriman. Situs ini tidak memiliki persetujuan gerejawi apa pun dan tidak berbicara dengan otoritas apa pun dari dirinya sendiri.',
-	'footer.notEndorsed': 'Independen, tanpa persetujuan Takhta Suci.',
+	'footer.notEndorsed': 'Tanpa persetujuan Takhta Suci',
 	'colophon.textsTitle': 'Teks-teksnya',
 	'colophon.textsBody':
 		'Setiap teks berasal dari sumber yang disebutkan namanya, dan setiap karya mencatat edisinya, halaman sumbernya, dan tanggal pengambilannya. Kitab Suci menggunakan terjemahan yang berada dalam domain publik; Katekismus, Kompendium, dan dokumen-dokumen Magisterium berasal dari teks-teks yang diterbitkan oleh Takhta Suci sendiri.',

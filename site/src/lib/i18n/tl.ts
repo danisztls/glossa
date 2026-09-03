@@ -100,7 +100,7 @@ export const tl: Dictionary = {
 		'Ginawa upang magpatuloy kahit walang koneksyon matapos ninyong dalawin, upang ang mahinang koneksyon ay hindi maging sagabal sa pagbabasa.',
 	'colophon.whatThisIsStanding':
 		'Ang Glossa Catholica ay isang pribadong pagsisikap ng mga layko. Wala itong anumang pagsang-ayon ng Simbahan at hindi nagsasalita sa anumang sariling awtoridad.',
-	'footer.notEndorsed': 'Malayang website, walang pag-apruba ng Banal na Sede.',
+	'footer.notEndorsed': 'Walang pag-apruba ng Banal na Sede',
 	'colophon.textsTitle': 'Ang mga teksto',
 	'colophon.textsBody':
 		'Bawat teksto ay nagmumula sa isang pinangalanang pinagkunan, at bawat akda ay nagtatala ng edisyon nito, ng pahina ng pinagkunan nito, at ng petsang kinuha ito. Ang Kasulatan ay gumagamit ng mga saling nasa pambayang ari; ang Katesismo, ang Kompendyo at ang mga dokumento ng Magisterio ay nagmumula sa mismong mga tekstong inilathala ng Banal na Sede.',

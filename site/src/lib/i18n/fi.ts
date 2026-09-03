@@ -98,7 +98,7 @@ export const fi: Dictionary = {
 		'Rakennettu toimimaan yhä ilman verkkoyhteyttä ensimmäisen käynnin jälkeen, jottei heikko yhteys olisi este lukemiselle.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica on maallikkouskovien yksityinen hanke. Sillä ei ole kirkollista hyväksyntää eikä se puhu millään omalla auktoriteetilla.',
-	'footer.notEndorsed': 'Riippumaton sivusto, ilman Pyhän istuimen hyväksyntää.',
+	'footer.notEndorsed': 'Ei Pyhän istuimen hyväksymä',
 	'colophon.textsTitle': 'Tekstit',
 	'colophon.textsBody':
 		'Jokainen teksti tulee nimetystä lähteestä, ja jokainen teos kirjaa laitoksensa, lähdesivunsa ja päivän, jona se noudettiin. Raamattu käyttää vapaassa käytössä olevia käännöksiä; Katekismus, Kompendium ja opetusviran asiakirjat tulevat Pyhän istuimen omista julkaistuista teksteistä.',

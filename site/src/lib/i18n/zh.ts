@@ -94,7 +94,7 @@ export const zh: Dictionary = {
 	'colophon.pointOffline': '設計為在您造訪過之後仍能離線運作，使不良的連線不致成為閱讀的障礙。',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica 是平信徒的私人事業。它未獲任何教會批准，也不以自身的任何權威發言。',
-	'footer.notEndorsed': '独立网站，未经圣座认可。',
+	'footer.notEndorsed': '未经圣座认可',
 	'colophon.textsTitle': '文本',
 	'colophon.textsBody':
 		'每一份文本都出自具名的來源，每一部作品都記載其版本、來源頁面與取得的日期。聖經採用公有領域的譯本；《天主教教理》、《教理簡編》與訓導文獻均出自聖座自己刊行的文本。',

@@ -219,7 +219,7 @@ export const de: Dictionary = {
 		'So gebaut, dass sie nach einem Besuch offline weiterarbeitet, damit eine schlechte Verbindung kein Hindernis fürs Lesen ist.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica ist ein privates Unternehmen von Laiengläubigen. Es trägt keine kirchliche Approbation und spricht mit keiner eigenen Autorität.',
-	'footer.notEndorsed': 'Unabhängig, ohne Billigung des Heiligen Stuhls.',
+	'footer.notEndorsed': 'Nicht vom Heiligen Stuhl gebilligt',
 	'colophon.textsTitle': 'Die Texte',
 	'colophon.textsBody':
 		'Jeder Text stammt aus einer benannten Quelle, und jedes Werk verzeichnet seine Ausgabe, seine Quellseite und das Datum des Abrufs. Die Schrift verwendet gemeinfreie Übersetzungen; Katechismus, Kompendium und die lehramtlichen Dokumente stammen aus den vom Heiligen Stuhl selbst veröffentlichten Texten.',

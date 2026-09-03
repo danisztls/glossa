@@ -371,13 +371,15 @@ export const en: Dictionary = {
 	// provokes it is in the wordmark at every address the site answers, so the
 	// disclaimer has to reach as far as the name does.
 	//
-	// Three words in it were chosen against alternatives and are worth keeping.
-	// "the Holy See" rather than "the Vatican", which is the state rather than
+	// "the Holy See" rather than "the Vatican", which names the state and not
 	// the authority, and rather than "ecclesiastical approbation", which is the
-	// exact term and one no footer can carry. And "Independent" is load-bearing:
-	// without it the sentence disclaims ONE authority and leaves a reader free
-	// to infer another, when the truth is that this site is endorsed by none.
-	'footer.notEndorsed': 'Independent, not endorsed by the Holy See.',
+	// exact term and one no footer can carry.
+	//
+	// IT IS THIS SHORT BECAUSE OF WHERE IT SITS. The line directly above it is
+	// the link to the colophon, so the disclaimer does not have to carry its
+	// own context — the full statement is one line and one click away. Move it
+	// away from that link and it would need to say more than this.
+	'footer.notEndorsed': 'Not endorsed by the Holy See',
 	'colophon.textsTitle': 'The texts',
 	'colophon.textsBody':
 		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts.',

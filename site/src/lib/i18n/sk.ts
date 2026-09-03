@@ -92,7 +92,7 @@ export const sk: Dictionary = {
 		'Vytvorené tak, aby po prvej návšteve fungovalo aj bez pripojenia, aby slabé spojenie nemuselo byť prekážkou v čítaní.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica je súkromná iniciatíva laických veriacich. Nemá žiadne cirkevné schválenie a nehovorí so žiadnou vlastnou autoritou.',
-	'footer.notEndorsed': 'Nezávislé, bez schválenia Svätej stolice.',
+	'footer.notEndorsed': 'Bez schválenia Svätej stolice',
 	'colophon.textsTitle': 'Texty',
 	'colophon.textsBody':
 		'Každý text pochádza z uvedeného zdroja a každé dielo zaznamenáva svoje vydanie, svoju zdrojovú stránku a dátum, kedy bolo získané. Písmo používa preklady vo verejnom vlastníctve; Katechizmus, Kompendium a dokumenty magistéria pochádzajú z vlastných publikovaných textov Svätej stolice.',

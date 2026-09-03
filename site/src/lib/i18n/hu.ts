@@ -220,7 +220,7 @@ export const hu: Dictionary = {
 		'Úgy készült, hogy egyetlen látogatás után kapcsolat nélkül is működjön, így a gyenge internet ne legyen akadálya az olvasásnak.',
 	'colophon.whatThisIsStanding':
 		'A Glossa Catholica világi hívek magánkezdeményezése. Nem rendelkezik egyházi jóváhagyással, és nem szól saját tekintéllyel.',
-	'footer.notEndorsed': 'Független, a Szentszék jóváhagyása nélkül.',
+	'footer.notEndorsed': 'A Szentszék jóváhagyása nélkül',
 	'colophon.textsTitle': 'A szövegek',
 	'colophon.textsBody':
 		'Minden szöveg megnevezett forrásból származik, és minden mű rögzíti a kiadását, a forrásoldalát és a letöltés dátumát. A Szentírás közkincsű fordításokat használ; a Katekizmus, a Kompendium és a tanítóhivatali dokumentumok a Szentszék saját közzétett szövegeiből valók.',

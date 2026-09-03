@@ -215,7 +215,7 @@ export const sl: Dictionary = {
 		'Zgrajeno tako, da po enem obisku deluje tudi brez povezave, da slaba povezava ne bi bila ovira za branje.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica je zasebna pobuda laiških vernikov. Nima nobene cerkvene odobritve in ne govori z lastno avtoriteto.',
-	'footer.notEndorsed': 'Neodvisno, brez odobritve Svetega sedeža.',
+	'footer.notEndorsed': 'Brez odobritve Svetega sedeža',
 	'colophon.textsTitle': 'Besedila',
 	'colophon.textsBody':
 		'Vsako besedilo prihaja iz imenovanega vira, vsako delo pa beleži svojo izdajo, izvorno stran in datum prevzema. Sveto pismo uporablja prevode v javni lasti; katekizem, kompendij in dokumenti učiteljstva prihajajo iz besedil, ki jih je objavil Sveti sedež sam.',

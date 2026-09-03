@@ -2811,13 +2811,14 @@ argument one step on rather than a second decision. Can. 216 is provoked by the 
 the name is in the wordmark at every one of the roughly six thousand addresses this site
 answers; a disclaimer that only a reader who navigates to the colophon ever meets does not
 reach as far as the thing it disclaims. `footer.notEndorsed` is the one-line form —
-_Independent, not endorsed by the Holy See._ — beside a Jerusalem Cross and the motto
-_Ad maiorem Dei gloriam_. Three words in it were chosen against alternatives. **"the Holy
-See"** rather than "the Vatican", which names the state and not the authority, and rather
-than "ecclesiastical approbation", which is the exact term and one no footer can carry.
-And **"Independent"**, which is load-bearing rather than decorative: without it the
-sentence disclaims ONE authority and leaves a reader free to infer another, when the truth
-is that this site is endorsed by none. All 34 dictionaries carry it, and it joins
+_Not endorsed by the Holy See_ — set under the colophon link and the motto _Ad maiorem Dei
+gloriam_, all three in one chrome beside a Jerusalem Cross. It says **"the Holy See"**
+rather than "the Vatican", which names the state and not the authority, and rather than
+"ecclesiastical approbation", which is the exact term and one no footer can carry.
+**It is as short as it is because of where it sits**: the line above it is the link to the
+full statement, so the disclaimer need not carry its own context, and the three lines are
+deliberately the same size and colour — set the motto larger and the stack reads as a
+heading with two captions rather than as an imprint. All 34 dictionaries carry it, and it joins
 `whatThisIsStanding` and `copyrightBody3` in each machine-translated file's header as a
 string that is OPERATIVE rather than descriptive.
 

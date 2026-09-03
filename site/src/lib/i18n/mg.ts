@@ -143,7 +143,7 @@ export const mg: Dictionary = {
 		"Namboarina mba hanohy hiasa na dia tsy misy fifandraisana aza rehefa avy nitsidika ianao, mba tsy ho sakana amin'ny famakiana ny fifandraisana malemy.",
 	'colophon.whatThisIsStanding':
 		"Ny Glossa Catholica dia hetsika manokana ataon'ny kristianina laika. Tsy manana fankatoavana ara-piangonana izy ary tsy miteny amin'ny fahefany manokana.",
-	'footer.notEndorsed': "Tsy miankina, tsy nankatoavin'ny Fiketrahana Masina.",
+	'footer.notEndorsed': "Tsy nankatoavin'ny Fiketrahana Masina",
 	'colophon.textsTitle': 'Ireo lahatsoratra',
 	'colophon.textsBody':
 		"Ny lahatsoratra tsirairay dia avy amin'ny loharano voatonona anarana, ary ny asa soratra tsirairay dia mirakitra ny fanontany, ny pejy niaviany ary ny daty nakana azy. Ny Soratra Masina dia mampiasa fandikan-teny efa an'ny besinimaro; ny Katesizy, ny Famintinana ary ireo antontan-taratasin'ny Fampianarana Ofisialy dia avy amin'ny lahatsoratra navoakan'ny Fiketrahana Masina ihany.",

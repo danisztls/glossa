@@ -216,7 +216,7 @@ export const sv: Dictionary = {
 		'Byggd för att fortsätta fungera offline när du väl har besökt den, så att en dålig uppkoppling inte behöver vara ett hinder för läsningen.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica är ett privat initiativ av lekmannatroende. Det har ingen kyrklig approbation och talar inte med egen auktoritet.',
-	'footer.notEndorsed': 'Oberoende, utan Heliga stolens godkännande.',
+	'footer.notEndorsed': 'Utan Heliga stolens godkännande',
 	'colophon.textsTitle': 'Texterna',
 	'colophon.textsBody':
 		'Varje text kommer från en namngiven källa, och varje verk anger sin utgåva, sin källsida och datumet då den hämtades. Skriften använder översättningar i public domain; katekesen, kompendiet och läroämbetets dokument kommer från Heliga stolens egna publicerade texter.',

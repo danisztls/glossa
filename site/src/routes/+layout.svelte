@@ -410,31 +410,28 @@
 		-->
 		<JerusalemCross class="footer-cross" />
 		<!--
-			`lang="la"` for the reason every reading region declares the language of
-			its own text: this is Latin sitting in a page that may be in any of
-			thirty-four languages, and a screen reader told nothing better will
-			pronounce it as though it were the surrounding one.
+			Three lines in one chrome, and the uniformity is the point: none of them
+			is a heading for the others. The colophon link leads because it is the way
+			OUT of the footer; the motto and the standing statement are the site
+			speaking about itself, and setting either one larger would have made it an
+			announcement rather than an imprint.
 
-			Untranslated, like the build string below and for the same kind of
-			reason — a motto is a fixed form of words, not a sentence to render in
-			the reader's language.
-		-->
-		<p class="motto" lang="la">Ad maiorem Dei gloriam</p>
-		<!--
-			The standing statement in one line, on every page. Its long form is
-			`colophon.whatThisIsStanding`, which sits on a page a reader has to
-			navigate to; this is the same claim where the name that provokes it is.
+			`lang="la"` on the motto for the reason every reading region declares the
+			language of its own text: this is Latin sitting in a page that may be in
+			any of thirty-four languages, and a screen reader told nothing better will
+			pronounce it as though it were the surrounding one. Untranslated, like the
+			build string below — a motto is a fixed form of words, not a sentence to
+			render in the reader's language.
 
-			The middot is `aria-hidden`: it separates two things for the eye and
-			would be announced as "middle dot" otherwise. The link boundary is what
-			separates them for a screen reader, which is why the disclaimer is a
-			span of its own rather than a bare text node run onto the anchor.
+			`footer.notEndorsed` is the one-line form of
+			`colophon.whatThisIsStanding`, which the link directly above it reaches.
+			That proximity is what lets it be this short: it does not have to carry
+			its own context, because the full statement is one line and one click
+			away.
 		-->
-		<p class="standing">
-			<a href="/colophon">{t('colophon.title')}</a>
-			<span class="sep" aria-hidden="true">·</span>
-			<span>{t('footer.notEndorsed')}</span>
-		</p>
+		<p><a href="/colophon">{t('colophon.title')}</a></p>
+		<p lang="la">Ad maiorem Dei gloriam</p>
+		<p>{t('footer.notEndorsed')}</p>
 		<!--
 			The build this page is running, and the reason it is not behind the
 			colophon link: what it answers is "did the update actually land",
@@ -698,9 +695,9 @@
 	 * `Icon.svelte`'s consumers already follow — and the size is a `font-size`
 	 * because the SVG is declared at 1em, so one number scales it.
 	 *
-	 * Muted AND slightly transparent: the glyph is a solid fill where the text
-	 * beside it is strokes with counters, so at the same colour it reads a good
-	 * deal heavier than the line it is meant to sit under.
+	 * Full text colour and no opacity, unlike the lines beside it: this is a
+	 * line drawing rather than a solid, so it carries far less ink than its
+	 * footprint suggests and goes weak long before the text does.
 	 */
 	.site-footer :global(.footer-cross) {
 		position: absolute;
@@ -708,31 +705,24 @@
 		inset-block-start: 50%;
 		transform: translateY(-50%);
 		font-size: 2.25rem;
-		color: var(--color-text-muted);
-		opacity: 0.7;
+		color: var(--color-text);
 	}
 
-	/* The one line in the footer that is text rather than apparatus, so it gets
-	   the reading face and a step of size over the small print. Not italic: a
-	   motto is a statement, not a quotation. */
-	.motto {
+	/*
+	 * ALL THREE LINES, ONE RULE, which is what keeps them one chrome: give the
+	 * motto its own size or face and the stack stops reading as an imprint and
+	 * starts reading as a heading with two captions. `.site-footer a` already
+	 * sets the same muted colour, so the colophon link matches its neighbours
+	 * and lights on hover alone.
+	 *
+	 * Spacing comes from `line-height` rather than margins, because three
+	 * stacked lines of one size want even leading, and margins between them
+	 * would be a second number saying the same thing.
+	 */
+	.site-footer p {
 		margin: 0;
-		font-family: var(--font-serif);
-		font-size: 1rem;
-		letter-spacing: 0.04em;
 		color: var(--color-text-muted);
-	}
-
-	/* Muted as a whole so the disclaimer and the colophon link beside it read as
-	   one line. Left at the body colour the statement would come out DARKER than
-	   the link, which inverts what each is for. */
-	.standing {
-		margin-block: 0.5rem 0;
-		color: var(--color-text-muted);
-	}
-
-	.sep {
-		margin-inline: 0.35em;
+		line-height: 1.9;
 	}
 
 	/*

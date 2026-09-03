@@ -96,7 +96,7 @@ export const lv: Dictionary = {
 		'Veidota tā, lai pēc pirmās apmeklēšanas turpinātu darboties bezsaistē, lai vājš savienojums nebūtu šķērslis lasīšanai.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica ir laju ticīgo privāta iniciatīva. Tai nav nekāda baznīcas apstiprinājuma, un tā nerunā ar nekādu savu autoritāti.',
-	'footer.notEndorsed': 'Neatkarīga vietne, bez Svētā Krēsla apstiprinājuma.',
+	'footer.notEndorsed': 'Bez Svētā Krēsla apstiprinājuma',
 	'colophon.textsTitle': 'Teksti',
 	'colophon.textsBody':
 		'Katrs teksts nāk no nosaukta avota, un katrs darbs norāda savu izdevumu, savu avota lapu un datumu, kad tas iegūts. Svētie Raksti izmanto tulkojumus, kas ir publiskajā īpašumā; Katehisms, Kompendijs un Maģistērija dokumenti nāk no Svētā Krēsla paša publicētajiem tekstiem.',

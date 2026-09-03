@@ -99,7 +99,7 @@ export const sw: Dictionary = {
 		'Imejengwa ili iendelee kufanya kazi bila mtandao mara tu unapokuwa umeitembelea, ili muunganisho hafifu usiwe kizuizi cha kusoma.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica ni jitihada binafsi ya waamini walei. Haina idhini yoyote ya kikanisa wala haisemi kwa mamlaka yake yenyewe.',
-	'footer.notEndorsed': 'Tovuti huru, bila idhini ya Kiti Kitakatifu.',
+	'footer.notEndorsed': 'Bila idhini ya Kiti Kitakatifu',
 	'colophon.textsTitle': 'Maandiko',
 	'colophon.textsBody':
 		'Kila maandishi yanatoka katika chanzo kilichotajwa, na kila kazi inaandika toleo lake, ukurasa wake wa chanzo na tarehe iliyochukuliwa. Maandiko Matakatifu hutumia tafsiri zilizo katika umiliki wa umma; Katekisimu, Kompendiamu na nyaraka za Mafundisho ya Kanisa hutoka katika maandiko yaliyochapishwa na Kiti Kitakatifu chenyewe.',

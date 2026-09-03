@@ -95,7 +95,7 @@ export const nl: Dictionary = {
 		'Gebouwd om offline te blijven werken zodra u haar bezocht hebt, zodat een slechte verbinding geen belemmering voor het lezen hoeft te zijn.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica is een particulier initiatief van lekengelovigen. Zij draagt geen kerkelijke goedkeuring en spreekt met geen enkel eigen gezag.',
-	'footer.notEndorsed': 'Onafhankelijk, zonder goedkeuring van de Heilige Stoel.',
+	'footer.notEndorsed': 'Zonder goedkeuring van de Heilige Stoel',
 	'colophon.textsTitle': 'De teksten',
 	'colophon.textsBody':
 		'Elke tekst komt van een met name genoemde bron, en elk werk vermeldt zijn editie, zijn bronpagina en de datum waarop hij is opgehaald. De Schrift gebruikt vertalingen in het publieke domein; de Catechismus, het Compendium en de documenten van het Leergezag komen uit de door de Heilige Stoel zelf gepubliceerde teksten.',

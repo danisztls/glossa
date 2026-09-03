@@ -1080,14 +1080,21 @@ lives in each file's header instead, which names its own confidence tier —
 keep that part.
 
 **The standing statement is in the FOOTER of every page since 2026-09-02, not
-only on the colophon.** `footer.notEndorsed` — "Independent, not endorsed by
-the Holy See." — is `colophon.whatThisIsStanding` in one line, on the reasoning
-that Can. 216 is provoked by the NAME and the name is in the wordmark at every
-address the site answers, so the disclaimer has to reach as far as it does. It
-says "the Holy See" and not "the Vatican" (the state, not the authority) nor
-"ecclesiastical approbation" (exact, and unreadable in a footer), and
-"Independent" is load-bearing: without it the sentence disclaims one authority
-and leaves a reader free to infer another. All 34 dictionaries carry it.
+only on the colophon.** `footer.notEndorsed` — "Not endorsed by the Holy See" —
+is `colophon.whatThisIsStanding` in one line, on the reasoning that Can. 216 is
+provoked by the NAME and the name is in the wordmark at every address the site
+answers, so the disclaimer has to reach as far as it does. It says "the Holy
+See" and not "the Vatican" (the state, not the authority) nor "ecclesiastical
+approbation" (exact, and unreadable in a footer). **It is this short because of
+where it sits** — the colophon link is the line directly above it, so it need
+not carry its own context; move it away from that link and it would have to say
+more. All 34 dictionaries carry it.
+
+**The three lines are one chrome, and that is load-bearing rather than lazy.**
+Colophon link, motto, disclaimer — same size, same colour, `.site-footer p` in
+one rule. Give the motto its own face or step and the stack reads as a heading
+with two captions instead of an imprint. Spacing is `line-height`, not margins,
+so the even leading is one number rather than two.
 
 **`JerusalemCross.svelte` is inline SVG because an `<img>` cannot see the
 theme.** `<html>` carries four independent axes — `data-theme`, `data-sepia`,
@@ -1097,9 +1104,14 @@ covers one axis and gets `data-theme='light'` on a dark-preferring OS
 backwards. Inline, `fill: currentColor` follows all four for nothing. It is its
 own file rather than an entry in `Icon.svelte`, whose docblock promises it is
 the only importer of `@lucide/svelte`; `Wordmark.svelte` is the precedent for a
-mark that is live geometry. **The proportions were rasterized, not estimated** —
-the first pass was a correct Jerusalem Cross that read badly at the ~36px the
-footer sets it at, so re-render before touching a number. And **draw the plain
+mark that is live geometry. **It is an OUTLINE, and so it had to become a
+traced perimeter** — it was six overlapping rectangles while it was a solid
+fill, which union cleanly under `fill` and draw every internal edge under
+`stroke`, giving a lattice of boxes rather than a cross. `POTENT` is that
+perimeter, clockwise from the top bar's left corner. **The proportions and the
+stroke were rasterized, not estimated** — at the footer's ~36px, 2.5 goes
+spindly and 3.5 closes the crosslets' counters, and round joins blob every
+corner; re-render before touching a number. And **draw the plain
 five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
 in the Order of the Holy Sepulchre's arrangement, because a mark drifting
 toward a specific body's ARMS would contradict the sentence beside it.

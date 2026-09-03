@@ -93,7 +93,7 @@ export const da: Dictionary = {
 		'Bygget til at blive ved med at virke offline, når du først har besøgt det, så en dårlig forbindelse ikke behøver være en hindring for læsningen.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica er et privat foretagende af lægfolk. Det bærer ingen kirkelig godkendelse og taler med ingen myndighed af sig selv.',
-	'footer.notEndorsed': 'Uafhængigt websted, uden Den Hellige Stols godkendelse.',
+	'footer.notEndorsed': 'Ikke godkendt af Den Hellige Stol',
 	'colophon.textsTitle': 'Teksterne',
 	'colophon.textsBody':
 		'Hver tekst kommer fra en navngiven kilde, og hvert værk angiver sin udgave, sin kildeside og datoen, hvor den blev hentet. Skriften bruger oversættelser i det offentlige domæne; Katekismen, Kompendiet og Læreembedets dokumenter kommer fra Den Hellige Stols egne udgivne tekster.',

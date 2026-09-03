@@ -218,7 +218,7 @@ export const ro: Dictionary = {
 		'Construit ca să funcționeze offline după ce l-ați vizitat o dată, astfel încât o conexiune slabă să nu fie o piedică în calea lecturii.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica este o inițiativă privată a credincioșilor laici. Nu are nicio aprobare ecleziastică și nu vorbește cu autoritate proprie.',
-	'footer.notEndorsed': 'Independent, fără aprobarea Sfântului Scaun.',
+	'footer.notEndorsed': 'Fără aprobarea Sfântului Scaun',
 	'colophon.textsTitle': 'Textele',
 	'colophon.textsBody':
 		'Fiecare text provine dintr-o sursă numită, iar fiecare lucrare își consemnează ediția, pagina-sursă și data preluării. Scriptura folosește traduceri din domeniul public; Catehismul, Compendiul și documentele magisteriale provin din textele publicate de însuși Sfântul Scaun.',

@@ -93,7 +93,7 @@ export const hr: Dictionary = {
 		'Napravljena da nastavi raditi izvan mreže nakon što ste je posjetili, kako slaba veza ne bi morala biti prepreka čitanju.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica privatni je pothvat vjernika laika. Nema nikakvo crkveno odobrenje i ne govori nikakvom vlastitom vlašću.',
-	'footer.notEndorsed': 'Neovisno, bez odobrenja Svete Stolice.',
+	'footer.notEndorsed': 'Bez odobrenja Svete Stolice',
 	'colophon.textsTitle': 'Tekstovi',
 	'colophon.textsBody':
 		'Svaki tekst dolazi iz imenovanog izvora, a svako djelo bilježi svoje izdanje, svoju izvornu stranicu i datum kada je preuzeto. Pismo koristi prijevode u javnom vlasništvu; Katekizam, Kompendij i dokumenti Učiteljstva dolaze iz vlastitih objavljenih tekstova Svete Stolice.',
