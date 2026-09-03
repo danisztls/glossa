@@ -4266,3 +4266,55 @@ exits 0. Five names begin with `pre` for reasons unrelated to hooks (`preview`,
 asserts both directions plus four more invariants, and each was mutation-tested when
 written: six deliberate breakages, six failures. A guard that cannot fail is worse than
 no guard, because it is also an assurance.
+
+**`npm run build` deletes the corpus out from under `npm run dev`, and the dev server
+reloads the page into the hole** (found 2026-09-03; the defect long predates the day).
+`sync-corpus.mjs` opens by removing every entry under `src/lib/corpus-data/` and writes
+~8,000 files back over ~13s, and `prebuild` runs it in FULL on purpose — a deploy always
+derives from scratch. That directory is inside `src/`, which Vite watches, so the
+ordinary two-terminal habit hands a running dev server an unlink storm across the files
+its module graph is built on: `corpus-index.ts` globs `corpus-data/index/` eagerly and
+`content-urls.dev.ts` imports `content-manifest.json` the same way. Vite invalidates
+them and full-reloads INTO the half-written corpus, every index comes back empty,
+`listBibleWorks()` returns `[]`, and `scriptura/[book]/[chapter]/+page.ts` answers a
+perfectly good chapter with `error(404)`. The symptom is "Nothing at this address" at
+every valid address, and nothing recovers it but restarting the server.
+
+**`server.watch.ignored` is the fix, and it forfeits nothing that was promised.**
+CLAUDE.md already states that `npm run dev` does not re-derive the corpus and that
+picking up a re-sync means restarting it, so the directory was never a live input. The
+eager globs resolve at transform time either way; the ignore only decides whether a
+DELETION mid-flight may tear the page. It is deliberately not the whole answer — the six
+derived files under `static/` are wiped in the same breath and are still watched — which
+is why the two repairs below matter as much as this one.
+
+**Three caches were confused for each other, and only one of them was ever the
+problem.** `node_modules/.vite` is Vite's dependency pre-bundling cache, and clearing it
+(`npm run dev:clean`) is the right answer to `Pre-transform error: … deps/<name>-<hash>.js`
+and to nothing else. `CONTENT_CACHE` is the service worker's, which the dev twin now
+drops on activate. The corpus wipe touches neither, which is why a `dev:clean` habit
+never helped and why the failure read as unfixable.
+
+**"Nothing at this address" was also the wrong sentence, and that is a separate bug with
+a longer history.** `+error.svelte` discriminates on status — every deliberate refusal in
+a `load` is `error(404, …)`, an unexpected throw is a 500 — and it sent EVERY non-404 to
+`NotFound` whenever offline mode was off. So a dropped request told the reader their
+address does not exist, about an address that does, and `NotFound` is built to send them
+somewhere else: away from a page that was one retry from working. The file's own docblock
+argues at length that answering a reader this way would be "a lie about their own
+library", and then only guarded the offline case. There are three states now, the rule
+lives in `error-view.ts` because nothing renders a component under `vitest`
+(`environment: 'node'`), and `LoadFailed` carries the retry the way `NotDownloaded`
+carries the switch. `invalidateAll()` rather than `location.reload()`: the shell,
+the dictionaries and every index that DID arrive are already resident, so the retry costs
+only what failed.
+
+**A memoised rejection is how a transient failure becomes a permanent one, and this
+project has now learned it twice.** `corpus.ts`'s `readContent` wrote the rule down for
+the content tier — "a rejection kept in it makes the failure permanent for the life of
+the page: every later route asking for the same book is handed the same dead promise
+without ever trying again" — and the index tier, added on 2026-09-03, did not inherit it.
+The consequence is strictly worse one level up: a content read that never retries costs
+one text, while an index that never retries costs every address in that work type at
+once. `retryable-once.ts` is that rule as a tested primitive rather than a comment
+repeated in two places, and it is the reason the retry button can succeed at all.

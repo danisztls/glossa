@@ -297,6 +297,44 @@ half. When dev misbehaves, the two documented causes each have a fix —
 tear below, and a hard reload for the browser cache the dev service worker
 now uninstalls.
 
+**DO NOT RUN `npm run build` WHILE `npm run dev` IS RUNNING** (2026-09-03, §Process).
+`prebuild` runs `sync-corpus` in full, which DELETES every entry under
+`src/lib/corpus-data/` before writing ~8,000 files back over ~13s. That is
+inside the tree Vite watches, so a dev server reloads the page into a corpus
+that is half gone: every eager index glob comes back empty, `listBibleWorks()`
+returns `[]`, and a valid chapter gets `error(404)` — **"Nothing at this
+address" at every address, until the server is restarted.**
+
+- **`vite.config.ts`'s `server.watch.ignored` now covers `corpus-data/`**, so
+  the wipe no longer tears the page. It costs nothing: dev never re-derived the
+  corpus anyway (below), and the globs resolve at transform time regardless.
+- **The six derived files under `static/` are wiped in the same breath and are
+  still watched**, so a reload can still land mid-sync. What makes that
+  survivable is that the failure is now retryable rather than terminal.
+- **`npm run dev:clean` is not a remedy for this and never was.** It clears
+  `node_modules/.vite` — Vite's DEPENDENCY pre-bundling cache, whose one symptom
+  is `Pre-transform error: … deps/<name>-<hash>.js`. Three caches get confused
+  for each other here; the corpus wipe touches none of them.
+
+**A REJECTED PROMISE MUST NEVER BE MEMOISED, and this project has learned it
+twice.** `corpus.ts`'s `readContent` wrote the rule for the content tier; the
+index tier shipped without it on 2026-09-03 and cost more, because a content
+read that never retries costs one text while an index that never retries costs
+every address in that work type. `retryable-once.ts` is the rule as a tested
+primitive — use it for any new module-scope `Promise` memo rather than writing
+`??=` and hoping.
+
+**A LOAD THAT THREW IS NOT A MISSING ADDRESS.** `+error.svelte` has three
+states, not two, and picks between them with `error-view.ts` (a policy module
+for `sw-policy.ts`'s reason: nothing renders a component under `vitest`). 404 ->
+`NotFound`; a throw with offline mode on -> `NotDownloaded`, which carries the
+switch; a throw while ONLINE -> `LoadFailed`, which carries the retry. Until
+2026-09-03 the third fell through to the first, so a dropped fetch told the
+reader their address did not exist and then sent them away from a page one retry
+from working. `loadFailed.*` is English-only on purpose — `t()` falls back key
+by key, so every other interface language gets English rather than the old wrong
+answer in its own.
+
 **`npm run dev` does not re-derive the corpus** (2026-09-01, §Process):
 `predev` passes `--changed-only`, so a restart over an unchanged corpus costs
 ~0.27s. `sync-corpus.mjs` fingerprints six input sets into
