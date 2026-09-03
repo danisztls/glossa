@@ -73,6 +73,20 @@ running `rebuild.py` (`pgrep -f pipeline/rebuild.py`, sandbox off — a sandboxe
 rather than before, and expect the revert to keep happening until the parser
 change is on the branch the other sessions build from.
 
+**THE SECOND TELL IS A COVERAGE FALL IN A FAMILY YOUR BRANCH NEVER TOUCHED**,
+and it is the one that misleads, because the report names a family rather than
+a commit. Measured the same day, from the other side: a full rebuild launched
+from a worktree twelve commits behind main re-parsed the whole corpus with the
+older `vatican_docs.py` and `npm run sync-corpus` then refused the build over
+`encyclical 15599 → 14726` and `exhortation 12030 → 11572` — in a branch whose
+diff touches neither that scraper nor anything in its import closure. **The
+import-closure argument is sound about a DIFF and says nothing about a
+REBUILD**, which runs the whole checkout. The rebase alone restored both
+numbers exactly, with no change to the baseline. So before reading a coverage
+fall as a regression, ask whether this branch is current with the branch the
+shared `build/` was last written from; `git log --oneline main ^HEAD` answers
+in one line, and it is cheaper than the measurement it saves.
+
 **A run's exit code says whether it went worse than
 `pipeline/parse-baseline.json`, and nothing else.** Until 2026-08-29 both
 phases gated on the cross-language symmetry check, which is chronically FAIL
