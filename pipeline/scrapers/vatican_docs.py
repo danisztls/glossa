@@ -316,6 +316,17 @@ VATII_DOC_BASE = (
     "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/"
 )
 
+#: The First Vatican Council sits on the same `archive/hist_councils/` mirror
+#: but spells its own directory with a HYPHEN where the Second uses an
+#: underscore -- `i-vatican-council` against `ii_vatican_council`. Nothing
+#: derives one from the other; both are written out.
+VATI_INDEX_URL = (
+    "https://www.vatican.va/archive/hist_councils/i-vatican-council/index.htm"
+)
+VATI_DOC_BASE = (
+    "https://www.vatican.va/archive/hist_councils/i-vatican-council/documents/"
+)
+
 COPYRIGHT_HOLDER = "Libreria Editrice Vaticana / Dicastery for Communication"
 
 PONTIFF_CANDIDATES = [
@@ -1846,6 +1857,13 @@ class Node:
         self.has_unnumbered = (
             False  # e.g. LG's APPENDIX -- structure present, no addressable span
         )
+        # "leading" for a heading whose unnumbered text the source prints
+        # BEFORE its numbered flow rather than after it -- Vatican I's
+        # doctrinal chapters, which stand over the canons that anathematize
+        # denials of them. Empty everywhere else, and omitted from
+        # structure.json when empty: `before: null` has always meant trailing
+        # matter and still does. See walk_vatican_i.
+        self.position: str = ""
 
     def compute_span(self) -> tuple[int | None, int | None]:
         lo, hi = (min(self.own), max(self.own)) if self.own else (None, None)
@@ -2053,6 +2071,11 @@ class ScrapeState:
         self.current_footnote_table: dict[str, str] = {}
         self.current_chapter_footnote_table: dict[tuple[int | None, str], str] = {}
         self.current_star_table: dict[tuple[int, str], str] = {}
+        #: The page's footnote-marker convention, so a walk that splits a
+        #: block's own leading number off itself (`mark_and_split`) can do it
+        #: without threading the template through every call. Set by
+        #: `parse_document`; read by `walk_vatican_i`.
+        self.marker_template: str = "paren"
         self.corrections: list[dict] = corrections or []
         self.corrections_applied: list[dict] = []
         self.corrections_seen: set[str] = set()
@@ -4422,7 +4445,7 @@ def in_masthead_colour(block_html: str) -> bool:
 
 
 def extract_document_header(
-    blocks: list[Block], slug: str, pontiff: str
+    blocks: list[Block], slug: str, pontiff: str, through: re.Pattern | None = None
 ) -> tuple[str, int]:
     """Split the document's own printed masthead off the front of the stream.
 
@@ -4464,8 +4487,25 @@ def extract_document_header(
     Localised regnal names (`ЛЬВА XIV` for `Leo XIV`) close the other route
     in. Measured over all 468 raw pages, exactly those nine print the rule,
     and six of them already had the right masthead by identity -- so they are
-    the regression check on this, not just its beneficiaries."""
+    the regression check on this, not just its beneficiaries.
+
+    `through` is the same deference to a boundary the page states, for a page
+    that states it in WORDS rather than in a printed rule: the masthead runs
+    through the first block it matches, whatever identity would have said.
+    Only Vatican I passes one -- see `_VATI_MASTHEAD_THROUGH_RE` -- and it
+    needs to because identity has nothing to work with there. `Dei Filius`
+    prints `PIUS EPISCOPUS`, its own name, `SERVUS SERVORUM DEI`, `SACRO
+    APPROBANTE CONCILIO` and `Ad perpetuam rei memoriam` as five separate
+    centred blocks, of which only one names the document and none names the
+    author -- the author is a council and the name printed is the Pope's.
+    Measured: the scan stopped after two, leaving three lines of chancery
+    formula behind to be read as the opening of the document's own text."""
     end = _printed_masthead_end(blocks)
+    if through is not None:
+        for i, b in enumerate(blocks):
+            if through.search(fold(" ".join(b.text.split()))):
+                end = i + 1
+                break
     slug_words = [w for w in fold(slug.replace("-", " ")).split() if len(w) > 2]
     pont = fold(pontiff or "").strip()
     taken = 0
@@ -4991,7 +5031,7 @@ def apply_raw_text_corrections(
 
 @dataclass
 class DocRef:
-    family: str  # "vatii" | "encyclical" | "exhortation" | "cdf"
+    family: str  # "vati" | "vatii" | "encyclical" | "exhortation" | "cdf"
     document_kind: str
     slug: str
     pontiff_or_council: str
@@ -4999,6 +5039,13 @@ class DocRef:
         str  # 8 raw digits from the filename, format TBD (see parse_promulgation_date)
     )
     lang_urls: dict[str, str]  # {"en": url, "pt": url}
+    #: Editions the source offers only as a PDF, keyed by our own language tag.
+    #: NOT a subset of `lang_urls` and never fetched or parsed: this records
+    #: that the edition EXISTS in a format nothing here reads, which is the
+    #: difference between an absence that is the source's and one that is ours
+    #: (`docs/corpus-schema.md` #Documents, `pdf-only`). Populated only by
+    #: `discover_vatii` so far -- see `_VATII_PDF_LINK_RE`.
+    pdf_lang_urls: dict[str, str] = field(default_factory=dict)
     #: The language of the index this document was discovered from, and so the
     #: language its other URLs are derived from. English for all but the seven
     #: encyclicals vatican.va lists only in Italian -- see
@@ -5030,6 +5077,23 @@ VATII_KIND_MAP = {
 
 _VATII_LINK_RE = re.compile(
     r'href="documents/(vat-ii_(const|decl|decree)_(\d{8})_([a-z-]+)_([a-z]{2})\.html)"'
+)
+
+#: THE INDEX OFFERS SEVENTEEN EDITIONS THIS PARSER CANNOT READ, and until
+#: 2026-09-02 no ledger in the repository recorded that they exist. They are
+#: PDFs, so `_VATII_LINK_RE` -- which requires `.html` -- never saw them, and
+#: the absence read as bare absence: indistinguishable from "never checked",
+#: which is the exact gap `translations` was built to close.
+#:
+#: Traditional Chinese for all sixteen documents, under a path that shares
+#: nothing with the rest of the mirror (`/chinese/concilio/`, absolute, with
+#: the language written `zh-t` rather than as a suffix), plus Hebrew for
+#: `Dei Verbum` alone -- whose Nostra Aetate counterpart IS html and was
+#: captured, which is why Hebrew looked complete. Both confirmed live on
+#: 2026-09-02: 200, `application/pdf`.
+_VATII_PDF_LINK_RE = re.compile(
+    r'href="/chinese/concilio/vat-ii_([a-z-]+)_(zh)-t\.pdf"'
+    r'|href="documents/vat-ii_(?:const|decl|decree)_\d{8}_([a-z-]+)_([a-z]{2})\.pdf"'
 )
 
 #: The archive mirror's own two-letter codes, read off the index's own link
@@ -5072,6 +5136,66 @@ def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
             ),
         )
         ref.lang_urls[lang] = VATII_DOC_BASE + _fname
+    for m in _VATII_PDF_LINK_RE.finditer(text):
+        zh_slug, zh_lang, slug, lang = m.groups()
+        ref = by_slug.get(zh_slug or slug)
+        if ref is None:
+            continue  # a PDF for a document with no HTML edition at all
+        code = zh_lang or lang
+        ref.pdf_lang_urls[VATII_LANG_FROM_URL.get(code, code)] = (
+            f"https://www.vatican.va/chinese/concilio/vat-ii_{zh_slug}_zh-t.pdf"
+            if zh_slug
+            else VATII_DOC_BASE + m.group(0).split('"')[1].removeprefix("documents/")
+        )
+    return list(by_slug.values()), None
+
+
+_VATI_LINK_RE = re.compile(
+    r'href="documents/(vat-i_(const)_(\d{8})_([a-z-]+)_([a-z]{2})\.html)"'
+)
+
+#: **`la`, not `lt`.** The Second Vatican Council's mirror calls Latin `lt`
+#: (the trap `ccc.py` and `VATII_LANG_FROM_URL` both document); the First's
+#: calls it `la`, the standard tag, on the same host and one directory away.
+#: Read off the index's own link text on 2026-09-02, the same way that table
+#: was -- there is no rule here to derive, only two pages that disagree.
+#: Italian and Latin are the whole offering: no English edition of either
+#: constitution exists on vatican.va, which is why `vati.*.en` is absent from
+#: the corpus and recorded as `no-url` rather than left as bare absence.
+VATI_LANG_FROM_URL = {"it": "it", "la": "la"}
+VATI_LANG_TO_URL = {v: k for k, v in VATI_LANG_FROM_URL.items()}
+
+VATI_KIND_MAP = {"const": "conciliar-constitution"}
+
+
+def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
+    """The First Vatican Council's two dogmatic constitutions, off its index.
+
+    Same shape as `discover_vatii` and deliberately not merged with it: the
+    two mirrors differ in their directory spelling, in their Latin language
+    code, and in the document-kind vocabulary they need (Vatican I published
+    constitutions and nothing else -- there are no decrees or declarations to
+    map). A shared function would have to be told which council it was
+    reading at every one of those points."""
+    text, err = fetcher.fetch_text(VATI_INDEX_URL, "index__vati.html")
+    if text is None:
+        return [], err
+    by_slug: dict[str, DocRef] = {}
+    for m in _VATI_LINK_RE.finditer(text):
+        _fname, kind, date8, slug, lang = m.groups()
+        ref = by_slug.setdefault(
+            slug,
+            DocRef(
+                "vati",
+                VATI_KIND_MAP[kind],
+                slug,
+                "First Vatican Council",
+                date8,
+                {},
+                base_lang="la",
+            ),
+        )
+        ref.lang_urls[lang] = VATI_DOC_BASE + _fname
     return list(by_slug.values()), None
 
 
@@ -5392,7 +5516,7 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
     base = ref.lang_urls.get(ref.base_lang)
     if base is None or lang == ref.base_lang:
         return None
-    if ref.family == "vatii":
+    if ref.family in ("vatii", "vati"):
         return None  # discovered directly from the index, not derived
     # The URL code, not the work tag -- they are the same for every language
     # but Hebrew, which the modern CMS spells `iw`. Substituting the tag
@@ -5460,6 +5584,15 @@ class ParseResult:
     fetched_url: str
     retrieved_at: str
     header: str = ""  # the document's own printed masthead, as narrowed html
+    #: The bibliographic line a page prints about ITSELF, where it prints one.
+    #: Only Vatican I does: a starred note under a rule of hyphens naming the
+    #: printed edition this transcription follows -- `ASS, vol. V (1869-1870),
+    #: pp. 481-493` for the Latin, Bellocchi's collection for the Italian. It
+    #: is not a footnote in the text (nothing in either constitution carries a
+    #: marker) and the two languages name DIFFERENT printed sources, which is
+    #: an edition fact worth keeping rather than a duplicate. Recorded in the
+    #: manifest's `notes`; without this it went out with the footnote region.
+    printed_source: str = ""
 
 
 _TRANSPARENT_SPAN_RE = re.compile(r"</?span(?:\s[^>]*)?>", re.IGNORECASE)
@@ -5519,6 +5652,332 @@ class StubPageError(Exception):
 STUB_CONTENT_MIN_CHARS = 300
 
 
+# --------------------------------------------------------------------------
+# The First Vatican Council: a walk of its own
+# --------------------------------------------------------------------------
+#
+# WHY THIS IS NOT THE GENERAL WALK. Every other document in this corpus is a
+# stream of numbered paragraphs with headings between them, and the walk below
+# `parse_document` is eleven hundred lines of judgement about that stream. The
+# two constitutions of Vatican I are not that shape, in two ways that the
+# general walk does not merely handle badly but handles WRONGLY:
+#
+#   1. `Pastor Aeternus` prints no number anywhere, and `Dei Filius` numbers
+#      only its canons -- restarting at 1 in each of its four canon groups
+#      (1-5, 1-4, 1-6, 1-3). Fed to the general walk, canon II.1 arrives as
+#      `cand=1` against `last_n=5`, `looks_like_number_typo(1, 6)` accepts it
+#      as a same-length single-digit misprint, and the canon is SILENTLY
+#      renumbered §6. Measured on the real pages before this existed: groups
+#      I and II became §§1-9 under four "single-digit typo, corrected"
+#      anomalies, and groups III and IV -- where the digits stop being the
+#      same length -- fell through to the false-positive branch and were
+#      swept into the appendix, one block per group. The four doctrinal
+#      chapters were swallowed whole into §1.
+#   2. The numbered matter comes LAST. `appendix.json` exists for text a
+#      document prints with no number, but the walk can only ever discover it
+#      as back matter ("whatever survives to the end of the walk"), because
+#      that is what it is everywhere else. Here the unnumbered chapters come
+#      FIRST and the canons anathematize the denial of what they taught, so
+#      an appendix that renders after the sections prints the constitution
+#      backwards. Hence `position: "leading"` below.
+#
+# The shape is small, fixed and fully known -- two documents, four pages, one
+# council that closed in 1870 and will not publish again -- so it is read by a
+# walk written for it rather than by adding a third set of exceptions to a
+# stream parser tuned against seventeen hundred other pages. Everything BEFORE
+# the walk is shared: the same shell sniffing, block extraction, masthead
+# extraction, footnote-region split and inline-html narrowing.
+#
+# The two documents do not even share a page template with each other, which
+# is the measurement that settled how much could be assumed: `Dei Filius` is
+# on the modern `<div class="testo">` shell in both languages and
+# `Pastor Aeternus` is on the old table shell in both, on the same index, one
+# directory apart.
+
+#: The canon block. `CANONES` (la) / `CANONI` (it) is printed as its own
+#: fully-bold heading over the run of numbered canons; nothing else on either
+#: page carries the word. Latin and Italian are the whole language offering,
+#: so this table is complete rather than a sample.
+_VATI_CANONS_HEADING = {"la": "CANONES", "it": "CANONI"}
+
+#: A canon GROUP heading: a bare Roman numeral, then the group's subject --
+#: `I. DE DEO RERUM OMNIUM CREATORE` (la), `I - Di Dio creatore di tutte le
+#: cose` (it). The separator differs by language and both are accepted; the
+#: numeral is what carries the address, and it is what the printed edition
+#: cites a canon by ("Dei Filius, can. II.1"). Anchored and applied ONLY
+#: inside the canon region, so an ordinary sentence opening with a numeral
+#: elsewhere on the page can never reach it.
+_VATI_GROUP_RE = re.compile(r"^([IVX]{1,4})\s*[.–-]\s+(\S.*)$")
+
+#: The rule the source prints between its text and its one starred note --
+#: a paragraph of nothing but hyphens. `find_footnote_region_start` reads the
+#: last `<hr>` on these pages, which is page furniture BELOW the content, and
+#: so leaves both the rule and the note in the body as document text
+#: (measured: blocks 62-63 of `dei-filius.la`, 31-32 of `pastor-aeternus.la`).
+#: The caller knows better, which is exactly what `parse_document`'s
+#: `footnote_start` argument is for.
+_VATI_NOTE_RULE_RE = re.compile(r"<p(?=[\s>])[^>]*>\s*-{6,}\s*</p>", re.IGNORECASE)
+
+#: Typographic ornament the Italian edition prints between its last canon and
+#: its closing address. It is not a heading and not text.
+_VATI_ORNAMENT_RE = re.compile(r"^[\s*.•–-]+$")
+
+#: WHERE THE MASTHEAD ENDS, IN THE PAGE'S OWN WORDS. Both constitutions close
+#: their address clause with the chancery formula for a perpetual act --
+#: `Ad perpetuam rei memoriam` in Latin, `A perpetua memoria` in Italian --
+#: and the document's text begins in the block after it. All four pages print
+#: it; it is the same formula in both languages, so this is one rule and not
+#: a per-page table. Matched against `fold`ed text -- which UPPERCASES as well
+#: as stripping diacritics -- so the Latin's trailing period and the Italian's
+#: position at the end of a longer sentence both land. See
+#: `extract_document_header`'s `through` for why identity alone cannot find
+#: this boundary here.
+_VATI_MASTHEAD_THROUGH_RE = re.compile(r"AD PERPETUAM REI MEMORIAM|A PERPETUA MEMORIA")
+
+#: The CMS wrapper holding a Vatican I document's body, and the one thing all
+#: four pages agree on -- see `parse_document`'s shell branch for what the two
+#: general shell rules do with them instead.
+_VATI_CONTENT_RE = re.compile(
+    r'<div class="text parbase container vaticanrichtext"[^>]*>', re.IGNORECASE
+)
+
+
+def _vati_printed_source(foot_html: str) -> str:
+    """The starred bibliographic line, from the region below the rule.
+
+    The region holds the rule itself and the note, and nothing else on any of
+    the four pages, so the note is whatever text is left once the rule of
+    hyphens is out of it. The leading `*` goes with it: it is the marker
+    pairing this line with the one on the document's title, and the title
+    keeps its own."""
+    return re.sub(r"^[\s*-]*", "", " ".join(strip_tags(foot_html).split())).strip()
+
+
+def _vati_chapter_heading(
+    blocks: list[Block], i: int, lang: str
+) -> tuple[str, str, str, int] | None:
+    """`(label, title, title_html, blocks_consumed)` if a chapter heading opens
+    at `i`, else None. Two printed forms, one per document:
+
+    - TWO BLOCKS (`Dei Filius`/`Pastor Aeternus` la): a centred, NOT bold
+      `CAPUT I`, then the bold subject on its own line. The label line is not
+      bold, so `is_full_bold` -- which IS the general walk's heading detector
+      -- reads it as prose and the chapter number is lost outright; both
+      Latin editions lose all four this way.
+    - ONE BLOCK (both Italian editions): `Capitolo I - Dio creatore di tutte
+      le cose`, fully bold, which `split_label_prefix` already separates.
+
+    Both resolve through `match_label`, so the vocabulary stays in
+    `DIVISIONS` where every other language's does."""
+    b = blocks[i]
+    if b.is_heading:
+        # `merge_heading_lines` runs before the walk and has usually already
+        # done the split, leaving the label in `Block.label` and the bare
+        # subject in `Block.text` -- which is why asking `split_label_prefix`
+        # about `b.text` alone finds nothing. Both forms are accepted: the
+        # pre-split one first, then the raw one for a heading it left alone.
+        label, title = b.label, b.text
+        if not label:
+            split = split_label_prefix(b.text, lang)
+            if split is None:
+                return None
+            label, title = split
+        matched = match_label(label, lang)
+        if matched is not None and matched[0] == "chapter":
+            return label, title, heading_inner_html(b.html), 1
+        return None
+    # The bare label line: `CAPUT I` and nothing else, with the bold subject
+    # in the block below it.
+    if not bare_division_label(b.text, lang):
+        return None
+    matched = match_label(b.text, lang)
+    if matched is None or matched[0] != "chapter":
+        return None
+    if i + 1 >= len(blocks) or not blocks[i + 1].is_heading:
+        return None
+    nxt = blocks[i + 1]
+    return b.text.strip(), nxt.text, heading_inner_html(nxt.html), 2
+
+
+def walk_vatican_i(blocks: list[Block], state: ScrapeState, lang: str) -> None:
+    """Reads one Vatican I constitution into `state`.
+
+    The document is two regions with a hard boundary between them:
+
+    - LEADING PROSE -- an opening address, then the numbered `CAPUT`s, none
+      of which the edition numbers. Each becomes an `appendix.json` unit
+      carrying `position: "leading"`, and a `structure.json` row with the
+      same, so the site can print them where the source does. `Pastor
+      Aeternus` is nothing but this region.
+    - THE CANONS -- `CANONES`, then four groups, each restarting its
+      numbering at 1. They become the document's sections under one
+      continuous 1..N numbering, with each group's heading anchored at its
+      own first canon, so the printed address is recovered as a range rather
+      than fabricated as a number: group II is `before: 6` and owns §§6-9,
+      which is how a reader gets back from §6 to the `II. 1` on the page.
+
+    The boundary between the regions is the `CANONES` heading, and the end of
+    the canon run is the first unnumbered prose block after it -- both
+    documents print every canon as exactly one block that ends `anathema sit`,
+    with no unnumbered continuation anywhere between the group headings, so an
+    unnumbered block there is the closing address and nothing else. Asserted
+    rather than assumed: a numbered canon appearing after that point is
+    recorded as an anomaly."""
+    canons_word = _VATI_CANONS_HEADING.get(lang)
+    canon_start = None
+    for i, b in enumerate(blocks):
+        if b.is_heading and canons_word and b.text.strip().upper() == canons_word:
+            canon_start = i
+            break
+
+    leading: list[dict] = []
+    trailing: list[dict] = []
+
+    def open_unit(into: list[dict], title: str) -> dict:
+        unit = {"title": title, "blocks": [], "after_n": None}
+        into.append(unit)
+        return unit
+
+    def add(unit: dict, b: Block) -> None:
+        blocks_ = unit["blocks"]
+        if blocks_ and blocks_[-1].kind == b.kind:
+            blocks_[-1].text += " " + b.text
+            blocks_[-1].html = (blocks_[-1].html + " " + b.html).strip()
+        else:
+            blocks_.append(BlockOut(b.kind, b.text, b.html))
+
+    # ---- leading prose -------------------------------------------------
+    chapter_nodes: list[Node] = []
+    unit = open_unit(leading, "")  # the opening address, above the first CAPUT
+    i = 0
+    end = canon_start if canon_start is not None else len(blocks)
+    while i < end:
+        heading = _vati_chapter_heading(blocks, i, lang)
+        if heading is not None:
+            label, title, title_html, consumed = heading
+            node = Node("chapter", None, title, LEVELS["chapter"])
+            node.depth = 1
+            node.label = label
+            node.title_html = title_html
+            node.position = "leading"
+            state.root_children.append(node)
+            chapter_nodes.append(node)
+            unit = open_unit(leading, title)
+            unit["label"] = label
+            i += consumed
+            continue
+        b = blocks[i]
+        if _VATI_ORNAMENT_RE.match(b.text):
+            state.dropped.append(b.text)
+        elif b.is_heading and not unit["blocks"] and not unit["title"]:
+            # A bold line above the first CAPUT that is not a division label:
+            # the masthead extractor already took the real one, so anything
+            # left here is a stray heading over the opening address.
+            unit["title"] = b.text
+        else:
+            add(unit, b)
+        i += 1
+
+    # ---- the canons ----------------------------------------------------
+    if canon_start is not None:
+        canons_node = Node("section", None, blocks[canon_start].text, LEVELS["section"])
+        canons_node.depth = 1
+        state.root_children.append(canons_node)
+        # It precedes the first canon, so it anchors there like any other
+        # heading: without this it would carry `before: null` and read as
+        # trailing matter, which is the one thing it is not.
+        state.pending_headings.append(canons_node)
+        group_node: Node | None = None
+        n = 0
+        group_printed = 0
+        closed = False
+        # Opened on the first block of closing matter, never before it: an
+        # empty trailing unit would be written to `appendix.json` as a unit
+        # with no title and no text.
+        tail: dict | None = None
+
+        def close_canons() -> dict:
+            nonlocal closed, tail
+            closed = True
+            if tail is None:
+                tail = open_unit(trailing, "")
+            return tail
+
+        i = canon_start + 1
+        while i < len(blocks):
+            b = blocks[i]
+            i += 1
+            if _VATI_ORNAMENT_RE.match(b.text):
+                # The Italian edition prints `* * *` between its last canon
+                # and its closing address, which is the source marking the
+                # boundary the Latin leaves to be inferred. It ends the canon
+                # run but is not itself text -- and it has to OPEN the closing
+                # unit as it goes, or the address behind it joins whichever
+                # unit was last open, which is the leading `Capitolo IV`
+                # (measured: 1,790 characters of it, in the Italian alone).
+                state.dropped.append(b.text)
+                close_canons()
+                continue
+            group_m = _VATI_GROUP_RE.match(b.text) if b.is_heading else None
+            if group_m is not None:
+                numeral, subject = group_m.groups()
+                group_node = Node("chapter", None, subject, LEVELS["chapter"])
+                group_node.depth = 2
+                group_node.label = numeral
+                canons_node.children.append(group_node)
+                state.pending_headings.append(group_node)
+                group_printed = 0
+                continue
+            num = match_para_num(b.raw)
+            if num is not None and not closed:
+                printed, _ = num
+                group_printed += 1
+                if printed != group_printed:
+                    state.anomalies.append(
+                        f"canon {printed} printed where {group_printed} was due in "
+                        f"group {group_node.label if group_node else '?'} "
+                        "-- numbering read as printed, not corrected"
+                    )
+                n += 1
+                _, rest, rest_html = mark_and_split(b.raw, state.marker_template)
+                sec = Section(n=n, chapter=None)
+                sec.blocks.append(BlockOut(b.kind, rest, rest_html))
+                state.sections[n] = sec
+                state.last_n = n
+                for node in state.pending_headings:
+                    node.before = n
+                state.pending_headings.clear()
+                (group_node or canons_node).own.add(n)
+                continue
+            if num is not None and closed:
+                state.anomalies.append(
+                    f"numbered canon {num[0]} printed after the canon run closed "
+                    f"-- kept as closing matter: {b.text[:60]!r}"
+                )
+            add(close_canons(), b)
+        trailing = [u for u in trailing if u["blocks"]]
+
+    for unit in leading:
+        unit["position"] = "leading"
+    state.appendix = [u for u in leading if u["blocks"] or u["title"]] + trailing
+    for sec in state.sections.values():
+        sec.resolve(
+            state.current_footnote_table,
+            state.current_chapter_footnote_table,
+            state.current_star_table,
+            state.anomalies,
+        )
+    # A document with no numbered matter has no leading/trailing distinction
+    # to draw -- `Pastor Aeternus` is all chapters -- and marking it would
+    # ask the site to split a body that has no other half. The flag is for
+    # the case it was written for and no other.
+    if not state.sections:
+        for unit in state.appendix:
+            unit.pop("position", None)
+        for node in chapter_nodes:
+            node.position = ""
+
+
 def parse_document(
     html: str,
     lang: str,
@@ -5527,6 +5986,7 @@ def parse_document(
     slug: str = "",
     pontiff: str = "",
     footnote_start: int | None = None,
+    family: str = "",
 ) -> ParseResult:
     """`footnote_start`, when given, is an offset into the CONTENT REGION at
     which this page's footnote list begins, and it overrides every signal
@@ -5542,8 +6002,32 @@ def parse_document(
     run of a thousand definitions that follows the work's last numbered
     paragraph. Nothing else passes it, and the default is unchanged."""
     html = strip_transparent_spans(html)
-    testo_m = re.search(r'class="testo"', html)
-    if testo_m:
+    vati_m = _VATI_CONTENT_RE.search(html) if family == "vati" else None
+    if vati_m:
+        # THE TWO CONSTITUTIONS DO NOT SHARE A SHELL WITH EACH OTHER.
+        # `Dei Filius` is on the modern `<div class="testo">` shell in both
+        # languages and `Pastor Aeternus` is on neither shell in either --
+        # same index, one directory apart. `find_content_start_old_shell`
+        # returns 0 for both Pastor Aeternus pages, because it looks for the
+        # last `<hr>` before the first NUMBERED paragraph and that document
+        # numbers nothing; the whole page then became the content region,
+        # `_gap_block` swept the `<head>`'s `<title>` and `printDiv()` script
+        # into the first block, and the Italian edition parsed to a single
+        # 16,976-character unit with no structure at all.
+        #
+        # What every Vatican I page does share is the inner wrapper the CMS
+        # puts the body in, which is exact where both shell rules are
+        # inference. Confirmed on all four pages: one occurrence each,
+        # containing the whole document and nothing else.
+        shell = "vaticanrichtext"
+        end_m = re.search(r"</div>", html[vati_m.end() :], re.IGNORECASE)
+        region = (
+            html[vati_m.end() : vati_m.end() + end_m.start()]
+            if end_m
+            else html[vati_m.end() :]
+        )
+        content_start = 0
+    elif testo_m := re.search(r'class="testo"', html):
         shell = "modern"
         end_m = re.search(r"/TESTO", html[testo_m.start() :], re.IGNORECASE)
         # AFTER the opening tag, not at the `class="testo"` attribute inside
@@ -5578,6 +6062,22 @@ def parse_document(
 
     if footnote_start is not None:
         fn_start, evidence = footnote_start, "supplied by the caller"
+    elif family == "vati":
+        # Both Vatican I pages carry ONE note, a starred bibliographic line
+        # naming the printed edition (`*ASS, vol. V (1869-1870), pp. 481-493`
+        # in Latin, Bellocchi's collection in Italian), under a rule of
+        # hyphens the source prints as an ordinary paragraph. There is no
+        # `<hr>` between text and note and no NOTES heading, so
+        # `find_footnote_region_start` falls to the last `<hr>` on the page --
+        # which is page furniture BELOW the content, and leaves the rule and
+        # the note in the body as two blocks of document text. Measured on
+        # all four pages before this branch existed.
+        rule = _VATI_NOTE_RULE_RE.search(region)
+        fn_start, evidence = (
+            (rule.start(), "rule of hyphens above the starred source note")
+            if rule
+            else (None, "no note rule found")
+        )
     else:
         fn_start, evidence = find_footnote_region_start(region)
     if fn_start is None:
@@ -5622,6 +6122,7 @@ def parse_document(
     state.current_footnote_table = footnote_table
     state.current_chapter_footnote_table = chapter_footnote_table
     state.current_star_table = star_table
+    state.marker_template = marker_template
 
     blocks: list[Block] = []
     dropped_tags: collections.Counter = collections.Counter()
@@ -5698,7 +6199,12 @@ def parse_document(
 
     # Take the masthead off the front before anything can mistake it for a
     # heading. See extract_document_header.
-    header_html, header_blocks = extract_document_header(blocks, slug, pontiff)
+    header_html, header_blocks = extract_document_header(
+        blocks,
+        slug,
+        pontiff,
+        through=_VATI_MASTHEAD_THROUGH_RE if family == "vati" else None,
+    )
     if header_blocks:
         state.anomalies.append(
             f"document header captured ({header_blocks} block(s)): {header_html[:80]!r}"
@@ -6180,6 +6686,17 @@ def parse_document(
 
     numbered_titles = numbering_is_in_headings(blocks)
 
+    if family == "vati":
+        # The First Vatican Council is read by a walk written for it -- see
+        # `walk_vatican_i` for why the general one below reads its canons
+        # WRONGLY rather than merely badly. Everything above this line is
+        # shared: the same shell sniffing, block extraction, masthead
+        # extraction, footnote split and inline-html narrowing. Emptying the
+        # list is what skips the general walk; the appendix assembly that
+        # follows it still runs, over the units `walk_vatican_i` wrote.
+        walk_vatican_i(blocks, state, lang)
+        blocks = []
+
     i, n = 0, len(blocks)
     while i < n:
         b = blocks[i]
@@ -6489,6 +7006,17 @@ def parse_document(
         entry.pop("n", None)
         if unit["title"]:
             entry = {"title": unit["title"], **entry}
+        # Both optional and both written only by `walk_vatican_i`, so every
+        # appendix already on disk keeps the shape it has. `label` is the
+        # division label printed above the title (`CAPUT I`), the same split
+        # `structure.json` rows already make; `position` says the source
+        # prints this unit BEFORE its numbered flow rather than after it,
+        # which is the one thing a reader of `appendix.json` could not
+        # otherwise recover -- the file has meant "back matter" until now.
+        if unit.get("label"):
+            entry = {"label": unit["label"], **entry}
+        if unit.get("position"):
+            entry["position"] = unit["position"]
         appendix_out.append(entry)
     state.appendix_out = appendix_out
 
@@ -6518,6 +7046,7 @@ def parse_document(
         fetched_url=fetched_url,
         retrieved_at=datetime.now(UTC).strftime("%Y-%m-%d"),
         header=header_html,
+        printed_source=(_vati_printed_source(foot_html) if family == "vati" else ""),
     )
 
 
@@ -6913,6 +7442,12 @@ def build_manifest(
             "and lose their markup (docs/decisions.md §Storage)."
         ),
     ]
+    if parse.printed_source:
+        notes.insert(
+            0,
+            "The page names the printed edition it transcribes, in a starred "
+            f"note under its own text: {parse.printed_source}",
+        )
     if not state.sections and state.appendix_out:
         notes.insert(
             0,
@@ -7064,6 +7599,8 @@ def build_structure(state: ScrapeState, title: str) -> list[dict]:
             row["subtitle"] = nd.subtitle
         if nd.title_html:
             row["title_html"] = nd.title_html
+        if nd.position:
+            row["position"] = nd.position
         flat.append(row)
     if state.sections and not any(r["before"] is not None for r in flat):
         return [{"level": 1, "title": title, "before": min(state.sections)}]
@@ -7175,10 +7712,18 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
     counter-example that makes the shape clear: `be` on both mirrors, nothing
     to translate, nothing to write here.
 
+    THE TWO COUNCILS DISAGREE WITH EACH OTHER, which is why `vati` gets its
+    own branch rather than sharing Vatican II's table: the First Vatican
+    Council's mirror spells Latin `la` and the Second's spells it `lt`, on
+    the same host. Folding them together would have sent every Latin request
+    for Dei Filius and Pastor Aeternus to a URL that does not exist.
+
     DocRef.lang_urls is keyed by whatever the *source* used, so this
     translates the work-level tag into the right dict key per family."""
     if ref.family == "vatii":
         return VATII_LANG_TO_URL.get(lang, lang)
+    if ref.family == "vati":
+        return VATI_LANG_TO_URL.get(lang, lang)
     return MODERN_LANG_TO_URL.get(lang, lang)
 
 
@@ -7314,7 +7859,13 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     try:
         html = repair_markup(html, work_id)
         parse = parse_document(
-            html, lang, corrections, url, ref.slug, ref.pontiff_or_council
+            html,
+            lang,
+            corrections,
+            url,
+            ref.slug,
+            ref.pontiff_or_council,
+            family=ref.family,
         )
     except StubPageError as exc:
         # Not a parser defeat -- the page has no real content to parse (see
@@ -7403,6 +7954,18 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
         parse.state,
         parse,
     )
+    # An edition the index names and this parser cannot read, recorded on
+    # every edition of the same document that it can (`docs/corpus-schema.md`
+    # #Documents). Read off the index rather than typed here, so a PDF the
+    # Holy See adds or replaces with HTML is picked up by the next crawl
+    # instead of by somebody noticing.
+    pdf_only = {
+        lang_: {"status": "pdf-only", "checked_at": parse.retrieved_at, "note": url_}
+        for lang_, url_ in sorted(ref.pdf_lang_urls.items())
+        if lang_ != lang
+    }
+    if pdf_only:
+        manifest["translations"] = {**pdf_only, **manifest.get("translations", {})}
     write_document_outputs(
         work_id, manifest, parse.state, structure, sections_out, overrides_applied
     )
@@ -7656,6 +8219,84 @@ def run_phase1(
                         ref,
                         lang,
                         VATII_TITLES.get(slug, slug),
+                        html,
+                    )
+            touch_crawl_lock(lock_path)
+            for tag, r in pool.collect():
+                report(tag, r)
+        for tag, r in pool.collect(0):
+            report(tag, r)
+    finally:
+        pool.close()
+    return results
+
+
+# --------------------------------------------------------------------------
+# The First Vatican Council
+# --------------------------------------------------------------------------
+
+VATI_ORDER = ["dei-filius", "pastor-aeternus"]
+
+VATI_TITLES = {"dei-filius": "Dei Filius", "pastor-aeternus": "Pastor Aeternus"}
+
+
+def run_vati(
+    fetcher: Fetcher,
+    langs: list[str],
+    only: list[str] | None,
+    jobs: int = 1,
+    fetch_only: bool = False,
+    skip_written: bool = False,
+    lock_path: Path = CRAWL_LOCK_PATH,
+) -> list[dict]:
+    """Its own phase rather than a branch of `run_phase1`, for the reason
+    the language table gives: the two councils' mirrors agree on almost
+    nothing but the host. Four pages, so the pool is a formality kept for the
+    shared reporting rather than for the parallelism."""
+    refs, err = discover_vati(fetcher)
+    if err:
+        print(f"FATAL: could not fetch Vatican I index: {err}", file=sys.stderr)
+        return []
+    by_slug = {r.slug: r for r in refs}
+    print(f"discovered {len(refs)} Vatican I documents from index (expected 2)")
+    order = only or VATI_ORDER
+    results = []
+    pool = OrderedParsePool(jobs)
+
+    def report(tag, r: dict) -> None:
+        slug, lang = tag
+        results.append(r)
+        if lang is None:
+            return
+        print(
+            f"  {slug}.{lang}: {r['status']}"
+            + (f" {r.get('range')}" if r.get("range") else "")
+            + (f" ERR={r.get('error')}" if r.get("error") else "")
+        )
+
+    try:
+        for slug in order:
+            ref = by_slug.get(slug)
+            if ref is None:
+                pool.submit_done(
+                    (slug, None),
+                    {"family": "vati", "slug": slug, "status": "not-in-index"},
+                )
+                continue
+            for lang in langs:
+                if fetch_only:
+                    pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
+                    continue
+                early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
+                if early is not None:
+                    pool.submit_done((slug, lang), early)
+                else:
+                    pool.submit(
+                        (slug, lang),
+                        parse_and_write,
+                        ref,
+                        lang,
+                        VATI_TITLES.get(slug, slug),
                         html,
                     )
             touch_crawl_lock(lock_path)
@@ -8154,9 +8795,10 @@ def run_lock_path(cmd: str, offline: bool) -> tuple[Path, str]:
 
     AN OFFLINE RUN MAKES NO REQUEST, so that reason is gone and only the
     second one is left -- two writers racing the same work directory. Phase 1
-    writes `vatii.*` and phase 2 writes `encyclical.*` and `exhortation.*`, so
-    what remains is a race between two runs of the SAME phase, never between
-    the two phases, and a lock per phase says exactly that and nothing more.
+    writes `vatii.*`, phase 2 writes `encyclical.*` and `exhortation.*`, and
+    `vati` writes `vati.*`, so what remains is a race between two runs of the
+    SAME phase, never between two of them, and a lock per phase says exactly
+    that and nothing more.
     Neither writes `absent-sources.json` offline either, since only a live 404
     records one.
 
@@ -8528,6 +9170,27 @@ def main() -> int:
         "mirror publishes, since nothing reads the text",
     )
 
+    pv = sub.add_parser(
+        "vati",
+        parents=[net, par],
+        help="the First Vatican Council: Dei Filius and Pastor Aeternus, "
+        "Italian and Latin (the whole offering -- there is no English)",
+    )
+    pv.add_argument(
+        "--lang",
+        default="all",
+        help="comma-separated language codes, or `all` "
+        "(" + ",".join(sorted(VATI_LANG_FROM_URL.values())) + ")",
+    )
+    pv.add_argument(
+        "--only", help="comma-separated slugs, for iterating on one document"
+    )
+    pv.add_argument(
+        "--fetch-only",
+        action="store_true",
+        help="cache each language's page under corpus/raw/ and stop",
+    )
+
     p2 = sub.add_parser(
         "phase2",
         parents=[net, par],
@@ -8599,7 +9262,7 @@ def main() -> int:
     )
 
     lock_path = CRAWL_LOCK_PATH
-    if args.cmd in ("phase1", "phase2"):
+    if args.cmd in ("phase1", "phase2", "vati"):
         lock_path, lock_kind = run_lock_path(args.cmd, args.offline)
         try:
             acquire_crawl_lock(lock_path, lock_kind)
@@ -8640,6 +9303,37 @@ def main() -> int:
         report_fetching(fetcher)
         ok = report_run(results, fetcher, args.accept_baseline)
         report_symmetry(check_language_symmetry(known=sections_from_results(results)))
+        return 0 if ok else 1
+
+    if args.cmd == "vati":
+        try:
+            if args.lang == "all":
+                langs = sorted(VATI_LANG_FROM_URL.values())
+            else:
+                langs = [x.strip() for x in args.lang.split(",") if x.strip()]
+            unknown = (
+                [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
+            )
+            if unknown:
+                print(
+                    f"ERROR: no division labels for {', '.join(unknown)}; "
+                    f"known: {', '.join(sorted(DIVISIONS))}"
+                )
+                return 1
+            results = run_vati(
+                fetcher,
+                langs,
+                args.only.split(",") if args.only else None,
+                jobs=args.jobs,
+                fetch_only=args.fetch_only,
+                skip_written=args.skip_written,
+                lock_path=lock_path,
+            )
+        finally:
+            release_crawl_lock(lock_path)
+        summarize(results)
+        report_fetching(fetcher)
+        ok = report_run(results, fetcher, args.accept_baseline)
         return 0 if ok else 1
 
     if args.cmd == "phase2":

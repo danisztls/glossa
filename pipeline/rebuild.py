@@ -297,6 +297,18 @@ STAGES: tuple[Stage, ...] = (
         ("phase1", "--lang", "all", "--offline"),
         ("vatii.*",),
     ),
+    # The First Vatican Council. Its own stage and not a flag on `vatii`,
+    # because it is its own subcommand: the two councils' mirrors share a host
+    # and disagree on the directory spelling, on the code for Latin, and on
+    # the shape of the documents themselves (`walk_vatican_i`). Four pages, so
+    # it costs the rebuild nothing to run beside the others.
+    Stage(
+        "vati",
+        "documents",
+        "vatican_docs.py",
+        ("vati", "--lang", "all", "--offline"),
+        ("vati.*",),
+    ),
     Stage(
         "encyclicals",
         "documents",

@@ -1382,6 +1382,109 @@ lesson is not about Hebrew: it is that `lang_urls` is keyed by what the SOURCE
 calls a language, and any code that writes into it with our own tag is a bug
 waiting for the first language where the two disagree.
 
+**Seventeen Vatican II editions were never recorded, because a discovery regex
+narrowed to what the parser could read** (2026-09-02). The question was
+whether the corpus had every language of the Second Vatican Council. It had
+every HTML one — 202 editions, twelve languages carrying all sixteen
+documents, Arabic eight, Croatian and Hebrew one each — and the index also
+links Traditional Chinese for all sixteen, plus Hebrew for _Dei Verbum_, as
+PDFs. `_VATII_LINK_RE` requires `.html`, so it had never seen them, and no
+ledger in the repository said they existed.
+
+Nothing failed and nothing looked wrong. The absence read as bare absence,
+which is exactly what `translations` was built to distinguish from a checked
+one — and Hebrew looked complete because Nostra Aetate's Hebrew edition IS
+html and had been captured, so the gap was one document deep in a language
+that appeared present. **A regex written to find what the parser can read
+silently decides what the LEDGER can know**, and the ledger's whole job is to
+tell "asked and the answer was no" from "never asked". The fix is not a hand
+written table: `_VATII_PDF_LINK_RE` reads them off the same index, and
+`parse_and_write` records them on every edition of the document it can read,
+so a PDF the Holy See replaces with HTML is picked up by the next crawl.
+
+## The First Vatican Council
+
+Ingested 2026-09-02: two dogmatic constitutions, _Dei Filius_ and _Pastor
+Aeternus_, Italian and Latin, four pages. **There is no English edition of
+either on vatican.va** — the English texts in circulation come from Tanner and
+Denzinger, a different rights and provenance position from everything else
+here — so `vati.*.en` is absent and recorded as `no-url` rather than left
+bare.
+
+**The schema held and the walk did not, and that distinction is the whole
+story.** Every other document in this corpus is a stream of numbered
+paragraphs with headings between them, and `vatican_docs.py`'s walk is eleven
+hundred lines of judgement about that stream. Vatican I is not that shape in
+two ways:
+
+_Pastor Aeternus_ prints no number anywhere. _Dei Filius_ numbers only its
+canons, restarting at 1 in each of four groups (1–5, 1–4, 1–6, 1–3). And the
+numbered matter comes LAST — four unnumbered `CAPUT`s of doctrine, then the
+canons that anathematize the denial of what they taught.
+
+**Fed to the general walk it produced a confident, wrong answer, and reported
+the damage as a fix.** Canon II.1 arrives as `cand=1` against `last_n=5`, and
+`looks_like_number_typo(1, 6)` is true — a same-length single-digit
+substitution, which is exactly what that heuristic exists to catch — so the
+canon was silently renumbered §6 under an anomaly reading "single-digit typo,
+corrected". Four canons went that way. Groups III and IV, where the digits
+stop being the same length, fell through to the false-positive branch and were
+swept into the appendix, one block per group. The four doctrinal chapters were
+swallowed whole into §1 as "unnumbered prose before section 1". **A heuristic
+tuned to a misprint cannot tell a misprint from a restart**: both look like a
+number going backwards, and only knowing the document's shape separates them.
+
+**So the walk is forked and nothing else is.** `walk_vatican_i` is ~150 lines
+deciding what a block MEANS; the shell sniffing, block extraction, masthead
+extraction, footnote split, inline narrowing, manifest building, validation,
+ledgers and lock are all shared. The shape is small, fixed and fully known —
+two documents, one council that closed in 1870 and will not publish again — so
+it is read by a walk written for it rather than by a third set of exceptions
+in a parser tuned against seventeen hundred other pages.
+
+**The canons are the sections and the chapters are leading matter, which cost
+one new field.** Canons are numbered 1..18 continuously, with each group's
+heading anchored at its own first canon (`before` 1, 6, 10, 16). §6 is a
+number the printed edition never uses — it prints `II. 1` — so the printed
+address is recovered as a RANGE rather than fabricated as a number: group II
+owns §§6–9, and that is how a reader gets back from §6 to the page.
+
+The chapters go to `appendix.json`, which until now meant back matter and
+nothing else — the schema's own words, and the site's `tailRows` renders it
+strictly after the numbered sections. Rendered there, _Dei Filius_ would read
+backwards. `position: "leading"` is the answer, on the unit and on the
+structure row; **`before: null` keeps meaning what it always meant**, and
+leading matter got a field of its own rather than a re-reading of that one. It
+rides on the UNIT as well as the row because the first leading run has no
+heading to carry it — the constitution opens with its address to the Church,
+above the first `CAPUT` — and pairing by title cannot place a run with no
+title. A document that numbers nothing gets no `position` at all: _Pastor
+Aeternus_ has no numbered flow to be before or after, and marking it would ask
+a renderer to split a body with no other half.
+
+**Extracting the pairing to check it found a bug older than this work.**
+`splitUnnumbered` is a pure function because the site's own notes forbid
+driving a browser to verify UI, and the pairing was the only part of that page
+anything could check without one. Walking the HEADINGS and appending whatever
+they did not claim put an edition's OPENING paragraph after its last section:
+the untitled run matches no heading by construction, so it always fell into
+the unclaimed bucket at the end. `ad-catholici-sacerdotii.it` read its first
+paragraph after twenty-five headed units. Both arrays are already in document
+order, so the merge walks them together and the ordering fixes itself — for
+Vatican I and for every unnumbered edition that opens with prose.
+
+**Two smaller things, each a rule wearing a general one's clothes.** The two
+constitutions do not share a page template WITH EACH OTHER: `Dei Filius` is on
+the modern `<div class="testo">` shell and `Pastor Aeternus` is on neither
+shell, same index, one directory apart — so `find_content_start_old_shell`
+returned 0 for both Pastor Aeternus pages (it looks for the last `<hr>` before
+the first NUMBERED paragraph, and that document numbers nothing) and the
+Italian edition parsed to a single 16,976-character unit with no structure.
+What all four pages do share is the CMS's inner wrapper, which is exact where
+both shell rules are inference. And `CAPUT I` is not bold while `is_full_bold`
+IS the heading detector, so both Latin editions lost all four chapter labels —
+the subject survived, the numbering did not.
+
 ## The site
 
 **One static SPA shell, not a prerender.** The static page was never the content
@@ -3220,9 +3323,9 @@ at all.
 ## Scope
 
 **In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all
-pontificates, the 16 Vatican II documents, apostolic exhortations, the prayers, the
-Summa (EN + LA), and the Compendium of the Social Doctrine of the Church (ten
-languages, see below).
+pontificates, the 16 Vatican II documents, the 2 First Vatican Council constitutions,
+apostolic exhortations, the prayers, the Summa (EN + LA), and the Compendium of the
+Social Doctrine of the Church (ten languages, see below).
 
 **Every encyclical the Holy See publishes is on the site in some language** — English
 where it exists, otherwise the language it does exist in. Discovery consults the Italian

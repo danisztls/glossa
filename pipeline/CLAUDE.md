@@ -102,7 +102,9 @@ pipeline/scrapers/
                      `pipeline/dore-anchors.json`, never re-derived --
                      see "Output that is only regenerable" in the root
                      CLAUDE.md.
-  vatican_docs.py    encyclicals, Vatican II, exhortations
+  vatican_docs.py    encyclicals, Vatican I, Vatican II, exhortations.
+                     One scraper, three subcommands; `walk_vatican_i` is
+                     the one forked walk and its docstring says why.
   prayers.py
   audit.py census.py apply_sweep.py   tools over already-written output
 ```
@@ -255,12 +257,24 @@ every answer was already in `raw/`. What to know:
   generates a URL slot per (document, language) whether or not a translator
   filled it, and the page's own `EN - IT - LA - PT` bar is its statement of
   which editions exist.
-- **`pdf-only` is the one status that does not mean absent.** Six editions
+- **`pdf-only` is the one status that does not mean absent.** Editions that
   exist only as PDF, which nothing here reads — the **English _Amoris
   Laetitia_** among them, worth knowing before reading a hole in an English
-  column as the source's fault. The evidence is a `/content/dam/` href whose
-  language suffix matches the page, in the mirror's codes (Latin arrives as
-  `_lt`).
+  column as the source's fault. On the modern shell the evidence is a
+  `/content/dam/` href whose language suffix matches the page, in the mirror's
+  codes (Latin arrives as `_lt`).
+- **A ledger cannot record what a regex never matched, and that is how
+  seventeen editions went unrecorded for a week.** `_VATII_LINK_RE` requires
+  `.html`, so the Vatican II index's Traditional Chinese PDFs — all sixteen
+  documents, at `/chinese/concilio/vat-ii_{slug}_zh-t.pdf`, a path sharing
+  nothing with the rest of the mirror — and the Hebrew _Dei Verbum_ were
+  invisible to it. Nothing failed: the absence simply read as bare absence,
+  which is indistinguishable from never having asked, and Hebrew looked
+  complete because Nostra Aetate's IS html. `_VATII_PDF_LINK_RE` reads them
+  off the same index now (§Languages). **The general form: a discovery regex
+  narrowed to what the parser can read silently narrows what the LEDGER can
+  know**, and the ledger's whole job is to tell a checked absence from an
+  unchecked one.
 - **The ledger is an input, and the manifests catch up on the next parse.**
   `write_document_outputs` reads it into `manifest.translations`
   (`common/translations.py`): the ledger is the record, the manifest a copy.
@@ -316,6 +330,94 @@ added 139 editions for 141 requests; ten damaged parses are in
   Byelorussian division noun, and it is `параўн.` — "cf.", the first word of a
   footnote. Counting without reading would have made every footnote a chapter
   heading.
+
+## The First Vatican Council has a walk of its own, and had to
+
+Ingested 2026-09-02 (`docs/decisions.md` §The First Vatican Council). Two
+constitutions, Italian and Latin, four pages — vatican.va publishes no English
+edition of either, recorded as `no-url` rather than left bare. The subcommand
+is `vati` (its own, not a flag on `phase1`), and `walk_vatican_i` reads the
+blocks the shared machinery hands it.
+
+- **The general walk did not merely read this badly; it read it WRONGLY, and
+  it said so in the language of a fix.** `Dei Filius` numbers only its canons
+  and restarts at 1 in each of four groups (1–5, 1–4, 1–6, 1–3). Canon II.1
+  arrives as `cand=1` against `last_n=5`, and `looks_like_number_typo(1, 6)`
+  is TRUE — a same-length single-digit substitution — so the canon was
+  silently renumbered §6 under an anomaly reading "single-digit typo,
+  corrected". Groups III and IV, where the digits stop being the same length,
+  fell through to the false-positive branch and were swept into the appendix
+  one block per group, and the four doctrinal chapters were swallowed whole
+  into §1. **A heuristic tuned to a misprint cannot tell a misprint from a
+  restart**, because both look like a number going backwards; only knowing
+  the document's shape separates them.
+- **Everything before the walk is shared and everything after it is too** —
+  shell sniffing, block extraction, masthead extraction, the footnote split,
+  `narrow_html`, `build_manifest`, `validate_document`, the ledgers, the
+  lock. `parse_document` takes a `family` and empties the block list; the
+  appendix assembly that follows still runs. What is forked is the ~150 lines
+  that decide what a block MEANS, and forking there is what keeps 1,700 other
+  pages out of the blast radius.
+- **The two constitutions do not share a page template with each other.**
+  `Dei Filius` is on the modern `<div class="testo">` shell in both languages
+  and `Pastor Aeternus` is on neither shell in either — same index, one
+  directory apart. `find_content_start_old_shell` returns 0 for both Pastor
+  Aeternus pages (it looks for the last `<hr>` before the first NUMBERED
+  paragraph, and that document numbers nothing), so the whole page became the
+  content region and `_gap_block` swept the `<head>`'s `<title>` and
+  `printDiv()` script into the first block — the Italian edition parsed to a
+  single 16,976-character unit with no structure at all. The fix is the inner
+  wrapper all four pages DO share, `<div class="text parbase container
+vaticanrichtext">`, which is exact where both shell rules are inference.
+- **The mirrors of the two councils disagree with each other, on the same
+  host.** `i-vatican-council` against `ii_vatican_council` — hyphen against
+  underscore — and Latin is `la` on the First's mirror and `lt` on the
+  Second's. Hence `VATI_LANG_FROM_URL` beside `VATII_LANG_FROM_URL` rather
+  than one table: folding them would have sent every Latin request for
+  _Dei Filius_ and _Pastor Aeternus_ to a URL that does not exist.
+- **`CAPUT I` is not bold, and `is_full_bold` IS the heading detector.** The
+  Latin editions print the label as a plain centred line with the bold subject
+  beneath it, so all four chapters were lost in both — only the subject
+  survived, and with it went the chapter numbering. `_vati_chapter_heading`
+  takes both printed forms (two blocks in Latin, `Capitolo I - Title` in
+  Italian) and resolves each through `match_label`, so the vocabulary stays in
+  `DIVISIONS` where every other language's does.
+- **The page says where its masthead ends, in words rather than in a rule.**
+  Both constitutions close their address clause with the chancery formula for
+  a perpetual act — `Ad perpetuam rei memoriam` / `A perpetua memoria` — and
+  the text begins after it. Identity has nothing to work with here (only one
+  of five centred blocks names the document, and none names the author,
+  because the author is a council and the name printed is the Pope's), so the
+  scan stopped after two and left three lines of formula to be read as the
+  document's opening prose. `extract_document_header`'s `through` is the same
+  deference it already gives a printed rule.
+- **The canons are the sections, numbered 1..18 continuously, and each
+  group's heading is anchored at its own first canon** (`before` 1, 6, 10,
+  16). That is what recovers the printed address as a RANGE instead of
+  fabricating it as a number: §6 is a number the edition never prints, and
+  group II owning §§6–9 is how a reader gets back from it to the `II. 1` on
+  the page. The chapters go to `appendix.json` with `position: "leading"`
+  (`docs/corpus-schema.md`) — the field exists because the canons anathematize
+  the denial of what the chapters teach, and an appendix renders after the
+  sections.
+- **The end of the canon run is the first unnumbered prose block after it.**
+  Every canon is exactly one block ending `anathema sit`, with no unnumbered
+  continuation anywhere between the group headings — measured on both
+  editions — so an unnumbered block there is the closing address and nothing
+  else. A numbered canon after that point is recorded as an anomaly rather
+  than assumed away. The Italian prints `* * *` at that boundary, and the
+  ornament has to OPEN the closing unit as it closes the canons: it did not
+  for one iteration, and 1,790 characters of closing address joined the
+  leading `Capitolo IV`.
+- **The one note on either page is bibliographic, not textual.** A starred
+  line under a rule of hyphens naming the printed edition transcribed — `ASS,
+vol. V (1869-1870), pp. 481-493` for the Latin, Bellocchi's collection for
+  the Italian, so the two languages name DIFFERENT printed sources. Neither
+  constitution carries a footnote marker anywhere, so it resolves to no
+  citation and goes to `manifest.notes` instead; without that it went out with
+  the footnote region, and `find_footnote_region_start`'s last-`<hr>` fallback
+  (page furniture, below the content) left both the rule and the note in the
+  body as document text.
 
 ## The Catechism is eight editions in three page formats
 

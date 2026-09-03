@@ -3943,5 +3943,33 @@
     "lang": "pl",
     "status": "stub-page",
     "checked_at": "2026-08-29"
+  },
+  {
+    "work": "vati.dei-filius.it",
+    "lang": "en",
+    "status": "no-url",
+    "checked_at": "2026-09-02",
+    "note": "the First Vatican Council index lists Italian and Latin and nothing else, so there is no English URL on vatican.va to discover or to derive one from"
+  },
+  {
+    "work": "vati.dei-filius.la",
+    "lang": "en",
+    "status": "no-url",
+    "checked_at": "2026-09-02",
+    "note": "the First Vatican Council index lists Italian and Latin and nothing else, so there is no English URL on vatican.va to discover or to derive one from"
+  },
+  {
+    "work": "vati.pastor-aeternus.it",
+    "lang": "en",
+    "status": "no-url",
+    "checked_at": "2026-09-02",
+    "note": "the First Vatican Council index lists Italian and Latin and nothing else, so there is no English URL on vatican.va to discover or to derive one from"
+  },
+  {
+    "work": "vati.pastor-aeternus.la",
+    "lang": "en",
+    "status": "no-url",
+    "checked_at": "2026-09-02",
+    "note": "the First Vatican Council index lists Italian and Latin and nothing else, so there is no English URL on vatican.va to discover or to derive one from"
   }
 ]
