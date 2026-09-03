@@ -86,6 +86,7 @@ import type {
 	SummaQuestion,
 	WorkManifest
 } from './types';
+import { retryableOnce } from './retryable-once';
 
 import bibleCpdvEnManifest from './fixtures/bible.cpdv.en/manifest.json';
 import fixtureGenJson from './fixtures/bible.cpdv.en/books/gen.json';
@@ -1116,10 +1117,10 @@ const documentStructureLocations: Record<string, ContentLocation> = {};
  * boolean: `corpus.ts` fires several content reads at once on a reading route,
  * and each awaits this before touching a table.
  */
-let contentIndexReady: Promise<void> | undefined;
+const contentIndexOnce = retryableOnce(buildContentIndex);
 
 export function ensureContentIndex(): Promise<void> {
-	return (contentIndexReady ??= buildContentIndex());
+	return contentIndexOnce();
 }
 
 /**
@@ -1190,16 +1191,28 @@ async function fetchIndexFile<T>(url: string | undefined, name: string): Promise
  * Memoised on the PROMISE, not on a boolean: a reading route and the jump box
  * can ask for the same index in the same tick, and a boolean would let the
  * second caller past while the first was still in flight.
+ *
+ * AND NOT MEMOISED WHEN IT REJECTS, which is what `retryableOnce` is for and
+ * what this got wrong when it shipped (2026-09-03). A rejection left in the map
+ * is handed to every later caller without another attempt, so one failed fetch
+ * of `bible-index.json` leaves `bibleIndex` empty for the life of the page —
+ * and `listBibleWorks()` over an empty registry returns `[]`, which
+ * `scriptura/[book]/[chapter]/+page.ts` turns into `error(404)`. Every valid
+ * chapter then reads "Nothing at this address" until the tab is reloaded.
+ * `corpus.ts`'s `readContent` had already written this rule down one tier
+ * lower; the index tier simply did not inherit it.
  */
-const indexPrimers = new Map<string, Promise<void>>();
+const indexPrimers = new Map<string, () => Promise<void>>();
 
 function primeOnce(name: string, load: () => Promise<void>): Promise<void> {
-	let inFlight = indexPrimers.get(name);
-	if (!inFlight) {
-		inFlight = USE_REAL_CORPUS ? load().then(bumpGeneration) : Promise.resolve();
-		indexPrimers.set(name, inFlight);
+	let primer = indexPrimers.get(name);
+	if (!primer) {
+		primer = USE_REAL_CORPUS
+			? retryableOnce(() => load().then(bumpGeneration))
+			: () => Promise.resolve();
+		indexPrimers.set(name, primer);
 	}
-	return inFlight;
+	return primer();
 }
 
 /**

@@ -184,6 +184,46 @@ export default defineConfig({
 	define: {
 		__CORPUS_DATA_DIR__: JSON.stringify(corpusDataDir)
 	},
+	server: {
+		watch: {
+			/*
+			 * THE CORPUS IS INSIDE `src/`, AND A BUILD DELETES ALL OF IT.
+			 *
+			 * `sync-corpus.mjs` opens by removing every entry under
+			 * `src/lib/corpus-data/` and writing it back over ~13s, and
+			 * `prebuild` runs it in FULL on purpose (a deploy always derives
+			 * from scratch — see CLAUDE.md, "Running the site"). So the ordinary
+			 * two-terminal habit — `npm run dev` in one, `npm run build` in the
+			 * other — hands the dev server an unlink storm across thousands of
+			 * files that its own module graph is built on: `corpus-index.ts`
+			 * globs `corpus-data/index/` eagerly and `content-urls.dev.ts`
+			 * imports `content-manifest.json` the same way.
+			 *
+			 * Unignored, Vite invalidates those modules and full-reloads the
+			 * page INTO the half-written corpus. Every index glob comes back
+			 * empty, `listBibleWorks()` returns `[]`, and
+			 * `scriptura/[book]/[chapter]/+page.ts` answers a perfectly valid
+			 * chapter with `error(404)` — "Nothing at this address", at every
+			 * address, until the dev server is restarted. That is the failure
+			 * this ignore exists for, and it long predates the index tier
+			 * becoming lazy (2026-09-03).
+			 *
+			 * Ignoring the directory costs nothing that was ever promised:
+			 * CLAUDE.md already states that `npm run dev` does not re-derive the
+			 * corpus and that picking up a re-sync means restarting it. The
+			 * eager globs are resolved at transform time either way; this only
+			 * decides whether a DELETION mid-flight is allowed to tear the page.
+			 *
+			 * It is not the whole answer, and is not meant to be. The six
+			 * derived files under `static/` are wiped in the same breath and are
+			 * still watched, so a reload can still land mid-sync. What makes
+			 * that survivable rather than terminal is `retryable-once.ts`: a
+			 * failed index fetch is no longer memoised, so the retry that
+			 * `LoadFailed` offers actually re-fetches.
+			 */
+			ignored: ['**/src/lib/corpus-data/**']
+		}
+	},
 	optimizeDeps: {
 		/*
 		 * EVERY DEPENDENCY REACHED ONLY BY A DYNAMIC IMPORT BELONGS HERE, and

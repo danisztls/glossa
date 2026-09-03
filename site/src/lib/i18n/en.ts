@@ -153,6 +153,15 @@ export const en: Dictionary = {
 	'offline.hint':
 		'Uses no network at all: nothing is downloaded, no update is checked for, nothing is measured. Only texts already on this device will open.',
 	'offline.notDownloaded': 'Not on this device',
+	// Reached from `+error.svelte` when a load threw while ONLINE — a dropped
+	// request, not a wrong address. English only for now: `t()` falls back key
+	// by key, so every other interface language gets these in English rather
+	// than getting `NotFound`'s wrong answer in their own.
+	'loadFailed.title': 'That did not load',
+	'loadFailed.hint':
+		'The page exists — something went wrong fetching it. Trying again usually works.',
+	'loadFailed.retry': 'Try again',
+	'loadFailed.retrying': 'Trying…',
 	'offline.turnOff': 'Turn off offline mode',
 
 	'fontSize.label': 'Text size',
