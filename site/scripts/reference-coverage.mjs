@@ -300,7 +300,12 @@ export function classifyCitation(raw, lang, work) {
 	let recognized = false;
 	for (const seg of parseRefs(normalizeCitationSpacing(raw), { lang, work })) {
 		if (seg.kind === 'text') continue;
-		if (seg.kind === 'document' && !seg.slug) recognized = true;
+		// A document segment links by its SLUG or by the work it names. `work`
+		// is the second of those and arrived with the Code of Canon Law: a
+		// `CIC, can. 216` has no `/documenta` slug and never will — it
+		// resolves to `/ius-canonicum/216` — so counting it as merely
+		// recognized understated this measure by every canon the corpus cites.
+		if (seg.kind === 'document' && !seg.slug && !seg.work) recognized = true;
 		else linkable = true;
 	}
 	return linkable ? 'linkable' : recognized ? 'recognized' : 'nothing';

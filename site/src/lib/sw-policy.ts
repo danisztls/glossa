@@ -710,6 +710,11 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	'social-doctrine-chunk': 'magisterium',
 	'social-doctrine-appendix': 'magisterium',
 	'social-doctrine-structure': 'magisterium',
+	// The Code of Canon Law, on the same terms and for the same reasons: a
+	// document's kinds under different names, ~1 MB an edition, and an
+	// outline that indexes nothing without the text under it.
+	'canon-law-chunk': 'magisterium',
+	'canon-law-structure': 'magisterium',
 	'summa-question': 'summa'
 };
 

@@ -19,6 +19,8 @@ const manifest: RouteManifest = {
 	compendiumChapters: [1],
 	socialDoctrine: [1],
 	socialDoctrineChapters: [1],
+	canonLaw: [1],
+	canonLawTitles: [1],
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
 	summa: { i: [1, 2], suppl: [77] }
@@ -35,7 +37,7 @@ describe('sitemapPaths', () => {
 		const paths = sitemapPaths(manifest);
 		// 315 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
 		// + 2 compendium + 1 socialDoctrineChapter + 1 socialDoctrine
-		// + 1 document + 1 prayer + 3 summa.
+		// + 1 canonLawTitle + 1 canonLaw + 1 document + 1 prayer + 3 summa.
 		//
 		// The chrome is NINE PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
 		// (2026-08-28): nine unprefixed, which are the cluster's `x-default`,
@@ -47,7 +49,7 @@ describe('sitemapPaths', () => {
 		// shelf and its one work and took nothing away. Still no Compendium
 		// landing page -- the Catechism's index presents both works
 		// (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(315 + 19);
+		expect(paths).toHaveLength(315 + 21);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 

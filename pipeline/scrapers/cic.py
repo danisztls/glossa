@@ -1545,6 +1545,18 @@ def walk(blocks: list[Block], edition: Edition) -> WalkState:
             if p.kind is not None and open_labels.get(p.kind) == key:
                 state.breadcrumbs += 1
                 continue
+            # A HEADING THAT PRINTS ITS OWN RANGE AND IS NOT AT IT is a
+            # pointer, not a heading in place. The English page for canons
+            # 1166-1190 opens with `TITLE IV. THE VENERATION OF THE SAINTS
+            # ... (Cann. 1186 - 1190)` above canon 1166 -- the page-top
+            # contents list in its one-entry form, which `is_contents_list`
+            # cannot see because it takes two labels to look like a list.
+            # The source convicts it: the range it prints starts twenty
+            # canons after the canon it would stand over.
+            printed = printed_range(title)
+            if printed is not None and before is not None and printed > before:
+                state.contents_lists += 1
+                continue
             if p.kind is not None:
                 open_labels[p.kind] = key
                 depth = DIVISION_ORDER.index(p.kind)
@@ -1715,6 +1727,21 @@ def walk(blocks: list[Block], edition: Edition) -> WalkState:
     return state
 
 
+#: `(Cann. 1186 - 1190)` at the end of a heading -- the extent five of the
+#: seven editions print inside the title. Read only to CHECK the heading's
+#: position (see `flush`); the site strips it for display and the corpus
+#: keeps it, because it is what the edition printed.
+_PRINTED_RANGE_RE = re.compile(
+    r"\(\s*(?:can+|c[âa]n+|kan|кан)\.?\s*(\d{1,4})", re.IGNORECASE
+)
+
+
+def printed_range(title: str) -> int | None:
+    """The first canon a heading's own printed range names, or None."""
+    m = _PRINTED_RANGE_RE.search(title)
+    return int(m.group(1)) if m else None
+
+
 def strip_amendment_flag(html: str) -> tuple[str, bool]:
     """`(html with the amendment marks removed, whether there were any)`.
 
@@ -1754,8 +1781,7 @@ def strip_amendment_flag(html: str) -> tuple[str, bool]:
 
 
 def build_structure(state: WalkState) -> list[dict]:
-    """`structure.json`: the flat `{level, title, before}` array, Book VI's
-    divisions removed with its canons.
+    """`structure.json`: the flat `{level, kind?, title, before}` array.
 
     LEVELS COME FROM THE LABEL, which is the one place in this corpus that
     is true. Everywhere else a heading's depth is inferred from how it is
@@ -1765,7 +1791,19 @@ def build_structure(state: WalkState) -> list[dict]:
     Code is divided that way. What is inferred here is nothing.
 
     Compacted to contiguous `1..N` afterwards, as the schema requires: an
-    edition that never prints a `SECTIO` must not leave a hole at level 3."""
+    edition that never prints a `SECTIO` must not leave a hole at level 3.
+
+    `kind` IS STORED, AND THIS IS THE WORK THE DOCUMENT SCHEMA DROPPED IT
+    FOR. `structure.json` carried a `kind` until 2026-08-21 and lost it
+    because it "forced the scraper to judge whether a heading _meant_
+    chapter or section, which the sources do not reliably encode" -- a
+    judgement that put chapters inside sections in Gaudium et Spes. Here
+    there is no judgement: the edition prints `TITULUS` or `CAPUT`, and
+    `DIVISION_NOUNS` is a table of what those words are in each language.
+    The reason to keep it is the site's, and it is the same argument one
+    layer on: a reader's page has to be a run of canons under one TITLE, and
+    picking those by `level === 4` would be reading a compacted integer
+    where the source printed a word."""
     ranks = sorted(
         {DIVISION_ORDER.index(n.kind) for n in state.nodes if n.kind is not None}
     )
@@ -1782,6 +1820,8 @@ def build_structure(state: WalkState) -> list[dict]:
             # opening a division of its own.
             level = last_level
         entry: dict = {"level": level}
+        if node.kind:
+            entry["kind"] = node.kind
         if node.label:
             entry["label"] = node.label
         entry["title"] = node.title

@@ -32,6 +32,10 @@ export interface RouteManifest {
 	compendiumChapters: number[];
 	socialDoctrine: number[];
 	socialDoctrineChapters: number[];
+	canonLaw: number[];
+	/** The canon each reading unit of the Code opens at — what
+	 *  `/ius-canonicum/titulus/{n}` is addressed by. */
+	canonLawTitles: number[];
 	documents: string[];
 	prayers: string[];
 	/** Part slug -> question numbers, unioned across editions. */
@@ -187,6 +191,10 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 			return manifest.socialDoctrine.includes(address.n);
 		case 'socialDoctrineChapter':
 			return manifest.socialDoctrineChapters.includes(address.n);
+		case 'canonLaw':
+			return manifest.canonLaw.includes(address.n);
+		case 'canonLawTitle':
+			return manifest.canonLawTitles.includes(address.n);
 		case 'document':
 			return manifest.documents.includes(address.slug);
 		case 'prayer':

@@ -17,6 +17,8 @@
  */
 
 import {
+	canonLawCanonExists,
+	canonLawLangs,
 	defaultDocumentWorkId,
 	documentSectionExists,
 	findBookByAbbrev,
@@ -120,6 +122,25 @@ export function refAddress(
 		return { kind: 'summa', part, question: seg.question, article };
 	}
 	if (seg.kind === 'document') {
+		// A siglum naming a work the corpus holds under its OWN addresses
+		// rather than as a document. `CIC, can. 748, § 2` is canon 748, and
+		// `/ius-canonicum/748` is where it lives — there is no `/documenta`
+		// page to fall through to, so this branches before the slug test that
+		// would otherwise reject it.
+		if (seg.work === 'canon-law') {
+			const n = firstLocusSection(seg.locus);
+			if (n === undefined) return undefined;
+			// Validated against an edition, never trusted: the Catechism cites
+			// the 1917 Code in a handful of places and its numbering is not
+			// this one's. The reader's own edition is asked first and the
+			// union second, because the two editions with a gap in them
+			// (`cic.KNOWN_GAPS`) must not make a canon every other edition
+			// carries unlinkable.
+			const lang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
+			const exists =
+				canonLawCanonExists(lang, n) || canonLawLangs().some((l) => canonLawCanonExists(l, n));
+			return exists ? { kind: 'canonLaw', n } : undefined;
+		}
 		if (!seg.slug) return undefined; // recognized siglum, but not an ingested document (or PT, which never resolves one)
 		// The reader's own language edition: a citation link must not silently
 		// move them to a different-language edition than the one they are

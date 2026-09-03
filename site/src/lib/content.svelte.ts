@@ -69,9 +69,15 @@ import { readStoredJson, writeStoredJson } from './storage';
  * here either: `defaultWorkId` walks `CONTENT_LANG_FALLBACK` and answers
  * English, which is what every other work type already does for a reader the
  * corpus cannot meet in their own language.
+ *
+ * `'canon-law'` joins on those same terms, seven editions, and is the second
+ * member after `'summa'` with no Portuguese: vatican.va publishes the Code in
+ * Portuguese as a PDF and nothing here reads one. `CONTENT_LANG_FALLBACK`
+ * answers English, and the Latin edition is the one a canonist would reach
+ * for anyway — it is the only one of the seven that is not a translation.
  */
 export type WorkTypeKey =
-	'bible' | 'catechism' | 'compendium' | 'prayer' | 'social-doctrine' | 'summa';
+	'bible' | 'canon-law' | 'catechism' | 'compendium' | 'prayer' | 'social-doctrine' | 'summa';
 
 interface Override {
 	workId: string;

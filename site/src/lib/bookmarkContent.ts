@@ -106,6 +106,8 @@ function sortKey(target: Address): [number, number, number] {
 		case 'compendiumChapter':
 		case 'socialDoctrine':
 		case 'socialDoctrineChapter':
+		case 'canonLaw':
+		case 'canonLawTitle':
 			return [target.n, 0, 0];
 		// The whole document sorts to the top of its own section, ahead of every
 		// section of it.
@@ -167,10 +169,17 @@ export function bookmarkGroup(target: Address): { key: string; order: number } {
 		case 'socialDoctrine':
 		case 'socialDoctrineChapter':
 			return { key: 'socialDoctrine', order: 4 };
+		// Beside it, on the same reasoning and one place further along: the
+		// Code is its own work with its own address space, and a reader marks
+		// a canon exactly as they mark CCC 1. Prayers and documents move down
+		// one again, which is what a shelf order does when a shelf is added.
+		case 'canonLaw':
+		case 'canonLawTitle':
+			return { key: 'canonLaw', order: 5 };
 		case 'prayer':
-			return { key: 'prayers', order: 5 };
+			return { key: 'prayers', order: 6 };
 		// A section and the whole document file together, under the document.
 		case 'document':
-			return { key: `document:${target.slug}`, order: 6 };
+			return { key: `document:${target.slug}`, order: 7 };
 	}
 }

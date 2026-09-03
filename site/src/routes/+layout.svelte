@@ -100,7 +100,13 @@
 		// document in the library, which is why it has a work type of its own
 		// (docs/corpus-schema.md). Last, because it is the one shelf here
 		// holding a single work.
-		{ href: '/doctrina-socialis', key: 'nav.socialDoctrine' }
+		{ href: '/doctrina-socialis', key: 'nav.socialDoctrine' },
+		// Beside it on the same reasoning: the Code is a work with its own
+		// address space and its own type, not one more document in the
+		// library. Last of the two single-work shelves because a reader
+		// arrives at canon law knowing the canon they want, where the
+		// Compendium of the Social Doctrine is read through.
+		{ href: '/ius-canonicum', key: 'nav.canonLaw' }
 		// NO `/doctores` ENTRY, and that is deliberate (2026-08-28). The Summa
 		// moved off this bar and under the shelf for the Fathers and Doctors of
 		// the Church, where it belongs by category: the four above are the

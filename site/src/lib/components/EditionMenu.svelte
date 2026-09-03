@@ -118,6 +118,13 @@
 		if (pathname === '/doctrina-socialis' || pathname.startsWith('/doctrina-socialis/')) {
 			return { kind: 'type', type: 'social-doctrine' };
 		}
+		// The Code of Canon Law, seven editions. Added here at the same time
+		// as the route, which is the lesson the paragraph above records: this
+		// map is the one place a new work can be forgotten without anything
+		// failing.
+		if (pathname === '/ius-canonicum' || pathname.startsWith('/ius-canonicum/')) {
+			return { kind: 'type', type: 'canon-law' };
+		}
 		// The Summa's menu offers English and Latin and no Portuguese, which
 		// is the work's permanent shape rather than a gap (docs/decisions.md
 		// §Scope). `listEditions` is already language-agnostic, so the

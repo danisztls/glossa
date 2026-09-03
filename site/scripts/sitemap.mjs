@@ -106,6 +106,11 @@ export function sitemapPaths(manifest) {
 	for (const n of manifest.socialDoctrineChapters)
 		paths.push(hrefFor({ kind: 'socialDoctrineChapter', n }));
 	for (const n of manifest.socialDoctrine) paths.push(hrefFor({ kind: 'socialDoctrine', n }));
+	// The Code: its reading units before its canons, the same order and for
+	// the same reason as the pair above — a crawler meets the division before
+	// the unit inside it.
+	for (const n of manifest.canonLawTitles) paths.push(hrefFor({ kind: 'canonLawTitle', n }));
+	for (const n of manifest.canonLaw) paths.push(hrefFor({ kind: 'canonLaw', n }));
 	for (const slug of manifest.documents) paths.push(hrefFor({ kind: 'document', slug }));
 	for (const slug of manifest.prayers) paths.push(hrefFor({ kind: 'prayer', slug }));
 	for (const [part, questions] of Object.entries(manifest.summa)) {

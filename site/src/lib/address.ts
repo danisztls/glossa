@@ -66,6 +66,14 @@ export type Address =
 	 *  cited: "CSDC 160" names a paragraph. */
 	| { kind: 'socialDoctrine'; n: number }
 	| { kind: 'socialDoctrineChapter'; n: number }
+	/** A canon of the Code of Canon Law, or one of its reading units by the
+	 *  canon it opens at. Addressed per canon for the same reason the
+	 *  Compendium of the Social Doctrine is addressed per paragraph: "CIC
+	 *  can. 216" names a canon, wherever it is printed. The unit is a TITLE
+	 *  of the Code and not a book or a chapter — see `canonLawUnitStarts` in
+	 *  `scripts/sync-corpus.mjs`. */
+	| { kind: 'canonLaw'; n: number }
+	| { kind: 'canonLawTitle'; n: number }
 	/** A document, or one numbered section of it. `n` absent is the whole
 	 *  document: a section is a FRAGMENT on the document's single page
 	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
@@ -319,6 +327,15 @@ export function hrefFor(a: Address): string {
 			return `/doctrina-socialis/${a.n}`;
 		case 'socialDoctrineChapter':
 			return `/doctrina-socialis/caput/${a.n}`;
+		// `ius canonicum` is the Latin for the subject, and the shelf is the
+		// work, on `doctrina-socialis`' reasoning: the Code is the only canon
+		// law this corpus holds, and the Eastern Code would be a peer under
+		// the same shelf rather than a reason to nest this one. `titulus` is
+		// the Code's own word for the division a reader reads through.
+		case 'canonLaw':
+			return `/ius-canonicum/${a.n}`;
+		case 'canonLawTitle':
+			return `/ius-canonicum/titulus/${a.n}`;
 		case 'document':
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
 		// Nested under `/doctores`, the shelf for the Fathers and Doctors of the
@@ -357,6 +374,8 @@ const COMPENDIUM_RE = /^\/catechismus\/compendium\/(\d+)$/;
 // is free.
 const SOCIAL_DOCTRINE_CHAPTER_RE = /^\/doctrina-socialis\/caput\/(\d+)$/;
 const SOCIAL_DOCTRINE_RE = /^\/doctrina-socialis\/(\d+)$/;
+const CANON_LAW_TITLE_RE = /^\/ius-canonicum\/titulus\/(\d+)$/;
+const CANON_LAW_RE = /^\/ius-canonicum\/(\d+)$/;
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
 const SUMMA_RE = /^\/doctores\/summa\/([a-z-]+)\/(\d+)$/;
@@ -460,6 +479,14 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 	const socialDoctrine = SOCIAL_DOCTRINE_RE.exec(path);
 	if (socialDoctrine) return numbered('socialDoctrine', socialDoctrine[1]);
 
+	// The unit before the canon, like the chapter before the paragraph above:
+	// `/ius-canonicum/titulus/7` must not be read as canon `titulus`.
+	const canonLawTitle = CANON_LAW_TITLE_RE.exec(path);
+	if (canonLawTitle) return numbered('canonLawTitle', canonLawTitle[1]);
+
+	const canonLaw = CANON_LAW_RE.exec(path);
+	if (canonLaw) return numbered('canonLaw', canonLaw[1]);
+
 	const document = DOCUMENT_RE.exec(path);
 	if (document) {
 		const anchor = SECTION_ANCHOR_RE.exec(url.hash);
@@ -494,7 +521,9 @@ function numbered(
 		| 'compendium'
 		| 'compendiumChapter'
 		| 'socialDoctrine'
-		| 'socialDoctrineChapter',
+		| 'socialDoctrineChapter'
+		| 'canonLaw'
+		| 'canonLawTitle',
 	segment: string
 ): Address | undefined {
 	const n = canonicalNumber(segment, 1);

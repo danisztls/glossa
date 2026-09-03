@@ -25,6 +25,7 @@ export interface Copyright {
 export type WorkType =
 	| 'bible'
 	| 'bible-intro'
+	| 'canon-law'
 	| 'catechism'
 	| 'commentary'
 	| 'compendium'
@@ -393,9 +394,36 @@ export interface SocialDoctrineManifest extends WorkManifestBase {
 	 *  work's content-tier front matter, read through `getDocumentHeader`. */
 }
 
+/**
+ * The *Code of Canon Law* — `cic.{lang}`, one work, 1,752 canons, seven
+ * editions (docs/corpus-schema.md §Code of Canon Law).
+ *
+ * THE SAME ARRANGEMENT AS `SocialDoctrineManifest` AND FOR THE SAME REASON:
+ * its content files are a document's because its source pages are, and its
+ * ADDRESS is the Catechism's because a canon is a place. "CIC can. 216" names
+ * canon 216 wherever it is printed, so each canon is an address of its own at
+ * `/ius-canonicum/{n}` and the type is separate because everything deciding
+ * where a unit LIVES branches on it.
+ *
+ * What it does NOT share with that work is the shape of a reading page. The
+ * Compendium is twelve chapters of about fifty paragraphs; the Code is seven
+ * books of two to three hundred canons, subdivided five levels deep, and its
+ * own editions paginate at the TITLE. So `structure.json` here carries a
+ * `kind` per node — the division word the edition printed — and the reading
+ * surface is assembled from it rather than from a level number.
+ */
+export interface CanonLawManifest extends WorkManifestBase {
+	type: 'canon-law';
+	document_kind: DocumentKind;
+	/** "John Paul II", who promulgated it. */
+	pontiff_or_council: string;
+	promulgated: IsoDate;
+}
+
 export type WorkManifest =
 	| BibleManifest
 	| BibleIntroManifest
+	| CanonLawManifest
 	| CatechismManifest
 	| CommentaryManifest
 	| CompendiumManifest
@@ -676,6 +704,22 @@ export type StructureNode = CccNode;
  */
 export interface DocumentNode {
 	level: number;
+	/**
+	 * The division word the source printed — `book`, `part`, `section`,
+	 * `title`, `chapter`, `article`.
+	 *
+	 * THE CODE OF CANON LAW ONLY, and absent everywhere else on purpose. A
+	 * document's `kind` was dropped in 2026-08-21 because it forced the
+	 * scraper to judge what a heading MEANT from how it was painted, which
+	 * the sources do not encode and which put chapters inside sections in
+	 * Gaudium et Spes. The Code prints the word — `TITULUS`, `CAPUT` — and
+	 * `cic.DIVISION_NOUNS` is the table of what it is in each language, so
+	 * here it is read rather than judged. `canonLawDivisions` is the
+	 * consumer: a reading page is a run of canons under one TITLE, and
+	 * picking those by level number would be reading a per-edition
+	 * compaction where the source printed a noun.
+	 */
+	kind?: string;
 	title: string;
 	before: number | null;
 	/**
@@ -996,6 +1040,18 @@ export interface DocumentSection {
 	 *  than the first of its `blocks`, which is where the parser had been
 	 *  putting them — at the END of the paragraph BEFORE the part. */
 	epigraph?: CccBlock[];
+	/**
+	 * A wording this unit's text replaced, under the line naming the act that
+	 * replaced it — the Code of Canon Law and nothing else in the corpus
+	 * (docs/corpus-schema.md §Code of Canon Law).
+	 *
+	 * A FIELD RATHER THAN A UNIT because it is not an address. Four editions
+	 * print the superseded text of an amended canon below the Code, and a
+	 * reader who asks for canon 579 is owed the law in force; this rides
+	 * beside that text and never instead of it. An array because a canon can
+	 * be amended more than once.
+	 */
+	superseded?: { title: string; blocks: CccBlock[] }[];
 	// No `related` (no marginal cross-reference apparatus in any document
 	// family sampled) and no `in_brief` (a CCC-only summarization device) --
 	// both deliberately absent rather than carried as permanently-empty

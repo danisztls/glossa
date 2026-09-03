@@ -1,6 +1,6 @@
 # Glossa Catholica
 
-> A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Compendium of the Social Doctrine of the Church, the Summa Theologiae, magisterial documents, prayers, and Haydock's commentary on the Douay-Rheims. Free, ad-free, account-free, offline-first. Nothing here is ours.
+> A reading site for Scripture and the Magisterium: the Bible, the Catechism of the Catholic Church, the Compendium of the Catechism, the Compendium of the Social Doctrine of the Church, the Code of Canon Law, the Summa Theologiae, magisterial documents, prayers, and Haydock's commentary on the Douay-Rheims. Free, ad-free, account-free, offline-first. Nothing here is ours.
 
 ## The texts are not ours. The addresses are.
 
@@ -28,12 +28,14 @@ Every reading address is a citation. The vocabulary is Latin, the address does n
 /documenta/{slug}                       /documenta/rerum-novarum
 /doctrina-socialis/{n}                  /doctrina-socialis/160
 /doctrina-socialis/caput/{n}            /doctrina-socialis/caput/160
+/ius-canonicum/{n}                      /ius-canonicum/216
+/ius-canonicum/titulus/{n}              /ius-canonicum/titulus/7
 /doctores/summa/{part}/{question}       /doctores/summa/i/2
 /preces/{slug}                          /preces/act-of-contrition
 ```
 
 - `{book}` is the book's Latin name, lowercased and hyphenated, as the Clementine Vulgate prints it and with `I` for `J`: `genesis`, `exodus`, `i-samuel`, `psalmi`, `matthaeus`, `apocalypsis`, `canticum-canticorum`, `actus-apostolorum`. `{chapter}` is the chapter number as printed. Chapter `0`, where a book has one, is that book's introduction rather than a chapter of Scripture.
-- `{n}` is the paragraph number the work itself prints — the Catechism's 1 to 2865, the Compendium's 1 to 598, the Compendium of the Social Doctrine's 1 to 583. `caput` addresses a titled division rather than a paragraph.
+- `{n}` is the paragraph number the work itself prints — the Catechism's 1 to 2865, the Compendium's 1 to 598, the Compendium of the Social Doctrine's 1 to 583, the Code of Canon Law's canons 1 to 1752. `caput` addresses a titled division rather than a paragraph, and `titulus` does the same for the Code, whose divisions are titles.
 - `{slug}` is the document's Latin incipit, lowercased and hyphenated.
 - `{part}` is one of `i`, `i-ii`, `ii-ii`, `iii`, `suppl`.
 
@@ -62,7 +64,7 @@ Everything else on the site belongs to the publishers below. The colophon states
 
 ## Where the texts come from
 
-- [vatican.va](https://www.vatican.va/): the Catechism of the Catholic Church, the Compendium of the Catechism, the Compendium of the Social Doctrine of the Church, and the encyclicals, conciliar documents and exhortations — Libreria Editrice Vaticana. The authoritative publisher, in more languages than this site carries.
+- [vatican.va](https://www.vatican.va/): the Catechism of the Catholic Church, the Compendium of the Catechism, the Compendium of the Social Doctrine of the Church, the Code of Canon Law, and the encyclicals, conciliar documents and exhortations — Libreria Editrice Vaticana. The authoritative publisher, in more languages than this site carries.
 - [Corpus Thomisticum](https://www.corpusthomisticum.org/): the Latin text of the Summa Theologiae.
 - [Christian Classics Ethereal Library](https://ccel.org/): the English Summa Theologiae, the Fathers of the English Dominican Province translation.
 - [sacredbible.org](https://sacredbible.org/): the Catholic Public Domain Version and the Clementine Vulgate of 1914.

@@ -189,6 +189,8 @@ function documentChapterNames(nodes, starts, lang) {
  * @param {Record<string, any>} input.prayerIndex lang -> { prayers }
  * @param {{ lang: string, work: string, sections: { n: number }[], structure: any[] }[]} input.socialDoctrineEditions
  * @param {readonly number[]} input.socialDoctrineChapterStarts
+ * @param {{ lang: string, work: string, sections: { n: number }[], structure: any[] }[]} [input.canonLawEditions]
+ * @param {readonly number[]} [input.canonLawUnitStarts]
  * @param {Record<string, Record<string, string>>} input.dictionaries lang -> strings
  */
 export function buildRouteTitles({
@@ -200,9 +202,12 @@ export function buildRouteTitles({
 	prayerIndex,
 	socialDoctrineEditions,
 	socialDoctrineChapterStarts,
+	canonLawEditions,
+	canonLawUnitStarts,
 	dictionaries
 }) {
 	const csdc = servedDocumentEdition(socialDoctrineEditions);
+	const cic = servedDocumentEdition(canonLawEditions ?? []);
 	return {
 		version: ROUTE_TITLES_VERSION,
 		chrome: chromeNames(dictionaries),
@@ -214,6 +219,25 @@ export function buildRouteTitles({
 			: [],
 		socialDoctrineChapterNames: csdc
 			? documentChapterNames(csdc.structure, socialDoctrineChapterStarts, csdc.lang)
+			: {},
+		canonLawSpans: cic
+			? documentSpans(cic.structure, Math.max(...cic.sections.map((s) => s.n)), cic.lang)
+			: [],
+		// The canon range the source prints inside a heading is dropped for
+		// the same reason `canonLawTitleText` drops it on the page: five of
+		// the seven editions print it, the line below the title states it
+		// again, and a `<title>` is the one place there is no room for it
+		// twice. Kept in step with that function by hand — this file runs
+		// under plain node and cannot import it.
+		canonLawTitleNames: cic
+			? Object.fromEntries(
+					Object.entries(
+						documentChapterNames(cic.structure, canonLawUnitStarts ?? [], cic.lang)
+					).map(([n, name]) => [
+						n,
+						name.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || name
+					])
+				)
 			: {},
 		documents: documentNames(manifests),
 		prayers: prayerNames(prayerIndex),

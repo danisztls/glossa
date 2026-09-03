@@ -34,14 +34,14 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 15301,
-				"recognized": 2837,
+				"linkable": 15888,
+				"recognized": 2250,
 				"nothing": 1395
 			},
 			"prose": {
 				"blocks": 26088,
 				"scripture": 15080,
-				"document": 3751,
+				"document": 4153,
 				"stored": 0
 			},
 			"residue": [
@@ -175,8 +175,8 @@
 		"cdf": {
 			"citations": {
 				"total": 9181,
-				"linkable": 5325,
-				"recognized": 1510,
+				"linkable": 5379,
+				"recognized": 1456,
 				"nothing": 2346
 			},
 			"prose": {
@@ -313,6 +313,21 @@
 				}
 			]
 		},
+		"cic": {
+			"citations": {
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
+			},
+			"prose": {
+				"blocks": 24568,
+				"scripture": 6,
+				"document": 42,
+				"stored": 0
+			},
+			"residue": []
+		},
 		"commentary": {
 			"citations": {
 				"total": 0,
@@ -346,8 +361,8 @@
 		"csdc": {
 			"citations": {
 				"total": 9821,
-				"linkable": 6584,
-				"recognized": 1566,
+				"linkable": 6603,
+				"recognized": 1547,
 				"nothing": 1671
 			},
 			"prose": {
@@ -487,14 +502,14 @@
 		"encyclical": {
 			"citations": {
 				"total": 39117,
-				"linkable": 15533,
-				"recognized": 6343,
+				"linkable": 15599,
+				"recognized": 6277,
 				"nothing": 17241
 			},
 			"prose": {
 				"blocks": 39735,
 				"scripture": 20114,
-				"document": 257,
+				"document": 260,
 				"stored": 0
 			},
 			"residue": [
@@ -628,14 +643,14 @@
 		"exhortation": {
 			"citations": {
 				"total": 39450,
-				"linkable": 12019,
-				"recognized": 6231,
+				"linkable": 12030,
+				"recognized": 6220,
 				"nothing": 21200
 			},
 			"prose": {
 				"blocks": 30963,
 				"scripture": 22449,
-				"document": 302,
+				"document": 303,
 				"stored": 0
 			},
 			"residue": [
@@ -774,7 +789,7 @@
 				"nothing": 4
 			},
 			"prose": {
-				"blocks": 1226,
+				"blocks": 1188,
 				"scripture": 0,
 				"document": 0,
 				"stored": 0
@@ -835,14 +850,14 @@
 		"vatii": {
 			"citations": {
 				"total": 10028,
-				"linkable": 5460,
-				"recognized": 1822,
+				"linkable": 5509,
+				"recognized": 1773,
 				"nothing": 2746
 			},
 			"prose": {
 				"blocks": 7570,
 				"scripture": 5891,
-				"document": 847,
+				"document": 849,
 				"stored": 0
 			},
 			"residue": [

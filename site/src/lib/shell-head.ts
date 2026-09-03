@@ -97,6 +97,15 @@ export interface RouteTitles {
 	 *  geometry that happens to agree everywhere except the three places a Part
 	 *  begins. */
 	socialDoctrineChapterNames: Record<string, string>;
+	/** The Code of Canon Law's divisions, derived the same way and for the
+	 *  same reason. */
+	canonLawSpans: TitledSpan[];
+	/** Unit anchor -> the division that page renders. A table rather than
+	 *  `widestAt` over the spans above, and here the argument is sharper than
+	 *  it is for the Compendium of the Social Doctrine: four divisions open at
+	 *  canon 1311 — Book VI, its Part I, its Title I — and the widest of them
+	 *  runs eighty-nine canons past the page. */
+	canonLawTitleNames: Record<string, string>;
 	/** slug -> `[title, author, year]`. */
 	documents: Record<string, [string, string, string]>;
 	prayers: Record<string, string>;
@@ -173,6 +182,7 @@ const SUMMA = 'Summa Theologiae';
 const DOCTORES = 'Doctors of the Church';
 const MAGISTERIUM = 'Documents of the Magisterium';
 const SOCIAL_DOCTRINE = 'Compendium of the Social Doctrine';
+const CANON_LAW = 'Code of Canon Law';
 const PRAYERS = 'Prayers';
 
 const ROOT: Crumb = { name: SITE_NAME, href: '/' };
@@ -425,6 +435,8 @@ const WORK_OF: Record<Address['kind'], { key: string; href: string }> = {
 	document: { key: 'document', href: '/documenta' },
 	socialDoctrine: { key: 'socialDoctrine', href: '/doctrina-socialis' },
 	socialDoctrineChapter: { key: 'socialDoctrine', href: '/doctrina-socialis' },
+	canonLaw: { key: 'canonLaw', href: '/ius-canonicum' },
+	canonLawTitle: { key: 'canonLaw', href: '/ius-canonicum' },
 	prayer: { key: 'prayer', href: '/preces' },
 	summa: { key: 'summa', href: '/doctores/summa' }
 };
@@ -442,6 +454,8 @@ function unitOf(address: Address): { name: string; position?: number } | undefin
 			return { name: `Question ${address.n}`, position: address.n };
 		case 'socialDoctrine':
 			return { name: `Paragraph ${address.n}`, position: address.n };
+		case 'canonLaw':
+			return { name: `Canon ${address.n}`, position: address.n };
 		case 'summa':
 			return { name: `Question ${address.question}`, position: address.question };
 		default:
@@ -654,6 +668,42 @@ function bodyHead(
 					{ name, href: pathname }
 				],
 				links: [{ name: SOCIAL_DOCTRINE, href: '/doctrina-socialis' }]
+			};
+		}
+
+		case 'canonLaw': {
+			const where = innermost(titles.canonLawSpans, address.n);
+			const [prev, next] = neighbours(manifest.canonLaw, address.n);
+			const label = `CIC ${address.n}`;
+			return {
+				title: clip(where ? `${label} · ${where}` : label, 60) + ` — ${SITE_NAME}`,
+				description: `Canon ${address.n} of the Code of Canon Law${where ? `, in “${clip(where, 70)}”` : ''} — in seven languages, beside the division it belongs to.`,
+				canonical: pathname,
+				noindex: false,
+				alternates: [],
+				crumbs: [
+					ROOT,
+					{ name: CANON_LAW, href: '/ius-canonicum' },
+					{ name: label, href: pathname }
+				],
+				links: [
+					{ name: CANON_LAW, href: '/ius-canonicum' },
+					...numberLink('CIC', '/ius-canonicum', prev),
+					...numberLink('CIC', '/ius-canonicum', next)
+				]
+			};
+		}
+
+		case 'canonLawTitle': {
+			const name = titles.canonLawTitleNames[address.n] ?? `Canons from ${address.n}`;
+			return {
+				title: `${clip(name, 58)} — ${CANON_LAW}`,
+				description: `“${clip(name, 90)}” in the Code of Canon Law, from canon ${address.n}.`,
+				canonical: pathname,
+				noindex: false,
+				alternates: [],
+				crumbs: [ROOT, { name: CANON_LAW, href: '/ius-canonicum' }, { name, href: pathname }],
+				links: [{ name: CANON_LAW, href: '/ius-canonicum' }]
 			};
 		}
 

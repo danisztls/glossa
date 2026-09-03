@@ -35,6 +35,8 @@ const manifest: RouteManifest = {
 	compendiumChapters: [1],
 	socialDoctrine: [1, 160],
 	socialDoctrineChapters: [1, 160],
+	canonLaw: [1, 216],
+	canonLawTitles: [1, 7],
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
 	summa: { i: [1, 2], suppl: [77] }
@@ -102,6 +104,16 @@ const titles: RouteTitles = {
 		1: 'Introduction',
 		20: "God's Plan of Love for Humanity",
 		160: "Principles of the Church's Social Doctrine"
+	},
+	canonLawSpans: [
+		[1, 6, 'General Norms'],
+		[7, 22, 'Ecclesiastical Laws'],
+		[208, 223, 'The Obligations and Rights of All the Christian Faithful']
+	],
+	canonLawTitleNames: {
+		1: 'General Norms',
+		7: 'Ecclesiastical Laws',
+		208: 'The Obligations and Rights of All the Christian Faithful'
 	},
 	compendiumSpans: [
 		[1, 217, 'The Profession of Faith'],

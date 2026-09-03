@@ -409,6 +409,16 @@ const realIndexSocialDoctrineAbbreviations = import.meta.glob(
 	{ eager: true, import: 'default' }
 ) as Record<string, Record<string, CccAbbreviation[]>>;
 
+const realIndexCanonLaw = import.meta.glob('./corpus-data/index/canon-law-index.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, Record<string, { sectionNumbers: number[] }>>;
+
+const realIndexCanonLawUnits = import.meta.glob('./corpus-data/index/canon-law-units.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, number[]>;
+
 const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json', {
 	eager: true,
 	import: 'default'
@@ -803,6 +813,25 @@ export const socialDoctrineSectionNumbers: Record<string, number[]> = USE_REAL_C
  *  other work's chapter list is. */
 export const socialDoctrineChapterStarts: number[] = USE_REAL_CORPUS
 	? (single(realIndexSocialDoctrineChapters) ?? [])
+	: [];
+
+/** Canon numbers present per `cic.{lang}` work id — the same role
+ *  `socialDoctrineSectionNumbers` plays and keyed the same way, because an
+ *  edition of the Code is a work here rather than a language of one work. */
+export const canonLawSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
+	? Object.fromEntries(
+			Object.entries(single(realIndexCanonLaw) ?? {}).map(([workId, v]) => [
+				workId,
+				expandRun(v.sectionNumbers)
+			])
+		)
+	: {};
+
+/** The canon each reading unit of the Code opens at, unioned across editions
+ *  — see `canonLawUnitStarts` in `scripts/sync-corpus.mjs` for what a unit is
+ *  and why it is a title rather than a book or a chapter. */
+export const canonLawUnitStarts: number[] = USE_REAL_CORPUS
+	? (single(realIndexCanonLawUnits) ?? [])
 	: [];
 
 /** Each edition's own printed sigla table, keyed by bare LANG, in the same

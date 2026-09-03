@@ -736,6 +736,68 @@ consumer `planWaves`' byte counts were written for and had never had.
   failure path only ever reached by accident becomes ordinary here; look for
   the next one the same way.
 
+## The Code of Canon Law: the same arrangement, a different reading unit
+
+`type: 'canon-law'` (2026-09-03, §The Code of Canon Law). Everything the
+Compendium of the Social Doctrine's section above says applies unchanged —
+`sync-corpus.mjs`'s branch writes what the DOCUMENT branch writes and
+registers what the CATECHISM branch registers, no second content tier, no
+second chunk stride. What is new is only what a reading page IS.
+
+- **The reading unit is the TITLE, and both other candidates fail at an end.**
+  A page per BOOK is what the Latin edition itself publishes and puts 543
+  canons and 300 KB on one; a page per CHAPTER cuts the titles that have none
+  into nothing, since 78 titles hold 130 chapters between them and the rest
+  hold their canons directly. The title is 85 units, eleven canons in the
+  median one, and it is where the source's own editions paginate.
+  `canonLawUnitStarts` is books ∪ titles: a book anchors a unit only where its
+  canons run ahead of its first title, which is how cann. 1-6 get a page.
+- **The units are picked by `kind`, and that is why `cic.py` stores one.**
+  `structure.json` carries the division word the edition printed — `title`,
+  `caput`, `liber` — which a document's structure deliberately does not
+  (§Documents: `kind` forced the scraper to judge what a heading MEANT). Here
+  it is read, not judged. Picking by `level === 4` would work today and break
+  the day an edition omits a level, which is the one case a reading surface
+  must not silently repaginate on.
+- **A unit's name is the NARROWEST division at its anchor, the exact inverse
+  of `socialDoctrineDivisions`.** There the outermost is the chapter and
+  anything wider is a part divider printed on a page of its own; here four
+  divisions routinely open at one canon — 1311 opens Book VI, its Part I and
+  its Title I — and the outermost would title that page after a book running
+  eighty-nine canons past it. `CANON_LAW_UNIT_RANK` is the order.
+- **`canonLawDivisions` zips the stored rows against the outline BY POSITION
+  within one anchor**, because `StructureNode.kind` is the tree's own word
+  (`'sub'`) and not the source's. That is safe where an identity test is not:
+  `buildDocumentOutline` maps rows to fresh nodes one for one and in order.
+- **`canonLawTitleText` strips the range the source prints inside a heading**
+  — five of the seven editions print `(Cann. 7 - 22)` there and two print
+  none, so leaving it in gives the same page two shapes depending on the
+  reader's edition, and gives five of them the range twice. Stripped for
+  DISPLAY only; the corpus keeps what the edition printed, and
+  `route-titles.mjs` carries the same rule by hand because it runs under
+  plain node.
+- **`superseded` renders on the canon page and not on the reading page.** It
+  is apparatus about one canon — the wording a later act replaced — and the
+  canon page is where a reader arrives holding that canon's number. Behind a
+  closed disclosure summarised by the ACT's own line, because the text above
+  it is the law and this is not.
+- **The `CIC` siglum links now, and the grammar change is the payoff.**
+  `LOCUS_RE` wanted a digit and the Catechism writes `CIC, can. 748, § 2`, so
+  264 citations resolved to a tooltip beside a number left in plain text.
+  `SiglumEntry.work` marks the siglum, `CANON_MARKER_RE` skips the word and
+  the comma before it, and `refAddress` branches on `work` before the slug
+  test that would otherwise reject it. Worth 658 more linkable citations in
+  the Catechism alone, 185 in Vatican II, 215 in the encyclicals.
+- **`classifyCitation` had to be told.** `reference-coverage.mjs` defined
+  linkable as "a document segment with a slug", so every newly-linking canon
+  counted as merely recognised and the measure understated its own gain. A
+  metric that predates a kind of link does not report it.
+- **Both offline waves and the bookmark shelf need a row.** `sw-policy.ts`'s
+  `WAVE_BY_KIND` puts the two new asset kinds in `magisterium`; without it
+  they land in `other`, which its own test catches. `bookmarkGroup` gives the
+  Code order 5 and pushes prayers and documents down one — the sequence is a
+  shelf order, not an append log.
+
 ## Usage measurement: one beacon, three dashboard rules, and a shared vocabulary
 
 Added 2026-08-27 (§Usage measurement). First-party, bucketed, no identifier.

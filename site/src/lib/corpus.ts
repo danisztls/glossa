@@ -183,6 +183,8 @@ import {
 	socialDoctrineAbbreviations,
 	socialDoctrineChapterStarts,
 	socialDoctrineSectionNumbers,
+	canonLawSectionNumbers,
+	canonLawUnitStarts,
 	fixtureBibleBooks,
 	fixtureCccParagraphsByLang,
 	fixtureCompendiumQuestionsByLang,
@@ -2845,4 +2847,196 @@ export interface SocialDoctrineDivision {
  *  is where `socialDoctrineOutline` reads it from. */
 export async function loadSocialDoctrineOutline(lang: string): Promise<void> {
 	await loadDocumentStructure(socialDoctrineWorkId(lang));
+}
+
+// --- The Code of Canon Law (docs/corpus-schema.md) ------------------------
+//
+// THE SAME ARRANGEMENT AS THE BLOCK ABOVE and nothing new in it: addressed
+// like the Catechism, stored like a document, so existence and adjacency come
+// from this work's own index and reading a canon or an outline goes through
+// the document readers unchanged. `canonLawWorkId` is the one seam.
+//
+// WHAT IS DIFFERENT IS THE SHAPE OF A READING PAGE. The Compendium of the
+// Social Doctrine is twelve chapters of about fifty paragraphs and its
+// chapter is the obvious unit. The Code is seven books of two to three
+// hundred canons, divided five levels deep, and neither end works: a book is
+// 543 canons and 300 KB, a chapter is often three canons, and 78 titles hold
+// 130 chapters between them while the rest hold their canons directly. The
+// unit is the TITLE, which is what the Code's own editions paginate at.
+
+/** `'en'` -> `'cic.en'`. One place, for `socialDoctrineWorkId`'s reason. */
+export function canonLawWorkId(lang: string): string {
+	return `cic.${lang}`;
+}
+
+const canonLawNumberSets: Record<string, Set<number>> = Object.fromEntries(
+	Object.entries(canonLawSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
+);
+
+/** The languages this corpus carries an edition in, sorted. Seven today —
+ *  every one vatican.va publishes the Code in as HTML. Portuguese and
+ *  Belarusian exist there as PDF and are recorded `pdf-only` in every
+ *  manifest's `translations`. */
+export function canonLawLangs(): string[] {
+	return Object.keys(canonLawSectionNumbers)
+		.map((workId) => workId.slice('cic.'.length))
+		.sort();
+}
+
+/** Whether canon `n` exists in this edition — index-backed, no fetch. */
+export function canonLawCanonExists(lang: string, n: number): boolean {
+	return canonLawNumberSets[canonLawWorkId(lang)]?.has(n) ?? false;
+}
+
+/** The next or previous canon this edition actually carries.
+ *
+ *  Reads the edition's own numbers rather than stepping by one, because two
+ *  editions do not carry all 1,752: `cic.de` prints no can. 1330 and
+ *  `cic.es` no can. 1482, each the source's own omission (`cic.KNOWN_GAPS`).
+ *  Stepping by one would send a German reader from 1329 to an empty page. */
+export function getAdjacentCanonNumber(
+	lang: string,
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	const numbers = canonLawSectionNumbers[canonLawWorkId(lang)] ?? [];
+	const i = numbers.indexOf(n);
+	if (i === -1) return undefined;
+	return direction === 'prev' ? numbers[i - 1] : numbers[i + 1];
+}
+
+/** Every reading unit, as `[from, to]` canon spans covering 1..last.
+ *
+ *  `to` comes from the NEXT start, so a span is never stored and cannot
+ *  drift — the derivation `listSocialDoctrineChapters` uses and the one
+ *  `docs/corpus-schema.md` gives for a document's heading ranges. */
+export function listCanonLawTitles(lang: string): [number, number][] {
+	const numbers = canonLawSectionNumbers[canonLawWorkId(lang)] ?? [];
+	if (numbers.length === 0) return [];
+	const last = numbers[numbers.length - 1];
+	const starts = canonLawUnitStarts.filter((n) => n <= last);
+	return starts.map((from, i) => [from, (starts[i + 1] ?? last + 1) - 1]);
+}
+
+/** The unit containing canon `n`, or undefined for a number outside every
+ *  span. */
+export function canonLawTitleFor(lang: string, n: number): [number, number] | undefined {
+	return listCanonLawTitles(lang).find(([from, to]) => n >= from && n <= to);
+}
+
+/** Whether `n` opens a unit — what `/ius-canonicum/titulus/{n}` is addressed
+ *  by. */
+export function canonLawTitleExists(n: number): boolean {
+	return canonLawUnitStarts.includes(n);
+}
+
+/** One canon. One chunk, not the whole edition. */
+export async function getCanonAsync(lang: string, n: number): Promise<DocumentSection | undefined> {
+	if (!canonLawCanonExists(lang, n)) return undefined;
+	const workId = canonLawWorkId(lang);
+	const chunk = await fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []);
+	return chunk.find((section) => section.n === n);
+}
+
+/** A run of canons, for the unit reading view. Fetches only the chunks the
+ *  span touches — one at the median unit, five at the widest. */
+export async function getCanonLawRangeAsync(
+	lang: string,
+	from: number,
+	to: number
+): Promise<DocumentSection[]> {
+	const workId = canonLawWorkId(lang);
+	const starts = new Set<number>();
+	for (const n of canonLawSectionNumbers[workId] ?? []) {
+		if (n >= from && n <= to) starts.add(documentChunkStartFor(n));
+	}
+	const chunks = await Promise.all(
+		[...starts]
+			.sort((a, b) => a - b)
+			.map((n) => fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []))
+	);
+	return chunks
+		.flat()
+		.filter((section) => section.n >= from && section.n <= to)
+		.sort((a, b) => a.n - b.n);
+}
+
+/** The edition's outline, as the sidebar's row model. Unanchored rows are
+ *  dropped for `socialDoctrineOutline`'s reason: this work is addressed a
+ *  canon at a time, and a sentinel past the last canon routes to a 404. */
+export function canonLawOutline(lang: string): StructureNode[] {
+	const workId = canonLawWorkId(lang);
+	const numbers = canonLawSectionNumbers[workId] ?? [];
+	return buildDocumentOutline(
+		getDocumentStructure(workId).filter((row) => row.before !== null && row.before !== undefined),
+		numbers.length > 0 ? numbers[numbers.length - 1] : null
+	);
+}
+
+/** `canonLawOutline` in `StructureSidebarToc`'s row shape. */
+export function flattenCanonLawOutline(lang: string): { node: StructureNode; depth: number }[] {
+	return flattenTree(canonLawOutline(lang));
+}
+
+export interface CanonLawDivision {
+	from: number;
+	to: number;
+	node: StructureNode;
+	depth: number;
+}
+
+/** How a unit's name is chosen where several divisions open at one canon:
+ *  the narrowest that can BE a unit. A title says what a reader is about to
+ *  read; the book and part above it are the trail. */
+const CANON_LAW_UNIT_RANK: Record<string, number> = { title: 0, book: 1 };
+
+/**
+ * The reading units with their names — what the landing page lists and what
+ * `/ius-canonicum/titulus/{n}` is titled.
+ *
+ * THE NAME COMES FROM THE NARROWEST UNIT DIVISION AT THE ANCHOR, and the
+ * Compendium of the Social Doctrine takes the OUTERMOST at its own anchors
+ * for a reason that inverts here. There the outermost is the chapter and
+ * anything wider is a part divider the source prints on a page of its own;
+ * here four divisions routinely open at one canon — canon 1311 opens Book VI,
+ * its Part I and its Title I together — and the outermost would title every
+ * such page after a book that runs eighty-nine canons past it.
+ *
+ * IT READS `kind` OFF THE STORED ROWS rather than off the outline, because
+ * `StructureNode.kind` is the tree's own word (`'sub'`) and not the source's.
+ * The two arrays are zipped by position within one anchor, which is safe
+ * where an identity test is not: `buildDocumentOutline` maps rows to fresh
+ * nodes ONE FOR ONE and in order, so the nth stored row anchored at `from` is
+ * the nth outline row anchored there. (`socialDoctrineDivisions`' docblock
+ * records what happens to code that compares the two trees by identity.)
+ *
+ * IT HANDS BACK THE DEPTH for that same function's reason: the caller needs
+ * to know which outline rows sit inside the division, and cannot recover the
+ * depth from a node it did not build.
+ */
+export function canonLawDivisions(lang: string): CanonLawDivision[] {
+	const workId = canonLawWorkId(lang);
+	const rows = getDocumentStructure(workId).filter(
+		(row) => row.before !== null && row.before !== undefined
+	);
+	const flat = flattenCanonLawOutline(lang);
+	return listCanonLawTitles(lang).flatMap(([from, to]) => {
+		const here = flat.filter(({ node }) => node.paragraphs[0] === from);
+		if (here.length === 0) return [];
+		const rowsAt = rows.filter((row) => row.before === from);
+		let best = 0;
+		for (const [i, row] of rowsAt.entries()) {
+			const rank = CANON_LAW_UNIT_RANK[row.kind ?? ''];
+			const bestRank = CANON_LAW_UNIT_RANK[rowsAt[best]?.kind ?? ''];
+			if (rank !== undefined && (bestRank === undefined || rank < bestRank)) best = i;
+		}
+		const found = here[best] ?? here[0];
+		return [{ from, to, node: found.node, depth: found.depth }];
+	});
+}
+
+/** Fetches the edition's outline into `document-structures.svelte.ts`, which
+ *  is where `canonLawOutline` reads it from. */
+export async function loadCanonLawOutline(lang: string): Promise<void> {
+	await loadDocumentStructure(canonLawWorkId(lang));
 }

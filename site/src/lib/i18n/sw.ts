@@ -46,6 +46,16 @@ export const sw: Dictionary = {
 	'socialDoctrine.landing.title': 'Muhtasari wa Mafundisho ya Kijamii ya Kanisa',
 	'socialDoctrine.landing.tagline':
 		'Kile Kanisa linafundisha kuhusu maisha ya kijamii, katika aya 583.',
+	'nav.canonLaw': 'Sheria za Kanoni',
+	'canonLaw.landing.title': 'Kanuni za Sheria za Kanoni',
+	'canonLaw.landing.tagline':
+		'Sheria ya Kanisa la Kilatini, katika kanoni 1,752 zilizogawanywa katika vitabu saba.',
+	'canonLaw.canon': 'Kan.',
+	'canonLaw.canons': 'Kan.',
+	'canonLaw.prevCanon': 'Kanoni iliyotangulia',
+	'canonLaw.nextCanon': 'Kanoni inayofuata',
+	'canonLaw.readFullTitle': 'Soma kichwa chote',
+	'canonLaw.superseded': 'Maneno yaliyobadilishwa na',
 	'nav.prayers': 'Sala',
 	'nav.bookmarks': 'Alamisho',
 	'nav.menu': 'Menyu',

@@ -20,6 +20,16 @@ export const fr: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium de la doctrine sociale de l’Église',
 	'socialDoctrine.landing.tagline':
 		'Ce que l’Église enseigne sur la vie en société, en 583 numéros.',
+	'nav.canonLaw': 'Droit canonique',
+	'canonLaw.landing.title': 'Code de droit canonique',
+	'canonLaw.landing.tagline':
+		'Le droit de l’Église latine, en 1752 canons répartis en sept livres.',
+	'canonLaw.canon': 'Can.',
+	'canonLaw.canons': 'Cann.',
+	'canonLaw.prevCanon': 'Canon précédent',
+	'canonLaw.nextCanon': 'Canon suivant',
+	'canonLaw.readFullTitle': 'Lire tout le titre',
+	'canonLaw.superseded': 'Rédaction remplacée par',
 	'nav.prayers': 'Prières',
 	'nav.bookmarks': 'Signets',
 	'nav.menu': 'Menu',

@@ -178,6 +178,13 @@ export type RefSegment =
 			 *  every other segment, and never an alternative to `slug`: a
 			 *  siglum that resolves here is linked here. */
 			external?: ExternalSource;
+			/** Set where the siglum names a work this corpus holds under its
+			 *  OWN address space rather than as a document — today the Code of
+			 *  Canon Law, whose canons are addresses of their own the way the
+			 *  Catechism's paragraphs are. `slug` stays null for these: there
+			 *  is no `/documenta/{slug}` to point at, and `refAddress` branches
+			 *  on this before it reaches the document path. */
+			work?: 'canon-law';
 			raw: string;
 	  };
 
@@ -1623,6 +1630,9 @@ export interface SiglumEntry {
 	/** The ingested document this siglum names — see the section comment on
 	 *  why a slug listed here is validated against the corpus, never trusted. */
 	slug?: string;
+	/** The work this siglum names, where the corpus holds it under its own
+	 *  address space rather than as a document (`RefSegment.work`). */
+	work?: 'canon-law';
 }
 
 const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
@@ -1652,7 +1662,7 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		slug: 'catechesi-tradendae'
 	},
 	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
-	CIC: { expansion: 'Codex Iuris Canonici (Code of Canon Law)' },
+	CIC: { expansion: 'Codex Iuris Canonici (Code of Canon Law)', work: 'canon-law' },
 	CCEO: {
 		expansion: 'Codex Canonum Ecclesiarum Orientalium (Code of Canons of the Eastern Churches)'
 	},
@@ -1778,7 +1788,7 @@ const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
 	// table-group docblock above.
 	SC: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
 	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
-	CIC: { expansion: 'Codex Iuris Canonici (Código de Direito Canónico)' },
+	CIC: { expansion: 'Codex Iuris Canonici (Código de Direito Canónico)', work: 'canon-law' },
 	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' },
 	PL: { expansion: 'Patrologia Latina (Migne)' },
 	PG: { expansion: 'Patrologia Graeca (Migne)' },
@@ -1873,7 +1883,7 @@ const SERIES_SIGLA: Record<string, SiglumEntry> = {
 	SPM: { expansion: 'Stromata patristica et medievalia' },
 	TD: { expansion: 'Textes et documents' },
 	TPL: { expansion: 'Textus patristici et liturgici' },
-	CIC: { expansion: 'Codex Iuris Canonici' },
+	CIC: { expansion: 'Codex Iuris Canonici', work: 'canon-law' },
 	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' }
 };
 
@@ -3031,12 +3041,39 @@ interface DocumentMatch {
 	locus: string | null;
 	slug: string | null;
 	external: ExternalSource | null;
+	work?: 'canon-law';
 }
 
 /** A locus is digits, comma/dot-chained and dash-ranged, plus an optional "# N" subsection — display-only text, not parsed further (document segments never resolve to a link). */
 const LOCUS_RE = new RegExp(
 	`^\\d+(?:\\s*[${DASHES}]\\s*\\d+)?(?:\\s*[,.]\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?)*(?:\\s*#\\s*\\d+)?`
 );
+
+/**
+ * The word a citation of the Code puts between the siglum and the number.
+ *
+ * WITHOUT THIS, `CIC` LINKED NOTHING. The Catechism cites the Code 264 times
+ * and writes `CIC, can. 748, § 2`, never `CIC 748` — so the siglum matched,
+ * the locus regex met a `c` where it wanted a digit, and the number it needed
+ * stayed behind in a text segment. Only a bare `CIC 748` ever resolved, and
+ * the corpus prints that form almost nowhere.
+ *
+ * PER SIGLUM AND NOT GLOBAL, which is why it is consulted through
+ * `SiglumEntry.work` rather than folded into `LOCUS_RE`. A bare `c.` after
+ * some other siglum is as likely to be a chapter as a canon, and a grammar
+ * that swallowed it everywhere would read `PL 26, c. 5` as a canon reference.
+ *
+ * The spellings are the ones the corpus prints: Latin `can.`/`cann.`, the
+ * abbreviated `c.`/`cc.` the Spanish and Portuguese editions use, Portuguese
+ * `cân.`, German `Kan.`, Russian `Кан.`
+ */
+const CANON_MARKER_RE = /^(?:can{1,2}|c{1,2}|c[âa]n{1,2}|kan|кан)\.?\s*/iu;
+
+/** `, § 2` after a canon number — part of the citation and not of the
+ *  sentence, so it is consumed with the locus rather than left to trail the
+ *  link as stray text. The canon is still what the locus RESOLVES by:
+ *  `firstLocusSection` reads the leading digits. */
+const CANON_SUBSECTION_RE = new RegExp(`^\\s*,?\\s*§+\\s*\\d+(?:\\s*[${DASHES}]\\s*\\d+)?`);
 
 // --------------------------------------------------------------------------
 // Acta Apostolicae Sedis — the one address this grammar answers with a link
@@ -3132,12 +3169,32 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 	// Progressio. A siglum followed by a full stop and a Roman numeral is a
 	// title, and this is the one siglum that collides with one.
 	if (/^\.\s*[IVXL]+(?![\p{L}])/u.test(after)) return null;
-	const spaceSkip = /^ */.exec(after)![0];
-	const locusMatch = LOCUS_RE.exec(after.slice(spaceSkip.length));
-	const locus = locusMatch ? locusMatch[0] : null;
-	const consumedEnd =
-		m.index + m[0].length + (locusMatch ? spaceSkip.length + locusMatch[0].length : 0);
 	const entry = cfg.documentSigla.get(m[0]);
+	// The Code's own marker, skipped before the number is read but counted in
+	// what the segment consumes — so the link covers `CIC, can. 748, § 2`
+	// whole while `locus` still begins with the digits `firstLocusSection`
+	// wants. Only for a siglum that declares it; see `CANON_MARKER_RE`.
+	//
+	// THE COMMA IS PART OF IT, and only here. Every other siglum's locus runs
+	// straight on from the siglum (`AAS 86`), so a comma before it would be
+	// the sentence resuming; the Code is cited `CIC, can. 748` in 253 of the
+	// Catechism's 264 references to it, and stopping at that comma left the
+	// canon number in a text segment beside a link to nothing.
+	const canonical = entry?.work === 'canon-law';
+	const spaceSkip = (canonical ? /^[\s,]*/ : /^ */).exec(after)![0];
+	const rest = after.slice(spaceSkip.length);
+	const markerMatch = canonical ? CANON_MARKER_RE.exec(rest) : null;
+	const marker = markerMatch ? markerMatch[0] : '';
+	const locusMatch = LOCUS_RE.exec(rest.slice(marker.length));
+	const locus = locusMatch ? locusMatch[0] : null;
+	const subsection =
+		canonical && locusMatch
+			? (CANON_SUBSECTION_RE.exec(rest.slice(marker.length + locusMatch[0].length))?.[0] ?? '')
+			: '';
+	const consumedEnd =
+		m.index +
+		m[0].length +
+		(locusMatch ? spaceSkip.length + marker.length + locusMatch[0].length + subsection.length : 0);
 	// Validated against what the corpus actually holds, never trusted from
 	// the table — see the sigla section comment.
 	const slug = cfg.linksSigla && entry?.slug && ingestedSlugs().has(entry.slug) ? entry.slug : null;
@@ -3147,6 +3204,7 @@ function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatc
 		consumedEnd,
 		locus,
 		slug,
+		...(entry?.work ? { work: entry.work } : {}),
 		// Read past the locus, because the corroborating year is printed
 		// there and the segment stops before it — see the AAS section.
 		external: externalSourceFor(m[0], locus, s.slice(consumedEnd))
@@ -3668,6 +3726,7 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 				locus: dm.locus,
 				expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 				slug: dm.slug,
+				...(dm.work ? { work: dm.work } : {}),
 				...(dm.external ? { external: dm.external } : {}),
 				raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
 			},
@@ -4051,6 +4110,7 @@ export function linkifyProse(text: string, opts?: RefsOpts): RefSegment[] {
 					locus: dm.locus,
 					expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
 					slug: dm.slug,
+					...(dm.work ? { work: dm.work } : {}),
 					...(dm.external ? { external: dm.external } : {}),
 					raw: text.slice(dm.matchStart, dm.consumedEnd)
 				}

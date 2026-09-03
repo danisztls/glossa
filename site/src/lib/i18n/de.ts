@@ -20,6 +20,16 @@ export const de: Dictionary = {
 	'socialDoctrine.landing.title': 'Kompendium der Soziallehre der Kirche',
 	'socialDoctrine.landing.tagline':
 		'Was die Kirche über das Leben in der Gesellschaft lehrt, in 583 Nummern.',
+	'nav.canonLaw': 'Kirchenrecht',
+	'canonLaw.landing.title': 'Codex des kanonischen Rechtes',
+	'canonLaw.landing.tagline':
+		'Das Recht der lateinischen Kirche in 1752 Canones in sieben Büchern.',
+	'canonLaw.canon': 'Can.',
+	'canonLaw.canons': 'Cann.',
+	'canonLaw.prevCanon': 'Vorheriger Canon',
+	'canonLaw.nextCanon': 'Nächster Canon',
+	'canonLaw.readFullTitle': 'Ganzen Titel lesen',
+	'canonLaw.superseded': 'Fassung ersetzt durch',
 	'nav.prayers': 'Gebete',
 	'nav.bookmarks': 'Lesezeichen',
 	'nav.menu': 'Menü',

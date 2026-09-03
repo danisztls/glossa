@@ -2305,3 +2305,44 @@ describe('external sources — AAS volumes', () => {
 		);
 	});
 });
+
+describe('parseRefs — the Code of Canon Law', () => {
+	// The Catechism cites the Code 264 times and writes `CIC, can. 748, § 2`.
+	// Until 2026-09-03 the siglum matched and the number did not: `LOCUS_RE`
+	// wanted a digit and met a `c`, so every one of them rendered as a
+	// decoder-ring tooltip beside a canon number left in plain text. `CIC 748`,
+	// the one form that did resolve, is printed almost nowhere.
+	it('absorbs the canon marker, the comma before it, and the § after it', () => {
+		const doc = (s: string) => parseRefs(s).find((x) => x.kind === 'document');
+		expect(doc('Cf. CIC, can. 748, § 2')).toMatchObject({
+			label: 'CIC',
+			locus: '748',
+			work: 'canon-law',
+			slug: null,
+			raw: 'CIC, can. 748, § 2'
+		});
+		expect(doc('cf. CIC can. 216')).toMatchObject({ locus: '216', raw: 'CIC can. 216' });
+		expect(doc('CIC, cann. 1055-1056')).toMatchObject({
+			locus: '1055-1056',
+			raw: 'CIC, cann. 1055-1056'
+		});
+		// The bare form still works, and still names the same canon.
+		expect(doc('CIC 748')).toMatchObject({ locus: '748', raw: 'CIC 748' });
+	});
+
+	// The comma and the marker are per-siglum, not global: `AAS 86 (1994), 449`
+	// is a volume and a page, and a grammar that swallowed a comma after every
+	// siglum would read the page as part of the volume's locus.
+	it('leaves other sigla alone', () => {
+		const aas = parseRefs('AAS 86 (1994), 386-387').find((x) => x.kind === 'document');
+		expect(aas).toMatchObject({ label: 'AAS', locus: '86' });
+		expect(aas).not.toHaveProperty('work');
+	});
+
+	// `c.` after a siglum that is not the Code is as likely to be a chapter,
+	// which is why the marker is reached through `SiglumEntry.work`.
+	it('does not read a canon marker after a document siglum', () => {
+		const dv = parseRefs('DV, c. 3').find((x) => x.kind === 'document');
+		expect(dv).toMatchObject({ label: 'DV', locus: null, raw: 'DV' });
+	});
+});

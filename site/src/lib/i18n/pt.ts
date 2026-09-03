@@ -18,6 +18,16 @@ export const pt: Dictionary = {
 	'socialDoctrine.landing.title': 'Compêndio da Doutrina Social da Igreja',
 	'socialDoctrine.landing.tagline':
 		'O que a Igreja ensina sobre a vida em sociedade, em 583 números.',
+	'nav.canonLaw': 'Direito Canónico',
+	'canonLaw.landing.title': 'Código de Direito Canónico',
+	'canonLaw.landing.tagline':
+		'O direito da Igreja latina, em 1752 cânones distribuídos por sete livros.',
+	'canonLaw.canon': 'Cân.',
+	'canonLaw.canons': 'Cân.',
+	'canonLaw.prevCanon': 'Cânone anterior',
+	'canonLaw.nextCanon': 'Cânone seguinte',
+	'canonLaw.readFullTitle': 'Ler o título inteiro',
+	'canonLaw.superseded': 'Redação substituída por',
 	'nav.prayers': 'Orações',
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',

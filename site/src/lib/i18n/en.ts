@@ -23,6 +23,22 @@ export const en: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium of the Social Doctrine of the Church',
 	'socialDoctrine.landing.tagline':
 		'What the Church teaches about life in society, in 583 numbered paragraphs.',
+	'nav.canonLaw': 'Canon Law',
+	'canonLaw.landing.title': 'Code of Canon Law',
+	'canonLaw.landing.tagline': 'The law of the Latin Church, in 1,752 canons across seven books.',
+	// `Can.` is the abbreviation every edition of the Code prints and every
+	// citation of it uses, including in languages that spell the word
+	// differently — so it is a translatable key rather than a constant, and
+	// most dictionaries will still answer `Can.`
+	'canonLaw.canon': 'Can.',
+	'canonLaw.canons': 'Cann.',
+	'canonLaw.prevCanon': 'Previous canon',
+	'canonLaw.nextCanon': 'Next canon',
+	'canonLaw.readFullTitle': 'Read the whole title',
+	// The disclosure over a wording a later act replaced. It names what the
+	// text under it IS, because the alternative — a label like "History" —
+	// leaves a reader to guess whether they are looking at the law.
+	'canonLaw.superseded': 'Wording replaced by',
 	'nav.prayers': 'Prayers',
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',

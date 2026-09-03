@@ -173,6 +173,8 @@ describe('addresses', () => {
 			compendiumChapters: [],
 			socialDoctrine: [],
 			socialDoctrineChapters: [],
+			canonLaw: [],
+			canonLawTitles: [],
 			documents: [],
 			prayers: [],
 			summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }

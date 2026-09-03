@@ -57,6 +57,16 @@ export const mg: Dictionary = {
 	'socialDoctrine.landing.title': "Fintina ny Fampianarana Sosialin'ny Fiangonana",
 	'socialDoctrine.landing.tagline':
 		"Izay ampianarin'ny Fiangonana momba ny fiainana iarahana, ao anatin'ny laharana 583.",
+	'nav.canonLaw': 'Lalàna kanonika',
+	'canonLaw.landing.title': 'Fehezan-dalàna Kanonika',
+	'canonLaw.landing.tagline':
+		'Ny lalàn’ny Fiangonana latina, ao anatin’ny kanôna 1752 mizara ho boky fito.',
+	'canonLaw.canon': 'Kan.',
+	'canonLaw.canons': 'Kan.',
+	'canonLaw.prevCanon': 'Kanôna teo aloha',
+	'canonLaw.nextCanon': 'Kanôna manaraka',
+	'canonLaw.readFullTitle': 'Vakio ny lohateny manontolo',
+	'canonLaw.superseded': 'Andalana nosoloin’ny',
 	'nav.prayers': 'Vavaka',
 	'nav.bookmarks': 'Fanamarihana',
 	'nav.menu': 'Karazana',

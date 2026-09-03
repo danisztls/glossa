@@ -259,6 +259,16 @@ const COMPENDIUM_CHUNK_SIZE = 100;
  *  read this work is actually put to, which is one paragraph at a time. */
 const SOCIAL_DOCTRINE_CHUNK_SIZE = DOCUMENT_CHUNK_SIZE;
 
+/** The Code of Canon Law, on the same stride and for a sharper version of
+ *  the same argument. A canon is SHORT -- 558 bytes on average against a
+ *  Compendium paragraph's 1.4 KB -- and the reader who arrives at one has
+ *  almost always followed a citation, so what a chunk has to be small for is
+ *  a single `CIC can. 216`. At 25 that costs about 14 KB, and the widest
+ *  reading unit (cann. 460-572, 113 canons) needs five chunks, which is the
+ *  right way round: the citation is the common read and the long title is
+ *  the rare one. */
+const CANON_LAW_CHUNK_SIZE = DOCUMENT_CHUNK_SIZE;
+
 /** Bible books, chunked by CHAPTER on the same fixed-stride rule again
  *  (`bibleChapterChunkFor` in `corpus-index.ts`).
  *
@@ -771,6 +781,12 @@ const socialDoctrineIndex = {}; // workId -> { sectionNumbers } -- keyed by WORK
 // `csdc.{lang}` per edition, each with its own outline in the content tier.
 const socialDoctrineNumbers = []; // canonical URL existence, unioned across editions
 const socialDoctrineEditions = []; // [{ lang, work, sections, structure }] -- the xref pass and the chapter pass
+const canonLawIndex = {}; // workId -> { sectionNumbers } -- keyed by WORK ID
+// like the documents' and the Compendium of the Social Doctrine's, because
+// that is the shape of the content: one `cic.{lang}` per edition, each with
+// its own outline in the content tier.
+const canonLawNumbers = []; // canonical URL existence, unioned across editions
+const canonLawEditions = []; // [{ lang, work, sections, structure }] -- the reading-unit pass
 const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG, matching the Compendium
 // (one canonical work per language), per the task brief's own instruction to
 // follow that shape rather than the Documents one above: today there is
@@ -1120,7 +1136,8 @@ const CONTENT_TYPES = new Set([
 	'prayer',
 	'summa',
 	'document',
-	'social-doctrine'
+	'social-doctrine',
+	'canon-law'
 ]);
 
 const hasContentBranch = (workId, manifest) =>
@@ -1730,6 +1747,69 @@ for (const workId of workIds) {
 	// ADDRESSES are the Catechism's, which is the whole reason it has a type
 	// of its own -- so this branch writes what the document branch below
 	// writes, and registers what the Catechism branch above registers.
+	// The Code of Canon Law (docs/corpus-schema.md §Code of Canon Law). The
+	// branch below the Compendium of the Social Doctrine's, and the same
+	// sentence describes it: content files a document's, addresses the
+	// Catechism's. What it adds is `kind` — every division of the Code
+	// carries the word the edition printed, so the reading units are
+	// assembled from those words rather than from a level number.
+	if (manifest.type === 'canon-law') {
+		const lang = workId.split('.').pop();
+		const structure = readJson(path.join(workDir, 'structure.json'));
+		const sections = readJson(path.join(workDir, 'sections.json'));
+		const sectionNumbers = sections.map((s) => s.n).sort((a, b) => a - b);
+
+		canonLawIndex[workId] = { sectionNumbers };
+		canonLawNumbers.push(...sectionNumbers);
+		canonLawEditions.push({ lang, work: workId, sections, structure });
+
+		for (const section of sections) {
+			mark({ kind: 'canonLaw', n: section.n }, section, workId, manifest.language);
+		}
+
+		// `{ header, nodes }` and not a bare array, for the reason the branch
+		// below gives: `getDocumentStructure` reads a document's, that work's
+		// and this one's through one parser and returns `.nodes`.
+		{
+			const relPath = `content/${workId}/structure.json`;
+			const frontMatter = {
+				...(manifest.header ? { header: manifest.header } : {}),
+				nodes: structure
+			};
+			writeJson(path.join(destDir, relPath), frontMatter);
+			contentManifest.push({
+				workId,
+				kind: 'canon-law-structure',
+				relPath,
+				bytes: byteLength(frontMatter)
+			});
+		}
+
+		// `appendix.json` IS NOT SHIPPED, on the Compendium of the Social
+		// Doctrine's precedent and for its reason: four editions print front
+		// matter — the English INTRODUCTION with its sigla table, the
+		// constitution *Sacrae disciplinae leges* — and none of it is what a
+		// reader arrives at the Code for. The corpus holds it. What is NOT
+		// front matter is `superseded`, which rides on the canon and ships
+		// with it in the chunks below.
+		const maxN = sectionNumbers.length ? sectionNumbers[sectionNumbers.length - 1] : 0;
+		for (let start = 1; start <= maxN; start += CANON_LAW_CHUNK_SIZE) {
+			const end = start + CANON_LAW_CHUNK_SIZE - 1;
+			const chunk = sections.filter((s) => s.n >= start && s.n <= end);
+			if (chunk.length === 0) continue;
+			const chunkName = `${String(start).padStart(4, '0')}-${String(end).padStart(4, '0')}`;
+			const relPath = `content/${workId}/sections/${chunkName}.json`;
+			writeJson(path.join(destDir, relPath), chunk);
+			contentManifest.push({
+				workId,
+				kind: 'canon-law-chunk',
+				relPath,
+				bytes: byteLength(chunk)
+			});
+		}
+		continue;
+	}
+
 	if (manifest.type === 'social-doctrine') {
 		const lang = workId.split('.').pop();
 		const structure = readJson(path.join(workDir, 'structure.json'));
@@ -2301,6 +2381,55 @@ for (const { work, sections } of socialDoctrineEditions) {
 	}
 }
 
+/**
+ * The canon each reading unit of the Code opens at, unioned across editions.
+ *
+ * A UNIT IS A TITLE, AND A BOOK WHERE ITS CANONS RUN AHEAD OF ITS FIRST
+ * TITLE. That is the Code's own pagination — vatican.va's own English mirror
+ * gives a page to each — and it is the size a reader can hold: 85 units,
+ * eleven canons in the median one. The alternatives were both wrong at the
+ * ends. A page per BOOK is what the Latin edition does and puts 543 canons
+ * and 300 KB on one; a page per CHAPTER cuts titles that have none into
+ * nothing, since 78 titles hold 130 chapters between them and the rest hold
+ * their canons directly.
+ *
+ * PICKED BY `kind` AND NOT BY `level`, which is the reason `cic.py` stores
+ * one. A level is compacted per edition — it means "fourth-deepest thing
+ * this edition prints" — while `kind` is the word on the page. They agree
+ * across all seven editions today, and the way they stop agreeing is an
+ * edition that omits a division level, which is exactly the case a reading
+ * surface must not silently repaginate on.
+ *
+ * Unioned rather than taken from one edition for `socialDoctrineChapterStarts`'
+ * reason: the editions disagree slightly about which divisions reach their
+ * outline (77 titles to 79), and a unit any edition prints is a place.
+ */
+const CANON_LAW_UNIT_KINDS = new Set(['book', 'title']);
+const canonLawUnitStarts = [
+	...new Set(
+		canonLawEditions.flatMap(({ structure }) =>
+			structure
+				.filter((node) => CANON_LAW_UNIT_KINDS.has(node.kind) && node.before !== null)
+				.map((node) => node.before)
+		)
+	)
+].sort((a, b) => a - b);
+
+for (const { work, sections } of canonLawEditions) {
+	const lang = manifests[work].language;
+	for (const [i, from] of canonLawUnitStarts.entries()) {
+		const to = (canonLawUnitStarts[i + 1] ?? Infinity) - 1;
+		const span = sections.filter((s) => s.n >= from && s.n <= to);
+		if (span.length > 0) mark({ kind: 'canonLawTitle', n: from }, span, work, lang);
+	}
+}
+
+writeJson(
+	path.join(indexDir, 'canon-law-index.json'),
+	mapValues(canonLawIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
+);
+writeJson(path.join(indexDir, 'canon-law-units.json'), canonLawUnitStarts);
+
 writeJson(
 	path.join(indexDir, 'social-doctrine-index.json'),
 	mapValues(socialDoctrineIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))
@@ -2615,6 +2744,12 @@ const routeManifest = {
 	// languages is an address.
 	socialDoctrine: [...new Set(socialDoctrineNumbers)].sort((a, b) => a - b),
 	socialDoctrineChapters: socialDoctrineChapterStarts,
+	// Unioned for the same reason, one edition short in two places: `cic.de`
+	// prints no canon 1330 and `cic.es` no 1482, both the source's own
+	// omission (`cic.KNOWN_GAPS`), and both are addresses the other five
+	// editions carry.
+	canonLaw: [...new Set(canonLawNumbers)].sort((a, b) => a - b),
+	canonLawTitles: canonLawUnitStarts,
 	// From `manifests`, so a document the corpus knows about is an address even
 	// when this build has none of its text: `/documenta/{slug}` redirects that
 	// reader to the source page (docs/decisions.md §Posture), and it needs
@@ -2655,6 +2790,8 @@ const routeTitles = buildRouteTitles({
 	prayerIndex,
 	socialDoctrineEditions,
 	socialDoctrineChapterStarts,
+	canonLawEditions,
+	canonLawUnitStarts,
 	// The interface's own strings, for the seven chrome pages that take a
 	// language prefix. Read from the dictionaries so the head a searcher
 	// matches on is the sentence the page shows them — see CHROME_KEYS.

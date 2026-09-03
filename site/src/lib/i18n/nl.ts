@@ -41,6 +41,16 @@ export const nl: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium van de sociale leer van de Kerk',
 	'socialDoctrine.landing.tagline':
 		'Wat de Kerk leert over het leven in de samenleving, in 583 nummers.',
+	'nav.canonLaw': 'Kerkelijk recht',
+	'canonLaw.landing.title': 'Wetboek van Canoniek Recht',
+	'canonLaw.landing.tagline':
+		'Het recht van de Latijnse Kerk, in 1752 canones verdeeld over zeven boeken.',
+	'canonLaw.canon': 'Can.',
+	'canonLaw.canons': 'Cann.',
+	'canonLaw.prevCanon': 'Vorige canon',
+	'canonLaw.nextCanon': 'Volgende canon',
+	'canonLaw.readFullTitle': 'Lees de hele titel',
+	'canonLaw.superseded': 'Tekst vervangen door',
 	'nav.prayers': 'Gebeden',
 	'nav.bookmarks': 'Bladwijzers',
 	'nav.menu': 'Menu',

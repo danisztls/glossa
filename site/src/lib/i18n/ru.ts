@@ -20,6 +20,16 @@ export const ru: Dictionary = {
 	'socialDoctrine.landing.title': 'Компендиум социального учения Церкви',
 	'socialDoctrine.landing.tagline':
 		'Чему Церковь учит о жизни в обществе — 583 пронумерованных раздела.',
+	'nav.canonLaw': 'Каноническое право',
+	'canonLaw.landing.title': 'Кодекс канонического права',
+	'canonLaw.landing.tagline':
+		'Право Латинской Церкви в 1752 канонах, распределённых по семи книгам.',
+	'canonLaw.canon': 'Кан.',
+	'canonLaw.canons': 'Кан.',
+	'canonLaw.prevCanon': 'Предыдущий канон',
+	'canonLaw.nextCanon': 'Следующий канон',
+	'canonLaw.readFullTitle': 'Читать весь титул',
+	'canonLaw.superseded': 'Формулировка заменена',
 	'nav.prayers': 'Молитвы',
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',

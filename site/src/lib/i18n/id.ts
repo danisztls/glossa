@@ -47,6 +47,16 @@ export const id: Dictionary = {
 	'socialDoctrine.landing.title': 'Kompendium Ajaran Sosial Gereja',
 	'socialDoctrine.landing.tagline':
 		'Yang diajarkan Gereja tentang hidup bermasyarakat, dalam 583 nomor.',
+	'nav.canonLaw': 'Hukum Kanonik',
+	'canonLaw.landing.title': 'Kitab Hukum Kanonik',
+	'canonLaw.landing.tagline':
+		'Hukum Gereja Latin, dalam 1.752 kanon yang terbagi dalam tujuh buku.',
+	'canonLaw.canon': 'Kan.',
+	'canonLaw.canons': 'Kan.',
+	'canonLaw.prevCanon': 'Kanon sebelumnya',
+	'canonLaw.nextCanon': 'Kanon berikutnya',
+	'canonLaw.readFullTitle': 'Baca seluruh judul',
+	'canonLaw.superseded': 'Rumusan yang digantikan oleh',
 	'nav.prayers': 'Doa',
 	'nav.bookmarks': 'Penanda',
 	'nav.menu': 'Menu',
