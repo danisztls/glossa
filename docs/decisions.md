@@ -4223,3 +4223,46 @@ and `npm test` cannot reach that class at all (§The site, the boot payload). A 
 index primer is therefore visible in dev, a console warning in `preview:edge`, and
 invisible in `vitest`. The build-and-serve loop answers "what does a reader get"; dev
 answers "is this correct", and the two are not substitutes.
+
+**A check that has never passed is not a check, and `npm run check` had never
+passed** (2026-09-03). `svelte-check` reported 23 errors on a clean tree, which is why
+nothing gated on it and why no aggregate "is this sound" script existed to put it in.
+The 23 were in three files — 20 in `scripts/minify-build.mjs`, 2 in
+`scripts/export-section-names.mjs`, and one stale `@ts-expect-error` in
+`minify-build.test.ts` — against sixteen other `.mjs` scripts that are JSDoc-typed and
+clean under the same `checkJs: true, strict: true`. So the convention was never in
+question; two files had drifted out of it, and the noise made a real type error in real
+source indistinguishable from the standing 23. **The fix is to type the two, never to
+loosen the config**, which is the same argument `chunkSizeWarningLimit` got: a warning
+that always fires stops being read, and the answer is to make it mean something rather
+than to raise it until it is quiet. `html-minifier-terser` ships no types and got a
+four-option `declare module` rather than `@types/html-minifier-terser`, because this
+project passes four options and asserts about them, so a fifth added silently is worth
+a compile error.
+
+**`scripts/` is type-checked only where a test imports it**, which is worth knowing
+before wondering why some `.mjs` files are annotated and others are not. The generated
+`.svelte-kit/tsconfig.json` includes `../src/**` and `../vite.config.ts` and nothing
+else, and its `include` cannot be extended from `tsconfig.json` — an `include` in an
+extending config REPLACES the base's rather than merging, so restating it would mean
+maintaining a copy of SvelteKit's list. The `.d.ts` therefore lives under `src/`.
+
+**Three tests each named a different command as their fix, so the fix became one
+command.** `book-forms.test.ts`, `versification-export.test.ts` and
+`section-names.test.ts` fail when a committed JSON export falls behind the TypeScript
+table it is derived from — `refs-grammar.ts`, `versification.ts`, the i18n dictionaries
+— and each said `node scripts/export-<one>.mjs`. Editing the grammar does not tell you
+which of the three went stale. `npm run export` runs all three; they are byte-identical
+re-writes when nothing moved, so running the set costs nothing over running the right
+one.
+
+**The script table is the one part of this project with no compiler behind it, and now
+it has a test instead.** Every composite in `package.json` is a string naming another
+string: rename `build` and `prebuild`/`postbuild` stop running, with no error and no
+warning — the corpus is not re-derived, the built HTML is not minified, and the build
+exits 0. Five names begin with `pre` for reasons unrelated to hooks (`preview`,
+`preview:edge`, `preview:deploy`, `preflight`, `prepare`), so a future script called
+`view` or `flight` would silently acquire one. `src/lib/package-scripts.test.ts`
+asserts both directions plus four more invariants, and each was mutation-tested when
+written: six deliberate breakages, six failures. A guard that cannot fail is worse than
+no guard, because it is also an assurance.

@@ -180,16 +180,85 @@ mount entry points at a second address on purpose. Nothing outside the route
 tree ever knew a directory name — why the mismatch survived a year and why
 removing it was safe.
 
+**The script table is grouped, and the groups are the answer to "what do I
+run"** (regrouped 2026-09-03). `package.json` has no comments, so the order is
+the documentation: run, verify, derive, ship, and last the four npm invokes
+itself. `src/lib/package-scripts.test.ts` is the compiler this table does not
+otherwise have — see below.
+
+| run              |                                                      |
+| ---------------- | ---------------------------------------------------- |
+| `dev`            | the only place a missing index primer THROWS         |
+| `dev:clean`      | the same, after dropping Vite's dep cache            |
+| `build`          | `prebuild` derives the corpus, `postbuild` audits it |
+| `preview`        | static files only — **cannot see the worker**        |
+| `preview:edge`   | `wrangler dev`: the real worker over `build/`        |
+| `preview:deploy` | build -> preflight -> `preview:edge`                 |
+
+| verify         |                                                            |
+| -------------- | ---------------------------------------------------------- |
+| `verify`       | `format:check` -> `check` -> `test`, cheapest first        |
+| `test`         | always fixtures, never a synced corpus                     |
+| `check`        | `svelte-check`; **0 errors, and that is new** (2026-09-03) |
+| `format:check` | what the pre-commit hook does, over the whole tree         |
+
+| derive                |                                                      |
+| --------------------- | ---------------------------------------------------- |
+| `sync-corpus`         | full derivation, ~13.3s                              |
+| `sync-corpus:changed` | skip if nothing moved, ~0.3s (what `predev` runs)    |
+| `export`              | the three TS-table-to-JSON exporters, as one command |
+| `coverage:accept`     | record an intended reference-coverage drop           |
+| `lastmod:accept`      | record an intended lastmod change                    |
+
 ```sh
 cd site
-npm run dev                                          # or npm run build
 CORPUS_DIR=/path/to/glossa-corpus npm run dev        # corpus kept elsewhere
-npm run preview:deploy                               # build -> preflight -> real worker
-npm run preview:edge                                 # the same, over an existing build/
-npm run sync-corpus                                  # full derivation, ~13.3s
-npm run sync-corpus:changed                          # skip if nothing moved, ~0.3s
 node scripts/sync-corpus.mjs --changed-only --force  # ignore the cache
+npm run check -- --watch                             # what check:watch is
 ```
+
+**`npm run check` reported 23 errors for as long as anyone had run it, and
+that is why it gated nothing** (fixed 2026-09-03). All 23 were in three files —
+`scripts/minify-build.mjs` (20), `scripts/export-section-names.mjs` (2) and one
+stale `@ts-expect-error` — against sixteen other `.mjs` files that are JSDoc-
+typed and clean, so the convention was never in doubt; two files had simply
+drifted out of it and the noise made a real type error in real source
+indistinguishable. **The fix was to type the two, never to loosen
+`checkJs`/`strict`.** `html-minifier-terser` ships no types and now has a
+four-option declaration in `src/html-minifier-terser.d.ts`, which says why it
+is not `@types/…` and why it cannot live in `scripts/`.
+
+**`npm run export` exists because three separate tests each named a different
+command as their fix.** `book-forms.test.ts`, `versification-export.test.ts`
+and `section-names.test.ts` fail when their committed JSON falls behind a
+TypeScript table, and each used to say `node scripts/export-<one>.mjs`. Change
+`refs-grammar.ts` and you do not know which is stale; all three now say
+`npm run export`, and it runs all three. They are byte-identical re-writes when
+nothing moved, so running the set is free.
+
+**`npm run verify` is the only place the three checks are named together**, and
+there is no CI to name them anywhere else — a deploy ships one person's working
+tree (§Deploying). Order is cheapest-first so the fastest failure arrives
+first, not most-important-first.
+
+**FIVE SCRIPT NAMES BEGIN WITH `pre` FOR REASONS THAT HAVE NOTHING TO DO WITH
+HOOKS** — `preview`, `preview:edge`, `preview:deploy`, `preflight` and npm's
+own `prepare` — and npm runs `pre<name>`/`post<name>` around `npm run <name>`
+whether or not anyone meant it. Adding a script called `view`, `flight` or
+`view:deploy` would silently make an existing one its hook. The reverse is
+worse and has no symptom at all: rename `build` and `prebuild`/`postbuild`
+simply stop running, so the corpus is not re-derived and the built HTML is not
+minified, and the build still exits 0.
+
+**`src/lib/package-scripts.test.ts` is the compiler package.json does not
+have.** Nothing else in this repo reads it — `svelte-check` does not, `vitest`
+does not — so every composite is a string naming another string with no
+checking behind it. It asserts six things: no composite calls a missing script,
+no script names a missing `.mjs`, the three intended hooks still have their
+targets, no accidental hook exists, `deploy` and `preview:deploy` share their
+`build && preflight` gate, and `verify` still runs all three checks. Each was
+mutation-tested when written — break the invariant and the test fails — because
+a guard that cannot fail is worse than none.
 
 **`npm run preview` CANNOT SEE THE EDGE, and it answers wrong rather than
 refusing** (measured 2026-09-03). `vite preview` is a static file server with

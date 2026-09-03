@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-// @ts-expect-error -- plain-Node build script, no types
 import { commentsIn, minifyHtml } from '../../scripts/minify-build.mjs';
 
 /**

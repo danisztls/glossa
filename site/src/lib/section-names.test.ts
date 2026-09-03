@@ -16,7 +16,7 @@ import { dictionaryFor, UI_LANGS } from './i18n.svelte';
 import table from './section-names.json';
 
 describe('section-names.json', () => {
-	it('matches what the exporter would write today', async () => {
+	it('matches what the exporter would write today — run `npm run export` when this fails', async () => {
 		const raw = await import('node:fs').then((fs) =>
 			fs.readFileSync(new URL('./section-names.json', import.meta.url), 'utf8')
 		);

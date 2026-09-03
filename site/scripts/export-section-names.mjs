@@ -53,12 +53,19 @@ export const SECTION_KEYS = [
 	'nav.summa'
 ];
 
-/** `{ [lang]: { [key]: name } }`, omitting keys a dictionary does not define. */
+/**
+ * `{ [lang]: { [key]: name } }`, omitting keys a dictionary does not define.
+ *
+ * @returns {Promise<Record<string, Record<string, string>>>}
+ */
 export async function sectionNames() {
 	const dictionaries = await readDictionaries();
+	/** @type {Record<string, Record<string, string>>} */
 	const out = {};
 	for (const lang of UI_LANGS) {
+		/** @type {Record<string, string>} */
 		const dictionary = dictionaries[lang] ?? {};
+		/** @type {Record<string, string>} */
 		const row = {};
 		for (const key of SECTION_KEYS) {
 			const value = dictionary[key];
@@ -72,7 +79,11 @@ export async function sectionNames() {
 	return out;
 }
 
-/** The JSON text, byte for byte — the test compares against this. */
+/**
+ * The JSON text, byte for byte — the test compares against this.
+ *
+ * @returns {Promise<string>}
+ */
 export async function sectionNamesJson() {
 	return (
 		JSON.stringify(
@@ -86,8 +97,13 @@ export async function sectionNamesJson() {
 	);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Resolved on both sides rather than compared as a `file://` string: the
+// string form fails for any path that needs percent-encoding (a space in a
+// directory name is enough), and its failure is that the script exits 0 having
+// written nothing. `export-book-forms.mjs` and `export-versification.mjs` do
+// the same, and `npm run export` runs all three.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 	const json = await sectionNamesJson();
 	writeFileSync(SECTION_NAMES_PATH, json);
-	console.log(`wrote ${SECTION_NAMES_PATH} (${UI_LANGS.length} languages)`);
+	console.log(`[export-section-names] wrote ${SECTION_NAMES_PATH} (${UI_LANGS.length} languages)`);
 }

@@ -103,11 +103,22 @@ export const MINIFY_OPTIONS = {
 	minifyCSS: true
 };
 
-/** Minify one document. Exported so the tests exercise the real settings. */
+/**
+ * Minify one document. Exported so the tests exercise the real settings.
+ *
+ * @param {string} html
+ * @returns {Promise<string>}
+ */
 export const minifyHtml = (html) => minify(html, MINIFY_OPTIONS);
 
-/** Every file under `dir`, depth-first, in directory order. */
+/**
+ * Every file under `dir`, depth-first, in directory order.
+ *
+ * @param {string} dir
+ * @returns {string[]}
+ */
 function walk(dir) {
+	/** @type {string[]} */
 	const found = [];
 	for (const entry of readdirSync(dir).sort()) {
 		const full = path.join(dir, entry);
@@ -117,7 +128,14 @@ function walk(dir) {
 	return found;
 }
 
+/**
+ * Minify every `.html` under `buildDir` in place, and report what each cost.
+ *
+ * @param {string} buildDir
+ * @returns {Promise<{ file: string, before: number, after: number }[]>}
+ */
 export async function minifyBuiltHtml(buildDir) {
+	/** @type {{ file: string, before: number, after: number }[]} */
 	const report = [];
 	for (const file of walk(buildDir).filter((f) => f.endsWith('.html'))) {
 		const before = readFileSync(file, 'utf8');
@@ -153,6 +171,7 @@ export async function minifyBuiltHtml(buildDir) {
  * `.html` is here as markup, and is also the key the raw-text scan below reads
  * its inner syntaxes out of this same table by.
  */
+/** @type {Record<string, RegExp[]>} */
 const COMMENT_SYNTAX = {
 	'.html': [/<!--(?!\[|!).*?-->/gs],
 	'.xml': [/<!--.*?-->/gs],
@@ -169,6 +188,7 @@ const COMMENT_SYNTAX = {
  * to it. An entry here keeps the notice and records the decision. Keyed on the
  * build-relative path, minus the content hash a build asset carries.
  */
+/** @type {Record<string, string>} */
 const ALLOWED = {};
 
 /**
@@ -181,8 +201,13 @@ const ALLOWED = {};
  * all ride in a `<script>` and are not programs — and a `src=` script has no
  * content to read at all.
  */
+/**
+ * @param {string} html
+ * @returns {{ syntax: string | null, start: number, end: number }[]}
+ */
 function rawTextRuns(html) {
 	const lower = html.toLowerCase();
+	/** @type {{ syntax: string | null, start: number, end: number }[]} */
 	const runs = [];
 	const open = /<(script|style|title|textarea)\b([^>]*)>/gi;
 
@@ -196,6 +221,14 @@ function rawTextRuns(html) {
 	return runs;
 }
 
+/**
+ * The key into `COMMENT_SYNTAX` a raw-text element's content is written in, or
+ * `null` where it is neither JavaScript nor CSS.
+ *
+ * @param {string} tag
+ * @param {string} attrs
+ * @returns {string | null}
+ */
 function scriptSyntax(tag, attrs) {
 	const name = tag.toLowerCase();
 	if (name === 'style') return '.css';
@@ -206,7 +239,13 @@ function scriptSyntax(tag, attrs) {
 	return ['', 'module', 'text/javascript', 'application/javascript'].includes(value) ? '.js' : null;
 }
 
-/** Every match of `patterns` in `text`. */
+/**
+ * Every match of `patterns` in `text`.
+ *
+ * @param {RegExp[]} patterns
+ * @param {string} text
+ * @returns {string[]}
+ */
 const matches = (patterns, text) =>
 	patterns.flatMap((pattern) => [...text.matchAll(new RegExp(pattern))].map((m) => m[0]));
 
@@ -226,12 +265,18 @@ const matches = (patterns, text) =>
  * CSS. Neither is a JSON-LD block. Each is scanned as nothing rather than as
  * markup, which is the same reason JSON is absent from the table above.
  */
+/**
+ * @param {string} file Path, read only for its extension.
+ * @param {string} text
+ * @returns {string[]}
+ */
 export function commentsIn(file, text) {
 	const ext = path.extname(file).toLowerCase();
 	const patterns = COMMENT_SYNTAX[ext];
 	if (!patterns) return [];
 	if (ext !== '.html') return matches(patterns, text);
 
+	/** @type {string[]} */
 	const found = [];
 	// Blanking rather than cutting keeps a `<!--` and its `-->` from being
 	// spliced together across a script that sat between them.
@@ -253,7 +298,12 @@ export function commentsIn(file, text) {
  *
  * Runs AFTER the minify, so the HTML it walks is the HTML that ships.
  */
+/**
+ * @param {string} buildDir
+ * @returns {{ file: string, comments: string[] }[]}
+ */
 export function auditComments(buildDir) {
+	/** @type {{ file: string, comments: string[] }[]} */
 	const findings = [];
 	for (const file of walk(buildDir)) {
 		const rel = path.relative(buildDir, file);
