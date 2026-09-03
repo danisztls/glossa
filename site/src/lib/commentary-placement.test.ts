@@ -24,10 +24,10 @@ describe('placeCommentary', () => {
 		expect(trailing[0].notes).toHaveLength(2);
 	});
 
-	// THE PROPERTY EVERYTHING ELSE RESTS ON, and the reason this is a module at
-	// all: every note is behind exactly one mark, so the column and the verse
-	// can never disagree about which notes a mark stands for. A leak in either
-	// direction loses part of the apparatus with nothing erroring.
+	// THE PROPERTY EVERYTHING ELSE RESTS ON, and the one that broke: every note
+	// is behind exactly one mark. Spreading the entry rather than the anchor's
+	// own notes put the whole verse behind each inline mark — a superset, which
+	// renders perfectly well and so erred nowhere.
 	it('partitions every note across the marks, none twice and none nowhere', () => {
 		const notes = [note('a', 'Beginning.'), note('b'), note('c', 'earth.'), note('d', 'Elohim,')];
 		const { placed } = placeCommentary(TEXT, [entry('commentary.haydock.en', notes)]);
@@ -66,8 +66,8 @@ describe('placeCommentary', () => {
 		});
 
 		// `at` is the mark's identity everywhere else — `buildSegments`'s `mark`,
-		// and the id of the block the column scrolls to. It must index `placed`,
-		// not the text-ordered array it is read off.
+		// and the key `openMarks` lights the quoted words by. It must index
+		// `placed`, not the text-ordered array it is read off.
 		it('numbers each inline mark by its position in `placed`', () => {
 			const { placed, inline } = placeCommentary(TEXT, two);
 			for (const p of inline) expect(placed[p.at].work.id).toBe(p.work.id);

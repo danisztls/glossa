@@ -2,15 +2,21 @@
  * Every commentary's notes on one unit, divided into the marks that will
  * carry them.
  *
- * IT IS A MODULE BECAUSE TWO SURFACES NOW ASK THE SAME QUESTION. It was
- * `AnnotatedText`'s alone while a mark was the only way into a commentary:
- * the component cut the text, so the component owned the partition. The
- * commentary column reads it too — a mark in the verse has to name the block
- * in the pane that holds its notes — and calling `anchorCommentary` twice in
- * two places and hoping the two agree about which notes are trailing is
- * exactly the invariant `annotated-segments.ts` was extracted to protect. A
- * disagreement there does not throw; it silently points a mark at another
- * note's text.
+ * IT IS A MODULE BECAUSE THE PARTITION WENT UNTESTED INSIDE A COMPONENT, AND
+ * BROKE THERE. `anchorCommentary` divides a verse's notes correctly and
+ * `AnnotatedText` used to spread the whole ENTRY into each placement, so every
+ * inline mark carried the work's entire apparatus on that verse and only the
+ * trailing mark was scoped. Measured over the built corpus: 18,943 of 20,789
+ * annotated verses affected, 66,929 note-renderings where 24,805 were right,
+ * and 1 Maccabees 15:23 opening the same fifteen notes from fifteen daggers.
+ * Nothing erred, because a superset renders perfectly well.
+ *
+ * The test that was supposed to catch it ran over `anchorCommentary`'s OUTPUT,
+ * and the leak was one layer above — at the point of USE, which lived in a
+ * `.svelte` file and so was reachable by no test in this repository. That is
+ * the whole argument for the module: it is the same reason
+ * `annotated-segments.ts` was extracted, and it now holds a test that fails on
+ * exactly this.
  *
  * The partition is TOTAL and DISJOINT, which is the property worth pinning:
  * every note is behind exactly one mark. Measured over the built corpus when
