@@ -1090,11 +1090,22 @@ where it sits** — the colophon link is the line directly above it, so it need
 not carry its own context; move it away from that link and it would have to say
 more. All 34 dictionaries carry it.
 
-**The three lines are one chrome, and that is load-bearing rather than lazy.**
-Colophon link, motto, disclaimer — same size, same colour, `.site-footer p` in
-one rule. Give the motto its own face or step and the stack reads as a heading
-with two captions instead of an imprint. Spacing is `line-height`, not margins,
-so the even leading is one number rather than two.
+**The lines are one chrome, and that is load-bearing rather than lazy.**
+Colophon link, motto, disclaimer, then `.build` — one column, `.site-footer p`
+in one rule, spacing from `line-height` rather than margins so the even leading
+is one number. Give the motto its own face or step and the stack reads as a
+heading with two captions instead of an imprint. `.build` is IN the column and
+not under the whole imprint: centred against the mark as well, it would sit on
+the footer's midline while the three lines it belongs with sit off it.
+
+**The colophon link is the one exception, and it was made by DELETING.** The
+footer overrode `a` back to `--color-text-muted` with `text-decoration: none`,
+which left the only link in it indistinguishable from the two statements below
+— an affordance disguised as a caption. The override is gone, so `base.css`'s
+own rule applies: `--color-link`, underline at 35% of its colour, solid on
+hover, like every other link on the site. **Reach for the global rule before
+writing a footer-local one**; the size and leading are untouched, so the stack
+is still one chrome and only the clickable thing looks clickable.
 
 **`JerusalemCross.svelte` is inline SVG because an `<img>` cannot see the
 theme.** `<html>` carries four independent axes — `data-theme`, `data-sepia`,

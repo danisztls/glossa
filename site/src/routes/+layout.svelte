@@ -440,20 +440,25 @@
 				<p><a href="/colophon">{t('colophon.title')}</a></p>
 				<p lang="la">Ad maiorem Dei gloriam</p>
 				<p>{t('footer.notEndorsed')}</p>
+				<!--
+					IN THE COLUMN, not under the whole imprint: it is a fourth line of
+					the same stack, and centring it against the mark as well would have
+					put it on the footer's midline while the three lines it belongs
+					with sit off it.
+
+					The build this page is running, and the reason it is not behind the
+					colophon link: what it answers is "did the update actually land",
+					which is a question asked WHILE looking at a page that might be
+					stale, about that page. A number one navigation away answers it
+					about the document you had to load to read it.
+
+					Untranslated on purpose. `vite.config.ts`'s `buildId` is a date and
+					a commit — the same string in every language, and the string
+					`usage.ts` stores to tell a landed update from an offered one.
+				-->
+				<span class="build">{version}</span>
 			</div>
 		</div>
-		<!--
-			The build this page is running, and the reason it is not behind the
-			colophon link: what it answers is "did the update actually land",
-			which is a question asked WHILE looking at a page that might be
-			stale, about that page. A number one navigation away answers it
-			about the document you had to load to read it.
-
-			Untranslated on purpose. `vite.config.ts`'s `buildId` is a date and
-			a commit — the same string in every language, and the string
-			`usage.ts` stores to tell a landed update from an offered one.
-		-->
-		<span class="build">{version}</span>
 	</footer>
 </div>
 
@@ -728,13 +733,21 @@
 	/*
 	 * ALL THREE LINES, ONE RULE, which is what keeps them one chrome: give the
 	 * motto its own size or face and the stack stops reading as an imprint and
-	 * starts reading as a heading with two captions. `.site-footer a` already
-	 * sets the same muted colour, so the colophon link matches its neighbours
-	 * and lights on hover alone.
+	 * starts reading as a heading with two captions.
 	 *
-	 * Spacing comes from `line-height` rather than margins, because three
-	 * stacked lines of one size want even leading, and margins between them
-	 * would be a second number saying the same thing.
+	 * THE COLOPHON LINK IS THE ONE DELIBERATE EXCEPTION, and it is made by
+	 * DELETING rather than adding. This block used to override `a` back to the
+	 * muted colour with `text-decoration: none`, which left the only link in
+	 * the footer indistinguishable from the two statements under it — an
+	 * affordance disguised as a caption. With the override gone it is simply a
+	 * link: `base.css` gives it `--color-link` and an underline at 35% of its
+	 * own colour that goes solid on hover, exactly as every other link on the
+	 * site does. Same size and same leading as its neighbours, so the stack is
+	 * still one chrome; only the thing that is clickable looks clickable.
+	 *
+	 * Spacing comes from `line-height` rather than margins, because stacked
+	 * lines of one size want even leading, and margins between them would be a
+	 * second number saying the same thing.
 	 */
 	.site-footer p {
 		margin: 0;
@@ -742,19 +755,9 @@
 		line-height: 1.9;
 	}
 
-	.site-footer a {
-		color: var(--color-text-muted);
-		text-decoration: none;
-	}
-
-	.site-footer a:hover {
-		color: var(--color-text);
-		text-decoration: underline;
-	}
-
-	/* Its own line under the colophon link, quieter than it and quieter than
-	   the body: it is for the person maintaining the site, and a reader who
-	   never wonders about it should be able to not see it. */
+	/* The last line of the column, quieter than the three above it: it is for
+	   the person maintaining the site, and a reader who never wonders about it
+	   should be able to not see it. */
 	.build {
 		display: block;
 		margin-block-start: 0.4rem;
