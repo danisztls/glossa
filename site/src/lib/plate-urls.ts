@@ -4,10 +4,13 @@
  * The same glob-with-`?url` mechanism as `content-urls.ts`, and a separate
  * module for the same reason that one is separate: the glob is the only way
  * to learn the hashed asset URL a build assigns, and it must be written once.
- * See `content-urls.ts` for the full argument, and `vite.config.ts` for the
- * `assetsInlineLimit` rule that keeps anything under `corpus-data/` out of
- * the boot chunk — a base64'd plate would defeat the whole deferred-load
- * design silently, exactly as it did for the document outlines.
+ * See `content-urls.ts` for the full argument, and for why the `no-inline`
+ * below is on the import rather than left to `vite.config.ts`'s
+ * `assetsInlineLimit`: the service-worker bundle reads this module through a
+ * Vite build that never sees that config. No plate is anywhere near the 4 KB
+ * limit today, so this one is a statement of the requirement rather than a
+ * fix — a base64'd plate would defeat the whole deferred-load design
+ * silently, exactly as it did for the document outlines.
  *
  * A FUNCTION RATHER THAN THE EXPORTED MAP `content-urls.ts` uses, because
  * that is what lets the dev twin be a formula instead of an inventory: in
@@ -18,7 +21,7 @@
 
 const globbed = import.meta.glob('./corpus-data/plates/*.avif', {
 	eager: true,
-	query: '?url',
+	query: '?url&no-inline',
 	import: 'default'
 }) as Record<string, string>;
 

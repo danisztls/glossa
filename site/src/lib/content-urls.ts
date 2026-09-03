@@ -30,14 +30,31 @@
  * two used to strip the prefix separately, with their own copy of the regex.
  */
 
-// `?url` + `import: 'default'` yields the hashed BUILD ASSET URL for each file
-// (a string), not its contents — Vite still emits the file itself as a build
-// asset, just doesn't inline it. `vite.config.ts` is what makes that last part
-// true below 4 KB; see its `assetsInlineLimit` note, which is not optional
-// reading.
+/*
+ * `?url` + `import: 'default'` yields the hashed BUILD ASSET URL for each file
+ * (a string), not its contents — Vite still emits the file itself as a build
+ * asset, just doesn't inline it.
+ *
+ * `no-inline` IS WHAT MAKES THAT LAST PART TRUE, and it is here rather than
+ * only in `vite.config.ts` because this module is read by a build that config
+ * cannot reach. SvelteKit compiles `service-worker.ts` in a Vite build of its
+ * own with `configFile: false`, forwarding four options and NOT
+ * `assetsInlineLimit` (`build_service_worker.js`) — so the guard held for the
+ * app bundle and did nothing here, and 1,656 content files under 4 KB were
+ * base64'd into `data:` URIs in the worker alone. Everything downstream then
+ * did the wrong thing quietly: `contentPath` made a "pathname" out of the
+ * base64 payload, `cacheAssets` fetched that and got a 404 it swallows, the
+ * real asset fell out of `contentUrls` and into the SHELL precache instead —
+ * and the panel, which prices from the APP bundle where the same glob yields
+ * real URLs, showed a shelf that could never finish (`27.1 / 27.2 MB`). Two
+ * bundles, one module, two different answers.
+ *
+ * `scripts/audit-inlined-corpus.mjs` fails the build if this ever regresses,
+ * because none of the above raises anything.
+ */
 const globbed = import.meta.glob('./corpus-data/content/**/*.json', {
 	eager: true,
-	query: '?url',
+	query: '?url&no-inline',
 	import: 'default'
 }) as Record<string, string>;
 

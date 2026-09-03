@@ -440,10 +440,13 @@
 		position: relative;
 	}
 
+	/* NO RULE BETWEEN THE SHELVES. Six lines through six short rows is more
+	   structure than the list has: the names are one column, the sizes a
+	   second and the controls a third, and that alignment already says where a
+	   row begins and ends. The rule under the last one stays, because the
+	   totals line below it is a different kind of thing — see `.foot`. */
 	.shelf + .shelf {
-		margin-block-start: 0.15rem;
-		border-block-start: 1px solid var(--color-border);
-		padding-block-start: 0.15rem;
+		margin-block-start: 0.1rem;
 	}
 
 	.shelf-line {
@@ -605,7 +608,18 @@
 	@media (min-width: 34rem) {
 		.advanced-dialog {
 			inline-size: min(32rem, 92vw);
-			block-size: auto;
+			/*
+			 * `fit-content` AND NOT `auto`, which is what the two `inset: 0`
+			 * edges turn into a stretch: with both block insets pinned and the
+			 * height auto, the box is solved to fill its containing block and
+			 * the auto margins get nothing to centre with — so the panel grew
+			 * to the cap and stood over its own content in empty space. A
+			 * `fit-content` height is a definite size, so the box shrinks to
+			 * the content and the auto margins do the centring they are there
+			 * for. The cap still clamps it, and `.sheet-body` still scrolls
+			 * once it bites.
+			 */
+			block-size: fit-content;
 			max-block-size: min(44rem, 90vh);
 			margin: auto;
 			border: 1px solid var(--color-border);

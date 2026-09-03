@@ -245,6 +245,20 @@ export default defineConfig({
 		 * `false` disables inlining for these paths; `undefined` leaves every
 		 * other asset — icons, fonts, the odd small SVG — on Vite's default,
 		 * where inlining is the right call.
+		 *
+		 * THIS DOES NOT REACH THE SERVICE WORKER, and believing it did cost a
+		 * shelf that could never finish downloading (2026-09-03). SvelteKit
+		 * compiles `service-worker.ts` in a Vite build of its own with
+		 * `configFile: false`, forwarding `modulePreload`, `rollupOptions`,
+		 * `outDir`, `emptyOutDir` and `minify` and nothing else — so the
+		 * bundle whose entire job is to fetch corpus files had 1,656 of them
+		 * base64'd into it while the app bundle, guarded here, had none.
+		 * `content-urls.ts` and `plate-urls.ts` therefore say `no-inline` on
+		 * the import itself, which no config forwarding can drop, and
+		 * `scripts/audit-inlined-corpus.mjs` fails the build if either guard
+		 * comes undone. Keep this one anyway: it covers `corpus-index.ts`'s
+		 * globs and anything else under `corpus-data/` that a future module
+		 * reaches for.
 		 */
 		assetsInlineLimit: (filePath: string) =>
 			filePath.includes('/corpus-data/') ? false : undefined

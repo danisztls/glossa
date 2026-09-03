@@ -19,6 +19,25 @@ check `build/_app/immutable/assets/` actually contains it** rather than
 trusting the file count (43 documents' `appendix.json` were inlined, unnoticed,
 for as long as that tier existed).
 
+**And that config does NOT reach the service worker** (2026-09-03). SvelteKit
+compiles `service-worker.ts` in a Vite build of its own with
+`configFile: false`, forwarding `modulePreload`, `rollupOptions`, `outDir`,
+`emptyOutDir` and `minify` and nothing else — so the guard held for the app
+bundle while **1,656 content files under 4 KB were base64'd into the one
+bundle whose entire job is to fetch them**. Every layer then failed quietly:
+`contentPath` made a "pathname" out of the base64 payload, `cacheAssets`
+fetched that and swallowed the 404, the real asset fell out of `contentUrls`
+into the versioned SHELL precache (downloaded at install, lost on the next
+deploy), and the library panel — which prices from the app bundle, where the
+same glob yields real URLs — showed `27.1 / 27.2 MB` and a Download button
+that could never finish it. **`content-urls.ts` and `plate-urls.ts` say
+`no-inline` on the import itself**, which no config forwarding can drop, and
+`scripts/audit-inlined-corpus.mjs` (in `postbuild`) fails the build on any
+`data:application/json` or `data:image/avif` in built JS. Removing it also cut
+the worker bundle from 6.16 MB to 3.63 MB. The general lesson: **a rule in
+`vite.config.ts` is a rule about the builds that read it**, and this repo has
+three.
+
 **And the glob must not run under `npm run dev` at all.** An eager glob is one
 static import per matched file: the build folds those into a chunk, the dev
 server answers each as its own module request, and at 2,590 files Chrome fails
@@ -690,6 +709,15 @@ consumer `planWaves`' byte counts were written for and had never had.
   is last and decides what an interrupted fill got to); the panel is a list of
   the library's parts, where Doré's plates are a thing about the Bible and sit
   under it. Only `libraryRows`' output moves — `planWaves` is untouched.
+- **The card is `block-size: fit-content`, not `auto`.** With both block
+  insets pinned by `.sheet`'s `inset: 0`, an auto height is solved to FILL the
+  containing block and the auto margins get nothing to centre with — so the
+  panel stood at its own cap over a page of empty space. A `fit-content`
+  height is a definite size, so the box shrinks to its content and the margins
+  centre it.
+- **No rule between the shelves.** Six lines through six short rows is more
+  structure than the list has; the three columns already say where a row
+  begins. The rule above the totals stays — that line is a different thing.
 - **The progress bar is absolutely positioned on the row's bottom rule.** In
   the flow it appeared and disappeared with the download, pushing every shelf
   below it down and pulling them back up under the reader's finger; reserving
