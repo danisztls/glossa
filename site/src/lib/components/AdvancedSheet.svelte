@@ -443,8 +443,8 @@
 	/* NO RULE BETWEEN THE SHELVES. Six lines through six short rows is more
 	   structure than the list has: the names are one column, the sizes a
 	   second and the controls a third, and that alignment already says where a
-	   row begins and ends. The rule under the last one stays, because the
-	   totals line below it is a different kind of thing — see `.foot`. */
+	   row begins and ends. Nor under the last one: the totals line below it is
+	   set off by air alone — see `.foot`. */
 	.shelf + .shelf {
 		margin-block-start: 0.1rem;
 	}
@@ -565,12 +565,11 @@
 		transition: inline-size 200ms linear;
 	}
 
-	/* A row, set off from the shelves by a rule and a little air rather than by
-	   being built differently. The size cell holds a sum instead of a shelf's
-	   own bytes, which is the only thing about it that is not a shelf. */
+	/* A row, set off from the shelves by air rather than by being built
+	   differently. The size cell holds a sum instead of a shelf's own bytes,
+	   which is the only thing about it that is not a shelf. */
 	.foot {
 		margin-block-start: 0.55rem;
-		border-block-start: 1px solid var(--color-border);
 		padding-block-start: 0.55rem;
 	}
 
