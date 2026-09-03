@@ -1104,14 +1104,15 @@ covers one axis and gets `data-theme='light'` on a dark-preferring OS
 backwards. Inline, `fill: currentColor` follows all four for nothing. It is its
 own file rather than an entry in `Icon.svelte`, whose docblock promises it is
 the only importer of `@lucide/svelte`; `Wordmark.svelte` is the precedent for a
-mark that is live geometry. **It is an OUTLINE, and so it had to become a
-traced perimeter** — it was six overlapping rectangles while it was a solid
-fill, which union cleanly under `fill` and draw every internal edge under
-`stroke`, giving a lattice of boxes rather than a cross. `POTENT` is that
-perimeter, clockwise from the top bar's left corner. **The proportions and the
-stroke were rasterized, not estimated** — at the footer's ~36px, 2.5 goes
-spindly and 3.5 closes the crosslets' counters, and round joins blob every
-corner; re-render before touching a number. And **draw the plain
+mark that is live geometry. **It is five plain crosses of two lines each, and
+the arms are deliberately NOT potent** — heraldically a Jerusalem Cross caps
+each arm with a bar, and it was drawn that way twice (a solid fill, then a
+traced perimeter) before both were dropped: at the ~36px the footer sets it at,
+the bars and their counters close into texture. The ARRANGEMENT is what
+identifies the mark; the detail only survives at display size. **The stroke and
+the spacing were rasterized, not estimated** — 2.5 goes spindly at 36px and 4
+thickens the crosslets into blocks, and the geometry leaves nine units of
+clearance on every side of every crosslet. Re-render before touching a number. And **draw the plain
 five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
 in the Order of the Holy Sepulchre's arrangement, because a mark drifting
 toward a specific body's ARMS would contradict the sentence beside it.

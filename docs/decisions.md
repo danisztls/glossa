@@ -2835,6 +2835,16 @@ a mark drifting there would contradict the sentence printed next to it. The comp
 docblock carries that rule, so making it look "more official" has to be a decision someone
 takes rather than a tidy-up.
 
+**The mark is drawn as five plain crosses of two crossed lines, and the arms are not
+potent.** Heraldry caps each arm of a Jerusalem Cross with a bar, and it was built that way
+twice — a solid fill, then a traced outline — before both were dropped for the same
+measured reason: at the ~36px the footer actually sets it at, the bars and the counters
+between them close into texture, so the detail costs legibility and buys nothing. What
+identifies the mark at any size is the ARRANGEMENT, one cross with a smaller cross in each
+quadrant, and that is what is kept. The general rule is the one the drop caps and the
+favicon already record — decide a mark's detail at the size it is SET, not at the size it
+is designed.
+
 **Two canons bite harder than 216 and are not addressed by any of this**, recorded here so
 nobody reads the colophon paragraph as having settled them. **C. 826 §3**: collections of
 prayers for the public or private use of the faithful are not to be published except with the
