@@ -34,9 +34,9 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 15110,
-				"recognized": 3006,
-				"nothing": 1417
+				"linkable": 15301,
+				"recognized": 2837,
+				"nothing": 1395
 			},
 			"prose": {
 				"blocks": 26088,
@@ -126,11 +126,6 @@
 					"example": "Pontificale Romanum. De Ordinatione Episcopi, presbyterorum et diaconorum, De Ordinatione "
 				},
 				{
-					"key": "cdf instr.",
-					"count": 13,
-					"example": "CDF, instr. “Libertatis conscientia” 13."
-				},
-				{
 					"key": "preghiera eucaristica",
 					"count": 12,
 					"example": "Preghiera eucaristica IV: Messale Romano (Libreria Editrice Vaticana 1983) p. 412."
@@ -169,6 +164,152 @@
 					"key": "ordo exsequiarum",
 					"count": 10,
 					"example": "Ordo exsequiarum, 50, editio typica (Typis Polyglottis Vaticanis 1969) p. 23."
+				},
+				{
+					"key": "st. john",
+					"count": 9,
+					"example": "St. John of the Cross, the Ascent of Mount Carmel 2, 22, 3-5 in The Collected Works of St."
+				}
+			]
+		},
+		"cdf": {
+			"citations": {
+				"total": 9181,
+				"linkable": 5325,
+				"recognized": 1510,
+				"nothing": 2346
+			},
+			"prose": {
+				"blocks": 5264,
+				"scripture": 3665,
+				"document": 22,
+				"stored": 0
+			},
+			"residue": [
+				{
+					"key": "ibid. n.",
+					"count": 116,
+					"example": "Cf. ibid., n. 302."
+				},
+				{
+					"key": "ibid.",
+					"count": 46,
+					"example": "Ibid."
+				},
+				{
+					"key": "] cf.",
+					"count": 36,
+					"example": "] Cf. SYNODUS EPISCOPORUM, II Coetus extraordinarius (1985), Relatio finalis, II, C), 1. ["
+				},
+				{
+					"key": "francisco discurso",
+					"count": 34,
+					"example": "Cf. Francisco, Discurso a la Sesión del G7 sobre la Inteligencia Artificial en Borgo Egnaz"
+				},
+				{
+					"key": "ordo baptismi",
+					"count": 32,
+					"example": "Ordo baptismi parvulorum, ed. typica, Rom, 15. Mai 1969."
+				},
+				{
+					"key": "catéchisme de",
+					"count": 24,
+					"example": "Cf. Catéchisme de l’Église catholique, n. 1681."
+				},
+				{
+					"key": "françois discours",
+					"count": 24,
+					"example": "Cf. François, Discours à la Session du G7 sur l’Intelligence Artificielle à Borgo Egnazia "
+				},
+				{
+					"key": "francis address",
+					"count": 23,
+					"example": "Cf. Francis, Address at the G7 Session on Artificial Intelligence in Borgo Egnazia (Puglia"
+				},
+				{
+					"key": "catechismo della",
+					"count": 22,
+					"example": "Cf. Catechismo della Chiesa Cattolica, n. 1681."
+				},
+				{
+					"key": "francesco discorso",
+					"count": 22,
+					"example": "Cf. Francesco, Discorso alla Sessione del G7 sull’Intelligenza Artificiale a Borgo Egnazia"
+				},
+				{
+					"key": "catecismo de",
+					"count": 21,
+					"example": "Cf. Catecismo de la Iglesia Católica, n. 1681."
+				},
+				{
+					"key": "] cfr.",
+					"count": 20,
+					"example": "] Cfr. Rm 6,6; 7, 23. ["
+				},
+				{
+					"key": "vgl. ebd.",
+					"count": 18,
+					"example": "Vgl. ebd., 28: l.c., 939."
+				},
+				{
+					"key": "ibidem n.",
+					"count": 18,
+					"example": "Ibidem, n. 1."
+				},
+				{
+					"key": "por. tamże",
+					"count": 18,
+					"example": "Por. tamże, 43 i 75."
+				},
+				{
+					"key": "francis message",
+					"count": 17,
+					"example": "Cf. Francis, Message for the LVIII World Day of Social Communications (24 January 2024): L"
+				},
+				{
+					"key": "francisco mensaje",
+					"count": 17,
+					"example": "Cf. Francisco, Mensaje para la LVIII Jornada Mundial de las Comunicaciones Sociales (24 de"
+				},
+				{
+					"key": "françois message",
+					"count": 17,
+					"example": "Cf. François, Message pour la LVIIIe Journée Mondiale des Communications Sociales (24 janv"
+				},
+				{
+					"key": "francesco messaggio",
+					"count": 17,
+					"example": "Cf. Francesco, Messaggio per la LVIII Giornata Mondiale delle Comunicazioni Sociali (24 ge"
+				},
+				{
+					"key": "catechism of",
+					"count": 16,
+					"example": "Catechism of the Catholic Church, par. 356. Cf. ibid., par. 221."
+				},
+				{
+					"key": "john paul",
+					"count": 16,
+					"example": "John Paul II, Act of Entrustment to Mary for the Jubilee of Bishops (8 October 2000), par."
+				},
+				{
+					"key": "conseil pontifical",
+					"count": 16,
+					"example": "Conseil pontifical pour les communications sociales, Ethique sur Internet (22 février 2002"
+				},
+				{
+					"key": "ibidem.",
+					"count": 16,
+					"example": "Ibidem."
+				},
+				{
+					"key": "pontifical council",
+					"count": 15,
+					"example": "Cf. Pontifical Council for Social Communications, Ethics in Internet (22 February 2002), p"
+				},
+				{
+					"key": "r. pontificio",
+					"count": 15,
+					"example": "Cfr. Pontificio Consejo para los Agentes Sanitarios, Nueva carta de los Agentes sanitarios"
 				}
 			]
 		},
@@ -204,15 +345,15 @@
 		},
 		"csdc": {
 			"citations": {
-				"total": 9824,
-				"linkable": 6445,
-				"recognized": 1684,
-				"nothing": 1695
+				"total": 9821,
+				"linkable": 6584,
+				"recognized": 1566,
+				"nothing": 1671
 			},
 			"prose": {
-				"blocks": 6270,
-				"scripture": 3270,
-				"document": 215,
+				"blocks": 6061,
+				"scripture": 3264,
+				"document": 0,
 				"stored": 0
 			},
 			"residue": [
@@ -223,7 +364,7 @@
 				},
 				{
 					"key": "john paul",
-					"count": 133,
+					"count": 129,
 					"example": "John Paul II, Address at General Audience (19 October 1983), 2: L'Osservatore Romano, Engl"
 				},
 				{
@@ -262,11 +403,6 @@
 					"example": "Jean-Paul II, Discours à l'Audience générale (19 octobre 1983), 2: L'Osservatore Romano, é"
 				},
 				{
-					"key": "congregation for",
-					"count": 60,
-					"example": "Congregation for Catholic Education, Guidelines for the Study and Teaching of the Church's"
-				},
-				{
 					"key": "juan pablo",
 					"count": 46,
 					"example": "Juan Pablo II, Audiencia general (19 de octubre de 1983), 2: L'Osservatore Romano, edición"
@@ -280,6 +416,11 @@
 					"key": "congregazione per",
 					"count": 42,
 					"example": "Congregazione per l'Educazione Cattolica, Orientamenti per lo studio e l'insegnamento dell"
+				},
+				{
+					"key": "congregation for",
+					"count": 40,
+					"example": "Congregation for Catholic Education, Guidelines for the Study and Teaching of the Church's"
 				},
 				{
 					"key": "congregação para",
@@ -345,13 +486,13 @@
 		},
 		"encyclical": {
 			"citations": {
-				"total": 36800,
-				"linkable": 14171,
-				"recognized": 6441,
-				"nothing": 16188
+				"total": 39117,
+				"linkable": 15533,
+				"recognized": 6343,
+				"nothing": 17241
 			},
 			"prose": {
-				"blocks": 39757,
+				"blocks": 39735,
 				"scripture": 20114,
 				"document": 257,
 				"stored": 0
@@ -359,12 +500,12 @@
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 317,
+					"count": 326,
 					"example": "Ibid."
 				},
 				{
 					"key": ". cf.",
-					"count": 197,
+					"count": 192,
 					"example": ". Cf. Pius XI, Encyclical Letter QuadragesimoAnno, III, loc. cit., 228."
 				},
 				{
@@ -374,7 +515,7 @@
 				},
 				{
 					"key": ". por.",
-					"count": 126,
+					"count": 123,
 					"example": ". Por. tamże, s. 109 n."
 				},
 				{
@@ -383,14 +524,19 @@
 					"example": ". Tamże, s. 98."
 				},
 				{
-					"key": ". vert.",
-					"count": 98,
-					"example": ". Vert. dogmaattinen konstituutio Katolisesta uskosta (Dei Filius), III."
-				},
-				{
 					"key": "] matth.",
 					"count": 94,
 					"example": "] Matth. XXIV, 6-7. ["
+				},
+				{
+					"key": "ibid. n.",
+					"count": 93,
+					"example": "Cf. ibid., n. 82: loc. cit., 297; DC 64 (1967) col. 701."
+				},
+				{
+					"key": ". vert.",
+					"count": 90,
+					"example": ". Vert. Jumalallisesta ilmoituksesta, 4."
 				},
 				{
 					"key": "] ibid.",
@@ -403,6 +549,11 @@
 					"example": "] Cfr n. 16: l.c., 265. ["
 				},
 				{
+					"key": "ibid. t.",
+					"count": 76,
+					"example": "Ibid. t. X, p. 471; cf. t. V pp. 29, 59, 65, t. X, p. 446s."
+				},
+				{
 					"key": "ibid. p.",
 					"count": 73,
 					"example": "Ibid. p. 618."
@@ -411,11 +562,6 @@
 					"key": "] ep.",
 					"count": 71,
 					"example": "] Ep., lib. 2, ep. 74, apud Migne, Patr. lat., t. 148, col. 425. ["
-				},
-				{
-					"key": "ibid. n.",
-					"count": 70,
-					"example": "Ibid., n. 14."
 				},
 				{
 					"key": "] s.",
@@ -433,13 +579,28 @@
 					"example": "] In Epist. ad Ephes., III. ["
 				},
 				{
+					"key": "vgl. ebd.",
+					"count": 60,
+					"example": "Vgl. ebd., 82: a.a.O., 297."
+				},
+				{
 					"key": "] cf.",
 					"count": 55,
 					"example": "] Cf. Brev. Rom. in festo SS. Nom. Iesu; die III intra octavam Concept. immac. B.M.V.; in "
 				},
 				{
-					"key": ". \"katolinen",
+					"key": "romano guardini",
 					"count": 53,
+					"example": "Romano Guardini, Religiöse Gestalten in Dostojewskijs Werk, Mainz/Paderborn 1989, S. 236f."
+				},
+				{
+					"key": "ibíd.",
+					"count": 52,
+					"example": "Ibíd."
+				},
+				{
+					"key": ". \"katolinen",
+					"count": 52,
 					"example": ". \"Katolinen kirkko ja kristittyjen ykseys\", 1."
 				},
 				{
@@ -448,48 +609,28 @@
 					"example": "خطاب البابا فرنسيس خلال اللقاء المسكوني وبين الأديان مع الشباب، سكوبيي - مقدونيا الشمالية "
 				},
 				{
+					"key": "conc. trid.",
+					"count": 50,
+					"example": "Conc. Trid., sess.22, c.2."
+				},
+				{
 					"key": "] de",
 					"count": 50,
 					"example": "] De dono perseverantiae, c. 20, n. 53. ["
 				},
 				{
-					"key": "vgl. ebd.",
-					"count": 50,
-					"example": "Vgl. ebd., 10, 244."
-				},
-				{
 					"key": "archiv. secr.",
 					"count": 50,
 					"example": "Cf. Archiv. Secr. Vat., C.SS. Rituum, Processus, v. 227, p. 196."
-				},
-				{
-					"key": "romano guardini",
-					"count": 49,
-					"example": "Romano Guardini, Religiöse Gestalten in Dostojewskijs Werk, Mainz/Paderborn 1989, S. 236f."
-				},
-				{
-					"key": "ibid. t.",
-					"count": 49,
-					"example": "Ibid. t. X, p. 471; cf. t. V pp. 29, 59, 65, t. X, p. 446s."
-				},
-				{
-					"key": "ibíd.",
-					"count": 48,
-					"example": "Ibíd."
-				},
-				{
-					"key": "conc. trid.",
-					"count": 47,
-					"example": "Conc. Trid., sess.22, c.2."
 				}
 			]
 		},
 		"exhortation": {
 			"citations": {
-				"total": 38177,
-				"linkable": 11309,
-				"recognized": 6294,
-				"nothing": 20574
+				"total": 39450,
+				"linkable": 12019,
+				"recognized": 6231,
+				"nothing": 21200
 			},
 			"prose": {
 				"blocks": 30963,
@@ -500,7 +641,7 @@
 			"residue": [
 				{
 					"key": "ibid.",
-					"count": 983,
+					"count": 992,
 					"example": "Ibid."
 				},
 				{
@@ -529,6 +670,11 @@
 					"example": "Por. Propositio 2."
 				},
 				{
+					"key": "ibíd.",
+					"count": 227,
+					"example": "Ibíd."
+				},
+				{
 					"key": "ebd.",
 					"count": 173,
 					"example": "Ebd."
@@ -549,11 +695,6 @@
 					"example": "Ibid., n. 63."
 				},
 				{
-					"key": "ibíd.",
-					"count": 121,
-					"example": "Ibíd."
-				},
-				{
 					"key": "tamże.",
 					"count": 121,
 					"example": "Tamże."
@@ -570,12 +711,12 @@
 				},
 				{
 					"key": "propositio 8.",
-					"count": 80,
+					"count": 84,
 					"example": "Propositio 8."
 				},
 				{
 					"key": "propositio 4.",
-					"count": 75,
+					"count": 82,
 					"example": "Cf. Propositio 4."
 				},
 				{
@@ -594,34 +735,34 @@
 					"example": "Cf. Instrumentum laboris, \"Vocación y misión de los laicos en la Iglesia y en el mundo a l"
 				},
 				{
-					"key": "ср. предложение",
-					"count": 65,
-					"example": "Ср. Предложение 5."
-				},
-				{
 					"key": "propositio 9.",
-					"count": 61,
+					"count": 64,
 					"example": "Propositio 9."
 				},
 				{
 					"key": "propositio 14.",
-					"count": 60,
+					"count": 63,
 					"example": "Cf. Propositio 14."
 				},
 				{
-					"key": "taz. ilivyotangulia",
-					"count": 60,
-					"example": "Taz. ilivyotangulia, 63."
-				},
-				{
-					"key": "vö. propositio",
-					"count": 60,
-					"example": "Vö. Propositio 2."
-				},
-				{
 					"key": "propositio 30.",
-					"count": 59,
+					"count": 63,
 					"example": "Cf. Propositio 30."
+				},
+				{
+					"key": "propositio 38.",
+					"count": 61,
+					"example": "Cf. Propositio 38."
+				},
+				{
+					"key": "ср. propositio",
+					"count": 61,
+					"example": "Ср. Propositio 17."
+				},
+				{
+					"key": "ср. предложение",
+					"count": 61,
+					"example": "Ср. Предложение 2."
 				}
 			]
 		},
@@ -633,7 +774,7 @@
 				"nothing": 4
 			},
 			"prose": {
-				"blocks": 1188,
+				"blocks": 1226,
 				"scripture": 0,
 				"document": 0,
 				"stored": 0
@@ -676,44 +817,49 @@
 			},
 			"residue": []
 		},
-		"vatii": {
+		"vati": {
 			"citations": {
-				"total": 9998,
-				"linkable": 5161,
-				"recognized": 1996,
-				"nothing": 2841
+				"total": 0,
+				"linkable": 0,
+				"recognized": 0,
+				"nothing": 0
 			},
 			"prose": {
-				"blocks": 7580,
-				"scripture": 5894,
+				"blocks": 58,
+				"scripture": 18,
+				"document": 0,
+				"stored": 0
+			},
+			"residue": []
+		},
+		"vatii": {
+			"citations": {
+				"total": 10028,
+				"linkable": 5460,
+				"recognized": 1822,
+				"nothing": 2746
+			},
+			"prose": {
+				"blocks": 7570,
+				"scripture": 5891,
 				"document": 847,
 				"stored": 0
 			},
 			"residue": [
 				{
 					"key": "] cf.",
-					"count": 201,
+					"count": 178,
 					"example": "] Cf. Ibid., n. 12. ["
 				},
 				{
 					"key": "пар. 1",
-					"count": 57,
+					"count": 56,
 					"example": "Пар. 1 П 1, 23."
 				},
 				{
-					"key": "sal. vatikāna",
-					"count": 46,
-					"example": "Sal. Vatikāna II koncils, Dogm. konst., 2."
-				},
-				{
 					"key": "sal. 1",
-					"count": 46,
+					"count": 45,
 					"example": "Sal. 1 Pēt 1, 23."
-				},
-				{
-					"key": "conc. vat.",
-					"count": 44,
-					"example": "Cf. CONC. VAT. II, Decr. sul rinnovamento della vita religiosa, n. 8: [pag. 419ss]."
 				},
 				{
 					"key": "missale romanum",
@@ -741,11 +887,6 @@
 					"example": "Taz. Efe 1:10."
 				},
 				{
-					"key": "r. conc.",
-					"count": 36,
-					"example": "Cfr. Conc. Vat. II, ibid., n.° 36-38."
-				},
-				{
 					"key": "пар. 2",
 					"count": 35,
 					"example": "Пар. 2 Кар 5, 19."
@@ -754,6 +895,11 @@
 					"key": "sal. jņ",
 					"count": 35,
 					"example": "Sal. Jņ 11, 52."
+				},
+				{
+					"key": "sal. vatikāna",
+					"count": 34,
+					"example": "Sal. Vatikāna II koncils, Dogm. konst., 2."
 				},
 				{
 					"key": "taz. yn",
@@ -771,11 +917,6 @@
 					"example": "Cfr. S. Pio X, aloc. à Associação católica da juventude francesa acerca da piedade, ciénci"
 				},
 				{
-					"key": "пар. conc.",
-					"count": 34,
-					"example": "Пар. CONC. VAT. I, Const. dogm. I, de Ecclesia Christi, Pastor aeternus, cap. 3, DENZ. 828"
-				},
-				{
 					"key": "sal. 2",
 					"count": 33,
 					"example": "Sal. 2 Kor 5, 19."
@@ -791,19 +932,9 @@
 					"example": "cf. Pius XII, allocution to cardinals, Feb. 18, 1946: A.A.S. 38 (1946) pp. 101-102; Idem.,"
 				},
 				{
-					"key": "] conc.",
-					"count": 31,
-					"example": "] Conc. Vat. I, Const. dogm. De fide cath., chap. 3, sur la foi: Denz. 1789 (3008). ["
-				},
-				{
 					"key": "пар. дз",
 					"count": 30,
 					"example": "Пар. Дз 1, 8."
-				},
-				{
-					"key": "taz. conc.",
-					"count": 30,
-					"example": "Taz. Conc. Vat.I, Const. dogm.I, de Ecclesia Christi, Pastor aeternus, c. 3. Denz. 1828 (3"
 				},
 				{
 					"key": "sal. apd",
@@ -811,9 +942,34 @@
 					"example": "Sal. Apd 1, 8."
 				},
 				{
+					"key": "r. conc.",
+					"count": 28,
+					"example": "Cfr. Conc. Vat. II, ibid., n.° 36-38."
+				},
+				{
 					"key": "taz. 1kor",
 					"count": 28,
 					"example": "Taz. 1Kor 9:16."
+				},
+				{
+					"key": "taz. mdo",
+					"count": 27,
+					"example": "Taz. Mdo 1:8."
+				},
+				{
+					"key": "пар. рым",
+					"count": 26,
+					"example": "Пар. Рым 6, 4-11; Клс 2, 12-13; 1 П 3, 21-22; Mк 16, 16."
+				},
+				{
+					"key": "пар. s.",
+					"count": 26,
+					"example": "Пар. S. PIUS X, Alloc. ad catholicam Associationem Iuventutis Gallicae de pietate, scienti"
+				},
+				{
+					"key": "] conc.",
+					"count": 25,
+					"example": "] Conc. Vat. I, Const. dogm. De fide cath., chap. 3, sur la foi: Denz. 1789 (3008). ["
 				}
 			]
 		}

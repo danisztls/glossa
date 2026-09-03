@@ -1961,8 +1961,18 @@ if (publishedDefeats.length > 0) {
  *  which is simply how long that document is in Arabic.
  *
  *  The Compendium of the Social Doctrine's own appendix was exempt here too
- *  until 2026-09-02 and is no longer shipped at all — see the branch above. */
-const CEILING_EXEMPT_KINDS = new Set(['document-appendix']);
+ *  until 2026-09-02 and is no longer shipped at all — see the branch above.
+ *
+ *  A PLATE IMAGE is the same statement in the other medium, and it entered
+ *  the manifest on 2026-09-02 only so the offline library could price it
+ *  (see `syncPlates`): an AVIF holds one engraving, the reader who opens it
+ *  wants that engraving, and there is no split of it that is anything but a
+ *  broken picture. The ceiling caught 224 of Doré's at the derived widths and
+ *  asked for chunking, which is the one remedy that cannot exist here. What
+ *  DOES bound these is the derivation — `PLATE_WIDTHS` and the encoder in
+ *  `pipeline/scrapers/dore.py` — so a plate that grew is a re-encode
+ *  question, not a chunking one. */
+const CEILING_EXEMPT_KINDS = new Set(['document-appendix', 'plate-image']);
 
 const oversized = contentManifest
 	.filter(
