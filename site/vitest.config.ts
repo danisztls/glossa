@@ -15,8 +15,31 @@ import { defineConfig } from 'vitest/config';
 // "Cannot find module", and a scratch test constructing a `$state`-based
 // store threw `ReferenceError: $state is not defined` (the literal,
 // uncompiled rune call) — both fixed by this one `await`.
+// The argument is `{}` and it is not decoration. `sveltekit()` called with
+// NOTHING loads `svelte.config.js`, which this project does not have — its
+// Kit options are passed inline in `vite.config.ts` — so every `npm test`
+// printed `No Svelte config file found in …/site - using SvelteKit's default
+// configuration without an adapter.` before its first line of output. Passing
+// an object takes the "options from the Vite config" branch instead
+// (@sveltejs/kit's exports/vite/index.js), which is silent. The validated
+// config is the same either way: both end in `process_config` over an empty
+// object, and nothing under `vitest run` reads an adapter.
+//
+// `runes` is here because a divergence in it would be silent and confusing
+// rather than harmless — it is the one Kit option `vite.config.ts` sets that
+// changes how a file COMPILES, and a `.svelte` component compiled one way by
+// the dev server and another by a test is a difference no test could report
+// as itself. Nothing imports a component today (`environment: 'node'`), which
+// is exactly when a divergence like this gets written down instead of found.
 export default defineConfig({
-	plugins: [await sveltekit()],
+	plugins: [
+		await sveltekit({
+			compilerOptions: {
+				runes: ({ filename }) =>
+					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
+			}
+		})
+	],
 	test: {
 		include: ['src/**/*.test.ts'],
 		environment: 'node'

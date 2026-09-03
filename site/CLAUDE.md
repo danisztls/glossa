@@ -167,6 +167,41 @@ page, and read the dev log — `dependency optimized: <name>` followed by
 `optimized dependencies changed. reloading` is this, and nothing in the
 browser is involved. Add the dep to `include` and neither line appears.
 
+**THE OTHER CACHE WAS A REAL HAZARD TOO, AND `vite dev` NOW UNINSTALLS IT**
+(2026-09-02, §Process). `vite.config.ts`'s `glossa:dev-service-worker` plugin
+resolves `src/service-worker.ts` to `src/service-worker.dev.ts` under `serve`:
+a worker that caches nothing, intercepts nothing, and on `activate` drops every
+`glossa-*` cache and unregisters itself. Both premises the real worker's
+caching rests on are FALSE against the dev server, and each has a symptom that
+does not look like a cache —
+
+- **Content URLs are not content-hashed in dev** (`/src/lib/corpus-data/…`,
+  from `content-urls.dev.ts`) and `CONTENT_CACHE` is unversioned, so
+  `cacheFirstAndStore` pins the first read of a corpus file to that path
+  **permanently**. Re-run `sync-corpus` and the browser serves the old text,
+  and restarting the dev server does not help — nothing sweeps that cache but
+  `CLEAR_CONTENT` or clearing site data by hand.
+- **`version` changes per dev-server PROCESS, not per deploy** (`buildId()`
+  carries the minute), and the shell precache includes `/` — the document every
+  route is served from. So `src/app.html` edits appear to do nothing until the
+  server is restarted, which is what makes "restart it and it's fine" read as a
+  Vite problem.
+
+There is a third cost that is not staleness at all: in dev the real worker's
+module graph is **nine modules and 9.03 MB**, 8.82 MB of it
+`content-manifest.json` and its inline sourcemap. A service worker is stopped
+when idle and started again on the next event, and a controlled page's requests
+wait behind that start — paid again on every full reload, which is what an edit
+to any `.ts` module costs. The dev twin's graph is two modules and 11.9 KB.
+
+**Substituting the module is what `register: false` could not do.** That was
+tried first and reverted (above): it cannot evict a worker a browser already
+installed, so it only ever helped a profile that never had the problem. This
+keeps SvelteKit's registration exactly as a build has it — same shim, same
+`sw.svelte.ts` — and changes only what gets registered, so the eviction reaches
+the profiles that need it. **`npm run preview` is where the real worker is
+exercised**, and always was: it serves a build, so both premises hold.
+
 **The worktree trap shrank but did not vanish.** The default is
 `../../glossa-corpus` resolved from `site/`, so a worktree beside the main
 checkout finds the corpus. Anywhere else, the site silently falls back to the

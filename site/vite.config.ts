@@ -136,6 +136,50 @@ function devContentUrls(): Plugin {
 	};
 }
 
+/**
+ * In `vite dev` only, resolve the service worker to `service-worker.dev.ts` —
+ * a worker whose whole job is to uninstall the real one and drop its caches.
+ *
+ * WHY THE REAL WORKER CANNOT RUN HERE is argued in the dev twin's own
+ * docblock: both premises its caching rests on (content-hashed URLs, a
+ * `version` that turns over per deploy) are false against the dev server, so
+ * it pins corpus bytes to an unhashed path permanently and serves `/` itself
+ * cache-first out of a per-dev-server-process cache. Everything the person
+ * editing this site sees of that is "my change did not appear" and "restarting
+ * the server fixed it".
+ *
+ * SUBSTITUTING THE MODULE RATHER THAN SUPPRESSING THE REGISTRATION is the
+ * point. `kit.serviceWorker.register: false` under `command === 'serve'` was
+ * the first answer (2026-09-01, reverted 2026-09-02): it cannot evict a worker
+ * a browser has already installed, so it helps exactly the profiles that never
+ * had the problem, and it makes dev and production take different registration
+ * paths. This changes what is registered and nothing else.
+ *
+ * Matching the SPECIFIER rather than an importer, unlike `glossa:dev-content-
+ * urls` above: SvelteKit's dev shim is generated markup, not a module in this
+ * tree, and it imports the worker by absolute `/@fs/` path — so the file is
+ * the only thing there is to recognise, and one file is the whole rule.
+ * `apply: 'serve'` is what keeps this out of a build, where the real worker is
+ * the one that ships.
+ */
+function devServiceWorker(): Plugin {
+	const src = (name: string) =>
+		path.resolve(fileURLToPath(new URL('.', import.meta.url)), 'src', name);
+	const real = src('service-worker.ts');
+	const twin = src('service-worker.dev.ts');
+
+	return {
+		name: 'glossa:dev-service-worker',
+		apply: 'serve',
+		enforce: 'pre',
+		resolveId(source) {
+			const specifier = source.split('?', 1)[0];
+			const file = specifier.startsWith('/@fs/') ? specifier.slice('/@fs'.length) : specifier;
+			return file === real ? twin : null;
+		}
+	};
+}
+
 export default defineConfig({
 	define: {
 		__CORPUS_DATA_DIR__: JSON.stringify(corpusDataDir)
@@ -207,6 +251,7 @@ export default defineConfig({
 	},
 	plugins: [
 		devContentUrls(),
+		devServiceWorker(),
 		sveltekit({
 			// See `buildId` above for why this is not SvelteKit's default
 			// timestamp, and why dropping either half of it breaks something.

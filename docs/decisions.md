@@ -3405,6 +3405,65 @@ deletion, which — now that the mechanism is understood — it cannot, since th
 what provokes the re-optimization; the observation was of a second cold start, not of a
 cache that had been left alone.
 
+**AND THEN THE OTHER CACHE TURNED OUT TO BE REAL AS WELL** (2026-09-02, same day, later).
+With the pin in place the dev server no longer re-optimizes — checked the way the entry
+above prescribes, from cold, crawling the whole 464-module client graph over HTTP: no
+`dependency optimized:` line, no `optimized dependencies changed. reloading`. The
+complaint survived it, and grew a second half that the optimizer cannot produce at all —
+_"often the changed content doesn't show, so I close the tab and restart the server."_
+That is a browser cache being described, and this time it was.
+
+**The service worker's design rests on two premises a build satisfies and `vite dev`
+does not.** Neither is a bug in the worker; both are it being right about a build and
+running somewhere else:
+
+- **Content URLs are content-hashed**, which is the entire licence for
+  `cacheFirstAndStore` to keep a file forever without revalidating — a changed file is a
+  different URL. In dev they are plain paths (`/src/lib/corpus-data/…`, from
+  `content-urls.dev.ts`, which exists because the real glob costs 2,590 module requests)
+  and `CONTENT_CACHE` is unversioned. So the first read of a corpus file pins those bytes
+  to that path permanently: re-run `sync-corpus` and the browser serves the old text, and
+  restarting the dev server does **not** help, because nothing sweeps that cache but a
+  `CLEAR_CONTENT` message or clearing site data by hand. This is the half that reads as
+  "often".
+- **`version` changes per deploy**, so `SHELL_CACHE` turns over and `activate` sweeps the
+  old one. In dev it changes per dev-server PROCESS — `buildId()` carries the minute — and
+  the shell precache includes `/` itself, the one document every address is served from.
+  Between restarts the boot document comes cache-first out of a snapshot. This is the half
+  that reads as "restart the server", and it is why the restart looked like it was fixing
+  Vite.
+
+**There is a third cost that is not staleness, and it is the one that answers "reloading
+forever".** In dev the real worker's module graph is nine modules and **9.03 MB**, of
+which 8.82 MB is `content-manifest.json` and its inline sourcemap (measured by crawling
+`/service-worker.js` transitively). A service worker is stopped when idle and started
+again on the next event, and a controlled page's requests wait behind that start. An edit
+to any `.ts` module is a full reload (the HMR entry above), so that is paid again on every
+edit. The dev twin's graph is two modules and 11.9 KB.
+
+**The fix substitutes the MODULE, which is precisely what `register: false` could not
+do.** `vite.config.ts`'s `glossa:dev-service-worker` resolves `src/service-worker.ts` to
+`src/service-worker.dev.ts` under `apply: 'serve'` — a worker that registers no `fetch`
+handler, never calls `clients.claim()`, and on `activate` deletes every `glossa-*` cache
+and unregisters itself. SvelteKit's shim still registers `./service-worker.js` exactly as
+it does in a build and `sw.svelte.ts` still wires itself up, so the eviction reaches the
+profile that has the problem — the failure of the previous day's answer, which could only
+help a profile that never had one. Registering no `fetch` handler is what makes the
+interval between activation and the tab closing harmless; skipping `claim()` is what stops
+a reload loop, since a page loaded after the unregistration is never controlled, never
+fires `controllerchange`, and so is never reloaded by `#land()`. The one reload that does
+happen is the handover from the real worker, which is the reload that shows the evicted
+content fresh.
+
+**Two things this deliberately does not do.** It does not touch `src/service-worker.ts`
+with an `import.meta.env.DEV` branch — the file would still import the 8.8 MB manifest to
+reach the branch, and the dev twin sits beside `content-urls.dev.ts` and `plate-urls.dev.ts`
+under a rule the config already states. And it does not try to make the worker correct in
+dev, which would mean inventing content hashes the dev server has no reason to produce.
+`npm run preview` serves a build and is where the worker is exercised — as it already was
+for the 2,590-module glob, which is the second time "preview is always fine" has been the
+tell.
+
 **73.8% OF EVERY BYTE THE DEV SERVER SENDS IS AN INLINE SOURCEMAP**, and three attempts
 to turn that off all failed. The graph is 411 modules and 18.78 MB, of which 13.85 MB is
 base64 `sourceMappingURL` payload; `content-manifest.json` alone is served as 8,552,054
