@@ -236,6 +236,16 @@ silent, corpus-wide no-op.
   before/after, reason and evidence — never a code special-case, never
   invented text. A defect with no known correct value gets documented, not
   fixed (§Corrections and overrides).
+- **A citation correction needs a witness INSIDE the edition.**
+  `find-gazette-siglum.py` proposes `AAS` -> `ASS` (the gazette renamed in 1909) only where the edition writes both sigla at pre-1909 citations, so its
+  own correct uses are the evidence — Latin Lumen gentium prints both in ONE
+  footnote. 36 entries filed for that document's la/en/es/sw; the 56 editions
+  that write `AAS` uniformly are a practice, not a slip, and are refused
+  (`--practice`). See §Corrections and overrides.
+- **A defect proposer must read the page the parser reads**, which means
+  applying already-filed corrections to the raw HTML first — `raw/` is never
+  modified, so without that a second run finds the defect in the page, not in
+  the parse, and refuses everything as unlocatable.
 - **That rule is about PROSE. Broken markup is the parser's business.** A
   correction amends what the source _said_ and must be auditable; a mangled
   tag changes nothing a reader reads and only decides whether the parser can

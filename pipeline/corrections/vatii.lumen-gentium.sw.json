@@ -1,0 +1,223 @@
+[
+  {
+    "id": "vatii.lg.sw-sec7-fn8-ass29",
+    "locator": {
+      "section": 7,
+      "marker": "8"
+    },
+    "field": "raw_text",
+    "from": "Divinum illud</i>, 9 mei 1897: \n             <i>AAS </i>29 (1896-97)",
+    "to": "Divinum illud</i>, 9 mei 1897: \n             <i>ASS </i>29 (1896-97)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 29 of the ASS is 1896-1897, while AAS 29 is 1937. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'Divinum illud</i>, 9 mei 1897: \\n             <i>AAS </i>29 (1896-97)'. The parse carries this as section 7, footnote 8: 'Taz. Leo XIII, Enc. Divinum illud, 9 mei 1897: AAS 29 (1896-97) uk. 650. – Pius XII, Enc. Mystici Corporis, l.c., uk. 219-220; Denz. 2288 (3808). – Mt. Augustinus, Serm. 268,2: PL 38, 1232 na nyingine. – Mt. Ioannes Chrys., In Eph., Hom. 9, 3: PG 62, 72. – Didymus Alex., Trin. 2, 1: PG 39, 449 s. – Mt. Thomas, In Col. 1, 18, lect. 5: Ed. Marietti, II, n. 46: “Kama ulivyowekwa mwili mmoja kutoka kwa umoja wa roho ( animae), vivyo hivyo Kanisa kutoka kwa umoja wa Roho...”.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec8-fn9-ass22",
+    "locator": {
+      "section": 8,
+      "marker": "9"
+    },
+    "field": "raw_text",
+    "from": "istianae</i>, 10 jenuari 1890: \n             <i>AAS </i>22 (1889-90)",
+    "to": "istianae</i>, 10 jenuari 1890: \n             <i>ASS </i>22 (1889-90)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 22 of the ASS is 1889-1890, while AAS 22 is 1930. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'istianae</i>, 10 jenuari 1890: \\n             <i>AAS </i>22 (1889-90)'. The parse carries this as section 8, footnote 9: 'Taz. Leo XIII, Enc. Sapientiae Christianae, 10 jenuari 1890: AAS 22 (1889-90) uk. 392. Id., Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 710 na 724 ss. – Pius XII, Enc. Mystici Corporis, l.c., uk. 199-200.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec8-fn9-ass28",
+    "locator": {
+      "section": 8,
+      "marker": "9"
+    },
+    "field": "raw_text",
+    "from": "d., Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>AAS </i>28 (1895-96)",
+    "to": "d., Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'd., Epist. Enc. \\n             <i>Satis cognitum</i>, 29 juni 1896: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 8, footnote 9: 'Taz. Leo XIII, Enc. Sapientiae Christianae, 10 jenuari 1890: AAS 22 (1889-90) uk. 392. Id., Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 710 na 724 ss. – Pius XII, Enc. Mystici Corporis, l.c., uk. 199-200.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec8-fn11-ass28",
+    "locator": {
+      "section": 8,
+      "marker": "11"
+    },
+    "field": "raw_text",
+    "from": "n11\">[11]</a>Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>AAS </i>28 (1895-96)",
+    "to": "n11\">[11]</a>Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'n11\">[11]</a>Taz. Leo XIII, Epist. Enc. \\n             <i>Satis cognitum</i>, 29 juni 1896: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 8, footnote 11: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 713.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec15-fn28-ass26",
+    "locator": {
+      "section": 15,
+      "marker": "28"
+    },
+    "field": "raw_text",
+    "from": "atulationis</i>, 20 juni 1894: \n             <i>AAS </i>26 (1893-94)",
+    "to": "atulationis</i>, 20 juni 1894: \n             <i>ASS </i>26 (1893-94)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 26 of the ASS is 1893-1894, while AAS 26 is 1934. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'atulationis</i>, 20 juni 1894: \\n             <i>AAS </i>26 (1893-94)'. The parse carries this as section 15, footnote 28: 'Taz. Leo XIII, Epist. Apost. Praeclare gratulationis, 20 juni 1894: AAS 26 (1893-94) uk. 707.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec15-fn29-ass28",
+    "locator": {
+      "section": 15,
+      "marker": "29"
+    },
+    "field": "raw_text",
+    "from": "n29\">[29]</a>Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>AAS </i>28 (1895-96)",
+    "to": "n29\">[29]</a>Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'n29\">[29]</a>Taz. Leo XIII, Epist. Enc. \\n             <i>Satis cognitum</i>, 29 juni 1896: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 15, footnote 29: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 738. – Id. Epist. Enc. Caritatis studium, 25 julai 1898: AAS 31 (1898-99) uk. 11. – Pius XII, Nuntius radioph. Nell’alba, 24 desemba 1941: AAS 34 (1942) uk.21.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec15-fn29-ass31",
+    "locator": {
+      "section": 15,
+      "marker": "29"
+    },
+    "field": "raw_text",
+    "from": "is studium</i>, 25 julai 1898: \n             <i>AAS </i>31 (1898-99)",
+    "to": "is studium</i>, 25 julai 1898: \n             <i>ASS </i>31 (1898-99)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 31 of the ASS is 1898-1899, while AAS 31 is 1939. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'is studium</i>, 25 julai 1898: \\n             <i>AAS </i>31 (1898-99)'. The parse carries this as section 15, footnote 29: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 738. – Id. Epist. Enc. Caritatis studium, 25 julai 1898: AAS 31 (1898-99) uk. 11. – Pius XII, Nuntius radioph. Nell’alba, 24 desemba 1941: AAS 34 (1942) uk.21.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec19-fn39-ass21",
+    "locator": {
+      "section": 19,
+      "marker": "39"
+    },
+    "field": "raw_text",
+    "from": "az.Leo XIII, Epist. \n             <i>Et sane</i>, 17 desemba 1888: \n             <i>AAS </i>21 (1888)",
+    "to": "az.Leo XIII, Epist. \n             <i>Et sane</i>, 17 desemba 1888: \n             <i>ASS </i>21 (1888)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 21 of the ASS is 1888, while AAS 21 is 1929. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'az.Leo XIII, Epist. \\n             <i>Et sane</i>, 17 desemba 1888: \\n             <i>AAS </i>21 (1888)'. The parse carries this as section 19, footnote 39: 'Taz. Liber sacramentorum Mt. Gregorii, Praef. in natali Mt. Matthiae et Mt. Thomae: PL 78, 51 na 152; taz. Cod. Vat. lat. 3548, f.18 – Mt. Hilarius Pict., In Ps. 67,10: PL 9, 450; CSEL 22, uk.286. – Mt. Hieronymus, Adv. Iovin. 1,26: PL 23, 247A.-S. – Mt. Augustinus, In Ps. 86,4: PL 37, 1103. – Mt. Gregorius M., Mor. in Iob XXVIII,V: PL 76, 455-456. – Primatius, Comm. in Apoc. V: PL 66, 924BC. – Paschasius Radb., In Mt. L.8, cap.16: PL 120, 561C. – Taz.Leo XIII, Epist. Et sane, 17 desemba 1888: AAS 21 (1888) uk. 321.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec20-fn50-ass28",
+    "locator": {
+      "section": 20,
+      "marker": "50"
+    },
+    "field": "raw_text",
+    "from": "50\">[50]</a> Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>AAS </i>28 (1895-96)",
+    "to": "50\">[50]</a> Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: '50\">[50]</a> Taz. Leo XIII, Epist. Enc. \\n             <i>Satis cognitum</i>, 29 juni 1896: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 20, footnote 50: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 732.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec20-fn52-ass21",
+    "locator": {
+      "section": 20,
+      "marker": "52"
+    },
+    "field": "raw_text",
+    "from": "z. Leo XIII, Epist. \n             <i>Et sane</i>, 17 desemba 1888: \n             <i>AAS </i>21 (1888)",
+    "to": "z. Leo XIII, Epist. \n             <i>Et sane</i>, 17 desemba 1888: \n             <i>ASS </i>21 (1888)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 21 of the ASS is 1888, while AAS 21 is 1929. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'z. Leo XIII, Epist. \\n             <i>Et sane</i>, 17 desemba 1888: \\n             <i>AAS </i>21 (1888)'. The parse carries this as section 20, footnote 52: 'Taz. Leo XIII, Epist. Et sane, 17 desemba 1888: AAS 21 (1888) uk. 321 s.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec23-fn72-ass13",
+    "locator": {
+      "section": 23,
+      "marker": "72"
+    },
+    "field": "raw_text",
+    "from": "e munus</i>, 30 septemba 1880: \n             <i>AAS </i>13 (1880)",
+    "to": "e munus</i>, 30 septemba 1880: \n             <i>ASS </i>13 (1880)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 13 of the ASS is 1880, while AAS 13 is 1921. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'e munus</i>, 30 septemba 1880: \\n             <i>AAS </i>13 (1880)'. The parse carries this as section 23, footnote 72: 'Taz. Leo XIII, Epist. Enc. Grande munus, 30 septemba 1880: AAS 13 (1880) uk. 145. Taz. CIC, c. 1327; c. 1350 §2.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec27-fn95-ass28",
+    "locator": {
+      "section": 27,
+      "marker": "95"
+    },
+    "field": "raw_text",
+    "from": "95\">[95]</a> Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>AAS </i>28 (1895-96)",
+    "to": "95\">[95]</a> Taz. Leo XIII, Epist. Enc. \n             <i>Satis cognitum</i>, 29 juni 1896: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: '95\">[95]</a> Taz. Leo XIII, Epist. Enc. \\n             <i>Satis cognitum</i>, 29 juni 1896: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 27, footnote 95: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 732. Idem, Epist. Officio sanctissimo, 22 desemba 1887: AAS 20 (1887) uk. 264. – Pius IX, Litt. Apost. ad Episcopos Germaniae, 12 machi 1875, na Alloc. Consist. 15 machi 1875: Denz. 3112-3117, katika toleo jipya tu.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec27-fn95-ass20",
+    "locator": {
+      "section": 27,
+      "marker": "95"
+    },
+    "field": "raw_text",
+    "from": "ctissimo</i>, 22 desemba 1887: \n             <i>AAS </i> 20 (1887)",
+    "to": "ctissimo</i>, 22 desemba 1887: \n             <i>ASS </i> 20 (1887)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 20 of the ASS is 1887, while AAS 20 is 1928. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'ctissimo</i>, 22 desemba 1887: \\n             <i>AAS </i> 20 (1887)'. The parse carries this as section 27, footnote 95: 'Taz. Leo XIII, Epist. Enc. Satis cognitum, 29 juni 1896: AAS 28 (1895-96) uk. 732. Idem, Epist. Officio sanctissimo, 22 desemba 1887: AAS 20 (1887) uk. 264. – Pius IX, Litt. Apost. ad Episcopos Germaniae, 12 machi 1875, na Alloc. Consist. 15 machi 1875: Denz. 3112-3117, katika toleo jipya tu.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec36-fn116-ass18",
+    "locator": {
+      "section": 36,
+      "marker": "116"
+    },
+    "field": "raw_text",
+    "from": "rtale Dei</i>, 1 novemba 1885: \n             <i>AAS </i>18 (1885)",
+    "to": "rtale Dei</i>, 1 novemba 1885: \n             <i>ASS </i>18 (1885)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 18 of the ASS is 1885, while AAS 18 is 1926. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'rtale Dei</i>, 1 novemba 1885: \\n             <i>AAS </i>18 (1885)'. The parse carries this as section 36, footnote 116: 'Taz. Leo XIII, Epist. Enc. Immortale Dei, 1 novemba 1885: AAS 18 (1885) uk. 166 ss. – Id. Litt. Encicl. Sapientiae christianae, 10 jenuari 1890: AAS 22 (1889-90) uk. 397 ss. – Pius XII, Alloc. Alla vostra filiale, 23 machi 1958: AAS 50 (1958) uk. 220: “Hali ya ulei safi na wa halali ya serikali”.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec36-fn116-ass22",
+    "locator": {
+      "section": 36,
+      "marker": "116"
+    },
+    "field": "raw_text",
+    "from": "stianae</i>, 10 jenuari 1890: \n             <i> AAS </i>22 (1889-90)",
+    "to": "stianae</i>, 10 jenuari 1890: \n             <i> ASS </i>22 (1889-90)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 22 of the ASS is 1889-1890, while AAS 22 is 1930. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'stianae</i>, 10 jenuari 1890: \\n             <i> AAS </i>22 (1889-90)'. The parse carries this as section 36, footnote 116: 'Taz. Leo XIII, Epist. Enc. Immortale Dei, 1 novemba 1885: AAS 18 (1885) uk. 166 ss. – Id. Litt. Encicl. Sapientiae christianae, 10 jenuari 1890: AAS 22 (1889-90) uk. 397 ss. – Pius XII, Alloc. Alla vostra filiale, 23 machi 1958: AAS 50 (1958) uk. 220: “Hali ya ulei safi na wa halali ya serikali”.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec45-fn142-ass33",
+    "locator": {
+      "section": 45,
+      "marker": "142"
+    },
+    "field": "raw_text",
+    "from": "olations</i>, 23 desemba 1900: \n             <i>AAS </i>33 (1900-01)",
+    "to": "olations</i>, 23 desemba 1900: \n             <i>ASS </i>33 (1900-01)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 33 of the ASS is 1900-1901, while AAS 33 is 1941. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'olations</i>, 23 desemba 1900: \\n             <i>AAS </i>33 (1900-01)'. The parse carries this as section 45, footnote 142: 'Taz. Conc. Vat.I, Schema De Ecclesia Christi, cap. XV na dondoo n.48: Mansi 51, 549 s. na 619 s. – Taz. Leo XIII, Epist. Au milieu des consolations, 23 desemba 1900: AAS 33 (1900-01) uk. 361. – Pius XII, Const.Apost. Provida Mater, l.c., uk. 114 s.'.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "vatii.lg.sw-sec62-fn187-ass28",
+    "locator": {
+      "section": 62,
+      "marker": "187"
+    },
+    "field": "raw_text",
+    "from": "m populi</i>, 5 septemba 1895: \n             <i>AAS </i>28 (1895-96)",
+    "to": "m populi</i>, 5 septemba 1895: \n             <i>ASS </i>28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 2 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__sw.html: 'm populi</i>, 5 septemba 1895: \\n             <i>AAS </i>28 (1895-96)'. The parse carries this as section 62, footnote 187: 'Taz. Leo XIII, Litt. Enc. Adiutricem populi, 5 septemba 1895: AAS 28 (1895-96) uk. 129. – Mt. Pius X, Litt.Encicl. Ad diem illum, 2 februari 1904: Acta, I, uk. 154; Denz. 1978a (3370). – Pius XI, Litt. Enc. Miserentissimus Redemptor, 8 mei 1928: AAS 20 (1928) uk. 178. – Pius XII, Nuntius radioph., 13 mei 1946: AAS 38 (1946) uk. 266.'.",
+    "added": "2026-09-03"
+  }
+]

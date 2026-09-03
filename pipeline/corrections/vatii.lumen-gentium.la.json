@@ -1,0 +1,15 @@
+[
+  {
+    "id": "vatii.lg.la-sec27-fn95-ass28",
+    "locator": {
+      "section": 27,
+      "marker": "95"
+    },
+    "field": "raw_text",
+    "from": "t. Encycl. <i>Satis cognitum</i>, 29 iun. 1896: AAS 28 (1895-96)",
+    "to": "t. Encycl. <i>Satis cognitum</i>, 29 iun. 1896: ASS 28 (1895-96)",
+    "reason": "The gazette was the Acta Sanctae Sedis until 1908 and the Acta Apostolicae Sedis from 1909, and the printed year says which this is: volume 28 of the ASS is 1895-1896, while AAS 28 is 1936. Read as printed the citation names a real volume 41 years from the document it cites. THE WITNESS IS THIS EDITION ITSELF, which writes ASS at 18 other pre-1909 citation(s) and AAS here; no sibling language is relied on. One character changes and nothing else. The witness is in THIS FOOTNOTE: it writes both sigla, a few words apart, for two volumes of the same gazette.",
+    "evidence": "raw/vatican-docs/vatii__lumen-gentium__la.html: 't. Encycl. <i>Satis cognitum</i>, 29 iun. 1896: AAS 28 (1895-96)'. The parse carries this as section 27, footnote 95: 'Cf. LEO XIII, Epist. Encycl. Satis cognitum, 29 iun. 1896: AAS 28 (1895-96), p. 732. IDEM, Epist. Officio sanctissimo, 22 dec. 1887: ASS 20 (1887), p. 264. PIUS IX, Litt. Apost. ad Episcopos Germaniae, 12 mart. 1875, et Alloc. Consist., 15 mart. 1875: DENZ. 3112-3117, in nova ed. tantum.'.",
+    "added": "2026-09-03"
+  }
+]

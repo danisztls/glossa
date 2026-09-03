@@ -270,6 +270,33 @@ repaired one unit while claiming the defect was handled. The layer holds five en
 against a corpus of hundreds of works, all the same defect, filed only because the sole
 discriminator is cross-language and the parser reads one document at a time.
 
+**The edition's own inconsistency is a witness, and it is the one that licenses a
+citation correction.** The corpus writes the pre-1909 gazette under the later siglum 194
+times — `AAS 18 (1885)` for what is volume 18 of the _Acta Sanctae Sedis_ — and the
+question is which of those are defects. The test that decides it is internal:
+`find-gazette-siglum.py` proposes an entry only where **the edition writes `ASS` at some
+pre-1909 citations and `AAS` at others**, so the edition contradicts its own practice and
+its correct uses are the witness. No sibling language is relied on, which matters because
+this is a citation and not a lost space: the Latin editio typica of Lumen gentium prints
+both sigla _in one footnote_, seven words apart, and that footnote is the whole argument
+for its own correction.
+
+**The refusal is the larger half, and it is where "never modernization" bites.** 56
+editions and 134 citations write `AAS` uniformly — Czech Lumen gentium at all seventeen of
+its pre-1909 citations. A uniform practice is that edition's usage, not a slip, and there
+is no witness inside it; correcting those would impose the Latin's convention on an
+edition that consistently does otherwise. They are reported under `--practice` and filed
+nowhere. Two narrower refusals sit beside it: a volume and year that do not agree (Spanish
+`AAS 29 (1896-1807)` is the right volume with an OCR'd year — a second defect, reported,
+never bundled into the first), and a `from` that cannot be made unique, since
+`apply_raw_text_corrections` matches by string and replaces once.
+
+**A proposer must read the page the way the parser does.** The tool applies already-filed
+corrections to the raw HTML before scanning it, because `raw/` is never modified: without
+that, running it after filing finds the defect still in the page and gone from the parse,
+disagrees with itself, and refuses every entry as unlocatable. It is idempotent as a
+result, which is what makes it safe to run over the whole corpus repeatedly.
+
 **Loud failure is the point.** An override exists because the parser is wrong, so the
 parser improving is the _expected_ way for one to stop matching — indistinguishable from
 being aimed at the wrong unit unless the run says which entry and why.
