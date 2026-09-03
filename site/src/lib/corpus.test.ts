@@ -30,8 +30,11 @@ import {
 	completeEditionTags,
 	languageDisplayName,
 	resolveEditionTag,
-	PREFERRED_EDITION
+	PREFERRED_EDITION,
+	buildDocumentOutline,
+	levelSocialDoctrineRows
 } from './corpus';
+import type { DocumentNode } from './types';
 
 describe('Compendium whole-reading units', () => {
 	it('uses the innermost chapter, while retaining a section fallback before its first chapter', () => {
@@ -485,5 +488,77 @@ describe('regional editions', () => {
 		// have shown it missing, and an unnamed tag degrades to itself — the
 		// Catechism's Malagasy edition named itself "mg" in the edition menu.
 		expect(languageDisplayName('mg')).toBe('Malagasy');
+	});
+});
+
+describe('the Social Doctrine outline is re-levelled onto the division anchors', () => {
+	// The two shapes the ten editions actually take, cut down to Part One's
+	// first two chapters. English paints four levels — part, chapter, section,
+	// subsection — and Portuguese paints the first three at level 1, which is
+	// what left `csdc.pt` with 75 top-level rows and a sidebar that could not
+	// collapse anything.
+	const NESTED: DocumentNode[] = [
+		{ level: 2, title: 'INTRODUCTION', before: 1 },
+		{ level: 3, title: 'a. At the dawn', before: 7 },
+		{ level: 1, title: 'PART ONE', before: 20 },
+		{ level: 2, title: "GOD'S PLAN", before: 20, label: 'CHAPTER ONE' },
+		{ level: 3, title: "I. GOD'S LIBERATING ACTION", before: 20 },
+		{ level: 4, title: "a. God's gratuitous presence", before: 20 },
+		{ level: 4, title: 'b. The principle of creation', before: 26 },
+		{ level: 2, title: "THE CHURCH'S MISSION", before: 60, label: 'CHAPTER TWO' },
+		{ level: 3, title: 'I. EVANGELIZATION', before: 60 }
+	];
+	const FLAT: DocumentNode[] = [
+		{ level: 1, title: 'INTRODUÇÃO', before: 1 },
+		{ level: 2, title: 'a) No alvorecer', before: 7 },
+		{ level: 1, title: 'PRIMEIRA PARTE', before: 20 },
+		{ level: 1, title: 'O DESÍGNIO DE AMOR', before: 20, label: 'CAPÍTULO I' },
+		{ level: 1, title: 'I. O AGIR LIBERTADOR', before: 20 },
+		{ level: 2, title: 'a) A proximidade gratuita', before: 20 },
+		{ level: 2, title: 'b) Princípio da criação', before: 26 },
+		{ level: 1, title: 'MISSÃO DA IGREJA', before: 60, label: 'CAPÍTULO II' },
+		{ level: 1, title: 'I. A EVANGELIZAÇÃO', before: 60 }
+	];
+	const STARTS = [1, 20, 60];
+
+	it('reads the same hierarchy off both', () => {
+		// Part, division, section, subsection — regardless of which levels the
+		// edition's own page happened to paint them at.
+		const shape = [2, 3, 1, 2, 3, 4, 4, 2, 3];
+		expect(levelSocialDoctrineRows(NESTED, STARTS).map((row) => row.level)).toEqual(shape);
+		expect(levelSocialDoctrineRows(FLAT, STARTS).map((row) => row.level)).toEqual(shape);
+	});
+
+	it('gives the sidebar one root per part, with the chapters inside it', () => {
+		// The bug in one assertion: `buildDocumentOutline` nests by level, so a
+		// flat edition put every chapter and every section at the top level,
+		// where nothing collapses because a root is always rendered.
+		const roots = (rows: DocumentNode[]) =>
+			buildDocumentOutline(levelSocialDoctrineRows(rows, STARTS), 104).map((n) => n.title);
+		expect(roots(FLAT)).toEqual(['INTRODUÇÃO', 'PRIMEIRA PARTE']);
+		expect(roots(NESTED)).toEqual(['INTRODUCTION', 'PART ONE']);
+		expect(buildDocumentOutline(FLAT, 104).map((n) => n.title)).toHaveLength(6);
+	});
+
+	it('takes the labelled row as the division heading, not the first at the anchor', () => {
+		// `PRIMEIRA PARTE` and `CAPÍTULO I` both open at §20, and the part is
+		// printed first; the chapter is what the division is named after
+		// (`socialDoctrineDivisions`), so the part stands over it.
+		const [part] = buildDocumentOutline(levelSocialDoctrineRows(FLAT, STARTS), 104).slice(1);
+		expect(part.title).toBe('PRIMEIRA PARTE');
+		expect(part.children.map((c) => c.label)).toEqual(['CAPÍTULO I', 'CAPÍTULO II']);
+		// And the part's span runs to the end of its last chapter rather than
+		// stopping at the next row that happened to share its printed level.
+		expect(part.paragraphs).toEqual([20, 104]);
+	});
+
+	it('leaves an edition that labels nothing with the rows it does print', () => {
+		// `csdc.hu`, `csdc.sw` and `csdc.vi` print no division label at all, so
+		// there is nothing to say which row at an anchor is the chapter. The
+		// first one takes the division, which is the outline the source itself
+		// supports — 13 roots rather than 4, and every one of them collapsing.
+		const unlabelled = FLAT.map(({ label: _label, ...row }) => row);
+		const roots = buildDocumentOutline(levelSocialDoctrineRows(unlabelled, STARTS), 104);
+		expect(roots.map((n) => n.title)).toEqual(['INTRODUÇÃO', 'PRIMEIRA PARTE', 'MISSÃO DA IGREJA']);
 	});
 });

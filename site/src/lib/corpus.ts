@@ -2854,9 +2854,86 @@ export function socialDoctrineOutline(lang: string): StructureNode[] {
 	const workId = socialDoctrineWorkId(lang);
 	const numbers = socialDoctrineSectionNumbers[workId] ?? [];
 	return buildDocumentOutline(
-		getDocumentStructure(workId).filter((row) => row.before !== null && row.before !== undefined),
+		levelSocialDoctrineRows(
+			getDocumentStructure(workId).filter((row) => row.before !== null && row.before !== undefined),
+			socialDoctrineChapterStarts
+		),
 		numbers.length > 0 ? numbers[numbers.length - 1] : null
 	);
+}
+
+/**
+ * The edition's heading rows with `level` REPLACED by the one hierarchy all
+ * ten editions agree on: part, division, and everything printed inside it.
+ *
+ * `level` is not a fact about this work — it is read off how a page paints a
+ * heading, and the ten editions are ten differently painted pages. The
+ * twelve chapters sit at level 2 in English, level 1 in Portuguese, and in
+ * Hungarian, Swahili and Vietnamese at no level that isolates them at all
+ * (`socialDoctrineChapterStarts`, scripts/sync-corpus.mjs, which is where
+ * this was first measured). Handed to `buildDocumentOutline` as printed, a
+ * flat edition builds a flat tree: `csdc.pt` produced 75 roots and `csdc.hu`
+ * 99, so the sidebar listed every chapter AND every roman-numeral section
+ * inside it at the top level, permanently open, where the reader's own
+ * branch is the only thing meant to be expanded (`StructureSidebarToc` —
+ * ONLY THE READER'S OWN BRANCH IS EXPANDED). Re-levelled, every edition
+ * renders the same 3-to-13-root outline.
+ *
+ * WHAT THE EDITIONS DO AGREE ON IS THE DIVISION ANCHOR, which is the whole
+ * basis of this: `starts` is the work's own list of the paragraph each
+ * reading division opens at, unioned across editions and identical in all of
+ * them because they are translations of one numbered text. So the levels are
+ * derived from where a row FALLS rather than from how it was painted:
+ *
+ *  - the rows an edition prints above a division's own heading are the part
+ *    divider standing over it (`PART ONE`, printed on a page of its own with
+ *    no name beside it) — level 1;
+ *  - the division's own heading, the labelled one where the edition prints a
+ *    label and otherwise the first row at the anchor — level 2. This is the
+ *    same choice, and for the same reason, that `socialDoctrineDivisions`
+ *    makes when it names a division;
+ *  - everything else in the division keeps the source's own relative depth,
+ *    shifted to sit below the heading. An edition that paints two levels
+ *    inside a chapter gets two; one that paints none gets one flat run,
+ *    which is that edition's own granularity and not something to invent.
+ *
+ * The three editions printing no label anywhere therefore hand the division
+ * row to the part where a part opens at the same paragraph, so their outline
+ * has thirteen roots rather than four. That is the silence `sync-corpus.mjs`
+ * describes, not a miss here: an anchor is taken when any edition labels it,
+ * and an edition that labels nothing cannot say which of its own rows is the
+ * chapter.
+ */
+export function levelSocialDoctrineRows(
+	rows: DocumentNode[],
+	starts: readonly number[]
+): DocumentNode[] {
+	const anchors = [...starts].sort((a, b) => a - b);
+	if (anchors.length === 0) return rows;
+	// Rows in the order they are printed, grouped by the division they fall
+	// in — the last anchor at or before the row, and the first anchor for
+	// anything ahead of it (`csdc.sw` anchors its front matter at §2 and §8).
+	const byDivision = new Map<number, number[]>();
+	for (const [i, row] of rows.entries()) {
+		let division = anchors[0];
+		for (const anchor of anchors) {
+			if (anchor > (row.before as number)) break;
+			division = anchor;
+		}
+		byDivision.set(division, [...(byDivision.get(division) ?? []), i]);
+	}
+
+	const levels = new Array<number>(rows.length);
+	for (const group of byDivision.values()) {
+		const labelled = group.findIndex((i) => rows[i].label);
+		const head = labelled === -1 ? 0 : labelled;
+		const inside = group.slice(head + 1);
+		const floor = inside.length > 0 ? Math.min(...inside.map((i) => rows[i].level)) : 0;
+		for (const [k, i] of group.entries()) {
+			levels[i] = k < head ? 1 : k === head ? 2 : 3 + (rows[i].level - floor);
+		}
+	}
+	return rows.map((row, i) => ({ ...row, level: levels[i] }));
 }
 
 /** `socialDoctrineOutline` in `StructureSidebarToc`'s row shape. The walk is

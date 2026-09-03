@@ -3884,6 +3884,29 @@ those three sections were the only ones in nine of ten editions with more. The m
 could not have decided it — `align="right"` covers the whole quotation in English, the
 attribution alone in Hungarian, and nothing at all in Polish.
 
+**A heading's `level` is not a fact about the work, and one sidebar per edition is what
+trusting it costs (2026-09-03).** `level` is read off how a page paints a heading, and this
+work's ten editions are ten differently painted pages: the twelve chapters sit at level 2
+in English, level 1 in Portuguese, and in Hungarian, Swahili and Vietnamese at no level
+that isolates them at all. `sync-corpus.mjs` had already measured exactly this — it is why
+the division anchors are unioned across editions rather than read from one outline — and
+the outline itself was still handed the printed levels. `buildDocumentOutline` nests by
+level, so a flat edition builds a flat tree: five of the ten came out with more than 35
+top-level rows, 75 in `csdc.pt` and 97 in `csdc.hu`. **A root is always rendered**, since
+the sidebar's collapse rule is that a row's children appear when the reader is inside it,
+so an outline whose every row is a root has nothing to collapse — the Portuguese reader got
+all twelve chapters and every roman-numeral section inside them, permanently open, and the
+chapter page's inner headings vanished besides (they are selected by depth, and everything
+was at depth 0). The fix re-levels the rows onto the anchors before the tree is built
+(`levelSocialDoctrineRows`): the rows above a division's own heading are the part standing
+over it, the labelled row at the anchor is the division — the same choice
+`socialDoctrineDivisions` makes when it names one — and everything else keeps the edition's
+own relative depth below it. Every edition renders 3 to 13 roots now, and each of them
+collapses. **Where the editions disagree about how a text is
+painted, derive the structure from what they agree it SAYS** — here, which paragraph each
+division opens at, which is identical in all ten because they are translations of one
+numbered text.
+
 **The reference coverage fell in two families and the fall is the fix.** `vatii` prose
 scripture 6,995 → 5,896, prose sigla 950 → 847 — against citations 6,626 → 9,998 and
 linkable citations 3,046 → 5,114. The references did not go anywhere: they moved out of

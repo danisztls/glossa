@@ -817,6 +817,19 @@ check). No second content tier, no second chunk stride, no second reader.
   `shell-head.ts` carries `socialDoctrineChapterNames`, read off the nodes that
   produced the anchors, and the chapter page does not use `widestAt`.
   `socialDoctrineDivisions` is the same rule for the pages.
+- **A heading's `level` is per-edition paint, so the outline is re-levelled onto
+  the division anchors before the tree is built** (`levelSocialDoctrineRows`,
+  2026-09-03). The twelve chapters sit at level 2 in English and level 1 in
+  Portuguese, and `hu`/`sw`/`vi` paint no level that isolates them at all — so
+  `buildDocumentOutline`, which nests by level, gave `csdc.pt` 75 roots and
+  `csdc.hu` 97, and five of the ten more than 35. A root is always rendered, so
+  the sidebar listed every chapter and every section inside it, permanently open,
+  where only the
+  reader's own branch is meant to expand. `socialDoctrineChapterStarts` is the
+  one thing all ten editions agree on: rows above a division's heading are the
+  part, the labelled row at the anchor is the division, and everything else
+  keeps the edition's own relative depth below it. Every edition renders 3–13
+  roots now. §The Compendium of the Social Doctrine.
 - **Two calls to `socialDoctrineOutline` share no node, so nothing may compare
   them by identity.** `buildDocumentOutline` maps the stored `DocumentNode[]`
   into fresh `StructureNode`s every call, and both pages looked a division's
