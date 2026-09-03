@@ -287,6 +287,17 @@ The CCC hierarchy as a tree. Nodes:
 }
 ```
 
+**`site/src/lib/types.ts` carries one `kind` this list does not, and the
+difference is deliberate.** `CccNodeKind` there also has `'title'` — the Code
+of Canon Law's division — and **no corpus file ever emits it**: a
+document-shaped outline stamps every node `sub`, so the Code's titles reach the
+site as `sub` nodes whose printed `label` says what they are. The member exists
+so the site's two shared label tables (`KIND_LABELS`, `LABEL_KIND_WORDS`) can
+key a column on it instead of the Code keeping a private copy of both. It is a
+name in the site's vocabulary, not a value in this contract; a parser that
+wrote `"kind": "title"` into a `structure.json` would be writing something
+nothing here has agreed to read.
+
 **A heading can carry citations** (added 2026-08-23), and `title`/`title_marked`/`citations` are the same triple a paragraph has, for the same reason: the source prints a `<sup>` reference inside the heading, and the footnote it points at is content that has to live somewhere. `title` is always the plain form with no `⟦⟧` tokens in it, so every consumer that only wants to print a heading can keep reading `title` alone; `title_marked` keeps each reference where the source set it, and is present **only** when there is at least one. `citations` uses the identical entry shape as `paragraphs.json` (`marker`, `text`, optional `label`), and the same invariants are validated: every token has an entry, every entry has a token, and no token survives in `title`.
 
 Rare, and expected to stay rare — two nodes in the whole corpus, both in `ccc.en`: `III. Christ Jesus — "Mediator and Fullness of All Revelation"` (footnote `DV 2.`) and `II. "I Know Whom I Have Believed"` (footnote `2 Tim 1:12`), each sourcing the phrase its heading quotes. The fields are optional precisely so the other 394 CCC nodes, and every node of every other work, carry no trace of the case.

@@ -768,27 +768,50 @@ export function inlineTitleNodes(
  * `displayTitle` still does the right thing by stripping, and callers that
  * want a label ask for one.
  *
- * Abbreviated rather than spelled out for the two deep kinds (there are 19
+ * Abbreviated rather than spelled out for the DEEP kinds (there are 19
  * chapters and 67 articles in the CCC, and "Chapter"/"Article" repeated at
  * that density is more column than information), spelled out for the two
  * shallow ones (4 parts, 8 sections — they head the page and can afford it).
+ * `title` joins the deep side and for a sharper version of the same reason:
+ * the Code of Canon Law has 77 of them and they are not the bottom of its
+ * tree.
+ *
+ * A ROW IS AS COMPLETE AS THE WORKS IN THAT LANGUAGE REQUIRE, which is why
+ * `title` is filled in for seven languages and `article` for eleven rather
+ * than either being filled in for all seventeen. Naming a division in a
+ * language no work here divides that way is inventing vocabulary nobody can
+ * check — see the low-confidence tiers in `src/lib/i18n/`'s headers for what
+ * that costs. `kindLabelWord` answers `null` for a gap and every caller
+ * degrades to the label the source printed, which is always available and
+ * always right, just longer.
+ *
+ * So the gaps say which works exist, not which words do:
+ *
+ *  - **`title` is the Code of Canon Law's**, in the seven languages the Holy
+ *    See publishes it in as HTML. No other work in this corpus has such a
+ *    division.
+ *  - **`article` is the Catechism's**, plus the Code's — which is what added
+ *    `ru` on 2026-09-03. The remaining five gaps (`hu`, `pl`, `ro`, `sl`,
+ *    `sv`) are the Compendium-only languages, where neither work is
+ *    published. It was absent from all eight until 2026-08-26, when the
+ *    Catechism stopped being en/pt.
  */
 const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> = {
-	en: { part: 'Part', section: 'Section', chapter: 'Ch.', article: 'Art.' },
+	en: { part: 'Part', section: 'Section', title: 'Tit.', chapter: 'Ch.', article: 'Art.' },
 	pt: { part: 'Parte', section: 'Secção', chapter: 'Cap.', article: 'Art.' },
 	be: { part: 'Частка', section: 'Раздзел', chapter: 'Гл.' },
-	de: { part: 'Teil', section: 'Abschnitt', chapter: 'Kap.', article: 'Art.' },
-	es: { part: 'Parte', section: 'Sección', chapter: 'Cap.', article: 'Art.' },
-	fr: { part: 'Partie', section: 'Section', chapter: 'Ch.', article: 'Art.' },
+	de: { part: 'Teil', section: 'Abschnitt', title: 'Tit.', chapter: 'Kap.', article: 'Art.' },
+	es: { part: 'Parte', section: 'Sección', title: 'Tít.', chapter: 'Cap.', article: 'Art.' },
+	fr: { part: 'Partie', section: 'Section', title: 'Tit.', chapter: 'Ch.', article: 'Art.' },
 	hu: { part: 'rész', section: 'szakasz', chapter: 'fejezet' },
 	id: { part: 'Bagian', section: 'Seksi', chapter: 'Bab' },
-	it: { part: 'Parte', section: 'Sezione', chapter: 'Cap.', article: 'Art.' },
-	la: { part: 'Pars', section: 'Sectio', chapter: 'Cap.', article: 'Art.' },
+	it: { part: 'Parte', section: 'Sezione', title: 'Tit.', chapter: 'Cap.', article: 'Art.' },
+	la: { part: 'Pars', section: 'Sectio', title: 'Tit.', chapter: 'Cap.', article: 'Art.' },
 	lt: { part: 'dalis', section: 'skyrius', chapter: 'poskyris' },
 	mg: { part: 'Fizarana', section: 'Sampana', chapter: 'Toko', article: 'And.' },
 	pl: { part: 'Część', section: 'Sekcja', chapter: 'Rozdz.' },
 	ro: { part: 'Partea', section: 'Secțiunea', chapter: 'Cap.' },
-	ru: { part: 'Часть', section: 'Раздел', chapter: 'Гл.' },
+	ru: { part: 'Часть', section: 'Раздел', title: 'Тит.', chapter: 'Гл.', article: 'Ст.' },
 	sl: { part: 'Del', section: 'Oddelek', chapter: 'Pogl.' },
 	sv: { part: 'Del', section: 'Avdelning', chapter: 'Kap.' }
 };
@@ -797,10 +820,8 @@ const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> 
  * Languages that write the number BEFORE the noun ("1. rész"), not after
  * it. Hungarian's ordinal syntax, not a house style — and the reason the
  * label word is stored lowercase for it, since it is no longer the first
- * word of the marker. `article` is absent only from `hu`, `pl`, `ro`, `ru`,
- * `sl` and `sv`: the Catechism is the one work with that kind and those are
- * the six languages it is not published in. It was absent from all eight
- * until 2026-08-26, when the Catechism stopped being en/pt.
+ * word of the marker. Which rows of `KIND_LABELS` are partial, and why, is
+ * recorded there rather than here.
  */
 const NUMBER_FIRST: ReadonlySet<Lang> = new Set<Lang>(['hu', 'lt']);
 

@@ -596,8 +596,25 @@ export interface BibleIntroBlock {
 	text: string;
 }
 
+/**
+ * NAMED FOR THE CATECHISM AND NOT ITS PROPERTY. Six of these seven are the
+ * Catechism's own divisions; `title` is the Code of Canon Law's, added
+ * 2026-09-03 for the reason the kind exists at all — the shared vocabulary
+ * that abbreviates a division word (`KIND_LABELS` in titles.ts) and the one
+ * that recognises a printed one (`LABEL_KIND_WORDS` in structureToc.ts) are
+ * both keyed on this union, so a division no member names has to carry its
+ * own copy of both. It did, for a day, and the copy drifted.
+ *
+ * NO CORPUS NODE CARRIES `title`, and that is not a contradiction. A
+ * document-shaped outline stamps every node `sub` (`buildDocumentOutline`,
+ * corpus.ts) because judging what a heading MEANS is what mis-nested Gaudium
+ * et Spes — so the Code's titles reach the page as `sub` nodes whose printed
+ * `label` says what they are. This member is what the two tables key their
+ * `title` column on and what `documentLabelKind` returns for `TITULUS I`; it
+ * is a name in a vocabulary, not a claim about a tree.
+ */
 export type CccNodeKind =
-	'prologue' | 'part' | 'section' | 'chapter' | 'article' | 'sub' | 'in-brief';
+	'prologue' | 'part' | 'section' | 'title' | 'chapter' | 'article' | 'sub' | 'in-brief';
 
 export interface CccNode {
 	kind: CccNodeKind;

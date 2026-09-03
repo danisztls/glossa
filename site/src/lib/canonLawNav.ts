@@ -15,8 +15,8 @@
  */
 import { hrefFor } from './address';
 import { canonLawOutline, canonLawTitleFor } from './corpus';
-import { contains } from './components/structureToc';
-import { documentHeadingParts, type DisplayTitle } from './titles';
+import { contains, documentLabelKind } from './components/structureToc';
+import { documentHeadingParts, kindLabelWord, type DisplayTitle } from './titles';
 import type { StructureNode } from './types';
 
 /**
@@ -115,63 +115,74 @@ export function canonLawHeadingParts(title: string, lang: string): DisplayTitle 
 }
 
 /**
- * The division nouns the seven editions print, and what each shortens to.
+ * The division nouns the Code prints that the SHARED recogniser cannot
+ * reach, and the kind each names.
  *
- * THE WORDS ARE `KIND_LABELS`' (titles.ts), NOT A SECOND VOCABULARY. That
- * table is what the Catechism, the Compendium and every document already
- * abbreviate a chapter with, so a reader who has seen `Ch. 3` on one page
- * must not meet `Chap. III` on another — which is exactly what shipped for a
- * day. `canonLawNav.test.ts` asserts the agreement per language through
- * `kindLabelWord`, in the same shape `menu-filter.test.ts` uses to hold two
- * language tables together.
+ * `documentLabelKind` (structureToc.ts) is asked first and answers for the
+ * six Latin-script spellings of `title`, which joined `LABEL_KIND_WORDS` on
+ * 2026-09-03. What is left here is what could not join it, for two different
+ * reasons, and neither is a preference:
  *
- * KEYED BY THE PRINTED NOUN even so, because the kind is not on the outline:
- * `buildDocumentOutline` stamps every node it builds `kind: 'sub'`
+ *  - **The chapter and article nouns would change 148 other works.** Adding
+ *    `CAPUT`, `CAPITOLO`, `CHAPITRE`, `KAPITEL`, `ARTICOLO`, `ARTIKEL` and
+ *    `ART` to the shared table is not inert the way the title nouns were
+ *    (measured over all 1,668 `structure.json` files: the title nouns match
+ *    `cic.*` and nothing else; these match 148 works besides). Those works
+ *    take `marker()`'s DERIVED form, which numbers a row by its position
+ *    among its tree siblings — and `vatii.christus-dominus.la` prints `CAPUT
+ *    II` and `CAPUT III` with no `CAPUT I` above them, so they would be
+ *    renumbered `Cap. 1` and `Cap. 2`. A long label is a cost; a wrong number
+ *    is a lie.
+ *  - **`documentLabelKind` reads Latin script only** (`[A-Z]+`, its own
+ *    docblock), so the Russian edition's nouns are invisible to it whatever
+ *    the table says. Widening that fold is a change to how every Cyrillic
+ *    label in the corpus is read, for four kinds and not one.
+ *
+ * THE WORDS ARE NOT HERE AT ALL, which is the point of the shape: this maps a
+ * printed noun to a KIND, and `kindLabelWord` turns the kind into the word
+ * (`KIND_LABELS`, titles.ts). There is one abbreviation vocabulary on the
+ * site and the Code reads it, so a reader cannot meet `Ch. 3` on one page and
+ * `Chap. III` on the next — which is what shipped for a day, when this held
+ * words of its own.
+ *
+ * KEYED BY THE PRINTED NOUN rather than by the node's kind because the
+ * outline carries none: `buildDocumentOutline` stamps every node `sub`
  * (corpus.ts), and the source's own word survives only in the `label`.
  * Reading the label is also what makes the French parts degrade correctly —
- * `PREMIÈRE PARTIE` puts the ordinal first, matches nothing here, and prints
- * as the source prints it.
- *
- * TWO ENTRIES HAVE NO COUNTERPART TO AGREE WITH, and both are the Code being
- * unlike the rest of the corpus rather than a divergence:
- *
- *  - **`title`.** No other work here has a division of that name, so
- *    `StructureNode['kind']` has no such member and `KIND_LABELS` no such
- *    column. `Tit.` is this module's, and the test has nothing to check it
- *    against.
- *  - **Russian `article`.** `KIND_LABELS` carries no `article` for `ru`, `hu`,
- *    `pl`, `ro`, `sl` or `sv` — the six languages the Catechism, the one work
- *    with that kind, is not published in. The Code IS published in Russian, so
- *    `Ст.` is filled in here; the day a Russian work needs it in the shared
- *    table, that is where it goes.
- *
- * BOOK, PART AND SECTION ARE ABSENT, on the shared table's own judgement:
- * `KIND_LABELS` abbreviates `chapter` and `article` and spells `part` and
- * `section` out. Book and part are the top of the tree — twenty rows per
- * edition, where the index gives the label a line of its own — and section is
- * eight rows. The 265 below them are what repeat a noun beside a name in a
- * column that has to hold both, which is the same judgement the Code itself
- * makes: `Art.` is the one level every edition already abbreviates.
- *
- * (German is also why this stays keyed on the printed noun rather than routed
- * through `kindLabelWord` at call time: the Code's German edition prints
- * `SEKTION` and `KIND_LABELS.de.section` is `Abschnitt` — a different WORD,
- * not a shorter one, and printing it would put a noun on the page that the
- * page it names does not use. Leaving `section` out settles that too.)
+ * `PREMIÈRE PARTIE` puts its ordinal first, matches nothing, and prints as
+ * the source prints it.
  */
-const CANON_LAW_LABEL_SHORT: Record<string, Record<string, string>> = {
-	en: { TITLE: 'Tit.', CHAPTER: 'Ch.', ART: 'Art.' },
-	la: { TITULUS: 'Tit.', CAPUT: 'Cap.', ART: 'Art.' },
-	it: { TITOLO: 'Tit.', CAPITOLO: 'Cap.', ARTICOLO: 'Art.' },
-	es: { TITULO: 'Tít.', CAPITULO: 'Cap.', ART: 'Art.' },
-	fr: { TITRE: 'Tit.', CHAPITRE: 'Ch.', ART: 'Art.' },
-	de: { TITEL: 'Tit.', KAPITEL: 'Kap.', ARTIKEL: 'Art.' },
-	ru: { ТИТУЛ: 'Тит.', ГЛАВА: 'Гл.', СТ: 'Ст.' }
+const CANON_LAW_EXTRA_NOUNS: Partial<Record<string, StructureNode['kind']>> = {
+	CAPUT: 'chapter',
+	CAPITOLO: 'chapter',
+	CHAPITRE: 'chapter',
+	KAPITEL: 'chapter',
+	ART: 'article',
+	ARTICOLO: 'article',
+	ARTIKEL: 'article',
+	ГЛАВА: 'chapter',
+	ТИТУЛ: 'title',
+	СТ: 'article'
 };
 
-/** Accents off, upper-cased — `documentLabelKind`'s fold (structureToc.ts),
- *  which is what lets one table answer for `TÍTULO` and `TITULO` at once.
- *  Cyrillic carries no combining marks here and folds to itself. */
+/**
+ * The kinds this shortens, which is the shared table's own judgement and not
+ * a second one: `KIND_LABELS` abbreviates `title`, `chapter` and `article`
+ * and spells `part` and `section` out, on the reasoning in its docblock —
+ * the deep kinds repeat at a density where the word is more column than
+ * information, the shallow ones head a page and can afford it.
+ *
+ * `book` is absent from the union entirely, so it degrades here with no entry
+ * needed. Section is the one place the Code and the shared table would have
+ * disagreed about the WORD rather than its length — the German edition prints
+ * `SEKTION` and `KIND_LABELS.de.section` is `Abschnitt` — and excluding the
+ * kind settles that too.
+ */
+const CANON_LAW_SHORTENED = new Set<StructureNode['kind']>(['title', 'chapter', 'article']);
+
+/** Accents off, upper-cased — `documentLabelKind`'s own fold, repeated for
+ *  the entries above that it cannot reach. Cyrillic carries no combining
+ *  marks here and folds to itself. */
 function foldNoun(word: string): string {
 	return word.normalize('NFD').replace(/\p{M}/gu, '').toUpperCase();
 }
@@ -195,17 +206,17 @@ function isShouted(text: string): boolean {
  * read `Tit. 1`. Shortening the NOUN touches nothing a citation is made of.
  *
  * The abbreviation takes the label's own case register, so an edition that
- * shouts its headings goes on shouting: a table whose values are capitalised
- * where the source capitalises would be a second copy of that fact, and the
- * index sets some of these rows through `text-transform: uppercase` and some
- * not (`.rank-sub .kind-label`, StructureIndex.svelte).
+ * shouts its headings goes on shouting: capitalising the shared table's
+ * values would be a second copy of a fact that belongs to the edition, and
+ * the index sets some of these rows through `text-transform: uppercase` and
+ * some not (`.rank-sub .kind-label`, StructureIndex.svelte).
  */
 export function canonLawLabelText(label: string, lang: string): string {
-	const table = CANON_LAW_LABEL_SHORT[lang.split('-')[0].toLowerCase()];
-	if (!table) return label;
 	const m = /^(\p{L}+)\.?(\s*)(\S.*)?$/u.exec(label.trim());
 	if (!m || !m[3]) return label;
-	const short = table[foldNoun(m[1])];
+	const kind = documentLabelKind(m[1]) ?? CANON_LAW_EXTRA_NOUNS[foldNoun(m[1])];
+	if (!kind || !CANON_LAW_SHORTENED.has(kind)) return label;
+	const short = kindLabelWord(kind, lang);
 	if (!short) return label;
 	return `${isShouted(m[1]) ? short.toLocaleUpperCase() : short} ${m[3]}`;
 }

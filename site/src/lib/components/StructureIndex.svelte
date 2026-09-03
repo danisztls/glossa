@@ -162,11 +162,20 @@
 		subsections = true,
 		openDepth = 2,
 		kinds,
-		// `in-brief` is the one kind with no rank of its own, and no row ever
-		// carries it: it is reading content, excluded from the spine
-		// (`INDEX_OUTLINE_KINDS`) and from the detail pass (`sub` only). It
+		// TWO KINDS HAVE NO RANK OF THEIR OWN, for opposite reasons, and no row
+		// reaching this default ever carries either. `in-brief` is reading
+		// content — excluded from the spine (`INDEX_OUTLINE_KINDS`) and from
+		// the detail pass, which takes `sub` only. `title` is the Code of Canon
+		// Law's division: it exists in the kind union so the shared label
+		// tables can key a column on it (`CccNodeKind`'s docblock), while no
+		// node in the corpus is stamped with it, and the Code's own index
+		// supplies a rank from DEPTH the way the Social Doctrine's does.
+		//
+		// So this is a fallback that cannot fire rather than a typographic
+		// claim: a work that one day carries real `title` nodes wants a rank of
+		// its own here and a tier in the stylesheet, not the smallest one. It
 		// maps rather than casts so the default stays total.
-		rank = (node) => (node.kind === 'in-brief' ? 'sub' : node.kind),
+		rank = (node) => (node.kind === 'in-brief' || node.kind === 'title' ? 'sub' : node.kind),
 		heading = (node, lang) => ({
 			marker: marker(node, lang),
 			title: displayTitle(node, lang).title

@@ -846,21 +846,44 @@ second chunk stride. What is new is only what a reading page IS.
   because the outline carries none (`buildDocumentOutline` stamps every node
   `sub`), which also makes French degrade correctly — `PREMIÈRE PARTIE` puts
   its ordinal first, matches nothing, and prints verbatim.
-- **THE WORDS IT ABBREVIATES WITH ARE `KIND_LABELS`', AND A TEST HOLDS THEM
-  THERE.** That table (titles.ts, read through `kindLabelWord`) is what every
-  other work on the site abbreviates a chapter with, so a second vocabulary is
-  a reader meeting `Ch. 3` on one page and `Chap. III` on the next — which is
-  what shipped for a day, because the two tables are keyed differently (kind
-  against printed noun) and nothing compared them. `canonLawNav.test.ts`
-  asserts the agreement per language wherever BOTH name the pair, the shape
-  `menu-filter.test.ts` uses. Two entries have no counterpart and say so:
-  `title` (no other work has that division, so the kind union has no member
-  for it) and Russian `article` (`KIND_LABELS` omits `article` for the six
-  languages the Catechism is not published in). **Book, part and section are
-  outside the table on the shared table's own judgement** — it abbreviates
-  `chapter` and `article` and spells the other two out — and section doubly
-  so, since the Code's German prints `SEKTION` where `KIND_LABELS.de.section`
-  says `Abschnitt`: a different word, not a shorter one.
+- **IT HOLDS NO WORDS AT ALL — `'title'` IS A KIND NOW, AND THE SHARED TABLES
+  ANSWER.** `canonLawLabelText` maps a printed noun to a `StructureNode['kind']`
+  and asks `kindLabelWord` for the word, so it cannot disagree with the rest of
+  the site: a reader meeting `Ch. 3` on one page and `Chap. III` on the next is
+  unrepresentable rather than merely tested against. Getting there took three
+  small extensions, each measured:
+  - **`CccNodeKind` gained `'title'`** (types.ts). No corpus node carries it —
+    a document-shaped outline stamps everything `sub` — and that is not a
+    contradiction: the member exists so the two shared tables can key a column
+    on it. It is a name in a vocabulary, not a claim about a tree. Widening the
+    union is safe because every consumer is a `Partial<Record<…>>` or a `Set`;
+    the one place it did bite is `StructureIndex`'s `IndexRank`, whose default
+    `rank` now maps `title` beside `in-brief` as a fallback that cannot fire.
+  - **`KIND_LABELS` gained a `title` column for seven languages, and `ru` gained
+    `article`.** A row is as complete as the works in that language require —
+    naming a division in a language no work here divides that way is inventing
+    vocabulary nobody can check — so the gaps say which works exist, not which
+    words do.
+  - **`LABEL_KIND_WORDS` gained the six Latin-script title nouns**, so
+    `documentLabelKind` stops answering `null` for a division 77 rows deep.
+    Inert for everything else, measured over all 1,668 `structure.json` files:
+    those nouns match `cic.*` and nothing else.
+- **The chapter and article nouns deliberately did NOT join the shared
+  recogniser, and the measurement is why.** `CAPUT`, `CAPITOLO`, `CHAPITRE`,
+  `KAPITEL`, `ARTICOLO`, `ARTIKEL`, `ART` match **148 works besides the Code** —
+  every Latin, Italian, French and German conciliar document — and those take
+  `marker()`'s DERIVED form, which numbers a row by its position among its tree
+  siblings. `vatii.christus-dominus.la` prints `CAPUT II` and `CAPUT III` with
+  no `CAPUT I` above them, so they would be renumbered `Cap. 1` and `Cap. 2`.
+  They stay in `CANON_LAW_EXTRA_NOUNS`, beside the Cyrillic ones, which
+  `documentLabelKind` cannot reach at all (its fold is `[A-Z]+` — a general
+  limit of that function across all four kinds, not a gap in this one).
+- **Book, part and section are outside what it shortens, on the shared table's
+  own judgement** — `KIND_LABELS` abbreviates `title`, `chapter` and `article`
+  and spells the other two out — and section doubly so, since the Code's German
+  prints `SEKTION` where `KIND_LABELS.de.section` says `Abschnitt`: a different
+  word, not a shorter one. `book` is absent from the kind union entirely and so
+  degrades with no entry needed.
 - **The breadcrumb is a flex row, and that block is global.** A crumb wraps as
   a UNIT — in inline flow the trail is one paragraph and the line breaks at
   whatever space it reaches, so `BOOK I` was stranded on a line above its own

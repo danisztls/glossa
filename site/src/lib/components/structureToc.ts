@@ -106,10 +106,19 @@ export function rowState(
 
 /**
  * `label`'s first-or-last alphabetic word, normalized (accents stripped,
- * upper-cased), matched against the same four kinds `KIND_LABELS`
- * (`titles.ts`) carries a printed word for — or `null` when neither end
- * matches, which is the common case (`"INTRODUÇÃO"`, a nested sub-heading's
- * own title with no printed identifier line at all).
+ * upper-cased), matched against the kinds `KIND_LABELS` (`titles.ts`) carries
+ * a printed word for — or `null` when neither end matches, which is the
+ * common case (`"INTRODUÇÃO"`, a nested sub-heading's own title with no
+ * printed identifier line at all).
+ *
+ * THE FOLD IS LATIN-SCRIPT ONLY (`[A-Z]+`), which is a general limit of this
+ * function and not a gap in any one kind: a Cyrillic label tokenizes to its
+ * Roman numeral alone, so `ГЛАВА I` and `ТИТУЛ I` are as invisible here as
+ * each other. Nothing depends on it today — the works with such labels either
+ * carry no division label at all or, like the Code, pass `deriveMarkers=false`
+ * and print what the source printed. Widening it to `\p{Lu}` would change how
+ * every Cyrillic label in the corpus is read, for four kinds and not one, so
+ * it is a separate measurement rather than a line to slip in here.
  *
  * Checking BOTH ends, not just the first word, is what `kindPrefixTokens`
  * (`titles.ts`) already found true of the real corpus: chapter puts the kind
@@ -130,10 +139,22 @@ const LABEL_KIND_WORDS: Partial<Record<string, StructureNode['kind']>> = {
 	ARTICLE: 'article',
 	ARTIGO: 'article',
 	SECTION: 'section',
-	SECCAO: 'section'
+	SECCAO: 'section',
+	// The Code of Canon Law's own division, in the six of its seven editions
+	// this fold can read (2026-09-03). Inert for everything else in the
+	// corpus, measured rather than assumed: of 1,668 `structure.json` files,
+	// the only labels whose first or last word is one of these six belong to
+	// `cic.*` — so no other work's marker changes, and `marker()` stops
+	// answering `null` for a division 77 rows deep in this one.
+	TITLE: 'title',
+	TITULUS: 'title',
+	TITOLO: 'title',
+	TITULO: 'title',
+	TITRE: 'title',
+	TITEL: 'title'
 };
 
-function documentLabelKind(label: string): StructureNode['kind'] | null {
+export function documentLabelKind(label: string): StructureNode['kind'] | null {
 	const words = label
 		.normalize('NFD')
 		.replace(/\p{M}/gu, '')

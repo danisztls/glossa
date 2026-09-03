@@ -70,19 +70,26 @@ describe('canonLawLabelText', () => {
 	});
 
 	/**
-	 * THE ONE THAT MATTERS: the Code must abbreviate a kind exactly as the rest
-	 * of the site does. `KIND_LABELS` (titles.ts) is the site's table and
-	 * `CANON_LAW_LABEL_SHORT` is keyed by the printed noun instead — it has to
-	 * be, since the outline carries no kind — so nothing but this holds the two
-	 * together, and they drifted the day the second one was written (`Chap.`
-	 * against the shared `Ch.`).
+	 * THE ONE THAT MATTERS. `canonLawLabelText` holds no words of its own — it
+	 * maps a printed noun to a kind and asks `kindLabelWord` — so it CANNOT
+	 * disagree with the rest of the site, and what is worth pinning is the
+	 * other half: that every noun the seven editions print still reaches a
+	 * word. A hole in `KIND_LABELS`, a noun dropped from
+	 * `CANON_LAW_EXTRA_NOUNS`, or `documentLabelKind` ceasing to recognise
+	 * `TITULUS` all degrade to the verbatim label — correct, silent, and a
+	 * whole column of the index suddenly a third wider.
 	 *
-	 * Same shape as `menu-filter.test.ts`'s agreement check: assert only where
-	 * BOTH tables name the pair. A kind the shared table has no word for in a
-	 * language is skipped rather than failed — `article` is absent for `ru`
-	 * there, and the docblock beside the table says why.
+	 * The labels are real: every distinct division noun in all seven editions,
+	 * taken off `structure.json`.
 	 */
-	const SHARED: [lang: string, label: string, kind: StructureNode['kind']][] = [
+	const PRINTED: [lang: string, label: string, kind: StructureNode['kind']][] = [
+		['en', 'TITLE IV', 'title'],
+		['la', 'TITULUS I', 'title'],
+		['it', 'TITOLO III', 'title'],
+		['es', 'TÍTULO VII', 'title'],
+		['fr', 'TITRE II', 'title'],
+		['de', 'TITEL I', 'title'],
+		['ru', 'ТИТУЛ V', 'title'],
 		['en', 'CHAPTER I', 'chapter'],
 		['la', 'CAPUT III', 'chapter'],
 		['it', 'CAPITOLO IX', 'chapter'],
@@ -99,15 +106,34 @@ describe('canonLawLabelText', () => {
 		['ru', 'Ст. 1', 'article']
 	];
 
-	it.each(SHARED)(
-		'abbreviates %s %s as the rest of the site abbreviates a %s',
-		(lang, label, kind) => {
-			const shared = kindLabelWord(kind, lang);
-			if (shared === null) return; // no counterpart — see the table's docblock
-			const [noun] = canonLawLabelText(label, lang).split(' ');
-			expect(noun.toLocaleUpperCase()).toBe(shared.toLocaleUpperCase());
+	it.each(PRINTED)("abbreviates %s %s with the site's own word for a %s", (lang, label, kind) => {
+		const shared = kindLabelWord(kind, lang);
+		expect(shared, `KIND_LABELS has no ${kind} for ${lang}`).not.toBeNull();
+		const [noun, ...rest] = canonLawLabelText(label, lang).split(' ');
+		expect(noun.toLocaleUpperCase()).toBe((shared as string).toLocaleUpperCase());
+		// The numeral is the source's, untouched — the whole reason this is not
+		// `marker()`.
+		expect(rest.join(' ')).toBe(label.split(' ').slice(1).join(' '));
+	});
+
+	// A separate assertion because the article rows above cannot make it: every
+	// edition already prints `Art.`/`Ст.`, so for those the function is a no-op
+	// and "the label got shorter" is false while everything about the row is
+	// right.
+	it('actually shortens the nouns the editions spell out', () => {
+		const SPELLED_OUT: [string, string][] = [
+			['en', 'CHAPTER I'],
+			['la', 'TITULUS I'],
+			['it', 'CAPITOLO IX'],
+			['es', 'CAPÍTULO II'],
+			['fr', 'CHAPITRE X'],
+			['de', 'KAPITEL VIII'],
+			['ru', 'ГЛАВА II']
+		];
+		for (const [lang, label] of SPELLED_OUT) {
+			expect(canonLawLabelText(label, lang).length).toBeLessThan(label.length);
 		}
-	);
+	});
 
 	it('leaves book, part and section alone — the shared table spells those out', () => {
 		expect(canonLawLabelText('BOOK VII', 'en')).toBe('BOOK VII');
@@ -123,8 +149,25 @@ describe('canonLawLabelText', () => {
 		expect(canonLawLabelText('CINQUIEME PARTIE', 'fr')).toBe('CINQUIEME PARTIE');
 	});
 
-	it('leaves a label with no numeral after the noun, and a language with no table', () => {
+	it('leaves a label with no numeral after the noun', () => {
 		expect(canonLawLabelText('CHAPTER', 'en')).toBe('CHAPTER');
-		expect(canonLawLabelText('CHAPTER I', 'pt')).toBe('CHAPTER I');
+	});
+
+	it('leaves a noun neither table knows', () => {
+		// Book is in neither and has no kind at all, so it degrades with no
+		// entry needed — and so does a word from nowhere near a division.
+		expect(canonLawLabelText('LIBER I', 'la')).toBe('LIBER I');
+		expect(canonLawLabelText('PROOEMIUM I', 'la')).toBe('PROOEMIUM I');
+	});
+
+	// THE LABEL AND THE LANGUAGE ARE ALWAYS ONE EDITION'S: every caller passes
+	// `crumb.node.label` beside `editions.lang`, and the outline that label came
+	// from is that edition's. The kind is read from the noun and the word from
+	// the language, so crossing them returns the other language's word — which
+	// is unreachable today and recorded here so a future caller knows which
+	// half wins rather than discovering it.
+	it('reads the kind from the noun and the word from the language', () => {
+		expect(canonLawLabelText('CAPUT III', 'la')).toBe('CAP. III');
+		expect(canonLawLabelText('CAPUT III', 'de')).toBe('KAP. III');
 	});
 });
