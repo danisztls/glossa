@@ -857,7 +857,7 @@
 								notes={editionNotesOn ? verse.notes : undefined}
 								lang={current.work.language}
 								work={current.work.id}
-								dropCap={i === 0 && headingsBefore(verse.n).length === 0}
+								dropCap={i === 0}
 								noteOffset={noteOffsets.get(`v${verse.n}`) ?? 0}
 								commentary={commentaryByVerse.get(verse.n)}
 								osis={data.osis}
@@ -979,6 +979,48 @@
 	 * and at that frequency anything emphatic reads as clutter.
 	 */
 	.section-heading {
+		/*
+		 * CLEARS THE DROP CAP, which is what lets the reader promote the first
+		 * letter of EVERY chapter rather than only of the ones that open with no
+		 * heading above them.
+		 *
+		 * The reader used to pass `dropCap={i === 0 && headingsBefore(verse.n).length === 0}`,
+		 * and the effect was that the Matos Soares Bible had essentially no
+		 * initials at all: it is the one edition that prints a heading before
+		 * verse 1 almost everywhere (1165 of its 1334 chapters, against 151 for
+		 * the Douay-Rheims and none for Crampon or the Clementina). Suppressing
+		 * 87% of an edition's initials is not a rule about headings, and the
+		 * catechism reader had already settled the question the other way —
+		 * `catechismus/caput/[n]` sets its cap on the first paragraph regardless
+		 * of the `innerHeadings` printed above it, which 4 of the 20 PT chapters
+		 * exercise. A heading followed by an initial under it is what the printed
+		 * editions do.
+		 *
+		 * THE COLLISION IS WITH THE NEXT HEADING, NOT THE ONE ABOVE. A block box
+		 * does not move aside for a float: only its line boxes shorten, so a
+		 * pericope line landing beside a live three-line cap would take a phantom
+		 * indent, and `.section-heading-1`'s `border-block-end` would rule
+		 * straight through the glyph. That is a real case rather than a
+		 * hypothetical one — this edition sets a heading every few verses (Genesis
+		 * 1 has one before verse 3), and 113 of the 1232 chapters that carry a
+		 * later heading have under ~180 characters of text ahead of it, which is
+		 * about the three lines the cap occupies.
+		 *
+		 * `clear` is a blunt instrument — it clears every float on that side, not
+		 * just the cap — so it is safe here only because the cap is the only
+		 * `inline-start` float this route puts in the reading flow. The other one
+		 * in the stylesheet, `.margin-note` (reading-chrome.css), reaches the page
+		 * through `CitationDisclosure`, which only `HeadingText` and `ProseBlocks`
+		 * render; this reader uses `AnnotatedText` for verses AND for headings, so
+		 * neither is in this flow. Add a floated apparatus to the Bible reader and
+		 * this rule has to be narrowed with it.
+		 *
+		 * Logical rather than `clear: left`, matching the cap's own
+		 * `float: inline-start` and `.margin-note`'s existing `clear: inline-start`
+		 * — the corpus has right-to-left texts and the cap follows the text's
+		 * direction.
+		 */
+		clear: inline-start;
 		font-family: var(--font-serif);
 		/* em, not rem: scales with .reading-text's own font-size (which
 		   carries --reading-scale, owned by app.css) instead of fighting it. */
