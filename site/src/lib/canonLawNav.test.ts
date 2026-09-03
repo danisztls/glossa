@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { canonLawHeadingParts, canonLawLabelText, canonLawTitleText } from './canonLawNav';
+import { kindLabelWord } from './titles';
+import type { StructureNode } from './types';
 
 /**
  * The two rules here both failed silently on the page rather than throwing,
@@ -49,7 +51,7 @@ describe('canonLawHeadingParts', () => {
 
 describe('canonLawLabelText', () => {
 	it('shortens the noun and keeps the numeral the source printed', () => {
-		expect(canonLawLabelText('CHAPTER I', 'en')).toBe('CHAP. I');
+		expect(canonLawLabelText('CHAPTER I', 'en')).toBe('CH. I');
 		expect(canonLawLabelText('TITLE IV', 'en')).toBe('TIT. IV');
 		expect(canonLawLabelText('CAPUT III', 'la')).toBe('CAP. III');
 		expect(canonLawLabelText('KAPITEL VIII', 'de')).toBe('KAP. VIII');
@@ -67,9 +69,53 @@ describe('canonLawLabelText', () => {
 		expect(canonLawLabelText('Глава V', 'ru')).toBe('Гл. V');
 	});
 
-	it('leaves book and part alone — they are the top of the tree', () => {
+	/**
+	 * THE ONE THAT MATTERS: the Code must abbreviate a kind exactly as the rest
+	 * of the site does. `KIND_LABELS` (titles.ts) is the site's table and
+	 * `CANON_LAW_LABEL_SHORT` is keyed by the printed noun instead — it has to
+	 * be, since the outline carries no kind — so nothing but this holds the two
+	 * together, and they drifted the day the second one was written (`Chap.`
+	 * against the shared `Ch.`).
+	 *
+	 * Same shape as `menu-filter.test.ts`'s agreement check: assert only where
+	 * BOTH tables name the pair. A kind the shared table has no word for in a
+	 * language is skipped rather than failed — `article` is absent for `ru`
+	 * there, and the docblock beside the table says why.
+	 */
+	const SHARED: [lang: string, label: string, kind: StructureNode['kind']][] = [
+		['en', 'CHAPTER I', 'chapter'],
+		['la', 'CAPUT III', 'chapter'],
+		['it', 'CAPITOLO IX', 'chapter'],
+		['es', 'CAPÍTULO II', 'chapter'],
+		['fr', 'CHAPITRE X', 'chapter'],
+		['de', 'KAPITEL VIII', 'chapter'],
+		['ru', 'ГЛАВА II', 'chapter'],
+		['en', 'Art. 2', 'article'],
+		['la', 'Art. 1', 'article'],
+		['it', 'Articolo 3', 'article'],
+		['es', 'Art. 4', 'article'],
+		['fr', 'Art. 1', 'article'],
+		['de', 'Artikel 2', 'article'],
+		['ru', 'Ст. 1', 'article']
+	];
+
+	it.each(SHARED)(
+		'abbreviates %s %s as the rest of the site abbreviates a %s',
+		(lang, label, kind) => {
+			const shared = kindLabelWord(kind, lang);
+			if (shared === null) return; // no counterpart — see the table's docblock
+			const [noun] = canonLawLabelText(label, lang).split(' ');
+			expect(noun.toLocaleUpperCase()).toBe(shared.toLocaleUpperCase());
+		}
+	);
+
+	it('leaves book, part and section alone — the shared table spells those out', () => {
 		expect(canonLawLabelText('BOOK VII', 'en')).toBe('BOOK VII');
 		expect(canonLawLabelText('PARS II', 'la')).toBe('PARS II');
+		expect(canonLawLabelText('SECTION I', 'en')).toBe('SECTION I');
+		// And German prints SEKTION where the shared table says `Abschnitt`,
+		// which is a different word rather than a shorter one.
+		expect(canonLawLabelText('SEKTION II', 'de')).toBe('SEKTION II');
 	});
 
 	it('leaves a label whose ordinal comes first, which is how French sets a part', () => {

@@ -117,28 +117,56 @@ export function canonLawHeadingParts(title: string, lang: string): DisplayTitle 
 /**
  * The division nouns the seven editions print, and what each shortens to.
  *
- * KEYED BY THE PRINTED NOUN, not by the division's kind, because the kind is
- * not on the outline: `buildDocumentOutline` stamps every node it builds
- * `kind: 'sub'` (corpus.ts), and the source's own word survives only in the
- * `label`. Reading the label is also what makes the French parts degrade
- * correctly — `PREMIÈRE PARTIE` puts the ordinal first, matches nothing here,
- * and prints as the source prints it.
+ * THE WORDS ARE `KIND_LABELS`' (titles.ts), NOT A SECOND VOCABULARY. That
+ * table is what the Catechism, the Compendium and every document already
+ * abbreviate a chapter with, so a reader who has seen `Ch. 3` on one page
+ * must not meet `Chap. III` on another — which is exactly what shipped for a
+ * day. `canonLawNav.test.ts` asserts the agreement per language through
+ * `kindLabelWord`, in the same shape `menu-filter.test.ts` uses to hold two
+ * language tables together.
  *
- * BOOK AND PART ARE DELIBERATELY ABSENT. Twenty rows per edition sit at those
- * two levels, they are the top of the tree, and the index sets them on a line
- * of their own where there is room for the whole word. The 273 rows below
- * them repeat their noun beside a name in a column that has to hold both,
- * which is the same judgement the Code itself makes: `Art.` is the one level
- * every edition already abbreviates.
+ * KEYED BY THE PRINTED NOUN even so, because the kind is not on the outline:
+ * `buildDocumentOutline` stamps every node it builds `kind: 'sub'`
+ * (corpus.ts), and the source's own word survives only in the `label`.
+ * Reading the label is also what makes the French parts degrade correctly —
+ * `PREMIÈRE PARTIE` puts the ordinal first, matches nothing here, and prints
+ * as the source prints it.
+ *
+ * TWO ENTRIES HAVE NO COUNTERPART TO AGREE WITH, and both are the Code being
+ * unlike the rest of the corpus rather than a divergence:
+ *
+ *  - **`title`.** No other work here has a division of that name, so
+ *    `StructureNode['kind']` has no such member and `KIND_LABELS` no such
+ *    column. `Tit.` is this module's, and the test has nothing to check it
+ *    against.
+ *  - **Russian `article`.** `KIND_LABELS` carries no `article` for `ru`, `hu`,
+ *    `pl`, `ro`, `sl` or `sv` — the six languages the Catechism, the one work
+ *    with that kind, is not published in. The Code IS published in Russian, so
+ *    `Ст.` is filled in here; the day a Russian work needs it in the shared
+ *    table, that is where it goes.
+ *
+ * BOOK, PART AND SECTION ARE ABSENT, on the shared table's own judgement:
+ * `KIND_LABELS` abbreviates `chapter` and `article` and spells `part` and
+ * `section` out. Book and part are the top of the tree — twenty rows per
+ * edition, where the index gives the label a line of its own — and section is
+ * eight rows. The 265 below them are what repeat a noun beside a name in a
+ * column that has to hold both, which is the same judgement the Code itself
+ * makes: `Art.` is the one level every edition already abbreviates.
+ *
+ * (German is also why this stays keyed on the printed noun rather than routed
+ * through `kindLabelWord` at call time: the Code's German edition prints
+ * `SEKTION` and `KIND_LABELS.de.section` is `Abschnitt` — a different WORD,
+ * not a shorter one, and printing it would put a noun on the page that the
+ * page it names does not use. Leaving `section` out settles that too.)
  */
 const CANON_LAW_LABEL_SHORT: Record<string, Record<string, string>> = {
-	en: { SECTION: 'Sect.', TITLE: 'Tit.', CHAPTER: 'Chap.', ART: 'Art.' },
-	la: { SECTIO: 'Sect.', TITULUS: 'Tit.', CAPUT: 'Cap.', ART: 'Art.' },
-	it: { SEZIONE: 'Sez.', TITOLO: 'Tit.', CAPITOLO: 'Cap.', ARTICOLO: 'Art.' },
-	es: { SECCION: 'Secc.', TITULO: 'Tít.', CAPITULO: 'Cap.', ART: 'Art.' },
-	fr: { SECTION: 'Sect.', TITRE: 'Tit.', CHAPITRE: 'Chap.', ART: 'Art.' },
-	de: { SEKTION: 'Sekt.', TITEL: 'Tit.', KAPITEL: 'Kap.', ARTIKEL: 'Art.' },
-	ru: { РАЗДЕЛ: 'Разд.', ТИТУЛ: 'Тит.', ГЛАВА: 'Гл.', СТ: 'Ст.' }
+	en: { TITLE: 'Tit.', CHAPTER: 'Ch.', ART: 'Art.' },
+	la: { TITULUS: 'Tit.', CAPUT: 'Cap.', ART: 'Art.' },
+	it: { TITOLO: 'Tit.', CAPITOLO: 'Cap.', ARTICOLO: 'Art.' },
+	es: { TITULO: 'Tít.', CAPITULO: 'Cap.', ART: 'Art.' },
+	fr: { TITRE: 'Tit.', CHAPITRE: 'Ch.', ART: 'Art.' },
+	de: { TITEL: 'Tit.', KAPITEL: 'Kap.', ARTIKEL: 'Art.' },
+	ru: { ТИТУЛ: 'Тит.', ГЛАВА: 'Гл.', СТ: 'Ст.' }
 };
 
 /** Accents off, upper-cased — `documentLabelKind`'s fold (structureToc.ts),
@@ -157,7 +185,7 @@ function isShouted(text: string): boolean {
 
 /**
  * A printed division label with its noun abbreviated — `CHAPTER I` ->
- * `CHAP. I`, `Art. 1` unchanged, `PREMIÈRE PARTIE` unchanged.
+ * `CH. I`, `Art. 1` unchanged, `PREMIÈRE PARTIE` unchanged.
  *
  * THE SOURCE'S OWN NUMERAL IS KEPT, and that is the whole difference from
  * `marker()` (structureToc.ts), whose short form is unusable here for the

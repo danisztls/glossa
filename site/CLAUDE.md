@@ -839,15 +839,28 @@ second chunk stride. What is new is only what a reading page IS.
   rearrangement at hydration.
 - **The chrome abbreviates a division's label; the running text prints it
   whole.** `canonLawLabelText` shortens the NOUN and keeps the source's own
-  numeral — `CHAPTER I` → `CHAP. I` — which is what `marker()`'s short form
+  numeral — `CHAPTER I` → `CH. I` — which is what `marker()`'s short form
   cannot do here: that form renumbers from tree position, and the Code
   restarts `TITLE I` inside every book and part, so four different places
   would read `Tit. 1`. It is keyed by the printed noun rather than by kind,
   because the outline carries none (`buildDocumentOutline` stamps every node
   `sub`), which also makes French degrade correctly — `PREMIÈRE PARTIE` puts
-  its ordinal first, matches nothing, and prints verbatim. Book and part are
-  deliberately outside the table: twenty rows per edition, at the top of the
-  tree, where the index gives the label a line of its own.
+  its ordinal first, matches nothing, and prints verbatim.
+- **THE WORDS IT ABBREVIATES WITH ARE `KIND_LABELS`', AND A TEST HOLDS THEM
+  THERE.** That table (titles.ts, read through `kindLabelWord`) is what every
+  other work on the site abbreviates a chapter with, so a second vocabulary is
+  a reader meeting `Ch. 3` on one page and `Chap. III` on the next — which is
+  what shipped for a day, because the two tables are keyed differently (kind
+  against printed noun) and nothing compared them. `canonLawNav.test.ts`
+  asserts the agreement per language wherever BOTH name the pair, the shape
+  `menu-filter.test.ts` uses. Two entries have no counterpart and say so:
+  `title` (no other work has that division, so the kind union has no member
+  for it) and Russian `article` (`KIND_LABELS` omits `article` for the six
+  languages the Catechism is not published in). **Book, part and section are
+  outside the table on the shared table's own judgement** — it abbreviates
+  `chapter` and `article` and spells the other two out — and section doubly
+  so, since the Code's German prints `SEKTION` where `KIND_LABELS.de.section`
+  says `Abschnitt`: a different word, not a shorter one.
 - **The breadcrumb is a flex row, and that block is global.** A crumb wraps as
   a UNIT — in inline flow the trail is one paragraph and the line breaks at
   whatever space it reaches, so `BOOK I` was stranded on a line above its own
