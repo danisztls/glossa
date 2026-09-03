@@ -3473,7 +3473,8 @@ long tail of three quota failures or one unserved book is the entire value.
 Until 2026-09-02 every link this site made pointed at a locus inside its own corpus, and
 `llms.txt` said as much: **cite the publisher for the words, link here for the locus**.
 An outbound link is therefore a new kind of object here, not a new field, and it arrived
-for one citation only — Acta Apostolicae Sedis.
+for one citation only — Acta Apostolicae Sedis. Its predecessor gazette followed on
+2026-09-03, and the two together are still the whole list.
 
 **AAS is a venue, not a work, which is why it is linked and not ingested.**
 `AAS 86 (1994), 386-387` addresses a page in a printed volume; this corpus's whole address
@@ -3531,6 +3532,74 @@ rather than a nullable slug, and a held siglum's link here always wins.
 **It strengthens the rights position rather than straining it.** `llms.txt` already says
 to cite the publisher for the words; an external-link line pointing at vatican.va is that
 sentence made clickable.
+
+**Acta Sanctae Sedis is the second, and it is a TABLE — the exception the paragraph above
+asks for evidence before making.** ASS is what AAS was called from 1865 to 1908, cited 389
+times across the corpus and most densely in Lumen gentium, which prints it in nine of its
+editions. Two things make a derivation impossible rather than merely inconvenient. The
+filename does not follow from the volume: the Vatican's year suffixes are irregular
+(`ASS-32-1899-900`, `ASS-33-1900-1`, `ASS-34-1901-2`) and volumes 10 and 16 carry a
+supplement's page range inside the name. And the CHECK only half derives — `year − volume
+== 1867` holds from volume 9 up and fails for all eight below it, where the early volumes
+span two years apiece and the offset walks (volume 4 is 1868, not 1871). `audit.py` has
+carried that offset since it learned to flag impossible references, with
+`SERIES_ASS_IRREGULAR_BELOW = 4`; it is set too low, and only had 13 distinct volumes to
+test against.
+
+**What licenses the table is that the series is CLOSED.** The failure a URL table is
+avoided for here is the silent stale row, and that needs a series still growing. ASS
+ceased with volume 41 in 1908 and cannot gain one; the only way the table rots is
+vatican.va moving the files, which breaks the AAS derivation in the same breath. That is
+the shape of evidence to ask for before writing the next one — not "the rows are few" but
+"the set cannot change".
+
+**Everything else carries over unchanged, the year check first**, and it is the year check
+that makes the volume's SPELLING not matter. A volume reaches the table three ways, because
+the corpus prints it three ways and all three are the same address: as a digit locus; as a
+Roman numeral, which `LOCUS_RE` cannot read and which the French and Latin editions set
+(`ASS XXVIII (1895-1896)` is volume 28, whose years are 1895-96); and as the head of a
+comma-chained locus, where the citation put the year inside it (`ASS 5, 1869, 305-331`
+arrives as one locus carrying volume, year and pages together). None of the three needed a
+new tolerance, because each is answered by the same two-token check — which on the Roman
+numerals earns its keep twice over, refusing `ASS XXII (1930)` (Casti connubii, an AAS
+volume under the earlier siglum) and `ASS XII (1908)`, where the source has set Haerent
+animo's volume XLI as XII and the printed year says so.
+
+The year itself is read from `(1885)`, `(1890-91)`, `(1890/91)`, `[1869]` and a bare
+`, 1908` alike — a two-year volume is cited by either of its years, the Vatican's own index
+brackets rather than parenthesises, and the Latin editions use no bracket at all. The
+unbracketed form is safe for the same reason the whole design is: the number must EQUAL one
+of the volume's own years, and an ASS volume runs to some 700 pages, so nothing it could be
+confused with reaches four digits (`ASS 41,555-575` is declined on the digit count alone).
+Measured over the corpus through the grammar itself: **258 citations link, across 27 of the
+41 volumes.** Each of the 41 addresses was confirmed 200 and `application/pdf` by HEAD on
+2026-09-03.
+
+**The siglum was not glossed in English or Portuguese at all**, which is the half of this
+that had nothing to do with linking: `ASS` sat only in `SERIES_SIGLA`, so 31 citations in
+the English editions, 72 more in the six tags that fall back to English (`be`, `lv`, `sw`,
+`sl`, `nl`, `hr`) and 43 in Portuguese rendered as unglossed text. Adding the two rows
+moved `recognized` in the `vatii` and `encyclical` families and left `linkable` flat in
+every family — the same containment check the AAS change was held to, and the same result:
+an external address is not an address on this site.
+
+**A first pass refused the Roman and unbracketed forms on the grounds that they were "a
+different locus grammar", and that was wrong in a way worth recording.** `ASS XXVIII` is
+`ASS 28`; the spelling of a numeral is not a different address, and "`LOCUS_RE` only reads
+digits" is a fact about the implementation offered as if it were a fact about the citation.
+The tell is that the refusal had no failure to point at — every argument for it was about
+this code, and none about what the reader would be sent to. **Where a shape is refused, the
+reason has to name what would go wrong**; where it names only what is currently written, it
+is a to-do wearing a rule's clothes.
+
+**What is refused now is refused on the year alone.** The bulk are AAS volumes under the
+earlier siglum — `ASS 57 (1965)`, `ASS 81 (1989)`, `ASS XXII (1929)` — which is the check
+doing exactly its job. The one genuine cost is a citation that prints the DOCUMENT's year
+rather than the VOLUME's: `ASS 20 (1888)` is Libertas praestantissimum, really in volume
+20, which the Vatican's index labels 1887. Accepting a year ±1 would recover a handful and
+would be the one thing this design refuses — a tolerance invented to fit the cases in front
+of it, on a check whose whole value is that two tokens must agree. The table follows the
+index, and a year the index does not print is not ours to supply.
 
 **The Code of Canon Law is no longer one of these, and the reason is worth keeping.** It
 was listed here as a citation carrying a real locus whose per-book URLs needed a range

@@ -2204,10 +2204,10 @@ describe('glossOf', () => {
 });
 
 /**
- * The one address this grammar answers with a link that leaves the site: an
- * AAS volume, on the Holy See's own server. See the AAS section in
- * `refs-grammar.ts` for why it is derived rather than tabulated, and why the
- * printed year is a CHECK and not an input.
+ * The first of the two addresses this grammar answers with a link that leaves
+ * the site: an AAS volume, on the Holy See's own server. See the AAS section
+ * in `refs-grammar.ts` for why it is derived rather than tabulated, and why
+ * the printed year is a CHECK and not an input.
  */
 describe('external sources — AAS volumes', () => {
 	const aas = (text: string, lang = 'en') =>
@@ -2303,6 +2303,179 @@ describe('external sources — AAS volumes', () => {
 		expect(seg?.external?.href).toBe(
 			'https://www.vatican.va/archive/aas/documents/AAS-58-1966-ocr.pdf'
 		);
+	});
+});
+
+/**
+ * The second: an Acta Sanctae Sedis volume, the gazette AAS replaced in 1909.
+ * A 41-row table rather than a derivation — the filenames are irregular and
+ * the volume/year offset only holds from volume 9 up — but the printed year
+ * is a check here exactly as it is for AAS, and for the same reason: it is
+ * what refuses a misprinted siglum. See the ASS section in `refs-grammar.ts`.
+ *
+ * Every citation below is one the corpus actually prints.
+ */
+describe('external sources — ASS volumes', () => {
+	const ass = (text: string, lang = 'en') =>
+		parseRefs(normalizeCitationSpacing(text), { lang }).find(
+			(s) => s.kind === 'document' && s.label === 'ASS'
+		) as Extract<RefSegment, { kind: 'document' }> | undefined;
+
+	it('opens the volume PDF when the printed year matches the table', () => {
+		expect(ass('Encyclical Letter Immortale Dei: ASS 18 (1885), 170–171;')?.external).toEqual({
+			href: 'https://www.vatican.va/archive/ass/documents/ASS-18-1885-ocr.pdf',
+			label: '18 (1885)'
+		});
+	});
+
+	it('pads a single-digit volume, as the Vatican’s own filenames do', () => {
+		expect(ass('Const. Ap. Romanos Pontifices: ASS 3 (1867) 162;')?.external?.href).toBe(
+			'https://www.vatican.va/archive/ass/documents/ASS-03-1867-ocr.pdf'
+		);
+	});
+
+	// A volume bound across two years is cited by either of them, and the
+	// editions abbreviate the span three ways. Only the FIRST year is read;
+	// the tail is the same volume's other year however it is written.
+	it('accepts either year of a two-year volume, and every spelling of the span', () => {
+		const href = 'https://www.vatican.va/archive/ass/documents/ASS-23-1890-91-ocr.pdf';
+		for (const printed of [
+			'Enz. Rerum novarum: ASS 23 (1890-91) 649-662',
+			'Rerum Novarum: ASS 23 (1890-1891), p. 651',
+			'Enc. Rerum novarum, ASS 23 (1890/91) 643ss',
+			'Rerum novarum: ASS 23 (1890–1891), 643ff'
+		]) {
+			expect(ass(printed)?.external?.href).toBe(href);
+		}
+		// Volume 29 is 1896-97, and Divinum illud is dated by its second year.
+		expect(ass('Enz. Divinum illud, 9. Mai 1897: ASS 29 (1897) 650-651.', 'de')?.external).toEqual({
+			href: 'https://www.vatican.va/archive/ass/documents/ASS-29-1896-97-ocr.pdf',
+			label: '29 (1897)'
+		});
+	});
+
+	// The Vatican's own index brackets the year, and fourteen citations
+	// follow it.
+	it('accepts the year in square brackets', () => {
+		expect(
+			ass('Litt. Ap. Apostolicae Sedis, 12 oct. 1869: ASS 5 [1869], 305-331')?.external?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-05-1869-70-ocr.pdf');
+		expect(
+			ass('condamnant l\u2019avortement direct : ASS 17 [1884], 556', 'fr')?.external?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-17-1884-ocr.pdf');
+	});
+
+	// The volumes whose names carry the supplement's page range — nothing
+	// about the filename follows from the volume and year, which is the whole
+	// argument for a table.
+	it('opens the two volumes bound with a supplement', () => {
+		expect(ass('ASS 10 (1877) 3')?.external?.href).toBe(
+			'https://www.vatican.va/archive/ass/documents/ASS-10-1877-1-639+supplemento-321-448-ocr.pdf'
+		);
+		expect(ass('ASS 16 (1883-84) 5')?.external?.href).toBe(
+			'https://www.vatican.va/archive/ass/documents/ASS-16-1883-84-1-576+supplemento-17-96-ocr.pdf'
+		);
+	});
+
+	// The French and Latin editions set the volume in Roman, and it is the
+	// same address — XXVIII is 28, whose years are 1895-96.
+	it('reads a volume set in Roman', () => {
+		expect(
+			ass('Lettre encyclique Satis cognitum du 29 juin 1896. ASS XXVIII (1895-1896) 710.', 'fr')
+				?.external
+		).toEqual({
+			href: 'https://www.vatican.va/archive/ass/documents/ASS-28-1895-96-ocr.pdf',
+			label: 'XXVIII (1895)'
+		});
+		expect(
+			ass('Lettre encyclique Divinum illud du 9 mai 1897. ASS XXIX (1897) 649.', 'fr')?.external
+				?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-29-1896-97-ocr.pdf');
+	});
+
+	// `ASS, XLI, 1908` — no bracket at all, which is how the Latin editions
+	// set it. Safe because the number must equal one of the volume's own
+	// years, and an ASS page never reaches four digits.
+	it('reads a year printed after a bare comma', () => {
+		expect(
+			ass('Cf S. PIUS X, Adhortatio apost. Haerent animo: ASS, XLI, 1908, pp. 555-577;', 'la')
+				?.external?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-41-1908-ocr.pdf');
+		expect(
+			ass('Leo XIII, litt. enc. Adiutricem populi: ASS, XXVIII, 1895-1896, p.130.', 'la')?.external
+				?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-28-1895-96-ocr.pdf');
+		// A page list is not a year, however many numbers it chains.
+		expect(ass('Haerent animo: ASS 41,555-575.')?.external).toBeUndefined();
+		expect(ass('ASS 14, 449ss.')?.external).toBeUndefined();
+	});
+
+	// The digit twin of the same form. `LOCUS_RE` chains on commas, so the
+	// volume, the year and the pages all arrive as one locus.
+	it('reads a year chained into the locus', () => {
+		expect(
+			ass('Acta Pii IX, V, 55-72; ASS 5, 1869, 305-331; Fontes Iuris Canonici', 'de')?.external
+		).toEqual({
+			href: 'https://www.vatican.va/archive/ass/documents/ASS-05-1869-70-ocr.pdf',
+			label: '5 (1869)'
+		});
+		expect(
+			ass('die direkte Abtreibung verurteilt hat (ASS 17, 1884, S. 556;', 'de')?.external?.href
+		).toBe('https://www.vatican.va/archive/ass/documents/ASS-17-1884-ocr.pdf');
+	});
+
+	// The year check answers for a numeral exactly as for a digit, and both
+	// of these need it: Casti connubii is AAS 22 (1930), and Haerent animo is
+	// volume XLI, which this source has set as XII.
+	it('refuses a Roman volume the printed year contradicts', () => {
+		expect(
+			ass('Lettre encyclique Casti connubii du 31 décembre 1930 : ASS XXII (1930) 539-592.', 'fr')
+				?.external
+		).toBeUndefined();
+		expect(
+			ass('Exhortation Haerent animo du 4 août 1908 : ASS XII (1908) 555-577.', 'fr')?.external
+		).toBeUndefined();
+	});
+
+	it('refuses a Roman volume with no year beside it', () => {
+		expect(
+			ass('lo Spirito Santo è l’anima di lei (ASS XXIX p. 650).', 'it')?.external
+		).toBeUndefined();
+	});
+
+	// THE MIRROR OF THE AAS TRAP. Mystici Corporis is AAS 35 (1943); volume 35
+	// of the ASS is 1902-3. Deriving the file from the volume alone would open
+	// a real scan forty years early, and nothing downstream could tell.
+	it('refuses a volume whose printed year says Acta Apostolicae Sedis', () => {
+		const seg = ass('Pius XII, Litt. Encycl. Mystici Corporis, 29 iun. 1943: ASS 35 (1943) p. 209');
+		// Still recognized, still glossed — only the way out is withheld.
+		expect(seg).toMatchObject({ locus: '35' });
+		expect(seg?.external).toBeUndefined();
+		expect(
+			ass('Litt. Encycl. Divino afflante Spiritu: ASS 12 (1920) 396;')?.external
+		).toBeUndefined();
+	});
+
+	// The series ceased with volume 41 in 1908, so these name no volume at
+	// all — they are AAS references under the wrong siglum.
+	it('refuses a volume the series never had', () => {
+		expect(ass('ASS 79 (1987), 1453')?.external).toBeUndefined();
+		expect(ass('ASS 91 (1999), 89')?.external).toBeUndefined();
+	});
+
+	it('refuses a citation that prints no year to check the volume against', () => {
+		expect(ass('ASS 18, 170-171.')?.external).toBeUndefined();
+		expect(ass('ASS 23, pp. 643 ss.')?.external).toBeUndefined();
+	});
+
+	// The gazettes are two rows in one table, not two code paths, and neither
+	// answers for the other's siglum.
+	it('keeps the two gazettes apart', () => {
+		expect(ass('AAS 18 (1885) p. 161.')).toBeUndefined();
+		const seg = parseRefs('Cf. ibid., 11: AAS 58 (1966), 1033-1034.').find(
+			(s) => s.kind === 'document' && s.label === 'AAS'
+		) as Extract<RefSegment, { kind: 'document' }> | undefined;
+		expect(seg?.external?.href).toContain('/archive/aas/');
 	});
 });
 

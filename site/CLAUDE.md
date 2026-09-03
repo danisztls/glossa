@@ -1343,13 +1343,14 @@ from the sync's edition records, `reference-coverage.mjs` buckets per work,
 **`prose.document` is the counter that guards the sigla scan** — counted per
 family, with preflight refusing a 3% drop, same as prose scripture.
 
-## One siglum links off the site, and the year is what makes it safe
+## Two sigla link off the site, and the year is what makes it safe
 
-`AAS` is the only citation the grammar answers with an address outside the
-corpus (2026-09-02, §Linking out): a `RefSegment`'s optional `external`, built
-by `aasVolume` in `refs-grammar.ts` and rendered inside `SiglumGloss`'s card —
-never as a glyph on the siglum, which would mark thousands of references in a
-column that is already apparatus.
+`AAS` and `ASS` — the Holy See's gazette either side of 1909 — are the only
+citations the grammar answers with an address outside the corpus (2026-09-02
+and 2026-09-03, §Linking out): a `RefSegment`'s optional `external`, built by
+`aasVolume`/`assVolume` in `refs-grammar.ts` and rendered inside
+`SiglumGloss`'s card — never as a glyph on the siglum, which would mark
+thousands of references in a column that is already apparatus.
 
 - **The printed year is a CHECK, never an input.** Volume _n_ is 1908 + _n_,
   so the citation says it twice and both must agree. A long tail of sources
@@ -1365,6 +1366,31 @@ column that is already apparatus.
   are single PDFs (9 and 75 in two parts, so both are skipped), 95 onward are
   monthly and a citation names no month. That ceiling is 23.8% of AAS
   references and is a fact about the publisher, not a gap to close.
+- **ASS is a 41-row TABLE, and being closed is what licenses it.** The
+  filenames do not derive (`ASS-32-1899-900`; volumes 10 and 16 carry a
+  supplement's page range) and `year − volume == 1867` holds only from volume
+  9 up — so a derivation is impossible, not merely inconvenient. What makes a
+  table safe here is that the series ceased in 1908 and can never gain a row;
+  ask for that before writing the next one, not "the rows are few".
+  `audit.py`'s `SERIES_ASS_IRREGULAR_BELOW = 4` is set too low against the
+  real index. 258 citations link across 27 volumes; what is refused is
+  refused by the year check (`ASS 35 (1943)` is Mystici Corporis under the
+  earlier siglum).
+- **The volume's SPELLING does not matter, because the year check does.** It
+  is read as a digit locus, as a Roman numeral `LOCUS_RE` cannot reach
+  (`ASS XXVIII (1895-1896)` is volume 28), or as the head of a comma-chained
+  locus that swallowed the year (`ASS 5, 1869, 305-331`); the year comes from
+  `(1885)`, `(1890/91)`, `[1869]` or a bare `, 1908`. None needed a new
+  tolerance — the same two tokens must agree, which is what refuses
+  `ASS XII (1908)` (Haerent animo is volume XLI, and the year says so). All
+  three shapes were refused for one pass on the grounds that they were "a
+  different locus grammar", which was a fact about `LOCUS_RE` dressed as a
+  fact about the citation: **where a shape is refused, the reason has to name
+  what would go WRONG**, not what is currently written.
+- **`ASS` was in no English or Portuguese sigla table until then**, so 146
+  citations across those and the six tags falling back to English were
+  unglossed text. Adding the rows moved `recognized` in `vatii` and
+  `encyclical` and left `linkable` flat everywhere — the containment check.
 
 ## Haydock on the page: the commentary's site half
 

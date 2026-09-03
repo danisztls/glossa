@@ -1573,10 +1573,11 @@ export const BOOK_FORMS: Record<string, Record<string, string[]>> = {
 // appearance) has nothing in the corpus to link to, so the point of
 // recognizing THOSE is a quiet, informative non-link (sigla + locus +
 // expansion tooltip) instead of the sigla vanishing into unstyled text.
-// AAS is the one that is no longer only that: it still resolves to no address
-// here — `slug` stays null and `refHref` still declines it — but the volume it
-// names is a file on vatican.va, so the card its expansion opens carries a
-// link out to it as well. See the AAS section by `findDocumentAt`.
+// AAS and ASS are the two that are no longer only that: they still resolve to
+// no address here — `slug` stays null and `refHref` still declines them — but
+// the volume each names is a file on vatican.va, so the card its expansion
+// opens carries a link out to it as well. See the two gazette sections by
+// `findDocumentAt`.
 //
 // This table is a decoder ring built by counting `\bTOKEN\b` occurrences in
 // the corpus's citations and confirming each entry's meaning against its
@@ -1673,6 +1674,13 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	PG: { expansion: 'Patrologia Graeca (Migne)' },
 	SCh: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
 	AAS: { expansion: 'Acta Apostolicae Sedis (official gazette of the Holy See)' },
+	// The gazette AAS replaced in 1909. It reaches this table late because the
+	// works that print it are not the Catechism: 31 citations in the English
+	// editions, and 72 more in the six tags that fall back to this config
+	// (`be`, `lv`, `sw`, `sl`, `nl`, `hr`) — Lumen gentium and Dignitatis
+	// humanae citing Leo XIII, mostly. Until 2026-09-03 every one of them was
+	// unglossed text.
+	ASS: { expansion: 'Acta Sanctae Sedis (the Holy See gazette before 1909)' },
 	DV: {
 		expansion: 'Dei Verbum (Vatican II, Dogmatic Constitution on Divine Revelation)',
 		slug: 'dei-verbum'
@@ -1810,7 +1818,11 @@ const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
 	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' },
 	PL: { expansion: 'Patrologia Latina (Migne)' },
 	PG: { expansion: 'Patrologia Graeca (Migne)' },
-	AAS: { expansion: 'Acta Apostolicae Sedis' }
+	AAS: { expansion: 'Acta Apostolicae Sedis' },
+	// 43 citations across the Portuguese editions, the most of any language
+	// after Spanish and Italian — Catholics in Political Life and Dignitatis
+	// humanae carry most of them.
+	ASS: { expansion: 'Acta Sanctae Sedis' }
 	// Vatican II / encyclical sigla (LG, GS, DV, ...) do not appear in
 	// ccc.pt at all — its citations spell those documents out in full
 	// ("Const. past. Gaudium et Spes") rather than abbreviating them.
@@ -3168,6 +3180,182 @@ function aasVolume(locus: string | null, after: string): ExternalSource | null {
 	};
 }
 
+// --------------------------------------------------------------------------
+// Acta Sanctae Sedis — the gazette AAS replaced, 41 volumes from 1865 to
+// 1908, and the second address this grammar answers with a link that leaves
+// the site. Cited 389 times across the corpus (measured 2026-09-03), most
+// densely in Lumen gentium, which prints it in nine of its editions.
+//
+// A TABLE, WHERE AAS IS A DERIVATION, and the two reasons are not preferences.
+// The filename is not derivable at all: the year suffix is irregular
+// (`ASS-32-1899-900`, `ASS-33-1900-1`, `ASS-34-1901-2`) and volumes 10 and 16
+// carry the supplement's page range inside the name. And the CHECK only half
+// derives — `year - volume == 1867` holds from volume 9 up and fails for all
+// eight below it, where the early volumes span two years apiece and the
+// offset walks (volume 4 is 1868, not 1871). The pipeline's `audit.py` uses
+// that offset with `SERIES_ASS_IRREGULAR_BELOW = 4`, which is set too low; it
+// had only 13 distinct volumes to test against.
+//
+// WHAT MAKES THE TABLE SAFE IS THAT THE SERIES IS CLOSED. The failure a URL
+// table is avoided for in the AAS section is the silent stale row, and that
+// needs a series still growing. This one ceased with volume 41 in 1908 and
+// cannot gain a row; the only way it rots is vatican.va moving the files,
+// which breaks the AAS derivation in exactly the same breath.
+//
+// THE PRINTED YEAR IS STILL A CHECK AND NOT AN INPUT — the whole AAS design
+// carries over, because it is what refuses a misprinted siglum. 340 citations
+// name a volume in 1-41 whose printed year matches the table; 55 name one in
+// range whose year does not (`ASS 35 (1943)`, `ASS 12 (1920)` — AAS volumes
+// under the wrong siglum, the mirror of the trap the AAS section describes),
+// and 49 more name a volume the series never had (`ASS 79`, `ASS 91`). All
+// 104 are declined, and the reader is told nothing rather than something
+// false.
+//
+// Read against `/archive/ass/index_en.htm` on 2026-09-03, when every one of
+// the 41 was confirmed 200 and `application/pdf` by HEAD (2.4-3.5 MB).
+// --------------------------------------------------------------------------
+
+/**
+ * Volume -> the years it carries and the file that holds it, in volume order.
+ *
+ * A volume spanning two years is cited by either of them — the sources print
+ * `ASS 29 (1896-97)` and `ASS 29 (1897)` alike — so both are accepted, and
+ * both are years genuinely inside the volume the link opens.
+ */
+const ASS_VOLUMES: readonly (readonly [number, number, string])[] = [
+	[1865, 1866, 'ASS-01-1865-66-ocr.pdf'],
+	[1867, 1867, 'ASS-02-1867-ocr.pdf'],
+	[1867, 1867, 'ASS-03-1867-ocr.pdf'],
+	[1868, 1868, 'ASS-04-1868-ocr.pdf'],
+	[1869, 1870, 'ASS-05-1869-70-ocr.pdf'],
+	[1870, 1871, 'ASS-06-1870-71-ocr.pdf'],
+	[1872, 1873, 'ASS-07-1872-73-ocr.pdf'],
+	[1874, 1875, 'ASS-08-1874-75-ocr.pdf'],
+	[1876, 1876, 'ASS-09-1876-ocr.pdf'],
+	[1877, 1877, 'ASS-10-1877-1-639+supplemento-321-448-ocr.pdf'],
+	[1878, 1878, 'ASS-11-1878-ocr.pdf'],
+	[1879, 1879, 'ASS-12-1879-ocr.pdf'],
+	[1880, 1880, 'ASS-13-1880-ocr.pdf'],
+	[1881, 1881, 'ASS-14-1881-ocr.pdf'],
+	[1882, 1882, 'ASS-15-1882-ocr.pdf'],
+	[1883, 1884, 'ASS-16-1883-84-1-576+supplemento-17-96-ocr.pdf'],
+	[1884, 1884, 'ASS-17-1884-ocr.pdf'],
+	[1885, 1885, 'ASS-18-1885-ocr.pdf'],
+	[1886, 1887, 'ASS-19-1886-87-ocr.pdf'],
+	[1887, 1887, 'ASS-20-1887-ocr.pdf'],
+	[1888, 1888, 'ASS-21-1888-ocr.pdf'],
+	[1889, 1890, 'ASS-22-1889-90-ocr.pdf'],
+	[1890, 1891, 'ASS-23-1890-91-ocr.pdf'],
+	[1891, 1892, 'ASS-24-1891-92-ocr.pdf'],
+	[1892, 1893, 'ASS-25-1892-93-ocr.pdf'],
+	[1893, 1894, 'ASS-26-1893-94-ocr.pdf'],
+	[1894, 1895, 'ASS-27-1894-95-ocr.pdf'],
+	[1895, 1896, 'ASS-28-1895-96-ocr.pdf'],
+	[1896, 1897, 'ASS-29-1896-97-ocr.pdf'],
+	[1897, 1898, 'ASS-30-1897-98-ocr.pdf'],
+	[1898, 1899, 'ASS-31-1898-99-ocr.pdf'],
+	[1899, 1900, 'ASS-32-1899-900-ocr.pdf'],
+	[1900, 1901, 'ASS-33-1900-1-ocr.pdf'],
+	[1901, 1902, 'ASS-34-1901-2-ocr.pdf'],
+	[1902, 1903, 'ASS-35-1902-3-ocr.pdf'],
+	[1903, 1904, 'ASS-36-1903-4-ocr.pdf'],
+	[1904, 1905, 'ASS-37-1904-5-ocr.pdf'],
+	[1905, 1906, 'ASS-38-1905-6-ocr.pdf'],
+	[1906, 1906, 'ASS-39-1906-ocr.pdf'],
+	[1907, 1907, 'ASS-40-1907-ocr.pdf'],
+	[1908, 1908, 'ASS-41-1908-ocr.pdf']
+];
+
+/**
+ * The year after the volume, where a two-year volume may print its span:
+ * `(1885)`, `(1890-91)`, `(1890-1891)`, `(1890/91)`, `[1869]`. Only the FIRST
+ * year is read — it is the one the table is keyed on, and the tail is the
+ * same volume's other year however the edition abbreviates it.
+ *
+ * Wider than `AAS_YEAR_RE` on three counts. The span, because AAS volumes are
+ * annual and ASS's first thirty-odd are not. The SQUARE BRACKETS because the
+ * Vatican's own index writes the year that way (`ASS 18 [1885]`) and 14
+ * citations follow it; the pair is not required to match, since no edition
+ * prints a mismatched one and a link built from one would open the same
+ * volume anyway. And the BARE COMMA (`ASS, XLI, 1908, pp. 555-577`), which is
+ * how the Latin editions set it.
+ *
+ * The comma branch is safe for the same reason the whole design is: the
+ * number has to EQUAL one of the volume's own years, and an ASS volume runs
+ * to some 700 pages, so no page number it could be confused with reaches four
+ * digits at all. `ASS 41,555-575` is refused by the digit count alone.
+ */
+const ASS_YEAR_RE = new RegExp(
+	`^ *(?:[([]\\s*(\\d{4})(?:\\s*[${DASHES}/]\\s*\\d{2,4})?\\s*[)\\]]` +
+		`|,\\s*(\\d{4})(?:\\s*[${DASHES}/]\\s*\\d{2,4})?(?=\\s*[,.;]|\\s|$))`
+);
+
+/**
+ * A volume set in Roman, which `LOCUS_RE` — digits only, and shared by every
+ * siglum — leaves in the trailing text.
+ *
+ * THE FRENCH AND LATIN EDITIONS PRINT IT THIS WAY and it is the same address:
+ * `ASS XXVIII (1895-1896)` is volume 28, whose years are 1895-96. Reading it
+ * needs no new tolerance, because the year check answers for a numeral
+ * exactly as it does for a digit — and earns its keep here twice over, on
+ * `ASS XXII (1930)` (Casti connubii, an AAS volume under the earlier siglum)
+ * and on `ASS XII (1908)`, where the source has set Haerent animo's volume
+ * XLI as XII and the printed 1908 refuses it.
+ *
+ * `strictRomanToInt` and not `romanToInt`: the latter reads a trailing `L` as
+ * the older archives' OCR of `1`, which would make volume XL eleven. It is
+ * still reachable through `strictRomanToInt`, so `ASS XL (1907)` reads as
+ * volume 11 and the year check declines it — a refusal, which is the safe
+ * direction, and no edition here prints it.
+ */
+const ASS_ROMAN_RE = /^ *,?\s*([IVXLC]{1,7})(?![\p{L}])/u;
+
+function assVolume(locus: string | null, after: string): ExternalSource | null {
+	// The volume is the locus wherever `LOCUS_RE` could read one, a Roman
+	// numeral in the trailing text wherever it could not, and the head of the
+	// locus where the citation put the year inside it: `LOCUS_RE` chains on
+	// commas, so `ASS 5, 1869, 305-331` arrives as ONE locus carrying the
+	// volume, the year and the pages together. Splitting it costs nothing,
+	// because the year check answers the same question either way — a
+	// component has to EQUAL one of the volume's years, so `ASS 14, 449ss`
+	// offers nothing four digits long and is declined where it stands.
+	let volume: number | null = null;
+	let printedVolume = '';
+	let rest = after;
+	if (locus === null) {
+		const roman = ASS_ROMAN_RE.exec(after);
+		if (roman) {
+			volume = strictRomanToInt(roman[1]);
+			printedVolume = roman[1];
+			rest = after.slice(roman[0].length);
+		}
+	} else if (/^\d+$/.test(locus)) {
+		volume = Number(locus);
+		printedVolume = locus;
+	} else {
+		const [head, ...tail] = locus.split(',');
+		if (tail.length && /^\d+$/.test(head.trim())) {
+			volume = Number(head);
+			printedVolume = head.trim();
+			rest = ',' + tail.join(',');
+		}
+	}
+	if (volume === null) return null;
+	const row = ASS_VOLUMES[volume - 1];
+	if (!row) return null;
+	const printed = ASS_YEAR_RE.exec(rest);
+	if (!printed) return null;
+	const year = Number(printed[1] ?? printed[2]);
+	const [first, last, file] = row;
+	if (year !== first && year !== last) return null;
+	return {
+		href: `https://www.vatican.va/archive/ass/documents/${file}`,
+		// The source's own numeral, as the Code's labels keep theirs — the
+		// citation says XXVIII and the card should not answer 28.
+		label: `${printedVolume} (${year})`
+	};
+}
+
 /** The siglum's address on its publisher's site, where it has one. Keyed by
  *  siglum so a second such source joins as a row, not as a code path. */
 function externalSourceFor(
@@ -3175,7 +3363,9 @@ function externalSourceFor(
 	locus: string | null,
 	after: string
 ): ExternalSource | null {
-	return sigla === 'AAS' ? aasVolume(locus, after) : null;
+	if (sigla === 'AAS') return aasVolume(locus, after);
+	if (sigla === 'ASS') return assVolume(locus, after);
+	return null;
 }
 
 function findDocumentAt(cfg: LangConfig, s: string, start: number): DocumentMatch | null {
