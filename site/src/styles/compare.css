@@ -620,3 +620,21 @@
 		display: block;
 	}
 }
+
+/*
+ * A PRAYER'S ROWS ARE LINES, AND A LINE MUST NOT BE PADDED (2026-09-03).
+ *
+ * Every other route hands `CompareGrid` a verse, a paragraph or a section per
+ * row, where the 0.4rem above and below is what separates one unit from the
+ * next. `/preces` hands it one PRINTED LINE (`$lib/prayer-lines.ts`), so that
+ * same padding falls between every line of the prayer: 0.8rem added to a 1.65
+ * leading sets the stanza a third looser than the identical text one column
+ * over, and unevenly, since a line the VIEWPORT wrapped sits inside a cell and
+ * collects none of it.
+ *
+ * Keyed on the route's own wrapper rather than on a prop, because it is a fact
+ * about what that route's rows ARE and not a choice a caller makes twice.
+ */
+.prayer-reading-layout .compare-cell {
+	padding-block: 0;
+}

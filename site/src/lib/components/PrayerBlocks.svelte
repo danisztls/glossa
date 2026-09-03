@@ -1,17 +1,27 @@
 <!--
-	Renders a prayer's flowing text — one `PrayerBlock[]` array, `prose` |
-	`versicle` | `response` (types.ts). The same component renders a
-	vernacular prayer's `blocks`, the Rosary's `instructions.blocks`, and a
-	Latin companion's — all the identical shape, so there is exactly one
-	renderer rather than three near-duplicates.
+	Renders a prayer's flowing text — one `PrayerLine[]` list, flattened from
+	the corpus's blocks by `$lib/prayer-lines.ts`. The same component renders a
+	vernacular prayer's `blocks`, the Rosary's `instructions.blocks`, a Latin
+	companion's, and one line of any of them inside a compare cell — all the
+	identical shape, so there is exactly one renderer rather than four
+	near-duplicates.
+
+	IT TAKES LINES AND NOT BLOCKS, since 2026-09-03, and compare mode is why.
+	`CompareGrid` aligns two columns by giving each row its own grid sized to
+	the taller cell, so whatever the reader wants aligned has to be a ROW —
+	and line-for-line alignment means the row is a printed line. The split
+	therefore cannot happen inside this component's render, where nothing
+	outside could see the lines. Everything the flattening knew and a lone line
+	would not (which block it came from, whether that block was broken into
+	lines, whether it is the block's first or last) travels on the line itself.
 
 	THE LABEL IS VERBATIM SOURCE TEXT, RENDERED AS PRINTED, NEVER REGENERATED
 	FROM THE BLOCK KIND: a `versicle` block doesn't imply "V." — most sources
 	print that, but PT's own Angelus and Rosary-closing dialogue print "D."/
 	"C." for the identical leader/assembly roles (docs/corpus-schema.md
-	"Prayers"). Synthesizing a label from `block.kind` would silently erase
+	"Prayers"). Synthesizing a label from `line.kind` would silently erase
 	that real difference between how each source page typesets the same
-	prayer; `block.label` is shown exactly as the corpus stored it instead.
+	prayer; `label` is shown exactly as the corpus stored it instead.
 
 	NOT `aria-hidden` on the label: unlike a decorative bullet or rule, "V."/
 	"R." is content a reader following along in a missal expects to hear
@@ -19,87 +29,153 @@
 	screen reader gets it too, read inline before the line it prefixes.
 -->
 <script lang="ts">
-	import type { PrayerBlock } from '$lib/types';
 	import InlineText from './InlineText.svelte';
-	import { parseInlineHtml, splitLines, type InlineNode } from '$lib/inline-html';
+	import type { InlineNode } from '$lib/inline-html';
+	import type { PrayerLine } from '$lib/prayer-lines';
+	import { splitDropCap } from '$lib/dropcap';
 
 	interface Props {
-		blocks: PrayerBlock[];
+		lines: PrayerLine[];
+		/** Set illuminated initials on this text. The caller decides, exactly as
+		    it does for `ProseBlocks`: this component cannot see whether the lines
+		    it was handed OPEN the reading or conclude it, and the Rosary's
+		    `blocks` are its closing prayer, printed below four mystery groups. */
+		dropCap?: boolean;
 	}
 
-	let { blocks }: Props = $props();
+	let { lines, dropCap = false }: Props = $props();
 
 	/**
-	 * A block's printed lines — one entry per line the SOURCE broke, which for
-	 * a block that prints on one line is a single entry.
+	 * The opening of a PROSE block, split into the pieces `dropcaps.css`'s
+	 * `.drop-cap-letter` / `.drop-cap-lead` need — null wherever no initial is
+	 * warranted. `splitDropCap` decides that for the text (it declines a digit,
+	 * a lowercase opening and a joining script, $lib/dropcap.ts); what this
+	 * decides is which lines may ask at all.
 	 *
-	 * `InlineText`, not `InlineProse`: a prayer's lines carry `<br>` and
-	 * nothing else (measured across the source's whole prayer region), and
-	 * the one thing `InlineProse` adds is linkifying scripture references out
-	 * of running prose -- which a prayer does not contain and which would
-	 * turn "and lead us not into temptation" into a hunt for citations that
-	 * are not there. The Rosary's meditations DO carry sourced locators, and
-	 * those are `PrayerMystery`'s, not this component's.
+	 * VERSE TAKES NO INITIAL, and the whole of 2026-09-03 was spent finding out
+	 * why. A drop cap is a device for the top of a column of running prose: the
+	 * letter is sized in LINES and the lines beside it indent around it, which
+	 * is right where those lines are the viewport's and wrong where they are the
+	 * source's — a three-line cap on the Pai Nosso indented `santificado` and
+	 * `venha` so that two printed lines read as continuations of the first. A
+	 * one-line versal fixes that (nothing is left to indent) and was set on
+	 * every line opening on a capital, which the lowercase rule keeps to about
+	 * one line in five. What it could not fix is that verse does not want the
+	 * device at all: a prayer is seven lines under its own `<h1>`, so the eye
+	 * already has its way in and each initial only competes with the heading two
+	 * lines above it. Long running text needs an entry point; a hymn does not.
+	 *
+	 * So the initial belongs to a block the source printed as ONE RUN — the
+	 * Memorare, the three Eastern prayers, the Act of Contrition — where there
+	 * is a paragraph for the cap to bite into and the lines beside it really are
+	 * wraps. And only to the FIRST such block: a later one is a further
+	 * paragraph of the same prayer, not a second beginning. `ProseBlocks`
+	 * excludes a `quote` block for the neighbouring reason (a blockquote is a
+	 * second opening competing with the cap); a prayer has no such block.
+	 *
+	 * The split comes off the line's first TEXT run rather than off its markup:
+	 * a line opening `<i>Sancta Maria</i>` would otherwise put a tag inside the
+	 * initial.
 	 */
-	function lines(block: PrayerBlock): InlineNode[][] {
-		return splitLines(parseInlineHtml(block.html ?? escapeText(block.text)));
-	}
-
-	/* `text` is plain text, so it has to be escaped before it can be parsed
-	   as the narrow markup -- a prayer that printed an ampersand would
-	   otherwise arrive as a broken entity. */
-	function escapeText(text: string): string {
-		return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	function capFor(line: PrayerLine) {
+		// AND NOT TO A DIALOGUE'S OPENING TURN, which is a layout fact rather
+		// than a judgment: a versicle's text sits in a flex item, a flex item is
+		// a block formatting context, and so it CONTAINS the cap's float instead
+		// of letting it escape. The Angelus opens `V. The Angel of the Lord
+		// declared unto Mary.` — one line — so the cap would stand alone in a row
+		// three lines tall with the label beside its shoulder and nothing wrapped
+		// around it. Three prayers in the corpus open this way (EN, FR and PT
+		// Angelus); every other opening block is prose.
+		if (!dropCap || line.verse || line.kind !== 'prose') return null;
+		if (!(line.block === 0 && line.first)) return null;
+		const head = line.nodes[0];
+		if (head?.kind !== 'text') return null;
+		const split = splitDropCap(head.text);
+		if (split.first === '') return null;
+		const restNodes: InlineNode[] = [{ kind: 'text', text: split.rest }, ...line.nodes.slice(1)];
+		return { ...split, restNodes };
 	}
 </script>
 
-<!--
-	A block's body. VERSE AND PROSE ARE SET DIFFERENTLY, and which one a block
-	is is not a field on it — it is whether the source broke the block into
-	lines. A block with lines gets each of them as its own hanging-indent
-	block, so every line the source printed starts at the margin and only a
-	line the viewport broke sits in from it; a block the source printed as one
-	run gets no wrapper and no indent, because there are no source lines for a
-	wrap to be confused with and indenting every continuation of a prose
-	paragraph would be setting the Memorare as if it were a hymn.
--->
-{#snippet body(ls: InlineNode[][])}
-	{#if ls.length > 1}
-		{#each ls as line, i (i)}<span class="prayer-verse-line"><InlineText nodes={line} /></span
-			>{/each}
-	{:else}
-		<InlineText nodes={ls[0] ?? []} />
-	{/if}
-{/snippet}
+<!-- The initial, in the two pieces `dropcaps.css` sets: the letter, and the
+     punctuation that leads into it at body size on its shoulder. -->
+{#snippet capMark(c: { lead: string; first: string })}<span class="drop-cap-letter"
+		>{#if c.lead}<span class="drop-cap-lead">{c.lead}</span>{/if}{c.first}</span
+	>{/snippet}
 
-{#each blocks as block, i (i)}
-	{#if block.kind === 'versicle' || block.kind === 'response'}
-		<p class="prayer-line" class:prayer-versicle={block.kind === 'versicle'}>
-			{#if block.label}<span class="prayer-line-label">{block.label}</span>{/if}
-			<span class="prayer-line-text">{@render body(lines(block))}</span>
+<!-- One line's text, with its initial where it takes one. -->
+{#snippet body(line: PrayerLine)}{@const c = capFor(line)}{#if c}{@render capMark(c)}<InlineText
+			nodes={c.restNodes}
+		/>{:else}<InlineText nodes={line.nodes} />{/if}{/snippet}
+
+<!--
+	VERSE AND PROSE ARE SET DIFFERENTLY, and which one a line is is not a field
+	on its block — it is whether the source broke that block into lines. A line
+	the source printed gets its own `.prayer-verse-line`; a block printed as one
+	run gets `.prayer-prose`, because there are no source lines for a wrap to be
+	confused with.
+
+	THE GAP BETWEEN BLOCKS IS CARRIED BY EACH BLOCK'S LAST LINE. Every line is
+	its own element now, so a margin on all of them would space the lines of one
+	stanza as widely as the stanzas themselves.
+-->
+{#each lines as line (line.n)}
+	{#if line.kind === 'versicle' || line.kind === 'response'}
+		<p
+			class="prayer-line"
+			class:prayer-versicle={line.kind === 'versicle'}
+			class:block-end={line.last}
+		>
+			<!-- The column is reserved for every line of a LABELLED block, so the
+			     turn's continuation lines stay under its own opening rather than
+			     stepping back to the margin; a block whose source prints no label
+			     reserves nothing. -->
+			{#if line.labelled}<span class="prayer-line-label">{line.label ?? ''}</span>{/if}
+			<span class="prayer-line-text">{@render body(line)}</span>
 		</p>
+	{:else if line.verse}
+		<p class="prayer-verse-line" class:block-end={line.last}>{@render body(line)}</p>
 	{:else}
-		<p class="prayer-prose">{@render body(lines(block))}</p>
+		<p class="prayer-prose" class:block-end={line.last}>{@render body(line)}</p>
 	{/if}
 {/each}
 
 <style>
-	.prayer-prose {
-		margin: 0 0 1rem;
+	.prayer-prose,
+	.prayer-verse-line,
+	.prayer-line {
+		margin: 0;
+	}
+
+	.prayer-prose.block-end,
+	.prayer-verse-line.block-end {
+		margin-block-end: 1rem;
 	}
 
 	/*
-	 * ONE LINE THE SOURCE PRINTED, hanging so that a line the viewport breaks
-	 * is visibly a continuation and not a new verse -- which is how a printed
-	 * missal or hymnal sets the same text, and the distinction the block's own
-	 * `<br>`s would otherwise lose. `display: block` rather than a real block
-	 * element because these sit inside a `<p>` and inside the text column of a
-	 * dialogic line, neither of which may contain one.
+	 * ONE LINE THE SOURCE PRINTED.
+	 *
+	 * IT USED TO HANG: `text-indent: -1.15em` with matching padding, so a line
+	 * the viewport broke sat in from the margin and was visibly a continuation
+	 * rather than a new verse -- which is how a printed missal sets the same
+	 * text. That is the right device for a hymnal and the wrong one for this
+	 * column, because the premise it rests on is that a wrap is the exception.
+	 * Here it is not. Prayers set at 1.1x the reading base in the prose
+	 * column's width (the route's own docblock) is 56.7 characters per line,
+	 * and the source's `<br>`s are not always verse -- the Nicene Creed's are
+	 * sense-lines running to 84 characters, so 8 of its 24 wrap and the indent
+	 * opened a gap at the head of every one of them. A mark that fires on a
+	 * third of the lines has stopped marking anything.
+	 *
+	 * THE ELEMENT PER LINE STAYS, and earns its keep twice over without the
+	 * indent: `text-wrap: pretty` applies per block, so each PRINTED line
+	 * balances its own wrap and stops stranding one word of itself
+	 * ("...begotten of the / Father,"), and compare mode needs a line to be a
+	 * thing before it can put one beside another. Neither is reachable from a
+	 * single `<p>` full of `<br>`s, which has one block for the whole prayer.
 	 */
 	.prayer-verse-line {
-		display: block;
-		text-indent: -1.15em;
-		padding-inline-start: 1.15em;
+		text-wrap: pretty;
 	}
 
 	/* Versicle/response set as a hanging-label line -- the label sits in its
@@ -109,7 +185,10 @@
 	.prayer-line {
 		display: flex;
 		gap: 0.6em;
-		margin: 0 0 0.4rem;
+	}
+
+	.prayer-line.block-end {
+		margin-block-end: 0.4rem;
 	}
 
 	/* The text column is what carries the lines; the row must not, because the

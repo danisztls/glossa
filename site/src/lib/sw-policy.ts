@@ -306,6 +306,11 @@ const LANG_FONT_SCRIPTS: Record<string, readonly FontScript[]> = {
 	sk: ['latin-ext'],
 	hr: ['latin-ext'],
 	sl: ['latin-ext'],
+	// `lt` was missing until 2026-09-03, and it is what the docblock above
+	// warns of: Lithuanian spells `ė ų ū č š ž` in Latin Extended-A, so an
+	// offline reader of `prayer.common.lt` had a fallback serif inside the
+	// text face. Online it always rendered, which is why nobody saw it.
+	lt: ['latin-ext'],
 	hu: ['latin-ext'],
 	ro: ['latin-ext'],
 	lv: ['latin-ext'],

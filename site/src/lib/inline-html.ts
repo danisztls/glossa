@@ -158,14 +158,15 @@ export function parseInlineHtml(html: string): InlineNode[] {
  * A parsed string cut at its top-level line breaks — one array per printed
  * line, and a one-element array when the string has none.
  *
- * WHY A CALLER WANTS THE LINES RATHER THAN THE BREAKS. Verse has to
- * distinguish a line the SOURCE broke from a line the VIEWPORT broke, and a
- * hanging indent is how print does it: the source's lines start at the
- * margin, a wrap sits in from it. One paragraph carrying `<br>` cannot
- * express that, and the way it fails is not subtle — `text-indent` applies to
- * a BLOCK's first line, so the first source line is the only one at the
- * margin and all nineteen others look like continuations of it. Giving each
- * line its own block is what lets the indent mean "continued".
+ * WHY A CALLER WANTS THE LINES RATHER THAN THE BREAKS. A printed line is the
+ * unit a reader sees, so it has to be the unit the page can style, and every
+ * property worth putting on one is per-BLOCK: `text-wrap: pretty`, which
+ * keeps a line from stranding one word of itself when the viewport breaks it,
+ * and the hanging indent this originally existed for, which is gone —
+ * `PrayerBlocks.svelte`'s `.prayer-verse-line` docblock has the argument. One
+ * paragraph carrying `<br>` can express neither: it is a single block for the
+ * whole prayer, so `text-indent` reaches only its first line and `text-wrap`
+ * balances all twenty at once.
  *
  * SPLITS AT THE TOP LEVEL ONLY. A break inside `<i>`/`<b>`/`<a>` stays a
  * `break` node and renders as a `<br>` within its line — the behaviour this

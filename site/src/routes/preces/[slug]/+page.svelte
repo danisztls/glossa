@@ -53,29 +53,24 @@
 	 * tagline is "Prayers with the Latin text alongside", and that remains the
 	 * default reading of the page.
 	 *
-	 * BOTH SIDES ARE KEYED ON THE LEFT PRAYER'S `n`, deliberately, and this is
-	 * the one place `alignByNumber` is handed a number rather than reading it.
-	 * A prayer's `n` is its print order WITHIN ITS OWN LANGUAGE'S list, and
-	 * what makes two entries the same prayer is the SLUG — the schema
-	 * guarantees the slug sets match, not that the two lists number them
-	 * alike. Passing each side its own `n` would therefore emit two orphaned
-	 * rows instead of one pair the moment a language reordered. There is
-	 * exactly one unit per side (this page is one slug), so forcing the pair
-	 * cannot mis-zip: it is the degenerate case where the address IS the
-	 * match.
+	 * A ROW IS A PRINTED LINE, NOT THE PRAYER — see `compareRows`, which holds
+	 * the argument for zipping the two columns by position and what it costs.
+	 * A prayer's own `n` never enters it: `n` is print order WITHIN ITS OWN
+	 * LANGUAGE'S list, and what makes two entries the same prayer is the SLUG,
+	 * which this page already IS.
 	 *
-	 * What genuinely does NOT fit is aligning by BLOCK: the Angelus has 14
-	 * vernacular blocks (its versicle/response lines kept separate) against 10
-	 * Latin blocks (the source collapses each repeated "Hail Mary" into one
-	 * fused "Ave, María..." line) — a per-block zip would silently misalign
-	 * the moment the two sides' block counts diverge, which is exactly the
-	 * failure `alignByNumber`'s own docblock exists to rule out. Rendering
-	 * each side's blocks in its own natural flow, inside one aligned row, is
-	 * what stays honest.
+	 * BLOCKS ARE STILL THE WRONG UNIT TO ZIP, and lines are not blocks. The
+	 * Angelus has 14 vernacular blocks (its versicle/response lines kept
+	 * separate) against 10 Latin ones, because the Latin source collapses each
+	 * repeated "Hail Mary" into one fused "Ave, María..." line — a per-block zip
+	 * pairs the second block with the second block and is wrong from there down.
+	 * Flattening to lines does not make those two editions agree either; what it
+	 * does is make the disagreement a line's worth rather than a block's, and
+	 * visible where it happens rather than as an accumulating drift.
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { alignByNumber } from '$lib/compare';
+	import { pairPrayerLines, prayerLines, type PrayerRow } from '$lib/prayer-lines';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
 		adoptCompareFromUrl,
@@ -149,24 +144,42 @@
 	const secondary = $derived(comparisons.find((c) => c.work.id === compareTarget));
 	const compareActive = $derived(secondary !== undefined);
 
-	/** One row, both sides keyed on the LEFT prayer's `n` — the module
-	 *  docblock says why the right side's own number is the wrong key. */
+	/**
+	 * A ROW PER PRINTED LINE WHERE THE TWO EDITIONS BREAK ALIKE, and the whole
+	 * prayer in one row where they do not (2026-09-03). `pairPrayerLines` is the
+	 * rule and carries the measurement; what belongs here is why the row is the
+	 * lever at all.
+	 *
+	 * It was one row holding each side's whole prayer. `CompareGrid` sizes each
+	 * ROW to its taller cell — that is the whole of how it keeps two columns
+	 * level — so a single row aligned nothing inside itself: the two columns
+	 * flowed independently and stayed level only for as long as neither wrapped
+	 * a line. Line-for-line alignment is therefore a row per line, which is what
+	 * `prayerLines` exists to make available.
+	 *
+	 * `alignByNumber` is not used and is not the tool here. It aligns on numbers
+	 * the two sides CARRY, over their union; a line carries only its position,
+	 * and pairing by position is a claim about the source that has to be tested
+	 * rather than a key to look up.
+	 */
 	const compareRows = $derived.by(() => {
 		const prayer = current?.prayer;
 		if (!prayer || !secondary) return [];
-		return alignByNumber(
-			[prayer],
-			[
-				{
-					n: prayer.n,
-					title: secondary.title,
-					prayer: secondary.prayer
-				}
-			]
-		);
+		return pairPrayerLines(prayerLines(prayer.blocks), prayerLines(secondary.prayer.blocks));
 	});
 
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
+
+	/** Whether EITHER column has anything to put in the band above the first row
+	 *  — a rubric, mystery groups, directions. An empty band is not free: its
+	 *  cells carry the grid's own block padding, so it would open a gap over
+	 *  every compared prayer that has none of the three, which is most of them
+	 *  (English and Portuguese print no rubric at all). */
+	const hasPreamble = $derived(
+		[current?.prayer, secondary?.prayer].some(
+			(p) => p && (p.rubric || p.groups?.length || p.instructions)
+		)
+	);
 
 	/** Stable in-page destinations for a grouped prayer's sourced divisions.
 	 * The Rosary is currently the only such prayer; deriving these from each
@@ -284,7 +297,7 @@
 	{/if}
 {/snippet}
 
-{#snippet prayerBody(p: Prayer, bodyLang: string)}
+{#snippet prayerPreamble(p: Prayer, bodyLang: string)}
 	{#if p.rubric}
 		<p class="prayer-rubric">{p.rubric}</p>
 	{/if}
@@ -352,17 +365,17 @@
 			{#if p.instructions.blocks.length > 1}
 				<div class="prayer-opening">
 					<p class="prayer-step-label label-micro">{t('prayers.rosary.openingPrayer')}</p>
-					<PrayerBlocks blocks={p.instructions.blocks.slice(0, 1)} />
+					<PrayerBlocks lines={prayerLines(p.instructions.blocks.slice(0, 1))} />
 				</div>
 				<ol class="prayer-steps">
 					{#each p.instructions.blocks.slice(1) as block, i (i)}
-						<li><PrayerBlocks blocks={[block]} /></li>
+						<li><PrayerBlocks lines={prayerLines([block])} /></li>
 					{/each}
 				</ol>
 			{:else}
 				<!-- A single-block instructions field has no opening prayer to
 				     separate from its steps, so it renders the way it always did. -->
-				<PrayerBlocks blocks={p.instructions.blocks} />
+				<PrayerBlocks lines={prayerLines(p.instructions.blocks)} />
 			{/if}
 
 			{#if decadePrayers.length > 0}
@@ -376,8 +389,21 @@
 			{/if}
 		</section>
 	{/if}
+{/snippet}
 
-	<PrayerBlocks blocks={p.blocks} />
+<!-- The whole prayer in one flow: what the SINGLE column renders. Compare mode
+     splits the same two halves apart — the preamble into `CompareGrid`'s band
+     above the first row, the lines into a row each.
+
+     THE INITIALS GO ON THE BLOCKS ONLY WHERE THE BLOCKS OPEN THE READING,
+     which for every prayer but one they do. A group prayer's `blocks` are its
+     CONCLUSION — the preamble's own comment says so, and it is why they render
+     last — so an initial there would fall halfway down the Rosary. `kind` is
+     `'group'` exactly when `groups` is present (types.ts), and no prayer in any
+     edition carries `instructions` without them, so the one test covers both. -->
+{#snippet prayerBody(p: Prayer, bodyLang: string)}
+	{@render prayerPreamble(p, bodyLang)}
+	<PrayerBlocks lines={prayerLines(p.blocks)} dropCap={p.kind !== 'group'} />
 {/snippet}
 
 {#snippet prayerToc(p: Prayer)}
@@ -398,28 +424,49 @@
 	</nav>
 {/snippet}
 
-{#snippet leftCell(p: Prayer)}
-	{@render prayerBody(p, current?.work.language ?? 'en')}
-{/snippet}
+<!-- A CELL IS ONE PRINTED LINE, which is what makes the two columns stay level
+     line by line rather than only at the top (see `compareRows`). It is still
+     the one renderer the single column uses — handed a list of one.
 
-<!-- NO TITLE HERE. The secondary side carries its own `title`, and printing
-     it at the top of this cell is what made the two columns start at different
-     heights and in different weights: the vernacular column has no title of
-     its own — the page's `<h1>` IS its title — so the right column opened one
-     line lower with a bold line the left column had no counterpart for. Both
-     titles now sit in the `.compare-unit-header` below, which is where every
-     other compare route puts the pair, and where an identical pair collapses
-     to one instead of being set twice.
+     NO TITLE HERE. The secondary side carries its own `title`, and printing it
+     at the top of the right cell is what made the two columns start at
+     different heights and in different weights: the vernacular column has no
+     title of its own — the page's `<h1>` IS its title — so the right column
+     opened one line lower with a bold line the left column had no counterpart
+     for. Both titles sit in the `.compare-unit-header` below, which is where
+     every other compare route puts the pair, and where an identical pair
+     collapses to one instead of being set twice. -->
+{#snippet leftCell(row: PrayerRow)}<PrayerBlocks
+		lines={row.lines}
+		dropCap={current?.prayer.kind !== 'group'}
+	/>{/snippet}
 
-     ONE SHAPE, NOT TWO. This snippet used to branch on whether the right side
-     was a whole `Prayer` or the bare title-and-blocks of the Latin FIELD.
-     Latin is an edition now (see the module docblock), so every column is a
-     whole prayer and the branch is gone — which also means the Latin column
-     renders a rubric or a group if the Latin edition ever prints one, instead
-     of silently dropping it the way the field-shaped cell had to. -->
-{#snippet rightCell(u: { n: number; title: string; prayer: Prayer })}
-	{@render prayerBody(u.prayer, secondary?.work.language ?? 'en')}
-{/snippet}
+{#snippet rightCell(row: PrayerRow)}<PrayerBlocks
+		lines={row.lines}
+		dropCap={secondary?.prayer.kind !== 'group'}
+	/>{/snippet}
+
+<!-- EVERYTHING THAT IS NOT A LINE, in the band above the first row.
+     `CompareGrid`'s interlude is for content that divides the units rather
+     than being one of them, and a rubric, the Rosary's four mystery groups and
+     its directions are exactly that here: they precede the prayer's own lines,
+     each column prints its own, and none of them is a line to pair with a line
+     opposite. Each side renders whatever it has, which may be nothing —
+     `prayerPreamble` emits a rubric only where the source printed one, so the
+     band is empty for most prayers and costs an empty row.
+
+     This is also what keeps a Latin column able to show a rubric or a group if
+     that edition ever prints one, rather than silently dropping it the way the
+     old field-shaped cell had to. -->
+{#snippet leftPreamble()}{#if current}{@render prayerPreamble(
+			current.prayer,
+			current.work.language
+		)}{/if}{/snippet}
+
+{#snippet rightPreamble()}{#if secondary}{@render prayerPreamble(
+			secondary.prayer,
+			secondary.work.language
+		)}{/if}{/snippet}
 
 {#if current}
 	<div class:reading-layout={hasToc} class="prayer-reading-layout" class:compare={compareActive}>
@@ -540,6 +587,11 @@
 					rightLabel={compareColumnLabel(secondary.work)}
 					left={leftCell}
 					right={rightCell}
+					interlude={{
+						has: (n) => hasPreamble && n === compareRows[0]?.n,
+						left: leftPreamble,
+						right: rightPreamble
+					}}
 				/>
 				<!-- WHICH MYSTERIES ARE TODAY'S, ANSWERED BEFORE THE READER SCROLLS.
 			     The Rosary is prayed one set of five decades at a time, on a
