@@ -3558,6 +3558,15 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	//    reference, and the English ones often sit in a clause that also names
 	//    a document ("...DS 3005; DV 6; St. Thomas Aquinas, S Th I, I, I").
 	//    Whichever starts earliest is the one the clause is actually about.
+	//
+	//    AND WHICHEVER WINS, THE REST OF THE CLAUSE IS PARSED AGAIN, exactly as
+	//    the scripture branch above does and for the same reason: one clause
+	//    routinely names two documents. CCC 90's Portuguese footnote cites
+	//    "Const. dogm. Dei Filius, c. 4: DS 3016 [...] Cf. II Concílio do
+	//    Vaticano, Const. dogm. Lumen Gentium, 25", and dropping the tail to
+	//    text lost the second one — leftmost-wins decides which match comes
+	//    FIRST, never that it is the only one. Recursion always consumes at
+	//    least the match, so it terminates.
 	const dm = findDocumentAt(cfg, rawClause, pos);
 	const tm = findDocumentTitleAt(rawClause, pos);
 	const sm = findSummaAt(rawClause, pos);
@@ -3569,7 +3578,8 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		const segs: RefSegment[] = [];
 		if (wm.locusStart > 0) segs.push(textSeg(rawClause.slice(0, wm.locusStart)));
 		segs.push(...parseBareCccList(wm.locus, wm.kind));
-		if (wm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(wm.consumedEnd)));
+		if (wm.consumedEnd < rawClause.length)
+			segs.push(...parseClause(rawClause.slice(wm.consumedEnd), cfg, state));
 		return segs;
 	}
 	if (
@@ -3586,7 +3596,8 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			article: sm.article,
 			raw: rawClause.slice(sm.matchStart, sm.consumedEnd)
 		});
-		if (sm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(sm.consumedEnd)));
+		if (sm.consumedEnd < rawClause.length)
+			segs.push(...parseClause(rawClause.slice(sm.consumedEnd), cfg, state));
 		return segs;
 	}
 	const useTitle = tm !== null && (dm === null || tm.matchStart < dm.matchStart);
@@ -3603,7 +3614,8 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			slug: tm.slug,
 			raw: rawClause.slice(tm.matchStart, tm.consumedEnd)
 		});
-		if (tm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(tm.consumedEnd)));
+		if (tm.consumedEnd < rawClause.length)
+			segs.push(...parseClause(rawClause.slice(tm.consumedEnd), cfg, state));
 		return segs;
 	}
 
@@ -3620,7 +3632,8 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			...(dm.external ? { external: dm.external } : {}),
 			raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
 		});
-		if (dm.consumedEnd < rawClause.length) segs.push(textSeg(rawClause.slice(dm.consumedEnd)));
+		if (dm.consumedEnd < rawClause.length)
+			segs.push(...parseClause(rawClause.slice(dm.consumedEnd), cfg, state));
 		return segs;
 	}
 

@@ -17,9 +17,9 @@
  */
 
 import {
+	defaultDocumentWorkId,
 	documentSectionExists,
 	findBookByAbbrev,
-	getDocumentGroup,
 	listDocuments,
 	summaArticleExists,
 	summaQuestionExists,
@@ -77,14 +77,12 @@ function firstLocusSection(locus: string | null): number | undefined {
  * so `ctx.lang` (the reader's EFFECTIVE content language for this document,
  * `content.documentLangFor(slug)`-equivalent at the call site — never the
  * raw UI language) picks which language's edition to check the section
- * against. Deliberately NOT `corpus.defaultDocumentWorkId`, which falls back
- * to "any edition, if the reader's language has none" — the right behavior
- * for OPENING a document page (better to show it in some language than
- * 404), but the wrong one here: a citation link that silently lands the
- * reader on a different-language edition than the one they're reading would
- * violate "respect the reader's language" in the one case it's meant to
- * cover, so this looks up the exact-language edition directly and emits no
- * link at all if that specific edition doesn't have the section.
+ * against, through the same `corpus.defaultDocumentWorkId` chain that
+ * OPENING the document resolves — their own language first, and what the
+ * document page would have shown them when it has no edition there. It read
+ * the exact-language edition alone until 2026-09-03, and refusing the link
+ * was not respecting the reader's language but withholding a work this site
+ * holds; the section-existence check below is what stays strict.
  */
 export function refAddress(
 	seg: RefSegment,
@@ -127,7 +125,20 @@ export function refAddress(
 		// move them to a different-language edition than the one they are
 		// reading (see the docblock).
 		const targetLang = (ctx.lang ?? 'en').split('-')[0].toLowerCase();
-		const workId = getDocumentGroup(seg.slug)?.manifests[targetLang]?.id;
+		// The reader's own edition when the document has one, and otherwise the
+		// edition OPENING it would give them — the same `editionInLang` chain
+		// `/documenta/{slug}` resolves at page load, which is what makes this
+		// safe: the URL names no edition, so the link cannot land them anywhere
+		// the document's own page would not have.
+		//
+		// Requiring the reader's exact language here read as respecting it and
+		// was the opposite: a citation naming a document this site holds went
+		// dead because it holds it in another language. Dei Filius (Italian and
+		// Latin only) is cited 25 times in the Portuguese Catechism and 17 in
+		// the English, and no document at all has a Malagasy edition — every one
+		// of `ccc.mg`'s 141 document citations linked nowhere. That is the
+		// Summa's argument above, reached from the other direction.
+		const workId = defaultDocumentWorkId(seg.slug, targetLang);
 		if (!workId) return undefined;
 		// The number is validated, never trusted: "Humani generis 561" cites an
 		// AAS page, and that document has 44 sections. A section is a FRAGMENT

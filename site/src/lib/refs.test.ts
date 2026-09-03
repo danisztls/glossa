@@ -100,17 +100,19 @@ const { mockBibleBooks } = vi.hoisted(() => {
 });
 
 /**
- * Fake document registry for `refHref`'s document-linking tests: two slugs,
- * one available in both EN/PT ("gaudium-et-spes", mirroring the real
- * `vatii.gaudium-et-spes.{en,pt}` pair — section 19 stands in for the real
- * corpus's own GS §19, the CCC 27 citation `docs/link-surface.md` predicted
- * this feature would resolve) and one EN-only ("dei-verbum") to exercise the
- * "target section doesn't exist in the reader's effective language" path
- * without needing the real corpus.
+ * Fake document registry for `refHref`'s document-linking tests. Three shapes,
+ * because three things can be true of a citation's target: available in both
+ * EN/PT ("gaudium-et-spes", mirroring the real `vatii.gaudium-et-spes.{en,pt}`
+ * pair — section 19 stands in for the real corpus's own GS §19, the CCC 27
+ * citation `docs/link-surface.md` predicted this feature would resolve); in
+ * the reader's language but SHORT a section ("dei-verbum", whose PT edition
+ * stops at 1, the one case that must still refuse the anchor); and in no
+ * reader language at all ("sacrosanctum-concilium", EN-only — which links
+ * anyway, through the edition opening the document would give them).
  */
 const mockDocumentSections: Record<string, Partial<Record<string, number[]>>> = {
 	'gaudium-et-spes': { en: [1, 2, 19, 20], pt: [1, 2, 19, 20] },
-	'dei-verbum': { en: [1, 2, 3] },
+	'dei-verbum': { en: [1, 2, 3], pt: [1] },
 	// Present so the per-language sigla tests below can prove that `SC` and
 	// `CA` reach a real document from the German/Spanish/French tables and
 	// stay unlinked from the Latin/Italian one, which is the whole point of
@@ -165,6 +167,13 @@ vi.mock('./corpus', () => ({
 			if (Object.keys(manifests).length === 0) manifests.en = { id: `vatii.${slug}.en`, title };
 			return { slug, family: 'vatii', manifests };
 		}),
+	// Mirrors `editionInLang`'s chain closely enough for these tests: the
+	// reader's own language, then English, then Latin, then whatever exists.
+	defaultDocumentWorkId: (slug: string, lang: string) => {
+		const langs = Object.keys(mockDocumentSections[slug] ?? {});
+		const pick = [lang, 'en', 'la'].find((l) => langs.includes(l)) ?? langs[0];
+		return pick ? `vatii.${slug}.${pick}` : undefined;
+	},
 	getDocumentGroup: (slug: string) => {
 		const byLang = mockDocumentSections[slug];
 		if (!byLang) return undefined;
@@ -1522,7 +1531,7 @@ describe('refHref', () => {
 		).toBe('/documenta/gaudium-et-spes#s19');
 	});
 
-	it("never links a document whose section is absent from the reader's effective language (dei-verbum is EN-only in the mock registry)", () => {
+	it("never links a section absent from the edition the reader will get (dei-verbum's PT edition stops at 1)", () => {
 		expect(
 			refHref(
 				{
@@ -1537,6 +1546,27 @@ describe('refHref', () => {
 				{ lang: 'pt' }
 			)
 		).toBeUndefined();
+	});
+
+	it('links a document the reader\u2019s language has no edition of, against the one opening it would give them', () => {
+		// Sacrosanctum Concilium is EN-only here, as Dei Filius is IT/LA-only in
+		// the real corpus and no document at all has a Malagasy edition. The URL
+		// names no edition, so this lands the reader exactly where
+		// `/documenta/{slug}` would have.
+		expect(
+			refHref(
+				{
+					kind: 'document',
+					via: 'siglum',
+					label: 'SC',
+					locus: '61',
+					expansion: 'Sacrosanctum Concilium',
+					slug: 'sacrosanctum-concilium',
+					raw: 'SC 61'
+				},
+				{ lang: 'de' }
+			)
+		).toBe('/documenta/sacrosanctum-concilium#s61');
 	});
 
 	it('never links a PT SC segment, even though its EN counterpart (Sacrosanctum Concilium) does — the language-dependent siglum guard', () => {
@@ -1932,6 +1962,32 @@ describe('parseRefs — documents named by title', () => {
 		expect(segs.find((s) => s.kind === 'document')).toMatchObject({ via: 'siglum' });
 	});
 
+	it('links every document the clause names, not only the leftmost', () => {
+		// CCC 90's Portuguese footnote, with Dei Filius standing in as Dei
+		// Verbum (the mock registry has no `vati` family). The tail after the
+		// first match used to be dropped to plain text, so the SECOND document
+		// went unlinked — behind the first, the DS siglum between them and the
+		// AAS volume that closes the note.
+		const segs = parseRefs(
+			'Cf. I Concílio do Vaticano, Const. dogm. Dei Verbum, c. 4: DS 3016 «mysteriorum nexus». ' +
+				'Cf. II Concílio do Vaticano, Const. dogm. Lumen Gentium, 25: AAS 57 (1965) 29.',
+			{ lang: 'pt' }
+		);
+		expect(
+			segs.filter((s) => s.kind === 'document').map((s) => [s.via, s.label, s.slug, s.locus])
+		).toEqual([
+			['title', 'Dei Verbum', 'dei-verbum', null],
+			['siglum', 'DS', null, '3016'],
+			['title', 'Lumen Gentium', 'lumen-gentium', '25'],
+			['siglum', 'AAS', null, '57']
+		]);
+		// And the original string is still reproduced character for character.
+		expect(segs.map((s) => (s.kind === 'text' ? s.text : s.raw)).join('')).toBe(
+			'Cf. I Concílio do Vaticano, Const. dogm. Dei Verbum, c. 4: DS 3016 «mysteriorum nexus». ' +
+				'Cf. II Concílio do Vaticano, Const. dogm. Lumen Gentium, 25: AAS 57 (1965) 29.'
+		);
+	});
+
 	it('is not shadowed by an unlinkable siglum appearing LATER in the clause', () => {
 		// Regression: nearly every PT citation ends in an "AAS 58 (1966) 818"
 		// volume reference, and AAS never resolves to an address here. Matching
@@ -1972,9 +2028,15 @@ describe('refHref — documents named by title', () => {
 		expect(refHref(seg(null), { lang: 'en' })).toBe('/documenta/gaudium-et-spes');
 	});
 
-	it('respects the reader language rather than falling back to another edition', () => {
-		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBeUndefined();
+	it('checks the section against the edition the reader will actually get', () => {
+		// PT has an edition and it stops at 1, so the anchor is refused — and a
+		// title, unlike a siglum, still names the document, so it degrades to
+		// the landing page rather than to nothing.
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'pt' })).toBe('/documenta/dei-verbum');
 		expect(refHref(seg('2', 'dei-verbum'), { lang: 'en' })).toBe('/documenta/dei-verbum#s2');
+		// DE has no edition, so the check runs against the one a DE reader
+		// opening the document would be shown.
+		expect(refHref(seg('2', 'dei-verbum'), { lang: 'de' })).toBe('/documenta/dei-verbum#s2');
 	});
 });
 

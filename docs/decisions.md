@@ -582,6 +582,33 @@ in `common.sample_run_writes_nothing` rather than in each scraper: the protocol 
 to learn what a full crawl would cost before spending it, which wants a report and not
 an artifact.
 
+**A clause names as many documents as it names, and the parse stopped at the first**
+(2026-09-03). CCC 90's Portuguese footnote reads `Cf. I Concílio do Vaticano, Const. dogm.
+Dei Filius, c. 4: DS 3016 [...] Cf. II Concílio do Vaticano, Const. dogm. Lumen Gentium,
+25: AAS 57 (1965) 29` — two documents this site holds, and only ever one link. The
+leftmost-wins race between the siglum, title, Summa and work-title matchers was written to
+settle which match comes FIRST; each of the four branches then dropped the rest of the
+clause to plain text, which quietly made it settle that there was only one. The scripture
+branch beside them had recursed since the day it was written, for the same reason and
+against the same corpus — one clause carrying two references. Recursing all four raised
+linkable citations in every family that moved (`vatii` 52.92% → 54.58%, `encyclical`
+38.91% → 39.07%, `ccc` 77.74% → 77.76%) with `nothing` unchanged in each: what moved came
+out of "recognized but not linkable", never out of text.
+
+**And half of what that recovered would still have been dead, because a document was
+addressed in the reader's language or not at all.** `refAddress` looked up the exact
+`manifests[lang]` edition and emitted no link where there was none, on the argument that a
+citation must not land a reader on an edition they are not reading. But a document URL
+names no edition — `/documenta/{slug}` resolves one at page load through `editionInLang` —
+so the refusal bought nothing and cost the citation: Dei Filius exists in Italian and Latin
+only and is cited 25 times in the Portuguese Catechism and 17 in the English, and no
+document in this corpus has a Malagasy edition, so all 141 of `ccc.mg`'s document citations
+linked nowhere. It goes through `defaultDocumentWorkId(slug, lang)` now — the reader's own
+edition first, and the one opening the document would have given them otherwise. **The
+strict half was always the section check, not the language**: a section absent from the
+edition the reader will actually get still refuses the anchor, and a title then degrades to
+the landing page where a siglum links nowhere.
+
 **One grammar.** The citation grammar lives once, in TypeScript
 (`site/src/lib/refs-grammar.ts`), and every index is **derived at build and never
 committed** — a committed index is an interpretation living next to the sources, free to

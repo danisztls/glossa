@@ -805,6 +805,19 @@ resolve would offer an address that does not exist.
   0.3 threshold (measured against this corpus — `docs/decisions.md`).
   `suggest()` with no ranker is the literal tiers alone, a supported state.
 
+**A clause is parsed to its end, not to its first match** (2026-09-03,
+§Parsing). The siglum, title, Summa and work-title branches of `parseClause`
+each dropped the clause tail to text, so `Const. dogm. Dei Filius, c. 4: DS
+3016 [...] Const. dogm. Lumen Gentium, 25` in CCC 90's Portuguese footnote
+linked only Dei Filius; they recurse now, as the scripture branch always did
+(`vatii` 52.92% → 54.58% linkable, `nothing` unchanged). **And a document
+link no longer requires an edition in the reader's own language**:
+`refAddress` goes through `defaultDocumentWorkId`, the same `editionInLang`
+chain `/documenta/{slug}` resolves at page load, because the URL names no
+edition and the refusal only ever cost the citation (all 141 of `ccc.mg`'s
+document citations linked nowhere). The section check stays strict against
+whichever edition that picks.
+
 The five tags with **no** config (`hu ro sl sv en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by
 bare number and their prose prints no Scripture locator, so the English table
