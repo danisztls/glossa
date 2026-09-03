@@ -675,6 +675,102 @@ and nothing had ever read that region.
   is in en and it — one shared exemplar, not two witnesses, the same lesson
   `audit.py refs` records.
 
+### The four PDF editions: the same appendix, printed in two columns
+
+`prayer.common.{be,id,lt,ru}` (2026-09-03). vatican.va publishes the
+Compendium in fourteen languages and serves ten as HTML; the other four exist
+only as a PDF made by the national bishops' conference that translated it, and
+`ccc/compendium_pdf.py` already read the 598-question body out of all four. It
+stops where this starts. **Every one of them is Appendix A entire plus the two
+Creeds and the Our Father — 27 prayers, 24 for the Indonesian — and none of it
+cost a fetch.** `rebuild.py --list` counts the works.
+
+- **`compendium_pdf.PDF_EDITIONS` is IMPORTED, not mirrored** (unlike
+  `COMPENDIUM_FILES`, which mirrors a table in a sibling _script_). It is a
+  library, and which reader each file needs, which re-decode, which glyph its
+  fonts fail to map and where its furniture ends are facts about those four
+  files — as true of the appendix as of the body.
+- **The appendix page is not the body page, so the body reader is not reused.**
+  That one separates a cross-reference MARGIN from one column of text; this is
+  parallel text, vernacular left and Latin right, each prayer opening with a
+  heading on one baseline in both. What is shared is `common/pdf.py`.
+- **The printed Latin is the anchor, the bound AND the check** — the same three
+  jobs it does for the Compendium's body above, and for the same reason. The
+  titles come off `prayer.common.en`'s own Latin column, so the anchors are
+  read from the corpus rather than retyped into it; the columns being parallel,
+  where a prayer's Latin stops its vernacular stops, which is what cuts
+  twenty-four prayers apart with no vernacular string anywhere in the file.
+- **THE RE-DECODE IS PER COLUMN, not per file.** The Russian's fonts carry no
+  `ToUnicode`, and re-reading poppler's bytes as cp1251 is what recovers its
+  Cyrillic — but the Latin column is not Cyrillic, and re-read it says `In
+Nуmine Patris` for `In Nómine Patris`. `read_edition` cannot make this
+  distinction and does not need to; the appendix reader applies `decode` to the
+  left column alone.
+- **A printed line that REACHES THE MEASURE is a wrap; one that stops short is
+  a break the editor made.** It is the only signal a PDF carries for the
+  difference and the appendix needs it both ways: the Memorare is justified
+  prose that has to come back as one paragraph, the Ave Maria is set a clause
+  to a line and has to keep every one. The measure is the column's **95th
+  percentile** line end, not its mode — several editions set these prayers as
+  verse, where the modal line end is some middle-length clause and every longer
+  line then reads as having run out of room.
+- **The Eastern-rite prayers are the one run with no anchor**, and what finds
+  them is present in all four: each names its tradition on a line of its own in
+  parentheses — `(Koptų tradicija)`, `(Коптский обряд)` — with the heading in
+  the tight run of lines above it. The same rule pulls the Belarusian's
+  `(паэтычная форма)` off its titles and into `rubric`, where it belongs.
+- **Three editions differ in ways that are the source's, not the parser's**,
+  and each is declared rather than branched on: the Indonesian misprints two
+  Latin headings (`Egina Cæli`, `Vine, Creator Spiritus`), so they are located
+  as the one heading standing in the gap their neighbours leave and stored as
+  printed; the Indonesian prints neither the Rosary's concluding prayer nor any
+  Eastern-rite prayer (`absent`); the Russian's reader reports no face at all,
+  so a heading is recognised by its text there — measured off the region
+  (`Region.faced`), not declared.
+- **The Belarusian's Latin column is printed and NOT published.** It sets every
+  accent as a separate positioned glyph over a base letter its fonts do not
+  map, and the two readers fail differently and both irrecoverably: MuPDF
+  answers `et F<FFFD>´lii` for `et Fílii` and floats some accents to the end of
+  the line, poppler combines them onto the following letter (`Fĺii`) and drops
+  others outright (`nostr.` for `nostræ`). Word for word against the English
+  appendix it scores **84.9%**, against 99.5 / 99.2 / 95.1 for the other three.
+  Hence `latin_unreadable`, which is a statement about the FILE — `no_latin`
+  says the source printed nothing, and here that would be false.
+- **`report_pdf_latin` is the oracle and it is printed, never gated**, like its
+  sibling above. Read the SHAPE: the Lithuanian's six departures in 1,359 words
+  are each one letter (`quelli` for `quem`, `sieut` for `sicut`, `posi` for
+  `post`), which says a reader misread a glyph; the Russian's are whole words
+  (`genitrix` for `genetrix`, `solatium` for `solacium`, `exultavit`), which
+  says the edition did; the Indonesian's are both.
+
+**Two defects in the shared reader came out of this, both fixed and both
+measured over `compendium.ru` before they were kept.**
+
+- **Not every one of poppler's `<word>` boundaries is a space.** It ends a word
+  where the font forces it to, and `poppler_lines` was joining on the tag, so
+  `sæ|cula` became `sæ cula` inside twelve Latin prayers and `Г|ЛАВА` became `Г
+ЛАВА`. The threshold is measured and the measurement is what makes it safe:
+  over 37,757 word pairs the gap is bimodal with an empty band between — 424
+  pairs at 0.1pt or less, one at 0.5, then nothing until 0.7 where real spaces
+  begin and run to a median of 2.26. `_WORD_TOUCH` is 0.6. At 0.8 it reaches
+  real spaces and closes `«ВЕРУЮ В БОГА»` into `«ВЕРУЮ ВБОГА»`.
+- **`PdfEdition.repair_small_caps` was that defect patched one layer too late**
+  and is gone. It rejoined a lone capital to the word after it in an all-caps
+  line, which is exactly what the reader had broken; with the cause fixed the
+  patch became damage, since a one-letter Russian preposition before a word is
+  the same shape. 38 answers of `compendium.ru` read correctly that did not,
+  the division table still matches on all 218 pages, and nothing else uses
+  poppler.
+
+**A near miss worth recording: `furniture_strip` is compared against the
+BASELINE, not `y0`.** The Russian's running head sits at y=80 and its text
+block opens at y=101.1 on a 595pt page, so 0.17 — 101.15 — looks like it lands
+exactly on the first body line, and a reading of it that way "explained" a
+missing line of the Nicene Creed and would have re-admitted 164 running heads
+into the body. The line was elsewhere. `_in_furniture` reads `line.baseline`,
+which for poppler is the box BOTTOM, so the head clears at ~89 and the body at
+~110 and the strip sits comfortably between them.
+
 ## The Compendium of the Social Doctrine numbers a letter the way it numbers itself
 
 `csdc.{lang}`, ten of the twelve editions vatican.va publishes as HTML

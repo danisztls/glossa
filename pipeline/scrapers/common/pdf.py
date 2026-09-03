@@ -196,8 +196,7 @@ def poppler_lines(path: Path) -> list[Line]:
     lines: list[Line] = []
     for n, page in enumerate(root.iter(f"{_XHTML}page")):
         for line in page.iter(f"{_XHTML}line"):
-            words = [w.text or "" for w in line.iter(f"{_XHTML}word")]
-            joined = " ".join(w for w in words if w)
+            joined = _join_words(line.iter(f"{_XHTML}word"))
             if not joined.strip():
                 continue
             lines.append(
@@ -212,6 +211,45 @@ def poppler_lines(path: Path) -> list[Line]:
                 )
             )
     return sorted(lines, key=_reading_order)
+
+
+#: How far apart two of poppler's `<word>` boxes have to be before the space
+#: between them is a real one.
+#:
+#: NOT EVERY `<word>` BOUNDARY IS A SPACE. poppler ends a word at some glyph
+#: boundaries the font forces on it, and joining on the tag alone inserts a
+#: space that was never printed. The false splits fall after the `æ` ligature
+#: -- `sæ|cula` for `sæcula`, which put a space inside a word in twelve of the
+#: Russian Compendium's Latin prayers -- and after the large capital opening a
+#: small-capped heading, `Г|ЛАВА` for `ГЛАВА` -- which is the same damage that
+#: `compendium_pdf` carried a `repair_small_caps` regex to patch downstream
+#: until 2026-09-03, and that the regex then started causing (see its entry
+#: for the Russian edition).
+#:
+#: THE THRESHOLD IS MEASURED, and the measurement is what makes it safe: over
+#: that edition's 37,757 word pairs the gap is bimodal with an empty band
+#: between the two modes. 424 pairs sit at 0.1pt or less (a few negative), one
+#: at 0.5, and then NOTHING until 0.7, where real word spaces begin and run to
+#: a median of 2.26. 0.6 falls in the empty band. Set it wider and the joining
+#: reaches real spaces: at 0.8 it closed up the display line `«ВЕРУЮ В БОГА»`
+#: into `«ВЕРУЮ ВБОГА»`, because a letterspaced capital leaves a narrower gap
+#: than body type does.
+_WORD_TOUCH = 0.6
+
+
+def _join_words(words) -> str:
+    parts: list[str] = []
+    end: float | None = None
+    for word in words:
+        text = word.text or ""
+        if not text:
+            continue
+        start = float(word.get("xMin", 0.0))
+        if parts and (end is None or start - end > _WORD_TOUCH):
+            parts.append(" ")
+        parts.append(text)
+        end = float(word.get("xMax", start))
+    return "".join(parts)
 
 
 #: The two readers, by the name an edition declares.

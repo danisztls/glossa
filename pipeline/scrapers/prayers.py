@@ -99,11 +99,27 @@ section for the reasoning against inventing a numeric address.
   meditations, plus sourced directions for praying it. Captured as
   `groups` and `instructions`, present only on this one entry.
 
-Usage:
-  uv run pipeline/scrapers/prayers.py --lang en|pt|both
+**Fourteen editions, in three source shapes.** The module opened on English
+and Portuguese and the paragraphs above still describe those two, because
+what they say about the two page layouts is still true of them. What has been
+added since is stated where it is done rather than restated here:
 
-No --sample mode: 28 prayers total (24 Appendix A entries, three short CCC
-texts, and the Litany), parsed instantly and entirely
+  - the Compendium's OWN BODY as a source for the two Creeds and the Our
+    Father, which every edition prints at the head of Part One Section Two
+    and of Part Four Section Two and which nothing had ever read (see "The
+    Compendium's OWN BODY" below);
+  - the four editions vatican.va publishes only as a PDF -- Byelorussian,
+    Indonesian, Lithuanian and Russian -- whose appendix is the same book set
+    in two parallel columns on a page (see "The four PDF editions" below).
+
+`LANG_CONFIG` is the table that says which of the three each edition is, and
+`--lang` derives its choices from it.
+
+Usage:
+  uv run pipeline/scrapers/prayers.py --lang all|en|pt|...
+
+No --sample mode: at most 28 prayers per edition (24 Appendix A entries,
+three short CCC texts, and the Litany), parsed instantly and entirely
 offline; there is nothing here for a sample slice to save time on.
 """
 
@@ -111,15 +127,38 @@ from __future__ import annotations
 
 import argparse
 import html as ihtml
+import itertools
 import json
 import re
+import statistics
 import sys
 import unicodedata
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
-from functools import lru_cache
+from functools import cache, lru_cache
 from pathlib import Path
+
+# `ccc/compendium_pdf.py` is a LIBRARY, not a `uv run --script` program -- it
+# has no main and `ccc/compendium.py` imports it the same way. So unlike
+# `COMPENDIUM_FILES` below, which mirrors a table in a sibling script, the four
+# PDF editions' declarations are imported: which reader each file needs, which
+# re-decode, which glyph its fonts fail to map and where its furniture ends are
+# facts about those four files, and they are as true of the appendix as of the
+# body. A second copy of them is a second thing to keep true.
+#
+# QUALIFIED WITH ITS DIRECTORY, and that is not style. `ccc/` has no
+# `__init__.py` and does not need one -- it resolves as a namespace package off
+# the `pipeline/scrapers` entry Python already puts on `sys.path` for this
+# script. A bare `from compendium_pdf import ...` behind a `sys.path` insert
+# would import the same file and work, and `rebuild.py`'s `resolve_import`
+# would answer None for it: the code fingerprint would then not carry this
+# module, and `--changed-only` would skip the prayers stage after an edit to
+# it. An import the fingerprint cannot follow is a stale parse waiting to
+# happen (pipeline/CLAUDE.md, "the standing failure mode is the silent stale
+# answer").
+from ccc.compendium_pdf import PDF_EDITIONS, PdfEdition, pdf_copyright
 
 # Sibling package in this directory -- a script's own directory is on sys.path,
 # so this resolves regardless of the working directory. See common/__init__.py's
@@ -133,6 +172,14 @@ from common import (
     raw_root,
     require_corpus,
     write_stamped_json,
+)
+from common.pdf import (
+    Line,
+    merge_runs,
+    page_boxes,
+    read_lines,
+    remap,
+    split_pages,
 )
 
 # The corpus is a separate, private repository (docs/decisions.md
@@ -2558,6 +2605,9 @@ def build_our_father_pt(html_text: str) -> Prayer:
 #: editions use where others write `cael-`. Folding past this would start hiding
 #: real divergence, which is the whole point of the fold.
 _LATIN_LIGATURES = (("æ", "ae"), ("Æ", "Ae"), ("œ", "oe"), ("Œ", "Oe"))
+#: Unicode categories for a diacritic printed as a character of its own --
+#: modifier symbol and modifier letter. See `fold_latin`.
+_ACCENT_MARKS = frozenset({"Sk", "Lm"})
 _LATIN_OE_RE = re.compile(r"\bco(?=el)")
 _LATIN_WORD_RE = re.compile(r"[a-z]+")
 
@@ -2568,8 +2618,19 @@ def fold_latin(text: str) -> list[str]:
 
     The Compendium accents its Latin for chant (`omnipoténtem`) where the
     Catechism does not, so an unfolded comparison of two identical Creeds
-    disagrees on a third of their words."""
-    s = unicodedata.normalize("NFKD", text)
+    disagrees on a third of their words.
+
+    A SPACING ACCENT IS DROPPED FIRST, BEFORE NORMALISING, and both halves of
+    that matter. The English Compendium page writes `sǽcula` as `æ` followed
+    by U+00B4 ACUTE ACCENT -- a letter and a separate punctuation mark, not
+    one composed character -- and the Belarusian PDF sets every one of its
+    accents the same way. `unicodedata.combining` answers 0 for U+00B4, so it
+    survived the strip; and NFKD is no help either, because its compatibility
+    decomposition is a SPACE plus a combining acute, which splits the word
+    where the mark stood. So `saecula` folded to `sae` and `cula`, and every
+    edition spelling the word normally read as departing from the English."""
+    s = "".join(c for c in text if unicodedata.category(c) not in _ACCENT_MARKS)
+    s = unicodedata.normalize("NFKD", s)
     for ligature, opened in _LATIN_LIGATURES:
         s = s.replace(ligature, opened)
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
@@ -2982,6 +3043,869 @@ def report_body_latin(lang: str, html_text: str) -> list[str]:
                 f"{' '.join(received[max(0, at - 2) : at + 4])!r}"
             )
     return reports
+
+
+# --------------------------------------------------------------------------
+# The four PDF editions: the same appendix, printed in two parallel columns
+#
+# vatican.va publishes the Compendium in fourteen languages and serves ten as
+# HTML. The other four -- Byelorussian, Indonesian, Lithuanian and Russian --
+# it publishes only as a PDF made by the national bishops' conference that
+# translated it, and `ccc/compendium_pdf.py` already reads the 598-question
+# body out of all four. It stops where this starts: everything after Q598 is
+# Appendix A, which that scraper leaves alone exactly as it does in the ten.
+#
+# THE PAGE IS THE SAME BOOK IN ALL FOUR, and it is not the page the body is on:
+#
+#     +----------------------------------------------------+
+#     |  Kryžiaus ženklas        Signum Crucis             |  <- heading pair
+#     |  Vardan Dievo -- Tėvo    In nómine Patris et Filii  |
+#     |  ir Sūnaus, ir Šven-     et Spíritus Sancti. Amen.  |
+#     |  tosios Dvasios. Amen.                              |
+#     +----------------------------------------------------+
+#
+# -- the vernacular in the left column, the Latin in the right, each prayer
+# opening with a heading on one baseline in both. So none of what follows is
+# the body reader reused: that one separates a cross-reference MARGIN from a
+# single column of text and would read this page as one column with a very
+# wide margin. What is shared is `common/pdf.py` and `PDF_EDITIONS`, which is
+# imported rather than mirrored because every claim it makes -- which reader,
+# which re-decode, which glyph is unmapped, where the furniture ends -- is a
+# fact about these four files and is as true here as there.
+#
+# THE PRINTED LATIN IS THE INSTRUMENT, the same way it is for the Compendium's
+# own body above, and for the same reason: nothing here reads a word of
+# Byelorussian, Indonesian, Lithuanian or Russian.
+#
+#   - It is the ANCHOR. `Signum Crucis`, `Ave, Maria`, `Actus contritionis`
+#     are Latin script in all four, so the prayers are located by a table of
+#     Latin titles taken off `prayer.common.en`'s own Latin column.
+#   - It is the BOUND. The columns are set in parallel, so where the Latin of
+#     a prayer stops the vernacular stops -- which is what cuts twenty-four
+#     prayers apart without one vernacular string in the file.
+#   - It is the CHECK. `report_pdf_latin` folds every extracted Latin word
+#     against the English appendix's and prints the differences.
+#
+# WHAT THE FOUR EDITIONS DISAGREE ABOUT, all of it measured rather than
+# assumed, and none of it needing a per-edition branch anywhere below:
+#
+#   - The Russian reports NO FONT AT ALL (poppler's `-bbox-layout` gives
+#     geometry and nothing else), so a heading cannot be recognised by its
+#     weight there and has to be recognised by its text. That is measured off
+#     the region -- `Region.faced` -- rather than declared.
+#   - The Indonesian MISPRINTS two of its Latin headings, `Egina Cæli` for
+#     `Regina Cæli` and `Vine, Creator Spiritus` for `Veni, ...`, so no fold
+#     of the expected title reaches them. They are found instead as the one
+#     heading standing in the gap their neighbours leave, and stored as
+#     printed.
+#   - The Indonesian PRINTS NEITHER the Rosary's concluding prayer nor any of
+#     the three Eastern-rite prayers -- `absent`, the same statement Swedish
+#     and Slovenian already make about the same three.
+#   - The Byelorussian's LATIN COLUMN IS NOT RECOVERABLE, and both readers
+#     fail differently: it sets its accents as separate positioned glyphs over
+#     base letters its fonts do not map, so MuPDF gives `et F<FFFD>´lii` for
+#     `et Fílii` and sometimes floats the accent to the end of the line
+#     (`peccatoribus,´`), while poppler combines it onto the wrong letter
+#     (`Fĺii`, `Mará`) and drops others outright (`nostr.` for `nostræ`). Word
+#     for word against the English appendix that column scores 84.9%, where
+#     the other three score 99.5%, 99.2% and 95.1%. So this edition publishes
+#     NO Latin companion -- `latin_unreadable`, which is a statement about the
+#     file and not, like `no_latin`, about what the source prints.
+# --------------------------------------------------------------------------
+
+#: The file each PDF edition is published as. MIRRORS `EDITIONS` in
+#: `ccc/compendium.py` for the same reason `COMPENDIUM_FILES` does, and fails
+#: the same loud way at `read_source` if it drifts.
+PDF_FILES = {
+    "be": "archive_2005_compendium-ccc_be.pdf",
+    "id": "archive_compendium-ccc_id.pdf",
+    "lt": "compendium_catech_lit.pdf",
+    "ru": "archive_compendium-ccc_ru.pdf",
+}
+
+#: How far apart, as a fraction of the page, the two columns' left edges must
+#: be before they are two columns rather than one column and an indent.
+COLUMN_MIN_GAP = 0.25
+#: ...and how much of the first column's line count the second must carry.
+COLUMN_MIN_SHARE = 0.4
+#: Points to pull the split left of the Latin column's own edge, so a hyphen
+#: the vernacular hangs past its measure stays with the vernacular. Without it
+#: `išga-` at the end of a Lithuanian line is read as the first word of the
+#: Latin line beside it.
+COLUMN_TOL = 6.0
+#: How many pages after its opening heading a region is looked for in. Both
+#: are generous: the bounds come from the text, and `Region.refit` re-measures
+#: the columns over what the prayers actually claimed.
+APPENDIX_SPAN = 17
+CREED_SPAN = 3
+#: A printed line ending this far short of the measure was broken there on
+#: purpose; one reaching it ran out of room and runs on into the next.
+MEASURE_TOL = 12.0
+#: A vertical gap this many times the column's own line spacing opens a block.
+BLOCK_GAP = 1.4
+#: How much further than its Latin a prayer's vernacular may run, in lines. A
+#: translation is usually the longer of the two.
+TAIL_ROOM = 2.5
+#: How many lines in a row may share no word with the expected Latin before
+#: the prayer is taken to have ended. More than one, because a Latin line a
+#: reader mangled shares nothing either.
+END_MISS_RUN = 3
+
+#: The three Appendix A prayers no edition prints Latin beside -- and so the
+#: three with no anchor. Derived rather than retyped: they are exactly the
+#: appendix entries in `NO_LATIN_SLUGS`.
+EASTERN_SLUGS = [slug for slug in APPENDIX_SLUGS if slug in NO_LATIN_SLUGS]
+assert len(EASTERN_SLUGS) == 3
+
+#: The Compendium's own Latin headings for the three prayers it prints in its
+#: body. Spelled here in the fullest form any edition uses, since the match is
+#: by prefix: `Symbolum Nicænum` on one line and `Constantinopolitanum` on the
+#: next is one heading.
+PDF_CREED_TITLES = {
+    "apostles-creed": "Symbolum Apostolicum",
+    "nicene-creed": "Symbolum Nicaenum Constantinopolitanum",
+    "our-father": "Pater noster",
+}
+
+#: A numbered paragraph: the question-and-answer body resuming after the
+#: Creeds, and the enumerated formulas of Appendix B after the last prayer.
+_NUMBERED_RE = re.compile(r"^\s*\d{1,3}[.)]\s*\D")
+#: A line that is nothing but a parenthesis -- the tradition an Eastern-rite
+#: prayer belongs to, and the Belarusian's `(паэтычная форма)`.
+_PDF_RUBRIC_RE = re.compile(r"^\s*\(.*\)\s*$")
+#: A soft hyphen, and any space the reader put after it. These editions set
+#: discretionary breaks as U+00AD and `merge_runs` restores a word space at
+#: the fragment boundary one falls on, so `Curah<AD> kanlah` is one word.
+_SOFT_BREAK_RE = re.compile("­\\s*")
+_LINE_HYPHEN = ("-", "‐", "‑")
+
+
+def fold_word(text: str) -> str:
+    """One folded string, letters only, for comparing a printed heading."""
+    return "".join(fold_latin(text))
+
+
+def fold_ligature_blind(text: str) -> str:
+    """As `fold_word`, but blind to the ligature an edition may not have
+    mapped -- the Belarusian prints `Regina Cæli` with `æ` unmapped, so its
+    heading folds to `reginacli` and no tolerance of spelling reaches it."""
+    return fold_word(text).replace("ae", "").replace("oe", "")
+
+
+def _pdf_y(line: Line) -> float:
+    return line.baseline or line.y0
+
+
+def _pdf_at(line: Line) -> tuple[int, float]:
+    """A line's place in the book, so two columns on two pages still order."""
+    return (line.page, _pdf_y(line))
+
+
+def _pdf_mode(values, bucket: float = 1.0) -> float:
+    counts: dict[float, int] = {}
+    for value in values:
+        key = round(value / bucket) * bucket
+        counts[key] = counts.get(key, 0) + 1
+    return max(counts.items(), key=lambda kv: (kv[1], -kv[0]))[0]
+
+
+def pdf_path(lang: str) -> Path:
+    return RAW_ROOT / f"compendium-{lang}" / PDF_FILES[lang]
+
+
+@cache
+def pdf_lines(lang: str) -> tuple[tuple[Line, ...], float]:
+    """One edition's lines and its page width, furniture stripped.
+
+    NOT `compendium_pdf.read_edition`, which also separates the body from the
+    cross-reference margin and merges within each -- both wrong here, where
+    the second column is the Latin and not a margin. What is reused is every
+    per-file repair that scraper declares.
+
+    THE RE-DECODE IS DELIBERATELY NOT APPLIED HERE. The Russian's fonts carry
+    no `ToUnicode`, and re-reading poppler's bytes as cp1251 recovers its
+    Cyrillic -- but the Latin column is not Cyrillic, and re-reading it turns
+    `In Nómine Patris` into `In Nуmine Patris`. It is applied per column, in
+    `pdf_region`, which is the first place the two are told apart."""
+    ed = PDF_EDITIONS[lang]
+    path = pdf_path(lang)
+    lines = read_lines(path, ed.backend)
+    lines = remap(lines, ed.glyphs)
+    boxes = page_boxes(path)
+    width, height = boxes[0].width, boxes[0].height
+    if ed.two_up:
+        lines = split_pages(lines, {b.page: b.width / 2 for b in boxes})
+        width /= 2
+    return (
+        tuple(ln for ln in lines if not _in_pdf_furniture(ln, height, ed)),
+        width,
+    )
+
+
+def _in_pdf_furniture(line: Line, height: float, ed: PdfEdition) -> bool:
+    return not (height * ed.furniture_strip < line.baseline)
+
+
+@cache
+def pdf_page_text(lang: str) -> dict[int, str]:
+    """Each page's whole text, for finding the page a region opens on.
+
+    Merged first, because a heading can arrive in pieces: MuPDF ends a run at
+    a font change, so the Lithuanian's `Symbolum Apostolicum` is `S` and
+    `ymbolum Apostolicum` until the fragments are rejoined."""
+    lines, _ = pdf_lines(lang)
+    pages: dict[int, list[str]] = {}
+    for line in merge_runs(list(lines)):
+        pages.setdefault(line.page, []).append(line.text)
+    return {page: "\n".join(texts) for page, texts in pages.items()}
+
+
+def pdf_column_edges(page_lines: list[Line], width: float):
+    """A page's two column edges, by how many lines start at each.
+
+    BY COUNT, not by the widest gap between distinct left edges, which is what
+    this was first. The Belarusian's Latin column arrives in many short
+    fragments at many x positions, several of them repeated often enough to
+    look solid, so the widest gap lands on whichever of them sits furthest
+    right and the split falls outside the text. The two real columns are by a
+    wide margin the two commonest starts on any page that has two."""
+    counts = Counter(round(line.x0) for line in page_lines)
+    if not counts:
+        return None, None
+    ranked = [x for x, _ in counts.most_common()]
+    first = ranked[0]
+    second = next(
+        (
+            x
+            for x in ranked[1:]
+            if abs(x - first) >= COLUMN_MIN_GAP * width
+            and counts[x] >= COLUMN_MIN_SHARE * counts[first]
+        ),
+        None,
+    )
+    if second is None:
+        return float(first), None
+    return float(min(first, second)), float(max(first, second))
+
+
+@dataclass
+class Region:
+    """One run of parallel-text pages, split into its two columns."""
+
+    lang: str
+    left: list[Line]
+    right: list[Line]
+    #: Each page's vernacular column edge -- it mirrors between recto and
+    #: verso, because the outer margin is the wide one.
+    edges: dict[int, float]
+    #: The distance from that edge to the Latin column's, constant per book.
+    offset: float
+    #: The median baseline-to-baseline step within a column.
+    spacing: float
+    #: How far past its own edge each column's longest lines reach.
+    reach: tuple[float, float]
+
+    def measure(self, line: Line, latin: bool) -> float:
+        edge = self.edges[line.page] + (self.offset if latin else 0.0)
+        return edge + self.reach[1 if latin else 0]
+
+    @property
+    def faced(self) -> bool:
+        """Whether the reader reports a face at all -- see the Russian."""
+        return any(line.bold for line in self.right)
+
+    def refit(self, chunks: list[PdfChunk]) -> None:
+        """Re-measure the columns over what the prayers actually claimed.
+
+        A region is opened generously, by a page count rather than a boundary,
+        so it reaches past the Creeds into the question-and-answer body, which
+        is set to a WIDER measure across the whole page. Measured with those
+        lines in, the parallel column looks half again as wide as it is and
+        every one of its lines then reads as a deliberate break rather than a
+        wrap -- which turns the Our Father's one paragraph into nine lines."""
+        left = [ln for c in chunks for ln in c.title + c.body]
+        right = [ln for c in chunks for ln in c.latin_title + c.latin_body]
+        self.reach = (
+            _pdf_reach(left, self.edges, 0.0) or self.reach[0],
+            _pdf_reach(right, self.edges, self.offset) or self.reach[1],
+        )
+
+
+def _pdf_reach(lines: list[Line], edges: dict[int, float], shift: float) -> float:
+    """How far past its own edge a column's longest lines run -- its measure.
+
+    A HIGH PERCENTILE, not the mode, and the difference is the Belarusian. A
+    justified column ends most of its lines at the measure, so there the mode
+    IS the measure; but this appendix is set as verse in several editions, a
+    clause to a line, and there the modal line-end is some middle-length
+    clause. Every longer line then reads as though it had run out of room, and
+    a prayer of ten printed lines comes out as one. The measure is where the
+    longest lines reach, whatever the rest do."""
+    if not lines:
+        return 0.0
+    ends = sorted(ln.x1 - edges[ln.page] - shift for ln in lines)
+    return ends[min(len(ends) - 1, int(len(ends) * 0.95))]
+
+
+def pdf_region(lang: str, pages: list[int]) -> Region:
+    """The two columns over a run of pages, in reading order.
+
+    SPLIT THE COLUMNS ON THE READER'S OWN FRAGMENTS, THEN MERGE WITHIN EACH --
+    the warning `common/pdf.merge_runs` and `compendium_pdf` both carry, and it
+    bites harder here than in the body: merged first, the vernacular's last
+    word and the Latin's first become one line, and what comes out is a
+    plausible sentence in neither language."""
+    lines, width = pdf_lines(lang)
+    on_page = {p: [ln for ln in lines if ln.page == p] for p in pages}
+    measured = {p: pdf_column_edges(v, width) for p, v in on_page.items() if v}
+    gaps = [round(hi - lo) for lo, hi in measured.values() if hi is not None]
+    if not gaps:
+        raise RuntimeError(
+            f"{lang}: no two-column page in {pages[0]}..{pages[-1]} -- the "
+            "parallel-text region was not found where it was looked for"
+        )
+    offset = float(Counter(gaps).most_common(1)[0][0])
+    edges = {p: lo for p, (lo, _) in measured.items()}
+
+    ed = PDF_EDITIONS[lang]
+    left: list[Line] = []
+    right: list[Line] = []
+    for page, on in on_page.items():
+        if page not in edges:
+            continue
+        at = edges[page] + offset - COLUMN_TOL
+        vernacular = merge_runs([ln for ln in on if ln.x0 < at])
+        latin = merge_runs([ln for ln in on if ln.x0 >= at])
+        if ed.decode is not None:
+            vernacular = [ln.with_text(ed.decode(ln.text)) for ln in vernacular]
+        left += vernacular
+        right += latin
+    left.sort(key=_pdf_at)
+    right.sort(key=_pdf_at)
+    steps = [
+        _pdf_y(b) - _pdf_y(a)
+        for a, b in itertools.pairwise(left)
+        if a.page == b.page and 0 < _pdf_y(b) - _pdf_y(a) < 40
+    ]
+    return Region(
+        lang,
+        left,
+        right,
+        edges,
+        offset,
+        statistics.median(steps),
+        (_pdf_reach(left, edges, 0.0), _pdf_reach(right, edges, offset)),
+    )
+
+
+@lru_cache(maxsize=1)
+def english_appendix() -> list[Prayer]:
+    """The English appendix, parsed once and held.
+
+    It is the reference the four PDF editions are anchored and checked
+    against, so it is read here as well as by `run("en")` -- and reading the
+    same cached page twice is cheap where reading it three times per PDF
+    edition would not be."""
+    return build_prayers_en(EN_RAW.read_text(encoding="cp1252", errors="replace"))
+
+
+@lru_cache(maxsize=1)
+def appendix_latin_titles() -> dict[str, str]:
+    """The Latin title of every appendix prayer that has one, off the English
+    edition's own Latin column -- so the anchors are read from the corpus
+    rather than retyped into it."""
+    return {
+        prayer.slug: prayer.latin.title for prayer in english_appendix() if prayer.latin
+    }
+
+
+@lru_cache(maxsize=1)
+def appendix_latin_words() -> dict[str, frozenset[str]]:
+    """Every Latin word each appendix prayer can contain, from the same page,
+    plus the three the Latin Catechism holds instead."""
+    words = {
+        prayer.slug: frozenset(
+            fold_latin(" ".join(block.text for block in prayer.latin.blocks))
+        )
+        for prayer in english_appendix()
+        if prayer.latin
+    }
+    words.update(
+        {
+            prayer.slug: frozenset(
+                fold_latin(" ".join(block.text for block in prayer.blocks))
+            )
+            for prayer in read_latin_catechism_prayers()
+        }
+    )
+    return words
+
+
+def is_pdf_heading(line: Line) -> bool:
+    return line.bold and not line.italic
+
+
+def opens_next_pdf(line: Line) -> bool:
+    """Whether this line is plainly the start of whatever follows a prayer."""
+    return is_pdf_heading(line) or bool(_NUMBERED_RE.match(line.text))
+
+
+@dataclass
+class PdfChunk:
+    """One prayer, as the printed lines of each column."""
+
+    slug: str
+    title: list[Line] = field(default_factory=list)
+    body: list[Line] = field(default_factory=list)
+    latin_title: list[Line] = field(default_factory=list)
+    latin_body: list[Line] = field(default_factory=list)
+    rubric: str | None = None
+
+
+def anchor_latin_titles(
+    region: Region, titles: dict[str, str], order: list[str]
+) -> dict[str, int]:
+    """Where each prayer opens, as an index into the Latin column.
+
+    TWO PASSES, because two of the eighty-four printed Latin headings are the
+    edition's own MISPRINTS -- the Indonesian's `Egina Cæli` and `Vine,
+    Creator Spiritus` -- and no fold of the expected title reaches either. The
+    first pass matches by text, tolerating the ligature (`Regina Cæli` against
+    `Regina caeli`) and a title printed across two lines; the second fills a
+    slug the first missed with the ONE heading standing in the gap its
+    neighbours leave, and the misprint is then stored exactly as printed.
+
+    The second pass needs a face to recognise a heading by and the Russian's
+    reader reports none, so it is skipped there -- measured off the region
+    rather than declared, so an edition that starts reporting a face needs no
+    entry anywhere."""
+    faced = region.faced
+    wanted = [slug for slug in order if slug in titles]
+
+    def eligible(i: int) -> bool:
+        return is_pdf_heading(region.right[i]) if faced else True
+
+    def matches(i: int, want: str, want_loose: str) -> bool:
+        got = fold_word(region.right[i].text)
+        return (
+            got.startswith(want)
+            or (want.startswith(got) and len(got) >= 6)
+            or fold_ligature_blind(region.right[i].text) == want_loose
+        )
+
+    found: dict[str, int] = {}
+    cursor = 0
+    for slug in wanted:
+        want = fold_word(titles[slug])
+        want_loose = fold_ligature_blind(titles[slug])
+        hit = next(
+            (
+                i
+                for i in range(cursor, len(region.right))
+                if eligible(i) and matches(i, want, want_loose)
+            ),
+            None,
+        )
+        if hit is not None:
+            found[slug] = hit
+            cursor = hit + 1
+    if not faced:
+        return found
+    for k, slug in enumerate(wanted):
+        if slug in found:
+            continue
+        lo = max((found[s] for s in wanted[:k] if s in found), default=-1)
+        hi = min(
+            (found[s] for s in wanted[k + 1 :] if s in found),
+            default=len(region.right),
+        )
+        gap = [i for i in range(lo + 1, hi) if is_pdf_heading(region.right[i])]
+        if len(gap) != 1:
+            raise RuntimeError(
+                f"{region.lang}: {slug}'s Latin title is not printed as expected "
+                f"and {len(gap)} headings stand between its neighbours -- one was "
+                "expected, so the misprint cannot be located by position either"
+            )
+        found[slug] = gap[0]
+    return found
+
+
+def latin_title_run(region: Region, start: int, expected: str) -> int:
+    """How many lines of the Latin column the heading at `start` occupies.
+
+    Only ever more than one where the printed title is still a PREFIX of the
+    expected one, which is what keeps `Symbolum Nicænum` / `Constantinopolitanum`
+    together without letting the Rosary's title swallow `Mystéria gaudiósa`
+    beneath it."""
+    want = fold_word(expected)
+    got = fold_word(region.right[start].text)
+    n = 1
+    while (
+        got != want
+        and want.startswith(got)
+        and start + n < len(region.right)
+        and (not region.faced or is_pdf_heading(region.right[start + n]))
+    ):
+        got += fold_word(region.right[start + n].text)
+        n += 1
+    return n
+
+
+def latin_body_end(region: Region, start: int, slug: str, limit: int) -> int:
+    """Where the Latin of the last prayer in a region stops.
+
+    Every other prayer stops at the next anchor; the last has none, so it is
+    stopped by the text itself. The English appendix's Latin column and
+    `prayer.common.la` between them hold every word it can contain, so the end
+    is the LAST line that still shares one -- not the first that does not,
+    which one mangled line would trigger."""
+    vocabulary = appendix_latin_words().get(slug, frozenset())
+    last, missed = start, 0
+    for i in range(start, limit):
+        line = region.right[i]
+        if opens_next_pdf(line):
+            break
+        if vocabulary & frozenset(fold_latin(line.text)):
+            last, missed = i, 0
+        else:
+            missed += 1
+            if missed >= END_MISS_RUN:
+                break
+    return last + 1
+
+
+def cut_vernacular(region: Region, chunks: list[PdfChunk]) -> None:
+    """The vernacular column, cut wherever the Latin column is cut.
+
+    The two are set in parallel, which is what lets none of this read a word
+    of the vernacular: a prayer's heading band is everything above the first
+    line of its Latin body, and its text is everything above the next prayer's
+    Latin heading."""
+    end = _pdf_tail_end(region, chunks)
+    for k, chunk in enumerate(chunks):
+        head = _pdf_at(chunk.latin_title[0])
+        stop = _pdf_at(chunks[k + 1].latin_title[0]) if k + 1 < len(chunks) else end
+        span = [
+            line
+            for line in region.left
+            if (head[0], head[1] - 0.6 * region.spacing)
+            <= _pdf_at(line)
+            < (stop[0], stop[1] - 0.6 * region.spacing)
+        ]
+        if chunk.latin_body:
+            first = _pdf_at(chunk.latin_body[0])
+            cut = (first[0], first[1] - 0.5 * region.spacing)
+        else:
+            cut = (head[0], head[1] + 0.5 * region.spacing)
+        title = [line for line in span if _pdf_at(line) < cut]
+        body = [line for line in span if _pdf_at(line) >= cut]
+        # A PARENTHESISED LINE UNDER THE HEADING IS A RUBRIC, never part of
+        # the title: the Belarusian marks its rhymed settings `(паэтычная
+        # форма)` and every edition names an Eastern-rite prayer's tradition
+        # the same way, which is how the three that print no Latin at all are
+        # found below.
+        rubric = [line for line in title if _PDF_RUBRIC_RE.match(line.text)]
+        title = [line for line in title if line not in rubric]
+        if not rubric and body and _PDF_RUBRIC_RE.match(body[0].text):
+            rubric, body = body[:1], body[1:]
+        chunk.title, chunk.body = title, body
+        if rubric:
+            chunk.rubric = " ".join(line.text.strip() for line in rubric)
+
+
+def _pdf_tail_end(region: Region, chunks: list[PdfChunk]) -> tuple[int, float]:
+    tail = chunks[-1]
+    last = (tail.latin_body or tail.latin_title)[-1]
+    room = (last.page, _pdf_y(last) + TAIL_ROOM * region.spacing)
+    floor = _pdf_at(tail.latin_body[0] if tail.latin_body else tail.latin_title[-1])
+    hit = next(
+        (
+            _pdf_at(line)
+            for line in region.left
+            if _pdf_at(line) > floor and opens_next_pdf(line)
+        ),
+        None,
+    )
+    return min(hit, room) if hit else room
+
+
+def eastern_rite_chunks(
+    region: Region, lo: tuple[int, float], hi: tuple[int, float]
+) -> list[tuple[list[Line], Line, list[Line]]]:
+    """The Eastern-rite prayers, which no edition prints Latin beside.
+
+    They are the one run with no anchor, and the signal that finds them is
+    present in all four editions including the Russian, where the reader
+    reports no face: each is headed and then names its tradition on a line of
+    its own in parentheses. The heading is the tight run of lines above that;
+    the gap to the prayer before it is what ends the walk backwards."""
+    lines = [line for line in region.left if lo < _pdf_at(line) < hi]
+    marks = [i for i, line in enumerate(lines) if _PDF_RUBRIC_RE.match(line.text)]
+    found: list[list] = []
+    for k, mark in enumerate(marks):
+        head = mark
+        while (
+            head > 0
+            and lines[head - 1].page == lines[head].page
+            and _pdf_y(lines[head]) - _pdf_y(lines[head - 1])
+            <= BLOCK_GAP * region.spacing
+        ):
+            head -= 1
+        end = marks[k + 1] if k + 1 < len(marks) else len(lines)
+        found.append([lines[head:mark], lines[mark], lines[mark + 1 : end]])
+    for k in range(len(found) - 1):
+        stop = _pdf_at(found[k + 1][0][0])
+        found[k][2] = [line for line in found[k][2] if _pdf_at(line) < stop]
+    return [(t, r, b) for t, r, b in found]
+
+
+def pdf_appendix_chunks(lang: str, absent: frozenset[str]) -> tuple[Region, list]:
+    text = pdf_page_text(lang)
+    first = next(
+        (p for p in sorted(text) if "Signum Crucis" in text[p]),
+        None,
+    )
+    if first is None:
+        raise RuntimeError(
+            f"{lang}: Appendix A's opening Latin heading is not on any page"
+        )
+    pages = [p for p in sorted(text) if first <= p < first + APPENDIX_SPAN]
+    region = pdf_region(lang, pages)
+    titles = appendix_latin_titles()
+    slugs = [s for s in APPENDIX_SLUGS if s not in absent]
+    anchors = anchor_latin_titles(region, titles, slugs)
+    missing = [s for s in slugs if s in titles and s not in anchors]
+    if missing:
+        raise RuntimeError(f"{lang}: no Latin anchor found for {missing}")
+
+    ordered = sorted(anchors.items(), key=lambda kv: kv[1])
+    chunks = [
+        _pdf_chunk(region, slug, i, ordered, k, titles[slug])
+        for k, (slug, i) in enumerate(ordered)
+    ]
+    cut_vernacular(region, chunks)
+
+    eastern = [s for s in EASTERN_SLUGS if s not in absent]
+    if eastern:
+        rosary = next(c for c in chunks if c.slug == "rosary")
+        acts = next(c for c in chunks if c.slug == "act-of-faith")
+        found = eastern_rite_chunks(
+            region,
+            _pdf_at((rosary.latin_body or rosary.latin_title)[-1]),
+            _pdf_at(acts.latin_title[0]),
+        )
+        if len(found) != len(eastern):
+            raise RuntimeError(
+                f"{lang}: {len(found)} parenthesised traditions stand between the "
+                f"Rosary and the Acts, expected {len(eastern)}"
+            )
+        made = [
+            PdfChunk(slug=slug, title=title, body=body, rubric=rubric.text.strip())
+            for slug, (title, rubric, body) in zip(eastern, found, strict=True)
+        ]
+        rosary.body = [
+            line for line in rosary.body if _pdf_at(line) < _pdf_at(found[0][0][0])
+        ]
+        at = [c.slug for c in chunks].index("act-of-faith")
+        chunks[at:at] = made
+    region.refit(chunks)
+    return region, chunks
+
+
+def _pdf_chunk(region, slug, i, ordered, k, title) -> PdfChunk:
+    n = latin_title_run(region, i, title)
+    limit = ordered[k + 1][1] if k + 1 < len(ordered) else len(region.right)
+    stop = limit if k + 1 < len(ordered) else latin_body_end(region, i + n, slug, limit)
+    return PdfChunk(
+        slug=slug,
+        latin_title=region.right[i : i + n],
+        latin_body=region.right[i + n : stop],
+    )
+
+
+def pdf_creed_chunks(lang: str, slugs: list[str], anchor: str) -> tuple[Region, list]:
+    """The Compendium's own Creeds and Our Father, set the same way.
+
+    The same region as the eight HTML editions read in `build_creeds_body`,
+    and easier here: a PDF page has no markup to disagree about, so the column
+    the vernacular is in is the whole of what has to be known."""
+    text = pdf_page_text(lang)
+    first = next(
+        (p for p in sorted(text) if re.search(anchor, text[p], re.IGNORECASE)), None
+    )
+    if first is None:
+        raise RuntimeError(f"{lang}: no page carries the Latin heading {anchor!r}")
+    pages = [p for p in sorted(text) if first <= p < first + CREED_SPAN]
+    region = pdf_region(lang, pages)
+    anchors = anchor_latin_titles(region, PDF_CREED_TITLES, slugs)
+    missing = [slug for slug in slugs if slug not in anchors]
+    if missing:
+        raise RuntimeError(f"{lang}: no Latin anchor found for {missing}")
+    ordered = sorted(anchors.items(), key=lambda kv: kv[1])
+    chunks = [
+        _pdf_chunk(region, slug, i, ordered, k, PDF_CREED_TITLES[slug])
+        for k, (slug, i) in enumerate(ordered)
+    ]
+    cut_vernacular(region, chunks)
+    region.refit(chunks)
+    return region, chunks
+
+
+def _mend_wrapped(head: str, tail: str) -> str:
+    head = head.rstrip()
+    if head.endswith(_LINE_HYPHEN):
+        return head[:-1] + tail.lstrip()
+    return f"{head} {tail.lstrip()}"
+
+
+def pdf_title_text(lines: list[Line]) -> str:
+    """A heading's lines as one string, always joined: a heading is one phrase
+    however many lines it took, and the Belarusian breaks its Nicene Creed's
+    across two with a hyphen."""
+    parts = [_SOFT_BREAK_RE.sub("", line.text).strip() for line in lines]
+    parts = [part for part in parts if part]
+    if not parts:
+        return ""
+    out = parts[0]
+    for part in parts[1:]:
+        out = _mend_wrapped(out, part)
+    return _WS_RE.sub(" ", out).strip()
+
+
+def pdf_printed_lines(lines: list[Line], region: Region, latin: bool) -> list[str]:
+    """The editor's own lines, not the reader's.
+
+    A printed line that REACHES THE MEASURE ran out of room and continues into
+    the next; one that stops short was broken there on purpose. It is the only
+    signal a PDF carries for the difference, and the appendix depends on it in
+    both directions: the Memorare is justified prose that must come back as
+    one paragraph, and the Ave Maria is set a clause to a line and must keep
+    every one of them."""
+    out: list[str] = []
+    carry = False
+    for line in lines:
+        text = _SOFT_BREAK_RE.sub("", line.text).strip()
+        if not text:
+            continue
+        if carry and out:
+            out[-1] = _mend_wrapped(out[-1], text)
+        else:
+            out.append(text)
+        carry = line.x1 >= region.measure(line, latin) - MEASURE_TOL
+    # `merge_runs` restores a space at a fragment boundary, and where the
+    # fragment's own text already ended in one that leaves two.
+    return [_WS_RE.sub(" ", row).strip() for row in out]
+
+
+def pdf_paragraphs(lines: list[Line], region: Region, latin: bool) -> list[list[str]]:
+    """Printed lines grouped into blocks at the gaps the editor opened."""
+    if not lines:
+        return []
+    groups: list[list[Line]] = [[lines[0]]]
+    for prev, line in itertools.pairwise(lines):
+        if (
+            prev.page != line.page
+            or _pdf_y(line) - _pdf_y(prev) > BLOCK_GAP * region.spacing
+        ):
+            groups.append([line])
+        else:
+            groups[-1].append(line)
+    return [
+        rows for group in groups if (rows := pdf_printed_lines(group, region, latin))
+    ]
+
+
+def pdf_blocks(lines: list[Line], region: Region, latin: bool) -> list[BlockOut]:
+    out: list[BlockOut] = []
+    for rows in pdf_paragraphs(lines, region, latin):
+        out.append(BlockOut(kind="prose", text=" ".join(rows), html=line_html(rows)))
+    return out
+
+
+def prayer_from_pdf_chunk(chunk: PdfChunk, region: Region, *, latin: bool) -> Prayer:
+    prayer = Prayer(
+        n=0,
+        slug=chunk.slug,
+        title=pdf_title_text(chunk.title),
+        blocks=pdf_blocks(chunk.body, region, False),
+        rubric=chunk.rubric,
+    )
+    if latin and chunk.latin_body:
+        prayer.latin = LatinText(
+            title=pdf_title_text(chunk.latin_title),
+            blocks=pdf_blocks(chunk.latin_body, region, True),
+        )
+    return prayer
+
+
+def read_pdf_appendix(lang: str) -> list[Prayer]:
+    """Appendix A out of a PDF edition -- a `PdfSource.reader`."""
+    spec = LANG_CONFIG[lang]
+    region, chunks = pdf_appendix_chunks(lang, spec.absent)
+    return [
+        prayer_from_pdf_chunk(chunk, region, latin=not spec.latin_unreadable)
+        for chunk in chunks
+    ]
+
+
+def read_pdf_creeds(lang: str) -> list[Prayer]:
+    """The two Creeds out of the Compendium's own body. No `latin`, for the
+    reason `NO_LATIN_SLUGS` gives: the Latin here is used and not stored."""
+    region, chunks = pdf_creed_chunks(
+        lang, list(BODY_CREED_SLUGS), r"Symbolum\s+Apostolicum"
+    )
+    return [prayer_from_pdf_chunk(chunk, region, latin=False) for chunk in chunks]
+
+
+def read_pdf_our_father(lang: str) -> list[Prayer]:
+    region, chunks = pdf_creed_chunks(lang, ["our-father"], r"Pater\s+[Nn]oster")
+    return [prayer_from_pdf_chunk(chunk, region, latin=False) for chunk in chunks]
+
+
+def report_pdf_latin(lang: str) -> list[str]:
+    """Every difference between a PDF edition's printed Latin and the English
+    appendix's, word for word.
+
+    A REPORT AND NOT A GATE, the same as `report_body_latin`: a second printed
+    transcription of the same universal texts carries its own variants, and
+    nothing here can tell one from a misprint by itself. What it is for is
+    reading -- the Lithuanian's seven departures in 1,359 words are all one
+    letter (`quelli` for `quem`, `sieut` for `sicut`), which says the reader
+    misread a glyph; the Russian's are whole words (`genitrix` for `genetrix`,
+    `solatium` for `solacium`), which says the edition did."""
+    spec = LANG_CONFIG[lang]
+    if spec.latin_unreadable:
+        return []
+    region, chunks = pdf_appendix_chunks(lang, spec.absent)
+    reference = appendix_latin_words()
+    out: list[str] = []
+    for chunk in chunks:
+        want = reference.get(chunk.slug)
+        if not want or not chunk.latin_body:
+            continue
+        got = fold_latin(
+            " ".join(
+                " ".join(rows)
+                for rows in pdf_paragraphs(chunk.latin_body, region, True)
+            )
+        )
+        strange = sorted({word for word in got if word not in want})
+        if strange:
+            out.append(f"{lang} {chunk.slug}: {', '.join(strange)}")
+    return out
+
+
+def print_pdf_latin_report(langs: list[str]) -> None:
+    lines: list[str] = []
+    for lang in langs:
+        if lang in PDF_FILES:
+            lines += report_pdf_latin(lang)
+    print("\n=== PDF editions: printed Latin against the English appendix's ===")
+    if not lines:
+        print("  (no departures)")
+        return
+    for line in lines:
+        print(f"  {line}")
 
 
 # --------------------------------------------------------------------------
@@ -3526,6 +4450,44 @@ def collect_texts(p: Prayer) -> list[str]:
     return texts
 
 
+def creed_source_note(spec: LangSpec) -> str:
+    """Where THIS edition's two Creeds and Our Father were read from.
+
+    One sentence and it was wrong for eleven of fourteen editions: it named
+    the Catechism, which is true of English, Portuguese and Latin and of
+    nothing else. Derived from the spec, so an edition whose source moves
+    cannot go on describing the old one."""
+    own, catechism = [], []
+    for slug, source in (
+        ("the two Creeds", spec.creeds),
+        ("the Our Father", spec.our_father),
+    ):
+        if source is None:
+            continue
+        (own if source.url == spec.appendix.url else catechism).append(slug)
+    parts = []
+    if own:
+        parts.append(
+            f"{_and_list(own)} are read from the Compendium's OWN body, at the "
+            "head of Part One Section Two and of Part Four Section Two, in this "
+            "same file"
+        )
+    if catechism:
+        parts.append(
+            f"{_and_list(catechism)} are re-parsed from the already-cached "
+            "Catechism HTML"
+        )
+    if not parts:
+        return "This mirror prints neither Creed nor the Our Father anywhere."
+    return f"{'; '.join(parts)} -- with zero new network fetches."
+
+
+def _and_list(parts: list[str]) -> str:
+    if len(parts) == 1:
+        return parts[0]
+    return f"{', '.join(parts[:-1])} and {parts[-1]}"
+
+
 def edition_note(spec: LangSpec) -> str:
     """What this edition was assembled FROM, per edition rather than as one
     string for all of them.
@@ -3543,9 +4505,7 @@ def edition_note(spec: LangSpec) -> str:
         parts.append("Catechism texts")
     if spec.litany or spec.rosary_mysteries:
         parts.append("Vatican Rosary pages")
-    if len(parts) == 1:
-        return parts[0]
-    return f"{', '.join(parts[:-1])} and {parts[-1]}"
+    return _and_list(parts)
 
 
 def check_source_coverage() -> list[str]:
@@ -4214,6 +5174,29 @@ class Source:
 
 
 @dataclass(frozen=True)
+class PdfSource:
+    """A source that is a PDF, and so has no text to hand its reader.
+
+    A `Source.reader` takes the page's HTML; there is no equivalent string
+    here, and the reader needs the file's geometry rather than its characters.
+    So it takes the LANGUAGE instead and resolves the file itself through the
+    cache in `pdf_lines` -- a Compendium PDF is read once and its appendix, its
+    Creeds and its Our Father all come out of that one read.
+
+    A separate class rather than a flag on `Source`, so that `read_source`
+    dispatches on the type and every one of the ten HTML readers keeps a
+    signature that cannot be handed a language by mistake."""
+
+    path: Path
+    url: str
+    retrieved_at: str
+    reader: Callable[[str], list[Prayer]]
+
+
+AnySource = Source | PdfSource
+
+
+@dataclass(frozen=True)
 class LangSpec:
     """What one language's collection is made of.
 
@@ -4238,13 +5221,13 @@ class LangSpec:
     title: str
     short_title: str
     #: The Compendium's Appendix A. The one source every edition has.
-    appendix: Source
+    appendix: AnySource
     #: The Catechism's own pages: both Creeds on one, the Our Father on the
     #: other. Absent where vatican.va publishes no CCC in this language --
     #: and absent for Spanish for a different reason, since the Spanish
     #: appendix prints its own Padre nuestro (see `build_prayers_es`).
-    creeds: Source | None = None
-    our_father: Source | None = None
+    creeds: AnySource | None = None
+    our_father: AnySource | None = None
     #: The Holy Rosary micro-site's Litany page.
     litany: Source | None = None
     #: That micro-site's own code for this language, naming the four
@@ -4284,6 +5267,13 @@ class LangSpec:
     #: shared `NO_LATIN_SLUGS`; Spanish prints a Latin *Pater Noster* beside
     #: its own Our Father and so takes one fewer.
     no_latin: frozenset[str] | None = None
+    #: This edition PRINTS a Latin column that no reader can recover, so none
+    #: of it is published. A statement about the FILE, which is why it is not
+    #: `no_latin`: that field says the source printed nothing, and saying so
+    #: here would be false. Only the Belarusian PDF, whose accents are separate
+    #: positioned glyphs over base letters its fonts do not map -- see the PDF
+    #: section above for what each of the two readers makes of `et Fílii`.
+    latin_unreadable: bool = False
 
     def expected_slugs(self) -> list[str]:
         """Exactly the prayers this edition's sources can produce, in the
@@ -4312,6 +5302,8 @@ class LangSpec:
         return order
 
     def expected_no_latin(self) -> frozenset[str]:
+        if self.latin_unreadable:
+            return frozenset(self.expected_slugs())
         base = NO_LATIN_SLUGS if self.no_latin is None else self.no_latin
         return frozenset(base) & set(self.expected_slugs())
 
@@ -4357,6 +5349,17 @@ def compendium_source(lang: str, reader: Callable[[str], list[Prayer]]) -> Sourc
     path = RAW_ROOT / f"compendium-{lang}" / name
     return Source(
         path, COMPENDIUM_DOCUMENTS_URL + name, captured_at(path, RETRIEVED_AT), reader
+    )
+
+
+def pdf_source(lang: str, reader: Callable[[str], list[Prayer]]) -> PdfSource:
+    """The same, for the four editions vatican.va publishes only as a PDF."""
+    path = pdf_path(lang)
+    return PdfSource(
+        path,
+        COMPENDIUM_DOCUMENTS_URL + PDF_FILES[lang],
+        captured_at(path, RETRIEVED_AT),
+        reader,
     )
 
 
@@ -4535,6 +5538,96 @@ LANG_CONFIG: dict[str, LangSpec] = {
         ),
         rosary_mysteries="po",
     ),
+    # ---- the four PDF editions ------------------------------------------
+    #
+    # Every one of them is Appendix A entire, plus the two Creeds and the Our
+    # Father out of the Compendium's own body -- the same three the eight HTML
+    # editions above gained, from the same two places in the same book, read
+    # out of a page rather than out of markup. No fetch: all four files have
+    # been in `raw/` since compendium.py captured them, and their 598-question
+    # bodies are already `compendium.{be,id,lt,ru}`.
+    #
+    # NONE OF THEM HAS A LITANY OR MYSTERY PAGES. The Holy Rosary micro-site
+    # publishes six languages and none of these is among them, so the Rosary
+    # here is the bare Appendix A entry the Compendium prints -- its title,
+    # its four mystery lists and its concluding prayer -- which is a shorter
+    # entry and not a broken one (see `LangSpec`).
+    #
+    # EACH CARRIES A SECOND RIGHTS HOLDER. These four translations were
+    # published by the national bishops' conference rather than by LEV, and
+    # each PDF prints both notices; `pdf_copyright` is the table
+    # `ccc/compendium.py` already reads them from.
+    "be": LangSpec(
+        work_id="prayer.common.be",
+        title="Агульныя малітвы",
+        short_title="Агульныя малітвы",
+        appendix=pdf_source("be", read_pdf_appendix),
+        creeds=pdf_source("be", read_pdf_creeds),
+        our_father=pdf_source("be", read_pdf_our_father),
+        # ITS LATIN COLUMN IS PRINTED AND NOT PUBLISHED. The file sets every
+        # accent as a separate positioned glyph over a base letter its fonts
+        # do not map: MuPDF answers `et F<FFFD>´lii` for `et Fílii` and floats
+        # some accents to the end of the line, poppler combines them onto the
+        # wrong letter (`Fĺii`) and drops others outright. 84.9% of the
+        # English appendix's Latin words survive, against 99.5%, 99.2% and
+        # 95.1% in the other three. There is no reading of that column that is
+        # not partly guesswork, and `prayer.common.la` publishes the same
+        # texts whole.
+        latin_unreadable=True,
+        copyright_notice=pdf_copyright("be", COPYRIGHT_NOTICE),
+        copyright_note=(
+            "Published as a PDF by the Conference of Catholic Bishops in "
+            "Belarus under a Libreria Editrice Vaticana grant; the file "
+            "prints both notices and both are recorded."
+        ),
+    ),
+    "id": LangSpec(
+        work_id="prayer.common.id",
+        title="Doa Bersama",
+        short_title="Doa Bersama",
+        appendix=pdf_source("id", read_pdf_appendix),
+        creeds=pdf_source("id", read_pdf_creeds),
+        our_father=pdf_source("id", read_pdf_our_father),
+        # This edition ends the Rosary at the Glorious Mysteries and goes
+        # straight to the Act of Faith: it prints neither the Rosary's
+        # concluding prayer nor any of the three Eastern-rite prayers. The
+        # same statement Swedish and Slovenian make about the same three.
+        absent=frozenset(EASTERN_SLUGS),
+        copyright_notice=pdf_copyright("id", COPYRIGHT_NOTICE),
+        copyright_note=(
+            "Published as a PDF by the Indonesian Bishops' Conference and "
+            "Penerbit Kanisius under a Libreria Editrice Vaticana grant; the "
+            "file prints both notices and both are recorded."
+        ),
+    ),
+    "lt": LangSpec(
+        work_id="prayer.common.lt",
+        title="Bendrosios maldos",
+        short_title="Bendrosios maldos",
+        appendix=pdf_source("lt", read_pdf_appendix),
+        creeds=pdf_source("lt", read_pdf_creeds),
+        our_father=pdf_source("lt", read_pdf_our_father),
+        copyright_notice=pdf_copyright("lt", COPYRIGHT_NOTICE),
+        copyright_note=(
+            "Published as a PDF by the Lithuanian Bishops' Conference under a "
+            "Libreria Editrice Vaticana grant; the file prints both notices "
+            "and both are recorded."
+        ),
+    ),
+    "ru": LangSpec(
+        work_id="prayer.common.ru",
+        title="Основные молитвы",
+        short_title="Основные молитвы",
+        appendix=pdf_source("ru", read_pdf_appendix),
+        creeds=pdf_source("ru", read_pdf_creeds),
+        our_father=pdf_source("ru", read_pdf_our_father),
+        copyright_notice=pdf_copyright("ru", COPYRIGHT_NOTICE),
+        copyright_note=(
+            "Published as a PDF by the Cultural Centre \u00abSpiritual "
+            "Library\u00bb under a Libreria Editrice Vaticana grant; the file "
+            "prints both notices and both are recorded."
+        ),
+    ),
 }
 
 
@@ -4668,25 +5761,20 @@ def build_manifest(
     varied = varied or []
     notes = [
         (
-            'The 24 Appendix A ("Common Prayers") entries are sourced from the '
-            "same Compendium of the CCC (2005) page already parsed into compendium."
-            f"{lang}; the Apostles' Creed, Nicene Creed, and Our Father are "
-            "re-parsed from the already-cached Catechism HTML with zero new "
-            'network fetches. Appendix B ("Formulas of Catholic Doctrine") is '
+            f"The {len(spec.expected_slugs()) - len(CREED_AND_LORDS_PRAYER_SLUGS)}"
+            ' Appendix A ("Common Prayers") '
+            "entries are sourced from the same Compendium of the CCC (2005) "
+            f"{'PDF' if isinstance(spec.appendix, PdfSource) else 'page'} "
+            f"already parsed into compendium.{lang}; "
+            + creed_source_note(spec)
+            + ' Appendix B ("Formulas of Catholic Doctrine") is '
             "adjacent in the same source but is not prayers (short catechetical "
             "enumerations -- virtues, precepts, capital sins, ...); deliberately "
             "out of scope here, same as it remains for compendium." + lang + "."
         ),
         (
-            "The Litany of Loreto is sourced from the English and Portuguese "
-            "Vatican Holy Rosary micro-site pages, captured sequentially with "
-            "the two-second crawl delay. Those pages show no visible copyright "
-            "notice; their HTML metadata names the Dicastery for Communication "
-            "as publisher, so the project's existing Vatican/LEV copyright "
-            "posture applies rather than treating the absent notice as a licence."
-        ),
-        (
-            f"{n_with_latin}/{len(SLUGS)} prayers carry an optional `latin` field. "
+            f"{n_with_latin}/{len(prayers) or len(spec.expected_slugs())} prayers "
+            "carry an optional `latin` field. "
             "The three CCC prayers (the Apostles' Creed, Nicene Creed, and Our "
             "Father) are sourced from pages that do not print a Latin companion; "
             "the Coptic, Syro-Maronite, and Byzantine prayers likewise have none "
@@ -4710,10 +5798,10 @@ def build_manifest(
             )
             if lang == "en"
             else (
-                "The Portuguese source prints one wording throughout, so the "
-                "regional split the English appendix carries -- a UK and a USA "
-                f"wording of five prayers, separated as {REGIONAL_WORK_ID} -- has "
-                "no counterpart here."
+                "This source prints one wording throughout, so the regional "
+                "split the English appendix carries -- a UK and a USA wording "
+                f"of five prayers, separated as {REGIONAL_WORK_ID} -- has no "
+                "counterpart here."
             )
         ),
         (
@@ -4728,15 +5816,24 @@ def build_manifest(
             "prefix is kept on each block's `label` field rather than "
             "normalized away."
         ),
-        (
+    ]
+    if spec.rosary_mysteries:
+        notes.append(
             "The Rosary is the one entry with a `groups` array and "
             "`instructions`: its four named mystery groups retain the "
             "Compendium's weekday rubrics, while each of the twenty items "
             "carries the full Scripture meditation printed in Vatican's "
             "Holy Rosary mystery pages. Those pages also supply the opening "
             "invocation and decade-by-decade directions."
-        ),
-    ]
+        )
+    else:
+        notes.append(
+            "The Rosary here is the entry the Compendium's appendix prints and "
+            "no more -- its title, its four mystery lists and its concluding "
+            "prayer, with no `groups` and no directions for praying it. Those "
+            "come from the Vatican Holy Rosary micro-site, which publishes six "
+            "languages and not this one."
+        )
     if lang == "pt":
         notes.append(
             "PT's Latin block (the trailing sequential pass -- see module "
@@ -4756,6 +5853,38 @@ def build_manifest(
             "orthographic choices. A known, deliberate v1 loss -- the "
             "same posture docs/corpus-schema.md already takes for CCC "
             "inline emphasis -- recorded here rather than fixed."
+        )
+    if spec.litany:
+        notes.append(
+            "The Litany of Loreto is sourced from the Vatican Holy Rosary "
+            "micro-site page in this language, captured with the two-second "
+            "crawl delay. Those pages show no visible copyright notice; their "
+            "HTML metadata names the Dicastery for Communication as publisher, "
+            "so the project's existing Vatican/LEV copyright posture applies "
+            "rather than treating the absent notice as a licence."
+        )
+    if spec.latin_unreadable:
+        notes.append(
+            "This edition PRINTS a Latin column beside every prayer and none of "
+            "it is published here. Its accents are set as separate positioned "
+            "glyphs over base letters the embedded fonts do not map, and the two "
+            "PDF readers fail differently and both irrecoverably: MuPDF answers "
+            "`et F?\u00b4lii` for `et Fílii`, with the base letter unmapped, and "
+            "floats some accents to the end of the line; poppler combines them "
+            "onto the following letter "
+            "(`Fĺii`) and drops others outright (`nostr.` for `nostræ`). Word "
+            "for word against the English appendix's Latin column that text "
+            "scores 84.9%, where the other three PDF editions score 99.5%, "
+            "99.2% and 95.1%. The same Latin texts are published whole as "
+            "prayer.common.la."
+        )
+    if spec.absent:
+        notes.append(
+            f"This edition does not print {len(spec.absent)} of Appendix A's "
+            f"entries at all -- {', '.join(sorted(spec.absent))} -- so the "
+            "collection is shorter here than in the editions that do. An "
+            "absence in the source, asserted rather than inferred, so that a "
+            "parser silently losing a row cannot be mistaken for it."
         )
     if spec.copyright_note:
         notes.append(spec.copyright_note)
@@ -5046,7 +6175,7 @@ def print_summary(
 # --------------------------------------------------------------------------
 
 
-def read_source(lang: str, source: Source) -> list[Prayer]:
+def read_source(lang: str, source: AnySource) -> list[Prayer]:
     """One source's prayers, or a hard failure naming the file.
 
     A source NAMED in a `LangSpec` and missing from disk is an error, never a
@@ -5061,6 +6190,8 @@ def read_source(lang: str, source: Source) -> list[Prayer]:
             "captured with --fetch-companions; a Compendium or Catechism page "
             "belongs to compendium.py or ccc.py, not to a workaround here."
         )
+    if isinstance(source, PdfSource):
+        return source.reader(lang)
     return source.reader(source.path.read_text(encoding="cp1252", errors="replace"))
 
 
@@ -5223,6 +6354,10 @@ def print_body_latin_report(langs: list[str]) -> None:
     first; one edition alone printing `caeeli` is the second."""
     reports: list[str] = []
     for lang in langs:
+        # The four PDF editions print the same region and are read by
+        # `report_pdf_latin` instead -- this one reads HTML.
+        if lang not in COMPENDIUM_FILES:
+            continue
         spec = LANG_CONFIG[lang]
         if not spec.appendix.path.exists():
             continue
@@ -5319,6 +6454,7 @@ def main() -> int:
         print_summary(lang, results[lang], ok, problems if lang == langs[-1] else [])
 
     print_body_latin_report(langs)
+    print_pdf_latin_report(langs)
     return 0 if overall_ok else 1
 
 

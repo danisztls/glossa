@@ -1429,6 +1429,78 @@ written table: `_VATII_PDF_LINK_RE` reads them off the same index, and
 `parse_and_write` records them on every edition of the document it can read,
 so a PDF the Holy See replaces with HTML is picked up by the next crawl.
 
+### The prayers a Catholic knows by heart, in fifteen languages, for no fetch
+
+The site's interface is thirty-four languages. `/preces` was eleven, and only
+three of those — English, Portuguese, Latin — carried all four of the prayers
+a Catholic is expected to know by heart: the two Creeds, the Our Father and
+the Hail Mary. That is the worst place a fallback can land, because a prayer
+is the one text people already know and would notice being wrong.
+
+**The answer was in a file already on disk, and had been for a year.** Every
+Compendium edition prints the two Creeds at the head of Part One Section Two
+and the Our Father at the head of Part Four Section Two, vernacular beside
+Latin — in the same page `prayers.py` was already reading Appendix A out of.
+Nothing had ever read that region, because the scraper was written to read an
+appendix and an appendix is what it looked for. Eight editions were completed
+(2026-09-02) without one request. **Before adding a source, read the whole of
+the one you have**: the survey that would have named national bishops'
+conferences as the next step was the survey that found this instead.
+
+**The four PDF editions came in the same way** (2026-09-03). vatican.va serves
+ten of the fourteen Compendium editions as HTML and publishes Byelorussian,
+Indonesian, Lithuanian and Russian only as a PDF made by the conference that
+translated each. Those files had been in `raw/` since August and their
+598-question bodies were already parsed; their appendices had never been
+looked at. `prayer.common.{be,id,lt,ru}` are 27 prayers each (24 for the
+Indonesian), and three of the four are interface languages.
+
+**What made a reader safe in four languages nobody here reads is that the
+Latin does every job.** The page is parallel text — vernacular column, Latin
+column — so the printed Latin is the ANCHOR (the titles are Latin script in
+all four, and they are read off `prayer.common.en`'s own Latin column rather
+than retyped), the BOUND (the columns being parallel, where a prayer's Latin
+stops its vernacular stops, which is what cuts twenty-four prayers apart), and
+the CHECK (every extracted Latin word folded against the English appendix's).
+Not one line of the reader tests a vernacular string.
+
+**Two limits are the file's and are recorded as the file's.** The Belarusian
+PRINTS a Latin column and publishes none of it: its accents are separate
+positioned glyphs over base letters its fonts do not map, and the two PDF
+readers fail differently and both irrecoverably — 84.9% of the English
+appendix's Latin words survive against 99.5, 99.2 and 95.1 for the other
+three. That is `latin_unreadable`, deliberately not the existing `no_latin`,
+which says the SOURCE printed nothing: a reader has to be able to tell "not
+printed" from "not readable", and only one of the two is a fact about the
+book. The Indonesian genuinely prints no Eastern-rite prayers and no
+concluding prayer for the Rosary, which is `absent` — the same statement
+Swedish and Slovenian already make.
+
+**Reading a new region of an old file found two defects in the shared PDF
+reader, and the second is the more interesting.** poppler ends a `<word>`
+where the font forces it to, not only where a space is printed, and
+`poppler_lines` was joining on the tag — putting a space inside `sæcula` and
+`ГЛАВА`. The threshold that fixes it is measured rather than chosen: over
+37,757 word pairs in that edition the gap is bimodal with an empty band
+between, 424 pairs at 0.1pt or less and then nothing until 0.7 where real
+spaces begin. And `PdfEdition.repair_small_caps` — a regex that rejoined a
+lone capital to the word after it — turned out to be that same defect patched
+one layer too late. With the cause fixed the patch became damage, closing
+`«ВЕРУЮ В БОГА»` into `«ВЕРУЮ ВБОГА»`, because a one-letter Russian
+preposition before a word is exactly the shape it was written to join. **A
+downstream repair outlives the bug it was written for and then starts
+producing it.** 38 answers of `compendium.ru` read correctly that did not.
+
+**The near miss is worth as much as the fixes.** A line of the Russian Nicene
+Creed came out missing, and the obvious explanation was that
+`furniture_strip=0.17` — 101.15pt on a 595pt page — lands exactly on a text
+block that opens at y=101.1. It was wrong: `_in_furniture` compares the
+BASELINE, which for poppler is the box bottom, so the head clears at ~89 and
+the body at ~110. Acting on the plausible reading would have re-admitted 164
+running heads into `compendium.ru`'s body to fix a line that was somewhere
+else entirely. **A number that explains the symptom is not evidence that it
+caused it** — the diff of the rebuilt work is.
+
 ## The First Vatican Council
 
 Ingested 2026-09-02: two dogmatic constitutions, _Dei Filius_ and _Pastor

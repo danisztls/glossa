@@ -133,14 +133,6 @@ class PdfEdition:
     #: apart. Empty means the edition's quotes are not detectable, which is
     #: the Russian's case and is explained at its entry.
     quote_style: str = ""
-    #: Rejoin an initial the reader split off. poppler tokenises by spacing,
-    #: and this edition sets its chapter headings with a large capital
-    #: followed by small capitals, so the gap after the initial reads as a
-    #: word break: "ГЛАВА ПЕРВАЯ" arrives as "Г ЛАВА ПЕРВАЯ" and stops
-    #: matching the division table. Applied only to a line that is entirely
-    #: uppercase -- a heading -- so ordinary prose, where a one-letter Russian
-    #: preposition really does precede a word, is untouched.
-    repair_small_caps: bool = False
     #: The same at the FOOT, and zero by default because both editions read so
     #: far put every piece of furniture at the top. It was symmetric with the
     #: head for one revision, and the cost was silent: the Indonesian runs its
@@ -191,12 +183,24 @@ PDF_EDITIONS: dict[str, PdfEdition] = {
     # It is also imposed two pages to a sheet, so its 109 sheets are 218 book
     # pages; read as sheets its running heads come out as "24 ... 25" on one
     # line and half its questions disappear.
+    #
+    # IT CARRIED A `repair_small_caps` FLAG UNTIL 2026-09-03, and the flag was
+    # a regex over the finished line -- rejoin a lone capital to the word after
+    # it, in a line that is all capitals -- because this edition sets its
+    # headings with a large initial and the reader read the gap after it as a
+    # word space. That was the defect one layer too late: poppler was ending a
+    # `<word>` where the font forced it to, not where a space was printed, and
+    # `common/pdf._join_words` now declines to insert one where the boxes
+    # touch. With the cause gone the patch became damage -- it closed up
+    # `«ВЕРУЮ В БОГА»` into `«ВЕРУЮ ВБОГА»`, since a one-letter Russian
+    # preposition before a word is exactly what it was written to join. The
+    # division table still matches on all 218 pages without it, and 38 answers
+    # read correctly that did not.
     "ru": PdfEdition(
         backend="poppler",
         decode=_cp1251,
         two_up=True,
         furniture_strip=0.17,
-        repair_small_caps=True,
         # NO QUOTE STYLE, and it is a limit of the reader rather than of the
         # edition. This book sets its epigraphs in italic like the other
         # three, in `BPCABA+MSTT31c666` against the body's
@@ -245,18 +249,6 @@ MARGIN_REF_RE = re.compile(r"^\d[\d,;:.‐‑–—\s-]*$")
 MAX_HEADING_WORDS = 4
 
 
-#: A single letter standing alone before a word, in a line that is all
-#: capitals -- the signature of a small-capped initial the reader split off.
-_SMALL_CAP_SPLIT = re.compile(r"\b(\w) (\w{2,})")
-
-
-def _rejoin_initial(text: str) -> str:
-    stripped = text.strip()
-    if not stripped or stripped != stripped.upper():
-        return text
-    return _SMALL_CAP_SPLIT.sub(r"\1\2", text)
-
-
 @dataclass
 class PdfPage:
     n: int
@@ -273,8 +265,6 @@ def read_edition(path: Path, ed: PdfEdition) -> list[PdfPage]:
     lines = read_lines(path, ed.backend)
     if ed.decode is not None:
         lines = [ln.with_text(ed.decode(ln.text)) for ln in lines]
-    if ed.repair_small_caps:
-        lines = [ln.with_text(_rejoin_initial(ln.text)) for ln in lines]
     lines = remap(lines, ed.glyphs)
     boxes = page_boxes(path)
     height = boxes[0].height
