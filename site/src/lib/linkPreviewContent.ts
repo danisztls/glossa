@@ -52,6 +52,7 @@ import { summaPartFromSlug, type PreviewTarget } from './address';
 import { summaQuestionLabel } from './summa-titles';
 import { content } from './content.svelte';
 import { i18n } from './i18n.svelte';
+import { ensureAllIndexes } from './corpus-index';
 import { displayTitle } from './titles';
 
 export interface ResolvedUnit {
@@ -380,6 +381,9 @@ const previewCache = new Map<string, Promise<ResolvedUnit | undefined>>();
  * reader's language, or a number outside this corpus.
  */
 export async function resolveUnitText(target: PreviewTarget): Promise<ResolvedUnit | undefined> {
+	// A preview or a bookmark can name any tier, so this cannot narrow the way
+	// `index-priming.ts` narrows a route — and both callers are already async.
+	await ensureAllIndexes();
 	const key = cacheKey(target);
 	if (!key) return undefined;
 	let pending = previewCache.get(key);

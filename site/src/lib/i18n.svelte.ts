@@ -102,8 +102,24 @@ import { en } from './i18n/en';
  *
  * A template literal (`import(\`./i18n/${lang}.ts\`)`) would defeat this: Vite
  * cannot analyze it, and would fold every dictionary back into one graph.
+ *
+ * ENGLISH IS EXCLUDED BY THE SECOND PATTERN, and the exclusion is what makes
+ * the first one work. `en.ts` is statically imported above, so a glob that also
+ * matched it asked the bundler for two incompatible placements of one module —
+ * answered with `[INEFFECTIVE_DYNAMIC_IMPORT] src/lib/i18n/en.ts is dynamically
+ * imported ... but also statically imported ... dynamic import will not move
+ * module into another chunk`, which is not a warning about `en` alone: with the
+ * dynamic edge collapsed into the static one, English stayed in the boot chunk
+ * AND kept a dynamic importer, and the chunk it was pinned to is the one every
+ * other dictionary's chunk then shares. Excluding it states the arrangement the
+ * static import already decided.
+ *
+ * Nothing reaches `loaderFor('en')` to notice: `loaded` starts `{ en }`, so
+ * `ensure('en')` returns at its first line. The throw below is now reachable for
+ * English too, which is correct — asking to LOAD the dictionary that is by
+ * definition already loaded is a bug in the caller, not a language to fetch.
  */
-const loaders = import.meta.glob<Record<string, Dictionary>>('./i18n/*.ts');
+const loaders = import.meta.glob<Record<string, Dictionary>>(['./i18n/*.ts', '!./i18n/en.ts']);
 
 function loaderFor(lang: UiLang): () => Promise<Record<string, Dictionary>> {
 	const found = loaders[`./i18n/${lang}.ts`];

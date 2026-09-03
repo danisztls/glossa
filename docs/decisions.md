@@ -1608,6 +1608,62 @@ there is a gap; that is lossless, so the older refusal to store a mere BOUND —
 must not silently mislink — still holds unamended. And a work manifest keeps only the first
 of its `sources`, because `sourceUrl` reads `sources[0].url` and no page reads the rest.
 
+**The lever that was left was not shipping it eagerly, and it took the boot payload from
+6.30 MB to 0.47 MB** (2026-09-03). The entry above ends by saying compression bought
+nothing and that the per-registry pricing is the part that holds; this is what applying
+that pricing to the rest of the tier actually cost and bought. The measurement that
+started it was not of the boot INDEX but of the boot PAYLOAD — every `.js` file
+`index.html` asks for before it can paint, which nothing had ever added up: 6.30 MB raw,
+~530 KB brotli, of which 92% was data compiled into JavaScript rather than code. Four
+things were in it, and only one was suspected:
+
+- **2.92 MB of index-tier JSON**, inlined by `import.meta.glob(..., { eager: true })`.
+  The six large per-work-type files (1.33 MB) are now `?url` assets primed by the route
+  that reads them (`index-priming.ts`), and `manifests.json` (1.50 MB) is a `?url` asset
+  awaited unconditionally in `+layout.ts` — it answers "what works are there", which
+  every path asks. Small files stay eager: under 20 KB a request costs more than a parse,
+  and `plates-credit.json` stays for a stated reason (the colophon must not have its
+  attribution arrive over a network that can fail).
+- **1.59 MB of `content-manifest.json`**, which `corpus-assets.ts`'s docblock says must be
+  read by the service worker AND NOWHERE ELSE, "because importing it from there and
+  nowhere else is what actually keeps it out of the app". `usage.ts` and
+  `library.svelte.ts` had each added a static import since — the rule was written when the
+  file was 248 KB. `usage.ts` did not need it at all (it wanted a work's language, which
+  `manifests` already carries — verified equal across all 1,654 works); `library.svelte.ts`
+  now `await import()`s it, which is free because nothing renders until the reader opens
+  the panel. `nodes/0.js` fell from 1.65 MB to 65 KB.
+- **1.34 MB of the content tier's relPath->URL map**, plus a module-scope loop running up
+  to ten regexes over each of 9,733 keys before first paint. A location answers "which file
+  holds section 12", which nothing can ask before a route has decided to read something, so
+  `corpus-index.ts` reaches `content-urls.ts` by `await import()` now. Every one of the
+  eighteen call sites was already inside an `async` function, so the readers stayed
+  synchronous and no signature moved.
+- **`suggest.ts` and its 186 KB grammar**, static in `JumpBox`, which the layout RENDERS on
+  every route behind an `{#if open}` that is false until a reader reaches for the box. The
+  precedent was already in that file: it lazily imported `fuzzysort` (7.5 KB) while
+  statically importing the module that consumes it.
+
+**The generalisable part is that three of the four were invisible to every check that
+existed.** Each was one word (`query: '?url'`) or one import away from correct, neither
+spelling errors nor fails a test, and the symptom is only that the site got slower for
+everybody. `scripts/preflight-deploy.mjs` now measures the boot payload off `index.html`
+and REFUSES THE DEPLOY over `MAX_BOOT_JS_BYTES` — a ceiling in bytes rather than Vite's
+per-chunk warning, which cannot tell a 1.34 MB chunk that is lazily fetched from one every
+route parses before paint, and says nothing about a payload spread over twenty chunks.
+
+**Asynchrony was pushed to the ARRIVAL of the data, never to its readers.** Two dozen
+synchronous readers in `corpus.ts` (`getBook`, `getCccStructure`, `listSummaQuestions`)
+are called from render and keep their signatures; the registries are the same mutable
+objects, filled in place by primers that `load()` awaits — which is where a route already
+waits. That is why this is a change to a handful of files rather than to the component
+tree. The guards differ by how completely their callers can be enumerated: the content
+index throws always (every call site is inside one of eighteen `async` functions and is
+provably covered), while the per-work-type indexes throw only in dev and warn in
+production, because their readers include reading chrome that appears on more than one
+shelf and the path mapping is a judgement. Under fixtures `USE_REAL_CORPUS` is false and
+neither guard can fire, so `npm test` is not what catches a mistake here — `npm run dev`
+is, which is the argument for the throw.
+
 **A bogus reference-shaped URL gets a 404, not the shell with a 200.** The host's
 ordinary SPA fallback would make every mistyped citation look like a citable resource, on
 a site whose whole point is citable deep links. `corpus-routes.json` is an address-only

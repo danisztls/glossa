@@ -29,9 +29,9 @@
 	import { resolveBookToken } from '$lib/book-token';
 	import { usage } from '$lib/usage';
 	import { cccParagraphExists, getCanonicalBook, prayerIndexLang } from '$lib/corpus';
-	import type { BibleBookMeta } from '$lib/corpus-index';
+	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
-	import { setFuzzyRanker, suggest } from '$lib/suggest';
+	import type { suggest as suggestFn } from '$lib/suggest';
 	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { isOverlayOpen, isTypingTarget } from '$lib/shortcuts';
@@ -54,7 +54,7 @@
 	let listEl: HTMLUListElement | undefined = $state();
 
 	/**
-	 * Loose matching arrives after the box does.
+	 * The suggester and its loose matcher both arrive after the box does.
 	 *
 	 * `fuzzysort` is 7.5 KB gzipped and this component sits in the layout
 	 * header, so a static import would put it in the boot chunk of every route
@@ -65,16 +65,41 @@
 	 * afterwards (`sw-policy.ts` takes every build asset that is not corpus
 	 * content), so the second open and every offline one are instant.
 	 *
+	 * `SUGGEST.TS` ITSELF NOW COMES THE SAME WAY, and it is the far larger half
+	 * of that argument: it reaches `refs-grammar.ts` (186 KB of source) and
+	 * `titles.ts` (49 KB), and this component is rendered — not merely
+	 * importable — by the root layout on every route, so all of it was
+	 * synchronous boot-chunk code standing behind a `{#if open}` that is false
+	 * until a reader reaches for the box. Deferring `fuzzysort` while statically
+	 * importing the module that CONSUMES it was saving the 7.5 KB and paying the
+	 * 235 KB behind it.
+	 *
+	 * `suggester` is `undefined` until the box has been opened once, which is
+	 * exactly the window in which `suggestions` must be empty anyway: nothing
+	 * can be suggested for a box nobody has opened.
+	 *
 	 * `fuzzyReady` exists only to re-run the query: injecting the ranker
 	 * mutates module state that `$derived` cannot see, and without a signal a
 	 * list already on screen would keep the answer it computed a moment before
-	 * the matcher landed.
+	 * the matcher landed. `suggester` lands through `$state` and so needs no
+	 * such signal — reading it in `suggestions` is the dependency.
 	 */
 	let fuzzyReady = $state(false);
+	let suggester: typeof suggestFn | undefined = $state();
 
-	async function loadFuzzy() {
-		if (fuzzyReady) return;
-		const { default: fuzzysort } = await import('fuzzysort');
+	async function loadSuggester() {
+		if (suggester && fuzzyReady) return;
+		// Both in flight at once: neither needs the other to be fetched, and the
+		// ranker is injected into the module rather than passed to it.
+		// `ensureAllIndexes` and not a narrowed set: the suggester ranges over the
+		// whole address space by definition — a fragment can become a chapter, a
+		// paragraph, a question, a document or a prayer, and which one is the
+		// answer, not the question.
+		const [{ setFuzzyRanker, suggest }, { default: fuzzysort }] = await Promise.all([
+			import('$lib/suggest'),
+			import('fuzzysort'),
+			ensureAllIndexes()
+		]);
 		setFuzzyRanker((needle, haystack) =>
 			fuzzysort
 				// 0.3, NOT fuzzysort's default 0.5, and the number is measured
@@ -97,6 +122,7 @@
 				.map((hit) => ({ index: hit.obj.index, score: hit.score }))
 		);
 		fuzzyReady = true;
+		suggester = suggest;
 	}
 
 	/**
@@ -109,8 +135,8 @@
 		// Read so the list recomputes when the loose matcher lands — see
 		// `fuzzyReady`. The value itself says nothing this expression wants.
 		void fuzzyReady;
-		return open
-			? suggest(query, {
+		return open && suggester
+			? suggester(query, {
 					lang: i18n.lang,
 					bibleWorkId: content.workIdFor('bible'),
 					cccLang: content.langFor('catechism'),
@@ -156,7 +182,7 @@
 		query = '';
 		active = -1;
 		open = true;
-		void loadFuzzy();
+		void loadSuggester();
 		dialogEl?.showModal();
 		// `showModal()` focuses the first focusable descendant, which is this
 		// input — said explicitly because that is a fact about the field's

@@ -32,7 +32,7 @@
  * synthetic directory rather than only against whatever `build/` happens to
  * hold.
  */
-import { readdirSync, existsSync, readFileSync } from 'node:fs';
+import { readdirSync, existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compareCoverage, readBaseline } from './reference-coverage.mjs';
@@ -53,6 +53,31 @@ const MAX_FILES = 20_000;
  */
 const MIN_WORKS = 100;
 const MIN_CONTENT_ASSETS = 100;
+
+/**
+ * The boot payload: every `.js` file `index.html` asks for before it can paint.
+ *
+ * WHAT THIS GUARDS IS A CLASS OF MISTAKE THAT MAKES NO NOISE. Everything in the
+ * index tier is reached by `import.meta.glob`, and the difference between a
+ * file that ships as a fetched asset and one compiled into the boot chunk is
+ * `query: '?url'` — one word, no error either way, and the symptom is only that
+ * the site got slower for everyone. It has happened repeatedly: the document
+ * outlines (414 KB), the xref tables (715 KB), and `content-manifest.json`,
+ * which `corpus-assets.ts`'s docblock says must never be reached from a page
+ * and which two later imports put in `nodes/0.js` anyway — 1.59 MB, unnoticed,
+ * until the whole boot payload was measured on 2026-09-03 and came to 6.30 MB.
+ *
+ * A CEILING IN BYTES, NOT A RATIO OR A CHUNK COUNT. `build.chunkSizeWarningLimit`
+ * fires per chunk and so says nothing about a payload split across twenty of
+ * them, and it cannot tell a 1.3 MB chunk that is lazily fetched — as the
+ * content URL map now is — from one every route parses before first paint. What
+ * matters is the total a reader waits for, so that is what is measured.
+ *
+ * The limit is ~2.5x the current 0.47 MB: loose enough that ordinary feature
+ * work never trips it, tight enough that re-inlining any one of the index files
+ * does. Raise it deliberately, with a measurement, or not at all.
+ */
+const MAX_BOOT_JS_BYTES = 1_200_000;
 
 function walk(dir) {
 	let files = 0;
@@ -194,6 +219,43 @@ if (Number.isNaN(expiresAt)) {
 	fail(`security.txt has no parseable Expires field (RFC 9116 requires one). Rebuild.`);
 } else if (expiresAt <= Date.now()) {
 	fail(`security.txt expired at ${expires}, so it is stale build output. Rebuild.`);
+}
+
+/**
+ * Measured off `index.html` rather than off a chunk listing, because that file
+ * IS the definition: the SPA shell is what every address is served, so what it
+ * asks for before it can render is what every reader waits for. `modulepreload`
+ * and `<script src>` alike — both are fetched and parsed on the critical path.
+ */
+const shellPath = path.join(buildDir, 'index.html');
+if (existsSync(shellPath)) {
+	const shell = readFileSync(shellPath, 'utf8');
+	const referenced = [...shell.matchAll(/(?:href|src)="([^"]+\.js)"/g)].map((m) => m[1]);
+	let bootBytes = 0;
+	const missing = [];
+	for (const href of new Set(referenced)) {
+		const file = path.join(buildDir, href.replace(/^\//, ''));
+		if (!existsSync(file)) {
+			missing.push(href);
+			continue;
+		}
+		bootBytes += statSync(file).size;
+	}
+	if (missing.length > 0) {
+		fail(
+			`index.html references ${missing.length} missing script(s): ${missing.slice(0, 3).join(', ')}`
+		);
+	}
+	if (bootBytes > MAX_BOOT_JS_BYTES) {
+		fail(
+			`boot payload is ${(bootBytes / 1e6).toFixed(2)} MB of JavaScript, over the ` +
+				`${(MAX_BOOT_JS_BYTES / 1e6).toFixed(2)} MB ceiling. Something that should be fetched ` +
+				`is being inlined into the boot chunk — check for an \`import.meta.glob\` over ` +
+				`corpus-data/ that lost its \`query: '?url'\`, or a new static import of ` +
+				`corpus-assets.ts (see MAX_BOOT_JS_BYTES above).`
+		);
+	}
+	console.log(`[preflight] boot payload ${(bootBytes / 1e6).toFixed(2)} MB of JS`);
 }
 
 console.log('[preflight] ok');

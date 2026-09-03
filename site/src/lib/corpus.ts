@@ -162,6 +162,8 @@ import {
 	bibleIndex,
 	condensationMap,
 	bibleIntroBooks,
+	ensureContentIndex,
+	requireIndex,
 	bibleIntroLocation,
 	fixtureBibleIntrosByLang,
 	cccChunkLocation,
@@ -704,6 +706,7 @@ export function workIdToEdition(workId: string): string {
 // --- Bible: index-backed (metadata + chapter existence, sync) -------------
 
 export function getBook(workId: string, osis: string): BibleBookMeta | undefined {
+	requireIndex('bible', 'getBook');
 	return bibleIndex[workId]?.find((b) => b.osis === osis);
 }
 
@@ -711,6 +714,7 @@ export function getBook(workId: string, osis: string): BibleBookMeta | undefined
  *  already sorted by `scripts/sync-corpus.mjs` / `corpus-index.ts`'s fixture
  *  branch. */
 export function listBooks(workId: string): BibleBookMeta[] {
+	requireIndex('bible', 'listBooks');
 	return bibleIndex[workId] ?? [];
 }
 
@@ -800,6 +804,7 @@ function navigableChapters(workId: string, book: BibleBookMeta): number[] {
 }
 
 export async function getBookIntro(lang: string, osis: string): Promise<BibleIntro | undefined> {
+	await ensureContentIndex();
 	const base = baseLang(lang);
 	if (!hasBookIntro(base, osis)) return undefined;
 	const intros = await fetchTier(
@@ -1076,6 +1081,7 @@ async function readContentFromNetwork<T>(url: string): Promise<T> {
  * nothing built at that address" rather than a failure.
  */
 export async function loadTranslatedDescriptions(lang: string): Promise<Record<string, string>> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS) return {};
 	const location = translatedDescriptionsLocation(lang);
 	if (!location) return {};
@@ -1097,6 +1103,7 @@ export async function loadTranslatedDescriptions(lang: string): Promise<Record<s
  * its author and type facets and no tag facet.
  */
 export async function loadDocumentTags(): Promise<Record<string, string[]>> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS) return {};
 	const location = documentTagsLocation();
 	if (!location) return {};
@@ -1142,6 +1149,7 @@ async function fetchChapterChunk(
 	osis: string,
 	chapterN: number
 ): Promise<Chapter[]> {
+	await ensureContentIndex();
 	return fetchTier(
 		fixtureBibleBooks[workId]?.[osis]?.chapters,
 		bibleChapterLocation(workId, osis, chapterN),
@@ -1249,6 +1257,7 @@ export async function getCommentaryChapter(
 	osis: string,
 	chapterN: number
 ): Promise<Map<number, CommentaryNote[]>> {
+	await ensureContentIndex();
 	const chunk = await fetchTier<CommentaryChapter[]>(
 		[],
 		bibleChapterLocation(workId, osis, chapterN),
@@ -1372,10 +1381,12 @@ function adjacentInSorted(
 
 /** Languages the CCC is available in. */
 export function cccLangs(): string[] {
+	requireIndex('ccc', 'cccLangs');
 	return Object.keys(cccStructures).sort();
 }
 
 export function getCccStructure(lang: string): CccNode[] {
+	requireIndex('ccc', 'getCccStructure');
 	return cccStructures[lang] ?? [];
 }
 
@@ -1389,6 +1400,7 @@ const cccParagraphNumberSets: Record<string, Set<number>> = Object.fromEntries(
  *  contiguous range: the fixtures are deliberately gappy (see
  *  `corpus-index.ts`'s docblock). */
 export function cccParagraphExists(lang: string, n: number): boolean {
+	requireIndex('ccc', 'cccParagraphExists');
 	return cccParagraphNumberSets[lang]?.has(n) ?? false;
 }
 
@@ -1399,6 +1411,7 @@ export function getAdjacentCccParagraphNumber(
 	n: number,
 	direction: 'prev' | 'next'
 ): number | undefined {
+	requireIndex('ccc', 'getAdjacentCccParagraphNumber');
 	return adjacentInSorted(cccParagraphNumbers[lang] ?? [], n, direction);
 }
 
@@ -1484,6 +1497,7 @@ export function listCccChapters(lang: string): CccNode[] {
 // --- Catechism: content tier (async, read/fetched, memoized, chunked) -----
 
 async function fetchCccChunk(lang: string, n: number): Promise<CccParagraph[]> {
+	await ensureContentIndex();
 	return fetchTier(fixtureCccParagraphsByLang[lang] ?? [], cccChunkLocation(`ccc.${lang}`, n), []);
 }
 
@@ -1550,10 +1564,12 @@ export async function getCccParagraphRangeAsync(
 
 /** Languages the Compendium is available in. */
 export function compendiumLangs(): string[] {
+	requireIndex('compendium', 'compendiumLangs');
 	return Object.keys(compendiumStructures).sort();
 }
 
 export function getCompendiumStructure(lang: string): StructureNode[] {
+	requireIndex('compendium', 'getCompendiumStructure');
 	return compendiumStructures[lang] ?? [];
 }
 
@@ -1639,6 +1655,7 @@ export function condensingQuestionRun(from: number, to: number): [number, number
 // raw each meant opening question 1 downloaded all 598 answers.
 
 async function fetchCompendiumChunk(lang: string, n: number): Promise<CompendiumQuestion[]> {
+	await ensureContentIndex();
 	return fetchTier(
 		fixtureCompendiumQuestionsByLang[lang] ?? [],
 		compendiumChunkLocation(`compendium.${lang}`, n),
@@ -1707,6 +1724,7 @@ export function getAdjacentCompendiumQuestionNumber(
 	n: number,
 	direction: 'prev' | 'next'
 ): number | undefined {
+	requireIndex('compendium', 'getAdjacentCompendiumQuestionNumber');
 	return adjacentInSorted(compendiumQuestionNumbers[lang] ?? [], n, direction);
 }
 
@@ -1898,6 +1916,7 @@ export function documentHeadingAnchor(i: number): string {
  * position.
  */
 export function documentOutline(workId: string): StructureNode[] {
+	requireIndex('document', 'documentOutline');
 	const sectionNs = documentSectionNumbers[workId] ?? [];
 	return buildDocumentOutline(
 		getDocumentStructure(workId),
@@ -1926,6 +1945,7 @@ export function documentTailNumber(lastN: number | null, tailIndex: number): num
 }
 
 export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null): StructureNode[] {
+	requireIndex('document', 'buildDocumentOutline');
 	let lastAnchored = -1;
 	rows.forEach((row, i) => {
 		if (row.before !== null && row.before !== undefined) lastAnchored = i;
@@ -2035,6 +2055,7 @@ export function documentHasText(workId: string): boolean {
  *  `readContent`, so a reader who opens the document after following a
  *  preview re-fetches only the chunks the preview did not already pull. */
 async function fetchDocumentChunk(workId: string, n: number): Promise<DocumentSection[]> {
+	await ensureContentIndex();
 	return fetchTier([], documentChunkLocation(workId, n), []);
 }
 
@@ -2046,6 +2067,7 @@ async function fetchDocumentChunk(workId: string, n: number): Promise<DocumentSe
  *  does not, and merging the two would put a unit with no address into a list
  *  every caller indexes by `n`. */
 export async function getDocumentAppendixAsync(workId: string): Promise<DocumentAppendixUnit[]> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS) return [];
 	const location = documentAppendixLocation(workId);
 	if (!location) return [];
@@ -2053,6 +2075,7 @@ export async function getDocumentAppendixAsync(workId: string): Promise<Document
 }
 
 async function fetchDocumentSections(workId: string): Promise<DocumentSection[]> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS) return [];
 	const chunks = await Promise.all(
 		documentChunkLocations(workId).map((location) => readContent<DocumentSection[]>(location))
@@ -2139,6 +2162,7 @@ export function documentSectionText(section: DocumentSection): string {
 /** Language tags the prayer collection is available in -- FULL tags, so
  *  `en-gb` is one of them and is not the same entry as `en`. */
 export function prayerLangs(): string[] {
+	requireIndex('prayer', 'prayerLangs');
 	return Object.keys(prayerStructures).sort();
 }
 
@@ -2168,6 +2192,7 @@ export function prayerLangs(): string[] {
  * apart without naming either work.
  */
 export function prayerIndexLang(tag: string): string {
+	requireIndex('prayer', 'prayerIndexLang');
 	const langs = prayerLangs();
 	const sizes = Object.fromEntries(langs.map((l) => [l, prayerMetasByLang[l]?.length ?? 0]));
 	return resolveEditionTag(completeEditionTags(sizes), tag) ?? langs[0] ?? '';
@@ -2218,6 +2243,7 @@ export function completeEditionTags(sizes: Record<string, number>): string[] {
  * branch produced the tags.
  */
 export function listPrayerEditions(slug?: string): WorkManifest[] {
+	requireIndex('prayer', 'listPrayerEditions');
 	const sizes = Object.fromEntries(
 		prayerLangs().map((l) => [l, prayerMetasByLang[l]?.length ?? 0])
 	);
@@ -2249,6 +2275,7 @@ export function currentPrayerEditionId(preferredTag: string, slug?: string): str
 }
 
 export function getPrayerStructure(lang: string): StructureNode[] {
+	requireIndex('prayer', 'getPrayerStructure');
 	return prayerStructures[lang] ?? [];
 }
 
@@ -2257,10 +2284,12 @@ export function getPrayerStructure(lang: string): StructureNode[] {
  *  fetch: this is existence/metadata, never `blocks`/`latin`/`groups`
  *  themselves (see `PrayerMeta`'s docblock in corpus-index.ts). */
 export function listPrayerMeta(lang: string): PrayerMeta[] {
+	requireIndex('prayer', 'listPrayerMeta');
 	return [...(prayerMetasByLang[lang] ?? [])].sort((a, b) => a.n - b.n);
 }
 
 export function getPrayerMeta(lang: string, slug: string): PrayerMeta | undefined {
+	requireIndex('prayer', 'getPrayerMeta');
 	return prayerMetasByLang[lang]?.find((p) => p.slug === slug);
 }
 
@@ -2341,6 +2370,7 @@ export function listPrayerGroups(lang: string): PrayerGroupSummary[] {
 // throwing keeps that graceful if a test ever does call this directly.
 
 async function fetchPrayers(lang: string): Promise<Prayer[]> {
+	await ensureContentIndex();
 	return fetchTier([], prayerContentLocation(`prayer.common.${lang}`), []);
 }
 
@@ -2361,10 +2391,12 @@ export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer
 // §The site).
 
 export function summaLangs(): string[] {
+	requireIndex('summa', 'summaLangs');
 	return Object.keys(summaStructures).sort();
 }
 
 export function getSummaStructure(lang: string): SummaNode[] {
+	requireIndex('summa', 'getSummaStructure');
 	return summaStructures[lang] ?? [];
 }
 
@@ -2380,6 +2412,7 @@ export function defaultSummaWorkId(lang: string): string | undefined {
 }
 
 export function listSummaQuestions(lang: string): SummaQuestionMeta[] {
+	requireIndex('summa', 'listSummaQuestions');
 	return summaQuestionMetas[lang] ?? [];
 }
 
@@ -2618,6 +2651,7 @@ export async function getSummaQuestionAsync(
 	part: string,
 	n: number
 ): Promise<SummaQuestion | undefined> {
+	await ensureContentIndex();
 	const lang = workId.slice('summa.'.length);
 	const fixture = (fixtureSummaQuestionsByLang[lang] ?? []).find(
 		(q) => q.part === part && q.n === n
@@ -2739,6 +2773,7 @@ export async function getSocialDoctrineParagraphAsync(
 	lang: string,
 	n: number
 ): Promise<DocumentSection | undefined> {
+	await ensureContentIndex();
 	if (!socialDoctrineParagraphExists(lang, n)) return undefined;
 	const workId = socialDoctrineWorkId(lang);
 	const chunk = await fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []);
@@ -2752,6 +2787,7 @@ export async function getSocialDoctrineRangeAsync(
 	from: number,
 	to: number
 ): Promise<DocumentSection[]> {
+	await ensureContentIndex();
 	const workId = socialDoctrineWorkId(lang);
 	const starts = new Set<number>();
 	for (const n of socialDoctrineSectionNumbers[workId] ?? []) {
@@ -2932,6 +2968,7 @@ export function canonLawTitleExists(n: number): boolean {
 
 /** One canon. One chunk, not the whole edition. */
 export async function getCanonAsync(lang: string, n: number): Promise<DocumentSection | undefined> {
+	await ensureContentIndex();
 	if (!canonLawCanonExists(lang, n)) return undefined;
 	const workId = canonLawWorkId(lang);
 	const chunk = await fetchTier<DocumentSection[]>([], documentChunkLocation(workId, n), []);
@@ -2945,6 +2982,7 @@ export async function getCanonLawRangeAsync(
 	from: number,
 	to: number
 ): Promise<DocumentSection[]> {
+	await ensureContentIndex();
 	const workId = canonLawWorkId(lang);
 	const starts = new Set<number>();
 	for (const n of canonLawSectionNumbers[workId] ?? []) {

@@ -22,7 +22,6 @@
  * last week is exactly the one the panel has to be right about.
  */
 
-import { listContentAssets } from './corpus-assets';
 import { heldPaths, libraryRows, libraryTotal, type LibraryRow } from './library';
 import {
 	contentPath,
@@ -75,7 +74,7 @@ class LibraryStore {
 	 */
 	async refresh(): Promise<void> {
 		try {
-			const waves = planWaves(entries(), shelfPlan());
+			const waves = planWaves(await entries(), shelfPlan());
 			const held = await heldContent();
 			this.rows = libraryRows(waves, held);
 			this.total = libraryTotal(this.rows);
@@ -118,7 +117,7 @@ class LibraryStore {
 	 */
 	async remove(wave: WaveId): Promise<void> {
 		try {
-			const target = planWaves(entries(), shelfPlan()).find((planned) => planned.id === wave);
+			const target = planWaves(await entries(), shelfPlan()).find((planned) => planned.id === wave);
 			if (!target || typeof caches === 'undefined') return;
 			const cache = await caches.open(CONTENT_CACHE);
 			await Promise.all(target.assets.map((asset) => cache.delete(asset.path)));
@@ -144,7 +143,13 @@ class LibraryStore {
 /** The inventory, with each URL reduced to the pathname the cache is keyed on
  *  — `partitionAssets` does exactly this in the worker, against
  *  `sw.location.href`; here the document is the base. */
-function entries(): ContentEntry[] {
+async function entries(): Promise<ContentEntry[]> {
+	// `await import()`: `corpus-assets.ts` eagerly inlines `content-manifest.json`
+	// (1.59 MB) and is meant to be the service worker's alone — see its docblock
+	// and `usage.ts`'s `contentLangOf`. `AdvancedSheet` renders nothing until a
+	// reader opens it, so nothing here is wanted before then, and both callers
+	// below are already `async`.
+	const { listContentAssets } = await import('./corpus-assets');
 	const baseHref = typeof document === 'undefined' ? '/' : document.baseURI;
 	return listContentAssets().map((asset) => ({
 		...asset,

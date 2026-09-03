@@ -5,6 +5,52 @@ corpus-safety rules that apply before any of this (where the corpus lives,
 what may be deleted, the lint hook); `docs/decisions.md` holds the full
 rationale wherever a § is cited.
 
+## The boot payload has a ceiling, and the deploy enforces it
+
+Everything `index.html` asks for before it can paint. It was **6.30 MB of
+JavaScript and is 0.47 MB** (2026-09-03, §The site); `npm run preflight` prints
+it and refuses to deploy over `MAX_BOOT_JS_BYTES` in
+`scripts/preflight-deploy.mjs`. Re-measure rather than quoting the number.
+
+**Vite's `chunkSizeWarningLimit` is not this check and cannot be.** It fires per
+chunk, so it says nothing about a payload split across twenty of them, and it
+cannot tell the content URL map (1.34 MB, `await import()`ed) from a chunk every
+route parses. It is raised to 1,700 kB for that reason — the app build is quiet
+and the service worker's still warns, because SvelteKit compiles that one with
+`configFile: false` and does not forward the option (the same gap
+`assetsInlineLimit` has, below).
+
+**Three things put data in the boot chunk, all silent, all one word wide:**
+
+1. **An `import.meta.glob` over `corpus-data/` that lost `query: '?url'`** —
+   `{ eager: true, import: 'default' }` compiles the JSON into the importing
+   chunk. Nothing errors. This is how 2.92 MB of index tier got there.
+2. **A static import of `corpus-assets.ts` from anything but
+   `src/service-worker.ts`** — it eagerly inlines `content-manifest.json`
+   (1.59 MB). Its docblock has always said "importing this from there and
+   nowhere else is what actually keeps it out of the app"; `usage.ts` and
+   `library.svelte.ts` each broke it anyway, when the file was small enough that
+   nobody noticed.
+3. **A static import from a component the layout RENDERS**, even one whose whole
+   body is behind `{#if open}`. Svelte still mounts it, so `JumpBox`'s
+   `suggest.ts` (with `refs-grammar.ts`, 186 KB) was boot-chunk code on every
+   route. Rendering is not the gate — importing is.
+
+**Lazy DATA, not lazy readers.** `corpus.ts`'s two dozen synchronous readers are
+called from render and must stay synchronous; what became asynchronous is when
+the registries are FILLED. The primers (`ensureCoreIndex`, `ensureBibleIndex`, …
+in `corpus-index.ts`) mutate the same exported objects in place, and
+`+layout.ts` awaits the ones `index-priming.ts` maps to the path — `load()` is
+where a route already waits. Adding a reading route means adding it to
+`BY_SEGMENT` there; an unknown path primes everything, which costs a fetch and
+is the only direction that mapping may be wrong in.
+
+**`npm test` cannot catch a missing primer.** `USE_REAL_CORPUS` is false under
+fixtures, so both guards (`requireContentIndex`, `requireIndex`) are inert and
+an unprimed read is indistinguishable from a corpus that lacks the text.
+`npm run dev` is what catches it — `requireIndex` throws there and warns in
+production, deliberately.
+
 ## Corpus data must never be inlined into the bundle
 
 `corpus-index.ts` globs the content tier with `query: '?url'` on the premise

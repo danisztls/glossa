@@ -25,7 +25,7 @@
  * in six look like with the real collection present.
  */
 
-import { USE_REAL_CORPUS, plateContentLocation } from './corpus-index';
+import { USE_REAL_CORPUS, plateContentLocation, ensureContentIndex } from './corpus-index';
 import type { Plate } from './plates';
 
 /** The one collection the corpus holds. A parameter rather than a literal at
@@ -64,6 +64,7 @@ export function getPlates(workId: string = DORE_WORK_ID): Plate[] {
  * the reader came for.
  */
 export async function loadPlates(workId: string = DORE_WORK_ID): Promise<void> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS || started.has(workId)) return;
 	started.add(workId);
 	const location = plateContentLocation(workId);

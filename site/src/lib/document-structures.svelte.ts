@@ -32,7 +32,7 @@
  * document content functions already take.
  */
 
-import { USE_REAL_CORPUS, documentStructureLocation } from './corpus-index';
+import { USE_REAL_CORPUS, documentStructureLocation, ensureContentIndex } from './corpus-index';
 import type { DocumentFrontMatter, DocumentNode } from './types';
 
 const EMPTY_NODES: DocumentNode[] = [];
@@ -109,6 +109,7 @@ function frontMatter(workId: string): DocumentFrontMatter {
  * is not retried on every subsequent `$derived` re-run.
  */
 export async function loadDocumentStructure(workId: string): Promise<void> {
+	await ensureContentIndex();
 	if (!USE_REAL_CORPUS || started.has(workId)) return;
 	started.add(workId);
 	const location = documentStructureLocation(workId);

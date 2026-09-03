@@ -220,6 +220,36 @@ export default defineConfig({
 	},
 	build: {
 		/*
+		 * THE PER-CHUNK WARNING CANNOT ASK THE QUESTION THAT MATTERS HERE, which
+		 * is not "is any chunk large" but "how much does a reader parse before
+		 * the page paints". Two chunks are deliberately far over the 500 kB
+		 * default and neither is in the boot payload: the content tier's
+		 * relPath->URL map (~1.34 MB, `await import()`ed by `corpus-index.ts`
+		 * when the first content read needs it) and `content-manifest.json`
+		 * (~1.59 MB, the service worker's own bundle). Both are inventories of a
+		 * ~9,700-file corpus, so they are large because the corpus is, and they
+		 * compress to a fraction of that over the wire.
+		 *
+		 * Left at the default, the warning fired on every build for two chunks
+		 * that are correct, which is how a warning stops being read.
+		 *
+		 * THIS SILENCES THE APP BUILD AND NOT THE SERVICE WORKER'S, for the same
+		 * reason `assetsInlineLimit` below does not reach it: SvelteKit compiles
+		 * `service-worker.ts` in a Vite build of its own with `configFile: false`
+		 * and forwards five options, of which this is not one. So the worker's
+		 * bundle still reports its `content-manifest.json` on every build. Left
+		 * as is deliberately — there is no config surface to set it from, and the
+		 * one warning that remains names the one chunk whose size is worth
+		 * re-reading as the corpus grows.
+		 *
+		 * The real guard is `scripts/preflight-deploy.mjs`'s `MAX_BOOT_JS_BYTES`: it
+		 * measures what `index.html` actually asks for before first paint —
+		 * 0.47 MB as of 2026-09-03, down from 6.30 MB — and REFUSES THE DEPLOY
+		 * over the ceiling, which is a stronger promise than a line of build log.
+		 * This number only decides when Vite mentions a chunk in passing.
+		 */
+		chunkSizeWarningLimit: 1_700,
+		/*
 		 * CORPUS DATA IS NEVER INLINED, whatever its size.
 		 *
 		 * `corpus-index.ts` globs the content tier with `query: '?url'` on the

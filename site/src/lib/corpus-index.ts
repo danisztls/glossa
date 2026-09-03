@@ -144,7 +144,9 @@ import fixtureCompendiumPtQuestions from './fixtures/compendium.pt/questions.jso
 import fixtureXrefs from './fixtures/xrefs/ccc-bible.json';
 
 import { buildCondensationMap, type CondensationMap } from './condensation';
-import { contentUrlByRelPath } from './content-urls';
+// `./content-urls` is reached by `await import()` inside `ensureContentIndex`
+// below and is deliberately NOT imported here — see that function for why the
+// one static edge was 1.1 MB of the boot chunk.
 
 // --- Bible book metadata (index tier: chapter NUMBERS, never verse text) --
 
@@ -338,15 +340,17 @@ interface SummaQuestionMetaCompact extends Omit<SummaQuestionMeta, 'articles'> {
 interface SummaIndexFile {
 	[lang: string]: { structure: SummaNode[]; questions: SummaQuestionMetaCompact[] };
 }
-const realIndexManifests = import.meta.glob('./corpus-data/index/manifests.json', {
+const realIndexManifestsUrl = import.meta.glob('./corpus-data/index/manifests.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, Record<string, WorkManifest>>;
+}) as Record<string, string>;
 
-const realIndexBible = import.meta.glob('./corpus-data/index/bible-index.json', {
+const realIndexBibleUrl = import.meta.glob('./corpus-data/index/bible-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, BibleIndexFile>;
+}) as Record<string, string>;
 
 const realIndexBibleIntro = import.meta.glob('./corpus-data/index/bible-intro-index.json', {
 	eager: true,
@@ -358,30 +362,34 @@ const realIndexCommentary = import.meta.glob('./corpus-data/index/commentary-ind
 	import: 'default'
 }) as Record<string, CommentaryIndexFile>;
 
-const realIndexCcc = import.meta.glob('./corpus-data/index/ccc-index.json', {
+const realIndexCccUrl = import.meta.glob('./corpus-data/index/ccc-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, CccIndexFile>;
+}) as Record<string, string>;
 
-const realIndexCompendium = import.meta.glob('./corpus-data/index/compendium-index.json', {
+const realIndexCompendiumUrl = import.meta.glob('./corpus-data/index/compendium-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, CompendiumIndexFile>;
+}) as Record<string, string>;
 
 const realIndexCondensation = import.meta.glob('./corpus-data/index/ccc-compendium.json', {
 	eager: true,
 	import: 'default'
 }) as Record<string, CondensationMap>;
 
-const realIndexSumma = import.meta.glob('./corpus-data/index/summa-index.json', {
+const realIndexSummaUrl = import.meta.glob('./corpus-data/index/summa-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, SummaIndexFile>;
+}) as Record<string, string>;
 
-const realIndexDocuments = import.meta.glob('./corpus-data/index/document-index.json', {
+const realIndexDocumentsUrl = import.meta.glob('./corpus-data/index/document-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, DocumentIndexFile>;
+}) as Record<string, string>;
 
 /**
  * The Compendium of the Social Doctrine's three index files.
@@ -404,10 +412,10 @@ const realIndexSocialDoctrineChapters = import.meta.glob(
 	{ eager: true, import: 'default' }
 ) as Record<string, number[]>;
 
-const realIndexSocialDoctrineAbbreviations = import.meta.glob(
+const realIndexSocialDoctrineAbbreviationsUrl = import.meta.glob(
 	'./corpus-data/index/social-doctrine-abbreviations.json',
-	{ eager: true, import: 'default' }
-) as Record<string, Record<string, CccAbbreviation[]>>;
+	{ eager: true, query: '?url', import: 'default' }
+) as Record<string, string>;
 
 const realIndexCanonLaw = import.meta.glob('./corpus-data/index/canon-law-index.json', {
 	eager: true,
@@ -419,10 +427,11 @@ const realIndexCanonLawUnits = import.meta.glob('./corpus-data/index/canon-law-u
 	import: 'default'
 }) as Record<string, number[]>;
 
-const realIndexPrayers = import.meta.glob('./corpus-data/index/prayer-index.json', {
+const realIndexPrayersUrl = import.meta.glob('./corpus-data/index/prayer-index.json', {
 	eager: true,
+	query: '?url',
 	import: 'default'
-}) as Record<string, PrayerIndexFile>;
+}) as Record<string, string>;
 
 /**
  * Credit for the illustration collections — index tier, ~470 bytes, and one
@@ -536,7 +545,7 @@ const realDocumentTagUrls = import.meta.glob('./corpus-data/index/document-tags.
  * against fixtures.
  */
 export const USE_REAL_CORPUS =
-	!import.meta.env?.VITEST && Object.keys(realIndexManifests).length > 0;
+	!import.meta.env?.VITEST && Object.keys(realIndexManifestsUrl).length > 0;
 
 function single<T>(modules: Record<string, T>): T | undefined {
 	return Object.values(modules)[0];
@@ -545,7 +554,7 @@ function single<T>(modules: Record<string, T>): T | undefined {
 // --- Registries (real corpus when present, fixtures otherwise) -----------
 
 export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
-	? (single(realIndexManifests) ?? {})
+	? {}
 	: {
 			'bible.cpdv.en': bibleCpdvEnManifest as WorkManifest,
 			'bible.douay-rheims.en': bibleDouayRheimsEnManifest as WorkManifest,
@@ -561,12 +570,7 @@ export const manifests: Record<string, WorkManifest> = USE_REAL_CORPUS
 		};
 
 export const bibleIndex: Record<string, BibleBookMeta[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexBible) ?? {}).map(([workId, v]) => [
-				workId,
-				v.books.map(expandBookMeta)
-			])
-		)
+	? {}
 	: {
 			'bible.cpdv.en': [
 				metaFromFullBook(fixtureGenJson as BibleBook),
@@ -632,18 +636,14 @@ export const commentaryChapters: Record<
 	: {};
 
 export const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCcc) ?? {}).map(([lang, v]) => [lang, v.structure])
-		)
+	? {}
 	: {
 			en: cccEnStructure as unknown as CccNode[],
 			pt: cccPtStructure as unknown as CccNode[]
 		};
 
 export const cccAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCcc) ?? {}).map(([lang, v]) => [lang, v.abbreviations])
-		)
+	? {}
 	: {
 			en: cccEnAbbreviations as CccAbbreviation[],
 			pt: cccPtAbbreviations as CccAbbreviation[]
@@ -656,12 +656,7 @@ export const cccAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORP
  *  contiguous, but the fixtures deliberately aren't (see this file's own
  *  docblock and corpus.ts's VITEST guard). */
 export const cccParagraphNumbers: Record<string, number[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCcc) ?? {}).map(([lang, v]) => [
-				lang,
-				expandRun(v.paragraphNumbers)
-			])
-		)
+	? {}
 	: {
 			en: (fixtureCccEnParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b),
 			pt: (fixtureCccPtParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b)
@@ -670,9 +665,7 @@ export const cccParagraphNumbers: Record<string, number[]> = USE_REAL_CORPUS
 /** Summa headings per language. Latin carries only its four parts -- the
  *  Corpus Thomisticum prints no treatise groupings and no question titles. */
 export const summaStructures: Record<string, SummaNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [lang, v.structure])
-		)
+	? {}
 	: {
 			en: summaEnStructure as unknown as SummaNode[],
 			la: summaLaStructure as unknown as SummaNode[]
@@ -680,12 +673,7 @@ export const summaStructures: Record<string, SummaNode[]> = USE_REAL_CORPUS
 
 /** Question existence/metadata per language -- see `SummaQuestionMeta`. */
 export const summaQuestionMetas: Record<string, SummaQuestionMeta[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexSumma) ?? {}).map(([lang, v]) => [
-				lang,
-				v.questions.map((q) => ({ ...q, articles: expandRun(q.articles) }))
-			])
-		)
+	? {}
 	: Object.fromEntries(
 			Object.entries({
 				en: fixtureSummaEnQuestions as unknown as SummaQuestion[],
@@ -737,9 +725,7 @@ export const condensationMap: CondensationMap = USE_REAL_CORPUS
 		).map;
 
 export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCompendium) ?? {}).map(([lang, v]) => [lang, v.structure])
-		)
+	? {}
 	: {
 			en: compendiumEnStructure as unknown as StructureNode[],
 			pt: compendiumPtStructure as unknown as StructureNode[]
@@ -756,12 +742,7 @@ export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CO
  *  fewer requests than before, not more, since these checks now cost no
  *  fetch at all. */
 export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCompendium) ?? {}).map(([lang, v]) => [
-				lang,
-				expandRun(v.questionNumbers ?? 0)
-			])
-		)
+	? {}
 	: {
 			// The raw fixture imports, not `fixtureCompendiumQuestionsByLang`
 			// below: that binding is declared further down this module, and a
@@ -776,24 +757,11 @@ export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORP
 
 /** How many unnumbered units each document work has. Absent from the map when
  *  it has none, which is the great majority. */
-const documentAppendixUnitCounts: Record<string, number> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexDocuments) ?? {})
-				.filter(([, v]) => v.appendixUnits)
-				.map(([workId, v]) => [workId, v.appendixUnits as number])
-		)
-	: {};
+const documentAppendixUnitCounts: Record<string, number> = {};
 
 /** Section numbers actually present per document work id — same role as
  *  `cccParagraphNumbers` above, keyed by work id instead of language. */
-export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexDocuments) ?? {}).map(([workId, v]) => [
-				workId,
-				expandRun(v.sectionNumbers)
-			])
-		)
-	: {};
+export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS ? {} : {};
 
 /** Section numbers present per `csdc.{lang}` work id -- the same role
  *  `documentSectionNumbers` plays, and keyed the same way, because an edition
@@ -836,9 +804,7 @@ export const canonLawUnitStarts: number[] = USE_REAL_CORPUS
 
 /** Each edition's own printed sigla table, keyed by bare LANG, in the same
  *  shape and for the same consumers as `cccAbbreviations`. */
-export const socialDoctrineAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORPUS
-	? (single(realIndexSocialDoctrineAbbreviations) ?? {})
-	: {};
+export const socialDoctrineAbbreviations: Record<string, CccAbbreviation[]> = {};
 
 /**
  * Prayer structure trees, keyed by bare LANG (see `PrayerIndexFile`'s
@@ -847,19 +813,11 @@ export const socialDoctrineAbbreviations: Record<string, CccAbbreviation[]> = US
  * tier functions degrade to empty under vitest for the same reason), so
  * this is `{}` under vitest/no-corpus.
  */
-export const prayerStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexPrayers) ?? {}).map(([lang, v]) => [lang, v.structure])
-		)
-	: {};
+export const prayerStructures: Record<string, StructureNode[]> = USE_REAL_CORPUS ? {} : {};
 
 /** Per-prayer existence/metadata, keyed by bare LANG -- same role as
  *  `cccParagraphNumbers`/`documentSectionNumbers`, one type up. */
-export const prayerMetasByLang: Record<string, PrayerMeta[]> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexPrayers) ?? {}).map(([lang, v]) => [lang, v.prayers])
-		)
-	: {};
+export const prayerMetasByLang: Record<string, PrayerMeta[]> = USE_REAL_CORPUS ? {} : {};
 
 /**
  * The citation tables are the one part of the index tier that is NOT inlined.
@@ -1124,71 +1082,361 @@ const documentAppendixLocations: Record<string, ContentLocation> = {};
  * headings is not a library).
  */
 const documentStructureLocations: Record<string, ContentLocation> = {};
-// The content tier's URL map is `content-urls.ts`, not a glob of its own — see
-// that module for why the second copy of this glob had to go (it doubled dev's
-// module-request count and took the dev server past what a browser will open).
-for (const [relPath, url] of Object.entries(contentUrlByRelPath)) {
-	const location: ContentLocation = { relPath, url };
-	const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
-	if (bibleMatch) {
-		const [, workId, osis, startStr, endStr] = bibleMatch;
-		const start = Number(startStr);
-		((bibleChapterLocations[workId] ??= {})[osis] ??= {})[start] = {
-			...location,
-			start,
-			end: Number(endStr)
-		};
-		continue;
+/**
+ * Fill the location tables above from the content tier's URL map.
+ *
+ * THIS RAN AT MODULE SCOPE UNTIL 2026-09-03, and it was the second-largest
+ * thing in front of first paint on every route. Two costs, and the smaller one
+ * is the loop:
+ *
+ *   - `./content-urls` is one eager `?url` glob over the whole content tier —
+ *     9,733 files as of this writing — which compiles to a map of string pairs
+ *     weighing ~1.1 MB. A STATIC import put that map in the boot chunk, where
+ *     rolldown merged it with the index tier's inlined JSON into one 4.37 MB
+ *     chunk `nodes/0.js` pulled in synchronously.
+ *   - The loop then ran up to ten regexes against each of those 9,733 keys
+ *     before the app could render anything.
+ *
+ * Neither is work a reader needs done to see a page: a location answers "which
+ * file holds section 12 of this document", which nothing can ask before a route
+ * has decided to read something. So the map arrives by `await import()` and the
+ * loop runs on first use — one chunk, fetched in parallel with the content read
+ * that wanted it, and never fetched at all on a route that reads no content
+ * (the colophon, a chrome page, a 404).
+ *
+ * `./content-urls` IS IMPORTED NOWHERE ELSE ON THE APP SIDE, which is what
+ * makes the deferral real rather than nominal — a single surviving static edge
+ * anywhere in the boot graph would put the map straight back, exactly as
+ * `[INEFFECTIVE_DYNAMIC_IMPORT]` warns when a module is reached both ways
+ * (`i18n.svelte.ts` has the other instance of that lesson). `corpus-assets.ts`
+ * imports it too and is allowed to: it is the service worker's bundle alone,
+ * which is its own entry and never loads with a page.
+ *
+ * Idempotent and concurrency-safe by memoising the PROMISE rather than a
+ * boolean: `corpus.ts` fires several content reads at once on a reading route,
+ * and each awaits this before touching a table.
+ */
+let contentIndexReady: Promise<void> | undefined;
+
+export function ensureContentIndex(): Promise<void> {
+	return (contentIndexReady ??= buildContentIndex());
+}
+
+/**
+ * Whether the tables are populated, for the synchronous location readers below.
+ *
+ * They stay synchronous on purpose — every one of them is called from inside an
+ * `async` function that has already awaited `ensureContentIndex`, and making
+ * fifteen signatures async to express a wait their callers had already done
+ * would have spread `await` across `corpus.ts` for nothing. What the flag buys
+ * is that FORGETTING the await is loud: an unprimed lookup would otherwise
+ * return `undefined`, which every caller reads as "this corpus does not have
+ * that", so a missing await would surface as content that silently does not
+ * exist rather than as an error.
+ */
+let contentIndexBuilt = false;
+
+function requireContentIndex(fn: string): void {
+	if (contentIndexBuilt || !USE_REAL_CORPUS) return;
+	throw new Error(`${fn}: await ensureContentIndex() before reading a content location`);
+}
+
+/**
+ * THE SIX LARGE PER-WORK-TYPE INDEXES, fetched by the route that reads them.
+ *
+ * They were eagerly inlined — `import.meta.glob(..., { eager: true })` compiles
+ * a JSON file into the importing chunk as an object literal — which put
+ * 1.33 MB of them in front of first paint on EVERY route, so a reader opening
+ * Genesis 1 parsed the Summa's, the Compendium's and the prayer book's
+ * registries to do it. This file's own docblock named that as the only
+ * remaining lever ("making the index lazy, or splitting it per route"), and
+ * `docs/decisions.md` §The site rules out the alternative: compressing the
+ * tier was measured and bought 0.58% over the wire, because gzip had already
+ * collapsed the redundancy. What is left is entropy, so the only thing that
+ * helps is not sending it.
+ *
+ * `?url` rather than a lazy `import()` of the JSON: a fetched asset is parsed
+ * by `JSON.parse` rather than by the JavaScript parser (several times faster
+ * for the same bytes), it is content-hashed and immutably cacheable on its own
+ * rather than inside a chunk that changes whenever any code near it does, and
+ * `sw-policy.ts` already partitions such assets into the shell tier, so offline
+ * keeps working with no new rule. It is the arrangement the xref tables moved
+ * to for exactly these reasons, and the four `?url` globs beside these six are
+ * its precedent.
+ *
+ * WHICH REGISTRIES A PRIMER FILLS IS FIXED BY WHICH FILE THEY COME OUT OF, not
+ * by which route wants them — `ccc-index.json` carries the structure, the
+ * abbreviations and the paragraph numbers, so `ensureCccIndex` fills all three
+ * or none. Splitting a file's registries across two primers would mean fetching
+ * it twice.
+ *
+ * The registries stay the same mutable objects they always were and are filled
+ * in place with `Object.assign`, so every one of the two dozen SYNCHRONOUS
+ * readers in `corpus.ts` (`getBook`, `getCccStructure`, `listSummaQuestions`,
+ * …) keeps its signature and its call sites. That is the whole reason this is a
+ * change to two files rather than to the component tree: what is asynchronous
+ * is the ARRIVAL of the data, and `load()` is where a route already waits.
+ */
+async function fetchIndexFile<T>(url: string | undefined, name: string): Promise<T | undefined> {
+	if (!url) return undefined;
+	const response = await fetch(url);
+	if (!response.ok) throw new Error(`index tier: ${name} -> ${response.status}`);
+	return (await response.json()) as T;
+}
+
+/**
+ * One primer per index file.
+ *
+ * Memoised on the PROMISE, not on a boolean: a reading route and the jump box
+ * can ask for the same index in the same tick, and a boolean would let the
+ * second caller past while the first was still in flight.
+ */
+const indexPrimers = new Map<string, Promise<void>>();
+
+function primeOnce(name: string, load: () => Promise<void>): Promise<void> {
+	let inFlight = indexPrimers.get(name);
+	if (!inFlight) {
+		inFlight = USE_REAL_CORPUS ? load() : Promise.resolve();
+		indexPrimers.set(name, inFlight);
 	}
-	const cccMatch = relPath.match(/^content\/([^/]+)\/paragraphs\/(\d+)-(\d+)\.json$/);
-	if (cccMatch) {
-		const [, workId, startStr] = cccMatch;
-		(cccChunkLocations[workId] ??= {})[Number(startStr)] = location;
-		continue;
+	return inFlight;
+}
+
+const indexPrimed = new Set<string>();
+
+/**
+ * Guard for the synchronous readers: an unprimed read returns an empty
+ * registry, which every caller upstream reads as "this corpus does not have
+ * that" — a page that quietly says the text is missing, which is the worst of
+ * the available failures because nothing anywhere reports it.
+ *
+ * IT THROWS IN DEV AND STAYS QUIET IN PRODUCTION, which is not the arrangement
+ * `requireContentIndex` uses, and the difference is how completely each one's
+ * callers can be enumerated. Every content-location call site is inside one of
+ * eighteen `async` functions in three modules, so that guard is provably
+ * covered and may be strict. These readers are called from RENDER, in route
+ * components and in reading chrome that appears on more than one shelf, and
+ * `index-priming.ts` maps them by path — a mapping that is a judgement about
+ * which component renders where, and judgements are wrong sometimes. Under
+ * fixtures (`npm test`) `USE_REAL_CORPUS` is false and this cannot fire at all,
+ * so the test suite is not what would catch a mistake; `npm run dev` is, and
+ * that is where the throw is worth having. A reader on the deployed site gets
+ * the empty-registry behaviour instead of a blank page — worse diagnostics,
+ * better failure.
+ */
+export function requireIndex(name: string, fn: string): void {
+	if (!USE_REAL_CORPUS || indexPrimed.has(name)) return;
+	const message = `${fn}: the ${name} index was read before it was primed — see index-priming.ts`;
+	if (import.meta.env?.DEV) throw new Error(message);
+	console.warn(message);
+}
+
+export function ensureBibleIndex(): Promise<void> {
+	return primeOnce('bible', async () => {
+		const file = await fetchIndexFile<BibleIndexFile>(single(realIndexBibleUrl), 'bible-index');
+		for (const [workId, v] of Object.entries(file ?? {})) {
+			bibleIndex[workId] = v.books.map(expandBookMeta);
+		}
+		indexPrimed.add('bible');
+	});
+}
+
+export function ensureCccIndex(): Promise<void> {
+	return primeOnce('ccc', async () => {
+		const file = await fetchIndexFile<CccIndexFile>(single(realIndexCccUrl), 'ccc-index');
+		for (const [lang, v] of Object.entries(file ?? {})) {
+			cccStructures[lang] = v.structure;
+			cccAbbreviations[lang] = v.abbreviations;
+			cccParagraphNumbers[lang] = expandRun(v.paragraphNumbers);
+		}
+		indexPrimed.add('ccc');
+	});
+}
+
+export function ensureCompendiumIndex(): Promise<void> {
+	return primeOnce('compendium', async () => {
+		const file = await fetchIndexFile<CompendiumIndexFile>(
+			single(realIndexCompendiumUrl),
+			'compendium-index'
+		);
+		for (const [lang, v] of Object.entries(file ?? {})) {
+			compendiumStructures[lang] = v.structure;
+			compendiumQuestionNumbers[lang] = expandRun(v.questionNumbers ?? 0);
+		}
+		indexPrimed.add('compendium');
+	});
+}
+
+export function ensureSummaIndex(): Promise<void> {
+	return primeOnce('summa', async () => {
+		const file = await fetchIndexFile<SummaIndexFile>(single(realIndexSummaUrl), 'summa-index');
+		for (const [lang, v] of Object.entries(file ?? {})) {
+			summaStructures[lang] = v.structure;
+			summaQuestionMetas[lang] = v.questions.map((q) => ({
+				...q,
+				articles: expandRun(q.articles)
+			}));
+		}
+		indexPrimed.add('summa');
+	});
+}
+
+export function ensureDocumentIndex(): Promise<void> {
+	return primeOnce('document', async () => {
+		const file = await fetchIndexFile<DocumentIndexFile>(
+			single(realIndexDocumentsUrl),
+			'document-index'
+		);
+		for (const [workId, v] of Object.entries(file ?? {})) {
+			documentSectionNumbers[workId] = expandRun(v.sectionNumbers);
+			if (v.appendixUnits) documentAppendixUnitCounts[workId] = v.appendixUnits;
+		}
+		indexPrimed.add('document');
+	});
+}
+
+export function ensurePrayerIndex(): Promise<void> {
+	return primeOnce('prayer', async () => {
+		const file = await fetchIndexFile<PrayerIndexFile>(single(realIndexPrayersUrl), 'prayer-index');
+		for (const [lang, v] of Object.entries(file ?? {})) {
+			prayerStructures[lang] = v.structure;
+			prayerMetasByLang[lang] = v.prayers;
+		}
+		indexPrimed.add('prayer');
+	});
+}
+
+/**
+ * The CORE index: the work manifests, and the one other large file that is not
+ * per-work-type.
+ *
+ * `manifests.json` is 1.50 MB and answers "does this address exist, and what is
+ * it called" for every work in the corpus — the question this file's docblock
+ * says the boot index is FOR, and one that the language menu, the edition
+ * pickers, the colophon and fourteen other places ask without a work in hand.
+ * So unlike the six above it is not route-scoped: `+layout.ts` awaits it on
+ * every path.
+ *
+ * What changes is only that it ARRIVES as a fetched, content-hashed JSON asset
+ * rather than as an object literal compiled into the boot chunk. That is worth
+ * the move on its own: `JSON.parse` is several times faster than the JavaScript
+ * parser over the same bytes, the fetch runs concurrently with the rest of the
+ * boot rather than inside it, and the file is then cached and revalidated on
+ * its own hash instead of being re-downloaded whenever unrelated code near it
+ * changes.
+ *
+ * `plates-credit.json` is deliberately NOT here despite being index tier: the
+ * colophon prints it and renders nothing else that fetches, and attribution
+ * that arrives over the network is attribution that can fail to arrive. It is
+ * 495 bytes. The same goes for the other small eager files — under 20 KB each,
+ * where a request costs more than the parse.
+ */
+export function ensureCoreIndex(): Promise<void> {
+	return primeOnce('core', async () => {
+		const [works, abbreviations] = await Promise.all([
+			fetchIndexFile<Record<string, WorkManifest>>(single(realIndexManifestsUrl), 'manifests'),
+			fetchIndexFile<Record<string, CccAbbreviation[]>>(
+				single(realIndexSocialDoctrineAbbreviationsUrl),
+				'social-doctrine-abbreviations'
+			)
+		]);
+		Object.assign(manifests, works ?? {});
+		Object.assign(socialDoctrineAbbreviations, abbreviations ?? {});
+		indexPrimed.add('core');
+	});
+}
+
+/** Every per-work-type index at once, for the readers that range over the whole
+ *  corpus rather than over one work — the jump box's suggester and the link
+ *  preview, which cannot know which tier a fragment or an href will land in. */
+export function ensureAllIndexes(): Promise<void> {
+	return Promise.all([
+		ensureBibleIndex(),
+		ensureCccIndex(),
+		ensureCompendiumIndex(),
+		ensureSummaIndex(),
+		ensureDocumentIndex(),
+		ensurePrayerIndex()
+	]).then(() => undefined);
+}
+
+async function buildContentIndex(): Promise<void> {
+	// Under fixtures there is no content tier to locate: `corpus.ts` passes both
+	// a fixture and a location to `fetchTier` and reads the fixture, so every
+	// table below would be built and then never consulted. Bailing here is not
+	// just the saving — it is what keeps `npm test` off the glob entirely. The
+	// module resolves `?url` for all 9,733 content files, which a build folds
+	// into one chunk but vite-node transforms on demand, and two content-tier
+	// tests timed out at 5 s the first time anything awaited it.
+	if (!USE_REAL_CORPUS) {
+		contentIndexBuilt = true;
+		return;
 	}
-	const compendiumMatch = relPath.match(/^content\/([^/]+)\/questions\/(\d+)-(\d+)\.json$/);
-	if (compendiumMatch) {
-		const [, workId, startStr] = compendiumMatch;
-		(compendiumChunkLocations[workId] ??= {})[Number(startStr)] = location;
-		continue;
+	const { contentUrlByRelPath } = await import('./content-urls');
+	for (const [relPath, url] of Object.entries(contentUrlByRelPath)) {
+		const location: ContentLocation = { relPath, url };
+		const bibleMatch = relPath.match(/^content\/([^/]+)\/books\/([^/]+)\/(\d+)-(\d+)\.json$/);
+		if (bibleMatch) {
+			const [, workId, osis, startStr, endStr] = bibleMatch;
+			const start = Number(startStr);
+			((bibleChapterLocations[workId] ??= {})[osis] ??= {})[start] = {
+				...location,
+				start,
+				end: Number(endStr)
+			};
+			continue;
+		}
+		const cccMatch = relPath.match(/^content\/([^/]+)\/paragraphs\/(\d+)-(\d+)\.json$/);
+		if (cccMatch) {
+			const [, workId, startStr] = cccMatch;
+			(cccChunkLocations[workId] ??= {})[Number(startStr)] = location;
+			continue;
+		}
+		const compendiumMatch = relPath.match(/^content\/([^/]+)\/questions\/(\d+)-(\d+)\.json$/);
+		if (compendiumMatch) {
+			const [, workId, startStr] = compendiumMatch;
+			(compendiumChunkLocations[workId] ??= {})[Number(startStr)] = location;
+			continue;
+		}
+		const documentMatch = relPath.match(/^content\/([^/]+)\/sections\/(\d+)-(\d+)\.json$/);
+		if (documentMatch) {
+			const [, workId, startStr] = documentMatch;
+			(documentChunkLocationsByWork[workId] ??= {})[Number(startStr)] = location;
+			continue;
+		}
+		const appendixMatch = relPath.match(/^content\/([^/]+)\/appendix\.json$/);
+		if (appendixMatch) {
+			documentAppendixLocations[appendixMatch[1]] = location;
+			continue;
+		}
+		const structureMatch = relPath.match(/^content\/([^/]+)\/structure\.json$/);
+		if (structureMatch) {
+			documentStructureLocations[structureMatch[1]] = location;
+			continue;
+		}
+		const introMatch = relPath.match(/^content\/([^/]+)\/intros\.json$/);
+		if (introMatch) {
+			bibleIntroLocations[introMatch[1]] = location;
+			continue;
+		}
+		const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
+		if (prayerMatch) {
+			prayerLocations[prayerMatch[1]] = location;
+			continue;
+		}
+		const platesMatch = relPath.match(/^content\/([^/]+)\/plates\.json$/);
+		if (platesMatch) {
+			plateLocations[platesMatch[1]] = location;
+			continue;
+		}
+		// One file per question, which is one reader page -- `{part-slug}/{n}`.
+		const summaMatch = relPath.match(/^content\/([^/]+)\/questions\/([^/]+)\/(\d+)\.json$/);
+		if (summaMatch) {
+			const [, workId, partSlug, nStr] = summaMatch;
+			((summaQuestionLocations[workId] ??= {})[partSlug] ??= {})[Number(nStr)] = location;
+		}
 	}
-	const documentMatch = relPath.match(/^content\/([^/]+)\/sections\/(\d+)-(\d+)\.json$/);
-	if (documentMatch) {
-		const [, workId, startStr] = documentMatch;
-		(documentChunkLocationsByWork[workId] ??= {})[Number(startStr)] = location;
-		continue;
-	}
-	const appendixMatch = relPath.match(/^content\/([^/]+)\/appendix\.json$/);
-	if (appendixMatch) {
-		documentAppendixLocations[appendixMatch[1]] = location;
-		continue;
-	}
-	const structureMatch = relPath.match(/^content\/([^/]+)\/structure\.json$/);
-	if (structureMatch) {
-		documentStructureLocations[structureMatch[1]] = location;
-		continue;
-	}
-	const introMatch = relPath.match(/^content\/([^/]+)\/intros\.json$/);
-	if (introMatch) {
-		bibleIntroLocations[introMatch[1]] = location;
-		continue;
-	}
-	const prayerMatch = relPath.match(/^content\/([^/]+)\/prayers\.json$/);
-	if (prayerMatch) {
-		prayerLocations[prayerMatch[1]] = location;
-		continue;
-	}
-	const platesMatch = relPath.match(/^content\/([^/]+)\/plates\.json$/);
-	if (platesMatch) {
-		plateLocations[platesMatch[1]] = location;
-		continue;
-	}
-	// One file per question, which is one reader page -- `{part-slug}/{n}`.
-	const summaMatch = relPath.match(/^content\/([^/]+)\/questions\/([^/]+)\/(\d+)\.json$/);
-	if (summaMatch) {
-		const [, workId, partSlug, nStr] = summaMatch;
-		((summaQuestionLocations[workId] ??= {})[partSlug] ??= {})[Number(nStr)] = location;
-	}
+	contentIndexBuilt = true;
 }
 
 /** The one chunk chapter `n` of `osis` lives in. */
@@ -1211,6 +1459,7 @@ export function bibleChapterLocation(
 	osis: string,
 	n: number
 ): ContentLocation | undefined {
+	requireContentIndex('bibleChapterLocation');
 	return bibleChapterChunkFor(workId, osis, n);
 }
 
@@ -1219,21 +1468,25 @@ export function bibleChapterLocation(
  *  chapter), but it is what makes "download this book for offline" expressible
  *  as a book rather than as a list of chunk paths. */
 export function bibleBookLocations(workId: string, osis: string): ContentLocation[] {
+	requireContentIndex('bibleBookLocations');
 	return locationsInChunkOrder(bibleChapterLocations[workId]?.[osis]);
 }
 
 export function cccChunkLocation(workId: string, n: number): ContentLocation | undefined {
+	requireContentIndex('cccChunkLocation');
 	return cccChunkLocations[workId]?.[cccChunkStartFor(n)];
 }
 
 /** The one chunk question `n` lives in. */
 export function compendiumChunkLocation(workId: string, n: number): ContentLocation | undefined {
+	requireContentIndex('compendiumChunkLocation');
 	return compendiumChunkLocations[workId]?.[compendiumChunkStartFor(n)];
 }
 
 /** Every chunk of one edition, in question order — for a range read that
  *  spans the whole work. */
 export function compendiumChunkLocationsFor(workId: string): ContentLocation[] {
+	requireContentIndex('compendiumChunkLocationsFor');
 	return locationsInChunkOrder(compendiumChunkLocations[workId]);
 }
 
@@ -1242,6 +1495,7 @@ export function summaQuestionLocation(
 	partSlug: string,
 	n: number
 ): ContentLocation | undefined {
+	requireContentIndex('summaQuestionLocation');
 	return summaQuestionLocations[workId]?.[partSlug]?.[n];
 }
 
@@ -1252,6 +1506,7 @@ export function documentAppendixUnits(workId: string): number {
 
 /** A document's unnumbered matter, when it has any. */
 export function documentAppendixLocation(workId: string): ContentLocation | undefined {
+	requireContentIndex('documentAppendixLocation');
 	return documentAppendixLocations[workId];
 }
 
@@ -1259,12 +1514,14 @@ export function documentAppendixLocation(workId: string): ContentLocation | unde
  *  it has no headings — the sync writes the file even when the tree is empty,
  *  precisely so the two stay distinguishable. */
 export function documentStructureLocation(workId: string): ContentLocation | undefined {
+	requireContentIndex('documentStructureLocation');
 	return documentStructureLocations[workId];
 }
 
 /** The one chunk section `n` lives in — for a single-section read (a link
  *  preview), which must not pay for the whole document. */
 export function documentChunkLocation(workId: string, n: number): ContentLocation | undefined {
+	requireContentIndex('documentChunkLocation');
 	return documentChunkLocationsByWork[workId]?.[documentChunkStartFor(n)];
 }
 
@@ -1272,19 +1529,23 @@ export function documentChunkLocation(workId: string, n: number): ContentLocatio
  *  view, which needs all of them. See `locationsInChunkOrder` for why the
  *  numeric key, not insertion order, decides. */
 export function documentChunkLocations(workId: string): ContentLocation[] {
+	requireContentIndex('documentChunkLocations');
 	return locationsInChunkOrder(documentChunkLocationsByWork[workId]);
 }
 
 export function bibleIntroLocation(workId: string): ContentLocation | undefined {
+	requireContentIndex('bibleIntroLocation');
 	return bibleIntroLocations[workId];
 }
 
 /** Where `workId`'s plate list lives, or undefined when the corpus has no
  *  such collection built — the ordinary case under fixtures. */
 export function plateContentLocation(workId: string): ContentLocation | undefined {
+	requireContentIndex('plateContentLocation');
 	return plateLocations[workId];
 }
 
 export function prayerContentLocation(workId: string): ContentLocation | undefined {
+	requireContentIndex('prayerContentLocation');
 	return prayerLocations[workId];
 }

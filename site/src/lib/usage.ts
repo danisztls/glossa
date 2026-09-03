@@ -32,7 +32,7 @@
 import { browser, dev } from '$app/environment';
 import { compare } from './compare-pref.svelte';
 import { setContentReadObserver } from './corpus';
-import { listContentAssets } from './corpus-assets';
+import { manifests } from './corpus-index';
 import { i18n } from './i18n.svelte';
 import { offline } from './offline.svelte';
 import { readStoredJson, readStoredString, writeStoredJson, writeStoredString } from './storage';
@@ -113,16 +113,29 @@ function isStandalone(): boolean {
 	return (navigator as Navigator & { standalone?: boolean }).standalone === true;
 }
 
-/** workId -> declared content language, from the manifest rather than from
- *  parsing the id. Work ids only LOOK parseable (CLAUDE.md, the corpus
- *  schema); `sync-corpus.mjs` copies the real language onto every asset. */
-let langByWork: Map<string, string> | undefined;
+/**
+ * workId -> declared content language, from the manifest rather than from
+ * parsing the id. Work ids only LOOK parseable (CLAUDE.md, the corpus schema).
+ *
+ * READ OFF `manifests`, NOT off the content inventory, and the change is worth
+ * 1.59 MB of boot chunk. This walked `listContentAssets()` until 2026-09-03,
+ * which is one line and a whole module: `corpus-assets.ts` exists to be read by
+ * `src/service-worker.ts` AND NOWHERE ELSE — its own docblock says importing it
+ * from there and nowhere else "is what actually keeps it out of the app" —
+ * because it eagerly inlines `content-manifest.json`, one row per content file.
+ * That file was 248 KB when the rule was written and is 1.59 MB now, and this
+ * import (with `library.svelte.ts`'s) had quietly put every byte of it in
+ * `nodes/0.js`, the chunk every route loads, to answer a question about
+ * languages.
+ *
+ * `manifests` is already resident, and the two agree: compared across all 1,654
+ * works in the corpus, every `asset.lang` equals its work's `manifest.language`.
+ * The one row that differs is `dore.tours`, the plate collection, which has no
+ * manifest and carries an empty `lang` — falsy on both sides, so `noteWork`'s
+ * `if (lang)` skips it either way, which is what it did before.
+ */
 function contentLangOf(workId: string): string | undefined {
-	if (!langByWork) {
-		langByWork = new Map();
-		for (const asset of listContentAssets()) langByWork.set(asset.workId, asset.lang);
-	}
-	return langByWork.get(workId);
+	return manifests[workId]?.language;
 }
 
 /**
@@ -358,6 +371,12 @@ class UsageSession {
 	}
 
 	async #measure(): Promise<void> {
+		// `await import()`, so `corpus-assets.ts` — and the 1.59 MB
+		// `content-manifest.json` it inlines — stays out of the boot chunk. This
+		// runs on a timer well after first paint and is the only thing on a page
+		// that still wants the per-file inventory; see `contentLangOf` above for
+		// the rule this restores.
+		const { listContentAssets } = await import('./corpus-assets');
 		this.#library = await measureLibrary(
 			typeof caches === 'undefined' ? undefined : caches,
 			// THE PLATES ARE NOT PART OF THE DENOMINATOR, and leaving them in
