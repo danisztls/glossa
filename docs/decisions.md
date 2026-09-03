@@ -4192,3 +4192,34 @@ place that has to agree about what one run produces. `lastmod.json` is deliberat
 it: it is committed, it is an input to the next run as much as an output of this one, and
 clearing it would forget when every address was last revised rather than invalidate a
 derivation.
+
+**A local server that answers a question wrongly is worse than one that refuses to
+answer it, and `vite preview` had been the local server here for a year** (2026-09-03).
+`npm run preview` serves `build/` as static files behind SvelteKit's SPA fallback.
+`src/worker.ts` never runs, so nothing the edge owns is exercised — and the way it is
+not exercised is a 200 that looks entirely normal. Measured against the same build,
+side by side: `/catechismus/999999` is a 404 through the worker and a **200 carrying
+the application shell** through preview; `/scriptura/josh/1` is a 301 to the Latin slug
+through the worker and a 200 through preview; a Bible chapter's `<title>` is
+`Joshua 1 — Glossa Catholica` through the worker and the un-rewritten
+`Glossa Catholica` through preview. `_headers` is read by one and not the other. So
+the entire head-rewriting half of the site (§The edge writes the head), the route
+manifest's whole purpose, and the OSIS compatibility redirects were unverifiable
+locally by the only command anyone ran — while presenting as working.
+
+**`wrangler dev` was always available and simply had no script, which is the whole
+reason it went unused.** It runs the real worker over `build/` with the asset binding,
+local D1 for the beacon, and `_headers` parsed; it serves over `127.0.0.1`, a secure
+context, so the real service worker installs exactly as it does in a deploy. It
+therefore dominates `vite preview` on every axis except startup time, and `preview` is
+kept only for that. `npm run preview:edge` is the bare form and
+`npm run preview:deploy` is `npm run deploy` with the deploy removed — build,
+preflight, serve — because neither server rebuilds, and a `build/` an hour old is the
+ordinary way to spend an afternoon on a bug that was already fixed.
+
+**None of this replaces `npm run dev`, and the temptation to let it is the trap worth
+naming.** `requireIndex` throws under `import.meta.env.DEV` and only warns in a build,
+and `npm test` cannot reach that class at all (§The site, the boot payload). A missing
+index primer is therefore visible in dev, a console warning in `preview:edge`, and
+invisible in `vitest`. The build-and-serve loop answers "what does a reader get"; dev
+answers "is this correct", and the two are not substitutes.

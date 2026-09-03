@@ -184,10 +184,49 @@ removing it was safe.
 cd site
 npm run dev                                          # or npm run build
 CORPUS_DIR=/path/to/glossa-corpus npm run dev        # corpus kept elsewhere
+npm run preview:deploy                               # build -> preflight -> real worker
+npm run preview:edge                                 # the same, over an existing build/
 npm run sync-corpus                                  # full derivation, ~13.3s
 npm run sync-corpus:changed                          # skip if nothing moved, ~0.3s
 node scripts/sync-corpus.mjs --changed-only --force  # ignore the cache
 ```
+
+**`npm run preview` CANNOT SEE THE EDGE, and it answers wrong rather than
+refusing** (measured 2026-09-03). `vite preview` is a static file server with
+SvelteKit's SPA fallback in front of it; `src/worker.ts` never runs, so every
+behaviour the worker owns is silently absent — and absent as a _plausible_
+200, which is the part that makes it a trap:
+
+| request                | `npm run preview`  | `npm run preview:edge`        |
+| ---------------------- | ------------------ | ----------------------------- |
+| `/catechismus/999999`  | **200**, the shell | 404                           |
+| `/scriptura/josh/1`    | **200**, the shell | 301 -> `/scriptura/iosue/1`   |
+| `<title>` on a chapter | `Glossa Catholica` | `Joshua 1 — Glossa Catholica` |
+| `_headers`             | not read           | `Parsed 3 valid header rules` |
+
+So the whole head-rewriting half of this file (§The edge writes the head), the
+route manifest's 404s, the OSIS 301s and the cache policy are unverifiable
+under `preview`. `npm run preview:edge` is `wrangler dev`: the real worker over
+`build/`, with local D1 for the beacon and `_headers` applied. It serves the
+same built assets over `127.0.0.1`, which is a secure context, so the REAL
+service worker still installs — everything `preview` was reached for, plus the
+edge. **Prefer it; `preview` has no remaining advantage but startup time.**
+
+**`npm run preview:deploy` is `npm run deploy` with the deploy removed** —
+build, preflight, then `wrangler dev`. Reach for it rather than the two
+separately: neither server rebuilds, so `preview` over a `build/` from an hour
+ago is the ordinary way to spend an afternoon debugging a fixed bug, and
+preflight is what turns a fixture build or a boot-payload regression (§The boot
+payload has a ceiling) into a refusal instead of a puzzle.
+
+**`npm run dev` is still the only place a missing primer THROWS.**
+`requireIndex` throws under `import.meta.env.DEV` and warns everywhere else,
+and `npm test` cannot reach it at all (§The boot payload has a ceiling). A
+build-and-serve loop is therefore not a substitute for dev; it is the other
+half. When dev misbehaves, the two documented causes each have a fix —
+`npm run dev:clean` (`rm -rf node_modules/.vite`, then dev) for the dep-cache
+tear below, and a hard reload for the browser cache the dev service worker
+now uninstalls.
 
 **`npm run dev` does not re-derive the corpus** (2026-09-01, §Process):
 `predev` passes `--changed-only`, so a restart over an unchanged corpus costs
