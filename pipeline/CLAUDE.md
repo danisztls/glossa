@@ -129,9 +129,10 @@ pipeline/scrapers/
                      see "Output that is only regenerable" in the root
                      CLAUDE.md.
   vatican_docs.py    encyclicals, Vatican I, Vatican II, exhortations,
-                     CDF/DDF. One scraper, four subcommands;
-                     `walk_vatican_i` is the one forked walk and its
-                     docstring says why.
+                     CDF/DDF. One scraper, four subcommands; three of
+                     them are `INDEX_FAMILIES` rows over one runner and
+                     `walk_vatican_i` is the one forked walk, its
+                     docstring saying why.
   prayers.py
   audit.py census.py apply_sweep.py   tools over already-written output
 ```
@@ -357,6 +358,38 @@ added 139 editions for 141 requests; ten damaged parses are in
   Byelorussian division noun, and it is `параўн.` — "cf.", the first word of a
   footnote. Counting without reading would have made every footnote a chapter
   heading.
+
+## A new index-driven family is a table row, not a copied runner
+
+`INDEX_FAMILIES` in `vatican_docs.py` (2026-09-03, `docs/decisions.md`
+§Process). Three of the four subcommands — `phase1`, `vati`, `phase3` — are
+`IndexFamily` rows driven by one `run_family`; they were three runners
+measured 85–94% identical, and adding the CDF had meant editing four dispatch
+sites and copying one, which a rebase then truncated at the tail two of them
+shared.
+
+- **The membership test is not similarity, it is that the family's index
+  names every edition's URL.** A run is then fully determined before the first
+  fetch: nothing per-document to derive, nothing to probe. `phase2` fails that
+  test — per-pontificate discovery, URLs derived by substitution,
+  `--offered-only` to avoid probing — and stays its own function. Do not fold
+  it in.
+- **The table carries what a family IS, never how its pages are read.** Index,
+  titles, reading order, language-code spellings, `--lang` aliases. The two
+  `family == "vati"` branches inside the parser are the counter-example and
+  must stay branches: each says why the general rule reads Vatican I's pages
+  _wrongly_ rather than badly, and a config flag cannot hold that.
+- **Adding one**: a row here plus a `Stage` in `rebuild.py`. `url_lang_key`,
+  `translation_url_for`, the lock's subcommand set and the subparsers all read
+  the table.
+- **Every `discover_*` returns `(refs, notes)`** — notes printed verbatim, a
+  fatal failure being empty `refs` plus a note. Two used to return one error
+  string instead, and that mismatch alone was what kept the three runners
+  apart.
+- **`--fetch-only` exits 0 before the baseline is judged**, for all three now.
+  Nothing was parsed, so `report_run` would grade the corpus's standing state
+  as this run's verdict — and `--accept-baseline` would write it. That is not
+  hypothetical: it put 3,678 `fetch-failed` rows in the floor once.
 
 ## The First Vatican Council has a walk of its own, and had to
 

@@ -3757,6 +3757,43 @@ locator shape, the schema. `validate` did not, though it was byte-identical, bec
 is exactly where an edition's claims about its own text live and is _expected_ to
 diverge. Rate limits and decoding are the same category.
 
+**The rule cuts the other way too, and `vatican_docs.py`'s three index-driven runners
+are the case** (2026-09-03). `run_phase1`, `run_vati` and `run_phase3` were 85–94%
+identical line-for-line once the family-specific names were normalised away, and six
+lines apart in substance — but similarity was not the argument for merging them. The
+argument is that all three families are **discovered from an index that names every
+edition's URL**, so a run is fully determined before the first document is fetched and
+there is nothing per-document to derive or probe. That is an entitlement shared from
+above the family, and it is exactly what phase 2 does not have: it discovers per
+pontificate, derives each translation's URL by substitution, and spends `--offered-only`
+to avoid asking for editions that may not exist. Phase 2 stayed where it was. One
+`IndexFamily` descriptor and one `run_family` now carry the three, and the four dispatch
+sites adding the CDF had needed — `translation_url_for`'s membership tuple,
+`url_lang_key`'s three branches, the lock's subcommand tuple, `main`'s branch per
+family — are table lookups. A sixth family is a table entry and a `Stage` in
+`rebuild.py`.
+
+**What stayed duplicated is the point of the entry.** Two `family == "vati"` branches
+sit inside the parser — the starred bibliographic line that ends Vatican I's footnote
+block, and the hand-off to `walk_vatican_i` — and each carries a paragraph on why the
+general rule reads those pages _wrongly_ rather than merely badly (§The First Vatican
+Council). A descriptor field would have turned a documented exception into a
+configuration flag, which is how the reason gets lost; the table carries only what a
+family **is**, never how its pages are read.
+
+**The prerequisite was a return type, and it was the whole obstacle.** Two of the five
+`discover_*` functions returned `(refs, str | None)` — one error, no notes — and three
+returned `(refs, list[str])`. That difference alone forced each runner to open with its
+own error-handling preamble, which is what kept three otherwise-identical bodies apart.
+Normalising it first, as its own commit with the corpus rebuilt byte-for-byte
+unchanged, made the collapse a mechanical edit. **The correctness claim for both commits
+is `rebuild.py --force` over the 1,615 works the scraper owns: 7,089 files, every
+checksum identical, `0 wrote`.** One behaviour did change, deliberately and in the
+direction of an existing guard: `--fetch-only` now exits 0 before `report_run` for all
+three, where only phase 3 did. Phase 2 grew that guard the day a fetch-only run with
+`--accept-baseline` wrote 3,678 `fetch-failed` rows into the floor; phase 1 and `vati`
+had been one flag away from the same thing.
+
 **A hook says when a check runs; an npm script says how to invoke one.** There is no CI,
 so the alternative to the hook is nothing running it. It checks the **index**, piped from
 `git show :path`, so an unstaged fix cannot make a broken commit pass and an unstaged

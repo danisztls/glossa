@@ -247,6 +247,7 @@ import re
 import sys
 import time
 import urllib.parse
+from collections.abc import Callable
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
@@ -6014,13 +6015,13 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
     base = ref.lang_urls.get(ref.base_lang)
     if base is None or lang == ref.base_lang:
         return None
-    if ref.family in ("vatii", "vati", "cdf"):
-        # All three are discovered directly from their index, never derived.
-        # For `cdf` that is not merely simpler but required: six of its
-        # documents spell their filename differently in one language than in
-        # the rest (see `discover_cdf`), so a substituted URL would 404 on an
-        # edition that exists and the absent ledger would remember it as
-        # missing.
+    if ref.family in INDEX_DISCOVERED_FAMILIES:
+        # Every one of them got each edition's URL off its own index, so there
+        # is nothing to derive. For `cdf` that is not merely simpler but
+        # required: six of its documents spell their filename differently in
+        # one language than in the rest (see `discover_cdf`), so a substituted
+        # URL would 404 on an edition that exists and the absent ledger would
+        # remember it as missing.
         return None
     # The URL code, not the work tag -- they are the same for every language
     # but Hebrew, which the modern CMS spells `iw`. Substituting the tag
@@ -8216,21 +8217,17 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
     counter-example that makes the shape clear: `be` on both mirrors, nothing
     to translate, nothing to write here.
 
-    THE TWO COUNCILS DISAGREE WITH EACH OTHER, which is why `vati` gets its
-    own branch rather than sharing Vatican II's table: the First Vatican
-    Council's mirror spells Latin `la` and the Second's spells it `lt`, on
-    the same host. Folding them together would have sent every Latin request
-    for Dei Filius and Pastor Aeternus to a URL that does not exist.
+    THE TWO COUNCILS DISAGREE WITH EACH OTHER, which is why each carries its
+    own table rather than sharing one: the First Vatican Council's mirror
+    spells Latin `la` and the Second's spells it `lt`, on the same host.
+    Folding them together would have sent every Latin request for Dei Filius
+    and Pastor Aeternus to a URL that does not exist.
 
     DocRef.lang_urls is keyed by whatever the *source* used, so this
-    translates the work-level tag into the right dict key per family."""
-    if ref.family == "vatii":
-        return VATII_LANG_TO_URL.get(lang, lang)
-    if ref.family == "vati":
-        return VATI_LANG_TO_URL.get(lang, lang)
-    if ref.family == "cdf":
-        return CDF_LANG_TO_URL.get(lang, lang)
-    return MODERN_LANG_TO_URL.get(lang, lang)
+    translates the work-level tag into the right dict key per family. The
+    tables are `IndexFamily.lang_to_url`, collected into `FAMILY_LANG_TO_URL`;
+    a family absent from it is on the modern shell."""
+    return FAMILY_LANG_TO_URL.get(ref.family, MODERN_LANG_TO_URL).get(lang, lang)
 
 
 # --------------------------------------------------------------------------
@@ -8613,7 +8610,7 @@ def scrape_one(
     """Fetch then parse one document, serially. Returns a small result dict
     for progress/reporting; never raises.
 
-    The two halves run back to back here. `run_phase1`/`run_phase2` drive them
+    The two halves run back to back here. `run_family`/`run_phase2` drive them
     apart instead, so that parsing overlaps the crawl delay -- but this
     composition is the definition of what that overlap must produce, and the
     `--jobs 1` path still goes through it."""
@@ -8666,7 +8663,171 @@ VATII_TITLES = {
 }
 
 
-def run_phase1(
+# --------------------------------------------------------------------------
+# The three index-driven families: Vatican II, Vatican I, and the CDF/DDF
+#
+# ONE RUNNER AND A TABLE, as of 2026-09-03. This was three functions --
+# `run_phase1`, `run_vati`, `run_phase3` -- measured at 85-94% identical
+# line-for-line once the family-specific names were normalised away, and six
+# lines apart in substance. Adding the CDF had meant editing four dispatch
+# sites and copying a runner, and the copy went wrong in the obvious way: a
+# rebase put `run_vati` and `run_phase3` at the same insertion point and cut
+# the first one off at the tail they shared.
+#
+# WHAT MAKES THEM ONE FUNCTION is not that they do the same thing but that
+# all three families are DISCOVERED FROM AN INDEX THAT NAMES EVERY EDITION'S
+# URL: a run is fully determined before the first document is fetched, so
+# there is nothing per-document to derive and nothing to probe for. Phase 2
+# is deliberately not here. It discovers per pontificate, derives each
+# translation's URL by substitution from the one its index gave it, and
+# spends `--offered-only` to avoid asking for editions that do not exist --
+# a different shape, not a fourth instance of this one.
+#
+# WHAT MUST NOT MOVE INTO THE TABLE is per-family *reading* knowledge. Two
+# `family == "vati"` branches sit inside the parser -- the starred
+# bibliographic line that ends Vatican I's footnote block, and the hand-off
+# to `walk_vatican_i` -- and each carries a paragraph saying why the general
+# rule reads those pages wrongly rather than merely badly. Turning a
+# documented exception into a configuration flag is how that reason gets
+# lost. What a family may declare here is only what it IS: where its index
+# is, what it calls its documents, and which spellings its URLs use.
+# --------------------------------------------------------------------------
+
+VATI_ORDER = ("dei-filius", "pastor-aeternus")
+
+VATI_TITLES = {"dei-filius": "Dei Filius", "pastor-aeternus": "Pastor Aeternus"}
+
+
+@dataclass(frozen=True)
+class IndexFamily:
+    """One index-driven family, as data."""
+
+    #: Subcommand name, which is also the offline lock's -- see `run_lock_path`.
+    cmd: str
+    #: First segment of the work id, `{family}.{slug}.{lang}`.
+    tag: str
+    #: Human name. Used in the one message this runner can fail with.
+    label: str
+    #: Returns `(refs, notes)`; see THE DISCOVERY CONTRACT above `discover_vatii`.
+    discover: Callable[[Fetcher], tuple[list[DocRef], list[str]]]
+    #: `slug -> printed title`, read with `.get(slug, slug)`.
+    titles: dict[str, str]
+    #: How `ref.lang_urls` spells a language, which is whatever the family's
+    #: own mirror spells it. The councils DISAGREE WITH EACH OTHER -- Latin is
+    #: `lt` on the Second's pages and `la` on the First's, same host, one
+    #: directory apart -- which is why this is per family and not one table.
+    lang_to_url: dict[str, str]
+    #: Reading order, or None to walk `sorted(by_slug)`. Both councils have a
+    #: canonical order worth keeping; the CDF selection is a date-keyed table
+    #: with no order of its own to preserve.
+    order: tuple[str, ...] | None
+    #: What a `--lang` word means here, and which word the subparser defaults
+    #: to. `both` is absent for Vatican I on purpose: it means `en,pt` and
+    #: neither exists, so `--lang both` there should keep failing the division
+    #: label check by name rather than quietly resolving to two empty runs.
+    lang_aliases: dict[str, tuple[str, ...]]
+    default_lang: str
+    #: Record a language the index never offered without printing a line for
+    #: it. The RESULT is identical either way -- `fetch_for_parse` returns the
+    #: same `no-url` dict, and the run summary still counts it -- so this is
+    #: output volume and nothing else. On for the CDF, where 17 languages
+    #: across 25 documents leaves most pairs legitimately absent; off for two
+    #: councils that published nearly everything in nearly every language.
+    quiet_no_url: bool
+    #: Whether a parsing run ends with the cross-language symmetry report.
+    #: Off for Vatican I, whose whole offering is two documents in Italian and
+    #: Latin -- a two-edition comparison reports the Latin's own numbering as
+    #: an asymmetry every time and answers no question anyone asked.
+    symmetry: bool
+    #: argparse.
+    help: str
+    lang_help: str
+
+
+INDEX_FAMILIES = (
+    IndexFamily(
+        cmd="phase1",
+        tag="vatii",
+        label="Vatican II",
+        discover=discover_vatii,
+        titles=VATII_TITLES,
+        lang_to_url=VATII_LANG_TO_URL,
+        order=tuple(VATII_ORDER),
+        lang_aliases={
+            "both": ("en", "pt"),
+            "all": tuple(sorted(VATII_LANG_FROM_URL.values())),
+        },
+        default_lang="both",
+        quiet_no_url=False,
+        symmetry=True,
+        help="Vatican II, all 16 documents",
+        lang_help="comma-separated language codes, or `both` (en,pt) or `all` "
+        "(every language the mirror publishes that this parser has division "
+        "labels for: " + ",".join(sorted(VATII_LANG_FROM_URL.values())) + ")",
+    ),
+    IndexFamily(
+        cmd="vati",
+        tag="vati",
+        label="Vatican I",
+        discover=discover_vati,
+        titles=VATI_TITLES,
+        lang_to_url=VATI_LANG_TO_URL,
+        order=VATI_ORDER,
+        lang_aliases={"all": tuple(sorted(VATI_LANG_FROM_URL.values()))},
+        default_lang="all",
+        quiet_no_url=False,
+        symmetry=False,
+        help="the First Vatican Council: Dei Filius and Pastor Aeternus, "
+        "Italian and Latin (the whole offering -- there is no English)",
+        lang_help="comma-separated language codes, or `all` "
+        "(" + ",".join(sorted(VATI_LANG_FROM_URL.values())) + ")",
+    ),
+    IndexFamily(
+        cmd="phase3",
+        tag="cdf",
+        label="CDF/DDF",
+        discover=discover_cdf,
+        titles=CDF_TITLES,
+        lang_to_url=CDF_LANG_TO_URL,
+        # No reading order: `CDF_DOCUMENTS` is keyed by promulgation date and
+        # slug, and the corpus slug is what a run is asked for.
+        order=None,
+        lang_aliases={
+            "both": ("en", "pt"),
+            # Every language the index OFFERS, not the ones this parser can
+            # read -- which is what makes `--lang all --fetch-only` the
+            # acquisition run. The index offers Lithuanian and Malagasy,
+            # neither of which has division labels here, so a parsing
+            # `--lang all` stops on the check in `main` and says which.
+            # `PARSABLE_CDF_LANGS` is the intersection, and `rebuild.py`
+            # passes that rather than spelling a list out.
+            "all": tuple(sorted(set(CDF_LANG_FROM_URL.values()))),
+        },
+        default_lang="both",
+        quiet_no_url=True,
+        symmetry=True,
+        help="CDF/DDF documents, the selection in CDF_DOCUMENTS",
+        lang_help="comma-separated language codes, `both` (en,pt), or `all` -- "
+        "every language the index offers, which is wider than this parser "
+        "can read and is meant for --fetch-only. The readable subset is "
+        + ",".join(PARSABLE_CDF_LANGS)
+        + ". A document with no edition in a requested language is reported "
+        "`no-url` and never fetched: the index already said so",
+    ),
+)
+
+INDEX_FAMILY_BY_CMD = {f.cmd: f for f in INDEX_FAMILIES}
+
+#: The families `translation_url_for` must not derive a URL for, because
+#: their index already gave every edition's.
+INDEX_DISCOVERED_FAMILIES = frozenset(f.tag for f in INDEX_FAMILIES)
+
+#: `url_lang_key`'s lookup. Anything not here is on the modern shell.
+FAMILY_LANG_TO_URL = {f.tag: f.lang_to_url for f in INDEX_FAMILIES}
+
+
+def run_family(
+    family: IndexFamily,
     fetcher: Fetcher,
     langs: list[str],
     only: list[str] | None,
@@ -8675,15 +8836,16 @@ def run_phase1(
     skip_written: bool = False,
     lock_path: Path = CRAWL_LOCK_PATH,
 ) -> list[dict]:
-    refs, notes = discover_vatii(fetcher)
+    """Walk one index-driven family's documents in every language asked for."""
+    refs, notes = family.discover(fetcher)
     for note in notes:
         print(f"  [discover] {note}")
     if not refs:
-        print("FATAL: no Vatican II documents discovered", file=sys.stderr)
+        print(f"FATAL: no {family.label} documents discovered", file=sys.stderr)
         return []
     by_slug = {r.slug: r for r in refs}
-    order = only or VATII_ORDER
-    results = []
+    order = only or family.order or sorted(by_slug)
+    results: list[dict] = []
     pool = OrderedParsePool(jobs)
 
     def report(tag, r: dict) -> None:
@@ -8703,10 +8865,13 @@ def run_phase1(
             if ref is None:
                 pool.submit_done(
                     (slug, None),
-                    {"family": "vatii", "slug": slug, "status": "not-in-index"},
+                    {"family": family.tag, "slug": slug, "status": "not-in-index"},
                 )
                 continue
             for lang in langs:
+                if family.quiet_no_url and url_lang_key(ref, lang) not in ref.lang_urls:
+                    results.append(_result_base(ref, lang, None) | {"status": "no-url"})
+                    continue
                 # Same separation `cache_page` argues for on the phase-2 side:
                 # a language's pages can be acquired before this parser has a
                 # `DIVISIONS` table to read them with, and Swahili is the case
@@ -8725,170 +8890,7 @@ def run_phase1(
                         parse_and_write,
                         ref,
                         lang,
-                        VATII_TITLES.get(slug, slug),
-                        html,
-                    )
-            touch_crawl_lock(lock_path)
-            for tag, r in pool.collect():
-                report(tag, r)
-        for tag, r in pool.collect(0):
-            report(tag, r)
-    finally:
-        pool.close()
-    return results
-
-
-# --------------------------------------------------------------------------
-# The First Vatican Council
-# --------------------------------------------------------------------------
-
-VATI_ORDER = ["dei-filius", "pastor-aeternus"]
-
-VATI_TITLES = {"dei-filius": "Dei Filius", "pastor-aeternus": "Pastor Aeternus"}
-
-
-def run_vati(
-    fetcher: Fetcher,
-    langs: list[str],
-    only: list[str] | None,
-    jobs: int = 1,
-    fetch_only: bool = False,
-    skip_written: bool = False,
-    lock_path: Path = CRAWL_LOCK_PATH,
-) -> list[dict]:
-    """Its own phase rather than a branch of `run_phase1`, for the reason
-    the language table gives: the two councils' mirrors agree on almost
-    nothing but the host. Four pages, so the pool is a formality kept for the
-    shared reporting rather than for the parallelism."""
-    refs, notes = discover_vati(fetcher)
-    for note in notes:
-        print(f"  [discover] {note}")
-    if not refs:
-        print("FATAL: no Vatican I documents discovered", file=sys.stderr)
-        return []
-    by_slug = {r.slug: r for r in refs}
-    order = only or VATI_ORDER
-    results = []
-    pool = OrderedParsePool(jobs)
-
-    def report(tag, r: dict) -> None:
-        slug, lang = tag
-        results.append(r)
-        if lang is None:
-            return
-        print(
-            f"  {slug}.{lang}: {r['status']}"
-            + (f" {r.get('range')}" if r.get("range") else "")
-            + (f" ERR={r.get('error')}" if r.get("error") else "")
-        )
-
-    try:
-        for slug in order:
-            ref = by_slug.get(slug)
-            if ref is None:
-                pool.submit_done(
-                    (slug, None),
-                    {"family": "vati", "slug": slug, "status": "not-in-index"},
-                )
-                continue
-            for lang in langs:
-                if fetch_only:
-                    pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
-                    continue
-                early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
-                if early is not None:
-                    pool.submit_done((slug, lang), early)
-                else:
-                    pool.submit(
-                        (slug, lang),
-                        parse_and_write,
-                        ref,
-                        lang,
-                        VATI_TITLES.get(slug, slug),
-                        html,
-                    )
-            touch_crawl_lock(lock_path)
-            for tag, r in pool.collect():
-                report(tag, r)
-        for tag, r in pool.collect(0):
-            report(tag, r)
-    finally:
-        pool.close()
-    return results
-
-
-# --------------------------------------------------------------------------
-# Phase 3: CDF/DDF documents
-#
-# Shaped like phase 1 rather than phase 2, because this family's index gives
-# every edition's URL outright: there is nothing per-document to derive and
-# so nothing to probe. What phase 2 spends `--offered-only` to avoid, this
-# phase never had.
-# --------------------------------------------------------------------------
-
-
-def run_phase3(
-    fetcher: Fetcher,
-    langs: list[str],
-    only: list[str] | None,
-    jobs: int = 1,
-    fetch_only: bool = False,
-    skip_written: bool = False,
-    lock_path: Path = CRAWL_LOCK_PATH,
-) -> list[dict]:
-    refs, notes = discover_cdf(fetcher)
-    for note in notes:
-        print(f"  [discover] {note}")
-    if not refs:
-        print("FATAL: no CDF documents discovered", file=sys.stderr)
-        return []
-    by_slug = {r.slug: r for r in refs}
-    order = only or sorted(by_slug)
-    results: list[dict] = []
-    pool = OrderedParsePool(jobs)
-
-    def report(tag, r: dict) -> None:
-        slug, lang = tag
-        results.append(r)
-        if lang is None:  # not-discovered; queued only to hold its place
-            return
-        print(
-            f"  {slug}.{lang}: {r['status']}"
-            + (f" {r.get('range')}" if r.get("range") else "")
-            + (f" ERR={r.get('error')}" if r.get("error") else "")
-        )
-
-    try:
-        for slug in order:
-            ref = by_slug.get(slug)
-            if ref is None:
-                pool.submit_done(
-                    (slug, None),
-                    {"family": "cdf", "slug": slug, "status": "not-in-index"},
-                )
-                continue
-            for lang in langs:
-                # A language this document simply does not have is not worth a
-                # line of output per document: the index already said which
-                # editions exist, so "no-url" here is the index being read
-                # correctly rather than anything failing. Still recorded in
-                # `results` so the run summary counts it.
-                if url_lang_key(ref, lang) not in ref.lang_urls:
-                    results.append(_result_base(ref, lang, None) | {"status": "no-url"})
-                    continue
-                if fetch_only:
-                    pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
-                    continue
-                early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
-                if early is not None:
-                    pool.submit_done((slug, lang), early)
-                else:
-                    pool.submit(
-                        (slug, lang),
-                        parse_and_write,
-                        ref,
-                        lang,
-                        CDF_TITLES.get(slug, slug),
+                        family.titles.get(slug, slug),
                         html,
                     )
             touch_crawl_lock(lock_path)
@@ -9815,47 +9817,24 @@ def main() -> int:
         "Never affects the request rate",
     )
 
-    p1 = sub.add_parser(
-        "phase1", parents=[net, par], help="Vatican II, all 16 documents"
-    )
-    p1.add_argument(
-        "--lang",
-        default="both",
-        help="comma-separated language codes, or `both` (en,pt) or `all` "
-        "(every language the mirror publishes that this parser has division "
-        "labels for: " + ",".join(sorted(VATII_LANG_FROM_URL.values())) + ")",
-    )
-    p1.add_argument(
-        "--only", help="comma-separated slugs, for iterating on one document"
-    )
-    p1.add_argument(
-        "--fetch-only",
-        action="store_true",
-        help="cache each language's page under corpus/raw/ and stop -- no "
-        "parsing, nothing written to build/. Accepts any language code the "
-        "mirror publishes, since nothing reads the text",
-    )
-
-    pv = sub.add_parser(
-        "vati",
-        parents=[net, par],
-        help="the First Vatican Council: Dei Filius and Pastor Aeternus, "
-        "Italian and Latin (the whole offering -- there is no English)",
-    )
-    pv.add_argument(
-        "--lang",
-        default="all",
-        help="comma-separated language codes, or `all` "
-        "(" + ",".join(sorted(VATI_LANG_FROM_URL.values())) + ")",
-    )
-    pv.add_argument(
-        "--only", help="comma-separated slugs, for iterating on one document"
-    )
-    pv.add_argument(
-        "--fetch-only",
-        action="store_true",
-        help="cache each language's page under corpus/raw/ and stop",
-    )
+    # One subparser per index-driven family, off `INDEX_FAMILIES`. Adding a
+    # sixth family is a table entry and a `Stage` in `rebuild.py`; it used to
+    # be a copied runner and four dispatch sites.
+    for fam in INDEX_FAMILIES:
+        fp = sub.add_parser(fam.cmd, parents=[net, par], help=fam.help)
+        fp.add_argument("--lang", default=fam.default_lang, help=fam.lang_help)
+        fp.add_argument(
+            "--only",
+            help="comma-separated slugs (the corpus's own, where they differ "
+            "from the source's), for iterating on one document",
+        )
+        fp.add_argument(
+            "--fetch-only",
+            action="store_true",
+            help="cache each language's page under corpus/raw/ and stop -- no "
+            "parsing, nothing written to build/. Accepts any language code the "
+            "index offers, since nothing reads the text",
+        )
 
     p2 = sub.add_parser(
         "phase2",
@@ -9910,31 +9889,6 @@ def main() -> int:
         "cached, so it can only save requests, never lose an edition",
     )
 
-    p3 = sub.add_parser(
-        "phase3",
-        parents=[net, par],
-        help="CDF/DDF documents, the selection in CDF_DOCUMENTS",
-    )
-    p3.add_argument(
-        "--lang",
-        default="both",
-        help="comma-separated language codes, `both` (en,pt), or `all` -- "
-        "every language the index offers, which is wider than this parser "
-        "can read and is meant for --fetch-only. The readable subset is "
-        + ",".join(PARSABLE_CDF_LANGS)
-        + ". A document with no edition in a requested language is reported "
-        "`no-url` and never fetched: the index already said so",
-    )
-    p3.add_argument(
-        "--only", help="comma-separated corpus slugs, for iterating on one document"
-    )
-    p3.add_argument(
-        "--fetch-only",
-        action="store_true",
-        help="cache each language's page under corpus/raw/ and stop -- no "
-        "parsing, nothing written to build/",
-    )
-
     sub.add_parser(
         "discover-encyclicals",
         parents=[net],
@@ -9964,7 +9918,7 @@ def main() -> int:
     )
 
     lock_path = CRAWL_LOCK_PATH
-    if args.cmd in ("phase1", "phase2", "phase3", "vati"):
+    if args.cmd in INDEX_FAMILY_BY_CMD or args.cmd == "phase2":
         lock_path, lock_kind = run_lock_path(args.cmd, args.offline)
         try:
             acquire_crawl_lock(lock_path, lock_kind)
@@ -9972,14 +9926,16 @@ def main() -> int:
             print(f"ERROR: {e}")
             return 1
 
-    if args.cmd == "phase1":
+    family = INDEX_FAMILY_BY_CMD.get(args.cmd)
+    if family is not None:
         try:
-            if args.lang == "both":
-                langs = ["en", "pt"]
-            elif args.lang == "all":
-                langs = sorted(VATII_LANG_FROM_URL.values())
-            else:
+            langs = list(family.lang_aliases.get(args.lang) or ())
+            if not langs:
                 langs = [x.strip() for x in args.lang.split(",") if x.strip()]
+            # Division labels are a parser's requirement, so --fetch-only,
+            # which parses nothing, does not have it. This is what lets the
+            # raw side of the corpus hold languages the interface has never
+            # had, years before anything can read them.
             unknown = (
                 [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
             )
@@ -9989,40 +9945,8 @@ def main() -> int:
                     f"known: {', '.join(sorted(DIVISIONS))}"
                 )
                 return 1
-            only = args.only.split(",") if args.only else None
-            results = run_phase1(
-                fetcher,
-                langs,
-                only,
-                jobs=args.jobs,
-                fetch_only=args.fetch_only,
-                skip_written=args.skip_written,
-                lock_path=lock_path,
-            )
-        finally:
-            release_crawl_lock(lock_path)
-        summarize(results)
-        report_fetching(fetcher)
-        ok = report_run(results, fetcher, args.accept_baseline)
-        report_symmetry(check_language_symmetry(known=sections_from_results(results)))
-        return 0 if ok else 1
-
-    if args.cmd == "vati":
-        try:
-            if args.lang == "all":
-                langs = sorted(VATI_LANG_FROM_URL.values())
-            else:
-                langs = [x.strip() for x in args.lang.split(",") if x.strip()]
-            unknown = (
-                [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
-            )
-            if unknown:
-                print(
-                    f"ERROR: no division labels for {', '.join(unknown)}; "
-                    f"known: {', '.join(sorted(DIVISIONS))}"
-                )
-                return 1
-            results = run_vati(
+            results = run_family(
+                family,
                 fetcher,
                 langs,
                 args.only.split(",") if args.only else None,
@@ -10035,7 +9959,20 @@ def main() -> int:
             release_crawl_lock(lock_path)
         summarize(results)
         report_fetching(fetcher)
+        if args.fetch_only:
+            # Nothing was parsed, so the baseline has no evidence from this
+            # run and `report_run` would judge the corpus's standing state as
+            # though it were this run's verdict -- and `--accept-baseline`
+            # would then WRITE that. It has happened: a fetch-only phase 2 run
+            # recorded 3,678 `fetch-failed` rows as the accepted floor. Phase 2
+            # grew this guard then; phase 1 and `vati` never had it, and the
+            # collapse into one runner is what gives it to them.
+            return 0
         ok = report_run(results, fetcher, args.accept_baseline)
+        if family.symmetry:
+            report_symmetry(
+                check_language_symmetry(known=sections_from_results(results))
+            )
         return 0 if ok else 1
 
     if args.cmd == "phase2":
@@ -10080,50 +10017,6 @@ def main() -> int:
             # this run and would report the corpus's standing state as though
             # it were this run's verdict. A fetch-only run succeeds when the
             # pages it could get are on disk.
-            return 0
-        ok = report_run(results, fetcher, args.accept_baseline)
-        report_symmetry(check_language_symmetry(known=sections_from_results(results)))
-        return 0 if ok else 1
-
-    if args.cmd == "phase3":
-        try:
-            if args.lang == "both":
-                langs = ["en", "pt"]
-            elif args.lang == "all":
-                # Every language the index offers, NOT the ones this parser
-                # can read -- which is what makes `--lang all --fetch-only`
-                # the acquisition run. This index offers Lithuanian and
-                # Malagasy, neither of which has division labels here, so a
-                # parsing `--lang all` stops on the check below and says so.
-                # `PARSABLE_CDF_LANGS` is the intersection, and rebuild.py
-                # passes that rather than spelling a list out.
-                langs = sorted(set(CDF_LANG_FROM_URL.values()))
-            else:
-                langs = [x.strip() for x in args.lang.split(",") if x.strip()]
-            unknown = (
-                [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
-            )
-            if unknown:
-                print(
-                    f"ERROR: no division labels for {', '.join(unknown)}; "
-                    f"known: {', '.join(sorted(DIVISIONS))}"
-                )
-                return 1
-            only = args.only.split(",") if args.only else None
-            results = run_phase3(
-                fetcher,
-                langs,
-                only,
-                jobs=args.jobs,
-                fetch_only=args.fetch_only,
-                skip_written=args.skip_written,
-                lock_path=lock_path,
-            )
-        finally:
-            release_crawl_lock(lock_path)
-        summarize(results)
-        report_fetching(fetcher)
-        if args.fetch_only:
             return 0
         ok = report_run(results, fetcher, args.accept_baseline)
         report_symmetry(check_language_symmetry(known=sections_from_results(results)))
