@@ -3451,6 +3451,44 @@ interface ClauseState {
  */
 const BOOK_CHAPTER_GAP_RE = /^ *\.? *,? */;
 
+/**
+ * A clause is: the text before a match, the match, and then THE REST OF THE
+ * CLAUSE PARSED AGAIN. Every branch below emits that shape, so it is written
+ * once here rather than six times inline.
+ *
+ * It is stated once because it was stated six times and they disagreed. The
+ * scripture branches recursed over the tail; the four document/Summa branches
+ * pushed it as plain text, so a clause naming two documents linked only the
+ * first — CCC 90's Portuguese footnote reaches both Dei Filius and Lumen
+ * Gentium, and only ever drew one link (docs/decisions.md §Parsing,
+ * 2026-09-03). Nothing about those branches said they were doing something
+ * different; the offsets were just spelled out by hand each time.
+ *
+ * The caller builds its own segment (only it knows the shape and how to slice
+ * `raw`) and hands over the span it covers. `matchStart` is where the SEGMENT
+ * starts, which is not always where the match did: a work title stays text and
+ * only its locus links, so that branch passes `locusStart`.
+ *
+ * Termination is the caller's to keep: `consumedEnd` must be strictly past
+ * `matchStart`, which every matcher here guarantees by consuming at least what
+ * it matched.
+ */
+function emitMatch(
+	rawClause: string,
+	span: { matchStart: number; consumedEnd: number },
+	matched: RefSegment | RefSegment[],
+	cfg: LangConfig,
+	state: ClauseState
+): RefSegment[] {
+	const segs: RefSegment[] = [];
+	if (span.matchStart > 0) segs.push(textSeg(rawClause.slice(0, span.matchStart)));
+	segs.push(...(Array.isArray(matched) ? matched : [matched]));
+	if (span.consumedEnd < rawClause.length) {
+		segs.push(...parseClause(rawClause.slice(span.consumedEnd), cfg, state));
+	}
+	return segs;
+}
+
 function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): RefSegment[] {
 	if (rawClause === '') return [];
 
@@ -3481,28 +3519,29 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 		}
 		const consumedEnd = afterBook + cv.consumed;
 		const cf = clauseCf || precededByCf(rawClause.slice(0, bm.matchStart));
-		const segs: RefSegment[] = [];
-		if (bm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, bm.matchStart)));
-		segs.push({
-			kind: 'scripture',
-			osis: bm.osis,
-			chapter: cv.chapter,
-			verses: cv.verses,
-			...(cf ? { cf: true as const } : {}),
-			raw: rawClause.slice(bm.matchStart, consumedEnd)
-		});
+		// Set BEFORE `emitMatch` recurses: a bookless continuation clause in
+		// the tail inherits this book.
 		state.currentBook = bm.osis;
 		state.currentCf = cf;
-		// Keep scanning the REST of this clause rather than dropping it to
-		// text: PT's archive drifts between ";" and "," as the mark between
-		// two references, so one comma-joined clause can carry two of them
+		// The tail matters here too, and this is the branch that has always
+		// known it: PT's archive drifts between ";" and "," as the mark
+		// between two references, so one comma-joined clause can carry two
 		// ("Heb 10, 5-7, citando o Sl 40. 7-9, segundo os LXX" — Ps 40 is a
-		// second real reference, not prose). Recursion always consumes at
-		// least the matched book, so it terminates.
-		if (consumedEnd < rawClause.length) {
-			segs.push(...parseClause(rawClause.slice(consumedEnd), cfg, state));
-		}
-		return segs;
+		// second real reference, not prose).
+		return emitMatch(
+			rawClause,
+			{ matchStart: bm.matchStart, consumedEnd },
+			{
+				kind: 'scripture',
+				osis: bm.osis,
+				chapter: cv.chapter,
+				verses: cv.verses,
+				...(cf ? { cf: true as const } : {}),
+				raw: rawClause.slice(bm.matchStart, consumedEnd)
+			},
+			cfg,
+			state
+		);
 	}
 
 	// 2. Bookless continuation of the previously established book — requires
@@ -3521,20 +3560,20 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 			) {
 				const consumedEnd = digitsStart + cv.consumed;
 				const cf = clauseCf || state.currentCf;
-				const segs: RefSegment[] = [];
-				if (digitsStart > 0) segs.push(textSeg(rawClause.slice(0, digitsStart)));
-				segs.push({
-					kind: 'scripture',
-					osis: state.currentBook,
-					chapter: cv.chapter,
-					verses: cv.verses,
-					...(cf ? { cf: true as const } : {}),
-					raw: rawClause.slice(digitsStart, consumedEnd)
-				});
-				if (consumedEnd < rawClause.length) {
-					segs.push(...parseClause(rawClause.slice(consumedEnd), cfg, state));
-				}
-				return segs;
+				return emitMatch(
+					rawClause,
+					{ matchStart: digitsStart, consumedEnd },
+					{
+						kind: 'scripture',
+						osis: state.currentBook,
+						chapter: cv.chapter,
+						verses: cv.verses,
+						...(cf ? { cf: true as const } : {}),
+						raw: rawClause.slice(digitsStart, consumedEnd)
+					},
+					cfg,
+					state
+				);
 			}
 		}
 	}
@@ -3558,15 +3597,9 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	//    reference, and the English ones often sit in a clause that also names
 	//    a document ("...DS 3005; DV 6; St. Thomas Aquinas, S Th I, I, I").
 	//    Whichever starts earliest is the one the clause is actually about.
-	//
-	//    AND WHICHEVER WINS, THE REST OF THE CLAUSE IS PARSED AGAIN, exactly as
-	//    the scripture branch above does and for the same reason: one clause
-	//    routinely names two documents. CCC 90's Portuguese footnote cites
-	//    "Const. dogm. Dei Filius, c. 4: DS 3016 [...] Cf. II Concílio do
-	//    Vaticano, Const. dogm. Lumen Gentium, 25", and dropping the tail to
-	//    text lost the second one — leftmost-wins decides which match comes
-	//    FIRST, never that it is the only one. Recursion always consumes at
-	//    least the match, so it terminates.
+	//    It decides which match comes FIRST, and never that it is the only
+	//    one: whichever wins, `emitMatch` parses the rest of the clause again,
+	//    and one clause routinely names two documents.
 	const dm = findDocumentAt(cfg, rawClause, pos);
 	const tm = findDocumentTitleAt(rawClause, pos);
 	const sm = findSummaAt(rawClause, pos);
@@ -3575,66 +3608,72 @@ function parseClause(rawClause: string, cfg: LangConfig, state: ClauseState): Re
 	if (wm !== null && wm.matchStart === earliest) {
 		// The Catechism or Compendium by name: the title stays text, each
 		// paragraph number links, as a bare number list would.
-		const segs: RefSegment[] = [];
-		if (wm.locusStart > 0) segs.push(textSeg(rawClause.slice(0, wm.locusStart)));
-		segs.push(...parseBareCccList(wm.locus, wm.kind));
-		if (wm.consumedEnd < rawClause.length)
-			segs.push(...parseClause(rawClause.slice(wm.consumedEnd), cfg, state));
-		return segs;
+		return emitMatch(
+			rawClause,
+			// `locusStart`, not `matchStart`: the work's name is part of the
+			// text before the match, not part of it.
+			{ matchStart: wm.locusStart, consumedEnd: wm.consumedEnd },
+			parseBareCccList(wm.locus, wm.kind),
+			cfg,
+			state
+		);
 	}
 	if (
 		sm !== null &&
 		(dm === null || sm.matchStart < dm.matchStart) &&
 		(tm === null || sm.matchStart < tm.matchStart)
 	) {
-		const segs: RefSegment[] = [];
-		if (sm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, sm.matchStart)));
-		segs.push({
-			kind: 'summa',
-			part: sm.part,
-			question: sm.question,
-			article: sm.article,
-			raw: rawClause.slice(sm.matchStart, sm.consumedEnd)
-		});
-		if (sm.consumedEnd < rawClause.length)
-			segs.push(...parseClause(rawClause.slice(sm.consumedEnd), cfg, state));
-		return segs;
+		return emitMatch(
+			rawClause,
+			sm,
+			{
+				kind: 'summa',
+				part: sm.part,
+				question: sm.question,
+				article: sm.article,
+				raw: rawClause.slice(sm.matchStart, sm.consumedEnd)
+			},
+			cfg,
+			state
+		);
 	}
 	const useTitle = tm !== null && (dm === null || tm.matchStart < dm.matchStart);
 
 	if (useTitle) {
-		const segs: RefSegment[] = [];
-		if (tm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, tm.matchStart)));
-		segs.push({
-			kind: 'document',
-			via: 'title',
-			label: tm.title,
-			locus: tm.locus,
-			expansion: null,
-			slug: tm.slug,
-			raw: rawClause.slice(tm.matchStart, tm.consumedEnd)
-		});
-		if (tm.consumedEnd < rawClause.length)
-			segs.push(...parseClause(rawClause.slice(tm.consumedEnd), cfg, state));
-		return segs;
+		return emitMatch(
+			rawClause,
+			tm,
+			{
+				kind: 'document',
+				via: 'title',
+				label: tm.title,
+				locus: tm.locus,
+				expansion: null,
+				slug: tm.slug,
+				raw: rawClause.slice(tm.matchStart, tm.consumedEnd)
+			},
+			cfg,
+			state
+		);
 	}
 
 	if (dm) {
-		const segs: RefSegment[] = [];
-		if (dm.matchStart > 0) segs.push(textSeg(rawClause.slice(0, dm.matchStart)));
-		segs.push({
-			kind: 'document',
-			via: 'siglum',
-			label: dm.sigla,
-			locus: dm.locus,
-			expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
-			slug: dm.slug,
-			...(dm.external ? { external: dm.external } : {}),
-			raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
-		});
-		if (dm.consumedEnd < rawClause.length)
-			segs.push(...parseClause(rawClause.slice(dm.consumedEnd), cfg, state));
-		return segs;
+		return emitMatch(
+			rawClause,
+			dm,
+			{
+				kind: 'document',
+				via: 'siglum',
+				label: dm.sigla,
+				locus: dm.locus,
+				expansion: cfg.documentSigla.get(dm.sigla)?.expansion ?? null,
+				slug: dm.slug,
+				...(dm.external ? { external: dm.external } : {}),
+				raw: rawClause.slice(dm.matchStart, dm.consumedEnd)
+			},
+			cfg,
+			state
+		);
 	}
 
 	// 4. Nothing recognized (patristic titles, canon-law prose, editorial
