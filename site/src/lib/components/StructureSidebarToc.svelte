@@ -238,6 +238,20 @@
 		 *  listing text that is on the page and unreachable from it. Absent
 		 *  for the CCC and Compendium, which have no such rows. */
 		linkableAnchors?: Set<string>;
+		/** Rewrites a row's printed label before it is shown — the Code of
+		 *  Canon Law abbreviates the division noun and keeps the source's own
+		 *  numeral (`canonLawLabelText`), which is what `deriveMarkers` cannot
+		 *  do for it: that form renumbers, and the Code restarts `TITLE I`
+		 *  inside every book. Absent everywhere else, where the label either
+		 *  fits or is already handled by `deriveMarkers`. */
+		markerText?: (label: string) => string;
+		/** Rewrites a row's stored title before it is cased and rendered,
+		 *  applied to `titleHtml` as well as to the plain form so the two
+		 *  cannot disagree. The Code strips the canon range its editions print
+		 *  inside a heading (`canonLawTitleText`) — and BEFORE the casing, not
+		 *  after, because `normalizeCase` rewrites a heading only when it is
+		 *  ALL-CAPS and `(Cann. 35 - 93)` is not. */
+		titleText?: (title: string) => string;
 	}
 
 	let {
@@ -252,7 +266,9 @@
 		anchorFor,
 		borrowedTitleLabel,
 		linkableAnchors,
-		deriveMarkers = true
+		deriveMarkers = true,
+		markerText,
+		titleText
 	}: Props = $props();
 
 	const roots = $derived(structure.filter((row) => row.depth === 0).map((row) => row.node));
@@ -298,8 +314,11 @@
 	{@const cur = currentIndex(nodes, currentN, outlineKinds)}
 	<ol class="sidebar-toc-list toc-level">
 		{#each nodes as node, i (node.anchor ?? node.title + node.paragraphs.join('-'))}
-			{@const dt = displayTitle(node, lang)}
-			{@const label = deriveMarkers ? marker(node, lang, nodes, i) : marker(node, lang)}
+			{@const shown = titleText ? { ...node, title: titleText(node.title) } : node}
+			{@const shownHtml = node.titleHtml && titleText ? titleText(node.titleHtml) : node.titleHtml}
+			{@const dt = displayTitle(shown, lang)}
+			{@const printed = deriveMarkers ? marker(node, lang, nodes, i) : marker(node, lang)}
+			{@const label = printed && markerText ? markerText(printed) : printed}
 			{@const anchor = node.paragraphs[0]}
 			{@const kids = outlineChildren(node, outlineKinds)}
 			{@const raw = rowState(node, currentN, outlineKinds)}
@@ -317,7 +336,7 @@
 							class="row-title"
 							lang={node.titleLang}
 							title={node.titleLang ? borrowedTitleLabel?.(node.titleLang) : undefined}
-							><InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} /></span
+							><InlineText nodes={inlineTitleNodes(dt.title, shownHtml, lang)} /></span
 						>
 					</a>
 				{:else}
@@ -328,7 +347,7 @@
 					     own tables of contents. -->
 					<span class="row-title unlinked" title="No section number in this corpus">
 						{#if label}<span class="kind-label label-micro">{label}</span>{/if}
-						<InlineText nodes={inlineTitleNodes(dt.title, node.titleHtml, lang)} />
+						<InlineText nodes={inlineTitleNodes(dt.title, shownHtml, lang)} />
 					</span>
 				{/if}
 				<!-- ONLY THE READER'S OWN BRANCH IS EXPANDED. A row's children

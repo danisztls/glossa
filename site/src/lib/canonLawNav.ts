@@ -16,6 +16,7 @@
 import { hrefFor } from './address';
 import { canonLawOutline, canonLawTitleFor } from './corpus';
 import { contains } from './components/structureToc';
+import { documentHeadingParts, type DisplayTitle } from './titles';
 import type { StructureNode } from './types';
 
 /**
@@ -79,7 +80,104 @@ export function canonLawTrail(lang: string, n: number): CanonLawCrumb[] {
  *
  * Anchored to the END and requiring a digit, so a division whose NAME ends
  * in a parenthesis keeps it.
+ *
+ * IT READS PAST A TRAILING RUN OF CLOSING TAGS, because it is also applied to
+ * `title_html` — 160 Italian divisions carry one, and the edition sets the
+ * range INSIDE the emphasis it closes the heading with (`… </b> (<b>Cann. 35
+ * – 93)</b>`). Anchored at `$` alone the `</b>` defeated the match, so the
+ * sidebar and the body headings printed a range the breadcrumb beside them
+ * had dropped. Whatever emphasis the range was wrapped in goes with it.
  */
 export function canonLawTitleText(title: string): string {
-	return title.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || title;
+	return (
+		title.replace(/\s*\((?=[^()]*\d)[^()]*\)(?:\s*<\/[a-zA-Z][^>]*>)*\s*$/u, '').trim() || title
+	);
+}
+
+/**
+ * A division's heading, split into the ordinal it opens with and the name
+ * after it, with the printed range gone.
+ *
+ * THE STRIP HAS TO HAPPEN FIRST, and doing it last is what made five of the
+ * seven editions shout. `normalizeCase` (titles.ts) rewrites a heading only
+ * when it is ALL-CAPS, and `(Cann. 35 - 93)` is not: the `ann` of the range
+ * the source prints inside the title is lower-case, so every heading carrying
+ * one failed the test and came through as `SINGULAR ADMINISTRATIVE ACTS`
+ * while the headings beside it — Book II's, and every heading in the two
+ * editions that print no range at all — read `The People of God`. One page
+ * showed both forms in one breadcrumb.
+ *
+ * So this is the pair, in the order that works, and every surface takes it
+ * from here rather than composing the two itself.
+ */
+export function canonLawHeadingParts(title: string, lang: string): DisplayTitle {
+	return documentHeadingParts(canonLawTitleText(title), lang);
+}
+
+/**
+ * The division nouns the seven editions print, and what each shortens to.
+ *
+ * KEYED BY THE PRINTED NOUN, not by the division's kind, because the kind is
+ * not on the outline: `buildDocumentOutline` stamps every node it builds
+ * `kind: 'sub'` (corpus.ts), and the source's own word survives only in the
+ * `label`. Reading the label is also what makes the French parts degrade
+ * correctly — `PREMIÈRE PARTIE` puts the ordinal first, matches nothing here,
+ * and prints as the source prints it.
+ *
+ * BOOK AND PART ARE DELIBERATELY ABSENT. Twenty rows per edition sit at those
+ * two levels, they are the top of the tree, and the index sets them on a line
+ * of their own where there is room for the whole word. The 273 rows below
+ * them repeat their noun beside a name in a column that has to hold both,
+ * which is the same judgement the Code itself makes: `Art.` is the one level
+ * every edition already abbreviates.
+ */
+const CANON_LAW_LABEL_SHORT: Record<string, Record<string, string>> = {
+	en: { SECTION: 'Sect.', TITLE: 'Tit.', CHAPTER: 'Chap.', ART: 'Art.' },
+	la: { SECTIO: 'Sect.', TITULUS: 'Tit.', CAPUT: 'Cap.', ART: 'Art.' },
+	it: { SEZIONE: 'Sez.', TITOLO: 'Tit.', CAPITOLO: 'Cap.', ARTICOLO: 'Art.' },
+	es: { SECCION: 'Secc.', TITULO: 'Tít.', CAPITULO: 'Cap.', ART: 'Art.' },
+	fr: { SECTION: 'Sect.', TITRE: 'Tit.', CHAPITRE: 'Chap.', ART: 'Art.' },
+	de: { SEKTION: 'Sekt.', TITEL: 'Tit.', KAPITEL: 'Kap.', ARTIKEL: 'Art.' },
+	ru: { РАЗДЕЛ: 'Разд.', ТИТУЛ: 'Тит.', ГЛАВА: 'Гл.', СТ: 'Ст.' }
+};
+
+/** Accents off, upper-cased — `documentLabelKind`'s fold (structureToc.ts),
+ *  which is what lets one table answer for `TÍTULO` and `TITULO` at once.
+ *  Cyrillic carries no combining marks here and folds to itself. */
+function foldNoun(word: string): string {
+	return word.normalize('NFD').replace(/\p{M}/gu, '').toUpperCase();
+}
+
+/** A run of letters with no lower-case in it — `cic.py`'s `_is_shouted`, and
+ *  the same question: is this label set in capitals? */
+function isShouted(text: string): boolean {
+	const letters = [...text].filter((c) => /\p{L}/u.test(c));
+	return letters.length > 0 && letters.every((c) => c.toLocaleUpperCase() === c);
+}
+
+/**
+ * A printed division label with its noun abbreviated — `CHAPTER I` ->
+ * `CHAP. I`, `Art. 1` unchanged, `PREMIÈRE PARTIE` unchanged.
+ *
+ * THE SOURCE'S OWN NUMERAL IS KEPT, and that is the whole difference from
+ * `marker()` (structureToc.ts), whose short form is unusable here for the
+ * reason `/doctrina-socialis`'s breadcrumb records and a sharper one: it
+ * numbers a row by its position among its TREE siblings, and the Code
+ * restarts `TITLE I` inside every book and part. Four different places would
+ * read `Tit. 1`. Shortening the NOUN touches nothing a citation is made of.
+ *
+ * The abbreviation takes the label's own case register, so an edition that
+ * shouts its headings goes on shouting: a table whose values are capitalised
+ * where the source capitalises would be a second copy of that fact, and the
+ * index sets some of these rows through `text-transform: uppercase` and some
+ * not (`.rank-sub .kind-label`, StructureIndex.svelte).
+ */
+export function canonLawLabelText(label: string, lang: string): string {
+	const table = CANON_LAW_LABEL_SHORT[lang.split('-')[0].toLowerCase()];
+	if (!table) return label;
+	const m = /^(\p{L}+)\.?(\s*)(\S.*)?$/u.exec(label.trim());
+	if (!m || !m[3]) return label;
+	const short = table[foldNoun(m[1])];
+	if (!short) return label;
+	return `${isShouted(m[1]) ? short.toLocaleUpperCase() : short} ${m[3]}`;
 }

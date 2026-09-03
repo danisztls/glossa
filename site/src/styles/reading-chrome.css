@@ -31,7 +31,31 @@
  * reasoning `UnitNav` and the tables of contents give for opting out: the
  * reader who reaches for a crumb reached for it in order to GO there.
  */
+/*
+ * A CRUMB WRAPS AS A UNIT, which is what the flex row buys and inline flow
+ * could not. In flow the trail is one paragraph and the line breaks at
+ * whatever space it reaches, so a crumb splits between its ordinal and its
+ * name — `BOOK I` alone on one line, `General Norms` on the next, with the
+ * `›` of the crumb before it stranded above — and a reader gets a stack of
+ * fragments where the whole point of the trail is that each step is one
+ * thing. Each `<a>` and each `›` is a flex item here, so the break happens
+ * between crumbs, and a crumb splits internally only when it alone is wider
+ * than the line.
+ *
+ * It matters most on the Code of Canon Law, whose trail is six levels deep
+ * where every other work's is one or two, and it is right on all of them:
+ * this is the same block for the same reason the rest of the file is.
+ *
+ * `align-items: baseline` because the ordinal is set smaller than the name
+ * beside it (`.label-micro`), and `gap` replaces what `.sep`'s own margins
+ * were doing — a margin inside a flex row would add to the gap rather than be
+ * it. The row gap is `0`: the leading already separates wrapped lines.
+ */
 .breadcrumb {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.35em;
 	font-size: 0.85rem;
 	color: var(--color-text-muted);
 	margin-bottom: 0.75rem;
@@ -61,8 +85,11 @@
 	text-underline-offset: 0.15em;
 }
 
+/* The row's `gap` sets the space on both sides of a separator, which is what
+   the two margins here used to do — kept as a rule rather than deleted so a
+   route that ever sets a margin on `.sep` again reads why it must not. */
 .breadcrumb .sep {
-	margin: 0 0.35em;
+	margin: 0;
 }
 
 .breadcrumb .ordinal {

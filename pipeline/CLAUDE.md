@@ -746,6 +746,27 @@ establish…`, which is canon 1439 §2 quoting 1423 with its opening words lost.
   has words before its first one — the archive template's own content cell is a
   leaf cell too, and rewriting THAT flattens the `align="center"` the whole
   outline is read from.
+- **The delimiter after a label does not always sit beside it.** English sets
+  one title inside its own anchor and leaves the colon outside —
+  `<a name="TITLE_I">TITLE I</a>:` — so once `split_label` has taken the
+  label, the punctuation is behind a closing tag where a plain `lstrip` cannot
+  see it, and canon 1166 opened under `TITLE I : SACRAMENTALS`.
+  `drop_leading_punct` reads past tags and copies them through; it recovered
+  30 canons in six editions as well, each opening with a stranded dash the
+  same rule had left behind (`<b>— </b>§ 1. The following…`).
+- **The one correction filed against this work is a heading, and it is a
+  heading because the source left no markup to read.** The EN page for canons
+  1-6 prints the Latin edition's book title run into the English one inside a
+  single `<b>` — `GENERAL NORMS LIBER I. DE NORMIS GENERALIBUS` — so nothing
+  can divide them; twelve other pages of the same edition print `BOOK I.
+GENERAL NORMS`, which is the witness. `require_all_applied` runs after the
+  page loop, where a language has been read whole and an entry that matched
+  nothing is drift rather than an unvisited page.
+- **`BOOK IV` reads `FUNCTION OF THE CHURCH` in every EN page and stays that
+  way.** The word the other six editions carry (`SANCTIFICANDI`, `DI
+SANTIFICARE`, `СВЯТИТЕЛЬСКОЕ`) is dropped consistently, which makes it the
+  edition's own reading and not a slip — and a defect with no witness in its
+  own edition gets documented, not invented (`KNOWN_GAPS`' argument).
 - **The amendment apparatus is cut at the edition's own legend.** Three
   editions reprint superseded wordings after the Code; the boundary is the
   `( n : …)` line that explains the mark, with the typographic rule as a

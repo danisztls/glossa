@@ -99,6 +99,7 @@ from common import (
     corpus_dir,
     corrections_receipt,
     load_corrections,
+    require_all_applied,
     require_corpus,
     write_stamped_json,
 )
@@ -644,6 +645,46 @@ _ENTITY_RE = re.compile(
 )
 
 
+#: What an edition may leave between a label and the name after it, or
+#: between a canon's number and its text: an em or en dash, a hyphen, a full
+#: stop, a semicolon, a colon.
+_STRANDED_PUNCT = " .:;-—–\xa0"
+
+
+def drop_leading_punct(html: str) -> str:
+    """Whitespace and stray punctuation off the front of `html`, reading
+    past tags to reach it.
+
+    THE DELIMITER AFTER A LABEL DOES NOT ALWAYS SIT BESIDE IT. The English
+    edition sets one title inside its own anchor and leaves the delimiter
+    outside -- `<a name="TITLE_I">TITLE I</a>:` -- so once the label is gone
+    the colon is behind a closing tag, where a plain `lstrip` cannot see it.
+    Left there it becomes the title, and canon 1166 opened under `TITLE I :
+    SACRAMENTALS`.
+
+    Tags are copied through rather than dropped, because the emphasis the
+    source put on the NAME is on the same tags as the punctuation before it;
+    `vd._EMPTY_TAG_PAIR_RE` clears whichever of them end up holding
+    nothing."""
+    out: list[str] = []
+    i = 0
+    while i < len(html):
+        if html[i] == "<":
+            j = html.find(">", i)
+            if j == -1:
+                break
+            out.append(html[i : j + 1])
+            i = j + 1
+            continue
+        chunk, step = html[i], 1
+        if html[i] == "&" and (m := _ENTITY_RE.match(html, i)):
+            chunk, step = ihtml.unescape(m.group(0)), m.end() - i
+        if chunk.strip(_STRANDED_PUNCT + "\t\n\r"):
+            break
+        i += step
+    return "".join(out) + html[i:]
+
+
 def strip_leading_text(html: str, prefix: str) -> str:
     """Drop `prefix` off the front of `html`, reading entities as characters.
 
@@ -683,8 +724,7 @@ def strip_leading_text(html: str, prefix: str) -> str:
         i += step
     if seen < len(want):
         return html
-    rest = html[i:].lstrip().lstrip(" .:;-—–").lstrip()
-    kept = "".join(out) + rest
+    kept = "".join(out) + drop_leading_punct(html[i:])
     while (collapsed := vd._EMPTY_TAG_PAIR_RE.sub("", kept)) != kept:
         kept = collapsed
     return kept
@@ -2256,6 +2296,14 @@ def parse_edition(
         html = vd.decode_page(raw)
         html = vd.apply_raw_text_corrections(html, corrections, applied, seen)
         read.append((name, page_blocks(html, name)))
+
+    # EVERY PAGE OF THE EDITION HAS NOW BEEN READ, so an entry that matched
+    # nothing matches nothing anywhere -- which is drift, and the whole
+    # reason the ledger is checked rather than trusted. There is no partial
+    # run to except: a language is parsed whole or not at all.
+    require_all_applied(
+        corrections, seen, source=str(RAW_ROOT / edition.lang), field="raw_text"
+    )
 
     blocks: list[Block] = []
     amendments: list[Amendment] = []

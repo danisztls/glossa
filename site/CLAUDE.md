@@ -827,6 +827,34 @@ second chunk stride. What is new is only what a reading page IS.
   DISPLAY only; the corpus keeps what the edition printed, and
   `route-titles.mjs` carries the same rule by hand because it runs under
   plain node.
+- **AND THE STRIP RUNS BEFORE THE CASING, which is the whole of what
+  `canonLawHeadingParts` exists to fix.** `normalizeCase` (titles.ts) rewrites
+  a heading only when it is ALL-CAPS, and the `ann` of `(Cann. 35 - 93)` is
+  not — so with the strip applied afterwards, every heading carrying a range
+  failed the test and came through shouting while its neighbours were cased.
+  One breadcrumb showed `General Norms` and `SINGULAR ADMINISTRATIVE ACTS`
+  side by side. The four display surfaces take the pair from that one function
+  now, and `route-titles.mjs` takes a `clean` argument rather than a pass
+  afterwards, because a `<title>` written the other way round is a visible
+  rearrangement at hydration.
+- **The chrome abbreviates a division's label; the running text prints it
+  whole.** `canonLawLabelText` shortens the NOUN and keeps the source's own
+  numeral — `CHAPTER I` → `CHAP. I` — which is what `marker()`'s short form
+  cannot do here: that form renumbers from tree position, and the Code
+  restarts `TITLE I` inside every book and part, so four different places
+  would read `Tit. 1`. It is keyed by the printed noun rather than by kind,
+  because the outline carries none (`buildDocumentOutline` stamps every node
+  `sub`), which also makes French degrade correctly — `PREMIÈRE PARTIE` puts
+  its ordinal first, matches nothing, and prints verbatim. Book and part are
+  deliberately outside the table: twenty rows per edition, at the top of the
+  tree, where the index gives the label a line of its own.
+- **The breadcrumb is a flex row, and that block is global.** A crumb wraps as
+  a UNIT — in inline flow the trail is one paragraph and the line breaks at
+  whatever space it reaches, so `BOOK I` was stranded on a line above its own
+  name with the previous crumb's `›` dangling over it. It matters most here
+  (six levels where every other work has one or two) and is right everywhere,
+  which is why it went into `reading-chrome.css` beside the rest of
+  `.breadcrumb` rather than into this route.
 - **`superseded` renders on the canon page and not on the reading page.** It
   is apparatus about one canon — the wording a later act replaced — and the
   canon page is where a reader arrives holding that canon's number. Behind a

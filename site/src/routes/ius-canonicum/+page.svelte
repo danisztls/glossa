@@ -20,8 +20,7 @@
 	import StructureIndex from '$lib/components/StructureIndex.svelte';
 	import { DOCUMENT_OUTLINE_KINDS, workLink } from '$lib/components/indexToc';
 	import { content } from '$lib/content.svelte';
-	import { canonLawHeadingHref, canonLawTitleText } from '$lib/canonLawNav';
-	import { documentHeadingParts } from '$lib/titles';
+	import { canonLawHeadingHref, canonLawHeadingParts, canonLawLabelText } from '$lib/canonLawNav';
 	import { t } from '$lib/i18n.svelte';
 	import type { StructureNode } from '$lib/types';
 
@@ -62,12 +61,19 @@
 	 * Every division of the Code carries a `label` — that is what makes it a
 	 * division here at all (`cic.py`'s `split_label`) — so unlike the
 	 * Compendium of the Social Doctrine there is no second shape to fall back
-	 * to. `documentHeadingParts` still runs, for the handful of titles that
+	 * to. `canonLawHeadingParts` still runs, for the handful of titles that
 	 * open with a list marker of their own.
+	 *
+	 * The label is ABBREVIATED, not renumbered: `canonLawLabelText` shortens
+	 * the noun and keeps the source's own numeral, which is the one thing
+	 * `marker()`'s short form cannot do here (its docblock).
 	 */
-	const heading = (node: StructureNode, at: string) => {
-		const parts = documentHeadingParts(node.title, at);
-		return { marker: node.label ?? parts.ordinal, title: canonLawTitleText(parts.title) };
+	const heading = (node: StructureNode, rowLang: string) => {
+		const parts = canonLawHeadingParts(node.title, rowLang);
+		return {
+			marker: node.label ? canonLawLabelText(node.label, rowLang) : parts.ordinal,
+			title: parts.title
+		};
 	};
 
 	const workColumns = $derived([{ label: t('nav.canonLaw'), icon: Scale }]);

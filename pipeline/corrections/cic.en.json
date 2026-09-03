@@ -1,0 +1,12 @@
+[
+  {
+    "id": "cic.en-book1-latin-title-run-in",
+    "locator": { "page": "cic_lib1-cann1-6_en.html", "division": "BOOK I" },
+    "field": "raw_text",
+    "from": "<b>GENERAL NORMS LIBER I. DE NORMIS GENERALIBUS</b>",
+    "to": "<b>GENERAL NORMS</b>",
+    "reason": "On the one page where Book I actually opens, the EN edition prints the Latin edition's own book title run into the English one inside a single <b> -- 'GENERAL NORMS LIBER I. DE NORMIS GENERALIBUS' -- with no separator of any kind between them. There is no markup to read, so no parser can divide them; the whole string becomes the book's title and stands at the head of every breadcrumb in Book I. The Latin half is not a translation the EN edition offers (it offers none anywhere else, in any book), it is the Latin edition's heading left in.",
+    "evidence": "raw/cic/en/cic_lib1-cann1-6_en.html: '<p align=\"center\"><font color=\"#663300\"><b>BOOK I.</b></font></p> <p align=\"center\"><font color=\"#663300\"><b>GENERAL NORMS LIBER I. DE NORMIS GENERALIBUS</b></font></p>'. The same edition prints the title as 'BOOK I. GENERAL NORMS' on the breadcrumb line of twelve other pages of Book I (cic_lib1-cann7-22_en.html, ...cann23-28, ...cann29-34, ...cann94-95, ...cann96-123, ...cann124-128, ...cann129-144, ...cann145-196, ...cann197-199, ...cann200-203, among others) -- so the correct reading is witnessed repeatedly inside this edition and nothing is imported from another. Compare cic_lib4-cann834-848_en.html, where the same two lines are printed as SEPARATE paragraphs ('FUNCTION OF THE CHURCH' then 'LIBER IV. DE ECCLESIAE MUNERE SANCTIFICANDI'), which is what makes the Book I paragraph a transcription slip rather than the edition's convention.",
+    "added": "2026-09-03"
+  }
+]

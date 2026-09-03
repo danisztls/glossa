@@ -160,18 +160,25 @@ function documentSpans(nodes, last, lang) {
  * prints on its own page, which opens at the same paragraph and outruns the
  * chapter by three chapters.
  *
+ * `clean` runs on the stored title BEFORE it is displayed, which is the only
+ * order that works for a caller that has something to remove: `displayTitle`
+ * rewrites a heading's case only when it is ALL-CAPS, and the Code's printed
+ * `(Cann. 35 - 93)` is not — so stripping afterwards leaves the name shouting
+ * while its neighbours are cased. See `canonLawHeadingParts`.
+ *
  * @param {{ level: number, title: string, before: number | null, label?: string }[]} nodes
  * @param {readonly number[]} starts
  * @param {string} lang
+ * @param {(title: string) => string} [clean]
  */
-function documentChapterNames(nodes, starts, lang) {
+function documentChapterNames(nodes, starts, lang, clean) {
 	/** @type {Record<string, string>} */
 	const names = {};
 	for (const start of starts) {
 		const here = nodes.filter((node) => node.before === start);
 		const node = here.find((candidate) => candidate.label) ?? here[0];
 		if (!node) continue;
-		const { title } = displayDocumentTitle(node.title, lang);
+		const { title } = displayDocumentTitle(clean ? clean(node.title) : node.title, lang);
 		if (title) names[start] = title;
 	}
 	return names;
@@ -228,15 +235,14 @@ export function buildRouteTitles({
 		// the seven editions print it, the line below the title states it
 		// again, and a `<title>` is the one place there is no room for it
 		// twice. Kept in step with that function by hand — this file runs
-		// under plain node and cannot import it.
+		// under plain node and cannot import it — INCLUDING the order, which
+		// is why it is a `clean` argument and no longer a pass afterwards.
 		canonLawTitleNames: cic
-			? Object.fromEntries(
-					Object.entries(
-						documentChapterNames(cic.structure, canonLawUnitStarts ?? [], cic.lang)
-					).map(([n, name]) => [
-						n,
-						name.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || name
-					])
+			? documentChapterNames(
+					cic.structure,
+					canonLawUnitStarts ?? [],
+					cic.lang,
+					(title) => title.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || title
 				)
 			: {},
 		documents: documentNames(manifests),

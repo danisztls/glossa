@@ -33,8 +33,14 @@
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { canonLawHeadingHref, canonLawTitleText, canonLawTrail } from '$lib/canonLawNav';
-	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
+	import {
+		canonLawHeadingHref,
+		canonLawHeadingParts,
+		canonLawLabelText,
+		canonLawTitleText,
+		canonLawTrail
+	} from '$lib/canonLawNav';
+	import { displayDocumentTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection } from '$lib/types';
 	import type { PageData } from './$types';
@@ -80,7 +86,7 @@
 	 *  a visible rearrangement on every load. */
 	function headingSuffix(): string {
 		const title =
-			division && canonLawTitleText(displayDocumentTitle(division.node.title, editions.lang).title);
+			division && displayDocumentTitle(canonLawTitleText(division.node.title), editions.lang).title;
 		return title ? ` · ${title}` : '';
 	}
 </script>
@@ -110,6 +116,8 @@
 			heading={t('document.tableOfContents')}
 			routeHref={(n) => canonLawHeadingHref(editions.lang, n)}
 			deriveMarkers={false}
+			markerText={(label) => canonLawLabelText(label, editions.lang)}
+			titleText={canonLawTitleText}
 		/>
 	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
@@ -118,22 +126,26 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/ius-canonicum">{t('nav.canonLaw')}</a>
 					{#each trail as crumb (crumb.node.anchor ?? crumb.node.title)}
-						{@const dt = documentHeadingParts(crumb.node.title, editions.lang)}
+						{@const dt = canonLawHeadingParts(crumb.node.title, editions.lang)}
 						{@const at = crumb.node.paragraphs[0]}
 						<span class="sep">›</span>
-						<!-- THE LABEL VERBATIM, for `socialDoctrineNav`'s reason and a
-						     sharper one: `marker()`'s short form numbers a row by its
-						     position among its TREE siblings, and the Code restarts
-						     `TITLE I` inside every book and part. Four different places
-						     would read `Tit. 1`. -->
+						<!-- THE SOURCE'S OWN NUMERAL, and only the noun shortened.
+						     `marker()`'s short form is not available here for
+						     `socialDoctrineNav`'s reason and a sharper one: it numbers a
+						     row by its position among its TREE siblings, and the Code
+						     restarts `TITLE I` inside every book and part, so four
+						     different places would read `Tit. 1`. `canonLawLabelText`
+						     touches nothing a citation is made of, and this is the
+						     deepest trail on the site — six crumbs spelling out
+						     `CHAPTER` is what it saves. -->
 						<a
 							href={Number.isFinite(at)
 								? canonLawHeadingHref(editions.lang, at as number)
 								: undefined}
 						>
-							{#if crumb.node.label}<span class="ordinal label-micro">{crumb.node.label}</span
-								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span
-								>{/if}{canonLawTitleText(dt.title)}
+							{#if crumb.node.label}<span class="ordinal label-micro"
+									>{canonLawLabelText(crumb.node.label, editions.lang)}</span
+								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}{dt.title}
 						</a>
 					{/each}
 				</nav>
@@ -222,10 +234,9 @@
 						<span class="label">{t('canonLaw.readFullTitle')}</span>
 						<span class="chapter-name">
 							{#if division.node.label}<span class="chapter-label label-micro"
-									>{division.node.label}</span
-								>{/if}{canonLawTitleText(
-								displayDocumentTitle(division.node.title, editions.lang).title
-							)}
+									>{canonLawLabelText(division.node.label, editions.lang)}</span
+								>{/if}{displayDocumentTitle(canonLawTitleText(division.node.title), editions.lang)
+								.title}
 						</span>
 						<span class="chapter-range">{division.from}–{division.to}</span>
 					</a>

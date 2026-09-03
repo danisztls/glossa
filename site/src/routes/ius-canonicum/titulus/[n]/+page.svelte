@@ -35,8 +35,14 @@
 	import { setPosition } from '$lib/reading-position';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { canonLawHeadingHref, canonLawTitleText, canonLawTrail } from '$lib/canonLawNav';
-	import { displayDocumentTitle, documentHeadingParts } from '$lib/titles';
+	import {
+		canonLawHeadingHref,
+		canonLawHeadingParts,
+		canonLawLabelText,
+		canonLawTitleText,
+		canonLawTrail
+	} from '$lib/canonLawNav';
+	import { displayDocumentTitle } from '$lib/titles';
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
@@ -57,7 +63,7 @@
 
 	const heading = $derived(
 		division
-			? canonLawTitleText(displayDocumentTitle(division.node.title, editions.lang).title)
+			? displayDocumentTitle(canonLawTitleText(division.node.title), editions.lang).title
 			: ''
 	);
 
@@ -155,6 +161,8 @@
 			heading={t('document.tableOfContents')}
 			routeHref={(n) => canonLawHeadingHref(editions.lang, n)}
 			deriveMarkers={false}
+			markerText={(label) => canonLawLabelText(label, editions.lang)}
+			titleText={canonLawTitleText}
 		/>
 	{/snippet}
 	<div class="reading-layout" class:compare={editions.compareActive}>
@@ -163,13 +171,15 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
 					<a href="/ius-canonicum">{t('nav.canonLaw')}</a>
 					{#each trail as crumb, i (crumb.node.anchor ?? crumb.node.title)}
-						{@const dt = documentHeadingParts(crumb.node.title, editions.lang)}
+						{@const dt = canonLawHeadingParts(crumb.node.title, editions.lang)}
 						{@const at = crumb.node.paragraphs[0]}
 						{@const last = i === trail.length - 1}
-						<!-- THE LABEL VERBATIM: `marker()`'s short form numbers a row by
-						     its position among its TREE siblings, and the Code restarts
-						     `TITLE I` inside every book and part, so four different
-						     places would read `Tit. 1`. -->
+						<!-- THE SOURCE'S OWN NUMERAL, and only the noun shortened.
+						     `marker()`'s short form numbers a row by its position among
+						     its TREE siblings, and the Code restarts `TITLE I` inside
+						     every book and part, so four different places would read
+						     `Tit. 1`; `canonLawLabelText` touches nothing a citation is
+						     made of. -->
 						<span class="sep">›</span>
 						<a
 							href={last || !Number.isFinite(at)
@@ -177,9 +187,9 @@
 								: canonLawHeadingHref(editions.lang, at as number)}
 							aria-current={last ? 'page' : undefined}
 						>
-							{#if crumb.node.label}<span class="ordinal label-micro">{crumb.node.label}</span
-								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span
-								>{/if}{canonLawTitleText(dt.title)}
+							{#if crumb.node.label}<span class="ordinal label-micro"
+									>{canonLawLabelText(crumb.node.label, editions.lang)}</span
+								>{:else if dt.ordinal}<span class="ordinal">{dt.ordinal}</span>{/if}{dt.title}
 						</a>
 					{/each}
 				</nav>
@@ -200,10 +210,10 @@
 
 			{#if editions.compareActive && editions.secondary}
 				{@const secondaryTitle = division
-					? canonLawTitleText(
-							displayDocumentTitle(division.node.title, editions.secondaryLang ?? editions.lang)
-								.title
-						)
+					? displayDocumentTitle(
+							canonLawTitleText(division.node.title),
+							editions.secondaryLang ?? editions.lang
+						).title
 					: ''}
 				<!-- The division's TITLE is translated and so always splits; the
 				     RANGE below it is a pair of canon numbers, which these seven
@@ -262,10 +272,16 @@
 				<div class="reading-text chapter-body" lang={editions.current.work.language}>
 					{#each editions.current.canons as canon, i (canon.n)}
 						{#each innerHeadings.get(canon.n) ?? [] as row, h (row.node.anchor ?? row.node.title)}
-							{@const dt = documentHeadingParts(row.node.title, editions.lang)}
+							{@const dt = canonLawHeadingParts(row.node.title, editions.lang)}
 							<!-- `id` on the first heading of a run only: they share a
 							     canon, so they would share an anchor, and it is the
-							     outermost one anything addresses. -->
+							     outermost one anything addresses.
+
+							     THE LABEL IS PRINTED WHOLE HERE, where the breadcrumb and
+							     the index abbreviate it: this is a heading in the running
+							     text, set at the width of the text, and `CHAPTER I` is
+							     what the source put over these canons. Shortening is for
+							     the chrome, which has a column to fit. -->
 							<svelte:element
 								this={`h${row.level}`}
 								class={`inner-heading level-${row.level}`}
