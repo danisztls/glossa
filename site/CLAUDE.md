@@ -842,7 +842,7 @@ second chunk stride. What is new is only what a reading page IS.
   numeral — `CHAPTER I` → `CH. I` — which is what `marker()`'s short form
   cannot do here: that form renumbers from tree position, and the Code
   restarts `TITLE I` inside every book and part, so four different places
-  would read `Tit. 1`. It is keyed by the printed noun rather than by kind,
+  would read `Title 1`. It is keyed by the printed noun rather than by kind,
   because the outline carries none (`buildDocumentOutline` stamps every node
   `sub`), which also makes French degrade correctly — `PREMIÈRE PARTIE` puts
   its ordinal first, matches nothing, and prints verbatim.
@@ -852,15 +852,22 @@ second chunk stride. What is new is only what a reading page IS.
   the site: a reader meeting `Ch. 3` on one page and `Chap. III` on the next is
   unrepresentable rather than merely tested against. Getting there took three
   small extensions, each measured:
-  - **`CccNodeKind` gained `'title'`** (types.ts). No corpus node carries it —
-    a document-shaped outline stamps everything `sub` — and that is not a
-    contradiction: the member exists so the two shared tables can key a column
-    on it. It is a name in a vocabulary, not a claim about a tree. Widening the
+  - **`CccNodeKind` gained `'title'`** (types.ts). Nothing reads it off a file:
+    `cic.py` writes the word into its own flat `structure.json` rows, but a
+    document-shaped outline stamps every derived node `sub`, so no
+    `StructureNode` ever carries it. That is not a contradiction — the member
+    exists so the two shared tables can key a column on it. It is a name in a
+    vocabulary, not a claim about a tree. Widening the
     union is safe because every consumer is a `Partial<Record<…>>` or a `Set`;
     the one place it did bite is `StructureIndex`'s `IndexRank`, whose default
     `rank` now maps `title` beside `in-brief` as a fallback that cannot fire.
   - **`KIND_LABELS` gained a `title` column for seven languages, and `ru` gained
-    `article`.** A row is as complete as the works in that language require —
+    `article`.** The title word is SPELLED OUT in all seven (`Title`,
+    `Titulus`, `Título`…): it shipped as `Tit.` for a day on the density
+    argument that earns `Ch.` and `Art.` their full stops, and that argument
+    does not reach a word an abbreviation shortens by one letter. An
+    abbreviation has to save something. A row is as complete as the works in
+    that language require —
     naming a division in a language no work here divides that way is inventing
     vocabulary nobody can check — so the gaps say which works exist, not which
     words do.
@@ -878,12 +885,16 @@ second chunk stride. What is new is only what a reading page IS.
   They stay in `CANON_LAW_EXTRA_NOUNS`, beside the Cyrillic ones, which
   `documentLabelKind` cannot reach at all (its fold is `[A-Z]+` — a general
   limit of that function across all four kinds, not a gap in this one).
-- **Book, part and section are outside what it shortens, on the shared table's
-  own judgement** — `KIND_LABELS` abbreviates `title`, `chapter` and `article`
-  and spells the other two out — and section doubly so, since the Code's German
-  prints `SEKTION` where `KIND_LABELS.de.section` says `Abschnitt`: a different
-  word, not a shorter one. `book` is absent from the kind union entirely and so
-  degrades with no entry needed.
+- **Book, part and section are outside what it relabels, on the shared table's
+  own judgement** — `KIND_LABELS` holds a word for `title`, `chapter` and
+  `article` and spells the other two out — and section doubly so, since the
+  Code's German prints `SEKTION` where `KIND_LABELS.de.section` says
+  `Abschnitt`: a different word, not a shorter one. `book` is absent from the
+  kind union entirely and so degrades with no entry needed. For `title` the
+  substitution is not a shortening at all but a NORMALISATION, and it earns its
+  place there: the Spanish pages print `TITULO` and `CAPITULO` bare in places
+  and `TÍTULO`/`CAPÍTULO` in others, and every crumb comes out of the table
+  accented either way.
 - **The breadcrumb is a flex row, and that block is global.** A crumb wraps as
   a UNIT — in inline flow the trail is one paragraph and the line breaks at
   whatever space it reaches, so `BOOK I` was stranded on a line above its own
@@ -891,6 +902,16 @@ second chunk stride. What is new is only what a reading page IS.
   (six levels where every other work has one or two) and is right everywhere,
   which is why it went into `reading-chrome.css` beside the rest of
   `.breadcrumb` rather than into this route.
+- **`flex-wrap` alone did not deliver that, and the row looked WORSE than the
+  inline flow it replaced.** A flex item shrinks before the row wraps, so a
+  trail wider than the column was solved by squeezing every crumb and letting
+  each break inside itself — the same stack of fragments, now sorted into a
+  column of ordinals above a column of names, which is what the second
+  screenshot showed. `.breadcrumb > *` takes `flex: 0 0 auto` to refuse the
+  squeeze (the break goes between crumbs, where it belongs) plus
+  `max-width: 100%` for the one case the arrangement allows an internal break:
+  a single crumb wider than the whole column. **A wrapping rule is only as good
+  as the shrink rule beside it.**
 - **`superseded` renders on the canon page and not on the reading page.** It
   is apparatus about one canon — the wording a later act replaced — and the
   canon page is where a reader arrives holding that canon's number. Behind a

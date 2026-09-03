@@ -50,6 +50,16 @@
  * beside it (`.label-micro`), and `gap` replaces what `.sep`'s own margins
  * were doing — a margin inside a flex row would add to the gap rather than be
  * it. The row gap is `0`: the leading already separates wrapped lines.
+ *
+ * `flex-wrap` ALONE DID NOT DO IT, and the second rule is the half that
+ * matters. A flex item shrinks before the row wraps, so a trail wider than
+ * the column was solved by squeezing every crumb narrow enough to fit on one
+ * line and letting each wrap INTERNALLY — the exact stack of fragments the
+ * paragraph above says this arrangement rules out, only now aligned into two
+ * columns of ordinals and names. `flex: 0 0 auto` refuses the squeeze, so the
+ * overflow goes where it belongs: a break between two crumbs. `max-width`
+ * caps a crumb at the line, which is the one case the docblock allows it to
+ * break inside itself — a crumb that alone is wider than the column.
  */
 .breadcrumb {
 	display: flex;
@@ -59,6 +69,11 @@
 	font-size: 0.85rem;
 	color: var(--color-text-muted);
 	margin-bottom: 0.75rem;
+}
+
+.breadcrumb > * {
+	flex: 0 0 auto;
+	max-width: 100%;
 }
 
 .breadcrumb a {

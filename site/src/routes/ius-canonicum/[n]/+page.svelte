@@ -129,12 +129,12 @@
 						{@const dt = canonLawHeadingParts(crumb.node.title, editions.lang)}
 						{@const at = crumb.node.paragraphs[0]}
 						<span class="sep">›</span>
-						<!-- THE SOURCE'S OWN NUMERAL, and only the noun shortened.
+						<!-- THE SOURCE'S OWN NUMERAL, and only the noun rewritten.
 						     `marker()`'s short form is not available here for
 						     `socialDoctrineNav`'s reason and a sharper one: it numbers a
 						     row by its position among its TREE siblings, and the Code
 						     restarts `TITLE I` inside every book and part, so four
-						     different places would read `Tit. 1`. `canonLawLabelText`
+						     different places would read `Title 1`. `canonLawLabelText`
 						     touches nothing a citation is made of, and this is the
 						     deepest trail on the site — six crumbs spelling out
 						     `CHAPTER` is what it saves. -->

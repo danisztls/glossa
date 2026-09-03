@@ -289,14 +289,18 @@ The CCC hierarchy as a tree. Nodes:
 
 **`site/src/lib/types.ts` carries one `kind` this list does not, and the
 difference is deliberate.** `CccNodeKind` there also has `'title'` — the Code
-of Canon Law's division — and **no corpus file ever emits it**: a
-document-shaped outline stamps every node `sub`, so the Code's titles reach the
-site as `sub` nodes whose printed `label` says what they are. The member exists
+of Canon Law's division — and **nothing ever reads it off a file**. The Code
+does write `"kind": "title"` into its own `structure.json` (§The Code of Canon
+Law below; it is the one work whose nodes carry the word the edition printed),
+but that is a `DocumentNode.kind`, a free string on a flat array, and the tree
+this list describes is not built from it: `buildDocumentOutline` stamps every
+derived node `sub`, so the Code's titles reach the site's `StructureNode` as
+`sub` nodes whose printed `label` says what they are. The union member exists
 so the site's two shared label tables (`KIND_LABELS`, `LABEL_KIND_WORDS`) can
 key a column on it instead of the Code keeping a private copy of both. It is a
-name in the site's vocabulary, not a value in this contract; a parser that
-wrote `"kind": "title"` into a `structure.json` would be writing something
-nothing here has agreed to read.
+name in the site's vocabulary, not a value a CCC-shaped `structure.json` may
+carry — which is the same separation `DocumentNode.kind` already documents from
+the other side.
 
 **A heading can carry citations** (added 2026-08-23), and `title`/`title_marked`/`citations` are the same triple a paragraph has, for the same reason: the source prints a `<sup>` reference inside the heading, and the footnote it points at is content that has to live somewhere. `title` is always the plain form with no `⟦⟧` tokens in it, so every consumer that only wants to print a heading can keep reading `title` alone; `title_marked` keeps each reference where the source set it, and is present **only** when there is at least one. `citations` uses the identical entry shape as `paragraphs.json` (`marker`, `text`, optional `label`), and the same invariants are validated: every token has an entry, every entry has a token, and no token survives in `title`.
 

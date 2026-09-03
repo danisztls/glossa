@@ -52,15 +52,28 @@ describe('canonLawHeadingParts', () => {
 describe('canonLawLabelText', () => {
 	it('shortens the noun and keeps the numeral the source printed', () => {
 		expect(canonLawLabelText('CHAPTER I', 'en')).toBe('CH. I');
-		expect(canonLawLabelText('TITLE IV', 'en')).toBe('TIT. IV');
 		expect(canonLawLabelText('CAPUT III', 'la')).toBe('CAP. III');
 		expect(canonLawLabelText('KAPITEL VIII', 'de')).toBe('KAP. VIII');
 		expect(canonLawLabelText('ГЛАВА II', 'ru')).toBe('ГЛ. II');
 	});
 
-	it('folds the accent an edition writes into its own noun', () => {
-		expect(canonLawLabelText('TÍTULO VII', 'es')).toBe('TÍT. VII');
+	// `title` goes through the same substitution and comes out the same length:
+	// its word in `KIND_LABELS` is the whole word, because "Title" -> "Tit."
+	// saves one character and costs the reader a certainty.
+	it('leaves the title noun at its full length', () => {
+		expect(canonLawLabelText('TITLE IV', 'en')).toBe('TITLE IV');
+		expect(canonLawLabelText('TITULUS I', 'la')).toBe('TITULUS I');
+		expect(canonLawLabelText('ТИТУЛ V', 'ru')).toBe('ТИТУЛ V');
+	});
+
+	// The Spanish pages print `CAPITULO`/`TITULO` bare in places and
+	// `CAPÍTULO`/`TÍTULO` in others; the noun is read through the fold and
+	// printed from the table, so every crumb is accented either way.
+	it('folds the accent an edition writes into its own noun, and restores it', () => {
+		expect(canonLawLabelText('TÍTULO VII', 'es')).toBe('TÍTULO VII');
+		expect(canonLawLabelText('TITULO VII', 'es')).toBe('TÍTULO VII');
 		expect(canonLawLabelText('CAPÍTULO II', 'es')).toBe('CAP. II');
+		expect(canonLawLabelText('CAPITULO II', 'es')).toBe('CAP. II');
 	});
 
 	it('takes the label’s own case register', () => {
@@ -106,7 +119,7 @@ describe('canonLawLabelText', () => {
 		['ru', 'Ст. 1', 'article']
 	];
 
-	it.each(PRINTED)("abbreviates %s %s with the site's own word for a %s", (lang, label, kind) => {
+	it.each(PRINTED)("labels %s %s with the site's own word for a %s", (lang, label, kind) => {
 		const shared = kindLabelWord(kind, lang);
 		expect(shared, `KIND_LABELS has no ${kind} for ${lang}`).not.toBeNull();
 		const [noun, ...rest] = canonLawLabelText(label, lang).split(' ');
@@ -116,14 +129,14 @@ describe('canonLawLabelText', () => {
 		expect(rest.join(' ')).toBe(label.split(' ').slice(1).join(' '));
 	});
 
-	// A separate assertion because the article rows above cannot make it: every
-	// edition already prints `Art.`/`Ст.`, so for those the function is a no-op
-	// and "the label got shorter" is false while everything about the row is
-	// right.
+	// A separate assertion because the article and title rows above cannot make
+	// it: every edition already prints `Art.`/`Ст.`, and the title word is not
+	// abbreviated at all, so for those the function is a no-op and "the label
+	// got shorter" is false while everything about the row is right.
 	it('actually shortens the nouns the editions spell out', () => {
 		const SPELLED_OUT: [string, string][] = [
 			['en', 'CHAPTER I'],
-			['la', 'TITULUS I'],
+			['la', 'CAPUT III'],
 			['it', 'CAPITOLO IX'],
 			['es', 'CAPÍTULO II'],
 			['fr', 'CHAPITRE X'],

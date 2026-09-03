@@ -772,9 +772,15 @@ export function inlineTitleNodes(
  * chapters and 67 articles in the CCC, and "Chapter"/"Article" repeated at
  * that density is more column than information), spelled out for the two
  * shallow ones (4 parts, 8 sections — they head the page and can afford it).
- * `title` joins the deep side and for a sharper version of the same reason:
- * the Code of Canon Law has 77 of them and they are not the bottom of its
- * tree.
+ *
+ * `title` IS SPELLED OUT DESPITE BEING DEEP, because the test is what an
+ * abbreviation SAVES and not where the kind sits: "Title" -> "Tit." saves one
+ * character and costs the reader the certainty that the word ends there. It
+ * shipped abbreviated for a day on the density argument alone, which is the
+ * argument that does not apply — an abbreviation has to earn its full stop.
+ * The row is spelled out in all seven languages together, since a crumb that
+ * read `TIT. IV` in English and `TITULUS I` in Latin would be one vocabulary
+ * pretending to be two.
  *
  * A ROW IS AS COMPLETE AS THE WORKS IN THAT LANGUAGE REQUIRE, which is why
  * `title` is filled in for seven languages and `article` for eleven rather
@@ -797,21 +803,21 @@ export function inlineTitleNodes(
  *    Catechism stopped being en/pt.
  */
 const KIND_LABELS: Record<Lang, Partial<Record<StructureNode['kind'], string>>> = {
-	en: { part: 'Part', section: 'Section', title: 'Tit.', chapter: 'Ch.', article: 'Art.' },
+	en: { part: 'Part', section: 'Section', title: 'Title', chapter: 'Ch.', article: 'Art.' },
 	pt: { part: 'Parte', section: 'Secção', chapter: 'Cap.', article: 'Art.' },
 	be: { part: 'Частка', section: 'Раздзел', chapter: 'Гл.' },
-	de: { part: 'Teil', section: 'Abschnitt', title: 'Tit.', chapter: 'Kap.', article: 'Art.' },
-	es: { part: 'Parte', section: 'Sección', title: 'Tít.', chapter: 'Cap.', article: 'Art.' },
-	fr: { part: 'Partie', section: 'Section', title: 'Tit.', chapter: 'Ch.', article: 'Art.' },
+	de: { part: 'Teil', section: 'Abschnitt', title: 'Titel', chapter: 'Kap.', article: 'Art.' },
+	es: { part: 'Parte', section: 'Sección', title: 'Título', chapter: 'Cap.', article: 'Art.' },
+	fr: { part: 'Partie', section: 'Section', title: 'Titre', chapter: 'Ch.', article: 'Art.' },
 	hu: { part: 'rész', section: 'szakasz', chapter: 'fejezet' },
 	id: { part: 'Bagian', section: 'Seksi', chapter: 'Bab' },
-	it: { part: 'Parte', section: 'Sezione', title: 'Tit.', chapter: 'Cap.', article: 'Art.' },
-	la: { part: 'Pars', section: 'Sectio', title: 'Tit.', chapter: 'Cap.', article: 'Art.' },
+	it: { part: 'Parte', section: 'Sezione', title: 'Titolo', chapter: 'Cap.', article: 'Art.' },
+	la: { part: 'Pars', section: 'Sectio', title: 'Titulus', chapter: 'Cap.', article: 'Art.' },
 	lt: { part: 'dalis', section: 'skyrius', chapter: 'poskyris' },
 	mg: { part: 'Fizarana', section: 'Sampana', chapter: 'Toko', article: 'And.' },
 	pl: { part: 'Część', section: 'Sekcja', chapter: 'Rozdz.' },
 	ro: { part: 'Partea', section: 'Secțiunea', chapter: 'Cap.' },
-	ru: { part: 'Часть', section: 'Раздел', title: 'Тит.', chapter: 'Гл.', article: 'Ст.' },
+	ru: { part: 'Часть', section: 'Раздел', title: 'Титул', chapter: 'Гл.', article: 'Ст.' },
 	sl: { part: 'Del', section: 'Oddelek', chapter: 'Pogl.' },
 	sv: { part: 'Del', section: 'Avdelning', chapter: 'Kap.' }
 };

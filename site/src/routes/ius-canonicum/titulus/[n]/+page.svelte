@@ -174,11 +174,11 @@
 						{@const dt = canonLawHeadingParts(crumb.node.title, editions.lang)}
 						{@const at = crumb.node.paragraphs[0]}
 						{@const last = i === trail.length - 1}
-						<!-- THE SOURCE'S OWN NUMERAL, and only the noun shortened.
+						<!-- THE SOURCE'S OWN NUMERAL, and only the noun rewritten.
 						     `marker()`'s short form numbers a row by its position among
 						     its TREE siblings, and the Code restarts `TITLE I` inside
 						     every book and part, so four different places would read
-						     `Tit. 1`; `canonLawLabelText` touches nothing a citation is
+						     `Title 1`; `canonLawLabelText` touches nothing a citation is
 						     made of. -->
 						<span class="sep">›</span>
 						<a

@@ -166,11 +166,18 @@ const CANON_LAW_EXTRA_NOUNS: Partial<Record<string, StructureNode['kind']>> = {
 };
 
 /**
- * The kinds this shortens, which is the shared table's own judgement and not
- * a second one: `KIND_LABELS` abbreviates `title`, `chapter` and `article`
- * and spells `part` and `section` out, on the reasoning in its docblock —
- * the deep kinds repeat at a density where the word is more column than
- * information, the shallow ones head a page and can afford it.
+ * The kinds whose printed noun the chrome REPLACES with the shared table's
+ * word. Which kinds those are is `KIND_LABELS`' own judgement and not a
+ * second one: it holds a word for these three and spells `part` and `section`
+ * out on the reasoning in its docblock.
+ *
+ * REPLACING IS NOT ALWAYS SHORTENING, and `title` is the case. Its word is
+ * the whole word (`Title`, `Titulus` — see that docblock for why), so the
+ * substitution changes nothing in most editions and NORMALISES in the one
+ * that needs it: the Spanish pages print `TITULO` and `CAPITULO` bare in
+ * places and `TÍTULO`/`CAPÍTULO` in others, and every crumb comes out of the
+ * table accented either way. `chapter` and `article` are the two that
+ * genuinely shorten.
  *
  * `book` is absent from the union entirely, so it degrades here with no entry
  * needed. Section is the one place the Code and the shared table would have
@@ -178,7 +185,7 @@ const CANON_LAW_EXTRA_NOUNS: Partial<Record<string, StructureNode['kind']>> = {
  * `SEKTION` and `KIND_LABELS.de.section` is `Abschnitt` — and excluding the
  * kind settles that too.
  */
-const CANON_LAW_SHORTENED = new Set<StructureNode['kind']>(['title', 'chapter', 'article']);
+const CANON_LAW_RELABELLED = new Set<StructureNode['kind']>(['title', 'chapter', 'article']);
 
 /** Accents off, upper-cased — `documentLabelKind`'s own fold, repeated for
  *  the entries above that it cannot reach. Cyrillic carries no combining
@@ -195,17 +202,18 @@ function isShouted(text: string): boolean {
 }
 
 /**
- * A printed division label with its noun abbreviated — `CHAPTER I` ->
- * `CH. I`, `Art. 1` unchanged, `PREMIÈRE PARTIE` unchanged.
+ * A printed division label with its noun taken from the site's own table —
+ * `CHAPTER I` -> `CH. I`, `TITLE IV` unchanged, `Art. 1` unchanged,
+ * `PREMIÈRE PARTIE` unchanged.
  *
  * THE SOURCE'S OWN NUMERAL IS KEPT, and that is the whole difference from
  * `marker()` (structureToc.ts), whose short form is unusable here for the
  * reason `/doctrina-socialis`'s breadcrumb records and a sharper one: it
  * numbers a row by its position among its TREE siblings, and the Code
  * restarts `TITLE I` inside every book and part. Four different places would
- * read `Tit. 1`. Shortening the NOUN touches nothing a citation is made of.
+ * read `Title 1`. Rewriting the NOUN touches nothing a citation is made of.
  *
- * The abbreviation takes the label's own case register, so an edition that
+ * The word takes the label's own case register, so an edition that
  * shouts its headings goes on shouting: capitalising the shared table's
  * values would be a second copy of a fact that belongs to the edition, and
  * the index sets some of these rows through `text-transform: uppercase` and
@@ -215,7 +223,7 @@ export function canonLawLabelText(label: string, lang: string): string {
 	const m = /^(\p{L}+)\.?(\s*)(\S.*)?$/u.exec(label.trim());
 	if (!m || !m[3]) return label;
 	const kind = documentLabelKind(m[1]) ?? CANON_LAW_EXTRA_NOUNS[foldNoun(m[1])];
-	if (!kind || !CANON_LAW_SHORTENED.has(kind)) return label;
+	if (!kind || !CANON_LAW_RELABELLED.has(kind)) return label;
 	const short = kindLabelWord(kind, lang);
 	if (!short) return label;
 	return `${isShouted(m[1]) ? short.toLocaleUpperCase() : short} ${m[3]}`;
