@@ -62,14 +62,14 @@ stored — see "Cross-references" below.
 
 ## Work IDs
 
-`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism; `compendium.{lang}` for the Compendium; `csdc.{lang}` for the Compendium of the Social Doctrine of the Church (one work, no edition axis — see its own section below for why it is not a `document`); `prayer.{slug}.{lang}` for prayer collections (currently one: `prayer.common.{lang}`, combining the Compendium's Appendix A, three already-cached CCC texts, and the Litany of Loreto — see "Prayers" below; `{slug}` leaves room for a later, larger collection to ship as its own work rather than growing `common` without bound); `{family}.{slug}.{lang}` for documents (encyclicals, conciliar texts, curial documents) — e.g. `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`; `commentary.{slug}.{lang}` for a commentary on another work (`commentary.haydock.en` — see "Commentary" below).
+`{corpus}.{edition}.{lang}` for Bibles (`bible.cpdv.en`, `bible.matos-soares.pt`); `ccc.{lang}` for the Catechism; `compendium.{lang}` for the Compendium; `csdc.{lang}` for the Compendium of the Social Doctrine of the Church (one work, no edition axis — see its own section below for why it is not a `document`); `cic.{lang}` for the Code of Canon Law (same shape and the same reason); `prayer.{slug}.{lang}` for prayer collections (currently one: `prayer.common.{lang}`, combining the Compendium's Appendix A, three already-cached CCC texts, and the Litany of Loreto — see "Prayers" below; `{slug}` leaves room for a later, larger collection to ship as its own work rather than growing `common` without bound); `{family}.{slug}.{lang}` for documents (encyclicals, conciliar texts, curial documents) — e.g. `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `cdf.dominus-iesus.en`; `commentary.{slug}.{lang}` for a commentary on another work (`commentary.haydock.en` — see "Commentary" below).
 
 ## manifest.json (all works)
 
 ```jsonc
 {
   "id": "bible.cpdv.en",
-  "type": "bible", // "bible" | "bible-intro" | "catechism" | "compendium" | "prayer" | "summa" | "document" | "social-doctrine" | "commentary" | "plates"
+  "type": "bible", // "bible" | "bible-intro" | "catechism" | "compendium" | "prayer" | "summa" | "document" | "social-doctrine" | "canon-law" | "commentary" | "plates"
   "title": "Catholic Public Domain Version",
   "short_title": "CPDV",
   "language": "en", // BCP 47
@@ -460,6 +460,48 @@ Ingested 2026-09-02. 583 numbered paragraphs, 1,232 footnotes, two printed sigla
 Both are named in `csdc.WITHHELD` with the measurement that put them there, and the five PDF-only editions (`be`, `el`, `lv`, `uk`, `zh`) are recorded in every manifest's `translations` as `pdf-only`, so an absent language column is never bare absence.
 
 **Nine markers in three editions resolve to no note, and eight paragraphs in three editions have no address.** Both are tabled in `csdc.py` (`KNOWN_DANGLING`, `KNOWN_GAPS`) with the reason read off the page, and anything not in those tables fails the run. The gaps are all one source defect — the edition never closes the previous paragraph, so two numbered paragraphs share one `<p>`, and the second one's TEXT is stored under the first one's number rather than lost. Hungarian's five "dangling" markers are not dangling at all: that edition prints its real markers as bare digits glued to the preceding word, which nothing can read safely, and the five the parser does find are a quotation's own enumerated conditions.
+
+## Code of Canon Law — `cic.{lang}`
+
+Ingested 2026-09-03. 1,752 canons in the **seven languages vatican.va publishes the Code in as HTML** — `de`, `en`, `es`, `fr`, `it`, `la`, `ru`. Manifest `type: "canon-law"`, `document_kind: "code-of-canon-law"`, `pontiff_or_council: "John Paul II"`, `promulgated: "1983-01-25"`.
+
+**Its content files are a DOCUMENT's and its addresses are the Catechism's**, which is `csdc.{lang}`'s arrangement exactly and for the same reason: "CIC can. 748 §2" names a canon the way "CCC 1731" names a paragraph. So the work carries `structure.json` (the flat `{level, title, before}` array) and `sections.json` (`{n, blocks:[{html}], citations}`) in the document shapes, and each of its 1,752 canons is an address of its own. A canon's `blocks` are the paragraphs the source prints inside it — its `§§`, and the enumerated items inside those — in source order.
+
+**`citations` is `[]` in every unit of every edition, and is written all the same.** The Code prints no footnote apparatus anywhere: not one marker in seven editions. The field is an empty fact about this work rather than a missing one, and a consumer that reads a document's units should not have to branch on this one.
+
+**`superseded` is a section-level field, and only this work has one.** Three editions print, after the text in force, the wording a later act replaced — under a bracketed line naming the act (`[Litterae Apostolicae Motu Proprio Datae "Authenticum charismatis" quibus can. 579 … mutatur]`, `[Earlier version]`, `[Redacción original del canon modificado por …]`) — and mark the amended canon in the body with a superscript `n`. It is an array of `{ title, blocks }`, the same block shape as `blocks`:
+
+```jsonc
+{
+  "n": 579,
+  "blocks": [
+    {
+      "html": "Episcopi dioecesani, in suo quisque territorio, instituta vitae consecratae formali decreto valide erigere possunt, praevia licentia Sedis Apostolicae scripto data.",
+    },
+  ],
+  "citations": [],
+  "superseded": [
+    {
+      "title": "[Litterae Apostolicae Motu Proprio Datae \"Authenticum charismatis\" quibus can. 579 Codicis Iuris Canonici mutatur, die I mensis Novembris, anno Domini MMXX]",
+      "blocks": [
+        {
+          "html": "Episcopi dioecesani, in suo quisque territorio, instituta vitae consecrate formali decreto erigere possunt, dummodo Sedes Apostolica consulta fuerit.]",
+        },
+      ],
+    },
+  ],
+}
+```
+
+**It rides on the canon rather than in the numbered flow because it is not an address.** A reader who asks for canon 579 is owed the law in force; the wording _Authenticum charismatis_ replaced is what that canon used to say, and it belongs beside the canon, never instead of it. The edition's own legend for the mark goes to `manifest.notes`, once — the source reprints it on every page that carries an amendment, and eleven copies of one sentence is not front matter.
+
+**Book VI is the text in force, not the 1983 one, and the manifest says so.** _Pascite Gregem Dei_ replaced canons 1311–1399 whole with effect from 8 December 2021, and these pages carry the replacement — English canon 1311 has the §2 on pastoral charity the revision introduced, canon 1398 is the new delict against the dignity of the person, and the 1983 canon on abortion has moved to 1397 §2. The `cic_lib6_*.pdf` beside each edition is the same revised book in another format. Every manifest records the range and the date, because a citation to a Book VI canon written before then may name a different provision.
+
+`appendix.json` carries the front matter where an edition prints any — the English edition's INTRODUCTION with its own sigla table, and the constitution _Sacrae disciplinae leges_. Written only where there is one; four editions print the Code and nothing else.
+
+**Two canons are absent, each from one edition, and both are the source's omission** (`cic.KNOWN_GAPS`): `cic.de` has no 1330 (its page for 1321–1330 prints 1321–1329 under a heading naming the full range) and `cic.es` no 1482 (its page runs 1481 straight into 1483). Neither is supplied from another edition — a defect with no known correct value in its own edition gets documented, not invented — and the site's content-language chain is what a reader falls through.
+
+The **Portuguese and Belarusian editions exist and are PDF-only**; both are fetched into `raw/` and parsed by nothing, and both are recorded in every manifest's `translations` as `pdf-only`. The Portuguese one is worth naming: the claim that no Portuguese edition exists on vatican.va is what kept this work out of scope until now, and it was never true.
 
 ## Summa Theologiae — `summa.{lang}`
 

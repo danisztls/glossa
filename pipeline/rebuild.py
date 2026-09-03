@@ -158,12 +158,17 @@ SCRAPERS = PIPELINE / "scrapers"
 # and for the same reason -- see CLAUDE.md, "The scrapers' layout".
 sys.path.insert(0, str(SCRAPERS))
 
+import cic as C  # noqa: E402
 import vatican_docs as V  # noqa: E402
 from common import binary_identity, build_root, corpus_dir, raw_root  # noqa: E402
 
 #: Every language `vatican_docs` has division labels for. Derived rather than
 #: listed; see PHASE 2'S LANGUAGES above.
 PHASE2_LANGS = ",".join(sorted(V.DIVISIONS))
+
+#: Every edition of the Code `cic.py` can read, from its own table and for
+#: PHASE2_LANGS' reason.
+CIC_LANGS = ",".join(sorted(C.EDITIONS))
 
 #: Beside the `build/` it describes rather than inside it, so that listing the
 #: corpus's works still lists only works. Deleting `build/` does not delete it,
@@ -318,6 +323,18 @@ STAGES: tuple[Stage, ...] = (
         "csdc.py",
         ("--langs", "all", "--offline"),
         ("csdc.*",),
+    ),
+    # The Code of Canon Law. `--offline` for the same reason both document
+    # phases carry it -- the recipe's zero-network promise is enforced rather
+    # than asserted -- and the language list is the scraper's own `EDITIONS`,
+    # derived here for the reason PHASE 2'S LANGUAGES sets out at length: a
+    # list typed into this file is a list that was correct when it was typed.
+    Stage(
+        "cic",
+        "documents",
+        "cic.py",
+        ("--languages", CIC_LANGS, "--offline"),
+        ("cic.*",),
     ),
     # `plates.json` alone is under a second; --derive is the image pipeline.
     Stage(

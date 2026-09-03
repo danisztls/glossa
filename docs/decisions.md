@@ -3202,8 +3202,14 @@ rather than a nullable slug, and a held siglum's link here always wins.
 to cite the publisher for the words; an external-link line pointing at vatican.va is that
 sentence made clickable.
 
-**Still not linked out, deliberately.** The Code of Canon Law (the citation carries a
-canon, which is a real locus, but the per-book URLs need a range table) and the papal minor
+**The Code of Canon Law is no longer one of these, and the reason is worth keeping.** It
+was listed here as a citation carrying a real locus whose per-book URLs needed a range
+table — an argument for linking OUT that was really an argument for not having ingested
+it. It is in the corpus now (§The Code of Canon Law), so a `CIC can. 216` resolves to a
+canon on this site rather than to someone else's page, and this row was never about
+canon law: it is about works this corpus does not hold.
+
+**Still not linked out, deliberately.** The papal minor
 magisterium — addresses, homilies, messages, motu proprios, roughly 2,000 citations, every
 one of them on vatican.va at an address the citation does not derive. That family needs a
 discovery crawl of the pontificate indexes, which is most of the work of _ingesting_ it;
@@ -3256,7 +3262,8 @@ under-reports by a factor of six and cannot be used as an index of what exists.
   demand is flat: 69% of 734 cited works are cited exactly once, and "ingest Augustine"
   is eighty-two projects. There is no top-forty subset. Parse the citation strings
   instead; 72.8% already carry a work-internal locator.
-- **The Code of Canon Law** — no Portuguese edition on vatican.va at all.
+- ~~**The Code of Canon Law** — no Portuguese edition on vatican.va at all.~~ **Taken
+  in on 2026-09-03, and the reason it was out was simply false** — see below.
 - **Denzinger** — Herder-copyrighted, never a vatican.va publication, despite being the
   most-cited non-scripture siglum in the CCC.
 - **General audiences** — thousands of talks, low citation density.
@@ -3274,6 +3281,61 @@ under-reports by a factor of six and cannot be used as an index of what exists.
   between two witnesses produces a text no page prints, whose provenance is a rule rather
   than a URL. `prayer.common.la` therefore takes one witness's characters and only the
   other's _segmentation_, which the base witness does not carry and cannot be wrong about.
+
+### The Code of Canon Law, and a scope decision that rested on two wrong facts
+
+Taken in on 2026-09-03, in the seven languages vatican.va publishes it in as HTML —
+`de en es fr it la ru`, 1,752 canons apiece. `cic.{lang}`, `type: "canon-law"`,
+the arrangement the Compendium of the Social Doctrine set out below: a document's
+content files, the Catechism's addresses.
+
+**It was out of scope for a reason that was never true, and a second one that was
+a wrong URL.** The 2026-08-15 survey (`docs/research/vatican-documents.md`)
+recorded "no Portuguese edition on vatican.va at all" and "not Latin
+(`cic_index_lt.html`, 404)", and this file carried the first of those as the
+standing reason the Code was excluded. Both are wrong. The Latin index is
+`cic_index_la.html`; `lt` 404s here, which is the exact inverse of the trap
+`ccc.py` documents on the same host, where `catechism_lt` IS the Latin
+Catechism. And a Portuguese edition exists at
+`cod-iuris-canonici/portuguese/codex-iuris-canonici_po.pdf` — 488 pages with a
+clean text layer, which `common/pdf.py` and `ccc/compendium_pdf.py` are already
+equipped to read.
+
+**What found them is the page that lists the editions, and the lesson is about
+where a scope survey looks.** `archive/cdc/index.htm` names every edition of the
+Code and links each one — six HTML indexes, two PDFs, a single-page Russian
+mirror, a Chinese page in another directory entirely. The survey had probed
+URLs it derived from a naming convention and read a 404 as an absent edition;
+the mirror does not follow that convention here, and it publishes a page that
+says so. **A guessed URL's 404 is evidence about the guess.** Where an origin
+prints an index of what it has, that index is the answer and a derived address
+is a hypothesis — the same rule `cic.py`'s discovery follows for the 1,061
+content pages, none of whose names any rule produces (`cic_lib1-cann7-22_en`,
+`cic_libroI_7-22_it`, `cic_libro1_cann7-22_sp`, `cic_liberI_la`).
+
+**Book VI is the law in force, and it took two checks to be sure.** _Pascite
+Gregem Dei_ replaced canons 1311–1399 whole on 8 December 2021, and each
+edition's index links a PDF called _Nova versio Libri VI_ beside the HTML — from
+which the obvious reading is that the HTML is the superseded text and the
+replacement is in a format nothing here parses. That reading is wrong: the HTML
+IS the revision (English canon 1311 carries the §2 on pastoral charity the
+revision introduced; canon 1398 is the new delict against the dignity of the
+person; the 1983 abortion canon has moved to 1397 §2), and the PDF is the same
+book in another format. The corpus nearly withheld 89 canons of current law on
+the strength of a link's title. **A page that says what it is beats a filename
+that implies it**, and the check that settled it was reading two canons whose
+text the revision is known to have changed.
+
+**The Latin edition keeps an amendment apparatus, and it is the first thing in
+this corpus that publishes a superseded text.** A superscript `n` marks each
+canon a later act has changed, and below the Code the edition reprints the
+wording that act replaced, under a bracketed line naming it. English and Spanish
+do the same in their own words; German does; Italian and Russian do not. It is
+real content and it is not an address — canon 579 must resolve to the law in
+force — so it rides on the canon as `superseded` rather than in `sections.json`'s
+numbered flow (`docs/corpus-schema.md` §Code of Canon Law). The alternative
+considered and rejected was `appendix.json`: an appendix is matter with no
+number, and these have one.
 
 ### The Compendium of the Social Doctrine, and what a work type is for
 

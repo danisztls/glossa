@@ -85,6 +85,16 @@ def urllib_transport(url: str, *, user_agent: str, timeout: float) -> bytes:
         # retry loop that exists for exactly this. Found by a 51 MB PDF that
         # cut off eight megabytes in.
         raise FetchError(f"{url}: {type(exc).__name__}: {exc}") from exc
+    except TimeoutError as exc:
+        # A response that never BEGAN, which is the same failure one step
+        # earlier and escaped the same way. `socket.timeout` has been an alias
+        # for the builtin `TimeoutError` since 3.10, and a builtin is not a
+        # `URLError`, so a read that timed out killed the whole run from
+        # inside the one function whose contract is to raise `FetchError`.
+        # `download_resumable` below has always caught it; this is the half
+        # that had not. Found by a 6 MB PDF on a crawl of 1,061 pages that had
+        # just succeeded.
+        raise FetchError(f"{url}: read timed out after {timeout}s") from exc
 
 
 #: How much of a resumed download to read per `recv`. Big enough that a

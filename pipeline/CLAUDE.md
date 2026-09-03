@@ -425,6 +425,67 @@ the Social Doctrine).
   quotation's `(1)`–`(5)` — its real markers are bare digits glued to the
   preceding word and are unreadable.
 
+## The Code of Canon Law is discovered, never derived
+
+`cic.{lang}`, the seven languages vatican.va publishes the Code in as HTML
+(2026-09-03, `docs/decisions.md` §The Code of Canon Law, `docs/corpus-schema.md`
+§Code of Canon Law). 1,752 canons per edition, over 1,061 pages.
+
+- **A scope decision that rested on a guessed URL's 404.** The Code was out of
+  scope for "no Portuguese edition on vatican.va at all" and the survey also
+  recorded no Latin one. Both wrong: Latin is `cic_index_la.html` (`lt` 404s,
+  the exact inverse of `catechism_lt`, which IS Latin), and Portuguese is a
+  488-page PDF with a clean text layer. `archive/cdc/index.htm` lists every
+  edition and links each; **where an origin prints an index of what it has, a
+  derived address is a hypothesis.**
+- **Nothing constructs a page URL.** Six index pages name their own edition's
+  content pages and the conventions share no rule — `cic_lib1-cann7-22_en`,
+  `cic_libroI_7-22_it`, `cic_libro1_cann7-22_sp`, `cic_liberI_la`, in the
+  directories `eng`, `ita`, `esp`, `deu`, `fra`, `latin`.
+- **INDEX ORDER IS NOT DOCUMENT ORDER**, and `order_pages` sorts by the largest
+  canon number on each page. The English index links `PART II` before the
+  section it opens with, so canon 330 arrived after 430 a hundred times; the
+  LARGEST is taken because Spanish's markers are bare numbers and so are its
+  enumerated items, which makes every page's smallest a `1`.
+- **Book VI is the text in force and the PDF beside it is not a replacement.**
+  Each index links a _Nova versio Libri VI_ PDF, which reads as "the HTML is the
+  1983 book" and is not: the HTML carries the _Pascite Gregem Dei_ revision.
+  Read canon 1398 before believing a filename.
+- **The three signals a heading has are centring, the mirror's brown, and
+  capitals, and no edition uses all three.** English prints `BOOK I` flush left
+  in colour and its chapters as unstyled paragraphs; Spanish prints its articles
+  the same way; French, German and Russian never use the colour at all. The
+  amendment mark is ALSO brown, which put every marked paragraph into the
+  outline until `page_blocks` learned to read the colour past it.
+- **A canon marker is capitalised and a self-citation is not**, which is the
+  whole of what separates `Can. 1312` opening a canon from `can. 1452` inside
+  one — needed because two pages run several canons into one paragraph. The
+  second guard is that the number must be the one that comes next, and the
+  third is that a marker is never followed by a comma: the English page for
+  canons 1400–1500 prints `Can. 1423, the conference of bishops must
+establish…`, which is canon 1439 §2 quoting 1423 with its opening words lost.
+- **`strip_leading_text` exists because entities are not characters.**
+  `vd.strip_leading_text_html` walks a prefix across tag boundaries and skips
+  whitespace, but `&nbsp;` is not whitespace and `T&Iacute;TULO` does not start
+  with `T`; 235 Spanish divisions read `TÍTULO I TÍTULO I DE LAS LEYES`.
+- **A block's text is derived like the STORED text, not with every tag as a
+  space.** The French edition prints `C<b>an. 237</b>`, which the every-tag-a-
+  space rule reads as `C an. 237` — not a marker in any language, and canon 237
+  was gone.
+- **The Latin Book VI page is a Word table export and the repair is the
+  parser's business.** One canon per `<td>`, each closing with an unclosed
+  `<p>&nbsp;`, which made the block scan match spans starting in one cell and
+  ending in the next: 43 canons missing, 46 of their neighbours fine.
+  `unwrap_word_cells` rewrites a cell only where its `<p>`s do not balance or it
+  has words before its first one — the archive template's own content cell is a
+  leaf cell too, and rewriting THAT flattens the `align="center"` the whole
+  outline is read from.
+- **The amendment apparatus is cut at the edition's own legend.** Three
+  editions reprint superseded wordings after the Code; the boundary is the
+  `( n : …)` line that explains the mark, with the typographic rule as a
+  fallback. Cutting at the first repeated canon number instead took 61 English
+  canons out of the corpus, because the Code cross-references itself in prose.
+
 ## The Summa is the exception to two rules at once
 
 Ingested 2026-08-23 (`docs/decisions.md`, `docs/corpus-schema.md` §Summa). It
