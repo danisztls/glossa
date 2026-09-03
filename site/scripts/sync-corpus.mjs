@@ -154,6 +154,33 @@ const sitemapPath = path.join(siteRoot, 'static/sitemap.xml');
 // history. See scripts/lastmod.mjs for why git cannot stand in for it.
 const lastmodPath = path.join(siteRoot, 'scripts/lastmod.json');
 
+/**
+ * EVERY FILE THIS SCRIPT DERIVES, named once because they are one artifact.
+ *
+ * They are written at six different points a thousand lines apart, but nothing
+ * downstream can use any of them without the rest: the manifest addresses what
+ * `destDir` holds, the titles and apparatus name those same addresses, the
+ * sitemap is read off the manifest, and the coverage report describes the
+ * corpus the other five came from. `syncFingerprint` already treated them as
+ * one set — `destDir` and this list are its `outputs` part — and the wipe below
+ * is the other place that has to agree, so the list stopped being written out
+ * twice.
+ *
+ * `lastmodPath` IS DELIBERATELY NOT HERE. It is committed, it is an input to
+ * the next run as much as an output of this one, and it is the one file whose
+ * value is its history (`scripts/lastmod.mjs`). Clearing it would not
+ * invalidate a derivation; it would forget when every address was last
+ * revised.
+ */
+const derivedFiles = [
+	routeManifestPath,
+	routeTitlesPath,
+	apparatusPath,
+	worksPath,
+	sitemapPath,
+	REPORT_PATH
+];
+
 /** CCC/Compendium `paragraphs.json`/`questions.json` are per-language single
  *  arrays ordered by `n`; Bible books split naturally along the print
  *  volume's own chapter boundaries, but the CCC's 2865 paragraphs don't —
@@ -460,18 +487,7 @@ function syncFingerprint() {
 		),
 		ledger: contentDigest([lastmodPath], siteRoot),
 		corpus: treeDigest([buildSrc], corpusDir),
-		outputs: treeDigest(
-			[
-				destDir,
-				routeManifestPath,
-				routeTitlesPath,
-				apparatusPath,
-				worksPath,
-				sitemapPath,
-				REPORT_PATH
-			],
-			siteRoot
-		)
+		outputs: treeDigest([destDir, ...derivedFiles], siteRoot)
 	};
 }
 
@@ -544,19 +560,42 @@ for (const entry of existsSync(destDir) ? readdirSync(destDir) : []) {
 	rmSync(path.join(destDir, entry), { recursive: true, force: true });
 }
 
+/*
+ * AND THE DERIVED FILES GO WITH IT, in the same breath as the wipe, because
+ * from here until each is rewritten there is no run that could have produced
+ * the pair of them.
+ *
+ * This used to happen only in the fixture branch below, and the gap was found
+ * on 2026-09-03 by the content-size ceiling refusing 224 plate images. That
+ * exit is a thousand lines below the wipe and above every write, so it left a
+ * tree with `corpus-data/content/` and no `corpus-data/index/` — every
+ * manifest, TOC and xref table falling back to the bundled fixtures — beside a
+ * `corpus-routes.json` describing the 344 works of the run before. `npm run
+ * build` refuses to run after a failed `prebuild`, but nothing stops `vite
+ * build` by hand, and preflight would have approved what came out: it reads
+ * the route manifest to tell a real corpus from fixtures, and the route
+ * manifest was the file the failed run never touched.
+ *
+ * SO THE INVARIANT IS POSITIVE RATHER THAN DEFENSIVE: these files exist only
+ * where a run wrote them over a complete `corpus-data/`. Every gate in this
+ * script exits nonzero rather than returning, and none of them can now exit
+ * into a tree that still looks synced. It holds for a `kill -9` too, which is
+ * why the clearing is here and not in a `process.on('exit')` handler.
+ *
+ * A missing manifest is a refusal in preflight and a 404 for every corpus
+ * address at the edge — both loud, which is the point. The failure this
+ * replaces was silent.
+ */
+for (const file of derivedFiles) rmSync(file, { force: true });
+
 if (!existsSync(buildSrc)) {
-	// A fixture build must never inherit a real corpus's route manifest from a
-	// previous build. Without this, preflight would see a plausible work count
-	// beside fixture client assets and could approve exactly the deploy it is
-	// meant to stop. This is generated site output, never corpus/raw.
-	rmSync(routeManifestPath, { force: true });
-	rmSync(sitemapPath, { force: true });
-	rmSync(routeTitlesPath, { force: true });
-	rmSync(apparatusPath, { force: true });
-	rmSync(worksPath, { force: true });
-	// And the images the wipe above spared. A fixture build has no plates.json
-	// to point at them, so they would render nowhere and ship anyway — 103 MB
-	// of build assets belonging to a corpus this build does not have.
+	// The clearing above is what keeps a fixture build from inheriting a real
+	// corpus's route manifest: preflight would otherwise see a plausible work
+	// count beside fixture client assets and approve exactly the deploy it is
+	// meant to stop. Here it only remains to take the images the wipe spared.
+	// A fixture build has no plates.json to point at them, so they would render
+	// nowhere and ship anyway — 103 MB of build assets belonging to a corpus
+	// this build does not have.
 	rmSync(platesDest, { recursive: true, force: true });
 	// The lastmod ledger is deliberately NOT removed, and this exit is what
 	// keeps a fixture build from rewriting it: two fixture books cannot be

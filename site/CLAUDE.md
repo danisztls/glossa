@@ -251,6 +251,18 @@ npm run deploy      # build -> preflight -> wrangler deploy
   fifty readers a day). Anything new in `static/` still works un-negated; it
   just silently costs an invocation per request. What each layer actually
   costs is priced in §The site — read it before optimising here by guess.
+- **A failed sync now leaves nothing that looks synced** (2026-09-03,
+  §Process). `sync-corpus.mjs` clears `corpus-routes.json`,
+  `route-titles.json`, `apparatus.json`, `works.json`, `sitemap.xml` and
+  `reference-coverage.json` in the same breath as it wipes `corpus-data/`, and
+  writes them back on the way through — so they exist only where a run
+  completed over what is on disk. Before that, a gate tripping between the two
+  (the content-size ceiling, over 224 plate images) left `content/` with no
+  `index/` — everything back on fixtures — under the previous run's route
+  manifest, and preflight approved the build: the manifest is what it reads to
+  tell a corpus from fixtures. **A new derived file belongs in `derivedFiles`**,
+  or it is the next one to survive a failure. `lastmod.json` is the deliberate
+  exception and says why.
 - **Preflight (`scripts/preflight-deploy.mjs`) checks the corpus, not the
   page count**: it refuses a build reporting fewer than 100 works or 100
   content assets (the fixture-backed build), and refuses a build whose

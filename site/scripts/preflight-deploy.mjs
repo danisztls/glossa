@@ -86,11 +86,19 @@ console.log(
 		`(${Math.round((files / MAX_FILES) * 100)}% of Cloudflare's ${MAX_FILES.toLocaleString()}-file cap)`
 );
 
+// Absent for either of two reasons, and the second is why the message names
+// both: the sync found no corpus and said so, or it FAILED partway. It clears
+// this file in the same breath as it wipes `corpus-data/` and writes it back
+// only on the way through, so a manifest that is missing means no run has
+// completed over what is on disk — which is exactly the build that must not be
+// uploaded, and the one that used to arrive here carrying the previous run's
+// manifest. See the clearing in `sync-corpus.mjs` for the failure that found it.
 const routesPath = path.join(buildDir, 'corpus-routes.json');
 if (!existsSync(routesPath)) {
 	fail(
-		'missing corpus-routes.json — this looks like a FIXTURE build, not the corpus. ' +
-			'Set CORPUS_DIR to a real corpus/ checkout and rebuild.'
+		'missing corpus-routes.json — no sync has completed over this tree. Either the corpus ' +
+			'was not found (set CORPUS_DIR to a real glossa-corpus checkout) or the sync failed ' +
+			'partway; re-run `npm run sync-corpus`, read what it refuses, and rebuild.'
 	);
 }
 

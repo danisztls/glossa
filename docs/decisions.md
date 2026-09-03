@@ -3830,3 +3830,28 @@ as part of the module text but does not parse it unless devtools is open, and th
 over localhost. The browser-side reload cost was NOT measured — doing so needs a real
 browser, which this project deliberately does not drive — so no claim about wall-clock is
 made here. The server-side numbers above are the measured ones.
+
+**A script that destroys its output before rebuilding it must invalidate the evidence
+that the output is good, in the same breath.** `sync-corpus.mjs` wipes
+`src/lib/corpus-data/` at the top and writes `corpus-routes.json`, `route-titles.json`,
+`apparatus.json`, `works.json`, `sitemap.xml` and `reference-coverage.json` at six points
+over the thousand lines that follow. Every gate between those two ends exits nonzero, and
+until 2026-09-03 an exit there left the whole set behind, describing a corpus that was no
+longer on disk. The failure that surfaced it was the content-size ceiling refusing 224
+plate images: the tree kept `corpus-data/content/` with no `corpus-data/index/` beside
+it — every manifest, TOC and xref table silently back on the bundled fixtures — under a
+`corpus-routes.json` still naming 344 works. `npm run build` will not run after a failed
+`prebuild`, but `vite build` by hand exits 0 and produces a normal-looking 9,412-file
+build, and preflight approved it: the file it reads to tell a real corpus from fixtures
+was the one file the failed run had not touched.
+
+**The fix is to make the check's own input impossible to forge, not to add a check.** The
+six files are cleared beside the wipe, so they exist only where a run wrote them over a
+complete `corpus-data/` — and preflight's existing refusal for a missing manifest becomes
+a refusal for an incomplete sync at no cost. Clearing at the wipe rather than in a
+`process.on('exit')` handler is what makes it hold for a `kill -9` as well as an exit,
+and the set was already named once in `syncFingerprint`'s `outputs`, which is the other
+place that has to agree about what one run produces. `lastmod.json` is deliberately not in
+it: it is committed, it is an input to the next run as much as an output of this one, and
+clearing it would forget when every address was last revised rather than invalidate a
+derivation.
