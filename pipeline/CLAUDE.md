@@ -657,6 +657,30 @@ edition: read the array in order and use `kind`. **Both tables feed the site's
 grammar**, where the collision mattered — see `site/CLAUDE.md` §Reference
 grammar.
 
+### A ceiling that only one edition needed is a defect in the others
+
+`parse_page_en` refused an unbolded roman-numeral heading, because "`I.` et
+al. are too easily mistaken for ordinary prose without the bold signal". True
+of Portuguese, which the rule was written for; inherited by the IntraText
+shell, where it cost **English 60 subdivisions and German 57** — among them
+the seventh petition of the Our Father and `II THE CHURCH IS HOLY`, so the
+English Catechism gave the Church three marks instead of four and nothing
+said so.
+
+**The count is what tells a ceiling from a defect.** Nodes whose title opens
+on a roman numeral, 2026-09-03: es 272, fr 273, la 272, pt 272, mg 276, it
+291, against en 214 and de 213. One-sided, so a parser defect by this file's
+own rule (§Work that spans languages) — 274 and 270 after the fix.
+
+**What replaces the bold signal is three measured guards**, each of which one
+edition needs and the others do not, which is why they are a table and not a
+rule: a 90-character cap (IntraText numbers every body paragraph, so prose
+opens on a DIGIT); the period required for a ONE-character numeral only,
+because `I` is the English pronoun and the book opens on it; and a title that
+opens on a capital, a quote or an ellipsis, because French's period-optional
+pattern otherwise reads two cells of the Creed table on `__P14.HTM` as
+subdivisions. `docs/research/prayers-glossa.md` §6.2 holds the measurements.
+
 ## Prayers: the Compendium's body is a source, and the Latin is the instrument
 
 `prayer.common.{lang}` (`docs/corpus-schema.md` §Prayers). Every edition of
@@ -698,6 +722,35 @@ and nothing had ever read that region.
   (`caeeli`, `proper`, `sedit`, `MaríaVírgine`, `et in incarnatus`). `Víirgine`
   is in en and it — one shared exemplar, not two witnesses, the same lesson
   `audit.py refs` records.
+
+- **A TABLE ROW IS NOT A LINE, and only the source's `<br>` says where the
+  lines are.** `build_creeds_pt` read the CCC's `#table2` one line per row,
+  on a comment asserting the rows were lines; they are not — the table pairs
+  the two Creeds SECTION for section so each stands level beside its
+  counterpart, and the Latin Catechism sets the identical pair in eleven rows
+  against Portuguese's seven, which settles that the row count is a fact about
+  a page's layout. The collapse ran the Creed's clauses together with the
+  semicolons as their only surviving trace, and `;` mid-line is the tell:
+  eight in the Apostles' Creed, five in the Nicene, none in the Latin that
+  already read the same table with `br_segments`. Fixed 2026-09-03, 7 lines →
+  22 and 7 → 37. **`line_html`'s own test is what decides which kind of `<br>`
+  a cell holds** — median 25 characters and 82% clause-final here, against
+  22/80% for `ccc-la` — and French and Italian pass it the other way, printing
+  their Creeds as running prose with no `<br>` at all. See
+  `docs/research/prayers-glossa.md` §6.
+
+- **A cross-language line count is not an oracle; the Latin printed beside the
+  prayer is.** vatican.va typesets the same prayer differently per language, so
+  the counts differ legitimately — the Compendium's Italian page prints the
+  Pater as ten `<br>` lines and the French page prints the identical prayer as
+  one paragraph. What a mirror does not do by accident is set one column as
+  verse and its neighbour as prose, so `check_latin_line_parity` flags only
+  that all-or-nothing shape, per edition, against a declared
+  `LangSpec.latin_lineation_differs`. Six were declared on 2026-09-03 (fr, it×2,
+  pt, ro×2), each read off the raw markup first; the PDF editions are excluded
+  because they have no `<br>` to have dropped. **It would not have caught the
+  Creed defect above** — those come from the Catechism's pages and carry no
+  Latin companion — which is the reach, not a gap to close by inventing one.
 
 ### The four PDF editions: the same appendix, printed in two columns
 
