@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -94,6 +96,7 @@ export const ko: Dictionary = {
 		'한 번 방문하시면 연결이 끊겨도 계속 작동하도록 만들어졌습니다. 열악한 연결이 읽기의 장벽이 되지 않도록 하기 위함입니다.',
 	'colophon.whatThisIsStanding':
 		'글로사 카톨리카는 평신도들의 사적인 기획입니다. 어떠한 교회의 인가도 받지 않았으며, 자체의 어떠한 권위로도 말하지 않습니다.',
+	'footer.notEndorsed': '독립적인 사이트이며, 교황청의 승인을 받지 않았습니다.',
 	'colophon.textsTitle': '본문',
 	'colophon.textsBody':
 		'모든 본문은 명시된 출처에서 왔으며, 각 저작은 그 판본과 출처 페이지와 가져온 날짜를 기록합니다. 성경은 퍼블릭 도메인 번역을 사용하며, 교리서와 요약본과 교도권 문헌은 성좌가 스스로 펴낸 본문에서 왔습니다.',

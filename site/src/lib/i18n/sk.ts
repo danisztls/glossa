@@ -17,9 +17,11 @@
  * judgement that a reader who cannot read the page cannot weigh it either, and
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive. Deleting a
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive. Deleting a
  * doubtful line is a valid fix -- it falls back to English.
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
@@ -90,6 +92,7 @@ export const sk: Dictionary = {
 		'Vytvorené tak, aby po prvej návšteve fungovalo aj bez pripojenia, aby slabé spojenie nemuselo byť prekážkou v čítaní.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica je súkromná iniciatíva laických veriacich. Nemá žiadne cirkevné schválenie a nehovorí so žiadnou vlastnou autoritou.',
+	'footer.notEndorsed': 'Nezávislé, bez schválenia Svätej stolice.',
 	'colophon.textsTitle': 'Texty',
 	'colophon.textsBody':
 		'Každý text pochádza z uvedeného zdroja a každé dielo zaznamenáva svoje vydanie, svoju zdrojovú stránku a dátum, kedy bolo získané. Písmo používa preklady vo verejnom vlastníctve; Katechizmus, Kompendium a dokumenty magistéria pochádzajú z vlastných publikovaných textov Svätej stolice.',

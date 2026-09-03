@@ -255,6 +255,7 @@ export const la: Dictionary = {
 		'Ita facta ut sine rete legi possit postquam semel adisti, ne infirma coniunctio lectioni obstet.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica inceptum privatum christifidelium laicorum est. Nullam approbationem ecclesiasticam habet nec ulla auctoritate propria loquitur.',
+	'footer.notEndorsed': 'Privatum inceptum, a Sancta Sede non approbatum.',
 	'colophon.textsTitle': 'De textibus',
 	'colophon.textsBody':
 		'Omnis textus e fonte nominato venit, et omne opus editionem suam, paginam fontis et diem quo haustus est memorat. Scriptura translationibus utitur quae iuris publici sunt; Catechismus, Compendium et documenta Magisterii ex ipsis Sanctae Sedis editis textibus veniunt.',

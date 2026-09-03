@@ -18,9 +18,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -94,6 +96,7 @@ export const lv: Dictionary = {
 		'Veidota tā, lai pēc pirmās apmeklēšanas turpinātu darboties bezsaistē, lai vājš savienojums nebūtu šķērslis lasīšanai.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica ir laju ticīgo privāta iniciatīva. Tai nav nekāda baznīcas apstiprinājuma, un tā nerunā ar nekādu savu autoritāti.',
+	'footer.notEndorsed': 'Neatkarīga vietne, bez Svētā Krēsla apstiprinājuma.',
 	'colophon.textsTitle': 'Teksti',
 	'colophon.textsBody':
 		'Katrs teksts nāk no nosaukta avota, un katrs darbs norāda savu izdevumu, savu avota lapu un datumu, kad tas iegūts. Svētie Raksti izmanto tulkojumus, kas ir publiskajā īpašumā; Katehisms, Kompendijs un Maģistērija dokumenti nāk no Svētā Krēsla paša publicētajiem tekstiem.',

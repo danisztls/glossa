@@ -366,6 +366,18 @@ export const en: Dictionary = {
 	// readers never reach.
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica is a private undertaking of the lay faithful. It carries no ecclesiastical approbation and speaks with no authority of its own.',
+	// THE SAME CLAIM AS ABOVE, IN A LINE, IN THE FOOTER OF EVERY PAGE. The
+	// paragraph above is read by whoever goes to the colophon; the name that
+	// provokes it is in the wordmark at every address the site answers, so the
+	// disclaimer has to reach as far as the name does.
+	//
+	// Three words in it were chosen against alternatives and are worth keeping.
+	// "the Holy See" rather than "the Vatican", which is the state rather than
+	// the authority, and rather than "ecclesiastical approbation", which is the
+	// exact term and one no footer can carry. And "Independent" is load-bearing:
+	// without it the sentence disclaims ONE authority and leaves a reader free
+	// to infer another, when the truth is that this site is endorsed by none.
+	'footer.notEndorsed': 'Independent, not endorsed by the Holy See.',
 	'colophon.textsTitle': 'The texts',
 	'colophon.textsBody':
 		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts.',

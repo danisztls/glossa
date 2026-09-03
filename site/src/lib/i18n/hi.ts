@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -100,6 +102,7 @@ export const hi: Dictionary = {
 		'एक बार आने के बाद बिना संबंध के भी चलता रहे, ऐसा बनाया गया है, ताकि कमज़ोर संबंध पढ़ने में बाधा न बने।',
 	'colophon.whatThisIsStanding':
 		'ग्लोसा कैथोलिका लोकधर्मी विश्वासियों का एक निजी प्रयास है। इसे कोई कलीसियाई अनुमोदन प्राप्त नहीं है और यह अपने किसी अधिकार से नहीं बोलता।',
+	'footer.notEndorsed': 'स्वतंत्र, परमधर्मपीठ द्वारा अनुमोदित नहीं।',
 	'colophon.textsTitle': 'पाठ',
 	'colophon.textsBody':
 		'प्रत्येक पाठ एक नामित स्रोत से आता है, और प्रत्येक कृति अपना संस्करण, अपना स्रोत-पृष्ठ और वह तिथि अंकित करती है जब उसे लिया गया। धर्मग्रंथ सार्वजनिक अधिकार-क्षेत्र के अनुवादों का उपयोग करता है; धर्मशिक्षा, संक्षेपिका और धर्मशिक्षण-अधिकार के दस्तावेज़ परमधर्मपीठ के अपने प्रकाशित पाठों से आते हैं।',

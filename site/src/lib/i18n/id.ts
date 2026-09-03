@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -98,6 +100,7 @@ export const id: Dictionary = {
 		'Dibangun agar tetap berfungsi luring setelah Anda mengunjunginya, sehingga koneksi yang buruk tidak perlu menjadi penghalang untuk membaca.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica adalah usaha pribadi kaum awam beriman. Situs ini tidak memiliki persetujuan gerejawi apa pun dan tidak berbicara dengan otoritas apa pun dari dirinya sendiri.',
+	'footer.notEndorsed': 'Independen, tanpa persetujuan Takhta Suci.',
 	'colophon.textsTitle': 'Teks-teksnya',
 	'colophon.textsBody':
 		'Setiap teks berasal dari sumber yang disebutkan namanya, dan setiap karya mencatat edisinya, halaman sumbernya, dan tanggal pengambilannya. Kitab Suci menggunakan terjemahan yang berada dalam domain publik; Katekismus, Kompendium, dan dokumen-dokumen Magisterium berasal dari teks-teks yang diterbitkan oleh Takhta Suci sendiri.',

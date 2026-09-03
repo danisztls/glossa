@@ -2806,6 +2806,34 @@ would misstate what this site claims about itself, or lose someone the only
 sentence written for them. Deleting a doubtful line remains the right fix: `t()`
 falls back per key, so removal costs English rather than nothing.
 
+**The statement reached the footer of every page on 2026-09-02**, which is the same
+argument one step on rather than a second decision. Can. 216 is provoked by the NAME, and
+the name is in the wordmark at every one of the roughly six thousand addresses this site
+answers; a disclaimer that only a reader who navigates to the colophon ever meets does not
+reach as far as the thing it disclaims. `footer.notEndorsed` is the one-line form —
+_Independent, not endorsed by the Holy See._ — beside a Jerusalem Cross and the motto
+_Ad maiorem Dei gloriam_. Three words in it were chosen against alternatives. **"the Holy
+See"** rather than "the Vatican", which names the state and not the authority, and rather
+than "ecclesiastical approbation", which is the exact term and one no footer can carry.
+And **"Independent"**, which is load-bearing rather than decorative: without it the
+sentence disclaims ONE authority and leaves a reader free to infer another, when the truth
+is that this site is endorsed by none. All 34 dictionaries carry it, and it joins
+`whatThisIsStanding` and `copyrightBody3` in each machine-translated file's header as a
+string that is OPERATIVE rather than descriptive.
+
+**Neither of the two marks beside it is encumbered, and that was checked rather than
+assumed.** _Ad maiorem Dei gloriam_ is the Society of Jesus's motto and was never
+proprietary to it — it long ago passed into general Catholic use. The Jerusalem Cross is
+the emblem of the Custody of the Holy Land and of the Equestrian Order of the Holy
+Sepulchre, and is also a public Christian symbol far older than either body's current use
+of it; its traditional reading, the Gospel going out from Jerusalem to the four corners of
+the earth, is close to a statement of what this site is for. **Can. 216 reserves a NAME.
+No canon reserves a symbol or a Latin phrase.** The one line not to cross is a specific
+body's ARMS — no crown, no motto ring, no red-on-white in the Order's arrangement — because
+a mark drifting there would contradict the sentence printed next to it. The component's
+docblock carries that rule, so making it look "more official" has to be a decision someone
+takes rather than a tidy-up.
+
 **Two canons bite harder than 216 and are not addressed by any of this**, recorded here so
 nobody reads the colophon paragraph as having settled them. **C. 826 §3**: collections of
 prayers for the public or private use of the faithful are not to be published except with the

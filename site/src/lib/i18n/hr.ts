@@ -17,9 +17,11 @@
  * judgement that a reader who cannot read the page cannot weigh it either, and
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive. Deleting a
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive. Deleting a
  * doubtful line is a valid fix -- it falls back to English.
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
@@ -91,6 +93,7 @@ export const hr: Dictionary = {
 		'Napravljena da nastavi raditi izvan mreže nakon što ste je posjetili, kako slaba veza ne bi morala biti prepreka čitanju.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica privatni je pothvat vjernika laika. Nema nikakvo crkveno odobrenje i ne govori nikakvom vlastitom vlašću.',
+	'footer.notEndorsed': 'Neovisno, bez odobrenja Svete Stolice.',
 	'colophon.textsTitle': 'Tekstovi',
 	'colophon.textsBody':
 		'Svaki tekst dolazi iz imenovanog izvora, a svako djelo bilježi svoje izdanje, svoju izvornu stranicu i datum kada je preuzeto. Pismo koristi prijevode u javnom vlasništvu; Katekizam, Kompendij i dokumenti Učiteljstva dolaze iz vlastitih objavljenih tekstova Svete Stolice.',

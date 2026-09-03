@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -100,6 +102,7 @@ export const ig: Dictionary = {
 		"E wuru ya ka ọ nọgide na-arụ ọrụ n'enweghị njikọ mgbe ị gaachaala ya otu ugboro, ka njikọ na-adịghị ike ghara ịbụ ihe mgbochi ọgụgụ.",
 	'colophon.whatThisIsStanding':
 		"Glossa Catholica bụ ọrụ nkeonwe nke ndị kwere ekwe na-abụghị ndị ụkọchukwu. O nweghị nkwado ọ bụla nke Chọọchị, ọ naghịkwa ekwu okwu site n'ikike nke aka ya.",
+	'footer.notEndorsed': 'Saịtị nweere onwe ya, nke Oche Nsọ na-akwadoghị.',
 	'colophon.textsTitle': 'Ederede ndị ahụ',
 	'colophon.textsBody':
 		"Ederede ọ bụla si n'ebe a kpọrọ aha ya, akwụkwọ ọ bụla na-edekwa mbipụta ya, ibe si na ya bịa, na ụbọchị e wetara ya. Akwụkwọ Nsọ na-eji nsụgharị ndị dị n'aka ọha; Katekizim, Nchịkọta, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị si n'ederede ndị Oche Nsọ n'onwe ya bipụtara.",

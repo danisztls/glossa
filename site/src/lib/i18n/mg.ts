@@ -28,9 +28,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -141,6 +143,7 @@ export const mg: Dictionary = {
 		"Namboarina mba hanohy hiasa na dia tsy misy fifandraisana aza rehefa avy nitsidika ianao, mba tsy ho sakana amin'ny famakiana ny fifandraisana malemy.",
 	'colophon.whatThisIsStanding':
 		"Ny Glossa Catholica dia hetsika manokana ataon'ny kristianina laika. Tsy manana fankatoavana ara-piangonana izy ary tsy miteny amin'ny fahefany manokana.",
+	'footer.notEndorsed': "Tsy miankina, tsy nankatoavin'ny Fiketrahana Masina.",
 	'colophon.textsTitle': 'Ireo lahatsoratra',
 	'colophon.textsBody':
 		"Ny lahatsoratra tsirairay dia avy amin'ny loharano voatonona anarana, ary ny asa soratra tsirairay dia mirakitra ny fanontany, ny pejy niaviany ary ny daty nakana azy. Ny Soratra Masina dia mampiasa fandikan-teny efa an'ny besinimaro; ny Katesizy, ny Famintinana ary ireo antontan-taratasin'ny Fampianarana Ofisialy dia avy amin'ny lahatsoratra navoakan'ny Fiketrahana Masina ihany.",

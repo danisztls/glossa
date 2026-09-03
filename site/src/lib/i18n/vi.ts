@@ -18,9 +18,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive. What is
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive. What is
  * here is the chrome -- including every key `CHROME_KEYS` requires, since an
  * unnamed chrome page fails the sync rather than falling back.
  *
@@ -97,6 +99,7 @@ export const vi: Dictionary = {
 		'Được dựng để tiếp tục hoạt động ngoại tuyến sau lần bạn ghé thăm đầu tiên, để một kết nối kém không phải là rào cản cho việc đọc.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica là một sáng kiến tư nhân của giáo dân. Trang này không có bất kỳ sự chuẩn nhận nào của Giáo hội và không nói với thẩm quyền riêng nào.',
+	'footer.notEndorsed': 'Độc lập, không được Tòa Thánh chuẩn nhận.',
 	'colophon.textsTitle': 'Các bản văn',
 	'colophon.textsBody':
 		'Mỗi bản văn đều đến từ một nguồn được nêu tên, và mỗi tác phẩm đều ghi lại ấn bản, trang nguồn và ngày được lấy về. Kinh Thánh dùng các bản dịch thuộc phạm vi công cộng; Sách Giáo lý, Bản Toát yếu và các văn kiện của Huấn quyền đến từ chính các bản văn do Tòa Thánh xuất bản.',

@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -98,6 +100,7 @@ export const uk: Dictionary = {
 		'Зроблений так, щоб продовжувати працювати без мережі після першого відвідування, аби слабке з’єднання не мусило бути перешкодою для читання.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica — приватна ініціатива вірних мирян. Вона не має жодного церковного схвалення і не говорить жодною власною владою.',
+	'footer.notEndorsed': 'Незалежний сайт, без схвалення Святого Престолу.',
 	'colophon.textsTitle': 'Тексти',
 	'colophon.textsBody':
 		'Кожен текст походить із названого джерела, і кожен твір записує своє видання, свою вихідну сторінку та дату, коли його було отримано. Писання використовує переклади в суспільному надбанні; Катехизм, Компендіум і документи Магістеріуму походять із власних опублікованих текстів Святого Престолу.',

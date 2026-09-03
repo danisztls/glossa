@@ -1079,12 +1079,48 @@ colophon keys now, with a parity check over `src/lib/i18n/*.ts`. The honesty
 lives in each file's header instead, which names its own confidence tier —
 keep that part.
 
+**The standing statement is in the FOOTER of every page since 2026-09-02, not
+only on the colophon.** `footer.notEndorsed` — "Independent, not endorsed by
+the Holy See." — is `colophon.whatThisIsStanding` in one line, on the reasoning
+that Can. 216 is provoked by the NAME and the name is in the wordmark at every
+address the site answers, so the disclaimer has to reach as far as it does. It
+says "the Holy See" and not "the Vatican" (the state, not the authority) nor
+"ecclesiastical approbation" (exact, and unreadable in a footer), and
+"Independent" is load-bearing: without it the sentence disclaims one authority
+and leaves a reader free to infer another. All 34 dictionaries carry it.
+
+**`JerusalemCross.svelte` is inline SVG because an `<img>` cannot see the
+theme.** `<html>` carries four independent axes — `data-theme`, `data-sepia`,
+`data-oled`, `data-mono` — and a referenced SVG is a separate document that
+sees none of them; the most it could read is `prefers-color-scheme`, which
+covers one axis and gets `data-theme='light'` on a dark-preferring OS
+backwards. Inline, `fill: currentColor` follows all four for nothing. It is its
+own file rather than an entry in `Icon.svelte`, whose docblock promises it is
+the only importer of `@lucide/svelte`; `Wordmark.svelte` is the precedent for a
+mark that is live geometry. **The proportions were rasterized, not estimated** —
+the first pass was a correct Jerusalem Cross that read badly at the ~36px the
+footer sets it at, so re-render before touching a number. And **draw the plain
+five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
+in the Order of the Holy Sepulchre's arrangement, because a mark drifting
+toward a specific body's ARMS would contradict the sentence beside it.
+
+**The footer's centring survives the mark only because the padding is
+symmetric.** The cross is absolutely positioned in the inline-start lane, so
+`.site-footer`'s inline padding reserves that lane on BOTH sides; pad one side
+and every centred line shifts by half the difference, which reads as the footer
+being slightly wrong rather than as anything nameable. Below 30rem the mark
+returns to the flow above the motto and the padding goes back. `Ad maiorem Dei
+gloriam` beside it is untranslated and carries `lang="la"`, the only Latin in
+the chrome. None of it prints — `.site-footer` is in `print.css`'s hidden list,
+and the colophon carries the full statement.
+
 **Twenty of the thirty-four dictionaries have never been read by a native
 speaker** — every language added on 2026-08-31 was translated by an LLM in
 one sitting, and the exposure grew when the colophon keys were added. The
-colophon's `whatThisIsStanding` and `copyrightBody3` (canonical standing
-under Can. 216; how a rights holder reaches us) are the two strings where a
-mistranslation costs something real — the first to check. Tiers, per each
+colophon's `whatThisIsStanding`, the footer's `footer.notEndorsed` and
+`copyrightBody3` (canonical standing under Can. 216 at both lengths; how a
+rights holder reaches us) are the three strings where a mistranslation costs
+something real — the first to check. Tiers, per each
 file's header: **grounded** (`mg`'s core terms, read off `ccc.mg`'s own
 manifest — the corpus is the authority for a language's Catholic usage, and
 the first place to look), **medium** (`fi lv sw vi be zh ko tl id uk`), and

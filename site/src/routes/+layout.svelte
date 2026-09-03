@@ -11,6 +11,9 @@
 	import { install } from '$lib/install.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
+	// The other live-geometry mark beside `Wordmark`, and inline SVG for the
+	// reason its docblock gives: an <img> cannot see the four theme axes.
+	import JerusalemCross from '$lib/components/JerusalemCross.svelte';
 	// Mounted once, globally: see the component's own docblock for why this is
 	// a single delegated listener rather than something every link-generating
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
@@ -384,9 +387,54 @@
 		But it does have to be reachable from every page — docs/research/
 		copyright.md §5's posture rests on the position being stated openly,
 		and a page nobody can find states it to nobody.
+
+		THE SAME ARGUMENT ONE STEP FURTHER is why the standing statement is here
+		and not only there. Can. 216 CIC reserves the name "Catholic" to
+		undertakings holding the consent of competent ecclesiastical authority;
+		this site holds none, and the name is on every page, so the disclaimer
+		has to be too. `colophon.whatThisIsStanding` says it in full to a reader
+		who went looking; `footer.notEndorsed` says it in a line to one who did
+		not. It names the Holy See rather than "the Vatican" (which is the state)
+		and rather than "ecclesiastical approbation" (which is a term of art a
+		footer cannot carry).
 	-->
 	<footer class="site-footer">
-		<a href="/colophon">{t('colophon.title')}</a>
+		<!--
+			FIRST IN THE DOCUMENT AND OUT OF THE FLOW. Absolutely positioned at the
+			inline-start edge (see the CSS), so the lines below stay centred on the
+			FOOTER's midline rather than on the space left over beside it — which is
+			what a flex row would have given, and it would have looked almost right,
+			which is the worse failure. `.site-footer`'s symmetric inline padding is
+			the other half: it reserves the lane on BOTH sides, so the centre is true
+			and no line can run under the mark.
+		-->
+		<JerusalemCross class="footer-cross" />
+		<!--
+			`lang="la"` for the reason every reading region declares the language of
+			its own text: this is Latin sitting in a page that may be in any of
+			thirty-four languages, and a screen reader told nothing better will
+			pronounce it as though it were the surrounding one.
+
+			Untranslated, like the build string below and for the same kind of
+			reason — a motto is a fixed form of words, not a sentence to render in
+			the reader's language.
+		-->
+		<p class="motto" lang="la">Ad maiorem Dei gloriam</p>
+		<!--
+			The standing statement in one line, on every page. Its long form is
+			`colophon.whatThisIsStanding`, which sits on a page a reader has to
+			navigate to; this is the same claim where the name that provokes it is.
+
+			The middot is `aria-hidden`: it separates two things for the eye and
+			would be announced as "middle dot" otherwise. The link boundary is what
+			separates them for a screen reader, which is why the disclaimer is a
+			span of its own rather than a bare text node run onto the anchor.
+		-->
+		<p class="standing">
+			<a href="/colophon">{t('colophon.title')}</a>
+			<span class="sep" aria-hidden="true">·</span>
+			<span>{t('footer.notEndorsed')}</span>
+		</p>
 		<!--
 			The build this page is running, and the reason it is not behind the
 			colophon link: what it answers is "did the update actually land",
@@ -627,10 +675,87 @@
 	}
 
 	.site-footer {
+		position: relative;
 		border-top: 1px solid var(--color-border);
-		padding: 1.25rem;
+		/*
+		 * SYMMETRIC, and that is the whole trick rather than a rounding of the
+		 * old 1.25rem. The cross is absolutely positioned in the inline-start
+		 * lane, so the padding has to reserve that lane on BOTH sides: pad only
+		 * the side the mark is on and every centred line below shifts by half
+		 * the difference, which reads as the footer being slightly wrong rather
+		 * than as anything a person can name.
+		 */
+		padding: 1.25rem 3.5rem;
 		text-align: center;
 		font-size: 0.8rem;
+	}
+
+	/*
+	 * Logical inset, never `left`: in Arabic and Hebrew the mark belongs at the
+	 * start edge like everything else the site draws (styles/direction.css).
+	 *
+	 * `:global` because the class is passed into a component — the convention
+	 * `Icon.svelte`'s consumers already follow — and the size is a `font-size`
+	 * because the SVG is declared at 1em, so one number scales it.
+	 *
+	 * Muted AND slightly transparent: the glyph is a solid fill where the text
+	 * beside it is strokes with counters, so at the same colour it reads a good
+	 * deal heavier than the line it is meant to sit under.
+	 */
+	.site-footer :global(.footer-cross) {
+		position: absolute;
+		inset-inline-start: 1rem;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		font-size: 2.25rem;
+		color: var(--color-text-muted);
+		opacity: 0.7;
+	}
+
+	/* The one line in the footer that is text rather than apparatus, so it gets
+	   the reading face and a step of size over the small print. Not italic: a
+	   motto is a statement, not a quotation. */
+	.motto {
+		margin: 0;
+		font-family: var(--font-serif);
+		font-size: 1rem;
+		letter-spacing: 0.04em;
+		color: var(--color-text-muted);
+	}
+
+	/* Muted as a whole so the disclaimer and the colophon link beside it read as
+	   one line. Left at the body colour the statement would come out DARKER than
+	   the link, which inverts what each is for. */
+	.standing {
+		margin-block: 0.5rem 0;
+		color: var(--color-text-muted);
+	}
+
+	.sep {
+		margin-inline: 0.35em;
+	}
+
+	/*
+	 * Below the site's narrow breakpoint the reserved lanes cost more than the
+	 * arrangement is worth: 3.5rem each side of a 320px screen leaves about
+	 * 208px for a sentence. The mark returns to the flow above the motto,
+	 * centred, and the padding goes back to what the footer had before it
+	 * existed. 30rem is `app.css`'s own phone breakpoint, the one `Wordmark`
+	 * swaps to its monogram at — reused so the site keeps one idea of "narrow".
+	 */
+	@media (max-width: 30rem) {
+		.site-footer {
+			padding-inline: 1.25rem;
+		}
+
+		.site-footer :global(.footer-cross) {
+			position: static;
+			display: block;
+			transform: none;
+			margin-inline: auto;
+			margin-block-end: 0.5rem;
+			font-size: 1.9rem;
+		}
 	}
 
 	.site-footer a {

@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: LOW. Written by an LLM with no native reader in
  * the loop, and this is one of the five languages where that is most
@@ -101,6 +103,7 @@ export const ml: Dictionary = {
 		'ഒരിക്കൽ സന്ദർശിച്ചാൽ ഇന്റർനെറ്റില്ലാതെയും പ്രവർത്തിക്കുംവിധം നിർമ്മിച്ചിരിക്കുന്നു, ദുർബലമായ ബന്ധം വായനയ്ക്കു തടസ്സമാകാതിരിക്കാൻ.',
 	'colophon.whatThisIsStanding':
 		'ഗ്ലോസ്സാ കത്തോലിക്ക അല്മായ വിശ്വാസികളുടെ ഒരു സ്വകാര്യ സംരംഭമാണ്. ഇതിന് സഭാപരമായ യാതൊരു അംഗീകാരവുമില്ല; സ്വന്തമായ യാതൊരു അധികാരത്തിലും ഇതു സംസാരിക്കുന്നില്ല.',
+	'footer.notEndorsed': 'സ്വതന്ത്രം, പരിശുദ്ധ സിംഹാസനത്തിന്റെ അംഗീകാരമില്ലാതെ.',
 	'colophon.textsTitle': 'വാചകങ്ങൾ',
 	'colophon.textsBody':
 		'ഓരോ വാചകവും പേരു സൂചിപ്പിച്ച ഉറവിടത്തിൽ നിന്നു വരുന്നു; ഓരോ കൃതിയും അതിന്റെ പതിപ്പ്, ഉറവിടത്താൾ, എടുത്ത തീയതി എന്നിവ രേഖപ്പെടുത്തുന്നു. വിശുദ്ധ ഗ്രന്ഥത്തിനു പൊതുസഞ്ചയത്തിലുള്ള പരിഭാഷകൾ ഉപയോഗിക്കുന്നു; മതബോധനഗ്രന്ഥവും സംഗ്രഹവും പ്രബോധനാധികാരത്തിന്റെ രേഖകളും പരിശുദ്ധ സിംഹാസനം തന്നെ പ്രസിദ്ധീകരിച്ച വാചകങ്ങളിൽ നിന്നു വരുന്നു.',

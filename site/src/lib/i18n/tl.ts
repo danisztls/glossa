@@ -21,9 +21,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive.
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive.
  *
  * TRANSLATION CONFIDENCE: MEDIUM. Written by an LLM with no native reader
  * in the loop. The chrome vocabulary here is conventional and is likely
@@ -98,6 +100,7 @@ export const tl: Dictionary = {
 		'Ginawa upang magpatuloy kahit walang koneksyon matapos ninyong dalawin, upang ang mahinang koneksyon ay hindi maging sagabal sa pagbabasa.',
 	'colophon.whatThisIsStanding':
 		'Ang Glossa Catholica ay isang pribadong pagsisikap ng mga layko. Wala itong anumang pagsang-ayon ng Simbahan at hindi nagsasalita sa anumang sariling awtoridad.',
+	'footer.notEndorsed': 'Malayang website, walang pag-apruba ng Banal na Sede.',
 	'colophon.textsTitle': 'Ang mga teksto',
 	'colophon.textsBody':
 		'Bawat teksto ay nagmumula sa isang pinangalanang pinagkunan, at bawat akda ay nagtatala ng edisyon nito, ng pahina ng pinagkunan nito, at ng petsang kinuha ito. Ang Kasulatan ay gumagamit ng mga saling nasa pambayang ari; ang Katesismo, ang Kompendyo at ang mga dokumento ng Magisterio ay nagmumula sa mismong mga tekstong inilathala ng Banal na Sede.',

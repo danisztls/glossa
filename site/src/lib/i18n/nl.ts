@@ -17,9 +17,11 @@
  * judgement that a reader who cannot read the page cannot weigh it either, and
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive. Deleting a
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive. Deleting a
  * doubtful line is a valid fix -- it falls back to English.
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
@@ -93,6 +95,7 @@ export const nl: Dictionary = {
 		'Gebouwd om offline te blijven werken zodra u haar bezocht hebt, zodat een slechte verbinding geen belemmering voor het lezen hoeft te zijn.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica is een particulier initiatief van lekengelovigen. Zij draagt geen kerkelijke goedkeuring en spreekt met geen enkel eigen gezag.',
+	'footer.notEndorsed': 'Onafhankelijk, zonder goedkeuring van de Heilige Stoel.',
 	'colophon.textsTitle': 'De teksten',
 	'colophon.textsBody':
 		'Elke tekst komt van een met name genoemde bron, en elk werk vermeldt zijn editie, zijn bronpagina en de datum waarop hij is opgehaald. De Schrift gebruikt vertalingen in het publieke domein; de Catechismus, het Compendium en de documenten van het Leergezag komen uit de door de Heilige Stoel zelf gepubliceerde teksten.',

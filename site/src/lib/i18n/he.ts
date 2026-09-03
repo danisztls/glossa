@@ -18,9 +18,11 @@
  * that an English wall is not more honest than a translation -- see
  * `docs/decisions.md`. The confidence note below governs
  * the colophon too.
- * `colophon.whatThisIsStanding` (the canonical standing statement, Can. 216
- * CIC) and `colophon.copyrightBody3` (how a rights holder reaches us) are the
- * two to check first: both are operative rather than descriptive. What is
+ * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
+ * standing statement, Can. 216 CIC, at full length and in the one line the
+ * footer of every page carries) and `colophon.copyrightBody3` (how a rights
+ * holder reaches us) are the ones to check first: all three are operative
+ * rather than descriptive. What is
  * here is the chrome -- including every key `CHROME_KEYS` requires, since an
  * unnamed chrome page fails the sync rather than falling back.
  *
@@ -97,6 +99,7 @@ export const he: Dictionary = {
 		'נבנה כך שימשיך לפעול גם ללא חיבור לאחר שביקרת בו, כדי שחיבור לקוי לא יהיה מכשול לקריאה.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica הוא מפעל פרטי של מאמינים הדיוטות. אין לו כל אישור כנסייתי והוא אינו מדבר בשום סמכות משל עצמו.',
+	'footer.notEndorsed': 'אתר עצמאי, ללא אישור הכס הקדוש.',
 	'colophon.textsTitle': 'הטקסטים',
 	'colophon.textsBody':
 		'כל טקסט בא ממקור נקוב בשם, וכל יצירה רושמת את מהדורתה, את עמוד המקור שלה ואת התאריך שבו הובאה. כתבי הקודש משתמשים בתרגומים שברשות הרבים; הקטכיזם, התמצית ומסמכי המגיסטריום באים מן הטקסטים שהכס הקדוש עצמו פרסם.',
