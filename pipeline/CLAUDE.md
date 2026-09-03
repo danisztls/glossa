@@ -451,6 +451,48 @@ edition: read the array in order and use `kind`. **Both tables feed the site's
 grammar**, where the collision mattered — see `site/CLAUDE.md` §Reference
 grammar.
 
+## Prayers: the Compendium's body is a source, and the Latin is the instrument
+
+`prayer.common.{lang}` (`docs/corpus-schema.md` §Prayers). Every edition of
+this work now carries the two Creeds, the Our Father and the Hail Mary —
+eleven languages, up from three — and the eight that gained them cost **no
+fetch**: the Compendium prints all three at the head of Part One Section Two
+and Part Four Section Two, in the same file Appendix A is already read from,
+and nothing had ever read that region.
+
+- **The Latin is the anchor, the classifier and the check, and none of those
+  three steps reads a word of the vernacular** — which is what makes the
+  reader safe in eight languages nobody here is required to know. `Symbolum`
+  and `Pater noster` are set in Latin script in every edition, so the region is
+  bounded without a table of vernacular headings; each block is then scored
+  against `ccc-la`'s own text (`latin_likeness`) to say whether it is Latin.
+- **The four blocks are not in one order, and getting that wrong is silent.**
+  German, Italian, Romanian and Slovenian interleave each Creed with its
+  Latin; English, French, Spanish and Hungarian print both vernaculars and
+  then both Latins. "The vernacular is the run before the Latin heading" files
+  the Nicene Creed under `apostles-creed` in half the editions and yields a
+  real creed under the wrong slug.
+- **Score the whole text; never test an incipit.** Hungarian heads a block
+  `Symbolum Apostolicum` and prints `Credo in unum Deum` under it — the Nicene
+  incipit on the Apostles' Creed's body. An incipit test files it wrongly and
+  reports nothing; a whole-text score puts it right and leaves the divergence
+  to the report.
+- **Four markup shapes, declared in `COMPENDIUM_BODY_SHAPE` per REGION rather
+  than per edition**, because German sets its Creeds in a two-column table and
+  its Our Father as paragraphs. Italian sets the entire Creed region inside one
+  `<p>` divided only by its bold headings, which is why every paragraph is
+  split on its bold runs before anything else looks at it.
+- **The printed Latin is used and NOT stored.** It is a second transcription of
+  what `prayer.common.la` already publishes, carrying its own misprints, so
+  `NO_LATIN_SLUGS` does not move. What it buys instead is
+  `print_body_latin_report`, run over all ten editions on every parse and
+  **printed rather than gated**: a departure shared by many editions is a
+  received variant (nine agree on `sedet ad dexteram Dei Patris` where `ccc-la`
+  has no `Dei`; five on `quotidianum`), and one edition alone is a slip
+  (`caeeli`, `proper`, `sedit`, `MaríaVírgine`, `et in incarnatus`). `Víirgine`
+  is in en and it — one shared exemplar, not two witnesses, the same lesson
+  `audit.py refs` records.
+
 ## The Compendium of the Social Doctrine numbers a letter the way it numbers itself
 
 `csdc.{lang}`, ten of the twelve editions vatican.va publishes as HTML

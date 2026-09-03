@@ -118,6 +118,7 @@ import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
+from functools import lru_cache
 from pathlib import Path
 
 # Sibling package in this directory -- a script's own directory is on sys.path,
@@ -2494,6 +2495,496 @@ def build_our_father_pt(html_text: str) -> Prayer:
 
 
 # --------------------------------------------------------------------------
+# The Compendium's OWN BODY: the two Creeds and the Our Father
+# --------------------------------------------------------------------------
+#
+# EIGHT EDITIONS HELD NEITHER CREED, AND THE TEXT WAS IN THE FILE ALL ALONG.
+# This scraper reads Appendix A, which opens at the Sign of the Cross and
+# carries the Hail Mary but neither Creed nor the Our Father -- while every
+# Compendium ALSO prints all three at the head of Part One Section Two and of
+# Part Four Section Two, vernacular beside Latin. Reading that region takes
+# `de fr hu it ro sl sv` from one of the four prayers a Catholic is expected to
+# know by heart to four, and `es` (whose appendix prints its own Our Father)
+# from two to four, at the cost of no fetch at all: it is the same file
+# `compendium_source` already hands to the appendix reader. All eleven language
+# editions of this work now carry all four.
+#
+# THE LATIN IS THE ANCHOR, THE CLASSIFIER AND THE CHECK, in that order -- and
+# not one of those three steps reads a word of the vernacular, which is what
+# makes this safe in seven languages nobody here is required to know.
+#
+#   - ANCHOR. `Symbolum` and `Pater noster` are set in Latin script in every
+#     edition. A vernacular heading would need a table of seven spellings, and
+#     would still miss Spanish, which heads its Apostles' Creed with nothing.
+#   - CLASSIFIER. THE FOUR BLOCKS ARE NOT IN ONE ORDER. German, Italian,
+#     Romanian and Slovenian INTERLEAVE -- vernacular Creed, its Latin, the
+#     other Creed, its Latin. English, French and Hungarian GROUP -- both
+#     vernaculars, then both Latins. So "the vernacular is the run before the
+#     Latin heading" is right in half the editions and wrong in the other half,
+#     and wrong INVISIBLY: it files the Nicene vernacular under `apostles-creed`
+#     and yields a real creed under the wrong slug. Every block is therefore
+#     scored against the Latin Catechism's own prayers and called Latin or not;
+#     the blocks that are not are the vernacular, in printed order, because the
+#     Apostles' Creed precedes the Nicene in every edition and every rite.
+#   - CHECK. `report_body_latin` folds each printed Latin against `ccc-la`'s
+#     own. Measured on the German, the two agree word for word once the ligature
+#     is opened -- so this is quiet on a sound edition, which is what makes a
+#     report worth reading.
+#
+# SCORING RATHER THAN TESTING AN INCIPIT is what makes the classifier survive
+# the one edition that is wrong. Hungarian heads a block `Symbolum Apostolicum`
+# and then prints `Credo in unum Deum, Patrem omnipotentem, Creatorem coeli et
+# terrae` -- the NICENE incipit on the Apostles' Creed's body. An incipit test
+# files that under the wrong slug and reports nothing. A whole-text score puts
+# it where it belongs (0.92 against the Apostles', where a sound edition scores
+# 0.99) and leaves the divergence for the check to report.
+#
+# THE LATIN IS USED AND NOT STORED. `prayer.common.la` already publishes all
+# three of these prayers from the Catechism, and what the Compendium prints
+# beside the vernacular is a SECOND transcription of the same text carrying its
+# own misprints -- `caeeli`, `Víirgine`, `proper`, `sedit`, a lost space in
+# `MaríaVírgine`. Storing seven more copies of the Latin Creed whose only
+# differences from one another are the Vatican's typographical slips would be
+# publishing noise in the shape of a variant. `NO_LATIN_SLUGS` does not move.
+#
+# ENGLISH AND PORTUGUESE ARE NOT READ HERE and neither changes: both already
+# take these three prayers from their own Catechism, and the Portuguese
+# Compendium prints no Latin Creed at all. They are still CHECKED here, which is
+# why `report_body_latin` runs over all ten editions and not the eight this
+# supplies.
+
+#: Orthography that varies between two faithful printings of the same Latin, and
+#: nothing else: the ligature, and the older `coel-` spelling some of these
+#: editions use where others write `cael-`. Folding past this would start hiding
+#: real divergence, which is the whole point of the fold.
+_LATIN_LIGATURES = (("æ", "ae"), ("Æ", "Ae"), ("œ", "oe"), ("Œ", "Oe"))
+_LATIN_OE_RE = re.compile(r"\bco(?=el)")
+_LATIN_WORD_RE = re.compile(r"[a-z]+")
+
+
+def fold_latin(text: str) -> list[str]:
+    """A Latin text as comparable words: ligatures opened, accents dropped,
+    `coel-` spelled `cael-`, everything that is not a letter discarded.
+
+    The Compendium accents its Latin for chant (`omnipoténtem`) where the
+    Catechism does not, so an unfolded comparison of two identical Creeds
+    disagrees on a third of their words."""
+    s = unicodedata.normalize("NFKD", text)
+    for ligature, opened in _LATIN_LIGATURES:
+        s = s.replace(ligature, opened)
+    s = "".join(c for c in s if not unicodedata.combining(c)).lower()
+    return _LATIN_WORD_RE.findall(_LATIN_OE_RE.sub("cae", s))
+
+
+@lru_cache(maxsize=1)
+def latin_reference() -> dict[str, frozenset[str]]:
+    """The Latin Catechism's own three prayers, as word sets to score against.
+
+    Read through `read_latin_catechism_prayers`, so this is the same text
+    `prayer.common.la` publishes rather than a second transcription of it."""
+    return {
+        prayer.slug: frozenset(
+            fold_latin(" ".join(block.text for block in prayer.blocks))
+        )
+        for prayer in read_latin_catechism_prayers()
+    }
+
+
+#: A block is Latin when this share of its words are in one of the Catechism's
+#: Latin prayers. Measured over every unit of both regions in all ten editions:
+#: the Latin blocks score 0.92 to 1.00 and the vernacular ones 0.00 to 0.22, so
+#: anything between about 0.3 and 0.9 separates them and the midpoint is not a
+#: tuned number. The Romance vernaculars are the near miss and they are not
+#: near -- Italian's `Credo in Dio, Padre onnipotente` shares `credo` and `in`
+#: with the Latin and then stops.
+LATIN_SCORE_MIN = 0.6
+
+#: A Creed is long, and short Latin-scoring blocks exist -- `Amen.` alone scores
+#: 1.00. Seeding a region on one of those would find the appendix's Latin
+#: column, hundreds of units further on, rather than this region's.
+LATIN_SEED_CHARS = 200
+
+#: Below this, a block gets no vote on whether it is Latin and simply joins the
+#: block above it. Slovenian closes each of its four Creeds with a bare `Amen.`,
+#: which scores 1.00 as Latin inside the vernacular ones too and would otherwise
+#: cut both Slovenian Creeds in half.
+LATIN_CLASS_MIN_CHARS = 40
+
+#: A chunk shorter than this is a heading the source set in a paragraph of its
+#: own rather than a prayer -- German prints `DAS GEBET DES HERRN` that way. The
+#: shortest text either region holds anywhere is an Our Father at 285 characters.
+BODY_PRAYER_MIN_CHARS = 120
+
+#: The two slugs the Creed region supplies. The Our Father region supplies the
+#: third and is read by the same machinery under `("our-father",)`.
+BODY_CREED_SLUGS = ("apostles-creed", "nicene-creed")
+
+
+def latin_likeness(text: str) -> tuple[str | None, float]:
+    """Which of the Catechism's Latin prayers this text is, and how much of it
+    agrees. `(None, 0.0)` for a text with no words at all."""
+    words = fold_latin(text)
+    if not words:
+        return None, 0.0
+    best_slug, best_score = None, 0.0
+    for slug, reference in latin_reference().items():
+        score = sum(1 for word in words if word in reference) / len(words)
+        if score > best_score:
+            best_slug, best_score = slug, score
+    return best_slug, best_score
+
+
+def is_latin_block(text: str) -> bool:
+    return latin_likeness(text)[1] >= LATIN_SCORE_MIN
+
+
+@dataclass
+class BodyChunk:
+    """One printed block of the Creed or Our Father region: the heading the
+    source set over it, where it set one, and the raw HTML under it."""
+
+    title: str | None
+    parts: list[str] = field(default_factory=list)
+
+    @property
+    def text(self) -> str:
+        return " ".join(t for t in (flatten(part) for part in self.parts) if t)
+
+
+#: A heading here is bold, and the bold may sit under a `<font>` (most
+#: editions), a `<span lang="fr">` (French alone) or neither (Romanian,
+#: Slovenian). Splitting AT the `<b>` and letting the wrappers fall away as
+#: empty segments covers all three without naming any of them.
+_BOLD_SPLIT_RE = re.compile(r"(?i)(?=<b\b)")
+_BOLD_HEAD_RE = re.compile(r"(?is)^\s*<b\b[^>]*>(.*?)</b>(.*)$")
+#: A question opens with its number; a reference line is nothing but numbers and
+#: separators. Both are language-invariant, which is why a region is bounded on
+#: them rather than on any printed heading.
+_BODY_QUESTION_RE = re.compile(r"^\d+\.")
+_BODY_REFERENCE_RE = re.compile(r"^[\d\s,;.‐-―-]+$")
+#: Where the Latin heading falls inside a table, this is what finds the table.
+_BODY_TABLE_ANCHOR = {
+    "creeds": re.compile(r"(?i)\bSymbolum\b"),
+    "our-father": re.compile(r"(?i)\bPater\s+noster\b"),
+}
+
+
+def bold_units(paragraph_html: str) -> list[str]:
+    """A paragraph as the units its own headings divide it into.
+
+    ITALIAN SETS THE WHOLE CREED REGION IN ONE `<p>` -- both vernaculars and
+    both Latins, divided by nothing but four bold headings -- so splitting every
+    paragraph on its bold runs is what lets one reader serve it and the six
+    editions that use a paragraph per block. For those six it is very nearly a
+    no-op: a paragraph with one leading heading yields itself."""
+    return [unit for unit in _BOLD_SPLIT_RE.split(paragraph_html) if flatten(unit)]
+
+
+def head_and_body(unit_html: str) -> tuple[str | None, str]:
+    """A unit as `(heading, the rest)`, or `(None, all of it)`."""
+    match = _BOLD_HEAD_RE.match(unit_html.strip())
+    if match is None:
+        return None, unit_html
+    return flatten(match.group(1)), match.group(2)
+
+
+def body_chunks(units: list[str]) -> list[BodyChunk]:
+    """Units as chunks, split where the source sets a heading and again wherever
+    Latin gives way to vernacular or back.
+
+    THE SECOND SPLIT IS THE ONE THAT MATTERS, and English is what needs it:
+    it heads its Latin Apostles' Creed `Symbolum Apostolicum` and then prints
+    ten unheaded paragraphs of the Nicene Creed in English under no heading at
+    all. A chunker reading headings alone returns one block that is a Latin
+    creed followed by an English one."""
+    chunks: list[BodyChunk] = []
+    latin_now: bool | None = None
+    for unit in units:
+        title, body = head_and_body(unit)
+        if title is not None:
+            chunks.append(BodyChunk(title))
+            latin_now = None
+        body_text = flatten(body)
+        if not body_text:
+            continue
+        if len(body_text) >= LATIN_CLASS_MIN_CHARS:
+            latin_here = is_latin_block(body_text)
+            if latin_now is not None and latin_here != latin_now:
+                chunks.append(BodyChunk(None))
+            latin_now = latin_here
+        if not chunks:
+            chunks.append(BodyChunk(None))
+        chunks[-1].parts.append(body)
+    return [
+        chunk
+        for chunk in chunks
+        if chunk.parts and len(chunk.text) >= BODY_PRAYER_MIN_CHARS
+    ]
+
+
+def stream_body_chunks(
+    html_text: str, lang: str, slugs: tuple[str, ...]
+) -> list[BodyChunk]:
+    """The chunks of one region, for the editions that set it as paragraphs.
+
+    THE END IS THE LATIN AND THE START IS THE SECTION HEADING. Every edition
+    closes each region with its Latin, so the end is found by scoring; the start
+    is the first heading after the last numbered question before it, because the
+    answer to that question is ordinary prose and the heading that follows it
+    (`SEGUNDA SECCIÓN`, `MÁSODIK SZAKASZ`, `Andra delen`) is the only thing
+    between the two that the source sets bold."""
+    units = [
+        unit
+        for paragraph in top_paragraphs(html_text)
+        for unit in bold_units(paragraph)
+    ]
+    seeds = [
+        i
+        for i, unit in enumerate(units)
+        if len(flatten(unit)) >= LATIN_SEED_CHARS
+        and latin_likeness(flatten(unit))[0] in slugs
+        and is_latin_block(flatten(unit))
+    ]
+    if not seeds:
+        raise RuntimeError(
+            f"{lang}: found no Latin {slugs[0]} in the Compendium's body"
+        )
+    seed = seeds[0]
+    # The appendix prints Latin too, hundreds of units later; this region is the
+    # FIRST cluster. 40 is far wider than any edition's region (Spanish's, the
+    # longest, is 19 units) and far narrower than the gap to the appendix.
+    end = max(i for i in seeds if i - seed < 40)
+    while end + 1 < len(units):
+        following = flatten(units[end + 1])
+        if following and not is_latin_block(following):
+            break
+        end += 1
+    question = max(
+        (
+            i
+            for i in range(seed)
+            if _BODY_QUESTION_RE.match(flatten(units[i]))
+            or _BODY_REFERENCE_RE.match(flatten(units[i]) or "x")
+        ),
+        default=-1,
+    )
+    start = next(
+        (
+            i
+            for i in range(question + 1, seed)
+            if head_and_body(units[i])[0] is not None
+        ),
+        None,
+    )
+    if start is None:
+        raise RuntimeError(
+            f"{lang}: no heading between question {question} and the Latin at "
+            f"{seed} -- the region cannot be bounded"
+        )
+    return body_chunks(units[start : end + 1])
+
+
+def _enclosing_tables(html_text: str, region: str) -> list[str]:
+    """Every distinct table holding a Latin heading for `region`.
+
+    Found by walking out from the heading rather than by matching `<table>`,
+    because the page is itself one big layout table and these are nested inside
+    it -- a non-recursive `<table>...</table>` match returns the outer one and
+    its cells are the whole document."""
+    spans: list[tuple[int, int]] = []
+    for match in _BODY_TABLE_ANCHOR[region].finditer(html_text):
+        start = html_text.rfind("<table", 0, match.start())
+        end = html_text.find("</table>", match.start())
+        if start != -1 and end != -1 and (start, end) not in spans:
+            spans.append((start, end))
+    return [html_text[start : end + 8] for start, end in spans]
+
+
+def _table_rows(table_html: str) -> list[list[str]]:
+    return [
+        [cell.group(1) for cell in _TD_RE.finditer(row.group(1))]
+        for row in _TR_RE.finditer(table_html)
+    ]
+
+
+def paired_cell_chunks(
+    html_text: str, lang: str, region: str, slugs: tuple[str, ...]
+) -> list[BodyChunk]:
+    """German's shape: one table, one row per Creed, and each cell holding its
+    own heading and then its text."""
+    chunks: list[BodyChunk] = []
+    for table in _enclosing_tables(html_text, region):
+        for row in _table_rows(table):
+            for cell in row:
+                chunks.extend(body_chunks(bold_units(cell)))
+    if not chunks:
+        raise RuntimeError(f"{lang}: no {region} found in a paired-cell table")
+    return chunks
+
+
+def headed_column_chunks(
+    html_text: str, lang: str, region: str, slugs: tuple[str, ...]
+) -> list[BodyChunk]:
+    """Swedish's shape: a table per prayer, its first row the two headings and
+    every row after it one printed line, with an empty spacer column between the
+    vernacular and the Latin.
+
+    Read by COLUMN, which is the whole reason this is not the paired-cell
+    reader: taken row by row the vernacular and the Latin alternate every line,
+    and the classifier would cut each Creed into as many chunks as it has
+    lines."""
+    chunks: list[BodyChunk] = []
+    for table in _enclosing_tables(html_text, region):
+        rows = [row for row in _table_rows(table) if row]
+        width = max(len(row) for row in rows)
+        for column in range(width):
+            cells = [row[column] for row in rows if column < len(row)]
+            if not any(flatten(cell) for cell in cells):
+                continue  # the spacer column
+            title = flatten(cells[0]) or None
+            parts = [cell for cell in cells[1:] if flatten(cell)]
+            if not parts:
+                continue
+            chunk = BodyChunk(title, parts)
+            if len(chunk.text) >= BODY_PRAYER_MIN_CHARS:
+                chunks.append(chunk)
+    if not chunks:
+        raise RuntimeError(f"{lang}: no {region} found in a headed-column table")
+    return chunks
+
+
+#: How each edition sets the two regions. `stream` is the default and the
+#: majority; German sets its Creeds in a two-column table and its Our Father as
+#: paragraphs, which is why this is per region rather than per edition.
+COMPENDIUM_BODY_SHAPE: dict[str, dict[str, str]] = {
+    "de": {"creeds": "paired-cells"},
+    "es": {"creeds": "paired-cells"},
+    "sv": {"creeds": "headed-columns", "our-father": "headed-columns"},
+}
+_BODY_READERS = {
+    "stream": lambda html, lang, region, slugs: stream_body_chunks(html, lang, slugs),
+    "paired-cells": paired_cell_chunks,
+    "headed-columns": headed_column_chunks,
+}
+
+
+def region_chunks(
+    html_text: str, lang: str, region: str, slugs: tuple[str, ...]
+) -> list[BodyChunk]:
+    shape = COMPENDIUM_BODY_SHAPE.get(lang, {}).get(region, "stream")
+    return _BODY_READERS[shape](html_text, lang, region, slugs)
+
+
+def _pair_by_language(
+    chunks: list[BodyChunk], lang: str, region: str, slugs: tuple[str, ...]
+) -> list[tuple[BodyChunk, BodyChunk]]:
+    """The region's chunks as `(vernacular, Latin)` pairs, one per slug.
+
+    Pairing is by ORDER within each language rather than by adjacency, which is
+    what makes it indifferent to whether the edition interleaves or groups."""
+    latin = [chunk for chunk in chunks if is_latin_block(chunk.text)]
+    vernacular = [chunk for chunk in chunks if not is_latin_block(chunk.text)]
+    if len(latin) != len(slugs) or len(vernacular) != len(slugs):
+        raise RuntimeError(
+            f"{lang}: expected {len(slugs)} vernacular and {len(slugs)} Latin "
+            f"{region} blocks, found {len(vernacular)} and {len(latin)}"
+        )
+    found = [latin_likeness(chunk.text)[0] for chunk in latin]
+    if found != list(slugs):
+        raise RuntimeError(
+            f"{lang}: the Latin {region} blocks read as {found}, not {list(slugs)}"
+        )
+    return list(zip(vernacular, latin, strict=True))
+
+
+def _prayer_from_chunk(vernacular: BodyChunk, slug: str, lang: str) -> Prayer:
+    if not vernacular.title:
+        raise RuntimeError(f"{lang}: the {slug} is printed under no heading")
+    return Prayer(
+        0,
+        slug,
+        vernacular.title,
+        [
+            BlockOut("prose", flatten(part), html=line_html(br_segments(part)))
+            for part in vernacular.parts
+            if flatten(part)
+        ],
+    )
+
+
+def build_creeds_body(lang: str) -> Callable[[str], list[Prayer]]:
+    """The two Creeds, read from this edition's own Compendium body."""
+
+    def read(html_text: str) -> list[Prayer]:
+        chunks = region_chunks(html_text, lang, "creeds", BODY_CREED_SLUGS)
+        pairs = _pair_by_language(chunks, lang, "creeds", BODY_CREED_SLUGS)
+        return [
+            _prayer_from_chunk(vernacular, slug, lang)
+            for (vernacular, _), slug in zip(pairs, BODY_CREED_SLUGS, strict=True)
+        ]
+
+    return read
+
+
+def build_our_father_body(lang: str) -> Callable[[str], list[Prayer]]:
+    """The Our Father, read from this edition's own Compendium body."""
+
+    def read(html_text: str) -> list[Prayer]:
+        chunks = region_chunks(html_text, lang, "our-father", ("our-father",))
+        pairs = _pair_by_language(chunks, lang, "our-father", ("our-father",))
+        return [_prayer_from_chunk(pairs[0][0], "our-father", lang)]
+
+    return read
+
+
+def report_body_latin(lang: str, html_text: str) -> list[str]:
+    """Every place this edition's printed Latin departs from the Catechism's.
+
+    A REPORT AND NOT A GATE, for the same reason the cross-language symmetry
+    check is one: a departure may be the Compendium and the Catechism printing
+    two received readings, and five of these editions agree on `sedet ad
+    dexteram Dei Patris` where `ccc-la` prints no `Dei`, with `quotidianum`
+    against `cotidianum` older still. What it is FOR is the other kind, which
+    nothing else in this scraper can see -- one misprinted character inside a
+    Latin prayer nobody here is required to be able to read."""
+    reports: list[str] = []
+    catechism = {
+        prayer.slug: fold_latin(" ".join(block.text for block in prayer.blocks))
+        for prayer in read_latin_catechism_prayers()
+    }
+    for region, slugs in (
+        ("creeds", BODY_CREED_SLUGS),
+        ("our-father", ("our-father",)),
+    ):
+        try:
+            chunks = region_chunks(html_text, lang, region, slugs)
+        except RuntimeError as exc:
+            reports.append(str(exc))
+            continue
+        for chunk in chunks:
+            if not is_latin_block(chunk.text):
+                continue
+            slug = latin_likeness(chunk.text)[0]
+            printed, received = fold_latin(chunk.text), catechism[slug]
+            if printed == received:
+                continue
+            at = next(
+                (
+                    i
+                    for i, (a, b) in enumerate(zip(printed, received, strict=False))
+                    if a != b
+                ),
+                min(len(printed), len(received)),
+            )
+            reports.append(
+                f"{lang}/{slug}: Latin departs from ccc-la at word {at} -- "
+                f"{' '.join(printed[max(0, at - 2) : at + 4])!r} against "
+                f"{' '.join(received[max(0, at - 2) : at + 4])!r}"
+            )
+    return reports
+
+
+# --------------------------------------------------------------------------
 # The Litany of Loreto
 # --------------------------------------------------------------------------
 #
@@ -3033,6 +3524,28 @@ def collect_texts(p: Prayer) -> list[str]:
         texts.append(p.instructions.title)
         texts.extend(block.text for block in p.instructions.blocks)
     return texts
+
+
+def edition_note(spec: LangSpec) -> str:
+    """What this edition was assembled FROM, per edition rather than as one
+    string for all of them.
+
+    It was one string, and it named the Catechism for every edition -- true of
+    English, Portuguese and Latin, and false of the eight that read their
+    Creeds and their Our Father out of the Compendium's own body. The manifest
+    is where a reader checks what a work is, so it may not describe three
+    editions and be read by eleven."""
+    parts = ["Compendium of the CCC (2005) Appendix A"]
+    companions = [s for s in (spec.creeds, spec.our_father) if s]
+    if any(s.url == spec.appendix.url for s in companions):
+        parts.append("its own text of the Creeds and the Our Father")
+    if any(s.url != spec.appendix.url for s in companions):
+        parts.append("Catechism texts")
+    if spec.litany or spec.rosary_mysteries:
+        parts.append("Vatican Rosary pages")
+    if len(parts) == 1:
+        return parts[0]
+    return f"{', '.join(parts[:-1])} and {parts[-1]}"
 
 
 def check_source_coverage() -> list[str]:
@@ -3878,6 +4391,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Allgemeine Gebete",
         short_title="Allgemeine Gebete",
         appendix=compendium_source("de", build_prayers_de),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("de", build_creeds_body("de")),
+        our_father=compendium_source("de", build_our_father_body("de")),
         rosary_mysteries="ge",
         litany=litany_source("de", "ge"),
     ),
@@ -3886,6 +4404,9 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Oraciones Comunes",
         short_title="Oraciones Comunes",
         appendix=compendium_source("es", build_prayers_es),
+        # The Creeds are the Compendium's own, from the head of Part One
+        # Section Two -- a two-column table on the same page as the appendix.
+        creeds=compendium_source("es", build_creeds_body("es")),
         # No `our_father`: the Spanish appendix prints its own, as its 25th
         # row (see `ES_APPENDIX_SLUGS`) -- with a Latin *Pater Noster* beside
         # it, which is why `no_latin` is one shorter than everyone else's.
@@ -3899,6 +4420,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Rugăciuni obişnuite",
         short_title="Rugăciuni obişnuite",
         appendix=compendium_source("ro", build_prayers_ro),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("ro", build_creeds_body("ro")),
+        our_father=compendium_source("ro", build_our_father_body("ro")),
         copyright_notice=(
             "Copyright © 2005 - Libreria Editrice Vaticana pentru folosirea în "
             "România a traducerii în limba română"
@@ -3916,6 +4442,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Splošne molitve",
         short_title="Splošne molitve",
         appendix=compendium_source("sl", build_prayers_sl),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("sl", build_creeds_body("sl")),
+        our_father=compendium_source("sl", build_our_father_body("sl")),
         appendix_slugs=[s for s in APPENDIX_SLUGS if s not in SL_ABSENT],
         absent=SL_ABSENT | SL_LATIN_ONLY,
     ),
@@ -3924,10 +4455,16 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Vanliga böner",
         short_title="Vanliga böner",
         appendix=compendium_source("sv", build_prayers_sv),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("sv", build_creeds_body("sv")),
+        our_father=compendium_source("sv", build_our_father_body("sv")),
         # The Holy Rosary micro-site publishes six languages and Swedish is
-        # not one of them, and vatican.va publishes no Swedish Catechism --
-        # so no Litany, no Creeds, no Our Father, and a Rosary that is the
-        # bare Appendix A entry.
+        # not one of them -- so no Litany, and a Rosary that is the bare
+        # Appendix A entry. The Creeds and the Our Father do NOT depend on
+        # vatican.va publishing a Swedish Catechism, which it does not: the
+        # Compendium prints all three itself.
         appendix_slugs=SV_APPENDIX_SLUGS,
         absent=SV_ABSENT,
     ),
@@ -3936,6 +4473,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Prières Communes",
         short_title="Prières Communes",
         appendix=compendium_source("fr", build_prayers_fr),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("fr", build_creeds_body("fr")),
+        our_father=compendium_source("fr", build_our_father_body("fr")),
         rosary_mysteries="fr",
         litany=litany_source("fr", "fr"),
     ),
@@ -3944,6 +4486,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Alapvető imádságok",
         short_title="Alapvető imádságok",
         appendix=compendium_source("hu", build_prayers_hu),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("hu", build_creeds_body("hu")),
+        our_father=compendium_source("hu", build_our_father_body("hu")),
         # The Hungarian appendix prints "Jöjj, Szentlélek Istenünk" as a bold
         # heading and then moves straight to the next prayer -- the Veni
         # Sancte Spiritus has no text in this edition. It is the same kind of
@@ -3955,6 +4502,11 @@ LANG_CONFIG: dict[str, LangSpec] = {
         title="Preghiere Comuni",
         short_title="Preghiere Comuni",
         appendix=compendium_source("it", build_prayers_it),
+        # The Creeds and the Our Father are the Compendium's OWN, from the
+        # head of Part One Section Two and of Part Four Section Two -- the
+        # same page the appendix above is read from, and no fetch.
+        creeds=compendium_source("it", build_creeds_body("it")),
+        our_father=compendium_source("it", build_our_father_body("it")),
         rosary_mysteries="it",
         litany=litany_source("it", "it"),
     ),
@@ -4218,12 +4770,16 @@ def build_manifest(
     # prayer claims a page the manifest does not declare and that no declared
     # page goes unclaimed, and that check is worth nothing if both sides are
     # built from the same hand-written pair of conditionals.
-    sources = [{"url": spec.appendix.url, "retrieved_at": spec.appendix.retrieved_at}]
-    for companion in (spec.creeds, spec.our_father, spec.litany):
-        if companion:
-            sources.append(
-                {"url": companion.url, "retrieved_at": companion.retrieved_at}
-            )
+    # DEDUPED BY URL, in first-declared order. Eight editions read their Creeds
+    # and their Our Father out of the Compendium page the appendix is on, so
+    # three of a spec's four sources are one file and a manifest listing it
+    # three times would claim three pages this work does not have.
+    # `check_source_coverage` compares this list against `prayer_sources`, which
+    # answers per prayer and so cannot see the repetition.
+    sources: list[dict] = []
+    for source in (spec.appendix, spec.creeds, spec.our_father, spec.litany):
+        if source and not any(entry["url"] == source.url for entry in sources):
+            sources.append({"url": source.url, "retrieved_at": source.retrieved_at})
     if spec.rosary_mysteries:
         sources += [
             {
@@ -4238,7 +4794,7 @@ def build_manifest(
         "title": spec.title,
         "short_title": spec.short_title,
         "language": lang,
-        "edition": "Compendium of the CCC (2005) Appendix A + Catechism texts and Vatican Rosary pages",
+        "edition": edition_note(spec),
         "sources": sources,
         "copyright": {
             "status": "copyrighted",
@@ -4656,6 +5212,31 @@ def print_latin_summary(prayers: list[Prayer], report: list[dict]) -> None:
     )
 
 
+def print_body_latin_report(langs: list[str]) -> None:
+    """What every Compendium's printed Latin says against the Catechism's.
+
+    Printed rather than gated, and printed for EVERY edition rather than the
+    eight that are read here -- English and Portuguese take these prayers from
+    their own Catechism, so a divergence in their Compendium costs the corpus
+    nothing and is still the cheapest evidence there is for telling a received
+    variant from a misprint. Five editions agreeing on `Dei Patris` is the
+    first; one edition alone printing `caeeli` is the second."""
+    reports: list[str] = []
+    for lang in langs:
+        spec = LANG_CONFIG[lang]
+        if not spec.appendix.path.exists():
+            continue
+        reports += report_body_latin(
+            lang, spec.appendix.path.read_text(encoding="cp1252", errors="replace")
+        )
+    print("\n=== printed Latin against ccc-la ===")
+    if not reports:
+        print("no divergence")
+        return
+    for line in reports:
+        print(f"  {line}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     # `all` IS THE DEFAULT AND THAT IS LOAD-BEARING, not a convenience. It was
@@ -4737,6 +5318,7 @@ def main() -> int:
     for lang in langs:
         print_summary(lang, results[lang], ok, problems if lang == langs[-1] else [])
 
+    print_body_latin_report(langs)
     return 0 if overall_ok else 1
 
 
