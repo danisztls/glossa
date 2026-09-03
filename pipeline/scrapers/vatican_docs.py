@@ -5227,10 +5227,25 @@ VATII_LANG_FROM_URL = {
 VATII_LANG_TO_URL = {v: k for k, v in VATII_LANG_FROM_URL.items()}
 
 
-def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
+# --------------------------------------------------------------------------
+# THE DISCOVERY CONTRACT, which `run_family` is written against.
+#
+# Every `discover_*` returns `(refs, notes)`. `notes` are printed verbatim,
+# one per line, and are the ONLY channel: a fatal failure is an empty `refs`
+# with a note saying why, not a separate error return. Two of the five used
+# to return `str | None` instead -- one error string, no notes -- and that
+# difference alone was what stopped the three index-driven runners sharing a
+# body, since each had to open with its own error-handling preamble. The
+# `(expected N)` sanity counts moved in here at the same time, because the
+# function that read the index is the one that knows what should have been
+# on it.
+# --------------------------------------------------------------------------
+
+
+def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
     text, err = fetcher.fetch_text(VATII_INDEX_URL, "index__vatii.html")
     if text is None:
-        return [], err
+        return [], [f"could not fetch the Vatican II index: {err}"]
     by_slug: dict[str, DocRef] = {}
     for m in _VATII_LINK_RE.finditer(text):
         _fname, kind, date8, slug, lang = m.groups()
@@ -5252,7 +5267,9 @@ def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
             if zh_slug
             else VATII_DOC_BASE + m.group(0).split('"')[1].removeprefix("documents/")
         )
-    return list(by_slug.values()), None
+    return list(by_slug.values()), [
+        f"discovered {len(by_slug)} Vatican II documents from index (expected 16)"
+    ]
 
 
 _VATI_LINK_RE = re.compile(
@@ -5273,7 +5290,7 @@ VATI_LANG_TO_URL = {v: k for k, v in VATI_LANG_FROM_URL.items()}
 VATI_KIND_MAP = {"const": "conciliar-constitution"}
 
 
-def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
+def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
     """The First Vatican Council's two dogmatic constitutions, off its index.
 
     Same shape as `discover_vatii` and deliberately not merged with it: the
@@ -5284,7 +5301,7 @@ def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
     reading at every one of those points."""
     text, err = fetcher.fetch_text(VATI_INDEX_URL, "index__vati.html")
     if text is None:
-        return [], err
+        return [], [f"could not fetch the Vatican I index: {err}"]
     by_slug: dict[str, DocRef] = {}
     for m in _VATI_LINK_RE.finditer(text):
         _fname, kind, date8, slug, lang = m.groups()
@@ -5301,7 +5318,9 @@ def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], str | None]:
             ),
         )
         ref.lang_urls[lang] = VATI_DOC_BASE + _fname
-    return list(by_slug.values()), None
+    return list(by_slug.values()), [
+        f"discovered {len(by_slug)} Vatican I documents from index (expected 2)"
+    ]
 
 
 _ENCYC_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/encyclicals/documents/([a-z0-9_.-]+)\.html"'
@@ -8656,12 +8675,13 @@ def run_phase1(
     skip_written: bool = False,
     lock_path: Path = CRAWL_LOCK_PATH,
 ) -> list[dict]:
-    refs, err = discover_vatii(fetcher)
-    if err:
-        print(f"FATAL: could not fetch Vatican II index: {err}", file=sys.stderr)
+    refs, notes = discover_vatii(fetcher)
+    for note in notes:
+        print(f"  [discover] {note}")
+    if not refs:
+        print("FATAL: no Vatican II documents discovered", file=sys.stderr)
         return []
     by_slug = {r.slug: r for r in refs}
-    print(f"discovered {len(refs)} Vatican II documents from index (expected 16)")
     order = only or VATII_ORDER
     results = []
     pool = OrderedParsePool(jobs)
@@ -8740,12 +8760,13 @@ def run_vati(
     the language table gives: the two councils' mirrors agree on almost
     nothing but the host. Four pages, so the pool is a formality kept for the
     shared reporting rather than for the parallelism."""
-    refs, err = discover_vati(fetcher)
-    if err:
-        print(f"FATAL: could not fetch Vatican I index: {err}", file=sys.stderr)
+    refs, notes = discover_vati(fetcher)
+    for note in notes:
+        print(f"  [discover] {note}")
+    if not refs:
+        print("FATAL: no Vatican I documents discovered", file=sys.stderr)
         return []
     by_slug = {r.slug: r for r in refs}
-    print(f"discovered {len(refs)} Vatican I documents from index (expected 2)")
     order = only or VATI_ORDER
     results = []
     pool = OrderedParsePool(jobs)
