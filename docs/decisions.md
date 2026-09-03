@@ -3733,6 +3733,22 @@ is cited in longhand, which is the `cdf instr.` residue bucket in
 not be neutral: `II` for _Inter Insigniores_ would claim every "Vatican II" in the corpus,
 which is the trap `SS` is already kept out for.
 
+**What is not held is reported by a command, not written down in a file.** `discover-cdf`
+prints each held document annotated with the editions the corpus does not take, and
+`--unselected` names the 214 documents it does not hold at all. A table of that residue in
+`docs/research/` was the obvious alternative and is the wrong shape: this index gained six
+documents in 2025 alone, so such a table is wrong by the next promulgation, silently, in a
+file nothing re-reads — the rot CLAUDE.md's rule about inventory counts exists to prevent.
+The instrument does not rot. Four gaps, four different decisions: 214 documents unselected
+(not a backlog — the citation measurement is what to re-run, not the list); two Chinese
+HTML editions of _Dignitas Infinita_ never fetched, because `DIVISIONS` has no Chinese and
+a work tag would acquire two pages nothing can read; three Lithuanian editions in `raw/`
+and not in `build/`, acquired and unparsed, which is exactly the split `--fetch-only`
+exists for; and nine PDF-only editions across seven documents, on the terms `ccc.py` set
+for Arabic and Chinese. **The first of those corrected a claim in the code**: Chinese was
+left unmapped on the stated ground that this index only ever serves it as PDF, which is
+true of three documents and false of the fourth.
+
 ## Process
 
 **Shared code is decided by entitlement, not by identical bodies.** `apply_corrections`

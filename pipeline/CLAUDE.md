@@ -433,8 +433,8 @@ SELECTION is a decision rather than an enumeration.
   notifications carry **zero** (fifteen searched by name). Re-run that
   measurement before growing the table; the numbers belong in the commit, not
   in the docblock.
-- **`discover-cdf` is the census.** Index-only, no document fetches: what the
-  index lists, what the table selects, and each document's languages.
+- **`discover-cdf` is the census**, and it is where "what do we not have?"
+  is answered — see below.
 - **The corpus slug is assigned, not read off the filename.** This family
   names its files after the SUBJECT (`freedom-liberation` is _Libertatis
   Conscientia_, `eutanasia` is _Iura et Bona_), so `document_title`'s
@@ -508,6 +508,38 @@ switched off in August for a signature the parser no longer produces (9
 sections with §1 at 59%/64%; now 44 and 130 sections, largest at 8% and 3%) and
 nothing had re-measured them. The file says its entries are temporary; nothing
 enforces it.
+
+### What is NOT held, and the one command that says so
+
+`uv run pipeline/scrapers/vatican_docs.py discover-cdf [--unselected]` — index
+only, no document fetches. It prints the 25 held documents each annotated with
+the editions the corpus does not take, then the count it does not hold at all;
+`--unselected` names those too. **Derived rather than written down**: the index
+gained six documents in 2025 alone, so a table of the residue in `docs/` would
+be wrong by the next promulgation and nothing would re-read it.
+
+Four kinds of gap, and they are four different decisions:
+
+- **214 of 239 documents are not selected.** Not a backlog — `CDF_DOCUMENTS`
+  holds what the corpus cites and these are what it does not. Re-run the
+  citation measurement, not this list, before adding one.
+- **Two editions are not fetched at all**: Dignitas Infinita's `zh_cn` and
+  `zh_tw`, which the index links as HTML. Chinese has no `DIVISIONS` entry
+  (`第一章` interleaves the numeral, `_NUMERAL` has no CJK digits), so a work
+  tag would fetch two pages nothing can read. **The earlier claim that this
+  index serves Chinese only as PDF is false** and was corrected where it was
+  written.
+- **Three editions are in `raw/` and not in `build/`**: the Lithuanian
+  _Homosexualitatis Problema_, _Dominus Iesus_ and the 2002 note on political
+  life. `lit` is mapped, so they were acquired; `lt` has no `DIVISIONS` entry,
+  so they are not parsed. That split is the point of `--fetch-only`, and
+  adding Lithuanian later costs a vocabulary entry and no requests.
+- **Nine editions of seven documents exist only as PDF** (`cs` once, `nl`
+  twice, `zh_cn`/`zh_tw` three times each). Nothing here reads PDF; the terms
+  are the ones `ccc.py` set for Arabic and Chinese.
+
+Plus the seven parsed editions withheld in `site/unpublished.json` above —
+held, readable, and deliberately not published.
 
 ## The Catechism is eight editions in three page formats
 

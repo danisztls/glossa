@@ -5638,9 +5638,14 @@ CDF_INDEX_URL = (
 #: once, on the 1962 `instructio-de-modo-procedendi` -- which is the whole
 #: reason this table cannot be inferred from a sample.
 #:
-#: Chinese is PDF-only wherever it appears and is deliberately absent: this
-#: parser reads HTML, and mapping a code whose only pages are PDFs would
-#: claim an edition the crawl cannot fetch.
+#: Chinese is absent, and the reason is the parser rather than the source.
+#: It was first left out on the ground that the index only ever serves it as
+#: PDF -- true of three documents and FALSE of Dignitas Infinita, which links
+#: `_zh_cn.html` and `_zh_tw.html` like any other edition. What actually
+#: stops it is `DIVISIONS`: Chinese interleaves the numeral into the division
+#: label (`第一章`) and `_NUMERAL` has no CJK digits, so a mapped code would
+#: fetch two pages nothing can read. `discover-cdf` reports both editions as
+#: `not fetched, no work tag` rather than letting them go unmentioned.
 CDF_LANG_FROM_URL = {
     "be": "be", "cs": "cs", "en": "en", "fr": "fr", "ge": "de", "hr": "hr",
     "hu": "hu", "it": "it", "la": "la", "lit": "lt", "lt": "la", "mg": "mg",
@@ -5680,7 +5685,8 @@ CDF_LANG_TO_URL = {"de": "ge", "es": "sp", "la": "lt", "lt": "lit", "pt": "po"}
 #: questions was discovered under a "slug" carrying a whole nested anchor.
 _CDF_LINK_RE = re.compile(
     r'href="\s*([^"\s]*'
-    r'rc_(?:con_cfaith|ddf)_doc_(\d{8})_([^"<>]+?)_([a-z]{2,3}(?:_[a-z]{2})?)\.html)"',
+    r'rc_(?:con_cfaith|ddf)_doc_(\d{8})_([^"<>]+?)_([a-z]{2,3}(?:_[a-z]{2})?)'
+    r'\.(html|pdf))"',
     re.IGNORECASE,
 )
 
@@ -5841,41 +5847,56 @@ def _cdf_normalise_slug(raw: str) -> str:
     return urllib.parse.unquote(raw).replace(" ", "-").replace("_", "-").lower()
 
 
-def discover_cdf(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
-    """Every language URL comes off the index; none is derived from another.
+#: What the index links for one document that this scraper will not read:
+#: an edition in a language with no work tag, and an edition published only
+#: as PDF. Both are recorded rather than dropped, because "we hold every
+#: edition of this document" and "we hold every edition we can read" are
+#: different claims and only the second is true.
+CdfOffer = collections.namedtuple("CdfOffer", "code ext")
 
-    Same posture as `discover_vatii`, and for a sharper reason: this family's
-    filenames are NOT one substitution apart. Three documents are filed under
-    a different slug in different languages (1966's mixed-marriage instruction
-    is `istr-matrimoni-misti` in en/de/it and `matrimonii-sacramentum` in
-    fr/la/pl/pt/es), and three more have the date written the other way round
-    in exactly one edition -- French `19920528_communionis-notio` against
-    everyone else's `28051992_communionis-notio`.
 
-    The date reversal is handled by keying on the CALENDAR date rather than
-    the digits: `parse_promulgation_date` already reads either order, so the
-    two spellings land on one key and the French edition joins its own
-    document instead of becoming a second one-language work. Deriving that
-    URL instead would have produced a 404 and recorded a French edition that
-    exists as absent."""
+def read_cdf_index(
+    fetcher: Fetcher,
+) -> tuple[
+    dict[tuple[str, str], dict[str, str]],
+    dict[tuple[str, str], set[CdfOffer]],
+    list[str],
+]:
+    """`(usable, offered, notes)` off one read of the Dicastery's index.
+
+    `usable` is `(promulgated, slug) -> {source code: url}` restricted to HTML
+    pages in a language `CDF_LANG_FROM_URL` maps -- what discovery crawls.
+    `offered` is EVERY (code, extension) pair the index links for that
+    document, unfiltered.
+
+    Two return values off one parse because the difference between them is
+    the thing worth reporting: a Chinese edition served as HTML and a Czech
+    one served as PDF are both editions the Holy See publishes and this
+    corpus does not hold, and a reader of `discover-cdf --unselected` is
+    owed the distinction. Nothing in the crawl path reads `offered`."""
     notes: list[str] = []
     text, err = fetcher.fetch_text(CDF_INDEX_URL, "index__cdf.html")
     if text is None:
-        return [], [f"could not fetch the CDF index: {err}"]
+        return {}, {}, [f"could not fetch the CDF index: {err}"]
 
-    # `(promulgated, slug) -> {work lang: url}`, for every document listed.
-    found: dict[tuple[str, str], dict[str, str]] = {}
+    usable: dict[tuple[str, str], dict[str, str]] = {}
+    offered: dict[tuple[str, str], set[CdfOffer]] = {}
     unmapped: collections.Counter = collections.Counter()
-    for path, date8, raw_slug, code in _CDF_LINK_RE.findall(text):
+    for path, date8, raw_slug, code, ext in _CDF_LINK_RE.findall(text):
         promulgated = parse_promulgation_date(date8)
         if promulgated is None:
             notes.append(f"{raw_slug}: {date8!r} is a date in neither order -- skipped")
             continue
-        lang = CDF_LANG_FROM_URL.get(code.lower())
-        if lang is None:
-            unmapped[code.lower()] += 1
+        key = (promulgated, _cdf_normalise_slug(raw_slug))
+        code, ext = code.lower(), ext.lower()
+        offered.setdefault(key, set()).add(CdfOffer(code, ext))
+        if ext != "html":
             continue
-        urls = found.setdefault((promulgated, _cdf_normalise_slug(raw_slug)), {})
+        lang = CDF_LANG_FROM_URL.get(code)
+        if lang is None:
+            unmapped[code] += 1
+            continue
+        urls = usable.setdefault(key, {})
         # KEYED BY WHAT THE SOURCE CALLS THE LANGUAGE, never by what we call
         # it -- the rule `MODERN_LANG_TO_URL` was written for, and the same
         # invisible failure when broken: `url_lang_key` asks `lang_urls` for
@@ -5893,9 +5914,32 @@ def discover_cdf(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
         urls.setdefault(code_key, urllib.parse.urljoin(CDF_INDEX_URL, path))
     if unmapped:
         notes.append(
-            "index language codes with no work tag (ignored): "
+            "index language codes with no work tag (not crawled): "
             + ", ".join(f"{c}x{n}" for c, n in sorted(unmapped.items()))
         )
+    return usable, offered, notes
+
+
+def discover_cdf(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
+    """Every language URL comes off the index; none is derived from another.
+
+    Same posture as `discover_vatii`, and for a sharper reason: this family's
+    filenames are NOT one substitution apart. Three documents are filed under
+    a different slug in different languages (1966's mixed-marriage instruction
+    is `istr-matrimoni-misti` in en/de/it and `matrimonii-sacramentum` in
+    fr/la/pl/pt/es), and three more have the date written the other way round
+    in exactly one edition -- French `19920528_communionis-notio` against
+    everyone else's `28051992_communionis-notio`.
+
+    The date reversal is handled by keying on the CALENDAR date rather than
+    the digits: `parse_promulgation_date` already reads either order, so the
+    two spellings land on one key and the French edition joins its own
+    document instead of becoming a second one-language work. Deriving that
+    URL instead would have produced a 404 and recorded a French edition that
+    exists as absent."""
+    found, offered, notes = read_cdf_index(fetcher)
+    if not offered:
+        return [], notes
 
     refs: list[DocRef] = []
     for (promulgated, slug), (corpus_slug, kind, _title) in sorted(
@@ -5914,9 +5958,10 @@ def discover_cdf(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
             DocRef("cdf", kind, corpus_slug, cdf_issuing_body(promulgated), date8, urls)
         )
     notes.append(
-        f"index lists {len(found)} documents; CDF_DOCUMENTS selects "
-        f"{len(refs)} of them -- see CDF_DOCUMENTS for the measurement "
-        "behind the selection"
+        f"index lists {len(offered)} documents ({len(found)} with at least one "
+        f"readable edition); CDF_DOCUMENTS selects {len(refs)} -- "
+        "`discover-cdf --unselected` lists the rest, CDF_DOCUMENTS has the "
+        "measurement behind the selection"
     )
     return refs, notes
 
@@ -9625,6 +9670,80 @@ def report_fetching(fetcher: Fetcher) -> None:
         print(f"  [absent] ledger updated: {absent.path}")
 
 
+# --------------------------------------------------------------------------
+# The CDF census: what is held, what of it is not readable, and what is not
+# held at all.
+#
+# DERIVED, NEVER TYPED. The alternative was a table in `docs/research/` naming
+# the 214 documents this corpus does not take, and CLAUDE.md's own rule about
+# inventory counts is the argument against it: the index gains documents (six
+# in 2025 alone) and a list written today is wrong by the next promulgation,
+# silently, in a file nothing re-reads. What does not rot is the instrument.
+# --------------------------------------------------------------------------
+
+
+def _cdf_edition_gaps(offers: set[CdfOffer]) -> list[str]:
+    """What this document offers that the corpus does not take, in words.
+
+    Three kinds, and they are three different decisions:
+      * a language with no work tag -- the crawl never asks for it
+      * a language mapped but with no `DIVISIONS` entry -- fetched into
+        `raw/` and not parsed, so the page is held and the text is not
+      * an edition published only as PDF -- nothing here reads PDF
+    """
+    html = {o.code for o in offers if o.ext == "html"}
+    gaps = []
+    unmapped = sorted(c for c in html if c not in CDF_LANG_FROM_URL)
+    if unmapped:
+        gaps.append("not fetched, no work tag: " + ",".join(unmapped))
+    unreadable = sorted(
+        CDF_LANG_FROM_URL[c]
+        for c in html
+        if c in CDF_LANG_FROM_URL and CDF_LANG_FROM_URL[c] not in DIVISIONS
+    )
+    if unreadable:
+        gaps.append("fetched, not parsed (no DIVISIONS): " + ",".join(unreadable))
+    pdf_only = sorted({o.code for o in offers if o.ext == "pdf"} - html)
+    if pdf_only:
+        gaps.append("PDF only: " + ",".join(pdf_only))
+    return gaps
+
+
+def report_cdf_census(fetcher: Fetcher, unselected: bool) -> int:
+    refs, notes = discover_cdf(fetcher)
+    _found, offered, _notes = read_cdf_index(fetcher)  # cached; no second request
+    for note in notes:
+        print(f"[discover] {note}")
+
+    print("\n=== held ===")
+    keyed = {v[0]: k for k, v in CDF_DOCUMENTS.items()}
+    for ref in sorted(refs, key=lambda r: r.date_digits):
+        # `lang_urls` is keyed by the source's code; a census is for a reader,
+        # so it prints the work tags those become.
+        langs = ",".join(sorted(CDF_LANG_FROM_URL[c] for c in ref.lang_urls))
+        print(
+            f"  {parse_promulgation_date(ref.date_digits)}  "
+            f"{ref.slug:36} {ref.document_kind:20} {len(ref.lang_urls):2} {langs}"
+        )
+        for gap in _cdf_edition_gaps(offered.get(keyed[ref.slug], set())):
+            print(f"      {gap}")
+
+    rest = {k: v for k, v in offered.items() if k not in CDF_DOCUMENTS}
+    print(f"\n=== not held: {len(rest)} of {len(offered)} documents on the index ===")
+    print(
+        "  Not a backlog. The corpus was measured for what it cites and these\n"
+        "  are what it does not (see CDF_DOCUMENTS); re-run that measurement,\n"
+        "  not this list, before adding one."
+    )
+    if not unselected:
+        print("  --unselected lists them.")
+        return 0
+    for (promulgated, slug), offers in sorted(rest.items()):
+        codes = ",".join(sorted({o.code for o in offers if o.ext == "html"}))
+        print(f"  {promulgated}  {slug[:52]:52} {codes or '(pdf only)'}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -9800,11 +9919,16 @@ def main() -> int:
         parents=[net],
         help="index-only census, no document fetches",
     )
-    sub.add_parser(
+    p3d = sub.add_parser(
         "discover-cdf",
         parents=[net],
-        help="index-only census of the CDF index: what it lists, what "
-        "CDF_DOCUMENTS selects, and what it leaves",
+        help="index-only census: what the index lists, what CDF_DOCUMENTS "
+        "selects, which of its editions are not readable, and what is left",
+    )
+    p3d.add_argument(
+        "--unselected",
+        action="store_true",
+        help="also name every document on the index the corpus does not hold",
     )
     sub.add_parser(
         "check-symmetry",
@@ -9985,20 +10109,7 @@ def main() -> int:
         return 0 if ok else 1
 
     if args.cmd == "discover-cdf":
-        refs, notes = discover_cdf(fetcher)
-        for note in notes:
-            print(f"[discover] {note}")
-        print()
-        for ref in sorted(refs, key=lambda r: r.date_digits):
-            # `lang_urls` is keyed by the source's code; a census is for a
-            # reader, so it prints the work tags those become.
-            langs = ",".join(sorted(CDF_LANG_FROM_URL[c] for c in ref.lang_urls))
-            print(
-                f"  {parse_promulgation_date(ref.date_digits)}  "
-                f"{ref.slug:36} {ref.document_kind:20} {len(ref.lang_urls):2} {langs}"
-            )
-        print(f"\n{len(refs)} documents selected")
-        return 0
+        return report_cdf_census(fetcher, args.unselected)
 
     if args.cmd == "check-symmetry":
         # No `known` here by definition: this subcommand exists to check a
