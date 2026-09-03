@@ -41,7 +41,7 @@
 	import { splitMarkers } from '$lib/inline-markers';
 	import { splitDropCap } from '$lib/dropcap';
 	import { splitLemma, type LemmaSplit } from '$lib/lemma';
-	import { anchorCommentary, type CommentaryAnchor } from '$lib/commentary-anchors';
+	import { placeCommentary } from '$lib/commentary-placement';
 	import { buildSegments } from '$lib/annotated-segments';
 	import { noteLetter } from '$lib/sidenotes.svelte';
 	import Sidenote from '$lib/components/Sidenote.svelte';
@@ -194,33 +194,19 @@
 	}
 
 	/**
-	 * Every commentary's notes on this unit, placed against the text.
+	 * Every commentary's notes on this unit, divided into the marks that carry
+	 * them — `placed` in work order (the index a segment's `mark` names),
+	 * `inline` in text order (so the cuts below can be made in one pass), and
+	 * `trailing` for the notes no words in the text carry.
 	 *
-	 * Flattened across works because the SEGMENTS are one sequence: two
-	 * commentaries anchoring at the same words would otherwise each want to cut
-	 * the run, and the order they are set in has to be the order the works are
-	 * listed. Each entry keeps its own work, since the mark's label and the
-	 * grammar its citations resolve under are the work's, not the edition's.
+	 * THE PARTITION IS NOT COMPUTED HERE any more, because the commentary
+	 * column asks the same question and the two must agree about which notes
+	 * are trailing — see `commentary-placement.ts`.
 	 */
-	const placed = $derived.by(() =>
-		(commentary ?? []).flatMap((entry) => {
-			const { anchors, trailing } = anchorCommentary(text, entry.notes);
-			return [
-				...anchors.map((anchor) => ({ ...entry, anchor })),
-				...(trailing.length ? [{ ...entry, notes: trailing, anchor: undefined }] : [])
-			];
-		})
-	);
-
-	/** In text order, so the cuts below can be made in one pass. */
-	const inline = $derived(
-		placed
-			.flatMap((p, i) => (p.anchor ? [{ ...p, anchor: p.anchor as CommentaryAnchor, at: i }] : []))
-			.sort((a, b) => a.anchor.from - b.anchor.from)
-	);
-
-	/** The notes no words in the text carry — the mark at the unit's end. */
-	const trailing = $derived(placed.filter((p) => !p.anchor));
+	const placement = $derived(placeCommentary(text, commentary));
+	const placed = $derived(placement.placed);
+	const inline = $derived(placement.inline);
+	const trailing = $derived(placement.trailing);
 
 	/** See `buildSegments` — the arithmetic lives outside the component so it
 	 *  can be tested, which is the only way anything in a `.svelte` file gets
