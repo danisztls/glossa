@@ -434,6 +434,12 @@
 		padding: 0;
 	}
 
+	/* Positioned so the progress bar can hang off the row's bottom edge without
+	   being in the flow — see `.bar`. */
+	.shelf {
+		position: relative;
+	}
+
 	.shelf + .shelf {
 		margin-block-start: 0.15rem;
 		border-block-start: 1px solid var(--color-border);
@@ -531,9 +537,20 @@
 		color: var(--color-accent);
 	}
 
+	/*
+	 * OUT OF THE FLOW, along the row's own bottom rule, because a bar that
+	 * takes height appears and disappears — and it did: starting a download
+	 * pushed every shelf below the running one down by its height, and
+	 * finishing pulled them back up, under the reader's finger. Reserving the
+	 * space instead would cost the height on all seven rows for ever, which is
+	 * the panel's own scrollbar bought back at the same price. Overlaying the
+	 * rule costs nothing and is where a progress bar belongs anyway.
+	 */
 	.bar {
-		block-size: 0.25rem;
-		margin-block-end: 0.45rem;
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		block-size: 2px;
 		border-radius: 999px;
 		background: var(--color-border);
 		overflow: hidden;
@@ -575,12 +592,21 @@
 	 * A scoped selector compiles to `.advanced-dialog.svelte-hash` and outranks
 	 * the global single class without `!important` — `TocMenu` does the same
 	 * at its own breakpoint, for the same reason.
+	 *
+	 * THE CAP IS SET SO THE CONTENT FITS UNDER IT, which is the whole point of
+	 * the number: this panel is a short list that ends, not a table of
+	 * contents, and every one of its rows is a control. At 34rem it was two
+	 * rows short of its own content, so the panel every reader opens opened
+	 * scrolled — with the offline switch, the thing the panel is named for,
+	 * below the fold. `block-size: auto` still shrinks it to whatever the
+	 * reader's own language chain produced; the cap only decides when a short
+	 * window takes over, and `90vh` is what answers for the window.
 	 */
 	@media (min-width: 34rem) {
 		.advanced-dialog {
-			inline-size: min(30rem, 92vw);
+			inline-size: min(32rem, 92vw);
 			block-size: auto;
-			max-block-size: min(34rem, 80vh);
+			max-block-size: min(44rem, 90vh);
 			margin: auto;
 			border: 1px solid var(--color-border);
 			border-radius: var(--radius-lg);

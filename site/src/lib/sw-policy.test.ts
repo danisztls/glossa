@@ -673,6 +673,25 @@ describe('planWaves', () => {
 		expect(waves['catechism'].assets.map((a) => a.path)).toEqual(['/ccc-en-0001-0100.json']);
 	});
 
+	/**
+	 * WHY `shelfPlan()` DROPS `current`, and the bug it was written for. The
+	 * carve-out above is right for a prefetch and wrong for a shelf: pressing
+	 * Download beside "Catechism" while reading CCC 1-100 fetched a Catechism
+	 * with its next chunk missing, and the panel priced the same hole out of
+	 * the total, so nothing said so. Then the reader navigates — the hole moves
+	 * with them, that chunk is back in `catechism`, and the shelf reads
+	 * "6.0 / 6.1 MB" no amount of pressing Download will finish.
+	 */
+	it('gives the wave back whole when nothing is open', () => {
+		const open = byId(['en'], { workId: 'ccc.en', path: '/ccc-en-0001-0100.json' });
+		const shelf = byId(['en']);
+		expect(shelf['neighbours'].assets).toHaveLength(0);
+		expect(shelf['catechism'].assets).toHaveLength(
+			open['catechism'].assets.length + open['neighbours'].assets.length
+		);
+		expect(shelf['catechism'].assets.map((a) => a.path)).toContain('/ccc-en-0101-0200.json');
+	});
+
 	it('yields no neighbours for a page with no content file', () => {
 		const waves = byId(['en'], { workId: 'ccc.en', path: '/not-in-the-inventory.json' });
 		expect(waves['neighbours'].assets).toHaveLength(0);

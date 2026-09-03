@@ -137,6 +137,27 @@ export function readerPlan(): WavePlanInput {
 	};
 }
 
+/**
+ * The same plan with nothing open — what a SHELF is, as against a prefetch.
+ *
+ * `planWaves` lifts the files either side of the reader's current page into
+ * `neighbours`, a wave the library panel never shows, which means every row
+ * planned with `current` set is short by the handful of files that happen to
+ * sit beside whatever is on screen. Priced that way a shelf reads a little
+ * light; fetched that way it arrives with a hole; and because the hole moves
+ * with the reader, the next navigation puts those files back in the shelf,
+ * absent — the "26.5 / 26.6 MB" that no amount of pressing Download ever
+ * finishes.
+ *
+ * `neighbours` earns its place in the AUTOMATIC pass, where the whole point is
+ * to have the next page before it is asked for. It has no place in a shelf,
+ * so the panel and the explicit downloads both plan without it —
+ * `service-worker.ts` drops `current` for a `CACHE_WAVE` for this reason.
+ */
+export function shelfPlan(): WavePlanInput {
+	return { ...readerPlan(), current: undefined };
+}
+
 export interface WaveProgress {
 	wave: WaveId;
 	count: number;

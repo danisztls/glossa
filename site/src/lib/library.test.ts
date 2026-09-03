@@ -49,17 +49,37 @@ describe('libraryRows', () => {
 		expect(libraryRows(waves, new Set()).map((r) => r.id)).toEqual(['catechism']);
 	});
 
-	it('keeps planWaves order, which is the download order', () => {
+	/**
+	 * The rows are READ in a different order from the one they download in,
+	 * and this is the pair that makes the difference visible: `WAVE_ORDER`
+	 * puts `illustrations` last of the real waves because 103 MB of engravings
+	 * is the lowest value per byte in the corpus, while a reader looking at
+	 * the panel reads Doré's plates as a thing about the Bible.
+	 */
+	it('reads the shelves in their own order, plates beside the Bible', () => {
 		const waves = [
 			wave('essentials', [asset('/e.json', 1)]),
 			wave('catechism', [asset('/c.json', 1)]),
-			wave('scripture', [asset('/s.json', 1)])
+			wave('scripture', [asset('/s.json', 1)]),
+			wave('magisterium', [asset('/m.json', 1)]),
+			wave('summa', [asset('/t.json', 1)]),
+			wave('illustrations', [asset('/i.avif', 1)])
 		];
 		expect(libraryRows(waves, new Set()).map((r) => r.id)).toEqual([
 			'essentials',
 			'catechism',
-			'scripture'
+			'scripture',
+			'illustrations',
+			'magisterium',
+			'summa'
 		]);
+	});
+
+	/** A wave this list has never heard of still gets a row — at the end,
+	 *  which is where `other` belongs anyway. */
+	it('sorts an unplaced wave last rather than dropping it', () => {
+		const waves = [wave('other', [asset('/o.json', 1)]), wave('summa', [asset('/t.json', 1)])];
+		expect(libraryRows(waves, new Set()).map((r) => r.id)).toEqual(['summa', 'other']);
 	});
 });
 

@@ -614,7 +614,17 @@ function fill(event: ExtendableMessageEvent, data: CacheMessage): void {
 	if (data.type === 'CACHE_CONTENT' || data.type === 'CACHE_WAVE') {
 		const langs = data.langs?.length ? data.langs : ['en'];
 		const explicit = data.type === 'CACHE_WAVE';
-		const planned = wavesFor(langs, data.current, data.chosen);
+		// NO `current` ON AN EXPLICIT REQUEST, and this is a fix rather than a
+		// tidy-up. `planWaves` lifts the files either side of the open page
+		// into `neighbours`, removing them from the wave they belong to — so
+		// "download the Bible" while reading Genesis fetched a Bible with a
+		// hole where Genesis's neighbours were, and the panel then read
+		// "26.5 / 26.6 MB" forever. Worse, the hole MOVES: navigate and those
+		// files are back in `scripture`, still absent. Prefetching what is
+		// adjacent is what the AUTOMATIC pass is for; a shelf the reader named
+		// is taken whole. `library.svelte.ts`'s `shelfPlan()` prices it on the
+		// same terms, which is what keeps the two numbers the same number.
+		const planned = wavesFor(langs, explicit ? undefined : data.current, data.chosen);
 		// `'all'` takes the whole plan rather than a named wave — the loop
 		// below already walks a list, so "everything" is the list unfiltered
 		// and needs no second code path. It stays on the EXPLICIT side of the

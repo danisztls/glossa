@@ -670,10 +670,33 @@ consumer `planWaves`' byte counts were written for and had never had.
   `WAVE_ORDER` and have `planWaves` try to fill it.
 - **It plans the waves on the CLIENT, and that is not duplication.** The
   worker plans to fetch; this plans to PRICE, before the download exists for
-  the worker to be asked about. `readerPlan()` is exported from
+  the worker to be asked about. `shelfPlan()` is exported from
   `sw.svelte.ts` precisely so both sides plan from the same input — if they
   ever diverge, the panel shows one number and the worker fetches another set
   of files, with no symptom.
+- **A SHELF IS PLANNED WITH NO PAGE OPEN, and `readerPlan()` is the wrong
+  function to reach for here** (2026-09-03). `planWaves` lifts the files
+  either side of the reader's current page into `neighbours`, which the panel
+  never shows — so a named download arrived with a hole in it, the panel
+  priced the same hole out of the total so nothing said so, and the next
+  navigation moved the hole: those files back in the shelf, still absent, a
+  row reading `26.5 / 26.6 MB` that no amount of pressing Download would
+  finish. `shelfPlan()` is `readerPlan()` with `current` dropped, and
+  `service-worker.ts` drops it too for any `CACHE_WAVE` — belt and braces,
+  since the message carries whatever the page sent. `neighbours` earns its
+  carve-out in the AUTOMATIC pass and nowhere else.
+- **The rows are read in `SHELF_ORDER`, which is NOT `WAVE_ORDER`.** The
+  download order is a priority (descending value per byte, so `illustrations`
+  is last and decides what an interrupted fill got to); the panel is a list of
+  the library's parts, where Doré's plates are a thing about the Bible and sit
+  under it. Only `libraryRows`' output moves — `planWaves` is untouched.
+- **The progress bar is absolutely positioned on the row's bottom rule.** In
+  the flow it appeared and disappeared with the download, pushing every shelf
+  below it down and pulling them back up under the reader's finger; reserving
+  the height on all seven rows instead would buy back the panel's own
+  scrollbar. The card's `max-block-size` is likewise set so the content fits
+  UNDER it (44rem) — at 34rem the panel opened scrolled, with the offline
+  switch it is named for below the fold.
 - **Held bytes are read back from the cache, never accumulated from progress
   messages** (`usage.ts`'s `measureLibrary` gives the reason: progress only
   covers fills this page watched). The comparison is `ContentEntry.path`

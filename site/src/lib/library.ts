@@ -52,8 +52,31 @@ export interface LibraryRow {
 const NOT_A_SHELF: ReadonlySet<WaveId> = new Set<WaveId>(['neighbours']);
 
 /**
- * The rows for one reader, in `planWaves`' order — which is descending value
- * per byte, so the list reads top to bottom as "take this first".
+ * The order the shelves are READ in, which is not the order they download in.
+ *
+ * `WAVE_ORDER` is a priority — descending value per byte — and that is the one
+ * thing about it that must not be disturbed: it decides what an interrupted
+ * fill got to, so `illustrations` (103 MB of engravings) belongs at its very
+ * end. But a panel is a list of the library's parts, and Doré's plates are a
+ * thing about the Bible. Held apart by the download priority they sat two rows
+ * below it with the Summa in between, reading as an unrelated shelf.
+ *
+ * Only the reading order moves. Nothing downstream reads a row's position, and
+ * `planWaves` is untouched, so the two orders can differ without either being
+ * wrong. A wave missing from this list sorts last rather than vanishing.
+ */
+const SHELF_ORDER: readonly WaveId[] = [
+	'essentials',
+	'catechism',
+	'scripture',
+	'illustrations',
+	'magisterium',
+	'summa',
+	'other'
+];
+
+/**
+ * The rows for one reader, in `SHELF_ORDER`.
  *
  * An EMPTY wave is dropped rather than shown at 0 MB: a reader whose language
  * chain holds no Summa has no Summa to download, and a row saying so is a row
@@ -80,7 +103,11 @@ export function libraryRows(waves: readonly Wave[], held: ReadonlySet<string>): 
 			complete: heldCount === wave.assets.length
 		});
 	}
-	return rows;
+	const place = (id: WaveId) => {
+		const at = SHELF_ORDER.indexOf(id);
+		return at === -1 ? SHELF_ORDER.length : at;
+	};
+	return rows.sort((a, b) => place(a.id) - place(b.id));
 }
 
 /**

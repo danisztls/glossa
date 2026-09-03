@@ -11,9 +11,10 @@
  * The worker plans them to FETCH; this plans them to PRICE, before the reader
  * has agreed to anything, and the worker cannot answer a question asked of it
  * before the download exists. What keeps the two honest is that both call
- * `planWaves` over the same inventory with the same `readerPlan()` — the
+ * `planWaves` over the same inventory with the same `shelfPlan()` — the
  * reason that function is exported from `sw.svelte.ts` rather than private to
- * its `#send`.
+ * its `#send`. A shelf is planned with no page open, which is not a detail:
+ * see `shelfPlan`'s own docblock for the download that never finished.
  *
  * MEASURED FROM THE CACHE, NEVER FROM THE PROGRESS MESSAGES, for the reason
  * `usage.ts`'s `measureLibrary` gives: progress only reports fills that
@@ -30,7 +31,7 @@ import {
 	type WaveId,
 	type WaveRequest
 } from './sw-policy';
-import { readerPlan, serviceWorker } from './sw.svelte';
+import { serviceWorker, shelfPlan } from './sw.svelte';
 
 /** The worker's content cache. A third copy of the constant — `usage.ts`
  *  documents why it cannot be imported from `service-worker.ts`, and its test
@@ -74,7 +75,7 @@ class LibraryStore {
 	 */
 	async refresh(): Promise<void> {
 		try {
-			const waves = planWaves(entries(), readerPlan());
+			const waves = planWaves(entries(), shelfPlan());
 			const held = await heldContent();
 			this.rows = libraryRows(waves, held);
 			this.total = libraryTotal(this.rows);
@@ -111,12 +112,13 @@ class LibraryStore {
 	 * already reads it.
 	 *
 	 * Deleting one wave cannot empty another's row: `WAVE_FOR_KIND` puts each
-	 * work kind in exactly one wave, and the one wave that overlaps
-	 * (`neighbours`, the chunk around the open page) is never a row.
+	 * work kind in exactly one wave, and the one wave that would have
+	 * overlapped — `neighbours`, the chunk around the open page — is empty
+	 * here, because `shelfPlan()` names no open page.
 	 */
 	async remove(wave: WaveId): Promise<void> {
 		try {
-			const target = planWaves(entries(), readerPlan()).find((planned) => planned.id === wave);
+			const target = planWaves(entries(), shelfPlan()).find((planned) => planned.id === wave);
 			if (!target || typeof caches === 'undefined') return;
 			const cache = await caches.open(CONTENT_CACHE);
 			await Promise.all(target.assets.map((asset) => cache.delete(asset.path)));
