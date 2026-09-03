@@ -34,8 +34,8 @@
 		"ccc": {
 			"citations": {
 				"total": 19533,
-				"linkable": 15888,
-				"recognized": 2250,
+				"linkable": 15889,
+				"recognized": 2249,
 				"nothing": 1395
 			},
 			"prose": {
@@ -789,7 +789,7 @@
 				"nothing": 4
 			},
 			"prose": {
-				"blocks": 1188,
+				"blocks": 1226,
 				"scripture": 0,
 				"document": 0,
 				"stored": 0
