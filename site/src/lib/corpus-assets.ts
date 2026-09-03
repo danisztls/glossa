@@ -27,6 +27,11 @@
  */
 
 import { contentUrlByRelPath } from './content-urls';
+import { plateUrl } from './plate-urls';
+
+/** Where a plate image's `relPath` starts — `sync-corpus.mjs`'s `PLATES_DIR`,
+ *  and the one prefix in the manifest that is not `content/`. */
+const PLATES_PREFIX = 'plates/';
 
 /** One row of `content-manifest.json`, as `scripts/sync-corpus.mjs` writes it. */
 export interface ContentManifestEntry {
@@ -41,11 +46,17 @@ export interface ContentManifestEntry {
 		| 'bible-chapters'
 		| 'bible-intros'
 		| 'ccc-chunk'
+		| 'commentary-chapters'
 		| 'compendium-chunk'
 		| 'document-appendix'
 		| 'document-chunk'
 		| 'document-structure'
+		| 'plate-image'
+		| 'plates'
 		| 'prayer-collection'
+		| 'social-doctrine-appendix'
+		| 'social-doctrine-chunk'
+		| 'social-doctrine-structure'
 		| 'summa-question';
 	relPath: string;
 	bytes: number;
@@ -79,8 +90,25 @@ export function listContentAssets(): ContentAsset[] {
 
 	const out: ContentAsset[] = [];
 	for (const entry of manifest) {
-		const url = contentUrlByRelPath[entry.relPath];
+		const url = urlFor(entry.relPath);
 		if (url) out.push({ ...entry, url });
 	}
 	return out;
+}
+
+/**
+ * A manifest row's hashed URL, from whichever of the two globs owns it.
+ *
+ * TWO GLOBS AND NOT ONE, deliberately. Doré's 482 plate images are in the
+ * manifest so the library panel can price them (`sync-corpus.mjs`'s
+ * `syncPlates`), but their URLs stay in `plate-urls.ts`: that module is
+ * imported by `Plate.svelte`, which is a Bible-route chunk, while
+ * `content-urls.ts` is imported by `corpus-index.ts`, which is the boot
+ * chunk. Widening the content glob to `plates/*.avif` would put 482 hashed
+ * URLs into the module every page loads, to be read by the two places that
+ * already have them.
+ */
+function urlFor(relPath: string): string | undefined {
+	if (relPath.startsWith(PLATES_PREFIX)) return plateUrl(relPath.slice(PLATES_PREFIX.length));
+	return contentUrlByRelPath[relPath];
 }

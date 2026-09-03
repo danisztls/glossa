@@ -556,7 +556,19 @@ export function routeFor(request: RoutableRequest, partition: AssetPartition): R
  *     5 MB and is the work least likely to be read end to end.
  */
 export type WaveId =
-	'neighbours' | 'essentials' | 'catechism' | 'scripture' | 'magisterium' | 'summa' | 'other';
+	| 'neighbours'
+	| 'essentials'
+	| 'catechism'
+	| 'scripture'
+	| 'magisterium'
+	| 'summa'
+	| 'illustrations'
+	| 'other';
+
+/** A `CACHE_WAVE` target: one wave, or the library entire. `'all'` is not a
+ *  `WaveId` because it is not a wave — it is every wave, and making it one
+ *  would put it in `WAVE_ORDER` and have `planWaves` try to fill it. */
+export type WaveRequest = WaveId | 'all';
 
 export interface Wave {
 	id: WaveId;
@@ -596,8 +608,8 @@ export interface Wave {
  * `catechism` is ~0.6 MB gzipped per edition (3.0-3.8 MB raw, 29 files), which
  * is a real download and is included anyway: the Catechism is the site's second
  * pillar, a reader who installed this PWA installed it to read one of four or
- * five works offline, and it is the cheapest whole work among them. The three
- * excluded waves are 23-28 MB raw each.
+ * five works offline, and it is the cheapest whole work among them. The
+ * excluded waves are 23-28 MB raw each, and `illustrations` is 103 MB.
  *
  * The worker gates this further at runtime on connection and storage quota —
  * see `src/service-worker.ts`. This table is the ceiling, not the decision.
@@ -656,14 +668,20 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	'compendium-chunk': 'essentials',
 	'bible-intros': 'essentials',
 	// The 29 KB list of where Doré's 241 engravings sit, NOT the engravings.
-	// The images are not corpus content at all — they are ordinary build
-	// assets, classified by `isDeferred` above into the same permanent cache
-	// on first read, and in no wave, because they are enrichment rather than
-	// part of the library. But the list has to be here or the plates a reader
-	// HAS already cached cannot be placed offline: the pictures would be on
+	// It is `essentials` because it is tiny and because without it the plates
+	// a reader HAS cached cannot be placed offline: the pictures would be on
 	// the device and unreachable, which is the worse of the two failures and
 	// the silent one.
 	plates: 'essentials',
+	// AND THE ENGRAVINGS THEMSELVES, which were in no wave until 2026-09-02.
+	// They are ordinary build assets rather than corpus text, so the fetch
+	// handler has always stored them in the permanent content cache on first
+	// read — but a file that arrives only by being looked at is a file a
+	// reader cannot ask for ahead of a flight, and 482 AVIFs at 103 MB is the
+	// one thing here big enough that nobody should get it uninvited. A wave of
+	// its own answers both: `illustrations` is outside `AUTOMATIC_WAVES`, so
+	// it is only ever the reader pressing the button.
+	'plate-image': 'illustrations',
 	'ccc-chunk': 'catechism',
 	'bible-chapters': 'scripture',
 	// A commentary rides the wave of the work it annotates, which is
@@ -702,6 +720,12 @@ const WAVE_ORDER: readonly WaveId[] = [
 	'scripture',
 	'magisterium',
 	'summa',
+	// Last of the real waves, which is what the order means: 103 MB of
+	// engravings is the lowest value per byte in the corpus by a wide margin,
+	// and it is the one wave whose absence costs a reader nothing but
+	// pictures. `other` still follows it, being the bug-catcher rather than a
+	// shelf.
+	'illustrations',
 	'other'
 ];
 

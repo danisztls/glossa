@@ -58,7 +58,7 @@ import { contentLangChain, lastContentRead } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
 import { offline, setOfflineObserver } from './offline.svelte';
 import { usage } from './usage';
-import type { WaveId, WavePlanInput } from './sw-policy';
+import type { WaveId, WavePlanInput, WaveRequest } from './sw-policy';
 
 /** How long to wait between `registration.update()` checks. Six hours: long
  *  enough that a reader with the app open all day costs one or two requests,
@@ -152,7 +152,7 @@ class ServiceWorkerStore {
 	progress = $state<WaveProgress | undefined>();
 	/** Bumped once per `CACHE_CONTENT:done`. A COUNTER and not a boolean,
 	 *  because what a consumer wants is "something finished, look again" and
-	 *  two fills in a session must be two signals — `LibrarySheet` re-measures
+	 *  two fills in a session must be two signals — `AdvancedSheet` re-measures
 	 *  the cache off this. */
 	completed = $state(0);
 	/** Whether a worker is actually driving this page. The library panel is
@@ -356,9 +356,9 @@ class ServiceWorkerStore {
 		this.#send({ type: 'CACHE_CONTENT' });
 	}
 
-	/** One named wave, in full. The reader asked, so the worker does not gate
-	 *  this on connection or quota. */
-	requestWave(wave: WaveId): void {
+	/** One named wave in full, or `'all'` for every wave. The reader asked, so
+	 *  the worker does not gate this on connection or quota. */
+	requestWave(wave: WaveRequest): void {
 		this.#send({ type: 'CACHE_WAVE', wave });
 	}
 

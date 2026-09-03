@@ -64,7 +64,7 @@ import {
 	planWaves,
 	routeFor,
 	type Wave,
-	type WaveId
+	type WaveRequest
 } from '$lib/sw-policy';
 import {
 	cacheAssets,
@@ -513,7 +513,9 @@ sw.addEventListener('fetch', (event) => {
  *                    waves for `langs` and stop.
  *   CACHE_WAVE     — `{ langs, current?, chosen?, wave }`. Take one named wave
  *                    WHOLE and ungated — every edition of it in the chain, not
- *                    just the automatic slice: the reader asked.
+ *                    just the automatic slice: the reader asked. `wave: 'all'`
+ *                    is every wave on the same terms, and reports progress
+ *                    wave by wave as it goes.
  *   CLEAR_CONTENT  — drop the whole content cache.
  *   SKIP_WAITING   — the reader accepted the update offer; take over now.
  *
@@ -529,7 +531,7 @@ interface CacheMessage {
 	on?: boolean;
 	langs?: string[];
 	workId?: string;
-	wave?: WaveId;
+	wave?: WaveRequest;
 	current?: { workId: string; path: string };
 	/** The reader's explicitly picked editions — see `WavePlanInput.chosen`. */
 	chosen?: string[];
@@ -613,8 +615,16 @@ function fill(event: ExtendableMessageEvent, data: CacheMessage): void {
 		const langs = data.langs?.length ? data.langs : ['en'];
 		const explicit = data.type === 'CACHE_WAVE';
 		const planned = wavesFor(langs, data.current, data.chosen);
+		// `'all'` takes the whole plan rather than a named wave — the loop
+		// below already walks a list, so "everything" is the list unfiltered
+		// and needs no second code path. It stays on the EXPLICIT side of the
+		// branch, so it is ungated on connection and quota and takes each
+		// wave whole: a reader who pressed "download everything" asked for
+		// every edition, not one Catechism.
 		const wanted = explicit
-			? planned.filter((wave) => wave.id === data.wave)
+			? data.wave === 'all'
+				? planned
+				: planned.filter((wave) => wave.id === data.wave)
 			: planned.filter((wave) => wave.automatic);
 
 		event.waitUntil(

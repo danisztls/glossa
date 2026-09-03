@@ -612,26 +612,29 @@ check). No second content tier, no second chunk stride, no second reader.
 
 ## Offline mode: three gates, and the one the worker has to remember
 
-Added 2026-09-02 (§The site). Off by default, and **behind the `+ Advanced`
-fold** at the foot of `SettingsMenu.svelte` — which is what `AppearanceMenu`
-was called until it stopped holding only appearance.
+Added 2026-09-02 (§The site). Off by default, and **not in `SettingsMenu` at
+all**: the `Advanced…` row at the foot of that panel — which is what
+`AppearanceMenu` was called until it stopped holding only appearance — opens
+`AdvancedSheet.svelte`, and the switch lives there beside the library.
 `src/lib/offline.svelte.ts` is the feature's docblock.
 
-- **The fold is a measurement, not modesty.** The automatic waves put the
-  shell, the prayers, the Compendium and ONE Catechism edition on the device
-  and nothing else; Scripture, magisterium and Summa (23-28 MB each) arrive
-  only if the reader asks. Offline mode alone is therefore a switch for the
-  reader who wants no phone-home, not for the one filling a library — which
-  is why it is folded rather than in the front row.
-- **The fold opens itself when the switch is on**, one-way within a session.
-  A hidden control that is silently ON is a reader who cannot explain why
-  nothing loads.
-- **The library panel is the fold's OTHER row, and it comes first** —
-  `LibrarySheet.svelte`, opened through `library.open`. Offline mode turns
-  downloads off, so a reader meeting the switch before the shelf meets them in
-  the wrong order.
+- **Keeping it out of the front row is a measurement, not modesty.** The
+  automatic waves put the shell, the prayers, the Compendium and ONE Catechism
+  edition on the device and nothing else; Scripture, magisterium and Summa
+  (23-28 MB each) arrive only if the reader asks. So the switch is worth
+  little until a library is filled, and the two are one subject read in one
+  order — not a row in the panel every reader opens to change the text size.
+- **It was a fold in that popover until 2026-09-02, and the width is why it
+  stopped being one.** The panel is ~11rem, so a switch whose price is a whole
+  sentence could only carry it as a `title` nobody hovers on a phone; the
+  library, being byte counts and a progress bar, had to be a second dialog
+  regardless. One dialog holding both is one place to look with room to say
+  what the switch costs.
+- **The library block comes FIRST inside it.** Offline mode turns downloads
+  off, so a reader meeting the switch before the shelf meets them in the wrong
+  order.
 
-## The library panel: waves priced before the reader commits
+## The Advanced panel: waves priced before the reader commits
 
 Added 2026-09-02 with offline mode's second half (§The site). It is the
 consumer `planWaves`' byte counts were written for and had never had.
@@ -640,6 +643,19 @@ consumer `planWaves`' byte counts were written for and had never had.
   reader's chain, so "Bible" can be two editions and 24 MB. `requestWork` and
   `assetsForWork` exist for the finer grain and are still unused; that is a
   second level in this list, not new machinery.
+- **Doré's engravings are a wave (`illustrations`) as of 2026-09-02, and never
+  an automatic one.** 482 AVIFs, 103 MB — four times the text corpus. They had
+  been in no wave at all, reachable only by being looked at; `sync-corpus.mjs`
+  now pushes each image into `content-manifest.json` (`kind: 'plate-image'`,
+  `relPath` under `plates/`) so the panel can price them, and
+  `corpus-assets.ts` resolves those rows through `plateUrl` rather than the
+  content glob — widening that glob would put 482 hashed URLs in the boot
+  chunk. `usage.ts` excludes them from `measureLibrary`'s denominator, or the
+  `full` bucket would be unreachable.
+- **`CACHE_WAVE` accepts `wave: 'all'`** — every wave, on the explicit
+  (ungated, whole-wave) side of the branch, reporting progress wave by wave.
+  It is a `WaveRequest` and not a `WaveId` precisely so it cannot land in
+  `WAVE_ORDER` and have `planWaves` try to fill it.
 - **It plans the waves on the CLIENT, and that is not duplication.** The
   worker plans to fetch; this plans to PRICE, before the download exists for
   the worker to be asked about. `readerPlan()` is exported from
@@ -659,6 +675,21 @@ consumer `planWaves`' byte counts were written for and had never had.
   cost the whole grammar in `route-manifest.ts` (`corpus-routes.json`,
   sitemap, `route-titles.json`, `assertNamed`, an `hreflang` cluster) for a
   control surface with nothing to index.
+- **A shelf is dropped from the PAGE; the whole library is dropped by the
+  WORKER, and that is not drift.** `library.remove(wave)` re-plans, deletes
+  that wave's paths out of `glossa-content` and re-measures — awaited, so no
+  round trip to wait out. `CLEAR_CONTENT` is `caches.delete(CONTENT_CACHE)`
+  and takes what no current plan NAMES as well: files whose content hash has
+  moved on, a language the reader has stopped reading. Summing the waves would
+  be a "forget everything" that quietly left things behind.
+- **Every delete is two-click, and one `armed` holds the target** (a `WaveId`
+  or `'all'`), so arming a second disarms the first. Two controls each one
+  click from firing is how the wrong one goes.
+- **The library block is gated on `serviceWorker.controlled`; the switch is
+  not.** A Download button with no worker to receive the message does nothing
+  at all (`#post` returns on a null controller), while offline mode still
+  stops the beacon and the update check by itself. `controlled` is false under
+  `npm run dev`, which registers no worker.
 - **The sizes shown are RAW bytes**, per `Wave.bytes`' own docblock —
   `content-length` is knowable only after fetching, which is too late to ask.
   It over-states the transfer by roughly three, which is the safe direction.

@@ -2995,9 +2995,9 @@ already offline-FIRST — the shell precached, content stored on first read, the
 fillable ahead of time — and every one of those mechanisms is about coping with a network
 that went away. This is the other direction: the network is there, and the reader has asked
 that nothing touch it. A metered plan abroad, a flight, a rationed connection, or simply not
-wanting a reading device to talk to a server. Off by default, one switch in the settings
-panel (`SettingsMenu.svelte`, which is what `AppearanceMenu` became when it stopped holding
-only appearance).
+wanting a reading device to talk to a server. Off by default, one switch reached from the
+settings panel (`SettingsMenu.svelte`, which is what `AppearanceMenu` became when it stopped
+holding only appearance).
 
 **It shipped behind a fold on the same day it was built, and the reason is worth keeping.**
 Asked what the switch actually buys, the answer was smaller than it looked: the automatic
@@ -3010,12 +3010,36 @@ needs nothing further: the reader who does not want a reading device phoning hom
 narrower audience than a front-row control implies, so the control moved behind
 `+ Advanced` rather than being widened or removed.
 
-**Then the first half was built, on the same day and into the same fold** — `LibrarySheet`,
-a panel of the reader's waves priced before they commit to any of them, which is the consumer
-`planWaves`' byte counts had been waiting for since the corpus was split. The two rows sit in
-the fold in the order the reader needs them: the library first, because offline mode turns
-downloading off, and a reader who meets the switch before the shelf meets them backwards.
-That ordering is the whole of what the pairing had been missing.
+**Then the first half was built, on the same day and into the same fold** — a panel of the
+reader's waves priced before they commit to any of them, which is the consumer `planWaves`'
+byte counts had been waiting for since the corpus was split. The two rows sat in the fold in
+the order the reader needs them: the library first, because offline mode turns downloading
+off, and a reader who meets the switch before the shelf meets them backwards. That ordering
+is the whole of what the pairing had been missing.
+
+**Doré's engravings became a shelf, having been in no wave at all.** The 241 plates are
+ordinary build assets rather than corpus text, so the fetch handler had always stored them in
+the permanent content cache on first read — which meant the only way to get them was to have
+already looked at them, one plate at a time, online. That is the opposite of what a reader
+packing for a flight wants. They are now `illustrations`, last in the wave order and outside
+`AUTOMATIC_WAVES`: 482 files and 103 MB, four times the entire text corpus, so nobody may
+have it uninvited and the row says what it costs before anyone presses anything. Two
+consequences worth recording. The sync writes each image into `content-manifest.json` to give
+it a price, but its URL is resolved through `plate-urls.ts` rather than the content glob —
+widening that glob would have moved 482 hashed URLs into the chunk every page loads, to be
+read by the two places that already had them. And the usage beacon's `full` library bucket
+now excludes the plates from its denominator: leaving them in would have made a reader with
+every word of every work read as `partial` forever, retiring the bucket without anyone
+noticing.
+
+**A shelf can be dropped as well as taken, and the two deletions are not one operation.**
+Each row carries a bin beside its arrow, and the foot of the panel still carries "remove
+everything" — but a per-wave delete happens in the page, against the same content cache the
+panel already reads, while the whole-library one is the worker's `caches.delete`. The reason
+is what the wave plan can NAME: the cache also holds files whose content hash has moved on
+and languages the reader has stopped reading, so a "forget everything" assembled by summing
+the waves would quietly leave things behind. Both are two-click, and one piece of state holds
+which is armed, so a second click always lands where the reader is looking.
 
 **The panel plans the waves on the client, which is not a second planner.** The worker plans
 in order to fetch; this plans in order to PRICE, and a price is asked for before the download
@@ -3027,9 +3051,19 @@ are read back from the cache every time, never accumulated from the progress mes
 the reason `measureLibrary` already gives: progress covers only the fills this page watched,
 and the reader whose library was filled last week is the one the panel must be right about.
 
-**A hidden switch that is ON must not stay hidden**: the fold opens itself whenever offline
-mode is enabled, one-way within a session. Otherwise the reader who cannot find the control
-is the reader who cannot explain why nothing loads.
+**And then the fold stopped being a fold, later the same day** — `+ Advanced` now opens
+`AdvancedSheet`, a dialog holding the library and the switch together, and the settings
+popover keeps only the door. Three things were wrong with the fold and the third is the one
+that decided it. A hidden control that is silently ON is a reader who cannot explain why
+nothing loads, which the fold answered by opening itself whenever offline mode was enabled —
+a rule that works and that nothing needs once the control is simply a row in a panel with a
+title. The library was a second dialog either way, because byte counts, a progress bar and a
+destructive action do not fit an 11rem popover. And that width is why the switch could only
+ever name its state and not its price: what offline mode costs — that a text not already on
+the device will not open — is a sentence, and the popover could carry a sentence only as a
+`title` nobody hovers on a phone. Splitting one subject across a popover row and a dialog
+made the reader assemble it themselves, and the panel that was too narrow to explain either
+half was what forced the split.
 
 **It is three gates and not one, because there are three mechanisms and no single
 chokepoint.** `sw.svelte.ts` stops the update check, the offer and every download message the

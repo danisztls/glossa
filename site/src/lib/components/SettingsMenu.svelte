@@ -1,40 +1,33 @@
 <!--
 	The reader's settings, in one popover: dark mode, the sepia paper tint, the
-	OLED true-black ground, the monochrome palette, the reading text size — and
-	offline mode.
+	OLED true-black ground, the monochrome palette, the reading text size — and,
+	below the divider, the way into everything about the network.
 
 	IT WAS `AppearanceMenu` UNTIL OFFLINE MODE, and the rename is the honest
 	half of that change. Everything above the divider is still the one question
-	the panel was built around ("how does this page look to me?"); offline mode
-	is a second question, and a panel called Appearance holding it would have
-	been a worse lie than a panel called Settings holding five appearance rows.
-	The trigger is the same slider icon, which is what a reader reads as
-	"settings" anyway.
+	the panel was built around ("how does this page look to me?"); what the
+	network does on this device is a second question, and a panel called
+	Appearance offering a door to it would have been a worse lie than a panel
+	called Settings holding five appearance rows. The trigger is the same
+	slider icon, which is what a reader reads as "settings" anyway.
 
-	OFFLINE MODE IS BEHIND A FOLD, AND THAT IS A MEASUREMENT RATHER THAN A
-	TASTE. What the switch buys a reader today is narrow: the automatic waves
-	put the shell, the prayers, the Compendium and ONE Catechism edition on the
-	device (`sw-policy.ts`'s `AUTOMATIC_WAVES`), and nothing else — the
-	Scripture, magisterium and Summa waves are 23-28 MB each and are reachable
-	only by a `CACHE_WAVE` that no UI sends. So a reader who turns it on has
-	what they have already read and little more, and the feature it would pair
-	with — "fill my library, then go dark" — does not exist yet. A control
-	whose value is that conditional does not belong in the front row of the one
-	panel every reader opens to change the text size.
+	OFFLINE MODE IS NOT IN THIS PANEL, AND THAT IS A MEASUREMENT RATHER THAN A
+	TASTE. What the switch buys a reader is conditional on their having filled
+	a library first: the automatic waves put the shell, the prayers, the
+	Compendium and ONE Catechism edition on the device (`sw-policy.ts`'s
+	`AUTOMATIC_WAVES`), and the Scripture, magisterium and Summa waves are
+	23-28 MB each that somebody has to ask for. So the switch and the library
+	are one subject read in one order, and neither belongs in the front row of
+	the one panel every reader opens to change the text size. Both live in
+	`AdvancedSheet.svelte`, which the row below opens; all this panel keeps is
+	the door.
 
-	THE FOLD OPENS ITSELF WHEN THE SWITCH IS ON, which is the rule that keeps
-	hiding it honest: a reader who cannot find the control is a reader who
-	cannot explain why nothing loads. It is one-way within a session, exactly
-	as `LanguageMenu`'s "+ more" is — there is no state in which folding it
-	back is what someone wants, and while offline mode is on there is a state
-	in which it would be actively harmful.
-
-	IT CARRIES THE ONLY `title` BESIDES MONOCHROME'S, for the same reason that
-	one does: the label names the state and not the price. What it actually
-	costs — that a text not already on the device will not open — is a
-	sentence, and a sentence belongs in a tooltip rather than in a row of a
-	panel whose every other row is two words wide. `$lib/offline.svelte.ts` is
-	the feature; this switch is the whole of its UI.
+	THE DOOR IS A ROW AND NOT A FOLD, which it was until 2026-09-02. A fold
+	made this panel host the pair, and the panel is ~11rem wide: a switch whose
+	price is a whole sentence could only carry that sentence as a `title` — and
+	the library, being a list of byte counts and a progress bar, had to be a
+	second dialog anyway. One dialog holding both is one place to look, with
+	room to say what the switch costs.
 
 	WHY ONE MENU. These were two triggers in the header — a palette icon for a
 	four-item theme list (auto/light/dark/sepia) and an "Aa" icon for the size
@@ -80,9 +73,7 @@
 -->
 <script lang="ts">
 	import { appearance, DARK_MODES } from '$lib/theme.svelte';
-	import { offline } from '$lib/offline.svelte';
 	import { library } from '$lib/library.svelte';
-	import { serviceWorker } from '$lib/sw.svelte';
 	import { fontScale, MIN_FONT_SCALE, MAX_FONT_SCALE } from '$lib/prefs.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
@@ -90,11 +81,6 @@
 	import { t } from '$lib/i18n.svelte';
 
 	const menu = new Menu();
-
-	/** Whether the network fold is showing. Initialised from the preference so
-	 *  an active offline mode is never the thing behind the fold — see the
-	 *  docblock. */
-	let advancedOpen = $state(offline.enabled);
 
 	const percent = $derived(Math.round(fontScale.value * 100));
 
@@ -254,60 +240,24 @@
 			     without: that rule was about not carving up ONE subject, and
 			     this is a second one. -->
 			<div class="advanced" role="none">
-				{#if advancedOpen}
-					<!-- FIRST, because it is the prerequisite: offline mode below
-					     turns downloads OFF, so a reader who meets the switch
-					     before the shelf meets it in the wrong order. Offered
-					     only where a download would do something —
-					     `serviceWorker.controlled` is false under `npm run dev`,
-					     which registers no worker at all. -->
-					{#if serviceWorker.controlled}
-						<div class="field" role="none">
-							<button
-								type="button"
-								role="menuitem"
-								aria-haspopup="dialog"
-								class="menu-more"
-								onclick={() => {
-									library.open = true;
-									menu.close();
-								}}
-							>
-								{t('library.title')}…
-							</button>
-						</div>
-					{/if}
-
-					<div class="field" role="none">
-						<span class="field-label label-micro">{t('offline.label')}</span>
-						<div class="field-control" role="none">
-							<button
-								type="button"
-								role="menuitemcheckbox"
-								aria-checked={offline.enabled}
-								aria-label={t('offline.label')}
-								title={t('offline.hint')}
-								class="switch-btn"
-								onclick={() => offline.toggle()}
-							>
-								<span class="switch" class:on={offline.enabled}></span>
-							</button>
-						</div>
-					</div>
-				{:else}
-					<!-- `.menu-more` is `LanguageMenu`'s fold control, reused rather
-					     than restyled: two folds in the header's panels that look
-					     different are two folds a reader has to learn twice. -->
-					<button
-						type="button"
-						role="menuitem"
-						aria-expanded="false"
-						class="menu-more"
-						onclick={() => (advancedOpen = true)}
-					>
-						+ {t('advanced.label')}
-					</button>
-				{/if}
+				<!-- `.menu-more` is `LanguageMenu`'s "+ more" control, reused rather
+				     than restyled: the trailing ellipsis rather than a leading "+"
+				     is what says this one leaves the panel instead of growing it,
+				     which is the same distinction every other menu here draws. The
+				     popover closes as the dialog opens — two overlapping surfaces
+				     for one subject, and the dialog is the one being read. -->
+				<button
+					type="button"
+					role="menuitem"
+					aria-haspopup="dialog"
+					class="menu-more"
+					onclick={() => {
+						library.open = true;
+						menu.close();
+					}}
+				>
+					{t('advanced.label')}…
+				</button>
 			</div>
 		</div>
 	{/if}
@@ -417,8 +367,8 @@
 	   justifies this one: a rule between two appearance rows would have made
 	   one gap larger than the rest and organised nothing, because those rows
 	   are one subject. This separates two subjects. The margin above it is
-	   `.field + .field`'s own, restated because the fold is not a `.field` and
-	   would otherwise sit tight against the row above. */
+	   `.field + .field`'s own, restated because the row below is not a `.field`
+	   and would otherwise sit tight against the row above. */
 	.advanced {
 		margin-block-start: 0.55rem;
 		border-block-start: 1px solid var(--color-border);

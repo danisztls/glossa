@@ -1026,6 +1026,7 @@ function syncPlates(workId, workDir, manifest) {
 	mkdirSync(platesDest, { recursive: true });
 	let present = 0;
 	let written = 0;
+	let imageBytes = 0;
 	for (const name of readdirSync(imagesDir).sort()) {
 		if (!wanted.has(name)) continue;
 		present++;
@@ -1034,6 +1035,20 @@ function syncPlates(workId, workDir, manifest) {
 		plateImages.add(name);
 		const from = path.join(imagesDir, name);
 		const to = path.join(platesDest, name);
+		// THE IMAGES ARE IN THE MANIFEST, and until 2026-09-02 they were not.
+		// They are ordinary build assets, so the fetch handler already stores
+		// them in the permanent content cache on first read; what they had no
+		// way to be was PRICED, and an offline library panel cannot offer a
+		// download it cannot cost. `bytes` is read off the source rather than
+		// the destination because a copy that was skipped has no fresh stat to
+		// take, and the two are the same file by `isCopyOf`'s own test.
+		//
+		// `relPath` is under `plates/` rather than `content/`, which is why
+		// `corpus-assets.ts` resolves these through `plateUrl` — the content
+		// glob is `content/**/*.json` and always was.
+		const bytes = statSync(from).size;
+		imageBytes += bytes;
+		contentManifest.push({ workId, kind: 'plate-image', relPath: `${PLATES_DIR}/${name}`, bytes });
 		if (isCopyOf(from, to)) continue;
 		copyFileSync(from, to);
 		written++;
@@ -1046,7 +1061,8 @@ function syncPlates(workId, workDir, manifest) {
 	}
 	console.log(
 		`[sync-corpus] ${workId}: ${plates.length} plates, ${present} images ` +
-			`(${written} copied, ${present - written} already current)`
+			`(${written} copied, ${present - written} already current, ` +
+			`${(imageBytes / 1e6).toFixed(1)} MB offered offline)`
 	);
 }
 

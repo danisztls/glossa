@@ -89,19 +89,20 @@ export const en: Dictionary = {
 	'mono.label': 'Monochrome',
 	'mono.hint':
 		'Sets the whole page in a single grey, so nothing is told apart by colour. Sepia turns off while it is on.',
-	// OFFLINE MODE — `SettingsMenu.svelte`'s last row, and
+	// OFFLINE MODE — `AdvancedSheet.svelte`'s second block, and
 	// `NotDownloaded.svelte` when it has refused something. `offline.hint` is
-	// the tooltip on the switch AND the body of that page, deliberately: they
-	// are one sentence, and a reader who read it in the panel should recognise
-	// it when it comes true. It names the price ("only texts already here")
-	// rather than the mechanism, which is why it mentions neither the service
-	// worker, nor the cache, nor the beacon.
-	// The fold's label, `LanguageMenu`'s "+ more" idiom. One word: the panel is
-	// ~11rem wide and the row it uncovers already says "Offline mode", so
-	// naming the subject again ("Advanced network") would buy width and no
-	// information.
+	// the sentence under the switch AND the body of that page, deliberately:
+	// they are one sentence, and a reader who read it in the panel should
+	// recognise it when it comes true. It names the price ("only texts already
+	// here") rather than the mechanism, which is why it mentions neither the
+	// service worker, nor the cache, nor the beacon.
+	// Two surfaces, one word: the row in `SettingsMenu` that opens the panel,
+	// and the panel's own title. One word because the panel names its two
+	// blocks itself ("Offline library", "Offline mode"), so naming the subject
+	// in the title too ("Advanced network") would say it three times.
 	'advanced.label': 'Advanced',
-	// THE OFFLINE LIBRARY — `LibrarySheet.svelte`. The wave names are NOT here:
+	// THE OFFLINE LIBRARY — `AdvancedSheet.svelte`'s first block. The wave
+	// names are NOT here:
 	// five of the seven reuse keys the translators have already written
 	// (`nav.ccc`, `nav.bible`, `nav.magisterium`, `summa.landing.title`), which
 	// is the cheap way to add a surface. Only the two the interface had no word
@@ -109,10 +110,27 @@ export const en: Dictionary = {
 	'library.title': 'Offline library',
 	'library.lede': 'Texts kept on this device open with no network at all.',
 	'library.essentials': 'Prayers and Compendium',
+	// Doré's 241 engravings, 482 files and 103 MB — named for what a reader
+	// would look for rather than for the artist, who is credited on the
+	// colophon and in every plate's own caption. "(illustrations)" and not
+	// "illustrated" because the row is not another Bible: it is the pictures
+	// alone, and the text is the row above.
+	'library.illustrations': 'Bible (illustrations)',
 	'library.other': 'Other texts',
+	// The totals row. A noun for the sum of the shelves, not a verb: the
+	// buttons beside it say what can be done to it.
+	'library.everything': 'Everything',
+	'library.downloadAll': 'Download everything',
+	// `library.download`, `library.remove` and their `…Confirm` are the names
+	// of ICONS — a downward arrow and a bin — so they are the button's
+	// `aria-label` and its `title` and are never rendered as text. A verb
+	// alone, therefore: the row already says which shelf, and an icon button
+	// whose label repeats the row reads it twice to a screen reader.
 	'library.download': 'Download',
 	'library.downloaded': 'On this device',
 	'library.offlineNote': 'Turn offline mode off to download anything.',
+	'library.remove': 'Remove from this device',
+	'library.removeConfirm': 'Remove?',
 	'library.forget': 'Remove downloads',
 	'library.forgetConfirm': 'Remove everything?',
 	'offline.label': 'Offline mode',

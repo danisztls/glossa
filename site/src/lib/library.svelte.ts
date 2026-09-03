@@ -23,7 +23,13 @@
 
 import { listContentAssets } from './corpus-assets';
 import { heldPaths, libraryRows, libraryTotal, type LibraryRow } from './library';
-import { contentPath, planWaves, type ContentEntry, type WaveId } from './sw-policy';
+import {
+	contentPath,
+	planWaves,
+	type ContentEntry,
+	type WaveId,
+	type WaveRequest
+} from './sw-policy';
 import { readerPlan, serviceWorker } from './sw.svelte';
 
 /** The worker's content cache. A third copy of the constant — `usage.ts`
@@ -33,13 +39,19 @@ const CONTENT_CACHE = 'glossa-content';
 
 class LibraryStore {
 	/**
-	 * Whether the panel is showing.
+	 * Whether `AdvancedSheet` is showing.
 	 *
 	 * UI state on a data store, deliberately: the control that opens it is a
 	 * row in `SettingsMenu`'s popover and the dialog itself is mounted in the
 	 * root layout beside the other overlays (it must outlive the popover,
 	 * which closes the moment it is used). Two components, one boolean, and
 	 * the alternative is a prop threaded through the layout for one flag.
+	 *
+	 * The flag belongs to the library store rather than to an offline-mode one
+	 * because the library is what the panel's visibility DECIDES something
+	 * about: a fill that finishes re-measures only while the reader is looking
+	 * (`refresh` walks thousands of cache keys). Offline mode reads the same
+	 * panel and needs no flag to do it.
 	 */
 	open = $state(false);
 
@@ -74,10 +86,45 @@ class LibraryStore {
 		}
 	}
 
-	/** Take one wave whole. The reader asked, so the worker does not gate it
-	 *  on connection or quota — see `service-worker.ts`'s message handler. */
-	download(wave: WaveId): void {
+	/** Take one wave whole, or `'all'` for every wave in the reader's plan.
+	 *  The reader asked, so the worker does not gate it on connection or
+	 *  quota — see `service-worker.ts`'s message handler. */
+	download(wave: WaveRequest): void {
 		serviceWorker.requestWave(wave);
+	}
+
+	/**
+	 * Drop one shelf, from the PAGE rather than through the worker.
+	 *
+	 * The whole-library `forget` below goes through the worker and this does
+	 * not, which is a real distinction and not drift. `CLEAR_CONTENT` is
+	 * `caches.delete(CONTENT_CACHE)` — it takes everything, INCLUDING what no
+	 * current wave plan names: files from a corpus generation whose hashes
+	 * have moved on, or a language the reader has since stopped reading. A
+	 * per-wave delete can only ever reach what the plan can name, so summing
+	 * the waves would be a "forget everything" that quietly left things
+	 * behind. Two operations, two mechanisms.
+	 *
+	 * Nothing is posted to the worker, so nothing has to be waited out: the
+	 * deletes are awaited and the re-measure that follows reads a settled
+	 * cache. The page and the worker share this cache — `heldContent()` below
+	 * already reads it.
+	 *
+	 * Deleting one wave cannot empty another's row: `WAVE_FOR_KIND` puts each
+	 * work kind in exactly one wave, and the one wave that overlaps
+	 * (`neighbours`, the chunk around the open page) is never a row.
+	 */
+	async remove(wave: WaveId): Promise<void> {
+		try {
+			const target = planWaves(entries(), readerPlan()).find((planned) => planned.id === wave);
+			if (!target || typeof caches === 'undefined') return;
+			const cache = await caches.open(CONTENT_CACHE);
+			await Promise.all(target.assets.map((asset) => cache.delete(asset.path)));
+		} catch {
+			// Storage refused. The re-measure below still runs, so the panel
+			// shows what is actually there rather than what was intended.
+		}
+		await this.refresh();
 	}
 
 	/** Forget everything downloaded. The rows go to zero when the worker

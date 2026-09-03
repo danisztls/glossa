@@ -27,7 +27,7 @@
 	// Mounted here rather than inside the panel that opens it: the popover
 	// closes the instant its row is used, and a `<dialog>` unmounted
 	// mid-`showModal()` never opens. See the component's own docblock.
-	import LibrarySheet from '$lib/components/LibrarySheet.svelte';
+	import AdvancedSheet from '$lib/components/AdvancedSheet.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
 	// Renders its own trigger AND its sheet AND the one window-level keydown
 	// listener behind both, exactly as `JumpBox` does — which is why it sits in
@@ -469,7 +469,7 @@
 <LinkPreview />
 <InstallHint />
 <UpdateBanner />
-<LibrarySheet />
+<AdvancedSheet />
 <!-- Outside `.app-shell` with the other viewport-fixed overlays: it belongs to
      the window, not to the column of text under it. -->
 <ToTopButton />

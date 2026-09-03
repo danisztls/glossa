@@ -360,7 +360,17 @@ class UsageSession {
 	async #measure(): Promise<void> {
 		this.#library = await measureLibrary(
 			typeof caches === 'undefined' ? undefined : caches,
-			listContentAssets().length
+			// THE PLATES ARE NOT PART OF THE DENOMINATOR, and leaving them in
+			// would have quietly retired the `full` bucket. Doré's engravings
+			// entered the manifest on 2026-09-02 so the library panel could
+			// price them (`sw-policy.ts`'s `illustrations` wave): 482 files and
+			// 103 MB against a text corpus of ~2,600 files and ~25 MB. A reader
+			// with every word of every work on the device would have counted
+			// 2,600 of 3,082 held — 84%, under `FULL_LIBRARY_RATIO`, reported
+			// as `partial` forever. The bucket measures the LIBRARY, and the
+			// illustrations are the one thing in the cache nobody is expected
+			// to have.
+			listContentAssets().filter((asset) => asset.kind !== 'plate-image').length
 		);
 	}
 

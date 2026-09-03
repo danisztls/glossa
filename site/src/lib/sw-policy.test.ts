@@ -465,6 +465,42 @@ describe('planWaves', () => {
 		}
 	});
 
+	/**
+	 * The engravings themselves are a wave of their own, and NEVER automatic.
+	 *
+	 * 482 AVIFs at 103 MB is four times the whole text corpus, so the two
+	 * properties asserted here are the only things standing between a reader
+	 * and a download nobody agreed to: the images are in `illustrations`
+	 * rather than riding `essentials` with the 29 KB list that indexes them,
+	 * and `illustrations` offers nothing takeable uninvited. A `WAVE_FOR_KIND`
+	 * edit that moved `plate-image` to any automatic wave would be silent
+	 * everywhere else.
+	 */
+	it('puts the plate images in their own wave, and offers none of it uninvited', () => {
+		const images = [
+			entry({ workId: 'dore.tours', kind: 'plate-image', lang: '', path: '/OT-001-800.avif' }),
+			entry({ workId: 'dore.tours', kind: 'plate-image', lang: '', path: '/OT-001-1200.avif' })
+		];
+		const list = entry({ workId: 'dore.tours', kind: 'plates', lang: '', path: '/plates.json' });
+
+		for (const langs of [['en'], ['pt', 'en', 'la']]) {
+			const waves = planWaves([...images, list], { langs });
+			const illustrations = waves.find((w) => w.id === 'illustrations')!;
+			expect(illustrations.assets.map((a) => a.path).sort()).toEqual(
+				['/OT-001-1200.avif', '/OT-001-800.avif'].sort()
+			);
+			expect(illustrations.automatic).toBe(false);
+			expect(illustrations.autoAssets).toEqual([]);
+			expect(illustrations.autoBytes).toBe(0);
+			// The list that indexes them stays in `essentials`: a reader whose
+			// plates are cached but whose index is not cannot place them.
+			expect(waves.find((w) => w.id === 'essentials')!.assets.map((a) => a.path)).toEqual([
+				'/plates.json'
+			]);
+			expect(waves.find((w) => w.id === 'other')!.assets).toEqual([]);
+		}
+	});
+
 	/** The reader's own languages first: the plate list is enrichment and must
 	 *  not push the text of the language they read behind it. */
 	it('sorts a languageless collection behind the reader’s own languages', () => {
