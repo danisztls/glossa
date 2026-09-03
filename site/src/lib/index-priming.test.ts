@@ -33,15 +33,15 @@ describe('indexesForPath', () => {
 		expect(indexesForPath('/pt/preces/rosarium')).toEqual(['prayer']);
 	});
 
-	it('does not mistake a work slug for a language prefix', () => {
-		// `is` and `it` are interface languages AND plausible first segments; only
-		// a segment followed by more path is treated as a prefix.
-		expect(indexesForPath('/it')).toEqual(['ccc', 'compendium']);
-	});
-
-	it('gives the home page the outlines it renders', () => {
-		expect(indexesForPath('/')).toEqual(['ccc', 'compendium']);
-		expect(indexesForPath('')).toEqual(['ccc', 'compendium']);
+	it('gives the home page every shelf it renders', () => {
+		// Five sections: a Bible chapter picker, the Catechism pair, the prayer
+		// groups and the Magisterium's documents. Getting this wrong rendered the
+		// Bible and Magisterium sections empty against a full corpus.
+		const home = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
+		expect(indexesForPath('/')).toEqual(home);
+		expect(indexesForPath('')).toEqual(home);
+		// A bare language prefix IS the home page, so it takes the same set.
+		expect(indexesForPath('/it')).toEqual(home);
 	});
 
 	it('asks for nothing where the shelf needs nothing', () => {

@@ -31,6 +31,18 @@ export type IndexName = 'bible' | 'ccc' | 'compendium' | 'summa' | 'document' | 
 const ALL: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'summa', 'document', 'prayer'];
 
 /**
+ * The home page renders FIVE shelves, not one — a Bible chapter picker, the
+ * Catechism pair's outlines, the prayer groups and the Magisterium's documents
+ * grouped by pontiff. It got `['ccc', 'compendium']` when this table was first
+ * written, from a grep that found the two it names in `+page.svelte` and not
+ * the three it reaches through `listDocuments`, `listPrayerGroups` and
+ * `BookChapterPicker`; the Bible and Magisterium sections rendered empty
+ * against a full corpus. Only the Summa is absent, and deliberately —
+ * `/doctores` is not in the nav and the home page does not list it.
+ */
+const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
+
+/**
  * First path segment -> the indexes a page under it reads.
  *
  * The Catechism and the Compendium are ONE entry and take both, in both
@@ -77,6 +89,6 @@ export function indexesForPath(pathname: string): readonly IndexName[] {
 	// why the language check cannot simply strip a leading tag: `/it` must land
 	// where `/` lands, and `/it/scriptura/…` where `/scriptura/…` does.
 	const segment = isUiLang(first) ? (segments[1] ?? '') : first;
-	if (segment === '') return ['ccc', 'compendium'];
+	if (segment === '') return HOME;
 	return BY_SEGMENT[segment] ?? ALL;
 }

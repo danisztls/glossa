@@ -45,6 +45,17 @@ where a route already waits. Adding a reading route means adding it to
 `BY_SEGMENT` there; an unknown path primes everything, which costs a fetch and
 is the only direction that mapping may be wrong in.
 
+**Making a registry lazy also breaks what was DERIVED from it at module scope.**
+`corpus.ts` memoises five maps at module load (the canonical book list, the
+document groups, three existence Sets); module load is long before any primer
+resolves, so they were built empty and stayed empty — the home page's Bible and
+Magisterium sections rendered blank. They go through `derived()` now, which
+recomputes when `indexGeneration()` moves. **Two of them named no registry** —
+they reach `manifests` through `listWorksOfType` — so grepping for the registry
+found nothing. `corpus-derivations.test.ts` scans the source for the pattern,
+because under fixtures the registries ARE populated at module load and every
+runnable test passes either way.
+
 **`npm test` cannot catch a missing primer.** `USE_REAL_CORPUS` is false under
 fixtures, so both guards (`requireContentIndex`, `requireIndex`) are inert and
 an unprimed read is indistinguishable from a corpus that lacks the text.

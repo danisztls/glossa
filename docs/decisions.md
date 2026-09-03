@@ -1651,6 +1651,44 @@ and REFUSES THE DEPLOY over `MAX_BOOT_JS_BYTES` — a ceiling in bytes rather th
 per-chunk warning, which cannot tell a 1.34 MB chunk that is lazily fetched from one every
 route parses before paint, and says nothing about a payload spread over twenty chunks.
 
+**Making a registry lazy breaks whatever was DERIVED from it at module scope, and that
+is not visible from the registry's own call sites** (2026-09-03, same day). The home page's
+Bible and Magisterium sections rendered blank against a full corpus. `corpus.ts` builds
+five maps once at module load — the canonical book list, the document groups, three
+existence Sets — on the sound argument that regrouping ~450 document works on every
+`listDocuments()` would be waste. Module load now happens long before any primer resolves,
+so those maps were built from empty registries and memoised the emptiness permanently.
+
+**The search that missed them looked for the registry and they do not name it.**
+`canonicalBooksByOsis` and `documentGroupsBySlug` reach `manifests` through
+`listWorksOfType`, inside an IIFE — so a scan for module-scope reads of `manifests` found
+nothing, and the conversion looked complete. The lesson generalises past this refactor:
+when a value stops being available at module load, the thing to enumerate is not its
+readers but everything memoised from it, one indirection out.
+
+**The fix keeps the memo and keys it on a GENERATION rather than dropping it.** The
+original reasoning about wasted work was correct and still is; only the "once" was wrong.
+`corpus-index.ts` counts registry fills, `corpus.ts`'s `derived()` recomputes when the
+count moves — a counter and not a boolean, because six primers land independently and a
+map built after the Bible index arrived is still stale for the document index. That is
+correct under any ordering, including a read before any primer at all.
+
+**It is guarded by a source scan, because nothing runnable can catch it.** Under fixtures
+`USE_REAL_CORPUS` is false and the registries ARE populated at module load, so an eager
+derivation is perfectly correct and every test passes; the difference exists only against a
+real corpus. `corpus-derivations.test.ts` therefore asserts about the text of `corpus.ts`
+— every module-scope declaration mentioning a lazily-primed registry, or one of the ten
+functions that read one for you, must go through `derived()` — with a second assertion
+that the scan still matches something, so it cannot pass by finding nothing. Same move
+`sw-policy.test.ts` makes when it reads the content kinds back out of `sync-corpus.mjs`.
+
+**The route mapping was wrong on the same page for an unrelated reason, and the two looked
+identical from the browser.** `index-priming.ts` gave `/` the Catechism pair, from a grep
+that found the two work types `+page.svelte` names and not the three it reaches through
+`listDocuments`, `listPrayerGroups` and `BookChapterPicker`. Both bugs blank the same
+sections; only one was the cause of what was actually observed. Fixing a symptom that has
+two sufficient causes needs both found.
+
 **Asynchrony was pushed to the ARRIVAL of the data, never to its readers.** Two dozen
 synchronous readers in `corpus.ts` (`getBook`, `getCccStructure`, `listSummaQuestions`)
 are called from render and keep their signatures; the registries are the same mutable

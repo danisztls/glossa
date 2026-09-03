@@ -163,6 +163,7 @@ import {
 	condensationMap,
 	bibleIntroBooks,
 	ensureContentIndex,
+	indexGeneration,
 	requireIndex,
 	bibleIntroLocation,
 	fixtureBibleIntrosByLang,
@@ -894,7 +895,30 @@ export interface CanonicalBook {
 	namesByWorkId: Record<string, string>;
 }
 
-const canonicalBooksByOsis: Map<string, CanonicalBook> = (() => {
+/**
+ * A value derived from the index registries, recomputed when they change.
+ *
+ * The registries are filled by `corpus-index.ts`'s primers rather than at
+ * module load (see `indexGeneration` there), so a map built at module scope is
+ * built from nothing. These derivations exist because rebuilding them per call
+ * would be real waste — regrouping ~450 document works on every
+ * `listDocuments()` — so the answer is to keep the memo and key it on the
+ * generation, not to drop it.
+ */
+function derived<T>(build: () => T): () => T {
+	let value: T | undefined;
+	let builtAt = -1;
+	return () => {
+		const now = indexGeneration();
+		if (builtAt !== now) {
+			value = build();
+			builtAt = now;
+		}
+		return value as T;
+	};
+}
+
+const canonicalBooksByOsis = derived<Map<string, CanonicalBook>>(() => {
 	const out = new Map<string, CanonicalBook>();
 	// Sorted for determinism: iteration order otherwise depends on
 	// filesystem/glob enumeration order, which isn't guaranteed stable.
@@ -922,14 +946,14 @@ const canonicalBooksByOsis: Map<string, CanonicalBook> = (() => {
 		if (entry && !entry.chapters.includes(0)) entry.chapters = [0, ...entry.chapters];
 	}
 	return out;
-})();
+});
 
 export function listCanonicalBooks(): CanonicalBook[] {
-	return [...canonicalBooksByOsis.values()].sort((a, b) => a.order - b.order);
+	return [...canonicalBooksByOsis().values()].sort((a, b) => a.order - b.order);
 }
 
 export function getCanonicalBook(osis: string): CanonicalBook | undefined {
-	return canonicalBooksByOsis.get(osis);
+	return canonicalBooksByOsis().get(osis);
 }
 
 // --- Bible: content tier (async, read/fetched, memoized) -------------------
@@ -1390,8 +1414,8 @@ export function getCccStructure(lang: string): CccNode[] {
 	return cccStructures[lang] ?? [];
 }
 
-const cccParagraphNumberSets: Record<string, Set<number>> = Object.fromEntries(
-	Object.entries(cccParagraphNumbers).map(([lang, ns]) => [lang, new Set(ns)])
+const cccParagraphNumberSets = derived<Record<string, Set<number>>>(() =>
+	Object.fromEntries(Object.entries(cccParagraphNumbers).map(([lang, ns]) => [lang, new Set(ns)]))
 );
 
 /** Whether paragraph `n` exists in this corpus for `lang` — index-backed
@@ -1401,7 +1425,7 @@ const cccParagraphNumberSets: Record<string, Set<number>> = Object.fromEntries(
  *  `corpus-index.ts`'s docblock). */
 export function cccParagraphExists(lang: string, n: number): boolean {
 	requireIndex('ccc', 'cccParagraphExists');
-	return cccParagraphNumberSets[lang]?.has(n) ?? false;
+	return cccParagraphNumberSets()[lang]?.has(n) ?? false;
 }
 
 /** The paragraph number immediately before/after `n` that actually exists,
@@ -1705,14 +1729,16 @@ export async function getCompendiumQuestionRangeAsync(
 
 /** Question numbers this edition carries, as a set per language — the
  *  Compendium's `cccParagraphNumberSets`. */
-const compendiumQuestionNumberSets: Record<string, Set<number>> = Object.fromEntries(
-	Object.entries(compendiumQuestionNumbers).map(([lang, ns]) => [lang, new Set(ns)])
+const compendiumQuestionNumberSets = derived<Record<string, Set<number>>>(() =>
+	Object.fromEntries(
+		Object.entries(compendiumQuestionNumbers).map(([lang, ns]) => [lang, new Set(ns)])
+	)
 );
 
 /** Whether this edition carries question `n`. Index-backed (no fetch), same
  *  role as `cccParagraphExists`. */
 export function compendiumQuestionExists(lang: string, n: number): boolean {
-	return compendiumQuestionNumberSets[lang]?.has(n) ?? false;
+	return compendiumQuestionNumberSets()[lang]?.has(n) ?? false;
 }
 
 /** The question number immediately before/after `n` that actually exists, or
@@ -1785,11 +1811,11 @@ function parseDocumentWorkId(
 	return m ? { family: m[1], slug: m[2], lang: m[3] } : undefined;
 }
 
-/** Computed once at module load, same reasoning as `canonicalBooksByOsis`
+/** Memoised per index generation, same reasoning as `canonicalBooksByOsis`
  *  above: re-grouping ~450 document works (16 Vatican II + ~430 encyclicals
  *  and counting) on every `listDocuments()`/`getDocumentGroup()` call would
  *  be wasted work for something that never changes at runtime. */
-const documentGroupsBySlug: Map<string, DocumentGroup> = (() => {
+const documentGroupsBySlug = derived<Map<string, DocumentGroup>>(() => {
 	const out = new Map<string, DocumentGroup>();
 	// Sorted for determinism, same reasoning as `canonicalBooksByOsis`.
 	const works = [...listWorksOfType('document')].sort((a, b) => a.id.localeCompare(b.id));
@@ -1804,18 +1830,18 @@ const documentGroupsBySlug: Map<string, DocumentGroup> = (() => {
 		group.manifests[parsed.lang] = work as DocumentManifest;
 	}
 	return out;
-})();
+});
 
 /** All documents in this corpus, one entry per {family, slug} regardless of
  *  how many languages it has — the granularity the `/documents` library and
  *  the home page's Magisterium group both want (docs/corpus-schema.md
  *  §Documents). */
 export function listDocuments(): DocumentGroup[] {
-	return [...documentGroupsBySlug.values()];
+	return [...documentGroupsBySlug().values()];
 }
 
 export function getDocumentGroup(slug: string): DocumentGroup | undefined {
-	return documentGroupsBySlug.get(slug);
+	return documentGroupsBySlug().get(slug);
 }
 
 /**
@@ -1998,14 +2024,16 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 	return roots;
 }
 
-const documentSectionNumberSets: Record<string, Set<number>> = Object.fromEntries(
-	Object.entries(documentSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
+const documentSectionNumberSets = derived<Record<string, Set<number>>>(() =>
+	Object.fromEntries(
+		Object.entries(documentSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
+	)
 );
 
 /** Whether section `n` exists in this corpus for `workId` — index-backed
  *  (no fetch), same role as `cccParagraphExists`. */
 export function documentSectionExists(workId: string, n: number): boolean {
-	return documentSectionNumberSets[workId]?.has(n) ?? false;
+	return documentSectionNumberSets()[workId]?.has(n) ?? false;
 }
 
 /**
@@ -2018,7 +2046,7 @@ export function documentSectionExists(workId: string, n: number): boolean {
  * language's sections to embed without fetching every language's file first.
  */
 export function documentHasSections(workId: string): boolean {
-	return (documentSectionNumberSets[workId]?.size ?? 0) > 0;
+	return (documentSectionNumberSets()[workId]?.size ?? 0) > 0;
 }
 
 /** Whether `workId` has any READABLE text — numbered or not.

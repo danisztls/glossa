@@ -1196,10 +1196,41 @@ const indexPrimers = new Map<string, Promise<void>>();
 function primeOnce(name: string, load: () => Promise<void>): Promise<void> {
 	let inFlight = indexPrimers.get(name);
 	if (!inFlight) {
-		inFlight = USE_REAL_CORPUS ? load() : Promise.resolve();
+		inFlight = USE_REAL_CORPUS ? load().then(bumpGeneration) : Promise.resolve();
 		indexPrimers.set(name, inFlight);
 	}
 	return inFlight;
+}
+
+/**
+ * How many times a registry has been filled.
+ *
+ * `corpus.ts` derives several maps from these registries — the canonical book
+ * list, the document groups, the existence Sets — and does it ONCE, because
+ * regrouping ~450 document works on every `listDocuments()` would be wasted
+ * work for something that never changes at runtime. That premise was true while
+ * the registries were populated at module load and is false now: a map computed
+ * before its primer resolved is empty, and memoised emptiness is permanent.
+ *
+ * It cost the home page's Bible and Magisterium sections, which rendered blank
+ * against a full corpus (2026-09-03). Both derivations read `manifests`
+ * INDIRECTLY, through `listWorksOfType`, so neither looked like a registry read
+ * at the point where one would have been noticed.
+ *
+ * A counter and not a boolean: six primers land independently, and a map built
+ * after the Bible index arrived is still stale for the document index. Deriving
+ * consumers memoise the generation they were computed at and recompute when it
+ * moves, which is correct no matter what order anything runs in — including the
+ * case that started this, a read that happens before any primer at all.
+ */
+let generation = 0;
+
+function bumpGeneration(): void {
+	generation++;
+}
+
+export function indexGeneration(): number {
+	return generation;
 }
 
 const indexPrimed = new Set<string>();
@@ -1370,6 +1401,7 @@ async function buildContentIndex(): Promise<void> {
 	// tests timed out at 5 s the first time anything awaited it.
 	if (!USE_REAL_CORPUS) {
 		contentIndexBuilt = true;
+		bumpGeneration();
 		return;
 	}
 	const { contentUrlByRelPath } = await import('./content-urls');
@@ -1437,6 +1469,7 @@ async function buildContentIndex(): Promise<void> {
 		}
 	}
 	contentIndexBuilt = true;
+	bumpGeneration();
 }
 
 /** The one chunk chapter `n` of `osis` lives in. */
