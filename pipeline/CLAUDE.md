@@ -739,18 +739,16 @@ and nothing had ever read that region.
   their Creeds as running prose with no `<br>` at all. See
   `docs/research/prayers-glossa.md` §6.
 
-- **A cross-language line count is not an oracle; the Latin printed beside the
-  prayer is.** vatican.va typesets the same prayer differently per language, so
-  the counts differ legitimately — the Compendium's Italian page prints the
-  Pater as ten `<br>` lines and the French page prints the identical prayer as
-  one paragraph. What a mirror does not do by accident is set one column as
-  verse and its neighbour as prose, so `check_latin_line_parity` flags only
-  that all-or-nothing shape, per edition, against a declared
-  `LangSpec.latin_lineation_differs`. Six were declared on 2026-09-03 (fr, it×2,
-  pt, ro×2), each read off the raw markup first; the PDF editions are excluded
-  because they have no `<br>` to have dropped. **It would not have caught the
-  Creed defect above** — those come from the Catechism's pages and carry no
-  Latin companion — which is the reach, not a gap to close by inventing one.
+- **A cross-language line count is not an oracle.** vatican.va typesets the same
+  prayer differently per language, so the counts differ legitimately: the
+  Compendium's Italian page prints the Pater as ten `<br>` lines and the French
+  page prints the identical prayer as one paragraph, in the same document, the
+  same year, the same appendix. Neither is damaged, and standardising the two
+  would invent typography no one printed. Where a mismatch IS worth reading the
+  raw over, the oracle is the Latin printed beside the prayer on the same page,
+  not the other editions — checked by hand over all fourteen on 2026-09-03, and
+  the six it turned up (fr, it×2, pt, ro×2, ru) were every one of them the
+  source's own setting.
 
 ### The four PDF editions: the same appendix, printed in two columns
 

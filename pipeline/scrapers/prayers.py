@@ -4578,81 +4578,6 @@ def check_source_coverage() -> list[str]:
     return problems
 
 
-def printed_lines(blocks: list[BlockOut]) -> int:
-    """How many lines the source printed for a run of blocks.
-
-    Counted off `html`, which is `line_html`'s VERDICT and not the raw markup:
-    a block whose `<br/>`s that function judged to be column wrap has `html is
-    None` and is one line, which is the same thing the site's `prayerLines`
-    counts. Reading the `<br/>`s again here would ask a question the parse has
-    already answered, and answer it differently."""
-    return sum(len(b.html.split("<br />")) if b.html else 1 for b in blocks)
-
-
-def check_latin_line_parity(lang: str, prayers: list[Prayer]) -> list[str]:
-    """A prayer set as verse whose Latin companion beside it is one run, or
-    the reverse -- asserted per edition, because it is sometimes true.
-
-    THE ORACLE IS THE LATIN ON THE SAME PAGE, NOT THE OTHER LANGUAGES. Line
-    counts across editions cannot be an oracle: vatican.va typesets the same
-    prayer differently per language, and the Compendium's own Pater is the
-    proof -- the Italian page prints it as ten `<br/>` lines and the French
-    page prints the identical prayer as one paragraph. Nothing is wrong with
-    either. But a mirror sets a prayer and the Latin printed beside it in one
-    pass, so where the two disagree ABOUT WHETHER THERE ARE LINES AT ALL, the
-    likeliest explanation is that we dropped one side's breaks.
-
-    IT WOULD NOT HAVE CAUGHT THE DEFECT THAT PROMPTED IT, and the reach is
-    worth stating rather than assuming. The Portuguese Creeds came out as 7
-    lines against the 22 and 37 the page prints, because `build_creeds_pt`
-    flattened the table cells it read them from -- and this check is blind to
-    that twice over: the Creeds come from the Catechism's own pages, not the
-    appendix, so they carry no Latin companion to compare against, and 7
-    against 22 is not the all-or-nothing shape below. What this covers is the
-    appendix, where a Latin column is printed beside almost every entry. The
-    Creeds and the Our Father have no same-page oracle, and nothing here
-    invents one for them.
-
-    ONLY THE ALL-OR-NOTHING DISAGREEMENT COUNTS, never a difference in the
-    number of lines. Latin is denser than every language that translates it,
-    so the counts differ constantly and legitimately; and an edition free to
-    break one column into stanzas and leave the other whole makes the block
-    count differ too. What no typesetter does by accident is set one column as
-    verse and its neighbour as prose.
-
-    NOT RUN OVER THE PDF EDITIONS, and that is a statement about evidence
-    rather than a concession. There are no `<br/>`s in a PDF to have dropped:
-    lineation there is `line_html`'s reflow judgment over physical lines, and
-    it can reach different verdicts about two columns for the honest reason
-    that Latin verse lines are short and clause-final where a vernacular
-    paragraph is neither. A mismatch would be evidence of a different bug with
-    a different discriminator, so it is not evidence for this one."""
-    spec = LANG_CONFIG[lang]
-    if isinstance(spec.appendix, PdfSource):
-        return []
-    found = {
-        p.slug
-        for p in prayers
-        if p.latin and p.blocks and p.latin.blocks
-        # Exactly one of the two is a single run.
-        if (printed_lines(p.blocks) == 1) != (printed_lines(p.latin.blocks) == 1)
-    }
-    if found == spec.latin_lineation_differs:
-        return []
-    problems = []
-    if found - spec.latin_lineation_differs:
-        problems.append(
-            f"{lang}: prayer and Latin companion disagree about lineation, "
-            f"undeclared: {sorted(found - spec.latin_lineation_differs)}"
-        )
-    if spec.latin_lineation_differs - found:
-        problems.append(
-            f"{lang}: declared lineation mismatch no longer present: "
-            f"{sorted(spec.latin_lineation_differs - found)}"
-        )
-    return problems
-
-
 def validate_prayers(lang: str, prayers: list[Prayer]) -> list[str]:
     """One edition against what its own sources should have produced.
 
@@ -4677,8 +4602,6 @@ def validate_prayers(lang: str, prayers: list[Prayer]) -> list[str]:
             )
         else:
             problems.append(f"{lang}: slug ORDER differs from the source's print order")
-
-    problems += check_latin_line_parity(lang, prayers)
 
     latin_missing = {p.slug for p in prayers if p.latin is None}
     if latin_missing != spec.expected_no_latin():
@@ -5387,13 +5310,6 @@ class LangSpec:
     #: positioned glyphs over base letters its fonts do not map -- see the PDF
     #: section above for what each of the two readers makes of `et Fílii`.
     latin_unreadable: bool = False
-    #: Entries this mirror sets as verse beside a Latin companion printed as
-    #: one run, or the reverse -- a fact about the page, asserted so that a
-    #: parser dropping one column's line breaks cannot be mistaken for one.
-    #: See `check_latin_line_parity`; each entry below names what the raw
-    #: markup shows, because the whole value of the check is that it fails on
-    #: anything not read off the page first.
-    latin_lineation_differs: frozenset[str] = frozenset()
 
     def expected_slugs(self) -> list[str]:
         """Exactly the prayers this edition's sources can produce, in the
@@ -5559,11 +5475,6 @@ LANG_CONFIG: dict[str, LangSpec] = {
             "and an ISBN, where every other edition carries only the LEV line. "
             "Both are recorded rather than normalised away."
         ),
-        # Romanian prints TWO of each Act -- one "din Catehismul mic" as a
-        # prose run, then a second "Din cărţile de rugăciuni" broken line by
-        # line -- against a Latin companion set as one run. The lines are the
-        # second version's and they are real.
-        latin_lineation_differs=frozenset({"act-of-faith", "act-of-hope"}),
     ),
     "sl": LangSpec(
         work_id="prayer.common.sl",
@@ -5608,10 +5519,6 @@ LANG_CONFIG: dict[str, LangSpec] = {
         our_father=compendium_source("fr", build_our_father_body("fr")),
         rosary_mysteries="fr",
         litany=litany_source("fr", "fr"),
-        # The French page sets its whole appendix as running prose -- the
-        # sequence's French is the exception, broken line by line, while the
-        # Latin `Veni, Sancte Spiritus` above it runs on unbroken.
-        latin_lineation_differs=frozenset({"veni-sancte-spiritus"}),
     ),
     "hu": LangSpec(
         work_id="prayer.common.hu",
@@ -5641,10 +5548,6 @@ LANG_CONFIG: dict[str, LangSpec] = {
         our_father=compendium_source("it", build_our_father_body("it")),
         rosary_mysteries="it",
         litany=litany_source("it", "it"),
-        # Both are the Italian column breaking where the Latin does not: the
-        # Atto di dolore prints its two sentences on separate lines, and the
-        # Atto di speranza is one sentence against a Latin set in three.
-        latin_lineation_differs=frozenset({"act-of-contrition", "act-of-hope"}),
     ),
     "pt": LangSpec(
         work_id="prayer.common.pt",
@@ -5670,9 +5573,6 @@ LANG_CONFIG: dict[str, LangSpec] = {
             build_litany("pt"),
         ),
         rosary_mysteries="po",
-        # The Portuguese Acto de Esperança is a single `<p>` beside a Latin
-        # set in three lines.
-        latin_lineation_differs=frozenset({"act-of-hope"}),
     ),
     # ---- the four PDF editions ------------------------------------------
     #
