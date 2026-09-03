@@ -1724,6 +1724,19 @@ def parse_page_intratext(
         text = strip_tags(marked)
         if not text:
             continue
+        if not is_heading and is_plain_roman_heading(text, cfg["lang"]):
+            # A ROMAN-NUMERAL SUBDIVISION THE MIRROR DID NOT BOLD. See that
+            # predicate for the measurement; the short version is that the
+            # exclusion below was written for Portuguese, which loses nothing
+            # by it, and cost English 60 subdivisions and German 57.
+            #
+            # The seventh petition of the Our Father is the one that found it.
+            # vatican.va sets `VII "BUT DELIVER US FROM EVIL"` as a plain <p>
+            # inside __PAC.HTM -- the page its own index and breadcrumb file
+            # under `VI. "And Lead Us not into Temptation"` -- so English ran
+            # petition VI from 2846 to 2854 and had no seventh at all, while
+            # pt, la and fr all carry VII as a proper heading.
+            is_heading = True
         if not is_heading and is_bare_structural_label(text, cfg["lang"]):
             # A LABELLED HEADING THE MIRROR DID NOT BOLD. Whole pages of the
             # English edition set every heading in plain type -- __P16.HTM
@@ -1804,6 +1817,72 @@ def is_bare_structural_label(text: str, lang: str = "pt") -> bool:
         m = pat.match(folded)
         if m and len(folded) - m.end() <= 3:
             return True
+    return False
+
+
+#: The longest roman-numeral subdivision heading any IntraText edition prints,
+#: measured 2026-09-03 over every unbolded candidate in en/fr/de: 64 characters
+#: ("I ,,Im Namen des Vaters und des Sohnes und des Heiligen Geistes\""). The
+#: cap is what separates a heading from prose, and 90 leaves room without
+#: reaching the length of any body paragraph on these pages.
+_PLAIN_ROMAN_MAX = 90
+
+
+#: How a subdivision title may open when its first character is not a capital:
+#: a quotation mark, or the ellipsis with which an edition continues the
+#: previous heading's sentence ("II ... geboren von der Jungfrau Maria").
+#:
+#: THE GUARD IS FRENCH'S DOING and it is the whole reason it exists. That
+#: edition's `roman` pattern is period-optional, so without it the two cells of
+#: the Creed comparison table on __P14.HTM -- "II ressuscita le troisième
+#: jour," and "II a parlé par les prophètes." -- promote to subdivisions of
+#: Article 2, which is text read as structure. A heading's first word is
+#: capitalised or the source opens it with a mark; a lower-case first word is a
+#: clause continuing a sentence. Measured 2026-09-03 over every unbolded
+#: candidate: it admits 60 in English, 64 in German and 11 in French, and
+#: rejects exactly those two.
+_TITLE_OPENER_RE = re.compile('^["\u201c\u201d\u201e\u00ab\u00bb\u2018\u2019,.\u2026]')
+
+
+def is_plain_roman_heading(text: str, lang: str) -> bool:
+    """True for a roman-numeral subdivision heading the mirror did not bold.
+
+    `is_bare_structural_label` deliberately will not say this, and said so:
+    "roman-numeral subheadings are excluded since 'I.' et al. are too easily
+    mistaken for ordinary prose without the bold signal". That was written for
+    Portuguese, where it costs nothing, and inherited by the IntraText shell,
+    where it cost 60 subdivisions in English and 57 in German.
+
+    THE COUNT IS WHAT MAKES IT A DEFECT RATHER THAN A CEILING. Counting nodes
+    whose title opens on a roman numeral, 2026-09-03: es 272, fr 273, la 272,
+    pt 272, mg 276, it 291 -- against en 214 and de 213. A one-sided gap of
+    that shape is a parser defect by this project's own rule (CLAUDE.md, "Work
+    that spans languages"), and it is the same rule that closed the in-brief
+    gap in `parse_page_en` a few lines below. After the fix: en 274, de 270.
+
+    WHAT REPLACES THE BOLD SIGNAL IS LENGTH, and the fear the ceiling was
+    guarding against turns out not to happen in these editions. Measured over
+    every unbolded block in en/fr/de matching that edition's own `roman`
+    pattern and passing the two guards below: 60 in English, 64 in German and 11
+    in French, and every one of them is a heading. The reason the length cap can
+    carry this at all is structural rather than lucky:
+    IntraText numbers every body paragraph, so a body block opens on a DIGIT
+    ("2807 The term..."), and a short block opening on a roman numeral is not
+    prose here. English's own pattern still requires the period and German's
+    still narrows the numeral class to I/V/X, so nothing about which strings
+    are numerals is loosened -- see `_LABEL_PATTERNS`.
+    """
+    folded = fold(text)
+    for kind, pat in _COMPILED_LABELS[lang]:
+        if kind != "roman":
+            continue
+        m = pat.match(folded)
+        if m is None:
+            return False
+        rest = text[m.end() :].strip()
+        if not 2 <= len(rest) <= _PLAIN_ROMAN_MAX:
+            return False
+        return rest[0].isupper() or bool(_TITLE_OPENER_RE.match(rest))
     return False
 
 
@@ -2672,7 +2751,25 @@ _LABEL_PATTERNS = {
         ("article", r"^ARTICLE\s+(\d+)\b"),
         ("paragraph_marker", r"^PARAGRAPH\s+(\d+)\."),
         ("in_brief", r"^IN BRIEF$"),
-        ("roman", r"^([IVXLCDM]+)\.\s"),
+        # THE PERIOD IS REQUIRED FOR `I` AND OPTIONAL FOR EVERYTHING LONGER,
+        # and the asymmetry is English rather than fussiness: `I` is the
+        # first-person pronoun and this book opens on it. Making the period
+        # optional outright matches 16 blocks, 8 of them ordinary prose or
+        # quotation — `I BELIEVE`, `I am the LORD your God, who brought you
+        # out of the land of Egypt`, `I want to spend my heaven in doing good
+        # on earth`. No English word is two roman digits long, so requiring
+        # two characters leaves exactly two blocks, and both are subdivisions
+        # the tree was missing: `II THE CHURCH IS HOLY` (__P29.HTM) and
+        # `VII "BUT DELIVER US FROM EVIL"` (__PAC.HTM). Measured 2026-09-03.
+        #
+        # The lookbehind is what says "two or more": it is checked at the
+        # position after the numeral, so it succeeds only when the numeral
+        # itself supplied those two characters. German and Spanish reach the
+        # same place from the other side — they drop the period for every
+        # numeral and narrow the class instead — and French must have neither,
+        # because its Creed table on __P14.HTM prints `II ressuscita le
+        # troisième jour,` as a cell.
+        ("roman", r"^([IVXLCDM]+)(?:\.|(?<=[IVX]{2}))\s"),
     ],
     "es": [
         ("prologue", r"^PROLOGO$"),
