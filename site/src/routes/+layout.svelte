@@ -400,38 +400,46 @@
 	-->
 	<footer class="site-footer">
 		<!--
-			FIRST IN THE DOCUMENT AND OUT OF THE FLOW. Absolutely positioned at the
-			inline-start edge (see the CSS), so the lines below stay centred on the
-			FOOTER's midline rather than on the space left over beside it — which is
-			what a flex row would have given, and it would have looked almost right,
-			which is the worse failure. `.site-footer`'s symmetric inline padding is
-			the other half: it reserves the lane on BOTH sides, so the centre is true
-			and no line can run under the mark.
-		-->
-		<JerusalemCross class="footer-cross" />
-		<!--
-			Three lines in one chrome, and the uniformity is the point: none of them
-			is a heading for the others. The colophon link leads because it is the way
-			OUT of the footer; the motto and the standing statement are the site
-			speaking about itself, and setting either one larger would have made it an
-			announcement rather than an imprint.
+			The mark and the lines are ONE centred group, which is why they need a
+			wrapper at all: the footer centres its contents, and a flex row is what
+			makes "cross, then text" a single thing for it to centre. Written in
+			reading order and never positioned, so RTL needs nothing — in Arabic and
+			Hebrew the row reverses itself and the mark lands on the right.
 
-			`lang="la"` on the motto for the reason every reading region declares the
-			language of its own text: this is Latin sitting in a page that may be in
-			any of thirty-four languages, and a screen reader told nothing better will
-			pronounce it as though it were the surrounding one. Untranslated, like the
-			build string below — a motto is a fixed form of words, not a sentence to
-			render in the reader's language.
-
-			`footer.notEndorsed` is the one-line form of
-			`colophon.whatThisIsStanding`, which the link directly above it reaches.
-			That proximity is what lets it be this short: it does not have to carry
-			its own context, because the full statement is one line and one click
-			away.
+			This replaced an absolutely-positioned mark in the inline-start lane,
+			which is why `.site-footer` has no outsized inline padding any more: that
+			padding existed ONLY to reserve the lane symmetrically so the centred
+			lines stayed on the footer's true midline. With the mark in the flow
+			there is no lane, and the whole trick goes with it.
 		-->
-		<p><a href="/colophon">{t('colophon.title')}</a></p>
-		<p lang="la">Ad maiorem Dei gloriam</p>
-		<p>{t('footer.notEndorsed')}</p>
+		<div class="imprint">
+			<JerusalemCross class="footer-cross" />
+			<!--
+				Three lines in one chrome, and the uniformity is the point: none of
+				them is a heading for the others. The colophon link leads because it
+				is the way OUT of the footer; the motto and the standing statement
+				are the site speaking about itself, and setting either one larger
+				would make it an announcement rather than an imprint.
+
+				`lang="la"` on the motto for the reason every reading region declares
+				the language of its own text: this is Latin sitting in a page that may
+				be in any of thirty-four languages, and a screen reader told nothing
+				better will pronounce it as though it were the surrounding one.
+				Untranslated, like the build string below — a motto is a fixed form of
+				words, not a sentence to render in the reader's language.
+
+				`footer.notEndorsed` is the one-line form of
+				`colophon.whatThisIsStanding`, which the link two lines above it
+				reaches. That proximity is what lets it be this short: it does not
+				have to carry its own context, because the full statement is one click
+				away.
+			-->
+			<div>
+				<p><a href="/colophon">{t('colophon.title')}</a></p>
+				<p lang="la">Ad maiorem Dei gloriam</p>
+				<p>{t('footer.notEndorsed')}</p>
+			</div>
+		</div>
 		<!--
 			The build this page is running, and the reason it is not behind the
 			colophon link: what it answers is "did the update actually land",
@@ -672,39 +680,41 @@
 	}
 
 	.site-footer {
-		position: relative;
 		border-top: 1px solid var(--color-border);
-		/*
-		 * SYMMETRIC, and that is the whole trick rather than a rounding of the
-		 * old 1.25rem. The cross is absolutely positioned in the inline-start
-		 * lane, so the padding has to reserve that lane on BOTH sides: pad only
-		 * the side the mark is on and every centred line below shifts by half
-		 * the difference, which reads as the footer being slightly wrong rather
-		 * than as anything a person can name.
-		 */
-		padding: 1.25rem 3.5rem;
+		padding: 1.25rem;
 		text-align: center;
 		font-size: 0.8rem;
 	}
 
 	/*
-	 * Logical inset, never `left`: in Arabic and Hebrew the mark belongs at the
-	 * start edge like everything else the site draws (styles/direction.css).
-	 *
+	 * `wrap` is the only concession to width here, and it degrades the way the
+	 * old media query used to on purpose: where the row will not fit, the mark
+	 * takes its own line and stays centred above the text. Nothing has to
+	 * measure anything.
+	 */
+	.imprint {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.9rem;
+	}
+
+	/*
 	 * `:global` because the class is passed into a component — the convention
 	 * `Icon.svelte`'s consumers already follow — and the size is a `font-size`
 	 * because the SVG is declared at 1em, so one number scales it.
 	 *
-	 * Full text colour and no opacity, unlike the lines beside it: this is a
-	 * line drawing rather than a solid, so it carries far less ink than its
-	 * footprint suggests and goes weak long before the text does.
+	 * Full text colour and no opacity, where the three lines beside it are
+	 * muted: the mark is the one thing in the footer that is not apparatus, and
+	 * a heraldic figure faded to match small print reads as a watermark someone
+	 * forgot to remove. 2.5rem because the potent bars and the four crosslets
+	 * are real internal detail — below about 36px they start closing up, so
+	 * this is the mark's floor rather than a preference.
 	 */
 	.site-footer :global(.footer-cross) {
-		position: absolute;
-		inset-inline-start: 1rem;
-		inset-block-start: 50%;
-		transform: translateY(-50%);
-		font-size: 2.25rem;
+		flex-shrink: 0;
+		font-size: 2.5rem;
 		color: var(--color-text);
 	}
 
@@ -723,29 +733,6 @@
 		margin: 0;
 		color: var(--color-text-muted);
 		line-height: 1.9;
-	}
-
-	/*
-	 * Below the site's narrow breakpoint the reserved lanes cost more than the
-	 * arrangement is worth: 3.5rem each side of a 320px screen leaves about
-	 * 208px for a sentence. The mark returns to the flow above the motto,
-	 * centred, and the padding goes back to what the footer had before it
-	 * existed. 30rem is `app.css`'s own phone breakpoint, the one `Wordmark`
-	 * swaps to its monogram at — reused so the site keeps one idea of "narrow".
-	 */
-	@media (max-width: 30rem) {
-		.site-footer {
-			padding-inline: 1.25rem;
-		}
-
-		.site-footer :global(.footer-cross) {
-			position: static;
-			display: block;
-			transform: none;
-			margin-inline: auto;
-			margin-block-end: 0.5rem;
-			font-size: 1.9rem;
-		}
 	}
 
 	.site-footer a {

@@ -1104,28 +1104,41 @@ covers one axis and gets `data-theme='light'` on a dark-preferring OS
 backwards. Inline, `fill: currentColor` follows all four for nothing. It is its
 own file rather than an entry in `Icon.svelte`, whose docblock promises it is
 the only importer of `@lucide/svelte`; `Wordmark.svelte` is the precedent for a
-mark that is live geometry. **It is five plain crosses of two lines each, and
-the arms are deliberately NOT potent** — heraldically a Jerusalem Cross caps
-each arm with a bar, and it was drawn that way twice (a solid fill, then a
-traced perimeter) before both were dropped: at the ~36px the footer sets it at,
-the bars and their counters close into texture. The ARRANGEMENT is what
-identifies the mark; the detail only survives at display size. **The stroke and
-the spacing were rasterized, not estimated** — 2.5 goes spindly at 36px and 4
-thickens the crosslets into blocks, and the geometry leaves nine units of
-clearance on every side of every crosslet. Re-render before touching a number. And **draw the plain
+mark that is live geometry. **THE GEOMETRY IS NOT OURS**: it is Wikimedia
+Commons' `Cross-Jerusalem-Potent-Heraldry.svg` by AnonMoos and Melian, public
+domain, verified through the Commons API (`AttributionRequired: false`, no
+restrictions) before it was copied and credited in the docblock anyway. Three
+of our own drawings preceded it — a solid potent built from overlapping rects,
+the same traced as an outline, five plain crossed lines — and all three were
+guesses at proportions the heraldry has already settled. **The `<use
+xlink:href>` pairs were expanded into rotations** about (280, 280): two for the
+arm, four for the crosslet. That is not a redraw and it was proved so — the
+expansion pixel-diffs to zero against the original — and it exists because
+`id`s in a component collide if it is ever rendered twice, and `xlink:href` is
+deprecated. And **draw the plain
 five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
 in the Order of the Holy Sepulchre's arrangement, because a mark drifting
 toward a specific body's ARMS would contradict the sentence beside it.
 
-**The footer's centring survives the mark only because the padding is
-symmetric.** The cross is absolutely positioned in the inline-start lane, so
-`.site-footer`'s inline padding reserves that lane on BOTH sides; pad one side
-and every centred line shifts by half the difference, which reads as the footer
-being slightly wrong rather than as anything nameable. Below 30rem the mark
-returns to the flow above the motto and the padding goes back. `Ad maiorem Dei
-gloriam` beside it is untranslated and carries `lang="la"`, the only Latin in
-the chrome. None of it prints — `.site-footer` is in `print.css`'s hidden list,
-and the colophon carries the full statement.
+**The mark and the lines are ONE centred group** (`.imprint`, a flex row), and
+that is why they need a wrapper: the footer centres its contents, and the row
+is what makes "cross, then text" a single thing to centre. It is written in
+reading order and never positioned, so **RTL needs nothing** — the row reverses
+itself and the mark lands on the right in Arabic and Hebrew. `flex-wrap` is the
+only concession to width: where the row will not fit, the mark takes its own
+line above the text, and nothing measures anything.
+
+**It was absolutely positioned in the inline-start lane for one revision**, and
+the cost was a trick worth not reintroducing: `.site-footer` needed outsized
+SYMMETRIC inline padding, whose only job was to reserve that lane on both sides
+so the centred lines stayed on the footer's true midline. Pad one side and
+every line shifts by half the difference — wrong in a way nobody can name. With
+the mark in the flow there is no lane, so the padding is back to `1.25rem` and
+a `max-width: 30rem` restack rule is gone entirely.
+
+`Ad maiorem Dei gloriam` is untranslated and carries `lang="la"`, the only
+Latin in the chrome. None of it prints — `.site-footer` is in `print.css`'s
+hidden list, and the colophon carries the full statement.
 
 **Twenty of the thirty-four dictionaries have never been read by a native
 speaker** — every language added on 2026-08-31 was translated by an LLM in

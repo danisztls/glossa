@@ -2835,15 +2835,22 @@ a mark drifting there would contradict the sentence printed next to it. The comp
 docblock carries that rule, so making it look "more official" has to be a decision someone
 takes rather than a tidy-up.
 
-**The mark is drawn as five plain crosses of two crossed lines, and the arms are not
-potent.** Heraldry caps each arm of a Jerusalem Cross with a bar, and it was built that way
-twice — a solid fill, then a traced outline — before both were dropped for the same
-measured reason: at the ~36px the footer actually sets it at, the bars and the counters
-between them close into texture, so the detail costs legibility and buys nothing. What
-identifies the mark at any size is the ARRANGEMENT, one cross with a smaller cross in each
-quadrant, and that is what is kept. The general rule is the one the drop caps and the
-favicon already record — decide a mark's detail at the size it is SET, not at the size it
-is designed.
+**The mark itself is not ours, and that is the right answer rather than a shortcut.**
+Three drawings were made here first — a solid cross potent from overlapping rectangles, the
+same shape as a traced outline, then five plain crossed lines — and each was an attempt to
+settle proportions that heraldry settled centuries ago. What ships is Wikimedia Commons'
+`Cross-Jerusalem-Potent-Heraldry.svg` by AnonMoos and Melian, which is **public domain**:
+checked through the Commons API before copying, which reports no attribution requirement
+and no restrictions. It is credited in the component's docblock regardless, because a site
+whose entire position is about other people's rights in their work does not take a licence
+exemption as permission to go quiet about where something came from.
+
+**Its `<use xlink:href>` indirection was expanded into explicit rotations and the
+equivalence was PROVED, not assumed.** The source defines two `id`s and re-uses them; two
+copies of a component carrying `id`s are duplicate ids in one document, and `xlink:href` is
+deprecated besides. So the arm is drawn at two rotations about (280, 280) and the crosslet
+at four, and the result pixel-diffs to **zero** against the original render. A refactor of
+someone else's geometry is a redraw unless something checks it.
 
 **Two canons bite harder than 216 and are not addressed by any of this**, recorded here so
 nobody reads the colophon paragraph as having settled them. **C. 826 §3**: collections of
