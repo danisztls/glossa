@@ -56,6 +56,15 @@ Empirically confirmed templates (see survey doc + live fetches performed
       (39).`, RN EN) -- handled by matching on the anchor's `name`
       attribute (always present, always numeric) and separately trimming
       a redundant echoed "(N)"/"[N]" that immediately follows.
+      WORD WRITES `_edn`/`_ednref` WHEN THE AUTHOR USED ENDNOTES rather
+      than footnotes -- the same export, the same pairing, three letters
+      different -- and every regex here read only `_ftn`, so those pages
+      matched no template, found no definition anchor, and were handed to
+      the `paren` fallback. 47 raw pages are in that state, 10 of them
+      CDF; the Spanish Libertatis Conscientia prints all 100 of its
+      numbered paragraphs and came out with none. The two are aliases
+      throughout, never distinguished: nothing downstream cares which
+      button the author pressed in 2001.
     - "bracket": bare `[N]` inline, no <sup> and no anchor (36 works)
     - "paren": bare `(N)` inline, with an optional second series `(N*)`
       seen exactly once (Lumen Gentium's patristic "SUPPLEMENTARY NOTES",
@@ -511,8 +520,19 @@ def narrow_html(marked_html: str, dropped: collections.Counter | None = None) ->
     `strip_tags` or the round-trip invariant breaks: an unknown tag leaves a
     space behind, so `Igreja."<a name="fnref3"></a>(3)` narrows with a space
     the source does not print while the block's own text no longer has one.
-    Both sides read the same markup and must drop the same nothings."""
+    A COMMENT GOES THE SAME WAY, and for the same reason one line further on
+    in `strip_tags`. `_TAG_RE` requires a letter after the `<`, so `<!--` is
+    not a tag to this function and the whole comment survives as a text run
+    -- escaped on the way out, then unescaped by `html_to_text` back into
+    literal `<!--[if !supportFootnotes]-->` sitting in the reader's prose,
+    while the text side removed it. Word's conditional comments wrap every
+    footnote marker on the CDF pages (113 pairs on one Latin page alone), so
+    the round-trip check fired on fifteen editions the day that family
+    landed; the encyclicals had never shown it because their export path
+    does not emit them. Substituted with a space, not with nothing, because
+    that is what `strip_tags` does and the two must agree exactly."""
     marked_html = _EMPTY_ANCHOR_RE.sub("", marked_html)
+    marked_html = _COMMENT_RE.sub(" ", marked_html)
     out: list[str] = []
     pos = 0
     for m in _TAG_RE.finditer(marked_html):
@@ -1093,7 +1113,7 @@ def match_para_num(inner_html: str) -> tuple[int, int] | None:
 
 _SUP_RE = re.compile(r"<sup>(.*?)</sup>", re.IGNORECASE | re.DOTALL)
 _FTNREF_RE = re.compile(
-    r"<a\s[^>]*?name=[\"']?_ftnref([0-9A-Za-z]+)[\"']?[^>]*>(.*?)</a>"
+    r"<a\s[^>]*?name=[\"']?_(?:ftn|edn)ref([0-9A-Za-z]+)[\"']?[^>]*>(.*?)</a>"
     r"\s*(?:\((\d+)\)|\[(\d+)\])?\.?",
     re.IGNORECASE | re.DOTALL,
 )
@@ -1178,7 +1198,7 @@ _FNPAIR_REF_RE = re.compile(
 
 
 def detect_marker_template(body_html: str) -> str:
-    if re.search(r'name=["\']?_ftnref[0-9A-Za-z]+', body_html, re.IGNORECASE):
+    if re.search(r'name=["\']?_(?:ftn|edn)ref[0-9A-Za-z]+', body_html, re.IGNORECASE):
         return "ftn"
     if _FNPAIR_REF_RE.search(body_html):
         return "fnpair"
@@ -1279,7 +1299,7 @@ _FN_HEADING_RE = re.compile(
 # bibliographic year citations ("A.A.S. 54 (1962)") get swallowed as
 # ordinary body prose attached to the final numbered section.
 _FN_DEF_ANCHOR_RE = re.compile(
-    r'name=["\']?(?:_ftn(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+'
+    r'name=["\']?(?:_(?:ftn|edn)(?!ref)[0-9A-Za-z]+|\$[0-9A-Za-z]+|%24[0-9A-Za-z]+'
     r"|fn(?!ref)\d[0-9A-Za-z]*)",
     re.IGNORECASE,
 )
@@ -1316,6 +1336,9 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
     start = find_footnote_run_start(html)
     if start is not None:
         candidates.append((start, "numbered definition run"))
+    start = find_bare_footnote_run_start(html, list(_TOC_PARA_RE.finditer(html)))
+    if start is not None:
+        candidates.append((start, "restarted bare-numbered definition run"))
     hrs = list(_HR_RE.finditer(html))
     if hrs:
         candidates.append((hrs[-1].start(), "last <hr>"))
@@ -1385,21 +1408,11 @@ def find_footnote_run_start(html: str) -> int | None:
     # them before they exist.
     label_res = (_FN_BRACKET_RE, _FN_PAREN_RE, _FN_TRAILING_PAREN_RE)
     paras = list(_TOC_PARA_RE.finditer(html))
-    labels: list[tuple[int, int]] = []  # (paragraph index, marker as int)
-    for i, para in enumerate(paras):
-        text = strip_tags(para.group(2))
-        for label_re in label_res:
-            m = label_re.match(text)
-            if m and m.group(1).isdigit():
-                labels.append((i, int(m.group(1))))
-                break
-    by_para = dict(labels)
-    for i, n in labels:
+    by_para = _label_runs(paras, label_res)
+    for i, n in sorted(by_para.items()):
         if n != 1:
             continue
-        run = 0
-        while by_para.get(i + run) == run + 1:
-            run += 1
+        run = _run_length(by_para, i)
         if run < _FN_RUN_MIN:
             continue
         if run >= _FN_RUN_SHARE * (len(paras) - i):
@@ -1407,8 +1420,100 @@ def find_footnote_run_start(html: str) -> int | None:
     return None
 
 
+#: A footnote list whose entries are labelled `N.` -- the one label shape
+#: `find_footnote_run_start` cannot read on its own, because it is also how
+#: every numbered PARAGRAPH in this corpus opens. Eight Polish CDF editions
+#: print their notes that way with no heading, no anchor and no `<hr>`
+#: anywhere on the page, so every signal returned nothing and the whole
+#: apparatus was read as more document: `aspects-of-evangelization.pl` came
+#: out as 56 sections instead of 13, its 56 markers resolving to nothing.
+#:
+#: Two conditions make the shape readable, and neither is optional:
+#:
+#:   THE RUN MUST BE A RESTART. The page's own body is a run of `N.` from 1,
+#:   so the FIRST such run is never the notes -- taking it would cut every
+#:   document in the corpus at its own paragraph 1. Only a later run
+#:   beginning at 1, on a page that has already numbered as far as
+#:   `_FN_RUN_MIN`, is a candidate at all.
+#:
+#:   THE MARKERS MUST CORROBORATE IT. A body whose last part restarts its own
+#:   numbering would otherwise be destroyed exactly like the notes case, and
+#:   no rule about paragraph labels can tell the two apart. So the labels are
+#:   checked against the page above them: a footnote list is the resolution
+#:   of markers the prose already printed, and a restarted body part is not.
+#:   `_FN_BARE_CORROBORATION` of the run's own numbers must appear as inline
+#:   markers before it -- deliberately a SHARE and not the highest marker,
+#:   since `(1991)` and `(2006)` are years and a maximum would read them.
+_FN_BARE_CORROBORATION = 0.9
+
+#: Every inline marker convention `detect_marker_template` knows, read here
+#: only to be counted. Correctness of the individual match does not matter --
+#: a year in parentheses is a false marker and is harmless, because the test
+#: below asks whether the run's numbers are PRESENT, never how many markers
+#: there are.
+_FN_INLINE_MARKER_RES = (
+    re.compile(r"<sup[^>]*>\s*(\d{1,4})\s*</sup>", re.IGNORECASE),
+    re.compile(r"\[(\d{1,4})\]"),
+    re.compile(r"\((\d{1,4})\)"),
+    re.compile(r"_(?:ftn|edn)ref(\d{1,4})", re.IGNORECASE),
+)
+
+
+def _label_runs(
+    paras: list[re.Match], label_res: tuple[re.Pattern, ...]
+) -> dict[int, int]:
+    """`paragraph index -> the number it is labelled with`, first shape wins."""
+    by_para: dict[int, int] = {}
+    for i, para in enumerate(paras):
+        text = strip_tags(para.group(2))
+        for label_re in label_res:
+            m = label_re.match(text)
+            if m and m.group(1).isdigit():
+                by_para[i] = int(m.group(1))
+                break
+    return by_para
+
+
+def _run_length(by_para: dict[int, int], start: int) -> int:
+    run = 0
+    while by_para.get(start + run) == run + 1:
+        run += 1
+    return run
+
+
+def find_bare_footnote_run_start(html: str, paras: list[re.Match]) -> int | None:
+    """The offset of a `N.`-labelled footnote list that RESTARTS the page's
+    numbering, or None. See `_FN_BARE_CORROBORATION` for why both guards are
+    there."""
+    by_para = _label_runs(paras, (_FN_BARE_RE,))
+    starts = [i for i, n in sorted(by_para.items()) if n == 1]
+    if len(starts) < 2:
+        return None  # one run of 1.. is the document's own numbering
+    for i in starts[1:]:
+        # "Something was numbered before this" is asked as the HIGHEST label
+        # above, not as a consecutive run: a body's numbered paragraphs are
+        # separated by its headings, which are paragraphs too, so
+        # `_run_length` reads the document's own §1 as a run of one and the
+        # guard rejected every page it was written for.
+        if max(n for j, n in by_para.items() if j < i) < _FN_RUN_MIN:
+            continue
+        run = _run_length(by_para, i)
+        if run < _FN_RUN_MIN:
+            continue
+        if run < _FN_RUN_SHARE * (len(paras) - i):
+            continue
+        above = html[: paras[i].start()]
+        marked = set()
+        for marker_re in _FN_INLINE_MARKER_RES:
+            marked.update(int(x) for x in marker_re.findall(above))
+        present = sum(1 for n in range(1, run + 1) if n in marked)
+        if present >= _FN_BARE_CORROBORATION * run:
+            return paras[i].start()
+    return None
+
+
 _FN_ANCHOR_DEF_RE = re.compile(
-    r"^\s*<a\s[^>]*?name=[\"']?(?:_ftn(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)|%24(?P<pct>[0-9A-Za-z]+))[\"']?[^>]*>"
+    r"^\s*<a\s[^>]*?name=[\"']?(?:_(?:ftn|edn)(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)|%24(?P<pct>[0-9A-Za-z]+))[\"']?[^>]*>"
     r"(?P<inner>.*?)</a>\s*\.?\s*",
     re.IGNORECASE | re.DOTALL,
 )
@@ -1531,7 +1636,7 @@ def raw_blocks(html: str) -> list[str]:
 
 
 _FN_ANCHOR_ANY_RE = re.compile(
-    r"<a\s[^>]*?name=[\"']?(?:_ftn(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)"
+    r"<a\s[^>]*?name=[\"']?(?:_(?:ftn|edn)(?!ref)(?P<ftn>[0-9A-Za-z]+)|\$(?P<dollar>[0-9A-Za-z]+)"
     r"|%24(?P<pct>[0-9A-Za-z]+)|fn(?!ref)(?P<pair>\d[0-9A-Za-z]*))[\"']?[^>]*>"
     r"(?P<inner>.*?)</a>"
     # The PAIRED form prints its number in a SECOND anchor linking back to the
@@ -5374,8 +5479,18 @@ def document_title(slug: str) -> str:
     One function because the manufactured title is computed in two places --
     `run_phase2` passes it into the parse, `parse_and_write` falls back to it
     for callers that do not -- and two copies of a default are what drift.
-    See `SLUG_TITLES` for why the table exists at all."""
-    return SLUG_TITLES.get(slug) or slug.replace("-", " ").title()
+    See `SLUG_TITLES` for why the table exists at all.
+
+    A CDF slug is never manufactured from. That family's corpus slugs are
+    assigned by `CDF_DOCUMENTS` rather than read off a filename, and four of
+    them are English descriptions of a document whose real title is a
+    sentence -- `Catholics In Political Life` is not the name of anything.
+    Consulted here and not only at the call site because the manufactured
+    title is the FALLBACK, and a fallback that is wrong for one family is
+    worth less than no fallback at all."""
+    return (
+        CDF_TITLES.get(slug) or SLUG_TITLES.get(slug) or slug.replace("-", " ").title()
+    )
 
 
 def _encyclical_refs_from_index(
@@ -5487,6 +5602,325 @@ def discover_exhortations(
     return refs, notes
 
 
+# --------------------------------------------------------------------------
+# CDF / DDF documents
+#
+# The fourth family, and the first whose SELECTION is an argument rather than
+# an enumeration. Vatican II is sixteen documents and the encyclical and
+# exhortation indexes are the Holy See's own lists of what a pontiff wrote,
+# so for those three "discover" and "publish" are the same verb. The
+# Dicastery's own "Complete List of Documents" is not that list. It is 239
+# documents and it is genuinely complete -- 1962 to 2026, doctrinal texts
+# alongside notifications about one named theologian's book, rescripts,
+# communiques, letters to a single bishop and procedural decrees. Publishing
+# all of it is not the same decision as publishing every encyclical. See
+# `CDF_DOCUMENTS` for what was measured and what it decided.
+# --------------------------------------------------------------------------
+
+CDF_INDEX_URL = (
+    "https://www.vatican.va/roman_curia/congregations/cfaith/doc_doc_index.htm"
+)
+
+#: The index's own language codes, read off its link TEXT the way
+#: `VATII_LANG_FROM_URL` is read off the conciliar mirror's -- it labels every
+#: link with the language's English name, so the page says which code means
+#: what and the guesses it defeats are real ones. Counted 2026-09-03 over the
+#: whole index: en 410, it 225, sp 185, fr 174, ge 173, po 165, pl 134, lt 73,
+#: sk 12, hu 12, hr 10, la 7, vi 6, nl 5, cs 5, lit 5, uk 3, zh_cn 2, zh_tw 2,
+#: be 1, mg 1, sl 1.
+#:
+#: `lt` IS LATIN HERE AND `lit` IS LITHUANIAN -- 73 links against 5. This is
+#: the third family to spring the same trap (`ccc.py` documents it for
+#: `catechism_lt`, `VATII_LANG_FROM_URL` for the conciliar mirror) and the
+#: first where both readings are live on one index, so a code map borrowed
+#: from anywhere else does not fail: it files sixty-six Latin editions as
+#: Lithuanian and says nothing while it does it. The index prints `la` too,
+#: once, on the 1962 `instructio-de-modo-procedendi` -- which is the whole
+#: reason this table cannot be inferred from a sample.
+#:
+#: Chinese is PDF-only wherever it appears and is deliberately absent: this
+#: parser reads HTML, and mapping a code whose only pages are PDFs would
+#: claim an edition the crawl cannot fetch.
+CDF_LANG_FROM_URL = {
+    "be": "be", "cs": "cs", "en": "en", "fr": "fr", "ge": "de", "hr": "hr",
+    "hu": "hu", "it": "it", "la": "la", "lit": "lt", "lt": "la", "mg": "mg",
+    "nl": "nl", "pl": "pl", "po": "pt", "sk": "sk", "sl": "sl", "sp": "es",
+    "uk": "uk", "vi": "vi",
+}  # fmt: skip
+
+#: Work tag -> the code this family's URLs use. `la` maps to `lt` and not to
+#: the `la` the index also prints, because `lt` is what 66 of the 67 Latin
+#: pages are filed under; the one `la` page is reached from its own index
+#: link rather than by substitution, so nothing needs the reverse.
+CDF_LANG_TO_URL = {"de": "ge", "es": "sp", "la": "lt", "lt": "lit", "pt": "po"}
+
+#: The filename, and whatever precedes it, left to `urljoin`.
+#:
+#: THE INDEX MIXES THREE HREF SHAPES FOR ONE DOCUMENT and does it within a
+#: single language list -- Norme de delictis reservatis prints a relative
+#: `documents/…_en.html` for English, German, Italian, Latin and Polish and a
+#: fully-qualified `https://www.vatican.va/roman_curia/congregations/cfaith/
+#: documents/…` for French, Portuguese and Spanish; documents older than 2009
+#: add a root-absolute `/documents/…` at the site root. Matching a path prefix
+#: at all is therefore the bug: an earlier version of this pattern required a
+#: leading `/`, found 51 documents where the page links 239, and reported "the
+#: index does not list it" for nineteen of the twenty-five below -- a wrong
+#: answer that reads exactly like a true one, since the index really can
+#: rename a file. `urllib.parse.urljoin` against the index's own URL resolves
+#: all three and is the only thing that should be deciding this.
+#:
+#: The filename's own slug is captured loosely (`[^"<>]+?`) rather than as
+#: `[a-z0-9-]+`: three of Donum Vitae's editions have a SPACE in the
+#: filename, percent-encoded in the href (`respect-for%20human-life_ge.html`
+#: beside `respect-for-human-life_en.html`), so a strict character class
+#: silently drops the German, Hungarian and Italian editions of the one
+#: document in this family that the CCC cites most. Loose, but not `.+?`:
+#: a dot matches the closing quote too, so the lazy group happily ran past
+#: the end of one href and into the next tag, and the 2018 note on economic
+#: questions was discovered under a "slug" carrying a whole nested anchor.
+_CDF_LINK_RE = re.compile(
+    r'href="\s*([^"\s]*'
+    r'rc_(?:con_cfaith|ddf)_doc_(\d{8})_([^"<>]+?)_([a-z]{2,3}(?:_[a-z]{2})?)\.html)"',
+    re.IGNORECASE,
+)
+
+#: What this family publishes: `(promulgated, source slug) -> (corpus slug,
+#: document_kind, title)`.
+#:
+#: WHY A TABLE AND NOT THE INDEX. Every other family here enumerates from the
+#: origin's own list, on the stated ground that a hardcoded document list is
+#: the thing to avoid. The Dicastery's index is a different kind of list: 239
+#: entries spanning 1962 to 2026, most of them notifications naming one
+#: theologian's book, rescripts, communiques, letters about one shrine, and
+#: procedural decrees. So the corpus was asked which of them it actually
+#: refers to -- 119,321 citation strings across 1,480 editions, 1,121 of
+#: which name the Congregation or the Holy Office (measured 2026-09-02;
+#: exhortation 357, encyclical 348, csdc 252, ccc 122, vatii 40). The answer
+#: was not close:
+#:
+#:   * The 25 documents below carry ~840 of those 1,121, and every one of
+#:     them is cited BY PARAGRAPH NUMBER ("Libertatis conscientia 13."),
+#:     which is what makes a document a link target rather than a mention.
+#:   * The notifications carry none. Not few -- none. Schillebeeckx, Boff,
+#:     Curran, Dupuis, Balasuriya, Kung, Pohier, Guindon, Gramick/Nugent,
+#:     de Mello, Vidal, Messner, Anglicanorum coetibus, Medjugorje and
+#:     Gisella Cardia were each searched for by name across every citation
+#:     in the corpus and found zero times. (Two apparent hits were the
+#:     Latvian vocative `Kungs` in `gaudete-et-exsultate.lv` and the poet
+#:     Thiago de Mello in `querida-amazonia.de`.)
+#:
+#: So the index is not being second-guessed on what the Dicastery published.
+#: It is being read against what this corpus can link, which is the criterion
+#: `docs/link-surface.md` already sets for everything else. Re-run that
+#: measurement before growing this table, and put the number in the commit
+#: message rather than here (CLAUDE.md, Documentation conventions).
+#:
+#: WHY THE CORPUS SLUG IS NOT THE SOURCE SLUG. In every other family the file
+#: is named after the document's incipit and `document_title` manufactures a
+#: title from it (`rerum-novarum` -> `Rerum Novarum`), with `SLUG_TITLES` for
+#: the twenty-two exceptions. Here the habit is inverted: the filename names
+#: the SUBJECT, in whatever language the office was working in --
+#: `freedom-liberation` is Libertatis Conscientia, `eutanasia` is Iura et
+#: Bona, `theologian-vocation` is Donum Veritatis. Manufacturing a title from
+#: those produces a name no citation anywhere uses. Latin is what this corpus
+#: addresses a document by (see `INDEX_DUPLICATE_SLUGS`), so the corpus slug
+#: is the incipit where there is one and an English description where there
+#: is not -- the two doctrinal notes, the considerations and the 2004 letter
+#: have no incipit to be named by.
+#:
+#: WHY THE KEY IS THE DATE AND THE SLUG. `homosexual-persons` is TWO
+#: documents: the 1986 pastoral-care letter (Homosexualitatis Problema) and a
+#: 1992 set of considerations on legislative proposals. A table keyed by slug
+#: alone silently publishes one of them under the other's name.
+CDF_DOCUMENTS = {
+    ("1973-07-05", "mysterium-ecclesiae"): (
+        "mysterium-ecclesiae", "cdf-declaration", "Mysterium Ecclesiae"),
+    ("1974-11-18", "declaration-abortion"): (
+        "quaestio-de-abortu", "cdf-declaration", "Quaestio de Abortu"),
+    ("1975-12-29", "persona-humana"): (
+        "persona-humana", "cdf-declaration", "Persona Humana"),
+    ("1976-10-15", "inter-insigniores"): (
+        "inter-insigniores", "cdf-declaration", "Inter Insigniores"),
+    ("1980-05-05", "eutanasia"): (
+        "iura-et-bona", "cdf-declaration", "Iura et Bona"),
+    ("1980-10-20", "pastoralis-actio"): (
+        "pastoralis-actio", "cdf-instruction", "Pastoralis Actio"),
+    ("1983-08-06", "sacerdotium-ministeriale"): (
+        "sacerdotium-ministeriale", "cdf-letter", "Sacerdotium Ministeriale"),
+    ("1984-08-06", "theology-liberation"): (
+        "libertatis-nuntius", "cdf-instruction", "Libertatis Nuntius"),
+    ("1986-03-22", "freedom-liberation"): (
+        "libertatis-conscientia", "cdf-instruction", "Libertatis Conscientia"),
+    ("1986-10-01", "homosexual-persons"): (
+        "homosexualitatis-problema", "cdf-letter", "Homosexualitatis Problema"),
+    ("1987-02-22", "respect-for-human-life"): (
+        "donum-vitae", "cdf-instruction", "Donum Vitae"),
+    ("1990-05-24", "theologian-vocation"): (
+        "donum-veritatis", "cdf-instruction", "Donum Veritatis"),
+    ("1992-05-28", "communionis-notio"): (
+        "communionis-notio", "cdf-letter", "Communionis Notio"),
+    ("1995-10-28", "dubium-ordinatio-sac"): (
+        "responsum-ordinatio-sacerdotalis", "cdf-responsum",
+        "Responsum ad Dubium on Ordinatio Sacerdotalis"),
+    ("2000-08-06", "dominus-iesus"): (
+        "dominus-iesus", "cdf-declaration", "Dominus Iesus"),
+    ("2002-11-24", "politica"): (
+        "catholics-in-political-life", "cdf-doctrinal-note",
+        ("Doctrinal Note on Some Questions Regarding the Participation of "
+         "Catholics in Political Life")),
+    ("2003-07-31", "homosexual-unions"): (
+        "legal-recognition-homosexual-unions", "cdf-considerations",
+        ("Considerations Regarding Proposals to Give Legal Recognition to "
+         "Unions Between Homosexual Persons")),
+    ("2004-07-31", "collaboration"): (
+        "collaboration-of-men-and-women", "cdf-letter",
+        ("Letter to the Bishops of the Catholic Church on the Collaboration "
+         "of Men and Women in the Church and in the World")),
+    ("2007-12-03", "nota-evangelizzazione"): (
+        "aspects-of-evangelization", "cdf-doctrinal-note",
+        "Doctrinal Note on Some Aspects of Evangelization"),
+    ("2008-12-08", "dignitas-personae"): (
+        "dignitas-personae", "cdf-instruction", "Dignitas Personae"),
+    ("2016-08-15", "ad-resurgendum-cum-christo"): (
+        "ad-resurgendum-cum-christo", "cdf-instruction",
+        "Ad Resurgendum cum Christo"),
+    # The four most recent, cited by this corpus 13, 0, 26 and 40 times.
+    # Samaritanus Bonus is the one with no citations at all, and is here
+    # because it is the standing answer on the question Iura et Bona opened
+    # -- which the corpus does cite, 26 times.
+    ("2018-02-22", "placuit-deo"): (
+        "placuit-deo", "cdf-letter", "Placuit Deo"),
+    ("2020-07-14", "samaritanus-bonus"): (
+        "samaritanus-bonus", "cdf-letter", "Samaritanus Bonus"),
+    ("2024-04-02", "dignitas-infinita"): (
+        "dignitas-infinita", "cdf-declaration", "Dignitas Infinita"),
+    ("2025-01-28", "antiqua-et-nova"): (
+        "antiqua-et-nova", "cdf-doctrinal-note", "Antiqua et Nova"),
+}  # fmt: skip
+
+#: The languages this family offers that this parser can read, derived rather
+#: than typed -- `rebuild.py` passes it, so a `DIVISIONS` entry added for one
+#: family reaches this one on the next rebuild instead of on the next time
+#: someone remembers a list. The two it leaves out are Lithuanian (5 links)
+#: and Malagasy (1), neither of which has division labels here.
+PARSABLE_CDF_LANGS = sorted(set(CDF_LANG_FROM_URL.values()) & set(DIVISIONS))
+
+#: Title per corpus slug, for the fallback path in `parse_and_write`. The
+#: table above is keyed by the SOURCE's (date, slug), which nothing
+#: downstream of discovery is holding.
+CDF_TITLES = {slug: title for slug, _kind, title in CDF_DOCUMENTS.values()}
+
+#: The name on the masthead changed mid-family and the documents were not
+#: retitled. Praedicate Evangelium (promulgated 2022-06-05) turned every
+#: Roman Congregation into a Dicastery, so a 1975 declaration is the
+#: Congregation's and a 2025 note is the Dicastery's -- and
+#: `pontiff_or_council`, the field the site prints under a document's title,
+#: has to say which rather than picking one name for a family that spans the
+#: change.
+CDF_RENAME_DATE = "2022-06-05"
+CDF_BODY_BEFORE = "Congregation for the Doctrine of the Faith"
+CDF_BODY_AFTER = "Dicastery for the Doctrine of the Faith"
+
+
+def cdf_issuing_body(promulgated: str | None) -> str:
+    return (
+        CDF_BODY_AFTER
+        if promulgated and promulgated >= CDF_RENAME_DATE
+        else CDF_BODY_BEFORE
+    )
+
+
+def _cdf_normalise_slug(raw: str) -> str:
+    """The filename's slug as a slug: percent-decoded, separators unified.
+
+    Three of Donum Vitae's editions are filed under `respect-for%20human-life`
+    while the rest use `respect-for-human-life`, and Pastoralis Actio is
+    `pastoralis_actio` with an underscore where every other filename in the
+    family uses a hyphen. Both are the same document wearing two spellings,
+    and only one spelling in each pair looks like a slug."""
+    return urllib.parse.unquote(raw).replace(" ", "-").replace("_", "-").lower()
+
+
+def discover_cdf(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
+    """Every language URL comes off the index; none is derived from another.
+
+    Same posture as `discover_vatii`, and for a sharper reason: this family's
+    filenames are NOT one substitution apart. Three documents are filed under
+    a different slug in different languages (1966's mixed-marriage instruction
+    is `istr-matrimoni-misti` in en/de/it and `matrimonii-sacramentum` in
+    fr/la/pl/pt/es), and three more have the date written the other way round
+    in exactly one edition -- French `19920528_communionis-notio` against
+    everyone else's `28051992_communionis-notio`.
+
+    The date reversal is handled by keying on the CALENDAR date rather than
+    the digits: `parse_promulgation_date` already reads either order, so the
+    two spellings land on one key and the French edition joins its own
+    document instead of becoming a second one-language work. Deriving that
+    URL instead would have produced a 404 and recorded a French edition that
+    exists as absent."""
+    notes: list[str] = []
+    text, err = fetcher.fetch_text(CDF_INDEX_URL, "index__cdf.html")
+    if text is None:
+        return [], [f"could not fetch the CDF index: {err}"]
+
+    # `(promulgated, slug) -> {work lang: url}`, for every document listed.
+    found: dict[tuple[str, str], dict[str, str]] = {}
+    unmapped: collections.Counter = collections.Counter()
+    for path, date8, raw_slug, code in _CDF_LINK_RE.findall(text):
+        promulgated = parse_promulgation_date(date8)
+        if promulgated is None:
+            notes.append(f"{raw_slug}: {date8!r} is a date in neither order -- skipped")
+            continue
+        lang = CDF_LANG_FROM_URL.get(code.lower())
+        if lang is None:
+            unmapped[code.lower()] += 1
+            continue
+        urls = found.setdefault((promulgated, _cdf_normalise_slug(raw_slug)), {})
+        # KEYED BY WHAT THE SOURCE CALLS THE LANGUAGE, never by what we call
+        # it -- the rule `MODERN_LANG_TO_URL` was written for, and the same
+        # invisible failure when broken: `url_lang_key` asks `lang_urls` for
+        # `ge`/`sp`/`lt`/`po`, so keying these by the work tag left every
+        # German, Spanish, Latin and Portuguese edition reported `no-url` by
+        # a run that had just discovered its URL. 115 pages of 203.
+        #
+        # Round-tripped through `CDF_LANG_TO_URL` rather than stored as the
+        # code that was matched, because Latin arrives under two spellings:
+        # `_lt` on 73 links and `_la` on seven, and one work tag needs one
+        # key. Both collapse to `lt`, which is what `url_lang_key` asks for.
+        code_key = CDF_LANG_TO_URL.get(lang, lang)
+        # First link wins: the index prints a document's language list once
+        # and then repeats individual editions in the prose around it.
+        urls.setdefault(code_key, urllib.parse.urljoin(CDF_INDEX_URL, path))
+    if unmapped:
+        notes.append(
+            "index language codes with no work tag (ignored): "
+            + ", ".join(f"{c}x{n}" for c, n in sorted(unmapped.items()))
+        )
+
+    refs: list[DocRef] = []
+    for (promulgated, slug), (corpus_slug, kind, _title) in sorted(
+        CDF_DOCUMENTS.items()
+    ):
+        date8 = promulgated.replace("-", "")
+        urls = found.get((promulgated, slug), {})
+        if not urls:
+            notes.append(
+                f"{corpus_slug}: CDF_DOCUMENTS names ({promulgated}, {slug!r}), "
+                "which the index does not list -- a stale key, or the index "
+                "renamed the file"
+            )
+            continue
+        refs.append(
+            DocRef("cdf", kind, corpus_slug, cdf_issuing_body(promulgated), date8, urls)
+        )
+    notes.append(
+        f"index lists {len(found)} documents; CDF_DOCUMENTS selects "
+        f"{len(refs)} of them -- see CDF_DOCUMENTS for the measurement "
+        "behind the selection"
+    )
+    return refs, notes
+
+
 #: The languages a phase2 run fetches unless told otherwise. Deliberately not
 #: the ten the corpus now holds: this is the DEFAULT, and a default that
 #: crawls ten languages makes an unqualified `phase2` an expensive thing to
@@ -5516,8 +5950,14 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
     base = ref.lang_urls.get(ref.base_lang)
     if base is None or lang == ref.base_lang:
         return None
-    if ref.family in ("vatii", "vati"):
-        return None  # discovered directly from the index, not derived
+    if ref.family in ("vatii", "vati", "cdf"):
+        # All three are discovered directly from their index, never derived.
+        # For `cdf` that is not merely simpler but required: six of its
+        # documents spell their filename differently in one language than in
+        # the rest (see `discover_cdf`), so a substituted URL would 404 on an
+        # edition that exists and the absent ledger would remember it as
+        # missing.
+        return None
     # The URL code, not the work tag -- they are the same for every language
     # but Hebrew, which the modern CMS spells `iw`. Substituting the tag
     # produced `/he/`, which 404s, and the document that offers Hebrew is the
@@ -7724,6 +8164,8 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
         return VATII_LANG_TO_URL.get(lang, lang)
     if ref.family == "vati":
         return VATI_LANG_TO_URL.get(lang, lang)
+    if ref.family == "cdf":
+        return CDF_LANG_TO_URL.get(lang, lang)
     return MODERN_LANG_TO_URL.get(lang, lang)
 
 
@@ -8310,6 +8752,90 @@ def run_vati(
 
 
 # --------------------------------------------------------------------------
+# Phase 3: CDF/DDF documents
+#
+# Shaped like phase 1 rather than phase 2, because this family's index gives
+# every edition's URL outright: there is nothing per-document to derive and
+# so nothing to probe. What phase 2 spends `--offered-only` to avoid, this
+# phase never had.
+# --------------------------------------------------------------------------
+
+
+def run_phase3(
+    fetcher: Fetcher,
+    langs: list[str],
+    only: list[str] | None,
+    jobs: int = 1,
+    fetch_only: bool = False,
+    skip_written: bool = False,
+    lock_path: Path = CRAWL_LOCK_PATH,
+) -> list[dict]:
+    refs, notes = discover_cdf(fetcher)
+    for note in notes:
+        print(f"  [discover] {note}")
+    if not refs:
+        print("FATAL: no CDF documents discovered", file=sys.stderr)
+        return []
+    by_slug = {r.slug: r for r in refs}
+    order = only or sorted(by_slug)
+    results: list[dict] = []
+    pool = OrderedParsePool(jobs)
+
+    def report(tag, r: dict) -> None:
+        slug, lang = tag
+        results.append(r)
+        if lang is None:  # not-discovered; queued only to hold its place
+            return
+        print(
+            f"  {slug}.{lang}: {r['status']}"
+            + (f" {r.get('range')}" if r.get("range") else "")
+            + (f" ERR={r.get('error')}" if r.get("error") else "")
+        )
+
+    try:
+        for slug in order:
+            ref = by_slug.get(slug)
+            if ref is None:
+                pool.submit_done(
+                    (slug, None),
+                    {"family": "cdf", "slug": slug, "status": "not-in-index"},
+                )
+                continue
+            for lang in langs:
+                # A language this document simply does not have is not worth a
+                # line of output per document: the index already said which
+                # editions exist, so "no-url" here is the index being read
+                # correctly rather than anything failing. Still recorded in
+                # `results` so the run summary counts it.
+                if url_lang_key(ref, lang) not in ref.lang_urls:
+                    results.append(_result_base(ref, lang, None) | {"status": "no-url"})
+                    continue
+                if fetch_only:
+                    pool.submit_done((slug, lang), cache_page(fetcher, ref, lang))
+                    continue
+                early, html = fetch_for_parse(fetcher, ref, lang, skip_written)
+                if early is not None:
+                    pool.submit_done((slug, lang), early)
+                else:
+                    pool.submit(
+                        (slug, lang),
+                        parse_and_write,
+                        ref,
+                        lang,
+                        CDF_TITLES.get(slug, slug),
+                        html,
+                    )
+            touch_crawl_lock(lock_path)
+            for tag, r in pool.collect():
+                report(tag, r)
+        for tag, r in pool.collect(0):
+            report(tag, r)
+    finally:
+        pool.close()
+    return results
+
+
+# --------------------------------------------------------------------------
 # Phase 2: encyclicals (+ exhortations, same code path)
 # --------------------------------------------------------------------------
 
@@ -8795,10 +9321,10 @@ def run_lock_path(cmd: str, offline: bool) -> tuple[Path, str]:
 
     AN OFFLINE RUN MAKES NO REQUEST, so that reason is gone and only the
     second one is left -- two writers racing the same work directory. Phase 1
-    writes `vatii.*`, phase 2 writes `encyclical.*` and `exhortation.*`, and
-    `vati` writes `vati.*`, so what remains is a race between two runs of the
-    SAME phase, never between two of them, and a lock per phase says exactly
-    that and nothing more.
+    writes `vatii.*`, phase 2 `encyclical.*` and `exhortation.*`, phase 3
+    `cdf.*`, and `vati` `vati.*`, so what remains is a race between two runs
+    of the SAME phase, never between any two of them, and a lock per phase
+    says exactly that and nothing more.
     Neither writes `absent-sources.json` offline either, since only a live 404
     records one.
 
@@ -9244,10 +9770,41 @@ def main() -> int:
         "cached, so it can only save requests, never lose an edition",
     )
 
+    p3 = sub.add_parser(
+        "phase3",
+        parents=[net, par],
+        help="CDF/DDF documents, the selection in CDF_DOCUMENTS",
+    )
+    p3.add_argument(
+        "--lang",
+        default="both",
+        help="comma-separated language codes, `both` (en,pt), or `all` -- "
+        "every language the index offers, which is wider than this parser "
+        "can read and is meant for --fetch-only. The readable subset is "
+        + ",".join(PARSABLE_CDF_LANGS)
+        + ". A document with no edition in a requested language is reported "
+        "`no-url` and never fetched: the index already said so",
+    )
+    p3.add_argument(
+        "--only", help="comma-separated corpus slugs, for iterating on one document"
+    )
+    p3.add_argument(
+        "--fetch-only",
+        action="store_true",
+        help="cache each language's page under corpus/raw/ and stop -- no "
+        "parsing, nothing written to build/",
+    )
+
     sub.add_parser(
         "discover-encyclicals",
         parents=[net],
         help="index-only census, no document fetches",
+    )
+    sub.add_parser(
+        "discover-cdf",
+        parents=[net],
+        help="index-only census of the CDF index: what it lists, what "
+        "CDF_DOCUMENTS selects, and what it leaves",
     )
     sub.add_parser(
         "check-symmetry",
@@ -9262,7 +9819,7 @@ def main() -> int:
     )
 
     lock_path = CRAWL_LOCK_PATH
-    if args.cmd in ("phase1", "phase2", "vati"):
+    if args.cmd in ("phase1", "phase2", "phase3", "vati"):
         lock_path, lock_kind = run_lock_path(args.cmd, args.offline)
         try:
             acquire_crawl_lock(lock_path, lock_kind)
@@ -9382,6 +9939,66 @@ def main() -> int:
         ok = report_run(results, fetcher, args.accept_baseline)
         report_symmetry(check_language_symmetry(known=sections_from_results(results)))
         return 0 if ok else 1
+
+    if args.cmd == "phase3":
+        try:
+            if args.lang == "both":
+                langs = ["en", "pt"]
+            elif args.lang == "all":
+                # Every language the index offers, NOT the ones this parser
+                # can read -- which is what makes `--lang all --fetch-only`
+                # the acquisition run. This index offers Lithuanian and
+                # Malagasy, neither of which has division labels here, so a
+                # parsing `--lang all` stops on the check below and says so.
+                # `PARSABLE_CDF_LANGS` is the intersection, and rebuild.py
+                # passes that rather than spelling a list out.
+                langs = sorted(set(CDF_LANG_FROM_URL.values()))
+            else:
+                langs = [x.strip() for x in args.lang.split(",") if x.strip()]
+            unknown = (
+                [] if args.fetch_only else [x for x in langs if x not in DIVISIONS]
+            )
+            if unknown:
+                print(
+                    f"ERROR: no division labels for {', '.join(unknown)}; "
+                    f"known: {', '.join(sorted(DIVISIONS))}"
+                )
+                return 1
+            only = args.only.split(",") if args.only else None
+            results = run_phase3(
+                fetcher,
+                langs,
+                only,
+                jobs=args.jobs,
+                fetch_only=args.fetch_only,
+                skip_written=args.skip_written,
+                lock_path=lock_path,
+            )
+        finally:
+            release_crawl_lock(lock_path)
+        summarize(results)
+        report_fetching(fetcher)
+        if args.fetch_only:
+            return 0
+        ok = report_run(results, fetcher, args.accept_baseline)
+        report_symmetry(check_language_symmetry(known=sections_from_results(results)))
+        return 0 if ok else 1
+
+    if args.cmd == "discover-cdf":
+        refs, notes = discover_cdf(fetcher)
+        for note in notes:
+            print(f"[discover] {note}")
+        print()
+        for ref in sorted(refs, key=lambda r: r.date_digits):
+            # `lang_urls` is keyed by the source's code; a census is for a
+            # reader, so it prints the work tags those become.
+            langs = ",".join(sorted(CDF_LANG_FROM_URL[c] for c in ref.lang_urls))
+            print(
+                f"  {parse_promulgation_date(ref.date_digits)}  "
+                f"{ref.slug:36} {ref.document_kind:20} {len(ref.lang_urls):2} {langs}"
+            )
+        print(f"\n{len(refs)} documents selected")
+        return 0
 
     if args.cmd == "check-symmetry":
         # No `known` here by definition: this subcommand exists to check a

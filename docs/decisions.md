@@ -3615,6 +3615,124 @@ one to the marker that raises it. Net +866 linked references in `vatii`, +422 in
 holds and is not weakened by this: **a coverage drop is a question, and the answer is only
 ever "accept" when the citation column has risen to meet it.**
 
+### The doctrinal office, and the first family whose selection is an argument
+
+Taken in on 2026-09-03: 25 documents of the Congregation — now Dicastery — for the
+Doctrine of the Faith, 200 editions in seventeen languages, as `cdf.*`
+(`pipeline/scrapers/vatican_docs.py` phase 3). The fourth family that scraper carries,
+and the first where deciding WHICH documents to hold was most of the work.
+
+**The index is complete and that is the problem.** Vatican II is sixteen documents and a
+pontiff's encyclical index is the Holy See's own list of what he wrote, so for the first
+three families "discover" and "publish" were the same verb. The Dicastery's "Complete List
+of Documents" is 239 documents spanning 1962 to 2026, and most of them are notifications
+about one named theologian's book, rescripts, communiqués, letters about a single shrine
+and procedural decrees. Publishing all of it is not the same decision as publishing every
+encyclical, and no rule inside the scraper could make it one.
+
+**So the corpus was asked what it refers to.** Every citation string in `build/` — 119,321
+of them across 1,480 editions — was searched for the Congregation and the Holy Office;
+1,121 name one of them (exhortation 357, encyclical 348, csdc 252, ccc 122, vatii 40). The
+25 documents in `CDF_DOCUMENTS` carry about 840 of those, and every one is cited **by
+paragraph number** (`CDF, instruction, Libertatis conscientia 13.`), which is what makes a
+document a link target rather than a mention. The notifications carry **none** — not few:
+Schillebeeckx, Boff, Curran, Dupuis, Balasuriya, Küng, Pohier, Guindon, Gramick/Nugent, de
+Mello, Vidal, Messner, _Anglicanorum coetibus_, Medjugorje and Gisella Cardia were each
+searched for by name across every citation in the corpus and found zero times. (Two
+apparent hits were the Latvian vocative _Kungs_ in `gaudete-et-exsultate.lv` and the poet
+Thiago de Mello in `querida-amazonia.de`.) The criterion is the one
+`docs/link-surface.md` already sets for everything else; what is new is that it had to be
+MEASURED before the family could be scoped, rather than read off an index.
+
+**The corpus slug is the incipit, because here the filename names the subject.** Every
+other family in this scraper is filed under its document's own first words, which is why
+`document_title` manufactures a title from the slug and `SLUG_TITLES` holds the
+twenty-two exceptions. This office inverts the habit: `freedom-liberation` is _Libertatis
+Conscientia_, `eutanasia` is _Iura et Bona_, `theologian-vocation` is _Donum Veritatis_.
+Manufacturing from those produces a name no citation anywhere uses, so `CDF_DOCUMENTS`
+assigns the slug as well as the title — the incipit where there is one, an English
+description for the four documents that have none. **The table is keyed by (date, source
+slug) and not by slug**, because `homosexual-persons` is two documents: the 1986
+pastoral-care letter and a 1992 set of considerations on legislative proposals.
+
+**Reading an index is not reading a page, and the difference cost three hours.** The
+index was first read through a Markdown extractor, which dropped roughly half of it — and
+the half it dropped included the 2002 doctrinal note on political life, the second
+most-cited CDF document in this corpus at 96 citations. That produced a confident,
+well-evidenced and wrong finding ("the Complete List is not complete"), a table of
+hardcoded URLs to work around it, and a note in this file explaining the Holy See's
+editorial lapse. The scraper's own fetch of the raw page found all 239 documents and every
+one of the five supposedly-missing ones. **A cleaned rendering of a page is evidence about
+the rendering.** The scraper reads `raw/`, so the scraper is what should have been asked
+first, and the code that caught it was the one line written to report the case the table
+was for: `on the index after all -- drop its CDF_OFF_INDEX entry`.
+
+**Three page conventions were new, and two of them were corpus-wide bugs wearing a new
+family's clothes.**
+
+- **Word writes `_edn`/`_ednref` when the author used endnotes rather than footnotes.**
+  Same export, same pairing, three letters different, and every regex in this scraper read
+  only `_ftn` — so those pages matched no marker template, found no definition anchor, and
+  fell through to the `(N)` fallback. 47 raw pages are in that state and only 10 are CDF:
+  aliasing the two gave **39 works a footnote apparatus they did not have**, including
+  _Caritas in Veritate_ in eight languages at once (0 → 159 citations each) and
+  `ecclesia-in-asia.es` (0 → 239). It also cost `sacramentum-caritatis.ru` nineteen
+  citations, which is the fix working: the page has exactly 256 endnote definitions and
+  256 references, and 275 was the fallback counting numbers that were not markers.
+- **A footnote list can announce itself only by the numbering restarting.** Eight Polish
+  editions print their notes as `N.&nbsp;text` with no heading, no anchor and no `<hr>`
+  anywhere on the page — the one label shape `find_footnote_run_start` could not read,
+  because it is also how every numbered paragraph in this corpus opens. Two guards make it
+  readable and neither is optional: the run must be a RESTART (the page's first run of
+  `N.` is its own body, and taking it would cut every document at its own paragraph 1),
+  and **the markers must corroborate it** — 90% of the run's numbers must already appear
+  as inline markers above it, which a body part that restarts its own numbering cannot
+  satisfy. Measured over all 1,611 works this scraper owns: 16 changed, zero regressed,
+  and two were pre-existing defects elsewhere — `nostra-aetate.he` went from 15 sections
+  and no resolved citations to 5 and all 15, and `quas-primas.fr` stopped shipping its
+  footnote list as ten extra sections.
+- **`narrow_html` kept the HTML comments `strip_tags` drops.** `<!--` is not a tag to a
+  regex that requires a letter after the `<`, so Word's `<!--[if !supportFootnotes]-->`
+  wrappers survived narrowing as escaped text and came back out of `html_to_text` as
+  literal markup in the reader's prose. The round-trip check caught it on fifteen editions
+  the day the family landed; the encyclicals had never shown it because their export path
+  emits no conditional comments.
+
+**`lt` is Latin here and `lit` is Lithuanian — 73 links against five.** Third family to
+spring that trap (`ccc.py` documents it for `catechism_lt`, `VATII_LANG_FROM_URL` for the
+conciliar mirror) and the first where both readings are live on one index, which is what
+makes it dangerous: a code map borrowed from anywhere else does not fail, it files
+sixty-six Latin editions as Lithuanian and says nothing. The index also prints `la` once,
+on a 1962 instruction, so the table cannot be inferred from a sample either.
+
+**Seven editions of 200 are withheld, each with the measurement that put it there**
+(`site/unpublished.json`). Two signatures, both cross-edition: text loss against the
+median edition of the same document (`inter-insigniores.pl` stores 4,855 characters
+against 32,092), and addresses that are wrong while the text is whole — one section
+holding most of the document where every other edition captured nine (`donum-vitae.it`,
+`.la`), or a footnote list read as 51 further sections (`donum-vitae.pl`). **The
+signature has to be conjunctive**: one section holding half a document's text is not a
+defect where every edition agrees the document has three sections, and a first pass at
+this flagged all eight editions of _Iura et Bona_ and all seven of _Samaritanus Bonus_ for
+being short documents.
+
+**Two entries came OUT of that file in the same change.** `vatii.christus-dominus.cs` and
+`vatii.sacrosanctum-concilium.cs` were switched off in August for capturing 9 sections with
+§1 holding 59% and 64% of the text; they now capture 44 and 130, matching every sibling
+edition, with the largest section at 8% and 3%. The file says its entries are expected to
+be temporary and that the fix is to repair the parser and remove the entry — these had
+been repaired by someone else's parser work and nothing re-read them.
+
+**One siglum, not eleven.** `LC` now resolves to `cdf.libertatis-conscientia`; the other
+24 documents get no row in `DOCUMENT_SIGLA_EN`. The rule that decided it is the one that
+table already runs on — a siglum earns a row by appearing in a source's apparatus — and
+the sources answer clearly: of the editions that print an abbreviation table at all
+(`ccc.fr`'s 58 entries, `ccc.la`'s 119), **none lists a single CDF document**. This office
+is cited in longhand, which is the `cdf instr.` residue bucket in
+`scripts/reference-coverage.baseline.json`. Inventing two-letter sigla nobody prints would
+not be neutral: `II` for _Inter Insigniores_ would claim every "Vatican II" in the corpus,
+which is the trap `SS` is already kept out for.
+
 ## Process
 
 **Shared code is decided by entitlement, not by identical bodies.** `apply_corrections`

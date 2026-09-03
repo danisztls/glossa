@@ -60,6 +60,34 @@
 		"  }"
 	],
 	"works": {
+		"cdf.collaboration-of-men-and-women.hu": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 4 sections against 17 in the median edition of this document and one of them holds 51% of its 38 KB, i.e. this page's numbering was not recognised and most of its text was swept into one section. Its other editions are unaffected."
+		},
+		"cdf.donum-vitae.it": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 1 section against 9 in the median edition of this document, and it holds 100% of the 64 KB -- the whole instruction under a single address. Its other editions are unaffected."
+		},
+		"cdf.donum-vitae.la": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 1 section against 9 in the median edition of this document, and it holds 100% of the 61 KB -- the whole instruction under a single address. Its other editions are unaffected."
+		},
+		"cdf.donum-vitae.pl": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 60 sections against 9 in the median edition, because this page's footnote list is a bare-numbered run its body cannot be told from (find_bare_footnote_run_start reads that shape but is not corroborated here). 51 of the 60 'sections' are bibliography. Its other editions are unaffected."
+		},
+		"cdf.inter-insigniores.pl": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition stores 4,855 characters against 32,092 in the median edition of this document -- 85% of the declaration is missing from the parse, not from the source. Its other editions are unaffected."
+		},
+		"cdf.iura-et-bona.pl": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 6 sections against 3 in the median edition, its footnote list read as three further sections of document. Its other editions are unaffected."
+		},
+		"cdf.persona-humana.de": {
+			"date": "2026-09-03",
+			"reason": "Parse defeat found by the CDF ingestion: the edition captured 5 sections against 13 in the median edition of this document and one of them holds 56% of its 37 KB, i.e. this page's numbering was only partly recognised. Its other editions are unaffected."
+		},
 		"encyclical.acerbo-nimis.it": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 6 sections and §1 holds 78% of the 27 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
@@ -112,10 +140,6 @@
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 8 sections and §1 holds 60% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
-		"vatii.christus-dominus.cs": {
-			"date": "2026-08-29",
-			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 9 sections and §1 holds 59% of the 40 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
-		},
 		"vatii.christus-dominus.fr": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 9 sections and §3 holds 62% of the 45 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
@@ -147,10 +171,6 @@
 		"vatii.presbyterorum-ordinis.hu": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 1 section and §1 holds 100% of the 83 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
-		},
-		"vatii.sacrosanctum-concilium.cs": {
-			"date": "2026-08-29",
-			"reason": "Parse defeat found by the Latin-script language ingestion: the edition captured 9 sections and §1 holds 64% of the 32 KB, i.e. this page's numbering was not recognised and nearly all of its text was swept into one section. Its other editions are unaffected."
 		},
 		"vatii.unitatis-redintegratio.fr": {
 			"date": "2026-08-29",

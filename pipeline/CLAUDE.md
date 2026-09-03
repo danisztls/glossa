@@ -102,9 +102,10 @@ pipeline/scrapers/
                      `pipeline/dore-anchors.json`, never re-derived --
                      see "Output that is only regenerable" in the root
                      CLAUDE.md.
-  vatican_docs.py    encyclicals, Vatican I, Vatican II, exhortations.
-                     One scraper, three subcommands; `walk_vatican_i` is
-                     the one forked walk and its docstring says why.
+  vatican_docs.py    encyclicals, Vatican I, Vatican II, exhortations,
+                     CDF/DDF. One scraper, four subcommands;
+                     `walk_vatican_i` is the one forked walk and its
+                     docstring says why.
   prayers.py
   audit.py census.py apply_sweep.py   tools over already-written output
 ```
@@ -418,6 +419,95 @@ vol. V (1869-1870), pp. 481-493` for the Latin, Bellocchi's collection for
   the footnote region, and `find_footnote_region_start`'s last-`<hr>` fallback
   (page furniture, below the content) left both the rule and the note in the
   body as document text.
+## The Dicastery for the Doctrine of the Faith: 25 documents chosen out of 239
+
+`cdf.{slug}.{lang}`, `vatican_docs.py phase3` (2026-09-03, §The doctrinal
+office). The fourth family that scraper carries and the first where the
+SELECTION is a decision rather than an enumeration.
+
+- **The index is complete; the corpus is what narrows it.** 239 documents,
+  1962–2026, most of them notifications about one theologian's book, rescripts
+  and procedural decrees. `CDF_DOCUMENTS` holds the 25 the corpus actually
+  cites — measured, not judged: 1,121 of 119,321 citation strings name the
+  Congregation or Holy Office, the 25 carry ~840 of them, and the
+  notifications carry **zero** (fifteen searched by name). Re-run that
+  measurement before growing the table; the numbers belong in the commit, not
+  in the docblock.
+- **`discover-cdf` is the census.** Index-only, no document fetches: what the
+  index lists, what the table selects, and each document's languages.
+- **The corpus slug is assigned, not read off the filename.** This family
+  names its files after the SUBJECT (`freedom-liberation` is _Libertatis
+  Conscientia_, `eutanasia` is _Iura et Bona_), so `document_title`'s
+  manufacture-from-slug is wrong here and `CDF_DOCUMENTS` carries slug, kind
+  and title. Keyed by **(promulgation date, source slug)** — `homosexual-persons`
+  is two different documents, 1986 and 1992.
+- **`lt` is LATIN on this index and `lit` is Lithuanian** — 73 links against 5,
+  and it prints `la` once as well. Third family to spring this trap
+  (`catechism_lt`, `VATII_LANG_FROM_URL`) and the first with both readings
+  live on one page, so a borrowed code map does not fail: it files 66 Latin
+  editions as Lithuanian silently.
+- **`lang_urls` is keyed by what the SOURCE calls the language**, the rule
+  `MODERN_LANG_TO_URL` exists for, and breaking it fails the same invisible
+  way: keying by the work tag left every German, Spanish, Latin and Portuguese
+  edition reported `no-url` by a run that had just discovered its URL — 115
+  pages fetched of 203.
+- **`urljoin`, never a path prefix.** The index mixes three href shapes inside
+  a single document's language list (relative `documents/…`, root-absolute
+  `/documents/…`, and fully qualified). Requiring a leading `/` found 51
+  documents where the page links 239 and reported "the index does not list it"
+  for nineteen of the twenty-five — a wrong answer shaped exactly like a true
+  one.
+- **Do not read an index through a Markdown extractor.** One did, dropped half
+  the page, and produced a confident finding that the Holy See's "Complete
+  List" omits five major documents including the 2002 note on political life
+  (96 citations, the second most-cited of the family). All five are on the
+  page. `raw/` is what the scraper reads, so `raw/` is what an argument about
+  the source has to be made from.
+
+### Three page conventions, two of them corpus-wide bugs
+
+- **Word writes `_edn`/`_ednref` for endnotes** where it writes `_ftn`/`_ftnref`
+  for footnotes — same export, three letters different — and every regex here
+  read only `_ftn`. 47 raw pages, only 10 of them CDF. Aliasing the two gave
+  **39 works an apparatus they did not have**, _Caritas in Veritate_ in eight
+  languages among them (0 → 159 citations each). `sacramentum-caritatis.ru`
+  fell 275 → 256, which is the fix working: the page has exactly 256
+  definitions and 256 references.
+- **`find_bare_footnote_run_start`: a footnote list can announce itself only by
+  the numbering RESTARTING.** Eight Polish editions print notes as `N.&nbsp;`
+  with no heading, no anchor and no `<hr>` — the one label shape the existing
+  run detector refuses, because it is also how every numbered paragraph opens.
+  Two guards, neither optional: the run must be a restart (the first run of
+  `N.` is the body, and taking it cuts every document at its own §1), and 90%
+  of its numbers must already appear as inline markers above it. Measured over
+  all 1,611 works this scraper owns: **16 changed, 0 regressed**, two of them
+  pre-existing defects elsewhere (`nostra-aetate.he` 15 sections/0 resolved →
+  5/15; `quas-primas.fr` stopped shipping its notes as ten extra sections).
+- **`narrow_html` must drop what `strip_tags` drops.** `<!--` is not a tag to a
+  regex needing a letter after `<`, so Word's `<!--[if !supportFootnotes]-->`
+  survived narrowing as escaped text and came back through `html_to_text` as
+  literal markup in the reader's prose. Fifteen editions, caught by the
+  round-trip check.
+
+### Judging a damaged edition needs a CONJUNCTIVE signature
+
+Seven of 200 editions are withheld in `site/unpublished.json`, each with its
+measurement. Two shapes, both cross-edition — text loss against the median
+edition of the same document (`inter-insigniores.pl`: 4,855 characters against
+32,092), and whole text under wrong addresses (`donum-vitae.it` and `.la` put
+all of it in one section where every sibling captured nine; `donum-vitae.pl`
+reads 51 footnotes as sections).
+
+**"One section holds over half the text" is not a defect on its own.** A first
+pass using that alone flagged all eight editions of _Iura et Bona_ and all
+seven of _Samaritanus Bonus_ — documents with three and twelve long numbered
+parts, where every edition agrees. The section COUNT has to have fallen too.
+
+**Re-read that file when a parser changes.** Two Czech Vatican II editions were
+switched off in August for a signature the parser no longer produces (9
+sections with §1 at 59%/64%; now 44 and 130 sections, largest at 8% and 3%) and
+nothing had re-measured them. The file says its entries are temporary; nothing
+enforces it.
 
 ## The Catechism is eight editions in three page formats
 

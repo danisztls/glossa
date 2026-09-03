@@ -586,7 +586,9 @@ Per-edition invariants are what fail a run: question numbers inside their part's
 
 v2, scoped 2026-08-15 — see `decisions.md` §Scope for what's in/out and why, and `research/vatican-documents.md` for the underlying survey (citation-frequency tables, per-pontificate EN/PT coverage audit, numbering tests — cited by locator below, not restated here). Covers Vatican II's 16 constitutions/decrees/declarations, papal encyclicals, apostolic exhortations, and CDF/DDF declarations — one schema shape for all of them, since every family sampled shares the same numbering/citation/quotation structure (`vatican-documents.md` §3). **The First Vatican Council joined on 2026-09-02 and is the one family that does not share that structure**: neither of its two constitutions has a document-wide numbering, and `Dei Filius` numbers only its canons, restarting at 1 in each of four canon groups. The schema shape held; the WALK did not, and `walk_vatican_i` is why (`pipeline/CLAUDE.md`).
 
-Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vati` | `vatii` | `encyclical` | `exhortation` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema; `cdf` is declared in `vatican_docs.py` but no `cdf.*` work has been ingested yet). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `exhortation.amoris-laetitia.pt`.
+Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vati` | `vatii` | `encyclical` | `exhortation` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `exhortation.amoris-laetitia.pt`, `cdf.libertatis-conscientia.la`.
+
+**`cdf.*` slugs are ASSIGNED, not read off the source filename** (2026-09-03, `decisions.md` §The doctrinal office). Every other family here is filed under its document's incipit, so the slug and the title are the same fact; this one names its files after the subject — `freedom-liberation` is _Libertatis Conscientia_ — so `vatican_docs.CDF_DOCUMENTS` maps `(promulgation date, source slug)` to the corpus slug, the kind and the title. The slug is the Latin incipit where the document has one and an English description where it has none (`catholics-in-political-life`), because Latin is what this corpus addresses a document by. A document slug is unique across all five families: `getDocumentGroup` keys on the slug alone.
 
 `manifest.json`: same shape as the Catechism/Compendium manifest, `"type": "document"`, plus document-only fields:
 
@@ -596,8 +598,12 @@ Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vati` | `vatii` | `ency
   "type": "document",
   // ...bible-manifest-shared fields (title, language, edition, sources, copyright, notes, generated_at)...
   // document-only:
-  "document_kind": "conciliar-constitution", // "conciliar-constitution" | "conciliar-decree" | "conciliar-declaration" | "encyclical" | "apostolic-exhortation" | "apostolic-constitution" | "cdf-declaration" | …
+  "document_kind": "conciliar-constitution", // "conciliar-constitution" | "conciliar-decree" | "conciliar-declaration" | "encyclical" | "apostolic-exhortation" | "apostolic-constitution" | "cdf-declaration" | "cdf-instruction" | "cdf-letter" | "cdf-doctrinal-note" | "cdf-responsum" | "cdf-considerations" | …
   "pontiff_or_council": "Second Vatican Council", // e.g. "John Paul II", "Second Vatican Council", "Congregation for the Doctrine of the Faith"
+  // ^ for `cdf.*` this follows the PROMULGATION DATE, not the family: Praedicate
+  //   Evangelium (2022-06-05) turned the Congregation into the Dicastery, and a 1975
+  //   declaration is the Congregation's while a 2025 note is the Dicastery's. The
+  //   documents were not retitled, so the field is what says which.
   "promulgated": "1964-11-21", // the document's own date, distinct from sources[].retrieved_at
   "translations": {
     // optional; present only when a sibling-language edition is known and NOT written as its own work — never present alongside a real sibling work, which is provenance enough on its own

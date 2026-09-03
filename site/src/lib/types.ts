@@ -281,6 +281,11 @@ export type DocumentKind =
 	| 'apostolic-exhortation'
 	| 'apostolic-constitution'
 	| 'cdf-declaration'
+	| 'cdf-instruction'
+	| 'cdf-letter'
+	| 'cdf-doctrinal-note'
+	| 'cdf-responsum'
+	| 'cdf-considerations'
 	// The schema (docs/corpus-schema.md §Documents) deliberately leaves this
 	// open-ended ("…") rather than a closed enum -- a future family this
 	// union hasn't been extended for yet should still type-check as a valid

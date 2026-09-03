@@ -27,7 +27,19 @@ const KIND_KEYS: Record<string, string> = {
 	encyclical: 'document.kind.encyclical',
 	'apostolic-exhortation': 'document.kind.apostolicExhortation',
 	'apostolic-constitution': 'document.kind.apostolicConstitution',
-	'cdf-declaration': 'document.kind.cdfDeclaration'
+	// The doctrinal-office kinds. Every one carries the `CDF ` prefix its
+	// label already had, including the four documents the Dicastery issued
+	// under its post-2022 name: this is a FACET in `/documenta`, and `cdf-`
+	// declaration next to `conciliar-declaration` needs the prefix to stay a
+	// distinguishable filter. Which body issued a given document is a
+	// separate field — `pontiff_or_council`, printed under its title, and it
+	// says Congregation or Dicastery per the promulgation date.
+	'cdf-declaration': 'document.kind.cdfDeclaration',
+	'cdf-instruction': 'document.kind.cdfInstruction',
+	'cdf-letter': 'document.kind.cdfLetter',
+	'cdf-doctrinal-note': 'document.kind.cdfDoctrinalNote',
+	'cdf-responsum': 'document.kind.cdfResponsum',
+	'cdf-considerations': 'document.kind.cdfConsiderations'
 };
 
 /** Singular label for one document's kind — falls back to the raw

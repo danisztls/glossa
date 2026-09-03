@@ -165,6 +165,7 @@ from common import binary_identity, build_root, corpus_dir, raw_root  # noqa: E4
 #: Every language `vatican_docs` has division labels for. Derived rather than
 #: listed; see PHASE 2'S LANGUAGES above.
 PHASE2_LANGS = ",".join(sorted(V.DIVISIONS))
+PHASE3_LANGS = ",".join(V.PARSABLE_CDF_LANGS)
 
 #: Every edition of the Code `cic.py` can read, from its own table and for
 #: PHASE2_LANGS' reason.
@@ -322,6 +323,20 @@ STAGES: tuple[Stage, ...] = (
             PHASE2_LANGS,
         ),
         ("encyclical.*", "exhortation.*"),
+    ),
+    # The Dicastery for the Doctrine of the Faith. `--lang` is the readable
+    # subset derived by the scraper, not a list typed here, for the reason
+    # `PHASE2_LANGS` is: this index also offers Lithuanian and Malagasy, which
+    # `DIVISIONS` has no labels for, and `--lang all` means every language the
+    # index OFFERS -- the acquisition run, not the parse. Which 25 of its 239
+    # documents are written is `V.CDF_DOCUMENTS`, and the argument for that
+    # selection is in its docblock.
+    Stage(
+        "cdf",
+        "documents",
+        "vatican_docs.py",
+        ("phase3", "--lang", PHASE3_LANGS, "--offline"),
+        ("cdf.*",),
     ),
     # The Compendium of the Social Doctrine. `--langs all` is spelled out
     # rather than left to the script's default, which is English alone: the

@@ -1751,8 +1751,11 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	// Apostolic exhortations. THESE CARRIED NO SLUG UNTIL 2026-09-02, on the
 	// stated ground that "none is ingested" — true when it was written and
 	// false since the exhortation sweep landed 33 of them (§Languages). The
-	// six below are in `build/`; `MD` and `LC` stay slugless because they are
-	// an apostolic letter and a CDF instruction, and neither family is held.
+	// six below are in `build/`; `MD` stays slugless because it is an
+	// apostolic letter, and no letter is held. `LC` was slugless here for
+	// one day for the same reason about CDF instructions, and resolves to
+	// `cdf.libertatis-conscientia` since 2026-09-03 — its own entry, near the
+	// foot of this table, says why it is the family's only one.
 	FC: {
 		expansion: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)',
 		slug: 'familiaris-consortio'
@@ -1779,7 +1782,22 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	GILH: { expansion: 'General Instruction of the Liturgy of the Hours' },
 	OCF: { expansion: 'Order of Christian Funerals' },
 	OP: { expansion: 'Ordo Paenitentiae (Rite of Penance)' },
-	LC: { expansion: 'Libertatis Conscientia (CDF instruction on Christian freedom and liberation)' },
+	// The one CDF siglum with evidence, and it now resolves:
+	// `cdf.libertatis-conscientia` landed 2026-09-03 with 24 other documents
+	// of that family. IT IS THE ONLY ONE THAT GETS A ROW. The other 24 were
+	// checked for a siglum the way this table's entries are earned — by
+	// reading the abbreviation tables the sources print — and every edition
+	// that prints one (ccc.fr's 58 sigla, ccc.la's 119) lists none of them:
+	// this office is cited in longhand, `CDF, instr. "Libertatis
+	// conscientia" 13.`, which is the `cdf instr.` residue bucket in
+	// `scripts/reference-coverage.baseline.json`. Two-letter sigla nobody
+	// prints would be pure invention, and expensive invention: `II` for
+	// Inter Insigniores would claim every "Vatican II" in the corpus, which
+	// is the same trap `SS` is kept out for above.
+	LC: {
+		expansion: 'Libertatis Conscientia (CDF instruction on Christian freedom and liberation)',
+		slug: 'libertatis-conscientia'
+	},
 	ND: { expansion: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)' }
 };
 
