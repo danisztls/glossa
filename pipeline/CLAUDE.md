@@ -757,6 +757,21 @@ Nуmine Patris` for `In Nómine Patris`. `read_edition` cannot make this
   (`genitrix` for `genetrix`, `solatium` for `solacium`, `exultavit`), which
   says the edition did; the Indonesian's are both.
 
+**WHERE THIS STOPS, and it stops at vatican.va.** Fourteen editions is every
+one there is: no Catechism and no Compendium exists there in Polish, Dutch,
+Czech, Slovak, Croatian, Vietnamese, Korean, Tagalog, Ukrainian, Finnish,
+Danish, Latvian, Swahili, Hebrew, Hindi, Malayalam or Igbo, so nothing further
+is reachable by re-parsing and the next edition costs a fetch from a host
+nobody here has used. Twenty of the thirty-four interface languages still have
+no prayers. **The survey of national bishops'-conference sources for thirteen
+of them is written up in `docs/research/prayers-beyond-the-vatican.md`** —
+which tier each language is in, what the catch is, the four small things the
+code still lacks, and the one decision left open (Finland has exactly one
+Catholic publisher and Tagalog has none hosting the text, so both defeat the
+two-witness rule, and whether to ship them from a single named source is not a
+call to take mid-task). Read it before starting, and re-confirm a URL before
+capturing from it: the survey recorded hosts and findings, not always paths.
+
 **Two defects in the shared reader came out of this, both fixed and both
 measured over `compendium.ru` before they were kept.**
 
