@@ -47,6 +47,32 @@ language list is `sorted(V.DIVISIONS)` for exactly that reason.
 runs it again. The state lives in `<corpus>/.rebuild-state.json`, untracked;
 deleting it costs one full rebuild.
 
+**A PARSER FIX IS INVISIBLE UNTIL THE STAGE RUNS, and an A/B diff against a
+scratch output directory is not that run.** `build/` is the only thing the site
+reads (through `sync-corpus.mjs`), so a comparison written somewhere else
+proves the fix and ships nothing — the Code's stranded colon and its Book I
+correction were each confirmed by diff one day and each still on the page the
+next. The loop that ends a parser change is `rebuild.py --only <stage>` **into
+the real corpus** (`CORPUS_DIR` from a worktree — the default
+`../glossa-corpus` resolves beside the WORKTREE and quietly finds nothing,
+which `--list` shows as `0 works`), then `npm run sync-corpus`, then read the
+change back out of `build/<work>/structure.json`.
+
+**AND ANOTHER WORKTREE'S REBUILD WILL TAKE IT BACK OUT, which is the half that
+makes the loop above insufficient.** `build/` is shared, `rebuild.py` with no
+`--only` runs every stage, and every session runs it from ITS OWN checkout — so
+a full rebuild launched from a branch that lacks your parser fix silently
+re-parses the work with the older code and reverts the output. Measured
+2026-09-03: `--only cic` landed the corrected titles at 09:04 and the
+`prayers-basics` worktree's full rebuild overwrote them at 09:05:32, seventeen
+seconds into a run this one knew nothing about. **The tell is
+`corrections-applied.json`** — it came back `"applied": []` for a work with a
+filed correction, which no run from this branch can produce. So: check for a
+running `rebuild.py` (`pgrep -f pipeline/rebuild.py`, sandbox off — a sandboxed
+`ps` sees its own namespace only) before the re-parse, verify AFTER the sync
+rather than before, and expect the revert to keep happening until the parser
+change is on the branch the other sessions build from.
+
 **A run's exit code says whether it went worse than
 `pipeline/parse-baseline.json`, and nothing else.** Until 2026-08-29 both
 phases gated on the cross-language symmetry check, which is chronically FAIL
@@ -419,6 +445,7 @@ vol. V (1869-1870), pp. 481-493` for the Latin, Bellocchi's collection for
   the footnote region, and `find_footnote_region_start`'s last-`<hr>` fallback
   (page furniture, below the content) left both the rule and the note in the
   body as document text.
+
 ## The Dicastery for the Doctrine of the Faith: 25 documents chosen out of 239
 
 `cdf.{slug}.{lang}`, `vatican_docs.py phase3` (2026-09-03, §The doctrinal
