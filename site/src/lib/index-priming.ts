@@ -39,8 +39,58 @@ const ALL: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'summa', 'docum
  * `BookChapterPicker`; the Bible and Magisterium sections rendered empty
  * against a full corpus. Only the Summa is absent, and deliberately —
  * `/doctores` is not in the nav and the home page does not list it.
+ *
+ * IT TAKES NO `REFS` BEYOND WHAT IT ALREADY LISTS, unlike every reading shelf
+ * below. The home page renders shelf listings, work titles and prayer
+ * incipits, and not one line of corpus prose or apparatus — so nothing on it
+ * ever resolves a reference, which is the whole of what that set is for.
  */
 const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
+
+/**
+ * The indexes a linkified REFERENCE reads, which every reading shelf owes on
+ * top of its own — a shelf renders the corpus's prose, and the corpus's prose
+ * cites the rest of the corpus.
+ *
+ * `refs.ts`'s `refAddress` is called from render, once per reference, by
+ * `ProseBlocks`/`InlineProse`/`Sidenote`/`CommentaryGloss`/`RefText` — every
+ * component that turns a citation into a link. It validates the address before
+ * minting one (a plausible-looking wrong link is the failure that module is
+ * written against), and three of its branches validate against a registry:
+ * scripture through `findBookByAbbrev`, a Summa citation through
+ * `summaQuestionExists`, a document siglum through `documentSectionExists`.
+ * The other two need none — a CCC or Compendium paragraph address is minted
+ * from the number itself, and a `CIC` canon reads a registry that is still
+ * inlined.
+ *
+ * THE TABLE BELOW ASKED WHERE A SHELF'S OWN TEXT COMES FROM, and that is not
+ * the same question. `/doctrina-socialis/1` was listed as needing nothing: the
+ * Compendium of the Social Doctrine reads an inlined registry for its own
+ * paragraphs, which is true, and then footnotes those paragraphs with
+ * Scripture — so the first reference on the page threw `listBooks: the bible
+ * index was read before it was primed` out of `ProseBlocks`' own `hrefFor`. It
+ * was never one shelf's bug. `/documenta` primed only `document`, against
+ * prose that cites Scripture in the open rather than in footnotes (~4,400
+ * locators corpus-wide, 334 in Evangelium Vitae alone — see
+ * `refs-grammar.ts`'s `linkifyProse`); `/catechismus` primed the Catechism
+ * pair and neither of the two registries its footnotes cite most.
+ *
+ * It costs three parallel fetches on a cold reading route — 314 KB, 87 KB and
+ * 127 KB raw as of 2026-09-03, `sync-corpus.mjs` prints the current figures —
+ * and nothing on any later navigation, since the primers memoise. That is the
+ * price of the lazy index tier being correct rather than nearly correct; the
+ * alternative on offer was a page that renders its citations as dead text.
+ */
+const REFS: readonly IndexName[] = ['bible', 'summa', 'document'];
+
+/**
+ * A shelf's own indexes plus `REFS`, ordered as `ALL` orders them so that the
+ * answer does not depend on how the entry happened to be written.
+ */
+function withRefs(...own: readonly IndexName[]): readonly IndexName[] {
+	const wanted = new Set<IndexName>([...own, ...REFS]);
+	return ALL.filter((name) => wanted.has(name));
+}
 
 /**
  * First path segment -> the indexes a page under it reads.
@@ -52,19 +102,24 @@ const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'p
  * other.
  */
 const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
-	scriptura: ['bible'],
-	catechismus: ['ccc', 'compendium'],
-	documenta: ['document'],
-	preces: ['prayer'],
-	doctores: ['summa'],
-	// The Compendium of the Social Doctrine and the Code of Canon Law read
-	// registries that are still eagerly inlined (6.9 KB and 15.5 KB), so they
-	// need nothing primed — but they DO render the reading chrome, whose
-	// edition menu asks the manifest, not an index. Listed with an empty set
-	// rather than left out, so a reader of this table can tell "needs nothing"
-	// from "nobody considered it".
-	'doctrina-socialis': [],
-	'ius-canonicum': [],
+	scriptura: withRefs('bible'),
+	catechismus: withRefs('ccc', 'compendium'),
+	documenta: withRefs('document'),
+	// The prayers themselves carry no links — `PrayerBlocks` renders through
+	// `InlineText`, which is handed no `hrefFor` at all. `PrayerMystery` does:
+	// a mystery of the Rosary prints the passage it is contemplated with, and
+	// that citation is a `RefText` like any other.
+	preces: withRefs('prayer'),
+	doctores: withRefs('summa'),
+	// These two read registries that are still eagerly inlined (6.9 KB and
+	// 15.5 KB) for their own text, so `REFS` is the whole of what they need —
+	// which is exactly what made them look like they needed nothing.
+	'doctrina-socialis': withRefs(),
+	'ius-canonicum': withRefs(),
+	// The one shelf that really does need nothing: the colophon is the site's
+	// own writing about the corpus, and cites it only by title. Listed with an
+	// empty set rather than left out, so a reader of this table can tell "needs
+	// nothing" from "nobody considered it".
 	colophon: []
 };
 

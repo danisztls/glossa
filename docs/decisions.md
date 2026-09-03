@@ -1716,6 +1716,23 @@ that found the two work types `+page.svelte` names and not the three it reaches 
 sections; only one was the cause of what was actually observed. Fixing a symptom that has
 two sufficient causes needs both found.
 
+**The mapping was wrong a second time, and for a reason the first fix could not have
+reached: it asks only half the question.** `/doctrina-socialis` was listed as needing
+nothing primed, which is true of the Compendium of the Social Doctrine's own paragraphs —
+they come from a registry that is still inlined — and says nothing about what those
+paragraphs CITE. `refs.ts`'s `refAddress` runs from render, once per reference, and
+validates an address before it will mint a link: scripture against the Bible's book/chapter
+table, a Summa citation against its questions, a document siglum against its section
+numbers. So the first footnote on `/doctrina-socialis/1` threw `listBooks: the bible index was read before it was primed`. It
+was never one shelf's bug — `/documenta` primed only `document`, against prose that cites
+Scripture in the open rather than in footnotes (~4,400 locators corpus-wide), and
+`/catechismus` primed the Catechism pair and neither of the two registries its footnotes
+cite most. Those two failed SILENTLY, which
+is the worse half: only the scripture check is behind `requireIndex`, so a document or
+Summa citation read an empty registry, concluded the corpus does not hold the target, and
+rendered as dead text. A shelf owes the indexes its own text is read FROM and the indexes
+its text POINTS AT, and the table asked only the first.
+
 **Asynchrony was pushed to the ARRIVAL of the data, never to its readers.** Two dozen
 synchronous readers in `corpus.ts` (`getBook`, `getCccStructure`, `listSummaQuestions`)
 are called from render and keep their signatures; the registries are the same mutable

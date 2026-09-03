@@ -45,6 +45,15 @@ where a route already waits. Adding a reading route means adding it to
 `BY_SEGMENT` there; an unknown path primes everything, which costs a fetch and
 is the only direction that mapping may be wrong in.
 
+**A shelf needs the indexes its text is read FROM and the indexes its text
+POINTS AT.** `refs.ts`'s `refAddress` validates an address from render before it
+mints a link, against the Bible's books, the Summa's questions and the
+documents' section numbers — so every shelf that renders a citation owes those
+three (`REFS` in `index-priming.ts`) whatever its own text costs.
+`/doctrina-socialis` was listed as needing nothing, its paragraphs coming from
+an inlined registry, and its first footnote threw `listBooks: … read before it
+was primed` (docs/decisions.md §The site).
+
 **Making a registry lazy also breaks what was DERIVED from it at module scope.**
 `corpus.ts` memoises five maps at module load (the canonical book list, the
 document groups, three existence Sets); module load is long before any primer
