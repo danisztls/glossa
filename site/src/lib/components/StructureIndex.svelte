@@ -490,6 +490,17 @@
 		text-decoration: underline;
 		text-underline-offset: 0.15em;
 	}
+	/* THE UNDERLINE IS THE NAME'S, NOT THE LABEL'S. `CHAPTER ONE` stands
+	   before the title inside the same anchor, and a decoration propagates to
+	   every in-flow descendant — so hovering the row drew one rule through the
+	   label and the name together, as though the two were one phrase. A
+	   descendant cannot switch it off (`text-decoration: none` on a child does
+	   nothing); an atomic inline-level box is simply not decorated, which is
+	   what `inline-block` makes it. Scoped to a linked row because it is the
+	   only place an underline is ever drawn over one. */
+	.row.linked .kind-label {
+		display: inline-block;
+	}
 	/* The chip is inside the row's target area and is not a link of its own, so
 	   it takes the muted colour of the apparatus it is — and the row's accent
 	   with everything else when the pointer is anywhere on the row. */
