@@ -321,5 +321,7 @@ export const de: Dictionary = {
 	'shortcuts.title': 'Tastenkürzel',
 	'shortcuts.betweenDocuments': 'Zwischen Dokumenten',
 	'shortcuts.withinDocument': 'Innerhalb des Dokuments',
-	'shortcuts.show': 'Diese Liste anzeigen'
+	'shortcuts.show': 'Diese Liste anzeigen',
+	'zen.enter': 'Fokusmodus',
+	'zen.exit': 'Fokusmodus beenden'
 };

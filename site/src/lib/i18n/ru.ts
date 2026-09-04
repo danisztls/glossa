@@ -314,5 +314,7 @@ export const ru: Dictionary = {
 	'shortcuts.title': 'Сочетания клавиш',
 	'shortcuts.betweenDocuments': 'Между документами',
 	'shortcuts.withinDocument': 'Внутри документа',
-	'shortcuts.show': 'Показать этот список'
+	'shortcuts.show': 'Показать этот список',
+	'zen.enter': 'Режим сосредоточения',
+	'zen.exit': 'Выйти из режима сосредоточения'
 };

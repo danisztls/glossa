@@ -318,5 +318,7 @@ export const ro: Dictionary = {
 	'shortcuts.title': 'Scurtături de tastatură',
 	'shortcuts.betweenDocuments': 'Între documente',
 	'shortcuts.withinDocument': 'În document',
-	'shortcuts.show': 'Afișează această listă'
+	'shortcuts.show': 'Afișează această listă',
+	'zen.enter': 'Mod de concentrare',
+	'zen.exit': 'Ieșiți din modul de concentrare'
 };

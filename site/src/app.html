@@ -236,6 +236,17 @@
 					document.documentElement.style.setProperty('--reading-scale', String(s));
 				}
 			} catch (e) {}
+			try {
+				// Focus mode (src/lib/zen.svelte.ts), applied here for the same
+				// reason as the theme: without it a reader who left it on watches
+				// the site header and the sidebar paint and then disappear. No
+				// default and no migration — absent means off. The attribute is
+				// safe to set on every page; styles/zen.css declines to act on one
+				// with no reading bar to put the way out in.
+				if (localStorage.getItem('glossa:zen') === '1') {
+					document.documentElement.setAttribute('data-zen', '');
+				}
+			} catch (e) {}
 			// The static shell is authored in English, but a reader with no saved
 			// choice should still get the document language matching their browser
 			// as early as possible. The app store performs the same negotiation and

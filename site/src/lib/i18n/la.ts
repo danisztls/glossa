@@ -363,6 +363,8 @@ export const la: Dictionary = {
 	'shortcuts.betweenDocuments': 'Inter documenta',
 	'shortcuts.withinDocument': 'Intra documentum',
 	'shortcuts.show': 'Hunc indicem ostendere',
+	'zen.enter': 'Modum intentionis ini',
+	'zen.exit': 'Modum intentionis relinque',
 	'nav.calendar': 'Calendarium',
 	'calendar.title': 'Calendarium Liturgicum',
 	'calendar.tagline':

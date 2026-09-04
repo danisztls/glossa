@@ -32,19 +32,25 @@
  * why Shift is not part of the guard below: `?` is shifted nearly everywhere,
  * and on AZERTY so is `.`.
  *
+ * `Escape` is on `key` too and for a different reason: it is not a printed
+ * character at all, so `code` and `key` agree everywhere and `key` is the
+ * spelling that says what is meant. It leaves focus mode, and only while
+ * focus mode is on — see `ShortcutContext.zen`.
+ *
  * ## What this module deliberately does not do
  *
  * It touches no DOM. The environment is `node` under vitest (see
  * `vitest.config.ts`), and the whole point of splitting the matcher from
  * `Shortcuts.svelte` is that the table above is testable at all — there is no
  * component test harness in this repository, so logic left in a `.svelte`
- * file is logic nothing checks. The caller supplies the three facts that
- * cannot be read off a keystroke (`ShortcutContext`), and executes whatever
- * comes back.
+ * file is logic nothing checks. The caller supplies the facts that cannot be
+ * read off a keystroke (`ShortcutContext` — where focus is, what is open,
+ * which way the interface runs, whether focus mode is on), and executes
+ * whatever comes back.
  */
 
 export type ShortcutAction =
-	'previousDocument' | 'nextDocument' | 'previousReference' | 'nextReference' | 'help';
+	'previousDocument' | 'nextDocument' | 'previousReference' | 'nextReference' | 'help' | 'exitZen';
 
 /**
  * The subset of `KeyboardEvent` the resolver reads.
@@ -69,6 +75,17 @@ export interface ShortcutContext {
 	overlay: boolean;
 	/** The interface is right-to-left, which mirrors the horizontal axis. */
 	rtl: boolean;
+	/**
+	 * Focus mode is on, so `Escape` has something to close.
+	 *
+	 * THE FLAG IS WHAT KEEPS `Escape` FREE THE REST OF THE TIME. A key that
+	 * quietly does nothing is cheap; a key that quietly SWALLOWS something is
+	 * not, and `Escape` already belongs to whatever the browser or the page
+	 * has open. With this false the resolver answers `null` and the keystroke
+	 * is never claimed — see `resolveShortcut`, which does not
+	 * `preventDefault` what it did not match.
+	 */
+	zen: boolean;
 }
 
 /** Keys on the visual LEFT. Which document they reach depends on `rtl`. */
@@ -117,6 +134,14 @@ export function resolveShortcut(e: KeyStroke, ctx: ShortcutContext): ShortcutAct
 	// bare `S` would step the page out from under the panel the reader is
 	// looking at.
 	if (ctx.overlay) return null;
+
+	// AFTER the overlay guard above, and that ordering is the whole of it: a
+	// dialog opened from inside focus mode must close on `Escape` the way
+	// every dialog does, and if this claimed the key first the reader would
+	// leave the mode instead and be left looking at the panel they had just
+	// tried to dismiss. `isOverlayOpen` is true for exactly the set that owns
+	// the key, so falling through to `null` there hands it back untouched.
+	if (e.key === 'Escape') return ctx.zen ? 'exitZen' : null;
 
 	if (e.key === '?') return 'help';
 	if (INLINE_START.includes(e.code)) return ctx.rtl ? 'nextDocument' : 'previousDocument';

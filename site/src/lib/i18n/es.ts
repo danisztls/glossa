@@ -319,5 +319,7 @@ export const es: Dictionary = {
 	'shortcuts.title': 'Atajos de teclado',
 	'shortcuts.betweenDocuments': 'Entre documentos',
 	'shortcuts.withinDocument': 'Dentro del documento',
-	'shortcuts.show': 'Mostrar esta lista'
+	'shortcuts.show': 'Mostrar esta lista',
+	'zen.enter': 'Modo de concentración',
+	'zen.exit': 'Salir del modo de concentración'
 };

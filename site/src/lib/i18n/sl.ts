@@ -314,5 +314,7 @@ export const sl: Dictionary = {
 	'shortcuts.title': 'Bližnjice na tipkovnici',
 	'shortcuts.betweenDocuments': 'Med dokumenti',
 	'shortcuts.withinDocument': 'Znotraj dokumenta',
-	'shortcuts.show': 'Pokaži ta seznam'
+	'shortcuts.show': 'Pokaži ta seznam',
+	'zen.enter': 'Način zbranosti',
+	'zen.exit': 'Zapusti način zbranosti'
 };

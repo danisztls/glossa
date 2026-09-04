@@ -306,5 +306,7 @@ export const ar: Dictionary = {
 	'shortcuts.title': 'اختصارات لوحة المفاتيح',
 	'shortcuts.betweenDocuments': 'بين الوثائق',
 	'shortcuts.withinDocument': 'داخل الوثيقة',
-	'shortcuts.show': 'عرض هذه القائمة'
+	'shortcuts.show': 'عرض هذه القائمة',
+	'zen.enter': 'وضع التركيز',
+	'zen.exit': 'أنهِ وضع التركيز'
 };
