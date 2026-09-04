@@ -10,7 +10,7 @@ architecture and data contract this app is built against.
 
 The corpus lives in **its own private repository**, `glossa-corpus`, expected
 on disk as a sibling of this one — `~/Dev/me/glossa` and
-`~/Dev/me/glossa-corpus` (docs/decisions.md §The corpus; it holds verbatim
+`~/Dev/me/glossa-corpus` (pipeline/docs/corpus.md; it holds verbatim
 reproductions of copyrighted texts and this repository is public). It is
 scraped/built separately by `../pipeline/` (see `docs/corpus-schema.md`). The
 site never commits its synced build copy; it only knows how to _read_ it.

@@ -25,7 +25,7 @@ def load_overrides(work_id: str) -> list[dict]:
     """The recorded overrides for `work_id`, or `[]` when none are filed.
 
     OVERRIDES ARE NOT CORRECTIONS, and the two directories are separate on
-    purpose (docs/decisions.md §Corrections and overrides):
+    purpose (pipeline/docs/corrections.md):
 
       - `pipeline/corrections/` says **the source is wrong**. It edits the
         fetched page before parsing, and its evidence is an argument about

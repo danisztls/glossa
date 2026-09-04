@@ -16,7 +16,7 @@
  * `rewriteRelativeImportExtensions`, which is what lets the `.ts` specifiers
  * below resolve in both worlds). One grammar, one set of tests, and an index
  * that cannot drift from the corpus it describes because nothing persists
- * between builds. See docs/decisions.md §Parsing.
+ * between builds. See site/docs/references.md.
  *
  * Coverage is every edition of a work, not one: the Portuguese Catechism
  * prints Scripture locators inline that the English edition footnotes, and
@@ -177,7 +177,7 @@ function mergeRefs(refs) {
  * import it in all three places rather than editing a fourth copy.
  *
  * The rules, matching those two: an emphasis tag leaves NOTHING behind (a
- * tag is not a word boundary -- decisions.md §Storage), `<br>` and every
+ * tag is not a word boundary -- pipeline/docs/parsing.md), `<br>` and every
  * other tag leave a space, footnote markers contribute nothing whether they
  * arrive as `<sup data-fn>` elements or as bare ⟦n⟧ tokens.
  *
@@ -272,7 +272,7 @@ export function buildCccBibleXrefs(editions) {
  * references are unioned, exactly as the two Catechism editions are.
  *
  * Keyed by `slug` rather than work id because that is what a link addresses:
- * `/documenta/{slug}#s{n}` is edition-free (docs/decisions.md #2's URL
+ * `/documenta/{slug}#s{n}` is edition-free (site/docs/addresses.md's URL
  * convention), and the reader's own language preference decides which edition
  * that page opens in. Output is `[{ work, n, refs }]`, ordered by slug then
  * section, entries with no references omitted.

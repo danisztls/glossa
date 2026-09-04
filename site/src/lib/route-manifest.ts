@@ -103,7 +103,7 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
  * declares no alternates.
  *
  * WHY IT EXISTS AT ALL, given that prefixing reading addresses was refused
- * (docs/decisions.md §The site): every objection there is about PUBLICATION --
+ * (site/docs/languages.md): every objection there is about PUBLICATION --
  * `hreflang` alternates that would be a false claim, 5,811 addresses becoming
  * 81,368, a forced `<sitemapindex>`, `hrefFor` losing its monopoly on the
  * spelling of an address. None of them reaches an address that is never

@@ -2,7 +2,7 @@
 	/**
 	 * One document, whole, on one page.
 	 *
-	 * THIS ROUTE ABSORBED TWO OTHERS on 2026-08-17 (docs/decisions.md §The site): the
+	 * THIS ROUTE ABSORBED TWO OTHERS on 2026-08-17 (site/docs/shell.md): the
 	 * former `documents/[slug]/read` (continuous full text) and
 	 * `documents/[slug]/[n]` (one prerendered page per numbered section). The
 	 * per-section route alone was 9,315 of the deployment's 15,256 files — 61%

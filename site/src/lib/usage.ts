@@ -7,7 +7,7 @@
  * app launching at `start_url` makes no document request at all. Request logs
  * can count arrivals and nothing else — they cannot tell a reader who came
  * once from one who has read daily for a year, which is the question this
- * exists to answer. See docs/decisions.md §Usage measurement.
+ * exists to answer. See site/docs/usage.md.
  *
  * It is NOT an analytics client. There is no identifier, no cookie, no
  * sequence, no passage-level position, and no free text; every number is a

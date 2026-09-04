@@ -38,7 +38,7 @@ WHAT IT REFUSES TO PROPOSE, and why each refusal is principled:
     and `present-day` are real joins, but the lost character is a hyphen and
     restoring a space writes something the source did not say. Reported as a
     defect with no known correct value and filed nowhere, per
-    `docs/decisions.md` on corrections.
+    `pipeline/docs/corrections.md`.
 
 Everything it does propose is one restored space and nothing else, which is
 what makes the output safe to turn into `pipeline/corrections/` entries: the

@@ -36,7 +36,7 @@ _DEFAULT_CORPUS_DIR = _REPO_ROOT.parent / "glossa-corpus"
 def corpus_dir() -> Path:
     """The corpus checkout: `$CORPUS_DIR`, or a `glossa-corpus/` sibling.
 
-    THE CORPUS IS NOT IN THIS REPOSITORY (docs/decisions.md §The corpus). It
+    THE CORPUS IS NOT IN THIS REPOSITORY (pipeline/docs/corpus.md). It
     holds verbatim reproductions of texts other people hold rights in, so it
     lives in a private repository of its own, expected on disk beside this
     one. `CORPUS_DIR` overrides that, and is spelled the same way here as in
@@ -100,7 +100,7 @@ def require_corpus() -> Path:
     if not path.is_dir():
         raise SystemExit(
             f"corpus directory not found at {path}\n"
-            "The corpus lives in its own private repository (docs/decisions.md, "
+            "The corpus lives in its own private repository (pipeline/docs/corpus.md, "
             "2026-08-23). Clone it beside this one as `glossa-corpus/`, or set "
             "CORPUS_DIR to point at it."
         )

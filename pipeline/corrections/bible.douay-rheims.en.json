@@ -10,7 +10,7 @@
     "field": "text",
     "from": "comdemnation",
     "to": "condemnation",
-    "reason": "Transcription typo in Challoner's note, not in his text: 'comdemnation' for 'condemnation' (m for n). A mechanical single-letter defect of the kind docs/decisions.md's source-defect corrections policy admits -- no wording is changed, and the corrected reading is the only English word the letters can be.",
+    "reason": "Transcription typo in Challoner's note, not in his text: 'comdemnation' for 'condemnation' (m for n). A mechanical single-letter defect of the kind pipeline/docs/corrections.md's policy admits -- no wording is changed, and the corrected reading is the only English word the letters can be.",
     "evidence": "corpus/raw/vulgata-online/DR2/Jo.3.json, record tp='fn' vn=19 rn=1: '_The judgment:_ That is, the cause of his comdemnation.' The note glosses John 3:19 'And this is the judgment', and the printed Challoner reads 'condemnation' -- cf. the note on the neighbouring verse 18 in the same chapter, which uses the word correctly twice ('is not condemned', 'condemned already'). 'comdemnation' is not a word, an archaism, or an eighteenth-century spelling.",
     "added": "2026-08-24"
   },
@@ -25,7 +25,7 @@
     "field": "lemma",
     "from": "Nineve",
     "to": "Ninive",
-    "reason": "Transcription typo in the note's lemma: the two middle vowels are transposed. Mechanical and single-word, so within docs/decisions.md's source-defect policy. It matters more than an ordinary typo because a lemma is structural, not prose -- it names the words in the verse the note glosses, and a lemma matching no string in its verse cannot be resolved to a span by anything downstream.",
+    "reason": "Transcription typo in the note's lemma: the two middle vowels are transposed. Mechanical and single-word, so within pipeline/docs/corrections.md's policy. It matters more than an ordinary typo because a lemma is structural, not prose -- it names the words in the verse the note glosses, and a lemma matching no string in its verse cannot be resolved to a span by anything downstream.",
     "evidence": "Internal: across the whole DR2 source the city is spelled 'Ninive' 13 times -- in verses (Gen 10:11-12, Tob 1:11, Jdt 1:5, Jonas 1:2 itself), in Jonas's own chapter argument, in Tobias's book preface, and in four OTHER footnotes including Nahum's -- against this single 'Nineve'. External: drbo.org, an independent transcription of the same Challoner apparatus, prints the note as '[2] \"Ninive\": The capital city of the Assyrian empire.' -- same gloss word for word, lemma spelled Ninive (https://drbo.org/chapter/37001.htm, retrieved 2026-08-24). Note that the missing inline anchor on this verse is a SEPARATE defect of the same transcription and is not repaired here: drbo marks the lemma in the verse text, vulgata.online does not.",
     "added": "2026-08-24"
   },
@@ -279,7 +279,7 @@
     "field": "lemma",
     "from": "Noheston",
     "to": "Nohestan",
-    "reason": "Vowel transposed in the lemma: 'Noheston' for 'Nohestan'. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "Vowel transposed in the lemma: 'Noheston' for 'Nohestan'. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/2Rs.18.json, record tp='fn' vn=4 rn=1: '_And he called its name Noheston:_ That is, their brass; or a little brass.' The verse it quotes, in the same file, reads '... and {1:he called its name Nohestan}' -- the lemma and its own anchor disagree by one vowel. bible.clementina.la 2kgs 18:4 has 'vocavitque nomen eius Nohestan', which is the text this edition translates.",
     "added": "2026-08-25"
   },
@@ -294,7 +294,7 @@
     "field": "lemma",
     "from": "Illustrius",
     "to": "Illustrious",
-    "reason": "Dropped 'o' in the lemma: 'Illustrius' for 'Illustrious'. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "Dropped 'o' in the lemma: 'Illustrius' for 'Illustrious'. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/1Ma.json (this host names a first chapter without its number), record tp='fn' vn=11 rn=1: '_Antiochus the Illustrius:_ Epiphanes, the younger son of Antiochus the Great ...'. Its own verse 11 reads 'a wicked root, Antiochus the Illustrious, the son of king Antiochus'. Across the DR2 source 'Illustrious' is spelled correctly 6 times against this single 'Illustrius'.",
     "added": "2026-08-25"
   },
@@ -309,7 +309,7 @@
     "field": "lemma",
     "from": "hath not know us",
     "to": "hath not known us",
-    "reason": "Dropped 'n' in the lemma's participle: 'hath not know us' for 'hath not known us'. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "Dropped 'n' in the lemma's participle: 'hath not know us' for 'hath not known us'. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/Is.63.json, record tp='fn' vn=16 rn=1: '_Abraham hath not know us:_ That is, Abraham will not now acknowledge us for his children ...' -- the gloss itself paraphrases the verb as 'acknowledge', a perfect. The verse in the same file reads 'and Abraham hath not known us'. Across the DR2 source 'hath not known' occurs 6 times against this single 'hath not know'.",
     "added": "2026-08-25"
   },
@@ -324,7 +324,7 @@
     "field": "lemma",
     "from": "Assyraians",
     "to": "Assyrians",
-    "reason": "Intruded 'a' in the lemma: 'Assyraians' for 'Assyrians'. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "Intruded 'a' in the lemma: 'Assyraians' for 'Assyrians'. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/Ez.23.json, record tp='fn' vn=5 rn=1: '_On the Assyraians:_ That is, the idols of the Assyrians' -- the note's own body spells it correctly in its next four words. Its verse reads 'on the Assyrians that came to her'. Across the DR2 source 'Assyrians' occurs 151 times against this single 'Assyraians'.",
     "added": "2026-08-25"
   },
@@ -339,7 +339,7 @@
     "field": "lemma",
     "from": "Chaldeeans",
     "to": "Chaldeans",
-    "reason": "Doubled 'e' in the lemma: 'Chaldeeans' for 'Chaldeans'. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "Doubled 'e' in the lemma: 'Chaldeeans' for 'Chaldeans'. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/Dn.2.json, record tp='fn' vn=2 rn=1: '_The Chaldeeans:_ That is, the astrologers, that pretended to divine by stars.' Its verse reads 'and the magicians, and the Chaldeans: to declare to the king his dreams'. Across the DR2 source 'Chaldeans' occurs 91 times against this single 'Chaldeeans'.",
     "added": "2026-08-25"
   },
@@ -354,7 +354,7 @@
     "field": "lemma",
     "from": "A star full",
     "to": "A star fall",
-    "reason": "One letter wrong in the lemma, turning a verb into an adjective: 'A star full' for 'A star fall'. Singled out in the audit as the one of the six worth re-checking against raw/ before filing, because a wrong word rather than a misspelt one could as easily have been ours; it is not. Mechanical single-word transcription typo in the note's lemma, within docs/decisions.md's source-defect corrections policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
+    "reason": "One letter wrong in the lemma, turning a verb into an adjective: 'A star full' for 'A star fall'. Singled out in the audit as the one of the six worth re-checking against raw/ before filing, because a wrong word rather than a misspelt one could as easily have been ours; it is not. Mechanical single-word transcription typo in the note's lemma, within pipeline/docs/corrections.md's policy. A lemma is structural rather than prose -- it quotes the words of the verse it glosses, so one that matches no string in its verse cannot be resolved to a span by anything downstream. Adjudicated in docs/research/douay-rheims-lemma-audit.md.",
     "evidence": "corpus/raw/vulgata-online/DR2/Ap.9.json, record tp='fn' vn=1 rn=1: '_A star full:_ This may mean the fall and apostasy of great and learned men from the true faith. Or a whole nation FALLING into error ...' -- the gloss explains a fall twice over, and cannot be glossing a star that is full. The verse in the same file reads 'I saw a star fall from heaven upon the earth', and bible.clementina.la rev 9:1 has 'vidi stellam de caelo cecidisse in terram'. 'full' is not a printing of 'fall' but a transcription of it.",
     "added": "2026-08-25"
   }

@@ -65,7 +65,7 @@
     "field": "latin_text",
     "from": "ac Parác1ito, in sæculórum",
     "to": "ac Paráclito, in sæculórum",
-    "reason": "Digit '1' substituted for letter 'l' in 'Paráclito' (Paraclete) -- the exact digit-substitution typo class docs/decisions.md's corrections policy names as eligible.",
+    "reason": "Digit '1' substituted for letter 'l' in 'Paráclito' (Paraclete) -- the exact digit-substitution typo class pipeline/docs/corrections.md's policy names as eligible.",
     "evidence": "corpus/raw/compendium-pt/archive_2005_compendium-ccc_po.html Appendix A Latin block, Veni Creator Spiritus: 'ac Parác1ito, in sæculórum sǽcula.'; compendium-en's parallel Latin column reads 'ac Paráclito, in sæculórum sæcula.' -- same hymn text, unambiguous reading.",
     "added": "2026-08-16"
   },

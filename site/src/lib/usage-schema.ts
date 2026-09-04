@@ -21,7 +21,7 @@
  * NOTHING HERE MAY TOUCH THE DOM. `src/worker.ts` imports this module and runs
  * on the edge; a `window` reference would break the deploy rather than a test.
  *
- * See `docs/decisions.md` §Usage measurement for the design, and
+ * See `site/docs/usage.md` for the design, and
  * `usage.svelte.ts` for the collector that fills a payload in.
  */
 

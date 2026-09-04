@@ -61,7 +61,7 @@ WHAT IS STILL NOT SHARED, because the duplication is only apparent:
     edition*, not about a template, and being equal right now is not a reason
     to make them unable to diverge. Note the contrast with
     `apply_verse_corrections`, which those two ALSO had identically and which
-    did move: the corrections layer's rules come from docs/decisions.md and
+    did move: the corrections layer's rules come from pipeline/docs/corrections.md and
     docs/corpus-schema.md, and an edition has no standing to disagree with
     them. `validate` is where an edition's own claims live. Identical bodies
     were never the test; whether the source is entitled to differ is.

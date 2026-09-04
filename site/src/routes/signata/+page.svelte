@@ -12,7 +12,7 @@
 	 * order they happened to save things in tells them nothing. Save order
 	 * survives only as the tie-break inside a section. Every document gets its
 	 * own section for the same reason the "Cited in" panel names a work once
-	 * and lists its references under it (docs/decisions.md §The site).
+	 * and lists its references under it.
 	 *
 	 * A row whose address no longer resolves — a withheld work, a slug this
 	 * reader's language does not carry — still renders, with its citation and a

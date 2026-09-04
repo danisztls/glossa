@@ -8,7 +8,7 @@ import { redirect } from '@sveltejs/kit';
  * they are published in fourteen languages and declare an `hreflang` cluster.
  * Everything else a reader can put a language in front of is a citation, which
  * is the same citation in every language -- so the language is taken, stored,
- * and the bar is left showing the address (`docs/decisions.md` §The site, and
+ * and the bar is left showing the address (`site/docs/languages.md`, and
  * `parseLangEntry` in `route-manifest.ts` for the edge's half).
  *
  * SvelteKit prefers a literal route segment to a rest parameter, so this does

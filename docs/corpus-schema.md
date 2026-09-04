@@ -351,7 +351,7 @@ Array ordered by `n`:
 **Eight editions as of 2026-08-26** — `de`, `en`, `es`, `fr`, `it`, `la`, `mg`, `pt` — which is every language vatican.va publishes the Catechism in as HTML. The two it publishes only as PDF (Arabic, and Traditional Chinese, both split across part-files rather than one document) are captured in `raw/` and parsed by nothing. Three source mirrors are involved and the differences between them are edition facts worth stating before anyone reads an asymmetry as a defect:
 
 - **Only five of the eight print a footnote apparatus.** English keys its notes to anchors, Italian and Latin to `<sup>` numbers with the notes at the foot of the page, Malagasy to Word's footnote export, Portuguese to bare `(N)` markers. French, German and Spanish print no notes at all: they fold every reference into the running text — French in parentheses (`(cf. CT 20-22 ; 25)`), German in square brackets (`[Vgl. DV 5.]`), Spanish in parentheses with a hyperlink where the referent is on vatican.va. Those three therefore store `citations: []` throughout, and their `text` is correspondingly longer than the same paragraph elsewhere. Lifting a parenthesis out of French prose would be inventing an apparatus the source does not have, and would remove words the source does print. `audit.py balance` normalizes each pair by its own median, which is what makes the comparison survive this.
-- **`in_brief` is 81 divisions in every edition**, and getting there found two defects in editions that had been in the corpus for a week — see decisions.md §Oracles.
+- **`in_brief` is 81 divisions in every edition**, and getting there found two defects in editions that had been in the corpus for a week — see ../pipeline/docs/oracles.md.
 - **`sub` density is a typographic fact, not a structural one.** The unnumbered run-in sub-headings ("The living God", "God is Truth") are bold in the Spanish, Malagasy, Italian and Latin mirrors and plain in the English and German ones. Where the source bolds them they are `sub` nodes; where it does not they are dropped as display matter and logged. So the same work has 2 unnumbered subs in `ccc.en` and several hundred in `ccc.es`. No paragraph text differs.
 - **English prints two divisions as articles that the others print as subheadings** — `2746-2758` ("The prayer of the hour of Jesus") and `2855-2865` ("The final doxology") — which is why it has 67 articles against everyone else's 65. Read as printed; not a defect in either direction.
 
@@ -584,7 +584,7 @@ Added 2026-08-23 (`decisions.md`; sourcing survey in `research/summa-and-fathers
 }
 ```
 
-`structure.json`: FLAT and document-ordered, like the documents' and for the same reason (`decisions.md` §Storage — "record the observable thing; derive the rest"), with one extra field:
+`structure.json`: FLAT and document-ordered, like the documents' and for the same reason (`../pipeline/docs/corpus.md` — "record the observable thing; derive the rest"), with one extra field:
 
 ```jsonc
 [{ "level": 1, "part": "I", "title": "FIRST PART", "before": 1 }]
@@ -646,7 +646,7 @@ v2, scoped 2026-08-15 — see `decisions.md` §Scope for what's in/out and why, 
 
 Work IDs: `{family}.{slug}.{lang}`, where `{family}` is `vati` | `vatii` | `encyclical` | `exhortation` | `cdf` (distinguishes publishing pipeline and future per-family styling without forking the schema). Examples: `vatii.lumen-gentium.en`, `encyclical.centesimus-annus.pt`, `exhortation.amoris-laetitia.pt`, `cdf.libertatis-conscientia.la`.
 
-**`cdf.*` slugs are ASSIGNED, not read off the source filename** (2026-09-03, `decisions.md` §The doctrinal office). Every other family here is filed under its document's incipit, so the slug and the title are the same fact; this one names its files after the subject — `freedom-liberation` is _Libertatis Conscientia_ — so `vatican_docs.CDF_DOCUMENTS` maps `(promulgation date, source slug)` to the corpus slug, the kind and the title. The slug is the Latin incipit where the document has one and an English description where it has none (`catholics-in-political-life`), because Latin is what this corpus addresses a document by. A document slug is unique across all five families: `getDocumentGroup` keys on the slug alone.
+**`cdf.*` slugs are ASSIGNED, not read off the source filename** (2026-09-03, `decisions.md` §Scope). Every other family here is filed under its document's incipit, so the slug and the title are the same fact; this one names its files after the subject — `freedom-liberation` is _Libertatis Conscientia_ — so `vatican_docs.CDF_DOCUMENTS` maps `(promulgation date, source slug)` to the corpus slug, the kind and the title. The slug is the Latin incipit where the document has one and an English description where it has none (`catholics-in-political-life`), because Latin is what this corpus addresses a document by. A document slug is unique across all five families: `getDocumentGroup` keys on the slug alone.
 
 `manifest.json`: same shape as the Catechism/Compendium manifest, `"type": "document"`, plus document-only fields:
 
@@ -684,7 +684,7 @@ Absence of a sibling-language work (e.g. no `encyclical.rerum-novarum.pt` direct
 
 Never fabricated or inferred without evidence: each status is derived from what's actually on disk or from a direct, logged HTTP response (an absent raw-cache file, a cached-but-stub one, or a reproduced 404), the same "auditable from cache/evidence" posture as everything else in this pipeline.
 
-**Two fix layers, and they are not the same** (`decisions.md` §Corrections and overrides). `pipeline/corrections/` claims the _source_ is wrong and edits the fetched HTML before parsing; `pipeline/overrides/` claims the source is fine and our _derivation_ is not, and edits `structure.json`/`sections.json` after parsing. Keeping them apart is what lets `corpus/raw/` remain the record of what the source actually said. A work with overrides gets an `overrides-applied.json` receipt, written only when there are any; the layer ships empty on purpose, and the bar for filing an entry is that the defect belongs to one document rather than to a class of them. See `pipeline/overrides/README.md`.
+**Two fix layers, and they are not the same** (`../pipeline/docs/corrections.md`). `pipeline/corrections/` claims the _source_ is wrong and edits the fetched HTML before parsing; `pipeline/overrides/` claims the source is fine and our _derivation_ is not, and edits `structure.json`/`sections.json` after parsing. Keeping them apart is what lets `corpus/raw/` remain the record of what the source actually said. A work with overrides gets an `overrides-applied.json` receipt, written only when there are any; the layer ships empty on purpose, and the bar for filing an entry is that the defect belongs to one document rather than to a class of them. See `pipeline/overrides/README.md`.
 
 `structure.json` **(amended 2026-08-21, documents only — see `decisions.md`)**: a FLAT, document-ordered array of `{ level, title, before }`, plus the optional `label` and `subtitle` added 2026-08-22 (`label` was called `ident` until 2026-08-25). It no longer reuses the CCC/Compendium node schema, and `kind`/`n`/`paragraphs`/`children` are gone.
 
@@ -798,7 +798,7 @@ An entry's `refs` are the union across every edition of the work, drawn from all
 
 ## Corrections (auditable source-defect fixes)
 
-Verified source defects are fixed through a corrections layer, never by hand-editing output (see `decisions.md` §Corrections and overrides):
+Verified source defects are fixed through a corrections layer, never by hand-editing output (see `../pipeline/docs/corrections.md`):
 
 - **Input**: `pipeline/corrections/{work_id}.json` (committed to the repo) — array of entries:
 

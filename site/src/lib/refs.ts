@@ -8,7 +8,7 @@
  * `scripts/sync-corpus.mjs` build the scripture cross-reference index with the
  * exact parser that renders the page, instead of the second, separately
  * maintained Python implementation the corpus used to ship (see
- * docs/decisions.md §Parsing). This module is the part that genuinely needs
+ * site/docs/references.md). This module is the part that genuinely needs
  * the corpus: whether a book, chapter, verse or document section actually
  * exists in the edition the reader has open.
  *
@@ -164,7 +164,7 @@ export function refAddress(
 		// The number is validated, never trusted: "Humani generis 561" cites an
 		// AAS page, and that document has 44 sections. A section is a FRAGMENT
 		// on the document's one page, not a page of its own —
-		// `documents/[slug]/[n]` was retired 2026-08-17 (docs/decisions.md §The site;
+		// `documents/[slug]/[n]` was retired 2026-08-17 (site/docs/addresses.md;
 		// 9,315 prerendered files for one section of text each). `#s{n}` is the
 		// same anchor the reading view has always carried.
 		const n = firstLocusSection(seg.locus);
@@ -279,7 +279,7 @@ export function refAddress(
 			? verseExtent(seg.osis, seg.chapter, seg.verses, chapterN, resolve)
 			: undefined;
 
-	// Edition-free (docs/decisions.md #2, which the Bible now follows too).
+	// Edition-free (site/docs/addresses.md, which the Bible now follows too).
 	// `ctx.bibleWorkId` is still required above: it decides whether the
 	// book/chapter/verse EXISTS for this reader, which is what stops a dead
 	// link — it just no longer appears in the URL.

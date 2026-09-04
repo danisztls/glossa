@@ -6,7 +6,7 @@ Research conducted 2026-08-27 (Claude, read-only survey; live fetches against
 `glossa-corpus`). Written to answer a question the corpus had never been asked:
 the editions we hold were chosen by what vatican.va publishes, so it is worth
 knowing, separately, where the readers actually are. Companion to
-`../decisions.md` §Languages and `../../CLAUDE.md` §"Work that spans
+`../../site/docs/languages.md` and `../../CLAUDE.md` §"Work that spans
 languages".
 
 **Scope note**: nothing here is scraped, parsed or ingested. This document
@@ -256,7 +256,7 @@ paid for and sitting in `raw/`.
 
 Meanwhile **`mg` is the one content language that is not an interface
 language**, and it holds a whole work: all 2,865 paragraphs of the CCC. It is
-the highest-value interface addition by the standard `decisions.md` §Languages
+the highest-value interface addition by the standard `../../site/docs/languages.md`
 already sets — coverage, not count — and its blocker is competence rather than
 code.
 

@@ -18,7 +18,7 @@ class CorrectionDriftError(RuntimeError):
     Raised when a recorded correction stops applying, which means either the
     source page changed or the correction was wrong to begin with. Either way
     the run must fail loudly rather than emit a work whose corrections
-    silently did nothing -- see docs/decisions.md, "Source-defect corrections
+    silently did nothing -- see pipeline/docs/corrections.md, "Source-defect corrections
     policy".
 
     vatican_docs.py deliberately does NOT use this: `scrape_one` promises not
@@ -41,7 +41,7 @@ class CorrectionDriftError(RuntimeError):
 # and `apply_verse_corrections` below. They are here because neither answer is
 # an edition's to give: "never apply an entry carrying a `resolution`" and
 # "an entry that matched nothing on a full run is drift" are both
-# docs/decisions.md's source-defect corrections policy, in the same way the
+# pipeline/docs/corrections.md's policy, in the same way the
 # locator shape is docs/corpus-schema.md's. What stays with each scraper is
 # the applier itself, which knows what its own parse looks like.
 #
@@ -61,7 +61,7 @@ def filed(corrections: Iterable[dict], field: str | None = None) -> list[dict]:
 
     An entry carrying a `resolution` is documented-but-not-applied: a defect
     with no known correct value gets recorded, never invented
-    (docs/decisions.md SS Corrections and overrides). Passing `field=None`
+    (pipeline/docs/corrections.md). Passing `field=None`
     keeps every kind, which is what an applier that owns a whole file wants.
     """
     return [
@@ -111,7 +111,7 @@ def corrections_receipt(
     rather than writes the five bodies were character for character the same.
     Nothing here is per-source: `applied` and `corrections` are already this
     work's own, and an entry carrying a `resolution` is documented-but-not-
-    applied by the policy in docs/decisions.md, not by any one source's
+    applied by the policy in pipeline/docs/corrections.md, not by any one source's
     reading of it.
 
     Written by `write_stamped_json` along with the rest of the work, which is
@@ -139,7 +139,7 @@ def apply_verse_corrections(
     matos_soares.py differed only in reaching a book's fields by attribute
     rather than by key. That is not a coincidence of three editions agreeing.
     Every rule here comes from somewhere above the edition: the drift guard and
-    the never-apply-a-`resolution` rule are docs/decisions.md's source-defect
+    the never-apply-a-`resolution` rule are pipeline/docs/corrections.md's source-defect
     corrections policy, and the `{osis, chapter, verse}` locator and
     `{"n", "text"}` verse are docs/corpus-schema.md. An edition has no standing
     to disagree with either, which is exactly what `validate` -- asserting book

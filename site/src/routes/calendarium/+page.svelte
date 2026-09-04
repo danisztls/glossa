@@ -64,7 +64,7 @@
 
 	/** The options each published layer computes under, by layer id. The
 	 *  universal Latin calendar is the default for the reason
-	 *  `docs/decisions.md` gives: a conference's transfers are a fact about a
+	 *  `site/docs/calendar.md` gives: a conference's transfers are a fact about a
 	 *  country, not about the calendar. */
 	const OPTIONS: Record<string, CalendarOptions> = Object.fromEntries(
 		NATIONAL_CALENDAR_LIST.map((c) => [c.id, { nationalCalendar: c } as CalendarOptions])

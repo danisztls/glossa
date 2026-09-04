@@ -27,7 +27,7 @@ interface PrayerByLang {
 export const load: PageLoad = async ({ params }) => {
 	const slug = params.slug;
 
-	// Prayer URLs stay edition-free (docs/decisions.md #2, same as CCC/
+	// Prayer URLs stay edition-free (site/docs/addresses.md, same as CCC/
 	// Compendium) — the edition comes from a stored preference applied
 	// client-side, and this route renders only in the browser (`ssr = false`,
 	// `+layout.ts`) — but `load` only re-runs on navigation, not when a

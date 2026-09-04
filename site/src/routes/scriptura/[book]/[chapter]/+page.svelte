@@ -279,7 +279,7 @@
 	 * right book table.
 	 *
 	 * SUPPRESSED WHILE COMPARING, and not by an accident of layout: compare
-	 * mode spends the room the notes live in (docs/decisions.md — two reading
+	 * mode spends the room the notes live in (site/docs/reading.md — two reading
 	 * columns plus the aside leave about 10rem of a 17rem lane), so the
 	 * apparatus lane is already taken back there. Fetching a commentary to set
 	 * it where there is nowhere to set it would be a megabyte for nothing.
@@ -324,7 +324,7 @@
 	 * the design rather than working around a restriction, and the chapter
 	 * rendered complete without JavaScript, with only the passage marking
 	 * needing it. Since the site became one SPA shell with `ssr = false`
-	 * (`+layout.ts`, docs/decisions.md §The site) no route component runs
+	 * (`+layout.ts`, site/docs/shell.md) no route component runs
 	 * during the build at all — the whole chapter now needs JavaScript to
 	 * render, not just the highlight — so the guard is no longer load-bearing
 	 * against a prerendering throw; it stays because it still states the

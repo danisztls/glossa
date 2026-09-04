@@ -16,7 +16,7 @@ import type { PageLoad } from './$types';
  * docblock below) rather than picking a language at load time, because
  * content language now follows a client-side preference
  * (`$lib/content.svelte.ts`) and this route renders only in the browser
- * (`ssr = false`, `+layout.ts`, docs/decisions.md §The site) — but `load`
+ * (`ssr = false`, `+layout.ts`, site/docs/shell.md) — but `load`
  * only re-runs on navigation, not when a stored preference changes on its
  * own, so reading it there wouldn't keep the page honest anyway. Cheap to
  * embed: one

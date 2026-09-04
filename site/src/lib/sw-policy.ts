@@ -533,7 +533,7 @@ export interface RoutableRequest {
  */
 export function routeFor(request: RoutableRequest, partition: AssetPartition): RouteKind {
 	// The site makes no non-GET requests (no forms, no mutation — see
-	// docs/decisions.md's account-free posture); stay defensive anyway.
+	// docs/decisions.md §Posture's account-free rule); stay defensive anyway.
 	if (request.method !== 'GET') return 'passthrough';
 	// Never touch cross-origin, and in particular never cache an opaque
 	// response whose success this worker cannot inspect. The site makes no

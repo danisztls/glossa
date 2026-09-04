@@ -175,7 +175,7 @@ export function pickComparisonEdition<E extends { id: string; lang: string }>(
 // `page.url.searchParams` during prerendering threw (one prerendered file
 // served every query string that points at it). That trap is gone since the
 // site became one SPA shell with `ssr = false` (`+layout.ts`,
-// docs/decisions.md §The site) and no route component runs on the server
+// site/docs/shell.md) and no route component runs on the server
 // at all — but this stays a pure string/URL utility with NO dependency on
 // `$app/state` or `$app/navigation` regardless, so it stays callable from
 // anywhere (`compare-nav.svelte.ts`'s docblock makes the same case for why

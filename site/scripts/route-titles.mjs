@@ -6,7 +6,7 @@
  * half of what a consumer that does not run JavaScript needs: `ssr = false`
  * means one document is served for all ~5,800 addresses, so without this every
  * one of them is titled `Glossa Catholica` and described by the same sentence
- * (docs/decisions.md §The site, "What a crawler that does not render is told").
+ * (site/docs/edge.md, "What a crawler that does not render is told").
  *
  * WHAT MAY GO IN HERE IS A NAME, NEVER A TEXT. `wrangler.jsonc` says the edge
  * worker "is not an application server and never reads or transforms corpus

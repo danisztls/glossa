@@ -281,7 +281,7 @@ export interface SummaQuestion {
 /**
  * A heading in the Summa's table of contents. Flat and document-ordered,
  * with ranges DERIVED rather than stored — the same shape and the same
- * reasoning as the documents' `DocumentNode` (docs/decisions.md §Storage:
+ * reasoning as the documents' `DocumentNode` (pipeline/docs/corpus.md:
  * "record the observable thing; derive the rest").
  *
  * `part` is the extra field the documents' node does not need: question

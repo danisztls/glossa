@@ -26,7 +26,7 @@ describes the corpus -- and neither is visible from the prose alone.
 WHY THE LATIN IS A COLUMN AND NOT AN ARBITER. `bible.clementina.la` is the
 text `bible.cpdv.en` and `bible.douay-rheims.en` were translated from and the
 one `bible.matos-soares.pt` follows, so where the vernaculars disagree it is
-evidence rather than a third opinion (docs/decisions.md §Oracles). But it
+evidence rather than a third opinion (pipeline/docs/oracles.md). But it
 is evidence about ONE question -- how the base divides its verses -- and Psalm
 13 is the standing proof that this is not the same question as which reading
 is right: there the Latin's verse COUNT sides with the Portuguese while its

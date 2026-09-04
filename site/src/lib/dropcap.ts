@@ -101,7 +101,7 @@ export interface DropCapSplit {
  * `splitDropCap` directly under vitest's Node test environment
  * (`environment: 'node'`, vitest.config.ts). It used to run under Node
  * during the build's prerendering pass too, before the site became one SPA
- * shell with `ssr = false` (`+layout.ts`, docs/decisions.md §The site) —
+ * shell with `ssr = false` (`+layout.ts`, site/docs/shell.md) —
  * but the guard was never only about that, and stays regardless of which
  * Node context reaches it.
  */

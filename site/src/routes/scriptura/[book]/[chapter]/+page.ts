@@ -8,7 +8,7 @@ import type { PageLoad } from './$types';
 /**
  * A Scripture chapter at an EDITION-FREE address: `/scriptura/{book}/{chapter}`.
  *
- * The Bible used to be the site's one exception to docs/decisions.md #2's
+ * The Bible used to be the site's one exception to site/docs/addresses.md's
  * "URLs stay edition-free" convention — CCC, Compendium and documents all
  * addressed content without naming an edition, while scripture carried
  * `/scriptura/{edition}/{book}/{chapter}`. That exception cost more than it

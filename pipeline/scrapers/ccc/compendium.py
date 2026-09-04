@@ -134,7 +134,7 @@ from compendium_pdf import (
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-# The corpus is a separate, private repository (docs/decisions.md
+# The corpus is a separate, private repository (pipeline/docs/corpus.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 BUILD_ROOT = build_root()
@@ -201,7 +201,7 @@ COPYRIGHT_HOLDER = "Libreria Editrice Vaticana"
 
 
 #: How these scrapers conduct themselves toward vatican.va. The 2.0s is that
-#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md).
+#: host's robots.txt `Crawl-delay` and is a commitment (pipeline/docs/corpus.md).
 #: No retry: this is a single-work crawl of a handful of pages, where a failed
 #: page means the output would be wrong and stopping is the right answer --
 #: unlike vatican_docs.py, which crawls hundreds and must survive one bad URL.
@@ -1726,7 +1726,7 @@ def apply_corrections(
     longer matches means either the mirror changed or the correction was
     wrong, and both are worse than a failed run. An entry carrying a
     `resolution` is documented rather than applied -- the policy for a defect
-    with no known correct value (docs/decisions.md).
+    with no known correct value (pipeline/docs/corrections.md).
 
     ENTRIES APPLY IN FILE ORDER, and one may quote the page as an earlier
     entry leaves it. That is not a convenience: two independent defects can
@@ -2045,7 +2045,7 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "source's own line break between the label and the title. Boldness alone "
             "cannot say: an earlier parser consumed the sub-headings beneath a title "
             "into it ('The Sacramental Celebration of the Paschal Mystery CELEBRATING "
-            "THE LITURGY OF THE CHURCH Who celebrates?'). See docs/decisions.md §Parsing."
+            "THE LITURGY OF THE CHURCH Who celebrates?'). See pipeline/docs/parsing.md."
         ),
         (
             "The work's division scheme -- four parts, eight sections, twenty chapters -- "

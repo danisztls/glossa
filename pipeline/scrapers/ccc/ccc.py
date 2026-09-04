@@ -95,7 +95,7 @@ from common import (
 USER_AGENT = "Glossa Catholica corpus builder"
 CRAWL_DELAY = 2.0  # seconds; robots.txt on vatican.va says Crawl-delay: 2
 
-# The corpus is a separate, private repository (docs/decisions.md
+# The corpus is a separate, private repository (pipeline/docs/corpus.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 BUILD_ROOT = build_root()
@@ -468,7 +468,7 @@ def resolve_markers(
 
 
 #: How these scrapers conduct themselves toward vatican.va. The 2.0s is that
-#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md).
+#: host's robots.txt `Crawl-delay` and is a commitment (pipeline/docs/corpus.md).
 #: No retry: this is a single-work crawl of a handful of pages, where a failed
 #: page means the output would be wrong and stopping is the right answer --
 #: unlike vatican_docs.py, which crawls hundreds and must survive one bad URL.

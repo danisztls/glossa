@@ -112,7 +112,7 @@ def sample_run_writes_nothing(sample: bool) -> bool:
 
     `summa.py` alone had it right, and its wording is kept here verbatim: a
     sample is something you READ, and then you run the real thing. The point
-    of the protocol (`docs/decisions.md`) is to learn what a full crawl would
+    of the protocol (`pipeline/docs/corpus.md`) is to learn what a full crawl would
     cost before spending it, which needs a report and not an artifact.
 
     Here rather than in each scraper because the flag is per-source and the
@@ -133,7 +133,7 @@ def write_if_changed(path: Path, text: str) -> bool:
     THE REASON OUTLIVED THE ONE IT WAS WRITTEN FOR. This was argued from git:
     the directory was tracked, and a diff in which all 1,229 files look
     touched cannot show which document a parser fix actually moved. `build/`
-    stopped being tracked on 2026-08-27 (docs/decisions.md §The corpus), and
+    stopped being tracked on 2026-08-27 (pipeline/docs/corpus.md), and
     the guard is worth more rather than less -- `git status` is no longer
     available to answer "what did this fix move", so the mtimes and the
     directory comparison in the next function are what is left. Rewriting

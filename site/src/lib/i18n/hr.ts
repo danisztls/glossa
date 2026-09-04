@@ -16,7 +16,7 @@
  * the one page whose form contradicts its content. That was reversed on the
  * judgement that a reader who cannot read the page cannot weigh it either, and
  * that an English wall is not more honest than a translation -- see
- * `docs/decisions.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
+ * `site/docs/colophon.md`. IT HAS NOT BEEN READ BY A NATIVE SPEAKER.
  * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
  * standing statement, Can. 216 CIC, at full length and in the one line the
  * footer of every page carries) and `colophon.copyrightBody3` (how a rights

@@ -53,7 +53,7 @@
 	"builds its own option list, mixing this prayer's sibling languages with
 	its Latin FIELD — which is not a work and has no manifest of its own".
 	The second half of that stopped being true when Latin became a real prayer
-	edition (docs/decisions.md §Addresses and editions) and `/preces` started passing
+	edition (site/docs/addresses.md) and `/preces` started passing
 	ordinary manifests like everyone else; the first half was always just a
 	boolean. What was left was eight copies of one `ComparisonEditionMenu`
 	call differing only in where the array came from, so the bar builds it.

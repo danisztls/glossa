@@ -23,7 +23,7 @@ import unicodedata
 # request, store the bytes verbatim. What differed was never that sequence --
 # it was a handful of knobs, open-coded, which is how vatican.va's `Crawl-delay`
 # ended up asserted in four separate files where it reads like an
-# implementation detail instead of the commitment docs/decisions.md says it is.
+# implementation detail instead of the commitment pipeline/docs/corpus.md says it is.
 #
 # A RATE LIMIT IS STILL NOT SHARED. It is DECLARED -- `FetchPolicy` has no
 # default for `delay` or `user_agent`, so a new scraper cannot inherit another

@@ -1,4 +1,4 @@
--- Usage measurement. See docs/decisions.md §Usage measurement.
+-- Usage measurement. See site/docs/usage.md.
 --
 -- Three tables, and the separation between the first and the third is the
 -- whole privacy design rather than normalisation:

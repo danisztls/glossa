@@ -84,7 +84,7 @@ only thing that could see: `ccc.en` ¶2051 had swallowed the Ten Commandments
 table (14.9x), `ccc.en` ¶2436 was missing the opening sentence the mirror
 never printed (0.49x), and `summa.en` III q. 26 a. 2 had a 5,150-character
 editorial note stored as the continuation of `ad 3` (2.35x). All three were
-fixed on 2026-08-25 (docs/decisions.md §Oracles).
+fixed on 2026-08-25 (pipeline/docs/oracles.md).
 
 What is left is the noise floor, and it is worth naming so nobody re-opens
 it: `ccc.en` ¶230 at 2.12x prints its Augustine citation inline where the
@@ -410,7 +410,7 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
 
     Lives in the corpus repo rather than this one because its content is
     verbatim heading text from the source documents, which is the reason the
-    corpus is private (docs/decisions.md §The corpus).
+    corpus is private (pipeline/docs/corpus.md).
     """
     root = corpus / "oracles" / "toc"
     if not root.exists():

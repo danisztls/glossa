@@ -2,14 +2,16 @@
 
 Operational notes for the site. The repo root's `CLAUDE.md` holds the
 corpus-safety rules that apply before any of this (where the corpus lives,
-what may be deleted, the lint hook); `docs/decisions.md` holds the full
-rationale wherever a § is cited.
+what may be deleted, the lint hook); **`site/docs/*.md` holds the rationale**
+— `addresses`, `languages`, `references`, `shell`, `edge`, `reading`,
+`finding`, `calendar`, `usage`, `linking-out`, `colophon`, `dev-loop` — with
+`docs/decisions.md` holding only posture, scope and process.
 
 ## The boot payload has a ceiling, and the deploy enforces it
 
 Everything `index.html` asks for before it can paint. It was **6.30 MB of
-JavaScript and is 0.47 MB** (2026-09-03, §The site); `npm run preflight` prints
-it and refuses to deploy over `MAX_BOOT_JS_BYTES` in
+JavaScript and is 0.47 MB** (2026-09-03, `site/docs/shell.md`); `npm run
+preflight` prints it and refuses to deploy over `MAX_BOOT_JS_BYTES` in
 `scripts/preflight-deploy.mjs`. Re-measure rather than quoting the number.
 
 **Vite's `chunkSizeWarningLimit` is not this check and cannot be.** It fires per
@@ -52,7 +54,7 @@ documents' section numbers — so every shelf that renders a citation owes those
 three (`REFS` in `index-priming.ts`) whatever its own text costs.
 `/doctrina-socialis` was listed as needing nothing, its paragraphs coming from
 an inlined registry, and its first footnote threw `listBooks: … read before it
-was primed` (docs/decisions.md §The site).
+was primed` (site/docs/shell.md).
 
 **Making a registry lazy also breaks what was DERIVED from it at module scope.**
 `corpus.ts` memoises five maps at module load (the canonical book list, the

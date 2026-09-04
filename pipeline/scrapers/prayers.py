@@ -182,7 +182,7 @@ from common.pdf import (
     split_pages,
 )
 
-# The corpus is a separate, private repository (docs/decisions.md
+# The corpus is a separate, private repository (pipeline/docs/corpus.md
 # §The corpus); `common.corpus_dir()` resolves it, honouring $CORPUS_DIR.
 RAW_ROOT = raw_root()
 BUILD_ROOT = build_root()
@@ -498,7 +498,7 @@ def top_paragraphs(body_html: str) -> list[str]:
 
 
 #: How this scraper conducts itself toward vatican.va. The 2.0s is that host's
-#: robots.txt `Crawl-delay` and is a commitment (docs/decisions.md). No retry:
+#: robots.txt `Crawl-delay` and is a commitment (pipeline/docs/corpus.md). No retry:
 #: this captures a handful of named pages, and a failure means the prayer text
 #: would be missing, which is a reason to stop rather than to carry on.
 VATICAN_POLICY = FetchPolicy(user_agent=USER_AGENT, delay=2.0)
@@ -4296,7 +4296,7 @@ def enrich_rosary_with_full_mysteries(rosary: Prayer, lang: str) -> None:
 
 
 # --------------------------------------------------------------------------
-# Corrections (docs/decisions.md §Corrections and overrides)
+# Corrections (pipeline/docs/corrections.md)
 # --------------------------------------------------------------------------
 
 
@@ -4866,7 +4866,7 @@ def build_structure(prayers: list[Prayer], lang: str) -> list[dict]:
 # those five and nothing else. A reader who prefers English (UK) therefore
 # reads five prayers from it and twenty-three from `prayer.common.en`,
 # resolved per address the way a citation to the Summa's Supplementum reaches
-# English for a Latin-preferring reader (docs/decisions.md §Addresses and editions).
+# English for a Latin-preferring reader (site/docs/addresses.md).
 #
 # THAT IS A REVERSAL of the shape this file shipped with hours earlier, and
 # the reasoning it reverses is worth keeping because it was not wrong so much
@@ -4981,7 +4981,7 @@ def build_regional_manifest(
             f"these here and the other {len(SLUGS) - len(prayers)} from "
             "prayer.common.en, resolved per address. Sources, copyright and "
             "corrections are identical to prayer.common.en's because the two are "
-            "one parse of one page. See docs/decisions.md §Addresses and editions "
+            "one parse of one page. See site/docs/addresses.md "
             "for why "
             "this is sparse rather than a second whole book."
         ),
@@ -5036,7 +5036,7 @@ def build_regional_manifest(
 # THE ONE EN DEFECT IS A CORRECTION, NOT A MERGE. `sæ´cula` is fixed in
 # pipeline/corrections/prayer.common.en.json, against the source HTML, with
 # the PT witness cited as the evidence for what was meant -- the ordinary
-# path for a source defect with a known correct value (docs/decisions.md
+# path for a source defect with a known correct value (pipeline/docs/corrections.md
 # §Corrections and overrides). Fixing it there rather than here keeps
 # this function a pure selection over already-parsed text, and fixes the EN
 # edition's own `latin` field at the same time.
@@ -5860,7 +5860,7 @@ def build_manifest(
                 f"{REGIONAL_VARIANT} wording of the same {len(varied)} is "
                 f"{REGIONAL_WORK_ID}, a regional edition of those prayers alone. "
                 "There is no `variants` field: the split is an edition boundary "
-                "(docs/decisions.md §Addresses and editions)."
+                "(site/docs/addresses.md)."
             )
             if lang == "en"
             else (

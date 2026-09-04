@@ -209,7 +209,7 @@ Three distinct causes found, two of them parser-side:
 - **Source typo** — `aeterni-patris.en` renders §21's marker as literal `Z 1.`
   on vatican.va's own page. This is a source defect and belongs in
   `pipeline/corrections/` with locator and evidence, per
-  `docs/decisions.md` §Corrections and overrides — not a code
+  `../../pipeline/docs/corrections.md` — not a code
   special-case.
 
 ### 4. Hypothesis killed: PT heading detection is _not_ overfiring
@@ -581,7 +581,7 @@ oracle (`<corpus>/oracles/toc/`) the earlier entries kept calling for, so all
 
 Two mechanical audits (`pipeline/scrapers/audit.py`) retired work the sweep
 would otherwise have done slowly and less reliably. Reasoning in
-`decisions.md` §Oracles; the short version is that **coverage** (raw body
+`../../pipeline/docs/oracles.md`; the short version is that **coverage** (raw body
 text vs stored text) sees a class neither existing oracle can: the round-trip
 check is a statement about one block, and cross-language symmetry compares
 section-number sets, so a block that never became a block is invisible to both.

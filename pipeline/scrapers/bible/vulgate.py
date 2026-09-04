@@ -25,7 +25,7 @@ Two things about the text are deliberate and must not be "fixed":
     folded in the lookup keys.
 
 Corpus fidelity says the stored text is what the page prints
-(docs/decisions.md, Corrections and overrides). Normalising
+(pipeline/docs/corrections.md). Normalising
 orthography on the way in would make the Latin edition a silent modernisation
 of a 1914 critical printing, and would do it in the one place -- the corpus --
 where it could not be undone without re-parsing.

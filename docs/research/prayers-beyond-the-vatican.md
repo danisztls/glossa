@@ -100,7 +100,7 @@ What is **not** in place, and each is small:
 1. **`LangSpec.appendix` is `AnySource`, not `AnySource | None`.** Every edition so far has a Compendium appendix; a conference-sourced one has no Compendium page at all. `expected_slugs()` already composes from what is present, so nothing downstream branches — but the field and `build_manifest`'s source list have to allow the absence.
 2. **`run()` requires a Rosary entry** and raises `f"{lang}: Appendix A parser produced no Rosary entry"` when the appendix produces none. With no appendix there is no Rosary, and that check has to move under "if there is an appendix".
 3. **`build_manifest`'s first note and `creed_source_note` both assume a Compendium.** They are derived from the spec now rather than hardcoded, so the fix is a branch and not a rewrite — but an edition sourced from `katolsk.dk` must not describe itself as Appendix A of anything.
-4. **`ko`, `tl` and `uk` are missing from `ContentLang` and `LANGUAGE_NAMES`** in `site/src/lib/`. An unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as "mg" for five days (decisions.md §Languages). Add the row the same day the work ships, not after.
+4. **`ko`, `tl` and `uk` are missing from `ContentLang` and `LANGUAGE_NAMES`** in `site/src/lib/`. An unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as "mg" for five days (`../../site/docs/languages.md`). Add the row the same day the work ships, not after.
 
 ## 8. The shape of the work, per language
 

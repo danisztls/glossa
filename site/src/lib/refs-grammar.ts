@@ -20,7 +20,7 @@
  * built by grepping real citations rather than from a specification. It had a
  * second home until 2026-08-21, `pipeline/build/xrefs.py`, which produced the
  * committed `corpus/xrefs/ccc-bible.json`; the two drifted, this one was
- * right wherever they disagreed, and the Python is gone (docs/decisions.md).
+ * right wherever they disagreed, and the Python is gone (site/docs/references.md).
  * `scripts/build-xrefs.mjs` now derives that index from this module, so there
  * is exactly one grammar again.
  *
@@ -3107,7 +3107,7 @@ const CANON_SUBSECTION_RE = new RegExp(`^\\s*,?\\s*§+\\s*\\d+(?:\\s*[${DASHES}]
 
 // --------------------------------------------------------------------------
 // Acta Apostolicae Sedis — the one address this grammar answers with a link
-// that LEAVES the site (docs/decisions.md §Linking out).
+// that LEAVES the site (site/docs/linking-out.md).
 //
 // AAS is a venue, not a work: "AAS 86 (1994), 386-387" names a page in a
 // printed volume, and a page number has no unit for this corpus's
@@ -3726,7 +3726,7 @@ const BOOK_CHAPTER_GAP_RE = /^ *\.? *,? */;
  * scripture branches recursed over the tail; the four document/Summa branches
  * pushed it as plain text, so a clause naming two documents linked only the
  * first — CCC 90's Portuguese footnote reaches both Dei Filius and Lumen
- * Gentium, and only ever drew one link (docs/decisions.md §Parsing,
+ * Gentium, and only ever drew one link (site/docs/references.md,
  * 2026-09-03). Nothing about those branches said they were doing something
  * different; the offsets were just spelled out by hand each time.
  *

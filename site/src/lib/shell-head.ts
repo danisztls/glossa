@@ -6,7 +6,7 @@
  * the edge. Until this module existed it learned the same title and the same
  * sentence ~6,000 times — the textbook signature of duplicated content, and the
  * reason a pasted link unfurled as the site's name rather than the chapter's
- * (docs/decisions.md §The site).
+ * (site/docs/edge.md).
  *
  * PURE, AND THAT IS THE POINT. It takes an address and two generated tables
  * and returns fields; `src/worker.ts` is the only place that knows about
@@ -825,7 +825,7 @@ function jsonLd(value: unknown): string {
  * The elements appended to `<head>`: the canonical address, the card's URL, a
  * robots directive where one is warranted, and the breadcrumb.
  *
- * `og:url` IS THE REVERSAL of the omission argued in docs/decisions.md, and
+ * `og:url` IS THE REVERSAL of the omission argued in site/docs/edge.md, and
  * the reason it was omitted is the reason it can be written now. It was left
  * out because one document answered all ~6,000 addresses, so the only value the
  * static file could carry was the site root — which would have retitled and

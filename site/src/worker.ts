@@ -61,7 +61,7 @@ declare class HTMLRewriter {
 /** Where the usage beacon posts. Short because `sendBeacon` bodies are small
  *  and this is one of only two paths the worker answers itself. Note the WAF
  *  custom rule that guards it matches this literal path — see
- *  docs/decisions.md §Usage measurement. */
+ *  site/docs/usage.md. */
 const BEACON_PATH = '/a';
 
 /**
@@ -326,7 +326,7 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		// Before the navigation test, and cheaply: the site makes no other POST
 		// request of any kind (no forms, no mutation — see the account-free
-		// posture in docs/decisions.md), so a POST is either the beacon or is
+		// posture in docs/decisions.md §Posture), so a POST is either the beacon or is
 		// not ours, and only a POST pays for the extra URL parse.
 		if (request.method === 'POST') {
 			return new URL(request.url).pathname === BEACON_PATH

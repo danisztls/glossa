@@ -2,8 +2,10 @@
 
 Operational notes for the scrapers and the rebuild. The repo root's
 `CLAUDE.md` holds the corpus-safety rules that apply before any of this
-(where the corpus lives, what may be deleted, the ledgers); `docs/decisions.md`
-holds the full rationale wherever a § is cited.
+(where the corpus lives, what may be deleted, the ledgers); **`pipeline/docs/*.md`
+holds the rationale** — `corpus`, `corrections`, `parsing`, `oracles`,
+`languages` — with `docs/decisions.md` holding only posture, scope and
+process.
 
 ## The rebuild recipe is `pipeline/rebuild.py`, and it is a program
 
@@ -427,7 +429,7 @@ shared.
 
 ## The First Vatican Council has a walk of its own, and had to
 
-Ingested 2026-09-02 (`docs/decisions.md` §The First Vatican Council). Two
+Ingested 2026-09-02 (`pipeline/docs/parsing.md`). Two
 constitutions, Italian and Latin, four pages — vatican.va publishes no English
 edition of either, recorded as `no-url` rather than left bare. The subcommand
 is `vati` (its own, not a flag on `phase1`), and `walk_vatican_i` reads the
@@ -1068,7 +1070,7 @@ the Social Doctrine).
 ## The Code of Canon Law is discovered, never derived
 
 `cic.{lang}`, the seven languages vatican.va publishes the Code in as HTML
-(2026-09-03, `docs/decisions.md` §The Code of Canon Law, `docs/corpus-schema.md`
+(2026-09-03, `docs/decisions.md` §Scope, `docs/corpus-schema.md`
 §Code of Canon Law). 1,752 canons per edition, over 1,061 pages.
 
 - **A scope decision that rested on a guessed URL's 404.** The Code was out of
@@ -1204,9 +1206,9 @@ The site's half (rendering, preferences, anchors) is in `site/CLAUDE.md`.
 The one scraper here that produces nothing for `build/`. It fetches GCatholic's
 iCal calendars into `raw/gcatholic-calendar/` and parses them to
 `site/src/lib/calendar/oracle/`, where the site's own computed calendar is
-checked against them day by day (`site/CLAUDE.md`, `docs/decisions.md` §The
-liturgical calendar). Nothing it writes is served to a reader; it decides
-whether the code that decides days is right.
+checked against them day by day (`site/CLAUDE.md`, `site/docs/calendar.md`).
+Nothing it writes is served to a reader; it decides whether the code that
+decides days is right.
 
 - **The oracle is tracked in THIS repository, not the corpus**, because the
   corpus is a separate private checkout a test run cannot assume is present.

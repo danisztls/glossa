@@ -27,7 +27,7 @@ WHAT IT REFUSES TO PROPOSE, each refusal principled:
     this is the important refusal. Czech Lumen gentium writes AAS at all
     seventeen of its pre-1909 citations, which is that edition's practice and
     not a slip; correcting it would impose the Latin's usage on an edition
-    that consistently does otherwise, and `docs/decisions.md` on corrections
+    that consistently does otherwise, and `pipeline/docs/corrections.md`
     forbids exactly that -- "never wording, never modernization". These are
     reported as leads under `--practice` and filed nowhere.
   * A VOLUME AND YEAR THAT ARE NOT AN ASS ROW. `AAS 29 (1896-1807)` in the

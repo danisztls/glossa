@@ -22,7 +22,7 @@
  * forming. `--all` is there for the days when the whole site has eleven
  * sessions and the floor hides everything.
  *
- * See docs/decisions.md §Usage measurement.
+ * See site/docs/usage.md.
  */
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';

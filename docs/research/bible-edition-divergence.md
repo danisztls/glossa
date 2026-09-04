@@ -131,7 +131,7 @@ it as vv. 4–6 where the Latin keeps it inside v3.
 So the verse counts read 7 / 7 / 10 / 7 for LA / PT / EN / DR, and the Latin's
 count "sides with the Portuguese" while the Latin's **text** sides with the
 English. This corrects what this project then concluded (the standing rule is now
-`docs/decisions.md` §Oracles), which took from the count alone that "the interpolation is not in CPDV's own base."
+`../../pipeline/docs/oracles.md`), which took from the count alone that "the interpolation is not in CPDV's own base."
 
 That is the general lesson, and it is why the tool reports the Latin as a
 column rather than resolving rows with it. A verse-count oracle answers _how

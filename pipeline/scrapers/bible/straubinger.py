@@ -323,7 +323,7 @@ def abbrevs_for(osis: str, name: str) -> list[str]:
 # The 18-chapter, 21-correction single-verse mislabelling class (landmine,
 # third kind -- see docblock) goes through the audited corrections layer,
 # `pipeline/corrections/bible.straubinger.es.json` (CLAUDE.md "Corrections
-# and overrides"; docs/decisions.md SS Corrections and overrides): the
+# and overrides"; pipeline/docs/corrections.md): the
 # source's own printed verse ADDRESS is wrong, which is exactly the class
 # that layer exists for -- a verse number is not markup, it is what a reader
 # cites. `field: "verse_number"` is the same field `kaldi.py`'s

@@ -77,7 +77,7 @@ export type Address =
 	/** A document, or one numbered section of it. `n` absent is the whole
 	 *  document: a section is a FRAGMENT on the document's single page
 	 *  (`#s{n}`), not a page of its own -- `documents/[slug]/[n]` was retired
-	 *  2026-08-17 (docs/decisions.md §The site; 9,315 prerendered files for one section
+	 *  2026-08-17 (site/docs/shell.md; 9,315 prerendered files for one section
 	 *  of text each). */
 	| { kind: 'document'; slug: string; n?: number }
 	/** A Summa question, or one article of it (`#a3`). Articles are fragments
@@ -298,7 +298,7 @@ export function hrefFor(a: Address): string {
 			const span = a.from !== undefined && a.to !== undefined && a.to > a.from;
 			const query = span ? `?v=${a.from}-${a.to}` : '';
 			const hash = a.from !== undefined ? `#v${a.anchor ?? a.from}` : '';
-			// Edition-free (docs/decisions.md #2, which the Bible now follows
+			// Edition-free (site/docs/addresses.md, which the Bible now follows
 			// too): which edition renders here is the reader's standing
 			// preference, never the link's to decide.
 			return `/scriptura/${bookSlug(a.osis)}/${a.chapter}${query}${hash}`;
@@ -312,7 +312,7 @@ export function hrefFor(a: Address): string {
 		// same outline the Catechism prints at length (`toc-pairing.ts`). It
 		// was `/compendium/{n}` until 2026-08-28; there is no compatibility
 		// layer, so the old address is now invalid like every other retired
-		// one (docs/decisions.md §Addresses and editions).
+		// one (site/docs/addresses.md).
 		case 'compendium':
 			return `/catechismus/compendium/${a.n}`;
 		case 'compendiumChapter':
@@ -340,7 +340,7 @@ export function hrefFor(a: Address): string {
 			return a.n === undefined ? `/documenta/${a.slug}` : `/documenta/${a.slug}#s${a.n}`;
 		// Nested under `/doctores`, the shelf for the Fathers and Doctors of the
 		// Church, because a work by one theologian is not a peer of Scripture,
-		// the Catechism or the Magisterium — see docs/decisions.md §Addresses
+		// the Catechism or the Magisterium — see site/docs/addresses.md
 		// and editions. It was `/summa/{part}/{question}` until 2026-08-28, and
 		// there is no compatibility layer, exactly as with `/compendium/{n}`.
 		case 'summa': {

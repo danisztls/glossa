@@ -7,7 +7,7 @@
  * measuring the corpus, and every regression the grammar has had was found
  * the same way, by hand, after the fact: 3,590 references silently not
  * linking when an italic book name split a citation across two text runs
- * (decisions.md §Storage), 153 references to Romans lost to a "Cat Rom"
+ * (site/docs/references.md), 153 references to Romans lost to a "Cat Rom"
  * guard, ~200 English references lost to an abbreviating full stop. The unit
  * tests lock in what each rule does; nothing measured what the grammar
  * covers, so a change that lost five hundred links passed `npm test` and

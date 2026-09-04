@@ -397,7 +397,7 @@ sw.addEventListener('activate', (event) => {
  * pages) — but the host never serves that fallback automatically:
  * `src/worker.ts` intercepts every navigation and serves the shell only for a
  * path `corpus-routes.json` recognizes, an HTTP 404 shell otherwise (see
- * docs/decisions.md, "One SPA shell, corpus-validated deep links"). This
+ * site/docs/shell.md). This
  * handler is that same idea's OFFLINE counterpart: with no network to reach
  * the edge worker or its manifest, it serves the cached shell unconditionally
  * and lets the client-side router decide what the address means, rather than

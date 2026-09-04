@@ -486,7 +486,7 @@ const SV_SMALL_WORDS = new Set([
 
 // Latin's closed-class function words: conjunctions and prepositions, none
 // of which is ever a proper noun, which is the whole standard for this list
-// (see decisions.md, "A list entry that is a coin flip does not go on the
+// (see site/docs/languages.md, "A list entry that is a coin flip does not go on the
 // list"). Latin has no articles, so the list is shorter than any other here.
 const LA_SMALL_WORDS = new Set([
 	'et',

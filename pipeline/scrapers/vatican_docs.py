@@ -7,7 +7,7 @@
 documents, from vatican.va -- in every language the Holy See publishes them in
 that this parser has a division vocabulary for (see `DIVISIONS`): ar, de, en,
 es, fr, it, la, pl, pt, ru. It read English and Portuguese alone until
-2026-08-29; `docs/decisions.md` §Languages has why that stopped being the
+2026-08-29; `pipeline/docs/languages.md` has why that stopped being the
 boundary of the corpus.
 
 Generalizes ccc.py's EN-mirror parser (same IntraText-family template, same
@@ -209,7 +209,7 @@ follow whichever checkout the code being run lives in.
 
   SOURCE_ROOT -- where pipeline/corrections/ lives. Derived from
   __file__, the way ccc.py/compendium.py do it, because corrections ARE
-  tracked source: `docs/decisions.md`'s Corrections and overrides
+  tracked source: `pipeline/docs/corrections.md`
   makes git history the audit log, so a correction must land in whatever
   checkout its scraper change is being written in. Hardcoding this one
   wrote correction files into the main checkout while their scraper code
@@ -280,7 +280,7 @@ from common import (
 )
 
 #: How this scraper conducts itself toward vatican.va. The 2.0s is from that
-#: host's robots.txt `Crawl-delay` and is a commitment (docs/decisions.md),
+#: host's robots.txt `Crawl-delay` and is a commitment (pipeline/docs/corpus.md),
 #: not a tuning parameter; the retries are for the ~1-in-6-to-8 transient edge
 #: failures the 2026-08-15 survey measured (no 403s, no CAPTCHA).
 VATICAN_POLICY = FetchPolicy(
@@ -482,7 +482,7 @@ def strip_tags(s: str) -> str:
 
 
 # --------------------------------------------------------------------------
-# Narrowed inline HTML (docs/decisions.md §Storage)
+# Narrowed inline HTML (pipeline/docs/corpus.md)
 # --------------------------------------------------------------------------
 #
 # A unit's text is stored as HTML restricted to a closed allowlist, rather
@@ -2111,7 +2111,7 @@ class Section:
         # blocks joined with markers stripped, so it is derivable from them
         # twice over; the site's `documentSectionText` is that derivation, and
         # it now matches this section for section rather than approximately
-        # (docs/decisions.md §Storage).
+        # (pipeline/docs/corpus.md).
         return {
             "n": self.n,
             "blocks": [b.to_dict() for b in self.blocks],
@@ -2467,7 +2467,7 @@ class Block:
     kind: str  # "prose" | "quote"
     text: str  # marked text (⟦n⟧ tokens embedded), tags stripped
     raw: str  # raw inner html, for paragraph-number detection
-    html: str = ""  # narrowed inline html (docs/decisions.md §Storage)
+    html: str = ""  # narrowed inline html (pipeline/docs/corpus.md)
     style: int = 9  # observed heading style rank; see heading_style_rank
     # A heading printed on several lines: the bare division label above the
     # name ("CHAPTER THREE"), and any further lines below it. Both empty for
@@ -6055,7 +6055,7 @@ def offered_languages(ref: DocRef) -> set[str] | None:
     The switcher already knows. Reading it off the base-language page we hold
     turns that crawl into 76 requests with almost no 404s, and `robots.txt`'s
     `Crawl-delay: 2` is a commitment about our conduct rather than a budget
-    (`docs/decisions.md`), so a cheaper way to ask the same question is worth
+    (`pipeline/docs/languages.md`), so a cheaper way to ask the same question is worth
     having.
 
     None means "cannot say" -- no cached base page -- and the caller must then
@@ -6776,7 +6776,7 @@ def parse_document(
         state.anomalies.append(f"page furniture skipped: {text[:80]!r}")
 
     # Tags outside the stored allowlist keep their text and lose their markup
-    # (docs/decisions.md §Storage). Reported per run so the allowlist can be
+    # (pipeline/docs/corpus.md). Reported per run so the allowlist can be
     # revisited against evidence rather than assumption -- which is how `sup`
     # earned its place, and how `span[lang]` lost the one it was wrongly
     # given (all 486 instances were lang="pt" inside Portuguese pages).
@@ -6793,7 +6793,7 @@ def parse_document(
     # arrived at from the other direction. Where the source names its own
     # divisions, that naming is the most direct statement of depth it
     # makes, so labelled headings sort by label and unlabelled ones sort
-    # by appearance strictly beneath them (docs/decisions.md §Parsing).
+    # by appearance strictly beneath them (pipeline/docs/parsing.md).
     _LABEL_DEPTH = {"part": 1, "chapter": 2, "section": 3, "article": 4}
     # The shallowest division label the document actually prints. Gaudium et
     # Spes says PART, Dei Verbum's top division is CHAPTER; front and back
@@ -7743,7 +7743,7 @@ def validate_document(
 
 
 # --------------------------------------------------------------------------
-# Known, unfixable source defects (docs/decisions.md's Source-defect
+# Known, unfixable source defects (pipeline/docs/corrections.md's Source-defect
 # corrections policy explicitly excludes these: there is no correct value to
 # substitute, only a gap or a dangling reference in vatican.va's own page --
 # see docs/research/vatican-documents.md's "Known source defects" section
@@ -7944,7 +7944,7 @@ def build_manifest(
         (
             "Inline markup is stored per block in `html`, restricted to a closed "
             "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
-            "and lose their markup (docs/decisions.md §Storage)."
+            "and lose their markup (pipeline/docs/corpus.md)."
         ),
     ]
     if parse.printed_source:
@@ -8239,7 +8239,7 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
 #
 #   fetch_for_parse -- touches vatican.va. Must stay strictly serial, one
 #     request at a time, behind `_sleep_for_crawl_delay`. robots.txt asks for
-#     a 2s Crawl-delay and docs/decisions.md treats that as a commitment about
+#     a 2s Crawl-delay and pipeline/docs/corpus.md treats that as a commitment about
 #     someone else's server, not a tuning parameter. Nothing here may ever run
 #     concurrently.
 #
@@ -9135,7 +9135,7 @@ def run_phase2(
 
 
 # --------------------------------------------------------------------------
-# Cross-language symmetry check (docs/decisions.md's "Language symmetry
+# Cross-language symmetry check (pipeline/docs/oracles.md's "Language symmetry
 # principle" used as a QA oracle -- see this task's brief). Deliberately a
 # standalone pass over already-written corpus/build/ output, not folded
 # into parse_document/validate_document: it needs to see BOTH languages'
@@ -9191,7 +9191,7 @@ def check_language_symmetry(
     Deliberately does NOT require every document to exist in every
     language: a missing translation is legitimate and common across the
     full encyclical corpus this scraper also covers (Leo XIII is only
-    ~17% translated into Portuguese on vatican.va, docs/decisions.md's
+    ~17% translated into Portuguese on vatican.va, pipeline/docs/oracles.md's
     "Scope" section / research/vatican-documents.md
     §2) -- so a (family, slug) with only one language written is silently
     skipped, not flagged. Only a pair where BOTH sides exist and disagree
@@ -9384,7 +9384,7 @@ def run_lock_path(cmd: str, offline: bool) -> tuple[Path, str]:
     two things it protects is someone else's server: two sweeps at once double
     the request rate against vatican.va whatever each is fetching, and
     `robots.txt`'s `Crawl-delay: 2` is a commitment about our conduct rather
-    than a budget to spend twice (`docs/decisions.md`). That reason does not
+    than a budget to spend twice (`pipeline/docs/languages.md`). That reason does not
     care which documents the two runs overlap on, so neither does the lock.
 
     AN OFFLINE RUN MAKES NO REQUEST, so that reason is gone and only the
@@ -9608,7 +9608,7 @@ PARSE_BASELINE_COMMENT = [
     "produces and how many problems it reports. This is a floor, not a target:",
     "a run exits nonzero when a work fails that is not in here, when a work's",
     "failure changes kind, or when one accumulates problems. It says nothing",
-    "about whether the corpus is good -- see docs/decisions.md, Parsing.",
+    "about whether the corpus is good -- see pipeline/docs/parsing.md.",
     "Written only by `--accept-baseline`, which is a deliberate act.",
 ]
 

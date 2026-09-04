@@ -2,7 +2,7 @@
 	/**
 	 * Book/chapter navigator for the Bible reader.
 	 *
-	 * Renders ONE canonical book/chapter structure (docs/decisions.md #4:
+	 * Renders ONE canonical book/chapter structure (site/docs/addresses.md:
 	 * "structure is independent of the content version") from
 	 * `listCanonicalBooks()` — the union of books/chapters across every Bible
 	 * edition — rather than looping over each Bible work and duplicating the

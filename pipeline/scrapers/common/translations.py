@@ -34,7 +34,7 @@ def load_translations_checked(
     already on disk. That made them regenerable from nothing but a previous
     copy of the output -- so a rebuild into an empty directory silently
     dropped all 125 of them, and untracking the parsed corpus (2026-08-27,
-    `docs/decisions.md` §The corpus) would have made the loss permanent.
+    `pipeline/docs/corpus.md`) would have made the loss permanent.
     A status is a record of what the source ANSWERED, which is the same class
     of knowledge as `absent-sources.json` next door: measured against someone
     else's server, expensive to re-measure, and cheap to write down.

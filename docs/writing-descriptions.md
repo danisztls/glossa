@@ -55,7 +55,7 @@ Note both shapes changed in August 2026 and older recipes are wrong:
 `structure.json` is a **flat array** of `{level, title, before}` (plus optional
 `label`/`subtitle`), not a tree with `kind`/`paragraphs`; and a section's
 blocks carry **`html` only** — `text` and `text_marked` were removed
-(`docs/decisions.md` §Storage). A recipe asking for `.text` returns empty
+(`../pipeline/docs/corpus.md`). A recipe asking for `.text` returns empty
 strings rather than failing, which reads as an empty document.
 
 ```sh
@@ -299,7 +299,7 @@ slug, derived from the `origin: "read"` descriptions and enforced by
 naming no document, or a malformed tag). When recording a new description,
 consider whether the document belongs under existing terms — the vocabulary is
 widened only deliberately, and never with a term that names what a document
-DOES rather than what it is about (`docs/decisions.md` §The site).
+DOES rather than what it is about (`../site/docs/finding.md`).
 
 ### 6. Report defects; fix parsers only deliberately
 

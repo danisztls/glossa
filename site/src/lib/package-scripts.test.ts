@@ -108,7 +108,7 @@ describe('package.json scripts', () => {
 	});
 
 	it('runs every non-watch check under `verify`', () => {
-		// There is no CI on this project (docs/decisions.md §Process: a deploy
+		// There is no CI on this project (site/docs/edge.md: a deploy
 		// ships one person's working tree), so `verify` is the only place the
 		// three checks are named together. A check that is not here is a check
 		// that runs when someone remembers it.

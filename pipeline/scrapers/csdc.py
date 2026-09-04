@@ -1126,7 +1126,7 @@ def build_manifest(
         (
             "Inline markup is stored per block in `html`, restricted to a closed "
             "allowlist (i, b, br, sup, blockquote); tags outside it keep their text "
-            "and lose their markup (docs/decisions.md §Storage)."
+            "and lose their markup (pipeline/docs/corpus.md)."
         ),
         (
             "The front matter -- the two sigla tables, Cardinal Sodano's letter of "

@@ -453,7 +453,7 @@ describe('preferred edition', () => {
 
 describe('regional editions', () => {
 	// `prayer.common.en-gb` is the five prayers the source heads "UK VERSION";
-	// `prayer.common.en` is the collection (docs/decisions.md §Addresses and editions).
+	// `prayer.common.en` is the collection (site/docs/addresses.md).
 	const PRAYERS = { en: 28, 'en-gb': 5, la: 21, pt: 28 };
 
 	it('measures completeness within a base language, not across the corpus', () => {

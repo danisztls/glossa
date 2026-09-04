@@ -4,16 +4,18 @@ Operational notes for working on Glossa Catholica — only what must be true
 before ANY file is touched. Each half carries its own notes, loaded when you
 work under it: **`pipeline/CLAUDE.md`** (scrapers, rebuild, vatican.va,
 audits) and **`site/CLAUDE.md`** (routes, edge, rendering, i18n, deploy).
-Architecture and rationale live in `PLAN.md`, `docs/decisions.md`,
-`docs/corpus-schema.md` and `docs/link-surface.md` — the full story is in
-`docs/decisions.md` wherever a § is cited.
+Architecture and rationale live in `PLAN.md`, `docs/corpus-schema.md` and
+`docs/link-surface.md`. **`docs/decisions.md` holds only what is true of the
+whole project** — posture, scope, process — and its table at the top names the
+file beside the code that decides everything else (`pipeline/docs/*.md`,
+`site/docs/*.md`). Read that one rather than the whole set.
 
 ## The corpus: a separate repository, and two directories inside it
 
 **The corpus is not in this repository.** It lives in `glossa-corpus`, a
 **private** repository expected on disk as a sibling of this one — it holds
 verbatim reproductions of texts other people hold rights in, and this
-repository is public (`docs/decisions.md` §The corpus; the corpus repo's own
+repository is public (`pipeline/docs/corpus.md`; the corpus repo's own
 `README.md` has the copyright position).
 
 Both halves resolve it the same way, so one exported variable moves both:
@@ -139,9 +141,15 @@ Avoid bare inventory counts (how many works, editions, languages) in this
 file and in `docs/` — they rot silently as the corpus grows. Point at what
 derives the number (`rebuild.py --list`, the sync's printed tables,
 `works.json`), or date-stamp it. Keep a number only where it IS the evidence
-for an argument. New session lessons: the story goes to `docs/decisions.md`;
-the CLAUDE.md for the half it belongs to gets the rule, one line of evidence,
-and the § pointer.
+for an argument.
+
+New session lessons: the story goes to the `docs/` file beside the code it
+governs — `pipeline/docs/` or `site/docs/`, listed in `docs/decisions.md`'s
+table — and only a project-wide rule goes in `docs/decisions.md` itself. The
+CLAUDE.md for the half it belongs to gets the rule, one line of evidence, and
+the pointer. **One claim, then at most one clause of evidence**: the
+measurement that justified a rule is in the commit that made it, and an entry
+that retells it is an entry nobody finishes.
 
 ## Sandbox quirks that waste time
 

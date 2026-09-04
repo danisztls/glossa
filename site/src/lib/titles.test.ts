@@ -400,7 +400,7 @@ describe('displayTitle — the eight Compendium languages beyond en/pt', () => {
 
 	// One real title from each of the six Catechism editions added
 	// 2026-08-26, which is what guards the second copy of the label
-	// vocabulary (decisions.md, "A division label is read in the language it
+	// vocabulary (site/docs/languages.md, "A division label is read in the language it
 	// was printed in").
 	it('reads each Catechism edition’s own division labels', () => {
 		expect(displayTitle(node('part', 1, 'PARS PRIMA PROFESSIO FIDEI'), 'la')).toEqual({

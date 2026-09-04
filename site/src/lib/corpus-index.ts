@@ -997,7 +997,7 @@ export function bibleChapterChunkFor(
  * return, which already only carries the coarse-fetch's requested slice
  * (see corpus.ts's "COARSE FETCH, NARROW RETURN"). That SSR path dates from
  * when every route was prerendered; since the site became one SPA shell
- * with `ssr = false` (`+layout.ts`, docs/decisions.md §The site) no
+ * with `ssr = false` (`+layout.ts`, site/docs/shell.md) no
  * route's `load()` runs on the server at all, so `relPath` has nothing left
  * to read against today — `corpus.ts`'s docblock covers why it stays.
  */
@@ -1151,7 +1151,7 @@ function requireContentIndex(fn: string): void {
  * Genesis 1 parsed the Summa's, the Compendium's and the prayer book's
  * registries to do it. This file's own docblock named that as the only
  * remaining lever ("making the index lazy, or splitting it per route"), and
- * `docs/decisions.md` §The site rules out the alternative: compressing the
+ * `site/docs/shell.md` rules out the alternative: compressing the
  * tier was measured and bought 0.58% over the wire, because gzip had already
  * collapsed the redundancy. What is left is entropy, so the only thing that
  * helps is not sending it.

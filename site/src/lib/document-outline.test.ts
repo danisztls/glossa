@@ -50,7 +50,7 @@ describe('buildDocumentOutline', () => {
 		// This used to assert `[null, null]`, on the reasoning that a consumer
 		// must not link a heading with no address — right while the body
 		// rendered nothing for it, and wrong since the appendix landed
-		// (docs/decisions.md §Storage): the text IS on the page, and a range
+		// (pipeline/docs/corpus.md): the text IS on the page, and a range
 		// of nulls left `rowState` unable to mark the row a reader was in.
 		// Strictly above every real section number, so nothing collides, and
 		// positional only — the row still LINKS by its `#h{i}` anchor, and

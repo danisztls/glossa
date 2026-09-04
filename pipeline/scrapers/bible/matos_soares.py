@@ -224,7 +224,7 @@ WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ]+")
 # Filémon 22 "A o mesmo tempo" for "Ao mesmo tempo". Detected as two adjacent
 # tokens -- a bare 1-letter fragment plus a short (<=3 letter) fragment --
 # whose concatenation (lowercased) is one of these common short PT words.
-# Policy is source-faithful either way (per docs/decisions.md), so this is
+# Policy is source-faithful either way (per pipeline/docs/corrections.md), so this is
 # never auto-corrected; it's reported so an editor can judge digitization
 # artifact vs. genuine period spacing on a case-by-case basis.
 SPLIT_WORD_TARGETS = {

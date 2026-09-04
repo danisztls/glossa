@@ -105,7 +105,7 @@ next document.
 
 **Costs:** every content word is wrapped in a concordance anchor, so _every
 word boundary becomes a tag boundary_ — precisely the defect class that cost a
-day on 2026-08-22 (`decisions.md` §Storage, "inline emphasis is not a word boundary").
+day on 2026-08-22 (`../../pipeline/docs/parsing.md`, "inline emphasis is not a word boundary").
 Documents split across pages multiply requests per work, the same shape as the
 18× fetch multiplier `vulgate-edition-choice.md` §3 measured for LAT0001. And
 discovery needs a hand-built id map per work per language, where vatican.va

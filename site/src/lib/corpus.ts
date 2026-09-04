@@ -11,7 +11,7 @@
  * ENTIRE corpus (every Bible verse, every CCC paragraph, every Compendium
  * answer, both languages) straight into the client JS graph, on the
  * reasoning that adapter-static prerendered every route at build time back
- * then (no server runtime, docs/decisions.md) so inlining avoided a network
+ * then (no server runtime, site/docs/shell.md) so inlining avoided a network
  * round-trip and any risk of drift between what a page fetched and what
  * got embedded in it. That reasoning was correct as far as it went — it
  * just didn't scale. Measured against the real corpus: one chunk file, 18 MB
@@ -69,7 +69,7 @@
  * SvelteKit's server build, not whenever a route is prerendered — those
  * used to be the same thing, back when every route was prerendered, but
  * since the site became one SPA shell with `ssr = false` (`+layout.ts`,
- * docs/decisions.md §The site) no route's `load()` executes on the server
+ * site/docs/shell.md) no route's `load()` executes on the server
  * for a real visit any more, so `readContentFromDisk`'s branch has nothing
  * left to run against in production — it stays correct and in place
  * because the split was never actually about prerendering, only about
@@ -258,7 +258,7 @@ export function listWorksOfType(type: WorkType): WorkManifest[] {
 
 /**
  * Editions of a work type, sorted by language then id — the order the
- * edition/version selector (docs/decisions.md #1) lists them in. Distinct
+ * edition/version selector (site/docs/addresses.md) lists them in. Distinct
  * from `listWorksOfType`, which returns registry order.
  */
 export function listEditions(type: WorkType): WorkManifest[] {
@@ -538,7 +538,7 @@ export const PREFERRED_EDITION: Record<string, string> = {
 };
 
 /**
- * Preferred work id for a type at a UI language (docs/decisions.md #1:
+ * Preferred work id for a type at a UI language (site/docs/addresses.md:
  * content language follows UI language by default) — the edition in the
  * reader's own language, else the first one `CONTENT_LANG_FALLBACK` finds,
  * else any edition at all.
@@ -826,7 +826,7 @@ export function findBookByAbbrev(workId: string, abbrev: string): BibleBookMeta 
 // --- Canonical (edition-independent) Bible structure ---------------------
 //
 // Tables of contents and the book/chapter picker describe the *work*, not
-// whichever edition is currently selected (docs/decisions.md #4): a reader
+// whichever edition is currently selected (site/docs/addresses.md): a reader
 // picking "Genesis 12" shouldn't see the picker change shape when they
 // switch editions. `CanonicalBook` is the union of a book's presence across
 // every Bible work — every osis code and chapter number seen in ANY
@@ -941,7 +941,7 @@ declare const __CORPUS_DATA_DIR__: string;
  *     the page except `load`'s own return. `import.meta.env.SSR` is true
  *     whenever this module runs in SvelteKit's server build; since the site
  *     became one SPA shell with `ssr = false` (`+layout.ts`,
- *     docs/decisions.md §The site) no route's `load()` runs there for a
+ *     site/docs/shell.md) no route's `load()` runs there for a
  *     real visit any more, so this branch has nothing left to run against
  *     today — it is kept because the split was never really "prerender vs
  *     runtime", only "server vs browser", and `import.meta.env.SSR` still
@@ -1451,7 +1451,7 @@ export function getCccChapterBreadcrumb(lang: string, n: number): CccNode[] {
  * entry list handed to `adapter-static`'s prerendering for
  * `/catechismus/caput/[n]`, back when every route was prerendered
  * individually. Since the site became one SPA shell with `ssr = false`
- * (`+layout.ts`, docs/decisions.md §The site) there is no such entry list
+ * (`+layout.ts`, site/docs/shell.md) there is no such entry list
  * to prerender any more; this now resolves a chapter address to its
  * structure node instead (`linkPreviewContent.ts` uses it to find the
  * chapter starting at a given paragraph number), and it still defines which
@@ -1744,7 +1744,7 @@ export {
 export interface DocumentGroup {
 	/** Language-independent id, e.g. "lumen-gentium" — the segment between
 	 *  `family` and `lang` in every edition's work id, and what edition-free
-	 *  `/documents/{slug}` URLs address (docs/decisions.md #2's URL
+	 *  `/documents/{slug}` URLs address (site/docs/addresses.md's URL
 	 *  convention, extended to documents). */
 	slug: string;
 	/** Publishing family (`vatii`, `encyclical`, `exhortation`, future
@@ -1800,7 +1800,7 @@ export function getDocumentGroup(slug: string): DocumentGroup | undefined {
 /**
  * Preferred work id for a document slug at a UI language — same "content
  * language follows UI language by default" rule as `defaultWorkId`
- * (docs/decisions.md #1), scoped to one document's own editions rather than
+ * (site/docs/addresses.md), scoped to one document's own editions rather than
  * a whole work type's edition list (see `DocumentGroup`'s docblock on why
  * documents need their own version of this instead of reusing
  * `defaultWorkId('document', lang)`, which would only tell you *a* document
@@ -2154,7 +2154,7 @@ export function prayerLangs(): string[] {
  *
  * THE TWO DIFFER FOR A REGIONAL EDITION AND ONLY FOR ONE. `prayer.common.en-gb`
  * is the five prayers the source heads "UK VERSION" and nothing else
- * (docs/decisions.md §Addresses and editions), so indexing off it would present the
+ * (site/docs/addresses.md), so indexing off it would present the
  * collection as five prayers and a reader who prefers English (UK) would lose
  * the other twenty-three from the listing, the sidebar and the prev/next
  * chain — none of which they have lost: they read those from
@@ -2201,7 +2201,7 @@ export function completeEditionTags(sizes: Record<string, number>): string[] {
  * the edition menu's list on `/preces` and `/preces/{slug}`.
  *
  * IT IS NOT `listEditions('prayer')`, and that is the whole reason this
- * exists. `prayer.common.en-gb` is five prayers (docs/decisions.md §Addresses
+ * exists. `prayer.common.en-gb` is five prayers (site/docs/addresses.md
  * and editions), so listing every prayer edition unconditionally put "English
  * (UK)" in the menu on all twenty-eight pages — an option that on twenty-three
  * of them named an edition with no text at this address, resolved straight

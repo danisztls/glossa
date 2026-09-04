@@ -54,7 +54,7 @@
  * Configurable via the `CORPUS_DIR` env var (default: `../../glossa-corpus`,
  * resolved relative to this `site/` package — the corpus is a separate,
  * private repository expected as a sibling checkout of this one, see
- * docs/decisions.md §The corpus). Spelled the same way as
+ * pipeline/docs/corpus.md). Spelled the same way as
  * `pipeline/scrapers/common/`'s `corpus_dir()`, so one exported variable
  * moves both halves of the project. If no corpus is found, this is a no-op
  * (with a warning): `corpus.ts` falls back to its fixtures, so the site
@@ -210,7 +210,7 @@ const CCC_CHUNK_SIZE = 100;
  *  "~200 KB raw worst-case (Gaudium et Spes)" — had gone stale by 4×: Gaudium
  *  et Spes measures 623 KB today and the real worst case is Evangelium Vitae
  *  at 827 KB. The claim was written 2026-08-16 and `html` landed on
- *  2026-08-21 (docs/decisions.md §Storage), which is most of the gap; nobody re-measured
+ *  2026-08-21 (pipeline/docs/corpus.md), which is most of the gap; nobody re-measured
  *  after. What made it matter is that a hover LINK PREVIEW of a single cited
  *  section (`linkPreviewContent.ts`) pays for the whole file, so citing one
  *  paragraph of an encyclical downloaded the encyclical.
@@ -520,7 +520,7 @@ const forced = process.argv.includes('--force');
  * what is on disk, and the next statement deletes it.
  *
  * OPT-IN, and `prebuild` does not opt in -- only `predev` does (package.json).
- * `docs/decisions.md` §Parsing settles the general question against skipping by
+ * `pipeline/docs/parsing.md` settles the general question against skipping by
  * default, and the argument there is about the pipeline, where a stale parse is
  * invisible and flows downstream. This one fails differently: its output is the
  * page in the browser, and the recovery is `--force` and thirteen seconds. What
@@ -621,7 +621,7 @@ if (!existsSync(buildSrc)) {
 	// allowed to record the rest of the corpus as withdrawn.
 	console.warn(
 		`[sync-corpus] No corpus found at ${buildSrc} -- corpus.ts will fall back to its bundled ` +
-			`fixtures. The corpus is a separate, private repository (docs/decisions.md, ` +
+			`fixtures. The corpus is a separate, private repository (pipeline/docs/corpus.md, ` +
 			`2026-08-23): clone it beside this one as glossa-corpus/, or set CORPUS_DIR.`
 	);
 	process.exit(0);
@@ -864,7 +864,7 @@ function mark(address, value, workId, lang) {
  *
  * SINCE 2026-08-27 IT ESSENTIALLY ALWAYS RETURNS UNDEFINED, and that is not a
  * regression to chase. `build/` (formerly `build/`) is not tracked in the corpus repository
- * (`docs/decisions.md` §The corpus), so there is no commit touching a work to
+ * (`pipeline/docs/corpus.md`), so there is no commit touching a work to
  * ask about. Kept rather than deleted because it still answers for anyone
  * holding a pre-rewrite clone, and would answer again if the corpus were ever
  * laid out differently — but NOT because it "costs nothing", which is what
@@ -2527,7 +2527,7 @@ writeJson(
  * corpus. `corpus/xrefs/ccc-bible.json` used to be a committed file built by
  * a separate Python parser; it is now computed from `corpus/build/` on every
  * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
- * and docs/decisions.md §Parsing.
+ * and site/docs/references.md.
  */
 // The grammar's document-title and siglum matchers are fed the same document
 // list `refs.ts` hands them in the browser, so the builder and the renderer

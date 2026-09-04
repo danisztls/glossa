@@ -291,7 +291,7 @@ export function inlineText(nodes: InlineNode[]): string {
  * `dilexit-nos` (118 EN / 127 PT).
  *
  * It is the same mistake the scraper made on the other side of the pipeline —
- * "an emphasis tag is not a word boundary" (`decisions.md` §Storage).
+ * "an emphasis tag is not a word boundary" (`pipeline/docs/parsing.md`).
  * Markup describes how the words look; it does not divide them.
  *
  * So: flatten to text, linkify once, then rebuild the tree around the segment

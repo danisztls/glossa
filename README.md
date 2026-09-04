@@ -13,7 +13,7 @@ _Glossa_ — the apparatus of cross-references and commentary that medieval scri
 | `site/`     | The SvelteKit site (static adapter, offline-first PWA)                                 |
 | `docs/`     | Design decisions, research, corpus schema                                              |
 
-Start with `docs/decisions.md` for the design choices and why they are what they are, and `docs/corpus-schema.md` for the data contract between pipeline and site. See `PLAN.md` for the current development plan — what's done, in flight, and next, and why.
+Start with `docs/decisions.md` for the project-wide posture, scope and process, and for the table naming which of `pipeline/docs/` and `site/docs/` decides what; `docs/corpus-schema.md` is the data contract between pipeline and site. See `PLAN.md` for the current development plan — what's done, in flight, and next, and why.
 
 ## Content and copyright
 

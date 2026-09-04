@@ -298,7 +298,7 @@ def strip_tags(html_text: str) -> str:
     """The plain text of a narrowed-HTML block.
 
     Inline tags are dropped with NO replacement -- `strip_tags` on the CCC
-    learned this the expensive way (docs/decisions.md §Storage: "inline
+    learned this the expensive way (pipeline/docs/parsing.md: "inline
     emphasis is not a word boundary"), and `<i>quae</i>dam` must not become
     `quae dam`.
     `<br>` is the one that genuinely separates words.
@@ -1206,7 +1206,7 @@ def apply_raw_text_corrections(
     uses to decide which text belongs where. Repairing it afterwards would
     mean rewriting an article whose divisions had already been built wrong.
 
-    The drift guard is the point (docs/decisions.md, source-defect corrections
+    The drift guard is the point (pipeline/docs/corrections.md, source-defect
     policy): a correction whose `from` no longer appears has either been fixed
     upstream or was wrong, and either way the run must fail rather than
     quietly emit an uncorrected work. Only enforced on a full run -- under

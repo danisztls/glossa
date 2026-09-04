@@ -88,7 +88,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
  * A REGIONAL EDITION NAMES ITS REGION; the unmarked one does not.
  * `prayer.common.en-gb` is the UK wording of the five prayers the source
  * prints twice, alongside `prayer.common.en`, which is the collection
- * (docs/decisions.md §Addresses and editions). Only the marked one needs a name here —
+ * (site/docs/addresses.md). Only the marked one needs a name here —
  * `en` falls through to `LANGUAGE_NAMES` and stays plain "English", which is
  * what the collection is.
  *

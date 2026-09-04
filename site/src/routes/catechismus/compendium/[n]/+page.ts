@@ -20,7 +20,7 @@ interface CompendiumQuestionByLang {
 export const load: PageLoad = async ({ params }) => {
 	const n = Number(params.n);
 
-	// Compendium URLs stay edition-free (docs/decisions.md #2: `/catechismus/compendium/1`,
+	// Compendium URLs stay edition-free (site/docs/addresses.md: `/catechismus/compendium/1`,
 	// never `/catechismus/compendium/en/1`) — the edition comes from a stored preference
 	// applied client-side, and this route renders only in the browser
 	// (`ssr = false`, `+layout.ts`) — but `load` only re-runs on navigation,

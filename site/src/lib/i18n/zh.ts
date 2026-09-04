@@ -26,7 +26,7 @@
  * the one page whose form contradicts its content. That was reversed on the
  * judgement that a reader who cannot read the page cannot weigh it either, and
  * that an English wall is not more honest than a translation -- see
- * `docs/decisions.md`. The confidence note below governs
+ * `site/docs/colophon.md`. The confidence note below governs
  * the colophon too.
  * `colophon.whatThisIsStanding` and `footer.notEndorsed` (the canonical
  * standing statement, Can. 216 CIC, at full length and in the one line the

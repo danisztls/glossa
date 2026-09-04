@@ -40,7 +40,7 @@
  * "a direct swap of the English convention"). There is no correct
  * edition-blind answer, so the tie goes to whichever edition the reader
  * currently has open. The destination is still edition-free (the caller
- * navigates to `/bible/{osis}/{chapter}`, per docs/decisions.md #2); the
+ * navigates to `/bible/{osis}/{chapter}`, per site/docs/addresses.md); the
  * preference decides only how an ambiguous *token* is read.
  */
 

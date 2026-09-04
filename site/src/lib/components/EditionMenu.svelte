@@ -23,7 +23,7 @@
 	`content.setDocument` instead (see `content.svelte.ts`'s docblock for why
 	those are separate methods, not `workIdFor('document')`).
 
-	EVERY URL IS EDITION-FREE NOW (docs/decisions.md #2). This used to be the
+	EVERY URL IS EDITION-FREE NOW (site/docs/addresses.md). This used to be the
 	one place with a fork in it: CCC and Compendium URLs named no edition, so
 	picking one was a pure store write, while the Bible's reading route
 	carried `/scriptura/{edition}/{book}/{chapter}` and had to *navigate* on a
@@ -193,7 +193,7 @@
 		);
 	});
 	const documentGroup = $derived(ctx?.kind === 'document' ? getDocumentGroup(ctx.slug) : undefined);
-	// A document's editions, sorted like `listEditions` (docs/decisions.md #1:
+	// A document's editions, sorted like `listEditions` (site/docs/addresses.md:
 	// language then id) rather than however `Object.values` happens to order
 	// the manifest map — with only two languages this rarely matters, but
 	// staying consistent with the Bible/CCC/Compendium menus costs nothing.

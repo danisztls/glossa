@@ -45,7 +45,7 @@
 	 * here is a paragraph rather than a phrase, so it scrolls inside the card
 	 * instead of resizing it.
 	 *
-	 * A GLOSS MUST NEVER BE CONFUSABLE WITH ITS SOURCE (docs/decisions.md
+	 * A GLOSS MUST NEVER BE CONFUSABLE WITH ITS SOURCE (docs/decisions.md §Posture
 	 * §Posture) is why the note is set smaller, in the sans face, on a surface
 	 * of its own with its own `lang`. Challoner's commentary is not Scripture
 	 * and must not be able to be read as though it were.

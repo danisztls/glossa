@@ -166,7 +166,7 @@ describe('parseHref', () => {
 		});
 
 		// The shape this route used to have, before a document became one page
-		// (docs/decisions.md §Addresses and editions). Nothing generates it now, and a
+		// (site/docs/addresses.md). Nothing generates it now, and a
 		// stale link from anywhere should degrade to nothing rather than to the
 		// wrong thing.
 		it('does not parse the retired per-section path', () => {
@@ -238,7 +238,7 @@ describe('parseHref', () => {
 			'/signata',
 			'/',
 			// The English route names resolve as invalid addresses site-wide
-			// (docs/decisions.md §Addresses and editions); nothing may resurrect them.
+			// (site/docs/addresses.md); nothing may resurrect them.
 			'/ccc/1213',
 			// Retired 2026-08-28 when the Compendium moved under the Catechism.
 			// There is no compatibility layer, so the old shape is as dead as

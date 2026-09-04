@@ -565,7 +565,7 @@ def parse_book(osis: str, html_text: str, anomalies: list[Anomaly]) -> ParsedBoo
 
 
 # --------------------------------------------------------------------------
-# Verse-number corrections (docs/decisions.md "Corrections and overrides")
+# Verse-number corrections (pipeline/docs/corrections.md)
 #
 # These fix the printed/anchored VERSE NUMBER, not verse text, so they do not
 # fit `common.apply_verse_corrections` (which only ever edits `text`) and get

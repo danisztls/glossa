@@ -13,7 +13,7 @@
 	IT ROLLS IN THE READER'S EDITION, not in "the Bible" — `randomVerse`
 	walks `content.workIdFor('bible')`'s own books, so a Vulgate reader lands
 	somewhere the Vulgate actually has, and the destination carries no
-	edition (docs/decisions.md §Addresses and editions) like every other
+	edition (site/docs/addresses.md) like every other
 	reference URL.
 
 	RENDERS NOTHING when there are no verses to roll, following the

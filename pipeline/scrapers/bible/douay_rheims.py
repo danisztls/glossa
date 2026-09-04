@@ -29,7 +29,7 @@ WHAT IS INGESTED HERE AND WHAT IS NOT. Everything the source carries is
 captured -- verses, notes, arguments, headings. Nothing is RENDERED by the
 site yet: `PLAN.md` #3 (footnotes as sidenotes) is a stated prerequisite for
 showing a gloss at all, because "a gloss must never be confusable with its
-source, visually or structurally" (docs/decisions.md). Capturing now and
+source, visually or structurally" (docs/decisions.md §Posture). Capturing now and
 rendering later costs one crawl instead of two, which is the whole of
 docs/link-surface.md's "re-parse, never re-crawl".
 

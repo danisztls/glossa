@@ -185,7 +185,7 @@
 	// failure for a statistic and the reason `wrangler dev` needs no database.
 	//
 	// TWO PIECES OF THIS LIVE IN THE DASHBOARD and nothing here can assert
-	// they agree -- docs/decisions.md §Usage measurement is their record:
+	// they agree -- site/docs/usage.md is their record:
 	//
 	//   1. A WAF custom rule (one of the free plan's five) blocking `/a` for
 	//      verified bots, non-POST methods and non-same-origin requests.

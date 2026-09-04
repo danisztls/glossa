@@ -37,7 +37,7 @@
 	 * finger-sized target.
 	 *
 	 * THE OUTBOUND LINK IS INSIDE THE CARD, WHICH IS THE POINT OF PUTTING IT
-	 * HERE AT ALL (docs/decisions.md §Linking out). An AAS citation names a
+	 * HERE AT ALL (site/docs/linking-out.md). An AAS citation names a
 	 * volume the corpus does not hold and vatican.va does, and the obvious
 	 * chrome for that -- an external-link glyph on the siglum itself -- would
 	 * draw a mark beside every one of the thousands of AAS references in the

@@ -244,7 +244,7 @@ export default defineConfig({
 		 *   .../node_modules/.vite/deps/<name>-<hash>.js
 		 *
 		 * and against this graph — 411 modules, 18.78 MB, most of it inline
-		 * sourcemap (docs/decisions.md §Process) — the reload is slow enough
+		 * sourcemap (site/docs/dev-loop.md) — the reload is slow enough
 		 * to tear the module graph rather than merely delay it. The page ends
 		 * up in a state no reload fixes.
 		 *

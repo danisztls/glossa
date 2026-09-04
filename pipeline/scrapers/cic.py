@@ -447,7 +447,7 @@ def cache_name_for_page(edition: Edition, url: str) -> str:
 
 def make_fetcher(offline: bool = False, refresh: bool = False) -> Fetcher:
     """vatican.va's conduct, from `vatican_docs.VATICAN_POLICY` -- the 2.0s
-    floor is that host's `robots.txt` speaking (docs/decisions.md) and
+    floor is that host's `robots.txt` speaking (pipeline/docs/corpus.md) and
     belongs to the host, not to whichever scraper here is talking to it."""
     return Fetcher(
         RAW_ROOT,
@@ -1991,7 +1991,7 @@ def work_id_for(lang: str) -> str:
 #: writing a canon of the Code from another edition, which is the one thing
 #: `pipeline/corrections/` exists to forbid -- a defect with no known
 #: correct value in its own edition gets documented, not invented
-#: (docs/decisions.md §Corrections and overrides). A reader who asks for
+#: (pipeline/docs/corrections.md). A reader who asks for
 #: `cic.de` canon 1330 falls back to another language, which is what the
 #: site's content-language chain is for.
 KNOWN_GAPS: dict[str, dict[int, str]] = {
@@ -2153,7 +2153,7 @@ def build_manifest(
         (
             "Inline markup is stored per block in `html`, restricted to the closed "
             "allowlist the documents use (i, b, br, sup, blockquote); tags outside it "
-            "keep their text and lose their markup (docs/decisions.md §Storage)."
+            "keep their text and lose their markup (pipeline/docs/corpus.md)."
         ),
         (
             "The Code prints no footnotes in any edition, so every unit's `citations` "

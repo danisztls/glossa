@@ -32,7 +32,7 @@ The calendar itself shipped, and so did a national calendar for every country
 GCatholic publishes one for: `site/src/lib/calendar/` computes any day of any
 year and `oracle.test.ts` checks every calendar — three years, eight transfer
 variants, and 86 national feeds — day by day against GCatholic
-(`docs/decisions.md` §The liturgical calendar). Sixteen of the layers were
+(`site/docs/calendar.md`). Sixteen of the layers were
 written by hand and the rest derived by
 `pipeline/derive_national_calendars.py`; **only the ones the oracle agrees with
 are published**, the rest being held in `national/held.ts` with the count of

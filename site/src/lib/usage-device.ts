@@ -14,7 +14,7 @@
  * March, how many survived to April) — the sort of question that genuinely
  * does need identity. What it buys is the age distribution of the active
  * population, which is what "are they reading daily or did they stop" actually
- * asks. See docs/decisions.md §Usage measurement.
+ * asks. See site/docs/usage.md.
  *
  * Everything here is pure and DOM-free so it can be tested directly; the store
  * that reads and writes localStorage around it is `usage.svelte.ts`.

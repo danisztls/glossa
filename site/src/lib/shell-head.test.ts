@@ -349,7 +349,7 @@ describe('headHtml', () => {
 	});
 
 	/**
-	 * The reversal recorded in docs/decisions.md: `og:url` was omitted from
+	 * The reversal recorded in site/docs/edge.md: `og:url` was omitted from
 	 * `app.html` because one document answered every address, so the only value
 	 * it could carry was the site root — which would have relinked every
 	 * deep-link preview to the home page. Per-address, it can name the address.

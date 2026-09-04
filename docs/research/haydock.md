@@ -6,7 +6,7 @@ Douay-Rheims ingestion and did not — the findings below existed only in a
 conversation until then, which is the reason the document exists at all.
 
 **Ingested 2026-09-01 as `commentary.haydock.en`.** The four open decisions at
-the foot of this note are answered there; `docs/decisions.md` §Addresses and
+the foot of this note are answered there; `../../site/docs/addresses.md`
 editions holds the reasoning, `docs/corpus-schema.md` §Commentary the shape,
 and `CLAUDE.md` the things that will bite. What is kept here is the
 measurement, plus — under "What the crawl changed" — the three claims below

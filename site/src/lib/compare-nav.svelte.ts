@@ -88,7 +88,7 @@ export function chooseComparisonEdition(id: string) {
  * served every query string that pointed at it — see
  * `bible/[book]/[chapter]/+page.svelte`'s `citedRange` docblock, which
  * documents that trap for `?v=`). Since the site became one SPA shell with
- * `ssr = false` (`+layout.ts`, docs/decisions.md §The site) no route
+ * `ssr = false` (`+layout.ts`, site/docs/shell.md) no route
  * component runs during the build at all, so the guard is now belt-and-braces
  * rather than load-bearing. It is kept because it states the requirement —
  * this reads the address bar, which only exists in a browser — and costs
