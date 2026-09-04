@@ -1696,6 +1696,13 @@ the page. The same call is wrong inside a modal for a second reason, which
 `TocMenu` and `JumpBox` had already met: the document behind an open dialog is
 inert but still scrollable. `site/docs/reading.md`.
 
+The scroll the site DOES compute is `$lib/smooth-scroll`'s critically damped
+spring, never `behavior: 'smooth'`: a second native `scrollTo` restarts the
+first, and a held step key repeats thirty times a second. Retargeting a spring
+keeps both position and velocity continuous, so nothing restarts. It yields to
+any other scroll by noticing the page is not where it left it — one check that
+catches the wheel, the scrollbar and the keys alike.
+
 ## Focus mode: print's hidden list, with three exceptions and one gate
 
 `data-zen` on `<html>` (`$lib/zen.svelte.ts`, a fifth axis written exactly as

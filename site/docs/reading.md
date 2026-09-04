@@ -223,9 +223,31 @@ then scrolls the page itself, because focus scrolls with `nearest` semantics:
 left to the browser, a run of steps moves nothing until the cursor reaches an
 edge and then pins each target _against_ that edge, with the text it names off
 screen. The target is absolute rather than a delta, which is what makes a
-held-down key behave: each keystroke re-measures against wherever the smooth
-scroll has got to and retargets, instead of stacking deltas onto a position
-the animation has already left.
+held-down key behave: each keystroke re-measures against wherever the page has
+got to and retargets, instead of stacking deltas onto a position the animation
+has already left.
+
+**The animation is a critically damped spring, not `behavior: 'smooth'`.** The
+native one is a fixed curve, and a second `scrollTo` while it is running
+restarts it — so a held key, repeating thirty times a second, began a fresh
+animation from a standing start on every frame, and what the reader felt was a
+stack of little lurches rather than a glide. A spring has no curve to restart:
+there is only a point being pulled toward wherever the target now is, and both
+its position and its velocity stay continuous when that target moves.
+Critically damped is the specific choice — the fastest approach that does not
+overshoot, and a reading page that sailed past the paragraph and came back
+would be worse than a hard jump. `$lib/smooth-scroll` solves the equation in
+closed form rather than integrating it, so a dropped frame or a tab that wakes
+up half a second later cannot destabilise it, and `omega` is the one number to
+turn.
+
+It yields to the reader rather than fighting them, and by measurement rather
+than by listener: if the page is not where the animation last put it, someone
+else is scrolling — a wheel, a trackpad, a scrollbar drag, Space, Page Down, a
+find-in-page match — and it abandons the glide where it stands. One check
+catches every input; cancelling on `wheel` and `touchstart` would have missed
+the keys, which are the likeliest thing to arrive while a keyboard reader is
+stepping.
 
 **The scroll is smooth, and one line elsewhere was quietly killing it.** A
 sidebar keeping its own highlighted row visible used
