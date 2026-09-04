@@ -331,18 +331,70 @@ placing appointments against weekdays here, they are reading what each day IS,
 and that is a line of text of unpredictable length — "Saints Cornelius, Pope,
 and Cyprian, Bishop, Martyrs" — which a column a seventh of the page wide cannot
 hold. The grid clipped nearly every name it drew to two lines and dropped them
-all below 34rem. What survives of it is the month: a listing of one month's
-days, every one present, with the month named above and one press to the next,
-and a heavier rule above each Sunday for the week structure a list does not
-otherwise show.
+all below 34rem. What survives of it is the month: a listing of one month, with
+the month named above and one press to the next, and a heavier rule above each
+Sunday for the week structure a list does not otherwise show.
 
 **There is no separate "month being viewed".** The month listed is the month of
 `selected`, and paging moves the selected day, clamped into the shorter month —
 so the page keeps one piece of state and it is the one in the URL. A view month
 held beside the selection would show two months at once, since the day's card
-sits under the listing. **The awkward half is focus**: a keyboard move that
+sits with the listing. **The awkward half is focus**: a keyboard move that
 crosses a month replaces every row, so the component names the date to stand on
 and refocuses it after the render.
+
+### The filter came back, with the repair the year listing needed
+
+Listing every day was the month view's answer to the year listing's one real
+defect, and it was the wrong answer: a third of a month is rows reading `Féria`
+beside an empty name, and they sit between the reader and the days that are not.
+`daysOf` filters to the days that have something to say — a celebration of their
+own, an optional memorial, an observance — **plus the chosen day and today,
+whatever is appointed on them**. That second half is the repair. A date can be
+typed into the field, pasted in a URL or arrowed onto and it is always a row,
+marked; nothing can be looked up and be missing. The year listing had no such
+rule, which is why filtering there lost dates and filtering here does not.
+
+A row and a day stopped being the same thing, so the arrow keys follow the rows,
+off one end of a month and into the next month's list. Stepping by a calendar
+day would make a hidden feria appear under the caret for one keystroke and
+vanish again — a list that rearranges itself as it is read.
+
+### The page must not move under the reader
+
+Two separate jumps, with two different fixes, and the second only appeared when
+the day's card moved ABOVE the listing on 2026-09-04 — where it belongs, since
+the card is the answer and the list is the way to ask again.
+
+**The selected row was rewrapping.** `font-weight: 600` on the whole row is a
+metric change, and a celebration's name runs to 111 characters, so any row near
+the wrap gained a line the moment it was selected and shoved every row below it
+down. Clicking down the list made the list jump under the cursor. The mark is a
+2px accent bar carried transparent by _every_ row plus a background tint; the
+weight cue survives on the day number, which has a fixed `inline-size` and
+cannot reflow whatever it wears.
+
+**The card's height depends on the day.** Measured over three years and every
+published layer: 804 of 1,095 days carry no optional memorial, 229 carry one, 55
+carry two, and the maximum is five (Argentina, 9 October 2027). So a reserved
+`min-block-size` would have to reserve for five and stand empty on three days in
+four. The component records its own top edge before the navigation and scrolls
+by the measured difference after — measuring rather than predicting, which is
+also what makes it safe beside the browser's own scroll anchoring: where the
+browser already compensated, the two readings agree and it scrolls by nothing.
+
+**And the list itself is a pane of a fixed height** (`clamp(18rem, 60vh, 40rem)`,
+`scrollbar-gutter: stable`). A month is twelve to twenty-nine rows depending on
+how thickly the sanctoral falls in it, and the chosen day can add one — so the
+page's own height was a function of the month. Fixing the box means the list can
+change by any number of rows and nothing outside it moves. The pane scrolls the
+chosen row into view by the shortest move that shows it, and starts a new month
+at its own beginning; the page's scroll is never what does that.
+
+The three corrections are one effect, in that order — page, pane, keyboard —
+because focusing a row scrolls it into view, and a scroll correction applied
+afterwards would undo that and leave the focused row just past the edge, one
+keypress from doing it again.
 
 ## What it deliberately does not say
 

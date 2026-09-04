@@ -6,11 +6,15 @@
 	 *
 	 * This page listed the whole liturgical year, Advent to Advent, filtered
 	 * down to the days that were not plain weekdays — about 230 rows. What was
-	 * wrong with it was the SPAN, not the shape: a reader looking for a
-	 * particular date had to scan a screen and a half of them, and the days
-	 * with nothing appointed were missing altogether, so a date could be
-	 * looked up and simply not be there. A month is 30 rows, every one of them
-	 * present, with the month named above it and one press to the next.
+	 * wrong with it was the SPAN, not the filter: a reader looking for a
+	 * particular date had to scan a screen and a half of them. A month is a
+	 * dozen to thirty rows, with the month named above it and one press to the
+	 * next.
+	 *
+	 * The filter came back (`daysOf`) with the one repair the year listing
+	 * needed: the chosen day is always a row. A date could be looked up in
+	 * that list and simply not be there, which is a defect of the year
+	 * listing's rule and not of filtering.
 	 *
 	 * ## And a list, not a grid
 	 *
@@ -86,6 +90,8 @@
 	 *  — see `pick`. Not `$state`: it is read once, by the effect that undoes
 	 *  the shift, and writing it must not itself re-render anything. */
 	let anchorTop: number | undefined;
+	/** Which month the pane is currently scrolled within — see the effect. */
+	let scrolledMonth: number | undefined;
 
 	const ymd = $derived(fromDayNumber(selected));
 
@@ -98,11 +104,15 @@
 		);
 	}
 
+	/** The month `delta` months from the one shown. */
+	function monthOffset(delta: number): { year: number; month: number } {
+		const months = ymd.year * 12 + (ymd.month - 1) + delta;
+		return { year: Math.floor(months / 12), month: (((months % 12) + 12) % 12) + 1 };
+	}
+
 	/** The same day-of-month `delta` months away, clamped into the month. */
 	function shiftMonths(delta: number): DayNumber {
-		const months = ymd.year * 12 + (ymd.month - 1) + delta;
-		const year = Math.floor(months / 12);
-		const month = (((months % 12) + 12) % 12) + 1;
+		const { year, month } = monthOffset(delta);
 		return toDayNumber(year, month, Math.min(ymd.day, monthLength(year, month)));
 	}
 
@@ -122,38 +132,65 @@
 		new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' })
 	);
 
-	/** Every day of the month, in order — INCLUDING the ones with nothing
-	 *  appointed. A month view that omitted them would be a list a reader
-	 *  could look a date up in and not find it, which is what the year listing
-	 *  did and the one thing about it that was a defect rather than a span. */
-	const days = $derived.by(() => {
-		const first = toDayNumber(ymd.year, ymd.month, 1);
-		return Array.from({ length: monthLength(ymd.year, ymd.month) }, (_, i) => {
+	/** What a row prints: the day's own celebration, or — for a plain weekday
+	 *  that still offers something — the first optional memorial or observance,
+	 *  which is the only thing that makes such a day worth a look. A day this
+	 *  returns nothing for is a day with nothing to say, and is not listed. */
+	function rowName(d: LiturgicalDay | undefined): { text: string; optional: boolean } | undefined {
+		if (!d) return undefined;
+		if (d.celebration.rank !== 'weekday')
+			return { text: celebrationName(d.celebration, lang), optional: false };
+		const spare = d.optional[0] ?? d.observances[0];
+		if (spare) return { text: celebrationName(spare, lang), optional: true };
+		return undefined;
+	}
+
+	/**
+	 * A month's rows: THE DAYS THAT HAVE SOMETHING TO SAY, plus the chosen day
+	 * and today.
+	 *
+	 * The whole month was listed until this filter, and the argument for that
+	 * was a real one — the year listing before it dropped the plain weekdays,
+	 * and a reader could look a date up in it and simply not find it. What
+	 * makes the filter safe is the second half of the rule rather than the
+	 * first: `selected` is always a row, so the date a reader asks for is
+	 * always in the list, marked, whether or not anything is appointed on it.
+	 * Nothing can be looked up and be missing. What is dropped is only the
+	 * dozen-odd rows a month that said "Féria" beside an empty name — a third
+	 * of the list, carrying nothing, between the reader and the days that do.
+	 *
+	 * Today is kept for the same reason `Hoje` exists: it is the one row a
+	 * reader navigates back to, and the accented circle is the landmark they
+	 * find it by.
+	 *
+	 * Taking `(year, month)` rather than reading `ymd` is what lets the arrow
+	 * keys walk off one end of a month into the next — `step` below builds the
+	 * neighbour's list with it.
+	 */
+	function daysOf(year: number, month: number) {
+		const first = toDayNumber(year, month, 1);
+		return Array.from({ length: monthLength(year, month) }, (_, i) => {
 			const n = first + i;
 			return {
 				n,
 				iso: formatIsoDate(n),
 				day: i + 1,
-				weekdayName: weekdayFormat.format(new Date(Date.UTC(ymd.year, ymd.month - 1, i + 1))),
-				// The rule that stands in for the grid's columns. Never on the
-				// first row, where it would be a second line under the header.
-				weekStart: i > 0 && weekday(n) === SUNDAY,
+				weekdayName: weekdayFormat.format(new Date(Date.UTC(year, month - 1, i + 1))),
 				liturgical: liturgicalDay(n, options)
 			};
-		});
-	});
-
-	/** What a row prints: the day's own celebration, or — for a plain weekday
-	 *  that still offers something — the first optional memorial, which is the
-	 *  only thing that makes such a day worth a look. */
-	function rowName(d: LiturgicalDay | undefined): { text: string; optional: boolean } | undefined {
-		if (!d) return undefined;
-		if (d.celebration.rank !== 'weekday')
-			return { text: celebrationName(d.celebration, lang), optional: false };
-		if (d.optional.length > 0)
-			return { text: celebrationName(d.optional[0], lang), optional: true };
-		return undefined;
+		})
+			.filter((d) => rowName(d.liturgical) !== undefined || d.n === selected || d.n === today)
+			.map((d, i) => ({
+				// The rule that stands in for the grid's columns, decided AFTER
+				// the filter: it marks the first row of each week, and on the
+				// first row of the list it would be a second line under the
+				// header rather than a division within it.
+				...d,
+				weekStart: i > 0 && weekday(d.n) === SUNDAY
+			}));
 	}
+
+	const days = $derived(daysOf(ymd.year, ymd.month));
 
 	/**
 	 * Every way of choosing a day goes through here, and it does two things
@@ -191,39 +228,74 @@
 	}
 
 	/**
+	 * One row up or down, ACROSS the month boundary.
+	 *
+	 * A row and a day stopped being the same thing when the empty days left
+	 * the list, and the arrows follow the rows: what the reader sees is a
+	 * list, and a list is walked from one line to the next. Stepping by a
+	 * calendar day instead would make a hidden feria appear under the caret
+	 * for one keystroke and vanish again, which is a list that rearranges
+	 * itself as you read it.
+	 *
+	 * Off either end, the neighbouring month's own list supplies the next row
+	 * — its last if we walked backwards off the top, its first if forwards off
+	 * the bottom — so the arrows never dead-end at the edge of a month.
+	 */
+	function step(delta: 1 | -1): DayNumber {
+		const here = days.findIndex((d) => d.n === selected);
+		const next = days[here + delta];
+		if (next) return next.n;
+		const { year, month } = monthOffset(delta);
+		const over = daysOf(year, month);
+		return (delta > 0 ? over[0] : over[over.length - 1]).n;
+	}
+
+	/**
 	 * Arrow keys walk the list, which is what makes it navigable without a
 	 * mouse and without thirty tab stops.
 	 *
 	 * Every move is a real navigation and the URL follows — there is no
 	 * "focused but not selected" state to explain, and a reader who arrows to
-	 * a day and stops has that day's card above them. Up and down are one DAY,
-	 * which in a list is one row; a month is PageUp/PageDown, and Home/End are
-	 * the ends of the month. Left and right are deliberately untouched: in a
-	 * vertical list they mean nothing, and binding them would take them away
-	 * from the browser.
+	 * a day and stops has that day's card above them. Up and down are one ROW,
+	 * a month is PageUp/PageDown, and Home/End are the ends of the month's
+	 * list. Left and right are deliberately untouched: in a vertical list they
+	 * mean nothing, and binding them would take them away from the browser.
 	 */
 	function onRowKeydown(event: KeyboardEvent) {
-		const first = toDayNumber(ymd.year, ymd.month, 1);
 		const target = {
-			ArrowUp: selected - 1,
-			ArrowDown: selected + 1,
-			PageUp: shiftMonths(-1),
-			PageDown: shiftMonths(1),
-			Home: first,
-			End: first + monthLength(ymd.year, ymd.month) - 1
+			ArrowUp: () => step(-1),
+			ArrowDown: () => step(1),
+			PageUp: () => shiftMonths(-1),
+			PageDown: () => shiftMonths(1),
+			Home: () => days[0].n,
+			End: () => days[days.length - 1].n
 		}[event.key];
 		if (target === undefined) return;
 		event.preventDefault();
-		pick(target, true);
+		pick(target(), true);
+	}
+
+	/** Scroll the chosen row into the pane, by the shortest move that shows it
+	 *  — the pane's own scrolling, never the page's, which is the whole point
+	 *  of the pane. */
+	function reveal() {
+		const row = listEl?.querySelector<HTMLElement>(`[data-date="${formatIsoDate(selected)}"]`);
+		if (!listEl || !row) return;
+		const top = row.offsetTop;
+		const bottom = top + row.offsetHeight;
+		if (top < listEl.scrollTop) listEl.scrollTop = top;
+		else if (bottom > listEl.scrollTop + listEl.clientHeight)
+			listEl.scrollTop = bottom - listEl.clientHeight;
 	}
 
 	/**
-	 * Undo the shift, then restore the keyboard — IN THAT ORDER, which is the
-	 * whole reason these are one effect and not two. Focusing a row scrolls it
-	 * into view if it is off-screen, and a scroll correction applied afterwards
-	 * would undo that and leave the focused row just past the edge, one
-	 * keypress from doing it again. Correcting first means the browser's own
-	 * scroll-into-view gets the last word, and only when it is really needed.
+	 * Put the page back, then the pane, then the keyboard — IN THAT ORDER,
+	 * which is the whole reason these are one effect and not three. Focusing a
+	 * row scrolls it into view if it is off-screen, and a scroll correction
+	 * applied afterwards would undo that and leave the focused row just past
+	 * the edge, one keypress from doing it again. Correcting first means the
+	 * browser's own scroll-into-view gets the last word, and only when the two
+	 * corrections above did not already make it unnecessary.
 	 */
 	$effect(() => {
 		// Re-runs on every day change, focus or no focus.
@@ -233,6 +305,14 @@
 			if (now !== undefined && now !== anchorTop) window.scrollBy(0, now - anchorTop);
 			anchorTop = undefined;
 		}
+		// A new month starts at its own beginning; keeping the last month's
+		// offset would open February somewhere in the middle of it.
+		const month = ymd.year * 12 + ymd.month;
+		if (listEl && scrolledMonth !== month) {
+			listEl.scrollTop = 0;
+			scrolledMonth = month;
+		}
+		reveal();
 		if (!refocus) return;
 		const row = listEl?.querySelector<HTMLElement>(`[data-date="${refocus}"]`);
 		refocus = undefined;
@@ -351,14 +431,39 @@
 		transform: scaleX(-1);
 	}
 
+	/*
+	 * A PANE OF A FIXED HEIGHT, and the height is the point rather than the
+	 * scrolling.
+	 *
+	 * What a month lists is now between twelve and twenty-nine rows depending
+	 * on how thickly the sanctoral falls in it, and the day the reader picks
+	 * can add one — so every click that crossed a month, and some that did
+	 * not, resized the page under whatever was below. Fixing the box means the
+	 * list can change by any number of rows and NOTHING outside it moves: the
+	 * page's height is the same in February as in August.
+	 *
+	 * `60vh` rather than a count of rows, because the box is a window onto the
+	 * month and the window is the screen's to size; the bounds keep it from
+	 * collapsing on a short viewport or running away on a tall one.
+	 * `scrollbar-gutter: stable` so that the rows do not shift sideways on the
+	 * months long enough to need a scrollbar.
+	 */
 	ol {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		border-top: 1px solid var(--color-border);
+		position: relative;
+		block-size: clamp(18rem, 60vh, 40rem);
+		overflow-y: auto;
+		scrollbar-gutter: stable;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
 	}
 	li {
 		border-bottom: 1px solid var(--color-border);
+	}
+	li:last-child {
+		border-bottom: none;
 	}
 	/*
 	 * THE WEEK IS THE ONE THING A LIST LOSES, and a heavier rule above each
@@ -378,7 +483,7 @@
 		grid-template-columns: 3.75rem 1rem 1fr auto;
 		align-items: baseline;
 		gap: 0.5rem;
-		padding: 0.35rem 0.25rem;
+		padding: 0.35rem 0.6rem 0.35rem 0.4rem;
 		/* Carried by EVERY row, transparent until one is chosen, so that
 		   marking the selection cannot change where the text begins. */
 		border-inline-start: 2px solid transparent;
