@@ -167,6 +167,49 @@ describe('UI_LANGS and the dictionaries', () => {
 		}
 	});
 
+	/**
+	 * EVERY WORD THE CALENDAR PRINTS AS A TERM OF ART HAS AN EXPLANATION, and
+	 * the pairing is what this checks rather than the wording.
+	 *
+	 * `TermGloss` builds its key by interpolation (`calendar.gloss.colour.` +
+	 * the day's colour), so a colour, rank or season named in the dictionary
+	 * with no gloss beside it renders the KEY as the tooltip's text — visible
+	 * only on the days that carry that term, which for `rose` is twice a year
+	 * and for `blue` is once, in two countries. The primer at the foot of
+	 * `/calendarium` is total over the three unions by its type; this is the
+	 * other half, over the strings themselves, in both directions: a gloss
+	 * naming a term the calendar does not have is as wrong as a term with none.
+	 */
+	it('glosses every calendar term, and glosses nothing that is not one', async () => {
+		const en = await dictionaryFor('en');
+		const groups = ['season', 'rank', 'colour'];
+		const terms = new Set(
+			Object.keys(en)
+				.map((k) => k.match(/^calendar\.(season|rank|colour)\.(.+)$/))
+				.filter((m) => m !== null)
+				.map((m) => `${m[1]}.${m[2]}`)
+		);
+		const glossed = new Set(
+			Object.keys(en)
+				.map((k) => k.match(/^calendar\.gloss\.(season|rank|colour)\.(.+)$/))
+				.filter((m) => m !== null)
+				.map((m) => `${m[1]}.${m[2]}`)
+		);
+		expect(groups.every((g) => [...terms].some((t) => t.startsWith(`${g}.`)))).toBe(true);
+		expect(
+			[...terms].filter((t) => !glossed.has(t)),
+			'named, never explained'
+		).toEqual([]);
+		expect(
+			[...glossed].filter((t) => !terms.has(t)),
+			'explained, never named'
+		).toEqual([]);
+		// The three counters have no union behind them and are named one by one.
+		for (const cycle of ['sundayCycle', 'weekdayCycle', 'psalterWeek', 'obligation']) {
+			expect(en[`calendar.gloss.${cycle}`], cycle).toBeTruthy();
+		}
+	});
+
 	// Every placeholder is substituted by the caller with `.replace('{x}', …)`,
 	// so a translation that drops or misspells one silently loses the word it
 	// stood for — a sentence with no language name in it, or a plate's control

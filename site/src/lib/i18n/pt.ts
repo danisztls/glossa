@@ -396,5 +396,61 @@ export const pt: Dictionary = {
 	'calendar.rank.optional-memorial': 'Memória facultativa',
 	'calendar.rank.commemoration': 'Comemoração',
 	'calendar.rank.sunday': 'Domingo',
-	'calendar.rank.weekday': 'Féria'
+	'calendar.rank.weekday': 'Féria',
+	/* Ver `en.ts`: as glosas aparecem no cartão do dia e no rodapé de
+	   `/calendarium`. */
+	'calendar.gloss.season.advent':
+		'As quatro semanas antes do Natal: preparação para a vinda do Senhor, e início do ano da Igreja.',
+	'calendar.gloss.season.christmas':
+		'Do Natal ao Batismo do Senhor, celebrando o nascimento do Senhor e a sua manifestação ao mundo.',
+	'calendar.gloss.season.lent':
+		'Os quarenta dias da Quarta-feira de Cinzas até a Missa vespertina da Ceia do Senhor: penitência, esmola e preparação para a Páscoa.',
+	'calendar.gloss.season.triduum':
+		'Os três dias da tarde da Quinta-feira Santa à tarde do Domingo de Páscoa — paixão, morte e ressurreição do Senhor, e o ápice de todo o ano.',
+	'calendar.gloss.season.easter':
+		'Os cinquenta dias da Páscoa a Pentecostes, celebrados como uma única festa — “um só grande domingo”.',
+	'calendar.gloss.season.ordinary':
+		'As trinta e três ou trinta e quatro semanas fora dos outros tempos. Não é tempo “qualquer”, e sim ordenado: as semanas são numeradas, e a Igreja percorre a vida e o ensinamento do Senhor em ordem. Vem em duas etapas — depois do Tempo do Natal até a Quaresma, e depois de Pentecostes até o Advento.',
+	'calendar.gloss.rank.solemnity':
+		'O grau mais alto: a Páscoa, o Natal, a Ascensão, o padroeiro do lugar. Celebra-se com Glória e Credo, e começa na tarde do dia anterior.',
+	'calendar.gloss.rank.feast':
+		'Celebra-se dentro do próprio dia. Os apóstolos e evangelistas, e os dias maiores do Senhor e de Nossa Senhora.',
+	'calendar.gloss.rank.memorial':
+		'Um santo lembrado no seu dia, dentro da Missa e do Ofício do tempo. Obrigatória onde é celebrada.',
+	'calendar.gloss.rank.optional-memorial':
+		'Pode ser celebrada ou não, à escolha do sacerdote ou da comunidade. Se não for, o dia é simplesmente a féria.',
+	'calendar.gloss.rank.commemoration':
+		'O que uma memória se torna na Quaresma: uma oração acrescentada à Missa ferial, que o tempo mantém no mais.',
+	'calendar.gloss.rank.sunday':
+		'A festa primordial — o Dia do Senhor, celebrado toda semana desde a ressurreição. Só uma solenidade ou uma festa do Senhor pode substituí-lo, e no Advento, na Quaresma e no Tempo Pascal nem isso.',
+	'calendar.gloss.rank.weekday':
+		'Dia sem celebração própria. A Missa e o Ofício são os do tempo — o que torna o tempo a coisa a saber.',
+	'calendar.gloss.colour.white':
+		'Alegria. Tempo Pascal e Tempo do Natal, os dias do Senhor fora da sua paixão, Nossa Senhora, os anjos e os santos não mártires.',
+	'calendar.gloss.colour.red':
+		'Sangue e fogo. Domingo de Ramos e Sexta-feira Santa, Pentecostes, os apóstolos e evangelistas, e os mártires.',
+	'calendar.gloss.colour.green': 'Tempo Comum: a cor da esperança e do que cresce.',
+	'calendar.gloss.colour.violet': 'Advento e Quaresma, e também nas Missas pelos falecidos.',
+	'calendar.gloss.colour.rose':
+		'Usado duas vezes por ano — no domingo Gaudete, terceiro do Advento, e no domingo Laetare, quarto da Quaresma — quando o jejum se alivia e o fim se avizinha.',
+	'calendar.gloss.colour.black': 'Pode ser usado nas Missas pelos falecidos.',
+	'calendar.gloss.colour.blue':
+		'O privilégio do azul: usado na Imaculada Conceição na Espanha, nas Filipinas e nos poucos outros lugares a que a Santa Sé o concedeu.',
+	'calendar.gloss.sundayCycle':
+		'As leituras dominicais correm em três anos — A, B e C — lendo Mateus, Marcos e Lucas por vez, com João na Quaresma e no Tempo Pascal. O ciclo vira no primeiro domingo do Advento, com o ano da Igreja.',
+	'calendar.gloss.weekdayCycle':
+		'As leituras feriais correm em dois anos, I e II: a primeira leitura muda, o Evangelho não. O ano litúrgico recebe o nome do ano civil em que termina — anos ímpares são I, anos pares II.',
+	'calendar.gloss.psalterWeek':
+		'A Liturgia das Horas distribui os salmos por quatro semanas, I a IV, que se repetem ao longo do ano. Esta é a semana cujos salmos são os de hoje, para quem reza as Horas.',
+	'calendar.gloss.obligation':
+		'Dia em que os fiéis são obrigados a participar da Missa e a abster-se dos trabalhos que o impeçam. Todos os domingos, e os demais dias que cada conferência episcopal determinou.',
+	'calendar.primer.title': 'Primeira vez por aqui?',
+	'calendar.primer.lead':
+		'A Igreja guarda um ano próprio. Começa no Advento, gira em torno da Páscoa e dá a cada dia um nome, um grau e uma cor — e são eles que decidem o que se reza e se lê na Missa e na Liturgia das Horas naquele dia. Assim, “23.º Domingo do Tempo Comum” é um endereço: diz a um sacerdote, a um coro ou a quem reza em casa quais orações e leituras são as de hoje.',
+	'calendar.primer.seasons': 'Os tempos',
+	'calendar.primer.ranks': 'O que um dia pode ser',
+	'calendar.primer.colours': 'As cores',
+	'calendar.primer.cycles': 'Os ciclos',
+	'calendar.primer.cyclesLead':
+		'Três contadores que, juntos, dizem quais leituras e salmos estão marcados para hoje.'
 };

@@ -192,8 +192,10 @@
  * THE LITURGICAL COLOUR SWATCH — a small disc in the colour of the day's
  * vestments, and the site's only visual vocabulary for that colour.
  *
- * Two surfaces draw it, `LiturgicalDayCard` and the month grid, and the
- * reason it is a primitive at two rather than at ten is what the second copy
+ * Three surfaces draw it — `LiturgicalDayCard`, the month listing, and the
+ * colour list in `CalendarPrimer`, where the disc beside a name is what makes
+ * the list recognisably about the discs on the page above it. The reason it is
+ * a primitive at three rather than at ten is what the second copy
  * already did: the copy the year listing carried had six colours and the
  * card's had seven, so a day kept in blue — the Immaculate Conception in
  * Spain and the Philippines — drew as an empty ring in one place and a blue

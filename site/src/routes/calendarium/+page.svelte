@@ -57,6 +57,7 @@
 	import { goto } from '$app/navigation';
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
+	import CalendarPrimer from '$lib/components/CalendarPrimer.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import {
 		formatIsoDate,
@@ -194,6 +195,8 @@
 		{/if}
 
 		<CalendarMonth {selected} today={localToday()} {options} {lang} onpick={go} />
+
+		<CalendarPrimer />
 	</div>
 </div>
 

@@ -405,6 +405,53 @@ What is left in the component is the refocus alone — a keyboard move that
 crosses a month replaces every row, so the date to stand on is named before the
 navigation and focused after it.
 
+## The page explains its own vocabulary
+
+Asked by a reader who had met none of it: what do the colours mean, what is
+Ordinary Time, why does it matter that tomorrow is the Twenty-third Sunday in
+it, what are the Sunday cycle, the weekday cycle and the psalter week. Every
+word on the day's card is a term of art, and the page printed all of them with
+no way in.
+
+**Two shapes, because the question has two shapes.** A gloss behind a term
+answers "what does _Memorial_ mean"; it cannot answer "what is any of this
+for", because a reader who does not know the vocabulary does not know which
+word to press first, and pressing seven in turn never adds up to the sentence
+that the Church keeps a year of its own and that a day's name, rank and colour
+are what decide the prayers and readings appointed for it. So: `TermGloss` on
+every term in the card, and `CalendarPrimer` at the foot of the page, whose
+lead is that sentence and whose four folds are the vocabulary — the seasons,
+what a day can be, the colours, the cycles.
+
+**One set of sentences, shown twice.** Both read `calendar.gloss.*` out of the
+dictionary, so the tooltip and the primer cannot come to say different things
+about the same word — the reason the calendar page and the home page share
+`LiturgicalDayCard` in the first place.
+
+**`TermGloss` is `SiglumGloss` with the citation half removed**, mechanism for
+mechanism: the same `NoteCard(uid, { margin: false })`, so the browser's
+declarative invoker toggles it on a tap and a resting pointer opens it; the
+same dotted underline and `cursor: help`; the same `role="note"`. What differs
+is that a siglum's expansion is content in the citation's language with an
+outbound address behind it, and this is chrome in the reader's own with nowhere
+to send them — so no `lang`, no source line. **The top layer is load-bearing
+here**: the card is held to a fixed height with `overflow-y: auto`, which clips
+absolutely positioned descendants, and a popover is not one.
+
+**Totality is checked from both ends.** The primer's three lists are
+`satisfies Record<Season | Rank | Colour, true>`, so a term added to
+`calendar/types.ts` and not explained is a type error; and a test pairs the
+`calendar.*` names against the `calendar.gloss.*` sentences in both directions,
+because `TermGloss` builds its key by interpolation — a named colour with no
+gloss renders the key as its own tooltip, and for `rose` that is visible twice
+a year, for `blue` once, in two countries.
+
+**English and Portuguese only**, on `loadFailed.*`'s precedent: `t()` falls
+back key by key, so the other thirty-two interface languages get these in
+English rather than a machine translation of thirty definitions of Catholic
+terms of art, where the obvious dictionary word is often not the one the Church
+uses (site/CLAUDE.md §Languages, on the confidence tiers).
+
 ## What it deliberately does not say
 
 **The lectionary.** The cycle letters are stated as facts about the year and

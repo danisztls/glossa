@@ -666,5 +666,66 @@ export const en: Dictionary = {
 	'calendar.rank.optional-memorial': 'Optional memorial',
 	'calendar.rank.commemoration': 'Commemoration',
 	'calendar.rank.sunday': 'Sunday',
-	'calendar.rank.weekday': 'Weekday'
+	'calendar.rank.weekday': 'Weekday',
+	/*
+	 * THE GLOSSES: what each of those words means, for a reader who has met
+	 * none of them before. Every one is shown twice — behind the term itself
+	 * in the day's card (`TermGloss`) and in the primer at the foot of
+	 * `/calendarium` — so a definition is written once and cannot come to
+	 * disagree with itself.
+	 */
+	'calendar.gloss.season.advent':
+		'The four weeks before Christmas: preparation for the Lord’s coming, and the beginning of the Church’s year.',
+	'calendar.gloss.season.christmas':
+		'From Christmas Day to the Baptism of the Lord, keeping the Lord’s birth and his manifestation to the world.',
+	'calendar.gloss.season.lent':
+		'The forty days from Ash Wednesday to the evening Mass of the Lord’s Supper: penance, almsgiving and preparation for Easter.',
+	'calendar.gloss.season.triduum':
+		'The three days from the evening of Holy Thursday to the evening of Easter Sunday — the Lord’s passion, death and resurrection, and the summit of the whole year.',
+	'calendar.gloss.season.easter':
+		'The fifty days from Easter to Pentecost, kept as one continuous feast — “one great Sunday”.',
+	'calendar.gloss.season.ordinary':
+		'The thirty-three or thirty-four weeks outside the other seasons. Not “plain” but ordered: the weeks are numbered, and the Church reads through the Lord’s life and teaching in course. It comes in two stretches — after Christmas Time until Lent, and after Pentecost until Advent.',
+	'calendar.gloss.rank.solemnity':
+		'The highest rank: Easter, Christmas, the Ascension, a place’s own patron. Kept with the Gloria and the Creed, and beginning the evening before.',
+	'calendar.gloss.rank.feast':
+		'Kept within the day itself. The apostles and evangelists, and the greater days of the Lord and of Our Lady.',
+	'calendar.gloss.rank.memorial':
+		'A saint remembered on his or her day, within the season’s own Mass and Office. Obligatory wherever it is kept.',
+	'calendar.gloss.rank.optional-memorial':
+		'May be kept or not, as the priest or community chooses. Left unkept, the day is simply the weekday.',
+	'calendar.gloss.rank.commemoration':
+		'What a memorial becomes in Lent: a prayer added to the ferial Mass, which the season otherwise keeps whole.',
+	'calendar.gloss.rank.sunday':
+		'The original feast day — the Lord’s Day, kept every week since the resurrection. Only a solemnity or a feast of the Lord may displace one, and in Advent, Lent and Easter Time not even those.',
+	'calendar.gloss.rank.weekday':
+		'A day with no celebration of its own. The Mass and the Office are the season’s, which is what makes the season worth knowing.',
+	'calendar.gloss.colour.white':
+		'Joy. Easter and Christmas Time, the Lord’s days other than of his passion, Our Lady, the angels, and saints who were not martyrs.',
+	'calendar.gloss.colour.red':
+		'Blood and fire. Palm Sunday and Good Friday, Pentecost, the apostles and evangelists, and the martyrs.',
+	'calendar.gloss.colour.green': 'Ordinary Time: the colour of hope, and of things growing.',
+	'calendar.gloss.colour.violet': 'Advent and Lent, and worn also in Masses for the dead.',
+	'calendar.gloss.colour.rose':
+		'Worn twice a year — Gaudete Sunday, the third of Advent, and Laetare Sunday, the fourth of Lent — where the fast lightens and the end is in sight.',
+	'calendar.gloss.colour.black': 'May be worn in Masses for the dead.',
+	'calendar.gloss.colour.blue':
+		'The privilege of blue: worn for the Immaculate Conception in Spain, the Philippines and the few other places the Holy See has granted it to.',
+	'calendar.gloss.sundayCycle':
+		'The Sunday readings run over three years — A, B and C — reading Matthew, Mark and Luke in turn, with John through Lent and Easter Time. The cycle turns on the First Sunday of Advent, with the Church’s year.',
+	'calendar.gloss.weekdayCycle':
+		'The weekday readings run over two years, I and II: the first reading changes, the Gospel does not. A liturgical year is named for the calendar year it ends in — odd years are I, even years II.',
+	'calendar.gloss.psalterWeek':
+		'The Liturgy of the Hours spreads the psalms over four weeks, I to IV, repeating through the year. This is which week’s psalms are today’s, for anyone praying the Hours.',
+	'calendar.gloss.obligation':
+		'A day on which the faithful are bound to take part in Mass, and to keep from work that would prevent it. Every Sunday, and the other days each conference of bishops has determined.',
+	'calendar.primer.title': 'New to this?',
+	'calendar.primer.lead':
+		'The Church keeps a year of its own. It begins with Advent, turns on Easter, and gives every day a name, a rank and a colour — and those decide what is prayed and read at Mass and in the Liturgy of the Hours that day. So “Twenty-third Sunday in Ordinary Time” is an address: it tells a priest, a choir, or anyone praying at home which prayers and readings belong to today.',
+	'calendar.primer.seasons': 'The seasons',
+	'calendar.primer.ranks': 'What a day can be',
+	'calendar.primer.colours': 'The colours',
+	'calendar.primer.cycles': 'The cycles',
+	'calendar.primer.cyclesLead':
+		'Three counters, which together say which readings and psalms are appointed for today.'
 };
