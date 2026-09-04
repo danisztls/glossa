@@ -6560,6 +6560,18 @@ def main() -> int:
     # languages"). Derived from the table so a new entry needs no edit here.
     ap.add_argument("--lang", choices=[*sorted(LANG_CONFIG), "all"], default="all")
     ap.add_argument(
+        "--write-parse",
+        metavar="DIR",
+        help=(
+            "write each edition's parsed prayers.json under DIR and exit. "
+            "THIS IS WHAT MAKES THE CURATION RE-RUNNABLE: the curated files "
+            "are checked against the PARSE, and `build/` no longer holds one "
+            "(prayers_project.py writes the curation there), so a curator "
+            "needs somewhere to put a pristine reading. Not part of any "
+            "stage; nothing reads DIR but the curation"
+        ),
+    )
+    ap.add_argument(
         "--verify-curated",
         action="store_true",
         help=(
@@ -6583,6 +6595,39 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
+    if args.write_parse:
+        out = Path(args.write_parse)
+
+        def dump(tag: str, items: list[Prayer]) -> None:
+            d = out / f"prayer.common.{tag}"
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "prayers.json").write_text(
+                json.dumps([p.to_dict() for p in items], ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            print(f"  {d}  {len(items)} prayers")
+
+        parsed: dict[str, list[Prayer]] = {}
+        for lang in sorted(LANG_CONFIG):
+            prayers, _ = run(lang)
+            parsed[lang] = prayers
+            attach_sources(prayers, lang)
+            dump(lang, build_base_edition(prayers) if lang == "en" else prayers)
+        # THE TWO DERIVED EDITIONS COUNT AS PARSE. `la` is where the curation
+        # reads the canonical Latin from, and `en-gb` holds the five UK
+        # wordings, so a parse directory without them cannot answer the
+        # curation's questions: it would resolve the Latin to nothing and
+        # silently drop the companion from every prayer that has one.
+        if "en" in parsed and "pt" in parsed:
+            latin, _witnesses = build_latin_edition(parsed["en"], parsed["pt"])
+            dump("la", latin)
+        if "en" in parsed:
+            dump("en-gb", build_regional_edition(parsed["en"]))
+        print(
+            f"parse written to {out} -- point the curation at it with "
+            f"GLOSSA_PARSE_DIR={out}"
+        )
+        return 0
     if args.verify_curated:
         ok, _ = verify_curated()
         return 0 if ok else 1
