@@ -173,12 +173,33 @@ def kind_of(rec: dict, cur: dict) -> str:
     return "simple"
 
 
+def title_of(slug: str, lang: str, *candidates: str | None) -> str:
+    """The first title the curation records, and never the slug.
+
+    THE SLUG IS NOT A TITLE, and falling back to it published one: the Latin
+    entries carried no `title` until the curation read it off the page beside
+    the text (2026-09-04), so `prayer.common.la` printed the Pater Noster as
+    `our-father` for 18 of its 24 prayers and nothing anywhere said so. A
+    missing title is a curation that has not been re-run, which is a thing to
+    fix rather than to paper over with an identifier.
+    """
+    for t in candidates:
+        if t:
+            return t
+    raise RuntimeError(
+        f"{slug} ({lang}): no title in the curation, and the slug is not one "
+        f"-- re-run the curation (authored/prayers/curation/README.md)"
+    )
+
+
 def prayer_dict(n: int, slug: str, cur: dict, lang: str) -> dict:
     rec = cur["langs"][lang]
     d: dict = {
         "n": n,
         "slug": slug,
-        "title": rec.get("title") or cur.get("latin", {}).get("title") or slug,
+        "title": title_of(
+            slug, lang, rec.get("title"), cur.get("latin", {}).get("title")
+        ),
         "kind": kind_of(rec, cur),
         "blocks": blocks_out(rec["blocks"]),
     }
@@ -241,7 +262,7 @@ def build_latin(curated: dict[str, dict]) -> list[dict]:
             {
                 "n": n,
                 "slug": slug,
-                "title": cur["latin"].get("title") or slug,
+                "title": title_of(slug, "la", cur["latin"].get("title")),
                 "kind": "simple",
                 "blocks": blocks_out(cur["latin"]["blocks"]),
             }
