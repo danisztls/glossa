@@ -270,12 +270,21 @@ too, for a reason that survives the change of medium: with the header and the
 sidebar gone it is the only thing left saying which chapter of which work this
 is.
 
-**Subtractive by construction, which is what makes it safe to leave on.**
-Hiding `.reading-aside` changes no geometry at all — the aside is a grid child
-and the track it sat in is declared by `grid-template-columns`, so the column
-stays on the midline with the apparatus lane still opposite it. A mode that
-widened the measure would change where every line breaks, and the reader would
-lose their place twice on every toggle.
+**Nothing moves, which is what makes it safe to leave on.** Everything the
+mode hides it hides with `opacity: 0` and `visibility: hidden` together, never
+with `display: none`: the pair paints nothing and still holds every box, so the
+header keeps its height, the reading bar keeps the height it publishes as
+`--reading-bar-height` — which `scroll-padding-top` and both asides are
+measured against — and the reader's line stays on the pixel it was on. The
+first version used `display: none` and jumped the page twice per toggle: the
+header collapsed and pulled the document up by its own height, and the one
+control left in the bar slid to the inline start. A mode that changed the
+measure would be worse still, rebreaking every line in the text.
+
+`opacity` alone would not do. A fully transparent control still takes Tab,
+still takes a click and is still announced; `visibility: hidden` is what
+removes it from the tab order, from hit testing and from the accessibility
+tree, and it is the half that keeps the box.
 
 **Every rule is gated on `:has(.reading-bar)`, and the gate is the feature.**
 The preference outlives a navigation and the only control that clears it is in
@@ -284,15 +293,22 @@ with no header, no footer and nothing that put them back. One selector makes
 "the way out is always on screen" true rather than usually true, and costs less
 than a route table that would then have to be kept in step.
 
-**The header is emptied leaf by leaf and NOT `display: none`, and the trap is
-worth stating because the site relies on its inverse elsewhere.** `JumpBox` and
-`Shortcuts` each render trigger and `<dialog>` as siblings inside the control
-row. `display: none` on an ancestor takes the dialog out of the box tree too —
-exactly how `layout.css` hides `TocMenu`'s panel with its wrapper — so hiding
-the header would leave `/`, Ctrl+K and `?` still listening at the window and
-opening a modal nobody can see: `showModal()` succeeds, the page goes inert,
-nothing errors. The leaves go instead, which also clears the tab order in a way
-`visibility: hidden` would not.
+**The header is emptied leaf by leaf, and the trap is worth stating because
+the site relies on its inverse elsewhere.** `JumpBox` and `Shortcuts` each
+render trigger and `<dialog>` as siblings inside the control row, so hiding the
+triggers leaves the dialogs alone. Hiding an ancestor would not, and neither
+property gets you out of it: `display: none` takes a descendant dialog out of
+the box tree — exactly how `layout.css` hides `TocMenu`'s panel with its
+wrapper — and `visibility` inherits through the top layer, so a dialog in a
+hidden subtree opens invisibly. Either way `/`, Ctrl+K and `?` are still
+listening at the window and opening a modal nobody can see: `showModal()`
+succeeds, the page goes inert, nothing errors.
+
+The reading bar is the one container this file hides that holds a dialog —
+`TocMenu`'s panel is a direct child, beside its trigger — so its rule excludes
+`dialog` and `[popover]` in the `:not()` rather than overriding them
+afterwards. An override has to out-specify whatever it is fighting, which puts
+a safety net one careless selector away from losing silently.
 
 **`Escape` leaves the mode and carries a flag saying when it may.**
 `ShortcutContext.zen` is the fourth fact the resolver cannot read off a

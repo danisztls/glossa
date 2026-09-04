@@ -2,18 +2,41 @@
  * FOCUS MODE — the reading page with everything but the text taken away.
  *
  * `$lib/zen.svelte.ts` puts `data-zen` on `<html>` and knows nothing else;
- * this file is the entire behaviour. It is subtractive by construction: it
- * hides boxes and clears the chrome's own borders and padding, and it moves
- * nothing, resizes nothing and re-lays-out nothing. That is what makes it
- * safe to leave on across a navigation — a mode that changed the measure
- * would change where every line breaks, and the reader would lose their
- * place twice on every toggle.
+ * this file is the entire behaviour.
+ *
+ * ## Nothing moves. That is the constraint the whole file is written to.
+ *
+ * The mode hides boxes; it does not remove them. Every rule below is either a
+ * colour or the `opacity`/`visibility` pair, and there is not one declaration
+ * in the file that changes a size, a spacing or a border width. Toggling it
+ * therefore reflows nothing: the header keeps its height, the reading bar
+ * keeps the height it publishes as `--reading-bar-height` (which
+ * `scroll-padding-top` and both asides are measured against — `base.css`), and
+ * the reader's line stays on the same pixel it was on. A mode that changed the
+ * measure would rebreak every line, and the reader would lose their place
+ * twice on every toggle — once going in and once coming out.
+ *
+ * `display: none` was the first version and is what this replaced. It hid the
+ * same list, and the page jumped: the site header collapsed to nothing and
+ * pulled the whole document up by its height, the reading bar's contents went
+ * and took the sticky inset with them, and the one control left in the bar
+ * slid to the inline start.
+ *
+ * ## Why the pair, and not `opacity` alone
+ *
+ * `opacity: 0` says what the mode means — paint nothing. It is not enough by
+ * itself: a fully transparent control still takes Tab, still takes a click,
+ * and is still announced, so a reader would tab into a wordmark they cannot
+ * see and a stray click would land on a nav link. `visibility: hidden` is what
+ * removes it from the tab order, from hit testing and from the accessibility
+ * tree while leaving its box exactly where it was — which is the whole reason
+ * this file can hide anything at all without moving the page.
  *
  * ## The list is print's list, minus what a screen still needs
  *
  * `print.css` has removed the same chrome for as long as this site has had
- * any, and its selectors are argued there rather than here. Three of them
- * are deliberately NOT repeated below, and each exception is the difference
+ * any, and its selectors are argued there rather than here. Three of them are
+ * deliberately NOT repeated below, and each exception is the difference
  * between paper and a screen:
  *
  *   - `.reading-bar` STAYS, emptied rather than hidden. It carries the way
@@ -44,58 +67,70 @@
  * A browser without `:has()` drops these rules entirely and the mode simply
  * does nothing, which is the right direction to fail in.
  *
- * ## Why the header is emptied and not `display: none`
+ * ## Dialogs, and the trap that survives the change of property
  *
  * `JumpBox` and `Shortcuts` sit in `.controls`, and each renders its trigger
- * and its `<dialog>` as siblings inside the same component. `display: none`
- * on any ancestor removes the dialog from the box tree with everything else
- * — which is precisely how `layout.css` hides `TocMenu`'s panel along with
- * its wrapper — so hiding `.site-header` outright would leave `/`, Ctrl+K
- * and `?` still listening at the window and opening a modal that cannot be
- * seen. `showModal()` would succeed, the rest of the page would go inert,
- * and the reader would be looking at a page that had stopped responding for
- * no visible reason.
+ * and its `<dialog>` as siblings inside the same component — so hiding the
+ * TRIGGERS, as this file does, leaves the dialogs alone and `/`, Ctrl+K and
+ * `?` keep working. Hiding an ancestor would not: `display: none` takes a
+ * descendant dialog out of the box tree (which is exactly how `layout.css`
+ * hides `TocMenu`'s panel along with its wrapper), and `visibility` inherits,
+ * so a dialog inside a hidden subtree opens invisibly even from the top layer.
+ * Either way `showModal()` succeeds, the rest of the page goes inert, and the
+ * reader is looking at a page that stopped responding for no visible reason.
  *
- * So the leaves go instead: the wordmark, the nav, and every `.menu-trigger`
- * in the row. Nothing focusable is left behind (`display: none` takes them
- * out of the tab order, which `visibility: hidden` on the bar would not),
- * every dialog still opens normally, and with no rendered children and its
- * own padding cleared the header collapses to nothing on its own.
- *
- * `.site-footer` holds no dialog and is hidden the ordinary way.
+ * The reading bar is the one place this file hides a container that holds a
+ * dialog — `TocMenu`'s panel is a direct child of the bar, beside its trigger
+ * — so the bar's rule excludes them structurally: `:not(.zen-toggle, dialog,
+ * [popover])`. That is an exclusion and not an override on purpose. An
+ * override would have to out-specify the rule it is fighting, which puts a
+ * safety net one careless selector away from losing silently; excluding the
+ * elements means there is nothing to fight. A closed dialog and a closed
+ * popover are `display: none` by the UA stylesheet either way, so the
+ * exception costs nothing while they are shut.
  */
 
-/* The site header, emptied leaf by leaf — see the docblock. `background` and
-   the rule under it would otherwise paint a bare strip above the text. */
+/* The header keeps its height and stops painting. `border-bottom-COLOR`, not
+   `border-bottom: 0` — the width is one pixel of layout, and this file spends
+   none. */
 html[data-zen]:has(.reading-bar) .site-header {
 	background: transparent;
-	border-bottom: 0;
-}
-
-html[data-zen]:has(.reading-bar) .header-bar {
-	padding: 0;
-}
-
-html[data-zen]:has(.reading-bar) .site-header .brand,
-html[data-zen]:has(.reading-bar) .site-header .primary-nav,
-html[data-zen]:has(.reading-bar) .site-header .menu-trigger {
-	display: none;
+	border-bottom-color: transparent;
 }
 
 /*
- * The footer, the two sticky navigation columns, the floating helpers and
- * the narrow-screen stand-ins for the sidebar. Every one of these is
- * STANDING chrome: it is on the page because the page is this site, not
- * because anything happened. What is left alone by that rule is the class of
- * overlay that appears in answer to an event — `UpdateBanner` when a new
- * version has actually deployed — which a reader has asked to be told about
- * and which is gone again once they have.
+ * Everything the mode hides, in one list, because they are all hidden the same
+ * way and the pair only reads as a decision when it is written once.
+ *
+ * THE HEADER GOES LEAF BY LEAF — the wordmark, the nav, and every
+ * `.menu-trigger` in the row — for the dialogs' sake (see the docblock).
+ *
+ * The rest is STANDING chrome: it is on the page because the page is this
+ * site, not because anything happened. What is left alone by that rule is the
+ * class of overlay that appears in answer to an event — `UpdateBanner` when a
+ * new version has actually deployed — which a reader has asked to be told
+ * about and which is gone again once they have.
  *
  * The two asides are already `display: none` below 80rem (`layout.css`), so
  * hiding them at every width is a state the reading routes are built for
  * rather than a new one: the bar's own contents panel is what stands in, and
  * in focus mode that is hidden too.
+ *
+ * THE BAR IS EMPTIED, NOT RESTYLED — it keeps its background, its rule and its
+ * height, and only its contents go. That is not timidity about the look: an
+ * opaque bar is what stops the text from sliding under an invisible edge as it
+ * scrolls, and the border is what explains where it went. `> *` and not a
+ * descendant selector: the toggle is a direct child, and so is
+ * `.reading-bar-editions`, the wrapper that keeps the three edition controls
+ * wrapping as one phrase. Reaching further in would hide the toggle's own
+ * icon, and the two exceptions beside it keep an open panel visible — see the
+ * docblock. Its siblings holding their boxes is also what keeps the toggle on
+ * the same pixel in both modes, so the button that leaves the mode is where
+ * the button that entered it was.
  */
+html[data-zen]:has(.reading-bar) .site-header .brand,
+html[data-zen]:has(.reading-bar) .site-header .primary-nav,
+html[data-zen]:has(.reading-bar) .site-header .menu-trigger,
 html[data-zen]:has(.reading-bar) .site-footer,
 html[data-zen]:has(.reading-bar) .reading-aside,
 html[data-zen]:has(.reading-bar) .index-aside,
@@ -103,24 +138,8 @@ html[data-zen]:has(.reading-bar) .mobile-picker,
 html[data-zen]:has(.reading-bar) .toc-inline,
 html[data-zen]:has(.reading-bar) .install-hint,
 html[data-zen]:has(.reading-bar) .to-top,
-html[data-zen]:has(.reading-bar) .compare-toolbar {
-	display: none;
-}
-
-/*
- * THE BAR IS EMPTIED, NOT RESTYLED — it keeps its background, its rule and
- * its height, and only its contents go. That is not timidity about the look:
- * an opaque bar is what stops the text from sliding under an invisible edge
- * as it scrolls, and the border is what explains where it went. A
- * transparent bar with one button floating on it was the alternative, and it
- * costs either occluded words or a `pointer-events` carve-out to keep the
- * text under it selectable.
- *
- * `> *` and not a descendant selector: the toggle is a direct child, and so
- * is `.reading-bar-editions`, the wrapper that keeps the three edition
- * controls wrapping as one phrase. Reaching further in would hide the
- * toggle's own icon.
- */
-html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle) {
-	display: none;
+html[data-zen]:has(.reading-bar) .compare-toolbar,
+html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle, dialog, [popover]) {
+	opacity: 0;
+	visibility: hidden;
 }
