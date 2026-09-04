@@ -33,9 +33,14 @@
 	    panel had no keyboard path at all before this. Focus plus Enter is now
 	    the whole workflow.
 
-	The scroll comes free: `styles/base.css` puts `scroll-padding-top` on the
-	scrollport for the sticky reading bar, and focus-driven scroll-into-view
-	honours it. Nothing here computes a header offset, and nothing should.
+	THE SCROLL DOES NOT COME FREE, and the version that assumed it did was the
+	worst part of this: focus scrolls with `nearest` semantics, so the step
+	moved the page by the minimum and left the number it had just reached
+	pinned to the edge it entered from. Focus now moves with `preventScroll`
+	and the page is scrolled here instead, to put the number on the reference
+	line — `scrollTopForReference` in `$lib/shortcuts.ts` argues the geometry,
+	including why a third of the way down the viewport still means nothing
+	here computes a header offset, and nothing should.
 
 	## The sheet
 
@@ -66,6 +71,7 @@
 		isTypingTarget,
 		neighbourIndex,
 		resolveShortcut,
+		scrollTopForReference,
 		type ShortcutAction
 	} from '$lib/shortcuts';
 
@@ -182,7 +188,21 @@
 						delta
 					);
 		if (target === null) return false;
-		nodes[target].focus();
+		// `preventScroll` and then our own scroll, never the browser's: see
+		// `scrollTopForReference` for what `nearest` does to a run of steps.
+		nodes[target].focus({ preventScroll: true });
+		window.scrollTo({
+			top: scrollTopForReference(
+				nodes[target].getBoundingClientRect().top,
+				window.scrollY,
+				window.innerHeight
+			),
+			// An absolute target rather than `scrollBy`, which is what makes a
+			// held-down key correct: each keystroke re-measures against wherever
+			// the smooth scroll has got to and retargets, instead of adding a
+			// delta to a position the animation has already left behind.
+			behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+		});
 		return true;
 	}
 

@@ -4,6 +4,7 @@ import {
 	isOverlayOpen,
 	neighbourIndex,
 	resolveShortcut,
+	scrollTopForReference,
 	type KeyStroke,
 	type ShortcutContext
 } from './shortcuts';
@@ -188,5 +189,43 @@ describe('indexAtReferenceLine', () => {
 	it('has nothing to find on a page with no numbers', () => {
 		expect(indexAtReferenceLine([], 240, 1)).toBeNull();
 		expect(indexAtReferenceLine([], 240, -1)).toBeNull();
+	});
+});
+
+describe('scrollTopForReference', () => {
+	// A 720px viewport puts the reference line at 240.
+	const height = 720;
+
+	it('lands the number on the reference line, from either direction', () => {
+		// Below the line: the page scrolls down by the difference.
+		expect(scrollTopForReference(600, 1000, height)).toBe(1360);
+		// Above it: the page scrolls back up by the difference. This is the
+		// half `nearest` never did at all, an already-visible number being the
+		// case where moving focus scrolls nothing.
+		expect(scrollTopForReference(100, 1000, height)).toBe(860);
+	});
+
+	it('is idempotent on a number already on the line', () => {
+		expect(scrollTopForReference(240, 1000, height)).toBe(1000);
+	});
+
+	it('is the inverse of the line `indexAtReferenceLine` reads', () => {
+		// What the pick-up step chooses is what the scroll then parks: taking
+		// the top of the number it selected and scrolling there leaves that
+		// number exactly on the line the next step will measure against.
+		const tops = [-420, -180, 240, 520, 800];
+		const line = height * (1 / 3);
+		const i = indexAtReferenceLine(tops, line, 1);
+		expect(i).not.toBeNull();
+		const scrollY = 1000;
+		const after = scrollTopForReference(tops[i as number], scrollY, height);
+		// The number's new viewport top, after the page has moved by that much.
+		expect(tops[i as number] - (after - scrollY)).toBe(line);
+	});
+
+	it('clamps at the top of the document rather than asking for a negative', () => {
+		// Verse 1, two lines under the title, on a page not yet scrolled: there
+		// is no scroll that could bring it down to a third of the viewport.
+		expect(scrollTopForReference(180, 0, height)).toBe(0);
 	});
 });
