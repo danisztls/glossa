@@ -1714,19 +1714,20 @@ behaviour. The selectors are `print.css`'s, which argues each one in place —
   without the gate a reader who left it on would meet the home page with no
   header, no footer and no way back. A new page that should honour focus mode
   needs a `ReadingBar`, not an entry in a list.
-- **Hiding a container that holds a `<dialog>` disables the dialog, and this
-  is where it bites.** `JumpBox` and `Shortcuts` render trigger and `<dialog>`
-  as siblings inside `.site-header`, so `display: none` on the header would
-  leave `/`, Ctrl+K and `?` listening at the window and opening a modal that
-  cannot be seen — `showModal()` succeeds, the page goes inert, nothing
-  errors. The header is emptied leaf by leaf instead (`.brand`,
-  `.primary-nav`, `.menu-trigger`), which also clears the tab order.
-  `layout.css` relies on the same mechanism in the other direction for
-  `TocMenu`.
-- **It is subtractive: nothing moves, resizes or re-lays-out.** Hiding
-  `.reading-aside` costs no geometry — the track is declared by
-  `grid-template-columns` and survives its child. Keep it that way, or a
-  toggle re-breaks every line and the reader loses their place.
+- **Nothing moves.** Everything hidden is hidden with `opacity: 0` and
+  `visibility: hidden` together, never with `display: none`: the pair paints
+  nothing and still holds every box, so the header keeps its height and the
+  bar keeps the `--reading-bar-height` that `scroll-padding-top` is measured
+  against. `display: none` was the first version and jumped the page by the
+  header's height on every toggle. Add rules in that form, or the mode stops
+  being free to leave on.
+- **Hiding a container that holds a `<dialog>` disables the dialog, and both
+  properties do it.** `JumpBox` and `Shortcuts` render trigger and `<dialog>`
+  as siblings inside `.site-header`, so only the triggers are hidden;
+  `display: none` would take the dialog out of the box tree (`layout.css`
+  relies on that for `TocMenu`) and `visibility` inherits through the top
+  layer. The bar's rule excludes `dialog` and `[popover]` in its `:not()`
+  rather than overriding them — an override has to out-specify what it fights.
 - **`zen` in the code, "focus" on screen.** The mode's name is what a
   developer searches for; the reader-facing string is not, on a site
   publishing the Catechism and the Code of Canon Law. `zen.enter`/`zen.exit`
