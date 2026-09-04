@@ -47,3 +47,7 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Generated from scripts/llms.template.md by the same sync pass, so its counts
+# and its list of publishers are read off the corpus rather than remembered.
+/static/llms.txt

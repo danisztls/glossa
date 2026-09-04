@@ -91,6 +91,7 @@ import { isDivergentBook, toVulgateCandidates } from '../src/lib/versification.t
 import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
+import { assertSourcesNamed, llmsFacts, llmsTxt } from './llms.mjs';
 import {
 	CHANGE_CEILING,
 	fingerprint,
@@ -146,6 +147,11 @@ const apparatusPath = path.join(siteRoot, 'static/apparatus.json');
 // Read by nobody here. It is published for the machines that come asking what
 // this library holds and who to cite for it, and `static/llms.txt` points at it.
 const worksPath = path.join(siteRoot, 'static/works.json');
+// The prose half of that same answer, filled from `works` and the manifest by
+// scripts/llms.mjs. Generated for the reason its template records: every count
+// in it had rotted at least once while it was maintained by hand.
+const llmsPath = path.join(siteRoot, 'static/llms.txt');
+const llmsTemplatePath = path.join(siteRoot, 'scripts/llms.template.md');
 // Derived from the same manifest, one line below where it is written. The
 // SPA shell means a crawler can otherwise reach the corpus only by rendering
 // the app and walking JavaScript-written links; see scripts/sitemap.mjs.
@@ -178,6 +184,7 @@ const derivedFiles = [
 	apparatusPath,
 	worksPath,
 	sitemapPath,
+	llmsPath,
 	REPORT_PATH
 ];
 
@@ -2905,6 +2912,13 @@ const lastmod = resolveLastmod({
 // would 404: the two are generated from the same object in the same pass, so
 // a disagreement between them is a bug here and not a corpus condition.
 writeFileSync(sitemapPath, sitemapXml(routeManifest, lastmod.dates));
+
+// Same pass, same objects: the file that tells a machine what this library
+// holds is derived from the manifest that holds it, so the two cannot drift.
+// `assertSourcesNamed` throws rather than warns — see scripts/llms.mjs.
+const llmsTemplate = readFileSync(llmsTemplatePath, 'utf8');
+assertSourcesNamed(llmsTemplate, works);
+writeFileSync(llmsPath, llmsTxt(llmsTemplate, llmsFacts({ routeManifest, works, apparatus })));
 
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content
