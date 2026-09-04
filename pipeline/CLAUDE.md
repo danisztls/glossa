@@ -697,7 +697,7 @@ subdivisions. `docs/research/prayers-glossa.md` §6.2 holds the measurements.
 
 **`build/prayer.common.*` is not a parse** (2026-09-04, `docs/decisions.md`
 §The curated prayers, `docs/corpus-schema.md` §Prayers). The corpus is
-`<corpus>/oracles/prayers/*.json` — 35 files, 477 prayers, 20 editions, the
+`<corpus>/authored/prayers/*.json` — 35 files, 477 prayers, 20 editions, the
 text as it should read with each editorial act recorded beside it.
 `prayers_project.py` writes the work directories from it; everything below
 still describes how the pages are READ, which is what the verifier does.
@@ -724,7 +724,7 @@ still describes how the pages are READ, which is what the verifier does.
   `la`, where the canonical Latin is read from, and `en-gb`. Without them the
   Latin resolves to nothing and the companion vanishes from every prayer.
 
-- **`--changed-only` fingerprints `oracles/` too**, and did not until this
+- **`--changed-only` fingerprints every tracked tree**, and did not until this
   landed: `shared_inputs()["corpus"]` hashed `raw/` alone, so a curated edit
   was invisible and the stage was skipped.
 

@@ -160,7 +160,14 @@ sys.path.insert(0, str(SCRAPERS))
 
 import cic as C  # noqa: E402
 import vatican_docs as V  # noqa: E402
-from common import binary_identity, build_root, corpus_dir, raw_root  # noqa: E402
+from common import (  # noqa: E402
+    authored_root,
+    binary_identity,
+    build_root,
+    corpus_dir,
+    oracles_root,
+    raw_root,
+)
 
 #: Every language `vatican_docs` has division labels for. Derived rather than
 #: listed; see PHASE 2'S LANGUAGES above.
@@ -238,7 +245,7 @@ STAGES: tuple[Stage, ...] = (
         binaries=("mutool", "pdftotext"),
     ),
     # THE PRAYERS ARE PROJECTED FROM THE CURATION, NOT PARSED (2026-09-03).
-    # `oracles/prayers/*.json` is the corpus; `prayers_project.py` writes the
+    # `authored/prayers/*.json` is the corpus; `prayers_project.py` writes the
     # work directories from it. `prayers.py` still runs, and still reads every
     # page, but as the VERIFIER that each curated line is findable in the
     # witness it cites -- so it declares no outputs and the partition stays
@@ -576,18 +583,28 @@ def fingerprint(stage: Stage, images: bool, shared: dict[str, str]) -> dict[str,
 def shared_inputs() -> dict[str, str]:
     """The two parts every stage shares, walked once for the whole run.
 
-    `corpus` IS BOTH TRACKED INPUT TREES, not just `raw/`. It was `raw/` alone
+    `corpus` IS EVERY TRACKED INPUT TREE, not just `raw/`. It was `raw/` alone
     for as long as every stage's only corpus input was a fetched page — and
-    that stopped being true when the prayers began to be projected from
-    `oracles/prayers/` (2026-09-03). Editing a curated prayer changes nothing
-    under `raw/`, so `--changed-only` skipped the stage and the edit never
-    reached `build/`: the silent stale answer this flag is opt-in to avoid.
-    `oracles/` is 35 files beside `raw/`'s 11,795, so walking it is free.
+    that stopped being true when the prayers began to be projected from what
+    is now `authored/prayers/` (2026-09-03). Editing a curated prayer changes
+    nothing under `raw/`, so `--changed-only` skipped the stage and the edit
+    never reached `build/`: the silent stale answer this flag is opt-in to
+    avoid.
+
+    ALL THREE TRACKED TREES ARE WALKED, and `oracles/` is here even though no
+    stage reads it today, because the cost of walking it is nothing (35 files
+    beside `raw/`'s 14,000) and the cost of forgetting it is a stale build
+    that nothing reports. That is the same reasoning that put `authored/`
+    here, one incident later than it should have been.
     """
     return {
         "data": tree_digest(PIPELINE, want=lambda p: p.suffix != ".py"),
         "corpus": _digest(
-            [tree_digest(raw_root()), tree_digest(corpus_dir() / "oracles")]
+            [
+                tree_digest(raw_root()),
+                tree_digest(authored_root()),
+                tree_digest(oracles_root()),
+            ]
         ),
     }
 

@@ -96,7 +96,7 @@ def main() -> int:
 
     doc = json.loads(DESCRIPTIONS.read_text())
     descriptions = doc.setdefault("descriptions", {})
-    oracle_dir = corpus / "oracles" / "toc"
+    oracle_dir = common.oracles_root(corpus) / "toc"
 
     for entry in entries:
         work = entry["work"]

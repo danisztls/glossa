@@ -13,7 +13,7 @@ discards, where quotation (fixtures, corrections' `from`/`to`, research notes)
 is a different thing and stays here. A build is therefore not reproducible from
 a clone of this repository alone. That is the accepted cost.
 
-**`raw/` is write-once; `build/` is regenerable; `oracles/` is hand-read.** The
+**`raw/` is write-once; `build/` is regenerable; `authored/` is what we decided and serve; `oracles/` is what checks a parse.** The
 whole insurance policy is that capture regret is fixed by re-parsing, never
 re-crawling, and that holds only while `raw/` is intact. The directories are
 named for that question (2026-08-27, was `works/`), so `.gitignore` can say

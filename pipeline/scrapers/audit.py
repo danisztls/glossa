@@ -412,7 +412,7 @@ def read_toc_oracles(corpus: Path) -> dict[str, list[dict]]:
     verbatim heading text from the source documents, which is the reason the
     corpus is private (pipeline/docs/corpus.md).
     """
-    root = corpus / "oracles" / "toc"
+    root = common.oracles_root(corpus) / "toc"
     if not root.exists():
         return {}
     out = {}
