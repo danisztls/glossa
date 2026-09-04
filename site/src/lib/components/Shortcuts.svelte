@@ -61,6 +61,7 @@
 -->
 <script lang="ts">
 	import { tick } from 'svelte';
+	import { springScrollTo } from '$lib/smooth-scroll';
 	import Icon from './Icon.svelte';
 	import type { IconName } from './Icon.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
@@ -199,18 +200,19 @@
 		// `preventScroll` and then our own scroll, never the browser's: see
 		// `scrollTopForReference` for what `nearest` does to a run of steps.
 		nodes[target].focus({ preventScroll: true });
-		window.scrollTo({
-			top: scrollTopForReference(
+		// An absolute document position rather than a delta, which is what makes
+		// a held-down key correct: each keystroke re-measures against wherever
+		// the page has got to and retargets, instead of adding a delta to a
+		// position the animation has already left behind. `springScrollTo` is
+		// what makes the retarget smooth rather than a restart — see
+		// `$lib/smooth-scroll`, which owns the reduced-motion case too.
+		springScrollTo(
+			scrollTopForReference(
 				nodes[target].getBoundingClientRect().top,
 				window.scrollY,
 				window.innerHeight
-			),
-			// An absolute target rather than `scrollBy`, which is what makes a
-			// held-down key correct: each keystroke re-measures against wherever
-			// the smooth scroll has got to and retargets, instead of adding a
-			// delta to a position the animation has already left behind.
-			behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-		});
+			)
+		);
 		return true;
 	}
 
