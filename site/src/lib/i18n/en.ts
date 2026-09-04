@@ -601,6 +601,16 @@ export const en: Dictionary = {
 	'calendar.date': 'Date',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
+	'calendar.filter': 'Search countries',
+	// The regions the calendar picker groups its flags by. They are the
+	// source's own grouping (`national/index.ts`), not a geography: "Americas"
+	// is one region because the picker is a control and five headings is what
+	// fits above a grid.
+	'calendar.region.europe': 'Europe',
+	'calendar.region.americas': 'The Americas',
+	'calendar.region.africa': 'Africa',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oceania',
 	'calendar.previousDay': 'Previous day',
 	'calendar.today': 'Today',
 	'calendar.nextDay': 'Next day',

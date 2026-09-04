@@ -1647,9 +1647,9 @@ with no dated list. So `grc.ts` sits here rather than in the corpus, on
 states.
 
 **What makes it trustworthy is `oracle.test.ts`, not care.** It compares every
-day of three years in all eight transfer variants plus sixteen national
-calendars — 72 in all — against calendars GCatholic computed independently
-(`pipeline/CLAUDE.md`). Six rules came out of it that reading the Norms had got
+day of three years in all eight transfer variants plus every national calendar
+GCatholic publishes — 94 in all as of 2026-09-04 — against calendars GCatholic
+computed independently (`pipeline/CLAUDE.md`). Six rules came out of it that reading the Norms had got
 wrong; the two worth carrying here because they generalise:
 
 - **An optional memorial never takes the day**, though line 12 of n. 59 sits
@@ -1665,6 +1665,18 @@ never imported.** That is deliberate and is what keeps them out
 of the bundle — nothing globs them, so the trap at the head of this file does
 not apply. `npm run build`'s inlined-corpus audit is the standing check; if they
 ever become an `import`, they land in the boot chunk every route preloads.
+
+**The picker is a grid of flags grouped by region** (`CalendarMenu.svelte`).
+A reader of that control already knows the answer before they read anything —
+they are looking for their own country, which they recognise by its flag faster
+than they can read a column of names in an alphabet that may not be theirs. The
+flags are emoji composed from the same ISO code the calendar is keyed by, so a
+country added to `national/` arrives with its flag drawn; England, Scotland and
+Wales are tag sequences and are named from `SUBDIVISION_NAMES`, being the three
+ids that are 3166-2 subdivisions. Windows draws the pair as boxed letters, which
+is the country's own code and why the cells are sized for two letters. Ordered
+inside a region by the reader's own alphabet (`Intl.Collator`), so the layer
+table stores regions and not an order.
 
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
@@ -1692,15 +1704,56 @@ name is the `title` and the `aria-label`. The row's controls wear
 `.menu-trigger` and `.label-micro` rather than restating them, so a change to the
 chrome reaches this page without anyone remembering it is there.
 
+**THE ENGINE COMPUTES; A NATIONAL LAYER IS COPIED, AND ALWAYS WAS.** Worth
+being exact about, because the two halves are checked differently. The temporal
+cycle, the Table of Liturgical Days, transferred solemnities, Lenten
+commemorations and `grc.ts` are derived here and judged by a calendar somebody
+else computed — that is the half that can be wrong invisibly, and it is what
+seven engine extensions came out of. A conference's proper celebrations are not
+derivable from anything: they are a positive act, and even the sixteen
+hand-written layers took their content from the oracle (`br.ts`: "a celebration
+earns a row by making a day come out differently"). So for a country the NAME
+check is a transcription check; for the derived ones it is circular, and every
+generated file says so in its own header.
+
 **Adding a country is a data file and no code.** `NationalCalendar` is a layer —
 propers, overrides, transfers, and general celebrations kept on another day —
-because that is what Universal Norms nn. 48–55 describe. `national/index.ts`
-holds the fifteen, ordered by Catholic population (the criterion they were
-chosen by), and `national/common.ts` is what a row is spelled with.
-`national/br.ts` is the worked example, and its `movedInYear` is a table of
-YEARS rather than a rule: Brazil moved Peter and Paul backward from a Monday in
-2026 and forward from a Tuesday in 2027, so no rule fits and inventing one
-produces a date nobody chose.
+because that is what Universal Norms nn. 48–55 describe. `national/common.ts` is
+what a row is spelled with. Since 2026-09-04 `national/` holds a layer for every
+calendar GCatholic publishes: sixteen written by hand and the rest derived by
+`pipeline/derive_national_calendars.py`, which reads the difference between a
+country's feed and the general variant it layers over.
+
+**EIGHTY-FIVE LAYERS, NINETY-SIX TERRITORIES, AND ONLY WHAT PASSES IS
+PUBLISHED.** Three numbers, three separate facts:
+
+- **96 against 85** is eight particular churches standing for more than one
+  place — Åland keeps Finland's calendar, the Faroes and Greenland keep
+  Denmark's, three vicariates carry eleven countries between them.
+  `alsoCovers` on those layers puts the other territories in the picker without
+  inventing a calendar for them; `TERRITORY_CALENDARS` resolves it.
+- **`national/held.ts` is `site/unpublished.json`'s argument for a different
+  kind of output**: a layer the oracle still disagrees with is kept out of
+  `NATIONAL_CALENDAR_LIST` until it does not. A reader cannot tell a calendar
+  that is wrong on four days from one that is right, and this is the one kind
+  of output where being wrong looks exactly like being right. The counts in it
+  are the evidence and they are small — out of 1,095 days per calendar, most
+  differ on one to five.
+- **The last test in `oracle.test.ts` asserts the list is EXACTLY the diverging
+  set**, in both directions. Without it a regressed layer would be silently
+  absorbed and a fixed one would sit unpublished for ever. `NATIONAL_CALENDARS`
+  is keyed over ALL layers, held ones included, because the test has to reach a
+  held layer to measure it; the route resolves `?c=` against the published list
+  instead, so a held id in a pasted URL falls back to the general calendar.
+- **`CALENDAR_FEED_IDS` maps GCatholic's code to the layer**, and the obvious
+  derivation is wrong in a way that reads as right: taking the code up to the
+  first hyphen answers `us` for `US-H` and then `it` for `IT-rome0`, which is
+  the Diocese of Rome — so the Vatican was checked against Italy's layer and
+  Andorra against Spain's, and both failed on days neither had got wrong.
+  `national/br.ts` is the worked example, and its `movedInYear` is a table of
+  YEARS rather than a rule: Brazil moved Peter and Paul backward from a Monday in
+  2026 and forward from a Tuesday in 2027, so no rule fits and inventing one
+  produces a date nobody chose.
 
 **THE CLAIM "NO CODE" IS TRUE AND COST SEVEN EXTENSIONS TO KEEP TRUE**
 (2026-09-03, §The liturgical calendar). Each was found by a country failing the

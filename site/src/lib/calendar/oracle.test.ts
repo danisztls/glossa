@@ -45,7 +45,8 @@ import { describe, expect, it } from 'vitest';
 import { buildYear } from './year';
 import { parseIsoDate } from './computus';
 import type { CalendarOptions, LiturgicalDay, Names } from './types';
-import { NATIONAL_CALENDARS } from './national';
+import { CALENDAR_FEED_IDS, NATIONAL_CALENDARS } from './national';
+import { HELD_CALENDARS } from './national/held';
 
 const ORACLE_DIR = join(dirname(fileURLToPath(import.meta.url)), 'oracle');
 
@@ -188,8 +189,7 @@ const VARIANT_OF = new Map(ACCEPTED_VARIANTS.map(([mine, theirs]) => [fold(mine)
  * override the layer's, and one layer is checked against both answers.
  */
 function optionsFor(oracle: Oracle): CalendarOptions {
-	const country = oracle.calendar.split('-')[0].toLowerCase();
-	const national = NATIONAL_CALENDARS[country];
+	const national = NATIONAL_CALENDARS[layerIdFor(oracle.calendar)];
 	if (national && oracle.transfers === undefined) return { nationalCalendar: national };
 	return {
 		...(national ? { nationalCalendar: national } : {}),
@@ -197,6 +197,22 @@ function optionsFor(oracle: Oracle): CalendarOptions {
 		ascensionOnSunday: oracle.transfers?.ascensionOnSunday ?? false,
 		corpusChristiOnSunday: oracle.transfers?.corpusChristiOnSunday ?? false
 	};
+}
+
+/**
+ * The layer a feed's code belongs to.
+ *
+ * `CALENDAR_FEED_IDS` names the fourteen that do not answer their own id, and
+ * every one of them is a real distinction rather than a spelling: eight are a
+ * particular church's calendar (`IT-rome0` is the Diocese of Rome, which is
+ * Vatican City's), three are British countries with no alpha-2 code, and three
+ * name a transfer variant. Taking the code up to the first hyphen answers
+ * correctly for `US-H` and `DK-kobe0` and WRONGLY for `IT-rome0` and
+ * `ES-urge0` — it checked the Vatican against Italy's layer and Andorra
+ * against Spain's, and blamed both countries for the difference.
+ */
+function layerIdFor(calendar: string): string {
+	return CALENDAR_FEED_IDS[calendar] ?? calendar.toLowerCase();
 }
 
 /**
@@ -242,10 +258,33 @@ function ours(
 	];
 }
 
-/** A celebration's name in the language this oracle file carries names in. */
+/**
+ * A celebration's name in the language this oracle file carries names in.
+ *
+ * `zt` IS GCATHOLIC'S SLUG AND `zht` IS THIS SITE'S, for Traditional Chinese —
+ * §Languages has why a tag here is an identity rather than a variant of `zh`.
+ * The oracle records the language it was fetched under, so the translation
+ * happens on the way in; without it the Hong Kong, Macau and Taiwan layers
+ * looked as though they had no names at all.
+ */
+const ANCHOR_TAGS: Record<string, keyof Names> = { zt: 'zht' };
+
 function nameIn(names: Names, anchorLang: string): string {
-	return names[anchorLang as keyof Names] ?? names.la ?? names.en ?? '';
+	const tag = ANCHOR_TAGS[anchorLang] ?? (anchorLang as keyof Names);
+	return names[tag] ?? names.la ?? names.en ?? '';
 }
+
+/**
+ * Layer ids whose calendar differed from the oracle in some year of this run.
+ *
+ * Filled by the per-file assertions below and read by the last test in the
+ * file, which is what keeps `held.ts` honest in both directions: a layer that
+ * starts failing cannot be published by accident, and a layer that has been
+ * fixed cannot stay held by neglect. It is a module-level accumulator rather
+ * than a second pass because the comparison it would repeat is the expensive
+ * part of this file, and vitest runs a file's tests in source order.
+ */
+const diverged = new Set<string>();
 
 describe('the computed calendar against GCatholic', () => {
 	it('has an oracle to check against', () => {
@@ -255,6 +294,7 @@ describe('the computed calendar against GCatholic', () => {
 	for (const file of files) {
 		const oracle: Oracle = JSON.parse(readFileSync(join(ORACLE_DIR, file), 'utf8'));
 		const options = optionsFor(oracle);
+		const held = layerIdFor(oracle.calendar) in HELD_CALENDARS;
 
 		describe(file.replace(/\.json$/, ''), () => {
 			// One built year serves every assertion below. The oracle is a
@@ -299,7 +339,14 @@ describe('the computed calendar against GCatholic', () => {
 						);
 					}
 				}
-				expect(wrong.join('\n  ')).toBe('');
+				if (wrong.length > 0) diverged.add(layerIdFor(oracle.calendar));
+				// A HELD CALENDAR IS EXPECTED TO DIFFER AND IS NOT ASSERTED
+				// HERE. The last test in this file is what judges it, against
+				// `held.ts`; asserting per file would either turn every held
+				// calendar red — which is a suite nobody reads — or, if
+				// inverted, demand that each of its three years diverge, which
+				// no country does.
+				if (!held) expect(wrong.join('\n  ')).toBe('');
 			});
 
 			it('agrees about the psalter week on every day', () => {
@@ -344,8 +391,26 @@ describe('the computed calendar against GCatholic', () => {
 						);
 					}
 				}
-				expect(wrong.join('\n  ')).toBe('');
+				if (wrong.length > 0) diverged.add(layerIdFor(oracle.calendar));
+				if (!held) expect(wrong.join('\n  ')).toBe('');
 			});
 		});
 	}
+
+	/**
+	 * `held.ts` names exactly the calendars that still differ.
+	 *
+	 * THE TEST THAT MAKES HOLDING A CALENDAR HONEST. A list of known failures
+	 * is only worth having if something refuses to let it drift: without this,
+	 * a layer that regressed would be silently absorbed by the list, and a
+	 * layer somebody fixed would sit unpublished for ever because nothing said
+	 * so. Both directions fail here, and each names the file to edit.
+	 */
+	it('holds exactly the calendars that still differ from the oracle', () => {
+		const shouldPublish = Object.keys(HELD_CALENDARS)
+			.filter((id) => !diverged.has(id))
+			.sort();
+		const shouldHold = [...diverged].filter((id) => !(id in HELD_CALENDARS)).sort();
+		expect({ shouldPublish, shouldHold }).toEqual({ shouldPublish: [], shouldHold: [] });
+	});
 });

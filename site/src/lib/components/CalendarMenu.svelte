@@ -10,14 +10,34 @@
 	They are not choosing between alternatives they have to weigh — they are
 	looking for their own country, which they recognise by its flag faster than
 	they can read a column of names in an alphabet that may not even be theirs.
-	A grid also shows the whole set at once, where a select shows four rows and
+	A grid also shows the whole set at once, where a select showed four rows and
 	a scrollbar; "which countries does this site have?" is a question the
 	control can now answer by being opened.
 
 	The name is not dropped — it is the `title` and the `aria-label` on every
 	cell, so it is one hover or one screen-reader stop away, and the trigger
 	prints the current one in full. What the grid removes is the need to read
-	sixteen names to find one flag.
+	fifty names to find one flag.
+
+	## Grouped by region, and filtered by name
+
+	Sixteen flags are a grid; fifty are a wall. So they are grouped the way
+	GCatholic groups them — which is also how the reader will have met the list
+	if they met it there — and a reader looking for Ecuador knows which
+	continent it is on before they know what its flag looks like.
+
+	The box above them is the other half, and it is the same argument
+	`LanguageMenu` makes for its own: the grouping is a guess about where a
+	reader will look, and a guess is only tolerable where being wrong is cheap.
+	Typing searches EVERY region and ignores the grouping entirely — a filtered
+	list that silently omitted matches would be the one failure neither half
+	could recover from. It searches the country's name in the reader's own
+	language and its code, so a Portuguese reader finds Germany by typing
+	"alemanha" and anyone finds it by typing "de".
+
+	ORDERED INSIDE A REGION BY THE READER'S OWN ALPHABET, with `Intl.Collator`,
+	because a list of country names sorted in English is sorted for nobody
+	else. `national/index.ts` therefore stores the regions and not the order.
 
 	## The flags are emoji, and the fallback is the country code
 
@@ -26,6 +46,11 @@
 	assets, no sprite sheet, no per-flag licence question, and nothing to keep
 	in step with the calendar list — a country added to `national/` arrives
 	here with its flag already drawn.
+
+	England, Scotland and Wales are the exception at both ends: their ids are
+	ISO 3166-2 subdivision tags, so the flag is a TAG SEQUENCE (a black flag
+	followed by the tagged code) and the name comes from a table rather than
+	from `Intl` — see `SUBDIVISION_NAMES`.
 
 	The known cost is Windows, whose system emoji font ships no country flags:
 	Chrome and Edge there render the pair as the two boxed letters "BR"
@@ -37,62 +62,72 @@
 
 	It sits above the grid with its name printed, and wears the Vatican flag
 	because that is the flag of the see whose calendar it is. It is deliberately
-	not the seventeenth square: it is the DEFAULT and the thing the other
-	sixteen are layers over (see `national/index.ts`), and a row that says so in
-	words is worth more than the four millimetres it costs.
+	not one more square: it is the DEFAULT and the thing every other one is a
+	layer over (see `national/index.ts`), and a row that says so in words is
+	worth more than the four millimetres it costs.
 -->
 <script lang="ts">
 	import { bcp47, t } from '$lib/i18n.svelte';
 	import { keepInViewport } from '$lib/floating';
+	import { matchesQuery } from '$lib/highlight';
+	import { CALENDAR_REGIONS, SUBDIVISION_NAMES, TERRITORY_CALENDARS } from '$lib/calendar/national';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 
 	interface Props {
-		/** The chosen calendar's id — `'general'` or an alpha-2 country code. */
+		/** The chosen calendar's id — `'general'` or a layer's id. */
 		value: string;
-		/** Country codes to offer, in the order they should be offered in. */
-		countries: readonly string[];
-		/** The interface language, for the country names. */
+		/** The interface language, for the territory names and their order. */
 		lang: string;
 		onchoose: (id: string) => void;
 	}
 
-	let { value, countries, lang, onchoose }: Props = $props();
+	let { value, lang, onchoose }: Props = $props();
 
 	const menu = new Menu();
+	let query = $state('');
+	let filterEl: HTMLInputElement | undefined = $state();
 
 	/**
-	 * The flag of an ISO 3166-1 alpha-2 code.
+	 * The flag of a territory.
 	 *
 	 * Regional indicator symbols are U+1F1E6..U+1F1FF in the same order as
-	 * A..Z, so the whole mapping is one offset — there is no table to keep,
-	 * and a country the calendar gains needs nothing added here.
+	 * A..Z, so an alpha-2 code is one offset and there is no table to keep. A
+	 * subdivision (`gb-eng`) is the other Unicode form: a black flag followed
+	 * by the tag characters of its code and a cancel tag, which is the
+	 * sequence that draws the three British flags.
 	 */
 	function flag(code: string): string {
+		if (code.includes('-')) {
+			const tag = code.replace('-', '');
+			return String.fromCodePoint(
+				0x1f3f4,
+				...[...tag].map((c) => 0xe0000 + c.charCodeAt(0)),
+				0xe007f
+			);
+		}
 		return String.fromCodePoint(
-			...code
-				.toUpperCase()
-				.split('')
-				.map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)
+			...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)
 		);
 	}
 
 	/**
-	 * A country's name, in the reader's own language, from the platform.
+	 * A territory's name, in the reader's own language, from the platform.
 	 *
 	 * `Intl.DisplayNames` is what the language menu already uses for language
 	 * names (`menu-filter.ts`), and it earns its place here for the same
-	 * reason: sixteen country names in thirty-odd interface languages is a
+	 * reason: fifty territory names in thirty-odd interface languages is a
 	 * table nobody would maintain, and every browser already knows them. A tag
-	 * it cannot name falls back to the code, which is at least the ISO name of
-	 * the country.
+	 * it cannot name falls back to `SUBDIVISION_NAMES` and then to the code,
+	 * which is at least the ISO name of the place.
 	 *
 	 * `bcp47`, for the reason `menu-filter.ts`'s own `Intl` call gives: `zht`
 	 * is structurally valid and unresolvable, so it does not throw into the
 	 * `catch` below — it answers in the browser's locale, which reads as a bug
 	 * in the country list rather than in the tag.
 	 */
-	function countryName(code: string, uiLang: string): string {
+	function territoryName(code: string, uiLang: string): string {
+		if (SUBDIVISION_NAMES[code]) return SUBDIVISION_NAMES[code];
 		const upper = code.toUpperCase();
 		try {
 			return new Intl.DisplayNames([bcp47(uiLang)], { type: 'region' }).of(upper) ?? upper;
@@ -102,15 +137,65 @@
 	}
 
 	const generalName = $derived(t('calendar.which.general'));
-	const rows = $derived(
-		countries.map((code) => ({ code, name: countryName(code, lang), flag: flag(code) }))
+
+	/** The regions, each with its own territories named and sorted for this
+	 *  reader. A region whose every calendar is held renders nothing. */
+	const regions = $derived(
+		CALENDAR_REGIONS.map((region) => {
+			const collator = new Intl.Collator(bcp47(lang));
+			const cells = region.territories
+				.filter((code) => TERRITORY_CALENDARS[code])
+				.map((code) => ({
+					code,
+					calendar: TERRITORY_CALENDARS[code],
+					name: territoryName(code, lang),
+					flag: flag(code)
+				}))
+				.sort((a, b) => collator.compare(a.name, b.name));
+			return { id: region.id, cells };
+		}).filter((region) => region.cells.length > 0)
 	);
-	const currentName = $derived(value === 'general' ? generalName : countryName(value, lang));
-	const currentFlag = $derived(flag(value === 'general' ? 'VA' : value));
+
+	const filtered = $derived(
+		query.trim()
+			? regions
+					.map((region) => ({
+						...region,
+						cells: region.cells.filter((cell) => matchesQuery(`${cell.name} ${cell.code}`, query))
+					}))
+					.filter((region) => region.cells.length > 0)
+			: regions
+	);
+
+	const matches = $derived(filtered.flatMap((region) => region.cells));
+
+	const currentCell = $derived(
+		regions.flatMap((r) => r.cells).find((cell) => cell.calendar === value)
+	);
+	const currentName = $derived(value === 'general' ? generalName : (currentCell?.name ?? value));
+	const currentFlag = $derived(value === 'general' ? flag('VA') : (currentCell?.flag ?? ''));
+
+	// The box is what the panel is for at this size, so it takes focus on open
+	// — a reader who already knows their country types three letters and is
+	// done, and one who does not still sees the flags under it.
+	$effect(() => {
+		if (menu.open) filterEl?.focus();
+		else query = '';
+	});
 
 	function choose(id: string) {
 		onchoose(id);
 		menu.closeAndRefocus();
+	}
+
+	/** Enter takes the only cell left, and does nothing while there is more
+	 *  than one — `LanguageMenu`'s own rule, and for its reason: with two on
+	 *  screen a first-match Enter picks one for reasons the reader cannot see. */
+	function onFilterKeydown(event: KeyboardEvent) {
+		menu.onPanelKeydown(event);
+		if (event.key !== 'Enter' || matches.length !== 1) return;
+		event.preventDefault();
+		choose(matches[0].calendar);
 	}
 </script>
 
@@ -132,51 +217,72 @@
 	</button>
 	{#if menu.open}
 		<!-- A `<div>` rather than the `<ul>` the plain panels are: this one holds
-		     a row AND a grid, so `role="menu"` cannot sit on a single list. It
-		     goes on each of the two instead, and Escape is handled on the
-		     wrapper's two children for the same reason. -->
+		     a box, a row and several grids, so `role="menu"` cannot sit on a
+		     single list. It goes on each list instead. -->
 		<div class="panel-surface menu-panel calendar-panel" use:keepInViewport>
-			<ul class="menu-list" role="menu" aria-label={t('calendar.calendar')}>
-				<li role="none">
-					<button
-						type="button"
-						role="menuitemradio"
-						aria-checked={value === 'general'}
-						class="menu-item general-row"
-						class:current={value === 'general'}
-						onclick={() => choose('general')}
-						onkeydown={menu.onPanelKeydown}
-					>
-						<span class="menu-item-main">
-							<span class="check-slot"
-								>{#if value === 'general'}<Icon name="check" />{/if}</span
-							>
-							<span class="flag" aria-hidden="true">{flag('VA')}</span>
-							<span>{generalName}</span>
-						</span>
-					</button>
-				</li>
-			</ul>
-			<ul class="flag-grid" role="menu" aria-label={t('calendar.calendar')}>
-				{#each rows as row (row.code)}
-					{@const isCurrent = value === row.code}
+			<input
+				type="search"
+				class="menu-filter"
+				bind:this={filterEl}
+				bind:value={query}
+				onkeydown={onFilterKeydown}
+				placeholder={t('calendar.filter')}
+				aria-label={t('calendar.filter')}
+			/>
+			{#if !query.trim()}
+				<ul class="menu-list" role="menu" aria-label={t('calendar.which.general')}>
 					<li role="none">
 						<button
 							type="button"
 							role="menuitemradio"
-							aria-checked={isCurrent}
-							class="flag-cell"
-							class:current={isCurrent}
-							aria-label={row.name}
-							title={row.name}
-							onclick={() => choose(row.code)}
+							aria-checked={value === 'general'}
+							class="menu-item general-row"
+							class:current={value === 'general'}
+							onclick={() => choose('general')}
 							onkeydown={menu.onPanelKeydown}
 						>
-							<span class="flag" aria-hidden="true">{row.flag}</span>
+							<span class="menu-item-main">
+								<span class="check-slot"
+									>{#if value === 'general'}<Icon name="check" />{/if}</span
+								>
+								<span class="flag" aria-hidden="true">{flag('VA')}</span>
+								<span>{generalName}</span>
+							</span>
 						</button>
 					</li>
+				</ul>
+			{/if}
+			{#if matches.length === 0}
+				<p class="menu-empty">{t('menu.noMatches')}</p>
+			{:else}
+				{#each filtered as region (region.id)}
+					<p class="label-micro region-heading">{t(`calendar.region.${region.id}`)}</p>
+					<ul
+						class="flag-grid"
+						role="menu"
+						aria-label={t(`calendar.region.${region.id}`)}
+						onkeydown={menu.onPanelKeydown}
+					>
+						{#each region.cells as cell (cell.code)}
+							{@const isCurrent = value === cell.calendar}
+							<li role="none">
+								<button
+									type="button"
+									role="menuitemradio"
+									aria-checked={isCurrent}
+									class="flag-cell"
+									class:current={isCurrent}
+									aria-label={cell.name}
+									title={cell.name}
+									onclick={() => choose(cell.calendar)}
+								>
+									<span class="flag" aria-hidden="true">{cell.flag}</span>
+								</button>
+							</li>
+						{/each}
+					</ul>
 				{/each}
-			</ul>
+			{/if}
 		</div>
 	{/if}
 </div>
@@ -197,7 +303,7 @@
 	}
 
 	.calendar-panel {
-		min-width: min(17rem, 90vw);
+		min-width: min(19rem, 90vw);
 	}
 
 	/*
@@ -218,24 +324,27 @@
 		font-size: 1.1em;
 	}
 
-	/* The hairline is the only thing separating the default from the layers
-	   over it; the row above is a sentence and the grid below is a picture, so
-	   nothing else is needed to tell them apart. */
+	/* The heading is the only thing separating one region's flags from the
+	   next; a rule between them would be a second divider saying the same. */
+	.region-heading {
+		margin: 0.6rem 0 0.2rem;
+		padding-inline: 0.4rem;
+	}
+
 	.flag-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(2.5rem, 1fr));
 		gap: 0.15rem;
-		margin: 0.35rem 0 0;
-		padding: 0.35rem 0 0;
-		border-top: 1px solid var(--color-border);
+		margin: 0;
+		padding: 0;
 		list-style: none;
 	}
 
 	/*
 	 * A SQUARE, sized for the two-letter fallback rather than for the flag.
 	 * Where the flags draw, 1.5rem of emoji sits comfortably inside 2.4rem;
-	 * where they do not, the cell holds "BR" at the same size without the
-	 * grid changing shape between platforms.
+	 * where they do not, the cell holds "BR" at the same size without the grid
+	 * changing shape between platforms.
 	 */
 	.flag-cell {
 		display: flex;

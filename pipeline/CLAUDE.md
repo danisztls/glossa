@@ -1222,10 +1222,32 @@ whether the code that decides days is right.
   the oracle because nothing could assert them: this project's vernaculars are
   the Missal's and GCatholic's are its house style.
 - **`ics/{year}-{lang}-{calendar}.ics` is deterministic**, which is what makes
-  the country dimension free — `General-{A..H}` for the eight transfer variants,
-  or an ISO country code for one of ~100 national calendars. `CALENDARS` names
-  what is fetched and a country is a row; it holds the fifteen countries with
-  the most Catholics, in that order, plus the eight universal variants.
+  the country dimension free. `CALENDARS` names what is fetched and a country
+  is a row; since 2026-09-04 it holds **every calendar GCatholic publishes** —
+  86 of them, plus the eight universal variants — where it had held the sixteen
+  largest Catholic populations. The boundary was never a limit (a country costs
+  one row here and one data file on the site), so the honest set is the one the
+  source publishes.
+- **GCatholic lists 96 territories and publishes 86 calendars**, and the
+  difference is eight particular churches standing for more than one place:
+  `IT-rome0` is the Diocese of Rome, which is Vatican City's calendar;
+  `ES-urge0` is Urgell, which is Andorra's; `DK-kobe0` covers Denmark, the
+  Faroes and Greenland; and three vicariates (`KW-arab1`, `AE-arab0`,
+  `PS-jeru0`) carry eleven countries between them. **Read a code as a
+  calendar, never as a country** — `IT-rome0` lowercases to `it`, and the
+  site's oracle test compared the Vatican against Italy's layer for exactly
+  that reason until `CALENDAR_FEED_IDS` existed.
+- **The languages are read off the source, not guessed.** Each calendar's own
+  HTML page carries a language switcher naming the editions it is published
+  in; the anchor is the country's own language wherever there is one. Twenty-
+  three calendars are English-only because GCatholic offers nothing else.
+- **A CALENDAR-YEAR CAN BE ABSENT and that is the source's answer, not a
+  failure.** Trinidad and Tobago publishes 2026 and 2027 and no 2025. The run
+  skips the whole calendar-year rather than the one language that 404ed — a
+  year checked in one language and not another is a hole the cross-language
+  agreement check would not cover — and `Fetcher` has already written the URL
+  to `absent-sources.json`, so the next run costs no request. Only a 404 or a
+  410 counts (`_DEFINITIVELY_ABSENT`); a timeout is the network.
 - **The rank token is the LANGUAGE's own initial, not a machine code.** Latin,
   English, Portuguese, Spanish, Italian and French all print `S F M m`, which
   reads as a vocabulary; German prints `H F G g` and Polish `U Ś W w`. `RANKS`
@@ -1234,6 +1256,18 @@ whether the code that decides days is right.
   ranking a solemnity as nothing. The `_SUMMARY` regex matches the token as
   "anything but a bracket" for the same reason: an ASCII class turned Polish's
   `Ś` into part of the name.
+- **THE FIFTEEN LANGUAGES ADDED WITH THE FULL CRAWL WERE READ, NOT WRITTEN**
+  (2026-09-04). A table of guessed initials is exactly what that fatal guard
+  exists to refuse, so they were derived by ALIGNMENT: one calendar and year in
+  two languages is the same set of days, a day whose two editions each hold
+  exactly one unresolved token forces that pair whatever the order inside the
+  day, and iterating to a fixpoint reaches all five ranks in all fifteen. Every
+  token came out unanimous. **Two of them refute the rule the first three
+  suggested** — Latin, German and Polish all spell the optional memorial as the
+  lowercase of the obligatory one, until Croatian pairs `Sp` with `ns`
+  (_neobvezni spomendan_, a different word) and Indonesian pairs `Pfak` with
+  `Pfac*`; three of the scripts have no case at all. There is no rule; there is
+  a reading.
 - **THE UNITED STATES IS TWO CALENDARS.** `US-D` and `US-H` and no plain `US`:
   the Ascension is on the Thursday in six ecclesiastical provinces and on the
   Sunday everywhere else. A trailing `-A`..`-H` names the transfer variant
@@ -1249,6 +1283,51 @@ whether the code that decides days is right.
   carries the liturgical COLOUR and the rank as machine-readable tokens the HTML
   only paints in CSS — a whole column is worth more than two Easters. Years
   outside the window are covered by hand-written tests instead.
+
+## A national layer is DERIVED, and the derivation is a proposer
+
+`pipeline/derive_national_calendars.py` (2026-09-04, §The liturgical calendar).
+`site/scripts/book-forms-oracle.mjs --derive` for a different table: it reads
+what a country's feed does differently from the general variant it layers over
+and PROPOSES the `NationalCalendar` that states it. Nothing runs it at deploy;
+its output is committed as ordinary source and read by a person.
+
+    uv run pipeline/derive_national_calendars.py --calendars IT   # print one
+    uv run pipeline/derive_national_calendars.py --all --write    # write them
+
+- **IT IS PYTHON AND WRITES TYPESCRIPT, which is the wrong way round for this
+  repository, and the alternative is worse**: a second iCalendar parser.
+  `parse_feed` already reads these feeds — folding, escaping, the coloured
+  disc, the per-language rank tokens, the UID grammar — and every one of those
+  is a place two implementations drift silently.
+- **`--all` leaves the sixteen hand-written layers alone**, and naming one on
+  `--calendars` is the only check there is on the tool: run it against Italy or
+  the United States and read the proposal beside the file a person wrote. Both
+  now come out identical, corrections included.
+- **THE TRANSFERS ARE ASKED OF THREE DAYS, NOT SCORED OVER THE YEAR.** The
+  first version compared a country against all eight `General-*` feeds and took
+  the fewest differences; the variants differ from each other on two or three
+  days and a country with sixty propers differs from every one of them on
+  sixty, so the margin is noise. England came out `General-C` and keeps
+  Epiphany on the Sunday, which put every comparison after it out by a day.
+- **A year whose 6 January is a Sunday says nothing about Epiphany** — both
+  conventions land on the same day — and reading it as evidence made England
+  contradict itself between years.
+- **The corrections are `oracle.test.ts`'s `ACCEPTED_VARIANTS`, read back.**
+  That table already holds every name this project and GCatholic spell
+  differently, a few of which are the source misprinting one (`Xeelos` for
+  Blessed Francis Xavier Seelos). Hand transcription had been correcting those
+  silently; a derivation would reproduce them. **Correcting the source where
+  confidence is high is the right act** and this repository already has the
+  shape for it — a locator, the exact before and after, a witness. A scan for
+  further misprints (every proper name across all 86 calendars, grouped by the
+  words that identify a saint) returned nothing beyond that table: GCatholic is
+  internally consistent and `Xeelos` was a singleton.
+- **What it will not derive** is stated in each generated file rather than
+  guessed: holy days of obligation (the feeds do not mark them), `displacedBy`
+  on a move, and any proper whose date fits neither a fixed day, an offset from
+  Easter, nor an *n*th weekday. Those become a `NOT DERIVED` comment block.
+
 - **Conduct**: `robots.txt` opens `/calendar/` to `*`; no `Crawl-delay` is
   stated, so the 2.0s floor is chosen rather than commanded, on the principle
   that an unstated limit is not a licence. The crawl is one file per year,

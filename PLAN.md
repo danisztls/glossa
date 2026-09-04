@@ -28,12 +28,16 @@ Each stated as: what it is, why it matters, what it depends on, and sizing.
 
 ## Loose ends from the liturgical calendar (landed 2026-09-03)
 
-The calendar itself shipped, and so did fifteen national calendars over it:
-`site/src/lib/calendar/` computes any day of any year and `oracle.test.ts`
-checks 72 calendars — three years, eight transfer variants, and sixteen
-national files — day by day against GCatholic (`docs/decisions.md` §The
-liturgical calendar). What follows is what that work located and deliberately
-did not do.
+The calendar itself shipped, and so did a national calendar for every country
+GCatholic publishes one for: `site/src/lib/calendar/` computes any day of any
+year and `oracle.test.ts` checks every calendar — three years, eight transfer
+variants, and 86 national feeds — day by day against GCatholic
+(`docs/decisions.md` §The liturgical calendar). Sixteen of the layers were
+written by hand and the rest derived by
+`pipeline/derive_national_calendars.py`; **only the ones the oracle agrees with
+are published**, the rest being held in `national/held.ts` with the count of
+days each still differs on. What follows is what that work located and
+deliberately did not do.
 
 ### Decisions only the person directing the work can take
 
@@ -46,19 +50,31 @@ did not do.
   where a table of dates and ranks is fact), and it would belong in the corpus
   rather than in the site bundle. Depends on nothing; wants deciding on its own
   terms rather than as an extension.
-- **The sixteenth country and beyond.** The list stops at Germany because it
-  was drawn by Catholic population and a list has to stop; Uganda, Tanzania,
-  Canada, Vietnam and Portugal are the next ones, and GCatholic publishes ~100.
-  A country now costs one row in `pipeline/scrapers/liturgical_calendar.py`'s `CALENDARS`
-  and one file under `site/src/lib/calendar/national/` — measured across the
-  fifteen, mostly transcription and a few rounds of the oracle. **What it does
-  NOT cost is engine work, and that is now evidence rather than a hope**: the
-  last four layers written needed no change to `year.ts` at all.
+- **The held calendars, one at a time.** Taken 2026-09-04: the list is every
+  calendar GCatholic publishes, and what remains is not adding countries but
+  finishing the ones already derived. `national/held.ts` names them with the
+  measurement — out of 1,095 days per calendar, most differ on one to five —
+  and its header groups them by cause. Three of those causes are ENGINE work
+  rather than transcription and are the ones worth taking as a batch: All Souls
+  transferred off a Sunday, an observance suppressed by the day it falls on,
+  and a conference that changed a transfer inside the oracle's window. The
+  fourth wants a `MovableRule` that can say "the last Sunday of October".
+- **A second witness for a derived layer.** The oracle's name check is circular
+  for a derived country — it compares a name to the feed the name came from —
+  and the fix is what `docs/decisions.md` already requires of prayers and of
+  the gazette sigla: a second source, here each conference's own published
+  ordo. It is a large research job, one country at a time, and it is the only
+  thing that would make a derived layer as well attested as a hand-read one.
 - **Diocesan calendars.** Italy's file adds no saint of its own, which surprises
   until you see why: Italy's propers are in its dioceses' calendars, not its
   national one. A diocesan layer would be a third tier over the national one,
   and nothing in the model forbids it; whether the site wants ~2,000 of them is
-  a different question from whether it could hold one.
+  a different question from whether it could hold one. **Eight are already
+  here, and not as a tier**: GCatholic publishes a particular church's calendar
+  where a country has none of its own — the Diocese of Rome for Vatican City,
+  Urgell for Andorra, the Latin Patriarchate of Jerusalem and two Arabian
+  vicariates for eleven countries between them — so they are national layers by
+  another name, and `alsoCovers` is what lets one stand for several places.
 
 ### Known limits, stated rather than fixed
 

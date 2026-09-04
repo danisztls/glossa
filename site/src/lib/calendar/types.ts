@@ -155,6 +155,27 @@ export interface Names {
 	fr?: string;
 	pl?: string;
 	de?: string;
+	// The other fourteen arrived with the rest of GCatholic's calendars on
+	// 2026-09-04, and each is here for the same reason the first eight are:
+	// some conference approved a celebration in it. `zht` is the site's tag
+	// for Traditional Chinese and not GCatholic's, which spells it `zt` —
+	// §Languages has the argument for why a tag here is an identity rather
+	// than a variant of `zh`.
+	cs?: string;
+	da?: string;
+	hr?: string;
+	hu?: string;
+	id?: string;
+	ja?: string;
+	ko?: string;
+	lt?: string;
+	mt?: string;
+	nl?: string;
+	no?: string;
+	sk?: string;
+	sv?: string;
+	vi?: string;
+	zht?: string;
 }
 
 /** One celebration, as the calendar carries it before any day is resolved. */
@@ -336,8 +357,33 @@ export interface CalendarOptions {
  * with no code, and that the general calendar cannot drift out from under it.
  */
 export interface NationalCalendar {
-	/** ISO 3166-1 alpha-2, lowercased — `br`. */
+	/**
+	 * ISO 3166-1 alpha-2, lowercased — `br`.
+	 *
+	 * Three are ISO 3166-2 SUBDIVISION tags, because England, Scotland and
+	 * Wales keep three different calendars and none of the three has a
+	 * country code of its own: `gb-eng`, `gb-sct`, `gb-wls`. Anything reading
+	 * this as two letters has to allow for that — `CalendarMenu`'s flag draws
+	 * a tag sequence for them, which is what those three have instead of a
+	 * pair of regional indicators.
+	 */
 	id: string;
+	/**
+	 * Territories that keep THIS calendar and publish none of their own.
+	 *
+	 * A calendar is a conference's or a particular church's, and a particular
+	 * church can span countries: the Latin Patriarchate of Jerusalem covers
+	 * Cyprus, Israel, Jordan and Palestine, and the vicariates of Northern and
+	 * Southern Arabia cover seven more between them. Åland keeps Finland's
+	 * calendar and the Faroes and Greenland keep Denmark's, for the same
+	 * reason at a smaller scale — one diocese, several jurisdictions.
+	 *
+	 * It exists so the picker can offer a reader their own flag without
+	 * inventing a calendar for their country. `TERRITORY_CALENDARS` in
+	 * `national/index.ts` resolves it; nothing in `year.ts` reads it, because
+	 * it is a fact about who keeps this calendar and not about what it does.
+	 */
+	alsoCovers?: readonly string[];
 	/** The transfers this conference has made. */
 	options: Omit<CalendarOptions, 'nationalCalendar'>;
 	/** Celebrations this country adds, keyed `MM-DD`. */

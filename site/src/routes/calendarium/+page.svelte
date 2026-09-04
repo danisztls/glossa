@@ -69,7 +69,6 @@
 			options: { nationalCalendar: c } as CalendarOptions
 		}))
 	];
-	const COUNTRY_IDS = NATIONAL_CALENDAR_LIST.map((c) => c.id);
 
 	/**
 	 * BOTH CONTROLS READ THE URL, and neither keeps a copy of its own.
@@ -168,12 +167,7 @@
 			</label>
 			<div class="control">
 				<span class="label-micro" aria-hidden="true">{t('calendar.calendar')}</span>
-				<CalendarMenu
-					value={calendarId}
-					countries={COUNTRY_IDS}
-					{lang}
-					onchoose={(id) => commit({ c: id })}
-				/>
+				<CalendarMenu value={calendarId} {lang} onchoose={(id) => commit({ c: id })} />
 			</div>
 			<!-- The two arrows carry no words, for the reason `UnitNav`'s docblock
 			     gives about a row that cannot shrink: "Previous day"/"Next day" in

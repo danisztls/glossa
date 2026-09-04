@@ -4003,6 +4003,65 @@ wrong in a way that looks like nothing at all. The address bar agreed with the r
 which is what made it possible to click for months and conclude the page was slow rather
 than broken.
 
+### Every calendar GCatholic publishes, and the question it forced
+
+The list was the sixteen largest Catholic populations, on the reasoning that a
+list has to stop somewhere and population is the only criterion available that
+is a fact rather than a preference. What retired that reasoning on 2026-09-04 is
+that the boundary was never a limit: a country costs one row in the scraper and
+one data file on the site. So the set is now the one the source publishes — 86
+calendars over 96 territories, the difference being eight particular churches
+that stand for more than one place.
+
+**The crawl brought fifteen languages at once, and their rank tokens were READ
+rather than written.** The token in a `SUMMARY` is the language's own initial,
+and an unknown one is fatal in `parse_feed` precisely so a table of guesses
+cannot pass. So they were derived by alignment: one calendar and year in two
+languages is the same set of days, a day whose two editions each hold exactly
+one unresolved token forces that pair whatever the order inside the day, and
+iterating to a fixpoint reaches all five ranks in all fifteen, unanimously. Two
+of them refute the rule the first three suggested — Latin, German and Polish all
+spell the optional memorial as the lowercase of the obligatory one, until
+Croatian pairs `Sp` with `ns` (_neobvezni spomendan_, a different word) and
+Indonesian pairs `Pfak` with `Pfac*`; three of the scripts have no case at all.
+
+**THE QUESTION IT FORCED IS WHETHER THIS IS STILL COMPUTING OR NOW COPYING**,
+and the honest answer has two parts. The temporal cycle, the Table of Liturgical
+Days, transferred solemnities, Lenten commemorations and `grc.ts` are computed
+here and judged by a calendar someone else computed; that half is unchanged and
+it is the half that can be wrong invisibly. A conference's proper celebrations
+are not derivable from anything — they are a positive act — and even the sixteen
+hand-written layers took their content from the oracle: `br.ts` says "a
+celebration earns a row by making a day come out differently". So the KIND of
+knowledge did not change when the transcription went from hand to machine. What
+changed is that the name check for a derived country is now circular, and that
+hand transcription had been silently correcting the source (`Xeelos` for Blessed
+Francis Xavier Seelos). The second is fixed: the derivation reads
+`oracle.test.ts`'s own `ACCEPTED_VARIANTS` table, which is where this project
+already keeps every name it and GCatholic spell differently. **Correcting the
+source where confidence is high is the right act**, and this repository has the
+shape for it. A scan for further misprints — every proper name across all 86
+calendars, grouped by the words that identify a saint, reporting groups whose
+spellings differ — returned nothing beyond that table.
+
+**Only what the oracle agrees with is published.** `national/held.ts` names the
+layers that still differ, with the measured count of diverging days out of 1,095
+per calendar, and they are excluded from the picker. It is
+`site/unpublished.json`'s argument for a different kind of output: a reader
+cannot tell a calendar that is wrong on four days from one that is right, and
+this is the one kind of output where being wrong looks exactly like being right.
+The last test in `oracle.test.ts` asserts the held list is EXACTLY the diverging
+set, in both directions — without it a regressed layer would be silently
+absorbed by the list and a fixed one would sit unpublished for ever.
+
+The recurring causes of what is still held, none of which a layer can state:
+All Souls transferred off a Sunday (a rule of `year.ts`, not a row); an
+observance suppressed by the day it falls on (Australia prints no ANZAC Day
+inside the Octave of Easter); a conference that changed a transfer inside the
+oracle's window (England and Wales restored Epiphany to 6 January from Advent
+2025, and `CalendarOptions` carries a boolean and not a table); and a patronal
+solemnity on the LAST weekday of a month, which `MovableRule` cannot spell.
+
 ### The country picker is a grid of flags
 
 It was a `<select>` of country names, and the argument for the change is what the reader

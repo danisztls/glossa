@@ -74,6 +74,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (
     Fetcher,
+    FetchError,
     FetchPolicy,
     raw_root,
     require_corpus,
@@ -105,20 +106,36 @@ YEARS = (2025, 2026, 2027)
 #: alpha-2 country codes, each the GRC plus that conference's own propers,
 #: elevations and transfers.
 #:
-#: NO NATIONAL CALENDAR HAS A LATIN EDITION and asking for one 404s. That is
-#: correct rather than a gap: a national calendar's propers are approved in
-#: the vernacular by the conference that has them, and GCatholic publishes
-#: Latin only for the calendar that is a Latin book.
+#: WHICH COUNTRIES, AND WHY THESE: ALL OF THEM. The list was the sixteen
+#: largest Catholic populations until 2026-09-04, on the reasoning that a
+#: list has to stop somewhere and population is the only criterion available
+#: that is a fact rather than a preference. What retired that reasoning is
+#: that the boundary was never a limit -- a country costs one row here and
+#: one data file on the site -- so the honest set is the one the source
+#: publishes, and stopping short of it was a decision nobody had to make.
 #:
-#: WHICH COUNTRIES, AND WHY THESE. The order is Catholic population, largest
-#: first -- the criterion the work was asked for, and the only one available
-#: that is a fact rather than a preference. It reaches Germany at fifteen
-#: countries, which is where the list stops; the next ones down (Uganda,
-#: Tanzania, Canada, Vietnam) cost one row here and one file under
-#: `site/src/lib/calendar/national/`, so the boundary is a decision and not a
-#: limit. The populations themselves are not restated here: a count that rots
-#: silently is worse than no count (root CLAUDE.md), and GCatholic's own
-#: country pages carry them.
+#: THE LANGUAGES ARE READ OFF THE SOURCE, NOT GUESSED. Each calendar's own
+#: HTML page carries a language switcher naming the editions GCatholic
+#: publishes it in, which is what the pairs below are; the anchor is the
+#: country's own language wherever there is one, since that is the language
+#: its conference approved its propers in. Twenty-three calendars are
+#: English-only because GCatholic offers nothing else for them.
+#:
+#: NO NATIONAL CALENDAR HAS A LATIN EDITION, with two measured exceptions --
+#: Slovenia and the Latin Patriarchate of Jerusalem, whose feeds do answer in
+#: Latin. Everywhere else asking for one 404s, and that is correct rather
+#: than a gap: a national calendar's propers are approved in the vernacular
+#: by the conference that has them, and GCatholic publishes Latin only for
+#: the calendar that is a Latin book.
+#:
+#: EIGHT OF THESE ARE A PARTICULAR CHURCH'S CALENDAR AND NOT A COUNTRY'S, and
+#: the URLs say so: `IT-rome0` is the Diocese of Rome, which is Vatican City's
+#: calendar; `ES-urge0` is Urgell, which is Andorra's; `DK-kobe0` covers
+#: Denmark, the Faroes and Greenland; `FI-hels0` Finland and Åland; `IT-zmar5`
+#: San Marino; and three vicariates -- `KW-arab1` (Northern Arabia),
+#: `AE-arab0` (Southern Arabia) and `PS-jeru0` (Jerusalem) -- carry eleven
+#: countries between them. GCatholic lists 96 territories and publishes 86
+#: calendars; the difference is those eight standing for more than one place.
 #:
 #: THE UNITED STATES IS TWO CALENDARS AND NOT ONE. GCatholic publishes `US-D`
 #: and `US-H` and no plain `US`, which is not an artefact of its URLs: the
@@ -137,23 +154,97 @@ CALENDARS: dict[str, tuple[str, ...]] = {
     "General-F": ("la", "en", "pt"),
     "General-G": ("la", "en", "pt"),
     "General-H": ("la", "en", "pt"),
+    # Europe, and the five particular churches whose calendar stands for a country
+    "AT": ("de", "en"),
+    "BA": ("hr", "en"),
+    "BE": ("nl", "en"),
+    "CH": ("de", "en"),
+    "CZ": ("cs", "en"),
+    "DE": ("de", "en"),
+    "DK-kobe0": ("da", "en"),
+    "ES": ("es", "en"),
+    "ES-urge0": ("es", "en"),
+    "FI-hels0": ("en",),
+    "FR": ("fr", "en"),
+    "HR": ("hr", "en"),
+    "HU": ("hu", "en"),
+    "IE": ("en",),
+    "IT": ("it", "en"),
+    "IT-rome0": ("it", "en"),
+    "IT-zmar5": ("it", "en"),
+    "LI": ("de", "en"),
+    "LT": ("lt", "en"),
+    "LU": ("fr", "en"),
+    "MC": ("fr", "en"),
+    "MT": ("mt", "en"),
+    "NL": ("nl", "en"),
+    "NO": ("no", "en"),
+    "PL": ("pl", "en"),
+    "PT": ("pt", "en"),
+    "QE": ("en",),
+    "QS": ("en",),
+    "QW": ("en",),
+    "RU": ("en",),
+    "SE": ("sv", "en"),
+    "SI": ("en",),
+    "SK": ("sk", "en"),
+    "UA": ("en",),
+    # The Americas
+    "AR": ("es", "en"),
+    "BO": ("es", "en"),
     "BR": ("pt", "en"),
+    "CA": ("en", "fr"),
+    "CL": ("es", "en"),
+    "CO": ("es", "en"),
+    "CR": ("es", "en"),
+    "EC": ("es", "en"),
+    "GT": ("es", "en"),
+    "HT": ("fr", "en"),
     "MX": ("es", "en"),
-    "PH": ("en",),
+    "PA": ("es", "en"),
+    "PE": ("es", "en"),
+    "PR": ("es", "en"),
+    "TT": ("en",),
     "US-D": ("en",),
     "US-H": ("en",),
-    "CO": ("es", "en"),
-    "IT": ("it", "en"),
-    "CD": ("fr", "en"),
-    "FR": ("fr", "en"),
-    "ES": ("es", "en"),
-    "PL": ("pl", "en"),
-    "AR": ("es", "en"),
-    "PE": ("es", "en"),
     "VE": ("es", "en"),
-    "IN": ("en",),
+    "VI": ("es", "en"),
+    # Africa
+    "AO": ("pt", "en"),
+    "CD": ("fr", "en"),
+    "CV": ("pt", "en"),
+    "DZ": ("fr", "en"),
+    "KE": ("en",),
     "NG": ("en",),
-    "DE": ("de", "en"),
+    "RW": ("fr", "en"),
+    "SD": ("en",),
+    "ST": ("pt", "en"),
+    "TN": ("fr", "en"),
+    "UG": ("en",),
+    "ZA": ("en",),
+    # Asia, with three vicariates standing for eleven countries between them
+    "AE-arab0": ("en",),
+    "BN": ("en",),
+    "HK": ("zt", "en"),
+    "ID": ("id", "en"),
+    "IN": ("en",),
+    "JP": ("ja", "en"),
+    "KR": ("ko", "en"),
+    "KW-arab1": ("en",),
+    "MO": ("zt", "en"),
+    "MY": ("en",),
+    "PH": ("en",),
+    "PS-jeru0": ("en",),
+    "SG": ("en",),
+    "TH": ("en",),
+    "TL": ("pt", "en"),
+    "TW": ("zt", "en"),
+    "VN-H": ("vi", "en"),
+    # Oceania
+    "AU": ("en",),
+    "GU": ("en",),
+    "MP": ("en",),
+    "NZ": ("en",),
 }
 
 #: THE FIRST LANGUAGE OF A CALENDAR IS ITS ANCHOR, and the only one whose
@@ -236,6 +327,22 @@ COLOURS = {"⚪": "white", "🟢": "green", "🟣": "violet", "🔴": "red", "�
 #: guessing, and an unknown token is fatal (`parse_feed`) — which is how this
 #: was found, on the first Polish feed, rather than by silently ranking a
 #: solemnity as nothing.
+#:
+#: THE FIFTEEN ROWS BELOW WERE READ OFF THE FEEDS, NOT WRITTEN. Widening the
+#: crawl to every calendar GCatholic publishes (2026-09-04) brought fifteen
+#: languages at once, and a table of guessed initials is exactly what the
+#: fatal guard exists to refuse. So they were derived by alignment: the same
+#: calendar and year in two languages is the same set of days, a day whose
+#: two editions each hold exactly ONE unresolved token forces that pair
+#: whatever the order inside the day, and iterating that to a fixpoint
+#: reaches all five ranks in all fifteen. Every token was decided unanimously.
+#:
+#: TWO OF THEM REFUTE THE RULE THE FIRST THREE SUGGESTED. Latin, German and
+#: Polish all spell the optional memorial as the lowercase of the obligatory
+#: one, which reads as a convention until Croatian pairs `Sp` with `ns`
+#: (*neobvezni spomendan* -- a different word, not a different case) and
+#: Indonesian pairs `Pfak` with `Pfac*`. Three scripts here have no case at
+#: all. There is no rule; there is a reading.
 RANKS: dict[str, dict[str, str]] = {
     "*": {
         "S": "solemnity",
@@ -258,7 +365,119 @@ RANKS: dict[str, dict[str, str]] = {
         "w": "optional-memorial",
         "w*": "commemoration",
     },
+    "nl": {
+        "HF": "solemnity",
+        "F": "feast",
+        "G": "memorial",
+        "g": "optional-memorial",
+        "g*": "commemoration",
+    },
+    "da": {
+        "H": "solemnity",
+        "F": "feast",
+        "M": "memorial",
+        "m": "optional-memorial",
+        "m*": "commemoration",
+    },
+    "no": {
+        "H": "solemnity",
+        "F": "feast",
+        "M": "memorial",
+        "m": "optional-memorial",
+        "m*": "commemoration",
+    },
+    "sv": {
+        "H": "solemnity",
+        "F": "feast",
+        "M": "memorial",
+        "m": "optional-memorial",
+        "m*": "commemoration",
+    },
+    "lt": {
+        "Iš": "solemnity",
+        "Š": "feast",
+        "M": "memorial",
+        "m": "optional-memorial",
+        "m*": "commemoration",
+    },
+    "mt": {
+        "S": "solemnity",
+        "F": "feast",
+        "T": "memorial",
+        "t": "optional-memorial",
+        "t*": "commemoration",
+    },
+    "hu": {
+        "FÜ": "solemnity",
+        "Ü": "feast",
+        "E": "memorial",
+        "e": "optional-memorial",
+        "e*": "commemoration",
+    },
+    "cs": {
+        "Sl": "solemnity",
+        "Sv": "feast",
+        "P": "memorial",
+        "p": "optional-memorial",
+        "p*": "commemoration",
+    },
+    "sk": {
+        "Sl": "solemnity",
+        "Sv": "feast",
+        "Sp": "memorial",
+        "sp": "optional-memorial",
+        "sp*": "commemoration",
+    },
+    "hr": {  # `ns` is neobvezni spomendan, not a case of `Sp`
+        "Sv": "solemnity",
+        "B": "feast",
+        "Sp": "memorial",
+        "ns": "optional-memorial",
+        "sp*": "commemoration",
+    },
+    "id": {  # `Pfak`/`Pfac*` differ by a letter in the source
+        "H": "solemnity",
+        "P": "feast",
+        "Pw": "memorial",
+        "Pfak": "optional-memorial",
+        "Pfac*": "commemoration",
+    },
+    "vi": {
+        "T": "solemnity",
+        "K": "feast",
+        "N": "memorial",
+        "n": "optional-memorial",
+        "n*": "commemoration",
+    },
+    "ja": {
+        "祭": "solemnity",
+        "祝": "feast",
+        "記": "memorial",
+        "任": "optional-memorial",
+        "任*": "commemoration",
+    },
+    "ko": {
+        "대": "solemnity",
+        "축": "feast",
+        "기": "memorial",
+        "선": "optional-memorial",
+        "선*": "commemoration",
+    },
+    "zt": {
+        "節": "solemnity",
+        "慶": "feast",
+        "紀": "memorial",
+        "自": "optional-memorial",
+        "自*": "commemoration",
+    },
 }
+
+#: A 404 or a 410 is the origin saying a calendar-year does not exist; a
+#: timeout or a 5xx is the network, and must never be read as an absence.
+#: `AbsentSources` draws the same line one layer down and this is the caller's
+#: half of it -- the message is matched rather than a status, because the
+#: ledger's own refusal ("recorded absent") arrives the same way on a re-run.
+_DEFINITIVELY_ABSENT = re.compile(r"HTTP Error (?:404|410)|recorded absent")
 
 POLICY = FetchPolicy(
     user_agent="glossa-catholica/1.0 (+https://glossa.catholic; calendar oracle)",
@@ -505,11 +724,39 @@ def main() -> int:
 
     stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     payloads: dict[str, object] = {}
+    absent: list[str] = []
     for year in years:
         for calendar in calendars:
-            oracle = fetch_calendar(fetcher, year, calendar)
+            try:
+                oracle = fetch_calendar(fetcher, year, calendar)
+            except FetchError as exc:
+                # A CALENDAR-YEAR CAN BE ABSENT, and that is the source's
+                # answer rather than this run's failure -- Trinidad and
+                # Tobago publishes 2026 and 2027 and no 2025. The whole
+                # calendar-year is skipped rather than the one language that
+                # 404ed, because a year checked in one language and not
+                # another is a hole the cross-language agreement check would
+                # then not cover. `Fetcher` has already written the URL to
+                # `absent-sources.json`, so the next run costs no request.
+                if not _DEFINITIVELY_ABSENT.search(str(exc)):
+                    raise
+                absent.append(f"{year} {calendar}")
+                print(f"  {year} {calendar}: not published", file=sys.stderr)
+                continue
             payloads[f"{year}-{calendar}.json"] = {"generated_at": stamp, **oracle}
             print(f"  {year} {calendar}: {len(oracle['days'])} rows", file=sys.stderr)
+    if absent:
+        print(f"  {len(absent)} calendar-years not published", file=sys.stderr)
+    # THE LEDGER IS ONLY WORTH ANYTHING IF IT IS WRITTEN. `Fetcher` records a
+    # definitive 404 in memory and something has to save it, which every other
+    # scraper here does at the end of its run; without this the absence was
+    # rediscovered — at four requests and two backoff sleeps — on every run.
+    if fetcher.absent.save():
+        print(
+            f"  absent-sources.json: +{len(fetcher.absent.added)} "
+            f"-{len(fetcher.absent.forgotten)}",
+            file=sys.stderr,
+        )
 
     # One call for the whole run, not one per file: `write_stamped_json` judges
     # its payloads as a unit, and this oracle IS one -- a re-parse that moves

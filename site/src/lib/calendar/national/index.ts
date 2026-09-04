@@ -1,18 +1,22 @@
 /**
- * The national calendars, by ISO 3166-1 alpha-2 code.
+ * The national calendars, by ISO code — every one GCatholic publishes.
  *
- * ## Which countries, and why these
+ * ## Which countries, and why these: all of them
  *
- * Catholic population, largest first. It is the criterion the work was asked
- * for and the only one available that is a fact rather than a preference, and
- * it puts a calendar in front of roughly two thirds of the Catholics alive.
- * The list stops at Germany because a list has to stop somewhere; the next
- * countries down cost one file each and no change to any code, which is what
- * `NationalCalendar` being a data layer means.
+ * It was the sixteen largest Catholic populations until 2026-09-04, on the
+ * reasoning that a list has to stop somewhere and population is the only
+ * criterion available that is a fact rather than a preference. What retired
+ * that reasoning is that the boundary was never a limit — a country costs one
+ * data file and no code — so the honest set is the one the source publishes,
+ * and stopping short of it was a decision nobody had to make. The sixteen are
+ * still the sixteen written by hand; the rest were derived by
+ * `pipeline/derive_national_calendars.py` from the same feeds the oracle uses,
+ * and each of those files says so in its own header.
  *
- * The populations themselves are deliberately not written here — a count that
- * rots silently is worse than no count (root `CLAUDE.md`), and this order is
- * the only thing they are needed for.
+ * The order here is alphabetical by id and carries no claim at all. It used to
+ * be Catholic population, which said which sixteen had been chosen and why;
+ * with every calendar present there is nothing left for an order to say, and
+ * `CALENDAR_REGIONS` below is what the picker actually reads.
  *
  * ## What a layer may not do
  *
@@ -21,47 +25,394 @@
  * `../year.ts` — which is what keeps a country from drifting away from the
  * general calendar it is a layer over. If a country seems to need a rule of
  * its own, the rule is probably general and stated wrongly.
+ *
+ * ## Eighty-five calendars, ninety-six territories
+ *
+ * Eleven of the places GCatholic lists have no calendar of their own: they
+ * keep a neighbouring conference's, or a particular church's that spans
+ * several countries. Åland keeps Finland's, the Faroes and Greenland keep
+ * Denmark's, and three vicariates carry eight countries between them — the
+ * Latin Patriarchate of Jerusalem for Cyprus, Israel, Jordan and Palestine,
+ * Northern Arabia for Bahrain, Kuwait, Qatar and Saudi Arabia, Southern
+ * Arabia for Oman, the Emirates and Yemen. `alsoCovers` on those five layers
+ * is what puts the other territories in the picker without inventing a
+ * calendar for them; `TERRITORY_CALENDARS` is the resolved map.
  */
 
 import type { NationalCalendar } from '../types';
+import { HELD_CALENDARS } from './held';
+import { ANDORRA } from './ad';
+import { SOUTHERN_ARABIA } from './ae';
+import { ANGOLA } from './ao';
 import { ARGENTINA } from './ar';
+import { AUSTRIA } from './at';
+import { AUSTRALIA } from './au';
+import { BOSNIA_HERZEGOVINA } from './ba';
+import { BELGIUM } from './be';
+import { BRUNEI } from './bn';
+import { BOLIVIA } from './bo';
 import { BRAZIL } from './br';
-import { COLOMBIA } from './co';
+import { CANADA } from './ca';
 import { CONGO } from './cd';
-import { FRANCE } from './fr';
+import { SWITZERLAND } from './ch';
+import { CHILE } from './cl';
+import { COLOMBIA } from './co';
+import { COSTA_RICA } from './cr';
+import { CABO_VERDE } from './cv';
+import { CZECHIA } from './cz';
 import { GERMANY } from './de';
+import { DENMARK } from './dk';
+import { ALGERIA } from './dz';
+import { ECUADOR } from './ec';
+import { SPAIN } from './es';
+import { FINLAND } from './fi';
+import { FRANCE } from './fr';
+import { ENGLAND } from './gb-eng';
+import { SCOTLAND } from './gb-sct';
+import { WALES } from './gb-wls';
+import { GUATEMALA } from './gt';
+import { GUAM } from './gu';
+import { HONG_KONG } from './hk';
+import { CROATIA } from './hr';
+import { HAITI } from './ht';
+import { HUNGARY } from './hu';
+import { INDONESIA } from './id';
+import { IRELAND } from './ie';
 import { INDIA } from './in';
 import { ITALY } from './it';
+import { JAPAN } from './jp';
+import { KENYA } from './ke';
+import { SOUTH_KOREA } from './kr';
+import { NORTHERN_ARABIA } from './kw';
+import { LIECHTENSTEIN } from './li';
+import { LITHUANIA } from './lt';
+import { LUXEMBOURG } from './lu';
+import { MONACO } from './mc';
+import { MACAU } from './mo';
+import { NORTHERN_MARIANAS } from './mp';
+import { MALTA } from './mt';
 import { MEXICO } from './mx';
+import { MALAYSIA } from './my';
 import { NIGERIA } from './ng';
+import { NETHERLANDS } from './nl';
+import { NORWAY } from './no';
+import { NEW_ZEALAND } from './nz';
+import { PANAMA } from './pa';
 import { PERU } from './pe';
 import { PHILIPPINES } from './ph';
 import { POLAND } from './pl';
-import { SPAIN } from './es';
+import { PUERTO_RICO } from './pr';
+import { JERUSALEM } from './ps';
+import { PORTUGAL } from './pt';
+import { RUSSIA } from './ru';
+import { RWANDA } from './rw';
+import { SUDAN } from './sd';
+import { SWEDEN } from './se';
+import { SINGAPORE } from './sg';
+import { SLOVENIA } from './si';
+import { SLOVAKIA } from './sk';
+import { SAN_MARINO } from './sm';
+import { SAO_TOME_PRINCIPE } from './st';
+import { THAILAND } from './th';
+import { TIMOR_LESTE } from './tl';
+import { TUNISIA } from './tn';
+import { TRINIDAD_TOBAGO } from './tt';
+import { TAIWAN } from './tw';
+import { UKRAINE } from './ua';
+import { UGANDA } from './ug';
 import { UNITED_STATES } from './us';
+import { VATICAN_CITY } from './va';
 import { VENEZUELA } from './ve';
+import { VIRGIN_ISLANDS } from './vi';
+import { VIETNAM } from './vn';
+import { SOUTH_AFRICA } from './za';
 
-/** In the order the picker offers them — Catholic population, descending. */
-export const NATIONAL_CALENDAR_LIST: readonly NationalCalendar[] = [
-	BRAZIL,
-	MEXICO,
-	PHILIPPINES,
-	UNITED_STATES,
-	COLOMBIA,
-	ITALY,
-	CONGO,
-	FRANCE,
-	SPAIN,
-	POLAND,
+/**
+ * Every layer there is, alphabetically by id — see the header on why that
+ * order. `NATIONAL_CALENDAR_LIST` below is the part of it a reader can pick.
+ */
+export const ALL_NATIONAL_CALENDARS: readonly NationalCalendar[] = [
+	ANDORRA,
+	SOUTHERN_ARABIA,
+	ANGOLA,
 	ARGENTINA,
-	PERU,
-	VENEZUELA,
+	AUSTRIA,
+	AUSTRALIA,
+	BOSNIA_HERZEGOVINA,
+	BELGIUM,
+	BRUNEI,
+	BOLIVIA,
+	BRAZIL,
+	CANADA,
+	CONGO,
+	SWITZERLAND,
+	CHILE,
+	COLOMBIA,
+	COSTA_RICA,
+	CABO_VERDE,
+	CZECHIA,
+	GERMANY,
+	DENMARK,
+	ALGERIA,
+	ECUADOR,
+	SPAIN,
+	FINLAND,
+	FRANCE,
+	ENGLAND,
+	SCOTLAND,
+	WALES,
+	GUATEMALA,
+	GUAM,
+	HONG_KONG,
+	CROATIA,
+	HAITI,
+	HUNGARY,
+	INDONESIA,
+	IRELAND,
 	INDIA,
+	ITALY,
+	JAPAN,
+	KENYA,
+	SOUTH_KOREA,
+	NORTHERN_ARABIA,
+	LIECHTENSTEIN,
+	LITHUANIA,
+	LUXEMBOURG,
+	MONACO,
+	MACAU,
+	NORTHERN_MARIANAS,
+	MALTA,
+	MEXICO,
+	MALAYSIA,
 	NIGERIA,
-	GERMANY
+	NETHERLANDS,
+	NORWAY,
+	NEW_ZEALAND,
+	PANAMA,
+	PERU,
+	PHILIPPINES,
+	POLAND,
+	PUERTO_RICO,
+	JERUSALEM,
+	PORTUGAL,
+	RUSSIA,
+	RWANDA,
+	SUDAN,
+	SWEDEN,
+	SINGAPORE,
+	SLOVENIA,
+	SLOVAKIA,
+	SAN_MARINO,
+	SAO_TOME_PRINCIPE,
+	THAILAND,
+	TIMOR_LESTE,
+	TUNISIA,
+	TRINIDAD_TOBAGO,
+	TAIWAN,
+	UKRAINE,
+	UGANDA,
+	UNITED_STATES,
+	VATICAN_CITY,
+	VENEZUELA,
+	VIRGIN_ISLANDS,
+	VIETNAM,
+	SOUTH_AFRICA
 ];
 
-/** The same, by `id`, for the oracle test and the route's query parameter. */
-export const NATIONAL_CALENDARS: Record<string, NationalCalendar> = Object.fromEntries(
-	NATIONAL_CALENDAR_LIST.map((c) => [c.id, c])
+/**
+ * The ones a reader may pick — every layer the oracle agrees with, and no
+ * other. `held.ts` holds the rest with the measurement that keeps them out
+ * and the argument for keeping them out at all.
+ */
+export const NATIONAL_CALENDAR_LIST: readonly NationalCalendar[] = ALL_NATIONAL_CALENDARS.filter(
+	(c) => !(c.id in HELD_CALENDARS)
 );
+
+/**
+ * Every layer by `id`, HELD ONES INCLUDED — the oracle test has to reach a
+ * held layer to measure it, which is the whole mechanism by which a held
+ * calendar earns its way out. The route resolves `?c=` against
+ * `NATIONAL_CALENDAR_LIST` instead, so a held id in a pasted URL falls back
+ * to the general calendar rather than showing a calendar nobody may pick.
+ */
+export const NATIONAL_CALENDARS: Record<string, NationalCalendar> = Object.fromEntries(
+	ALL_NATIONAL_CALENDARS.map((c) => [c.id, c])
+);
+
+/**
+ * The picker's grouping: a region, and the territories in it.
+ *
+ * FIVE ROWS OF FLAGS BEAT ONE GRID OF NINETY-SIX. The control is scanned
+ * rather than read (`CalendarMenu.svelte`), and a scan needs somewhere to
+ * start — a reader looking for Ecuador knows which continent it is on before
+ * they know what its flag looks like. The regions are GCatholic's own, which
+ * is also how the reader will have met this list if they met it there.
+ *
+ * The order INSIDE a region is not here, deliberately: it is the reader's own
+ * alphabet, sorted at render with `Intl.Collator`, because a list of country
+ * names sorted in English is sorted for nobody else.
+ */
+export const CALENDAR_REGIONS: readonly { id: string; territories: readonly string[] }[] = [
+	{
+		id: 'europe',
+		territories: [
+			'ad',
+			'at',
+			'ax',
+			'ba',
+			'be',
+			'ch',
+			'cz',
+			'de',
+			'dk',
+			'es',
+			'fi',
+			'fo',
+			'fr',
+			'gb-eng',
+			'gb-sct',
+			'gb-wls',
+			'hr',
+			'hu',
+			'ie',
+			'it',
+			'li',
+			'lt',
+			'lu',
+			'mc',
+			'mt',
+			'nl',
+			'no',
+			'pl',
+			'pt',
+			'ru',
+			'se',
+			'si',
+			'sk',
+			'sm',
+			'ua',
+			'va'
+		]
+	},
+	{
+		id: 'americas',
+		territories: [
+			'ar',
+			'bo',
+			'br',
+			'ca',
+			'cl',
+			'co',
+			'cr',
+			'ec',
+			'gl',
+			'gt',
+			'ht',
+			'mx',
+			'pa',
+			'pe',
+			'pr',
+			'tt',
+			'us',
+			've',
+			'vi'
+		]
+	},
+	{
+		id: 'africa',
+		territories: ['ao', 'cd', 'cv', 'dz', 'ke', 'ng', 'rw', 'sd', 'st', 'tn', 'ug', 'za']
+	},
+	{
+		id: 'asia',
+		territories: [
+			'ae',
+			'bh',
+			'bn',
+			'cy',
+			'hk',
+			'id',
+			'il',
+			'in',
+			'jo',
+			'jp',
+			'kr',
+			'kw',
+			'mo',
+			'my',
+			'om',
+			'ph',
+			'ps',
+			'qa',
+			'sa',
+			'sg',
+			'th',
+			'tl',
+			'tw',
+			'vn',
+			'ye'
+		]
+	},
+	{ id: 'oceania', territories: ['au', 'gu', 'mp', 'nz'] }
+];
+
+/**
+ * Which calendar a territory keeps — the identity for eighty-five of them,
+ * and a neighbour's or a vicariate's for the other eleven (see the header).
+ * Derived from the layers rather than written out, so a country added to
+ * `alsoCovers` reaches the picker with nothing else to remember.
+ */
+export const TERRITORY_CALENDARS: Record<string, string> = Object.fromEntries(
+	NATIONAL_CALENDAR_LIST.flatMap((c) => [
+		[c.id, c.id],
+		...(c.alsoCovers ?? []).map((t) => [t, c.id])
+	])
+);
+
+/**
+ * GCatholic's own code for a calendar against the layer it belongs to.
+ *
+ * READ BY `oracle.test.ts` AND BY NOTHING ELSE, and it exists because the
+ * obvious derivation is wrong in a way that reads as right: the test used to
+ * take the code up to the first hyphen and lowercase it, which answers `us`
+ * for `US-H` and `dk` for `DK-kobe0` and then answers `it` for `IT-rome0` and
+ * `es` for `ES-urge0`. Those two are the Diocese of Rome and the Diocese of
+ * Urgell — Vatican City's calendar and Andorra's — so the Vatican was being
+ * checked against Italy's layer and Andorra against Spain's, and both failed
+ * on days neither country had got wrong.
+ *
+ * Only the codes that do not lowercase to their own id are here; the test
+ * falls back to the lowercased code, which is right for the other seventy-odd.
+ */
+export const CALENDAR_FEED_IDS: Record<string, string> = {
+	'AE-arab0': 'ae',
+	'DK-kobe0': 'dk',
+	'ES-urge0': 'ad',
+	'FI-hels0': 'fi',
+	'IT-rome0': 'va',
+	'IT-zmar5': 'sm',
+	'KW-arab1': 'kw',
+	'PS-jeru0': 'ps',
+	QE: 'gb-eng',
+	QS: 'gb-sct',
+	QW: 'gb-wls',
+	'US-D': 'us',
+	'US-H': 'us',
+	'VN-H': 'vn'
+};
+
+/**
+ * The three territories `Intl.DisplayNames` cannot name.
+ *
+ * England, Scotland and Wales keep three different calendars and none of them
+ * has an ISO 3166-1 country code, so their ids are 3166-2 SUBDIVISION tags
+ * and `Intl.DisplayNames({ type: 'region' })` answers nothing for them. Every
+ * other territory here is named by the platform in the reader's own language,
+ * which is the whole reason there is no table of country names in this repo;
+ * these three are English-only until someone asks otherwise, which is better
+ * than the alternative of a bare `GB-ENG`.
+ */
+export const SUBDIVISION_NAMES: Record<string, string> = {
+	'gb-eng': 'England',
+	'gb-sct': 'Scotland',
+	'gb-wls': 'Wales'
+};
