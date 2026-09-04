@@ -647,10 +647,26 @@ if (!existsSync(buildSrc)) {
  *    is the thing `CLAUDE.md` says must never happen ("a genuine failure belongs
  *    in the run summary, never silently absent from the corpus").
  */
+/**
+ * Directories under `build/` that are NOT works and must not be reported as
+ * works whose scrape failed.
+ *
+ * One entry, and it is named rather than pattern-matched because the whole
+ * value of the manifestless warning below is that it fires on anything
+ * unexpected. `gcatholic-calendar/` is the liturgical-calendar oracle —
+ * somebody else's computed calendars, which `src/lib/calendar/oracle.test.ts`
+ * checks ours against and nothing at runtime reads. It moved here out of the
+ * `glossa` repository on 2026-09-04 (`pipeline/scrapers/liturgical_calendar.py`
+ * carries the argument), and it lives under `build/` because it is parsed
+ * output regenerable from `raw/` with no network, which is what `build/`
+ * means — being a work is not.
+ */
+const NON_WORK_DIRS = new Set(['gcatholic-calendar']);
+
 const workDirs = readdirSync(buildSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())
 	.map((e) => e.name)
-	.filter((name) => !name.startsWith('.'))
+	.filter((name) => !name.startsWith('.') && !NON_WORK_DIRS.has(name))
 	.sort();
 
 const manifestless = workDirs.filter(

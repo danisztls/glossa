@@ -206,12 +206,13 @@ otherwise have — see below.
 | `preview:edge`   | `wrangler dev`: the real worker over `build/`        |
 | `preview:deploy` | build -> preflight -> `preview:edge`                 |
 
-| verify         |                                                            |
-| -------------- | ---------------------------------------------------------- |
-| `verify`       | `format:check` -> `check` -> `test`, cheapest first        |
-| `test`         | always fixtures, never a synced corpus                     |
-| `check`        | `svelte-check`; **0 errors, and that is new** (2026-09-03) |
-| `format:check` | what the pre-commit hook does, over the whole tree         |
+| verify            |                                                            |
+| ----------------- | ---------------------------------------------------------- |
+| `verify`          | `format:check` -> `check` -> `test`, cheapest first        |
+| `test`            | always fixtures, never a synced corpus                     |
+| `check`           | `svelte-check`; **0 errors, and that is new** (2026-09-03) |
+| `format:check`    | what the pre-commit hook does, over the whole tree         |
+| `verify:calendar` | the oracle — **needs the corpus, and is NOT in `verify`**  |
 
 | derive                |                                                      |
 | --------------------- | ---------------------------------------------------- |
@@ -1662,11 +1663,17 @@ wrong; the two worth carrying here because they generalise:
   between them; both are `rank: 'feast'`. Comparing on rank gets the
   Transfiguration-on-a-Sunday case backwards and reads plausibly doing it.
 
-**The oracle files under `src/lib/calendar/oracle/` are read with `node:fs`,
-never imported.** That is deliberate and is what keeps them out
-of the bundle — nothing globs them, so the trap at the head of this file does
-not apply. `npm run build`'s inlined-corpus audit is the standing check; if they
-ever become an `import`, they land in the boot chunk every route preloads.
+**THE ORACLE MOVED TO THE CORPUS ON 2026-09-04** —
+`glossa-corpus/build/gcatholic-calendar/`, untracked, rebuilt by `uv run
+pipeline/rebuild.py --only calendar` from `raw/` with no network. It was 281
+files and 28 MB in a public repository whose whole packed history is 10.6 MB.
+**So `npm test` no longer runs it**: `npm run verify:calendar` does, with its own
+`vitest.oracle.config.ts`, and `package-scripts.test.ts` asserts it stays out of
+both `verify` and `test` — the colon in the name reads as membership and it is
+not a member. **Without a corpus it FAILS naming the path and the rebuild
+command**, never skips green. `held.ts` — the result, and the only part the site
+acts on — stays here. It is the one directory under `build/` that is not a work,
+so `sync-corpus.mjs` names it in `NON_WORK_DIRS` (§docs/calendar.md).
 
 **The picker is a grid of flags grouped by region** (`CalendarMenu.svelte`).
 A reader of that control already knows the answer before they read anything —
@@ -1683,41 +1690,30 @@ and the `aria-label`. Ordered inside a region by the reader's own alphabet
 controls wear `.menu-trigger` and `.label-micro` rather than restating them, so
 a change to the chrome reaches this page without anyone remembering it is there.
 
-**THE GENERAL CALENDAR IS NOT THE VATICAN'S, AND FOR A DAY THE PICKER SAID IT
-WAS** (2026-09-04). The general row wore 🇻🇦 on the reasoning that it is the
-flag of the see whose calendar it is — but Vatican City keeps the DIOCESE OF
-ROME's calendar, which GCatholic publishes as `IT-rome0`, which this directory
-carries as `va`, and which has eleven propers no other calendar has. So one flag
-stood for two different calendars in one control, and on the general row it said
-the universal calendar belongs to a country. The mark is 🌐: a globe is not a
-territory, which is exactly the claim that row makes.
+**THE GENERAL CALENDAR IS NOT THE VATICAN'S, AND THE PICKER SAID IT WAS** for a
+day (2026-09-04). Vatican City keeps the DIOCESE OF ROME's calendar — `IT-rome0`
+upstream, `va` here, eleven propers no other calendar has — so 🇻🇦 stood for two
+different calendars in one control. The mark is 🌐: a globe is not a territory
+(§docs/calendar.md).
 
-**`?c=` NAMES A TERRITORY, NOT A LAYER** (2026-09-04), because for eleven of the
-ninety-six places the two differ. Four cells select `ps`; with the layer stored,
-the trigger had to guess which had been pressed and printed the alphabetically
-first, so choosing Israel answered "Cyprus". The route resolves the code through
-`TERRITORY_CALENDARS`, one lookup that cannot be ambiguous in that direction, and
-a layer id is still a valid `?c=` because a layer's own territory is one of the
-territories it covers. **A held calendar's territories leave the picker with
-it** — `TERRITORY_CALENDARS` is built from the published list — which takes Oman
-and Yemen out with Southern Arabia and the Faroes and Greenland out with Denmark.
-Correct rather than incidental: what is held for a country is held for everyone
-who keeps that country's calendar.
+**`?c=` NAMES A TERRITORY, NOT A LAYER** (2026-09-04): four cells select `ps`,
+and with the layer stored the trigger printed the alphabetically first, so
+choosing Israel answered "Cyprus". `TERRITORY_CALENDARS` resolves it, and a
+layer id stays valid because a layer's own territory is one it covers. **A held
+calendar's territories leave the picker with it** — that map is built from the
+published list — which is right: what is held for a country is held for everyone
+who keeps that country's calendar (§docs/calendar.md).
 
-**`/calendarium` IS A MONTH GRID** (`CalendarMonth.svelte`, 2026-09-04), where it
-was a flat list of the ~230 non-ferial days of the liturgical year. The list
-answered "what is coming" and nothing else — a reader could not find a date, could
-not see what weekday Easter falls on, and could not see the shape of a season.
-**There is no separate "month being viewed":** the month drawn is the month of
-`selected`, and paging moves the selected day (clamped into the shorter month), so
-the page keeps ONE piece of state and it is the one in the URL. A view month held
-beside the selection would show the reader two different months at once, since the
-day's card sits under the grid. **The week begins on Sunday and not from the
-reader's locale** — this is the calendar whose weeks are numbered from the Lord's
-Day, so a Monday-first grid would cut the row a reader is looking at in two.
-Arrow keys walk it and every move is a real navigation; the awkward half is that
-crossing a month replaces every cell, so the component names the date to stand on
-and refocuses it after the render.
+**`/calendarium` IS A MONTH LISTING** (`CalendarMonth.svelte`, 2026-09-04),
+where it listed the whole liturgical year filtered to its ~230 non-ferial days.
+It was a seven-column grid for an afternoon in between, and the reason that went
+back generalises: **this page is not a diary** — a day's name is a line of text
+of unpredictable length, which a column a seventh of the page wide cannot hold.
+**There is no separate "month being viewed"**: the month listed is the month of
+`selected`, and paging moves the selected day, so the page keeps one piece of
+state and it is the one in the URL. Rows are real `?c=`/`?d=` links, not buttons;
+a keyboard move that crosses a month replaces every row, so the component names
+the date to stand on and refocuses it after the render (§docs/calendar.md).
 
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
@@ -1860,17 +1856,14 @@ fires. Two call sites shipped that way before anyone looked (`library.ts`,
 `i18n.test.ts` checks the places.
 
 **`dateLocale` in `dates.ts` is the one helper that scan allows through, and it
-is stricter than the shim** (2026-09-04): it cuts the region, runs `bcp47`, and
-then asks `supportedLocalesOf` whether the platform can answer for the result,
-falling back to `en-US` where it cannot. That last step is what `bcp47` alone
-does not do and Latin needs — a real interface language here with no CLDR data,
-which unchecked would take the RUNTIME's default locale, so a Latin interface on
-a French machine would print French month names. **The order matters in both
-directions**: cut the region first (`pt-BR` is a language choice, not a country)
-and convert after (`zht` cut to `zh` resolves to Simplified). It replaced
-`lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written when the site had two
-interface languages and left standing as it grew past thirty — so every reader
-who was not Portuguese was shown English dates, silently, for a year.
+is stricter than the shim** (2026-09-04): it cuts the region, runs `bcp47`, then
+asks `supportedLocalesOf` whether the platform can answer — falling back to
+`en-US` where it cannot, which is what Latin needs and `bcp47` alone does not
+do. **The order matters both ways**: cut the region first (`pt-BR` is a language
+choice, not a country), convert after (`zht` cut to `zh` resolves to
+Simplified). It replaced `lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written
+when the site had two interface languages — so every reader who was not
+Portuguese was shown English dates for a year (§docs/languages.md).
 
 **Still do not derive one list from the other.** The lists equalized and
 separated four times in eight days; the rule survives the flip and reads the

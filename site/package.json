@@ -12,6 +12,7 @@
 		"preview:deploy": "npm run build && npm run preflight && npm run preview:edge",
 		"verify": "npm run format:check && npm run check && npm run test",
 		"test": "vitest run",
+		"verify:calendar": "vitest run --config vitest.oracle.config.ts",
 		"test:watch": "vitest",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "npm run check -- --watch",

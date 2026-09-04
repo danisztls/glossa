@@ -42,6 +42,14 @@ export default defineConfig({
 	],
 	test: {
 		include: ['src/**/*.test.ts'],
+		// THE ORACLE IS NOT PART OF `npm test`, and the line above is why:
+		// everything this run contains is hermetic — fixtures, no corpus, no
+		// network, the same answer on any machine — while `oracle.test.ts`
+		// reads 281 files of somebody else's computed calendars out of the
+		// private corpus checkout. Checking our calendar against theirs is a
+		// development verification, not a build gate; `npm run verify:calendar`
+		// is the task and `vitest.oracle.config.ts` is its config.
+		exclude: ['node_modules/**', 'src/lib/calendar/oracle.test.ts'],
 		environment: 'node'
 	}
 });

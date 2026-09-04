@@ -1201,20 +1201,30 @@ The site's half (rendering, preferences, anchors) is in `site/CLAUDE.md`.
   number of underscores overall, and the anomaly report is for the record that
   would prove that stale.
 
-## `liturgical_calendar.py` fetches an oracle, and writes no work at all
+## `liturgical_calendar.py` fetches an oracle, and writes no WORK at all
 
-The one scraper here that produces nothing for `build/`. It fetches GCatholic's
-iCal calendars into `raw/gcatholic-calendar/` and parses them to
-`site/src/lib/calendar/oracle/`, where the site's own computed calendar is
+It fetches GCatholic's iCal calendars into `raw/gcatholic-calendar/` and parses
+them to `build/gcatholic-calendar/`, where the site's own computed calendar is
 checked against them day by day (`site/CLAUDE.md`, `site/docs/calendar.md`).
 Nothing it writes is served to a reader; it decides whether the code that
 decides days is right.
 
-- **The oracle is tracked in THIS repository, not the corpus**, because the
-  corpus is a separate private checkout a test run cannot assume is present.
-  The fetched feeds stay in `raw/` as usual, so widening the parse is a
-  re-parse and never a re-crawl — demonstrated: the slimming pass that took the
-  output from 7.1 MB to 2.7 MB cost 0 requests and 78 cache hits.
+- **THE ORACLE MOVED FROM `glossa` TO THE CORPUS ON 2026-09-04**, having been
+  tracked at `site/src/lib/calendar/oracle/` since this scraper was written. It
+  is parsed output regenerable from `raw/`, which is what `build/` means, and a
+  verbatim reproduction of somebody else's published calendars, which is what
+  the private corpus is for. It is therefore **the one directory under `build/`
+  that is not a work** — no `manifest.json`, named in `sync-corpus.mjs`'s
+  `NON_WORK_DIRS`, and a stage in `rebuild.py` so a rebuild into an empty
+  `build/` does not leave the calendar with nothing to check itself against.
+  The cost is paid rather than hidden: `npm run verify:calendar` is a
+  development task, not part of the site's hermetic `npm test`
+  (`site/docs/calendar.md`).
+- The fetched feeds stay in `raw/` as usual, so widening the parse is a
+  re-parse and never a re-crawl — demonstrated twice: the slimming pass that
+  took the output from 7.1 MB to 2.7 MB cost 0 requests and 78 cache hits, and
+  the move above was verified the same way (the re-parse into the corpus
+  reported all 281 files **unchanged**).
 - **Only the anchor language's names are written out.** Every language is still
   fetched and parsed, because the cross-language agreement check is what caught
   GCatholic emitting 22 June's two optional memorials in one order in Latin and

@@ -31,14 +31,57 @@ for their rarity.
 GCatholic publishes the calendar as iCal, per year, in the eight variants that
 correspond exactly to the three transfers a conference may make.
 `pipeline/scrapers/liturgical_calendar.py` fetches those to `raw/` and parses
-them to `calendar/oracle/`, where `oracle.test.ts` compares every day of three
-years, in every variant and every published national calendar, against what
-this project computes.
+them to `glossa-corpus/build/gcatholic-calendar/`, where `oracle.test.ts`
+compares every day of three years, in every variant and every published
+national calendar, against what this project computes.
 
 **Nothing from the oracle is served to a reader.** It decides no day at
 runtime; it decides whether the code that decides days is right. That is what
-makes it an oracle in the corpus's own sense of the word, and why a scraper
-that writes nothing to `build/` belongs in `pipeline/` at all.
+makes it an oracle in the corpus's own sense of the word.
+
+### It lived in this repository until 2026-09-04, and the argument for that expired
+
+The reasoning was that `oracle.test.ts` reads it and the corpus is a separate,
+private checkout a test run cannot assume is present — written when the oracle
+was 130 files and 7.4 MB. Widening it to every calendar GCatholic publishes
+took it to **281 files and 28 MB, about a quarter of this public repository's
+whole packed history**, for one third-party dataset that grows with every
+language and year added.
+
+Two things settled it, and neither is size on its own.
+
+**It is parsed output regenerable from `raw/` with no network, which is the
+definition of `build/`** — and the corpus's own rule, since 2026-08-27, is that
+generated output is not tracked. Keeping it here made this repository the one
+place in the project where that rule did not hold, for the one artifact that
+grows fastest.
+
+**And it is a verbatim reproduction of somebody else's published calendars**,
+which is the class of thing the corpus repository is private FOR. Whether a
+table of feast names is copyrightable is exactly the judgement the public/private
+split exists to avoid having to make in public.
+
+**What it costs is that the check now needs the corpus, and the answer is that
+the check was never a build step.** Parsing GCatholic and comparing against it
+is a verification you run while working on the calendar — `npm run
+verify:calendar`, its own vitest config, excluded from `npm test`, which is
+hermetic by design and must stay runnable on any checkout. `held.ts`, the
+RESULT of the comparison and the only part the site acts on, stays here.
+
+**It FAILS without a corpus rather than skipping**, naming the path it looked in
+and the rebuild command. An empty file list would make every `describe` vanish
+and the run report green over nothing — the exact failure this whole apparatus
+exists to prevent. The one test that would then give WRONG advice, the held-set
+check (with no oracle it reports every held calendar as ready to publish), is
+skipped instead of left to fail.
+
+**It is the one directory under `build/` that is not a work**, carrying no
+`manifest.json`; `sync-corpus.mjs` names it in `NON_WORK_DIRS` so the
+manifestless check does not report it as a scrape that failed, and `rebuild.py`
+carries it as a stage so a rebuild into an empty `build/` does not leave the
+calendar with nothing to check itself against. The move was verified the way
+this project verifies every re-parse: the parse into the corpus reported all 281
+files **unchanged**.
 
 **It earned its place before the first test ran**, finding two rules written
 from the Norms that were wrong — the Octave of Easter is ranked as
@@ -203,6 +246,55 @@ ships no flag glyphs, so Chrome draws the boxed letters `BR`, which is the
 country's code and still names the cell. The general calendar is a labelled row
 above the grid rather than a square in it, because it is the thing the others
 are layers over.
+
+**IT WORE THE VATICAN FLAG FOR A DAY, AND THAT WAS A FACTUAL ERROR.** The
+reasoning was that 🇻🇦 is the flag of the see whose calendar the general one is.
+It is not: Vatican City keeps the **Diocese of Rome's** calendar, which
+GCatholic publishes as `IT-rome0` and `national/` carries as `va`, with eleven
+propers no other calendar has — Ludovica Albertoni, Our Lady _Salus Populi
+Romani_, All Saints of the Holy Roman Church. So one flag stood for two
+different calendars in the same control, and on the general row it said the
+universal calendar belongs to a country. 🌐 is the mark now, because a globe is
+not a territory and that is precisely the claim the row makes.
+
+**`?c=` names a TERRITORY and not a layer**, which matters for eleven of the
+ninety-six places. Four cells select `ps`; with a layer id stored, the trigger
+had to guess which of them the reader had pressed, and it took the first by
+name — so choosing Israel answered "Cyprus". The route resolves the code through
+`TERRITORY_CALENDARS`, a lookup that cannot be ambiguous in that direction, and
+every layer id remains a valid `?c=` because a layer's own territory is one of
+the territories it covers. **A held calendar's territories leave the picker with
+it**, since that map is built from the published list — which is correct rather
+than incidental: what is held for a country is held for everyone who keeps that
+country's calendar.
+
+### The month listing, and the grid that lasted an afternoon
+
+The page listed the whole liturgical year, Advent to Advent, filtered to the
+~230 days that were not plain weekdays. **What was wrong with that was the SPAN,
+not the shape**, and it took building the other thing to be sure. A reader had
+to scan a screen and a half to find a date, and the days with nothing appointed
+were filtered out altogether — so a date could be looked up and simply not be
+there.
+
+The replacement was a seven-column month grid, which is what a calendar usually
+looks like. It went back the same day. **This page is not a diary**: nobody is
+placing appointments against weekdays here, they are reading what each day IS,
+and that is a line of text of unpredictable length — "Saints Cornelius, Pope,
+and Cyprian, Bishop, Martyrs" — which a column a seventh of the page wide cannot
+hold. The grid clipped nearly every name it drew to two lines and dropped them
+all below 34rem. What survives of it is the month: a listing of one month's
+days, every one present, with the month named above and one press to the next,
+and a heavier rule above each Sunday for the week structure a list does not
+otherwise show.
+
+**There is no separate "month being viewed".** The month listed is the month of
+`selected`, and paging moves the selected day, clamped into the shorter month —
+so the page keeps one piece of state and it is the one in the URL. A view month
+held beside the selection would show two months at once, since the day's card
+sits under the listing. **The awkward half is focus**: a keyboard move that
+crosses a month replaces every row, so the component names the date to stand on
+and refocuses it after the render.
 
 ## What it deliberately does not say
 

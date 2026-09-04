@@ -38,7 +38,7 @@
  * a silent tolerance.
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -48,7 +48,43 @@ import type { CalendarOptions, LiturgicalDay, Names } from './types';
 import { CALENDAR_FEED_IDS, NATIONAL_CALENDARS } from './national';
 import { HELD_CALENDARS } from './national/held';
 
-const ORACLE_DIR = join(dirname(fileURLToPath(import.meta.url)), 'oracle');
+/**
+ * The oracle lives in the CORPUS, and this file is the only thing that reads
+ * it.
+ *
+ * It sat in this directory until 2026-09-04 — 281 files and 28 MB in a public
+ * repository whose whole packed history is 10.6 MB, so about a quarter of it
+ * was one third-party dataset that grows with every language and year added.
+ * `pipeline/scrapers/liturgical_calendar.py` carries the full argument; the
+ * short of it is that the oracle is parsed output regenerable from `raw/`
+ * with no network, which is what `build/` is for, and that it is a verbatim
+ * reproduction of somebody else's published calendars, which is what the
+ * private corpus repository is for.
+ *
+ * `CORPUS_DIR` is spelled the same way here as in `sync-corpus.mjs` and
+ * `common/paths.py`, so one exported variable moves all three. The default is
+ * resolved from this file rather than from `process.cwd()` because vitest can
+ * be run from either the repository root or `site/`.
+ */
+const CORPUS_DIR =
+	process.env.CORPUS_DIR ??
+	join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'glossa-corpus');
+const ORACLE_DIR = join(CORPUS_DIR, 'build', 'gcatholic-calendar');
+
+/**
+ * WITHOUT A CORPUS THIS FILE ASSERTS NOTHING, AND SAYS SO IN THE ONE PLACE A
+ * PERSON WILL SEE IT.
+ *
+ * That is the cost of the move and it is paid deliberately rather than
+ * papered over: this test is a DEVELOPMENT verification and not a build step
+ * (it is excluded from `npm test`, which runs on fixtures by design — see
+ * `vitest.oracle.config.ts`), so the machine that lacks the corpus is the
+ * machine that was never going to run it. What must not happen is a silent
+ * pass: an empty `files` would make every `describe` below vanish and the
+ * suite report green over nothing, which is the exact failure mode the
+ * calendar exists to avoid.
+ */
+const HAVE_ORACLE = existsSync(ORACLE_DIR);
 
 interface OracleCelebration {
 	rank: string | null;
@@ -68,9 +104,11 @@ interface Oracle {
 	days: OracleDay[];
 }
 
-const files = readdirSync(ORACLE_DIR)
-	.filter((f) => f.endsWith('.json'))
-	.sort();
+const files = HAVE_ORACLE
+	? readdirSync(ORACLE_DIR)
+			.filter((f) => f.endsWith('.json'))
+			.sort()
+	: [];
 
 /** Roman numeral -> the psalter week's number. */
 const PSALTER: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4 };
@@ -288,6 +326,14 @@ const diverged = new Set<string>();
 
 describe('the computed calendar against GCatholic', () => {
 	it('has an oracle to check against', () => {
+		// The message names the path it looked in and how to fill it, because
+		// the honest answer to "why did 94 calendars stop being checked" is
+		// almost always that the corpus is somewhere else.
+		expect(
+			HAVE_ORACLE,
+			`no oracle at ${ORACLE_DIR}. Set CORPUS_DIR, or rebuild it with ` +
+				`\`uv run pipeline/rebuild.py --only calendar\` (no network).`
+		).toBe(true);
 		expect(files.length).toBeGreaterThan(0);
 	});
 
@@ -405,8 +451,13 @@ describe('the computed calendar against GCatholic', () => {
 	 * a layer that regressed would be silently absorbed by the list, and a
 	 * layer somebody fixed would sit unpublished for ever because nothing said
 	 * so. Both directions fail here, and each names the file to edit.
+	 *
+	 * SKIPPED WITHOUT AN ORACLE rather than left to fail: with no files read,
+	 * `diverged` is empty and this would report every held calendar as ready
+	 * to publish — a page of wrong advice on top of the one assertion above
+	 * that already says the real thing.
 	 */
-	it('holds exactly the calendars that still differ from the oracle', () => {
+	it.skipIf(!HAVE_ORACLE)('holds exactly the calendars that still differ from the oracle', () => {
 		const shouldPublish = Object.keys(HELD_CALENDARS)
 			.filter((id) => !diverged.has(id))
 			.sort();

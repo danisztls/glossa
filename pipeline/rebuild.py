@@ -391,6 +391,26 @@ STAGES: tuple[Stage, ...] = (
         heavy=("--derive",),
         binaries=("avifenc",),
     ),
+    # THE ONE STAGE WHOSE OUTPUT IS NOT A WORK. `gcatholic-calendar/` holds
+    # the liturgical-calendar oracle -- 281 files of somebody else's computed
+    # calendars, which `site/src/lib/calendar/oracle.test.ts` checks ours
+    # against. It has no `manifest.json`, nothing in the site reads it at
+    # runtime, and `sync-corpus.mjs` names it in `NON_WORK_DIRS` so its
+    # manifestless directory is not reported as a scrape that failed.
+    #
+    # It is in this recipe because it moved out of the `glossa` repository on
+    # 2026-09-04 (`liturgical_calendar.py` has the argument) and is therefore
+    # regenerable-from-`raw/` output like everything else here. Left out, a
+    # rebuild into an empty `build/` would leave the calendar with nothing to
+    # check itself against -- exactly the class of loss the root CLAUDE.md
+    # records happening three times in one day.
+    Stage(
+        "calendar",
+        "calendar",
+        "liturgical_calendar.py",
+        ("--offline",),
+        ("gcatholic-calendar",),
+    ),
 )
 
 

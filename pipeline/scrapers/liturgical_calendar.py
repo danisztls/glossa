@@ -76,6 +76,7 @@ from common import (
     Fetcher,
     FetchError,
     FetchPolicy,
+    build_root,
     raw_root,
     require_corpus,
     write_stamped_json,
@@ -85,13 +86,35 @@ from common import (
 #: `raw/`; `captured-at.json` is written into it by `Fetcher`.
 SOURCE_DIR_NAME = "gcatholic-calendar"
 
-#: The oracle itself, checked into THIS repository rather than the corpus.
-#: It is read by `site/src/lib/calendar/oracle.test.ts` and by nothing at
-#: runtime, so it must travel with the tests that consult it -- the corpus is
-#: a separate, private checkout that a test run cannot assume is present.
-ORACLE_DIR = (
-    Path(__file__).resolve().parents[2] / "site" / "src" / "lib" / "calendar" / "oracle"
-)
+#: The oracle's directory name under `build/`. IT MOVED OUT OF THE `glossa`
+#: REPOSITORY ON 2026-09-04, having been at
+#: `site/src/lib/calendar/oracle/` since the first version of this scraper.
+#:
+#: The argument for keeping it there was that `oracle.test.ts` reads it and
+#: the corpus is a separate checkout a test run cannot assume is present.
+#: That was written when the oracle was 130 files and 7.4 MB; at 281 files
+#: and 28 MB it was about a QUARTER OF THE ENTIRE PUBLIC REPOSITORY's packed
+#: size, and it grows with every language and year added.
+#:
+#: Two things settled it. It is parsed output, regenerable from `raw/` with
+#: no network, which is the definition of `build/` -- the repository's own
+#: rule is that generated output is not tracked. And it is a verbatim
+#: reproduction of somebody else's published calendars, which is the class of
+#: thing the corpus repository is private FOR; whether a table of feast names
+#: is copyrightable is exactly the judgement the split exists to avoid making
+#: in public.
+#:
+#: What it costs is that `oracle.test.ts` skips without a corpus. That is the
+#: right shape rather than a regression: verifying the calendar against
+#: somebody else's is a development task, not a build step, and the site's
+#: `npm test` runs on fixtures by design. `npm run verify:calendar` is the
+#: task; `held.ts` -- the RESULT of the comparison, and the only part the
+#: site acts on -- stays committed in `glossa`.
+#:
+#: NOT A WORK DIRECTORY, though it sits beside them: it carries no
+#: `manifest.json` and nothing in `build/` reads it. `sync-corpus.mjs` names
+#: it in `NON_WORK_DIRS` for that reason.
+ORACLE_DIR_NAME = SOURCE_DIR_NAME
 
 BASE = "https://gcatholic.org/calendar/ics"
 
@@ -761,14 +784,17 @@ def main() -> int:
     # One call for the whole run, not one per file: `write_stamped_json` judges
     # its payloads as a unit, and this oracle IS one -- a re-parse that moves
     # any year has moved the reading of the source, and a diff in which only
-    # some files carry the new stamp would hide which. It is tracked here (the
-    # corpus is not on the machine that runs the site's tests), so the churn
-    # guard is what keeps `git diff` able to answer "what did this change".
-    wrote = write_stamped_json(ORACLE_DIR, payloads, stamp)
+    # some files carry the new stamp would hide which. The churn guard still
+    # earns its place now that the output is untracked: `--changed-only` in
+    # `rebuild.py` fingerprints this directory, so a run that rewrote every
+    # file with a new stamp and nothing else would make every later stage
+    # look as though its inputs had moved.
+    oracle_dir = build_root() / ORACLE_DIR_NAME
+    wrote = write_stamped_json(oracle_dir, payloads, stamp)
 
     print(
         f"\n{len(payloads)} oracle file(s) "
-        f"{'written to' if wrote else 'unchanged in'} {ORACLE_DIR}\n"
+        f"{'written to' if wrote else 'unchanged in'} {oracle_dir}\n"
         f"{fetcher.network_fetches} fetched, {fetcher.cache_hits} cached",
         file=sys.stderr,
     )

@@ -67,6 +67,27 @@ scans `src/` for a `new Intl.*` handed a bare lang-shaped identifier without
 `bcp47(`. **A shim is only as good as the places that remember it, so the
 places are checked rather than documented.**
 
+**`dateLocale` in `dates.ts` is the one call site that scan lets through a
+helper, and it is stricter than the shim.** It cuts the region, runs `bcp47`,
+and then asks `supportedLocalesOf` whether the platform can answer for the
+result — falling back to `en-US` where it cannot. That last step is what
+`bcp47` alone does not do and what Latin needs: a real interface language here
+with no CLDR data, which unchecked would take the RUNTIME's default locale, so
+a Latin interface on a French machine would print French month names.
+**The order matters in both directions** — cut the region first, because
+`pt-BR` is a language the reader chose and not a country this site knows, and
+convert after, because `zht` cut to `zh` resolves to Simplified.
+
+It exists because the calendar's month listing needed month names, and writing
+that turned up what `formatPromulgated` had been doing all along:
+`lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written when the site had two
+interface languages and left standing as it grew past thirty. **Every reader
+who was not Portuguese had been shown English dates for a year**, on every
+document and every calendar day, with nothing to report it — the branch was
+correct when written and became a bug by growth. The general shape is worth
+keeping: a two-way branch on a list that is no longer two things long fails
+silently in favour of whichever branch is the default.
+
 **And `zh-TW` does not fold to `zh`.** `browserLangs` reduces a browser tag to
 its primary subtag, which is right for regional pairs and wrong for a script:
 a Taiwanese reader would negotiate into Simplified chrome. `SCRIPT_VARIANTS` is

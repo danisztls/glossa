@@ -117,6 +117,22 @@ describe('package.json scripts', () => {
 		}
 	});
 
+	it('keeps `verify:calendar` OUT of `verify`', () => {
+		// The colon reads as membership and this one is not a member, so the
+		// exception is a test rather than a line in a table nobody rereads.
+		// `verify` must stay runnable on any checkout: format, types and the
+		// hermetic suite, no corpus and no network. `verify:calendar` reads
+		// 281 files of somebody else's computed calendars out of the private
+		// corpus and would turn a missing checkout into a failed verify.
+		// Checking our calendar against theirs is a development task, done
+		// while working on the calendar — see `vitest.oracle.config.ts`.
+		expect(scripts['verify:calendar']).toBeDefined();
+		expect(scripts.verify).not.toContain('verify:calendar');
+		// And it must not creep into the hermetic run either, which is the
+		// same rule stated where it would actually be broken.
+		expect(scripts.test).toBe('vitest run');
+	});
+
 	it('leaves no scripts/*.mjs unreachable', () => {
 		// Five of these are hand-run tools with no npm script — the book-forms
 		// oracle, the three exporters, the OG card. They are reachable because
