@@ -213,6 +213,44 @@ recording.** Wrapping the picture in a control — which is what makes it a tab
 stop at all — puts a shrink-to-fit box of `auto` height between it and the
 stage, so `max-block-size: 100%` resolves to nothing, silently.
 
+## Stepping between references
+
+**The arrow, WASD and HJKL keys step from one reference number to the next,
+and the number they land on is parked at the reading line** — a third of the
+way down the viewport, the same `REFERENCE_LINE` the scroll spy asks "where is
+the reader looking" with. The step focuses the number with `preventScroll` and
+then scrolls the page itself, because focus scrolls with `nearest` semantics:
+left to the browser, a run of steps moves nothing until the cursor reaches an
+edge and then pins each target _against_ that edge, with the text it names off
+screen. The target is absolute rather than a delta, which is what makes a
+held-down key behave: each keystroke re-measures against wherever the smooth
+scroll has got to and retargets, instead of stacking deltas onto a position
+the animation has already left.
+
+**The scroll is smooth, and one line elsewhere was quietly killing it.** A
+sidebar keeping its own highlighted row visible used
+`scrollIntoView({ block: 'nearest' })`, which scrolls every scrollable
+ancestor up to and including the viewport — and performing a scroll on a box
+aborts any smooth scroll already running on it, whether or not the position
+actually changes. `StructureSidebarToc`'s current row is `spy.current` on half
+the routes that render it, so it fires _while_ the page is moving: a step that
+crossed a section boundary started gliding and then stopped dead. It reads as
+the site being janky rather than as anything to do with a table of contents,
+which is why it survived being written twice.
+
+`$lib/reveal-row` is the answer and the place the argument lives: it nudges
+one container's `scrollTop`, which cannot move the page, and it finds that
+container by measuring `overflow-y` up the ancestor chain rather than by
+naming a class — `StructureSidebarToc` renders into the aside, into the
+reading bar's panel and into `/documenta`'s inline contents, and a list of
+selectors would have been a fourth place to keep in step. The walk stops at
+`<html>`, so the answer is never the viewport. `IndexSidebarToc` had avoided
+`scrollIntoView` from the start for the neighbouring reason — a spy that moved
+the window it was measuring would feed straight back into itself — and
+`TocMenu` and `JumpBox` for a third: the document behind an open modal is
+inert but still scrollable, so arrowing through a list would move the page the
+reader comes back to.
+
 ## Focus mode
 
 **It is `print.css`'s hidden list, read as a screen instead of as paper.**

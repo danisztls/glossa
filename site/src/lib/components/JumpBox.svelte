@@ -24,6 +24,7 @@
 	 * keys alone; a mouse still clicks them directly.
 	 */
 	import { goto } from '$app/navigation';
+	import { revealRow } from '$lib/reveal-row';
 	import { hrefFor } from '$lib/address';
 	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
 	import { resolveBookToken } from '$lib/book-token';
@@ -289,8 +290,14 @@
 		scrollActiveIntoView();
 	}
 
+	/* Nudges the active suggestion inside the results list and nothing else.
+	   `scrollIntoView` would walk out to the viewport, and the document behind
+	   an open modal is inert but still scrollable — arrowing through results
+	   would quietly move the page the reader comes back to. Same argument
+	   `TocMenu.revealCurrent` makes; the arithmetic is in `$lib/reveal-row`. */
 	function scrollActiveIntoView() {
-		listEl?.children[active]?.scrollIntoView({ block: 'nearest' });
+		const row = listEl?.children[active];
+		if (row instanceof HTMLElement) revealRow(row);
 	}
 
 	function choose(href: string) {

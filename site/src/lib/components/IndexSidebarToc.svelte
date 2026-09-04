@@ -21,6 +21,7 @@
 	 * their own, and the spy only ever hands the number back.
 	 */
 	import { browser } from '$app/environment';
+	import { revealRow } from '$lib/reveal-row';
 	import Icon from './Icon.svelte';
 	import { useScrollSpy, type SpyTarget } from '$lib/scroll-spy.svelte';
 
@@ -51,26 +52,20 @@
 
 	const CURRENT_ID = 'index-toc-current';
 
-	/* Keep the highlighted row visible inside the aside's OWN scroll container
-	   (`.index-aside` is `overflow-y: auto` — app.css) on a list long enough to
-	   overflow it. Deliberately NOT `scrollIntoView`: that walks every
-	   scrollable ancestor up to the viewport, and this effect fires on scroll,
-	   so any window movement it caused would feed straight back into the spy
-	   that triggered it. Setting one container's `scrollTop` cannot move the
-	   page. */
+	/* Keep the highlighted row visible inside the list's OWN scroll container
+	   on a list long enough to overflow it. Deliberately NOT `scrollIntoView`:
+	   that walks every scrollable ancestor up to the viewport, and this effect
+	   fires on scroll, so any window movement it caused would feed straight
+	   back into the spy that triggered it — and would abort a smooth scroll
+	   the reader had asked for. `$lib/reveal-row` carries that argument and
+	   the arithmetic; it finds the container by measuring rather than by name
+	   (`.index-aside` here, the reading bar's `.sheet-body` when `TocMenu`
+	   renders this same list), which is the one thing the local version could
+	   not do. */
 	$effect(() => {
 		if (!browser || currentIndex === undefined) return;
 		const row = document.getElementById(CURRENT_ID);
-		const box = row?.closest<HTMLElement>('.index-aside');
-		if (!row || !box) return;
-		// Measured, not `offsetTop`-derived: whether the aside is the row's
-		// `offsetParent` depends on it being positioned, which it is only above
-		// the grid breakpoint (below it the aside is `display: none` anyway).
-		// Two rects need no such case analysis.
-		const rowBox = row.getBoundingClientRect();
-		const asideBox = box.getBoundingClientRect();
-		if (rowBox.top < asideBox.top) box.scrollTop -= asideBox.top - rowBox.top;
-		else if (rowBox.bottom > asideBox.bottom) box.scrollTop += rowBox.bottom - asideBox.bottom;
+		if (row) revealRow(row);
 	});
 </script>
 

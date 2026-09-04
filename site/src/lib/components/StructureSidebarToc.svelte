@@ -117,6 +117,7 @@
 	import { browser } from '$app/environment';
 	import type { StructureNode } from '$lib/types';
 	import { displayTitle, inlineTitleNodes } from '$lib/titles';
+	import { revealRow } from '$lib/reveal-row';
 	import Icon from './Icon.svelte';
 	import InlineText from './InlineText.svelte';
 	import {
@@ -295,18 +296,32 @@
 	const CURRENT_ID = `${uid}-current`;
 	const HEADING_ID = `${uid}-heading`;
 
-	// Scrolls the reader's current row into view within the aside's OWN
-	// scroll container (`.reading-aside` is `overflow-y: auto` — app.css)
-	// whenever they land on a new page. Browser-only: `document` doesn't
-	// exist outside a browser. That guarded against a prerendering throw;
-	// since `ssr = false` (`+layout.ts`, site/docs/shell.md) no
-	// route ever renders server-side at all now, so the guard is
-	// belt-and-braces rather than load-bearing — kept because it still
-	// states the actual requirement, and every route this component serves
-	// still renders a complete, navigable tree without this effect running.
+	/* Keeps the reader's current row visible inside the list's OWN scroll
+	   container — the aside, the reading bar's panel, or `/documenta`'s inline
+	   contents, whichever this instance rendered into.
+
+	   DELIBERATELY NOT `scrollIntoView`, and the reason is `currentN`: on half
+	   the routes that render this list it is `spy.current`, so this effect
+	   fires WHILE the page is scrolling. `scrollIntoView` scrolls every
+	   scrollable ancestor up to the viewport, and performing a scroll on the
+	   viewport aborts a smooth scroll already running on it — so a keyboard
+	   reference step (`Shortcuts.svelte`) that crossed a section boundary had
+	   its animation cancelled mid-glide by the sidebar keeping its own place.
+	   `$lib/reveal-row` moves one container's `scrollTop` and cannot touch the
+	   page; `IndexSidebarToc` and `TocMenu` had both already reached the same
+	   conclusion by their own routes.
+
+	   Browser-only: `document` doesn't exist outside a browser. That guarded
+	   against a prerendering throw; since `ssr = false` (`+layout.ts`,
+	   site/docs/shell.md) no route ever renders server-side at all now, so the
+	   guard is belt-and-braces rather than load-bearing — kept because it
+	   still states the actual requirement, and every route this component
+	   serves still renders a complete, navigable tree without this effect
+	   running. */
 	$effect(() => {
 		if (!browser || currentN === undefined) return;
-		document.getElementById(CURRENT_ID)?.scrollIntoView({ block: 'nearest' });
+		const row = document.getElementById(CURRENT_ID);
+		if (row) revealRow(row);
 	});
 </script>
 
