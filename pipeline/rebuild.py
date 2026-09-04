@@ -237,7 +237,26 @@ STAGES: tuple[Stage, ...] = (
         outputs=("compendium.*",),
         binaries=("mutool", "pdftotext"),
     ),
-    Stage("prayers", "prayers", "prayers.py", outputs=("prayer.*",)),
+    # THE PRAYERS ARE PROJECTED FROM THE CURATION, NOT PARSED (2026-09-03).
+    # `oracles/prayers/*.json` is the corpus; `prayers_project.py` writes the
+    # work directories from it. `prayers.py` still runs, and still reads every
+    # page, but as the VERIFIER that each curated line is findable in the
+    # witness it cites -- so it declares no outputs and the partition stays
+    # exact. Splitting them this way is what lets the check fail loudly
+    # without taking the reader's text down with it.
+    Stage(
+        "prayers-verify",
+        "prayers",
+        "prayers.py",
+        ("--verify-curated",),
+    ),
+    Stage(
+        "prayers",
+        "prayers",
+        "prayers_project.py",
+        outputs=("prayer.*",),
+        needs=("prayers-verify",),
+    ),
     Stage("cpdv", "bible", "bible/cpdv.py", ("--offline",), ("bible.cpdv.*",)),
     Stage(
         "clementina",

@@ -6438,6 +6438,117 @@ def print_body_latin_report(langs: list[str]) -> None:
         print(f"  {line}")
 
 
+# --------------------------------------------------------------------------
+# The curated corpus, and this scraper's job after it
+# --------------------------------------------------------------------------
+#
+# THE TEXT A READER SEES IS NO LONGER THIS PARSE. `<corpus>/oracles/prayers/`
+# holds the curated prayers -- edited, uniformly lineated, with each editorial
+# act recorded -- and `prayers_project.py` writes `build/prayer.common.*` from
+# them. What this scraper still does, and what nothing else can, is READ THE
+# PAGE: `--verify-curated` re-parses every edition and asserts that each
+# curated line is still findable in the witness it cites.
+#
+# That is the guarantee that keeps curation from drifting into invention. A
+# curated word that no page prints is either a typo we introduced or a source
+# that changed under us, and both are worth a loud failure.
+
+
+def verify_curated() -> tuple[bool, list[str]]:
+    """Every curated line, against the page it cites."""
+    import unicodedata
+
+    from common import corpus_dir
+
+    oracles = sorted((corpus_dir() / "oracles" / "prayers").glob("*.json"))
+    if not oracles:
+        return True, [f"no curated prayers in {corpus_dir() / 'oracles/prayers'}"]
+
+    lig = {"æ": "ae", "Æ": "Ae", "ǽ": "ae", "œ": "oe", "Œ": "Oe", "’": "'"}
+
+    def words(text: str) -> list[str]:
+        text = "".join(lig.get(c, c) for c in text)
+        d = unicodedata.normalize("NFD", text.casefold())
+        d = "".join(c for c in d if unicodedata.category(c) != "Mn")
+        return "".join(c if c.isalnum() or c.isspace() else " " for c in d).split()
+
+    def curated_words(blocks: list) -> list[str]:
+        out: list[str] = []
+        for b in blocks:
+            if isinstance(b, dict):
+                lines = list(b.get("lines") or [])
+                if lines and b.get("label"):
+                    lines[0] = f"{b['label']} {lines[0]}"
+                out += lines or [i["text"] for i in (b.get("invocations") or [])]
+            else:
+                out += b
+        return words(" ".join(out))
+
+    problems: list[str] = []
+    checked = repaired = 0
+    for lang in sorted(LANG_CONFIG):
+        try:
+            parsed, _ = run(lang)
+        except Exception as exc:  # a page that no longer parses is a finding
+            problems.append(f"{lang}: parse failed -- {exc}")
+            continue
+        by_slug = {p.slug: p for p in parsed}
+        for f in oracles:
+            cur = json.loads(f.read_text(encoding="utf-8"))
+            rec = cur["langs"].get(lang)
+            if rec is None or rec.get("witness") != "compendium":
+                continue
+            prayer = by_slug.get(cur["slug"])
+            if prayer is None:
+                problems.append(
+                    f"{lang}/{cur['slug']}: curated from the Compendium, "
+                    "but this parse has no such prayer"
+                )
+                continue
+            checked += 1
+            mine = set(curated_words(rec["blocks"]))
+            # BOTH WORDINGS COUNT AS "on the page". The English appendix
+            # prints five prayers twice, UK and USA, and the curation takes
+            # one of each; checking against only the base wording would
+            # report the regional edition's own five as invented.
+            printed = [b.text for b in prayer.blocks]
+            printed += [b.label or "" for b in prayer.blocks]
+            printed += [x.text for v in prayer.variants for x in v.blocks]
+            if prayer.latin:
+                printed += [b.text for b in prayer.latin.blocks]
+                printed += [b.label or "" for b in prayer.latin.blocks]
+            theirs = set(words(" ".join(printed)))
+            missing = sorted(mine - theirs)
+            # A DECLARED REPAIR IS NOT A DEFECT. The curation records every
+            # editorial act in `flags`; a word that is missing from the page
+            # BECAUSE a flag says it was repaired is the system working -- the
+            # Indonesian `berlindung` is one word here and `ber lindung` on
+            # the page, which is why it was repaired at all. What must still
+            # fail is a word no flag accounts for.
+            declared = " ".join(
+                f.get("what", "")
+                for f in cur.get("flags", [])
+                if lang in (f.get("lang", "") or "").replace(" ", "").split(",")
+                or f.get("lang") == "*"
+            )
+            undeclared = [w for w in missing if w not in words(declared)]
+            if undeclared:
+                problems.append(
+                    f"{lang}/{cur['slug']}: {len(undeclared)} curated word(s) "
+                    f"neither on the page nor declared in flags -- "
+                    f"{' '.join(undeclared[:8])}"
+                )
+            elif missing:
+                repaired += len(missing)
+    print(
+        f"\n=== curated prayers verified against the pages: {checked} "
+        f"(language, prayer) pairs, {len(problems)} problem(s)"
+    )
+    for p in problems:
+        print(f"  {p}")
+    return not problems, problems
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     # `all` IS THE DEFAULT AND THAT IS LOAD-BEARING, not a convenience. It was
@@ -6448,6 +6559,17 @@ def main() -> int:
     # documents unparsed for months (CLAUDE.md, "The Magisterium is ten
     # languages"). Derived from the table so a new entry needs no edit here.
     ap.add_argument("--lang", choices=[*sorted(LANG_CONFIG), "all"], default="all")
+    ap.add_argument(
+        "--verify-curated",
+        action="store_true",
+        help=(
+            "re-parse every edition and check the curated prayers in "
+            "<corpus>/oracles/prayers against it. Writes NOTHING: the text a "
+            "reader sees is projected from the curation by "
+            "prayers_project.py, and this is the check that it is still what "
+            "the pages print"
+        ),
+    )
     ap.add_argument(
         "--fetch-companions",
         action="store_true",
@@ -6461,6 +6583,9 @@ def main() -> int:
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
     require_corpus()
+    if args.verify_curated:
+        ok, _ = verify_curated()
+        return 0 if ok else 1
     langs = sorted(LANG_CONFIG) if args.lang == "all" else [args.lang]
     if args.fetch_companions:
         capture_companions(langs)
