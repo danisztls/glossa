@@ -1782,20 +1782,30 @@ FR_END_ANCHOR = 'name="B) FORMULES DE LA DOCTRINE CATHOLIQUE"'
 FR_BLOCKS = (5, 2, 2, 2, 1, 1, 2, 2, 3, 4)
 FR_EASTERN_BLOCK = 8
 
-#: Emphasized paragraphs that are not prayer titles. "A) PRIERES COMMUNES" is
-#: the misplaced section heading described above, emphasized like a title in
-#: the middle of the run; the two ellipsis forms are POINTERS to prayers
-#: printed in full earlier ("Gloire au Pere..." inside the Angelus); "Prions."
-#: and "Oremus." head the collect that closes the Rosary in each language.
+#: Emphasized paragraphs that are not prayer titles but ARE the prayer's text:
+#: the two ellipsis forms are POINTERS to prayers printed in full earlier
+#: ("Gloire au Pere..." inside the Angelus), and "Prions." / "Oremus." head the
+#: collect that closes the Rosary in each language.
 FR_NOT_TITLES = frozenset(
     {
-        "A) PRIÈRES COMMUNES",
         "Gloire au Père...",
         "Glória Patri...",
         "Prions.",
         "Orémus.",
     }
 )
+
+#: ...and the one that is not text at all. "A) PRIERES COMMUNES" is the
+#: misplaced section heading described above, emphasized like a title 34 KB
+#: into the section it names. IT HAS TO BE DROPPED AND NOT MERELY DENIED
+#: TITLEHOOD: everything that is not a title joins the entry above it, and the
+#: entry above this one is the LATIN Requiem aeternam -- so the French edition
+#: shipped "A) PRIÈRES COMMUNES" as a second Latin block of the Eternal Rest,
+#: the only Latin companion in fourteen editions to carry a line no other
+#: edition has. Found by folding the fourteen Latin witnesses to one prayer
+#: against each other (2026-09-03); nothing per-edition could see it, because
+#: within French alone a stray block is indistinguishable from a short one.
+FR_PAGE_FURNITURE = frozenset({"A) PRIÈRES COMMUNES"})
 
 
 def build_prayers_fr(html_text: str) -> list[Prayer]:
@@ -1813,6 +1823,8 @@ def build_prayers_fr(html_text: str) -> list[Prayer]:
     entries: list[tuple[str, str | None, list[str]]] = []
     for raw in paras:
         text = flatten(raw)
+        if text in FR_PAGE_FURNITURE:
+            continue
         if not is_title_paragraph(raw) or text in FR_NOT_TITLES:
             if entries:
                 entries[-1][2].append(raw)
@@ -1844,15 +1856,20 @@ def build_prayers_fr(html_text: str) -> list[Prayer]:
     if at != len(entries):
         raise RuntimeError(f"FR: block sizes consumed {at} of {len(entries)} entries")
 
+    # BOTH COLUMNS OF ONE PAGE GO THROUGH ONE READER. This built the Latin as
+    # a flat run of `prose` until 2026-09-03, while the vernacular beside it
+    # went through `parse_simple_body` -- so the French Angelus came out as
+    # fourteen versicle/response blocks in French and ONE block in Latin, with
+    # the `D.` and `C.` the page prints in both columns surviving as labels on
+    # one side and as literal text on the other. The same page, the same
+    # prayer, the same markers, read two ways. Nothing per-edition could see
+    # it: within French alone each column is self-consistent.
+    #
+    # `parse_simple_body` adds only the UK/USA variant markers over
+    # `process_paragraph`, and those are English-only, so the Latin cannot
+    # reach them.
     latin_by_slug = {
-        slug: LatinText(
-            title,
-            [
-                BlockOut("prose", flatten(q), html=line_html(br_segments(q)))
-                for q in body
-                if flatten(q)
-            ],
-        )
+        slug: LatinText(title, parse_simple_body(body)[0])
         for slug, (title, _, body) in zip(LATIN_SLUGS, latin, strict=True)
     }
 
@@ -4301,16 +4318,29 @@ def _correct_lines(lines: list[str], frm: str, to: str) -> list[str] | None:
     SEPARATORS IT MATCHED: word i of `to` is joined to word i+1 by whatever
     stood between words i and i+1 of `from`, line break included. The
     correction therefore cannot move, add or remove a line break -- it can
-    only change the words. That requires the two phrases to have the same
-    word count, which every correction on file does (they are single-word
-    OCR repairs quoted with enough context to be unambiguous); `None` for
-    anything else, so the caller fails loudly rather than guessing.
+    only change the words.
+
+    THAT REASONING ONLY BINDS A MATCH THAT SPANS A LINE BREAK, and the
+    equal-word-count rule it implies was enforced over every match until
+    2026-09-03. The French appendix needs the other case: it writes
+    `qui a s&aelig;&acute; culo sunt`, leaving a SPACE inside a word after an
+    accent that never composed, so the repair has to close two tokens into
+    one (`sǽculo`) -- four times, and there is no way to say that while the
+    word count is held fixed. A match containing no line break has none to
+    preserve, so the separator argument does not apply to it and a plain
+    substitution is exact. A match that DOES span one still has to keep the
+    count, and still answers `None` when it cannot, so the caller fails
+    loudly rather than guessing where the line should now break.
     """
     words_from, words_to = frm.split(), to.split()
-    if len(words_from) != len(words_to):
-        return None
     joined = "\n".join(lines)
     pattern = re.compile(r"[ \n]+".join(re.escape(w) for w in words_from))
+    if len(words_from) != len(words_to):
+        # permitted only where no match crosses a line break -- see above
+        if any("\n" in m.group(0) for m in pattern.finditer(joined)):
+            return None
+        fixed, n = pattern.subn(lambda m: to, joined)
+        return fixed.split("\n") if n else None
 
     def swap(m: re.Match[str]) -> str:
         seps = re.findall(r"[ \n]+", m.group(0))

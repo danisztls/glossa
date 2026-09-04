@@ -750,6 +750,63 @@ and nothing had ever read that region.
   the six it turned up (fr, it×2, pt, ro×2, ru) were every one of them the
   source's own setting.
 
+- **The fourteen Latin companions ARE one text, and folding them against each
+  other is the oracle the line count could not be.** The appendix prints the
+  same Latin beside every vernacular, so the columns are fourteen
+  transcriptions of one exemplar rather than fourteen texts — fold away stress
+  accents, the `ae`/`æ` ligature, case and punctuation and what is left is
+  either one reading or a defect. Two things make it work where the line count
+  failed: the subject is not written in any of the fourteen languages (the
+  `audit.py refs` precondition), and the differences are separable into three
+  kinds that want three different answers.
+  - **House style is uniform per edition and carries no per-prayer
+    information.** Measured 2026-09-03 over every prayer with a Latin
+    companion: `de` prints it unaccented in 21 of 21, `ro` in 18 of 21 — and
+    `ro`'s three exceptions are exactly the three canticles, which it sets
+    with the chant pointing. `hu`, `ro` and `sv` never write `æ` at all. A
+    rule that holds across a whole edition is not a reading.
+  - **A slip is a non-word**: `luz` for `lux`, `Spirits` for `Spíritus`,
+    `Sancii` for `Sancti`, `sieut` for `sicut`, `dorninica` for `dominica`
+    (the `rn`→`m` of a page scan). `it` and `lt` share `sieut`, `eum`,
+    `sanetitate` and `posi` — one exemplar, not two witnesses, the same
+    lesson `audit.py refs` records.
+  - **A variant is attested Latin**, and the two Gospel canticles have an
+    oracle for it already in `build/`: the Magnificat is Luke 1:46–55 and the
+    Benedictus 1:68–79, so `bible.clementina.la` says whether a reading is
+    Latin at all. Every edition shares a 13–14 word residue (the Gloria Patri
+    appended to each canticle); what stands ABOVE that residue is the
+    corruption, and the Clementine clears `exultavit` (de/ru/sv) as its own
+    spelling while convicting `ficit`, `mentis`, `onmium` and `ancillaesuae`.
+    `genetrix`/`genitrix`, `eundem`/`eumdem`, `solacium`/`solatium`,
+    `plebi`/`plebis suae` and the Vulgate's `salutari` against the
+    Neo-Vulgate's `salvatore` are received variants and stay.
+
+  **What it found that nothing per-edition could**, because within one edition
+  each column is self-consistent: `prayer.common.fr` shipped the appendix's
+  own section heading `A) PRIÈRES COMMUNES` as a second Latin block of the
+  Eternal Rest (`FR_NOT_TITLES` denied it titlehood, and everything that is
+  not a title joins the entry above it — which was the Latin _Requiem
+  aeternam_; hence `FR_PAGE_FURNITURE`, which drops instead), and the French
+  Latin Angelus was ONE block where its own vernacular is fourteen, because
+  `build_prayers_fr` built the Latin as a flat run of `prose` while the
+  vernacular went through `parse_simple_body` — the same page, the same
+  prayer, the same printed `D.`/`C.`, read two ways. **Both columns of one
+  page go through one reader.**
+
+- **`&aelig;&acute;` is a corpus-wide defect that hid in a normalised field,
+  and only French has it.** 18 occurrences, every one in the Latin companion,
+  none corrected until 2026-09-03 — where the English page's single instance
+  had been corrected by hand since August. It survived because every
+  comparison that could have seen it folds orthography away first, which is
+  exactly what makes an uncomposed accent invisible. Four of the eighteen also
+  leave a SPACE inside the word (`qui a sæ´ culo sunt`), so the repair has to
+  close two tokens into one — `_correct_lines` now permits a word-count change
+  for a match holding no line break, since the separator-reuse argument that
+  forbade it only ever bound a match that spans one. The Indonesian PDF splits
+  the same word at the same point with an unrelated reader (MuPDF, so
+  `_WORD_TOUCH` is not in play), which is what identifies the break as the
+  shared exemplar's lost hyphen rather than either parser's doing.
+
 ### The four PDF editions: the same appendix, printed in two columns
 
 `prayer.common.{be,id,lt,ru}` (2026-09-03). vatican.va publishes the

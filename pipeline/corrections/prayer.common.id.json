@@ -1,0 +1,14 @@
+[
+  {
+    "id": "prayer.common.id-benedictus-saeculo-split",
+    "locator": {
+      "prayer": "benedictus"
+    },
+    "field": "latin_text",
+    "from": "qui a sæ culo sunt",
+    "to": "qui a sæculo sunt",
+    "reason": "'sæ culo' is not two Latin words: 'culo' is not a word the Benedictus uses and 'sæ' is not a word at all. The phrase is Luke 1:70's 'qui a sæculo sunt' -- 'the prophets who are from of old' -- and every other edition of this appendix prints it closed. The space is not this reader's: the Indonesian is read with MuPDF, so `common/pdf.py`'s poppler-only `_WORD_TOUCH` threshold (the fix for `sæ|cula` splitting in twelve Latin prayers, 2026-09-03) never touches this file, and it is the only split of its kind in the whole edition.",
+    "evidence": "The FRENCH Compendium, an unrelated HTML page read by an unrelated parser, splits the SAME word at the SAME point: corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html prints 'sicut loc&uacute;tus est per os sanct&oacute;rum, <br />qui a s&aelig;&acute; culo sunt' (corrected as prayer.common.fr-benedictus-aelig-acute). Two editions produced on different continents in different media do not invent one space in one word independently; the shared Latin exemplar these appendices are set from breaks 'sæ-culo' across a line, and both lost the hyphen and kept the gap. The same exemplar break shows in the French Te Deum ('sæ´ culi'), Memorare ('sæ´ culo') and Veni Sancte Spiritus ('cæ´ litus'), all long words, all at a syllable boundary.",
+    "added": "2026-09-03"
+  }
+]

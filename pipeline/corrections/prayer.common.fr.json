@@ -1,0 +1,218 @@
+[
+  {
+    "id": "prayer.common.fr-glory-be-aelig-acute",
+    "locator": {
+      "prayer": "glory-be"
+    },
+    "field": "latin_text",
+    "from": "sæ´cula",
+    "to": "sǽcula",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacut'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-angelus-aelig-acute",
+    "locator": {
+      "prayer": "angelus"
+    },
+    "field": "latin_text",
+    "from": "quæ´sumus",
+    "to": "quǽsumus",
+    "reason": "'quæ´sumus' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'Or&eacute;mus</i>.<br />Gr&aacute;tiam tuam, qu&aelig;&acute;sumus,<br />D&oacute;mi'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-regina-caeli-aelig-acute",
+    "locator": {
+      "prayer": "regina-caeli"
+    },
+    "field": "latin_text",
+    "from": "quæ´sumus",
+    "to": "quǽsumus",
+    "reason": "'quæ´sumus' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'Or&eacute;mus</i>.<br />Gr&aacute;tiam tuam, qu&aelig;&acute;sumus,<br />D&oacute;mi'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-magnificat-aelig-acute",
+    "locator": {
+      "prayer": "magnificat"
+    },
+    "field": "latin_text",
+    "from": "sæ´cula",
+    "to": "sǽcula",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacut'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-benedictus-aelig-acute",
+    "locator": {
+      "prayer": "benedictus"
+    },
+    "field": "latin_text",
+    "from": "sæ´ culo",
+    "to": "sǽculo",
+    "reason": "'sæ´ culo' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup. The page also leaves a SPACE after the failed accent here, so the word reaches a reader broken in two. Closing it is why this correction changes the word count -- see `_correct_lines`, which permits that only for a match that holds no line break, as this one does.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-benedictus-aelig-acute-6",
+    "locator": {
+      "prayer": "benedictus"
+    },
+    "field": "latin_text",
+    "from": "sæ´cula",
+    "to": "sǽcula",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacut'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-te-deum-aelig-acute",
+    "locator": {
+      "prayer": "te-deum"
+    },
+    "field": "latin_text",
+    "from": "quæ´sumus",
+    "to": "quǽsumus",
+    "reason": "'quæ´sumus' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'Or&eacute;mus</i>.<br />Gr&aacute;tiam tuam, qu&aelig;&acute;sumus,<br />D&oacute;mi'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-te-deum-aelig-acute-8",
+    "locator": {
+      "prayer": "te-deum"
+    },
+    "field": "latin_text",
+    "from": "tuum in sæ´culum",
+    "to": "tuum in sǽculum",
+    "reason": "'sæ´culum' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-te-deum-aelig-acute-9",
+    "locator": {
+      "prayer": "te-deum"
+    },
+    "field": "latin_text",
+    "from": "et in sæ´culum",
+    "to": "et in sǽculum",
+    "reason": "'sæ´culum' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-te-deum-aelig-acute-10",
+    "locator": {
+      "prayer": "te-deum"
+    },
+    "field": "latin_text",
+    "from": "sæ´ culi",
+    "to": "sǽculi",
+    "reason": "'sæ´ culi' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup. The page also leaves a SPACE after the failed accent here, so the word reaches a reader broken in two. Closing it is why this correction changes the word count -- see `_correct_lines`, which permits that only for a match that holds no line break, as this one does.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-veni-creator-spiritus-aelig-acute",
+    "locator": {
+      "prayer": "veni-creator-spiritus"
+    },
+    "field": "latin_text",
+    "from": "præ´vio",
+    "to": "prǽvio",
+    "reason": "'præ´vio' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'pr&oacute;tinus, <br />Duct&oacute;re sic te pr&aelig;&acute;vio <br />Vit&eacute;'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-veni-creator-spiritus-aelig-acute-12",
+    "locator": {
+      "prayer": "veni-creator-spiritus"
+    },
+    "field": "latin_text",
+    "from": "sæ´cula",
+    "to": "sǽcula",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacut'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-veni-sancte-spiritus-aelig-acute",
+    "locator": {
+      "prayer": "veni-sancte-spiritus"
+    },
+    "field": "latin_text",
+    "from": "cæ´ litus",
+    "to": "cǽlitus",
+    "reason": "'cæ´ litus' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup. The page also leaves a SPACE after the failed accent here, so the word reaches a reader broken in two. Closing it is why this correction changes the word count -- see `_correct_lines`, which permits that only for a match that holds no line break, as this one does.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'ni, Sancte Sp&iacute;ritus, Et em&iacute;tte c&aelig;&acute; litus Lucis tu&aelig; r'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-anima-christi-aelig-acute",
+    "locator": {
+      "prayer": "anima-christi"
+    },
+    "field": "latin_text",
+    "from": "sæ´cula",
+    "to": "sǽcula",
+    "reason": "'sæ´cula' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacut'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-memorare-aelig-acute",
+    "locator": {
+      "prayer": "memorare"
+    },
+    "field": "latin_text",
+    "from": "sæ´ culo",
+    "to": "sǽculo",
+    "reason": "'sæ´ culo' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup. The page also leaves a SPACE after the failed accent here, so the word reaches a reader broken in two. Closing it is why this correction changes the word count -- see `_correct_lines`, which permits that only for a match that holds no line break, as this one does.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'acute;pio,<br />et nunc et semper<br />et in s&aelig;&acute;cula s&aelig;cul&oacute'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-rosary-aelig-acute",
+    "locator": {
+      "prayer": "rosary"
+    },
+    "field": "latin_text",
+    "from": "præ´mia",
+    "to": "prǽmia",
+    "reason": "'præ´mia' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'pr&oacute;tinus, <br />Duct&oacute;re sic te pr&aelig;&acute;vio <br />Vit&eacute;'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-rosary-aelig-acute-17",
+    "locator": {
+      "prayer": "rosary"
+    },
+    "field": "latin_text",
+    "from": "quæ´sumus",
+    "to": "quǽsumus",
+    "reason": "'quæ´sumus' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'Or&eacute;mus</i>.<br />Gr&aacute;tiam tuam, qu&aelig;&acute;sumus,<br />D&oacute;mi'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  },
+  {
+    "id": "prayer.common.fr-act-of-contrition-aelig-acute",
+    "locator": {
+      "prayer": "act-of-contrition"
+    },
+    "field": "latin_text",
+    "from": "pæ´nitet",
+    "to": "pǽnitet",
+    "reason": "'pæ´nitet' is not a word in any orthography: it is 'æ' followed by U+00B4 ACUTE ACCENT, the SPACING character, sitting inside a syllable. The source writes the entity pair '&aelig;&acute;' -- an attempt to point the ligature that never composed. The French appendix does this 18 times and never once prints a correctly pointed 'æ', so no font or encoding convention explains it as intentional. The correction composes what was typed (U+01FD, 'ǽ') rather than dropping the accent: the editor did point this vowel, and deleting the mark would be second-guessing the source instead of repairing its markup.",
+    "evidence": "corpus/raw/compendium-fr/archive_2005_compendium-ccc_fr.html, Appendix A Latin column: 'RITIONIS</b></p> <p>Deus meus, ex toto corde p&aelig;&acute;nitet me<br /> &oacute;'. The English page's single instance of the same failure is already corrected as prayer.common.en-glory-be-saecula-acute, and the Portuguese witness to this same Latin prints the word with one precomposed character.",
+    "added": "2026-09-03"
+  }
+]
