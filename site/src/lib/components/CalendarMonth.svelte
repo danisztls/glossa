@@ -77,10 +77,15 @@
 
 	let { selected, today, options, lang, onpick }: Props = $props();
 
+	let sectionEl: HTMLElement | undefined = $state();
 	let listEl: HTMLElement | undefined = $state();
 	/** The date to put the keyboard back on once the list has re-rendered —
-	 *  see `moveTo` below. */
+	 *  see `pick` below. */
 	let refocus: string | undefined = $state();
+	/** Where this section's top edge was when the reader asked for another day
+	 *  — see `pick`. Not `$state`: it is read once, by the effect that undoes
+	 *  the shift, and writing it must not itself re-render anything. */
+	let anchorTop: number | undefined;
 
 	const ymd = $derived(fromDayNumber(selected));
 
@@ -151,30 +156,52 @@
 	}
 
 	/**
-	 * Arrow keys walk the list, which is what makes it navigable without a
-	 * mouse and without thirty tab stops.
+	 * Every way of choosing a day goes through here, and it does two things
+	 * besides the navigation.
 	 *
-	 * Every move goes through `onpick`, so it is a real navigation and the URL
-	 * follows — there is no "focused but not selected" state to explain, and a
-	 * reader who arrows to a day and stops has that day's card below them. Up
-	 * and down are one DAY, which in a list is one row; a month is
-	 * PageUp/PageDown, and Home/End are the ends of the month. Left and right
-	 * are deliberately untouched: in a vertical list they mean nothing, and
-	 * binding them would take them away from the browser.
+	 * THE ANCHOR. The day's card sits ABOVE this list and its height depends
+	 * on the day — an optional memorial or two, a transferred solemnity, a
+	 * name that wraps — so a plain re-render moves every row down or up by a
+	 * few lines at the moment the reader clicks one. Recording this section's
+	 * top edge BEFORE the change lets the effect below put it back exactly
+	 * where it was, so nothing under the cursor moves. It is measured here and
+	 * not in the effect because by then the page has already reflowed; and it
+	 * is a scroll adjustment rather than a reserved height because the card
+	 * would have to reserve for its worst day — five optional memorials — and
+	 * stand mostly empty on the three days in four that have none.
 	 *
-	 * THE REFOCUS IS THE AWKWARD HALF and it cannot be avoided: `onpick`
+	 * (Measuring the shift instead of predicting it is also what makes this
+	 * safe next to the browser's own scroll anchoring: where the browser has
+	 * already compensated, the two measurements agree and this scrolls by
+	 * nothing.)
+	 *
+	 * THE REFOCUS is for the keyboard and cannot be avoided: `onpick`
 	 * re-renders the list, and a move that crosses a month boundary replaces
 	 * every row in it, so the element the reader was standing on is gone by
 	 * the time the browser would restore focus to it. `refocus` names the date
-	 * to stand on and the effect below puts the keyboard there once the new
-	 * rows exist. `keepFocus` on the `goto` is what stops SvelteKit throwing
-	 * focus to `<body>` in between.
+	 * to stand on and the effect puts the keyboard there once the new rows
+	 * exist. `keepFocus` on the `goto` is what stops SvelteKit throwing focus
+	 * to `<body>` in between.
 	 */
-	function moveTo(target: DayNumber) {
-		refocus = formatIsoDate(target);
-		onpick(refocus);
+	function pick(target: DayNumber, focusRow = false) {
+		anchorTop = sectionEl?.getBoundingClientRect().top;
+		const iso = formatIsoDate(target);
+		if (focusRow) refocus = iso;
+		onpick(iso);
 	}
 
+	/**
+	 * Arrow keys walk the list, which is what makes it navigable without a
+	 * mouse and without thirty tab stops.
+	 *
+	 * Every move is a real navigation and the URL follows — there is no
+	 * "focused but not selected" state to explain, and a reader who arrows to
+	 * a day and stops has that day's card above them. Up and down are one DAY,
+	 * which in a list is one row; a month is PageUp/PageDown, and Home/End are
+	 * the ends of the month. Left and right are deliberately untouched: in a
+	 * vertical list they mean nothing, and binding them would take them away
+	 * from the browser.
+	 */
 	function onRowKeydown(event: KeyboardEvent) {
 		const first = toDayNumber(ymd.year, ymd.month, 1);
 		const target = {
@@ -187,29 +214,40 @@
 		}[event.key];
 		if (target === undefined) return;
 		event.preventDefault();
-		moveTo(target);
+		pick(target, true);
 	}
 
+	/**
+	 * Undo the shift, then restore the keyboard — IN THAT ORDER, which is the
+	 * whole reason these are one effect and not two. Focusing a row scrolls it
+	 * into view if it is off-screen, and a scroll correction applied afterwards
+	 * would undo that and leave the focused row just past the edge, one
+	 * keypress from doing it again. Correcting first means the browser's own
+	 * scroll-into-view gets the last word, and only when it is really needed.
+	 */
 	$effect(() => {
+		// Re-runs on every day change, focus or no focus.
+		void selected;
+		if (anchorTop !== undefined) {
+			const now = sectionEl?.getBoundingClientRect().top;
+			if (now !== undefined && now !== anchorTop) window.scrollBy(0, now - anchorTop);
+			anchorTop = undefined;
+		}
 		if (!refocus) return;
 		const row = listEl?.querySelector<HTMLElement>(`[data-date="${refocus}"]`);
 		refocus = undefined;
 		row?.focus();
 	});
-
-	function page(delta: number) {
-		onpick(formatIsoDate(shiftMonths(delta)));
-	}
 </script>
 
-<section class="month">
+<section class="month" bind:this={sectionEl}>
 	<header>
 		<button
 			type="button"
 			class="menu-trigger step-btn"
 			aria-label={t('calendar.previousMonth')}
 			title={t('calendar.previousMonth')}
-			onclick={() => page(-1)}
+			onclick={() => pick(shiftMonths(-1))}
 		>
 			<Icon name="arrow-left" />
 		</button>
@@ -221,15 +259,11 @@
 			class="menu-trigger step-btn"
 			aria-label={t('calendar.nextMonth')}
 			title={t('calendar.nextMonth')}
-			onclick={() => page(1)}
+			onclick={() => pick(shiftMonths(1))}
 		>
 			<Icon name="arrow-right" />
 		</button>
-		<button
-			type="button"
-			class="menu-trigger wide today-btn"
-			onclick={() => onpick(formatIsoDate(today))}
-		>
+		<button type="button" class="menu-trigger wide today-btn" onclick={() => pick(today)}>
 			{t('calendar.today')}
 		</button>
 	</header>
@@ -253,7 +287,7 @@
 					aria-current={d.n === selected ? 'date' : undefined}
 					onclick={(e) => {
 						e.preventDefault();
-						onpick(d.iso);
+						pick(d.n);
 					}}
 					onkeydown={onRowKeydown}
 				>
@@ -345,14 +379,40 @@
 		align-items: baseline;
 		gap: 0.5rem;
 		padding: 0.35rem 0.25rem;
+		/* Carried by EVERY row, transparent until one is chosen, so that
+		   marking the selection cannot change where the text begins. */
+		border-inline-start: 2px solid transparent;
 		text-decoration: none;
 		color: inherit;
 	}
 	a:hover {
 		background: var(--color-bg-elevated);
 	}
+	/*
+	 * THE SELECTED ROW IS MARKED WITHOUT TOUCHING ITS TEXT METRICS, which the
+	 * `font-weight: 600` this replaces did not manage: a celebration's name
+	 * runs to a hundred characters — "Saints Pedro Poveda Castroverde and
+	 * Inocencio of the Immaculate Canoura Arnau, Priests, and Companions,
+	 * Martyrs" — so on any row sitting near the wrap, bolding it pushed the
+	 * name onto a second line and shoved every row below it down. Clicking
+	 * down the list made the list jump under the cursor.
+	 *
+	 * A bar and a tint say the same thing and occupy the same space. The
+	 * weight survives on the day NUMBER, which is given a fixed inline size
+	 * and cannot reflow whatever it wears.
+	 */
 	a.selected {
-		font-weight: 600;
+		background: var(--color-bg-elevated);
+		border-inline-start-color: var(--color-accent);
+	}
+	a.selected .num {
+		font-weight: 700;
+	}
+	/* Not on today, whose number is already white-on-accent — and the name
+	   keeps its own colour, because a muted one is saying the celebration is
+	   optional and selecting the row does not make it obligatory. */
+	a.selected:not(.is-today) .num {
+		color: var(--color-text);
 	}
 
 	.date {
