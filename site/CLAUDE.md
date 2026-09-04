@@ -1684,6 +1684,18 @@ a runtime error nothing in `npm test`, `npm run check` or the build sees.
 A callback fits both consumers (`CommentaryGloss`'s trailing mark has nothing
 in the text to bind to) and has no third state to explain.
 
+## `scrollIntoView` moves the page, so a list never calls it
+
+Use `$lib/reveal-row`'s `revealRow` to bring a current row into view.
+`scrollIntoView` scrolls **every** scrollable ancestor up to the viewport, and
+performing a scroll on a box aborts a smooth scroll already running on it —
+so `StructureSidebarToc`, whose current row is `spy.current` on half its
+routes, cancelled the keyboard reference step's animation the moment the step
+crossed a section boundary. Setting one container's `scrollTop` cannot move
+the page. The same call is wrong inside a modal for a second reason, which
+`TocMenu` and `JumpBox` had already met: the document behind an open dialog is
+inert but still scrollable. `site/docs/reading.md`.
+
 ## Focus mode: print's hidden list, with three exceptions and one gate
 
 `data-zen` on `<html>` (`$lib/zen.svelte.ts`, a fifth axis written exactly as
