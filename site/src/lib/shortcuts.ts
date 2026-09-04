@@ -97,8 +97,9 @@ const BLOCK_END = ['KeyS', 'KeyJ', 'ArrowDown'];
  *     scrolling past the last number and before the first, and on every page
  *     with no numbers at all (the home page, the section indexes, the
  *     colophon).
- *   - Focusing a number scrolls it into view, so the viewport still follows
- *     the reader down the page; what changes is the size of the step.
+ *   - Every step parks the number it lands on at the reference line
+ *     (`scrollTopForReference`), so the viewport follows the reader down the
+ *     page; what changes is the size of the step.
  *
  * The horizontal arrows carry none of that, because a page that does not
  * scroll sideways had no use for them.
@@ -230,4 +231,42 @@ export function indexAtReferenceLine(
 		if (tops[i] < line) last = i;
 	}
 	return last;
+}
+
+/**
+ * Where the page has to sit for a reference number to land on that same line.
+ *
+ * THE STEP HAS TO SCROLL DELIBERATELY, because the browser's own answer is
+ * the wrong one. Moving focus scrolls with `nearest` semantics — the smallest
+ * nudge that makes the element visible — so a run of steps down the page does
+ * nothing at all until the cursor reaches the bottom edge, and from then on
+ * pins every number it lands on against that edge, with the text that number
+ * addresses off screen below it. Stepping back does the same against the top.
+ * The reader ends up reading at whichever margin they happened to arrive
+ * from, and the number they just asked for is the one thing they cannot read.
+ *
+ * So the number goes to the third of the viewport `indexAtReferenceLine`
+ * picks the cursor UP from, on every step. One line for both jobs is what
+ * makes the pair predictable: the cursor holds still while the text moves
+ * past it, the first step is not a special case, and up and down are mirror
+ * images of each other.
+ *
+ * It follows that nothing here compensates for the sticky reading bar, and
+ * nothing should — a third of the way down the viewport is far below it.
+ * `html`'s `scroll-padding-top` (`styles/base.css`) is still what protects
+ * every scroll the site does NOT compute: `:target`, a pasted `#v12`,
+ * SvelteKit's deep-link `scrollIntoView`.
+ *
+ * `top` is the number's viewport-relative top edge, so the caller measures
+ * and this stays arithmetic. Clamped at the top of the document — the opening
+ * verses of a chapter cannot reach the line, and a negative offset would
+ * scroll to 0 anyway; the far end needs a document height this does not have,
+ * and the browser clamps it.
+ */
+export function scrollTopForReference(
+	top: number,
+	scrollY: number,
+	viewportHeight: number
+): number {
+	return Math.max(0, scrollY + top - viewportHeight * REFERENCE_LINE);
 }
