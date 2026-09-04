@@ -374,27 +374,36 @@ down. Clicking down the list made the list jump under the cursor. The mark is a
 weight cue survives on the day number, which has a fixed `inline-size` and
 cannot reflow whatever it wears.
 
-**The card's height depends on the day.** Measured over three years and every
-published layer: 804 of 1,095 days carry no optional memorial, 229 carry one, 55
-carry two, and the maximum is five (Argentina, 9 October 2027). So a reserved
-`min-block-size` would have to reserve for five and stand empty on three days in
-four. The component records its own top edge before the navigation and scrolls
-by the measured difference after — measuring rather than predicting, which is
-also what makes it safe beside the browser's own scroll anchoring: where the
-browser already compensated, the two readings agree and it scrolls by nothing.
+**And the card's height depends on the day**, which is the whole of the second
+jump. Measured over three years and every published layer: 804 of 1,095 days
+carry no optional memorial, 229 carry one, 55 carry two, and the maximum is five
+(Argentina, 9 October 2027). **So the card is held to one height and scrolls
+inside itself past it** (`fixedHeight`, 15.5rem, 19rem below 34rem,
+`scrollbar-gutter: stable`) — a height that fits the ordinary day whole: date,
+name over two lines, the kind-of-day line, the cycles, and one thing kept
+beside it.
 
-**And the list itself is a pane of a fixed height** (`clamp(18rem, 60vh, 40rem)`,
-`scrollbar-gutter: stable`). A month is twelve to twenty-nine rows depending on
-how thickly the sanctoral falls in it, and the chosen day can add one — so the
-page's own height was a function of the month. Fixing the box means the list can
-change by any number of rows and nothing outside it moves. The pane scrolls the
-chosen row into view by the shortest move that shows it, and starts a new month
-at its own beginning; the page's scroll is never what does that.
+**The height is on a wrapper and the border is on the card inside it**, which is
+why they are two elements. Bordered, the fixed box draws a frame around whatever
+the day does not fill, and three days in four show a rule two lines under the
+last word; unbordered, the space it holds open is just page, and the card is
+exactly as tall as what it says. The frame belongs to the card and the height to
+the layout.
 
-The three corrections are one effect, in that order — page, pane, keyboard —
-because focusing a row scrolls it into view, and a scroll correction applied
-afterwards would undo that and leave the focused row just past the edge, one
-keypress from doing it again.
+**The fix went to the list first, and that was the wrong box.** The list was
+made a fixed-height scrolling pane and the section measured its own top edge
+before each navigation to scroll the page back afterwards — which worked, and
+was a correction applied at the wrong end of the problem. The list's height is a
+property of the MONTH and nothing sits below it to be moved; the card's height
+is a property of the day the reader is changing, and it sits above everything.
+**Hold the box whose size moves for a reason the reader did not intend**, and no
+compensation is needed anywhere: with the card fixed, the anchor measured zero
+every time and came out, and the list went back to being as long as the month
+is.
+
+What is left in the component is the refocus alone — a keyboard move that
+crosses a month replaces every row, so the date to stand on is named before the
+navigation and focused after it.
 
 ## What it deliberately does not say
 

@@ -1810,18 +1810,18 @@ lacked, since a date typed, pasted or arrowed onto is always a row and nothing
 can be looked up and be missing. A row and a day are therefore not the same
 thing, and the arrow keys walk ROWS, off one month's end into the next.
 
-**THE DAY'S CARD IS ABOVE THE LISTING, AND NEITHER MAY MOVE THE OTHER**
-(2026-09-04). Three separate reflows, three fixes, and the middle one is the
-rule worth carrying: **a selection must not change text metrics** — `font-weight`
-on a row whose name runs to 111 characters rewraps it and shoves every row below
-it down, so selection is an accent bar every row carries transparent. The card's
-height is not reservable (804 of 1,095 days carry no optional memorial and the
-worst carries five), so the list records its own top edge before a navigation
-and scrolls by the measured difference after — measured, not predicted, which is
-what makes it compose with the browser's own scroll anchoring. The list is a
-fixed-height pane so that a month of twelve rows and a month of twenty-nine
-leave the page the same height. The three corrections are ONE effect in the
-order page, pane, keyboard, because focus scrolls last (§docs/calendar.md).
+**THE DAY'S CARD IS ABOVE THE LISTING, AND NOTHING MAY MOVE UNDER A CLICK**
+(2026-09-04). Two reflows, two rules. **A selection must not change text
+metrics** — `font-weight` on a row whose name runs to 111 characters rewraps it
+and shoves every row below it down, so selection is an accent bar every row
+carries transparent. And **the box that is held is the one whose size moves for
+a reason the reader did not intend**: the card's height is a function of the day
+being changed (804 of 1,095 days carry no optional memorial; the worst carries
+five), so IT takes a fixed height and scrolls inside itself, and the list is
+free to be as long as its month. The list was the fixed pane first, with the
+section measuring its own top edge to scroll the page back — a correction at the
+wrong end, and once the card was fixed it measured zero every time
+(§docs/calendar.md).
 
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put

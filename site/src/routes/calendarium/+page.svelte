@@ -173,23 +173,19 @@
 		<p class="page-tagline">{t('calendar.tagline')}</p>
 
 		<div class="controls">
-			<label class="control">
-				<span class="label-micro">{t('calendar.date')}</span>
-				<input
-					class="date-field"
-					type="date"
-					value={formatIsoDate(selected)}
-					oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
-				/>
-			</label>
-			<div class="control">
-				<span class="label-micro" aria-hidden="true">{t('calendar.calendar')}</span>
-				<CalendarMenu value={territory} {lang} onchoose={(id) => commit({ c: id })} />
-			</div>
+			<input
+				class="date-field"
+				type="date"
+				aria-label={t('calendar.date')}
+				title={t('calendar.date')}
+				value={formatIsoDate(selected)}
+				oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
+			/>
+			<CalendarMenu value={territory} {lang} onchoose={(id) => commit({ c: id })} />
 		</div>
 
 		{#if day}
-			<LiturgicalDayCard {day} heading="h2" />
+			<LiturgicalDayCard {day} heading="h2" fixedHeight />
 		{:else}
 			<!-- Only reachable for a date outside any year this can build, which
 			     the date input makes hard to ask for. Saying so is better than
@@ -219,18 +215,32 @@
 	 * change to the chrome's border or corner radius reaches this row without
 	 * anyone remembering it is here.
 	 */
+	/*
+	 * ONE ROW, TWO CONTROLS, NO CAPTIONS. Each control stood in its own column
+	 * under a `.label-micro` heading — DATE over a date field, CALENDAR over a
+	 * button already carrying a globe and the calendar's name — which is two
+	 * groups of chrome, twice the height, to say what both controls say
+	 * themselves. A date field is the most self-describing control on the
+	 * platform; the caption it had is its `aria-label` and its `title` now, so
+	 * nothing was taken from a screen reader, only from the screen.
+	 */
 	.controls {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: end;
-		gap: 0.75rem 1rem;
-		margin: 1rem 0 0;
+		align-items: center;
+		gap: 0.4rem;
+		/* The margin below is the one gap on this page that has to be said
+		   out loud: the card beneath is a bordered box and the controls are
+		   loose elements, so without it they read as its lid. */
+		margin: 0.9rem 0 1.1rem;
 		font-family: var(--font-sans);
 	}
-	.control {
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+	/* Both controls, one height, smaller than the chrome's default — this row
+	   is a page's own furniture rather than the site header's, and the pair
+	   sits directly above a card whose first line is a date. */
+	.controls :global(.menu-trigger) {
+		height: 2rem;
+		font-size: 0.8rem;
 	}
 	/*
 	 * DELIBERATELY NOT WEARING `.menu-trigger`, though it restates that class's
@@ -244,14 +254,14 @@
 	 * heights of the BODY tall. The family and size are named separately.
 	 */
 	.date-field {
-		height: 2.25rem;
-		padding-inline: 0.6rem;
+		height: 2rem;
+		padding-inline: 0.5rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
 		font-family: var(--font-sans);
-		font-size: 0.85rem;
+		font-size: 0.8rem;
 		line-height: 1;
 	}
 	.date-field:hover {

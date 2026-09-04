@@ -81,17 +81,10 @@
 
 	let { selected, today, options, lang, onpick }: Props = $props();
 
-	let sectionEl: HTMLElement | undefined = $state();
 	let listEl: HTMLElement | undefined = $state();
 	/** The date to put the keyboard back on once the list has re-rendered —
 	 *  see `pick` below. */
 	let refocus: string | undefined = $state();
-	/** Where this section's top edge was when the reader asked for another day
-	 *  — see `pick`. Not `$state`: it is read once, by the effect that undoes
-	 *  the shift, and writing it must not itself re-render anything. */
-	let anchorTop: number | undefined;
-	/** Which month the pane is currently scrolled within — see the effect. */
-	let scrolledMonth: number | undefined;
 
 	const ymd = $derived(fromDayNumber(selected));
 
@@ -193,35 +186,22 @@
 	const days = $derived(daysOf(ymd.year, ymd.month));
 
 	/**
-	 * Every way of choosing a day goes through here, and it does two things
-	 * besides the navigation.
+	 * Every way of choosing a day goes through here.
 	 *
-	 * THE ANCHOR. The day's card sits ABOVE this list and its height depends
-	 * on the day — an optional memorial or two, a transferred solemnity, a
-	 * name that wraps — so a plain re-render moves every row down or up by a
-	 * few lines at the moment the reader clicks one. Recording this section's
-	 * top edge BEFORE the change lets the effect below put it back exactly
-	 * where it was, so nothing under the cursor moves. It is measured here and
-	 * not in the effect because by then the page has already reflowed; and it
-	 * is a scroll adjustment rather than a reserved height because the card
-	 * would have to reserve for its worst day — five optional memorials — and
-	 * stand mostly empty on the three days in four that have none.
+	 * The one thing it does besides the navigation is the REFOCUS, which is
+	 * for the keyboard and cannot be avoided: `onpick` re-renders the list,
+	 * and a move that crosses a month boundary replaces every row in it, so
+	 * the element the reader was standing on is gone by the time the browser
+	 * would restore focus to it. `refocus` names the date to stand on and the
+	 * effect puts the keyboard there once the new rows exist. `keepFocus` on
+	 * the `goto` is what stops SvelteKit throwing focus to `<body>` in
+	 * between.
 	 *
-	 * (Measuring the shift instead of predicting it is also what makes this
-	 * safe next to the browser's own scroll anchoring: where the browser has
-	 * already compensated, the two measurements agree and this scrolls by
-	 * nothing.)
-	 *
-	 * THE REFOCUS is for the keyboard and cannot be avoided: `onpick`
-	 * re-renders the list, and a move that crosses a month boundary replaces
-	 * every row in it, so the element the reader was standing on is gone by
-	 * the time the browser would restore focus to it. `refocus` names the date
-	 * to stand on and the effect puts the keyboard there once the new rows
-	 * exist. `keepFocus` on the `goto` is what stops SvelteKit throwing focus
-	 * to `<body>` in between.
+	 * Nothing here compensates for the page moving, because nothing above this
+	 * list changes size when the day changes — the card holds a fixed height
+	 * for exactly that reason.
 	 */
 	function pick(target: DayNumber, focusRow = false) {
-		anchorTop = sectionEl?.getBoundingClientRect().top;
 		const iso = formatIsoDate(target);
 		if (focusRow) refocus = iso;
 		onpick(iso);
@@ -275,44 +255,7 @@
 		pick(target(), true);
 	}
 
-	/** Scroll the chosen row into the pane, by the shortest move that shows it
-	 *  — the pane's own scrolling, never the page's, which is the whole point
-	 *  of the pane. */
-	function reveal() {
-		const row = listEl?.querySelector<HTMLElement>(`[data-date="${formatIsoDate(selected)}"]`);
-		if (!listEl || !row) return;
-		const top = row.offsetTop;
-		const bottom = top + row.offsetHeight;
-		if (top < listEl.scrollTop) listEl.scrollTop = top;
-		else if (bottom > listEl.scrollTop + listEl.clientHeight)
-			listEl.scrollTop = bottom - listEl.clientHeight;
-	}
-
-	/**
-	 * Put the page back, then the pane, then the keyboard — IN THAT ORDER,
-	 * which is the whole reason these are one effect and not three. Focusing a
-	 * row scrolls it into view if it is off-screen, and a scroll correction
-	 * applied afterwards would undo that and leave the focused row just past
-	 * the edge, one keypress from doing it again. Correcting first means the
-	 * browser's own scroll-into-view gets the last word, and only when the two
-	 * corrections above did not already make it unnecessary.
-	 */
 	$effect(() => {
-		// Re-runs on every day change, focus or no focus.
-		void selected;
-		if (anchorTop !== undefined) {
-			const now = sectionEl?.getBoundingClientRect().top;
-			if (now !== undefined && now !== anchorTop) window.scrollBy(0, now - anchorTop);
-			anchorTop = undefined;
-		}
-		// A new month starts at its own beginning; keeping the last month's
-		// offset would open February somewhere in the middle of it.
-		const month = ymd.year * 12 + ymd.month;
-		if (listEl && scrolledMonth !== month) {
-			listEl.scrollTop = 0;
-			scrolledMonth = month;
-		}
-		reveal();
 		if (!refocus) return;
 		const row = listEl?.querySelector<HTMLElement>(`[data-date="${refocus}"]`);
 		refocus = undefined;
@@ -320,7 +263,7 @@
 	});
 </script>
 
-<section class="month" bind:this={sectionEl}>
+<section class="month">
 	<header>
 		<button
 			type="button"
@@ -432,38 +375,22 @@
 	}
 
 	/*
-	 * A PANE OF A FIXED HEIGHT, and the height is the point rather than the
-	 * scrolling.
-	 *
-	 * What a month lists is now between twelve and twenty-nine rows depending
-	 * on how thickly the sanctoral falls in it, and the day the reader picks
-	 * can add one — so every click that crossed a month, and some that did
-	 * not, resized the page under whatever was below. Fixing the box means the
-	 * list can change by any number of rows and NOTHING outside it moves: the
-	 * page's height is the same in February as in August.
-	 *
-	 * `60vh` rather than a count of rows, because the box is a window onto the
-	 * month and the window is the screen's to size; the bounds keep it from
-	 * collapsing on a short viewport or running away on a tall one.
-	 * `scrollbar-gutter: stable` so that the rows do not shift sideways on the
-	 * months long enough to need a scrollbar.
+	 * THE LIST IS AS LONG AS THE MONTH IS, and it is the LAST thing on the
+	 * page for that reason: a month of twelve rows and a month of twenty-nine
+	 * leave the page different heights, and nothing is below it to be moved.
+	 * What must not move is this list, and what would have moved it is the
+	 * day's card above — which is the box that is held to a fixed height
+	 * (`LiturgicalDayCard`), because that is the one whose size depends on
+	 * something the reader changes without meaning to change the layout.
 	 */
 	ol {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		position: relative;
-		block-size: clamp(18rem, 60vh, 40rem);
-		overflow-y: auto;
-		scrollbar-gutter: stable;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
+		border-top: 1px solid var(--color-border);
 	}
 	li {
 		border-bottom: 1px solid var(--color-border);
-	}
-	li:last-child {
-		border-bottom: none;
 	}
 	/*
 	 * THE WEEK IS THE ONE THING A LIST LOSES, and a heavier rule above each
@@ -483,7 +410,7 @@
 		grid-template-columns: 3.75rem 1rem 1fr auto;
 		align-items: baseline;
 		gap: 0.5rem;
-		padding: 0.35rem 0.6rem 0.35rem 0.4rem;
+		padding: 0.35rem 0.25rem;
 		/* Carried by EVERY row, transparent until one is chosen, so that
 		   marking the selection cannot change where the text begins. */
 		border-inline-start: 2px solid transparent;
