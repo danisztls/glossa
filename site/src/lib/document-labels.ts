@@ -50,3 +50,32 @@ export function documentKindLabel(kind: string): string {
 	const key = KIND_KEYS[kind];
 	return key ? t(key) : kind;
 }
+
+/**
+ * The names one issuing body has held, folded to the one it holds now.
+ *
+ * `pontiff_or_council` is corpus data and stays exactly as promulgated — a
+ * document issued in 2016 was issued by the *Congregation* for the Doctrine of
+ * the Faith, and its masthead says so, because that is a fact about the
+ * document. What is NOT a fact about the document is that this makes two
+ * bodies: *Praedicate Evangelium* renamed the Congregation to a Dicastery in
+ * 2022, and `/documenta`'s author facet was showing the doctrinal office as
+ * two options — 188 documents under one name and 12 under the other — so no
+ * click reached the body's work whole. Every other office on that list will
+ * eventually do the same thing; the curia is renamed regularly.
+ *
+ * SO THIS FOLDS THE FACET AND TOUCHES NOTHING ELSE. The label is the current
+ * name because that is what the body is called; the search box still reads the
+ * raw field, so a reader who types "Congregation" still finds the documents
+ * that say it. This is a display grouping over data that is left alone, which
+ * is the same posture `titles.ts` takes towards a title it cannot parse.
+ */
+const RENAMED_BODIES: Record<string, string> = {
+	'Congregation for the Doctrine of the Faith': 'Dicastery for the Doctrine of the Faith'
+};
+
+/** The facet value a document's issuing body belongs to. Identity for every
+ *  body that has not been renamed, which is all but one of them today. */
+export function documentAuthorKey(author: string): string {
+	return RENAMED_BODIES[author] ?? author;
+}

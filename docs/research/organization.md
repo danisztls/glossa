@@ -1,23 +1,29 @@
 # How this is organized: five doors, and the ladder behind them
 
-Written 2026-09-03, revised 2026-09-04. This is an organization pass in the
-shape of `audiences.md`: it names the shape the site should converge on,
-says which reader each part is for, and grounds every claim about the
-present in a path. Counts carry the date they were taken, because the two
-dates no longer agree.
+Written 2026-09-03. **Built 2026-09-04.** This is an organization pass in
+the shape of `audiences.md`: it names the shape the site converged on, says
+which reader each part is for, and grounds every claim about the state it
+found in a path.
 
-**One of the five doors is now built.** The liturgical calendar landed on
-2026-09-03 — the day this was written, and independently of it — and
-`/calendarium` is in the bar (`site/docs/calendar.md`). So the Calendar column below has stopped being a proposal, and
-what it says is read here as evidence rather than as intent: it is the
-first measurement of what a door added under this design actually costs.
-Everything else here is still unimplemented.
+**It is a record now and not a proposal, and it is kept as it was
+argued.** The standing rules moved to where the code is —
+`site/docs/finding.md` for the bar, Library and the jump box,
+`site/docs/addresses.md` for the shelving and the two route tables,
+`site/CLAUDE.md` for what must be true before any of it is touched. What
+stays here is the reasoning those rules are the conclusion of, including
+the parts that were wrong on the way: the three umbrella labels that
+failed, the axis the Social Doctrine was sorted on twice before it settled,
+and an exclusion the calendar falsified within a day. A design document
+that is edited until it agrees with the code is a second copy of the code.
+
+Three things came out differently in the building and are marked **[built
+differently]** where they appear. Counts carry the date they were taken.
 
 It exists because the navigation was built one work at a time. On
-2026-09-03 the bar held six items; today it holds seven. The two newest
-works are still reachable from nowhere else: neither `/doctrina-socialis`
-nor `/ius-canonicum` is named on the home page, and neither is in the jump
-box.
+2026-09-03 the bar held six items and by the next morning seven, and the
+two newest works were reachable from nowhere else: neither
+`/doctrina-socialis` nor `/ius-canonicum` was named on the home page, and
+neither was in the jump box.
 
 ## The fact that decides the shape
 
@@ -116,7 +122,11 @@ where the reader's own position in the corpus lives:
 - **Continue reading**, which today is a home-page section over four of the
   work types in `CONTINUE_TYPES` (`+page.svelte`) and silently omits
   `social-doctrine` and `canon-law` — a reader halfway through the Code
-  gets no row.
+  gets no row. **[built differently]** The obvious fix is to add the two
+  missing types, and that would have left the same defect armed for the
+  next work ingested. `continueRows` DISCOVERS the types from the reader's
+  own saved positions instead, so there is no list to fall behind the
+  corpus.
 - **Bookmarks**, which `/signata` already groups by work rather than by
   recency, for the reason its docblock gives. Library surfaces them;
   `/signata` remains the full view.
@@ -391,6 +401,19 @@ change.
 language-prefixed `hreflang` cluster plus sitemap, route manifest and
 worker entries.
 
+**[built differently]** The omission turned out to be worse than a missing
+cluster, and the fix split in two. `isCanonicalPath` reads a SECOND table,
+`STATIC_PATHS`, and it is that one that decides whether a URL exists at
+all — so `/calendarium` and `/ius-canonicum`, in neither table, were
+answering **404 with the app's own not-found UI** on every cold load and to
+every crawler, while client-side navigation into them worked perfectly.
+Both are in `STATIC_PATHS` now and a test walks `src/routes/` so the next
+one cannot be forgotten. But only `/ius-canonicum` and the new
+`/bibliotheca` joined `CHROME_PATHS`: a cluster claims a page is written in
+37 languages, and `/calendarium`'s 44 `calendar.*` keys exist in three
+dictionaries. It joins the day it is translated. `/catechismus/compendium`
+is held out by the same rule at fourteen.
+
 The other two exist as routes and are absent from `CHROME_PATHS` anyway.
 `route-manifest.ts` lists nine paths; **`/ius-canonicum` and
 `/calendarium` are neither of them**, though `/ius-canonicum`'s twin
@@ -419,14 +442,14 @@ haystack there.
 All six are live on 2026-09-04 and none of them is caused by the design;
 two would be swept up by rebuilding the pages named, and four would not.
 
-| What                                                                                                                                                                                                                          | Where                                                                           | Swept up by this?          |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
-| Home page's Magisterium rows link `/documenta#<pontiff>`, and that page has had no anchors since 2026-08-31                                                                                                                   | `+page.svelte`, `documenta/+page.svelte`                                        | Yes, when home is rebuilt  |
-| `CONTINUE_TYPES` omits `social-doctrine` and `canon-law`                                                                                                                                                                      | `+page.svelte`                                                                  | Yes, in Library            |
-| `/ius-canonicum` and `/calendarium` are both absent from `CHROME_PATHS`, so neither is in a language cluster, in the sitemap, or named at the edge                                                                            | `route-manifest.ts`, `route-titles.mjs`                                         | No — fix separately        |
-| The calendar's forty-nine `calendar.*` keys exist in `en`, `la` and `pt` only, so thirty-four interface languages read the newest door entirely in English                                                                    | `site/src/lib/i18n/`                                                            | No — a decision, not a fix |
-| The jump box completes neither new work: `SECTIONS` has no `/doctrina-socialis` or `/ius-canonicum`, and its `CIC` docblock still says the corpus holds no canon law                                                          | `suggest.ts`                                                                    | No — fix separately        |
-| The doctrinal office is reachable in no single click: CDF and DDF are two author chips for one body renamed in 2022, the `cdf-*` kinds are six more, and a document's author is plain text rather than a link to its siblings | `documenta/+page.svelte`, `document-labels.ts`, `documenta/[slug]/+page.svelte` | No — fix separately        |
+| What                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Where                                                                           | Swept up by this?          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| Home page's Magisterium rows link `/documenta#<pontiff>`, and that page has had no anchors since 2026-08-31                                                                                                                                                                                                                                                                                                                                                             | `+page.svelte`, `documenta/+page.svelte`                                        | Yes, when home is rebuilt  |
+| `CONTINUE_TYPES` omits `social-doctrine` and `canon-law`                                                                                                                                                                                                                                                                                                                                                                                                                | `+page.svelte`                                                                  | Yes, in Library            |
+| `/ius-canonicum` and `/calendarium` are both absent from `CHROME_PATHS`, so neither is in a language cluster, in the sitemap, or named at the edge                                                                                                                                                                                                                                                                                                                      | `route-manifest.ts`, `route-titles.mjs`                                         | No — fix separately        |
+| The calendar's forty-nine `calendar.*` keys exist in `en`, `la` and `pt` only, so thirty-four interface languages read the newest door entirely in English                                                                                                                                                                                                                                                                                                              | `site/src/lib/i18n/`                                                            | No — a decision, not a fix |
+| The jump box completes neither new work: `SECTIONS` has no `/doctrina-socialis` or `/ius-canonicum`, and its `CIC` docblock still says the corpus holds no canon law                                                                                                                                                                                                                                                                                                    | `suggest.ts`                                                                    | No — fix separately        |
+| The doctrinal office is reachable in no single click: CDF and DDF are two author chips for one body renamed in 2022, the `cdf-*` kinds are six more, and a document's author is plain text rather than a link to its siblings. **[built differently]** — the facet folds now (`documentAuthorKey`), which is one click; the author stayed plain text, because a link into a facet needs the filter in the URL and `/documenta` keeps its filters out of it deliberately | `documenta/+page.svelte`, `document-labels.ts`, `documenta/[slug]/+page.svelte` | No — fix separately        |
 
 ## What this deliberately excludes
 

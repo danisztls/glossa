@@ -11,7 +11,7 @@
  * `dictionaryFor` in a module the layout loads would have pulled all of them
  * back in and silently undone the split.
  *
- * So the eight keys it actually needs are extracted here instead — generated
+ * So the keys it actually needs are extracted here instead — generated
  * and committed, never hand-edited, exactly like `export-book-forms.mjs` — and
  * `src/lib/section-names.test.ts` fails whenever the committed file falls
  * behind the dictionaries. Run this after changing any `nav.*` or `*.abbrev`
@@ -19,7 +19,7 @@
  *
  *     node scripts/export-section-names.mjs
  *
- * It is ~8 short strings per language against a dictionary's ~270, so the
+ * It is a dozen short strings per language against a dictionary's ~300, so the
  * whole table is a few KB and stays eager without apology.
  */
 
@@ -49,6 +49,11 @@ export const SECTION_KEYS = [
 	'nav.compendium',
 	'compendium.abbrev',
 	'nav.magisterium',
+	'nav.socialDoctrine',
+	'nav.canonLaw',
+	// The Code is cited by its abbreviation and not by its name — `Can. 748`,
+	// never "Code of Canon Law 748" — so this is the form a reader types.
+	'canonLaw.canon',
 	'nav.prayers',
 	'nav.summa'
 ];

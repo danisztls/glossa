@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
-	 * The index of the Catechism — and of its Compendium, which has no index
-	 * of its own.
+	 * The index of the Catechism and of its Compendium, and the door the nav
+	 * bar's "Learn" opens.
 	 *
 	 * ONE PAGE FOR BOTH WORKS, because they are one outline published at two
 	 * lengths. `toc-pairing.ts` establishes that structurally (every part,
@@ -10,9 +10,18 @@
 	 * every row offers both works and offers them ALIKE — see
 	 * `StructureIndex` on why the title is not a link.
 	 *
-	 * The home page shows the same table to a shallower depth, from this same
-	 * component and the same resolver (`catechismRows.ts`), so the two cannot
-	 * drift the way the hand-written pair of them had.
+	 * THIS IS A TABLE OF DIVISIONS, WHICH IS NOT THE ONLY WAY IN, and that is
+	 * why the Compendium has an index of its own since 2026-09-04
+	 * (`routes/catechismus/compendium/+page.svelte`). Being a table of parts
+	 * and sections is exactly right for a reader who knows the outline and
+	 * wrong for the reader the Compendium was written for, who arrives holding
+	 * a question. Both pages exist; this one is the pair, that one is the
+	 * questions.
+	 *
+	 * The home page carried the same table to a shallower depth until the same
+	 * day, when it became the liturgical day and five doors: two full indices
+	 * were most of its height, which is why nothing ingested after them was
+	 * ever added to it (`routes/+page.svelte`).
 	 */
 	import BookText from '@lucide/svelte/icons/book-text';
 	import MessageCircleQuestionMark from '@lucide/svelte/icons/message-circle-question-mark';
@@ -114,6 +123,43 @@
 	{/if}
 
 	<StructureIndex {tree} {lang} {links} {workColumns} noCounterpartLabel={t('ccc.noCounterpart')} />
+
+	<!--
+		THE REST OF THE SHELF, which this page is the door to since 2026-09-04.
+		The nav bar's first item points here and is labelled "Learn", so what a
+		reader reaches through it has to be everything on the shelf and not the
+		Catechism alone.
+
+		TWO ROWS AND NOT TWO MORE INDICES, deliberately. The table above is
+		already the longest thing on the site's chrome; the Compendium's own
+		index and the Social Doctrine's are each a page in their own right, and
+		reproducing either here would repeat the mistake the home page was just
+		relieved of — an index of an index, at the cost of the page's bottom.
+
+		WHY THE SOCIAL DOCTRINE IS ON THIS SHELF AT ALL: it is a systematic
+		synthesis read THROUGH, not a dated act cited singly, which is the axis
+		the shelf sorts on. `/bibliotheca`'s docblock carries the argument, and
+		the address space agrees without being asked —
+		`/doctrina-socialis/{n}` and `/doctrina-socialis/caput/{n}` mirror this
+		work's two exactly.
+
+		The Compendium of the Social Doctrine must never be labelled bare
+		"Compendium" beside this page's other one: both rows print their full
+		titles, which is the whole price of putting them one click apart.
+	-->
+	<nav class="shelf" aria-labelledby="shelf-heading">
+		<h2 id="shelf-heading" class="shelf-heading">{t('nav.learn')}</h2>
+		<ul>
+			<li>
+				<a href="/catechismus/compendium">{t('compendium.landing.title')}</a>
+				<p>{t('compendium.landing.tagline')}</p>
+			</li>
+			<li>
+				<a href="/doctrina-socialis">{t('socialDoctrine.landing.title')}</a>
+				<p>{t('socialDoctrine.landing.tagline')}</p>
+			</li>
+		</ul>
+	</nav>
 </div>
 
 <style>
@@ -138,5 +184,37 @@
 	.copyright-notice {
 		margin: 0 0 1.5rem;
 		font-size: 0.8rem;
+	}
+
+	/* The rest of the shelf, under the table. It takes the tagline's measure
+	   rather than the table's: these two rows are prose, and the width the
+	   columns need is not a width a sentence should be set to. */
+	.shelf {
+		max-width: 40rem;
+		margin: 2.5rem 0 0;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.shelf-heading {
+		font-family: var(--font-serif);
+		font-size: 1.1rem;
+		margin: 0 0 0.75rem;
+	}
+
+	.shelf ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.shelf li {
+		margin-bottom: 0.9rem;
+	}
+
+	.shelf p {
+		margin: 0.15rem 0 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
 	}
 </style>

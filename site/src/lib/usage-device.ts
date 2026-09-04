@@ -236,10 +236,18 @@ export function sectionFor(pathname: string): string {
 	// anyone find the shelf) from how much the Summa is read.
 	if (pathname === '/doctores/summa' || pathname.startsWith('/doctores/summa/')) return 'summa';
 	const root = pathname.split('/')[1] ?? '';
+	// Every top-level route root that is a section, in `SETS.section` order.
+	// `usage-schema.test.ts` holds the two together: a root missing here lands
+	// in `other`, which is not an error and is why `/doctrina-socialis` and
+	// `/ius-canonicum` went uncounted from the day each landed.
 	const KNOWN = [
+		'bibliotheca',
 		'scriptura',
 		'catechismus',
 		'compendium',
+		'doctrina-socialis',
+		'ius-canonicum',
+		'calendarium',
 		'documenta',
 		'doctores',
 		'preces',

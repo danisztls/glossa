@@ -122,6 +122,18 @@ describe('navigation', () => {
 		const paths = [
 			'/',
 			'/catechismus',
+			// THE FOUR THAT ARE HERE BECAUSE TWO OF THEM ANSWERED 404 IN
+			// PRODUCTION. `/calendarium` and `/ius-canonicum` were in neither
+			// `STATIC_PATHS` nor `CHROME_PATHS`, so the worker had no reason to
+			// think either existed — and the SPA router never asks the worker, so
+			// following the nav to them worked and only a cold load, a refresh or
+			// a shared link did not. `route-manifest.test.ts` now walks the route
+			// directory so a new page cannot repeat it; these stay named here
+			// because this is the file that says what a URL ANSWERS.
+			'/bibliotheca',
+			'/calendarium',
+			'/ius-canonicum',
+			'/catechismus/compendium',
 			'/scriptura/genesis/1',
 			'/scriptura/genesis/0',
 			'/catechismus/330',

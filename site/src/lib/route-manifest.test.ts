@@ -1,3 +1,5 @@
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
 	CHROME_PATHS,
@@ -65,6 +67,46 @@ describe('isCanonicalPath', () => {
 		'/bible/gen/1'
 	])('rejects %s', (path) => {
 		expect(isCanonicalPath(path, manifest)).toBe(false);
+	});
+});
+
+/**
+ * THE GUARD FOR THE FAILURE THIS FILE'S TWO TABLES ALLOW.
+ *
+ * `/calendarium` and `/ius-canonicum` each shipped as a route directory with a
+ * `+page.svelte`, a nav entry and working client-side navigation, and each
+ * answered 404 to every cold load for weeks: `isCanonicalPath` is the edge's
+ * only authority on whether a URL exists, and neither path was in
+ * `STATIC_PATHS` or in `CHROME_PATHS`. Nothing caught it because the SPA
+ * router does not ask the worker, so every way a person would check by hand
+ * works.
+ *
+ * So the routes on disk are the assertion. A directory with a page and no
+ * dynamic segment IS an address, and this walks them rather than listing them
+ * — a list would have to be remembered, which is the thing that failed.
+ */
+describe('every static route is an address the edge admits', () => {
+	/** Route directories with a `+page.svelte` and no `[param]` anywhere above
+	 *  them, as pathnames. `/404` and the language-entry tree are excluded:
+	 *  the first is the not-found page itself, the second is a matcher. */
+	function staticRoutes(dir: string, prefix = ''): string[] {
+		const out: string[] = [];
+		for (const entry of readdirSync(dir, { withFileTypes: true })) {
+			if (entry.name === '+page.svelte' && prefix) out.push(prefix);
+			if (!entry.isDirectory()) continue;
+			if (entry.name.startsWith('[') || entry.name.startsWith('.') || entry.name === '404')
+				continue;
+			out.push(...staticRoutes(join(dir, entry.name), `${prefix}/${entry.name}`));
+		}
+		return out;
+	}
+
+	it.each(staticRoutes('src/routes'))('%s', (path) => {
+		expect(isCanonicalPath(path, manifest)).toBe(true);
+	});
+
+	it('finds the routes at all, so an empty walk cannot pass vacuously', () => {
+		expect(staticRoutes('src/routes').length).toBeGreaterThan(8);
 	});
 });
 

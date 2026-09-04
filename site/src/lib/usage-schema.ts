@@ -115,9 +115,22 @@ export const SETS = {
 	/** Top-level sections visited, by canonical (Latin) route root. */
 	section: [
 		'home',
+		// The catalogue (2026-09-04). It is the one door on the bar that leads
+		// to no work of its own, so its series answers a question no other
+		// bucket can: whether a reader who arrives without an address uses the
+		// map. Everything below it was reachable before and stays comparable.
+		'bibliotheca',
 		'scriptura',
 		'catechismus',
 		'compendium',
+		// Three sections that had been landing in `other` — the two works
+		// ingested after this list was written, and the calendar. A bucket
+		// added late reads zero for the days before it existed, which is
+		// honest; folding them into `other` was not, since `other` is supposed
+		// to mean "not one of the sections".
+		'doctrina-socialis',
+		'ius-canonicum',
+		'calendarium',
 		'documenta',
 		// The shelf for the Fathers and Doctors (2026-08-28). `summa` stays a
 		// bucket of its own — the work moved under the shelf, and a series that

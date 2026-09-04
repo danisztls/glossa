@@ -45,10 +45,11 @@ export const la: Dictionary = {
 	'nav.menu': 'Index',
 	'home.title': 'Glossa Catholica',
 	'home.continueReading': 'Perge legere',
-	'home.works': 'Bibliotheca',
-	'home.ccc.heading': 'Catechismus et Compendium',
+	'nav.library': 'Bibliotheca',
+	'nav.learn': 'Disce',
+	'library.landing.tagline':
+		'Corpus totum, pluteus post pluteum — cum loco ubi desiisti et iis quae notasti.',
 	'ccc.noCounterpart': 'Nihil respondens in altero opere',
-	'home.magisterium.mostRecent': 'Recentissima',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations
 	// carry `ioannes` (bible-index.json), while `refparse.ts` reads only
@@ -212,8 +213,6 @@ export const la: Dictionary = {
 	'prayers.rosary.todayHeading': 'Mysteria hodierna',
 	'prayers.rosary.openingPrayer': 'Oratio initialis',
 	'prayers.rosary.decadePrayers': 'Orationes decadis',
-	'home.prayers.heading': 'Preces',
-	'home.prayers.browseAll': 'Omnes preces percurre',
 	'ref.tooltip.loading': 'Legitur…',
 	'ref.tooltip.openCcc': 'Aperi in Catechismo',
 	'ref.tooltip.openBible': 'Aperi in Scriptura',

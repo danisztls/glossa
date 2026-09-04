@@ -467,14 +467,17 @@ export function assertNamed(paths, manifest, titles) {
  * sentences that need thirteen speakers, and CLAUDE.md's Malagasy note is what
  * happens when that is guessed at instead.
  *
- * `/` has no `description` key because it has no tagline: the home page's lede
- * IS its list of works. So it is composed from the five section names, which
- * are themselves translated, and which is what a reader searching for any one
- * of those works would type.
+ * `/` has no `description` key because it has no tagline. So it is composed
+ * from the names of five works, which are themselves translated, and which is
+ * what a reader searching for any one of them would type. They were the home
+ * page's own section headings until 2026-09-04, when the page became the
+ * liturgical day and five doors; the list stayed as it was, because what a
+ * searcher types is the name of a work and not the name of a door.
  */
 /** @type {Record<string, { title: string; description?: string }>} */
 const CHROME_KEYS = {
 	'/': { title: 'home.title' },
+	'/bibliotheca': { title: 'nav.library', description: 'library.landing.tagline' },
 	'/scriptura': { title: 'bible.landing.title', description: 'bible.landing.tagline' },
 	'/catechismus': { title: 'ccc.landing.title', description: 'ccc.landing.tagline' },
 	'/documenta': { title: 'nav.magisterium', description: 'document.library.tagline' },
@@ -482,13 +485,17 @@ const CHROME_KEYS = {
 		title: 'socialDoctrine.landing.title',
 		description: 'socialDoctrine.landing.tagline'
 	},
+	'/ius-canonicum': {
+		title: 'canonLaw.landing.title',
+		description: 'canonLaw.landing.tagline'
+	},
 	'/doctores': { title: 'doctores.landing.title', description: 'doctores.landing.tagline' },
 	'/doctores/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
 	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },
 	'/colophon': { title: 'colophon.title', description: 'colophon.lede' }
 };
 
-/** The works named on the home page, for the one description with no key. */
+/** Five works the site holds, for the one description with no key. */
 const HOME_SECTION_KEYS = [
 	'bible.landing.title',
 	'ccc.landing.title',

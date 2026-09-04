@@ -44,12 +44,28 @@ export const en: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'home.continueReading': 'Continue reading',
-	'home.works': 'Library',
-	// Home page's Catechism/Compendium section — see routes/+page.svelte's
-	// module docblock for why this is ONE table of contents, not two.
-	'home.ccc.heading': 'Catechism & Compendium',
+	// The Library door, and the page behind it (`routes/bibliotheca/`). The
+	// key was `home.works` and had been written in all thirty-seven languages
+	// for a home-page section that no longer existed — the label is the same
+	// word, so it was renamed rather than re-translated.
+	'nav.library': 'Library',
+	// THE ONE IMPERATIVE ON THE BAR, and the trade is deliberate: it is the
+	// only label a reader who does not yet know what a "Catechism" is can act
+	// on (`docs/research/organization.md` §The bar). It points at
+	// `/catechismus`, which keeps its own name everywhere else on the site.
+	// Each dictionary uses whatever register its language puts on a nav item —
+	// an imperative in the Romance languages and Latin, a verbal noun in the
+	// Slavic ones and in Hungarian, where an imperative would read as an order.
+	'nav.learn': 'Learn',
+	// Both halves of what the page holds, in one sentence: the catalogue, and
+	// the reader's own place in it. A library has a catalogue AND a borrowing
+	// record.
+	'library.landing.tagline':
+		'The whole corpus, shelf by shelf — with where you left off and what you have marked.',
+	// The placeholder in a paired index row where one of the two works has
+	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
+	// drawn rather than closed.
 	'ccc.noCounterpart': 'No counterpart in the other work',
-	'home.magisterium.mostRecent': 'Latest',
 	'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Search',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
@@ -322,8 +338,6 @@ export const en: Dictionary = {
 	'prayers.rosary.todayHeading': 'Today’s mysteries',
 	'prayers.rosary.openingPrayer': 'Opening prayer',
 	'prayers.rosary.decadePrayers': 'The prayers of a decade',
-	'home.prayers.heading': 'Prayers',
-	'home.prayers.browseAll': 'Browse all prayers',
 
 	// Reference tooltips/popovers — RefText.svelte is the consumer.
 	'ref.tooltip.loading': 'Loading…',

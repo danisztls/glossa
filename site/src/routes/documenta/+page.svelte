@@ -69,7 +69,7 @@
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { documentKindLabel } from '$lib/document-labels';
+	import { documentAuthorKey, documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { pontificate } from '$lib/pontificates';
@@ -249,7 +249,8 @@
 	   — and that is the one a reader narrowing 272 titles is asking for. Note
 	   `every` needs no empty-selection branch, unlike the two above it. */
 	const byAuthor = (row: Row) =>
-		selectedAuthors.length === 0 || selectedAuthors.includes(row.manifest.pontiff_or_council);
+		selectedAuthors.length === 0 ||
+		selectedAuthors.includes(documentAuthorKey(row.manifest.pontiff_or_council));
 	const byKind = (row: Row) =>
 		selectedKinds.length === 0 || selectedKinds.includes(row.manifest.document_kind);
 	const byTag = (row: Row) => selectedTags.every((tag) => row.tagKeys.includes(tag));
@@ -295,7 +296,7 @@
 	const authorRecency = $derived.by(() => {
 		const latest = new Map<string, string>();
 		for (const row of rows) {
-			const key = row.manifest.pontiff_or_council;
+			const key = documentAuthorKey(row.manifest.pontiff_or_council);
 			const seen = latest.get(key);
 			if (!seen || row.manifest.promulgated > seen) latest.set(key, row.manifest.promulgated);
 		}
@@ -310,7 +311,10 @@
 	const authorFacets = $derived(
 		buildFacet(
 			rows.filter((row) => byKind(row) && byTag(row) && bySearch(row)),
-			(row) => [row.manifest.pontiff_or_council],
+			// FOLDED, so a body that has been renamed is one option and not two —
+			// see `documentAuthorKey`. The row's own masthead still prints the
+			// name the document was issued under.
+			(row) => [documentAuthorKey(row.manifest.pontiff_or_council)],
 			(key) => key,
 			([a], [b]) => (authorRecency.get(b) ?? '').localeCompare(authorRecency.get(a) ?? '')
 		).map((facet) => ({ ...facet, note: pontificate(facet.value) }))

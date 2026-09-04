@@ -64,7 +64,7 @@
 	 * Unlike `TocMenu` it has exactly ONE form. That component becomes an
 	 * anchored card at 48rem because a screen with room to read around a
 	 * gloss should still show the text; here the breakpoint is the width at
-	 * which the six links stop hiding and become the header's own row, so
+	 * which the nav links stop hiding and become the header's own row, so
 	 * there is no width at which a card would be the thing to draw.
 	 */
 	let navOpen = $state(false);
@@ -76,50 +76,67 @@
 	 *  read it; the two are one decision and are commented as one. */
 	const BAR_QUERY = '(min-width: 720px)';
 
-	// No "Home" entry: the brand link above is already a link to `/`, and two
-	// controls one tab-stop apart doing the identical thing is redundancy, not
-	// redundancy-as-safety. Removing it also lets `isActive` drop its special
-	// case (see below).
+	/**
+	 * FIVE DOORS, AND THE POINT IS THAT THE LIST STOPS GROWING.
+	 *
+	 * It was one item per WORK until 2026-09-04 — Bible, Catechism, Prayers,
+	 * Calendar, Magisterium, Social Doctrine, Canon Law — which is a rule with
+	 * no end state: seven items by the time the Code landed, and Denzinger, the
+	 * Roman Catechism, the Fathers and a second code each cost another slot.
+	 * Under this bar every future work lands inside Library or inside Learn and
+	 * the bar is finished.
+	 *
+	 * WHO A NAV BAR IS FOR, which is the judgment the whole shape rests on.
+	 * `docs/research/audiences.md` splits readers on whether they arrive with an
+	 * ADDRESS or with a QUESTION. The address-holders — §7 the seminarian, §4
+	 * the citation-follower — do not use this bar at all: one types `can. 748`
+	 * into `JumpBox`, the other arrives mid-corpus on a URL someone else wrote
+	 * and never sees the header. The question-holders (§1, §5) are "plausibly
+	 * most of the traffic" and are the ones a bar of work names cannot serve,
+	 * because using it means already knowing which book holds the answer. A bar
+	 * of works is therefore built for the readers who need it least.
+	 *
+	 * NO "HOME" ENTRY: the brand link above is already a link to `/`, and two
+	 * controls one tab-stop apart doing the identical thing is redundancy, not
+	 * redundancy-as-safety. Removing it also lets `isActive` drop its special
+	 * case (see below). Library is NOT that mistake repeated — it and the two
+	 * shortcuts beside it reach different pages, and a shortcut past an index
+	 * is ordinary navigation.
+	 *
+	 * `docs/research/organization.md` is the argument in full.
+	 */
 	const NAV_ITEMS = [
+		// THE ONE IMPERATIVE AMONG FOUR NOUNS, and mixed grammar in a nav row is
+		// normally a smell. It is taken deliberately: it is the only label here
+		// that explains itself to a reader who does not yet know that
+		// "Catechism" is where one goes to learn — §5, who was told to read the
+		// Catechism and stops "at the vocabulary of the corpus itself". The
+		// route does not move: `/catechismus` keeps its name on its own page, in
+		// the jump box and in every `<head>`, and the site already ships this
+		// mismatch in the other direction with "Magisterium" over `/documenta`.
+		{ href: '/catechismus', key: 'nav.learn' },
 		{ href: '/scriptura', key: 'nav.bible' },
-		// One entry for both the Catechism and its Compendium: they share an
-		// index, which offers every division in both works at once.
-		{ href: '/catechismus', key: 'nav.ccc' },
-		// 28 prayers is not a pillar alongside three works running to
-		// thousands of pages each — but a corpus nobody can find from the nav
-		// is a corpus nobody reads, so it gets the same one-click-away
-		// treatment as everything else rather than being reachable only from
-		// the home page's own Prayers section.
+		// 28 prayers is not a pillar alongside works running to thousands of
+		// pages each, but it is the shortest path from arrival to reading and
+		// the most recognised word here after "Bible" — so it keeps a door.
 		{ href: '/preces', key: 'nav.prayers' },
+		// THE SUPERSET, NOT THE REMAINDER — the reason this bar can stop
+		// growing. `/bibliotheca` lists every work including the two above, so
+		// it makes no taxonomic claim and cannot become the bin for whatever did
+		// not fit. Three umbrella labels were tried before it and all three
+		// failed the same way; see that route's own docblock.
+		{ href: '/bibliotheca', key: 'nav.library' },
 		// The one page here whose subject is not a text: the liturgical
 		// calendar is computed in the browser from the date of Easter and a
-		// table of celebrations, with no content tier behind it.
-		{ href: '/calendarium', key: 'nav.calendar' },
-		// The canonical route is Latin while the displayed label is
-		// "Magisterium" — URL identity and localised display language are
-		// intentionally independent.
-		{ href: '/documenta', key: 'nav.magisterium' },
-		// Beside the Magisterium and not inside it: the Compendium of the
-		// Social Doctrine is a work with its own address space, not one more
-		// document in the library, which is why it has a work type of its own
-		// (docs/corpus-schema.md). Last, because it is the one shelf here
-		// holding a single work.
-		{ href: '/doctrina-socialis', key: 'nav.socialDoctrine' },
-		// Beside it on the same reasoning: the Code is a work with its own
-		// address space and its own type, not one more document in the
-		// library. Last of the two single-work shelves because a reader
-		// arrives at canon law knowing the canon they want, where the
-		// Compendium of the Social Doctrine is read through.
-		{ href: '/ius-canonicum', key: 'nav.canonLaw' }
-		// NO `/doctores` ENTRY, and that is deliberate (2026-08-28). The Summa
-		// moved off this bar and under the shelf for the Fathers and Doctors of
-		// the Church, where it belongs by category: the four above are the
-		// Church's own texts, and the Summa is one Doctor writing about them.
-		// The shelf stays unlisted — nothing on the site links to it — until it
-		// holds more than one work and that one has had its quality pass. It is
-		// still reachable by address, by the jump box, by a cross-reference and
-		// through the sitemap. Restoring it is this line:
-		//   { href: '/doctores', key: 'doctores.landing.title' }
+		// table of celebrations, with no content tier behind it. It is a door
+		// rather than a work, which is why it survives a bar that keeps no
+		// work-sized items — and it is the only by-date entry and the only
+		// daily-return surface the site has.
+		{ href: '/calendarium', key: 'nav.calendar' }
+		// `/documenta`, `/doctrina-socialis`, `/ius-canonicum` and `/doctores`
+		// are all one click away inside Library rather than being listed here,
+		// and `/catechismus` reaches the Social Doctrine as well. Nothing became
+		// unreachable and no route moved.
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
@@ -133,7 +150,7 @@
 	 * `await tick()` before `showModal()`: the sheet's copy of the links is
 	 * rendered by `{#if navOpen}`, so the element `showModal()` is called on
 	 * has to be given its content first. Rendering it only while open is also
-	 * what keeps the four anchors from existing twice in the document — the
+	 * what keeps the nav anchors from existing twice in the document — the
 	 * header's own row is the other copy, and above 720px it is the real one.
 	 */
 	async function openNav() {
@@ -169,7 +186,7 @@
 	}
 
 	/* A rotation into landscape, or a window dragged wider, would otherwise
-	   leave the sheet covering a layout that is already showing the same six
+	   leave the sheet covering a layout that is already showing the same
 	   links in its header — with the only control that closes it (the
 	   hamburger) now `display: none`. Guarded on the media query rather than
 	   on the event, so an iOS URL-bar collapse does nothing. */
@@ -265,7 +282,7 @@
 <!-- ONE list, rendered in two places: the header's row above 720px and the
      sheet below it. Written as a snippet rather than as two `{#each}` blocks
      because the pair would have drifted — `aria-current`, the dismissal
-     handler and the six hrefs are the same decision in both, and the copy
+     handler and the hrefs are the same decision in both, and the copy
      that is wrong is the one nobody is looking at. -->
 {#snippet navLinks()}
 	{#each NAV_ITEMS as item (item.href)}
@@ -493,7 +510,7 @@
 
 	/*
 	 * IN FLOW, NOT STICKY, and that is the decision the rest of this file is
-	 * written around. The brand, the six sections and the reading controls
+	 * written around. The brand, the five doors and the reading controls
 	 * are what a reader needs on arrival and rarely again: a text is read from
 	 * `ReadingBar` — which IS sticky, and is the only chrome that stays — and
 	 * from the page itself. Pinned, this bar charged every route a band across
@@ -649,7 +666,7 @@
 	/* The sheet's own list. Everything else it wears — the dialog shell, the
 	   panel, the head, the title, the close button, the scroll body — is
 	   `app.css`'s `.dialog-bare`/`.sheet`/`.sheet-*`, shared with `TocMenu`
-	   and `JumpBox`. A column because these six rows are a stack, which a
+	   and `JumpBox`. A column because these rows are a stack, which a
 	   plain block body does not assume. */
 	.nav-links {
 		display: flex;
