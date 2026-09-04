@@ -724,6 +724,14 @@ still describes how the pages are READ, which is what the verifier does.
   `la`, where the canonical Latin is read from, and `en-gb`. Without them the
   Latin resolves to nothing and the companion vanishes from every prayer.
 
+- **A TITLE IS READ OFF THE PAGE, THE LATIN'S INCLUDED, and the slug is not a
+  fallback.** `curate.py` took `title` from the witness for every vernacular
+  entry and not for `latin`, so 18 of `prayer.common.la`'s 24 prayers
+  published their slug as their name — the Pater Noster as `our-father` — and
+  the four that had one had it TYPED, two of those disagreeing with the page
+  they cite. `title_of` in `prayers_project.py` now raises rather than
+  reaching for the slug, which is what let it go unseen.
+
 - **`--changed-only` fingerprints every tracked tree**, and did not until this
   landed: `shared_inputs()["corpus"]` hashed `raw/` alone, so a curated edit
   was invisible and the stage was skipped.
