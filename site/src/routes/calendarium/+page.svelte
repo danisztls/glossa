@@ -32,7 +32,9 @@
 	 * dressed up as an answer the site cannot give.
 	 */
 	import { page } from '$app/state';
-	import { replaceState } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import {
 		celebrationName,
@@ -45,7 +47,7 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST } from '$lib/calendar/national';
-	import { bcp47, i18n, t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
 	 *  the one place in this codebase where local time is the correct basis.
@@ -67,34 +69,27 @@
 			options: { nationalCalendar: c } as CalendarOptions
 		}))
 	];
-	let calendarId = $state('general');
-	let options = $derived(CALENDARS.find((c) => c.id === calendarId)!.options);
+	const COUNTRY_IDS = NATIONAL_CALENDAR_LIST.map((c) => c.id);
 
 	/**
-	 * A country's name, in the reader's own language, from the platform.
+	 * BOTH CONTROLS READ THE URL, and neither keeps a copy of its own.
 	 *
-	 * `Intl.DisplayNames` is what the language menu already uses for language
-	 * names (`menu-filter.ts`), and it earns its place here for the same
-	 * reason: fifteen country names in thirty-four interface languages is 510
-	 * strings nobody would maintain, and every browser already knows them. A
-	 * tag it cannot name falls back to the code, which is at least the ISO
-	 * name of the country.
+	 * The date has lived in `?d=` since this page was written, for the reason
+	 * above; the calendar joins it in `?c=` on the same argument the compare
+	 * toggle makes (`compare-nav.svelte.ts`): the address in front of the
+	 * reader should be the address that reproduces what they are looking at,
+	 * and a control that changed the page without changing the URL hands out
+	 * links that don't show what the sender sees. It also means a reload keeps
+	 * the reader in their own country's calendar.
+	 *
+	 * An unknown or absent `c` is the general calendar rather than an error —
+	 * a query parameter is typed by hand and pasted around, and the general
+	 * calendar is what this page shows when nobody has said otherwise.
 	 */
-	function calendarLabel(id: string, lang: string): string {
-		if (id === 'general') return t('calendar.which.general');
-		const code = id.toUpperCase();
-		try {
-			// `bcp47`, for the reason `menu-filter.ts`'s own `Intl` call gives:
-			// `zht` is structurally valid and unresolvable, so it does not
-			// throw into the `catch` below — it answers in the browser's
-			// locale, which reads as a bug in the country list rather than in
-			// the tag.
-			return new Intl.DisplayNames([bcp47(lang)], { type: 'region' }).of(code) ?? code;
-		} catch {
-			return code;
-		}
-	}
-
+	let calendarId = $derived(
+		CALENDARS.find((c) => c.id === page.url.searchParams.get('c'))?.id ?? 'general'
+	);
+	let options = $derived(CALENDARS.find((c) => c.id === calendarId)!.options);
 	let selected = $derived(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
 	let day = $derived(liturgicalDay(selected, options));
 	let year = $derived(liturgicalYearOf(selected));
@@ -108,10 +103,41 @@
 		wholeYear.filter((d) => d.celebration.rank !== 'weekday' || d.optional.length > 0)
 	);
 
-	function go(iso: string) {
+	/**
+	 * Commit a control's new value to the address bar.
+	 *
+	 * `goto`, NOT `$app/navigation`'s `replaceState`, and the difference is the
+	 * whole reason these controls used to do nothing. Shallow routing updates
+	 * `history` and `page.state` and deliberately never touches `page.url` —
+	 * so the address bar changed under every click while `selected`, which is
+	 * derived from `page.url`, stayed on today's date for the life of the
+	 * page. No error, no warning: the page simply had two ideas of where it
+	 * was and only showed one of them.
+	 *
+	 * The three flags are the same set `compare-nav.svelte.ts` commits its own
+	 * parameter with, for the same reasons: `replaceState` because stepping a
+	 * day is not a destination and a reader who stepped through a week should
+	 * still be one Back press from the page they arrived from; `noScroll`
+	 * because the year's listing below can be scrolled to the day in question
+	 * and jumping to the top would lose it; `keepFocus` because these ARE the
+	 * focused controls, and a keyboard reader who lost focus to `<body>` would
+	 * have to tab back to the arrow they just pressed to press it again.
+	 */
+	function commit(params: { d?: string; c?: string }) {
 		const url = new URL(page.url);
-		url.searchParams.set('d', iso);
-		replaceState(url, page.state);
+		if (params.d !== undefined) url.searchParams.set('d', params.d);
+		// The general calendar is the default, so it is absence rather than a
+		// value: `?c=general` would be a parameter that says nothing, and it
+		// would sit in every link a reader copies off the default page.
+		if (params.c !== undefined) {
+			if (params.c === 'general') url.searchParams.delete('c');
+			else url.searchParams.set('c', params.c);
+		}
+		goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+	}
+
+	function go(iso: string) {
+		commit({ d: iso });
 	}
 
 	function step(days: number) {
@@ -131,28 +157,55 @@
 		<p class="page-tagline">{t('calendar.tagline')}</p>
 
 		<div class="controls">
-			<label>
-				<span>{t('calendar.date')}</span>
+			<label class="control">
+				<span class="label-micro">{t('calendar.date')}</span>
 				<input
+					class="date-field"
 					type="date"
 					value={formatIsoDate(selected)}
 					oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
 				/>
 			</label>
-			<label>
-				<span>{t('calendar.calendar')}</span>
-				<select bind:value={calendarId}>
-					{#each CALENDARS as c (c.id)}
-						<option value={c.id}>{calendarLabel(c.id, lang)}</option>
-					{/each}
-				</select>
-			</label>
+			<div class="control">
+				<span class="label-micro" aria-hidden="true">{t('calendar.calendar')}</span>
+				<CalendarMenu
+					value={calendarId}
+					countries={COUNTRY_IDS}
+					{lang}
+					onchoose={(id) => commit({ c: id })}
+				/>
+			</div>
+			<!-- The two arrows carry no words, for the reason `UnitNav`'s docblock
+			     gives about a row that cannot shrink: "Previous day"/"Next day" in
+			     a language that spells them out pushed this row to three lines on
+			     a phone. The words survive as `title` and `aria-label`, which is
+			     where they were already doing the work for assistive technology. -->
 			<div class="steps">
-				<button type="button" onclick={() => step(-1)}>{t('calendar.previousDay')}</button>
-				<button type="button" onclick={() => go(formatIsoDate(localToday()))}>
+				<button
+					type="button"
+					class="menu-trigger step-btn"
+					aria-label={t('calendar.previousDay')}
+					title={t('calendar.previousDay')}
+					onclick={() => step(-1)}
+				>
+					<Icon name="arrow-left" />
+				</button>
+				<button
+					type="button"
+					class="menu-trigger wide today-btn"
+					onclick={() => go(formatIsoDate(localToday()))}
+				>
 					{t('calendar.today')}
 				</button>
-				<button type="button" onclick={() => step(1)}>{t('calendar.nextDay')}</button>
+				<button
+					type="button"
+					class="menu-trigger step-btn"
+					aria-label={t('calendar.nextDay')}
+					title={t('calendar.nextDay')}
+					onclick={() => step(1)}
+				>
+					<Icon name="arrow-right" />
+				</button>
 			</div>
 		</div>
 
@@ -189,23 +242,76 @@
 </div>
 
 <style>
+	/*
+	 * THE CONTROLS ARE CHROME, so they are set in the chrome's own vocabulary
+	 * rather than in a row of browser defaults.
+	 *
+	 * They used to be a bare `<input type="date">`, a bare `<select>` and
+	 * three bare `<button>`s — five elements wearing whatever the platform
+	 * draws, sitting under a page set in the reading face, a few centimetres
+	 * from a header of bordered 2.25rem squares. Nothing about them was wrong
+	 * except that they belonged to a different site.
+	 *
+	 * What they wear now is what the header wears: `.label-micro` for the
+	 * captions (styles/components.css — the site speaking, as opposed to a
+	 * word from a text) and `.menu-trigger` for the buttons and the calendar
+	 * popover (styles/menus.css). Those are real reuse and not a copied
+	 * ruleset: a change to the chrome's border or corner radius reaches this
+	 * row without anyone remembering it is here.
+	 */
 	.controls {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
-		gap: 0.75rem 1.25rem;
+		gap: 0.75rem 1rem;
 		margin: 1rem 0 1.25rem;
+		font-family: var(--font-sans);
 	}
-	.controls label {
+	.control {
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		gap: 0.25rem;
+	}
+	/*
+	 * DELIBERATELY NOT WEARING `.menu-trigger`, though it restates that class's
+	 * geometry: this is a field the reader types into, not a control that opens
+	 * something, and borrowing the class would make every future edit to the
+	 * chrome's triggers an edit to a date picker as well. What is shared is the
+	 * geometry and the tokens, which is the part that has to agree.
+	 *
+	 * `font: inherit` is not used here — see styles/base.css on why a control
+	 * that inherits the shorthand and then sets `font-size` comes out 1.5 line
+	 * heights of the BODY tall. The family and size are named separately.
+	 */
+	.date-field {
+		height: 2.25rem;
+		padding-inline: 0.6rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-bg-elevated);
+		color: var(--color-text);
+		font-family: var(--font-sans);
 		font-size: 0.85rem;
-		color: var(--color-text-muted);
+		line-height: 1;
+	}
+	.date-field:hover {
+		border-color: var(--color-accent);
 	}
 	.steps {
 		display: flex;
 		gap: 0.4rem;
+	}
+	.today-btn {
+		font-size: 0.85rem;
+	}
+	/*
+	 * An arrow is a picture of a direction, not a character, so nothing flips
+	 * it under `dir="rtl"` — `UnitNav`'s docblock has the whole argument. The
+	 * flex row above mirrors on its own, putting "previous" where an RTL
+	 * reader looks for it; this turns the mark to point the same way.
+	 */
+	.steps:dir(rtl) .step-btn :global(svg) {
+		transform: scaleX(-1);
 	}
 	.year-heading {
 		margin-top: 2rem;

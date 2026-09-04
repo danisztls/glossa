@@ -3973,6 +3973,57 @@ because there is no text at `2026-04-05`; and as a chrome path it would multiply
 every date in history and put an unbounded set of URLs into the sitemap for pages that
 are pure computation.
 
+The calendar joined it in `?c=` on 2026-09-04, on the argument `compare-pref.svelte.ts`
+already makes for `?compare=`: the address in front of the reader should be the address
+that reproduces what they are looking at, and a control that changes the page without
+changing the URL hands out links that do not show what the sender sees. `?c=general` is
+never written — the general calendar is the default, so it is an absence rather than a
+value, and a parameter saying nothing would otherwise ride along in every link copied
+off the default page.
+
+### `replaceState` does not update `page.url`, and the controls did nothing
+
+Every control on `/calendarium` was inert from the day the page was written until
+2026-09-04: the date input and the arrows moved the address bar and the page went on
+showing today. No console error, no warning, nothing in `npm run check` or `npm test`.
+
+The page committed its date with `replaceState` from `$app/navigation`, and SvelteKit's
+shallow routing sets `page.state` and calls `history.replaceState` and **deliberately
+never assigns `page.url`** — it even stores the OLD `page.url.href` in the history entry
+it writes. Everything on the page derived from `page.url.searchParams`, so the page had
+two ideas of where it was and rendered the stale one. Shallow routing is for state that
+belongs to a history entry without belonging to an address; a query parameter the render
+reads is exactly what it is not for.
+
+The fix is `goto(url, { replaceState: true, noScroll: true, keepFocus: true })` — the
+same three flags `compare-nav.svelte.ts` commits its own parameter with, and for the
+same reasons. **The general lesson is about the failure's shape, not the API**: a
+control that reads derived state and writes it through a different mechanism can be
+wrong in a way that looks like nothing at all. The address bar agreed with the reader,
+which is what made it possible to click for months and conclude the page was slow rather
+than broken.
+
+### The country picker is a grid of flags
+
+It was a `<select>` of country names, and the argument for the change is what the reader
+of that control is doing: they are not weighing alternatives, they are looking for their
+own country, which they recognise by its flag faster than they can read a column of
+names in an alphabet that may not be theirs. A grid also answers "which countries does
+this site have?" by being opened, where a select showed four rows and a scrollbar.
+
+The flags are the two regional-indicator code points of the ISO 3166-1 alpha-2 code the
+calendar is already keyed by — one offset, no assets, no licence question, and nothing
+to keep in step with `national/index.ts`. **The fallback is what makes that safe**:
+Windows ships no country-flag glyphs, so Chrome and Edge there draw the pair as the two
+boxed letters `BR`, which is the country's code and so still names the cell. The cells
+are sized for that pair rather than for a picture.
+
+The name is not dropped: it is the `title` and the `aria-label` on every cell, and the
+trigger prints the current one in full. The general calendar is a labelled row above the
+grid rather than a seventeenth square, because it is the default and the thing the others
+are layers over — and it wears the Vatican flag, which is the flag of the see whose
+calendar it is.
+
 ## Scope
 
 **In**: the Bible (nine editions), the CCC, the Compendium, all encyclicals across all

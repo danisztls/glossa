@@ -1669,6 +1669,28 @@ ever become an `import`, they land in the boot chunk every route preloads.
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
 an unbounded set of URLs into the sitemap for pages that are pure computation.
+The calendar sits beside it in `?c=` (2026-09-04), never written for the general
+calendar — the default is an absence, not a value.
+
+**`replaceState` FROM `$app/navigation` DOES NOT UPDATE `page.url`, and every
+control on this page was inert because of it** (2026-09-04, §The liturgical
+calendar). Shallow routing sets `page.state` and calls `history.replaceState`,
+and assigns `page.url` nowhere — so the address bar moved on every click while
+`selected`, derived from `page.url.searchParams`, stayed on today's date. Silent
+in every direction: no console error, no `check` failure, no test. Commit a
+parameter the render reads with `goto(url, { replaceState: true, noScroll: true,
+keepFocus: true })`, the three flags `compare-nav.svelte.ts` already uses;
+shallow routing is for state that belongs to a history entry and not to an
+address.
+
+**The country picker is `CalendarMenu.svelte`, a grid of flag emoji** — two
+regional-indicator code points off the alpha-2 code the calendar is already keyed
+by, so a country added to `national/` arrives with its flag drawn and no table to
+update. Windows renders the pair as the boxed letters `BR`, which is a legible
+fallback and why the cells are sized for two letters rather than a picture; the
+name is the `title` and the `aria-label`. The row's controls wear
+`.menu-trigger` and `.label-micro` rather than restating them, so a change to the
+chrome reaches this page without anyone remembering it is there.
 
 **Adding a country is a data file and no code.** `NationalCalendar` is a layer —
 propers, overrides, transfers, and general celebrations kept on another day —
