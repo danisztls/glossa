@@ -29,7 +29,7 @@
  * kind of thing that is 98% right and silently wrong in the remaining 2%, and
  * no amount of re-reading finds those. `oracle.test.ts` compares every day of
  * three years, in all eight transfer variants, against calendars computed
- * independently by GCatholic — see `pipeline/scrapers/calendar.py` for what
+ * independently by GCatholic — see `pipeline/scrapers/liturgical_calendar.py` for what
  * the oracle is and why it is an oracle rather than a source. The Latin names
  * are the Calendarium's own formulae and are asserted against it; the English
  * and Portuguese are the Missal's wordings in those languages and are NOT,

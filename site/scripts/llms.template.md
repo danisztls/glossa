@@ -82,6 +82,7 @@ Everything else on the site belongs to the publishers below. The colophon states
 ## Where the texts come from
 
 - [vatican.va](https://www.vatican.va/): the Catechism of the Catholic Church, the Compendium of the Catechism, the Compendium of the Social Doctrine of the Church, the Code of Canon Law, and the encyclicals, conciliar documents and exhortations — Libreria Editrice Vaticana. The authoritative publisher, in more languages than this site carries.
+- [Vatican News](https://www.vaticannews.va/): the common prayers in the four languages the Compendium is not published in — Hindi, Vietnamese and Chinese in both scripts — and, in the languages it is, the prayers it omits and the two Creeds in their current English. Dicastery for Communication; the text is Libreria Editrice Vaticana's.
 - [Corpus Thomisticum](https://www.corpusthomisticum.org/): the Latin text of the Summa Theologiae.
 - [Christian Classics Ethereal Library](https://ccel.org/): the English Summa Theologiae, the Fathers of the English Dominican Province translation.
 - [sacredbible.org](https://sacredbible.org/): the Catholic Public Domain Version and the Clementine Vulgate of 1914.

@@ -12,7 +12,7 @@
  * Poland is also the calendar that showed the rank tokens in these feeds are
  * the LANGUAGE's initials rather than Latin's: its `SUMMARY` prints `U Ś W w`
  * for *uroczystość, święto, wspomnienie*, where six Romance-and-Latin feeds
- * had all printed `S F M m` (see `RANKS` in `pipeline/scrapers/calendar.py`).
+ * had all printed `S F M m` (see `RANKS` in `pipeline/scrapers/liturgical_calendar.py`).
  */
 
 import type { NationalCalendar } from '../types';

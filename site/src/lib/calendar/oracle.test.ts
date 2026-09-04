@@ -2,7 +2,7 @@
  * The computed calendar, checked day by day against calendars computed by
  * somebody else.
  *
- * `pipeline/scrapers/calendar.py` fetches GCatholic's iCal feeds for three
+ * `pipeline/scrapers/liturgical_calendar.py` fetches GCatholic's iCal feeds for three
  * years in eight transfer variants of the universal calendar, plus fifteen
  * national calendars (sixteen files — the United States is published twice,
  * with the Ascension on the Thursday and on the Sunday), and writes them to

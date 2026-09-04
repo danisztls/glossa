@@ -148,11 +148,16 @@ pipeline/scrapers/
                      `walk_vatican_i` is the one forked walk, its
                      docstring saying why.
   prayers.py
-  calendar.py        the General Roman Calendar, fetched from GCatholic as an
-                     ORACLE. Writes nothing to `build/` and produces no work:
-                     the site COMPUTES the calendar and this is what proves it
-                     right. Its output is tracked in this repository, not the
-                     corpus -- see below.
+  liturgical_calendar.py   the General Roman Calendar, fetched from GCatholic
+                     as an ORACLE. Writes nothing to `build/` and produces no
+                     work: the site COMPUTES the calendar and this is what
+                     proves it right. Its output is tracked in this repository,
+                     not the corpus -- see below. NOT `calendar.py`: a script's
+                     own directory leads `sys.path`, so that name shadowed the
+                     STDLIB `calendar` for every sibling, and `common` imports
+                     `http.client`, which imports `email`, which imports
+                     `calendar` -- every other scraper died on a circular
+                     import it had no part in (renamed 2026-09-04).
   audit.py census.py apply_sweep.py   tools over already-written output
 ```
 
@@ -1194,7 +1199,7 @@ The site's half (rendering, preferences, anchors) is in `site/CLAUDE.md`.
   number of underscores overall, and the anomaly report is for the record that
   would prove that stale.
 
-## `calendar.py` fetches an oracle, and writes no work at all
+## `liturgical_calendar.py` fetches an oracle, and writes no work at all
 
 The one scraper here that produces nothing for `build/`. It fetches GCatholic's
 iCal calendars into `raw/gcatholic-calendar/` and parses them to

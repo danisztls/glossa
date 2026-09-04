@@ -3698,10 +3698,18 @@ week Ordinary Time resumes at after Pentecost.
 
 GCatholic publishes the General Roman Calendar as iCal, per year, in the eight variants
 that correspond exactly to the three transfers a conference may make, and in Latin as
-well as the vernaculars. `pipeline/scrapers/calendar.py` fetches those into
+well as the vernaculars. `pipeline/scrapers/liturgical_calendar.py` fetches those into
 `raw/gcatholic-calendar/` and parses them to `site/src/lib/calendar/oracle/`, where
 `oracle.test.ts` compares **every day of three years in all eight variants, plus
 sixteen national calendars** — 72 calendars — against what this project computes.
+
+It is `liturgical_calendar.py` and not `calendar.py`, which is what it was called for a
+day. A script's own directory leads `sys.path`, so that name was the stdlib `calendar`
+for every other file in `pipeline/scrapers/` — and `common` imports `http.client`, which
+imports `email`, which imports `calendar`. Every scraper in the directory died on a
+circular import through a module it never mentions, in a traceback naming
+`email/_parseaddr.py`. The shadowing is silent when it does not crash, which is worse:
+anything reaching for `calendar.monthrange` would have got a calendar of feast days.
 
 **Nothing from the oracle is served to a reader.** It decides no day at runtime; it
 decides whether the code that decides days is right. That is what makes it an oracle in

@@ -49,7 +49,7 @@ did not do.
 - **The sixteenth country and beyond.** The list stops at Germany because it
   was drawn by Catholic population and a list has to stop; Uganda, Tanzania,
   Canada, Vietnam and Portugal are the next ones, and GCatholic publishes ~100.
-  A country now costs one row in `pipeline/scrapers/calendar.py`'s `CALENDARS`
+  A country now costs one row in `pipeline/scrapers/liturgical_calendar.py`'s `CALENDARS`
   and one file under `site/src/lib/calendar/national/` — measured across the
   fifteen, mostly transcription and a few rounds of the oracle. **What it does
   NOT cost is engine work, and that is now evidence rather than a hope**: the

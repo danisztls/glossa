@@ -23,7 +23,7 @@
  *
  * Each entry below is present because the oracle showed Brazil's calendar
  * differing from the general one on a specific day — 36 days across 2025,
- * 2026 and 2027 (`pipeline/scrapers/calendar.py`). Nothing is here because a
+ * 2026 and 2027 (`pipeline/scrapers/liturgical_calendar.py`). Nothing is here because a
  * list somewhere said Brazil venerates a saint; a celebration earns a row by
  * making a day come out differently.
  */
