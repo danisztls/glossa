@@ -412,6 +412,44 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 
 ## Prayers — `prayers.json`
 
+> **THIS WORK IS CURATED, AND EVERYTHING BELOW DESCRIBES ITS FILE FORMAT
+> RATHER THAN ITS PROVENANCE** (2026-09-04, `decisions.md` §The curated
+> prayers). `build/prayer.common.*` is no longer a parse. The corpus is
+> `<corpus>/oracles/prayers/*.json` — one file per prayer, the text as it
+> should read in every language, with each editorial act recorded beside it —
+> and `pipeline/scrapers/prayers_project.py` writes these work directories
+> from it. `prayers.py` still reads every page, as the verifier
+> (`--verify-curated`) that each curated line is findable in the witness it
+> cites; 363 (language, prayer) pairs, 0 unexplained departures.
+>
+> Four statements in this section are superseded, and are kept because the
+> reasoning that produced them is still the reasoning:
+>
+> - **The edition list is 20, not 16.** `hi`, `vi`, `zh` and `zht` come from
+>   Vatican News, which publishes no Compendium; so do seven prayers the
+>   Compendium's appendix does not print at all (St Michael, St Joseph, the
+>   Holy Family, spiritual communion, the Divine Mercy chaplet, the
+>   consecration to the Immaculate Heart, the prayer for the Pope). 477
+>   prayers across 20 editions.
+> - **`latin` is ONE canonical text, attached to every edition**, not each
+>   page's own transcription of it. The appendix prints the Latin beside every
+>   vernacular, so the corpus held fourteen transcriptions of one text with
+>   their own misprints (`luz perpetua`, `Spirits Sancti`, `sieut locutus`).
+>   Each curated file holds one Latin; `prayer.common.la` is emitted from that
+>   same field, so the companion a German reader sees and the Latin edition a
+>   Latin reader reads cannot disagree. Every witness's departure from it is
+>   recorded per prayer in `latin_witnesses` — 122 of them.
+> - **`prayer.common.la` is no longer "the English page's, every character of
+>   it."** It is the canonical Latin of the curation, and it cites the two
+>   witnesses it was reconciled from rather than the fifty-nine pages that
+>   print some Latin.
+> - **A block may carry VERSE STRUCTURE the page does not print.** The curated
+>   files declare a `form` (`prose` / `clauses` / `verse` / `versicles` /
+>   `petitions` / `groups`), and where that form is metrical the lines are
+>   grouped into stanzas: the Veni Creator is seven quatrains in the projected
+>   editions, where every vernacular page runs its 28 lines together and only
+>   `prayer.common.la` divided them.
+
 A prayer collection has no numbered units in its source at all — unlike CCC paragraphs, Compendium questions, or document sections, none of which this schema invents a number for. Work IDs `prayer.{slug}.{lang}`, where `{lang}` is a full BCP-47 tag and may carry a region — `prayer.common.{be,de,en,en-gb,es,fr,hu,id,it,la,lt,pt,ro,ru,sl,sv}` (currently one slug: `prayer.common.{lang}`, combining the Compendium of the CCC's Appendix A, the two Creeds and the Our Father, and the Litany of Loreto — but **not every edition has every part**, because the source families are not published in the same languages: see the symmetry bullet below); manifest `type: "prayer"`. Array ordered by `n`:
 
 ```jsonc
