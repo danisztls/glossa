@@ -685,76 +685,62 @@ subdivisions. `docs/research/prayers-glossa.md` §6.2 holds the measurements.
 
 **`build/prayer.common.*` is not a parse** (2026-09-04, `docs/decisions.md`
 §The curated prayers, `docs/corpus-schema.md` §Prayers). The corpus is
-`<corpus>/oracles/prayers/*.json` — 35 files, 477 prayers, 20 editions, one
-file per prayer holding the text as it should read in every language with each
-editorial act recorded beside it. `prayers_project.py` writes the work
-directories from it; everything below this section still describes how the
-pages are READ, which is what the verifier does.
-
-    uv run pipeline/rebuild.py --only prayers-verify,prayers --force
+`<corpus>/oracles/prayers/*.json` — 35 files, 477 prayers, 20 editions, the
+text as it should read with each editorial act recorded beside it.
+`prayers_project.py` writes the work directories from it; everything below
+still describes how the pages are READ, which is what the verifier does.
 
 - **Two stages, and the split is the point.** `prayers-verify` runs
   `prayers.py --verify-curated`, reads every page and declares no outputs;
-  `prayers` runs `prayers_project.py`, writes `prayer.*` and reads no page. So
-  the `outputs` partition stays exact and a failing check cannot take the
-  reader's text down with it. Current: **363 (language, prayer) pairs, 0
-  unexplained departures.**
+  `prayers` writes `prayer.*` and reads no page. The `outputs` partition stays
+  exact and a failing check cannot take the reader's text down with it.
+  Currently 363 (language, prayer) pairs, 0 unexplained departures.
 - **A declared repair is not a defect.** The verifier reads the curated
-  `flags`: a word missing from the page _because a flag says it was repaired_
-  passes (the Indonesian `berlindung` is one word in the curation and
-  `ber lindung` on the page, which is why it was repaired). A word no flag
-  accounts for fails. That is the whole guard against curation drifting into
-  invention.
+  `flags`: a word missing from the page because a flag says it was repaired
+  passes (`berlindung` is one word in the curation, `ber lindung` on the
+  page); a word no flag accounts for fails. That is the guard against curation
+  drifting into invention.
 - **THE CURATION MUST NOT READ ITS OWN PROJECTION.** `curate.py` takes its
-  witnesses from `build/prayer.common.*`, which the projector now writes — run
-  in that order and every prayer agrees with itself. It refuses when a
-  manifest says `"curated": true`. To re-curate:
+  witnesses from `build/`, which the projector writes — run in that order and
+  every prayer agrees with itself. It refuses when a manifest says
+  `"curated": true`. To re-curate:
 
       uv run pipeline/scrapers/prayers.py --write-parse /tmp/parse
       GLOSSA_PARSE_DIR=/tmp/parse uv run --no-project python run_all.py
 
-  `--write-parse` is in no stage and exists only for this. It writes the two
-  DERIVED editions as well — `la`, where the canonical Latin is read from, and
-  `en-gb` — because a parse directory without them resolves the Latin to
-  nothing and silently drops the companion from every prayer that has one.
+  `--write-parse` is in no stage and writes the two DERIVED editions too —
+  `la`, where the canonical Latin is read from, and `en-gb`. Without them the
+  Latin resolves to nothing and the companion vanishes from every prayer.
 
 - **`--changed-only` fingerprints `oracles/` too**, and did not until this
-  landed: `shared_inputs()["corpus"]` hashed `raw/` alone, so editing a
-  curated prayer changed nothing it could see and the stage was skipped. The
-  silent stale answer that flag is opt-in to avoid.
+  landed: `shared_inputs()["corpus"]` hashed `raw/` alone, so a curated edit
+  was invisible and the stage was skipped.
 
-**EDITORIALISING MOVED THE CORPUS TOWARD THE SOURCE, NOT AWAY FROM IT**, which
-is the finding worth carrying to the next work. Every editorial act so far
-undid damage done by a RENDERING rather than by an editor: fourteen
-transcriptions of one Latin collapsed to the text that was composed once; the
-Veni Creator's seven quatrains recovered from pages that print 28 undivided
-lines; `sæ´ culo`, `kami ber / lindung` and `och den / Helige Ande` closed,
-each a column wrap inside a word or a phrase. The sharpest case is the
-Belarusian and Russian Veni Creator: **both PDFs print 28 lines and our own
-reader merged two of them**, so "editing" there was undoing our damage to
-recover what the page literally prints. What looks like fidelity is often
-fidelity to an artifact of the copy.
+**EDITORIALISING MOVED THE CORPUS TOWARD THE SOURCE, NOT AWAY.** Every
+editorial act so far undid damage done by a RENDERING rather than an editor:
+fourteen transcriptions of one Latin collapsed to the text composed once; the
+Veni Creator's quatrains recovered from pages printing 28 undivided lines;
+`sæ´ culo`, `kami ber / lindung`, `och den / Helige Ande` closed, each a column
+wrap inside a word or phrase. Sharpest: **both the Belarusian and Russian PDFs
+print 28 lines and our own reader merged two**, so editing there recovered
+what the page literally prints. What looks like fidelity is often fidelity to
+an artifact of the copy.
 
-- **The PDF appendix reader mis-reads VERSE as wrapped prose, and the bug is
-  structural.** `carry = line.x1 >= region.measure(line, latin) - MEASURE_TOL`
-  calls a line reaching the column measure a wrap; `reach` is the column's
-  95th percentile, so in a column of verse the longest metrical line reaches
-  it BY CONSTRUCTION. Measured 2026-09-04: the Belarusian Veni Creator's
-  opening line is `x1=172.0` against a p95 of `152.0`, the widest in the poem,
-  and was read as running on into the line beneath; the Russian's
-  `Во славе с Ним – Воскресший Сын.` is `x1=575.0`, the widest in its column,
-  same result. The curated files restore the printed lines (`unmerge`), and
-  **the reader is deliberately unchanged**: that rule serves four editions
-  across both verse and justified prose — the Memorare has to rejoin — so a
-  discriminator has to be measured over all of them before it is kept. 27% and
-  47% of verse lines already sit within `MEASURE_TOL` of the measure, so the
+- **The PDF appendix reader mis-reads VERSE as wrapped prose, structurally.**
+  `carry = line.x1 >= region.measure(...) - MEASURE_TOL` calls a line reaching
+  the measure a wrap, and `reach` is the column's 95th percentile — so in
+  verse the longest metrical line reaches it BY CONSTRUCTION. Measured: the
+  Belarusian's opening line is `x1=172.0` against p95 `152.0`, the Russian's
+  `Во славе с Ним – Воскресший Сын.` is `575.0`, both the widest in their
+  column, both swallowed the line beneath. The curated files restore them
+  (`unmerge`); **the reader is deliberately unchanged**, because that rule
+  serves four editions across verse AND justified prose (the Memorare must
+  rejoin) and 27–47% of verse lines already sit within `MEASURE_TOL` — the
   obvious threshold is not obviously safe.
-- **An `Amen.` on a line of its own is lineation, not metre.** Hungarian,
-  Lithuanian and Swedish set it that way in the Veni Creator, which is what
-  put them at 29, 29 and 25 lines; folded onto the line before, Hungarian and
-  Lithuanian are seven quatrains exactly and Swedish is six. Only the
-  Indonesian remains irregular, and for a reason in the text: its sixth stanza
-  is compressed into two long lines.
+- **An `Amen.` on its own line is lineation, not metre.** Folding it onto the
+  line before leaves Hungarian and Lithuanian at seven quatrains and Swedish
+  at six. Only the Indonesian stays irregular, for a reason in the text: its
+  sixth stanza is compressed into two long lines.
 
 ## Prayers: the Compendium's body is a source, and the Latin is the instrument
 
