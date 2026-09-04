@@ -212,3 +212,62 @@ black square.
 recording.** Wrapping the picture in a control — which is what makes it a tab
 stop at all — puts a shrink-to-fit box of `auto` height between it and the
 stage, so `max-block-size: 100%` resolves to nothing, silently.
+
+## Focus mode
+
+**It is `print.css`'s hidden list, read as a screen instead of as paper.**
+`data-zen` on `<html>` — a fifth axis beside `data-theme`, `data-sepia`,
+`data-oled` and `data-mono` — and `styles/zen.css` is the whole behaviour.
+There was nothing to invent about which selectors those are: print has been
+removing the same chrome for as long as the site has had any, and argues each
+one in place.
+
+**Three are deliberately not repeated, and each is the difference between the
+two media.** `.unit-nav` stays — print drops it because paper cannot be
+followed anywhere, but on a screen prev/next IS reading, and a mode that
+strands the reader at the end of a unit has hidden the text rather than the
+distractions. `.reading-bar` stays, emptied rather than hidden, because it
+carries the way back out. `.breadcrumb` stays, which is print's own exception
+too, for a reason that survives the change of medium: with the header and the
+sidebar gone it is the only thing left saying which chapter of which work this
+is.
+
+**Subtractive by construction, which is what makes it safe to leave on.**
+Hiding `.reading-aside` changes no geometry at all — the aside is a grid child
+and the track it sat in is declared by `grid-template-columns`, so the column
+stays on the midline with the apparatus lane still opposite it. A mode that
+widened the measure would change where every line breaks, and the reader would
+lose their place twice on every toggle.
+
+**Every rule is gated on `:has(.reading-bar)`, and the gate is the feature.**
+The preference outlives a navigation and the only control that clears it is in
+the bar, so on a page with no bar a reader who left it on would meet a site
+with no header, no footer and nothing that put them back. One selector makes
+"the way out is always on screen" true rather than usually true, and costs less
+than a route table that would then have to be kept in step.
+
+**The header is emptied leaf by leaf and NOT `display: none`, and the trap is
+worth stating because the site relies on its inverse elsewhere.** `JumpBox` and
+`Shortcuts` each render trigger and `<dialog>` as siblings inside the control
+row. `display: none` on an ancestor takes the dialog out of the box tree too —
+exactly how `layout.css` hides `TocMenu`'s panel with its wrapper — so hiding
+the header would leave `/`, Ctrl+K and `?` still listening at the window and
+opening a modal nobody can see: `showModal()` succeeds, the page goes inert,
+nothing errors. The leaves go instead, which also clears the tab order in a way
+`visibility: hidden` would not.
+
+**`Escape` leaves the mode and carries a flag saying when it may.**
+`ShortcutContext.zen` is the fourth fact the resolver cannot read off a
+keystroke; without it the key would be claimed on every page at all times, and
+a key that quietly swallows something is dearer than one that quietly does
+nothing. The ordering is the part to preserve — the check sits after the
+overlay guard, so a dialog opened inside focus mode still closes on `Escape`
+rather than dismissing the mode and standing there.
+
+**It is `zen` in the code and "focus" on screen.** The editors that popularised
+the arrangement supply the name a developer searches for; this site publishes
+the Catechism and the Code of Canon Law, and a Buddhist school of meditation is
+not the register its chrome is written in. The strings are in the fourteen
+dictionaries holding the full chrome — the rest are partial by design and
+already fall back to English for `ui.close`, so translating this one would draw
+a second completeness boundary.

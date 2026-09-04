@@ -25,6 +25,7 @@ const ctx = (over: Partial<ShortcutContext> = {}): ShortcutContext => ({
 	typing: false,
 	overlay: false,
 	rtl: false,
+	zen: false,
 	...over
 });
 
@@ -122,6 +123,24 @@ describe('resolveShortcut', () => {
 		for (const code of ['KeyB', 'KeyC', 'KeyT', 'KeyG', 'KeyN', 'KeyP']) {
 			expect(resolveShortcut(stroke({ code }), ctx()), code).toBeNull();
 		}
+	});
+
+	it('leaves focus mode on Escape, and only while focus mode is on', () => {
+		expect(resolveShortcut(stroke({ key: 'Escape' }), ctx({ zen: true }))).toBe('exitZen');
+		// The whole reason the flag exists: `Escape` belongs to whatever else
+		// has it, and a key that is claimed and does nothing is worse than one
+		// that was never claimed.
+		expect(resolveShortcut(stroke({ key: 'Escape' }), ctx())).toBeNull();
+	});
+
+	it('yields Escape to an overlay opened from inside focus mode', () => {
+		// `AnchorMenu` over a reference, or the shortcut sheet itself. Claiming
+		// the key here would dismiss the mode and leave the panel standing.
+		expect(
+			resolveShortcut(stroke({ key: 'Escape' }), ctx({ zen: true, overlay: true }))
+		).toBeNull();
+		// And the jump box, which is a field: Escape there closes the box.
+		expect(resolveShortcut(stroke({ key: 'Escape' }), ctx({ zen: true, typing: true }))).toBeNull();
 	});
 });
 

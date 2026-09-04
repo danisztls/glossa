@@ -14,9 +14,11 @@
 	only the comparison picker appears, next to the toggle that summoned it.
 
 	ONE FLAT ROW, IN A FIXED ORDER: contents, bookmark, print, roll, edition,
-	compare, second edition. The page-level buttons come first and the
+	compare, second edition, focus. The page-level buttons come first and the
 	text-level controls follow, so the row runs from what is being read to how
-	it is being read. The table of contents sits ahead of all of them because
+	it is being read — and the focus toggle is last because it is the far end
+	of that same axis, the only control here about the page AROUND the text
+	rather than about the text. The table of contents sits ahead of all of them because
 	it is the one control that does not act on this page at all — it leaves
 	it — and because it is the sidebar's narrow-screen stand-in (`TocMenu`),
 	which is a thing a reader looks for at the start of the chrome rather than
@@ -86,6 +88,7 @@
 	import ApparatusMenu from './ApparatusMenu.svelte';
 	import type { WorkManifest } from '$lib/types';
 	import CompareToggle from './CompareToggle.svelte';
+	import ZenToggle from './ZenToggle.svelte';
 	import BookmarkButton from './BookmarkButton.svelte';
 	import PrintButton from './PrintButton.svelte';
 	import RandomVerseButton from './RandomVerseButton.svelte';
@@ -249,6 +252,13 @@
 			/>
 		{/if}
 	</div>
+	<!-- Last, and outside the editions wrapper: see `ZenToggle` for why the
+	     outermost control on the "how it is being read" axis belongs at that
+	     end of the row, and `styles/zen.css` for the `> *:not(.zen-toggle)`
+	     rule that leaves this one standing when it is pressed. Rendered by
+	     every caller, index routes included — a table of contents is a page a
+	     reader reads down as much as a chapter is. -->
+	<ZenToggle />
 </div>
 
 <style>

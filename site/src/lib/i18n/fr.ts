@@ -320,5 +320,7 @@ export const fr: Dictionary = {
 	'shortcuts.title': 'Raccourcis clavier',
 	'shortcuts.betweenDocuments': 'Entre les documents',
 	'shortcuts.withinDocument': 'Dans le document',
-	'shortcuts.show': 'Afficher cette liste'
+	'shortcuts.show': 'Afficher cette liste',
+	'zen.enter': 'Mode concentration',
+	'zen.exit': 'Quitter le mode concentration'
 };

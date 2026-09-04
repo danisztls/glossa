@@ -350,6 +350,8 @@ export const pt: Dictionary = {
 	'shortcuts.betweenDocuments': 'Entre documentos',
 	'shortcuts.withinDocument': 'Dentro do documento',
 	'shortcuts.show': 'Mostrar esta lista',
+	'zen.enter': 'Modo de concentração',
+	'zen.exit': 'Sair do modo de concentração',
 	'nav.calendar': 'Calendário',
 	'calendar.title': 'Calendário Litúrgico',
 	'calendar.tagline':

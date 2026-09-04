@@ -85,6 +85,16 @@
 	// itself and is already taken; `message-square-quote` draws a speech
 	// bubble, and an apparatus is not someone talking.
 	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
+	// Focus mode's two states. Both draw the same four CORNER BRACKETS, opened
+	// outward and folded inward — a frame growing to hold the page, and the
+	// frame coming back. The frame is what actually changes, which is why this
+	// pair and not `expand`/`shrink`: those are four diagonal arrows running to
+	// the corners, the video player's fullscreen glyph, and this control does
+	// not ask the browser for a screen. `focus` was the other candidate and is
+	// a camera's autofocus reticle — the right word attached to the wrong
+	// drawing.
+	import Maximize from '@lucide/svelte/icons/maximize';
+	import Minimize from '@lucide/svelte/icons/minimize';
 
 	const ICONS = {
 		search: Search,
@@ -114,7 +124,9 @@
 		'arrow-left': ArrowLeft,
 		'arrow-right': ArrowRight,
 		'arrow-down': ArrowDown,
-		'notebook-pen': NotebookPen
+		'notebook-pen': NotebookPen,
+		maximize: Maximize,
+		minimize: Minimize
 	};
 
 	export type IconName = keyof typeof ICONS;

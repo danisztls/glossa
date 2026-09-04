@@ -1,0 +1,126 @@
+/*
+ * FOCUS MODE — the reading page with everything but the text taken away.
+ *
+ * `$lib/zen.svelte.ts` puts `data-zen` on `<html>` and knows nothing else;
+ * this file is the entire behaviour. It is subtractive by construction: it
+ * hides boxes and clears the chrome's own borders and padding, and it moves
+ * nothing, resizes nothing and re-lays-out nothing. That is what makes it
+ * safe to leave on across a navigation — a mode that changed the measure
+ * would change where every line breaks, and the reader would lose their
+ * place twice on every toggle.
+ *
+ * ## The list is print's list, minus what a screen still needs
+ *
+ * `print.css` has removed the same chrome for as long as this site has had
+ * any, and its selectors are argued there rather than here. Three of them
+ * are deliberately NOT repeated below, and each exception is the difference
+ * between paper and a screen:
+ *
+ *   - `.reading-bar` STAYS, emptied rather than hidden. It carries the way
+ *     back out. Print hides it because paper does not scroll and the button
+ *     that produced the page is spent; here it is the one control the reader
+ *     must be able to find without knowing a keystroke.
+ *   - `.unit-nav` STAYS. Print's reason for dropping it is that "paper does
+ *     not scroll" — a printed page cannot be followed anywhere. On a screen
+ *     prev/next IS reading: it is how a chapter becomes the next chapter,
+ *     and a focus mode that stops the reader at the end of a unit has hidden
+ *     the text rather than the distractions.
+ *   - `.breadcrumb` stays, which is print's own exception too, for a reason
+ *     that survives the change of medium: with the header and the sidebar
+ *     gone it is the only thing left on the page that says which chapter of
+ *     which work this is. It is one muted line above the title and it
+ *     scrolls away with the title.
+ *
+ * ## Why every rule is gated on `:has(.reading-bar)`
+ *
+ * The preference persists, and the toggle lives in the reading bar — so on
+ * a page with no bar (the home page, `/signata`, `/colophon`,
+ * `/calendarium`) a reader who had switched it on would meet a site with no
+ * header, no footer and no control anywhere that put them back. The gate is
+ * what makes the promise "the way out is always on screen" true rather than
+ * merely usually true, and it costs one selector rather than a route table
+ * this file would then have to be kept in step with.
+ *
+ * A browser without `:has()` drops these rules entirely and the mode simply
+ * does nothing, which is the right direction to fail in.
+ *
+ * ## Why the header is emptied and not `display: none`
+ *
+ * `JumpBox` and `Shortcuts` sit in `.controls`, and each renders its trigger
+ * and its `<dialog>` as siblings inside the same component. `display: none`
+ * on any ancestor removes the dialog from the box tree with everything else
+ * — which is precisely how `layout.css` hides `TocMenu`'s panel along with
+ * its wrapper — so hiding `.site-header` outright would leave `/`, Ctrl+K
+ * and `?` still listening at the window and opening a modal that cannot be
+ * seen. `showModal()` would succeed, the rest of the page would go inert,
+ * and the reader would be looking at a page that had stopped responding for
+ * no visible reason.
+ *
+ * So the leaves go instead: the wordmark, the nav, and every `.menu-trigger`
+ * in the row. Nothing focusable is left behind (`display: none` takes them
+ * out of the tab order, which `visibility: hidden` on the bar would not),
+ * every dialog still opens normally, and with no rendered children and its
+ * own padding cleared the header collapses to nothing on its own.
+ *
+ * `.site-footer` holds no dialog and is hidden the ordinary way.
+ */
+
+/* The site header, emptied leaf by leaf — see the docblock. `background` and
+   the rule under it would otherwise paint a bare strip above the text. */
+html[data-zen]:has(.reading-bar) .site-header {
+	background: transparent;
+	border-bottom: 0;
+}
+
+html[data-zen]:has(.reading-bar) .header-bar {
+	padding: 0;
+}
+
+html[data-zen]:has(.reading-bar) .site-header .brand,
+html[data-zen]:has(.reading-bar) .site-header .primary-nav,
+html[data-zen]:has(.reading-bar) .site-header .menu-trigger {
+	display: none;
+}
+
+/*
+ * The footer, the two sticky navigation columns, the floating helpers and
+ * the narrow-screen stand-ins for the sidebar. Every one of these is
+ * STANDING chrome: it is on the page because the page is this site, not
+ * because anything happened. What is left alone by that rule is the class of
+ * overlay that appears in answer to an event — `UpdateBanner` when a new
+ * version has actually deployed — which a reader has asked to be told about
+ * and which is gone again once they have.
+ *
+ * The two asides are already `display: none` below 80rem (`layout.css`), so
+ * hiding them at every width is a state the reading routes are built for
+ * rather than a new one: the bar's own contents panel is what stands in, and
+ * in focus mode that is hidden too.
+ */
+html[data-zen]:has(.reading-bar) .site-footer,
+html[data-zen]:has(.reading-bar) .reading-aside,
+html[data-zen]:has(.reading-bar) .index-aside,
+html[data-zen]:has(.reading-bar) .mobile-picker,
+html[data-zen]:has(.reading-bar) .toc-inline,
+html[data-zen]:has(.reading-bar) .install-hint,
+html[data-zen]:has(.reading-bar) .to-top,
+html[data-zen]:has(.reading-bar) .compare-toolbar {
+	display: none;
+}
+
+/*
+ * THE BAR IS EMPTIED, NOT RESTYLED — it keeps its background, its rule and
+ * its height, and only its contents go. That is not timidity about the look:
+ * an opaque bar is what stops the text from sliding under an invisible edge
+ * as it scrolls, and the border is what explains where it went. A
+ * transparent bar with one button floating on it was the alternative, and it
+ * costs either occluded words or a `pointer-events` carve-out to keep the
+ * text under it selectable.
+ *
+ * `> *` and not a descendant selector: the toggle is a direct child, and so
+ * is `.reading-bar-editions`, the wrapper that keeps the three edition
+ * controls wrapping as one phrase. Reaching further in would hide the
+ * toggle's own icon.
+ */
+html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle) {
+	display: none;
+}

@@ -1635,6 +1635,46 @@ a runtime error nothing in `npm test`, `npm run check` or the build sees.
 A callback fits both consumers (`CommentaryGloss`'s trailing mark has nothing
 in the text to bind to) and has no third state to explain.
 
+## Focus mode: print's hidden list, with three exceptions and one gate
+
+`data-zen` on `<html>` (`$lib/zen.svelte.ts`, a fifth axis written exactly as
+`theme.svelte.ts` writes its four) and `styles/zen.css` is the whole
+behaviour. The selectors are `print.css`'s, which argues each one in place —
+**do not re-argue them here; add to both or neither.** `site/docs/reading.md`.
+
+- **Three are deliberately NOT repeated, and each is paper vs screen.**
+  `.unit-nav` stays (prev/next IS reading; print drops it because paper
+  cannot be followed), `.reading-bar` stays emptied rather than hidden (it
+  carries the way out), `.breadcrumb` stays (print's own exception, and with
+  the header and sidebar gone it is the only thing left saying which chapter
+  of which work this is).
+- **Every rule is gated on `:has(.reading-bar)`.** The preference persists
+  across navigations and the only control that turns it off is in the bar, so
+  without the gate a reader who left it on would meet the home page with no
+  header, no footer and no way back. A new page that should honour focus mode
+  needs a `ReadingBar`, not an entry in a list.
+- **Hiding a container that holds a `<dialog>` disables the dialog, and this
+  is where it bites.** `JumpBox` and `Shortcuts` render trigger and `<dialog>`
+  as siblings inside `.site-header`, so `display: none` on the header would
+  leave `/`, Ctrl+K and `?` listening at the window and opening a modal that
+  cannot be seen — `showModal()` succeeds, the page goes inert, nothing
+  errors. The header is emptied leaf by leaf instead (`.brand`,
+  `.primary-nav`, `.menu-trigger`), which also clears the tab order.
+  `layout.css` relies on the same mechanism in the other direction for
+  `TocMenu`.
+- **It is subtractive: nothing moves, resizes or re-lays-out.** Hiding
+  `.reading-aside` costs no geometry — the track is declared by
+  `grid-template-columns` and survives its child. Keep it that way, or a
+  toggle re-breaks every line and the reader loses their place.
+- **`zen` in the code, "focus" on screen.** The mode's name is what a
+  developer searches for; the reader-facing string is not, on a site
+  publishing the Catechism and the Code of Canon Law. `zen.enter`/`zen.exit`
+  are in the fourteen dictionaries carrying the full chrome and deliberately
+  not in the twenty-three that already fall back to English for `ui.close`.
+- **`Escape` leaves it, gated on `ShortcutContext.zen` and checked AFTER the
+  overlay guard** — otherwise a dialog opened inside focus mode would dismiss
+  the mode and stay on screen.
+
 ## The liturgical calendar is computed, and checked against someone else's
 
 `$lib/calendar/` derives every day of any liturgical year from the date of

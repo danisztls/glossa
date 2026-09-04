@@ -320,5 +320,7 @@ export const hu: Dictionary = {
 	'shortcuts.title': 'Billentyűparancsok',
 	'shortcuts.betweenDocuments': 'Dokumentumok között',
 	'shortcuts.withinDocument': 'A dokumentumon belül',
-	'shortcuts.show': 'Lista megjelenítése'
+	'shortcuts.show': 'Lista megjelenítése',
+	'zen.enter': 'Fókusz mód',
+	'zen.exit': 'Fókusz mód bezárása'
 };

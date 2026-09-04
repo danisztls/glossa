@@ -316,5 +316,7 @@ export const sv: Dictionary = {
 	'shortcuts.title': 'Kortkommandon',
 	'shortcuts.betweenDocuments': 'Mellan dokument',
 	'shortcuts.withinDocument': 'I dokumentet',
-	'shortcuts.show': 'Visa den här listan'
+	'shortcuts.show': 'Visa den här listan',
+	'zen.enter': 'Fokusläge',
+	'zen.exit': 'Avsluta fokusläget'
 };

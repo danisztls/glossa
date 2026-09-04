@@ -1,5 +1,7 @@
 /*
- * The site's stylesheet, as eleven files and an index.
+ * The site's stylesheet, as one file per concern and an index. (The count was
+ * written out here and was one behind before anyone noticed — the list below
+ * is the list.)
  *
  * IT WAS ONE FILE OF 3,304 LINES until 2026-08-28, of which 1,226 were CSS
  * and the rest the reasoning behind it. The prose is not the problem and is
@@ -37,4 +39,8 @@
 @import './styles/print.css';
 @import './styles/reading-chrome.css';
 @import './styles/menus.css';
+/* After every file whose rules it takes away — `layout.css` states the
+   contents panel's `display`, `menus.css` the triggers' — so that what focus
+   mode hides is hidden by cascade order and not only by specificity. */
+@import './styles/zen.css';
 @import './styles/direction.css';

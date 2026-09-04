@@ -312,5 +312,7 @@ export const pl: Dictionary = {
 	'shortcuts.title': 'Skróty klawiszowe',
 	'shortcuts.betweenDocuments': 'Między dokumentami',
 	'shortcuts.withinDocument': 'W dokumencie',
-	'shortcuts.show': 'Pokaż tę listę'
+	'shortcuts.show': 'Pokaż tę listę',
+	'zen.enter': 'Tryb skupienia',
+	'zen.exit': 'Zakończ tryb skupienia'
 };

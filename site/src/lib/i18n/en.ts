@@ -589,6 +589,13 @@ export const en: Dictionary = {
 	'shortcuts.betweenDocuments': 'Between documents',
 	'shortcuts.withinDocument': 'Within the document',
 	'shortcuts.show': 'Show this list',
+	// Focus mode — `ZenToggle.svelte`, and the `Esc` row of the shortcut sheet.
+	// The code calls it `zen`, after the editors that popularised the
+	// arrangement; the reader is told "focus", because this site publishes the
+	// Catechism and the Code of Canon Law and a school of Buddhist meditation
+	// is not the register its chrome is written in. See `zen.svelte.ts`.
+	'zen.enter': 'Focus mode',
+	'zen.exit': 'Leave focus mode',
 	// ---------------------------------------------------------- Calendar
 	// The liturgical calendar is computed, not read: `$lib/calendar` derives
 	// every day from the date of Easter and a table of the Church's fixed

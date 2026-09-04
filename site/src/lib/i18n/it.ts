@@ -319,5 +319,7 @@ export const it: Dictionary = {
 	'shortcuts.title': 'Scorciatoie da tastiera',
 	'shortcuts.betweenDocuments': 'Tra i documenti',
 	'shortcuts.withinDocument': 'Nel documento',
-	'shortcuts.show': 'Mostra questo elenco'
+	'shortcuts.show': 'Mostra questo elenco',
+	'zen.enter': 'Modalità concentrazione',
+	'zen.exit': 'Esci dalla modalità concentrazione'
 };

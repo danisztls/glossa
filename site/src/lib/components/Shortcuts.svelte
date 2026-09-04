@@ -74,6 +74,7 @@
 		scrollTopForReference,
 		type ShortcutAction
 	} from '$lib/shortcuts';
+	import { zen } from '$lib/zen.svelte';
 
 	/**
 	 * One keycap: the letter it prints on a Latin layout, the direction it
@@ -124,7 +125,8 @@
 			{
 				typing: isTypingTarget(e.target),
 				overlay: isOverlayOpen(document),
-				rtl: i18n.rtl
+				rtl: i18n.rtl,
+				zen: zen.on
 			}
 		);
 		if (!action) return;
@@ -146,6 +148,12 @@
 				return stepReference(-1);
 			case 'nextReference':
 				return stepReference(1);
+			case 'exitZen':
+				// Unconditionally true: the resolver only answers this while the
+				// mode is on, so there is no "nothing to do" case to hand the
+				// key back for.
+				zen.set(false);
+				return true;
 		}
 	}
 
@@ -369,6 +377,22 @@
 						</span>
 						<span>{t('shortcuts.show')}</span>
 					</li>
+					<!--
+						ONLY WHILE THE MODE IS ON, unlike the four rows above it.
+						`Escape` is the one binding here that is conditional (see
+						`ShortcutContext.zen`), and a reference sheet listing a key
+						that currently does nothing teaches the reader something
+						untrue. Shown, it is the answer to the question a reader in
+						focus mode opens this sheet to ask.
+					-->
+					{#if zen.on}
+						<li>
+							<span class="keys">
+								<kbd class="key plain wide"><span class="cap">Esc</span></kbd>
+							</span>
+							<span>{t('zen.exit')}</span>
+						</li>
+					{/if}
 				</ul>
 			</div>
 		</div>
