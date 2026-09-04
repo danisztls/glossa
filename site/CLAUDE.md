@@ -1840,6 +1840,21 @@ keepFocus: true })`, the three flags `compare-nav.svelte.ts` already uses;
 shallow routing is for state that belongs to a history entry and not to an
 address.
 
+**THE PAGE EXPLAINS ITS OWN VOCABULARY** (2026-09-04). Every word on the day's
+card is a term of art — a vestment colour, a rank out of the Universal Norms, a
+season that is not the English word, three lectionary counters — and the page
+printed all of them with no way in. Two shapes, because the question has two:
+`TermGloss` behind each term (`SiglumGloss`'s mechanism with the citation half
+removed — the top layer is what lets it escape the card's `overflow-y: auto`),
+and `CalendarPrimer` at the foot, whose lead says what a liturgical year is FOR
+and whose folds are the vocabulary. **Both read the same `calendar.gloss.*`
+strings**, so tooltip and primer cannot disagree; the primer's lists are
+`satisfies Record<Season | Rank | Colour, true>` so an unexplained term is a
+type error, and a test pairs names against glosses in both directions —
+`TermGloss` interpolates its key, so a missing gloss shows as the key itself,
+which for `rose` is visible twice a year. **English and Portuguese only**, on
+`loadFailed.*`'s precedent (§docs/calendar.md).
+
 **THE ENGINE COMPUTES; A NATIONAL LAYER IS COPIED, AND ALWAYS WAS.** Worth
 being exact about, because the two halves are checked differently. The temporal
 cycle, the Table of Liturgical Days, transferred solemnities, Lenten

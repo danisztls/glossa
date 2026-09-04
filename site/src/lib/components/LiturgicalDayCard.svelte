@@ -17,6 +17,7 @@
 	import { celebrationName, type Celebration, type LiturgicalDay } from '$lib/calendar';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import TermGloss from './TermGloss.svelte';
 
 	interface Props {
 		day: LiturgicalDay;
@@ -34,17 +35,15 @@
 	let lang = $derived(i18n.lang);
 	let name = $derived(celebrationName(day.celebration, lang));
 
-	/** The season and week, as one line: "Ordinary Time, week 10". A week of
-	 *  0 is the stretch between Ash Wednesday and the First Sunday of Lent,
-	 *  which is genuinely not in a numbered week and says so by omission.
+	/** The season's name — the part a reader may not know, and so the part the
+	 *  gloss hangs on; the week is printed after it as plain text. A week of 0
+	 *  is the stretch between Ash Wednesday and the First Sunday of Lent, which
+	 *  is genuinely not in a numbered week and says so by omission.
 	 *
 	 *  The comma is doing work: the middle dots below separate the FACTS from
 	 *  each other, and a season that also used one would read as two of them. */
-	let season = $derived(
-		day.week > 0
-			? `${t(`calendar.season.${day.season}`)}, ${t('calendar.week')} ${day.week}`
-			: t(`calendar.season.${day.season}`)
-	);
+	let seasonName = $derived(t(`calendar.season.${day.season}`));
+	let weekSuffix = $derived(day.week > 0 ? `, ${t('calendar.week')} ${day.week}` : '');
 
 	function rankLabel(c: Celebration): string {
 		return t(`calendar.rank.${c.rank}`);
@@ -60,13 +59,35 @@
 			{:else}
 				<h2>{name}</h2>
 			{/if}
+			<!--
+			EVERY WORD ON THIS LINE IS A TERM OF ART and a reader meeting the page
+			for the first time knows none of them: a colour that is a vestment
+			colour, a rank out of the Universal Norms, a season that is not the
+			English word. Each carries its own explanation (`TermGloss`), and the
+			same sentences are set out whole in the primer at the foot of
+			`/calendarium` — written once, in the dictionary, so the two cannot
+			come to disagree.
+		-->
 			<p class="meta">
 				<span class="colour">
 					<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
-					{t(`calendar.colour.${day.colour}`)}
+					<TermGloss
+						term={t(`calendar.colour.${day.colour}`)}
+						gloss={t(`calendar.gloss.colour.${day.colour}`)}
+					/>
 				</span>
-				<span class="rank">{rankLabel(day.celebration)}</span>
-				<span class="season">{season}</span>
+				<span class="rank">
+					<TermGloss
+						term={rankLabel(day.celebration)}
+						gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
+					/>
+				</span>
+				<span class="season"
+					><TermGloss
+						term={seasonName}
+						gloss={t(`calendar.gloss.season.${day.season}`)}
+					/>{weekSuffix}</span
+				>
 			</p>
 			{#if day.celebration.transferredFrom}
 				<!-- Said out loud rather than shown silently on the wrong day: a
@@ -82,22 +103,30 @@
 		<dl class="facts">
 			{#if day.holyDayOfObligation}
 				<div>
-					<dt>{t('calendar.obligation')}</dt>
+					<dt>
+						<TermGloss term={t('calendar.obligation')} gloss={t('calendar.gloss.obligation')} />
+					</dt>
 					<!-- The canon is in the corpus in seven languages, so the claim
 					     links to its own authority rather than asserting itself. -->
 					<dd><a href="/ius-canonicum/1246">{t('calendar.obligationCanon')}</a></dd>
 				</div>
 			{/if}
 			<div>
-				<dt>{t('calendar.sundayCycle')}</dt>
+				<dt>
+					<TermGloss term={t('calendar.sundayCycle')} gloss={t('calendar.gloss.sundayCycle')} />
+				</dt>
 				<dd>{day.sundayCycle}</dd>
 			</div>
 			<div>
-				<dt>{t('calendar.weekdayCycle')}</dt>
+				<dt>
+					<TermGloss term={t('calendar.weekdayCycle')} gloss={t('calendar.gloss.weekdayCycle')} />
+				</dt>
 				<dd>{day.weekdayCycle}</dd>
 			</div>
 			<div>
-				<dt>{t('calendar.psalterWeek')}</dt>
+				<dt>
+					<TermGloss term={t('calendar.psalterWeek')} gloss={t('calendar.gloss.psalterWeek')} />
+				</dt>
 				<dd>{['', 'I', 'II', 'III', 'IV'][day.psalterWeek]}</dd>
 			</div>
 		</dl>
