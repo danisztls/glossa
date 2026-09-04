@@ -1804,6 +1804,25 @@ state and it is the one in the URL. Rows are real `?c=`/`?d=` links, not buttons
 a keyboard move that crosses a month replaces every row, so the component names
 the date to stand on and refocuses it after the render (§docs/calendar.md).
 
+**IT LISTS THE DAYS THAT SAY SOMETHING, PLUS THE CHOSEN DAY AND TODAY** — that
+second half is what makes filtering safe here and is what the year listing
+lacked, since a date typed, pasted or arrowed onto is always a row and nothing
+can be looked up and be missing. A row and a day are therefore not the same
+thing, and the arrow keys walk ROWS, off one month's end into the next.
+
+**THE DAY'S CARD IS ABOVE THE LISTING, AND NEITHER MAY MOVE THE OTHER**
+(2026-09-04). Three separate reflows, three fixes, and the middle one is the
+rule worth carrying: **a selection must not change text metrics** — `font-weight`
+on a row whose name runs to 111 characters rewraps it and shoves every row below
+it down, so selection is an accent bar every row carries transparent. The card's
+height is not reservable (804 of 1,095 days carry no optional memorial and the
+worst carries five), so the list records its own top edge before a navigation
+and scrolls by the measured difference after — measured, not predicted, which is
+what makes it compose with the browser's own scroll anchoring. The list is a
+fixed-height pane so that a month of twelve rows and a month of twenty-nine
+leave the page the same height. The three corrections are ONE effect in the
+order page, pane, keyboard, because focus scrolls last (§docs/calendar.md).
+
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
 an unbounded set of URLs into the sitemap for pages that are pure computation.

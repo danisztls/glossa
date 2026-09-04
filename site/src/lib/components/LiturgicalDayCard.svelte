@@ -28,12 +28,15 @@
 	let lang = $derived(i18n.lang);
 	let name = $derived(celebrationName(day.celebration, lang));
 
-	/** The season and week, as one line: "Ordinary Time · week 10". A week of
+	/** The season and week, as one line: "Ordinary Time, week 10". A week of
 	 *  0 is the stretch between Ash Wednesday and the First Sunday of Lent,
-	 *  which is genuinely not in a numbered week and says so by omission. */
+	 *  which is genuinely not in a numbered week and says so by omission.
+	 *
+	 *  The comma is doing work: the middle dots below separate the FACTS from
+	 *  each other, and a season that also used one would read as two of them. */
 	let season = $derived(
 		day.week > 0
-			? `${t(`calendar.season.${day.season}`)} · ${t('calendar.week')} ${day.week}`
+			? `${t(`calendar.season.${day.season}`)}, ${t('calendar.week')} ${day.week}`
 			: t(`calendar.season.${day.season}`)
 	);
 
@@ -144,13 +147,26 @@
 		margin: 0.2rem 0 0.4rem;
 		line-height: 1.2;
 	}
+	/*
+	 * ONE LINE, NOT THREE COLUMNS. These three say what kind of day it is —
+	 * its colour, its rank, where it falls in the year — and set as flex items
+	 * a centimetre apart they read as an unlabelled table whose headings went
+	 * missing. Separated by middle dots they read as what they are: a phrase.
+	 * The dots are drawn by CSS rather than put in the markup so that nothing
+	 * announces them, and so a wrapped line never begins with one.
+	 */
 	.meta {
-		margin: 0;
+		margin: 0.15rem 0 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem 1rem;
+		gap: 0.15rem 0.55rem;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
+	}
+	.meta > span + span::before {
+		content: '·';
+		margin-inline-end: 0.55rem;
+		color: var(--color-border);
 	}
 	.colour {
 		display: inline-flex;
@@ -163,12 +179,23 @@
 		color: var(--color-text-muted);
 		font-style: italic;
 	}
+	/*
+	 * The cycles are the card's FOOTNOTES — a lectionary year, a psalter week:
+	 * true, occasionally wanted, and not what anyone opened the page to read.
+	 * They were set at the same weight as the name of the feast and separated
+	 * from it by nothing but a gap. A rule above them and the muted label
+	 * treatment `.optional` already uses put them where they belong, and the
+	 * card now reads in three parts: what day it is, the facts about it, and
+	 * what else may be kept on it.
+	 */
 	.facts {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem 1.5rem;
-		margin: 0.9rem 0 0;
-		font-size: 0.85rem;
+		gap: 0.3rem 1.25rem;
+		margin: 0.8rem 0 0;
+		border-top: 1px solid var(--color-border);
+		padding-top: 0.7rem;
+		font-size: 0.82rem;
 	}
 	.facts div {
 		display: flex;
