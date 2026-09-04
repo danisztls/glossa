@@ -554,10 +554,21 @@ def fingerprint(stage: Stage, images: bool, shared: dict[str, str]) -> dict[str,
 
 
 def shared_inputs() -> dict[str, str]:
-    """The two parts every stage shares, walked once for the whole run."""
+    """The two parts every stage shares, walked once for the whole run.
+
+    `corpus` IS BOTH TRACKED INPUT TREES, not just `raw/`. It was `raw/` alone
+    for as long as every stage's only corpus input was a fetched page — and
+    that stopped being true when the prayers began to be projected from
+    `oracles/prayers/` (2026-09-03). Editing a curated prayer changes nothing
+    under `raw/`, so `--changed-only` skipped the stage and the edit never
+    reached `build/`: the silent stale answer this flag is opt-in to avoid.
+    `oracles/` is 35 files beside `raw/`'s 11,795, so walking it is free.
+    """
     return {
         "data": tree_digest(PIPELINE, want=lambda p: p.suffix != ".py"),
-        "corpus": tree_digest(raw_root()),
+        "corpus": _digest(
+            [tree_digest(raw_root()), tree_digest(corpus_dir() / "oracles")]
+        ),
     }
 
 
