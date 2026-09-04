@@ -28,65 +28,16 @@
  * GCatholic publishes this calendar in English only, so a proper carries its English name and nothing else. `celebrationName` falls back to it for a reader of any other language, which is the name the celebration actually has.
  */
 
-import { keptAs, proper } from './common';
+import { keptAs, proper, withGroup } from './common';
+import { EASTERN_AFRICA } from './groups';
 import type { NationalCalendar } from '../types';
 
 export const SUDAN: NationalCalendar = {
 	id: 'sd',
 	options: { epiphanyOnSunday: true, ascensionOnSunday: true, corpusChristiOnSunday: true },
-	propers: {
-		'01-09': [proper('adrian-of-canterbury', { en: 'Saint Adrian of Canterbury, abbot' }, 'o')],
-		'01-20': [
-			proper('cyprian-michael-tansi', { en: 'Blessed Cyprian Michael Tansi, priest' }, 'o')
-		],
-		'02-26': [
-			proper('alexander-of-alexandria', { en: 'Saint Alexander of Alexandria, bishop' }, 'o')
-		],
-		'04-04': [
-			proper('benedict-the-moor', { en: 'Saint Benedict the Moor, religious' }, 'o', {
-				colour: 'violet'
-			})
-		],
-		'04-12': [proper('zeno-of-verona', { en: 'Saint Zeno of Verona, bishop' }, 'o')],
-		'04-20': [proper('marcellinus-of-embrun', { en: 'Saint Marcellinus of Embrun, bishop' }, 'o')],
-		'04-30': [proper('mother-of-africa', { en: 'Our Lady Mother of Africa' }, 'f')],
-		'05-24': [proper('help-of-christians', { en: 'Our Lady Help of Christians' }, 'm')],
-		'06-12': [proper('onuphrius', { en: 'Saint Onuphrius, abbot' }, 'o')],
-		'07-28': [
-			proper('victor-i', { en: 'Saint Victor I, pope and martyr' }, 'o', { colour: 'red' })
-		],
-		'07-30': [proper('justin-de-jacobis', { en: 'Saint Justin de Jacobis, bishop' }, 'o')],
-		'08-12': [
-			proper('isidore-bakanja', { en: 'Blessed Isidore Bakanja, martyr' }, 'o', { colour: 'red' })
-		],
-		'08-18': [proper('victoria-rasoamanarivo', { en: 'Blessed Victoria Rasoamanarivo' }, 'o')],
-		'09-22': [
-			proper(
-				'maurice-of-agaune-and-companions',
-				{ en: 'Saint Maurice of Agaune and companions, martyrs' },
-				'o',
-				{ colour: 'red' }
-			)
-		],
-		'10-10': [proper('daniele-comboni', { en: 'Saint Daniele Comboni, bishop' }, 's')],
-		'10-20': [
-			proper(
-				'daudi-okelo-and-blessed-jildo-irwa',
-				{ en: 'Blessed Daudi Okelo and Blessed Jildo Irwa, martyrs' },
-				'o',
-				{ colour: 'red' }
-			)
-		],
-		'11-06': [proper('all-saints-of-africa', { en: 'All Saints of Africa' }, 'm')],
-		'12-01': [
-			proper(
-				'marie-clementine-anuarite-nengapeta',
-				{ en: 'Blessed Marie-Clémentine Anuarite Nengapeta, virgin and martyr' },
-				'o',
-				{ colour: 'red' }
-			)
-		]
-	},
+	propers: withGroup(EASTERN_AFRICA, {
+		'10-10': [proper('daniele-comboni', { en: 'Saint Daniele Comboni, bishop' }, 's')]
+	}),
 	overrides: {
 		'josephine-bakhita': keptAs('s')
 	},

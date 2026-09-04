@@ -1285,8 +1285,50 @@ HEADER = """/**
 """
 
 
-def render(layer: dict) -> str:
-    """The layer as the TypeScript file that states it."""
+def names_literal(entry: dict, anchor: str) -> str:
+    """A celebration's `names` object, in the anchor language and English.
+
+    THE ANCHOR IS OMITTED WHERE IT WOULD REPEAT THE ENGLISH. `pair_names`
+    leaves a celebration unpaired where a day holds two of the same rank and
+    colour, and the English name stands in -- writing that under the country's
+    own tag would assert that the conference approved an English wording,
+    which is the one thing these names are here to say it did not.
+
+    Module level rather than a closure in `render` because `groups.ts` renders
+    propers too, and a second copy of this rule is a second place for the
+    anchor tag to be got wrong.
+    """
+    local = entry.get("local", entry["en"])
+    if anchor == "en" or local == entry["en"]:
+        return "{ en: " + ts(entry["en"]) + " }"
+    tag = LANG_TAG.get(anchor, anchor)
+    return "{ " + tag + ": " + ts(local) + ", en: " + ts(entry["en"]) + " }"
+
+
+def proper_call(entry: dict, indent: str, anchor: str) -> str:
+    """One `proper(...)` call, indented."""
+    opts = []
+    if entry["colour"] != "white":
+        opts.append(f"colour: '{entry['colour']}'")
+    if entry.get("marian"):
+        opts.append("marian: true")
+    since = entry.get("since")
+    if since:
+        opts.append(f"since: {since}")
+    tail = f", {{ {', '.join(opts)} }}" if opts else ""
+    return (
+        f"{indent}proper('{entry['id']}', {names_literal(entry, anchor)}, "
+        f"'{RANK_LETTER[entry['rank']]}'{tail})"
+    )
+
+
+def render(layer: dict, group: str | None = None) -> str:
+    """The layer as the TypeScript file that states it.
+
+    `group` names a constant in `./groups.ts` holding propers this layer
+    shares, to the letter, with every other member of that group -- see
+    `SHARED_PROPERS` below and `withGroup` in `national/common.ts`.
+    """
     calendar = layer["calendar"]
     name, const = NAMES[calendar]
     anchor = layer["anchor"]
@@ -1309,60 +1351,41 @@ def render(layer: dict) -> str:
             "refuses (`docs/decisions.md` §Scope)."
         )
 
-    def names_literal(entry: dict) -> str:
-        # THE ANCHOR IS OMITTED WHERE IT WOULD REPEAT THE ENGLISH.
-        # `pair_names` leaves a celebration unpaired where a day holds two of
-        # the same rank and colour, and the English name stands in -- writing
-        # that under the country's own tag would assert that the conference
-        # approved an English wording, which is the one thing these names are
-        # here to say it did not.
-        local = entry.get("local", entry["en"])
-        if anchor == "en" or local == entry["en"]:
-            return "{ en: " + ts(entry["en"]) + " }"
-        tag = LANG_TAG.get(anchor, anchor)
-        return "{ " + tag + ": " + ts(local) + ", en: " + ts(entry["en"]) + " }"
-
-    def proper_call(entry: dict, indent: str) -> str:
-        opts = []
-        if entry["colour"] != "white":
-            opts.append(f"colour: '{entry['colour']}'")
-        if entry.get("marian"):
-            opts.append("marian: true")
-        since = entry.get("since")
-        if since:
-            opts.append(f"since: {since}")
-        tail = f", {{ {', '.join(opts)} }}" if opts else ""
-        return (
-            f"{indent}proper('{entry['id']}', {names_literal(entry)}, "
-            f"'{RANK_LETTER[entry['rank']]}'{tail})"
-        )
-
     used_helpers = set()
     body: list[str] = [f"export const {const}: NationalCalendar = {{"]
     body.append(f"\tid: '{layer['id']}',")
+    covers = ALSO_COVERS.get(calendar)
+    if covers:
+        body.append("\talsoCovers: [" + ", ".join(f"'{t}'" for t in covers) + "],")
     if layer["options"]:
         opts = ", ".join(f"{k}: true" for k in layer["options"])
         body.append(f"\toptions: {{ {opts} }},")
     else:
         body.append("\toptions: {},")
 
-    if not layer["propers"]:
+    if group:
+        used_helpers.add("withGroup")
+        if not layer["propers"]:
+            body.append(f"\tpropers: withGroup({group}),")
+        else:
+            body.append(f"\tpropers: withGroup({group}, {{")
+    elif not layer["propers"]:
         body.append("\tpropers: {},")
     else:
         body.append("\tpropers: {")
     for mmdd in sorted(layer["propers"]):
         entries = layer["propers"][mmdd]
         used_helpers.add("proper")
-        rows = ",\n".join(proper_call(e, "\t\t\t") for e in entries)
+        rows = ",\n".join(proper_call(e, "\t\t\t", anchor) for e in entries)
         body.append(f"\t\t'{mmdd}': [\n{rows}\n\t\t],")
     if layer["propers"]:
-        body.append("\t},")
+        body.append("\t}),") if group else body.append("\t},")
 
     if layer["movable"]:
         used_helpers.add("proper")
         body.append("\tmovable: [")
         for entry in sorted(layer["movable"], key=lambda e: e["id"]):
-            call = proper_call(entry, "\t\t\t")
+            call = proper_call(entry, "\t\t\t", anchor)
             body.append(
                 f"\t\t{{\n\t\t\tat: {rule_literal(entry)},"
                 f"\n\t\t\tcelebration:\n{call}\n\t\t}},"
@@ -1378,7 +1401,7 @@ def render(layer: dict) -> str:
             body.append(
                 f"\t\t{{\n\t\t\tat: {at},"
                 f"\n\t\t\tobservance: {{ id: '{slug(row['name'])}', "
-                f"names: {names_literal({'en': row['name'], 'local': row['local']})}"
+                f"names: {names_literal({'en': row['name'], 'local': row['local']}, anchor)}"
                 f"{colour} }}\n\t\t}},"
             )
         body.append("\t],")
@@ -1416,6 +1439,8 @@ def render(layer: dict) -> str:
     body.append("};")
 
     imports = ["import type { NationalCalendar } from '../types';"]
+    if group:
+        imports.insert(0, f"import {{ {group} }} from './groups';")
     if used_helpers:
         imports.insert(
             0, f"import {{ {', '.join(sorted(used_helpers))} }} from './common';"
@@ -1506,6 +1531,166 @@ HAND_WRITTEN = {
 }
 
 
+#: Layers that carry the same propers, and the constant in
+#: `national/groups.ts` each shared set is written to.
+#:
+#: MEASURED, THEN NAMED -- never the other way round. Comparing all 85 layers
+#: on 2026-09-04 found that no two are identical but several carry propers
+#: agreeing to the letter, and these are the groups where the shared set is
+#: large enough to be worth naming. THE NAMES ARE DESCRIPTIONS OF THE MEMBERS
+#: AND NOT CLAIMS ABOUT WHO APPROVED THE ROWS: AMECEA is the plausible
+#: explanation of the eastern African set and the *Regionalkalender fur das
+#: deutsche Sprachgebiet* of the third, and neither is verified here. What is
+#: verified is the identity, on every run.
+#:
+#: A group is only emitted where every member is being derived in the same
+#: run, every member shares the anchor language (a name written under two
+#: different tags is not the same row), and the intersection is worth a file.
+#: A DATE enters the group only where every member holds an identical entry
+#: list for it -- whole dates rather than single celebrations, so that a
+#: member can never carry its own row on a group's date and `withGroup` can
+#: refuse a collision outright.
+#: TWO CANDIDATES WERE TRIED AND REFUSED BY THE RULES ABOVE, and they are
+#: recorded here rather than deleted, because both look like obvious groups
+#: and the next person will propose them again:
+#:
+#:   - LUXEMBOURG belongs with Austria and Liechtenstein by celebration and
+#:     not by ROW: it shares 48 of them, and its anchor language is French
+#:     where theirs is German, so every shared celebration carries a different
+#:     name. A group is a set of rows, and those are not the same rows.
+#:   - HONG KONG AND TAIWAN share 27 celebrations and exactly ONE date. The
+#:     Chinese martyrs are in both and are not kept on the same days, which is
+#:     the whole reason the intersection is taken over dates: a group built on
+#:     celebration ids would have moved a feast in one of them.
+#: Territories that keep a calendar which is not their own country's, by the
+#: GCatholic code of the calendar they keep.
+#:
+#: IT LIVES HERE BECAUSE IT USED TO LIVE NOWHERE. `alsoCovers` was added to
+#: five layer files by a throwaway script in the session that wrote them, and
+#: the script is gone -- so the field was regenerable only from the previous
+#: copy of its own output, which is the exact shape the root `CLAUDE.md`
+#: records biting this project three times in one day. The first re-derivation
+#: after that dropped all eleven territories out of the picker, silently and
+#: with every test still passing, because nothing computes them.
+#:
+#: Eight particular churches stand for more than one place: two vicariates of
+#: Arabia and the Latin Patriarchate of Jerusalem carry ten countries between
+#: them, Copenhagen carries the Faroes and Greenland, and Helsinki carries
+#: Aland. Read off GCatholic's own calendar index, which lists a territory
+#: under the calendar it keeps.
+ALSO_COVERS: dict[str, tuple[str, ...]] = {
+    "AE-arab0": ("om", "ye"),
+    "DK-kobe0": ("fo", "gl"),
+    "FI-hels0": ("ax",),
+    "KW-arab1": ("bh", "qa", "sa"),
+    "PS-jeru0": ("cy", "il", "jo"),
+}
+
+SHARED_PROPERS: dict[str, tuple[str, ...]] = {
+    "EASTERN_AFRICA": ("KE", "SD", "UG", "ZA"),
+    "NORTH_AFRICA": ("DZ", "TN"),
+    "GERMAN_LANGUAGE_AREA": ("AT", "LI"),
+}
+
+#: Below this many shared dates a group costs a reader more than it saves: an
+#: import and a second file to look in, for a handful of rows.
+MIN_GROUP_DATES = 5
+
+GROUPS_HEADER = """/**
+ * Propers that several national calendars carry identically.
+ *
+ * GENERATED by `pipeline/derive_national_calendars.py` -- do not edit. Each
+ * constant below is the intersection of its members' derived propers, at
+ * whole-date granularity: a date is here only where EVERY member of the group
+ * holds an identical list of celebrations on it, same ids, ranks, colours and
+ * names. A member that stops agreeing simply keeps the date in its own file
+ * on the next run.
+ *
+ * ## These are measurements, not claims about authority
+ *
+ * The names describe who shares the rows, and nothing more. AMECEA is the
+ * plausible explanation of the eastern African set and the *Regionalkalender
+ * fur das deutsche Sprachgebiet* of the German-language one, and this project
+ * has verified neither -- what it has verified, on every run, is that the
+ * rows are the same. Do not read a group as saying that some body approved
+ * it, and do not add a member by hand on the grounds that it ought to belong.
+ *
+ * ## What this changes about checking, which is nothing
+ *
+ * `oracle.test.ts` compares the calendar this project COMPUTES against the
+ * calendar GCatholic computes, day by day, per country. It never reads a
+ * layer file, so a shared set is invisible to it and every member goes on
+ * being checked whole. That is what makes this a deduplication of the data
+ * rather than an assertion about it -- and it is why it was safe to do at
+ * all. See `withGroup` in `./common.ts`.
+ */
+
+"""
+
+
+def render_groups(shared: dict[str, tuple[str, dict]]) -> str:
+    """`national/groups.ts`, from each group's name, anchor and propers."""
+    body = [
+        GROUPS_HEADER,
+        "import { proper } from './common';",
+        "import type { Celebration } from '../types';",
+        "",
+    ]
+    for name in sorted(shared):
+        anchor, propers = shared[name]
+        members = ", ".join(NAMES[c][0] for c in SHARED_PROPERS[name])
+        body.append(f"/** Carried identically by {members}. */")
+        body.append(f"export const {name}: Record<string, Celebration[]> = {{")
+        for mmdd in sorted(propers):
+            rows = ",\n".join(proper_call(e, "\t\t", anchor) for e in propers[mmdd])
+            body.append(f"\t'{mmdd}': [\n{rows}\n\t],")
+        body.append("};")
+        body.append("")
+    return "\n".join(body)
+
+
+def shared_propers(layers: dict[str, dict]) -> dict[str, tuple[str, dict]]:
+    """Pull each group's identical dates out of its members, in place.
+
+    Returns the group name -> (anchor, propers) for the ones that qualify;
+    every date it returns has been REMOVED from each member's own propers, so
+    a member's file and its group are disjoint by construction.
+    """
+    found: dict[str, tuple[str, dict]] = {}
+    for name, members in SHARED_PROPERS.items():
+        if not all(c in layers for c in members):
+            continue
+        anchors = {layers[c]["anchor"] for c in members}
+        if len(anchors) != 1:
+            print(
+                f"{name}: members disagree on the anchor language "
+                f"({', '.join(sorted(anchors))}) -- not grouped",
+                file=sys.stderr,
+            )
+            continue
+        first, *rest = (layers[c]["propers"] for c in members)
+        agreed = {
+            mmdd: entries
+            for mmdd, entries in first.items()
+            if all(other.get(mmdd) == entries for other in rest)
+        }
+        if len(agreed) < MIN_GROUP_DATES:
+            print(
+                f"{name}: only {len(agreed)} shared date(s) -- not grouped",
+                file=sys.stderr,
+            )
+            continue
+        for code in members:
+            for mmdd in agreed:
+                layers[code]["propers"].pop(mmdd)
+        found[name] = (anchors.pop(), agreed)
+        print(
+            f"{name}: {len(agreed)} shared date(s) across {', '.join(members)}",
+            file=sys.stderr,
+        )
+    return found
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--calendars", help="comma-separated GCatholic calendar codes")
@@ -1528,6 +1713,10 @@ def main() -> int:
     else:
         raise SystemExit("name --calendars or pass --all")
 
+    # EVERY LAYER IS BUILT BEFORE ANY IS WRITTEN, which is what the shared
+    # sets need: a group's contents are an intersection across its members, so
+    # no member can be rendered until all of them exist.
+    layers: dict[str, dict] = {}
     for code in codes:
         if code not in CALENDARS:
             raise SystemExit(f"unknown calendar {code!r}")
@@ -1539,11 +1728,24 @@ def main() -> int:
         if not years:
             print(f"{code}: nothing in raw/ -- skipped", file=sys.stderr)
             continue
-        layer = lift_sacred_heart(build_layer(analyse(code, CALENDARS[code], years)))
-        text = render(layer)
+        layers[code] = lift_sacred_heart(
+            build_layer(analyse(code, CALENDARS[code], years))
+        )
+
+    shared = shared_propers(layers)
+    group_of = {
+        code: name
+        for name, members in SHARED_PROPERS.items()
+        if name in shared
+        for code in members
+    }
+
+    for code, layer in layers.items():
+        text = render(layer, group_of.get(code))
         summary = (
             f"{code}: {layer['variant']} (+{layer['variant_score']}), "
-            f"{sum(len(v) for v in layer['propers'].values())} propers, "
+            f"{sum(len(v) for v in layer['propers'].values())} propers"
+            f"{' + ' + group_of[code] if code in group_of else ''}, "
             f"{len(layer['movable'])} movable, {len(layer['overrides'])} overrides, "
             f"{len(layer['moves']) + len(layer['movedInYear'])} moves, "
             f"{len(layer['observances'])} observances, {len(layer['todo'])} todo"
@@ -1557,6 +1759,25 @@ def main() -> int:
             out.write_text(text, encoding="utf-8")
         else:
             print(text)
+
+    # WRITTEN ONLY WHEN EVERY MEMBER OF EVERY GROUP WAS IN THIS RUN, because a
+    # partial rewrite would drop the groups the run did not derive and leave
+    # their members importing a constant that no longer exists.
+    if (
+        shared
+        and args.write
+        and all(
+            all(c in layers for c in members) for members in SHARED_PROPERS.values()
+        )
+    ):
+        (args.out / "groups.ts").write_text(render_groups(shared), encoding="utf-8")
+        print(f"groups.ts: {len(shared)} shared set(s)", file=sys.stderr)
+    elif shared and args.write:
+        print(
+            "groups.ts NOT written: not every group's members were derived in "
+            "this run. Re-run with --all to rewrite it.",
+            file=sys.stderr,
+        )
     return 0
 
 

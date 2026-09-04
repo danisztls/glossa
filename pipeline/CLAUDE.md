@@ -1201,6 +1201,25 @@ The site's half (rendering, preferences, anchors) is in `site/CLAUDE.md`.
   number of underscores overall, and the anomaly report is for the record that
   would prove that stale.
 
+## `derive_national_calendars.py` proposes a layer, and now also a shared set
+
+**`SHARED_PROPERS` names groups of calendars whose propers agree, and the tool
+takes the INTERSECTION** — it never trusts the table for content. A date enters
+a group only where every member holds an identical entry list on it, every
+member must share the anchor language (a name under two tags is not the same
+row), and the whole run must include every member or `groups.ts` is not
+rewritten. Three groups qualify today and two named candidates do not, both
+recorded in the table rather than deleted (`site/docs/calendar.md`).
+
+**`ALSO_COVERS` IS IN THIS FILE BECAUSE IT USED TO BE NOWHERE.** `alsoCovers`
+was written into five layers by a throwaway script in the session that created
+them; the script is gone, so the field was regenerable only from the previous
+copy of its own output — the shape the root `CLAUDE.md` records biting this
+project three times in one day. The first re-derivation after that dropped
+eleven territories out of the site's picker, silently, with every test passing.
+**When a re-derivation's diff DELETES a field, ask what wrote it** before
+accepting the loss.
+
 ## `liturgical_calendar.py` fetches an oracle, and writes no WORK at all
 
 It fetches GCatholic's iCal calendars into `raw/gcatholic-calendar/` and parses

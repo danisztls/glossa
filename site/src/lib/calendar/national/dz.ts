@@ -28,37 +28,14 @@
  * A proper carries the name its conference approved, in fr, and the English rendering GCatholic prints beside it. There is no Latin original — the celebration was approved in the vernacular — and composing one would be exactly the invented text this project refuses (`docs/decisions.md` §Scope).
  */
 
-import { keptAs, proper } from './common';
+import { keptAs, proper, withGroup } from './common';
+import { NORTH_AFRICA } from './groups';
 import type { NationalCalendar } from '../types';
 
 export const ALGERIA: NationalCalendar = {
 	id: 'dz',
 	options: { epiphanyOnSunday: true, corpusChristiOnSunday: true },
-	propers: {
-		'01-03': [
-			proper(
-				'fulgentius-of-ruspe',
-				{ fr: 'Saint Fulgence de Ruspe, évêque', en: 'Saint Fulgentius of Ruspe, bishop' },
-				'm'
-			)
-		],
-		'01-08': [
-			proper(
-				'quodvultdeus-and-saint-deogratias',
-				{
-					fr: 'Saint Quodvultdeus et Saint Deogratias, évêques',
-					en: 'Saint Quodvultdeus and Saint Deogratias, bishops'
-				},
-				'o'
-			)
-		],
-		'04-30': [
-			proper(
-				'mother-of-africa',
-				{ fr: 'Notre-Dame d’Afrique', en: 'Our Lady Mother of Africa' },
-				's'
-			)
-		],
+	propers: withGroup(NORTH_AFRICA, {
 		'05-06': [
 			proper(
 				'james',
@@ -69,89 +46,8 @@ export const ALGERIA: NationalCalendar = {
 				'o',
 				{ colour: 'red' }
 			)
-		],
-		'06-04': [
-			proper(
-				'optatus-of-milevis',
-				{ fr: 'Saint Optat de Milev, évêque', en: 'Saint Optatus of Milevis, bishop' },
-				'm'
-			)
-		],
-		'06-26': [
-			proper(
-				'josemaria-escriva-de-balaguer',
-				{
-					fr: 'Saint Josemaria Escrivá de Balaguer, prêtre',
-					en: 'Saint Josemaría Escrivá de Balaguer, priest'
-				},
-				'o'
-			)
-		],
-		'07-10': [
-			proper(
-				'marciana-of-mauretania',
-				{
-					fr: 'Sainte Marcienne de Dellys, vierge et martyre',
-					en: 'Saint Marciana of Mauretania, virgin and martyr'
-				},
-				'o',
-				{ colour: 'red' }
-			)
-		],
-		'07-17': [
-			proper(
-				'speratus-and-companions',
-				{
-					fr: 'Saint Spérat et ses compagnons, martyrs Scillitains',
-					en: 'Saint Speratus and companions, martyrs of Scillium'
-				},
-				'm',
-				{ colour: 'red' }
-			)
-		],
-		'09-10': [
-			proper(
-				'nemesian',
-				{
-					fr: 'Saint Némésianus, évêque, et ses compagnons, martyrs',
-					en: 'Saint Nemesian, bishop, and companions, martyrs'
-				},
-				'o',
-				{ colour: 'red' }
-			)
-		],
-		'09-12': [
-			proper(
-				'marcellinus-of-carthage',
-				{ fr: 'Saint Marcellin de Carthage, martyr', en: 'Saint Marcellinus of Carthage, martyr' },
-				'o',
-				{ colour: 'red' }
-			)
-		],
-		'10-30': [
-			proper(
-				'marcellus-of-tangier-and-saint-maximilian-of-numidia',
-				{
-					fr: 'Saint Marcel et Saint Maximilien, martyrs',
-					en: 'Saint Marcellus of Tangier and Saint Maximilian of Numidia, martyrs'
-				},
-				'm',
-				{ colour: 'red' }
-			)
-		],
-		'12-01': [
-			proper(
-				'charles-de-foucauld',
-				{ fr: 'Saint Charles de Foucauld, prêtre', en: 'Saint Charles de Foucauld, priest' },
-				'o'
-			)
-		],
-		'12-05': [
-			proper('crispina', { fr: 'Sainte Crispine, martyre', en: 'Saint Crispina, martyr' }, 'm', {
-				colour: 'red'
-			})
 		]
-	},
+	}),
 	overrides: {
 		augustine: keptAs('s'),
 		'cornelius-cyprian': keptAs('s'),

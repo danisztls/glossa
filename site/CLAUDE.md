@@ -1744,6 +1744,28 @@ earns a row by making a day come out differently"). So for a country the NAME
 check is a transcription check; for the derived ones it is circular, and every
 generated file says so in its own header.
 
+**SOME LAYERS SHARE THEIR PROPERS, AND `national/groups.ts` HOLDS THE ROWS**
+(2026-09-04). Kenya, Sudan, Uganda and South Africa carry seventeen dates
+identically; Algeria and Tunisia twelve; Austria and Liechtenstein thirty-nine.
+`withGroup` composes and **throws on a collision**, which is the whole safety
+property: a date joins a group only where every member holds an identical list
+on it, so a member can never carry a row of its own on a group's date. Three
+rules keep it a deduplication rather than a claim — whole dates never single
+celebrations, one anchor language per group (which is what keeps Luxembourg out
+though it shares 48 celebrations), and names that describe the members and
+assert nothing about who approved the rows. **It cost the oracle nothing**,
+because `oracle.test.ts` compares computed calendars and never reads a layer
+file. `groups.test.ts` is in the hermetic suite for a reason worth remembering:
+the throw is at module load, and nothing in `npm test` imported a grouped layer
+once the oracle moved out of it (§docs/calendar.md).
+
+**`ALSO_COVERS` LIVES IN THE DERIVATION NOW, AND USED TO LIVE NOWHERE.** The
+field was written into five layer files by a throwaway script that no longer
+exists, so it was regenerable only from the previous copy of its own output —
+the exact shape the root `CLAUDE.md` records biting this project three times in
+one day. The first re-derivation dropped eleven territories out of the picker
+silently, with every test still passing, because nothing computes them.
+
 **Adding a country is a data file and no code.** `NationalCalendar` is a layer —
 propers, overrides, transfers, and general celebrations kept on another day —
 because that is what Universal Norms nn. 48–55 describe. `national/common.ts` is

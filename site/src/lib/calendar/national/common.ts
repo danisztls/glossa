@@ -143,3 +143,55 @@ export const BLUE_IMMACULATE_CONCEPTION = { colour: 'blue' as const };
 /** The Thursday after Pentecost — Our Lord Jesus Christ, Eternal High Priest,
  *  which seven of these conferences keep and the General Calendar does not. */
 export const THURSDAY_AFTER_PENTECOST = { fromEaster: 53 } as const;
+
+/**
+ * A layer's propers, on top of a set several layers share — `./groups.ts`.
+ *
+ * ## Why a shared set exists at all
+ *
+ * Measured across every layer here on 2026-09-04: no two are identical, but
+ * some carry the same propers to the letter. Kenya, Sudan and Uganda hold the
+ * same eighteen; Algeria and Tunisia agree on all but one; Austria,
+ * Liechtenstein and Luxembourg share nearly fifty. Written flat, those are
+ * several hundred lines that say the same thing in several files, and the
+ * failure that shape invites is the one nobody sees: a correction applied to
+ * three of four copies.
+ *
+ * ## What the composition does NOT change
+ *
+ * `oracle.test.ts` compares the calendar this project COMPUTES against the
+ * calendar GCatholic computes, day by day, per country. It never reads a
+ * layer file. So factoring a shared set out of four files is invisible to it,
+ * and remains checked exactly as before — which is what makes this a
+ * refactor of the data rather than a claim about it.
+ *
+ * ## THE COLLISION IS A THROW, AND THAT IS THE WHOLE SAFETY PROPERTY
+ *
+ * A group must never change what a country celebrates. The derivation only
+ * puts a DATE in a group when every member of that group has an identical
+ * entry list for it, so a member can have nothing of its own on a group's
+ * date — and if one ever does, this throws at module load rather than
+ * silently letting one side win. A spread would resolve it quietly, and which
+ * side won would depend on argument order, which is not a thing anybody
+ * should have to know to read a calendar.
+ *
+ * The groups are DERIVED, not hand-kept: `pipeline/derive_national_calendars.py`
+ * writes `./groups.ts` and the members that use it, so a member that stops
+ * agreeing leaves the group on the next run rather than quietly inheriting a
+ * celebration its conference dropped.
+ */
+export function withGroup(
+	group: Record<string, Celebration[]>,
+	own: Record<string, Celebration[]> = {}
+): Record<string, Celebration[]> {
+	for (const mmdd of Object.keys(own)) {
+		if (mmdd in group) {
+			throw new Error(
+				`withGroup: ${mmdd} is in both the shared group and the layer's own propers. ` +
+					`A group holds a date only where every member agrees on it exactly; re-derive ` +
+					`with \`uv run pipeline/derive_national_calendars.py --all --write\`.`
+			);
+		}
+	}
+	return { ...group, ...own };
+}
