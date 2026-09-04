@@ -1,23 +1,32 @@
 <script lang="ts">
 	/**
-	 * A civil month of the liturgical calendar, as a grid.
+	 * A civil month of the liturgical calendar, as a list of its days.
 	 *
-	 * ## Why a month and not the year
+	 * ## A month, and not the whole year
 	 *
-	 * This replaced a flat list of the whole liturgical year, Advent to
-	 * Advent, filtered down to the days that were not plain weekdays — about
-	 * 230 rows. It answered "what is coming" and answered nothing else: a
-	 * reader who wanted a particular date had to scan for it, a reader who
-	 * wanted to know what day of the week Easter falls on could not tell at
-	 * all, and the shape of a season — a run of green with a red day in it —
-	 * was invisible in a column of text.
+	 * This page listed the whole liturgical year, Advent to Advent, filtered
+	 * down to the days that were not plain weekdays — about 230 rows. What was
+	 * wrong with it was the SPAN, not the shape: a reader looking for a
+	 * particular date had to scan a screen and a half of them, and the days
+	 * with nothing appointed were missing altogether, so a date could be
+	 * looked up and simply not be there. A month is 30 rows, every one of them
+	 * present, with the month named above it and one press to the next.
 	 *
-	 * A month grid is what a calendar looks like, which is the whole argument.
-	 * It costs the year view, and that is a real loss for the one question the
-	 * list was good at; what buys it back is that stepping a month is one
-	 * press, so the year is twelve presses away rather than absent.
+	 * ## And a list, not a grid
 	 *
-	 * ## The grid navigates by MOVING THE SELECTED DAY
+	 * It was a seven-column grid for an afternoon, which is what a calendar
+	 * usually looks like, and the reason it went back is that this page is not
+	 * a diary. Nobody is placing appointments against weekdays here; they are
+	 * reading what each day IS, and that is a line of text of unpredictable
+	 * length — "Saints Cornelius, Pope, and Cyprian, Bishop, Martyrs" — which
+	 * a column a seventh of the page wide cannot hold. The grid clipped nearly
+	 * every name it drew to two lines and dropped them all below 34rem; a row
+	 * gives the name the width of the page.
+	 *
+	 * The week survives as a rule above each Sunday, which is the one thing
+	 * the grid said that a list does not say by itself.
+	 *
+	 * ## Paging MOVES THE SELECTED DAY
 	 *
 	 * There is no separate "month being viewed". The month shown is the month
 	 * of `selected`, and the arrows move `selected` by a month — so the page
@@ -26,39 +35,26 @@
 	 *
 	 * The alternative — a view month held in the component, independent of the
 	 * selected day — is what a mail client's calendar does, and it is wrong
-	 * here: this page's whole content below the grid is one day, so a reader
+	 * here: this page's whole content below the list is one day, so a reader
 	 * paging to March and seeing February's feast underneath has been shown
 	 * two different months at once. Paging moves the day.
 	 *
 	 * THE DAY OF THE MONTH IS KEPT AND CLAMPED. Stepping from 31 March to
 	 * February lands on the 28th (or the 29th), not on 3 March, and stepping
-	 * on lands on 31 April's neighbour rather than skipping the month. The
-	 * clamp is not symmetric — going back to February from the 31st and
-	 * forward again gives the 28th, not the 31st — which is the ordinary
-	 * behaviour of every date picker and the only one that does not need the
-	 * component to remember where the reader started.
-	 *
-	 * ## The week begins on Sunday
-	 *
-	 * Not from the reader's locale, and deliberately: this is a LITURGICAL
-	 * calendar, whose week begins on the Lord's Day (Universal Norms n. 4).
-	 * The Sunday is the day the rest of the week is numbered from — "Monday of
-	 * the Second Week of Lent" is Monday AFTER that Sunday — so a grid that
-	 * put Monday first would break the one row a reader of this page is
-	 * looking at into two.
-	 *
-	 * `Intl.Locale`'s `weekInfo` could answer the civil question and is
-	 * unavailable in Firefox anyway; it is not the question.
+	 * on lands on 30 April rather than skipping the month. The clamp is not
+	 * symmetric — going back to February from the 31st and forward again gives
+	 * the 28th, not the 31st — which is the ordinary behaviour of every date
+	 * picker and the only one that does not need the component to remember
+	 * where the reader started.
 	 */
 	import {
 		celebrationName,
 		formatIsoDate,
 		fromDayNumber,
 		liturgicalDay,
-		onOrBefore,
-		SATURDAY,
 		SUNDAY,
 		toDayNumber,
+		weekday,
 		type CalendarOptions,
 		type DayNumber,
 		type LiturgicalDay
@@ -68,9 +64,9 @@
 	import Icon from './Icon.svelte';
 
 	interface Props {
-		/** The chosen day. Its month is the month drawn. */
+		/** The chosen day. Its month is the month listed. */
 		selected: DayNumber;
-		/** Today in the reader's own zone, marked in the grid. */
+		/** Today in the reader's own zone, marked in the list. */
 		today: DayNumber;
 		options: CalendarOptions;
 		/** The interface language, for the month and weekday names. */
@@ -81,9 +77,9 @@
 
 	let { selected, today, options, lang, onpick }: Props = $props();
 
-	let gridEl: HTMLElement | undefined = $state();
-	/** The date to put the keyboard back on once the grid has re-rendered —
-	 *  see `moveBy` below. */
+	let listEl: HTMLElement | undefined = $state();
+	/** The date to put the keyboard back on once the list has re-rendered —
+	 *  see `moveTo` below. */
 	let refocus: string | undefined = $state();
 
 	const ymd = $derived(fromDayNumber(selected));
@@ -105,46 +101,6 @@
 		return toDayNumber(year, month, Math.min(ymd.day, monthLength(year, month)));
 	}
 
-	/**
-	 * The weeks drawn: from the Sunday on or before the 1st to the Saturday on
-	 * or after the last day.
-	 *
-	 * FOUR TO SIX ROWS, whichever the month needs, rather than a fixed six.
-	 * A fixed grid keeps the page from reflowing as the reader pages, which is
-	 * a real virtue; what it costs is a whole empty week below February in a
-	 * common year, and this grid sits above the day it describes rather than
-	 * beside other months, so nothing lines up with it to be disturbed.
-	 */
-	const weeks = $derived.by(() => {
-		const first = toDayNumber(ymd.year, ymd.month, 1);
-		const start = onOrBefore(first, SUNDAY);
-		const last = first + monthLength(ymd.year, ymd.month) - 1;
-		const end = onOrBefore(last + 6, SATURDAY);
-		const rows: {
-			n: DayNumber;
-			iso: string;
-			day: number;
-			outside: boolean;
-			liturgical: LiturgicalDay | undefined;
-		}[][] = [];
-		for (let n = start; n <= end; n += 7) {
-			rows.push(
-				Array.from({ length: 7 }, (_, i) => {
-					const d = n + i;
-					const parts = fromDayNumber(d);
-					return {
-						n: d,
-						iso: formatIsoDate(d),
-						day: parts.day,
-						outside: parts.month !== ymd.month,
-						liturgical: liturgicalDay(d, options)
-					};
-				})
-			);
-		}
-		return rows;
-	});
-
 	/** The locale to name the month and the weekdays in — `dates.ts` holds the
 	 *  reason it is not the raw interface tag. */
 	const locale = $derived(dateLocale(lang));
@@ -157,23 +113,35 @@
 		}).format(new Date(Date.UTC(ymd.year, ymd.month - 1, 1)))
 	);
 
-	/** The seven column headings, in the reader's own language. Taken off a
-	 *  known week (7 January 2024 was a Sunday) rather than off the month
-	 *  being drawn, so they do not change as the reader pages. */
-	const weekdayNames = $derived(
-		Array.from({ length: 7 }, (_, i) => {
-			const d = new Date(Date.UTC(2024, 0, 7 + i));
-			return {
-				short: new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(d),
-				long: new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }).format(d)
-			};
-		})
+	const weekdayFormat = $derived(
+		new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' })
 	);
 
-	/** What a cell prints under its number: the day's own celebration, or —
-	 *  for a plain weekday that still offers something — the first optional
-	 *  memorial, which is the only thing that makes such a day worth a look. */
-	function cellName(d: LiturgicalDay | undefined): { text: string; optional: boolean } | undefined {
+	/** Every day of the month, in order — INCLUDING the ones with nothing
+	 *  appointed. A month view that omitted them would be a list a reader
+	 *  could look a date up in and not find it, which is what the year listing
+	 *  did and the one thing about it that was a defect rather than a span. */
+	const days = $derived.by(() => {
+		const first = toDayNumber(ymd.year, ymd.month, 1);
+		return Array.from({ length: monthLength(ymd.year, ymd.month) }, (_, i) => {
+			const n = first + i;
+			return {
+				n,
+				iso: formatIsoDate(n),
+				day: i + 1,
+				weekdayName: weekdayFormat.format(new Date(Date.UTC(ymd.year, ymd.month - 1, i + 1))),
+				// The rule that stands in for the grid's columns. Never on the
+				// first row, where it would be a second line under the header.
+				weekStart: i > 0 && weekday(n) === SUNDAY,
+				liturgical: liturgicalDay(n, options)
+			};
+		});
+	});
+
+	/** What a row prints: the day's own celebration, or — for a plain weekday
+	 *  that still offers something — the first optional memorial, which is the
+	 *  only thing that makes such a day worth a look. */
+	function rowName(d: LiturgicalDay | undefined): { text: string; optional: boolean } | undefined {
 		if (!d) return undefined;
 		if (d.celebration.rank !== 'weekday')
 			return { text: celebrationName(d.celebration, lang), optional: false };
@@ -183,67 +151,50 @@
 	}
 
 	/**
-	 * Arrow keys walk the grid, which is what makes it a calendar rather than
-	 * a page of forty buttons.
+	 * Arrow keys walk the list, which is what makes it navigable without a
+	 * mouse and without thirty tab stops.
 	 *
 	 * Every move goes through `onpick`, so it is a real navigation and the URL
 	 * follows — there is no "focused but not selected" state to explain, and a
-	 * reader who arrows to a day and stops has that day's card below them.
+	 * reader who arrows to a day and stops has that day's card below them. Up
+	 * and down are one DAY, which in a list is one row; a month is
+	 * PageUp/PageDown, and Home/End are the ends of the month. Left and right
+	 * are deliberately untouched: in a vertical list they mean nothing, and
+	 * binding them would take them away from the browser.
 	 *
 	 * THE REFOCUS IS THE AWKWARD HALF and it cannot be avoided: `onpick`
-	 * re-renders the grid, and a move that crosses a month boundary replaces
-	 * every cell in it, so the element the reader was standing on is gone by
+	 * re-renders the list, and a move that crosses a month boundary replaces
+	 * every row in it, so the element the reader was standing on is gone by
 	 * the time the browser would restore focus to it. `refocus` names the date
 	 * to stand on and the effect below puts the keyboard there once the new
-	 * cells exist. `keepFocus` on the `goto` is what stops SvelteKit throwing
+	 * rows exist. `keepFocus` on the `goto` is what stops SvelteKit throwing
 	 * focus to `<body>` in between.
-	 *
-	 * The handler is on the CELL and not on the table, though the event would
-	 * bubble either way: a `<table>` is not interactive, and a keyboard
-	 * listener on one is a promise to keyboard users that the element takes
-	 * focus. The cells are the buttons; they are what takes it.
 	 */
-	function moveBy(days: number) {
-		const target = selected + days;
+	function moveTo(target: DayNumber) {
 		refocus = formatIsoDate(target);
 		onpick(refocus);
 	}
 
-	function onGridKeydown(event: KeyboardEvent) {
-		const step = {
-			ArrowLeft: -1,
-			ArrowRight: 1,
-			ArrowUp: -7,
-			ArrowDown: 7
+	function onRowKeydown(event: KeyboardEvent) {
+		const first = toDayNumber(ymd.year, ymd.month, 1);
+		const target = {
+			ArrowUp: selected - 1,
+			ArrowDown: selected + 1,
+			PageUp: shiftMonths(-1),
+			PageDown: shiftMonths(1),
+			Home: first,
+			End: first + monthLength(ymd.year, ymd.month) - 1
 		}[event.key];
-		if (step !== undefined) {
-			event.preventDefault();
-			// An arrow is a picture of a direction and the grid mirrors under
-			// `dir="rtl"`, so left and right have to mirror with it — unlike
-			// the step buttons, whose GLYPH is flipped instead.
-			const rtl = getComputedStyle(gridEl!).direction === 'rtl';
-			moveBy(Math.abs(step) === 1 && rtl ? -step : step);
-			return;
-		}
-		if (event.key === 'Home' || event.key === 'End') {
-			event.preventDefault();
-			const sunday = onOrBefore(selected, SUNDAY);
-			moveBy((event.key === 'Home' ? sunday : sunday + 6) - selected);
-			return;
-		}
-		if (event.key === 'PageUp' || event.key === 'PageDown') {
-			event.preventDefault();
-			const target = shiftMonths(event.key === 'PageUp' ? -1 : 1);
-			refocus = formatIsoDate(target);
-			onpick(refocus);
-		}
+		if (target === undefined) return;
+		event.preventDefault();
+		moveTo(target);
 	}
 
 	$effect(() => {
 		if (!refocus) return;
-		const cell = gridEl?.querySelector<HTMLElement>(`[data-date="${refocus}"]`);
+		const row = listEl?.querySelector<HTMLElement>(`[data-date="${refocus}"]`);
 		refocus = undefined;
-		cell?.focus();
+		row?.focus();
 	});
 
 	function page(delta: number) {
@@ -263,7 +214,7 @@
 			<Icon name="arrow-left" />
 		</button>
 		<!-- `aria-live` so a reader who pages with the keyboard is told which
-		     month they landed in; the grid below is far too large to announce. -->
+		     month they landed in; the list below is far too long to announce. -->
 		<h2 aria-live="polite">{monthName}</h2>
 		<button
 			type="button"
@@ -284,58 +235,48 @@
 	</header>
 
 	<!--
-		A REAL TABLE, not a grid of divs with ARIA on it. The weekday is a
-		column header of every cell under it, which is a relationship `<th
-		scope="col">` states for nothing and `role="grid"` would need
-		`aria-describedby` on forty-two buttons to imitate.
+		REAL LINKS, as the year listing had them: `?d=` IS the address of the
+		day, so a row is a place and not a control. That is what makes a
+		middle-click open it, a long-press offer to copy it, and a screen
+		reader announce it as a link to somewhere. `preventDefault` is what
+		keeps the click a shallow navigation rather than a page load.
 	-->
-	<table bind:this={gridEl}>
-		<caption class="visually-hidden">{monthName}</caption>
-		<thead>
-			<tr>
-				{#each weekdayNames as w, i (i)}
-					<th scope="col" abbr={w.long}><abbr title={w.long}>{w.short}</abbr></th>
-				{/each}
-			</tr>
-		</thead>
-		<tbody>
-			{#each weeks as week (week[0].iso)}
-				<tr>
-					{#each week as cell (cell.iso)}
-						{@const name = cellName(cell.liturgical)}
-						<td>
-							<button
-								type="button"
-								data-date={cell.iso}
-								class="cell"
-								class:outside={cell.outside}
-								class:selected={cell.n === selected}
-								class:is-today={cell.n === today}
-								aria-current={cell.n === selected ? 'date' : undefined}
-								title={name?.text}
-								onclick={() => onpick(cell.iso)}
-								onkeydown={onGridKeydown}
-							>
-								<span class="head">
-									<span class="num">{cell.day}</span>
-									{#if cell.liturgical}
-										<span class="swatch" data-colour={cell.liturgical.colour} aria-hidden="true"
-										></span>
-									{/if}
-								</span>
-								{#if cell.n === today}
-									<span class="visually-hidden">{t('calendar.today')}</span>
-								{/if}
-								{#if name}
-									<span class="name" class:optional={name.optional}>{name.text}</span>
-								{/if}
-							</button>
-						</td>
-					{/each}
-				</tr>
-			{/each}
-		</tbody>
-	</table>
+	<ol bind:this={listEl}>
+		{#each days as d (d.iso)}
+			{@const name = rowName(d.liturgical)}
+			<li class:week-start={d.weekStart}>
+				<a
+					href={`?d=${d.iso}`}
+					data-date={d.iso}
+					class:selected={d.n === selected}
+					class:is-today={d.n === today}
+					aria-current={d.n === selected ? 'date' : undefined}
+					onclick={(e) => {
+						e.preventDefault();
+						onpick(d.iso);
+					}}
+					onkeydown={onRowKeydown}
+				>
+					<span class="date">
+						<span class="num">{d.day}</span>
+						<span class="weekday">{d.weekdayName}</span>
+					</span>
+					{#if d.liturgical}
+						<span class="swatch" data-colour={d.liturgical.colour} aria-hidden="true"></span>
+					{:else}
+						<span aria-hidden="true"></span>
+					{/if}
+					<span class="name" class:optional={name?.optional}>
+						{name?.text ?? ''}
+						{#if d.n === today}<span class="visually-hidden">{t('calendar.today')}</span>{/if}
+					</span>
+					{#if d.liturgical}
+						<span class="rank">{t(`calendar.rank.${d.liturgical.celebration.rank}`)}</span>
+					{/if}
+				</a>
+			</li>
+		{/each}
+	</ol>
 </section>
 
 <style>
@@ -376,143 +317,98 @@
 		transform: scaleX(-1);
 	}
 
-	table {
-		inline-size: 100%;
-		border-collapse: collapse;
-		table-layout: fixed;
-	}
-
-	th {
-		padding: 0 0 0.3rem;
-		font-size: 0.7rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--color-text-muted);
-	}
-	/* The browser's own dotted underline on an `<abbr title>` reads as a
-	   spelling error under a three-letter word. The title is still there. */
-	th abbr {
-		text-decoration: none;
-	}
-
-	td {
+	ol {
+		list-style: none;
+		margin: 0;
 		padding: 0;
-		border: 1px solid var(--color-border);
+		border-top: 1px solid var(--color-border);
+	}
+	li {
+		border-bottom: 1px solid var(--color-border);
+	}
+	/*
+	 * THE WEEK IS THE ONE THING A LIST LOSES, and a heavier rule above each
+	 * Sunday puts it back. The liturgical week begins on the Lord's Day
+	 * (Universal Norms n. 4), and the Sunday is the day the rest of the week
+	 * is numbered from — "Monday of the Second Week of Lent" is the Monday
+	 * AFTER that Sunday — so a reader following a season needs to see where
+	 * one starts. It is a border on the `li` rather than a separator element,
+	 * so it costs no row and cannot be read out as content.
+	 */
+	li.week-start {
+		border-top: 2px solid var(--color-border);
 	}
 
-	.cell {
-		display: flex;
-		flex-direction: column;
-		gap: 0.15rem;
-		inline-size: 100%;
-		/* Tall enough for a number and two lines of a name at the size below;
-		   a fixed height keeps every week the same depth whether or not the
-		   days in it have names, which is what makes the grid read as a grid. */
-		block-size: 4.25rem;
-		padding: 0.25rem 0.3rem;
-		border: 2px solid transparent;
-		background: transparent;
+	a {
+		display: grid;
+		grid-template-columns: 3.75rem 1rem 1fr auto;
+		align-items: baseline;
+		gap: 0.5rem;
+		padding: 0.35rem 0.25rem;
+		text-decoration: none;
 		color: inherit;
-		font: inherit;
-		text-align: start;
-		cursor: pointer;
 	}
-	.cell:hover {
+	a:hover {
 		background: var(--color-bg-elevated);
 	}
-	.cell:focus-visible {
-		/* Inside the border rather than around it: an outline on a collapsed
-		   table border is drawn under the neighbouring cell on one side. */
-		outline: none;
-		border-color: var(--color-accent);
+	a.selected {
+		font-weight: 600;
 	}
 
-	.head {
+	.date {
 		display: flex;
-		align-items: center;
-		gap: 0.3rem;
+		align-items: baseline;
+		gap: 0.4rem;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
 	}
 	.num {
-		font-size: 0.8rem;
+		/* Tabular, and given a fixed width, so the weekday beside it starts at
+		   the same place on every row — single- and double-digit alike. */
 		font-variant-numeric: tabular-nums;
-		line-height: 1.4;
+		inline-size: 1.2em;
+		text-align: end;
 	}
-	/* Sized against the number beside it — the primitive is `em`-based for
-	   exactly this (styles/components.css). */
-	.head .swatch {
-		font-size: 0.8rem;
-	}
-
 	/*
-	 * A DAY OF THE NEXT MONTH IS SHOWN AND IS NOT DIMMED TO NOTHING. It is
-	 * still a real day with a real feast on it, and the last row of a month is
-	 * where a reader looks for the first days of the next one; drawing them at
-	 * 30% would make the answer visible and unreadable at the same time.
-	 * What marks them is the number, which is the part that says which month
-	 * the cell belongs to.
+	 * Today is marked on the NUMBER and the selection on the ROW, so a reader
+	 * can see both at once — on the day itself they are the same row, and on
+	 * any other day the two marks must not compete for the same edge.
 	 */
-	.outside .num {
-		color: var(--color-text-muted);
-	}
-	.outside .name {
-		opacity: 0.6;
-	}
-
-	.name {
-		font-size: 0.7rem;
-		line-height: 1.25;
-		overflow: hidden;
-		/* Two lines and then an ellipsis. `line-clamp` needs the legacy box
-		   display to take effect; the `title` on the button carries the whole
-		   name for anything the clamp cuts. */
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-	}
-	.name.optional {
-		color: var(--color-text-muted);
-	}
-
-	/* Today is marked on the NUMBER and the selection on the CELL, so a reader
-	   can see both at once — on the day they are the same cell, and any other
-	   day the two marks must not compete for the same edge. */
 	.is-today .num {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		inline-size: 1.5em;
-		block-size: 1.5em;
+		inline-size: 1.6em;
+		block-size: 1.6em;
 		border-radius: 50%;
 		background: var(--color-accent);
 		color: var(--color-bg);
 		font-weight: 600;
 	}
-	.selected {
-		border-color: var(--color-accent);
-		background: var(--color-bg-elevated);
+	.weekday {
+		font-size: 0.78rem;
+	}
+
+	.name.optional {
+		color: var(--color-text-muted);
+	}
+	.rank {
+		font-size: 0.78rem;
+		color: var(--color-text-muted);
+		text-align: end;
 	}
 
 	/*
-	 * BELOW THIS WIDTH THE NAMES GO AND THE DOTS STAY. Seven columns of a
-	 * phone's width is about 3rem a cell, which is four or five characters —
-	 * enough to show that there is a name and never enough to read it. The
-	 * swatch still carries the season, the card below carries the day, and the
-	 * grid becomes what it can be at that size: a date picker.
+	 * The rank goes first at narrow widths, then the weekday. The NAME is what
+	 * the row is for and it keeps the whole line; the rank is recoverable from
+	 * the card below, and the weekday from the Sunday rules.
 	 */
 	@media (max-width: 34rem) {
-		.cell {
-			block-size: 2.75rem;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
+		a {
+			grid-template-columns: 2.25rem 1rem 1fr;
 		}
-		.head {
-			flex-direction: column;
-			gap: 0.1rem;
-		}
-		.name {
+		.rank,
+		.weekday {
 			display: none;
 		}
 	}

@@ -23,11 +23,11 @@
 	 * showing a different day", and leaves `/calendarium` as the one address
 	 * worth indexing.
 	 *
-	 * ## The month grid IS the navigation
+	 * ## The month listing IS the navigation
 	 *
 	 * `CalendarMonth.svelte` holds the arrangement and the argument for it.
 	 * What it means here is that this page has one control row and no day
-	 * steppers: the grid steps a day by being clicked or arrowed, and steps a
+	 * steppers: the list steps a day by being clicked or arrowed, and steps a
 	 * month with its own arrows, so a second pair of arrows above it would be
 	 * two controls doing one thing at two grains.
 	 *
@@ -124,10 +124,10 @@
 	 * parameter with, for the same reasons: `replaceState` because stepping a
 	 * day is not a destination and a reader who stepped through a week should
 	 * still be one Back press from the page they arrived from; `noScroll`
-	 * because the grid below can be arrowed through and jumping to the top on
+	 * because the list below can be arrowed through and jumping to the top on
 	 * every keypress would take the day's card off the screen; `keepFocus`
 	 * because these ARE the focused controls, and a keyboard reader who lost
-	 * focus to `<body>` would have to tab back to the cell they just left.
+	 * focus to `<body>` would have to tab back to the row they just left.
 	 */
 	function commit(params: { d?: string; c?: string }) {
 		const url = new URL(page.url);
