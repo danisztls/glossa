@@ -69,10 +69,46 @@ across all 18 editions. The rejected spelling was `/catechismus/cccc/{n}`:
 `CCCC` is a siglum no edition prints, and the two differ by a repetition count
 rather than a glyph.
 
-**And the Compendium has no index of its own.** The Catechism's presents both
-works a row at a time, with paragraph range and question range together. Two
-landing pages showing one outline at two resolutions was the same page written
-twice, and they had already drifted apart in their `<title>` tags.
+**And the Compendium had no index of its own until 2026-09-04.** The argument
+against one was that the Catechism's presents both works a row at a time, with
+paragraph range and question range together, so a second page would be one
+outline at two resolutions — the same page written twice, which they already
+were, having drifted apart in their `<title>` tags.
+
+**What that missed is that a table of DIVISIONS is not the only way in.** Parts
+and sections are exactly right for a reader who knows the outline and wrong for
+the reader the Compendium was written for, who arrives holding a question rather
+than an address (`docs/research/audiences.md` §5). So the shortest, plainest
+work in the corpus was the one reachable only by knowing a question's number,
+and the site's whole answer to a reader without the vocabulary was a page whose
+first column is the Catechism. The new page is not a second outline: it is
+`CatechismIndex`'s existing ONE-COLUMN case — already written, because four
+languages carry the Compendium and no Catechism — made reachable in every
+language rather than only in the four that force it.
+
+**The Social Doctrine is shelved under the Catechism too, and it moved three
+times first** — beside the Magisterium, then under it, then here. An item that
+will not sit still means the taxonomy is short an axis, and it was: the
+_Compendium of the Social Doctrine_ is a compilation of magisterial documents by
+ORIGIN, a systematic synthesis by FORM, and social teaching by SUBJECT, and one
+shelf can encode one of those. **The shelf encodes form**, like every other one
+here — Bible, Law and Prayers are all kinds of text — and on that axis the line
+is synthesis against occasion: works that gather scattered teaching into an
+ordered whole and are read THROUGH, against dated acts issued once and cited
+SINGLY. The address space had already drawn it: `/doctrina-socialis/{n}` and
+`/doctrina-socialis/caput/{n}` mirror the Catechism's two exactly, where the
+Code is cited by canon and a document by section.
+
+An earlier draft grouped it with the Magisterium on the ORIGIN axis, on the
+evidence that exactly three work types carry `promulgated`,
+`pontiff_or_council` and `document_kind` — `document`, `social-doctrine` and
+`canon-law` — while every other type has all three null. That is true and worth
+knowing; it is also an origin argument imported into a form-sorted shelf, and
+mixing the two is what produced three different answers.
+
+**The price is that two works are called "the Compendium", and it is paid in
+copy.** Inside this shelf the _Compendium of the Social Doctrine_ is never
+labelled bare "Compendium": every row prints its full title.
 
 **The Summa is addressed under `/doctores`, a shelf for the Fathers and Doctors
 of the Church.** It had been a fifth peer of Scripture, the Catechism, the
@@ -93,17 +129,56 @@ commissioning inventions rather than looking up terms.
 `/doctores` is a shelf like `/documenta` and `/doctores/summa` is a work index
 like `/catechismus`; both are chrome, so both take every language prefix.
 
-**The shelf is unlisted, and that is a separate decision from the move.**
-Nothing in the reading interface links to `/doctores` while the Summa awaits a
-quality pass and has no company; it stays reachable by address, by the jump
-box, by cross-reference and through the sitemap. This cuts against the prayers'
-rule that "a corpus nobody can find from the nav is a corpus nobody reads", and
-is meant to: the Summa is being held back deliberately, not filed badly.
-Restoring it is one line.
+**The shelf is off the nav bar, and that is a separate decision from the move.**
+The Summa awaits a quality pass and has no company, and it stays reachable by
+address, by the jump box, by cross-reference and through the sitemap. This cuts
+against the prayers' rule that "a corpus nobody can find from the nav is a
+corpus nobody reads", and is meant to: the Summa is being held back
+deliberately, not filed badly.
+
+**`/bibliotheca` lists it anyway, and the argument does not reach that page.**
+Being unlisted in a BAR is invisibility, because a bar has no room to say why;
+on a catalogue the caveat can be a sentence beside the shelf. The two are not in
+tension — one is a door and the other is the record of what is behind every
+door.
 
 **The usage beacon keeps `summa` as its own bucket and adds `doctores`**
 (`usage-schema.ts`). A series that broke at the move would read as a collapse
 in readership rather than a change of address.
+
+## Two tables decide a URL, and a page needs both
+
+**`STATIC_PATHS` is EXISTENCE and `CHROME_PATHS` is PUBLICATION.**
+`isCanonicalPath` is the edge's only authority on whether a URL is a page at
+all, and it reads both; the sitemap, the `hreflang` clusters and the per-page
+`<head>` read only the second. They overlap almost entirely, which is exactly
+how a page can fall through both.
+
+**Two did.** `/calendarium` and `/ius-canonicum` each shipped with a route
+directory, a `+page.svelte`, a nav entry and working navigation, and each
+answered **404 with the app's own not-found UI** to every cold load and every
+crawler from the day it landed. The SPA router never asks the worker, so a
+reader who followed the nav saw the page and a reader who refreshed it, opened
+it in a new tab or was sent the link did not — and every way a person would
+check by hand is the first kind. `route-manifest.test.ts` walks `src/routes/`
+now and fails on any static route directory neither table admits: **a list that
+has to be remembered is the thing that failed, so the routes on disk are the
+assertion.**
+
+**A page joins `CHROME_PATHS` only when its own strings exist in every
+interface language.** `route-titles.mjs` states the rule — a cluster whose
+Portuguese member is described in English is worse than no cluster, because it
+tells a search engine the page is Portuguese and then serves English — and two
+pages are held out by it today. `/calendarium` is the purest chrome page on the
+site, holding no corpus text at all, and its 44 `calendar.*` keys are written in
+three dictionaries; `/catechismus/compendium` is described by
+`compendium.landing.*`, which fourteen carry. Both are in `STATIC_PATHS`, so
+both exist, answer 200 and are indexable at their bare address. Each is one line
+plus a `CHROME_KEYS` entry on the day its strings are translated.
+
+**So "should this be a chrome path" is two questions, not one**: is every word
+on the page the interface, and is the interface actually written. The first was
+always the test; the second is what the two omissions taught.
 
 ## Which edition a reader gets
 

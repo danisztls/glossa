@@ -60,7 +60,7 @@ was primed` (site/docs/shell.md).
 `corpus.ts` memoises five maps at module load (the canonical book list, the
 document groups, three existence Sets); module load is long before any primer
 resolves, so they were built empty and stayed empty — the home page's Bible and
-Magisterium sections rendered blank. They go through `derived()` now, which
+Magisterium sections, as it then was, rendered blank. They go through `derived()` now, which
 recomputes when `indexGeneration()` moves. **Two of them named no registry** —
 they reach `manifests` through `listWorksOfType` — so grepping for the registry
 found nothing. `corpus-derivations.test.ts` scans the source for the pattern,
@@ -523,6 +523,39 @@ npm run deploy      # build -> preflight -> wrangler deploy
   `robots.txt`, `.well-known/security.txt`, the `fonts/OFL-*.txt` licences and
   `_headers` keep their comments on purpose.
 
+## The bar is five doors, and adding a work does not add one
+
+Rationale in `site/docs/finding.md`; what must be true before you touch it:
+
+- **`NAV_ITEMS` names doors, not works** — Learn, Bible, Prayers, Library,
+  Calendar. A newly ingested work goes on a shelf in `/bibliotheca` and,
+  where it belongs there, under `/catechismus`; it does **not** get a bar
+  entry. The bar was one item per work until 2026-09-04 and had reached seven.
+- **`Learn` points at `/catechismus` and no route moved.** Display label and
+  canonical route are independent here and always were — the bar has said
+  "Magisterium" over `/documenta` from the beginning.
+- **`/bibliotheca` must stay a superset.** It lists every work including the
+  ones with their own door. A Library that held only what the bar left out is
+  a leftovers bin, and the label stops meaning anything.
+- **No page in this group writes a name or a sentence of its own.** Library's
+  shelves and the home page's doors reuse the key each destination is already
+  titled and described by, the same rule `route-titles.mjs` follows for the
+  `<head>`. Adding a shelf should add no dictionary key; if it does, check
+  whether the destination page really has no tagline.
+- **The home page is the liturgical day plus the doors.** Do not put an index
+  on it. It carried the Bible's whole table of contents and the Catechism's
+  whole outline until 2026-09-04, which is why nothing ingested after them was
+  ever added to it — a WEIGHT problem that reads as a nesting problem.
+- **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
+  Every work with an index belongs there whether or not it has a door, and
+  `scripts/export-section-names.mjs` must be re-run and its output committed
+  after any `nav.*` or `*.abbrev` change (`section-names.test.ts` fails
+  otherwise).
+- **One row per work TYPE in "continue reading", and the types are
+  discovered.** `continueRows` reads the reader's own positions; it replaced a
+  literal list written when four types existed, under which a reader halfway
+  through the Code got no row.
+
 ## `/documenta` filters, and the one editorial file behind them
 
 Replaced the pontificate table of contents on 2026-08-31 (§The site): a
@@ -600,15 +633,31 @@ Added 2026-08-28 (§The site). `ssr = false` means one document answers every
 address, so everything a non-rendering consumer learns comes from
 `src/worker.ts`, which rewrites the shell's `<head>` per address.
 
-**Nine pages take a language prefix and the rest do not, and the line is not
-cosmetic.** `CHROME_PATHS` in `route-manifest.ts` lists them (`/`,
-`/scriptura`, `/catechismus`, `/documenta`, `/doctrina-socialis`, `/doctores`,
-`/doctores/summa`, `/preces`, `/colophon`) — the pages whose every word IS the
-interface, so the Portuguese one is a different page. A reading address names a citation, the
-same in every language, and takes no published prefix: prefixing them would
-declare `hreflang` alternates serving byte-identical text through
-`CONTENT_LANG_FALLBACK` (§The site; the entry-point redirect above is the
-unpublished exception).
+**Some pages take a language prefix and the rest do not, and the line is not
+cosmetic.** `CHROME_PATHS` in `route-manifest.ts` lists them — the pages whose
+every word IS the interface, so the Portuguese one is a different page. Read the
+list from the file, never from a copy here; it has moved twice. A reading
+address names a citation, the same in every language, and takes no published
+prefix: prefixing them would declare `hreflang` alternates serving
+byte-identical text through `CONTENT_LANG_FALLBACK` (`site/docs/languages.md`;
+the entry-point redirect above is the unpublished exception).
+
+**`STATIC_PATHS` IS A SECOND TABLE AND A PAGE NEEDS BOTH, which is how two of
+them 404'd for weeks.** `isCanonicalPath` decides whether a URL exists at all
+and reads both tables; the sitemap and the head read only `CHROME_PATHS`. A new
+static route that reaches neither answers **404 with the app's own not-found UI
+on every cold load** while client-side navigation into it works perfectly — the
+SPA router never asks the worker, so every way a person checks by hand shows the
+page working. `/calendarium` and `/ius-canonicum` both shipped that way.
+`route-manifest.test.ts` walks `src/routes/` and fails on any static route
+directory neither table admits, so **adding a route is now the assertion rather
+than remembering to add it to a list.**
+
+**A page joins `CHROME_PATHS` only when its own title and description strings
+exist in EVERY interface language**, which is a translation gate and not a
+routing one — see `site/docs/addresses.md` §Two tables. `/calendarium` and
+`/catechismus/compendium` are both held out by it today and are both in
+`STATIC_PATHS`, so both answer 200 and are indexable at their bare address.
 
 **A cluster is thirty-five URLs, and the unprefixed one is not the English
 page.** One prefixed member per interface language plus the bare path, which

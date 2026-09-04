@@ -8,6 +8,9 @@
 			"nav.compendium": "Compendium",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magisterium",
+			"nav.socialDoctrine": "Social Doctrine",
+			"nav.canonLaw": "Canon Law",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Prayers",
 			"nav.summa": "Summa"
 		},
@@ -18,6 +21,9 @@
 			"nav.compendium": "Compêndio",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magistério",
+			"nav.socialDoctrine": "Doutrina social",
+			"nav.canonLaw": "Direito Canónico",
+			"canonLaw.canon": "Cân.",
 			"nav.prayers": "Orações",
 			"nav.summa": "Suma"
 		},
@@ -28,6 +34,9 @@
 			"nav.compendium": "Compendium",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magisterium",
+			"nav.socialDoctrine": "Doctrina socialis",
+			"nav.canonLaw": "Ius canonicum",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Preces",
 			"nav.summa": "Summa"
 		},
@@ -38,6 +47,9 @@
 			"nav.compendium": "Kompendium",
 			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Lehramt",
+			"nav.socialDoctrine": "Soziallehre",
+			"nav.canonLaw": "Kirchenrecht",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Gebete",
 			"nav.summa": "Summa"
 		},
@@ -48,6 +60,9 @@
 			"nav.compendium": "Compendio",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magisterio",
+			"nav.socialDoctrine": "Doctrina social",
+			"nav.canonLaw": "Derecho canónico",
+			"canonLaw.canon": "c.",
 			"nav.prayers": "Oraciones",
 			"nav.summa": "Suma"
 		},
@@ -58,6 +73,9 @@
 			"nav.compendium": "Abrégé",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magistère",
+			"nav.socialDoctrine": "Doctrine sociale",
+			"nav.canonLaw": "Droit canonique",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Prières",
 			"nav.summa": "Somme"
 		},
@@ -68,6 +86,9 @@
 			"nav.compendium": "Compendio",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magistero",
+			"nav.socialDoctrine": "Dottrina sociale",
+			"nav.canonLaw": "Diritto canonico",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Preghiere",
 			"nav.summa": "Somma"
 		},
@@ -78,6 +99,9 @@
 			"nav.compendium": "Famintinana",
 			"compendium.abbrev": "Famint.",
 			"nav.magisterium": "Fampianaran’ny Fiangonana",
+			"nav.socialDoctrine": "Fampianarana sosialy",
+			"nav.canonLaw": "Lalàna kanonika",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Vavaka",
 			"nav.summa": "Somà"
 		},
@@ -88,6 +112,9 @@
 			"nav.compendium": "Kompendium",
 			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Tanítóhivatal",
+			"nav.socialDoctrine": "Társadalmi tanítás",
+			"nav.canonLaw": "Kánonjog",
+			"canonLaw.canon": "Kán.",
 			"nav.prayers": "Imádságok",
 			"nav.summa": "Summa"
 		},
@@ -98,6 +125,9 @@
 			"nav.compendium": "Kompendium",
 			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Magisterium",
+			"nav.socialDoctrine": "Nauka społeczna",
+			"nav.canonLaw": "Prawo kanoniczne",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Modlitwy",
 			"nav.summa": "Suma"
 		},
@@ -108,6 +138,9 @@
 			"nav.compendium": "Compendiu",
 			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Magisteriu",
+			"nav.socialDoctrine": "Doctrina socială",
+			"nav.canonLaw": "Drept canonic",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Rugăciuni",
 			"nav.summa": "Summa"
 		},
@@ -118,6 +151,9 @@
 			"nav.compendium": "Kompendij",
 			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Učiteljstvo",
+			"nav.socialDoctrine": "Družbeni nauk",
+			"nav.canonLaw": "Kanonsko pravo",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Molitve",
 			"nav.summa": "Summa"
 		},
@@ -128,6 +164,9 @@
 			"nav.compendium": "Kompendiet",
 			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Läroämbetet",
+			"nav.socialDoctrine": "Sociallära",
+			"nav.canonLaw": "Kanonisk rätt",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Böner",
 			"nav.summa": "Summa"
 		},
@@ -138,6 +177,9 @@
 			"nav.compendium": "Компендиум",
 			"compendium.abbrev": "Комп.",
 			"nav.magisterium": "Учительство",
+			"nav.socialDoctrine": "Социальное учение",
+			"nav.canonLaw": "Каноническое право",
+			"canonLaw.canon": "Кан.",
 			"nav.prayers": "Молитвы",
 			"nav.summa": "Сумма"
 		},
@@ -146,6 +188,9 @@
 			"nav.ccc": "Catechismus",
 			"nav.compendium": "Compendium",
 			"nav.magisterium": "Leergezag",
+			"nav.socialDoctrine": "Sociale leer",
+			"nav.canonLaw": "Kerkelijk recht",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Gebeden",
 			"nav.summa": "Summa"
 		},
@@ -154,6 +199,9 @@
 			"nav.ccc": "Katekismus",
 			"nav.compendium": "Kompendium",
 			"nav.magisterium": "Læreembedet",
+			"nav.socialDoctrine": "Sociallære",
+			"nav.canonLaw": "Kanonisk ret",
+			"canonLaw.canon": "Can.",
 			"nav.prayers": "Bønner",
 			"nav.summa": "Summa"
 		},
@@ -162,6 +210,9 @@
 			"nav.ccc": "Katechismus",
 			"nav.compendium": "Kompendium",
 			"nav.magisterium": "Učitelský úřad",
+			"nav.socialDoctrine": "Sociální nauka",
+			"nav.canonLaw": "Kanonické právo",
+			"canonLaw.canon": "Kán.",
 			"nav.prayers": "Modlitby",
 			"nav.summa": "Summa"
 		},
@@ -170,6 +221,9 @@
 			"nav.ccc": "Katechizmus",
 			"nav.compendium": "Kompendium",
 			"nav.magisterium": "Magistérium",
+			"nav.socialDoctrine": "Sociálna náuka",
+			"nav.canonLaw": "Kánonické právo",
+			"canonLaw.canon": "Kán.",
 			"nav.prayers": "Modlitby",
 			"nav.summa": "Suma"
 		},
@@ -178,6 +232,9 @@
 			"nav.ccc": "Katekizam",
 			"nav.compendium": "Kompendij",
 			"nav.magisterium": "Učiteljstvo",
+			"nav.socialDoctrine": "Socijalni nauk",
+			"nav.canonLaw": "Kanonsko pravo",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Molitve",
 			"nav.summa": "Suma"
 		},
@@ -186,6 +243,9 @@
 			"nav.ccc": "Katekismus",
 			"nav.compendium": "Kompendium",
 			"nav.magisterium": "Opetusvirka",
+			"nav.socialDoctrine": "Sosiaalioppi",
+			"nav.canonLaw": "Kanoninen oikeus",
+			"canonLaw.canon": "Kaanon",
 			"nav.prayers": "Rukoukset",
 			"nav.summa": "Summa"
 		},
@@ -194,6 +254,9 @@
 			"nav.ccc": "Katehisms",
 			"nav.compendium": "Kompendijs",
 			"nav.magisterium": "Maģistērijs",
+			"nav.socialDoctrine": "Sociālā mācība",
+			"nav.canonLaw": "Kanoniskās tiesības",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Lūgšanas",
 			"nav.summa": "Summa"
 		},
@@ -202,6 +265,9 @@
 			"nav.ccc": "Katekisimu",
 			"nav.compendium": "Muhtasari",
 			"nav.magisterium": "Mafundisho ya Kanisa",
+			"nav.socialDoctrine": "Mafundisho ya kijamii",
+			"nav.canonLaw": "Sheria za Kanoni",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Sala",
 			"nav.summa": "Summa"
 		},
@@ -210,6 +276,9 @@
 			"nav.ccc": "Giáo lý",
 			"nav.compendium": "Bản Toát yếu",
 			"nav.magisterium": "Huấn quyền",
+			"nav.socialDoctrine": "Học thuyết xã hội",
+			"nav.canonLaw": "Giáo luật",
+			"canonLaw.canon": "Đ.",
 			"nav.prayers": "Kinh nguyện",
 			"nav.summa": "Summa"
 		},
@@ -218,6 +287,9 @@
 			"nav.ccc": "Катэхізіс",
 			"nav.compendium": "Кампендыум",
 			"nav.magisterium": "Настаўніцтва Касцёла",
+			"nav.socialDoctrine": "Сацыяльнае вучэнне",
+			"nav.canonLaw": "Кананічнае права",
+			"canonLaw.canon": "Кан.",
 			"nav.prayers": "Малітвы",
 			"nav.summa": "Сума"
 		},
@@ -226,6 +298,9 @@
 			"nav.ccc": "Katekizmas",
 			"nav.compendium": "Santrauka",
 			"nav.magisterium": "Magisteriumas",
+			"nav.socialDoctrine": "Socialinis mokymas",
+			"nav.canonLaw": "Kanonų teisė",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Maldos",
 			"nav.summa": "Suma"
 		},
@@ -234,6 +309,9 @@
 			"nav.ccc": "Katekizmi",
 			"nav.compendium": "Përmbledhja",
 			"nav.magisterium": "Magjisteri",
+			"nav.socialDoctrine": "Doktrina shoqërore",
+			"nav.canonLaw": "E drejta kanonike",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Lutje",
 			"nav.summa": "Summa"
 		},
@@ -242,6 +320,9 @@
 			"nav.ccc": "Katesismo",
 			"nav.compendium": "Kompendyo",
 			"nav.magisterium": "Magisterium",
+			"nav.socialDoctrine": "Aral panlipunan",
+			"nav.canonLaw": "Batas Kanoniko",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Mga Panalangin",
 			"nav.summa": "Summa"
 		},
@@ -250,6 +331,9 @@
 			"nav.ccc": "Katekismus",
 			"nav.compendium": "Kompendium",
 			"nav.magisterium": "Magisterium",
+			"nav.socialDoctrine": "Ajaran sosial",
+			"nav.canonLaw": "Hukum Kanonik",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Doa",
 			"nav.summa": "Summa"
 		},
@@ -258,6 +342,9 @@
 			"nav.ccc": "Katakizim",
 			"nav.compendium": "Nchịkọta",
 			"nav.magisterium": "Nkuzi Chọọchị",
+			"nav.socialDoctrine": "Ozizi mmekọrịta",
+			"nav.canonLaw": "Iwu Kanọn",
+			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Ekpere",
 			"nav.summa": "Summa"
 		},
@@ -266,6 +353,9 @@
 			"nav.ccc": "Катехизм",
 			"nav.compendium": "Компендіум",
 			"nav.magisterium": "Учительство Церкви",
+			"nav.socialDoctrine": "Соціальне вчення",
+			"nav.canonLaw": "Канонічне право",
+			"canonLaw.canon": "Кан.",
 			"nav.prayers": "Молитви",
 			"nav.summa": "Сума"
 		},
@@ -274,6 +364,9 @@
 			"nav.ccc": "教理",
 			"nav.compendium": "简编",
 			"nav.magisterium": "训导权",
+			"nav.socialDoctrine": "社会训导",
+			"nav.canonLaw": "教会法",
+			"canonLaw.canon": "第",
 			"nav.prayers": "祈祷文",
 			"nav.summa": "神学大全"
 		},
@@ -282,6 +375,9 @@
 			"nav.ccc": "教理",
 			"nav.compendium": "簡編",
 			"nav.magisterium": "訓導權",
+			"nav.socialDoctrine": "社會訓導",
+			"nav.canonLaw": "教會法",
+			"canonLaw.canon": "第",
 			"nav.prayers": "祈禱經文",
 			"nav.summa": "神學大全"
 		},
@@ -290,6 +386,9 @@
 			"nav.ccc": "교리서",
 			"nav.compendium": "요약",
 			"nav.magisterium": "교도권",
+			"nav.socialDoctrine": "사회교리",
+			"nav.canonLaw": "교회법",
+			"canonLaw.canon": "제",
 			"nav.prayers": "기도문",
 			"nav.summa": "신학대전"
 		},
@@ -298,6 +397,9 @@
 			"nav.ccc": "മതബോധനം",
 			"nav.compendium": "സംഗ്രഹം",
 			"nav.magisterium": "സഭയുടെ പ്രബോധനാധികാരം",
+			"nav.socialDoctrine": "സാമൂഹിക പ്രബോധനം",
+			"nav.canonLaw": "കാനൻ നിയമം",
+			"canonLaw.canon": "കാ.",
 			"nav.prayers": "പ്രാർഥനകൾ",
 			"nav.summa": "സുമ്മ"
 		},
@@ -306,6 +408,9 @@
 			"nav.ccc": "धर्मशिक्षा",
 			"nav.compendium": "संक्षेप",
 			"nav.magisterium": "कलीसिया का शिक्षण",
+			"nav.socialDoctrine": "सामाजिक शिक्षा",
+			"nav.canonLaw": "कैनन विधि",
+			"canonLaw.canon": "कै.",
 			"nav.prayers": "प्रार्थनाएँ",
 			"nav.summa": "सुम्मा"
 		},
@@ -316,6 +421,9 @@
 			"nav.compendium": "الموجز",
 			"compendium.abbrev": "المختصر",
 			"nav.magisterium": "تعليم الكنيسة",
+			"nav.socialDoctrine": "التعليم الاجتماعي",
+			"nav.canonLaw": "القانون الكنسي",
+			"canonLaw.canon": "ق.",
 			"nav.prayers": "الصلوات",
 			"nav.summa": "الخلاصة"
 		},
@@ -324,6 +432,9 @@
 			"nav.ccc": "קטכיזם",
 			"nav.compendium": "תקציר",
 			"nav.magisterium": "המגיסטריום",
+			"nav.socialDoctrine": "תורה חברתית",
+			"nav.canonLaw": "משפט קנוני",
+			"canonLaw.canon": "קנון",
 			"nav.prayers": "תפילות",
 			"nav.summa": "סומה"
 		}

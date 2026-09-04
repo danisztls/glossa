@@ -1,7 +1,60 @@
 # Finding something
 
-Two surfaces: the jump box, which completes an address, and `/documenta`, which
-filters a shelf. Neither is a full-text search.
+Three surfaces: the nav bar and `/bibliotheca`, which are for a reader who has
+no address; the jump box, which completes one; and `/documenta`, which filters a
+shelf. None of them is a full-text search.
+
+## The bar is for the readers who use it least, so it is built for the others
+
+`docs/research/audiences.md` splits readers on whether they arrive with an
+**address** or with a **question**. The address-holders never touch the bar —
+one types `can. 748` into the jump box, another arrives mid-corpus on a URL
+somebody else wrote and never sees the header — while the question-holders are
+"plausibly most of the traffic" and are the ones a bar of work names cannot
+serve, because using it means already knowing which book holds the answer.
+
+**So the bar names doors and not works**: Learn, Bible, Prayers, Library,
+Calendar. It was one item per work until 2026-09-04, which is a rule with no end
+state — seven items by the time the Code landed, and Denzinger, the Roman
+Catechism, the Fathers and a second code each cost another slot. Under five
+doors every future work lands inside Library or inside Learn.
+
+**`Learn` is the one imperative among four nouns, and the mixed grammar is the
+point.** It is the only label that explains itself to a reader who does not yet
+know that "Catechism" is where one goes to learn. The route does not move:
+`/catechismus` keeps its own name on its own page, in the jump box and in every
+`<head>`, exactly as the site already ships "Magisterium" over `/documenta`.
+Each dictionary takes whatever register its language puts on a nav item — an
+imperative in the Romance languages, a verbal noun where an imperative would
+read as an order.
+
+**Library works only as the SUPERSET, and three umbrella labels failed before
+it.** "Church", "Magisterium" and "Teaching" all failed the same way: Scripture
+is transmitted by the Church, the Catechism is issued by the Church, the prayers
+are the Church's — a label every sibling satisfies carries no information and
+cannot tell a reader where to click. `/bibliotheca` escapes that only because it
+lists **every** work, Bible and Prayers included, so it makes no taxonomic claim
+and cannot become the bin for whatever did not fit. Redundancy is a defect only
+when two items reach the SAME place, which is why there is no "Home" entry
+beside the brand link and why a shortcut past an index is not one.
+
+**It holds a catalogue AND a borrowing record**, which is what makes it more
+than an index: the shelves, then where the reader left off, then their marks.
+`/signata` remains the full view of the second.
+
+**No page below the bar declares a name or a sentence of its own.** Library's
+shelves, the home page's doors and the `<head>` all read the key the destination
+page is already titled and described by (`scripts/route-titles.mjs`). A
+catalogue that paraphrased the pages it lists would be a second set of sentences
+to translate into 37 languages and a second set to keep true.
+
+**The home page is the liturgical day and the doors, and nothing else.** It
+rendered the Bible's whole table of contents and then the Catechism's whole
+outline until the same day, and those two blocks were most of its height — which
+is why nothing ingested afterwards was ever added to it, neither the Compendium
+of the Social Doctrine nor the Code. **That was a WEIGHT problem and not a
+nesting one**, which is why rearranging the nav into categories kept feeling
+like the fix and kept not being one.
 
 ## The jump box
 
@@ -74,6 +127,25 @@ a letter, which is also how one reaches a DIFFERENT book, where John is reached
 by rearranging the letters actually typed. Same length and same multiset is the
 whole test.
 
+**A section the bar does not name is still completable, because the two lists
+answer different questions.** `suggest.ts`'s `SECTIONS` is every work with an
+index, which is not the five doors: `/doctrina-socialis` and `/ius-canonicum`
+are reached through Library and through the box, and both were missing from the
+box until 2026-09-04 — so the Code was ingested in seven languages and `can. 748`
+completed to nothing for weeks. A work that is in the corpus and not in that
+table is invisible to the one surface an expert uses.
+
+**`CIC` means two works and both rows are offered.** Portuguese cites the
+Catechism as `CIC` (_Catecismo da Igreja Católica_); everywhere else it is the
+_Codex Iuris Canonici_. This was noted as a future collision while the corpus
+held no canon law, with the predicted fix being a discriminator on the reader's
+language — and that prediction was wrong for the same reason the box accepts
+every language's word for a work: **the interface language decides what a row is
+labelled and does not get to decide what the reader meant.** A Portuguese
+speaker reading English chrome still types `CIC` for the Catechism. So the
+siglum sits on both sections, the box offers both rows, and the ranking orders
+them. It costs one row in a list of eight and can never be silently wrong.
+
 **The matched span is marked in the row, and re-derived rather than carried.**
 A row shows an address as the reader's own language spells it, so
 `highlight.ts` matches the LABEL rather than reusing what `suggest.ts` matched
@@ -120,6 +192,16 @@ want modelling in the worker, the sitemap, the route manifest and the beacon.
 list, which is why its options are `aria-pressed` buttons rather than
 checkboxes: two instances of a checkbox facet are two elements claiming one
 `id`, and a `<label for>` then points at whichever the parser saw first.
+
+**A body that has been renamed is one facet option, and its documents still say
+what they said.** _Praedicate Evangelium_ made the Congregation for the Doctrine
+of the Faith a Dicastery in 2022, and the facet showed the doctrinal office as
+two options — 188 documents under one name, 12 under the other — so no click
+reached its work whole. `documentAuthorKey` folds the pair for the facet only:
+`pontiff_or_council` is corpus data and a document issued in 2016 still prints
+the name it was issued under, because that is a fact about the document, and the
+search box still reads the raw field so "Congregation" still finds them. **The
+curia is renamed regularly, so this is a table that will grow.**
 
 **The author facet prints each pontificate's years, from a table and not from
 the documents.** Twelve regnal names in reverse-chronological order asks the

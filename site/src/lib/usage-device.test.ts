@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
 	RECORD_MAX_DAYS,
@@ -14,7 +15,7 @@ import {
 	shouldCollect,
 	type DeviceRecord
 } from './usage-device';
-import { bucketAge, bucketVisits } from './usage-schema';
+import { bucketAge, bucketVisits, SETS } from './usage-schema';
 
 describe('rollDevice', () => {
 	it('starts a device on its first session', () => {
@@ -196,6 +197,39 @@ describe('refKindFor', () => {
 });
 
 describe('sectionFor', () => {
+	/**
+	 * THE TWO LISTS ARE ONE DECISION AND LIVE IN TWO FILES, so this is the
+	 * seam. `sectionFor` names a bucket and `SETS.section` is what the worker
+	 * will accept; a name in one and not the other fails in the quiet
+	 * direction — the worker drops the value and the series reads zero, which
+	 * looks like nobody visiting rather than like a fault (the schema module's
+	 * own docblock says so about the mirror case).
+	 *
+	 * It runs over the ROUTES rather than over a list, for the same reason
+	 * `route-manifest.test.ts` walks `src/routes/`: a section that has to be
+	 * remembered is what went wrong. `/doctrina-socialis` and `/ius-canonicum`
+	 * each counted as `other` from the day they landed until 2026-09-04.
+	 */
+	it('buckets every top-level route as a section the schema accepts', () => {
+		const roots = readdirSync('src/routes', { withFileTypes: true })
+			.filter(
+				(e) =>
+					e.isDirectory() && !e.name.startsWith('[') && !e.name.startsWith('.') && e.name !== '404'
+			)
+			.map((e) => `/${e.name}`);
+		expect(roots.length).toBeGreaterThan(8);
+		const unbucketed = roots.filter((path) => sectionFor(path) === 'other');
+		// `/signata` is the reader's own bookmark library and is deliberately
+		// unmeasured: it is `noindex`, it lists nothing but this browser's own
+		// localStorage, and a bucket for it would count how often someone looks
+		// at their own marks.
+		expect(unbucketed).toEqual(['/signata']);
+		for (const path of roots) {
+			if (path === '/signata') continue;
+			expect(SETS.section, path).toContain(sectionFor(path));
+		}
+	});
+
 	it('names the canonical sections and nothing else', () => {
 		expect(sectionFor('/')).toBe('home');
 		expect(sectionFor('/scriptura/genesis/1')).toBe('scriptura');

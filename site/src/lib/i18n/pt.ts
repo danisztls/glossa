@@ -33,10 +33,11 @@ export const pt: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'home.continueReading': 'Continuar lendo',
-	'home.works': 'Biblioteca',
-	'home.ccc.heading': 'Catecismo e Compêndio',
+	'nav.library': 'Biblioteca',
+	'nav.learn': 'Aprender',
+	'library.landing.tagline':
+		'Todo o corpus, prateleira a prateleira — com o ponto onde parou e o que marcou.',
 	'ccc.noCounterpart': 'Sem correspondência na outra obra',
-	'home.magisterium.mostRecent': 'Mais recente',
 	'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',
 	'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
@@ -200,8 +201,6 @@ export const pt: Dictionary = {
 	'prayers.rosary.todayHeading': 'Mistérios de hoje',
 	'prayers.rosary.openingPrayer': 'Oração inicial',
 	'prayers.rosary.decadePrayers': 'As orações de uma dezena',
-	'home.prayers.heading': 'Orações',
-	'home.prayers.browseAll': 'Ver todas as orações',
 
 	'ref.tooltip.loading': 'Carregando…',
 	'ref.tooltip.openCcc': 'Abrir no Catecismo',

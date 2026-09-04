@@ -52,6 +52,8 @@
 
 import { hrefFor, summaPartFromSlug, summaPartSlug, type Address } from './address';
 import {
+	canonLawCanonExists,
+	canonLawLangs,
 	cccLangs,
 	cccParagraphExists,
 	compendiumLangs,
@@ -71,6 +73,8 @@ import {
 	listPrayerMeta,
 	listSummaQuestions,
 	prayerIndexLang,
+	socialDoctrineLangs,
+	socialDoctrineParagraphExists,
 	summaLangs,
 	summaQuestionExists,
 	PREFERRED_EDITION,
@@ -92,8 +96,10 @@ export type SuggestionKind =
 	| 'cccChapter'
 	| 'compendium'
 	| 'compendiumChapter'
+	| 'canonLaw'
 	| 'document'
 	| 'prayer'
+	| 'socialDoctrine'
 	| 'summa'
 	| 'section';
 
@@ -141,6 +147,8 @@ export interface SuggestOpts {
 	cccLang?: string;
 	compendiumLang?: string;
 	prayerLang?: string;
+	socialDoctrineLang?: string;
+	canonLawLang?: string;
 	summaLang?: string;
 	/** How many rows the caller will draw. */
 	limit?: number;
@@ -310,6 +318,8 @@ interface Context {
 	cccLang: string;
 	compendiumLang: string;
 	prayerLang: string;
+	socialDoctrineLang: string;
+	canonLawLang: string;
 	summaLang: string;
 	limit: number;
 	sep: string;
@@ -369,6 +379,8 @@ function resolveContext(opts: SuggestOpts): Context {
 		cccLang: opts.cccLang ?? pickLang(cccLangs(), chain),
 		compendiumLang: opts.compendiumLang ?? pickLang(compendiumLangs(), chain),
 		prayerLang: opts.prayerLang ?? prayerIndexLang(lang),
+		socialDoctrineLang: opts.socialDoctrineLang ?? pickLang(socialDoctrineLangs(), chain),
+		canonLawLang: opts.canonLawLang ?? pickLang(canonLawLangs(), chain),
 		summaLang: opts.summaLang ?? pickLang(summaLangs(), chain),
 		limit: opts.limit ?? DEFAULT_LIMIT,
 		sep: grammarSurface(lang).chapterVerseSep
@@ -1003,10 +1015,15 @@ function exactReference(query: string, ctx: Context): Scored[] {
 interface SectionWords {
 	kind: SuggestionKind;
 	/**
-	 * Where a bare keyword lands. Not necessarily this section's OWN page:
-	 * the Compendium has no index, and points at the Catechism's, which
-	 * presents both works a row at a time. Two sections naming one address is
-	 * why the landing rows below dedupe on it.
+	 * Where a bare keyword lands — this section's own index page.
+	 *
+	 * The Compendium's `path` was `/catechismus` until 2026-09-04, because it
+	 * had no index of its own and the Catechism's presents both works a row at
+	 * a time. It has one now (`routes/catechismus/compendium/`), so the two no
+	 * longer name one address — but the dedupe below stays: it is what keeps a
+	 * one-letter prefix that matches several sections from offering the same
+	 * page under several names, which is a property of the matcher and not of
+	 * any one section's path.
 	 */
 	path: string;
 	titleKey: string;
@@ -1021,15 +1038,26 @@ interface SectionWords {
 	 * cannot type it back is the same defect as a form the box completes and
 	 * `parseRefs` then fails to resolve, in the other direction.
 	 *
-	 * ONE OF THEM IS A KNOWN COLLISION AND IS ADMITTED ANYWAY. Portuguese
-	 * cites the Catechism as `CIC` (*Catecismo da Igreja Catolica*), which
-	 * everywhere else is the *Codex Iuris Canonici*. The corpus holds no canon
-	 * law today (PLAN.md #10 has it as a future work), so `cic 27` has exactly
-	 * one thing it can mean and answering the Catechism is right. If the Code
-	 * is ever ingested this becomes the `SC`/`CA`/`AA` problem in
-	 * `refs-grammar.ts`, and the discriminator will have to be the reader's
-	 * language -- Portuguese means the Catechism, everyone else means the
-	 * Code. Recorded here so that is a decision rather than a rediscovery.
+	 * ONE OF THEM IS A REAL COLLISION AND BOTH READINGS ARE NOW OFFERED.
+	 * Portuguese cites the Catechism as `CIC` (*Catecismo da Igreja Catolica*),
+	 * which everywhere else is the *Codex Iuris Canonici*. This block used to
+	 * say the corpus held no canon law, so `cic 27` had one possible meaning;
+	 * the Code was ingested in seven languages and the prediction came true.
+	 *
+	 * THE RESOLUTION IS NOT THE ONE THIS BLOCK PREDICTED. It expected a
+	 * discriminator on the reader's language — Portuguese means the Catechism,
+	 * everyone else means the Code — and that is wrong for the same reason
+	 * `EVERY LANGUAGE'S WORD IS ACCEPTED` is right two paragraphs up: the
+	 * interface language decides what a row is LABELLED and does not get to
+	 * decide what the reader meant. A Portuguese speaker reading English chrome
+	 * still types `CIC` for the Catechism, and a canonist reading Portuguese
+	 * chrome still types it for the Code.
+	 *
+	 * So `cic` is an `extra` on BOTH sections and the box offers both rows,
+	 * which is what an ambiguous input deserves and what the ranking exists to
+	 * order. It costs one row in a list of eight and it can never be silently
+	 * wrong, where a language-keyed guess would answer confidently and hide the
+	 * other work from the reader who wanted it.
 	 */
 	abbrevKey?: string;
 	/** Fixed forms no dictionary supplies: URL segments and citation sigla. */
@@ -1043,11 +1071,13 @@ const SECTIONS: SectionWords[] = [
 		path: '/catechismus',
 		titleKey: 'nav.ccc',
 		abbrevKey: 'ccc.abbrev',
-		extra: ['catechismus', 'ccc', 'cec']
+		// `cic` is here AND on the Code below: see `abbrevKey`'s note on the
+		// one collision this table admits deliberately.
+		extra: ['catechismus', 'ccc', 'cec', 'cic']
 	},
 	{
 		kind: 'compendium',
-		path: '/catechismus',
+		path: '/catechismus/compendium',
 		titleKey: 'nav.compendium',
 		abbrevKey: 'compendium.abbrev',
 		extra: ['compendium', 'comp']
@@ -1057,6 +1087,26 @@ const SECTIONS: SectionWords[] = [
 		path: '/documenta',
 		titleKey: 'nav.magisterium',
 		extra: ['documenta', 'documents', 'documentos']
+	},
+	{
+		kind: 'socialDoctrine',
+		path: '/doctrina-socialis',
+		titleKey: 'nav.socialDoctrine',
+		// `CSDC` is what the work's own paragraphs are cited by; the Latin URL
+		// segment is here for the same reason every other one is.
+		extra: ['doctrina-socialis', 'csdc']
+	},
+	{
+		kind: 'canonLaw',
+		path: '/ius-canonicum',
+		titleKey: 'nav.canonLaw',
+		abbrevKey: 'canonLaw.canon',
+		// `can` and `cann` are what a citation of the Code actually opens with
+		// — `canonLaw.canon` is the same word in whatever the reader's
+		// dictionary spells it, and these are the Latin forms every edition
+		// prints. `cic` is the siglum, and is the collision documented on
+		// `abbrevKey` above.
+		extra: ['ius-canonicum', 'cic', 'can', 'cann', 'codex']
 	},
 	{ kind: 'prayer', path: '/preces', titleKey: 'nav.prayers', extra: ['preces'] },
 	{
@@ -1192,6 +1242,45 @@ function compendiumRow(n: number, score: number, order: number, ctx: Context): S
 }
 
 /**
+ * The Social Doctrine's paragraphs and the Code's canons.
+ *
+ * NEITHER CARRIES A `detail`, and that is a limit rather than an omission. The
+ * two rows above name their enclosing division, which they can because the
+ * Catechism's and the Compendium's outlines are eager. These two are derived
+ * from a DOCUMENT's structure and are fetched (`loadSocialDoctrineOutline`,
+ * `loadCanonLawOutline`), so a synchronous suggestion cannot see one. A row
+ * with a label and a badge is already a complete offer; the division name is
+ * what a reader gets on arriving.
+ */
+function socialDoctrineRow(n: number, score: number, order: number, ctx: Context): Scored {
+	return {
+		href: hrefFor({ kind: 'socialDoctrine', n }),
+		kind: 'socialDoctrine',
+		label: `${tr('nav.socialDoctrine', ctx.lang)} ${n}`,
+		completion: `${tr('nav.socialDoctrine', ctx.lang)} ${n}`,
+		badge: tr('nav.socialDoctrine', ctx.lang),
+		score,
+		order
+	};
+}
+
+/** `Can. 748` — the abbreviation the Code is cited by, in the reader's own
+ *  dictionary, which is what `canonLaw.canon` holds and why the reading pages
+ *  print the same string. */
+function canonLawRow(n: number, score: number, order: number, ctx: Context): Scored {
+	const label = `${tr('canonLaw.canon', ctx.lang)} ${n}`;
+	return {
+		href: hrefFor({ kind: 'canonLaw', n }),
+		kind: 'canonLaw',
+		label,
+		completion: label,
+		badge: tr('nav.canonLaw', ctx.lang),
+		score,
+		order
+	};
+}
+
+/**
  * The unit numbers of one work that a typed digit-prefix could be growing into.
  *
  * Both works are dense ranges (1-2865, 1-598) but neither is guaranteed
@@ -1215,6 +1304,8 @@ function unitCompletions(typed: string, max: number, exists: (n: number) => bool
 
 const MAX_CCC = 2865;
 const MAX_COMPENDIUM = 598;
+const MAX_SOCIAL_DOCTRINE = 583;
+const MAX_CANON = 1752;
 
 function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 	const match = KEYWORD_RE.exec(query);
@@ -1294,6 +1385,24 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 				const exact = String(n) === numberRaw;
 				out.push(
 					compendiumRow(n, (exact ? SCORE.exactUnit : SCORE.numericPrefix) + bump, order++, ctx)
+				);
+			}
+		} else if (section.kind === 'socialDoctrine') {
+			for (const n of unitCompletions(numberRaw, MAX_SOCIAL_DOCTRINE, (x) =>
+				socialDoctrineParagraphExists(ctx.socialDoctrineLang, x)
+			)) {
+				const exact = String(n) === numberRaw;
+				out.push(
+					socialDoctrineRow(n, (exact ? SCORE.exactUnit : SCORE.numericPrefix) + bump, order++, ctx)
+				);
+			}
+		} else if (section.kind === 'canonLaw') {
+			for (const n of unitCompletions(numberRaw, MAX_CANON, (x) =>
+				canonLawCanonExists(ctx.canonLawLang, x)
+			)) {
+				const exact = String(n) === numberRaw;
+				out.push(
+					canonLawRow(n, (exact ? SCORE.exactUnit : SCORE.numericPrefix) + bump, order++, ctx)
 				);
 			}
 		}

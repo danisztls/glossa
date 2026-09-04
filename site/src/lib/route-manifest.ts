@@ -45,7 +45,7 @@ export interface RouteManifest {
 /**
  * The pages whose content IS the interface, in the order the sitemap lists them.
  *
- * These eight are the only addresses that take an interface-language prefix
+ * These are the only addresses that take an interface-language prefix
  * (`/pt/catechismus`), and the reason is the distinction the whole URL grammar
  * rests on: a reading address names a citation, which is the same citation in
  * every language and takes no prefix, while these name a page whose every word
@@ -58,10 +58,12 @@ export interface RouteManifest {
  */
 export const CHROME_PATHS = [
 	'/',
+	'/bibliotheca',
 	'/scriptura',
 	'/catechismus',
 	'/doctrina-socialis',
 	'/documenta',
+	'/ius-canonicum',
 	// The shelf and the one work on it. Both are chrome by the same test as
 	// the rest: every word on either page is the interface. `/doctores/summa`
 	// is the only two-segment member, which `parseChromePath` handles because
@@ -71,6 +73,33 @@ export const CHROME_PATHS = [
 	'/preces',
 	'/colophon'
 ] as const;
+
+/**
+ * TWO PAGES ARE CHROME BY THIS TEST AND ARE DELIBERATELY NOT ON THE LIST, and
+ * the thing that keeps them off is the same in both cases: **a cluster claims
+ * a page is written in 37 languages, and neither page is.**
+ *
+ * `scripts/route-titles.mjs` states the rule it enforces — a cluster whose
+ * Portuguese member is described in English is worse than no cluster, because
+ * it tells a search engine the page is Portuguese and then serves English —
+ * and the two conditions differ only in degree:
+ *
+ *   - `/calendarium` holds no corpus text at all, which makes it the purest
+ *     chrome page on the site, and its 44 `calendar.*` keys are written in
+ *     `en`, `la` and `pt`. The other 34 dictionaries fall through to English
+ *     per key (`i18n.svelte.ts`). The page is also still being built.
+ *   - `/catechismus/compendium` is titled and described by
+ *     `compendium.landing.*`, which 14 dictionaries carry.
+ *
+ * Both are in `STATIC_PATHS`, so both exist, answer 200 and are indexable at
+ * their bare address; neither is claimed in a language it is not written in.
+ * Each is one line here plus a `CHROME_KEYS` entry on the day its strings are
+ * translated, and nothing else has to move.
+ *
+ * `/ius-canonicum` was missing for a third reason — nobody added it — and its
+ * `canonLaw.landing.*` keys were already in all 37, which is why it joined the
+ * list above on the day the omission was found and these two did not.
+ */
 
 const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);
 
@@ -93,7 +122,7 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
 /**
  * `/es/scriptura/iosue/1` -> `{ lang: 'es', path: '/scriptura/iosue/1' }`.
  *
- * A LANGUAGE ENTRY POINT, WHICH IS NOT A PUBLISHED ADDRESS. The eight
+ * A LANGUAGE ENTRY POINT, WHICH IS NOT A PUBLISHED ADDRESS. The
  * `CHROME_PATHS` above take a prefix and KEEP it: they are real pages in
  * fourteen languages, they self-canonicalize, and they declare an `hreflang`
  * cluster. A reading address prefixed this way is a doorway instead -- it is
@@ -135,16 +164,40 @@ export function parseLangEntry(
 	return isCanonicalPath(path, manifest) ? { lang, path } : undefined;
 }
 
+/**
+ * Every page the app renders that is not an address into the corpus.
+ *
+ * THIS IS THE EXISTENCE TABLE AND `CHROME_PATHS` IS THE PUBLICATION ONE, and
+ * a page needs the first to answer 200 at all. They overlap almost entirely,
+ * which is how the two that were in neither went unnoticed: `/calendarium`
+ * and `/ius-canonicum` answered **404 with the app's own not-found UI** to
+ * every cold load and every crawler from the day each landed, while
+ * client-side navigation into them worked perfectly, because the SPA router
+ * never asks the worker. A reader who followed the nav saw the page; a reader
+ * who refreshed it, opened it in a new tab, or was sent the link did not.
+ * (`/ius-canonicum` is in `CHROME_PATHS` now too and would pass on that
+ * alone; it is listed here as well because every other page on this list is.)
+ *
+ * `route-manifest.test.ts` walks `src/routes/` and fails on a route directory
+ * that reaches neither table, so the next one cannot be forgotten the same way.
+ */
 const STATIC_PATHS = new Set([
 	'/',
+	'/bibliotheca',
 	'/scriptura',
 	'/catechismus',
-	// NOT `/catechismus/compendium`: the Compendium has no index of its own,
-	// because the Catechism's presents both works a row at a time
-	// (`CatechismIndex.svelte`, 2026-08-28). It is a path segment that groups
-	// addresses rather than a page, exactly as `/catechismus/caput` is.
+	// The Compendium's own index, added 2026-09-04. It was NOT a page until
+	// then — the Catechism's index presents both works a row at a time
+	// (`CatechismIndex.svelte`, 2026-08-28) — but that index is a table of
+	// DIVISIONS, so the Compendium's 598 questions were reachable only by
+	// number and the one work written for a reader with no vocabulary could
+	// not be browsed as questions at all.
+	'/catechismus/compendium',
 	'/doctrina-socialis',
 	'/documenta',
+	'/ius-canonicum',
+	// The one page here whose subject is not a text at all.
+	'/calendarium',
 	'/doctores',
 	'/doctores/summa',
 	'/preces',

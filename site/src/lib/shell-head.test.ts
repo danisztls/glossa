@@ -54,6 +54,7 @@ const manifest: RouteManifest = {
 function chromeFixture(): RouteTitles['chrome'] {
 	const pages: Record<string, [string, string]> = {
 		'/': ['Glossa Catholica', 'The Bible · Catechism · Summa'],
+		'/bibliotheca': ['Library — Glossa Catholica', 'The whole corpus, shelf by shelf.'],
 		'/scriptura': ['The Bible — Glossa Catholica', 'Read the whole Bible.'],
 		'/catechismus': [
 			'Catechism of the Catholic Church — Glossa Catholica',
@@ -64,6 +65,7 @@ function chromeFixture(): RouteTitles['chrome'] {
 			'Compendium of the Social Doctrine of the Church — Glossa Catholica',
 			'What the Church teaches about life in society.'
 		],
+		'/ius-canonicum': ['Code of Canon Law — Glossa Catholica', 'The law of the Latin Church.'],
 		'/doctores': ['Doctors of the Church — Glossa Catholica', 'The Fathers and Doctors.'],
 		'/doctores/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
 		'/preces': ['Common Prayers — Glossa Catholica', 'Prayers with the Latin alongside.'],
