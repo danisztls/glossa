@@ -44,7 +44,7 @@
 		toDayNumber,
 		type CalendarOptions
 	} from '$lib/calendar';
-	import { BRAZIL } from '$lib/calendar/national/br';
+	import { NATIONAL_CALENDAR_LIST } from '$lib/calendar/national';
 	import { i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
@@ -57,13 +57,38 @@
 
 	/** Which calendar to compute. The universal Latin calendar is the default
 	 *  for the reason `docs/decisions.md` gives: a conference's transfers are a
-	 *  fact about a country, not about the calendar. */
+	 *  fact about a country, not about the calendar. The national calendars
+	 *  follow in `NATIONAL_CALENDAR_LIST`'s own order, which is Catholic
+	 *  population — the criterion they were chosen by. */
 	const CALENDARS = [
 		{ id: 'general', options: {} as CalendarOptions },
-		{ id: 'br', options: { nationalCalendar: BRAZIL } as CalendarOptions }
+		...NATIONAL_CALENDAR_LIST.map((c) => ({
+			id: c.id,
+			options: { nationalCalendar: c } as CalendarOptions
+		}))
 	];
 	let calendarId = $state('general');
 	let options = $derived(CALENDARS.find((c) => c.id === calendarId)!.options);
+
+	/**
+	 * A country's name, in the reader's own language, from the platform.
+	 *
+	 * `Intl.DisplayNames` is what the language menu already uses for language
+	 * names (`menu-filter.ts`), and it earns its place here for the same
+	 * reason: fifteen country names in thirty-four interface languages is 510
+	 * strings nobody would maintain, and every browser already knows them. A
+	 * tag it cannot name falls back to the code, which is at least the ISO
+	 * name of the country.
+	 */
+	function calendarLabel(id: string, lang: string): string {
+		if (id === 'general') return t('calendar.which.general');
+		const code = id.toUpperCase();
+		try {
+			return new Intl.DisplayNames([lang], { type: 'region' }).of(code) ?? code;
+		} catch {
+			return code;
+		}
+	}
 
 	let selected = $derived(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
 	let day = $derived(liturgicalDay(selected, options));
@@ -113,7 +138,7 @@
 				<span>{t('calendar.calendar')}</span>
 				<select bind:value={calendarId}>
 					{#each CALENDARS as c (c.id)}
-						<option value={c.id}>{t(`calendar.which.${c.id}`)}</option>
+						<option value={c.id}>{calendarLabel(c.id, lang)}</option>
 					{/each}
 				</select>
 			</label>

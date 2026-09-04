@@ -28,9 +28,10 @@ Each stated as: what it is, why it matters, what it depends on, and sizing.
 
 ## Loose ends from the liturgical calendar (landed 2026-09-03)
 
-The calendar itself shipped: `site/src/lib/calendar/` computes any day of any
-year and `oracle.test.ts` checks 27 calendars — three years, eight transfer
-variants, plus Brazil — day by day against GCatholic (`docs/decisions.md` §The
+The calendar itself shipped, and so did fifteen national calendars over it:
+`site/src/lib/calendar/` computes any day of any year and `oracle.test.ts`
+checks 72 calendars — three years, eight transfer variants, and sixteen
+national files — day by day against GCatholic (`docs/decisions.md` §The
 liturgical calendar). What follows is what that work located and deliberately
 did not do.
 
@@ -45,20 +46,29 @@ did not do.
   where a table of dates and ranks is fact), and it would belong in the corpus
   rather than in the site bundle. Depends on nothing; wants deciding on its own
   terms rather than as an extension.
-- **More national calendars.** The layer is built and Brazil proves it works
-  with real data; `NationalCalendar` is a data file with no code, and GCatholic
-  publishes ~100 countries at a deterministic URL. Portugal and the USA are the
-  obvious next two on the site's audiences. Each costs its own propers, its own
-  elevations, and its own oracle years — call it a day each, most of it
-  transcription and checking rather than engineering.
+- **The sixteenth country and beyond.** The list stops at Germany because it
+  was drawn by Catholic population and a list has to stop; Uganda, Tanzania,
+  Canada, Vietnam and Portugal are the next ones, and GCatholic publishes ~100.
+  A country now costs one row in `pipeline/scrapers/calendar.py`'s `CALENDARS`
+  and one file under `site/src/lib/calendar/national/` — measured across the
+  fifteen, mostly transcription and a few rounds of the oracle. **What it does
+  NOT cost is engine work, and that is now evidence rather than a hope**: the
+  last four layers written needed no change to `year.ts` at all.
+- **Diocesan calendars.** Italy's file adds no saint of its own, which surprises
+  until you see why: Italy's propers are in its dioceses' calendars, not its
+  national one. A diocesan layer would be a third tier over the national one,
+  and nothing in the model forbids it; whether the site wants ~2,000 of them is
+  a different question from whether it could hold one.
 
 ### Known limits, stated rather than fixed
 
-- **Brazil's Sunday transfers run out after 2027.** `sundayTransfers` is a
-  table of years and not a rule, because the evidence rules every rule out:
-  Peter and Paul went backward from a Monday in 2026 and forward from a Tuesday
-  in 2027. Outside the listed years the solemnity keeps its own date. Fixing
-  this properly means reading the CNBB's Ordo each year, which is an annual
+- **The per-year tables run out after 2027.** `movedInYear` (Brazil's and the
+  Congo's transfers, the Congo's Visitation) and Spain's Ember Days are tables
+  of years and not rules, because the evidence rules every rule out: Peter and
+  Paul went backward from a Monday in 2026 and forward from a Tuesday in 2027;
+  Spain's Ember Days are Monday, Monday, Tuesday. Outside the listed years the
+  celebration keeps its own date and the observance is absent. Fixing this
+  properly means reading each conference's Ordo every year, which is an annual
   chore and not a piece of code; the alternative — guessing a direction — puts
   a solemnity on a date nobody chose.
 - **The oracle covers 2025–2027 and nothing else.** That is GCatholic's iCal
@@ -69,15 +79,23 @@ did not do.
   confirm**: Saint Joseph is anticipated rather than deferred when 19 March
   falls in Holy Week, which rests on the published practice of 2008 because 19
   March is outside Holy Week in all three oracle years.
+- **A national proper's name is transcribed, not derived.** There is no Latin
+  original to reproduce and no second published source that was consulted, so
+  the oracle's name check for those rows is a transcription check. Everything
+  the ENGINE does with the row — date, rank, colour, precedence, moves,
+  transfers, suppressions — is checked independently, and that is the half that
+  can be wrong invisibly. A second witness per country (a conference's own Ordo)
+  would close the gap and is a country-by-country research task.
 - **The lectionary is absent by choice.** The cycle letters are stated; the
   readings are not, because their citations are a work this corpus does not
   hold. Adding them is not a calendar problem — it is deciding whether to
   ingest a lectionary.
-- **Latin, English and Portuguese only.** The interface is thirty-four
-  languages and every other one falls through `CONTENT_LANG_FALLBACK` to
-  English and then to Latin. That is the same posture the corpus takes for a
-  work it does not hold in a reader's language, and a translator adding a
-  language adds three name columns to `grc.ts`, not a mechanism.
+- **The general calendar is Latin, English and Portuguese.** A national layer
+  carries the language its conference approved its propers in (es, it, fr, pl,
+  de, en) and an English rendering beside it; every other interface language
+  falls through `CONTENT_LANG_FALLBACK`. That is the same posture the corpus
+  takes for a work it does not hold in a reader's language, and a translator
+  adding a language adds name columns to `grc.ts`, not a mechanism.
 
 ## Loose ends from the 2026-08-28 Bible capture (gap #15)
 

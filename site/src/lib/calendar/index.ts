@@ -50,7 +50,8 @@ function cacheKey(year: number, options: CalendarOptions): string {
 		options.nationalCalendar?.id ?? '',
 		options.epiphanyOnSunday ? 'e' : '',
 		options.ascensionOnSunday ? 'a' : '',
-		options.corpusChristiOnSunday ? 'c' : ''
+		options.corpusChristiOnSunday ? 'c' : '',
+		options.sacredHeartOnSunday ? 'h' : ''
 	].join('|');
 }
 
@@ -108,7 +109,10 @@ export function today(options: CalendarOptions = {}): LiturgicalDay | undefined 
  * except a national proper approved only in the vernacular, which has the
  * language it was approved in.
  */
-export function celebrationName(celebration: Celebration, lang: string): string {
+export function celebrationName(
+	celebration: { id: string; names: Celebration['names'] },
+	lang: string
+): string {
 	const base = lang.split('-')[0] as keyof Celebration['names'];
 	return (
 		celebration.names[base] ??

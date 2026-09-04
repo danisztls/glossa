@@ -106,6 +106,26 @@
 			</ul>
 		</section>
 	{/if}
+
+	{#if day.observances.length > 0}
+		<!--
+			An observance is not a celebration and is kept apart from them —
+			`Observance` in `$lib/calendar/types.ts`. Thanksgiving is a Thursday
+			in Ordinary Time with a Mass appointed for it, and putting it in the
+			list above would make it a rank the Church has not given it.
+		-->
+		<section class="optional">
+			<h3>{t('calendar.alsoObserved')}</h3>
+			<ul>
+				{#each day.observances as o (o.id)}
+					<li>
+						<span class="swatch" data-colour={o.colour ?? 'white'} aria-hidden="true"></span>
+						{celebrationName(o, lang)}
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
 </article>
 
 <style>
@@ -164,6 +184,11 @@
 	}
 	.swatch[data-colour='black'] {
 		background: #23211e;
+	}
+	/* Not a colour of GIRM 346: the Immaculate Conception in Spain and the
+	   Philippines — see `Colour` in `$lib/calendar/types.ts`. */
+	.swatch[data-colour='blue'] {
+		background: #3a5ea8;
 	}
 	.transferred {
 		margin: 0.5rem 0 0;

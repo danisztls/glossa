@@ -81,6 +81,7 @@ export function anchors(
 		epiphanyOnSunday?: boolean;
 		ascensionOnSunday?: boolean;
 		corpusChristiOnSunday?: boolean;
+		sacredHeartOnSunday?: boolean;
 	} = {}
 ): Anchors {
 	const pascha = easter(year);
@@ -123,7 +124,7 @@ export function anchors(
 		pentecost: pascha + 49,
 		trinity: pascha + 56,
 		corpusChristi: options.corpusChristiOnSunday ? pascha + 63 : pascha + 60,
-		sacredHeart: pascha + 68,
+		sacredHeart: options.sacredHeartOnSunday ? pascha + 70 : pascha + 68,
 		immaculateHeart: pascha + 69,
 		maryMotherOfChurch: pascha + 50,
 		christTheKing: nextAdvent - 7,

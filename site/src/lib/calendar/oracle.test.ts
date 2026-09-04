@@ -3,7 +3,9 @@
  * somebody else.
  *
  * `pipeline/scrapers/calendar.py` fetches GCatholic's iCal feeds for three
- * years in eight transfer variants, plus Brazil, and writes them to
+ * years in eight transfer variants of the universal calendar, plus fifteen
+ * national calendars (sixteen files — the United States is published twice,
+ * with the Ascension on the Thursday and on the Sunday), and writes them to
  * `./oracle/`. Every one of those days is compared here. What the oracle is
  * for, and why it is an oracle and not a source, is argued at the head of
  * that scraper; the short of it is that a liturgical calendar is the one kind
@@ -13,8 +15,10 @@
  * ## What is compared, and what deliberately is not
  *
  * Compared: the season's shape by way of the RANK and the COLOUR of the day's
- * own celebration, the set of optional memorials offered on it, the psalter
- * week, and — for the fixed celebrations only — the Latin name.
+ * own celebration, the set of optional memorials offered on it, the civil
+ * observances beside it, the psalter week, and the names — the Latin ones in
+ * the universal calendars, and a country's own propers in the language its
+ * conference approved them in.
  *
  * Not compared: the names of temporal days. Both calendars generate those
  * from a formula and the two formulae differ in case and in inflection
@@ -40,8 +44,8 @@ import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildYear } from './year';
 import { parseIsoDate } from './computus';
-import type { CalendarOptions, LiturgicalDay } from './types';
-import { BRAZIL } from './national/br';
+import type { CalendarOptions, LiturgicalDay, Names } from './types';
+import { NATIONAL_CALENDARS } from './national';
 
 const ORACLE_DIR = join(dirname(fileURLToPath(import.meta.url)), 'oracle');
 
@@ -92,7 +96,7 @@ function fold(name: string): string {
 }
 
 /**
- * Latin names this calendar and GCatholic spell differently, both correctly.
+ * Names this calendar and GCatholic spell differently.
  *
  * WHY A TABLE AND NOT A LOOSER COMPARISON. The point of checking names at all
  * is to catch the wrong saint on a day — a real defect that a rank-and-colour
@@ -106,6 +110,14 @@ function fold(name: string): string {
  * else, which is where its value is.
  *
  * The left column is what this site prints — the Roman Missal's form.
+ *
+ * THE LAST THREE ARE NOT VARIANTS BUT MISSPELLINGS, and they are the reason
+ * this table is a pair of names rather than a set of tolerated ones. Pedro
+ * Bautista, Francis Xavier Seelos and Miguel Agustín Pro are spelled
+ * `Baustista`, `Xeelos` and `Augustín` in the feeds. This site prints the
+ * names correctly and records here that the oracle does not, which is what
+ * keeps the check strict: a fourth misspelling appearing tomorrow fails
+ * rather than passing quietly.
  */
 const ACCEPTED_VARIANTS: ReadonlyArray<readonly [string, string]> = [
 	['Beatae Mariae Virginis Guadalupensis', 'Beatæ Mariæ Virginis de Guadalupe'],
@@ -146,16 +158,41 @@ const ACCEPTED_VARIANTS: ReadonlyArray<readonly [string, string]> = [
 	],
 	['Ss. Xysti II, papae, et sociorum, martyrum', 'Ss. Xysti, papæ, et sociorum, martyrum'],
 	['S. Turibii de Mogrovejo, episcopi', 'S. Turibii de Mongrovejo, episcopi'],
-	['S. Wenceslai, martyris', 'S. Venceslai, martyris']
+	['S. Wenceslai, martyris', 'S. Venceslai, martyris'],
+	[
+		'Saints Pedro Bautista, Paul Miki and Companions, Martyrs',
+		'Saints Pedro Baustista, Paul Miki and companions, martyrs'
+	],
+	['Blessed Francis Xavier Seelos, Priest', 'Blessed Francis Xavier Xeelos, priest'],
+	[
+		'Blessed Miguel Agustín Pro, Priest and Martyr',
+		'Blessed Miguel Augustín Pro, priest and martyr'
+	]
 ];
 
 /** Folded `ours -> theirs`, built once. */
 const VARIANT_OF = new Map(ACCEPTED_VARIANTS.map(([mine, theirs]) => [fold(mine), fold(theirs)]));
 
-/** The options a `General-X` oracle was computed with. */
+/**
+ * The options an oracle file was computed with.
+ *
+ * A `General-X` file states all three transfers, and they are passed. A
+ * national file usually states none: the country's transfers are part of what
+ * its layer CLAIMS, so passing nothing is what puts the claim under test —
+ * the layer's own `options` are what `buildYear` then merges.
+ *
+ * THE UNITED STATES IS THE EXCEPTION AND IT IS THE INTERESTING ONE. GCatholic
+ * publishes `US-D` and `US-H`, the same calendar with the Ascension on the
+ * Thursday and on the Sunday, because the country genuinely keeps both — six
+ * ecclesiastical provinces have the Thursday. So the file's stated transfers
+ * override the layer's, and one layer is checked against both answers.
+ */
 function optionsFor(oracle: Oracle): CalendarOptions {
-	if (oracle.calendar === 'BR') return { nationalCalendar: BRAZIL };
+	const country = oracle.calendar.split('-')[0].toLowerCase();
+	const national = NATIONAL_CALENDARS[country];
+	if (national && oracle.transfers === undefined) return { nationalCalendar: national };
 	return {
+		...(national ? { nationalCalendar: national } : {}),
 		epiphanyOnSunday: oracle.transfers?.epiphanyOnSunday ?? false,
 		ascensionOnSunday: oracle.transfers?.ascensionOnSunday ?? false,
 		corpusChristiOnSunday: oracle.transfers?.corpusChristiOnSunday ?? false
@@ -175,8 +212,9 @@ function shapeOf(rows: Array<{ rank: string | null; colour: string }>): string[]
 
 /** What this calendar offers on a day, in the oracle's own vocabulary. */
 function ours(
-	day: LiturgicalDay
-): Array<{ rank: string | null; colour: string; name: string; pt?: string; source?: string }> {
+	day: LiturgicalDay,
+	anchorLang: string
+): Array<{ rank: string | null; colour: string; name: string; source?: string }> {
 	const asOracle = (c: (typeof day)['celebration'], principal: boolean) => ({
 		// The oracle leaves the day's own celebration unranked when it is a
 		// Sunday or a weekday, and — see ALL_SOULS below — when it is the
@@ -187,10 +225,26 @@ function ours(
 				? null
 				: c.rank,
 		colour: c.colour,
-		name: c.names.la ?? c.names.pt ?? c.names.en ?? '',
+		name: nameIn(c.names, anchorLang),
 		source: c.source
 	});
-	return [asOracle(day.celebration, true), ...day.optional.map((c) => asOracle(c, false))];
+	return [
+		asOracle(day.celebration, true),
+		...day.optional.map((c) => asOracle(c, false)),
+		// A civil observance is emitted by the feeds as an unranked row in
+		// white beside the day's own — never instead of it. See `Observance`.
+		...day.observances.map((o) => ({
+			rank: null,
+			colour: o.colour ?? 'white',
+			name: nameIn(o.names, anchorLang),
+			source: 'observance'
+		}))
+	];
+}
+
+/** A celebration's name in the language this oracle file carries names in. */
+function nameIn(names: Names, anchorLang: string): string {
+	return names[anchorLang as keyof Names] ?? names.la ?? names.en ?? '';
 }
 
 describe('the computed calendar against GCatholic', () => {
@@ -228,7 +282,7 @@ describe('the computed calendar against GCatholic', () => {
 				for (const od of oracle.days) {
 					const day = dayFor(od.date);
 					if (!day) continue;
-					const mine = ours(day);
+					const mine = ours(day, oracle.anchorLang);
 					const theirs = shapeOf(od.celebrations);
 					let shape = shapeOf(mine);
 					// The one named divergence: GCatholic has no rose.
@@ -266,24 +320,26 @@ describe('the computed calendar against GCatholic', () => {
 					const day = dayFor(od.date);
 					if (!day) continue;
 					const theirs = new Set(od.celebrations.map((c) => fold(c.name)));
-					for (const mine of ours(day)) {
+					for (const mine of ours(day, oracle.anchorLang)) {
 						// Temporal days are formula-named on both sides and the
 						// formulae differ; only the fixed celebrations, whose
 						// names are the Calendarium's own, are compared.
 						if (mine.source === 'temporal') continue;
-						// A Portuguese-anchored oracle (Brazil) can only check the
-						// names Brazil itself approved. Its Portuguese for a
-						// GENERAL celebration is GCatholic's translation and this
-						// site's is the Missal's, so comparing those two would
-						// report a difference on every saint and mean nothing.
-						const name = oracle.anchorLang === 'pt' ? (mine.pt ?? mine.name) : mine.name;
-						if (oracle.anchorLang === 'pt' && mine.source !== 'proper') continue;
-						const folded = fold(name);
+						// A VERNACULAR-ANCHORED ORACLE CAN ONLY CHECK THE NAMES
+						// THAT COUNTRY ITSELF APPROVED. GCatholic's Spanish or
+						// Polish for a GENERAL celebration is its own translation
+						// and this site's is the Missal's, so comparing those two
+						// would report a difference on every saint and mean
+						// nothing by any of them. A country's own propers are the
+						// opposite case: there is one approved name and both
+						// sides are reproducing it.
+						if (oracle.anchorLang !== 'la' && mine.source !== 'proper') continue;
+						const folded = fold(mine.name);
 						if (theirs.has(folded)) continue;
 						const variant = VARIANT_OF.get(folded);
 						if (variant !== undefined && theirs.has(variant)) continue;
 						wrong.push(
-							`${od.date}: ours "${name}" is not among ` +
+							`${od.date}: ours "${mine.name}" is not among ` +
 								od.celebrations.map((c) => `"${c.name}"`).join(', ')
 						);
 					}

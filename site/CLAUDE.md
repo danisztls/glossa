@@ -1647,10 +1647,10 @@ with no dated list. So `grc.ts` sits here rather than in the corpus, on
 states.
 
 **What makes it trustworthy is `oracle.test.ts`, not care.** It compares every
-day of three years in all eight transfer variants plus Brazil — 27 calendars —
-against calendars GCatholic computed independently (`pipeline/CLAUDE.md`). Six
-rules came out of it that reading the Norms had got wrong; the two worth
-carrying here because they generalise:
+day of three years in all eight transfer variants plus sixteen national
+calendars — 72 in all — against calendars GCatholic computed independently
+(`pipeline/CLAUDE.md`). Six rules came out of it that reading the Norms had got
+wrong; the two worth carrying here because they generalise:
 
 - **An optional memorial never takes the day**, though line 12 of n. 59 sits
   above line 13. Reading the precedence table as a plain sort made every ferial
@@ -1660,8 +1660,8 @@ carrying here because they generalise:
   between them; both are `rank: 'feast'`. Comparing on rank gets the
   Transfiguration-on-a-Sunday case backwards and reads plausibly doing it.
 
-**The oracle files under `src/lib/calendar/oracle/` are 2.7 MB and are read
-with `node:fs`, never imported.** That is deliberate and is what keeps them out
+**The oracle files under `src/lib/calendar/oracle/` are read with `node:fs`,
+never imported.** That is deliberate and is what keeps them out
 of the bundle — nothing globs them, so the trap at the head of this file does
 not apply. `npm run build`'s inlined-corpus audit is the standing check; if they
 ever become an `import`, they land in the boot chunk every route preloads.
@@ -1671,12 +1671,47 @@ names no citation, so it is not a reading address; as a chrome path it would put
 an unbounded set of URLs into the sitemap for pages that are pure computation.
 
 **Adding a country is a data file and no code.** `NationalCalendar` is a layer —
-propers, elevations, transfers, and general celebrations kept on another day —
-because that is what Universal Norms nn. 48–55 describe. `national/br.ts` is the
-worked example, and its `sundayTransfers` is a table of YEARS rather than a
-rule: Brazil moved Peter and Paul backward from a Monday in 2026 and forward
-from a Tuesday in 2027, so no rule fits and inventing one produces a date nobody
-chose.
+propers, overrides, transfers, and general celebrations kept on another day —
+because that is what Universal Norms nn. 48–55 describe. `national/index.ts`
+holds the fifteen, ordered by Catholic population (the criterion they were
+chosen by), and `national/common.ts` is what a row is spelled with.
+`national/br.ts` is the worked example, and its `movedInYear` is a table of
+YEARS rather than a rule: Brazil moved Peter and Paul backward from a Monday in
+2026 and forward from a Tuesday in 2027, so no rule fits and inventing one
+produces a date nobody chose.
+
+**THE CLAIM "NO CODE" IS TRUE AND COST SEVEN EXTENSIONS TO KEEP TRUE**
+(2026-09-03, §The liturgical calendar). Each was found by a country failing the
+oracle, not by reasoning, and each is a thing the eight variants of the
+universal calendar cannot express:
+
+- **A fourth Sunday transfer**: the Congo keeps the Sacred Heart on the Sunday
+  (`sacredHeartOnSunday`), and the Immaculate Heart does NOT follow it.
+- **`movable` propers**, placed by an offset from Easter or by an *n*th weekday
+  of a month — seven conferences keep the Eternal High Priest on the Thursday
+  after Pentecost, the Philippines the Santo Niño on the third Sunday of
+  January.
+- **`'F'` in `common.ts` is a proper feast OF THE LORD**, line 5. This file
+  argued for one afternoon that a country never needs it; the Santo Niño falls
+  on a Sunday in Ordinary Time in 2026 and takes it, which only line 5 does.
+- **`elevations` is called `overrides`** — Mexico keeps Scholastica and Padre
+  Pio at a LOWER rank than the general calendar, and two layers change only a
+  colour.
+- **`since` on an override gates the OVERRIDE**, not the celebration: those two
+  Mexican demotions begin in 2026.
+- **`blue` is a `Colour`** — the _privilegio de azul_, in Spain and the
+  Philippines and, measured, in none of the five Spanish-American calendars.
+- **`Observance` is not a `Celebration`.** Thanksgiving, Independence Day,
+  Germany's Whit Monday, Spain's Ember Days: the feeds rank them as nothing,
+  because they are not lines of n. 59. Giving them a rank would lose the only
+  true thing about them.
+
+**A national proper's name is transcribed, and the oracle's name check for it is
+a transcription check.** There is no Latin original — a conference approved it in
+its own language — so the site carries that wording and (for the non-Anglophone
+layers) an English rendering written here. What the oracle checks INDEPENDENTLY
+is everything the engine does with the row: date, rank, colour, precedence,
+moves, transfers, suppressions. That is the half that can be wrong invisibly.
 
 ## Languages: the interface is a superset of the content
 

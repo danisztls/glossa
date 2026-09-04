@@ -31,8 +31,24 @@ import type { DayNumber } from './computus';
  */
 export type Season = 'advent' | 'christmas' | 'lent' | 'triduum' | 'easter' | 'ordinary';
 
-/** The vestment colour a day is kept in (GIRM 346). */
-export type Colour = 'white' | 'red' | 'green' | 'violet' | 'rose' | 'black';
+/**
+ * The vestment colour a day is kept in (GIRM 346).
+ *
+ * `blue` IS NOT IN GIRM 346 AND IS NOT AN ERROR. It reaches this list from
+ * two national calendars: Spain obtained the *privilegio de azul* for the
+ * Immaculate Conception in the eighteenth century, and the Philippines — the
+ * one other calendar here that inherited it — keeps 8 December in blue too.
+ * It is therefore a fact about a country and never about the feast: no row of
+ * `grc.ts` carries it, and each of those two layers says so in its own
+ * `overrides`.
+ *
+ * MEASURED, AND NARROWER THAN IT LOOKS. The privilege is usually described as
+ * Spain's and her former dominions', which reads as a prediction about the
+ * Spanish-speaking Americas; of the six such calendars here, none keeps it —
+ * Mexico, Colombia, Peru, Venezuela and Argentina all print 8 December in
+ * white. Counting the discs across all forty-eight feeds is what says so.
+ */
+export type Colour = 'white' | 'red' | 'green' | 'violet' | 'rose' | 'black' | 'blue';
 
 /**
  * What a celebration IS — its dignity, in the Norms' sense (nn. 10–15).
@@ -117,11 +133,28 @@ export const PRECEDENCE = {
  * A national calendar's propers are the exception that proves it: Brazil's
  * own saints have no Latin name in `br.ts`, because the conference that has
  * them approved them in Portuguese and there is nothing to reproduce.
+ *
+ * ## Why the list grew past three
+ *
+ * Latin, English and Portuguese were enough while the only national calendar
+ * was Brazil's. They are not enough for fifteen: a Mexican proper's own name
+ * is Spanish, an Italian one's is Italian, and there is no Latin behind
+ * either to fall back to. So a language is here when some calendar's propers
+ * were APPROVED in it — which is why this list is exactly the anchor
+ * languages of `national/`, and why it is not the site's thirty-four
+ * interface languages. A reader of one of the other thirty falls through
+ * `celebrationName`'s chain to the celebration's own name in the language the
+ * conference that has it uses, which is the right answer rather than a gap.
  */
 export interface Names {
 	la?: string;
 	en?: string;
 	pt?: string;
+	es?: string;
+	it?: string;
+	fr?: string;
+	pl?: string;
+	de?: string;
 }
 
 /** One celebration, as the calendar carries it before any day is resolved. */
@@ -192,7 +225,73 @@ export interface LiturgicalDay {
 	 *  the corpus holds in seven languages. A conference may suppress or
 	 *  transfer some of these (§2), so a national calendar overrides it. */
 	holyDayOfObligation: boolean;
+	/** Civil observances the day carries besides its celebration — see
+	 *  `Observance`. Empty on all but a handful of days, and only ever in the
+	 *  countries whose calendars print them. */
+	observances: Observance[];
 }
+
+/**
+ * A day a national calendar names that is not a celebration.
+ *
+ * The United States prints four (the Day of Prayer for the Legal Protection
+ * of Unborn Children, Independence Day, Labor Day, Thanksgiving) and India
+ * one (Republic Day). They carry NO RANK in the source, and that is not an
+ * omission: they are not lines of the Table of Liturgical Days at all. The
+ * Missal provides a Mass for various needs on such a day; the day itself
+ * remains the weekday it is. So they are kept apart from `Celebration`
+ * rather than given an invented rank, which is the only way a reader can be
+ * told the truth — that Thanksgiving is a Thursday in Ordinary Time with a
+ * Mass appointed for it.
+ *
+ * They are omitted on a SUNDAY and kept on anything else — including a day
+ * an obligatory memorial has taken, which is what Germany's Whit Monday
+ * shows: 25 May 2026 is the memorial of Mary Mother of the Church AND the
+ * Mass of the Holy Spirit. The evidence for the rule is exactly two Sundays,
+ * 4 July 2027 and 26 January 2025, on neither of which the observance
+ * appears; nothing in these three years puts one under a solemnity, so
+ * nothing here claims to know what happens then.
+ */
+export interface Observance {
+	id: string;
+	names: Names;
+	/** White unless stated. Germany's Whit Monday is red, being the Mass of
+	 *  the Holy Spirit rather than a civil day. */
+	colour?: Colour;
+	/**
+	 * This one IS the day rather than a note beside it.
+	 *
+	 * Spain's Ember Days of Thanksgiving and Petition are the case, and they
+	 * are the reason the flag exists rather than a second concept: the feeds
+	 * emit them INSTEAD of the ferial row, in white, and the optional memorial
+	 * that would otherwise be offered — Saint Bruno on 6 October 2025 — is not
+	 * offered. That is what Universal Norms nn. 45–47 describe: on Rogation
+	 * and Ember Days the Mass IS the day's, in the manner the conference lays
+	 * down, so the weekday keeps its class and changes its name and colour.
+	 */
+	replacesDay?: boolean;
+}
+
+/**
+ * Where a celebration falls when it does not fall on a date.
+ *
+ * Two forms, which between them cover every movable proper in the fifteen
+ * national calendars — and they are two rather than a list of named anchors
+ * because a named anchor (`thursday-after-pentecost`) is a vocabulary that
+ * grows by one entry per country, while an offset is a fact anyone can check
+ * against a calendar:
+ *
+ *  - `fromEaster` — days from Easter Sunday, signed. Our Lord Jesus Christ
+ *    the Eternal High Priest is +53 (the Thursday after Pentecost, kept in
+ *    seven of these calendars); Argentina's Saint Mary at the Cross is −9,
+ *    the Friday of the Fifth Week of Lent.
+ *  - `{ month, weekday, nth }` — the *n*th such weekday of a month. The
+ *    Philippines' Santo Niño is the third Sunday of January; the United
+ *    States' Labor Day and Thanksgiving are the first Monday of September
+ *    and the fourth Thursday of November.
+ */
+export type MovableRule =
+	{ fromEaster: number } | { month: number; weekday: 0 | 1 | 2 | 3 | 4 | 5 | 6; nth: number };
 
 /**
  * What a caller may vary about the calendar.
@@ -201,7 +300,7 @@ export interface LiturgicalDay {
  * c. 1246 §2, and they are separate flags rather than a country because they
  * are separate decisions: a conference can move Ascension and keep Corpus
  * Christi on its Thursday, and several do. `nationalCalendar` is the other
- * axis — the propers and elevations a country adds on top.
+ * axis — the propers and overrides a country adds on top.
  */
 export interface CalendarOptions {
 	/** Epiphany on the Sunday falling 2–8 January, rather than 6 January. */
@@ -210,6 +309,19 @@ export interface CalendarOptions {
 	ascensionOnSunday?: boolean;
 	/** Corpus Christi on the Sunday after Trinity, rather than the Thursday. */
 	corpusChristiOnSunday?: boolean;
+	/**
+	 * The Most Sacred Heart of Jesus on the Sunday after, rather than on the
+	 * Friday of the week after Corpus Christi.
+	 *
+	 * A FOURTH TRANSFER, AND THE ONE THE VARIANT LETTERS DO NOT CARRY.
+	 * GCatholic's `General-{A..H}` are the eight combinations of the first
+	 * three, which reads as a statement that there are three; the Democratic
+	 * Republic of the Congo keeps the Sacred Heart on the Sunday in all three
+	 * oracle years, so there are four. The Immaculate Heart does NOT follow it
+	 * — it stays on its own Saturday, which is then the day BEFORE rather than
+	 * the day after.
+	 */
+	sacredHeartOnSunday?: boolean;
 	/** A national calendar to lay over the General Roman Calendar. */
 	nationalCalendar?: NationalCalendar;
 }
@@ -230,9 +342,48 @@ export interface NationalCalendar {
 	options: Omit<CalendarOptions, 'nationalCalendar'>;
 	/** Celebrations this country adds, keyed `MM-DD`. */
 	propers: Record<string, Celebration[]>;
-	/** Celebrations of the general calendar this country keeps at another
-	 *  rank, keyed by the general celebration's `id`. A `null` suppresses. */
-	elevations?: Record<string, Partial<Celebration> | null>;
+	/** Celebrations this country adds that fall on no fixed date — see
+	 *  `MovableRule`. */
+	movable?: ReadonlyArray<{ at: MovableRule; celebration: Celebration }>;
+	/**
+	 * Observances this country's calendar prints, placed by `MM-DD`, by a
+	 * rule where the date moves, or by a table of years where no rule fits —
+	 * see `Observance`.
+	 *
+	 * The year table is Spain's Ember Days, and it is a table for the reason
+	 * `movedInYear` is: the evidence rules the rules out. They fall on Monday
+	 * 6 October 2025, Monday 5 October 2026 and TUESDAY 5 October 2027 — not
+	 * an *n*th weekday, not a fixed date, and not the day after the first
+	 * Sunday either, since that would be 4 October in 2027. Outside the years
+	 * listed the observance is simply absent, which is at least not a date
+	 * nobody chose.
+	 */
+	observances?: ReadonlyArray<{
+		at: string | MovableRule | { years: Record<number, string> };
+		observance: Observance;
+	}>;
+	/**
+	 * Celebrations of the general calendar this country keeps differently,
+	 * keyed by the general celebration's `id`. A `null` suppresses it
+	 * outright.
+	 *
+	 * CALLED `overrides` AND NOT `elevations` BECAUSE IT IS NOT ALWAYS AN
+	 * ELEVATION. It was, while Brazil was the only layer — every entry raised
+	 * a memorial to a feast. Three of the fifteen do the opposite (Mexico
+	 * keeps Saint Scholastica as an optional memorial where the general
+	 * calendar makes her obligatory), one changes only the colour (the blue
+	 * Immaculate Conception, see `Colour`), and several suppress. A field
+	 * named for the commonest case invites a reader to assume the rank can
+	 * only go up, and the two directions are the same operation.
+	 *
+	 * `since` ON AN OVERRIDE GATES THE OVERRIDE, NOT THE CELEBRATION — the
+	 * one place that field means something different from what it means on a
+	 * `Celebration`, and it is here because a conference changes its mind:
+	 * Mexico kept Saint Scholastica and Padre Pio as obligatory memorials in
+	 * 2025 and as optional ones from 2026. Before the year named, the general
+	 * calendar's own rank stands.
+	 */
+	overrides?: Record<string, Partial<Celebration> | null>;
 	/** Holy days of obligation this conference has suppressed or moved to a
 	 *  Sunday, by the general celebration's `id` (c. 1246 §2). */
 	notObligatory?: readonly string[];
@@ -246,16 +397,29 @@ export interface NationalCalendar {
 	 * year and not before — Brazil omitted Pontian and Hippolytus outright in
 	 * 2025 and has kept them on 12 August since 2026.
 	 *
-	 * A MOVE IS CONDITIONAL ON THE DISPLACING DAY BEING KEPT AT ALL. Where the
-	 * proper's own date falls on a Sunday, the proper is not observed, so
-	 * nothing displaces anything: the general celebration stays where it was
-	 * and is then suppressed by that Sunday like any other memorial. 5 October
-	 * 2025 is the case — a Sunday, so São Benedito is not kept and Faustina
-	 * does not move to the 6th.
+	 * A MOVE CAUSED BY A PROPER IS CONDITIONAL ON THAT PROPER BEING KEPT, and
+	 * `displacedBy` names it. Where the proper's own date falls on a Sunday
+	 * the proper is not observed, so nothing displaces anything: the general
+	 * celebration stays where it was and is then suppressed by that Sunday
+	 * like any other memorial. 5 October 2025 is the case — a Sunday, so São
+	 * Benedito is not kept and Faustina does not move to the 6th.
+	 *
+	 * A MOVE WITH NO `displacedBy` IS UNCONDITIONAL, and most are: a
+	 * conference that keeps Saints Philip and James on 4 May keeps them there
+	 * in a year when 3 May is a Sunday too. Making every move conditional was
+	 * the first implementation and it is wrong in exactly the years the
+	 * condition fires — Mexico lost the apostles altogether in 2026.
+	 *
+	 * `to` MAY BE A RULE RATHER THAN A DATE, for the case where a country
+	 * moves a general celebration off the fixed calendar and onto the temporal
+	 * cycle: Venezuela keeps Our Lady of Sorrows on the Friday of the Fifth
+	 * Week of Lent — where the Seven Sorrows were kept before 1969 — rather
+	 * than on 15 September, so its date is different every year.
 	 */
-	moves?: Record<string, { to: string; since?: number }>;
+	moves?: Record<string, { to: string | MovableRule; since?: number; displacedBy?: string }>;
 	/**
-	 * Solemnities this conference moves to a Sunday, as `id -> year -> MM-DD`.
+	 * Celebrations this conference kept on another date in a particular year,
+	 * as `id -> year -> MM-DD`.
 	 *
 	 * A TABLE OF YEARS AND NOT A RULE, because the evidence says there is no
 	 * rule. Measured across the three oracle years, Brazil moved Saints Peter
@@ -265,8 +429,17 @@ export interface NationalCalendar {
 	 * Neither "nearest Sunday" nor "following Sunday" fits all six, so the
 	 * direction is a decision the conference publishes in its Ordo year by
 	 * year, and inventing a rule to cover it would produce a date nobody
-	 * chose. Outside the years listed the solemnity keeps its own date, which
-	 * is the general calendar's answer and is at least not a fabrication.
+	 * chose. Outside the years listed the celebration keeps its own date,
+	 * which is the general calendar's answer and is at least not a
+	 * fabrication.
+	 *
+	 * CALLED `movedInYear` AND NOT `sundayTransfers` because a Sunday is not
+	 * what these have in common — being unaccounted-for is. The Congo's is not
+	 * a Sunday at all: it keeps the Visitation on 1 June 2026, 31 May that
+	 * year being Pentecost, where the general calendar simply omits the feast.
+	 * Only a SOLEMNITY is transferred when impeded (n. 60), and this is a
+	 * feast, so nothing in the Norms produces the Congo's answer and nothing
+	 * here should pretend to.
 	 */
-	sundayTransfers?: Record<string, Record<number, string>>;
+	movedInYear?: Record<string, Record<number, string>>;
 }

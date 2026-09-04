@@ -151,7 +151,7 @@ export const BRAZIL: NationalCalendar = {
 
 	/** Three general celebrations Brazil keeps at a higher rank than the
 	 *  General Roman Calendar gives them. */
-	elevations: {
+	overrides: {
 		'our-lady-of-mount-carmel': { rank: 'feast', precedence: PRECEDENCE.PROPER_FEAST },
 		'rose-of-lima': { rank: 'feast', precedence: PRECEDENCE.PROPER_FEAST },
 		'our-lady-of-guadalupe': { rank: 'feast', precedence: PRECEDENCE.PROPER_FEAST }
@@ -160,17 +160,17 @@ export const BRAZIL: NationalCalendar = {
 	/** Four general memorials displaced by a Brazilian proper on their own
 	 *  date, each kept on the day before. */
 	moves: {
-		ephrem: { to: '06-08' },
-		'augustine-zhao-rong': { to: '07-08' },
+		ephrem: { to: '06-08', displacedBy: 'jose-de-anchieta' },
+		'augustine-zhao-rong': { to: '07-08', displacedBy: 'paulina' },
 		// Omitted outright in Brazil in 2025; kept on the 12th from 2026.
-		'pontian-hippolytus': { to: '08-12', since: 2026 },
-		faustina: { to: '10-06' }
+		'pontian-hippolytus': { to: '08-12', since: 2026, displacedBy: 'dulce-lopes-pontes' },
+		faustina: { to: '10-06', displacedBy: 'benedito' }
 	},
 
 	/**
 	 * The three solemnities Brazil moves to a Sunday, listed year by year.
 	 *
-	 * A TABLE AND NOT A RULE — see `sundayTransfers` in `../types.ts` for the
+	 * A TABLE AND NOT A RULE — see `movedInYear` in `../types.ts` for the
 	 * six measurements that rule out every rule tried. Years absent from a row
 	 * keep the celebration on its own date, which is the general calendar's
 	 * answer rather than a guess at the conference's.
@@ -179,7 +179,7 @@ export const BRAZIL: NationalCalendar = {
 	 * needed no move in 2025 because 29 June was already a Sunday, and All
 	 * Saints stayed on Saturday 1 November 2025 rather than moving at all.
 	 */
-	sundayTransfers: {
+	movedInYear: {
 		'peter-and-paul': { 2026: '06-28', 2027: '07-04' },
 		assumption: { 2025: '08-17', 2026: '08-16' },
 		'all-saints': { 2027: '11-07' }

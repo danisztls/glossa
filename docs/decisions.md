@@ -3701,7 +3701,7 @@ that correspond exactly to the three transfers a conference may make, and in Lat
 well as the vernaculars. `pipeline/scrapers/calendar.py` fetches those into
 `raw/gcatholic-calendar/` and parses them to `site/src/lib/calendar/oracle/`, where
 `oracle.test.ts` compares **every day of three years in all eight variants, plus
-Brazil** — 27 calendars — against what this project computes.
+sixteen national calendars** — 72 calendars — against what this project computes.
 
 **Nothing from the oracle is served to a reader.** It decides no day at runtime; it
 decides whether the code that decides days is right. That is what makes it an oracle in
@@ -3757,7 +3757,7 @@ since 19 March is outside Holy Week in all three of its years.
 ### Brazil, and a rule that turned out not to exist
 
 A national calendar is modelled as a **layer** over the general one — propers, rank
-elevations, transfers, and the general celebrations it keeps on another day — because
+changes, transfers, and the general celebrations it keeps on another day — because
 that is what nn. 48–55 describe. A country is then a data file with no code, and the
 general calendar cannot drift out from under it.
 
@@ -3766,15 +3766,95 @@ rule behind them failed and the failure is the finding. Measured across the thre
 years: Saints Peter and Paul moved from a **Monday backward** to the preceding Sunday in
 2026 and from a **Tuesday forward** to the following Sunday in 2027; All Saints moved
 forward from a Monday in 2027 and did not move at all from a Saturday in 2025. Neither
-"nearest Sunday" nor "following Sunday" fits all six. So `sundayTransfers` is a table of
-years rather than a rule, and outside the years listed the solemnity keeps its own
-date — the general calendar's answer, which is at least not a date nobody chose.
+"nearest Sunday" nor "following Sunday" fits all six. So `movedInYear` is a table of
+years rather than a rule, and outside the years listed the celebration keeps its own
+date — the general calendar's answer, which is at least not a date nobody chose. (The
+field is not called `sundayTransfers`, because a Sunday is not what these have in
+common: the Congo keeps the Visitation on Monday 1 June 2026, 31 May that year being
+Pentecost, and only a solemnity is transferred when impeded.)
 
-Two smaller facts of the same kind. A move is **conditional on the displacing day being
-kept**: 5 October 2025 is a Sunday, so São Benedito is not observed, so nothing
-displaces Faustina and she does not move to the 6th. And a move can **begin** in a given
-year — Brazil omitted Pontian and Hippolytus outright in 2025 and has kept them on 12
-August since 2026.
+Two smaller facts of the same kind. A move can be **conditional on the displacing
+proper being kept**: 5 October 2025 is a Sunday, so São Benedito is not observed, so
+nothing displaces Faustina and she does not move to the 6th. And a move can **begin**
+in a given year — Brazil omitted Pontian and Hippolytus outright in 2025 and has kept
+them on 12 August since 2026.
+
+### Fifteen countries, and what a layer had to learn to be one
+
+Extended on 2026-09-03, the same day. The countries are the fifteen with the most
+Catholics, which is the criterion the work was asked for and the only one available
+that is a fact rather than a preference; the list stops at Germany because a list has
+to stop somewhere, and the next one down costs a file and no code. Sixteen oracle
+calendars, because GCatholic publishes the United States twice — `US-D` and `US-H`,
+the Ascension on the Thursday in six ecclesiastical provinces and on the Sunday
+everywhere else — and one layer is checked against both.
+
+**The claim that a country is a data file survived, and it cost seven small extensions
+to the engine to keep it true.** Each is a thing a real conference does that the eight
+variants of the universal calendar cannot express, and each was found by a country
+failing rather than by reasoning:
+
+- **There are four Sunday transfers, not three.** GCatholic's `General-{A..H}` are the
+  eight combinations of Epiphany, the Ascension and Corpus Christi, which reads as a
+  statement that those are the three. The Democratic Republic of the Congo also keeps
+  the **Sacred Heart** on the Sunday, in all three years — and the Immaculate Heart
+  does not follow it, staying on her Saturday, which becomes the day before rather
+  than the day after.
+- **A celebration can fall on no date at all.** Seven conferences keep Our Lord Jesus
+  Christ the Eternal High Priest on the Thursday after Pentecost, a feast Benedict XVI
+  granted in 2012 that is in no variant of the general calendar; the Philippines keeps
+  the Santo Niño on the third Sunday of January; Argentina keeps Our Lady of the Valley
+  on the Saturday after the Second Sunday of Easter and Saint Mary at the Cross on the
+  Friday of the Fifth Week of Lent. Two forms cover all of them — an offset from Easter
+  and an *n*th weekday of a month — and they are two rather than a vocabulary of named
+  anchors because an offset is a fact anyone can check against a calendar.
+- **A proper can be a feast OF THE LORD.** The module argued for one afternoon that a
+  country never needs line 5, since n. 59 gives proper feasts one line (8). The Santo
+  Niño disproves it: the third Sunday of January 2026 is the Second in Ordinary Time,
+  and the feast takes it. Line 8 loses to a Sunday and the feast would have vanished.
+- **`elevations` had to be renamed `overrides`.** It only ever raised a rank while
+  Brazil was the only layer. Mexico keeps Saint Scholastica and Padre Pio as OPTIONAL
+  memorials where the general calendar makes them obligatory; the Philippines and Spain
+  change only a colour. A field named for the commonest case invites a reader to assume
+  the rank can only go up.
+- **A conference changes its mind.** Those two Mexican demotions are true from 2026 and
+  were not true in 2025, so `since` gates an override as well as a celebration — the
+  same lesson John Henry Newman taught, from the other direction.
+- **Blue is a liturgical colour in two of these calendars.** Spain obtained the
+  _privilegio de azul_ for the Immaculate Conception in the eighteenth century and the
+  Philippines inherited it. **The obvious generalisation is false and worth recording
+  as such**: the privilege is described as Spain's and her former dominions', which
+  predicts the Spanish-speaking Americas, and Mexico, Colombia, Peru, Venezuela and
+  Argentina all print 8 December in white. Counting the discs over forty-eight feeds is
+  what settles it.
+- **Some days a calendar names are not celebrations.** The United States prints four
+  (the Day of Prayer for the Legal Protection of Unborn Children, Independence Day,
+  Labor Day, Thanksgiving), India one (Republic Day), Germany keeps Whit Monday as a
+  Mass of the Holy Spirit in red, and Spain keeps Ember Days of Thanksgiving and
+  Petition in October. They carry **no rank**, and that is not an omission: they are not
+  lines of the Table of Liturgical Days at all. Giving them an invented rank would be
+  the only way to lose the one true thing about them — that Thanksgiving is a Thursday
+  in Ordinary Time with a Mass appointed for it. So they are a separate kind, kept
+  beside the day's celebration rather than among them.
+
+**The rank tokens in these feeds are the language's own initials.** Nine calendars in
+Latin, English, Portuguese, Spanish, Italian and French all print `S F M m`, which
+reads as a machine vocabulary; German prints `H F G g` for _Hochfest, Fest, gebotener /
+nicht gebotener Gedenktag_ and Polish `U Ś W w` for _uroczystość, święto, wspomnienie_.
+A table read as language-independent was a coincidence of six Romance-and-Latin feeds.
+The star suffix for a commemoration is the only part that genuinely is universal.
+
+**A national proper's name is transcribed, and the check that remains is real.** These
+celebrations have no Latin original — they were approved by a conference in the
+language it works in — so the site carries the conference's own wording, and for the
+non-Anglophone layers an English rendering of it written here. The oracle then checks
+the names in the anchor language only, which is a transcription check rather than an
+independent one; what it checks independently is everything the ENGINE does with them —
+the date, the rank, the colour, the precedence interactions, the moves, the transfers,
+the suppressions. That is the part that can be wrong in a way nobody notices, and the
+part the day-by-day comparison of 75 calendars actually tests. Three of GCatholic's
+names are misspellings (`Baustista`, `Xeelos`, `Augustín`); the site prints them
+correctly and the divergence is a named pair rather than a loosened match.
 
 ### What the calendar deliberately does not say
 
@@ -3788,7 +3868,8 @@ swatch says the same thing without the page pretending to be the sanctuary.
 
 **Thirty-four languages' worth of saints.** The Calendarium is a Latin book, so the
 Latin name is the celebration's own and Latin is complete. English and Portuguese — the
-site's two stated audiences — are written; every other interface language falls through
+site's two stated audiences — are written, and each national layer's propers carry the
+language its conference approved them in; every other interface language falls through
 `CONTENT_LANG_FALLBACK` to English and then to Latin, exactly as it does for a work the
 corpus does not hold in that language. A national calendar's propers have no Latin at
 all, and that is correct rather than a gap: they were approved in the vernacular by the

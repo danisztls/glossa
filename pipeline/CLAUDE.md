@@ -1219,7 +1219,26 @@ whether the code that decides days is right.
 - **`ics/{year}-{lang}-{calendar}.ics` is deterministic**, which is what makes
   the country dimension free — `General-{A..H}` for the eight transfer variants,
   or an ISO country code for one of ~100 national calendars. `CALENDARS` names
-  what is fetched and a country is a row.
+  what is fetched and a country is a row; it holds the fifteen countries with
+  the most Catholics, in that order, plus the eight universal variants.
+- **The rank token is the LANGUAGE's own initial, not a machine code.** Latin,
+  English, Portuguese, Spanish, Italian and French all print `S F M m`, which
+  reads as a vocabulary; German prints `H F G g` and Polish `U Ś W w`. `RANKS`
+  is per language with a Latin-letter fallback, and an unknown token is FATAL —
+  which is how this was found, on the first Polish feed, rather than by silently
+  ranking a solemnity as nothing. The `_SUMMARY` regex matches the token as
+  "anything but a bracket" for the same reason: an ASCII class turned Polish's
+  `Ś` into part of the name.
+- **THE UNITED STATES IS TWO CALENDARS.** `US-D` and `US-H` and no plain `US`:
+  the Ascension is on the Thursday in six ecclesiastical provinces and on the
+  Sunday everywhere else. A trailing `-A`..`-H` names the transfer variant
+  wherever it appears, so the oracle records it for those two exactly as for
+  `General-*`, and the site's single US layer is checked against both.
+- **Blue is a fifth disc, and it is narrower than it looks.** 🔵 appears on one
+  day — the Immaculate Conception — in exactly two of sixteen national
+  calendars, Spain and the Philippines. The privilege is described as Spain's
+  and her former dominions', which predicts the Spanish-speaking Americas;
+  Mexico, Colombia, Peru, Venezuela and Argentina all print 8 December white.
 - **The feeds cover 2025–2027 only** (measured 2026-09-03 by asking; the HTML
   tables cover 2024–2028). The iCal is still what is read, because its `SUMMARY`
   carries the liturgical COLOUR and the rank as machine-readable tokens the HTML
@@ -1227,7 +1246,8 @@ whether the code that decides days is right.
   outside the window are covered by hand-written tests instead.
 - **Conduct**: `robots.txt` opens `/calendar/` to `*`; no `Crawl-delay` is
   stated, so the 2.0s floor is chosen rather than commanded, on the principle
-  that an unstated limit is not a licence. The whole crawl is 78 files.
+  that an unstated limit is not a licence. The crawl is one file per year,
+  calendar and language in `CALENDARS`, and every one is cached under `raw/`.
 
 ## Work that spans languages
 

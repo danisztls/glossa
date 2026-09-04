@@ -601,7 +601,6 @@ export const en: Dictionary = {
 	'calendar.date': 'Date',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
-	'calendar.which.br': 'Brazil',
 	'calendar.previousDay': 'Previous day',
 	'calendar.today': 'Today',
 	'calendar.nextDay': 'Next day',
@@ -611,6 +610,7 @@ export const en: Dictionary = {
 		'From the First Sunday of Advent to the Saturday before the next. Weekdays with nothing appointed are omitted.',
 	'calendar.week': 'week',
 	'calendar.alsoToday': 'Also kept today',
+	'calendar.alsoObserved': 'Also observed today',
 	'calendar.obligation': 'Holy day of obligation',
 	// Names the canon rather than asserting the fact on its own authority —
 	// the Code is in the corpus in seven languages and the link goes to it.
@@ -631,6 +631,7 @@ export const en: Dictionary = {
 	'calendar.colour.violet': 'Violet',
 	'calendar.colour.rose': 'Rose',
 	'calendar.colour.black': 'Black',
+	'calendar.colour.blue': 'Blue',
 	'calendar.rank.solemnity': 'Solemnity',
 	'calendar.rank.feast': 'Feast',
 	'calendar.rank.memorial': 'Memorial',

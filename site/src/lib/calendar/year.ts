@@ -40,12 +40,36 @@ import {
 	after,
 	formatIsoDate,
 	fromDayNumber,
+	onOrAfter,
 	toDayNumber,
 	weekday
 } from './computus';
 import { ALL_SOULS, GRC, HOLY_DAYS_OF_OBLIGATION, SATURDAY_MEMORIAL_OF_MARY } from './grc';
 import { anchors, sundayCycle, temporalYear, weekdayCycle, type Anchors } from './temporal';
-import { PRECEDENCE, type CalendarOptions, type Celebration, type LiturgicalDay } from './types';
+import {
+	PRECEDENCE,
+	type CalendarOptions,
+	type Celebration,
+	type LiturgicalDay,
+	type MovableRule,
+	type Observance
+} from './types';
+
+/**
+ * The day a `MovableRule` names, in a given liturgical year.
+ *
+ * `fromEaster` is arithmetic on the day number, which is the whole reason
+ * days are integers here. The nth-weekday form is resolved in the CIVIL year
+ * the month falls in — a liturgical year spans two, so the month decides
+ * which: January to November belong to the year Easter falls in, December to
+ * the one before it, exactly as the fixed sanctorale is keyed.
+ */
+function movableDay(rule: MovableRule, a: Anchors): DayNumber {
+	if ('fromEaster' in rule) return a.easter + rule.fromEaster;
+	const civilYear = rule.month === 12 ? a.year - 1 : a.year;
+	const first = onOrAfter(toDayNumber(civilYear, rule.month, 1), rule.weekday);
+	return first + 7 * (rule.nth - 1);
+}
 
 /** The two celebrations the Proper of Saints places by Easter and not by a
  *  date. Both are memorials, and both were added to the Calendar after 1969 —
@@ -134,7 +158,7 @@ function psalterWeek(
  * Everything the Proper of Saints puts on a day, before precedence.
  *
  * A national calendar contributes here and only here: its propers are added
- * to the list, and its `elevations` amend or suppress a general celebration
+ * to the list, and its `overrides` amend or suppress a general celebration
  * in place. Keeping it to this one function is what makes a country a data
  * file — nothing downstream knows whether a celebration came from the General
  * Roman Calendar or from Brazil's.
@@ -150,26 +174,30 @@ function sanctoralFor(
 	const national = options.nationalCalendar;
 	const out: Celebration[] = [];
 
+	/** Whether a celebration was in the calendar yet, in this civil year. */
+	const inCalendar = (c: Celebration) => c.since === undefined || civilYear >= c.since;
+
 	// Where a national calendar keeps a general celebration on another date.
 	// Consulted twice below — once to take it off its own day, once to put it
 	// on the new one — so it is resolved here rather than at either site.
-	// A move only happens if the displacing proper is actually kept on its own
-	// date. Where that date is a Sunday the proper is not observed at all, so
-	// nothing displaces anything — see `moves` in `../types.ts`.
-	const keptOn = (mmdd: string): boolean => {
+	// A move that names a `displacedBy` only happens if THAT proper is kept on
+	// the date. Where the date is a Sunday the proper is not observed at all,
+	// so nothing displaces anything — see `moves` in `../types.ts`.
+	const displacerKept = (mmdd: string, properId: string): boolean => {
 		const [mm, dd] = mmdd.split('-').map(Number);
 		const t = temporal.get(toDayNumber(civilYear, mm, dd));
-		return t !== undefined && t.celebration.precedence > PRECEDENCE.PROPER_FEAST;
+		if (t === undefined || t.celebration.precedence <= PRECEDENCE.PROPER_FEAST) return false;
+		return (national?.propers?.[mmdd] ?? []).some((c) => c.id === properId && inCalendar(c));
 	};
 	const move = national?.moves;
 	const movedTo = (id: string, ownDay: string): string | undefined => {
-		const sunday = national?.sundayTransfers?.[id]?.[civilYear];
+		const sunday = national?.movedInYear?.[id]?.[civilYear];
 		if (sunday !== undefined) return sunday;
 		const m = move?.[id];
 		if (m === undefined || (m.since !== undefined && civilYear < m.since)) return undefined;
-		return keptOn(ownDay) ? m.to : undefined;
+		if (m.displacedBy !== undefined && !displacerKept(ownDay, m.displacedBy)) return undefined;
+		return typeof m.to === 'string' ? m.to : monthDay(movableDay(m.to, a));
 	};
-	const inCalendar = (c: Celebration) => c.since === undefined || civilYear >= c.since;
 
 	// THE MOVABLE MEMORIALS GO FIRST, and the order is the tie-break rather
 	// than a matter of taste. `resolveDay` sorts by precedence and the sort is
@@ -178,19 +206,36 @@ function sanctoralFor(
 	// that instituted it give it the day and reduce the other to optional. 13
 	// June 2026 is both the Immaculate Heart and Anthony of Padua, and putting
 	// the fixed table first gave the day to Anthony.
-	for (const { at, celebration } of MOVABLE_SANCTORAL) {
-		if (a[at] === n) out.push(celebration);
-	}
 	const fromGeneral = (celebration: Celebration, movedFrom?: string) => {
-		const elevation = national?.elevations?.[celebration.id];
-		if (elevation === null) return; // suppressed in this country
+		const override = national?.overrides?.[celebration.id];
+		if (override === null) return; // suppressed in this country
 		if (!inCalendar(celebration)) return; // not yet inscribed in this year
+		// An override's own `since` gates the OVERRIDE — see `overrides` in
+		// `../types.ts`. It is stripped rather than carried through, so that
+		// `since` on a celebration keeps meaning one thing everywhere else.
+		const { since, ...amendment } = override ?? {};
+		const applies = since === undefined || civilYear >= since;
 		out.push({
 			...celebration,
-			...elevation,
+			...(applies ? amendment : {}),
 			...(movedFrom ? { transferredFrom: movedFrom } : {})
 		});
 	};
+	// THE MOVABLE MEMORIALS GO FIRST, and the order is the tie-break rather
+	// than a matter of taste. `resolveDay` sorts by precedence and the sort is
+	// stable, so of two obligatory memorials on one day the earlier wins — and
+	// when the Immaculate Heart falls on a fixed memorial's date, the decrees
+	// that instituted it give it the day and reduce the other to optional. 13
+	// June 2026 is both the Immaculate Heart and Anthony of Padua, and putting
+	// the fixed table first gave the day to Anthony.
+	//
+	// THEY GO THROUGH `fromGeneral` LIKE ANY OTHER GENERAL CELEBRATION, which
+	// they did not until Germany showed why: it suppresses the Immaculate
+	// Heart outright, and an `overrides` row that the calendar never consults
+	// is a claim that silently does nothing.
+	for (const { at, celebration } of MOVABLE_SANCTORAL) {
+		if (a[at] === n) fromGeneral(celebration);
+	}
 	for (const celebration of GRC.get(key) ?? []) {
 		if (movedTo(celebration.id, key) !== undefined) continue; // kept elsewhere here
 		fromGeneral(celebration);
@@ -208,6 +253,16 @@ function sanctoralFor(
 	}
 	if (key === '11-02') out.push(ALL_SOULS);
 	for (const celebration of national?.propers?.[key] ?? []) {
+		if (!inCalendar(celebration)) continue;
+		out.push({ ...celebration, proper: true, source: 'proper' });
+	}
+	// The propers that fall on no date. Scanned rather than looked up, because
+	// the list is a handful per country and computing each rule's day is two
+	// additions — a map keyed by day number would have to be rebuilt per year
+	// and would say less.
+	for (const { at, celebration } of national?.movable ?? []) {
+		if (movableDay(at, a) !== n) continue;
+		if (!inCalendar(celebration)) continue;
 		out.push({ ...celebration, proper: true, source: 'proper' });
 	}
 	return out;
@@ -370,19 +425,57 @@ export function buildYear(
 		}
 
 		const notObligatory = merged.nationalCalendar?.notObligatory ?? [];
+
+		// Observances (`Observance` in `../types.ts`): named by three of these
+		// calendars, ranked by none. Attached on any day that is not a Sunday
+		// — including one an obligatory memorial has taken, which Germany's
+		// Whit Monday requires. The two Sundays in the oracle's three years
+		// carry no observance, and that is the whole of the evidence for the
+		// rule; it is said here rather than assumed away.
+		const observances: Observance[] = [];
+		let kept_ = winner;
+		let offered = optional;
+		if (winner.rank !== 'sunday') {
+			const { year: civil } = fromDayNumber(n);
+			for (const { at, observance } of merged.nationalCalendar?.observances ?? []) {
+				const on =
+					typeof at === 'string'
+						? at === monthDay(n)
+						: 'years' in at
+							? at.years[civil] === monthDay(n)
+							: movableDay(at, a) === n;
+				if (!on) continue;
+				// `replacesDay` — Spain's Ember Days. The weekday keeps its
+				// class and takes the observance's name and colour, and the
+				// optional memorial it would have offered is not offered.
+				if (observance.replacesDay && winner.rank === 'weekday') {
+					kept_ = {
+						...winner,
+						id: observance.id,
+						names: observance.names,
+						colour: observance.colour ?? 'white'
+					};
+					offered = [];
+					continue;
+				}
+				observances.push(observance);
+			}
+		}
+
 		days.set(n, {
 			date: formatIsoDate(n),
 			dayNumber: n,
 			season: t.season,
 			week: t.week,
-			celebration: winner,
-			optional,
-			colour: winner.colour,
+			celebration: kept_,
+			optional: offered,
+			colour: kept_.colour,
 			...cycles,
 			psalterWeek: psalterWeek(n, t.season, t.week, a, firstSundayOfChristmas),
 			holyDayOfObligation:
 				weekday(n) === SUNDAY ||
-				(HOLY_DAYS_OF_OBLIGATION.includes(winner.id) && !notObligatory.includes(winner.id))
+				(HOLY_DAYS_OF_OBLIGATION.includes(kept_.id) && !notObligatory.includes(kept_.id)),
+			observances
 		});
 	}
 
