@@ -187,3 +187,57 @@
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-panel);
 }
+
+/*
+ * THE LITURGICAL COLOUR SWATCH — a small disc in the colour of the day's
+ * vestments, and the site's only visual vocabulary for that colour.
+ *
+ * Two surfaces draw it, `LiturgicalDayCard` and the month grid, and the
+ * reason it is a primitive at two rather than at ten is what the second copy
+ * already did: the copy the year listing carried had six colours and the
+ * card's had seven, so a day kept in blue — the Immaculate Conception in
+ * Spain and the Philippines — drew as an empty ring in one place and a blue
+ * disc four centimetres away in the other. Nothing reported it, because a
+ * missing background is not an error. A colour table that disagrees with
+ * itself is a bug no test can see, and there is exactly one right answer per
+ * colour, so it belongs in one place.
+ *
+ * SIZED IN `em`, so it scales with whatever it sits beside — a disc next to
+ * a name in the reading column and one next to a date in a 3rem grid cell
+ * are the same object at two sizes, and a consumer that needs a different
+ * one sets `font-size` rather than restating the geometry.
+ *
+ * The border is in every colour, not only the pale ones: white on a light
+ * theme and black on a dark one are otherwise invisible discs.
+ */
+.swatch {
+	display: inline-block;
+	inline-size: 0.7em;
+	block-size: 0.7em;
+	border-radius: 50%;
+	border: 1px solid var(--color-border);
+	vertical-align: baseline;
+}
+.swatch[data-colour='white'] {
+	background: #fdfdfb;
+}
+.swatch[data-colour='red'] {
+	background: #a4262c;
+}
+.swatch[data-colour='green'] {
+	background: #2f6b3f;
+}
+.swatch[data-colour='violet'] {
+	background: #5f3f7a;
+}
+.swatch[data-colour='rose'] {
+	background: #d99bb0;
+}
+.swatch[data-colour='black'] {
+	background: #23211e;
+}
+/* Not a colour of GIRM 346: the Immaculate Conception in Spain and the
+   Philippines — see `Colour` in `$lib/calendar/types.ts`. */
+.swatch[data-colour='blue'] {
+	background: #3a5ea8;
+}

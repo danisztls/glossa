@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatPromulgated } from './dates';
+import { dateLocale, formatPromulgated } from './dates';
 
 /**
  * The regression these guard is a date rendering ONE DAY EARLY west of
@@ -35,11 +35,36 @@ describe('formatPromulgated', () => {
 	});
 
 	it('picks the locale from the bare language tag', () => {
-		// `pt-PT` ordering and month case differ from `en-US`; anything that
-		// isn't Portuguese falls through to English (the site has two UI
-		// languages, and this mirrors how the rest of the chrome branches).
+		// The REGION is cut off deliberately: the reader chose an interface
+		// language and not a country, so `pt-BR` must format as Portuguese and
+		// not as Brazil, and `en-GB` as English and not as the United Kingdom
+		// (whose `dateStyle: 'long'` is "18 November 1965").
 		expect(formatPromulgated('1965-11-18', 'pt-BR')).toBe('18 de novembro de 1965');
 		expect(formatPromulgated('1965-11-18', 'en-GB')).toBe('November 18, 1965');
+	});
+
+	it('formats in any interface language the platform knows', () => {
+		// The regression this guards is the two-language branch this module
+		// carried while the interface grew to thirty-odd: every reader who was
+		// not Portuguese got English month names, silently.
+		expect(formatPromulgated('1965-11-18', 'pl')).toContain('listopada');
+		expect(formatPromulgated('1965-11-18', 'de')).toContain('November 1965');
+	});
+
+	it('converts the app’s own tags before asking Intl about them', () => {
+		// `zht` is this app's slug for Traditional Chinese and not BCP-47, and
+		// cutting it to `zh` — which the region-stripping above would do to any
+		// other tag — hands Intl the SIMPLIFIED locale. The conversion has to
+		// run after the region goes and before the platform is asked.
+		expect(dateLocale('zht')).toBe('zh-Hant');
+	});
+
+	it('falls back to English for a language Intl cannot resolve', () => {
+		// Latin is the standing case — a real interface language of this site
+		// with no CLDR data. What must NOT happen is the runtime's own default
+		// locale leaking in, which is what an unchecked tag would do.
+		expect(dateLocale('la')).toBe('en-US');
+		expect(formatPromulgated('1965-11-18', 'la')).toBe('November 18, 1965');
 	});
 
 	it('returns the raw string unchanged when it is not a date', () => {

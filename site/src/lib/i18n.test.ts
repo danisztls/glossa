@@ -253,6 +253,12 @@ describe('UI_LANGS and the dictionaries', () => {
 				// and not the word `language`.
 				if (!/lang\b(?!\s*\.)/i.test(arg)) continue;
 				if (arg.includes('bcp47(')) continue;
+				// `dateLocale` is the shim reached through a helper rather than
+				// inline, and it is STRICTER than `bcp47` alone: it converts the
+				// tag and then asks `supportedLocalesOf` whether the platform
+				// can answer for it, falling back to `en-US` where it cannot.
+				// `dates.test.ts` pins both halves of that chain.
+				if (arg.includes('dateLocale(')) continue;
 				offenders.push(`${path.relative(root, file)}: ${match[0]}${arg.trim()}`);
 			}
 		}

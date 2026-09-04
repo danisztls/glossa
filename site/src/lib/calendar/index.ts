@@ -13,7 +13,18 @@ import type { CalendarOptions, Celebration, LiturgicalDay } from './types';
 import { buildYear } from './year';
 
 export * from './types';
-export { easter, formatIsoDate, parseIsoDate, toDayNumber } from './computus';
+export {
+	easter,
+	formatIsoDate,
+	fromDayNumber,
+	onOrBefore,
+	parseIsoDate,
+	SATURDAY,
+	SUNDAY,
+	toDayNumber,
+	weekday
+} from './computus';
+export type { DayNumber, Weekday, Ymd } from './computus';
 export { anchors, sundayCycle, weekdayCycle } from './temporal';
 export { GRC, HOLY_DAYS_OF_OBLIGATION } from './grc';
 export { buildYear };

@@ -37,6 +37,40 @@
  * Arabia for Oman, the Emirates and Yemen. `alsoCovers` on those five layers
  * is what puts the other territories in the picker without inventing a
  * calendar for them; `TERRITORY_CALENDARS` is the resolved map.
+ *
+ * ## Which countries cluster, measured rather than assumed
+ *
+ * Asked on 2026-09-04 and worth writing down, because two of the three
+ * answers are not what the picker's regions would suggest. NO TWO LAYERS ARE
+ * IDENTICAL — every calendar here earns its file — but they cluster three
+ * ways, and only the first is visible in this directory:
+ *
+ *   - **By shared calendar.** The eleven territories above, and nothing else.
+ *   - **BY TRANSFER, WHICH IS THE BIGGEST CLUSTER BY FAR AND CUTS ACROSS
+ *     EVERY REGION.** `options` takes one of a handful of shapes: a third of
+ *     the calendars move Epiphany, the Ascension and Corpus Christi all to
+ *     the Sunday, and a block of central Europe (Austria, Bosnia, Croatia,
+ *     Czechia, Germany, Liechtenstein, Monaco, Slovakia, Slovenia,
+ *     Switzerland, and Jerusalem) moves none of them. Those groups ARE
+ *     GCatholic's `General-{A..H}` variants, which is why there are eight of
+ *     them — and exactly two calendars fall outside all eight, the Congo
+ *     (which also moves the Sacred Heart) and Spain (which pins Epiphany to
+ *     the 6th explicitly).
+ *   - **By propers, along ecclesiastical rather than geographical lines.**
+ *     Kenya, Sudan and Uganda carry the SAME eighteen propers — AMECEA's, and
+ *     South Africa and Nigeria carry most of them; Algeria and Tunisia agree
+ *     on all but one; Austria, Liechtenstein and Luxembourg are a family with
+ *     Germany at its edge; Hong Kong and Taiwan share the Chinese martyrs;
+ *     Portugal, Angola, Cabo Verde, São Tomé and Timor-Leste are Lusophone;
+ *     Denmark, Finland, Norway and Sweden are Nordic. The United States and
+ *     the Virgin Islands are the closest pair on the list and the least
+ *     surprising one.
+ *
+ * None of that is machinery — a layer is still a flat file and the clusters
+ * are an observation about their contents. Factoring the shared propers into
+ * a base layer would save some lines and cost the one property that makes
+ * this directory checkable: that a country's file says everything that
+ * country does, and the oracle compares it whole.
  */
 
 import type { NationalCalendar } from '../types';

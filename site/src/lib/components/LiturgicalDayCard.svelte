@@ -157,39 +157,6 @@
 		align-items: center;
 		gap: 0.35rem;
 	}
-	/* The swatch carries a border in every colour, because white on a light
-	   theme and black on a dark one are otherwise invisible discs. */
-	.swatch {
-		display: inline-block;
-		width: 0.7em;
-		height: 0.7em;
-		border-radius: 50%;
-		border: 1px solid var(--color-border);
-		vertical-align: baseline;
-	}
-	.swatch[data-colour='white'] {
-		background: #fdfdfb;
-	}
-	.swatch[data-colour='red'] {
-		background: #a4262c;
-	}
-	.swatch[data-colour='green'] {
-		background: #2f6b3f;
-	}
-	.swatch[data-colour='violet'] {
-		background: #5f3f7a;
-	}
-	.swatch[data-colour='rose'] {
-		background: #d99bb0;
-	}
-	.swatch[data-colour='black'] {
-		background: #23211e;
-	}
-	/* Not a colour of GIRM 346: the Immaculate Conception in Spain and the
-	   Philippines — see `Colour` in `$lib/calendar/types.ts`. */
-	.swatch[data-colour='blue'] {
-		background: #3a5ea8;
-	}
 	.transferred {
 		margin: 0.5rem 0 0;
 		font-size: 0.85rem;

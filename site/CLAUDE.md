@@ -1671,12 +1671,51 @@ A reader of that control already knows the answer before they read anything —
 they are looking for their own country, which they recognise by its flag faster
 than they can read a column of names in an alphabet that may not be theirs. The
 flags are emoji composed from the same ISO code the calendar is keyed by, so a
-country added to `national/` arrives with its flag drawn; England, Scotland and
-Wales are tag sequences and are named from `SUBDIVISION_NAMES`, being the three
-ids that are 3166-2 subdivisions. Windows draws the pair as boxed letters, which
-is the country's own code and why the cells are sized for two letters. Ordered
-inside a region by the reader's own alphabet (`Intl.Collator`), so the layer
-table stores regions and not an order.
+country added to `national/` arrives with its flag drawn and no table to update;
+England, Scotland and Wales are tag sequences and are named from
+`SUBDIVISION_NAMES`, being the three ids that are 3166-2 subdivisions. Windows
+draws the pair as boxed letters, which is the country's own code and why the
+cells are sized for two letters rather than a picture; the name is the `title`
+and the `aria-label`. Ordered inside a region by the reader's own alphabet
+(`Intl.Collator`), so the layer table stores regions and not an order. The row's
+controls wear `.menu-trigger` and `.label-micro` rather than restating them, so
+a change to the chrome reaches this page without anyone remembering it is there.
+
+**THE GENERAL CALENDAR IS NOT THE VATICAN'S, AND FOR A DAY THE PICKER SAID IT
+WAS** (2026-09-04). The general row wore 🇻🇦 on the reasoning that it is the
+flag of the see whose calendar it is — but Vatican City keeps the DIOCESE OF
+ROME's calendar, which GCatholic publishes as `IT-rome0`, which this directory
+carries as `va`, and which has eleven propers no other calendar has. So one flag
+stood for two different calendars in one control, and on the general row it said
+the universal calendar belongs to a country. The mark is 🌐: a globe is not a
+territory, which is exactly the claim that row makes.
+
+**`?c=` NAMES A TERRITORY, NOT A LAYER** (2026-09-04), because for eleven of the
+ninety-six places the two differ. Four cells select `ps`; with the layer stored,
+the trigger had to guess which had been pressed and printed the alphabetically
+first, so choosing Israel answered "Cyprus". The route resolves the code through
+`TERRITORY_CALENDARS`, one lookup that cannot be ambiguous in that direction, and
+a layer id is still a valid `?c=` because a layer's own territory is one of the
+territories it covers. **A held calendar's territories leave the picker with
+it** — `TERRITORY_CALENDARS` is built from the published list — which takes Oman
+and Yemen out with Southern Arabia and the Faroes and Greenland out with Denmark.
+Correct rather than incidental: what is held for a country is held for everyone
+who keeps that country's calendar.
+
+**`/calendarium` IS A MONTH GRID** (`CalendarMonth.svelte`, 2026-09-04), where it
+was a flat list of the ~230 non-ferial days of the liturgical year. The list
+answered "what is coming" and nothing else — a reader could not find a date, could
+not see what weekday Easter falls on, and could not see the shape of a season.
+**There is no separate "month being viewed":** the month drawn is the month of
+`selected`, and paging moves the selected day (clamped into the shorter month), so
+the page keeps ONE piece of state and it is the one in the URL. A view month held
+beside the selection would show the reader two different months at once, since the
+day's card sits under the grid. **The week begins on Sunday and not from the
+reader's locale** — this is the calendar whose weeks are numbered from the Lord's
+Day, so a Monday-first grid would cut the row a reader is looking at in two.
+Arrow keys walk it and every move is a real navigation; the awkward half is that
+crossing a month replaces every cell, so the component names the date to stand on
+and refocuses it after the render.
 
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
@@ -1694,15 +1733,6 @@ parameter the render reads with `goto(url, { replaceState: true, noScroll: true,
 keepFocus: true })`, the three flags `compare-nav.svelte.ts` already uses;
 shallow routing is for state that belongs to a history entry and not to an
 address.
-
-**The country picker is `CalendarMenu.svelte`, a grid of flag emoji** — two
-regional-indicator code points off the alpha-2 code the calendar is already keyed
-by, so a country added to `national/` arrives with its flag drawn and no table to
-update. Windows renders the pair as the boxed letters `BR`, which is a legible
-fallback and why the cells are sized for two letters rather than a picture; the
-name is the `title` and the `aria-label`. The row's controls wear
-`.menu-trigger` and `.label-micro` rather than restating them, so a change to the
-chrome reaches this page without anyone remembering it is there.
 
 **THE ENGINE COMPUTES; A NATIONAL LAYER IS COPIED, AND ALWAYS WAS.** Worth
 being exact about, because the two halves are checked differently. The temporal
@@ -1826,6 +1856,19 @@ source for it.** `zht` is structurally valid BCP-47, so `Intl` does not throw
 fires. Two call sites shipped that way before anyone looked (`library.ts`,
 `/calendarium`). **A shim is only as good as the places that remember it**, so
 `i18n.test.ts` checks the places.
+
+**`dateLocale` in `dates.ts` is the one helper that scan allows through, and it
+is stricter than the shim** (2026-09-04): it cuts the region, runs `bcp47`, and
+then asks `supportedLocalesOf` whether the platform can answer for the result,
+falling back to `en-US` where it cannot. That last step is what `bcp47` alone
+does not do and Latin needs — a real interface language here with no CLDR data,
+which unchecked would take the RUNTIME's default locale, so a Latin interface on
+a French machine would print French month names. **The order matters in both
+directions**: cut the region first (`pt-BR` is a language choice, not a country)
+and convert after (`zht` cut to `zh` resolves to Simplified). It replaced
+`lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written when the site had two
+interface languages and left standing as it grew past thirty — so every reader
+who was not Portuguese was shown English dates, silently, for a year.
 
 **Still do not derive one list from the other.** The lists equalized and
 separated four times in eight days; the rule survives the flip and reads the

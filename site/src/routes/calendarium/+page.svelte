@@ -23,6 +23,14 @@
 	 * showing a different day", and leaves `/calendarium` as the one address
 	 * worth indexing.
 	 *
+	 * ## The month grid IS the navigation
+	 *
+	 * `CalendarMonth.svelte` holds the arrangement and the argument for it.
+	 * What it means here is that this page has one control row and no day
+	 * steppers: the grid steps a day by being clicked or arrowed, and steps a
+	 * month with its own arrows, so a second pair of arrows above it would be
+	 * two controls doing one thing at two grains.
+	 *
 	 * ## Two things this page will not do
 	 *
 	 * It does not paint itself in the day's liturgical colour — see
@@ -34,19 +42,16 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
-	import Icon from '$lib/components/Icon.svelte';
+	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import {
-		celebrationName,
 		formatIsoDate,
-		getYear,
 		liturgicalDay,
-		liturgicalYearOf,
 		parseIsoDate,
 		toDayNumber,
 		type CalendarOptions
 	} from '$lib/calendar';
-	import { NATIONAL_CALENDAR_LIST } from '$lib/calendar/national';
+	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
 	import { i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
@@ -57,18 +62,13 @@
 		return toDayNumber(now.getFullYear(), now.getMonth() + 1, now.getDate());
 	}
 
-	/** Which calendar to compute. The universal Latin calendar is the default
-	 *  for the reason `docs/decisions.md` gives: a conference's transfers are a
-	 *  fact about a country, not about the calendar. The national calendars
-	 *  follow in `NATIONAL_CALENDAR_LIST`'s own order, which is Catholic
-	 *  population — the criterion they were chosen by. */
-	const CALENDARS = [
-		{ id: 'general', options: {} as CalendarOptions },
-		...NATIONAL_CALENDAR_LIST.map((c) => ({
-			id: c.id,
-			options: { nationalCalendar: c } as CalendarOptions
-		}))
-	];
+	/** The options each published layer computes under, by layer id. The
+	 *  universal Latin calendar is the default for the reason
+	 *  `docs/decisions.md` gives: a conference's transfers are a fact about a
+	 *  country, not about the calendar. */
+	const OPTIONS: Record<string, CalendarOptions> = Object.fromEntries(
+		NATIONAL_CALENDAR_LIST.map((c) => [c.id, { nationalCalendar: c } as CalendarOptions])
+	);
 
 	/**
 	 * BOTH CONTROLS READ THE URL, and neither keeps a copy of its own.
@@ -81,26 +81,33 @@
 	 * links that don't show what the sender sees. It also means a reload keeps
 	 * the reader in their own country's calendar.
 	 *
+	 * `?c=` NAMES A TERRITORY AND NOT A LAYER, which are not the same thing
+	 * for eleven of the ninety-six places in the picker: Israel, Jordan and
+	 * Cyprus all keep the Latin Patriarchate of Jerusalem's calendar, which is
+	 * the layer `ps`. Storing the layer would be storing the answer instead of
+	 * the question — the picker would then have to guess which of four cells
+	 * the reader had pressed to print a name in its trigger, and it printed
+	 * the alphabetically first one, so choosing Israel said "Cyprus". A layer
+	 * id is still accepted, because every layer's own territory is one of the
+	 * territories it covers, so nothing that was a valid `?c=` stopped being
+	 * one.
+	 *
 	 * An unknown or absent `c` is the general calendar rather than an error —
 	 * a query parameter is typed by hand and pasted around, and the general
-	 * calendar is what this page shows when nobody has said otherwise.
+	 * calendar is what this page shows when nobody has said otherwise. A HELD
+	 * calendar's id lands here too, and correctly: `TERRITORY_CALENDARS` is
+	 * built from the published list, so an id withdrawn by `held.ts` resolves
+	 * to nothing in exactly the same way a typo does.
 	 */
-	let calendarId = $derived(
-		CALENDARS.find((c) => c.id === page.url.searchParams.get('c'))?.id ?? 'general'
+	let territory = $derived.by(() => {
+		const raw = page.url.searchParams.get('c');
+		return raw && TERRITORY_CALENDARS[raw] ? raw : 'general';
+	});
+	let options = $derived(
+		territory === 'general' ? ({} as CalendarOptions) : OPTIONS[TERRITORY_CALENDARS[territory]]
 	);
-	let options = $derived(CALENDARS.find((c) => c.id === calendarId)!.options);
 	let selected = $derived(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
 	let day = $derived(liturgicalDay(selected, options));
-	let year = $derived(liturgicalYearOf(selected));
-
-	/** The whole liturgical year, for the listing below — Advent to Advent, in
-	 *  order, which is the order it is lived in and not the civil one. */
-	let wholeYear = $derived([...getYear(year, options).values()]);
-	/** Only the days worth listing: everything that is not a plain weekday.
-	 *  A year is ~365 rows and about 130 of them say nothing but the season. */
-	let notable = $derived(
-		wholeYear.filter((d) => d.celebration.rank !== 'weekday' || d.optional.length > 0)
-	);
 
 	/**
 	 * Commit a control's new value to the address bar.
@@ -117,10 +124,10 @@
 	 * parameter with, for the same reasons: `replaceState` because stepping a
 	 * day is not a destination and a reader who stepped through a week should
 	 * still be one Back press from the page they arrived from; `noScroll`
-	 * because the year's listing below can be scrolled to the day in question
-	 * and jumping to the top would lose it; `keepFocus` because these ARE the
-	 * focused controls, and a keyboard reader who lost focus to `<body>` would
-	 * have to tab back to the arrow they just pressed to press it again.
+	 * because the grid below can be arrowed through and jumping to the top on
+	 * every keypress would take the day's card off the screen; `keepFocus`
+	 * because these ARE the focused controls, and a keyboard reader who lost
+	 * focus to `<body>` would have to tab back to the cell they just left.
 	 */
 	function commit(params: { d?: string; c?: string }) {
 		const url = new URL(page.url);
@@ -137,10 +144,6 @@
 
 	function go(iso: string) {
 		commit({ d: iso });
-	}
-
-	function step(days: number) {
-		go(formatIsoDate(selected + days));
 	}
 
 	let lang = $derived(i18n.lang);
@@ -167,41 +170,11 @@
 			</label>
 			<div class="control">
 				<span class="label-micro" aria-hidden="true">{t('calendar.calendar')}</span>
-				<CalendarMenu value={calendarId} {lang} onchoose={(id) => commit({ c: id })} />
-			</div>
-			<!-- The two arrows carry no words, for the reason `UnitNav`'s docblock
-			     gives about a row that cannot shrink: "Previous day"/"Next day" in
-			     a language that spells them out pushed this row to three lines on
-			     a phone. The words survive as `title` and `aria-label`, which is
-			     where they were already doing the work for assistive technology. -->
-			<div class="steps">
-				<button
-					type="button"
-					class="menu-trigger step-btn"
-					aria-label={t('calendar.previousDay')}
-					title={t('calendar.previousDay')}
-					onclick={() => step(-1)}
-				>
-					<Icon name="arrow-left" />
-				</button>
-				<button
-					type="button"
-					class="menu-trigger wide today-btn"
-					onclick={() => go(formatIsoDate(localToday()))}
-				>
-					{t('calendar.today')}
-				</button>
-				<button
-					type="button"
-					class="menu-trigger step-btn"
-					aria-label={t('calendar.nextDay')}
-					title={t('calendar.nextDay')}
-					onclick={() => step(1)}
-				>
-					<Icon name="arrow-right" />
-				</button>
+				<CalendarMenu value={territory} {lang} onchoose={(id) => commit({ c: id })} />
 			</div>
 		</div>
+
+		<CalendarMonth {selected} today={localToday()} {options} {lang} onpick={go} />
 
 		{#if day}
 			<LiturgicalDayCard {day} heading="h2" />
@@ -211,27 +184,6 @@
 			     an empty page. -->
 			<p>{t('calendar.noSuchDay')}</p>
 		{/if}
-
-		<h2 class="year-heading">{t('calendar.yearHeading')} {year}</h2>
-		<p class="year-note">{t('calendar.yearNote')}</p>
-		<ol class="year">
-			{#each notable as d (d.date)}
-				<li class:current={d.dayNumber === selected}>
-					<a
-						href={`?d=${d.date}`}
-						onclick={(e) => {
-							e.preventDefault();
-							go(d.date);
-						}}
-					>
-						<span class="cell-date">{d.date}</span>
-						<span class="swatch" data-colour={d.colour} aria-hidden="true"></span>
-						<span class="cell-name">{celebrationName(d.celebration, lang)}</span>
-						<span class="cell-rank">{t(`calendar.rank.${d.celebration.rank}`)}</span>
-					</a>
-				</li>
-			{/each}
-		</ol>
 	</div>
 </div>
 
@@ -248,17 +200,17 @@
 	 *
 	 * What they wear now is what the header wears: `.label-micro` for the
 	 * captions (styles/components.css — the site speaking, as opposed to a
-	 * word from a text) and `.menu-trigger` for the buttons and the calendar
-	 * popover (styles/menus.css). Those are real reuse and not a copied
-	 * ruleset: a change to the chrome's border or corner radius reaches this
-	 * row without anyone remembering it is here.
+	 * word from a text) and `.menu-trigger` for the calendar popover
+	 * (styles/menus.css). Those are real reuse and not a copied ruleset: a
+	 * change to the chrome's border or corner radius reaches this row without
+	 * anyone remembering it is here.
 	 */
 	.controls {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
 		gap: 0.75rem 1rem;
-		margin: 1rem 0 1.25rem;
+		margin: 1rem 0 0;
 		font-family: var(--font-sans);
 	}
 	.control {
@@ -290,93 +242,5 @@
 	}
 	.date-field:hover {
 		border-color: var(--color-accent);
-	}
-	.steps {
-		display: flex;
-		gap: 0.4rem;
-	}
-	.today-btn {
-		font-size: 0.85rem;
-	}
-	/*
-	 * An arrow is a picture of a direction, not a character, so nothing flips
-	 * it under `dir="rtl"` — `UnitNav`'s docblock has the whole argument. The
-	 * flex row above mirrors on its own, putting "previous" where an RTL
-	 * reader looks for it; this turns the mark to point the same way.
-	 */
-	.steps:dir(rtl) .step-btn :global(svg) {
-		transform: scaleX(-1);
-	}
-	.year-heading {
-		margin-top: 2rem;
-	}
-	.year-note {
-		margin: 0 0 0.75rem;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
-	.year {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		border-top: 1px solid var(--color-border);
-	}
-	.year li {
-		border-bottom: 1px solid var(--color-border);
-	}
-	.year a {
-		display: grid;
-		grid-template-columns: 6.5rem 1rem 1fr auto;
-		align-items: baseline;
-		gap: 0.5rem;
-		padding: 0.35rem 0.25rem;
-		text-decoration: none;
-		color: inherit;
-	}
-	.year li.current a {
-		font-weight: 600;
-	}
-	.cell-date {
-		font-variant-numeric: tabular-nums;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
-	.cell-rank {
-		font-size: 0.78rem;
-		color: var(--color-text-muted);
-		text-align: right;
-	}
-	.swatch {
-		display: inline-block;
-		width: 0.65em;
-		height: 0.65em;
-		border-radius: 50%;
-		border: 1px solid var(--color-border);
-	}
-	.swatch[data-colour='white'] {
-		background: #fdfdfb;
-	}
-	.swatch[data-colour='red'] {
-		background: #a4262c;
-	}
-	.swatch[data-colour='green'] {
-		background: #2f6b3f;
-	}
-	.swatch[data-colour='violet'] {
-		background: #5f3f7a;
-	}
-	.swatch[data-colour='rose'] {
-		background: #d99bb0;
-	}
-	.swatch[data-colour='black'] {
-		background: #23211e;
-	}
-	@media (max-width: 34rem) {
-		.year a {
-			grid-template-columns: 5.5rem 1rem 1fr;
-		}
-		.cell-rank {
-			display: none;
-		}
 	}
 </style>

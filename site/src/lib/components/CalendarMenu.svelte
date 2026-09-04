@@ -60,11 +60,31 @@
 
 	## The general calendar is a row, not a cell
 
-	It sits above the grid with its name printed, and wears the Vatican flag
-	because that is the flag of the see whose calendar it is. It is deliberately
-	not one more square: it is the DEFAULT and the thing every other one is a
-	layer over (see `national/index.ts`), and a row that says so in words is
-	worth more than the four millimetres it costs.
+	It sits above the grid with its name printed. It is deliberately not one
+	more square: it is the DEFAULT and the thing every other one is a layer
+	over (see `national/index.ts`), and a row that says so in words is worth
+	more than the four millimetres it costs.
+
+	IT WORE THE VATICAN FLAG FOR A DAY AND THAT WAS A FACTUAL ERROR. Vatican
+	City is not the general calendar — it keeps the Diocese of Rome's, which
+	GCatholic publishes as `IT-rome0` and this directory carries as `va`, with
+	eleven propers of its own that no other calendar has (Peter's chair, the
+	dedication of the Lateran as the cathedral's own, the anniversary of the
+	pope's election). So the flag was on two different calendars in one
+	control, and on the one it does not belong to it said that the universal
+	calendar is a country's. 🌐 is the mark instead: a globe is not a
+	territory, which is the whole claim the row makes.
+
+	## The value is a TERRITORY, and the calendar is looked up from it
+
+	Eleven of the ninety-six places here have no calendar of their own — Israel,
+	Jordan and Cyprus keep the Latin Patriarchate of Jerusalem's, the Faroes and
+	Greenland keep Denmark's. So four cells select one layer, and a control
+	whose value was the LAYER could not tell which of them had been pressed: it
+	found the first cell matching and printed that, so choosing Israel put
+	"Cyprus" in the trigger. The value is the cell's own code and the route
+	resolves it through `TERRITORY_CALENDARS`, which is one lookup and cannot
+	be ambiguous in that direction.
 -->
 <script lang="ts">
 	import { bcp47, t } from '$lib/i18n.svelte';
@@ -75,7 +95,8 @@
 	import { Menu } from './menu.svelte';
 
 	interface Props {
-		/** The chosen calendar's id — `'general'` or a layer's id. */
+		/** The chosen TERRITORY's code, or `'general'` — never a layer id, for
+		 *  the reason in the docblock above. */
 		value: string;
 		/** The interface language, for the territory names and their order. */
 		lang: string;
@@ -136,10 +157,18 @@
 		}
 	}
 
+	/** The mark on the general calendar's row. NOT a flag — see the docblock:
+	 *  the Vatican has a calendar of its own and a cell of its own. */
+	const GENERAL_MARK = '🌐';
+
 	const generalName = $derived(t('calendar.which.general'));
 
 	/** The regions, each with its own territories named and sorted for this
-	 *  reader. A region whose every calendar is held renders nothing. */
+	 *  reader. `TERRITORY_CALENDARS` is what filters: a territory whose
+	 *  calendar `held.ts` withdrew resolves to nothing and gets no cell, which
+	 *  takes Oman and Yemen out with Southern Arabia's layer and the Faroes
+	 *  and Greenland out with Denmark's — correct, since what is held for a
+	 *  country is held for everyone who keeps that country's calendar. */
 	const regions = $derived(
 		CALENDAR_REGIONS.map((region) => {
 			const collator = new Intl.Collator(bcp47(lang));
@@ -147,7 +176,6 @@
 				.filter((code) => TERRITORY_CALENDARS[code])
 				.map((code) => ({
 					code,
-					calendar: TERRITORY_CALENDARS[code],
 					name: territoryName(code, lang),
 					flag: flag(code)
 				}))
@@ -169,11 +197,9 @@
 
 	const matches = $derived(filtered.flatMap((region) => region.cells));
 
-	const currentCell = $derived(
-		regions.flatMap((r) => r.cells).find((cell) => cell.calendar === value)
-	);
+	const currentCell = $derived(regions.flatMap((r) => r.cells).find((cell) => cell.code === value));
 	const currentName = $derived(value === 'general' ? generalName : (currentCell?.name ?? value));
-	const currentFlag = $derived(value === 'general' ? flag('VA') : (currentCell?.flag ?? ''));
+	const currentFlag = $derived(value === 'general' ? GENERAL_MARK : (currentCell?.flag ?? ''));
 
 	// The box is what the panel is for at this size, so it takes focus on open
 	// — a reader who already knows their country types three letters and is
@@ -195,7 +221,7 @@
 		menu.onPanelKeydown(event);
 		if (event.key !== 'Enter' || matches.length !== 1) return;
 		event.preventDefault();
-		choose(matches[0].calendar);
+		choose(matches[0].code);
 	}
 </script>
 
@@ -245,7 +271,7 @@
 								<span class="check-slot"
 									>{#if value === 'general'}<Icon name="check" />{/if}</span
 								>
-								<span class="flag" aria-hidden="true">{flag('VA')}</span>
+								<span class="flag" aria-hidden="true">{GENERAL_MARK}</span>
 								<span>{generalName}</span>
 							</span>
 						</button>
@@ -264,7 +290,7 @@
 						onkeydown={menu.onPanelKeydown}
 					>
 						{#each region.cells as cell (cell.code)}
-							{@const isCurrent = value === cell.calendar}
+							{@const isCurrent = value === cell.code}
 							<li role="none">
 								<button
 									type="button"
@@ -274,7 +300,7 @@
 									class:current={isCurrent}
 									aria-label={cell.name}
 									title={cell.name}
-									onclick={() => choose(cell.calendar)}
+									onclick={() => choose(cell.code)}
 								>
 									<span class="flag" aria-hidden="true">{cell.flag}</span>
 								</button>
