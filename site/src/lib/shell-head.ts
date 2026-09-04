@@ -30,7 +30,7 @@ import {
 	parseLangEntry,
 	type RouteManifest
 } from './route-manifest.ts';
-import { isRtl, UI_LANGS, type UiLang } from './ui-langs.ts';
+import { bcp47, isRtl, UI_LANGS, type UiLang } from './ui-langs.ts';
 
 /**
  * The site's name, and the tail of nearly every title.
@@ -496,8 +496,12 @@ function chromeHead(
 		noindex: false,
 		lang,
 		alternates: [
+			// `bcp47`, and only here: the HREF keeps the tag the corpus and the
+			// sitemap use (`/zht/preces`), while the `hreflang` it is declared
+			// under has to be a tag the consumer accepts, or the consumer drops
+			// that one link and says nothing.
 			...UI_LANGS.filter((tag) => titles.chrome[tag]?.[path]).map((tag) => ({
-				hreflang: tag,
+				hreflang: bcp47(tag),
 				href: chromeHref(tag, path)
 			})),
 			{ hreflang: 'x-default', href: path }
@@ -983,5 +987,5 @@ export function noscriptHtml(head: ShellHead): string {
  * reason; this is the copy that reaches a consumer which never runs it.
  */
 export function htmlAttrs(head: ShellHead): { lang: string; dir: string } | undefined {
-	return head.lang ? { lang: head.lang, dir: isRtl(head.lang) ? 'rtl' : 'ltr' } : undefined;
+	return head.lang ? { lang: bcp47(head.lang), dir: isRtl(head.lang) ? 'rtl' : 'ltr' } : undefined;
 }

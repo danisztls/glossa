@@ -45,7 +45,7 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST } from '$lib/calendar/national';
-	import { i18n, t } from '$lib/i18n.svelte';
+	import { bcp47, i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
 	 *  the one place in this codebase where local time is the correct basis.
@@ -84,7 +84,12 @@
 		if (id === 'general') return t('calendar.which.general');
 		const code = id.toUpperCase();
 		try {
-			return new Intl.DisplayNames([lang], { type: 'region' }).of(code) ?? code;
+			// `bcp47`, for the reason `menu-filter.ts`'s own `Intl` call gives:
+			// `zht` is structurally valid and unresolvable, so it does not
+			// throw into the `catch` below — it answers in the browser's
+			// locale, which reads as a bug in the country list rather than in
+			// the tag.
+			return new Intl.DisplayNames([bcp47(lang)], { type: 'region' }).of(code) ?? code;
 		} catch {
 			return code;
 		}

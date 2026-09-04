@@ -155,6 +155,12 @@ import {
 	getDocumentStructure,
 	loadDocumentStructure
 } from './document-structures.svelte';
+// `baseLang` and `languageDisplayName` live in `lang-names.ts` since
+// 2026-09-04 and are re-exported here, where the whole app already reaches for
+// them. See that file for why they had to leave: the sync could not import
+// this module to check them, so nothing checked them.
+import { baseLang, languageDisplayName } from './lang-names';
+export { baseLang, languageDisplayName };
 import { summaPartSlug } from './route-manifest';
 import { summaHeadingTitle, summaQuestionLabel } from './summa-titles';
 import {
@@ -391,11 +397,14 @@ export function listEditions(type: WorkType): WorkManifest[] {
  * every one that changed the elected edition was also one the readership test
  * rejected, and that convergence is luck rather than a rule.
  *
- * KEYED ON CONTENT LANGUAGE, of which there are twenty-six (see `ContentLang`
- * in types.ts) — all of them interface languages since the superset flip, and
- * fifteen of them without a row. An unlisted tag gets the tail alone, so a
- * language ingested before its row is written degrades to the old global
- * behaviour rather than to nothing.
+ * KEYED ON CONTENT LANGUAGE (see `ContentLang` in types.ts) — all of them
+ * interface languages since the superset flip, and most of them without a row.
+ * An unlisted tag gets the tail alone, so a language ingested before its row
+ * is written degrades to the old global behaviour rather than to nothing, and
+ * `lt`, `sq`, `uk` and `hi` are deliberately left there: each is one work or
+ * two, no neighbour of any of them passes the two tests above (Polish is not
+ * intelligible to a Lithuanian reader, and Russian for `uk` is not this
+ * project's call to make), and English is what the tail already says.
  */
 export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> = {
 	en: ['en', 'la'],
@@ -414,7 +423,21 @@ export const CONTENT_LANG_FALLBACK: Readonly<Record<string, readonly string[]>> 
 	sl: ['en', 'la'],
 	sv: ['en', 'la'],
 	sk: ['cs', 'en', 'la'],
-	be: ['pl', 'en', 'la']
+	be: ['pl', 'en', 'la'],
+	// THE ONLY PAIR HERE THAT IS ONE LANGUAGE. Every other row names a
+	// neighbour a reader can make something of; these two name each other,
+	// and a reader of either can read the other with effort, because the
+	// difference is the script and not the words. So the pair is mutual,
+	// which no other row is — the asymmetry elsewhere is real (a Slovak
+	// reader reads Czech far more easily than the reverse is assumed), and
+	// here there is none to encode.
+	//
+	// It is also the cheapest neighbour in the table: `prayer.common.zh` and
+	// `prayer.common.zht` are the whole of the corpus in either, so the
+	// offline fill's per-language cost (see `contentLangChain` below) is one
+	// prayer collection rather than a Compendium.
+	zh: ['zht', 'en', 'la'],
+	zht: ['zh', 'en', 'la']
 };
 
 /** The tail every row ends in, and what an unlisted language falls back to. */
@@ -486,8 +509,8 @@ export function contentLangChain(lang: string): string[] {
  * Ordinaria*. The Douay-Rheims brings Challoner's 1,916 notes, his 1,307
  * chapter arguments and Haydock's 45,747. THE COST IS THE REGISTER, and it is
  * paid by the readers least able to afford it: every `CONTENT_LANG_FALLBACK`
- * row ends in `en, la` and only eight of thirty-four interface languages have
- * a Bible of their own, so this is what most of the world reads here, mostly
+ * row ends in `en, la` and only eight interface languages have a Bible of
+ * their own, so this is what most of the world reads here, mostly
  * as non-native English. It is bounded — the CPDV is one click away in the
  * edition menu and the choice persists — and that is why it was accepted.
  *
@@ -573,76 +596,6 @@ export function resolveEditionTag(available: string[], preferred: string): strin
 		fallbackFor(baseLang(preferred)).map(inLang).find(Boolean) ??
 		available[0]
 	);
-}
-
-/** BCP-47 language tag -> bare language subtag, e.g. "pt-PT" -> "pt". */
-export function baseLang(tag: string): string {
-	return tag.split('-')[0].toLowerCase();
-}
-
-/**
- * A content language's own name, written in that language ("Português", not
- * "Portuguese") — same convention LanguageMenu.svelte uses for the UI
- * language switch, and `Latina` is deliberately the same string in both.
- * Keyed on CONTENT language, which is NOT the interface list and must not be
- * derived from it — `mg` has no dictionary and never appears in the language
- * switch (see `ContentLang` in types.ts). An unrecognized tag falls back to
- * the tag itself, which is why a missing entry degrades to "mg" rather than
- * to nothing, and why the Catechism's Malagasy edition named itself in the
- * edition menu as the bare subtag from the day it was ingested: the type
- * union gained the language and this table did not. EVERY TAG IN THAT UNION
- * NEEDS A LINE HERE, and nothing fails when one does not.
- */
-const LANGUAGE_NAMES: Record<string, string> = {
-	en: 'English',
-	pt: 'Português',
-	la: 'Latina',
-	de: 'Deutsch',
-	es: 'Español',
-	fr: 'Français',
-	it: 'Italiano',
-	mg: 'Malagasy',
-	pl: 'Polski',
-	ru: 'Русский',
-	ar: 'العربية',
-	hu: 'Magyar',
-	ro: 'Română',
-	sl: 'Slovenščina',
-	sv: 'Svenska',
-	cs: 'Čeština',
-	da: 'Dansk',
-	fi: 'Suomi',
-	hr: 'Hrvatski',
-	lv: 'Latviešu',
-	nl: 'Nederlands',
-	sk: 'Slovenčina',
-	sw: 'Kiswahili',
-	vi: 'Tiếng Việt',
-	be: 'Беларуская',
-	he: 'עברית',
-	id: 'Bahasa Indonesia',
-	lt: 'Lietuvių'
-};
-
-/**
- * A REGIONAL EDITION NAMES ITS REGION; the unmarked one does not.
- * `prayer.common.en-gb` is the UK wording of the five prayers the source
- * prints twice, alongside `prayer.common.en`, which is the collection
- * (docs/decisions.md §Addresses and editions). Only the marked one needs a name here —
- * `en` falls through to `LANGUAGE_NAMES` and stays plain "English", which is
- * what the collection is.
- *
- * Written in the content language's own language, like every other entry
- * here — this one happens to be English already. The region is spelled the
- * way a reader of that edition would name it ("UK"), not by its BCP-47
- * subtag, which is `GB`.
- */
-const REGION_NAMES: Record<string, string> = {
-	'en-gb': 'English (UK)'
-};
-
-export function languageDisplayName(tag: string): string {
-	return REGION_NAMES[tag.toLowerCase()] ?? LANGUAGE_NAMES[baseLang(tag)] ?? tag;
 }
 
 /**

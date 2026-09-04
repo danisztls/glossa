@@ -5,7 +5,7 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 

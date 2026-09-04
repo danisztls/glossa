@@ -41,7 +41,7 @@
 	already reading Korean chrome had to open "+ more" to find Korean.
 
 	The two halves cover for each other. The fold is a guess about which
-	twelve of thirty-four a reader wants, and a guess is only tolerable where
+	twelve of them a reader wants, and a guess is only tolerable where
 	being wrong is cheap; the box is what makes it cheap, since a language
 	below the fold is three keystrokes away rather than a scroll and a hunt.
 	Typing therefore searches ALL of them and ignores the fold entirely —

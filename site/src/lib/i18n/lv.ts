@@ -29,7 +29,7 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 

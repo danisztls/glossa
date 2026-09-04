@@ -287,6 +287,15 @@ type FontScript = keyof typeof DEFERRED_FONTS;
  *   `vietnamese` (U+1EA0-1EF9). `latin-ext` does not reach them. It takes both
  *   because its `ṅ` and its chrome's Latin-Extended-A punctuation do.
  *
+ * THE SCRIPTS WITH NO WEBFONT AT ALL ARE ABSENT AND MUST STAY ABSENT, which
+ * is the other way an entry here can be wrong. `zh`, `zht`, `ko`, `hi` and
+ * `ml` are set in the reader's own system faces through the `:lang()` block
+ * at the foot of `direction.css`, because Han, Hangul, Devanagari and
+ * Malayalam are megabytes even subset. There is no file for `cacheAssets` to
+ * fetch, so a row for one of them would name a bucket that matches nothing —
+ * silently, like every other failure this table has. Their absence is a
+ * decision and not the omission the `lt` comment above records.
+ *
  * CHECK THIS TABLE WHEN ADDING A LANGUAGE, beside the glyph inventory in
  * `fonts.css` that answers the same question for the online path. A language
  * missing here still renders correctly online — the browser fetches what it

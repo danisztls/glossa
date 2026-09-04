@@ -221,6 +221,22 @@
 			"nav.prayers": "Малітвы",
 			"nav.summa": "Сума"
 		},
+		"lt": {
+			"nav.bible": "Šventasis Raštas",
+			"nav.ccc": "Katekizmas",
+			"nav.compendium": "Santrauka",
+			"nav.magisterium": "Magisteriumas",
+			"nav.prayers": "Maldos",
+			"nav.summa": "Suma"
+		},
+		"sq": {
+			"nav.bible": "Bibla",
+			"nav.ccc": "Katekizmi",
+			"nav.compendium": "Përmbledhja",
+			"nav.magisterium": "Magjisteri",
+			"nav.prayers": "Lutje",
+			"nav.summa": "Summa"
+		},
 		"tl": {
 			"nav.bible": "Bibliya",
 			"nav.ccc": "Katesismo",
@@ -260,6 +276,14 @@
 			"nav.magisterium": "训导权",
 			"nav.prayers": "祈祷文",
 			"nav.summa": "神学大全"
+		},
+		"zht": {
+			"nav.bible": "聖經",
+			"nav.ccc": "教理",
+			"nav.compendium": "簡編",
+			"nav.magisterium": "訓導權",
+			"nav.prayers": "祈禱經文",
+			"nav.summa": "神學大全"
 		},
 		"ko": {
 			"nav.bible": "성경",

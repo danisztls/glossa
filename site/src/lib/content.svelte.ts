@@ -196,7 +196,7 @@ class ContentStore {
 	 * with it — a blank page with no edition menu on it, which is the one
 	 * shape a reader cannot recover from, since the control that would have
 	 * let them pick a language is the control that is missing. Twelve
-	 * languages carry one of the two works; the interface has thirty-four, so
+	 * languages carry one of the two works; the interface has more, so
 	 * TWENTY-TWO of them saw the blank page, `pl`, `ru` and `ar` included from
 	 * the day this method was written.
 	 *

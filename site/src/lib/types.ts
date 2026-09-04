@@ -36,7 +36,7 @@ export type WorkType =
 
 /**
  * Bare language subtag the corpus ships content in (see `baseLang` in
- * corpus.ts). Fourteen tags as of 2026-08-25, and the four newest are the
+ * lang-names.ts). Fourteen tags as of 2026-08-25, and the four newest are the
  * point of this comment: `hu`, `ro`, `sl` and `sv` arrived with the
  * Compendium, which vatican.va publishes in ten languages, and none of them
  * was an interface language when it did.
@@ -79,6 +79,20 @@ export type WorkType =
  * ingestion in a language nobody has written a dictionary for will separate
  * them again from this side. `CONTENT_LANG_FALLBACK` is what carries a reader
  * across the gap either way.
+ *
+ * IT SEPARATED THEM THREE MORE TIMES BEFORE ANYONE LOOKED (2026-09-04), and
+ * the reason is that THIS UNION IS A CLAIM NOTHING VERIFIED. Five languages
+ * were in the corpus and not in it — `uk` from two CDF documents, and `hi`,
+ * `zh` and `zht` from the curated prayers — and a tag missing here costs
+ * nothing at the type level, because no value is ever narrowed to it: a
+ * manifest's `language` is `Bcp47`, and every reader of it goes through
+ * `baseLang`, which takes a `string`. What the omission actually cost was the
+ * table it is paired with, `LANGUAGE_NAMES` in lang-names.ts, where a missing
+ * entry degrades to the bare tag — so the prayers' edition menu offered
+ * "hi", "zh" and "zht" as if they were titles. That is the Malagasy symptom
+ * exactly, a year on, and the fix this time is a check rather than a list:
+ * `scripts/sync-corpus.mjs` reads the real corpus and refuses a language that
+ * has no name and no dictionary.
  */
 export type ContentLang =
 	| 'en'
@@ -112,7 +126,16 @@ export type ContentLang =
 	// Albanian, and the first content language that arrived from a work
 	// other than the Magisterium's two big families: vatican.va publishes
 	// the Compendium of the Social Doctrine in it and nothing else here.
-	| 'sq';
+	| 'sq'
+	// Ukrainian, from the two CDF documents vatican.va publishes in it.
+	| 'uk'
+	// The four Vatican News prayer editions (2026-09-04). `zht` is that
+	// site's own tag for Traditional Chinese and is not BCP-47 — see
+	// `bcp47` in ui-langs.ts, which converts it wherever a tag leaves this
+	// app as markup, and does not rename it here: the corpus is keyed on it.
+	| 'hi'
+	| 'zh'
+	| 'zht';
 
 interface WorkManifestBase {
 	id: string;

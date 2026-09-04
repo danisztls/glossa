@@ -1,7 +1,7 @@
 /**
  * The two dropdowns that outgrew being a list, and what they filter on.
  *
- * `LanguageMenu` offers thirty-four interface languages and `EditionMenu`
+ * `LanguageMenu` offers every interface language and `EditionMenu`
  * offers up to twenty-four editions of a work; both were written when the
  * numbers were two and three, and both are now panels a reader scrolls
  * looking for something they can already name. A search box is the answer to
@@ -19,73 +19,15 @@
  * language in this menu whose name a reader cannot type is a language they
  * would otherwise have to scroll for.
  */
-import { baseLang, contentLangChain } from './corpus';
-import { UI_LANGS, type UiLang } from './ui-langs';
+import { contentLangChain } from './corpus';
+// `UI_LANG_NAMES` moved to `lang-names.ts` on 2026-09-04, with `corpus.ts`'s
+// `LANGUAGE_NAMES` and for the same reason; re-exported here because
+// `LanguageMenu.svelte` imports it from this module along with everything
+// else the panel needs.
+import { baseLang, UI_LANG_NAMES } from './lang-names';
+export { UI_LANG_NAMES };
+import { bcp47, UI_LANGS, type UiLang } from './ui-langs';
 import type { WorkManifest } from './types';
-
-/**
- * The interface languages, each named in its OWN language.
- *
- * Not translated into the current one: a reader who has landed on the wrong
- * interface language needs to RECOGNIZE their language in the list, and
- * "Portuguese" is no help to someone who only reads Portuguese. That was worth
- * stating with two entries and is the whole usability of the control at
- * thirty-four.
- *
- * A `Record<UiLang, …>` AND NOT AN ARRAY, and out here rather than inside
- * `LanguageMenu.svelte`, which is the whole of the fix to what that component
- * used to warn about at length: its `OPTIONS` array was the one copy of
- * `UI_LANGS` no test guarded, and a language missing from it stayed reachable
- * by URL and by browser negotiation while being findable by nobody. Keyed on
- * the union, an omission is now a type error; carrying no order of its own, it
- * has nothing left to disagree with `ui-langs.ts` about.
- *
- * It is NOT `corpus.ts`'s `LANGUAGE_NAMES`, which would be the obvious source:
- * that table is keyed on CONTENT language and deliberately does not name the
- * reach tier, which is eight of these thirty-four. Where the two overlap they
- * agree, and the test beside this file is what says so.
- *
- * `Latina` rather than `Lingua Latina` for the same reason `Deutsch` is not
- * `Deutsche Sprache` — and it is what `LANGUAGE_NAMES` already calls the
- * Clementine's language in the edition menu, which sits two triggers away in
- * the same header.
- */
-export const UI_LANG_NAMES: Record<UiLang, string> = {
-	en: 'English',
-	pt: 'Português',
-	la: 'Latina',
-	de: 'Deutsch',
-	es: 'Español',
-	fr: 'Français',
-	it: 'Italiano',
-	mg: 'Malagasy',
-	hu: 'Magyar',
-	pl: 'Polski',
-	ro: 'Română',
-	sl: 'Slovenščina',
-	sv: 'Svenska',
-	ru: 'Русский',
-	nl: 'Nederlands',
-	da: 'Dansk',
-	cs: 'Čeština',
-	sk: 'Slovenčina',
-	hr: 'Hrvatski',
-	fi: 'Suomi',
-	lv: 'Latviešu',
-	sw: 'Kiswahili',
-	vi: 'Tiếng Việt',
-	be: 'Беларуская',
-	tl: 'Tagalog',
-	id: 'Bahasa Indonesia',
-	ig: 'Igbo',
-	uk: 'Українська',
-	zh: '中文',
-	ko: '한국어',
-	ml: 'മലയാളം',
-	hi: 'हिन्दी',
-	ar: 'العربية',
-	he: 'עברית'
-};
 
 /**
  * Below this many rows a panel is a list and a search box is furniture.
@@ -265,8 +207,9 @@ export function orderByLangChain<T extends { language: string }>(
  * Three surfaces, because a reader looking for German may know it as
  * `Deutsch`, as `DE`, or — reading the interface in their own language — as
  * "German"/"alemão". The third comes from `Intl.DisplayNames`, which is the
- * only one of the three nobody here has to maintain: a table of thirty-four
- * language names in thirty-four languages is 1,156 strings for a search box.
+ * only one of the three nobody here has to maintain: naming every interface
+ * language in every interface language is the SQUARE of that list — over a
+ * thousand strings, for a search box.
  *
  * It is wrapped because it is the one part that can fail. `Intl.DisplayNames`
  * is old enough to rely on, but a runtime missing it, or a tag it declines to
@@ -279,7 +222,11 @@ export function uiLangSearchText(lang: UiLang, nativeName: string, inLang: strin
 
 function displayName(lang: UiLang, inLang: string): string {
 	try {
-		return new Intl.DisplayNames([inLang, 'en'], { type: 'language' }).of(lang) ?? '';
+		// `bcp47` because `Intl` is one of the machines that reads a tag: it
+		// does not know `zht`, and answers a tag it cannot name with the tag
+		// itself — which is not an exception this `catch` would see, just a
+		// third surface silently equal to the first. `zh-Hant` it names.
+		return new Intl.DisplayNames([bcp47(inLang), 'en'], { type: 'language' }).of(bcp47(lang)) ?? '';
 	} catch {
 		return '';
 	}

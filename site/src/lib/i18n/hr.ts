@@ -26,7 +26,7 @@
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 

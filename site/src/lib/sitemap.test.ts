@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { assertCanonical, sitemapPaths, sitemapXml, ORIGIN } from '../../scripts/sitemap.mjs';
-import { parseChromePath } from './route-manifest';
+import { CHROME_PATHS, parseChromePath } from './route-manifest';
+import { UI_LANGS } from './ui-langs';
 import { isCanonicalPath, type RouteManifest } from './route-manifest';
 
 /**
@@ -41,15 +42,18 @@ describe('sitemapPaths', () => {
 		//
 		// The chrome is NINE PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
 		// (2026-08-28): nine unprefixed, which are the cluster's `x-default`,
-		// and nine under each of the THIRTY-FOUR tags in `UI_LANGS` — fourteen
+		// and nine under each of the THIRTY-SEVEN tags in `UI_LANGS` — fourteen
 		// until 2026-08-31, when the twelve content languages with no chrome
-		// gained one and eight reach languages were added on top, which is why
-		// this number moves whenever that list does. It was seven
+		// gained one and eight reach languages were added on top, and
+		// thirty-four until 2026-09-04, when `lt`, `sq` and `zht` closed the
+		// same gap again. Which is why this number moves whenever that list
+		// does, and why it is written as a product below rather than as a
+		// figure: the arithmetic is the assertion. It was seven
 		// until the Summa moved under `/doctores` the same day, which added the
 		// shelf and its one work and took nothing away. Still no Compendium
 		// landing page -- the Catechism's index presents both works
 		// (`CatechismIndex.svelte`).
-		expect(paths).toHaveLength(315 + 21);
+		expect(paths).toHaveLength(CHROME_PATHS.length * (UI_LANGS.length + 1) + 21);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 

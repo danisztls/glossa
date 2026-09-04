@@ -1226,6 +1226,86 @@ unnamed: a content language is named in its own language by `LANGUAGE_NAMES` in
 unnamed tag degrades silently to itself — `ccc.mg` offered itself in the edition menu as
 "mg".
 
+**The Malagasy symptom came back on 2026-09-04, in five languages at once, because the
+rule was a sentence in a docblock and nothing read it.** `UI_LANGS` became a superset of
+the content languages on 2026-08-31 and that was the whole of the enforcement. Three
+ingestions since then each brought a language nobody had written a dictionary for, and
+each arrived inside a commit about something else: `csdc.sq` with the Compendium of the
+Social Doctrine (Albanian, 583 paragraphs, the one language vatican.va publishes that work
+in and no other here), `compendium.lt` with the four PDF-only Compendium editions
+(recorded above as "three of the four are interface languages" — the fourth was
+Lithuanian, and the sentence noticing it did not act on it), and `prayer.common.{hi,zh,zht}`
+with the curated prayers. `cdf.*.uk` had been in the corpus since the doctrinal office's
+25 documents landed. Nothing broke, which is the point: `t()` falls back to English key by
+key, so every page rendered, and the only visible trace was the prayers' edition menu
+offering "hi", "zh" and "zht" where it should have offered a title. That is exactly what
+`ccc.mg` did a week earlier, and the paragraph above had already been written about it.
+
+**So the fix is a check and not three more list entries.** `scripts/sync-corpus.mjs`
+reads the real corpus, folds every manifest's `language` to its base tag, and exits 1 on
+one that has no `LANGUAGE_NAMES` entry or no dictionary. It has to live in the sync
+rather than in vitest, which runs on fixtures — two Bible books, in languages that have
+had dictionaries since the first week — and a check for "the corpus holds a language the
+interface does not" is worth exactly as much as the corpus it reads. **Two tables, not
+one, because the failures differ and a language can fail either alone**: no dictionary
+leaves a reader inside English chrome, no name leaves the edition menu offering a bare
+tag as though it were a title. The check could not be written at all until
+`LANGUAGE_NAMES` and `UI_LANG_NAMES` left `corpus.ts` and `menu-filter.ts` for a leaf
+module (`lang-names.ts`): both of those reach `corpus-index.ts`'s `import.meta.glob`, so
+Node cannot import either, which is the same reason `ui-langs.ts` exists. **A rule stated
+where the one process that could check it cannot read it is a rule nobody is enforcing.**
+
+**Traditional Chinese is `zht` inside the app and `zh-Hant` at every edge, and `zh-Hant`
+throughout was weighed and rejected** (2026-09-04). `zht` is not BCP-47; it is Vatican
+News's URL slug (`vaticannews.va/zht/prayers/…`). The corpus field is typed `Bcp47`, and
+`en-GB` proves the pipeline assigns proper tags rather than echoing slugs — so renaming
+looks like the obviously correct move, and the reason against it is not the cost.
+
+**A tag here is an IDENTITY; a subtag is a VARIANT.** Every table that matters keys on
+`baseLang`, which folds `zh-Hant` to `zh` — and folding is the _point_ of `baseLang`,
+because it is how `prayer.common.en` and `prayer.common.en-gb` become one row with
+`DEFAULT_REGION` quietly choosing between them. `EditionMenu`'s `pairEditions` makes it
+literal: it keeps the **first** edition per base language and drops the rest. Under
+`zh-Hant` the Traditional prayers would be a regional variant of the Simplified ones —
+unofferable in that menu, unnegotiable, chosen for the reader by a default nobody wrote.
+That is right for English spelling (`en`/`en-GB` differ in five words) and wrong for a
+script (`zh`/`zht` differ in nearly every character, and a reader of one may not read the
+other comfortably). **The real alternative to `zht` was never `zh-Hant`; it was `zh-Hant`
+plus a script exception inside `baseLang`** — the most-called primitive in the corpus
+layer — to stop it doing the one thing it exists for. BCP-47 has no way to say "these two
+are peers." `baseLang` does.
+
+So `bcp47()` in `ui-langs.ts` converts wherever a tag leaves for a machine, and the URL
+keeps `zht`, because a path segment is an address and carries no BCP-47 obligation. **The
+consequence to hold on to is that `direction.css` must match `:lang(zh-Hant)` and not
+`:lang(zht)`, after `:lang(zh)` rather than before it**: `:lang()` matches on
+hyphen-delimited prefixes, so `zh-Hant` matches both selectors at equal weight and source
+order is the whole of what separates them.
+
+**The `Intl` half of that bargain leaked twice before anyone looked, and the reason it is
+now a test is that it cannot fail loudly.** A three-letter primary subtag is the ISO 639-3
+shape, so `zht` is _structurally_ valid: `Intl` does not throw, the `try`/`catch` every one
+of these call sites already carries never fires, and the answer comes back in the browser's
+default locale. `library.ts` printed `24.1` to a reader whose panel says `24,1` everywhere
+else — in the very function whose docblock explains why a tag is passed at all — and
+`/calendarium` named fifteen countries in whatever language the browser preferred.
+`i18n.test.ts` now scans `src/` for a `new Intl.*` handed a bare lang-shaped identifier
+without `bcp47(`; property access is exempt, since `dates.ts`'s
+`lang.startsWith('pt') ? 'pt-PT' : 'en-US'` resolves to a literal on every branch. **A
+shim is only as good as the places that remember it, so the places are checked rather than
+documented.**
+
+**And `zh-TW` does not fold to `zh`.** `browserLangs` reduces a browser tag to its primary
+subtag, which is right for the regional pairs it was written for (`pt-BR` and `pt-PT` are
+one entry in both of this site's lists) and wrong for a script: a Taiwanese reader would
+negotiate into Simplified chrome, which is the outcome having two dictionaries exists to
+prevent. `SCRIPT_VARIANTS` is the exception list, checked before the fold, and `app.html`
+carries its own copy for the pre-paint pass — a disagreement there swaps every glyph at
+hydration. **Writing `zht.ts` is also what revealed that `zh.ts` had drifted**: its whole
+colophon and its entire canon-law block were in Traditional characters, added by two later
+commits that took "Chinese" for one script. Nothing mechanical can see that — same key,
+same encoding, same length — and any reader of either script sees it immediately.
+
 **Content fallback is per-language, at most one neighbour deep, and always ends English
 then Latin** (2026-08-26). `CONTENT_LANG_FALLBACK` in `corpus.ts` was one global
 `['en', 'la']`, which said where a reader ends up and nothing about where they should look

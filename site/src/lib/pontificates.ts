@@ -21,7 +21,7 @@
  *
  * `to: null` renders as a trailing en dash, the conventional form for an
  * office still held. It is deliberately not the word "present": that would be
- * a chrome string, and the interface has thirty-four dictionaries — whereas
+ * a chrome string, and that is one per dictionary — whereas
  * `2025-` is the same in all of them, and a table of digits is the one label
  * on this page that needs no translator.
  *

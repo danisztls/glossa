@@ -155,6 +155,31 @@
 		'Noto Sans CJK SC', 'Source Han Sans SC', var(--font-serif);
 }
 
+/* Traditional Chinese, added 2026-09-04 with `zht` (ui-langs.ts). TWO THINGS
+   ABOUT THIS RULE ARE NOT COSMETIC:
+
+   It matches `zh-Hant` AND NOT `zht`. `:lang()` matches the computed language,
+   which is whatever is written on `<html lang>`, and both writers of that
+   attribute — `applyDocumentLang` and app.html's pre-paint block — put `bcp47`
+   through it, so the attribute reads `zh-Hant` where the app's own tag is
+   `zht`. Writing `:lang(zht)` here would compile, apply to nothing, and leave
+   Traditional text in the Simplified stack, which renders — differently — for
+   several hundred characters.
+
+   It must come AFTER `:lang(zh)`, which it does not override by specificity:
+   `:lang()` matches on hyphen-delimited prefixes, so `zh-Hant` matches BOTH
+   selectors and they weigh the same. Source order is the whole of what
+   separates them. Moving this block above the one before it silently gives a
+   Taiwanese reader mainland forms.
+
+   The families are the Traditional cuts of the same faces, and Source Sans
+   stays first for the reason the block above gives. */
+:lang(zh-Hant) {
+	--font-sans:
+		'Source Sans 3 Variable', 'PingFang TC', 'Hiragino Sans CNS', 'Microsoft JhengHei',
+		'Noto Sans CJK TC', 'Source Han Sans TC', var(--font-serif);
+}
+
 :lang(ko) {
 	--font-sans:
 		'Source Sans 3 Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR',

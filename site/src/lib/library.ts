@@ -19,6 +19,7 @@
  */
 
 import type { Wave, WaveId } from './sw-policy';
+import { bcp47 } from './ui-langs';
 
 /** One shelf: a wave, priced, and measured against what is on the device. */
 export interface LibraryRow {
@@ -170,7 +171,11 @@ export function formatBytes(bytes: number, lang: string): string {
 
 function number(value: number, lang: string, decimals: number): string {
 	try {
-		return new Intl.NumberFormat(lang, {
+		// `bcp47`, or the paragraph above is false for one reader: `zht` is a
+		// structurally valid tag `Intl` cannot resolve, so it does not throw
+		// into the `catch` — it quietly returns the browser's default locale,
+		// which is the exact outcome passing `lang` at all exists to prevent.
+		return new Intl.NumberFormat(bcp47(lang), {
 			minimumFractionDigits: decimals,
 			maximumFractionDigits: decimals
 		}).format(value);

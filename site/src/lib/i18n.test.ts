@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
+	bcp47,
 	browserLangs,
 	browserUiLangs,
 	detectUiLang,
@@ -47,6 +48,32 @@ describe('detectUiLang', () => {
 		expect(detectUiLang(['ro-RO'])).toBe('ro');
 		expect(detectUiLang(['sl-SI'])).toBe('sl');
 		expect(detectUiLang(['sv-SE', 'en-US'])).toBe('sv');
+	});
+
+	/**
+	 * The one place a script beats a region, and the failure it prevents.
+	 *
+	 * `zh-TW` and `zh-HK` fold to `zht` and not to `zh` (`SCRIPT_VARIANTS` in
+	 * ui-langs.ts): the two dictionaries are the same language in scripts that
+	 * share few characters, so a Taiwanese reader negotiated into `zh` gets an
+	 * interface they can read only with effort — the outcome having two
+	 * dictionaries exists to prevent. `zh-CN` and a bare `zh` keep the
+	 * ordinary primary-subtag rule.
+	 */
+	it('negotiates Traditional Chinese apart from Simplified', () => {
+		expect(detectUiLang(['zh-TW'])).toBe('zht');
+		expect(detectUiLang(['zh-HK', 'en-US'])).toBe('zht');
+		expect(detectUiLang(['zh-Hant'])).toBe('zht');
+		expect(detectUiLang(['zh-CN'])).toBe('zh');
+		expect(detectUiLang(['zh'])).toBe('zh');
+	});
+
+	// The three that closed the superset gap a second time on 2026-09-04. The
+	// corpus had `compendium.lt`, `csdc.sq` and `prayer.common.zht` and the
+	// interface had none of them.
+	it('negotiates the languages added with the curated prayers', () => {
+		expect(detectUiLang(['lt-LT'])).toBe('lt');
+		expect(detectUiLang(['sq-AL'])).toBe('sq');
 	});
 
 	// No operating system offers Latin as a display language, so this branch
@@ -165,6 +192,88 @@ describe('UI_LANGS and the dictionaries', () => {
 		}
 	});
 
+	/**
+	 * EVERY LOCALE-SENSITIVE API MUST BE HANDED `bcp47(...)`, AND THIS SCANS
+	 * THE SOURCE FOR IT, because the failure has no symptom at the call site.
+	 *
+	 * `zht` is structurally valid BCP-47 — a three-letter primary subtag is
+	 * the ISO 639-3 shape — so `Intl` does not reject it. It resolves it to
+	 * the browser's default locale and answers cheerfully, which means the
+	 * `try`/`catch` every one of these calls already has never fires. Two
+	 * call sites were written this way before anyone looked (2026-09-04):
+	 * `library.ts` printed `24.1` to a reader whose panel says `24,1`
+	 * everywhere else, in the very function whose docblock explains why the
+	 * tag is passed at all, and `/calendarium` named fifteen countries in
+	 * whatever language the browser preferred.
+	 *
+	 * A TEST AND NOT A CONVENTION, because the convention is invisible: the
+	 * code reads correctly, the types are satisfied, and the output is wrong
+	 * only for one of thirty-seven languages. `corpus-derivations.test.ts`
+	 * scans source for the same class of reason.
+	 *
+	 * THE RULE: a `new Intl.*(...)` whose first argument mentions a bare
+	 * lang-shaped identifier must also mention `bcp47(`. Property access is
+	 * exempt (`lang.startsWith('pt') ? 'pt-PT' : 'en-US'` in `dates.ts`
+	 * resolves to a literal on every branch), and so is an argument naming no
+	 * tag at all (`Intl.Segmenter(undefined, …)`).
+	 */
+	it('hands every Intl constructor a tag Intl can resolve', () => {
+		const root = path.join(process.cwd(), 'src');
+		/** @returns every `.ts`/`.svelte` file under `src`, tests excluded. */
+		const walk = (dir: string): string[] =>
+			readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+				const full = path.join(dir, entry.name);
+				if (entry.isDirectory()) return walk(full);
+				if (entry.name.endsWith('.test.ts')) return [];
+				return /\.(ts|svelte)$/.test(entry.name) ? [full] : [];
+			});
+
+		// The first argument's source text: from the open paren to the comma
+		// that ends it, tracking bracket depth so `[a, b]` and `f(x, y)` do
+		// not end it early.
+		const firstArg = (source: string, from: number): string => {
+			let depth = 0;
+			for (let i = from; i < source.length; i++) {
+				const c = source[i];
+				if ('([{'.includes(c)) depth++;
+				else if (')]}'.includes(c)) {
+					if (depth === 0) return source.slice(from, i);
+					depth--;
+				} else if (c === ',' && depth === 0) return source.slice(from, i);
+			}
+			return source.slice(from);
+		};
+
+		const offenders: string[] = [];
+		for (const file of walk(root)) {
+			const source = readFileSync(file, 'utf8');
+			for (const match of source.matchAll(/new Intl\.[A-Za-z]+\(/g)) {
+				const arg = firstArg(source, match.index + match[0].length);
+				// `lang`, `inLang`, `readerLang`, `uiLang` — but not `lang.x`,
+				// and not the word `language`.
+				if (!/lang\b(?!\s*\.)/i.test(arg)) continue;
+				if (arg.includes('bcp47(')) continue;
+				offenders.push(`${path.relative(root, file)}: ${match[0]}${arg.trim()}`);
+			}
+		}
+		expect(offenders, offenders.join('\n')).toEqual([]);
+	});
+
+	/**
+	 * `zht` is the app's tag and `zh-Hant` is the tag a machine gets, and the
+	 * conversion happens at exactly four points (`bcp47`'s docblock names
+	 * them). The pair of assertions is the contract: everything else is
+	 * already a language subtag and must pass through untouched, or the
+	 * `hreflang` cluster starts declaring tags that are not the URLs' own.
+	 */
+	it('hands a machine a real language tag, and only where there is one to fix', () => {
+		expect(bcp47('zht')).toBe('zh-Hant');
+		for (const lang of UI_LANGS) {
+			if (lang === 'zht') continue;
+			expect(bcp47(lang), lang).toBe(lang);
+		}
+	});
+
 	// Hebrew joined Arabic on 2026-08-31. The assertion is deliberately the
 	// whole set rather than a membership check: `app.html` carries its own
 	// copy of this list for the pre-paint `dir`, and the failure mode of a
@@ -185,5 +294,34 @@ describe('UI_LANGS and the dictionaries', () => {
 		expect(declared, 'no `var UI = [...]` found in src/app.html').toBeDefined();
 		const tags = [...(declared ?? '').matchAll(/'([a-z-]+)'/g)].map((m) => m[1]);
 		expect(tags).toEqual([...UI_LANGS]);
+	});
+
+	/**
+	 * The same drift, in the two tables that arrived with `zht` — and this
+	 * pair fails LOUDER than the list above, which is why it is worth its own
+	 * assertion. A stale `UI` costs a flash of the wrong language; a stale
+	 * `BCP` writes `lang="zht"` before paint and `lang="zh-Hant"` after it,
+	 * so `direction.css`'s `:lang(zh-Hant)` misses on the first paint and the
+	 * page changes typeface under the reader, and a stale `VAR` negotiates a
+	 * `zh-TW` browser into Simplified and then swaps every glyph at
+	 * hydration.
+	 */
+	it('keeps app.html’s tag conversions equal to ui-langs.ts', () => {
+		const html = readFileSync(path.join(process.cwd(), 'src/app.html'), 'utf8');
+		const bcpBlock = /var BCP = \{([^}]*)\}/.exec(html)?.[1];
+		expect(bcpBlock, 'no `var BCP = {...}` found in src/app.html').toBeDefined();
+		const pairs = [...(bcpBlock ?? '').matchAll(/'?([a-zA-Z-]+)'?:\s*'([a-zA-Z-]+)'/g)];
+		for (const [, tag, written] of pairs) expect(bcp47(tag), tag).toBe(written);
+		// And the other direction: nothing `bcp47` rewrites may be missing here.
+		const covered = new Set(pairs.map((m) => m[1]));
+		for (const lang of UI_LANGS) {
+			if (bcp47(lang) !== lang) expect(covered, lang).toContain(lang);
+		}
+
+		const varBlock = /var VAR = \{([^}]*)\}/.exec(html)?.[1];
+		expect(varBlock, 'no `var VAR = {...}` found in src/app.html').toBeDefined();
+		const variants = [...(varBlock ?? '').matchAll(/'([a-z-]+)':\s*'([a-z-]+)'/g)];
+		expect(variants.length).toBeGreaterThan(0);
+		for (const [, tag, folded] of variants) expect(detectUiLang([tag]), tag).toBe(folded);
 	});
 });

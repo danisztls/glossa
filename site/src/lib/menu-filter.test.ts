@@ -26,7 +26,7 @@ describe('UI_LANG_NAMES', () => {
 	});
 
 	/**
-	 * The overlap with `corpus.ts`'s `LANGUAGE_NAMES` is 26 of these 34, and
+	 * The overlap with `lang-names.ts`'s `LANGUAGE_NAMES` is most of these, and
 	 * the two tables have to say the same thing about the same language: they
 	 * sit two triggers apart in the same header, and "Latina" in one beside
 	 * "Latin" in the other would read as two different languages.

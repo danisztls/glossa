@@ -82,6 +82,8 @@ import {
 } from './build-xrefs.mjs';
 
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
+import { baseLang, languageDisplayName } from '../src/lib/lang-names.ts';
+import { isUiLang } from '../src/lib/ui-langs.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
@@ -2050,6 +2052,73 @@ if (existsSync(platesDest)) {
 	// as an empty one for the content glob to find.
 	if (plateImages.size === 0) rmSync(platesDest, { recursive: true, force: true });
 	if (stale > 0) console.log(`[sync-corpus] plates: removed ${stale} image(s) nothing wants`);
+}
+
+/**
+ * THE INTERFACE IS A SUPERSET OF THE CORPUS, checked rather than asserted.
+ *
+ * `ui-langs.ts` has stated that rule since 2026-08-31 and nothing enforced
+ * it, so between then and 2026-09-04 five languages entered the corpus with
+ * no interface behind them — `uk` from two CDF documents, `lt` and `sq` from
+ * the Compendium and the Compendium of the Social Doctrine, `zh`, `zht` and
+ * `hi` from the curated prayers — and each of them arrived in a commit about
+ * something else entirely. The rule was never in dispute; there was simply no
+ * moment at which anyone was told.
+ *
+ * THIS IS THAT MOMENT, and it is HERE rather than in vitest because vitest
+ * runs on fixtures: two Bible books, in languages that have had dictionaries
+ * since the first week. A check for "the corpus holds a language the
+ * interface does not" is worth exactly as much as the corpus it reads, so it
+ * belongs in the one pass that reads the real one.
+ *
+ * TWO TABLES, NOT ONE, because the failures differ and a language can fail
+ * either alone. A missing dictionary leaves a reader inside English chrome —
+ * the Malagasy case. A missing `LANGUAGE_NAMES` entry leaves the edition menu
+ * offering the bare tag as though it were a title, which is what `hi`, `zh`
+ * and `zht` did in the prayers menu for two days. `languageDisplayName`
+ * returns the tag it was given when it has nothing better, so comparing
+ * against the tag IS the check.
+ *
+ * Regional tags fold first (`en-GB` is English), which is `baseLang`'s job
+ * and not a special case here.
+ */
+const namelessLangs = new Map(); // bare lang -> work ids
+for (const [workId, manifest] of Object.entries(manifests)) {
+	const lang = baseLang(String(manifest.language ?? ''));
+	if (!lang) continue;
+	const named = languageDisplayName(lang) !== lang;
+	if (named && isUiLang(lang)) continue;
+	const ids = namelessLangs.get(lang) ?? [];
+	ids.push(workId);
+	namelessLangs.set(lang, ids);
+}
+
+if (namelessLangs.size > 0) {
+	console.error(
+		`[sync-corpus] ${namelessLangs.size} corpus language(s) the interface does not have:\n` +
+			[...namelessLangs]
+				.sort()
+				.map(([lang, ids]) => {
+					const missing = [
+						languageDisplayName(lang) === lang ? 'no LANGUAGE_NAMES entry' : null,
+						isUiLang(lang) ? null : 'no dictionary'
+					]
+						.filter(Boolean)
+						.join(', ');
+					const sample = ids.slice(0, 3).join(', ');
+					const rest = ids.length > 3 ? `, +${ids.length - 3} more` : '';
+					return `  ${lang.padEnd(5)} ${missing}\n        ${sample}${rest}`;
+				})
+				.join('\n') +
+			`\n\nTHE INTERFACE IS A SUPERSET OF THE CORPUS (src/lib/ui-langs.ts). ` +
+			`A name goes in LANGUAGE_NAMES in src/lib/lang-names.ts; a dictionary means ` +
+			`adding the tag to UI_LANGS and writing src/lib/i18n/<tag>.ts, plus its ` +
+			`copies in src/app.html and src/lib/usage-schema.ts and its name in ` +
+			`UI_LANG_NAMES — src/lib/i18n.test.ts names all of them. ` +
+			`A dictionary need not be complete: CHROME_KEYS in scripts/route-titles.mjs ` +
+			`is the part this build actually requires.`
+	);
+	process.exit(1);
 }
 
 if (publishedDefeats.length > 0) {

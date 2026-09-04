@@ -5,12 +5,13 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
- * A REACH LANGUAGE: the corpus holds nothing in हिन्दी, and that is the
- * point rather than an oversight. The interface list stopped tracking the
- * corpus on 2026-08-31 (see `../ui-langs.ts`) and reaches past it by Catholic
- * population -- here, the Hindi belt, and the widest reach across northern India. A reader gets their own chrome and English
- * content through `CONTENT_LANG_FALLBACK`, which is the honest state of it:
- * the alternative is not better content, it is the same content behind a
+ * WRITTEN AS A REACH LANGUAGE ON 2026-08-31 — chrome for a corpus that held
+ * nothing in it, chosen by Catholic population: the Hindi belt, and the
+ * widest reach across northern India. IT STOPPED BEING ONE ON 2026-09-04,
+ * when the curated prayers brought `prayer.common.hi` from Vatican News.
+ * Everything else the corpus holds still reaches a Hindi reader in English
+ * through `CONTENT_LANG_FALLBACK`, which is the honest state of it: the
+ * alternative is not better content, it is the same content behind a
  * language they do not read.
  *
  * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
@@ -36,7 +37,7 @@
  * English per key, DELETING a doubtful line is also a valid fix and
  * strictly better than leaving a wrong one standing.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 

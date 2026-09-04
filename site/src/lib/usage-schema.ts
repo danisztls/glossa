@@ -136,7 +136,7 @@ export const SETS = {
 export type SetField = keyof typeof SETS;
 
 /** Interface languages. A copy of `i18n.svelte.ts`'s `UI_LANGS`, kept here so
- *  the worker does not import the store and its fourteen dictionaries for one
+ *  the worker does not import the store and every dictionary behind it for one
  *  validation. `usage-schema.test.ts` asserts the two are equal — the same
  *  arrangement, and the same reason, as `app.html`'s copy. */
 export const UI_TAGS = [
@@ -164,11 +164,14 @@ export const UI_TAGS = [
 	'sw',
 	'vi',
 	'be',
+	'lt',
+	'sq',
 	'tl',
 	'id',
 	'ig',
 	'uk',
 	'zh',
+	'zht',
 	'ko',
 	'ml',
 	'hi',

@@ -1715,11 +1715,42 @@ moves, transfers, suppressions. That is the half that can be wrong invisibly.
 
 ## Languages: the interface is a superset of the content
 
-Thirty-four interface tags against twenty-eight content languages — it was
-the other way around for a year, until 2026-08-31. `UI_LANGS` lives in
-`site/src/lib/ui-langs.ts` and `ContentLang` in `types.ts`; use
-`isUiLang`/`UI_LANGS`, never a literal list (`app.html` and `usage-schema.ts`
-each keep a necessary copy, and a test asserts both against `UI_LANGS`).
+The interface is wider than the corpus — it was the other way around for a
+year, until 2026-08-31. `UI_LANGS` lives in `site/src/lib/ui-langs.ts` and
+`ContentLang` in `types.ts`; use `isUiLang`/`UI_LANGS`, never a literal list
+(`app.html` and `usage-schema.ts` each keep a necessary copy, and a test
+asserts both against `UI_LANGS`).
+
+**THE SUPERSET IS CHECKED BY `sync-corpus.mjs`, and until 2026-09-04 it was
+only asserted** (§Languages). Five languages entered the corpus with no
+interface behind them in the four days after the flip — `lt`, `sq`, `uk`,
+`zh`, `zht`, `hi`, each inside a commit about something else — and the only
+visible trace was the prayers' edition menu offering "hi", "zh" and "zht" as
+if they were titles, which is exactly what `ccc.mg` had done a week earlier.
+The sync now reads the real corpus and exits 1 on a language with no
+`LANGUAGE_NAMES` entry or no dictionary; **the check cannot live in vitest**,
+which runs on two Bible books in languages that have had dictionaries since
+the first week. Both tables moved to `src/lib/lang-names.ts` to make it
+possible — `corpus.ts` and `menu-filter.ts` reach `import.meta.glob` and Node
+cannot import either, the same reason `ui-langs.ts` exists.
+
+**`zht` is Vatican News's slug, not BCP-47, and `zh-Hant` throughout was
+weighed and rejected** (§Languages). A tag here is an IDENTITY and a subtag is
+a VARIANT: `baseLang` folds `zh-Hant` to `zh`, which is exactly how `en` and
+`en-GB` become one row, and `EditionMenu`'s `pairEditions` keeps only the
+first edition per base language — so the Traditional prayers would have been
+unofferable and unnegotiable. Right for English spelling, wrong for a script.
+`bcp47()` converts wherever a tag leaves for a machine; the URL keeps `zht`.
+So `direction.css` matches `:lang(zh-Hant)`, **after** `:lang(zh)`, which
+also matches it at equal weight; and `SCRIPT_VARIANTS` folds `zh-TW` to `zht`
+rather than to `zh`, with a copy in `app.html` for the pre-paint pass.
+
+**Every `Intl` constructor must be handed `bcp47(...)`, and a test scans the
+source for it.** `zht` is structurally valid BCP-47, so `Intl` does not throw
+— it answers in the browser's default locale, past a `try`/`catch` that never
+fires. Two call sites shipped that way before anyone looked (`library.ts`,
+`/calendarium`). **A shim is only as good as the places that remember it**, so
+`i18n.test.ts` checks the places.
 
 **Still do not derive one list from the other.** The lists equalized and
 separated four times in eight days; the rule survives the flip and reads the
@@ -1729,11 +1760,11 @@ separates them again from the other side.
 
 **What the old list actually tracked was who had written a dictionary.**
 Closing that gap (twelve content languages had no chrome) made the interface
-a superset; on top sit eight **reach languages** (`tl zh ko id uk ig ml hi`),
-chosen by Catholic population rather than by what has been ingested. A reader
-in one gets their own chrome and English content through
-`CONTENT_LANG_FALLBACK`; the alternative is the same content behind a
-language they do not read.
+a superset; on top sit the **reach languages** (`tl ko id ig ml` of the eight
+added on 2026-08-31 — `zh`, `uk` and `hi` have since gained a text), chosen
+by Catholic population rather than by what has been ingested. A reader in one
+gets their own chrome and English content through `CONTENT_LANG_FALLBACK`;
+the alternative is the same content behind a language they do not read.
 
 **A dictionary need not be complete** — `t()` falls back to English key by
 key. What the build enforces is `CHROME_KEYS` (`assertNamed` throws on an
@@ -1743,7 +1774,7 @@ unnamed chrome page, which breaks the `hreflang` cluster) and
 **The colophon was the one page deliberately left untranslated, and on
 2026-09-02 that was reversed** — the argument (a machine translation of the
 page about care with words contradicts itself) proves too much: a reader who
-cannot read the page cannot weigh it either. All 34 dictionaries carry all 31
+cannot read the page cannot weigh it either. Every dictionary carries all 31
 colophon keys now, with a parity check over `src/lib/i18n/*.ts`. The honesty
 lives in each file's header instead, which names its own confidence tier —
 keep that part.
@@ -1757,7 +1788,7 @@ See" and not "the Vatican" (the state, not the authority) nor "ecclesiastical
 approbation" (exact, and unreadable in a footer). **It is this short because of
 where it sits** — the colophon link is the line directly above it, so it need
 not carry its own context; move it away from that link and it would have to say
-more. All 34 dictionaries carry it.
+more. Every dictionary carries it.
 
 **The lines are one chrome, and that is load-bearing rather than lazy.**
 Colophon link, motto, disclaimer, then `.build` — one column, `.site-footer p`

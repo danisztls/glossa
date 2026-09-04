@@ -26,6 +26,7 @@ import {
 	RTL_LANGS,
 	isUiLang,
 	isRtl,
+	bcp47,
 	browserLangs,
 	browserUiLangs,
 	navigatorLangs,
@@ -38,6 +39,7 @@ export {
 	RTL_LANGS,
 	isUiLang,
 	isRtl,
+	bcp47,
 	browserLangs,
 	browserUiLangs,
 	navigatorLangs,
@@ -58,7 +60,11 @@ export {
  */
 function applyDocumentLang(lang: UiLang): void {
 	if (typeof document === 'undefined') return;
-	document.documentElement.lang = lang;
+	// `bcp47`, because this attribute is read by the browser and not by us:
+	// `zht` is Vatican News's tag for Traditional Chinese and not a language
+	// tag at all, and `lang` is the input to font fallback, hyphenation and
+	// quote marks. `direction.css` matches `:lang(zh-Hant)` accordingly.
+	document.documentElement.lang = bcp47(lang);
 	document.documentElement.dir = isRtl(lang) ? 'rtl' : 'ltr';
 }
 

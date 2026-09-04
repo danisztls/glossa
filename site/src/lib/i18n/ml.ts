@@ -36,7 +36,7 @@
  * English per key, DELETING a doubtful line is also a valid fix and
  * strictly better than leaving a wrong one standing.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 

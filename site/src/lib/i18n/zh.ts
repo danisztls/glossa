@@ -5,13 +5,20 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
- * A REACH LANGUAGE: the corpus holds nothing in 中文, and that is the
- * point rather than an oversight. The interface list stopped tracking the
- * corpus on 2026-08-31 (see `../ui-langs.ts`) and reaches past it by Catholic
- * population -- here, China and Taiwan, and the language vatican.va publishes the Catechism in. A reader gets their own chrome and English
- * content through `CONTENT_LANG_FALLBACK`, which is the honest state of it:
- * the alternative is not better content, it is the same content behind a
- * language they do not read.
+ * WRITTEN AS A REACH LANGUAGE ON 2026-08-31 — chrome for a corpus that held
+ * nothing in it — AND IT STOPPED BEING ONE ON 2026-09-04, when the curated
+ * prayers brought `prayer.common.zh`. Nothing about the file changes; what
+ * changes is that its readers now have a text of their own, and that
+ * `CONTENT_LANG_FALLBACK` gives them `zht` before English.
+ *
+ * SIMPLIFIED, AND `zht.ts` BESIDE IT IS TRADITIONAL. That file was written on
+ * 2026-09-04 and writing it is what revealed that this one had drifted: the
+ * whole colophon and the entire canon-law block were in Traditional
+ * characters, added by two later commits that took "Chinese" for one script.
+ * Both were corrected here in the same breath. The drift is invisible to
+ * everything mechanical — same key, same encoding, same length — and obvious
+ * to any reader of either script, which is why the answer is two files and
+ * not one with a converter.
  *
  * COMPLETE SINCE 2026-09-02, colophon included. The long colophon prose was
  * deliberately omitted when this file was written: a machine translation of the
@@ -32,7 +39,7 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
- * The language names in `LanguageMenu.svelte` and `corpus.ts` are written in
+ * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
 
@@ -46,15 +53,15 @@ export const zh: Dictionary = {
 	'nav.socialDoctrine': '社会训导',
 	'socialDoctrine.landing.title': '教会社会训导汇编',
 	'socialDoctrine.landing.tagline': '教会关于社会生活的训导，共583个编号段落。',
-	'nav.canonLaw': '教會法',
+	'nav.canonLaw': '教会法',
 	'canonLaw.landing.title': '天主教法典',
-	'canonLaw.landing.tagline': '拉丁教會的法律，共一千七百五十二條，分為七卷。',
+	'canonLaw.landing.tagline': '拉丁教会的法律，共一千七百五十二条，分为七卷。',
 	'canonLaw.canon': '第',
 	'canonLaw.canons': '第',
-	'canonLaw.prevCanon': '上一條',
-	'canonLaw.nextCanon': '下一條',
-	'canonLaw.readFullTitle': '閱讀整篇',
-	'canonLaw.superseded': '被取代的條文，依據',
+	'canonLaw.prevCanon': '上一条',
+	'canonLaw.nextCanon': '下一条',
+	'canonLaw.readFullTitle': '阅读整篇',
+	'canonLaw.superseded': '被取代的条文，依据',
 	'nav.prayers': '祈祷文',
 	'nav.bookmarks': '书签',
 	'nav.menu': '菜单',
@@ -92,46 +99,46 @@ export const zh: Dictionary = {
 	'prayers.landing.tagline': '祈祷文并列拉丁文本。',
 	'colophon.title': '版本说明',
 	'colophon.lede': '本站是什么，文本从何而来，以及我们对复制这些文本的立场。',
-	'colophon.whatThisIs': '本站是什麼',
+	'colophon.whatThisIs': '本站是什么',
 	'colophon.whatThisIsBody':
-		'Glossa Catholica 是閱讀聖經、《天主教教理》、《教理簡編》及訓導文獻的網站，備有英文、葡文與拉丁文。它為被閱讀而存在，除此之外不向您索求任何東西：',
-	'colophon.pointFree': '免費，且永遠免費。沒有付費牆，沒有訂閱，沒有任何東西出售。',
-	'colophon.pointNoAds': '沒有廣告，也沒有任何形式的贊助置入。',
-	'colophon.pointNoAccounts': '沒有帳戶。無須註冊，無須登入。',
+		'Glossa Catholica 是阅读圣经、《天主教教理》、《教理简编》及训导文献的网站，备有英文、葡文与拉丁文。它为被阅读而存在，除此之外不向您索求任何东西：',
+	'colophon.pointFree': '免费，且永远免费。没有付费墙，没有订阅，没有任何东西出售。',
+	'colophon.pointNoAds': '没有广告，也没有任何形式的赞助置入。',
+	'colophon.pointNoAccounts': '没有账户。无须注册，无须登录。',
 	'colophon.pointNoTracking':
-		'沒有追蹤指令碼，沒有第三方程式碼，沒有 cookie。僅有匿名的使用次數統計，不含任何足以辨識您的資料。',
-	'colophon.pointOffline': '設計為在您造訪過之後仍能離線運作，使不良的連線不致成為閱讀的障礙。',
+		'没有跟踪脚本，没有第三方代码，没有 cookie。仅有匿名的使用次数统计，不含任何足以识别您的资料。',
+	'colophon.pointOffline': '设计为在您访问过之后仍能离线运作，使不良的连接不致成为阅读的障碍。',
 	'colophon.whatThisIsStanding':
-		'Glossa Catholica 是平信徒的私人事業。它未獲任何教會批准，也不以自身的任何權威發言。',
+		'Glossa Catholica 是平信徒的私人事业。它未获任何教会批准，也不以自身的任何权威发言。',
 	'footer.notEndorsed': '未经圣座认可',
 	'colophon.textsTitle': '文本',
 	'colophon.textsBody':
-		'每一份文本都出自具名的來源，每一部作品都記載其版本、來源頁面與取得的日期。聖經採用公有領域的譯本；《天主教教理》、《教理簡編》與訓導文獻均出自聖座自己刊行的文本。',
+		'每一份文本都出自具名的来源，每一部作品都记载其版本、来源页面与取得的日期。圣经采用公有领域的译本；《天主教教理》、《教理简编》与训导文献均出自圣座自己刊行的文本。',
 	'colophon.textsFidelity':
-		'文本從不刪節、從不意譯、從不改寫，也從不與廣告並陳。我們確實修補明顯的瑕疵——脫落的字、殘缺的引註、吞沒整段的標記——一律朝著來源自身所印的樣子，絕不朝著我們認為它該說的樣子。',
-	'colophon.countBible': '種聖經版本',
-	'colophon.countDocuments': '份訓導文獻',
-	'colophon.copyrightTitle': '版權',
+		'文本从不删节、从不意译、从不改写，也从不与广告并陈。我们确实修补明显的瑕疵——脱落的字、残缺的引注、吞没整段的标记——一律朝着来源自身所印的样子，绝不朝着我们认为它该说的样子。',
+	'colophon.countBible': '种圣经版本',
+	'colophon.countDocuments': '份训导文献',
+	'colophon.copyrightTitle': '版权',
 	'colophon.copyrightBody1':
-		'《天主教教理》、《教理簡編》與訓導文獻屬於其權利人所有——主要是梵蒂岡書局（Libreria Editrice Vaticana）與傳播部。',
-	'colophon.copyrightBody2': '每一部作品都以權利人自己的措辭顯示其版權聲明，並連結至取用的頁面。',
-	'colophon.copyrightBody3': '若您擁有此處任何文本的權利，而寧願它不被刊出，請寫信給我們。',
-	'colophon.contactTitle': '聯絡',
-	'colophon.contactBody': '任何事情皆可，包括上述事項：',
+		'《天主教教理》、《教理简编》与训导文献属于其权利人所有——主要是梵蒂冈书局（Libreria Editrice Vaticana）与传播部。',
+	'colophon.copyrightBody2': '每一部作品都以权利人自己的措辞显示其版权声明，并链接至取用的页面。',
+	'colophon.copyrightBody3': '若您拥有此处任何文本的权利，而宁愿它不被刊出，请写信给我们。',
+	'colophon.contactTitle': '联络',
+	'colophon.contactBody': '任何事情皆可，包括上述事项：',
 	'colophon.contactPending':
-		'尚未設定聯絡地址。在具備聯絡方式之前，本站不應公開——若無管道可以聯繫我們，上述承諾便毫無意義。',
-	'colophon.illustrationsTitle': '插圖',
+		'尚未设定联络地址。在具备联络方式之前，本站不应公开——若无渠道可以联系我们，上述承诺便毫无意义。',
+	'colophon.illustrationsTitle': '插图',
 	'colophon.illustrationsBody':
-		'聖經載有古斯塔夫·多雷的版畫，每一幅都置於其所描繪的那一節旁——這是他聖經系列中最後也最龐大的一套，依他的素描刻於木板，與正文一同印出，而非集中置於卷末。',
+		'圣经载有古斯塔夫·多雷的版画，每一幅都置于其所描绘的那一节旁——这是他圣经系列中最后也最庞大的一套，依他的素描刻于木板，与正文一同印出，而非集中置于卷末。',
 	'colophon.illustrationsRights':
-		'如下方年份所示，它們皆屬公有領域；忠實拍攝公有領域版畫所得的複製品，本身不產生新的版權。',
-	'colophon.countPlates': '幅版畫',
-	'colophon.countPlateChapters': '章附有插圖',
-	'colophon.typeTitle': '字體',
+		'如下方年份所示，它们皆属公有领域；忠实拍摄公有领域版画所得的复制品，本身不产生新的版权。',
+	'colophon.countPlates': '幅版画',
+	'colophon.countPlateChapters': '章附有插图',
+	'colophon.typeTitle': '字体',
 	'colophon.typeBody':
-		'以 EB Garamond 排印，這是 Georg Duffner 與 Octavio Pardo 對克洛德·加拉蒙於一五九〇年代所刻字體的復刻——教會自文藝復興以來即以此人文主義傳統付印。其西里爾字母出自同一雙手，卻未復刻任何東西：從未有人刻過西里爾文的加拉蒙體，因此俄文所用的是為與其餘字體並立而繪的形體。',
+		'以 EB Garamond 排印，这是 Georg Duffner 与 Octavio Pardo 对克洛德·加拉蒙于一五九〇年代所刻字体的复刻——教会自文艺复兴以来即以此人文主义传统付印。其西里尔字母出自同一双手，却未复刻任何东西：从未有人刻过西里尔文的加拉蒙体，因此俄文所用的是为与其余字体并立而绘的形体。',
 	'colophon.typeArabic':
-		'阿拉伯文全然超出其範圍，改以 Amiri 排印——這是 Khaled Hosny 對一九〇五年為開羅布拉克印刷所所刻納斯赫體的復刻，選用的理由與正文字體相同：取一種特定的歷史書籍字體，而非當代的新繪。',
+		'阿拉伯文全然超出其范围，改以 Amiri 排印——这是 Khaled Hosny 对一九〇五年为开罗布拉克印刷所所刻纳斯赫体的复刻，选用的理由与正文字体相同：取一种特定的历史书籍字体，而非当代的新绘。',
 	'colophon.typeInitials':
-		'開頭的首字母為 Pirata One，一種哥德體，其大寫字母在首字母所需的尺寸下仍然易讀；俄文則用 Ponomar，重現聖議會印刷所的教會斯拉夫字體。Ponomar 只排首字母，絕不排正文：一份現代通諭若通篇以聖議會字體排印，便會就其本質說出不實之言。以上皆依 SIL Open Font License 授權，並自本站提供而非取自第三方，因此閱讀一個頁面不向他人的伺服器索求任何東西。'
+		'开头的首字母为 Pirata One，一种哥德体，其大写字母在首字母所需的尺寸下仍然易读；俄文则用 Ponomar，重现圣议会印刷所的教会斯拉夫字体。Ponomar 只排首字母，绝不排正文：一份现代通谕若通篇以圣议会字体排印，便会就其本质说出不实之言。以上皆依 SIL Open Font License 授权，并自本站提供而非取自第三方，因此阅读一个页面不向他人的服务器索求任何东西。'
 };
