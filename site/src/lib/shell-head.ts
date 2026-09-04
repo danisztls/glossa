@@ -202,7 +202,7 @@ const STATIC_HEADS: Record<
 	'/': { title: SITE_NAME, description: SITE_DESCRIPTION },
 	'/scriptura': {
 		title: `${SCRIPTURE} — ${SITE_NAME}`,
-		description: `The Bible in English, Latin and Portuguese, book by book, with every chapter cross-referenced to the Catechism and the documents of the Church.`
+		description: `The Bible, book by book, with every chapter cross-referenced to the Catechism and the documents of the Church.`
 	},
 	'/catechismus': {
 		title: `${CATECHISM} — ${SITE_NAME}`,
@@ -218,11 +218,11 @@ const STATIC_HEADS: Record<
 	},
 	'/doctores/summa': {
 		title: `${SUMMA} — ${SITE_NAME}`,
-		description: `Thomas Aquinas's Summa Theologiae in English and Latin, question by question, with its citations linked to Scripture and the Fathers.`
+		description: `Thomas Aquinas's Summa Theologiae, question by question, with its citations linked to Scripture and the Fathers.`
 	},
 	'/preces': {
 		title: `${PRAYERS} — ${SITE_NAME}`,
-		description: `The common prayers of the Church in English, Latin and Portuguese, with their sources.`
+		description: `The common prayers of the Church, with their sources.`
 	},
 	'/colophon': {
 		title: `Colophon — ${SITE_NAME}`,
@@ -550,7 +550,7 @@ function bodyHead(
 				title: `${name} — ${SITE_NAME}`,
 				description: intro
 					? `An introduction to the book of ${book}: what it is, when it was written and how it is read.`
-					: `${book}, chapter ${address.chapter}, in English, Latin and Portuguese, with the Catechism and the documents of the Church that cite it.`,
+					: `${book}, chapter ${address.chapter}, with the Catechism and the documents of the Church that cite it.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -728,7 +728,7 @@ function bodyHead(
 			if (!name) return undefined;
 			return {
 				title: `${name} — ${SITE_NAME}`,
-				description: `${name}, in English, Latin and Portuguese, with its source.`,
+				description: `${name}, with its source.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
