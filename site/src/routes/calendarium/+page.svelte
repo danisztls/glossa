@@ -31,6 +31,20 @@
 	 * month with its own arrows, so a second pair of arrows above it would be
 	 * two controls doing one thing at two grains.
 	 *
+	 * ## The day comes first, and the month under it
+	 *
+	 * The day's card is the ANSWER — what the reader asked for by naming a date
+	 * — and the list is the way to ask again, so the answer does not sit below
+	 * thirty rows of navigation where a reader arriving at `/calendarium` would
+	 * have to scroll to find out what today is.
+	 *
+	 * What it costs is that the card is now ABOVE the rows being clicked, and
+	 * the card is not a fixed height: an ordinary weekday and a day carrying
+	 * four optional memorials differ by several lines, so changing the day would
+	 * drag the list up or down under the reader's cursor. That is fixed where it
+	 * happens rather than by freezing a height here — `CalendarMonth.svelte`
+	 * holds its own top still across the change.
+	 *
 	 * ## Two things this page will not do
 	 *
 	 * It does not paint itself in the day's liturgical colour — see
@@ -174,8 +188,6 @@
 			</div>
 		</div>
 
-		<CalendarMonth {selected} today={localToday()} {options} {lang} onpick={go} />
-
 		{#if day}
 			<LiturgicalDayCard {day} heading="h2" />
 		{:else}
@@ -184,6 +196,8 @@
 			     an empty page. -->
 			<p>{t('calendar.noSuchDay')}</p>
 		{/if}
+
+		<CalendarMonth {selected} today={localToday()} {options} {lang} onpick={go} />
 	</div>
 </div>
 
