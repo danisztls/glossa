@@ -14,13 +14,25 @@
 	route. A prop would mean each of the seventeen callers of `ReadingBar`
 	threading through a value none of them decides.
 
-	IT IS THE LAST CONTROL IN THE ROW. The bar runs from what is being read to
-	how it is being read (see `ReadingBar`), and this is the outermost thing
-	on that axis — it is not about the text, or the edition, but about the
-	page around them. It also puts it outside `.reading-bar-editions`, whose
-	three controls read as one phrase that a fourth would break. Where it sits
-	stops mattering the moment it is pressed: it is then the row's only child,
-	and the row is packed against the inline start.
+	IT IS THE FIRST CONTROL IN THE ROW, placed by where it has to be FOUND
+	rather than by what it acts on — the only control in the bar placed that
+	way. Once it is pressed it is the only thing on the bar a reader can see,
+	and the bar is the only chrome left on the page; so it goes at the edge the
+	row packs against, which is also the edge every line of the text below
+	begins from. It does not move between the two modes, because
+	`styles/zen.css` hides its siblings without taking their boxes.
+
+	It sat LAST until then, on the argument that the row runs from what is
+	being read to how it is being read (see `ReadingBar`) and this is the
+	outermost thing on that axis. That reasoning was sound and rested on
+	something that stopped being true: while the mode used `display: none`, the
+	toggle became the row's only child the moment it was pressed and was packed
+	against the inline start regardless of where it had been written. Hidden
+	siblings keep their boxes now, and a button at the end would be stranded in
+	the middle of a bar that looks empty.
+
+	Either way it stays outside `.reading-bar-editions`, whose three controls
+	read as one phrase that a fourth would break.
 
 	NOT HIDDEN ON A PHONE, unlike the shortcut sheet's trigger beside it in the
 	header. That one is hidden below 640px because it describes eight keys

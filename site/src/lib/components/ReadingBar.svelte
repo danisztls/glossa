@@ -13,16 +13,26 @@
 	Gathering them here means the bar is the same object before and after —
 	only the comparison picker appears, next to the toggle that summoned it.
 
-	ONE FLAT ROW, IN A FIXED ORDER: contents, bookmark, print, roll, edition,
-	compare, second edition, focus. The page-level buttons come first and the
+	ONE FLAT ROW, IN A FIXED ORDER: focus, contents, bookmark, print, roll,
+	edition, compare, second edition. The page-level buttons come first and the
 	text-level controls follow, so the row runs from what is being read to how
-	it is being read — and the focus toggle is last because it is the far end
-	of that same axis, the only control here about the page AROUND the text
-	rather than about the text. The table of contents sits ahead of all of them because
-	it is the one control that does not act on this page at all — it leaves
-	it — and because it is the sidebar's narrow-screen stand-in (`TocMenu`),
-	which is a thing a reader looks for at the start of the chrome rather than
-	among the controls that change how the page is set.
+	it is being read. The table of contents heads that run: it is the one
+	control that does not act on this page at all — it leaves it — and it is
+	the sidebar's narrow-screen stand-in (`TocMenu`), which a reader looks for
+	at the start of the chrome rather than among the controls that change how
+	the page is set.
+
+	THE FOCUS TOGGLE SITS AHEAD OF EVEN THAT, and it is the one control placed
+	by where it has to be FOUND rather than by what it acts on. It used to sit
+	last, on the argument that it is the far end of the same axis — the only
+	control here about the page AROUND the text rather than about the text —
+	and that argument quietly depended on `styles/zen.css` removing its
+	siblings with `display: none`, which left it the row's only child and
+	packed it against the inline start anyway. It hides them without taking
+	their boxes now, so a toggle at the end would be a lone button stranded in
+	the middle of a bar that looks empty. First, it is at the edge the row
+	packs against and the edge every line of the text below begins from, in
+	both modes and without moving.
 	The roll joins the second group and sits last in it: it is the
 	only one of those that leaves the page, and the only one not every
 	route renders (see `randomVerse` below), so putting it at that group's
@@ -219,6 +229,13 @@
 </script>
 
 <div class="reading-bar" bind:this={barEl}>
+	<!-- First, and outside the editions wrapper: see `ZenToggle` for why the
+	     way out of focus mode is placed by where it must be found rather than
+	     by what it acts on, and `styles/zen.css` for the `> *:not(.zen-toggle,
+	     dialog, [popover])` rule that leaves this one visible when it is
+	     pressed. Rendered by every caller, index routes included — a table of
+	     contents is a page a reader reads down as much as a chapter is. -->
+	<ZenToggle />
 	{#if toc}
 		<TocMenu label={toc.label} content={toc.content} />
 	{/if}
@@ -252,13 +269,6 @@
 			/>
 		{/if}
 	</div>
-	<!-- Last, and outside the editions wrapper: see `ZenToggle` for why the
-	     outermost control on the "how it is being read" axis belongs at that
-	     end of the row, and `styles/zen.css` for the `> *:not(.zen-toggle)`
-	     rule that leaves this one standing when it is pressed. Rendered by
-	     every caller, index routes included — a table of contents is a page a
-	     reader reads down as much as a chapter is. -->
-	<ZenToggle />
 </div>
 
 <style>
