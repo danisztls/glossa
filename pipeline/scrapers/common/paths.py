@@ -63,15 +63,60 @@ def raw_root() -> Path:
     return corpus_dir() / "raw"
 
 
+def authored_root(corpus: Path | None = None) -> Path:
+    """`authored/` inside the corpus -- text this project decided, and serves.
+
+    IT WAS `oracles/prayers/` UNTIL 2026-09-04, and the rename is the whole
+    point. An ORACLE tells you whether your output is right; this is the
+    output. `prayers_project.py` writes `build/prayer.common.*` FROM these
+    files and the site serves them, while `prayers.py` was demoted to the
+    thing that CHECKS them against the pages they cite -- so the direction of
+    checking runs the opposite way from `oracles/toc/`, which sat beside it
+    under one name saying both were oracles.
+
+    That name was not merely imprecise, it produced a false belief in a reader
+    who had read the docs: the README described this directory as "read off
+    the raw pages by hand; nothing regenerates them", and in fact 17 scripts
+    under `authored/prayers/curation/` rebuild all 35 files in ~40s. What is
+    true is narrower and is why it is tracked: the thing that rebuilds them is
+    deliberately NOT a pipeline stage and cannot be made one, because
+    `source_blocks` reads its witnesses out of `build/` -- run in the ordinary
+    order, every prayer would agree with itself and the check would pass for
+    the worst possible reason.
+
+    `raw/` is somebody else's, `build/` is a machine's, this is ours.
+    """
+    return (corpus if corpus is not None else corpus_dir()) / "authored"
+
+
+def oracles_root(corpus: Path | None = None) -> Path:
+    """`oracles/` inside the corpus -- independent readings that CHECK a parse.
+
+    What is left here after the curated prayers moved to `authored/` on
+    2026-09-04, and now the directory means one thing: a reading taken by a
+    person, kept so a parser can be held to it. `oracles/toc/` is the whole of
+    it -- the headings someone saw a source print, recorded before the parse
+    was trusted, and compared by `audit.py toc`.
+
+    NOTHING HERE IS EVER SERVED TO A READER, which is the test for whether a
+    new file belongs. If the site would publish it, it is `authored/`; if a
+    pipeline stage reproduces it from `raw/`, it is `build/`.
+
+    Five places built this path out of a literal before this function existed
+    -- the same duplication `corpus_dir()` was written to end.
+    """
+    return (corpus if corpus is not None else corpus_dir()) / "oracles"
+
+
 def build_root(corpus: Path | None = None) -> Path:
     """`build/` inside the corpus checkout -- every scraper's parsed output.
 
     IT WAS `works/` AT THE TOP LEVEL UNTIL 2026-08-27, and the rename is the
     point rather than a tidy-up. The corpus repository holds three things and
     only one of them is derived: `raw/` is what someone else's server was
-    asked for, `oracles/` is what a person read off those pages by hand, and
+    asked for, `authored/` and `oracles/` are what a person decided here, and
     this is output -- rebuilt from `raw/` in seconds, tracked by nothing, and
-    the only one of the three that a deletion cannot destroy. Three sibling
+    the only one of the four that a deletion cannot destroy. Sibling
     directories with names that did not say which was which is what made
     "is this corpus data" the wrong question to be asking (CLAUDE.md); a
     directory called `build/` answers it before anyone has to ask. It also

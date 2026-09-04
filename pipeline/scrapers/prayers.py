@@ -6442,7 +6442,7 @@ def print_body_latin_report(langs: list[str]) -> None:
 # The curated corpus, and this scraper's job after it
 # --------------------------------------------------------------------------
 #
-# THE TEXT A READER SEES IS NO LONGER THIS PARSE. `<corpus>/oracles/prayers/`
+# THE TEXT A READER SEES IS NO LONGER THIS PARSE. `<corpus>/authored/prayers/`
 # holds the curated prayers -- edited, uniformly lineated, with each editorial
 # act recorded -- and `prayers_project.py` writes `build/prayer.common.*` from
 # them. What this scraper still does, and what nothing else can, is READ THE
@@ -6458,11 +6458,12 @@ def verify_curated() -> tuple[bool, list[str]]:
     """Every curated line, against the page it cites."""
     import unicodedata
 
-    from common import corpus_dir
+    from common import authored_root
 
-    oracles = sorted((corpus_dir() / "oracles" / "prayers").glob("*.json"))
+    curated_dir = authored_root() / "prayers"
+    oracles = sorted(curated_dir.glob("*.json"))
     if not oracles:
-        return True, [f"no curated prayers in {corpus_dir() / 'oracles/prayers'}"]
+        return True, [f"no curated prayers in {curated_dir}"]
 
     lig = {"æ": "ae", "Æ": "Ae", "ǽ": "ae", "œ": "oe", "Œ": "Oe", "’": "'"}
 
@@ -6576,7 +6577,7 @@ def main() -> int:
         action="store_true",
         help=(
             "re-parse every edition and check the curated prayers in "
-            "<corpus>/oracles/prayers against it. Writes NOTHING: the text a "
+            "<corpus>/authored/prayers against it. Writes NOTHING: the text a "
             "reader sees is projected from the curation by "
             "prayers_project.py, and this is the check that it is still what "
             "the pages print"

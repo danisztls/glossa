@@ -4,7 +4,7 @@
 # ///
 """Project `build/prayer.common.*` from the CURATED prayers, not from a parse.
 
-`<corpus>/oracles/prayers/*.json` is the prayer corpus now: one file per
+`<corpus>/authored/prayers/*.json` is the prayer corpus now: one file per
 prayer, the text as it should read, in every language, with each editorial
 act recorded beside it. This writes the work directories the site reads out of
 those files. `prayers.py` still runs -- as the VERIFIER that every curated
@@ -101,14 +101,17 @@ COPYRIGHT = {
 }
 
 
-def oracle_dir() -> Path:
-    return common.corpus_dir() / "oracles" / "prayers"
+def curated_dir() -> Path:
+    """`<corpus>/authored/prayers/`, which was `oracles/prayers/` until
+    2026-09-04 -- see `authored_root` for why the old name said the opposite
+    of the truth about this directory."""
+    return common.authored_root() / "prayers"
 
 
 def load() -> dict[str, dict]:
-    files = sorted(oracle_dir().glob("*.json"))
+    files = sorted(curated_dir().glob("*.json"))
     if not files:
-        raise RuntimeError(f"no curated prayers in {oracle_dir()}")
+        raise RuntimeError(f"no curated prayers in {curated_dir()}")
     return {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in files}
 
 
@@ -313,7 +316,7 @@ def manifest_for(
         "copyright": COPYRIGHT,
         "notes": (
             "Curated. The text is edited from the witnesses named in "
-            "<corpus>/oracles/prayers/, where every editorial act is recorded "
+            "<corpus>/authored/prayers/, where every editorial act is recorded "
             "with its reason; this file is projected from those and not "
             "parsed. The Latin printed beside each prayer is one canonical "
             "text, not that page's own transcription of it."

@@ -415,7 +415,7 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 > **THIS WORK IS CURATED, AND EVERYTHING BELOW DESCRIBES ITS FILE FORMAT
 > RATHER THAN ITS PROVENANCE** (2026-09-04, `pipeline/docs/corpus.md`).
 > `build/prayer.common.*` is no longer a parse. The corpus is
-> `<corpus>/oracles/prayers/*.json` — one file per prayer, the text as it
+> `<corpus>/authored/prayers/*.json` — one file per prayer, the text as it
 > should read in every language, with each editorial act recorded beside it —
 > and `pipeline/scrapers/prayers_project.py` writes these work directories
 > from it. `prayers.py` still reads every page, as the verifier

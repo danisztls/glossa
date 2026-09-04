@@ -34,11 +34,34 @@ fixtures.
 Inside the corpus repo, **the directory names carry the distinction that
 governs what may be deleted**:
 
-| Path       | Value                                                                        | Rule                                |
-| ---------- | ---------------------------------------------------------------------------- | ----------------------------------- |
-| `build/`   | Parsed output. Rebuilt from cache in ~19s, zero network. **Untracked.**      | Safe to rebuild. Git holds no copy. |
-| `oracles/` | Tables of contents read off the raw pages by hand. Nothing regenerates them. | Tracked. Treat like `raw/`.         |
-| `raw/`     | Every scraped source page. The **only** artifact that cost real fetches.     | Treat as write-once. Never delete.  |
+| Path        | Value                                                                                                               | Rule                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `build/`    | Parsed output. Rebuilt from cache in ~19s, zero network. **Untracked.**                                             | Safe to rebuild. Git holds no copy. |
+| `authored/` | Text this project DECIDED and the site serves — the curated prayers, and the scripts recording every editorial act. | Tracked. Treat like `raw/`.         |
+| `oracles/`  | Readings kept only to CHECK a parse, never served: tables of contents read by hand. Nothing regenerates them.       | Tracked. Treat like `raw/`.         |
+| `raw/`      | Every scraped source page. The **only** artifact that cost real fetches.                                            | Treat as write-once. Never delete.  |
+
+**`authored/` AND `oracles/` ARE OPPOSITES AND WERE ONE DIRECTORY UNTIL
+2026-09-04.** An oracle tells you whether your output is right; `authored/` IS
+the output. `prayers_project.py` writes `build/prayer.common.*` FROM
+`authored/prayers/`, and `prayers.py` was demoted to the thing that checks it —
+so under the old name the direction of checking ran opposite ways in two
+sibling directories, and the name asserted the wrong one. **It was not a
+tidiness problem: the corpus README described that directory as "read off the
+raw pages by hand; nothing regenerates them", and 17 scripts under
+`authored/prayers/curation/` rebuild all 35 files in ~40s.** An agent read the
+row, repeated it back as fact, and was corrected by the person who remembered
+otherwise. The reason `authored/` is tracked is narrower and is the thing to
+carry: **what rebuilds it is deliberately not a pipeline stage and cannot be
+made one**, because the curation reads its witnesses out of `build/` — run in
+the ordinary order every prayer would agree with itself and the check would
+pass for the worst possible reason.
+
+The question to ask of anything new, in this order: did somebody else's server
+send it (`raw/`); will the site serve it and did a person decide it here
+(`authored/`); does it exist only to check a parse (`oracles/`); can a
+`rebuild.py` stage reproduce it from those with no network (`build/`). **Only
+the last is safe to delete.**
 
 (`build/` was `works/`, tracked, until 2026-08-27 — §The corpus. It is one
 copy plus the rebuild recipe now, `pipeline/rebuild.py` — see
