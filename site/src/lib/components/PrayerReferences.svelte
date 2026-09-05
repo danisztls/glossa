@@ -23,10 +23,12 @@
 	lines set at 1.1x the reading base, so anything here at body size argues with
 	the prayer for the page.
 
-	WHAT IT DOES NOT TAKE IS THE COLUMN. `CitedBy` files addresses in a fixed
-	column because a concordance is dozens of rows to scan down; this is three
-	or four groups, and one per line under a seven-line prayer reads as more
-	apparatus than there is. One wrapping line, breaking between groups.
+	INCLUDING THE COLUMN, WHICH THIS TRIED WITHOUT FIRST. The argument for one
+	wrapping line was that three groups are nothing to scan down; the answer is
+	that a reader does not scan this panel at all, they recognise it, and what
+	they recognise is "Cited in" — a work's name in its own column with its
+	numbers beside it. Set as one line the three groups ran together into a
+	sentence of numbers, which is a different thing wearing the same type.
 
 	AND THE LINKS PREVIEW, which is the reason there is no `data-link-preview`
 	marker on this block. That opt-out is for navigation chrome — a table of
@@ -154,17 +156,18 @@
 {#if rows.length}
 	<section class="prayer-references" aria-labelledby="prayer-see-also">
 		<h2 id="prayer-see-also" class="label-micro">{t('prayers.seeAlso')}</h2>
-		<p class="rows">
+		<ul>
 			{#each rows as row (row.key)}
-				<span class="row">
-					<span class="work">{row.name}</span><span class="loci"
+				<li>
+					<span class="work">{row.name}</span>
+					<span class="loci"
 						>{#each row.items as item, i (item.key)}{#if i > 0}<span class="sep" aria-hidden="true"
 									>·</span
 								><wbr />{/if}<a href={item.href}>{item.label}</a>{/each}</span
 					>
-				</span>
+				</li>
 			{/each}
-		</p>
+		</ul>
 	</section>
 {/if}
 
@@ -184,36 +187,36 @@
 	}
 
 	/*
-	 * ONE LINE, NOT A COLUMN. `CitedBy` puts its addresses in a fixed column
-	 * because a concordance is dozens of rows and a reader scans down it; this
-	 * is three or four groups and nothing to scan — set as rows it was a stack
-	 * of two-word lines under a seven-line prayer, which reads as more apparatus
-	 * than there is. It is `.sources` in that same component: a flex row that
-	 * wraps between groups, never inside one.
+	 * `CitedBy`'s own grid: the work's name in a column of its own width, its
+	 * loci in the rest. One row per group, which is what makes this read as
+	 * the same panel rather than as a similar one — see the docblock for the
+	 * single wrapping line this replaced and why it did not work.
 	 */
-	.rows {
+	ul {
+		list-style: none;
 		margin: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.15rem 1.1rem;
+		padding: 0;
+		display: grid;
+		grid-template-columns: max-content minmax(0, 1fr);
+		gap: 0.3rem 0.9rem;
 	}
 
-	/* A group breaks only at the `<wbr />` after each separator, so a work's
-	   name and its first locus stay together — there is no whitespace between
-	   them to break on — while a long run of numbers wraps rather than running
-	   off a phone's right edge. */
-	.row {
-		font-variant-numeric: tabular-nums;
+	li {
+		display: contents;
 	}
 
-	/* The work's name, said once per group and quiet relative to the loci beside
+	/* The work's name, said once per row and quiet relative to the loci beside
 	   it: those are the links, this is the label saying what they are. */
 	.work {
 		color: var(--color-text-muted);
+		white-space: nowrap;
 	}
 
+	/* A row breaks only at the `<wbr />` after each separator, so a long run of
+	   numbers wraps inside its own column rather than running off a phone's
+	   right edge. */
 	.loci {
-		margin-inline-start: 0.3em;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.sep {
