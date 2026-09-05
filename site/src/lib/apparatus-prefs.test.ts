@@ -107,7 +107,7 @@ describe('switching', () => {
 
 describe('a commentary that arrives switched on', () => {
 	// The prayers' apparatus is tens of kilobytes, is the only apparatus a
-	// prayer page has, and reaches two prayers of thirty-five — so opt-in meant
+	// prayer page has, and reaches part of the collection — so opt-in meant
 	// a reader who never opened the panel never learned it existed. The switch
 	// is the same switch; only the default moved.
 	it('is on before the reader has said anything', () => {

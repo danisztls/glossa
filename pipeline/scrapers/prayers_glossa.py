@@ -104,11 +104,27 @@ WORK_PREFIX = "commentary.preces"
 #: because the eight editions share no markup and all eight print the number.
 CCC_HAIL_MARY = {"slug": "hail-mary", "first": 2676, "last": 2678}
 
-#: Compendium 578-598: the Our Father, from "what is its origin" to "what
-#: does the final Amen mean". One numbering serves every edition -- that is
-#: why the work is keyed by language and not by edition -- and the range is
-#: asserted per edition rather than assumed.
-COMPENDIUM_OUR_FATHER = {"slug": "our-father", "first": 578, "last": 598}
+#: WHERE THE COMPENDIUM WALKS A PRAYER CLAUSE BY CLAUSE. A section is a
+#: stretch of questions that follows one prayer in the prayer's own order and
+#: quotes the clause each is about inside the question itself -- `What does
+#: "Hallowed be thy Name" mean?`. Both bounds are questions that say what
+#: they bound: 33 asks what the symbols of faith are and 217 what the Amen
+#: concluding the profession means; 578 asks where the Our Father comes from
+#: and 598 what its final Amen means. One numbering serves every edition --
+#: that is why the work is keyed by language and not by edition -- and each
+#: range is asserted per edition rather than assumed.
+#:
+#: THE TWO CREEDS SHARE ONE SECTION, BECAUSE THE COMPENDIUM EXPOUNDS ONE SET
+#: OF ARTICLES. Part One follows the Apostles' Creed and takes up what the
+#: Nicene adds where it adds it, so a question is filed under whichever creed
+#: PRINTS the clause it quotes -- `has spoken through the prophets` under the
+#: Nicene alone, `I believe in the Holy Spirit` under both, because both
+#: profess it. Nothing is duplicated that the two prayers do not share.
+COMPENDIUM_SECTIONS: tuple[dict, ...] = (
+    {"slug": "our-father", "first": 578, "last": 598},
+    {"slug": "apostles-creed", "first": 33, "last": 217},
+    {"slug": "nicene-creed", "first": 33, "last": 217},
+)
 
 #: WHERE ELSE THE CORPUS SPEAKS OF THIS PRAYER -- the passages the page
 #: offers as links under the text, and the reason the apparatus may drop
@@ -116,27 +132,81 @@ COMPENDIUM_OUR_FATHER = {"slug": "our-father", "first": 578, "last": 598}
 #: checked against the corpus before it is written (`check_references`),
 #: because a reference is a promise that something is there.
 #:
+#: THE RULE OF ADMISSION IS THAT THE PASSAGE SPEAKS OF THIS PRAYER, not of
+#: its subject. It qualifies by NAMING the prayer (CCC 2678 on how "medieval
+#: piety developed the prayer of the rosary", Compendium 547 on the
+#: Magnificat, CCC 168 quoting the Te Deum, CCC 700 the Veni Creator), by
+#: QUOTING it (CCC 2157, which prints the Sign of the Cross entire and says
+#: what making it does), or by BEING the article that expounds it (CCC
+#: 185-1065 is the Creed from `Whoever says "I believe"` to its final Amen;
+#: 2759-2865 is `The Lord's Prayer`). Everything ruled out here was ruled out
+#: for the same reason: the Catechism has a great deal on prayer to Mary and
+#: names neither the Salve Regina nor the Memorare, so those prayers get no
+#: reference rather than a passage that is merely nearby.
+#:
 #: THE THREE ARE NOT THE SAME KIND OF FACT AND ARE ALL VERIFIABLE. The
 #: Catechism's and the Compendium's ranges are read off their own tables of
-#: contents -- CCC 2759-2865 is the article `The Lord's Prayer`, and the
-#: Compendium's 562-563 is the pair that names the Ave (`How does the Church
-#: pray to Mary? Above all with the Hail Mary`). The scriptural ones are
-#: where the prayer's words are printed as Scripture, which is the same
-#: measurement that kept Haydock out of the apparatus: the Ave's first half
-#: is Luke 1:28 and 1:42 and its second half is not Scripture at all, which
-#: is why the verses are named one by one rather than as a span.
+#: contents; the scriptural ones are where the prayer's words are printed as
+#: Scripture, which is the same measurement that kept Haydock out of the
+#: apparatus -- the Ave's first half is Luke 1:28 and 1:42 and its second
+#: half is not Scripture at all, which is why the verses are named one by one
+#: rather than as a span, while the Magnificat and the Benedictus are one
+#: canticle each and are named as one.
+#:
+#: THE ORDER IS THE COLLECTION'S, since the page prints them in the order
+#: they are written and a reader meets one prayer at a time.
 REFERENCES: dict[str, list[dict]] = {
-    "hail-mary": [
-        {"work": "bible", "osis": "luke", "chapter": 1, "first": 28, "last": 28},
-        {"work": "bible", "osis": "luke", "chapter": 1, "first": 42, "last": 42},
-        {"work": "ccc", "first": 2676, "last": 2677},
-        {"work": "compendium", "first": 562, "last": 563},
+    "apostles-creed": [
+        {"work": "ccc", "first": 185, "last": 1065},
+        {"work": "compendium", "first": 33, "last": 217},
+    ],
+    "nicene-creed": [
+        {"work": "ccc", "first": 185, "last": 1065},
+        {"work": "compendium", "first": 33, "last": 217},
     ],
     "our-father": [
         {"work": "bible", "osis": "matt", "chapter": 6, "first": 9, "last": 13},
         {"work": "bible", "osis": "luke", "chapter": 11, "first": 2, "last": 4},
         {"work": "ccc", "first": 2759, "last": 2865},
         {"work": "compendium", "first": 578, "last": 598},
+    ],
+    "sign-of-the-cross": [
+        {"work": "ccc", "first": 2157, "last": 2157},
+    ],
+    "hail-mary": [
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 28, "last": 28},
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 42, "last": 42},
+        {"work": "ccc", "first": 2676, "last": 2677},
+        {"work": "compendium", "first": 562, "last": 563},
+    ],
+    "angel-of-god": [
+        {"work": "ccc", "first": 336, "last": 336},
+    ],
+    "magnificat": [
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 46, "last": 55},
+        {"work": "ccc", "first": 2619, "last": 2619},
+        {"work": "compendium", "first": 547, "last": 547},
+    ],
+    "benedictus": [
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 68, "last": 79},
+    ],
+    "te-deum": [
+        {"work": "ccc", "first": 168, "last": 168},
+    ],
+    "veni-creator-spiritus": [
+        {"work": "ccc", "first": 700, "last": 700},
+    ],
+    "veni-sancte-spiritus": [
+        {"work": "ccc", "first": 2670, "last": 2672},
+        {"work": "compendium", "first": 561, "last": 561},
+    ],
+    "rosary": [
+        {"work": "ccc", "first": 2678, "last": 2678},
+        {"work": "compendium", "first": 563, "last": 563},
+    ],
+    "act-of-contrition": [
+        {"work": "ccc", "first": 1451, "last": 1453},
+        {"work": "compendium", "first": 303, "last": 303},
     ],
 }
 
@@ -607,9 +677,9 @@ def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]
     return notes, disagreements, len(drafts)
 
 
-def compendium_notes(lang: str, prayer: dict) -> tuple[list[dict], int]:
-    """Compendium 578-598 as notes on the Our Father, and how many questions
-    were read to get them."""
+def compendium_notes(lang: str, prayer: dict, section: dict) -> tuple[list[dict], int]:
+    """One section of the Compendium as notes on its prayer, and how many
+    questions were read to get them."""
     path = common.build_root() / f"compendium.{lang}" / "questions.json"
     if not path.exists():
         return [], 0
@@ -617,19 +687,18 @@ def compendium_notes(lang: str, prayer: dict) -> tuple[list[dict], int]:
     text = comparable(annotated_text(prayer))
     notes: list[dict] = []
     read = 0
-    # The cursor the site keeps, kept here: the Compendium asks its questions
-    # in the prayer's own order, so a petition is looked for at or after the
-    # last one and `in heaven` cannot be found in `on earth as it is in
-    # heaven` before it is found in `who art in heaven`.
+    # The cursor the site keeps, kept here: a section asks its questions in
+    # the prayer's own order, so a clause is looked for at or after the last
+    # one and `in heaven` cannot be found in `on earth as it is in heaven`
+    # before it is found in `who art in heaven`.
     search_from = 0
-    for n in range(COMPENDIUM_OUR_FATHER["first"], COMPENDIUM_OUR_FATHER["last"] + 1):
+    for n in range(section["first"], section["last"] + 1):
         question = questions.get(n)
         if question is None:
             raise RuntimeError(
-                f"compendium.{lang}: question {n} is missing, and the Our "
-                f"Father section is qq. {COMPENDIUM_OUR_FATHER['first']}-"
-                f"{COMPENDIUM_OUR_FATHER['last']} in every edition -- one "
-                "numbering serves them all"
+                f"compendium.{lang}: question {n} is missing, and "
+                f"{section['slug']} is qq. {section['first']}-{section['last']} "
+                "in every edition -- one numbering serves them all"
             )
         blocks = question.get("answer_blocks") or []
         body = "\n\n".join(b["text"] for b in blocks if b.get("text"))
@@ -637,9 +706,10 @@ def compendium_notes(lang: str, prayer: dict) -> tuple[list[dict], int]:
             continue
         read += 1
         found = quoted_phrase(question.get("question", ""), text, search_from)
-        # No lemma, no note -- `ccc_notes` says why, and it bites hardest
-        # here: eight of the twenty-one questions ask what the Our Father IS
-        # rather than what one of its petitions means.
+        # No lemma, no note -- `ccc_notes` says why. Most of a section is
+        # this: eight of the Our Father's twenty-one questions ask what the
+        # prayer IS rather than what one of its petitions means, and most of
+        # Part One expounds an article of the Creed without quoting it.
         if found is None:
             continue
         search_from = found.at + found.length
@@ -653,20 +723,23 @@ def compendium_notes(lang: str, prayer: dict) -> tuple[list[dict], int]:
     return notes, read
 
 
-def page_source(manifest: dict, page: Path) -> dict | None:
+def page_source(manifest: dict, page: Path | None) -> dict | None:
     """The source record for the page the notes were read off.
 
     The Catechism's manifest lists every page of the edition -- 375 of them
     in English -- and citing the first would name the front matter as the
     origin of a note on 2676. The raw filename is the URL's last segment,
     which is how `Fetcher` names what it stores, so the two can be paired.
+    Without a page there is nothing to pair and the edition is cited for its
+    references alone, which the first source names as well as any.
     """
     from urllib.parse import unquote
 
-    for source in manifest.get("sources") or []:
-        url = source.get("url") or ""
-        if unquote(url.rsplit("/", 1)[-1]) == page.name:
-            return source
+    if page is not None:
+        for source in manifest.get("sources") or []:
+            url = source.get("url") or ""
+            if unquote(url.rsplit("/", 1)[-1]) == page.name:
+                return source
     return (manifest.get("sources") or [None])[0]
 
 
@@ -733,67 +806,86 @@ def check_references(lang: str, slug: str, references: list[dict]) -> None:
 
 
 def build(lang: str) -> tuple[dict | None, dict]:
-    """One language's apparatus, and what it reached."""
+    """One language's apparatus, and what it reached.
+
+    THE WORK EXISTS FOR THE TWO BOOKS, NOT FOR THE NOTES, and that is why a
+    prayer with no note can still be an entry. Every reference names the
+    Catechism, its Compendium or the Scripture one of them prints, so a
+    language holding either book has something to say about a dozen prayers
+    and quotes a clause of four of them. A language holding neither produces
+    no work at all -- there would be no source to name and no title to
+    compose from one.
+    """
     prayers = load_prayers(lang)
     stats = {
         "lang": lang,
         "read": 0,
         "notes": 0,
-        "prayers": 0,
+        "glossed": 0,
+        "linked": 0,
         "references": 0,
         "disagreements": [],
     }
     if not prayers:
         return None, stats
 
-    entries: list[dict] = []
+    ccc = read_manifest(f"ccc.{lang}")
+    page = ccc_page(lang)
+    compendium = read_manifest(f"compendium.{lang}")
+    if ccc is None and compendium is None:
+        return None, stats
+
+    notes_by_slug: dict[str, list[dict]] = {}
     contributors: list[tuple[str, dict]] = []
 
-    hail_mary = prayers.get(CCC_HAIL_MARY["slug"])
-    if hail_mary is not None:
-        ccc = read_manifest(f"ccc.{lang}")
-        page = ccc_page(lang)
-        if ccc is not None and page is not None:
+    if ccc is not None:
+        contributors.append((f"ccc.{lang}", ccc))
+        hail_mary = prayers.get(CCC_HAIL_MARY["slug"])
+        if page is not None and hail_mary is not None:
             notes, disagreements, read = ccc_notes(lang, hail_mary)
             stats["read"] += read
             stats["disagreements"] = disagreements
             if notes:
-                entries.append({"slug": CCC_HAIL_MARY["slug"], "notes": notes})
-                contributors.append((f"ccc.{lang}", ccc))
+                notes_by_slug[CCC_HAIL_MARY["slug"]] = notes
 
-    our_father = prayers.get(COMPENDIUM_OUR_FATHER["slug"])
-    if our_father is not None:
-        compendium = read_manifest(f"compendium.{lang}")
-        if compendium is not None:
-            notes, read = compendium_notes(lang, our_father)
+    if compendium is not None:
+        contributors.append((f"compendium.{lang}", compendium))
+        for section in COMPENDIUM_SECTIONS:
+            prayer = prayers.get(section["slug"])
+            if prayer is None:
+                continue
+            notes, read = compendium_notes(lang, prayer, section)
             stats["read"] += read
             if notes:
-                entries.append({"slug": COMPENDIUM_OUR_FATHER["slug"], "notes": notes})
-                contributors.append((f"compendium.{lang}", compendium))
+                notes_by_slug.setdefault(section["slug"], []).extend(notes)
+
+    # THE COLLECTION'S OWN ORDER, walked rather than the tables' -- a prayer
+    # is an entry here only if this language prints it, which is the check
+    # §Commentary requires (a note addressing nothing renders beside nothing,
+    # invisibly) turned into the loop itself. `main` still refuses a table
+    # naming a prayer no collection has, since that one no loop can catch.
+    entries: list[dict] = []
+    for slug in prayers:
+        notes = notes_by_slug.get(slug) or []
+        # WHERE ELSE THE PRAYER IS SPOKEN OF, and the notes' own loci are not
+        # it: a note cites the paragraph it IS, one per card, while these are
+        # the whole of what the three books have on this prayer -- including
+        # the hundred CCC paragraphs and the hundred and eighty Compendium
+        # questions this apparatus does not reprint.
+        references = [dict(ref) for ref in REFERENCES.get(slug, [])]
+        if not notes and not references:
+            continue
+        check_references(lang, slug, references)
+        entry: dict = {"slug": slug, "notes": notes}
+        if references:
+            entry["references"] = references
+        entries.append(entry)
 
     if not entries:
         return None, stats
 
-    # THE ONE FATAL CHECK, and it is §Commentary's own: a note naming a unit
-    # the annotated work does not have addresses nothing and renders beside
-    # nothing, which is invisible on the page rather than loud.
-    for entry in entries:
-        if entry["slug"] not in prayers:
-            raise RuntimeError(
-                f"{WORK_PREFIX}.{lang}: no prayer `{entry['slug']}` in "
-                f"prayer.common.{lang} -- the notes would address nothing"
-            )
-        # WHERE ELSE THE PRAYER IS SPOKEN OF, and the notes' own loci are not
-        # it: a note cites the paragraph it IS, one per card, while these are
-        # the whole of what the three books have on this prayer -- including
-        # the twenty-one Compendium questions and the hundred CCC paragraphs
-        # this apparatus does not reprint.
-        references = [dict(ref) for ref in REFERENCES.get(entry["slug"], [])]
-        check_references(lang, entry["slug"], references)
-        if references:
-            entry["references"] = references
-
-    stats["prayers"] = len(entries)
+    stats["glossed"] = sum(1 for e in entries if e["notes"])
+    stats["linked"] = sum(1 for e in entries if e.get("references"))
     stats["notes"] = sum(len(e["notes"]) for e in entries)
     stats["references"] = sum(len(e.get("references") or []) for e in entries)
     return {"entries": entries, "contributors": contributors}, stats
@@ -805,7 +897,10 @@ def manifest_for(lang: str, doc: dict, generated_at: str) -> dict:
     for work_id, manifest in contributors:
         if work_id.startswith("ccc."):
             page = ccc_page(lang)
-            record = page_source(manifest, page) if page else None
+            # The page is where the notes were read; without one the
+            # edition is here for its references alone, and naming the
+            # edition itself is still the truth.
+            record = page_source(manifest, page)
         else:
             record = (manifest.get("sources") or [None])[0]
         if record:
@@ -852,18 +947,20 @@ def manifest_for(lang: str, doc: dict, generated_at: str) -> dict:
             "The Catechism of the Catholic Church and its Compendium read as "
             "a commentary on the common prayers: CCC 2676-2677, which glosses "
             "the Ave Maria clause by clause, and the Compendium's questions "
-            "on the Our Father, one per petition. Neither was written as an "
-            "apparatus to a prayer book; both quote the prayer's own words at "
-            "the head of what they say about them, which is what makes the "
-            "notes placeable. A note's `lemma` is the longest opening run of "
-            "that note which this edition of the prayer prints verbatim, so "
-            "every headword is a quotation of the annotated text -- and a "
-            "note whose source glosses a different wording, or glosses the "
-            "prayer as a whole rather than one of its clauses, is not kept. "
-            "What those paragraphs and questions are is named instead in each "
-            "prayer's `references`, which is where the two books' whole "
-            "treatment of it can be read. Each note cites the paragraph or "
-            "question it is."
+            "on the Creed and on the Our Father, which quote the article or "
+            "the petition they are about inside the question itself. Neither "
+            "was written as an apparatus to a prayer book; both quote the "
+            "prayer's own words at the head of what they say about them, "
+            "which is what makes the notes placeable. A note's `lemma` is the "
+            "longest opening run of that note which this edition of the "
+            "prayer prints verbatim, so every headword is a quotation of the "
+            "annotated text -- and a note whose source glosses a different "
+            "wording, or glosses the prayer as a whole rather than one of its "
+            "clauses, is not kept. What those paragraphs and questions are is "
+            "named instead in each prayer's `references`, which reach further "
+            "than the notes do: a prayer the two books name or expound but "
+            "never quote carries references and no notes at all. Each note "
+            "cites the paragraph or question it is."
         ),
         "generated_at": generated_at,
         "prayers": [e["slug"] for e in doc["entries"]],
@@ -897,6 +994,28 @@ def languages() -> list[str]:
     )
 
 
+def check_tables() -> None:
+    """That every slug this file tabulates is a prayer somebody prints.
+
+    THE ONE MISTAKE THE PER-LANGUAGE LOOP CANNOT CATCH. `build` walks the
+    collection and asks the tables about each prayer, so a table keyed on a
+    slug that does not exist is simply never consulted -- silently, in all
+    twenty languages at once. Asked the other way round, against the union of
+    every collection, a typo is fatal on the next run.
+    """
+    known: set[str] = set()
+    for lang in languages():
+        known.update(load_prayers(lang))
+    tabulated = set(REFERENCES) | {s["slug"] for s in COMPENDIUM_SECTIONS}
+    tabulated.add(CCC_HAIL_MARY["slug"])
+    unknown = sorted(tabulated - known)
+    if unknown:
+        raise RuntimeError(
+            f"{WORK_PREFIX}.*: no prayer named {', '.join(unknown)} in any "
+            "collection -- the table addresses nothing"
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lang", action="append", help="restrict to these languages")
@@ -911,6 +1030,7 @@ def main() -> int:
     args = parser.parse_args()
 
     require_corpus()
+    check_tables()
     generated_at = datetime.now(UTC).isoformat(timespec="seconds")
 
     wanted = set(args.lang or []) or None
@@ -926,28 +1046,29 @@ def main() -> int:
             written += 1
 
     print(f"{WORK_PREFIX}.* — the Catechism and the Compendium on the prayers\n")
-    # `read` is every run of 2676-2677 and every question of 578-598 this
-    # edition holds; `kept` is those that quote a clause of the prayer. The
-    # gap is not a miss rate -- it is how much of the two books is about the
-    # prayer as a whole rather than about one of its lines, and that share is
-    # what the references carry instead.
-    print(f"  {'lang':6} {'prayers':>7} {'read':>5} {'kept':>5} {'refs':>5}")
+    # `read` is every run of CCC 2676-2677 and every question of the
+    # Compendium sections this edition holds; `kept` is those that open on a
+    # clause of the prayer. THE GAP IS NOT A MISS RATE and grows as the
+    # sections do: most of the Compendium's Part One expounds an article of
+    # the Creed without quoting it, and what a book says about a prayer as a
+    # whole is what the references carry instead. `glossed` and `linked` are
+    # prayers, not notes: how many this edition marks, and how many it sends
+    # somewhere to be read.
+    print(
+        f"  {'lang':6} {'read':>5} {'kept':>5} {'glossed':>7} {'linked':>6} {'refs':>5}"
+    )
     total_read = total_kept = 0
     for row in rows:
-        if row["read"] == 0:
+        if row["read"] == 0 and row["linked"] == 0:
             continue
         total_read += row["read"]
         total_kept += row["notes"]
-        share = row["notes"] * 100 // row["read"]
         print(
-            f"  {row['lang']:6} {row['prayers']:>7} {row['read']:>5} "
-            f"{row['notes']:>5} {row['references']:>5}  {share:>3}%"
+            f"  {row['lang']:6} {row['read']:>5} {row['notes']:>5} "
+            f"{row['glossed']:>7} {row['linked']:>6} {row['references']:>5}"
         )
-    empty = [r["lang"] for r in rows if r["read"] == 0]
-    share = total_kept * 100 // total_read if total_read else 0
-    print(
-        f"\n  {'total':6} {'':>7} {total_read:>5} {total_kept:>5} {'':>5}  {share:>3}%"
-    )
+    empty = [r["lang"] for r in rows if r["read"] == 0 and r["linked"] == 0]
+    print(f"\n  {'total':6} {total_read:>5} {total_kept:>5}")
     if empty:
         print(f"\n  no source in: {', '.join(empty)}")
 

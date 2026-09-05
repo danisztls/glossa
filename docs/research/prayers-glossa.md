@@ -169,6 +169,17 @@ beside a line, the Compendium is the right size, and it reaches eight
 languages the Catechism does not (`be hu id lt ro ru sl sv`, against the
 Catechism's own `la` and `mg`). Both are already read by `pipeline/scrapers/ccc/`.
 
+**AND ITS PART ONE IS THE CREED AT THE LENGTH §2.3 COULD NOT FIND** — measured
+2026-09-05, and shipped. Where the Catechism gives Article 9 alone ¶748–975,
+the Compendium asks qq. 33–217 and quotes the article it is about inside the
+question: `Why does the Profession of Faith begin with the words, "I believe in
+God"?`, `What is meant by the "resurrection of the body"?`. That is the same
+shape as its Our Father section, so it needed no new mechanism, only a table of
+sections. It yields **54 notes on the Apostles' Creed and 21 on the Nicene**
+across the fourteen editions — one to six per creed per language, since a
+question qualifies only where THAT creed prints the clause it quotes. The two
+creeds share the section for the same reason they share their articles.
+
 ### 2.5 Haydock: four prayers are Scripture and are already glossed
 
 `commentary.haydock.en` annotates `bible.douay-rheims.en`, and four of the

@@ -139,8 +139,10 @@ const prayerStarted = new Set<string>();
 
 /** One prayer's entry in one commentary, starting the fetch on the first ask.
  *  Undefined is the ordinary answer for a prayer this work does not reach: the
- *  apparatus covers two prayers of thirty-five, which is a fact about the
- *  sources and not a gap. */
+ *  apparatus reaches part of the collection and not all of it, which is a fact
+ *  about the sources and not a gap. An entry that IS reached may still carry
+ *  no notes — a prayer the two books name but never quote has references
+ *  alone (docs/corpus-schema.md §Commentary). */
 function prayerEntry(workId: string, slug: string): PrayerCommentary | undefined {
 	const loaded = prayerStore.byWork[workId];
 	if (loaded) return loaded.get(slug);

@@ -462,12 +462,15 @@ This is flagged here so it is not rediscovered mid-implementation — the way th
 
 The survey is `docs/research/prayers-glossa.md`. **§2's tier 0 is built**:
 `commentary.preces.{lang}`, written by `pipeline/scrapers/prayers_glossa.py`,
-fifteen languages — the Catechism's ¶2676-2677 on the Hail Mary and the
-Compendium's qq. 578-598 on the Our Father. Of the 335 runs and answers it
-reads, **120 quote a clause of the prayer and are kept**; the rest gloss the
+fifteen languages — the Catechism's ¶2676-2677 on the Hail Mary, the
+Compendium's qq. 578-598 on the Our Father and its qq. 33-217 on the two
+Creeds. Only what quotes a clause of the prayer is kept; the rest glosses the
 prayer as a whole and became `references` under the text instead (2026-09-05),
-because an apparatus of 215 unanchored notes at the foot of a seven-line Ave is
-the Catechism reprinted beside the prayer rather than a gloss on it. It cost no fetch and no new rights question, and the
+because an apparatus of unanchored notes at the foot of a seven-line Ave is
+the Catechism reprinted beside the prayer rather than a gloss on it. Those
+references reach further than the notes do — a prayer the two books name or
+expound but never quote carries them alone, which is most of the dozen the
+apparatus now touches. It cost no fetch and no new rights question, and the
 machinery needed one new function (`anchorCommentaryLines`, the cursor walking
 a prayer's printed lines instead of a verse). `pipeline/CLAUDE.md` §The
 prayers' glossa and `site/CLAUDE.md` §Haydock on the page hold the rules.

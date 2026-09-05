@@ -1516,8 +1516,9 @@ parsing, markers, validation — is in `pipeline/CLAUDE.md`).
 - **BOTH DEFAULTS MOVE, AND A WORK IS WHAT MOVES THEM.** `subsumes_notes`
   flips the edition's; `default_on` flips the commentary's, and the prayers'
   apparatus is the only work in the corpus that sets it (2026-09-05) — tens of
-  kilobytes, the only apparatus a prayer page has, two prayers of thirty-five,
-  so opt-in meant a reader who never opened the panel never learned it existed.
+  kilobytes, the only apparatus a prayer page has, and reaches part of the
+  collection rather than all of it, so opt-in meant a reader who never opened
+  the panel never learned it existed.
   Every caller reads it through `commentaryDefaultsOn`, so the enabled test and
   the panel's switch cannot ask the question with two different defaults.
 - **A COMMENTARY'S CHOICE IS STORED PER FAMILY, an edition's per edition.**

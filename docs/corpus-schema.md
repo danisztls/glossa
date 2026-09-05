@@ -313,12 +313,22 @@ grounds.
 unanchored notes hang at the end of the verse they belong to. A prayer has no such place
 until its last line, and an apparatus at the foot of a seven-line text is a paragraph of the
 Catechism reprinted beside the prayer rather than a gloss ON it — so `prayers_glossa.py`
-keeps only the notes that quote a clause, which is 120 of the 335 runs and answers it read.
+keeps only the notes that quote a clause — a minority of what it reads, and the script prints
+the table.
 
-**`references` is where the other 215 went, and it is a different KIND of claim.** A note
+**`references` is where the rest went, and it is a different KIND of claim.** A note
 cites the paragraph it IS; a reference names the whole of what a work has on this prayer —
 the Catechism's hundred-paragraph article on the Lord's Prayer, the Compendium's
-twenty-one questions, the Gospel verses the prayer's own words are. Each is a range
+twenty-one questions, the Gospel verses the prayer's own words are.
+
+**AN ENTRY MAY CARRY REFERENCES AND NO NOTES AT ALL** (2026-09-05), which is why `notes` can
+be the empty array. The two books name or expound far more prayers than they quote clause by
+clause: the Catechism prints the Sign of the Cross entire and says what making it does, names
+the Veni Creator and the Te Deum, has an article on contrition — none of it a headword any
+prayer prints, all of it something to go and read. The rule of admission is that the passage
+speaks of THIS prayer, by naming it, quoting it, or being the article that expounds it; a
+passage about the same SUBJECT is not a reference, which is why prayers the Catechism never
+names carry none. Each is a range
 (`first`/`last`, plus `osis`/`chapter` where the work is the Bible, where they are VERSE
 numbers), and **every one is checked against the corpus before it is written**: a reference
 is a promise that there is something to read at the other end, and a wrong number does not
@@ -363,8 +373,8 @@ page.
 reader touches it, and `commentary.preces.*` is the only work in the corpus that sets it.
 The default is off, because a commentary is normally the largest thing in the corpus and
 nobody opening a chapter asked for it (Haydock is 23 MB); this one is tens of kilobytes, is
-the only apparatus a prayer page has, and reaches two prayers of thirty-five — so off meant
-a reader who never opened the panel never learned it existed. It is `subsumes_notes`'s
+the only apparatus a prayer page has, and reaches part of the collection rather than all of
+it — so off meant a reader who never opened the panel never learned it existed. It is `subsumes_notes`'s
 precedent exactly: a fact about the work, flipping a default and suppressing nothing.
 
 ## Canonical book order (73 books, lowercase OSIS)
