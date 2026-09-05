@@ -58,12 +58,23 @@
 	country's own code, which is what the cell means — and it is why the cells
 	are sized for a two-letter glyph pair rather than for a picture.
 
-	## The general calendar is a row, not a cell
+	## The general calendar is a group of one, and its cell is a cell
 
-	It sits above the grid with its name printed. It is deliberately not one
-	more square: it is the DEFAULT and the thing every other one is a layer
-	over (see `national/index.ts`), and a row that says so in words is worth
-	more than the four millimetres it costs.
+	It is a square in a grid under a heading, exactly like every country
+	below it — which is the second answer to this question. It was a full-width
+	row with its name set beside the globe until 2026-09-05, on the argument
+	that it is the DEFAULT and the thing every other calendar is a layer over
+	(see `national/index.ts`), and that a row saying so in words was worth the
+	four millimetres.
+
+	WHAT THAT ARGUMENT MISSED IS THAT THE PANEL IS A LIST OF CHOICES AND THE
+	SHAPE OF A CHOICE IS ITS WEIGHT. A row twenty times the area of the cells
+	under it does not read as "the default" — it reads as a different KIND of
+	thing, offered by a different control, and the one thing every option in
+	this panel has in common is that picking it answers the same question. The
+	name is not lost: it is the group's heading, in the same `.label-micro` the
+	regions wear, so it is printed where a region's name is printed and the
+	cells all stay one size.
 
 	IT WORE THE VATICAN FLAG FOR A DAY AND THAT WAS A FACTUAL ERROR. Vatican
 	City is not the general calendar — it keeps the Diocese of Rome's, which
@@ -73,7 +84,7 @@
 	pope's election). So the flag was on two different calendars in one
 	control, and on the one it does not belong to it said that the universal
 	calendar is a country's. 🌐 is the mark instead: a globe is not a
-	territory, which is the whole claim the row makes.
+	territory, which is the whole claim the cell makes.
 
 	## The value is a TERRITORY, and the calendar is looked up from it
 
@@ -91,7 +102,6 @@
 	import { keepInViewport } from '$lib/floating';
 	import { matchesQuery } from '$lib/highlight';
 	import { CALENDAR_REGIONS, SUBDIVISION_NAMES, TERRITORY_CALENDARS } from '$lib/calendar/national';
-	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 
 	interface Props {
@@ -256,24 +266,25 @@
 				aria-label={t('calendar.filter')}
 			/>
 			{#if !query.trim()}
-				<ul class="menu-list" role="menu" aria-label={t('calendar.which.general')}>
+				<!-- A group of one, wearing the same heading and the same cell as
+				     every region below — see the docblock. It is hidden while a
+				     filter is typed for the reason the regions are: what is on
+				     screen then is what MATCHED, and a row that always shows would
+				     be the one entry the box does not answer for. -->
+				<p class="label-micro region-heading">{generalName}</p>
+				<ul class="flag-grid" role="menu" aria-label={generalName} onkeydown={menu.onPanelKeydown}>
 					<li role="none">
 						<button
 							type="button"
 							role="menuitemradio"
 							aria-checked={value === 'general'}
-							class="menu-item general-row"
+							class="flag-cell"
 							class:current={value === 'general'}
+							aria-label={generalName}
+							title={generalName}
 							onclick={() => choose('general')}
-							onkeydown={menu.onPanelKeydown}
 						>
-							<span class="menu-item-main">
-								<span class="check-slot"
-									>{#if value === 'general'}<Icon name="check" />{/if}</span
-								>
-								<span class="flag" aria-hidden="true">{GENERAL_MARK}</span>
-								<span>{generalName}</span>
-							</span>
+							<span class="flag" aria-hidden="true">{GENERAL_MARK}</span>
 						</button>
 					</li>
 				</ul>
@@ -346,10 +357,6 @@
 		line-height: 1;
 	}
 
-	.general-row .flag {
-		font-size: 1.1em;
-	}
-
 	/* The heading is the only thing separating one region's flags from the
 	   next; a rule between them would be a second divider saying the same. */
 	.region-heading {
@@ -408,14 +415,5 @@
 	.flag-cell.current {
 		border-color: var(--color-accent);
 		background: var(--color-bg-elevated);
-	}
-
-	/* Same fixed slot LanguageMenu's grid uses, and for the same reason: the
-	   row's label has to start at one place whether or not it is ticked. */
-	.check-slot {
-		display: inline-flex;
-		justify-content: center;
-		inline-size: 0.9em;
-		flex: none;
 	}
 </style>

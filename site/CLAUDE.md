@@ -1914,6 +1914,23 @@ upstream, `va` here, eleven propers no other calendar has — so 🇻🇦 stood 
 different calendars in one control. The mark is 🌐: a globe is not a territory
 (§docs/calendar.md).
 
+**EVERY OPTION IN THAT PANEL IS THE SAME SIZE, INCLUDING THE GENERAL CALENDAR**
+(2026-09-05). It was a full-width labelled row above the grid, on the argument
+that it is the default every other calendar layers over; a row twenty times a
+cell's area reads as a different KIND of thing rather than as a default, and its
+name is now the group's `.label-micro` heading instead. The grid is
+`repeat(auto-fill, …)` and not `auto-fit` for the same reason a group of one is
+now possible: `auto-fit` collapses the empty tracks, so Oceania — Guam alone —
+drew a button the whole panel wide (§docs/calendar.md).
+
+**THE CHOSEN CALENDAR IS REMEMBERED, AND `?c=` OVERRIDES WITHOUT REPLACING IT**
+(2026-09-05, `calendar-pref.ts`). Only a choice made in the picker is stored;
+arriving on somebody's `?c=pl` link shows Poland and leaves the reader's own
+preference alone — the one place this differs from `compare-pref`, which adopts
+its parameter, because a territory is a fact about a person in a way a column
+layout is not. It is applied by writing `?c=` into the address on mount, never
+by holding a value beside the URL (§docs/calendar.md).
+
 **`?c=` NAMES A TERRITORY, NOT A LAYER** (2026-09-04): four cells select `ps`,
 and with the layer stored the trigger printed the alphabetically first, so
 choosing Israel answered "Cyprus". `TERRITORY_CALENDARS` resolves it, and a
@@ -1927,9 +1944,13 @@ where it listed the whole liturgical year filtered to its ~230 non-ferial days.
 It was a seven-column grid for an afternoon in between, and the reason that went
 back generalises: **this page is not a diary** — a day's name is a line of text
 of unpredictable length, which a column a seventh of the page wide cannot hold.
-**There is no separate "month being viewed"**: the month listed is the month of
-`selected`, and paging moves the selected day, so the page keeps one piece of
-state and it is the one in the URL. Rows are real `?c=`/`?d=` links, not buttons;
+**TURNING A PAGE IS NOT CHOOSING** (2026-09-05): the month being viewed is a
+second piece of state, and the arrows moved `selected` by a month until they
+were not. One state in the URL was the tidier design and it priced out looking —
+two presses forward to see when Advent starts threw away the day being read
+about, and the clamp into a shorter month meant two presses back would not
+restore it. `view` follows the chosen day one way only, so the two can disagree
+only while the reader is browsing. Rows are real `?c=`/`?d=` links, not buttons;
 a keyboard move that crosses a month replaces every row, so the component names
 the date to stand on and refocuses it after the render (§docs/calendar.md).
 
@@ -1943,13 +1964,28 @@ thing, and the arrow keys walk ROWS, off one month's end into the next.
 (2026-09-04). Two reflows, two rules. **A selection must not change text
 metrics** — `font-weight` on a row whose name runs to 111 characters rewraps it
 and shoves every row below it down, so selection is an accent bar every row
-carries transparent. And **the box that is held is the one whose size moves for
-a reason the reader did not intend**: the card's height is a function of the day
-being changed (804 of 1,095 days carry no optional memorial; the worst carries
-five), so IT takes a fixed height and scrolls inside itself, and the list is
-free to be as long as its month. The list was the fixed pane first, with the
-section measuring its own top edge to scroll the page back — a correction at the
-wrong end, and once the card was fixed it measured zero every time
+carries transparent. **The second was answered by freezing a height, twice, and
+neither box was the answer** — the list first (wrong end: its height is a
+property of the month, and nothing sits below it), then the card, which IS the
+box whose size moves for a reason the reader did not intend (804 of 1,095 days
+carry no optional memorial; the worst carries five). **A surface that ANSWERS
+may not be clipped to protect a surface that NAVIGATES**: the fixed card cut the
+last line off every day that had more to say, so the card is as tall as its day
+again and the list moves. What survives is the metric-stable selection, which
+removed a movement rather than absorbing one, and the paging change above, which
+stops the card resizing for anything but a day the reader asked for
+(§docs/calendar.md).
+
+**THE DATE FIELD PRINTS THE DATE, AND THE CARD STOPPED** (2026-09-05). A native
+`<input type="date">` takes its format from the OS locale, not the interface
+language, so the page's own control disagreed with every date on the page below
+it. The input keeps the value, keyboard, validation and picker and is hidden
+with `opacity` — never `visibility`, `display` or a clip, which take a control
+out of the focus order — under a span carrying `formatPromulgated`; a click
+anywhere calls `showPicker()` (the platform's indicator is invisible with the
+rest), and `:focus-visible` uncovers the real input, because typing into
+segments that cannot be seen is what this arrangement could genuinely break. The
+card's `showDate` is false here and true on the home page, where it stands alone
 (§docs/calendar.md).
 
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It

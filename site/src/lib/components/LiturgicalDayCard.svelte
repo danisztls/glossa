@@ -13,6 +13,13 @@
 	 * interface's background in one theme or another. A small disc beside a
 	 * translated word says the same thing without the page pretending to be
 	 * the sanctuary.
+	 *
+	 * IT IS AS TALL AS THE DAY IT SHOWS, and that was decided twice. It was
+	 * held to a fixed height on `/calendarium` for one day, so that the month
+	 * listing under it would not move when the reader clicked a row — and the
+	 * height that fits an ordinary weekday clips a day that has more to say,
+	 * which is the one thing a card answering a question may not do. The list
+	 * below moves instead. See the route's docblock for the trade in full.
 	 */
 	import { celebrationName, type Celebration, type LiturgicalDay } from '$lib/calendar';
 	import { formatPromulgated } from '$lib/dates';
@@ -24,13 +31,17 @@
 		/** Render the heading as the page's `h1` rather than an `h2`. */
 		heading?: 'h1' | 'h2';
 		/**
-		 * Hold the card to one height whatever day it shows, scrolling inside
-		 * itself past that — for the page where the READER changes the day and
-		 * something below has to stay where it is. See the style rule.
+		 * Print the civil date above the celebration's name.
+		 *
+		 * True everywhere the card stands alone — the home page shows today
+		 * and nothing else on it says which day that is. False on
+		 * `/calendarium`, where the date field a centimetre above prints the
+		 * same date in the same words, and a card repeating it would be the
+		 * page answering a question it has just been asked.
 		 */
-		fixedHeight?: boolean;
+		showDate?: boolean;
 	}
-	let { day, heading = 'h2', fixedHeight = false }: Props = $props();
+	let { day, heading = 'h2', showDate = true }: Props = $props();
 
 	let lang = $derived(i18n.lang);
 	let name = $derived(celebrationName(day.celebration, lang));
@@ -50,16 +61,17 @@
 	}
 </script>
 
-<div class="pane" class:fixed-height={fixedHeight}>
-	<article class="day">
-		<header>
+<article class="day">
+	<header>
+		{#if showDate}
 			<p class="date">{formatPromulgated(day.date, lang)}</p>
-			{#if heading === 'h1'}
-				<h1>{name}</h1>
-			{:else}
-				<h2>{name}</h2>
-			{/if}
-			<!--
+		{/if}
+		{#if heading === 'h1'}
+			<h1>{name}</h1>
+		{:else}
+			<h2>{name}</h2>
+		{/if}
+		<!--
 			EVERY WORD ON THIS LINE IS A TERM OF ART and a reader meeting the page
 			for the first time knows none of them: a colour that is a vestment
 			colour, a rank out of the Universal Norms, a season that is not the
@@ -68,148 +80,110 @@
 			`/calendarium` — written once, in the dictionary, so the two cannot
 			come to disagree.
 		-->
-			<p class="meta">
-				<span class="colour">
-					<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
-					<TermGloss
-						term={t(`calendar.colour.${day.colour}`)}
-						gloss={t(`calendar.gloss.colour.${day.colour}`)}
-					/>
-				</span>
-				<span class="rank">
-					<TermGloss
-						term={rankLabel(day.celebration)}
-						gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
-					/>
-				</span>
-				<span class="season"
-					><TermGloss
-						term={seasonName}
-						gloss={t(`calendar.gloss.season.${day.season}`)}
-					/>{weekSuffix}</span
-				>
+		<p class="meta">
+			<span class="colour">
+				<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
+				<TermGloss
+					term={t(`calendar.colour.${day.colour}`)}
+					gloss={t(`calendar.gloss.colour.${day.colour}`)}
+				/>
+			</span>
+			<span class="rank">
+				<TermGloss
+					term={rankLabel(day.celebration)}
+					gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
+				/>
+			</span>
+			<span class="season"
+				><TermGloss
+					term={seasonName}
+					gloss={t(`calendar.gloss.season.${day.season}`)}
+				/>{weekSuffix}</span
+			>
+		</p>
+		{#if day.celebration.transferredFrom}
+			<!-- Said out loud rather than shown silently on the wrong day: a
+			     solemnity impeded by Holy Week is kept elsewhere, and a reader
+			     looking for it on its own date deserves to know why it moved. -->
+			<p class="transferred">
+				{t('calendar.transferredFrom')}
+				{formatPromulgated(day.celebration.transferredFrom, lang)}
 			</p>
-			{#if day.celebration.transferredFrom}
-				<!-- Said out loud rather than shown silently on the wrong day: a
-				     solemnity impeded by Holy Week is kept elsewhere, and a reader
-				     looking for it on its own date deserves to know why it moved. -->
-				<p class="transferred">
-					{t('calendar.transferredFrom')}
-					{formatPromulgated(day.celebration.transferredFrom, lang)}
-				</p>
-			{/if}
-		</header>
-
-		<dl class="facts">
-			{#if day.holyDayOfObligation}
-				<div>
-					<dt>
-						<TermGloss term={t('calendar.obligation')} gloss={t('calendar.gloss.obligation')} />
-					</dt>
-					<!-- The canon is in the corpus in seven languages, so the claim
-					     links to its own authority rather than asserting itself. -->
-					<dd><a href="/ius-canonicum/1246">{t('calendar.obligationCanon')}</a></dd>
-				</div>
-			{/if}
-			<div>
-				<dt>
-					<TermGloss term={t('calendar.sundayCycle')} gloss={t('calendar.gloss.sundayCycle')} />
-				</dt>
-				<dd>{day.sundayCycle}</dd>
-			</div>
-			<div>
-				<dt>
-					<TermGloss term={t('calendar.weekdayCycle')} gloss={t('calendar.gloss.weekdayCycle')} />
-				</dt>
-				<dd>{day.weekdayCycle}</dd>
-			</div>
-			<div>
-				<dt>
-					<TermGloss term={t('calendar.psalterWeek')} gloss={t('calendar.gloss.psalterWeek')} />
-				</dt>
-				<dd>{['', 'I', 'II', 'III', 'IV'][day.psalterWeek]}</dd>
-			</div>
-		</dl>
-
-		{#if day.optional.length > 0}
-			<section class="optional">
-				<h3>{t('calendar.alsoToday')}</h3>
-				<ul>
-					{#each day.optional as c (c.id)}
-						<li>
-							<span class="swatch" data-colour={c.colour} aria-hidden="true"></span>
-							{celebrationName(c, lang)}
-							<span class="rank-inline">{rankLabel(c)}</span>
-						</li>
-					{/each}
-				</ul>
-			</section>
 		{/if}
+	</header>
 
-		{#if day.observances.length > 0}
-			<!--
-				An observance is not a celebration and is kept apart from them —
-				`Observance` in `$lib/calendar/types.ts`. Thanksgiving is a Thursday
-				in Ordinary Time with a Mass appointed for it, and putting it in the
-				list above would make it a rank the Church has not given it.
-			-->
-			<section class="optional">
-				<h3>{t('calendar.alsoObserved')}</h3>
-				<ul>
-					{#each day.observances as o (o.id)}
-						<li>
-							<span class="swatch" data-colour={o.colour ?? 'white'} aria-hidden="true"></span>
-							{celebrationName(o, lang)}
-						</li>
-					{/each}
-				</ul>
-			</section>
+	<dl class="facts">
+		{#if day.holyDayOfObligation}
+			<div>
+				<dt>
+					<TermGloss term={t('calendar.obligation')} gloss={t('calendar.gloss.obligation')} />
+				</dt>
+				<!-- The canon is in the corpus in seven languages, so the claim
+				     links to its own authority rather than asserting itself. -->
+				<dd><a href="/ius-canonicum/1246">{t('calendar.obligationCanon')}</a></dd>
+			</div>
 		{/if}
-	</article>
-</div>
+		<div>
+			<dt>
+				<TermGloss term={t('calendar.sundayCycle')} gloss={t('calendar.gloss.sundayCycle')} />
+			</dt>
+			<dd>{day.sundayCycle}</dd>
+		</div>
+		<div>
+			<dt>
+				<TermGloss term={t('calendar.weekdayCycle')} gloss={t('calendar.gloss.weekdayCycle')} />
+			</dt>
+			<dd>{day.weekdayCycle}</dd>
+		</div>
+		<div>
+			<dt>
+				<TermGloss term={t('calendar.psalterWeek')} gloss={t('calendar.gloss.psalterWeek')} />
+			</dt>
+			<dd>{['', 'I', 'II', 'III', 'IV'][day.psalterWeek]}</dd>
+		</div>
+	</dl>
+
+	{#if day.optional.length > 0}
+		<section class="optional">
+			<h3>{t('calendar.alsoToday')}</h3>
+			<ul>
+				{#each day.optional as c (c.id)}
+					<li>
+						<span class="swatch" data-colour={c.colour} aria-hidden="true"></span>
+						{celebrationName(c, lang)}
+						<span class="rank-inline">{rankLabel(c)}</span>
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
+
+	{#if day.observances.length > 0}
+		<!--
+			An observance is not a celebration and is kept apart from them —
+			`Observance` in `$lib/calendar/types.ts`. Thanksgiving is a Thursday
+			in Ordinary Time with a Mass appointed for it, and putting it in the
+			list above would make it a rank the Church has not given it.
+		-->
+		<section class="optional">
+			<h3>{t('calendar.alsoObserved')}</h3>
+			<ul>
+				{#each day.observances as o (o.id)}
+					<li>
+						<span class="swatch" data-colour={o.colour ?? 'white'} aria-hidden="true"></span>
+						{celebrationName(o, lang)}
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
+</article>
 
 <style>
 	.day {
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		padding: 1rem 1.25rem;
-	}
-	/*
-	 * ONE HEIGHT FOR EVERY DAY, and the height is the point rather than the
-	 * scrolling.
-	 *
-	 * This card's height is a function of the day it shows — an optional
-	 * memorial or two, an observance, a transferred solemnity, a name that
-	 * wraps — and on `/calendarium` it sits ABOVE the month a reader clicks
-	 * through. Measured over three years and every published layer: 804 of
-	 * 1,095 days carry no optional memorial, 229 carry one, 55 carry two, and
-	 * the worst carries five. So a card free to size itself moves the list
-	 * under the reader's cursor on most clicks, and reserving for the worst
-	 * day is the same box with the scrollbar taken away and several empty
-	 * lines put back in its place.
-	 *
-	 * THE HEIGHT IS ON THIS BOX AND THE BORDER IS ON THE CARD INSIDE IT, which
-	 * is the whole reason the two are separate elements. Bordered, the fixed
-	 * box would draw a frame around whatever the day does not fill, and three
-	 * days in four would show a rule two lines under the last word; unbordered,
-	 * the space it holds open is just page, and the card is exactly as tall as
-	 * what it says. The frame belongs to the card, the height to the layout.
-	 *
-	 * The height fits the ordinary day whole — date, name over two lines, the
-	 * kind-of-day line, the cycles, and one thing kept beside it — and the days
-	 * past that scroll. Taller on a narrow screen, where every one of those
-	 * lines wraps. `scrollbar-gutter: stable` so the card does not narrow on
-	 * the days that need the bar.
-	 */
-	.fixed-height {
-		block-size: 15.5rem;
-		overflow-y: auto;
-		scrollbar-gutter: stable;
-	}
-	@media (max-width: 34rem) {
-		.fixed-height {
-			block-size: 19rem;
-		}
 	}
 	.date {
 		margin: 0;
@@ -220,6 +194,12 @@
 	h2 {
 		margin: 0.2rem 0 0.4rem;
 		line-height: 1.2;
+	}
+	/* With no date above it, the name is the first thing in the box and the
+	   0.2rem that separated the two would be a short top padding. */
+	h1:first-child,
+	h2:first-child {
+		margin-top: 0;
 	}
 	/*
 	 * ONE LINE, NOT THREE COLUMNS. These three say what kind of day it is —

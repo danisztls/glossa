@@ -243,9 +243,25 @@ site have?" by being opened. The flags are the two regional-indicator code
 points of the ISO 3166-1 code the calendar is already keyed by: one offset, no
 assets, no licence question. **The fallback is what makes that safe** — Windows
 ships no flag glyphs, so Chrome draws the boxed letters `BR`, which is the
-country's code and still names the cell. The general calendar is a labelled row
-above the grid rather than a square in it, because it is the thing the others
-are layers over.
+country's code and still names the cell.
+
+**The general calendar is a group of one, and it was a full-width row for a
+day.** The row printed 🌐 beside the calendar's name and the argument for it was
+that this is the DEFAULT, the thing every other calendar is a layer over, and
+that saying so in words was worth the four millimetres. **What that missed is
+that the shape of a choice is its weight**: a row twenty times the area of the
+cells below does not read as "the default", it reads as a different KIND of
+thing offered by a different control — and every option in this panel answers
+the same question. It is a square in a `flag-grid` under a `.label-micro`
+heading now, exactly like a region, so the name is still printed where a
+region's name is printed and every cell is one size.
+
+**`auto-fill`, not `auto-fit`, is what makes a group of one possible.** The two
+differ in exactly one case and this control hits it twice — Oceania is Guam
+alone, and the general calendar is a grid of one cell. `auto-fit` collapses the
+tracks nothing landed in and lets the survivors split the full width, so a lone
+flag drew a button the whole panel wide; `auto-fill` keeps the empty tracks.
+Nothing changes for a region that fills its row.
 
 **IT WORE THE VATICAN FLAG FOR A DAY, AND THAT WAS A FACTUAL ERROR.** The
 reasoning was that 🇻🇦 is the flag of the see whose calendar the general one is.
@@ -267,6 +283,38 @@ the territories it covers. **A held calendar's territories leave the picker with
 it**, since that map is built from the published list — which is correct rather
 than incidental: what is held for a country is held for everyone who keeps that
 country's calendar.
+
+**The chosen calendar is REMEMBERED, and `?c=` overrides it without replacing
+it** (2026-09-05, `calendar-pref.ts`). A reader in Brazil is not choosing Brazil
+for one visit — they live there — so the picker's choice is stored the way the
+theme and the reading size are, and a bare `/calendarium` opens in it. What is
+stored is only an explicit choice in the picker: arriving on somebody else's
+`?c=pl` link shows Poland's calendar and leaves the reader's own preference
+alone. **That is the one place this differs from `compare-pref`**, which adopts
+its parameter as a preference; a territory is a fact about a person in a way a
+column layout is not, and a shared link should not silently re-home anyone. The
+preference is applied by writing `?c=` into the address on mount, not by holding
+a value beside the URL — this page's contract is that the address reproduces the
+screen, and a page showing Brazil under a bare `/calendarium` would hand out
+links that show the sender Brazil and the recipient Rome.
+
+**The date field prints the date the way the page writes dates, and a native
+`<input type="date">` cannot be made to** (2026-09-05). Its format comes from
+the operating system's locale rather than from the interface language, so a
+reader on an American machine met `09/17/2026` at the top of a page that says
+"17 de setembro de 2026" everywhere else. The input is still the control — the
+value, the keyboard, the validation and the platform's own calendar popup — and
+a span over it carries `formatPromulgated`, the same function the card used.
+Three details are load-bearing: the input is hidden with `opacity` and never
+`visibility`, `display` or a clip, because those take a control out of the focus
+order on one engine or another; a click anywhere on the field calls
+`showPicker()`, since the platform's picker indicator is invisible along with
+the rest of it; and keyboard focus — `:focus-visible`, so only keyboard —
+uncovers the real input, because typing into segments that cannot be seen is the
+one thing this arrangement could genuinely break. **The card then stopped
+printing the date**, which is what makes the whole trade worth it: the date is
+said once, in the control that sets it. It still prints on the home page, where
+the card stands alone (`showDate`).
 
 ### Some layers share their propers, and factoring them out cost the oracle nothing
 
@@ -335,13 +383,29 @@ all below 34rem. What survives of it is the month: a listing of one month, with
 the month named above and one press to the next, and a heavier rule above each
 Sunday for the week structure a list does not otherwise show.
 
-**There is no separate "month being viewed".** The month listed is the month of
-`selected`, and paging moves the selected day, clamped into the shorter month —
-so the page keeps one piece of state and it is the one in the URL. A view month
-held beside the selection would show two months at once, since the day's card
-sits with the listing. **The awkward half is focus**: a keyboard move that
-crosses a month replaces every row, so the component names the date to stand on
-and refocuses it after the render.
+**There IS a separate "month being viewed", and there was not until 2026-09-05.**
+The month listed was the month of `selected` and the arrows moved the selected
+day, clamped into the shorter month — one piece of state, in the URL, so the
+address always reproduced the whole screen. The argument was sound and the
+behaviour was wrong, because it priced out the thing a reader actually does with
+a calendar: **looking**. Pressing forward twice to see when Advent starts threw
+away the day they were reading about, replaced the card above with a day they
+never chose, and — the clamp not being symmetric — could not be undone by
+pressing back twice. **Turning a page is not choosing.**
+
+`view` is the month on screen and it follows the chosen day ONE WAY: pick a day
+(a row, the date field, Today, a pasted `?d=`) and the listing goes to that day's
+month; page the listing and the chosen day stays put. So the two can only
+disagree while the reader is browsing, which is the state the second variable
+exists to allow, and any choice at all resolves it. PageUp/PageDown on a row is
+the one control left that moves the day by a month, and it moves it from the
+FOCUSED ROW rather than from `selected` — a reader who paged to March and tabbed
+into the list is standing in March, and stepping from a chosen day in February
+would jump them out of what they are looking at.
+
+**The awkward half is still focus**: a keyboard move that crosses a month
+replaces every row, so the component names the date to stand on and refocuses it
+after the render.
 
 ### The filter came back, with the repair the year listing needed
 
@@ -377,33 +441,43 @@ cannot reflow whatever it wears.
 **And the card's height depends on the day**, which is the whole of the second
 jump. Measured over three years and every published layer: 804 of 1,095 days
 carry no optional memorial, 229 carry one, 55 carry two, and the maximum is five
-(Argentina, 9 October 2027). **So the card is held to one height and scrolls
-inside itself past it** (`fixedHeight`, 15.5rem, 19rem below 34rem,
-`scrollbar-gutter: stable`) — a height that fits the ordinary day whole: date,
-name over two lines, the kind-of-day line, the cycles, and one thing kept
-beside it.
+(Argentina, 9 October 2027).
 
-**The height is on a wrapper and the border is on the card inside it**, which is
-why they are two elements. Bordered, the fixed box draws a frame around whatever
-the day does not fill, and three days in four show a rule two lines under the
-last word; unbordered, the space it holds open is just page, and the card is
-exactly as tall as what it says. The frame belongs to the card and the height to
-the layout.
-
-**The fix went to the list first, and that was the wrong box.** The list was
-made a fixed-height scrolling pane and the section measured its own top edge
+**Two boxes were held in turn, and neither was the answer.** First the LIST was
+made a fixed-height scrolling pane, with the section measuring its own top edge
 before each navigation to scroll the page back afterwards — which worked, and
-was a correction applied at the wrong end of the problem. The list's height is a
-property of the MONTH and nothing sits below it to be moved; the card's height
-is a property of the day the reader is changing, and it sits above everything.
-**Hold the box whose size moves for a reason the reader did not intend**, and no
-compensation is needed anywhere: with the card fixed, the anchor measured zero
-every time and came out, and the list went back to being as long as the month
-is.
+was a correction applied at the wrong end: the list's height is a property of
+the MONTH, and nothing sits below it to be moved. Then the CARD was held instead
+(15.5rem, 19rem below 34rem, `scrollbar-gutter: stable`), which is the box whose
+size moves for a reason the reader did not intend — and the compensation could
+then come out, because the anchor measured zero every time. That is the right
+diagnosis and it produced a defect of its own: a height chosen to fit the
+ordinary day whole CLIPS every day that has more to say, so a card whose whole
+job is to answer a question showed its answer with the last line cut off, to
+keep a list below it still.
+
+**So the card is as tall as the day it shows, and the list moves** (2026-09-05).
+A reflow is the smaller injury: the reader caused it, it settles in one frame,
+and nothing is hidden by it. **The general rule the pair of reversals leaves is
+narrower than "hold the box that moves"**: a surface that ANSWERS may not be
+clipped to protect a surface that NAVIGATES. What is left of the fix is the
+metric-stable selection above — which was always the real one, since it removed
+a movement rather than absorbing it — plus the other half of the repair, one
+section up: paging no longer changes the day, so the card only resizes when the
+reader has asked for a different day.
+
+The card kept the two-element split for a few hours after that (a `.pane` for
+the height, an `.article` for the border, so the frame would not enclose empty
+space) and it went with the height; one element again.
 
 What is left in the component is the refocus alone — a keyboard move that
 crosses a month replaces every row, so the date to stand on is named before the
 navigation and focused after it.
+
+**And Today moved up to the page's control row**, out of the month header where
+it sat beside the two arrows. Beside two controls that turn a page it read as a
+third month control, and it is not one: it names a DAY, like the date field it
+now stands next to.
 
 ## The page explains its own vocabulary
 
