@@ -1,0 +1,238 @@
+<script lang="ts">
+	/**
+	 * One of `/schola`'s paintings, with its attribution behind the same
+	 * control a Doré plate's caption uses.
+	 *
+	 * ## Why the credit is a card and not a line
+	 *
+	 * `Plate.svelte` argues this at length for the engravings and every word
+	 * of it holds here: an attribution is apparatus, apparatus must not move
+	 * the text, and a `<details>` under a picture pushes the whole page down
+	 * when it opens. The popover is in the top layer and `position: fixed`, so
+	 * opening it costs no layout at all. `AnchoredPanel` is the mechanism,
+	 * shared with the plate card, the citation card and the anchor menu rather
+	 * than written a fourth time.
+	 *
+	 * WHAT IT DOES NOT SHARE WITH `Plate.svelte` IS THE MARKUP, which is
+	 * `floating.svelte.ts`'s own stated rule — only the mechanism moved into
+	 * that class, because these panels want different widths and type and
+	 * Svelte's scoped classes stop at the component boundary. This is a
+	 * separate component for a reason of its own besides: a plate is a
+	 * zoomable engraving with an `srcset`, a `PlateViewer` and a title of its
+	 * own in the caption, and none of those exist here. A painting on a
+	 * landing page is illustration; there is nothing to zoom into and nothing
+	 * to read.
+	 *
+	 * ## The trigger is the icon alone
+	 *
+	 * A plate's caption trigger has the plate's own title as its content and
+	 * the glyph as a hint after it. These pictures have no title on the page —
+	 * they are not the subject of anything, and a line of small caps under
+	 * each would be four captions competing with the headings they sit above.
+	 * So the control is the `info` glyph and nothing else, which makes an
+	 * `aria-label` mandatory rather than optional: an icon has no text to
+	 * attach a name to. `docs/decisions.md`'s accessibility bar says exactly
+	 * this, and `Icon.svelte` enforces the other half by making every icon
+	 * `aria-hidden` with no label prop to reach for.
+	 *
+	 * ## The image
+	 *
+	 * `alt=""`, with the identification in the caption — `Plate.svelte`'s
+	 * arrangement and its argument: the picture is not information the page
+	 * would be incomplete without, and a screen reader that reads the same
+	 * line twice is worse served than one that reads it once.
+	 *
+	 * `width`/`height` are the intrinsic pixels, so the browser reserves the
+	 * box before it has a byte and nothing below shifts when the file lands.
+	 * `eager` is for a picture above the fold; everything else is `lazy` and
+	 * costs nothing until the reader arrives at it.
+	 */
+	import type { Artwork } from '$lib/schola-art';
+	import Icon from '$lib/components/Icon.svelte';
+	import { AnchoredPanel } from '$lib/floating.svelte';
+
+	interface Props {
+		art: Artwork;
+		/** The attribution, already composed and already localized — passed
+		 *  rather than read for the reason `Plate.svelte` gives: the page that
+		 *  knows which collection a picture belongs to is the page that writes
+		 *  the line, and this component then needs no corpus and no language. */
+		credit: string;
+		/** The trigger's accessible name. Its own string because the button has
+		 *  no text content to take one from. */
+		label: string;
+		/** Above the fold. The hero, and nothing else. */
+		eager?: boolean;
+	}
+
+	let { art, credit, label, eager = false }: Props = $props();
+
+	// Per INSTANCE: a page renders several of these and `popovertarget` needs a
+	// distinct id to name. `$props.id()` has to be a bare variable declaration
+	// initializer, so it cannot be passed straight to the constructor.
+	const uid = $props.id();
+	const card = new AnchoredPanel(uid);
+</script>
+
+<figure class="art">
+	<img
+		class="plate"
+		class:paper={art.paper}
+		src={art.src}
+		width={art.width}
+		height={art.height}
+		alt=""
+		loading={eager ? 'eager' : 'lazy'}
+		decoding="async"
+	/>
+	<figcaption>
+		<button
+			bind:this={card.trigger}
+			type="button"
+			class="caption-trigger"
+			popovertarget={card.id}
+			aria-expanded={card.open}
+			aria-label={label}
+		>
+			<Icon name="info" class="hint" />
+		</button>
+		<!-- `role="note"` — ARIA's own word for content ancillary to the thing it
+		     hangs off, which an attribution exactly is. Not `tooltip`, which
+		     describes its anchor and is summoned rather than asked for. -->
+		<span
+			bind:this={card.panel}
+			id={card.id}
+			popover="auto"
+			role="note"
+			ontoggle={card.onToggle}
+			class="panel-surface floating-panel art-credit">{credit}</span
+		>
+		<!-- Print gets the credit unconditionally, on `Plate.svelte`'s reasoning:
+		     a printed page leaves this site, and it is the one copy whose reader
+		     cannot press anything. A popover never prints — top layer, and
+		     closed besides — so the line is rendered separately rather than
+		     coaxed out of the card. `aria-hidden` so it is not read twice. -->
+		<span class="credit-print" aria-hidden="true">{credit}</span>
+	</figcaption>
+</figure>
+
+<style>
+	.art {
+		margin: 0;
+		position: relative;
+	}
+
+	.plate {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+		border-radius: var(--radius-md);
+		filter: var(--plate-filter);
+	}
+
+	/*
+	 * A PAINTING MUST NOT TAKE `--plate-blend`. That token multiplies a grey
+	 * scan's white paper away into the page and is tuned for exactly that; an
+	 * oil painting put through it goes to mud. Only the works `schola-art.ts`
+	 * marks `paper` — ink on a white sheet — get it.
+	 */
+	.plate.paper {
+		mix-blend-mode: var(--plate-blend);
+	}
+
+	/* A reader who asked for one grey ramp is not handed four oil paintings. */
+	:global(html[data-mono]) .plate {
+		filter: var(--plate-filter) grayscale(1);
+	}
+
+	/*
+	 * THE TRIGGER SITS ON THE PICTURE, at its trailing end. A caption row under
+	 * a banner would be a row of empty page with one glyph in it, and these
+	 * banners are wide. On the image it is where the thing it describes is.
+	 *
+	 * Its own disc rather than a bare glyph: the pictures are paintings and a
+	 * `currentColor` outline over Raphael's sky is not reliably visible in any
+	 * theme. The disc is the page's own elevated surface, so it reads as
+	 * chrome laid on the picture rather than as part of it.
+	 */
+	.caption-trigger {
+		appearance: none;
+		position: absolute;
+		inset-block-end: 0.5rem;
+		inset-inline-end: 0.5rem;
+		display: grid;
+		place-items: center;
+		inline-size: 1.75rem;
+		block-size: 1.75rem;
+		padding: 0;
+		margin: 0;
+		border: 1px solid var(--color-border);
+		border-radius: 50%;
+		background: var(--color-bg-elevated);
+		color: var(--color-text-muted);
+		font: inherit;
+		font-size: 0.9rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.caption-trigger:hover {
+		color: var(--color-text);
+		border-color: var(--color-accent);
+	}
+
+	.caption-trigger:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	/*
+	 * The card. Where it sits — fixed, hidden until `AnchoredPanel` has
+	 * measured it, the UA `[popover]` centring reset, no `z-index` because the
+	 * top layer decides — is `.floating-panel` in app.css.
+	 */
+	.art-credit {
+		max-inline-size: min(24rem, calc(100vw - 1rem));
+		padding: 0.5rem 0.7rem;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		line-height: 1.5;
+		color: var(--color-text);
+		text-align: start;
+		text-wrap: pretty;
+		overflow-wrap: break-word;
+	}
+
+	.credit-print {
+		display: none;
+	}
+
+	/*
+	 * ON PAPER THE CONTROL BECOMES THE LINE IT OPENS. Paper is white, so the
+	 * blend has nothing to blend with and the dark-theme dim would only waste
+	 * ink; and a picture printed with no attribution beside it is the one copy
+	 * that cannot go and ask for one.
+	 */
+	@media print {
+		.art {
+			break-inside: avoid;
+		}
+
+		.plate {
+			mix-blend-mode: normal;
+			filter: none;
+		}
+
+		.caption-trigger {
+			display: none;
+		}
+
+		.credit-print {
+			display: block;
+			margin-block-start: 0.3rem;
+			font-family: var(--font-sans);
+			font-size: 0.75rem;
+			color: var(--color-text-muted);
+		}
+	}
+</style>

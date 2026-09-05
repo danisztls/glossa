@@ -47,7 +47,17 @@
 	 * already exist in every dictionary, the same rule `/bibliotheca` and the
 	 * home page's doors follow. **So do the pictures**: an artwork's caption is
 	 * `Artist, Title, year. Institution.` and carries no sentence to translate
-	 * (`schola-art.ts`), which is why ten of them cost one new key.
+	 * (`schola-art.ts`), so the whole set costs two keys — the word "detail"
+	 * and the name of the control that shows a credit.
+	 *
+	 * ## THIS IS A LANDING PAGE AND IS LAID OUT AS ONE
+	 *
+	 * `.landing-column`, not `.content-column`: `layout.css` carries the
+	 * argument, which is that `--content-width` is a count of CHARACTERS and
+	 * this page's content is banners, a numbered list and a grid. The prose
+	 * that is still prose keeps a measure of its own through
+	 * `.landing-measure`. `/`, `/bibliotheca` and `/documenta` are the same
+	 * kind of page and take the same column.
 	 */
 	import {
 		getBook,
@@ -65,9 +75,19 @@
 	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
 	import { gospelsRoute, pillarsRoute, socialRoute } from '$lib/learning-routes';
-	import { BANNERS, VIGNETTES, type Artwork } from '$lib/schola-art';
+	import { BANNERS, type Artwork } from '$lib/schola-art';
+	import ArtFigure from '$lib/components/ArtFigure.svelte';
+	import Icon from '$lib/components/Icon.svelte';
+	import type { IconName } from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { StructureNode, WorkType } from '$lib/types';
+
+	// The identification, plus the one interface word in it. Composed here and
+	// passed down for the reason `Plate.svelte` gives about its own credit: the
+	// page that knows what a picture is is the page that writes the line, and
+	// `ArtFigure` then needs no dictionary of its own.
+	const creditOf = (art: Artwork) =>
+		art.credit + (art.detail ? ` (${t('schola.art.detail')})` : '');
 
 	// --- The four pillars ---------------------------------------------------
 	//
@@ -158,6 +178,7 @@
 	const SHELVES = [
 		{
 			key: 'scripture',
+			icon: 'scroll' as IconName,
 			headingKey: 'nav.bible',
 			href: '/scriptura',
 			type: 'bible',
@@ -165,6 +186,7 @@
 		},
 		{
 			key: 'catechism',
+			icon: 'book-marked' as IconName,
 			headingKey: 'nav.ccc',
 			href: '/catechismus',
 			type: 'catechism',
@@ -179,6 +201,7 @@
 		},
 		{
 			key: 'magisterium',
+			icon: 'landmark' as IconName,
 			headingKey: 'nav.magisterium',
 			href: '/documenta',
 			type: 'document',
@@ -193,6 +216,7 @@
 		},
 		{
 			key: 'law',
+			icon: 'scale' as IconName,
 			headingKey: 'nav.canonLaw',
 			href: '/ius-canonicum',
 			type: 'canon-law',
@@ -200,6 +224,7 @@
 		},
 		{
 			key: 'theologian',
+			icon: 'feather' as IconName,
 			headingKey: 'doctores.landing.title',
 			href: '/doctores',
 			type: 'summa',
@@ -214,6 +239,7 @@
 		},
 		{
 			key: 'prayers',
+			icon: 'flame' as IconName,
 			headingKey: 'nav.prayers',
 			href: '/preces',
 			type: 'prayer',
@@ -230,46 +256,29 @@
 </svelte:head>
 
 <!--
-	One figure shape for all ten works. `alt=""` with the identification in the
-	caption is `Plate.svelte`'s arrangement and its argument: the picture is not
-	information the page would be incomplete without, and a screen reader that
-	reads the same line twice is worse served than one that reads it once.
+	A LANDING COLUMN, NOT A READING ONE. `layout.css` says why the two are
+	different: `--content-width` holds 62.4 characters of prose, and this page's
+	content is banners, a numbered list and a grid of shelves. The prose on it
+	takes `.landing-measure` instead, which is the measure without the column.
 
-	`eager` is passed for the hero alone. Everything else is below the fold on
-	every viewport, and `loading="lazy"` with the intrinsic size declared means
-	the browser reserves the box and fetches nothing until the reader arrives.
+	`eager` is passed for the hero alone. Every other picture is below the fold
+	on every viewport, and `loading="lazy"` with the intrinsic size declared
+	means the browser reserves the box and fetches nothing until the reader
+	arrives at it.
 -->
-{#snippet plate(art: Artwork, eager: boolean)}
-	<img
-		class="plate"
-		class:paper={art.paper}
-		src={art.src}
-		width={art.width}
-		height={art.height}
-		alt=""
-		loading={eager ? 'eager' : 'lazy'}
-		decoding="async"
-	/>
-{/snippet}
-
-{#snippet credit(art: Artwork)}
-	{art.credit}{art.detail ? ` (${t('schola.art.detail')})` : ''}
-{/snippet}
-
-<div class="content-column">
-	<figure class="masthead">
-		{@render plate(BANNERS.hero, true)}
-		<figcaption>{@render credit(BANNERS.hero)}</figcaption>
-	</figure>
+<div class="landing-column">
+	<div class="masthead">
+		<ArtFigure art={BANNERS.hero} credit={creditOf(BANNERS.hero)} label={t('art.about')} eager />
+	</div>
 
 	<h1>{t('schola.landing.title')}</h1>
-	<p class="page-tagline">{t('schola.landing.tagline')}</p>
+	<p class="page-tagline landing-measure">{t('schola.landing.tagline')}</p>
 
 	<!-- The one paragraph on this site that recommends rather than describes,
 	     and it says so underneath. Not an `<aside>` styled to look like a
 	     pull-quote: it is addressed to the reader as directly as anything here,
 	     and only its AUTHORSHIP is set apart. -->
-	<section class="house-note" aria-labelledby="house-note-heading">
+	<section class="house-note landing-measure" aria-labelledby="house-note-heading">
 		<h2 id="house-note-heading" class="visually-hidden">{t('schola.start.attribution')}</h2>
 		<p>{t('schola.start.body')}</p>
 		<p class="attribution">{t('schola.start.attribution')}</p>
@@ -278,16 +287,19 @@
 	{#each routes as route (route.key)}
 		<section class="route" aria-labelledby="route-{route.key}">
 			{#if BANNERS[route.key]}
-				<figure class="route-plate">
-					{@render plate(BANNERS[route.key], false)}
-					<figcaption>{@render credit(BANNERS[route.key])}</figcaption>
-				</figure>
+				<div class="route-plate">
+					<ArtFigure
+						art={BANNERS[route.key]}
+						credit={creditOf(BANNERS[route.key])}
+						label={t('art.about')}
+					/>
+				</div>
 			{/if}
 			<h2 id="route-{route.key}">{t(`schola.route.${route.key}.title`)}</h2>
 			<!-- The citation is the route's warrant, so it is a link and not a
 			     caption: a reader who doubts that this order is the Church's and
 			     not ours can go and read the paragraph that sets it out. -->
-			<p class="route-source">
+			<p class="route-source landing-measure">
 				<a href={route.source}>{t(`schola.route.${route.key}.source`)}</a>
 			</p>
 			<ol class="steps">
@@ -306,7 +318,7 @@
 						<!-- Set by nothing today; `RouteStep.description` says why the
 						     field is there. -->
 						{#if step.description}
-							<p class="step-description">{step.description}</p>
+							<p class="step-description landing-measure">{step.description}</p>
 						{/if}
 					</li>
 				{/each}
@@ -319,9 +331,16 @@
 		<div class="shelf-grid">
 			{#each shelves as shelf (shelf.key)}
 				<div class="shelf">
-					{#if VIGNETTES[shelf.key]}
-						{@render plate(VIGNETTES[shelf.key], false)}
-					{/if}
+					<!-- A MARK ON THE ROW, NOT A PICTURE BESIDE IT. This section is six
+					     definitions of what kind of authority a shelf carries, read by
+					     someone who does not yet know a catechism from a council; a
+					     painting here is something to look at while reading the
+					     sentence, and the sentence is the point. `schola-art.ts` keeps
+					     the argument and what the six paintings were.
+
+					     Decorative, so `aria-hidden` — which `Icon.svelte` enforces
+					     rather than offers. The heading beside it is the name. -->
+					<span class="shelf-icon"><Icon name={shelf.icon} /></span>
 					<div class="shelf-text">
 						<h3><a href={shelf.href}>{t(shelf.headingKey)}</a></h3>
 						<p class="shelf-kind">{t(`schola.kind.${shelf.key}`)}</p>
@@ -344,14 +363,6 @@
 				</div>
 			{/each}
 		</div>
-		<!-- The six vignettes share one credit line rather than each carrying a
-		     caption: a five-line card with a two-line attribution under a 5rem
-		     picture is a card about its own picture. -->
-		<p class="art-credits">
-			{#each shelves as shelf, i (shelf.key)}{#if VIGNETTES[shelf.key]}{i > 0
-						? ' · '
-						: ''}{@render credit(VIGNETTES[shelf.key])}{/if}{/each}
-		</p>
 	</section>
 </div>
 
@@ -367,18 +378,9 @@
 		margin: 0 0 1.5rem;
 	}
 
-	.masthead .plate,
-	.route-plate .plate {
-		border-radius: var(--radius-md);
-	}
-
 	h1 {
 		font-family: var(--font-serif);
 		margin: 0 0 0.5rem;
-	}
-
-	.page-tagline {
-		max-width: 40rem;
 	}
 
 	.visually-hidden {
@@ -393,45 +395,6 @@
 		border: 0;
 	}
 
-	/*
-	 * A PAINTING MUST NOT TAKE `--plate-blend`. That token multiplies a grey
-	 * scan's white paper away into the page and is tuned for exactly that; an
-	 * oil painting put through it goes to mud. Only the works `schola-art.ts`
-	 * marks `paper` — ink on a white sheet — get it. All of them take the
-	 * dark-mode dim, which is a brightness step and not an inversion, because
-	 * a picture is not a diagram.
-	 */
-	.plate {
-		display: block;
-		inline-size: 100%;
-		block-size: auto;
-		filter: var(--plate-filter);
-	}
-
-	.plate.paper {
-		mix-blend-mode: var(--plate-blend);
-	}
-
-	/*
-	 * Monochrome is a reader's explicit request for one grey ramp
-	 * (`tokens.css`: "decoration is a cost paid on every page by a reader who
-	 * wanted a palette"). Four colour paintings would be the loudest thing on
-	 * the page in the one mode that asked for none.
-	 */
-	:global(html[data-mono]) .plate {
-		filter: var(--plate-filter) grayscale(1);
-	}
-
-	figcaption {
-		margin-block-start: 0.5rem;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		line-height: 1.4;
-		color: var(--color-text-muted);
-		text-align: center;
-		text-wrap: pretty;
-	}
-
 	/* The note is set off by a rule on its inline start rather than by a box:
 	   a card would make it look like a callout the works below produced, and
 	   what it needs to look like is somebody talking. */
@@ -439,7 +402,6 @@
 		margin: 1.75rem 0 2.5rem;
 		padding-inline-start: 1rem;
 		border-inline-start: 3px solid var(--color-accent);
-		max-width: 40rem;
 	}
 
 	.house-note p {
@@ -473,7 +435,6 @@
 		margin: 0 0 0.75rem;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
-		max-width: 40rem;
 	}
 
 	/*
@@ -565,7 +526,6 @@
 		margin: 0.3rem 0 0;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
-		max-width: 40rem;
 	}
 
 	/*
@@ -604,11 +564,30 @@
 		border-color: var(--color-accent);
 	}
 
-	.shelf .plate {
+	/*
+	 * A DISC, SIZED ONCE, so six glyphs of different natural weight sit on one
+	 * line down the grid. The icon is `1em` of the font-size set here rather
+	 * than a pixel size, which is `Icon.svelte`'s whole contract.
+	 *
+	 * `--color-accent` and nothing else coloured: the mark identifies the row
+	 * and the heading names it, so a second saturated element would make the
+	 * card look like a control.
+	 */
+	.shelf-icon {
 		flex: 0 0 auto;
-		inline-size: 5rem;
-		block-size: 5rem;
+		display: grid;
+		place-items: center;
+		inline-size: 2.25rem;
+		block-size: 2.25rem;
 		border-radius: var(--radius-sm);
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		font-size: 1.15rem;
+		color: var(--color-accent);
+	}
+
+	.shelf:hover .shelf-icon {
+		border-color: var(--color-accent);
 	}
 
 	.shelf-text {
@@ -642,26 +621,9 @@
 		color: var(--color-text-muted);
 	}
 
-	.art-credits {
-		margin: 1.25rem 0 0;
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		text-wrap: pretty;
-	}
-
-	/*
-	 * A plate PRINTS, on `Plate.svelte`'s reasoning: paper is white, so the
-	 * blend has nothing to blend with and the dark dim would only waste ink.
-	 */
+	/* The pictures print themselves — `ArtFigure` carries its own print rules,
+	   including turning its caption control back into the line it opens. */
 	@media print {
-		.plate {
-			mix-blend-mode: normal;
-			filter: none;
-			break-inside: avoid;
-		}
-
 		.shelf {
 			background: none;
 			break-inside: avoid;

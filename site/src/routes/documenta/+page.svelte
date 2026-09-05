@@ -374,9 +374,9 @@
 </svelte:head>
 
 <div class="reading-layout">
-	<div class="content-column">
+	<div class="landing-column">
 		<h1>{t('nav.magisterium')}</h1>
-		<p class="page-tagline">{t('document.library.tagline')}</p>
+		<p class="page-tagline landing-measure">{t('document.library.tagline')}</p>
 
 		<!--
 			The panel a reader gets where the aside is not — below the grid

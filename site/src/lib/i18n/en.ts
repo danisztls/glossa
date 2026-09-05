@@ -112,8 +112,8 @@ export const en: Dictionary = {
 	'schola.kind.prayers': 'The words the Church prays, with the Latin beside them.',
 	// The only interface word in an artwork's caption. Everything else in one
 	// is a proper noun and a date, held beside the asset in `schola-art.ts`
-	// rather than in thirty-seven dictionaries — which is why ten pictures
-	// cost one key. Rendered in parentheses after the identification.
+	// rather than in every dictionary — which is why the pictures cost two keys
+	// between them. Rendered in parentheses after the identification.
 	'schola.art.detail': 'detail',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
@@ -599,6 +599,12 @@ export const en: Dictionary = {
 	// is what saves fourteen dictionaries a second string for "zoom out".
 	'plates.enlarge': 'Enlarge {title}',
 	'plates.zoom': 'Zoom',
+	// `ArtFigure`'s caption trigger, whose only content is the `info` glyph —
+	// so unlike a plate's, whose visible content is the plate's own title, it
+	// has no text to take an accessible name from and this string is the name.
+	// A picture, not a plate: these illustrate a landing page and there is
+	// nothing to enlarge and no title on screen.
+	'art.about': 'About this picture',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
 		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. Its Cyrillic is by the same hands but revives nothing: no Garamond Cyrillic was ever cut, so the Russian is set in a form drawn to sit beside the rest.',

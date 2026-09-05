@@ -101,6 +101,21 @@
 	// `calendar-days` dots the grid with a week's worth of days and closes up
 	// at 1em; the plain frame reads at that size.
 	import Calendar from '@lucide/svelte/icons/calendar';
+	// THE SIX SHELVES OF `/schola`, one glyph each. That section answers "what
+	// kind of authority does this carry", so each is chosen on the same axis
+	// the shelf is sorted on rather than on what the books look like: the
+	// scroll is Scripture as received text, the ribboned book is the handbook
+	// one is taught from, the institution's portico is the teaching office,
+	// the balance is law rather than doctrine, the quill is one author writing
+	// under his own name, and the votive flame is prayer. They replaced six
+	// paintings, which read as pictures to look at while reading a definition
+	// — see `schola-art.ts` on why that was the wrong section for illustration.
+	import Scroll from '@lucide/svelte/icons/scroll';
+	import BookMarked from '@lucide/svelte/icons/book-marked';
+	import Landmark from '@lucide/svelte/icons/landmark';
+	import Scale from '@lucide/svelte/icons/scale';
+	import Feather from '@lucide/svelte/icons/feather';
+	import Flame from '@lucide/svelte/icons/flame';
 
 	const ICONS = {
 		search: Search,
@@ -133,7 +148,13 @@
 		'notebook-pen': NotebookPen,
 		maximize: Maximize,
 		minimize: Minimize,
-		calendar: Calendar
+		calendar: Calendar,
+		scroll: Scroll,
+		'book-marked': BookMarked,
+		landmark: Landmark,
+		scale: Scale,
+		feather: Feather,
+		flame: Flame
 	};
 
 	export type IconName = keyof typeof ICONS;

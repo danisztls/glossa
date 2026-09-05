@@ -546,11 +546,27 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   failed the second; the route is gone and `learning-routes.ts` holds the note.
   It also shipped filtering on `document_kind` alone, which put two Vatican I
   constitutions at the head of it — a `kind` is not a provenance.
-- **The page's ten artworks are public domain and cost one dictionary key.**
+- **The page's artworks are public domain and cost two dictionary keys.**
   A caption is `Artist, Title, year. Institution.`, held in `schola-art.ts`;
   no master is kept, because `assets/README.md`'s URL, SHA-256 and crop box
   re-derive a faithful crop exactly. Only ink on a white sheet may take
-  `--plate-blend`, and `[data-mono]` desaturates all ten.
+  `--plate-blend`, and `[data-mono]` desaturates every one.
+- **A CREDIT IS BEHIND THE CAPTION TRIGGER, NOT SET UNDER THE PICTURE.**
+  `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
+  native popover, `role="note"`, and the line printed unconditionally because
+  a printed page cannot be pressed. Its trigger is the `info` glyph alone, so
+  the `aria-label` is mandatory rather than a courtesy.
+- **"What each of these is" takes ICONS, and took paintings for a day.** That
+  section is six definitions of what authority a shelf carries, read by
+  someone who cannot yet tell a catechism from a council. A painting there is
+  something to look at while reading the sentence; a glyph belongs to the row.
+  Illustration goes above a route, not beside a definition.
+- **The four landing pages are `.landing-column`, not `.content-column`.**
+  `/`, `/bibliotheca`, `/documenta`, `/schola`. `--content-width` is a count
+  of CHARACTERS (`--measure-cpl`, 62.4) and it is the wrong tool for a page
+  made of doors and grids; `layout.css` holds both and the argument. Prose on
+  such a page takes `.landing-measure`, which is the measure without the
+  column. `.index-column`'s 52rem is a table's width and is neither.
 - **The home page's doors mirror the bar's order**, Learn last in both. Two
   lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the

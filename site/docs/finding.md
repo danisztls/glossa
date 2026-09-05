@@ -100,17 +100,35 @@ group is the section §5 actually stops at: not where a work is, but what
 authority it carries — that the Summa is one theologian's book, that the Code is
 law rather than doctrine.
 
-**THE TEN PICTURES COST ONE KEY, because a caption is not a sentence.** Each is
+**THE PICTURES COST TWO KEYS, because a caption is not a sentence.** Each is
 `Artist, Title, year. Institution.` — proper nouns and a date, held beside the
-asset in `schola-art.ts` — and the only interface word in one is "detail".
-Images are `alt=""` with the identification in the caption, `Plate.svelte`'s
-arrangement. They are public-domain works newly cut from Commons scans and no
-master is kept: faithful crops with no retouching, so `assets/README.md`'s
-recorded URL, SHA-256 and crop box reproduce each one exactly. **A colour
-painting must not take `--plate-blend`** — that token is tuned to multiply a
-grey scan's white paper away and turns an oil into mud — and under
-`[data-mono]` all ten are desaturated, because a reader who asked for one grey
-ramp did not ask for four paintings.
+asset in `schola-art.ts` — and the only interface words in the whole set are
+"detail" and the name of the control that shows a credit. Images are `alt=""`
+with the identification in the caption, `Plate.svelte`'s arrangement. They are
+public-domain works newly cut from Commons scans and no master is kept:
+faithful crops with no retouching, so `assets/README.md`'s recorded URL,
+SHA-256 and crop box reproduce each one exactly. **A colour painting must not
+take `--plate-blend`** — that token is tuned to multiply a grey scan's white
+paper away and turns an oil into mud — and under `[data-mono]` every one is
+desaturated, because a reader who asked for one grey ramp did not ask for
+paintings.
+
+**THE CREDIT IS A PRESS AWAY, WHICH IS ALSO WHAT KILLED THE SHELF VIGNETTES.**
+`ArtFigure.svelte` puts the identification behind the same caption trigger a
+Doré plate uses — `AnchoredPanel`, native popover, `role="note"`, printed
+unconditionally because the printed copy is the one whose reader cannot press
+anything — so a banner carries no line of small type under it. The six shelves
+of "What each of these is" had 400px paintings and now have icons: that
+section is the one part of the page that is definition rather than
+illustration, read by someone who does not yet know a catechism from a
+council, and a painting beside a definition is something to look at instead of
+reading it. A glyph belongs to the row. It also took 147 KB out of the build.
+
+**AND THE PAGE IS A LANDING PAGE, LAID OUT AS ONE.** `.landing-column` in
+`layout.css`, shared with `/`, `/bibliotheca` and `/documenta` — all four were
+set in `--content-width`, which is 62.4 CHARACTERS of prose and the wrong
+instrument for a page of banners, grids and a numbered list. The prose that is
+still prose keeps `.landing-measure`.
 
 **Library works only as the SUPERSET, and three umbrella labels failed before
 it.** "Church", "Magisterium" and "Teaching" all failed the same way: Scripture

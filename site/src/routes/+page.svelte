@@ -104,7 +104,7 @@
 	const continuing = $derived(continueRows(positions, (id) => getWork(id)?.type).slice(0, 4));
 </script>
 
-<div class="content-column">
+<div class="landing-column">
 	<!-- The wordmark IS the h1's text — see Wordmark.svelte. `home.title` stays
 	     the plain-text form of the same name, used in every page's <title>. -->
 	<h1 class="site-title"><Wordmark /></h1>

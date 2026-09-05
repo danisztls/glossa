@@ -18,6 +18,43 @@
 }
 
 /*
+ * A LANDING PAGE IS NOT A READING PAGE, and until now the four of them —
+ * `/`, `/bibliotheca`, `/documenta`, `/schola` — were laid out as one.
+ *
+ * `--content-width` is a MEASURE: `--measure-cpl` characters of running prose,
+ * 62.4 of them, and it moves with the reader's font-size setting because the
+ * count of characters is the thing being held. That is exactly right for a
+ * chapter of Genesis and wrong for a page whose content is doors, shelves,
+ * cards and a table — none of which is prose, and all of which were being
+ * squeezed into a column sized for a sentence. A two-column grid of shelves
+ * inside 56rem is two narrow columns; the same grid here is two shelves.
+ *
+ * 72rem, ONE STEP BELOW THE 80rem READING BREAKPOINT and no accident: past
+ * 80rem `.reading-layout` opens its aside, and a landing page that reached
+ * that width would be claiming a page shape it does not have. Below it, this
+ * is the widest a centred block gets on this site.
+ *
+ * A LANDING PAGE STILL HAS PROSE ON IT — a tagline, a note, a shelf's
+ * description — and that prose still wants a measure. It gets one from
+ * `.landing-measure` rather than from the container, because the container is
+ * now sized by the grid: the two are different jobs and were only ever the
+ * same value by accident.
+ *
+ * `.index-column` (52rem, declared three times in three routes) is NOT this
+ * and should not be folded into it. That one is a table whose width is what
+ * its columns need; this one is a page.
+ */
+.landing-column {
+	max-width: 72rem;
+	margin-inline: auto;
+	padding-inline: 1.25rem;
+}
+
+.landing-measure {
+	max-width: 40rem;
+}
+
+/*
  * Reading page with a persistent navigation column on the right.
  *
  * Shared primitive, not per-route CSS, because four reading views want the

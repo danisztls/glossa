@@ -218,9 +218,9 @@
 	<title>{t('nav.library')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="content-column">
+<div class="landing-column">
 	<h1>{t('nav.library')}</h1>
-	<p class="page-tagline">{t('library.landing.tagline')}</p>
+	<p class="page-tagline landing-measure">{t('library.landing.tagline')}</p>
 
 	{#if continuing.length > 0}
 		<section aria-labelledby="continue-heading">

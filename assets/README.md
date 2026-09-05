@@ -64,37 +64,45 @@ crozier, takes the heron's legs and neck, severs the swan's neck and puts holes
 through the geese. The midpoint (≥ 128) removes the feathered halo and keeps
 the drawing.
 
-## `/schola`'s ten works
+## `/schola`'s four banners
 
-Public-domain artworks illustrating the learning portal — one banner over the
-page's title, one over each route, and a square vignette on each shelf. The
-identifications, the licence position and the `paper` flag are in
-`site/src/lib/schola-art.ts`; this section is the derivation.
+Public-domain paintings illustrating the learning portal — one over the page's
+title and one over each route. The identifications, the licence position and
+the `paper` flag are in `site/src/lib/schola-art.ts`; this section is the
+derivation.
+
+**Six square vignettes were derived the same way and are no longer here.** They
+sat on the shelves of "What each of these is", which is the one section of that
+page that is not illustration but definition, and a painting there is something
+to look at while reading the sentence. They are `Icon.svelte` glyphs now.
+The six rows below are kept rather than deleted: the derivation is the only
+record of what those files were, the crop boxes were the expensive part, and
+somebody restoring one should not have to find the scans again.
 
 **No masters are kept, and that is the difference from the drollery above.**
 These are faithful crops — no retouching, nothing invented — so the two commands
 below reproduce each asset byte for byte from a URL. Keeping the originals would
-put 77 MB of JPEG in a public repository to save a download. The SHA-256 is of
+put tens of megabytes of JPEG in a public repository to save a download. The SHA-256 is of
 the file as fetched from Commons, so a scan replaced upstream is detected rather
 than silently re-cropped.
 
 Fetch (`{name}.jpg`, from `https://upload.wikimedia.org/wikipedia/commons/…`):
 
-| name              | Commons file                                                                                 | px         | sha256 (first 16)  |
-| ----------------- | -------------------------------------------------------------------------------------------- | ---------- | ------------------ |
-| hero-jerome       | `Antonello da Messina - St Jerome in his study - National Gallery London.jpg`                | 4731×6000  | `d2a50c625ee24fa0` |
-| pillars-disputa   | `Sanzio, Raffaello - Disputa del Sacramento - 1508-1511 - hi res.jpg`                        | 1845×1459  | `aa68e33c3f09d905` |
-| gospels-preaching | `Christ Preaching, called La Petite Tombe MET DP832290.jpg`                                  | 3594×2687  | `75563743cc71e5f3` |
-| social-gleaners   | `Jean-François Millet - Gleaners - Google Art Project 2.jpg`                                 | 5354×4006  | `6abe60efbda2dbdb` |
-| shelf-scripture   | `The Inspiration of Saint Matthew-Caravaggio (1602).jpg`                                     | 6911×10816 | `91ab56aa9ff23b50` |
-| shelf-catechism   | `Albrecht Dürer - Jesus among the Doctors - Google Art Project.jpg`                          | 4338×3480  | `a1bdaa3136fa9c27` |
-| shelf-magisterium | `Concilio Trento Museo Buonconsiglio.jpg`                                                    | 4056×3340  | `c6e92776016982e9` |
-| shelf-law         | `Gregory IX approving decretals Raphael Rooms.jpg`                                           | 2008×2999  | `8f5d7191b70db28e` |
-| shelf-theologian  | `Le Triomphe de saint Thomas d'Aquin - Benozzo Gozzoli - Musée du Louvre … - avec cadre.jpg` | 3606×9403  | `77ce2e5c3761f557` |
-| shelf-prayers     | `Albrecht Dürer - Praying Hands, 1508 - Google Art Project.jpg`                              | 2680×3900  | `e406c782ee1b6dac` |
+| name                  | Commons file                                                                                 | px         | sha256 (first 16)  |
+| --------------------- | -------------------------------------------------------------------------------------------- | ---------- | ------------------ |
+| hero-jerome           | `Antonello da Messina - St Jerome in his study - National Gallery London.jpg`                | 4731×6000  | `d2a50c625ee24fa0` |
+| pillars-disputa       | `Sanzio, Raffaello - Disputa del Sacramento - 1508-1511 - hi res.jpg`                        | 1845×1459  | `aa68e33c3f09d905` |
+| gospels-preaching     | `Christ Preaching, called La Petite Tombe MET DP832290.jpg`                                  | 3594×2687  | `75563743cc71e5f3` |
+| social-gleaners       | `Jean-François Millet - Gleaners - Google Art Project 2.jpg`                                 | 5354×4006  | `6abe60efbda2dbdb` |
+| ~~shelf-scripture~~   | `The Inspiration of Saint Matthew-Caravaggio (1602).jpg`                                     | 6911×10816 | `91ab56aa9ff23b50` |
+| ~~shelf-catechism~~   | `Albrecht Dürer - Jesus among the Doctors - Google Art Project.jpg`                          | 4338×3480  | `a1bdaa3136fa9c27` |
+| ~~shelf-magisterium~~ | `Concilio Trento Museo Buonconsiglio.jpg`                                                    | 4056×3340  | `c6e92776016982e9` |
+| ~~shelf-law~~         | `Gregory IX approving decretals Raphael Rooms.jpg`                                           | 2008×2999  | `8f5d7191b70db28e` |
+| ~~shelf-theologian~~  | `Le Triomphe de saint Thomas d'Aquin - Benozzo Gozzoli - Musée du Louvre … - avec cadre.jpg` | 3606×9403  | `77ce2e5c3761f557` |
+| ~~shelf-prayers~~     | `Albrecht Dürer - Praying Hands, 1508 - Google Art Project.jpg`                              | 2680×3900  | `e406c782ee1b6dac` |
 
 Crop and encode. The crop box is `WxH+X+Y` on the master; banners are 2.5:1 at
-1800px and vignettes square at 400px. **The boxes were chosen by eye and are
+1800px and the withdrawn vignettes were square at 400px. **The boxes were chosen by eye and are
 the only judgement in the derivation** — every one of them was got wrong at
 least once and corrected against the output, so change one only by looking at
 what comes out: the first hero band landed on the shelves above Jerome, and the
@@ -105,18 +113,18 @@ magick "$master" -crop "$box" +repage -resize "${W}x${H}!" out.png
 avifenc -q 65 -s 0 -y 420 --jobs all out.png "site/src/lib/assets/schola/$name.avif"
 ```
 
-| name              | crop box             | out      |
-| ----------------- | -------------------- | -------- |
-| hero-jerome       | `4731x1892+0+2050`   | 1800×720 |
-| pillars-disputa   | `1845x738+0+680`     | 1800×720 |
-| gospels-preaching | `3300x1320+150+560`  | 1800×720 |
-| social-gleaners   | `5354x2142+0+1250`   | 1800×720 |
-| shelf-scripture   | `6911x6911+0+400`    | 400×400  |
-| shelf-catechism   | `3480x3480+429+0`    | 400×400  |
-| shelf-magisterium | `3340x3340+358+0`    | 400×400  |
-| shelf-law         | `2008x2008+0+500`    | 400×400  |
-| shelf-theologian  | `3360x3360+123+3150` | 400×400  |
-| shelf-prayers     | `2400x2400+240+600`  | 400×400  |
+| name                  | crop box             | out      |
+| --------------------- | -------------------- | -------- |
+| hero-jerome           | `4731x1892+0+2050`   | 1800×720 |
+| pillars-disputa       | `1845x738+0+680`     | 1800×720 |
+| gospels-preaching     | `3300x1320+150+560`  | 1800×720 |
+| social-gleaners       | `5354x2142+0+1250`   | 1800×720 |
+| ~~shelf-scripture~~   | `6911x6911+0+400`    | 400×400  |
+| ~~shelf-catechism~~   | `3480x3480+429+0`    | 400×400  |
+| ~~shelf-magisterium~~ | `3340x3340+358+0`    | 400×400  |
+| ~~shelf-law~~         | `2008x2008+0+500`    | 400×400  |
+| ~~shelf-theologian~~  | `3360x3360+123+3150` | 400×400  |
+| ~~shelf-prayers~~     | `2400x2400+240+600`  | 400×400  |
 
 **`gospels-preaching` is the one exception to the encoder line**: it is a
 monochrome etching, so it is converted with `-colorspace Gray` and encoded
