@@ -283,6 +283,18 @@ export const pt: Dictionary = {
 		'O texto nunca é abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes — uma palavra em falta, uma referência truncada, marcação que engoliu um parágrafo — sempre no sentido do que a própria fonte imprime, nunca no sentido do que julgamos que deveria dizer.',
 	'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
 	'colophon.countDocuments': 'documentos do Magist\u00e9rio',
+	// Operative rather than descriptive, like `whatThisIsStanding` and
+	// `copyrightBody3`: this is the notice the LGPD argument in
+	// site/docs/usage.md rests on, so a loose line here misstates what the site
+	// does rather than merely reading oddly. Terms are this dictionary's own —
+	// 'código de terceiros' and 'utilização' from `pointNoTracking`.
+	'colophon.privacyTitle': 'Privacidade',
+	'colophon.privacyBody1':
+		'Sem contas, sem cookies, sem publicidade, sem código de terceiros. Nada aqui o segue para fora deste site.',
+	'colophon.privacyBody2':
+		'Contamos, isso sim, como o site é utilizado: uma medição por visita, com cada campo em intervalos e não em valores — quanto tempo ficou, quantas vezes já nos visitou, que obras abriu. O país é contado à parte, sem nada que o ligue ao resto. Descreve uma visita, não um visitante, e é conservada durante {days} dias.',
+	'colophon.privacyBody3':
+		'Nunca são enviados: o que escreve na caixa de pesquisa, que passagem tinha aberta, ou qualquer coisa que permita reconhecer de novo o seu dispositivo. As suas definições, marcadores e textos descarregados ficam no seu dispositivo.',
 	'colophon.copyrightTitle': 'Direitos de autor',
 	'colophon.copyrightBody1':
 		'O Catecismo, o Compêndio e os documentos do Magistério pertencem aos seus titulares de direitos — principalmente a Libreria Editrice Vaticana e o Dicastério para a Comunicação.',
