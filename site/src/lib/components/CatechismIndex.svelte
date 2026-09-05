@@ -125,10 +125,12 @@
 	<StructureIndex {tree} {lang} {links} {workColumns} noCounterpartLabel={t('ccc.noCounterpart')} />
 
 	<!--
-		THE REST OF THE SHELF, which this page is the door to since 2026-09-04.
-		The nav bar's first item points here and is labelled "Learn", so what a
-		reader reaches through it has to be everything on the shelf and not the
-		Catechism alone.
+		THE REST OF THE SHELF. The bar's "Learn" pointed here for one day, so
+		this section existed to make the shelf reachable through it; it points
+		at `/schola` now, and this section stays because a reader already
+		looking at the Catechism's index should not have to go back out to the
+		portal to find the shorter book beside it. Its heading is the link, so
+		the word "Learn" names the page that is actually called that.
 
 		TWO ROWS AND NOT TWO MORE INDICES, deliberately. The table above is
 		already the longest thing on the site's chrome; the Compendium's own
@@ -148,7 +150,9 @@
 		titles, which is the whole price of putting them one click apart.
 	-->
 	<nav class="shelf" aria-labelledby="shelf-heading">
-		<h2 id="shelf-heading" class="shelf-heading">{t('nav.learn')}</h2>
+		<h2 id="shelf-heading" class="shelf-heading">
+			<a href="/schola">{t('nav.learn')}</a>
+		</h2>
 		<ul>
 			<li>
 				<a href="/catechismus/compendium">{t('compendium.landing.title')}</a>

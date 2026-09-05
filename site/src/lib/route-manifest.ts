@@ -99,6 +99,15 @@ export const CHROME_PATHS = [
  * `/ius-canonicum` was missing for a third reason — nobody added it — and its
  * `canonLaw.landing.*` keys were already in all 37, which is why it joined the
  * list above on the day the omission was found and these two did not.
+ *
+ * **`/schola` is the third, and it is the one the rule was worth having for.**
+ * The learning portal is addressed to the reader who has no vocabulary yet
+ * (`docs/research/audiences.md` §5), which is the reader least able to make
+ * anything of an English page — so a cluster claiming it is written in 37
+ * languages would be false about exactly the page where being false costs
+ * most. Its 19 `schola.*` keys are in `en`. What keeps that cost small is that
+ * the page names no work, book or division of its own: those come from the
+ * corpus, already in the reader's content language.
  */
 
 const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);
@@ -201,6 +210,12 @@ const STATIC_PATHS = new Set([
 	'/doctores',
 	'/doctores/summa',
 	'/preces',
+	// The learning portal, added 2026-09-04, and the door the bar's "Learn"
+	// opens since that day — it pointed at `/catechismus` before, which is a
+	// table of divisions and so unusable by a reader who cannot name one
+	// (`docs/research/audiences.md` §5). It holds no corpus text: every step
+	// of every route on it is a link, titled by the work it names.
+	'/schola',
 	// The reader's own bookmark library. Static and corpus-free, like
 	// `/colophon`: what it lists lives in this browser's localStorage, so
 	// there is nothing for the generated manifest to validate against.

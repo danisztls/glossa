@@ -180,6 +180,16 @@ plus a `CHROME_KEYS` entry on the day its strings are translated.
 on the page the interface, and is the interface actually written. The first was
 always the test; the second is what the two omissions taught.
 
+**`/schola` is the third page held out, and it is the one that shows the rule
+is not a technicality.** The learning portal (2026-09-04) is addressed to the
+reader with no vocabulary yet — `audiences.md` §5, who does not know the
+Compendium is a shorter book — which is the reader least able to make anything
+of an English page, so claiming it in 37 languages would be false exactly where
+being false costs most. Its 19 `schola.*` keys are in `en`. What keeps that
+bill small is that the page names no work, book or division in its own words:
+every step of every route is titled from the corpus, already in the reader's
+content language.
+
 ## Which edition a reader gets
 
 **Written down, never derived from sort order.** `PREFERRED_EDITION` names it

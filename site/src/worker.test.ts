@@ -134,6 +134,10 @@ describe('navigation', () => {
 			'/calendarium',
 			'/ius-canonicum',
 			'/catechismus/compendium',
+			// The learning portal, on the same terms: in `STATIC_PATHS` only,
+			// so its bare address must answer 200 while no prefixed form of it
+			// exists yet.
+			'/schola',
 			'/scriptura/genesis/1',
 			'/scriptura/genesis/0',
 			'/catechismus/330',

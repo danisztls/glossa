@@ -62,6 +62,56 @@ export const en: Dictionary = {
 	// record.
 	'library.landing.tagline':
 		'The whole corpus, shelf by shelf — with where you left off and what you have marked.',
+
+	// --- `/schola`, the learning portal (`routes/schola/`) -------------------
+	//
+	// NINETEEN KEYS AND NOT ONE OF THEM IS A STEP OF A ROUTE. Every book, part
+	// and document named on that page is titled by the corpus itself, in the
+	// reader's own content language; what is written here is the page's own
+	// name, the name of each route, and the sentence saying which document
+	// states that route's order. `learning-routes.ts` holds the rule.
+	//
+	// Until all thirty-seven dictionaries carry them, `/schola` stays out of
+	// `CHROME_PATHS` — see `route-manifest.ts`, which holds `/calendarium` and
+	// `/catechismus/compendium` out by the same gate.
+	'schola.landing.title': 'Where to begin',
+	'schola.landing.tagline':
+		'What each of these books is, and orders for reading them that the Church has set out.',
+	// THE ONE PLACE THIS SITE SPEAKS FOR ITSELF, and the attribution below it
+	// is not decoration: everything else on the page reports what a document
+	// says, and this recommends. `docs/writing-descriptions.md` forbids exactly
+	// that of the descriptions, so the departure is marked where a reader can
+	// see it rather than left to be inferred.
+	'schola.start.body':
+		'If you are new to this, begin with the Compendium of the Catechism: the same teaching, much shorter, written as questions and answers.',
+	'schola.start.attribution': 'A note from this site, not from any of the works below',
+	'schola.route.pillars.title': 'The four pillars',
+	'schola.route.pillars.source': 'The plan the Catechism sets out for itself',
+	'schola.route.gospels.title': 'The Gospels, and then Acts',
+	'schola.route.gospels.source':
+		'The Council urges frequent reading of Scripture; the order here is the canon’s own',
+	'schola.route.council.title': 'The Second Vatican Council',
+	'schola.route.council.source':
+		'The Council’s own three kinds of document: constitutions, then decrees, then declarations',
+	'schola.route.social.title': 'The Church’s social teaching',
+	'schola.route.social.source': 'The Compendium’s own arrangement, part by part',
+	// The section `docs/research/audiences.md` §5 actually stops at: not
+	// where a work is, but what KIND of thing it is and what authority it
+	// carries. Its group headings and every work's description under them are
+	// keys that already exist in all thirty-seven dictionaries; only these
+	// seven sentences are new.
+	'schola.kinds.heading': 'What each of these is',
+	'schola.kind.scripture':
+		'The word of God as the Church receives it. Everything else here is read in its light.',
+	'schola.kind.catechism':
+		'A summary of what the Church believes, published at two lengths. Not itself a source: it gathers Scripture, the Fathers, the liturgy and the Magisterium.',
+	'schola.kind.magisterium':
+		'Acts of the Church’s teaching office — councils and popes — each written at a particular moment and about a particular question.',
+	'schola.kind.law':
+		'Law rather than doctrine. It states what the Church requires, and it is amended.',
+	'schola.kind.theologian':
+		'The work of one theologian. It carries no official authority, however great its author.',
+	'schola.kind.prayers': 'The words the Church prays, with the Latin beside them.',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.

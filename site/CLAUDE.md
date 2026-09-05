@@ -527,13 +527,22 @@ npm run deploy      # build -> preflight -> wrangler deploy
 
 Rationale in `site/docs/finding.md`; what must be true before you touch it:
 
-- **`NAV_ITEMS` names doors, not works** — Learn, Bible, Prayers, Library,
-  Calendar. A newly ingested work goes on a shelf in `/bibliotheca` and,
-  where it belongs there, under `/catechismus`; it does **not** get a bar
-  entry. The bar was one item per work until 2026-09-04 and had reached seven.
-- **`Learn` points at `/catechismus` and no route moved.** Display label and
-  canonical route are independent here and always were — the bar has said
-  "Magisterium" over `/documenta` from the beginning.
+- **`NAV_ITEMS` names doors, not works** — Bible, Prayers, Library, Calendar,
+  Learn. A newly ingested work goes on a shelf in `/bibliotheca` and, where it
+  belongs there, on a route in `/schola`; it does **not** get a bar entry. The
+  bar was one item per work until 2026-09-04 and had reached seven.
+- **`Learn` names `/schola`, a portal, and not the Catechism.** It pointed at
+  `/catechismus` for one day: a table of divisions is unusable by the reader
+  the word was chosen for, who cannot yet name a part (`audiences.md` §5). The
+  Catechism is the one work with no bar door, which is why `isActive` lights
+  nothing on `/catechismus` — correctly.
+- **`/schola` reports orders and never invents one.** Each route cites the
+  document in this corpus that states it (`learning-routes.ts`); the one
+  paragraph in the site's own voice carries `schola.start.attribution` on the
+  page, because `docs/writing-descriptions.md` forbids recommending and this
+  recommends. A second such paragraph needs the same mark or must not exist.
+- **The home page's doors mirror the bar's order**, Learn last in both. Two
+  lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library that held only what the bar left out is
   a leftovers bin, and the label stops meaning anything.
@@ -655,9 +664,12 @@ than remembering to add it to a list.**
 
 **A page joins `CHROME_PATHS` only when its own title and description strings
 exist in EVERY interface language**, which is a translation gate and not a
-routing one — see `site/docs/addresses.md` §Two tables. `/calendarium` and
-`/catechismus/compendium` are both held out by it today and are both in
-`STATIC_PATHS`, so both answer 200 and are indexable at their bare address.
+routing one — see `site/docs/addresses.md` §Two tables. `/calendarium`,
+`/catechismus/compendium` and `/schola` are all held out by it today and are
+all in `STATIC_PATHS`, so each answers 200 and is indexable at its bare
+address. `/schola` is the one worth remembering: it is written FOR the reader
+with no vocabulary, so a cluster claiming it in 37 languages would be false
+where being false costs most.
 
 **A cluster is thirty-five URLs, and the unprefixed one is not the English
 page.** One prefixed member per interface language plus the bare path, which
