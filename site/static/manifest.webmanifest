@@ -10,6 +10,14 @@
 	"background_color": "#ffffff",
 	"theme_color": "#f6f5f1",
 	"lang": "en",
+	"$comment_categories": "Play and the desktop app stores read these; nothing on the web does.",
+	"categories": ["books", "education"],
+	"$comment_shortcuts": "Named in Latin because a shortcut label is ONE static string and the interface has 37 languages — there is no key to translate it by. Latin is the language the canonical reader URLs are already in (site/CLAUDE.md), so the label and the address it opens agree. /doctores is deliberately absent for the same reason it is absent from the nav: the Summa awaits a quality pass.",
+	"shortcuts": [
+		{ "name": "Scriptura", "url": "/scriptura" },
+		{ "name": "Catechismus", "url": "/catechismus" },
+		{ "name": "Calendarium", "url": "/calendarium" }
+	],
 	"icons": [
 		{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
 		{ "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
@@ -18,6 +26,13 @@
 			"sizes": "512x512",
 			"type": "image/png",
 			"purpose": "maskable"
+		},
+		{
+			"$comment": "Android 13+ themed icons. A SEPARATE entry, never a purpose merged into the ones above: a monochrome asset is an alpha silhouette the launcher tints itself, so anything declaring it as also \"any\" would ship a black-on-black icon to every surface that took the first purpose it understood. Generated from src/lib/assets/favicon.svg with both fills flattened, inset to match icon-maskable-512.png exactly (245x266 at +133,+123).",
+			"src": "/icons/icon-monochrome-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "monochrome"
 		}
 	]
 }
