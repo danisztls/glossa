@@ -166,7 +166,7 @@ Canonical reader URLs are Latin and do not vary with interface language:
 is replaced in the bar with the bare path by
 `routes/[uilang=uilang]/[...rest]/+page.ts`. It canonicalizes to the bare
 path, is in no sitemap and declares no alternates; `parseLangEntry` in
-`route-manifest.ts` is the edge half. The nine `CHROME_PATHS` are unchanged
+`route-manifest.ts` is the edge half. The `CHROME_PATHS` are unchanged by it
 (published prefix, self-canonicalizing, `hreflang` cluster), so
 `parseChromePath` is tried first everywhere. Two traps: `parseLangEntry` must
 never be `noindex` (a `noindex` beside a canonical naming another URL can

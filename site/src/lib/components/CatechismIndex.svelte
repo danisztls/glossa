@@ -1,7 +1,12 @@
 <script lang="ts">
 	/**
-	 * The index of the Catechism and of its Compendium, and the door the nav
-	 * bar's "Learn" opens.
+	 * The index of the Catechism and of its Compendium.
+	 *
+	 * IT IS NOT WHAT THE BAR'S "Learn" OPENS, though it was for one day
+	 * (2026-09-04): that word names `/schola` now, because a table of divisions
+	 * is exactly right for a reader who knows the outline and useless to the
+	 * one the label was chosen for. This page is reached from there, from
+	 * Library, and from the jump box.
 	 *
 	 * ONE PAGE FOR BOTH WORKS, because they are one outline published at two
 	 * lengths. `toc-pairing.ts` establishes that structurally (every part,
