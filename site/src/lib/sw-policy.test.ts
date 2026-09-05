@@ -501,6 +501,44 @@ describe('planWaves', () => {
 		}
 	});
 
+	/**
+	 * The zoom renditions are a SECOND shelf, and the two properties asserted
+	 * here are what that is worth.
+	 *
+	 * `plate-detail` is the same 241 pictures at `PLATE_DETAIL_WIDTH`, several
+	 * times the bytes of both served renditions together. Mapped into
+	 * `illustrations` it would silently multiply the one number a reader reads
+	 * before pressing that button, and leave no way to take the pictures
+	 * without them — so what is asserted is not only that it has a wave, but
+	 * that the wave it has is not the other one. And like the pictures it
+	 * enlarges, none of it may be taken uninvited.
+	 */
+	it('puts the zoom renditions on a shelf of their own, also uninvited', () => {
+		const served = entry({
+			workId: 'dore.tours',
+			kind: 'plate-image',
+			lang: '',
+			path: '/OT-001-1200.avif'
+		});
+		const zoom = entry({
+			workId: 'dore.tours',
+			kind: 'plate-detail',
+			lang: '',
+			path: '/OT-001-2000.avif'
+		});
+
+		const waves = planWaves([served, zoom], { langs: ['en'] });
+		const illustrations = waves.find((w) => w.id === 'illustrations')!;
+		const detail = waves.find((w) => w.id === 'illustrations-detail')!;
+
+		expect(illustrations.assets.map((a) => a.path)).toEqual(['/OT-001-1200.avif']);
+		expect(detail.assets.map((a) => a.path)).toEqual(['/OT-001-2000.avif']);
+		expect(detail.automatic).toBe(false);
+		expect(detail.autoAssets).toEqual([]);
+		expect(detail.autoBytes).toBe(0);
+		expect(waves.find((w) => w.id === 'other')!.assets).toEqual([]);
+	});
+
 	/** The reader's own languages first: the plate list is enrichment and must
 	 *  not push the text of the language they read behind it. */
 	it('sorts a languageless collection behind the reader’s own languages', () => {

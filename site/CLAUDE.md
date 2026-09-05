@@ -969,9 +969,16 @@ consumer `planWaves`' byte counts were written for and had never had.
   now pushes each image into `content-manifest.json` (`kind: 'plate-image'`,
   `relPath` under `plates/`) so the panel can price them, and
   `corpus-assets.ts` resolves those rows through `plateUrl` rather than the
-  content glob — widening that glob would put 482 hashed URLs in the boot
-  chunk. `usage.ts` excludes them from `measureLibrary`'s denominator, or the
-  `full` bucket would be unreachable.
+  content glob — widening that glob would put a hashed URL per rendition of
+  every plate in the boot chunk. `usage.ts` excludes them from
+  `measureLibrary`'s denominator, or the `full` bucket would be unreachable.
+- **The zoom renditions are a SECOND wave (`illustrations-detail`), not more of
+  the first** (2026-09-05). `PLATE_DETAIL_WIDTH` is 2000px and costs several
+  times both served widths together, so folding `kind: 'plate-detail'` into
+  `illustrations` would multiply the one number a reader reads before pressing
+  a button and leave no way to take the pictures without them. Same exclusions
+  as `plate-image` everywhere: `measureLibrary`'s denominator, the content-size
+  ceiling. See `docs/reading.md` §Plates.
 - **`CACHE_WAVE` accepts `wave: 'all'`** — every wave, on the explicit
   (ungated, whole-wave) side of the branch, reporting progress wave by wave.
   It is a `WaveRequest` and not a `WaveId` precisely so it cannot land in

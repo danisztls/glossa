@@ -183,18 +183,42 @@ the source prints this, so the corpus keeps it.
 **A plate opens over the page, and the argument is arithmetic rather than
 taste.** A phone is served the 800px rendition for a 390px slot, so the reader
 is already holding twice the detail on their screen with no way to reach it.
-The viewer shows the file the page already downloaded, read off `currentSrc`:
-no request, no wait, no spinner, and it works offline exactly where the plate
-did.
+Opening the viewer shows the file the page already downloaded, read off
+`currentSrc`: no request, no wait, no spinner, and it works offline exactly
+where the plate did.
 
-**A detail rendition is a separate decision and is deliberately not taken** —
-1800–2000px from the masters is ~140 MB on top of a 110 MB deploy, and
-per-reader it is free only until someone taps.
+**Zooming buys a bigger file, and only zooming does** (2026-09-05).
+`PLATE_DETAIL_WIDTH` is 2000px — the masters' own floor, since the narrowest
+engraving crops to 2248px — and it is deliberately not in `PLATE_WIDTHS`, so no
+`srcset` can offer it and no phone can be handed 1.2 MB to draw two inches of
+reading column. It is fetched on the first zoom of a viewer and never on open.
 
-**Two states, not a continuous zoom.** Fit, and the file's own natural width,
-which is the point past which the browser invents pixels. It is offered only
-where there is headroom to gain: a control that magnifies by 4% reads as broken
-rather than as finished.
+**The zoom does not wait for it.** The stage goes to 2000px the moment the
+gesture lands, drawing the file in hand upscaled, and swaps in the real one
+when it decodes — so the arrival sharpens rather than moves, and the point the
+reader aimed at stays put. If it never arrives (offline, or a corpus derived
+before the width existed) the ceiling falls back to the loaded file's own
+natural width, which is exactly what this view did before.
+
+**Two states, not a continuous zoom.** Fit, and the best available file's own
+natural width, which is the point past which the browser invents pixels with
+nothing coming to replace them. It is offered only where there is headroom to
+gain — and that test is why the rendition exists: fit on a tall desktop is
+~1155px of a 1200px file, so the control magnified by 4%, read as broken, and
+was not drawn at all. Desktop readers had no zoom. At 2000 they have 1.7x.
+
+**The engraver's quality figure stops descending here.** The ladder softens as
+width grows (q60 at 800, q58 at 1200) because artifacts shrink on screen with
+the rendition; the zoom rendition is the one file drawn at 1:1, where that
+argument is exactly reversed, so it takes q58 again rather than less. Measured
+against its own render it reaches SSIM 0.989–0.994 where the 1200 reaches
+0.967–0.984.
+
+**It is a second offline shelf, not more of the first.** `illustrations-detail`
+is priced and offered beside `illustrations` rather than folded into it: the
+zoom renditions cost several times the two a chapter draws, and a reader who
+wants the pictures on a flight is not necessarily a reader who expects to zoom
+into them there.
 
 **It is the one modal on a site whose whole apparatus vocabulary is popovers.**
 A citation floats beside the text because it glosses it; the picture IS the

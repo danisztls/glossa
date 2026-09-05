@@ -63,6 +63,7 @@ export const ru: Dictionary = {
 	'library.lede': 'Тексты, сохранённые на этом устройстве, открываются вообще без сети.',
 	'library.essentials': 'Молитвы и Компендиум',
 	'library.illustrations': 'Библия (иллюстрации)',
+	'library.illustrationsDetail': 'Библия (иллюстрации, высокое разрешение)',
 	'library.other': 'Другие тексты',
 	'library.everything': 'Всё',
 	'library.downloadAll': 'Загрузить всё',

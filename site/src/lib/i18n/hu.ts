@@ -62,6 +62,7 @@ export const hu: Dictionary = {
 	'library.lede': 'Az ezen az eszközön tárolt szövegek hálózat nélkül is megnyílnak.',
 	'library.essentials': 'Imádságok és Kompendium',
 	'library.illustrations': 'Biblia (illusztrációk)',
+	'library.illustrationsDetail': 'Biblia (illusztrációk, nagy felbontás)',
 	'library.other': 'További szövegek',
 	'library.everything': 'Minden',
 	'library.downloadAll': 'Összes letöltése',

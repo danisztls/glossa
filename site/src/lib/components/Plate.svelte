@@ -56,9 +56,11 @@
 	 * phone, where `srcset` has handed the browser the 800px rendition — so
 	 * the reader is holding roughly twice the detail they can see, and Doré's
 	 * hatching is what that detail is made of. `PlateViewer` is a full-viewport
-	 * `<dialog>` over the SAME file, never a larger one; its docblock carries
-	 * the rest of the argument, including why it is a modal where every other
-	 * floating thing here is a popover.
+	 * `<dialog>` over that SAME file: opening it fetches nothing, and only a
+	 * second gesture — the zoom — asks for the 2000px rendition, which is in no
+	 * `srcset` so that nothing else can. Its docblock carries the rest of the
+	 * argument, including why it is a modal where every other floating thing
+	 * here is a popover.
 	 *
 	 * `t` ARRIVES WITH IT, and the note above about this component needing no
 	 * language still holds where it was aimed: the CREDIT is composed by the
@@ -113,8 +115,9 @@
 	 * `viewerSrc` IS READ OFF THE INLINE IMAGE at the moment of the click,
 	 * never rebuilt: `currentSrc` is the rendition the browser actually chose
 	 * out of the `srcset` for this viewport and this pixel ratio, and it is
-	 * therefore the one file already in the cache. See `PlateViewer`'s
-	 * docblock for why the viewer refuses to fetch a bigger one.
+	 * therefore the one file already in the cache — which is what makes
+	 * opening the viewer free. See `PlateViewer`'s docblock for what the zoom
+	 * then does with it.
 	 */
 	let imgEl: HTMLImageElement | undefined = $state();
 	let openerEl: HTMLButtonElement | undefined = $state();

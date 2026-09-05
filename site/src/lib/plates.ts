@@ -3,13 +3,13 @@
  * Bible reader.
  *
  * ONE MODULE READ BY BOTH ENDS, deliberately, the way `usage-schema.ts` is:
- * `scripts/sync-corpus.mjs` imports `PLATE_WIDTHS` to decide which images to
- * copy and `PLATE_INTRINSIC_WIDTH` to decide which dimensions to record, and
- * the page below reads the same two constants to build the `srcset` and the
- * `width`/`height` attributes. A second copy would drift in the direction
- * that fails quietly — the sync copying widths the page never asks for, or
- * the page asking for a width the sync never copied, which is a 404 per plate
- * and no error anywhere.
+ * `scripts/sync-corpus.mjs` imports `PLATE_WIDTHS` and `PLATE_DETAIL_WIDTH` to
+ * decide which images to copy and `PLATE_INTRINSIC_WIDTH` to decide which
+ * dimensions to record, and the page below reads the same constants to build
+ * the `srcset`, the `width`/`height` attributes and the viewer's zoom. A
+ * second copy would drift in the direction that fails quietly — the sync
+ * copying widths the page never asks for, or the page asking for a width the
+ * sync never copied, which is a 404 per plate and no error anywhere.
  *
  * WHY THE PLATES ARE ANCHORED TO A VERSE and not given a page or a gallery of
  * their own: 241 plates over 195 chapters is 14.6% coverage, so a per-chapter
@@ -32,8 +32,33 @@ export const PLATE_WIDTHS = [800, 1200] as const;
 
 /** The rendition whose pixel dimensions are recorded in the content file.
  *  All renditions of a plate share an aspect ratio, so one pair is enough to
- *  reserve the right space; the largest is used because it is exact. */
+ *  reserve the right space; the largest of the SERVED widths is used because
+ *  it is exact. */
 export const PLATE_INTRINSIC_WIDTH = 1200;
+
+/**
+ * The rendition the viewer zooms into, and the reason it is a constant of its
+ * own rather than a third entry in `PLATE_WIDTHS`.
+ *
+ * A `srcset` IS A MENU THE BROWSER ORDERS FROM, and it orders by device pixels.
+ * Put 2000 in that list and a phone at 3x asks for it to fill a 390px slot —
+ * 1.2 MB to draw an engraving two inches wide, on the connection least able to
+ * afford it, before the reader has expressed any interest in the picture at
+ * all. The whole point of this width is that it is fetched only by a reader
+ * who has opened the viewer AND asked to zoom. So it is deliberately not in
+ * the ladder, and `plateSrcset` cannot reach it.
+ *
+ * WHY 2000. It is the masters' own floor: the narrowest engraving in the set
+ * crops to 2248px, so every plate downscales into this and none is invented.
+ * What it buys is a real magnification where there was almost none — the
+ * viewer fits a plate to about 1155px on a tall desktop, so zoom was worth
+ * 1.04x there and the control was not drawn at all. See `PlateViewer`.
+ *
+ * The height is not recorded and does not need to be: every rendition of a
+ * plate shares its aspect ratio, and the viewer already has that from
+ * `plate.width / plate.height`.
+ */
+export const PLATE_DETAIL_WIDTH = 2000;
 
 /**
  * How wide the plate is drawn, as the browser should assume before layout.

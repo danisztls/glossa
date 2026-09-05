@@ -208,8 +208,9 @@ class Stage:
     #: that wrote outside these would be measured as writing nothing.
     outputs: tuple[str, ...] = ()
     #: Dropped by --no-images. Only dore has one, and only because its
-    #: --derive re-encodes 482 AVIFs from 241 masters and takes minutes where
-    #: every other stage takes seconds.
+    #: --derive re-encodes three renditions of each of 241 masters -- the two
+    #: a chapter draws and the one the viewer zooms into -- and takes tens of
+    #: minutes where every other stage takes seconds.
     heavy: tuple[str, ...] = field(default_factory=tuple)
     #: Stage names whose OUTPUT this one reads. Empty for all but `haydock`;
     #: see WHY THE STAGES CAN OVERLAP above for why this had to exist at all,
@@ -753,8 +754,8 @@ def main() -> int:
         "--no-images",
         action="store_true",
         help="run dore.py without --derive: plates.json in under a second "
-        "instead of a re-encode of 482 AVIFs, which is what you want when "
-        "images/ is already there",
+        "instead of a re-encode of every rendition of every plate, which is "
+        "what you want when images/ is already there",
     )
     ap.add_argument(
         "--changed-only",

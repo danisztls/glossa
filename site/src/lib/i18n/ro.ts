@@ -62,6 +62,7 @@ export const ro: Dictionary = {
 	'library.lede': 'Textele păstrate pe acest dispozitiv se deschid fără nicio rețea.',
 	'library.essentials': 'Rugăciuni și Compendiu',
 	'library.illustrations': 'Biblia (ilustrații)',
+	'library.illustrationsDetail': 'Biblia (ilustrații, rezoluție înaltă)',
 	'library.other': 'Alte texte',
 	'library.everything': 'Tot',
 	'library.downloadAll': 'Descarcă tot',

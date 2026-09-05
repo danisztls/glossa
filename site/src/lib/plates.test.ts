@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS, placePlates, plateImageName } from './plates';
+import {
+	PLATE_DETAIL_WIDTH,
+	PLATE_INTRINSIC_WIDTH,
+	PLATE_WIDTHS,
+	placePlates,
+	plateImageName
+} from './plates';
 import type { Plate } from './plates';
 
 function plate(id: string, verse: number | null): Plate {
@@ -61,5 +67,22 @@ describe('the image vocabulary shared with the sync', () => {
 	 *  rendition has to be one the sync actually copies. */
 	it('records dimensions for a width it emits', () => {
 		expect(PLATE_WIDTHS).toContain(PLATE_INTRINSIC_WIDTH);
+	});
+
+	/**
+	 * THE ONE PROPERTY THAT MAKES THE ZOOM RENDITION AFFORDABLE, and it is one
+	 * word wide. A `srcset` is a menu the browser orders from by device pixels:
+	 * with 2000 in `PLATE_WIDTHS`, `plateSrcset` offers it and a phone at 3x
+	 * takes it — over a megabyte to draw an engraving two inches down a reading
+	 * column, before anyone has asked to see the picture. Nothing would error;
+	 * the site would just be slower for the readers least able to afford it.
+	 */
+	it('keeps the zoom rendition out of the srcset ladder', () => {
+		expect(PLATE_WIDTHS).not.toContain(PLATE_DETAIL_WIDTH);
+		expect(PLATE_DETAIL_WIDTH).toBeGreaterThan(Math.max(...PLATE_WIDTHS));
+	});
+
+	it('names the zoom rendition the way `syncPlates` copies it', () => {
+		expect(plateImageName('OT-001', PLATE_DETAIL_WIDTH)).toBe('OT-001-2000.avif');
 	});
 });

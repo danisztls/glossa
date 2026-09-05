@@ -184,21 +184,28 @@ export const en: Dictionary = {
 	// blocks itself ("Offline library", "Offline mode"), so naming the subject
 	// in the title too ("Advanced network") would say it three times.
 	'advanced.label': 'Advanced',
-	// THE OFFLINE LIBRARY — `AdvancedSheet.svelte`'s first block. The wave
-	// names are NOT here:
-	// five of the seven reuse keys the translators have already written
+	// THE OFFLINE LIBRARY — `AdvancedSheet.svelte`'s first block. Most of the
+	// wave names are NOT here:
+	// several of them reuse keys the translators have already written
 	// (`nav.ccc`, `nav.bible`, `nav.magisterium`, `summa.landing.title`), which
-	// is the cheap way to add a surface. Only the two the interface had no word
-	// for are below.
+	// is the cheap way to add a surface. Only the ones the interface had no
+	// word for are below.
 	'library.title': 'Offline library',
 	'library.lede': 'Texts kept on this device open with no network at all.',
 	'library.essentials': 'Prayers and Compendium',
-	// Doré's 241 engravings, 482 files and 103 MB — named for what a reader
-	// would look for rather than for the artist, who is credited on the
+	// Doré's engravings at the two widths a chapter draws — named for what a
+	// reader would look for rather than for the artist, who is credited on the
 	// colophon and in every plate's own caption. "(illustrations)" and not
 	// "illustrated" because the row is not another Bible: it is the pictures
 	// alone, and the text is the row above.
 	'library.illustrations': 'Bible (illustrations)',
+	// The same pictures at `PLATE_DETAIL_WIDTH`, which the viewer fetches only
+	// when a reader zooms. A row of its own because it costs several times the
+	// one above and is worth nothing to a reader who does not zoom — see
+	// `WAVE_FOR_KIND`. It says "high resolution" rather than a pixel count: the
+	// number is a fact about the file and the shelf is a question about what
+	// the reader wants to be able to do.
+	'library.illustrationsDetail': 'Bible (illustrations, high resolution)',
 	'library.other': 'Other texts',
 	// The totals row. A noun for the sum of the shelves, not a verb: the
 	// buttons beside it say what can be done to it.

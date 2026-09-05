@@ -102,6 +102,7 @@
 		magisterium: 'nav.magisterium',
 		summa: 'summa.landing.title',
 		illustrations: 'library.illustrations',
+		'illustrations-detail': 'library.illustrationsDetail',
 		other: 'library.other'
 	};
 

@@ -70,6 +70,7 @@ export const pt: Dictionary = {
 	'library.lede': 'Os textos guardados neste dispositivo abrem sem rede nenhuma.',
 	'library.essentials': 'Orações e Compêndio',
 	'library.illustrations': 'Bíblia (ilustrações)',
+	'library.illustrationsDetail': 'Bíblia (ilustrações, alta resolução)',
 	'library.other': 'Outros textos',
 	'library.everything': 'Tudo',
 	'library.downloadAll': 'Transferir tudo',

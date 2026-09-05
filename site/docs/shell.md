@@ -121,6 +121,12 @@ entire text corpus, so nobody may have it uninvited and the row says what it
 costs. The beacon's `full` library bucket excludes them from its denominator,
 or a reader with every word of every work would read as `partial` for ever.
 
+**And the zoom renditions are a second shelf behind it** (`illustrations-detail`,
+2026-09-05). They are the same engravings at `PLATE_DETAIL_WIDTH`, several times
+the bytes of the two a chapter draws, and worth nothing to a reader who does not
+zoom — so folding them into the row above would have multiplied the one number
+that row exists to state. Same exclusions as `plate-image`, for the same reason.
+
 **A shelf can be dropped as well as taken, and the two deletions are not one
 operation.** A per-wave delete happens in the page against the content cache;
 "remove everything" is the worker's `caches.delete`, because the cache also

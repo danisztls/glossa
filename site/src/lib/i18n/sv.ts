@@ -61,6 +61,7 @@ export const sv: Dictionary = {
 	'library.lede': 'Texter som finns på den här enheten öppnas helt utan nätverk.',
 	'library.essentials': 'Böner och Kompendiet',
 	'library.illustrations': 'Bibeln (illustrationer)',
+	'library.illustrationsDetail': 'Bibeln (illustrationer, hög upplösning)',
 	'library.other': 'Övriga texter',
 	'library.everything': 'Allt',
 	'library.downloadAll': 'Hämta allt',

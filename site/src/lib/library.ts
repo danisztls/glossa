@@ -71,6 +71,7 @@ const SHELF_ORDER: readonly WaveId[] = [
 	'catechism',
 	'scripture',
 	'illustrations',
+	'illustrations-detail',
 	'magisterium',
 	'summa',
 	'other'
