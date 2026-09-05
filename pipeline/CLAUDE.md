@@ -750,12 +750,20 @@ still describes how the pages are READ, which is what the verifier does.
 
 ## The prayers' glossa reads two books it already holds
 
-`prayers_glossa.py` writes `commentary.preces.{lang}` — 335 notes over fifteen
-languages, 120 of them anchored at the words they quote (2026-09-04; the
-script prints the table). CCC 2676-2677 is a printed gloss per clause of the
+`prayers_glossa.py` writes `commentary.preces.{lang}` — fifteen languages, and
+the script prints the table. CCC 2676-2677 is a printed gloss per clause of the
 Ave; the Compendium's qq. 578-598 are one answer per petition of the Pater,
 and its QUESTION quotes the petition. Rationale and the tiers that were left
 out are `docs/research/prayers-glossa.md`.
+
+**IT KEEPS ONLY WHAT QUOTES A CLAUSE, and the report's two columns are `read`
+and `kept`** (2026-09-05). 335 runs and answers read, 120 stored: the rest
+gloss the prayer as a WHOLE — what the Our Father is, why it is called the
+Lord's Prayer — and a note with no headword has nowhere to sit but the foot of
+a seven-line text, which is the Catechism reprinted beside the prayer rather
+than a gloss on it. The gap is not a miss rate, and it is not lost either:
+each entry carries `references`, the whole passage in each book, checked
+against the corpus before it is written (`check_references`).
 
 - **HAYDOCK GLOSSES FOUR OF THESE PRAYERS AND IS NOT USED, because he
   annotates a different English.** Measured against `commentary.haydock.en`:
@@ -780,6 +788,26 @@ out are `docs/research/prayers-glossa.md`.
   the fourteen — `“ ”`, `« »`, `,, ''`, `„ "`. A pattern that knows only the
   English pair reports de, hu, lt and ro as quoting nothing, which is how the
   first measurement here was wrong by four editions.
+- **THE WORD BOUNDARY IS ASKED OF BOTH TEXTS, and asking only the run's was
+  worth six of the fifteen editions.** A prefix that ends cleanly in the source
+  can end mid-word in the prayer: the French Catechism's `prie pour nous`
+  against an appendix printing `priez` stored `…, prie`, which the site then
+  refused, silently, because `commentary-anchors.ts` checks the prayer's side
+  and this did not. `splits_word` here IS `splitsWord` there, character for
+  character, and the cursor is the same cursor — what this file decides a lemma
+  IS, that file has to be able to find.
+- **The headword ends where the EDITION closes it, not where the lemma stops.**
+  A run that opens on a quotation closes on one, and the remark begins after
+  that: cut at the match instead and five editions open a note on the tail of
+  their own headword (`toi " : Les deux paroles`, `[or Rejoice, Mary]: the
+greeting`). English and German quote nothing and need nothing.
+- **No two headwords may claim the same words.** CCC 2677 heads its two runs
+  `Santa Maria, Mãe de Deus, rogai por nós…` and `Rogai por nós, pecadores…` —
+  fair quotation of a prayer that prints them as one clause, and fatal to a
+  reader that anchors in one pass. The earlier one is CUT back to where the
+  later begins, never searched for elsewhere. English heads the same two runs
+  `Holy Mary, Mother of God` and `Pray for us sinners`, which is why the miss
+  was six editions wide and invisible in the one anybody reads first.
 
 **EDITORIALISING MOVED THE CORPUS TOWARD THE SOURCE, NOT AWAY.** Every
 editorial act so far undid damage done by a RENDERING rather than an editor:

@@ -389,6 +389,24 @@ interface CommentaryManifestBase extends WorkManifestBase {
 	 * `apparatus-prefs.svelte.ts`.
 	 */
 	subsumes_notes?: boolean;
+	/**
+	 * Whether this apparatus is set beside the text unless the reader turns it
+	 * off, rather than off until they turn it on.
+	 *
+	 * THE OTHER DEFAULT, AND IT IS A FACT ABOUT THE WORK — `subsumes_notes`'s
+	 * precedent exactly, and the reason it is a field rather than a rule the
+	 * interface infers from `addresses`. A commentary is opt-in because it is
+	 * the largest thing in the corpus and nobody opening a chapter asked for
+	 * it: Haydock is 23 MB. `commentary.preces.*` is neither — tens of
+	 * kilobytes, the only apparatus a prayer page has, and reaching two
+	 * prayers of thirty-five, so opt-in meant a reader who never opened the
+	 * panel never learned it was there.
+	 *
+	 * What it changes is the DEFAULT and nothing else: the row is in the same
+	 * panel and the reader's own choice, either way, is what gets stored
+	 * (`apparatus-prefs.svelte.ts`).
+	 */
+	default_on?: boolean;
 }
 
 /**
@@ -650,8 +668,45 @@ export interface CommentaryBook {
 export interface PrayerCommentary {
 	/** Prayer of the annotated collection these notes are about. */
 	slug: string;
+	/**
+	 * EVERY ONE OF THEM CARRIES A LEMMA, which is what lets the page render
+	 * the apparatus as marks in the text and nothing at its foot. A source
+	 * paragraph that glosses the prayer as a whole rather than one of its
+	 * clauses is not stored as a note at all — it is covered by `references`,
+	 * which names the whole passage instead (`prayers_glossa.py`).
+	 */
 	notes: CommentaryNote[];
+	/**
+	 * Where else the corpus speaks of this prayer, as links under the text.
+	 *
+	 * NOT THE NOTES' OWN LOCI. A note cites the paragraph it IS, one per card;
+	 * these are the whole of what each book has on the prayer — the Catechism's
+	 * hundred-paragraph article on the Lord's Prayer, the Compendium's
+	 * twenty-one questions, the Gospel verses the prayer's words are — most of
+	 * which this apparatus deliberately does not reprint.
+	 */
+	references?: PrayerReference[];
 }
+
+/**
+ * One range in another work, as a prayer page offers it.
+ *
+ * A RANGE AND NOT A LIST, because that is how the sources divide: `CCC
+ * 2759–2865` is one article, and where the prayer's words are drawn from two
+ * separate verses those are two references rather than one span across
+ * everything between them.
+ */
+export type PrayerReference =
+	| {
+			work: 'bible';
+			/** Lowercase OSIS code, as everywhere else in the corpus. */
+			osis: string;
+			chapter: number;
+			/** First and last VERSE of that chapter. */
+			first: number;
+			last: number;
+	  }
+	| { work: 'ccc' | 'compendium'; first: number; last: number };
 
 export interface BibleBook {
 	/** Lowercase OSIS code, matches the source filename. */

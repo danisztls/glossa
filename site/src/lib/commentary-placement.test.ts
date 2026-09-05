@@ -138,13 +138,21 @@ describe('placePrayerCommentary', () => {
 		}
 	});
 
-	// A prayer has no end until its last line, so unplaced notes cannot hang
-	// off the line that happened to come last — the caller renders `trailing`
-	// after the whole text, and it is empty when every headword landed.
-	it('adds no trailing mark when every headword is in the text', () => {
-		const { trailing } = placePrayerCommentary(AVE, [
+	// NOTHING IS RENDERED AT THE FOOT OF A PRAYER, so `unplaced` is the one
+	// thing that could go wrong in silence: the pipeline stores only notes that
+	// quote a clause, and a note that lost its place here would simply not
+	// appear. Both directions are pinned — empty where every headword landed,
+	// and populated (not swallowed) where one did not.
+	it('places every headword the prayer carries, and reports the ones it does not', () => {
+		const landed = placePrayerCommentary(AVE, [
 			entry('commentary.preces.en', [note('a', 'Hail, Mary'), note('b', 'Amen')])
 		]);
-		expect(trailing).toEqual([]);
+		expect(landed.unplaced).toEqual([]);
+
+		const missed = placePrayerCommentary(AVE, [
+			entry('commentary.preces.en', [note('a', 'Elohim')])
+		]);
+		expect(missed.unplaced.flatMap((p) => p.notes)).toHaveLength(1);
+		expect(missed.byLine.flat()).toEqual([]);
 	});
 });

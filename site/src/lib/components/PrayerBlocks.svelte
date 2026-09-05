@@ -63,8 +63,10 @@
 	 * commentary's marks fall among them.
 	 *
 	 * A line that is not plain text contributes an empty string, so no lemma
-	 * can be found in it and its notes fall to the trailing mark — see
-	 * `plainLine`, which is the same refusal one layer down.
+	 * can be found in it — see `plainLine`, which is the same refusal one layer
+	 * down. Nothing in the corpus reaches that case: every glossed prayer is
+	 * plain text throughout, and a note that lost its place would simply not
+	 * render (`placePrayerCommentary`'s `unplaced`).
 	 */
 	const texts = $derived(lines.map((line) => plainLine(line) ?? ''));
 	const placement = $derived(placePrayerCommentary(texts, commentary));
@@ -150,7 +152,10 @@
 		>{#if c.lead}<span class="drop-cap-lead">{c.lead}</span>{/if}{c.first}</span
 	>{/snippet}
 
-<!-- One line's text, with its initial where it takes one. -->
+<!-- One note's card, opened by the dagger at the end of the words it quotes.
+     `lemmaMarked` unconditionally: every note this apparatus stores quotes a
+     clause of the prayer and every one of them anchors, so the card would
+     otherwise print a headword the line beside it is already lighting. -->
 {#snippet gloss(entry: (typeof placement.placed)[number], mark: number | undefined)}
 	<CommentaryGloss
 		notes={entry.notes}
@@ -158,6 +163,7 @@
 		work={entry.work.id}
 		title={entry.work.short_title || entry.work.title}
 		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
+		lemmaMarked
 	/>
 {/snippet}
 
@@ -209,17 +215,10 @@
 	{/if}
 {/each}
 
-<!-- THE NOTES NO WORDS IN THE PRAYER CARRY, on one mark after the whole text.
-     A verse ends and its unplaced notes hang there; a prayer has no such place
-     until its last line, and hanging them off whichever line happened to be
-     last would set an apparatus in the middle of the text the moment a later
-     line took no mark. With the inline marks these PARTITION the prayer's
-     notes — no note behind two marks, and none behind none. -->
-{#if placement.trailing.length}
-	<p class="prayer-trailing">
-		{#each placement.trailing as entry, i (i)}{@render gloss(entry, undefined)}{/each}
-	</p>
-{/if}
+<!-- NOTHING HANGS AT THE FOOT, and `placement.unplaced` says why in full: the
+     apparatus is the marks in the text, every stored note quotes a clause, and
+     what the two books say ABOUT the prayer rather than about one of its lines
+     is offered as links under it (`PrayerReferences`, the route). -->
 
 <style>
 	.prayer-prose,
@@ -277,13 +276,6 @@
 	   would push it out of alignment with the ones above and below it. */
 	.prayer-line-text {
 		min-width: 0;
-	}
-
-	/* The trailing mark's own line. It carries nothing but marks, so it needs
-	   no measure of its own — only the gap that says the prayer has ended and
-	   the apparatus begun. */
-	.prayer-trailing {
-		margin-block: 0.75rem 0;
 	}
 
 	.prayer-line-label {

@@ -113,9 +113,26 @@
 		    text — which is also why this is a callback rather than a binding:
 		    there is nothing for that mark to report to. */
 		onopen?: (open: boolean) => void;
+		/**
+		 * Whether the TEXT already carries these notes' headword, lit while the
+		 * card is open — in which case the card must not print it again.
+		 *
+		 * `Sidenote`'s `lemmaMarked` one apparatus over, and the same rule:
+		 * print the headword only where the words could not be marked. It is a
+		 * prop rather than something read off the notes because only the caller
+		 * knows — `AnnotatedText` and `PrayerBlocks` are what located the words,
+		 * and a note carrying a `lemma` says nothing about whether it was found.
+		 *
+		 * DEFAULT FALSE, WHICH KEEPS HAYDOCK AS HE WAS. A verse's card may hold
+		 * several notes at one mark, where the headword divides one authority's
+		 * remark from the next, and a trailing mark's notes have no words in the
+		 * text at all. A prayer's card holds exactly one note, always anchored,
+		 * so there the headword is only ever a repetition.
+		 */
+		lemmaMarked?: boolean;
 	}
 
-	let { notes, lang, work, title, osis, chapter, onopen }: Props = $props();
+	let { notes, lang, work, title, osis, chapter, onopen, lemmaMarked = false }: Props = $props();
 
 	/** The chapter a bare verse number in a note belongs to, where there is
 	 *  one. See `osis`. */
@@ -243,7 +260,8 @@
 {#snippet catena()}
 	{#each notes as note, i (i)}
 		<div class="commentary-item">
-			{#if note.lemma}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span class="sidenote-text"
+			{#if note.lemma && !lemmaMarked}<b class="sidenote-lemma">{note.lemma}</b>{/if}<span
+				class="sidenote-text"
 				><InlineNodes nodes={nodesOf(note)} {hrefFor}>
 					{#snippet marker(m: string)}<sup class="commentary-submarker">{m}</sup>{/snippet}
 				</InlineNodes></span

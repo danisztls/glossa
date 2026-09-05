@@ -83,8 +83,8 @@
 		prayerCommentariesAt,
 		resolveEditionTag
 	} from '$lib/corpus';
-	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
-	import { prayerNotesFor } from '$lib/commentary.svelte';
+	import { apparatusPrefs, commentaryDefaultsOn } from '$lib/apparatus-prefs.svelte';
+	import { prayerNotesFor, prayerReferencesFor } from '$lib/commentary.svelte';
 	import type { CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
@@ -97,9 +97,10 @@
 	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
+	import PrayerReferences from '$lib/components/PrayerReferences.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
-	import type { Prayer } from '$lib/types';
+	import type { Prayer, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -182,11 +183,33 @@
 		const out: CommentaryEntry[] = [];
 		if (compareActive || !current) return out;
 		for (const work of commentaries) {
-			if (!apparatusPrefs.commentaryEnabled(work.id)) continue;
+			if (!enabled(work)) continue;
 			const notes = prayerNotesFor(work.id, data.slug);
 			if (notes.length > 0) out.push({ work, notes });
 		}
 		return out;
+	});
+
+	/** ON UNLESS THE READER TURNED IT OFF, which `default_on` says and no other
+	 *  commentary in the corpus does — `CommentaryManifest.default_on` carries
+	 *  the argument. Read through one function because the enabled test and the
+	 *  panel's switch have to ask the same question with the same default. */
+	function enabled(work: WorkManifest): boolean {
+		return apparatusPrefs.commentaryEnabled(work.id, commentaryDefaultsOn(work));
+	}
+
+	/**
+	 * The passages under the text: where the Gospel prints this prayer and
+	 * where the two books treat it whole.
+	 *
+	 * THE SAME SWITCH AND THE SAME SUPPRESSION as the notes, because they are
+	 * the same apparatus read the other way round — `PrayerReferences` has the
+	 * argument. They cost no second fetch: an entry carries its notes and its
+	 * references in one file.
+	 */
+	const references = $derived.by(() => {
+		if (compareActive || !current) return [];
+		return commentaries.filter(enabled).flatMap((work) => prayerReferencesFor(work.id, data.slug));
 	});
 
 	/**
@@ -449,6 +472,11 @@
 {#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{@render prayerPreamble(p, bodyLang)}
 	<PrayerBlocks lines={prayerLines(p.blocks)} dropCap={p.kind !== 'group'} {commentary} />
+	<!-- Under the whole text and not under a block: these name the prayer, the
+	     way the notes name its clauses. `bodyLang` rather than the reader's
+	     interface language, because a siglum is the SOURCE work's own short
+	     title and that work is the one this edition is annotated by. -->
+	<PrayerReferences {references} lang={bodyLang} />
 {/snippet}
 
 {#snippet prayerToc(p: Prayer)}

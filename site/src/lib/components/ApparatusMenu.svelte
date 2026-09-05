@@ -30,7 +30,7 @@
 	`apparatus-prefs.svelte.ts`.
 -->
 <script lang="ts">
-	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
+	import { apparatusPrefs, commentaryDefaultsOn } from '$lib/apparatus-prefs.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 	import type { WorkManifest } from '$lib/types';
@@ -108,8 +108,12 @@
 				</div>
 			{/if}
 
+			<!-- `default_on` is the work's own answer to which way this switch
+			     points before the reader touches it: off for a catena nobody
+			     asked for, on for the prayers' apparatus, which is a page's only
+			     one and small enough to arrive with the text. -->
 			{#each commentaries as work (work.id)}
-				{@const on = apparatusPrefs.commentaryEnabled(work.id)}
+				{@const on = apparatusPrefs.commentaryEnabled(work.id, commentaryDefaultsOn(work))}
 				<div class="field" role="none">
 					<span class="field-label label-micro">{t('apparatus.commentary')}</span>
 					<div class="field-control" role="none">
@@ -119,7 +123,7 @@
 							aria-checked={on}
 							aria-label={work.title}
 							class="switch-btn"
-							onclick={() => apparatusPrefs.setCommentary(work.id, !on)}
+							onclick={() => apparatusPrefs.setCommentary(work.id, !on, commentaryDefaultsOn(work))}
 						>
 							<span class="switch" class:on></span>
 						</button>

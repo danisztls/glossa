@@ -83,7 +83,9 @@ import re
 import sys
 import unicodedata
 from datetime import UTC, datetime
+from itertools import pairwise
 from pathlib import Path
+from typing import NamedTuple
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -108,6 +110,36 @@ CCC_HAIL_MARY = {"slug": "hail-mary", "first": 2676, "last": 2678}
 #: asserted per edition rather than assumed.
 COMPENDIUM_OUR_FATHER = {"slug": "our-father", "first": 578, "last": 598}
 
+#: WHERE ELSE THE CORPUS SPEAKS OF THIS PRAYER -- the passages the page
+#: offers as links under the text, and the reason the apparatus may drop
+#: every note that quotes nothing. Each is a range, and every one of them is
+#: checked against the corpus before it is written (`check_references`),
+#: because a reference is a promise that something is there.
+#:
+#: THE THREE ARE NOT THE SAME KIND OF FACT AND ARE ALL VERIFIABLE. The
+#: Catechism's and the Compendium's ranges are read off their own tables of
+#: contents -- CCC 2759-2865 is the article `The Lord's Prayer`, and the
+#: Compendium's 562-563 is the pair that names the Ave (`How does the Church
+#: pray to Mary? Above all with the Hail Mary`). The scriptural ones are
+#: where the prayer's words are printed as Scripture, which is the same
+#: measurement that kept Haydock out of the apparatus: the Ave's first half
+#: is Luke 1:28 and 1:42 and its second half is not Scripture at all, which
+#: is why the verses are named one by one rather than as a span.
+REFERENCES: dict[str, list[dict]] = {
+    "hail-mary": [
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 28, "last": 28},
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 42, "last": 42},
+        {"work": "ccc", "first": 2676, "last": 2677},
+        {"work": "compendium", "first": 562, "last": 563},
+    ],
+    "our-father": [
+        {"work": "bible", "osis": "matt", "chapter": 6, "first": 9, "last": 13},
+        {"work": "bible", "osis": "luke", "chapter": 11, "first": 2, "last": 4},
+        {"work": "ccc", "first": 2759, "last": 2865},
+        {"work": "compendium", "first": 578, "last": 598},
+    ],
+}
+
 #: A lemma has to be at least this many comparable characters and two words.
 #: Both guards, because either alone admits junk that reads as a quotation:
 #: the German 2676 opens `Du bist voll der Gnade`, whose prayer-matching
@@ -115,11 +147,27 @@ COMPENDIUM_OUR_FATHER = {"slug": "our-father", "first": 578, "last": 598}
 MIN_LEMMA_CHARS = 8
 MIN_LEMMA_WORDS = 2
 
-#: Opening and closing quotation the sources set a lemma in. Trimmed from the
-#: STORED lemma only: the anchoring ignores punctuation anyway, but the site
-#: prints this string as the note's headword and a stray guillemet there is
-#: the source's typesetting leaking into our own.
-_QUOTES = " \t«»“”„‟‘’'\"«»"
+#: Opening and closing quotation the sources set a lemma in, and the
+#: punctuation that ends a headword. Trimmed from the STORED lemma only: the
+#: anchoring ignores punctuation anyway, but a lemma is compared for length
+#: and printed in the reports, and `Jojjon el a te Orszagod?` carries the
+#: Compendium's question mark into a phrase the prayer states.
+_OPENERS = "«“„‟‘\"'"
+_CLOSERS = "»”’\"'"
+_LEMMA_EDGES = " \t.,;:!?…" + _OPENERS + _CLOSERS
+
+#: What the remark may not open with once its headword is cut away: the
+#: closing half of the source's quotation, and whatever punctuation divided
+#: the two. A colon in English, a guillemet and a full stop in Latin, a
+#: semicolon in German -- taking them all is what lets one rule serve every
+#: edition.
+_TEXT_EDGES = _LEMMA_EDGES + "-—–"
+
+#: A letter or digit in any script, and the elisions a lemma may not contain
+#: -- `lemma.ts`'s `WORD` and `ELIDED`, which the site checks on the same
+#: strings. Two definitions of "comparable" drift within a week.
+_WORD_RE = re.compile(r"[^\W_]", re.UNICODE)
+ELIDED_RE = re.compile(r"\.\.\.|…|\bec\.|\betc\.|&c\.")
 
 #: `æ` and `œ` are LIGATURES, not accents, so no Unicode normal form takes
 #: them apart -- `NFD("æ") == "æ"`. They have to be expanded by hand or the
@@ -225,9 +273,74 @@ def ccc_runs(page_html: str) -> list[tuple[str, str | None]]:
     return runs
 
 
-def opening_quotation(run: str, prayer: str) -> tuple[str, int] | None:
-    """The longest prefix of `run` that `prayer` prints verbatim, and where
-    it ends.
+class Quotation(NamedTuple):
+    """A headword the source printed and the annotated prayer prints back.
+
+    `at` and `length` are its position in the FOLDED prayer, which is the
+    only coordinate the two texts share. They are what makes overlap
+    detectable: two headwords that claim the same words are two spans that
+    intersect, and nothing about the strings themselves says so.
+    """
+
+    lemma: str
+    at: int
+    length: int
+    #: Where the headword ends in the run it opens. Meaningless for a lemma
+    #: read out of the middle of a Compendium question, which is why it has
+    #: a default rather than a value nobody may use.
+    end: int = -1
+
+
+class Comparable(NamedTuple):
+    """A text with its folded form and the map back into it."""
+
+    raw: str
+    folded: str
+    at: list[int]
+
+
+def comparable(text: str) -> Comparable:
+    folded, at = fold(text)
+    return Comparable(text, folded, at)
+
+
+def splits_word(text: str, at: int) -> bool:
+    """Whether a boundary at `at` cuts a word in half.
+
+    `commentary-anchors.ts`'s `splitsWord`, character for character, and the
+    two HAVE to agree: this file decides what a lemma is, the site decides
+    where it lands, and a boundary rule kept on one side only stores
+    headwords the page then refuses. The French Ave is the case that proved
+    it -- the Catechism glosses `prie pour nous` against an appendix that
+    prints `priez`, and `prie` is a clean prefix of `priez` on the run's side
+    of the comparison alone.
+    """
+    return (
+        0 < at < len(text)
+        and _WORD_RE.match(text[at - 1]) is not None
+        and _WORD_RE.match(text[at]) is not None
+    )
+
+
+def find_quotation(needle: str, prayer: Comparable, start: int) -> int | None:
+    """Where the prayer prints `needle` at or after `start`, whole-worded.
+
+    AT OR AFTER, because the site reads the notes in one pass with a cursor
+    and so must this: a headword found only BEFORE the last one is a headword
+    the page will not find at all.
+    """
+    i = prayer.folded.find(needle, start)
+    while i != -1:
+        if not splits_word(prayer.raw, prayer.at[i]) and not splits_word(
+            prayer.raw, prayer.at[i + len(needle) - 1] + 1
+        ):
+            return i
+        i = prayer.folded.find(needle, i + 1)
+    return None
+
+
+def opening_quotation(run: str, prayer: Comparable, start: int) -> Quotation | None:
+    """The longest prefix of `run` that `prayer` prints verbatim.
 
     THE OFFSET IS RETURNED BECAUSE THE NOTE MUST NOT REPEAT ITS OWN HEADWORD.
     A printed glossa sets the lemma and then the remark; the schema has a
@@ -236,60 +349,117 @@ def opening_quotation(run: str, prayer: str) -> tuple[str, int] | None:
     `by the greatest share of divine graces`. Storing the run whole would
     print the clause twice in one card.
 
-    ENDING ON A WORD BOUNDARY, which is not decoration: without it the Latin
-    lemma stopped at `... in hora mortis nostr` (see `_LIGATURES` for the
-    cause that has since been fixed, and this for why a cut like it can never
-    be stored). A headword that ends inside a word is wrong twice over -- it
-    reads as a transcription error and it marks a span the source did not
-    name.
+    ENDING ON A WORD BOUNDARY IN BOTH TEXTS, which is not decoration. On the
+    run's side, without it the Latin lemma stopped at `... in hora mortis
+    nostr` (see `_LIGATURES` for the cause, since fixed, and this for why a
+    cut like it can never be stored). On the prayer's side, without it the
+    French stored `Sainte Marie, Mere de Dieu, prie` against an appendix that
+    prints `priez` -- a headword the page then refused, silently, because
+    `splitsWord` is checked there and was not checked here.
     """
-    folded_run, at = fold(run)
-    folded_prayer, _ = fold(prayer)
-    length = 0
+    folded_run, run_at = fold(run)
     for k in range(len(folded_run), MIN_LEMMA_CHARS - 1, -1):
-        if folded_run[:k] in folded_prayer:
-            length = k
-            break
-    while length >= MIN_LEMMA_CHARS:
-        end = at[length - 1] + 1
-        if end >= len(run) or not run[end].isalnum():
-            lemma = run[:end].strip(_QUOTES)
-            if len(lemma.split()) >= MIN_LEMMA_WORDS:
-                return lemma, end
+        end = run_at[k - 1] + 1
+        if end < len(run) and run[end].isalnum():
+            continue
+        at = find_quotation(folded_run[:k], prayer, start)
+        if at is None:
+            continue
+        lemma = run[:end].strip(_LEMMA_EDGES)
+        if len(lemma.split()) < MIN_LEMMA_WORDS or ELIDED_RE.search(lemma):
             return None
+        return Quotation(lemma, at, k, end)
+    return None
+
+
+def shorten(
+    run: str, quotation: Quotation, length: int, prayer: Comparable
+) -> Quotation | None:
+    """`quotation` cut back to `length` folded characters, or nothing.
+
+    Both word boundaries are asked again, and independently: the run and the
+    prayer agree letter for letter over the match and about nothing else, so
+    a cut that falls between words in one can fall inside a word in the other.
+    """
+    _, run_at = fold(run)
+    while length >= MIN_LEMMA_CHARS:
+        end = run_at[length - 1] + 1
+        if (end >= len(run) or not run[end].isalnum()) and not splits_word(
+            prayer.raw, prayer.at[quotation.at + length - 1] + 1
+        ):
+            lemma = run[:end].strip(_LEMMA_EDGES)
+            if len(lemma.split()) >= MIN_LEMMA_WORDS and not ELIDED_RE.search(lemma):
+                return Quotation(lemma, quotation.at, length, end)
         length -= 1
     return None
 
 
-#: An editorial parenthesis inside the source's own quotation of the lemma,
-#: and the closing quote after it.
+def resolve_overlaps(drafts: list[dict], prayer: Comparable) -> None:
+    """No two headwords may claim the same words, in place.
+
+    THE SOURCE OVERLAPS ITSELF AND THE PRAYER DOES NOT. CCC 2677 heads its
+    two runs `Santa Maria, Mae de Deus, rogai por nos...` and `Rogai por nos,
+    pecadores...`, which is a fair way to quote a prayer that prints the two
+    as one continuous clause -- but the page anchors in one pass, so the
+    first headword swallows the second's opening words and the second then
+    anchors nowhere. English is the edition that does not do it (`Holy Mary,
+    Mother of God`, then `Pray for us sinners`), which is why the miss was
+    six editions wide and invisible in the one anybody reads first.
+
+    The earlier headword yields, because the later one is where the source
+    starts saying something new. Yielding is a CUT, never a search elsewhere:
+    what is left is still a prefix of the run and still printed verbatim by
+    the prayer.
+    """
+    quoted = [d for d in drafts if d["quotation"] is not None]
+    for earlier, later in pairwise(quoted):
+        first, second = earlier["quotation"], later["quotation"]
+        if first.at + first.length <= second.at:
+            continue
+        earlier["quotation"] = shorten(
+            earlier["body"], first, second.at - first.at, prayer
+        )
+
+
+#: An editorial parenthesis inside the source's own quotation of the lemma.
 _PARENTHETICAL_RE = re.compile(r"\s*(\([^)]*\)|\[[^\]]*\])\s*")
 
 
-def close_quotation(run: str, end: int) -> int:
-    """Where the source's quotation of the lemma really ends.
+def headword_end(run: str, end: int) -> int:
+    """Where the source's own quotation of the lemma really ends.
 
-    Three editions print `« Ave, Maria (Laetare, Maria) »` -- the prayer says
-    only `Ave, Maria`, so the derived lemma stops there and the remark would
-    open on `(Laetare, Maria) ». Gabrielis...`, carrying the closing
-    guillemet of a quotation whose opening one is already gone. The
-    parenthesis is the Catechism's own rendering note and belongs INSIDE the
-    quotation, so where a closing quote follows it the cut moves past both.
+    THE STORED LEMMA AND THE PRINTED HEADWORD ARE NOT THE SAME LENGTH, and
+    everything here follows from that. The lemma stops where the prayer stops
+    agreeing; the headword runs on to whatever the edition closes it with, and
+    the remark begins after THAT. Cutting at the lemma instead left the
+    Catechism's own words at the head of five editions' notes -- French opened
+    a note `toi " : Les deux paroles`, English `[or Rejoice, Mary]: the
+    greeting`, both of them the tail of a headword and neither of them a
+    remark.
 
-    Not where it does not: English prints `Hail Mary [or Rejoice, Mary]: the
-    greeting`, whose bracket is followed by a colon and is the first thing
-    the note says. The closing quote is the whole discriminator.
+    A run that OPENS on a quotation closes on one, and that is the whole rule
+    for the five editions that quote (pt, la, it, es, fr): the first closing
+    glyph after the match ends the headword, whatever the prayer stopped
+    printing and whatever parenthesis the Catechism added -- `« Ave, Maria
+    (Laetare, Maria) »` is one headword, its parenthesis the edition's own
+    rendering note. English and German quote nothing and need nothing: their
+    headword ends where the lemma does, on a colon or a full stop that the
+    text's own trim removes. The one exception is English's bracket, which is
+    an editorial alternative rather than the start of the remark.
     """
-    m = _PARENTHETICAL_RE.match(run, end)
-    if m is None:
+    head = run.lstrip()[:1]
+    if head and head in _OPENERS:
+        closed = next((i for i in range(end, len(run)) if run[i] in _CLOSERS), None)
+        if closed is not None:
+            return closed + 1
         return end
-    after = m.end()
-    if after < len(run) and run[after] in "»”’\"'":
-        return after + 1
+    m = _PARENTHETICAL_RE.match(run, end)
+    if m is not None and m.end() < len(run) and run[m.end()] in _CLOSERS + ":":
+        return m.end() + 1
     return end
 
 
-def quoted_phrase(question: str, prayer: str) -> str | None:
+def quoted_phrase(question: str, prayer: Comparable, start: int) -> Quotation | None:
     """The petition a Compendium question quotes, if the prayer prints it.
 
     THE QUOTE GLYPHS ARE THE EDITION'S OWN and there are four pairs across
@@ -298,17 +468,22 @@ def quoted_phrase(question: str, prayer: str) -> str | None:
     quoting nothing at all, which is how this file's first measurement was
     wrong by four editions.
     """
-    best: str | None = None
-    folded_prayer, _ = fold(prayer)
-    for m in re.finditer(r"[“”„‟«»\"»]([^“”„‟«»\"]{3,90}?)[“”„‟«»\"«]", question):
-        candidate = m.group(1).strip(_QUOTES)
+    best: Quotation | None = None
+    for m in re.finditer(
+        r"[\u201c\u201d\u201e\u201f«»\"]([^\u201c\u201d\u201e\u201f«»\"]{3,90}?)[\u201c\u201d\u201e\u201f«»\"]",
+        question,
+    ):
+        candidate = m.group(1).strip(_LEMMA_EDGES)
         folded, _ = fold(candidate)
         if len(folded) < MIN_LEMMA_CHARS or len(candidate.split()) < MIN_LEMMA_WORDS:
             continue
-        if folded in folded_prayer and (
-            best is None or len(folded) > len(fold(best)[0])
-        ):
-            best = candidate
+        if ELIDED_RE.search(candidate):
+            continue
+        at = find_quotation(folded, prayer, start)
+        if at is None:
+            continue
+        if best is None or len(folded) > best.length:
+            best = Quotation(candidate, at, len(folded))
     return best
 
 
@@ -347,14 +522,13 @@ def annotated_text(prayer: dict) -> str:
     return " ".join(b["text"] for b in prayer.get("blocks", []))
 
 
-def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]]]:
-    """CCC 2676-2677 as notes on the Hail Mary, plus the italic disagreements."""
+def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]], int]:
+    """CCC 2676-2677 as notes on the Hail Mary, the italic disagreements, and
+    how many runs were read to get them."""
     page = ccc_page(lang)
     if page is None:
-        return [], []
-    text = annotated_text(prayer)
-    notes: list[dict] = []
-    disagreements: list[tuple[str, str]] = []
+        return [], [], 0
+    text = comparable(annotated_text(prayer))
     # The paragraph a run belongs to: the region opens at 2676 and the second
     # printed number inside it starts 2677. Read off the run rather than
     # assumed, so a source that ever splits differently is not mis-cited.
@@ -363,6 +537,14 @@ def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]
     first = printed_at(region_html, CCC_HAIL_MARY["first"])
     last = printed_at(region_html, CCC_HAIL_MARY["last"])
     region = re.sub(r"<[^>]*$", "", region_html[first:last])
+
+    # TWO PASSES, BECAUSE ONE HEADWORD'S EXTENT DEPENDS ON THE NEXT ONE'S
+    # START -- see `resolve_overlaps`. The first pass searches from just after
+    # the previous headword's START rather than its end, which is what lets an
+    # overlap be seen at all instead of silently costing the later note its
+    # lemma.
+    drafts: list[dict] = []
+    search_from = 0
     for part in _RUN_SPLIT_RE.split(region):
         body = plain(part)
         if len(body) < 20:
@@ -373,28 +555,34 @@ def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]
             if printed.isdigit():
                 number = int(printed)
             body = body[numbered.end() :]
-
-        lemma, remainder = None, body
-        found = opening_quotation(body, text)
+        found = opening_quotation(body, text, search_from)
         if found is not None:
-            candidate, end = found
-            # The delimiter between headword and remark is the source's own
-            # and differs in every edition -- a colon in English, a closing
-            # guillemet and a full stop in Latin, nothing but a full stop in
-            # German. Taking whatever punctuation follows the quotation is
-            # what lets one rule serve all of them.
-            tail = body[close_quotation(body, end) :].lstrip(_QUOTES + ".:;,-—– ")
-            # A run that is nothing but its own headword keeps its text and
-            # loses the field: a note with no remark in it is not a note.
+            search_from = found.at + 1
+        drafts.append(
+            {"number": number, "body": body, "part": part, "quotation": found}
+        )
+
+    resolve_overlaps(drafts, text)
+
+    notes: list[dict] = []
+    disagreements: list[tuple[str, str]] = []
+    for draft in drafts:
+        body, found = draft["body"], draft["quotation"]
+        lemma, remainder = None, None
+        if found is not None:
+            tail = body[headword_end(body, found.end) :].lstrip(_TEXT_EDGES)
+            # A run that is nothing but its own headword is not a note: there
+            # is no remark in it to read, and the paragraph it came from is
+            # named in the prayer's references either way.
             if len(tail) >= 20:
-                lemma, remainder = candidate, tail
+                lemma, remainder = found.lemma, tail
 
         # THE SOURCE'S ITALICS ARE AN ORACLE, NOT THE MECHANISM -- see the
         # module docstring. An EMPTY italic run is markup rather than a
         # quotation (the French mirror sets `2676<i> </i>Ce double
         # mouvement`) and says nothing either way.
-        if italic := _ITALIC_RE.search(part):
-            printed_lemma = plain(italic.group(1)).strip(_QUOTES)
+        if italic := _ITALIC_RE.search(draft["part"]):
+            printed_lemma = plain(italic.group(1)).strip(_LEMMA_EDGES)
             folded_italic, _ = fold(printed_lemma)
             folded_lemma, _ = fold(lemma or "")
             if folded_italic and (
@@ -402,23 +590,38 @@ def ccc_notes(lang: str, prayer: dict) -> tuple[list[dict], list[tuple[str, str]
             ):
                 disagreements.append((printed_lemma, lemma or "(none)"))
 
-        note: dict = {}
-        if lemma:
-            note["lemma"] = lemma
-        note["text"] = remainder
-        note["locus"] = {"work": "ccc", "n": number}
-        notes.append(note)
-    return notes, disagreements
+        # NO LEMMA, NO NOTE, since 2026-09-05. A note that quotes nothing has
+        # nowhere to sit but the foot of the prayer, and a foot-note on a
+        # seven-line text is a paragraph of the Catechism reprinted beside a
+        # prayer rather than a gloss ON it. What those paragraphs are is a
+        # place to go and read them, which is `references`.
+        if lemma is None or remainder is None:
+            continue
+        notes.append(
+            {
+                "lemma": lemma,
+                "text": remainder,
+                "locus": {"work": "ccc", "n": draft["number"]},
+            }
+        )
+    return notes, disagreements, len(drafts)
 
 
-def compendium_notes(lang: str, prayer: dict) -> list[dict]:
-    """Compendium 578-598 as notes on the Our Father."""
+def compendium_notes(lang: str, prayer: dict) -> tuple[list[dict], int]:
+    """Compendium 578-598 as notes on the Our Father, and how many questions
+    were read to get them."""
     path = common.build_root() / f"compendium.{lang}" / "questions.json"
     if not path.exists():
-        return []
+        return [], 0
     questions = {q["n"]: q for q in json.loads(path.read_text(encoding="utf-8"))}
-    text = annotated_text(prayer)
+    text = comparable(annotated_text(prayer))
     notes: list[dict] = []
+    read = 0
+    # The cursor the site keeps, kept here: the Compendium asks its questions
+    # in the prayer's own order, so a petition is looked for at or after the
+    # last one and `in heaven` cannot be found in `on earth as it is in
+    # heaven` before it is found in `who art in heaven`.
+    search_from = 0
     for n in range(COMPENDIUM_OUR_FATHER["first"], COMPENDIUM_OUR_FATHER["last"] + 1):
         question = questions.get(n)
         if question is None:
@@ -432,14 +635,22 @@ def compendium_notes(lang: str, prayer: dict) -> list[dict]:
         body = "\n\n".join(b["text"] for b in blocks if b.get("text"))
         if not body:
             continue
-        note: dict = {}
-        lemma = quoted_phrase(question.get("question", ""), text)
-        if lemma:
-            note["lemma"] = lemma
-        note["text"] = body
-        note["locus"] = {"work": "compendium", "n": n}
-        notes.append(note)
-    return notes
+        read += 1
+        found = quoted_phrase(question.get("question", ""), text, search_from)
+        # No lemma, no note -- `ccc_notes` says why, and it bites hardest
+        # here: eight of the twenty-one questions ask what the Our Father IS
+        # rather than what one of its petitions means.
+        if found is None:
+            continue
+        search_from = found.at + found.length
+        notes.append(
+            {
+                "lemma": found.lemma,
+                "text": body,
+                "locus": {"work": "compendium", "n": n},
+            }
+        )
+    return notes, read
 
 
 def page_source(manifest: dict, page: Path) -> dict | None:
@@ -470,14 +681,66 @@ def compose(parts: list[str], separator: str) -> str:
     return separator.join(parts)
 
 
+def numbered_units(work_id: str, filename: str) -> set[int] | None:
+    """The unit numbers a work holds, or nothing where the work is absent."""
+    path = common.build_root() / work_id / filename
+    if not path.exists():
+        return None
+    return {u["n"] for u in json.loads(path.read_text(encoding="utf-8"))}
+
+
+def bible_verses(lang: str, osis: str, chapter: int) -> set[int] | None:
+    """One chapter's verse numbers in any Bible of this language."""
+    for work in sorted(common.build_root().glob(f"bible.*.{lang}")):
+        path = work / "books" / f"{osis}.json"
+        if not path.exists():
+            continue
+        book = json.loads(path.read_text(encoding="utf-8"))
+        found = next((c for c in book["chapters"] if c["n"] == chapter), None)
+        if found is not None:
+            return {v["n"] for v in found["verses"]}
+    return None
+
+
+def check_references(lang: str, slug: str, references: list[dict]) -> None:
+    """That every reference names something the corpus actually holds.
+
+    FATAL, like the slug check below and for the same reason one layer over:
+    a reference is a promise that there is something to read at the other
+    end, and a wrong number does not fail -- it renders as a link that lands
+    on an empty page. Silence here means only that this language has no
+    edition of the work to check against, which is the one honest way to
+    skip.
+    """
+    for ref in references:
+        if ref["work"] == "bible":
+            held = bible_verses(lang, ref["osis"], ref["chapter"])
+            where = f"{ref['osis']} {ref['chapter']}"
+        elif ref["work"] == "ccc":
+            held = numbered_units(f"ccc.{lang}", "paragraphs.json")
+            where = f"ccc.{lang}"
+        else:
+            held = numbered_units(f"compendium.{lang}", "questions.json")
+            where = f"compendium.{lang}"
+        if held is None:
+            continue
+        absent = [n for n in (ref["first"], ref["last"]) if n not in held]
+        if absent:
+            raise RuntimeError(
+                f"{WORK_PREFIX}.{lang}: the {slug} reference to {where} names "
+                f"{', '.join(str(n) for n in absent)}, which is not there"
+            )
+
+
 def build(lang: str) -> tuple[dict | None, dict]:
     """One language's apparatus, and what it reached."""
     prayers = load_prayers(lang)
     stats = {
         "lang": lang,
+        "read": 0,
         "notes": 0,
-        "anchored": 0,
         "prayers": 0,
+        "references": 0,
         "disagreements": [],
     }
     if not prayers:
@@ -491,17 +754,19 @@ def build(lang: str) -> tuple[dict | None, dict]:
         ccc = read_manifest(f"ccc.{lang}")
         page = ccc_page(lang)
         if ccc is not None and page is not None:
-            notes, disagreements = ccc_notes(lang, hail_mary)
+            notes, disagreements, read = ccc_notes(lang, hail_mary)
+            stats["read"] += read
+            stats["disagreements"] = disagreements
             if notes:
                 entries.append({"slug": CCC_HAIL_MARY["slug"], "notes": notes})
                 contributors.append((f"ccc.{lang}", ccc))
-                stats["disagreements"] = disagreements
 
     our_father = prayers.get(COMPENDIUM_OUR_FATHER["slug"])
     if our_father is not None:
         compendium = read_manifest(f"compendium.{lang}")
         if compendium is not None:
-            notes = compendium_notes(lang, our_father)
+            notes, read = compendium_notes(lang, our_father)
+            stats["read"] += read
             if notes:
                 entries.append({"slug": COMPENDIUM_OUR_FATHER["slug"], "notes": notes})
                 contributors.append((f"compendium.{lang}", compendium))
@@ -518,10 +783,19 @@ def build(lang: str) -> tuple[dict | None, dict]:
                 f"{WORK_PREFIX}.{lang}: no prayer `{entry['slug']}` in "
                 f"prayer.common.{lang} -- the notes would address nothing"
             )
+        # WHERE ELSE THE PRAYER IS SPOKEN OF, and the notes' own loci are not
+        # it: a note cites the paragraph it IS, one per card, while these are
+        # the whole of what the three books have on this prayer -- including
+        # the twenty-one Compendium questions and the hundred CCC paragraphs
+        # this apparatus does not reprint.
+        references = [dict(ref) for ref in REFERENCES.get(entry["slug"], [])]
+        check_references(lang, entry["slug"], references)
+        if references:
+            entry["references"] = references
 
     stats["prayers"] = len(entries)
     stats["notes"] = sum(len(e["notes"]) for e in entries)
-    stats["anchored"] = sum(1 for e in entries for n in e["notes"] if n.get("lemma"))
+    stats["references"] = sum(len(e.get("references") or []) for e in entries)
     return {"entries": entries, "contributors": contributors}, stats
 
 
@@ -565,6 +839,15 @@ def manifest_for(lang: str, doc: dict, generated_at: str) -> dict:
             "holder": holder,
             "notice": notice,
         },
+        # THE APPARATUS IS ON UNLESS THE READER TURNS IT OFF, which no other
+        # commentary in the corpus is. Haydock's default is off because he is
+        # 23 MB and nobody opening a chapter asked for a catena; this is tens
+        # of kilobytes, it is the only apparatus a prayer page has, and it
+        # reaches two prayers of thirty-five -- so a reader who never opens
+        # the panel would never learn it exists. Stated in the manifest and
+        # not inferred by the site from `addresses`, on `subsumes_notes`'s
+        # precedent: which way a default points is a fact about the work.
+        "default_on": True,
         "notes": (
             "The Catechism of the Catholic Church and its Compendium read as "
             "a commentary on the common prayers: CCC 2676-2677, which glosses "
@@ -574,9 +857,13 @@ def manifest_for(lang: str, doc: dict, generated_at: str) -> dict:
             "the head of what they say about them, which is what makes the "
             "notes placeable. A note's `lemma` is the longest opening run of "
             "that note which this edition of the prayer prints verbatim, so "
-            "every headword is a quotation of the annotated text and a note "
-            "whose source glosses a different wording carries none. Each note "
-            "cites the paragraph or question it is."
+            "every headword is a quotation of the annotated text -- and a "
+            "note whose source glosses a different wording, or glosses the "
+            "prayer as a whole rather than one of its clauses, is not kept. "
+            "What those paragraphs and questions are is named instead in each "
+            "prayer's `references`, which is where the two books' whole "
+            "treatment of it can be read. Each note cites the paragraph or "
+            "question it is."
         ),
         "generated_at": generated_at,
         "prayers": [e["slug"] for e in doc["entries"]],
@@ -639,21 +926,28 @@ def main() -> int:
             written += 1
 
     print(f"{WORK_PREFIX}.* — the Catechism and the Compendium on the prayers\n")
-    print(f"  {'lang':6} {'prayers':>7} {'notes':>6} {'anchored':>9}")
-    total_notes = total_anchored = 0
+    # `read` is every run of 2676-2677 and every question of 578-598 this
+    # edition holds; `kept` is those that quote a clause of the prayer. The
+    # gap is not a miss rate -- it is how much of the two books is about the
+    # prayer as a whole rather than about one of its lines, and that share is
+    # what the references carry instead.
+    print(f"  {'lang':6} {'prayers':>7} {'read':>5} {'kept':>5} {'refs':>5}")
+    total_read = total_kept = 0
     for row in rows:
-        if row["notes"] == 0:
+        if row["read"] == 0:
             continue
-        total_notes += row["notes"]
-        total_anchored += row["anchored"]
-        share = row["anchored"] * 100 // row["notes"]
+        total_read += row["read"]
+        total_kept += row["notes"]
+        share = row["notes"] * 100 // row["read"]
         print(
-            f"  {row['lang']:6} {row['prayers']:>7} {row['notes']:>6} "
-            f"{row['anchored']:>6} {share:>3}%"
+            f"  {row['lang']:6} {row['prayers']:>7} {row['read']:>5} "
+            f"{row['notes']:>5} {row['references']:>5}  {share:>3}%"
         )
-    empty = [r["lang"] for r in rows if r["notes"] == 0]
-    share = total_anchored * 100 // total_notes if total_notes else 0
-    print(f"\n  {'total':6} {'':>7} {total_notes:>6} {total_anchored:>6} {share:>3}%")
+    empty = [r["lang"] for r in rows if r["read"] == 0]
+    share = total_kept * 100 // total_read if total_read else 0
+    print(
+        f"\n  {'total':6} {'':>7} {total_read:>5} {total_kept:>5} {'':>5}  {share:>3}%"
+    )
     if empty:
         print(f"\n  no source in: {', '.join(empty)}")
 

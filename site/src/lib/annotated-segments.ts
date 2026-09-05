@@ -87,6 +87,12 @@ export function buildSegments(
 			// lost. Splitting a commentary's quotation around the edition's own
 			// footnote marker, or around the words another note quotes, would put
 			// two apparatuses inside one another.
+			//
+			// A PRAYER HAS NO TRAILING MARK (2026-09-05), so there the drop would
+			// be a loss — and there is nothing to drop: a prayer line is one
+			// piece with no edition lemma, so `stop` is the line's end and there
+			// is no cut to straddle. `PrayerBlocks` is the simplest caller this
+			// function has, which is what makes that true rather than lucky.
 			if (anchor.from < at) continue;
 			push(text.slice(at, anchor.from));
 			out.push({ kind: 'quoted', text: text.slice(anchor.from, anchor.to), mark });

@@ -27,12 +27,14 @@
  *
  * WHAT IS STORED IS THE DIFFERENCE FROM THE DEFAULT, NOT THE STATE. An
  * edition's own notes are ON unless switched off, and a commentary is OFF
- * until switched on — so the two halves are stored as `off` and `on` lists
- * rather than one "enabled" list. Storing the state outright would make the
- * default unrepresentable: a reader who has never touched the panel and a
- * reader who has switched everything off would both hold an empty set, and
- * the next edition ingested would arrive silently switched off for the first
- * of them.
+ * until switched on unless the work says otherwise — so the two halves are
+ * stored as `off` and `on` lists rather than one "enabled" list. Storing the
+ * state outright would make the default unrepresentable: a reader who has
+ * never touched the panel and a reader who has switched everything off would
+ * both hold an empty set, and the next edition ingested would arrive silently
+ * switched off for the first of them. Both defaults MOVE — `subsumes_notes`
+ * and `default_on` are properties of a work, so which list an id belongs in
+ * is a question its caller has to answer, never a constant here.
  *
  * IT IS NOT LANGUAGE-SCOPED, unlike `content.svelte.ts`'s overrides. That
  * store expires a choice when the interface language moves because an edition
@@ -42,6 +44,7 @@
  */
 
 import { readStoredJson, writeStoredJson } from './storage';
+import type { WorkManifest } from './types';
 
 const STORAGE_KEY = 'glossa:apparatus';
 
@@ -93,12 +96,17 @@ class ApparatusStore {
 	/**
 	 * Whether a commentary is set beside the text it annotates.
 	 *
-	 * Defaults OFF. A commentary is the largest body of text in the corpus and
-	 * nobody opening a chapter asked for it; switching it on is what causes it
-	 * to be fetched at all (`commentary.svelte.ts`).
+	 * Defaults OFF, and `defaultOn` is the work saying otherwise
+	 * (`CommentaryManifest.default_on`, which is where the argument for either
+	 * default belongs). A commentary is normally the largest body of text in
+	 * the corpus and nobody opening a chapter asked for it; switching it on is
+	 * what causes it to be fetched at all (`commentary.svelte.ts`). The
+	 * prayers' apparatus is the exception on every count.
 	 */
-	commentaryEnabled(workId: string): boolean {
-		return this.#state.on.includes(workId);
+	commentaryEnabled(workId: string, defaultOn = false): boolean {
+		if (has(this.#state.off, workId)) return false;
+		if (has(this.#state.on, workId)) return true;
+		return defaultOn;
 	}
 
 	/** `subsumed` is the same flag `editionNotesEnabled` takes, and it has to be
@@ -111,10 +119,13 @@ class ApparatusStore {
 		});
 	}
 
-	setCommentary(workId: string, enabled: boolean) {
+	/** `defaultOn` is the same flag `commentaryEnabled` takes, and it has to be
+	 *  passed here too: what gets stored is the difference from the default, so
+	 *  which list the id belongs in depends on which way the default points. */
+	setCommentary(workId: string, enabled: boolean, defaultOn = false) {
 		this.#write({
-			...this.#state,
-			on: withMembership(this.#state.on, workId, enabled)
+			off: withCommentary(this.#state.off, workId, defaultOn && !enabled),
+			on: withCommentary(this.#state.on, workId, !defaultOn && enabled)
 		});
 	}
 
@@ -134,4 +145,59 @@ function withMembership(list: string[], id: string, present: boolean): string[] 
 	return [...set].sort();
 }
 
+/**
+ * A COMMENTARY'S CHOICE IS NOT PER LANGUAGE, and this is the whole of how.
+ *
+ * `commentary.preces.*` is fifteen works, one per language, and the reader
+ * meets exactly one of them — whichever annotates the edition in front of
+ * them. Stored per work id, switching the apparatus off under the English Ave
+ * would leave it on under the Portuguese one, and a reader who turned it off
+ * would meet it again on the next prayer they opened in another language.
+ * Stored per FAMILY — `commentary.preces`, the id without its language, which
+ * is what `commentary.{slug}.{lang}` means — the choice is about the
+ * commentary, which is what the reader thought they were choosing.
+ *
+ * An edition's own notes are NOT family-scoped and must not be: the
+ * Douay-Rheims and the CPDV are two editions with two apparatuses, and a
+ * reader turning one off has said nothing about the other.
+ */
+function familyOf(workId: string): string {
+	const parts = workId.split('.');
+	return parts.length > 2 ? parts.slice(0, 2).join('.') : workId;
+}
+
+/** Whether a list holds this commentary — under its family, or under a full
+ *  work id stored before the family was the key. Both are read so a reader who
+ *  had switched Haydock on before 2026-09-05 still has him on; only the family
+ *  is ever written. That branch is deliberately untested: the store reads
+ *  storage once at module load, so a legacy value cannot be put in front of it
+ *  from a test without exporting the class for no other reason. */
+function has(list: string[], workId: string): boolean {
+	return list.includes(familyOf(workId)) || list.includes(workId);
+}
+
+/** The list with this commentary present or absent. It always drops the full
+ *  work id: leaving one behind would let a stale entry outvote the choice just
+ *  made, since `has` reads either form. */
+function withCommentary(list: string[], workId: string, present: boolean): string[] {
+	const set = new Set(list);
+	set.delete(workId);
+	set.delete(familyOf(workId));
+	if (present) set.add(familyOf(workId));
+	return [...set].sort();
+}
+
 export const apparatusPrefs = new ApparatusStore();
+
+/**
+ * Which way a commentary's switch points before the reader touches it.
+ *
+ * A NARROWING AND NOT A POLICY: `default_on` is a field on a commentary
+ * manifest and every caller holds a `WorkManifest`, so each of them would
+ * otherwise write the same type test — and one of them would write it
+ * differently. The policy itself is the work's, stated by whichever scraper
+ * wrote the manifest (`CommentaryManifest.default_on`).
+ */
+export function commentaryDefaultsOn(work: WorkManifest): boolean {
+	return work.type === 'commentary' && work.default_on === true;
+}

@@ -278,8 +278,8 @@ depend on which manifest had been read yet — an ordering dependency standing i
 that is simply true of the commentary.
 
 **The prayer arm ships ONE file per work, unchunked**, where the Bible arm packs by size:
-a commentary on Scripture varies by an order of magnitude per chapter, and this one is 335
-notes across fifteen languages. It is `prayer.common.*`'s own precedent, on the same
+a commentary on Scripture varies by an order of magnitude per chapter, and this one is a
+few tens of kilobytes per language. It is `prayer.common.*`'s own precedent, on the same
 grounds.
 
 ```jsonc
@@ -288,14 +288,41 @@ grounds.
     "slug": "hail-mary",
     "notes": [
       {
-        "lemma": "Full of grace, the Lord is with thee", // optional, as above
+        "lemma": "Full of grace, the Lord is with thee", // REQUIRED here — see below
         "text": "These two phrases of the angel's greeting shed light on one another…",
         "locus": { "work": "ccc", "n": 2676 },
       },
     ],
+    "references": [
+      {
+        "work": "bible",
+        "osis": "luke",
+        "chapter": 1,
+        "first": 28,
+        "last": 28,
+      },
+      { "work": "ccc", "first": 2676, "last": 2677 },
+      { "work": "compendium", "first": 562, "last": 563 },
+    ],
   },
 ]
 ```
+
+**A NOTE WITHOUT A LEMMA IS NOT STORED, and this arm is the one that says so** (2026-09-05).
+`CommentaryNote.lemma` is optional in the schema and stays optional for Haydock, whose
+unanchored notes hang at the end of the verse they belong to. A prayer has no such place
+until its last line, and an apparatus at the foot of a seven-line text is a paragraph of the
+Catechism reprinted beside the prayer rather than a gloss ON it — so `prayers_glossa.py`
+keeps only the notes that quote a clause, which is 120 of the 335 runs and answers it read.
+
+**`references` is where the other 215 went, and it is a different KIND of claim.** A note
+cites the paragraph it IS; a reference names the whole of what a work has on this prayer —
+the Catechism's hundred-paragraph article on the Lord's Prayer, the Compendium's
+twenty-one questions, the Gospel verses the prayer's own words are. Each is a range
+(`first`/`last`, plus `osis`/`chapter` where the work is the Bible, where they are VERSE
+numbers), and **every one is checked against the corpus before it is written**: a reference
+is a promise that there is something to read at the other end, and a wrong number does not
+fail — it renders as a link onto an empty page.
 
 **`locus` is provenance per NOTE, and it exists because one work draws on two books.**
 A manifest names one set of sources; `commentary.preces.{lang}` reads the Catechism on the
@@ -312,13 +339,33 @@ transcribed from italics and the validator only reports a miss; these sources ma
 lemma differently in every edition — italics inside guillemets, a colon and no markup,
 nothing at all — so `prayers_glossa.py` takes instead the longest opening run of the note
 that the annotated prayer prints verbatim. It cannot invent, and a note whose source
-glosses a different wording simply carries no lemma. The French Catechism glosses a `tu`
-Ave against an appendix that prints `vous`, and that note is unanchored rather than
-approximately placed.
+glosses a different wording is dropped rather than approximately placed. The French
+Catechism glosses a `tu` Ave against an appendix that prints `vous`, so its `prie pour
+nous` shortens to `Sainte Marie, Mère de Dieu` and the note that glosses only `Prie pour
+nous, pauvres pécheurs` is not kept at all.
+
+**THE STORED LEMMA AND THE PRINTED HEADWORD ARE NOT THE SAME LENGTH**, which is the trap
+in deriving one. The lemma stops where the prayer stops agreeing; the source's headword
+runs on to whatever the edition closes it with, and `text` must begin after THAT — cut at
+the lemma instead, five editions opened a note on the tail of their own headword
+(`toi " : Les deux paroles`, `[or Rejoice, Mary]: the greeting`). And **no two lemmas may
+claim the same words**: CCC 2677 heads its two runs `Santa Maria, Mãe de Deus, rogai por
+nós…` and `Rogai por nós, pecadores…`, so the first is cut back where the second begins.
+The site anchors in one pass with a cursor, so an overlap costs the later note its place
+silently — and English, which heads the same two runs `Holy Mary, Mother of God` and `Pray
+for us sinners`, is the edition that hides it.
 
 **Every unit named must exist in the annotated work**, exactly as for a verse, and for the
 same reason: a note addressing nothing renders beside nothing, which is invisible on the
 page.
+
+**`default_on` is a commentary's own answer to which way its switch points** before the
+reader touches it, and `commentary.preces.*` is the only work in the corpus that sets it.
+The default is off, because a commentary is normally the largest thing in the corpus and
+nobody opening a chapter asked for it (Haydock is 23 MB); this one is tens of kilobytes, is
+the only apparatus a prayer page has, and reaches two prayers of thirty-five — so off meant
+a reader who never opened the panel never learned it existed. It is `subsumes_notes`'s
+precedent exactly: a fact about the work, flipping a default and suppressing nothing.
 
 ## Canonical book order (73 books, lowercase OSIS)
 
