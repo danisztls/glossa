@@ -462,10 +462,12 @@ This is flagged here so it is not rediscovered mid-implementation — the way th
 
 The survey is `docs/research/prayers-glossa.md`. **§2's tier 0 is built**:
 `commentary.preces.{lang}`, written by `pipeline/scrapers/prayers_glossa.py`,
-335 notes over fifteen languages, 120 carrying a headword the prayer prints and
-114 marks set inside the text against the real corpus —
-the Catechism's ¶2676-2677 on the Hail Mary and the Compendium's qq. 578-598
-on the Our Father. It cost no fetch and no new rights question, and the
+fifteen languages — the Catechism's ¶2676-2677 on the Hail Mary and the
+Compendium's qq. 578-598 on the Our Father. Of the 335 runs and answers it
+reads, **120 quote a clause of the prayer and are kept**; the rest gloss the
+prayer as a whole and became `references` under the text instead (2026-09-05),
+because an apparatus of 215 unanchored notes at the foot of a seven-line Ave is
+the Catechism reprinted beside the prayer rather than a gloss on it. It cost no fetch and no new rights question, and the
 machinery needed one new function (`anchorCommentaryLines`, the cursor walking
 a prayer's printed lines instead of a verse). `pipeline/CLAUDE.md` §The
 prayers' glossa and `site/CLAUDE.md` §Haydock on the page hold the rules.
@@ -481,12 +483,14 @@ became step 1. The general lesson is worth keeping: **"already glossed at
 another address" is a claim about wording, and until the wording is compared it
 is a claim about nothing.**
 
-**Lemma, with the line as a fallback — argued three times now.** §5 settled it
-on the Portuguese Apostles' Creed going from seven lines to twenty-two with no
-word changed; the curation made the same point from the other side, imposing a
+**Lemma, never the line — argued three times now.** §5 settled it on the
+Portuguese Apostles' Creed going from seven lines to twenty-two with no word
+changed; the curation made the same point from the other side, imposing a
 `form` that moved line numbers again in three editions in one day. Tier 0 adds
-the third: a line is also where a lemma can FAIL to fit, and a headword
-spanning a line break is refused rather than approximated.
+the third and this plan had it backwards: it proposed refusing a headword that
+spans a line break, and refusing cost 37 of 114 marks — the Catechism quotes a
+clause the Ave sets across two lines. A break is the edition's typesetting, so
+the anchor spans it and only the last line takes the mark.
 
 What is left, in order:
 

@@ -114,11 +114,19 @@ export function placeCommentary(
  * Each line lights the words it prints; only the last takes the dagger, which
  * is `PlacedAnchor.showMark` and is what stops one note raising three marks.
  *
- * THE TRAILING MARK IS THE PRAYER'S, NOT THE LINE'S. A verse ends and its
- * unplaced notes hang there; a prayer has no such place until its last line,
- * and hanging them off whichever line came last would put an apparatus in the
- * middle of the text whenever a later line took no mark. So the caller renders
- * `trailing` once, after the whole prayer.
+ * THERE IS NO TRAILING MARK, AND THAT IS THE PRAYER APPARATUS'S OWN RULE
+ * (2026-09-05). A verse ends and its unplaced notes can hang there; a prayer
+ * has no such place until its last line, and an apparatus at the foot of a
+ * seven-line text is a paragraph of the Catechism reprinted beside the prayer
+ * rather than a gloss ON it. So `prayers_glossa.py` stores only notes that
+ * quote a clause, and what the rest of those two books say about the prayer is
+ * offered as `PrayerCommentary.references` — a place to go and read them.
+ *
+ * `unplaced` is therefore expected to be EMPTY and is returned anyway. It is
+ * the one thing that could go wrong silently: the pipeline and
+ * `commentary-anchors.ts` fold the same strings by the same rules, and if they
+ * ever stop agreeing a note would simply not appear. Naming it is what lets a
+ * caller — or a test — say so.
  */
 export interface PlacedPrayerCommentary extends CommentaryEntry {
 	/** `undefined` on the mark at the prayer's end. */
@@ -130,7 +138,9 @@ export interface PrayerCommentaryPlacement {
 	/** One entry per line, in the order given: the quoted runs that line
 	 *  carries, in text order. */
 	byLine: PlacedAnchor[][];
-	trailing: PlacedPrayerCommentary[];
+	/** Notes whose lemma the prayer's lines did not carry. Empty against the
+	 *  corpus, and NOT rendered — see the docblock above. */
+	unplaced: PlacedPrayerCommentary[];
 }
 
 export function placePrayerCommentary(
@@ -159,5 +169,5 @@ export function placePrayerCommentary(
 	}
 
 	for (const marks of byLine) marks.sort((a, b) => a.anchor.from - b.anchor.from);
-	return { placed, byLine, trailing: placed.filter((p) => !p.anchor) };
+	return { placed, byLine, unplaced: placed.filter((p) => !p.anchor) };
 }

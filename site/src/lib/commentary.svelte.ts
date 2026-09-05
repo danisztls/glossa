@@ -29,7 +29,7 @@
 
 import { getCommentaryChapter, getPrayerCommentary } from './corpus';
 import { USE_REAL_CORPUS } from './corpus-index';
-import type { CommentaryNote } from './types';
+import type { CommentaryNote, PrayerCommentary, PrayerReference } from './types';
 
 const EMPTY: Map<number, CommentaryNote[]> = new Map();
 
@@ -129,32 +129,44 @@ export async function loadChapter(workId: string, osis: string, chapter: number)
 // than retried on every re-run.
 
 const NO_NOTES: CommentaryNote[] = [];
+const NO_REFERENCES: PrayerReference[] = [];
 
-const prayerStore = $state<{ byWork: Record<string, Map<string, CommentaryNote[]>> }>({
+const prayerStore = $state<{ byWork: Record<string, Map<string, PrayerCommentary>> }>({
 	byWork: {}
 });
 
 const prayerStarted = new Set<string>();
 
-/** One prayer's notes from one commentary, starting the fetch on the first
- *  ask. Empty is the ordinary answer for a prayer this work does not reach:
- *  the apparatus covers two prayers of thirty-five, which is a fact about the
+/** One prayer's entry in one commentary, starting the fetch on the first ask.
+ *  Undefined is the ordinary answer for a prayer this work does not reach: the
+ *  apparatus covers two prayers of thirty-five, which is a fact about the
  *  sources and not a gap. */
-export function prayerNotesFor(workId: string, slug: string): CommentaryNote[] {
+function prayerEntry(workId: string, slug: string): PrayerCommentary | undefined {
 	const loaded = prayerStore.byWork[workId];
-	if (loaded) return loaded.get(slug) ?? NO_NOTES;
+	if (loaded) return loaded.get(slug);
 	if (USE_REAL_CORPUS && !prayerStarted.has(workId)) void loadPrayerCommentary(workId);
-	return NO_NOTES;
+	return undefined;
+}
+
+export function prayerNotesFor(workId: string, slug: string): CommentaryNote[] {
+	return prayerEntry(workId, slug)?.notes ?? NO_NOTES;
+}
+
+/** Where else the corpus speaks of this prayer, per commentary — the links
+ *  under the text. They ride the apparatus's own fetch and its own switch,
+ *  because they are what the notes this apparatus does NOT carry became. */
+export function prayerReferencesFor(workId: string, slug: string): PrayerReference[] {
+	return prayerEntry(workId, slug)?.references ?? NO_REFERENCES;
 }
 
 export async function loadPrayerCommentary(workId: string): Promise<void> {
 	if (!USE_REAL_CORPUS || prayerStarted.has(workId)) return;
 	prayerStarted.add(workId);
-	let notes: Map<string, CommentaryNote[]>;
+	let entries: Map<string, PrayerCommentary>;
 	try {
-		notes = await getPrayerCommentary(workId);
+		entries = await getPrayerCommentary(workId);
 	} catch {
-		notes = new Map();
+		entries = new Map();
 	}
-	prayerStore.byWork = { ...prayerStore.byWork, [workId]: notes };
+	prayerStore.byWork = { ...prayerStore.byWork, [workId]: entries };
 }

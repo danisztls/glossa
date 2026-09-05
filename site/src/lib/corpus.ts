@@ -2391,17 +2391,21 @@ async function fetchPrayers(lang: string): Promise<Prayer[]> {
 }
 
 /**
- * One prayer commentary's notes, keyed by the slug of the annotated prayer.
+ * One prayer commentary's entries, keyed by the slug of the annotated prayer.
+ *
+ * THE WHOLE ENTRY AND NOT ITS NOTES, because an entry carries `references` as
+ * well and they are wanted at the same moment by the same page — one fetch,
+ * one store, one gate.
  *
  * COARSE FETCH, NARROW RETURN, like `getCommentaryChapter` — except that the
  * whole work is one file, so the "chunk" is the apparatus entire. At a few
  * tens of kilobytes per language that is the same call `getPrayers` already
  * makes for the prayers themselves, and splitting it would buy nothing.
  */
-export async function getPrayerCommentary(workId: string): Promise<Map<string, CommentaryNote[]>> {
+export async function getPrayerCommentary(workId: string): Promise<Map<string, PrayerCommentary>> {
 	await ensureContentIndex();
 	const entries = await fetchTier<PrayerCommentary[]>([], prayerContentLocation(workId), []);
-	return new Map(entries.map((entry) => [entry.slug, entry.notes]));
+	return new Map(entries.map((entry) => [entry.slug, entry]));
 }
 
 export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer | undefined> {

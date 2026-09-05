@@ -1513,6 +1513,19 @@ parsing, markers, validation — is in `pipeline/CLAUDE.md`).
   default, not the state — storing the state makes "never touched the panel"
   and "switched everything off" the same value, and the next work ingested
   arrives silently off for the first of them.
+- **BOTH DEFAULTS MOVE, AND A WORK IS WHAT MOVES THEM.** `subsumes_notes`
+  flips the edition's; `default_on` flips the commentary's, and the prayers'
+  apparatus is the only work in the corpus that sets it (2026-09-05) — tens of
+  kilobytes, the only apparatus a prayer page has, two prayers of thirty-five,
+  so opt-in meant a reader who never opened the panel never learned it existed.
+  Every caller reads it through `commentaryDefaultsOn`, so the enabled test and
+  the panel's switch cannot ask the question with two different defaults.
+- **A COMMENTARY'S CHOICE IS STORED PER FAMILY, an edition's per edition.**
+  `commentary.preces.*` is fifteen works and the reader meets one per page, so
+  the id is stored without its language — "I do not want this commentary" is
+  not a statement about English. An edition's notes must NOT be scoped that
+  way: the Douay-Rheims and the CPDV are two apparatuses, and turning one off
+  says nothing about the other.
 - **A commentary is offered at the edition it annotates** — `commentariesAt`
   takes an address and reads `annotates`. The argument went round twice; the
   settled condition is that the marks now sit at the words the notes quote, so
@@ -1707,10 +1720,10 @@ in the text to bind to) and has no third state to explain.
 **A SECOND UNIT SPACE SINCE 2026-09-04, AND ALMOST NOTHING ABOVE CHANGED.**
 `commentary.preces.{lang}` annotates `prayer.common.{lang}` and its units name
 a `Prayer.slug`, not a verse — the Catechism on the Ave and the Compendium on
-the Pater, 335 notes over fifteen languages (`pipeline/CLAUDE.md` for what it
-reads and why Haydock is not in it). It contributes no route and no name, the
-apparatus is still opt-in and still fetched only when it is, and the mark is
-the same dagger. What is new is exactly four things:
+the Pater, over fifteen languages (`pipeline/CLAUDE.md` for what it reads and
+why Haydock is not in it). It contributes no route and no name, it is still
+fetched only when it is switched on, and the mark is the same dagger. What is
+new is exactly four things:
 
 - **`manifest.addresses` is the branch, and both scrapers write it.**
   `sync-corpus.mjs` reads it before it opens the work's directory, which is
@@ -1722,26 +1735,57 @@ the same dagger. What is new is exactly four things:
   the same repeated clause — `Mary` occurs in three lines of the English Ave.
   And a clause the edition set across a break is still one clause: confining a
   span to one line placed **77** of the tier's 120 headwords and left the Ave
-  with a single mark in most languages; spanning it places **114**. Each line
+  with a single mark in most languages; spanning it places every one. Each line
   lights the words it prints and only the last takes the dagger
   (`PlacedAnchor.showMark`), or one note raises three marks onto one card.
-- **The trailing mark is the PRAYER's, not the last line's.** A verse ends and
-  its unplaced notes hang there; hanging a prayer's off whichever line came
-  last would set an apparatus mid-text the moment a later line took no mark.
-  `PrayerBlocks` renders it after the whole run, and the partition property is
-  pinned by a test either side of the line boundary.
+- **THERE IS NO TRAILING MARK, AND NOTHING HANGS AT THE FOOT** (2026-09-05).
+  It was rendered after the whole run for a day, on the argument that a prayer
+  has no end until its last line — true, and beside the point: two thirds of
+  the source's runs gloss the prayer as a WHOLE, and 215 of those under a
+  seven-line Ave is the Catechism reprinted beside the prayer rather than a
+  gloss on it. The pipeline stores only notes that quote a clause (120 of the
+  335 it reads), so every note anchors and the apparatus IS the marks in the
+  text. `placePrayerCommentary` still returns what it could not place, named
+  `unplaced` and rendered nowhere — the two folds could only ever disagree in
+  silence, and a name is what lets a test say so.
+- **What the dropped notes became is `PrayerCommentary.references`** — the
+  Gospel the prayer is printed in, the Catechism's article on it, the
+  Compendium's questions, as links under the text. Same file, same fetch, same
+  switch, because they are the same act of reading two books beside a prayer.
+  The ranges are the pipeline's and are checked there; `PrayerReferences`
+  decides only how a range is written down, and takes each siglum from the
+  source work's own `short_title` exactly as the locus does. It is `CitedBy`'s
+  panel turned around — that one answers "who cites this address", this one
+  "where is this prayer treated" — so it takes that panel's treatment: the rule
+  above it, 0.85rem, the work named once and muted before its loci. Not its
+  COLUMN, though: a concordance is dozens of rows to scan down, this is three
+  groups, and one per line under a seven-line prayer reads as more apparatus
+  than there is. A prayer
+  is seven lines at 1.1x the reading base, and anything under it at body size
+  argues with the prayer for the page. The links PREVIEW (no
+  `data-link-preview` marker): that opt-out is for navigation chrome, and a
+  paragraph the reader may want to see before deciding to leave the prayer is
+  exactly what the card is for.
 - **`CommentaryNote.locus` labels a note with the paragraph it IS, and links
   it.** One work draws on two books, so a manifest-level attribution would tell
   half its readers the wrong one; the siglum comes from that source work's own
   `short_title` in the corpus (`CCC` everywhere, `Compêndio`/`Lilla katekesen`
   per edition), never a literal.
+- **The card does not print the headword, because the line is lighting it.**
+  `CommentaryGloss` takes `lemmaMarked`, which is `Sidenote`'s rule one
+  apparatus over: print the headword only where the words could not be marked.
+  It is the CALLER's answer and defaults false, so Haydock is unchanged — a
+  verse's card may hold several notes at one mark, where the headword divides
+  one authority's remark from the next; a prayer's holds exactly one, always
+  anchored.
 
 **And the prayers' apparatus rides `essentials`, which is automatic** —
 the one commentary in the corpus that may. `WAVE_FOR_KIND`'s own rule puts a
 commentary on the wave of the work it annotates; the rule it looks like it
 breaks is about SIZE, and this is tens of kilobytes beside a collection every
-reader already takes. Left out, a reader who filled the library and then
-switched the apparatus on would get a 504 with the prayers sitting right there.
+reader already takes. Left out, a reader who filled the library would get a 504
+with the prayers sitting right there — and since 2026-09-05 without having
+asked for anything, the apparatus being on unless they turn it off.
 
 **`fold` in `lemma.ts` expands `æ` and `œ`**, which no normal form does — they
 are letters, not a base plus a mark. The curated Latin Ave ends `nostræ` and

@@ -14,8 +14,10 @@ day of looking found, so that the decision is taken against evidence and not
 re-surveyed later.
 
 **Tier 0 was built on 2026-09-04 as `commentary.preces.{lang}`** — §2.2 and
-§2.4, the Hail Mary and the Our Father: 335 notes over fifteen languages, 120
-with a headword the prayer prints and 114 marks set inside the text. Two of this survey's conclusions did not
+§2.4, the Hail Mary and the Our Father, over fifteen languages. Of the 335 runs
+and answers read, **120 quote a clause and are kept**, each of them marked
+inside the text; the rest gloss the prayer whole and are offered as links to
+the passage instead (2026-09-05). Two of this survey's conclusions did not
 survive contact and are corrected in place below: §2.5's Haydock was measured
 and dropped, and §2.2's lemma boundary turned out to be typographic in six
 editions rather than a `<br>` in one. `pipeline/CLAUDE.md` §The prayers' glossa

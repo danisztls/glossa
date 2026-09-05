@@ -379,6 +379,12 @@ export const en: Dictionary = {
 	'prayers.landing.title': 'Common Prayers',
 	'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
 	'prayers.tableOfContents': 'Table of Contents',
+	// The heading over the passages under a glossed prayer — the Gospel it is
+	// drawn from, the Catechism's article on it, the Compendium's questions.
+	// "See also" and not "Sources": the Ave's second half is nobody's Scripture,
+	// and the Catechism is not where the prayer came from. What is true of all
+	// of them is only that they are somewhere else to read about it.
+	'prayers.seeAlso': 'See also',
 	'prayers.prevPrayer': 'Previous prayer',
 	'prayers.nextPrayer': 'Next prayer',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the

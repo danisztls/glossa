@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { apparatusPrefs } from './apparatus-prefs.svelte';
+import { apparatusPrefs, commentaryDefaultsOn } from './apparatus-prefs.svelte';
+import type { WorkManifest } from './types';
 
 const EDITION = 'bible.douay-rheims.en';
 const COMMENTARY = 'commentary.haydock.en';
 const OTHER = 'commentary.other.en';
+// The prayers' apparatus: one work per language, and the one commentary in the
+// corpus that arrives switched on.
+const PRECES_EN = 'commentary.preces.en';
+const PRECES_PT = 'commentary.preces.pt';
 
 // A module-level singleton, like `compare-pref`'s, so tests must not leak into
 // each other. Reset to the defaults rather than exporting a second constructor
@@ -12,6 +17,7 @@ beforeEach(() => {
 	apparatusPrefs.setEditionNotes(EDITION, true);
 	apparatusPrefs.setCommentary(COMMENTARY, false);
 	apparatusPrefs.setCommentary(OTHER, false);
+	apparatusPrefs.setCommentary(PRECES_EN, true, true);
 });
 
 describe('the two defaults, which are deliberately opposite', () => {
@@ -96,5 +102,57 @@ describe('switching', () => {
 		apparatusPrefs.setCommentary(COMMENTARY, true);
 		apparatusPrefs.setCommentary(COMMENTARY, false);
 		expect(apparatusPrefs.commentaryEnabled(COMMENTARY)).toBe(false);
+	});
+});
+
+describe('a commentary that arrives switched on', () => {
+	// The prayers' apparatus is tens of kilobytes, is the only apparatus a
+	// prayer page has, and reaches two prayers of thirty-five — so opt-in meant
+	// a reader who never opened the panel never learned it existed. The switch
+	// is the same switch; only the default moved.
+	it('is on before the reader has said anything', () => {
+		expect(apparatusPrefs.commentaryEnabled(PRECES_EN, true)).toBe(true);
+		expect(apparatusPrefs.commentaryEnabled(PRECES_EN, false)).toBe(false);
+	});
+
+	it('stays off once turned off, and comes back on when turned on', () => {
+		apparatusPrefs.setCommentary(PRECES_EN, false, true);
+		expect(apparatusPrefs.commentaryEnabled(PRECES_EN, true)).toBe(false);
+		apparatusPrefs.setCommentary(PRECES_EN, true, true);
+		expect(apparatusPrefs.commentaryEnabled(PRECES_EN, true)).toBe(true);
+	});
+
+	// The reader turned OFF "the Catechism and the Compendium on the prayers",
+	// not "…in English". `commentary.preces.*` is fifteen works and the reader
+	// meets one of them per page, so a per-work id would have met them again on
+	// the next prayer they opened in another language.
+	it('is one choice across every language of the same commentary', () => {
+		apparatusPrefs.setCommentary(PRECES_EN, false, true);
+		expect(apparatusPrefs.commentaryEnabled(PRECES_PT, true)).toBe(false);
+		apparatusPrefs.setCommentary(PRECES_PT, true, true);
+		expect(apparatusPrefs.commentaryEnabled(PRECES_EN, true)).toBe(true);
+	});
+
+	// An edition's notes are NOT family-scoped and must not become so: the
+	// Douay-Rheims and the CPDV are two editions with two apparatuses, and a
+	// reader turning one off has said nothing about the other.
+	it('leaves editions alone, which are chosen one at a time', () => {
+		apparatusPrefs.setEditionNotes(EDITION, false);
+		expect(apparatusPrefs.editionNotesEnabled('bible.cpdv.en')).toBe(true);
+	});
+});
+
+describe('which way a work says its switch points', () => {
+	const work = (extra: Partial<WorkManifest>) => ({ id: PRECES_EN, ...extra }) as WorkManifest;
+
+	it('reads `default_on` off a commentary manifest', () => {
+		expect(commentaryDefaultsOn(work({ type: 'commentary', default_on: true }))).toBe(true);
+		expect(commentaryDefaultsOn(work({ type: 'commentary' }))).toBe(false);
+	});
+
+	// The narrowing is the point: every caller holds a `WorkManifest`, and a
+	// non-commentary has no such field to read.
+	it('answers false for a work that is not a commentary', () => {
+		expect(commentaryDefaultsOn(work({ type: 'bible' }))).toBe(false);
 	});
 });
