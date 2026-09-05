@@ -166,3 +166,101 @@ describe('every route that resolves a reference is primed for one', () => {
 		expect(indexesForPath(url)).toEqual(expect.arrayContaining(['bible', 'summa', 'document']));
 	});
 });
+
+/**
+ * THE SECOND WAY A ROUTE READS AN UNPRIMED INDEX, and the one the scan above
+ * cannot see: not through a citation, but by calling a `corpus.ts` reader
+ * directly.
+ *
+ * `/schola` did (2026-09-04). It renders the Compendium of the Social
+ * Doctrine's outline, resolves no reference at all, and so appears nowhere in
+ * the `refHref` scan — it threw at every load under `npm run dev` on a
+ * `requireIndex` in `buildDocumentOutline`. That guard was in the wrong place
+ * and is gone, but the class is real: a page importing `documentOutline`,
+ * `getCccStructure` or `summaQuestion` owes that index whether or not it ever
+ * mints a link.
+ *
+ * SO THE REQUIREMENT IS READ OFF `corpus.ts` ITSELF. Each exported function
+ * declares what it needs by calling `requireIndex`, and a function that calls
+ * another inherits it — which is what makes this a check on the mapping rather
+ * than a second copy of it. Regex over the source, like the scan above and for
+ * the same reason: there is no other way to ask a question about which module
+ * reaches which.
+ *
+ * IT ERRS TOWARD DEMANDING TOO MUCH, deliberately. The call detection is a
+ * word match, so a name mentioned in a comment counts; the failure that
+ * produces is a test asking for a primer that is not needed, which a person
+ * reads and dismisses. The opposite error is a page that throws in dev and
+ * renders empty in production.
+ */
+describe('every route that reads an index directly is primed for it', () => {
+	const SRC = new URL('..', import.meta.url);
+	const corpus = readFileSync(new URL('lib/corpus.ts', SRC), 'utf8');
+
+	/** Exported function name -> its body, which runs to the next export. */
+	const bodies = new Map<string, string>();
+	const declarations = [...corpus.matchAll(/\nexport (?:async )?function ([A-Za-z0-9_]+)/g)];
+	declarations.forEach((match, i) => {
+		const next = declarations[i + 1];
+		bodies.set(match[1], corpus.slice(match.index, next ? next.index : corpus.length));
+	});
+
+	/** Index names each exported function requires, its callees included. */
+	const needs = new Map<string, Set<string>>(
+		[...bodies].map(([name, body]) => [
+			name,
+			new Set([...body.matchAll(/requireIndex\('([a-z]+)'/g)].map(([, index]) => index))
+		])
+	);
+	for (let changed = true; changed;) {
+		changed = false;
+		for (const [name, body] of bodies) {
+			for (const callee of bodies.keys()) {
+				if (callee === name || !new RegExp(`\\b${callee}\\s*\\(`).test(body)) continue;
+				for (const index of needs.get(callee)!) {
+					if (needs.get(name)!.has(index)) continue;
+					needs.get(name)!.add(index);
+					changed = true;
+				}
+			}
+		}
+	}
+
+	it('finds the readers that declare a requirement', () => {
+		// So the scan cannot pass by matching nothing — if `requireIndex` is
+		// renamed or the readers move, this says so rather than going quiet.
+		expect(needs.get('documentOutline')).toContain('document');
+		expect(needs.get('getCccStructure')).toContain('ccc');
+	});
+
+	function pages(dir: string): string[] {
+		return readdirSync(new URL(dir, SRC), { withFileTypes: true }).flatMap((entry) =>
+			entry.isDirectory()
+				? pages(`${dir}${entry.name}/`)
+				: entry.name === '+page.svelte'
+					? [`${dir}${entry.name}`]
+					: []
+		);
+	}
+
+	/** What a page imports from `$lib/corpus`, aliases resolved to the export. */
+	function readersIn(text: string): string[] {
+		return [...text.matchAll(/import\s*\{([^}]*)\}\s*from '\$lib\/corpus'/g)]
+			.flatMap(([, names]) => names.split(','))
+			.map((name) => name.trim().split(/\s+as\s+/)[0])
+			.filter(Boolean);
+	}
+
+	it.each(pages('routes/'))('%s', (path) => {
+		const wanted = new Set(
+			readersIn(readFileSync(new URL(path, SRC), 'utf8')).flatMap((name) => [
+				...(needs.get(name) ?? [])
+			])
+		);
+		if (wanted.size === 0) return;
+		// `routes/preces/[slug]/+page.svelte` -> `/preces/[slug]`, which
+		// `indexesForPath` reads for its first segment and nothing else.
+		const url = path.slice('routes'.length, -'/+page.svelte'.length) || '/';
+		expect(indexesForPath(url)).toEqual(expect.arrayContaining([...wanted]));
+	});
+});
