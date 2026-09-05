@@ -665,11 +665,11 @@ than remembering to add it to a list.**
 **A page joins `CHROME_PATHS` only when its own title and description strings
 exist in EVERY interface language**, which is a translation gate and not a
 routing one — see `site/docs/addresses.md` §Two tables. `/calendarium`,
-`/catechismus/compendium` and `/schola` are all held out by it today and are
-all in `STATIC_PATHS`, so each answers 200 and is indexable at its bare
-address. `/schola` is the one worth remembering: it is written FOR the reader
-with no vocabulary, so a cluster claiming it in 37 languages would be false
-where being false costs most.
+`/catechismus/compendium` and `/schola` are all in `STATIC_PATHS` and not on
+that list today, so each answers 200 and is indexable at its bare address and
+none is published. **They are waiting, not excluded** — each joins on the day
+its strings are translated, one line plus a `CHROME_KEYS` entry, and `PLAN.md`
+§Three pages are unpublished holds the table of what each is waiting on.
 
 **A cluster is thirty-five URLs, and the unprefixed one is not the English
 page.** One prefixed member per interface language plus the bare path, which
