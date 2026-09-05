@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { parseHref } from './address';
 import { getCccStructure, getCompendiumStructure } from './corpus';
 import {
-	councilRoute,
 	gospelsRoute,
 	pillarsRoute,
 	socialRoute,
@@ -10,8 +9,7 @@ import {
 	type LearningRoute
 } from './learning-routes';
 import { pairDivisionsCached } from './toc-pairing';
-import type { DocumentGroup } from './corpus';
-import type { DocumentManifest, StructureNode } from './types';
+import type { StructureNode } from './types';
 
 const LABELS = { cccTitle: 'Catechism', compendiumTitle: 'Compendium' };
 
@@ -129,56 +127,6 @@ describe('the Gospels', () => {
 	});
 });
 
-function conciliar(slug: string, kind: string, promulgated: string): DocumentGroup {
-	const manifest = { id: `vatii.${slug}.en`, title: slug, document_kind: kind, promulgated };
-	return {
-		slug,
-		family: 'vatii',
-		manifests: { en: manifest as unknown as DocumentManifest }
-	};
-}
-
-describe('what the Council said', () => {
-	// Deliberately shuffled, and deliberately including a document the Council
-	// did not write: the ordering must come from the genre and the date, not
-	// from the order the corpus happens to list works in.
-	const documents = [
-		conciliar('nostra-aetate', 'conciliar-declaration', '1965-10-28'),
-		conciliar('lumen-gentium', 'conciliar-constitution', '1964-11-21'),
-		conciliar('inter-mirifica', 'conciliar-decree', '1963-12-04'),
-		conciliar('sacrosanctum-concilium', 'conciliar-constitution', '1963-12-04'),
-		conciliar('humanae-vitae', 'encyclical', '1968-07-25')
-	];
-	const route = councilRoute({
-		documents,
-		manifestOf: (group) => group.manifests.en,
-		source: '/documenta/lumen-gentium'
-	});
-
-	it('ranks the constitutions first, then decrees, then declarations', () => {
-		expect(route.steps.map((step) => step.label)).toEqual([
-			'sacrosanctum-concilium',
-			'lumen-gentium',
-			'inter-mirifica',
-			'nostra-aetate'
-		]);
-		everyHrefParses(route);
-	});
-
-	it('leaves out what the Council did not publish', () => {
-		expect(route.steps.map((step) => step.label)).not.toContain('humanae-vitae');
-	});
-
-	it('leaves out a document the corpus has no edition of', () => {
-		const none = councilRoute({
-			documents,
-			manifestOf: () => undefined,
-			source: '/documenta/lumen-gentium'
-		});
-		expect(none.steps).toEqual([]);
-	});
-});
-
 describe('the social doctrine', () => {
 	const node = (title: string, from: number): StructureNode => ({
 		kind: 'sub',
@@ -196,6 +144,34 @@ describe('the social doctrine', () => {
 		});
 		expect(route.steps.map((step) => step.label)).toEqual(['Part One', 'Part Two']);
 		everyHrefParses(route);
+	});
+
+	it('drops the work’s own title, which is a masthead and not a part', () => {
+		// `csdc.*/structure.json` opens with the Compendium's own name at
+		// `before: 1`, and it reached the page as step one above the three
+		// Parts. It also swallowed the Introduction — the two share a
+		// paragraph — so the range cannot tell them apart and the name does.
+		const route = socialRoute({
+			outline: [
+				node('COMPÊNDIO DA DOUTRINA SOCIAL DA IGREJA', 1),
+				node('PRIMEIRA PARTE', 20),
+				node('SEGUNDA PARTE', 160)
+			],
+			hrefAt: (n) => `/doctrina-socialis/caput/${n}`,
+			mastheadTitle: 'Compêndio da Doutrina Social da Igreja',
+			source: '/doctrina-socialis/8'
+		});
+		expect(route.steps.map((step) => step.label)).toEqual(['PRIMEIRA PARTE', 'SEGUNDA PARTE']);
+		everyHrefParses(route);
+	});
+
+	it('keeps every heading when no masthead title is given', () => {
+		const route = socialRoute({
+			outline: [node('Part One', 1), node('Part Two', 100)],
+			hrefAt: (n) => `/doctrina-socialis/caput/${n}`,
+			source: '/doctrina-socialis/8'
+		});
+		expect(route.steps).toHaveLength(2);
 	});
 
 	it('drops a heading nothing addresses', () => {

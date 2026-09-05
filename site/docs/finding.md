@@ -46,12 +46,37 @@ not disagree.
 **Every route on the learning portal is an order some document in this corpus
 states, and carries the address that states it.** The four pillars are the
 Catechism's own plan at `/catechismus/13`; the Gospels are in the canon's order
-under Dei Verbum's urging to read Scripture; the Council's sixteen documents are
-ranked by the Council's own three genres, constitutions before decrees before
-declarations; the social teaching follows the Compendium's own parts.
-`learning-routes.ts` holds the rule, and its builders take their data as
-arguments so the two routes whose ordering rule is least obvious can be tested
-at all — the fixtures carry no documents and no Social Doctrine.
+under Dei Verbum's urging to read Scripture; the social teaching follows the
+Compendium's own parts. `learning-routes.ts` holds the rule, and its builders
+take their data as arguments so the route whose ordering rule is least obvious
+can be tested at all — the fixtures carry no Social Doctrine.
+
+**A SOURCED ORDER IS NOT SUFFICIENT, AND THE COUNCIL IS WHERE THAT WAS
+LEARNED.** A route listed the Council's documents ranked by the Council's own
+three genres — constitutions, decrees, declarations — which is a real ordering
+made by the body that wrote them, and it was on the page for one day. Sixteen
+documents is not a beginner's reading order, and this page is for
+`audiences.md` §5. **The test a route has to pass is therefore both halves:
+somebody else stated the order, AND the order is one a newcomer can start on.**
+The Council is reached from Library and from `/documenta`, where each of the
+sixteen carries the summary written by reading it.
+
+**It also shipped with two documents that were not the Council's.** The builder
+filtered on `document_kind` alone, so `vati.dei-filius` and
+`vati.pastor-aeternus` — Vatican I, 1870 — stood at the head of a list titled
+"The Second Vatican Council", and they were the only two entries in it a reader
+could not read: Italian and Latin, nothing else. The genuine sixteen carry
+twelve to fourteen editions each, English among them. **A `kind` is not a
+provenance**; when a filter is a claim about who made something, filter on who
+made it.
+
+**And the Social Doctrine route opened on a masthead.** `csdc.*/structure.json`
+begins with the work's own title, which `docs/writing-descriptions.md` names
+outright — "The document's own title is not a heading… it is a masthead, not an
+internal division" — so the route read as though the book were a part of
+itself. `socialRoute` matches it against the work's own title rather than
+guessing from the node's shape, because that node also absorbed the
+Introduction: the two share a paragraph, so the range cannot tell them apart.
 
 **That is not fastidiousness.** `docs/writing-descriptions.md` binds the only
 prose this project authors with "Do not evaluate, recommend, or contextualize",
@@ -68,12 +93,24 @@ it. **A second such paragraph needs the same mark or it needs not to exist.**
 
 **Nothing on the page is written twice.** Every step is titled by the corpus, so
 it arrives in the reader's content language and cannot fall behind an ingestion;
-the shelves below reuse each destination's own `*.landing.tagline`. The 19
+the shelves below reuse each destination's own `*.landing.tagline`. The
 `schola.*` keys are the page's name, the route names, the sentence citing each
-source, and the seven saying what kind of thing each shelf holds. That last
+source, and the ones saying what kind of thing each shelf holds. That last
 group is the section §5 actually stops at: not where a work is, but what
 authority it carries — that the Summa is one theologian's book, that the Code is
 law rather than doctrine.
+
+**THE TEN PICTURES COST ONE KEY, because a caption is not a sentence.** Each is
+`Artist, Title, year. Institution.` — proper nouns and a date, held beside the
+asset in `schola-art.ts` — and the only interface word in one is "detail".
+Images are `alt=""` with the identification in the caption, `Plate.svelte`'s
+arrangement. They are public-domain works newly cut from Commons scans and no
+master is kept: faithful crops with no retouching, so `assets/README.md`'s
+recorded URL, SHA-256 and crop box reproduce each one exactly. **A colour
+painting must not take `--plate-blend`** — that token is tuned to multiply a
+grey scan's white paper away and turns an oil into mud — and under
+`[data-mono]` all ten are desaturated, because a reader who asked for one grey
+ramp did not ask for four paintings.
 
 **Library works only as the SUPERSET, and three umbrella labels failed before
 it.** "Church", "Magisterium" and "Teaching" all failed the same way: Scripture
