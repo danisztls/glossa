@@ -30,16 +30,65 @@ read as an order.
 **It pointed at `/catechismus` for one day, and that was a label doing work the
 page behind it did not do.** A table of divisions is exactly right for a reader
 who knows the outline and useless to one who cannot name a part — which is the
-reader the word "Learn" was chosen for. `/schola` is the page it opens now: what
-each work IS, and orders for reading them. The Catechism is therefore the one
-work here with no door of its own, and nothing became unreachable — `/schola`'s
-first route opens it, Library shelves it, and the jump box completes `CCC 1`.
+reader the word "Learn" was chosen for. `/schola` is the page it opens now: a
+guide to what each work IS, what a citation of it looks like, what the chrome
+around the text does, and the orders for reading the Church has set out. The
+Catechism is therefore the one work here with no door of its own, and nothing
+became unreachable — the guide's first row opens it, Library shelves it, and the
+jump box completes `CCC 1`.
 
 **Learn is LAST on the bar, not first.** It led on the argument that a newcomer
 needs the leftmost item; what that missed is that the four before it are the
 works themselves, so a bar opening with a page about the others reads as a
 preamble to them. The home page's doors mirror the bar's order, and the two must
 not disagree.
+
+## `/schola` is a guide, and its examples are live
+
+**The reference system is the part nothing else on the site teaches.** The
+corpus is addressed by number — `CCC 1`, `Comp. 1`, `CSDC 1`, `Can. 1`,
+`STh I, 1` — and `suggest.ts` reads every one of those notations back. A reader
+who has never seen a citation of the Catechism does not know that the number is
+a PARAGRAPH running unbroken from the first page to the last, or that the Code
+numbers canons rather than pages, and no page said so. That is
+`audiences.md` §5's "vocabulary of the corpus itself" stated plainly: per work,
+one sentence on what it is, one on what its numbered unit is called, and a
+worked example.
+
+**Every example is checked against the corpus before it is drawn as a link.**
+The page asks the same existence predicates the jump box asks —
+`cccParagraphExists`, `compendiumQuestionExists`, `socialDoctrineParagraphExists`,
+`canonLawCanonExists`, `summaQuestionExists`, `getDocumentGroup` — and where the
+answer is no the notation still shows and simply is not a link. A guide whose
+worked example 404s teaches the reader that they have misread the notation.
+**The number in each is the lowest one** (`CCC 1`, not `CCC 1471`): the unit
+every edition has, so the example survives a reader whose content language
+carries an abridgement, and following it lands at the beginning of the work
+rather than in the middle of an argument.
+
+**The Bible's example is DERIVED and the others are sigla.** The book's
+abbreviation comes from this language's own citation table (`bookAbbrev`),
+falling back to the reader's edition's name for the book, and the separator from
+the same grammar the parser reads — so a Portuguese reader is shown `Jo 3,16`
+and an English one `Jn 3:16`. `CSDC` and `STh` are the works' own sigla and are
+written down; `CCC`, `Comp.` and `Can.` come from the dictionary keys the
+editions print. **The OSIS id is lower-case here** (`john`), and both readers
+answer `undefined` for the other spelling, so the wrong case draws no example
+rather than erring.
+
+**The list is FLAT, one row per work, where it was six shelves with three works
+nested inside them.** Nesting is right for a catalogue and wrong for a guide: a
+nested work took its parent's definition and had no citation form of its own,
+and the Compendium of the Catechism, the Compendium of the Social Doctrine and
+the Summa are precisely the three a newcomer has heard named and cannot place.
+
+**The chrome gets a section of its own, named by its own controls.** The search
+box, Library, the language and edition menus, comparison, the apparatus, marks,
+the settings panel, the calendar and offline reading — each headed by the key
+that control is already labelled by (`jumpbox.short`, `settings.label`,
+`compare.enter`, …), so a reader who reads a row and goes looking for the
+control finds the same word, and a translated interface cannot disagree with its
+own guide. Only the sentence under each is new writing.
 
 ## `/schola` reports orders; it does not recommend them
 
@@ -117,12 +166,15 @@ paintings.
 `ArtFigure.svelte` puts the identification behind the same caption trigger a
 Doré plate uses — `AnchoredPanel`, native popover, `role="note"`, printed
 unconditionally because the printed copy is the one whose reader cannot press
-anything — so a banner carries no line of small type under it. The six shelves
-of "What each of these is" had 400px paintings and now have icons: that
-section is the one part of the page that is definition rather than
-illustration, read by someone who does not yet know a catechism from a
-council, and a painting beside a definition is something to look at instead of
-reading it. A glyph belongs to the row. It also took 147 KB out of the build.
+anything — so a banner carries no line of small type under it. **The trigger is
+`.menu-trigger`**, the site's own icon button, and carries nothing of its own
+but where it sits: it was a 1.75rem disc for a day, which made the one control
+laid on a picture the one control on the site that was not a rounded square.
+The definitions below had 400px paintings and now have icons: that part of the
+page is definition rather than illustration, read by someone who does not yet
+know a catechism from a council, and a painting beside a definition is
+something to look at instead of reading it. A glyph belongs to the row. It also
+took 147 KB out of the build.
 
 **AND THE PAGE IS A LANDING PAGE, LAID OUT AS ONE.** `.landing-column` in
 `layout.css`, shared with `/`, `/bibliotheca` and `/documenta` — all four were

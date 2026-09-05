@@ -1,6 +1,7 @@
 <script lang="ts">
 	/**
-	 * `/schola` — what these books are, and orders for reading them.
+	 * `/schola` — a short guide to the site: what is on it, how each work is
+	 * cited, how to find a passage, and orders for reading.
 	 *
 	 * ## The reader this is for, and why nothing else on the site was them
 	 *
@@ -11,12 +12,37 @@
 	 * shorter book, or that the Summa is not magisterial. With §1 they are
 	 * "plausibly most of the traffic". Every other page here answers an
 	 * address. This one answers neither an address nor a question: it says what
-	 * is on the shelf and in what order the Church has set it out.
+	 * is on the shelf, what a citation of it looks like, and what the chrome
+	 * around the text does.
 	 *
 	 * `Learn` pointed at `/catechismus` from the day the bar was rebuilt until
 	 * this page existed, which was a label doing work the page behind it did
 	 * not do — `/catechismus` is a table of divisions, and a reader who cannot
 	 * name a division cannot use one.
+	 *
+	 * ## THE REFERENCE SYSTEM IS THE PART NOBODY ELSE TEACHES
+	 *
+	 * The corpus is addressed by number — `CCC 1`, `Comp. 1`, `Can. 1`,
+	 * `STh I, 1` — and the jump box reads every one of those notations
+	 * (`suggest.ts`). A reader who has never seen a citation of the Catechism
+	 * does not know that the number is a PARAGRAPH and runs unbroken from the
+	 * first page to the last, and no page on this site said so. That is the
+	 * whole of §5's "vocabulary of the corpus itself", and it is what the books
+	 * section below exists to state: one sentence on what a work is, one on
+	 * what its numbered unit is called, and a worked example that is a link.
+	 *
+	 * **EVERY EXAMPLE IS CHECKED AGAINST THE CORPUS BEFORE IT IS OFFERED AS A
+	 * LINK.** `citations` asks the same existence predicate the jump box asks
+	 * (`cccParagraphExists`, `canonLawCanonExists`, `summaQuestionExists`, …),
+	 * and where the answer is no the notation is still shown and simply is not
+	 * a link. A guide whose worked example 404s teaches the reader that they
+	 * have misunderstood the notation.
+	 *
+	 * The Bible's example is DERIVED rather than written down: the book's
+	 * abbreviation comes from this language's own citation table
+	 * (`bookAbbrev`), falling back to the reader's edition's name for the book,
+	 * and the chapter/verse separator from the same grammar the parser uses —
+	 * so a Portuguese reader is shown `Jo 3,16` and not somebody else's colon.
 	 *
 	 * ## THE ROUTES ARE REPORTED, NOT RECOMMENDED
 	 *
@@ -30,47 +56,58 @@
 	 * recommends, which `docs/writing-descriptions.md` forbids of the
 	 * descriptions — so it says whose it is on the page rather than leaving a
 	 * reader to assume the Church said it. That is `PLAN.md` gap 16's general
-	 * problem answered by hand in the one place this page creates it.
+	 * problem answered by hand in the one place this page creates it. **A
+	 * second such paragraph would need the same mark**, which is why nothing in
+	 * the guide below tells a reader which book to prefer.
 	 *
 	 * ## What this page costs in translation, and what it does not
 	 *
-	 * Every step is titled by the corpus: a part's own heading, a book's own
-	 * name in the reader's edition, a document's own title. So the steps are in
-	 * the reader's content language already, and an ingestion cannot leave them
-	 * stale. The `schola.*` keys are the page's own name, the route names, the
-	 * sentence citing each source, and the sentences saying what kind of thing
-	 * each shelf holds — the last of which is the section §5 actually stops at,
-	 * and the only part of this page that is new writing rather than new
-	 * arrangement.
+	 * Every route step is titled by the corpus: a part's own heading, a book's
+	 * own name in the reader's edition, a document's own title. So the steps
+	 * are in the reader's content language already, and an ingestion cannot
+	 * leave them stale. Every work's NAME below is the key that work's own
+	 * landing page is titled by, and every feature's name is the key its own
+	 * control is labelled by — so the page names nothing twice.
 	 *
-	 * The shelf headings and every work's description below reuse keys that
-	 * already exist in every dictionary, the same rule `/bibliotheca` and the
-	 * home page's doors follow. **So do the pictures**: an artwork's caption is
+	 * What is genuinely new writing is the sentences: what each work is, what
+	 * its unit of citation is, and what each feature does. That is the part §5
+	 * stops at, and it is the reason `/schola` is still out of `CHROME_PATHS`
+	 * (`route-manifest.ts`).
+	 *
+	 * **The pictures cost two keys between them**: an artwork's caption is
 	 * `Artist, Title, year. Institution.` and carries no sentence to translate
-	 * (`schola-art.ts`), so the whole set costs two keys — the word "detail"
-	 * and the name of the control that shows a credit.
+	 * (`schola-art.ts`) — the word "detail" and the name of the control that
+	 * shows a credit.
 	 *
 	 * ## THIS IS A LANDING PAGE AND IS LAID OUT AS ONE
 	 *
 	 * `.landing-column`, not `.content-column`: `layout.css` carries the
 	 * argument, which is that `--content-width` is a count of CHARACTERS and
-	 * this page's content is banners, a numbered list and a grid. The prose
+	 * this page's content is banners, two grids and a numbered list. The prose
 	 * that is still prose keeps a measure of its own through
 	 * `.landing-measure`. `/`, `/bibliotheca` and `/documenta` are the same
 	 * kind of page and take the same column.
 	 */
 	import {
+		canonLawCanonExists,
+		cccParagraphExists,
+		compendiumQuestionExists,
 		getBook,
 		getCccStructure,
 		getCompendiumStructure,
+		getDocumentGroup,
 		getPrayerMeta,
 		getWork,
 		hasBookIntro,
+		listPrayerMeta,
 		listWorksOfType,
 		socialDoctrineOutline,
-		socialDoctrineWorkId
+		socialDoctrineParagraphExists,
+		socialDoctrineWorkId,
+		summaQuestionExists
 	} from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
+	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
 	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
@@ -166,89 +203,210 @@
 	);
 
 	/**
-	 * THE SHELVES, BY WHAT KIND OF THING THEY HOLD — which is the axis
-	 * `/bibliotheca` deliberately does not sort on. That page is the catalogue
-	 * and groups by subject; this one answers "what am I looking at, and what
-	 * authority does it carry", which is where §5 stops.
+	 * THE CHROME, NAMED BY ITS OWN CONTROLS. Every `nameKey` here is the key
+	 * the button, menu or page it describes is already labelled by, so a reader
+	 * who reads this row and then goes looking for it finds the same word — and
+	 * so a translated interface never disagrees with its own guide. Only the
+	 * sentence is written here.
 	 *
-	 * A shelf's heading is its own link, and any second work on it is a row —
-	 * `/bibliotheca`'s idiom, and the reason every string here already exists
-	 * in every dictionary.
+	 * `href` where the feature IS a page and nothing where it is a control on
+	 * one: a link to "the settings menu" would have to open a menu that lives
+	 * in the header of whatever page the reader is on, and there is no address
+	 * for that.
 	 */
-	const SHELVES = [
+	interface Feature {
+		key: string;
+		icon: IconName;
+		nameKey: string;
+		/** Set only where the feature IS a page. */
+		href?: string;
+	}
+
+	const FEATURES: readonly Feature[] = [
+		{ key: 'search', icon: 'search', nameKey: 'jumpbox.short' },
+		{ key: 'library', icon: 'book-open', nameKey: 'nav.library', href: '/bibliotheca' },
+		{ key: 'languages', icon: 'languages', nameKey: 'lang.label' },
+		{ key: 'compare', icon: 'columns-2', nameKey: 'compare.enter' },
+		{ key: 'apparatus', icon: 'notebook-pen', nameKey: 'apparatus.label' },
+		{ key: 'marks', icon: 'bookmark', nameKey: 'bookmark.library', href: '/signata' },
+		{ key: 'settings', icon: 'sliders-horizontal', nameKey: 'settings.label' },
+		{ key: 'calendar', icon: 'calendar', nameKey: 'nav.calendar', href: '/calendarium' },
+		{ key: 'offline', icon: 'download', nameKey: 'install.label' }
+	];
+
+	/**
+	 * THE BOOKS, BY WHAT KIND OF THING THEY HOLD — which is the axis
+	 * `/bibliotheca` deliberately does not sort on. That page is the catalogue
+	 * and groups by subject; this one answers "what am I looking at, what
+	 * authority does it carry, and what does a citation of it look like",
+	 * which is where §5 stops.
+	 *
+	 * FLAT, one row per work, where this was six shelves with the Compendium
+	 * of the Catechism, the Compendium of the Social Doctrine and the Summa
+	 * nested under the shelf they belong to. Nesting is right for a catalogue
+	 * and wrong here: a nested work got its parent's definition and no
+	 * citation form of its own, and those three are precisely the works a
+	 * newcomer has heard named and cannot place.
+	 *
+	 * Each is titled by the key its own landing page is titled by, so no name
+	 * on this page is written twice.
+	 */
+	const WORKS = [
 		{
 			key: 'scripture',
 			icon: 'scroll' as IconName,
-			headingKey: 'nav.bible',
+			titleKey: 'bible.landing.title',
 			href: '/scriptura',
-			type: 'bible',
-			works: []
+			type: 'bible'
 		},
 		{
 			key: 'catechism',
 			icon: 'book-marked' as IconName,
-			headingKey: 'nav.ccc',
+			titleKey: 'ccc.landing.title',
 			href: '/catechismus',
-			type: 'catechism',
-			works: [
-				{
-					href: '/catechismus/compendium',
-					titleKey: 'compendium.landing.title',
-					taglineKey: 'compendium.landing.tagline',
-					type: 'compendium'
-				}
-			]
+			type: 'catechism'
+		},
+		{
+			key: 'compendium',
+			icon: 'messages-square' as IconName,
+			titleKey: 'compendium.landing.title',
+			href: '/catechismus/compendium',
+			type: 'compendium'
 		},
 		{
 			key: 'magisterium',
 			icon: 'landmark' as IconName,
-			headingKey: 'nav.magisterium',
+			titleKey: 'nav.magisterium',
 			href: '/documenta',
-			type: 'document',
-			works: [
-				{
-					href: '/doctrina-socialis',
-					titleKey: 'socialDoctrine.landing.title',
-					taglineKey: 'socialDoctrine.landing.tagline',
-					type: 'social-doctrine'
-				}
-			]
+			type: 'document'
+		},
+		{
+			key: 'social',
+			icon: 'users' as IconName,
+			titleKey: 'socialDoctrine.landing.title',
+			href: '/doctrina-socialis',
+			type: 'social-doctrine'
 		},
 		{
 			key: 'law',
 			icon: 'scale' as IconName,
-			headingKey: 'nav.canonLaw',
+			titleKey: 'canonLaw.landing.title',
 			href: '/ius-canonicum',
-			type: 'canon-law',
-			works: []
+			type: 'canon-law'
 		},
 		{
-			key: 'theologian',
+			key: 'doctors',
 			icon: 'feather' as IconName,
-			headingKey: 'doctores.landing.title',
+			titleKey: 'doctores.landing.title',
 			href: '/doctores',
-			type: 'summa',
-			works: [
-				{
-					href: '/doctores/summa',
-					titleKey: 'summa.landing.title',
-					taglineKey: 'summa.landing.tagline',
-					type: 'summa'
-				}
-			]
+			type: 'summa'
 		},
 		{
 			key: 'prayers',
 			icon: 'flame' as IconName,
-			headingKey: 'nav.prayers',
+			titleKey: 'prayers.landing.title',
 			href: '/preces',
-			type: 'prayer',
-			works: []
+			type: 'prayer'
 		}
 	] as const;
 
 	const has = (type: string) => listWorksOfType(type as WorkType).length > 0;
-	const shelves = $derived(SHELVES.filter((shelf) => has(shelf.type)));
+	const works = $derived(WORKS.filter((work) => has(work.type)));
+
+	/**
+	 * The worked example beside each work: the notation, and the address it
+	 * reaches when that address exists.
+	 *
+	 * THE NUMBER IS THE LOWEST ONE, and deliberately: `CCC 1` and `Can. 1` are
+	 * the units every edition of those works has, so the example survives a
+	 * reader whose content language carries an abridged edition, and a reader
+	 * who follows it lands at the beginning of the work rather than in the
+	 * middle of an argument. The sigla — `CSDC`, `STh` — are the works' own and
+	 * are the forms `suggest.ts`'s `SECTIONS` table reads back; the two that
+	 * have a dictionary key (`ccc.abbrev`, `compendium.abbrev`, and `Can.` in
+	 * `canonLaw.canon`) take it, so a reader is shown the siglum their own
+	 * edition prints.
+	 */
+	interface Citation {
+		text: string;
+		href?: string;
+	}
+
+	const bibleExample = $derived.by((): Citation | undefined => {
+		// THE READER'S OWN EDITION HAS TO CARRY THE BOOK before the address is
+		// offered, which is the same check every other row makes — and it is
+		// what supplies the fallback name in one step.
+		//
+		// `osis` is LOWER-CASE here and everywhere in this corpus (`john`, not
+		// the OSIS standard's `John`): `bookAbbrev` and `getBook` both answer
+		// `undefined` for a spelling they do not hold, so the wrong case fails
+		// by drawing no example at all rather than by erring.
+		const book = bibleWorkId ? getBook(bibleWorkId, 'john') : undefined;
+		if (!book) return undefined;
+		// The abbreviation this language's citation grammar prints, then the
+		// edition's own name for the book. `bookAbbrev` answers for eleven
+		// languages and for the books their tables were built from; where it
+		// does not (Hungarian, today), a full name is a correct citation and a
+		// shorter one is not available.
+		const name = bookAbbrev('john', bibleLang) ?? book.name;
+		const sep = grammarSurface(bibleLang).chapterVerseSep;
+		return {
+			text: `${name} 3${sep}16`,
+			href: hrefFor({ kind: 'bible', osis: 'john', chapter: 3, from: 16, to: 16 })
+		};
+	});
+
+	const citations = $derived.by((): Record<string, Citation | undefined> => {
+		const summaPart = 'i';
+		const firstPrayer = listPrayerMeta(prayerLang)[0];
+		return {
+			scripture: bibleExample,
+			catechism: {
+				text: `${t('ccc.abbrev')} 1`,
+				href: cccParagraphExists(pairLang, 1) ? hrefFor({ kind: 'ccc', n: 1 }) : undefined
+			},
+			compendium: {
+				text: `${t('compendium.abbrev')} 1`,
+				href: compendiumQuestionExists(pairLang, 1)
+					? hrefFor({ kind: 'compendium', n: 1 })
+					: undefined
+			},
+			// A document is cited by its own Latin incipit and a section number
+			// within it, which is how the Catechism cites one throughout — so the
+			// example is a real document and not a shape. Dei Verbum because it
+			// is the one this page already links from the Gospels route.
+			magisterium: {
+				text: 'Dei Verbum 2',
+				href: getDocumentGroup('dei-verbum')
+					? hrefFor({ kind: 'document', slug: 'dei-verbum', n: 2 })
+					: undefined
+			},
+			social: {
+				text: 'CSDC 1',
+				href: socialDoctrineParagraphExists(socialLang, 1)
+					? hrefFor({ kind: 'socialDoctrine', n: 1 })
+					: undefined
+			},
+			law: {
+				text: `${t('canonLaw.canon')} 1`,
+				href: canonLawCanonExists(content.langFor('canon-law'), 1)
+					? hrefFor({ kind: 'canonLaw', n: 1 })
+					: undefined
+			},
+			doctors: {
+				text: 'STh I, 1',
+				href: summaQuestionExists('I', 1)
+					? hrefFor({ kind: 'summa', part: summaPart, question: 1, article: null })
+					: undefined
+			},
+			// The one work with no number to cite, so the example is a prayer
+			// that actually exists in the reader's own edition rather than a
+			// name written down here — the editions carry different sets.
+			prayers: firstPrayer
+				? { text: firstPrayer.title, href: hrefFor({ kind: 'prayer', slug: firstPrayer.slug }) }
+				: undefined
+		};
+	});
 </script>
 
 <svelte:head>
@@ -258,8 +416,8 @@
 <!--
 	A LANDING COLUMN, NOT A READING ONE. `layout.css` says why the two are
 	different: `--content-width` holds 62.4 characters of prose, and this page's
-	content is banners, a numbered list and a grid of shelves. The prose on it
-	takes `.landing-measure` instead, which is the measure without the column.
+	content is banners, two grids and a numbered list. The prose on it takes
+	`.landing-measure` instead, which is the measure without the column.
 
 	`eager` is passed for the hero alone. Every other picture is below the fold
 	on every viewport, and `loading="lazy"` with the intrinsic size declared
@@ -282,6 +440,64 @@
 		<h2 id="house-note-heading" class="visually-hidden">{t('schola.start.attribution')}</h2>
 		<p>{t('schola.start.body')}</p>
 		<p class="attribution">{t('schola.start.attribution')}</p>
+	</section>
+
+	<section aria-labelledby="guide-heading">
+		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
+		<p class="section-lede landing-measure">{t('schola.guide.lede')}</p>
+		<ul class="feature-grid">
+			{#each FEATURES as feature (feature.key)}
+				<li class="feature">
+					<!-- Decorative, so `aria-hidden` — which `Icon.svelte` enforces
+					     rather than offers. The name beside it is the name. -->
+					<span class="feature-icon"><Icon name={feature.icon} /></span>
+					<div class="feature-text">
+						<h3>
+							{#if feature.href}
+								<a href={feature.href}>{t(feature.nameKey)}</a>
+							{:else}
+								{t(feature.nameKey)}
+							{/if}
+						</h3>
+						<p>{t(`schola.feature.${feature.key}`)}</p>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</section>
+
+	<section aria-labelledby="books-heading">
+		<h2 id="books-heading">{t('schola.books.heading')}</h2>
+		<p class="section-lede landing-measure">{t('schola.books.lede')}</p>
+		<ul class="book-grid">
+			{#each works as work (work.key)}
+				<li class="book">
+					<span class="book-icon"><Icon name={work.icon} /></span>
+					<div class="book-text">
+						<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
+						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
+						{#if citations[work.key]}
+							<!-- The example is the row's own demonstration, so it is a
+							     link wherever the address exists — a reader who follows
+							     it has just read a citation and arrived where it points,
+							     which is the whole lesson. Where the corpus does not
+							     carry it the notation still shows and is inert. -->
+							<p class="book-cite">
+								<span class="cite-label">{t('schola.cite.label')}</span>
+								{#if citations[work.key]?.href}
+									<a class="cite-example" href={citations[work.key]?.href}
+										>{citations[work.key]?.text}</a
+									>
+								{:else}
+									<span class="cite-example">{citations[work.key]?.text}</span>
+								{/if}
+								<span class="cite-note">{t(`schola.cite.${work.key}`)}</span>
+							</p>
+						{/if}
+					</div>
+				</li>
+			{/each}
+		</ul>
 	</section>
 
 	{#each routes as route (route.key)}
@@ -325,45 +541,6 @@
 			</ol>
 		</section>
 	{/each}
-
-	<section class="shelves" aria-labelledby="shelves-heading">
-		<h2 id="shelves-heading">{t('schola.kinds.heading')}</h2>
-		<div class="shelf-grid">
-			{#each shelves as shelf (shelf.key)}
-				<div class="shelf">
-					<!-- A MARK ON THE ROW, NOT A PICTURE BESIDE IT. This section is six
-					     definitions of what kind of authority a shelf carries, read by
-					     someone who does not yet know a catechism from a council; a
-					     painting here is something to look at while reading the
-					     sentence, and the sentence is the point. `schola-art.ts` keeps
-					     the argument and what the six paintings were.
-
-					     Decorative, so `aria-hidden` — which `Icon.svelte` enforces
-					     rather than offers. The heading beside it is the name. -->
-					<span class="shelf-icon"><Icon name={shelf.icon} /></span>
-					<div class="shelf-text">
-						<h3><a href={shelf.href}>{t(shelf.headingKey)}</a></h3>
-						<p class="shelf-kind">{t(`schola.kind.${shelf.key}`)}</p>
-						{#if shelf.works.some((work) => has(work.type))}
-							<ul>
-								{#each shelf.works.filter((work) => has(work.type)) as work (work.href)}
-									<li>
-										<a href={work.href}>{t(work.titleKey)}</a>
-										<!-- `{@html}` on the same terms as the home page's doors:
-										     every string is a literal in a checked-in dictionary,
-										     named by a key in this file, and nothing is passed
-										     through from the corpus or from a URL. Three of these
-										     taglines emphasise a work's name inside the sentence. -->
-										<span class="work-tagline">{@html t(work.taglineKey)}</span>
-									</li>
-								{/each}
-							</ul>
-						{/if}
-					</div>
-				</div>
-			{/each}
-		</div>
-	</section>
 </div>
 
 <style>
@@ -429,6 +606,14 @@
 	/* A route's own heading sits under its picture and needs no second gap. */
 	.route-plate + h2 {
 		margin-top: 1rem;
+	}
+
+	/* The sentence under a section's rule, saying what the rows below are.
+	   `.page-tagline`'s job one level down, and it takes the same colour. */
+	.section-lede {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
 	}
 
 	.route-source {
@@ -532,15 +717,22 @@
 	 * TWO COLUMNS AT THE SITE'S OWN READING BREAKPOINT and one below it.
 	 * `80rem` is where `layout.css` hands the reading grid its aside; reusing
 	 * it rather than inventing a number keeps the site to one idea of "wide".
+	 *
+	 * The two grids are one rule: a guide whose halves disagreed about their
+	 * column count would read as two pages stapled together.
 	 */
-	.shelf-grid {
+	.feature-grid,
+	.book-grid {
+		list-style: none;
 		display: grid;
 		gap: 0.75rem;
-		margin-top: 1rem;
+		margin: 0;
+		padding: 0;
 	}
 
 	@media (min-width: 80rem) {
-		.shelf-grid {
+		.feature-grid,
+		.book-grid {
 			grid-template-columns: 1fr 1fr;
 		}
 	}
@@ -550,7 +742,8 @@
 	 * radius, no shadow — `--shadow-panel` is for things that float. Only the
 	 * border moves on hover, never the whole surface.
 	 */
-	.shelf {
+	.feature,
+	.book {
 		display: flex;
 		gap: 0.9rem;
 		align-items: flex-start;
@@ -560,20 +753,29 @@
 		border-radius: var(--radius-md);
 	}
 
-	.shelf:hover {
+	/*
+	 * THE BORDER ANSWERS ONLY WHERE THE CARD LEADS SOMEWHERE. Every book row
+	 * is a link to that work; a feature row is one only where the feature IS a
+	 * page — three of the nine — and the rest describe a control in the header
+	 * that no address opens. `:has(a)` is the difference, rather than a second
+	 * class the list would have to keep in step with its own `href` field.
+	 */
+	.book:hover,
+	.feature:has(a):hover {
 		border-color: var(--color-accent);
 	}
 
 	/*
-	 * A DISC, SIZED ONCE, so six glyphs of different natural weight sit on one
-	 * line down the grid. The icon is `1em` of the font-size set here rather
-	 * than a pixel size, which is `Icon.svelte`'s whole contract.
+	 * A DISC, SIZED ONCE, so glyphs of different natural weight sit on one line
+	 * down the grid. The icon is `1em` of the font-size set here rather than a
+	 * pixel size, which is `Icon.svelte`'s whole contract.
 	 *
 	 * `--color-accent` and nothing else coloured: the mark identifies the row
 	 * and the heading names it, so a second saturated element would make the
 	 * card look like a control.
 	 */
-	.shelf-icon {
+	.feature-icon,
+	.book-icon {
 		flex: 0 0 auto;
 		display: grid;
 		place-items: center;
@@ -586,47 +788,84 @@
 		color: var(--color-accent);
 	}
 
-	.shelf:hover .shelf-icon {
+	.book:hover .book-icon,
+	.feature:has(a):hover .feature-icon {
 		border-color: var(--color-accent);
 	}
 
-	.shelf-text {
+	.feature-text,
+	.book-text {
 		min-width: 0;
 	}
 
-	.shelf h3 {
+	.feature h3,
+	.book h3 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		margin: 0 0 0.2rem;
 	}
 
-	.shelf-kind {
+	.feature p,
+	.book-what {
 		margin: 0;
 		font-size: 0.9rem;
 	}
 
-	.shelf ul {
-		list-style: none;
+	/*
+	 * THE EXAMPLE IS DRAWN AS SOMETHING TO TYPE, in the idiom the shortcut
+	 * sheet's keycaps already use: the interface face on the page's own ground
+	 * inside a hairline. NOT a monospace — this site has exactly two faces and
+	 * `docs/reading.md` splits them on authorship, so a third introduced for
+	 * eight scraps of notation would be a new axis to maintain everywhere. The
+	 * box is what says "put this in the box at the top"; tabular figures for
+	 * the same reason the step gutter has them.
+	 */
+	.book-cite {
 		margin: 0.5rem 0 0;
-		padding: 0;
-	}
-
-	.shelf li {
-		margin-bottom: 0.4rem;
-	}
-
-	.work-tagline {
-		display: block;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
+	}
+
+	.cite-label {
+		font-variant-caps: small-caps;
+		letter-spacing: 0.04em;
+	}
+
+	.cite-example {
+		display: inline-block;
+		margin-inline: 0.25rem;
+		padding: 0.05rem 0.35rem;
+		font-family: var(--font-sans);
+		font-size: 0.95em;
+		font-variant-numeric: tabular-nums;
+		color: var(--color-text);
+		text-decoration: none;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-bg);
+	}
+
+	a.cite-example:hover,
+	a.cite-example:focus-visible {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
+	}
+
+	.cite-note::before {
+		content: '— ';
 	}
 
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,
 	   including turning its caption control back into the line it opens. */
 	@media print {
-		.shelf {
+		.feature,
+		.book {
 			background: none;
 			break-inside: avoid;
+		}
+
+		.cite-example {
+			background: none;
 		}
 	}
 </style>

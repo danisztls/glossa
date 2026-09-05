@@ -116,12 +116,15 @@ const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
 	// which is exactly what made them look like they needed nothing.
 	'doctrina-socialis': withRefs(),
 	'ius-canonicum': withRefs(),
-	// The learning portal renders no corpus prose — every route step is a
-	// LINK, titled from an index — so it takes the shelves it names and no
-	// `REFS`, on the home page's reasoning directly above. It reaches the
-	// documents and the Social Doctrine through `manifests` and an inlined
-	// registry, both of which `+layout.ts` already has on every path.
-	schola: ['bible', 'ccc', 'compendium', 'prayer'],
+	// The guide renders no corpus prose — every route step is a LINK titled
+	// from an index, and every worked citation is an address checked against
+	// an index before it is offered — so it takes the shelves it names and no
+	// `REFS`, on the home page's reasoning directly above. `summa` joined when
+	// the books list gained the Doctors' row: `summaQuestionExists` is asked
+	// before `STh I, 1` is drawn as a link. The Code, the Social Doctrine and
+	// the documents are checked too and cost nothing here, reaching `manifests`
+	// and the two inlined registries `+layout.ts` already has on every path.
+	schola: ['bible', 'ccc', 'compendium', 'prayer', 'summa'],
 	// The one shelf that really does need nothing: the colophon is the site's
 	// own writing about the corpus, and cites it only by title. Listed with an
 	// empty set rather than left out, so a reader of this table can tell "needs

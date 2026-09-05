@@ -101,9 +101,9 @@
 	// `calendar-days` dots the grid with a week's worth of days and closes up
 	// at 1em; the plain frame reads at that size.
 	import Calendar from '@lucide/svelte/icons/calendar';
-	// THE SIX SHELVES OF `/schola`, one glyph each. That section answers "what
+	// THE WORKS LISTED ON `/schola`, one glyph each. That section answers "what
 	// kind of authority does this carry", so each is chosen on the same axis
-	// the shelf is sorted on rather than on what the books look like: the
+	// the list is sorted on rather than on what the books look like: the
 	// scroll is Scripture as received text, the ribboned book is the handbook
 	// one is taught from, the institution's portico is the teaching office,
 	// the balance is law rather than doctrine, the quill is one author writing
@@ -116,6 +116,17 @@
 	import Scale from '@lucide/svelte/icons/scale';
 	import Feather from '@lucide/svelte/icons/feather';
 	import Flame from '@lucide/svelte/icons/flame';
+	// The three the guide added when `/schola`'s shelves became a flat list of
+	// works, each chosen on the same axis as the six above — what KIND of thing
+	// the row is, never what it looks like. Two speech bubbles for the
+	// Compendium of the Catechism, which is a book of questions and answers and
+	// not a shorter catechism laid out like the long one; a group of people for
+	// the social doctrine, whose subject is what people owe each other; and the
+	// globe-with-script `languages` for the row about reading a work in one
+	// language while the interface is in another.
+	import MessagesSquare from '@lucide/svelte/icons/messages-square';
+	import Users from '@lucide/svelte/icons/users';
+	import Languages from '@lucide/svelte/icons/languages';
 
 	const ICONS = {
 		search: Search,
@@ -154,7 +165,10 @@
 		landmark: Landmark,
 		scale: Scale,
 		feather: Feather,
-		flame: Flame
+		flame: Flame,
+		'messages-square': MessagesSquare,
+		users: Users,
+		languages: Languages
 	};
 
 	export type IconName = keyof typeof ICONS;

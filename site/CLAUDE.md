@@ -531,11 +531,26 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Learn. A newly ingested work goes on a shelf in `/bibliotheca` and, where it
   belongs there, on a route in `/schola`; it does **not** get a bar entry. The
   bar was one item per work until 2026-09-04 and had reached seven.
-- **`Learn` names `/schola`, a portal, and not the Catechism.** It pointed at
+- **`Learn` names `/schola`, a guide, and not the Catechism.** It pointed at
   `/catechismus` for one day: a table of divisions is unusable by the reader
   the word was chosen for, who cannot yet name a part (`audiences.md` §5). The
   Catechism is the one work with no bar door, which is why `isActive` lights
   nothing on `/catechismus` — correctly.
+- **`/schola` TEACHES THE CITATION, which nothing else on the site does.** One
+  row per work, flat, each with what the work is, what its numbered unit is
+  called, and a worked example — and **every example is put through the same
+  existence predicate the jump box asks before it is drawn as a link**
+  (`cccParagraphExists`, `canonLawCanonExists`, `summaQuestionExists`, …), with
+  the notation still shown, inert, where the corpus does not carry it. The
+  number is always the lowest one the work has. The Bible's is derived from
+  `bookAbbrev` and `grammarSurface`, so a Portuguese reader reads `Jo 3,16`;
+  note the OSIS ids here are LOWER-CASE (`john`), and the other spelling fails
+  by drawing nothing.
+- **The chrome section is headed by the controls' own keys** — `jumpbox.short`,
+  `settings.label`, `compare.enter` — so a row and the control it describes
+  cannot be called two different things in a translated interface. Only the
+  sentence under each is new writing, which is what still holds this page out
+  of `CHROME_PATHS`.
 - **`/schola` reports orders and never invents one.** Each route cites the
   document in this corpus that states it (`learning-routes.ts`); the one
   paragraph in the site's own voice carries `schola.start.attribution` on the
@@ -555,12 +570,15 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because
   a printed page cannot be pressed. Its trigger is the `info` glyph alone, so
-  the `aria-label` is mandatory rather than a courtesy.
-- **"What each of these is" takes ICONS, and took paintings for a day.** That
-  section is six definitions of what authority a shelf carries, read by
-  someone who cannot yet tell a catechism from a council. A painting there is
-  something to look at while reading the sentence; a glyph belongs to the row.
-  Illustration goes above a route, not beside a definition.
+  the `aria-label` is mandatory rather than a courtesy — and it wears
+  `.menu-trigger` and adds only its position, because a control laid on a
+  picture is still one of the site's buttons and every other one is a rounded
+  square.
+- **The definitions take ICONS, and took paintings for a day.** That section
+  says what authority each work carries, read by someone who cannot yet tell a
+  catechism from a council. A painting there is something to look at while
+  reading the sentence; a glyph belongs to the row. Illustration goes above a
+  route, not beside a definition.
 - **The four landing pages are `.landing-column`, not `.content-column`.**
   `/`, `/bibliotheca`, `/documenta`, `/schola`. `--content-width` is a count
   of CHARACTERS (`--measure-cpl`, 62.4) and it is the wrong tool for a page

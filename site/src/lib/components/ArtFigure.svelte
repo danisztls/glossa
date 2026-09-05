@@ -89,7 +89,7 @@
 		<button
 			bind:this={card.trigger}
 			type="button"
-			class="caption-trigger"
+			class="menu-trigger caption-trigger"
 			popovertarget={card.id}
 			aria-expanded={card.open}
 			aria-label={label}
@@ -150,40 +150,18 @@
 	 * a banner would be a row of empty page with one glyph in it, and these
 	 * banners are wide. On the image it is where the thing it describes is.
 	 *
-	 * Its own disc rather than a bare glyph: the pictures are paintings and a
-	 * `currentColor` outline over Raphael's sky is not reliably visible in any
-	 * theme. The disc is the page's own elevated surface, so it reads as
-	 * chrome laid on the picture rather than as part of it.
+	 * It is `.menu-trigger` and nothing more — the site's icon button, a
+	 * 2.25rem square with `--radius-md` corners, an elevated ground and the
+	 * accent on hover. THAT IT IS A BUTTON AT ALL is the reason it is not a
+	 * bare glyph here: a `currentColor` outline over Raphael's sky is not
+	 * reliably visible in any theme, and the square reads as chrome laid on
+	 * the picture rather than as part of it. What is local is only where it
+	 * sits, which is what that class deliberately never says.
 	 */
 	.caption-trigger {
-		appearance: none;
 		position: absolute;
 		inset-block-end: 0.5rem;
 		inset-inline-end: 0.5rem;
-		display: grid;
-		place-items: center;
-		inline-size: 1.75rem;
-		block-size: 1.75rem;
-		padding: 0;
-		margin: 0;
-		border: 1px solid var(--color-border);
-		border-radius: 50%;
-		background: var(--color-bg-elevated);
-		color: var(--color-text-muted);
-		font: inherit;
-		font-size: 0.9rem;
-		line-height: 1;
-		cursor: pointer;
-	}
-
-	.caption-trigger:hover {
-		color: var(--color-text);
-		border-color: var(--color-accent);
-	}
-
-	.caption-trigger:focus-visible {
-		outline: 2px solid var(--color-focus-ring);
-		outline-offset: 2px;
 	}
 
 	/*

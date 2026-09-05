@@ -64,20 +64,27 @@ export const en: Dictionary = {
 	'library.landing.tagline':
 		'The whole corpus, shelf by shelf — with where you left off and what you have marked.',
 
-	// --- `/schola`, the learning portal (`routes/schola/`) -------------------
+	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//
-	// NOT ONE OF THESE KEYS IS A STEP OF A ROUTE. Every book, part
-	// and document named on that page is titled by the corpus itself, in the
-	// reader's own content language; what is written here is the page's own
-	// name, the name of each route, and the sentence saying which document
-	// states that route's order. `learning-routes.ts` holds the rule.
+	// NOT ONE OF THESE KEYS IS A NAME. Every book, part and document named on
+	// that page is titled by the corpus itself in the reader's own content
+	// language, every work's heading is the key that work's own landing page
+	// is titled by, and every feature's heading is the key its own control is
+	// labelled by — so nothing on the page is named twice and a translated
+	// interface cannot disagree with its own guide.
+	//
+	// WHAT IS WRITTEN HERE IS SENTENCES: what a work is, what its unit of
+	// citation is called, and what a feature does. That is the part
+	// `docs/research/audiences.md` §5 actually stops at — not where a work is,
+	// but what KIND of thing it is, what authority it carries, and what `CCC 1`
+	// means when somebody writes it down.
 	//
 	// Until all thirty-seven dictionaries carry them, `/schola` stays out of
 	// `CHROME_PATHS` — see `route-manifest.ts`, which holds `/calendarium` and
 	// `/catechismus/compendium` out by the same gate.
 	'schola.landing.title': 'Where to begin',
 	'schola.landing.tagline':
-		'What each of these books is, and orders for reading them that the Church has set out.',
+		'A short guide to what is here: what each of these books is, how a citation of it is written, how to find a passage, and orders for reading that the Church has set out.',
 	// THE ONE PLACE THIS SITE SPEAKS FOR ITSELF, and the attribution below it
 	// is not decoration: everything else on the page reports what a document
 	// says, and this recommends. `docs/writing-descriptions.md` forbids exactly
@@ -93,23 +100,74 @@ export const en: Dictionary = {
 		'The Council urges frequent reading of Scripture; the order here is the canon’s own',
 	'schola.route.social.title': 'The Church’s social teaching',
 	'schola.route.social.source': 'The Compendium’s own arrangement, part by part',
-	// The section `docs/research/audiences.md` §5 actually stops at: not
-	// where a work is, but what KIND of thing it is and what authority it
-	// carries. Its group headings and every work's description under them are
-	// keys that already exist in every dictionary; only these sentences are
-	// new.
-	'schola.kinds.heading': 'What each of these is',
-	'schola.kind.scripture':
-		'The word of God as the Church receives it. Everything else here is read in its light.',
-	'schola.kind.catechism':
-		'A summary of what the Church believes, published at two lengths. Not itself a source: it gathers Scripture, the Fathers, the liturgy and the Magisterium.',
-	'schola.kind.magisterium':
-		'Acts of the Church’s teaching office — councils and popes — each written at a particular moment and about a particular question.',
-	'schola.kind.law':
+	// THE CHROME, ONE SENTENCE EACH. The heading beside each of these is the
+	// key the control itself is labelled by (`jumpbox.short`, `settings.label`,
+	// `compare.enter`, …), so a reader who reads a row and then goes looking
+	// for the control finds the same word. Only the sentence is new writing.
+	//
+	// Each says what the thing DOES and, where it costs the reader something to
+	// know, where it lives. None of them recommends: the one paragraph on this
+	// page that recommends is `schola.start.body`, and a second would need the
+	// same attribution beneath it.
+	'schola.guide.heading': 'Finding your way around',
+	'schola.guide.lede':
+		'The text is the whole of the page; everything else is a control you can ignore until you want it.',
+	'schola.feature.search':
+		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type. Press / or Ctrl+K from anywhere, and ? for the other shortcuts.',
+	'schola.feature.library':
+		'Every work on the site in one list, with where you last left off and everything you have marked.',
+	'schola.feature.languages':
+		'The interface and the text are chosen separately, so you can read a work in one language while the buttons stay in another. Where a work has several editions in your language, you choose between those too.',
+	'schola.feature.compare':
+		'Two editions of the same passage, side by side — the Latin beside your own language, or one translation beside another.',
+	'schola.feature.apparatus':
+		'An edition’s own footnotes, and any commentary written on the text, are offered beside it rather than under it. Citations inside the text are links, so a reference goes where it points.',
+	'schola.feature.marks':
+		'Mark a passage to come back to. Marks are kept in this browser and are not sent anywhere.',
+	'schola.feature.settings':
+		'Text size, light or dark, sepia, and a focus mode that clears everything but the text.',
+	'schola.feature.calendar':
+		'The liturgical day — season, colour, and who is kept — for the country whose calendar you follow.',
+	'schola.feature.offline':
+		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
+
+	// WHAT EACH WORK IS, AND WHAT ITS NUMBER MEANS. Two sentences per work: the
+	// first is what kind of thing it is and what authority it carries, the
+	// second is what a citation of it names. The heading above each is the key
+	// its own landing page is titled by, and the worked example beside it is
+	// built and existence-checked in the page.
+	//
+	// A citation is the part nothing else on the site teaches. A reader who has
+	// never seen one does not know that `CCC 1` names a PARAGRAPH running
+	// unbroken through the whole work, or that the Code numbers canons and not
+	// pages — and the jump box reads every one of these notations back.
+	'schola.books.heading': 'What is here, and how it is cited',
+	'schola.books.lede':
+		'Each of these is a different kind of book, and each is referred to by a number of its own. The examples are live — follow one to see where it lands.',
+	'schola.cite.label': 'Cited as',
+	'schola.what.scripture':
+		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',
+	'schola.cite.scripture': 'book, chapter and verse, in the abbreviations your own edition prints',
+	'schola.what.catechism':
+		'A summary of what the Catholic Church believes, in one volume. It is not itself a source: it gathers Scripture, the Fathers, the liturgy and the Church’s teaching, and every paragraph says where what it says comes from.',
+	'schola.cite.catechism': 'by paragraph number, running unbroken from the first page to the last',
+	'schola.what.compendium':
+		'The same teaching set out as questions and answers, at about a tenth the length.',
+	'schola.cite.compendium': 'by question number',
+	'schola.what.magisterium':
+		'What popes and councils have actually written — encyclicals, constitutions, decrees, declarations — each addressed to a particular moment and a particular question. Each is known by its opening words in Latin.',
+	'schola.cite.magisterium': 'by the document’s name, then a section number inside it',
+	'schola.what.social':
+		'The Church’s teaching on work, property, the family, politics and peace, gathered out of those documents into one book.',
+	'schola.cite.social': 'by paragraph number, under the siglum the work uses for itself',
+	'schola.what.law':
 		'Law rather than doctrine. It states what the Church requires, and it is amended.',
-	'schola.kind.theologian':
-		'The work of one theologian. It carries no official authority, however great its author.',
-	'schola.kind.prayers': 'The words the Church prays, with the Latin beside them.',
+	'schola.cite.law': 'by canon, which is what its numbered units are called',
+	'schola.what.doctors':
+		'The theologians the Church has named Doctors. It carries no official authority, however great its author.',
+	'schola.cite.doctors': 'by part, then question — the Summa’s own divisions',
+	'schola.what.prayers': 'The words the Church prays, with the Latin beside them.',
+	'schola.cite.prayers': 'by name; there are no numbers to cite',
 	// The only interface word in an artwork's caption. Everything else in one
 	// is a proper noun and a date, held beside the asset in `schola-art.ts`
 	// rather than in every dictionary — which is why the pictures cost two keys
