@@ -316,23 +316,12 @@ Catechism reprinted beside the prayer rather than a gloss ON it — so `prayers_
 keeps only the notes that quote a clause — a minority of what it reads, and the script prints
 the table.
 
-**`references` is where the rest went, and it is a different KIND of claim.** A note
-cites the paragraph it IS; a reference names the whole of what a work has on this prayer —
-the Catechism's hundred-paragraph article on the Lord's Prayer, the Compendium's
-twenty-one questions, the Gospel verses the prayer's own words are.
-
-**AN ENTRY MAY CARRY REFERENCES AND NO NOTES AT ALL** (2026-09-05), which is why `notes` can
-be the empty array. The two books name or expound far more prayers than they quote clause by
-clause: the Catechism prints the Sign of the Cross entire and says what making it does, names
-the Veni Creator and the Te Deum, has an article on contrition — none of it a headword any
-prayer prints, all of it something to go and read. The rule of admission is that the passage
-speaks of THIS prayer, by naming it, quoting it, or being the article that expounds it; a
-passage about the same SUBJECT is not a reference, which is why prayers the Catechism never
-names carry none. Each is a range
-(`first`/`last`, plus `osis`/`chapter` where the work is the Bible, where they are VERSE
-numbers), and **every one is checked against the corpus before it is written**: a reference
-is a promise that there is something to read at the other end, and a wrong number does not
-fail — it renders as a link onto an empty page.
+**`references` LEFT THIS WORK THE DAY AFTER IT ARRIVED, and where it went is the
+point** (2026-09-05). What a book says about the prayer as a whole is a place to go and
+read it, which is a different KIND of claim from a note — and, unlike a note, it is the
+same claim for every reader. It is one language-free table now, `prayer-references/`
+below. Nothing in a commentary work carries it, and an entry here is its notes and its
+slug and nothing else.
 
 **`locus` is provenance per NOTE, and it exists because one work draws on two books.**
 A manifest names one set of sources; `commentary.preces.{lang}` reads the Catechism on the
@@ -616,6 +605,54 @@ A prayer collection has no numbered units in its source at all — unlike CCC pa
   - **The report is printed, never gated**, like the one for the Compendium's body above, and it is read by SHAPE: the Lithuanian's six departures in 1,359 words are each a single letter (`quelli` for `quem`, `sieut` for `sicut`), which says a reader misread a glyph; the Russian's are whole words (`genitrix` for `genetrix`, `solatium` for `solacium`), which says the edition did.
 - **Cross-language symmetry is now PER EDITION against its own sources, not between two collections.** The rule used to read "the two vernacular collections' `slug` sets must match exactly", which was true while there were two and is false with ten: the collections are 28, 27, 26, 25, 24 and 21 entries long, and every one of those numbers is a fact about a mirror. Slovenian prints no Eastern-rite prayers and gives three Acts in Latin only; Swedish omits two of the three; Hungarian heads its Veni Sancte Spiritus and prints no text under it; Spanish prints a 25th appendix entry, its own Our Father; four mirrors have no Litany because the Holy Rosary micro-site publishes six languages and no more. So what is asserted is that each edition carries **exactly the slugs its own declared sources can produce, in the source's print order** (`LangSpec.expected_slugs`), which still catches a parser dropping or duplicating an entry — the thing the old rule was really for. What remains genuinely cross-edition is that a slug two editions BOTH carry has text in both. The old rule survives only in spirit — this is a real check, not a tautology, even when a scraper assigns slugs positionally from one shared list, because it still catches a parser producing the wrong count or order of entries in either language. `kind` and whether `latin` is present may legitimately differ per language for the same slug (the source itself typesets the same prayer differently across its two pages); only the address space itself — the slug set — is required to agree.
 - `structure.json` reuses the generic node schema purely for grouping (a lightweight table of contents), not addressing: `paragraphs` is `[null, null]` throughout, the same allowance already documented for Creed/Decalogue-style unnumbered content under "Catechism — `structure.json`" above.
+
+## Prayer references — `prayer-references/references.json`
+
+**NOT A WORK, AND THAT IS THE WHOLE OF ITS DESIGN** (2026-09-05). Where else the corpus
+speaks of a prayer — the Gospel its words are printed as, the Catechism article that
+expounds it, the Compendium question that names it — is a fact about the PRAYER. It does
+not change with the edition in front of the reader, so it is not `{type}.{slug}.{lang}`
+and has no `manifest.json`: it is a directory under `build/` beside
+`gcatholic-calendar/`, written by `prayers_glossa.py` and declared as that stage's second
+output. The site's sync names it in `NON_WORK_DIRS` and copies it whole into the index
+tier (~2 KB).
+
+It rode `commentary.preces.{lang}` for one day and the shape was wrong in two ways at
+once: the same table was written fifteen times, and it was absent from the five
+collections that have no Catechism and no Compendium — so a reader of the Hindi or
+Vietnamese prayers saw nothing under any prayer at all, for a claim their language has no
+bearing on.
+
+```jsonc
+{
+  "hail-mary": [
+    { "work": "bible", "osis": "luke", "chapter": 1, "first": 28, "last": 28 },
+    { "work": "bible", "osis": "luke", "chapter": 1, "first": 42, "last": 42 },
+    { "work": "ccc", "first": 2676, "last": 2677 },
+    { "work": "compendium", "first": 562, "last": 563 },
+  ],
+}
+```
+
+- **Each is a range** (`first`/`last`, plus `osis`/`chapter` where the work is the Bible,
+  where they are VERSE numbers), because that is how the sources divide: `CCC 2759–2865`
+  is one article, and where a prayer's words are drawn from two separate verses those are
+  two references rather than one span across everything between them.
+- **The addresses are edition-free**, which is what lets one table serve every language:
+  `/catechismus/2676` and `/scriptura/luke/1#v28` open whichever edition the reader
+  already has (`site/docs/addresses.md`).
+- **Every number is checked against every edition that could hold it**, and a miss is
+  fatal (`check_references`). Asked of one language it would pass on the strength of the
+  one complete edition; asked of all of them it is a check of the claim. A Bible that
+  does not print the chapter abstains — that edition cannot answer — but no edition may
+  print the chapter and lack the verse, and at least one must print it.
+- **The rule of admission is that the passage speaks of THIS prayer**: by naming it, by
+  quoting it, or by being the article that expounds it. A passage on the same SUBJECT is
+  not one, which is why prayers the Catechism never names carry nothing.
+- **Which prayers are Scripture is swept for, not remembered** — every prayer against
+  every verse of every Bible, 30 comparable characters verbatim
+  (`prayers_glossa.py --scripture`). `docs/research/prayers-glossa.md` §2.7 has what it
+  added and what it refused.
 
 ## Compendium of the Social Doctrine of the Church — `csdc.{lang}`
 

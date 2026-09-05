@@ -84,7 +84,8 @@
 		resolveEditionTag
 	} from '$lib/corpus';
 	import { apparatusPrefs, commentaryDefaultsOn } from '$lib/apparatus-prefs.svelte';
-	import { prayerNotesFor, prayerReferencesFor } from '$lib/commentary.svelte';
+	import { prayerNotesFor } from '$lib/commentary.svelte';
+	import { prayerReferences } from '$lib/corpus-index';
 	import type { CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
@@ -202,15 +203,15 @@
 	 * The passages under the text: where the Gospel prints this prayer and
 	 * where the two books treat it whole.
 	 *
-	 * THE SAME SWITCH AND THE SAME SUPPRESSION as the notes, because they are
-	 * the same apparatus read the other way round — `PrayerReferences` has the
-	 * argument. They cost no second fetch: an entry carries its notes and its
-	 * references in one file.
+	 * NEITHER THE APPARATUS'S SWITCH NOR ITS FETCH, since 2026-09-05. They
+	 * were both for a day, on the argument that they are what the unanchored
+	 * notes became — but a note is one book read in one language and this is
+	 * an address, the same address for every reader. Tied to the apparatus
+	 * they were absent wherever it was: the Hindi, Vietnamese and Chinese
+	 * collections have no Catechism and no Compendium, and their readers saw
+	 * nothing under any prayer. They are index tier now and always present.
 	 */
-	const references = $derived.by(() => {
-		if (compareActive || !current) return [];
-		return commentaries.filter(enabled).flatMap((work) => prayerReferencesFor(work.id, data.slug));
-	});
+	const references = $derived(prayerReferences[data.slug] ?? []);
 
 	/**
 	 * A ROW PER PRINTED LINE WHERE THE TWO EDITIONS BREAK ALIKE, and the whole

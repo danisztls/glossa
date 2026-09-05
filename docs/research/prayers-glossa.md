@@ -244,7 +244,8 @@ exists in `build/` yet, so it costs a family rather than a fetch.
 
 ### 2.7 Which prayers ARE Scripture: swept for, not remembered (2026-09-05)
 
-The references under a prayer include the Gospel its words are printed as, and
+The references under a prayer (`prayer-references/`, one language-free table)
+include the Gospel its words are printed as, and
 that is the claim in the table most likely to be made from memory and got
 wrong. So it is measured instead — every prayer against every verse of all
 nine Bibles in `build/`, reporting where the two share **30 comparable

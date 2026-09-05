@@ -10,16 +10,22 @@
 	explains; what a book says about the prayer AS A WHOLE is a place to go and
 	read it, which is this.
 
+	AND THEN IT LEFT THE APPARATUS, THE SAME DAY AND FOR THE SAME REASON READ
+	ONE STEP FURTHER. Made out of notes it inherited the notes' shape: one file
+	per language, behind the apparatus's switch and its fetch. But a note is one
+	book read in one language and this is an ADDRESS — that the Hail Mary is
+	Luke 1:28 and 1:42 does not change with the edition in front of the reader,
+	and the Catechism's article on the Lord's Prayer is the same article in all
+	eight. Tied to the apparatus it was absent wherever the apparatus was: the
+	Hindi, Vietnamese and two Chinese collections have no Catechism and no
+	Compendium, so their readers saw nothing under any prayer at all. It is one
+	language-free table now (`corpus-index.ts`'s `prayerReferences`, index tier),
+	keyed by slug, always present, switched by nothing.
+
 	SO IT REACHES FURTHER THAN THE NOTES DO, and on most prayers it is the only
 	thing here: the Catechism prints the Sign of the Cross entire and names the
 	Te Deum and the Veni Creator without ever quoting a clause the way a
-	headword needs. An entry with no notes and three references is the ordinary
-	case, not an empty one.
-
-	IT STILL RIDES THE APPARATUS'S OWN SWITCH AND ITS OWN FETCH. These arrive in
-	the same file as the notes, because they are the same act of reading two
-	books beside a prayer — and because a reader who has turned the apparatus
-	off has said what they want under the text.
+	headword needs.
 
 	IT IS `CitedBy`'S PANEL, ONE FACT TURNED AROUND. That component answers
 	"who cites this address"; this answers "where is this prayer treated", and a

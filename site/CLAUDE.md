@@ -1756,21 +1756,29 @@ new is exactly four things:
   text. `placePrayerCommentary` still returns what it could not place, named
   `unplaced` and rendered nowhere — the two folds could only ever disagree in
   silence, and a name is what lets a test say so.
-- **What the dropped notes became is `PrayerCommentary.references`** — the
-  Gospel the prayer is printed in, the Catechism's article on it, the
-  Compendium's questions, as links under the text. Same file, same fetch, same
-  switch, because they are the same act of reading two books beside a prayer.
-  The ranges are the pipeline's and are checked there; `PrayerReferences`
-  decides only how a range is written down, and takes each siglum from the
-  source work's own `short_title` exactly as the locus does. It is `CitedBy`'s
-  panel turned around — that one answers "who cites this address", this one
-  "where is this prayer treated" — so it takes that panel's treatment: the rule
-  above it, 0.85rem, the work named once and muted before its loci. Not its
-  COLUMN, though: a concordance is dozens of rows to scan down, this is three
-  groups, and one per line under a seven-line prayer reads as more apparatus
-  than there is. A prayer
-  is seven lines at 1.1x the reading base, and anything under it at body size
-  argues with the prayer for the page. The links PREVIEW (no
+- **What the dropped notes became is the prayer's REFERENCES, and they are not
+  the apparatus** — the Gospel the prayer is printed in, the Catechism's
+  article on it, the Compendium's questions, as links under the text. They
+  were `PrayerCommentary.references` for one day: same file, same fetch, same
+  switch, on the argument that they are the same act of reading two books
+  beside a prayer. **A note is one book read in one LANGUAGE; a reference is
+  an ADDRESS, and an address is the same for every reader** — so they are one
+  language-free table now, `corpus-index.ts`'s `prayerReferences`, keyed by
+  slug, index tier, eager, switched by nothing. What the old shape cost is the
+  argument for the new one: the Hindi, Vietnamese and two Chinese collections
+  have no Catechism and no Compendium, so their readers saw nothing under any
+  prayer, for a claim their language has no bearing on. The ranges are the
+  pipeline's and are checked there against every edition;
+  `PrayerReferences` decides only how a range is written down, and takes each
+  siglum from the reader's OWN edition of that work, falling back to the
+  annotated language — `bookName`'s fall-through, because the link opens the
+  reader's edition and a label naming another one is a label for a book it does
+  not lead to. It is `CitedBy`'s panel turned around — that one answers "who
+  cites this address", this one "where is this prayer treated" — so it takes
+  that panel's treatment whole, its COLUMN included: the rule above it,
+  0.85rem, the work named once and muted, one row per work. Set as a single
+  wrapping line first, the groups ran together into a sentence of numbers; the
+  panel is not scanned, it is recognised. The links PREVIEW (no
   `data-link-preview` marker): that opt-out is for navigation chrome, and a
   paragraph the reader may want to see before deciding to leave the prayer is
   exactly what the card is for.
