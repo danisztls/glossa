@@ -786,6 +786,17 @@ checked against the corpus before it is written (`check_references`).
   so those carry nothing. `check_tables` refuses a slug no collection prints,
   which is the one mistake the per-language loop cannot see — it walks the
   collection and would simply never consult the row.
+- **WHICH PRAYERS ARE SCRIPTURE IS SWEPT FOR, NOT REMEMBERED** (`--scripture`,
+  ~11s). Every prayer against every verse of all nine Bibles, reporting a
+  shared run of `SCRIPTURE_RUN` characters; `*` marks an address the table
+  already names. It is an oracle and gates nothing — a collection translates
+  independently of any Bible here, so a true reference can go unwitnessed in
+  fourteen editions and hold in the fifteenth. It added the Sign of the Cross
+  (Matt 28:19), the Angelus (Luke 1:38, John 1:14) and the responsory for the
+  Pope (Ps 40:3), and refused four more, the Te Deum loudest: nine addresses
+  in the Clementina alone, which says the hymn ENDS in a catena of Scripture
+  rather than being a passage of it. `docs/research/prayers-glossa.md` §2.7
+  has the table and the rejects.
 
 - **HAYDOCK GLOSSES FOUR OF THESE PRAYERS AND IS NOT USED, because he
   annotates a different English.** Measured against `commentary.haydock.en`:
