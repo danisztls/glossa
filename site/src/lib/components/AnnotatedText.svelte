@@ -233,8 +233,8 @@
 		lang={entry.work.language}
 		work={entry.work.id}
 		title={entry.work.short_title || entry.work.title}
-		osis={osis ?? ''}
-		chapter={chapter ?? 0}
+		{osis}
+		{chapter}
 		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
 	/>
 {/snippet}

@@ -73,45 +73,138 @@ function splitsWord(text: string, at: number): boolean {
 	return at > 0 && at < text.length && WORD.test(text[at - 1]) && WORD.test(text[at]);
 }
 
+/** One line's share of a quotation: where in THAT line the words fall. */
+export interface LineSpan {
+	line: number;
+	from: number;
+	to: number;
+}
+
+export interface CommentaryLineAnchor {
+	/** The lines the quoted words run across, in order, each clipped to its
+	 *  own line. One entry for a clause that fits a line, more for one the
+	 *  edition set across a break. Never empty. */
+	spans: LineSpan[];
+	/** The notes anchored here, in the order the source prints them. */
+	notes: CommentaryNote[];
+}
+
+export interface AnchoredLines {
+	/** In text order, never overlapping — see the cursor in the header. */
+	anchors: CommentaryLineAnchor[];
+	/** The notes with no place in the text, for the mark at the end. */
+	trailing: CommentaryNote[];
+}
+
+/**
+ * One unit's commentary where the unit is SET AS LINES — a prayer, whose notes
+ * name the prayer and quote one of its clauses.
+ *
+ * `lines` is the unit as the annotated edition prints it, in reading order.
+ * Nothing here rewrites any of them: a span is a pair of offsets into one of
+ * those exact strings.
+ *
+ * A QUOTATION MAY CROSS A LINE BREAK, and refusing to let it was measured and
+ * reversed the same day. A printed glossa quotes a clause; an edition sets that
+ * clause where its measure falls, and the two disagree constantly — the
+ * Catechism glosses `Full of grace, the Lord is with thee` and the English Ave
+ * ends a line after `full of grace,`. Confined to one line, the whole tier
+ * anchored 77 of its 120 headwords and the Ave itself showed one mark in most
+ * languages; spanning the break, the words are marked where they are and the
+ * mark goes after the last of them. The line break is the edition's
+ * typesetting, which is the same reason §5 of the survey keeps the LEMMA off
+ * line numbers in the first place.
+ *
+ * THE CURSOR WALKS THE WHOLE UNIT, not each line. A catena and a printed
+ * glossa both proceed from the start of the text to its end, so a note is found
+ * at or after the end of the last one — across a line boundary exactly as
+ * within one. Resetting per line would give the same repeated clause to two
+ * notes; searching each line alone would let a later note anchor above an
+ * earlier one. `Mary` occurs in three lines of the English Ave.
+ *
+ * It works by folding the lines JOINED, which costs nothing and buys the break:
+ * `fold` drops everything that carries no words, so the separator vanishes from
+ * the comparable string and a clause reads continuously across it. The offsets
+ * come back through `fold`'s own map, and the join character is a newline
+ * precisely so `splitsWord` still refuses a match that cuts a word in half at
+ * either end.
+ */
+export function anchorCommentaryLines(
+	lines: readonly string[],
+	notes: CommentaryNote[]
+): AnchoredLines {
+	const joined = lines.join('\n');
+	const run = fold(joined);
+	// Where each line starts in `joined` — the separator is one character, so
+	// this is the running sum plus one per line before it.
+	const starts: number[] = [];
+	let offset = 0;
+	for (const line of lines) {
+		starts.push(offset);
+		offset += line.length + 1;
+	}
+
+	const anchors: CommentaryLineAnchor[] = [];
+	const trailing: CommentaryNote[] = [];
+	let cursor = 0;
+
+	for (const note of notes) {
+		const found = note.lemma && !ELIDED.test(note.lemma) ? locate(note.lemma) : undefined;
+		if (!found) {
+			trailing.push(note);
+			continue;
+		}
+		// Two notes cannot share a span — the cursor has already moved past the
+		// last one — so an anchor is only ever appended, never merged into.
+		anchors.push({ spans: found, notes: [note] });
+	}
+	return { anchors, trailing };
+
+	function locate(lemma: string): LineSpan[] | undefined {
+		const quoted = fold(lemma).text;
+		if (quoted === '') return undefined;
+		for (let i = run.text.indexOf(quoted, cursor); i !== -1; i = run.text.indexOf(quoted, i + 1)) {
+			const from = run.at[i];
+			const to = run.at[i + quoted.length - 1] + 1;
+			if (splitsWord(joined, from) || splitsWord(joined, to)) continue;
+			cursor = i + quoted.length;
+			return spansOf(from, to);
+		}
+		return undefined;
+	}
+
+	/** `[from, to)` in the joined text, clipped to the lines it covers. A line
+	 *  the range only touches through the separator contributes nothing and is
+	 *  dropped, so `spans` never holds an empty one. */
+	function spansOf(from: number, to: number): LineSpan[] {
+		const spans: LineSpan[] = [];
+		for (const [line, start] of starts.entries()) {
+			const end = start + lines[line].length;
+			const a = Math.max(from, start);
+			const b = Math.min(to, end);
+			if (a < b) spans.push({ line, from: a - start, to: b - start });
+		}
+		return spans;
+	}
+}
+
 /**
  * One verse's commentary, divided into what the text can carry and what it
  * cannot.
  *
  * `text` is the verse as the annotated edition prints it. Nothing here rewrites
  * it: an anchor is a pair of offsets into that exact string.
+ *
+ * A verse is one line, so this is `anchorCommentaryLines` with a list of one —
+ * kept as its own function because it is what every Bible caller wants and
+ * because the measurements in this file's header were taken through it. With
+ * one line every anchor has exactly one span, so the flattening cannot lose
+ * anything.
  */
 export function anchorCommentary(text: string, notes: CommentaryNote[]): AnchoredCommentary {
-	const verse = fold(text);
-	const anchors: CommentaryAnchor[] = [];
-	const trailing: CommentaryNote[] = [];
-	let cursor = 0;
-
-	for (const note of notes) {
-		const anchor = note.lemma && !ELIDED.test(note.lemma) ? locate(note.lemma) : undefined;
-		if (!anchor) {
-			trailing.push(note);
-			continue;
-		}
-		// Two notes cannot share a span — the cursor has already moved past the
-		// last one — so an anchor is only ever appended, never merged into.
-		anchors.push({ ...anchor, notes: [note] });
-	}
-	return { anchors, trailing };
-
-	function locate(lemma: string): { from: number; to: number } | undefined {
-		const quoted = fold(lemma).text;
-		if (quoted === '') return undefined;
-		for (
-			let i = verse.text.indexOf(quoted, cursor);
-			i !== -1;
-			i = verse.text.indexOf(quoted, i + 1)
-		) {
-			const from = verse.at[i];
-			const to = verse.at[i + quoted.length - 1] + 1;
-			if (splitsWord(text, from) || splitsWord(text, to)) continue;
-			cursor = i + quoted.length;
-			return { from, to };
-		}
-		return undefined;
-	}
+	const { anchors, trailing } = anchorCommentaryLines([text], notes);
+	return {
+		anchors: anchors.map((a) => ({ from: a.spans[0].from, to: a.spans[0].to, notes: a.notes })),
+		trailing
+	};
 }

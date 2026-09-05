@@ -1696,6 +1696,50 @@ a runtime error nothing in `npm test`, `npm run check` or the build sees.
 A callback fits both consumers (`CommentaryGloss`'s trailing mark has nothing
 in the text to bind to) and has no third state to explain.
 
+**A SECOND UNIT SPACE SINCE 2026-09-04, AND ALMOST NOTHING ABOVE CHANGED.**
+`commentary.preces.{lang}` annotates `prayer.common.{lang}` and its units name
+a `Prayer.slug`, not a verse — the Catechism on the Ave and the Compendium on
+the Pater, 335 notes over fifteen languages (`pipeline/CLAUDE.md` for what it
+reads and why Haydock is not in it). It contributes no route and no name, the
+apparatus is still opt-in and still fetched only when it is, and the mark is
+the same dagger. What is new is exactly four things:
+
+- **`manifest.addresses` is the branch, and both scrapers write it.**
+  `sync-corpus.mjs` reads it before it opens the work's directory, which is
+  why it is a field rather than a lookup of the annotated work's own type.
+  `commentaryPrayers` in `corpus-index.ts` is `commentaryChapters`'s twin —
+  two registries and not one wider one, because nothing reads both.
+- **The cursor walks the prayer, not the line, and so may a quotation**
+  (`anchorCommentaryLines`). Resetting the cursor per line would give two notes
+  the same repeated clause — `Mary` occurs in three lines of the English Ave.
+  And a clause the edition set across a break is still one clause: confining a
+  span to one line placed **77** of the tier's 120 headwords and left the Ave
+  with a single mark in most languages; spanning it places **114**. Each line
+  lights the words it prints and only the last takes the dagger
+  (`PlacedAnchor.showMark`), or one note raises three marks onto one card.
+- **The trailing mark is the PRAYER's, not the last line's.** A verse ends and
+  its unplaced notes hang there; hanging a prayer's off whichever line came
+  last would set an apparatus mid-text the moment a later line took no mark.
+  `PrayerBlocks` renders it after the whole run, and the partition property is
+  pinned by a test either side of the line boundary.
+- **`CommentaryNote.locus` labels a note with the paragraph it IS, and links
+  it.** One work draws on two books, so a manifest-level attribution would tell
+  half its readers the wrong one; the siglum comes from that source work's own
+  `short_title` in the corpus (`CCC` everywhere, `Compêndio`/`Lilla katekesen`
+  per edition), never a literal.
+
+**And the prayers' apparatus rides `essentials`, which is automatic** —
+the one commentary in the corpus that may. `WAVE_FOR_KIND`'s own rule puts a
+commentary on the wave of the work it annotates; the rule it looks like it
+breaks is about SIZE, and this is tens of kilobytes beside a collection every
+reader already takes. Left out, a reader who filled the library and then
+switched the apparatus on would get a 504 with the prayers sitting right there.
+
+**`fold` in `lemma.ts` expands `æ` and `œ`**, which no normal form does — they
+are letters, not a base plus a mark. The curated Latin Ave ends `nostræ` and
+the Catechism prints `nostrae`, so without it the lemma matched as far as
+`nostr` and the word-boundary guard then refused the whole clause.
+
 ## `scrollIntoView` moves the page, so a list never calls it
 
 Use `$lib/reveal-row`'s `revealRow` to bring a current row into view.

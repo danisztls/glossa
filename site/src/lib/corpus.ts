@@ -129,6 +129,7 @@ import type {
 	Citer,
 	CommentaryChapter,
 	CommentaryNote,
+	PrayerCommentary,
 	CompendiumQuestion,
 	DocumentManifest,
 	CccAbbreviation,
@@ -204,6 +205,7 @@ import {
 	type SummaQuestionMeta,
 	bibleChapterLocation,
 	commentaryChapters,
+	commentaryPrayers,
 	manifests,
 	translatedDescriptionsLocation,
 	documentTagsLocation,
@@ -1209,6 +1211,27 @@ export function commentariesAt(
 	if (!workId) return [];
 	return Object.entries(commentaryChapters)
 		.filter(([, work]) => (work.books[osis] ?? []).includes(chapterN))
+		.map(([id]) => manifests[id])
+		.filter((work): work is WorkManifest => Boolean(work) && !isUnpublished(work.id))
+		.filter((work) => work.type === 'commentary' && work.annotates === workId)
+		.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/**
+ * The commentaries offered beside ONE PRAYER of one edition.
+ *
+ * `commentariesAt`'s twin, and everything its docblock argues holds here
+ * unchanged — a commentary is offered at the edition it annotates and no
+ * other, because a lemma quotes one text. That rule is the whole reason
+ * Haydock is not on this list: he glosses four of these prayers at their
+ * Scripture address, in Challoner's wording, and the appendix prints a
+ * different English (`pipeline/scrapers/prayers_glossa.py` holds the
+ * measurement). The four get a link instead.
+ */
+export function prayerCommentariesAt(slug: string, workId: string | undefined): WorkManifest[] {
+	if (!workId) return [];
+	return Object.entries(commentaryPrayers)
+		.filter(([, work]) => work.prayers.includes(slug))
 		.map(([id]) => manifests[id])
 		.filter((work): work is WorkManifest => Boolean(work) && !isUnpublished(work.id))
 		.filter((work) => work.type === 'commentary' && work.annotates === workId)
@@ -2353,6 +2376,20 @@ export function listPrayerGroups(lang: string): PrayerGroupSummary[] {
 async function fetchPrayers(lang: string): Promise<Prayer[]> {
 	await ensureContentIndex();
 	return fetchTier([], prayerContentLocation(`prayer.common.${lang}`), []);
+}
+
+/**
+ * One prayer commentary's notes, keyed by the slug of the annotated prayer.
+ *
+ * COARSE FETCH, NARROW RETURN, like `getCommentaryChapter` — except that the
+ * whole work is one file, so the "chunk" is the apparatus entire. At a few
+ * tens of kilobytes per language that is the same call `getPrayers` already
+ * makes for the prayers themselves, and splitting it would buy nothing.
+ */
+export async function getPrayerCommentary(workId: string): Promise<Map<string, CommentaryNote[]>> {
+	await ensureContentIndex();
+	const entries = await fetchTier<PrayerCommentary[]>([], prayerContentLocation(workId), []);
+	return new Map(entries.map((entry) => [entry.slug, entry.notes]));
 }
 
 export async function getPrayerAsync(lang: string, slug: string): Promise<Prayer | undefined> {

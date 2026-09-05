@@ -426,65 +426,61 @@ The scrape is done, and so is the CCC half. `ccc.la` landed 2026-08-26 through `
 
 This is flagged here so it is not rediscovered mid-implementation — the way the check itself was originally motivated by a real, found defect (`docs/research/vatican-documents.md` §6).
 
-## The prayers glossa — scoped 2026-09-04, not started
+## The prayers glossa — tier 0 shipped 2026-09-04
 
-The survey is `docs/research/prayers-glossa.md` and it is finished: what a
-source has to be (§1), what is already on disk (§2), what is public domain and
-machine-readable (§3), what nothing covers (§4), and the one design decision
-(§5). This is what remains to be **done**, in order, and what the curation
-changed about it.
+The survey is `docs/research/prayers-glossa.md`. **§2's tier 0 is built**:
+`commentary.preces.{lang}`, written by `pipeline/scrapers/prayers_glossa.py`,
+335 notes over fifteen languages, 120 carrying a headword the prayer prints and
+114 marks set inside the text against the real corpus —
+the Catechism's ¶2676-2677 on the Hail Mary and the Compendium's qq. 578-598
+on the Our Father. It cost no fetch and no new rights question, and the
+machinery needed one new function (`anchorCommentaryLines`, the cursor walking
+a prayer's printed lines instead of a verse). `pipeline/CLAUDE.md` §The
+prayers' glossa and `site/CLAUDE.md` §Haydock on the page hold the rules.
 
-**The machinery needs no new design.** A commentary is a work whose units
-carry a `lemma` and address another work, placed inside the annotated text by
-searching for the quoted words in reading order with a cursor for repeats
-(`commentary-anchors.ts`). That was built for Haydock against a Bible verse
-and `commentary.haydock.en` proves it; a prayer is a shorter unit with the
-same properties.
+**The order in this plan was Haydock first, and the measurement reversed it.**
+Four prayers are Scripture and Haydock glosses all four — 37 notes, 11 with a
+lemma, and **4** whose lemma the prayer prints. He annotates the Douay-Rheims
+and the appendix prints a different English, so his Magnificat opens "doth
+magnify the Lord" where the prayer reads "proclaims the greatness of the
+Lord". §1's third property, and the rule that already keeps him off the CPDV.
+The four get a link to their Scripture address instead, and the Catechism tier
+became step 1. The general lesson is worth keeping: **"already glossed at
+another address" is a claim about wording, and until the wording is compared it
+is a claim about nothing.**
 
-**Lemma, with the line as a fallback — and the curation has now argued this
-twice.** §5 settled it on the evidence that the Portuguese Apostles' Creed was
-seven lines one morning and twenty-two the next with no word changed, so a
-line-keyed note would have moved. The curation makes the same point from the
-other side: the projected editions now impose a `form`, and the Veni Creator's
-lines were re-grouped into seven quatrains, and the Belarusian and Russian
-gained a line each that our own reader had swallowed. **Line numbers moved
-again, three times, in one day.** `Criador do Céu e da Terra` did not.
+**Lemma, with the line as a fallback — argued three times now.** §5 settled it
+on the Portuguese Apostles' Creed going from seven lines to twenty-two with no
+word changed; the curation made the same point from the other side, imposing a
+`form` that moved line numbers again in three editions in one day. Tier 0 adds
+the third: a line is also where a lemma can FAIL to fit, and a headword
+spanning a line break is refused rather than approximated.
 
-The order to do it in:
+What is left, in order:
 
-1. **Haydock first, because it is already there.** Four prayers are Scripture
-   and are already glossed at another address — the Magnificat (Lk 1:46–55),
-   the Benedictus (1:68–79), the Our Father (Mt 6) and the Hail Mary's first
-   half (Lk 1:28,42) — with lemmas that quote the prayer's own words. This
-   costs no fetch, no rights question and no new source: it is a second
-   address for units the corpus already holds, and it is the honest test of
-   whether the anchoring works against a prayer at all.
-2. **The Catechism on the Our Father, the Hail Mary and the Creed.** Eight
-   languages, on disk, no fetch. The CCC's fourth part is a phrase-by-phrase
-   commentary whose section headings ARE the petitions; ¶2676–2677 is one
-   gloss per clause of the Hail Mary; the first part is the Creed article by
-   article. This is where the apparatus becomes worth reading, and it is the
-   only tier that reaches a reader who is not in English.
-3. **Then decide whether to go outside the corpus at all.** §3 ranks four
+1. **The Catechism on the Our Father and the Creeds, as LINKS not notes.**
+   §2.1 and §2.3: the headings are the petitions and the articles, and the
+   bodies are forty and two hundred paragraphs. `docs/link-surface.md`
+   governs, and the four Scripture prayers above join the same surface.
+2. **Then decide whether to go outside the corpus at all.** §3 ranks four
    public-domain works by how much work each is — the Roman Catechism, the
    three Lenten conferences of Aquinas, Britt on the Breviary hymns, Liguori
-   on the Salve Regina. None is needed to ship 1 and 2, and each carries a
-   fetch and a rights check.
+   on the Salve Regina. Each carries a fetch and a rights check.
 
-Two things the curation changed about the scope:
+Two things about the scope, unchanged by shipping:
 
-- **The collection is 35 prayers and 20 editions now, not 28 and 16.** The
-  seven Vatican News devotions and the four editions that come only from there
-  are all in §4's territory — modern devotional formulas with no classical
-  commentary — so they widen the collection without widening what a glossa can
-  cover. Expect the apparatus to reach a smaller FRACTION of the collection
-  than the survey's two thirds, for a reason that is about the sources.
-- **`latin_witnesses` is a second apparatus already in the files**, and it is
-  not a glossa: 122 recorded departures of each edition's printed Latin from
-  the canonical text. Whether a reader ever sees it is a separate question
+- **The collection is 35 prayers and 20 editions.** The apparatus reaches two
+  prayers and fifteen editions. The seven Vatican News devotions and the four
+  editions that come only from there are all in §4's territory — modern
+  formulas with no classical commentary — so they widen the collection without
+  widening what a glossa can cover.
+- **`latin_witnesses` is a second apparatus already in the curated files**, and
+  it is not a glossa: 122 recorded departures of each edition's printed Latin
+  from the canonical text. Whether a reader ever sees it is a separate question
   from this one, and answering them together would confuse an editorial record
   with a commentary.
 
 **An apparatus that covers part of a collection is a fact about the sources;
-one that pads the rest is a fabrication** (§ TL;DR). That is the line to hold
-when the coverage number looks thin.
+one that pads the rest is a fabrication** (§ TL;DR). Two prayers of thirty-five
+is what the sources support, and the page says so by offering the switch only
+where there is something behind it.

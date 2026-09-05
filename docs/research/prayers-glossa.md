@@ -13,6 +13,14 @@ parked** — the reason given was that it "would need sources". This is what a
 day of looking found, so that the decision is taken against evidence and not
 re-surveyed later.
 
+**Tier 0 was built on 2026-09-04 as `commentary.preces.{lang}`** — §2.2 and
+§2.4, the Hail Mary and the Our Father: 335 notes over fifteen languages, 120
+with a headword the prayer prints and 114 marks set inside the text. Two of this survey's conclusions did not
+survive contact and are corrected in place below: §2.5's Haydock was measured
+and dropped, and §2.2's lemma boundary turned out to be typographic in six
+editions rather than a `<br>` in one. `pipeline/CLAUDE.md` §The prayers' glossa
+holds what was built; §2.1, §2.3 and all of §3 are still open.
+
 ## TL;DR
 
 **The machinery is already built and does not need to change.** A commentary
@@ -31,7 +39,8 @@ prayer; and its whole first part is the Apostles' Creed article by article.
 Nothing needs to be sourced, translated or licensed that is not already here.
 
 **Four of the twenty-eight prayers already have a commentary in the corpus
-under a different address**, because they are Scripture: the Magnificat, the
+under a different address, and it turned out not to be usable** (§2.5, measured
+after this was written), because they are Scripture: the Magnificat, the
 Benedictus, the Our Father and the first half of the Hail Mary are glossed by
 `commentary.haydock.en` at Luke 1, Matthew 6 and Luke 11 — with lemmas like
 `Hail, full of grace` and `Hallowed` that quote the prayer's own words.
@@ -117,6 +126,20 @@ Each `<br>`-separated run opens with the lemma and continues with the note.
 That is the `{lemma, text}` pair the schema already has, requiring no
 judgment about where a note begins.
 
+**Corrected 2026-09-04: the `<br>` is ENGLISH's convention and not the
+source's.** Six of the eight editions give each clause its own `<p>` with the
+clause itself in `<i>` — `« Gratia plena, Dominus tecum »`, `«Cheia de graça, o
+Senhor é convosco»` — French sets the same in curly quotes, English breaks on
+`<br>` and marks the lemma with a colon and no markup at all, and German prints
+the whole paragraph as unmarked prose. So the run boundary is recoverable
+everywhere and the lemma's EXTENT is marked in six places, unmarked in two.
+What was built takes neither as the mechanism: the lemma is the longest opening
+run of the note that the prayer itself prints verbatim, one rule for all eight,
+with the italics kept as an oracle over it (`prayers_glossa.py --check`). Every
+disagreement it reports is a real divergence between the two texts — the French
+Catechism glosses a `tu` Ave against an appendix printing `vous`, the Spanish
+`Llena de gracia` against `llena eres de gracia`.
+
 **The lemma boundaries survive in `raw/` and not in `build/`.** CCC paragraph
 blocks collapse `<br>` to spaces by the convention `docs/corpus-schema.md`
 states for them, so `ccc.en/paragraphs.json` ¶2676 is one undifferentiated
@@ -164,6 +187,27 @@ else to get, and it is already in `build/`.
 
 **It is English-only and edition-bound**, so it glosses `prayer.common.en` and
 nothing else. That is the rule from §1 doing its job.
+
+**AND IT DOES NOT GLOSS `prayer.common.en` EITHER — measured 2026-09-04, and
+this section was wrong.** Over the four prayers Haydock carries 37 notes, 11
+of which have a lemma, and **4** of those lemmas are words the prayer prints:
+
+| prayer     | notes | with lemma | lemma in the prayer |
+| ---------- | ----- | ---------- | ------------------- |
+| Our Father | 13    | 2          | 1                   |
+| Hail Mary  | 4     | 2          | 1                   |
+| Benedictus | 14    | 5          | 2                   |
+| Magnificat | 6     | 2          | 0                   |
+
+The anchoring is not what fails. Haydock annotates the DOUAY-RHEIMS and the
+appendix prints a different English: his Magnificat opens "doth magnify the
+Lord" where the prayer reads "proclaims the greatness of the Lord", and his
+note at Matthew 6:11 is on "supersubstantial bread", which the prayer does not
+contain. §1's third property, and the same rule that already keeps Haydock off
+the CPDV — a lemma quotes one text. The table above is exactly what "already
+glossed at another address" is worth once the wording is checked, which this
+section did not do. The four prayers get a LINK to their Scripture address
+instead (`docs/link-surface.md`); nothing here is offered as an apparatus.
 
 ### 2.6 The Rosary, the Angelus and the Regina Caeli: the magisterium, ingested
 

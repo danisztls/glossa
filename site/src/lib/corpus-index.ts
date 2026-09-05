@@ -255,10 +255,13 @@ interface BibleIntroIndexFile {
  *  content tier, and nothing on a page needs to know WHICH verses are
  *  annotated until the reader has asked for the commentary at all. */
 interface CommentaryIndexFile {
-	[workId: string]: {
-		annotates: string;
-		books: { osis: string; order: number; chapters: CompactRun }[];
-	};
+	[workId: string]:
+		| {
+				annotates: string;
+				addresses: 'bible';
+				books: { osis: string; order: number; chapters: CompactRun }[];
+		  }
+		| { annotates: string; addresses: 'prayer'; prayers: string[] };
 }
 interface CccIndexFile {
 	[lang: string]: {
@@ -624,17 +627,34 @@ export const bibleIntroBooks: Record<string, string[]> = USE_REAL_CORPUS
 export const commentaryChapters: Record<
 	string,
 	{ annotates: string; books: Record<string, number[]> }
-> = USE_REAL_CORPUS
-	? Object.fromEntries(
-			Object.entries(single(realIndexCommentary) ?? {}).map(([workId, work]) => [
-				workId,
-				{
-					annotates: work.annotates,
-					books: Object.fromEntries(work.books.map((book) => [book.osis, expandRun(book.chapters)]))
-				}
-			])
-		)
-	: {};
+> = {};
+
+/**
+ * The same registry for a commentary whose units name a PRAYER — which slugs
+ * each one reaches, and the collection it annotates.
+ *
+ * A SECOND REGISTRY AND NOT A WIDER ONE. The two unit spaces have nothing in
+ * common to look up by: `commentaryChapters` is asked "does this work say
+ * anything at John 3" with an osis and a number, this is asked "…at
+ * `hail-mary`" with a slug, and one union-typed map would make every reader of
+ * either narrow a shape it already knows. They come out of one file because
+ * they are one fact about the corpus; they are read apart because nothing
+ * reads both.
+ */
+export const commentaryPrayers: Record<string, { annotates: string; prayers: string[] }> = {};
+
+if (USE_REAL_CORPUS) {
+	for (const [workId, work] of Object.entries(single(realIndexCommentary) ?? {})) {
+		if (work.addresses === 'prayer') {
+			commentaryPrayers[workId] = { annotates: work.annotates, prayers: work.prayers };
+		} else {
+			commentaryChapters[workId] = {
+				annotates: work.annotates,
+				books: Object.fromEntries(work.books.map((book) => [book.osis, expandRun(book.chapters)]))
+			};
+		}
+	}
+}
 
 export const cccStructures: Record<string, CccNode[]> = USE_REAL_CORPUS
 	? {}

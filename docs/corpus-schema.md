@@ -176,7 +176,7 @@ Manifest carries `books` (OSIS codes with an introduction, canonical order) and 
 - `blocks[].text` is plain text on the same terms as verse text above: markup dropped, emphasis a documented v1 loss recoverable from `raw/`.
 - A book may legitimately have none. Challoner prints one preface for both volumes of Kings and both of Paralipomenon, so `bible-intro.en` covers 71 of 73 books, and `/scriptura/2kgs/0` is correctly not an address at all.
 
-## Commentary — `commentary.{slug}.{lang}/books/{osis}.json`
+## Commentary — `commentary.{slug}.{lang}`
 
 **Added 2026-09-01 with `commentary.haydock.en`,** the corpus's first work whose units
 _address_ Scripture rather than containing it. `type: "commentary"`.
@@ -259,6 +259,66 @@ words it glosses, set in italics by the source, and it is promoted to a field fo
 verse they gloss but does **not** fail on a miss: Haydock quotes loosely where Challoner
 quotes exactly — eliding with "&c.", modernising a spelling, quoting the Latin where the
 verse prints English — so a mismatch is a lead rather than a verdict.
+
+### Two unit spaces, named by `addresses`
+
+**Added 2026-09-04 with `commentary.preces.{lang}`,** the Catechism and its Compendium
+read as an apparatus to the prayers. A commentary's units still address another work and
+still have no address of their own; what is new is that the unit may be a **prayer** and
+not a verse. `addresses` says which, and it is **required on every commentary**:
+
+| `addresses` | file                | a unit is                | manifest also carries      |
+| ----------- | ------------------- | ------------------------ | -------------------------- |
+| `bible`     | `books/{osis}.json` | `{osis, chapter, verse}` | `psalm_numbering`, `books` |
+| `prayer`    | `prayers.json`      | a `Prayer.slug`          | `prayers`                  |
+
+**It is written rather than derived from the annotated work's own type.** The site's sync
+branches on it before it opens the work's directory, so deriving it would make the answer
+depend on which manifest had been read yet — an ordering dependency standing in for a fact
+that is simply true of the commentary.
+
+**The prayer arm ships ONE file per work, unchunked**, where the Bible arm packs by size:
+a commentary on Scripture varies by an order of magnitude per chapter, and this one is 335
+notes across fifteen languages. It is `prayer.common.*`'s own precedent, on the same
+grounds.
+
+```jsonc
+[
+  {
+    "slug": "hail-mary",
+    "notes": [
+      {
+        "lemma": "Full of grace, the Lord is with thee", // optional, as above
+        "text": "These two phrases of the angel's greeting shed light on one another…",
+        "locus": { "work": "ccc", "n": 2676 },
+      },
+    ],
+  },
+]
+```
+
+**`locus` is provenance per NOTE, and it exists because one work draws on two books.**
+A manifest names one set of sources; `commentary.preces.{lang}` reads the Catechism on the
+Hail Mary and the Compendium on the Our Father, so a manifest-level attribution would tell
+half its readers the wrong book. It is also the more useful half — the site renders it as
+the note's label and links it to the paragraph — and it is stored typed rather than as the
+string `CCC 2676`, because re-deriving a fact by parsing a string we wrote ourselves is how
+a value comes to be regenerable only from a previous copy of itself. `attribution` is
+untouched and remains the catena's closed vocabulary of authorities; a note carries one or
+the other, never both.
+
+**Here the lemma is DERIVED and every stored one is verbatim.** Haydock's headwords are
+transcribed from italics and the validator only reports a miss; these sources mark their
+lemma differently in every edition — italics inside guillemets, a colon and no markup,
+nothing at all — so `prayers_glossa.py` takes instead the longest opening run of the note
+that the annotated prayer prints verbatim. It cannot invent, and a note whose source
+glosses a different wording simply carries no lemma. The French Catechism glosses a `tu`
+Ave against an appendix that prints `vous`, and that note is unanchored rather than
+approximately placed.
+
+**Every unit named must exist in the annotated work**, exactly as for a verse, and for the
+same reason: a note addressing nothing renders beside nothing, which is invisible on the
+page.
 
 ## Canonical book order (73 books, lowercase OSIS)
 
