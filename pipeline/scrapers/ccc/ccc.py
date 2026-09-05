@@ -1286,6 +1286,44 @@ class ScrapeState:
         parent_children.append(node)
         self.stack.append(node)
 
+    def take_mini_header(self, text: str, is_division: bool) -> None:
+        """An unbolded run-in heading: a `bare_sub` node, or dropped.
+
+        THE CATECHISM'S RUN-IN HEADINGS ARE A HEADING LEVEL, AND HALF THE
+        MIRRORS DECLINE TO BOLD THEM. `is_mini_header` has always recognised
+        them; until now it discarded them, and the count of what it discarded
+        is what shows the loss is not marginal:
+
+            ES 380 kept / 5 dropped   IT 378/7   LA 378/6   MG 400/41
+            FR  39/156   DE 7/330   PT 13/344    EN   2/315
+
+        The per-edition total is near-constant, so the editions are printing
+        the SAME headings and disagreeing only about typography -- which is an
+        edition's to choose and not a fact about the work. Four mirrors bold
+        them, `is_full_bold` takes them, and they arrive as `bare_sub` already;
+        the other four print them plain and lost them here. EN §§54-64 is the
+        case that found it: Italian, Latin and Spanish all carry `Foedus cum
+        Noe` / `L'Alleanza con Noè` / `La alianza con Noé` at 56-58, and
+        English carried one node spanning 54-64.
+
+        Pushed at `bare_sub` rather than at a level of its own because that IS
+        what the bolding editions produce, which makes them an oracle: EN's
+        node ranges must come out equal to theirs.
+
+        `is_division` is `opens_new_matter` -- whether a numbered paragraph or
+        a real heading follows. False means the header is a question the
+        current paragraph answers, and it is dropped as before, leaving the
+        answer attached to the paragraph that asks it. The one case that
+        matters is the Decalogue table between §§2051 and 2052: its four
+        headers are followed by display matter and not by a paragraph, so the
+        rule that saved §2051 its 2,562 characters keeps holding without a
+        clause of its own."""
+        self.open_display_header = text
+        if not is_division:
+            self.dropped.append(text)
+            return
+        self.push_heading("bare_sub", None, text)
+
     # -- paragraphs ------------------------------------------------------
     def start_paragraph(self, n: int, kind: str, text: str) -> None:
         in_brief = bool(self.stack) and self.stack[-1].kind == "in_brief"
@@ -1394,6 +1432,41 @@ def split_embedded_paragraph_starts(
     return result
 
 
+def opens_new_matter(
+    blocks: list[Block], j: int, number_re: re.Pattern[str], last_n: int | None
+) -> bool:
+    """True when block `j` begins something the current paragraph does not own.
+
+    THE CATECHISM SETS TWO DIFFERENT THINGS IN THE SAME RUN-IN STYLE, and
+    only what follows tells them apart:
+
+        The covenant with Noah          What is an indulgence?
+        56 Once the unity of the ...    "An indulgence is a remission ..."
+
+    The first is a division and the second is a question §1471 asks itself,
+    with the answer as its own next sentence. Both are short, unpunctuated
+    and set off from the body; nothing in the header itself distinguishes
+    them, and `is_mini_header` never claimed to. Reading both as headings
+    finalizes §1471 at its first sentence and orphans 554 characters of the
+    definition -- which is the failure the drop site was written to avoid, so
+    it is stated here rather than rediscovered: EN §§1471, 2071 and 2558, DE
+    §§1471 and 2558, PT §§205 and 1471, 2,633 characters in all.
+
+    A run of consecutive run-in headers resolves on the first block after the
+    whole run, because that is the only one that can be a paragraph."""
+    while j < len(blocks) and blocks[j].is_heading and is_mini_header(blocks[j].text):
+        j += 1
+    if j >= len(blocks):
+        # End of page. A paragraph never spans two pages on any mirror (see
+        # `current_footnote_table`), so nothing is left for this header to be
+        # inside of.
+        return True
+    if blocks[j].is_heading:
+        return True
+    m = number_re.match(blocks[j].text)
+    return m is not None and (last_n is None or int(m.group(1)) > last_n)
+
+
 def process_page(
     blocks: list[Block],
     footnote_table: dict[str, str],
@@ -1445,6 +1518,41 @@ def process_page(
                     j += 1
                 state.push_heading(kind, num, title)
                 i = j
+                continue
+            if (
+                state.open_paragraph is not None
+                and is_mini_header(b.text)
+                and not opens_new_matter(blocks, i + 1, number_re, state.last_n)
+            ):
+                # A BOLD RUN-IN QUESTION THE OPEN PARAGRAPH ANSWERS. French
+                # bolds these, so it is the only edition that arrives here:
+                # §1471 asks "Qu'est-ce que l'indulgence ?" and §2558
+                # "Qu'est-ce que la prière ?", each with the definition as its
+                # own next block and no number on it. Read as headings they
+                # finalize the paragraph and orphan the answer.
+                #
+                # AN OPEN PARAGRAPH IS THE HALF OF THIS TEST THAT THE BOLD
+                # PATH NEEDS. The three headings every intratext edition
+                # declares in its `<meta name="part">` breadcrumb and follows
+                # with unnumbered display matter -- the two creeds under "We
+                # Believe", the Decalogue under "The Church, Mother and
+                # Teacher" -- also fail `opens_new_matter`, and
+                # `check_declared_structure` fails on all three if they are
+                # dropped. No paragraph is open when they arrive, because the
+                # display matter beneath them is nobody's continuation; that
+                # is what tells the two apart.
+                #
+                # DROPPED, NOT APPENDED, which is the whole difference from
+                # what the quote demotion used to do: the header is a header
+                # wherever it is, so putting its words inside the paragraph is
+                # the same corruption in a quieter place. English prints these
+                # plain, drops them here, and keeps the definition -- §1471
+                # reads "The doctrine and practice of indulgences ... An
+                # indulgence is a remission before God ...", with no question
+                # in it. This is the branch that makes French agree.
+                state.open_display_header = b.text
+                state.dropped.append(b.text)
+                i += 1
                 continue
             state.push_heading("bare_sub", None, b.text)
             i += 1
@@ -1510,14 +1618,16 @@ def process_page(
             state.open_display_header = None
         elif state.open_paragraph is None:
             if b.kind == "prose" and is_mini_header(first_text):
-                state.dropped.append(first_text)
-                state.open_display_header = first_text
+                state.take_mini_header(
+                    first_text, opens_new_matter(blocks, i + 1, number_re, state.last_n)
+                )
             else:
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {first_text[:90]}")
         elif b.kind == "prose" and is_mini_header(first_text):
-            state.dropped.append(first_text)
-            state.open_display_header = first_text
+            state.take_mini_header(
+                first_text, opens_new_matter(blocks, i + 1, number_re, state.last_n)
+            )
         elif (
             b.kind == "prose"
             and state.open_display_header is not None
@@ -1753,7 +1863,30 @@ def parse_page_intratext(
             # so stay lost here -- "I." is too easily ordinary prose without
             # the bold signal, which is a documented ceiling, not this bug.
             is_heading = True
-        if is_heading and seen_body and match_label(text) is None:
+        if (
+            is_heading
+            and seen_body
+            and match_label(text) is None
+            and not is_mini_header(text)
+        ):
+            # A BOLD BLOCK AFTER BODY TEXT IS A QUOTATION, EXCEPT WHEN IT IS
+            # ONE OF THE RUN-IN HEADINGS `take_mini_header` KEEPS. The rule
+            # above exists for the Our Father, which the mirror bolds in the
+            # middle of §2759; French is the edition that shows its cost,
+            # because French BOLDS its run-in headings and prints them, like
+            # every edition, after the paragraph they follow. Demoted to a
+            # quote they were never offered to `is_mini_header` -- which only
+            # ever sees `prose` -- so `merge_quote_blocks` glued each one to
+            # the end of the preceding paragraph. §55 closed with the words
+            # "Tu as multiplié les alliances avec eux (MR, prière
+            # eucharistique IV, 118). L'alliance avec Noé": a liturgical
+            # quotation with the NEXT section's title welded onto it, which is
+            # text this project reproduces verbatim and did not.
+            #
+            # The two are separable on the same test the drop site uses, and
+            # the Our Father is why it holds: eight words at most and no
+            # terminal stop, against "Our Father who art in heaven, hallowed
+            # be thy name." -- ten words, and a full stop.
             is_heading, is_quote = False, True
         seen_body = seen_body or not is_heading
         blocks.append(Block(is_heading, "quote" if is_quote else "prose", text))
@@ -1788,6 +1921,55 @@ def test_en_bold_block_after_body_is_a_quote_not_a_heading() -> None:
         (False, "prose"),
     ]
     assert blocks[3].text.startswith("Our Father who art in heaven")
+
+
+def _run_en_page(page: str) -> ScrapeState:
+    """One English page through the whole block/heading pipeline."""
+    blocks, table = parse_page_en(page)
+    state = ScrapeState()
+    state.push_heading("article", 1, "Article 1 THE REVELATION OF GOD")
+    process_page(
+        blocks,
+        table,
+        {"match_label": MATCH_LABEL["en"], "number_re": NUMBER_RE, "lang": "en"},
+        state,
+    )
+    state.finalize_open_paragraph()
+    return state
+
+
+def test_a_run_in_heading_before_a_numbered_paragraph_is_a_division() -> None:
+    # __PG.HTM, abridged. vatican.va sets the four stages of revelation as
+    # plain <p class=MsoNormal>, so nothing but what follows says they are
+    # headings -- and it, la and es, which bold them, carry all four.
+    state = _run_en_page(
+        "<hr size=1 noshade>"
+        "<p class=MsoNormal>55 This revelation was not broken off ...</p>"
+        "<p class=MsoNormal>The covenant with Noah</p>"
+        "<p class=MsoNormal>56 After the unity of the human race ...</p>"
+    )
+    subs = [n.title for n in state.stack[0].children]
+    assert subs == ["The covenant with Noah"]
+    assert state.dropped == []
+    assert 56 in state.paragraphs
+
+
+def test_a_run_in_heading_before_unnumbered_prose_belongs_to_the_paragraph() -> None:
+    # __P4H.HTM, abridged: §1471 asks itself a question and answers it in the
+    # next block, with no number on the answer. Read as a heading it finalizes
+    # the paragraph at its first sentence and orphans the definition -- 554
+    # characters, and the worst cross-language length skew in the work (8.2x
+    # against the editions that kept it, now 1.3x).
+    state = _run_en_page(
+        "<hr size=1 noshade>"
+        "<p class=MsoNormal>1471 The doctrine and practice of indulgences ...</p>"
+        "<p class=MsoNormal>What is an indulgence?</p>"
+        "<p class=MsoNormal>An indulgence is a remission before God ...</p>"
+    )
+    assert state.stack[0].children == []
+    assert state.dropped == ["What is an indulgence?"]
+    assert state.paragraphs[1471].text.endswith("a remission before God ...")
+    assert "What is an indulgence" not in state.paragraphs[1471].text
 
 
 # --------------------------------------------------------------------------
@@ -3658,7 +3840,15 @@ def print_summary(lang: str, state: ScrapeState, ok: bool, problems: list[str]) 
     else:
         print("abbreviations table: none (this mirror prints no front matter)")
     print(f"source gaps recorded: {state.gaps}")
-    print(f"dropped mini-headers: {len(state.dropped)}")
+    # LISTED, NOT JUST COUNTED. Every one of these is a judgment that a short
+    # unpunctuated line belongs to the paragraph above it rather than to the
+    # tree, and the count alone hid a whole heading level for eight editions.
+    distinct = list(dict.fromkeys(state.dropped))
+    print(f"dropped mini-headers: {len(state.dropped)} ({len(distinct)} distinct)")
+    for text in distinct[:12]:
+        print(f"  - {text!r}")
+    if len(distinct) > 12:
+        print(f"  ... and {len(distinct) - 12} more")
     if state.display_matter:
         by_header: dict[str, int] = {}
         for header, _text in state.display_matter:

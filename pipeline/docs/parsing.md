@@ -75,6 +75,58 @@ of order, fails the run — that is ours. A heading an edition does not print is
 reported and not failed — that is the page's, and there is nothing to invent it
 from.
 
+**A DISAGREEMENT ABOUT TYPOGRAPHY IS NOT A DISAGREEMENT ABOUT STRUCTURE, and
+the CCC's run-in headings were read as one for as long as they existed.** The
+Catechism sets a heading level below its roman numerals — "The covenant with
+Noah", "God chooses Abraham" — which four mirrors bold and four print plain.
+`ccc.py` recognised the plain ones with `is_mini_header` and then discarded
+them, so English carried one node spanning §§54–64 where Italian, Latin and
+Spanish each carried four. The count of what was discarded is what makes the
+loss legible, because the per-edition total is near-constant:
+
+|         | ES  | IT  | LA  | MG  | FR  | DE  | PT  | EN  |
+| ------- | --- | --- | --- | --- | --- | --- | --- | --- |
+| kept    | 380 | 378 | 378 | 400 | 39  | 7   | 13  | 2   |
+| dropped | 5   | 7   | 6   | 41  | 156 | 330 | 344 | 315 |
+
+Keeping them moved cross-edition node agreement from two disjoint clusters at
+~47% to 85–99% for every edition. **The editions that already had them are the
+oracle** (`pipeline/docs/oracles.md`): the fixed parse must reproduce their
+node ranges, and it does — the four stages at 54–55, 56–58, 59–61 and 62–64 in
+all eight.
+
+**WHAT A RUN-IN HEADING IS DEPENDS ON WHAT FOLLOWS IT, and nothing else can
+tell.** The Catechism sets two different devices in that same style:
+
+```
+The covenant with Noah          What is an indulgence?
+56 Once the unity of the ...    "An indulgence is a remission ..."
+```
+
+The first is a division; the second is a question §1471 asks and answers in
+its own next block. Reading both as headings finalizes §1471 at its first
+sentence and orphans the definition — 2,633 characters across EN §§1471, 2071,
+2558, DE §§1471, 2558 and PT §§205, 1471. So a PLAIN run-in line is a heading
+only when a numbered paragraph or a real heading follows the run; a BOLD one is
+a heading unless a paragraph is open and no new matter follows, because the
+source has already said bold means heading and testing it anyway costs the two
+creeds and the Decalogue, which each intratext mirror declares in its own
+`<meta name="part">` and then follows with unnumbered display matter.
+
+**The same rule fixed a verbatim-text defect nobody was looking for.** French
+bolds its run-in headings, and a bold block after body text was demoted to a
+quote for the Our Father's sake — so French's headings were never offered to
+`is_mini_header` at all and `merge_quote_blocks` welded each to the paragraph
+above. §55 ended "…(MR, prière eucharistique IV, 118). L'alliance avec Noé":
+the next section's title inside a liturgical quotation, in a corpus that
+reproduces text verbatim. 264 French paragraphs carried one; every removal was
+checked to be exactly a structure node's title and nothing else, and the seven
+other editions' paragraph text is character-identical across the change.
+
+§1471 was the worst cross-language length skew in the work at 8.2×. It is now
+1.3×, which is `audit.py balance`'s own measure and the reason that audit
+exists.
+
 ## Document families
 
 **Word writes `_edn`/`_ednref` when the author used endnotes.** Same export,

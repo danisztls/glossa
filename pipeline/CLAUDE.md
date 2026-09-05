@@ -707,6 +707,27 @@ opens on a capital, a quote or an ellipsis, because French's period-optional
 pattern otherwise reads two cells of the Creed table on `__P14.HTM` as
 subdivisions. `docs/research/prayers-glossa.md` §6.2 holds the measurements.
 
+### The same defect one level down: a heading level all eight editions dropped
+
+The CCC's run-in headings ("The covenant with Noah") are a heading level.
+`is_mini_header` recognised them and `state.dropped` threw them away, so
+English carried one node over §§54–64 where it, la and es carried four —
+**kept vs dropped: es 380/5, it 378/7, la 378/6, mg 400/41, fr 39/156, de
+7/330, pt 13/344, en 2/315**, a near-constant total, which is eight editions
+agreeing about the headings and disagreeing about bold. Keeping them took
+cross-edition node agreement from two disjoint clusters at ~47% to 85–99%
+(2026-09-05). `pipeline/docs/parsing.md` holds the rule and the one that goes
+with it: a run-in line is a heading or is inside the paragraph depending on
+**what follows it**, never on how it is set.
+
+**It also found a verbatim-text defect, which is the part to carry.** French
+bolds these, and a bold block after body text was demoted to a quote for the
+Our Father's sake — so 264 French paragraphs ended with the next section's
+title welded on. Nothing was looking for that: it is invisible to a
+reproducibility check, invisible to `check_declared_structure`, and reads as
+ordinary text. What made it findable was a heading count that disagreed across
+editions.
+
 ## Prayers are CURATED, and this scraper's job is now to disagree with them
 
 **`build/prayer.common.*` is not a parse** (2026-09-04, `docs/decisions.md`
