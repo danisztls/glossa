@@ -150,18 +150,26 @@
 	 * a banner would be a row of empty page with one glyph in it, and these
 	 * banners are wide. On the image it is where the thing it describes is.
 	 *
-	 * It is `.menu-trigger` and nothing more — the site's icon button, a
-	 * 2.25rem square with `--radius-md` corners, an elevated ground and the
-	 * accent on hover. THAT IT IS A BUTTON AT ALL is the reason it is not a
-	 * bare glyph here: a `currentColor` outline over Raphael's sky is not
-	 * reliably visible in any theme, and the square reads as chrome laid on
-	 * the picture rather than as part of it. What is local is only where it
-	 * sits, which is what that class deliberately never says.
+	 * It is `.menu-trigger` — the site's icon button, a rounded square on an
+	 * elevated ground taking the accent on hover. THAT IT IS A BUTTON AT ALL is
+	 * why it is not a bare glyph here: a `currentColor` outline over Raphael's
+	 * sky is not reliably visible in any theme, and the square reads as chrome
+	 * laid on the picture rather than as part of it.
+	 *
+	 * WHAT IS OVERRIDDEN IS THE SIZE, and only the size. The class is 2.25rem
+	 * because a header control is a primary tap target with its neighbours to
+	 * be told apart from; this one sits alone on a picture, is the least
+	 * important control on the page, and at that size it reads as a button
+	 * somebody left on a painting. The radius, ground, border and hover stay
+	 * the class's, so it is still recognisably the same button.
 	 */
 	.caption-trigger {
 		position: absolute;
 		inset-block-end: 0.5rem;
 		inset-inline-end: 0.5rem;
+		inline-size: 1.6rem;
+		block-size: 1.6rem;
+		font-size: 0.8rem;
 	}
 
 	/*
