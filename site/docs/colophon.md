@@ -47,6 +47,33 @@ bad translation reads oddly; in those two it would misstate what this site
 claims about itself, or lose someone the only sentence written for them.
 Deleting a doubtful line remains the right fix, since `t()` falls back per key.
 
+**The privacy section is the reader's half of an argument that existed only in
+`site/docs/usage.md`.** The whole disclosure was one bullet — "anonymous usage
+counts only" — against eighteen bucketed fields, a separately-keyed country and
+a thirteen-month window: the one claim on this page a reader had to take purely
+on trust. It sits between the type and the copyright because that is where the
+page turns from the reader to the rights holder.
+
+**Three paragraphs, because the argument is not the notice.** A first draft ran
+to six and said everything `usage.md` says; what a reader needs is what is
+absent, what is counted, and what never leaves the device. The retention is
+interpolated from `RETENTION_DAYS` rather than typed, the rule the work counts
+follow — and it is 400 rather than the 365 next to it in `usage-device.ts`
+because the two bound different things: how long an anonymous aggregate stays
+useful, against how long a device may remember itself.
+
+**It is written in English and Portuguese only, and that is the operative
+tier.** `t()` falls back per key, so the other thirty-five interfaces render the
+English — but this belongs with `whatThisIsStanding` and `copyrightBody3`, the
+strings each dictionary is told to check first, because a loose line here
+misstates what the site does rather than merely reading oddly.
+
+**The `<h2>` ids are a link surface, not a detail of the aside that needed
+them.** They are fixed and English while every heading beside them translates,
+because `/colophon#privacy` is the address a privacy-policy field elsewhere
+would be given — renaming one silently breaks a link this page does not
+control.
+
 **The statement reached the footer of every page**, which is the same argument
 one step on rather than a second decision: can. 216 is provoked by the NAME,
 and the name is in the wordmark at every address, so a disclaimer only a reader

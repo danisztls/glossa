@@ -536,6 +536,21 @@ export const en: Dictionary = {
 		'The text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we think it should say.',
 	'colophon.countBible': 'Bible editions',
 	'colophon.countDocuments': 'magisterial documents',
+	// The expansion of `colophon.pointNoTracking`, which stays where it is as
+	// the summary. Three paragraphs and no more: what is absent, what is
+	// counted, what never leaves the device. site/docs/usage.md carries the
+	// reasoning — a reader wants the claims, not the argument for them.
+	//
+	// The retention is interpolated from `RETENTION_DAYS` rather than typed, the
+	// rule the work counts follow. It is 400 and not 365 deliberately: thirteen
+	// months, so a month has the same month a year earlier to be compared with.
+	'colophon.privacyTitle': 'Privacy',
+	'colophon.privacyBody1':
+		'No accounts, no cookies, no advertising, no third-party code. Nothing here follows you off this site.',
+	'colophon.privacyBody2':
+		'We do count how the site is used: one measurement per visit, every field a range rather than a value \u2014 how long you stayed, how often you have been here, which works you opened. Your country is counted separately, with nothing joining it to the rest. It describes a visit, not a visitor, and is kept for {days} days.',
+	'colophon.privacyBody3':
+		'Never sent: what you type into the search box, which passage you had open, or anything that could recognise your device again. Your settings, bookmarks and downloaded texts stay on your device.',
 	'colophon.copyrightTitle': 'Copyright',
 	'colophon.copyrightBody1':
 		'The Catechism, the Compendium and the magisterial documents are the property of their rights holders \u2014 principally the Libreria Editrice Vaticana and the Dicastery for Communication.',
