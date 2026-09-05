@@ -20,6 +20,8 @@
 /*
  * A LANDING PAGE IS NOT A READING PAGE, and until now the four of them —
  * `/`, `/bibliotheca`, `/documenta`, `/schola` — were laid out as one.
+ * `/calendarium` took it too (2026-09-05): not a landing page, but a page of
+ * controls, a card and a month listing, which is the same argument.
  *
  * `--content-width` is a MEASURE: `--measure-cpl` characters of running prose,
  * 62.4 of them, and it moves with the reader's font-size setting because the

@@ -23,6 +23,22 @@
 	 * showing a different day", and leaves `/calendarium` as the one address
 	 * worth indexing.
 	 *
+	 * ## Not a reading page, and no longer laid out as one
+	 *
+	 * `.landing-column`, not `.content-column` inside a `.reading-layout`:
+	 * `layout.css` carries the argument, which is that `--content-width` is a
+	 * count of CHARACTERS and nothing on this page is running prose. It is a row
+	 * of controls, a card of facts and a month of dated rows — and that last one
+	 * paid for the measure most, since a celebration's name runs to a hundred
+	 * characters and every one of them that wrapped did so in a column sized for
+	 * a sentence. The `.reading-layout` around it was reserving an aside lane for
+	 * an aside this page has never had.
+	 *
+	 * The prose that is still prose keeps a measure of its own — the tagline
+	 * through `.landing-measure`, the primer through its own cap. `/`,
+	 * `/bibliotheca`, `/documenta` and `/schola` are the same kind of page and
+	 * take the same column.
+	 *
 	 * ## The month listing IS the navigation
 	 *
 	 * `CalendarMonth.svelte` holds the arrangement and the argument for it.
@@ -337,64 +353,62 @@
 	<title>{t('calendar.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="reading-layout">
-	<div class="content-column">
-		<h1>{t('calendar.title')}</h1>
-		<p class="page-tagline">{t('calendar.tagline')}</p>
+<div class="landing-column">
+	<h1>{t('calendar.title')}</h1>
+	<p class="page-tagline landing-measure">{t('calendar.tagline')}</p>
 
-		<div class="controls">
-			<!--
-				THE FIELD PRINTS THE DATE THE WAY THE PAGE WRITES DATES, which a
-				native date input cannot be made to do: its format comes from the
-				operating system's locale rather than from the interface language,
-				so a reader on an American machine read `09/17/2026` at the top of
-				a page that says "17 de setembro de 2026" everywhere else. The
-				input is still the control — it keeps the value, the keyboard, the
-				validation and the platform's own calendar popup — and the span
-				over it is what is read. The card below no longer prints the date,
-				because THIS is where the date is now.
-			-->
-			<div class="date-field">
-				<input
-					type="date"
-					bind:this={dateEl}
-					aria-label={t('calendar.date')}
-					value={selectedIso}
-					oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
-					onkeydown={() => (typing = true)}
-					onclick={openPicker}
-				/>
-				<span class="date-face" aria-hidden="true">
-					<Icon name="calendar" />
-					<span class="date-text">
-						<span>{formatPromulgated(selectedIso, lang)}</span>
-						<span class="date-widest">{widestDate}</span>
-					</span>
+	<div class="controls">
+		<!--
+			THE FIELD PRINTS THE DATE THE WAY THE PAGE WRITES DATES, which a
+			native date input cannot be made to do: its format comes from the
+			operating system's locale rather than from the interface language,
+			so a reader on an American machine read `09/17/2026` at the top of
+			a page that says "17 de setembro de 2026" everywhere else. The
+			input is still the control — it keeps the value, the keyboard, the
+			validation and the platform's own calendar popup — and the span
+			over it is what is read. The card below no longer prints the date,
+			because THIS is where the date is now.
+		-->
+		<div class="date-field">
+			<input
+				type="date"
+				bind:this={dateEl}
+				aria-label={t('calendar.date')}
+				value={selectedIso}
+				oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
+				onkeydown={() => (typing = true)}
+				onclick={openPicker}
+			/>
+			<span class="date-face" aria-hidden="true">
+				<Icon name="calendar" />
+				<span class="date-text">
+					<span>{formatPromulgated(selectedIso, lang)}</span>
+					<span class="date-widest">{widestDate}</span>
 				</span>
-			</div>
-			<!-- Beside the date and not down beside the month's arrows, because it
-			     is the same control as the date field: both answer WHICH DAY, and
-			     the one that answers "the one I am living in" belongs with them.
-			     Down there it read as a third month control. -->
-			<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
-				{t('calendar.today')}
-			</button>
-			<CalendarMenu value={territory} {lang} onchoose={choose} />
+			</span>
 		</div>
-
-		{#if day}
-			<LiturgicalDayCard {day} heading="h2" showDate={false} />
-		{:else}
-			<!-- Only reachable for a date outside any year this can build, which
-			     the date input makes hard to ask for. Saying so is better than
-			     an empty page. -->
-			<p>{t('calendar.noSuchDay')}</p>
-		{/if}
-
-		<CalendarMonth {selected} {today} {options} {lang} onpick={go} />
-
-		<CalendarPrimer />
+		<!-- Beside the date and not down beside the month's arrows, because it
+		     is the same control as the date field: both answer WHICH DAY, and
+		     the one that answers "the one I am living in" belongs with them.
+		     Down there it read as a third month control. -->
+		<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
+			{t('calendar.today')}
+		</button>
+		<CalendarMenu value={territory} {lang} onchoose={choose} />
 	</div>
+
+	{#if day}
+		<LiturgicalDayCard {day} heading="h2" showDate={false} />
+	{:else}
+		<!-- Only reachable for a date outside any year this can build, which
+		     the date input makes hard to ask for. Saying so is better than
+		     an empty page. -->
+		<p>{t('calendar.noSuchDay')}</p>
+	{/if}
+
+	<CalendarMonth {selected} {today} {options} {lang} onpick={go} />
+
+	<CalendarPrimer />
 </div>
 
 <style>
