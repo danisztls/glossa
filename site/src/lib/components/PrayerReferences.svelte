@@ -3,17 +3,23 @@
 	the Catechism's article on it, the Compendium's questions.
 
 	IT IS WHAT THE NOTES WITH NO HEADWORD BECAME (2026-09-05). The apparatus
-	stored every run of CCC 2676-2677 and every answer of Compendium 578-598,
-	and two thirds of them quoted no clause of the prayer — so they hung at its
-	foot, which on a seven-line text is the Catechism reprinted beside the Ave
-	rather than a gloss on it. A commentary's job at this size is to mark the
-	words it explains; what a book says about the prayer AS A WHOLE is a place
-	to go and read it, which is this.
+	read every run and answer of the passages the two books give these prayers,
+	and most of them quoted no clause — so they hung at the prayer's foot, which
+	on a seven-line text is the Catechism reprinted beside the Ave rather than a
+	gloss on it. A commentary's job at this size is to mark the words it
+	explains; what a book says about the prayer AS A WHOLE is a place to go and
+	read it, which is this.
 
-	SO IT RIDES THE APPARATUS'S OWN SWITCH AND ITS OWN FETCH. These arrive in
-	the same file as the notes and appear when the notes do, because they are
-	the same act of reading two books beside a prayer — and because a reader who
-	has turned the apparatus off has said what they want under the text.
+	SO IT REACHES FURTHER THAN THE NOTES DO, and on most prayers it is the only
+	thing here: the Catechism prints the Sign of the Cross entire and names the
+	Te Deum and the Veni Creator without ever quoting a clause the way a
+	headword needs. An entry with no notes and three references is the ordinary
+	case, not an empty one.
+
+	IT STILL RIDES THE APPARATUS'S OWN SWITCH AND ITS OWN FETCH. These arrive in
+	the same file as the notes, because they are the same act of reading two
+	books beside a prayer — and because a reader who has turned the apparatus
+	off has said what they want under the text.
 
 	IT IS `CitedBy`'S PANEL, ONE FACT TURNED AROUND. That component answers
 	"who cites this address"; this answers "where is this prayer treated", and a
@@ -77,12 +83,24 @@
 		return (preferred && names[preferred]) || Object.values(names)[0] || osis;
 	}
 
-	/** The siglum a numbered work is cited by, out of the corpus and never a
-	 *  literal — `CommentaryGloss` names a note's locus the same way, and the
-	 *  two must agree: `CCC` in every language, the Compendium headed in its
-	 *  own (`Compêndio`, `Lilla katekesen`). */
+	/**
+	 * The siglum a numbered work is cited by, out of the corpus and never a
+	 * literal — `CommentaryGloss` names a note's locus the same way, and the
+	 * two must agree: `CCC` in every language, the Compendium headed in its
+	 * own (`Compêndio`, `Lilla katekesen`).
+	 *
+	 * THE READER'S OWN EDITION FIRST, `bookName`'s fall-through and for the
+	 * same reason: an address is edition-free, so the edition that opens when
+	 * this link is followed is the reader's standing preference, and naming a
+	 * different one here would label the link with a book it does not lead to.
+	 * The annotated language is the second try and matters where the two
+	 * differ — the Latin apparatus cites a Compendium that has no Latin
+	 * edition at all, and `COMPENDIUM` shouted in capitals is what the last
+	 * resort used to print there.
+	 */
 	function siglum(work: 'ccc' | 'compendium'): string {
-		const source = getWork(`${work}.${lang}`);
+		const preferred = content.workIdFor(work === 'ccc' ? 'catechism' : 'compendium');
+		const source = (preferred && getWork(preferred)) || getWork(`${work}.${lang}`);
 		return source?.short_title || source?.title || work.toUpperCase();
 	}
 

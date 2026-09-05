@@ -157,7 +157,9 @@ pipeline/scrapers/
                      What a prayer says is decided there and written here.
   prayers_glossa.py  the Catechism and the Compendium read as an apparatus to
                      the prayers -- `commentary.preces.*`, CCC 2676-2677 on
-                     the Ave and Compendium 578-598 on the Pater. Reads
+                     the Ave, Compendium 578-598 on the Pater and 33-217 on
+                     the two Creeds, plus the references that reach the
+                     prayers those never quote. Reads
                      `raw/ccc-*` (the `<br>` boundary between one clause's
                      gloss and the next does not survive into `build/`), the
                      Compendium's parsed questions, and the projected prayers
@@ -756,14 +758,34 @@ Ave; the Compendium's qq. 578-598 are one answer per petition of the Pater,
 and its QUESTION quotes the petition. Rationale and the tiers that were left
 out are `docs/research/prayers-glossa.md`.
 
-**IT KEEPS ONLY WHAT QUOTES A CLAUSE, and the report's two columns are `read`
-and `kept`** (2026-09-05). 335 runs and answers read, 120 stored: the rest
-gloss the prayer as a WHOLE — what the Our Father is, why it is called the
-Lord's Prayer — and a note with no headword has nowhere to sit but the foot of
-a seven-line text, which is the Catechism reprinted beside the prayer rather
-than a gloss on it. The gap is not a miss rate, and it is not lost either:
-each entry carries `references`, the whole passage in each book, checked
-against the corpus before it is written (`check_references`).
+**IT KEEPS ONLY WHAT QUOTES A CLAUSE, and the report's columns are `read` and
+`kept`** (2026-09-05). Most of what it reads glosses the prayer as a WHOLE —
+what the Our Father is, why it is called the Lord's Prayer — and a note with
+no headword has nowhere to sit but the foot of a seven-line text, which is the
+Catechism reprinted beside the prayer rather than a gloss on it. The gap is
+not a miss rate and widens as the sections do: most of the Compendium's Part
+One expounds an article of the Creed without quoting it. It is not lost
+either — each entry carries `references`, the whole passage in each book,
+checked against the corpus before it is written (`check_references`).
+
+- **A SECTION IS A STRETCH OF ONE BOOK THAT WALKS ONE PRAYER**, and the table
+  is `COMPENDIUM_SECTIONS`. Both bounds are questions that say what they
+  bound: 33 asks what the symbols of faith are and 217 what the Amen
+  concluding the profession means, as 578 and 598 do for the Our Father. The
+  two Creeds share one section because the Compendium expounds one set of
+  articles — a question is filed under whichever creed PRINTS the clause it
+  quotes, so `has spoken through the prophets` reaches the Nicene alone and
+  `I believe in the Holy Spirit` both.
+- **THE REFERENCES REACH FURTHER THAN THE NOTES, AND AN ENTRY MAY HAVE ONLY
+  THEM.** The rule of admission is that the passage speaks of THIS prayer —
+  by naming it (CCC 2678 on the rosary, 700 on the Veni Creator, Compendium
+  547 on the Magnificat), by quoting it (CCC 2157 prints the Sign of the Cross
+  entire), or by being the article that expounds it (CCC 185-1065 is the
+  Creed). A passage on the same SUBJECT is not one: the Catechism has a great
+  deal on prayer to Mary and names neither the Salve Regina nor the Memorare,
+  so those carry nothing. `check_tables` refuses a slug no collection prints,
+  which is the one mistake the per-language loop cannot see — it walks the
+  collection and would simply never consult the row.
 
 - **HAYDOCK GLOSSES FOUR OF THESE PRAYERS AND IS NOT USED, because he
   annotates a different English.** Measured against `commentary.haydock.en`:
