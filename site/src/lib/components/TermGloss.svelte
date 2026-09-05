@@ -19,10 +19,14 @@
 	 * line. Sharing the component would mean two callers disagreeing about
 	 * whether the panel's contents are content or chrome.
 	 *
-	 * THE TOP LAYER IS LOAD-BEARING ON `/calendarium`. The day's card there is
-	 * held to a fixed height with `overflow-y: auto`, which clips absolutely
-	 * positioned descendants; a popover is not one, so the card opens over the
-	 * page instead of being cut off at the box's edge.
+	 * THE TOP LAYER IS WHAT MAKES THE GLOSS SAFE INSIDE A BOX. The day's card
+	 * on `/calendarium` was held to a fixed height with `overflow-y: auto` for
+	 * one day, and a scroll container clips absolutely positioned descendants;
+	 * a popover is not one, so the panel opened over the page rather than
+	 * being cut off at the box's edge. The card is as tall as its day now and
+	 * clips nothing, which retires the need without retiring the property —
+	 * this glosses words inside `.facts` and inside the month's rows, and the
+	 * next bordered box it lands in will not have to be asked about.
 	 */
 	import { NoteCard } from '$lib/sidenotes.svelte';
 

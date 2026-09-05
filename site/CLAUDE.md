@@ -2024,11 +2024,17 @@ control on this page was inert because of it** (2026-09-04, §The liturgical
 calendar). Shallow routing sets `page.state` and calls `history.replaceState`,
 and assigns `page.url` nowhere — so the address bar moved on every click while
 `selected`, derived from `page.url.searchParams`, stayed on today's date. Silent
-in every direction: no console error, no `check` failure, no test. Commit a
-parameter the render reads with `goto(url, { replaceState: true, noScroll: true,
-keepFocus: true })`, the three flags `compare-nav.svelte.ts` already uses;
-shallow routing is for state that belongs to a history entry and not to an
-address.
+in every direction: no console error, no `check` failure, no test.
+
+**A URL PARAMETER NO `load` READS DOES NOT NEED A NAVIGATION TO CHANGE** — so
+the fix above was the wrong half, and this page holds the day and the calendar
+as `$state`, seeded from `page.url` and mirrored back with shallow
+`replaceState` (2026-09-05, §The liturgical calendar). `goto` per click ran the
+root layout's `load`, a `root.$set` over the tree and a focus and scroll pass
+for a page that fetches nothing, and the reader saw it as a flinch on every
+click that settled back where it started; paging the month, which is local
+state and touches no router, was the control that did not flinch. `goto`
+survives only on arrival, where `onMount` runs before shallow routing is legal.
 
 **THE PAGE EXPLAINS ITS OWN VOCABULARY** (2026-09-04). Every word on the day's
 card is a term of art — a vestment colour, a rank out of the Universal Norms, a

@@ -229,11 +229,31 @@ written, being an absence rather than a value.
 weeks, with no console error and nothing in `npm run check` or `npm test`.
 Shallow routing sets `page.state` and deliberately never assigns `page.url`, so
 a page deriving from `page.url.searchParams` had two ideas of where it was.
-The fix is `goto(url, { replaceState, noScroll, keepFocus })`. **The general
-lesson is about the failure's shape, not the API**: a control that reads
-derived state and writes it through a different mechanism can be wrong in a way
-that looks like nothing at all — the address bar agreed with the reader, which
-is what made it possible to conclude the page was slow rather than broken.
+**The general lesson is about the failure's shape, not the API**: a control that
+reads derived state and writes it through a different mechanism can be wrong in
+a way that looks like nothing at all — the address bar agreed with the reader,
+which is what made it possible to conclude the page was slow rather than broken.
+
+**The repair was `goto`, and `goto` was the wrong half to change** (2026-09-05).
+It fixed the disagreement and bought a flinch on every click: the header, the
+card and the listing all moved and settled back, on days whose card was
+identical, because a `goto` runs the whole router lifecycle — the root layout's
+`load` re-runs (it reads `url`), `root.$set` goes over the component tree, and a
+focus pass and a scroll pass follow — for a page that fetches nothing and
+computes every date it shows from arithmetic. **What isolated it was the control
+that did NOT flinch**: paging the month is local state and touches no router, so
+the one interaction with no navigation behind it was the one with no motion.
+
+So the ownership is inverted rather than the mechanism patched. The date and the
+calendar are `$state` on the page, **seeded from `page.url` and written back to
+the address bar with shallow `replaceState`** — and `page.url` freezing is now a
+fact about a value nothing reads. Two things keep that honest: the builder sets
+both parameters unconditionally, so a stale base cannot carry a stale answer;
+and the arrival path — the remembered calendar applied under a bare
+`/calendarium` — still uses `goto`, because shallow routing throws in dev before
+the router has started and a page's `onMount` runs inside that window. **A URL
+parameter that no `load` reads does not need a navigation to change**, and one
+that some `load` does read cannot be changed without one.
 
 **The country picker is a grid of flags.** The reader of that control is not
 weighing alternatives, they are looking for their own country, which they

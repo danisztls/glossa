@@ -63,7 +63,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
 	import CalendarPrimer from '$lib/components/CalendarPrimer.svelte';
@@ -98,7 +98,10 @@
 	);
 
 	/**
-	 * BOTH CONTROLS READ THE URL, and neither keeps a copy of its own.
+	 * THE CONTROLS OWN THE STATE AND THE ADDRESS BAR FOLLOWS THEM. It was the
+	 * other way round for a day — both controls derived from `page.url` and
+	 * neither kept a copy — and §The address bar follows has why that was
+	 * wrong and what the reader saw.
 	 *
 	 * The date has lived in `?d=` since this page was written, for the reason
 	 * above; the calendar joins it in `?c=` on the same argument the compare
@@ -107,6 +110,10 @@
 	 * and a control that changed the page without changing the URL hands out
 	 * links that don't show what the sender sees. It also means a reload keeps
 	 * the reader in their own country's calendar.
+	 *
+	 * The URL is still where both values COME FROM — these are seeded from it
+	 * and from nowhere else, so a pasted link, a reload and a return from
+	 * another page all land where they say they do.
 	 *
 	 * `?c=` NAMES A TERRITORY AND NOT A LAYER, which are not the same thing
 	 * for eleven of the ninety-six places in the picker: Israel, Jordan and
@@ -132,59 +139,90 @@
 	 * from; the preference only decides what the URL says when the reader
 	 * arrives without one.
 	 */
-	let territory = $derived.by(() => {
-		const raw = page.url.searchParams.get('c');
+	function territoryIn(url: URL): string {
+		const raw = url.searchParams.get('c');
 		return raw && TERRITORY_CALENDARS[raw] ? raw : 'general';
-	});
+	}
+
+	let territory = $state(territoryIn(page.url));
+	let selected = $state(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
+
 	let options = $derived(
 		territory === 'general' ? ({} as CalendarOptions) : OPTIONS[TERRITORY_CALENDARS[territory]]
 	);
-	let selected = $derived(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
 	let day = $derived(liturgicalDay(selected, options));
 
-	/**
-	 * Commit a control's new value to the address bar.
-	 *
-	 * `goto`, NOT `$app/navigation`'s `replaceState`, and the difference is the
-	 * whole reason these controls used to do nothing. Shallow routing updates
-	 * `history` and `page.state` and deliberately never touches `page.url` —
-	 * so the address bar changed under every click while `selected`, which is
-	 * derived from `page.url`, stayed on today's date for the life of the
-	 * page. No error, no warning: the page simply had two ideas of where it
-	 * was and only showed one of them.
-	 *
-	 * The three flags are the same set `compare-nav.svelte.ts` commits its own
-	 * parameter with, for the same reasons: `replaceState` because stepping a
-	 * day is not a destination and a reader who stepped through a week should
-	 * still be one Back press from the page they arrived from; `noScroll`
-	 * because the list below can be arrowed through and jumping to the top on
-	 * every keypress would take the day's card off the screen; `keepFocus`
-	 * because these ARE the focused controls, and a keyboard reader who lost
-	 * focus to `<body>` would have to tab back to the row they just left.
-	 */
-	function commit(params: { d?: string; c?: string }) {
+	/** The address this page's state describes. Built from `page.url` so that
+	 *  any parameter this page does not own survives, and setting BOTH of the
+	 *  two it does own — which is what makes it safe that `page.url` goes stale
+	 *  the moment `mirror` writes (see there). */
+	function addressFor(): URL {
 		const url = new URL(page.url);
-		if (params.d !== undefined) url.searchParams.set('d', params.d);
+		url.searchParams.set('d', formatIsoDate(selected));
 		// The general calendar is the default, so it is absence rather than a
 		// value: `?c=general` would be a parameter that says nothing, and it
 		// would sit in every link a reader copies off the default page.
-		if (params.c !== undefined) {
-			if (params.c === 'general') url.searchParams.delete('c');
-			else url.searchParams.set('c', params.c);
-		}
-		goto(url, { replaceState: true, noScroll: true, keepFocus: true });
+		if (territory === 'general') url.searchParams.delete('c');
+		else url.searchParams.set('c', territory);
+		return url;
+	}
+
+	/**
+	 * ## The address bar follows, and no longer drives
+	 *
+	 * `replaceState` from `$app/navigation` — shallow routing, which writes
+	 * `history` and `page.state` and deliberately never touches `page.url`.
+	 *
+	 * THAT PROPERTY WAS THE BUG AND IS NOW THE DESIGN, and the two states of
+	 * this page are worth keeping straight. It began shallow while both values
+	 * were DERIVED from `page.url`, so the address changed under every click
+	 * and the page stayed on today's date for its whole life — two ideas of
+	 * where it was, one of them shown. The repair was `goto`, which does update
+	 * `page.url`; what `goto` also does is run a navigation, and a navigation
+	 * here is a re-entry into the root layout's `load` (it reads `url`, so it
+	 * re-runs on every one), a `root.$set` over the whole component tree, a
+	 * focus pass and a scroll pass — the entire router lifecycle, for a page
+	 * that fetches nothing and computes every date it shows from arithmetic.
+	 * The reader saw it as a flinch on every single click, in both axes,
+	 * settling back where it started: the same day stepped to twice looked the
+	 * same afterwards and still moved in between. Paging the month never did
+	 * it, because paging is local state and touches no router — which is what
+	 * named the culprit.
+	 *
+	 * So the ownership is inverted rather than the mechanism patched. The
+	 * controls hold the state, the URL is seeded from once and written to
+	 * after, and `page.url` being frozen is now simply a fact about a value
+	 * nothing reads: `addressFor` sets both parameters unconditionally, so a
+	 * stale base cannot carry a stale answer.
+	 *
+	 * There is no `noScroll`/`keepFocus` to pass because there is nothing to
+	 * suppress — shallow routing scrolls nothing and blurs nothing. It also
+	 * replaces rather than pushes, which is what the `goto` asked for by flag:
+	 * stepping a day is not a destination, and a reader who walked through a
+	 * week is still one Back press from the page they arrived from.
+	 */
+	function mirror() {
+		replaceState(addressFor(), page.state);
 	}
 
 	function go(iso: string) {
-		commit({ d: iso });
+		const n = parseIsoDate(iso);
+		// A half-typed date in the field parses to nothing, and re-choosing the
+		// day already on screen is not a change. Neither is worth a history
+		// write, and the second would be a re-render for no difference.
+		if (n === undefined || n === selected) return;
+		selected = n;
+		mirror();
 	}
 
 	/** A calendar chosen in the picker is a calendar the reader KEEPS, so it is
-	 *  remembered as well as committed. A `?c=` they merely arrived on is not —
+	 *  remembered as well as shown. A `?c=` they merely arrived on is not —
 	 *  `calendar-pref.ts` holds that argument. */
 	function choose(id: string) {
 		rememberTerritory(id);
-		commit({ c: id });
+		if (id === territory) return;
+		territory = id;
+		mirror();
 	}
 
 	/**
@@ -195,8 +233,15 @@
 	 * because this page's whole contract is that the address reproduces what is
 	 * on the screen — a page showing Brazil's calendar under a bare
 	 * `/calendarium` would hand out links that show the sender Brazil and the
-	 * recipient Rome. `commit` replaces the history entry, so the page the
-	 * reader arrived from is still one Back press away.
+	 * recipient Rome.
+	 *
+	 * `goto` HERE AND `replaceState` EVERYWHERE ELSE, which is the one place
+	 * the two mechanisms meet. Shallow routing throws in dev when the router
+	 * has not finished starting, and a page's `onMount` runs inside that
+	 * window — Svelte flushes the mount effects a microtask before the client
+	 * router sets its own started flag. `goto` has no such guard, this runs at
+	 * most once per visit, and it runs while the page is still arriving, which
+	 * is the one moment a navigation costs the reader nothing to look at.
 	 *
 	 * `onMount` and not `$effect`: this must happen on arrival and never again,
 	 * and an effect over `territory` would fight the reader every time they
@@ -205,7 +250,9 @@
 	onMount(() => {
 		if (page.url.searchParams.has('c')) return;
 		const saved = storedTerritory();
-		if (saved && saved !== 'general' && TERRITORY_CALENDARS[saved]) commit({ c: saved });
+		if (!saved || saved === 'general' || !TERRITORY_CALENDARS[saved]) return;
+		territory = saved;
+		goto(addressFor(), { replaceState: true, noScroll: true, keepFocus: true });
 	});
 
 	/**

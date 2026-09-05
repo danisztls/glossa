@@ -33,8 +33,9 @@
 	 * ## PAGING DOES NOT MOVE THE SELECTED DAY
 	 *
 	 * There are two pieces of state here and there were one: the chosen day,
-	 * which lives in the URL (`?d=`), and the month being LOOKED AT, which
-	 * lives in `view` and belongs to nobody but this component.
+	 * which belongs to the page and is echoed in the address bar (`?d=`), and
+	 * the month being LOOKED AT, which lives in `view` and belongs to nobody
+	 * but this component.
 	 *
 	 * The arrows moved the chosen day by a month until 2026-09-05, on the
 	 * argument that one piece of state is better than two and that the address
@@ -227,14 +228,12 @@
 	/**
 	 * Every way of choosing a day goes through here.
 	 *
-	 * The one thing it does besides the navigation is the REFOCUS, which is
-	 * for the keyboard and cannot be avoided: `onpick` re-renders the list,
+	 * The one thing it does besides reporting the choice is the REFOCUS, which
+	 * is for the keyboard and cannot be avoided: `onpick` re-renders the list,
 	 * and a move that crosses a month boundary replaces every row in it, so
 	 * the element the reader was standing on is gone by the time the browser
 	 * would restore focus to it. `refocus` names the date to stand on and the
-	 * effect puts the keyboard there once the new rows exist. `keepFocus` on
-	 * the `goto` is what stops SvelteKit throwing focus to `<body>` in
-	 * between.
+	 * effect puts the keyboard there once the new rows exist.
 	 */
 	function pick(target: DayNumber, focusRow = false) {
 		const iso = formatIsoDate(target);
