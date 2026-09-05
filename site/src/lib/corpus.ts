@@ -1947,7 +1947,19 @@ export function documentTailNumber(lastN: number | null, tailIndex: number): num
 }
 
 export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null): StructureNode[] {
-	requireIndex('document', 'buildDocumentOutline');
+	// NO `requireIndex` HERE, and it had one until 2026-09-04. This function
+	// reads no registry at all — it is pure over `rows` and `lastN`, which is
+	// the whole reason it is split out from `documentOutline` (see the note
+	// below on testing it without a corpus). Its three callers differ in what
+	// they read: `documentOutline` takes `documentSectionNumbers`, which IS
+	// lazily primed, and guards itself; `socialDoctrineOutline` and
+	// `canonLawOutline` take registries that are still eagerly inlined and need
+	// nothing. So the guard fired on two callers that were right, and `/schola`
+	// — which renders the Social Doctrine's outline and primes no `document`
+	// index because it reads none — threw at every load.
+	//
+	// A GUARD BELONGS AT THE READ, not at a function the read happens to pass
+	// through. Put one here again and it is a claim about all three callers.
 	let lastAnchored = -1;
 	rows.forEach((row, i) => {
 		if (row.before !== null && row.before !== undefined) lastAnchored = i;
