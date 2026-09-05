@@ -541,6 +541,16 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   paragraph in the site's own voice carries `schola.start.attribution` on the
   page, because `docs/writing-descriptions.md` forbids recommending and this
   recommends. A second such paragraph needs the same mark or must not exist.
+- **A sourced order still has to be a BEGINNER'S order.** The Council's
+  sixteen documents, ranked by the Council's own genres, met the first test and
+  failed the second; the route is gone and `learning-routes.ts` holds the note.
+  It also shipped filtering on `document_kind` alone, which put two Vatican I
+  constitutions at the head of it — a `kind` is not a provenance.
+- **The page's ten artworks are public domain and cost one dictionary key.**
+  A caption is `Artist, Title, year. Institution.`, held in `schola-art.ts`;
+  no master is kept, because `assets/README.md`'s URL, SHA-256 and crop box
+  re-derive a faithful crop exactly. Only ink on a white sheet may take
+  `--plate-blend`, and `[data-mono]` desaturates all ten.
 - **The home page's doors mirror the bar's order**, Learn last in both. Two
   lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the

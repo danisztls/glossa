@@ -22,7 +22,9 @@
 	 *
 	 * `learning-routes.ts` holds the rule and the citations: every order here
 	 * is one a document in this corpus states, and each carries the address
-	 * that states it. The site sequences nothing on its own authority.
+	 * that states it. The site sequences nothing on its own authority — which
+	 * is also why the Council's sixteen documents are NOT a route here; that
+	 * file's own note says what went and why.
 	 *
 	 * THE ONE EXCEPTION IS THE NOTE AT THE TOP, and it is marked. It
 	 * recommends, which `docs/writing-descriptions.md` forbids of the
@@ -35,39 +37,35 @@
 	 * Every step is titled by the corpus: a part's own heading, a book's own
 	 * name in the reader's edition, a document's own title. So the steps are in
 	 * the reader's content language already, and an ingestion cannot leave them
-	 * stale. The nineteen `schola.*` keys are the page's own name, the route
-	 * names, the sentence citing each source, and the seven sentences saying
-	 * what kind of thing each shelf holds — the last of which is the section
-	 * §5 actually stops at, and the only part of this page that is new writing
-	 * rather than new arrangement.
+	 * stale. The `schola.*` keys are the page's own name, the route names, the
+	 * sentence citing each source, and the sentences saying what kind of thing
+	 * each shelf holds — the last of which is the section §5 actually stops at,
+	 * and the only part of this page that is new writing rather than new
+	 * arrangement.
 	 *
 	 * The shelf headings and every work's description below reuse keys that
-	 * already exist in all thirty-seven dictionaries, the same rule
-	 * `/bibliotheca` and the home page's doors follow.
+	 * already exist in every dictionary, the same rule `/bibliotheca` and the
+	 * home page's doors follow. **So do the pictures**: an artwork's caption is
+	 * `Artist, Title, year. Institution.` and carries no sentence to translate
+	 * (`schola-art.ts`), which is why ten of them cost one new key.
 	 */
 	import {
 		getBook,
 		getCccStructure,
 		getCompendiumStructure,
-		getDocumentManifest,
 		getPrayerMeta,
 		getWork,
 		hasBookIntro,
-		listDocuments,
 		listWorksOfType,
-		socialDoctrineOutline
+		socialDoctrineOutline,
+		socialDoctrineWorkId
 	} from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
 	import { content } from '$lib/content.svelte';
 	import { pairDivisionsCached } from '$lib/toc-pairing';
 	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
-	import {
-		councilRoute,
-		gospelsRoute,
-		pillarsRoute,
-		socialRoute,
-		type LearningRoute
-	} from '$lib/learning-routes';
+	import { gospelsRoute, pillarsRoute, socialRoute } from '$lib/learning-routes';
+	import { BANNERS, VIGNETTES, type Artwork } from '$lib/schola-art';
 	import { t } from '$lib/i18n.svelte';
 	import type { StructureNode, WorkType } from '$lib/types';
 
@@ -105,11 +103,12 @@
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 	const bibleLang = $derived(content.langFor('bible'));
 
-	// --- The Council --------------------------------------------------------
-	const documents = $derived(listDocuments());
-
 	// --- The social doctrine ------------------------------------------------
 	const socialLang = $derived(content.langFor('social-doctrine'));
+	// The work's own name, so `socialRoute` can tell the masthead row from a
+	// part. Read from the edition the reader is on, never written down: the row
+	// it has to match is that edition's own heading.
+	const socialTitle = $derived(getWork(socialDoctrineWorkId(socialLang))?.title);
 
 	const routes = $derived(
 		[
@@ -134,19 +133,10 @@
 				// citation than the document a reader can then read.
 				source: hrefFor({ kind: 'document', slug: 'dei-verbum' })
 			}),
-			councilRoute({
-				documents,
-				manifestOf: (group) => {
-					const workId = content.documentWorkIdFor(group.slug);
-					return workId ? getDocumentManifest(workId) : undefined;
-				},
-				// The Council's first constitution, which is where its own account
-				// of what it was doing begins.
-				source: hrefFor({ kind: 'document', slug: 'sacrosanctum-concilium' })
-			}),
 			socialRoute({
 				outline: socialDoctrineOutline(socialLang),
 				hrefAt: (n) => socialDoctrineHeadingHref(socialLang, n),
+				mastheadTitle: socialTitle,
 				// The Compendium's own statement of its plan.
 				source: hrefFor({ kind: 'socialDoctrine', n: 8 })
 			})
@@ -239,7 +229,39 @@
 	<title>{t('schola.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
+<!--
+	One figure shape for all ten works. `alt=""` with the identification in the
+	caption is `Plate.svelte`'s arrangement and its argument: the picture is not
+	information the page would be incomplete without, and a screen reader that
+	reads the same line twice is worse served than one that reads it once.
+
+	`eager` is passed for the hero alone. Everything else is below the fold on
+	every viewport, and `loading="lazy"` with the intrinsic size declared means
+	the browser reserves the box and fetches nothing until the reader arrives.
+-->
+{#snippet plate(art: Artwork, eager: boolean)}
+	<img
+		class="plate"
+		class:paper={art.paper}
+		src={art.src}
+		width={art.width}
+		height={art.height}
+		alt=""
+		loading={eager ? 'eager' : 'lazy'}
+		decoding="async"
+	/>
+{/snippet}
+
+{#snippet credit(art: Artwork)}
+	{art.credit}{art.detail ? ` (${t('schola.art.detail')})` : ''}
+{/snippet}
+
 <div class="content-column">
+	<figure class="masthead">
+		{@render plate(BANNERS.hero, true)}
+		<figcaption>{@render credit(BANNERS.hero)}</figcaption>
+	</figure>
+
 	<h1>{t('schola.landing.title')}</h1>
 	<p class="page-tagline">{t('schola.landing.tagline')}</p>
 
@@ -255,6 +277,12 @@
 
 	{#each routes as route (route.key)}
 		<section class="route" aria-labelledby="route-{route.key}">
+			{#if BANNERS[route.key]}
+				<figure class="route-plate">
+					{@render plate(BANNERS[route.key], false)}
+					<figcaption>{@render credit(BANNERS[route.key])}</figcaption>
+				</figure>
+			{/if}
 			<h2 id="route-{route.key}">{t(`schola.route.${route.key}.title`)}</h2>
 			<!-- The citation is the route's warrant, so it is a link and not a
 			     caption: a reader who doubts that this order is the Church's and
@@ -262,15 +290,24 @@
 			<p class="route-source">
 				<a href={route.source}>{t(`schola.route.${route.key}.source`)}</a>
 			</p>
-			<ol>
+			<ol class="steps">
 				{#each route.steps as step (step.href)}
 					<li>
 						<a class="step" href={step.href}>{step.label}</a>
-						{#each step.offers as offer (offer.href)}
-							<a class="offer" href={offer.href} title={offer.title}>
-								{offer.label ?? t(offer.labelKey ?? '')}
-							</a>
-						{/each}
+						{#if step.offers.length}
+							<span class="offers">
+								{#each step.offers as offer (offer.href)}
+									<a class="chip" href={offer.href} title={offer.title}>
+										{offer.label ?? t(offer.labelKey ?? '')}
+									</a>
+								{/each}
+							</span>
+						{/if}
+						<!-- Set by nothing today; `RouteStep.description` says why the
+						     field is there. -->
+						{#if step.description}
+							<p class="step-description">{step.description}</p>
+						{/if}
 					</li>
 				{/each}
 			</ol>
@@ -279,31 +316,62 @@
 
 	<section class="shelves" aria-labelledby="shelves-heading">
 		<h2 id="shelves-heading">{t('schola.kinds.heading')}</h2>
-		{#each shelves as shelf (shelf.key)}
-			<div class="shelf">
-				<h3><a href={shelf.href}>{t(shelf.headingKey)}</a></h3>
-				<p class="shelf-kind">{t(`schola.kind.${shelf.key}`)}</p>
-				{#if shelf.works.some((work) => has(work.type))}
-					<ul>
-						{#each shelf.works.filter((work) => has(work.type)) as work (work.href)}
-							<li>
-								<a href={work.href}>{t(work.titleKey)}</a>
-								<!-- `{@html}` on the same terms as the home page's doors:
-								     every string is a literal in a checked-in dictionary,
-								     named by a key in this file, and nothing is passed
-								     through from the corpus or from a URL. Three of these
-								     taglines emphasise a work's name inside the sentence. -->
-								<span class="work-tagline">{@html t(work.taglineKey)}</span>
-							</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
-		{/each}
+		<div class="shelf-grid">
+			{#each shelves as shelf (shelf.key)}
+				<div class="shelf">
+					{#if VIGNETTES[shelf.key]}
+						{@render plate(VIGNETTES[shelf.key], false)}
+					{/if}
+					<div class="shelf-text">
+						<h3><a href={shelf.href}>{t(shelf.headingKey)}</a></h3>
+						<p class="shelf-kind">{t(`schola.kind.${shelf.key}`)}</p>
+						{#if shelf.works.some((work) => has(work.type))}
+							<ul>
+								{#each shelf.works.filter((work) => has(work.type)) as work (work.href)}
+									<li>
+										<a href={work.href}>{t(work.titleKey)}</a>
+										<!-- `{@html}` on the same terms as the home page's doors:
+										     every string is a literal in a checked-in dictionary,
+										     named by a key in this file, and nothing is passed
+										     through from the corpus or from a URL. Three of these
+										     taglines emphasise a work's name inside the sentence. -->
+										<span class="work-tagline">{@html t(work.taglineKey)}</span>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
+				</div>
+			{/each}
+		</div>
+		<!-- The six vignettes share one credit line rather than each carrying a
+		     caption: a five-line card with a two-line attribution under a 5rem
+		     picture is a card about its own picture. -->
+		<p class="art-credits">
+			{#each shelves as shelf, i (shelf.key)}{#if VIGNETTES[shelf.key]}{i > 0
+						? ' · '
+						: ''}{@render credit(VIGNETTES[shelf.key])}{/if}{/each}
+		</p>
 	</section>
 </div>
 
 <style>
+	/*
+	 * THE MASTHEAD IS ABOVE THE TITLE, NOT BEHIND IT. Text over a painting has
+	 * to hold its contrast across five appearance axes — light, sepia, dark,
+	 * OLED and monochrome — and none of them is negotiable on a page whose
+	 * readers are the ones least able to work around a bad one. A band above
+	 * the title costs nothing and survives all five.
+	 */
+	.masthead {
+		margin: 0 0 1.5rem;
+	}
+
+	.masthead .plate,
+	.route-plate .plate {
+		border-radius: var(--radius-md);
+	}
+
 	h1 {
 		font-family: var(--font-serif);
 		margin: 0 0 0.5rem;
@@ -323,6 +391,45 @@
 		clip-path: inset(50%);
 		white-space: nowrap;
 		border: 0;
+	}
+
+	/*
+	 * A PAINTING MUST NOT TAKE `--plate-blend`. That token multiplies a grey
+	 * scan's white paper away into the page and is tuned for exactly that; an
+	 * oil painting put through it goes to mud. Only the works `schola-art.ts`
+	 * marks `paper` — ink on a white sheet — get it. All of them take the
+	 * dark-mode dim, which is a brightness step and not an inversion, because
+	 * a picture is not a diagram.
+	 */
+	.plate {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+		filter: var(--plate-filter);
+	}
+
+	.plate.paper {
+		mix-blend-mode: var(--plate-blend);
+	}
+
+	/*
+	 * Monochrome is a reader's explicit request for one grey ramp
+	 * (`tokens.css`: "decoration is a cost paid on every page by a reader who
+	 * wanted a palette"). Four colour paintings would be the loudest thing on
+	 * the page in the one mode that asked for none.
+	 */
+	:global(html[data-mono]) .plate {
+		filter: var(--plate-filter) grayscale(1);
+	}
+
+	figcaption {
+		margin-block-start: 0.5rem;
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		line-height: 1.4;
+		color: var(--color-text-muted);
+		text-align: center;
+		text-wrap: pretty;
 	}
 
 	/* The note is set off by a rule on its inline start rather than by a box:
@@ -345,12 +452,21 @@
 		color: var(--color-text-muted);
 	}
 
+	.route-plate {
+		margin: 2.5rem 0 0;
+	}
+
 	section h2 {
 		font-family: var(--font-serif);
 		font-size: 1.3rem;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.4rem;
 		margin: 2.25rem 0 0.4rem;
+	}
+
+	/* A route's own heading sits under its picture and needs no second gap. */
+	.route-plate + h2 {
+		margin-top: 1rem;
 	}
 
 	.route-source {
@@ -360,43 +476,143 @@
 		max-width: 40rem;
 	}
 
-	.route ol {
+	/*
+	 * THE NUMERAL IS IN A GUTTER, NOT IN THE TEXT. An `<ol>`'s own marker sits
+	 * against the first line, so a title that wraps loses its left edge; a
+	 * counter in a fixed serif column gives every step the same one whatever
+	 * its title does, which is what makes routes of very different title
+	 * lengths read as one list.
+	 */
+	.steps {
+		list-style: none;
+		counter-reset: step;
 		margin: 0;
-		padding-inline-start: 1.5rem;
+		padding: 0;
 	}
 
-	.route li {
-		padding: 0.3rem 0;
+	.steps li {
+		counter-increment: step;
+		position: relative;
+		padding: 0.55rem 0 0.55rem 2.4rem;
+		border-bottom: 1px solid var(--color-border);
 	}
 
+	.steps li:last-child {
+		border-bottom: 0;
+	}
+
+	.steps li::before {
+		content: counter(step);
+		position: absolute;
+		inset-inline-start: 0;
+		inline-size: 1.8rem;
+		text-align: end;
+		font-family: var(--font-serif);
+		font-variant-numeric: tabular-nums;
+		color: var(--color-text-muted);
+	}
+
+	/*
+	 * Muted until hovered, `.index-row`'s rule. A column of destinations set in
+	 * link colour and underlined is the wall this page had; the ruled row is
+	 * already obviously a row, and colour is what says which one the pointer
+	 * is on.
+	 */
 	.step {
 		font-family: var(--font-serif);
+		font-size: 1.05rem;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.step:hover,
+	.step:focus-visible {
+		color: var(--color-accent);
+		text-decoration: underline;
+	}
+
+	.offers {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-inline-start: 0.5rem;
+		vertical-align: 0.05em;
 	}
 
 	/* The chips state a second offer on the same step and must never outweigh
 	   the step itself — `¶1–1065` beside "Part One" is a range, not a rival
-	   destination. */
-	.offer {
+	   destination. Outlined and never filled, `components.css`'s rule: a
+	   filled badge repeated down a list reads as a row of marks. */
+	.chip {
 		display: inline-block;
-		margin-inline-start: 0.5rem;
 		padding: 0.05rem 0.4rem;
+		font-family: var(--font-sans);
 		font-size: 0.75rem;
 		font-variant-numeric: tabular-nums;
 		text-decoration: none;
 		color: var(--color-text-muted);
 		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm, 0.25rem);
+		border-radius: var(--radius-sm);
 	}
 
-	.offer:hover,
-	.offer:focus-visible {
+	.chip:hover,
+	.chip:focus-visible {
 		color: var(--color-accent);
 		border-color: var(--color-accent);
 	}
 
-	.shelf {
-		margin: 1.25rem 0;
+	.step-description {
+		margin: 0.3rem 0 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
 		max-width: 40rem;
+	}
+
+	/*
+	 * TWO COLUMNS AT THE SITE'S OWN READING BREAKPOINT and one below it.
+	 * `80rem` is where `layout.css` hands the reading grid its aside; reusing
+	 * it rather than inventing a number keeps the site to one idea of "wide".
+	 */
+	.shelf-grid {
+		display: grid;
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+
+	@media (min-width: 80rem) {
+		.shelf-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/*
+	 * The card is the home page's door: elevated ground, hairline border, one
+	 * radius, no shadow — `--shadow-panel` is for things that float. Only the
+	 * border moves on hover, never the whole surface.
+	 */
+	.shelf {
+		display: flex;
+		gap: 0.9rem;
+		align-items: flex-start;
+		padding: 0.9rem 1rem;
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+	}
+
+	.shelf:hover {
+		border-color: var(--color-accent);
+	}
+
+	.shelf .plate {
+		flex: 0 0 auto;
+		inline-size: 5rem;
+		block-size: 5rem;
+		border-radius: var(--radius-sm);
+	}
+
+	.shelf-text {
+		min-width: 0;
 	}
 
 	.shelf h3 {
@@ -424,5 +640,31 @@
 		display: block;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
+	}
+
+	.art-credits {
+		margin: 1.25rem 0 0;
+		font-family: var(--font-sans);
+		font-size: 0.7rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+		text-wrap: pretty;
+	}
+
+	/*
+	 * A plate PRINTS, on `Plate.svelte`'s reasoning: paper is white, so the
+	 * blend has nothing to blend with and the dark dim would only waste ink.
+	 */
+	@media print {
+		.plate {
+			mix-blend-mode: normal;
+			filter: none;
+			break-inside: avoid;
+		}
+
+		.shelf {
+			background: none;
+			break-inside: avoid;
+		}
 	}
 </style>

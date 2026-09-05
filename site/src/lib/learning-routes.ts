@@ -14,8 +14,10 @@
  * The four pillars are the Catechism's own plan for itself, at
  * `/catechismus/13`; that an ordered course is the right shape at all is
  * Catechesi Tradendae 21, "systematic, not improvised but programmed to reach
- * a precise goal"; the Council's documents are ranked by the Council's own
- * three genres. Where no source states an order, there is no route.
+ * a precise goal"; the Gospels stand in the canon's order and the Social
+ * Doctrine in the Compendium's own. Where no source states an order, there is
+ * no route — and where a source states one that is not a beginner's, there is
+ * none either. See the note where the Council's route used to be.
  *
  * The one place the site does speak for itself is the note at the top of
  * `/schola`, which is marked as ours on the page. It is not in this file,
@@ -32,12 +34,11 @@
  * ## Why these are pure functions over data
  *
  * Each builder takes what it needs rather than reaching into `corpus.ts`, so
- * `learning-routes.test.ts` can exercise the council and social-doctrine
- * routes at all: the test fixtures under `src/lib/fixtures/` carry the
- * Catechism, the Compendium, the Bible and the Summa, and no documents, no
- * prayers and no Social Doctrine. A builder that fetched its own data would
- * be untestable for exactly the two routes whose ordering rule is the least
- * obvious.
+ * `learning-routes.test.ts` can exercise the social-doctrine route at all:
+ * the test fixtures under `src/lib/fixtures/` carry the Catechism, the
+ * Compendium, the Bible and the Summa, and no prayers and no Social Doctrine.
+ * A builder that fetched its own data would be untestable for exactly the
+ * route whose ordering rule is the least obvious.
  *
  * Every address is built by `hrefFor`, which is the only function on the site
  * that writes one (`address.ts`). No path in this file is a template string.
@@ -47,10 +48,9 @@ import { hrefFor } from './address';
 import { BOOK_GROUPS } from './bible-groups';
 import { catechismRowLinks, type IndexWork } from './components/catechismRows';
 import type { RowLabels } from './components/catechismRows';
-import type { DocumentGroup } from './corpus';
-import type { DocumentManifest, StructureNode } from './types';
+import type { StructureNode } from './types';
 
-export type RouteKey = 'pillars' | 'gospels' | 'council' | 'social';
+export type RouteKey = 'pillars' | 'gospels' | 'social';
 
 /**
  * A second address the same step offers — the Compendium's treatment beside
@@ -73,6 +73,21 @@ export interface RouteStep {
 	href: string;
 	/** The step's own name, in the corpus's language. Never an interface string. */
 	label: string;
+	/**
+	 * The corpus's own written summary of this step, where one exists.
+	 *
+	 * NOTHING SETS THIS TODAY and that is deliberate. `description` is carried
+	 * only by `document` works — written by reading the document, 40 to 70
+	 * words, `origin: "read"` (`docs/writing-descriptions.md`) — and no route
+	 * here is built from documents since the Council left. The Catechism, the
+	 * Bible, the Compendium and the prayers have none, and inventing one for
+	 * them is the failure that procedure exists to prevent.
+	 *
+	 * It is here so that a route which IS built from documents renders the
+	 * summary that was already written for it, rather than reopening the
+	 * question of whether a step may carry prose.
+	 */
+	description?: string;
 	offers: StepOffer[];
 }
 
@@ -89,10 +104,10 @@ export interface LearningRoute {
 /**
  * THE ORDER OF THE ROUTES ON THE PAGE, which is itself a claim and is made
  * the same way: the Catechism's own plan first, because CCC 13 is the only
- * one of the four orders below that the Church states as a plan for
+ * one of the three orders below that the Church states as a plan for
  * catechesis rather than as the shape of one work.
  */
-export const ROUTE_ORDER: readonly RouteKey[] = ['pillars', 'gospels', 'council', 'social'];
+export const ROUTE_ORDER: readonly RouteKey[] = ['pillars', 'gospels', 'social'];
 
 /**
  * Which prayer each pillar IS, from the Catechism's own sentence naming them:
@@ -204,47 +219,29 @@ export function gospelsRoute(opts: {
 }
 
 /**
- * THE COUNCIL'S SIXTEEN DOCUMENTS, RANKED BY THE COUNCIL'S OWN GENRES.
+ * THERE IS NO COUNCIL ROUTE, AND THERE WAS ONE FOR A DAY.
  *
- * This is the whole reason this route can exist without an editorial claim:
- * Vatican II published constitutions, decrees and declarations, and that
- * three-way split is the Council's own statement of weight, carried in the
- * corpus as `document_kind` (`types.ts`). Sorting by it is reporting, not
- * recommending. Within a genre the order is chronological, which is also not
- * ours.
+ * `councilRoute` listed the conciliar documents ranked by the Council's own
+ * three genres, which is a sound ordering and was the wrong page for it. Two
+ * separate faults, and only the second is why it is gone:
+ *
+ * It filtered on `document_kind` ALONE, so `vati.dei-filius` and
+ * `vati.pastor-aeternus` — Vatican I, 1870 — appeared in a route titled "The
+ * Second Vatican Council", and those two are the only conciliar documents in
+ * the corpus that exist in no language but Italian and Latin. The genuine
+ * sixteen each carry twelve to fourteen editions, English among them, and
+ * `CONTENT_LANG_FALLBACK` ends `['en', 'la']` for every language, so no
+ * reader's default resolution can land on Latin.
+ *
+ * The fault that removed it is the other one: sixteen documents is not a
+ * beginner's reading order at any language coverage, and this page is for the
+ * reader of `docs/research/audiences.md` §5. The Council is reached from
+ * Library and from `/documenta`, where every one of the sixteen carries the
+ * written summary this page would have needed.
+ *
+ * A route through the Council belongs here the day some source states an
+ * order through it for a beginner. The genre ranking is not that.
  */
-const CONCILIAR_KINDS: readonly string[] = [
-	'conciliar-constitution',
-	'conciliar-decree',
-	'conciliar-declaration'
-];
-
-export function councilRoute(opts: {
-	documents: readonly DocumentGroup[];
-	/** The document's title in the reader's language, and its manifest, or
-	 *  nothing when the corpus has no edition of it at all. */
-	manifestOf: (group: DocumentGroup) => DocumentManifest | undefined;
-	source: string;
-}): LearningRoute {
-	const rows: { rank: number; date: string; step: RouteStep }[] = [];
-	for (const group of opts.documents) {
-		const manifest = opts.manifestOf(group);
-		if (!manifest) continue;
-		const rank = CONCILIAR_KINDS.indexOf(manifest.document_kind);
-		if (rank === -1) continue;
-		rows.push({
-			rank,
-			date: manifest.promulgated ?? '',
-			step: {
-				href: hrefFor({ kind: 'document', slug: group.slug }),
-				label: manifest.title,
-				offers: []
-			}
-		});
-	}
-	rows.sort((a, b) => a.rank - b.rank || a.date.localeCompare(b.date));
-	return { key: 'council', source: opts.source, steps: rows.map((row) => row.step) };
-}
 
 /**
  * The Compendium of the Social Doctrine's own top-level divisions.
@@ -253,16 +250,31 @@ export function councilRoute(opts: {
  * the corpus that says it is a synthesis to be read through
  * (`/doctrina-socialis`), so naming its parts in sequence adds nothing to what
  * the work already claims about itself.
+ *
+ * THE FIRST NODE IS THE WORK'S OWN NAME AND IS NOT A DIVISION.
+ * `csdc.pt/structure.json` opens with `COMPÊNDIO DA DOUTRINA SOCIAL DA IGREJA`
+ * at `before: 1`, and every edition does the same — the rule is stated in
+ * `docs/writing-descriptions.md`: "The document's own title is not a heading…
+ * it is a masthead, not an internal division." It reached the page as step
+ * one, above the three Parts, so the route read as though the book were a part
+ * of itself. It is matched against the work's own title rather than guessed
+ * from the node's shape, because it also SWALLOWED the Introduction — the two
+ * share `before: 1`, and `buildDocumentOutline` treats headings at one section
+ * as one heading printed on two lines. So the range is no help; the name is.
  */
 export function socialRoute(opts: {
 	outline: readonly StructureNode[];
 	/** Where a heading printed at paragraph `n` is read — the route reuses
 	 *  `/doctrina-socialis`'s own resolver rather than a second rule. */
 	hrefAt: (n: number) => string | undefined;
+	/** The work's own title, so the masthead node can be told from a part. */
+	mastheadTitle?: string;
 	source: string;
 }): LearningRoute {
+	const masthead = opts.mastheadTitle?.trim().toLocaleLowerCase();
 	const steps: RouteStep[] = [];
 	for (const node of opts.outline) {
+		if (masthead && node.title.trim().toLocaleLowerCase() === masthead) continue;
 		const at = node.paragraphs[0];
 		const href = Number.isFinite(at) ? opts.hrefAt(at as number) : undefined;
 		if (!href) continue;

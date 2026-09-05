@@ -66,7 +66,7 @@ export const en: Dictionary = {
 
 	// --- `/schola`, the learning portal (`routes/schola/`) -------------------
 	//
-	// NINETEEN KEYS AND NOT ONE OF THEM IS A STEP OF A ROUTE. Every book, part
+	// NOT ONE OF THESE KEYS IS A STEP OF A ROUTE. Every book, part
 	// and document named on that page is titled by the corpus itself, in the
 	// reader's own content language; what is written here is the page's own
 	// name, the name of each route, and the sentence saying which document
@@ -91,16 +91,13 @@ export const en: Dictionary = {
 	'schola.route.gospels.title': 'The Gospels, and then Acts',
 	'schola.route.gospels.source':
 		'The Council urges frequent reading of Scripture; the order here is the canon’s own',
-	'schola.route.council.title': 'The Second Vatican Council',
-	'schola.route.council.source':
-		'The Council’s own three kinds of document: constitutions, then decrees, then declarations',
 	'schola.route.social.title': 'The Church’s social teaching',
 	'schola.route.social.source': 'The Compendium’s own arrangement, part by part',
 	// The section `docs/research/audiences.md` §5 actually stops at: not
 	// where a work is, but what KIND of thing it is and what authority it
 	// carries. Its group headings and every work's description under them are
-	// keys that already exist in all thirty-seven dictionaries; only these
-	// seven sentences are new.
+	// keys that already exist in every dictionary; only these sentences are
+	// new.
 	'schola.kinds.heading': 'What each of these is',
 	'schola.kind.scripture':
 		'The word of God as the Church receives it. Everything else here is read in its light.',
@@ -113,6 +110,11 @@ export const en: Dictionary = {
 	'schola.kind.theologian':
 		'The work of one theologian. It carries no official authority, however great its author.',
 	'schola.kind.prayers': 'The words the Church prays, with the Latin beside them.',
+	// The only interface word in an artwork's caption. Everything else in one
+	// is a proper noun and a date, held beside the asset in `schola-art.ts`
+	// rather than in thirty-seven dictionaries — which is why ten pictures
+	// cost one key. Rendered in parentheses after the identification.
+	'schola.art.detail': 'detail',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.
