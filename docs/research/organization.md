@@ -59,6 +59,18 @@ the rest of the document rests on.
 | **Library**  | `/bibliotheca` | everything, plus the reader's own place   | The complete catalogue — the superset, not the remainder               |
 | **Calendar** | `/calendarium` | the liturgical year, general and national | The only by-date entry, and the only daily-return surface the site has |
 
+**[built differently]** Learn is LAST on the bar and does not point at
+`/catechismus`. Both halves failed for one reason: the label was chosen
+because it explains itself to a reader who cannot name a division, and the
+page behind it was a table of divisions. `/schola` (2026-09-04) is what it
+opens — what each work IS, and orders for reading them that the sources
+themselves set out, every route citing the paragraph that states it. Its
+position moved because the four doors before it are the works, so a bar
+opening with a page about the others reads as a preamble. The Catechism keeps
+no door of its own and loses nothing: `/schola`'s first route opens it,
+Library shelves it, the jump box completes `CCC 1`. The row above is kept as
+it was argued.
+
 Five, against seven today, and the difference is the whole argument.
 `/calendarium` is one of the two additions since this bar was drafted, and
 it is the one this bar would also have made: a calendar is a permanent

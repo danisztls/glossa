@@ -69,12 +69,14 @@
 	 * into 37 languages and a third to keep true.
 	 */
 	const DOORS = [
-		// The Catechism's tagline names BOTH works, which is right for this
-		// door: `/catechismus` is the index of the pair.
-		{ href: '/catechismus', titleKey: 'nav.learn', taglineKey: 'ccc.landing.tagline' },
 		{ href: '/scriptura', titleKey: 'nav.bible', taglineKey: 'bible.landing.tagline' },
 		{ href: '/preces', titleKey: 'nav.prayers', taglineKey: 'prayers.landing.tagline' },
-		{ href: '/bibliotheca', titleKey: 'nav.library', taglineKey: 'library.landing.tagline' }
+		{ href: '/bibliotheca', titleKey: 'nav.library', taglineKey: 'library.landing.tagline' },
+		// Last here because it is last on the bar, and the two orders must not
+		// disagree — this block IS the bar with room to say what each door
+		// holds. It pointed at `/catechismus` with the Catechism's own tagline
+		// until 2026-09-04, when Learn got a page of its own (`/schola`).
+		{ href: '/schola', titleKey: 'nav.learn', taglineKey: 'schola.landing.tagline' }
 	] as const;
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —

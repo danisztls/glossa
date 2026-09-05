@@ -13,20 +13,67 @@ somebody else wrote and never sees the header — while the question-holders are
 "plausibly most of the traffic" and are the ones a bar of work names cannot
 serve, because using it means already knowing which book holds the answer.
 
-**So the bar names doors and not works**: Learn, Bible, Prayers, Library,
-Calendar. It was one item per work until 2026-09-04, which is a rule with no end
+**So the bar names doors and not works**: Bible, Prayers, Library, Calendar,
+Learn. It was one item per work until 2026-09-04, which is a rule with no end
 state — seven items by the time the Code landed, and Denzinger, the Roman
 Catechism, the Fathers and a second code each cost another slot. Under five
 doors every future work lands inside Library or inside Learn.
 
 **`Learn` is the one imperative among four nouns, and the mixed grammar is the
 point.** It is the only label that explains itself to a reader who does not yet
-know that "Catechism" is where one goes to learn. The route does not move:
-`/catechismus` keeps its own name on its own page, in the jump box and in every
-`<head>`, exactly as the site already ships "Magisterium" over `/documenta`.
-Each dictionary takes whatever register its language puts on a nav item — an
+know that "Catechism" is where one goes to learn — and the site already ships
+that mismatch the other way, with "Magisterium" over `/documenta`. Each
+dictionary takes whatever register its language puts on a nav item: an
 imperative in the Romance languages, a verbal noun where an imperative would
 read as an order.
+
+**It pointed at `/catechismus` for one day, and that was a label doing work the
+page behind it did not do.** A table of divisions is exactly right for a reader
+who knows the outline and useless to one who cannot name a part — which is the
+reader the word "Learn" was chosen for. `/schola` is the page it opens now: what
+each work IS, and orders for reading them. The Catechism is therefore the one
+work here with no door of its own, and nothing became unreachable — `/schola`'s
+first route opens it, Library shelves it, and the jump box completes `CCC 1`.
+
+**Learn is LAST on the bar, not first.** It led on the argument that a newcomer
+needs the leftmost item; what that missed is that the four before it are the
+works themselves, so a bar opening with a page about the others reads as a
+preamble to them. The home page's doors mirror the bar's order, and the two must
+not disagree.
+
+## `/schola` reports orders; it does not recommend them
+
+**Every route on the learning portal is an order some document in this corpus
+states, and carries the address that states it.** The four pillars are the
+Catechism's own plan at `/catechismus/13`; the Gospels are in the canon's order
+under Dei Verbum's urging to read Scripture; the Council's sixteen documents are
+ranked by the Council's own three genres, constitutions before decrees before
+declarations; the social teaching follows the Compendium's own parts.
+`learning-routes.ts` holds the rule, and its builders take their data as
+arguments so the two routes whose ordering rule is least obvious can be tested
+at all — the fixtures carry no documents and no Social Doctrine.
+
+**That is not fastidiousness.** `docs/writing-descriptions.md` binds the only
+prose this project authors with "Do not evaluate, recommend, or contextualize",
+`/colophon` disclaims any approbation, and `audiences.md` §9 exists to catch
+anything that reads like one. A page of our own reading advice would fail all
+three; a page reporting what the sources set out fails none.
+
+**One paragraph is the exception, and it says so on the page.** The note at the
+top of `/schola` recommends the Compendium to a newcomer in the site's own
+voice, and carries `schola.start.attribution` — "A note from this site, not from
+any of the works below" — directly beneath it. It is `PLAN.md` gap 16's general
+problem, provenance marking, answered by hand in the one place this page creates
+it. **A second such paragraph needs the same mark or it needs not to exist.**
+
+**Nothing on the page is written twice.** Every step is titled by the corpus, so
+it arrives in the reader's content language and cannot fall behind an ingestion;
+the shelves below reuse each destination's own `*.landing.tagline`. The 19
+`schola.*` keys are the page's name, the route names, the sentence citing each
+source, and the seven saying what kind of thing each shelf holds. That last
+group is the section §5 actually stops at: not where a work is, but what
+authority it carries — that the Summa is one theologian's book, that the Code is
+law rather than doctrine.
 
 **Library works only as the SUPERSET, and three umbrella labels failed before
 it.** "Church", "Magisterium" and "Teaching" all failed the same way: Scripture

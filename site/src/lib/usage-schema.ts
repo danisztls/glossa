@@ -132,6 +132,12 @@ export const SETS = {
 		'ius-canonicum',
 		'calendarium',
 		'documenta',
+		// The learning portal (2026-09-04), the bar's "Learn" since that day.
+		// It is the one bucket that measures a reader who has NOT chosen a work
+		// — every other section name is a shelf — so `schola` against
+		// `bibliotheca` is the closest this beacon comes to asking how many
+		// arrive without an address at all.
+		'schola',
 		// The shelf for the Fathers and Doctors (2026-08-28). `summa` stays a
 		// bucket of its own — the work moved under the shelf, and a series that
 		// broke at the move would read as a collapse in readership.

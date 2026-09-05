@@ -251,6 +251,7 @@ export function sectionFor(pathname: string): string {
 		'documenta',
 		'doctores',
 		'preces',
+		'schola',
 		'summa',
 		'colophon'
 	];

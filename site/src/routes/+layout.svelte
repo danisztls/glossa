@@ -106,15 +106,6 @@
 	 * `docs/research/organization.md` is the argument in full.
 	 */
 	const NAV_ITEMS = [
-		// THE ONE IMPERATIVE AMONG FOUR NOUNS, and mixed grammar in a nav row is
-		// normally a smell. It is taken deliberately: it is the only label here
-		// that explains itself to a reader who does not yet know that
-		// "Catechism" is where one goes to learn — §5, who was told to read the
-		// Catechism and stops "at the vocabulary of the corpus itself". The
-		// route does not move: `/catechismus` keeps its name on its own page, in
-		// the jump box and in every `<head>`, and the site already ships this
-		// mismatch in the other direction with "Magisterium" over `/documenta`.
-		{ href: '/catechismus', key: 'nav.learn' },
 		{ href: '/scriptura', key: 'nav.bible' },
 		// 28 prayers is not a pillar alongside works running to thousands of
 		// pages each, but it is the shortest path from arrival to reading and
@@ -132,11 +123,33 @@
 		// rather than a work, which is why it survives a bar that keeps no
 		// work-sized items — and it is the only by-date entry and the only
 		// daily-return surface the site has.
-		{ href: '/calendarium', key: 'nav.calendar' }
-		// `/documenta`, `/doctrina-socialis`, `/ius-canonicum` and `/doctores`
-		// are all one click away inside Library rather than being listed here,
-		// and `/catechismus` reaches the Social Doctrine as well. Nothing became
-		// unreachable and no route moved.
+		{ href: '/calendarium', key: 'nav.calendar' },
+		// THE ONE IMPERATIVE AMONG FOUR NOUNS, and mixed grammar in a nav row is
+		// normally a smell. It is taken deliberately: it is the only label here
+		// that explains itself to a reader who does not yet know that
+		// "Catechism" is where one goes to learn — §5, who was told to read the
+		// Catechism and stops "at the vocabulary of the corpus itself". The site
+		// already ships this mismatch the other way with "Magisterium" over
+		// `/documenta`.
+		//
+		// IT POINTED AT `/catechismus` UNTIL 2026-09-04 AND NOW HAS A PAGE OF
+		// ITS OWN. The label was doing work the page behind it did not do: a
+		// table of divisions is exactly right for a reader who knows the outline
+		// and useless to one who cannot name a part. `/schola` says what each
+		// work IS and offers orders for reading them that the sources
+		// themselves set out.
+		//
+		// LAST, NOT FIRST. It led the bar on the argument that a newcomer needs
+		// the leftmost item; what that argument missed is that the four before
+		// it are the works themselves, and a bar whose first item is about the
+		// others reads as a preamble to them.
+		{ href: '/schola', key: 'nav.learn' }
+		// `/catechismus`, `/documenta`, `/doctrina-socialis`, `/ius-canonicum`
+		// and `/doctores` are all one click away — inside Library, and the
+		// Catechism inside Learn as well. Nothing became unreachable and no
+		// route moved. The Catechism is the one work here with no door of its
+		// own, which is what `isActive` no longer lighting anything on
+		// `/catechismus` correctly reports.
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
