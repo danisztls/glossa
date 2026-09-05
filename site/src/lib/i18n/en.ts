@@ -51,8 +51,9 @@ export const en: Dictionary = {
 	'nav.library': 'Library',
 	// THE ONE IMPERATIVE ON THE BAR, and the trade is deliberate: it is the
 	// only label a reader who does not yet know what a "Catechism" is can act
-	// on (`docs/research/organization.md` §The bar). It points at
-	// `/catechismus`, which keeps its own name everywhere else on the site.
+	// on (`docs/research/organization.md` §The bar). It named `/catechismus`
+	// for one day and names `/schola` since — the word was chosen for a reader
+	// who cannot yet name a division, and it pointed at a table of divisions.
 	// Each dictionary uses whatever register its language puts on a nav item —
 	// an imperative in the Romance languages and Latin, a verbal noun in the
 	// Slavic ones and in Hungarian, where an imperative would read as an order.
