@@ -357,9 +357,19 @@
 		padding-inline: 0.4rem;
 	}
 
+	/*
+	 * `auto-fill` AND NOT `auto-fit`. The two differ in exactly one case and
+	 * this control hits it: a region with fewer territories than the row has
+	 * room for. `auto-fit` collapses the tracks nothing landed in, so the
+	 * survivors split the full width between them — and Oceania, which is
+	 * Guam alone, drew one button the whole panel wide. `auto-fill` keeps the
+	 * empty tracks, so a lone flag is a flag-sized square with space after it,
+	 * and every region's cells are the same size as every other's. Nothing
+	 * changes for a region that fills its row.
+	 */
 	.flag-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(2.5rem, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
 		gap: 0.15rem;
 		margin: 0;
 		padding: 0;
