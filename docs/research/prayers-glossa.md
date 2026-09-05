@@ -242,6 +242,48 @@ Paul II's apostolic letter on the Rosary — the single most on-point document
 for the corpus's longest prayer. It is an apostolic letter, and no such family
 exists in `build/` yet, so it costs a family rather than a fetch.
 
+### 2.7 Which prayers ARE Scripture: swept for, not remembered (2026-09-05)
+
+The references under a prayer include the Gospel its words are printed as, and
+that is the claim in the table most likely to be made from memory and got
+wrong. So it is measured instead — every prayer against every verse of all
+nine Bibles in `build/`, reporting where the two share **30 comparable
+characters verbatim** (`prayers_glossa.py --scripture`, ~11s). Thirty is the
+floor at which the noise stops: at twenty the Gloria Patri "matches" Matthew
+28:19 on `the Holy Spirit`.
+
+**It added three and refused four.**
+
+| prayer              | address              | witnessed in                           |
+| ------------------- | -------------------- | -------------------------------------- |
+| Sign of the Cross   | Matt 28:19           | de, la, en ×2, es, pt — six of nine    |
+| Angelus             | Luke 1:38, John 1:14 | de, la, fr, hu, en — the two versicles |
+| Prayer for the Pope | Ps 40:3              | both English editions, word for word   |
+
+Refused, and each for a reason worth keeping:
+
+- **The Te Deum lights up nine addresses in the Clementina and none anywhere
+  else** — Isaiah 6:3, Revelation 4:8, and Psalms 20:5, 27:9, 30:2, 32:22,
+  70:1, 122:3, 144:2, which are its Sanctus and its closing suffrages. The
+  hymn ENDS in a catena of Scripture; it is not a passage of it, and naming
+  seven psalms under it would say otherwise.
+- **The Nicene Creed quotes 1 Corinthians 15:4 exactly** (`resurrexit tertia
+die secundum Scripturas`, la and fr). One line of twelve articles, and the
+  Creed already carries the whole of CCC 185–1065.
+- **The Regina Caeli meets Luke 24:34 in French alone**, the Chaplet meets
+  Matthew 28:19 in Spanish because it names the Sign of the Cross in its
+  rubric, and the Veni Creator meets Jude 25 on a doxology. One edition each.
+- **Eternal Rest is 4 Esdras 2:34–35**, which is real and is outside the 73
+  books the corpus holds. There is no address to give.
+
+Two rows in the report are unmarked for a typographic reason worth knowing:
+the Angelus witnesses Luke 1:28 and 1:42 in the English Bibles and nowhere
+else, because the English collection prints the Ave in full inside the Angelus
+where the Latin elides it (`Ave, María...`). What one collection sets out and
+another abbreviates is not a fact about the prayer. The Benedictus likewise
+meets every berakah in the Old Testament (1 Kgs 1:48, 1 Sam 25:32, 2 Chr 6:4)
+because of the formula it opens with, which is true and is not a reference.
+
 ## 3. Tier 1 — public domain, machine-readable, costs fetches
 
 Ranked by how little has to be decided before capture.

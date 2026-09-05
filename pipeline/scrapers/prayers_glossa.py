@@ -171,6 +171,7 @@ REFERENCES: dict[str, list[dict]] = {
         {"work": "compendium", "first": 578, "last": 598},
     ],
     "sign-of-the-cross": [
+        {"work": "bible", "osis": "matt", "chapter": 28, "first": 19, "last": 19},
         {"work": "ccc", "first": 2157, "last": 2157},
     ],
     "hail-mary": [
@@ -181,6 +182,10 @@ REFERENCES: dict[str, list[dict]] = {
     ],
     "angel-of-god": [
         {"work": "ccc", "first": 336, "last": 336},
+    ],
+    "angelus": [
+        {"work": "bible", "osis": "luke", "chapter": 1, "first": 38, "last": 38},
+        {"work": "bible", "osis": "john", "chapter": 1, "first": 14, "last": 14},
     ],
     "magnificat": [
         {"work": "bible", "osis": "luke", "chapter": 1, "first": 46, "last": 55},
@@ -208,7 +213,19 @@ REFERENCES: dict[str, list[dict]] = {
         {"work": "ccc", "first": 1451, "last": 1453},
         {"work": "compendium", "first": 303, "last": 303},
     ],
+    "prayer-for-the-pope": [
+        {"work": "bible", "osis": "ps", "chapter": 40, "first": 3, "last": 3},
+    ],
 }
+
+#: How long a verbatim run has to be before it is evidence that a prayer
+#: QUOTES a verse rather than sharing an idiom with it (`--scripture`).
+#: Thirty comparable characters, measured: at twenty the Gloria Patri
+#: "matches" Matthew 28:19 on `the Holy Spirit` and the Salve Regina matches
+#: half the psalter; at thirty the only survivors are prayers that really are
+#: Scripture, plus the Benedictus against every berakah in the Old Testament,
+#: which is a true fact about the formula it opens with.
+SCRIPTURE_RUN = 30
 
 #: A lemma has to be at least this many comparable characters and two words.
 #: Both guards, because either alone admits junk that reads as a quotation:
@@ -775,6 +792,79 @@ def bible_verses(lang: str, osis: str, chapter: int) -> set[int] | None:
     return None
 
 
+def scripture_sweep() -> list[tuple[str, list[tuple[str, list[str]]]]]:
+    """Every prayer against every verse of every Bible, verbatim.
+
+    THE ONE PART OF `REFERENCES` A NUMBER CHECK CANNOT DEFEND. `check_references`
+    proves a verse exists; nothing proves it is the verse this prayer's words
+    are printed as, and that claim is exactly the one a person makes from
+    memory and gets wrong. So it is swept for instead: fold every prayer, fold
+    every verse, and report where they share a run of `SCRIPTURE_RUN`
+    characters. It is an ORACLE and not a mechanism -- it writes nothing and
+    gates nothing, because a prayer collection translates independently of any
+    Bible in the corpus and a real reference can go unwitnessed in fourteen
+    editions and hold in the fifteenth.
+
+    IT IS WHAT FOUND THE THREE ADDED ON 2026-09-05 and what refused four
+    others. The Sign of the Cross is Matthew 28:19 in six of the nine Bibles,
+    the Angelus's two versicles are Luke 1:38 and John 1:14 in five, and the
+    responsory for the Pope is Psalm 40:3 in both English editions, word for
+    word. Against that: the Te Deum lights up nine addresses in the Clementina
+    alone -- Isaiah 6:3, Revelation 4:8 and the seven psalm verses of its
+    suffrages -- and none anywhere else, which says the hymn ENDS in a catena
+    of Scripture rather than being a passage of it; the Nicene Creed quotes
+    1 Corinthians 15:4 exactly (`resurrexit tertia die secundum Scripturas`)
+    and that is one line of twelve articles; the Regina Caeli meets Luke 24:34
+    in French and no other edition. A reference says where the prayer is
+    printed or treated, so none of the four is one.
+
+    TWO UNMARKED ROWS ARE TYPOGRAPHY, NOT EVIDENCE. The Angelus witnesses
+    Luke 1:28 and 1:42 in the two English Bibles and nowhere else, because the
+    English collection prints the Ave in full inside the Angelus where the
+    Latin elides it (`Ave, María...`). What one collection sets out and
+    another abbreviates is not a fact about the prayer, so the table names
+    only the two versicles the Angelus prints in every edition.
+    """
+    rows: list[tuple[str, list[tuple[str, list[str]]]]] = []
+    for work in sorted(common.build_root().glob("bible.*")):
+        lang = work.name.rsplit(".", 1)[-1]
+        prayers = load_prayers(lang)
+        if not prayers:
+            continue
+        # The prayers' runs are the small side and go in the index: thirty-five
+        # prayers is some thousands of windows against a Bible's millions.
+        windows: dict[str, set[str]] = {}
+        for slug, prayer in prayers.items():
+            folded, _ = fold(annotated_text(prayer))
+            for i in range(len(folded) - SCRIPTURE_RUN + 1):
+                windows.setdefault(folded[i : i + SCRIPTURE_RUN], set()).add(slug)
+        found: dict[str, list[str]] = {}
+        for book in sorted((work / "books").glob("*.json")):
+            for chapter in json.loads(book.read_text(encoding="utf-8"))["chapters"]:
+                for verse in chapter["verses"]:
+                    folded, _ = fold(verse["text"])
+                    seen: set[str] = set()
+                    for i in range(len(folded) - SCRIPTURE_RUN + 1):
+                        seen |= windows.get(folded[i : i + SCRIPTURE_RUN], set())
+                    for slug in seen:
+                        found.setdefault(slug, []).append(
+                            f"{book.stem} {chapter['n']}:{verse['n']}"
+                        )
+        rows.append((work.name, sorted(found.items())))
+    return rows
+
+
+def tabulated_verses(slug: str) -> set[str]:
+    """The Bible addresses `REFERENCES` claims for a prayer, as the sweep
+    prints them, so the two can be read against each other."""
+    return {
+        f"{ref['osis']} {ref['chapter']}:{n}"
+        for ref in REFERENCES.get(slug, [])
+        if ref["work"] == "bible"
+        for n in range(ref["first"], ref["last"] + 1)
+    }
+
+
 def check_references(lang: str, slug: str, references: list[dict]) -> None:
     """That every reference names something the corpus actually holds.
 
@@ -1025,6 +1115,11 @@ def main() -> int:
         help="report where the derived lemma and the source's italics disagree",
     )
     parser.add_argument(
+        "--scripture",
+        action="store_true",
+        help="report where a prayer is printed verbatim in a Bible of the corpus",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true", help="report and write nothing"
     )
     args = parser.parse_args()
@@ -1083,6 +1178,22 @@ def main() -> int:
             for printed_lemma, derived in row["disagreements"]:
                 print(f"  {row['lang']:4} italic {printed_lemma[:60]!r}")
                 print(f"       {'':4} lemma  {derived[:60]!r}")
+
+    if args.scripture:
+        print(
+            "\nWhere a prayer's own words are printed as Scripture — every\n"
+            f"prayer against every verse, {SCRIPTURE_RUN} comparable characters\n"
+            "verbatim. `*` is an address the references table names. This is an\n"
+            "oracle: read it before adding a row, and expect true references to\n"
+            "go unwitnessed where a collection translates its own way.\n"
+        )
+        for work_name, found in scripture_sweep():
+            print(f"  {work_name}")
+            for slug, where in found:
+                named = tabulated_verses(slug)
+                marked = ", ".join(f"{w}*" if w in named else w for w in where[:12])
+                more = " …" if len(where) > 12 else ""
+                print(f"    {slug:34} {marked}{more}")
 
     if args.dry_run:
         print("\n--dry-run: nothing written.")
