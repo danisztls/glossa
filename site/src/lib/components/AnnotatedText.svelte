@@ -268,48 +268,11 @@
 
 <style>
 	/*
-	 * THE WORDS THE OPEN NOTE IS ABOUT.
-	 *
-	 * THE SAME WASH AS `.citation-marker.highlighted`, at the same strength and
-	 * for the same statement — "this is the one you asked about" — because a
-	 * second vocabulary for one idea is a second thing to learn. It is what the
-	 * margin note's highlight used to say across the page, said in the text
-	 * instead, now that there is no margin copy to pair a marker with.
-	 *
-	 * AN OUTLINE AND NOT PADDING, which is that rule's own arithmetic and
-	 * matters more here: this is a phrase inside a line of Scripture, so
-	 * padding on it would re-break the line and shift every word after it the
-	 * moment a note opened. An outline is drawn outside the border box, follows
-	 * the radius, takes no space at all, and — unlike a spread `box-shadow` —
-	 * does not paint under the background where two translucent layers would
-	 * stack into a darker rectangle. A phrase that wraps gets one per line
-	 * fragment, which is what a printed underline does too.
+	 * `.note-lemma` AND ITS HIGHLIGHT ARE IN `reading-chrome.css`, not here.
+	 * They were here until 2026-09-05, when `PrayerBlocks` began setting the
+	 * same spans for the prayers' apparatus and got no styling at all — a
+	 * scoped class borrowed across a component boundary is silently unstyled.
+	 * The block there carries the argument for the wash and for the printed
+	 * form; this component now shares them rather than owning them.
 	 */
-	.note-lemma.highlighted {
-		background: color-mix(in srgb, var(--color-accent) 18%, transparent);
-		outline: 0.15em solid color-mix(in srgb, var(--color-accent) 18%, transparent);
-		border-radius: var(--radius-sm);
-	}
-
-	/*
-	 * ON PAPER IT IS MARKED ALWAYS, because nothing there opens.
-	 *
-	 * A screen shows the words only while their note is open, which is exactly
-	 * the pairing the headword used to do at the top of the note. Print has no
-	 * open state, so without this a printed chapter would carry notes that have
-	 * lost their headwords and verses that never say which words each one is
-	 * about — the marker letter alone, which is what a lemma exists to improve
-	 * on. Dotted rather than a wash: a printed apparatus underlines its lemma,
-	 * and a colour-mixed background is not something to ask of a sheet of paper.
-	 *
-	 * Here rather than in `print.css` because the rule is this component's
-	 * alone, and a scoped `@media print` block is the same cascade the rest of
-	 * this file is in.
-	 */
-	@media print {
-		.note-lemma {
-			text-decoration: underline dotted;
-			text-underline-offset: 0.15em;
-		}
-	}
 </style>

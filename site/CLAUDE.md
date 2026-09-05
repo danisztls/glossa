@@ -1649,6 +1649,14 @@ not.
   verse-level (every marker at position 0) and his lemma is a catchword with
   the elision printed in, a discontinuous quotation and so not a span of
   anything.
+- **`.note-lemma` AND ITS HIGHLIGHT ARE IN `reading-chrome.css`, and were
+  scoped to `AnnotatedText` until 2026-09-05.** `PrayerBlocks` then set the
+  same spans for the prayers and every one came out unstyled — no error, no
+  warning, just no highlight. It is the identical failure `.sidenote-lemma`
+  moved global to prevent four days earlier, so the rule is worth stating
+  plainly: **a class name borrowed across a component boundary in Svelte is
+  silently unstyled.** Two components rendering one class means the rule is
+  global, and the file to put it in is `reading-chrome.css`.
 - **Refusing is a first-class outcome**: `lemmaMarked` is true exactly when
   the words were located and is the one prop that suppresses the headword —
   the two can never disagree. Dropping the headword unconditionally would have
