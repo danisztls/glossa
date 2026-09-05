@@ -63,6 +63,7 @@ export const fr: Dictionary = {
 	'library.lede': 'Les textes conservés sur cet appareil s’ouvrent sans aucun réseau.',
 	'library.essentials': 'Prières et Abrégé',
 	'library.illustrations': 'Bible (illustrations)',
+	'library.illustrationsDetail': 'Bible (illustrations, haute résolution)',
 	'library.other': 'Autres textes',
 	'library.everything': 'Tout',
 	'library.downloadAll': 'Tout télécharger',

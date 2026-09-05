@@ -48,7 +48,7 @@
 	both keep the mitre; AVIF is simply 14% smaller at a slightly lower DSSIM
 	against the master (0.0041 against 0.0044, measured composited over a white
 	AND a near-black ground, since the mask is the whole point). It also stops
-	this being the one image on the site that is not AVIF: Dore's 482 plates
+	this being the one image on the site that is not AVIF: Dore's plates
 	already are, for a different and stronger reason -- they are grayscale, and
 	lossy WebP has no monochrome mode, so it carries two flat chroma planes for
 	nothing (`pipeline/scrapers/dore/plates.py`).

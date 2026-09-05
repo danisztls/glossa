@@ -51,6 +51,7 @@ export interface ContentManifestEntry {
 		| 'document-appendix'
 		| 'document-chunk'
 		| 'document-structure'
+		| 'plate-detail'
 		| 'plate-image'
 		| 'plates'
 		| 'prayer-collection'
@@ -100,14 +101,14 @@ export function listContentAssets(): ContentAsset[] {
 /**
  * A manifest row's hashed URL, from whichever of the two globs owns it.
  *
- * TWO GLOBS AND NOT ONE, deliberately. Doré's 482 plate images are in the
+ * TWO GLOBS AND NOT ONE, deliberately. Doré's plate images are in the
  * manifest so the library panel can price them (`sync-corpus.mjs`'s
  * `syncPlates`), but their URLs stay in `plate-urls.ts`: that module is
  * imported by `Plate.svelte`, which is a Bible-route chunk, while
  * `content-urls.ts` is imported by `corpus-index.ts`, which is the boot
- * chunk. Widening the content glob to `plates/*.avif` would put 482 hashed
- * URLs into the module every page loads, to be read by the two places that
- * already have them.
+ * chunk. Widening the content glob to `plates/*.avif` would put a hashed URL
+ * per rendition of every plate — three per engraving — into the module every
+ * page loads, to be read by the two places that already have them.
  */
 function urlFor(relPath: string): string | undefined {
 	if (relPath.startsWith(PLATES_PREFIX)) return plateUrl(relPath.slice(PLATES_PREFIX.length));

@@ -4,10 +4,10 @@
  *
  * The argument is `content-urls.dev.ts`'s, one step shorter. An eager glob is
  * one module request per matched file on every full reload, and the plates are
- * 482 of them — on their own not the ~2,590 that took the dev server past what
- * a browser will open, but added to that count for no gain, since in dev there
- * are no hashed URLs to learn: Vite serves a `?url` import straight back as the
- * file's own path under the project root.
+ * three per engraving — on their own not the ~2,590 that took the dev server
+ * past what a browser will open, but added to that count for no gain, since in
+ * dev there are no hashed URLs to learn: Vite serves a `?url` import straight
+ * back as the file's own path under the project root.
  *
  * So the URL is computed rather than looked up, and the one thing that cannot
  * be assumed — the prefix Vite is actually serving `corpus-data/` from — is

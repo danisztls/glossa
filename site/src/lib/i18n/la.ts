@@ -85,6 +85,7 @@ export const la: Dictionary = {
 	'library.lede': 'Textus in hoc instrumento servati sine ulla rete aperiuntur.',
 	'library.essentials': 'Preces et Compendium',
 	'library.illustrations': 'Biblia (imagines)',
+	'library.illustrationsDetail': 'Biblia (imagines accuratiores)',
 	'library.other': 'Alii textus',
 	'library.everything': 'Omnia',
 	'library.downloadAll': 'Omnia transferre',

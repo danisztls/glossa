@@ -87,7 +87,12 @@ import { isUiLang } from '../src/lib/ui-langs.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
-import { PLATE_INTRINSIC_WIDTH, PLATE_WIDTHS } from '../src/lib/plates.ts';
+import {
+	PLATE_DETAIL_WIDTH,
+	PLATE_INTRINSIC_WIDTH,
+	PLATE_WIDTHS,
+	plateImageName
+} from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
 import { isDivergentBook, toVulgateCandidates } from '../src/lib/versification.ts';
 import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
@@ -549,16 +554,18 @@ if (changedOnly && !forced) {
  * THE DESTINATION STARTS EMPTY, so that a content file whose work has been
  * withdrawn cannot survive into a build.
  *
- * EXCEPT `plates/`, WHICH IS RECONCILED INSTEAD. It is 482 derived AVIFs,
- * 103 MB, against ~2 MB for the whole rest of the index tier — the only thing
- * here whose cost is its bytes rather than its parsing, and the only thing
- * that does not change between two runs of a script that otherwise rebuilds
- * everything from the corpus. Nothing derives these at sync time; `dore.py
- * --derive` does, and only when it is run.
+ * EXCEPT `plates/`, WHICH IS RECONCILED INSTEAD. It is three derived AVIFs per
+ * engraving — hundreds of MB, against ~2 MB for the whole rest of the index
+ * tier — the only thing here whose cost is its bytes rather than its parsing,
+ * and the only thing that does not change between two runs of a script that
+ * otherwise rebuilds everything from the corpus. Nothing derives these at sync
+ * time; `dore.py --derive` does, and only when it is run. The run's own last
+ * line prices what it found.
  *
  * BE HONEST ABOUT THE SAVING, because it is not what a profile first suggests.
  * On a filesystem with copy-on-write reflinks and a warm page cache, copying
- * all 482 costs about 0.17 s of a 5.4 s sync; a CPU profile taken on a cold
+ * all of them cost about 0.17 s of a 5.4 s sync (measured over the two served
+ * widths, before the zoom rendition existed); a CPU profile taken on a cold
  * cache attributed 1.5 s to `copyFile`, which is the same work costing what it
  * costs when the bytes are actually read and written. So this is worth having
  * for the cold case, for a filesystem that cannot reflink, and because it is
@@ -1100,16 +1107,34 @@ function syncPlates(workId, workDir, manifest) {
 	writeJson(path.join(destDir, relPath), plates);
 	contentManifest.push({ workId, kind: 'plates', relPath, bytes: byteLength(plates) });
 
-	const wanted = new Set(
-		plates.flatMap((plate) => PLATE_WIDTHS.map((w) => `${plate.id}-${w}.avif`))
-	);
+	/**
+	 * Every image this build wants, and whether it is the zoom rendition.
+	 *
+	 * A MAP RATHER THAN A SET, because the two widths in `PLATE_WIDTHS` and the
+	 * one in `PLATE_DETAIL_WIDTH` are copied identically and priced apart. The
+	 * srcset renditions are what a chapter draws; the zoom rendition is fetched
+	 * only by a reader who zooms, so it belongs to an offline shelf of its own
+	 * (`WAVE_FOR_KIND` in `sw-policy.ts`) and must not be added to the cost of
+	 * the pictures themselves. Deciding it from the width here, where the names
+	 * are minted, keeps the one place that knows the ladder the one place that
+	 * names it — nothing downstream parses a width back out of a file name.
+	 */
+	const wanted = new Map();
+	for (const plate of plates) {
+		for (const width of PLATE_WIDTHS) wanted.set(plateImageName(plate.id, width), false);
+		wanted.set(plateImageName(plate.id, PLATE_DETAIL_WIDTH), true);
+	}
 	mkdirSync(platesDest, { recursive: true });
 	let present = 0;
+	let detailPresent = 0;
 	let written = 0;
 	let imageBytes = 0;
+	let detailBytes = 0;
 	for (const name of readdirSync(imagesDir).sort()) {
-		if (!wanted.has(name)) continue;
+		const isDetail = wanted.get(name);
+		if (isDetail === undefined) continue;
 		present++;
+		if (isDetail) detailPresent++;
 		// Recorded whether or not it is copied: this is what the prune below
 		// spares, and a file already correct is exactly as wanted as a fresh one.
 		plateImages.add(name);
@@ -1127,13 +1152,46 @@ function syncPlates(workId, workDir, manifest) {
 		// `corpus-assets.ts` resolves these through `plateUrl` — the content
 		// glob is `content/**/*.json` and always was.
 		const bytes = statSync(from).size;
-		imageBytes += bytes;
-		contentManifest.push({ workId, kind: 'plate-image', relPath: `${PLATES_DIR}/${name}`, bytes });
+		// TWO PUSHES RATHER THAN ONE WITH THE KIND IN A VARIABLE, and the
+		// duplication is load-bearing: `sw-policy.test.ts` reads the kinds this
+		// script writes out of its own source, by finding `kind: '…'` inside a
+		// `contentManifest.push(`. It is the only thing that catches a kind
+		// mapped to no download wave, which is a whole work type that silently
+		// never downloads — and a computed kind is invisible to it.
+		if (isDetail) {
+			detailBytes += bytes;
+			contentManifest.push({
+				workId,
+				kind: 'plate-detail',
+				relPath: `${PLATES_DIR}/${name}`,
+				bytes
+			});
+		} else {
+			imageBytes += bytes;
+			contentManifest.push({
+				workId,
+				kind: 'plate-image',
+				relPath: `${PLATES_DIR}/${name}`,
+				bytes
+			});
+		}
 		if (isCopyOf(from, to)) continue;
 		copyFileSync(from, to);
 		written++;
 	}
-	if (present !== wanted.size) {
+	// THE ZOOM RENDITIONS BEING ABSENT IS NOT THE SAME FINDING as a plate
+	// having no image, and folding the two into one count said "241 of 723
+	// missing" for the ordinary case of a corpus derived before this width
+	// existed. That is a whole feature quietly off, with a fix that is one
+	// command — so it gets its own line, and the site degrades to what it did
+	// before: fit, and the loaded file's own natural size.
+	if (detailPresent === 0 && plates.length > 0) {
+		console.warn(
+			`[sync-corpus] ${workId}: no ${PLATE_DETAIL_WIDTH}px renditions in ${imagesDir} — the ` +
+				`viewer's zoom will show the reading column's own file. Run ` +
+				`\`uv run --script pipeline/scrapers/dore/dore.py --derive\` to encode them.`
+		);
+	} else if (present !== wanted.size) {
 		console.warn(
 			`[sync-corpus] ${workId}: ${wanted.size - present} of ${wanted.size} plate image(s) ` +
 				`missing from ${imagesDir}`
@@ -1142,7 +1200,8 @@ function syncPlates(workId, workDir, manifest) {
 	console.log(
 		`[sync-corpus] ${workId}: ${plates.length} plates, ${present} images ` +
 			`(${written} copied, ${present - written} already current, ` +
-			`${(imageBytes / 1e6).toFixed(1)} MB offered offline)`
+			`${(imageBytes / 1e6).toFixed(1)} MB offered offline` +
+			`${detailPresent > 0 ? ` + ${(detailBytes / 1e6).toFixed(1)} MB at ${PLATE_DETAIL_WIDTH}px` : ''})`
 	);
 }
 
@@ -2219,10 +2278,12 @@ if (publishedDefeats.length > 0) {
  *  wants that engraving, and there is no split of it that is anything but a
  *  broken picture. The ceiling caught 224 of Doré's at the derived widths and
  *  asked for chunking, which is the one remedy that cannot exist here. What
- *  DOES bound these is the derivation — `PLATE_WIDTHS` and the encoder in
- *  `pipeline/scrapers/dore.py` — so a plate that grew is a re-encode
- *  question, not a chunking one. */
-const CEILING_EXEMPT_KINDS = new Set(['document-appendix', 'plate-image']);
+ *  DOES bound these is the derivation — `PLATE_WIDTHS`, `PLATE_DETAIL_WIDTH`
+ *  and the encoder in `pipeline/scrapers/dore/dore.py` — so a plate that grew
+ *  is a re-encode question, not a chunking one. The zoom rendition is the
+ *  same statement at four times the pixels and clears the ceiling on every
+ *  plate rather than 224 of them. */
+const CEILING_EXEMPT_KINDS = new Set(['document-appendix', 'plate-image', 'plate-detail']);
 
 const oversized = contentManifest
 	.filter(

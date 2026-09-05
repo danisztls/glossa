@@ -61,6 +61,7 @@ export const sl: Dictionary = {
 	'library.lede': 'Besedila, shranjena v tej napravi, se odprejo povsem brez omrežja.',
 	'library.essentials': 'Molitve in Kompendij',
 	'library.illustrations': 'Biblija (ilustracije)',
+	'library.illustrationsDetail': 'Biblija (ilustracije, visoka ločljivost)',
 	'library.other': 'Druga besedila',
 	'library.everything': 'Vse',
 	'library.downloadAll': 'Prenesi vse',

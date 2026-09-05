@@ -134,7 +134,7 @@
 		//
 		// NOTHING NEEDS ADDING FOR THE DORE PLATES, and the reflex to add
 		// `!/plates/*` is the mistake to resist -- there is no such path. The
-		// 482 images are content-hashed BUILD assets under `/_app/immutable/`
+		// images are content-hashed BUILD assets under `/_app/immutable/`
 		// (see `syncPlates` in scripts/sync-corpus.mjs for why they go through
 		// Vite rather than into `static/`), so the first negation already
 		// covers them -- and so does the zone's rate limiting rule, which

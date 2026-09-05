@@ -118,8 +118,8 @@ function devContentUrls(): Plugin {
 	// somewhere else in the tree from being silently captured.
 	const substitutions = new Map<string, [string, readonly string[]]>([
 		['./content-urls', [lib('content-urls.dev.ts'), ['corpus-index.ts', 'corpus-assets.ts']]],
-		// The plates' 482 images, on the same terms and for the same reason —
-		// see `plate-urls.dev.ts`.
+		// Every rendition of every plate, on the same terms and for the same
+		// reason — see `plate-urls.dev.ts`.
 		['./plate-urls', [lib('plate-urls.dev.ts'), ['plate-src.ts']]]
 	]);
 

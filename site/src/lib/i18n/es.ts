@@ -63,6 +63,7 @@ export const es: Dictionary = {
 	'library.lede': 'Los textos guardados en este dispositivo se abren sin red alguna.',
 	'library.essentials': 'Oraciones y Compendio',
 	'library.illustrations': 'Biblia (ilustraciones)',
+	'library.illustrationsDetail': 'Biblia (ilustraciones, alta resolución)',
 	'library.other': 'Otros textos',
 	'library.everything': 'Todo',
 	'library.downloadAll': 'Descargar todo',

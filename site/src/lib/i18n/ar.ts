@@ -60,6 +60,7 @@ export const ar: Dictionary = {
 	'library.lede': 'النصوص المحفوظة على هذا الجهاز تُفتح بلا أي اتصال بالشبكة.',
 	'library.essentials': 'الصلوات والمختصر',
 	'library.illustrations': 'الكتاب المقدس (الرسوم)',
+	'library.illustrationsDetail': 'الكتاب المقدس (الرسوم بدقة عالية)',
 	'library.other': 'نصوص أخرى',
 	'library.everything': 'الكل',
 	'library.downloadAll': 'تنزيل الكل',

@@ -11,29 +11,44 @@
 	 * until this existed there was no way to reach any of it. Doré's hatching
 	 * is what that headroom is made of, so it is worth reaching.
 	 *
-	 * IT SHOWS THE RENDITION THE PAGE ALREADY LOADED, and never asks for a
-	 * bigger one. `src` is the inline `<img>`'s own `currentSrc`, so opening
-	 * the viewer costs no request, no wait and no spinner, and it works
-	 * offline in exactly the cases the plate itself did — which matters,
-	 * because the plates are deliberately in no service-worker download wave
-	 * (`sw-policy.ts`) and an offline reader has the ones they have already
-	 * seen. Fetching a detail rendition on tap would have made this the one
-	 * control that breaks when the plate under it does not.
+	 * OPENING COSTS NOTHING; ZOOMING BUYS A BIGGER FILE. `src` is the inline
+	 * `<img>`'s own `currentSrc`, so the picture appears with no request, no
+	 * wait and no spinner, and it works offline in exactly the cases the plate
+	 * itself did. Only the zoom — an explicit second gesture, on a picture the
+	 * reader is already looking at — asks for `PLATE_DETAIL_WIDTH`, which is
+	 * 2000px and is in no `srcset` precisely so that nothing else can ask for
+	 * it (see `plates.ts`).
 	 *
-	 * TWO STATES, NOT A CONTINUOUS ZOOM. Fit, and the loaded file's own
-	 * natural size — which is the ceiling, since past it the browser is
-	 * inventing pixels. A pinch-zoom with momentum, bounds and a transform
-	 * matrix is a great deal of code around a question the reader is asking
-	 * once ("what is in there?"), and two states answer it with a scroll
-	 * container the browser already knows how to pan.
+	 * THE ZOOM DOES NOT WAIT FOR IT. The geometry is the detail rendition's
+	 * from the moment the reader asks: the stage goes straight to 2000 CSS px,
+	 * drawing the file already in hand upscaled, and swaps in the real one
+	 * when it decodes. So the arrival is a SHARPENING and never a jump —
+	 * nothing moves under the reader, the point they aimed at stays where they
+	 * put it, and a slow connection costs clarity rather than responsiveness.
+	 * A brief upscale is the one place this view knowingly draws invented
+	 * pixels, and it draws them only over a file that is on its way.
+	 *
+	 * AND IF IT NEVER ARRIVES, NOTHING IS BROKEN. A `failed` status — an offline
+	 * reader who does not have this plate's zoom rendition, or a build derived
+	 * before the width existed — puts the ceiling back at the loaded
+	 * file's own natural width, which is precisely what this component did
+	 * before the rendition existed. The plates are in no automatic download
+	 * wave (`sw-policy.ts`), so that case is ordinary rather than exceptional.
+	 *
+	 * TWO STATES, NOT A CONTINUOUS ZOOM. Fit, and the best file's own natural
+	 * size — which is the ceiling, since past it the browser is inventing
+	 * pixels with nothing coming to replace them. A pinch-zoom with momentum,
+	 * bounds and a transform matrix is a great deal of code around a question
+	 * the reader is asking once ("what is in there?"), and two states answer
+	 * it with a scroll container the browser already knows how to pan.
 	 *
 	 * SO THE ZOOM IS OFFERED ONLY WHERE THERE IS SOMETHING TO GAIN.
-	 * `canZoom` compares the natural width against the width the plate is
-	 * ALREADY drawn at here, and on a tall desktop those are nearly the same
-	 * number: fit in a 1440px-tall viewport is around 1155 px of a 1200px
-	 * file. A control that magnifies by 4% is a control that reads as broken,
-	 * so the toolbar button is not rendered and the picture is not a zoom
-	 * target.
+	 * `canZoom` compares the width zooming would reach against the width the
+	 * plate is ALREADY drawn at here. That test is why the detail rendition
+	 * exists at all: on a tall desktop the two were nearly the same number —
+	 * fit in a 1440px-tall viewport is around 1155 px of a 1200px file — so
+	 * the control magnified by 4%, read as broken, and was therefore not
+	 * rendered. Desktop readers had no zoom. At 2000 they have 1.7x.
 	 *
 	 * `<dialog>` AND `showModal()`, which is a departure from every other
 	 * floating thing on this site and the one case that earns it. A citation,
@@ -62,6 +77,8 @@
 	 */
 	import { tick } from 'svelte';
 	import type { Plate } from '$lib/plates';
+	import { PLATE_DETAIL_WIDTH } from '$lib/plates';
+	import { plateDetailSrc } from '$lib/plate-src';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
 
@@ -95,13 +112,34 @@
 	let stageWidth = $state(0);
 	let stageHeight = $state(0);
 	/**
-	 * The intrinsic width of the file that actually loaded — 800 or 1200 —
-	 * and NOT `plate.width`, which is always 1200 because that is the
-	 * rendition the pipeline measured (`PLATE_INTRINSIC_WIDTH`). Zooming to a
-	 * width the file does not have is upscaling, which is the one thing this
-	 * view exists to avoid.
+	 * The intrinsic width of the file currently ON the element — 800 or 1200,
+	 * and 2000 once the zoom rendition has taken its place. NOT `plate.width`,
+	 * which is always 1200 because that is the rendition the pipeline measured
+	 * (`PLATE_INTRINSIC_WIDTH`).
+	 *
+	 * It is the zoom ceiling only where no bigger file can be had — see
+	 * `zoomWidth`. That is the whole of the old rule ("never magnify past the
+	 * file") kept as the fallback, with the new rule in front of it: magnify to
+	 * the file that is coming.
 	 */
 	let natural = $state(0);
+
+	/**
+	 * The zoom rendition: where it lives, and how far along getting it we are.
+	 *
+	 * `idle` until the reader first asks to zoom — nothing here is fetched on
+	 * open, for the reason the docblock gives. `failed` is a real resting
+	 * state and not an error to report: it is what an offline reader without
+	 * this plate cached gets, and what a build with no 2000px renditions gets
+	 * on every plate. Both simply return this view to the ceiling it had
+	 * before the rendition existed, which is a working view.
+	 */
+	const detailHref = $derived(plateDetailSrc(plate.id));
+	let detailStatus = $state<'idle' | 'loading' | 'ready' | 'failed'>('idle');
+
+	/** What is actually on the element. The loaded rendition until the bigger
+	 *  file has DECODED — not merely loaded — so the swap cannot flash. */
+	const shown = $derived(detailStatus === 'ready' && detailHref ? detailHref : src);
 
 	const ratio = $derived(plate.width / plate.height);
 
@@ -109,10 +147,23 @@
 	 *  dimensions binds first. */
 	const fitWidth = $derived(Math.min(stageWidth, stageHeight * ratio));
 
+	/**
+	 * How wide the zoomed state draws.
+	 *
+	 * THE DETAIL WIDTH IS KNOWN BEFORE THE FILE IS, which is what lets the
+	 * zoom be instant: every plate is encoded at exactly `PLATE_DETAIL_WIDTH`,
+	 * so there is no measurement to wait for and the box can be right from the
+	 * first frame. `natural` — the loaded file's own width, 800 or 1200 — is
+	 * the answer only where there is no bigger file to be had.
+	 */
+	const zoomWidth = $derived(
+		detailHref && detailStatus !== 'failed' ? PLATE_DETAIL_WIDTH : natural
+	);
+
 	/** 1.15 rather than any headroom at all: below about a sixth, the reader
 	 *  taps and the picture does not visibly change, which reads as a control
 	 *  that failed rather than as one that had nothing to do. */
-	const canZoom = $derived(natural > 0 && fitWidth > 0 && natural > fitWidth * 1.15);
+	const canZoom = $derived(zoomWidth > 0 && fitWidth > 0 && zoomWidth > fitWidth * 1.15);
 
 	/* A stage that stops being able to zoom while it is zoomed — a rotation
 	   to landscape, a window pulled taller — would otherwise leave the reader
@@ -148,6 +199,7 @@
 	 */
 	async function setZoom(next: boolean, fx: number, fy: number) {
 		if (!canZoom) return;
+		if (next) void loadDetail();
 		zoomed = next;
 		await tick();
 		if (!next || !stageEl) return;
@@ -155,7 +207,42 @@
 		stageEl.scrollTop = fy * stageEl.scrollHeight - stageEl.clientHeight / 2;
 	}
 
-	/* `detail` is 0 for a click synthesized by Enter or Space, where there is
+	/**
+	 * Fetch the zoom rendition, once, on the first zoom of this viewer.
+	 *
+	 * A DETACHED `Image` AND `decode()`, not a `src` swap on the element the
+	 * reader is looking at. Assigning a new `src` to a live `<img>` and waiting
+	 * for `load` shows the intermediate states of the decode; `decode()`
+	 * resolves when the bitmap is ready, so `shown` flips to a file that will
+	 * paint on the next frame. The element then resolves the same URL out of
+	 * the HTTP cache with nothing left to do.
+	 *
+	 * IT RESOLVES WHILE THE READER IS ALREADY ZOOMED, deliberately — see the
+	 * docblock. Nothing here touches `zoomed`, `stageEl.scrollLeft` or the
+	 * geometry: the stage was sized to `PLATE_DETAIL_WIDTH` the moment the
+	 * gesture landed, so this swap moves nothing and the scroll offsets stay
+	 * valid in pixels.
+	 *
+	 * A REJECTION IS AN ANSWER AND IS REMEMBERED. `failed` is terminal for the
+	 * life of this viewer: a reader toggling zoom on a plate they do not have
+	 * offline would otherwise re-request a file they have already been refused,
+	 * once per tap.
+	 */
+	async function loadDetail() {
+		if (!detailHref || detailStatus !== 'idle') return;
+		detailStatus = 'loading';
+		const probe = new Image();
+		probe.src = detailHref;
+		try {
+			await probe.decode();
+			detailStatus = 'ready';
+		} catch {
+			detailStatus = 'failed';
+		}
+	}
+
+	/* `e.detail` — the click's own count, nothing to do with `detailStatus`
+	   above — is 0 for a click synthesized by Enter or Space, where there is
 	   no pointer and `clientX` is a meaningless 0 — which would otherwise
 	   scroll a keyboard reader to the plate's top-left corner. */
 	function onPictureClick(e: MouseEvent) {
@@ -193,11 +280,19 @@
 			     is in. Two labels ("zoom in" / "zoom out") would be a control
 			     that renames itself under the reader's finger, and would cost
 			     fourteen dictionaries a second string to say what a toggle
-			     state already says. -->
+			     state already says.
+
+			     `aria-busy` says the bigger file is still in flight, and it is
+			     all that is said: the picture is already at its zoomed size and
+			     only its sharpness is pending, so a spinner would announce a
+			     wait the reader is not having. Like the label above, it costs
+			     those fourteen dictionaries nothing. -->
 			<button
 				type="button"
 				class="viewer-button"
+				class:busy={detailStatus === 'loading'}
 				aria-pressed={zoomed}
+				aria-busy={detailStatus === 'loading'}
 				aria-label={t('plates.zoom')}
 				onclick={() => setZoom(!zoomed, 0.5, 0.5)}
 			>
@@ -246,12 +341,12 @@
 			aria-label={canZoom ? t('plates.zoom') : undefined}
 			style:--plate-ratio={`${plate.width} / ${plate.height}`}
 			style:--plate-fit={fitWidth > 0 ? `${fitWidth}px` : '100%'}
-			style:--plate-natural={`${natural}px`}
+			style:--plate-zoom={`${zoomWidth}px`}
 			onclick={onPictureClick}
 		>
 			<img
 				bind:this={imgEl}
-				{src}
+				src={shown}
 				alt={canZoom ? '' : plate.title}
 				width={plate.width}
 				height={plate.height}
@@ -328,6 +423,34 @@
 	.viewer-button:focus-visible {
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
+	}
+
+	/*
+	 * THE ZOOM RENDITION IS IN FLIGHT, said in the only place with nothing else
+	 * to say. The control itself breathes rather than being replaced by a
+	 * spinner: it is still the control, still pressable, and what is pending is
+	 * the sharpness of a picture the reader is already looking at — so this has
+	 * to read as "still working", never as "wait".
+	 *
+	 * `prefers-reduced-motion` takes the animation and keeps the statement: a
+	 * steady dim is the same information without the pulse, and `aria-busy`
+	 * carries it to a reader who gets neither.
+	 */
+	.viewer-button.busy {
+		animation: plate-detail-pending 1.4s ease-in-out infinite;
+	}
+
+	@keyframes plate-detail-pending {
+		50% {
+			opacity: 0.45;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.viewer-button.busy {
+			animation: none;
+			opacity: 0.55;
+		}
 	}
 
 	/*
@@ -412,11 +535,14 @@
 		aspect-ratio: var(--plate-ratio);
 	}
 
-	/* ZOOM: the loaded file's own width, in CSS pixels, which is the point at
-	   which one image pixel is one CSS pixel and there is nothing further to
-	   be had from it. */
+	/* ZOOM: the best available file's own width, in CSS pixels, which is the
+	   point at which one image pixel is one CSS pixel and there is nothing
+	   further to be had from it. `--plate-zoom` is `PLATE_DETAIL_WIDTH` from
+	   the moment the reader asks — before that file has arrived, and whether
+	   or not it ever does — so the box is settled in one step and the arriving
+	   rendition only sharpens what is in it. */
 	.stage.zoomed .picture {
-		inline-size: var(--plate-natural);
+		inline-size: var(--plate-zoom);
 		block-size: auto;
 		max-inline-size: none;
 		aspect-ratio: var(--plate-ratio);

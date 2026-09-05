@@ -577,6 +577,7 @@ export type WaveId =
 	| 'magisterium'
 	| 'summa'
 	| 'illustrations'
+	| 'illustrations-detail'
 	| 'other';
 
 /** A `CACHE_WAVE` target: one wave, or the library entire. `'all'` is not a
@@ -696,6 +697,15 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	// its own answers both: `illustrations` is outside `AUTOMATIC_WAVES`, so
 	// it is only ever the reader pressing the button.
 	'plate-image': 'illustrations',
+	// AND THE ZOOM RENDITIONS ARE A SECOND SHELF, NOT MORE OF THE FIRST. They
+	// are the same 241 pictures at `PLATE_DETAIL_WIDTH`, which is several times
+	// the bytes of both served renditions together — so folding them into
+	// `illustrations` would multiply the one number a reader reads before
+	// pressing a button, and would leave no way to take the pictures without
+	// them. They are also wanted by a strictly narrower reader: one who not
+	// only wants the engravings offline but expects to zoom into them there.
+	// Two rows, each priced, each opt-in.
+	'plate-detail': 'illustrations-detail',
 	'ccc-chunk': 'catechism',
 	'bible-chapters': 'scripture',
 	// A commentary rides the wave of the work it annotates, which is
@@ -757,6 +767,12 @@ const WAVE_ORDER: readonly WaveId[] = [
 	// pictures. `other` still follows it, being the bug-catcher rather than a
 	// shelf.
 	'illustrations',
+	// And then the same pictures again, larger, which is lower still by the
+	// same measure: it costs several times the wave above it and its absence
+	// costs a reader nothing but the zoom, which degrades to the file the
+	// column already drew. An interrupted fill should reach everything else
+	// first, so this sorts behind the wave it duplicates.
+	'illustrations-detail',
 	'other'
 ];
 

@@ -118,12 +118,25 @@ USER_AGENT = "glossa-catholica/1.0 (+https://glossacatholica.org)"
 #: least the courtesy the Holy See asks for.
 CRAWL_DELAY = 2.0
 
-#: Widths served, and the AVIF quality each is encoded at. Two sizes, because
-#: the whole point of the smaller one is that a phone never downloads the
-#: larger: a browser fetches exactly one entry of a srcset. Encoding is a
-#: little softer at 1200 than at 800 -- the artifacts are proportionally
+#: Widths served, and the AVIF quality each is encoded at. The first two are
+#: the srcset: the whole point of the smaller one is that a phone never
+#: downloads the larger, since a browser fetches exactly one entry. Encoding is
+#: a little softer at 1200 than at 800 -- the artifacts are proportionally
 #: smaller there, and dense line work is where the bytes go.
-OUTPUT_SIZES = ((800, 60), (1200, 58))
+#:
+#: 2000 IS NOT IN THE SRCSET AND IS NOT SOFTER, and the two facts are the same
+#: fact. It is fetched only when a reader zooms (`PLATE_DETAIL_WIDTH` in
+#: `site/src/lib/plates.ts`, which is deliberately a separate constant so this
+#: width can never reach a `srcset` and be chosen for the reading column). What
+#: it is then drawn at is one image pixel to one CSS pixel -- so the argument
+#: for softening as the width grows, that the artifacts shrink on screen with
+#: it, is exactly the argument that stops applying here. The ladder therefore
+#: stops descending: 58, the same figure as the 1200.
+#:
+#: The width is the masters' own floor. The narrowest engraving in the set
+#: crops to 2248 px (`find_plate_box` over all 241), so every plate downscales
+#: to 2000 and none is invented.
+OUTPUT_SIZES = ((800, 60), (1200, 58), (2000, 58))
 
 
 def load_anchors() -> tuple[list[dict], dict]:
@@ -185,8 +198,8 @@ def fetch_plates(anchors: list[dict], *, limit: int | None = None) -> list[str]:
     return failures
 
 
-def derive_images(anchors: list[dict], out_root: Path) -> list[str]:
-    """Crop, level, resize and encode every plate at every served width.
+def derive_images(anchors: list[dict], out_root: Path, *, complete: bool) -> list[str]:
+    """Crop, level, resize and encode every plate at every derived width.
 
     Writes `sizes.json` beside the images: `plate_id -> width -> [w, h]`.
 
@@ -198,6 +211,13 @@ def derive_images(anchors: list[dict], out_root: Path) -> list[str]:
     shoves the verse the reader was on off the screen. The numbers exist only
     here, at the moment the encoder is handed the pixels, so they are recorded
     here rather than re-derived by a second decoder somewhere downstream.
+
+    WHICH IS WHY `--limit` MUST NOT WRITE IT. The file is a whole inventory and
+    is rewritten rather than merged -- that is what makes a withdrawn plate
+    disappear from it -- so a two-plate trial run used to leave `sizes.json`
+    describing two plates, and `syncPlates` reads it to decide which plates
+    have a derived image at all. The result was 239 plates silently withheld
+    from the build by a flag whose help text says "for a trial run".
     """
     source_dir = raw_root() / "dore" / "plates"
     problems: list[str] = []
@@ -224,11 +244,13 @@ def derive_images(anchors: list[dict], out_root: Path) -> list[str]:
                     quality=quality,
                 )
                 sizes.setdefault(plate_id, {})[str(width)] = list(rendered.size)
-    if sizes:
+    if sizes and complete:
         out_root.mkdir(parents=True, exist_ok=True)
         (out_root / "sizes.json").write_text(
             json.dumps(sizes, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
+    elif sizes:
+        print("  --limit: images written, sizes.json left alone (it is an inventory)")
     return problems
 
 
@@ -355,7 +377,7 @@ def main() -> int:
         images = out / "images"
         wanted = anchors[: args.limit]
         print(f"deriving {len(wanted)} plates at {len(OUTPUT_SIZES)} sizes -> {images}")
-        for problem in derive_images(wanted, images):
+        for problem in derive_images(wanted, images, complete=args.limit is None):
             print(f"  {problem}")
     return 0
 

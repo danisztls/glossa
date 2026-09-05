@@ -388,8 +388,11 @@ class UsageSession {
 			// 2,600 of 3,082 held — 84%, under `FULL_LIBRARY_RATIO`, reported
 			// as `partial` forever. The bucket measures the LIBRARY, and the
 			// illustrations are the one thing in the cache nobody is expected
-			// to have.
-			listContentAssets().filter((asset) => asset.kind !== 'plate-image').length
+			// to have. `plate-detail` — the zoom rendition, larger again than
+			// the two the column draws — is the same thing more so.
+			listContentAssets().filter(
+				(asset) => asset.kind !== 'plate-image' && asset.kind !== 'plate-detail'
+			).length
 		);
 	}
 

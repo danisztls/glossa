@@ -15,8 +15,8 @@
  * A FUNCTION RATHER THAN THE EXPORTED MAP `content-urls.ts` uses, because
  * that is what lets the dev twin be a formula instead of an inventory: in
  * `vite dev` a `?url` import resolves to the file's own path under the project
- * root, so `plates/OT-001-800.avif` is derivable and 482 module requests are
- * not worth spending to be told it.
+ * root, so `plates/OT-001-800.avif` is derivable and one module request per
+ * rendition of every plate is not worth spending to be told it.
  */
 
 const globbed = import.meta.glob('./corpus-data/plates/*.avif', {

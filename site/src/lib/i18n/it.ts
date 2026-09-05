@@ -62,6 +62,7 @@ export const it: Dictionary = {
 	'library.lede': 'I testi tenuti su questo dispositivo si aprono senza alcuna rete.',
 	'library.essentials': 'Preghiere e Compendio',
 	'library.illustrations': 'Bibbia (illustrazioni)',
+	'library.illustrationsDetail': 'Bibbia (illustrazioni, alta risoluzione)',
 	'library.other': 'Altri testi',
 	'library.everything': 'Tutto',
 	'library.downloadAll': 'Scarica tutto',
