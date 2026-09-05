@@ -190,6 +190,14 @@ bill small is that the page names no work, book or division in its own words:
 every step of every route is titled from the corpus, already in the reader's
 content language.
 
+**None of the three is excluded; all three are waiting.** A page joins on the
+day its strings exist everywhere — one line in `CHROME_PATHS` plus a
+`CHROME_KEYS` entry, with `sitemap.test.ts` and `shell-head.test.ts` following
+by arithmetic — and `assertNamed` fails the sync if a key is missing anywhere,
+which is what makes publishing early impossible rather than merely unwise.
+`PLAN.md` §Three pages are unpublished is the current state; the counts here
+are dated and rot.
+
 ## Which edition a reader gets
 
 **Written down, never derived from sort order.** `PREFERRED_EDITION` names it

@@ -75,14 +75,24 @@ export const CHROME_PATHS = [
 ] as const;
 
 /**
- * TWO PAGES ARE CHROME BY THIS TEST AND ARE DELIBERATELY NOT ON THE LIST, and
- * the thing that keeps them off is the same in both cases: **a cluster claims
- * a page is written in 37 languages, and neither page is.**
+ * THREE PAGES ARE CHROME BY THIS TEST AND BELONG ON THIS LIST, and are held off
+ * it by one thing: **a cluster claims a page is written in 37 languages, and
+ * none of the three is yet.**
  *
- * `scripts/route-titles.mjs` states the rule it enforces — a cluster whose
+ * **THEY ARE WAITING, NOT EXCLUDED.** Each joins the list above the day its
+ * strings are translated — one line here plus a `CHROME_KEYS` entry in
+ * `scripts/route-titles.mjs`, and nothing else moves, because
+ * `sitemap.test.ts` and `shell-head.test.ts` are written as arithmetic over
+ * `CHROME_PATHS.length`. Until then each is unpublished: no language prefix,
+ * no `hreflang` cluster, no sitemap row, and no per-page `<title>` or
+ * description at the edge. `PLAN.md` §Three pages are unpublished carries the
+ * table of what each is waiting on and is the place to look for the current
+ * state; the counts below are dated and rot.
+ *
+ * `scripts/route-titles.mjs` states the rule this enforces — a cluster whose
  * Portuguese member is described in English is worse than no cluster, because
  * it tells a search engine the page is Portuguese and then serves English —
- * and the two conditions differ only in degree:
+ * and the three conditions differ only in degree (all 2026-09-04):
  *
  *   - `/calendarium` holds no corpus text at all, which makes it the purest
  *     chrome page on the site, and its 44 `calendar.*` keys are written in
@@ -90,24 +100,24 @@ export const CHROME_PATHS = [
  *     per key (`i18n.svelte.ts`). The page is also still being built.
  *   - `/catechismus/compendium` is titled and described by
  *     `compendium.landing.*`, which 14 dictionaries carry.
+ *   - `/schola` is the learning portal, and it is the one the rule was worth
+ *     having for: it is addressed to the reader who has no vocabulary yet
+ *     (`docs/research/audiences.md` §5), which is the reader least able to
+ *     make anything of an English page — so claiming it in 37 languages would
+ *     be false about exactly the page where being false costs most. Its 19
+ *     `schola.*` keys are in `en`. **It is also the one where waiting has a
+ *     cost of its own**, since an unpublished page is one a search engine
+ *     cannot offer that reader in their language either. What keeps its bill
+ *     small is that the page names no work, book or division in its own
+ *     words: those come from the corpus, already translated.
  *
- * Both are in `STATIC_PATHS`, so both exist, answer 200 and are indexable at
- * their bare address; neither is claimed in a language it is not written in.
- * Each is one line here plus a `CHROME_KEYS` entry on the day its strings are
- * translated, and nothing else has to move.
+ * All three are in `STATIC_PATHS`, so all three exist, answer 200 and are
+ * indexable at their bare address; none is claimed in a language it is not
+ * written in.
  *
- * `/ius-canonicum` was missing for a third reason — nobody added it — and its
+ * `/ius-canonicum` was missing for a fourth reason — nobody added it — and its
  * `canonLaw.landing.*` keys were already in all 37, which is why it joined the
- * list above on the day the omission was found and these two did not.
- *
- * **`/schola` is the third, and it is the one the rule was worth having for.**
- * The learning portal is addressed to the reader who has no vocabulary yet
- * (`docs/research/audiences.md` §5), which is the reader least able to make
- * anything of an English page — so a cluster claiming it is written in 37
- * languages would be false about exactly the page where being false costs
- * most. Its 19 `schola.*` keys are in `en`. What keeps that cost small is that
- * the page names no work, book or division of its own: those come from the
- * corpus, already in the reader's content language.
+ * list above on the day the omission was found and these three did not.
  */
 
 const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);

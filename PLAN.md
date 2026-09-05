@@ -39,15 +39,47 @@ are published**, the rest being held in `national/held.ts` with the count of
 days each still differs on. What follows is what that work located and
 deliberately did not do.
 
-One item on that list is neither a decision nor a stated limit but a plain
-omission, found 2026-09-04: **`/calendarium` is not in `CHROME_PATHS`**
-(`site/src/lib/route-manifest.ts`). The page is in the nav bar, so it takes no
-language prefix, sits in no `hreflang` cluster, appears in no sitemap row, and
-gets no per-page `<title>` or description at the edge, because
-`scripts/route-titles.mjs` keys its map off that same list — even though
-`calendar.title` and `calendar.tagline` exist to name it. `/ius-canonicum` has
-carried the identical omission since canon law landed. Both are one line each,
-and neither depends on anything below.
+### Three pages are unpublished, and each is waiting on the same thing
+
+**`/calendarium`, `/catechismus/compendium` and `/schola` are in
+`STATIC_PATHS` and not in `CHROME_PATHS`** (`site/src/lib/route-manifest.ts`).
+Each answers 200 and is indexable at its bare address, and none of them takes a
+language prefix, sits in an `hreflang` cluster, appears in a sitemap row, or
+gets a per-page `<title>` or description at the edge —
+`scripts/route-titles.mjs` keys its map off that second list.
+
+**This is a translation gate, not an omission, and it started as one.** The
+omission was real on 2026-09-04: `/calendarium` and `/ius-canonicum` were in
+NEITHER table and answered 404 to every cold load. Fixing that separated the
+two questions a chrome path asks — is every word on the page the interface, and
+is the interface actually written — and the three below pass the first and fail
+the second. `chromeNames` deliberately does not fall back to English, because a
+cluster whose Portuguese member is described in English tells a search engine
+the page is Portuguese and then serves English. `/ius-canonicum` was published
+the same day precisely because its `canonLaw.landing.*` keys were already in
+all 37.
+
+| page                      | waits on               | in              |
+| ------------------------- | ---------------------- | --------------- |
+| `/calendarium`            | 44 `calendar.*` keys   | en, la, pt      |
+| `/catechismus/compendium` | `compendium.landing.*` | 14 dictionaries |
+| `/schola`                 | 19 `schola.*` keys     | en              |
+
+**Each costs one line in `CHROME_PATHS` plus a `CHROME_KEYS` entry in
+`scripts/route-titles.mjs`, and nothing else moves.** `sitemap.test.ts` and
+`shell-head.test.ts` are written as arithmetic over `CHROME_PATHS.length`, so
+they follow; `assertNamed` fails the sync if a key is missing anywhere, which
+is what makes publishing early impossible rather than merely unwise. None of
+the three depends on anything else in this file.
+
+**`/schola` is the one to weigh separately.** The other two are pages a reader
+can use in a second language; the learning portal is written FOR the reader who
+has no vocabulary yet (`docs/research/audiences.md` §5), so shipping it as an
+English cluster would be false exactly where being false costs most — and
+leaving it unpublished costs that same reader a page a search engine cannot
+offer them in their language. Both directions are bad and translation is the
+only way out. Its bill is deliberately small: the page names no work, book or
+division in its own words.
 
 ### Decisions only the person directing the work can take
 
