@@ -27,9 +27,9 @@
 	 *
 	 * `CalendarMonth.svelte` holds the arrangement and the argument for it.
 	 * What it means here is that this page has one control row and no day
-	 * steppers: the list steps a day by being clicked or arrowed, and steps a
-	 * month with its own arrows, so a second pair of arrows above it would be
-	 * two controls doing one thing at two grains.
+	 * steppers: the list steps a day by being clicked or arrowed, and turns a
+	 * page of the month with its own arrows, so a second pair of arrows above
+	 * it would be two controls doing one thing at two grains.
 	 *
 	 * ## The day comes first, and the month under it
 	 *
@@ -38,12 +38,20 @@
 	 * thirty rows of navigation where a reader arriving at `/calendarium` would
 	 * have to scroll to find out what today is.
 	 *
-	 * What it costs is that the card is now ABOVE the rows being clicked, and
-	 * the card is not a fixed height: an ordinary weekday and a day carrying
-	 * four optional memorials differ by several lines, so changing the day would
-	 * drag the list up or down under the reader's cursor. That is fixed where it
-	 * happens rather than by freezing a height here — `CalendarMonth.svelte`
-	 * holds its own top still across the change.
+	 * What it costs is that the card is ABOVE the rows being clicked, and its
+	 * height is a function of the day: an ordinary weekday and a day carrying
+	 * four optional memorials differ by several lines, so changing the day
+	 * drags the list up or down under the reader's cursor. THAT COST IS PAID
+	 * RATHER THAN AVOIDED. The card was held to a fixed height and scrolled
+	 * inside itself for exactly one day, and the height it was held at clipped
+	 * every day that had more to say — an answer with its last line cut off, to
+	 * keep a list below it still. A reflow is the smaller injury: the reader
+	 * caused it, it settles in one frame, and nothing is hidden by it.
+	 *
+	 * The other half of the repair is that the list no longer moves for reasons
+	 * the reader did not ask for — paging a month leaves the chosen day alone
+	 * (`CalendarMonth.svelte`), so the card above changes only when the reader
+	 * changes the day.
 	 *
 	 * ## Two things this page will not do
 	 *
@@ -53,11 +61,13 @@
 	 * and the cycle letters are stated as facts about the year rather than
 	 * dressed up as an answer the site cannot give.
 	 */
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
 	import CalendarPrimer from '$lib/components/CalendarPrimer.svelte';
+	import Icon from '$lib/components/Icon.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import {
 		formatIsoDate,
@@ -67,6 +77,8 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
+	import { rememberTerritory, storedTerritory } from '$lib/calendar-pref';
+	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
@@ -113,6 +125,12 @@
 	 * calendar's id lands here too, and correctly: `TERRITORY_CALENDARS` is
 	 * built from the published list, so an id withdrawn by `held.ts` resolves
 	 * to nothing in exactly the same way a typo does.
+	 *
+	 * WHAT "ABSENT" MEANS IS ANSWERED BY THE READER'S OWN PREFERENCE before it
+	 * falls back to the general calendar — see `onMount` below and
+	 * `calendar-pref.ts`. The URL stays the one thing this component derives
+	 * from; the preference only decides what the URL says when the reader
+	 * arrives without one.
 	 */
 	let territory = $derived.by(() => {
 		const raw = page.url.searchParams.get('c');
@@ -161,7 +179,58 @@
 		commit({ d: iso });
 	}
 
+	/** A calendar chosen in the picker is a calendar the reader KEEPS, so it is
+	 *  remembered as well as committed. A `?c=` they merely arrived on is not —
+	 *  `calendar-pref.ts` holds that argument. */
+	function choose(id: string) {
+		rememberTerritory(id);
+		commit({ c: id });
+	}
+
+	/**
+	 * The remembered calendar, applied ONCE, on arrival, and only where the
+	 * address does not already name one.
+	 *
+	 * It writes the territory into `?c=` rather than holding it beside the URL,
+	 * because this page's whole contract is that the address reproduces what is
+	 * on the screen — a page showing Brazil's calendar under a bare
+	 * `/calendarium` would hand out links that show the sender Brazil and the
+	 * recipient Rome. `commit` replaces the history entry, so the page the
+	 * reader arrived from is still one Back press away.
+	 *
+	 * `onMount` and not `$effect`: this must happen on arrival and never again,
+	 * and an effect over `territory` would fight the reader every time they
+	 * chose the general calendar back.
+	 */
+	onMount(() => {
+		if (page.url.searchParams.has('c')) return;
+		const saved = storedTerritory();
+		if (saved && saved !== 'general' && TERRITORY_CALENDARS[saved]) commit({ c: saved });
+	});
+
+	/**
+	 * The date field, which is a native `<input type="date">` wearing the
+	 * site's clothes — see the style rules. It is held here for one reason: the
+	 * input is transparent, so the platform's own picker indicator is invisible
+	 * with it, and a click anywhere on the field has to open the picker.
+	 *
+	 * `showPicker` THROWS rather than answering falsely where it is unsupported
+	 * or refused without a user gesture, which is why the call is wrapped and
+	 * the failure is silent. Nothing is lost by it: the same click focuses the
+	 * field, the field takes typing, and the month below lists every day.
+	 */
+	let dateEl: HTMLInputElement | undefined = $state();
+	function openPicker() {
+		try {
+			dateEl?.showPicker();
+		} catch {
+			/* unsupported, or refused — the field still takes typing */
+		}
+	}
+
 	let lang = $derived(i18n.lang);
+	let selectedIso = $derived(formatIsoDate(selected));
+	let today = $derived(localToday());
 </script>
 
 <svelte:head>
@@ -174,19 +243,43 @@
 		<p class="page-tagline">{t('calendar.tagline')}</p>
 
 		<div class="controls">
-			<input
-				class="date-field"
-				type="date"
-				aria-label={t('calendar.date')}
-				title={t('calendar.date')}
-				value={formatIsoDate(selected)}
-				oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
-			/>
-			<CalendarMenu value={territory} {lang} onchoose={(id) => commit({ c: id })} />
+			<!--
+				THE FIELD PRINTS THE DATE THE WAY THE PAGE WRITES DATES, which a
+				native date input cannot be made to do: its format comes from the
+				operating system's locale rather than from the interface language,
+				so a reader on an American machine read `09/17/2026` at the top of
+				a page that says "17 de setembro de 2026" everywhere else. The
+				input is still the control — it keeps the value, the keyboard, the
+				validation and the platform's own calendar popup — and the span
+				over it is what is read. The card below no longer prints the date,
+				because THIS is where the date is now.
+			-->
+			<div class="date-field">
+				<input
+					type="date"
+					bind:this={dateEl}
+					aria-label={t('calendar.date')}
+					value={selectedIso}
+					oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
+					onclick={openPicker}
+				/>
+				<span class="date-face" aria-hidden="true">
+					<Icon name="calendar" />
+					{formatPromulgated(selectedIso, lang)}
+				</span>
+			</div>
+			<!-- Beside the date and not down beside the month's arrows, because it
+			     is the same control as the date field: both answer WHICH DAY, and
+			     the one that answers "the one I am living in" belongs with them.
+			     Down there it read as a third month control. -->
+			<button type="button" class="menu-trigger today-btn" onclick={() => go(formatIsoDate(today))}>
+				{t('calendar.today')}
+			</button>
+			<CalendarMenu value={territory} {lang} onchoose={choose} />
 		</div>
 
 		{#if day}
-			<LiturgicalDayCard {day} heading="h2" fixedHeight />
+			<LiturgicalDayCard {day} heading="h2" showDate={false} />
 		{:else}
 			<!-- Only reachable for a date outside any year this can build, which
 			     the date input makes hard to ask for. Saying so is better than
@@ -194,7 +287,7 @@
 			<p>{t('calendar.noSuchDay')}</p>
 		{/if}
 
-		<CalendarMonth {selected} today={localToday()} {options} {lang} onpick={go} />
+		<CalendarMonth {selected} {today} {options} {lang} onpick={go} />
 
 		<CalendarPrimer />
 	</div>
@@ -219,13 +312,17 @@
 	 * anyone remembering it is here.
 	 */
 	/*
-	 * ONE ROW, TWO CONTROLS, NO CAPTIONS. Each control stood in its own column
+	 * ONE ROW, EVERY CONTROL, NO CAPTIONS. Each control stood in its own column
 	 * under a `.label-micro` heading — DATE over a date field, CALENDAR over a
 	 * button already carrying a globe and the calendar's name — which is two
 	 * groups of chrome, twice the height, to say what both controls say
-	 * themselves. A date field is the most self-describing control on the
-	 * platform; the caption it had is its `aria-label` and its `title` now, so
-	 * nothing was taken from a screen reader, only from the screen.
+	 * themselves. The caption they had is the `aria-label` now, so nothing was
+	 * taken from a screen reader, only from the screen.
+	 *
+	 * Today JOINED THEM from the month listing's header (2026-09-05), where it
+	 * sat beside the two month arrows and was read as a third month control.
+	 * It is not: it names a DAY, which is what the two controls beside it here
+	 * do.
 	 */
 	.controls {
 		display: flex;
@@ -238,9 +335,8 @@
 		margin: 0.9rem 0 1.1rem;
 		font-family: var(--font-sans);
 	}
-	/* Both controls, one height, smaller than the chrome's default — this row
-	   is a page's own furniture rather than the site header's, and the pair
-	   sits directly above a card whose first line is a date. */
+	/* Every control, one height, smaller than the chrome's default — this row
+	   is a page's own furniture rather than the site header's. */
 	.controls :global(.menu-trigger) {
 		height: 2rem;
 		font-size: 0.8rem;
@@ -257,8 +353,9 @@
 	 * heights of the BODY tall. The family and size are named separately.
 	 */
 	.date-field {
+		position: relative;
+		display: inline-flex;
 		height: 2rem;
-		padding-inline: 0.5rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
@@ -269,5 +366,62 @@
 	}
 	.date-field:hover {
 		border-color: var(--color-accent);
+	}
+	/*
+	 * THE INPUT IS THE CONTROL AND THE SPAN IS THE FACE. The input covers the
+	 * field exactly and is transparent; the span sits under it in the flow and
+	 * is what gives the field its width, so the box is as wide as the date it
+	 * prints in whatever language, and never wider.
+	 *
+	 * `opacity`, and NOT `visibility`, `display` or a clip: those three take a
+	 * control out of the focus order on one engine or another, and the whole
+	 * arrangement rests on this remaining a real, focusable date input with the
+	 * platform's own keyboard behaviour intact.
+	 */
+	.date-field input {
+		position: absolute;
+		inset: 0;
+		inline-size: 100%;
+		block-size: 100%;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--color-text);
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		opacity: 0;
+		cursor: pointer;
+	}
+	/*
+	 * A KEYBOARD READER GETS THE REAL FIELD BACK. Typing into segments that
+	 * cannot be seen is the one thing this arrangement could genuinely break,
+	 * so keyboard focus — and only keyboard focus, which is what
+	 * `:focus-visible` means — swaps the face for the input underneath it. The
+	 * face keeps its box (`visibility`, not `display`), so nothing on the row
+	 * moves as it goes.
+	 */
+	.date-field:has(input:focus-visible) {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 1px;
+	}
+	.date-field input:focus-visible {
+		padding-inline: 0.5rem;
+		opacity: 1;
+		cursor: auto;
+	}
+	.date-field:has(input:focus-visible) .date-face {
+		visibility: hidden;
+	}
+	.date-face {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding-inline: 0.5rem;
+		/* The input is the click target; the face must never intercept one. */
+		pointer-events: none;
+		white-space: nowrap;
+	}
+	.today-btn {
+		font-size: 0.8rem;
 	}
 </style>

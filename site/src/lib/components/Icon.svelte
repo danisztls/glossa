@@ -95,6 +95,12 @@
 	// drawing.
 	import Maximize from '@lucide/svelte/icons/maximize';
 	import Minimize from '@lucide/svelte/icons/minimize';
+	// A month's grid under a bound edge — the mark on `/calendarium`'s date
+	// field, which needs one because the field's own picker indicator is the
+	// platform's drawing and the field is wearing the site's clothes instead.
+	// `calendar-days` dots the grid with a week's worth of days and closes up
+	// at 1em; the plain frame reads at that size.
+	import Calendar from '@lucide/svelte/icons/calendar';
 
 	const ICONS = {
 		search: Search,
@@ -126,7 +132,8 @@
 		'arrow-down': ArrowDown,
 		'notebook-pen': NotebookPen,
 		maximize: Maximize,
-		minimize: Minimize
+		minimize: Minimize,
+		calendar: Calendar
 	};
 
 	export type IconName = keyof typeof ICONS;

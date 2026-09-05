@@ -30,27 +30,37 @@
 	 * The week survives as a rule above each Sunday, which is the one thing
 	 * the grid said that a list does not say by itself.
 	 *
-	 * ## Paging MOVES THE SELECTED DAY
+	 * ## PAGING DOES NOT MOVE THE SELECTED DAY
 	 *
-	 * There is no separate "month being viewed". The month shown is the month
-	 * of `selected`, and the arrows move `selected` by a month — so the page
-	 * keeps ONE piece of state, which lives in the URL (`?d=`), and the
-	 * address in the bar always reproduces exactly what is on the screen.
+	 * There are two pieces of state here and there were one: the chosen day,
+	 * which lives in the URL (`?d=`), and the month being LOOKED AT, which
+	 * lives in `view` and belongs to nobody but this component.
 	 *
-	 * The alternative — a view month held in the component, independent of the
-	 * selected day — is what a mail client's calendar does, and it is wrong
-	 * here: this page's whole content below the list is one day, so a reader
-	 * paging to March and seeing February's feast underneath has been shown
-	 * two different months at once. Paging moves the day.
+	 * The arrows moved the chosen day by a month until 2026-09-05, on the
+	 * argument that one piece of state is better than two and that the address
+	 * bar should reproduce the whole screen. What that costs is the thing a
+	 * reader actually does with a calendar: LOOKING. Pressing forward twice to
+	 * see when Advent starts silently threw away the day they were reading
+	 * about, replaced the card above with a day they never chose, and — since
+	 * the day of the month is clamped into the new month — could not be undone
+	 * by pressing back twice. Turning a page is not choosing.
 	 *
-	 * THE DAY OF THE MONTH IS KEPT AND CLAMPED. Stepping from 31 March to
-	 * February lands on the 28th (or the 29th), not on 3 March, and stepping
-	 * on lands on 30 April rather than skipping the month. The clamp is not
-	 * symmetric — going back to February from the 31st and forward again gives
-	 * the 28th, not the 31st — which is the ordinary behaviour of every date
+	 * `view` FOLLOWS THE CHOSEN DAY, one way only. Pick a day (a row, the date
+	 * field, Today, a pasted `?d=`) and the listing goes to that day's month;
+	 * page the listing and the chosen day stays where it is. So the two can
+	 * only disagree while the reader is browsing, which is the state the
+	 * disagreement exists to allow, and any choice at all resolves it.
+	 *
+	 * THE DAY OF THE MONTH IS KEPT AND CLAMPED — by PageUp/PageDown, which is
+	 * the one control that still moves the day by a month. Stepping from 31
+	 * March to February lands on the 28th (or the 29th), not on 3 March, and
+	 * stepping on lands on 30 April rather than skipping the month. The clamp
+	 * is not symmetric — going back to February from the 31st and forward
+	 * again gives the 28th — which is the ordinary behaviour of every date
 	 * picker and the only one that does not need the component to remember
 	 * where the reader started.
 	 */
+	import { untrack } from 'svelte';
 	import {
 		celebrationName,
 		formatIsoDate,
@@ -68,14 +78,15 @@
 	import Icon from './Icon.svelte';
 
 	interface Props {
-		/** The chosen day. Its month is the month listed. */
+		/** The chosen day. The listing goes to its month whenever it moves. */
 		selected: DayNumber;
 		/** Today in the reader's own zone, marked in the list. */
 		today: DayNumber;
 		options: CalendarOptions;
 		/** The interface language, for the month and weekday names. */
 		lang: string;
-		/** Called with an ISO date whenever the reader picks or pages. */
+		/** Called with an ISO date whenever the reader picks a day. Paging does
+		 *  not call it — that is the whole of §Paging above. */
 		onpick: (iso: string) => void;
 	}
 
@@ -86,7 +97,23 @@
 	 *  see `pick` below. */
 	let refocus: string | undefined = $state();
 
-	const ymd = $derived(fromDayNumber(selected));
+	/**
+	 * The month on screen. Seeded from the day the component opens on, moved
+	 * by the arrows, and pulled back to the chosen day whenever that changes.
+	 *
+	 * `untrack` around the write is what keeps the effect from being its own
+	 * dependency: it reads `view` to decide whether anything has to change,
+	 * and an effect that reads what it writes re-runs itself. The guard also
+	 * means paging inside one month costs no re-render.
+	 */
+	const opened = untrack(() => fromDayNumber(selected));
+	let view = $state({ year: opened.year, month: opened.month });
+	$effect(() => {
+		const s = fromDayNumber(selected);
+		untrack(() => {
+			if (s.year !== view.year || s.month !== view.month) view = { year: s.year, month: s.month };
+		});
+	});
 
 	/** How many days a month has, without a table: the first of the next
 	 *  month minus the first of this one. Handles February and December. */
@@ -97,16 +124,27 @@
 		);
 	}
 
-	/** The month `delta` months from the one shown. */
-	function monthOffset(delta: number): { year: number; month: number } {
-		const months = ymd.year * 12 + (ymd.month - 1) + delta;
+	/** The month `delta` months from `(year, month)`. */
+	function monthOffset(
+		year: number,
+		month: number,
+		delta: number
+	): { year: number; month: number } {
+		const months = year * 12 + (month - 1) + delta;
 		return { year: Math.floor(months / 12), month: (((months % 12) + 12) % 12) + 1 };
 	}
 
-	/** The same day-of-month `delta` months away, clamped into the month. */
-	function shiftMonths(delta: number): DayNumber {
-		const { year, month } = monthOffset(delta);
-		return toDayNumber(year, month, Math.min(ymd.day, monthLength(year, month)));
+	/** The same day-of-month `delta` months from `from`, clamped into the
+	 *  month it lands in. PageUp/PageDown is the only caller. */
+	function shiftMonths(from: DayNumber, delta: number): DayNumber {
+		const here = fromDayNumber(from);
+		const { year, month } = monthOffset(here.year, here.month, delta);
+		return toDayNumber(year, month, Math.min(here.day, monthLength(year, month)));
+	}
+
+	/** Turn a page of the listing. The chosen day is untouched — §Paging. */
+	function turn(delta: 1 | -1) {
+		view = monthOffset(view.year, view.month, delta);
 	}
 
 	/** The locale to name the month and the weekdays in — `dates.ts` holds the
@@ -118,7 +156,7 @@
 			month: 'long',
 			year: 'numeric',
 			timeZone: 'UTC'
-		}).format(new Date(Date.UTC(ymd.year, ymd.month - 1, 1)))
+		}).format(new Date(Date.UTC(view.year, view.month - 1, 1)))
 	);
 
 	const weekdayFormat = $derived(
@@ -146,17 +184,18 @@
 	 * was a real one — the year listing before it dropped the plain weekdays,
 	 * and a reader could look a date up in it and simply not find it. What
 	 * makes the filter safe is the second half of the rule rather than the
-	 * first: `selected` is always a row, so the date a reader asks for is
-	 * always in the list, marked, whether or not anything is appointed on it.
-	 * Nothing can be looked up and be missing. What is dropped is only the
-	 * dozen-odd rows a month that said "Féria" beside an empty name — a third
-	 * of the list, carrying nothing, between the reader and the days that do.
+	 * first: `selected` is always a row of ITS OWN month, so the date a reader
+	 * asks for is always in the list they are sent to, marked, whether or not
+	 * anything is appointed on it. Nothing can be looked up and be missing.
+	 * What is dropped is only the dozen-odd rows a month that said "Féria"
+	 * beside an empty name — a third of the list, carrying nothing, between the
+	 * reader and the days that do.
 	 *
 	 * Today is kept for the same reason `Hoje` exists: it is the one row a
 	 * reader navigates back to, and the accented circle is the landmark they
 	 * find it by.
 	 *
-	 * Taking `(year, month)` rather than reading `ymd` is what lets the arrow
+	 * Taking `(year, month)` rather than reading `view` is what lets the arrow
 	 * keys walk off one end of a month into the next — `step` below builds the
 	 * neighbour's list with it.
 	 */
@@ -183,7 +222,7 @@
 			}));
 	}
 
-	const days = $derived(daysOf(ymd.year, ymd.month));
+	const days = $derived(daysOf(view.year, view.month));
 
 	/**
 	 * Every way of choosing a day goes through here.
@@ -196,10 +235,6 @@
 	 * effect puts the keyboard there once the new rows exist. `keepFocus` on
 	 * the `goto` is what stops SvelteKit throwing focus to `<body>` in
 	 * between.
-	 *
-	 * Nothing here compensates for the page moving, because nothing above this
-	 * list changes size when the day changes — the card holds a fixed height
-	 * for exactly that reason.
 	 */
 	function pick(target: DayNumber, focusRow = false) {
 		const iso = formatIsoDate(target);
@@ -208,7 +243,7 @@
 	}
 
 	/**
-	 * One row up or down, ACROSS the month boundary.
+	 * One row up or down from `from`, ACROSS the month boundary.
 	 *
 	 * A row and a day stopped being the same thing when the empty days left
 	 * the list, and the arrows follow the rows: what the reader sees is a
@@ -221,11 +256,11 @@
 	 * — its last if we walked backwards off the top, its first if forwards off
 	 * the bottom — so the arrows never dead-end at the edge of a month.
 	 */
-	function step(delta: 1 | -1): DayNumber {
-		const here = days.findIndex((d) => d.n === selected);
+	function step(from: DayNumber, delta: 1 | -1): DayNumber {
+		const here = days.findIndex((d) => d.n === from);
 		const next = days[here + delta];
 		if (next) return next.n;
-		const { year, month } = monthOffset(delta);
+		const { year, month } = monthOffset(view.year, view.month, delta);
 		const over = daysOf(year, month);
 		return (delta > 0 ? over[0] : over[over.length - 1]).n;
 	}
@@ -240,13 +275,18 @@
 	 * a month is PageUp/PageDown, and Home/End are the ends of the month's
 	 * list. Left and right are deliberately untouched: in a vertical list they
 	 * mean nothing, and binding them would take them away from the browser.
+	 *
+	 * IT MOVES FROM THE ROW, not from `selected`, which the arrows on screen
+	 * no longer keep in the listed month (§Paging). A reader who paged to
+	 * March and tabbed into the list is standing on a March row; stepping from
+	 * a chosen day in February would jump them somewhere they are not looking.
 	 */
-	function onRowKeydown(event: KeyboardEvent) {
+	function onRowKeydown(event: KeyboardEvent, from: DayNumber) {
 		const target = {
-			ArrowUp: () => step(-1),
-			ArrowDown: () => step(1),
-			PageUp: () => shiftMonths(-1),
-			PageDown: () => shiftMonths(1),
+			ArrowUp: () => step(from, -1),
+			ArrowDown: () => step(from, 1),
+			PageUp: () => shiftMonths(from, -1),
+			PageDown: () => shiftMonths(from, 1),
 			Home: () => days[0].n,
 			End: () => days[days.length - 1].n
 		}[event.key];
@@ -270,7 +310,7 @@
 			class="menu-trigger step-btn"
 			aria-label={t('calendar.previousMonth')}
 			title={t('calendar.previousMonth')}
-			onclick={() => pick(shiftMonths(-1))}
+			onclick={() => turn(-1)}
 		>
 			<Icon name="arrow-left" />
 		</button>
@@ -282,12 +322,9 @@
 			class="menu-trigger step-btn"
 			aria-label={t('calendar.nextMonth')}
 			title={t('calendar.nextMonth')}
-			onclick={() => pick(shiftMonths(1))}
+			onclick={() => turn(1)}
 		>
 			<Icon name="arrow-right" />
-		</button>
-		<button type="button" class="menu-trigger wide today-btn" onclick={() => pick(today)}>
-			{t('calendar.today')}
 		</button>
 	</header>
 
@@ -312,7 +349,7 @@
 						e.preventDefault();
 						pick(d.n);
 					}}
-					onkeydown={onRowKeydown}
+					onkeydown={(e) => onRowKeydown(e, d.n)}
 				>
 					<span class="date">
 						<span class="num">{d.day}</span>
@@ -343,10 +380,14 @@
 	}
 
 	/*
-	 * The month's name between its two arrows, with Today pushed to the end —
-	 * the arrangement every calendar uses, and the reason it is not three
-	 * buttons in a row is that the name is the thing being changed and belongs
-	 * between the controls that change it.
+	 * The month's name between its two arrows — the arrangement every calendar
+	 * uses, and the reason it is not three buttons in a row is that the name is
+	 * the thing being changed and belongs between the controls that change it.
+	 *
+	 * Today used to sit at the end of this row and moved up to the page's
+	 * control row (2026-09-05): beside two arrows that turn a page it read as a
+	 * third month control, and it is not one — it names a DAY, like the date
+	 * field it now stands next to.
 	 */
 	header {
 		display: flex;
@@ -363,10 +404,6 @@
 		min-inline-size: 10rem;
 		text-align: center;
 	}
-	.today-btn {
-		margin-inline-start: auto;
-		font-size: 0.85rem;
-	}
 	/* An arrow is a picture of a direction, not a character, so nothing flips
 	   it under `dir="rtl"` — `UnitNav`'s docblock has the argument. The row
 	   mirrors on its own; this turns the mark to point the same way. */
@@ -378,10 +415,6 @@
 	 * THE LIST IS AS LONG AS THE MONTH IS, and it is the LAST thing on the
 	 * page for that reason: a month of twelve rows and a month of twenty-nine
 	 * leave the page different heights, and nothing is below it to be moved.
-	 * What must not move is this list, and what would have moved it is the
-	 * day's card above — which is the box that is held to a fixed height
-	 * (`LiturgicalDayCard`), because that is the one whose size depends on
-	 * something the reader changes without meaning to change the layout.
 	 */
 	ol {
 		list-style: none;
