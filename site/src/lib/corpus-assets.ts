@@ -54,6 +54,7 @@ export interface ContentManifestEntry {
 		| 'plate-image'
 		| 'plates'
 		| 'prayer-collection'
+		| 'prayer-commentary'
 		| 'social-doctrine-appendix'
 		| 'social-doctrine-chunk'
 		| 'social-doctrine-structure'

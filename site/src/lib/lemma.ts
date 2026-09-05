@@ -67,6 +67,30 @@ export const ELIDED = /\.\.\.|…|\bec\.|\betc\.|&c\./u;
  *  and two definitions of "comparable" would drift within a week. */
 export const WORD = /[\p{L}\p{N}]/u;
 
+/**
+ * Ligatures, expanded — the one thing normalisation cannot do for us.
+ *
+ * `NFD` decomposes a precomposed accent and does not touch `æ` or `œ`, which
+ * are letters in their own right rather than a base plus a mark. That was
+ * invisible while the annotated works were English and Portuguese, and became
+ * a defect the day a Latin apparatus arrived: the curated Ave ends `in hora
+ * mortis nostræ` and the Catechism prints `nostrae`, so the two folded
+ * differently and the lemma stopped one word short of its own end.
+ *
+ * SEVERAL CHARACTERS FOR ONE, WHICH IS WHY `at` IS PUSHED PER PIECE. Every
+ * comparable character still maps back to the source character it came from,
+ * so `æ` at index 12 answers 12 twice and a span containing it still covers
+ * the whole letter. `ß` is deliberately absent: German spells it the same way
+ * on both sides of every comparison here, and expanding it would be a guess
+ * about a text nobody has measured.
+ */
+const LIGATURES: Record<string, string> = {
+	æ: 'ae',
+	Œ: 'OE',
+	œ: 'oe',
+	Æ: 'AE'
+};
+
 export interface Folded {
 	/** The comparable text: letters and digits, lowercased and stripped of
 	 *  diacritics, with everything else gone. */
@@ -105,10 +129,12 @@ export function fold(text: string): Folded {
 	let i = 0;
 	for (const ch of text.normalize('NFC')) {
 		const c = ch === '’' || ch === '‘' || ch === '‛' ? "'" : ch;
-		const base = c.normalize('NFD')[0] ?? c;
-		if (WORD.test(base)) {
-			out += base.toLowerCase();
-			at.push(i);
+		for (const piece of LIGATURES[c] ?? c) {
+			const base = piece.normalize('NFD')[0] ?? piece;
+			if (WORD.test(base)) {
+				out += base.toLowerCase();
+				at.push(i);
+			}
 		}
 		i += ch.length;
 	}

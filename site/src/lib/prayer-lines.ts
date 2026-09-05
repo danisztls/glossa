@@ -135,3 +135,20 @@ export function pairPrayerLines(
 		right: { n: i, lines: [right[i]] }
 	}));
 }
+
+/**
+ * A line as the plain string a commentary anchor is an offset into, or
+ * undefined where it is not one.
+ *
+ * EVERY PRAYER LINE IN THE CORPUS IS PLAIN TEXT, and the schema is why: a
+ * prayer block's `html` carries `<br>` and nothing else (types.ts,
+ * `PrayerBlock.html`), so `splitLines` hands back runs with no markup left in
+ * them. This still asks rather than asserting, because the day a source
+ * prints an italic inside a prayer the honest answer is to set that line with
+ * no marks in it — its notes fall to the trailing mark and nothing is lost —
+ * rather than to anchor an offset into a string the reader is not seeing.
+ */
+export function plainLine(line: PrayerLine): string | undefined {
+	if (!line.nodes.every((node) => node.kind === 'text')) return undefined;
+	return line.nodes.map((node) => (node.kind === 'text' ? node.text : '')).join('');
+}

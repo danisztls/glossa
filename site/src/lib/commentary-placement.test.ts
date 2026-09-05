@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { placeCommentary, type CommentaryEntry } from './commentary-placement';
+import {
+	placeCommentary,
+	placePrayerCommentary,
+	type CommentaryEntry
+} from './commentary-placement';
 import type { CommentaryNote, WorkManifest } from './types';
 
 const note = (text: string, lemma?: string): CommentaryNote =>
@@ -72,5 +76,75 @@ describe('placeCommentary', () => {
 			const { placed, inline } = placeCommentary(TEXT, two);
 			for (const p of inline) expect(placed[p.at].work.id).toBe(p.work.id);
 		});
+	});
+});
+
+// The English Ave, one line per element — `prayer.common.en`'s own setting.
+const AVE = [
+	'Hail, Mary, full of grace,',
+	'the Lord is with thee.',
+	'Blessed art thou among women',
+	'and blessed is the fruit of thy womb, Jesus.',
+	'Holy Mary, Mother of God,',
+	'pray for us sinners,',
+	'now and at the hour of our death.',
+	'Amen.'
+];
+
+describe('placePrayerCommentary', () => {
+	it('files each quoted run under the line that carries it', () => {
+		const { byLine } = placePrayerCommentary(AVE, [
+			entry('commentary.preces.en', [note('a', 'Hail, Mary'), note('b', 'Holy Mary')])
+		]);
+		expect(byLine.map((marks) => marks.length)).toEqual([1, 0, 0, 0, 1, 0, 0, 0]);
+	});
+
+	// ONE NOTE, TWO RUNS, ONE DAGGER. The Catechism's `Full of grace, the Lord
+	// is with thee` crosses the Ave's first line break: both lines light the
+	// words they print, and only the second takes the mark — otherwise one note
+	// raises two marks opening the same card.
+	it('lights every line a quotation covers and marks only the last', () => {
+		const { byLine, placed } = placePrayerCommentary(AVE, [
+			entry('commentary.preces.en', [note('a', 'Full of grace, the Lord is with thee')])
+		]);
+		expect(byLine[0].map((m) => m.showMark)).toEqual([false]);
+		expect(byLine[1].map((m) => m.showMark)).toEqual([true]);
+		expect(byLine[0][0].at).toBe(byLine[1][0].at);
+		expect(placed).toHaveLength(1);
+	});
+
+	// The same leak `placeCommentary`'s own test pins, one unit space over: a
+	// mark must carry its OWN anchor's notes and not the work's whole apparatus
+	// on the prayer. A superset renders perfectly well, which is why it went
+	// unnoticed for a day the first time.
+	it('partitions every note across the marks, none twice and none nowhere', () => {
+		const notes = [note('a', 'Hail, Mary'), note('b'), note('c', 'Amen'), note('d', 'Elohim')];
+		const { placed } = placePrayerCommentary(AVE, [entry('commentary.preces.en', notes)]);
+		const seen = placed.flatMap((p) => p.notes);
+		expect(seen).toHaveLength(notes.length);
+		expect(new Set(seen).size).toBe(notes.length);
+	});
+
+	// `placed` is flat across works and its index is the mark's identity, so a
+	// run filed under a line must point back at the right placement — the one
+	// thing a per-line array could get wrong that a flat one cannot.
+	it('keeps `at` pointing at the placement it belongs to', () => {
+		const { placed, byLine } = placePrayerCommentary(AVE, [
+			entry('commentary.preces.en', [note('a', 'Hail, Mary')]),
+			entry('commentary.other.en', [note('b', 'Amen')])
+		]);
+		for (const mark of byLine.flat()) {
+			expect(placed[mark.at].notes).toBe(mark.anchor.notes);
+		}
+	});
+
+	// A prayer has no end until its last line, so unplaced notes cannot hang
+	// off the line that happened to come last — the caller renders `trailing`
+	// after the whole text, and it is empty when every headword landed.
+	it('adds no trailing mark when every headword is in the text', () => {
+		const { trailing } = placePrayerCommentary(AVE, [
+			entry('commentary.preces.en', [note('a', 'Hail, Mary'), note('b', 'Amen')])
+		]);
+		expect(trailing).toEqual([]);
 	});
 });

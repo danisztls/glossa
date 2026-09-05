@@ -264,6 +264,18 @@ STAGES: tuple[Stage, ...] = (
         outputs=("prayer.*",),
         needs=("prayers-verify",),
     ),
+    # The Catechism and the Compendium read as an apparatus to the prayers.
+    # It reads three stages' output -- `raw/ccc-*` for the lemma boundaries
+    # 2676 loses in `build/`, the Compendium's parsed questions, and the
+    # projected prayers a lemma has to quote -- so it is the one stage
+    # besides `haydock` with a real `needs`.
+    Stage(
+        "prayers-glossa",
+        "prayers",
+        "prayers_glossa.py",
+        outputs=("commentary.preces.*",),
+        needs=("prayers", "ccc", "compendium"),
+    ),
     Stage("cpdv", "bible", "bible/cpdv.py", ("--offline",), ("bible.cpdv.*",)),
     Stage(
         "clementina",

@@ -27,7 +27,7 @@
  * fetch is issued — the posture `corpus.ts` already takes for documents.
  */
 
-import { getCommentaryChapter } from './corpus';
+import { getCommentaryChapter, getPrayerCommentary } from './corpus';
 import { USE_REAL_CORPUS } from './corpus-index';
 import type { CommentaryNote } from './types';
 
@@ -115,4 +115,46 @@ export async function loadChapter(workId: string, osis: string, chapter: number)
 		notes = new Map();
 	}
 	store.byChapter = { ...store.byChapter, [key]: notes };
+}
+
+// --- A commentary on the prayers ------------------------------------------
+//
+// THE SAME SHAPE ONE FILE DOWN. `commentary.preces.{lang}` ships its whole
+// apparatus in a single file (types.ts, `PrayerCommentaryManifest`), so the
+// key is the work and not a work-plus-chapter: one fetch holds every note the
+// reader can reach in that language. Everything above still applies -- nothing
+// is fetched until `apparatus-prefs.svelte.ts` says the work is on, the
+// getter is synchronous so a caller inside a `$derived` registers its
+// dependency in the same breath as it asks, and a failure is recorded rather
+// than retried on every re-run.
+
+const NO_NOTES: CommentaryNote[] = [];
+
+const prayerStore = $state<{ byWork: Record<string, Map<string, CommentaryNote[]>> }>({
+	byWork: {}
+});
+
+const prayerStarted = new Set<string>();
+
+/** One prayer's notes from one commentary, starting the fetch on the first
+ *  ask. Empty is the ordinary answer for a prayer this work does not reach:
+ *  the apparatus covers two prayers of thirty-five, which is a fact about the
+ *  sources and not a gap. */
+export function prayerNotesFor(workId: string, slug: string): CommentaryNote[] {
+	const loaded = prayerStore.byWork[workId];
+	if (loaded) return loaded.get(slug) ?? NO_NOTES;
+	if (USE_REAL_CORPUS && !prayerStarted.has(workId)) void loadPrayerCommentary(workId);
+	return NO_NOTES;
+}
+
+export async function loadPrayerCommentary(workId: string): Promise<void> {
+	if (!USE_REAL_CORPUS || prayerStarted.has(workId)) return;
+	prayerStarted.add(workId);
+	let notes: Map<string, CommentaryNote[]>;
+	try {
+		notes = await getPrayerCommentary(workId);
+	} catch {
+		notes = new Map();
+	}
+	prayerStore.byWork = { ...prayerStore.byWork, [workId]: notes };
 }

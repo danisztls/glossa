@@ -1012,6 +1012,12 @@ def write_output(
         "language": "en",
         "edition": "Revised edition, 1859",
         "annotates": ANNOTATES_WORK_ID,
+        # WHICH UNIT SPACE ITS NOTES ADDRESS. There are two since
+        # `commentary.preces.*` (2026-09-04) -- a Bible verse and a prayer --
+        # and the field is written rather than inferred from the annotated
+        # work's type so that a consumer can branch on it before reading a
+        # second manifest. docs/corpus-schema.md §Commentary.
+        "addresses": "bible",
         # HAYDOCK'S CATENA INCLUDES CHALLONER'S OWN NOTES, and a reader with
         # both apparatuses on sees most of one of them twice. Measured
         # 2026-09-01 over the built corpus: 1,399 of the Douay-Rheims's 1,916

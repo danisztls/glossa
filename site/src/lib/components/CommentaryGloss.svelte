@@ -67,6 +67,8 @@
 	import type { RefSegment } from '$lib/refs-grammar';
 	import { linkifyInline, parseInlineMarked, plainTextNodes } from '$lib/inline-html';
 	import { refHref } from '$lib/refs';
+	import { getWork } from '$lib/corpus';
+	import { hrefFor as hrefForAddress } from '$lib/address';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { COMMENTARY_MARKER, NoteCard, NoteDialog, overflowsCard } from '$lib/sidenotes.svelte';
@@ -97,9 +99,14 @@
 		    the mark sits at the end of. It is what lets `linkifyProse` read
 		    Haydock's `v. 12` as a verse of this chapter; see
 		    `RefsOpts.sameChapter`, and note that nothing in the prose could
-		    have said which chapter it meant. */
-		osis: string;
-		chapter: number;
+		    have said which chapter it meant.
+
+		    ABSENT ON A PRAYER, and absent rather than empty: a prayer is not a
+		    chapter, so there is no verse for a bare `v. 12` to belong to, and
+		    handing the grammar a book of `''` at chapter 0 would be asking it
+		    to resolve against an address that does not exist. */
+		osis?: string;
+		chapter?: number;
 		/** Called when this mark's panel opens or closes, so the verse can light
 		    the words these notes quote while it is. `Sidenote`'s, and for its
 		    reason. Absent on the TRAILING mark, whose notes have no words in the
@@ -109,6 +116,12 @@
 	}
 
 	let { notes, lang, work, title, osis, chapter, onopen }: Props = $props();
+
+	/** The chapter a bare verse number in a note belongs to, where there is
+	 *  one. See `osis`. */
+	const sameChapter = $derived(
+		osis !== undefined && chapter !== undefined ? { osis, chapter } : undefined
+	);
 
 	const label = $derived(`${t('apparatus.commentary')}: ${title}`);
 
@@ -143,6 +156,32 @@
 		onopen?.(false);
 	});
 
+	/**
+	 * A note that IS a paragraph of another work, named and linked.
+	 *
+	 * WHERE `attribution` NAMES A PERSON, THIS NAMES AN ADDRESS, and the two
+	 * are alternatives rather than a pair: a catena's value is that the
+	 * tradition's voices are named, and this apparatus's value is that every
+	 * remark can be followed back to the paragraph it is. `commentary.preces.*`
+	 * draws on two books at once, so the label cannot come from the manifest.
+	 *
+	 * The siglum is the work's OWN short title out of the corpus, never a
+	 * literal: `ccc.{lang}` is headed `CCC` in every language and the
+	 * Compendium is headed in its own (`Compêndio`, `Lilla katekesen`).
+	 */
+	function locusWork(locus: NonNullable<CommentaryNote['locus']>): string {
+		return locus.work === 'ccc' ? `ccc.${lang}` : `compendium.${lang}`;
+	}
+
+	function locusLabel(locus: NonNullable<CommentaryNote['locus']>): string {
+		const source = getWork(locusWork(locus));
+		return `${source?.short_title || source?.title || ''} ${locus.n}`.trim();
+	}
+
+	function locusHref(locus: NonNullable<CommentaryNote['locus']>): string {
+		return hrefForAddress({ kind: locus.work, n: locus.n });
+	}
+
 	function hrefFor(seg: RefSegment): string | undefined {
 		return refHref(seg, { bibleWorkId: content.workIdFor('bible'), lang, work });
 	}
@@ -162,9 +201,7 @@
 		const source = note.text_marked
 			? parseInlineMarked(note.text_marked)
 			: plainTextNodes(note.text);
-		return linkifyInline(source, (text: string) =>
-			linkifyProse(text, { lang, work, sameChapter: { osis, chapter } })
-		);
+		return linkifyInline(source, (text: string) => linkifyProse(text, { lang, work, sameChapter }));
 	}
 </script>
 
@@ -211,6 +248,8 @@
 					{#snippet marker(m: string)}<sup class="commentary-submarker">{m}</sup>{/snippet}
 				</InlineNodes></span
 			>{#if note.attribution}<span class="commentary-attribution">{note.attribution}</span
+				>{:else if note.locus}<a class="commentary-attribution" href={locusHref(note.locus)}
+					>{locusLabel(note.locus)}</a
 				>{/if}{#if note.notes?.length}<ol class="commentary-subnotes">
 					{#each note.notes as sub (sub.marker)}<li value={Number(sub.marker)}>
 							{sub.text}

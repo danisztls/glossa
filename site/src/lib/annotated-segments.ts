@@ -36,6 +36,18 @@ export type Segment =
 export interface PlacedAnchor {
 	anchor: CommentaryAnchor;
 	at: number;
+	/**
+	 * Whether this run of quoted words takes the mark. Absent means yes, which
+	 * is every Bible caller: a verse is one line, so a quotation begins and ends
+	 * inside it.
+	 *
+	 * FALSE ON EVERY LINE BUT THE LAST OF A QUOTATION THE EDITION SET ACROSS A
+	 * BREAK. A printed apparatus sets its marker after the words it glosses,
+	 * once; the words themselves are marked wherever they are. So a prayer's
+	 * clause running over two lines lights both and takes one dagger, at the end
+	 * of the second — see `anchorCommentaryLines`.
+	 */
+	showMark?: boolean;
 }
 
 export function buildSegments(
@@ -78,7 +90,7 @@ export function buildSegments(
 			if (anchor.from < at) continue;
 			push(text.slice(at, anchor.from));
 			out.push({ kind: 'quoted', text: text.slice(anchor.from, anchor.to), mark });
-			out.push({ kind: 'mark', mark });
+			if (inline[next - 1].showMark !== false) out.push({ kind: 'mark', mark });
 			at = anchor.to;
 		}
 		push(text.slice(at, stop));

@@ -149,7 +149,19 @@ pipeline/scrapers/
                      them are `INDEX_FAMILIES` rows over one runner and
                      `walk_vatican_i` is the one forked walk, its
                      docstring saying why.
-  prayers.py
+  prayers.py         the VERIFIER of the curated prayers, not their parser:
+                     it reads every witness page and checks that each curated
+                     line is findable in the page it cites. Declares no
+                     outputs -- see below.
+  prayers_project.py projects `prayer.common.*` FROM `authored/prayers/`.
+                     What a prayer says is decided there and written here.
+  prayers_glossa.py  the Catechism and the Compendium read as an apparatus to
+                     the prayers -- `commentary.preces.*`, CCC 2676-2677 on
+                     the Ave and Compendium 578-598 on the Pater. Reads
+                     `raw/ccc-*` (the `<br>` boundary between one clause's
+                     gloss and the next does not survive into `build/`), the
+                     Compendium's parsed questions, and the projected prayers
+                     a lemma has to quote -- so it runs after all three.
   liturgical_calendar.py   the General Roman Calendar, fetched from GCatholic
                      as an ORACLE. Writes nothing to `build/` and produces no
                      work: the site COMPUTES the calendar and this is what
@@ -735,6 +747,39 @@ still describes how the pages are READ, which is what the verifier does.
 - **`--changed-only` fingerprints every tracked tree**, and did not until this
   landed: `shared_inputs()["corpus"]` hashed `raw/` alone, so a curated edit
   was invisible and the stage was skipped.
+
+## The prayers' glossa reads two books it already holds
+
+`prayers_glossa.py` writes `commentary.preces.{lang}` — 335 notes over fifteen
+languages, 120 of them anchored at the words they quote (2026-09-04; the
+script prints the table). CCC 2676-2677 is a printed gloss per clause of the
+Ave; the Compendium's qq. 578-598 are one answer per petition of the Pater,
+and its QUESTION quotes the petition. Rationale and the tiers that were left
+out are `docs/research/prayers-glossa.md`.
+
+- **HAYDOCK GLOSSES FOUR OF THESE PRAYERS AND IS NOT USED, because he
+  annotates a different English.** Measured against `commentary.haydock.en`:
+  37 notes over the Magnificat, Benedictus, Our Father and Hail Mary, 11 with
+  a lemma, **4** the prayer prints. His Magnificat opens "doth magnify the
+  Lord" where the appendix prints "proclaims the greatness of the Lord".
+  Same rule that keeps him off the CPDV — a lemma quotes one text.
+- **THE LEMMA IS DERIVED, NOT TRANSCRIBED, and that is one rule instead of
+  eight.** These sources mark a headword differently in every edition —
+  italics in guillemets (pt, la, it, es, mg), in curly quotes (fr), a colon
+  and no markup (en), nothing at all (de). So the lemma is the longest opening
+  run of the note that the prayer prints VERBATIM: it can store nothing the
+  annotated text does not contain, and a note glossing another wording carries
+  none. `--check` reports where that disagrees with the source's own italics,
+  and every disagreement so far is a real divergence between the two texts.
+- **`raw/` for the Catechism, `build/` for the Compendium.** CCC blocks
+  collapse `<br>` to a space by the schema's own convention, so 2676 is one
+  undifferentiated run in `build/` and the boundary between one clause's gloss
+  and the next survives only on the page. The Compendium's quotation marks
+  survive its parse, so there is nothing to recover.
+- **The quote glyphs are the edition's own**, and there are four pairs across
+  the fourteen — `“ ”`, `« »`, `,, ''`, `„ "`. A pattern that knows only the
+  English pair reports de, hu, lt and ro as quoting nothing, which is how the
+  first measurement here was wrong by four editions.
 
 **EDITORIALISING MOVED THE CORPUS TOWARD THE SOURCE, NOT AWAY.** Every
 editorial act so far undid damage done by a RENDERING rather than an editor:

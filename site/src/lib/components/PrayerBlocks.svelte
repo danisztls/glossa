@@ -30,8 +30,11 @@
 -->
 <script lang="ts">
 	import InlineText from './InlineText.svelte';
+	import CommentaryGloss from './CommentaryGloss.svelte';
 	import type { InlineNode } from '$lib/inline-html';
-	import type { PrayerLine } from '$lib/prayer-lines';
+	import { plainLine, type PrayerLine } from '$lib/prayer-lines';
+	import { buildSegments } from '$lib/annotated-segments';
+	import { placePrayerCommentary, type CommentaryEntry } from '$lib/commentary-placement';
 	import { splitDropCap } from '$lib/dropcap';
 
 	interface Props {
@@ -41,9 +44,46 @@
 		    it was handed OPEN the reading or conclude it, and the Rosary's
 		    `blocks` are its closing prayer, printed below four mystery groups. */
 		dropCap?: boolean;
+		/**
+		 * The commentaries switched on for this prayer, with their notes on it.
+		 *
+		 * RENDERED HERE AND NOT BY THE ROUTE, for `AnnotatedText`'s reason: a
+		 * mark sits at the words its note quotes, and only the component that
+		 * owns a line can cut it. Absent while comparing — two columns of a
+		 * prayer are already two texts to hold in view, and an apparatus is a
+		 * third.
+		 */
+		commentary?: CommentaryEntry[];
 	}
 
-	let { lines, dropCap = false }: Props = $props();
+	let { lines, dropCap = false, commentary }: Props = $props();
+
+	/**
+	 * The lines as the strings an anchor is an offset into, and where each
+	 * commentary's marks fall among them.
+	 *
+	 * A line that is not plain text contributes an empty string, so no lemma
+	 * can be found in it and its notes fall to the trailing mark — see
+	 * `plainLine`, which is the same refusal one layer down.
+	 */
+	const texts = $derived(lines.map((line) => plainLine(line) ?? ''));
+	const placement = $derived(placePrayerCommentary(texts, commentary));
+
+	/** Which inline commentary marks are open, by their index in `placed`. */
+	let openMarks: (boolean | undefined)[] = $state([]);
+
+	/** One line's text cut at the words its notes quote. `buildSegments` is
+	 *  `AnnotatedText`'s, handed the simplest input it has: one text piece, no
+	 *  edition lemmas (a prayer carries no footnote apparatus of its own) and
+	 *  this line's marks. */
+	function segmentsFor(line: PrayerLine) {
+		return buildSegments(
+			texts[line.n],
+			[{ text: texts[line.n] }],
+			new Map(),
+			placement.byLine[line.n] ?? []
+		);
+	}
 
 	/**
 	 * The opening of a PROSE block, split into the pieces `dropcaps.css`'s
@@ -86,6 +126,13 @@
 		// three lines tall with the label beside its shoulder and nothing wrapped
 		// around it. Three prayers in the corpus open this way (EN, FR and PT
 		// Angelus); every other opening block is prose.
+		// AND NOT TO A GLOSSED LINE. A drop cap owns the opening of a run and a
+		// commentary's first mark may fall inside those same words; rather than
+		// arbitrate, the initial stands down — it is a flourish and the mark is
+		// the apparatus. Unreachable today (every glossed prayer is set as
+		// verse, which takes no initial anyway) and cheaper to state than to
+		// rediscover.
+		if (placement.byLine[line.n]?.length) return null;
 		if (!dropCap || line.verse || line.kind !== 'prose') return null;
 		if (!(line.block === 0 && line.first)) return null;
 		const head = line.nodes[0];
@@ -104,9 +151,31 @@
 	>{/snippet}
 
 <!-- One line's text, with its initial where it takes one. -->
-{#snippet body(line: PrayerLine)}{@const c = capFor(line)}{#if c}{@render capMark(c)}<InlineText
-			nodes={c.restNodes}
-		/>{:else}<InlineText nodes={line.nodes} />{/if}{/snippet}
+{#snippet gloss(entry: (typeof placement.placed)[number], mark: number | undefined)}
+	<CommentaryGloss
+		notes={entry.notes}
+		lang={entry.work.language}
+		work={entry.work.id}
+		title={entry.work.short_title || entry.work.title}
+		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
+	/>
+{/snippet}
+
+<!-- THE WORDS A NOTE QUOTES, lit while its card is open, exactly as
+     `AnnotatedText` does it inside a verse: a `<span>` that says nothing and a
+     class that lights, never a `<mark>`. -->
+{#snippet body(line: PrayerLine)}{@const c =
+		capFor(
+			line
+		)}{#if placement.byLine[line.n]?.length}{#each segmentsFor(line) as seg, i (i)}{#if seg.kind === 'mark'}{@render gloss(
+					placement.placed[seg.mark],
+					seg.mark
+				)}{:else if seg.kind === 'quoted'}<span
+					class="note-lemma"
+					class:highlighted={openMarks[seg.mark]}>{seg.text}</span
+				>{:else if seg.kind === 'text'}{seg.text}{/if}{/each}{:else if c}{@render capMark(
+			c
+		)}<InlineText nodes={c.restNodes} />{:else}<InlineText nodes={line.nodes} />{/if}{/snippet}
 
 <!--
 	VERSE AND PROSE ARE SET DIFFERENTLY, and which one a line is is not a field
@@ -139,6 +208,18 @@
 		<p class="prayer-prose" class:block-end={line.last}>{@render body(line)}</p>
 	{/if}
 {/each}
+
+<!-- THE NOTES NO WORDS IN THE PRAYER CARRY, on one mark after the whole text.
+     A verse ends and its unplaced notes hang there; a prayer has no such place
+     until its last line, and hanging them off whichever line happened to be
+     last would set an apparatus in the middle of the text the moment a later
+     line took no mark. With the inline marks these PARTITION the prayer's
+     notes — no note behind two marks, and none behind none. -->
+{#if placement.trailing.length}
+	<p class="prayer-trailing">
+		{#each placement.trailing as entry, i (i)}{@render gloss(entry, undefined)}{/each}
+	</p>
+{/if}
 
 <style>
 	.prayer-prose,
@@ -196,6 +277,13 @@
 	   would push it out of alignment with the ones above and below it. */
 	.prayer-line-text {
 		min-width: 0;
+	}
+
+	/* The trailing mark's own line. It carries nothing but marks, so it needs
+	   no measure of its own — only the gap that says the prayer has ended and
+	   the apparatus begun. */
+	.prayer-trailing {
+		margin-block: 0.75rem 0;
 	}
 
 	.prayer-line-label {

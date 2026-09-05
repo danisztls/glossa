@@ -707,6 +707,18 @@ const WAVE_FOR_KIND: Readonly<Record<string, WaveId>> = {
 	// ever downloaded by a reader who asked — which is the right default for
 	// the largest body of text the corpus holds.
 	'commentary-chapters': 'scripture',
+	// THE PRAYERS' COMMENTARY RIDES `essentials`, WHICH IS AUTOMATIC, and it
+	// is the one apparatus in the corpus that may be. The rule above -- a
+	// commentary rides the wave of the work it annotates -- puts it here, and
+	// the rule it appears to break ("a commentary is never fetched uninvited")
+	// is a rule about SIZE: Haydock is 23 MB and nobody should get it by
+	// accident. `commentary.preces.*` is 335 notes across fifteen languages,
+	// tens of kilobytes, beside a prayer collection every reader already
+	// takes. Leaving it out would give a reader who filled the library and
+	// then switched the apparatus on a 504 from a cache-only worker, with the
+	// prayers themselves sitting right there -- the half-library failure
+	// `document-structure` is in `magisterium` to avoid.
+	'prayer-commentary': 'essentials',
 	'document-chunk': 'magisterium',
 	'document-appendix': 'magisterium',
 	// The outline, ~1.2 KB, beside the text it indexes. In `magisterium` and

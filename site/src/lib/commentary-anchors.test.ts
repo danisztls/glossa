@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { anchorCommentary } from './commentary-anchors';
+import { anchorCommentary, anchorCommentaryLines } from './commentary-anchors';
 import type { CommentaryNote } from './types';
 
 const note = (text: string, lemma?: string): CommentaryNote =>
@@ -109,5 +109,105 @@ describe('anchorCommentary', () => {
 		]);
 		expect(anchors).toHaveLength(0);
 		expect(trailing).toHaveLength(2);
+	});
+});
+
+/*
+ * The English Ave as `prayer.common.en` prints it, one line per element,
+ * against the clauses CCC 2676-2677 quotes at the head of each of its runs.
+ * Real text on both sides for `anchorCommentary`'s reason: what this decides
+ * is whether one book's headwords name runs of another's wording, and the ways
+ * that fails are the ways the Catechism happened to print.
+ */
+describe('anchorCommentaryLines', () => {
+	const AVE = [
+		'Hail, Mary, full of grace,',
+		'the Lord is with thee.',
+		'Blessed art thou among women',
+		'and blessed is the fruit of thy womb, Jesus.',
+		'Holy Mary, Mother of God,',
+		'pray for us sinners,',
+		'now and at the hour of our death.',
+		'Amen.'
+	];
+
+	/** Each anchor as the words it covers, line by line. */
+	const placed = (lines: string[], notes: CommentaryNote[]) =>
+		anchorCommentaryLines(lines, notes).anchors.map((a) =>
+			a.spans.map((s) => `${s.line}:${lines[s.line].slice(s.from, s.to)}`)
+		);
+
+	it('finds each headword in the line that prints it', () => {
+		expect(placed(AVE, [note('…', 'Hail, Mary'), note('…', 'Holy Mary, Mother of God')])).toEqual([
+			['0:Hail, Mary'],
+			['4:Holy Mary, Mother of God']
+		]);
+	});
+
+	// THE CASE THAT DECIDED THE SHAPE. CCC 2676's second gloss is headed `Full
+	// of grace, the Lord is with thee` and the English Ave ends a line after
+	// `full of grace,` — the clause is one clause and the break is the
+	// edition's setting. Confined to a line this anchored nothing; across it,
+	// each line carries the part of the quotation it prints.
+	it('carries a headword across a line break, one span per line', () => {
+		expect(placed(AVE, [note('…', 'Full of grace, the Lord is with thee')])).toEqual([
+			['0:full of grace,', '1:the Lord is with thee']
+		]);
+	});
+
+	it('sends a headword the prayer does not print to the trailing mark', () => {
+		const { anchors, trailing } = anchorCommentaryLines(AVE, [
+			note('…', 'Blessed is he who comes'),
+			note('…')
+		]);
+		expect(anchors).toEqual([]);
+		expect(trailing).toHaveLength(2);
+	});
+
+	// THE CURSOR WALKS THE UNIT, NOT THE LINE. `Mary` occurs in three of the
+	// Ave's lines, so two notes quoting it must take the first and the second —
+	// which is only true if the cursor survives the line boundary.
+	it('advances the cursor across lines, so a repeated clause is not reused', () => {
+		expect(placed(AVE, [note('a', 'Mary'), note('b', 'Mary')])).toEqual([['0:Mary'], ['4:Mary']]);
+	});
+
+	// The same property `anchorCommentary` is held to, across lines: every note
+	// is behind exactly one mark, so nothing renders twice and nothing is lost.
+	it('partitions the notes between the anchors and the trailing mark', () => {
+		const notes = [
+			note('a', 'Hail, Mary'),
+			note('b'),
+			note('c', 'Full of grace, the Lord is with thee'),
+			note('d', 'Amen')
+		];
+		const { anchors, trailing } = anchorCommentaryLines(AVE, notes);
+		const seen = [...anchors.flatMap((a) => a.notes), ...trailing];
+		expect(seen).toHaveLength(notes.length);
+		expect(new Set(seen).size).toBe(notes.length);
+	});
+
+	// A span is clipped to its own line and never covers the separator, so
+	// slicing each line by its span reassembles the quotation and nothing else.
+	it('clips every span to its own line', () => {
+		const [spans] = anchorCommentaryLines(AVE, [
+			note('…', 'Full of grace, the Lord is with thee')
+		]).anchors;
+		for (const span of spans.spans) {
+			expect(span.from).toBeGreaterThanOrEqual(0);
+			expect(span.to).toBeLessThanOrEqual(AVE[span.line].length);
+			expect(span.from).toBeLessThan(span.to);
+		}
+	});
+
+	// `æ` is a letter rather than a base plus a mark, so no normal form takes
+	// it apart: the curated Latin Ave ends `nostræ` and the Catechism prints
+	// `nostrae`. Without the expansion the lemma matched as far as `nostr` and
+	// the guard against a headword ending inside a word then refused it
+	// outright — a whole clause lost to one glyph.
+	it('folds æ and œ, which normalization does not', () => {
+		const lines = ['nunc et in hora mortis nostræ.'];
+		expect(placed(lines, [note('…', 'in hora mortis nostrae')])).toEqual([
+			['0:in hora mortis nostræ']
+		]);
 	});
 });

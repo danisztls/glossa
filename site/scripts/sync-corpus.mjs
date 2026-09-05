@@ -1469,6 +1469,41 @@ for (const workId of workIds) {
 	// chapter-0 mistake that section warns about: it would publish ~24,000
 	// addresses that render nothing of their own.
 	if (manifest.type === 'commentary') {
+		// A COMMENTARY ON THE PRAYERS, whose units name a `Prayer.slug` rather
+		// than a verse (docs/corpus-schema.md §Commentary). It branches on
+		// `manifest.addresses` and not on the annotated work's own type,
+		// because that would mean having read a second manifest before this
+		// one can be read at all.
+		//
+		// ONE FILE, NOT CHUNKED. The Bible arm below packs by size because a
+		// commentary's weight per chapter varies by an order of magnitude;
+		// this whole apparatus is a few tens of kilobytes per language, which
+		// is the ground `prayer.common.*` itself is kept whole on.
+		if (manifest.addresses === 'prayer') {
+			const entries = readJson(path.join(workDir, 'prayers.json'));
+			const relPath = `content/${workId}/prayers.json`;
+			writeJson(path.join(destDir, relPath), entries);
+			contentManifest.push({
+				workId,
+				kind: 'prayer-commentary',
+				relPath,
+				bytes: byteLength(entries)
+			});
+			if (!manifest.annotates) {
+				console.error(
+					`[sync-corpus] ${workId}: a commentary must name the work it \`annotates\`; ` +
+						'without it every note addresses nothing'
+				);
+				process.exit(1);
+			}
+			commentaryIndex[workId] = {
+				annotates: manifest.annotates,
+				addresses: 'prayer',
+				prayers: entries.map((e) => e.slug)
+			};
+			continue;
+		}
+
 		const booksDir = path.join(workDir, 'books');
 		const books = [];
 		for (const file of readdirSync(booksDir).sort()) {
@@ -1525,7 +1560,11 @@ for (const workId of workIds) {
 			);
 			process.exit(1);
 		}
-		commentaryIndex[workId] = { annotates: manifest.annotates, books };
+		commentaryIndex[workId] = {
+			annotates: manifest.annotates,
+			addresses: 'bible',
+			books
+		};
 		continue;
 	}
 
@@ -2411,10 +2450,14 @@ writeJson(
 writeJson(path.join(indexDir, 'bible-intro-index.json'), bibleIntroIndex);
 writeJson(
 	path.join(indexDir, 'commentary-index.json'),
-	mapValues(commentaryIndex, (work) => ({
-		...work,
-		books: work.books.map((book) => ({ ...book, chapters: compactRun(book.chapters) }))
-	}))
+	mapValues(commentaryIndex, (work) =>
+		work.addresses === 'prayer'
+			? work
+			: {
+					...work,
+					books: work.books.map((book) => ({ ...book, chapters: compactRun(book.chapters) }))
+				}
+	)
 );
 writeJson(
 	path.join(indexDir, 'ccc-index.json'),

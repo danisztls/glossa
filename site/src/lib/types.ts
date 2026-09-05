@@ -366,12 +366,11 @@ export interface DocumentManifest extends WorkManifestBase {
  * stops one step short: an introduction is addressed as chapter 0, and a
  * commentary note is addressed only by the verse it names in `annotates`.
  */
-export interface CommentaryManifest extends WorkManifestBase {
+interface CommentaryManifestBase extends WorkManifestBase {
 	type: 'commentary';
 	/** The work whose addresses this one's units name. Required: without it a
 	 *  note resolves against nothing. */
 	annotates: string;
-	psalm_numbering: PsalmNumbering;
 	/**
 	 * Whether this commentary already contains the annotated edition's own
 	 * apparatus, so that showing both prints most of one of them twice.
@@ -390,9 +389,43 @@ export interface CommentaryManifest extends WorkManifestBase {
 	 * `apparatus-prefs.svelte.ts`.
 	 */
 	subsumes_notes?: boolean;
+}
+
+/**
+ * A commentary on Scripture: its units name `{osis, chapter, verse}` of the
+ * Bible edition it annotates. `commentary.haydock.en`.
+ */
+export interface BibleCommentaryManifest extends CommentaryManifestBase {
+	addresses: 'bible';
+	psalm_numbering: PsalmNumbering;
 	/** Lowercase OSIS codes this commentary reaches, canonical order. */
 	books: string[];
 }
+
+/**
+ * A commentary on the prayers: its units name a `Prayer.slug` of the
+ * collection it annotates. `commentary.preces.{lang}`.
+ *
+ * NO CHAPTER, NO VERSE, AND NO NUMBER OF ANY KIND, because a prayer has none
+ * — `Prayer.slug` is the address and `n` is print order (see §Prayers below).
+ * That is also why the notes ship as ONE file per work rather than chunked
+ * the way a commentary on Scripture is: the whole apparatus for a language is
+ * a few tens of kilobytes, on `prayer.common.*`'s own precedent.
+ */
+export interface PrayerCommentaryManifest extends CommentaryManifestBase {
+	addresses: 'prayer';
+	/** Prayer slugs this commentary reaches, in collection order. */
+	prayers: string[];
+}
+
+/**
+ * WHICH UNIT SPACE A COMMENTARY'S NOTES ADDRESS is a field, not something
+ * derived from the annotated work's own type. Deriving it would make the
+ * answer depend on which manifest a consumer has read yet — `sync-corpus.mjs`
+ * branches on it before it opens the work's directory — for a fact that is
+ * simply true of the commentary. Both scrapers write it.
+ */
+export type CommentaryManifest = BibleCommentaryManifest | PrayerCommentaryManifest;
 
 /**
  * The *Compendium of the Social Doctrine of the Church* — `csdc.{lang}`, one
@@ -561,6 +594,24 @@ export interface CommentaryNote extends Annotated {
 	/** The words the note glosses, as the source quotes them. */
 	lemma?: string;
 	/**
+	 * The paragraph or question this note IS, where the commentary is drawn
+	 * from a work the corpus already holds at an address of its own.
+	 *
+	 * WRITTEN FOR `commentary.preces.*`, WHICH DRAWS ON TWO BOOKS. A manifest
+	 * can name one set of sources; that apparatus reads the Catechism on the
+	 * Hail Mary and the Compendium on the Our Father, so provenance has to sit
+	 * on the note or the reader is told the wrong book. It is also the more
+	 * useful half: a note that says which paragraph it is can be followed to
+	 * that paragraph, which is what the site renders it as.
+	 *
+	 * Typed rather than the string `CCC 2676`, because re-deriving a fact by
+	 * parsing a string we wrote ourselves is how a value comes to be
+	 * regenerable only from a previous copy of itself.
+	 *
+	 * Absent on Haydock, whose remarks are printed nowhere else in the corpus.
+	 */
+	locus?: { work: 'ccc' | 'compendium'; n: number };
+	/**
 	 * The authority the remark is drawn from, where the source names one:
 	 * "Calmet", "Worthington", "Witham". Matched against a closed vocabulary
 	 * in the pipeline and omitted rather than guessed — see
@@ -585,6 +636,21 @@ export interface CommentaryBook {
 	osis: string;
 	order: number;
 	chapters: CommentaryChapter[];
+}
+
+/**
+ * One prayer's notes — the whole unit of a prayer commentary, and the file it
+ * ships in holds one of these per annotated prayer.
+ *
+ * The notes are in the ORDER THE SOURCE PRINTS THEM, and that is load-bearing
+ * rather than tidy: `anchorCommentaryLines` walks the prayer's lines with a
+ * cursor and finds each lemma at or after the end of the last, which is the
+ * only thing that resolves a clause the prayer repeats.
+ */
+export interface PrayerCommentary {
+	/** Prayer of the annotated collection these notes are about. */
+	slug: string;
+	notes: CommentaryNote[];
 }
 
 export interface BibleBook {

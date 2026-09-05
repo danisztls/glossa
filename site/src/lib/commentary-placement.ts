@@ -25,7 +25,13 @@
  * of Haydock's apparatus with nothing erroring.
  */
 import type { CommentaryNote, WorkManifest } from '$lib/types';
-import { anchorCommentary, type CommentaryAnchor } from '$lib/commentary-anchors';
+import {
+	anchorCommentary,
+	anchorCommentaryLines,
+	type CommentaryAnchor,
+	type CommentaryLineAnchor
+} from '$lib/commentary-anchors';
+import type { PlacedAnchor } from '$lib/annotated-segments';
 
 /** One commentary's notes on this unit, as handed in by the caller. */
 export interface CommentaryEntry {
@@ -92,4 +98,66 @@ export function placeCommentary(
 		.sort((a, b) => a.anchor.from - b.anchor.from);
 
 	return { placed, inline, trailing: placed.filter((p) => !p.anchor) };
+}
+
+/**
+ * The same partition over a unit the source printed as SEVERAL LINES — a
+ * prayer, whose notes name the prayer and quote one of its clauses.
+ *
+ * `byLine` rather than one `inline` list, because the cuts are made per line: a
+ * prayer line is its own element (`PrayerBlocks`), so each needs its own run of
+ * segments. `placed` stays flat and its index is still the mark's identity,
+ * exactly as above, so `buildSegments` needs no notion of a line at all — it is
+ * handed one line's text and the runs that fall inside it.
+ *
+ * A QUOTATION THE EDITION SET ACROSS A BREAK IS ONE ANCHOR AND SEVERAL RUNS.
+ * Each line lights the words it prints; only the last takes the dagger, which
+ * is `PlacedAnchor.showMark` and is what stops one note raising three marks.
+ *
+ * THE TRAILING MARK IS THE PRAYER'S, NOT THE LINE'S. A verse ends and its
+ * unplaced notes hang there; a prayer has no such place until its last line,
+ * and hanging them off whichever line came last would put an apparatus in the
+ * middle of the text whenever a later line took no mark. So the caller renders
+ * `trailing` once, after the whole prayer.
+ */
+export interface PlacedPrayerCommentary extends CommentaryEntry {
+	/** `undefined` on the mark at the prayer's end. */
+	anchor: CommentaryLineAnchor | undefined;
+}
+
+export interface PrayerCommentaryPlacement {
+	placed: PlacedPrayerCommentary[];
+	/** One entry per line, in the order given: the quoted runs that line
+	 *  carries, in text order. */
+	byLine: PlacedAnchor[][];
+	trailing: PlacedPrayerCommentary[];
+}
+
+export function placePrayerCommentary(
+	lines: readonly string[],
+	commentary: readonly CommentaryEntry[] | undefined
+): PrayerCommentaryPlacement {
+	const placed: PlacedPrayerCommentary[] = [];
+	const byLine: PlacedAnchor[][] = lines.map(() => []);
+
+	for (const entry of commentary ?? []) {
+		const { anchors, trailing } = anchorCommentaryLines(lines, entry.notes);
+		for (const anchor of anchors) {
+			// `notes: anchor.notes` and not the entry's, for the reason
+			// `placeCommentary` above spells out at length.
+			const at = placed.length;
+			placed.push({ ...entry, notes: anchor.notes, anchor });
+			anchor.spans.forEach((span, i) => {
+				byLine[span.line].push({
+					anchor: { from: span.from, to: span.to, notes: anchor.notes },
+					at,
+					showMark: i === anchor.spans.length - 1
+				});
+			});
+		}
+		if (trailing.length) placed.push({ ...entry, notes: trailing, anchor: undefined });
+	}
+
+	for (const marks of byLine) marks.sort((a, b) => a.anchor.from - b.anchor.from);
+	return { placed, byLine, trailing: placed.filter((p) => !p.anchor) };
 }

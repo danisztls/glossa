@@ -77,7 +77,15 @@
 		chooseComparisonEdition,
 		toggleCompare
 	} from '$lib/compare-nav.svelte';
-	import { compareColumnLabel, getPrayerMeta, resolveEditionTag } from '$lib/corpus';
+	import {
+		compareColumnLabel,
+		getPrayerMeta,
+		prayerCommentariesAt,
+		resolveEditionTag
+	} from '$lib/corpus';
+	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
+	import { prayerNotesFor } from '$lib/commentary.svelte';
+	import type { CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
 	import CompareField from '$lib/components/CompareField.svelte';
@@ -100,6 +108,23 @@
 	 *  has two editions, and the bare form cannot tell them apart. */
 	let lang = $derived(resolveEditionTag(Object.keys(data.byLang), content.tagFor('prayer')) ?? '');
 	let current = $derived(data.byLang[lang]);
+
+	/**
+	 * The commentaries offered beside THIS prayer in THIS edition.
+	 *
+	 * `commentariesAt`'s twin one work type over, and everything the chapter
+	 * route says about it holds: the lookup is synchronous off the index tier,
+	 * so the control is settled before the page paints, and it is keyed on the
+	 * address AND the edition, because a headword quotes one text. Switching
+	 * edition can therefore empty the panel — which is the honest reading of
+	 * what exists, since `commentary.preces.*` is written for fifteen of the
+	 * collection's twenty editions and reaches two of its thirty-five prayers.
+	 *
+	 * There is no edition row beside it: a prayer carries no apparatus of its
+	 * own, so `ApparatusChoices.edition` stays absent and the panel is the
+	 * commentary switch alone.
+	 */
+	const commentaries = $derived(prayerCommentariesAt(data.slug, current?.work.id));
 
 	/**
 	 * Every second column this page can offer, in menu order: each OTHER
@@ -143,6 +168,26 @@
 	);
 	const secondary = $derived(comparisons.find((c) => c.work.id === compareTarget));
 	const compareActive = $derived(secondary !== undefined);
+
+	/**
+	 * The notes to set inside the prayer, one entry per enabled commentary.
+	 *
+	 * SUPPRESSED WHILE COMPARING, for the chapter route's reason read across:
+	 * there the apparatus lane is spent, here the two columns are already two
+	 * texts to hold level line by line, and a mark inside one of them would cut
+	 * a row that compare mode is trying to keep paired. Nothing is fetched
+	 * either — `prayerNotesFor` starts a load only when it is asked.
+	 */
+	const commentary = $derived.by(() => {
+		const out: CommentaryEntry[] = [];
+		if (compareActive || !current) return out;
+		for (const work of commentaries) {
+			if (!apparatusPrefs.commentaryEnabled(work.id)) continue;
+			const notes = prayerNotesFor(work.id, data.slug);
+			if (notes.length > 0) out.push({ work, notes });
+		}
+		return out;
+	});
 
 	/**
 	 * A ROW PER PRINTED LINE WHERE THE TWO EDITIONS BREAK ALIKE, and the whole
@@ -403,7 +448,7 @@
      edition carries `instructions` without them, so the one test covers both. -->
 {#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{@render prayerPreamble(p, bodyLang)}
-	<PrayerBlocks lines={prayerLines(p.blocks)} dropCap={p.kind !== 'group'} />
+	<PrayerBlocks lines={prayerLines(p.blocks)} dropCap={p.kind !== 'group'} {commentary} />
 {/snippet}
 
 {#snippet prayerToc(p: Prayer)}
@@ -504,6 +549,7 @@
 				canCompare={comparisons.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
+				apparatus={{ commentaries }}
 				comparison={{
 					editions: comparisons.map((c) => c.work),
 					current: compareTarget,
