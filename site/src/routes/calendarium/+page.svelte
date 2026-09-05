@@ -268,6 +268,7 @@
 	 */
 	let dateEl: HTMLInputElement | undefined = $state();
 	function openPicker() {
+		typing = false;
 		try {
 			dateEl?.showPicker();
 		} catch {
@@ -275,9 +276,61 @@
 		}
 	}
 
+	/**
+	 * THE FIELD LETS GO ONCE THE DATE IS CHOSEN, and it has to, because of what
+	 * focus does to it: `:focus-visible` swaps the site's face for the raw
+	 * input underneath (see the style rules), and a browser sets
+	 * `:focus-visible` on a text-entry control when it is CLICKED, not only
+	 * when it is tabbed to. So picking a date from the platform's popup left
+	 * the field focused and therefore showing the operating system's own
+	 * `09/17/2026` — the exact thing the face exists to prevent — until the
+	 * reader clicked somewhere else. Blurring puts the face back.
+	 *
+	 * EXCEPT WHEN THE READER IS TYPING, which is the one interaction blurring
+	 * would wreck: a date typed segment by segment fires `input` the moment the
+	 * last segment lands, and taking focus away there would eject someone
+	 * mid-correction. `typing` is which of the two is driving — a key sets it,
+	 * a click clears it — and nothing else consults it.
+	 */
+	let typing = false;
+	function pickDate(value: string) {
+		go(value);
+		if (!typing) dateEl?.blur();
+	}
+
 	let lang = $derived(i18n.lang);
 	let selectedIso = $derived(formatIsoDate(selected));
+	/* Its own derived value so that `widestDate` recomputes when the YEAR moves
+	   and not on every step to another day: twelve `Intl.DateTimeFormat`s per
+	   click, to arrive at the string it already had. */
+	let year = $derived(selectedIso.slice(0, 4));
 	let today = $derived(localToday());
+
+	/**
+	 * The widest date this field can ever print in the reader's language.
+	 *
+	 * IT IS RENDERED, HIDDEN, INSIDE THE FIELD, and that is what stops the row
+	 * moving. The face gives the field its width, so the box was as wide as
+	 * whatever date it happened to print — `1 de maio` and `28 de setembro` are
+	 * not the same width — and every step to another day slid the two controls
+	 * beside it left or right. A `min-inline-size` in `rem` would be a number
+	 * measured once in one language and wrong in the next one added; the widest
+	 * date is knowable, so it is computed and laid on top of the real one.
+	 *
+	 * Twelve probes on the 28th, which every month has and which is two digits
+	 * — with `tabular-nums` on the face that makes the probe an upper bound for
+	 * any day of any month. The longest STRING stands in for the widest one:
+	 * within a single language and script the difference is a whole character
+	 * or more, not a hair's width of kerning.
+	 */
+	const widestDate = $derived.by(() => {
+		let widest = '';
+		for (let month = 1; month <= 12; month++) {
+			const probe = formatPromulgated(`${year}-${String(month).padStart(2, '0')}-28`, lang);
+			if (probe.length > widest.length) widest = probe;
+		}
+		return widest;
+	});
 </script>
 
 <svelte:head>
@@ -307,19 +360,23 @@
 					bind:this={dateEl}
 					aria-label={t('calendar.date')}
 					value={selectedIso}
-					oninput={(e) => go((e.currentTarget as HTMLInputElement).value)}
+					oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
+					onkeydown={() => (typing = true)}
 					onclick={openPicker}
 				/>
 				<span class="date-face" aria-hidden="true">
 					<Icon name="calendar" />
-					{formatPromulgated(selectedIso, lang)}
+					<span class="date-text">
+						<span>{formatPromulgated(selectedIso, lang)}</span>
+						<span class="date-widest">{widestDate}</span>
+					</span>
 				</span>
 			</div>
 			<!-- Beside the date and not down beside the month's arrows, because it
 			     is the same control as the date field: both answer WHICH DAY, and
 			     the one that answers "the one I am living in" belongs with them.
 			     Down there it read as a third month control. -->
-			<button type="button" class="menu-trigger today-btn" onclick={() => go(formatIsoDate(today))}>
+			<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
 				{t('calendar.today')}
 			</button>
 			<CalendarMenu value={territory} {lang} onchoose={choose} />
@@ -382,11 +439,30 @@
 		margin: 0.9rem 0 1.1rem;
 		font-family: var(--font-sans);
 	}
-	/* Every control, one height, smaller than the chrome's default — this row
-	   is a page's own furniture rather than the site header's. */
+	/*
+	 * EVERY CONTROL ON THIS PAGE, ONE HEIGHT AND ONE PADDING, smaller than the
+	 * chrome's default — this row is a page's own furniture rather than the
+	 * site header's, and `CalendarMonth`'s two month arrows answer to the same
+	 * rule from their own file.
+	 *
+	 * THE PADDING HAS TO BE SAID HERE BECAUSE `.menu-trigger` IS A SQUARE.
+	 * That class is an icon button — `width: 2.25rem; padding: 0` — and `.wide`
+	 * is what a trigger carrying a LABEL wears (`styles/menus.css`). Today was
+	 * wearing the square: as a flex item it could not shrink below its own
+	 * word, so it came out exactly as wide as `Today` with no side padding at
+	 * all, beside a calendar button with 0.6rem and a date field with 0.5rem.
+	 * Three controls, three paddings, in a row four centimetres wide. One
+	 * value, named once, and the date face below takes it too.
+	 */
+	.controls {
+		--control-padding: 0.6rem;
+	}
 	.controls :global(.menu-trigger) {
 		height: 2rem;
 		font-size: 0.8rem;
+	}
+	.controls :global(.menu-trigger.wide) {
+		padding-inline: var(--control-padding);
 	}
 	/*
 	 * DELIBERATELY NOT WEARING `.menu-trigger`, though it restates that class's
@@ -452,7 +528,7 @@
 		outline-offset: 1px;
 	}
 	.date-field input:focus-visible {
-		padding-inline: 0.5rem;
+		padding-inline: var(--control-padding);
 		opacity: 1;
 		cursor: auto;
 	}
@@ -463,12 +539,32 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
-		padding-inline: 0.5rem;
+		padding-inline: var(--control-padding);
+		/* Digits of one width, so that the widest-date probe below is an upper
+		   bound for a one-digit day as well as a two-digit one. */
+		font-variant-numeric: tabular-nums;
 		/* The input is the click target; the face must never intercept one. */
 		pointer-events: none;
 		white-space: nowrap;
 	}
-	.today-btn {
-		font-size: 0.8rem;
+	/*
+	 * THE DATE AND THE WIDEST DATE IN ONE CELL, which is what holds the row
+	 * still. Both are laid in the same grid area, so the field is as wide as
+	 * the longer of them — always the probe — and stays that width whichever
+	 * day is on screen. Stepping a day used to slide the two controls beside
+	 * it, because the face gives the field its width and a date's width is a
+	 * fact about its month's name.
+	 *
+	 * `visibility`, not `display: none`: a hidden probe still has to be laid
+	 * out, or it sizes nothing.
+	 */
+	.date-text {
+		display: grid;
+	}
+	.date-text > * {
+		grid-area: 1 / 1;
+	}
+	.date-widest {
+		visibility: hidden;
 	}
 </style>

@@ -403,6 +403,21 @@
 		min-inline-size: 10rem;
 		text-align: center;
 	}
+	/*
+	 * THE SAME SIZE AS THE CONTROLS ABOVE, which they were not: `.menu-trigger`
+	 * is the site header's 2.25rem square at 1rem, and the row at the top of
+	 * this page sets its own controls to 2rem at 0.8rem because a page's
+	 * furniture is smaller than the site's. These two are that row's third
+	 * pair — the date field, Today and the calendar picker answer WHICH DAY,
+	 * these answer WHICH MONTH — and a control that steps the page should not
+	 * be a size the page uses nowhere else. The icons scale with the font
+	 * (`Icon.svelte` sizes in `em`), so one declaration moves both.
+	 */
+	.step-btn {
+		width: 2rem;
+		height: 2rem;
+		font-size: 0.8rem;
+	}
 	/* An arrow is a picture of a direction, not a character, so nothing flips
 	   it under `dir="rtl"` — `UnitNav`'s docblock has the argument. The row
 	   mirrors on its own; this turns the mark to point the same way. */

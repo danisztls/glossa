@@ -336,6 +336,36 @@ printing the date**, which is what makes the whole trade worth it: the date is
 said once, in the control that sets it. It still prints on the home page, where
 the card stands alone (`showDate`).
 
+**Three follow-ups the same day, and the first two are one bug seen twice**
+(2026-09-05). `:focus-visible` is not keyboard-only on a text-entry control — a
+browser sets it on a CLICK there too — so clicking the field swapped the face
+for the raw input, and picking a date from the platform's popup left it focused
+and therefore still showing `09/17/2026`, which is the one thing the face
+exists to prevent. **The field lets go once a date is chosen** (`pickDate`),
+except when the reader is TYPING one: a typed date fires `input` the moment the
+last segment lands, and blurring there would eject someone mid-correction, so a
+key sets `typing` and a click clears it. **And the field no longer changes
+width with the day it prints.** The face gives the box its width, so `1 de
+maio` and `28 de setembro` were different boxes and every step to another day
+slid Today and the calendar picker sideways. The widest date is knowable, so it
+is computed — twelve probes on the 28th, which every month has and which is two
+digits — and laid in the same grid cell as the real one, hidden. A
+`min-inline-size` in `rem` would have been a number measured once in one
+language and wrong in the thirty-seventh; `tabular-nums` on the face is what
+makes a two-digit probe an upper bound for a one-digit day.
+
+**And the row has one padding and one height, which took three tries to be
+true.** `.menu-trigger` is the site header's icon SQUARE (`width: 2.25rem;
+padding: 0`) and `.wide` is what a trigger carrying a label wears; Today was
+wearing the square, so as a flex item it could not shrink below its own word
+and came out with no side padding at all, beside a calendar button with 0.6rem
+and a date field with 0.5rem — three controls, three paddings, in a row four
+centimetres wide. One value now, `--control-padding`, named on the row and read
+by the date face and the focused input as well. The month's two arrows join the
+same rule from their own file: they were still the header's 2.25rem square at
+1rem, and they are a third pair of controls on this page — the date field,
+Today and the picker answer WHICH DAY, these answer WHICH MONTH.
+
 ### Some layers share their propers, and factoring them out cost the oracle nothing
 
 Comparing all 85 layers on 2026-09-04: **no two are identical**, so no calendar

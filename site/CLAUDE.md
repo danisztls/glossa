@@ -2029,6 +2029,27 @@ segments that cannot be seen is what this arrangement could genuinely break. The
 card's `showDate` is false here and true on the home page, where it stands alone
 (§docs/calendar.md).
 
+**`:focus-visible` IS NOT KEYBOARD-ONLY ON A TEXT-ENTRY CONTROL — a browser sets
+it on a CLICK there too** (2026-09-05), which is why the field above blurs once
+a date is chosen: clicking it swapped the site's face for the raw input, and
+picking from the platform's popup left it focused and still printing
+`09/17/2026`. It does not blur while the reader is TYPING a date, since `input`
+fires as the last segment lands. **And a control whose width is its text moves
+whatever stands beside it**: the field was as wide as the date it printed, so
+every step to another day slid Today and the picker sideways. The widest date is
+computable — twelve probes, one per month — so it is rendered hidden in the same
+grid cell as the real one, which is exact where a `min-inline-size` in `rem`
+would be one language's measurement (§docs/calendar.md).
+
+**`.menu-trigger` IS AN ICON SQUARE AND `.wide` IS THE ONE THAT CARRIES A
+LABEL** (`styles/menus.css`). A labelled button given the bare class cannot
+shrink below its own word as a flex item, so it renders text-width with NO side
+padding and nothing looks broken enough to notice — which is how the calendar's
+control row came to hold three paddings in four centimetres. That page names one
+`--control-padding` on the row and the date face reads it too; its month arrows
+take the row's 2rem/0.8rem from their own file rather than staying the site
+header's 2.25rem square (§docs/calendar.md).
+
 **A date is a query parameter (`/calendarium?d=2026-04-05`), not a path.** It
 names no citation, so it is not a reading address; as a chrome path it would put
 an unbounded set of URLs into the sitemap for pages that are pure computation.
