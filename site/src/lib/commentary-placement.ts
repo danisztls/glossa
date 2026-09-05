@@ -120,7 +120,9 @@ export function placeCommentary(
  * seven-line text is a paragraph of the Catechism reprinted beside the prayer
  * rather than a gloss ON it. So `prayers_glossa.py` stores only notes that
  * quote a clause, and what the rest of those two books say about the prayer is
- * offered as `PrayerCommentary.references` — a place to go and read them.
+ * offered as the prayer's references — a place to go and read them, keyed by
+ * slug and by nothing else, since an address has no language
+ * (`corpus-index.ts`'s `prayerReferences`).
  *
  * `unplaced` is therefore expected to be EMPTY and is returned anyway. It is
  * the one thing that could go wrong silently: the pipeline and

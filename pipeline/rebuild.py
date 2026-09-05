@@ -270,11 +270,21 @@ STAGES: tuple[Stage, ...] = (
     # 2676 loses in `build/`, the Compendium's parsed questions, and the
     # projected prayers a lemma has to quote -- so it is the one stage
     # besides `haydock` with a real `needs`.
+    #
+    # TWO OUTPUTS, AND THE SECOND IS NOT A WORK AND HAS NO LANGUAGE.
+    # `prayer-references/` is where else the corpus speaks of a prayer -- the
+    # Gospel its words are printed as, the article that expounds it -- which
+    # is one answer for every reader and so is written once rather than
+    # fifteen times inside an apparatus. It is checked against every edition
+    # of the three works it cites, which is why it is written HERE, by the
+    # one stage that has all of them behind `needs`, rather than beside the
+    # prayers it describes. `gcatholic-calendar` below is the precedent for a
+    # stage output that is not a work.
     Stage(
         "prayers-glossa",
         "prayers",
         "prayers_glossa.py",
-        outputs=("commentary.preces.*",),
+        outputs=("commentary.preces.*", "prayer-references"),
         needs=("prayers", "ccc", "compendium"),
     ),
     Stage("cpdv", "bible", "bible/cpdv.py", ("--offline",), ("bible.cpdv.*",)),

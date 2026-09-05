@@ -668,7 +668,7 @@ if (!existsSync(buildSrc)) {
  * output regenerable from `raw/` with no network, which is what `build/`
  * means — being a work is not.
  */
-const NON_WORK_DIRS = new Set(['gcatholic-calendar']);
+const NON_WORK_DIRS = new Set(['gcatholic-calendar', 'prayer-references']);
 
 const workDirs = readdirSync(buildSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())
@@ -2633,6 +2633,27 @@ writeJson(
 writeJson(path.join(indexDir, 'social-doctrine-chapters.json'), socialDoctrineChapterStarts);
 writeJson(path.join(indexDir, 'social-doctrine-abbreviations.json'), socialDoctrineAbbreviations);
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
+
+/**
+ * Where else the corpus speaks of a prayer — the Gospel its words are printed
+ * as, the article that expounds it — keyed by slug and by nothing else.
+ *
+ * IT HAS NO LANGUAGE, WHICH IS WHY IT IS COPIED RATHER THAN BUILT. Everything
+ * else in this file is assembled per work as the works are walked; this
+ * arrives already whole, from `build/prayer-references/`, because the answer
+ * is the same for every reader (`prayers_glossa.py`'s `references_document`).
+ * It rode the prayers' apparatus until 2026-09-05 and so was absent from the
+ * five collections that have no Catechism and no Compendium.
+ *
+ * Index tier and ~3 KB, eager on the client for `plates-credit.json`'s
+ * reason: a prayer page renders it under the text on first paint, and an
+ * address table that arrived over the network could fail to arrive.
+ */
+const prayerReferencesFile = path.join(buildSrc, 'prayer-references', 'references.json');
+writeJson(
+	path.join(indexDir, 'prayer-references.json'),
+	existsSync(prayerReferencesFile) ? readJson(prayerReferencesFile) : {}
+);
 writeJson(path.join(indexDir, 'plates-credit.json'), platesCredit);
 writeJson(
 	path.join(indexDir, 'summa-index.json'),

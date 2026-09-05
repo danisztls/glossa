@@ -29,7 +29,7 @@
 
 import { getCommentaryChapter, getPrayerCommentary } from './corpus';
 import { USE_REAL_CORPUS } from './corpus-index';
-import type { CommentaryNote, PrayerCommentary, PrayerReference } from './types';
+import type { CommentaryNote, PrayerCommentary } from './types';
 
 const EMPTY: Map<number, CommentaryNote[]> = new Map();
 
@@ -129,7 +129,6 @@ export async function loadChapter(workId: string, osis: string, chapter: number)
 // than retried on every re-run.
 
 const NO_NOTES: CommentaryNote[] = [];
-const NO_REFERENCES: PrayerReference[] = [];
 
 const prayerStore = $state<{ byWork: Record<string, Map<string, PrayerCommentary>> }>({
 	byWork: {}
@@ -140,9 +139,9 @@ const prayerStarted = new Set<string>();
 /** One prayer's entry in one commentary, starting the fetch on the first ask.
  *  Undefined is the ordinary answer for a prayer this work does not reach: the
  *  apparatus reaches part of the collection and not all of it, which is a fact
- *  about the sources and not a gap. An entry that IS reached may still carry
- *  no notes — a prayer the two books name but never quote has references
- *  alone (docs/corpus-schema.md §Commentary). */
+ *  about the sources and not a gap. Where else the corpus SPEAKS of a prayer
+ *  is not here and never was per language — `corpus-index.ts`'s
+ *  `prayerReferences`, keyed by slug alone. */
 function prayerEntry(workId: string, slug: string): PrayerCommentary | undefined {
 	const loaded = prayerStore.byWork[workId];
 	if (loaded) return loaded.get(slug);
@@ -152,13 +151,6 @@ function prayerEntry(workId: string, slug: string): PrayerCommentary | undefined
 
 export function prayerNotesFor(workId: string, slug: string): CommentaryNote[] {
 	return prayerEntry(workId, slug)?.notes ?? NO_NOTES;
-}
-
-/** Where else the corpus speaks of this prayer, per commentary — the links
- *  under the text. They ride the apparatus's own fetch and its own switch,
- *  because they are what the notes this apparatus does NOT carry became. */
-export function prayerReferencesFor(workId: string, slug: string): PrayerReference[] {
-	return prayerEntry(workId, slug)?.references ?? NO_REFERENCES;
 }
 
 export async function loadPrayerCommentary(workId: string): Promise<void> {

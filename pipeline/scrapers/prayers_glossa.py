@@ -99,6 +99,13 @@ from common import require_corpus, write_stamped_json
 #: would be true of it.
 WORK_PREFIX = "commentary.preces"
 
+#: WHERE THE REFERENCES GO, AND IT IS NOT A WORK AND HAS NO LANGUAGE. A work
+#: is `{type}.{slug}.{lang}` and carries text somebody translated; this is a
+#: table of addresses, the same table for every reader, so it is a directory
+#: under `build/` like `gcatholic-calendar/` and is named in the site sync's
+#: `NON_WORK_DIRS`. `rebuild.py` declares it as this stage's second output.
+REFERENCES_DIR = "prayer-references"
+
 #: CCC 2676-2677: the Ave Maria, clause by clause. The region is bounded by
 #: the printed numbers 2676 and 2678 rather than by any structural marker,
 #: because the eight editions share no markup and all eight print the number.
@@ -771,25 +778,32 @@ def compose(parts: list[str], separator: str) -> str:
     return separator.join(parts)
 
 
-def numbered_units(work_id: str, filename: str) -> set[int] | None:
-    """The unit numbers a work holds, or nothing where the work is absent."""
-    path = common.build_root() / work_id / filename
+def editions(work: str) -> list[Path]:
+    """Every edition of a numbered work in the corpus, `ccc` or `compendium`."""
+    return sorted(common.build_root().glob(f"{work}.*"))
+
+
+def numbered_units(work_dir: Path, filename: str) -> set[int] | None:
+    """The unit numbers an edition holds, or nothing where it has no such
+    file -- which is a broken build, not an absent edition, since the caller
+    found the directory by listing."""
+    path = work_dir / filename
     if not path.exists():
         return None
     return {u["n"] for u in json.loads(path.read_text(encoding="utf-8"))}
 
 
-def bible_verses(lang: str, osis: str, chapter: int) -> set[int] | None:
-    """One chapter's verse numbers in any Bible of this language."""
-    for work in sorted(common.build_root().glob(f"bible.*.{lang}")):
-        path = work / "books" / f"{osis}.json"
-        if not path.exists():
-            continue
-        book = json.loads(path.read_text(encoding="utf-8"))
-        found = next((c for c in book["chapters"] if c["n"] == chapter), None)
-        if found is not None:
-            return {v["n"] for v in found["verses"]}
-    return None
+def bible_verses(work_dir: Path, osis: str, chapter: int) -> set[int] | None:
+    """One chapter's verse numbers in one Bible, or nothing where that edition
+    does not print the chapter. An edition may legitimately lack a book, so
+    absence here is not a fault -- it is a question this edition cannot
+    answer."""
+    path = work_dir / "books" / f"{osis}.json"
+    if not path.exists():
+        return None
+    book = json.loads(path.read_text(encoding="utf-8"))
+    found = next((c for c in book["chapters"] if c["n"] == chapter), None)
+    return {v["n"] for v in found["verses"]} if found is not None else None
 
 
 def scripture_sweep() -> list[tuple[str, list[tuple[str, list[str]]]]]:
@@ -865,46 +879,87 @@ def tabulated_verses(slug: str) -> set[str]:
     }
 
 
-def check_references(lang: str, slug: str, references: list[dict]) -> None:
-    """That every reference names something the corpus actually holds.
+def check_references(slug: str, references: list[dict]) -> None:
+    """That every reference names something the corpus actually holds, in
+    every edition that could hold it.
 
-    FATAL, like the slug check below and for the same reason one layer over:
-    a reference is a promise that there is something to read at the other
-    end, and a wrong number does not fail -- it renders as a link that lands
-    on an empty page. Silence here means only that this language has no
-    edition of the work to check against, which is the one honest way to
-    skip.
+    FATAL, like `check_tables`, and for the same reason one layer over: a
+    reference is a promise that there is something to read at the other end,
+    and a wrong number does not fail -- it renders as a link that lands on an
+    empty page.
+
+    ASKED OF EVERY EDITION, WHICH IS WHAT MAKES IT A CHECK OF THE CLAIM. The
+    claim is about the PRAYER, so it has to hold wherever the reader is sent;
+    asked of one language it would pass on the strength of the one edition
+    that happens to be complete. A Bible that does not print the chapter at
+    all is the one honest abstention -- it is a question that edition cannot
+    answer -- but no edition may print the chapter and lack the verse, and at
+    least one has to print it or the reference names nothing anywhere.
     """
     for ref in references:
-        if ref["work"] == "bible":
-            held = bible_verses(lang, ref["osis"], ref["chapter"])
-            where = f"{ref['osis']} {ref['chapter']}"
-        elif ref["work"] == "ccc":
-            held = numbered_units(f"ccc.{lang}", "paragraphs.json")
-            where = f"ccc.{lang}"
-        else:
-            held = numbered_units(f"compendium.{lang}", "questions.json")
-            where = f"compendium.{lang}"
-        if held is None:
-            continue
-        absent = [n for n in (ref["first"], ref["last"]) if n not in held]
-        if absent:
+        answered = 0
+        for work_dir in editions("bible" if ref["work"] == "bible" else ref["work"]):
+            if ref["work"] == "bible":
+                held = bible_verses(work_dir, ref["osis"], ref["chapter"])
+                where = f"{work_dir.name} {ref['osis']} {ref['chapter']}"
+            elif ref["work"] == "ccc":
+                held = numbered_units(work_dir, "paragraphs.json")
+                where = work_dir.name
+            else:
+                held = numbered_units(work_dir, "questions.json")
+                where = work_dir.name
+            if held is None:
+                continue
+            answered += 1
+            absent = [n for n in (ref["first"], ref["last"]) if n not in held]
+            if absent:
+                raise RuntimeError(
+                    f"{REFERENCES_DIR}: the {slug} reference to {where} names "
+                    f"{', '.join(str(n) for n in absent)}, which is not there"
+                )
+        if answered == 0:
             raise RuntimeError(
-                f"{WORK_PREFIX}.{lang}: the {slug} reference to {where} names "
-                f"{', '.join(str(n) for n in absent)}, which is not there"
+                f"{REFERENCES_DIR}: the {slug} reference to {ref['work']} "
+                "names an address no edition in the corpus holds"
             )
+
+
+def span(ref: dict) -> str:
+    """A reference's extent, and a single number where the range is one."""
+    return (
+        str(ref["first"])
+        if ref["first"] == ref["last"]
+        else f"{ref['first']}-{ref['last']}"
+    )
+
+
+def references_document() -> dict[str, list[dict]]:
+    """The whole table, checked, keyed by prayer.
+
+    ONE FILE FOR EVERY LANGUAGE, WHICH IS THE WHOLE POINT OF IT BEING HERE
+    AND NOT IN THE APPARATUS. That the Hail Mary is Luke 1:28 and 1:42 is a
+    fact about the prayer; the Catechism reading it clause by clause in
+    fifteen languages is fifteen readings. The first cannot vary by language
+    and so is written once, language-free, and reaches the Hindi and
+    Vietnamese collections -- which have no Catechism, no Compendium and
+    therefore no apparatus at all. Until 2026-09-05 it rode the apparatus, and
+    those readers saw nothing.
+    """
+    doc: dict[str, list[dict]] = {}
+    for slug, references in REFERENCES.items():
+        check_references(slug, references)
+        doc[slug] = [dict(ref) for ref in references]
+    return doc
 
 
 def build(lang: str) -> tuple[dict | None, dict]:
     """One language's apparatus, and what it reached.
 
-    THE WORK EXISTS FOR THE TWO BOOKS, NOT FOR THE NOTES, and that is why a
-    prayer with no note can still be an entry. Every reference names the
-    Catechism, its Compendium or the Scripture one of them prints, so a
-    language holding either book has something to say about a dozen prayers
-    and quotes a clause of four of them. A language holding neither produces
-    no work at all -- there would be no source to name and no title to
-    compose from one.
+    NOTES ONLY, SINCE 2026-09-05. The references were here for a day and were
+    the wrong shape while they were: a work per language carrying a table that
+    is the same in every language, and absent entirely from the five
+    collections with no Catechism and no Compendium. They are written once by
+    `references_document` instead.
     """
     prayers = load_prayers(lang)
     stats = {
@@ -912,8 +967,6 @@ def build(lang: str) -> tuple[dict | None, dict]:
         "read": 0,
         "notes": 0,
         "glossed": 0,
-        "linked": 0,
-        "references": 0,
         "disagreements": [],
     }
     if not prayers:
@@ -922,24 +975,22 @@ def build(lang: str) -> tuple[dict | None, dict]:
     ccc = read_manifest(f"ccc.{lang}")
     page = ccc_page(lang)
     compendium = read_manifest(f"compendium.{lang}")
-    if ccc is None and compendium is None:
-        return None, stats
 
     notes_by_slug: dict[str, list[dict]] = {}
     contributors: list[tuple[str, dict]] = []
 
-    if ccc is not None:
-        contributors.append((f"ccc.{lang}", ccc))
+    if ccc is not None and page is not None:
         hail_mary = prayers.get(CCC_HAIL_MARY["slug"])
-        if page is not None and hail_mary is not None:
+        if hail_mary is not None:
             notes, disagreements, read = ccc_notes(lang, hail_mary)
             stats["read"] += read
             stats["disagreements"] = disagreements
             if notes:
                 notes_by_slug[CCC_HAIL_MARY["slug"]] = notes
+                contributors.append((f"ccc.{lang}", ccc))
 
     if compendium is not None:
-        contributors.append((f"compendium.{lang}", compendium))
+        reached = False
         for section in COMPENDIUM_SECTIONS:
             prayer = prayers.get(section["slug"])
             if prayer is None:
@@ -948,36 +999,25 @@ def build(lang: str) -> tuple[dict | None, dict]:
             stats["read"] += read
             if notes:
                 notes_by_slug.setdefault(section["slug"], []).extend(notes)
+                reached = True
+        if reached:
+            contributors.append((f"compendium.{lang}", compendium))
 
     # THE COLLECTION'S OWN ORDER, walked rather than the tables' -- a prayer
     # is an entry here only if this language prints it, which is the check
     # §Commentary requires (a note addressing nothing renders beside nothing,
     # invisibly) turned into the loop itself. `main` still refuses a table
     # naming a prayer no collection has, since that one no loop can catch.
-    entries: list[dict] = []
-    for slug in prayers:
-        notes = notes_by_slug.get(slug) or []
-        # WHERE ELSE THE PRAYER IS SPOKEN OF, and the notes' own loci are not
-        # it: a note cites the paragraph it IS, one per card, while these are
-        # the whole of what the three books have on this prayer -- including
-        # the hundred CCC paragraphs and the hundred and eighty Compendium
-        # questions this apparatus does not reprint.
-        references = [dict(ref) for ref in REFERENCES.get(slug, [])]
-        if not notes and not references:
-            continue
-        check_references(lang, slug, references)
-        entry: dict = {"slug": slug, "notes": notes}
-        if references:
-            entry["references"] = references
-        entries.append(entry)
-
+    entries = [
+        {"slug": slug, "notes": notes_by_slug[slug]}
+        for slug in prayers
+        if slug in notes_by_slug
+    ]
     if not entries:
         return None, stats
 
-    stats["glossed"] = sum(1 for e in entries if e["notes"])
-    stats["linked"] = sum(1 for e in entries if e.get("references"))
+    stats["glossed"] = len(entries)
     stats["notes"] = sum(len(e["notes"]) for e in entries)
-    stats["references"] = sum(len(e.get("references") or []) for e in entries)
     return {"entries": entries, "contributors": contributors}, stats
 
 
@@ -1046,11 +1086,10 @@ def manifest_for(lang: str, doc: dict, generated_at: str) -> dict:
             "prayer prints verbatim, so every headword is a quotation of the "
             "annotated text -- and a note whose source glosses a different "
             "wording, or glosses the prayer as a whole rather than one of its "
-            "clauses, is not kept. What those paragraphs and questions are is "
-            "named instead in each prayer's `references`, which reach further "
-            "than the notes do: a prayer the two books name or expound but "
-            "never quote carries references and no notes at all. Each note "
-            "cites the paragraph or question it is."
+            "clauses, is not kept. What those paragraphs and questions ARE is "
+            "not here at all: it is the same answer in every language, so it "
+            "is written once, language-free, as `prayer-references/`. Each "
+            "note cites the paragraph or question it is."
         ),
         "generated_at": generated_at,
         "prayers": [e["slug"] for e in doc["entries"]],
@@ -1064,6 +1103,20 @@ def write_output(lang: str, doc: dict, generated_at: str) -> None:
             "manifest.json": manifest_for(lang, doc, generated_at),
             "prayers.json": doc["entries"],
         },
+        generated_at,
+    )
+
+
+def write_references(doc: dict[str, list[dict]], generated_at: str) -> None:
+    """The one language-free output, written whatever `--lang` was asked for.
+
+    A per-language run must not leave a table that names some prayers and not
+    others: the file says what the corpus holds about every prayer, and half
+    of it is not a smaller truth but a false one.
+    """
+    write_stamped_json(
+        common.build_root() / REFERENCES_DIR,
+        {"references.json": doc},
         generated_at,
     )
 
@@ -1128,6 +1181,11 @@ def main() -> int:
     check_tables()
     generated_at = datetime.now(UTC).isoformat(timespec="seconds")
 
+    # BEFORE ANY WORK IS WRITTEN, because this is where a bad number in the
+    # table becomes fatal, and failing after fifteen works are on disk would
+    # leave the corpus half-written by a run that reported an error.
+    references = references_document()
+
     wanted = set(args.lang or []) or None
     rows: list[dict] = []
     written = 0
@@ -1139,33 +1197,48 @@ def main() -> int:
         if doc and not args.dry_run:
             write_output(lang, doc, generated_at)
             written += 1
+    if not args.dry_run:
+        write_references(references, generated_at)
 
     print(f"{WORK_PREFIX}.* — the Catechism and the Compendium on the prayers\n")
     # `read` is every run of CCC 2676-2677 and every question of the
     # Compendium sections this edition holds; `kept` is those that open on a
-    # clause of the prayer. THE GAP IS NOT A MISS RATE and grows as the
-    # sections do: most of the Compendium's Part One expounds an article of
-    # the Creed without quoting it, and what a book says about a prayer as a
-    # whole is what the references carry instead. `glossed` and `linked` are
-    # prayers, not notes: how many this edition marks, and how many it sends
-    # somewhere to be read.
-    print(
-        f"  {'lang':6} {'read':>5} {'kept':>5} {'glossed':>7} {'linked':>6} {'refs':>5}"
-    )
+    # clause of the prayer, and `glossed` the prayers they reach. THE GAP IS
+    # NOT A MISS RATE and grows as the sections do: most of the Compendium's
+    # Part One expounds an article of the Creed without quoting it, and what a
+    # book says about a prayer as a whole is what the references carry
+    # instead -- which is one table for every language and is reported below.
+    print(f"  {'lang':6} {'read':>5} {'kept':>5} {'glossed':>7}")
     total_read = total_kept = 0
     for row in rows:
-        if row["read"] == 0 and row["linked"] == 0:
+        if row["read"] == 0:
             continue
         total_read += row["read"]
         total_kept += row["notes"]
         print(
-            f"  {row['lang']:6} {row['read']:>5} {row['notes']:>5} "
-            f"{row['glossed']:>7} {row['linked']:>6} {row['references']:>5}"
+            f"  {row['lang']:6} {row['read']:>5} {row['notes']:>5} {row['glossed']:>7}"
         )
-    empty = [r["lang"] for r in rows if r["read"] == 0 and r["linked"] == 0]
+    empty = [r["lang"] for r in rows if r["read"] == 0]
     print(f"\n  {'total':6} {total_read:>5} {total_kept:>5}")
     if empty:
         print(f"\n  no source in: {', '.join(empty)}")
+
+    print(
+        f"\n{REFERENCES_DIR} — where else the corpus speaks of a prayer, and\n"
+        "the same answer in every language, so it is written once.\n"
+    )
+    for slug, refs in references.items():
+        named = ", ".join(
+            f"{r['osis']} {r['chapter']}:{span(r)}"
+            if r["work"] == "bible"
+            else f"{r['work'].upper()} {span(r)}"
+            for r in refs
+        )
+        print(f"  {slug:34} {named}")
+    print(
+        f"\n  {len(references)} prayer(s), "
+        f"{sum(len(r) for r in references.values())} reference(s)"
+    )
 
     if args.check:
         print(
@@ -1198,7 +1271,10 @@ def main() -> int:
     if args.dry_run:
         print("\n--dry-run: nothing written.")
     else:
-        print(f"\n  {written} work(s) written to {common.build_root()}")
+        print(
+            f"\n  {written} work(s) and {REFERENCES_DIR}/ written to "
+            f"{common.build_root()}"
+        )
     return 0
 
 

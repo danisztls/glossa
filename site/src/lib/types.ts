@@ -676,16 +676,6 @@ export interface PrayerCommentary {
 	 * which names the whole passage instead (`prayers_glossa.py`).
 	 */
 	notes: CommentaryNote[];
-	/**
-	 * Where else the corpus speaks of this prayer, as links under the text.
-	 *
-	 * NOT THE NOTES' OWN LOCI. A note cites the paragraph it IS, one per card;
-	 * these are the whole of what each book has on the prayer — the Catechism's
-	 * hundred-paragraph article on the Lord's Prayer, the Compendium's
-	 * twenty-one questions, the Gospel verses the prayer's words are — most of
-	 * which this apparatus deliberately does not reprint.
-	 */
-	references?: PrayerReference[];
 }
 
 /**
@@ -695,6 +685,14 @@ export interface PrayerCommentary {
  * 2759–2865` is one article, and where the prayer's words are drawn from two
  * separate verses those are two references rather than one span across
  * everything between them.
+ *
+ * IT IS NOT PART OF THE APPARATUS AND HAS NO LANGUAGE (2026-09-05). That the
+ * Hail Mary is Luke 1:28 and 1:42 is a fact about the prayer; the Catechism
+ * reading it clause by clause in fifteen languages is fifteen readings. So
+ * these arrive keyed by slug alone, in the index tier
+ * (`corpus-index.ts`'s `prayerReferences`, from the corpus's language-free
+ * `prayer-references/`), and reach the collections that have no apparatus at
+ * all — Hindi, Vietnamese, both Chinese — which for one day they did not.
  */
 export type PrayerReference =
 	| {

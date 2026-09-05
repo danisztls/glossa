@@ -468,9 +468,10 @@ Creeds. Only what quotes a clause of the prayer is kept; the rest glosses the
 prayer as a whole and became `references` under the text instead (2026-09-05),
 because an apparatus of unanchored notes at the foot of a seven-line Ave is
 the Catechism reprinted beside the prayer rather than a gloss on it. Those
-references reach further than the notes do — a prayer the two books name or
-expound but never quote carries them alone, which is most of the dozen the
-apparatus now touches. It cost no fetch and no new rights question, and the
+references left the apparatus the same day, for `build/prayer-references/`:
+an address is the same for every reader, so one language-free table serves
+fifteen prayers in every collection — including the five that have no
+Catechism, no Compendium and therefore no apparatus at all. It cost no fetch and no new rights question, and the
 machinery needed one new function (`anchorCommentaryLines`, the cursor walking
 a prayer's printed lines instead of a verse). `pipeline/CLAUDE.md` §The
 prayers' glossa and `site/CLAUDE.md` §Haydock on the page hold the rules.

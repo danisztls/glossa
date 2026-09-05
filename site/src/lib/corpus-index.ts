@@ -80,6 +80,7 @@ import type {
 	CccNode,
 	CccParagraph,
 	CompendiumQuestion,
+	PrayerReference,
 	StructureNode,
 	SummaNode,
 	SummaPart,
@@ -436,6 +437,29 @@ const realIndexPrayersUrl = import.meta.glob('./corpus-data/index/prayer-index.j
 	query: '?url',
 	import: 'default'
 }) as Record<string, string>;
+
+/**
+ * Where else the corpus speaks of a prayer, keyed by slug and by nothing
+ * else — index tier, ~3 KB, eager for `plateCredits`'s reason below: the
+ * prayer page prints it under the text and an address table that arrived over
+ * the network could fail to arrive.
+ *
+ * KEYED BY SLUG ALONE BECAUSE IT HAS NO LANGUAGE. That the Hail Mary is
+ * Luke 1:28 and 1:42 does not change with the edition in front of the reader,
+ * and neither does the Catechism's article on the Lord's Prayer; only the
+ * apparatus that READS those books is per language (`commentary.svelte.ts`).
+ * The addresses themselves are edition-free, so each link opens whichever
+ * edition the reader already has (`address.ts`).
+ */
+const realPrayerReferences = import.meta.glob('./corpus-data/index/prayer-references.json', {
+	eager: true,
+	import: 'default'
+}) as Record<string, Record<string, PrayerReference[]>>;
+
+/** Every prayer's references, keyed by slug. Empty under fixtures and for a
+ *  corpus built before `prayer-references/` existed. */
+export const prayerReferences: Record<string, PrayerReference[]> =
+	Object.values(realPrayerReferences)[0] ?? {};
 
 /**
  * Credit for the illustration collections — index tier, ~470 bytes, and one

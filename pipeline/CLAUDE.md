@@ -776,8 +776,18 @@ checked against the corpus before it is written (`check_references`).
   articles — a question is filed under whichever creed PRINTS the clause it
   quotes, so `has spoken through the prophets` reaches the Nicene alone and
   `I believe in the Holy Spirit` both.
-- **THE REFERENCES REACH FURTHER THAN THE NOTES, AND AN ENTRY MAY HAVE ONLY
-  THEM.** The rule of admission is that the passage speaks of THIS prayer —
+- **THE REFERENCES ARE NOT IN THE APPARATUS AND HAVE NO LANGUAGE**
+  (2026-09-05). They are `build/prayer-references/`, one table for every
+  reader, this stage's second output and not a work — because that the Hail
+  Mary is Luke 1:28 is a fact about the PRAYER, where the Catechism reading it
+  clause by clause in fifteen languages is fifteen readings. Written inside
+  `commentary.preces.{lang}` for one day, they were duplicated fifteen times
+  and absent from the five collections with no Catechism and no Compendium,
+  whose readers saw nothing under any prayer. `check_references` asks every
+  edition that could hold a number, not the one language at hand: the claim is
+  about the prayer, so it has to hold wherever the reader is sent.
+- **THE REFERENCES REACH FURTHER THAN THE NOTES.** The rule of admission is
+  that the passage speaks of THIS prayer —
   by naming it (CCC 2678 on the rosary, 700 on the Veni Creator, Compendium
   547 on the Magnificat), by quoting it (CCC 2157 prints the Sign of the Cross
   entire), or by being the article that expounds it (CCC 185-1065 is the
