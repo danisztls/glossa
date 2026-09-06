@@ -59,7 +59,10 @@
 	 * key its own landing page is titled and described by, which is the same
 	 * rule `scripts/route-titles.mjs` follows for the `<head>`. A catalogue that
 	 * paraphrased the pages it lists would be a second set of sentences to
-	 * translate into 37 languages and a second set to keep true.
+	 * translate into 37 languages and a second set to keep true. (The Social
+	 * Doctrine's card is titled from `nav.socialDoctrine` rather than from its
+	 * landing page — still a string a page already had, and the card's own note
+	 * says why a grid wants the short name.)
 	 *
 	 * **THE EXCEPTIONS ARE BOTH ONE CARD'S**: `ccc.landing.pairTitle` and
 	 * `ccc.landing.pairTagline`, because this is the only surface on the site
@@ -158,8 +161,15 @@
 			type: 'catechism'
 		},
 		{
+			// THE NAV BAR'S NAME AND NOT THE LANDING PAGE'S, the one card here
+			// titled from a different key than its `<head>`: "Compendium of the
+			// Social Doctrine of the Church" was the longest name in the grid and
+			// buried the two words a reader scans for in the middle of it. It is
+			// still what `/doctrina-socialis` calls itself; `nav.socialDoctrine`
+			// is the same work's short name and is already written in all 37
+			// languages, so the card shortens without a string to translate.
 			key: 'social',
-			titleKey: 'socialDoctrine.landing.title',
+			titleKey: 'nav.socialDoctrine',
 			icon: 'users',
 			href: '/doctrina-socialis',
 			taglineKey: 'socialDoctrine.landing.tagline',

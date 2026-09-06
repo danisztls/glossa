@@ -458,9 +458,8 @@ export const en: Dictionary = {
 	'ccc.nextParagraph': 'Next paragraph',
 	'ccc.inBrief': 'In Brief',
 	'ccc.landing.title': 'Catechism of the Catholic Church',
-	// THE PAIR UNDER ONE NAME, for `/bibliotheca`'s Learn shelf, where the
-	// Catechism and its Compendium are one card leading to the one index that
-	// holds both. `ccc.landing.title` names the Catechism alone and is what
+	// THE PAIR UNDER ONE NAME, for `/bibliotheca`, where the Catechism and its
+	// Compendium are one card leading to the one index that holds both. `ccc.landing.title` names the Catechism alone and is what
 	// every OTHER surface wants, `/schola`'s row and the `<head>` included, so
 	// this is a second key rather than a rewrite of that one.
 	//
@@ -470,7 +469,13 @@ export const en: Dictionary = {
 	// the class of string this project translates last. The two halves already
 	// exist translated (`ccc.landing.title`, `compendium.landing.title`) for
 	// whoever writes the rest.
-	'ccc.landing.pairTitle': 'Catechism & Compendium of the Catholic Church',
+	//
+	// TWO NAMES AND NOT THE FORMAL TITLE: it read "Catechism & Compendium of
+	// the Catholic Church" until 2026-09-06, which is a title that has to be
+	// read to the end before it says anything the first two words did not. A
+	// card is scanned down its left edge; "of the Catholic Church" is where
+	// the sentence under it starts.
+	'ccc.landing.pairTitle': 'Catechism & Compendium',
 	// The page's whole description: `/catechismus` indexes BOTH works, the
 	// Compendium having no index of its own. `**` marks the two names for
 	// emphasis (`boldMarkup.ts`) — inside the sentence rather than around it,
@@ -481,15 +486,18 @@ export const en: Dictionary = {
 	// names. A masthead's tagline has the width of the page and two sentences
 	// with two names in bold read as a masthead; in a 16rem card they were six
 	// lines against its neighbours' three, and a grid whose rows are all the
-	// height of the tallest card pays for that six times over. The names go
-	// because the card is already titled with both.
+	// height of the tallest card pays for that six times over.
+	//
+	// IT CARRIES THE FORMAL TITLE the card's name drops, which is what a
+	// sentence under a short name is for — and it is shorter than the clause
+	// it replaced, so the row every card is as tall as did not grow.
 	//
 	// English only, on `pairTitle`'s terms and for its reason: it exists for
 	// the one surface that names the pair, and a reader in another language
 	// gets a card that is English throughout rather than an English title over
 	// a translated sentence about two works it has stopped naming.
 	'ccc.landing.pairTagline':
-		'Catholic doctrine in 2,865 numbered paragraphs, and the same doctrine as 598 questions and answers.',
+		'The Catechism of the Catholic Church in 2,865 paragraphs, and its Compendium in 598 questions.',
 	'ccc.tableOfContents': 'Table of Contents',
 	'ccc.related': 'See also',
 
