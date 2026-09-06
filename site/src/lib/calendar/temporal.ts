@@ -531,12 +531,19 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 	);
 
 	/* --- Ordinary Time, first part. ------------------------------------ */
-	// Week 1 has no Sunday of its own: the Baptism occupies it. So the count
-	// starts from the Monday after, and the following Sunday opens week 2.
+	// THERE IS NO FIRST SUNDAY OF ORDINARY TIME. Week 1 is weekdays only —
+	// the Baptism closes Christmastide and the NEXT Sunday opens week 2, which
+	// is why the Missal numbers the Sundays from the second and prints no
+	// first. So the count is anchored on that Sunday and not on the day the
+	// season starts: measured from the start, a year where the Baptism is
+	// displaced to the Monday leaves five weekdays instead of six, and every
+	// Sunday of the first part comes out a week early. 15 January 2023 was
+	// emitted as the First Sunday of a week that has none, where the Missal
+	// and the lectionary both have the Second.
 	const otStart = a.baptism + 1;
+	const secondSunday = after(a.baptism, SUNDAY);
 	for (let n = otStart; n < a.ashWednesday; n++) {
-		const week = 1 + Math.floor((n - otStart + 1) / 7);
-		putOrdinary(n, week);
+		putOrdinary(n, n < secondSunday ? 1 : 2 + Math.floor((n - secondSunday) / 7));
 	}
 
 	function putOrdinary(n: DayNumber, week: number) {

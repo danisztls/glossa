@@ -394,16 +394,19 @@ const SINCE: Record<string, number> = {
 };
 
 /**
- * Solemnities that are ANTICIPATED when impeded rather than deferred.
+ * Solemnities whose transfer a rubric names outright, against n. 60's
+ * "closest day not listed under nn. 1–8".
  *
- * Saint Joseph is the only one. When 19 March falls in Holy Week it is kept
- * on the free day before — 15 March in 2008, the Saturday before Palm Sunday
- * — while the Annunciation in the same position goes forward past the whole
- * Octave of Easter. Both directions are "the closest day not listed under
- * nn. 1–8" from where each stands, and neither is derivable from the other,
- * which is why this is a table rather than a rule.
+ * The Annunciation is the only one: n. 61 sends 25 March in Holy Week to the
+ * Monday after the Second Sunday of Easter — 8 April in 2024 — where closest
+ * would put it back in Lent. Saint Joseph is NOT here and was: the closest
+ * day is the right answer for him in both positions he can be impeded from,
+ * backward out of Holy Week and forward off a Sunday of Lent, and stating a
+ * direction got the second one wrong.
  */
-const ANTICIPATED = new Set(['joseph']);
+const TRANSFER_TO: Record<string, Celebration['transferTo']> = {
+	annunciation: 'after-easter-octave'
+};
 
 function toCelebration(row: Row): Celebration {
 	const [, id, la, en, pt, rank, colour] = row;
@@ -419,7 +422,7 @@ function toCelebration(row: Row): Celebration {
 		// Only a solemnity is moved rather than dropped when a higher class
 		// takes its day (n. 60). Everything below is simply omitted that year.
 		...(rank === 's' ? { transferable: true } : {}),
-		...(ANTICIPATED.has(id) ? { anticipated: true } : {})
+		...(TRANSFER_TO[id] ? { transferTo: TRANSFER_TO[id] } : {})
 	};
 }
 

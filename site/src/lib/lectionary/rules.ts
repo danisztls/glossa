@@ -141,16 +141,15 @@ function weekdayNumber(day: LiturgicalDay): number | null {
 function sundayNumber(day: LiturgicalDay): number | null {
 	const base = SUNDAY_BASE[day.season];
 	if (base === undefined) return null;
-	// THERE IS NO FIRST SUNDAY OF ORDINARY TIME. The Sunday of that week is the
-	// Baptism of the Lord, and the next Sunday is the SECOND — the book numbers
-	// them from 64 and prints no 61, 62 or 63. `$lib/calendar` emits an Ordinary
-	// week-1 Sunday in a year where the Baptism is displaced to the Monday (8
-	// January 2023 kept Epiphany on the Sunday, so 15 January was labelled week
-	// 1 and is the Second Sunday), which is a defect there; clamping states what
-	// the book states rather than working around it, and keeps a reader in such
-	// a year from being handed the wrong Sunday.
-	const week = day.season === 'ordinary' ? Math.max(day.week, 2) : day.week;
-	return base + 3 * (week - 1) + CYCLE[day.sundayCycle];
+	// THERE IS NO FIRST SUNDAY OF ORDINARY TIME, which is why `SUNDAY_BASE`
+	// holds a 61 that no Sunday ever takes: the Baptism of the Lord occupies
+	// that week and the next Sunday is the SECOND, so the count starts at 64
+	// and the book prints no 61, 62 or 63. Nothing clamps the week here — this
+	// used to, against a `$lib/calendar` that emitted an Ordinary week-1 Sunday
+	// where the Baptism was displaced to the Monday, and the clamp hid the
+	// defect from the season rather than fixing it. `temporal.ts` anchors the
+	// count on the Sunday now, so a week-1 Sunday cannot reach this.
+	return base + 3 * (day.week - 1) + CYCLE[day.sundayCycle];
 }
 
 /**

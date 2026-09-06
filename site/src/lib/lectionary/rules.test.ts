@@ -37,15 +37,13 @@ function recorded(numbers: string[]): Set<string> {
 }
 
 /**
- * Days where the CALENDAR, not this module, disagrees with USCCB.
- *
- * 19 March 2028 is the Third Sunday of Lent, so St Joseph is impeded. USCCB
- * transfers him FORWARD to the Monday, which is what the Universal Norms
- * require of a solemnity a Lenten Sunday impedes; `$lib/calendar` transfers him
- * backward to the Saturday. Listed here rather than tolerated silently, because
- * the fix belongs in the calendar and this file is what found it.
+ * THERE IS NO EXCLUSION LIST, and there was one. 19 March 2028 is the Third
+ * Sunday of Lent, so St Joseph is impeded; USCCB transfers him forward to the
+ * Monday and `$lib/calendar` sent him back to the Saturday, so both dates sat
+ * here as a known divergence. The fix belonged in the calendar's transfer pass
+ * — n. 60's closest day is in either direction — and this file is what found
+ * it. A tolerated divergence is a defect with a comment on it.
  */
-const CALENDAR_DIVERGENCE = new Set(['2028-03-18', '2028-03-20']);
 
 describe('the OLM rules against the crawled days', () => {
 	const days = oracle.days as Record<string, string[]>;
@@ -61,7 +59,6 @@ describe('the OLM rules against the crawled days', () => {
 		for (const [date, numbers] of Object.entries(days)) {
 			const day = liturgicalDay(date, OPTIONS);
 			if (!day) continue;
-			if (CALENDAR_DIVERGENCE.has(date)) continue;
 			checked += 1;
 			const want = recorded(numbers);
 			const got = olmNumbersFor(day);

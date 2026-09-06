@@ -355,23 +355,29 @@ export function buildYear(
 	// under nn. 1–8" (n. 60), in date order so an earlier one cannot be
 	// displaced by a later.
 	//
-	// THE DIRECTION IS NOT THE SAME FOR ALL OF THEM, and this is what a plain
-	// forward queue gets wrong. The Annunciation impeded by Holy Week goes
-	// FORWARD, past the whole Octave of Easter, to the Monday after the Second
-	// Sunday of Easter — 25 March 2027 is Holy Thursday, and the oracle
-	// confirms it lands on 5 April. Saint Joseph impeded by Holy Week is
-	// ANTICIPATED instead, to the free day before, which is how 19 March was
-	// kept in 2008 (moved back to the 15th).
+	// CLOSEST IS IN EITHER DIRECTION, and that one word carries both cases the
+	// calendar actually meets. Saint Joseph impeded by a Sunday of Lent has a
+	// free day one step each way and goes FORWARD — 19 March 2017 was the
+	// Third Sunday of Lent and he was kept on Monday the 20th; the same is
+	// true of the Immaculate Conception on a Sunday of Advent, which is the
+	// commonest transfer there is. Saint Joseph impeded by Holy Week is
+	// ANTICIPATED, because forward is past the whole Octave of Easter and
+	// backward is a few days: 19 March 2008 was Holy Wednesday and he was kept
+	// on Saturday the 15th. One rule, read off the distance, gives both.
+	//
+	// So a tie breaks FORWARD, which is the only part not stated in n. 60 and
+	// is what the two Sunday cases above settle.
+	//
+	// The Annunciation is the exception and is not a distance at all: n. 61
+	// names its destination outright — "whenever this solemnity occurs during
+	// Holy Week, it is transferred to the Monday after the Second Sunday of
+	// Easter". Nearest would send it BACKWARD into Lent, five days rather than
+	// eleven, in a year like 2027 where 25 March is Holy Thursday. A named
+	// destination cannot be recovered from a search, so it is stated.
 	//
 	// 2035 is the year that needs both at once: Easter falls on 25 March, so
 	// Joseph is inside Holy Week and the Annunciation is on Easter Sunday
-	// itself. Sending both forward gives Joseph the Annunciation's day and
-	// pushes the Annunciation a fortnight past it.
-	//
-	// So the direction is a property of the celebration (`anticipated`) and
-	// not a rule read off the season. NOTE that Joseph's direction is the one
-	// thing here the oracle cannot confirm — 19 March is outside Holy Week in
-	// all three of its years — so it rests on the published practice cited.
+	// itself, inside the Octave the rubric also covers.
 	const taken = new Set<DayNumber>();
 	const free = (n: DayNumber): boolean =>
 		n >= a.adventStart &&
@@ -379,13 +385,28 @@ export function buildYear(
 		!taken.has(n) &&
 		(base.get(n) ?? []).every((c) => c.precedence > PRECEDENCE.PROPER_FEAST);
 
+	// The first free day at distance d from `from`, forward before backward.
+	const nearestFree = (from: DayNumber): DayNumber | undefined => {
+		for (let d = 1; d < 366; d++) {
+			if (free(from + d)) return from + d;
+			if (free(from - d)) return from - d;
+		}
+		return undefined;
+	};
+
 	for (const { from, celebration } of impeded) {
-		const step = celebration.anticipated ? -1 : 1;
-		let n = from + step;
-		while (n >= a.adventStart && n < a.nextAdvent && !free(n)) n += step;
+		// The Monday after the Second Sunday of Easter, which closes the
+		// Octave. Still searched from there rather than placed blind: the
+		// rubric names the day, and a day already taken is not a day.
+		const n =
+			celebration.transferTo === 'after-easter-octave'
+				? free(a.easter + 8)
+					? a.easter + 8
+					: nearestFree(a.easter + 8)
+				: nearestFree(from);
 		// Nowhere in this year to put it. Dropping is the honest answer: the
 		// alternative is inventing a date the Church did not choose.
-		if (!free(n)) continue;
+		if (n === undefined) continue;
 		taken.add(n);
 		base.get(n)!.push({ ...celebration, transferredFrom: formatIsoDate(from) });
 	}

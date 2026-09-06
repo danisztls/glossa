@@ -95,13 +95,89 @@ describe('Ordinary Time is numbered so that Christ the King is the thirty-fourth
 		expect(buildYear(2026).get(a.baptism + 7)!.week).toBe(2);
 		expect(buildYear(2026).get(a.baptism + 7)!.celebration.id).toBe('ordinary-2-sunday');
 	});
+
+	/* AND IT DOES NOT START ON A MONDAY EVERY YEAR. Where Epiphany is kept on
+	   the Sunday, the Baptism is the Monday after it and Ordinary Time opens
+	   on the Tuesday — so week 1 holds five weekdays instead of six. Counting
+	   the weeks from the day the season STARTS makes that year's every Sunday
+	   a week early; the count is anchored on the Sunday for this reason. The
+	   dates are the norm's: 2023 kept Epiphany on 8 January, so 15 January is
+	   the Second Sunday in Ordinary Time and 22 January the Third. */
+	it('opens week 1 on the Tuesday where the Baptism is displaced', () => {
+		const us: CalendarOptions = { epiphanyOnSunday: true };
+		expect(day(2023, '2023-01-08', us)!.celebration.id).toBe('epiphany');
+		expect(day(2023, '2023-01-09', us)!.celebration.id).toBe('baptism-of-the-lord');
+		expect(day(2023, '2023-01-10', us)!.celebration.id).toBe('ordinary-1-2');
+		expect(day(2023, '2023-01-14', us)!.celebration.id).toBe('ordinary-1-6');
+		expect(day(2023, '2023-01-15', us)!.celebration.id).toBe('ordinary-2-sunday');
+		expect(day(2023, '2023-01-22', us)!.celebration.id).toBe('ordinary-3-sunday');
+	});
+
+	/* 2024 is the same shape one day earlier — Epiphany on 7 January, the
+	   Baptism on Monday the 8th — and its Second Sunday is 14 January. */
+	it('does the same where Epiphany falls on 7 January', () => {
+		const us: CalendarOptions = { epiphanyOnSunday: true };
+		expect(day(2024, '2024-01-08', us)!.celebration.id).toBe('baptism-of-the-lord');
+		expect(day(2024, '2024-01-13', us)!.celebration.id).toBe('ordinary-1-6');
+		expect(day(2024, '2024-01-14', us)!.celebration.id).toBe('ordinary-2-sunday');
+	});
+});
+
+describe('Saint Joseph moves in whichever direction is closer', () => {
+	/* n. 60's "closest day not listed under nn. 1-8" is closest in EITHER
+	   direction, and 19 March is the celebration that meets both. The engine
+	   carried a per-celebration direction until 2026-09-06 and got the second
+	   of these backwards. */
+
+	/* Impeded by a Sunday of Lent, a free day lies one step each way and the
+	   tie breaks FORWARD. 19 March 2017 was the Third Sunday of Lent and the
+	   solemnity was kept on Monday the 20th. */
+	it('is deferred to the Monday off a Sunday of Lent', () => {
+		expect(day(2017, '2017-03-19')!.celebration.id).toBe('lent-3-sunday');
+		const moved = day(2017, '2017-03-20')!;
+		expect(moved.celebration.id).toBe('joseph');
+		expect(moved.celebration.transferredFrom).toBe('2017-03-19');
+	});
+
+	/* 2028 is the same case, and is the one a second witness confirms: USCCB
+	   publishes the solemnity's readings on Monday 20 March 2028. */
+	it('does the same in 2028, where the crawl agrees', () => {
+		expect(day(2028, '2028-03-19')!.celebration.id).toBe('lent-3-sunday');
+		expect(day(2028, '2028-03-20')!.celebration.id).toBe('joseph');
+	});
+
+	/* Impeded by Holy Week, forward is past the whole Octave of Easter and
+	   backward is a few days, so he is ANTICIPATED. 19 March 2008 was Holy
+	   Wednesday and the solemnity was kept on Saturday the 15th. */
+	it('is anticipated out of Holy Week', () => {
+		expect(day(2008, '2008-03-19')!.celebration.id).toBe('holy-week-3');
+		const moved = day(2008, '2008-03-15')!;
+		expect(moved.celebration.id).toBe('joseph');
+		expect(moved.celebration.transferredFrom).toBe('2008-03-19');
+	});
+
+	/* 2035 puts him inside Holy Week while the Annunciation is on Easter
+	   Sunday, so both move and in opposite directions. */
+	it('clears Holy Week in 2035 without taking the Annunciation’s day', () => {
+		expect(day(2035, '2035-03-19')!.celebration.id).toBe('holy-week-1');
+		expect(day(2035, '2035-03-17')!.celebration.id).toBe('joseph');
+	});
+
+	/* The commonest transfer of all, and the same tie: 8 December 2024 was the
+	   Second Sunday of Advent and the Immaculate Conception was kept on the
+	   Monday. A rule that anticipated would have put her on the 7th. */
+	it('breaks the same tie forward for the Immaculate Conception', () => {
+		expect(day(2025, '2024-12-08')!.celebration.id).toBe('advent-2-sunday');
+		expect(day(2025, '2024-12-09')!.celebration.id).toBe('immaculate-conception');
+	});
 });
 
 describe('the Annunciation when Holy Week or the Octave of Easter takes 25 March', () => {
 	/* Easter 2035 is 25 March — the Annunciation falls on Easter Sunday
-	   itself, the most impeded a solemnity can be. n. 60 moves it to the first
-	   day free of lines 1–8, which is the Monday after the Second Sunday of
-	   Easter: the octave runs to Sunday 1 April, so Monday 2 April. */
+	   itself, the most impeded a solemnity can be. This is NOT n. 60's closest
+	   day, which would send it backward into Lent; n. 61 names the destination
+	   outright, the Monday after the Second Sunday of Easter. The octave runs
+	   to Sunday 1 April, so Monday 2 April. */
 	it('moves it past the whole octave in 2035', () => {
 		expect(formatIsoDate(anchors(2035).easter)).toBe('2035-03-25');
 		expect(day(2035, '2035-03-25')!.celebration.id).toBe('easter-sunday');

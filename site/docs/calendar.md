@@ -115,10 +115,20 @@ Transfiguration displaces a Sunday and Saint Lawrence does not, though both are
 doing it.**
 
 **An impeded solemnity does not always move forward.** n. 60 sends it to "the
-closest day not listed under nn. 1–8", and _closest_ is not one direction: the
-Annunciation goes forward past the Octave of Easter, Saint Joseph is
-anticipated. 2035 needs both at once, because Easter falls on 25 March. The
-direction is a property of the celebration and not a rule read off the season.
+closest day not listed under nn. 1–8", and _closest_ is not one direction:
+Saint Joseph impeded by Holy Week is ANTICIPATED, because forward is past the
+whole Octave of Easter, and impeded by a Sunday of Lent he is DEFERRED, because
+a free day lies one step each way and a tie breaks forward. The search reads
+the distance and gets both, along with the Immaculate Conception's Monday.
+
+**The direction is not a property of the celebration**, which it was until
+2026-09-06 — a flag set from Joseph's Holy Week case sent him backward off a
+Lenten Sunday too, where the published practice of 2017 and USCCB's own 2028
+readings both say Monday. The flag now names a DESTINATION instead of a
+direction, and only the Annunciation has one: n. 61 sends it to the Monday
+after the Second Sunday of Easter, which is not the closest free day — closest
+would put it back in Lent — and so cannot be recovered from any search. 2035
+exercises both at once, because Easter falls on 25 March.
 
 **A national calendar is a layer over the general one** — propers, rank
 changes, transfers, and the general celebrations it keeps on another day —

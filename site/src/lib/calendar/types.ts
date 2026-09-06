@@ -214,12 +214,12 @@ export interface Celebration {
 	/** A solemnity impeded by a higher class is moved rather than dropped
 	 *  (n. 60). Everything else of lower class is simply omitted. */
 	transferable?: boolean;
-	/** Move this solemnity BACKWARD when impeded, not forward. Only Saint
-	 *  Joseph does: 19 March inside Holy Week is anticipated to the free day
-	 *  before it, where the Annunciation goes forward past the Octave of
-	 *  Easter. See the transfer pass in `year.ts` for why the direction has to
-	 *  be per celebration. */
-	anticipated?: boolean;
+	/** A rubric that names where this solemnity goes when impeded, overriding
+	 *  n. 60's "closest day". Only the Annunciation has one: n. 61 sends it to
+	 *  the Monday after the Second Sunday of Easter, which is not the closest
+	 *  free day and cannot be found by looking for one. Absent means the
+	 *  general norm — see the transfer pass in `year.ts`. */
+	transferTo?: 'after-easter-octave';
 	/** Set when this celebration was moved off its own date, naming the date
 	 *  it was moved from — so the page can say so rather than silently
 	 *  showing a feast on the wrong day. */

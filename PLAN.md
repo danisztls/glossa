@@ -136,10 +136,13 @@ in their language. Both directions were bad, which is what made writing the
   window (measured; its HTML tables reach 2024–2028). The rare cases live
   outside it and are covered by hand-written tests in `year.test.ts` instead —
   Easter on 25 March in 2035, a transferred Epiphany landing on 7 January, a
-  Christmas that is itself a Sunday. **One rule in the engine the oracle cannot
-  confirm**: Saint Joseph is anticipated rather than deferred when 19 March
-  falls in Holy Week, which rests on the published practice of 2008 because 19
-  March is outside Holy Week in all three oracle years.
+  Christmas that is itself a Sunday. **Saint Joseph's direction is the rule the
+  oracle cannot confirm**, 19 March being outside Holy Week in all three of its
+  years: the engine takes n. 60's closest free day in either direction, which
+  anticipates him out of Holy Week (15 March in 2008) and defers him off a
+  Sunday of Lent (20 March in 2017 and 2028), and both rest on published
+  practice. The 2028 half is a second witness — USCCB's own readings for that
+  Monday — and the engine sent him backward until it was read.
 - **A national proper's name is transcribed, not derived.** There is no Latin
   original to reproduce and no second published source that was consulted, so
   the oracle's name check for those rows is a transcription check. Everything
