@@ -145,16 +145,23 @@
  * 0.650em that is 1.8x — a versal, which is what one line can carry, and not
  * the 4.98em ornament three lines can.
  *
- * Placement. The glyph's position inside the float is what `line-height` buys:
- * the box is 1.487 x L, the content area is (1.006 + 0.279) x 1.487 = 1.911em,
- * and the baseline lands half the difference plus the ascent below the box top.
- * Solving that for a baseline at 1.180em gives L = 0.859, which puts the cap's
- * top on the line-box top exactly. Every other value of `line-height` slides
- * the letter up or down against the text beside it; it is not slack.
+ * Placement, and THIS ONE IS JUDGED RATHER THAN SOLVED. `line-height` sets
+ * where the glyph sits inside the float: the box is 1.487 x L, the content area
+ * is (1.006 + 0.279) x 1.487 = 1.911em, and the baseline lands half the
+ * difference plus the ascent below the box top. Solving that for a baseline at
+ * 1.180em gives L = 0.859, which aligns the cap's baseline with the text's
+ * exactly — and `1` reads better, which is the number here. It drops the letter
+ * 0.10-0.13em (measured across nine reading sizes; 2-4px, and it is an em and
+ * not a pixel nudge, so it scales), so the versal sits INTO its line rather
+ * than balanced on it — which is what a drop cap does and a raised initial does
+ * not. The arithmetic is kept because it says which way the knob turns and how
+ * far; it does not get a vote on where the letter looks right.
  *
- * Wrapping. The box is 1.487 x 0.859 = 1.277em against a 1.650em line, so
- * there is 0.37em of clearance — the three-line rule's trap (a box that spills
- * one pixel into the next line and indents it) cannot be reached from here.
+ * Wrapping is what the knob may NOT break, and 1 is the loosest value that
+ * does not: the box is 1.487 x 1 = 1.487em against a 1.650em line, 0.16em of
+ * clearance. Past about 1.11 the float spills into the second line and indents
+ * it — the three-line rule's trap, reachable from here in a way it is not from
+ * 0.859. Re-derive that ceiling if the font-size above moves.
  *
  * No phone rule, and the specificity that beats the breakpoint below is
  * deliberate. What shrinks the three-line cap on a narrow measure is that it
@@ -163,7 +170,7 @@
  */
 .drop-cap-letter.drop-cap-versal {
 	--drop-cap-scale: 1.487;
-	line-height: 0.859;
+	line-height: 1;
 }
 
 /*
