@@ -31,10 +31,16 @@
  * squeezed into a column sized for a sentence. A two-column grid of shelves
  * inside 56rem is two narrow columns; the same grid here is two shelves.
  *
- * 72rem, ONE STEP BELOW THE 80rem READING BREAKPOINT and no accident: past
- * 80rem `.reading-layout` opens its aside, and a landing page that reached
- * that width would be claiming a page shape it does not have. Below it, this
- * is the widest a centred block gets on this site.
+ * The width is `--landing-width` in `tokens.css`, which carries the argument
+ * for the number and for its being a rem rather than a measure.
+ *
+ * IT MUST NOT BE PUT INSIDE A `.reading-layout` WITHOUT `.index` (below).
+ * That grid places `.content-column` explicitly and nothing else, so a
+ * `.landing-column` in there is auto-placed — into track 1, the apparatus
+ * lane, which is 21.5rem wide. `/documenta` shipped that way for a day: the
+ * whole Magisterium index set in 344px with the 56rem reading track empty
+ * beside it, and nothing erroring, because a mis-placed grid child still
+ * renders. `layout-placement.test.ts` is the check that now fails on it.
  *
  * A LANDING PAGE STILL HAS PROSE ON IT — a tagline, a note, a shelf's
  * description — and that prose still wants a measure. It gets one from
@@ -47,7 +53,7 @@
  * its columns need; this one is a page.
  */
 .landing-column {
-	max-width: 72rem;
+	max-width: var(--landing-width);
 	margin-inline: auto;
 	padding-inline: 1.25rem;
 }
@@ -390,6 +396,66 @@
 		max-width: none;
 		margin-inline: 0;
 		padding-inline: 0;
+	}
+
+	/*
+	 * THE THIRD SHAPE: AN INDEX, which is a landing page that has an aside.
+	 *
+	 * `/documenta` is the one page that is both — a list of 298 documents and a
+	 * facet panel that narrows it — and it fits neither of the two shapes above.
+	 * The reading grid is wrong because a title-and-chip row is not 62.4
+	 * characters of prose; `.landing-column` alone is wrong because the filters
+	 * have to stand beside the list rather than above it. So this is that grid
+	 * with the reading measure replaced by `--landing-width` and the apparatus
+	 * lane taken out.
+	 *
+	 * TWO TRACKS, NOT THREE. `--margin-lane` is declared above whether or not a
+	 * route uses it, because a hanging reference number and a `.margin-note`
+	 * are columns of a reading page even when empty — and because a symmetric
+	 * pair of lanes is what puts the text on the page's own midline. An index
+	 * has neither kind of apparatus and never will: there is no reading column
+	 * for a note to hang out of. Left in, the lane is 21.5rem of page declared
+	 * for nothing, which is exactly what the mis-placement made visible.
+	 *
+	 * `--index-width` AND NOT `--landing-width`, which tokens.css argues: a
+	 * landing page's width is its grid of shelves, and an index's is its row's
+	 * first line. They are different measurements and were the same number for
+	 * one afternoon.
+	 *
+	 * `1fr` AND A CONTAINER `max-width`, NOT `minmax(0, var(--index-width))`.
+	 * A track whose growth limit is a length does not yield: between 80rem,
+	 * where this grid turns on, and 86rem, where the ensemble first fits, a
+	 * 62rem track plus a 21.5rem lane overflows the page — and the reading grid
+	 * has no such problem only because `--margin-lane`'s clamp is there to
+	 * absorb the squeeze. With no lane to give way, the list track has to be
+	 * the thing that yields, so it is the flexible one and the cap moves to the
+	 * container. The 2.5rem is this element's own `padding-inline`, inside the
+	 * `max-width` because `base.css` sets `box-sizing: border-box` globally.
+	 */
+	.reading-layout.index {
+		grid-template-columns: minmax(0, 1fr) var(--aside-lane);
+		max-width: calc(var(--index-width) + var(--aside-lane) + 2.5rem);
+		margin-inline: auto;
+	}
+
+	/* The same five declarations `.content-column` takes above, for the same
+	   reason: in here the track owns the width, so the column's own centring
+	   margins and side padding would be a second set of gutters inside the
+	   first. Placed explicitly because auto-placement is what went wrong. */
+	.reading-layout.index > .landing-column {
+		grid-column: 1;
+		grid-row: 1;
+		max-width: none;
+		margin-inline: 0;
+		padding-inline: 0;
+	}
+
+	/* Track 2, not track 3 — and stated because the rule below names the
+	   reading grid's third column. `grid-column: 3` in a two-track grid does
+	   not error; it opens an implicit third track and leaves the second empty,
+	   which is a quieter version of the bug this variant exists to fix. */
+	.reading-layout.index > .index-aside {
+		grid-column: 2;
 	}
 
 	/* The gutter, paid from inside the lane — see `--aside-lane`. */

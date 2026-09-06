@@ -138,14 +138,22 @@
 	     accessible name is an `aria-label` because a visible label would only
 	     repeat the placeholder. `value` + `oninput` rather than `bind:`, since
 	     the text belongs to the route — see `query` in Props. -->
-	<input
-		type="search"
-		class="doc-search"
-		value={query}
-		oninput={(event) => onQuery(event.currentTarget.value)}
-		placeholder={t('document.filter.search')}
-		aria-label={t('document.filter.search')}
-	/>
+	<!-- The band is what the aside makes sticky (`.index-aside
+	     :global(.doc-search-band)` on the route), so the field stays reachable
+	     while sixteen authors and twelve kinds scroll under it. The gap below
+	     the field is the band's padding rather than the field's margin for
+	     that reason alone: a sticky element's margin is transparent, so a
+	     facet row would have scrolled through it. -->
+	<div class="doc-search-band">
+		<input
+			type="search"
+			class="doc-search"
+			value={query}
+			oninput={(event) => onQuery(event.currentTarget.value)}
+			placeholder={t('document.filter.search')}
+			aria-label={t('document.filter.search')}
+		/>
+	</div>
 
 	<div class="filters-head">
 		<h2>{t('document.filter.heading')}</h2>
@@ -380,10 +388,14 @@
 	/* The panel's first control, so it is set a size up from the facet rows
 	   under it — this is the one thing here a reader types into, and it has to
 	   read as an entry field rather than as another row of the list. */
+	.doc-search-band {
+		padding-block-end: 1rem;
+	}
+
 	.doc-search {
 		width: 100%;
 		box-sizing: border-box;
-		margin-bottom: 1rem;
+		display: block;
 		/* 0.45rem rather than 0.35 holds the field at the height it had while
 		   it was being sized by the body's line box — 2.175rem against 2.2. */
 		padding: 0.45rem 0.5rem;

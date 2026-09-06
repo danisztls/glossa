@@ -176,6 +176,47 @@
 	);
 
 	/*
+	 * THE WIDTH OF A PAGE THAT IS NOT PROSE — `.landing-column` in layout.css,
+	 * and the list track of `.reading-layout.index` beside it.
+	 *
+	 * A rem and not a measure, which is the whole distinction: `--content-width`
+	 * above is a count of CHARACTERS and moves with `--reading-scale`, because
+	 * what it holds is how a sentence reads. A page of doors, shelves, cards and
+	 * ruled rows has no sentence to hold — none of that type is `.reading-text`
+	 * and none of it is scaled — so its width is a width.
+	 *
+	 * 72rem, ONE STEP BELOW THE 80rem READING BREAKPOINT and no accident: past
+	 * 80rem `.reading-layout` opens its aside, and a landing page that reached
+	 * that width would be claiming a page shape it does not have. Below it, this
+	 * is the widest a centred block gets on this site.
+	 *
+	 * A TOKEN RATHER THAN A NUMBER IN `.landing-column` because it is quoted in
+	 * the arithmetic below and read by `layout.css`; two copies drift.
+	 */
+	--landing-width: 72rem;
+
+	/*
+	 * AND THE LIST TRACK OF `.reading-layout.index`, which is narrower than a
+	 * landing page and wider than a measure — the only page shape on this site
+	 * that is neither.
+	 *
+	 * THE ROW'S FIRST LINE IS WHAT SIZES IT, not the row. A document's line
+	 * carries four things — title, date, author, kind — and the longest of them
+	 * is a body's whole name ("Dicastery for the Doctrine of the Faith") set
+	 * against a title that can run to a clause; under 60rem those two begin
+	 * trading places. Everything BELOW that line is prose at its own measure
+	 * and cannot help size the track: a description at 0.9rem sets 70
+	 * characters in 27rem, and no width the page could be would change that.
+	 *
+	 * WHICH IS WHY IT IS NOT `--landing-width`. It was, for an afternoon, and
+	 * the cost was 10rem of empty row under every description — the extra width
+	 * had nothing left to spend itself on once the first line was laid out. A
+	 * track wider than the widest thing in it is the same defect the apparatus
+	 * lane had, one column over.
+	 */
+	--index-width: 62rem;
+
+	/*
 	 * THREE RADII AND ONE SHADOW, because there were thirteen and eight.
 	 *
 	 * The palette below is derived, argued and measured; shape and elevation

@@ -264,6 +264,15 @@
 		rows.filter((row) => byAuthor(row) && byKind(row) && byTag(row) && bySearch(row))
 	);
 
+	/* A FRACTION ONLY ONCE THERE IS SOMETHING TO COMPARE. Unfiltered, both
+	   halves are the same number and `298 / 298` is a ratio saying nothing —
+	   worse than nothing, since a reader arriving at a page that opens with a
+	   fraction reads it as a state they are already in. The denominator earns
+	   its place the moment the set is narrowed and not before. */
+	const countLabel = $derived(
+		visible.length === rows.length ? `${rows.length}` : `${visible.length} / ${rows.length}`
+	);
+
 	/**
 	 * Build one facet's options.
 	 *
@@ -373,7 +382,23 @@
 	<title>{t('nav.magisterium')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="reading-layout">
+<!--
+	THE THIRD PAGE SHAPE, and this is the one page that takes it.
+
+	`.reading-layout.index` in `styles/layout.css`, which carries the argument:
+	the reading grid is a measure — 62.4 characters of prose — and a list of
+	document titles is not prose, while `.landing-column` on its own has
+	nowhere to put the facets. So this is the reading grid with the measure
+	replaced by `--index-width` and the apparatus lane dropped, since an index
+	has no margin notes and no hanging numbers to set in one.
+
+	THE `index` IS LOAD-BEARING AND WAS MISSING FOR A DAY. Without it the grid
+	places `.content-column` and nothing else, so the `.landing-column` below
+	was auto-placed into track 1 — the apparatus lane, 21.5rem — and the whole
+	Magisterium set in 344px with the 56rem reading track empty beside it.
+	Nothing errored; a mis-placed grid child still renders.
+-->
+<div class="reading-layout index">
 	<div class="landing-column">
 		<h1>{t('nav.magisterium')}</h1>
 		<p class="page-tagline landing-measure">{t('document.library.tagline')}</p>
@@ -427,9 +452,14 @@
 		     rule. The name it is owed is a visually-hidden span rather than an
 		     `aria-label`, which is only reliably exposed on interactive elements
 		     and on elements with a role — a bare `<p>` is neither, so the label
-		     is silently dropped by several screen readers. -->
+		     is silently dropped by several screen readers.
+
+		     IT SITS ON THE LINE THAT OPENS THE LIST rather than under the
+		     tagline, because it is a fact about the rows and not about the
+		     page: floating between the two it belonged to neither, and a
+		     number with nothing under it reads as a stray. -->
 		<p class="result-count">
-			<span class="visually-hidden">{t('document.filter.results')}: </span>{visible.length} / {rows.length}
+			<span class="visually-hidden">{t('document.filter.results')}: </span>{countLabel}
 		</p>
 
 		{#if visible.length === 0}
@@ -439,13 +469,23 @@
 				{#each visible as row (row.slug)}
 					{@const description = describe(row)}
 					<li class="index-row">
-						<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link index-link">
-							<span class="doc-title index-title">{@render marked(row.manifest.title)}</span>
-							<span class="doc-kind chip"
-								>{@render marked(documentKindLabel(row.manifest.document_kind))}</span
-							>
-						</a>
 						<!--
+							DATE, AUTHOR AND KIND RIDE THE TITLE'S LINE, in a rail at the
+							end of it. They were a second line under the title until the
+							page got a column wider than a measure, at which point the
+							description — capped at its own 60ch — left the whole right
+							half of every row empty while three facts that would have
+							filled it sat stacked underneath. Up here they use the width,
+							they cost 298 rows a line each, and they read down the page as
+							a column of dates and kinds rather than as an item of every
+							row in turn.
+
+							INSIDE THE ANCHOR, which is what `.index-link`'s docblock
+							already intends — the whole row is the link, and the space
+							between its ends is part of the target. The tags below stay
+							outside it: they are buttons, and a button inside an anchor is
+							not markup a browser will honour.
+
 							Date and author, no "Promulgated" label: in a list where every
 							row carries one, the label is hundreds of repetitions of a word
 							that the date's own format already implies. The AUTHOR is new
@@ -464,12 +504,20 @@
 							the Italian sentence about it, and the English one is the
 							fallback rather than the default.
 						-->
-						<p class="doc-meta label-micro">
-							<time datetime={row.manifest.promulgated}>
-								{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
-							</time>
-							<span class="doc-author">{@render marked(row.manifest.pontiff_or_council)}</span>
-						</p>
+						<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link index-link">
+							<span class="doc-title index-title">{@render marked(row.manifest.title)}</span>
+							<span class="doc-rail">
+								<span class="doc-meta label-micro">
+									<time datetime={row.manifest.promulgated}>
+										{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
+									</time>
+									<span class="doc-author">{@render marked(row.manifest.pontiff_or_council)}</span>
+								</span>
+								<span class="doc-kind chip"
+									>{@render marked(documentKindLabel(row.manifest.document_kind))}</span
+								>
+							</span>
+						</a>
 						{#if description}
 							<p class="doc-description">{@render marked(description)}</p>
 						{/if}
@@ -572,6 +620,33 @@
 		margin-top: 0.75rem;
 	}
 
+	/*
+	 * THE SEARCH FIELD HOLDS THE TOP OF THE ASIDE'S SCROLLPORT.
+	 *
+	 * `.index-aside` is its own scroll container (styles/layout.css) and this
+	 * panel is taller than one — sixteen authors, twelve kinds and a cloud of
+	 * subjects — so a reader who scrolled down to the subjects had scrolled
+	 * the one control they might want to type into off the top of it.
+	 *
+	 * ON THE ASIDE'S COPY AND NOT ON THE COMPONENT, because the same panel is
+	 * rendered inside `.filters-inline` above the list at narrower widths,
+	 * where there is no scroll container of its own: sticky there resolves
+	 * against the PAGE's scrollport, and the field would ride down the
+	 * document over 298 rows. `:global()` reaches into the component's scope;
+	 * `.index-aside` is this route's own element, so the pair is still scoped
+	 * to this page.
+	 *
+	 * The ground is opaque because a sticky element does not clip what passes
+	 * under it, and the band is what carries it — see the component, where the
+	 * gap below the field is padding for exactly this reason.
+	 */
+	.index-aside :global(.doc-search-band) {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background: var(--color-bg);
+	}
+
 	/* The site's second `<mark>` — `JumpBox` has the other, and the argument
 	   there applies here too: a wash behind the letters rather than a change of
 	   colour, because recolouring the matched words in 272 rows of serif titles
@@ -593,12 +668,19 @@
 		}
 	}
 
+	/* On the list's own opening rule, drawn here rather than by a
+	   `border-top` on the first `.index-row`: the rows carry a bottom border
+	   each (components.css), so the line that CLOSES the list is a row's and
+	   the line that opens it has to belong to something. This is that
+	   something, and it is also the count. */
 	.result-count {
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
 		color: var(--color-text-muted);
-		margin: 0 0 0.75rem;
+		margin: 1.5rem 0 0;
+		padding-block-end: 0.4rem;
+		border-block-end: 1px solid var(--color-border);
 	}
 
 	.no-results {
@@ -617,11 +699,37 @@
 		font-size: 1.15rem;
 	}
 
+	/*
+	 * THE RAIL AT THE END OF THE TITLE'S LINE — date, author, kind.
+	 *
+	 * `.index-link`'s own `justify-content: space-between` is what puts it
+	 * there, so the primitive is untouched and `/preces`, `/doctores/summa`
+	 * and `/colophon` keep the plain title-and-chip row they share. What this
+	 * adds is only that the end of the row now holds three things instead of
+	 * one.
+	 *
+	 * WRAPPING IS THE NARROW LAYOUT AND NEEDS NO QUERY. Below the grid the
+	 * column is a phone's, the title takes the whole of it and the rail falls
+	 * to a line of its own — where `space-between` leaves a single item at the
+	 * start, which is exactly where the meta line used to be. A
+	 * `margin-inline-start: auto` here would have kept it pinned right on that
+	 * wrapped line, which is the one place it should not be.
+	 */
+	.doc-rail {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.35rem 0.75rem;
+	}
+
+	.doc-link {
+		flex-wrap: wrap;
+	}
+
 	/* Tabular figures so dates align down the column; the author follows behind
 	   a separator drawn in CSS rather than typed into the markup, so it
 	   vanishes with the element it belongs to. */
 	.doc-meta {
-		margin: 0.3rem 0 0;
 		font-variant-numeric: tabular-nums;
 	}
 

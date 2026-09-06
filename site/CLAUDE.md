@@ -613,12 +613,21 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   catechism from a council. A painting there is something to look at while
   reading the sentence; a glyph belongs to the row. Illustration goes above a
   route, not beside a definition.
-- **The four landing pages are `.landing-column`, not `.content-column`.**
-  `/`, `/bibliotheca`, `/documenta`, `/schola`. `--content-width` is a count
-  of CHARACTERS (`--measure-cpl`, 62.4) and it is the wrong tool for a page
-  made of doors and grids; `layout.css` holds both and the argument. Prose on
-  such a page takes `.landing-measure`, which is the measure without the
-  column. `.index-column`'s 52rem is a table's width and is neither.
+- **The landing pages are `.landing-column`, not `.content-column`.**
+  `/`, `/bibliotheca`, `/schola`, and `/calendarium` on the same argument.
+  `--content-width` is a count of CHARACTERS (`--measure-cpl`, 62.4) and it is
+  the wrong tool for a page made of doors and grids; `layout.css` holds all
+  three shapes and the argument. Prose on such a page takes `.landing-measure`,
+  which is the measure without the column. `.index-column`'s 52rem is a table's
+  width and is neither.
+- **`/documenta` is the third shape and needs BOTH classes**
+  (`.reading-layout index` around a `.landing-column`): a landing page that has
+  an aside. Without the `index` the grid places `.content-column` and nothing
+  else, so the column is auto-placed into the apparatus lane — 21.5rem — with
+  the reading track empty beside it, and nothing errors. That shipped for a
+  day; `layout-placement.test.ts` is what catches the next one. Its width is
+  `--index-width` (62rem) and deliberately not `--landing-width`: an index is
+  sized by its row's first line, not by a grid of shelves.
 - **The home page's doors mirror the bar's order**, Learn last in both. Two
   lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the

@@ -246,10 +246,10 @@ something to look at instead of reading it. A glyph belongs to the row. It also
 took 147 KB out of the build.
 
 **AND THE PAGE IS A LANDING PAGE, LAID OUT AS ONE.** `.landing-column` in
-`layout.css`, shared with `/`, `/bibliotheca` and `/documenta` — all four were
-set in `--content-width`, which is 62.4 CHARACTERS of prose and the wrong
-instrument for a page of banners, grids and a numbered list. The prose that is
-still prose keeps `.landing-measure`.
+`layout.css`, shared with `/`, `/bibliotheca` and — through the `.index`
+variant below — `/documenta`; all four were set in `--content-width`, which is
+62.4 CHARACTERS of prose and the wrong instrument for a page of banners, grids
+and a numbered list. The prose that is still prose keeps `.landing-measure`.
 
 **Library works only as the SUPERSET, and three umbrella labels failed before
 it.** "Church", "Magisterium" and "Teaching" all failed the same way: Scripture
@@ -378,6 +378,47 @@ at all. A one-LETTER token must be a whole word and a one-DIGIT token need not,
 since a digit is an address whose typed prefix is exactly why the row is there.
 
 ## `/documenta` is a filtered list, not a table of contents
+
+**SO IT IS THE ONE PAGE THAT IS BOTH A LANDING PAGE AND A READING GRID**, and
+`.reading-layout.index` is that third shape: the reading grid with the measure
+replaced by `--index-width` and the apparatus lane taken out. Neither of the
+other two fits — a title-and-chip row is not 62.4 characters of prose, and a
+plain `.landing-column` has nowhere to stand the facets but above the list.
+An index has no margin notes and no hanging section numbers, so the lane that
+puts a reading column on the page's midline is 21.5rem declared for nothing.
+The list track is the flexible one, capped by the container, because with no
+lane to give way it is what has to yield between 80rem and 86rem.
+
+**AND `--index-width` IS NOT `--landing-width`, THOUGH IT WAS FOR AN
+AFTERNOON.** A landing page's width is its grid of shelves; an index's is its
+row's FIRST LINE — title, date, author, kind — since everything below that
+line is prose at its own measure and cannot help size the track. At 72rem the
+extra 10rem had nothing left to spend itself on and every description sat in
+an empty row, which is the apparatus lane's defect one column over. 62rem is
+where a body's whole name stops trading places with a long title.
+
+**THE VARIANT IS LOAD-BEARING AND WAS MISSING FOR A DAY** (2026-09-05). The
+grid places `.content-column` and nothing else, so the `.landing-column` this
+page took on 2026-09-04 was auto-placed — into track 1, the apparatus lane —
+and the whole Magisterium was set in 344px with the 56rem reading track empty
+beside it. **A mis-placed grid child is not an error**: every track is the
+right shape to hold either child, nothing threw, `svelte-check` had nothing to
+check, and the site has no visual regression suite. `layout-placement.test.ts`
+reads the `class="…"` attributes under `src/routes/` and is what catches the
+next one.
+
+**Date, author and kind ride the title's line.** They were a second line under
+it, which was right in a 56rem column and wrong the moment the page got a wider
+one: the description is capped at its own 60ch, so the right half of every row
+was empty while three facts that would have filled it sat stacked underneath.
+In the rail they cost 298 rows a line each and read down the page as a column.
+They are inside the anchor, which is what `.index-link` already intends; the
+subject chips stay outside it, being buttons.
+
+**The count prints a fraction only once there is one.** `298 / 298` is a ratio
+saying nothing, and a page that opens with one reads as a state the reader is
+already in. It sits on the rule that opens the list, too — it is a fact about
+the rows, and between the tagline and the first of them it belonged to neither.
 
 It grouped 272 documents into twelve collapsible pontificates with a sidebar of
 anchors — the right shape for the sixteen Vatican II texts it was written for.
