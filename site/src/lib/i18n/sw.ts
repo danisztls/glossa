@@ -31,6 +31,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -62,14 +68,48 @@ export const sw: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Endelea kusoma',
+	'home.tagline':
+		'Tovuti ya kusoma Maandiko, Katekisimu na nyaraka za Mafundisho ya Kanisa — bure, hufanya kazi bila mtandao, na hakuna cha kujiandikisha.',
+	'home.doors.heading': 'Uende wapi',
+	'home.find.heading': 'Au andika rejeo',
 	'nav.library': 'Maktaba',
 	'nav.learn': 'Jifunze',
 	'library.landing.tagline':
 		'Mkusanyo mzima, rafu kwa rafu — pamoja na mahali ulipoishia na ulichoweka alama.',
+	'jumpbox.placeholder': 'Nenda kwa… (mf. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Tafuta',
+	'jumpbox.hint': 'Bonyeza / au Ctrl+K kwenda kwenye rejeo',
+	'jumpbox.noMatch': 'Hakuna kilichopatikana',
+	'jumpbox.suggestions': 'Mapendekezo',
+	'settings.label': 'Mipangilio',
+	'darkMode.label': 'Hali ya giza',
+	'darkMode.auto': 'Otomatiki',
+	'darkMode.on': 'Imewashwa',
+	'darkMode.off': 'Imezimwa',
+	'loadFailed.title': 'Hiyo haikupakia',
+	'loadFailed.hint':
+		'Ukurasa upo — kitu kilikwenda vibaya wakati wa kuuleta. Kujaribu tena huwa kunatosha.',
+	'loadFailed.retry': 'Jaribu tena',
+	'loadFailed.retrying': 'Inajaribu…',
+	'fontSize.label': 'Ukubwa wa maandishi',
+	'fontSize.larger': 'Maandishi makubwa zaidi',
+	'fontSize.smaller': 'Maandishi madogo zaidi',
+	'print.label': 'Chapisha ukurasa huu',
+	'toTop.label': 'Rudi juu',
+	'edition.label': 'Toleo',
+	'edition.select': 'Chagua toleo',
+	'edition.current': 'Toleo la sasa',
+	'edition.filter': 'Tafuta matoleo',
+	'menu.noMatches': 'Hakuna kinacholingana',
 	'unitNav.previous': 'Iliyotangulia',
 	'unitNav.next': 'Inayofuata',
+	'bible.prevChapter': 'Sura iliyotangulia',
+	'bible.nextChapter': 'Sura inayofuata',
+	'bible.pickBook': 'Vitabu na sura',
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Soma Biblia nzima, kitabu kwa kitabu, sura kwa sura.',
+	'bible.landing.books': 'Vitabu',
+	'bible.introduction': 'Utangulizi',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -83,16 +123,39 @@ export const sw: Dictionary = {
 	'bible.group.catholicLetters': 'Barua za Kikatoliki',
 	'bible.group.revelation': 'Ufunuo',
 	'ccc.landing.title': 'Katekisimu ya Kanisa Katoliki',
+	'ccc.landing.pairTitle': 'Katekisimu na Muhtasari',
 	'ccc.landing.tagline':
 		'<strong>Katekisimu</strong> inaeleza mafundisho ya Kikatoliki katika aya 2,865 zenye namba. <strong>Muhtasari</strong> unaeleza mafundisho hayo hayo kwa maswali na majibu 598, kwa mpangilio uleule.',
+	'ccc.landing.pairTagline':
+		'Katekisimu ya Kanisa Katoliki katika vifungu 2,865, na Muhtasari wake katika maswali 598.',
+	'ccc.abbrev': 'KKK',
+	'compendium.abbrev': 'Muht.',
 	'document.library.tagline':
 		'Waraka wa kipapa, katiba za mtaguso, amri na matamko ya Mafundisho ya Kanisa.',
 	'doctores.landing.title': 'Walimu wa Kanisa',
 	'doctores.landing.tagline': 'Kazi za kitaalimungu za Mababa na Walimu wa Kanisa.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Tomaso wa Akwino, kwa Kiingereza na kwa Kilatini alichoandika.',
+	'index.division': 'Mgawanyo',
 	'prayers.landing.title': 'Sala za Kawaida',
 	'prayers.landing.tagline': 'Sala pamoja na maandishi ya Kilatini kando.',
+	'prayers.seeAlso': 'Tazama pia',
+	'anchor.actions': 'Vitendo kwa rejeo',
+	'anchor.copy': 'Nakili maandishi',
+	'anchor.copyLink': 'Nakili kiungo',
+	'anchor.view': 'Tazama',
+	'anchor.copied': 'Imenakiliwa',
+	'anchor.copyFailed': 'Haikuweza kunakili',
+	'bookmark.add': 'Weka alama',
+	'bookmark.remove': 'Ondoa alamisho',
+	'bookmark.library': 'Alamisho',
+	'bookmark.library.tagline': 'Kila kitu ulichokiweka alama ukisoma.',
+	'bookmark.empty': 'Bado hakuna kilichowekwa alama.',
+	'bookmark.emptyHint':
+		'Bofya nambari ya mstari au ya aya kisha uchague Weka alama, au tumia kitufe cha alamisho kilicho ukurasani.',
+	'bookmark.deviceOnly':
+		'Alamisho huhifadhiwa katika kivinjari hiki pekee. Hayatumwi popote, na kufuta data ya kivinjari huyaondoa.',
+	'bookmark.unavailable': 'Hakipo katika toleo unalosoma',
 	'colophon.title': 'Kolofoni',
 	'colophon.lede':
 		'Tovuti hii ni nini, maandishi yake yanatoka wapi, na msimamo wetu kuhusu kuyanakili.',
@@ -135,11 +198,18 @@ export const sw: Dictionary = {
 		'Iko katika umiliki wa umma, kama tarehe zilizo hapa chini zinavyoonyesha, na nakala ya picha ya kweli ya mchoro ulio katika umiliki wa umma haibebi hakimiliki mpya yake yenyewe.',
 	'colophon.countPlates': 'michoro',
 	'colophon.countPlateChapters': 'sura zilizopambwa kwa michoro',
+	'art.about': 'Kuhusu picha hii',
+	'art.detail': 'sehemu',
 	'colophon.typeTitle': 'Herufi',
 	'colophon.typeBody':
 		'Imepangwa kwa EB Garamond, ufufuo wa Georg Duffner na Octavio Pardo wa herufi alizochonga Claude Garamont miaka ya 1590 — mapokeo ya kibinadamu ambayo Kanisa limekuwa likichapisha kwayo tangu Renaissance. Herufi zake za Kikirili ni za mikono ileile lakini hazifufui chochote: hakuna Garamond ya Kikirili iliyowahi kuchongwa, kwa hiyo Kirusi kimepangwa kwa umbo lililochorwa ili kusimama kando ya nyingine.',
 	'colophon.typeArabic':
 		'Kiarabu kiko nje ya uwezo wake kabisa, na kimepangwa kwa Amiri — ufufuo wa Khaled Hosny wa naskh iliyochongwa kwa ajili ya mtambo wa Bulaq huko Cairo mwaka 1905, iliyochaguliwa kwa sababu ileile ya herufi za maandishi: aina mahususi ya kihistoria ya kitabu badala ya mchoro wa kisasa.',
 	'colophon.typeInitials':
-		'Herufi za mwanzo ni Pirata One, herufi za Kigothi ambazo herufi zake kubwa hubaki kusomeka katika ukubwa ambao herufi ya kwanza inahitaji, na — kwa Kirusi — Ponomar, ambayo huiga herufi ya Kislavoni cha Kanisa ya Mtambo wa Sinodi. Ponomar hupanga herufi ya kwanza na kamwe si maandishi: waraka wa kisasa uliopangwa wote kwa herufi ya Sinodi ungesema jambo lisilo kweli kuhusu ulivyo. Zote zina leseni chini ya SIL Open Font License na hutolewa kutoka tovuti hii badala ya kutoka kwa mtu wa tatu, hivyo kusoma ukurasa hakuombi chochote kutoka kwa seva ya mtu mwingine.'
+		'Herufi za mwanzo ni Pirata One, herufi za Kigothi ambazo herufi zake kubwa hubaki kusomeka katika ukubwa ambao herufi ya kwanza inahitaji, na — kwa Kirusi — Ponomar, ambayo huiga herufi ya Kislavoni cha Kanisa ya Mtambo wa Sinodi. Ponomar hupanga herufi ya kwanza na kamwe si maandishi: waraka wa kisasa uliopangwa wote kwa herufi ya Sinodi ungesema jambo lisilo kweli kuhusu ulivyo. Zote zina leseni chini ya SIL Open Font License na hutolewa kutoka tovuti hii badala ya kutoka kwa mtu wa tatu, hivyo kusoma ukurasa hakuombi chochote kutoka kwa seva ya mtu mwingine.',
+	'copyright.sourceTitle': 'Fungua ukurasa asilia wa chanzo',
+	'copyright.sourceLabel': 'Chanzo',
+	'lang.label': 'Lugha',
+	'lang.filter': 'Tafuta lugha',
+	'lang.more': 'lugha zaidi'
 };

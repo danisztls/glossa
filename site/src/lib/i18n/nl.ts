@@ -26,6 +26,12 @@
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -57,14 +63,48 @@ export const nl: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Verder lezen',
+	'home.tagline':
+		'Een leessite voor de Schrift, de Catechismus en de documenten van het Leergezag — gratis, ook offline bruikbaar, en er is niets om u voor aan te melden.',
+	'home.doors.heading': 'Waarheen',
+	'home.find.heading': 'Of typ een verwijzing',
 	'nav.library': 'Bibliotheek',
 	'nav.learn': 'Leren',
 	'library.landing.tagline':
 		'De hele collectie, plank voor plank — met waar u gebleven was en wat u hebt gemarkeerd.',
+	'jumpbox.placeholder': 'Ga naar… (bv. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Zoeken',
+	'jumpbox.hint': 'Druk op / of Ctrl+K om naar een verwijzing te gaan',
+	'jumpbox.noMatch': 'Niets gevonden',
+	'jumpbox.suggestions': 'Suggesties',
+	'settings.label': 'Instellingen',
+	'darkMode.label': 'Donkere modus',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Aan',
+	'darkMode.off': 'Uit',
+	'loadFailed.title': 'Dat is niet geladen',
+	'loadFailed.hint':
+		'De pagina bestaat — er ging iets mis bij het ophalen ervan. Opnieuw proberen helpt meestal.',
+	'loadFailed.retry': 'Opnieuw proberen',
+	'loadFailed.retrying': 'Bezig…',
+	'fontSize.label': 'Tekstgrootte',
+	'fontSize.larger': 'Grotere tekst',
+	'fontSize.smaller': 'Kleinere tekst',
+	'print.label': 'Deze pagina afdrukken',
+	'toTop.label': 'Terug naar boven',
+	'edition.label': 'Uitgave',
+	'edition.select': 'Uitgave kiezen',
+	'edition.current': 'Huidige uitgave',
+	'edition.filter': 'Uitgaven zoeken',
+	'menu.noMatches': 'Geen resultaten',
 	'unitNav.previous': 'Vorige',
 	'unitNav.next': 'Volgende',
+	'bible.prevChapter': 'Vorig hoofdstuk',
+	'bible.nextChapter': 'Volgend hoofdstuk',
+	'bible.pickBook': 'Boeken en hoofdstukken',
 	'bible.landing.title': 'De Bijbel',
 	'bible.landing.tagline': 'Lees de hele Bijbel, boek voor boek, hoofdstuk voor hoofdstuk.',
+	'bible.landing.books': 'Boeken',
+	'bible.introduction': 'Inleiding',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -78,16 +118,39 @@ export const nl: Dictionary = {
 	'bible.group.catholicLetters': 'Katholieke brieven',
 	'bible.group.revelation': 'Openbaring',
 	'ccc.landing.title': 'Catechismus van de Katholieke Kerk',
+	'ccc.landing.pairTitle': 'Catechismus en Compendium',
 	'ccc.landing.tagline':
 		'<strong>De Catechismus</strong> zet de katholieke leer uiteen in 2.865 genummerde paragrafen. <strong>Het Compendium</strong> geeft dezelfde leer weer als 598 vragen en antwoorden, volgens dezelfde indeling.',
+	'ccc.landing.pairTagline':
+		'De Catechismus van de Katholieke Kerk in 2.865 nummers, en zijn Compendium in 598 vragen.',
+	'ccc.abbrev': 'CKK',
+	'compendium.abbrev': 'Comp.',
 	'document.library.tagline':
 		'Encyclieken, conciliaire constituties, decreten en verklaringen van het Leergezag.',
 	'doctores.landing.title': 'Kerkleraren',
 	'doctores.landing.tagline': 'De theologische werken van de kerkvaders en kerkleraren.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Thomas van Aquino, in het Engels en in het Latijn dat hij schreef.',
+	'index.division': 'Onderdeel',
 	'prayers.landing.title': 'Gebruikelijke gebeden',
 	'prayers.landing.tagline': 'Gebeden met de Latijnse tekst ernaast.',
+	'prayers.seeAlso': 'Zie ook',
+	'anchor.actions': 'Acties bij de verwijzing',
+	'anchor.copy': 'Tekst kopiëren',
+	'anchor.copyLink': 'Koppeling kopiëren',
+	'anchor.view': 'Bekijken',
+	'anchor.copied': 'Gekopieerd',
+	'anchor.copyFailed': 'Kopiëren mislukt',
+	'bookmark.add': 'Markeren',
+	'bookmark.remove': 'Bladwijzer verwijderen',
+	'bookmark.library': 'Bladwijzers',
+	'bookmark.library.tagline': 'Alles wat u tijdens het lezen gemarkeerd hebt.',
+	'bookmark.empty': 'Nog niets gemarkeerd.',
+	'bookmark.emptyHint':
+		'Klik op het nummer van een vers of alinea en kies Markeren, of gebruik de bladwijzerknop op de pagina.',
+	'bookmark.deviceOnly':
+		'Bladwijzers blijven alleen in deze browser. Zij worden nergens heen gestuurd, en het wissen van uw browsergegevens verwijdert ze.',
+	'bookmark.unavailable': 'Niet in de uitgave die u leest',
 	'colophon.title': 'Colofon',
 	'colophon.lede':
 		'Wat deze site is, waar haar teksten vandaan komen, en hoe wij staan tegenover het reproduceren ervan.',
@@ -131,11 +194,18 @@ export const nl: Dictionary = {
 		'Zij bevinden zich in het publieke domein, zoals de data hieronder tonen, en een getrouwe fotografische reproductie van een gravure in het publieke domein draagt geen nieuw eigen auteursrecht.',
 	'colophon.countPlates': 'gravures',
 	'colophon.countPlateChapters': 'geïllustreerde hoofdstukken',
+	'art.about': 'Over deze afbeelding',
+	'art.detail': 'detail',
 	'colophon.typeTitle': 'De letter',
 	'colophon.typeBody':
 		'Gezet uit EB Garamond, de herleving door Georg Duffner en Octavio Pardo van de letters die Claude Garamont in de jaren 1590 sneed — de humanistische traditie waarin de Kerk sinds de Renaissance drukt. Het cyrillisch is van dezelfde handen maar herleeft niets: er is nooit een cyrillische Garamond gesneden, dus het Russisch is gezet in een vorm die getekend is om naast de rest te staan.',
 	'colophon.typeArabic':
 		'Het Arabisch gaat daar geheel aan voorbij en is gezet uit Amiri — de herleving door Khaled Hosny van het naskh dat in 1905 voor de Bulaq-pers in Caïro werd gesneden, gekozen op dezelfde grond als de tekstletter: een bepaalde historische boekletter in plaats van een hedendaagse tekening.',
 	'colophon.typeInitials':
-		'De openingsinitialen zijn Pirata One, een gebroken schrift waarvan de kapitalen leesbaar blijven op de grootte die een initiaal vraagt, en — voor het Russisch — Ponomar, dat de kerkslavische letter van de Synodale Drukkerij weergeeft. Ponomar zet de initiaal en nooit de tekst: een moderne encycliek geheel in synodale letter zou iets onwaars zeggen over wat zij is. Alle zijn gelicentieerd onder de SIL Open Font License en worden vanaf deze site geleverd in plaats van door een derde partij, zodat het lezen van een pagina niets vraagt van andermans server.'
+		'De openingsinitialen zijn Pirata One, een gebroken schrift waarvan de kapitalen leesbaar blijven op de grootte die een initiaal vraagt, en — voor het Russisch — Ponomar, dat de kerkslavische letter van de Synodale Drukkerij weergeeft. Ponomar zet de initiaal en nooit de tekst: een moderne encycliek geheel in synodale letter zou iets onwaars zeggen over wat zij is. Alle zijn gelicentieerd onder de SIL Open Font License en worden vanaf deze site geleverd in plaats van door een derde partij, zodat het lezen van een pagina niets vraagt van andermans server.',
+	'copyright.sourceTitle': 'De oorspronkelijke bronpagina openen',
+	'copyright.sourceLabel': 'Bron',
+	'lang.label': 'Taal',
+	'lang.filter': 'Talen zoeken',
+	'lang.more': 'meer talen'
 };

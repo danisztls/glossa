@@ -33,6 +33,10 @@ export const sv: Dictionary = {
 	'nav.menu': 'Meny',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Fortsätt läsa',
+	'home.tagline':
+		'En läsesajt för Skriften, katekesen och läroämbetets dokument — gratis, fungerar offline, och ingenting att registrera sig för.',
+	'home.doors.heading': 'Vart du ska',
+	'home.find.heading': 'Eller skriv en hänvisning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lär dig',
 	'library.landing.tagline':
@@ -76,6 +80,11 @@ export const sv: Dictionary = {
 	'offline.hint':
 		'Använder inget nätverk alls: inget hämtas, ingen uppdatering söks, inget mäts. Endast texter som redan finns på den här enheten öppnas.',
 	'offline.notDownloaded': 'Finns inte på den här enheten',
+	'loadFailed.title': 'Det gick inte att läsa in',
+	'loadFailed.hint':
+		'Sidan finns — något gick fel när den skulle hämtas. Att försöka igen brukar räcka.',
+	'loadFailed.retry': 'Försök igen',
+	'loadFailed.retrying': 'Försöker…',
 	'offline.turnOff': 'Stäng av offlineläget',
 
 	'fontSize.label': 'Textstorlek',
@@ -92,6 +101,8 @@ export const sv: Dictionary = {
 	'edition.label': 'Utgåva',
 	'edition.select': 'Välj utgåva',
 	'edition.current': 'Nuvarande utgåva',
+	'edition.filter': 'Sök utgåvor',
+	'menu.noMatches': 'Inga träffar',
 	'unitNav.previous': 'Föregående',
 	'unitNav.next': 'Nästa',
 	'bible.prevChapter': 'Föregående kapitel',
@@ -120,8 +131,11 @@ export const sv: Dictionary = {
 	'ccc.nextParagraph': 'Nästa stycke',
 	'ccc.inBrief': 'I korthet',
 	'ccc.landing.title': 'Katolska kyrkans katekes',
+	'ccc.landing.pairTitle': 'Katekesen och Kompendiet',
 	'ccc.landing.tagline':
 		'<strong>Katekesen</strong> framställer den katolska läran i 2 865 numrerade punkter. <strong>Kompendiet</strong> återger samma lära i 598 frågor och svar, efter samma disposition.',
+	'ccc.landing.pairTagline':
+		'Katolska kyrkans katekes i 2 865 punkter, och dess kompendium i 598 frågor.',
 	'ccc.tableOfContents': 'Innehåll',
 	'ccc.related': 'Se även',
 	'compendium.landing.title': 'Katekesens kompendium',
@@ -161,11 +175,13 @@ export const sv: Dictionary = {
 		'Summan finns inte i någon utgåva på ditt språk. Här visas utgåvan på {lang}.',
 	'summa.noLatinSupplement':
 		'Supplementet finns endast på engelska — det sammanställdes efter Thomas död.',
+	'index.division': 'Avdelning',
 	'index.showSubsections': 'Visa underavsnitt',
 	'index.hideSubsections': 'Dölj underavsnitt',
 	'prayers.landing.title': 'Böner',
 	'prayers.landing.tagline': 'Böner med den latinska texten bredvid.',
 	'prayers.tableOfContents': 'Innehåll',
+	'prayers.seeAlso': 'Se även',
 	'prayers.prevPrayer': 'Föregående bön',
 	'prayers.nextPrayer': 'Nästa bön',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -221,6 +237,11 @@ export const sv: Dictionary = {
 	'document.kind.apostolicExhortation': 'Apostolisk maning',
 	'document.kind.apostolicConstitution': 'Apostolisk konstitution',
 	'document.kind.cdfDeclaration': 'Deklaration från Troskongregationen',
+	'document.kind.cdfInstruction': 'Instruktion från Troskongregationen',
+	'document.kind.cdfLetter': 'Skrivelse från Troskongregationen',
+	'document.kind.cdfDoctrinalNote': 'Läromässig not från Troskongregationen',
+	'document.kind.cdfResponsum': 'Responsum från Troskongregationen',
+	'document.kind.cdfConsiderations': 'Överväganden från Troskongregationen',
 	'document.kindPlural.conciliarConstitution': 'Konstitutioner',
 	'document.kindPlural.conciliarDecree': 'Dekret',
 	'document.kindPlural.conciliarDeclaration': 'Deklarationer',
@@ -275,6 +296,8 @@ export const sv: Dictionary = {
 	'plates.scansBy': 'Skanningar tillhandahållna av',
 	'plates.enlarge': 'Förstora {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Om den här bilden',
+	'art.detail': 'detalj',
 	'colophon.typeTitle': 'Typsnittet',
 	'colophon.typeBody':
 		'Satt med EB Garamond, Georg Duffners och Octavio Pardos återupplivande av de typer Claude Garamont skar på 1590-talet — den humanistiska tradition kyrkan har tryckt i sedan renässansen. Dess kyrilliska är av samma händer men återupplivar ingenting: någon kyrillisk Garamond har aldrig skurits, så ryskan sätts i en form ritad för att stå bredvid de övriga.',
@@ -296,6 +319,8 @@ export const sv: Dictionary = {
 	'copyright.sourceTitle': 'Öppna den ursprungliga källsidan',
 	'copyright.sourceLabel': 'Källa',
 	'lang.label': 'Språk',
+	'lang.filter': 'Sök språk',
+	'lang.more': 'fler språk',
 	'notFound.title': 'Ingenting på den här adressen',
 	'notFound.lede': 'Sidan du bad om finns inte här.',
 	'notFound.body':

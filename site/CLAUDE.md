@@ -343,9 +343,9 @@ for `sw-policy.ts`'s reason: nothing renders a component under `vitest`). 404 ->
 switch; a throw while ONLINE -> `LoadFailed`, which carries the retry. Until
 2026-09-03 the third fell through to the first, so a dropped fetch told the
 reader their address did not exist and then sent them away from a page one retry
-from working. `loadFailed.*` is English-only on purpose — `t()` falls back key
-by key, so every other interface language gets English rather than the old wrong
-answer in its own.
+from working. `loadFailed.*` was English-only until 2026-09-06 and is in all 37
+now — `t()` falls back key by key, so the interim was English rather than the
+old wrong answer in the reader's own.
 
 **`npm run dev` does not re-derive the corpus** (2026-09-01, §Process):
 `predev` passes `--changed-only`, so a restart over an unchanged corpus costs
@@ -815,8 +815,9 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Catechism and its Compendium as ONE work and no other surface wants either
   string (`/schola` lists the two separately, and `/catechismus`'s own tagline
   is two sentences, which is a masthead's length and six lines in a card).
-  English-only, falling back key by key. `/` is the other exception and has
-  three of its own — see its bullet below.
+  Both are in all 37 since 2026-09-06, the two halves of the name having been
+  translated already. `/` is the other exception and has three of its own — see
+  its bullet below.
 - **`/bibliotheca`'s shelves ARE the home page's `.door` grid** (2026-09-06),
   cards across rather than blocks down a 72rem column, each one anchor with
   **the same glyph `/schola` gives that work** — take the icon from there
@@ -863,13 +864,14 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   heading alone stays `visually-hidden`, its card being already titled; the
   ruled-heading rule was deleted when the page had no visible heading left and
   is back now that it has two.
-- **`/` KEEPS THREE ENGLISH-ONLY KEYS AND KEEPS ITS `CHROME_PATHS` ROW**
+- **`/` KEPT THREE ENGLISH-ONLY KEYS AND KEPT ITS `CHROME_PATHS` ROW**
   (2026-09-06, by direction) — the one exception to the gate that holds three
-  pages unpublished. The root has no usable remedy: withholding it costs the
-  sitemap row and the `hreflang` cluster the whole site's ranking leans on. The
-  gate is on a page's name and description, and `/`'s are `home.title` plus five
-  work names, written in all 37. `route-manifest.ts` carries why this is not a
-  precedent.
+  pages unpublished. The keys were translated later the same day and the
+  exception stands, being the ROOT's rather than theirs: withholding the home
+  page costs the sitemap row and the `hreflang` cluster the whole site's ranking
+  leans on, so the next English-only string on `/` inherits it. The gate is on a
+  page's name and description, and `/`'s are `home.title` plus five work names,
+  written in all 37. `route-manifest.ts` carries why this is not a precedent.
 - **Two columns of doors at most, and `24rem` is what enforces it.** Derived
   against `--landing-width`, not chosen by eye: at 15rem the track resolved to
   four, and the four taglines are landing-page sentences of wildly different
@@ -2695,6 +2697,17 @@ the alternative is the same content behind a language they do not read.
 key. What the build enforces is `CHROME_KEYS` (`assertNamed` throws on an
 unnamed chrome page, which breaks the `hreflang` cluster) and
 `bible-groups.test.ts`, which demands all nine group names.
+
+**BUT A SET THAT RENDERS AS ONE LIST IS COMPLETE OR ABSENT**, which is
+`bible.group.*`'s rule read as the general one — one English heading among
+eight translated ones reads as a bug, and no test says so outside that one
+family. When the twenty-three tail dictionaries gained the everyday controls
+(2026-09-06) that decided what came WITH each key rather than what to
+translate: `anchor.copyFailed` pulled in the other five `anchor.*`, `lang.more`
+pulled in `lang.label`, `bookmark.empty` pulled in `emptyHint` and
+`deviceOnly` — and `document.kind.cdf*` was held back entirely, because those
+five join a filter list of twelve that those files carry none of. **The unit
+of translation is the surface, not the key.**
 
 **The colophon was the one page deliberately left untranslated, and on
 2026-09-02 that was reversed** — the argument (a machine translation of the

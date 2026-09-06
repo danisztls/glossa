@@ -35,6 +35,10 @@ export const fr: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Reprendre la lecture',
+	'home.tagline':
+		'Un site de lecture des Écritures, du Catéchisme et des documents du Magistère — gratuit, consultable hors ligne, et sans aucune inscription.',
+	'home.doors.heading': 'Où aller',
+	'home.find.heading': 'Ou tapez une référence',
 	'nav.library': 'Bibliothèque',
 	'nav.learn': 'Apprendre',
 	'library.landing.tagline':
@@ -78,6 +82,11 @@ export const fr: Dictionary = {
 	'offline.hint':
 		'N’utilise aucun réseau : rien n’est téléchargé, aucune mise à jour n’est recherchée, rien n’est mesuré. Seuls les textes déjà présents sur cet appareil s’ouvrent.',
 	'offline.notDownloaded': 'Absent de cet appareil',
+	'loadFailed.title': 'Cela n’a pas été chargé',
+	'loadFailed.hint':
+		'La page existe — quelque chose s’est mal passé lors de sa récupération. Réessayer suffit le plus souvent.',
+	'loadFailed.retry': 'Réessayer',
+	'loadFailed.retrying': 'Nouvel essai…',
 	'offline.turnOff': 'Désactiver le mode hors ligne',
 
 	'fontSize.label': 'Taille du texte',
@@ -124,8 +133,11 @@ export const fr: Dictionary = {
 	'ccc.nextParagraph': 'Paragraphe suivant',
 	'ccc.inBrief': 'En bref',
 	'ccc.landing.title': 'Catéchisme de l’Église catholique',
+	'ccc.landing.pairTitle': 'Catéchisme et Abrégé',
 	'ccc.landing.tagline':
 		'<strong>Le Catéchisme</strong> expose la doctrine catholique en 2 865 numéros. <strong>Le Compendium</strong> reprend la même doctrine en 598 questions et réponses, selon le même plan.',
+	'ccc.landing.pairTagline':
+		'Le Catéchisme de l’Église catholique en 2 865 numéros, et son Abrégé en 598 questions.',
 	'ccc.tableOfContents': 'Table des matières',
 	'ccc.related': 'Voir aussi',
 	'compendium.landing.title': 'Abrégé du Catéchisme',
@@ -166,11 +178,13 @@ export const fr: Dictionary = {
 		'La Somme n’a pas d’édition dans votre langue. Elle est présentée en {lang}.',
 	'summa.noLatinSupplement':
 		'Le Supplément n’existe qu’en anglais : il a été compilé après la mort de Thomas d’Aquin.',
+	'index.division': 'Division',
 	'index.showSubsections': 'Afficher les sous-sections',
 	'index.hideSubsections': 'Masquer les sous-sections',
 	'prayers.landing.title': 'Prières usuelles',
 	'prayers.landing.tagline': 'Des prières avec le texte latin en regard.',
 	'prayers.tableOfContents': 'Table des matières',
+	'prayers.seeAlso': 'Voir aussi',
 	'prayers.prevPrayer': 'Prière précédente',
 	'prayers.nextPrayer': 'Prière suivante',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -192,6 +206,7 @@ export const fr: Dictionary = {
 	'anchor.copyLink': 'Copier le lien',
 	'anchor.view': 'Voir',
 	'anchor.copied': 'Copié',
+	'anchor.copyFailed': 'Copie impossible',
 	'bookmark.add': 'Marquer',
 	'bookmark.remove': 'Retirer le signet',
 	'bookmark.library': 'Signets',
@@ -225,6 +240,11 @@ export const fr: Dictionary = {
 	'document.kind.apostolicExhortation': 'Exhortation apostolique',
 	'document.kind.apostolicConstitution': 'Constitution apostolique',
 	'document.kind.cdfDeclaration': 'Déclaration de la CDF',
+	'document.kind.cdfInstruction': 'Instruction de la CDF',
+	'document.kind.cdfLetter': 'Lettre de la CDF',
+	'document.kind.cdfDoctrinalNote': 'Note doctrinale de la CDF',
+	'document.kind.cdfResponsum': 'Responsum de la CDF',
+	'document.kind.cdfConsiderations': 'Considérations de la CDF',
 	'document.kindPlural.conciliarConstitution': 'Constitutions',
 	'document.kindPlural.conciliarDecree': 'Décrets',
 	'document.kindPlural.conciliarDeclaration': 'Déclarations',
@@ -278,6 +298,8 @@ export const fr: Dictionary = {
 	'plates.scansBy': 'Numérisations fournies par',
 	'plates.enlarge': 'Agrandir {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'À propos de cette image',
+	'art.detail': 'détail',
 	'colophon.typeTitle': 'Les caractères',
 	'colophon.typeBody':
 		'Composé en EB Garamond, la renaissance par Georg Duffner et Octavio Pardo des caractères que Claude Garamont grava dans les années 1590 — la tradition humaniste dans laquelle l’Église imprime depuis la Renaissance. Son cyrillique est de la même main mais ne ressuscite rien : aucun Garamond cyrillique n’a jamais été gravé, et le russe est donc composé dans une forme dessinée pour tenir auprès du reste.',
@@ -297,6 +319,7 @@ export const fr: Dictionary = {
 	'ccc.readFullChapter': 'Lire tout le chapitre',
 	'ccc.noParagraphNumber': 'Pas de numéro de paragraphe dans ce corpus',
 	'copyright.sourceTitle': 'Ouvrir la page source d’origine',
+	'copyright.sourceLabel': 'Source',
 	'lang.label': 'Langue',
 	'lang.filter': 'Rechercher une langue',
 	'lang.more': 'autres langues',

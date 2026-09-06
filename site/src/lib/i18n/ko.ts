@@ -32,6 +32,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -61,13 +67,47 @@ export const ko: Dictionary = {
 	'nav.summa': '신학대전',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': '이어서 읽기',
+	'home.tagline':
+		'성경과 교리서와 교도권 문헌을 읽기 위한 사이트 — 무료이고, 연결이 끊겨도 작동하며, 가입할 것이 없습니다.',
+	'home.doors.heading': '어디로 갈까요',
+	'home.find.heading': '또는 인용을 입력하십시오',
 	'nav.library': '서고',
 	'nav.learn': '배우기',
 	'library.landing.tagline': '전체 장서를 서가별로 — 읽던 자리와 표시해 둔 곳과 함께.',
+	'jumpbox.placeholder': '이동… (예: jn 3,16, ccc 1234)',
+	'jumpbox.short': '찾기',
+	'jumpbox.hint': '/ 또는 Ctrl+K를 누르면 인용으로 이동합니다',
+	'jumpbox.noMatch': '결과 없음',
+	'jumpbox.suggestions': '추천',
+	'settings.label': '설정',
+	'darkMode.label': '어두운 모드',
+	'darkMode.auto': '자동',
+	'darkMode.on': '켬',
+	'darkMode.off': '끔',
+	'loadFailed.title': '불러오지 못했습니다',
+	'loadFailed.hint':
+		'쪽은 있습니다 — 가져오는 중에 무언가 잘못되었습니다. 다시 시도하면 대개 됩니다.',
+	'loadFailed.retry': '다시 시도',
+	'loadFailed.retrying': '시도 중…',
+	'fontSize.label': '글자 크기',
+	'fontSize.larger': '글자 크게',
+	'fontSize.smaller': '글자 작게',
+	'print.label': '이 쪽 인쇄',
+	'toTop.label': '맨 위로',
+	'edition.label': '판본',
+	'edition.select': '판본 고르기',
+	'edition.current': '현재 판본',
+	'edition.filter': '판본 찾기',
+	'menu.noMatches': '일치하는 것이 없음',
 	'unitNav.previous': '이전',
 	'unitNav.next': '다음',
+	'bible.prevChapter': '이전 장',
+	'bible.nextChapter': '다음 장',
+	'bible.pickBook': '책과 장',
 	'bible.landing.title': '성경',
 	'bible.landing.tagline': '성경 전체를 한 권씩, 한 장씩 읽으십시오.',
+	'bible.landing.books': '책',
+	'bible.introduction': '머리말',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': '모세오경',
@@ -80,15 +120,37 @@ export const ko: Dictionary = {
 	'bible.group.catholicLetters': '가톨릭 서간',
 	'bible.group.revelation': '요한 묵시록',
 	'ccc.landing.title': '가톨릭 교회 교리서',
+	'ccc.landing.pairTitle': '교리서와 요약본',
 	'ccc.landing.tagline':
 		'<strong>교리서</strong>는 가톨릭 교리를 번호가 매겨진 2,865개 항으로 제시합니다. <strong>요약</strong>은 같은 교리를 같은 얼개에 따라 598개의 문답으로 다시 제시합니다.',
+	'ccc.landing.pairTagline': '가톨릭 교회 교리서 2,865항과, 그 요약본 598문답.',
+	'ccc.abbrev': '교리서',
+	'compendium.abbrev': '요약',
 	'document.library.tagline': '회칙, 공의회 헌장, 교령, 그리고 교도권의 선언.',
 	'doctores.landing.title': '교회 학자',
 	'doctores.landing.tagline': '교부들과 교회 학자들의 신학 저작.',
 	'summa.landing.title': '신학대전',
 	'summa.landing.tagline': '토마스 아퀴나스, 영어와 그가 쓴 라틴어로.',
+	'index.division': '구분',
 	'prayers.landing.title': '일반 기도문',
 	'prayers.landing.tagline': '라틴어 본문을 나란히 실은 기도문.',
+	'prayers.seeAlso': '함께 보기',
+	'anchor.actions': '인용에 대한 동작',
+	'anchor.copy': '본문 복사',
+	'anchor.copyLink': '링크 복사',
+	'anchor.view': '보기',
+	'anchor.copied': '복사됨',
+	'anchor.copyFailed': '복사하지 못했습니다',
+	'bookmark.add': '책갈피',
+	'bookmark.remove': '책갈피 없애기',
+	'bookmark.library': '책갈피',
+	'bookmark.library.tagline': '읽으시면서 표시해 두신 모든 것.',
+	'bookmark.empty': '아직 표시한 것이 없습니다.',
+	'bookmark.emptyHint':
+		'절이나 항의 번호를 누르고 책갈피를 고르시거나, 쪽에 있는 책갈피 단추를 쓰십시오.',
+	'bookmark.deviceOnly':
+		'책갈피는 이 브라우저에만 보관됩니다. 어디로도 보내지지 않으며, 브라우저 데이터를 지우면 함께 사라집니다.',
+	'bookmark.unavailable': '지금 읽으시는 판본에는 없습니다',
 	'colophon.title': '간기',
 	'colophon.lede':
 		'이 사이트가 무엇인지, 본문이 어디에서 왔는지, 그리고 그것을 옮기는 일에 대한 우리의 입장.',
@@ -130,11 +192,18 @@ export const ko: Dictionary = {
 		'아래의 연도가 보여 주듯 이것들은 퍼블릭 도메인에 있으며, 퍼블릭 도메인 판화를 충실히 사진으로 복제한 것은 그 자체로 새로운 저작권을 갖지 않습니다.',
 	'colophon.countPlates': '점의 판화',
 	'colophon.countPlateChapters': '개 장에 삽화',
+	'art.about': '이 그림에 대하여',
+	'art.detail': '부분',
 	'colophon.typeTitle': '활자',
 	'colophon.typeBody':
 		'클로드 가라몽이 1590년대에 새긴 활자를 게오르크 두프너와 옥타비오 파르도가 되살린 EB Garamond로 조판했습니다 — 교회가 르네상스 이래로 인쇄해 온 인문주의 전통입니다. 그 키릴 문자는 같은 손에서 나왔으나 되살린 것은 없습니다: 키릴 가라몽은 한 번도 새겨진 적이 없어, 러시아어는 나머지 곁에 서도록 그려진 형태로 조판되었습니다.',
 	'colophon.typeArabic':
 		'아랍어는 그 범위를 온전히 벗어나며 Amiri로 조판했습니다 — 1905년 카이로의 불라크 인쇄소를 위해 새겨진 나스흐체를 할레드 호스니가 되살린 것으로, 본문 활자와 같은 이유로 골랐습니다: 오늘날의 도안이 아니라 특정한 역사적 책 활자라는 이유입니다.',
 	'colophon.typeInitials':
-		'첫머리 장식 글자는 Pirata One으로, 큰 첫 글자가 요구하는 크기에서도 대문자가 읽히는 고딕 활자이며 — 러시아어의 경우 — 시노드 인쇄소의 교회 슬라브 활자를 재현한 Ponomar입니다. Ponomar는 첫 글자만 조판하며 결코 본문을 조판하지 않습니다: 현대의 회칙을 처음부터 끝까지 시노드 활자로 조판한다면 그것이 무엇인지에 대해 참되지 않은 무언가를 말하게 될 것입니다. 모두 SIL Open Font License에 따라 사용이 허가되었고 제삼자가 아니라 이 사이트에서 제공되므로, 한 페이지를 읽는 데 다른 이의 서버에 아무것도 요구하지 않습니다.'
+		'첫머리 장식 글자는 Pirata One으로, 큰 첫 글자가 요구하는 크기에서도 대문자가 읽히는 고딕 활자이며 — 러시아어의 경우 — 시노드 인쇄소의 교회 슬라브 활자를 재현한 Ponomar입니다. Ponomar는 첫 글자만 조판하며 결코 본문을 조판하지 않습니다: 현대의 회칙을 처음부터 끝까지 시노드 활자로 조판한다면 그것이 무엇인지에 대해 참되지 않은 무언가를 말하게 될 것입니다. 모두 SIL Open Font License에 따라 사용이 허가되었고 제삼자가 아니라 이 사이트에서 제공되므로, 한 페이지를 읽는 데 다른 이의 서버에 아무것도 요구하지 않습니다.',
+	'copyright.sourceTitle': '원래 출처 쪽 열기',
+	'copyright.sourceLabel': '출처',
+	'lang.label': '언어',
+	'lang.filter': '언어 찾기',
+	'lang.more': '다른 언어'
 };

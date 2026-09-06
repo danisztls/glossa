@@ -34,6 +34,10 @@ export const ro: Dictionary = {
 	'nav.menu': 'Meniu',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Continuați lectura',
+	'home.tagline':
+		'Un sit de lectură pentru Scriptură, Catehism și documentele Magisteriului — gratuit, disponibil offline și fără nimic la care să vă înregistrați.',
+	'home.doors.heading': 'Unde să mergeți',
+	'home.find.heading': 'Sau tastați o referință',
 	'nav.library': 'Bibliotecă',
 	'nav.learn': 'Învață',
 	'library.landing.tagline':
@@ -77,6 +81,11 @@ export const ro: Dictionary = {
 	'offline.hint':
 		'Nu folosește deloc rețeaua: nu se descarcă nimic, nu se caută actualizări, nu se măsoară nimic. Se deschid doar textele aflate deja pe acest dispozitiv.',
 	'offline.notDownloaded': 'Nu se află pe acest dispozitiv',
+	'loadFailed.title': 'Aceasta nu s-a încărcat',
+	'loadFailed.hint':
+		'Pagina există — ceva a mers prost la aducerea ei. O nouă încercare rezolvă de obicei.',
+	'loadFailed.retry': 'Încercați din nou',
+	'loadFailed.retrying': 'Se încearcă…',
 	'offline.turnOff': 'Dezactivează modul offline',
 
 	'fontSize.label': 'Mărimea textului',
@@ -93,6 +102,8 @@ export const ro: Dictionary = {
 	'edition.label': 'Ediție',
 	'edition.select': 'Alegeți ediția',
 	'edition.current': 'Ediția curentă',
+	'edition.filter': 'Caută ediții',
+	'menu.noMatches': 'Niciun rezultat',
 	'unitNav.previous': 'Înapoi',
 	'unitNav.next': 'Înainte',
 	'bible.prevChapter': 'Capitolul precedent',
@@ -121,8 +132,11 @@ export const ro: Dictionary = {
 	'ccc.nextParagraph': 'Paragraful următor',
 	'ccc.inBrief': 'Pe scurt',
 	'ccc.landing.title': 'Catehismul Bisericii Catolice',
+	'ccc.landing.pairTitle': 'Catehism și Compendiu',
 	'ccc.landing.tagline':
 		'<strong>Catehismul</strong> expune învățătura catolică în 2.865 de paragrafe numerotate. <strong>Compendiul</strong> reia aceeași învățătură în 598 de întrebări și răspunsuri, după aceeași structură.',
+	'ccc.landing.pairTagline':
+		'Catehismul Bisericii Catolice în 2.865 de paragrafe, iar Compendiul său în 598 de întrebări.',
 	'ccc.tableOfContents': 'Cuprins',
 	'ccc.related': 'Vezi și',
 	'compendium.landing.title': 'Compendiul Catehismului',
@@ -163,11 +177,13 @@ export const ro: Dictionary = {
 		'Summa nu are o ediție în limba dumneavoastră. Este afișată ediția în {lang}.',
 	'summa.noLatinSupplement':
 		'Supplementum există numai în engleză — a fost alcătuit după moartea lui Toma.',
+	'index.division': 'Diviziune',
 	'index.showSubsections': 'Arată subsecțiunile',
 	'index.hideSubsections': 'Ascunde subsecțiunile',
 	'prayers.landing.title': 'Rugăciuni',
 	'prayers.landing.tagline': 'Rugăciuni cu textul latin alături.',
 	'prayers.tableOfContents': 'Cuprins',
+	'prayers.seeAlso': 'Vezi și',
 	'prayers.prevPrayer': 'Rugăciunea precedentă',
 	'prayers.nextPrayer': 'Rugăciunea următoare',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -223,6 +239,11 @@ export const ro: Dictionary = {
 	'document.kind.apostolicExhortation': 'Exortație apostolică',
 	'document.kind.apostolicConstitution': 'Constituție apostolică',
 	'document.kind.cdfDeclaration': 'Declarație a Congregației pentru Doctrina Credinței',
+	'document.kind.cdfInstruction': 'Instrucțiune a Congregației pentru Doctrina Credinței',
+	'document.kind.cdfLetter': 'Scrisoare a Congregației pentru Doctrina Credinței',
+	'document.kind.cdfDoctrinalNote': 'Notă doctrinară a Congregației pentru Doctrina Credinței',
+	'document.kind.cdfResponsum': 'Responsum al Congregației pentru Doctrina Credinței',
+	'document.kind.cdfConsiderations': 'Considerații ale Congregației pentru Doctrina Credinței',
 	'document.kindPlural.conciliarConstitution': 'Constituții',
 	'document.kindPlural.conciliarDecree': 'Decrete',
 	'document.kindPlural.conciliarDeclaration': 'Declarații',
@@ -277,6 +298,8 @@ export const ro: Dictionary = {
 	'plates.scansBy': 'Scanări puse la dispoziție de',
 	'plates.enlarge': 'Mărește {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Despre această imagine',
+	'art.detail': 'detaliu',
 	'colophon.typeTitle': 'Litera',
 	'colophon.typeBody':
 		'Cules cu EB Garamond, reînvierea de către Georg Duffner și Octavio Pardo a caracterelor tăiate de Claude Garamont în anii 1590 — tradiția umanistă în care Biserica tipărește încă din Renaștere. Chirilica sa vine din aceleași mâini, dar nu reînvie nimic: un Garamond chirilic nu a fost tăiat niciodată, așa că rusa este culeasă într-o formă desenată ca să stea alături de restul.',
@@ -298,6 +321,8 @@ export const ro: Dictionary = {
 	'copyright.sourceTitle': 'Deschideți pagina-sursă originală',
 	'copyright.sourceLabel': 'Sursă',
 	'lang.label': 'Limbă',
+	'lang.filter': 'Caută limbi',
+	'lang.more': 'alte limbi',
 	'notFound.title': 'Nimic la această adresă',
 	'notFound.lede': 'Pagina pe care ați cerut-o nu este aici.',
 	'notFound.body':

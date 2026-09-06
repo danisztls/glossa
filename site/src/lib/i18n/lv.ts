@@ -29,6 +29,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -58,14 +64,48 @@ export const lv: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Turpināt lasīt',
+	'home.tagline':
+		'Lasīšanas vietne Svētajiem Rakstiem, Katehismam un Maģistērija dokumentiem — bez maksas, darbojas arī bezsaistē, un nekur nav jāreģistrējas.',
+	'home.doors.heading': 'Kurp doties',
+	'home.find.heading': 'Vai ierakstiet atsauci',
 	'nav.library': 'Bibliotēka',
 	'nav.learn': 'Mācīties',
 	'library.landing.tagline':
 		'Viss krājums, plaukts pēc plaukta — kopā ar to, kur apstājāties, un to, ko esat atzīmējis.',
+	'jumpbox.placeholder': 'Pāriet uz… (piem. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Meklēt',
+	'jumpbox.hint': 'Nospiediet / vai Ctrl+K, lai pārietu uz atsauci',
+	'jumpbox.noMatch': 'Nekas nav atrasts',
+	'jumpbox.suggestions': 'Ieteikumi',
+	'settings.label': 'Iestatījumi',
+	'darkMode.label': 'Tumšais režīms',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Ieslēgts',
+	'darkMode.off': 'Izslēgts',
+	'loadFailed.title': 'Tas neielādējās',
+	'loadFailed.hint':
+		'Lapa pastāv — kaut kas nogāja greizi, to ielādējot. Mēģinot vēlreiz, parasti izdodas.',
+	'loadFailed.retry': 'Mēģināt vēlreiz',
+	'loadFailed.retrying': 'Notiek mēģinājums…',
+	'fontSize.label': 'Teksta lielums',
+	'fontSize.larger': 'Lielāks teksts',
+	'fontSize.smaller': 'Mazāks teksts',
+	'print.label': 'Drukāt šo lapu',
+	'toTop.label': 'Atpakaļ uz augšu',
+	'edition.label': 'Izdevums',
+	'edition.select': 'Izvēlēties izdevumu',
+	'edition.current': 'Pašreizējais izdevums',
+	'edition.filter': 'Meklēt izdevumus',
+	'menu.noMatches': 'Nav atbilsmju',
 	'unitNav.previous': 'Iepriekšējais',
 	'unitNav.next': 'Nākamais',
+	'bible.prevChapter': 'Iepriekšējā nodaļa',
+	'bible.nextChapter': 'Nākamā nodaļa',
+	'bible.pickBook': 'Grāmatas un nodaļas',
 	'bible.landing.title': 'Bībele',
 	'bible.landing.tagline': 'Lasiet visu Bībeli, grāmatu pēc grāmatas, nodaļu pēc nodaļas.',
+	'bible.landing.books': 'Grāmatas',
+	'bible.introduction': 'Ievads',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -79,16 +119,39 @@ export const lv: Dictionary = {
 	'bible.group.catholicLetters': 'Katoliskās vēstules',
 	'bible.group.revelation': 'Atklāsmes grāmata',
 	'ccc.landing.title': 'Katoliskās Baznīcas katehisms',
+	'ccc.landing.pairTitle': 'Katehisms un Kompendijs',
 	'ccc.landing.tagline':
 		'<strong>Katehisms</strong> izklāsta katolisko mācību 2865 numurētos punktos. <strong>Kompendijs</strong> to pašu mācību sniedz kā 598 jautājumus un atbildes pēc tā paša izkārtojuma.',
+	'ccc.landing.pairTagline':
+		'Katoliskās Baznīcas katehisms 2865 numuros un tā Kompendijs 598 jautājumos.',
+	'ccc.abbrev': 'KBK',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline':
 		'Enciklikas, koncila konstitūcijas, dekrēti un Maģistērija deklarācijas.',
 	'doctores.landing.title': 'Baznīcas doktori',
 	'doctores.landing.tagline': 'Baznīcas tēvu un Baznīcas doktoru teoloģiskie darbi.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Toms Akvīnietis, angliski un latīņu valodā, kurā viņš rakstīja.',
+	'index.division': 'Iedaļa',
 	'prayers.landing.title': 'Ikdienas lūgšanas',
 	'prayers.landing.tagline': 'Lūgšanas ar latīņu tekstu blakus.',
+	'prayers.seeAlso': 'Skatiet arī',
+	'anchor.actions': 'Darbības ar atsauci',
+	'anchor.copy': 'Kopēt tekstu',
+	'anchor.copyLink': 'Kopēt saiti',
+	'anchor.view': 'Skatīt',
+	'anchor.copied': 'Nokopēts',
+	'anchor.copyFailed': 'Neizdevās nokopēt',
+	'bookmark.add': 'Atzīmēt',
+	'bookmark.remove': 'Noņemt grāmatzīmi',
+	'bookmark.library': 'Grāmatzīmes',
+	'bookmark.library.tagline': 'Viss, ko esat atzīmējis lasot.',
+	'bookmark.empty': 'Pagaidām nekas nav atzīmēts.',
+	'bookmark.emptyHint':
+		'Noklikšķiniet uz panta vai rindkopas numura un izvēlieties Atzīmēt, vai izmantojiet lapas grāmatzīmes pogu.',
+	'bookmark.deviceOnly':
+		'Grāmatzīmes glabājas tikai šajā pārlūkā. Tās nekur netiek sūtītas, un pārlūka datu dzēšana tās noņem.',
+	'bookmark.unavailable': 'Nav tajā izdevumā, ko lasāt',
 	'colophon.title': 'Kolofons',
 	'colophon.lede':
 		'Kas ir šī vietne, no kurienes nāk tās teksti un kāda ir mūsu nostāja par to atveidošanu.',
@@ -131,11 +194,18 @@ export const lv: Dictionary = {
 		'Tās ir publiskajā īpašumā, kā rāda zemāk esošie datumi, un uzticīga fotogrāfiska publiskajā īpašumā esošas gravīras reprodukcija nenes nekādas jaunas savas autortiesības.',
 	'colophon.countPlates': 'gravīras',
 	'colophon.countPlateChapters': 'ilustrētas nodaļas',
+	'art.about': 'Par šo attēlu',
+	'art.detail': 'fragments',
 	'colophon.typeTitle': 'Burti',
 	'colophon.typeBody':
 		'Salikts ar EB Garamond, Georga Dufnera un Oktavio Pardo atdzīvinājumu burtiem, ko Klods Garamons grieza 1590. gados — humānistiskajā tradīcijā, kurā Baznīca iespiež kopš renesanses. Tā kirilica ir to pašu roku darbs, bet neatdzīvina neko: kirilisks Garamonds nekad nav ticis griezts, tāpēc krievu valoda ir salikta formā, kas zīmēta, lai stāvētu blakus pārējam.',
 	'colophon.typeArabic':
 		'Arābu valoda tam ir pavisam nesasniedzama un ir salikta ar Amiri — Haleda Hosnija atdzīvinājumu nashi rakstam, kas 1905. gadā griezts Bulakas spiestuvei Kairā, izvēlētu tā paša apsvēruma dēļ kā teksta burti: konkrēts vēsturisks grāmatu raksts, nevis mūsdienu zīmējums.',
 	'colophon.typeInitials':
-		'Sākuma iniciāļi ir Pirata One, gotisks raksts, kura lielie burti paliek salasāmi tajā izmērā, ko iniciālis prasa, un — krievu valodai — Ponomar, kas atveido Sinodālās spiestuves baznīcslāvu rakstu. Ponomar liek iniciāli un nekad tekstu: mūsdienu enciklika, salikta cauri sinodālajā rakstā, teiktu kaut ko nepatiesu par to, kas tā ir. Visi ir licencēti ar SIL Open Font License un tiek pasniegti no šīs vietnes, nevis no trešās puses, tāpēc lapas lasīšana neprasa neko no kāda cita servera.'
+		'Sākuma iniciāļi ir Pirata One, gotisks raksts, kura lielie burti paliek salasāmi tajā izmērā, ko iniciālis prasa, un — krievu valodai — Ponomar, kas atveido Sinodālās spiestuves baznīcslāvu rakstu. Ponomar liek iniciāli un nekad tekstu: mūsdienu enciklika, salikta cauri sinodālajā rakstā, teiktu kaut ko nepatiesu par to, kas tā ir. Visi ir licencēti ar SIL Open Font License un tiek pasniegti no šīs vietnes, nevis no trešās puses, tāpēc lapas lasīšana neprasa neko no kāda cita servera.',
+	'copyright.sourceTitle': 'Atvērt sākotnējo avota lapu',
+	'copyright.sourceLabel': 'Avots',
+	'lang.label': 'Valoda',
+	'lang.filter': 'Meklēt valodas',
+	'lang.more': 'vairāk valodu'
 };

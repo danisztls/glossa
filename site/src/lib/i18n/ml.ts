@@ -36,6 +36,12 @@
  * English per key, DELETING a doubtful line is also a valid fix and
  * strictly better than leaving a wrong one standing.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -65,14 +71,48 @@ export const ml: Dictionary = {
 	'nav.summa': 'സുമ്മ',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'വായന തുടരുക',
+	'home.tagline':
+		'വിശുദ്ധ ഗ്രന്ഥവും മതബോധനഗ്രന്ഥവും പ്രബോധനാധികാരത്തിന്റെ രേഖകളും വായിക്കാനുള്ള ഇടം — സൗജന്യം, ഇന്റർനെറ്റില്ലാതെയും പ്രവർത്തിക്കുന്നു, രജിസ്റ്റർ ചെയ്യാൻ ഒന്നുമില്ല.',
+	'home.doors.heading': 'എവിടേക്കു പോകാം',
+	'home.find.heading': 'അല്ലെങ്കിൽ ഒരു പരാമർശം ടൈപ്പു ചെയ്യുക',
 	'nav.library': 'ഗ്രന്ഥശാല',
 	'nav.learn': 'പഠിക്കുക',
 	'library.landing.tagline':
 		'മുഴുവൻ ശേഖരവും, തട്ടു തട്ടായി — നിങ്ങൾ നിർത്തിയ ഇടവും അടയാളപ്പെടുത്തിയവയും ചേർത്ത്.',
+	'jumpbox.placeholder': 'ഇങ്ങോട്ടു പോകുക… (ഉദാ. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'തിരയുക',
+	'jumpbox.hint': 'ഒരു പരാമർശത്തിലേക്കു പോകാൻ / അല്ലെങ്കിൽ Ctrl+K അമർത്തുക',
+	'jumpbox.noMatch': 'ഒന്നും കിട്ടിയില്ല',
+	'jumpbox.suggestions': 'നിർദ്ദേശങ്ങൾ',
+	'settings.label': 'ക്രമീകരണങ്ങൾ',
+	'darkMode.label': 'ഇരുണ്ട രീതി',
+	'darkMode.auto': 'സ്വയം',
+	'darkMode.on': 'ഓൺ',
+	'darkMode.off': 'ഓഫ്',
+	'loadFailed.title': 'അതു വന്നില്ല',
+	'loadFailed.hint':
+		'താൾ ഉണ്ട് — അതു കൊണ്ടുവരുന്നതിൽ എന്തോ പിഴച്ചു. വീണ്ടും ശ്രമിച്ചാൽ സാധാരണ ശരിയാകും.',
+	'loadFailed.retry': 'വീണ്ടും ശ്രമിക്കുക',
+	'loadFailed.retrying': 'ശ്രമിക്കുന്നു…',
+	'fontSize.label': 'അക്ഷരവലുപ്പം',
+	'fontSize.larger': 'വലിയ അക്ഷരം',
+	'fontSize.smaller': 'ചെറിയ അക്ഷരം',
+	'print.label': 'ഈ താൾ അച്ചടിക്കുക',
+	'toTop.label': 'മുകളിലേക്കു മടങ്ങുക',
+	'edition.label': 'പതിപ്പ്',
+	'edition.select': 'പതിപ്പു തിരഞ്ഞെടുക്കുക',
+	'edition.current': 'ഇപ്പോഴത്തെ പതിപ്പ്',
+	'edition.filter': 'പതിപ്പുകൾ തിരയുക',
+	'menu.noMatches': 'ഒന്നും ചേരുന്നില്ല',
 	'unitNav.previous': 'മുമ്പത്തേത്',
 	'unitNav.next': 'അടുത്തത്',
+	'bible.prevChapter': 'മുൻ അധ്യായം',
+	'bible.nextChapter': 'അടുത്ത അധ്യായം',
+	'bible.pickBook': 'പുസ്തകങ്ങളും അധ്യായങ്ങളും',
 	'bible.landing.title': 'ബൈബിൾ',
 	'bible.landing.tagline': 'ബൈബിൾ മുഴുവൻ വായിക്കുക, പുസ്തകം പുസ്തകമായി, അധ്യായം അധ്യായമായി.',
+	'bible.landing.books': 'പുസ്തകങ്ങൾ',
+	'bible.introduction': 'ആമുഖം',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'പഞ്ചഗ്രന്ഥി',
@@ -85,16 +125,39 @@ export const ml: Dictionary = {
 	'bible.group.catholicLetters': 'കത്തോലിക്കാ ലേഖനങ്ങൾ',
 	'bible.group.revelation': 'വെളിപാട്',
 	'ccc.landing.title': 'കത്തോലിക്കാ സഭയുടെ മതബോധനഗ്രന്ഥം',
+	'ccc.landing.pairTitle': 'മതബോധനഗ്രന്ഥവും സംഗ്രഹവും',
 	'ccc.landing.tagline':
 		'<strong>മതബോധനഗ്രന്ഥം</strong> കത്തോലിക്കാ പ്രബോധനം 2,865 അക്കമിട്ട ഖണ്ഡികകളിൽ അവതരിപ്പിക്കുന്നു. <strong>സംഗ്രഹം</strong> അതേ പ്രബോധനം അതേ ക്രമത്തിൽ 598 ചോദ്യോത്തരങ്ങളായി അവതരിപ്പിക്കുന്നു.',
+	'ccc.landing.pairTagline':
+		'കത്തോലിക്കാ സഭയുടെ മതബോധനഗ്രന്ഥം 2,865 ഖണ്ഡികകളിൽ, അതിന്റെ സംഗ്രഹം 598 ചോദ്യങ്ങളിൽ.',
+	'ccc.abbrev': 'മതബോധനം',
+	'compendium.abbrev': 'സംഗ്രഹം',
 	'document.library.tagline':
 		'ചാക്രികലേഖനങ്ങൾ, സൂനഹദോസ് പ്രമാണങ്ങൾ, ഡിക്രികൾ, സഭയുടെ പ്രഖ്യാപനങ്ങൾ.',
 	'doctores.landing.title': 'സഭാവേദപാരംഗതർ',
 	'doctores.landing.tagline': 'സഭാപിതാക്കന്മാരുടെയും വേദപാരംഗതരുടെയും ദൈവശാസ്ത്ര കൃതികൾ.',
 	'summa.landing.title': 'സുമ്മ തെയോളോജിയേ',
 	'summa.landing.tagline': 'തോമസ് അക്വീനാസ്, ഇംഗ്ലീഷിലും അദ്ദേഹം എഴുതിയ ലത്തീനിലും.',
+	'index.division': 'വിഭാഗം',
 	'prayers.landing.title': 'സാധാരണ പ്രാർഥനകൾ',
 	'prayers.landing.tagline': 'ലത്തീൻ പാഠത്തോടൊപ്പമുള്ള പ്രാർഥനകൾ.',
+	'prayers.seeAlso': 'ഇതും കാണുക',
+	'anchor.actions': 'പരാമർശത്തിന്മേലുള്ള പ്രവൃത്തികൾ',
+	'anchor.copy': 'വാചകം പകർത്തുക',
+	'anchor.copyLink': 'കണ്ണി പകർത്തുക',
+	'anchor.view': 'കാണുക',
+	'anchor.copied': 'പകർത്തി',
+	'anchor.copyFailed': 'പകർത്താനായില്ല',
+	'bookmark.add': 'അടയാളപ്പെടുത്തുക',
+	'bookmark.remove': 'അടയാളം നീക്കുക',
+	'bookmark.library': 'ബുക്ക്‌മാർക്കുകൾ',
+	'bookmark.library.tagline': 'വായിക്കുമ്പോൾ നിങ്ങൾ അടയാളപ്പെടുത്തിയതെല്ലാം.',
+	'bookmark.empty': 'ഇതുവരെ ഒന്നും അടയാളപ്പെടുത്തിയിട്ടില്ല.',
+	'bookmark.emptyHint':
+		'ഒരു വാക്യത്തിന്റെയോ ഖണ്ഡികയുടെയോ സംഖ്യയിൽ ഞെക്കി അടയാളപ്പെടുത്തുക എന്നതു തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ താളിലെ ബുക്ക്‌മാർക്ക് ബട്ടൺ ഉപയോഗിക്കുക.',
+	'bookmark.deviceOnly':
+		'ബുക്ക്‌മാർക്കുകൾ ഈ ബ്രൗസറിൽ മാത്രമേ സൂക്ഷിക്കപ്പെടുന്നുള്ളൂ. അവ എങ്ങോട്ടും അയയ്ക്കപ്പെടുന്നില്ല; ബ്രൗസറിന്റെ വിവരങ്ങൾ മായ്ച്ചാൽ അവയും പോകും.',
+	'bookmark.unavailable': 'നിങ്ങൾ വായിക്കുന്ന പതിപ്പിൽ ഇല്ല',
 	'colophon.title': 'കോളഫോൺ',
 	'colophon.lede':
 		'ഈ സൈറ്റ് എന്താണ്, അതിലെ പാഠങ്ങൾ എവിടെനിന്നു വരുന്നു, അവ പുനഃപ്രസിദ്ധീകരിക്കുന്നതിൽ നമ്മുടെ നിലപാട്.',
@@ -138,11 +201,18 @@ export const ml: Dictionary = {
 		'താഴെയുള്ള തീയതികൾ കാണിക്കുന്നതുപോലെ അവ പൊതുസഞ്ചയത്തിലാണ്; പൊതുസഞ്ചയത്തിലുള്ള ഒരു കൊത്തുപണിയുടെ വിശ്വസ്തമായ ഛായാഗ്രഹണ പകർപ്പിനു സ്വന്തമായ പുതിയ പകർപ്പവകാശമില്ല.',
 	'colophon.countPlates': 'കൊത്തുപണികൾ',
 	'colophon.countPlateChapters': 'ചിത്രങ്ങളുള്ള അധ്യായങ്ങൾ',
+	'art.about': 'ഈ ചിത്രത്തെക്കുറിച്ച്',
+	'art.detail': 'ഭാഗം',
 	'colophon.typeTitle': 'അക്ഷരരൂപം',
 	'colophon.typeBody':
 		'1590-കളിൽ ക്ലോദ് ഗാരമോൻ കൊത്തിയ അക്ഷരങ്ങളുടെ ഗിയോർഗ് ഡുഫ്നറും ഒക്താവിയോ പാർദോയും നടത്തിയ പുനരുജ്ജീവനമായ EB Garamond-ൽ അച്ചുനിരത്തിയിരിക്കുന്നു — നവോത്ഥാനകാലം മുതൽ സഭ അച്ചടിച്ചുപോരുന്ന മാനവിക പാരമ്പര്യം. അതിന്റെ സിറിലിക് അതേ കൈകളുടേതാണെങ്കിലും ഒന്നിനെയും പുനരുജ്ജീവിപ്പിക്കുന്നില്ല: സിറിലിക് ഗാരമോൻ ഒരിക്കലും കൊത്തിയിട്ടില്ല, അതിനാൽ റഷ്യൻ ബാക്കിയുള്ളവയ്ക്കൊപ്പം നിൽക്കാൻ വരച്ച ഒരു രൂപത്തിലാണ് അച്ചുനിരത്തിയിരിക്കുന്നത്.',
 	'colophon.typeArabic':
 		'അറബി അതിന്റെ പരിധിക്കു തീർത്തും പുറത്താണ്, അത് Amiri-യിൽ അച്ചുനിരത്തിയിരിക്കുന്നു — 1905-ൽ കൈറോയിലെ ബൂലാഖ് അച്ചുകൂടത്തിനായി കൊത്തിയ നസ്ഖ് ലിപിയുടെ ഖാലിദ് ഹോസ്നി നടത്തിയ പുനരുജ്ജീവനം, വാചക അക്ഷരരൂപത്തിന്റെ അതേ ന്യായത്തിൽ തിരഞ്ഞെടുത്തത്: സമകാലിക രേഖാചിത്രമല്ല, ഒരു പ്രത്യേക ചരിത്രപരമായ ഗ്രന്ഥാക്ഷരം.',
 	'colophon.typeInitials':
-		'ആരംഭാക്ഷരങ്ങൾ Pirata One ആണ്, ഒരു ഗോഥിക് ലിപി; ആരംഭാക്ഷരം ആവശ്യപ്പെടുന്ന വലുപ്പത്തിലും അതിന്റെ വലിയ അക്ഷരങ്ങൾ വായിക്കാനാകും. റഷ്യനു വേണ്ടി Ponomar — സിനഡൽ അച്ചുകൂടത്തിന്റെ സഭാ സ്ലാവോണിക് അക്ഷരരൂപം പുനഃസൃഷ്ടിക്കുന്നത്. Ponomar ആരംഭാക്ഷരം മാത്രം അച്ചുനിരത്തുന്നു, ഒരിക്കലും വാചകമല്ല: ആദ്യന്തം സിനഡൽ അക്ഷരത്തിൽ അച്ചുനിരത്തിയ ഒരു ആധുനിക ചാക്രികലേഖനം അതെന്താണെന്നതിനെക്കുറിച്ച് സത്യമല്ലാത്ത ഒന്നു പറയും. എല്ലാം SIL Open Font License പ്രകാരം അനുമതിയുള്ളവയാണ്; മൂന്നാം കക്ഷിയിൽ നിന്നല്ല, ഈ ഇടത്തിൽ നിന്നുതന്നെ നൽകുന്നു, അതിനാൽ ഒരു താൾ വായിക്കുന്നത് മറ്റാരുടെയും സെർവറിനോട് ഒന്നും ആവശ്യപ്പെടുന്നില്ല.'
+		'ആരംഭാക്ഷരങ്ങൾ Pirata One ആണ്, ഒരു ഗോഥിക് ലിപി; ആരംഭാക്ഷരം ആവശ്യപ്പെടുന്ന വലുപ്പത്തിലും അതിന്റെ വലിയ അക്ഷരങ്ങൾ വായിക്കാനാകും. റഷ്യനു വേണ്ടി Ponomar — സിനഡൽ അച്ചുകൂടത്തിന്റെ സഭാ സ്ലാവോണിക് അക്ഷരരൂപം പുനഃസൃഷ്ടിക്കുന്നത്. Ponomar ആരംഭാക്ഷരം മാത്രം അച്ചുനിരത്തുന്നു, ഒരിക്കലും വാചകമല്ല: ആദ്യന്തം സിനഡൽ അക്ഷരത്തിൽ അച്ചുനിരത്തിയ ഒരു ആധുനിക ചാക്രികലേഖനം അതെന്താണെന്നതിനെക്കുറിച്ച് സത്യമല്ലാത്ത ഒന്നു പറയും. എല്ലാം SIL Open Font License പ്രകാരം അനുമതിയുള്ളവയാണ്; മൂന്നാം കക്ഷിയിൽ നിന്നല്ല, ഈ ഇടത്തിൽ നിന്നുതന്നെ നൽകുന്നു, അതിനാൽ ഒരു താൾ വായിക്കുന്നത് മറ്റാരുടെയും സെർവറിനോട് ഒന്നും ആവശ്യപ്പെടുന്നില്ല.',
+	'copyright.sourceTitle': 'മൂലസ്രോതസ്സിന്റെ താൾ തുറക്കുക',
+	'copyright.sourceLabel': 'സ്രോതസ്സ്',
+	'lang.label': 'ഭാഷ',
+	'lang.filter': 'ഭാഷകൾ തിരയുക',
+	'lang.more': 'കൂടുതൽ ഭാഷകൾ'
 };

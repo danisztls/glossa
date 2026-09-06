@@ -121,10 +121,12 @@ export const CHROME_PATHS = [
  *
  * **`/` IS THE ONE EXCEPTION, AND IT IS TAKEN RATHER THAN OVERLOOKED**
  * (2026-09-06, by direction). Its rewrite added three English-only keys —
- * `home.tagline` and two section headings — and the remedy above is not
- * available to the root: withholding the home page costs the sitemap row and
- * the `hreflang` cluster that every other page's ranking leans on, which is a
- * worse outcome than two headings falling through to English. What the rule
+ * `home.tagline` and two section headings, all three translated later the same
+ * day — and the remedy above is not available to the root: withholding the home
+ * page costs the sitemap row and the `hreflang` cluster that every other page's
+ * ranking leans on, which is a worse outcome than a heading falling through to
+ * English. The exception is kept written down because it is the ROOT's, not
+ * these keys': the next English-only string on `/` inherits it. What the rule
  * actually protects is intact either way, because the gate is on a page's NAME
  * and DESCRIPTION and not on its body: `/`'s `<title>` is `home.title` and its
  * description is composed by `scripts/route-titles.mjs` from five work names,

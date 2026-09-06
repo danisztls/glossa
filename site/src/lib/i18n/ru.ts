@@ -35,6 +35,10 @@ export const ru: Dictionary = {
 	'nav.menu': 'Меню',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Продолжить чтение',
+	'home.tagline':
+		'Сайт для чтения Священного Писания, Катехизиса и документов Учительства — бесплатно, без сети и без всякой регистрации.',
+	'home.doors.heading': 'Куда пойти',
+	'home.find.heading': 'Или введите ссылку',
 	'nav.library': 'Библиотека',
 	'nav.learn': 'Учиться',
 	'library.landing.tagline':
@@ -78,6 +82,11 @@ export const ru: Dictionary = {
 	'offline.hint':
 		'Совсем не использует сеть: ничего не загружается, обновления не проверяются, ничего не измеряется. Открываются только тексты, уже сохранённые на этом устройстве.',
 	'offline.notDownloaded': 'Нет на этом устройстве',
+	'loadFailed.title': 'Это не загрузилось',
+	'loadFailed.hint':
+		'Страница существует — что-то не сработало при её получении. Повторная попытка обычно помогает.',
+	'loadFailed.retry': 'Попробовать снова',
+	'loadFailed.retrying': 'Попытка…',
 	'offline.turnOff': 'Выключить автономный режим',
 
 	'fontSize.label': 'Размер текста',
@@ -94,6 +103,8 @@ export const ru: Dictionary = {
 	'edition.label': 'Издание',
 	'edition.select': 'Выбрать издание',
 	'edition.current': 'Текущее издание',
+	'edition.filter': 'Искать издания',
+	'menu.noMatches': 'Совпадений нет',
 	'unitNav.previous': 'Назад',
 	'unitNav.next': 'Вперёд',
 	'bible.prevChapter': 'Предыдущая глава',
@@ -122,8 +133,11 @@ export const ru: Dictionary = {
 	'ccc.nextParagraph': 'Следующий абзац',
 	'ccc.inBrief': 'Кратко',
 	'ccc.landing.title': 'Катехизис Католической Церкви',
+	'ccc.landing.pairTitle': 'Катехизис и Компендиум',
 	'ccc.landing.tagline':
 		'<strong>Катехизис</strong> излагает католическое вероучение в 2865 пронумерованных параграфах. <strong>Компендиум</strong> передаёт то же учение в 598 вопросах и ответах, по тому же плану.',
+	'ccc.landing.pairTagline':
+		'Катехизис Католической Церкви в 2865 параграфах и его Компендиум в 598 вопросах.',
 	'ccc.tableOfContents': 'Оглавление',
 	'ccc.related': 'См. также',
 	'compendium.landing.title': 'Компендиум Катехизиса',
@@ -163,11 +177,13 @@ export const ru: Dictionary = {
 	'summa.noEditionInYourLanguage': 'У Суммы нет издания на вашем языке. Показано на языке: {lang}.',
 	'summa.noLatinSupplement':
 		'Дополнение существует только по-английски — оно было составлено после смерти Аквината.',
+	'index.division': 'Раздел',
 	'index.showSubsections': 'Показать подразделы',
 	'index.hideSubsections': 'Скрыть подразделы',
 	'prayers.landing.title': 'Общие молитвы',
 	'prayers.landing.tagline': 'Молитвы с латинским текстом рядом.',
 	'prayers.tableOfContents': 'Оглавление',
+	'prayers.seeAlso': 'См. также',
 	'prayers.prevPrayer': 'Предыдущая молитва',
 	'prayers.nextPrayer': 'Следующая молитва',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -189,6 +205,7 @@ export const ru: Dictionary = {
 	'anchor.copyLink': 'Копировать ссылку',
 	'anchor.view': 'Смотреть',
 	'anchor.copied': 'Скопировано',
+	'anchor.copyFailed': 'Не удалось скопировать',
 	'bookmark.add': 'В закладки',
 	'bookmark.remove': 'Убрать закладку',
 	'bookmark.library': 'Закладки',
@@ -221,6 +238,11 @@ export const ru: Dictionary = {
 	'document.kind.apostolicExhortation': 'Апостольское обращение',
 	'document.kind.apostolicConstitution': 'Апостольская конституция',
 	'document.kind.cdfDeclaration': 'Декларация Конгрегации вероучения',
+	'document.kind.cdfInstruction': 'Инструкция Конгрегации вероучения',
+	'document.kind.cdfLetter': 'Письмо Конгрегации вероучения',
+	'document.kind.cdfDoctrinalNote': 'Вероучительная нота Конгрегации вероучения',
+	'document.kind.cdfResponsum': 'Ответ Конгрегации вероучения',
+	'document.kind.cdfConsiderations': 'Соображения Конгрегации вероучения',
 	'document.kindPlural.conciliarConstitution': 'Конституции',
 	'document.kindPlural.conciliarDecree': 'Декреты',
 	'document.kindPlural.conciliarDeclaration': 'Декларации',
@@ -273,6 +295,8 @@ export const ru: Dictionary = {
 	'plates.scansBy': 'Сканы предоставлены',
 	'plates.enlarge': 'Увеличить {title}',
 	'plates.zoom': 'Масштаб',
+	'art.about': 'Об этом изображении',
+	'art.detail': 'фрагмент',
 	'colophon.typeTitle': 'Шрифт',
 	'colophon.typeBody':
 		'Набрано шрифтом EB Garamond — возрождением, выполненным Георгом Дуффнером и Октавио Пардо, тех литер, что Клод Гарамон резал в 1590-е годы: гуманистической традиции, в которой Церковь печатает со времён Возрождения. Его кириллица вышла из тех же рук, но ничего не возрождает: кириллического Гарамона никогда не резали, и потому русский набран формой, нарисованной так, чтобы стоять рядом с остальным.',
@@ -292,7 +316,10 @@ export const ru: Dictionary = {
 	'ccc.readFullChapter': 'Читать главу целиком',
 	'ccc.noParagraphNumber': 'В этом корпусе нет номера абзаца',
 	'copyright.sourceTitle': 'Открыть исходную страницу',
+	'copyright.sourceLabel': 'Источник',
 	'lang.label': 'Язык',
+	'lang.filter': 'Искать языки',
+	'lang.more': 'ещё языки',
 	'notFound.title': 'По этому адресу ничего нет',
 	'notFound.lede': 'Страницы, которую вы запросили, здесь нет.',
 	'notFound.body':

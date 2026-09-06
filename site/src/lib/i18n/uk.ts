@@ -32,6 +32,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -62,14 +68,48 @@ export const uk: Dictionary = {
 	'nav.summa': 'Сума',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Продовжити читання',
+	'home.tagline':
+		'Сайт для читання Писання, Катехизму та документів Магістеріуму — безкоштовно, працює без мережі, і ніде не треба реєструватися.',
+	'home.doors.heading': 'Куди піти',
+	'home.find.heading': 'Або введіть посилання',
 	'nav.library': 'Бібліотека',
 	'nav.learn': 'Навчання',
 	'library.landing.tagline':
 		'Усе зібрання, полиця за полицею — разом із тим, де ви зупинилися, і тим, що позначили.',
+	'jumpbox.placeholder': 'Перейти до… (напр. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Пошук',
+	'jumpbox.hint': 'Натисніть / або Ctrl+K, щоб перейти до посилання',
+	'jumpbox.noMatch': 'Нічого не знайдено',
+	'jumpbox.suggestions': 'Пропозиції',
+	'settings.label': 'Налаштування',
+	'darkMode.label': 'Темний режим',
+	'darkMode.auto': 'Авто',
+	'darkMode.on': 'Увімк.',
+	'darkMode.off': 'Вимк.',
+	'loadFailed.title': 'Це не завантажилося',
+	'loadFailed.hint':
+		'Сторінка існує — щось пішло не так під час її отримання. Повторна спроба зазвичай допомагає.',
+	'loadFailed.retry': 'Спробувати знову',
+	'loadFailed.retrying': 'Спроба…',
+	'fontSize.label': 'Розмір тексту',
+	'fontSize.larger': 'Більший текст',
+	'fontSize.smaller': 'Менший текст',
+	'print.label': 'Надрукувати цю сторінку',
+	'toTop.label': 'Повернутися вгору',
+	'edition.label': 'Видання',
+	'edition.select': 'Обрати видання',
+	'edition.current': 'Поточне видання',
+	'edition.filter': 'Шукати видання',
+	'menu.noMatches': 'Збігів немає',
 	'unitNav.previous': 'Попереднє',
 	'unitNav.next': 'Наступне',
+	'bible.prevChapter': 'Попередній розділ',
+	'bible.nextChapter': 'Наступний розділ',
+	'bible.pickBook': 'Книги і розділи',
 	'bible.landing.title': 'Біблія',
 	'bible.landing.tagline': 'Читайте всю Біблію, книгу за книгою, розділ за розділом.',
+	'bible.landing.books': 'Книги',
+	'bible.introduction': 'Вступ',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'П’ятикнижжя',
@@ -82,16 +122,39 @@ export const uk: Dictionary = {
 	'bible.group.catholicLetters': 'Католицькі послання',
 	'bible.group.revelation': 'Одкровення',
 	'ccc.landing.title': 'Катехизм Католицької Церкви',
+	'ccc.landing.pairTitle': 'Катехизм і Компендіум',
 	'ccc.landing.tagline':
 		'<strong>Катехизм</strong> викладає католицьке вчення у 2865 пронумерованих пунктах. <strong>Компендіум</strong> подає те саме вчення як 598 запитань і відповідей за тим самим порядком.',
+	'ccc.landing.pairTagline':
+		'Катехизм Католицької Церкви у 2865 параграфах і його Компендіум у 598 питаннях.',
+	'ccc.abbrev': 'ККЦ',
+	'compendium.abbrev': 'Комп.',
 	'document.library.tagline':
 		'Енцикліки, соборові конституції, декрети та декларації Учительства Церкви.',
 	'doctores.landing.title': 'Учителі Церкви',
 	'doctores.landing.tagline': 'Богословські твори Отців та Учителів Церкви.',
 	'summa.landing.title': 'Сума теології',
 	'summa.landing.tagline': 'Тома Аквінський, англійською і латиною, якою він писав.',
+	'index.division': 'Розділ',
 	'prayers.landing.title': 'Звичайні молитви',
 	'prayers.landing.tagline': 'Молитви з латинським текстом поруч.',
+	'prayers.seeAlso': 'Див. також',
+	'anchor.actions': 'Дії з посиланням',
+	'anchor.copy': 'Копіювати текст',
+	'anchor.copyLink': 'Копіювати посилання',
+	'anchor.view': 'Переглянути',
+	'anchor.copied': 'Скопійовано',
+	'anchor.copyFailed': 'Не вдалося скопіювати',
+	'bookmark.add': 'У закладки',
+	'bookmark.remove': 'Прибрати закладку',
+	'bookmark.library': 'Закладки',
+	'bookmark.library.tagline': 'Усе, що ви позначили під час читання.',
+	'bookmark.empty': 'Поки нічого не позначено.',
+	'bookmark.emptyHint':
+		'Натисніть на номер вірша чи абзацу і виберіть «У закладки», або скористайтеся кнопкою закладки на сторінці.',
+	'bookmark.deviceOnly':
+		'Закладки зберігаються лише в цьому браузері. Вони нікуди не надсилаються, і очищення даних браузера їх видаляє.',
+	'bookmark.unavailable': 'Немає у виданні, яке ви читаєте',
 	'colophon.title': 'Колофон',
 	'colophon.lede':
 		'Чим є цей сайт, звідки походять його тексти і яка наша позиція щодо їх відтворення.',
@@ -135,11 +198,18 @@ export const uk: Dictionary = {
 		'Вони перебувають у суспільному надбанні, як показують дати нижче, і точне фотографічне відтворення гравюри в суспільному надбанні не несе жодного нового власного авторського права.',
 	'colophon.countPlates': 'гравюр',
 	'colophon.countPlateChapters': 'ілюстрованих розділів',
+	'art.about': 'Про це зображення',
+	'art.detail': 'фрагмент',
 	'colophon.typeTitle': 'Шрифт',
 	'colophon.typeBody':
 		'Набрано шрифтом EB Garamond, відродженням Ґеорґа Дуфнера й Октавіо Пардо тих літер, які Клод Ґарамон різьбив у 1590-х роках — гуманістичної традиції, у якій Церква друкує від часів Ренесансу. Його кирилиця — тієї ж руки, але не відроджує нічого: кириличного Ґарамона ніколи не різьбили, тож російська набрана формою, намальованою так, щоб стояти поруч з рештою.',
 	'colophon.typeArabic':
 		'Арабська цілком поза його межами і набрана шрифтом Amiri — відродженням Халеда Хосні насха, різьбленого для друкарні Булак у Каїрі 1905 року, обраним з того ж міркування, що й текстовий шрифт: певний історичний книжковий шрифт, а не сучасний малюнок.',
 	'colophon.typeInitials':
-		'Початкові ініціали — Pirata One, готичний шрифт, чиї великі літери лишаються читними в тому розмірі, якого вимагає буквиця, і — для російської — Ponomar, який відтворює церковнослов’янський шрифт Синодальної друкарні. Ponomar набирає ініціал і ніколи текст: сучасна енцикліка, набрана суцільно синодальним шрифтом, сказала б неправду про те, чим вона є. Усі вони ліцензовані за SIL Open Font License і подаються з цього сайту, а не від третьої сторони, тож читання сторінки нічого не вимагає від чужого сервера.'
+		'Початкові ініціали — Pirata One, готичний шрифт, чиї великі літери лишаються читними в тому розмірі, якого вимагає буквиця, і — для російської — Ponomar, який відтворює церковнослов’янський шрифт Синодальної друкарні. Ponomar набирає ініціал і ніколи текст: сучасна енцикліка, набрана суцільно синодальним шрифтом, сказала б неправду про те, чим вона є. Усі вони ліцензовані за SIL Open Font License і подаються з цього сайту, а не від третьої сторони, тож читання сторінки нічого не вимагає від чужого сервера.',
+	'copyright.sourceTitle': 'Відкрити первісну сторінку джерела',
+	'copyright.sourceLabel': 'Джерело',
+	'lang.label': 'Мова',
+	'lang.filter': 'Шукати мови',
+	'lang.more': 'ще мови'
 };

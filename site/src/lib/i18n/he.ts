@@ -35,6 +35,12 @@
  * English per key, DELETING a doubtful line is also a valid fix and
  * strictly better than leaving a wrong one standing.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -64,13 +70,46 @@ export const he: Dictionary = {
 	'nav.summa': 'סומה',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'המשך קריאה',
+	'home.tagline':
+		'אתר לקריאת כתבי הקודש, הקטכיזם ומסמכי המגיסטריום — חינם, פועל גם ללא חיבור, ואין להירשם לדבר.',
+	'home.doors.heading': 'לאן ללכת',
+	'home.find.heading': 'או הקלידו הפניה',
 	'nav.library': 'ספרייה',
 	'nav.learn': 'ללמוד',
 	'library.landing.tagline': 'כל האוסף, מדף אחר מדף — עם המקום שבו הפסקת ועם מה שסימנת.',
+	'jumpbox.placeholder': 'מעבר אל… (למשל jn 3:16, ccc 1234)',
+	'jumpbox.short': 'חיפוש',
+	'jumpbox.hint': 'הקישו / או Ctrl+K כדי לעבור להפניה',
+	'jumpbox.noMatch': 'אין תוצאות',
+	'jumpbox.suggestions': 'הצעות',
+	'settings.label': 'הגדרות',
+	'darkMode.label': 'מצב כהה',
+	'darkMode.auto': 'אוטו׳',
+	'darkMode.on': 'פועל',
+	'darkMode.off': 'כבוי',
+	'loadFailed.title': 'זה לא נטען',
+	'loadFailed.hint': 'העמוד קיים — משהו השתבש בעת הבאתו. ניסיון נוסף בדרך כלל מצליח.',
+	'loadFailed.retry': 'נסו שוב',
+	'loadFailed.retrying': 'מנסה…',
+	'fontSize.label': 'גודל הטקסט',
+	'fontSize.larger': 'טקסט גדול יותר',
+	'fontSize.smaller': 'טקסט קטן יותר',
+	'print.label': 'הדפסת עמוד זה',
+	'toTop.label': 'חזרה למעלה',
+	'edition.label': 'מהדורה',
+	'edition.select': 'בחירת מהדורה',
+	'edition.current': 'המהדורה הנוכחית',
+	'edition.filter': 'חיפוש מהדורות',
+	'menu.noMatches': 'אין התאמות',
 	'unitNav.previous': 'הקודם',
 	'unitNav.next': 'הבא',
+	'bible.prevChapter': 'הפרק הקודם',
+	'bible.nextChapter': 'הפרק הבא',
+	'bible.pickBook': 'ספרים ופרקים',
 	'bible.landing.title': 'כתבי הקודש',
 	'bible.landing.tagline': 'קראו את כתבי הקודש כולם, ספר אחר ספר, פרק אחר פרק.',
+	'bible.landing.books': 'ספרים',
+	'bible.introduction': 'מבוא',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -84,15 +123,37 @@ export const he: Dictionary = {
 	'bible.group.catholicLetters': 'איגרות קתוליות',
 	'bible.group.revelation': 'חזון יוחנן',
 	'ccc.landing.title': 'הקטכיזם של הכנסייה הקתולית',
+	'ccc.landing.pairTitle': 'הקטכיזם והתמצית',
 	'ccc.landing.tagline':
 		'<strong>הקטכיזם</strong> מציג את התורה הקתולית ב־2,865 פסקאות ממוספרות. <strong>התקציר</strong> מציג את אותה תורה ב־598 שאלות ותשובות, לפי אותו מבנה.',
+	'ccc.landing.pairTagline': 'הקטכיזם של הכנסייה הקתולית ב־2,865 סעיפים, ותמציתו ב־598 שאלות.',
+	'ccc.abbrev': 'קק״כ',
+	'compendium.abbrev': 'תמצית',
 	'document.library.tagline': 'אנציקליקות, חוקות מועצתיות, צווים והצהרות של המגיסטריום.',
 	'doctores.landing.title': 'מלומדי הכנסייה',
 	'doctores.landing.tagline': 'כתביהם התיאולוגיים של אבות הכנסייה ומלומדיה.',
 	'summa.landing.title': 'סומה תיאולוגיה',
 	'summa.landing.tagline': 'תומאס אקווינס, באנגלית ובלטינית שבה כתב.',
+	'index.division': 'חלוקה',
 	'prayers.landing.title': 'תפילות נפוצות',
 	'prayers.landing.tagline': 'תפילות עם הטקסט הלטיני לצדן.',
+	'prayers.seeAlso': 'ראו גם',
+	'anchor.actions': 'פעולות על ההפניה',
+	'anchor.copy': 'העתקת הטקסט',
+	'anchor.copyLink': 'העתקת הקישור',
+	'anchor.view': 'הצגה',
+	'anchor.copied': 'הועתק',
+	'anchor.copyFailed': 'ההעתקה נכשלה',
+	'bookmark.add': 'סימנייה',
+	'bookmark.remove': 'הסרת הסימנייה',
+	'bookmark.library': 'סימניות',
+	'bookmark.library.tagline': 'כל מה שסימנתם בשעת הקריאה.',
+	'bookmark.empty': 'עדיין לא סומן דבר.',
+	'bookmark.emptyHint':
+		'לחצו על מספר של פסוק או של פסקה ובחרו בסימנייה, או השתמשו בכפתור הסימנייה שבעמוד.',
+	'bookmark.deviceOnly':
+		'הסימניות נשמרות בדפדפן זה בלבד. הן אינן נשלחות לשום מקום, וניקוי נתוני הדפדפן מוחק אותן.',
+	'bookmark.unavailable': 'אינו במהדורה שאתם קוראים',
 	'colophon.title': 'קולופון',
 	'colophon.lede': 'מהו אתר זה, מהיכן באים הטקסטים שלו, ומהי עמדתנו בנוגע לשעתוקם.',
 	'colophon.whatThisIs': 'מה זה',
@@ -132,11 +193,18 @@ export const he: Dictionary = {
 		'הם ברשות הרבים, כפי שמראים התאריכים שלהלן, ושעתוק צילומי נאמן של תחריט שברשות הרבים אינו נושא זכות יוצרים חדשה משלו.',
 	'colophon.countPlates': 'תחריטים',
 	'colophon.countPlateChapters': 'פרקים מאוירים',
+	'art.about': 'על התמונה הזו',
+	'art.detail': 'פרט',
 	'colophon.typeTitle': 'הגופן',
 	'colophon.typeBody':
 		'סודר בגופן EB Garamond, החייאתם של גאורג דופנר ואוקטביו פרדו לאותיות שחתך קלוד גארמון בשנות ה-1590 — המסורת ההומניסטית שבה מדפיסה הכנסייה מאז הרנסנס. הכתב הקירילי שלו הוא מאותן ידיים אך אינו מחיה דבר: גארמון קירילי מעולם לא נחתך, ולכן הרוסית מסודרת בצורה שצוירה כדי לעמוד לצד השאר.',
 	'colophon.typeArabic':
 		"הערבית מצויה מחוץ להישג ידו לחלוטין, והיא מסודרת בגופן Amiri — החייאתו של ח'אלד חוסני לכתב הנסח' שנחתך עבור בית הדפוס בולאק בקהיר בשנת 1905, שנבחר מאותו נימוק כמו גופן הטקסט: כתב ספר היסטורי מסוים ולא רישום בן זמננו.",
 	'colophon.typeInitials':
-		'אותיות הפתיחה הן Pirata One, כתב גותי שאותיותיו הגדולות נותרות קריאות בגודל שאות פתיחה דורשת, ו— עבור הרוסית — Ponomar, המשחזר את הכתב הסלאבי-כנסייתי של דפוס הסינוד. Ponomar מסדר את אות הפתיחה ולעולם לא את הטקסט: אנציקליקה מודרנית שתסודר כולה בכתב הסינוד תאמר דבר שאינו נכון על מה שהיא. כולם מורשים תחת SIL Open Font License ומוגשים מאתר זה ולא מצד שלישי, כך שקריאת עמוד אינה מבקשת דבר משרת של אחר.'
+		'אותיות הפתיחה הן Pirata One, כתב גותי שאותיותיו הגדולות נותרות קריאות בגודל שאות פתיחה דורשת, ו— עבור הרוסית — Ponomar, המשחזר את הכתב הסלאבי-כנסייתי של דפוס הסינוד. Ponomar מסדר את אות הפתיחה ולעולם לא את הטקסט: אנציקליקה מודרנית שתסודר כולה בכתב הסינוד תאמר דבר שאינו נכון על מה שהיא. כולם מורשים תחת SIL Open Font License ומוגשים מאתר זה ולא מצד שלישי, כך שקריאת עמוד אינה מבקשת דבר משרת של אחר.',
+	'copyright.sourceTitle': 'פתיחת עמוד המקור',
+	'copyright.sourceLabel': 'מקור',
+	'lang.label': 'שפה',
+	'lang.filter': 'חיפוש שפות',
+	'lang.more': 'שפות נוספות'
 };

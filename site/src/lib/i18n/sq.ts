@@ -28,6 +28,12 @@
  * rather than descriptive. Deleting a doubtful line is a valid fix — English
  * fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -58,14 +64,48 @@ export const sq: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Vazhdo leximin',
+	'home.tagline':
+		'Një faqe leximi për Shkrimet, Katekizmin dhe dokumentet e Magjisterit — falas, punon edhe pa internet, dhe s’ka asgjë për t’u regjistruar.',
+	'home.doors.heading': 'Ku të shkoni',
+	'home.find.heading': 'Ose shkruani një referencë',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mëso',
 	'library.landing.tagline':
 		'I gjithë korpusi, raft pas rafti — bashkë me vendin ku e latë dhe me atë që keni shënuar.',
+	'jumpbox.placeholder': 'Shko te… (p.sh. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Kërko',
+	'jumpbox.hint': 'Shtypni / ose Ctrl+K për të shkuar te një referencë',
+	'jumpbox.noMatch': 'Asgjë e gjetur',
+	'jumpbox.suggestions': 'Sugjerime',
+	'settings.label': 'Cilësimet',
+	'darkMode.label': 'Mënyra e errët',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Ndezur',
+	'darkMode.off': 'Fikur',
+	'loadFailed.title': 'Kjo nuk u ngarkua',
+	'loadFailed.hint':
+		'Faqja ekziston — diçka shkoi keq gjatë marrjes së saj. Një provë e dytë zakonisht mjafton.',
+	'loadFailed.retry': 'Provo përsëri',
+	'loadFailed.retrying': 'Po provohet…',
+	'fontSize.label': 'Madhësia e tekstit',
+	'fontSize.larger': 'Tekst më i madh',
+	'fontSize.smaller': 'Tekst më i vogël',
+	'print.label': 'Shtypni këtë faqe',
+	'toTop.label': 'Kthehu lart',
+	'edition.label': 'Botimi',
+	'edition.select': 'Zgjidhni botimin',
+	'edition.current': 'Botimi i tanishëm',
+	'edition.filter': 'Kërko botime',
+	'menu.noMatches': 'Asnjë përputhje',
 	'unitNav.previous': 'I mëparshmi',
 	'unitNav.next': 'Në vijim',
+	'bible.prevChapter': 'Kapitulli i mëparshëm',
+	'bible.nextChapter': 'Kapitulli në vijim',
+	'bible.pickBook': 'Libra dhe kapituj',
 	'bible.landing.title': 'Bibla',
 	'bible.landing.tagline': 'Lexoni tërë Biblën, libër pas libri, kapitull pas kapitulli.',
+	'bible.landing.books': 'Libra',
+	'bible.introduction': 'Hyrje',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'Pentateuku',
@@ -78,16 +118,39 @@ export const sq: Dictionary = {
 	'bible.group.catholicLetters': 'Letrat katolike',
 	'bible.group.revelation': 'Zbulesa',
 	'ccc.landing.title': 'Katekizmi i Kishës Katolike',
+	'ccc.landing.pairTitle': 'Katekizmi dhe Përmbledhja',
 	'ccc.landing.tagline':
 		'<strong>Katekizmi</strong> e parashtron doktrinën katolike në 2.865 paragrafë të numëruar. <strong>Përmbledhja</strong> e rithotë të njëjtën doktrinë në 598 pyetje e përgjigje, sipas së njëjtës skemë.',
+	'ccc.landing.pairTagline':
+		'Katekizmi i Kishës Katolike në 2 865 numra, dhe Përmbledhja e tij në 598 pyetje.',
+	'ccc.abbrev': 'KKK',
+	'compendium.abbrev': 'Përmbl.',
 	'document.library.tagline':
 		'Enciklika, kushtetuta koncilore, dekrete dhe deklarata të Magjisterit.',
 	'doctores.landing.title': 'Doktorët e Kishës',
 	'doctores.landing.tagline': 'Veprat teologjike të Etërve dhe Doktorëve të Kishës.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Toma Akuini, në anglisht dhe në latinishten që shkroi vetë.',
+	'index.division': 'Ndarja',
 	'prayers.landing.title': 'Lutje të përbashkëta',
 	'prayers.landing.tagline': 'Lutje me tekstin latin përkrah.',
+	'prayers.seeAlso': 'Shih edhe',
+	'anchor.actions': 'Veprime mbi referencën',
+	'anchor.copy': 'Kopjo tekstin',
+	'anchor.copyLink': 'Kopjo lidhjen',
+	'anchor.view': 'Shiko',
+	'anchor.copied': 'U kopjua',
+	'anchor.copyFailed': 'Nuk u kopjua dot',
+	'bookmark.add': 'Shëno',
+	'bookmark.remove': 'Hiqe shënimin',
+	'bookmark.library': 'Faqeshënues',
+	'bookmark.library.tagline': 'Gjithçka që keni shënuar gjatë leximit.',
+	'bookmark.empty': 'Ende asgjë e shënuar.',
+	'bookmark.emptyHint':
+		'Klikoni numrin e një vargu ose paragrafi dhe zgjidhni Shëno, ose përdorni butonin e faqeshënuesit në faqe.',
+	'bookmark.deviceOnly':
+		'Faqeshënuesit ruhen vetëm në këtë shfletues. Nuk dërgohen askund, dhe fshirja e të dhënave të shfletuesit i heq.',
+	'bookmark.unavailable': 'Nuk gjendet në botimin që po lexoni',
 	'colophon.title': 'Kolofoni',
 	'colophon.lede':
 		'Çfarë është kjo faqe, nga vijnë tekstet e saj dhe si qëndrojmë ndaj riprodhimit të tyre.',
@@ -130,11 +193,18 @@ export const sq: Dictionary = {
 		'Ato janë në zotërim publik, siç e tregojnë datat më poshtë, dhe një riprodhim besnik fotografik i një gravure në zotërim publik nuk krijon një të drejtë të re autoriale të vetën.',
 	'colophon.countPlates': 'gravura',
 	'colophon.countPlateChapters': 'kapituj të ilustruar',
+	'art.about': 'Rreth kësaj pamjeje',
+	'art.detail': 'detaj',
 	'colophon.typeTitle': 'Shkronjat',
 	'colophon.typeBody':
 		'Radhitur me EB Garamond, ringjallja nga Georg Duffner dhe Octavio Pardo e shkronjave që Claude Garamont gdhendi në vitet 1590 — tradita humaniste me të cilën Kisha shtyp që nga Rilindja. Cirilikja e saj është nga të njëjtat duar, por nuk ringjall asgjë: një Garamond cirilik nuk u gdhend kurrë, prandaj rusishtja radhitet në forma të vizatuara që të qëndrojnë pranë të tjerave.',
 	'colophon.typeArabic':
 		'Arabishtja e kalon krejtësisht, dhe radhitet me Amiri — ringjallja nga Khaled Hosny e naskhit të gdhendur për shtypshkronjën Bulaq në Kajro më 1905, zgjedhur me të njëjtin arsyetim si shkronja e tekstit: një shkronjë libri e caktuar historikisht, e jo një vizatim bashkëkohor.',
 	'colophon.typeInitials':
-		'Nistoret hapëse janë Pirata One, një gjermanike gotike shkronjat e mëdha të së cilës mbeten të lexueshme në përmasën që kërkon një nistore e madhe, dhe — për rusishten — Ponomar, që riprodhon shkronjën sllavo-kishtare të Shtypshkronjës Sinodale. Ponomar radhit nistoren dhe kurrë tekstin: një enciklikë moderne e radhitur tërësisht me shkronjë sinodale do të thoshte diçka të pavërtetë për atë çfarë është. Të gjitha janë të licencuara nën SIL Open Font License dhe shërbehen nga kjo faqe e jo nga një palë e tretë, kështu që leximi i një faqeje nuk i kërkon asgjë serverit të askujt tjetër.'
+		'Nistoret hapëse janë Pirata One, një gjermanike gotike shkronjat e mëdha të së cilës mbeten të lexueshme në përmasën që kërkon një nistore e madhe, dhe — për rusishten — Ponomar, që riprodhon shkronjën sllavo-kishtare të Shtypshkronjës Sinodale. Ponomar radhit nistoren dhe kurrë tekstin: një enciklikë moderne e radhitur tërësisht me shkronjë sinodale do të thoshte diçka të pavërtetë për atë çfarë është. Të gjitha janë të licencuara nën SIL Open Font License dhe shërbehen nga kjo faqe e jo nga një palë e tretë, kështu që leximi i një faqeje nuk i kërkon asgjë serverit të askujt tjetër.',
+	'copyright.sourceTitle': 'Hapni faqen origjinale të burimit',
+	'copyright.sourceLabel': 'Burimi',
+	'lang.label': 'Gjuha',
+	'lang.filter': 'Kërko gjuhë',
+	'lang.more': 'gjuhë të tjera'
 };

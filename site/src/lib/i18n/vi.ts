@@ -31,6 +31,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -61,14 +67,47 @@ export const vi: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Đọc tiếp',
+	'home.tagline':
+		'Một trang đọc Kinh Thánh, Sách Giáo lý và các văn kiện của Huấn quyền — miễn phí, chạy được cả khi ngoại tuyến, và không có gì để ghi danh.',
+	'home.doors.heading': 'Đi đâu',
+	'home.find.heading': 'Hoặc gõ một trưng dẫn',
 	'nav.library': 'Thư viện',
 	'nav.learn': 'Học',
 	'library.landing.tagline':
 		'Toàn bộ kho sách, từng kệ một — cùng với chỗ bạn đang đọc dở và những gì bạn đã đánh dấu.',
+	'jumpbox.placeholder': 'Đi tới… (vd. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Tìm',
+	'jumpbox.hint': 'Nhấn / hoặc Ctrl+K để đi tới một trưng dẫn',
+	'jumpbox.noMatch': 'Không tìm thấy',
+	'jumpbox.suggestions': 'Gợi ý',
+	'settings.label': 'Cài đặt',
+	'darkMode.label': 'Chế độ tối',
+	'darkMode.auto': 'Tự động',
+	'darkMode.on': 'Bật',
+	'darkMode.off': 'Tắt',
+	'loadFailed.title': 'Trang đó không tải được',
+	'loadFailed.hint': 'Trang vẫn có — có gì đó trục trặc khi lấy về. Thử lại thường là được.',
+	'loadFailed.retry': 'Thử lại',
+	'loadFailed.retrying': 'Đang thử…',
+	'fontSize.label': 'Cỡ chữ',
+	'fontSize.larger': 'Chữ lớn hơn',
+	'fontSize.smaller': 'Chữ nhỏ hơn',
+	'print.label': 'In trang này',
+	'toTop.label': 'Trở lên đầu trang',
+	'edition.label': 'Bản in',
+	'edition.select': 'Chọn bản in',
+	'edition.current': 'Bản in hiện tại',
+	'edition.filter': 'Tìm bản in',
+	'menu.noMatches': 'Không có kết quả',
 	'unitNav.previous': 'Trước',
 	'unitNav.next': 'Tiếp',
+	'bible.prevChapter': 'Chương trước',
+	'bible.nextChapter': 'Chương sau',
+	'bible.pickBook': 'Sách và chương',
 	'bible.landing.title': 'Kinh Thánh',
 	'bible.landing.tagline': 'Đọc trọn bộ Kinh Thánh, từng cuốn một, từng chương một.',
+	'bible.landing.books': 'Các sách',
+	'bible.introduction': 'Dẫn nhập',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -82,16 +121,39 @@ export const vi: Dictionary = {
 	'bible.group.catholicLetters': 'Các thư Công giáo',
 	'bible.group.revelation': 'Khải Huyền',
 	'ccc.landing.title': 'Sách Giáo lý Hội Thánh Công giáo',
+	'ccc.landing.pairTitle': 'Sách Giáo lý và Bản Toát yếu',
 	'ccc.landing.tagline':
 		'<strong>Sách Giáo lý</strong> trình bày giáo huấn Công giáo trong 2.865 số được đánh số. <strong>Bản Toát yếu</strong> trình bày cùng giáo huấn ấy dưới dạng 598 câu hỏi thưa, theo cùng một bố cục.',
+	'ccc.landing.pairTagline':
+		'Sách Giáo lý Hội Thánh Công giáo trong 2.865 số, và Bản Toát yếu trong 598 câu hỏi.',
+	'ccc.abbrev': 'GLHTCG',
+	'compendium.abbrev': 'Toát yếu',
 	'document.library.tagline':
 		'Các thông điệp, hiến chế công đồng, sắc lệnh và tuyên ngôn của Huấn quyền.',
 	'doctores.landing.title': 'Các Tiến sĩ Hội Thánh',
 	'doctores.landing.tagline': 'Các tác phẩm thần học của các Giáo phụ và Tiến sĩ Hội Thánh.',
 	'summa.landing.title': 'Tổng luận Thần học',
 	'summa.landing.tagline': 'Tôma Aquinô, bằng tiếng Anh và bằng tiếng Latinh ngài đã viết.',
+	'index.division': 'Phân mục',
 	'prayers.landing.title': 'Kinh nguyện thông thường',
 	'prayers.landing.tagline': 'Các kinh nguyện kèm bản văn Latinh bên cạnh.',
+	'prayers.seeAlso': 'Xem thêm',
+	'anchor.actions': 'Thao tác với trưng dẫn',
+	'anchor.copy': 'Chép bản văn',
+	'anchor.copyLink': 'Chép liên kết',
+	'anchor.view': 'Xem',
+	'anchor.copied': 'Đã chép',
+	'anchor.copyFailed': 'Không chép được',
+	'bookmark.add': 'Đánh dấu',
+	'bookmark.remove': 'Bỏ dấu trang',
+	'bookmark.library': 'Dấu trang',
+	'bookmark.library.tagline': 'Tất cả những gì bạn đã đánh dấu khi đọc.',
+	'bookmark.empty': 'Chưa đánh dấu gì cả.',
+	'bookmark.emptyHint':
+		'Bấm vào số của một câu hoặc một số mục rồi chọn Đánh dấu, hoặc dùng nút dấu trang trên trang.',
+	'bookmark.deviceOnly':
+		'Dấu trang chỉ được giữ trong trình duyệt này. Chúng không được gửi đi đâu cả, và xoá dữ liệu trình duyệt sẽ xoá chúng.',
+	'bookmark.unavailable': 'Không có trong bản in bạn đang đọc',
 	'colophon.title': 'Trang ghi ấn',
 	'colophon.lede':
 		'Trang này là gì, các bản văn từ đâu mà có, và lập trường của chúng tôi về việc sao chép chúng.',
@@ -135,11 +197,18 @@ export const vi: Dictionary = {
 		'Chúng thuộc phạm vi công cộng, như các niên đại bên dưới cho thấy, và một bản sao chụp trung thực của một bản khắc thuộc phạm vi công cộng không mang bản quyền mới nào của riêng nó.',
 	'colophon.countPlates': 'bản khắc',
 	'colophon.countPlateChapters': 'chương có minh họa',
+	'art.about': 'Về bức tranh này',
+	'art.detail': 'chi tiết',
 	'colophon.typeTitle': 'Kiểu chữ',
 	'colophon.typeBody':
 		'Sắp chữ bằng EB Garamond, bản phục hồi của Georg Duffner và Octavio Pardo đối với những con chữ mà Claude Garamont đã khắc vào thập niên 1590 — truyền thống nhân văn mà Giáo hội đã in ấn theo từ thời Phục hưng. Phần chữ Kirin của nó do cùng những bàn tay ấy nhưng không phục hồi điều gì: chưa từng có Garamond Kirin nào được khắc, nên tiếng Nga được sắp bằng một hình thể được vẽ để đứng cạnh phần còn lại.',
 	'colophon.typeArabic':
 		'Tiếng Ả Rập hoàn toàn nằm ngoài tầm với của nó, và được sắp bằng Amiri — bản phục hồi của Khaled Hosny đối với kiểu naskh được khắc cho nhà in Bulaq ở Cairo năm 1905, được chọn theo cùng lý lẽ như kiểu chữ thân bài: một kiểu chữ sách lịch sử cụ thể chứ không phải một bản vẽ đương đại.',
 	'colophon.typeInitials':
-		'Các mẫu tự mở đầu là Pirata One, một kiểu chữ gô-tinh mà các chữ hoa vẫn dễ đọc ở kích thước mà một chữ cái đầu đoạn đòi hỏi, và — cho tiếng Nga — Ponomar, kiểu chữ tái hiện con chữ Slavơ Giáo hội của Nhà in Thượng Hội đồng. Ponomar chỉ sắp chữ cái đầu và không bao giờ sắp bản văn: một thông điệp hiện đại được sắp toàn bộ bằng kiểu chữ Thượng Hội đồng sẽ nói điều gì đó không đúng về bản chất của nó. Tất cả đều được cấp phép theo SIL Open Font License và được phục vụ từ chính trang này thay vì từ một bên thứ ba, nên việc đọc một trang không đòi hỏi gì từ máy chủ của người khác.'
+		'Các mẫu tự mở đầu là Pirata One, một kiểu chữ gô-tinh mà các chữ hoa vẫn dễ đọc ở kích thước mà một chữ cái đầu đoạn đòi hỏi, và — cho tiếng Nga — Ponomar, kiểu chữ tái hiện con chữ Slavơ Giáo hội của Nhà in Thượng Hội đồng. Ponomar chỉ sắp chữ cái đầu và không bao giờ sắp bản văn: một thông điệp hiện đại được sắp toàn bộ bằng kiểu chữ Thượng Hội đồng sẽ nói điều gì đó không đúng về bản chất của nó. Tất cả đều được cấp phép theo SIL Open Font License và được phục vụ từ chính trang này thay vì từ một bên thứ ba, nên việc đọc một trang không đòi hỏi gì từ máy chủ của người khác.',
+	'copyright.sourceTitle': 'Mở trang nguồn gốc',
+	'copyright.sourceLabel': 'Nguồn',
+	'lang.label': 'Ngôn ngữ',
+	'lang.filter': 'Tìm ngôn ngữ',
+	'lang.more': 'ngôn ngữ khác'
 };

@@ -32,6 +32,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -63,14 +69,48 @@ export const id: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Lanjutkan membaca',
+	'home.tagline':
+		'Situs bacaan untuk Kitab Suci, Katekismus, dan dokumen-dokumen Magisterium — gratis, tetap berfungsi luring, dan tidak ada yang perlu didaftarkan.',
+	'home.doors.heading': 'Ke mana',
+	'home.find.heading': 'Atau ketikkan sebuah rujukan',
 	'nav.library': 'Perpustakaan',
 	'nav.learn': 'Belajar',
 	'library.landing.tagline':
 		'Seluruh koleksi, rak demi rak — beserta tempat Anda berhenti dan apa yang Anda tandai.',
+	'jumpbox.placeholder': 'Lompat ke… (mis. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Cari',
+	'jumpbox.hint': 'Tekan / atau Ctrl+K untuk melompat ke suatu rujukan',
+	'jumpbox.noMatch': 'Tidak ada yang cocok',
+	'jumpbox.suggestions': 'Saran',
+	'settings.label': 'Pengaturan',
+	'darkMode.label': 'Mode gelap',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Nyala',
+	'darkMode.off': 'Mati',
+	'loadFailed.title': 'Itu tidak termuat',
+	'loadFailed.hint':
+		'Halamannya ada — ada yang salah saat mengambilnya. Mencoba lagi biasanya berhasil.',
+	'loadFailed.retry': 'Coba lagi',
+	'loadFailed.retrying': 'Mencoba…',
+	'fontSize.label': 'Ukuran teks',
+	'fontSize.larger': 'Teks lebih besar',
+	'fontSize.smaller': 'Teks lebih kecil',
+	'print.label': 'Cetak halaman ini',
+	'toTop.label': 'Kembali ke atas',
+	'edition.label': 'Edisi',
+	'edition.select': 'Pilih edisi',
+	'edition.current': 'Edisi sekarang',
+	'edition.filter': 'Cari edisi',
+	'menu.noMatches': 'Tidak ada yang cocok',
 	'unitNav.previous': 'Sebelumnya',
 	'unitNav.next': 'Berikutnya',
+	'bible.prevChapter': 'Bab sebelumnya',
+	'bible.nextChapter': 'Bab berikutnya',
+	'bible.pickBook': 'Kitab dan bab',
 	'bible.landing.title': 'Alkitab',
 	'bible.landing.tagline': 'Bacalah seluruh Alkitab, kitab demi kitab, bab demi bab.',
+	'bible.landing.books': 'Kitab',
+	'bible.introduction': 'Pengantar',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'Pentateukh',
@@ -83,16 +123,39 @@ export const id: Dictionary = {
 	'bible.group.catholicLetters': 'Surat-surat Katolik',
 	'bible.group.revelation': 'Wahyu',
 	'ccc.landing.title': 'Katekismus Gereja Katolik',
+	'ccc.landing.pairTitle': 'Katekismus dan Kompendium',
 	'ccc.landing.tagline':
 		'<strong>Katekismus</strong> memaparkan ajaran Katolik dalam 2.865 alinea bernomor. <strong>Kompendium</strong> menyajikan ajaran yang sama sebagai 598 tanya jawab, menurut kerangka yang sama.',
+	'ccc.landing.pairTagline':
+		'Katekismus Gereja Katolik dalam 2.865 nomor, dan Kompendiumnya dalam 598 pertanyaan.',
+	'ccc.abbrev': 'KGK',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline': 'Ensiklik, konstitusi konsili, dekret, dan deklarasi Magisterium.',
 	'doctores.landing.title': 'Pujangga Gereja',
 	'doctores.landing.tagline': 'Karya-karya teologis para Bapa dan Pujangga Gereja.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline':
 		'Tomas Aquinas, dalam bahasa Inggris dan dalam bahasa Latin yang ia tulis.',
+	'index.division': 'Bagian',
 	'prayers.landing.title': 'Doa-doa Umum',
 	'prayers.landing.tagline': 'Doa dengan teks Latin di sampingnya.',
+	'prayers.seeAlso': 'Lihat juga',
+	'anchor.actions': 'Tindakan atas rujukan',
+	'anchor.copy': 'Salin teks',
+	'anchor.copyLink': 'Salin tautan',
+	'anchor.view': 'Lihat',
+	'anchor.copied': 'Tersalin',
+	'anchor.copyFailed': 'Tidak dapat menyalin',
+	'bookmark.add': 'Tandai',
+	'bookmark.remove': 'Hapus penanda',
+	'bookmark.library': 'Penanda',
+	'bookmark.library.tagline': 'Segala yang Anda tandai selama membaca.',
+	'bookmark.empty': 'Belum ada yang ditandai.',
+	'bookmark.emptyHint':
+		'Klik nomor ayat atau alinea lalu pilih Tandai, atau gunakan tombol penanda pada halaman.',
+	'bookmark.deviceOnly':
+		'Penanda hanya disimpan di peramban ini. Penanda tidak dikirim ke mana pun, dan menghapus data peramban akan menghilangkannya.',
+	'bookmark.unavailable': 'Tidak ada dalam edisi yang Anda baca',
 	'colophon.title': 'Kolofon',
 	'colophon.lede':
 		'Apa situs ini, dari mana teksnya berasal, dan bagaimana sikap kami tentang memperbanyaknya.',
@@ -136,11 +199,18 @@ export const id: Dictionary = {
 		'Semuanya berada dalam domain publik, sebagaimana ditunjukkan oleh tahun-tahun di bawah ini, dan reproduksi fotografis yang setia dari sebuah ukiran domain publik tidak membawa hak cipta baru apa pun.',
 	'colophon.countPlates': 'ukiran',
 	'colophon.countPlateChapters': 'bab berilustrasi',
+	'art.about': 'Tentang gambar ini',
+	'art.detail': 'detail',
 	'colophon.typeTitle': 'Hurufnya',
 	'colophon.typeBody':
 		'Disusun dalam EB Garamond, kebangkitan kembali oleh Georg Duffner dan Octavio Pardo atas huruf-huruf yang dipahat Claude Garamont pada tahun 1590-an — tradisi humanis yang telah dipakai Gereja untuk mencetak sejak Renaisans. Huruf Kirilnya berasal dari tangan yang sama tetapi tidak membangkitkan apa pun: tidak pernah ada Garamond Kiril yang dipahat, sehingga bahasa Rusia disusun dalam bentuk yang digambar agar berdiri berdampingan dengan yang lain.',
 	'colophon.typeArabic':
 		'Bahasa Arab sama sekali di luar jangkauannya, dan disusun dalam Amiri — kebangkitan kembali oleh Khaled Hosny atas naskh yang dipahat untuk percetakan Bulaq di Kairo pada tahun 1905, dipilih dengan alasan yang sama seperti huruf teksnya: sebuah huruf buku historis tertentu, bukan gambar kontemporer.',
 	'colophon.typeInitials':
-		'Huruf-huruf inisial pembuka adalah Pirata One, huruf gotik yang huruf kapitalnya tetap terbaca pada ukuran yang dituntut sebuah inisial, dan — untuk bahasa Rusia — Ponomar, yang mereproduksi huruf Slavonik Gereja dari Percetakan Sinode. Ponomar menyusun inisialnya dan tidak pernah teksnya: sebuah ensiklik modern yang seluruhnya disusun dalam huruf Sinode akan mengatakan sesuatu yang tidak benar tentang apa dirinya. Semuanya dilisensikan di bawah SIL Open Font License dan disajikan dari situs ini alih-alih dari pihak ketiga, sehingga membaca sebuah halaman tidak meminta apa pun dari peladen orang lain.'
+		'Huruf-huruf inisial pembuka adalah Pirata One, huruf gotik yang huruf kapitalnya tetap terbaca pada ukuran yang dituntut sebuah inisial, dan — untuk bahasa Rusia — Ponomar, yang mereproduksi huruf Slavonik Gereja dari Percetakan Sinode. Ponomar menyusun inisialnya dan tidak pernah teksnya: sebuah ensiklik modern yang seluruhnya disusun dalam huruf Sinode akan mengatakan sesuatu yang tidak benar tentang apa dirinya. Semuanya dilisensikan di bawah SIL Open Font License dan disajikan dari situs ini alih-alih dari pihak ketiga, sehingga membaca sebuah halaman tidak meminta apa pun dari peladen orang lain.',
+	'copyright.sourceTitle': 'Buka halaman sumber aslinya',
+	'copyright.sourceLabel': 'Sumber',
+	'lang.label': 'Bahasa',
+	'lang.filter': 'Cari bahasa',
+	'lang.more': 'bahasa lainnya'
 };

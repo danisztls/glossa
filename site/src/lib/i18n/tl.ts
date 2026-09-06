@@ -32,6 +32,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -62,14 +68,48 @@ export const tl: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Magpatuloy sa pagbabasa',
+	'home.tagline':
+		'Isang pook-sapot na babasahin para sa Kasulatan, sa Katesismo, at sa mga dokumento ng Magisterio — libre, gumagana kahit walang koneksyon, at walang paglalagdaan.',
+	'home.doors.heading': 'Saan pupunta',
+	'home.find.heading': 'O mag-type ng sanggunian',
 	'nav.library': 'Aklatan',
 	'nav.learn': 'Matuto',
 	'library.landing.tagline':
 		'Ang buong koleksiyon, istante bawat istante — kasama ang huling binasa mo at ang mga minarkahan mo.',
+	'jumpbox.placeholder': 'Pumunta sa… (hal. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Maghanap',
+	'jumpbox.hint': 'Pindutin ang / o Ctrl+K upang pumunta sa isang sanggunian',
+	'jumpbox.noMatch': 'Walang natagpuan',
+	'jumpbox.suggestions': 'Mga mungkahi',
+	'settings.label': 'Mga Setting',
+	'darkMode.label': 'Madilim na anyo',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Bukas',
+	'darkMode.off': 'Sarado',
+	'loadFailed.title': 'Hindi iyon na-load',
+	'loadFailed.hint':
+		'Umiiral ang pahina — may nagkamali sa pagkuha nito. Karaniwang gumagana ang muling pagsubok.',
+	'loadFailed.retry': 'Subukan muli',
+	'loadFailed.retrying': 'Sinusubukan…',
+	'fontSize.label': 'Laki ng teksto',
+	'fontSize.larger': 'Mas malaking teksto',
+	'fontSize.smaller': 'Mas maliit na teksto',
+	'print.label': 'Ilimbag ang pahinang ito',
+	'toTop.label': 'Bumalik sa itaas',
+	'edition.label': 'Edisyon',
+	'edition.select': 'Pumili ng edisyon',
+	'edition.current': 'Kasalukuyang edisyon',
+	'edition.filter': 'Maghanap ng edisyon',
+	'menu.noMatches': 'Walang tugma',
 	'unitNav.previous': 'Nakaraan',
 	'unitNav.next': 'Susunod',
+	'bible.prevChapter': 'Nakaraang kabanata',
+	'bible.nextChapter': 'Susunod na kabanata',
+	'bible.pickBook': 'Mga aklat at kabanata',
 	'bible.landing.title': 'Ang Bibliya',
 	'bible.landing.tagline': 'Basahin ang buong Bibliya, aklat bawat aklat, kabanata bawat kabanata.',
+	'bible.landing.books': 'Mga Aklat',
+	'bible.introduction': 'Panimula',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'Pentateuko',
@@ -82,16 +122,39 @@ export const tl: Dictionary = {
 	'bible.group.catholicLetters': 'Mga Sulat Katoliko',
 	'bible.group.revelation': 'Pahayag',
 	'ccc.landing.title': 'Katesismo ng Simbahang Katoliko',
+	'ccc.landing.pairTitle': 'Katesismo at Kompendyo',
 	'ccc.landing.tagline':
 		'<strong>Ang Katesismo</strong> ay naglalahad ng turong Katoliko sa 2,865 binilang na talata. <strong>Ang Kompendyo</strong> ay muling naglalahad ng gayunding turo sa 598 tanong at sagot, sa gayunding balangkas.',
+	'ccc.landing.pairTagline':
+		'Ang Katesismo ng Simbahang Katoliko sa 2,865 bilang, at ang Kompendyo nito sa 598 tanong.',
+	'ccc.abbrev': 'KSK',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline':
 		'Mga ensiklika, konstitusyong konsiliyar, dekreto, at pahayag ng Magisterium.',
 	'doctores.landing.title': 'Mga Doktor ng Simbahan',
 	'doctores.landing.tagline': 'Ang mga akdang teolohiko ng mga Ama at Doktor ng Simbahan.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Tomas de Aquino, sa Ingles at sa Latin na kanyang isinulat.',
+	'index.division': 'Bahagi',
 	'prayers.landing.title': 'Karaniwang mga Panalangin',
 	'prayers.landing.tagline': 'Mga panalangin na may katabing tekstong Latin.',
+	'prayers.seeAlso': 'Tingnan din',
+	'anchor.actions': 'Mga gawain sa sanggunian',
+	'anchor.copy': 'Kopyahin ang teksto',
+	'anchor.copyLink': 'Kopyahin ang link',
+	'anchor.view': 'Tingnan',
+	'anchor.copied': 'Nakopya',
+	'anchor.copyFailed': 'Hindi makopya',
+	'bookmark.add': 'Markahan',
+	'bookmark.remove': 'Alisin ang bookmark',
+	'bookmark.library': 'Mga Bookmark',
+	'bookmark.library.tagline': 'Lahat ng minarkahan ninyo habang nagbabasa.',
+	'bookmark.empty': 'Wala pang minarkahan.',
+	'bookmark.emptyHint':
+		'Pindutin ang bilang ng isang talata o parapo at piliin ang Markahan, o gamitin ang pindutang bookmark sa pahina.',
+	'bookmark.deviceOnly':
+		'Ang mga bookmark ay nananatili sa browser na ito lamang. Hindi ipinapadala saanman, at nawawala ang mga ito kapag binura ang datos ng browser.',
+	'bookmark.unavailable': 'Wala sa edisyong binabasa ninyo',
 	'colophon.title': 'Kolopon',
 	'colophon.lede':
 		'Kung ano ang sityong ito, kung saan nanggaling ang mga teksto nito, at ang aming paninindigan sa paglalathala ng mga ito.',
@@ -135,11 +198,18 @@ export const tl: Dictionary = {
 		'Nasa pambayang ari ang mga ito, gaya ng ipinapakita ng mga petsa sa ibaba, at ang tapat na larawang kopya ng isang ukit na nasa pambayang ari ay walang dalang bagong sariling karapatang-ari.',
 	'colophon.countPlates': 'ukit',
 	'colophon.countPlateChapters': 'kabanatang may larawan',
+	'art.about': 'Tungkol sa larawang ito',
+	'art.detail': 'bahagi',
 	'colophon.typeTitle': 'Ang letra',
 	'colophon.typeBody':
 		'Nakahanay sa EB Garamond, ang muling pagbuhay nina Georg Duffner at Octavio Pardo sa mga letrang inukit ni Claude Garamont noong dekada 1590 — ang tradisyong humanista na pinaglilimbagan ng Simbahan mula pa noong Renasimyento. Ang Sirilikong letra nito ay mula sa parehong mga kamay ngunit walang binubuhay: walang Sirilikong Garamond na naukit kailanman, kaya ang Ruso ay nakahanay sa isang anyong iginuhit upang tumabi sa iba.',
 	'colophon.typeArabic':
 		'Ang Arabe ay lubos na lampas dito, at nakahanay sa Amiri — ang muling pagbuhay ni Khaled Hosny sa naskh na inukit para sa palimbagang Bulaq sa Cairo noong 1905, pinili sa parehong dahilan gaya ng letra ng teksto: isang tiyak na makasaysayang letra ng aklat sa halip na isang kasalukuyang guhit.',
 	'colophon.typeInitials':
-		'Ang mga pambungad na inisyal ay Pirata One, isang letrang gotiko na ang malalaking titik ay nananatiling mababasa sa sukat na hinihingi ng isang malaking unang titik, at — para sa Ruso — Ponomar, na muling gumagawa ng letrang Slavoniko ng Simbahan ng Palimbagang Sinodal. Ang Ponomar ay naghahanay ng inisyal at hindi kailanman ng teksto: ang isang makabagong ensiklika na buong nakahanay sa letrang Sinodal ay magsasabi ng isang bagay na hindi totoo tungkol sa kung ano ito. Lahat ay lisensiyado sa ilalim ng SIL Open Font License at inihahain mula sa pook-sapot na ito sa halip na mula sa ibang panig, kaya ang pagbabasa ng isang pahina ay walang hinihingi sa server ng iba.'
+		'Ang mga pambungad na inisyal ay Pirata One, isang letrang gotiko na ang malalaking titik ay nananatiling mababasa sa sukat na hinihingi ng isang malaking unang titik, at — para sa Ruso — Ponomar, na muling gumagawa ng letrang Slavoniko ng Simbahan ng Palimbagang Sinodal. Ang Ponomar ay naghahanay ng inisyal at hindi kailanman ng teksto: ang isang makabagong ensiklika na buong nakahanay sa letrang Sinodal ay magsasabi ng isang bagay na hindi totoo tungkol sa kung ano ito. Lahat ay lisensiyado sa ilalim ng SIL Open Font License at inihahain mula sa pook-sapot na ito sa halip na mula sa ibang panig, kaya ang pagbabasa ng isang pahina ay walang hinihingi sa server ng iba.',
+	'copyright.sourceTitle': 'Buksan ang orihinal na pahina ng pinagmulan',
+	'copyright.sourceLabel': 'Pinagmulan',
+	'lang.label': 'Wika',
+	'lang.filter': 'Maghanap ng wika',
+	'lang.more': 'iba pang wika'
 };

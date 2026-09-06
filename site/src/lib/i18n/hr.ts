@@ -26,6 +26,12 @@
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -55,14 +61,48 @@ export const hr: Dictionary = {
 	'nav.summa': 'Suma',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Nastavi čitati',
+	'home.tagline':
+		'Stranica za čitanje Pisma, Katekizma i dokumenata Učiteljstva — besplatno, radi i izvan mreže, i nema se za što registrirati.',
+	'home.doors.heading': 'Kamo poći',
+	'home.find.heading': 'Ili upišite navod',
 	'nav.library': 'Knjižnica',
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':
 		'Cijeli korpus, polica po polica — s mjestom na kojem ste stali i onim što ste označili.',
+	'jumpbox.placeholder': 'Idi na… (npr. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Traži',
+	'jumpbox.hint': 'Pritisnite / ili Ctrl+K za skok na navod',
+	'jumpbox.noMatch': 'Nema pogodaka',
+	'jumpbox.suggestions': 'Prijedlozi',
+	'settings.label': 'Postavke',
+	'darkMode.label': 'Tamni način',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Uključeno',
+	'darkMode.off': 'Isključeno',
+	'loadFailed.title': 'To se nije učitalo',
+	'loadFailed.hint':
+		'Stranica postoji — nešto je pošlo po zlu pri njezinu dohvaćanju. Ponovni pokušaj obično uspije.',
+	'loadFailed.retry': 'Pokušaj ponovno',
+	'loadFailed.retrying': 'Pokušavam…',
+	'fontSize.label': 'Veličina teksta',
+	'fontSize.larger': 'Veći tekst',
+	'fontSize.smaller': 'Manji tekst',
+	'print.label': 'Ispiši ovu stranicu',
+	'toTop.label': 'Natrag na vrh',
+	'edition.label': 'Izdanje',
+	'edition.select': 'Odaberi izdanje',
+	'edition.current': 'Trenutno izdanje',
+	'edition.filter': 'Traži izdanja',
+	'menu.noMatches': 'Nema pogodaka',
 	'unitNav.previous': 'Prethodno',
 	'unitNav.next': 'Sljedeće',
+	'bible.prevChapter': 'Prethodno poglavlje',
+	'bible.nextChapter': 'Sljedeće poglavlje',
+	'bible.pickBook': 'Knjige i poglavlja',
 	'bible.landing.title': 'Biblija',
 	'bible.landing.tagline': 'Čitajte cijelu Bibliju, knjigu po knjigu, poglavlje po poglavlje.',
+	'bible.landing.books': 'Knjige',
+	'bible.introduction': 'Uvod',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -76,16 +116,39 @@ export const hr: Dictionary = {
 	'bible.group.catholicLetters': 'Katoličke poslanice',
 	'bible.group.revelation': 'Otkrivenje',
 	'ccc.landing.title': 'Katekizam Katoličke Crkve',
+	'ccc.landing.pairTitle': 'Katekizam i Kompendij',
 	'ccc.landing.tagline':
 		'<strong>Katekizam</strong> izlaže katolički nauk u 2865 numeriranih odlomaka. <strong>Kompendij</strong> isti nauk donosi kao 598 pitanja i odgovora, prema istom rasporedu.',
+	'ccc.landing.pairTagline':
+		'Katekizam Katoličke Crkve u 2865 brojeva i njegov Kompendij u 598 pitanja.',
+	'ccc.abbrev': 'KKC',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline':
 		'Enciklike, koncilske konstitucije, dekreti i deklaracije Učiteljstva.',
 	'doctores.landing.title': 'Naučitelji Crkve',
 	'doctores.landing.tagline': 'Teološka djela crkvenih otaca i naučitelja Crkve.',
 	'summa.landing.title': 'Suma teologije',
 	'summa.landing.tagline': 'Toma Akvinski, na engleskom i na latinskom kojim je pisao.',
+	'index.division': 'Dioba',
 	'prayers.landing.title': 'Uobičajene molitve',
 	'prayers.landing.tagline': 'Molitve s latinskim tekstom uz njih.',
+	'prayers.seeAlso': 'Vidi također',
+	'anchor.actions': 'Radnje nad navodom',
+	'anchor.copy': 'Kopiraj tekst',
+	'anchor.copyLink': 'Kopiraj poveznicu',
+	'anchor.view': 'Prikaži',
+	'anchor.copied': 'Kopirano',
+	'anchor.copyFailed': 'Kopiranje nije uspjelo',
+	'bookmark.add': 'Označi',
+	'bookmark.remove': 'Ukloni oznaku',
+	'bookmark.library': 'Oznake',
+	'bookmark.library.tagline': 'Sve što ste označili dok ste čitali.',
+	'bookmark.empty': 'Još ništa nije označeno.',
+	'bookmark.emptyHint':
+		'Kliknite na broj retka ili odlomka i odaberite Označi, ili se poslužite gumbom za oznaku na stranici.',
+	'bookmark.deviceOnly':
+		'Oznake se čuvaju samo u ovom pregledniku. Nikamo se ne šalju, a brisanje podataka preglednika ih uklanja.',
+	'bookmark.unavailable': 'Nema toga u izdanju koje čitate',
 	'colophon.title': 'Kolofon',
 	'colophon.lede':
 		'Što je ova stranica, odakle dolaze njezini tekstovi i kakav je naš stav o njihovu reproduciranju.',
@@ -128,11 +191,18 @@ export const hr: Dictionary = {
 		'U javnom su vlasništvu, kako pokazuju datumi niže, a vjerna fotografska reprodukcija gravure u javnom vlasništvu ne nosi nikakvo novo vlastito autorsko pravo.',
 	'colophon.countPlates': 'gravura',
 	'colophon.countPlateChapters': 'ilustriranih poglavlja',
+	'art.about': 'O ovoj slici',
+	'art.detail': 'isječak',
 	'colophon.typeTitle': 'Slova',
 	'colophon.typeBody':
 		'Slog je u pismu EB Garamond, obnovi Georga Duffnera i Octavija Parda slova koja je Claude Garamont rezao 1590-ih — humanističke tradicije u kojoj Crkva tiska od renesanse. Njegova je ćirilica istih ruku, ali ne obnavlja ništa: garamondovska ćirilica nikada nije bila rezana, pa je ruski složen oblikom nacrtanim da stoji uz ostalo.',
 	'colophon.typeArabic':
 		'Arapski je posve izvan njegova dosega i složen je u pismu Amiri — obnovi Khaleda Hosnyja naskha rezanog za tiskaru Bulaq u Kairu 1905., odabranoj po istom razlogu kao i tekstovno pismo: određeno povijesno knjižno pismo, a ne suvremeni crtež.',
 	'colophon.typeInitials':
-		'Početna su slova Pirata One, gotičko pismo čije verzalne ostaju čitljive u veličini koju inicijal traži, i — za ruski — Ponomar, koje reproducira crkvenoslavensko pismo Sinodalne tiskare. Ponomar slaže inicijal, a nikada tekst: moderna enciklika složena cijela u sinodalnom pismu rekla bi nešto neistinito o tome što jest. Sva su licencirana pod SIL Open Font License i posluživana s ove stranice, a ne od treće strane, tako da čitanje stranice ne traži ništa od tuđeg poslužitelja.'
+		'Početna su slova Pirata One, gotičko pismo čije verzalne ostaju čitljive u veličini koju inicijal traži, i — za ruski — Ponomar, koje reproducira crkvenoslavensko pismo Sinodalne tiskare. Ponomar slaže inicijal, a nikada tekst: moderna enciklika složena cijela u sinodalnom pismu rekla bi nešto neistinito o tome što jest. Sva su licencirana pod SIL Open Font License i posluživana s ove stranice, a ne od treće strane, tako da čitanje stranice ne traži ništa od tuđeg poslužitelja.',
+	'copyright.sourceTitle': 'Otvori izvornu stranicu',
+	'copyright.sourceLabel': 'Izvor',
+	'lang.label': 'Jezik',
+	'lang.filter': 'Traži jezike',
+	'lang.more': 'još jezika'
 };

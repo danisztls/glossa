@@ -35,6 +35,10 @@ export const es: Dictionary = {
 	'nav.menu': 'Menú',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Seguir leyendo',
+	'home.tagline':
+		'Un sitio de lectura de las Escrituras, el Catecismo y los documentos del Magisterio — gratuito, disponible sin conexión y sin nada que registrar.',
+	'home.doors.heading': 'Adónde ir',
+	'home.find.heading': 'O escribe una referencia',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Aprender',
 	'library.landing.tagline':
@@ -78,6 +82,10 @@ export const es: Dictionary = {
 	'offline.hint':
 		'No usa la red en absoluto: no descarga nada, no busca actualizaciones, no mide nada. Solo se abren los textos que ya están en este dispositivo.',
 	'offline.notDownloaded': 'No está en este dispositivo',
+	'loadFailed.title': 'Eso no se cargó',
+	'loadFailed.hint': 'La página existe: algo falló al obtenerla. Volver a intentarlo suele bastar.',
+	'loadFailed.retry': 'Intentar de nuevo',
+	'loadFailed.retrying': 'Intentando…',
 	'offline.turnOff': 'Desactivar el modo sin conexión',
 
 	'fontSize.label': 'Tamaño del texto',
@@ -124,8 +132,11 @@ export const es: Dictionary = {
 	'ccc.nextParagraph': 'Párrafo siguiente',
 	'ccc.inBrief': 'Resumen',
 	'ccc.landing.title': 'Catecismo de la Iglesia Católica',
+	'ccc.landing.pairTitle': 'Catecismo y Compendio',
 	'ccc.landing.tagline':
 		'<strong>El Catecismo</strong> expone la doctrina católica en 2.865 números. <strong>El Compendio</strong> presenta la misma doctrina en 598 preguntas y respuestas, según el mismo plan.',
+	'ccc.landing.pairTagline':
+		'El Catecismo de la Iglesia Católica en 2.865 números, y su Compendio en 598 preguntas.',
 	'ccc.tableOfContents': 'Índice',
 	'ccc.related': 'Véase también',
 	'compendium.landing.title': 'Compendio del Catecismo',
@@ -165,11 +176,13 @@ export const es: Dictionary = {
 	'summa.noEditionInYourLanguage': 'La Suma no tiene edición en tu lengua. Se muestra en {lang}.',
 	'summa.noLatinSupplement':
 		'El Suplemento existe solo en inglés: fue compilado tras la muerte de Tomás de Aquino.',
+	'index.division': 'División',
 	'index.showSubsections': 'Mostrar subsecciones',
 	'index.hideSubsections': 'Ocultar subsecciones',
 	'prayers.landing.title': 'Oraciones comunes',
 	'prayers.landing.tagline': 'Oraciones con el texto latino al lado.',
 	'prayers.tableOfContents': 'Índice',
+	'prayers.seeAlso': 'Véase también',
 	'prayers.prevPrayer': 'Oración anterior',
 	'prayers.nextPrayer': 'Oración siguiente',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -191,6 +204,7 @@ export const es: Dictionary = {
 	'anchor.copyLink': 'Copiar enlace',
 	'anchor.view': 'Ver',
 	'anchor.copied': 'Copiado',
+	'anchor.copyFailed': 'No se pudo copiar',
 	'bookmark.add': 'Guardar',
 	'bookmark.remove': 'Quitar marcador',
 	'bookmark.library': 'Marcadores',
@@ -224,6 +238,11 @@ export const es: Dictionary = {
 	'document.kind.apostolicExhortation': 'Exhortación apostólica',
 	'document.kind.apostolicConstitution': 'Constitución apostólica',
 	'document.kind.cdfDeclaration': 'Declaración de la CDF',
+	'document.kind.cdfInstruction': 'Instrucción de la CDF',
+	'document.kind.cdfLetter': 'Carta de la CDF',
+	'document.kind.cdfDoctrinalNote': 'Nota doctrinal de la CDF',
+	'document.kind.cdfResponsum': 'Responsum de la CDF',
+	'document.kind.cdfConsiderations': 'Consideraciones de la CDF',
 	'document.kindPlural.conciliarConstitution': 'Constituciones',
 	'document.kindPlural.conciliarDecree': 'Decretos',
 	'document.kindPlural.conciliarDeclaration': 'Declaraciones',
@@ -277,6 +296,8 @@ export const es: Dictionary = {
 	'plates.scansBy': 'Digitalizaciones facilitadas por',
 	'plates.enlarge': 'Ampliar {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Sobre esta imagen',
+	'art.detail': 'detalle',
 	'colophon.typeTitle': 'La tipografía',
 	'colophon.typeBody':
 		'Compuesto en EB Garamond, el renacimiento que Georg Duffner y Octavio Pardo hicieron de los tipos que Claude Garamont grabó en la década de 1590, la tradición humanista en la que la Iglesia imprime desde el Renacimiento. Su cirílico es de las mismas manos, pero no revive nada: nunca se grabó un Garamond cirílico, así que el ruso se compone en una forma dibujada para convivir con el resto.',
@@ -296,6 +317,7 @@ export const es: Dictionary = {
 	'ccc.readFullChapter': 'Leer el capítulo completo',
 	'ccc.noParagraphNumber': 'Sin número de párrafo en este corpus',
 	'copyright.sourceTitle': 'Abrir la página de origen',
+	'copyright.sourceLabel': 'Fuente',
 	'lang.label': 'Lengua',
 	'lang.filter': 'Buscar lenguas',
 	'lang.more': 'más lenguas',

@@ -26,6 +26,12 @@
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -55,14 +61,48 @@ export const sk: Dictionary = {
 	'nav.summa': 'Suma',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Pokračovať v čítaní',
+	'home.tagline':
+		'Čitateľská stránka pre Písmo, Katechizmus a dokumenty magistéria — zadarmo, aj bez pripojenia, a bez akejkoľvek registrácie.',
+	'home.doors.heading': 'Kam ísť',
+	'home.find.heading': 'Alebo napíšte odkaz',
 	'nav.library': 'Knižnica',
 	'nav.learn': 'Učenie',
 	'library.landing.tagline':
 		'Celá zbierka, polica po polici — spolu s tým, kde ste prestali, a s tým, čo ste si označili.',
+	'jumpbox.placeholder': 'Prejsť na… (napr. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Hľadať',
+	'jumpbox.hint': 'Stlačte / alebo Ctrl+K na prechod k odkazu',
+	'jumpbox.noMatch': 'Nič sa nenašlo',
+	'jumpbox.suggestions': 'Návrhy',
+	'settings.label': 'Nastavenia',
+	'darkMode.label': 'Tmavý režim',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Zapnuté',
+	'darkMode.off': 'Vypnuté',
+	'loadFailed.title': 'To sa nenačítalo',
+	'loadFailed.hint':
+		'Stránka existuje — pri jej načítaní sa niečo pokazilo. Ďalší pokus obvykle pomôže.',
+	'loadFailed.retry': 'Skúsiť znova',
+	'loadFailed.retrying': 'Skúša sa…',
+	'fontSize.label': 'Veľkosť textu',
+	'fontSize.larger': 'Väčší text',
+	'fontSize.smaller': 'Menší text',
+	'print.label': 'Vytlačiť túto stránku',
+	'toTop.label': 'Späť nahor',
+	'edition.label': 'Vydanie',
+	'edition.select': 'Zvoliť vydanie',
+	'edition.current': 'Súčasné vydanie',
+	'edition.filter': 'Hľadať vydania',
+	'menu.noMatches': 'Žiadne výsledky',
 	'unitNav.previous': 'Predchádzajúce',
 	'unitNav.next': 'Ďalšie',
+	'bible.prevChapter': 'Predchádzajúca kapitola',
+	'bible.nextChapter': 'Nasledujúca kapitola',
+	'bible.pickBook': 'Knihy a kapitoly',
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Čítajte celú Bibliu, knihu po knihe, kapitolu po kapitole.',
+	'bible.landing.books': 'Knihy',
+	'bible.introduction': 'Úvod',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -76,15 +116,38 @@ export const sk: Dictionary = {
 	'bible.group.catholicLetters': 'Katolícke listy',
 	'bible.group.revelation': 'Zjavenie',
 	'ccc.landing.title': 'Katechizmus Katolíckej cirkvi',
+	'ccc.landing.pairTitle': 'Katechizmus a Kompendium',
 	'ccc.landing.tagline':
 		'<strong>Katechizmus</strong> predkladá katolícku náuku v 2 865 očíslovaných odsekoch. <strong>Kompendium</strong> tú istú náuku podáva ako 598 otázok a odpovedí podľa toho istého usporiadania.',
+	'ccc.landing.pairTagline':
+		'Katechizmus Katolíckej cirkvi v 2 865 číslach a jeho Kompendium v 598 otázkach.',
+	'ccc.abbrev': 'KKC',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline': 'Encykliky, koncilové konštitúcie, dekréty a deklarácie Magistéria.',
 	'doctores.landing.title': 'Učitelia Cirkvi',
 	'doctores.landing.tagline': 'Teologické diela cirkevných otcov a učiteľov Cirkvi.',
 	'summa.landing.title': 'Teologická suma',
 	'summa.landing.tagline': 'Tomáš Akvinský, po anglicky a v latinčine, ktorou písal.',
+	'index.division': 'Oddiel',
 	'prayers.landing.title': 'Bežné modlitby',
 	'prayers.landing.tagline': 'Modlitby s latinským textom vedľa.',
+	'prayers.seeAlso': 'Pozri aj',
+	'anchor.actions': 'Akcie k odkazu',
+	'anchor.copy': 'Kopírovať text',
+	'anchor.copyLink': 'Kopírovať odkaz',
+	'anchor.view': 'Zobraziť',
+	'anchor.copied': 'Skopírované',
+	'anchor.copyFailed': 'Nepodarilo sa skopírovať',
+	'bookmark.add': 'Pridať záložku',
+	'bookmark.remove': 'Odstrániť záložku',
+	'bookmark.library': 'Záložky',
+	'bookmark.library.tagline': 'Všetko, čo ste si pri čítaní označili.',
+	'bookmark.empty': 'Zatiaľ nič označené.',
+	'bookmark.emptyHint':
+		'Kliknite na číslo verša alebo odseku a zvoľte Pridať záložku, alebo použite tlačidlo záložky na stránke.',
+	'bookmark.deviceOnly':
+		'Záložky zostávajú len v tomto prehliadači. Nikam sa neodosielajú a vymazanie údajov prehliadača ich odstráni.',
+	'bookmark.unavailable': 'Nie je vo vydaní, ktoré čítate',
 	'colophon.title': 'Tiráž',
 	'colophon.lede':
 		'Čo je táto stránka, odkiaľ pochádzajú jej texty a aký je náš postoj k ich reprodukovaniu.',
@@ -127,11 +190,18 @@ export const sk: Dictionary = {
 		'Sú vo verejnom vlastníctve, ako ukazujú dátumy nižšie, a verná fotografická reprodukcia rytiny vo verejnom vlastníctve nenesie žiadne nové vlastné autorské právo.',
 	'colophon.countPlates': 'rytín',
 	'colophon.countPlateChapters': 'ilustrovaných kapitol',
+	'art.about': 'O tomto obrázku',
+	'art.detail': 'výrez',
 	'colophon.typeTitle': 'Písmo',
 	'colophon.typeBody':
 		'Sadzané písmom EB Garamond, obnovou Georga Duffnera a Octavia Parda typov, ktoré Claude Garamont rezal v 90. rokoch 16. storočia — humanistickej tradície, v ktorej Cirkev tlačí od renesancie. Jeho cyrilika je od tých istých rúk, ale neobnovuje nič: žiadna garamondovská cyrilika nebola nikdy rezaná, takže ruština je sadzaná tvarom nakresleným tak, aby stál vedľa ostatných.',
 	'colophon.typeArabic':
 		'Arabčina je celkom mimo jeho dosahu a je sadzaná písmom Amiri — obnovou Khaleda Hosnyho nashí rezaného pre tlačiareň Búláq v Káhire v roku 1905, zvolenou z tej istej úvahy ako textové písmo: konkrétne historické knižné písmo namiesto súčasnej kresby.',
 	'colophon.typeInitials':
-		'Úvodné iniciály sú Pirata One, lomené písmo, ktorého verzálky zostávajú čitateľné vo veľkosti, akú iniciála vyžaduje, a — pre ruštinu — Ponomar, ktorý reprodukuje cirkevnoslovanské písmo Synodálnej tlačiarne. Ponomar sadzí iniciálu a nikdy text: moderná encyklika vysadzaná celá synodálnym písmom by hovorila niečo nepravdivé o tom, čím je. Všetky sú licencované pod SIL Open Font License a poskytované z tejto stránky, nie od tretej strany, takže čítanie stránky nežiada nič od cudzieho servera.'
+		'Úvodné iniciály sú Pirata One, lomené písmo, ktorého verzálky zostávajú čitateľné vo veľkosti, akú iniciála vyžaduje, a — pre ruštinu — Ponomar, ktorý reprodukuje cirkevnoslovanské písmo Synodálnej tlačiarne. Ponomar sadzí iniciálu a nikdy text: moderná encyklika vysadzaná celá synodálnym písmom by hovorila niečo nepravdivé o tom, čím je. Všetky sú licencované pod SIL Open Font License a poskytované z tejto stránky, nie od tretej strany, takže čítanie stránky nežiada nič od cudzieho servera.',
+	'copyright.sourceTitle': 'Otvoriť pôvodnú zdrojovú stránku',
+	'copyright.sourceLabel': 'Zdroj',
+	'lang.label': 'Jazyk',
+	'lang.filter': 'Hľadať jazyky',
+	'lang.more': 'ďalšie jazyky'
 };

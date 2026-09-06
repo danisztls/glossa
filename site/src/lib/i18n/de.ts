@@ -35,6 +35,10 @@ export const de: Dictionary = {
 	'nav.menu': 'Menü',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Weiterlesen',
+	'home.tagline':
+		'Eine Leseseite für die Heilige Schrift, den Katechismus und die Dokumente des Lehramts — kostenlos, offline nutzbar und ohne Anmeldung.',
+	'home.doors.heading': 'Wohin',
+	'home.find.heading': 'Oder eine Stelle eintippen',
 	'nav.library': 'Bibliothek',
 	'nav.learn': 'Lernen',
 	'library.landing.tagline':
@@ -78,6 +82,11 @@ export const de: Dictionary = {
 	'offline.hint':
 		'Verwendet überhaupt kein Netz: nichts wird heruntergeladen, nicht nach Aktualisierungen gesucht, nichts gemessen. Nur Texte, die bereits auf diesem Gerät sind, lassen sich öffnen.',
 	'offline.notDownloaded': 'Nicht auf diesem Gerät',
+	'loadFailed.title': 'Das ließ sich nicht laden',
+	'loadFailed.hint':
+		'Die Seite gibt es — beim Abrufen ging etwas schief. Ein zweiter Versuch hilft meistens.',
+	'loadFailed.retry': 'Erneut versuchen',
+	'loadFailed.retrying': 'Wird versucht…',
 	'offline.turnOff': 'Offline-Modus ausschalten',
 
 	'fontSize.label': 'Schriftgröße',
@@ -124,8 +133,11 @@ export const de: Dictionary = {
 	'ccc.nextParagraph': 'Nächster Absatz',
 	'ccc.inBrief': 'Kurztext',
 	'ccc.landing.title': 'Katechismus der Katholischen Kirche',
+	'ccc.landing.pairTitle': 'Katechismus & Kompendium',
 	'ccc.landing.tagline':
 		'<strong>Der Katechismus</strong> legt die katholische Lehre in 2.865 nummerierten Abschnitten dar. <strong>Das Kompendium</strong> gibt dieselbe Lehre in 598 Fragen und Antworten wieder, nach derselben Gliederung.',
+	'ccc.landing.pairTagline':
+		'Der Katechismus der Katholischen Kirche in 2.865 Abschnitten und sein Kompendium in 598 Fragen.',
 	'ccc.tableOfContents': 'Inhaltsverzeichnis',
 	'ccc.related': 'Siehe auch',
 	'compendium.landing.title': 'Kompendium des Katechismus',
@@ -166,11 +178,13 @@ export const de: Dictionary = {
 		'Die Summa hat keine Ausgabe in Ihrer Sprache. Gezeigt wird die Ausgabe auf {lang}.',
 	'summa.noLatinSupplement':
 		'Das Supplementum gibt es nur auf Englisch — es wurde nach dem Tod des Aquinaten zusammengestellt.',
+	'index.division': 'Abschnitt',
 	'index.showSubsections': 'Unterabschnitte zeigen',
 	'index.hideSubsections': 'Unterabschnitte verbergen',
 	'prayers.landing.title': 'Gebete',
 	'prayers.landing.tagline': 'Gebete mit dem lateinischen Text daneben.',
 	'prayers.tableOfContents': 'Inhaltsverzeichnis',
+	'prayers.seeAlso': 'Siehe auch',
 	'prayers.prevPrayer': 'Vorheriges Gebet',
 	'prayers.nextPrayer': 'Nächstes Gebet',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -192,6 +206,7 @@ export const de: Dictionary = {
 	'anchor.copyLink': 'Link kopieren',
 	'anchor.view': 'Ansehen',
 	'anchor.copied': 'Kopiert',
+	'anchor.copyFailed': 'Kopieren fehlgeschlagen',
 	'bookmark.add': 'Merken',
 	'bookmark.remove': 'Lesezeichen entfernen',
 	'bookmark.library': 'Lesezeichen',
@@ -225,6 +240,11 @@ export const de: Dictionary = {
 	'document.kind.apostolicExhortation': 'Apostolisches Schreiben',
 	'document.kind.apostolicConstitution': 'Apostolische Konstitution',
 	'document.kind.cdfDeclaration': 'Erklärung der Glaubenskongregation',
+	'document.kind.cdfInstruction': 'Instruktion der Glaubenskongregation',
+	'document.kind.cdfLetter': 'Schreiben der Glaubenskongregation',
+	'document.kind.cdfDoctrinalNote': 'Lehrmäßige Note der Glaubenskongregation',
+	'document.kind.cdfResponsum': 'Responsum der Glaubenskongregation',
+	'document.kind.cdfConsiderations': 'Erwägungen der Glaubenskongregation',
 	'document.kindPlural.conciliarConstitution': 'Konstitutionen',
 	'document.kindPlural.conciliarDecree': 'Dekrete',
 	'document.kindPlural.conciliarDeclaration': 'Erklärungen',
@@ -279,6 +299,8 @@ export const de: Dictionary = {
 	'plates.scansBy': 'Scans bereitgestellt von',
 	'plates.enlarge': '{title} vergrößern',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Über dieses Bild',
+	'art.detail': 'Ausschnitt',
 	'colophon.typeTitle': 'Die Schrift',
 	'colophon.typeBody':
 		'Gesetzt in EB Garamond, Georg Duffners und Octavio Pardos Wiederbelebung der Typen, die Claude Garamont in den 1590er Jahren schnitt — jene humanistische Tradition, in der die Kirche seit der Renaissance druckt. Ihr Kyrillisch stammt von denselben Händen, belebt aber nichts wieder: Ein kyrillischer Garamond wurde nie geschnitten, also steht das Russische in einer Form, die eigens dazu gezeichnet wurde, neben dem Übrigen zu bestehen.',
@@ -298,6 +320,7 @@ export const de: Dictionary = {
 	'ccc.readFullChapter': 'Das ganze Kapitel lesen',
 	'ccc.noParagraphNumber': 'Keine Absatznummer in diesem Korpus',
 	'copyright.sourceTitle': 'Die ursprüngliche Quellseite öffnen',
+	'copyright.sourceLabel': 'Quelle',
 	'lang.label': 'Sprache',
 	'lang.filter': 'Sprachen suchen',
 	'lang.more': 'weitere Sprachen',

@@ -29,6 +29,12 @@
  * right; the longer taglines are what to check first. Deleting a doubtful
  * line is a valid fix — English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -59,14 +65,48 @@ export const be: Dictionary = {
 	'nav.summa': 'Сума',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Працягнуць чытанне',
+	'home.tagline':
+		'Сайт для чытання Пісання, Катэхізіса і дакументаў Магістэрыюма — бясплатна, працуе па-за сеткай, і нідзе не трэба рэгістравацца.',
+	'home.doors.heading': 'Куды пайсці',
+	'home.find.heading': 'Або ўвядзіце спасылку',
 	'nav.library': 'Бібліятэка',
 	'nav.learn': 'Навучанне',
 	'library.landing.tagline':
 		'Увесь збор, паліца за паліцай — разам з тым, дзе вы спыніліся, і тым, што вы адзначылі.',
+	'jumpbox.placeholder': 'Перайсці да… (напр. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Пошук',
+	'jumpbox.hint': 'Націсніце / або Ctrl+K, каб перайсці да спасылкі',
+	'jumpbox.noMatch': 'Нічога не знойдзена',
+	'jumpbox.suggestions': 'Прапановы',
+	'settings.label': 'Налады',
+	'darkMode.label': 'Цёмны рэжым',
+	'darkMode.auto': 'Аўта',
+	'darkMode.on': 'Укл.',
+	'darkMode.off': 'Выкл.',
+	'loadFailed.title': 'Гэта не загрузілася',
+	'loadFailed.hint':
+		'Старонка існуе — нешта не спрацавала пры яе атрыманні. Паўторная спроба звычайна дапамагае.',
+	'loadFailed.retry': 'Паспрабаваць зноў',
+	'loadFailed.retrying': 'Спроба…',
+	'fontSize.label': 'Памер тэксту',
+	'fontSize.larger': 'Буйнейшы тэкст',
+	'fontSize.smaller': 'Драбнейшы тэкст',
+	'print.label': 'Надрукаваць гэтую старонку',
+	'toTop.label': 'Вярнуцца ўгору',
+	'edition.label': 'Выданне',
+	'edition.select': 'Выбраць выданне',
+	'edition.current': 'Бягучае выданне',
+	'edition.filter': 'Шукаць выданні',
+	'menu.noMatches': 'Няма супадзенняў',
 	'unitNav.previous': 'Папярэдняе',
 	'unitNav.next': 'Наступнае',
+	'bible.prevChapter': 'Папярэдні раздзел',
+	'bible.nextChapter': 'Наступны раздзел',
+	'bible.pickBook': 'Кнігі і раздзелы',
 	'bible.landing.title': 'Біблія',
 	'bible.landing.tagline': 'Чытайце ўсю Біблію, кнігу за кнігай, раздзел за раздзелам.',
+	'bible.landing.books': 'Кнігі',
+	'bible.introduction': 'Уводзіны',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -80,16 +120,39 @@ export const be: Dictionary = {
 	'bible.group.catholicLetters': 'Каталіцкія пасланні',
 	'bible.group.revelation': 'Апакаліпсіс',
 	'ccc.landing.title': 'Катэхізіс Каталіцкага Касцёла',
+	'ccc.landing.pairTitle': 'Катэхізіс і Кампендыум',
 	'ccc.landing.tagline':
 		'<strong>Катэхізіс</strong> выкладае каталіцкае вучэнне ў 2865 пранумараваных пунктах. <strong>Кампендыум</strong> перадае тое самае вучэнне як 598 пытанняў і адказаў паводле таго ж парадку.',
+	'ccc.landing.pairTagline':
+		'Катэхізіс Каталіцкага Касцёла ў 2865 параграфах і яго Кампендыум у 598 пытаннях.',
+	'ccc.abbrev': 'ККК',
+	'compendium.abbrev': 'Камп.',
 	'document.library.tagline':
 		'Энцыклікі, саборныя канстытуцыі, дэкрэты і дэкларацыі Настаўніцтва Касцёла.',
 	'doctores.landing.title': 'Дактары Касцёла',
 	'doctores.landing.tagline': 'Багаслоўскія творы Айцоў і Дактароў Касцёла.',
 	'summa.landing.title': 'Сума тэалогіі',
 	'summa.landing.tagline': 'Тамаш Аквінскі, па-англійску і на лаціне, на якой ён пісаў.',
+	'index.division': 'Раздзел',
 	'prayers.landing.title': 'Штодзённыя малітвы',
 	'prayers.landing.tagline': 'Малітвы з лацінскім тэкстам побач.',
+	'prayers.seeAlso': 'Глядзі таксама',
+	'anchor.actions': 'Дзеянні са спасылкай',
+	'anchor.copy': 'Скапіяваць тэкст',
+	'anchor.copyLink': 'Скапіяваць спасылку',
+	'anchor.view': 'Паглядзець',
+	'anchor.copied': 'Скапіявана',
+	'anchor.copyFailed': 'Не ўдалося скапіяваць',
+	'bookmark.add': 'У закладкі',
+	'bookmark.remove': 'Прыбраць закладку',
+	'bookmark.library': 'Закладкі',
+	'bookmark.library.tagline': 'Усё, што вы адзначылі падчас чытання.',
+	'bookmark.empty': 'Пакуль нічога не адзначана.',
+	'bookmark.emptyHint':
+		'Націсніце на нумар верша ці абзаца і выберыце «У закладкі», або скарыстайцеся кнопкай закладкі на старонцы.',
+	'bookmark.deviceOnly':
+		'Закладкі захоўваюцца толькі ў гэтым браўзеры. Яны нікуды не адсылаюцца, і ачыстка даных браўзера іх выдаляе.',
+	'bookmark.unavailable': 'Няма ў выданні, якое вы чытаеце',
 	'colophon.title': 'Калафон',
 	'colophon.lede':
 		'Чым з’яўляецца гэты сайт, адкуль паходзяць яго тэксты і якая наша пазіцыя адносна іх узнаўлення.',
@@ -133,11 +196,18 @@ export const be: Dictionary = {
 		'Яны знаходзяцца ў грамадскім набытку, як паказваюць даты ніжэй, і дакладнае фатаграфічнае ўзнаўленне гравюры ў грамадскім набытку не нясе ніякага новага ўласнага аўтарскага права.',
 	'colophon.countPlates': 'гравюр',
 	'colophon.countPlateChapters': 'ілюстраваных раздзелаў',
+	'art.about': 'Пра гэты малюнак',
+	'art.detail': 'фрагмент',
 	'colophon.typeTitle': 'Шрыфт',
 	'colophon.typeBody':
 		'Набрана шрыфтам EB Garamond, адраджэннем Георга Дуфнера і Актавіа Парда тых літар, якія Клод Гарамон разаў у 1590-я гады — гуманістычнай традыцыі, у якой Царква друкуе з часоў Рэнесансу. Яго кірыліца — той жа рукі, але не адраджае нічога: кірылічны Гарамон ніколі не быў разаны, таму руская мова набрана формай, намаляванай так, каб стаяць побач з астатнім.',
 	'colophon.typeArabic':
 		'Арабская мова цалкам па-за яго межамі і набрана шрыфтом Amiri — адраджэннем Халеда Хосні насха, разанага для друкарні Булак у Каіры ў 1905 годзе, абраным па той жа развазе, што і тэкставы шрыфт: пэўны гістарычны кніжны шрыфт, а не сучасны малюнак.',
 	'colophon.typeInitials':
-		'Пачатковыя ініцыялы — Pirata One, гатычны шрыфт, чые вялікія літары застаюцца чытэльнымі ў тым памеры, якога патрабуе буквіца, і — для рускай мовы — Ponomar, які ўзнаўляе царкоўнаславянскі шрыфт Сінадальнай друкарні. Ponomar набірае ініцыял і ніколі тэкст: сучасная энцыкліка, набраная цалкам сінадальным шрыфтам, сказала б няпраўду пра тое, чым яна ёсць. Усе яны ліцэнзаваны паводле SIL Open Font License і падаюцца з гэтага сайта, а не ад трэцяга боку, так што чытанне старонкі нічога не патрабуе ад чужога сервера.'
+		'Пачатковыя ініцыялы — Pirata One, гатычны шрыфт, чые вялікія літары застаюцца чытэльнымі ў тым памеры, якога патрабуе буквіца, і — для рускай мовы — Ponomar, які ўзнаўляе царкоўнаславянскі шрыфт Сінадальнай друкарні. Ponomar набірае ініцыял і ніколі тэкст: сучасная энцыкліка, набраная цалкам сінадальным шрыфтам, сказала б няпраўду пра тое, чым яна ёсць. Усе яны ліцэнзаваны паводле SIL Open Font License і падаюцца з гэтага сайта, а не ад трэцяга боку, так што чытанне старонкі нічога не патрабуе ад чужога сервера.',
+	'copyright.sourceTitle': 'Адкрыць першапачатковую зыходную старонку',
+	'copyright.sourceLabel': 'Крыніца',
+	'lang.label': 'Мова',
+	'lang.filter': 'Шукаць мовы',
+	'lang.more': 'яшчэ мовы'
 };

@@ -64,11 +64,12 @@ export const en: Dictionary = {
 	// itself, and it is why a page that gained two sections cost three strings.
 	//
 	// **`/` IS IN `CHROME_PATHS` AND STAYS THERE** (2026-09-06, by direction),
-	// which these three are the one exception to. `route-manifest.ts` holds
-	// three pages out of that list because a cluster must not claim a page is
-	// written in a language it is not; the root cannot take that remedy — a
-	// home page in no sitemap row and no `hreflang` cluster is worse than one
-	// whose two section headings fall through to English. What the rule
+	// which these three were the one exception to until they were translated
+	// later the same day. `route-manifest.ts` holds three pages out of that
+	// list because a cluster must not claim a page is written in a language it
+	// is not; the root cannot take that remedy — a home page in no sitemap row
+	// and no `hreflang` cluster is worse than one whose two section headings
+	// fall through to English. What the rule
 	// actually protects is intact either way: `/`'s own `<title>` and
 	// description are `home.title` and the five work names
 	// `scripts/route-titles.mjs` composes, and all six are written everywhere.
@@ -76,9 +77,10 @@ export const en: Dictionary = {
 	// THE TAGLINE IS THE SENTENCE THIS SITE NEVER HAD. `route-titles.mjs` says
 	// so in its own docblock — "`/` has no `description` key because it has no
 	// tagline" — and composes the meta description out of work names instead.
-	// That composition stays until this key is translated; switching it now
-	// would describe thirty-six clusters in English, which is the thing the
-	// rule forbids. It says what the site is and what it costs, in the order
+	// The condition on switching that composition over was that this key be
+	// translated, and it was met on 2026-09-06 — all 37 carry it; whether the
+	// description SHOULD become the tagline is a separate call, and unmade.
+	// It says what the site is and what it costs, in the order
 	// `colophon.pointFree` and `colophon.pointOffline` say it, and counts
 	// nothing (`CLAUDE.md` §Documentation conventions).
 	'home.tagline':
@@ -414,9 +416,9 @@ export const en: Dictionary = {
 		'Uses no network at all: nothing is downloaded, no update is checked for, nothing is measured. Only texts already on this device will open.',
 	'offline.notDownloaded': 'Not on this device',
 	// Reached from `+error.svelte` when a load threw while ONLINE — a dropped
-	// request, not a wrong address. English only for now: `t()` falls back key
-	// by key, so every other interface language gets these in English rather
-	// than getting `NotFound`'s wrong answer in their own.
+	// request, not a wrong address. In all 37 since 2026-09-06; it was English
+	// everywhere until then, which was better than `NotFound`'s wrong answer in
+	// the reader's own and is not what a reader one retry from the page needs.
 	'loadFailed.title': 'That did not load',
 	'loadFailed.hint':
 		'The page exists — something went wrong fetching it. Trying again usually works.',
@@ -504,12 +506,9 @@ export const en: Dictionary = {
 	// every OTHER surface wants, `/schola`'s row and the `<head>` included, so
 	// this is a second key rather than a rewrite of that one.
 	//
-	// English only for now, deliberately: `t()` falls back key by key, so
-	// every other interface language gets these words rather than a machine
-	// translation nobody has read — and this is a name of two works, which is
-	// the class of string this project translates last. The two halves already
-	// exist translated (`ccc.landing.title`, `compendium.landing.title`) for
-	// whoever writes the rest.
+	// In all 37 since 2026-09-06, and it cost nothing to write: the two halves
+	// were already translated (`ccc.landing.title`, `compendium.landing.title`)
+	// and this is the pair under one name.
 	//
 	// TWO NAMES AND NOT THE FORMAL TITLE: it read "Catechism & Compendium of
 	// the Catholic Church" until 2026-09-06, which is a title that has to be
@@ -533,10 +532,9 @@ export const en: Dictionary = {
 	// sentence under a short name is for — and it is shorter than the clause
 	// it replaced, so the row every card is as tall as did not grow.
 	//
-	// English only, on `pairTitle`'s terms and for its reason: it exists for
-	// the one surface that names the pair, and a reader in another language
-	// gets a card that is English throughout rather than an English title over
-	// a translated sentence about two works it has stopped naming.
+	// In all 37 since 2026-09-06, with `pairTitle` and for its reason: the card
+	// is one surface, so a translated title over an English sentence about two
+	// works it has stopped naming was never one of the available states.
 	'ccc.landing.pairTagline':
 		'The Catechism of the Catholic Church in 2,865 paragraphs, and its Compendium in 598 questions.',
 	'ccc.tableOfContents': 'Table of Contents',

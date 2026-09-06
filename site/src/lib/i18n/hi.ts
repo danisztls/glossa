@@ -37,6 +37,12 @@
  * English per key, DELETING a doubtful line is also a valid fix and
  * strictly better than leaving a wrong one standing.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -67,14 +73,48 @@ export const hi: Dictionary = {
 	'nav.summa': 'सुम्मा',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'पढ़ना जारी रखें',
+	'home.tagline':
+		'पवित्र धर्मग्रंथ, धर्मशिक्षा और धर्मशिक्षण-अधिकार के दस्तावेज़ों को पढ़ने का स्थल — निःशुल्क, बिना संबंध के भी चलता है, और पंजीकरण के लिए कुछ नहीं।',
+	'home.doors.heading': 'कहाँ जाएँ',
+	'home.find.heading': 'अथवा कोई सन्दर्भ लिखें',
 	'nav.library': 'पुस्तकालय',
 	'nav.learn': 'सीखें',
 	'library.landing.tagline':
 		'पूरा संग्रह, अलमारी दर अलमारी — आपने कहाँ छोड़ा था और क्या चिह्नित किया, उसके साथ।',
+	'jumpbox.placeholder': 'यहाँ जाएँ… (जैसे jn 3:16, ccc 1234)',
+	'jumpbox.short': 'खोज',
+	'jumpbox.hint': 'किसी सन्दर्भ पर जाने के लिए / या Ctrl+K दबाएँ',
+	'jumpbox.noMatch': 'कुछ नहीं मिला',
+	'jumpbox.suggestions': 'सुझाव',
+	'settings.label': 'सेटिंग्स',
+	'darkMode.label': 'गहरा रूप',
+	'darkMode.auto': 'स्वतः',
+	'darkMode.on': 'चालू',
+	'darkMode.off': 'बंद',
+	'loadFailed.title': 'यह नहीं खुला',
+	'loadFailed.hint':
+		'पृष्ठ मौजूद है — उसे लाने में कुछ गड़बड़ हुई। फिर से प्रयास करने पर प्रायः काम बन जाता है।',
+	'loadFailed.retry': 'फिर से प्रयास करें',
+	'loadFailed.retrying': 'प्रयास हो रहा है…',
+	'fontSize.label': 'पाठ का आकार',
+	'fontSize.larger': 'बड़ा पाठ',
+	'fontSize.smaller': 'छोटा पाठ',
+	'print.label': 'यह पृष्ठ छापें',
+	'toTop.label': 'ऊपर लौटें',
+	'edition.label': 'संस्करण',
+	'edition.select': 'संस्करण चुनें',
+	'edition.current': 'वर्तमान संस्करण',
+	'edition.filter': 'संस्करण खोजें',
+	'menu.noMatches': 'कोई मेल नहीं',
 	'unitNav.previous': 'पिछला',
 	'unitNav.next': 'अगला',
+	'bible.prevChapter': 'पिछला अध्याय',
+	'bible.nextChapter': 'अगला अध्याय',
+	'bible.pickBook': 'ग्रंथ और अध्याय',
 	'bible.landing.title': 'बाइबिल',
 	'bible.landing.tagline': 'पूरी बाइबिल पढ़ें, पुस्तक दर पुस्तक, अध्याय दर अध्याय।',
+	'bible.landing.books': 'ग्रंथ',
+	'bible.introduction': 'प्रस्तावना',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'पंचग्रंथ',
@@ -87,15 +127,38 @@ export const hi: Dictionary = {
 	'bible.group.catholicLetters': 'काथलिक पत्र',
 	'bible.group.revelation': 'प्रकाशना',
 	'ccc.landing.title': 'काथलिक कलीसिया की धर्मशिक्षा',
+	'ccc.landing.pairTitle': 'धर्मशिक्षा और संक्षेपिका',
 	'ccc.landing.tagline':
 		'<strong>धर्मशिक्षा</strong> काथलिक शिक्षा को 2,865 क्रमांकित अनुच्छेदों में प्रस्तुत करती है। <strong>संक्षेप</strong> उसी शिक्षा को उसी क्रम के अनुसार 598 प्रश्नोत्तरों में प्रस्तुत करता है।',
+	'ccc.landing.pairTagline':
+		'काथलिक कलीसिया की धर्मशिक्षा 2,865 अनुच्छेदों में, और उसकी संक्षेपिका 598 प्रश्नों में।',
+	'ccc.abbrev': 'धर्मशिक्षा',
+	'compendium.abbrev': 'संक्षेप',
 	'document.library.tagline': 'विश्वपत्र, महासभा के संविधान, आदेश और कलीसियाई शिक्षण की घोषणाएँ।',
 	'doctores.landing.title': 'कलीसिया के आचार्य',
 	'doctores.landing.tagline': 'कलीसिया के पिताओं और आचार्यों की धर्मशास्त्रीय रचनाएँ।',
 	'summa.landing.title': 'सुम्मा थेओलोजीए',
 	'summa.landing.tagline': 'थॉमस अक्विनास, अंग्रेज़ी में और उस लातीनी में जो उन्होंने लिखी।',
+	'index.division': 'विभाग',
 	'prayers.landing.title': 'सामान्य प्रार्थनाएँ',
 	'prayers.landing.tagline': 'लातीनी पाठ के साथ प्रार्थनाएँ।',
+	'prayers.seeAlso': 'यह भी देखें',
+	'anchor.actions': 'सन्दर्भ पर कार्य',
+	'anchor.copy': 'पाठ की नकल करें',
+	'anchor.copyLink': 'कड़ी की नकल करें',
+	'anchor.view': 'देखें',
+	'anchor.copied': 'नकल हो गई',
+	'anchor.copyFailed': 'नकल नहीं हो सकी',
+	'bookmark.add': 'चिह्नित करें',
+	'bookmark.remove': 'चिह्न हटाएँ',
+	'bookmark.library': 'चिह्न',
+	'bookmark.library.tagline': 'पढ़ते समय आपने जो कुछ चिह्नित किया है।',
+	'bookmark.empty': 'अभी कुछ चिह्नित नहीं है।',
+	'bookmark.emptyHint':
+		'किसी पद या अनुच्छेद की संख्या पर क्लिक करें और चिह्नित करें चुनें, या पृष्ठ का चिह्न बटन काम में लें।',
+	'bookmark.deviceOnly':
+		'चिह्न केवल इसी ब्राउज़र में रहते हैं। वे कहीं नहीं भेजे जाते, और ब्राउज़र का डेटा साफ़ करने पर मिट जाते हैं।',
+	'bookmark.unavailable': 'आप जो संस्करण पढ़ रहे हैं उसमें नहीं',
 	'colophon.title': 'कोलोफ़ोन',
 	'colophon.lede': 'यह साइट क्या है, इसके पाठ कहाँ से आते हैं, और उनके पुनरुत्पादन पर हमारा रुख।',
 	'colophon.whatThisIs': 'यह क्या है',
@@ -138,11 +201,18 @@ export const hi: Dictionary = {
 		'नीचे दी गई तिथियों के अनुसार वे सार्वजनिक अधिकार-क्षेत्र में हैं, और सार्वजनिक अधिकार-क्षेत्र की उत्कीर्ण कृति की निष्ठापूर्ण छायाचित्रीय प्रतिकृति अपना कोई नया सर्वाधिकार नहीं रखती।',
 	'colophon.countPlates': 'उत्कीर्ण कृतियाँ',
 	'colophon.countPlateChapters': 'सचित्र अध्याय',
+	'art.about': 'इस चित्र के विषय में',
+	'art.detail': 'अंश',
 	'colophon.typeTitle': 'अक्षर',
 	'colophon.typeBody':
 		'EB Garamond में संयोजित, जो क्लोद गारामों द्वारा 1590 के दशक में उकेरे गए अक्षरों का गेओर्ग डुफ़्नर और ओक्ताविओ पार्दो द्वारा किया गया पुनरुद्धार है — वही मानवतावादी परंपरा जिसमें कलीसिया पुनर्जागरण से छापती आई है। इसकी सिरिलिक लिपि उन्हीं हाथों की है पर किसी का पुनरुद्धार नहीं करती: सिरिलिक गारामों कभी उकेरा ही नहीं गया, इसलिए रूसी उस रूप में संयोजित है जो शेष के साथ खड़े होने के लिए बनाया गया।',
 	'colophon.typeArabic':
 		'अरबी इसकी पहुँच से पूर्णतः बाहर है, और Amiri में संयोजित है — 1905 में क़ाहिरा के बूलाक़ मुद्रणालय के लिए उकेरी गई नस्ख़ लिपि का ख़ालिद होस्नी द्वारा किया गया पुनरुद्धार, जिसे पाठ-अक्षर के समान ही तर्क से चुना गया: कोई समकालीन रेखांकन नहीं, बल्कि एक विशिष्ट ऐतिहासिक पुस्तक-अक्षर।',
 	'colophon.typeInitials':
-		'आरंभिक अक्षर Pirata One हैं, एक गॉथिक लिपि जिसके बड़े अक्षर उस आकार में भी पठनीय रहते हैं जिसकी आरंभिक अक्षर माँग करता है, और — रूसी के लिए — Ponomar, जो धर्मसभा मुद्रणालय की कलीसियाई स्लावोनिक लिपि को पुनः प्रस्तुत करता है। Ponomar केवल आरंभिक अक्षर संयोजित करता है, कभी पाठ नहीं: पूरी तरह धर्मसभा लिपि में संयोजित कोई आधुनिक विश्वपत्र अपने विषय में कुछ असत्य कहेगा। ये सभी SIL Open Font License के अंतर्गत अनुज्ञप्त हैं और किसी तृतीय पक्ष के बजाय इसी स्थल से दिए जाते हैं, इसलिए कोई पृष्ठ पढ़ना किसी और के सर्वर से कुछ नहीं माँगता।'
+		'आरंभिक अक्षर Pirata One हैं, एक गॉथिक लिपि जिसके बड़े अक्षर उस आकार में भी पठनीय रहते हैं जिसकी आरंभिक अक्षर माँग करता है, और — रूसी के लिए — Ponomar, जो धर्मसभा मुद्रणालय की कलीसियाई स्लावोनिक लिपि को पुनः प्रस्तुत करता है। Ponomar केवल आरंभिक अक्षर संयोजित करता है, कभी पाठ नहीं: पूरी तरह धर्मसभा लिपि में संयोजित कोई आधुनिक विश्वपत्र अपने विषय में कुछ असत्य कहेगा। ये सभी SIL Open Font License के अंतर्गत अनुज्ञप्त हैं और किसी तृतीय पक्ष के बजाय इसी स्थल से दिए जाते हैं, इसलिए कोई पृष्ठ पढ़ना किसी और के सर्वर से कुछ नहीं माँगता।',
+	'copyright.sourceTitle': 'मूल स्रोत पृष्ठ खोलें',
+	'copyright.sourceLabel': 'स्रोत',
+	'lang.label': 'भाषा',
+	'lang.filter': 'भाषाएँ खोजें',
+	'lang.more': 'और भाषाएँ'
 };

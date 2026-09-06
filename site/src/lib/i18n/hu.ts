@@ -34,6 +34,10 @@ export const hu: Dictionary = {
 	'nav.menu': 'Menü',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Olvasás folytatása',
+	'home.tagline':
+		'Olvasóoldal a Szentírás, a Katekizmus és a Tanítóhivatal dokumentumai számára — ingyenes, kapcsolat nélkül is működik, és semmire nem kell regisztrálni.',
+	'home.doors.heading': 'Merre',
+	'home.find.heading': 'Vagy írjon be egy hivatkozást',
 	'nav.library': 'Könyvtár',
 	'nav.learn': 'Tanulás',
 	'library.landing.tagline':
@@ -77,6 +81,11 @@ export const hu: Dictionary = {
 	'offline.hint':
 		'Egyáltalán nem használ hálózatot: nem tölt le semmit, nem keres frissítést, nem mér semmit. Csak azok a szövegek nyílnak meg, amelyek már ezen az eszközön vannak.',
 	'offline.notDownloaded': 'Nincs ezen az eszközön',
+	'loadFailed.title': 'Ez nem töltődött be',
+	'loadFailed.hint':
+		'Az oldal létezik — a letöltése közben ment félre valami. Újra próbálva rendszerint sikerül.',
+	'loadFailed.retry': 'Újra',
+	'loadFailed.retrying': 'Próbálkozás…',
 	'offline.turnOff': 'Kapcsolat nélküli mód kikapcsolása',
 
 	'fontSize.label': 'Betűméret',
@@ -94,6 +103,8 @@ export const hu: Dictionary = {
 	'edition.label': 'Kiadás',
 	'edition.select': 'Válasszon kiadást',
 	'edition.current': 'Jelenlegi kiadás',
+	'edition.filter': 'Kiadások keresése',
+	'menu.noMatches': 'Nincs találat',
 	'unitNav.previous': 'Előző',
 	'unitNav.next': 'Következő',
 	'bible.prevChapter': 'Előző fejezet',
@@ -123,8 +134,11 @@ export const hu: Dictionary = {
 	'ccc.nextParagraph': 'Következő szakasz',
 	'ccc.inBrief': 'Összefoglalás',
 	'ccc.landing.title': 'A Katolikus Egyház Katekizmusa',
+	'ccc.landing.pairTitle': 'Katekizmus és Kompendium',
 	'ccc.landing.tagline':
 		'<strong>A Katekizmus</strong> 2865 számozott pontban fejti ki a katolikus tanítást. <strong>A Kompendium</strong> ugyanezt a tanítást 598 kérdésben és feleletben adja elő, ugyanazt a szerkezetet követve.',
+	'ccc.landing.pairTagline':
+		'A Katolikus Egyház Katekizmusa 2865 pontban, Kompendiuma pedig 598 kérdésben.',
 	'ccc.tableOfContents': 'Tartalomjegyzék',
 	'ccc.related': 'Lásd még',
 	'compendium.landing.title': 'A Katekizmus Kompendiuma',
@@ -165,11 +179,13 @@ export const hu: Dictionary = {
 		'A Summának nincs kiadása az Ön nyelvén. A(z) {lang} kiadás látható.',
 	'summa.noLatinSupplement':
 		'A Kiegészítés csak angolul létezik — Szent Tamás halála után állították össze.',
+	'index.division': 'Rész',
 	'index.showSubsections': 'Alfejezetek megjelenítése',
 	'index.hideSubsections': 'Alfejezetek elrejtése',
 	'prayers.landing.title': 'Imádságok',
 	'prayers.landing.tagline': 'Imádságok a latin szöveggel együtt.',
 	'prayers.tableOfContents': 'Tartalomjegyzék',
+	'prayers.seeAlso': 'Lásd még',
 	'prayers.prevPrayer': 'Előző imádság',
 	'prayers.nextPrayer': 'Következő imádság',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -225,6 +241,11 @@ export const hu: Dictionary = {
 	'document.kind.apostolicExhortation': 'Apostoli buzdítás',
 	'document.kind.apostolicConstitution': 'Apostoli konstitúció',
 	'document.kind.cdfDeclaration': 'A Hittani Kongregáció nyilatkozata',
+	'document.kind.cdfInstruction': 'A Hittani Kongregáció instrukciója',
+	'document.kind.cdfLetter': 'A Hittani Kongregáció levele',
+	'document.kind.cdfDoctrinalNote': 'A Hittani Kongregáció tanbeli jegyzete',
+	'document.kind.cdfResponsum': 'A Hittani Kongregáció válasza',
+	'document.kind.cdfConsiderations': 'A Hittani Kongregáció megfontolásai',
 	'document.kindPlural.conciliarConstitution': 'Konstitúciók',
 	'document.kindPlural.conciliarDecree': 'Határozatok',
 	'document.kindPlural.conciliarDeclaration': 'Nyilatkozatok',
@@ -279,6 +300,8 @@ export const hu: Dictionary = {
 	'plates.scansBy': 'A beolvasásokat rendelkezésre bocsátotta:',
 	'plates.enlarge': '{title} nagyítása',
 	'plates.zoom': 'Nagyítás',
+	'art.about': 'Erről a képről',
+	'art.detail': 'részlet',
 	'colophon.typeTitle': 'A betűk',
 	'colophon.typeBody':
 		'EB Garamonddal szedve, amely Georg Duffner és Octavio Pardo felújítása azokról a betűkről, amelyeket Claude Garamont metszett az 1590-es években — abban a humanista hagyományban, amelyben az Egyház a reneszánsz óta nyomtat. Cirill betűi ugyanattól a kéztől valók, de nem újítanak fel semmit: cirill Garamont soha nem metszettek, így az orosz szöveg olyan formával van szedve, amelyet a többi mellé rajzoltak.',
@@ -300,6 +323,8 @@ export const hu: Dictionary = {
 	'copyright.sourceTitle': 'Az eredeti forrásoldal megnyitása',
 	'copyright.sourceLabel': 'Forrás',
 	'lang.label': 'Nyelv',
+	'lang.filter': 'Nyelvek keresése',
+	'lang.more': 'további nyelv',
 	'notFound.title': 'Ezen a címen nincs semmi',
 	'notFound.lede': 'A kért oldal nincs itt.',
 	'notFound.body':

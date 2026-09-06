@@ -34,6 +34,10 @@ export const it: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Continua a leggere',
+	'home.tagline':
+		'Un sito di lettura delle Scritture, del Catechismo e dei documenti del Magistero — gratuito, disponibile offline e senza alcuna iscrizione.',
+	'home.doors.heading': 'Dove andare',
+	'home.find.heading': 'Oppure digita un riferimento',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Imparare',
 	'library.landing.tagline':
@@ -77,6 +81,11 @@ export const it: Dictionary = {
 	'offline.hint':
 		'Non usa affatto la rete: non scarica nulla, non cerca aggiornamenti, non misura nulla. Si aprono soltanto i testi già presenti su questo dispositivo.',
 	'offline.notDownloaded': 'Non presente su questo dispositivo',
+	'loadFailed.title': 'Non si è caricato',
+	'loadFailed.hint':
+		'La pagina esiste — qualcosa è andato storto nel recuperarla. Riprovare di solito basta.',
+	'loadFailed.retry': 'Riprova',
+	'loadFailed.retrying': 'Tentativo…',
 	'offline.turnOff': 'Disattiva la modalità offline',
 
 	'fontSize.label': 'Dimensione del testo',
@@ -123,8 +132,11 @@ export const it: Dictionary = {
 	'ccc.nextParagraph': 'Paragrafo successivo',
 	'ccc.inBrief': 'In sintesi',
 	'ccc.landing.title': 'Catechismo della Chiesa Cattolica',
+	'ccc.landing.pairTitle': 'Catechismo e Compendio',
 	'ccc.landing.tagline':
 		'<strong>Il Catechismo</strong> espone la dottrina cattolica in 2.865 numeri. <strong>Il Compendio</strong> ripropone la stessa dottrina in 598 domande e risposte, secondo lo stesso ordine.',
+	'ccc.landing.pairTagline':
+		'Il Catechismo della Chiesa Cattolica in 2.865 numeri, e il suo Compendio in 598 domande.',
 	'ccc.tableOfContents': 'Indice',
 	'ccc.related': 'Vedi anche',
 	'compendium.landing.title': 'Compendio del Catechismo',
@@ -165,11 +177,13 @@ export const it: Dictionary = {
 		'La Somma non ha un’edizione nella tua lingua. È mostrata in {lang}.',
 	'summa.noLatinSupplement':
 		'Il Supplemento esiste solo in inglese: fu compilato dopo la morte di Tommaso d’Aquino.',
+	'index.division': 'Divisione',
 	'index.showSubsections': 'Mostra sottosezioni',
 	'index.hideSubsections': 'Nascondi sottosezioni',
 	'prayers.landing.title': 'Preghiere comuni',
 	'prayers.landing.tagline': 'Preghiere con il testo latino a fronte.',
 	'prayers.tableOfContents': 'Indice',
+	'prayers.seeAlso': 'Vedi anche',
 	'prayers.prevPrayer': 'Preghiera precedente',
 	'prayers.nextPrayer': 'Preghiera successiva',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -191,6 +205,7 @@ export const it: Dictionary = {
 	'anchor.copyLink': 'Copia il collegamento',
 	'anchor.view': 'Vedi',
 	'anchor.copied': 'Copiato',
+	'anchor.copyFailed': 'Copia non riuscita',
 	'bookmark.add': 'Segna',
 	'bookmark.remove': 'Togli il segnalibro',
 	'bookmark.library': 'Segnalibri',
@@ -224,6 +239,11 @@ export const it: Dictionary = {
 	'document.kind.apostolicExhortation': 'Esortazione apostolica',
 	'document.kind.apostolicConstitution': 'Costituzione apostolica',
 	'document.kind.cdfDeclaration': 'Dichiarazione della CDF',
+	'document.kind.cdfInstruction': 'Istruzione della CDF',
+	'document.kind.cdfLetter': 'Lettera della CDF',
+	'document.kind.cdfDoctrinalNote': 'Nota dottrinale della CDF',
+	'document.kind.cdfResponsum': 'Responsum della CDF',
+	'document.kind.cdfConsiderations': 'Considerazioni della CDF',
 	'document.kindPlural.conciliarConstitution': 'Costituzioni',
 	'document.kindPlural.conciliarDecree': 'Decreti',
 	'document.kindPlural.conciliarDeclaration': 'Dichiarazioni',
@@ -277,6 +297,8 @@ export const it: Dictionary = {
 	'plates.scansBy': 'Scansioni fornite da',
 	'plates.enlarge': 'Ingrandisci {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Su questa immagine',
+	'art.detail': 'particolare',
 	'colophon.typeTitle': 'I caratteri',
 	'colophon.typeBody':
 		'Composto in EB Garamond, la rinascita a opera di Georg Duffner e Octavio Pardo dei caratteri che Claude Garamont incise negli anni 1590 — la tradizione umanistica in cui la Chiesa stampa fin dal Rinascimento. Il suo cirillico è della stessa mano ma non fa rivivere nulla: un Garamond cirillico non è mai stato inciso, così il russo è composto in una forma disegnata per stare accanto al resto.',
@@ -296,6 +318,7 @@ export const it: Dictionary = {
 	'ccc.readFullChapter': 'Leggi tutto il capitolo',
 	'ccc.noParagraphNumber': 'Nessun numero di paragrafo in questo corpus',
 	'copyright.sourceTitle': 'Apri la pagina di origine',
+	'copyright.sourceLabel': 'Fonte',
 	'lang.label': 'Lingua',
 	'lang.filter': 'Cerca lingue',
 	'lang.more': 'altre lingue',

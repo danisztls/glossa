@@ -45,6 +45,10 @@ export const la: Dictionary = {
 	'nav.menu': 'Index',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Perge legere',
+	'home.tagline':
+		'Sedes ad Scripturas, Catechismum et documenta Magisterii legenda — gratis, etiam sine rete, nullo nomine dando.',
+	'home.doors.heading': 'Quo eas',
+	'home.find.heading': 'Vel locum inscribe',
 	'nav.library': 'Bibliotheca',
 	'nav.learn': 'Disce',
 	'library.landing.tagline':
@@ -100,6 +104,11 @@ export const la: Dictionary = {
 	'offline.hint':
 		'Rete omnino non utitur: nihil transfertur, nulla renovatio quaeritur, nihil metitur. Soli textus in hoc instrumento iam praesentes aperiuntur.',
 	'offline.notDownloaded': 'In hoc instrumento non praesens',
+	'loadFailed.title': 'Hoc allatum non est',
+	'loadFailed.hint':
+		'Pagina exstat — in arcessendo aliquid erravit. Iterum conanti plerumque succedit.',
+	'loadFailed.retry': 'Iterum conare',
+	'loadFailed.retrying': 'Conatur…',
 	'offline.turnOff': 'Modum sine rete claudere',
 
 	'fontSize.label': 'Magnitudo textus',
@@ -154,8 +163,11 @@ export const la: Dictionary = {
 	// one. `Breviter` says the same thing and cannot be misread.
 	'ccc.inBrief': 'Breviter',
 	'ccc.landing.title': 'Catechismus Catholicae Ecclesiae',
+	'ccc.landing.pairTitle': 'Catechismus et Compendium',
 	'ccc.landing.tagline':
 		'<strong>Catechismus</strong> doctrinam catholicam 2.865 numeris distinctis exponit. <strong>Compendium</strong> eandem doctrinam 598 quaestionibus et responsionibus, eodem ordine servato, refert.',
+	'ccc.landing.pairTagline':
+		'Catechismus Catholicae Ecclesiae 2.865 numeris, eiusque Compendium 598 quaestionibus.',
 	'ccc.tableOfContents': 'Index capitum',
 	'ccc.related': 'Vide etiam',
 	'compendium.landing.title': 'Compendium Catechismi',
@@ -199,11 +211,13 @@ export const la: Dictionary = {
 	'summa.noEditionInYourLanguage': 'Summa editionem lingua tua non habet. Exhibetur {lang}.',
 	'summa.noLatinSupplement':
 		'Supplementum Anglice tantum exstat: post mortem sancti Thomae compositum est.',
+	'index.division': 'Divisio',
 	'index.showSubsections': 'Ostende partes minores',
 	'index.hideSubsections': 'Absconde partes minores',
 	'prayers.landing.title': 'Preces communes',
 	'prayers.landing.tagline': 'Preces, adiuncto textu Latino.',
 	'prayers.tableOfContents': 'Index precum',
+	'prayers.seeAlso': 'Vide etiam',
 	'prayers.prevPrayer': 'Prex prior',
 	'prayers.nextPrayer': 'Prex sequens',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -263,6 +277,11 @@ export const la: Dictionary = {
 	'document.kind.apostolicExhortation': 'Adhortatio apostolica',
 	'document.kind.apostolicConstitution': 'Constitutio apostolica',
 	'document.kind.cdfDeclaration': 'Declaratio CDF',
+	'document.kind.cdfInstruction': 'Instructio CDF',
+	'document.kind.cdfLetter': 'Epistula CDF',
+	'document.kind.cdfDoctrinalNote': 'Nota doctrinalis CDF',
+	'document.kind.cdfResponsum': 'Responsum CDF',
+	'document.kind.cdfConsiderations': 'Considerationes CDF',
 	'document.kindPlural.conciliarConstitution': 'Constitutiones',
 	'document.kindPlural.conciliarDecree': 'Decreta',
 	'document.kindPlural.conciliarDeclaration': 'Declarationes',
@@ -315,6 +334,8 @@ export const la: Dictionary = {
 	'plates.scansBy': 'Imagines electronicae praebitae a',
 	'plates.enlarge': 'Amplifica {title}',
 	'plates.zoom': 'Amplificatio',
+	'art.about': 'De hac imagine',
+	'art.detail': 'particula',
 	'colophon.typeTitle': 'De litterarum forma',
 	'colophon.typeBody':
 		'Litteris EB Garamond composita, quas Georgius Duffner et Octavius Pardo ex typis a Claudio Garamont circa annum 1590 caesis renovaverunt — ea traditione humanistica qua Ecclesia ab aetate litterarum renascentium imprimit. Litterae eius Cyrillicae ab iisdem manibus sunt, nihil tamen renovant: Garamont Cyrillicus numquam caesus est, ideoque textus Russicus forma nova exprimitur, quae ceteris apte adstet.',

@@ -36,6 +36,12 @@
  * doubtful line is also a valid fix and strictly better than leaving a
  * wrong one standing.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -65,14 +71,48 @@ export const ig: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Gaa n’ihu ịgụ',
+	'home.tagline':
+		"Saịtị ọgụgụ maka Akwụkwọ Nsọ, Katekizim, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị — n'efu, na-arụ ọrụ n'enweghị njikọ, ọ dịghịkwa ihe ị ga-edebanye aha na ya.",
+	'home.doors.heading': 'Ebe ị ga-aga',
+	'home.find.heading': 'Ma ọ bụ pịnye nrụtụaka',
 	'nav.library': 'Ọbá akwụkwọ',
 	'nav.learn': 'Mụta',
 	'library.landing.tagline':
 		'Nchịkọta ahụ dum, shelf n’otu n’otu — tinyere ebe ị kwụsịrị na ihe ị kara aka.',
+	'jumpbox.placeholder': 'Gaa na… (dka. jn 3:16, ccc 1234)',
+	'jumpbox.short': 'Chọọ',
+	'jumpbox.hint': 'Pịa / ma ọ bụ Ctrl+K ịga na nrụtụaka',
+	'jumpbox.noMatch': 'Ọ dịghị ihe dabara',
+	'jumpbox.suggestions': 'Aro',
+	'settings.label': 'Ntọala',
+	'darkMode.label': 'Ụdị gbara ọchịchịrị',
+	'darkMode.auto': 'Akpaaka',
+	'darkMode.on': 'Gbanyere',
+	'darkMode.off': 'Gbanyụrụ',
+	'loadFailed.title': 'Nke ahụ ebugoteghị',
+	'loadFailed.hint':
+		'Ibe ahụ dị — ihe adịghị mma mere mgbe a na-eweta ya. Ịnwale ọzọ na-arụkarị ọrụ.',
+	'loadFailed.retry': 'Nwaa ọzọ',
+	'loadFailed.retrying': 'Na-anwa…',
+	'fontSize.label': 'Nha ederede',
+	'fontSize.larger': 'Ederede buru ibu',
+	'fontSize.smaller': 'Ederede dị nta',
+	'print.label': 'Bipụta ibe a',
+	'toTop.label': "Laghachi n'elu",
+	'edition.label': 'Mbipụta',
+	'edition.select': 'Họrọ mbipụta',
+	'edition.current': 'Mbipụta ugbu a',
+	'edition.filter': 'Chọọ mbipụta',
+	'menu.noMatches': 'Ọ dịghị ihe dabara',
 	'unitNav.previous': 'Nke gara aga',
 	'unitNav.next': 'Nke ọzọ',
+	'bible.prevChapter': 'Isi gara aga',
+	'bible.nextChapter': 'Isi na-esote',
+	'bible.pickBook': 'Akwụkwọ na isi',
 	'bible.landing.title': 'Baịbụl',
 	'bible.landing.tagline': 'Gụọ Baịbụl niile, akwụkwọ n’akwụkwọ, isi n’isi.',
+	'bible.landing.books': 'Akwụkwọ',
+	'bible.introduction': 'Mmalite okwu',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'Pentatuk',
@@ -85,16 +125,39 @@ export const ig: Dictionary = {
 	'bible.group.catholicLetters': 'Akwụkwọ Ozi Katọlik',
 	'bible.group.revelation': 'Mkpughe',
 	'ccc.landing.title': 'Katakizim nke Chọọchị Katọlik',
+	'ccc.landing.pairTitle': 'Katekizim na Nchịkọta',
 	'ccc.landing.tagline':
 		'<strong>Katakizim</strong> na-akọwa ozizi Katọlik n’ime paragraf 2,865 e nyere nọmba. <strong>Nchịkọta</strong> na-ekwughachi otu ozizi ahụ dịka ajụjụ na azịza 598, n’otu usoro ahụ.',
+	'ccc.landing.pairTagline':
+		"Katekizim nke Chọọchị Katọlik n'ọnụọgụ 2,865, na Nchịkọta ya n'ajụjụ 598.",
+	'ccc.abbrev': 'KCK',
+	'compendium.abbrev': 'Nchịk.',
 	'document.library.tagline':
 		'Ensaịklikal, iwu kansụl, iwu nyefere, na nkwupụta nke Nkuzi Chọọchị.',
 	'doctores.landing.title': 'Ndị Ozizi Chọọchị',
 	'doctores.landing.tagline': 'Ọrụ nkà mmụta okpukpe nke Ndị Nna na Ndị Ozizi Chọọchị.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Tọmas Akwịnas, n’asụsụ Bekee na n’asụsụ Latin o ji dee.',
+	'index.division': 'Nkewa',
 	'prayers.landing.title': 'Ekpere Nkịtị',
 	'prayers.landing.tagline': 'Ekpere ya na ederede Latin n’akụkụ ya.',
+	'prayers.seeAlso': 'Lekwaa',
+	'anchor.actions': 'Ihe ị ga-eme na nrụtụaka',
+	'anchor.copy': 'Detuo ederede',
+	'anchor.copyLink': 'Detuo njikọ',
+	'anchor.view': 'Lee',
+	'anchor.copied': 'Edetuola',
+	'anchor.copyFailed': 'Enweghị ike idetu',
+	'bookmark.add': 'Kaa akara',
+	'bookmark.remove': 'Wepụ akara akwụkwọ',
+	'bookmark.library': 'Akara akwụkwọ',
+	'bookmark.library.tagline': 'Ihe niile i kara akara mgbe ị na-agụ.',
+	'bookmark.empty': 'Ọ dịghị ihe akara ka ugbu a.',
+	'bookmark.emptyHint':
+		"Pịa nọmba amaokwu ma ọ bụ paragraf wee họrọ Kaa akara, ma ọ bụ jiri bọtịnụ akara akwụkwọ dị n'ibe ahụ.",
+	'bookmark.deviceOnly':
+		"A na-edebe akara akwụkwọ naanị n'ihe nchọgharị a. A naghị eziga ha ebe ọ bụla, na ihichapụ data ihe nchọgharị gị na-ewepụ ha.",
+	'bookmark.unavailable': 'Ọ dịghị na mbipụta ị na-agụ',
 	'colophon.title': 'Kọlọfọn',
 	'colophon.lede': 'Ihe saịtị a bụ, ebe ederede ya si bịa, na ebe anyị guzo banyere ịmegharị ha.',
 	'colophon.whatThisIs': 'Gịnị ka nke a bụ',
@@ -137,11 +200,18 @@ export const ig: Dictionary = {
 		"Ha dị n'aka ọha, dịka ụbọchị ndị dị n'okpuru na-egosi, foto e sere nke ọma nke ihe ọkpụkpụ dị n'aka ọha adịghịkwa ebute ikike ọhụrụ nke aka ya.",
 	'colophon.countPlates': 'ihe ọkpụkpụ',
 	'colophon.countPlateChapters': 'isi nwere ihe osise',
+	'art.about': 'Maka foto a',
+	'art.detail': 'akụkụ',
 	'colophon.typeTitle': 'Ụdị mkpụrụedemede',
 	'colophon.typeBody':
 		"E ji EB Garamond dee ya, nke bụ mweghachi Georg Duffner na Octavio Pardo nke mkpụrụedemede Claude Garamont pịrị n'afọ ndị 1590 — omenala mmadụ ahụ Chọọchị ji na-ebipụta kemgbe Renaissance. Mkpụrụedemede Cyrillic ya sitere n'otu aka ahụ mana ọ naghị eweghachi ihe ọ bụla: a pịbeghị Garamond Cyrillic mgbe ọ bụla, ya mere e ji ụdị e sere ka o guzo n'akụkụ ndị ọzọ dee asụsụ Rọshịa.",
 	'colophon.typeArabic':
 		"Asụsụ Arabik dị kpamkpam n'èzí ike ya, e jikwa Amiri dee ya — mweghachi Khaled Hosny nke naskh a pịrị maka ụlọ obibi akwụkwọ Bulaq na Cairo n'afọ 1905, nke a họọrọ n'otu ihe kpatara e ji họrọ ụdị ederede: otu ụdị akwụkwọ akụkọ ihe mere eme kama eserese nke oge a.",
 	'colophon.typeInitials':
-		"Mkpụrụedemede mmalite bụ Pirata One, ụdị Gothic nke mkpụrụedemede ukwu ya ka na-apụta ìhè n'ogo mkpụrụedemede mmalite chọrọ, na — maka asụsụ Rọshịa — Ponomar, nke na-eweghachi ụdị Slavonic Chọọchị nke Ụlọ Obibi Akwụkwọ Sinod. Ponomar na-ede mkpụrụedemede mmalite, ọ naghị ede ederede ma ọlị: akwụkwọ ozi ndị ukwu nke oge a e ji ụdị Sinod dee ya niile ga-ekwu ihe na-abụghị eziokwu banyere ihe ọ bụ. E nyere ha niile ikike n'okpuru SIL Open Font License, e si na saịtị a nye ha kama isi n'aka onye ọzọ, ya mere ịgụ otu ibe adịghị arịọ ihe ọ bụla n'aka sava onye ọzọ."
+		"Mkpụrụedemede mmalite bụ Pirata One, ụdị Gothic nke mkpụrụedemede ukwu ya ka na-apụta ìhè n'ogo mkpụrụedemede mmalite chọrọ, na — maka asụsụ Rọshịa — Ponomar, nke na-eweghachi ụdị Slavonic Chọọchị nke Ụlọ Obibi Akwụkwọ Sinod. Ponomar na-ede mkpụrụedemede mmalite, ọ naghị ede ederede ma ọlị: akwụkwọ ozi ndị ukwu nke oge a e ji ụdị Sinod dee ya niile ga-ekwu ihe na-abụghị eziokwu banyere ihe ọ bụ. E nyere ha niile ikike n'okpuru SIL Open Font License, e si na saịtị a nye ha kama isi n'aka onye ọzọ, ya mere ịgụ otu ibe adịghị arịọ ihe ọ bụla n'aka sava onye ọzọ.",
+	'copyright.sourceTitle': 'Mepee ibe isi mmalite mbụ',
+	'copyright.sourceLabel': 'Isi mmalite',
+	'lang.label': 'Asụsụ',
+	'lang.filter': 'Chọọ asụsụ',
+	'lang.more': 'asụsụ ndị ọzọ'
 };

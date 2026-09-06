@@ -26,6 +26,12 @@
  * Every key `CHROME_KEYS` requires is here, since an unnamed chrome page fails
  * the sync rather than falling back.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -55,14 +61,48 @@ export const da: Dictionary = {
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Fortsæt læsning',
+	'home.tagline':
+		'Et læsested for Skriften, Katekismen og Læreembedets dokumenter — gratis, virker offline, og der er intet at tilmelde sig.',
+	'home.doors.heading': 'Hvor du kan gå hen',
+	'home.find.heading': 'Eller skriv en henvisning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lær',
 	'library.landing.tagline':
 		'Hele samlingen, hylde for hylde — med hvor du slap, og hvad du har markeret.',
+	'jumpbox.placeholder': 'Gå til… (f.eks. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Søg',
+	'jumpbox.hint': 'Tryk / eller Ctrl+K for at gå til en henvisning',
+	'jumpbox.noMatch': 'Intet fundet',
+	'jumpbox.suggestions': 'Forslag',
+	'settings.label': 'Indstillinger',
+	'darkMode.label': 'Mørk tilstand',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Til',
+	'darkMode.off': 'Fra',
+	'loadFailed.title': 'Det blev ikke indlæst',
+	'loadFailed.hint':
+		'Siden findes — noget gik galt, da den skulle hentes. Et nyt forsøg plejer at virke.',
+	'loadFailed.retry': 'Prøv igen',
+	'loadFailed.retrying': 'Prøver…',
+	'fontSize.label': 'Tekststørrelse',
+	'fontSize.larger': 'Større tekst',
+	'fontSize.smaller': 'Mindre tekst',
+	'print.label': 'Udskriv denne side',
+	'toTop.label': 'Tilbage til toppen',
+	'edition.label': 'Udgave',
+	'edition.select': 'Vælg udgave',
+	'edition.current': 'Nuværende udgave',
+	'edition.filter': 'Søg udgaver',
+	'menu.noMatches': 'Ingen træffere',
 	'unitNav.previous': 'Forrige',
 	'unitNav.next': 'Næste',
+	'bible.prevChapter': 'Forrige kapitel',
+	'bible.nextChapter': 'Næste kapitel',
+	'bible.pickBook': 'Bøger og kapitler',
 	'bible.landing.title': 'Bibelen',
 	'bible.landing.tagline': 'Læs hele Bibelen, bog for bog, kapitel for kapitel.',
+	'bible.landing.books': 'Bøger',
+	'bible.introduction': 'Indledning',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial: one
 	// English heading among eight translated ones reads as a bug.
@@ -76,16 +116,39 @@ export const da: Dictionary = {
 	'bible.group.catholicLetters': 'De katolske breve',
 	'bible.group.revelation': 'Åbenbaringen',
 	'ccc.landing.title': 'Den Katolske Kirkes Katekismus',
+	'ccc.landing.pairTitle': 'Katekismen og Kompendiet',
 	'ccc.landing.tagline':
 		'<strong>Katekismen</strong> fremlægger den katolske lære i 2.865 nummererede afsnit. <strong>Kompendiet</strong> gengiver den samme lære som 598 spørgsmål og svar efter samme disposition.',
+	'ccc.landing.pairTagline':
+		'Den Katolske Kirkes Katekismus i 2.865 numre, og dens Kompendium i 598 spørgsmål.',
+	'ccc.abbrev': 'KKK',
+	'compendium.abbrev': 'Komp.',
 	'document.library.tagline':
 		'Encyklikaer, konciliære konstitutioner, dekreter og erklæringer fra Læreembedet.',
 	'doctores.landing.title': 'Kirkelærere',
 	'doctores.landing.tagline': 'Kirkefædrenes og kirkelærernes teologiske værker.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Thomas Aquinas, på engelsk og på det latin han skrev.',
+	'index.division': 'Afdeling',
 	'prayers.landing.title': 'Almindelige bønner',
 	'prayers.landing.tagline': 'Bønner med den latinske tekst ved siden af.',
+	'prayers.seeAlso': 'Se også',
+	'anchor.actions': 'Handlinger for henvisningen',
+	'anchor.copy': 'Kopiér tekst',
+	'anchor.copyLink': 'Kopiér link',
+	'anchor.view': 'Vis',
+	'anchor.copied': 'Kopieret',
+	'anchor.copyFailed': 'Kunne ikke kopiere',
+	'bookmark.add': 'Bogmærk',
+	'bookmark.remove': 'Fjern bogmærke',
+	'bookmark.library': 'Bogmærker',
+	'bookmark.library.tagline': 'Alt, hvad du har markeret under læsningen.',
+	'bookmark.empty': 'Intet markeret endnu.',
+	'bookmark.emptyHint':
+		'Klik på nummeret på et vers eller et afsnit og vælg Bogmærk, eller brug sidens bogmærkeknap.',
+	'bookmark.deviceOnly':
+		'Bogmærker gemmes kun i denne browser. De sendes ingen steder hen, og hvis du rydder browserens data, forsvinder de.',
+	'bookmark.unavailable': 'Findes ikke i den udgave, du læser',
 	'colophon.title': 'Kolofon',
 	'colophon.lede':
 		'Hvad dette websted er, hvor teksterne kommer fra, og hvor vi står med hensyn til at gengive dem.',
@@ -128,11 +191,18 @@ export const da: Dictionary = {
 		'De er i det offentlige domæne, som datoerne nedenfor viser, og en tro fotografisk gengivelse af et stik i det offentlige domæne bærer ingen ny ophavsret af sig selv.',
 	'colophon.countPlates': 'stik',
 	'colophon.countPlateChapters': 'illustrerede kapitler',
+	'art.about': 'Om dette billede',
+	'art.detail': 'udsnit',
 	'colophon.typeTitle': 'Skriften',
 	'colophon.typeBody':
 		'Sat med EB Garamond, Georg Duffner og Octavio Pardos genoplivning af de typer, Claude Garamont skar i 1590erne — den humanistiske tradition, Kirken har trykt i siden renæssancen. Dens kyrilliske er af de samme hænder, men genopliver intet: der blev aldrig skåret en kyrillisk Garamond, så russisk er sat i en form tegnet til at stå ved siden af resten.',
 	'colophon.typeArabic':
 		'Arabisk er helt uden for dens rækkevidde og er sat med Amiri — Khaled Hosnys genoplivning af den naskh, der blev skåret til Bulaq-trykkeriet i Kairo i 1905, valgt ud fra samme ræsonnement som tekstskriften: en bestemt historisk bogtype frem for en nutidig tegning.',
 	'colophon.typeInitials':
-		'Åbningsinitialerne er Pirata One, en gotisk skrift hvis versaler forbliver læselige i den størrelse, en initial kræver, og — for russisk — Ponomar, som gengiver Synodaltrykkeriets kirkeslaviske type. Ponomar sætter initialen og aldrig teksten: en moderne encyklika sat helt igennem med synodaltype ville sige noget usandt om, hvad den er. Alle er licenseret under SIL Open Font License og leveres fra dette websted frem for fra en tredjepart, så det at læse en side ikke beder om noget fra en andens server.'
+		'Åbningsinitialerne er Pirata One, en gotisk skrift hvis versaler forbliver læselige i den størrelse, en initial kræver, og — for russisk — Ponomar, som gengiver Synodaltrykkeriets kirkeslaviske type. Ponomar sætter initialen og aldrig teksten: en moderne encyklika sat helt igennem med synodaltype ville sige noget usandt om, hvad den er. Alle er licenseret under SIL Open Font License og leveres fra dette websted frem for fra en tredjepart, så det at læse en side ikke beder om noget fra en andens server.',
+	'copyright.sourceTitle': 'Åbn den oprindelige kildeside',
+	'copyright.sourceLabel': 'Kilde',
+	'lang.label': 'Sprog',
+	'lang.filter': 'Søg sprog',
+	'lang.more': 'flere sprog'
 };

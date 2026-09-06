@@ -33,6 +33,10 @@ export const pt: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Continuar lendo',
+	'home.tagline':
+		'Um site de leitura das Escrituras, do Catecismo e dos documentos do Magistério — gratuito, disponível sem ligação e sem nada em que se inscrever.',
+	'home.doors.heading': 'Para onde ir',
+	'home.find.heading': 'Ou escreva uma referência',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Aprender',
 	'library.landing.tagline':
@@ -85,6 +89,11 @@ export const pt: Dictionary = {
 	'offline.hint':
 		'Não usa a rede de todo: não transfere nada, não procura atualizações, não mede nada. Só abrem os textos que já estão neste dispositivo.',
 	'offline.notDownloaded': 'Não está neste dispositivo',
+	'loadFailed.title': 'Isso não carregou',
+	'loadFailed.hint':
+		'A página existe — algo correu mal ao obtê-la. Tentar de novo costuma resolver.',
+	'loadFailed.retry': 'Tentar de novo',
+	'loadFailed.retrying': 'A tentar…',
 	'offline.turnOff': 'Desativar o modo offline',
 
 	'fontSize.label': 'Tamanho do texto',
@@ -145,8 +154,11 @@ export const pt: Dictionary = {
 	'ccc.nextParagraph': 'Próximo parágrafo',
 	'ccc.inBrief': 'Resumindo',
 	'ccc.landing.title': 'Catecismo da Igreja Católica',
+	'ccc.landing.pairTitle': 'Catecismo e Compêndio',
 	'ccc.landing.tagline':
 		'<strong>O Catecismo</strong> expõe a doutrina católica em 2.865 parágrafos numerados. <strong>O Compêndio</strong> retoma a mesma doutrina em 598 perguntas e respostas, segundo o mesmo plano.',
+	'ccc.landing.pairTagline':
+		'O Catecismo da Igreja Católica em 2.865 parágrafos, e o seu Compêndio em 598 perguntas.',
 	'ccc.tableOfContents': 'Índice',
 	'ccc.related': 'Veja também',
 
@@ -186,12 +198,14 @@ export const pt: Dictionary = {
 	'summa.noEditionInYourLanguage': 'A Suma não tem edição na sua língua. Apresentada em {lang}.',
 	'summa.noLatinSupplement':
 		'O Suplemento existe apenas em inglês — foi compilado após a morte de Tomás de Aquino.',
+	'index.division': 'Divisão',
 	'index.showSubsections': 'Mostrar subsecções',
 	'index.hideSubsections': 'Ocultar subsecções',
 
 	'prayers.landing.title': 'Orações Comuns',
 	'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
 	'prayers.tableOfContents': 'Índice',
+	'prayers.seeAlso': 'Veja também',
 	'prayers.prevPrayer': 'Oração anterior',
 	'prayers.nextPrayer': 'Próxima oração',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -250,6 +264,11 @@ export const pt: Dictionary = {
 	'document.kind.apostolicExhortation': 'Exortação Apostólica',
 	'document.kind.apostolicConstitution': 'Constituição Apostólica',
 	'document.kind.cdfDeclaration': 'Declaração da CDF',
+	'document.kind.cdfInstruction': 'Instrução da CDF',
+	'document.kind.cdfLetter': 'Carta da CDF',
+	'document.kind.cdfDoctrinalNote': 'Nota doutrinal da CDF',
+	'document.kind.cdfResponsum': 'Responsum da CDF',
+	'document.kind.cdfConsiderations': 'Considerações da CDF',
 	'document.kindPlural.conciliarConstitution': 'Constituições',
 	'document.kindPlural.conciliarDecree': 'Decretos',
 	'document.kindPlural.conciliarDeclaration': 'Declarações',
@@ -317,6 +336,8 @@ export const pt: Dictionary = {
 	'plates.scansBy': 'Digitalizações fornecidas por',
 	'plates.enlarge': 'Ampliar {title}',
 	'plates.zoom': 'Zoom',
+	'art.about': 'Sobre esta imagem',
+	'art.detail': 'pormenor',
 	'colophon.typeTitle': 'Os tipos',
 	'colophon.typeBody':
 		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na década de 1590 — a tradição humanista em que a Igreja imprime desde o Renascimento. O seu cirílico é das mesmas mãos, mas não renasce de nada: nunca se gravou um Garamond cirílico, pelo que o russo é composto numa forma desenhada para conviver com o resto.',

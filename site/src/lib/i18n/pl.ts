@@ -33,6 +33,10 @@ export const pl: Dictionary = {
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Czytaj dalej',
+	'home.tagline':
+		'Strona do czytania Pisma Świętego, Katechizmu i dokumentów Magisterium — bezpłatna, działająca bez połączenia i bez żadnej rejestracji.',
+	'home.doors.heading': 'Dokąd pójść',
+	'home.find.heading': 'Albo wpisz odsyłacz',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Nauka',
 	'library.landing.tagline':
@@ -76,6 +80,11 @@ export const pl: Dictionary = {
 	'offline.hint':
 		'W ogóle nie korzysta z sieci: nic nie jest pobierane, aktualizacje nie są sprawdzane, nic nie jest mierzone. Otwierają się tylko teksty, które są już na tym urządzeniu.',
 	'offline.notDownloaded': 'Nie ma na tym urządzeniu',
+	'loadFailed.title': 'To się nie wczytało',
+	'loadFailed.hint':
+		'Strona istnieje — coś poszło nie tak przy jej pobieraniu. Ponowna próba zwykle wystarcza.',
+	'loadFailed.retry': 'Spróbuj ponownie',
+	'loadFailed.retrying': 'Próba…',
 	'offline.turnOff': 'Wyłącz tryb offline',
 
 	'fontSize.label': 'Wielkość tekstu',
@@ -92,6 +101,8 @@ export const pl: Dictionary = {
 	'edition.label': 'Wydanie',
 	'edition.select': 'Wybierz wydanie',
 	'edition.current': 'Obecne wydanie',
+	'edition.filter': 'Szukaj wydań',
+	'menu.noMatches': 'Brak wyników',
 	'unitNav.previous': 'Poprzedni',
 	'unitNav.next': 'Następny',
 	'bible.prevChapter': 'Poprzedni rozdział',
@@ -120,8 +131,11 @@ export const pl: Dictionary = {
 	'ccc.nextParagraph': 'Następny akapit',
 	'ccc.inBrief': 'W skrócie',
 	'ccc.landing.title': 'Katechizm Kościoła Katolickiego',
+	'ccc.landing.pairTitle': 'Katechizm i Kompendium',
 	'ccc.landing.tagline':
 		'<strong>Katechizm</strong> wykłada naukę katolicką w 2865 numerowanych punktach. <strong>Kompendium</strong> przedstawia tę samą naukę w 598 pytaniach i odpowiedziach, według tego samego układu.',
+	'ccc.landing.pairTagline':
+		'Katechizm Kościoła Katolickiego w 2865 punktach i jego Kompendium w 598 pytaniach.',
 	'ccc.tableOfContents': 'Spis treści',
 	'ccc.related': 'Zobacz także',
 	'compendium.landing.title': 'Kompendium Katechizmu',
@@ -161,11 +175,13 @@ export const pl: Dictionary = {
 	'summa.noEditionInYourLanguage': 'Suma nie ma wydania w Twoim języku. Pokazana w języku: {lang}.',
 	'summa.noLatinSupplement':
 		'Suplement istnieje tylko po angielsku — zestawiono go po śmierci Akwinaty.',
+	'index.division': 'Podział',
 	'index.showSubsections': 'Pokaż podrozdziały',
 	'index.hideSubsections': 'Ukryj podrozdziały',
 	'prayers.landing.title': 'Modlitwy codzienne',
 	'prayers.landing.tagline': 'Modlitwy z tekstem łacińskim obok.',
 	'prayers.tableOfContents': 'Spis treści',
+	'prayers.seeAlso': 'Zobacz także',
 	'prayers.prevPrayer': 'Poprzednia modlitwa',
 	'prayers.nextPrayer': 'Następna modlitwa',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -187,6 +203,7 @@ export const pl: Dictionary = {
 	'anchor.copyLink': 'Kopiuj odnośnik',
 	'anchor.view': 'Pokaż',
 	'anchor.copied': 'Skopiowano',
+	'anchor.copyFailed': 'Nie udało się skopiować',
 	'bookmark.add': 'Zapisz',
 	'bookmark.remove': 'Usuń zakładkę',
 	'bookmark.library': 'Zakładki',
@@ -219,6 +236,11 @@ export const pl: Dictionary = {
 	'document.kind.apostolicExhortation': 'Adhortacja apostolska',
 	'document.kind.apostolicConstitution': 'Konstytucja apostolska',
 	'document.kind.cdfDeclaration': 'Deklaracja KNW',
+	'document.kind.cdfInstruction': 'Instrukcja KNW',
+	'document.kind.cdfLetter': 'List KNW',
+	'document.kind.cdfDoctrinalNote': 'Nota doktrynalna KNW',
+	'document.kind.cdfResponsum': 'Responsum KNW',
+	'document.kind.cdfConsiderations': 'Rozważania KNW',
 	'document.kindPlural.conciliarConstitution': 'Konstytucje',
 	'document.kindPlural.conciliarDecree': 'Dekrety',
 	'document.kindPlural.conciliarDeclaration': 'Deklaracje',
@@ -272,6 +294,8 @@ export const pl: Dictionary = {
 	'plates.scansBy': 'Skany udostępnione przez',
 	'plates.enlarge': 'Powiększ {title}',
 	'plates.zoom': 'Powiększenie',
+	'art.about': 'O tym obrazie',
+	'art.detail': 'fragment',
 	'colophon.typeTitle': 'Krój pisma',
 	'colophon.typeBody':
 		'Złożono krojem EB Garamond, odnowieniem przez Georga Duffnera i Octavia Parda czcionek, które Claude Garamont wyciął w latach dziewięćdziesiątych XVI wieku — tradycji humanistycznej, w której Kościół drukuje od czasów renesansu. Jego cyrylica wyszła spod tych samych rąk, ale niczego nie wskrzesza: cyrylickiego Garamonda nigdy nie wycięto, więc rosyjski składany jest formą narysowaną tak, by stanęła obok reszty.',
@@ -291,7 +315,10 @@ export const pl: Dictionary = {
 	'ccc.readFullChapter': 'Czytaj cały rozdział',
 	'ccc.noParagraphNumber': 'Brak numeru akapitu w tym korpusie',
 	'copyright.sourceTitle': 'Otwórz pierwotną stronę źródłową',
+	'copyright.sourceLabel': 'Źródło',
 	'lang.label': 'Język',
+	'lang.filter': 'Szukaj języków',
+	'lang.more': 'więcej języków',
 	'notFound.title': 'Pod tym adresem nic nie ma',
 	'notFound.lede': 'Strony, o którą prosiłeś, tutaj nie ma.',
 	'notFound.body':

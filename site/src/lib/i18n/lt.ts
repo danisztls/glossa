@@ -23,6 +23,12 @@
  * rather than descriptive. Deleting a doubtful line is a valid fix — English
  * fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -54,14 +60,48 @@ export const lt: Dictionary = {
 	'nav.summa': 'Suma',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Skaityti toliau',
+	'home.tagline':
+		'Svetainė Šventajam Raštui, Katekizmui ir Magisteriumo dokumentams skaityti — nemokamai, veikia ir be interneto, ir niekur nereikia registruotis.',
+	'home.doors.heading': 'Kur eiti',
+	'home.find.heading': 'Arba įrašykite nuorodą',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mokytis',
 	'library.landing.tagline':
 		'Visas rinkinys, lentyna po lentynos — su tuo, kur baigėte skaityti, ir tuo, ką pažymėjote.',
+	'jumpbox.placeholder': 'Pereiti prie… (pvz. jn 3,16, ccc 1234)',
+	'jumpbox.short': 'Ieškoti',
+	'jumpbox.hint': 'Paspauskite / arba Ctrl+K, kad pereitumėte prie nuorodos',
+	'jumpbox.noMatch': 'Nieko nerasta',
+	'jumpbox.suggestions': 'Pasiūlymai',
+	'settings.label': 'Nuostatos',
+	'darkMode.label': 'Tamsi veiksena',
+	'darkMode.auto': 'Auto',
+	'darkMode.on': 'Įjungta',
+	'darkMode.off': 'Išjungta',
+	'loadFailed.title': 'Tai neįsikėlė',
+	'loadFailed.hint':
+		'Puslapis yra — kažkas nepavyko jį parsiunčiant. Pabandžius dar kartą paprastai pavyksta.',
+	'loadFailed.retry': 'Bandyti dar kartą',
+	'loadFailed.retrying': 'Bandoma…',
+	'fontSize.label': 'Teksto dydis',
+	'fontSize.larger': 'Didesnis tekstas',
+	'fontSize.smaller': 'Mažesnis tekstas',
+	'print.label': 'Spausdinti šį puslapį',
+	'toTop.label': 'Atgal į viršų',
+	'edition.label': 'Leidimas',
+	'edition.select': 'Pasirinkti leidimą',
+	'edition.current': 'Dabartinis leidimas',
+	'edition.filter': 'Ieškoti leidimų',
+	'menu.noMatches': 'Atitikmenų nėra',
 	'unitNav.previous': 'Ankstesnis',
 	'unitNav.next': 'Kitas',
+	'bible.prevChapter': 'Ankstesnis skyrius',
+	'bible.nextChapter': 'Kitas skyrius',
+	'bible.pickBook': 'Knygos ir skyriai',
 	'bible.landing.title': 'Šventasis Raštas',
 	'bible.landing.tagline': 'Skaitykite visą Šventąjį Raštą – knyga po knygos, skyrius po skyriaus.',
+	'bible.landing.books': 'Knygos',
+	'bible.introduction': 'Įvadas',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': 'Penkiaknygė',
@@ -74,16 +114,39 @@ export const lt: Dictionary = {
 	'bible.group.catholicLetters': 'Katalikiškieji laiškai',
 	'bible.group.revelation': 'Apreiškimas Jonui',
 	'ccc.landing.title': 'Katalikų Bažnyčios katekizmas',
+	'ccc.landing.pairTitle': 'Katekizmas ir Santrauka',
 	'ccc.landing.tagline':
 		'<strong>Katekizmas</strong> išdėsto katalikų tikėjimo mokymą 2 865 numeruotuose punktuose. <strong>Santrauka</strong> pagal tą patį planą pateikia tą patį mokymą 598 klausimais ir atsakymais.',
+	'ccc.landing.pairTagline':
+		'Katalikų Bažnyčios katekizmas 2865 numeriuose ir jo Santrauka 598 klausimuose.',
+	'ccc.abbrev': 'KBK',
+	'compendium.abbrev': 'Santr.',
 	'document.library.tagline':
 		'Enciklikos, Susirinkimo konstitucijos, dekretai ir Magisteriumo deklaracijos.',
 	'doctores.landing.title': 'Bažnyčios mokytojai',
 	'doctores.landing.tagline': 'Bažnyčios tėvų ir mokytojų teologiniai veikalai.',
 	'summa.landing.title': 'Teologijos suma',
 	'summa.landing.tagline': 'Tomas Akvinietis – angliškai ir ta lotynų kalba, kuria jis rašė.',
+	'index.division': 'Dalis',
 	'prayers.landing.title': 'Bendrosios maldos',
 	'prayers.landing.tagline': 'Maldos su greta pateiktu lotynišku tekstu.',
+	'prayers.seeAlso': 'Taip pat žiūrėkite',
+	'anchor.actions': 'Veiksmai su nuoroda',
+	'anchor.copy': 'Kopijuoti tekstą',
+	'anchor.copyLink': 'Kopijuoti saitą',
+	'anchor.view': 'Peržiūrėti',
+	'anchor.copied': 'Nukopijuota',
+	'anchor.copyFailed': 'Nepavyko nukopijuoti',
+	'bookmark.add': 'Pažymėti',
+	'bookmark.remove': 'Pašalinti žymelę',
+	'bookmark.library': 'Žymelės',
+	'bookmark.library.tagline': 'Visa, ką pažymėjote skaitydami.',
+	'bookmark.empty': 'Kol kas nieko nepažymėta.',
+	'bookmark.emptyHint':
+		'Spustelėkite eilutės ar pastraipos numerį ir pasirinkite Pažymėti arba pasinaudokite puslapio žymelės mygtuku.',
+	'bookmark.deviceOnly':
+		'Žymelės laikomos tik šioje naršyklėje. Jos niekur nesiunčiamos, o išvalius naršyklės duomenis dingsta.',
+	'bookmark.unavailable': 'Nėra tame leidime, kurį skaitote',
 	'colophon.title': 'Kolofonas',
 	'colophon.lede':
 		'Kas yra ši svetainė, iš kur ateina jos tekstai ir kokios laikomės nuostatos juos perspausdindami.',
@@ -126,11 +189,18 @@ export const lt: Dictionary = {
 		'Kaip rodo žemiau nurodytos datos, jos yra viešojoje srityje, o tiksli viešosios srities graviūros fotografinė reprodukcija savaime nesukuria naujų autorių teisių.',
 	'colophon.countPlates': 'graviūros',
 	'colophon.countPlateChapters': 'iliustruoti skyriai',
+	'art.about': 'Apie šį paveikslą',
+	'art.detail': 'fragmentas',
 	'colophon.typeTitle': 'Šriftas',
 	'colophon.typeBody':
 		'Rinkta EB Garamond šriftu – Georgo Duffnerio ir Octavio Pardo atgaivintais raižiniais, kuriuos Claude’as Garamont’as išraižė XVI a. paskutiniame dešimtmetyje; tai humanistinė tradicija, kuria Bažnyčia spausdina nuo Renesanso. Jo kirilica yra tų pačių rankų darbas, bet nieko neatgaivina: kirilinis Garamond niekada nebuvo išraižytas, todėl rusiškas tekstas rinktas formomis, nupieštomis taip, kad derėtų prie viso kito.',
 	'colophon.typeArabic':
 		'Arabų raštas jam visiškai nepasiekiamas, todėl rinktas Amiri šriftu – Khaledo Hosny atgaivintu naschi raižiniu, sukurtu Kairo Bulako spaustuvei 1905 m., pasirinktu dėl tos pačios priežasties kaip ir pagrindinis šriftas: tai konkretus istorinis knygos šriftas, o ne šiuolaikinis piešinys.',
 	'colophon.typeInitials':
-		'Pradžios inicialai – Pirata One, gotikinis šriftas, kurio didžiosios raidės išlieka įskaitomos tokio dydžio, kokio reikalauja inicialas, o rusiškam tekstui – Ponomar, atkuriantis Sinodo spaustuvės bažnytinės slavų kalbos šriftą. Ponomar renka tik inicialą ir niekada teksto: moderni enciklika, ištisai surinkta Sinodo šriftu, pasakytų apie save netiesą. Visi jie licencijuoti pagal SIL Open Font License ir pateikiami iš šios svetainės, o ne iš trečiosios šalies, tad puslapio skaitymas nieko neprašo iš svetimo serverio.'
+		'Pradžios inicialai – Pirata One, gotikinis šriftas, kurio didžiosios raidės išlieka įskaitomos tokio dydžio, kokio reikalauja inicialas, o rusiškam tekstui – Ponomar, atkuriantis Sinodo spaustuvės bažnytinės slavų kalbos šriftą. Ponomar renka tik inicialą ir niekada teksto: moderni enciklika, ištisai surinkta Sinodo šriftu, pasakytų apie save netiesą. Visi jie licencijuoti pagal SIL Open Font License ir pateikiami iš šios svetainės, o ne iš trečiosios šalies, tad puslapio skaitymas nieko neprašo iš svetimo serverio.',
+	'copyright.sourceTitle': 'Atverti pirminį šaltinio puslapį',
+	'copyright.sourceLabel': 'Šaltinis',
+	'lang.label': 'Kalba',
+	'lang.filter': 'Ieškoti kalbų',
+	'lang.more': 'daugiau kalbų'
 };

@@ -34,6 +34,12 @@
  * operative rather than descriptive. Deleting a doubtful line is a valid fix —
  * English fills the gap per key.
  *
+ * THE READER-FACING CONTROLS ARRIVED 2026-09-06 -- the jump box, settings,
+ * dark mode, text size, the edition and language pickers, chapter navigation
+ * and bookmarks. This file was the shelf titles and the colophon until then,
+ * so its reader met their own language around an English interface. Same
+ * caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -63,13 +69,46 @@ export const zht: Dictionary = {
 	'nav.summa': '神學大全',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': '繼續閱讀',
+	'home.tagline':
+		'閱讀聖經、《天主教教理》及訓導文獻的網站——免費，離線亦可使用，無須註冊任何東西。',
+	'home.doors.heading': '何處可去',
+	'home.find.heading': '或鍵入一處引文',
 	'nav.library': '書庫',
 	'nav.learn': '學習',
 	'library.landing.tagline': '全部書目，一架一架——連同你讀到的地方和你標記的內容。',
+	'jumpbox.placeholder': '前往…（例：若 3:16、ccc 1234）',
+	'jumpbox.short': '搜尋',
+	'jumpbox.hint': '按 / 或 Ctrl+K 跳至引處',
+	'jumpbox.noMatch': '無相符者',
+	'jumpbox.suggestions': '建議',
+	'settings.label': '設定',
+	'darkMode.label': '深色模式',
+	'darkMode.auto': '自動',
+	'darkMode.on': '開',
+	'darkMode.off': '關',
+	'loadFailed.title': '這未能載入',
+	'loadFailed.hint': '該頁面是存在的——只是取回時出了差錯。再試一次通常即可。',
+	'loadFailed.retry': '再試一次',
+	'loadFailed.retrying': '正在嘗試…',
+	'fontSize.label': '字級',
+	'fontSize.larger': '更大的字',
+	'fontSize.smaller': '更小的字',
+	'print.label': '列印本頁',
+	'toTop.label': '回到頂端',
+	'edition.label': '版本',
+	'edition.select': '選擇版本',
+	'edition.current': '目前版本',
+	'edition.filter': '搜尋版本',
+	'menu.noMatches': '無相符項',
 	'unitNav.previous': '上一個',
 	'unitNav.next': '下一個',
+	'bible.prevChapter': '上一章',
+	'bible.nextChapter': '下一章',
+	'bible.pickBook': '書卷與章',
 	'bible.landing.title': '聖經',
 	'bible.landing.tagline': '通讀全部聖經，一卷一卷，一章一章。',
+	'bible.landing.books': '書卷',
+	'bible.introduction': '導言',
 	// All nine, because `bible-groups.test.ts` requires the set to be
 	// complete in every interface language rather than partial.
 	'bible.group.pentateuch': '梅瑟五書',
@@ -82,15 +121,36 @@ export const zht: Dictionary = {
 	'bible.group.catholicLetters': '公函',
 	'bible.group.revelation': '默示錄',
 	'ccc.landing.title': '天主教教理',
+	'ccc.landing.pairTitle': '教理與簡編',
 	'ccc.landing.tagline':
 		'<strong>《教理》</strong>以 2,865 個編號段落闡述天主教教義。<strong>《簡編》</strong>依同一綱目，以 598 個問答重述同一教義。',
+	'ccc.landing.pairTagline': '《天主教教理》共 2,865 條，其《簡編》共 598 問。',
+	'ccc.abbrev': '教理',
+	'compendium.abbrev': '簡編',
 	'document.library.tagline': '通諭、大公會議憲章、法令，以及訓導權的宣言。',
 	'doctores.landing.title': '教會聖師',
 	'doctores.landing.tagline': '教會教父與聖師的神學著作。',
 	'summa.landing.title': '神學大全',
 	'summa.landing.tagline': '多瑪斯·阿奎那，英文本與他所寫的拉丁文本。',
+	'index.division': '分部',
 	'prayers.landing.title': '常用祈禱經文',
 	'prayers.landing.tagline': '祈禱經文並列拉丁文本。',
+	'prayers.seeAlso': '另見',
+	'anchor.actions': '對該引處的操作',
+	'anchor.copy': '複製文本',
+	'anchor.copyLink': '複製連結',
+	'anchor.view': '檢視',
+	'anchor.copied': '已複製',
+	'anchor.copyFailed': '無法複製',
+	'bookmark.add': '加書籤',
+	'bookmark.remove': '移除書籤',
+	'bookmark.library': '書籤',
+	'bookmark.library.tagline': '您在閱讀時標記過的一切。',
+	'bookmark.empty': '尚未標記任何內容。',
+	'bookmark.emptyHint': '點選節或段的號碼並選擇「加書籤」，或使用頁面上的書籤按鈕。',
+	'bookmark.deviceOnly':
+		'書籤只保存在此瀏覽器中。它們不會被送往任何地方，清除瀏覽器資料即會將其刪除。',
+	'bookmark.unavailable': '您所讀的版本中沒有',
 	'colophon.title': '版本說明',
 	'colophon.lede': '本站是什麼，文本從何而來，以及我們對複製這些文本的立場。',
 	'colophon.whatThisIs': '本站是什麼',
@@ -128,11 +188,18 @@ export const zht: Dictionary = {
 		'如下方年份所示，它們皆屬公有領域；忠實拍攝公有領域版畫所得的複製品，本身不產生新的版權。',
 	'colophon.countPlates': '幅版畫',
 	'colophon.countPlateChapters': '章附有插圖',
+	'art.about': '關於這幅圖畫',
+	'art.detail': '局部',
 	'colophon.typeTitle': '字體',
 	'colophon.typeBody':
 		'以 EB Garamond 排印，這是 Georg Duffner 與 Octavio Pardo 對克洛德·加拉蒙於一五九〇年代所刻字體的復刻——教會自文藝復興以來即以此人文主義傳統付印。其西里爾字母出自同一雙手，卻未復刻任何東西：從未有人刻過西里爾文的加拉蒙體，因此俄文所用的是為與其餘字體並立而繪的形體。',
 	'colophon.typeArabic':
 		'阿拉伯文全然超出其範圍，改以 Amiri 排印——這是 Khaled Hosny 對一九〇五年為開羅布拉克印刷所所刻納斯赫體的復刻，選用的理由與正文字體相同：取一種特定的歷史書籍字體，而非當代的新繪。',
 	'colophon.typeInitials':
-		'開頭的首字母為 Pirata One，一種哥德體，其大寫字母在首字母所需的尺寸下仍然易讀；俄文則用 Ponomar，重現聖議會印刷所的教會斯拉夫字體。Ponomar 只排首字母，絕不排正文：一份現代通諭若通篇以聖議會字體排印，便會就其本質說出不實之言。以上皆依 SIL Open Font License 授權，並自本站提供而非取自第三方，因此閱讀一個頁面不向他人的伺服器索求任何東西。'
+		'開頭的首字母為 Pirata One，一種哥德體，其大寫字母在首字母所需的尺寸下仍然易讀；俄文則用 Ponomar，重現聖議會印刷所的教會斯拉夫字體。Ponomar 只排首字母，絕不排正文：一份現代通諭若通篇以聖議會字體排印，便會就其本質說出不實之言。以上皆依 SIL Open Font License 授權，並自本站提供而非取自第三方，因此閱讀一個頁面不向他人的伺服器索求任何東西。',
+	'copyright.sourceTitle': '開啟原始來源頁面',
+	'copyright.sourceLabel': '來源',
+	'lang.label': '語言',
+	'lang.filter': '搜尋語言',
+	'lang.more': '更多語言'
 };

@@ -42,6 +42,10 @@
  * `t()` falls back to English per key, DELETING a doubtful line is also a
  * valid fix and strictly better than leaving a wrong one standing.
  *
+ * THE REFERENCE MENU AND THE LANGUAGE PICKER ARRIVED 2026-09-06, with the
+ * bookmark panel's own hints -- this file had the settings and the jump box
+ * already. Same caveat as everything above: not read by a native speaker.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -73,6 +77,10 @@ export const mg: Dictionary = {
 	'nav.summa': 'Somà',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Manohy mamaky',
+	'home.tagline':
+		'Tranonkala famakiana ny Soratra Masina, ny Katesizy ary ny antontan-taratasin’ny Fampianarana Ofisialy — maimaim-poana, mandeha na tsy misy fifandraisana aza, ary tsy misy hisoratana anarana.',
+	'home.doors.heading': 'Aiza no handeha',
+	'home.find.heading': 'Na soraty ny fanondroana',
 	'nav.library': 'Tranomboky',
 	'nav.learn': 'Mianara',
 	'library.landing.tagline':
@@ -87,6 +95,11 @@ export const mg: Dictionary = {
 	'darkMode.auto': 'Auto',
 	'darkMode.on': 'Mandeha',
 	'darkMode.off': 'Mijanona',
+	'loadFailed.title': 'Tsy tafiditra izany',
+	'loadFailed.hint':
+		'Misy ilay pejy — nisy tsy nety teo am-pakana azy. Matetika dia mety ny manandrana indray.',
+	'loadFailed.retry': 'Andramo indray',
+	'loadFailed.retrying': 'Manandrana…',
 	'fontSize.label': 'Haben’ny soratra',
 	'fontSize.larger': 'Soratra lehibe kokoa',
 	'fontSize.smaller': 'Soratra kely kokoa',
@@ -95,6 +108,8 @@ export const mg: Dictionary = {
 	'edition.label': 'Famoahana',
 	'edition.select': 'Safidio ny famoahana',
 	'edition.current': 'Famoahana ampiasaina',
+	'edition.filter': 'Hitady famoahana',
+	'menu.noMatches': 'Tsy misy mifanaraka',
 	'unitNav.previous': 'Teo aloha',
 	'unitNav.next': 'Manaraka',
 	'bible.prevChapter': 'Toko teo aloha',
@@ -118,11 +133,21 @@ export const mg: Dictionary = {
 	'bible.group.revelation': 'Apôkalipsy',
 	'ccc.abbrev': 'CCC',
 	'ccc.landing.title': 'Katesizin’ny Fiangonana Katôlika',
+	'ccc.landing.pairTitle': 'Katesizy sy Famintinana',
 	'ccc.landing.tagline':
 		'<strong>Ny Katesizy</strong> dia mametra ny fampianarana katôlika amin’ny andalana misy laharana 2.865. <strong>Ny Famintinana</strong> dia mamerina izany fampianarana izany amin’ny fanontaniana sy valiny 598, araka izany filaharana izany ihany.',
+	'ccc.landing.pairTagline':
+		'Ny Katesizin’ny Fiangonana Katôlika amin’ny andalana 2.865, ary ny Famintinana azy amin’ny fanontaniana 598.',
 	'compendium.abbrev': 'Famint.',
 	'prayers.landing.title': 'Vavaka Fahazarana',
 	'prayers.landing.tagline': 'Vavaka miaraka amin’ny soratra latina eo anilany.',
+	'prayers.seeAlso': 'Jereo koa',
+	'anchor.actions': 'Asa amin’ny fanondroana',
+	'anchor.copy': 'Adikao ny lahatsoratra',
+	'anchor.copyLink': 'Adikao ny rohy',
+	'anchor.view': 'Jereo',
+	'anchor.copied': 'Voadika',
+	'anchor.copyFailed': 'Tsy afaka nadika',
 	'document.library.tagline':
 		'Ensiklika, lalàm-panorenan’ny Konsily, didy ary fanambaran’ny Fampianaran’ny Fiangonana.',
 	'doctores.landing.title': 'Mpampianatra ny Fiangonana',
@@ -130,11 +155,17 @@ export const mg: Dictionary = {
 		'Ny asa ara-teôlôjian’ny Aban’ny Fiangonana sy ny Mpampianatra ny Fiangonana.',
 	'summa.landing.title': 'Somà Teôlôjika',
 	'summa.landing.tagline': 'Md Tomà Akinasy, amin’ny teny anglisy sy amin’ny latina nanoratany.',
+	'index.division': 'Fizarana',
 	'bookmark.add': 'Marihina',
 	'bookmark.remove': 'Esory ny marika',
 	'bookmark.library': 'Fanamarihana',
 	'bookmark.library.tagline': 'Izay rehetra nomarihinao teo am-pamakiana.',
 	'bookmark.empty': 'Mbola tsy misy nomarihina.',
+	'bookmark.emptyHint':
+		'Tsindrio ny laharan’ny andininy na ny andalana ka safidio ny “Marihina”, na ampiasao ny bokotra fanamarihana eo amin’ny pejy.',
+	'bookmark.deviceOnly':
+		'Ny fanamarihana dia mitoetra ao amin’ity navigateur ity ihany. Tsy alefa na aiza na aiza izy ireo, ary ny famafana ny angon-drakitry ny navigateur dia mamafa azy.',
+	'bookmark.unavailable': 'Tsy ao amin’ny famoahana vakianao',
 	'colophon.title': 'Kôlôfôna',
 	'colophon.lede':
 		'Ny amin’ity tranonkala ity, ny niavian’ny soratra ao aminy, ary ny toerana ijoroanay amin’ny famerenana azy ireo.',
@@ -178,11 +209,18 @@ export const mg: Dictionary = {
 		"An'ny besinimaro izy ireo, araka ny asehon'ireo daty etsy ambany, ary ny sary nalaina marina tamin'ny sary sokitra an'ny besinimaro dia tsy mitondra zon'ny mpamorona vaovao manokana.",
 	'colophon.countPlates': 'sary sokitra',
 	'colophon.countPlateChapters': 'toko misy sary',
+	'art.about': 'Momba ity sary ity',
+	'art.detail': 'ampahany',
 	'colophon.typeTitle': 'Ny endri-tsoratra',
 	'colophon.typeBody':
 		"Natonta tamin'ny EB Garamond, famelomana indray nataon'i Georg Duffner sy Octavio Pardo ireo endri-tsoratra nosokirin'i Claude Garamont tamin'ny taona 1590 — ilay fomban-drazana maha-olona izay anontan'ny Fiangonana hatramin'ny Renaissance. Ny sorany sirilika dia avy amin'ny tanana mitovy nefa tsy mamelona na inona na inona: tsy nisy Garamond sirilika nosokirina mihitsy, ka natonta tamin'ny endrika nosarina mba hipetraka eo akaikin'ny sisa ny teny rosiana.",
 	'colophon.typeArabic':
 		"Ny teny arabo dia lavitra tanteraka izany, ka natonta tamin'ny Amiri — famelomana indray nataon'i Khaled Hosny ilay naskh nosokirina ho an'ny fanontam-pirinty Bulaq tao Kairo tamin'ny 1905, nofidina noho ny antony mitovy amin'ny endri-tsoratry ny lahatsoratra: endri-tsoratra ara-tantara manokana fa tsy sary vaovao ankehitriny.",
 	'colophon.typeInitials':
-		"Ireo litera fanombohana dia Pirata One, endri-tsoratra gôtika izay mbola vakiana tsara ny litera lehibeny amin'ny habe ilain'ny litera voalohany, ary — ho an'ny teny rosiana — Ponomar, izay mamerina ny endri-tsoratra slavôna am-piangonana an'ny Fanontam-pirinty Sinôdaly. Ny Ponomar dia manonta ny litera voalohany fa tsy ny lahatsoratra mihitsy: ny ansiklika maoderina natonta manontolo tamin'ny endri-tsoratra sinôdaly dia hilaza zavatra tsy marina momba izay maha-izy azy. Samy nomena alalana amin'ny SIL Open Font License izy rehetra ary avy amin'ity tranonkala ity no anomezana azy fa tsy avy amin'ny hafa, ka ny famakiana pejy dia tsy mangataka na inona na inona amin'ny mpizara an'olon-kafa."
+		"Ireo litera fanombohana dia Pirata One, endri-tsoratra gôtika izay mbola vakiana tsara ny litera lehibeny amin'ny habe ilain'ny litera voalohany, ary — ho an'ny teny rosiana — Ponomar, izay mamerina ny endri-tsoratra slavôna am-piangonana an'ny Fanontam-pirinty Sinôdaly. Ny Ponomar dia manonta ny litera voalohany fa tsy ny lahatsoratra mihitsy: ny ansiklika maoderina natonta manontolo tamin'ny endri-tsoratra sinôdaly dia hilaza zavatra tsy marina momba izay maha-izy azy. Samy nomena alalana amin'ny SIL Open Font License izy rehetra ary avy amin'ity tranonkala ity no anomezana azy fa tsy avy amin'ny hafa, ka ny famakiana pejy dia tsy mangataka na inona na inona amin'ny mpizara an'olon-kafa.",
+	'copyright.sourceTitle': 'Sokafy ny pejy loharano tany am-boalohany',
+	'copyright.sourceLabel': 'Loharano',
+	'lang.label': 'Fiteny',
+	'lang.filter': 'Hitady fiteny',
+	'lang.more': 'fiteny hafa'
 };

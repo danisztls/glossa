@@ -33,6 +33,10 @@ export const sl: Dictionary = {
 	'nav.menu': 'Meni',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Nadaljujte branje',
+	'home.tagline':
+		'Bralno spletišče za Sveto pismo, katekizem in dokumente učiteljstva — brezplačno, deluje tudi brez povezave in nikamor se ni treba vpisati.',
+	'home.doors.heading': 'Kam naprej',
+	'home.find.heading': 'Ali vtipkajte navedbo',
 	'nav.library': 'Knjižnica',
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':
@@ -76,6 +80,11 @@ export const sl: Dictionary = {
 	'offline.hint':
 		'Sploh ne uporablja omrežja: nič se ne prenese, posodobitve se ne preverjajo, nič se ne meri. Odprejo se samo besedila, ki so že v tej napravi.',
 	'offline.notDownloaded': 'Ni v tej napravi',
+	'loadFailed.title': 'To se ni naložilo',
+	'loadFailed.hint':
+		'Stran obstaja — pri njenem pridobivanju je šlo nekaj narobe. Ponoven poskus običajno uspe.',
+	'loadFailed.retry': 'Poskusite znova',
+	'loadFailed.retrying': 'Poskus…',
 	'offline.turnOff': 'Izklopi način brez povezave',
 
 	'fontSize.label': 'Velikost besedila',
@@ -92,6 +101,8 @@ export const sl: Dictionary = {
 	'edition.label': 'Izdaja',
 	'edition.select': 'Izberite izdajo',
 	'edition.current': 'Trenutna izdaja',
+	'edition.filter': 'Iskanje izdaj',
+	'menu.noMatches': 'Ni zadetkov',
 	'unitNav.previous': 'Nazaj',
 	'unitNav.next': 'Naprej',
 	'bible.prevChapter': 'Prejšnje poglavje',
@@ -121,8 +132,11 @@ export const sl: Dictionary = {
 	'ccc.nextParagraph': 'Naslednji odstavek',
 	'ccc.inBrief': 'Na kratko',
 	'ccc.landing.title': 'Katekizem katoliške Cerkve',
+	'ccc.landing.pairTitle': 'Katekizem in Kompendij',
 	'ccc.landing.tagline':
 		'<strong>Katekizem</strong> predstavlja katoliški nauk v 2865 oštevilčenih členih. <strong>Kompendij</strong> isti nauk podaja v 598 vprašanjih in odgovorih, po isti razčlenitvi.',
+	'ccc.landing.pairTagline':
+		'Katekizem katoliške Cerkve v 2865 členih in njegov Kompendij v 598 vprašanjih.',
 	'ccc.tableOfContents': 'Kazalo',
 	'ccc.related': 'Glej tudi',
 	'compendium.landing.title': 'Kompendij katekizma',
@@ -162,11 +176,13 @@ export const sl: Dictionary = {
 		'Summa nima izdaje v vašem jeziku. Prikazana je izdaja v jeziku {lang}.',
 	'summa.noLatinSupplement':
 		'Supplementum obstaja samo v angleščini — sestavljen je bil po Tomaževi smrti.',
+	'index.division': 'Razdelitev',
 	'index.showSubsections': 'Pokaži podpoglavja',
 	'index.hideSubsections': 'Skrij podpoglavja',
 	'prayers.landing.title': 'Molitve',
 	'prayers.landing.tagline': 'Molitve z latinskim besedilom ob strani.',
 	'prayers.tableOfContents': 'Kazalo',
+	'prayers.seeAlso': 'Glej tudi',
 	'prayers.prevPrayer': 'Prejšnja molitev',
 	'prayers.nextPrayer': 'Naslednja molitev',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
@@ -221,6 +237,11 @@ export const sl: Dictionary = {
 	'document.kind.apostolicExhortation': 'Apostolska spodbuda',
 	'document.kind.apostolicConstitution': 'Apostolska konstitucija',
 	'document.kind.cdfDeclaration': 'Izjava Kongregacije za nauk vere',
+	'document.kind.cdfInstruction': 'Navodilo Kongregacije za nauk vere',
+	'document.kind.cdfLetter': 'Pismo Kongregacije za nauk vere',
+	'document.kind.cdfDoctrinalNote': 'Doktrinarna nota Kongregacije za nauk vere',
+	'document.kind.cdfResponsum': 'Responsum Kongregacije za nauk vere',
+	'document.kind.cdfConsiderations': 'Premisleki Kongregacije za nauk vere',
 	'document.kindPlural.conciliarConstitution': 'Konstitucije',
 	'document.kindPlural.conciliarDecree': 'Odloki',
 	'document.kindPlural.conciliarDeclaration': 'Izjave',
@@ -274,6 +295,8 @@ export const sl: Dictionary = {
 	'plates.scansBy': 'Skene je omogočil',
 	'plates.enlarge': 'Povečaj {title}',
 	'plates.zoom': 'Povečava',
+	'art.about': 'O tej sliki',
+	'art.detail': 'izsek',
 	'colophon.typeTitle': 'Črke',
 	'colophon.typeBody':
 		'Stavljeno v EB Garamond, obuditvi črk, ki jih je v devetdesetih letih 16. stoletja rezal Claude Garamont, izpod rok Georga Duffnerja in Octavia Parda — v humanistični tradiciji, v kateri Cerkev tiska že od renesanse. Njegova cirilica je izpod istih rok, a ne obuja ničesar: cirilskega Garamonda ni nikoli nihče rezal, zato je ruščina stavljena v obliki, narisani tako, da stoji ob boku ostalemu.',
@@ -294,6 +317,8 @@ export const sl: Dictionary = {
 	'copyright.sourceTitle': 'Odprite izvirno izvorno stran',
 	'copyright.sourceLabel': 'Vir',
 	'lang.label': 'Jezik',
+	'lang.filter': 'Iskanje jezikov',
+	'lang.more': 'več jezikov',
 	'notFound.title': 'Na tem naslovu ni ničesar',
 	'notFound.lede': 'Strani, ki ste jo zahtevali, ni tukaj.',
 	'notFound.body':

@@ -186,7 +186,9 @@
 		"nl": {
 			"nav.bible": "Bijbel",
 			"nav.ccc": "Catechismus",
+			"ccc.abbrev": "CKK",
 			"nav.compendium": "Compendium",
+			"compendium.abbrev": "Comp.",
 			"nav.magisterium": "Leergezag",
 			"nav.socialDoctrine": "Sociale leer",
 			"nav.canonLaw": "Kerkelijk recht",
@@ -197,7 +199,9 @@
 		"da": {
 			"nav.bible": "Bibelen",
 			"nav.ccc": "Katekismus",
+			"ccc.abbrev": "KKK",
 			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Læreembedet",
 			"nav.socialDoctrine": "Sociallære",
 			"nav.canonLaw": "Kanonisk ret",
@@ -208,7 +212,9 @@
 		"cs": {
 			"nav.bible": "Bible",
 			"nav.ccc": "Katechismus",
+			"ccc.abbrev": "KKC",
 			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Učitelský úřad",
 			"nav.socialDoctrine": "Sociální nauka",
 			"nav.canonLaw": "Kanonické právo",
@@ -219,7 +225,9 @@
 		"sk": {
 			"nav.bible": "Biblia",
 			"nav.ccc": "Katechizmus",
+			"ccc.abbrev": "KKC",
 			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Magistérium",
 			"nav.socialDoctrine": "Sociálna náuka",
 			"nav.canonLaw": "Kánonické právo",
@@ -230,7 +238,9 @@
 		"hr": {
 			"nav.bible": "Biblija",
 			"nav.ccc": "Katekizam",
+			"ccc.abbrev": "KKC",
 			"nav.compendium": "Kompendij",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Učiteljstvo",
 			"nav.socialDoctrine": "Socijalni nauk",
 			"nav.canonLaw": "Kanonsko pravo",
@@ -241,7 +251,9 @@
 		"fi": {
 			"nav.bible": "Raamattu",
 			"nav.ccc": "Katekismus",
+			"ccc.abbrev": "KKK",
 			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Opetusvirka",
 			"nav.socialDoctrine": "Sosiaalioppi",
 			"nav.canonLaw": "Kanoninen oikeus",
@@ -252,7 +264,9 @@
 		"lv": {
 			"nav.bible": "Bībele",
 			"nav.ccc": "Katehisms",
+			"ccc.abbrev": "KBK",
 			"nav.compendium": "Kompendijs",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Maģistērijs",
 			"nav.socialDoctrine": "Sociālā mācība",
 			"nav.canonLaw": "Kanoniskās tiesības",
@@ -263,7 +277,9 @@
 		"sw": {
 			"nav.bible": "Biblia",
 			"nav.ccc": "Katekisimu",
+			"ccc.abbrev": "KKK",
 			"nav.compendium": "Muhtasari",
+			"compendium.abbrev": "Muht.",
 			"nav.magisterium": "Mafundisho ya Kanisa",
 			"nav.socialDoctrine": "Mafundisho ya kijamii",
 			"nav.canonLaw": "Sheria za Kanoni",
@@ -274,7 +290,9 @@
 		"vi": {
 			"nav.bible": "Kinh Thánh",
 			"nav.ccc": "Giáo lý",
+			"ccc.abbrev": "GLHTCG",
 			"nav.compendium": "Bản Toát yếu",
+			"compendium.abbrev": "Toát yếu",
 			"nav.magisterium": "Huấn quyền",
 			"nav.socialDoctrine": "Học thuyết xã hội",
 			"nav.canonLaw": "Giáo luật",
@@ -285,7 +303,9 @@
 		"be": {
 			"nav.bible": "Біблія",
 			"nav.ccc": "Катэхізіс",
+			"ccc.abbrev": "ККК",
 			"nav.compendium": "Кампендыум",
+			"compendium.abbrev": "Камп.",
 			"nav.magisterium": "Настаўніцтва Касцёла",
 			"nav.socialDoctrine": "Сацыяльнае вучэнне",
 			"nav.canonLaw": "Кананічнае права",
@@ -296,7 +316,9 @@
 		"lt": {
 			"nav.bible": "Šventasis Raštas",
 			"nav.ccc": "Katekizmas",
+			"ccc.abbrev": "KBK",
 			"nav.compendium": "Santrauka",
+			"compendium.abbrev": "Santr.",
 			"nav.magisterium": "Magisteriumas",
 			"nav.socialDoctrine": "Socialinis mokymas",
 			"nav.canonLaw": "Kanonų teisė",
@@ -307,7 +329,9 @@
 		"sq": {
 			"nav.bible": "Bibla",
 			"nav.ccc": "Katekizmi",
+			"ccc.abbrev": "KKK",
 			"nav.compendium": "Përmbledhja",
+			"compendium.abbrev": "Përmbl.",
 			"nav.magisterium": "Magjisteri",
 			"nav.socialDoctrine": "Doktrina shoqërore",
 			"nav.canonLaw": "E drejta kanonike",
@@ -318,7 +342,9 @@
 		"tl": {
 			"nav.bible": "Bibliya",
 			"nav.ccc": "Katesismo",
+			"ccc.abbrev": "KSK",
 			"nav.compendium": "Kompendyo",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Magisterium",
 			"nav.socialDoctrine": "Aral panlipunan",
 			"nav.canonLaw": "Batas Kanoniko",
@@ -329,7 +355,9 @@
 		"id": {
 			"nav.bible": "Alkitab",
 			"nav.ccc": "Katekismus",
+			"ccc.abbrev": "KGK",
 			"nav.compendium": "Kompendium",
+			"compendium.abbrev": "Komp.",
 			"nav.magisterium": "Magisterium",
 			"nav.socialDoctrine": "Ajaran sosial",
 			"nav.canonLaw": "Hukum Kanonik",
@@ -340,7 +368,9 @@
 		"ig": {
 			"nav.bible": "Baịbụl",
 			"nav.ccc": "Katakizim",
+			"ccc.abbrev": "KCK",
 			"nav.compendium": "Nchịkọta",
+			"compendium.abbrev": "Nchịk.",
 			"nav.magisterium": "Nkuzi Chọọchị",
 			"nav.socialDoctrine": "Ozizi mmekọrịta",
 			"nav.canonLaw": "Iwu Kanọn",
@@ -351,7 +381,9 @@
 		"uk": {
 			"nav.bible": "Біблія",
 			"nav.ccc": "Катехизм",
+			"ccc.abbrev": "ККЦ",
 			"nav.compendium": "Компендіум",
+			"compendium.abbrev": "Комп.",
 			"nav.magisterium": "Учительство Церкви",
 			"nav.socialDoctrine": "Соціальне вчення",
 			"nav.canonLaw": "Канонічне право",
@@ -362,7 +394,9 @@
 		"zh": {
 			"nav.bible": "圣经",
 			"nav.ccc": "教理",
+			"ccc.abbrev": "教理",
 			"nav.compendium": "简编",
+			"compendium.abbrev": "简编",
 			"nav.magisterium": "训导权",
 			"nav.socialDoctrine": "社会训导",
 			"nav.canonLaw": "教会法",
@@ -373,7 +407,9 @@
 		"zht": {
 			"nav.bible": "聖經",
 			"nav.ccc": "教理",
+			"ccc.abbrev": "教理",
 			"nav.compendium": "簡編",
+			"compendium.abbrev": "簡編",
 			"nav.magisterium": "訓導權",
 			"nav.socialDoctrine": "社會訓導",
 			"nav.canonLaw": "教會法",
@@ -384,7 +420,9 @@
 		"ko": {
 			"nav.bible": "성경",
 			"nav.ccc": "교리서",
+			"ccc.abbrev": "교리서",
 			"nav.compendium": "요약",
+			"compendium.abbrev": "요약",
 			"nav.magisterium": "교도권",
 			"nav.socialDoctrine": "사회교리",
 			"nav.canonLaw": "교회법",
@@ -395,7 +433,9 @@
 		"ml": {
 			"nav.bible": "ബൈബിൾ",
 			"nav.ccc": "മതബോധനം",
+			"ccc.abbrev": "മതബോധനം",
 			"nav.compendium": "സംഗ്രഹം",
+			"compendium.abbrev": "സംഗ്രഹം",
 			"nav.magisterium": "സഭയുടെ പ്രബോധനാധികാരം",
 			"nav.socialDoctrine": "സാമൂഹിക പ്രബോധനം",
 			"nav.canonLaw": "കാനൻ നിയമം",
@@ -406,7 +446,9 @@
 		"hi": {
 			"nav.bible": "बाइबिल",
 			"nav.ccc": "धर्मशिक्षा",
+			"ccc.abbrev": "धर्मशिक्षा",
 			"nav.compendium": "संक्षेप",
+			"compendium.abbrev": "संक्षेप",
 			"nav.magisterium": "कलीसिया का शिक्षण",
 			"nav.socialDoctrine": "सामाजिक शिक्षा",
 			"nav.canonLaw": "कैनन विधि",
@@ -430,7 +472,9 @@
 		"he": {
 			"nav.bible": "כתבי הקודש",
 			"nav.ccc": "קטכיזם",
+			"ccc.abbrev": "קק״כ",
 			"nav.compendium": "תקציר",
+			"compendium.abbrev": "תמצית",
 			"nav.magisterium": "המגיסטריום",
 			"nav.socialDoctrine": "תורה חברתית",
 			"nav.canonLaw": "משפט קנוני",
