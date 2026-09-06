@@ -724,10 +724,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Library's shelves and the home page's doors reuse the key each destination is
   already titled and described by, the same rule `route-titles.mjs` follows for
   the `<head>`. Adding a shelf should add no dictionary key; if it does, check
-  whether the destination page really has no tagline. The exception is
-  `ccc.landing.pairTitle` — the Learn shelf names the Catechism and its
-  Compendium as ONE card, and no other surface wants that name (`/schola` lists
-  the two separately, the `<head>` titles `/catechismus` after the Catechism).
+  whether the destination page really has no tagline. The exceptions are
+  `ccc.landing.pairTitle` and `ccc.landing.pairTagline` — one card names the
+  Catechism and its Compendium as ONE work and no other surface wants either
+  string (`/schola` lists the two separately, and `/catechismus`'s own tagline
+  is two sentences, which is a masthead's length and six lines in a card).
   English-only, falling back key by key.
 - **`/bibliotheca`'s shelves ARE the home page's `.door` grid** (2026-09-06),
   cards across rather than blocks down a 72rem column, each one anchor with
@@ -736,6 +737,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   rows and exactly one did, and that one shelf was what kept the card from
   being an anchor (an `<a>` inside an `<a>`). The `<h3>` lives INSIDE the
   anchor, which is valid and is what keeps seven named things in the outline.
+  Every card is the height of the tallest (`grid-auto-rows: 1fr`), so a long
+  tagline costs the whole grid — which is why the Catechism pair has a short
+  one. **The painting is below the last card, not above the title**: a reader
+  arriving at a catalogue wants the catalogue, and it is decoration there
+  rather than the page's subject.
 - **There is no Learn shelf, and the Summa has no row** (2026-09-06). The
   Catechism and its Compendium are one card (`/catechismus` indexes both);
   the Compendium of the Social Doctrine is its own. The taxonomy argument that

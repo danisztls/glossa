@@ -457,6 +457,19 @@ export const en: Dictionary = {
 	// because thirteen translations do not share English word order.
 	'ccc.landing.tagline':
 		'<strong>The Catechism</strong> sets out Catholic doctrine in 2,865 numbered paragraphs. <strong>The Compendium</strong> restates the same doctrine as 598 questions and answers, on the same outline.',
+	// THE SAME TWO FACTS IN ONE CLAUSE, for the card `ccc.landing.pairTitle`
+	// names. A masthead's tagline has the width of the page and two sentences
+	// with two names in bold read as a masthead; in a 16rem card they were six
+	// lines against its neighbours' three, and a grid whose rows are all the
+	// height of the tallest card pays for that six times over. The names go
+	// because the card is already titled with both.
+	//
+	// English only, on `pairTitle`'s terms and for its reason: it exists for
+	// the one surface that names the pair, and a reader in another language
+	// gets a card that is English throughout rather than an English title over
+	// a translated sentence about two works it has stopped naming.
+	'ccc.landing.pairTagline':
+		'Catholic doctrine in 2,865 numbered paragraphs, and the same doctrine as 598 questions and answers.',
 	'ccc.tableOfContents': 'Table of Contents',
 	'ccc.related': 'See also',
 

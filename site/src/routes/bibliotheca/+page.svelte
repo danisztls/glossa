@@ -29,11 +29,19 @@
 	 *
 	 * ## A catalogue, and one card that is not a work
 	 *
-	 * The last card is Bookmarks — `bookmarkGroup`'s counts in `/signata`'s own
-	 * section order, over a link to it. It sits IN the shelf grid rather than
-	 * above it because it is the same object at that size: a name, a mark, and
-	 * a way in. What tells it apart is that it is the only card whose subtitle
-	 * is a row of numbers.
+	 * The last card is Bookmarks, over a link to `/signata`. It sits IN the
+	 * shelf grid rather than above it because it is the same object at that
+	 * size: a name, a mark, a sentence, and a way in — and nothing about it
+	 * needs to look different, since the thing that tells it apart is that it
+	 * is the reader's own shelf and the sentence says so.
+	 *
+	 * IT CARRIED A ROW OF COUNTS UNTIL 2026-09-06, one chip per section of
+	 * `/signata` in that page's order, on the argument that the shape of what
+	 * you have marked says more than a total about whether it is worth
+	 * opening. It says that to the person who wrote it. On the page it was
+	 * `1 1` — bare numbers with nothing naming what they counted, in the slot
+	 * where every other card has a sentence, so the one card a reader could
+	 * not read was the one about their own reading.
 	 *
 	 * **THE READING POSITIONS ARE NOT HERE, AND THE TRAIL IS THE ARGUMENT.**
 	 * "Continue reading" was on the home page beside the doors, moved here on
@@ -53,18 +61,18 @@
 	 * paraphrased the pages it lists would be a second set of sentences to
 	 * translate into 37 languages and a second set to keep true.
 	 *
-	 * **THERE IS EXACTLY ONE EXCEPTION AND IT IS A NAME, NOT A SENTENCE**:
-	 * `ccc.landing.pairTitle`, because the Learn shelf names the Catechism and
-	 * its Compendium as one card and no other surface on the site wants that
-	 * name — `/schola` lists the two works separately and the `<head>` titles
-	 * `/catechismus` after the Catechism alone. It is English-only for now and
-	 * falls back key by key, which is the cost of the exception rather than a
-	 * gap in it.
+	 * **THE EXCEPTIONS ARE BOTH ONE CARD'S**: `ccc.landing.pairTitle` and
+	 * `ccc.landing.pairTagline`, because this is the only surface on the site
+	 * that names the Catechism and its Compendium as one thing — `/schola`
+	 * lists the two works separately and the `<head>` titles `/catechismus`
+	 * after the Catechism alone. The title came first; the sentence followed it
+	 * because `ccc.landing.tagline` is a masthead's two sentences and set six
+	 * lines in a card. Both are English-only for now and fall back key by key,
+	 * which is the cost of the exception rather than a gap in it.
 	 *
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { bookmarks } from '$lib/bookmarks.svelte';
-	import { bookmarkGroup } from '$lib/bookmarkContent';
 	import { listWorksOfType } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
@@ -134,16 +142,19 @@
 			// has always said in the sentence under it — so the Compendium of the
 			// Catechism has no card of its own and needs none.
 			//
-			// `ccc.landing.pairTitle` is the one key on this page written FOR
-			// this page: no other surface wants a name for the pair (`/schola`
-			// lists the two works separately, the `<head>` titles `/catechismus`
-			// after the Catechism). English only for now; `t()` falls back key by
-			// key.
+			// `ccc.landing.pairTitle` and `ccc.landing.pairTagline` are the two
+			// keys on this page written FOR this page: no other surface wants a
+			// name or a sentence for the pair (`/schola` lists the two works
+			// separately, the `<head>` titles `/catechismus` after the Catechism).
+			// `ccc.landing.tagline` is still what `/catechismus` says of itself,
+			// at a masthead's width; this is the same two facts in one clause,
+			// because in a card it was six lines against its neighbours' three.
+			// English only for now; `t()` falls back key by key.
 			key: 'catechism',
 			titleKey: 'ccc.landing.pairTitle',
 			icon: 'book-marked',
 			href: '/catechismus',
-			taglineKey: 'ccc.landing.tagline',
+			taglineKey: 'ccc.landing.pairTagline',
 			type: 'catechism'
 		},
 		{
@@ -200,20 +211,6 @@
 
 	const shelves = $derived(SHELVES.filter((shelf) => has(shelf.type)));
 
-	/** How many marks each of `/signata`'s own sections holds, in its order —
-	 *  the shape of the library rather than a bare total, which is what tells a
-	 *  reader whether it is worth opening. */
-	const markedGroups = $derived.by(() => {
-		const counts = new Map<string, { order: number; count: number }>();
-		for (const item of bookmarks.list) {
-			const group = bookmarkGroup(item.target);
-			const seen = counts.get(group.key);
-			if (seen) seen.count += 1;
-			else counts.set(group.key, { order: group.order, count: 1 });
-		}
-		return [...counts.values()].sort((a, b) => a.order - b.order);
-	});
-
 	// The identification, plus the one interface word in it — composed here and
 	// passed down, the arrangement `Plate.svelte` argues for: the page that
 	// knows what a picture is is the page that writes the line.
@@ -225,26 +222,6 @@
 </svelte:head>
 
 <div class="landing-column">
-	<!--
-		THE ONE PICTURE ON THIS PAGE, and it is Antonello's Jerome: a man alone
-		in a room full of books, which is what a library is. It headed `/schola`
-		until 2026-09-05 and moved here because that page is about being taught
-		and this one is about what is on the shelf — `landing-art.ts` holds the
-		swap and the credit. Above the title rather than behind it, for the
-		reason that file gives: text over a painting has to hold its contrast
-		across five appearance axes and does not need to.
-
-		`eager`, because it is the first thing on the page at every viewport.
-	-->
-	<div class="masthead">
-		<ArtFigure
-			art={BANNERS.bibliotheca}
-			credit={creditOf(BANNERS.bibliotheca)}
-			label={t('art.about')}
-			eager
-		/>
-	</div>
-
 	<h1>{t('nav.library')}</h1>
 	<p class="page-tagline landing-measure">{t('library.landing.tagline')}</p>
 
@@ -290,39 +267,71 @@
 			<!--
 				THE ONE CARD THAT IS NOT A WORK, and it is last because the
 				catalogue is what the page is for. Same card, same glyph
-				treatment; what it carries instead of a sentence is how much is
-				there and in which of `/signata`'s sections — a bare total says
-				nothing about whether it is worth opening. One link and not a
-				second copy of that page's list: this says how much and where,
-				and that page is the reading of it.
+				treatment, same sentence in the same place — and the sentence is
+				`/signata`'s own tagline, so this card obeys the rule the other
+				seven do rather than being the one that had to be looked at to be
+				understood. One link and not a second copy of that page's list:
+				this says what is there, and that page is the reading of it.
 
 				Absent until mount and absent for a reader who has marked
 				nothing, which the `auto-fit` grid needs no branch for — the
 				last cell simply is not there.
 			-->
-			{#if markedGroups.length > 0}
+			{#if bookmarks.list.length > 0}
 				<li>
 					<a class="shelf" href="/signata">
 						<h3 class="shelf-heading">
 							<span class="shelf-icon"><Icon name="bookmark" /></span>
 							<span class="shelf-title">{t('bookmark.library')}</span>
 						</h3>
-						<span class="marked-counts">
-							{#each markedGroups as group, i (i)}
-								<span class="chip">{group.count}</span>
-							{/each}
-						</span>
+						<span class="shelf-tagline">{t('bookmark.library.tagline')}</span>
 					</a>
 				</li>
 			{/if}
 		</ul>
 	</section>
+
+	<!--
+		THE ONE PICTURE ON THIS PAGE, AND IT IS AT THE BOTTOM. Antonello's
+		Jerome: a man alone in a room full of books, which is what a library is.
+		It headed `/schola` until 2026-09-05 and moved here because that page is
+		about being taught and this one is about what is on the shelf —
+		`landing-art.ts` holds the swap and the credit.
+
+		IT WAS THE MASTHEAD UNTIL 2026-09-06 and is a tailpiece now, which is a
+		claim about what the page is for rather than about the painting: a reader
+		arriving here wants the catalogue, and a 400px banner above the title put
+		a picture between them and every door on the site. Decoration below the
+		last card costs nothing and is still the right picture for the page.
+		Behind the title was the other option and `landing-art.ts` rules it out —
+		text over a painting has to hold its contrast across five appearance axes
+		and does not need to.
+
+		No `eager`: nothing above the fold now, so it loads lazily and the
+		shelves have the connection to themselves. The credit stays where
+		`ArtFigure` puts it, one press behind the `info` glyph — decoration is
+		about where the picture sits in the page's argument, not about dropping
+		the only line on the site that says whose painting it is.
+	-->
+	<div class="tailpiece">
+		<ArtFigure
+			art={BANNERS.bibliotheca}
+			credit={creditOf(BANNERS.bibliotheca)}
+			label={t('art.about')}
+		/>
+	</div>
 </div>
 
 <style>
-	/* The banner takes the whole column and the title follows it. */
-	.masthead {
-		margin: 0 0 1.5rem;
+	/*
+	 * THE PICTURE IS A TAILPIECE, and the space above it is what says so. A
+	 * banner is read as the page's subject; below the catalogue there is
+	 * nothing left for it to be the subject OF, which is the whole point of
+	 * moving it — the reader meets the shelves first and the painting after,
+	 * the way a printed book closes a chapter with an ornament.
+	 */
+	.tailpiece {
+		margin: 2.5rem 0 0;
 	}
 
 	section {
@@ -366,6 +375,7 @@
 		list-style: none;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		grid-auto-rows: 1fr;
 		gap: 0.75rem;
 		margin: 0;
 		padding: 0;
@@ -443,21 +453,5 @@
 		font-size: 0.85rem;
 		line-height: 1.45;
 		color: var(--color-text-muted);
-	}
-
-	/* Where the marks card carries its counts, in the place a work card puts
-	   its sentence — so the two line up down the grid rather than one card's
-	   numbers floating against its neighbour's prose. Tabular figures because
-	   they are a column of numbers even when they are a row. */
-	.marked-counts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.25rem;
-		margin-top: 0.45rem;
-	}
-
-	.marked-counts .chip {
-		font-variant-numeric: tabular-nums;
-		padding-inline: 0.35rem;
 	}
 </style>

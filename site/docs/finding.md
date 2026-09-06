@@ -467,9 +467,11 @@ what keeps every named thing in the outline.
 **The Summa has no card and the Catechism's holds two works.** `/catechismus`
 indexes the Catechism AND its Compendium, which the sentence under it has
 always said, so the pair is one card named for the pair —
-`ccc.landing.pairTitle`, the single string on this page written FOR it, since
-`/schola` lists the two works separately and the `<head>` titles `/catechismus`
-after the Catechism alone. `/doctores` keeps its card and its caveat; what went
+`ccc.landing.pairTitle`, and it carries a sentence written for it too
+(`ccc.landing.pairTagline`) because `/catechismus`'s own tagline is a masthead's
+two sentences and set six lines in a 16rem card. Those two are the only strings
+on this page written FOR it, since `/schola` lists the two works separately and
+the `<head>` titles `/catechismus` after the Catechism alone. `/doctores` keeps its card and its caveat; what went
 is the row underneath that jumped past the caveat into an unrevised Summa. The
 taxonomy that put the Social Doctrine under Learn — synthesis read THROUGH
 against dated acts cited SINGLY, after it had moved three times — is still true
@@ -477,10 +479,25 @@ and needs no container: with one card per work the ORDER states it, and the
 address space states it without being asked.
 
 **The last card is Bookmarks, and it is the only one that is not a work.** It
-carries `/signata`'s own section counts as chips where a work card carries its
-sentence — a bare total says nothing about whether it is worth opening — and it
-is absent for a reader who has marked nothing, which an `auto-fit` grid needs
-no branch to handle.
+reads exactly like the other seven — name, glyph, and `/signata`'s own tagline —
+and is absent for a reader who has marked nothing, which an `auto-fit` grid
+needs no branch to handle. It carried `/signata`'s section counts as chips
+where a work card carries its sentence, on the argument that the shape of a
+collection says more than a total about whether it is worth opening. It says
+that to whoever wrote it; on the page it was `1 1`, numbers with nothing naming
+what they counted, in the one slot a reader had learned to read as a sentence.
+
+**Every card is the height of the tallest** (`grid-auto-rows: 1fr`), because a
+grid of cards is read as a grid and a short row of them under a tall one reads
+as two grids. It is also what makes a long tagline expensive rather than free,
+which is the pressure that produced `pairTagline`.
+
+**The painting is a tailpiece, not a masthead** (2026-09-06). A reader arriving
+at a catalogue wants the catalogue, and a 400px banner above the title put a
+picture between them and every door on the site. Below the last card it is
+decoration, loads lazily since nothing is above the fold, and keeps its credit
+behind `ArtFigure`'s trigger — where a picture sits in a page's argument is a
+separate question from whether the page says whose it is.
 
 **The home page is the liturgical day and the doors, and nothing else.** It
 rendered the Bible's whole table of contents and then the Catechism's whole

@@ -1,7 +1,10 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
- * banner each over `/schola` and `/bibliotheca`, and no other picture on
- * either.
+ * each on `/schola` and `/bibliotheca`, and no other picture on either. A
+ * banner over `/schola`'s title; on `/bibliotheca` a tailpiece under the last
+ * shelf since 2026-09-06, because a catalogue's reader came for the catalogue
+ * and `BANNERS` is now the derivation's name rather than the role, the same
+ * way the filenames are.
  *
  * ## IT WAS FOUR OVER ONE PAGE, AND IS TWO OVER TWO
  *
