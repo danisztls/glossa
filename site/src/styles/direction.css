@@ -197,3 +197,46 @@
 		'Source Sans 3 Variable', 'Noto Sans Malayalam', 'Malayalam Sangam MN', 'Kartika',
 		var(--font-serif);
 }
+
+/* ---------------------------------------------------------------------------
+   HAN AS A READING SCRIPT, added 2026-09-05 with `ccc.zht`
+
+   The block above settles Han for the CHROME and says a webfont is never
+   coming; both halves still hold. What changed is that Traditional Chinese is
+   now a language somebody READS here rather than one they navigate in, and a
+   reading region takes `--font-serif`, which that block does not touch.
+
+   THE SELECTOR IS AN ATTRIBUTE, NOT `:lang()`, AND THE TWO CANNOT BE SWAPPED.
+   A reading region declares `lang={current.work.language}` — the corpus's own
+   tag, `zht` — while `<html lang>` carries `bcp47(...)`, which is why the
+   chrome rules above match `zh-Hant` and this one must not. It is the same
+   split `[lang='ru']` sits on a few blocks up, for the same reason: these
+   rules answer for a text region, those for the document.
+
+   EB GARAMOND STAYS FIRST, exactly as Source Sans does above. The Ming faces
+   carry Latin too, drawn to fill a full-width em, so naming one first would
+   hand it every numeral and every parenthesis in a Scripture locator —
+   `(創 10:5)` set with the digits as wide as the characters. Per-glyph
+   fallback answers the Latin before the question reaches them. */
+:not(:root)[lang='zht'] {
+	--font-serif:
+		'EB Garamond Variable', 'Songti TC', 'Noto Serif CJK TC', 'Source Han Serif TC', 'PMingLiU',
+		'MingLiU', serif;
+	/*
+	 * MEASURED THE SAME WAY THE OTHERS WERE: 0.9757em per character over the
+	 * edition's 370,496 characters, of which 95% are full-width Han and the
+	 * rest are the half-width digits and brackets of its Scripture locators.
+	 *
+	 * AND THE CHARACTER TARGET MOVES WITH IT, which no other script here has
+	 * needed. `--measure-cpl` is 62.4 because "55-65 characters per line is
+	 * where this type sets well" — a rule about Latin, and a Han line of 62
+	 * characters is half again the widest a Chinese book sets. 30-45 is the
+	 * band for this script; 40 is inside it and is a judgement rather than a
+	 * measurement, which is the honest way to say it. The column comes out at
+	 * 39em against Latin's 23.6 — wider on the page and shorter in
+	 * characters, which is what a script carrying more per character and
+	 * spending 2.6 times the width on one wants.
+	 */
+	--prose-char-advance: 0.9757;
+	--measure-cpl: 40;
+}
