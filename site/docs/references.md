@@ -186,10 +186,20 @@ so the same seeds come out darker on paper and lighter on a dark ground with
 nothing repeated per theme — and `oklab` rather than sRGB
 because an sRGB path from ultramarine to a warm grey runs through a muddy
 violet that half these pigments would land in. They resolve to chroma
-0.033–0.084 across a lightness band of 0.05, so the marks differ in hue and in
+0.039–0.080 across a lightness band of 0.05, so the marks differ in hue and in
 almost nothing else. **Judge a new seed by what it mixes to**: the commentary's
 first slate was already near neutral and resolved to chroma 0.017, an
-accidental grey sitting among six colours.
+accidental grey sitting among colours.
+
+**And judge it by its HUE ANGLE too, which this panel cannot see and another
+consumer can.** The seeds were picked as pigments first and sat where a
+manuscript kit puts them — madder, minium, bistre and orpiment all inside 52° of
+arc — which at this chroma is invisible and free. `/schola` then asked the same
+tokens for a legible icon and four shelves came out four shades of one rust. The
+seeds are spread about the circle now, roughly evenly, each still something a
+workshop ground; the panel gained a little by it, its closest pair going 4.3 to
+4.4 and its worst contrast on a dark ground 3.39 to 3.87. **Pick the pigment
+nearest a slot, not the slot nearest a pigment.**
 
 **A square and not a circle, and drawn rather than set.** A filled circle in
 front of a word is a bullet wherever it appears, so every group read as a list

@@ -1698,14 +1698,15 @@ holds the rationale. What must be true before touching it:
 - **The family marks are ORNAMENT, and the shelf is named beside every one of
   them.** One `--pigment-*` token per shelf, each `color-mix(in oklab, <seed>
 50%, var(--color-text-muted))` so one definition serves every theme, and
-  `data-mono` turns the set off with `--pigment-strength: 0%`. Judge a seed
-  by what it MIXES to — a near-neutral one resolves to no colour at all — and by
-  how far that lands from the rest (`--pigment-bible`'s minium is 4.7 from the
-  Catechism's red; vermilion, the obvious first try, was 1.2). If a pigment ever
+  `data-mono` turns the set off — with `--pigment-strength: 0%` AND
+  `--pigment-icon-c: 0`, two dials because a consumer that overrides chroma is
+  out of the first one's reach. Judge a seed by what it MIXES to (a near-neutral
+  one resolves to no colour at all), by how far that lands from the rest, and by
+  its HUE ANGLE, which this panel cannot see and `/schola` can. If a pigment ever
   becomes the only thing saying which work a row is, it owes WCAG 1.4.1 and
   cannot pay it. `src/lib/pigments.test.ts` is the bookkeeping: the set, the
-  mix, the mono dial, and no `var(--pigment-…)` naming a token that does not
-  exist.
+  mix, both dials, the flat fallback above a relative-colour declaration, and no
+  `var(--pigment-…)` naming a token that does not exist.
 - **ONE mark for every family, and it is drawn rather than set.** A square, not
   a circle: a filled circle before a word is a bullet wherever it appears. `▪`
   is in Source Sans 3's release TTF and would cost about a hundred bytes on the
