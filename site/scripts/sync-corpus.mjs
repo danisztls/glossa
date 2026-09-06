@@ -658,17 +658,39 @@ if (!existsSync(buildSrc)) {
  * Directories under `build/` that are NOT works and must not be reported as
  * works whose scrape failed.
  *
- * One entry, and it is named rather than pattern-matched because the whole
- * value of the manifestless warning below is that it fires on anything
- * unexpected. `gcatholic-calendar/` is the liturgical-calendar oracle —
- * somebody else's computed calendars, which `src/lib/calendar/oracle.test.ts`
- * checks ours against and nothing at runtime reads. It moved here out of the
- * `glossa` repository on 2026-09-04 (`pipeline/scrapers/liturgical_calendar.py`
- * carries the argument), and it lives under `build/` because it is parsed
- * output regenerable from `raw/` with no network, which is what `build/`
- * means — being a work is not.
+ * Every entry is NAMED rather than pattern-matched, because the whole value of
+ * the manifestless warning below is that it fires on anything unexpected.
+ * Four today, and they are four different kinds of not-a-work:
+ *
+ *  - `gcatholic-calendar/` is an ORACLE — somebody else's computed calendars,
+ *    which `src/lib/calendar/oracle.test.ts` checks ours against and nothing
+ *    at runtime reads. It moved here out of the `glossa` repository on
+ *    2026-09-04 (`pipeline/scrapers/liturgical_calendar.py` carries the
+ *    argument).
+ *  - `prayer-references/` is a LANGUAGE-FREE TABLE the site reads directly:
+ *    that the Hail Mary is Luke 1:28 is a fact about the prayer, not a reading
+ *    of it in any one tongue.
+ *  - `usccb-readings/` is a SOURCE the site does not read either — the day-by-
+ *    day citations `pipeline/scrapers/lectionary.py` fetches, from which the
+ *    committed lectionary table under `src/lib/lectionary/` is built. What the
+ *    reader is served is that table, the way the reader is served `grc.ts` and
+ *    never GCatholic.
+ *  - `olm1981/` is the ORACLE OVER THAT SOURCE — the typical edition's own
+ *    reading list, read off the 1981 scan by `pipeline/scrapers/olm.py`, which
+ *    `src/lib/lectionary/olm-oracle.test.ts` diffs the committed table
+ *    against. The United States' adaptation cannot be asked whether it differs
+ *    from the book it adapts, so something that is not it has to be.
+ *
+ * All four live under `build/` for the same reason: they are parsed output
+ * regenerable from `raw/` with no network, which is what `build/` means —
+ * being a work is not.
  */
-const NON_WORK_DIRS = new Set(['gcatholic-calendar', 'prayer-references']);
+const NON_WORK_DIRS = new Set([
+	'gcatholic-calendar',
+	'prayer-references',
+	'usccb-readings',
+	'olm1981'
+]);
 
 const workDirs = readdirSync(buildSrc, { withFileTypes: true })
 	.filter((e) => e.isDirectory())

@@ -1725,3 +1725,34 @@ Latin is evidence, not a third opinion. Those disagreements are **edition
 divergence, not defects** — `docs/research/bible-edition-divergence.md` has
 the four kinds and why calling them defects invites someone to "fix" a
 faithful text.
+
+## `lectionary.py` is a SOURCE and `olm.py` is the oracle over it
+
+USCCB's daily pages carry explicit slot markup and print the OLM's own
+numbers; the 1981 typical edition's scan carries clean citations and no
+readable slot labels, so neither is asked for the half it reads badly.
+`site/docs/lectionary.md` has the argument and the gaps.
+
+- **`--dates` MERGES into the year file; `--years` REPLACES it.** A dated run
+  reads one day of a year holding 365, and writing its own days alone threw
+  the other 364 away — twice, taking the committed table from 482 numbered
+  Mass sets to 55. A year run walks its whole span, so absence there is real
+  and replacing is how a day that STOPPED parsing gets seen. `--years <span>
+--offline` rebuilds from `raw/` at no network cost when a year file looks
+  wrong.
+- **A disambiguation page is not an empty page.** The Assumption's carries one
+  `<h3 class="name">` with no text, so `if parsed["readings"]:` was truthy and
+  the day was taken as an ordinary Mass with a blank slot — both its
+  formularies unfetched, in every year. `_usable` tests for a slot or a
+  citation.
+- **The source is not consistent about `.cfm`**: the same feast links
+  `081527-Vigil.cfm` in 2027 and `081526-Vigil` in 2026, so a regex requiring
+  the extension found one year's Masses and silently none of the other's.
+- **A 404 here is the publisher's edge, a 403 is the bot challenge**, which is
+  why `definitive` stays at its default and never records the latter. USCCB
+  runs from about 2012 to 2028-03-31 and has five permanent holes inside that
+  (`absent-sources.json`); probing it with `curl` trips the challenge, so use
+  the browser tier for that too.
+- **The scan is 92% of the numbering and 60% of the citations**, measured
+  against the 439 numbers both sources hold. It checks a table; it may not
+  fill one.

@@ -426,25 +426,51 @@ STAGES: tuple[Stage, ...] = (
         heavy=("--derive",),
         binaries=("avifenc",),
     ),
-    # THE ONE STAGE WHOSE OUTPUT IS NOT A WORK. `gcatholic-calendar/` holds
-    # the liturgical-calendar oracle -- 281 files of somebody else's computed
-    # calendars, which `site/src/lib/calendar/oracle.test.ts` checks ours
-    # against. It has no `manifest.json`, nothing in the site reads it at
-    # runtime, and `sync-corpus.mjs` names it in `NON_WORK_DIRS` so its
-    # manifestless directory is not reported as a scrape that failed.
+    # THE TWO STAGES WHOSE OUTPUT IS NOT A WORK, and they are not the same
+    # kind of thing despite sharing that. Neither has a `manifest.json`, both
+    # are named in `sync-corpus.mjs`'s `NON_WORK_DIRS` so a manifestless
+    # directory is not reported as a scrape that failed, and both are
+    # regenerable from `raw/` like everything else here -- left out, a rebuild
+    # into an empty `build/` would silently drop them, which is exactly the
+    # class of loss the root CLAUDE.md records happening three times in a day.
     #
-    # It is in this recipe because it moved out of the `glossa` repository on
-    # 2026-09-04 (`liturgical_calendar.py` has the argument) and is therefore
-    # regenerable-from-`raw/` output like everything else here. Left out, a
-    # rebuild into an empty `build/` would leave the calendar with nothing to
-    # check itself against -- exactly the class of loss the root CLAUDE.md
-    # records happening three times in one day.
+    # `gcatholic-calendar/` is an ORACLE: somebody else's computed calendars,
+    # which `site/src/lib/calendar/oracle.test.ts` checks ours against, read by
+    # nothing at runtime. It moved out of the `glossa` repository on 2026-09-04
+    # (`liturgical_calendar.py` has the argument).
+    #
+    # `usccb-readings/` is a SOURCE: the citations the lectionary table is
+    # built from, which the site does serve, by way of a table committed under
+    # `site/src/lib/lectionary/`. The distinction is the one the root CLAUDE.md
+    # draws for the corpus's own directories, and it decides what may be
+    # rebuilt away -- see `lectionary.py` for why the typical edition is the
+    # oracle over this and not the other way round.
     Stage(
         "calendar",
         "calendar",
         "liturgical_calendar.py",
         ("--offline",),
         ("gcatholic-calendar",),
+    ),
+    Stage(
+        "lectionary",
+        "calendar",
+        "lectionary.py",
+        ("--offline",),
+        ("usccb-readings",),
+    ),
+    # `olm1981/` is the third: an ORACLE again, and the one the stage above is
+    # checked against. It is the typical edition's own answer to "which
+    # passages does entry N appoint", read off the 1981 scan, and it exists
+    # because `usccb-readings/` is the United States' adaptation and cannot be
+    # asked whether it differs from the book it adapts. Nothing serves it --
+    # `site/src/lib/lectionary/olm-oracle.test.ts` is its only reader.
+    Stage(
+        "olm",
+        "calendar",
+        "olm.py",
+        ("--offline",),
+        ("olm1981",),
     ),
 )
 
