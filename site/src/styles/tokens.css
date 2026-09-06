@@ -405,6 +405,80 @@
 	 */
 	--plate-blend: multiply;
 	--plate-filter: none;
+
+	/*
+	 * THE PIGMENTS ARE DECORATION AND CARRY NOTHING, which is the whole
+	 * licence for there being seven of them where the palette above spends
+	 * three. `CitedBy`'s panel marks each citing shelf with a dot in this
+	 * family; the shelf is NAMED in the same breath, every time, so a reader
+	 * who cannot tell two of these apart — or sees none of them, under
+	 * `data-mono` — loses nothing at all. Nothing may ever be told apart by
+	 * one of these alone: the moment a pigment is the only thing saying which
+	 * work a row belongs to, this stops being ornament and owes WCAG 1.4.1.
+	 *
+	 * THEY ARE NEVER SET ON TEXT, only on a 0.4em dot, which is why they are
+	 * free of the contrast duty every colour above carries. The chip and the
+	 * row take the SAME dot rather than the chip taking the hue as its label
+	 * colour: 0.8rem text in seven muted pigments would owe 4.5:1 seven times
+	 * over, and would have to be loud enough to earn it.
+	 *
+	 * ONE DEFINITION FOR EVERY THEME. Each is mixed toward the theme's own
+	 * `--color-text-muted`, so the same seven literals come out darker on
+	 * paper and lighter on a dark ground with nothing repeated in the four
+	 * blocks below — the mix is what adapts, not the value. `oklab` because
+	 * the interpolation is perceptual: an sRGB mix of ultramarine and a warm
+	 * grey passes through a muddy violet, and half these pigments would land
+	 * in it.
+	 *
+	 * `--pigment-strength` is the one dial, and `data-mono` sets it to 0%:
+	 * every pigment then resolves to `--color-text-muted` exactly, seven dots
+	 * in one grey, which is what that mode's contract requires — "nothing
+	 * anywhere is told apart by hue". Sepia and OLED need no override for the
+	 * same reason they need none for the accent: they move the ground, and
+	 * the mix follows the text colour that sits on it.
+	 *
+	 * The vocabulary is the illuminator's, because the palette above already
+	 * speaks it — rubric red, ground lapis, gold — and seven invented UI hues
+	 * beside those three would read as a different application.
+	 *
+	 * WHAT THE MIX ACTUALLY RESOLVES TO, measured on paper: chroma 0.033 to
+	 * 0.084 and lightness 0.47 to 0.52 — one tonal band, differing in hue and
+	 * in almost nothing else, which is what keeps seven dots down a panel from
+	 * reading as seven weights. Closest pair is verdigris and the commentary
+	 * teal at dE(ok) 0.043. Three seeds were moved to get there and the
+	 * failure they had is worth naming: a seed already near neutral comes out
+	 * of a 50% mix with a warm grey as no colour at all — the commentary's
+	 * first slate resolved to chroma 0.017, an accidental grey among six
+	 * hues. Check a new seed by what it MIXES to, never by the literal.
+	 */
+	--pigment-strength: 50%;
+	--pigment-catechism: color-mix(
+		in oklab,
+		#a8332a var(--pigment-strength),
+		var(--color-text-muted)
+	);
+	--pigment-magisterium: color-mix(
+		in oklab,
+		#2a4a9e var(--pigment-strength),
+		var(--color-text-muted)
+	);
+	--pigment-social-doctrine: color-mix(
+		in oklab,
+		#1c6b4a var(--pigment-strength),
+		var(--color-text-muted)
+	);
+	--pigment-canon-law: color-mix(
+		in oklab,
+		#6b4423 var(--pigment-strength),
+		var(--color-text-muted)
+	);
+	--pigment-doctors: color-mix(in oklab, #8a6410 var(--pigment-strength), var(--color-text-muted));
+	--pigment-prayer: color-mix(in oklab, #6b3a6e var(--pigment-strength), var(--color-text-muted));
+	--pigment-commentary: color-mix(
+		in oklab,
+		#1f6b7f var(--pigment-strength),
+		var(--color-text-muted)
+	);
 }
 
 /*
@@ -665,4 +739,14 @@
 	--color-apparatus: #8e847f;
 	--color-focus-ring: #8e847f;
 	--color-bookmark: #c1b6b2;
+}
+
+/*
+ * One rule for all four monochrome blocks above, because `data-mono` is
+ * presence-only and none of them sets this: the decorative pigments collapse
+ * to `--color-text-muted` exactly, so the panel's dots are seven of one grey.
+ * See `--pigment-strength` where it is declared.
+ */
+:root[data-mono] {
+	--pigment-strength: 0%;
 }

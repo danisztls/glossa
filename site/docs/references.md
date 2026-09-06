@@ -168,3 +168,32 @@ the verses under their own marks — so the row repeats what is a scroll away.
 That is why the control is drawn for a LONE hidden family too: a chapter cited
 by nothing but its own apparatus would otherwise show an empty panel with no
 way to open it.
+
+**The pigments are ornament and are allowed to be, because the shelf is named
+in the same breath.** Each family's chip and each group in the list carry the
+same dot in one of seven low-chroma pigments (`--pigment-*` in `tokens.css`),
+and nothing anywhere is told apart by one: the work's name is beside every dot,
+so a reader under `data-mono` — where `--pigment-strength: 0%` resolves all
+seven to one grey — loses nothing. That is the line to hold. The moment a
+pigment is the only thing saying which work a row belongs to, this stops being
+decoration and owes WCAG 1.4.1, which seven hues cannot pay: the monochrome
+palette has three greys at dE 8.6, and the site's own two data colours already
+fall to dE 10.6 under deuteranopia.
+
+**One definition serves every theme, because the mix adapts and the literal
+does not.** Each pigment is `color-mix(in oklab, <seed> 50%, var(--color-text-muted))`,
+so the same seven seeds come out darker on paper and lighter on a dark ground
+with nothing repeated in the four theme blocks — and `oklab` rather than sRGB
+because an sRGB path from ultramarine to a warm grey runs through a muddy
+violet that half these pigments would land in. They resolve to chroma
+0.033–0.084 across a lightness band of 0.05, so the dots differ in hue and in
+almost nothing else. **Judge a new seed by what it mixes to**: the commentary's
+first slate was already near neutral and resolved to chroma 0.017, an
+accidental grey sitting among six colours.
+
+**Hovering or focusing a chip lights that family's rows** — `box-shadow` rather
+than padding, so a 237-reference panel cannot reflow under the reader's
+pointer. It is a pointer state in the component and not a `:has()` chain
+through the sibling list, because focus has to answer the same way as hover and
+`:focus-visible` is not reachable across that subtree without repeating the
+selector seven times.

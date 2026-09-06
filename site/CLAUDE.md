@@ -1549,6 +1549,13 @@ holds the rationale. What must be true before touching it:
   sections (the Catechism and its Compendium share one); a family that covered
   only some kinds would leave the rest permanently on. Every label is a key a
   page already uses, so a family costs no new string in 37 dictionaries.
+- **The family dots are ORNAMENT, and the shelf is named beside every one of
+  them.** Seven `--pigment-*` tokens, each `color-mix(in oklab, <seed> 50%,
+var(--color-text-muted))` so one definition serves four themes and
+  `data-mono` collapses all seven with `--pigment-strength: 0%`. Judge a seed
+  by what it MIXES to — a near-neutral one resolves to no colour at all. If a
+  pigment ever becomes the only thing saying which work a row is, it owes
+  WCAG 1.4.1 and cannot pay it.
 - **Commentary starts switched OFF and is the only family that does** — 36,995
   of the index's 84,775 citers, and the one family already on the page under
   its own marks. So the buttons are drawn whenever pressing one would change

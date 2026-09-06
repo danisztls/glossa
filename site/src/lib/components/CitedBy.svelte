@@ -105,6 +105,20 @@
 		if (hidden.has(family)) hidden.delete(family);
 		else hidden.add(family);
 	}
+
+	/**
+	 * The family whose chip is under the pointer or holding focus, whose rows
+	 * light up while it is.
+	 *
+	 * IT IS A POINTER STATE AND NOT A CSS `:has()` CHAIN, though the chain is
+	 * writable — `.filters:has(.filter[data-family='x']:hover) ~ ul …`. Focus
+	 * is why: a reader tabbing the chips gets the same answer as a reader
+	 * pointing at them, and `:focus-visible` cannot be reached from a sibling
+	 * subtree without repeating the whole selector. It also costs the panel
+	 * nothing when no chip is being touched, which a seven-branch selector
+	 * evaluated on every hover does not.
+	 */
+	let lit = $state<CitedByFamily | null>(null);
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
@@ -125,8 +139,13 @@
 				<button
 					type="button"
 					class="filter"
+					data-family={family.key}
 					aria-pressed={!hidden.has(family.key)}
-					onclick={() => toggle(family.key)}>{t(family.labelKey)}</button
+					onclick={() => toggle(family.key)}
+					onpointerenter={() => (lit = family.key)}
+					onpointerleave={() => (lit = null)}
+					onfocus={() => (lit = family.key)}
+					onblur={() => (lit = null)}>{t(family.labelKey)}</button
 				>
 			{/each}
 		</div>
@@ -145,7 +164,7 @@
 				</span>
 				<span class="sources">
 					{#each row.sources as source (source.key)}
-						<span class="source">
+						<span class="source" class:lit={source.family === lit} data-family={source.family}>
 							<span
 								class="source-label"
 								class:named={source.fullTitle !== null}
@@ -219,10 +238,65 @@
 		background: var(--color-bg-elevated);
 	}
 
+	/*
+	 * The pigment a shelf is marked with, resolved once per element and read
+	 * by the dot rule below. One list for both consumers, because the chip
+	 * and the row it lights carry the same `data-family` and must draw the
+	 * same colour — a legend and its list that can disagree is worse than no
+	 * legend. The values, the argument for there being seven, and what
+	 * `data-mono` does to them are all in `tokens.css`.
+	 */
+	[data-family='catechism'] {
+		--pigment: var(--pigment-catechism);
+	}
+	[data-family='magisterium'] {
+		--pigment: var(--pigment-magisterium);
+	}
+	[data-family='socialDoctrine'] {
+		--pigment: var(--pigment-social-doctrine);
+	}
+	[data-family='canonLaw'] {
+		--pigment: var(--pigment-canon-law);
+	}
+	[data-family='doctors'] {
+		--pigment: var(--pigment-doctors);
+	}
+	[data-family='prayer'] {
+		--pigment: var(--pigment-prayer);
+	}
+	[data-family='commentary'] {
+		--pigment: var(--pigment-commentary);
+	}
+
+	/*
+	 * The mark itself, on the chip and on every group it stands for.
+	 *
+	 * `background` is declared twice on purpose: a browser without
+	 * `color-mix()` drops the second declaration as invalid and keeps the
+	 * first, so the dot is a muted grey rather than absent. The fallback is
+	 * exactly what `data-mono` resolves to, which is the state this ornament
+	 * is designed to be legible without.
+	 */
+	.filter::before,
+	.source-label::before {
+		content: '';
+		display: inline-block;
+		inline-size: 0.4em;
+		block-size: 0.4em;
+		border-radius: 50%;
+		margin-inline-end: 0.4em;
+		vertical-align: 0.08em;
+		background: var(--color-text-muted);
+		background: var(--pigment, var(--color-text-muted));
+	}
+
 	/* Switched off: still legible, so the reader can see what they have put
 	   away and press it again — greying it to the point of disappearing would
 	   make the filter a one-way door on a touch screen. */
 	.filter[aria-pressed='false'] {
+		/* Switched off loses its colour with everything else it loses, which
+		   also keeps the rule below from being drawn through the dot. */
+		--pigment: var(--color-text-muted);
 		color: var(--color-text-muted);
 		border-style: dashed;
 		text-decoration: line-through;
@@ -273,6 +347,22 @@
 	   CCC cites some Bible verses twenty times, and that is one line. */
 	.source {
 		font-variant-numeric: tabular-nums;
+	}
+
+	/*
+	 * A group lights up while its own chip is hovered or focused.
+	 *
+	 * `box-shadow` AND NOT PADDING, so the wash has room to breathe without
+	 * costing a single pixel of layout: padding here would either eat the
+	 * 0.7rem column gap or reflow a 237-reference panel under the reader's
+	 * pointer, and both are worse than a tight highlight. Nothing animates —
+	 * this follows the pointer, and a fade would still be catching up as it
+	 * moves to the next chip.
+	 */
+	.source.lit {
+		background: var(--color-bg-elevated);
+		box-shadow: 0 0 0 0.2rem var(--color-bg-elevated);
+		border-radius: var(--radius-sm);
 	}
 
 	/* The work's name, said once per group. Quiet relative to the numbers
