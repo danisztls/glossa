@@ -34,6 +34,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -307,5 +313,50 @@ export const sq: Dictionary = {
 	'copyright.sourceLabel': 'Burimi',
 	'lang.label': 'Gjuha',
 	'lang.filter': 'Kërko gjuhë',
-	'lang.more': 'gjuhë të tjera'
+	'lang.more': 'gjuhë të tjera',
+	'calendar.title': 'Kalendari liturgjik',
+	'calendar.tagline':
+		'Kalendari i Përgjithshëm Roman, i llogaritur për çdo ditë — koha e saj, grada e saj, ngjyra e saj.',
+	'calendar.date': 'Data',
+	'calendar.calendar': 'Kalendari',
+	'calendar.which.general': 'Kalendari i Përgjithshëm Roman',
+	'calendar.filter': 'Kërko vende',
+	'calendar.region.europe': 'Evropa',
+	'calendar.region.americas': 'Amerikat',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azia',
+	'calendar.region.oceania': 'Oqeania',
+	'calendar.today': 'Sot',
+	'calendar.previousMonth': 'Muaji i kaluar',
+	'calendar.nextMonth': 'Muaji i ardhshëm',
+	'calendar.noSuchDay': 'Për atë datë nuk llogaritet asnjë ditë liturgjike.',
+	'calendar.week': 'java',
+	'calendar.alsoToday': 'Sot kremtohet edhe',
+	'calendar.alsoObserved': 'Sot kujtohet edhe',
+	'calendar.obligation': 'Festë e detyrueshme',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Cikli i së dielës',
+	'calendar.weekdayCycle': 'Cikli i ditëve të javës',
+	'calendar.psalterWeek': 'Java e psalterit',
+	'calendar.transferredFrom': 'Zhvendosur nga',
+	'calendar.season.advent': 'Ardhja',
+	'calendar.season.christmas': 'Koha e Krishtlindjes',
+	'calendar.season.lent': 'Kreshma',
+	'calendar.season.triduum': 'Tridita e Pashkës',
+	'calendar.season.easter': 'Koha e Pashkës',
+	'calendar.season.ordinary': 'Koha gjatë vitit',
+	'calendar.colour.white': 'E bardhë',
+	'calendar.colour.red': 'E kuqe',
+	'calendar.colour.green': 'E gjelbër',
+	'calendar.colour.violet': 'Vjollcë',
+	'calendar.colour.rose': 'Rozë',
+	'calendar.colour.black': 'E zezë',
+	'calendar.colour.blue': 'Blu',
+	'calendar.rank.solemnity': 'Kremte',
+	'calendar.rank.feast': 'Festë',
+	'calendar.rank.memorial': 'Kujtim i detyrueshëm',
+	'calendar.rank.optional-memorial': 'Kujtim i lirë',
+	'calendar.rank.commemoration': 'Përkujtim',
+	'calendar.rank.sunday': 'E diel',
+	'calendar.rank.weekday': 'Ditë jave'
 };

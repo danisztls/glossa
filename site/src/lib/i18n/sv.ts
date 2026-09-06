@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -432,5 +438,50 @@ export const sv: Dictionary = {
 	'shortcuts.withinDocument': 'I dokumentet',
 	'shortcuts.show': 'Visa den här listan',
 	'zen.enter': 'Fokusläge',
-	'zen.exit': 'Avsluta fokusläget'
+	'zen.exit': 'Avsluta fokusläget',
+	'calendar.title': 'Liturgisk kalender',
+	'calendar.tagline':
+		'Den allmänna romerska kalendern, uträknad för vilken dag som helst — dess tid, dess grad, dess färg.',
+	'calendar.date': 'Datum',
+	'calendar.calendar': 'Kalender',
+	'calendar.which.general': 'Allmänna romerska kalendern',
+	'calendar.filter': 'Sök länder',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Asien',
+	'calendar.region.oceania': 'Oceanien',
+	'calendar.today': 'I dag',
+	'calendar.previousMonth': 'Föregående månad',
+	'calendar.nextMonth': 'Nästa månad',
+	'calendar.noSuchDay': 'Ingen liturgisk dag beräknas för det datumet.',
+	'calendar.week': 'vecka',
+	'calendar.alsoToday': 'Firas även i dag',
+	'calendar.alsoObserved': 'Uppmärksammas även i dag',
+	'calendar.obligation': 'Påbjuden helgdag',
+	'calendar.obligationCanon': 'CIC can. 1246',
+	'calendar.sundayCycle': 'Söndagscykel',
+	'calendar.weekdayCycle': 'Vardagscykel',
+	'calendar.psalterWeek': 'Psaltarvecka',
+	'calendar.transferredFrom': 'Flyttad från',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Jultiden',
+	'calendar.season.lent': 'Fastan',
+	'calendar.season.triduum': 'Påsktriduum',
+	'calendar.season.easter': 'Påsktiden',
+	'calendar.season.ordinary': 'Tiden under året',
+	'calendar.colour.white': 'Vitt',
+	'calendar.colour.red': 'Rött',
+	'calendar.colour.green': 'Grönt',
+	'calendar.colour.violet': 'Violett',
+	'calendar.colour.rose': 'Rosa',
+	'calendar.colour.black': 'Svart',
+	'calendar.colour.blue': 'Blått',
+	'calendar.rank.solemnity': 'Högtid',
+	'calendar.rank.feast': 'Fest',
+	'calendar.rank.memorial': 'Minnesdag',
+	'calendar.rank.optional-memorial': 'Fri minnesdag',
+	'calendar.rank.commemoration': 'Åminnelse',
+	'calendar.rank.sunday': 'Söndag',
+	'calendar.rank.weekday': 'Vardag'
 };

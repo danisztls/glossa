@@ -38,6 +38,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -316,5 +322,50 @@ export const tl: Dictionary = {
 	'copyright.sourceLabel': 'Pinagmulan',
 	'lang.label': 'Wika',
 	'lang.filter': 'Maghanap ng wika',
-	'lang.more': 'iba pang wika'
+	'lang.more': 'iba pang wika',
+	'calendar.title': 'Kalendaryong liturhiko',
+	'calendar.tagline':
+		'Ang Pangkalahatang Kalendaryong Romano, tinutuos para sa alinmang araw — ang panahon nito, ang antas nito, ang kulay nito.',
+	'calendar.date': 'Petsa',
+	'calendar.calendar': 'Kalendaryo',
+	'calendar.which.general': 'Pangkalahatang Kalendaryong Romano',
+	'calendar.filter': 'Maghanap ng bansa',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Aprika',
+	'calendar.region.asia': 'Asya',
+	'calendar.region.oceania': 'Oseanya',
+	'calendar.today': 'Ngayon',
+	'calendar.previousMonth': 'Nakaraang buwan',
+	'calendar.nextMonth': 'Susunod na buwan',
+	'calendar.noSuchDay': 'Walang araw na liturhiko ang natutuos para sa petsang iyon.',
+	'calendar.week': 'linggo',
+	'calendar.alsoToday': 'Ipinagdiriwang din ngayon',
+	'calendar.alsoObserved': 'Ginugunita rin ngayon',
+	'calendar.obligation': 'Banal na araw ng pananagutan',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Siklo ng Linggo',
+	'calendar.weekdayCycle': 'Siklo ng karaniwang araw',
+	'calendar.psalterWeek': 'Linggo ng salterio',
+	'calendar.transferredFrom': 'Inilipat mula',
+	'calendar.season.advent': 'Adbiyento',
+	'calendar.season.christmas': 'Panahon ng Pasko',
+	'calendar.season.lent': 'Kuwaresma',
+	'calendar.season.triduum': 'Tatlong Araw ng Pagkabuhay',
+	'calendar.season.easter': 'Panahon ng Pagkabuhay',
+	'calendar.season.ordinary': 'Karaniwang Panahon',
+	'calendar.colour.white': 'Puti',
+	'calendar.colour.red': 'Pula',
+	'calendar.colour.green': 'Berde',
+	'calendar.colour.violet': 'Lila',
+	'calendar.colour.rose': 'Rosas',
+	'calendar.colour.black': 'Itim',
+	'calendar.colour.blue': 'Asul',
+	'calendar.rank.solemnity': 'Dakilang Kapistahan',
+	'calendar.rank.feast': 'Kapistahan',
+	'calendar.rank.memorial': 'Paggunita',
+	'calendar.rank.optional-memorial': 'Malayang paggunita',
+	'calendar.rank.commemoration': 'Pag-alaala',
+	'calendar.rank.sunday': 'Linggo',
+	'calendar.rank.weekday': 'Karaniwang araw'
 };

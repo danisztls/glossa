@@ -57,9 +57,9 @@ engine the page is Portuguese and then serves English. `/ius-canonicum` was
 published the same day precisely because its `canonLaw.landing.*` keys were
 already in all 37.
 
-| page           | waits on             | in         |
-| -------------- | -------------------- | ---------- |
-| `/calendarium` | 75 `calendar.*` keys | en, pt, la |
+| page           | waits on                                          | in                                      |
+| -------------- | ------------------------------------------------- | --------------------------------------- |
+| `/calendarium` | 31 `calendar.*` keys — the glosses and the primer | en, pt, la; its 44 labels are in all 37 |
 
 **It costs one line in `CHROME_PATHS` plus a `CHROME_KEYS` entry in
 `scripts/route-titles.mjs`, and nothing else moves.** `sitemap.test.ts` and

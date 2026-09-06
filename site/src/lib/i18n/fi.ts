@@ -35,6 +35,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -310,5 +316,50 @@ export const fi: Dictionary = {
 	'copyright.sourceLabel': 'Lähde',
 	'lang.label': 'Kieli',
 	'lang.filter': 'Hae kieliä',
-	'lang.more': 'lisää kieliä'
+	'lang.more': 'lisää kieliä',
+	'calendar.title': 'Liturginen kalenteri',
+	'calendar.tagline':
+		'Yleinen roomalainen kalenteri, laskettuna mille tahansa päivälle — sen aika, sen arvo, sen väri.',
+	'calendar.date': 'Päivämäärä',
+	'calendar.calendar': 'Kalenteri',
+	'calendar.which.general': 'Yleinen roomalainen kalenteri',
+	'calendar.filter': 'Hae maita',
+	'calendar.region.europe': 'Eurooppa',
+	'calendar.region.americas': 'Amerikat',
+	'calendar.region.africa': 'Afrikka',
+	'calendar.region.asia': 'Aasia',
+	'calendar.region.oceania': 'Oseania',
+	'calendar.today': 'Tänään',
+	'calendar.previousMonth': 'Edellinen kuukausi',
+	'calendar.nextMonth': 'Seuraava kuukausi',
+	'calendar.noSuchDay': 'Tälle päivämäärälle ei lasketa liturgista päivää.',
+	'calendar.week': 'viikko',
+	'calendar.alsoToday': 'Tänään vietetään myös',
+	'calendar.alsoObserved': 'Tänään muistetaan myös',
+	'calendar.obligation': 'Velvoittava juhlapyhä',
+	'calendar.obligationCanon': 'CIC kaanon 1246',
+	'calendar.sundayCycle': 'Sunnuntaikierto',
+	'calendar.weekdayCycle': 'Arkikierto',
+	'calendar.psalterWeek': 'Psalttiviikko',
+	'calendar.transferredFrom': 'Siirretty päivältä',
+	'calendar.season.advent': 'Adventti',
+	'calendar.season.christmas': 'Jouluaika',
+	'calendar.season.lent': 'Paastonaika',
+	'calendar.season.triduum': 'Pääsiäistriduum',
+	'calendar.season.easter': 'Pääsiäisaika',
+	'calendar.season.ordinary': 'Kirkkovuoden aika',
+	'calendar.colour.white': 'Valkoinen',
+	'calendar.colour.red': 'Punainen',
+	'calendar.colour.green': 'Vihreä',
+	'calendar.colour.violet': 'Violetti',
+	'calendar.colour.rose': 'Ruusunpunainen',
+	'calendar.colour.black': 'Musta',
+	'calendar.colour.blue': 'Sininen',
+	'calendar.rank.solemnity': 'Juhlapyhä',
+	'calendar.rank.feast': 'Juhla',
+	'calendar.rank.memorial': 'Pakollinen muistopäivä',
+	'calendar.rank.optional-memorial': 'Vapaaehtoinen muistopäivä',
+	'calendar.rank.commemoration': 'Muistaminen',
+	'calendar.rank.sunday': 'Sunnuntai',
+	'calendar.rank.weekday': 'Arkipäivä'
 };

@@ -170,10 +170,14 @@ interface language.** `route-titles.mjs` states the rule — a cluster whose
 Portuguese member is described in English is worse than no cluster, because it
 tells a search engine the page is Portuguese and then serves English — and one
 page is held out by it today. `/calendarium` is the purest chrome page on the
-site, holding no corpus text at all, and its 75 `calendar.*` keys are written in
-three dictionaries — `en`, `pt` and, since 2026-09-06, `la`. It is in
-`STATIC_PATHS`, so it exists, answers 200 and is indexable at its bare address.
-It is one line plus a `CHROME_KEYS` entry on the day its strings are translated.
+site, holding no corpus text at all, and its 75 `calendar.*` keys split in two.
+The 44 the page labels itself with are written in all 37 since 2026-09-06; the
+31 that teach those words — `calendar.gloss.*` and `calendar.primer.*`, prose
+rather than labels — are written in `en`, `pt` and `la` alone. Both of the keys
+`CHROME_KEYS` would read are labels, so the coded gate would pass while the
+argued one fails, which is the `/schola` lesson again. It is in `STATIC_PATHS`,
+so it exists, answers 200 and is indexable at its bare address. It is one line
+plus a `CHROME_KEYS` entry on the day the other 31 are translated.
 
 **`/catechismus/compendium` joined on 2026-09-06**, its nine outstanding
 `compendium.*` keys written into the twenty-three dictionaries that lacked

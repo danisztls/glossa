@@ -29,6 +29,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -305,5 +311,50 @@ export const lt: Dictionary = {
 	'copyright.sourceLabel': 'Šaltinis',
 	'lang.label': 'Kalba',
 	'lang.filter': 'Ieškoti kalbų',
-	'lang.more': 'daugiau kalbų'
+	'lang.more': 'daugiau kalbų',
+	'calendar.title': 'Liturginis kalendorius',
+	'calendar.tagline':
+		'Bendrasis Romos kalendorius, apskaičiuotas bet kuriai dienai — jos laikas, jos laipsnis, jos spalva.',
+	'calendar.date': 'Data',
+	'calendar.calendar': 'Kalendorius',
+	'calendar.which.general': 'Bendrasis Romos kalendorius',
+	'calendar.filter': 'Ieškoti šalių',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerikos',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azija',
+	'calendar.region.oceania': 'Okeanija',
+	'calendar.today': 'Šiandien',
+	'calendar.previousMonth': 'Ankstesnis mėnuo',
+	'calendar.nextMonth': 'Kitas mėnuo',
+	'calendar.noSuchDay': 'Tai datai liturginė diena neskaičiuojama.',
+	'calendar.week': 'savaitė',
+	'calendar.alsoToday': 'Šiandien taip pat švenčiama',
+	'calendar.alsoObserved': 'Šiandien taip pat minima',
+	'calendar.obligation': 'Privaloma šventė',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Sekmadienių ciklas',
+	'calendar.weekdayCycle': 'Šiokiadienių ciklas',
+	'calendar.psalterWeek': 'Psalmyno savaitė',
+	'calendar.transferredFrom': 'Perkelta iš',
+	'calendar.season.advent': 'Adventas',
+	'calendar.season.christmas': 'Kalėdų laikas',
+	'calendar.season.lent': 'Gavėnia',
+	'calendar.season.triduum': 'Velykų tridienis',
+	'calendar.season.easter': 'Velykų laikas',
+	'calendar.season.ordinary': 'Eilinis laikas',
+	'calendar.colour.white': 'Balta',
+	'calendar.colour.red': 'Raudona',
+	'calendar.colour.green': 'Žalia',
+	'calendar.colour.violet': 'Violetinė',
+	'calendar.colour.rose': 'Rožinė',
+	'calendar.colour.black': 'Juoda',
+	'calendar.colour.blue': 'Mėlyna',
+	'calendar.rank.solemnity': 'Iškilmė',
+	'calendar.rank.feast': 'Šventė',
+	'calendar.rank.memorial': 'Privalomas minėjimas',
+	'calendar.rank.optional-memorial': 'Neprivalomas minėjimas',
+	'calendar.rank.commemoration': 'Paminėjimas',
+	'calendar.rank.sunday': 'Sekmadienis',
+	'calendar.rank.weekday': 'Šiokiadienis'
 };

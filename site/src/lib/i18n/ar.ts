@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -417,5 +423,49 @@ export const ar: Dictionary = {
 	'shortcuts.withinDocument': 'داخل الوثيقة',
 	'shortcuts.show': 'عرض هذه القائمة',
 	'zen.enter': 'وضع التركيز',
-	'zen.exit': 'أنهِ وضع التركيز'
+	'zen.exit': 'أنهِ وضع التركيز',
+	'calendar.title': 'التقويم الطقسي',
+	'calendar.tagline': 'التقويم الروماني العام، محسوبًا لأي يوم — زمنه ورتبته ولونه.',
+	'calendar.date': 'التاريخ',
+	'calendar.calendar': 'التقويم',
+	'calendar.which.general': 'التقويم الروماني العام',
+	'calendar.filter': 'ابحث عن البلدان',
+	'calendar.region.europe': 'أوروبا',
+	'calendar.region.americas': 'الأمريكتان',
+	'calendar.region.africa': 'أفريقيا',
+	'calendar.region.asia': 'آسيا',
+	'calendar.region.oceania': 'أوقيانوسيا',
+	'calendar.today': 'اليوم',
+	'calendar.previousMonth': 'الشهر السابق',
+	'calendar.nextMonth': 'الشهر التالي',
+	'calendar.noSuchDay': 'لا يُحسب أي يوم طقسي لهذا التاريخ.',
+	'calendar.week': 'الأسبوع',
+	'calendar.alsoToday': 'يُحتفل اليوم أيضًا',
+	'calendar.alsoObserved': 'يُذكر اليوم أيضًا',
+	'calendar.obligation': 'عيد إلزامي',
+	'calendar.obligationCanon': 'CIC ق. 1246',
+	'calendar.sundayCycle': 'دورة الآحاد',
+	'calendar.weekdayCycle': 'دورة أيام الأسبوع',
+	'calendar.psalterWeek': 'أسبوع المزامير',
+	'calendar.transferredFrom': 'منقول من',
+	'calendar.season.advent': 'زمن المجيء',
+	'calendar.season.christmas': 'زمن الميلاد',
+	'calendar.season.lent': 'زمن الصوم',
+	'calendar.season.triduum': 'ثلاثية الفصح',
+	'calendar.season.easter': 'زمن الفصح',
+	'calendar.season.ordinary': 'الزمن العادي',
+	'calendar.colour.white': 'أبيض',
+	'calendar.colour.red': 'أحمر',
+	'calendar.colour.green': 'أخضر',
+	'calendar.colour.violet': 'بنفسجي',
+	'calendar.colour.rose': 'وردي',
+	'calendar.colour.black': 'أسود',
+	'calendar.colour.blue': 'أزرق',
+	'calendar.rank.solemnity': 'احتفال',
+	'calendar.rank.feast': 'عيد',
+	'calendar.rank.memorial': 'تذكار',
+	'calendar.rank.optional-memorial': 'تذكار اختياري',
+	'calendar.rank.commemoration': 'ذكرى',
+	'calendar.rank.sunday': 'أحد',
+	'calendar.rank.weekday': 'يوم عادي'
 };

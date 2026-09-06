@@ -99,11 +99,17 @@ export const CHROME_PATHS = [
  * it tells a search engine the page is Portuguese and then serves English.
  *
  *   - `/calendarium` holds no corpus text at all, which makes it the purest
- *     chrome page on the site, and its 75 `calendar.*` keys are written in
- *     `en`, `pt` and `la` — the last completed 2026-09-06, its primer and its
- *     twenty-four glosses. The other 34 dictionaries fall through to English
- *     per key (`i18n.svelte.ts`), and are the whole of what is left. The page
- *     is also still being built.
+ *     chrome page on the site, and its 75 `calendar.*` keys SPLIT IN TWO. The
+ *     44 the page labels itself with — the date controls, the regions, the
+ *     seasons, ranks and colours — are written in all 37 since 2026-09-06.
+ *     The 31 that TEACH those words are not: `calendar.gloss.*` and
+ *     `calendar.primer.*` are prose, they are written in `en`, `pt` and `la`,
+ *     and the other 34 fall through to English per key (`i18n.svelte.ts`). A
+ *     reader in those 34 would meet a page labelled in their language whose
+ *     every gloss and whose whole primer is English, which is the ARGUED gate
+ *     failing while the coded one passes — `calendar.title` and
+ *     `calendar.tagline` are both label keys and would open it. The page is
+ *     also still being built.
  *
  * It is in `STATIC_PATHS`, so it exists, answers 200 and is indexable at its
  * bare address; it is not claimed in a language it is not written in.

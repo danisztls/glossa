@@ -38,6 +38,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -316,5 +322,50 @@ export const id: Dictionary = {
 	'copyright.sourceLabel': 'Sumber',
 	'lang.label': 'Bahasa',
 	'lang.filter': 'Cari bahasa',
-	'lang.more': 'bahasa lainnya'
+	'lang.more': 'bahasa lainnya',
+	'calendar.title': 'Kalender liturgi',
+	'calendar.tagline':
+		'Kalender Romawi Umum, dihitung untuk hari mana pun — masanya, tingkatnya, warnanya.',
+	'calendar.date': 'Tanggal',
+	'calendar.calendar': 'Kalender',
+	'calendar.which.general': 'Kalender Romawi Umum',
+	'calendar.filter': 'Cari negara',
+	'calendar.region.europe': 'Eropa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oseania',
+	'calendar.today': 'Hari ini',
+	'calendar.previousMonth': 'Bulan sebelumnya',
+	'calendar.nextMonth': 'Bulan berikutnya',
+	'calendar.noSuchDay': 'Tidak ada hari liturgi yang dihitung untuk tanggal itu.',
+	'calendar.week': 'pekan',
+	'calendar.alsoToday': 'Hari ini juga dirayakan',
+	'calendar.alsoObserved': 'Hari ini juga diperingati',
+	'calendar.obligation': 'Hari raya wajib',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Siklus hari Minggu',
+	'calendar.weekdayCycle': 'Siklus hari biasa',
+	'calendar.psalterWeek': 'Pekan mazmur',
+	'calendar.transferredFrom': 'Dipindahkan dari',
+	'calendar.season.advent': 'Masa Adven',
+	'calendar.season.christmas': 'Masa Natal',
+	'calendar.season.lent': 'Masa Prapaskah',
+	'calendar.season.triduum': 'Trihari Paskah',
+	'calendar.season.easter': 'Masa Paskah',
+	'calendar.season.ordinary': 'Masa Biasa',
+	'calendar.colour.white': 'Putih',
+	'calendar.colour.red': 'Merah',
+	'calendar.colour.green': 'Hijau',
+	'calendar.colour.violet': 'Ungu',
+	'calendar.colour.rose': 'Merah muda',
+	'calendar.colour.black': 'Hitam',
+	'calendar.colour.blue': 'Biru',
+	'calendar.rank.solemnity': 'Hari Raya',
+	'calendar.rank.feast': 'Pesta',
+	'calendar.rank.memorial': 'Peringatan wajib',
+	'calendar.rank.optional-memorial': 'Peringatan fakultatif',
+	'calendar.rank.commemoration': 'Kenangan',
+	'calendar.rank.sunday': 'Hari Minggu',
+	'calendar.rank.weekday': 'Hari biasa'
 };

@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -431,5 +437,50 @@ export const sl: Dictionary = {
 	'shortcuts.withinDocument': 'Znotraj dokumenta',
 	'shortcuts.show': 'Pokaži ta seznam',
 	'zen.enter': 'Način zbranosti',
-	'zen.exit': 'Zapusti način zbranosti'
+	'zen.exit': 'Zapusti način zbranosti',
+	'calendar.title': 'Bogoslužni koledar',
+	'calendar.tagline':
+		'Splošni rimski koledar, izračunan za katerikoli dan — njegov čas, njegov red, njegova barva.',
+	'calendar.date': 'Datum',
+	'calendar.calendar': 'Koledar',
+	'calendar.which.general': 'Splošni rimski koledar',
+	'calendar.filter': 'Iskanje držav',
+	'calendar.region.europe': 'Evropa',
+	'calendar.region.americas': 'Amerike',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azija',
+	'calendar.region.oceania': 'Oceanija',
+	'calendar.today': 'Danes',
+	'calendar.previousMonth': 'Prejšnji mesec',
+	'calendar.nextMonth': 'Naslednji mesec',
+	'calendar.noSuchDay': 'Za ta datum ni izračunanega bogoslužnega dne.',
+	'calendar.week': 'teden',
+	'calendar.alsoToday': 'Danes se obhaja tudi',
+	'calendar.alsoObserved': 'Danes se spominjamo tudi',
+	'calendar.obligation': 'Zapovedani praznik',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Nedeljski krog',
+	'calendar.weekdayCycle': 'Delavniški krog',
+	'calendar.psalterWeek': 'Teden psalterija',
+	'calendar.transferredFrom': 'Prestavljeno z',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Božični čas',
+	'calendar.season.lent': 'Postni čas',
+	'calendar.season.triduum': 'Velikonočno tridnevje',
+	'calendar.season.easter': 'Velikonočni čas',
+	'calendar.season.ordinary': 'Med letom',
+	'calendar.colour.white': 'Bela',
+	'calendar.colour.red': 'Rdeča',
+	'calendar.colour.green': 'Zelena',
+	'calendar.colour.violet': 'Vijolična',
+	'calendar.colour.rose': 'Rožnata',
+	'calendar.colour.black': 'Črna',
+	'calendar.colour.blue': 'Modra',
+	'calendar.rank.solemnity': 'Slovesni praznik',
+	'calendar.rank.feast': 'Praznik',
+	'calendar.rank.memorial': 'Obvezni god',
+	'calendar.rank.optional-memorial': 'Neobvezni god',
+	'calendar.rank.commemoration': 'Spomin',
+	'calendar.rank.sunday': 'Nedelja',
+	'calendar.rank.weekday': 'Delavnik'
 };

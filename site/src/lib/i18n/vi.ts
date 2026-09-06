@@ -37,6 +37,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -311,5 +317,50 @@ export const vi: Dictionary = {
 	'copyright.sourceLabel': 'Nguồn',
 	'lang.label': 'Ngôn ngữ',
 	'lang.filter': 'Tìm ngôn ngữ',
-	'lang.more': 'ngôn ngữ khác'
+	'lang.more': 'ngôn ngữ khác',
+	'calendar.title': 'Lịch phụng vụ',
+	'calendar.tagline':
+		'Lịch Rôma chung, tính cho bất kỳ ngày nào — mùa của ngày, bậc của ngày, màu của ngày.',
+	'calendar.date': 'Ngày',
+	'calendar.calendar': 'Lịch',
+	'calendar.which.general': 'Lịch Rôma chung',
+	'calendar.filter': 'Tìm quốc gia',
+	'calendar.region.europe': 'Châu Âu',
+	'calendar.region.americas': 'Châu Mỹ',
+	'calendar.region.africa': 'Châu Phi',
+	'calendar.region.asia': 'Châu Á',
+	'calendar.region.oceania': 'Châu Đại Dương',
+	'calendar.today': 'Hôm nay',
+	'calendar.previousMonth': 'Tháng trước',
+	'calendar.nextMonth': 'Tháng sau',
+	'calendar.noSuchDay': 'Không có ngày phụng vụ nào được tính cho ngày đó.',
+	'calendar.week': 'tuần',
+	'calendar.alsoToday': 'Hôm nay cũng mừng',
+	'calendar.alsoObserved': 'Hôm nay cũng kính nhớ',
+	'calendar.obligation': 'Lễ buộc',
+	'calendar.obligationCanon': 'CIC Đ. 1246',
+	'calendar.sundayCycle': 'Chu kỳ Chúa nhật',
+	'calendar.weekdayCycle': 'Chu kỳ ngày thường',
+	'calendar.psalterWeek': 'Tuần thánh vịnh',
+	'calendar.transferredFrom': 'Dời từ',
+	'calendar.season.advent': 'Mùa Vọng',
+	'calendar.season.christmas': 'Mùa Giáng Sinh',
+	'calendar.season.lent': 'Mùa Chay',
+	'calendar.season.triduum': 'Tam Nhật Vượt Qua',
+	'calendar.season.easter': 'Mùa Phục Sinh',
+	'calendar.season.ordinary': 'Mùa Thường Niên',
+	'calendar.colour.white': 'Trắng',
+	'calendar.colour.red': 'Đỏ',
+	'calendar.colour.green': 'Xanh lục',
+	'calendar.colour.violet': 'Tím',
+	'calendar.colour.rose': 'Hồng',
+	'calendar.colour.black': 'Đen',
+	'calendar.colour.blue': 'Xanh lam',
+	'calendar.rank.solemnity': 'Lễ trọng',
+	'calendar.rank.feast': 'Lễ kính',
+	'calendar.rank.memorial': 'Lễ nhớ',
+	'calendar.rank.optional-memorial': 'Lễ nhớ tùy ý',
+	'calendar.rank.commemoration': 'Kỷ niệm',
+	'calendar.rank.sunday': 'Chúa nhật',
+	'calendar.rank.weekday': 'Ngày thường'
 };

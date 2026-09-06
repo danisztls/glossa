@@ -46,6 +46,12 @@
  * bookmark panel's own hints -- this file had the settings and the jump box
  * already. Same caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -328,5 +334,50 @@ export const mg: Dictionary = {
 	'copyright.sourceLabel': 'Loharano',
 	'lang.label': 'Fiteny',
 	'lang.filter': 'Hitady fiteny',
-	'lang.more': 'fiteny hafa'
+	'lang.more': 'fiteny hafa',
+	'calendar.title': 'Tetiandro litorzika',
+	'calendar.tagline':
+		'Ny Tetiandro Romana Ankapobeny, kajiana ho amin’ny andro rehetra — ny fotoanany, ny laharany, ny lokony.',
+	'calendar.date': 'Daty',
+	'calendar.calendar': 'Tetiandro',
+	'calendar.which.general': 'Tetiandro Romana Ankapobeny',
+	'calendar.filter': 'Hitady firenena',
+	'calendar.region.europe': 'Eoropa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azia',
+	'calendar.region.oceania': 'Oseania',
+	'calendar.today': 'Androany',
+	'calendar.previousMonth': 'Volana teo aloha',
+	'calendar.nextMonth': 'Volana manaraka',
+	'calendar.noSuchDay': 'Tsy misy andro litorzika voakajy ho amin’io daty io.',
+	'calendar.week': 'herinandro',
+	'calendar.alsoToday': 'Ankalazaina koa androany',
+	'calendar.alsoObserved': 'Tsaroana koa androany',
+	'calendar.obligation': 'Fety voadidy',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Tsingerin’ny alahady',
+	'calendar.weekdayCycle': 'Tsingerin’ny andro tsotra',
+	'calendar.psalterWeek': 'Herinandron’ny salamo',
+	'calendar.transferredFrom': 'Nafindra avy tamin’ny',
+	'calendar.season.advent': 'Fiaviana',
+	'calendar.season.christmas': 'Fotoanan’ny Noely',
+	'calendar.season.lent': 'Karemy',
+	'calendar.season.triduum': 'Telo Andro Masin’ny Paka',
+	'calendar.season.easter': 'Fotoanan’ny Paka',
+	'calendar.season.ordinary': 'Fotoana Tsotra',
+	'calendar.colour.white': 'Fotsy',
+	'calendar.colour.red': 'Mena',
+	'calendar.colour.green': 'Maitso',
+	'calendar.colour.violet': 'Volomparasy',
+	'calendar.colour.rose': 'Mavokely',
+	'calendar.colour.black': 'Mainty',
+	'calendar.colour.blue': 'Manga',
+	'calendar.rank.solemnity': 'Fety lehibe',
+	'calendar.rank.feast': 'Fety',
+	'calendar.rank.memorial': 'Fahatsiarovana',
+	'calendar.rank.optional-memorial': 'Fahatsiarovana an-tsitrapo',
+	'calendar.rank.commemoration': 'Fampahatsiarovana',
+	'calendar.rank.sunday': 'Alahady',
+	'calendar.rank.weekday': 'Andro tsotra'
 };

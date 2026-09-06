@@ -42,6 +42,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -313,5 +319,50 @@ export const ig: Dictionary = {
 	'copyright.sourceLabel': 'Isi mmalite',
 	'lang.label': 'Asụsụ',
 	'lang.filter': 'Chọọ asụsụ',
-	'lang.more': 'asụsụ ndị ọzọ'
+	'lang.more': 'asụsụ ndị ọzọ',
+	'calendar.title': 'Kalenda Litọjị',
+	'calendar.tagline':
+		'Kalenda Rome Izugbe, agbakọtara maka ụbọchị ọ bụla — oge ya, ọkwa ya, agba ya.',
+	'calendar.date': 'Ụbọchị',
+	'calendar.calendar': 'Kalenda',
+	'calendar.which.general': 'Kalenda Rome Izugbe',
+	'calendar.filter': 'Chọọ mba',
+	'calendar.region.europe': 'Yurop',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrịka',
+	'calendar.region.asia': 'Eshia',
+	'calendar.region.oceania': 'Oshenia',
+	'calendar.today': 'Taa',
+	'calendar.previousMonth': 'Ọnwa gara aga',
+	'calendar.nextMonth': 'Ọnwa na-esote',
+	'calendar.noSuchDay': 'Enweghị ụbọchị litọjị a gbakọrọ maka ụbọchị ahụ.',
+	'calendar.week': 'izu',
+	'calendar.alsoToday': 'A na-emekwa taa',
+	'calendar.alsoObserved': 'A na-echetakwa taa',
+	'calendar.obligation': 'Ụbọchị mmemme iwu',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Okirikiri Ụbọchị Ụka',
+	'calendar.weekdayCycle': 'Okirikiri ụbọchị nkịtị',
+	'calendar.psalterWeek': 'Izu Abụ Ọma',
+	'calendar.transferredFrom': 'E bugharịrị site na',
+	'calendar.season.advent': 'Oge Ọbịbịa',
+	'calendar.season.christmas': 'Oge Ekeresimesi',
+	'calendar.season.lent': 'Oge Nnọ Nri',
+	'calendar.season.triduum': 'Ụbọchị Atọ Dị Nsọ',
+	'calendar.season.easter': "Oge Mbilite n'Ọnwụ",
+	'calendar.season.ordinary': 'Oge Nkịtị',
+	'calendar.colour.white': 'Ọcha',
+	'calendar.colour.red': 'Uhie',
+	'calendar.colour.green': 'Ndụ ndụ',
+	'calendar.colour.violet': 'Odo odo',
+	'calendar.colour.rose': 'Pinki',
+	'calendar.colour.black': 'Oji',
+	'calendar.colour.blue': 'Anụnụ',
+	'calendar.rank.solemnity': 'Nnukwu Mmemme',
+	'calendar.rank.feast': 'Mmemme',
+	'calendar.rank.memorial': 'Ncheta',
+	'calendar.rank.optional-memorial': 'Ncheta nhọrọ',
+	'calendar.rank.commemoration': 'Ichetara',
+	'calendar.rank.sunday': 'Ụbọchị Ụka',
+	'calendar.rank.weekday': 'Ụbọchị nkịtị'
 };

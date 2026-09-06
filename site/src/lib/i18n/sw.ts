@@ -37,6 +37,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -313,5 +319,50 @@ export const sw: Dictionary = {
 	'copyright.sourceLabel': 'Chanzo',
 	'lang.label': 'Lugha',
 	'lang.filter': 'Tafuta lugha',
-	'lang.more': 'lugha zaidi'
+	'lang.more': 'lugha zaidi',
+	'calendar.title': 'Kalenda ya liturujia',
+	'calendar.tagline':
+		'Kalenda Kuu ya Kiroma, iliyokokotolewa kwa siku yoyote — kipindi chake, daraja lake, rangi yake.',
+	'calendar.date': 'Tarehe',
+	'calendar.calendar': 'Kalenda',
+	'calendar.which.general': 'Kalenda Kuu ya Kiroma',
+	'calendar.filter': 'Tafuta nchi',
+	'calendar.region.europe': 'Ulaya',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oceania',
+	'calendar.today': 'Leo',
+	'calendar.previousMonth': 'Mwezi uliopita',
+	'calendar.nextMonth': 'Mwezi ujao',
+	'calendar.noSuchDay': 'Hakuna siku ya liturujia inayokokotolewa kwa tarehe hiyo.',
+	'calendar.week': 'juma',
+	'calendar.alsoToday': 'Leo pia inaadhimishwa',
+	'calendar.alsoObserved': 'Leo pia inakumbukwa',
+	'calendar.obligation': 'Sikukuu ya lazima',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Mzunguko wa Dominika',
+	'calendar.weekdayCycle': 'Mzunguko wa siku za juma',
+	'calendar.psalterWeek': 'Juma la zaburi',
+	'calendar.transferredFrom': 'Imehamishwa kutoka',
+	'calendar.season.advent': 'Majilio',
+	'calendar.season.christmas': 'Kipindi cha Noeli',
+	'calendar.season.lent': 'Kwaresima',
+	'calendar.season.triduum': 'Triduo ya Pasaka',
+	'calendar.season.easter': 'Kipindi cha Pasaka',
+	'calendar.season.ordinary': 'Kipindi cha Mwaka',
+	'calendar.colour.white': 'Nyeupe',
+	'calendar.colour.red': 'Nyekundu',
+	'calendar.colour.green': 'Kijani',
+	'calendar.colour.violet': 'Zambarau',
+	'calendar.colour.rose': 'Waridi',
+	'calendar.colour.black': 'Nyeusi',
+	'calendar.colour.blue': 'Buluu',
+	'calendar.rank.solemnity': 'Sherehe',
+	'calendar.rank.feast': 'Sikukuu',
+	'calendar.rank.memorial': 'Kumbukumbu',
+	'calendar.rank.optional-memorial': 'Kumbukumbu ya hiari',
+	'calendar.rank.commemoration': 'Ukumbusho',
+	'calendar.rank.sunday': 'Dominika',
+	'calendar.rank.weekday': 'Siku ya kawaida'
 };

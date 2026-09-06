@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -432,5 +438,50 @@ export const pl: Dictionary = {
 	'shortcuts.withinDocument': 'W dokumencie',
 	'shortcuts.show': 'Pokaż tę listę',
 	'zen.enter': 'Tryb skupienia',
-	'zen.exit': 'Zakończ tryb skupienia'
+	'zen.exit': 'Zakończ tryb skupienia',
+	'calendar.title': 'Kalendarz liturgiczny',
+	'calendar.tagline':
+		'Ogólny kalendarz rzymski, obliczony na dowolny dzień — jego okres, jego stopień, jego kolor.',
+	'calendar.date': 'Data',
+	'calendar.calendar': 'Kalendarz',
+	'calendar.which.general': 'Ogólny kalendarz rzymski',
+	'calendar.filter': 'Szukaj krajów',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Ameryki',
+	'calendar.region.africa': 'Afryka',
+	'calendar.region.asia': 'Azja',
+	'calendar.region.oceania': 'Oceania',
+	'calendar.today': 'Dziś',
+	'calendar.previousMonth': 'Poprzedni miesiąc',
+	'calendar.nextMonth': 'Następny miesiąc',
+	'calendar.noSuchDay': 'Dla tej daty nie jest obliczany żaden dzień liturgiczny.',
+	'calendar.week': 'tydzień',
+	'calendar.alsoToday': 'Dziś obchodzi się także',
+	'calendar.alsoObserved': 'Dziś przypada także',
+	'calendar.obligation': 'Święto nakazane',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Cykl niedzielny',
+	'calendar.weekdayCycle': 'Cykl na dni powszednie',
+	'calendar.psalterWeek': 'Tydzień psałterza',
+	'calendar.transferredFrom': 'Przeniesione z',
+	'calendar.season.advent': 'Adwent',
+	'calendar.season.christmas': 'Okres Bożego Narodzenia',
+	'calendar.season.lent': 'Wielki Post',
+	'calendar.season.triduum': 'Triduum Paschalne',
+	'calendar.season.easter': 'Okres Wielkanocny',
+	'calendar.season.ordinary': 'Okres Zwykły',
+	'calendar.colour.white': 'Biały',
+	'calendar.colour.red': 'Czerwony',
+	'calendar.colour.green': 'Zielony',
+	'calendar.colour.violet': 'Fioletowy',
+	'calendar.colour.rose': 'Różowy',
+	'calendar.colour.black': 'Czarny',
+	'calendar.colour.blue': 'Błękitny',
+	'calendar.rank.solemnity': 'Uroczystość',
+	'calendar.rank.feast': 'Święto',
+	'calendar.rank.memorial': 'Wspomnienie obowiązkowe',
+	'calendar.rank.optional-memorial': 'Wspomnienie dowolne',
+	'calendar.rank.commemoration': 'Komemoracja',
+	'calendar.rank.sunday': 'Niedziela',
+	'calendar.rank.weekday': 'Dzień powszedni'
 };

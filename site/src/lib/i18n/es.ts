@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -435,5 +441,50 @@ export const es: Dictionary = {
 	'shortcuts.withinDocument': 'Dentro del documento',
 	'shortcuts.show': 'Mostrar esta lista',
 	'zen.enter': 'Modo de concentración',
-	'zen.exit': 'Salir del modo de concentración'
+	'zen.exit': 'Salir del modo de concentración',
+	'calendar.title': 'Calendario litúrgico',
+	'calendar.tagline':
+		'El Calendario Romano General, calculado para cualquier día: su tiempo, su grado, su color.',
+	'calendar.date': 'Fecha',
+	'calendar.calendar': 'Calendario',
+	'calendar.which.general': 'Calendario Romano General',
+	'calendar.filter': 'Buscar países',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'América',
+	'calendar.region.africa': 'África',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oceanía',
+	'calendar.today': 'Hoy',
+	'calendar.previousMonth': 'Mes anterior',
+	'calendar.nextMonth': 'Mes siguiente',
+	'calendar.noSuchDay': 'No se calcula ningún día litúrgico para esa fecha.',
+	'calendar.week': 'semana',
+	'calendar.alsoToday': 'También se celebra hoy',
+	'calendar.alsoObserved': 'También se conmemora hoy',
+	'calendar.obligation': 'Fiesta de precepto',
+	'calendar.obligationCanon': 'CIC c. 1246',
+	'calendar.sundayCycle': 'Ciclo dominical',
+	'calendar.weekdayCycle': 'Ciclo ferial',
+	'calendar.psalterWeek': 'Semana del salterio',
+	'calendar.transferredFrom': 'Trasladado del',
+	'calendar.season.advent': 'Adviento',
+	'calendar.season.christmas': 'Tiempo de Navidad',
+	'calendar.season.lent': 'Cuaresma',
+	'calendar.season.triduum': 'Triduo Pascual',
+	'calendar.season.easter': 'Tiempo Pascual',
+	'calendar.season.ordinary': 'Tiempo Ordinario',
+	'calendar.colour.white': 'Blanco',
+	'calendar.colour.red': 'Rojo',
+	'calendar.colour.green': 'Verde',
+	'calendar.colour.violet': 'Morado',
+	'calendar.colour.rose': 'Rosa',
+	'calendar.colour.black': 'Negro',
+	'calendar.colour.blue': 'Azul',
+	'calendar.rank.solemnity': 'Solemnidad',
+	'calendar.rank.feast': 'Fiesta',
+	'calendar.rank.memorial': 'Memoria',
+	'calendar.rank.optional-memorial': 'Memoria libre',
+	'calendar.rank.commemoration': 'Conmemoración',
+	'calendar.rank.sunday': 'Domingo',
+	'calendar.rank.weekday': 'Feria'
 };

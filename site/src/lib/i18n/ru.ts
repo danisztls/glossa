@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -434,5 +440,50 @@ export const ru: Dictionary = {
 	'shortcuts.withinDocument': 'Внутри документа',
 	'shortcuts.show': 'Показать этот список',
 	'zen.enter': 'Режим сосредоточения',
-	'zen.exit': 'Выйти из режима сосредоточения'
+	'zen.exit': 'Выйти из режима сосредоточения',
+	'calendar.title': 'Литургический календарь',
+	'calendar.tagline':
+		'Общий Римский календарь, рассчитанный на любой день — его время, его ранг, его цвет.',
+	'calendar.date': 'Дата',
+	'calendar.calendar': 'Календарь',
+	'calendar.which.general': 'Общий Римский календарь',
+	'calendar.filter': 'Поиск стран',
+	'calendar.region.europe': 'Европа',
+	'calendar.region.americas': 'Америка',
+	'calendar.region.africa': 'Африка',
+	'calendar.region.asia': 'Азия',
+	'calendar.region.oceania': 'Океания',
+	'calendar.today': 'Сегодня',
+	'calendar.previousMonth': 'Предыдущий месяц',
+	'calendar.nextMonth': 'Следующий месяц',
+	'calendar.noSuchDay': 'Для этой даты литургический день не рассчитывается.',
+	'calendar.week': 'неделя',
+	'calendar.alsoToday': 'Сегодня также празднуется',
+	'calendar.alsoObserved': 'Сегодня также отмечается',
+	'calendar.obligation': 'Обязательный праздник',
+	'calendar.obligationCanon': 'CIC кан. 1246',
+	'calendar.sundayCycle': 'Воскресный цикл',
+	'calendar.weekdayCycle': 'Будничный цикл',
+	'calendar.psalterWeek': 'Неделя псалтири',
+	'calendar.transferredFrom': 'Перенесено с',
+	'calendar.season.advent': 'Адвент',
+	'calendar.season.christmas': 'Рождественское время',
+	'calendar.season.lent': 'Великий пост',
+	'calendar.season.triduum': 'Пасхальное триденствие',
+	'calendar.season.easter': 'Пасхальное время',
+	'calendar.season.ordinary': 'Рядовое время',
+	'calendar.colour.white': 'Белый',
+	'calendar.colour.red': 'Красный',
+	'calendar.colour.green': 'Зелёный',
+	'calendar.colour.violet': 'Фиолетовый',
+	'calendar.colour.rose': 'Розовый',
+	'calendar.colour.black': 'Чёрный',
+	'calendar.colour.blue': 'Голубой',
+	'calendar.rank.solemnity': 'Торжество',
+	'calendar.rank.feast': 'Праздник',
+	'calendar.rank.memorial': 'Обязательное воспоминание',
+	'calendar.rank.optional-memorial': 'Необязательное воспоминание',
+	'calendar.rank.commemoration': 'Коммеморация',
+	'calendar.rank.sunday': 'Воскресенье',
+	'calendar.rank.weekday': 'Будний день'
 };

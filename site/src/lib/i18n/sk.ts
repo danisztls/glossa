@@ -32,6 +32,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -303,5 +309,50 @@ export const sk: Dictionary = {
 	'copyright.sourceLabel': 'Zdroj',
 	'lang.label': 'Jazyk',
 	'lang.filter': 'Hľadať jazyky',
-	'lang.more': 'ďalšie jazyky'
+	'lang.more': 'ďalšie jazyky',
+	'calendar.title': 'Liturgický kalendár',
+	'calendar.tagline':
+		'Všeobecný rímsky kalendár, vypočítaný pre ktorýkoľvek deň — jeho obdobie, jeho stupeň, jeho farba.',
+	'calendar.date': 'Dátum',
+	'calendar.calendar': 'Kalendár',
+	'calendar.which.general': 'Všeobecný rímsky kalendár',
+	'calendar.filter': 'Hľadať krajiny',
+	'calendar.region.europe': 'Európa',
+	'calendar.region.americas': 'Ameriky',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Ázia',
+	'calendar.region.oceania': 'Oceánia',
+	'calendar.today': 'Dnes',
+	'calendar.previousMonth': 'Predchádzajúci mesiac',
+	'calendar.nextMonth': 'Nasledujúci mesiac',
+	'calendar.noSuchDay': 'Pre tento dátum sa nepočíta nijaký liturgický deň.',
+	'calendar.week': 'týždeň',
+	'calendar.alsoToday': 'Dnes sa slávi aj',
+	'calendar.alsoObserved': 'Dnes pripadá aj',
+	'calendar.obligation': 'Prikázaný sviatok',
+	'calendar.obligationCanon': 'CIC kán. 1246',
+	'calendar.sundayCycle': 'Nedeľný cyklus',
+	'calendar.weekdayCycle': 'Feriálny cyklus',
+	'calendar.psalterWeek': 'Týždeň žaltára',
+	'calendar.transferredFrom': 'Preložené z',
+	'calendar.season.advent': 'Adventné obdobie',
+	'calendar.season.christmas': 'Vianočné obdobie',
+	'calendar.season.lent': 'Pôstne obdobie',
+	'calendar.season.triduum': 'Veľkonočné trojdnie',
+	'calendar.season.easter': 'Veľkonočné obdobie',
+	'calendar.season.ordinary': 'Cezročné obdobie',
+	'calendar.colour.white': 'Biela',
+	'calendar.colour.red': 'Červená',
+	'calendar.colour.green': 'Zelená',
+	'calendar.colour.violet': 'Fialová',
+	'calendar.colour.rose': 'Ružová',
+	'calendar.colour.black': 'Čierna',
+	'calendar.colour.blue': 'Modrá',
+	'calendar.rank.solemnity': 'Slávnosť',
+	'calendar.rank.feast': 'Sviatok',
+	'calendar.rank.memorial': 'Spomienka',
+	'calendar.rank.optional-memorial': 'Ľubovoľná spomienka',
+	'calendar.rank.commemoration': 'Pripomienka',
+	'calendar.rank.sunday': 'Nedeľa',
+	'calendar.rank.weekday': 'Féria'
 };

@@ -42,6 +42,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -317,5 +323,50 @@ export const ml: Dictionary = {
 	'copyright.sourceLabel': 'സ്രോതസ്സ്',
 	'lang.label': 'ഭാഷ',
 	'lang.filter': 'ഭാഷകൾ തിരയുക',
-	'lang.more': 'കൂടുതൽ ഭാഷകൾ'
+	'lang.more': 'കൂടുതൽ ഭാഷകൾ',
+	'calendar.title': 'ആരാധനക്രമ കലണ്ടർ',
+	'calendar.tagline':
+		'പൊതു റോമൻ കലണ്ടർ, ഏതു ദിവസത്തിനും കണക്കാക്കിയത് — അതിന്റെ കാലം, അതിന്റെ പദവി, അതിന്റെ നിറം.',
+	'calendar.date': 'തീയതി',
+	'calendar.calendar': 'കലണ്ടർ',
+	'calendar.which.general': 'പൊതു റോമൻ കലണ്ടർ',
+	'calendar.filter': 'രാജ്യങ്ങൾ തിരയുക',
+	'calendar.region.europe': 'യൂറോപ്പ്',
+	'calendar.region.americas': 'അമേരിക്കകൾ',
+	'calendar.region.africa': 'ആഫ്രിക്ക',
+	'calendar.region.asia': 'ഏഷ്യ',
+	'calendar.region.oceania': 'ഓഷ്യാനിയ',
+	'calendar.today': 'ഇന്ന്',
+	'calendar.previousMonth': 'മുൻമാസം',
+	'calendar.nextMonth': 'അടുത്ത മാസം',
+	'calendar.noSuchDay': 'ആ തീയതിക്ക് ആരാധനക്രമ ദിനം കണക്കാക്കുന്നില്ല.',
+	'calendar.week': 'ആഴ്ച',
+	'calendar.alsoToday': 'ഇന്ന് ഇവയും ആചരിക്കുന്നു',
+	'calendar.alsoObserved': 'ഇന്ന് ഇവയും സ്മരിക്കുന്നു',
+	'calendar.obligation': 'കടമയുള്ള തിരുനാൾ',
+	'calendar.obligationCanon': 'CIC കാ. 1246',
+	'calendar.sundayCycle': 'ഞായർ ചക്രം',
+	'calendar.weekdayCycle': 'വാരദിന ചക്രം',
+	'calendar.psalterWeek': 'സങ്കീർത്തന വാരം',
+	'calendar.transferredFrom': 'മാറ്റിയത്',
+	'calendar.season.advent': 'ആഗമനകാലം',
+	'calendar.season.christmas': 'ക്രിസ്മസ് കാലം',
+	'calendar.season.lent': 'നോമ്പുകാലം',
+	'calendar.season.triduum': 'പെസഹാ ത്രിദിനം',
+	'calendar.season.easter': 'ഉയിർപ്പുകാലം',
+	'calendar.season.ordinary': 'ആണ്ടുവട്ടക്കാലം',
+	'calendar.colour.white': 'വെള്ള',
+	'calendar.colour.red': 'ചുവപ്പ്',
+	'calendar.colour.green': 'പച്ച',
+	'calendar.colour.violet': 'വയലറ്റ്',
+	'calendar.colour.rose': 'റോസ്',
+	'calendar.colour.black': 'കറുപ്പ്',
+	'calendar.colour.blue': 'നീല',
+	'calendar.rank.solemnity': 'മഹോത്സവം',
+	'calendar.rank.feast': 'തിരുനാൾ',
+	'calendar.rank.memorial': 'സ്മരണ',
+	'calendar.rank.optional-memorial': 'ഐച്ഛിക സ്മരണ',
+	'calendar.rank.commemoration': 'അനുസ്മരണം',
+	'calendar.rank.sunday': 'ഞായർ',
+	'calendar.rank.weekday': 'വാരദിനം'
 };

@@ -35,6 +35,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -308,5 +314,50 @@ export const lv: Dictionary = {
 	'copyright.sourceLabel': 'Avots',
 	'lang.label': 'Valoda',
 	'lang.filter': 'Meklēt valodas',
-	'lang.more': 'vairāk valodu'
+	'lang.more': 'vairāk valodu',
+	'calendar.title': 'Liturģiskais kalendārs',
+	'calendar.tagline':
+		'Vispārējais Romas kalendārs, aprēķināts jebkurai dienai — tās laiks, tās pakāpe, tās krāsa.',
+	'calendar.date': 'Datums',
+	'calendar.calendar': 'Kalendārs',
+	'calendar.which.general': 'Vispārējais Romas kalendārs',
+	'calendar.filter': 'Meklēt valstis',
+	'calendar.region.europe': 'Eiropa',
+	'calendar.region.americas': 'Amerikas',
+	'calendar.region.africa': 'Āfrika',
+	'calendar.region.asia': 'Āzija',
+	'calendar.region.oceania': 'Okeānija',
+	'calendar.today': 'Šodien',
+	'calendar.previousMonth': 'Iepriekšējais mēnesis',
+	'calendar.nextMonth': 'Nākamais mēnesis',
+	'calendar.noSuchDay': 'Šim datumam liturģiskā diena netiek aprēķināta.',
+	'calendar.week': 'nedēļa',
+	'calendar.alsoToday': 'Šodien svin arī',
+	'calendar.alsoObserved': 'Šodien atzīmē arī',
+	'calendar.obligation': 'Obligātie svētki',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Svētdienu cikls',
+	'calendar.weekdayCycle': 'Darbdienu cikls',
+	'calendar.psalterWeek': 'Psalmu nedēļa',
+	'calendar.transferredFrom': 'Pārcelts no',
+	'calendar.season.advent': 'Adventa laiks',
+	'calendar.season.christmas': 'Ziemsvētku laiks',
+	'calendar.season.lent': 'Gavēņa laiks',
+	'calendar.season.triduum': 'Lieldienu tridijs',
+	'calendar.season.easter': 'Lieldienu laiks',
+	'calendar.season.ordinary': 'Parastais liturģiskais laiks',
+	'calendar.colour.white': 'Balta',
+	'calendar.colour.red': 'Sarkana',
+	'calendar.colour.green': 'Zaļa',
+	'calendar.colour.violet': 'Violeta',
+	'calendar.colour.rose': 'Rozā',
+	'calendar.colour.black': 'Melna',
+	'calendar.colour.blue': 'Zila',
+	'calendar.rank.solemnity': 'Lieli svētki',
+	'calendar.rank.feast': 'Svētki',
+	'calendar.rank.memorial': 'Piemiņas diena',
+	'calendar.rank.optional-memorial': 'Brīvas izvēles piemiņas diena',
+	'calendar.rank.commemoration': 'Piemiņa',
+	'calendar.rank.sunday': 'Svētdiena',
+	'calendar.rank.weekday': 'Darbdiena'
 };

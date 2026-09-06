@@ -35,6 +35,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -309,5 +315,50 @@ export const be: Dictionary = {
 	'copyright.sourceLabel': 'Крыніца',
 	'lang.label': 'Мова',
 	'lang.filter': 'Шукаць мовы',
-	'lang.more': 'яшчэ мовы'
+	'lang.more': 'яшчэ мовы',
+	'calendar.title': 'Літургічны каляндар',
+	'calendar.tagline':
+		'Агульны Рымскі каляндар, вылічаны на любы дзень — яго час, яго ранг, яго колер.',
+	'calendar.date': 'Дата',
+	'calendar.calendar': 'Каляндар',
+	'calendar.which.general': 'Агульны Рымскі каляндар',
+	'calendar.filter': 'Пошук краін',
+	'calendar.region.europe': 'Еўропа',
+	'calendar.region.americas': 'Амерыка',
+	'calendar.region.africa': 'Афрыка',
+	'calendar.region.asia': 'Азія',
+	'calendar.region.oceania': 'Акіянія',
+	'calendar.today': 'Сёння',
+	'calendar.previousMonth': 'Папярэдні месяц',
+	'calendar.nextMonth': 'Наступны месяц',
+	'calendar.noSuchDay': 'Для гэтай даты літургічны дзень не вылічаецца.',
+	'calendar.week': 'тыдзень',
+	'calendar.alsoToday': 'Сёння таксама святкуецца',
+	'calendar.alsoObserved': 'Сёння таксама адзначаецца',
+	'calendar.obligation': 'Абавязковае свята',
+	'calendar.obligationCanon': 'CIC кан. 1246',
+	'calendar.sundayCycle': 'Нядзельны цыкл',
+	'calendar.weekdayCycle': 'Будзённы цыкл',
+	'calendar.psalterWeek': 'Тыдзень псалтыра',
+	'calendar.transferredFrom': 'Перанесена з',
+	'calendar.season.advent': 'Адвэнт',
+	'calendar.season.christmas': 'Перыяд Нараджэння Пана',
+	'calendar.season.lent': 'Вялікі пост',
+	'calendar.season.triduum': 'Пасхальнае трохдзённе',
+	'calendar.season.easter': 'Пасхальны перыяд',
+	'calendar.season.ordinary': 'Звычайны перыяд',
+	'calendar.colour.white': 'Белы',
+	'calendar.colour.red': 'Чырвоны',
+	'calendar.colour.green': 'Зялёны',
+	'calendar.colour.violet': 'Фіялетавы',
+	'calendar.colour.rose': 'Ружовы',
+	'calendar.colour.black': 'Чорны',
+	'calendar.colour.blue': 'Блакітны',
+	'calendar.rank.solemnity': 'Урачыстасць',
+	'calendar.rank.feast': 'Свята',
+	'calendar.rank.memorial': 'Абавязковы ўспамін',
+	'calendar.rank.optional-memorial': 'Неабавязковы ўспамін',
+	'calendar.rank.commemoration': 'Камемарацыя',
+	'calendar.rank.sunday': 'Нядзеля',
+	'calendar.rank.weekday': 'Будны дзень'
 };

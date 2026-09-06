@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -438,5 +444,50 @@ export const hu: Dictionary = {
 	'shortcuts.withinDocument': 'A dokumentumon belül',
 	'shortcuts.show': 'Lista megjelenítése',
 	'zen.enter': 'Fókusz mód',
-	'zen.exit': 'Fókusz mód bezárása'
+	'zen.exit': 'Fókusz mód bezárása',
+	'calendar.title': 'Liturgikus naptár',
+	'calendar.tagline':
+		'Az Általános Római Naptár, bármely napra kiszámítva — az ideje, a rangja, a színe.',
+	'calendar.date': 'Dátum',
+	'calendar.calendar': 'Naptár',
+	'calendar.which.general': 'Általános Római Naptár',
+	'calendar.filter': 'Országok keresése',
+	'calendar.region.europe': 'Európa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Ázsia',
+	'calendar.region.oceania': 'Óceánia',
+	'calendar.today': 'Ma',
+	'calendar.previousMonth': 'Előző hónap',
+	'calendar.nextMonth': 'Következő hónap',
+	'calendar.noSuchDay': 'Arra a dátumra nem számítható liturgikus nap.',
+	'calendar.week': 'hét',
+	'calendar.alsoToday': 'Ma emellett ünnepeljük',
+	'calendar.alsoObserved': 'Ma emellett megemlékezünk',
+	'calendar.obligation': 'Parancsolt ünnep',
+	'calendar.obligationCanon': 'CIC 1246. kán.',
+	'calendar.sundayCycle': 'Vasárnapi ciklus',
+	'calendar.weekdayCycle': 'Hétköznapi ciklus',
+	'calendar.psalterWeek': 'Zsoltárhét',
+	'calendar.transferredFrom': 'Áthelyezve innen:',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Karácsonyi idő',
+	'calendar.season.lent': 'Nagyböjt',
+	'calendar.season.triduum': 'Szent Háromnap',
+	'calendar.season.easter': 'Húsvéti idő',
+	'calendar.season.ordinary': 'Évközi idő',
+	'calendar.colour.white': 'Fehér',
+	'calendar.colour.red': 'Piros',
+	'calendar.colour.green': 'Zöld',
+	'calendar.colour.violet': 'Lila',
+	'calendar.colour.rose': 'Rózsaszín',
+	'calendar.colour.black': 'Fekete',
+	'calendar.colour.blue': 'Kék',
+	'calendar.rank.solemnity': 'Főünnep',
+	'calendar.rank.feast': 'Ünnep',
+	'calendar.rank.memorial': 'Emléknap',
+	'calendar.rank.optional-memorial': 'Szabadon választható emléknap',
+	'calendar.rank.commemoration': 'Megemlékezés',
+	'calendar.rank.sunday': 'Vasárnap',
+	'calendar.rank.weekday': 'Köznap'
 };

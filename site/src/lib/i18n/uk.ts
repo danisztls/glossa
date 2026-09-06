@@ -38,6 +38,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -310,5 +316,50 @@ export const uk: Dictionary = {
 	'copyright.sourceLabel': 'Джерело',
 	'lang.label': 'Мова',
 	'lang.filter': 'Шукати мови',
-	'lang.more': 'ще мови'
+	'lang.more': 'ще мови',
+	'calendar.title': 'Літургійний календар',
+	'calendar.tagline':
+		'Загальний Римський календар, обчислений на будь-який день — його час, його ранг, його колір.',
+	'calendar.date': 'Дата',
+	'calendar.calendar': 'Календар',
+	'calendar.which.general': 'Загальний Римський календар',
+	'calendar.filter': 'Пошук країн',
+	'calendar.region.europe': 'Європа',
+	'calendar.region.americas': 'Америки',
+	'calendar.region.africa': 'Африка',
+	'calendar.region.asia': 'Азія',
+	'calendar.region.oceania': 'Океанія',
+	'calendar.today': 'Сьогодні',
+	'calendar.previousMonth': 'Попередній місяць',
+	'calendar.nextMonth': 'Наступний місяць',
+	'calendar.noSuchDay': 'Для цієї дати літургійний день не обчислюється.',
+	'calendar.week': 'тиждень',
+	'calendar.alsoToday': 'Сьогодні також святкується',
+	'calendar.alsoObserved': 'Сьогодні також відзначається',
+	'calendar.obligation': 'Обов’язкове свято',
+	'calendar.obligationCanon': 'CIC кан. 1246',
+	'calendar.sundayCycle': 'Недільний цикл',
+	'calendar.weekdayCycle': 'Буденний цикл',
+	'calendar.psalterWeek': 'Тиждень псалтиря',
+	'calendar.transferredFrom': 'Перенесено з',
+	'calendar.season.advent': 'Адвент',
+	'calendar.season.christmas': 'Різдвяний час',
+	'calendar.season.lent': 'Великий піст',
+	'calendar.season.triduum': 'Пасхальне тридення',
+	'calendar.season.easter': 'Пасхальний час',
+	'calendar.season.ordinary': 'Звичайний час',
+	'calendar.colour.white': 'Білий',
+	'calendar.colour.red': 'Червоний',
+	'calendar.colour.green': 'Зелений',
+	'calendar.colour.violet': 'Фіолетовий',
+	'calendar.colour.rose': 'Рожевий',
+	'calendar.colour.black': 'Чорний',
+	'calendar.colour.blue': 'Блакитний',
+	'calendar.rank.solemnity': 'Урочистість',
+	'calendar.rank.feast': 'Свято',
+	'calendar.rank.memorial': 'Обов’язковий спомин',
+	'calendar.rank.optional-memorial': 'Необов’язковий спомин',
+	'calendar.rank.commemoration': 'Комеморація',
+	'calendar.rank.sunday': 'Неділя',
+	'calendar.rank.weekday': 'Будній день'
 };

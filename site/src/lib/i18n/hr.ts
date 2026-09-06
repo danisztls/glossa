@@ -32,6 +32,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -302,5 +308,50 @@ export const hr: Dictionary = {
 	'copyright.sourceLabel': 'Izvor',
 	'lang.label': 'Jezik',
 	'lang.filter': 'Traži jezike',
-	'lang.more': 'još jezika'
+	'lang.more': 'još jezika',
+	'calendar.title': 'Liturgijski kalendar',
+	'calendar.tagline':
+		'Opći rimski kalendar, izračunan za bilo koji dan — njegovo vrijeme, njegov stupanj, njegova boja.',
+	'calendar.date': 'Datum',
+	'calendar.calendar': 'Kalendar',
+	'calendar.which.general': 'Opći rimski kalendar',
+	'calendar.filter': 'Traži zemlje',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerike',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azija',
+	'calendar.region.oceania': 'Oceanija',
+	'calendar.today': 'Danas',
+	'calendar.previousMonth': 'Prethodni mjesec',
+	'calendar.nextMonth': 'Sljedeći mjesec',
+	'calendar.noSuchDay': 'Za taj datum ne računa se nijedan liturgijski dan.',
+	'calendar.week': 'tjedan',
+	'calendar.alsoToday': 'Danas se slavi i',
+	'calendar.alsoObserved': 'Danas pada i',
+	'calendar.obligation': 'Zapovijedani blagdan',
+	'calendar.obligationCanon': 'CIC kan. 1246',
+	'calendar.sundayCycle': 'Nedjeljni ciklus',
+	'calendar.weekdayCycle': 'Ferijalni ciklus',
+	'calendar.psalterWeek': 'Tjedan psaltira',
+	'calendar.transferredFrom': 'Premješteno s',
+	'calendar.season.advent': 'Došašće',
+	'calendar.season.christmas': 'Božićno vrijeme',
+	'calendar.season.lent': 'Korizma',
+	'calendar.season.triduum': 'Vazmeno trodnevlje',
+	'calendar.season.easter': 'Vazmeno vrijeme',
+	'calendar.season.ordinary': 'Vrijeme kroz godinu',
+	'calendar.colour.white': 'Bijela',
+	'calendar.colour.red': 'Crvena',
+	'calendar.colour.green': 'Zelena',
+	'calendar.colour.violet': 'Ljubičasta',
+	'calendar.colour.rose': 'Ružičasta',
+	'calendar.colour.black': 'Crna',
+	'calendar.colour.blue': 'Plava',
+	'calendar.rank.solemnity': 'Svetkovina',
+	'calendar.rank.feast': 'Blagdan',
+	'calendar.rank.memorial': 'Obvezni spomendan',
+	'calendar.rank.optional-memorial': 'Neobvezni spomendan',
+	'calendar.rank.commemoration': 'Spomen',
+	'calendar.rank.sunday': 'Nedjelja',
+	'calendar.rank.weekday': 'Ferija'
 };

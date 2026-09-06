@@ -32,6 +32,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -309,5 +315,50 @@ export const nl: Dictionary = {
 	'copyright.sourceLabel': 'Bron',
 	'lang.label': 'Taal',
 	'lang.filter': 'Talen zoeken',
-	'lang.more': 'meer talen'
+	'lang.more': 'meer talen',
+	'calendar.title': 'Liturgische kalender',
+	'calendar.tagline':
+		'De Algemene Romeinse Kalender, berekend voor elke dag — zijn tijd, zijn rang, zijn kleur.',
+	'calendar.date': 'Datum',
+	'calendar.calendar': 'Kalender',
+	'calendar.which.general': 'Algemene Romeinse Kalender',
+	'calendar.filter': 'Landen zoeken',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Azië',
+	'calendar.region.oceania': 'Oceanië',
+	'calendar.today': 'Vandaag',
+	'calendar.previousMonth': 'Vorige maand',
+	'calendar.nextMonth': 'Volgende maand',
+	'calendar.noSuchDay': 'Voor die datum wordt geen liturgische dag berekend.',
+	'calendar.week': 'week',
+	'calendar.alsoToday': 'Vandaag ook gevierd',
+	'calendar.alsoObserved': 'Vandaag ook herdacht',
+	'calendar.obligation': 'Verplichte feestdag',
+	'calendar.obligationCanon': 'CIC can. 1246',
+	'calendar.sundayCycle': 'Zondagscyclus',
+	'calendar.weekdayCycle': 'Weekdagcyclus',
+	'calendar.psalterWeek': 'Psalmweek',
+	'calendar.transferredFrom': 'Overgebracht van',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Kersttijd',
+	'calendar.season.lent': 'Veertigdagentijd',
+	'calendar.season.triduum': 'Paastriduüm',
+	'calendar.season.easter': 'Paastijd',
+	'calendar.season.ordinary': 'Door het jaar',
+	'calendar.colour.white': 'Wit',
+	'calendar.colour.red': 'Rood',
+	'calendar.colour.green': 'Groen',
+	'calendar.colour.violet': 'Paars',
+	'calendar.colour.rose': 'Roze',
+	'calendar.colour.black': 'Zwart',
+	'calendar.colour.blue': 'Blauw',
+	'calendar.rank.solemnity': 'Hoogfeest',
+	'calendar.rank.feast': 'Feest',
+	'calendar.rank.memorial': 'Gedachtenis',
+	'calendar.rank.optional-memorial': 'Vrije gedachtenis',
+	'calendar.rank.commemoration': 'Herdenking',
+	'calendar.rank.sunday': 'Zondag',
+	'calendar.rank.weekday': 'Weekdag'
 };

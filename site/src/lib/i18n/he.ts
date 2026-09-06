@@ -41,6 +41,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -300,5 +306,49 @@ export const he: Dictionary = {
 	'copyright.sourceLabel': 'מקור',
 	'lang.label': 'שפה',
 	'lang.filter': 'חיפוש שפות',
-	'lang.more': 'שפות נוספות'
+	'lang.more': 'שפות נוספות',
+	'calendar.title': 'לוח השנה הליטורגי',
+	'calendar.tagline': 'לוח השנה הרומי הכללי, מחושב לכל יום — תקופתו, דרגתו, צבעו.',
+	'calendar.date': 'תאריך',
+	'calendar.calendar': 'לוח שנה',
+	'calendar.which.general': 'לוח השנה הרומי הכללי',
+	'calendar.filter': 'חיפוש מדינות',
+	'calendar.region.europe': 'אירופה',
+	'calendar.region.americas': 'אמריקה',
+	'calendar.region.africa': 'אפריקה',
+	'calendar.region.asia': 'אסיה',
+	'calendar.region.oceania': 'אוקיאניה',
+	'calendar.today': 'היום',
+	'calendar.previousMonth': 'החודש הקודם',
+	'calendar.nextMonth': 'החודש הבא',
+	'calendar.noSuchDay': 'לא מחושב יום ליטורגי לתאריך זה.',
+	'calendar.week': 'שבוע',
+	'calendar.alsoToday': 'נחגג היום גם',
+	'calendar.alsoObserved': 'מצוין היום גם',
+	'calendar.obligation': 'יום חג שחובה לקיימו',
+	'calendar.obligationCanon': 'CIC קנון 1246',
+	'calendar.sundayCycle': 'מחזור ימי ראשון',
+	'calendar.weekdayCycle': 'מחזור ימות החול',
+	'calendar.psalterWeek': 'שבוע התהילים',
+	'calendar.transferredFrom': 'הועבר מן',
+	'calendar.season.advent': 'זמן האדוונט',
+	'calendar.season.christmas': 'זמן חג המולד',
+	'calendar.season.lent': 'זמן הצום',
+	'calendar.season.triduum': 'שלושת ימי הפסחא',
+	'calendar.season.easter': 'זמן הפסחא',
+	'calendar.season.ordinary': 'הזמן שבמהלך השנה',
+	'calendar.colour.white': 'לבן',
+	'calendar.colour.red': 'אדום',
+	'calendar.colour.green': 'ירוק',
+	'calendar.colour.violet': 'סגול',
+	'calendar.colour.rose': 'ורוד',
+	'calendar.colour.black': 'שחור',
+	'calendar.colour.blue': 'כחול',
+	'calendar.rank.solemnity': 'חגיגה',
+	'calendar.rank.feast': 'חג',
+	'calendar.rank.memorial': 'זיכרון',
+	'calendar.rank.optional-memorial': 'זיכרון רשות',
+	'calendar.rank.commemoration': 'אזכרה',
+	'calendar.rank.sunday': 'יום ראשון',
+	'calendar.rank.weekday': 'יום חול'
 };

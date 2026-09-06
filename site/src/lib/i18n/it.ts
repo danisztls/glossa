@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -435,5 +441,50 @@ export const it: Dictionary = {
 	'shortcuts.withinDocument': 'Nel documento',
 	'shortcuts.show': 'Mostra questo elenco',
 	'zen.enter': 'Modalità concentrazione',
-	'zen.exit': 'Esci dalla modalità concentrazione'
+	'zen.exit': 'Esci dalla modalità concentrazione',
+	'calendar.title': 'Calendario liturgico',
+	'calendar.tagline':
+		'Il Calendario Romano Generale, calcolato per qualunque giorno: il suo tempo, il suo grado, il suo colore.',
+	'calendar.date': 'Data',
+	'calendar.calendar': 'Calendario',
+	'calendar.which.general': 'Calendario Romano Generale',
+	'calendar.filter': 'Cerca paesi',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Americhe',
+	'calendar.region.africa': 'Africa',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oceania',
+	'calendar.today': 'Oggi',
+	'calendar.previousMonth': 'Mese precedente',
+	'calendar.nextMonth': 'Mese successivo',
+	'calendar.noSuchDay': 'Per quella data non è calcolato alcun giorno liturgico.',
+	'calendar.week': 'settimana',
+	'calendar.alsoToday': 'Oggi si celebra anche',
+	'calendar.alsoObserved': 'Oggi ricorre anche',
+	'calendar.obligation': 'Festa di precetto',
+	'calendar.obligationCanon': 'CIC Can. 1246',
+	'calendar.sundayCycle': 'Ciclo domenicale',
+	'calendar.weekdayCycle': 'Ciclo feriale',
+	'calendar.psalterWeek': 'Settimana del salterio',
+	'calendar.transferredFrom': 'Trasferito dal',
+	'calendar.season.advent': 'Avvento',
+	'calendar.season.christmas': 'Tempo di Natale',
+	'calendar.season.lent': 'Quaresima',
+	'calendar.season.triduum': 'Triduo pasquale',
+	'calendar.season.easter': 'Tempo di Pasqua',
+	'calendar.season.ordinary': 'Tempo Ordinario',
+	'calendar.colour.white': 'Bianco',
+	'calendar.colour.red': 'Rosso',
+	'calendar.colour.green': 'Verde',
+	'calendar.colour.violet': 'Viola',
+	'calendar.colour.rose': 'Rosaceo',
+	'calendar.colour.black': 'Nero',
+	'calendar.colour.blue': 'Azzurro',
+	'calendar.rank.solemnity': 'Solennità',
+	'calendar.rank.feast': 'Festa',
+	'calendar.rank.memorial': 'Memoria',
+	'calendar.rank.optional-memorial': 'Memoria facoltativa',
+	'calendar.rank.commemoration': 'Commemorazione',
+	'calendar.rank.sunday': 'Domenica',
+	'calendar.rank.weekday': 'Feria'
 };

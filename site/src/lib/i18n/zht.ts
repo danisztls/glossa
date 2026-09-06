@@ -40,6 +40,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -288,5 +294,51 @@ export const zht: Dictionary = {
 	'copyright.sourceLabel': '來源',
 	'lang.label': '語言',
 	'lang.filter': '搜尋語言',
-	'lang.more': '更多語言'
+	'lang.more': '更多語言',
+	'calendar.title': '禮儀日曆',
+	'calendar.tagline': '羅馬通用日曆，可推算任何一天——那一天的時期、等級與顏色。',
+	'calendar.date': '日期',
+	'calendar.calendar': '日曆',
+	'calendar.which.general': '羅馬通用日曆',
+	'calendar.filter': '搜尋國家或地區',
+	'calendar.region.europe': '歐洲',
+	'calendar.region.americas': '美洲',
+	'calendar.region.africa': '非洲',
+	'calendar.region.asia': '亞洲',
+	'calendar.region.oceania': '大洋洲',
+	'calendar.today': '今天',
+	'calendar.previousMonth': '上個月',
+	'calendar.nextMonth': '下個月',
+	'calendar.noSuchDay': '該日期沒有推算出禮儀日。',
+	// `LiturgicalDayCard` prints this word and THEN the number, so it is the
+	// bare noun rather than the 第…週 the ordinal would take in running text.
+	'calendar.week': '週',
+	'calendar.alsoToday': '今日同時慶祝',
+	'calendar.alsoObserved': '今日同時紀念',
+	'calendar.obligation': '當守瞻禮',
+	'calendar.obligationCanon': 'CIC 第1246條',
+	'calendar.sundayCycle': '主日週期',
+	'calendar.weekdayCycle': '平日週期',
+	'calendar.psalterWeek': '聖詠集週次',
+	'calendar.transferredFrom': '移自',
+	'calendar.season.advent': '將臨期',
+	'calendar.season.christmas': '聖誕期',
+	'calendar.season.lent': '四旬期',
+	'calendar.season.triduum': '逾越節三日慶典',
+	'calendar.season.easter': '復活期',
+	'calendar.season.ordinary': '常年期',
+	'calendar.colour.white': '白色',
+	'calendar.colour.red': '紅色',
+	'calendar.colour.green': '綠色',
+	'calendar.colour.violet': '紫色',
+	'calendar.colour.rose': '玫瑰色',
+	'calendar.colour.black': '黑色',
+	'calendar.colour.blue': '藍色',
+	'calendar.rank.solemnity': '節日',
+	'calendar.rank.feast': '慶日',
+	'calendar.rank.memorial': '紀念',
+	'calendar.rank.optional-memorial': '自由紀念',
+	'calendar.rank.commemoration': '紀念禮',
+	'calendar.rank.sunday': '主日',
+	'calendar.rank.weekday': '平日'
 };

@@ -5,6 +5,12 @@
  * that picks between them). Keys are the English module's, in its order;
  * anything left out falls back to English rather than showing the key.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -438,5 +444,50 @@ export const ro: Dictionary = {
 	'shortcuts.withinDocument': 'În document',
 	'shortcuts.show': 'Afișează această listă',
 	'zen.enter': 'Mod de concentrare',
-	'zen.exit': 'Ieșiți din modul de concentrare'
+	'zen.exit': 'Ieșiți din modul de concentrare',
+	'calendar.title': 'Calendar liturgic',
+	'calendar.tagline':
+		'Calendarul Roman General, calculat pentru orice zi — timpul ei, gradul ei, culoarea ei.',
+	'calendar.date': 'Data',
+	'calendar.calendar': 'Calendar',
+	'calendar.which.general': 'Calendarul Roman General',
+	'calendar.filter': 'Caută țări',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Americile',
+	'calendar.region.africa': 'Africa',
+	'calendar.region.asia': 'Asia',
+	'calendar.region.oceania': 'Oceania',
+	'calendar.today': 'Astăzi',
+	'calendar.previousMonth': 'Luna precedentă',
+	'calendar.nextMonth': 'Luna următoare',
+	'calendar.noSuchDay': 'Pentru acea dată nu se calculează nicio zi liturgică.',
+	'calendar.week': 'săptămâna',
+	'calendar.alsoToday': 'Astăzi se mai celebrează',
+	'calendar.alsoObserved': 'Astăzi se mai ține',
+	'calendar.obligation': 'Sărbătoare de poruncă',
+	'calendar.obligationCanon': 'CIC can. 1246',
+	'calendar.sundayCycle': 'Ciclul duminical',
+	'calendar.weekdayCycle': 'Ciclul ferial',
+	'calendar.psalterWeek': 'Săptămâna psaltirii',
+	'calendar.transferredFrom': 'Transferat din',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Timpul Crăciunului',
+	'calendar.season.lent': 'Postul Mare',
+	'calendar.season.triduum': 'Triduumul Pascal',
+	'calendar.season.easter': 'Timpul Pascal',
+	'calendar.season.ordinary': 'Timpul de peste an',
+	'calendar.colour.white': 'Alb',
+	'calendar.colour.red': 'Roșu',
+	'calendar.colour.green': 'Verde',
+	'calendar.colour.violet': 'Violet',
+	'calendar.colour.rose': 'Roz',
+	'calendar.colour.black': 'Negru',
+	'calendar.colour.blue': 'Albastru',
+	'calendar.rank.solemnity': 'Solemnitate',
+	'calendar.rank.feast': 'Sărbătoare',
+	'calendar.rank.memorial': 'Memorial',
+	'calendar.rank.optional-memorial': 'Memorial facultativ',
+	'calendar.rank.commemoration': 'Comemorare',
+	'calendar.rank.sunday': 'Duminică',
+	'calendar.rank.weekday': 'Zi de rând'
 };

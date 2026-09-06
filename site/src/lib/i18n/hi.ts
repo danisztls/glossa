@@ -43,6 +43,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -315,5 +321,50 @@ export const hi: Dictionary = {
 	'copyright.sourceLabel': 'स्रोत',
 	'lang.label': 'भाषा',
 	'lang.filter': 'भाषाएँ खोजें',
-	'lang.more': 'और भाषाएँ'
+	'lang.more': 'और भाषाएँ',
+	'calendar.title': 'धर्मविधि पंचांग',
+	'calendar.tagline':
+		'सामान्य रोमन पंचांग, किसी भी दिन के लिए गणना किया गया — उसका काल, उसका दर्जा, उसका रंग।',
+	'calendar.date': 'तिथि',
+	'calendar.calendar': 'पंचांग',
+	'calendar.which.general': 'सामान्य रोमन पंचांग',
+	'calendar.filter': 'देश खोजें',
+	'calendar.region.europe': 'यूरोप',
+	'calendar.region.americas': 'अमेरिका',
+	'calendar.region.africa': 'अफ्रीका',
+	'calendar.region.asia': 'एशिया',
+	'calendar.region.oceania': 'ओशिनिया',
+	'calendar.today': 'आज',
+	'calendar.previousMonth': 'पिछला महीना',
+	'calendar.nextMonth': 'अगला महीना',
+	'calendar.noSuchDay': 'उस तिथि के लिए कोई धर्मविधि दिवस गणना में नहीं आता।',
+	'calendar.week': 'सप्ताह',
+	'calendar.alsoToday': 'आज यह भी मनाया जाता है',
+	'calendar.alsoObserved': 'आज यह भी स्मरण किया जाता है',
+	'calendar.obligation': 'अनिवार्य पर्व',
+	'calendar.obligationCanon': 'CIC कै. 1246',
+	'calendar.sundayCycle': 'रविवारीय चक्र',
+	'calendar.weekdayCycle': 'साप्ताहिक दिवस चक्र',
+	'calendar.psalterWeek': 'भजन सप्ताह',
+	'calendar.transferredFrom': 'स्थानांतरित',
+	'calendar.season.advent': 'आगमन काल',
+	'calendar.season.christmas': 'क्रिसमस काल',
+	'calendar.season.lent': 'चालीसा काल',
+	'calendar.season.triduum': 'पास्का त्रिदिवस',
+	'calendar.season.easter': 'पास्का काल',
+	'calendar.season.ordinary': 'सामान्य काल',
+	'calendar.colour.white': 'श्वेत',
+	'calendar.colour.red': 'लाल',
+	'calendar.colour.green': 'हरा',
+	'calendar.colour.violet': 'बैंगनी',
+	'calendar.colour.rose': 'गुलाबी',
+	'calendar.colour.black': 'काला',
+	'calendar.colour.blue': 'नीला',
+	'calendar.rank.solemnity': 'महापर्व',
+	'calendar.rank.feast': 'पर्व',
+	'calendar.rank.memorial': 'स्मृति',
+	'calendar.rank.optional-memorial': 'ऐच्छिक स्मृति',
+	'calendar.rank.commemoration': 'स्मरण',
+	'calendar.rank.sunday': 'रविवार',
+	'calendar.rank.weekday': 'साधारण दिन'
 };

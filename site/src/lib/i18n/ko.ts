@@ -38,6 +38,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -303,5 +309,51 @@ export const ko: Dictionary = {
 	'copyright.sourceLabel': '출처',
 	'lang.label': '언어',
 	'lang.filter': '언어 찾기',
-	'lang.more': '다른 언어'
+	'lang.more': '다른 언어',
+	'calendar.title': '전례력',
+	'calendar.tagline': '로마 일반 전례력을 어느 날짜로든 계산합니다 — 그날의 시기, 등급, 색깔.',
+	'calendar.date': '날짜',
+	'calendar.calendar': '달력',
+	'calendar.which.general': '로마 일반 전례력',
+	'calendar.filter': '나라 검색',
+	'calendar.region.europe': '유럽',
+	'calendar.region.americas': '아메리카',
+	'calendar.region.africa': '아프리카',
+	'calendar.region.asia': '아시아',
+	'calendar.region.oceania': '오세아니아',
+	'calendar.today': '오늘',
+	'calendar.previousMonth': '지난달',
+	'calendar.nextMonth': '다음 달',
+	'calendar.noSuchDay': '그 날짜로는 전례일이 계산되지 않습니다.',
+	// `LiturgicalDayCard` prints this word and THEN the number, so it is the
+	// bare noun rather than the 제…주간 the ordinal would take in running text.
+	'calendar.week': '주간',
+	'calendar.alsoToday': '오늘 함께 지내는 축일',
+	'calendar.alsoObserved': '오늘 함께 기념하는 날',
+	'calendar.obligation': '의무 축일',
+	'calendar.obligationCanon': 'CIC 제1246조',
+	'calendar.sundayCycle': '주일 주기',
+	'calendar.weekdayCycle': '평일 주기',
+	'calendar.psalterWeek': '시편 주간',
+	'calendar.transferredFrom': '옮겨온 날짜',
+	'calendar.season.advent': '대림 시기',
+	'calendar.season.christmas': '성탄 시기',
+	'calendar.season.lent': '사순 시기',
+	'calendar.season.triduum': '파스카 성삼일',
+	'calendar.season.easter': '부활 시기',
+	'calendar.season.ordinary': '연중 시기',
+	'calendar.colour.white': '흰색',
+	'calendar.colour.red': '붉은색',
+	'calendar.colour.green': '초록색',
+	'calendar.colour.violet': '자주색',
+	'calendar.colour.rose': '장미색',
+	'calendar.colour.black': '검은색',
+	'calendar.colour.blue': '푸른색',
+	'calendar.rank.solemnity': '대축일',
+	'calendar.rank.feast': '축일',
+	'calendar.rank.memorial': '기념일',
+	'calendar.rank.optional-memorial': '자유 기념일',
+	'calendar.rank.commemoration': '기념',
+	'calendar.rank.sunday': '주일',
+	'calendar.rank.weekday': '평일'
 };

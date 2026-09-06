@@ -32,6 +32,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -304,5 +310,50 @@ export const da: Dictionary = {
 	'copyright.sourceLabel': 'Kilde',
 	'lang.label': 'Sprog',
 	'lang.filter': 'Søg sprog',
-	'lang.more': 'flere sprog'
+	'lang.more': 'flere sprog',
+	'calendar.title': 'Liturgisk kalender',
+	'calendar.tagline':
+		'Den almindelige romerske kalender, beregnet for enhver dag — dens tid, dens rang, dens farve.',
+	'calendar.date': 'Dato',
+	'calendar.calendar': 'Kalender',
+	'calendar.which.general': 'Den almindelige romerske kalender',
+	'calendar.filter': 'Søg lande',
+	'calendar.region.europe': 'Europa',
+	'calendar.region.americas': 'Amerika',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Asien',
+	'calendar.region.oceania': 'Oceanien',
+	'calendar.today': 'I dag',
+	'calendar.previousMonth': 'Forrige måned',
+	'calendar.nextMonth': 'Næste måned',
+	'calendar.noSuchDay': 'Der beregnes ingen liturgisk dag for den dato.',
+	'calendar.week': 'uge',
+	'calendar.alsoToday': 'Fejres også i dag',
+	'calendar.alsoObserved': 'Mindes også i dag',
+	'calendar.obligation': 'Påbudt helligdag',
+	'calendar.obligationCanon': 'CIC can. 1246',
+	'calendar.sundayCycle': 'Søndagscyklus',
+	'calendar.weekdayCycle': 'Hverdagscyklus',
+	'calendar.psalterWeek': 'Salmeuge',
+	'calendar.transferredFrom': 'Flyttet fra',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Juletiden',
+	'calendar.season.lent': 'Fasten',
+	'calendar.season.triduum': 'Påskens triduum',
+	'calendar.season.easter': 'Påsketiden',
+	'calendar.season.ordinary': 'Det almindelige kirkeår',
+	'calendar.colour.white': 'Hvid',
+	'calendar.colour.red': 'Rød',
+	'calendar.colour.green': 'Grøn',
+	'calendar.colour.violet': 'Violet',
+	'calendar.colour.rose': 'Rosa',
+	'calendar.colour.black': 'Sort',
+	'calendar.colour.blue': 'Blå',
+	'calendar.rank.solemnity': 'Højtid',
+	'calendar.rank.feast': 'Fest',
+	'calendar.rank.memorial': 'Mindedag',
+	'calendar.rank.optional-memorial': 'Valgfri mindedag',
+	'calendar.rank.commemoration': 'Ihukommelse',
+	'calendar.rank.sunday': 'Søndag',
+	'calendar.rank.weekday': 'Hverdag'
 };

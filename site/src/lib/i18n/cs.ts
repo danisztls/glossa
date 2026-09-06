@@ -32,6 +32,12 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
+ * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
+ * `/calendarium` labels itself with, its seasons, ranks and colours among
+ * them. The 31 that TEACH those words (`calendar.gloss.*`,
+ * `calendar.primer.*`) are prose rather than labels and are left to English
+ * for now, by direction; the page stays unpublished until they are written.
+ *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.
  */
@@ -303,5 +309,50 @@ export const cs: Dictionary = {
 	'copyright.sourceLabel': 'Zdroj',
 	'lang.label': 'Jazyk',
 	'lang.filter': 'Hledat jazyky',
-	'lang.more': 'další jazyky'
+	'lang.more': 'další jazyky',
+	'calendar.title': 'Liturgický kalendář',
+	'calendar.tagline':
+		'Všeobecný římský kalendář, spočítaný pro kterýkoli den — jeho doba, jeho stupeň, jeho barva.',
+	'calendar.date': 'Datum',
+	'calendar.calendar': 'Kalendář',
+	'calendar.which.general': 'Všeobecný římský kalendář',
+	'calendar.filter': 'Hledat země',
+	'calendar.region.europe': 'Evropa',
+	'calendar.region.americas': 'Ameriky',
+	'calendar.region.africa': 'Afrika',
+	'calendar.region.asia': 'Asie',
+	'calendar.region.oceania': 'Oceánie',
+	'calendar.today': 'Dnes',
+	'calendar.previousMonth': 'Předchozí měsíc',
+	'calendar.nextMonth': 'Následující měsíc',
+	'calendar.noSuchDay': 'Pro toto datum se nepočítá žádný liturgický den.',
+	'calendar.week': 'týden',
+	'calendar.alsoToday': 'Dnes se slaví také',
+	'calendar.alsoObserved': 'Dnes připadá také',
+	'calendar.obligation': 'Zasvěcený svátek',
+	'calendar.obligationCanon': 'CIC kán. 1246',
+	'calendar.sundayCycle': 'Nedělní cyklus',
+	'calendar.weekdayCycle': 'Všední cyklus',
+	'calendar.psalterWeek': 'Týden žaltáře',
+	'calendar.transferredFrom': 'Přeloženo z',
+	'calendar.season.advent': 'Advent',
+	'calendar.season.christmas': 'Doba vánoční',
+	'calendar.season.lent': 'Postní doba',
+	'calendar.season.triduum': 'Velikonoční triduum',
+	'calendar.season.easter': 'Doba velikonoční',
+	'calendar.season.ordinary': 'Liturgické mezidobí',
+	'calendar.colour.white': 'Bílá',
+	'calendar.colour.red': 'Červená',
+	'calendar.colour.green': 'Zelená',
+	'calendar.colour.violet': 'Fialová',
+	'calendar.colour.rose': 'Růžová',
+	'calendar.colour.black': 'Černá',
+	'calendar.colour.blue': 'Modrá',
+	'calendar.rank.solemnity': 'Slavnost',
+	'calendar.rank.feast': 'Svátek',
+	'calendar.rank.memorial': 'Památka',
+	'calendar.rank.optional-memorial': 'Nezávazná památka',
+	'calendar.rank.commemoration': 'Připomínka',
+	'calendar.rank.sunday': 'Neděle',
+	'calendar.rank.weekday': 'Všední den'
 };
