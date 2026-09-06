@@ -29,28 +29,11 @@
 	 *
 	 * ## A catalogue, and one card that is not a work
 	 *
-	 * The last card is Bookmarks, over a link to `/signata`. It sits IN the
-	 * shelf grid rather than above it because it is the same object at that
-	 * size: a name, a mark, a sentence, and a way in — and nothing about it
-	 * needs to look different, since the thing that tells it apart is that it
-	 * is the reader's own shelf and the sentence says so.
-	 *
-	 * IT IS UNCONDITIONAL, AND WAS HIDDEN WHILE THE STORE WAS EMPTY UNTIL
-	 * 2026-09-06. Hiding it read as tidiness and was the opposite: this page is
-	 * the catalogue of what the site HAS, marking is one of the things it does,
-	 * and a door that opens only once you have already found the feature
-	 * elsewhere is shut against exactly the reader who needed it. Nothing is
-	 * behind it that the empty case cannot hold — `/signata` answers a reader
-	 * with no marks in its own words (`bookmark.empty`, `bookmark.emptyHint`),
-	 * which is a sentence, where a missing card is a silence.
-	 *
-	 * IT CARRIED A ROW OF COUNTS UNTIL 2026-09-06, one chip per section of
-	 * `/signata` in that page's order, on the argument that the shape of what
-	 * you have marked says more than a total about whether it is worth
-	 * opening. It says that to the person who wrote it. On the page it was
-	 * `1 1` — bare numbers with nothing naming what they counted, in the slot
-	 * where every other card has a sentence, so the one card a reader could
-	 * not read was the one about their own reading.
+	 * The last card is Bookmarks, over a link to `/signata`, and it is neither
+	 * this page's invention nor this page's alone: `ShelfGrid.svelte` draws the
+	 * whole bed, the home page renders the same one, and that component's
+	 * docblock carries the argument for the card, for its position last, and for
+	 * its being drawn whether or not the reader has marked anything.
 	 *
 	 * **THE READING POSITIONS ARE NOT HERE, AND THE TRAIL IS THE ARGUMENT.**
 	 * "Continue reading" was on the home page beside the doors, moved here on
@@ -64,36 +47,29 @@
 	 *
 	 * ## The catalogue is not this page's any more
 	 *
-	 * The seven entries moved to `$lib/shelves.ts`, the card to
-	 * `ShelfCard.svelte` and the grid to `.shelf-grid` in `components.css` on
-	 * 2026-09-06, when the home page's four doors were replaced by this same
-	 * list — the rule that no card declares a sentence of its own, and the two
-	 * exceptions the Catechism's pair costs, are argued there, beside the
-	 * entries they govern. What is still this page's is the Bookmarks card and
-	 * the painting at the foot.
+	 * The seven entries moved to `$lib/shelves.ts` and the card to
+	 * `ShelfCard.svelte` on 2026-09-06, when the home page's four doors were
+	 * replaced by this same list — the rule that no card declares a sentence of
+	 * its own, and the two exceptions the Catechism's pair costs, are argued
+	 * there, beside the entries they govern.
 	 *
-	 * WHAT THE HOME PAGE'S COPY LEAVES BEHIND IS THE READER'S OWN SHELF, and
-	 * the reason is the section above rather than the store: this page is the
-	 * catalogue of what the site HAS, marking included, where the home page's
-	 * copy is a way in to the WORKS. `/signata` is one press from every page in
-	 * the bar's Library door regardless.
+	 * THE ASSEMBLY WENT THE SAME DAY, to `ShelfGrid.svelte`, and that is what
+	 * ended the last thing the two pages disagreed about. They held a `<ul>`, an
+	 * `{#each}` and a visibility gate each, and this one appended a Bookmarks
+	 * card the home page's copy did not have — on the argument, recorded here,
+	 * that this page is the catalogue of what the site HAS, marking included,
+	 * where the home page is a way in to the WORKS. The distinction is real and
+	 * it was not worth a card: a reader who arrives at the root and has marks
+	 * wants them from there, and a catalogue that is the same on both pages
+	 * EXCEPT for one card is a resemblance maintained by hand. What is still
+	 * this page's own is the painting at the foot.
 	 *
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { t } from '$lib/i18n.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
-	import { visibleShelves } from '$lib/shelves';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
-	import ShelfCard from '$lib/components/ShelfCard.svelte';
-
-	/**
-	 * THE LIST AND THE CARD BOTH LIVE ELSEWHERE, since 2026-09-06: the home
-	 * page offers this same catalogue where it used to offer four doors, so a
-	 * copy of the seven entries here would be a copy to keep true every time a
-	 * work is ingested. `$lib/shelves.ts` holds them and the argument for their
-	 * order; `ShelfCard.svelte` holds the card the two pages drew twice.
-	 */
-	const shelves = $derived(visibleShelves());
+	import ShelfGrid from '$lib/components/ShelfGrid.svelte';
 
 	// The identification, plus the one interface word in it — composed here and
 	// passed down, the arrangement `Plate.svelte` argues for: the page that
@@ -120,47 +96,13 @@
 			outline, and a `<section>` per card would be a landmark announcing
 			nothing the heading does not.
 
-			The card is `ShelfCard.svelte`, the entries are `$lib/shelves.ts` and
-			the grid is `.shelf-grid` — all three shared with the home page,
-			which offers this same catalogue to a reader who arrives holding no
-			address. What is this page's own is the Bookmarks card below and the
-			painting at the foot.
+			All of that is `ShelfGrid.svelte` now, list and cards and bed and
+			the Bookmarks card at the end of them, and the home page renders
+			the same component. What is this page's own is the `<section>`
+			around it — the catalogue is this page's subject, where it is the
+			home page's way in — and the painting at the foot.
 		-->
-		<ul class="shelf-grid">
-			{#each shelves as shelf (shelf.key)}
-				<ShelfCard
-					href={shelf.href}
-					icon={shelf.icon}
-					title={t(shelf.titleKey)}
-					tagline={t(shelf.taglineKey)}
-				/>
-			{/each}
-
-			<!--
-				THE ONE CARD THAT IS NOT A WORK, and it is last because the
-				catalogue is what the page is for. Same card, same glyph
-				treatment, same sentence in the same place — and the sentence is
-				`/signata`'s own tagline, so this card obeys the rule the other
-				seven do rather than being the one that had to be looked at to be
-				understood. One link and not a second copy of that page's list:
-				this says what is there, and that page is the reading of it.
-
-				No branch on the store, and there was one until 2026-09-06:
-				a catalogue that omitted a shelf until the reader had already
-				used it would be hiding the way in from the one person
-				looking for it. The docblock has the rest.
-
-				IT IS ALSO WHY `ShelfCard` TAKES STRINGS AND NOT A `Shelf`: this
-				card has no work type, no landing page of its own in the
-				catalogue's sense, and no row in `$lib/shelves.ts` to be given.
-			-->
-			<ShelfCard
-				href="/signata"
-				icon="bookmark"
-				title={t('bookmark.library')}
-				tagline={t('bookmark.library.tagline')}
-			/>
-		</ul>
+		<ShelfGrid />
 	</section>
 
 	<!--

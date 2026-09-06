@@ -809,10 +809,10 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   of the title's line, then a column of subject chips beside the blurb. An
   index blurb is not the reading grid and takes no `--measure-cpl`.
 - **The home page has no doors any more** (2026-09-06, by direction): the
-  section that held four is the catalogue itself, drawn from the same list, card
-  and grid as `/bibliotheca` — a home page whose answer to "what is here" was a
-  link to the answer. Learn and the Library keep their bar entries, a page
-  rather than a work belonging there.
+  section that held four renders `ShelfGrid`, the same catalogue `/bibliotheca`
+  does — a home page whose answer to "what is here" was a link to the answer.
+  Learn and the Library keep their bar entries, a page rather than a work
+  belonging there.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library that held only what the bar left out is
   a leftovers bin, and the label stops meaning anything.
@@ -828,13 +828,17 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Both are in all 37 since 2026-09-06, the two halves of the name having been
   translated already. `/` is the other exception and has three of its own — see
   its bullet below.
-- **THE CATALOGUE IS ONE OBJECT IN THREE FILES** (2026-09-06) — `$lib/shelves.ts`
-  (the entries and `visibleShelves()`), `ShelfCard.svelte` (the card),
-  `.shelf-grid` in `components.css` (the bed) — because `/bibliotheca` and the
-  home page both draw it and two copies drift the first time a work is
-  ingested. Cards across rather than blocks down a 72rem column, each one anchor with
-  **the same glyph `/schola` gives that work** — take the icon from there
-  rather than choosing again. One card per work, no nesting: a shelf could hold
+- **THE CATALOGUE IS ONE COMPONENT** (2026-09-06) — `ShelfGrid.svelte`, over
+  `$lib/shelves.ts` (the entries and `visibleShelves()`) and `ShelfCard.svelte`
+  (the card) — because `/bibliotheca` and the home page both draw it. The list,
+  the card and the grid class were shared while the `<ul>`, the `{#each}` and
+  the gate were not, and the two pages promptly disagreed about what the
+  catalogue contains: **a shared class fixes a copied style, not a copied
+  assembly.** Only the wrapper is the page's — a `<section>` where the cards
+  are the subject, a `<nav>` where they are the way in. Cards across rather
+  than blocks down a 72rem column, each one anchor with **the same glyph
+  `/schola` gives that work** — take the icon from there rather than choosing
+  again. One card per work, no nesting: a shelf could hold
   rows and exactly one did, and that one shelf was what kept the card from
   being an anchor (an `<a>` inside an `<a>`). The `<h3>` lives INSIDE the
   anchor, which is valid and is what keeps seven named things in the outline.
@@ -868,9 +872,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   (2026-09-06): it carried `/signata`'s section counts as chips where a work
   card puts its sentence, and was hidden on an empty store — a catalogue names
   what the site HAS, and a door that opens only once you have found the feature
-  elsewhere is shut against the one reader looking for it. It is the one card
-  the home page's copy of this list leaves behind, being the reader's own shelf
-  rather than a work.
+  elsewhere is shut against the one reader looking for it. **It is on the home
+  page too, by direction**, the same argument one page over: the reader's own
+  shelf was held back there for being a shelf rather than a work, and a reader
+  arriving at the root with marks wants them from the root. It has no row in
+  `$lib/shelves.ts` and needs none, which is why `ShelfCard` takes strings.
 - **The home page is the day, the catalogue and the notation** —
   `organization.md`'s three ways in (by date, by question, by address), in the
   reverse order of expertise. Do not put an index on it: it carried the Bible's
@@ -908,12 +914,13 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   leans on, so the next English-only string on `/` inherits it. The gate is on a
   page's name and description, and `/`'s are `home.title` plus five work names,
   written in all 37. `route-manifest.ts` carries why this is not a precedent.
-- **`.shelf-grid` is `minmax(min(16rem, 100%), 1fr)` with `grid-auto-rows: 1fr`,
-  and both pages take it whole.** Four columns at the full `--landing-width` is
-  what a catalogue wants — seven cards down two columns is a screenful of
-  scrolling to see a list that fits on a screen — and equalising the rows buys a
-  straight bottom edge across four short columns. **Write the track minimum with
-  a `min()`**: a bare `24rem` (the home page's, while it had doors) laid the
+- **The bed is `minmax(min(16rem, 100%), 1fr)` with `grid-auto-rows: 1fr`, and
+  it is inside `ShelfGrid` rather than in `components.css`** (a shared class is
+  for a pattern with several unrelated callers; this has one). Four columns at
+  the full `--landing-width` is what a catalogue wants — the cards down two
+  columns is a screenful of scrolling to see a list that fits on a screen — and
+  equalising the rows buys a straight bottom edge across four short columns.
+  **Write the track minimum with a `min()`**: a bare `24rem` (the home page's, while it had doors) laid the
   cards out 384px wide inside a 350px column and ran them off the side of a
   390px phone, with the section rules stopping at the column edge to prove it.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**

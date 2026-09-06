@@ -90,11 +90,23 @@ wants most, plus two PAGES, one of whose entire content was "the catalogue is on
 click that way". A home page whose answer to _what is here_ is a link to the
 answer charges a click for a list that fits on a screen, and the two works it did
 name were there for being popular rather than for any argument the file could
-state. So the seven cards `/bibliotheca` draws are drawn here: one list
-(`$lib/shelves.ts`), one card (`ShelfCard.svelte`), one grid (`.shelf-grid` in
-`components.css`), and no copy of any of the three to keep true when a work is
-ingested. Learn and the Library are named in the nav bar, which is where a page
+state. So the catalogue `/bibliotheca` draws is drawn here, and since
+2026-09-06 as one component: `ShelfGrid.svelte` is the list, the cards, the bed
+and the Bookmarks card at the end of them, so neither page holds a copy of any
+of it. Learn and the Library are named in the nav bar, which is where a page
 rather than a work belongs.
+
+**THE TWO PAGES ASSEMBLED THAT GRID SEPARATELY FOR A FEW HOURS, AND DISAGREED
+ABOUT WHAT IT CONTAINS.** The list, the card and the grid class were shared and
+the `<ul>`, the `{#each}` and the `visibleShelves()` call were not — so
+`/bibliotheca` appended a Bookmarks card that the home page's copy did not have,
+while the comments on three files each said the two pages drew the same
+catalogue. A shared class fixes a copied STYLE; a copied ASSEMBLY needs a
+component. The card itself was kept off the home page on purpose at first —
+`/bibliotheca` is the catalogue of what the site HAS, marking included, where
+the home page is a way in to the WORKS — and the distinction is real and was not
+worth a card: a reader who arrives at the root and has marks wants them from
+there.
 
 **The `type` gate came with the list, and it is the reverse of what a door
 wanted.** A door was a page and correct in an empty build — `/bibliotheca` and
@@ -626,8 +638,11 @@ home page's `.door` grid — the same track pattern, the same gap, the same card
 the same whole-card anchor, differing only in the track floor — for as long as
 that page had doors. **It is one object rather than a resemblance now**: the
 home page draws this same catalogue, so the entries are `$lib/shelves.ts`, the
-card is `ShelfCard.svelte` and the bed is `.shelf-grid` in `components.css`,
-and neither page holds a copy of any of the three.
+card is `ShelfCard.svelte`, and `ShelfGrid.svelte` is the bed and the assembly —
+both pages render it and neither holds a copy of anything in it. What stays with
+the page is the element around it: a `<section>` on `/bibliotheca`, where the
+cards are the subject, and a `<nav>` on the home page, where they are the way
+in.
 
 **AND THE WHOLE CARD IS THE ANCHOR ONLY BECAUSE LEARN WAS UNFOLDED.** For one
 commit a shelf could hold rows of its own and exactly one did — Learn, over the
@@ -655,11 +670,14 @@ and needs no container: with one card per work the ORDER states it, and the
 address space states it without being asked.
 
 **The last card is Bookmarks, and it is the only one that is not a work.** It
-reads exactly like the other seven — name, glyph, and `/signata`'s own tagline —
-and is there whether or not the reader has marked anything (2026-09-06; it was
-hidden on an empty store until then). A catalogue names what the site has, and
-hiding the one door to marking until a reader has already found marking
-elsewhere shuts it against the only person looking for it; the empty case is
+reads exactly like the others — name, glyph, and `/signata`'s own tagline — it is
+there whether or not the reader has marked anything (2026-09-06; it was hidden on
+an empty store until then), and it is on both pages that draw the catalogue.
+It has no row in `$lib/shelves.ts` and needs none: a `Shelf` is a work type plus
+the strings its own landing page is titled by, and this card has neither. That is
+also why `ShelfCard` takes four strings rather than a `Shelf`. A catalogue names
+what the site has, and hiding the one door to marking until a reader has already
+found marking elsewhere shuts it against the only person looking for it; the empty case is
 `/signata`'s to answer, and it answers in words. It carried `/signata`'s section
 counts as chips where a work card carries its sentence, on the argument that the
 shape of a collection says more than a total about whether it is worth opening.

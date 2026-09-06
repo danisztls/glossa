@@ -41,10 +41,10 @@
 	 *     sentence saying what is behind it, and this page opened with a name
 	 *     alone — a reader who has never heard of the site got a blackletter
 	 *     wordmark and a liturgical day, and nothing that said what it was.
-	 *   - **The card**, which is now literally `/bibliotheca`'s: one component
-	 *     (`ShelfCard.svelte`) over one list (`$lib/shelves.ts`) in one grid
-	 *     (`.shelf-grid`), because the two pages offer the same catalogue and a
-	 *     second copy of it would be a second copy to keep true.
+	 *   - **The catalogue**, which is now literally `/bibliotheca`'s:
+	 *     `ShelfGrid.svelte` renders the list, the cards and the bed, because
+	 *     the two pages offer the same catalogue and a second copy of it would
+	 *     be a second copy to keep true.
 	 *   - **A mark beside the name**, from the vocabulary `/schola`'s own rows
 	 *     are drawn with — `scroll`, `flame`, `book-open` are that page's
 	 *     assignments for these three works, reused rather than re-chosen —
@@ -118,12 +118,12 @@
 	 * Three keys: `home.tagline`, `home.doors.heading`, `home.find.heading`.
 	 * The last two are heard and not read — every section here is untitled, and
 	 * a hidden `h2` is what a reader moving by heading gets instead of a rule.
-	 * Everything else is a name or a sentence written for another page in all
-	 * thirty-seven languages — the catalogue is `$lib/shelves.ts`'s keys, each
-	 * of them the one its own landing page is titled and described by, and the
-	 * line under the specimens is `jumpbox.hint`. `en.ts` carries the argument
-	 * for keeping `/` on the published list anyway, which is that the root has no
-	 * usable remedy: `route-manifest.ts` withholds a page rather than claim it
+	 * Everything else is a name or a sentence written for another page — the
+	 * catalogue is `$lib/shelves.ts`'s keys, each of them the one its own
+	 * landing page is titled and described by, plus `/signata`'s two for the
+	 * Bookmarks card, and the line under the specimens is `jumpbox.hint`.
+	 * `en.ts` carries the argument for keeping `/` on the published list
+	 * anyway, which is that the root has no usable remedy: `route-manifest.ts` withholds a page rather than claim it
 	 * in a language it is not written in, and withholding the home page costs
 	 * a sitemap row and an `hreflang` cluster that every other page's ranking
 	 * leans on.
@@ -135,14 +135,13 @@
 	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
 	import { liturgicalDay, toDayNumber, type LiturgicalDay } from '$lib/calendar';
-	import { visibleShelves } from '$lib/shelves';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
-	import ShelfCard from '$lib/components/ShelfCard.svelte';
+	import ShelfGrid from '$lib/components/ShelfGrid.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { WorkType } from '$lib/types';
 
-	/**
+	/*
 	 * THE WAY IN IS THE CATALOGUE ITSELF, AND WAS FOUR DOORS UNTIL 2026-09-06.
 	 *
 	 * The doors were Bible, Prayers, Library and Learn: two works a reader
@@ -152,21 +151,29 @@
 	 * that fits on a screen, and the two works it did name got there by being
 	 * the popular ones rather than by any argument this file could state.
 	 *
-	 * So the seven cards `/bibliotheca` draws are drawn here, from
-	 * `$lib/shelves.ts`, in `ShelfCard`s in a `.shelf-grid` — one list, one
-	 * card, one bed, no copy to keep true. Learn and the Library are named in
-	 * the nav bar, which is where a page rather than a work belongs;
-	 * `/bibliotheca` keeps the Bookmarks card, the painting, and the reason
-	 * both stay off this page (its docblock, §the reader's own shelf).
+	 * So the catalogue `/bibliotheca` draws is drawn here: `ShelfGrid`, which
+	 * is the list, the cards, the bed and the Bookmarks card at the end of them
+	 * as one object. This page held its own `<ul>` and `{#each}` for a few
+	 * hours after the doors went, which is how it came to be missing that last
+	 * card while the comments on three files said the two pages drew the same
+	 * catalogue.
 	 *
-	 * THE `type` GATE COMES WITH THE LIST and is `visibleShelves()`'s, which
-	 * is the change of mind the doors' own note recorded the other way round: a
-	 * door was a page and correct in an empty build, where a card is a work and
-	 * a card for a work a partial sync did not carry is a door onto an empty
-	 * index. The specimens below are gated on the same test.
+	 * Learn and the Library are named in the nav bar, which is where a page
+	 * rather than a work belongs. THE BOOKMARKS CARD IS NOT SUCH A PAGE, and
+	 * that is the change of mind: `/signata` is the reader's own shelf, which
+	 * was read as a reason for `/bibliotheca` to keep it — but a reader who
+	 * arrives at the root holding no address and HAS marks is exactly the
+	 * reader that card is for.
+	 *
+	 * THE VISIBILITY GATE COMES WITH THE COMPONENT and is `visibleShelves()`'s,
+	 * which is the change of mind the doors' own note recorded the other way
+	 * round: a door was a page and correct in an empty build, where a card is a
+	 * work and a card for a work a partial sync did not carry is a door onto an
+	 * empty index. The specimens below are gated on the same test — which is
+	 * all this page has left to do with `listWorksOfType`.
 	 */
-	const shelves = $derived(visibleShelves());
 
+	/** Is this work type in the build at all — the specimens' gate, below. */
 	const has = (type: WorkType) => listWorksOfType(type).length > 0;
 
 	// --- The third way in ------------------------------------------------------
@@ -265,24 +272,15 @@
 
 	<!--
 		A `<nav>` and not a `<section>`, which is the one place this differs from
-		`/bibliotheca`'s copy of the same grid: there the cards are the page's
+		`/bibliotheca`'s use of the same component: there the cards are the page's
 		SUBJECT, catalogued, and here they are the way in. The heading is hidden
-		either way — see the docblock; the seven names under it are what a
-		reader is looking at, and a rule reading "Where to go" over them names
-		what the cards already say.
+		either way — see the docblock; the names under it are what a reader is
+		looking at, and a rule reading "Where to go" over them names what the
+		cards already say.
 	-->
 	<nav aria-labelledby="doors-heading">
 		<h2 id="doors-heading" class="visually-hidden">{t('home.doors.heading')}</h2>
-		<ul class="shelf-grid">
-			{#each shelves as shelf (shelf.key)}
-				<ShelfCard
-					href={shelf.href}
-					icon={shelf.icon}
-					title={t(shelf.titleKey)}
-					tagline={t(shelf.taglineKey)}
-				/>
-			{/each}
-		</ul>
+		<ShelfGrid />
 	</nav>
 
 	{#if specimens.length > 0}
@@ -376,10 +374,9 @@
 		margin-top: 1.5rem;
 	}
 
-	/* THE CARD AND ITS GRID ARE BOTH SHARED, so this page draws neither. The
-	   seven cards are `ShelfCard.svelte` over `$lib/shelves.ts`, laid out in
-	   `.shelf-grid` from `components.css`, and `/bibliotheca` draws the same
-	   three. What is left below belongs to the notation alone. */
+	/* THE CATALOGUE DRAWS ITSELF, so this page styles none of it —
+	   `ShelfGrid.svelte` is the list, the cards and the bed, and `/bibliotheca`
+	   renders the same one. What is left below belongs to the notation alone. */
 
 	/* --- The notation ------------------------------------------------------
 	 *
