@@ -40,6 +40,7 @@
 	 * dropping the row, would each say something false — that the site lost a
 	 * citation, or that the Mass has no sequence.
 	 */
+	import { content } from '$lib/content.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
@@ -61,7 +62,18 @@
 	// The citation as the reader's language writes it, and the language it is
 	// then written in — which is what `RefText` must parse it under, and is
 	// English wherever nothing could be rewritten.
-	const cite = (text: string) => localizeCite(text, i18n.lang, t('lectionary.cf'));
+	//
+	// THE BIBLE EDITION'S LANGUAGE AND NOT THE INTERFACE'S, which is the rule
+	// every surface that writes a citation follows: `PrayerReferences` names
+	// the book out of that edition, and both notation specimens are drawn from
+	// it (`scriptureSpecimen`). A citation is an address into the edition this
+	// link opens, so it is written the way that edition's language writes one —
+	// otherwise a reader on the Clementina is shown one convention and taken to
+	// a page printing another. Safe because `vulgateNumbering` is a property of
+	// a WORK and never of a language, so naming a language here cannot switch
+	// off the Hebrew-to-Vulgate conversion these psalm citations need.
+	const citeLang = $derived(content.langFor('bible'));
+	const cite = (text: string) => localizeCite(text, citeLang, t('lectionary.cf'));
 
 	function label(p: Pericope, readings: Pericope[]): string {
 		const key = slotKey(p, readings);

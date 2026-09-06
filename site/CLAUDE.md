@@ -1773,6 +1773,16 @@ edition and the refusal only ever cost the citation (all 141 of `ccc.mg`'s
 document citations linked nowhere). The section check stays strict against
 whichever edition that picks.
 
+**A citation this site WRITES takes its chapter mark from `grammarSurface` and
+its language from the reader's Bible EDITION** (2026-09-06, §References). Four
+surfaces compose one — the day's readings, `PrayerReferences`, and the two
+notation specimens, which share `scriptureSpecimen` rather than the six
+duplicated lines they each carried. The book form still differs per surface and
+each difference is argued; the punctuation may not, and `PrayerReferences`'
+literal `:` showed a Portuguese reader `Lucas 1:28`. `content.langFor('bible')`
+is the input at all four, safe because `vulgateNumbering` is a property of a
+WORK and never of a language.
+
 **A citation naming several passages is several links** (2026-09-06,
 §References). `Ps 95:1-2, 6-7, 8-9` was one link, and an `Address` holds one
 span, so it claimed `?v=1-9` — four verses nobody cited. `parseVerseList`

@@ -31,6 +31,25 @@ whose verses do not resolve is drawn as text rather than degraded to the
 chapter: the words under it read `98-99` and a chapter link is one the reader
 cannot tell from a working one.
 
+**A citation this site WRITES is written the way the reader's own Bible
+edition's language writes one.** Four surfaces compose one rather than
+reproduce one — the day's readings, the prayers' "cited in" panel, and the
+notation specimens on `/` and `/schola` — and until 2026-09-06 they disagreed
+on both axes. The book form still differs by surface and each difference is
+argued (a reading list abbreviates; a panel names the book out of the edition
+its link opens; a specimen teaches a shape). **The chapter mark does not**: it
+comes from `grammarSurface`, the parser's own table, so a composed citation
+cannot be spelled in a form the parser refuses. `PrayerReferences` had a
+literal `:` and showed a Portuguese reader `Lucas 1:28` — the same defect the
+lectionary card was reported for, in a component nobody had looked at.
+
+**The language is the EDITION's, not the interface's**, because the link opens
+that edition: labelling it in another language's convention describes a page
+the reader is not being taken to. `content.langFor('bible')` is the input at
+all four. It is safe against the versification trap because `vulgateNumbering`
+is a property of a WORK and never of a language — naming a language cannot
+switch off the Hebrew-to-Vulgate conversion.
+
 **The groups are not on `RefSegment` and are re-read from `raw` instead.** A
 segment carries what an address is built from; how the source PUNCTUATED it is
 wanted by two surfaces and would otherwise appear in all 87 scripture

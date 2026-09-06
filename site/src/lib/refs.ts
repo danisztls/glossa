@@ -22,6 +22,7 @@ import {
 	defaultDocumentWorkId,
 	documentSectionExists,
 	findBookByAbbrev,
+	getBook,
 	listDocuments,
 	summaArticleExists,
 	summaQuestionExists,
@@ -29,8 +30,10 @@ import {
 } from './corpus';
 import { hrefFor, summaPartSlug, type Address } from './address';
 import {
+	bookAbbrev,
 	citationParts,
 	citesVulgateNumbering,
+	grammarSurface,
 	setDocumentTitleSource,
 	type RefSegment
 } from './refs-grammar';
@@ -463,4 +466,43 @@ function verseExtent(
 	}
 	if (present.length < 2) return undefined;
 	return { from: Math.min(...present), to: Math.max(...present) };
+}
+
+/**
+ * `Jo 3,16` — one scripture citation written the way `lang` writes one, for a
+ * page teaching the notation rather than resolving one.
+ *
+ * IT IS THE PARSER RUN BACKWARDS AND HAS TO STAY SO. Both halves come out of
+ * the tables `parseRefs` matches against — the abbreviation from `bookAbbrev`,
+ * the chapter mark from `grammarSurface` — because a specimen showing a form
+ * the parser does not read would teach a citation this site refuses. That is
+ * the same constraint `lectionary/cite.ts` works under, arrived at from the
+ * other direction.
+ *
+ * ONE FUNCTION BECAUSE THERE ARE TWO CALLERS AND THERE WERE TWO COPIES. The
+ * home page's notation section and `/schola`'s work list each carried these six
+ * lines verbatim, comments included; the second was written by copying the
+ * first, which is how the shelf catalogue's own docblock says a thing comes to
+ * drift.
+ *
+ * THE EDITION HAS TO CARRY THE BOOK before its name is printed, and asking
+ * supplies the fallback name in the same step. `osis` is LOWER-CASE here and
+ * everywhere in this corpus (`john`, not the OSIS standard's `John`):
+ * `bookAbbrev` and `getBook` both answer `undefined` for a spelling they do not
+ * hold, so the wrong case fails by drawing no specimen at all rather than by
+ * erring. Where the language has no abbreviation table (Hungarian, today) the
+ * edition's full name stands — a full name is a correct citation and a shorter
+ * one is not available.
+ */
+export function scriptureSpecimen(
+	workId: string | undefined,
+	lang: string,
+	osis = 'john',
+	chapter = 3,
+	verse = 16
+): string | undefined {
+	const book = workId ? getBook(workId, osis) : undefined;
+	if (!book) return undefined;
+	const name = bookAbbrev(osis, lang) ?? book.name;
+	return `${name} ${chapter}${grammarSurface(lang).chapterVerseSep}${verse}`;
 }

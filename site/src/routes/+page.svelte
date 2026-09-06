@@ -131,8 +131,8 @@
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { onMount } from 'svelte';
-	import { getBook, listWorksOfType } from '$lib/corpus';
-	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
+	import { listWorksOfType } from '$lib/corpus';
+	import { scriptureSpecimen } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { liturgicalDay, toDayNumber, type LiturgicalDay } from '$lib/calendar';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
@@ -188,23 +188,14 @@
 	/**
 	 * THE BIBLE'S SPECIMEN IS DERIVED AND THE OTHERS ARE WRITTEN, which is
 	 * `/schola`'s split and holds for its reason: the Bible's citation form is
-	 * the one that changes by language. The abbreviation comes from this
-	 * language's own citation table, falling back to the reader's edition's
-	 * name for the book, and the separator from the same grammar the parser
-	 * uses — so a Portuguese reader is shown `Jo 3,16` and not somebody else's
-	 * colon.
+	 * the one that changes by language, so a Portuguese reader is shown
+	 * `Jo 3,16` and not somebody else's colon.
 	 *
-	 * `osis` is LOWER-CASE here and everywhere in this corpus (`john`, not the
-	 * OSIS standard's `John`): `bookAbbrev` and `getBook` both answer
-	 * `undefined` for a spelling they do not hold, so the wrong case fails by
-	 * drawing no specimen at all rather than by erring.
+	 * `scriptureSpecimen` is where it is drawn, and it is shared with `/schola`
+	 * rather than written twice — these six lines were duplicated verbatim,
+	 * comments included, until 2026-09-06.
 	 */
-	const bibleSpecimen = $derived.by((): string | undefined => {
-		const book = bibleWorkId ? getBook(bibleWorkId, 'john') : undefined;
-		if (!book) return undefined;
-		const name = bookAbbrev('john', bibleLang) ?? book.name;
-		return `${name} 3${grammarSurface(bibleLang).chapterVerseSep}16`;
-	});
+	const bibleSpecimen = $derived(scriptureSpecimen(bibleWorkId, bibleLang));
 
 	/**
 	 * THREE SHAPES, NOT A CATALOGUE. `/schola` prints one specimen per work

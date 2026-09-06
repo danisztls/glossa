@@ -59,6 +59,7 @@
 	import { content } from '$lib/content.svelte';
 	import { getCanonicalBook, getWork } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
+	import { grammarSurface } from '$lib/refs-grammar';
 	import type { PrayerReference } from '$lib/types';
 
 	interface Props {
@@ -69,6 +70,10 @@
 	}
 
 	let { references, lang }: Props = $props();
+
+	/** What the reader's own Bible edition's language puts between chapter and
+	 *  verse — `:` in English, `,` across the Romance tables. See `label`. */
+	const chapterVerseSep = $derived(grammarSurface(content.langFor('bible')).chapterVerseSep);
 
 	/** An en dash and no spaces, `2676–2677`, and a single number where the
 	 *  range is one: a citation is written the way the works themselves write
@@ -117,9 +122,20 @@
 		return ref.work === 'bible' ? `bible:${ref.osis}` : ref.work;
 	}
 
+	/**
+	 * THE CHAPTER MARK IS THE EDITION'S LANGUAGE'S, NOT A LITERAL COLON. It was
+	 * one until 2026-09-06, so a Portuguese reader was shown `Lucas 1:28` under
+	 * the Ave Maria — English punctuation on a page with no other English on it,
+	 * which is the same defect the day's readings were reported for. The
+	 * language is the Bible EDITION's and not the interface's, because
+	 * `bookName` above already names the book out of that edition: one edition,
+	 * one convention, and the label then matches the work the link opens.
+	 * `grammarSurface` is the parser's own table, so this cannot drift from what
+	 * `RefText` reads back.
+	 */
 	function label(ref: PrayerReference): string {
 		return ref.work === 'bible'
-			? `${ref.chapter}:${span(ref.first, ref.last)}`
+			? `${ref.chapter}${chapterVerseSep}${span(ref.first, ref.last)}`
 			: span(ref.first, ref.last);
 	}
 

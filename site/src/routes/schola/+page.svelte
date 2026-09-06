@@ -108,7 +108,7 @@
 	 */
 	import { getBook, getDocumentManifest, listWorksOfType } from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
-	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
+	import { scriptureSpecimen } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
@@ -338,24 +338,12 @@
 	 * which is exactly what the sentence under that row says. An invented
 	 * shape there would teach a citation form that does not exist.
 	 */
-	const bibleSpecimen = $derived.by((): string | undefined => {
-		// THE READER'S OWN EDITION HAS TO CARRY THE BOOK before its name is
-		// printed, and asking supplies the fallback name in the same step.
-		//
-		// `osis` is LOWER-CASE here and everywhere in this corpus (`john`, not
-		// the OSIS standard's `John`): `bookAbbrev` and `getBook` both answer
-		// `undefined` for a spelling they do not hold, so the wrong case fails
-		// by drawing no specimen at all rather than by erring.
-		const book = bibleWorkId ? getBook(bibleWorkId, 'john') : undefined;
-		if (!book) return undefined;
-		// The abbreviation this language's citation grammar prints, then the
-		// edition's own name for the book. `bookAbbrev` answers for eleven
-		// languages and for the books their tables were built from; where it
-		// does not (Hungarian, today), a full name is a correct citation and a
-		// shorter one is not available.
-		const name = bookAbbrev('john', bibleLang) ?? book.name;
-		return `${name} 3${grammarSurface(bibleLang).chapterVerseSep}16`;
-	});
+	// Drawn by `scriptureSpecimen`, which is shared with the home page's own
+	// notation section — these lines were written out twice, comments included,
+	// until 2026-09-06. Everything the specimen has to be careful about (the
+	// reader's edition carrying the book, the lower-case OSIS id, the language
+	// with no abbreviation table) is stated there.
+	const bibleSpecimen = $derived(scriptureSpecimen(bibleWorkId, bibleLang));
 
 	const specimens = $derived.by((): Record<string, string | undefined> => ({
 		scripture: bibleSpecimen,

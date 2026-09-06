@@ -8,6 +8,7 @@ import {
 	normalizeCitationSpacing,
 	parseRefs,
 	refHref,
+	scriptureSpecimen,
 	type RefSegment
 } from './refs';
 import { bookAbbrev, citesVulgateNumbering, hasBookAbbrevs } from './refs-grammar';
@@ -155,6 +156,9 @@ const mockDocumentTitles: Record<string, string> = {
 vi.mock('./corpus', () => ({
 	findBookByAbbrev: (workId: string, abbrev: string) =>
 		mockBibleBooks[workId]?.[abbrev.toLowerCase()],
+	// The books are keyed by OSIS id here, which is what `getBook` takes and
+	// what `findBookByAbbrev` above happens to be handed too.
+	getBook: (workId: string, osis: string) => mockBibleBooks[workId]?.[osis],
 	workIdToEdition: (workId: string) => workId.replace(/^bible\./, ''),
 	listDocuments: () =>
 		Object.entries(mockDocumentTitles).map(([slug, title]) => {
@@ -2623,5 +2627,28 @@ describe('parseRefs — the Code of Canon Law', () => {
 	it('does not read a canon marker after a document siglum', () => {
 		const dv = parseRefs('DV, c. 3').find((x) => x.kind === 'document');
 		expect(dv).toMatchObject({ label: 'DV', locus: null, raw: 'DV' });
+	});
+});
+
+describe('scriptureSpecimen', () => {
+	it('writes the citation the reader’s own edition’s language writes', () => {
+		expect(scriptureSpecimen('bible.cpdv.en', 'en')).toBe('Jn 3:16');
+		// Portuguese abbreviates and separates differently, and both halves come
+		// out of the parser's own tables — a specimen the parser cannot read
+		// would teach a form this site refuses.
+		expect(scriptureSpecimen('bible.cpdv.en', 'pt')).toBe('Jo 3,16');
+	});
+
+	it('falls back to the edition’s own name where the language has no table', () => {
+		// Hungarian has none, and a full name is a correct citation where a
+		// shorter one is not available.
+		expect(scriptureSpecimen('bible.cpdv.en', 'hu')).toBe('John 3:16');
+	});
+
+	it('draws nothing where the edition does not carry the book', () => {
+		// The failure that matters: a specimen naming a book the reader's own
+		// Bible has not got. `undefined` rather than a guess.
+		expect(scriptureSpecimen('bible.cpdv.en', 'en', 'tob')).toBeUndefined();
+		expect(scriptureSpecimen(undefined, 'en')).toBeUndefined();
 	});
 });
