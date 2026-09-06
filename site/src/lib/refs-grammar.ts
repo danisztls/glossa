@@ -1542,6 +1542,89 @@ const BOOK_VARIANTS_AR: Record<string, string[]> = {
 };
 
 /**
+ * Traditional Chinese, from the Catechism's PDF edition (2026-09-05) and the
+ * largest table here that is not Latin-script: forty-nine books, every one of
+ * them derived and corroborated by `scripts/book-forms-oracle.mjs --derive
+ * zht` against the eight editions that print the same 2,865 paragraphs.
+ *
+ * IT IS THE SECOND CASELESS SCRIPT AND THE FIRST WHERE THAT HELPS. Arabic's
+ * entry above notes that nothing in the matcher can lean on a capital; here
+ * the same is true and `LEFT_BOUND`/`RIGHT_BOUND` do far more work than they
+ * do for a Latin table, because in Chinese EVERY neighbouring character is
+ * `\p{L}`. A form therefore matches only where punctuation or a space bounds
+ * it, which is exactly where a citation stands and nowhere a word does:
+ * `多` is Tobit in `(多 8:4-9)` and is the ordinary word "many" in 多次, where
+ * the following 次 rejects it. `瑪` is Matthew and is also the first
+ * character of 瑪利亞, Mary. Neither needs a rule.
+ *
+ * THE NUMBER IS INSIDE THE NAME, so `numberedVariants` has nothing to build:
+ * Chinese writes 格前 and 格後 for 1 and 2 Corinthians, 若一 for 1 John
+ * against 若 for the Gospel. That last pair is the `1 Joh` trap this file was
+ * bitten by in three editions at once, and it is closed the same way it is
+ * for Arabic's `رؤيا يوحنّا` — `buildVariantRe` sorts longest-first, so 若一
+ * wins wherever it stands and 若 cannot take its first character.
+ *
+ * WHAT IS DELIBERATELY ABSENT is a bare 格. §756 prints `(格 3:11)` once,
+ * where the reference editions read 1 Cor 3:11, and the locus vote is real
+ * evidence — but this edition writes 格前 83 times and 格後 39, so a bare 格
+ * is the number dropped rather than a form the edition uses, and putting it
+ * here would make the table assert which of the two a reader meant on the
+ * strength of one locus. That is the shape of the `1 Joh` defect, not its
+ * cure. One reference goes unlinked and the oracle keeps proposing it.
+ */
+const BOOK_VARIANTS_ZHT: Record<string, string[]> = {
+	gen: ['創'],
+	exod: ['出'],
+	lev: ['肋'],
+	num: ['戶'],
+	deut: ['申'],
+	josh: ['蘇'],
+	'1sam': ['撒上'],
+	'2sam': ['撒下'],
+	tob: ['多'],
+	job: ['約'],
+	ps: ['詠'],
+	prov: ['箴'],
+	eccl: ['訓'],
+	song: ['歌'],
+	wis: ['智'],
+	sir: ['德'],
+	isa: ['依'],
+	jer: ['耶'],
+	lam: ['哀'],
+	ezek: ['則'],
+	dan: ['達'],
+	hos: ['歐'],
+	amos: ['亞'],
+	zeph: ['索'],
+	mal: ['拉'],
+	'2macc': ['加下'],
+	matt: ['瑪'],
+	mark: ['谷'],
+	luke: ['路'],
+	john: ['若'],
+	acts: ['宗'],
+	rom: ['羅'],
+	'1cor': ['格前'],
+	'2cor': ['格後'],
+	gal: ['迦'],
+	eph: ['弗'],
+	phil: ['斐'],
+	col: ['哥'],
+	'1thess': ['得前'],
+	'2thess': ['得後'],
+	'1tim': ['弟前'],
+	'2tim': ['弟後'],
+	titus: ['鐸'],
+	heb: ['希'],
+	jas: ['雅'],
+	'1pet': ['伯前'],
+	'2pet': ['伯後'],
+	'1john': ['若一'],
+	rev: ['默']
+};
+
+/**
  * The book tables, materialized, for anything outside this module that has
  * to recognize the same surface forms.
  *
@@ -2317,6 +2400,23 @@ const CONFIG_PL = romanceConfig(BOOK_VARIANTS_PL, DOCUMENT_SIGLA_SERIES_ONLY);
 const CONFIG_RU = romanceConfig(BOOK_VARIANTS_RU, DOCUMENT_SIGLA_SERIES_ONLY);
 
 /**
+ * Traditional Chinese, and its marks are English's rather than the
+ * Continent's: this edition prints the chapter and the verse with a COLON,
+ * 1,456 times against a single stray semicolon, and separates two references
+ * inside one parenthesis with an ASCII `;`, 43 times and never with the
+ * fullwidth 、 or ；. Measured over the whole edition, which is the only way
+ * to know it — the surrounding prose is fullwidth throughout, so the ASCII
+ * marks inside a locus are a convention and not an accident of encoding.
+ *
+ * `allowBareSeparators` off, and `extraChapterVerseSeparators` empty: there
+ * is no second mark to admit. `linksSigla` on with the series-only table,
+ * like Polish, Russian and Arabic — this edition prints no document siglum at
+ * all, so what the flag governs never arises, and turning it off would be a
+ * claim about the language rather than about the one work it holds.
+ */
+const CONFIG_ZHT = buildConfig(BOOK_VARIANTS_ZHT, DOCUMENT_SIGLA_SERIES_ONLY, ':', false, true);
+
+/**
  * Spanish and Italian read by a work that numbers the books of Kings the
  * Douay way — see `KINGS_ES_MODERN`/`KINGS_IT_MODERN` for the evidence and
  * for why each needed a table widening as well as this remap.
@@ -2464,6 +2564,11 @@ const CONFIGS: Record<string, LangConfig> = {
 	pl: CONFIG_PL,
 	pt: CONFIG_PT,
 	ru: CONFIG_RU,
+	// Traditional Chinese only. `zh` -- Simplified, which the curated prayers
+	// hold -- has no table and falls through to English, which reads nothing
+	// in it; those twelve Scripture references are the whole exposure and the
+	// oracle has no second edition to derive a table against.
+	zht: CONFIG_ZHT,
 	en: CONFIG_EN
 };
 

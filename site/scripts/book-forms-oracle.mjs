@@ -178,11 +178,27 @@ function referenceLoci(refLangs) {
  * A book-shaped locator: an optional book number, a capitalized token, then
  * chapter and verse. Deliberately looser than the grammar's own matcher —
  * finding what the grammar MISSES is the point — and deliberately anchored on
- * a capital, since every book form in every edition is capitalized and
+ * a capital, since every book form in a bicameral script is capitalized and
  * matching lowercase would swallow ordinary prose.
+ *
+ * TWO SHAPES, BECAUSE A CAPITAL IS NOT AVAILABLE IN EVERY SCRIPT. The
+ * Catechism's Chinese edition prints `(創 10:5)` and `(弟前 2:3-4)`, and Han
+ * has no letter case at all — so against the first shape it reads as zero
+ * book-shaped tokens rather than as unresolved ones, which is silence and not
+ * an answer. The second is anchored on Han instead, with no book-number
+ * group: Chinese writes the number into the name (`弟前` is 1 Timothy, `若一`
+ * 1 John), so there is nothing in front to capture.
+ *
+ * It is looser than the first and it can be, because this tool's output is
+ * read rather than pasted: an ordinary sentence's last characters before a
+ * number will match, and what separates them from a book is the LOCUS VOTE,
+ * which they lose. `BOOK_VARIANTS_AR` is the other caseless table and was
+ * built before this existed.
  */
-const SHAPE =
-	/(?<![\p{L}\p{N}])((?:[123]|I{1,3})\s?)?(\p{Lu}[\p{L}]{0,7}\.?)\s?\s*(\d{1,3})\s*[,:.]\s*(\d{1,3})/gu;
+const SHAPES = [
+	/(?<![\p{L}\p{N}])((?:[123]|I{1,3})\s?)?(\p{Lu}[\p{L}]{0,7}\.?)\s?\s*(\d{1,3})\s*[,:.]\s*(\d{1,3})/gu,
+	/()(\p{Script=Han}{1,4})\s*(\d{1,3})\s*[,:.]\s*(\d{1,3})/gu
+];
 
 /** Byte spans of `text` the grammar already claims, so they are not proposed. */
 function claimed(text, lang) {
@@ -208,24 +224,26 @@ function derive(langs, refLoci) {
 			const loci = refLoci.get(n);
 			for (const text of texts) {
 				const spans = claimed(text, lang);
-				SHAPE.lastIndex = 0;
-				let m;
-				while ((m = SHAPE.exec(text))) {
-					const start = m.index;
-					const end = start + m[0].length;
-					if (spans.some(([a, z]) => start < z && end > a)) continue;
-					const token = ((m[1] ?? '').trim() ? `${m[1].trim()} ` : '') + m[2];
-					seen.set(token, (seen.get(token) ?? 0) + 1);
-					if (!example.has(token)) {
-						example.set(token, `§${n} …${text.slice(Math.max(0, start - 40), end + 8)}`);
+				for (const shape of SHAPES) {
+					shape.lastIndex = 0;
+					let m;
+					while ((m = shape.exec(text))) {
+						const start = m.index;
+						const end = start + m[0].length;
+						if (spans.some(([a, z]) => start < z && end > a)) continue;
+						const token = ((m[1] ?? '').trim() ? `${m[1].trim()} ` : '') + m[2];
+						seen.set(token, (seen.get(token) ?? 0) + 1);
+						if (!example.has(token)) {
+							example.set(token, `§${n} …${text.slice(Math.max(0, start - 40), end + 8)}`);
+						}
+						const candidates = loci?.get(`${m[3]}:${m[4]}`);
+						if (!candidates) continue;
+						let v = votes.get(token);
+						if (!v) votes.set(token, (v = new Map()));
+						// A locus two reference editions read differently splits its
+						// vote rather than counting twice for each.
+						for (const osis of candidates) v.set(osis, (v.get(osis) ?? 0) + 1 / candidates.size);
 					}
-					const candidates = loci?.get(`${m[3]}:${m[4]}`);
-					if (!candidates) continue;
-					let v = votes.get(token);
-					if (!v) votes.set(token, (v = new Map()));
-					// A locus two reference editions read differently splits its
-					// vote rather than counting twice for each.
-					for (const osis of candidates) v.set(osis, (v.get(osis) ?? 0) + 1 / candidates.size);
 				}
 			}
 		}

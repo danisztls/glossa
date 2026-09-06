@@ -1348,10 +1348,10 @@ has to be checked against that string — it is why the payload holds no free
 text, no sequence and no passage-level position (the "deliberately not" list
 is in §Usage measurement).
 
-## Reference grammar: eleven book tables, prose as apparatus, and the oracle behind both
+## Reference grammar: twelve book tables, prose as apparatus, and the oracle behind both
 
 `site/src/lib/refs-grammar.ts` turns a stored citation string into links, per
-**content language**. Eleven configs (`ar de en es fr it la mg pl pt ru`);
+**content language**. Twelve configs (`ar de en es fr it la mg pl pt ru zht`);
 until 2026-08-26 there were two, with `configFor` answering EN for everything
 else.
 
@@ -1363,9 +1363,9 @@ collide across editions (Sources chrétiennes vs Sacrosanctum concilium,
 Corpus apologetarum vs Centesimus annus), each edition right about its own
 references.
 
-**`scripts/book-forms-oracle.mjs` is where eight of the eleven tables came
+**`scripts/book-forms-oracle.mjs` is where nine of the twelve tables came
 from, and it is the tool to reach for next time.** Paragraph N is the same
-paragraph in all eight Catechism editions, so align on the locus and read the
+paragraph in all nine Catechism editions, so align on the locus and read the
 abbreviation off. `--derive` proposes a table with vote counts; the default
 mode **checks** an existing one by reporting links the other editions
 contradict — read that as a count, not a list (330 rows means the wrong table
@@ -1376,6 +1376,24 @@ for a work translated from one text at one time, since a section number is
 not the same section in two translations of an older encyclical. It will keep
 proposing two things that are **not** books: patristic work titles (`Sermo
 241, 2`), and the `??`-flagged singletons, which are for reading, not pasting.
+
+**IT HAS TWO SHAPES SINCE 2026-09-05, BECAUSE A CAPITAL IS NOT AVAILABLE IN
+EVERY SCRIPT.** The first is anchored on `\p{Lu}`, which is right for a
+bicameral script and answers ZERO for Han — so the Chinese Catechism read as
+nothing to propose rather than as fifty things, which is silence and not an
+answer. The second is anchored on `\p{Script=Han}` with no book-number group
+(Chinese writes the number into the name: `格前` is 1 Corinthians, `若一` 1
+John). It is looser, and it can be, because the LOCUS VOTE is what decides —
+an ordinary sentence's last characters before a number match the shape and
+lose the vote.
+
+**`BOOK_VARIANTS_ZHT` is the first table where `LEFT_BOUND`/`RIGHT_BOUND` do
+real work rather than guarding an edge case.** Every neighbouring character in
+Chinese is `\p{L}`, so a form matches only where punctuation or a space bounds
+it — which is exactly where a citation stands and nowhere a word does. `多` is
+Tobit in `(多 8:4-9)` and the ordinary word "many" in 多次; `瑪` is Matthew and
+the first character of 瑪利亞, Mary. Neither needed a rule. Forty-nine books,
+2,934 links, **0 contested** against the eight other editions.
 
 **Latin is the exception to "derived"**: `BOOK_VARIANTS_LA` is the Latin
 edition's own printed table (73 rows), with the oracle run over it as a check
@@ -1424,7 +1442,7 @@ edition and the refusal only ever cost the citation (all 141 of `ccc.mg`'s
 document citations linked nowhere). The section check stays strict against
 whichever edition that picks.
 
-The five tags with **no** config (`hu ro sl sv en-gb`) fall to English, and
+The six tags with **no** config (`hu ro sl sv zh en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by
 bare number and their prose prints no Scripture locator, so the English table
 matched nothing rather than something wrong. `scripts/reference-coverage.mjs`
@@ -1464,9 +1482,10 @@ holds the rationale. What must be true before touching it:
 
 ## Running prose is an apparatus, not decoration
 
-**Three of the eight Catechism editions print no footnotes at all** (de
-brackets, fr/es parenthesize), so everything `parseRefs` reads elsewhere,
-`linkifyProse` must read in the body text — its document-siglum scan is worth
+**Four of the nine Catechism editions print no footnotes at all** (de
+brackets, fr/es parenthesize, `zht` prints no apparatus whatever), so
+everything `parseRefs` reads elsewhere, `linkifyProse` must read in the body
+text — its document-siglum scan is worth
 3,624 references in those editions against 82 in English.
 
 **The counters that measure this scan do not render it, and for four days
