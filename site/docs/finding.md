@@ -157,12 +157,20 @@ closer to reporting than it was, which is the honest reading of why the line
 could go. It is still the one place on the site that advises without a mark, and
 that is worth knowing before a third is added.
 
-**THE MARK IS A RULE DOWN THE INLINE START, and it is deliberately the only
-thing on the page drawn that way.** `.house-note` and `.suggestion` share it, so
-a reader learns once what "this is the site talking" looks like. It is also why
-the Bible section's rows are not a numbered gutter: that drawing belonged to the
-sourced routes, and it says "this is a sequence somebody authorised", which a
-choice of three Gospels is not.
+**THE MARK IS A SENTENCE, NOT A BORDER, and it was a border for a day.** Both
+passages carried an accent rule down their inline start, on the argument that a
+reader should be able to see which paragraphs recommend without reading the
+attribution every time. What it produced was a blockquote — the one shape on the
+web that means "somebody else said this" — drawn around the two passages nobody
+else said, and the indent made the longest prose on the page the hardest to read.
+It is gone; the attribution line does the work, in words, where it cannot be
+misread as decoration. **A visual convention that has to be learned is worth
+less than a sentence that explains itself**, and it is worth strictly less than
+nothing when the convention already means something else.
+
+The Bible section's rows are still not a numbered gutter, and for a reason that
+survives all of this: that drawing belonged to the sourced routes and says "this
+is a sequence somebody authorised", which a choice of three Gospels is not.
 
 ## The Bible section proposes a path, because nobody else publishes one
 

@@ -450,9 +450,9 @@
 	<p class="page-tagline landing-measure">{t('schola.landing.tagline')}</p>
 
 	<!-- The one paragraph on this site that recommends rather than describes,
-	     and it says so underneath. Not an `<aside>` styled to look like a
-	     pull-quote: it is addressed to the reader as directly as anything here,
-	     and only its AUTHORSHIP is set apart. -->
+	     and it says so underneath. Deliberately NOT set apart by any styling:
+	     it is addressed to the reader as directly as anything here, and what
+	     marks it is the sentence naming its author, not a shape around it. -->
 	<section class="house-note landing-measure" aria-labelledby="house-note-heading">
 		<h2 id="house-note-heading" class="visually-hidden">{t('schola.start.attribution')}</h2>
 		<p>{t('schola.start.body')}</p>
@@ -460,15 +460,12 @@
 	</section>
 
 	<!--
-		THE SUGGESTION, and it wears the mark. `.suggestion` is `.house-note`'s
-		accent rule at section scale, which is the page's one visual for "this is
-		us talking" — learned once at the note above, reused here rather than
-		invented. The attribution at the foot is the same string that note
-		carries, because it is the same claim.
+		THE SUGGESTION. It sits directly under the note above deliberately: the
+		two together are the page's title, and a reader who wants to start today
+		should not have to pass a grid of chrome to be told how.
 
-		It sits directly under that note deliberately: the two together are the
-		page's title, and a reader who wants to start today should not have to
-		pass a grid of chrome to be told how.
+		It is set as ordinary prose — see the style block on why the accent rule
+		that used to set both of them apart is gone.
 	-->
 	{#if showBiblePath}
 		<!-- The banner that stood over the Gospels route, which this section
@@ -645,44 +642,39 @@
 	}
 
 	/*
-	 * THE PAGE'S OWN VOICE IS ONE RULE DOWN THE INLINE START, and both places
-	 * that speak in it wear it. A card would make either look like a callout
-	 * the works below produced, and what they need to look like is somebody
-	 * talking. Learning the mark once is the whole reason the two share it:
-	 * every other thing on this page reports, these two recommend, and the
-	 * reader should be able to see which is which without reading the
-	 * attribution line every time.
+	 * THE PAGE'S OWN VOICE IS NOT DRAWN, AND USED TO BE. Both of these carried
+	 * an accent rule down their inline start, on the argument that a reader
+	 * should be able to see which passages recommend without reading the
+	 * attribution line every time. What that actually produced was a blockquote
+	 * — the one shape on the web that means "somebody else said this", set
+	 * around the two passages nobody else said — and the indent it forced made
+	 * the longest prose on the page the hardest to read. **The provenance mark
+	 * is a SENTENCE, not a border**: `schola.start.attribution` under the note,
+	 * in words, where it cannot be misread as decoration or as a quotation.
+	 *
+	 * So these are two ordinary sections now. Their headings take `section h2`
+	 * like every other one, their paragraphs run at the page's own measure and
+	 * indent by nothing.
 	 */
-	.house-note,
-	.suggestion {
-		padding-inline-start: 1rem;
-		border-inline-start: 3px solid var(--color-accent);
-	}
-
 	.house-note {
-		margin: 1.75rem 0;
+		margin: 1.75rem 0 2rem;
 	}
 
 	.suggestion {
 		margin: 0 0 2.5rem;
 	}
 
-	/* Inside the accent rule the heading needs no second edge — the rule has
-	   already said where this region begins. */
+	/* The banner sits directly above the heading, so the standard 2.25rem of
+	   air over a section would open a hole between a picture and the thing it
+	   illustrates. */
 	.suggestion h2 {
-		border-bottom: 0;
-		margin-block: 0 0.6rem;
-		padding-bottom: 0;
-	}
-
-	.suggestion p {
-		margin: 0 0 0.75rem;
+		margin-block-start: 0;
 	}
 
 	/* A line that introduces the list under it, so it sits closer to the list
 	   than to the paragraph it follows. */
 	.lead-in {
-		margin-bottom: 0.35rem !important;
+		margin-block-end: 0.35rem;
 	}
 
 	/*
@@ -765,12 +757,11 @@
 		margin: 0.5rem 0 1.25rem;
 	}
 
-	.house-note p {
-		margin: 0;
-	}
-
+	/* THE ONLY MARK THE SITE'S OWN VOICE NOW CARRIES, so it says what it means
+	   in words rather than leaning on a border to imply it. Muted and small
+	   because it is apparatus about the paragraph above, not a second claim. */
 	.attribution {
-		margin-top: 0.4rem !important;
+		margin-block-start: 0.4rem;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
 	}

@@ -563,9 +563,13 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   editorial paragraphs beside it). What is left leans on `Dei Verbum` 25 and
   `Verbum Domini` 41 rather than on our say-so. It is the one place on the site
   that advises without a mark — know that before adding a third.
-- **The mark is a rule down the inline start**, `.house-note` and `.suggestion`
-  sharing one declaration: a reader learns once what "the site talking" looks
-  like.
+- **The mark is a SENTENCE, not a border.** Both passages wore an accent rule
+  down the inline start for a day; it read as a blockquote — the one shape that
+  means "somebody else said this" — around the two passages nobody else said,
+  and the indent made the page's longest prose its hardest to read. Neither is
+  set apart now. A visual convention that must be learned is worth less than a
+  line that explains itself, and worth less than nothing when the convention
+  already means something else.
 - **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
   why that section can exist at all and why it has to be ours. `Dei Verbum` 25
   names a priority ("above all the Gospels") and no sequence; `Verbum Domini`
