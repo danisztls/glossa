@@ -521,3 +521,49 @@ Two things about the scope, unchanged by shipping:
 one that pads the rest is a fabrication** (§ TL;DR). Two prayers of thirty-five
 is what the sources support, and the page says so by offering the switch only
 where there is something behind it.
+
+## A litany is a structure the corpus already holds and the site throws away
+
+Open, found 2026-09-06 while the prayers' initials were being set. **The
+`petitions` block is not a rendering gap — it is a projection loss**, and that
+is the whole reason this is worth doing rather than merely worth having:
+
+```
+{ "kind": "petitions", "response": "pray for us.",
+  "invocations": [ { "text": "Holy Mary,", "response_printed": true },
+                   { "text": "Holy Mother of God," }, … ] }
+```
+
+That is what `build/prayer.common.en` holds for the Litany of Loreto — the
+response stored ONCE over 54 invocations, and a flag on the one the source
+printed it after. `BlockOut.to_dict` keeps `text`/`html` beside it deliberately,
+"so every consumer that predates the kind is unaffected". **The site is that
+consumer.** It reads the `html`, prints 108 alternating lines, and the reader
+sees an undifferentiated column where the source has a call and a refrain.
+
+**`petitions` is also not in the schema.** `PrayerBlockKind` is
+`'prose' | 'versicle' | 'response'`; `prayer-lines.ts` writes
+`kind: block.kind ?? 'prose'` and the JSON is cast, so a fourth kind flows
+through typed as one of the three and nothing errs. Declaring it is the first
+step and is worth doing even if nothing else here is.
+
+**One structure, five presentations, inside one prayer.** The English Litany
+alone stores its call-and-response as: a `prose` block whose lines alternate
+(the Kyrie); **unlabelled** `versicle`/`response` blocks, which reserve no
+label column and so sit flush with the prose around them; the `petitions`
+block above; and `prose` runs of invocations with the response elided
+altogether, the reader supplying it. The Angelus, two prayers away, uses
+_labelled_ `versicle`/`response`. Every one of those is faithful to a page
+somebody typeset; what is missing is a rendering that makes them read alike.
+
+**The coverage is the part to decide on first: 14 of the 20 editions carry no
+dialogue structure at all.** `be hi hu id la lt ro ru sl sv vi zh zht en-gb`
+are 100% `prose` blocks, so their Angelus and their Litany are already flat.
+Six editions (`de en es fr it pt`) hold every `versicle`, `response` and
+`petitions` block in the collection. So this is a curation question before it
+is a rendering one, and it has the shape §4's devotions have: **improving what
+six editions show, while fourteen show what they always did.**
+
+Not scoped, deliberately. The rendering it wants (a refrain set once, an
+invocation list under it) is a design decision, and the curation that would
+bring the other fourteen editions up to it is a second one.

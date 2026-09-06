@@ -93,6 +93,7 @@
 	import { placePrayerCommentary, type CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
+	import { hostOf } from '$lib/copyright';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
@@ -364,15 +365,6 @@
 		)
 	);
 
-	/** A source URL's own filename, without extension —
-	 *  `.../misteri_gaudiosi_en.html` -> `misteri_gaudiosi_en`. See the
-	 *  `sectionSource` snippet on why this and not the host. Degrades to the
-	 *  whole URL rather than to nothing if a source is ever not a file path. */
-	function sourceFileLabel(url: string): string {
-		const last = url.split('/').pop();
-		return last ? last.replace(/\.[^.]+$/, '') : url;
-	}
-
 	function groupAnchorId(name: string) {
 		return (
 			'prayer-group-' +
@@ -403,28 +395,34 @@
 	from — not the four Holy Rosary micro-site pages the twenty mysteries and
 	the directions come from, which is most of what is on the screen.
 
-	It prints the URL's LAST SEGMENT, not the host `CopyrightNotice` prints.
-	The host is what answers that notice's question ("is this from the Holy
-	See's own servers?") and it would be the same five words five times here;
-	what distinguishes these is exactly the filename — `misteri_gaudiosi_en`
-	against `misteri_luminosi_en` — which is also the only part a reader could
-	use to tell which page they are being sent to before clicking.
+	IT SAYS WHAT THE NOTICE AT THE TOP OF THE PAGE SAYS — `Source: vatican.va`,
+	the same label and the same bare host — and it printed the URL's LAST
+	SEGMENT until 2026-09-06. The argument for the filename was that the host
+	is the same five words five times while `misteri_gaudiosi_en` against
+	`misteri_luminosi_en` tells the pages apart, and that is exactly why the
+	line read as a leaked file path: a reader is not choosing between those
+	four addresses, they are reading the mysteries under a heading the filename
+	only transliterates. The line answers the same question `CopyrightNotice`
+	answers — whose server this came from — for the sections that came from a
+	different one, so it answers it in the same words. Being repeated is what a
+	provenance line does.
 
 	A section with no `source` renders nothing at all, which is every prayer
 	but one, and every group in a corpus written before this field existed.
 -->
 {#snippet sectionSource(url: string | undefined)}
-	{#if url}
-		<a
-			class="prayer-section-source"
-			href={url}
-			target="_blank"
-			rel="external noopener"
-			title={t('copyright.sourceTitle')}
-			data-link-preview="off"
-		>
-			{sourceFileLabel(url)}<Icon name="external-link" class="ext" />
-		</a>
+	{@const host = hostOf(url)}
+	{#if url && host}
+		<span class="prayer-section-source">
+			<span class="source-label">{t('copyright.sourceLabel')}:</span><a
+				class="source-link"
+				href={url}
+				target="_blank"
+				rel="external noopener"
+				title={t('copyright.sourceTitle')}
+				data-link-preview="off">{host}<Icon name="external-link" class="ext" /></a
+			>
+		</span>
 	{/if}
 {/snippet}
 
@@ -904,13 +902,26 @@
 		font-weight: 400;
 		font-style: normal;
 		color: var(--color-text-muted);
-		text-decoration-line: underline;
-		text-decoration-style: dotted;
-		text-underline-offset: 0.15em;
 		margin-block-start: 0.15rem;
 	}
 
-	.prayer-section-source:hover {
+	/* THE UNDERLINE IS ON THE ANCHOR AND NOT ON THE LINE, which it was until
+	   the label arrived: with the whole line ruled, `Source:` looked like part
+	   of the destination and the row read as one long link. `CopyrightNotice`
+	   draws exactly this pair, and the label's own rule there says why it stays
+	   outside the anchor — the link text should be the thing being linked to. */
+	.prayer-section-source .source-label {
+		margin-inline-end: 0.2em;
+	}
+
+	.prayer-section-source .source-link {
+		color: inherit;
+		text-decoration-line: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.15em;
+	}
+
+	.prayer-section-source .source-link:hover {
 		color: var(--color-accent);
 		text-decoration-style: solid;
 	}
