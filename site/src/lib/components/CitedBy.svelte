@@ -50,30 +50,51 @@
 	);
 
 	/**
-	 * Which families are switched OFF, rather than which are on.
+	 * COMMENTARY STARTS SWITCHED OFF, and it is the only family that does.
 	 *
-	 * The empty set is the default and means "everything", which is what makes
-	 * the filter additive-free: a family appearing in the corpus later shows up
-	 * without anyone having opted into it. Kept across navigations within a
-	 * route — a reader who has just hidden the commentary means it for the next
-	 * chapter too, not only for this one.
+	 * It is 36,995 of the reverse index's 84,775 citers — more than the
+	 * Catechism, the documents and the Summa together — so a heavily annotated
+	 * verse answers "who cites this" mostly with one edition's footnotes, which
+	 * is not what the panel is opened for. It is also the one family already on
+	 * the page: the reader's own notes hang off the verses above under their
+	 * own marks, so a row here repeats what is a scroll away. Switched on, it
+	 * stays on for the next chapter.
 	 */
-	let hidden = $state(new SvelteSet<CitedByFamily>());
+	const HIDDEN_BY_DEFAULT: readonly CitedByFamily[] = ['commentary'];
 
 	/**
-	 * WHEN ONE FAMILY IS ALL THERE IS, no filter is applied and none is shown
-	 * — including the case where a stale `hidden` entry from a busier page
-	 * would otherwise empty the panel with no visible control to undo it.
+	 * Which families are switched OFF, rather than which are on.
+	 *
+	 * Storing the off side is what makes the filter additive-free: a family
+	 * appearing in the corpus later shows up without anyone having opted into
+	 * it, and the one default that is not "on" is written down in one place
+	 * rather than implied by an omission. Kept across navigations within a
+	 * route — a reader who has just hidden the magisterium means it for the
+	 * next chapter too, not only for this one.
 	 */
+	let hidden = $state(new SvelteSet<CitedByFamily>(HIDDEN_BY_DEFAULT));
+
+	/**
+	 * THE CONTROL IS DRAWN EXACTLY WHEN PRESSING IT WOULD CHANGE SOMETHING,
+	 * and the filter runs exactly when the control is drawn — so the panel can
+	 * never hide a row behind a button that is not on the page. A lone family
+	 * needs no filter unless it is the one that starts off, in which case it
+	 * needs the button most: without it a chapter annotated and cited by
+	 * nothing else would show an empty panel with no way to open it.
+	 */
+	const filtering = $derived(
+		families.length > 1 || families.some((family) => hidden.has(family.key))
+	);
+
 	const shown = $derived(
-		families.length < 2
+		filtering
 			? rows
-			: rows
 					.map((row) => ({
 						...row,
 						sources: row.sources.filter((source) => !hidden.has(source.family))
 					}))
 					.filter((row) => row.sources.length > 0)
+			: rows
 	);
 
 	const total = $derived(
@@ -91,7 +112,7 @@
 		{heading}
 		<span class="count">{total}</span>
 	</h2>
-	{#if families.length > 1}
+	{#if filtering}
 		<!--
 			Toggles, not a single-choice control: the reader is narrowing a list
 			they can already see, and narrowing it to two shelves is as ordinary

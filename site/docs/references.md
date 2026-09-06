@@ -154,6 +154,17 @@ library's own sections — the Catechism and its Compendium are one answer to
 because a Bible verse cited two hundred times is scanned for a shelf, not for
 a work; total because a family that covered only the kinds someone remembered
 would leave the rest permanently on, which is worse than no filter. The
-buttons are drawn from the rows and appear only where there are two or more
-families to choose between, and switched-off is the marked state: everything
-starts on, so the panel's loudest thing must not be its own control.
+buttons are drawn from the rows, and appear exactly when pressing one would
+change what is shown — more than one family present, or a family that starts
+switched off. Switched-off is the MARKED state, because all but one family
+start on and the panel's loudest thing must not be its own control.
+
+**Commentary is the one family that starts off**, and the reason is the
+measurement above turned around: it is 36,995 of the index's 84,775 citers,
+more than the Catechism, the documents and the Summa together, so a heavily
+annotated verse answers "who cites this" mostly with one edition's footnotes.
+It is also the one family already on the page — the reader's own notes hang off
+the verses under their own marks — so the row repeats what is a scroll away.
+That is why the control is drawn for a LONE hidden family too: a chapter cited
+by nothing but its own apparatus would otherwise show an empty panel with no
+way to open it.

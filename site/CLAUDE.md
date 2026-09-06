@@ -1529,6 +1529,11 @@ holds the rationale. What must be true before touching it:
   sections (the Catechism and its Compendium share one); a family that covered
   only some kinds would leave the rest permanently on. Every label is a key a
   page already uses, so a family costs no new string in 37 dictionaries.
+- **Commentary starts switched OFF and is the only family that does** — 36,995
+  of the index's 84,775 citers, and the one family already on the page under
+  its own marks. So the buttons are drawn whenever pressing one would change
+  something, a lone hidden family included, or a chapter cited by nothing but
+  its own apparatus would show an empty panel with no way to open it.
 
 ## Running prose is an apparatus, not decoration
 
