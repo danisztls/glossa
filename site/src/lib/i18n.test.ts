@@ -36,7 +36,10 @@ describe('detectUiLang', () => {
 	it('negotiates the languages added with Magnifica Humanitas', () => {
 		expect(detectUiLang(['de-AT'])).toBe('de');
 		expect(detectUiLang(['ar'])).toBe('ar');
-		expect(detectUiLang(['ja-JP', 'ru-RU', 'en-US'])).toBe('ru');
+		// `is` and not `ja` for the reason four other tests carry: a
+		// counterexample spelled as a language the interface might one day have
+		// gets overtaken. Japanese joined `UI_LANGS` on 2026-09-06.
+		expect(detectUiLang(['is-IS', 'ru-RU', 'en-US'])).toBe('ru');
 	});
 
 	// The four the Compendium's editions brought in as content languages
@@ -83,7 +86,7 @@ describe('detectUiLang', () => {
 	// had fallen out of that list.
 	it('negotiates Latin like any other interface language', () => {
 		expect(detectUiLang(['la'])).toBe('la');
-		expect(detectUiLang(['ja-JP', 'la'])).toBe('la');
+		expect(detectUiLang(['is-IS', 'la'])).toBe('la');
 	});
 });
 

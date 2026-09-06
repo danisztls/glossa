@@ -29,11 +29,13 @@
  * so its reader met their own language around an English interface. Same
  * caveat as everything above: not read by a native speaker.
  *
- * THE CALENDAR'S CONTROLS ARRIVED 2026-09-06 -- the 44 `calendar.*` keys
- * `/calendarium` labels itself with, its seasons, ranks and colours among
- * them. The 31 that TEACH those words (`calendar.gloss.*`,
- * `calendar.primer.*`) are prose rather than labels and are left to English
- * for now, by direction; the page stays unpublished until they are written.
+ * THE CALENDAR ARRIVED 2026-09-06, in two passes on one day -- the 44
+ * `calendar.*` keys `/calendarium` labels itself with, its seasons, ranks and
+ * colours among them, and then the 31 that TEACH those words
+ * (`calendar.gloss.*`, `calendar.primer.*`). Those 31 are prose rather than
+ * labels and are what held the page out of `CHROME_PATHS`: both keys
+ * `CHROME_KEYS` reads are labels, so the coded gate would have opened on a
+ * page whose whole primer was English. Same caveat as everything above.
  *
  * The language names in `lang-names.ts` are written in
  * their own language on purpose and are not translated here.

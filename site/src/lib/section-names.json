@@ -209,6 +209,19 @@
 			"nav.prayers": "Bønner",
 			"nav.summa": "Summa"
 		},
+		"no": {
+			"nav.bible": "Bibelen",
+			"nav.ccc": "Katekismen",
+			"ccc.abbrev": "KKK",
+			"nav.compendium": "Kompendiet",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Læreembetet",
+			"nav.socialDoctrine": "Sosiallære",
+			"nav.canonLaw": "Kirkerett",
+			"canonLaw.canon": "Kan.",
+			"nav.prayers": "Bønner",
+			"nav.summa": "Summa"
+		},
 		"cs": {
 			"nav.bible": "Bible",
 			"nav.ccc": "Katechismus",
@@ -247,6 +260,19 @@
 			"canonLaw.canon": "Kan.",
 			"nav.prayers": "Molitve",
 			"nav.summa": "Suma"
+		},
+		"mt": {
+			"nav.bible": "Bibbja",
+			"nav.ccc": "Katekiżmu",
+			"ccc.abbrev": "KKK",
+			"nav.compendium": "Kompendju",
+			"compendium.abbrev": "Komp.",
+			"nav.magisterium": "Maġisteru",
+			"nav.socialDoctrine": "Duttrina Soċjali",
+			"nav.canonLaw": "Dritt Kanoniku",
+			"canonLaw.canon": "Kan.",
+			"nav.prayers": "Talb",
+			"nav.summa": "Summa"
 		},
 		"fi": {
 			"nav.bible": "Raamattu",
@@ -416,6 +442,19 @@
 			"canonLaw.canon": "第",
 			"nav.prayers": "祈禱經文",
 			"nav.summa": "神學大全"
+		},
+		"ja": {
+			"nav.bible": "聖書",
+			"nav.ccc": "カテキズム",
+			"ccc.abbrev": "CCC",
+			"nav.compendium": "要約",
+			"compendium.abbrev": "要約",
+			"nav.magisterium": "教導職",
+			"nav.socialDoctrine": "社会教説",
+			"nav.canonLaw": "教会法",
+			"canonLaw.canon": "第",
+			"nav.prayers": "祈り",
+			"nav.summa": "神学大全"
 		},
 		"ko": {
 			"nav.bible": "성경",

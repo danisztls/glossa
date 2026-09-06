@@ -47,6 +47,17 @@
  * is not better content, it is the same content behind a language they do not
  * read.
  *
+ * AND A THIRD REASON ARRIVED ON 2026-09-06, WHICH IS NEITHER OF THOSE TWO:
+ * `ja`, `mt` and `no` are here because THE CALENDAR can be answered in them.
+ * `calendar/names/` holds the General Roman Calendar's 218 celebrations and
+ * the whole Proper of Time in each — read off the calendar GCatholic publishes
+ * for Japan, for Malta and for Norway — so the site could name every day of
+ * the year in three languages it had no chrome for. That is the same
+ * combination Malagasy was, arriving from a different side: a reader met their
+ * own language inside an English interface. It is not the reach tier either,
+ * which is chosen by Catholic population; what these three have is a whole
+ * surface the site can actually serve.
+ *
  * Latin sits in neither camp and is the reason the old exclusion was wrong:
  * it was left out on the grounds that nobody wants the chrome in it, which
  * was an assumption about readers rather than a fact about the corpus. The
@@ -125,9 +136,11 @@ export const UI_LANGS = [
 	'ru',
 	'nl',
 	'da',
+	'no',
 	'cs',
 	'sk',
 	'hr',
+	'mt',
 	'fi',
 	'lv',
 	'sw',
@@ -141,6 +154,7 @@ export const UI_LANGS = [
 	'uk',
 	'zh',
 	'zht',
+	'ja',
 	'ko',
 	'ml',
 	'hi',
