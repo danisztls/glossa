@@ -1557,6 +1557,7 @@ def process_page(
     # a Chinese sentence ends on 。 rather than on a period.
     mini_header = cfg["is_mini_header"]
     split_starts = cfg["split_embedded"]
+    measured_headings = cfg["measured_headings"]
     state.current_footnote_table = footnote_table
     i, n = 0, len(blocks)
     while i < n:
@@ -1602,8 +1603,22 @@ def process_page(
                 state.push_heading(kind, num, title)
                 i = j
                 continue
+            # AN EDITION THAT PRINTS ITS HEADINGS LARGER HAS NO AMBIGUITY HERE
+            # AND MUST NOT BE ASKED. This whole branch exists because bold is
+            # the only signal an HTML mirror gives, and bold says nothing
+            # about level; type size does. The Chinese edition sets 信經 at
+            # 18pt over its creed table, the two column heads at 13pt and
+            # 祈禱是甚麼？ at 16pt, against a 12pt body -- so `ccc_pdf._blocks`
+            # has already called them headings on the measurement, and
+            # `_heads_a_paragraph` has already sent the one genuinely
+            # ambiguous case (甚麼是大赦？, 12pt) down the `prose` path below,
+            # where `take_mini_header` reads it correctly. Asking again on the
+            # text's shape overrules the page: §184 swallowed both creeds and
+            # §2558 the Thérèse definition, 4 `sub` nodes for 2 corrupted
+            # paragraphs.
             if (
-                state.open_paragraph is not None
+                not measured_headings
+                and state.open_paragraph is not None
                 and mini_header(b.text)
                 and not opens_new_matter(
                     blocks, i + 1, number_re, state.last_n, mini_header
@@ -3428,6 +3443,7 @@ LANG_CONFIG = {
         "notes": "none",
         "number_re": NUMBER_RE,
         "is_mini_header": lambda text: is_run_in_heading(text, PDF_EDITIONS["zht"]),
+        "measured_headings": True,
         "split_embedded": functools.partial(
             split_embedded_paragraph_starts, pattern=ZH_EMBEDDED_START_RE
         ),
@@ -3472,6 +3488,9 @@ for _lang, _cfg in LANG_CONFIG.items():
     _cfg.setdefault("sample_chunks", sample_chunks_head)
     _cfg.setdefault("is_mini_header", is_mini_header)
     _cfg.setdefault("split_embedded", split_embedded_paragraph_starts)
+    # True only where the reader decides a heading by measuring the page
+    # rather than by reading a style off markup -- see the drop site.
+    _cfg.setdefault("measured_headings", False)
     _cfg.setdefault("absent", ())
     _cfg.setdefault(
         "edition", "vatican.va archive mirror, 1993/1997 second typical edition text"
