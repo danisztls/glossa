@@ -219,6 +219,34 @@ Sunday (a rule of `year.ts`), an observance suppressed by the day it falls on,
 a conference that changed a transfer inside the oracle's window, and a patronal
 solemnity on the LAST weekday of a month, which `MovableRule` cannot spell.
 
+### Two fifths of the held divergences were the generator's, not the engine's
+
+Measured 2026-09-06 by dumping all 155 divergent days rather than reading the
+list of causes, which was inferred and wrong about the largest group.
+`derive_national_calendars.py` had two defects and `year.ts` had none of them:
+it wrote a standing `moves` row from a SINGLE year's sighting — so England kept
+Saint George on 28 April for ever because 23 April 2025 fell inside the Octave
+of Easter — and it computed `replacesDay` and never printed it, so every
+derived layer's Ember Days doubled the ferial day and Spain looked like the
+only country that does it, Spain being hand-written. 155 days became 96,
+Scotland went from seventeen to one, Bosnia from twelve to three, and Russia to
+none.
+
+**A generator that turns one observation into a standing rule, or computes an
+answer it does not print, writes data that reads as an engine defect — and the
+engine is where everybody then looks.** The mechanism for a one-year fact
+already existed (`movedInYear`) and its own docblock already argued for it.
+
+**What remains is catalogued in `national/held.ts`**, classified against the
+days themselves: a proper the country places by a rule and the layer by a date
+(the biggest group, and two of them are LUNAR — Macau's Our Lady of China and
+Vietnam's commemoration of ancestors fall on the lunar new year); All Souls,
+where Denmark, Finland and England each keep a different rule; the Immaculate
+Heart as a national solemnity; a duplicated Newman; Epiphany, where the layer
+is right and `movedInYear` does not reach the temporal cycle; and an observance
+suppressed by the rank of the day it falls on. Read that file rather than this
+paragraph — it is beside the rows it describes.
+
 **A `days: 0` row is held by a disagreement about WORDS, and Japan was the
 one** (2026-09-06). The engine agreed about the rank, colour and precedence of
 all 1,095 days; what held the calendar was 10 September, where this site prints

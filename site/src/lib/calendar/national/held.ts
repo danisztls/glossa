@@ -55,21 +55,65 @@
  * layers that read as engine defects — and the engine is where everybody then
  * looks.**
  *
- * The recurring causes, none of which a layer can state today:
+ * ## What is left, classified against the days themselves (2026-09-06)
  *
- *   - **All Souls transferred off a Sunday.** Denmark and Thailand keep the
- *     Commemoration of All the Faithful Departed on the Monday when 2
- *     November is a Sunday; the general calendar keeps it on the Sunday, and
- *     that is a rule of `year.ts` rather than a row of a layer.
- *   - **An observance suppressed by the day it falls on.** Australia and New
- *     Zealand print no ANZAC Day inside the Octave of Easter, and Indonesia\'s
- *     Independence Day replaces a Sunday outright. `Observance` has
- *     `replacesDay` and nothing for "not on a day of this rank".
- *   - **A conference that changed a transfer inside the window.** England and
- *     Wales restored Epiphany to 6 January from Advent 2025;
- *     `CalendarOptions` carries a boolean per country and not a table.
- *   - **A patronal solemnity on the LAST weekday of a month**, which
- *     `MovableRule`\'s `nth` cannot spell.
+ * Read off all 96 remaining divergent days rather than inferred, because the
+ * list this replaces was inferred and was wrong about the largest group. Each
+ * heading names the calendars it accounts for; the rows below carry the
+ * numbers, which is where a count belongs.
+ *
+ *   - **A PROPER THE COUNTRY PLACES BY A RULE AND THE LAYER PLACES BY A
+ *     DATE — the biggest group by far** (`ad ae ao au ht mo mp mt pt rw sg si
+ *     tn tw vn`, and Wales's Saint David). A patronal or dedication feast
+ *     lands on a date the derivation read off one year, and the country moves
+ *     it: the Emirates keep the Dedication of the Churches of the Vicariate
+ *     on the LAST Sunday of October, which `MovableRule`'s `nth` cannot
+ *     spell. **Two of them are not solvable by any rule in this file's
+ *     vocabulary at all**: Macau keeps Our Lady of China and Vietnam the
+ *     commemoration of ancestors on the LUNAR new year — 29 January 2025,
+ *     17 February 2026, 6 February 2027 — and a lunisolar date is not a
+ *     function of the Gregorian one. Those two want a table of years.
+ *   - **All Souls kept on another day** (`dk fi gb-eng gb-sct gb-wls rw th`).
+ *     THE THREE COUNTRIES DO NOT SHARE A RULE, which is why the old entry
+ *     here calling it "transferred off a Sunday" was too tidy: Denmark keeps
+ *     it on the Monday after the Sunday All Saints is kept (3 Nov 2025,
+ *     2 Nov 2026, 8 Nov 2027), Finland on the Saturday falling 31 October to
+ *     6 November (1 Nov 2025, 31 Oct 2026, 6 Nov 2027), and England and Wales
+ *     move it only off a Sunday. So it is `movedInYear` data and not a rule —
+ *     and the derivation cannot yet write it, because All Souls reaches it
+ *     from the feed UNRANKED and is classified as a ferial or an observance
+ *     rather than as a general celebration that moved. Two moving parts: a
+ *     case in the generator, and `year.ts` honouring `movedInYear` for a day
+ *     it places specially.
+ *   - **The Immaculate Heart as a national solemnity, and Saint Irenaeus
+ *     displaced by it** (`cv ec tt`). Both keep the Immaculate Heart at a
+ *     rank the general calendar does not give it, on a date that then moves
+ *     Irenaeus; the layers state half of it.
+ *   - **A duplicated Newman** (`cv ie pt`). These print Saint John Henry
+ *     Newman twice — the general calendar's and a proper the derivation added
+ *     beside it — and Ireland's proper still calls him `priest` where the
+ *     general calendar has said `Priest and Doctor of the Church` since he was
+ *     proclaimed one on 1 November 2025. A DERIVATION DEFECT, not an engine
+ *     one: the same celebration resolved to an id and to a stranger.
+ *   - **Epiphany transferred in 2025 only** (`gb-eng gb-wls`). The layers now
+ *     carry the right `movedInYear` row and it changes nothing, because
+ *     `movedInYear` reaches the sanctorale and not the temporal cycle. The
+ *     conference did change its mind — England and Wales restored Epiphany to
+ *     6 January from Advent 2025 — so the fact is real and only the mechanism
+ *     is missing.
+ *   - **An observance suppressed by the day it falls on** (`au id nz`).
+ *     Australia and New Zealand print no ANZAC Day inside the Octave of
+ *     Easter, and Indonesia's Independence Day replaces a Sunday outright.
+ *     `Observance` has `replacesDay` and nothing for "not on a day of this
+ *     rank". The one entry from the old list that survived it unchanged.
+ *   - **Ember Days that still double, or sort differently** (`ad ba sk`).
+ *     `replacesDay` fires where the day's winner is a WEEKDAY, so a memorial
+ *     that wins the day still prints beside the Ember Day; Slovakia's Advent
+ *     pair also comes out in the other order. Andorra's are not in the layer
+ *     at all.
+ *   - **A handful that are their own case** (`pr sm tw ua`): a rank or colour
+ *     that differs where both sides print the same name, two propers on one
+ *     day, and a blessing day this calendar emits where the feed does not.
  */
 
 export const HELD_CALENDARS: Record<string, { days: number; names: number; feed: string }> = {
