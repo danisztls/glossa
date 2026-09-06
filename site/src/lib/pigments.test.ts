@@ -206,9 +206,10 @@ describe('the shelf pigments', () => {
 	});
 
 	it('is resolved by each consumer into a per-row property of its own', () => {
-		// `SRC` is `src/`, so both are named from there. The panel takes the
-		// muted mix and the guide takes the literal, which is the whole
-		// difference between the two families.
+		// `SRC` is `src/`, so both are named from there. The panel resolves a
+		// muted mix per SHELF, which is an identity; the guide resolves the
+		// ordered ramp on its reading cards, which is variety and claims
+		// nothing. That difference is the whole reason both families exist.
 		expect(
 			readFileSync(join(SRC, 'lib/components/CitedBy.svelte'), 'utf8'),
 			'the panel sets no --pigment'
@@ -216,7 +217,18 @@ describe('the shelf pigments', () => {
 		expect(
 			readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'),
 			'the guide sets no --shelf'
-		).toMatch(/--shelf:\s*var\(--shelf-/);
+		).toMatch(/--shelf:\s*var\(--hue-/);
+	});
+
+	/*
+	 * The guide names no `--shelf-*` at all any more: its rows are one accent,
+	 * and a work's identity colour is the panel's business. Asserted because
+	 * the tokens are still there and reaching for one is a one-line change that
+	 * would put a colour on this page claiming something.
+	 */
+	it('never lets the guide claim a shelf colour, which is the panel\u2019s to make', () => {
+		const guide = stripComments(readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'));
+		expect(guide, 'the guide names a --shelf-* in a declaration').not.toMatch(/var\(--shelf-/);
 	});
 
 	/*

@@ -328,7 +328,31 @@ than owed. Measured against every ground of each family — worst 4.15 light, 3.
 sepia, 6.11 dark, separation 7.8 on paper and 8.7 on a dark ground. Sepia and
 OLED restate nothing: each moves a ground rather than a palette.
 
-**FOUR LISTS ON THE PAGE ARE COLOURED AND ONLY ONE OF THEM MEANS ANYTHING BY
+**AND THEN ALL OF IT CAME BACK OUT AGAIN, EXCEPT ON THE CARDS** (2026-09-06).
+Four coloured lists put twenty-odd coloured glyphs across four grids, and **past
+a certain count a colour stops picking a row out and becomes the page's
+texture**: every row shouting is every row quiet. The marks are one accent
+again, and the per-row distinction is what it was before any of this — the
+icon's SHAPE, a scroll, a scale, a feather, which is a stronger signal than a
+hue and costs no palette.
+
+The one list that keeps its colours is the reading suggestion's cards, and the
+difference is what the reader is doing. A row in the shelf list is READ, one
+after another, and a colour on it is a label; a card in the suggestion is CHOSEN
+BETWEEN, and there a colour is doing the work a grid of cards exists to do.
+**The colour is in the edge and nowhere else** — a 3px head rule, with hover
+carrying it round the whole frame. It washed the ground at 7% as well for a day,
+on the argument that a 2px rule alone will not separate one card from the next;
+what that produced was eight coloured boxes competing with the words inside
+them.
+
+Everything below is the history of a colour system that shipped and was taken
+back. It is kept because the measurements are still true of the tokens, which
+are all still there and all still spent — `CitedBy` marks every shelf with the
+muted mix, and the cards walk the ramp — and because the next surface to reach
+for one owes the same arithmetic.
+
+**FOUR LISTS ON THE PAGE WERE COLOURED AND ONLY ONE OF THEM MEANT ANYTHING BY
 IT.** The shelf list's colour is identity: a work wears it wherever the site
 names it, and `CitedBy` marks the same work with the muted mix of the same
 value. The chrome guide's eight controls, the three rows that are pages rather

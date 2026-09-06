@@ -628,7 +628,25 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   and the chrome icons take `--color-accent`, mixed toward the border or the
   ground rather than filled — four sections divided by four hairlines in the
   same grey as every card border is a page with no landmarks in it.
-- **THE SHELF LIST TAKES `--pigment-*`, THE SAME TOKENS `CitedBy` DOTS ITSELF
+- **`/schola`'S MARKS ARE ONE ACCENT, AND THEY WERE EIGHT COLOURS FOR A DAY**
+  (2026-09-06). Every row wore its shelf's colour, the chrome guide and the
+  three places walked the ramp, and the page carried twenty-odd coloured glyphs
+  across four grids. **Past a certain count a colour stops picking a row out and
+  becomes the page's texture** — every row shouting is every row quiet. What
+  keeps its variety is the reading suggestion's cards, a list of eight things a
+  reader is choosing BETWEEN rather than reading down; there the colour is in
+  the EDGE alone, a 3px head rule, because eight tinted grounds were eight
+  coloured boxes competing with the words in them. The per-row mark that
+  survives is the icon's SHAPE — a scroll, a scale, a feather — which was the
+  answer before any of this and is a stronger one.
+- **The tokens all stay, and each still earns its keep.** `CitedBy` dots every
+  shelf with the muted mix, and the cards walk `--hue-*`; what went is this page
+  ASSERTING a colour per work. `pigments.test.ts` fails if the guide names a
+  `--shelf-*` again, that identity being the panel's to make.
+- **The paragraphs below are the history of a colour system that shipped and was
+  taken back, and they are kept for what they measured.** The arithmetic is
+  still true of the tokens, and the next surface to spend one owes the same.
+- **THE SHELF LIST TOOK `--pigment-*`, THE SAME TOKENS `CitedBy` DOTS ITSELF
   WITH** (2026-09-06), so a work wears one colour wherever the site names it.
   Eight rows whose icons were eight identical red glyphs made a stripe down the
   gutter that said nothing; a colour per shelf makes the mark carry the row, and
@@ -655,7 +673,8 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   therefore has one colour and two presentations rather than two colours.
   `pigments.test.ts` fails on a `--pigment-*` written as its own literal, which
   is how the two would come to drift.
-- **THE COLOURS ONLY EVER SHOWED ON HOVER, AND NOTHING FAILED.**
+- **THE COLOURS ONLY EVER SHOWED ON HOVER, AND NOTHING FAILED** — the bug that
+  cost this whole sequence.
   `.book-icon { color: var(--shelf) }` sat above a
   `.feature-icon, .book-icon { … color: var(--color-accent) }` — same
   specificity, later wins — so every shelf icon was the house red at rest and

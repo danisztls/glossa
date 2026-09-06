@@ -192,32 +192,26 @@
 	 * Each is titled by the key its own landing page is titled by, so no name
 	 * on this page is written twice.
 	 *
-	 * ## EACH ROW CARRIES A PIGMENT, AND THE PIGMENT IS THE SHELF
+	 * ## THE ROWS ARE ONE COLOUR, AND THEY WERE EIGHT FOR A DAY
 	 *
-	 * Eight rows whose icons were eight identical red glyphs made a stripe
-	 * down the gutter that said nothing — the mark was pure decoration beside
-	 * a name that was doing all the work. A colour per shelf makes the mark
-	 * carry the row.
+	 * Each row wore its shelf's own colour, taken from `tokens.css`'s
+	 * `--shelf-*` — the same value `CitedBy` marks that shelf with, so a work
+	 * would have worn one colour wherever the site named it. It is the accent
+	 * again (2026-09-06, by direction), and what it ran into is worth keeping:
+	 * once the chrome guide and the three places had colours too, the page
+	 * carried twenty-odd coloured glyphs across four grids, and **past a
+	 * certain count a colour stops picking a row out and becomes the page's
+	 * texture**. Every row shouting is every row quiet.
 	 *
-	 * **THE PIGMENT IS `tokens.css`'s, THE SAME ONE `CitedBy` DOTS ITSELF
-	 * WITH**, so a work wears one colour wherever the site names it and a
-	 * shelf that gains a pigment gains it in both places at once. The row
-	 * carries its key as `data-shelf` and the style block maps that to a
-	 * token, which is `CitedBy`'s own arrangement one page over — the map has
-	 * to be written somewhere, because this page's keys are its own (`social`,
-	 * `law`) and the panel's are citer families. The Compendium is the one row
-	 * that borrows: it takes the Catechism's, being the same teaching
-	 * abridged, which is what `catechismPairLang` says everywhere else in this
-	 * codebase.
+	 * The tokens are untouched and still earn their keep: `CitedBy` dots each
+	 * shelf with the muted mix, and the reading suggestion's cards walk the
+	 * ordered `--hue-*` ramp — a list of eight things a reader is choosing
+	 * BETWEEN, which is the case colour was helping with all along, rather
+	 * than a list they are reading down.
 	 *
-	 * **WHERE A PIGMENT MAY GO IS ARITHMETIC, NOT TASTE.** The family is
-	 * mixed halfway to `--color-text-muted` and resolves to 3.4-4.2:1 on a
-	 * dark ground, so it is a decoration and `tokens.css` says so. This page
-	 * spends it on the row's 1.35rem icon — beside the work's own name, so
-	 * nothing is told apart by colour alone — and on the Bible section's
-	 * stage figures and card edges. The card names stay `--color-accent` and
-	 * the notation chips are `--color-text-muted`, both of which owe 4.5:1 and
-	 * clear it.
+	 * The mark that IS still per row is the icon's shape, which was the answer
+	 * before any of this and is a stronger one: a scroll, a scale, a feather.
+	 *
 	 */
 	const WORKS = [
 		{
@@ -532,7 +526,7 @@
 		<p class="section-lede">{t('schola.books.lede')}</p>
 		<ul class="book-grid">
 			{#each works as work (work.key)}
-				<li class="book" data-shelf={work.key}>
+				<li class="book">
 					<span class="book-icon"><Icon name={work.icon} /></span>
 					<div class="book-text">
 						<h4><a href={work.href}>{t(work.titleKey)}</a></h4>
@@ -673,7 +667,7 @@
 		     colour is the shelf, so a section that is entirely one shelf is
 		     entirely one colour. It is the pigment the Scripture row above
 		     wears, which is where a reader can have learnt it. -->
-		<section class="suggestion" data-shelf="scripture" aria-labelledby="bible-heading">
+		<section class="suggestion" aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
 			<p class="section-lede">{t('schola.bible.library')}</p>
 
@@ -881,8 +875,7 @@
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		color: var(--shelf, var(--color-accent));
-		color: var(--shelf, var(--color-accent));
+		color: var(--color-accent);
 		margin-inline-start: -0.06em;
 		/* The shelf's own colour, like the icons. 1.6rem is large text and owes
 		   3:1, which every shelf colour clears on every ground; `.pick-name`
@@ -936,11 +929,14 @@
 	 * claims nothing about any of them, which is right, because nothing about
 	 * a Gospel is red.
 	 *
-	 * The colour is in the head rule AND a wash of the ground, because a 2px
-	 * edge alone is not enough to tell a card from its neighbour at a glance —
-	 * and the wash is what a card can afford where its NAME cannot: 1.1rem of
-	 * serif owes 4.5:1 and these literals clear 3:1, so the name stays on the
-	 * accent and the box carries the colour.
+	 * THE COLOUR IS IN THE EDGE AND NOWHERE ELSE (2026-09-06, by direction). It
+	 * washed the ground at 7% as well, on the argument that a 2px rule alone is
+	 * not enough to tell one card from the next; eight tinted grounds in one
+	 * section turned out to be eight coloured boxes competing with the words in
+	 * them, where the rule reads as a marker on a card that is still a card.
+	 * The name stays on the accent either way — 1.1rem of serif owes 4.5:1 and
+	 * these literals clear 3:1, so the edge is the only thing that can carry a
+	 * colour here at all.
 	 */
 	.pick {
 		display: flex;
@@ -949,10 +945,9 @@
 		block-size: 100%;
 		padding: 0.8rem 1rem 0.9rem;
 		border: 1px solid var(--color-border);
-		border-block-start: 2px solid color-mix(in srgb, var(--shelf) 55%, var(--color-border));
+		border-block-start: 3px solid var(--shelf);
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
-		background: color-mix(in oklab, var(--shelf) 7%, var(--color-bg-elevated));
 		color: var(--color-text);
 		text-decoration: none;
 	}
@@ -980,10 +975,11 @@
 		--shelf: var(--hue-4);
 	}
 
+	/* The whole edge takes the card's colour, the head rule already having it —
+	   so hover completes a frame rather than tinting anything. */
 	.pick:hover,
 	.pick:focus-visible {
 		border-color: var(--shelf);
-		background: color-mix(in oklab, var(--shelf) 14%, var(--color-bg-elevated));
 	}
 
 	/*
@@ -1151,47 +1147,6 @@
 	 * title's optical centre rather than on its baseline box.
 	 */
 	/*
-	 * THE SHELF'S COLOUR, resolved once per row and read by the icon, the stage
-	 * figures and the card edges below. `CitedBy`'s own list is the model, down
-	 * to being a set of attribute selectors rather than a value threaded
-	 * through the markup: a colour that has to be interpolated into a `style`
-	 * attribute is a colour no stylesheet can find.
-	 *
-	 * `--shelf-*` AND NOT `--pigment-*`, WHICH IS THE WHOLE OF WHAT THIS PAGE
-	 * ASKS THAT THE PANEL DOES NOT. A pigment is a dot's ornament, mixed
-	 * halfway to the muted grey so a column of them sits in one tonal band; a
-	 * shelf colour is the literal that pigment is mixed FROM, and it is the one
-	 * a reader would name out loud. This page wants the second — an icon that
-	 * is red, or blue, or green — and `tokens.css` holds both and derives one
-	 * from the other, so they can never disagree about which colour a shelf is.
-	 *
-	 * The Compendium takes the Catechism's — the same teaching abridged — and
-	 * is the only row that shares.
-	 */
-	[data-shelf='scripture'] {
-		--shelf: var(--shelf-bible);
-	}
-	[data-shelf='catechism'],
-	[data-shelf='compendium'] {
-		--shelf: var(--shelf-catechism);
-	}
-	[data-shelf='magisterium'] {
-		--shelf: var(--shelf-magisterium);
-	}
-	[data-shelf='social'] {
-		--shelf: var(--shelf-social-doctrine);
-	}
-	[data-shelf='law'] {
-		--shelf: var(--shelf-canon-law);
-	}
-	[data-shelf='doctors'] {
-		--shelf: var(--shelf-doctors);
-	}
-	[data-shelf='prayers'] {
-		--shelf: var(--shelf-prayer);
-	}
-
-	/*
 	 * THE SHARED RULE IS GEOMETRY AND CARRIES NO COLOUR, and the reason is a bug
 	 * that ran for four commits.
 	 *
@@ -1228,76 +1183,27 @@
 		margin-block-start: 0.12rem;
 	}
 
-	/*
-	 * THE CHROME'S MARKS WALK THE RAMP, and this file argued the opposite for a
-	 * day: the controls are one KIND of thing, so one colour. That is true of
-	 * what they are and wrong about what the mark is for. Eight identical
-	 * glyphs down two grids are eight marks a reader's eye slides over — the
-	 * icon stops being a way in to the row and becomes texture beside it. The
-	 * colour claims nothing here (`--hue-*` in `tokens.css` exists to say so),
-	 * it only keeps a row from blurring into its neighbour.
-	 *
-	 * The two bars continue one walk rather than each restarting, so no colour
-	 * appears twice in the section — the second grid is `:nth-of-type(2)`,
-	 * the `h3` between them being a heading and not a list.
-	 */
+	/* The chrome is one kind of thing, so its marks are one colour. */
 	.feature-icon {
-		color: var(--mark, var(--color-accent));
-	}
-
-	.feature-grid:nth-of-type(1) .feature:nth-child(1) {
-		--mark: var(--hue-1);
-	}
-	.feature-grid:nth-of-type(1) .feature:nth-child(2) {
-		--mark: var(--hue-2);
-	}
-	.feature-grid:nth-of-type(1) .feature:nth-child(3) {
-		--mark: var(--hue-3);
-	}
-	.feature-grid:nth-of-type(1) .feature:nth-child(4) {
-		--mark: var(--hue-4);
-	}
-	.feature-grid:nth-of-type(2) .feature:nth-child(1) {
-		--mark: var(--hue-5);
-	}
-	.feature-grid:nth-of-type(2) .feature:nth-child(2) {
-		--mark: var(--hue-6);
-	}
-	.feature-grid:nth-of-type(2) .feature:nth-child(3) {
-		--mark: var(--hue-7);
-	}
-	.feature-grid:nth-of-type(2) .feature:nth-child(4) {
-		--mark: var(--hue-8);
+		color: var(--color-accent);
 	}
 
 	/*
-	 * THE THREE THAT ARE PLACES take the ramp too, and not a shelf colour —
-	 * they are not shelves, and `--shelf-library` would be a token asserting
-	 * that they were. Positions 2, 5 and 8 rather than 1, 2 and 3: three rows
-	 * standing alone under their own heading want the widest gaps the ramp
-	 * has, where a run of eight wants its neighbours separated.
-	 */
-	.places .book:nth-child(1) {
-		--shelf: var(--hue-2);
-	}
-	.places .book:nth-child(2) {
-		--shelf: var(--hue-5);
-	}
-	.places .book:nth-child(3) {
-		--shelf: var(--hue-8);
-	}
-
-	/*
-	 * A shelf is eight kinds of thing, so its marks are eight colours — the
-	 * literal from `tokens.css`, which is a colour a reader would name rather
-	 * than the muted mix `CitedBy` dots itself with.
+	 * ONE ACCENT FOR EVERY MARK ON THE PAGE (2026-09-06, by direction), and it
+	 * replaced a colour per shelf plus an ordered ramp over the chrome guide
+	 * and the three places. What that produced was twenty-odd coloured glyphs
+	 * across four grids, and past a certain count a colour stops picking a row
+	 * out and becomes the page's texture — every row shouting is every row
+	 * quiet. The one list that keeps its variety is the reading suggestion's
+	 * cards, where the colour separates eight objects a reader is choosing
+	 * BETWEEN rather than labelling rows they are reading down.
 	 *
-	 * The fallback is for the three rows that are PLACES rather than texts:
-	 * Library, Calendar and Bookmarks carry no `data-shelf`, so they take the
-	 * accent, which is the honest answer for a row that is not a shelf.
+	 * `--shelf-*` and `--hue-*` are untouched in `tokens.css`: `CitedBy` marks
+	 * every shelf with the muted mix of the first, and the cards below walk the
+	 * second. What is gone is this page asserting a colour per work.
 	 */
 	.book-icon {
-		color: var(--shelf, var(--color-accent));
+		color: var(--color-accent);
 	}
 
 	/*
@@ -1309,13 +1215,13 @@
 	 * nowhere at all, so nothing here should look as though it might.
 	 */
 
-	/* Hover moves the same colour toward the text colour rather than to another
-	   one: a mark that answers by becoming a different colour is a mark that was
-	   not the row's colour to begin with. Declared under a flat `--shelf`, which
-	   is what a browser without `color-mix()` keeps. */
+	/* Hover deepens the accent rather than changing it: a mark that answers by
+	   becoming a different colour is a mark that was not the row's colour to
+	   begin with. Declared under a flat accent, which is what a browser without
+	   `color-mix()` keeps. */
 	.book:hover .book-icon {
-		color: var(--shelf);
-		color: color-mix(in oklab, var(--shelf) 75%, var(--color-text));
+		color: var(--color-accent);
+		color: color-mix(in oklab, var(--color-accent) 75%, var(--color-text));
 	}
 
 	/*
