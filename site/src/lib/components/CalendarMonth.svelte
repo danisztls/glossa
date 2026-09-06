@@ -64,6 +64,7 @@
 	import { untrack } from 'svelte';
 	import {
 		celebrationName,
+		ensureCelebrationNames,
 		formatIsoDate,
 		fromDayNumber,
 		liturgicalDay,
@@ -151,6 +152,17 @@
 	/** The locale to name the month and the weekdays in — `dates.ts` holds the
 	 *  reason it is not the raw interface tag. */
 	const locale = $derived(dateLocale(lang));
+
+	/**
+	 * Ask for the reader's own table of celebration names.
+	 *
+	 * The General Calendar's names in twenty languages are a chunk per language
+	 * and none of them is in the boot graph (`calendar/names.svelte.ts`), so
+	 * something that renders a name has to ask. A miss renders English and
+	 * re-renders when the chunk lands; a language with no table never resolves
+	 * to one and English is the answer.
+	 */
+	$effect(() => void ensureCelebrationNames(lang));
 
 	const monthName = $derived(
 		new Intl.DateTimeFormat(locale, {

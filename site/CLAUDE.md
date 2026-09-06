@@ -2638,6 +2638,18 @@ layers) an English rendering written here. What the oracle checks INDEPENDENTLY
 is everything the engine does with the row: date, rank, colour, precedence,
 moves, transfers, suppressions. That is the half that can be wrong invisibly.
 
+**THE GENERAL CALENDAR'S 218 NAMES REACH TWENTY MORE LANGUAGES, AND THE JOIN KEY
+IS `DESCRIPTION`** (2026-09-06). `grc.ts` still carries Latin, English and
+Portuguese; `calendar/names/{lang}.ts` carries the rest, transcribed from the
+national feeds — `General-A`…`H` are published in the same three, and a national
+calendar IS the General Calendar plus that conference's propers. **Never join a
+feed on POSITION**: 9 October puts Denis first in Korean and last in Italian, and
+the English name parenthesised at the head of `DESCRIPTION` is the only thing in
+a feed that identifies a celebration across languages. A chunk per language on
+`i18n.svelte.ts`'s accounting (239 KB the set, ~11 KB the reader's own), and
+`celebrationName` reads `grc.ts` first — **these are not checked and cannot be**,
+the oracle being where they came from (§docs/calendar.md).
+
 ## Languages: the interface is a superset of the content
 
 The interface is wider than the corpus — it was the other way around for a

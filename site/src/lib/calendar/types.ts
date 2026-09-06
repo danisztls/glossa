@@ -145,6 +145,18 @@ export const PRECEDENCE = {
  * interface languages. A reader of one of the other thirty falls through
  * `celebrationName`'s chain to the celebration's own name in the language the
  * conference that has it uses, which is the right answer rather than a gap.
+ *
+ * ## What is deliberately NOT here
+ *
+ * The General Calendar in these same languages. `ROWS` names its 218
+ * celebrations in Latin, English and Portuguese and in nothing else, and the
+ * twenty vernacular readings of them live in `names/`, a chunk per language
+ * loaded for the reader who wants one (`names.svelte.ts`). The division is by
+ * weight — a proper is a handful of names on a calendar somebody has selected,
+ * while the General Calendar is all 218 for everyone, and twenty languages of
+ * it in the boot graph costs 239 KB to save a request. And it is by
+ * provenance, which is the part worth keeping: what is in this interface was
+ * decided here, and what is in `names/` was transcribed.
  */
 export interface Names {
 	la?: string;

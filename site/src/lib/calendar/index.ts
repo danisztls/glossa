@@ -8,6 +8,7 @@
  */
 
 import { type DayNumber, fromDayNumber, parseIsoDate, toDayNumber } from './computus';
+import { residentCelebrationName } from './names.svelte';
 import { adventSunday } from './temporal';
 import type { CalendarOptions, Celebration, LiturgicalDay } from './types';
 import { buildYear } from './year';
@@ -27,6 +28,7 @@ export {
 export type { DayNumber, Weekday, Ymd } from './computus';
 export { anchors, sundayCycle, weekdayCycle } from './temporal';
 export { GRC, HOLY_DAYS_OF_OBLIGATION } from './grc';
+export { ensureCelebrationNames, NAMED_LANGS } from './names.svelte';
 export { buildYear };
 
 /**
@@ -113,12 +115,22 @@ export function today(options: CalendarOptions = {}): LiturgicalDay | undefined 
  * of the corpus does.
  *
  * The chain is the reader's own language, then English, then Latin — the tail
- * every row of `CONTENT_LANG_FALLBACK` ends in (`corpus.ts`). The calendar
- * carries three languages and the interface has thirty-four, so for most
- * readers this lands on Latin, which is the celebration's own name and not a
- * failure. It cannot return undefined: every celebration has a Latin name,
- * except a national proper approved only in the vernacular, which has the
- * language it was approved in.
+ * every row of `CONTENT_LANG_FALLBACK` ends in (`corpus.ts`). It cannot return
+ * undefined: every celebration has a Latin name, except a national proper
+ * approved only in the vernacular, which has the language it was approved in.
+ *
+ * THE CELEBRATION'S OWN `names` COMES FIRST AND THE TRANSCRIBED TABLE SECOND,
+ * which is the order the two were written in. A name in `names` was decided
+ * here — the Missal's wording in Latin, English and Portuguese, or a proper in
+ * the language its conference approved it in — while `names.svelte.ts` holds
+ * the General Calendar read off GCatholic in twenty more languages, unchecked
+ * and in its house style. Where both have an answer the one this project
+ * stands behind wins; in practice they do not overlap, because `ROWS` names
+ * nothing outside those three and no `overrides` row carries a name.
+ *
+ * The table is consulted whether or not it is resident and never fetches: a
+ * miss on the first render falls through to English and re-renders when the
+ * chunk lands (`residentCelebrationName`).
  */
 export function celebrationName(
 	celebration: { id: string; names: Celebration['names'] },
@@ -127,6 +139,7 @@ export function celebrationName(
 	const base = lang.split('-')[0] as keyof Celebration['names'];
 	return (
 		celebration.names[base] ??
+		residentCelebrationName(base, celebration.id) ??
 		celebration.names.en ??
 		celebration.names.la ??
 		celebration.names.pt ??

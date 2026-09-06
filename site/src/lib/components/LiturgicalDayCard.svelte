@@ -21,7 +21,12 @@
 	 * which is the one thing a card answering a question may not do. The list
 	 * below moves instead. See the route's docblock for the trade in full.
 	 */
-	import { celebrationName, type Celebration, type LiturgicalDay } from '$lib/calendar';
+	import {
+		celebrationName,
+		ensureCelebrationNames,
+		type Celebration,
+		type LiturgicalDay
+	} from '$lib/calendar';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import TermGloss from './TermGloss.svelte';
@@ -44,6 +49,17 @@
 	let { day, heading = 'h2', showDate = true }: Props = $props();
 
 	let lang = $derived(i18n.lang);
+
+	/**
+	 * Ask for the reader's own table of celebration names.
+	 *
+	 * The General Calendar's names in twenty languages are a chunk per language
+	 * and none of them is in the boot graph (`calendar/names.svelte.ts`), so
+	 * something that renders a name has to ask. A miss renders English and
+	 * re-renders when the chunk lands; a language with no table never resolves
+	 * to one and English is the answer.
+	 */
+	$effect(() => void ensureCelebrationNames(lang));
 	let name = $derived(celebrationName(day.celebration, lang));
 
 	/** The season's name — the part a reader may not know, and so the part the

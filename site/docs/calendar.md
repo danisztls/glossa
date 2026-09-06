@@ -215,6 +215,57 @@ conference's own wording and the oracle checks names in the anchor language
 only. What it checks independently is everything the ENGINE does with them —
 date, rank, colour, precedence, moves, suppressions.
 
+### The General Calendar reaches twenty more languages, on the same terms
+
+Until 2026-09-06 `grc.ts` named its 218 celebrations in Latin, English and
+Portuguese and in nothing else, so an Italian reader met Timothy and Titus as
+_Saints Timothy and Titus, Bishops_ — `celebrationName` falling back to
+English, correctly, on the page whose whole content is those names. The
+vernaculars are in the feeds already: **`General-A` through `General-H` are
+published in Latin, English and Portuguese, which are the three there was no
+gap in, but a national calendar IS the General Calendar plus that conference's
+propers**, so the whole sanctorale rides in on Italy's Italian edition, Korea's
+Korean one, and eighteen others.
+
+**The join key is `DESCRIPTION` and not position.** Every non-English edition
+parenthesises the English name at the head of that field, which is the only
+thing in a feed that identifies a celebration across languages — the order
+inside a day genuinely differs between editions, 9 October putting Denis first
+in Korean and last in Italian, and 22 June putting Paulinus of Nola and the
+martyrs the other way round in Latin from English. Joining on position gives
+Paulinus the martyrs' name and reads perfectly while doing it, which is why
+`liturgical_calendar.py` refuses to; `DESCRIPTION` makes the refusal
+unnecessary rather than working around it.
+
+**Two hundred and five to two hundred and eighteen of the 218 per language**,
+and what is absent is absent for a reason rather than a miss: Poland keeps
+Adalbert on 23 April and Hungary Saint Stephen on 20 August, so no Polish
+edition prints George and no Hungarian one prints Bernard. Those go on falling
+back to English. Two languages have their editions disagree — Spain and Urgell
+against the thirteen American calendars on nineteen names, Hong Kong and Macau
+against Taiwan on 197 — and each file records which side it took and that
+taking one was a choice.
+
+**They are not checked, and this is the circularity in its pure form.**
+`oracle.test.ts` compares what this project computes against what GCatholic
+publishes; these names ARE what GCatholic publishes. What the distance costs is
+measurable exactly where there is a second witness: against `ROWS`, GCatholic
+differs on 19 of the 218 Latin names, 36 of the English and 48 of the
+Portuguese — `Blase`, `Peñafort`, `Lurdes`, and a house style that lowercases
+_bishop and martyr_. Every one is a correction made by hand from the Missal's
+wording, and in the twenty new languages there is nothing to make it from. What
+is served there is the source uncorrected, which is worth more than English and
+less than a book. `celebrationName` reads `ROWS` first for that reason.
+
+**A chunk per language, none of them in the boot graph.** The set is 239 KB
+raw and 57 KB gzipped; one language is about 11 KB. That is the accounting
+`i18n.svelte.ts` already does for the interface dictionaries, down to the
+`import.meta.glob` and the argument for it, and a table of saints' names is the
+same kind of thing as a table of button labels — the cost of a language is paid
+by the reader who picks it. `names.svelte.ts` holds the loader,
+`LiturgicalDayCard` and `CalendarMonth` ask for it, and a miss renders English
+and re-renders when the chunk lands.
+
 ## The page
 
 **The date is a query parameter, not a path segment.** A reading address names
