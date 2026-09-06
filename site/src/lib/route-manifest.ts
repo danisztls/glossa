@@ -118,6 +118,21 @@ export const CHROME_PATHS = [
  * `/ius-canonicum` was missing for a fourth reason — nobody added it — and its
  * `canonLaw.landing.*` keys were already in all 37, which is why it joined the
  * list above on the day the omission was found and these three did not.
+ *
+ * **`/` IS THE ONE EXCEPTION, AND IT IS TAKEN RATHER THAN OVERLOOKED**
+ * (2026-09-06, by direction). Its rewrite added three English-only keys —
+ * `home.tagline` and two section headings — and the remedy above is not
+ * available to the root: withholding the home page costs the sitemap row and
+ * the `hreflang` cluster that every other page's ranking leans on, which is a
+ * worse outcome than two headings falling through to English. What the rule
+ * actually protects is intact either way, because the gate is on a page's NAME
+ * and DESCRIPTION and not on its body: `/`'s `<title>` is `home.title` and its
+ * description is composed by `scripts/route-titles.mjs` from five work names,
+ * and all six are written in all 37. Everything else on the page is a name or
+ * a sentence another page already wrote — each door is `nav.*` over its
+ * destination's own tagline. **This is not a precedent for the three above**,
+ * each of which has a page's worth of English and a remedy that costs it
+ * nothing it cannot get back.
  */
 
 const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);

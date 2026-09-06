@@ -43,6 +43,38 @@ works themselves, so a bar opening with a page about the others reads as a
 preamble to them. The home page's doors mirror the bar's order, and the two must
 not disagree.
 
+## The home page is the three ways in, in the order they are needed
+
+`docs/research/organization.md` §The three ways in names them — a reader arrives
+**by date**, **by question**, or **by address** — and until 2026-09-06 the home
+page held the first two and never said the third existed. So the notation this
+whole corpus is addressed by was something a reader found out about by pressing
+`/` on a hunch, and `/schola`'s citation column was the only page that taught it,
+which is one click behind a door labelled for someone who does not know they
+need it.
+
+**The day, the doors, then the notation.** The order is the reverse of expertise
+and is deliberate: the day is the only surface anyone returns to daily, the doors
+are for the reader holding no address at all, and the specimens are last because
+the reader who already knows `CCC 1234` types it into the box without reading
+this page.
+
+**The specimens are inert, and three of them, and the section describes a
+control rather than opening one.** All three follow rules stated elsewhere and
+are not new judgments: `/schola` records the direction that a specimen teaches a
+SHAPE and so must not be a link (§`/schola` is a guide), and that same page
+describes the settings menu and the language switcher without linking to them,
+because a control in the header of every page is not an address. Three is what it
+takes to show the notations differ — a book with chapter and verse, a siglum with
+a paragraph number, a code cited by canon — and a fourth of a shape already on the
+row would be a longer row teaching nothing more. The Bible's is derived from the
+reader's own citation grammar for the reason `/schola`'s is; the others are
+gated on the work being in the build.
+
+**Two sections gained a heading and one deliberately did not.** The day's stays
+`visually-hidden`: the card carries the celebration's name as its own heading, so
+a rule reading "Today" above it is a second title over one object.
+
 ## `/schola` is a guide, and its examples are specimens
 
 **The reference system is the part nothing else on the site teaches.** The

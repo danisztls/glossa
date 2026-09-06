@@ -126,9 +126,13 @@
 	// language while the interface is in another.
 	import MessagesSquare from '@lucide/svelte/icons/messages-square';
 	import Users from '@lucide/svelte/icons/users';
-	// `/bibliotheca`'s Learn shelf, which is the one shelf named for what a
-	// reader DOES with it rather than for what is on it — so its mark is the
-	// only one in the set that is not an object you could pick up.
+	// Learn — the one name in the set that says what a reader DOES rather than
+	// what is on the shelf, so its mark is the only one here that is not an
+	// object you could pick up. It was drawn for `/bibliotheca`'s Learn shelf,
+	// which was unfolded into one card per work the same day, and the home
+	// page's fourth door is what it marks now: the three doors beside it open
+	// on something to read and this one opens on how to find your way around
+	// them, which is the same distinction the shelf was named for.
 	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
 	import Languages from '@lucide/svelte/icons/languages';
 

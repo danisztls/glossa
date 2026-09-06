@@ -806,7 +806,7 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library that held only what the bar left out is
   a leftovers bin, and the label stops meaning anything.
-- **No page in this group writes a SENTENCE of its own, and exactly one name.**
+- **No page in this group writes a SENTENCE of its own except the home page.**
   Library's shelves and the home page's doors reuse the key each destination is
   already titled and described by, the same rule `route-titles.mjs` follows for
   the `<head>`. Adding a shelf should add no dictionary key; if it does, check
@@ -815,7 +815,8 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Catechism and its Compendium as ONE work and no other surface wants either
   string (`/schola` lists the two separately, and `/catechismus`'s own tagline
   is two sentences, which is a masthead's length and six lines in a card).
-  English-only, falling back key by key.
+  English-only, falling back key by key. `/` is the other exception and has
+  three of its own — see its bullet below.
 - **`/bibliotheca`'s shelves ARE the home page's `.door` grid** (2026-09-06),
   cards across rather than blocks down a 72rem column, each one anchor with
   **the same glyph `/schola` gives that work** — take the icon from there
@@ -842,14 +843,45 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **The last card is Bookmarks and it is not a work** — `/signata`'s section
   counts as chips where a work card puts its sentence, absent for a reader who
   has marked nothing (an `auto-fit` grid needs no branch for that).
-- **The home page is the liturgical day plus the doors, and NOTHING else.** Do
-  not put an index on it. It carried the Bible's whole table of contents and
-  the Catechism's whole outline until 2026-09-04, which is why nothing ingested
-  after them was ever added to it — a WEIGHT problem that reads as a nesting
-  problem. "Continue reading" went on 2026-09-06 for a different reason worth
-  keeping: a section that is EMPTY for every first-time reader was arranging
-  the one page a stranger arrives at around a state only a returning reader
-  has, and the returning reader got four rows of a list one click away.
+- **The home page is the day, the doors and the notation** —
+  `organization.md`'s three ways in (by date, by question, by address), in the
+  reverse order of expertise. Do not put an index on it: it carried the Bible's
+  whole table of contents and the Catechism's whole outline until 2026-09-04,
+  which is why nothing ingested after them was ever added to it — a WEIGHT
+  problem that reads as a nesting problem. "Continue reading" went on
+  2026-09-06 for a different reason worth keeping: a section that is EMPTY for
+  every first-time reader was arranging the one page a stranger arrives at
+  around a state only a returning reader has, and the returning reader got four
+  rows of a list one click away. **Everything on the page is now true on a
+  first visit**, which is the test a new section has to pass.
+- **The notation section describes the jump box and does not open it.** The
+  specimens are inert for the reason `/schola`'s are (a specimen teaches a
+  SHAPE), three of them because that is what it takes to show the notations
+  differ, and the section names the control rather than linking to it — a
+  control in the header of every page is not an address, which is the same
+  reason `/schola` describes the settings menu without a link. The day's
+  heading alone stays `visually-hidden`, its card being already titled; the
+  ruled-heading rule was deleted when the page had no visible heading left and
+  is back now that it has two.
+- **`/` KEEPS THREE ENGLISH-ONLY KEYS AND KEEPS ITS `CHROME_PATHS` ROW**
+  (2026-09-06, by direction) — the one exception to the gate that holds three
+  pages unpublished. The root has no usable remedy: withholding it costs the
+  sitemap row and the `hreflang` cluster the whole site's ranking leans on. The
+  gate is on a page's name and description, and `/`'s are `home.title` plus five
+  work names, written in all 37. `route-manifest.ts` carries why this is not a
+  precedent.
+- **Two columns of doors at most, and `24rem` is what enforces it.** Derived
+  against `--landing-width`, not chosen by eye: at 15rem the track resolved to
+  four, and the four taglines are landing-page sentences of wildly different
+  lengths, so the row was sized by `schola.landing.tagline` and left the first
+  two cards three-quarters empty. Write it `minmax(min(24rem, 100%), 1fr)` — a
+  track minimum is a floor, and the bare form ran the cards off the side of a
+  390px phone. **The doors also do NOT take `/bibliotheca`'s
+  `grid-auto-rows: 1fr`**: that rule equalises ROWS, where cards in one row
+  already stretch to each other, so on four short columns it straightens a
+  bottom edge and on two long ones — and on a phone's one — it makes every door
+  as tall as Learn's sentence. Both divergences have one cause: seven
+  short-tagline cards want to flow and four long-tagline doors do not.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

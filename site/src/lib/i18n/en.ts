@@ -53,6 +53,47 @@ export const en: Dictionary = {
 	// wherever it is put. The label is the same words in all thirty-seven
 	// languages, so every rename was mechanical rather than re-translated.
 	'reading.continue': 'Continue reading',
+
+	// --- `/`, the home page (`routes/+page.svelte`) --------------------------
+	//
+	// THREE KEYS, AND THE PAGE'S WHOLE BILL. Everything else on `/` is a name
+	// or a sentence some other page already wrote in all thirty-seven
+	// languages: each door is titled by `nav.*` and described by the tagline its
+	// own landing page carries, and the shortcut line under the specimens is
+	// `jumpbox.hint`. That is the same discipline `/bibliotheca` states for
+	// itself, and it is why a page that gained two sections cost three strings.
+	//
+	// **`/` IS IN `CHROME_PATHS` AND STAYS THERE** (2026-09-06, by direction),
+	// which these three are the one exception to. `route-manifest.ts` holds
+	// three pages out of that list because a cluster must not claim a page is
+	// written in a language it is not; the root cannot take that remedy — a
+	// home page in no sitemap row and no `hreflang` cluster is worse than one
+	// whose two section headings fall through to English. What the rule
+	// actually protects is intact either way: `/`'s own `<title>` and
+	// description are `home.title` and the five work names
+	// `scripts/route-titles.mjs` composes, and all six are written everywhere.
+	//
+	// THE TAGLINE IS THE SENTENCE THIS SITE NEVER HAD. `route-titles.mjs` says
+	// so in its own docblock — "`/` has no `description` key because it has no
+	// tagline" — and composes the meta description out of work names instead.
+	// That composition stays until this key is translated; switching it now
+	// would describe thirty-six clusters in English, which is the thing the
+	// rule forbids. It says what the site is and what it costs, in the order
+	// `colophon.pointFree` and `colophon.pointOffline` say it, and counts
+	// nothing (`CLAUDE.md` §Documentation conventions).
+	'home.tagline':
+		'A reading site for the Scriptures, the Catechism and the documents of the Magisterium — free, offline, and nothing to sign up for.',
+	// The heading over the four doors. NOT "Where to begin", which is
+	// `schola.landing.title` and a different promise: that page proposes an
+	// order to read in, and this one only says which way the rooms are. A
+	// translation should keep it a direction and not an instruction.
+	'home.doors.heading': 'Where to go',
+	// The third way in (`docs/research/organization.md` §The three ways in),
+	// after the day and the doors. "Or" is load-bearing: it is the alternative
+	// to the four doors above it for a reader who already holds an address,
+	// and the section under it is three specimens and the keyboard shortcut.
+	// "Reference" is the word `jumpbox.hint` already uses for the thing typed.
+	'home.find.heading': 'Or type a reference',
 	// The Library door, and the page behind it (`routes/bibliotheca/`). The
 	// key was `home.works` and had been written in all thirty-seven languages
 	// for a home-page section that no longer existed — the label is the same
