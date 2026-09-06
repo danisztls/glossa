@@ -1,0 +1,16 @@
+[
+  {
+    "id": "ccc.zht-2835-numprint",
+    "locator": {
+      "page": "43_2759-2865_ccc_zh.pdf",
+      "paragraph": 2835,
+      "structural": "paragraph_number"
+    },
+    "field": "paragraph_number",
+    "from": "3835",
+    "to": "2835",
+    "reason": "The source misprints this paragraph's own leading number, printing '3835' where 2835 belongs -- a single-digit substitution of 3 for 2 in the thousands place. The Catechism ends at 2865, so 3835 is not a paragraph of this work under any reading; content (the fourth petition of the Our Father applied to the hunger for the word of God) and sequential position (directly after 2834 on prayer and work, before 2836 on 'today') both give 2835, and all eight HTML editions number this paragraph 2835. Recorded here rather than left to the parser's generic single-digit heuristic so that the specific instance is auditable data.",
+    "evidence": "corpus/raw/ccc-zh/43_2759-2865_ccc_zh.pdf, page 16, first line of the paragraph: '3835. 此外，這項祈求和與此有關的責任，也適用於另一種使人喪亡的飢餓：「人不單靠食物生活，也靠上主口中所發的一切言語」(申 8:3; 瑪 4:4)'. Sole occurrence of a four-digit paragraph number above 2865 in the edition's forty-three files, checked by regex over all of them. ccc.en §2835 'This petition, with the responsibility it involves, also applies to another hunger from which men are dying: \"Man does not live by bread alone, but ... by every word that proceeds from the mouth of God\" (Dt 8:3; Mt 4:4)'.",
+    "added": "2026-09-05"
+  }
+]

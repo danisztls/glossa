@@ -2,7 +2,7 @@
 
 Survey conducted 2026-08-29 (Claude, read-only against files already in `glossa-corpus/raw/`, plus one live probe fetch of the English _Amoris Laetitia_ PDF). Companion to `vatican-documents.md` and `catholic-growth-and-catechism-languages.md`. Written because the ten-language Magisterium ingestion turned up a class of absence the corpus had no vocabulary for: **an edition that exists and that we cannot read.**
 
-**Status, 2026-09-01**: the four Compendia are **built and shipping** — `compendium.{be,id,lt,ru}`, 598 questions each, all four passing `validate`. The Catechism's Arabic and Chinese editions and the six documents are still deferred. §5 and §8 below were the two decisions this survey said had to be made first; both were made differently from the recommendation here, and §§5a and 8a record what actually decided them. Everything above those sections is the original survey and still stands.
+**Status, 2026-09-05**: the four Compendia are **built and shipping** — `compendium.{be,id,lt,ru}`, 598 questions each — and so is the **Chinese Catechism**, `ccc.zht`. The Arabic Catechism and the six documents are still deferred. §5 and §8 below were the two decisions this survey said had to be made first; both were made differently from the recommendation here, and §§5a and 8a record what actually decided them. §9a records what building the Chinese settled, including the one thing this survey measured and read wrongly. Everything above those sections is the original survey and still stands.
 
 ## TL;DR
 
@@ -193,6 +193,69 @@ Three things about the discriminator are worth keeping, because each was arrived
 
 The four Compendia are done. Still deferred, with the measurements taken 2026-08-31:
 
-- **The Chinese Catechism** — 43 files, each filename declaring its own paragraph range, which is a free coverage assertion. A naive scan finds 2,859 of 2,865, and **all six gaps are now explained**: §2256 and §2554 run the number into the previous line (parser tolerance); §1224 and §1478 omit the period after the number and §2835 is **printed `3835`** (three source defects for `pipeline/corrections/`); and **§1725 is genuinely absent from the edition** — the `撮要` (IN BRIEF) heading sits exactly where it belongs and the sequence runs 1724 → 撮要 → 1726, so it is a source omission to document, not to fix. It prints **no footnote apparatus at all** — no markers, no note blocks, no `PG`/`DV`/`LG` anywhere, and only two font sizes, 12pt body and 10.98pt inset quotation — so `citations: []` by construction. It folds Scripture into the running text (`創 10:5`, `希 1:1-2`), so publishing it needs a `zh` book table in `refs-grammar.ts`, and no CJK webfont is shipped. **It is the easiest of the six to extract and the hardest to publish**; keep those two judgements apart when it is picked up.
+- ~~**The Chinese Catechism**~~ — **built and shipping, 2026-09-05** (`ccc.zht`, 2,860 paragraphs). §9a records what the build settled and where this section was wrong.
 - **The Arabic Catechism** — 5 files mapping onto the Prologue and the four Parts. 2,852 of 2,865 paragraph numbers once the regex tolerates a combining mark or `«` between the bidi controls and the number, leaving 13 to read individually. **poppler only**: MuPDF fragments RTL lines, splitting single words across three. Also prints no footnote apparatus. §3's "does not round-trip" finding is confirmed and quantified — the Allah ligature decomposes in visual order, giving **2,312 occurrences of `هللا` for `الله` and 2,561 of `هلل`, against 30 correct spellings**. The text's commonest word is mis-spelled roughly 4,900 times before any normalisation, which is why it is deferred and why its normalisation must stay separable from extraction.
 - **The six documents**, including the English _Amoris Laetitia_. Untouched by this pass. §7 step 3 still reads correctly, and the `common/pdf.py` it wanted now exists.
+
+## 9a. The Chinese Catechism, as built (2026-09-05)
+
+`ccc.zht` ships — and it is `zht`, Traditional, which is a different content language from the `zh` the curated prayers already hold: 2,860 paragraphs, `validate` passing, and `audit.py
+divisions` reporting it in agreement with all eight HTML editions on every
+part, section, chapter, article and in-brief — 81 of the last, the number
+every other edition has. `audit.py balance` puts it in a **tighter** skew band
+than most Latin-script pairs (0.33–2.25 against German/English's 0.45–3.27),
+once each pair is normalised by its own median; the median itself is 3.4x,
+which is the script and not a finding.
+
+**§9's measurement of the six gaps was right and its filing of them was not.**
+Three of the six are parser tolerances rather than corrections, because
+`pipeline/docs/corrections.md` draws the line at "changes nothing a reader
+reads": §1224 and §1478 print the number without its period and §2256 and
+§2554 lose the line break before the number, and all four are read correctly
+by a pattern that expects either. **One correction is filed**, `ccc.zht-2835-numprint`,
+because §2835 is printed `3835` and that does change the parse. It also needed
+a change in `process_page`: the misprint reads FORWARD, so the ordinary
+reading of a larger-than-expected number — a gap in the source's numbering —
+opened §3835 and recorded a thousand-paragraph hole. The work ends at §2865,
+so a number above it is not a paragraph of this work whatever else it is, and
+that plus the single-digit test is what makes reading it as §2835 safe.
+
+**What the survey did not find is the reason the edition ships five paragraphs
+short, and it is the most important thing on this page.** The file carrying
+§§2258–2400 also carries the **2018 revision of §2267**, and the revision was
+pasted over the 1997 text without removing it:
+
+- both texts are in the content stream, on the same baselines, at the same x;
+- parts of the revision have **no text layer at all** — `長久以來，合法當局在完成
+了合法程序後便訴諸死刑` is on the rendered page and nowhere in `pdftotext`
+  over the entire file;
+- the same edit cost runs elsewhere in the same file: §2268, §2396 and §2397
+  each have a stretch of text that is printed and absent from the layer.
+  §2396 comes out as `性戀行為，都是嚴重違反貞潔的罪。` — a grammatical
+  sentence, missing its first eleven characters.
+
+**None of it looks like damage, which is why it had to be found by geometry
+rather than by reading.** Two tests, measured over all 43 files: runs that
+OVERLAP horizontally on one baseline (25 pairs, 20 of them §2267 at 95–376
+points, the other five a bracket kerned into its neighbour at 5–7), and a HOLE
+inside a row (20 rows, 17 of them the Creed comparison table's second column
+and told apart by being a column — the same break repeated down the page —
+and 3 of them these paragraphs). Those five, with §1725 which the book simply
+omits, are declared in `LANG_CONFIG['zht']['absent']`, and `validate` checks
+the declaration **in both directions**: a declared paragraph that turns up
+fails as loudly as an undeclared one that does not.
+
+**The decision not to transcribe them was the person directing the work's, not
+the parser's.** The text is legible on a rendered page and could have been
+read off it; that is OCR by eye, and this repository has already retired one
+table derived that way (`CLAUDE.md`, the Doré anchors). Omitted and
+documented, in `manifest.notes` and in `docs/corpus-schema.md`.
+
+**One thing §9 got exactly backwards: the edition does print a footnote.** The
+2018 revision brought one with it, sourcing Francis's address of 11 October
+2017, and it is the only one in 2,865 paragraphs. It belongs to §2267, so
+nothing stores it. Two stray 9pt footnote markers survive in §160 and §1789
+with no note anywhere; both are dropped as apparatus. `citations: []` stands.
+
+**Publication is still the other half, and §9's judgement that it is the
+harder one stands**: a `zht` book table in `refs-grammar.ts` and a CJK face.

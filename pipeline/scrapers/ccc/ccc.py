@@ -58,10 +58,12 @@ Known source limitations (see manifest notes / final report):
 from __future__ import annotations
 
 import argparse
+import functools
 import html as ihtml
 import re
 import sys
 import unicodedata
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -73,6 +75,12 @@ from pathlib import Path
 # below it being the only ones not at the top of the file.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from ccc_pdf import (
+    PDF_EDITIONS,
+    drop_restated_banner,
+    is_run_in_heading,
+    read_part_file,
+)
 from common import (
     CorrectionDriftError,
     Fetcher,
@@ -153,6 +161,9 @@ class Edition:
     #: takes them: they cost one request each and `raw/` is where the answer
     #: to "could we have?" lives (docs/link-surface.md).
     extra: tuple[str, ...] = ()
+    #: Where this edition's pages are cached, when that is not `ccc-{lang}`.
+    #: One edition needs it; see its entry.
+    raw: str | None = None
     #: The page carrying this edition's abbreviations table, if it prints one.
     #: Two of the eight do, and it is front matter in both -- so it is named
     #: here rather than reached through `page_re`, and it is read by
@@ -255,11 +266,25 @@ EDITIONS = {
         family="pt",
         page_re=r"^(?!index-)(?!indice_po\.html$).*_po\.html$",
     ),
-    "zh": Edition(
+    # TRADITIONAL CHINESE, WHICH IS `zht` AND NOT `zh`. The corpus already
+    # holds both scripts -- `prayer.common.zh` is 祈祷经文 and
+    # `prayer.common.zht` is 祈禱經文 -- and this edition is the second:
+    # 聖經, 啟示, 貞潔, every one of them the traditional form. Filed under
+    # `zh` a reader of it would be offered 简体中文 in the edition menu, which
+    # is the Malagasy symptom in `site/src/lib/types.ts` with the tag present
+    # and wrong instead of missing.
+    #
+    # `raw` is the one place the mirror's own spelling wins. The forty-three
+    # files were captured into `raw/ccc-zh/` before anything read them, the
+    # site serves them from `vatican.va/chinese/`, and `raw/` is the record of
+    # what the source served rather than of our taxonomy -- so the directory
+    # keeps the name it was written under and this table says so.
+    "zht": Edition(
         base="https://www.vatican.va/chinese/",
         toc="ccc_zh.htm",
         family="pdf",
         page_re=r".*\.pdf$",
+        raw="ccc-zh",
     ),
 }
 
@@ -269,7 +294,7 @@ PAGE_FAMILIES: dict[str, dict] = {}
 
 
 def raw_dir(lang: str) -> str:
-    return f"ccc-{lang}"
+    return EDITIONS[lang].raw or f"ccc-{lang}"
 
 
 #: `href=__P8.HTM` (IntraText, unquoted) and `href="p1s1c1_it.htm"` (the
@@ -1184,6 +1209,10 @@ class ScrapeState:
         #: continuation.
         self.display_matter: list[tuple[str, str]] = []
         self.false_starts: list[str] = []
+        #: `paragraph -> the rows whose text the reader found doubled`. Only
+        #: the PDF path fills it; a page of HTML cannot print two texts on one
+        #: baseline. See `ccc_pdf._collisions`.
+        self.damaged: dict[int, list[str]] = {}
         self.anomalies: list[str] = []
         self.orphan_content: list[str] = []
         self.fetch_failures: list[str] = []
@@ -1385,9 +1414,24 @@ class Block:
 
 _EMBEDDED_START_PUNCT_RE = r'[.!?:;"”’]'
 
+#: How a paragraph that lost its block boundary announces itself, with `{n}`
+#: standing for the number that would have to be there. WHITESPACE ON BOTH
+#: SIDES OF THE NUMBER -- see the note inside the function for the citation
+#: that made the trailing `\s+` necessary.
+EMBEDDED_START_RE = rf"(?<={_EMBEDDED_START_PUNCT_RE})\s+({{n}})\s+"
+
+#: The same shape, in a script that punctuates differently. A Chinese
+#: sentence ends on 。, and the number that follows it is printed with its
+#: period and no space -- "…致力於社會的建設。 2256.如果執政當局的命令…" is how
+#: this edition loses the boundary before §2256 and again before §2554, which
+#: are two of the six paragraph numbers a naive scan of it misses. The period
+#: is what replaces the trailing space as the guard: a numeral in Chinese
+#: prose is not followed by one.
+ZH_EMBEDDED_START_RE = r"(?<=[。！？])\s*({n})\s*\.\s*"
+
 
 def split_embedded_paragraph_starts(
-    text: str, base_n: int | None
+    text: str, base_n: int | None, pattern: str = EMBEDDED_START_RE
 ) -> list[tuple[int | None, str]]:
     """Some pages drop the <p> boundary between two numbered paragraphs
     entirely -- the next paragraph's number just appears mid-sentence,
@@ -1421,7 +1465,7 @@ def split_embedded_paragraph_starts(
         # same paragraph; English and the rest footnote it instead, so
         # nothing was ever wrong there. A paragraph number is followed by the
         # paragraph, which begins with a space.
-        m = re.search(rf"(?<={_EMBEDDED_START_PUNCT_RE})\s+({expected})\s+", remaining)
+        m = re.search(pattern.format(n=expected), remaining)
         if not m:
             result.append((owner, remaining))
             break
@@ -1433,7 +1477,11 @@ def split_embedded_paragraph_starts(
 
 
 def opens_new_matter(
-    blocks: list[Block], j: int, number_re: re.Pattern[str], last_n: int | None
+    blocks: list[Block],
+    j: int,
+    number_re: re.Pattern[str],
+    last_n: int | None,
+    mini_header: Callable[[str], bool],
 ) -> bool:
     """True when block `j` begins something the current paragraph does not own.
 
@@ -1454,7 +1502,7 @@ def opens_new_matter(
 
     A run of consecutive run-in headers resolves on the first block after the
     whole run, because that is the only one that can be a paragraph."""
-    while j < len(blocks) and blocks[j].is_heading and is_mini_header(blocks[j].text):
+    while j < len(blocks) and blocks[j].is_heading and mini_header(blocks[j].text):
         j += 1
     if j >= len(blocks):
         # End of page. A paragraph never spans two pages on any mirror (see
@@ -1467,6 +1515,34 @@ def opens_new_matter(
     return m is not None and (last_n is None or int(m.group(1)) > last_n)
 
 
+def _misprinted_number(state: ScrapeState, expected: int, printed: str) -> int:
+    """Record a paragraph whose own printed number is a single-digit misprint.
+
+    The printed digits are structural metadata, not body text, so correcting
+    the boundary here does not touch verbatim capture. The heuristic is a
+    generic safety net; each instance it fires on should have a matching
+    `pipeline/corrections/ccc.{lang}.json` entry (field `paragraph_number`) so
+    the fix is auditable data rather than a silent parser behaviour, and the
+    anomaly says so loudly when there is none.
+    """
+    entry = find_paragraph_number_correction(state.corrections, expected, int(printed))
+    if entry is not None:
+        if entry["id"] not in state.corrections_seen:
+            state.corrections_applied.append(dict(entry))
+            state.corrections_seen.add(entry["id"])
+        state.anomalies.append(
+            f"paragraph {expected}: source printed {printed!r} "
+            f"(corrected via corrections entry {entry['id']!r})"
+        )
+    else:
+        state.anomalies.append(
+            f"paragraph {expected}: source printed {printed!r} "
+            "(single-digit typo, corrected; UNDOCUMENTED -- add a "
+            "pipeline/corrections/ccc.{lang}.json paragraph_number entry)"
+        )
+    return expected
+
+
 def process_page(
     blocks: list[Block],
     footnote_table: dict[str, str],
@@ -1474,6 +1550,13 @@ def process_page(
     state: ScrapeState,
 ) -> None:
     match_label, number_re, lang = cfg["match_label"], cfg["number_re"], cfg["lang"]
+    # Two of this loop's judgements are the EDITION's and not the work's, so
+    # they arrive from `LANG_CONFIG` with the eight HTML editions' behaviour
+    # as the default. Both differ for Chinese and for the same reason: a
+    # Chinese line is one word, so a rule that counts words counts one, and
+    # a Chinese sentence ends on 。 rather than on a period.
+    mini_header = cfg["is_mini_header"]
+    split_starts = cfg["split_embedded"]
     state.current_footnote_table = footnote_table
     i, n = 0, len(blocks)
     while i < n:
@@ -1521,8 +1604,10 @@ def process_page(
                 continue
             if (
                 state.open_paragraph is not None
-                and is_mini_header(b.text)
-                and not opens_new_matter(blocks, i + 1, number_re, state.last_n)
+                and mini_header(b.text)
+                and not opens_new_matter(
+                    blocks, i + 1, number_re, state.last_n, mini_header
+                )
             ):
                 # A BOLD RUN-IN QUESTION THE OPEN PARAGRAPH ANSWERS. French
                 # bolds these, so it is the only edition that arrives here:
@@ -1567,6 +1652,22 @@ def process_page(
             if state.last_n is None or cand == expected:
                 is_new = True
                 rest_text = b.text[m.end() :]
+            elif cand > LAST_PARAGRAPH and looks_like_number_typo(cand, expected):
+                # A MISPRINT THE WORK'S OWN CEILING CATCHES, and the only
+                # reason this branch is separate from the one below is that
+                # the misprint reads FORWARD. The Chinese edition prints
+                # "3835." where §2835 belongs, so the ordinary reading of a
+                # number larger than expected -- a gap in the source's
+                # numbering -- would have opened §3835 and recorded a
+                # thousand-paragraph hole. The Catechism ends at §2865, so a
+                # number above it is not a paragraph of this work whatever
+                # else it is; that plus the single-digit test is what makes
+                # reading it as the expected number safe. Nothing else in the
+                # corpus is affected: no edition of the eight parses a
+                # paragraph number outside 1-2865 at all.
+                is_new = True
+                cand = _misprinted_number(state, expected, m.group(1))
+                rest_text = b.text[m.end() :]
             elif cand > expected:
                 is_new = True
                 state.record_gap(state.last_n, cand)
@@ -1585,30 +1686,13 @@ def process_page(
                 # than a hardcoded, silent parser behavior -- consulted here
                 # instead of just logging an anomaly.
                 is_new = True
-                entry = find_paragraph_number_correction(
-                    state.corrections, expected, cand
-                )
-                if entry is not None:
-                    if entry["id"] not in state.corrections_seen:
-                        state.corrections_applied.append(dict(entry))
-                        state.corrections_seen.add(entry["id"])
-                    state.anomalies.append(
-                        f"paragraph {expected}: source printed {m.group(1)!r} "
-                        f"(corrected via corrections entry {entry['id']!r})"
-                    )
-                else:
-                    state.anomalies.append(
-                        f"paragraph {expected}: source printed {m.group(1)!r} "
-                        "(single-digit typo, corrected; UNDOCUMENTED -- add a "
-                        "pipeline/corrections/ccc.{lang}.json paragraph_number entry)"
-                    )
-                cand = expected
+                cand = _misprinted_number(state, expected, m.group(1))
                 rest_text = b.text[m.end() :]
             # else: cand <= last_n and not a plausible typo -> false positive;
             # fall through as continuation
 
         base_n = cand if is_new else state.last_n
-        segments = split_embedded_paragraph_starts(rest_text, base_n)
+        segments = split_starts(rest_text, base_n)
         first_text = segments[0][1]
 
         if is_new:
@@ -1617,16 +1701,20 @@ def process_page(
             state.last_n = cand
             state.open_display_header = None
         elif state.open_paragraph is None:
-            if b.kind == "prose" and is_mini_header(first_text):
+            if b.kind == "prose" and mini_header(first_text):
                 state.take_mini_header(
-                    first_text, opens_new_matter(blocks, i + 1, number_re, state.last_n)
+                    first_text,
+                    opens_new_matter(
+                        blocks, i + 1, number_re, state.last_n, mini_header
+                    ),
                 )
             else:
                 where = state.stack[-1].title if state.stack else "?"
                 state.orphan_content.append(f"[{where}] {first_text[:90]}")
-        elif b.kind == "prose" and is_mini_header(first_text):
+        elif b.kind == "prose" and mini_header(first_text):
             state.take_mini_header(
-                first_text, opens_new_matter(blocks, i + 1, number_re, state.last_n)
+                first_text,
+                opens_new_matter(blocks, i + 1, number_re, state.last_n, mini_header),
             )
         elif (
             b.kind == "prose"
@@ -2888,6 +2976,29 @@ _ORDINALS = {
         "QUINTA": 5,
         "QUINTO": 5,
     },
+    # THE ONLY EDITION WHOSE TABLE HAS TO COVER EVERY KIND, and the reason is
+    # that Chinese has no second numbering system. The Latin-script editions
+    # spell the Part and the Chapter in words and then switch to arabic or
+    # roman for the Article and the subdivision -- "PARTE PRIMA", then
+    # "Articolo 1", then "I." -- so `_label_number` reads those two from the
+    # digits and only the ordinals need a table. This edition numbers all five
+    # kinds the same way, 第一條 beside 第一章, so every number it prints comes
+    # through here. Twelve is the ceiling the book actually reaches (the Creed
+    # has twelve articles); the subdivisions stop at eleven.
+    "zht": {
+        "一": 1,
+        "二": 2,
+        "三": 3,
+        "四": 4,
+        "五": 5,
+        "六": 6,
+        "七": 7,
+        "八": 8,
+        "九": 9,
+        "十": 10,
+        "十一": 11,
+        "十二": 12,
+    },
 }
 
 #: What each edition prints above each kind of division, in the order the
@@ -3035,6 +3146,38 @@ _LABEL_PATTERNS = {
         ("in_brief", r"^RESUMINDO:?$"),
         ("roman", r"^([IVXLCDM]+)\.?\s"),
     ],
+    # THE PART IS 卷, NOT 第N部分, and reading it the other way round inverts
+    # the top two levels of the work. 卷 is a scroll or volume and heads the
+    # four Parts; 第一部分 is literally "first portion" and heads the SECTIONS
+    # inside them, which is the level English calls "Section One". The page
+    # that carries §50 prints 卷一 / 信仰的宣認 and then 第一部分 / 「我信」
+    # ──「我們信」, which is Part One followed by its Section One in every
+    # other edition.
+    #
+    # THE PART LABEL MUST NOT TAKE A COLON. The Prologue's §§14-17 announce
+    # the four Parts by name, each on a display line of its own -- 卷一：信仰
+    # 的宣認 -- and those are the same four words the banner prints. English
+    # and Portuguese are safe here because they write "Part One: the
+    # Profession of Faith" against a heading that reads "PART ONE"; this
+    # edition writes the label identically and separates them with the colon
+    # alone. `push_heading` would drop them anyway, since a Part cannot open
+    # before §26, but dropping them costs the four subdivisions every other
+    # edition stores there, and the negative lookahead keeps them.
+    #
+    # `roman` is 一、二、三 -- the same characters as the ordinals above, and
+    # the enumeration comma is what makes it a subdivision rather than a
+    # number. It stays LAST for the reason the whole table does: it is the
+    # loosest pattern here.
+    "zht": [
+        ("prologue", r"^前言$"),
+        ("part", r"^卷([一二三四五])(?![：:])"),
+        ("section", r"^第([一二三四五六七八九十]+)部分"),
+        ("chapter", r"^第([一二三四五六七八九十]+)章"),
+        ("article", r"^第([一二三四五六七八九十]+)條"),
+        ("paragraph_marker", r"^第([一二三四五六七八九十]+)節"),
+        ("in_brief", r"^撮要$"),
+        ("roman", r"^([一二三四五六七八九十]+)、"),
+    ],
 }
 
 _COMPILED_LABELS = {
@@ -3048,6 +3191,13 @@ _ORDINAL_KINDS = ("part", "section", "chapter")
 def _label_number(kind: str, raw: str, ordinals: dict[str, int]) -> int | None:
     if kind in _ORDINAL_KINDS:
         return ordinals.get(raw)
+    # AN EDITION MAY SPELL ITS ARTICLE AND SUBDIVISION NUMBERS TOO, and the
+    # Chinese one does -- 第一條 for Article 1, 一、 for the subdivision under
+    # it, in the same characters it writes 卷一 with. The seven Latin-script
+    # editions switch to digits or roman numerals below the chapter, so their
+    # `raw` here is never a word and this lookup never fires for them.
+    if raw in ordinals:
+        return ordinals[raw]
     if kind == "roman":
         return roman_to_int(raw)
     if raw.isdigit():
@@ -3109,6 +3259,17 @@ def test_match_label_reads_each_edition_in_its_own_words() -> None:
         1,
     )
     assert MATCH_LABEL["es"]("Parrafo l: Jesus e Israel") == ("paragraph_marker", 1)
+    # Chinese numbers every kind the same way, so the ordinal table carries
+    # the article and the subdivision as well as the part.
+    assert MATCH_LABEL["zht"]("卷三") == ("part", 3)
+    assert MATCH_LABEL["zht"]("第二部分") == ("section", 2)
+    assert MATCH_LABEL["zht"]("第十二條") == ("article", 12)
+    assert MATCH_LABEL["zht"]("第一節 基督下降陰府") == ("paragraph_marker", 1)
+    assert MATCH_LABEL["zht"]("二、啟示的步驟") == ("roman", 2)
+    assert MATCH_LABEL["zht"]("撮要") == ("in_brief", None)
+    # The Prologue's own account of the four Parts, which the banner prints
+    # with the same two characters and no colon.
+    assert MATCH_LABEL["zht"]("卷一：信仰的宣認") is None
 
 
 # --------------------------------------------------------------------------
@@ -3260,6 +3421,43 @@ LANG_CONFIG = {
         "copyright_holder": "Libreria Editrice Vaticana",
         "copyright_notice": "Copyright © Libreria Editrice Vaticana",
     },
+    "zht": {
+        "family": "pdf",
+        # The only edition that prints none at all -- not a gap, a fact about
+        # the book. See `ccc_pdf.py`'s module note.
+        "notes": "none",
+        "number_re": NUMBER_RE,
+        "is_mini_header": lambda text: is_run_in_heading(text, PDF_EDITIONS["zht"]),
+        "split_embedded": functools.partial(
+            split_embedded_paragraph_starts, pattern=ZH_EMBEDDED_START_RE
+        ),
+        # PARAGRAPHS THIS EDITION DOES NOT YIELD, and they are two different
+        # failures declared in one place so that neither can be mistaken for
+        # a parser bug and neither can quietly stop being true -- `validate`
+        # asserts both that these are missing and that nothing else is.
+        #
+        #   §1725 the edition simply does not print. Its 撮要 (IN BRIEF)
+        #     heading sits exactly where it belongs and the sequence runs
+        #     1724 -> 撮要 -> 1726, so it is an omission by whoever set the
+        #     book, not a number this parser failed to find.
+        #   §2267 it prints twice over. The 2018 revision of the
+        #     death-penalty paragraph was pasted over the 1997 text without
+        #     removing it, both are in the content stream on the same
+        #     baselines, and one line of the revision has no text layer at
+        #     all -- so no reader recovers it and what an extractor returns
+        #     is the two texts interleaved. `ccc_pdf._collisions` finds it by
+        #     geometry and refuses it; storing what came out would have
+        #     published a paragraph that reads as prose and is not.
+        "absent": (1725, 2267, 2268, 2396, 2397),
+        "edition": (
+            "vatican.va, forty-three part PDFs, 1993/1997 second typical edition text "
+            "with the 2018 revision of §2267 set into it"
+        ),
+        "work_id": "ccc.zht",
+        "title": "天主教教理",
+        "copyright_holder": "Libreria Editrice Vaticana",
+        "copyright_notice": "Copyright © Libreria Editrice Vaticana",
+    },
 }
 
 #: Filled in from the tables above rather than repeated in each entry, so an
@@ -3267,10 +3465,17 @@ LANG_CONFIG = {
 for _lang, _cfg in LANG_CONFIG.items():
     _cfg["lang"] = _lang
     _cfg["match_label"] = MATCH_LABEL[_lang]
+    _cfg["is_bare_label"] = functools.partial(is_bare_structural_label, lang=_lang)
     _cfg["raw_dir"] = raw_dir(_lang)
     _cfg["base_url"] = EDITIONS[_lang].base
     _cfg["toc_href"] = EDITIONS[_lang].toc
     _cfg.setdefault("sample_chunks", sample_chunks_head)
+    _cfg.setdefault("is_mini_header", is_mini_header)
+    _cfg.setdefault("split_embedded", split_embedded_paragraph_starts)
+    _cfg.setdefault("absent", ())
+    _cfg.setdefault(
+        "edition", "vatican.va archive mirror, 1993/1997 second typical edition text"
+    )
 
 PAGE_FAMILIES.update(
     {
@@ -3281,11 +3486,82 @@ PAGE_FAMILIES.update(
 )
 
 
+def run_scrape_pdf(
+    lang: str, sample: bool, corrections: list[dict] | None, fetcher: Fetcher
+) -> tuple[ScrapeState, list[tuple[str, str]]]:
+    """The PDF path: the same state machine, fed from a page geometry.
+
+    The forty-three part-files are already in `raw/` -- `--capture zh` has
+    taken them since August -- so this reads them off disk rather than through
+    the fetcher, and a missing one is an error rather than a fetch, the same
+    way an offline parse behaves everywhere else. The TOC is still read
+    through the fetcher, because it is what puts the files in order and it is
+    cached beside them.
+
+    THE THREE THINGS THIS DOES THAT `process_page` CANNOT, all of them facts
+    about a book printed in parts rather than served as pages:
+
+      - it resolves each file's restated ancestor banner before the walk
+        (`drop_restated_banner`);
+      - it drops, whole, any paragraph the reader could not read, so a
+        damaged one is absent rather than half-present;
+      - it checks what was damaged against what the edition DECLARES it
+        cannot yield, and fails loudly on a disagreement in either
+        direction. An extraction defect that grew or healed silently is the
+        one thing a declaration like `absent` must not allow.
+    """
+    cfg = LANG_CONFIG[lang]
+    ed = PDF_EDITIONS[lang]
+    files = discover_pages(fetcher, lang)
+    if sample:
+        # The Prologue and the file after it, which is the same slice
+        # `sample_chunks_head` takes for the six editions with no named
+        # anchors: enough to exercise the banner, the numbering and the
+        # in-brief, and it costs two files of forty-three.
+        files = files[:2]
+    state = ScrapeState(corrections)
+    damaged: dict[int, list[str]] = {}
+    read: list[tuple[str, str]] = []
+    for url, name in files:
+        path = RAW_ROOT / cfg["raw_dir"] / name
+        if not path.is_file():
+            state.fetch_failures.append(
+                f"{name}: not in the corpus -- run `--capture {lang}` first"
+            )
+            continue
+        blocks = read_part_file(path, ed, damaged, cfg["match_label"])
+        blocks = drop_restated_banner(
+            blocks, cfg["match_label"], cfg["is_bare_label"], state.stack
+        )
+        process_page(
+            [
+                Block(b.kind == "heading", b.kind, b.text)
+                for b in blocks
+                if b.owner is None or b.owner not in damaged
+            ],
+            {},
+            cfg,
+            state,
+        )
+        read.append((url, name))
+    for n in sorted(set(damaged) - set(cfg["absent"])):
+        state.anomalies.append(
+            f"paragraph {n}: two texts printed on one baseline "
+            f"({', '.join(sorted(set(damaged[n])))}) -- dropped, and NOT declared "
+            f"in LANG_CONFIG[{lang!r}]['absent']"
+        )
+    state.damaged = dict(damaged)
+    return state, read
+
+
 def run_scrape(
     lang: str, sample: bool, corrections: list[dict] | None = None
 ) -> tuple[ScrapeState, list[tuple[str, str]], Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = make_fetcher(RAW_ROOT / cfg["raw_dir"])
+    if cfg["family"] == "pdf":
+        state, pages = run_scrape_pdf(lang, sample, corrections, fetcher)
+        return state, pages, fetcher
     all_pages = discover_pages(fetcher, lang)
     chunks = cfg["sample_chunks"](all_pages) if sample else [all_pages]
 
@@ -3492,13 +3768,30 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
     problems: list[str] = []
     paragraphs = state.paragraphs
 
+    # WHAT AN EDITION DECLARES IT DOES NOT HAVE IS CHECKED IN BOTH
+    # DIRECTIONS. Seven of the nine declare nothing and address the whole
+    # 1-2865 space; the Chinese declares two, one the book omits and one its
+    # file prints twice over (see its LANG_CONFIG entry). A declaration is
+    # only worth having if it can go stale loudly, so a declared paragraph
+    # that turns up is as much a problem as an undeclared one that does not
+    # -- the first says the source or the reader has changed and the entry
+    # should go, the second says something new broke.
+    absent = set(LANG_CONFIG[lang]["absent"])
     if not sample:
         missing = [
-            n for n in range(FIRST_PARAGRAPH, LAST_PARAGRAPH + 1) if n not in paragraphs
+            n
+            for n in range(FIRST_PARAGRAPH, LAST_PARAGRAPH + 1)
+            if n not in paragraphs and n not in absent
         ]
         if missing:
             problems.append(
                 f"missing paragraphs: {missing[:20]}{'...' if len(missing) > 20 else ''}"
+            )
+        present = sorted(n for n in absent if n in paragraphs)
+        if present:
+            problems.append(
+                f"paragraphs declared absent from this edition were parsed: {present} "
+                "-- remove them from LANG_CONFIG['absent'] if the reader now reads them"
             )
         spans = []
         for node in state.root_children:
@@ -3522,9 +3815,29 @@ def validate(lang: str, state: ScrapeState, sample: bool) -> tuple[bool, list[st
         for node in state.root_children:
             node.compute_span()
 
+    # LEFTOVER MARKUP IS AN HTML QUESTION, AND THE PDF EDITION ASKS ANOTHER
+    # ONE. An angle bracket in a parsed page is a tag the flattener missed; in
+    # a PDF it is a character the book prints, and this one prints two of
+    # them -- 信理部，<生命的禮物>訓令, the Congregation for the Doctrine of the
+    # Faith's *Donum vitae*, where every other edition would set a book title
+    # in italic. What a PDF edition can leave behind instead is its own page
+    # furniture, so the check becomes: no stored block may contain what that
+    # edition declares must never reach one. Same job, asked of the thing that
+    # can actually go wrong.
+    forbidden = (
+        [re.compile(p) for p in PDF_EDITIONS[lang].forbidden]
+        if LANG_CONFIG[lang]["family"] == "pdf"
+        else []
+    )
     for n, para in sorted(paragraphs.items()):
         for block in para.blocks:
-            if "<" in block.text or ">" in block.text:
+            if forbidden:
+                for pat in forbidden:
+                    if pat.search(block.text):
+                        problems.append(
+                            f"paragraph {n}: page furniture {pat.pattern!r} stored as text"
+                        )
+            elif "<" in block.text or ">" in block.text:
                 problems.append(f"paragraph {n}: leftover markup in block text")
             if "�" in block.text:
                 problems.append(f"paragraph {n}: replacement character present")
@@ -3633,6 +3946,11 @@ def build_manifest(
         if (date := captured_at(cache_dir / name)) is not None
     }
     today = datetime.now(UTC).strftime("%Y-%m-%d")
+    # WHICH NOTES ARE TRUE OF WHICH EDITION. Everything below the first two
+    # describes reading MARKUP -- a <meta> breadcrumb, a footnote <sup>, tag
+    # flattening -- and a PDF has none of it, so a manifest that carried them
+    # for the Chinese edition would be claiming to have checked things that do
+    # not exist in its source. The two lists are joined at the end.
     notes = [
         (
             "Marginal cross-reference apparatus ('related' field) is absent from this "
@@ -3640,6 +3958,12 @@ def build_manifest(
             "paragraphs 1, 4, 23-25, 1066-1075, 1213-1228, plus the front matter passage "
             "describing the apparatus, §18/PROLOGUE§V for EN); emitted as [] for all "
             "paragraphs pending a better source."
+        )
+        if cfg["family"] != "pdf"
+        else (
+            "Marginal cross-reference apparatus ('related' field) is not printed in this "
+            "edition's PDF either, so it is emitted as [] for every paragraph, as it is "
+            "for all eight HTML editions."
         ),
         (
             f"abbreviations.json holds {len(state.abbreviations)} entries: this edition's "
@@ -3654,11 +3978,57 @@ def build_manifest(
             "therefore not unique within an edition either (Latin gives 'Act' as both "
             "Actio and Actus Apostolorum), and `kind` is the only division either source "
             "itself draws: scripture, or general."
+        )
+        if cfg["family"] != "pdf"
+        else (
+            "abbreviations.json is empty: this edition prints no front-matter table of "
+            "sigla, as six of the eight HTML editions also do not."
         ),
         (
             "Inline italics (titles, Latin terms) are not captured in v1 -- recoverable "
             "later from corpus/raw/ without re-crawling."
         ),
+        *([] if cfg["family"] == "pdf" else _html_manifest_notes()),
+    ]
+    if cfg["family"] == "pdf":
+        notes += _pdf_manifest_notes(state, cfg)
+    if state.gaps:
+        notes.append(f"source paragraph-number gaps detected: {state.gaps}")
+    if state.fetch_failures:
+        notes.append(
+            f"page fetch failures (skipped, non-fatal): {state.fetch_failures}"
+        )
+    if state.orphan_content:
+        notes.append(
+            f"{len(state.orphan_content)} unnumbered content blocks (epigraphs opening "
+            "certain articles, e.g. the Decalogue commandment texts and creed texts) were "
+            "not attached to any paragraph -- a known v1 capture gap, logged not fabricated; "
+            "see scraper output for the per-article breakdown."
+        )
+    if state.display_matter:
+        headers = ", ".join(
+            repr(h) for h in dict.fromkeys(h for h, _t in state.display_matter)
+        )
+        notes.append(
+            f"{len(state.display_matter)} block(s), "
+            f"{sum(len(t) for _h, t in state.display_matter):,} characters, are display "
+            f"matter printed under a mini-header inside an in-brief ({headers}) and are "
+            "dropped with that header rather than stored as the preceding paragraph's "
+            "continuation, which is where they used to go. In this edition that is the "
+            "three-column Ten Commandments table the mirror prints between paragraph "
+            "2051 and 2052; unnumbered display matter has no address in paragraphs.json, "
+            "the Portuguese mirror prints no such table, and the Compendium already "
+            "declines the same table in its own appendix. raw/ keeps every word, so a "
+            "later schema for unnumbered matter recovers it by re-parsing."
+        )
+    return _finish_manifest(
+        lang, cfg, notes, fetched_pages, previous_dates, today, state, generated_at
+    )
+
+
+def _html_manifest_notes() -> list[str]:
+    """What is true of the eight editions served as HTML, and only of them."""
+    return [
         (
             "Structure is read from the heading blocks in the body, in document order. "
             "The EN mirror additionally DECLARES each page's full ancestor chain in a "
@@ -3704,35 +4074,76 @@ def build_manifest(
             "at all. No PT heading and no node of any other work carries one."
         ),
     ]
-    if state.gaps:
-        notes.append(f"source paragraph-number gaps detected: {state.gaps}")
-    if state.fetch_failures:
-        notes.append(
-            f"page fetch failures (skipped, non-fatal): {state.fetch_failures}"
-        )
-    if state.orphan_content:
-        notes.append(
-            f"{len(state.orphan_content)} unnumbered content blocks (epigraphs opening "
-            "certain articles, e.g. the Decalogue commandment texts and creed texts) were "
-            "not attached to any paragraph -- a known v1 capture gap, logged not fabricated; "
-            "see scraper output for the per-article breakdown."
-        )
-    if state.display_matter:
-        headers = ", ".join(
-            repr(h) for h in dict.fromkeys(h for h, _t in state.display_matter)
-        )
-        notes.append(
-            f"{len(state.display_matter)} block(s), "
-            f"{sum(len(t) for _h, t in state.display_matter):,} characters, are display "
-            f"matter printed under a mini-header inside an in-brief ({headers}) and are "
-            "dropped with that header rather than stored as the preceding paragraph's "
-            "continuation, which is where they used to go. In this edition that is the "
-            "three-column Ten Commandments table the mirror prints between paragraph "
-            "2051 and 2052; unnumbered display matter has no address in paragraphs.json, "
-            "the Portuguese mirror prints no such table, and the Compendium already "
-            "declines the same table in its own appendix. raw/ keeps every word, so a "
-            "later schema for unnumbered matter recovers it by re-parsing."
-        )
+
+
+def _pdf_manifest_notes(state: ScrapeState, cfg: dict) -> list[str]:
+    """What is true of an edition read out of a PDF, and only of one."""
+    absent = ", ".join(f"§{n}" for n in cfg["absent"])
+    return [
+        (
+            "This edition is published only as PDF -- forty-three part-files, each "
+            "named for the paragraph range it carries -- and is read with MuPDF through "
+            "common/pdf.py. Nothing here is OCR: the files carry a real text layer, and "
+            "the reader's identity is folded into rebuild.py's `readers` fingerprint so "
+            "that a poppler or MuPDF upgrade reports as an input that moved."
+        ),
+        (
+            "The edition prints NO footnote apparatus: no markers, no note list, no "
+            "sigla anywhere. `citations` is therefore [] by construction rather than by "
+            "omission, as it also is for the French, German and Spanish HTML editions, "
+            "which fold their references into the running sentence. This one folds its "
+            "Scripture references into the text the same way ('(創 10:5)'), and prints "
+            "its quotations from the Fathers, the liturgy, the Magisterium and the "
+            "saints two points smaller -- which its own §21 says is what the smaller "
+            "type means, and which is where this edition's `quote` blocks come from. "
+            "The single exception is the footnote that arrived with the 2018 revision "
+            "of §2267, sourcing Francis's address of 11 October 2017; it belongs to a "
+            "paragraph this edition cannot yield and is not stored."
+        ),
+        (
+            f"{absent} are not in paragraphs.json, and for two different reasons. §1725 "
+            "the edition does not print: its 撮要 (IN BRIEF) heading stands exactly "
+            "where it belongs and the sequence runs 1724 -> 撮要 -> 1726, so it is an "
+            "omission by whoever set the book. §2267 it prints twice over: the 2018 "
+            "revision of the death-penalty paragraph was pasted over the 1997 text "
+            "without removing it, both texts are in the content stream on the same "
+            "baselines, and one line of the revision has no text layer at all, so no "
+            "reader recovers it. What an extractor returns is the two interleaved, "
+            "which reads as prose and is not, so it is refused rather than stored. "
+            "Both are declared in the scraper and asserted by validate in both "
+            "directions."
+        ),
+        (
+            "Two paragraph numbers are recovered by tolerance rather than by "
+            "correction, because a missing period changes nothing a reader reads: §1224 "
+            "and §1478 print their number without one. Two more are recovered from "
+            "inside the paragraph before them, where the source lost the line break "
+            "(§2256, §2554). One is a genuine misprint and carries a corrections entry: "
+            "§2835 is printed '3835'."
+        ),
+        (
+            "Structure is read from type size and line length rather than from markup: "
+            "a line larger than the body is a heading, a short unnumbered line at the "
+            "body size is a run-in sub-heading, and a paragraph is a line whose number "
+            "hangs into the margin. Every part-file reprints its ancestors above its "
+            "first paragraph, and those restatements are dropped rather than pushed -- "
+            "the banner is sometimes misordered (the file carrying §§355-421 prints "
+            "Article 1 above Chapter 1) and sometimes short (the file carrying "
+            "§§484-511 omits the Section), and neither survives being read in order."
+        ),
+    ]
+
+
+def _finish_manifest(
+    lang: str,
+    cfg: dict,
+    notes: list[str],
+    fetched_pages: list[tuple[str, str]],
+    previous_dates: dict[str, str],
+    today: str,
+    state: ScrapeState,
+    generated_at: str,
+) -> dict:
     # THE MIRROR'S OWN TABLE OF CONTENTS GOES FIRST. `sources[0]` is what the
     # site links to as "the page this text came from" (site/src/lib/copyright.ts),
     # and the crawl's first CONTENT page is a poor answer: EN's is "__P1.HTM",
@@ -3763,7 +4174,7 @@ def build_manifest(
         "title": cfg["title"],
         "short_title": "CCC",
         "language": lang,
-        "edition": "vatican.va archive mirror, 1993/1997 second typical edition text",
+        "edition": cfg["edition"],
         "sources": sources,
         "copyright": {
             "status": "copyrighted",

@@ -651,26 +651,82 @@ Four kinds of gap, and they are four different decisions:
 Plus the seven parsed editions withheld in `site/unpublished.json` above —
 held, readable, and deliberately not published.
 
-## The Catechism is eight editions in three page formats
+## The Catechism is nine editions in four page formats
 
 Ingested 2026-08-26 (`docs/decisions.md`, `docs/corpus-schema.md`
 §Catechism). `ccc.py` reads every language vatican.va publishes the CCC in as
-HTML (`de en es fr it la mg pt`) and captures the two PDF-only ones (`ar`,
-`zh`) into `raw/` for nothing to read.
+HTML (`de en es fr it la mg pt`), reads Traditional Chinese out of the
+forty-three PDFs it publishes instead (`zht`, 2026-09-05), and captures Arabic into
+`raw/` for nothing to read.
 
 - **`catechism_lt` on vatican.va is LATIN, not Lithuanian.** The site's own
   link text says so, and the pages say `PARS PRIMA` — `lt` there is _latine_.
   (The Compendium's Lithuanian PDF two directories away is
   `compendium_catech_lit.pdf`.) Getting it wrong files the _editio typica
   latina_ under a language it is not in, and no check catches it.
-- **Three page families, not eight parsers**: `intratext` (en/fr/de),
-  `cms` (es/it/la/mg) and `pt` (its own per-chapter mirror). `EDITIONS` names
-  the source, `LANG_CONFIG` the reader, `_LABEL_PATTERNS` the labels.
-- **Only five of the eight print footnotes.** French, German and Spanish fold
+- **Four page families, not nine parsers**: `intratext` (en/fr/de),
+  `cms` (es/it/la/mg), `pt` (its own per-chapter mirror) and `pdf` (`zht`,
+  read by `ccc_pdf.py`). `EDITIONS` names the source, `LANG_CONFIG` the
+  reader, `_LABEL_PATTERNS` the labels.
+- **Only five of the nine print footnotes.** French, German and Spanish fold
   every reference into the running text, so their paragraphs carry
-  `citations: []` by construction and their stored text is longer. That is the
-  edition, not a gap — see `docs/corpus-schema.md`, and read `audit.py
-balance` with it in mind.
+  `citations: []` by construction and their stored text is longer; the
+  Chinese prints no apparatus at all. That is the edition, not a gap — see
+  `docs/corpus-schema.md`, and read `audit.py balance` with it in mind.
+
+### The Chinese edition is read from geometry, and it declares what it cannot give
+
+**IT IS `zht`, NOT `zh`.** The corpus holds both scripts — `prayer.common.zh`
+is 祈祷经文 and `prayer.common.zht` is 祈禱經文 — and this edition is the
+second. Filed under `zh` its reader would be offered 简体中文 in the edition
+menu, which is `site/src/lib/types.ts`'s Malagasy symptom with the tag present
+and wrong instead of missing. `raw/ccc-zh/` keeps the name it was captured
+under, because `raw/` records what the source served; `Edition.raw` says so.
+(`vatican_docs.py` still files the Vatican II PDFs' Traditional Chinese as
+`zh` in `translations` — a ledger entry rather than a served edition, and
+unfixed.)
+
+`ccc_pdf.py`, 2026-09-05. The seam is `Block` — `(is_heading, kind, text)` —
+which `process_page` has always consumed and which says nothing about markup,
+so a reader that decides those three from type size and line position feeds
+the same state machine as the four HTML parsers. Three measurements carry it:
+the paragraph number **hangs** into the margin (all 2,860 of them, and no
+other line opens with a digit run), leading is **bimodal** (18pt inside a
+block, 36 between, nothing in the twenties), and the book sets **two text
+sizes** whose meaning its own §21 states — 10pt is a citation from the
+Fathers, the liturgy, the Magisterium or the saints, which is where this
+edition's `quote` blocks come from and which the eight HTML editions do not
+record.
+
+- **Every part-file reprints its ancestors, and the reprint is not always
+  true.** The banner above each file's first paragraph names the Part, the
+  Section, the Chapter and the Article — sometimes MISORDERED (§§355-421
+  prints Article 1 above Chapter 1) and sometimes SHORT (§§484-511 omits the
+  Section). Read in order either one builds a wrong tree; **dropping any
+  heading that names a division already open** makes both questions go away,
+  because the stack is already right without it.
+- **THE 2018 REVISION OF §2267 WAS PASTED OVER THE 1997 TEXT WITHOUT REMOVING
+  IT**, and its file lost runs elsewhere in the same edit. Both texts are in
+  the content stream on the same baselines and parts of the revision have no
+  text layer at all — `長久以來，合法當局…` is on the rendered page and nowhere
+  in `pdftotext` over the whole file. Two geometries find it: runs that
+  OVERLAP on one baseline (20 pairs, all §2267, against five benign
+  bracket kerns of 5-7pt), and a HOLE inside a row (three, against seventeen
+  that are the Creed comparison table's second column and are told apart by
+  being a column — the same break repeated down the page). §§2267, 2268, 2396
+  and 2397 are refused, and §1725 the book simply omits. **All five are
+  declared in `LANG_CONFIG['zht']['absent']` and `validate` checks the
+  declaration in both directions**: a declared paragraph that turns up fails
+  as loudly as an undeclared one that does not.
+- **The failures here all read as prose.** §2396 stores a grammatical
+  sentence with its first eleven characters missing; §1471 lost 554
+  characters to a run-in question read as a division; §126 came out as its
+  own colon when the enumeration `一、` `二、` `三、` inside it matched the
+  subdivision pattern. None was visible in the tree and none failed
+  `validate`. What found every one of them was `audit.py balance` against the
+  eight editions that print the same 2,865 paragraphs, and `audit.py
+divisions`, which now reports the Chinese agreeing with all eight on every
+  part, section, chapter, article and in-brief.
 
 **Two editions print an abbreviations table, and they are not the same
 table.** French serves 58 sigla, Latin 119, parsed into `abbreviations.json`
@@ -678,7 +734,7 @@ by `Edition.sigla` and `SIGLA_READERS` from pages the body loop never visits.
 The two **disagree on two entries** (`SC`: _Sacrosanctum concilium_ vs
 _Sources chrétiennes_; `CA`: _Centesimus annus_ vs _Corpus apologetarum_) and
 each is right about its own edition's references — so the schema is
-per-edition, the other six stay `[]`, and `abbr` is not even unique within one
+per-edition, the other seven stay `[]`, and `abbr` is not even unique within one
 edition: read the array in order and use `kind`. **Both tables feed the site's
 grammar**, where the collision mattered — see `site/CLAUDE.md` §Reference
 grammar.

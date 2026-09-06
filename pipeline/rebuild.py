@@ -237,7 +237,12 @@ class Stage:
 # because they are the slowest parse, and `dore` is last because of --derive.
 # With --jobs that order is a preference rather than a schedule; see `plan`.
 STAGES: tuple[Stage, ...] = (
-    Stage("ccc", "catechism", "ccc/ccc.py", outputs=("ccc.*",)),
+    # MuPDF since 2026-09-05, and only for the Chinese edition: eight of the
+    # nine are HTML and read nothing external, the ninth is forty-three PDFs.
+    # A stage's `readers` fingerprint is over the stage, not the edition, so
+    # a MuPDF upgrade now reports the whole Catechism as moved -- which is
+    # the safe direction, and cheap at ~19s.
+    Stage("ccc", "catechism", "ccc/ccc.py", outputs=("ccc.*",), binaries=("mutool",)),
     Stage(
         "compendium",
         "catechism",
