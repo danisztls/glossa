@@ -2049,20 +2049,28 @@ it at all — worth 2,745 links, +31% on the work's apparatus.
 
 **Rendering — marks, cards, margins:**
 
-- **The dagger cost a font file.** `†` is NOT in either text family's `latin`
-  subset (Google files U+2020 under `latin-ext`, 158 KB), so
-  `static/fonts/source-sans-3-marks.woff2` is a 1.1 KB single-codepoint subset
-  under its own family, precached with the core faces; `fonts.css` records the
-  `pyftsubset` line. **"`‡`, `※` and `⁂` are not reachable at any
-  price" WAS HALF WRONG AND THE HALF MATTERS** (corrected 2026-09-06): that was
-  measured over Google's subsets, which partition a font by Unicode RANGE, and
-  a glyph outside every range they define is dropped even where the original
-  has it. Read against the release TTFs, `‡` is in both text families and
-  `※`/`⁂` are in neither — so the first needs a wider subset of a font already
-  here, and only the other two need a different source font. EB Garamond's own
-  original carries `❦` and `☞`. **Ask what the FONT has, never what the subset
-  ships.** `sidenotes.test.ts`
-  pins the codepoint against `fonts.css`'s `unicode-range`, because a mark and
+- **Two marks, and the second one is what the subsets hid.** `†` sits after the
+  words a note quotes, `‡` at the end of a verse whose notes name no words in
+  it — added 2026-09-06 because 9,594 verses carry both kinds of mark and
+  printed the same dagger for each. **It reports placement, not the `lemma`
+  field**: 2,332 headwords the Douay's wording refuses fall to the `‡` with the
+  18,466 that never had one, so the mark claims only "nothing here to light",
+  which the reader checks by pressing it. `commentaryMarker(anchored)`, and
+  `anchored` is required with no default at the call site — either default
+  renders perfectly and misinforms.
+- **The daggers cost a font file, and "`‡` is not reachable at any price" WAS
+  HALF WRONG** (corrected 2026-09-06). Neither is in either text family's
+  `latin` subset (Google files U+2020 under `latin-ext`, 158 KB, and U+2021 in
+  none of its 14 files), so `static/fonts/source-sans-3-marks.woff2` is a 1.2 KB
+  two-codepoint subset under its own family, precached with the core faces. The
+  old claim was measured over Google's subsets, which partition a font by
+  Unicode RANGE and drop a glyph outside every range they define even where the
+  original has it: read against the release, `‡` is in both text families and
+  `※`/`⁂` are in neither, and EB Garamond's own original carries `❦` and `☞`.
+  **Ask what the FONT has, never what the subset ships.** The cost of being
+  right was the source: `fonts.css`'s `pyftsubset` line names Adobe's release
+  zip where it used to name a path under `node_modules`. `sidenotes.test.ts`
+  pins both codepoints against `fonts.css`'s `unicode-range`, because a mark and
   a face that disagree render in a system font and nothing fails.
 - **It sets nothing in the margin, at any width** — the mark opens a card, the
   only way in. The gutter premise assumes an apparatus SMALLER than the text

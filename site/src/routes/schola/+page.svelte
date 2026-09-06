@@ -1028,9 +1028,11 @@
 	 * IT IS THE SAME GLYPH THE APPARATUS USES, deliberately — this site has one
 	 * mark meaning "there is a source here" and adding a second vocabulary for
 	 * a page with no apparatus on it would be inventing a distinction nobody
-	 * asked for. `‡` was the alternative and is not reachable at any price:
-	 * Google's subsets do not carry it (site/CLAUDE.md), which is also why the
-	 * dagger has a one-codepoint font of its own that is already precached.
+	 * asked for. `‡` IS reachable, and since 2026-09-06 it is spoken for: the
+	 * apparatus draws it for the notes that name no words in the verse, so
+	 * setting it here would say something about this sentence that is not true
+	 * of it. Both marks live in the two-codepoint font `fonts.css` subsets and
+	 * `sw-policy.ts` precaches.
 	 *
 	 * SUPERSCRIPTED BY `vertical-align`, NOT BY THE GLYPH. A dagger is drawn
 	 * baseline-to-cap like a letter, where an asterisk is drawn high in its own

@@ -499,9 +499,11 @@ chosen an edition of Dei Verbum keeps it.
 titles and two numbers inside two paragraphs of deliberately plain writing broke
 them exactly where they should have read straight through, and a reader who has
 not yet met the word "Gospel" is not helped by meeting "Verbum Domini 41"
-mid-clause. `†` is the site's existing mark for "there is a source here" and has
-a one-codepoint font of its own that is already precached; `‡` is not reachable
-at any price. It is superscripted by `vertical-align` and not by the glyph — a
+mid-clause. `†` is the site's existing mark for "there is a source here" and is in the
+two-codepoint font that is already precached. `‡` IS reachable and is not free
+to take: the commentary draws it for the notes that name no words in a verse,
+so setting it here would claim something of this sentence that is not true of
+it. It is superscripted by `vertical-align` and not by the glyph — a
 dagger is drawn baseline-to-cap like a letter — and the link carries an
 `aria-label`, because its only content is a mark.
 

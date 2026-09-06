@@ -10,13 +10,19 @@
 	median annotated verse carries two remarks and his longest twenty-nine, all
 	of them about the same line, so they are one card and one mark.
 
-	THE MARK IS ANCHORED TO THE VERSE, and that is measured rather than chosen.
-	Of 45,824 notes only 27,201 carry a lemma at all and 25,078 of those quote
-	the Douay verbatim, so a lemma-matched token would anchor 55% of the
-	apparatus and only on one edition; a marker run with holes in it is worse
-	than no run, because the reader learns to look for a mark and then meets
-	notes that have none. A verse is something every edition has. See
-	`COMMENTARY_MARKER` for why a dagger and what it cost to get one.
+	THE MARK IS ANCHORED TO THE WORDS WHERE IT CAN BE AND TO THE VERSE WHERE IT
+	CANNOT, and both halves are measured rather than chosen. Of 45,824 notes only
+	27,201 carry a lemma at all and 25,078 of those quote the Douay verbatim, so
+	a lemma-matched token alone would anchor 55% of the apparatus and only on one
+	edition — a marker run with holes in it is worse than no run, because the
+	reader learns to look for a mark and then meets notes that have none. A verse
+	is something every edition has, so the notes that cannot be placed keep a
+	mark at its end (`anchorCommentary`, 2026-09-01).
+
+	AND SINCE 2026-09-06 THE TWO ARE DIFFERENT GLYPHS, because 9,594 verses
+	carry both and printed the same dagger for each: `†` where opening the card
+	lights the words, `‡` where there is nothing to light. See `anchored` below
+	and `COMMENTARY_MARKER` for what the pair cost to get.
 
 	IT SETS NOTHING IN THE MARGIN, AT ANY WIDTH, and that is the whole shape of
 	this component. It had a gutter form for a day, on the premise the site is
@@ -71,7 +77,7 @@
 	import { hrefFor as hrefForAddress } from '$lib/address';
 	import { content } from '$lib/content.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import { COMMENTARY_MARKER, NoteCard, NoteDialog, overflowsCard } from '$lib/sidenotes.svelte';
+	import { commentaryMarker, NoteCard, NoteDialog, overflowsCard } from '$lib/sidenotes.svelte';
 	import type { CommentaryNote } from '$lib/types';
 	import Icon from './Icon.svelte';
 	import InlineNodes from './InlineNodes.svelte';
@@ -89,11 +95,12 @@
 		    throughout, where "3 Kings" is 1 Kings, so his citations resolve
 		    under his own work's config and not under the edition beside him. */
 		work: string;
-		/** What the commentary is CALLED, for the mark's own label. The mark is
-		    the same dagger whichever commentary raised it, so the name is the
-		    only thing telling a reader what is behind it. `ApparatusMenu` labels
-		    its switch with the same string, which is what ties the mark to the
-		    control that turned it on. */
+		/** What the commentary is CALLED, for the mark's own label. Both marks
+		    are the same whichever commentary raised them — they distinguish
+		    placement, not work — so the name is the only thing telling a reader
+		    WHAT is behind one. `ApparatusMenu` labels its switch with the same
+		    string, which is what ties the mark to the control that turned it
+		    on. */
 		title: string;
 		/** The ADDRESS these notes hang off — the book and chapter of the verse
 		    the mark sits at the end of. It is what lets `linkifyProse` read
@@ -107,11 +114,31 @@
 		    to resolve against an address that does not exist. */
 		osis?: string;
 		chapter?: number;
+		/**
+		 * Whether the text carries the words these notes quote — which is what
+		 * decides WHICH mark is drawn, `†` or `‡` (see `COMMENTARY_MARKER`).
+		 *
+		 * REQUIRED, WITH NO DEFAULT, because either default would be a lie half
+		 * the time and the lie is silent: a mark that draws `†` over notes with
+		 * nothing to light, or `‡` beside words that light anyway, renders
+		 * perfectly and simply misinforms. Both callers already hold the answer
+		 * — `PlacedCommentary.anchor` being defined, which is the same fact that
+		 * decided where to put the mark — so asking for it costs them nothing.
+		 *
+		 * IT IS NOT `notes.some((n) => n.lemma)`, AND THAT IS THE POINT. A note
+		 * carrying a headword says nothing about whether this edition's wording
+		 * carries it: 2,332 of Haydock's are refused by the Douay and fall to
+		 * the trailing mark alongside the 18,466 that never had one. The mark
+		 * reports placement, which the reader can check by pressing it.
+		 */
+		anchored: boolean;
 		/** Called when this mark's panel opens or closes, so the verse can light
 		    the words these notes quote while it is. `Sidenote`'s, and for its
 		    reason. Absent on the TRAILING mark, whose notes have no words in the
 		    text — which is also why this is a callback rather than a binding:
-		    there is nothing for that mark to report to. */
+		    there is nothing for that mark to report to. Absent on exactly the
+		    marks `anchored` is false for, and by the same test at both call
+		    sites. */
 		onopen?: (open: boolean) => void;
 		/**
 		 * Whether the TEXT already carries these notes' headword, lit while the
@@ -132,7 +159,17 @@
 		lemmaMarked?: boolean;
 	}
 
-	let { notes, lang, work, title, osis, chapter, onopen, lemmaMarked = false }: Props = $props();
+	let {
+		notes,
+		lang,
+		work,
+		title,
+		osis,
+		chapter,
+		anchored,
+		onopen,
+		lemmaMarked = false
+	}: Props = $props();
 
 	/** The chapter a bare verse number in a note belongs to, where there is
 	 *  one. See `osis`. */
@@ -222,10 +259,12 @@
 	}
 </script>
 
-<!-- THE MARK, at the end of the verse rather than inside it, because it names
-     the verse and not a place in it. `.note-marker` is the shared rule every
-     raised mark on this page uses; `.commentary-marker` adds only the face
-     that draws the dagger.
+<!-- THE MARK, AND WHICH OF THE TWO IT IS, is `anchored`: `†` after the words
+     these notes quote, `‡` at the end of a unit whose notes name no words in
+     it. The caller decides, because the caller is what placed the mark, and
+     the glyph is the only thing on the page that says which kind the reader is
+     about to press. `.note-marker` is the shared rule every raised mark on
+     this page uses; `.commentary-marker` adds only the face that draws them.
 
      NO POINTER HANDLERS, WHICH IS THE ONE PLACE THIS DIVERGES FROM `Sidenote`
      AND `CitationDisclosure`. `NoteCard` opens on the pointer resting, and
@@ -248,7 +287,7 @@
 		aria-label={label}
 		onclick={card.asModal ? () => full.open() : card.onClick}
 	>
-		{COMMENTARY_MARKER}
+		{commentaryMarker(anchored)}
 	</button>
 </sup>
 
@@ -335,16 +374,23 @@
 
 <style>
 	/*
-	 * THE FACE, AND NOTHING ELSE. Everything about how this mark is set — the
-	 * superscript, the sans face, the size floor, the accent colour — is
+	 * THE FACE, AND NOTHING ELSE. Everything about how these marks are set —
+	 * the superscript, the sans face, the size floor, the accent colour — is
 	 * `.note-marker` in `reading-chrome.css`, shared so the page's three raised
-	 * marks cannot drift apart. What is left here is that U+2020 is not in the
-	 * `latin` subset, so the dagger needs the 1.1 KB face `fonts.css` declares
-	 * for it or it falls through to whatever the reader's system draws.
+	 * marks cannot drift apart. What is left here is that neither U+2020 nor
+	 * U+2021 is in the `latin` subset, so both need the 1.2 KB face `fonts.css`
+	 * declares for them or they fall through to whatever the reader's system
+	 * draws.
 	 *
-	 * The extra hair of space is the one measurable difference: `.note-marker`
-	 * sets 0.08em because the source puts a footnote marker immediately after
-	 * the words it glosses, and this mark follows a full stop instead.
+	 * ONE RULE FOR BOTH MARKS, which the face makes safe rather than tidy: the
+	 * dagger and the double dagger have the identical advance and bounding box
+	 * at every weight of this file, so nothing here could need to differ.
+	 *
+	 * The extra hair of space is the one measurable difference from
+	 * `.note-marker`, which sets 0.08em because the source puts a footnote
+	 * marker immediately after the words it glosses. A `‡` follows the verse's
+	 * full stop and a `†` the last word of a lemma, which is as often a comma —
+	 * neither is the tight join that 0.08em was measured for.
 	 */
 	.commentary-marker {
 		font-family: 'Source Sans 3 Marks', var(--font-sans);

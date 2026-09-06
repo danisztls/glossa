@@ -211,7 +211,7 @@ export function overflowsCard(chars: number): boolean {
 }
 
 /**
- * The mark a COMMENTARY is anchored by, and the reason it is a symbol.
+ * The marks a COMMENTARY is anchored by, and the reason they are symbols.
  *
  * The edition's own notes letter themselves a, b, c down the chapter
  * (`noteLetter`); a commentary cannot join that run, because it is a separate
@@ -219,28 +219,64 @@ export function overflowsCard(chars: number): boolean {
  * "there is an apparatus here" without claiming a place in anyone's sequence,
  * which is what a printed annotated Bible uses it for.
  *
- * THE DAGGER, AND IT COST A FONT FILE TO GET. `†` is not in either text
- * family's `latin` subset: Google files U+2020 under `latin-ext`, so a page
- * carrying one dagger would pull 158 KB of Source Sans 3 it needs for nothing
- * else — and pull it for the English reader too, since a commentary is
- * switched on rather than implied by a language. `fonts.css` declares a
- * 1.1 KB face subset to this one glyph, under its own family, and
- * `.commentary-marker` names it ahead of `--font-sans`. `‡`, `※` and `⁂` are
- * not reachable at any price: checked with fontTools across every file in
- * both `@fontsource-variable` packages, Google's subsets do not carry them at
- * all, so a second mark would need a different source font rather than a
- * different range.
+ * TWO MARKS, BECAUSE THE APPARATUS ALREADY HAD TWO KINDS OF PLACE AND THE
+ * READER COULD NOT SEE WHICH (2026-09-06). `anchorCommentary` divides a unit's
+ * notes into the ones whose headword it found in this edition's text and the
+ * ones it did not: the first take a mark after the words they quote, the rest
+ * one at the unit's end. Against `bible.douay-rheims.en` that is 24,805
+ * anchored notes and 20,857 with no place in the text, and 9,594 verses carry
+ * BOTH kinds of mark — which printed the same dagger for each. So a reader who
+ * pressed one and got the words lit, then pressed the next and got a remark on
+ * the whole verse, had nothing on the page to tell them apart beforehand.
  *
- * ONE MARK PER COMMENTARY WORK, NOT PER NOTE. Haydock's median verse carries
- * two notes and his longest twenty-nine, and a row of identical daggers says
- * nothing a single one does not. The mark names the apparatus; the notes
- * behind it are what it points at — all of them, in one card, since the mark
- * is the only way to them at any width (`NoteCard`'s `margin: false`). A
- * second commentary would print a second dagger beside the first,
- * distinguished by its label and not by its glyph — worth revisiting when
- * there is a second, and not before.
+ *   `†`  the notes quote THESE words, and opening the card lights them
+ *   `‡`  the notes are on the whole unit, and there is nothing to light
+ *
+ * IT NAMES THE PLACEMENT, NOT THE FIELD, and that distinction is what lets the
+ * mark be trusted. 2,332 notes carry a headword this edition's wording refuses
+ * and 59 an elided catchword; all of them fall to the trailing mark. So a `‡`
+ * does not claim "these notes have no lemma" — it claims "these notes point at
+ * no words you can see", which is the claim the reader can check by pressing
+ * it.
+ *
+ * THE DAGGER COST A FONT FILE AND THE DOUBLE DAGGER COST 100 BYTES ON TOP OF
+ * IT. Neither is in either text family's `latin` subset — Google files U+2020
+ * under `latin-ext` and U+2021 in no subset at all — so a page carrying one
+ * mark would pull 158 KB of Source Sans 3 it needs for nothing else, and pull
+ * it for the English reader too, since a commentary is switched on rather than
+ * implied by a language. `fonts.css` declares a 1.2 KB face subset to these
+ * two glyphs, under its own family, and `.commentary-marker` names it ahead of
+ * `--font-sans`. Read out of the release the two have the identical advance
+ * and bounding box at every weight, so which one a mark draws cannot move a
+ * word. `※` and `⁂` stay unreachable, and for a stronger reason than the
+ * subsets: they are in neither family's ORIGINAL.
+ *
+ * ONE MARK PER COMMENTARY WORK PER PLACEMENT, NOT PER NOTE. Haydock's median
+ * verse carries two notes and his longest twenty-nine, and a row of identical
+ * marks says nothing a single one does not. The mark names the apparatus; the
+ * notes behind it are what it points at — all of them, in one card, since the
+ * mark is the only way to them at any width (`NoteCard`'s `margin: false`). A
+ * second commentary would print its own pair beside the first, distinguished
+ * by its label and not by its glyphs — worth revisiting when there is a
+ * second, and not before.
  */
 export const COMMENTARY_MARKER = '\u2020';
+
+/** The mark for the notes no words in the text carry — see
+ *  `COMMENTARY_MARKER`, which carries the argument for both. */
+export const COMMENTARY_MARKER_TRAILING = '\u2021';
+
+/**
+ * Which of the two a mark draws.
+ *
+ * `anchored` is `PlacedCommentary.anchor` being defined, which is the same
+ * question `commentary-placement.ts` already answers to decide WHERE the mark
+ * goes — so the glyph and the position cannot disagree without the placement
+ * itself being wrong.
+ */
+export function commentaryMarker(anchored: boolean): string {
+	return anchored ? COMMENTARY_MARKER : COMMENTARY_MARKER_TRAILING;
+}
 
 /**
  * The whole of a note that is past what a card holds.

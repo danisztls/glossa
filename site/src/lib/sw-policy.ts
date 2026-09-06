@@ -186,8 +186,8 @@ const DEFERRED_MEDIA = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
  *
  * The display faces are small and unconditional: `pirata-one-dropcap` sets the
  * wordmark in the header of every route, and `ponomar-dropcap-latin` is the
- * initial the reading pages open with. `source-sans-3-marks` is 1.1 KB and is
- * the dagger a commentary is anchored by — it is here rather than in a
+ * initial the reading pages open with. `source-sans-3-marks` is 1.2 KB and is
+ * the two daggers a commentary is anchored by — it is here rather than in a
  * deferred bucket because at that size the round trip costs more than the
  * bytes, and because a reader who filled the offline library and then switched
  * a commentary on would otherwise meet a tofu box (`fonts.css`).

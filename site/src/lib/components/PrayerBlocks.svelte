@@ -167,7 +167,13 @@
 <!-- One note's card, opened by the dagger at the end of the words it quotes.
      `lemmaMarked` unconditionally: every note this apparatus stores quotes a
      clause of the prayer and every one of them anchors, so the card would
-     otherwise print a headword the line beside it is already lighting. -->
+     otherwise print a headword the line beside it is already lighting.
+
+     `anchored` unconditionally, AND FOR THE SAME FACT — this apparatus has no
+     trailing mark at all (`placePrayerCommentary`), so the `‡` a verse uses for
+     notes with no place in the text can never appear on a prayer. If one ever
+     did, `unplaced` would be non-empty and that is the thing to fix, not the
+     glyph. -->
 {#snippet gloss(entry: PlacedPrayerCommentary, mark: number | undefined)}
 	<CommentaryGloss
 		notes={entry.notes}
@@ -175,6 +181,7 @@
 		work={entry.work.id}
 		title={entry.work.short_title || entry.work.title}
 		onopen={mark === undefined ? undefined : (on: boolean) => (open[mark] = on)}
+		anchored
 		lemmaMarked
 	/>
 {/snippet}

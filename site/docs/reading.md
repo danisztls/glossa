@@ -162,6 +162,27 @@ keep a mark at the verse's end. **The two sets partition the verse's notes** —
 no note behind two marks and none behind none — which is the property to check,
 since a leak would lose a fifth of the apparatus with nothing erroring.
 
+**The two kinds of mark are two glyphs, because 9,594 verses carry both and
+printed the same one for each.** `†` after the words a note quotes, `‡` at the
+end of a verse whose notes name no words in it — so the reader can see, before
+pressing, whether the card will light anything. **The mark reports PLACEMENT,
+not whether the note has a lemma**, and the distinction is what makes it
+truthful: 2,332 headwords are refused by the Douay's own wording and 59 are
+elided catchwords, and all of them fall to the `‡` alongside the 18,466 that
+never had a headword. A mark that claimed "no lemma" would be wrong 2,391 times;
+"nothing here to light" is checkable by pressing it. The prayers' apparatus has
+no trailing mark at all, so a `‡` can never appear on a prayer.
+
+**`‡` cost 100 bytes and a change of source font, which is the correction worth
+carrying.** It had been recorded as unreachable at any price — measured over
+Google's subsets, which partition a font by Unicode RANGE and drop a glyph
+outside every range they define even where the original has it. Google ships
+U+2021 in none of its 14 Source Sans 3 files; Adobe's release has it, so
+`source-sans-3-marks.woff2` is now subset from the release and the recipe in
+`fonts.css` names a URL rather than a path under `node_modules`. **Ask what the
+font has, never what the subset ships.** The two glyphs have the identical
+advance and bounding box at every weight, so which one a mark draws cannot move
+a word.
 **Attribution is parsed into a field, and the vocabulary is closed.** Splitting
 "… Witham" off the end of someone else's sentence is an editorial act and also
 the whole value of a catena, so the vocabulary is derived and then READ, a tail

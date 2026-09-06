@@ -227,6 +227,11 @@
      screen reader is given (the marker's `aria-expanded` and the card's
      `role="note"`). So the element is there always and says nothing, and the
      class is what lights. -->
+<!-- `mark` IS THE WHOLE OF IT: an index means the text carries a run for this
+     placement, `undefined` means the mark hangs at the end of the verse. That
+     one fact settles both `anchored` — which glyph is drawn, `†` or `‡` — and
+     whether there is anything for `onopen` to light, so the two cannot come
+     apart. -->
 {#snippet gloss(entry: (typeof placed)[number], mark: number | undefined)}
 	<CommentaryGloss
 		notes={entry.notes}
@@ -235,6 +240,7 @@
 		title={entry.work.short_title || entry.work.title}
 		{osis}
 		{chapter}
+		anchored={mark !== undefined}
 		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
 	/>
 {/snippet}

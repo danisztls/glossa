@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	chapterNoteOffsets,
 	COMMENTARY_MARKER,
+	COMMENTARY_MARKER_TRAILING,
+	commentaryMarker,
 	noteLetter,
 	overflowsCard,
 	CARD_MAX_CHARS
@@ -90,25 +92,42 @@ describe('overflowsCard', () => {
 });
 
 describe('COMMENTARY_MARKER', () => {
-	// The whole point of the mark: an edition's own notes letter themselves
+	// The whole point of the marks: an edition's own notes letter themselves
 	// a, b, c down the chapter and the page is already full of verse numbers,
 	// so a commentary's mark must be neither. A letter or a digit here would
 	// print a second run beside the first with nothing to say which was which.
 	it('is neither a letter nor a digit', () => {
-		expect(COMMENTARY_MARKER).not.toMatch(/[a-z0-9]/i);
-		expect(COMMENTARY_MARKER.length).toBe(1);
+		for (const mark of [COMMENTARY_MARKER, COMMENTARY_MARKER_TRAILING]) {
+			expect(mark).not.toMatch(/[a-z0-9]/i);
+			expect(mark.length).toBe(1);
+		}
 	});
 
-	// U+2020 is not in either text family's `latin` subset — Google files it
-	// under `latin-ext`, 158 KB that a page carrying one dagger would otherwise
-	// download for nothing else. `fonts.css` declares a 1.1 KB face subset to
-	// exactly this codepoint, so the mark and the file have to agree: change
-	// one without the other and the mark renders in whatever system face the
-	// reader happens to have, which no test could see and no build would fail.
-	it('is the codepoint the subset face carries', () => {
+	// THE TWO MUST DIFFER, which is the only thing the second mark was added
+	// for: `†` says the notes quote words the reader can see lit, `‡` says
+	// they name the whole unit. Collapsing them back to one glyph is exactly
+	// the state this apparatus was in before 2026-09-06, and it renders
+	// perfectly — 9,594 verses carrying both kinds of mark and nothing on the
+	// page telling them apart.
+	it('draws a different mark for an anchored placement than for a trailing one', () => {
+		expect(commentaryMarker(true)).toBe(COMMENTARY_MARKER);
+		expect(commentaryMarker(false)).toBe(COMMENTARY_MARKER_TRAILING);
+		expect(COMMENTARY_MARKER).not.toBe(COMMENTARY_MARKER_TRAILING);
+	});
+
+	// Neither mark is in either text family's `latin` subset: Google files
+	// U+2020 under `latin-ext` — 158 KB a page carrying one dagger would
+	// otherwise download for nothing else — and does not carry U+2021 in any
+	// of its 14 files at all, which is why the face is subset from Adobe's own
+	// release. `fonts.css` declares a 1.2 KB face over exactly this range, so
+	// the marks and the file have to agree: change one without the other and a
+	// mark renders in whatever system face the reader happens to have, which
+	// no test could see and no build would fail.
+	it('is the codepoints the subset face carries', () => {
 		expect(COMMENTARY_MARKER.codePointAt(0)).toBe(0x2020);
+		expect(COMMENTARY_MARKER_TRAILING.codePointAt(0)).toBe(0x2021);
 		const fonts = readFileSync(new URL('../styles/fonts.css', import.meta.url), 'utf8');
 		const face = fonts.slice(fonts.indexOf("font-family: 'Source Sans 3 Marks'"));
-		expect(face.slice(0, face.indexOf('}'))).toContain('unicode-range: U+2020;');
+		expect(face.slice(0, face.indexOf('}'))).toContain('unicode-range: U+2020-2021;');
 	});
 });

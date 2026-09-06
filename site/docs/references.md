@@ -217,8 +217,8 @@ recording because the obvious answer looks available. Of the ornament
 codepoints, all four families in this tree ship only `†`, `¶`, `§`, `•`
 and `*` — and most of those are already spoken for in the immediate vicinity
 (`¶29` is the Catechism's own reference label in this panel, `§8` the
-document's, `†` the commentary marker in the verses above). The originals hold
-more than the subsets do (`‡` in both text faces, `❦` and `☞` in EB Garamond,
+document's, `†` and `‡` the two commentary markers in the verses above). The
+originals hold more than the subsets do (`❦` and `☞` in EB Garamond,
 the geometric shapes in Source Sans 3), but what they hold is fill-and-size
 variants of three shapes — `▪ ■`, `◆ ◊`, `● ◦` — which at a mark this size is
 one shape each. `❖` is in neither original at all. A distinguishable mark per
