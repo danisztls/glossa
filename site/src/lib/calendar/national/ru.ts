@@ -88,7 +88,9 @@ export const RUSSIA: NationalCalendar = {
 		'teresa-of-calcutta': keptAs('m')
 	},
 	moves: {
-		andrew: { to: '12-01' },
 		george: { to: '05-06' }
+	},
+	movedInYear: {
+		andrew: { 2025: '12-01' }
 	}
 };

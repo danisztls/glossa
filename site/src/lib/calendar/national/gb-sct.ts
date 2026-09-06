@@ -63,10 +63,10 @@ export const SCOTLAND: NationalCalendar = {
 		patrick: keptAs('f', 'white'),
 		'teresa-benedicta': keptAs('f')
 	},
-	moves: {
-		'all-saints': { to: '11-02' },
-		andrew: { to: '12-01' },
-		assumption: { to: '08-16' },
-		'peter-and-paul': { to: '06-28' }
+	movedInYear: {
+		'all-saints': { 2025: '11-02' },
+		andrew: { 2025: '12-01' },
+		assumption: { 2026: '08-16' },
+		'peter-and-paul': { 2026: '06-28' }
 	}
 };

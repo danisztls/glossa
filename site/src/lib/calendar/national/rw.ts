@@ -81,11 +81,11 @@ export const RWANDA: NationalCalendar = {
 		'charles-lwanga': keptAs('s')
 	},
 	moves: {
-		'peter-and-paul': { to: '06-30' },
 		'philip-neri': { to: '05-27' }
 	},
 	movedInYear: {
 		'all-saints': { 2025: '11-02', 2027: '11-07' },
-		'charles-lwanga': { 2025: '06-29', 2026: '06-14', 2027: '06-06' }
+		'charles-lwanga': { 2025: '06-29', 2026: '06-14', 2027: '06-06' },
+		'peter-and-paul': { 2025: '06-30' }
 	}
 };

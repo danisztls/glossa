@@ -351,7 +351,7 @@ export const TAIWAN: NationalCalendar = {
 		'francis-xavier': keptAs('f'),
 		'therese-of-lisieux': keptAs('f')
 	},
-	moves: {
-		assumption: { to: '08-17' }
+	movedInYear: {
+		assumption: { 2025: '08-17' }
 	}
 };

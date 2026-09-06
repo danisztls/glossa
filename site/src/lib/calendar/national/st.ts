@@ -169,10 +169,8 @@ export const SAO_TOME_PRINCIPE: NationalCalendar = {
 		'therese-of-lisieux': keptAs('f'),
 		'thomas-apostle': keptAs('s')
 	},
-	moves: {
-		'anthony-of-padua': { to: '06-13' }
-	},
 	movedInYear: {
+		'anthony-of-padua': { 2026: '06-13' },
 		'thomas-apostle': { 2025: '12-22', 2026: '12-21', 2027: '12-21' }
 	}
 };

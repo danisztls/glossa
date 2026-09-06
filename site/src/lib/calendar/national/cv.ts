@@ -98,12 +98,9 @@ export const CABO_VERDE: NationalCalendar = {
 		'peter-claver': keptAs('m'),
 		'therese-of-lisieux': keptAs('f')
 	},
-	moves: {
-		'anthony-of-padua': { to: '06-13' },
-		boniface: { to: '06-05' },
-		irenaeus: { to: '06-28' }
-	},
 	movedInYear: {
+		'anthony-of-padua': { 2026: '06-13' },
+		boniface: { 2027: '06-05' },
 		irenaeus: { 2025: '10-25', 2026: '10-24', 2027: '10-30' }
 	}
 };

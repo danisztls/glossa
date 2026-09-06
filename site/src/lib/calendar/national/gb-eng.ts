@@ -123,14 +123,14 @@ export const ENGLAND: NationalCalendar = {
 	},
 	moves: {
 		adalbert: { to: '04-24' },
-		assumption: { to: '08-16' },
 		denis: { to: '10-10' },
-		epiphany: { to: '01-05' },
-		george: { to: '04-28' },
-		'john-leonardi': { to: '10-10' },
-		'peter-and-paul': { to: '06-28' }
+		'john-leonardi': { to: '10-10' }
 	},
 	movedInYear: {
-		'all-saints': { 2025: '11-02', 2027: '10-31' }
+		'all-saints': { 2025: '11-02', 2027: '10-31' },
+		assumption: { 2026: '08-16' },
+		epiphany: { 2025: '01-05' },
+		george: { 2025: '04-28' },
+		'peter-and-paul': { 2026: '06-28' }
 	}
 };

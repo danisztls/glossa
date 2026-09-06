@@ -257,7 +257,9 @@ export const CZECHIA: NationalCalendar = {
 	moves: {
 		'cornelius-cyprian': { to: '09-17' },
 		'cyril-methodius': { to: '07-05' },
-		george: { to: '04-24' },
-		wenceslaus: { to: '09-28' }
+		george: { to: '04-24' }
+	},
+	movedInYear: {
+		wenceslaus: { 2025: '09-28' }
 	}
 };

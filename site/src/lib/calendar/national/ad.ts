@@ -383,11 +383,13 @@ export const ANDORRA: NationalCalendar = {
 		adalbert: { to: '04-22' },
 		agnes: { to: '01-19' },
 		faustina: { to: '10-08' },
-		george: { to: '04-28' },
 		isidore: { to: '04-26' },
-		james: { to: '07-25' },
 		'john-of-capistrano': { to: '10-21' },
 		louis: { to: '08-30' },
 		'martin-de-porres': { to: '11-05' }
+	},
+	movedInYear: {
+		george: { 2025: '04-28' },
+		james: { 2027: '07-25' }
 	}
 };

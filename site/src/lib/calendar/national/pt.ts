@@ -186,7 +186,7 @@ export const PORTUGAL: NationalCalendar = {
 		'our-lady-of-mount-carmel': keptAs('m'),
 		'teresa-benedicta': keptAs('f')
 	},
-	moves: {
-		'anthony-of-padua': { to: '06-13' }
+	movedInYear: {
+		'anthony-of-padua': { 2026: '06-13' }
 	}
 };

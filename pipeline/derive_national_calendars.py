@@ -1075,7 +1075,36 @@ def build_layer(a: dict) -> dict:
         if cid is not None:
             # A general celebration, on a date the general calendar does not
             # keep it: a move, or a year table where the dates do not agree.
-            if len(mmdds) == 1:
+            #
+            # A PERMANENT MOVE NEEDS EVERY YEAR THAT COULD HAVE CONTRADICTED
+            # IT, AND ONE YEAR'S DISPLACEMENT IS ONE YEAR'S FACT. `occ` holds
+            # only the years this celebration was seen away from its general
+            # date, so a single entry could mean it was displaced ONCE and sat
+            # where the general calendar puts it in the others -- the opposite
+            # of a standing rule. Writing that as `moves` is how England came
+            # to keep Saint George on 28 April for ever because 23 April 2025
+            # fell inside the Octave of Easter, and Scotland to keep Saint
+            # Andrew on 1 December because 30 November 2025 was the First
+            # Sunday of Advent. Both are the ENGINE's n. 60 to compute, and
+            # neither is anything the conference did.
+            #
+            # A YEAR THE CELEBRATION IS ABSENT FROM ALTOGETHER IS NOT EVIDENCE
+            # EITHER WAY, which is why the test is not simply "seen in every
+            # year". A memorial suppressed by a Sunday is printed nowhere, so
+            # demanding three sightings would demote a real standing move to a
+            # two-year table and put the celebration back on a date the
+            # country abandoned. What must agree is every year that SAYS
+            # anything: seen somewhere, and seen at the same moved date.
+            # `movedInYear`'s docblock has the general form of the argument --
+            # the evidence rules the rules out -- and this is the branch it
+            # was not applied to.
+            seen = {
+                year
+                for year in a["years"]
+                for rows in a["country"][year].values()
+                if any(fold(r["name"]) == _key for r in rows)
+            }
+            if len(mmdds) == 1 and seen <= {year for year, _d, _r in occ}:
                 moves[cid] = next(iter(mmdds))
             else:
                 moved_in_year[cid] = {year: date[5:] for year, date, _r in occ}

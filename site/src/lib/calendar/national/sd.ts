@@ -42,7 +42,9 @@ export const SUDAN: NationalCalendar = {
 		'josephine-bakhita': keptAs('s')
 	},
 	moves: {
-		'josephine-bakhita': { to: '02-08' },
 		'pius-v': { to: '04-28' }
+	},
+	movedInYear: {
+		'josephine-bakhita': { 2026: '02-08' }
 	}
 };
