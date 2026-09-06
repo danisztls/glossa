@@ -201,8 +201,9 @@
 	 * dark ground, so it is a decoration and `tokens.css` says so. This page
 	 * spends it on the row's 1.35rem icon — beside the work's own name, so
 	 * nothing is told apart by colour alone — and on the Bible section's
-	 * stage figures and card edges. The words and the notation chips stay
-	 * `--color-accent`, which owes 4.5:1 and clears it.
+	 * stage figures and card edges. The card names stay `--color-accent` and
+	 * the notation chips are `--color-text-muted`, both of which owe 4.5:1 and
+	 * clear it.
 	 */
 	const WORKS = [
 		{
@@ -792,10 +793,12 @@
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		color: var(--pigment, var(--color-accent));
+		color: var(--color-accent);
+		color: color-mix(in oklab, var(--pigment) 85%, var(--color-text));
 		margin-inline-start: -0.06em;
-		/* 1.6rem is large text: a 3:1 floor, which this family clears
-		   everywhere. `.pick-name` two rules down is 1.1rem and does not. */
+		/* Lifted like the shelf icons, and for the same reason. 1.6rem is large
+		   text: a 3:1 floor, which the lifted family clears everywhere.
+		   `.pick-name` further down is 1.1rem and does not. */
 	}
 
 	.stage-why {
@@ -1054,13 +1057,49 @@
 	}
 
 	/*
+	 * THE DIAL IS TURNED UP HERE, because a dot and an icon are not the same
+	 * surface. `CitedBy` spends these at 50% on a 0.4em dot, where a whole
+	 * column of them sits within one glance and the eye reads them RELATIVE to
+	 * each other; a shelf icon stands alone in a row, half a page from the
+	 * next one, and has to read as a colour on its own. At 50% the family runs
+	 * chroma 0.026-0.094 — eight marks that a reader comparing them side by
+	 * side can tell apart and a reader scrolling past cannot.
+	 *
+	 * 85% of the seed, then 85% of THAT against the theme's own text colour,
+	 * and the second mix is what makes the first affordable. Strength alone
+	 * buys separation and spends contrast on a dark ground — the seeds are
+	 * dark and so is the ground, so more seed is less legible, 2.34:1 at 85%
+	 * neat. Mixing toward `--color-text` moves a pigment AWAY from the ground
+	 * in either family, darker on paper and lighter on a dark one, and costs
+	 * only what it takes back from chroma.
+	 *
+	 * Measured over the eight, against `--color-bg`, `--color-bg-elevated` and
+	 * OLED black: separation 4.3 -> 6.2 (OKLab x100), chroma 0.049-0.118, and
+	 * contrast 4.70 -> 5.37 on paper, 3.70 -> 4.13 on sepia, 3.39 -> 3.17 on a
+	 * dark ground. Only the last is a loss and it stays above 3:1, which is
+	 * more than a decoration beside its own name in words has to clear.
+	 *
+	 * `:root:not([data-mono])` IS LOAD-BEARING. `data-mono` sets the dial to
+	 * 0% on the root, and a rule further down the tree would beat it — this
+	 * page would keep its colours in the one mode whose whole contract is that
+	 * nothing anywhere is told apart by hue. Gated, the override does not
+	 * apply there and the root's 0% inherits down as it should. The lift needs
+	 * no gate: under mono `--pigment` is already `--color-text-muted`, and
+	 * mixing a grey toward the text colour gives a grey.
+	 */
+	:global(:root:not([data-mono])) .book-grid,
+	:global(:root:not([data-mono])) .suggestion {
+		--pigment-strength: 85%;
+	}
+
+	/*
 	 * Declared twice on purpose, which is the trick `CitedBy`'s dot uses: a
 	 * browser without `color-mix()` drops the pigment as invalid and keeps
 	 * the accent, so the icon is the house red rather than the body colour.
 	 */
 	.book-icon {
 		color: var(--color-accent);
-		color: var(--pigment, var(--color-accent));
+		color: color-mix(in oklab, var(--pigment) 85%, var(--color-text));
 	}
 
 	.feature-icon,
@@ -1087,8 +1126,11 @@
 		color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
 	}
 
+	/* Hover deepens the same mix rather than changing the hue: a mark that
+	   answers by becoming a different colour is a mark that was not the row's
+	   colour to begin with. */
 	.book:hover .book-icon {
-		color: color-mix(in srgb, var(--pigment) 70%, var(--color-text));
+		color: color-mix(in oklab, var(--pigment) 60%, var(--color-text));
 	}
 
 	/*
@@ -1124,15 +1166,6 @@
 	}
 
 	/*
-	 * THE EXAMPLE IS DRAWN AS SOMETHING TO TYPE, in the idiom the shortcut
-	 * sheet's keycaps already use: the interface face on the page's own ground
-	 * inside a hairline. NOT a monospace — this site has exactly two faces and
-	 * `docs/reading.md` splits them on authorship, so a third introduced for
-	 * eight scraps of notation would be a new axis to maintain everywhere. The
-	 * box is what says "put this in the box at the top"; tabular figures for
-	 * the same reason the step gutter has them.
-	 */
-	/*
 	 * The sentence and its specimen on one line, the specimen pushed to the
 	 * trailing edge so the notations form a column of their own down the grid.
 	 * Baselines, not boxes: a sentence at 0.8rem and a chip with its own
@@ -1166,14 +1199,29 @@
 		white-space: nowrap;
 		text-decoration: none;
 		border-radius: var(--radius-sm);
-		/* The notation carries the accent because the notation IS the lesson —
-		   read down the trailing edge of the grid and the column of specimens is
-		   the only thing on the page that has to be noticed twice. Tinted rather
-		   than filled: it is a specimen, not a control, and a solid accent chip
-		   would read as a button to press. */
-		color: var(--color-accent);
-		border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
-		background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg-elevated));
+		/*
+		 * MUTED, AND IT WORE THE ACCENT FOR A DAY. The chip is on the "Cited as"
+		 * row now, and that row is 0.8rem of `--color-text-muted` — so an accent
+		 * chip was the loudest thing on the quietest line of the card, shouting
+		 * a sentence it is only the exhibit for. Its own colour is the row's:
+		 * the label, the clause and the specimen are one line and read as one.
+		 *
+		 * WHAT MAKES IT FINDABLE IS THE BOX, NOT THE COLOUR. It is drawn as
+		 * something to type, in the idiom the shortcut sheet's keycaps already
+		 * use — the interface face on the page's own ground inside a hairline —
+		 * and a column of those down the trailing edge is a column whether or
+		 * not it is coloured. A specimen is not a control, and a chip loud
+		 * enough to be one reads as a button to press.
+		 *
+		 * NOT A MONOSPACE, which is the other way a reader might be told "this
+		 * is notation": the site has exactly two faces and `docs/reading.md`
+		 * splits them on authorship, so a third introduced for eight scraps
+		 * would be a new axis to maintain everywhere. Tabular figures for the
+		 * same reason the stage numerals have them.
+		 */
+		color: var(--color-text-muted);
+		border: 1px solid var(--color-border);
+		background: var(--color-bg-elevated);
 	}
 
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,

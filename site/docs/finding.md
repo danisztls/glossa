@@ -275,9 +275,30 @@ contrast, which is exactly what `tokens.css` says it is. So the guide spends it
 on the row's 1.35rem icon, on the 1.6rem serif figures that number the stages
 (large text, a 3:1 floor the family clears), and on the cards' borders and
 hover washes, which are not text at all. The card names, the running words and
-the notation chips stay `--color-accent`, which owes 4.5:1 and clears it. A
+the notation chips are `--color-text-muted` — the colour of the "Cited as"
+line they sit on, since an accent chip was the loudest thing on the quietest
+line of the card. Both owe 4.5:1 and clear it. A
 pigment on 0.8rem text would have shipped a contrast failure in one theme only,
 which is the kind nobody finds.
+
+**THE GUIDE TURNS THE DIAL UP, AND THAT IS THE PART WITH A TRAP IN IT.** A
+0.4em dot and a 1.35rem icon are not the same surface: the panel reads a column
+of dots in one glance, where a shelf icon stands alone in a row half a page from
+the next and has to read as a colour on its own. At the panel's 50% the family
+runs chroma 0.026–0.094 — eight marks a reader comparing them side by side can
+tell apart and a reader scrolling past cannot. `/schola` runs at 85% and then
+mixes the mark 85% toward `--color-text`, because strength alone buys separation
+and spends contrast on a dark ground (the seeds are dark, and so is the ground —
+2.34:1 at 85% neat), while a lift toward the text colour moves a pigment away
+from the ground in either family. Together: separation 4.3 → 6.2, chroma up
+about 40%, contrast 4.70 → 5.37 on paper and 3.70 → 4.13 on sepia, and 3.39 →
+3.17 in dark, the one loss and still over 3:1.
+
+**`data-mono` sets the dial on the ROOT, so an override anywhere below beats
+it** — and the page would keep its colours in the one mode whose entire contract
+is that nothing is told apart by hue. `:root:not([data-mono])` on the override
+is what prevents that, and `pigments.test.ts` fails on an ungated one; nothing
+renders under vitest, so a source scan is the only witness there can be.
 
 **HUE CARRIES NOTHING BY ITSELF.** Every mark wearing a pigment sits beside the
 work's name in words, so the colour is a second channel over a complete first

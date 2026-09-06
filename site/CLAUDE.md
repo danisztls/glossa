@@ -630,11 +630,24 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   is what a shared vocabulary looks like when it is right and what a collision
   looks like when it is not** — check `tokens.css` before opening a token
   family, not after.
+- **`/schola` TURNS THE DIAL UP TO 85%, AND GATES IT OFF MONOCHROME.** A dot
+  and an icon are not the same surface: `CitedBy` reads a column of dots in one
+  glance, where a shelf icon stands alone half a page from the next and has to
+  be a colour on its own — at 50% the family runs chroma 0.026-0.094, which a
+  reader comparing side by side can tell apart and a reader scrolling cannot.
+  Strength alone spends contrast on a dark ground (the seeds are dark and so is
+  the ground), so the icons are mixed 85% toward `--color-text` afterwards,
+  which moves a pigment AWAY from the ground in either family. Separation
+  4.3 -> 6.2, contrast up on paper and sepia and still over 3:1 in dark.
+  **`data-mono` sets the dial on the ROOT, so any override below beats it** —
+  `:root:not([data-mono])` is what keeps that mode's contract, and
+  `pigments.test.ts` fails on an ungated one.
 - **WHERE A PIGMENT MAY GO IS ARITHMETIC.** The family resolves to 3.4-4.2:1 on
   a dark ground, which is a decoration's contrast and not a text colour's — so
   `/schola` spends it on a 1.35rem icon, on the 1.6rem serif stage figures
   (large text, a 3:1 floor it clears) and on card borders and washes, and its
-  words and notation chips stay `--color-accent`. Hue is the second channel and
+  card names stay `--color-accent` and its notation chips are muted, being the
+  quietest line on the card. Hue is the second channel and
   never the first: every mark sits beside the work's own name, which is what
   lets `data-mono` turn the set off and lose nothing.
 - **A CARD'S NAME IS ACCENT AT REST, because the card IS a link.** Holding the

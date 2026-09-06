@@ -94,6 +94,33 @@ describe('the shelf pigments', () => {
 		expect(TOKENS.slice(at, TOKENS.indexOf('\n}', at))).toContain('--pigment-strength: 0%;');
 	});
 
+	/*
+	 * `--pigment-strength` is a dial and a consumer may turn it up — `/schola`
+	 * runs at 85%, because a 1.35rem icon standing alone in a row has to read
+	 * as a colour where a 0.4em dot in a column of dots is read against its
+	 * neighbours. But `data-mono` sets the dial to 0% ON THE ROOT, so an
+	 * override anywhere below beats it, and the one mode whose entire contract
+	 * is "nothing anywhere is told apart by hue" would keep its colours on that
+	 * page. Nothing renders under vitest, so the only witness is this scan.
+	 */
+	it('lets a consumer turn the dial up only outside monochrome', () => {
+		for (const file of walk(SRC)) {
+			if (file.endsWith('tokens.css')) continue;
+			const source = readFileSync(file, 'utf8');
+			for (const m of source.matchAll(/--pigment-strength:\s*(\d+)%/g)) {
+				// Comments stripped first: the paragraph ABOVE this very rule
+				// explains the gate, and matching prose would pass every time.
+				const rule = source
+					.slice(source.lastIndexOf('}', m.index), m.index)
+					.replace(/\/\*[\s\S]*?\*\//g, '');
+				expect(
+					rule,
+					`${file} sets --pigment-strength: ${m[1]}% without excluding [data-mono]`
+				).toContain(':not([data-mono])');
+			}
+		}
+	});
+
 	it('is never referenced by a name it does not have', () => {
 		const used = new Set<string>();
 		for (const file of walk(SRC)) {

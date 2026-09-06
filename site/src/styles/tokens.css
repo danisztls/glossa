@@ -431,7 +431,8 @@
 	 * on a 1.35rem icon standing beside the work's own name, on the 1.6rem
 	 * serif figure that numbers a stage — LARGE text, a 3:1 floor, which the
 	 * whole family clears — and on card borders and washes, which are not text
-	 * at all. Its running words and its notation chips stay `--color-accent`.
+	 * at all. Its running words stay `--color-accent` and its notation chips
+	 * are `--color-text-muted`, the colour of the line they sit on.
 	 * A new consumer owes the same arithmetic before it picks a surface.
 	 *
 	 * ONE DEFINITION FOR EVERY THEME. Each is mixed toward the theme's own
