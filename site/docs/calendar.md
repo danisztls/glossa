@@ -219,6 +219,24 @@ Sunday (a rule of `year.ts`), an observance suppressed by the day it falls on,
 a conference that changed a transfer inside the oracle's window, and a patronal
 solemnity on the LAST weekday of a month, which `MovableRule` cannot spell.
 
+**A `days: 0` row is held by a disagreement about WORDS, and Japan was the
+one** (2026-09-06). The engine agreed about the rank, colour and precedence of
+all 1,095 days; what held the calendar was 10 September, where this site prints
+the form the Japanese Church's own calendars print and GCatholic names the same
+205 martyrs by their leader. That is a row for `ACCEPTED_VARIANTS` — the
+question to ask of a held calendar with no day differences is which book each
+side is copying, not which is right.
+
+**And the fold that check runs through kept the letters of one script.**
+`[^a-z0-9]` is not a spelling of "punctuation": every name in the five
+calendars anchored in Japanese, Korean or Chinese folded to its DIGITS, so
+`성 김대건 안드레아 사제` and every other Korean name folded alike to the empty
+string and matched. Japan's two divergences were caught only because one name
+says 205 and the other 204. **A script-aware fold reports the same divergences
+and no others** — the derived layers took their names from the feeds, so
+nothing was hiding behind it — which is the measurement that made the change
+free, not the reason it was needed.
+
 **A national proper's name is transcribed, and the check that remains is
 real.** These celebrations have no Latin original, so the site carries the
 conference's own wording and the oracle checks names in the anchor language

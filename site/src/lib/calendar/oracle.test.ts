@@ -114,7 +114,7 @@ const files = HAVE_ORACLE
 const PSALTER: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4 };
 
 /**
- * Fold a Latin name to what two typesetters cannot disagree about.
+ * Fold a name to what two typesetters cannot disagree about.
  *
  * GCatholic prints the ligatures (`Mariæ`, `cœli`) and this calendar prints
  * the digraphs, which is a difference in the FONT of a name and not in the
@@ -122,6 +122,18 @@ const PSALTER: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4 };
  * `SS.` — as do the accents Polish and Vietnamese names carry into a Latin
  * line. What survives is the letters, which is what a disagreement would have
  * to be about to be worth reporting.
+ *
+ * IT KEPT THE LETTERS OF ONE SCRIPT UNTIL 2026-09-06, AND `[^a-z0-9]` IS NOT
+ * A SPELLING OF "PUNCTUATION". Five calendars are anchored in a language that
+ * writes no Latin — Japan, Korea, Hong Kong, Macau and Taiwan — and every
+ * name in them folded to its DIGITS: `성 김대건 안드레아 사제` to the empty
+ * string, which equals the empty string every other Korean name folded to. So
+ * the name check passed vacuously wherever it was not comparing numerals, and
+ * Japan's two real divergences were caught only because one name says 205 and
+ * the other 204. Measured over all five before the change: a script-aware
+ * fold reports the same divergences and no others, so nothing was hiding
+ * behind it — but nothing was being checked either, and a check that cannot
+ * fail is worse than none.
  */
 function fold(name: string): string {
 	return name
@@ -130,7 +142,7 @@ function fold(name: string): string {
 		.replace(/æ/gi, 'ae')
 		.replace(/œ/gi, 'oe')
 		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, ' ')
+		.replace(/[^\p{L}\p{N}]+/gu, ' ')
 		.trim();
 }
 
@@ -198,6 +210,14 @@ const ACCEPTED_VARIANTS: ReadonlyArray<readonly [string, string]> = [
 	['Ss. Xysti II, papae, et sociorum, martyrum', 'Ss. Xysti, papæ, et sociorum, martyrum'],
 	['S. Turibii de Mogrovejo, episcopi', 'S. Turibii de Mongrovejo, episcopi'],
 	['S. Wenceslai, martyris', 'S. Venceslai, martyris'],
+	// THE ONE NATIONAL PROPER IN THIS TABLE, and the only row not in Latin or
+	// English. Japan's 10 September: this site prints the form the Japanese
+	// Church's own calendars print — the Hiroshima diocese's, citing the
+	// Bishops' Conference's liturgy office, reads `09月10日 日本205福者殉教者
+	// （記念日・赤）` — and GCatholic names the same group by its leader, which
+	// is the Pauline saint-of-the-day style. Neither disagrees about which
+	// celebration is meant, and the two counts are the same 205 men.
+	['日本205福者殉教者', '福者セバスチャン木村司祭と204殉教者'],
 	[
 		'Saints Pedro Bautista, Paul Miki and Companions, Martyrs',
 		'Saints Pedro Baustista, Paul Miki and companions, martyrs'

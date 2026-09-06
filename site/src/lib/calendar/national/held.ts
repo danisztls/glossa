@@ -8,11 +8,20 @@
  * being right — so a country whose layer the oracle still disagrees with is
  * kept out of the picker until it does not.
  *
- * WHY THESE THIRTY-FOUR AND NOT OTHERS: they are exactly the calendars
+ * WHY THESE THIRTY-THREE AND NOT OTHERS: they are exactly the calendars
  * `oracle.test.ts` still finds a difference in, and that test asserts the
  * list is exactly that set. So a layer that starts failing cannot be
  * published by accident, and one that is fixed cannot stay held by neglect —
  * the test fails in both directions and names the file to edit.
+ *
+ * JAPAN LEFT THIS LIST ON 2026-09-06 AND IS THE SHAPE TO LOOK FOR NEXT. It
+ * was the only row here with `days: 0` — the engine agreed about the rank,
+ * colour and precedence of all 1,095 days — and what held it was two names
+ * for one celebration, 10 September, where this site prints the form the
+ * Japanese Church's own calendars print and GCatholic names the same group of
+ * martyrs by its leader. That is a row for `ACCEPTED_VARIANTS`, not a defect:
+ * a `days: 0` calendar is held by a disagreement about WORDS, and the
+ * question to ask of one is which book each side is copying.
  *
  * THE NUMBERS ARE THE EVIDENCE AND THEY ARE SMALL. Each is out of 1,095 days
  * (three years) per calendar: most differ on one to five, and the largest is
@@ -55,7 +64,6 @@ export const HELD_CALENDARS: Record<string, { days: number; names: number; feed:
 	ht: { days: 3, names: 0, feed: 'HT' },
 	id: { days: 3, names: 0, feed: 'ID' },
 	ie: { days: 2, names: 2, feed: 'IE' },
-	jp: { days: 0, names: 2, feed: 'JP' },
 	mo: { days: 3, names: 0, feed: 'MO' },
 	mp: { days: 3, names: 0, feed: 'MP' },
 	mt: { days: 3, names: 0, feed: 'MT' },
