@@ -298,16 +298,29 @@
 				shares, to save a reader one keystroke that the line underneath
 				already names.
 			-->
+			<!--
+				THE SENTENCE LEADS AND THE SPECIMENS FOLLOW IT, which is the
+				order the section had backwards until the heading came off.
+				Under a rule reading "Or type a reference" the chips could go
+				first and the line beneath them was a footnote; with no rule
+				they were three unexplained boxes over the small print that
+				said what they were, so a reader met the exhibit before the
+				claim. Now the section opens by naming the control and the
+				specimens are what it opens onto — which is also why the
+				weights are the other way round from before: the line is the
+				page's own text and the chips are quiet.
+
+				`jumpbox.hint` rather than a fourth new string, and it is the
+				right sentence rather than the cheap one: it names both
+				shortcuts, and it is already the line the shortcut sheet shows
+				for this control.
+			-->
+			<p class="find-lead">{t('jumpbox.hint')}</p>
 			<ul class="specimens">
 				{#each specimens as specimen (specimen.key)}
 					<li class="specimen">{specimen.text}</li>
 				{/each}
 			</ul>
-			<!-- `jumpbox.hint` rather than a fourth new string, and it is the
-			     right sentence rather than the cheap one: it names both
-			     shortcuts, and it is already the line the shortcut sheet shows
-			     for this control. -->
-			<p class="find-hint">{t('jumpbox.hint')}</p>
 		</section>
 	{/if}
 </div>
@@ -374,6 +387,11 @@
 	 * characters each, which a grid would space out across the column as
 	 * though the gaps meant something.
 	 */
+	.find-lead {
+		margin: 0 0 0.55rem;
+		font-size: 0.9rem;
+	}
+
 	.specimens {
 		list-style: none;
 		display: flex;
@@ -391,6 +409,15 @@
 	 * third introduced for three scraps of notation would be a new axis to
 	 * maintain everywhere. The box is what says "put this in the box at the
 	 * top"; tabular figures so the numerals sit evenly.
+	 *
+	 * THE GROUND IS THE PAGE'S, WHICH IS WHAT THE PARAGRAPH ABOVE ALWAYS
+	 * CLAIMED AND THE DECLARATION DID NOT DO. It was `--color-bg-elevated`,
+	 * copied from `/schola` with the rest of the chip, where it collides with
+	 * nothing because that page's rows are deliberately not cards. Here it
+	 * sits a centimetre under seven cards drawn in exactly that ground, that
+	 * border and that radius, so three inert specimens were three small cards
+	 * — and a card on this page is a link. The hairline is what makes a
+	 * specimen findable; the fill is what made it look pressable.
 	 */
 	.specimen {
 		padding: 0.15rem 0.5rem;
@@ -398,21 +425,15 @@
 		font-size: 0.85rem;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
-		color: var(--color-text);
+		color: var(--color-text-muted);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
-		background: var(--color-bg-elevated);
 	}
 
-	.find-hint {
-		margin: 0.75rem 0 0;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
-
+	/* The chips carry no fill to strip now, so print keeps only the rule that
+	   is about paper: a specimen may not be broken across two pages. */
 	@media print {
 		.specimen {
-			background: none;
 			break-inside: avoid;
 		}
 	}

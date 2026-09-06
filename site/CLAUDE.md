@@ -880,6 +880,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   `visually-hidden` and every one still exists, since three rules labelling what
   the cards and specimens under them already say made the page read as a form.
   The ruled-heading rule has now been deleted twice and is not coming back.
+  **So the sentence leads and the specimens follow it, and the chips carry no
+  fill**: with no rule above them they were three unexplained boxes over the
+  small print naming them, in `--color-bg-elevated` a centimetre under seven
+  cards drawn in that same ground, border and radius. A hairline makes a
+  specimen findable; the fill made it look pressable.
 - **`/` KEPT THREE ENGLISH-ONLY KEYS AND KEPT ITS `CHROME_PATHS` ROW**
   (2026-09-06, by direction) — the one exception to the gate that holds three
   pages unpublished. The keys were translated later the same day and the

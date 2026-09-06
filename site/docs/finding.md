@@ -72,6 +72,18 @@ row would be a longer row teaching nothing more. The Bible's is derived from the
 reader's own citation grammar for the reason `/schola`'s is; the others are
 gated on the work being in the build.
 
+**The sentence leads and the specimens follow it, and they carry no fill.** Both
+followed the heading coming off. Under a rule the chips could go first and the
+line beneath them was a footnote; with no rule they were three unexplained boxes
+over the small print saying what they were, so the reader met the exhibit before
+the claim — the line is the page's own text now and the chips are quiet. And the
+chip's ground was `--color-bg-elevated`, copied from `/schola` where it collides
+with nothing because that page's rows are deliberately not cards; a centimetre
+under seven cards in exactly that ground, border and radius, three inert
+specimens were three small cards, and a card on this page is a link. **The
+hairline is what makes a specimen findable; the fill is what made it look
+pressable.**
+
 **The middle way in was four doors and is the catalogue itself** (2026-09-06, by
 direction). The doors were Bible, Prayers, Library and Learn — two works a reader
 wants most, plus two PAGES, one of whose entire content was "the catalogue is one
