@@ -176,12 +176,12 @@
 			type: 'social-doctrine'
 		},
 		{
-			key: 'magisterium',
-			titleKey: 'nav.magisterium',
-			icon: 'landmark',
-			href: '/documenta',
-			taglineKey: 'document.library.tagline',
-			type: 'document'
+			key: 'preces',
+			titleKey: 'nav.prayers',
+			icon: 'flame',
+			href: '/preces',
+			taglineKey: 'prayers.landing.tagline',
+			type: 'prayer'
 		},
 		{
 			key: 'ius',
@@ -192,12 +192,12 @@
 			type: 'canon-law'
 		},
 		{
-			key: 'preces',
-			titleKey: 'nav.prayers',
-			icon: 'flame',
-			href: '/preces',
-			taglineKey: 'prayers.landing.tagline',
-			type: 'prayer'
+			key: 'magisterium',
+			titleKey: 'nav.magisterium',
+			icon: 'landmark',
+			href: '/documenta',
+			taglineKey: 'document.library.tagline',
+			type: 'document'
 		},
 		{
 			// THE CARD THE NAV BAR CANNOT CARRY. `+layout.svelte` leaves
