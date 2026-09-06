@@ -1,6 +1,7 @@
 <!--
-	The Advanced panel: the offline library, and the offline switch that
-	decides what the library is for.
+	The Advanced panel: the offline library, the offline switch that decides
+	what the library is for, and — quietly, at the foot — the build this page
+	is running.
 
 	WHY THE TWO ARE ONE PANEL. They were a fold inside `SettingsMenu`'s
 	popover — a "+ Advanced" row that uncovered a switch and a link to a second
@@ -66,6 +67,7 @@
 	import { offline } from '$lib/offline.svelte';
 	import { serviceWorker } from '$lib/sw.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import { version } from '$app/environment';
 	import type { WaveId } from '$lib/sw-policy';
 	import Icon from './Icon.svelte';
 
@@ -366,6 +368,32 @@
 					     is the width this panel was opened to buy. -->
 					<p class="lede">{t('offline.hint')}</p>
 				</section>
+
+				<!--
+					THE BUILD THIS PAGE IS RUNNING, and the last line of the panel
+					because it is the last thing anyone here needs. It sat in the site
+					footer until 2026-09-06, on the argument that "did the update
+					actually land" is asked WHILE looking at a page that might be
+					stale, about that page — and that argument is what allows the move
+					rather than what forbids it: a `<dialog>` opens over the document
+					already loaded, so the answer is still about the page in front of
+					you. A route would not be; the panel's own docblock says why it is
+					not one.
+
+					Under the offline switch and not above the library, because the
+					two blocks above are things to DO and this is a thing to read
+					back. `.build` rather than a third `.block`: a rule and a title
+					would announce it, and a reader who never wonders about it should
+					be able to not see it.
+
+					Untranslated on purpose. `vite.config.ts`'s `buildId` is a date and
+					a commit — the same string in every language, and the string
+					`usage.ts` stores to tell a landed update from an offered one.
+					`-dirty` means the tree held changes that commit does not describe,
+					which is the ordinary case for a deploy shipped from a working
+					tree.
+				-->
+				<p class="build">{version}</p>
 			</div>
 		</div>
 	{/if}
@@ -395,9 +423,23 @@
 	}
 
 	/* The last thing in its block is the sentence under the switch, and a
-	   bottom margin there would be a gap the panel does not need. */
-	.block:last-child .lede {
+	   bottom margin there would be a gap the panel does not need.
+	   `:last-of-type` and not `:last-child`, because the build line below is
+	   the body's last child and is not a block. */
+	.block:last-of-type .lede {
 		margin-block-end: 0;
+	}
+
+	/* Quieter than everything above it, and separated by space rather than by
+	   the rule `.block + .block` draws: it is not a third subject, it is the
+	   panel signing its name. */
+	.build {
+		margin: 1.1rem 0 0;
+		color: var(--color-text-muted);
+		opacity: 0.65;
+		font-size: 0.7rem;
+		font-variant-numeric: tabular-nums;
+		text-align: end;
 	}
 
 	/* The switch sits at the end of its own title's row, which is `.shelf-line`

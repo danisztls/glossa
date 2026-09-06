@@ -165,11 +165,14 @@ the new document opens, or it is claimed by the old worker and the reader pays
 a full load to arrive on the same stale shell. And the wait for
 `controllerchange` times out, because `activate` sweeps two caches first.
 
-**The build id is legible, and printed in the footer.** SvelteKit's default is
-`Date.now()`, which names the shell cache and is what `usage.ts` compares to
-tell a landed update from an offered one — all correct, and unreadable. It is a
-UTC minute and the commit, `-dirty` when the tree held changes that commit does
-not describe. The minute cannot be dropped in favour of the sha, since a deploy
+**The build id is legible, and printed at the foot of `AdvancedSheet`** (the
+site footer until 2026-09-06; a dialog opens over the document already loaded,
+so it still answers "did this update land" about the page in front of you).
+SvelteKit's default is `Date.now()`, which names the shell cache and is what
+`usage.ts` compares to tell a landed update from an offered one — all correct,
+and unreadable. It is a UTC minute and the commit, `-dirty` when the tree held
+changes that commit does not describe — the ordinary case, since the check
+reads the WHOLE repository and a deploy ships a working tree. The minute cannot be dropped in favour of the sha, since a deploy
 ships one person's working tree and two builds from one commit are the normal
 case. `vite.config.ts` is evaluated four times per build in four processes, so
 the first to compute the id exports it and the rest inherit it — without that,

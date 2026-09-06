@@ -471,8 +471,8 @@
 				the language of its own text: this is Latin sitting in a page that may
 				be in any of thirty-four languages, and a screen reader told nothing
 				better will pronounce it as though it were the surrounding one.
-				Untranslated, like the build string below — a motto is a fixed form of
-				words, not a sentence to render in the reader's language.
+				Untranslated on purpose: a motto is a fixed form of words, not a
+				sentence to render in the reader's language.
 
 				`footer.notEndorsed` is the one-line form of
 				`colophon.whatThisIsStanding`, which the link two lines above it
@@ -484,23 +484,6 @@
 				<p><a href="/colophon">{t('colophon.title')}</a></p>
 				<p lang="la">Ad maiorem Dei gloriam</p>
 				<p>{t('footer.notEndorsed')}</p>
-				<!--
-					IN THE COLUMN, not under the whole imprint: it is a fourth line of
-					the same stack, and centring it against the mark as well would have
-					put it on the footer's midline while the three lines it belongs
-					with sit off it.
-
-					The build this page is running, and the reason it is not behind the
-					colophon link: what it answers is "did the update actually land",
-					which is a question asked WHILE looking at a page that might be
-					stale, about that page. A number one navigation away answers it
-					about the document you had to load to read it.
-
-					Untranslated on purpose. `vite.config.ts`'s `buildId` is a date and
-					a commit — the same string in every language, and the string
-					`usage.ts` stores to tell a landed update from an offered one.
-				-->
-				<span class="build">{version}</span>
 			</div>
 		</div>
 	</footer>
@@ -798,17 +781,5 @@
 		margin: 0;
 		color: var(--color-text-muted);
 		line-height: 1.9;
-	}
-
-	/* The last line of the column, quieter than the three above it: it is for
-	   the person maintaining the site, and a reader who never wonders about it
-	   should be able to not see it. */
-	.build {
-		display: block;
-		margin-block-start: 0.4rem;
-		color: var(--color-text-muted);
-		opacity: 0.65;
-		font-size: 0.7rem;
-		font-variant-numeric: tabular-nums;
 	}
 </style>

@@ -2737,12 +2737,14 @@ not carry its own context; move it away from that link and it would have to say
 more. Every dictionary carries it.
 
 **The lines are one chrome, and that is load-bearing rather than lazy.**
-Colophon link, motto, disclaimer, then `.build` — one column, `.site-footer p`
-in one rule, spacing from `line-height` rather than margins so the even leading
-is one number. Give the motto its own face or step and the stack reads as a
-heading with two captions instead of an imprint. `.build` is IN the column and
-not under the whole imprint: centred against the mark as well, it would sit on
-the footer's midline while the three lines it belongs with sit off it.
+Colophon link, motto, disclaimer — one column, `.site-footer p` in one rule,
+spacing from `line-height` rather than margins so the even leading is one
+number. Give the motto its own face or step and the stack reads as a heading
+with two captions instead of an imprint. **The build id was a fourth line here
+until 2026-09-06 and is now the foot of `AdvancedSheet`** — a dialog opens over
+the document already loaded, so it answers "did this update land" about the
+page in front of you exactly as the footer did, without spending a line of the
+imprint on the one reader who asks.
 
 **The colophon link is the one exception, and it was made by DELETING.** The
 footer overrode `a` back to `--color-text-muted` with `text-decoration: none`,
