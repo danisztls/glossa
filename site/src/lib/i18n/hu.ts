@@ -42,6 +42,98 @@ export const hu: Dictionary = {
 	'nav.learn': 'Tanulás',
 	'library.landing.tagline':
 		'A teljes gyűjtemény, polcról polcra — azzal együtt, hol hagyta abba, és mit jelölt meg.',
+	'schola.landing.title': 'Hol kezdje',
+	'schola.landing.tagline':
+		'Rövid útmutató ahhoz, ami itt van: mi az egyes könyvek mivolta, hogyan írjuk le a rájuk való hivatkozást, hogyan találunk meg egy helyet, és milyen olvasási rendeket ajánlott az Egyház.',
+	'schola.start.heading': 'Ha ez mind új Önnek',
+	'schola.start.body': 'Kezdje ezzel: ',
+	'schola.start.bodyAfter':
+		' — ugyanaz a tanítás, mint a Katekizmusban, sokkal rövidebben, kérdésekben és feleletekben. Körülbelül tizedakkora terjedelmű, és semmit sem tételez föl.',
+	'schola.bible.heading': 'Ha még sosem olvasta a Szentírást',
+	'schola.bible.library':
+		'Nem egy könyv, hanem hetvenhárom, több mint ezer év alatt írva, és abban a rendben egybekötve, amelyben az Egyház megállapodott — nem az események rendjében, és nem is a legkönnyebben olvashatóban. A legtöbben az első lapon kezdik, és néhány héttel később abbahagyják, egy hosszú, ősi törvényről szóló fejezetben, mert még senki sem mondta meg nekik, mire való.',
+	'schola.bible.step.gospel': 'Kezdje egy evangéliummal',
+	'schola.bible.start':
+		'Egy a négy rövid könyv közül Jézus életéről, jóval beljebb, nem elöl. Nem a mi ötletünk: az Egyház egyik zsinata kérte, hogy tanítsák a Szentírás helyes használatát, „főképpen az Újszövetségét és mindenekelőtt az evangéliumokét”. Egyiket sem nevezte meg külön, és mi sem nevezzük meg.',
+	'schola.bible.whichGospel':
+		'Hármat szokás ajánlani, három különböző okból. Bármelyiknél lenni jó.',
+	'schola.bible.gospel.mark':
+		'A legrövidebb. Egy délután alatt végigolvasható, és kezdetben többet ér egyet befejezni, mint a legjobbat kiválasztani.',
+	'schola.bible.gospel.luke':
+		'Egy hiten kívül álló embernek íródott, aki rendben lejegyezve akarta a történetet — ami éppen Ön is lehet. Töretlenül folytatódik az Apostolok Cselekedeteiben, tehát valójában egy hosszabb könyv első fele.',
+	'schola.bible.gospel.john':
+		'Az, amelyik kimondja, miért íródott: „hogy higgyetek”. Egyszerű szavakkal, és egyenest annak a kérdésére tér, ki Jézus.',
+	'schola.bible.step.acts': 'Aztán ami ezután történt',
+	'schola.bible.thenActs':
+		'Ha befejezett egyet, olvassa el, mit tettek azok, akik ismerték őt, azután, hogy elment.',
+	'schola.bible.acts.why':
+		'Az evangéliumok vége utáni harminc év: néhány tucat rémült ember, és az, hogy amit láttak, hogyan jutott el a birodalom túlsó végébe.',
+	'schola.bible.step.old': 'Aztán a régebbi fele',
+	'schola.bible.thenOld':
+		'Nem az első laptól, és nem az egészet. Néhány hely viszi a történetet, és éppen ezekre utalnak vissza folyton az evangéliumok.',
+	'schola.bible.ot.beginnings': 'Hogyan kezdődik, és hogyan romlik el.',
+	'schola.bible.ot.promise': 'Egy család, és a neki tett ígéret, amely mindnyájukat túléli.',
+	'schola.bible.ot.exodus':
+		'Egy nép, amelyet kihoztak a rabszolgaságból, és a törvény, amelyet kapott, hogy aszerint éljen.',
+	'schola.bible.ot.psalms':
+		'Nem történet: százötven imádság és ének. Egyszerre egyet olvasson, bármilyen sorrendben. Az Egyház mind a mai napig naponta imádkozza őket.',
+	'schola.bible.bothWays':
+		'Ismerős dolgokra fog bukkanni, és ez a lényeg, nem véletlen egybeesés. Az Egyház a régebbi könyveket Krisztus fényében olvassa, az újabbakat pedig annak fényében, ami előttük volt — mindegyik fél magyarázza a másikat, s ezért egyiket sem olvassuk magában.',
+	'schola.guide.heading': 'Tájékozódás',
+	'schola.guide.lede':
+		'A szöveg maga az egész oldal; minden más vezérlőelem, amelyet figyelmen kívül hagyhat, amíg nincs rá szüksége.',
+	'schola.guide.top.heading': 'A sáv minden oldal tetején',
+	'schola.guide.reading.heading': 'A szöveg fölötti sáv',
+	'schola.feature.search':
+		'Írjon be egy hivatkozást a felső mezőbe — fejezetet és verset, egy pont számát, egy dokumentum nevét —, és gépelés közben kiegészíti. Bárhonnan nyomja meg a / vagy a Ctrl+K billentyűt, a ? pedig a többi gyorsbillentyűt mutatja.',
+	'schola.feature.languages':
+		'A felület és a szöveg külön választható, így egy művet olvashat az egyik nyelven, míg a gombok a másikon maradnak. Ahol egy műnek több kiadása van az Ön nyelvén, azok között is választ.',
+	'schola.feature.settings':
+		'Betűméret, világos vagy sötét, szépia, és hogy mennyit kér a jegyzetapparátusból a szöveg mellé.',
+	'schola.feature.offline':
+		'Tegye ki az oldalt a kezdőképernyőre, és alkalmazásként nyílik meg. Egész műveket letölthet, hogy kapcsolat nélkül olvassa őket.',
+	'schola.feature.contents':
+		'Annak a műnek a tagolása, amelyben van — könyvek, részek, fejezetek —, hogy mozogni tudjon benne anélkül, hogy visszatérne az elejére.',
+	'schola.feature.compare':
+		'Ugyanannak a helynek két kiadása egymás mellett — a latin az Ön nyelve mellett, vagy egyik fordítás a másik mellett.',
+	'schola.feature.apparatus':
+		'A kiadás saját jegyzetei és a szöveghez írt bármely magyarázat mellette jelenik meg, nem alatta. A szövegen belüli hivatkozások linkek, így egy utalás oda visz, ahová mutat.',
+	'schola.feature.focus':
+		'Mindent eltüntet a szövegen kívül. A kiút ott marad, ahol a sáv volt, hogy semmi ne rekedjen mögötte.',
+	'schola.books.heading': 'Mi van itt, és hogyan hivatkozunk rá',
+	'schola.books.lede':
+		'Mindegyikük másfajta könyv, és mindegyikre saját számmal hivatkozunk. A példák a formát mutatják: írjon be egy hasonlót a keresőmezőbe, és a helyre jut.',
+	'schola.cite.label': 'Hivatkozása',
+	'schola.what.scripture':
+		'A Szentírás úgy, ahogyan az Egyház elfogadja, mindkét Szövetségben. Itt minden mást ennek fényében olvasunk.',
+	'schola.cite.scripture':
+		'könyv, fejezet és vers, a saját kiadása által nyomtatott rövidítésekkel',
+	'schola.what.catechism':
+		'Annak összefoglalása, amit a Katolikus Egyház hisz, egyetlen kötetben. Maga nem forrás: összegyűjti a Szentírást, az atyákat, a liturgiát és az Egyház tanítását, és minden pont megmondja, honnan való, amit állít.',
+	'schola.cite.catechism': 'pontszám szerint, megszakítás nélkül az első laptól az utolsóig',
+	'schola.what.compendium':
+		'Ugyanaz a tanítás kérdésekben és feleletekben, körülbelül tizedakkora terjedelemben.',
+	'schola.cite.compendium': 'kérdésszám szerint',
+	'schola.what.magisterium':
+		'Amit a pápák és a zsinatok valóban írtak — enciklikák, konstitúciók, dekrétumok, nyilatkozatok —, mindegyik egy meghatározott pillanathoz és egy meghatározott kérdéshez szólva. Mindegyiket latin kezdőszavairól nevezzük.',
+	'schola.cite.magisterium': 'a dokumentum neve, majd egy azon belüli pontszám szerint',
+	'schola.what.social':
+		'Az Egyház tanítása a munkáról, a tulajdonról, a családról, a politikáról és a békéről, ezekből a dokumentumokból egy könyvbe gyűjtve.',
+	'schola.cite.social': 'pontszám szerint, azzal a rövidítéssel, amelyet a mű önmagára használ',
+	'schola.what.law': 'Jog, nem tanítás. Azt mondja meg, mit követel az Egyház, és módosítják.',
+	'schola.cite.law': 'kánon szerint — így hívják a számozott egységeit',
+	'schola.what.doctors':
+		'A teológusok, akiket az Egyház egyháztanítónak nyilvánított. Nem hordoz hivatalos tekintélyt, bármilyen nagy is a szerzője.',
+	'schola.cite.doctors': 'rész, majd kérdés szerint — a Summa saját tagolása',
+	'schola.what.prayers': 'A szavak, amelyekkel az Egyház imádkozik, a latinnal mellettük.',
+	'schola.cite.prayers': 'név szerint; nincsenek idézhető számok',
+	'schola.places.heading': 'Nem szövegek, hanem helyek ezen az oldalon',
+	'schola.what.library':
+		'Az oldal minden műve egy listában, tárgy szerint csoportosítva, nem műfaj szerint.',
+	'schola.what.calendar':
+		'A liturgikus nap — időszak, szín és kit ünneplünk — annak az országnak a naptára szerint, amelyet követ.',
+	'schola.what.bookmarks':
+		'A megjelölt helyek, és az, hol hagyta abba utoljára az egyes műveket. Mindkettő ebben a böngészőben marad, és sehová sem küldjük el.',
 	'ccc.noCounterpart': 'Nincs megfelelője a másik műben',
 	'jumpbox.placeholder': 'Ugrás… (pl. jános 3,16, ccc 1234)',
 	'jumpbox.short': 'Keresés',

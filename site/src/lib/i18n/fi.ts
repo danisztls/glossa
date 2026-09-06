@@ -72,6 +72,97 @@ export const fi: Dictionary = {
 	'nav.learn': 'Opi',
 	'library.landing.tagline':
 		'Koko kokoelma, hylly hyllyltä — ja mihin jäit ja mitä olet merkinnyt.',
+	'schola.landing.title': 'Mistä aloittaa',
+	'schola.landing.tagline':
+		'Lyhyt opas siihen, mitä täällä on: mikä kukin näistä kirjoista on, miten viittaus siihen kirjoitetaan, miten kohta löydetään, ja lukujärjestyksiä, joita kirkko on esittänyt.',
+	'schola.start.heading': 'Jos tämä kaikki on sinulle uutta',
+	'schola.start.body': 'Paras aloitus on tämä: ',
+	'schola.start.bodyAfter':
+		' — sama opetus kuin Katekismuksessa, paljon lyhyempänä, kysymyksinä ja vastauksina. Se on noin kymmenesosan mittainen eikä oleta mitään.',
+	'schola.bible.heading': 'Jos et ole koskaan lukenut Raamattua',
+	'schola.bible.library':
+		'Se ei ole yksi kirja vaan seitsemänkymmentäkolme, kirjoitettuja yli tuhannen vuoden aikana ja koottuja siihen järjestykseen, johon kirkko päätyi — ei siihen järjestykseen, jossa asiat tapahtuivat, eikä siihen, joka on helpoin lukea. Useimmat aloittavat ensimmäiseltä sivulta ja lopettavat muutamaa viikkoa myöhemmin, keskellä pitkää muinaisen lain lukua, koska kukaan ei ole vielä kertonut heille, mitä varten se on.',
+	'schola.bible.step.gospel': 'Aloita evankeliumista',
+	'schola.bible.start':
+		'Yksi neljästä lyhyestä kirjasta Jeesuksen elämästä, syvällä sisällä eikä edessä. Ajatus ei ole meidän: kirkon kirkolliskokous pyysi, että opetettaisiin Raamatun oikeaa käyttöä, ”erityisesti Uuden testamentin ja ennen kaikkea evankeliumien”. Se ei nimennyt yhtäkään erikseen, emmekä mekään nimeä.',
+	'schola.bible.whichGospel':
+		'Kolmea ehdotetaan tavallisesti, kolmesta eri syystä. Mikä tahansa niistä on hyvä paikka olla.',
+	'schola.bible.gospel.mark':
+		'Lyhyin. Voit lukea sen kokonaan yhtenä iltapäivänä, ja yhden loppuun saattaminen on alussa arvokkaampaa kuin parhaan valitseminen.',
+	'schola.bible.gospel.luke':
+		'Kirjoitettu uskon ulkopuolella olevalle, joka halusi kertomuksen järjestykseen pantuna — mikä saatat olla juuri sinä. Se jatkuu suoraan Apostolien tekoihin, joten se on oikeastaan pidemmän kirjan ensimmäinen puolisko.',
+	'schola.bible.gospel.john':
+		'Se, joka sanoo suoraan miksi se kirjoitettiin: ”että te uskoisitte”. Yksinkertaisia sanoja, ja se käy suoraan kysymykseen siitä, kuka Jeesus on.',
+	'schola.bible.step.acts': 'Sitten mitä tapahtui seuraavaksi',
+	'schola.bible.thenActs':
+		'Kun olet saanut yhden luettua, lue mitä hänet tunteneet tekivät sen jälkeen kun hän oli poissa.',
+	'schola.bible.acts.why':
+		'Kolmekymmentä vuotta evankeliumien päättymisen jälkeen: muutama kymmenkunta peloissaan olevaa ihmistä, ja se miten se mitä he olivat nähneet ylsi valtakunnan toiseen laitaan.',
+	'schola.bible.step.old': 'Sitten vanhempi puolisko',
+	'schola.bible.thenOld':
+		'Ei ensimmäiseltä sivulta, eikä kokonaan. Muutama kohta kantaa kertomusta, ja juuri niihin evankeliumit alituiseen viittaavat takaisin.',
+	'schola.bible.ot.beginnings': 'Kuinka se alkaa, ja kuinka se menee pieleen.',
+	'schola.bible.ot.promise':
+		'Yksi suku, ja sille annettu lupaus, joka elää kaikkien siihen kuuluvien yli.',
+	'schola.bible.ot.exodus': 'Kansa, joka tuotiin pois orjuudesta, ja laki, jonka mukaan elää.',
+	'schola.bible.ot.psalms':
+		'Ei kertomus: sataviisikymmentä rukousta ja laulua. Lue yksi kerrallaan, missä järjestyksessä tahansa. Kirkko rukoilee näitä yhä joka päivä.',
+	'schola.bible.bothWays':
+		'Tunnistat asioita, ja se on tarkoitus eikä sattuma. Kirkko lukee vanhemmat kirjat Kristuksen valossa ja uudemmat sen valossa mikä tuli ennen — kumpikin puolisko selittää toista, ja siksi kumpaakaan ei lueta yksin.',
+	'schola.guide.heading': 'Miten löydät perille',
+	'schola.guide.lede':
+		'Teksti on koko sivu; kaikki muu on säädin, jonka voit sivuuttaa kunnes haluat sen.',
+	'schola.guide.top.heading': 'Palkki jokaisen sivun yläreunassa',
+	'schola.guide.reading.heading': 'Palkki tekstin yläpuolella',
+	'schola.feature.search':
+		'Kirjoita viite yläreunan kenttään — luku ja jae, kappaleen numero, asiakirjan nimi — ja se täydentyy kirjoittaessasi. Paina mistä tahansa / tai Ctrl+K, ja ? muita pikanäppäimiä varten.',
+	'schola.feature.languages':
+		'Käyttöliittymä ja teksti valitaan erikseen, joten voit lukea teosta yhdellä kielellä painikkeiden pysyessä toisella. Missä teoksesta on useita laitoksia sinun kielelläsi, valitset myös niiden välillä.',
+	'schola.feature.settings':
+		'Tekstin koko, vaalea tai tumma, seepia, ja kuinka paljon selitysaineistoa haluat tekstin viereen.',
+	'schola.feature.offline':
+		'Lisää sivusto aloitusnäytöllesi, niin se avautuu kuin sovellus. Voit ladata kokonaisia teoksia luettavaksi ilman verkkoyhteyttä.',
+	'schola.feature.contents':
+		'Sen teoksen jaottelu, jossa olet — kirjat, osat, luvut — jotta voit liikkua sen sisällä palaamatta alkuun.',
+	'schola.feature.compare':
+		'Saman kohdan kaksi laitosta rinnakkain — latina oman kielesi vierellä, tai käännös toisen käännöksen vierellä.',
+	'schola.feature.apparatus':
+		'Laitoksen omat huomautukset, ja mikä tahansa tekstiin kirjoitettu selitys, tarjotaan sen vierellä eikä sen alla. Tekstin sisäiset viittaukset ovat linkkejä, joten viite vie sinne minne se osoittaa.',
+	'schola.feature.focus':
+		'Siivoaa kaiken muun paitsi tekstin. Ulospääsy jää siihen missä palkki oli, jottei mikään jää sen taakse.',
+	'schola.books.heading': 'Mitä täällä on, ja miten siihen viitataan',
+	'schola.books.lede':
+		'Jokainen näistä on eri laji kirja, ja jokaiseen viitataan omalla numerollaan. Esimerkit näyttävät muodon: kirjoita sellainen hakukenttään, niin päädyt kohtaan.',
+	'schola.cite.label': 'Viitataan',
+	'schola.what.scripture':
+		'Raamattu sellaisena kuin kirkko sen vastaanottaa, molemmissa testamenteissa. Kaikki muu täällä luetaan sen valossa.',
+	'schola.cite.scripture': 'kirja, luku ja jae, niillä lyhenteillä joita oma laitoksesi painaa',
+	'schola.what.catechism':
+		'Tiivistelmä siitä, mitä katolinen kirkko uskoo, yhtenä niteenä. Se ei itse ole lähde: se kokoaa Raamatun, isät, liturgian ja kirkon opetuksen, ja jokainen kohta kertoo mistä se on peräisin mitä se sanoo.',
+	'schola.cite.catechism': 'kohdan numeron mukaan, juoksevana ensimmäiseltä sivulta viimeiselle',
+	'schola.what.compendium':
+		'Sama opetus esitettynä kysymyksinä ja vastauksina, noin kymmenesosan mitassa.',
+	'schola.cite.compendium': 'kysymyksen numeron mukaan',
+	'schola.what.magisterium':
+		'Se mitä paavit ja kirkolliskokoukset ovat tosiasiassa kirjoittaneet — kiertokirjeitä, konstituutioita, dekreettejä, julistuksia — kukin osoitettu määrättyyn hetkeen ja määrättyyn kysymykseen. Kukin tunnetaan latinankielisistä alkusanoistaan.',
+	'schola.cite.magisterium': 'asiakirjan nimen mukaan, sitten sen sisäisen jakson numeron mukaan',
+	'schola.what.social':
+		'Kirkon opetus työstä, omistuksesta, perheestä, politiikasta ja rauhasta, koottuna noista asiakirjoista yhdeksi kirjaksi.',
+	'schola.cite.social': 'kohdan numeron mukaan, sen lyhenteen alla jota teos käyttää itsestään',
+	'schola.what.law': 'Oikeutta eikä oppia. Se sanoo mitä kirkko vaatii, ja sitä muutetaan.',
+	'schola.cite.law': 'kaanonin mukaan, joksi sen numeroituja yksiköitä kutsutaan',
+	'schola.what.doctors':
+		'Ne teologit, jotka kirkko on nimennyt kirkonopettajiksi. Se ei kanna virallista arvovaltaa, olipa tekijä kuinka suuri tahansa.',
+	'schola.cite.doctors': 'osan mukaan, sitten kysymyksen — Summan omat jaottelut',
+	'schola.what.prayers': 'Ne sanat, joilla kirkko rukoilee, latina vierellään.',
+	'schola.cite.prayers': 'nimeltä; numeroita ei ole viitattavaksi',
+	'schola.places.heading': 'Ei tekstejä, vaan paikkoja tällä sivustolla',
+	'schola.what.library':
+		'Kaikki sivuston teokset yhtenä luettelona, ryhmiteltyinä aiheen eikä lajin mukaan.',
+	'schola.what.calendar':
+		'Liturginen päivä — aika, väri ja ketä vietetään — sen maan mukaan, jonka kalenteria noudatat.',
+	'schola.what.bookmarks':
+		'Kohdat jotka olet merkinnyt, ja mihin viimeksi jäit kussakin teoksessa. Molemmat pysyvät tässä selaimessa eikä niitä lähetetä minnekään.',
 	'jumpbox.placeholder': 'Siirry… (esim. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Haku',
 	'jumpbox.hint': 'Paina / tai Ctrl+K siirtyäksesi viitteeseen',
@@ -124,8 +215,18 @@ export const fi: Dictionary = {
 		'<strong>Katekismus</strong> esittää katolisen opin 2 865 numeroidussa kohdassa. <strong>Kompendium</strong> esittää saman opin 598 kysymyksenä ja vastauksena samaa jäsennystä noudattaen.',
 	'ccc.landing.pairTagline':
 		'Katolisen kirkon katekismus 2 865 kohdassa ja sen Kompendium 598 kysymyksessä.',
+	'compendium.landing.title': 'Katekismuksen kompendium',
+	'compendium.landing.tagline':
+		'Kysymyksiä ja vastauksia, jotka tiivistävät Katolisen kirkon katekismuksen.',
+	'compendium.question': 'Kysymys',
+	'compendium.answer': 'Vastaus',
+	'compendium.tableOfContents': 'Sisällys',
+	'compendium.prevQuestion': 'Edellinen kysymys',
+	'compendium.nextQuestion': 'Seuraava kysymys',
+	'compendium.condenses': 'Tiivistää KKK ¶¶',
 	'ccc.abbrev': 'KKK',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'Tässä korpuksessa ei ole kysymysnumeroa',
 	'document.library.tagline':
 		'Kiertokirjeitä, konsiilin konstituutioita, dekreettejä ja opetusviran julistuksia.',
 	'doctores.landing.title': 'Kirkonopettajat',

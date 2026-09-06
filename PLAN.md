@@ -38,47 +38,51 @@ are published**, the rest being held in `national/held.ts` with the count of
 days each still differs on. What follows is what that work located and
 deliberately did not do.
 
-### Three pages are unpublished, and each is waiting on the same thing
+### Pages that are unpublished, and what each is waiting on
 
-**`/calendarium`, `/catechismus/compendium` and `/schola` are in
-`STATIC_PATHS` and not in `CHROME_PATHS`** (`site/src/lib/route-manifest.ts`).
-Each answers 200 and is indexable at its bare address, and none of them takes a
-language prefix, sits in an `hreflang` cluster, appears in a sitemap row, or
-gets a per-page `<title>` or description at the edge —
+**`/calendarium` is in `STATIC_PATHS` and not in `CHROME_PATHS`**
+(`site/src/lib/route-manifest.ts`). It answers 200 and is indexable at its bare
+address, and it does not take a language prefix, sit in an `hreflang` cluster,
+appear in a sitemap row, or get a per-page `<title>` or description at the edge —
 `scripts/route-titles.mjs` keys its map off that second list.
 
 **This is a translation gate, not an omission, and it started as one.** The
 omission was real on 2026-09-04: `/calendarium` and `/ius-canonicum` were in
 NEITHER table and answered 404 to every cold load. Fixing that separated the
 two questions a chrome path asks — is every word on the page the interface, and
-is the interface actually written — and the three below pass the first and fail
-the second. `chromeNames` deliberately does not fall back to English, because a
-cluster whose Portuguese member is described in English tells a search engine
-the page is Portuguese and then serves English. `/ius-canonicum` was published
-the same day precisely because its `canonLaw.landing.*` keys were already in
-all 37.
+is the interface actually written — and what remains below passes the first and
+fails the second. `chromeNames` deliberately does not fall back to English,
+because a cluster whose Portuguese member is described in English tells a search
+engine the page is Portuguese and then serves English. `/ius-canonicum` was
+published the same day precisely because its `canonLaw.landing.*` keys were
+already in all 37.
 
-| page                      | waits on               | in              |
-| ------------------------- | ---------------------- | --------------- |
-| `/calendarium`            | 44 `calendar.*` keys   | en, la, pt      |
-| `/catechismus/compendium` | `compendium.landing.*` | 14 dictionaries |
-| `/schola`                 | 19 `schola.*` keys     | en              |
+| page           | waits on             | in                  |
+| -------------- | -------------------- | ------------------- |
+| `/calendarium` | 75 `calendar.*` keys | en, pt (la partway) |
 
-**Each costs one line in `CHROME_PATHS` plus a `CHROME_KEYS` entry in
+**It costs one line in `CHROME_PATHS` plus a `CHROME_KEYS` entry in
 `scripts/route-titles.mjs`, and nothing else moves.** `sitemap.test.ts` and
 `shell-head.test.ts` are written as arithmetic over `CHROME_PATHS.length`, so
 they follow; `assertNamed` fails the sync if a key is missing anywhere, which
-is what makes publishing early impossible rather than merely unwise. None of
-the three depends on anything else in this file.
+is what makes publishing early impossible rather than merely unwise. It depends
+on nothing else in this file.
 
-**`/schola` is the one to weigh separately.** The other two are pages a reader
-can use in a second language; the learning portal is written FOR the reader who
-has no vocabulary yet (`docs/research/audiences.md` §5), so shipping it as an
-English cluster would be false exactly where being false costs most — and
-leaving it unpublished costs that same reader a page a search engine cannot
-offer them in their language. Both directions are bad and translation is the
-only way out. Its bill is deliberately small: the page names no work, book or
-division in its own words.
+**TWO PAGES LEFT THIS TABLE ON 2026-09-06, AND THE SECOND SET THE RULE.**
+`/catechismus/compendium` needed nine `compendium.*` keys in twenty-three
+dictionaries. `/schola` needed all 58 of its own in thirty-six — the head takes
+only a title and a tagline, so two keys apiece would have opened the gate and
+declared, in 37 languages, a page whose remaining 56 keys are English teaching
+prose. **The coded gate is on the head; the claim a cluster makes is about the
+page**, and where they come apart the page is what has to be true.
+
+**`/schola` was the one to weigh separately, and translation was the way out.**
+The learning portal is written FOR the reader who has no vocabulary yet
+(`docs/research/audiences.md` §5), so shipping it as an English cluster would
+have been false exactly where being false costs most — and leaving it
+unpublished cost that same reader a page a search engine could not offer them
+in their language. Both directions were bad, which is what made writing the
+58 keys the answer rather than a nicety.
 
 ### Decisions only the person directing the work can take
 

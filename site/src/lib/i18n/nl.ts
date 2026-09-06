@@ -71,6 +71,98 @@ export const nl: Dictionary = {
 	'nav.learn': 'Leren',
 	'library.landing.tagline':
 		'De hele collectie, plank voor plank — met waar u gebleven was en wat u hebt gemarkeerd.',
+	'schola.landing.title': 'Waar te beginnen',
+	'schola.landing.tagline':
+		'Een korte gids bij wat hier staat: wat elk van deze boeken is, hoe een verwijzing ernaar wordt geschreven, hoe u een plaats vindt, en leesordes die de Kerk heeft voorgesteld.',
+	'schola.start.heading': 'Als dit alles nieuw voor u is',
+	'schola.start.body': 'Begin met het ',
+	'schola.start.bodyAfter':
+		': dezelfde leer als de Catechismus, veel korter, geschreven in vragen en antwoorden. Het is ongeveer een tiende zo lang en veronderstelt niets.',
+	'schola.bible.heading': 'Als u de Bijbel nooit gelezen hebt',
+	'schola.bible.library':
+		'Zij is niet één boek maar drieënzeventig, geschreven over meer dan duizend jaar en gebundeld in de orde waarop de Kerk zich heeft vastgelegd — niet de orde waarin de dingen gebeurden, en niet die welke het gemakkelijkst leest. De meesten beginnen op de eerste bladzijde en houden enkele weken later op, in een lang hoofdstuk oud recht, omdat niemand hun nog heeft gezegd waartoe het dient.',
+	'schola.bible.step.gospel': 'Begin met een evangelie',
+	'schola.bible.start':
+		'Een van vier korte boeken over het leven van Jezus, ver naar binnen en niet vooraan. Het is niet ons idee: een concilie van de Kerk vroeg dat het juiste gebruik van de Schrift zou worden onderwezen, „vooral van het Nieuwe Testament en bovenal van de evangeliën”. Het noemde er geen enkel afzonderlijk, en wij evenmin.',
+	'schola.bible.whichGospel':
+		'Drie worden gewoonlijk voorgesteld, om drie verschillende redenen. Elk daarvan is een goede plaats om te zijn.',
+	'schola.bible.gospel.mark':
+		'Het kortste. U kunt het in één middag helemaal lezen, en er één uit hebben is in het begin meer waard dan het beste gekozen te hebben.',
+	'schola.bible.gospel.luke':
+		'Geschreven voor iemand buiten het geloof die het verhaal op orde gezet wilde hebben — wat precies u kan zijn. Het loopt rechtstreeks door in de Handelingen van de Apostelen, en is dus eigenlijk de eerste helft van een langer boek.',
+	'schola.bible.gospel.john':
+		'Dat wat ronduit zegt waarom het geschreven is: „opdat gij gelooft”. Eenvoudige woorden, en het gaat recht op de vraag af wie Jezus is.',
+	'schola.bible.step.acts': 'Dan wat er daarna gebeurde',
+	'schola.bible.thenActs':
+		'Wanneer u er één uit hebt, lees dan wat zij die hem gekend hadden deden nadat hij was heengegaan.',
+	'schola.bible.acts.why':
+		'De dertig jaar na het einde van de evangeliën: enkele tientallen bange mensen, en hoe wat zij gezien hadden de andere kant van het rijk bereikte.',
+	'schola.bible.step.old': 'Dan de oudere helft',
+	'schola.bible.thenOld':
+		'Niet vanaf de eerste bladzijde, en niet alles. Enkele plaatsen dragen het verhaal, en het zijn die waarnaar de evangeliën steeds terugwijzen.',
+	'schola.bible.ot.beginnings': 'Hoe het begint, en hoe het misgaat.',
+	'schola.bible.ot.promise': 'Één familie, en een belofte aan haar die allen in haar overleeft.',
+	'schola.bible.ot.exodus': 'Een volk uit slavernij geleid, en een wet om naar te leven.',
+	'schola.bible.ot.psalms':
+		'Geen verhaal: honderdvijftig gebeden en liederen. Lees er één tegelijk, in welke volgorde ook. De Kerk bidt ze nog elke dag.',
+	'schola.bible.bothWays':
+		'U zult dingen herkennen, en dat is de bedoeling en geen toeval. De Kerk leest de oudere boeken in het licht van Christus en de nieuwere in het licht van wat eraan voorafging — elke helft verklaart de andere, en daarom wordt geen van beide alleen gelezen.',
+	'schola.guide.heading': 'De weg vinden',
+	'schola.guide.lede':
+		'De tekst is de hele bladzijde; al het andere is een bedieningselement dat u kunt negeren tot u het wilt.',
+	'schola.guide.top.heading': 'De balk boven aan elke bladzijde',
+	'schola.guide.reading.heading': 'De balk boven een tekst',
+	'schola.feature.search':
+		'Typ een verwijzing in het vak bovenaan — hoofdstuk en vers, een nummer, de naam van een document — en het vult haar aan terwijl u typt. Druk overal op / of Ctrl+K, en op ? voor de overige sneltoetsen.',
+	'schola.feature.languages':
+		'De interface en de tekst worden apart gekozen, zodat u een werk in de ene taal kunt lezen terwijl de knoppen in een andere blijven. Waar een werk meerdere uitgaven in uw taal heeft, kiest u ook daartussen.',
+	'schola.feature.settings':
+		'Tekstgrootte, licht of donker, sepia, en hoeveel van het apparaat u naast de tekst wilt.',
+	'schola.feature.offline':
+		'Zet de site op uw beginscherm en zij opent als een app. U kunt hele werken downloaden om zonder verbinding te lezen.',
+	'schola.feature.contents':
+		'De indelingen van het werk waarin u bent — boeken, delen, hoofdstukken — zodat u zich erbinnen kunt bewegen zonder naar het begin terug te gaan.',
+	'schola.feature.compare':
+		'Twee uitgaven van dezelfde plaats naast elkaar — het Latijn naast uw eigen taal, of de ene vertaling naast de andere.',
+	'schola.feature.apparatus':
+		'De eigen noten van een uitgave, en elke commentaar op de tekst geschreven, worden ernaast aangeboden en niet eronder. Verwijzingen binnen de tekst zijn koppelingen, zodat een verwijzing gaat waar zij heen wijst.',
+	'schola.feature.focus':
+		'Ruimt alles op behalve de tekst. De uitweg blijft waar de balk was, zodat er niets achter opgesloten raakt.',
+	'schola.books.heading': 'Wat hier staat, en hoe het wordt aangehaald',
+	'schola.books.lede':
+		'Elk hiervan is een andere soort boek, en naar elk wordt met een eigen getal verwezen. De voorbeelden tonen de vorm: typ er zo een in het zoekvak en u komt bij de plaats uit.',
+	'schola.cite.label': 'Aangehaald als',
+	'schola.what.scripture':
+		'De Schrift zoals de Kerk haar ontvangt, in beide Testamenten. Al het andere hier wordt in haar licht gelezen.',
+	'schola.cite.scripture': 'boek, hoofdstuk en vers, in de afkortingen die uw eigen uitgave drukt',
+	'schola.what.catechism':
+		'Een samenvatting van wat de Katholieke Kerk gelooft, in één band. Hij is zelf geen bron: hij verzamelt de Schrift, de Vaders, de liturgie en de leer van de Kerk, en elk nummer zegt waar vandaan komt wat het beweert.',
+	'schola.cite.catechism':
+		'op nummer, onafgebroken doorlopend van de eerste bladzijde tot de laatste',
+	'schola.what.compendium':
+		'Dezelfde leer uiteengezet in vragen en antwoorden, op ongeveer een tiende van de lengte.',
+	'schola.cite.compendium': 'op vraagnummer',
+	'schola.what.magisterium':
+		'Wat pausen en concilies werkelijk hebben geschreven — encyclieken, constituties, decreten, verklaringen — elk gericht tot een bepaald ogenblik en een bepaalde vraag. Elk is bekend naar zijn beginwoorden in het Latijn.',
+	'schola.cite.magisterium':
+		'op de naam van het document, dan een nummer van een onderdeel daarbinnen',
+	'schola.what.social':
+		'De leer van de Kerk over arbeid, eigendom, het gezin, de politiek en de vrede, uit die documenten in één boek verzameld.',
+	'schola.cite.social': 'op nummer, onder de afkorting die het werk voor zichzelf gebruikt',
+	'schola.what.law': 'Recht en geen leer. Het zegt wat de Kerk vereist, en het wordt gewijzigd.',
+	'schola.cite.law': 'op canon, zoals zijn genummerde eenheden heten',
+	'schola.what.doctors':
+		'De theologen die de Kerk tot kerkleraar heeft uitgeroepen. Het draagt geen ambtelijk gezag, hoe groot de schrijver ook is.',
+	'schola.cite.doctors': 'op deel, dan kwestie — de eigen indelingen van de Summa',
+	'schola.what.prayers': 'De woorden die de Kerk bidt, met het Latijn ernaast.',
+	'schola.cite.prayers': 'op naam; er zijn geen nummers om aan te halen',
+	'schola.places.heading': 'Geen teksten, maar plaatsen op deze site',
+	'schola.what.library':
+		'Alle werken van de site in één lijst, gegroepeerd naar onderwerp en niet naar soort.',
+	'schola.what.calendar':
+		'De liturgische dag — tijd, kleur en wie wordt gevierd — voor het land waarvan u de kalender volgt.',
+	'schola.what.bookmarks':
+		'Plaatsen die u gemarkeerd hebt, en waar u in elk werk het laatst gebleven bent. Beide blijven in deze browser en worden nergens heen gestuurd.',
 	'jumpbox.placeholder': 'Ga naar… (bv. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Zoeken',
 	'jumpbox.hint': 'Druk op / of Ctrl+K om naar een verwijzing te gaan',
@@ -123,8 +215,18 @@ export const nl: Dictionary = {
 		'<strong>De Catechismus</strong> zet de katholieke leer uiteen in 2.865 genummerde paragrafen. <strong>Het Compendium</strong> geeft dezelfde leer weer als 598 vragen en antwoorden, volgens dezelfde indeling.',
 	'ccc.landing.pairTagline':
 		'De Catechismus van de Katholieke Kerk in 2.865 nummers, en zijn Compendium in 598 vragen.',
+	'compendium.landing.title': 'Compendium van de Catechismus',
+	'compendium.landing.tagline':
+		'Vragen en antwoorden die de Catechismus van de Katholieke Kerk samenvatten.',
+	'compendium.question': 'Vraag',
+	'compendium.answer': 'Antwoord',
+	'compendium.tableOfContents': 'Inhoud',
+	'compendium.prevQuestion': 'Vorige vraag',
+	'compendium.nextQuestion': 'Volgende vraag',
+	'compendium.condenses': 'Vat CKK ¶¶ samen',
 	'ccc.abbrev': 'CKK',
 	'compendium.abbrev': 'Comp.',
+	'compendium.noQuestionNumber': 'Geen vraagnummer in dit corpus',
 	'document.library.tagline':
 		'Encyclieken, conciliaire constituties, decreten en verklaringen van het Leergezag.',
 	'doctores.landing.title': 'Kerkleraren',

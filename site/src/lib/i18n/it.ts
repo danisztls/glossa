@@ -42,6 +42,98 @@ export const it: Dictionary = {
 	'nav.learn': 'Imparare',
 	'library.landing.tagline':
 		'L’intero corpus, scaffale per scaffale — con il punto in cui vi siete fermati e ciò che avete segnato.',
+	'schola.landing.title': 'Da dove cominciare',
+	'schola.landing.tagline':
+		'Una guida breve a quel che c’è qui: che cosa è ciascuno di questi libri, come se ne scrive una citazione, come trovare un passo, e ordini di lettura che la Chiesa ha proposto.',
+	'schola.start.heading': 'Se è la prima volta',
+	'schola.start.body': 'Comincia dal ',
+	'schola.start.bodyAfter':
+		': lo stesso insegnamento del Catechismo, molto più breve, scritto in domande e risposte. È lungo circa un decimo e non dà nulla per scontato.',
+	'schola.bible.heading': 'Se non hai mai letto la Bibbia',
+	'schola.bible.library':
+		'Non è un libro ma settantatré, scritti nell’arco di più di mille anni e raccolti nell’ordine che la Chiesa ha stabilito — non l’ordine in cui i fatti sono accaduti, né quello più facile da leggere. I più cominciano dalla prima pagina e smettono qualche settimana dopo, in un lungo capitolo di legge antica, perché nulla ha ancora detto loro a che cosa serva.',
+	'schola.bible.step.gospel': 'Comincia da un Vangelo',
+	'schola.bible.start':
+		'Uno dei quattro libri brevi sulla vita di Gesù, ben dentro e non in testa. L’idea non è nostra: un Concilio della Chiesa ha chiesto che si insegnasse il retto uso della Scrittura, «soprattutto del Nuovo Testamento e anzitutto dei Vangeli». Non ne ha indicato nessuno in particolare, e neppure noi.',
+	'schola.bible.whichGospel':
+		'Tre sono comunemente suggeriti, per tre ragioni diverse. Uno qualsiasi è un buon posto dove stare.',
+	'schola.bible.gospel.mark':
+		'Il più corto. Puoi leggerlo tutto in un pomeriggio, e averne finito uno vale più, all’inizio, che aver scelto il migliore.',
+	'schola.bible.gospel.luke':
+		'Scritto per qualcuno fuori dalla fede che voleva la storia messa in ordine — il che può essere esattamente il tuo caso. Prosegue diritto negli Atti degli Apostoli, quindi è in realtà la prima metà di un libro più lungo.',
+	'schola.bible.gospel.john':
+		'Quello che dice apertamente perché è stato scritto: «perché crediate». Parole semplici, e va dritto alla questione di chi sia Gesù.',
+	'schola.bible.step.acts': 'Poi quel che accadde dopo',
+	'schola.bible.thenActs':
+		'Quando ne avrai finito uno, leggi che cosa fecero, dopo che egli se ne fu andato, quelli che lo avevano conosciuto.',
+	'schola.bible.acts.why':
+		'I trent’anni dopo la fine dei Vangeli: qualche decina di persone spaventate, e come ciò che avevano visto arrivò all’altro capo dell’impero.',
+	'schola.bible.step.old': 'Poi la metà più antica',
+	'schola.bible.thenOld':
+		'Non dalla prima pagina, e non tutta. Alcuni luoghi portano la storia, e sono quelli a cui i Vangeli continuano a rimandare.',
+	'schola.bible.ot.beginnings': 'Come comincia, e come va storta.',
+	'schola.bible.ot.promise':
+		'Una famiglia, e una promessa fatta a essa che sopravvive a tutti i suoi.',
+	'schola.bible.ot.exodus': 'Un popolo tratto fuori dalla schiavitù, e una legge data per vivere.',
+	'schola.bible.ot.psalms':
+		'Non un racconto: centocinquanta preghiere e canti. Leggine uno per volta, in qualunque ordine. La Chiesa li prega ancora ogni giorno.',
+	'schola.bible.bothWays':
+		'Riconoscerai delle cose, e questo è il punto e non una coincidenza. La Chiesa legge i libri antichi alla luce di Cristo e quelli recenti alla luce di ciò che è venuto prima — ciascuna metà spiega l’altra, ed è per questo che nessuna si legge da sola.',
+	'schola.guide.heading': 'Orientarsi',
+	'schola.guide.lede':
+		'Il testo è tutta la pagina; il resto è un comando che puoi ignorare finché non ti serve.',
+	'schola.guide.top.heading': 'La barra in cima a ogni pagina',
+	'schola.guide.reading.heading': 'La barra sopra un testo',
+	'schola.feature.search':
+		'Scrivi un riferimento nella casella in alto — capitolo e versetto, numero di paragrafo, il nome di un documento — e lo completa mentre scrivi. Premi / o Ctrl+K da qualunque punto, e ? per le altre scorciatoie.',
+	'schola.feature.languages':
+		'L’interfaccia e il testo si scelgono separatamente, così puoi leggere un’opera in una lingua mentre i pulsanti restano in un’altra. Dove un’opera ha più edizioni nella tua lingua, scegli anche fra quelle.',
+	'schola.feature.settings':
+		'Dimensione del testo, chiaro o scuro, seppia, e quanto apparato vuoi accanto al testo.',
+	'schola.feature.offline':
+		'Aggiungi il sito alla schermata iniziale e si apre come un’app. Puoi scaricare opere intere per leggerle senza connessione.',
+	'schola.feature.contents':
+		'Le divisioni dell’opera in cui ti trovi — libri, parti, capitoli — per muoverti al suo interno senza tornare all’inizio.',
+	'schola.feature.compare':
+		'Due edizioni dello stesso passo, affiancate — il latino accanto alla tua lingua, o una traduzione accanto a un’altra.',
+	'schola.feature.apparatus':
+		'Le note proprie di un’edizione, e qualunque commento scritto sul testo, sono offerti accanto a esso e non sotto. Le citazioni dentro il testo sono collegamenti: un riferimento porta dove punta.',
+	'schola.feature.focus':
+		'Toglie tutto tranne il testo. L’uscita resta dov’era la barra, così nulla rimane intrappolato dietro.',
+	'schola.books.heading': 'Che cosa c’è qui, e come si cita',
+	'schola.books.lede':
+		'Ognuno di questi è un genere di libro diverso, e ognuno si richiama con un numero proprio. Gli esempi mostrano la forma: scrivine uno simile nella casella di ricerca e arrivi al passo.',
+	'schola.cite.label': 'Si cita',
+	'schola.what.scripture':
+		'Le Scritture come la Chiesa le riceve, in entrambi i Testamenti. Tutto il resto qui si legge alla loro luce.',
+	'schola.cite.scripture':
+		'libro, capitolo e versetto, nelle abbreviazioni che stampa la tua edizione',
+	'schola.what.catechism':
+		'Un riassunto di ciò che la Chiesa Cattolica crede, in un solo volume. Non è esso stesso una fonte: raccoglie la Scrittura, i Padri, la liturgia e l’insegnamento della Chiesa, e ogni numero dice da dove viene ciò che afferma.',
+	'schola.cite.catechism': 'per numero, ininterrotto dalla prima all’ultima pagina',
+	'schola.what.compendium':
+		'Lo stesso insegnamento esposto in domande e risposte, a circa un decimo della lunghezza.',
+	'schola.cite.compendium': 'per numero di domanda',
+	'schola.what.magisterium':
+		'Ciò che i papi e i concili hanno effettivamente scritto — encicliche, costituzioni, decreti, dichiarazioni — ciascuno rivolto a un momento e a una questione determinati. Ciascuno è noto per le sue parole iniziali in latino.',
+	'schola.cite.magisterium': 'per il nome del documento, poi un numero di sezione al suo interno',
+	'schola.what.social':
+		'L’insegnamento della Chiesa sul lavoro, la proprietà, la famiglia, la politica e la pace, raccolto da quei documenti in un solo libro.',
+	'schola.cite.social': 'per numero, sotto la sigla che l’opera usa per sé',
+	'schola.what.law': 'Diritto e non dottrina. Dice ciò che la Chiesa richiede, e viene emendato.',
+	'schola.cite.law': 'per canone, che è il nome delle sue unità numerate',
+	'schola.what.doctors':
+		'I teologi che la Chiesa ha dichiarato Dottori. Non porta alcuna autorità ufficiale, per quanto grande sia il suo autore.',
+	'schola.cite.doctors': 'per parte, poi questione — le divisioni proprie della Somma',
+	'schola.what.prayers': 'Le parole che la Chiesa prega, con il latino accanto.',
+	'schola.cite.prayers': 'per nome; non ci sono numeri da citare',
+	'schola.places.heading': 'Non testi, ma luoghi di questo sito',
+	'schola.what.library':
+		'Tutte le opere del sito in un solo elenco, raggruppate per materia e non per genere.',
+	'schola.what.calendar':
+		'Il giorno liturgico — tempo, colore e chi si celebra — per il paese di cui segui il calendario.',
+	'schola.what.bookmarks':
+		'I passi che hai segnato, e dove ti sei fermato in ciascuna opera. Entrambi restano in questo browser e non sono inviati da nessuna parte.',
 	'ccc.noCounterpart': 'Nessuna corrispondenza nell’altra opera',
 	'jumpbox.placeholder': 'Vai a… (es. giovanni 3,16, ccc 1234)',
 	'jumpbox.short': 'Cerca',

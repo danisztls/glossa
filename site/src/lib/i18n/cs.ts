@@ -69,6 +69,97 @@ export const cs: Dictionary = {
 	'nav.learn': 'Učení',
 	'library.landing.tagline':
 		'Celý korpus, polici po polici — s tím, kde jste přestali, a s tím, co jste si označili.',
+	'schola.landing.title': 'Kde začít',
+	'schola.landing.tagline':
+		'Krátký průvodce tím, co je zde: co je každá z těchto knih, jak se zapisuje odkaz na ni, jak najít místo, a pořádky čtení, které církev navrhla.',
+	'schola.start.heading': 'Je-li vám to všechno nové',
+	'schola.start.body': 'Nejlepší začátek je ',
+	'schola.start.bodyAfter':
+		': totéž učení jako v Katechismu, mnohem kratší, psané v otázkách a odpovědích. Má asi desetinu rozsahu a nic nepředpokládá.',
+	'schola.bible.heading': 'Nečetli-li jste nikdy Bibli',
+	'schola.bible.library':
+		'Není to jedna kniha, nýbrž sedmdesát tři, psané po více než tisíc let a svázané v pořádku, na němž se církev ustálila — ne v pořádku, v němž se věci staly, a ne v tom, který se čte nejsnáze. Většina lidí začne na první stránce a po několika týdnech přestane, v dlouhé kapitole starobylého zákona, protože jim ještě nikdo neřekl, k čemu to je.',
+	'schola.bible.step.gospel': 'Začněte evangeliem',
+	'schola.bible.start':
+		'Jedna ze čtyř krátkých knih o Ježíšově životě, hluboko uvnitř a ne vpředu. Není to náš nápad: koncil církve žádal, aby se učilo správnému užívání Písma, „zvláště Nového zákona a především evangelií“. Žádné z nich nejmenoval zvlášť, a nejmenujeme ani my.',
+	'schola.bible.whichGospel':
+		'Tři se obvykle navrhují, ze tří různých důvodů. Kterékoli z nich je dobré místo, kde být.',
+	'schola.bible.gospel.mark':
+		'Nejkratší. Můžete je přečíst celé za jedno odpoledne, a mít jedno dočtené má na začátku větší cenu než mít vybrané to nejlepší.',
+	'schola.bible.gospel.luke':
+		'Napsané pro někoho mimo víru, kdo chtěl mít věc sepsanou po pořádku — což můžete být právě vy. Pokračuje přímo do Skutků apoštolů, takže je vlastně první polovinou delší knihy.',
+	'schola.bible.gospel.john':
+		'To, které rovnou říká, proč bylo napsáno: „abyste uvěřili“. Prostá slova, a jde přímo k otázce, kdo je Ježíš.',
+	'schola.bible.step.acts': 'Pak co bylo dál',
+	'schola.bible.thenActs':
+		'Až jedno dočtete, přečtěte si, co po jeho odchodu udělali ti, kdo ho znali.',
+	'schola.bible.acts.why':
+		'Třicet let po konci evangelií: pár desítek vyděšených lidí, a jak to, co viděli, dorazilo na druhý konec říše.',
+	'schola.bible.step.old': 'Pak starší polovina',
+	'schola.bible.thenOld':
+		'Ne od první stránky, a ne celá. Několik míst nese vyprávění, a jsou to právě ta, k nimž se evangelia stále vracejí.',
+	'schola.bible.ot.beginnings': 'Jak to začíná a jak se to kazí.',
+	'schola.bible.ot.promise': 'Jedna rodina a příslib jí daný, který přežije všechny v ní.',
+	'schola.bible.ot.exodus': 'Lid vyvedený z otroctví a zákon, který dostal, aby podle něj žil.',
+	'schola.bible.ot.psalms':
+		'Ne vyprávění: sto padesát modliteb a písní. Čtěte po jedné, v libovolném pořadí. Církev se je dodnes modlí každý den.',
+	'schola.bible.bothWays':
+		'Budete poznávat věci, a o to jde, není to náhoda. Církev čte starší knihy ve světle Kristově a novější ve světle toho, co bylo předtím — každá polovina vysvětluje druhou, a proto se žádná nečte sama.',
+	'schola.guide.heading': 'Jak se tu vyznat',
+	'schola.guide.lede':
+		'Text je celá stránka; všechno ostatní je ovládací prvek, který můžete přehlížet, dokud ho nebudete chtít.',
+	'schola.guide.top.heading': 'Lišta v záhlaví každé stránky',
+	'schola.guide.reading.heading': 'Lišta nad textem',
+	'schola.feature.search':
+		'Napište odkaz do pole nahoře — kapitolu a verš, číslo odstavce, název dokumentu — a doplní se vám během psaní. Odkudkoli stiskněte / nebo Ctrl+K, a ? pro ostatní zkratky.',
+	'schola.feature.languages':
+		'Rozhraní a text se volí zvlášť, takže můžete číst dílo v jednom jazyce, zatímco tlačítka zůstanou v jiném. Kde má dílo ve vašem jazyce několik vydání, vybíráte i mezi nimi.',
+	'schola.feature.settings':
+		'Velikost textu, světlý či tmavý režim, sépie, a kolik poznámkového aparátu chcete vedle textu.',
+	'schola.feature.offline':
+		'Přidejte web na domovskou obrazovku a otevře se jako aplikace. Celá díla si můžete stáhnout a číst bez připojení.',
+	'schola.feature.contents':
+		'Členění díla, v němž jste — knihy, části, kapitoly — abyste se v něm pohybovali bez návratu na začátek.',
+	'schola.feature.compare':
+		'Dvě vydání téhož místa vedle sebe — latina vedle vašeho jazyka, nebo jeden překlad vedle druhého.',
+	'schola.feature.apparatus':
+		'Vlastní poznámky vydání a jakýkoli komentář napsaný k textu se nabízejí vedle něj, a ne pod ním. Citace uvnitř textu jsou odkazy, takže odkaz vede tam, kam ukazuje.',
+	'schola.feature.focus':
+		'Odklidí všechno kromě textu. Cesta ven zůstane tam, kde byla lišta, aby za ní nic neuvízlo.',
+	'schola.books.heading': 'Co je zde a jak se to cituje',
+	'schola.books.lede':
+		'Každá z těchto knih je jiného druhu a na každou se odkazuje vlastním číslem. Příklady ukazují tvar: napište podobný do vyhledávacího pole a dostanete se na místo.',
+	'schola.cite.label': 'Cituje se',
+	'schola.what.scripture':
+		'Písmo, jak je církev přijímá, v obou Zákonech. Všechno ostatní zde se čte v jeho světle.',
+	'schola.cite.scripture': 'kniha, kapitola a verš, ve zkratkách, které tiskne vaše vydání',
+	'schola.what.catechism':
+		'Shrnutí toho, čemu katolická církev věří, v jednom svazku. Sám není pramenem: shromažďuje Písmo, otce, liturgii a učení církve, a každý odstavec říká, odkud pochází to, co tvrdí.',
+	'schola.cite.catechism':
+		'podle čísla odstavce, běžícího bez přerušení od první stránky k poslední',
+	'schola.what.compendium':
+		'Totéž učení podané v otázkách a odpovědích, asi v desetinovém rozsahu.',
+	'schola.cite.compendium': 'podle čísla otázky',
+	'schola.what.magisterium':
+		'To, co papežové a koncily skutečně napsali — encykliky, konstituce, dekrety, deklarace — každý dokument obrácený k určité chvíli a určité otázce. Každý je znám podle svých úvodních latinských slov.',
+	'schola.cite.magisterium': 'podle názvu dokumentu, pak čísla oddílu v něm',
+	'schola.what.social':
+		'Učení církve o práci, vlastnictví, rodině, politice a míru, shromážděné z těch dokumentů do jedné knihy.',
+	'schola.cite.social': 'podle čísla odstavce, pod zkratkou, kterou dílo užívá samo pro sebe',
+	'schola.what.law': 'Právo, ne nauka. Říká, co církev vyžaduje, a bývá měněno.',
+	'schola.cite.law': 'podle kánonu, tak se jmenují jeho číslované jednotky',
+	'schola.what.doctors':
+		'Teologové, které církev prohlásila za učitele. Nenese to žádnou úřední autoritu, jakkoli velký je jeho autor.',
+	'schola.cite.doctors': 'podle části, pak otázky — vlastního členění Sumy',
+	'schola.what.prayers': 'Slova, jimiž se církev modlí, s latinou vedle.',
+	'schola.cite.prayers': 'podle názvu; není co citovat čísly',
+	'schola.places.heading': 'Ne texty, nýbrž místa na tomto webu',
+	'schola.what.library':
+		'Všechna díla webu v jednom seznamu, seskupená podle předmětu, ne podle druhu.',
+	'schola.what.calendar':
+		'Liturgický den — období, barva a kdo se slaví — pro zemi, jejímž kalendářem se řídíte.',
+	'schola.what.bookmarks':
+		'Místa, která jste si označili, a kde jste naposledy skončili v každém díle. Obojí zůstává v tomto prohlížeči a nikam se neodesílá.',
 	'jumpbox.placeholder': 'Přejít na… (např. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Hledat',
 	'jumpbox.hint': 'Stiskněte / nebo Ctrl+K pro přechod na odkaz',
@@ -121,8 +212,17 @@ export const cs: Dictionary = {
 		'<strong>Katechismus</strong> vykládá katolickou nauku ve 2 865 číslovaných odstavcích. <strong>Kompendium</strong> tutéž nauku podává jako 598 otázek a odpovědí podle téhož uspořádání.',
 	'ccc.landing.pairTagline':
 		'Katechismus katolické církve ve 2 865 číslech a jeho Kompendium v 598 otázkách.',
+	'compendium.landing.title': 'Kompendium Katechismu',
+	'compendium.landing.tagline': 'Otázky a odpovědi shrnující Katechismus katolické církve.',
+	'compendium.question': 'Otázka',
+	'compendium.answer': 'Odpověď',
+	'compendium.tableOfContents': 'Obsah',
+	'compendium.prevQuestion': 'Předchozí otázka',
+	'compendium.nextQuestion': 'Následující otázka',
+	'compendium.condenses': 'Shrnuje KKC ¶¶',
 	'ccc.abbrev': 'KKC',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'V tomto korpusu chybí číslo otázky',
 	'document.library.tagline':
 		'Encykliky, koncilní konstituce, dekrety a deklarace učitelského úřadu církve.',
 	'doctores.landing.title': 'Učitelé církve',

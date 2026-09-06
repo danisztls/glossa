@@ -467,19 +467,34 @@ export function assertNamed(paths, manifest, titles) {
  * sentences that need thirteen speakers, and CLAUDE.md's Malagasy note is what
  * happens when that is guessed at instead.
  *
- * `/` has no `description` key because it has no tagline. So it is composed
- * from the names of five works, which are themselves translated, and which is
- * what a reader searching for any one of them would type. They were the home
- * page's own section headings until 2026-09-04, when the page became the
- * liturgical day and five doors; the list stayed as it was, because what a
- * searcher types is the name of a work and not the name of a door.
+ * `/` HAD NO `description` KEY BECAUSE IT HAD NO TAGLINE, and it has one since
+ * 2026-09-06 — `home.tagline`, written in all 37, which is the condition the
+ * key's own comment in `en.ts` set for switching this over. Until then the
+ * description was composed from the names of five works: themselves translated,
+ * and what a reader searching for any one of them would type. `HOME_SECTION_KEYS`
+ * is kept as the FALLBACK rather than deleted, because it is the one description
+ * on this table that can be assembled with no sentence of its own — so a
+ * dictionary that has not yet caught up to a future rewrite of the tagline gets
+ * five work names instead of dropping out of the cluster, which is what a
+ * missing description costs here (`chromeNames` has no fallback to English).
+ *
+ * WHAT THE SWITCH BUYS is a description that says what the site IS. Five names
+ * joined by `·` tells a searcher which books are here and nothing about what
+ * they would be arriving at, and it read identically to a list of nav links;
+ * the tagline is the sentence the page itself opens with, which is the rule
+ * every other row on this table already follows.
  */
-/** @type {Record<string, { title: string; description?: string }>} */
+/** Every chrome page names BOTH keys since 2026-09-06, `/` included — the
+ *  optional `description` was there for the root alone. @type {Record<string, { title: string; description: string }>} */
 const CHROME_KEYS = {
-	'/': { title: 'home.title' },
+	'/': { title: 'home.title', description: 'home.tagline' },
 	'/bibliotheca': { title: 'nav.library', description: 'library.landing.tagline' },
 	'/scriptura': { title: 'bible.landing.title', description: 'bible.landing.tagline' },
 	'/catechismus': { title: 'ccc.landing.title', description: 'ccc.landing.tagline' },
+	'/catechismus/compendium': {
+		title: 'compendium.landing.title',
+		description: 'compendium.landing.tagline'
+	},
 	'/documenta': { title: 'nav.magisterium', description: 'document.library.tagline' },
 	'/doctrina-socialis': {
 		title: 'socialDoctrine.landing.title',
@@ -492,10 +507,12 @@ const CHROME_KEYS = {
 	'/doctores': { title: 'doctores.landing.title', description: 'doctores.landing.tagline' },
 	'/doctores/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
 	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },
+	'/schola': { title: 'schola.landing.title', description: 'schola.landing.tagline' },
 	'/colophon': { title: 'colophon.title', description: 'colophon.lede' }
 };
 
-/** Five works the site holds, for the one description with no key. */
+/** Five works the site holds — `/`'s description before `home.tagline` was
+ *  translated, kept as its fallback. See `CHROME_KEYS`. */
 const HOME_SECTION_KEYS = [
 	'bible.landing.title',
 	'ccc.landing.title',
@@ -544,11 +561,17 @@ function chromeNames(dictionaries) {
 			const keys = CHROME_KEYS[path];
 			const name = d[keys.title];
 			if (!name) continue;
-			const description = keys.description
-				? plain(d[keys.description])
-				: HOME_SECTION_KEYS.map((key) => plain(d[key]))
-						.filter(Boolean)
-						.join(' · ');
+			// The five work names are `/`'s fallback and nothing else's: it is the
+			// only description on this table assemblable with no sentence of its
+			// own, and dropping the root out of the cluster over one missing key
+			// costs more than every other page here (`CHROME_KEYS`).
+			const description =
+				plain(d[keys.description] ?? '') ||
+				(path === '/'
+					? HOME_SECTION_KEYS.map((key) => plain(d[key]))
+							.filter(Boolean)
+							.join(' · ')
+					: '');
 			if (!description) continue;
 			// The home page is titled the site's name alone: it is the one page
 			// where "<name> — <site name>" would print the same words twice.

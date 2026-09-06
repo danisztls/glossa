@@ -77,8 +77,11 @@
 	 *
 	 * What is genuinely new writing is the sentences: what each work is, what
 	 * its unit of citation is, and what each feature does. That is the part §5
-	 * stops at, and it is the reason `/schola` is still out of `CHROME_PATHS`
-	 * (`route-manifest.ts`).
+	 * stops at, and it was what kept `/schola` out of `CHROME_PATHS` until all
+	 * 58 keys were written in all 37 languages (2026-09-06, `route-manifest.ts`).
+	 * **A new sentence on this page is now a string in thirty-six dictionaries,
+	 * not a note in a docblock** — the page is published, so the bill is paid
+	 * up front rather than deferred.
 	 *
 	 * **The pictures cost two keys between them**: an artwork's caption is
 	 * `Artist, Title, year. Institution.` and carries no sentence to translate

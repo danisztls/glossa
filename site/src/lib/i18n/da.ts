@@ -69,6 +69,96 @@ export const da: Dictionary = {
 	'nav.learn': 'Lær',
 	'library.landing.tagline':
 		'Hele samlingen, hylde for hylde — med hvor du slap, og hvad du har markeret.',
+	'schola.landing.title': 'Hvor man begynder',
+	'schola.landing.tagline':
+		'En kort vejledning i, hvad der er her: hvad hver af disse bøger er, hvordan en henvisning til den skrives, hvordan man finder et sted, og læseordener, som Kirken har foreslået.',
+	'schola.start.heading': 'Hvis alt dette er nyt for dig',
+	'schola.start.body': 'Begynd med ',
+	'schola.start.bodyAfter':
+		': den samme lære som Katekismens, meget kortere, skrevet i spørgsmål og svar. Den fylder omkring en tiendedel og forudsætter intet.',
+	'schola.bible.heading': 'Hvis du aldrig har læst Bibelen',
+	'schola.bible.library':
+		'Den er ikke én bog, men treoghalvfjerds, skrevet gennem mere end tusind år og samlet i den orden, Kirken fastholdt — ikke den orden, tingene skete i, og ikke den, der er lettest at læse. De fleste begynder på første side og holder op nogle uger senere, midt i et langt kapitel gammel lov, fordi ingen endnu har fortalt dem, hvad den er til for.',
+	'schola.bible.step.gospel': 'Begynd med et evangelium',
+	'schola.bible.start':
+		'En af fire korte bøger om Jesu liv, langt inde og ikke forrest. Det er ikke vores idé: et kirkemøde bad om, at man lærte den rette brug af Skriften, „især Det Nye Testamente og først og fremmest evangelierne“. Det nævnte intet enkelt, og det gør vi heller ikke.',
+	'schola.bible.whichGospel':
+		'Tre foreslås almindeligvis, af tre forskellige grunde. Hvilket som helst af dem er et godt sted at være.',
+	'schola.bible.gospel.mark':
+		'Det korteste. Du kan læse det helt på en eftermiddag, og at have læst ét færdigt er i begyndelsen mere værd end at have valgt det bedste.',
+	'schola.bible.gospel.luke':
+		'Skrevet til en uden for troen, som ville have historien nedskrevet i orden — hvilket måske er netop dig. Det fortsætter direkte over i Apostlenes Gerninger, så det er i virkeligheden første halvdel af en længere bog.',
+	'schola.bible.gospel.john':
+		'Det, der lige ud siger, hvorfor det blev skrevet: „for at I skal tro“. Enkle ord, og det går lige til spørgsmålet om, hvem Jesus er.',
+	'schola.bible.step.acts': 'Så hvad der skete bagefter',
+	'schola.bible.thenActs':
+		'Når du har læst ét færdigt, så læs, hvad de, der kendte ham, gjorde, efter at han var borte.',
+	'schola.bible.acts.why':
+		'De tredive år efter evangeliernes slutning: nogle få dusin forskræmte mennesker, og hvordan det, de havde set, nåede til den anden ende af riget.',
+	'schola.bible.step.old': 'Så den ældre halvdel',
+	'schola.bible.thenOld':
+		'Ikke fra første side, og ikke det hele. Nogle få steder bærer fortællingen, og det er dem, evangelierne bliver ved med at pege tilbage på.',
+	'schola.bible.ot.beginnings': 'Hvordan det begynder, og hvordan det går galt.',
+	'schola.bible.ot.promise': 'Én familie, og et løfte til den, som overlever alle i den.',
+	'schola.bible.ot.exodus': 'Et folk ført ud af slaveri, og en lov at leve efter.',
+	'schola.bible.ot.psalms':
+		'Ikke en fortælling: hundrede og halvtreds bønner og sange. Læs én ad gangen, i hvilken som helst orden. Kirken beder dem stadig hver dag.',
+	'schola.bible.bothWays':
+		'Du vil genkende ting, og det er meningen snarere end et tilfælde. Kirken læser de ældre bøger i Kristi lys og de nyere i lyset af det, der gik forud — hver halvdel forklarer den anden, og derfor læses ingen af dem alene.',
+	'schola.guide.heading': 'At finde rundt',
+	'schola.guide.lede':
+		'Teksten er hele siden; alt andet er en betjening, du kan lade ligge, indtil du vil have den.',
+	'schola.guide.top.heading': 'Linjen øverst på hver side',
+	'schola.guide.reading.heading': 'Linjen over en tekst',
+	'schola.feature.search':
+		'Skriv en henvisning i feltet øverst — kapitel og vers, et afsnitsnummer, navnet på et dokument — og den fuldføres, mens du skriver. Tryk / eller Ctrl+K hvor som helst fra, og ? for de øvrige genveje.',
+	'schola.feature.languages':
+		'Grænseflade og tekst vælges hver for sig, så du kan læse et værk på ét sprog, mens knapperne bliver på et andet. Hvor et værk har flere udgaver på dit sprog, vælger du også mellem dem.',
+	'schola.feature.settings':
+		'Tekststørrelse, lyst eller mørkt, sepia, og hvor meget af apparatet du vil have ved siden af teksten.',
+	'schola.feature.offline':
+		'Læg siden på din hjemmeskærm, så åbner den som en app. Du kan hente hele værker og læse dem uden forbindelse.',
+	'schola.feature.contents':
+		'Inddelingerne i det værk, du er i — bøger, dele, kapitler — så du kan bevæge dig inde i det uden at gå tilbage til begyndelsen.',
+	'schola.feature.compare':
+		'To udgaver af det samme sted, side om side — latinen ved siden af dit eget sprog, eller én oversættelse ved siden af en anden.',
+	'schola.feature.apparatus':
+		'En udgaves egne noter, og enhver kommentar skrevet til teksten, tilbydes ved siden af den og ikke under. Henvisninger inde i teksten er links, så en henvisning fører derhen, hvor den peger.',
+	'schola.feature.focus':
+		'Rydder alt bort undtagen teksten. Vejen ud bliver, hvor linjen var, så intet er fanget bag den.',
+	'schola.books.heading': 'Hvad der er her, og hvordan det citeres',
+	'schola.books.lede':
+		'Hver af disse er en anden slags bog, og hver henvises der til med sit eget tal. Eksemplerne viser formen: skriv et lignende i søgefeltet, og du lander på stedet.',
+	'schola.cite.label': 'Citeres som',
+	'schola.what.scripture':
+		'Skriften, som Kirken modtager den, i begge testamenter. Alt andet her læses i dens lys.',
+	'schola.cite.scripture': 'bog, kapitel og vers, i de forkortelser din egen udgave trykker',
+	'schola.what.catechism':
+		'Et sammendrag af, hvad Den Katolske Kirke tror, i ét bind. Den er ikke selv en kilde: den samler Skriften, fædrene, liturgien og Kirkens lære, og hvert nummer siger, hvor det, den siger, kommer fra.',
+	'schola.cite.catechism': 'efter nummer, løbende ubrudt fra første side til sidste',
+	'schola.what.compendium':
+		'Den samme lære fremstillet i spørgsmål og svar, i omtrent en tiendedel af længden.',
+	'schola.cite.compendium': 'efter spørgsmålsnummer',
+	'schola.what.magisterium':
+		'Hvad paver og kirkemøder faktisk har skrevet — encyklikaer, konstitutioner, dekreter, erklæringer — hvert rettet til et bestemt øjeblik og et bestemt spørgsmål. Hvert kendes på sine indledende ord på latin.',
+	'schola.cite.magisterium': 'efter dokumentets navn, dernæst et afsnitsnummer inde i det',
+	'schola.what.social':
+		'Kirkens lære om arbejde, ejendom, familien, politik og fred, samlet ud af de dokumenter i én bog.',
+	'schola.cite.social': 'efter nummer, under den forkortelse værket bruger om sig selv',
+	'schola.what.law': 'Ret og ikke lære. Den siger, hvad Kirken kræver, og den ændres.',
+	'schola.cite.law': 'efter canon, som dens nummererede enheder kaldes',
+	'schola.what.doctors':
+		'De teologer, Kirken har udnævnt til kirkelærere. Det bærer ingen officiel myndighed, hvor stor forfatteren end er.',
+	'schola.cite.doctors': 'efter del, dernæst spørgsmål — Summaens egne inddelinger',
+	'schola.what.prayers': 'De ord, Kirken beder, med latinen ved siden af.',
+	'schola.cite.prayers': 'efter navn; der er ingen numre at citere',
+	'schola.places.heading': 'Ikke tekster, men steder på dette websted',
+	'schola.what.library':
+		'Alle webstedets værker i én liste, grupperet efter emne og ikke efter art.',
+	'schola.what.calendar':
+		'Den liturgiske dag — tid, farve og hvem der fejres — for det land, hvis kalender du følger.',
+	'schola.what.bookmarks':
+		'Steder, du har markeret, og hvor du sidst slap i hvert værk. Begge dele bliver i denne browser og sendes ingen steder hen.',
 	'jumpbox.placeholder': 'Gå til… (f.eks. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Søg',
 	'jumpbox.hint': 'Tryk / eller Ctrl+K for at gå til en henvisning',
@@ -121,8 +211,18 @@ export const da: Dictionary = {
 		'<strong>Katekismen</strong> fremlægger den katolske lære i 2.865 nummererede afsnit. <strong>Kompendiet</strong> gengiver den samme lære som 598 spørgsmål og svar efter samme disposition.',
 	'ccc.landing.pairTagline':
 		'Den Katolske Kirkes Katekismus i 2.865 numre, og dens Kompendium i 598 spørgsmål.',
+	'compendium.landing.title': 'Katekismens Kompendium',
+	'compendium.landing.tagline':
+		'Spørgsmål og svar, der sammenfatter Den Katolske Kirkes Katekismus.',
+	'compendium.question': 'Spørgsmål',
+	'compendium.answer': 'Svar',
+	'compendium.tableOfContents': 'Indhold',
+	'compendium.prevQuestion': 'Forrige spørgsmål',
+	'compendium.nextQuestion': 'Næste spørgsmål',
+	'compendium.condenses': 'Sammenfatter KKK ¶¶',
 	'ccc.abbrev': 'KKK',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'Intet spørgsmålsnummer i dette korpus',
 	'document.library.tagline':
 		'Encyklikaer, konciliære konstitutioner, dekreter og erklæringer fra Læreembedet.',
 	'doctores.landing.title': 'Kirkelærere',

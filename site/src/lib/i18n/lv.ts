@@ -72,6 +72,98 @@ export const lv: Dictionary = {
 	'nav.learn': 'Mācīties',
 	'library.landing.tagline':
 		'Viss krājums, plaukts pēc plaukta — kopā ar to, kur apstājāties, un to, ko esat atzīmējis.',
+	'schola.landing.title': 'Ar ko sākt',
+	'schola.landing.tagline':
+		'Īss ceļvedis pa to, kas šeit ir: kas ir katra no šīm grāmatām, kā raksta atsauci uz to, kā atrast vietu, un lasīšanas kārtības, ko Baznīca ir piedāvājusi.',
+	'schola.start.heading': 'Ja tas viss jums ir jauns',
+	'schola.start.body': 'Vislabākais sākums ir ',
+	'schola.start.bodyAfter':
+		': tā pati mācība, kas katehismā, daudz īsāka, uzrakstīta jautājumos un atbildēs. Tā ir apmēram desmito daļu gara un neko nepieņem par pašsaprotamu.',
+	'schola.bible.heading': 'Ja nekad neesat lasījis Bībeli',
+	'schola.bible.library':
+		'Tā nav viena grāmata, bet septiņdesmit trīs, rakstītas vairāk nekā tūkstoš gadu garumā un sakārtotas tajā secībā, pie kuras Baznīca apstājās — nevis tajā, kādā notikumi risinājās, un ne tajā, kuru ir visvieglāk lasīt. Vairums sāk pirmajā lappusē un pēc dažām nedēļām beidz, garā senā likuma nodaļā, jo neviens vēl nav pateicis, kam tas domāts.',
+	'schola.bible.step.gospel': 'Sāciet ar evaņģēliju',
+	'schola.bible.start':
+		'Viena no četrām īsām grāmatām par Jēzus dzīvi, dziļi iekšpusē, nevis priekšgalā. Doma nav mūsu: Baznīcas koncils lūdza mācīt pareizu Rakstu lietošanu, „īpaši Jaunās Derības un pirmām kārtām evaņģēliju“. Tas nenosauca nevienu atsevišķi, un mēs arī nenosauksim.',
+	'schola.bible.whichGospel':
+		'Trīs parasti tiek ieteikti, trīs dažādu iemeslu dēļ. Jebkurš no tiem ir laba vieta, kur būt.',
+	'schola.bible.gospel.mark':
+		'Īsākais. Jūs varat izlasīt to visu vienā pēcpusdienā, un sākumā vairāk vērts ir vienu pabeigt nekā izvēlēties labāko.',
+	'schola.bible.gospel.luke':
+		'Rakstīts kādam ārpus ticības, kas gribēja stāstu pierakstītu pēc kārtas — kas varētu būt tieši jūs. Tas turpinās tieši Apustuļu darbos, tāpēc patiesībā ir garākas grāmatas pirmā puse.',
+	'schola.bible.gospel.john':
+		'Tas, kurš atklāti pasaka, kāpēc uzrakstīts: „lai jūs ticētu“. Vienkārši vārdi, un tas iet taisni pie jautājuma, kas ir Jēzus.',
+	'schola.bible.step.acts': 'Tad — kas notika pēc tam',
+	'schola.bible.thenActs':
+		'Kad esat vienu pabeidzis, izlasiet, ko darīja tie, kas viņu pazina, pēc tam kad viņš bija aizgājis.',
+	'schola.bible.acts.why':
+		'Trīsdesmit gadi pēc evaņģēliju beigām: pāris desmiti nobijušos cilvēku, un tas, kā redzētais sasniedza impērijas otru malu.',
+	'schola.bible.step.old': 'Tad senākā puse',
+	'schola.bible.thenOld':
+		'Ne no pirmās lappuses, un ne visa. Dažas vietas nes stāstu, un tieši uz tām evaņģēliji atkal un atkal atsaucas atpakaļ.',
+	'schola.bible.ot.beginnings': 'Kā tas sākas un kā aiziet greizi.',
+	'schola.bible.ot.promise': 'Viena ģimene un tai dots apsolījums, kas pārdzīvo visus tajā.',
+	'schola.bible.ot.exodus':
+		'Tauta, izvesta no verdzības, un likums, kas tai dots, lai pēc tā dzīvotu.',
+	'schola.bible.ot.psalms':
+		'Nav stāsts: simt piecdesmit lūgšanu un dziesmu. Lasiet pa vienai, jebkurā secībā. Baznīca tās joprojām lūdz katru dienu.',
+	'schola.bible.bothWays':
+		'Jūs atpazīsiet lietas, un tā ir jēga, nevis sakritība. Baznīca senākās grāmatas lasa Kristus gaismā un jaunākās — tā gaismā, kas bija pirms tam: katra puse skaidro otru, un tāpēc neviena netiek lasīta viena pati.',
+	'schola.guide.heading': 'Kā šeit orientēties',
+	'schola.guide.lede':
+		'Teksts ir visa lappuse; viss pārējais ir vadīkla, ko varat neievērot, kamēr tā nav vajadzīga.',
+	'schola.guide.top.heading': 'Josla katras lappuses augšā',
+	'schola.guide.reading.heading': 'Josla virs teksta',
+	'schola.feature.search':
+		'Ierakstiet atsauci laukā augšā — nodaļu un pantu, rindkopas numuru, dokumenta nosaukumu — un tā tiek papildināta, jums rakstot. Nospiediet no jebkuras vietas / vai Ctrl+K, un ? pārējām saīsnēm.',
+	'schola.feature.languages':
+		'Saskarne un teksts tiek izvēlēti atsevišķi, tāpēc varat lasīt darbu vienā valodā, kamēr pogas paliek citā. Kur darbam ir vairāki izdevumi jūsu valodā, izvēlaties arī starp tiem.',
+	'schola.feature.settings':
+		'Teksta lielums, gaišs vai tumšs, sēpija, un cik daudz aparāta vēlaties blakus tekstam.',
+	'schola.feature.offline':
+		'Pievienojiet vietni sākuma ekrānam, un tā atvērsies kā lietotne. Varat lejupielādēt veselus darbus, lai lasītu bez savienojuma.',
+	'schola.feature.contents':
+		'Tā darba dalījums, kurā atrodaties — grāmatas, daļas, nodaļas — lai pārvietotos tā iekšienē, neatgriežoties pie sākuma.',
+	'schola.feature.compare':
+		'Divi viena un tā paša fragmenta izdevumi blakus — latīņu valoda blakus jūsu pašu valodai, vai viens tulkojums blakus citam.',
+	'schola.feature.apparatus':
+		'Izdevuma paša piezīmes un jebkurš tekstam rakstīts komentārs tiek piedāvāti tam blakus, nevis zem tā. Atsauces teksta iekšienē ir saites, tāpēc norāde ved turp, kurp tā rāda.',
+	'schola.feature.focus':
+		'Notīra visu, izņemot tekstu. Izeja paliek tur, kur bija josla, lai nekas neieslēgtos aiz tās.',
+	'schola.books.heading': 'Kas šeit ir un kā to citē',
+	'schola.books.lede':
+		'Katra no šīm ir cita veida grāmata, un uz katru atsaucas ar savu skaitli. Piemēri rāda formu: ierakstiet līdzīgu meklēšanas laukā, un jūs nonāksiet pie vietas.',
+	'schola.cite.label': 'Citē kā',
+	'schola.what.scripture':
+		'Raksti tādi, kādus tos saņem Baznīca, abās Derībās. Viss pārējais šeit tiek lasīts to gaismā.',
+	'schola.cite.scripture': 'grāmata, nodaļa un pants, tajos saīsinājumos, ko drukā jūsu izdevums',
+	'schola.what.catechism':
+		'Kopsavilkums tam, ko tic Katoliskā Baznīca, vienā sējumā. Pats tas nav avots: tas savāc Rakstus, tēvus, liturģiju un Baznīcas mācību, un katra rindkopa pasaka, no kurienes nāk tas, ko tā apgalvo.',
+	'schola.cite.catechism':
+		'pēc rindkopas numura, kas rit nepārtraukti no pirmās lappuses līdz pēdējai',
+	'schola.what.compendium':
+		'Tā pati mācība, izklāstīta jautājumos un atbildēs, apmēram desmitajā daļā apjoma.',
+	'schola.cite.compendium': 'pēc jautājuma numura',
+	'schola.what.magisterium':
+		'Tas, ko pāvesti un koncili patiešām ir rakstījuši — enciklikas, konstitūcijas, dekrēti, deklarācijas — katrs adresēts noteiktam brīdim un noteiktam jautājumam. Katrs pazīstams pēc saviem pirmajiem latīņu vārdiem.',
+	'schola.cite.magisterium': 'pēc dokumenta nosaukuma, tad iedaļas numura tajā',
+	'schola.what.social':
+		'Baznīcas mācība par darbu, īpašumu, ģimeni, politiku un mieru, savākta no tiem dokumentiem vienā grāmatā.',
+	'schola.cite.social': 'pēc rindkopas numura, zem tā saīsinājuma, ko darbs lieto pats sev',
+	'schola.what.law': 'Tiesības, nevis mācība. Tās saka, ko Baznīca prasa, un tiek grozītas.',
+	'schola.cite.law': 'pēc kanona — tā sauc tās numurētās vienības',
+	'schola.what.doctors':
+		'Teologi, kurus Baznīca ir nosaukusi par Baznīcas doktoriem. Tas nenes nekādu oficiālu autoritāti, lai cik liels būtu autors.',
+	'schola.cite.doctors': 'pēc daļas, tad jautājuma — pašas Summas dalījums',
+	'schola.what.prayers': 'Vārdi, ar kuriem Baznīca lūdzas, ar latīņu valodu blakus.',
+	'schola.cite.prayers': 'pēc nosaukuma; nav numuru, ko citēt',
+	'schola.places.heading': 'Ne teksti, bet vietas šajā vietnē',
+	'schola.what.library':
+		'Visi vietnes darbi vienā sarakstā, sagrupēti pēc priekšmeta, nevis pēc veida.',
+	'schola.what.calendar':
+		'Liturģiskā diena — laiks, krāsa un kas tiek svinēts — tai valstij, kuras kalendāram sekojat.',
+	'schola.what.bookmarks':
+		'Vietas, ko esat atzīmējis, un kur pēdējoreiz palikāt katrā darbā. Abas paliek šajā pārlūkā un netiek nekur sūtītas.',
 	'jumpbox.placeholder': 'Pāriet uz… (piem. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Meklēt',
 	'jumpbox.hint': 'Nospiediet / vai Ctrl+K, lai pārietu uz atsauci',
@@ -124,8 +216,17 @@ export const lv: Dictionary = {
 		'<strong>Katehisms</strong> izklāsta katolisko mācību 2865 numurētos punktos. <strong>Kompendijs</strong> to pašu mācību sniedz kā 598 jautājumus un atbildes pēc tā paša izkārtojuma.',
 	'ccc.landing.pairTagline':
 		'Katoliskās Baznīcas katehisms 2865 numuros un tā Kompendijs 598 jautājumos.',
+	'compendium.landing.title': 'Katehisma kompendijs',
+	'compendium.landing.tagline': 'Jautājumi un atbildes, kas apkopo Katoliskās Baznīcas katehismu.',
+	'compendium.question': 'Jautājums',
+	'compendium.answer': 'Atbilde',
+	'compendium.tableOfContents': 'Saturs',
+	'compendium.prevQuestion': 'Iepriekšējais jautājums',
+	'compendium.nextQuestion': 'Nākamais jautājums',
+	'compendium.condenses': 'Apkopo KBK ¶¶',
 	'ccc.abbrev': 'KBK',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'Šajā korpusā nav jautājuma numura',
 	'document.library.tagline':
 		'Enciklikas, koncila konstitūcijas, dekrēti un Maģistērija deklarācijas.',
 	'doctores.landing.title': 'Baznīcas doktori',

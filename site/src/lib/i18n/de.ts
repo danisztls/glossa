@@ -43,6 +43,99 @@ export const de: Dictionary = {
 	'nav.learn': 'Lernen',
 	'library.landing.tagline':
 		'Der ganze Bestand, Regal für Regal — mit der Stelle, an der Sie aufgehört haben, und dem, was Sie markiert haben.',
+	'schola.landing.title': 'Wo anfangen',
+	'schola.landing.tagline':
+		'Ein kurzer Wegweiser durch das, was hier steht: was jedes dieser Bücher ist, wie man es zitiert, wie man eine Stelle findet, und Leseordnungen, die die Kirche vorgelegt hat.',
+	'schola.start.heading': 'Wenn Ihnen das alles neu ist',
+	'schola.start.body': 'Beginnen Sie mit dem ',
+	'schola.start.bodyAfter':
+		': dieselbe Lehre wie im Katechismus, viel kürzer, in Fragen und Antworten geschrieben. Es hat etwa ein Zehntel des Umfangs und setzt nichts voraus.',
+	'schola.bible.heading': 'Wenn Sie die Bibel nie gelesen haben',
+	'schola.bible.library':
+		'Sie ist nicht ein Buch, sondern dreiundsiebzig, über mehr als tausend Jahre geschrieben und in der Ordnung zusammengestellt, auf die die Kirche sich festgelegt hat — nicht in der Ordnung des Geschehens und nicht in der, die sich am leichtesten liest. Die meisten fangen auf der ersten Seite an und hören ein paar Wochen später auf, in einem langen Kapitel altem Recht, weil ihnen noch niemand gesagt hat, wozu das da ist.',
+	'schola.bible.step.gospel': 'Fangen Sie mit einem Evangelium an',
+	'schola.bible.start':
+		'Eines von vier kurzen Büchern über das Leben Jesu, weit drinnen und nicht vorn. Das ist nicht unser Einfall: ein Konzil der Kirche hat verlangt, den rechten Gebrauch der Schrift zu lehren, „vor allem des Neuen Testamentes und zuerst der Evangelien“. Es hat keines einzeln genannt, und wir tun es auch nicht.',
+	'schola.bible.whichGospel':
+		'Drei werden gewöhnlich vorgeschlagen, aus drei verschiedenen Gründen. Jedes davon ist ein guter Ort, um zu sein.',
+	'schola.bible.gospel.mark':
+		'Das kürzeste. Sie können es an einem Nachmittag ganz lesen, und eines beendet zu haben ist am Anfang mehr wert, als das beste gewählt zu haben.',
+	'schola.bible.gospel.luke':
+		'Geschrieben für jemanden außerhalb des Glaubens, der die Geschichte der Reihe nach aufgezeichnet haben wollte — was genau Sie sein könnten. Es geht ohne Bruch in die Apostelgeschichte über, ist also eigentlich die erste Hälfte eines längeren Buches.',
+	'schola.bible.gospel.john':
+		'Das, welches offen sagt, warum es geschrieben wurde: „damit ihr glaubt“. Einfache Worte, und es geht geradewegs auf die Frage zu, wer Jesus ist.',
+	'schola.bible.step.acts': 'Dann, was danach geschah',
+	'schola.bible.thenActs':
+		'Wenn Sie eines beendet haben, lesen Sie, was die taten, die ihn gekannt hatten, nachdem er fort war.',
+	'schola.bible.acts.why':
+		'Die dreißig Jahre nach dem Ende der Evangelien: ein paar Dutzend verängstigte Menschen, und wie das, was sie gesehen hatten, ans andere Ende des Reiches gelangte.',
+	'schola.bible.step.old': 'Dann die ältere Hälfte',
+	'schola.bible.thenOld':
+		'Nicht von der ersten Seite an, und nicht ganz. Ein paar Stellen tragen die Geschichte, und es sind die, auf die die Evangelien immer wieder zurückweisen.',
+	'schola.bible.ot.beginnings': 'Wie es beginnt, und wie es schiefgeht.',
+	'schola.bible.ot.promise':
+		'Eine Familie, und eine ihr gegebene Verheißung, die alle in ihr überdauert.',
+	'schola.bible.ot.exodus':
+		'Ein Volk aus der Sklaverei herausgeführt, und ein Gesetz, nach dem es leben soll.',
+	'schola.bible.ot.psalms':
+		'Keine Erzählung: hundertfünfzig Gebete und Lieder. Lesen Sie eines nach dem anderen, in beliebiger Reihenfolge. Die Kirche betet sie bis heute täglich.',
+	'schola.bible.bothWays':
+		'Sie werden Dinge wiedererkennen, und das ist der Sinn und kein Zufall. Die Kirche liest die älteren Bücher im Licht Christi und die neueren im Licht dessen, was vorher war — jede Hälfte erklärt die andere, und darum wird keine allein gelesen.',
+	'schola.guide.heading': 'Sich zurechtfinden',
+	'schola.guide.lede':
+		'Der Text ist die ganze Seite; alles andere ist ein Bedienelement, das Sie übergehen können, bis Sie es brauchen.',
+	'schola.guide.top.heading': 'Die Leiste oben auf jeder Seite',
+	'schola.guide.reading.heading': 'Die Leiste über einem Text',
+	'schola.feature.search':
+		'Geben Sie oben eine Stelle in das Feld ein — Kapitel und Vers, eine Nummer, den Namen eines Dokumentes — und es ergänzt sie beim Tippen. Drücken Sie von überall / oder Strg+K, und ? für die übrigen Tastenkürzel.',
+	'schola.feature.languages':
+		'Oberfläche und Text werden getrennt gewählt, Sie können also ein Werk in einer Sprache lesen, während die Schaltflächen in einer anderen bleiben. Wo ein Werk mehrere Ausgaben in Ihrer Sprache hat, wählen Sie auch zwischen diesen.',
+	'schola.feature.settings':
+		'Schriftgröße, hell oder dunkel, Sepia, und wie viel vom Apparat Sie neben dem Text haben wollen.',
+	'schola.feature.offline':
+		'Legen Sie die Seite auf Ihren Startbildschirm, und sie öffnet sich wie eine App. Sie können ganze Werke herunterladen und ohne Verbindung lesen.',
+	'schola.feature.contents':
+		'Die Gliederung des Werkes, in dem Sie sind — Bücher, Teile, Kapitel — damit Sie sich darin bewegen können, ohne an den Anfang zurückzugehen.',
+	'schola.feature.compare':
+		'Zwei Ausgaben derselben Stelle nebeneinander — das Lateinische neben Ihrer eigenen Sprache, oder eine Übersetzung neben einer anderen.',
+	'schola.feature.apparatus':
+		'Die eigenen Anmerkungen einer Ausgabe und jeder zum Text geschriebene Kommentar werden daneben angeboten und nicht darunter. Zitate im Text sind Verweise, eine Stelle führt also dorthin, wohin sie zeigt.',
+	'schola.feature.focus':
+		'Räumt alles außer dem Text weg. Der Weg hinaus bleibt, wo die Leiste war, damit nichts dahinter eingeschlossen ist.',
+	'schola.books.heading': 'Was hier steht, und wie es zitiert wird',
+	'schola.books.lede':
+		'Jedes davon ist eine andere Art Buch, und auf jedes wird mit einer eigenen Zahl verwiesen. Die Beispiele zeigen die Form: tippen Sie eines davon in das Suchfeld, und Sie landen bei der Stelle.',
+	'schola.cite.label': 'Zitiert als',
+	'schola.what.scripture':
+		'Die Schrift, wie die Kirche sie empfängt, in beiden Testamenten. Alles andere hier wird in ihrem Licht gelesen.',
+	'schola.cite.scripture':
+		'Buch, Kapitel und Vers, in den Abkürzungen, die Ihre eigene Ausgabe druckt',
+	'schola.what.catechism':
+		'Eine Zusammenfassung dessen, was die Katholische Kirche glaubt, in einem Band. Er ist selbst keine Quelle: er sammelt die Schrift, die Väter, die Liturgie und die Lehre der Kirche, und jede Nummer sagt, woher stammt, was sie sagt.',
+	'schola.cite.catechism': 'nach Nummer, durchlaufend von der ersten bis zur letzten Seite',
+	'schola.what.compendium': 'Dieselbe Lehre in Fragen und Antworten, etwa ein Zehntel so lang.',
+	'schola.cite.compendium': 'nach Fragenummer',
+	'schola.what.magisterium':
+		'Was Päpste und Konzilien tatsächlich geschrieben haben — Enzykliken, Konstitutionen, Dekrete, Erklärungen — jeweils an einen bestimmten Augenblick und eine bestimmte Frage gerichtet. Jedes wird nach seinen lateinischen Anfangsworten benannt.',
+	'schola.cite.magisterium': 'nach dem Namen des Dokumentes, dann einer Abschnittsnummer darin',
+	'schola.what.social':
+		'Die Lehre der Kirche über Arbeit, Eigentum, Familie, Politik und Frieden, aus jenen Dokumenten in einem Buch gesammelt.',
+	'schola.cite.social': 'nach Nummer, unter dem Kürzel, das das Werk für sich selbst verwendet',
+	'schola.what.law':
+		'Recht und nicht Lehre. Es sagt, was die Kirche fordert, und es wird geändert.',
+	'schola.cite.law': 'nach Canon, so heißen seine nummerierten Einheiten',
+	'schola.what.doctors':
+		'Die Theologen, die die Kirche zu Lehrern erklärt hat. Es trägt keine amtliche Autorität, so groß sein Verfasser auch sei.',
+	'schola.cite.doctors': 'nach Teil, dann Quaestio — den eigenen Gliedern der Summe',
+	'schola.what.prayers': 'Die Worte, die die Kirche betet, mit dem Lateinischen daneben.',
+	'schola.cite.prayers': 'nach dem Namen; es gibt keine Nummern zu zitieren',
+	'schola.places.heading': 'Keine Texte, sondern Orte auf dieser Seite',
+	'schola.what.library':
+		'Alle Werke der Seite in einer Liste, nach Sachgebiet geordnet und nicht nach Gattung.',
+	'schola.what.calendar':
+		'Der liturgische Tag — Zeit, Farbe und wessen gedacht wird — für das Land, dessen Kalender Sie folgen.',
+	'schola.what.bookmarks':
+		'Stellen, die Sie gemerkt haben, und wo Sie in jedem Werk zuletzt aufgehört haben. Beides bleibt in diesem Browser und wird nirgendwohin gesendet.',
 	'ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
 	'jumpbox.placeholder': 'Springe zu… (z. B. johannes 3,16, ccc 1234)',
 	'jumpbox.short': 'Suchen',

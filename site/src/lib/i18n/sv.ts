@@ -41,6 +41,96 @@ export const sv: Dictionary = {
 	'nav.learn': 'Lär dig',
 	'library.landing.tagline':
 		'Hela samlingen, hylla för hylla — med var du slutade och vad du har markerat.',
+	'schola.landing.title': 'Var man börjar',
+	'schola.landing.tagline':
+		'En kort vägledning till vad som finns här: vad var och en av dessa böcker är, hur en hänvisning till den skrivs, hur man hittar ett ställe, och läsordningar som kyrkan har föreslagit.',
+	'schola.start.heading': 'Om allt detta är nytt för dig',
+	'schola.start.body': 'Börja med ',
+	'schola.start.bodyAfter':
+		': samma lära som katekesens, mycket kortare, skriven i frågor och svar. Det är ungefär en tiondel så långt och förutsätter ingenting.',
+	'schola.bible.heading': 'Om du aldrig har läst Bibeln',
+	'schola.bible.library':
+		'Den är inte en bok utan sjuttiotre, skrivna under mer än tusen år och samlade i den ordning kyrkan stannade för — inte den ordning händelserna skedde i, och inte den som är lättast att läsa. De flesta börjar på första sidan och slutar några veckor senare, mitt i ett långt kapitel gammal lag, eftersom ingen ännu har sagt dem vad den är till för.',
+	'schola.bible.step.gospel': 'Börja med ett evangelium',
+	'schola.bible.start':
+		'En av fyra korta böcker om Jesu liv, långt in och inte främst. Det är inte vår idé: ett kyrkomöte bad att man skulle lära ut det rätta bruket av Skriften, ”särskilt Nya testamentet och framför allt evangelierna”. Det nämnde inget enskilt, och det gör inte vi heller.',
+	'schola.bible.whichGospel':
+		'Tre brukar föreslås, av tre olika skäl. Vilket som helst av dem är ett bra ställe att vara på.',
+	'schola.bible.gospel.mark':
+		'Det kortaste. Du kan läsa det helt på en eftermiddag, och att ha läst ut ett är i början värt mer än att ha valt det bästa.',
+	'schola.bible.gospel.luke':
+		'Skrivet för någon utanför tron som ville ha berättelsen nedtecknad i ordning — vilket kan vara just du. Det fortsätter rakt in i Apostlagärningarna, så det är i själva verket första hälften av en längre bok.',
+	'schola.bible.gospel.john':
+		'Det som rent ut säger varför det skrevs: ”för att ni skall tro”. Enkla ord, och det går rakt på frågan om vem Jesus är.',
+	'schola.bible.step.acts': 'Sedan vad som hände därefter',
+	'schola.bible.thenActs':
+		'När du har läst ut ett, läs vad de som kände honom gjorde sedan han var borta.',
+	'schola.bible.acts.why':
+		'De trettio åren efter evangeliernas slut: några dussin skrämda människor, och hur det de hade sett nådde andra sidan av riket.',
+	'schola.bible.step.old': 'Sedan den äldre hälften',
+	'schola.bible.thenOld':
+		'Inte från första sidan, och inte allt. Några få ställen bär berättelsen, och det är dem evangelierna hela tiden pekar tillbaka på.',
+	'schola.bible.ot.beginnings': 'Hur det börjar, och hur det går fel.',
+	'schola.bible.ot.promise': 'En familj, och ett löfte till den som överlever alla i den.',
+	'schola.bible.ot.exodus': 'Ett folk som förs ut ur slaveri, och en lag att leva efter.',
+	'schola.bible.ot.psalms':
+		'Ingen berättelse: hundrafemtio böner och sånger. Läs en i taget, i vilken ordning som helst. Kyrkan ber dem alltjämt varje dag.',
+	'schola.bible.bothWays':
+		'Du kommer att känna igen saker, och det är meningen snarare än en tillfällighet. Kyrkan läser de äldre böckerna i Kristi ljus och de nyare i ljuset av det som kom före — varje hälft förklarar den andra, och därför läses ingen av dem ensam.',
+	'schola.guide.heading': 'Att hitta omkring',
+	'schola.guide.lede':
+		'Texten är hela sidan; allt annat är en kontroll du kan strunta i tills du vill ha den.',
+	'schola.guide.top.heading': 'Raden överst på varje sida',
+	'schola.guide.reading.heading': 'Raden ovanför en text',
+	'schola.feature.search':
+		'Skriv en hänvisning i rutan överst — kapitel och vers, ett styckenummer, namnet på ett dokument — och den fylls i medan du skriver. Tryck / eller Ctrl+K varifrån som helst, och ? för de andra genvägarna.',
+	'schola.feature.languages':
+		'Gränssnitt och text väljs var för sig, så du kan läsa ett verk på ett språk medan knapparna står kvar på ett annat. Där ett verk har flera utgåvor på ditt språk väljer du mellan dem också.',
+	'schola.feature.settings':
+		'Textstorlek, ljust eller mörkt, sepia, och hur mycket av apparaten du vill ha bredvid texten.',
+	'schola.feature.offline':
+		'Lägg till sidan på hemskärmen så öppnas den som en app. Du kan hämta hela verk för att läsa utan uppkoppling.',
+	'schola.feature.contents':
+		'Indelningarna i det verk du är i — böcker, delar, kapitel — så att du kan röra dig inuti det utan att gå tillbaka till början.',
+	'schola.feature.compare':
+		'Två utgåvor av samma ställe, sida vid sida — latinet bredvid ditt eget språk, eller en översättning bredvid en annan.',
+	'schola.feature.apparatus':
+		'En utgåvas egna noter, och varje kommentar skriven till texten, erbjuds bredvid den och inte under. Hänvisningar inne i texten är länkar, så en hänvisning leder dit den pekar.',
+	'schola.feature.focus':
+		'Rensar bort allt utom texten. Vägen ut står kvar där raden var, så att ingenting blir instängt bakom den.',
+	'schola.books.heading': 'Vad som finns här, och hur det citeras',
+	'schola.books.lede':
+		'Var och en av dessa är ett slags bok för sig, och var och en hänvisas till med ett eget nummer. Exemplen visar formen: skriv ett sådant i sökrutan så hamnar du på stället.',
+	'schola.cite.label': 'Citeras som',
+	'schola.what.scripture':
+		'Skriften så som kyrkan tar emot den, i båda testamentena. Allt annat här läses i dess ljus.',
+	'schola.cite.scripture': 'bok, kapitel och vers, i de förkortningar din egen utgåva trycker',
+	'schola.what.catechism':
+		'En sammanfattning av vad Katolska kyrkan tror, i en enda volym. Den är inte själv en källa: den samlar Skriften, fäderna, liturgin och kyrkans lära, och varje punkt säger varifrån det den påstår kommer.',
+	'schola.cite.catechism': 'efter punktnummer, löpande obrutet från första sidan till sista',
+	'schola.what.compendium':
+		'Samma lära framställd i frågor och svar, på ungefär en tiondel av längden.',
+	'schola.cite.compendium': 'efter frågenummer',
+	'schola.what.magisterium':
+		'Vad påvar och kyrkomöten faktiskt har skrivit — encyklikor, konstitutioner, dekret, deklarationer — vart och ett riktat till ett bestämt ögonblick och en bestämd fråga. Vart och ett är känt efter sina inledande ord på latin.',
+	'schola.cite.magisterium': 'efter dokumentets namn, sedan ett avsnittsnummer inuti det',
+	'schola.what.social':
+		'Kyrkans lära om arbete, egendom, familjen, politiken och freden, hämtad ur de dokumenten och samlad i en bok.',
+	'schola.cite.social': 'efter punktnummer, under den förkortning verket använder om sig självt',
+	'schola.what.law': 'Rätt och inte lära. Den säger vad kyrkan kräver, och den ändras.',
+	'schola.cite.law': 'efter kanon, vilket dess numrerade enheter kallas',
+	'schola.what.doctors':
+		'De teologer kyrkan har utnämnt till kyrkolärare. Det bär ingen officiell auktoritet, hur stor författaren än är.',
+	'schola.cite.doctors': 'efter del, sedan fråga — Summans egna indelningar',
+	'schola.what.prayers': 'Orden kyrkan ber, med latinet bredvid.',
+	'schola.cite.prayers': 'efter namn; det finns inga nummer att citera',
+	'schola.places.heading': 'Inte texter, utan platser på den här sidan',
+	'schola.what.library':
+		'Alla verk på sidan i en lista, grupperade efter ämne och inte efter slag.',
+	'schola.what.calendar':
+		'Den liturgiska dagen — tid, färg och vem som firas — för det land vars kalender du följer.',
+	'schola.what.bookmarks':
+		'Ställen du har markerat, och var du senast slutade i varje verk. Bådadera stannar i den här webbläsaren och skickas ingenstans.',
 	'ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
 	'jumpbox.placeholder': 'Gå till… (t.ex. joh 3:16, ccc 1234)',
 	'jumpbox.short': 'Sök',

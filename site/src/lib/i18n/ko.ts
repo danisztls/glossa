@@ -74,6 +74,95 @@ export const ko: Dictionary = {
 	'nav.library': '서고',
 	'nav.learn': '배우기',
 	'library.landing.tagline': '전체 장서를 서가별로 — 읽던 자리와 표시해 둔 곳과 함께.',
+	'schola.landing.title': '어디서부터 시작할까',
+	'schola.landing.tagline':
+		'여기 있는 것들에 대한 짧은 안내입니다. 이 책들이 각각 무엇인지, 그 인용을 어떻게 적는지, 어떤 대목을 어떻게 찾는지, 그리고 교회가 제시한 읽기 순서.',
+	'schola.start.heading': '이 모든 것이 처음이시라면',
+	'schola.start.body': '이렇게 시작하십시오: ',
+	'schola.start.bodyAfter':
+		'. 교리서와 같은 가르침을 훨씬 짧게, 묻고 답하는 형식으로 담았습니다. 분량은 십분의 일쯤이며, 아무것도 미리 전제하지 않습니다.',
+	'schola.bible.heading': '성경을 한 번도 읽어 보지 않으셨다면',
+	'schola.bible.library':
+		'한 권이 아니라 일흔세 권입니다. 천 년이 넘는 세월에 걸쳐 쓰였고, 교회가 정한 순서대로 묶였습니다 — 일이 일어난 순서도 아니고, 읽기에 가장 쉬운 순서도 아닙니다. 대개는 첫 쪽부터 시작했다가 몇 주 뒤, 옛 율법의 긴 장 어딘가에서 그만둡니다. 그것이 무엇을 위한 것인지 아직 아무도 말해 주지 않았기 때문입니다.',
+	'schola.bible.step.gospel': '복음서 하나로 시작하십시오',
+	'schola.bible.start':
+		'예수님의 생애를 다룬 네 권의 짧은 책 가운데 하나로, 맨 앞이 아니라 한참 안쪽에 있습니다. 저희 생각이 아닙니다. 교회의 한 공의회는 성경을 올바로 사용하도록 가르치기를 청하면서 「특히 신약을, 그중에서도 무엇보다 복음서를」이라고 했습니다. 어느 하나를 지목하지는 않았고, 저희도 지목하지 않겠습니다.',
+	'schola.bible.whichGospel':
+		'세 가지가 흔히 권해지는데, 이유는 저마다 다릅니다. 어느 것이든 머무르기에 좋은 자리입니다.',
+	'schola.bible.gospel.mark':
+		'가장 짧습니다. 한나절이면 다 읽을 수 있고, 처음에는 가장 좋은 것을 고르는 일보다 하나를 끝까지 읽는 일이 더 값집니다.',
+	'schola.bible.gospel.luke':
+		'이야기를 차례대로 적어 주기를 바란, 신앙 밖의 어떤 사람을 위해 쓰였습니다 — 바로 당신일 수도 있습니다. 사도행전으로 곧장 이어지므로, 사실은 더 긴 책의 전반부입니다.',
+	'schola.bible.gospel.john':
+		'왜 쓰였는지를 대놓고 말하는 책입니다. 「너희로 믿게 하려 함이라.」 쉬운 말로, 예수님이 누구신가 하는 물음으로 곧장 들어갑니다.',
+	'schola.bible.step.acts': '그다음, 그 뒤에 일어난 일',
+	'schola.bible.thenActs':
+		'하나를 다 읽으셨거든, 그분이 떠나신 뒤에 그분을 알던 이들이 무엇을 했는지 읽으십시오.',
+	'schola.bible.acts.why':
+		'복음서가 끝난 뒤의 삼십 년. 겁에 질린 수십 명의 사람들, 그리고 그들이 본 것이 어떻게 제국의 반대편까지 이르렀는가.',
+	'schola.bible.step.old': '그다음, 더 오래된 절반',
+	'schola.bible.thenOld':
+		'첫 쪽부터도 아니고, 전부도 아닙니다. 몇 군데가 이야기를 이끌며, 복음서가 거듭 되짚어 가리키는 곳이 바로 그곳들입니다.',
+	'schola.bible.ot.beginnings': '어떻게 시작되며, 어떻게 어긋나는가.',
+	'schola.bible.ot.promise': '한 집안, 그리고 그 집안 사람들을 모두 넘어 살아남는 약속.',
+	'schola.bible.ot.exodus': '종살이에서 이끌려 나온 백성, 그리고 살아가라고 주어진 법.',
+	'schola.bible.ot.psalms':
+		'이야기가 아닙니다. 백쉰 편의 기도와 노래입니다. 한 편씩, 어떤 순서로든 읽으십시오. 교회는 오늘도 날마다 이것들을 바칩니다.',
+	'schola.bible.bothWays':
+		'알아보시는 것들이 있을 텐데, 우연이 아니라 그것이 요점입니다. 교회는 더 오래된 책들을 그리스도의 빛에서, 더 나중의 책들을 앞서 있었던 것의 빛에서 읽습니다 — 두 절반이 서로를 풀이하므로, 어느 쪽도 홀로 읽지 않습니다.',
+	'schola.guide.heading': '길 찾기',
+	'schola.guide.lede':
+		'본문이 곧 쪽 전체입니다. 나머지는 필요해지기 전까지 무시해도 좋은 조작 장치입니다.',
+	'schola.guide.top.heading': '모든 쪽 맨 위의 막대',
+	'schola.guide.reading.heading': '본문 위의 막대',
+	'schola.feature.search':
+		'맨 위 칸에 인용을 입력하십시오 — 장과 절, 항 번호, 문헌 이름 — 입력하는 대로 완성됩니다. 어디서든 / 또는 Ctrl+K를, 다른 단축키는 ?를 누르십시오.',
+	'schola.feature.languages':
+		'화면과 본문은 따로 고릅니다. 그래서 단추는 한 언어로 두고 저작은 다른 언어로 읽으실 수 있습니다. 어떤 저작이 당신의 언어로 여러 판본을 가진 경우에는 그중에서도 고르십니다.',
+	'schola.feature.settings':
+		'글자 크기, 밝게 또는 어둡게, 세피아, 그리고 본문 곁에 주석을 얼마나 둘지.',
+	'schola.feature.offline':
+		'이 사이트를 홈 화면에 추가하시면 앱처럼 열립니다. 저작 전체를 내려받아 연결 없이 읽으실 수 있습니다.',
+	'schola.feature.contents':
+		'지금 계신 저작의 구분 — 권, 부, 장 — 처음으로 돌아가지 않고 그 안에서 옮겨 다니시도록.',
+	'schola.feature.compare':
+		'같은 대목의 두 판본을 나란히 — 당신의 언어 곁에 라틴어를, 또는 한 번역 곁에 다른 번역을.',
+	'schola.feature.apparatus':
+		'판본 자체의 각주와 본문에 붙은 어떤 주해든, 아래가 아니라 곁에 놓입니다. 본문 안의 인용은 링크이므로, 가리키는 곳으로 그대로 갑니다.',
+	'schola.feature.focus':
+		'본문만 남기고 모두 치웁니다. 나가는 길은 막대가 있던 자리에 그대로 있어, 그 뒤에 갇히는 것이 없습니다.',
+	'schola.books.heading': '여기 무엇이 있고, 어떻게 인용하는가',
+	'schola.books.lede':
+		'이들은 저마다 다른 종류의 책이며, 각각 고유한 번호로 가리킵니다. 보기가 그 형태를 알려 줍니다. 비슷하게 검색 칸에 입력하시면 그 대목에 닿습니다.',
+	'schola.cite.label': '인용 형식',
+	'schola.what.scripture':
+		'교회가 받아들이는 그대로의 성경, 두 계약 모두. 여기 있는 나머지 전부는 그 빛에서 읽힙니다.',
+	'schola.cite.scripture': '권, 장, 절 — 당신의 판본이 찍는 약호로',
+	'schola.what.catechism':
+		'가톨릭 교회가 믿는 바를 한 권으로 간추린 책입니다. 그 자체가 원천은 아닙니다. 성경과 교부와 전례와 교회의 가르침을 모으며, 각 항은 자기가 말하는 바가 어디서 왔는지 밝힙니다.',
+	'schola.cite.catechism': '항 번호로. 첫 쪽부터 끝 쪽까지 끊기지 않고 이어집니다',
+	'schola.what.compendium':
+		'같은 가르침을 묻고 답하는 형식으로 펼친 것으로, 분량은 십분의 일쯤입니다.',
+	'schola.cite.compendium': '물음 번호로',
+	'schola.what.magisterium':
+		'교황들과 공의회들이 실제로 쓴 것 — 회칙, 헌장, 교령, 선언 — 각각 특정한 때와 특정한 물음을 향합니다. 각각은 라틴어 첫 낱말들로 불립니다.',
+	'schola.cite.magisterium': '문헌 이름으로, 그다음 그 안의 항 번호로',
+	'schola.what.social':
+		'노동과 소유, 가정, 정치, 평화에 대한 교회의 가르침을 그 문헌들에서 모아 한 권으로 엮은 것.',
+	'schola.cite.social': '항 번호로, 그 저작이 스스로에게 쓰는 약호 아래에서',
+	'schola.what.law': '교리가 아니라 법입니다. 교회가 무엇을 요구하는지 말하며, 개정됩니다.',
+	'schola.cite.law': '조문으로. 번호 매긴 단위를 그렇게 부릅니다',
+	'schola.what.doctors':
+		'교회가 학자로 선포한 신학자들입니다. 저자가 아무리 위대해도 공적 권위를 지니지는 않습니다.',
+	'schola.cite.doctors': '부, 그다음 문제로 — 신학대전 자체의 구분',
+	'schola.what.prayers': '교회가 바치는 말들, 곁에 라틴어와 함께.',
+	'schola.cite.prayers': '이름으로. 인용할 번호는 없습니다',
+	'schola.places.heading': '본문이 아니라, 이 사이트의 자리들',
+	'schola.what.library': '이 사이트의 모든 저작을 한 목록에, 종류가 아니라 주제로 묶어 놓았습니다.',
+	'schola.what.calendar':
+		'전례일 — 시기와 색, 누구를 기리는지 — 당신이 따르는 달력의 나라에 맞추어.',
+	'schola.what.bookmarks':
+		'표시해 두신 대목들과, 저작마다 마지막으로 멈추신 자리. 둘 다 이 브라우저에 보관되며 어디로도 보내지지 않습니다.',
 	'jumpbox.placeholder': '이동… (예: jn 3,16, ccc 1234)',
 	'jumpbox.short': '찾기',
 	'jumpbox.hint': '/ 또는 Ctrl+K를 누르면 인용으로 이동합니다',
@@ -124,8 +213,17 @@ export const ko: Dictionary = {
 	'ccc.landing.tagline':
 		'<strong>교리서</strong>는 가톨릭 교리를 번호가 매겨진 2,865개 항으로 제시합니다. <strong>요약</strong>은 같은 교리를 같은 얼개에 따라 598개의 문답으로 다시 제시합니다.',
 	'ccc.landing.pairTagline': '가톨릭 교회 교리서 2,865항과, 그 요약본 598문답.',
+	'compendium.landing.title': '교리서 요약본',
+	'compendium.landing.tagline': '가톨릭 교회 교리서를 간추린 문답.',
+	'compendium.question': '물음',
+	'compendium.answer': '답',
+	'compendium.tableOfContents': '차례',
+	'compendium.prevQuestion': '이전 물음',
+	'compendium.nextQuestion': '다음 물음',
+	'compendium.condenses': '교리서 ¶¶ 간추림',
 	'ccc.abbrev': '교리서',
 	'compendium.abbrev': '요약',
+	'compendium.noQuestionNumber': '이 말뭉치에는 물음 번호가 없습니다',
 	'document.library.tagline': '회칙, 공의회 헌장, 교령, 그리고 교도권의 선언.',
 	'doctores.landing.title': '교회 학자',
 	'doctores.landing.tagline': '교부들과 교회 학자들의 신학 저작.',

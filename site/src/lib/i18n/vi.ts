@@ -75,6 +75,98 @@ export const vi: Dictionary = {
 	'nav.learn': 'Học',
 	'library.landing.tagline':
 		'Toàn bộ kho sách, từng kệ một — cùng với chỗ bạn đang đọc dở và những gì bạn đã đánh dấu.',
+	'schola.landing.title': 'Bắt đầu từ đâu',
+	'schola.landing.tagline':
+		'Một chỉ dẫn ngắn về những gì có ở đây: mỗi cuốn sách này là gì, một trưng dẫn nó được viết thế nào, tìm một đoạn ra sao, và những thứ tự đọc mà Hội Thánh đã đề nghị.',
+	'schola.start.heading': 'Nếu tất cả những điều này còn mới với bạn',
+	'schola.start.body': 'Khởi đầu tốt nhất là ',
+	'schola.start.bodyAfter':
+		': cùng một giáo huấn như Sách Giáo lý, ngắn hơn nhiều, viết theo lối hỏi thưa. Nó dài chừng một phần mười và không giả định điều gì trước.',
+	'schola.bible.heading': 'Nếu bạn chưa bao giờ đọc Kinh Thánh',
+	'schola.bible.library':
+		'Đó không phải một cuốn sách mà là bảy mươi ba cuốn, viết trong hơn một ngàn năm và đóng lại theo thứ tự Hội Thánh đã định — không phải thứ tự các việc đã xảy ra, cũng không phải thứ tự dễ đọc nhất. Phần đông bắt đầu ở trang thứ nhất rồi vài tuần sau bỏ dở, giữa một chương dài của luật cổ, bởi chưa ai nói cho họ biết nó dùng để làm gì.',
+	'schola.bible.step.gospel': 'Hãy bắt đầu bằng một sách Tin Mừng',
+	'schola.bible.start':
+		'Một trong bốn cuốn ngắn về cuộc đời Đức Giêsu, nằm sâu bên trong chứ không ở đầu. Đó không phải ý của chúng tôi: một Công đồng của Hội Thánh đã xin dạy cách dùng Kinh Thánh cho đúng, „nhất là Tân Ước và trước hết là các sách Tin Mừng“. Công đồng không nêu tên cuốn nào, và chúng tôi cũng không.',
+	'schola.bible.whichGospel':
+		'Ba cuốn thường được đề nghị, vì ba lý do khác nhau. Cuốn nào cũng là một chỗ tốt để ở lại.',
+	'schola.bible.gospel.mark':
+		'Ngắn nhất. Bạn có thể đọc trọn trong một buổi chiều, và lúc khởi đầu, đọc xong một cuốn đáng giá hơn là đã chọn được cuốn hay nhất.',
+	'schola.bible.gospel.luke':
+		'Viết cho một người ngoài đức tin muốn câu chuyện được ghi lại có thứ tự — điều có thể đúng với chính bạn. Nó chạy thẳng sang sách Công vụ Tông đồ, nên thật ra là nửa đầu của một cuốn sách dài hơn.',
+	'schola.bible.gospel.john':
+		'Cuốn nói thẳng ra vì sao nó được viết: „để anh em tin“. Lời lẽ đơn sơ, và đi thẳng vào câu hỏi Đức Giêsu là ai.',
+	'schola.bible.step.acts': 'Rồi đến chuyện xảy ra sau đó',
+	'schola.bible.thenActs':
+		'Khi đã đọc xong một cuốn, hãy đọc xem những người từng biết Người đã làm gì sau khi Người ra đi.',
+	'schola.bible.acts.why':
+		'Ba mươi năm sau khi các sách Tin Mừng khép lại: vài chục con người sợ hãi, và cách điều họ đã thấy lan tới đầu kia của đế quốc.',
+	'schola.bible.step.old': 'Rồi đến nửa cổ hơn',
+	'schola.bible.thenOld':
+		'Không phải từ trang đầu, và không phải tất cả. Một ít chỗ mang lấy câu chuyện, và đó chính là những chỗ các sách Tin Mừng không ngừng quy chiếu về.',
+	'schola.bible.ot.beginnings': 'Nó bắt đầu thế nào, và hỏng đi ra sao.',
+	'schola.bible.ot.promise':
+		'Một gia đình, và một lời hứa ban cho nó, sống lâu hơn mọi người trong nó.',
+	'schola.bible.ot.exodus':
+		'Một dân được đưa ra khỏi cảnh nô lệ, và một lề luật ban cho họ để sống.',
+	'schola.bible.ot.psalms':
+		'Không phải một câu chuyện: một trăm năm mươi lời kinh và bài ca. Hãy đọc từng bài, theo thứ tự nào cũng được. Hội Thánh vẫn đọc những bài này mỗi ngày.',
+	'schola.bible.bothWays':
+		'Bạn sẽ nhận ra nhiều điều, và đó là chủ ý chứ không phải tình cờ. Hội Thánh đọc các sách cổ hơn dưới ánh sáng Đức Kitô và các sách mới hơn dưới ánh sáng những gì đi trước — mỗi nửa giải thích nửa kia, và vì thế không nửa nào được đọc riêng một mình.',
+	'schola.guide.heading': 'Tìm đường',
+	'schola.guide.lede':
+		'Bản văn là cả trang; mọi thứ còn lại là một nút điều khiển mà bạn có thể bỏ qua cho tới khi cần đến.',
+	'schola.guide.top.heading': 'Thanh ở đầu mỗi trang',
+	'schola.guide.reading.heading': 'Thanh phía trên một bản văn',
+	'schola.feature.search':
+		'Gõ một trưng dẫn vào ô trên cùng — chương và câu, một số mục, tên một văn kiện — và nó tự hoàn tất khi bạn gõ. Bấm / hoặc Ctrl+K từ bất cứ đâu, và ? để xem các phím tắt khác.',
+	'schola.feature.languages':
+		'Giao diện và bản văn được chọn riêng, nên bạn có thể đọc một tác phẩm bằng một ngôn ngữ trong khi các nút vẫn ở ngôn ngữ khác. Nơi một tác phẩm có nhiều bản in trong ngôn ngữ của bạn, bạn cũng chọn giữa chúng.',
+	'schola.feature.settings':
+		'Cỡ chữ, sáng hay tối, sắc nâu, và bạn muốn bao nhiêu phần chú giải nằm cạnh bản văn.',
+	'schola.feature.offline':
+		'Thêm trang này vào màn hình chính thì nó mở ra như một ứng dụng. Bạn có thể tải trọn các tác phẩm để đọc khi không có kết nối.',
+	'schola.feature.contents':
+		'Các phân chia của tác phẩm bạn đang ở trong — quyển, phần, chương — để đi lại bên trong nó mà không phải trở về đầu.',
+	'schola.feature.compare':
+		'Hai bản in của cùng một đoạn, đặt cạnh nhau — tiếng Latinh bên cạnh ngôn ngữ của bạn, hoặc bản dịch này bên cạnh bản dịch kia.',
+	'schola.feature.apparatus':
+		'Các chú thích của chính bản in, và mọi lời chú giải viết về bản văn, được đặt bên cạnh chứ không phải bên dưới. Những trưng dẫn trong bản văn là liên kết, nên một quy chiếu dẫn tới đúng nơi nó chỉ.',
+	'schola.feature.focus':
+		'Dọn hết mọi thứ trừ bản văn. Lối ra vẫn ở nơi thanh vốn nằm, để không gì bị kẹt phía sau.',
+	'schola.books.heading': 'Ở đây có gì, và trưng dẫn thế nào',
+	'schola.books.lede':
+		'Mỗi cuốn trong số này là một loại sách khác nhau, và mỗi cuốn được quy chiếu bằng một con số riêng. Các thí dụ cho thấy dạng thức: gõ một dạng như thế vào ô tìm và bạn tới đúng đoạn.',
+	'schola.cite.label': 'Trưng dẫn là',
+	'schola.what.scripture':
+		'Kinh Thánh như Hội Thánh lãnh nhận, trong cả hai Giao ước. Mọi thứ khác ở đây được đọc dưới ánh sáng của nó.',
+	'schola.cite.scripture': 'sách, chương và câu, theo các chữ tắt mà bản in của bạn dùng',
+	'schola.what.catechism':
+		'Bản tóm lược điều Hội Thánh Công giáo tin, gói trong một cuốn. Tự nó không phải là nguồn: nó quy tụ Kinh Thánh, các giáo phụ, phụng vụ và giáo huấn của Hội Thánh, và mỗi số đều nói điều mình phát biểu đến từ đâu.',
+	'schola.cite.catechism': 'theo số, chạy liền một mạch từ trang đầu đến trang cuối',
+	'schola.what.compendium':
+		'Cùng một giáo huấn trình bày theo lối hỏi thưa, dài chừng một phần mười.',
+	'schola.cite.compendium': 'theo số câu hỏi',
+	'schola.what.magisterium':
+		'Những gì các giáo hoàng và các công đồng đã thực sự viết — thông điệp, hiến chế, sắc lệnh, tuyên ngôn — mỗi văn kiện ngỏ với một thời điểm và một vấn đề nhất định. Mỗi văn kiện được gọi theo những chữ Latinh mở đầu của nó.',
+	'schola.cite.magisterium': 'theo tên văn kiện, rồi một số mục bên trong nó',
+	'schola.what.social':
+		'Giáo huấn của Hội Thánh về lao động, sở hữu, gia đình, chính trị và hòa bình, gom từ các văn kiện ấy vào một cuốn.',
+	'schola.cite.social': 'theo số, dưới chữ tắt mà tác phẩm dùng cho chính nó',
+	'schola.what.law': 'Luật chứ không phải đạo lý. Nó nói điều Hội Thánh đòi hỏi, và được tu chính.',
+	'schola.cite.law': 'theo điều, tên gọi các đơn vị đánh số của nó',
+	'schola.what.doctors':
+		'Các nhà thần học được Hội Thánh tuyên phong là Tiến sĩ. Điều đó không mang thẩm quyền chính thức, dù tác giả lớn đến đâu.',
+	'schola.cite.doctors': 'theo phần, rồi vấn đề — những phân chia riêng của bộ Tổng luận',
+	'schola.what.prayers': 'Những lời Hội Thánh cầu nguyện, có tiếng Latinh bên cạnh.',
+	'schola.cite.prayers': 'theo tên; không có số nào để trưng dẫn',
+	'schola.places.heading': 'Không phải bản văn, mà là những nơi trên trang này',
+	'schola.what.library':
+		'Mọi tác phẩm của trang trong một danh mục, nhóm theo chủ đề chứ không theo loại.',
+	'schola.what.calendar':
+		'Ngày phụng vụ — mùa, màu, và ai được kính nhớ — cho quốc gia mà bạn theo lịch của họ.',
+	'schola.what.bookmarks':
+		'Những đoạn bạn đã đánh dấu, và nơi bạn dừng lại lần cuối trong mỗi tác phẩm. Cả hai được giữ trong trình duyệt này và không gửi đi đâu cả.',
 	'jumpbox.placeholder': 'Đi tới… (vd. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Tìm',
 	'jumpbox.hint': 'Nhấn / hoặc Ctrl+K để đi tới một trưng dẫn',
@@ -126,8 +218,17 @@ export const vi: Dictionary = {
 		'<strong>Sách Giáo lý</strong> trình bày giáo huấn Công giáo trong 2.865 số được đánh số. <strong>Bản Toát yếu</strong> trình bày cùng giáo huấn ấy dưới dạng 598 câu hỏi thưa, theo cùng một bố cục.',
 	'ccc.landing.pairTagline':
 		'Sách Giáo lý Hội Thánh Công giáo trong 2.865 số, và Bản Toát yếu trong 598 câu hỏi.',
+	'compendium.landing.title': 'Bản Toát yếu Sách Giáo lý',
+	'compendium.landing.tagline': 'Những câu hỏi thưa tóm lược Sách Giáo lý Hội Thánh Công giáo.',
+	'compendium.question': 'Hỏi',
+	'compendium.answer': 'Thưa',
+	'compendium.tableOfContents': 'Mục lục',
+	'compendium.prevQuestion': 'Câu hỏi trước',
+	'compendium.nextQuestion': 'Câu hỏi sau',
+	'compendium.condenses': 'Tóm lược GLHTCG ¶¶',
 	'ccc.abbrev': 'GLHTCG',
 	'compendium.abbrev': 'Toát yếu',
+	'compendium.noQuestionNumber': 'Không có số câu hỏi trong kho văn bản này',
 	'document.library.tagline':
 		'Các thông điệp, hiến chế công đồng, sắc lệnh và tuyên ngôn của Huấn quyền.',
 	'doctores.landing.title': 'Các Tiến sĩ Hội Thánh',

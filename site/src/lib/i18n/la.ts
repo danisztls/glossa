@@ -53,6 +53,96 @@ export const la: Dictionary = {
 	'nav.learn': 'Disce',
 	'library.landing.tagline':
 		'Corpus totum, pluteus post pluteum — cum loco ubi desiisti et iis quae notasti.',
+	'schola.landing.title': 'Unde incipiendum',
+	'schola.landing.tagline':
+		'Brevis index eorum quae hic habentur: quid sit quisque horum librorum, quomodo eius locus citetur, quomodo locus inveniatur, et ordines legendi quos Ecclesia proposuit.',
+	'schola.start.heading': 'Si haec tibi nova sunt',
+	'schola.start.body': 'Optimum initium est ',
+	'schola.start.bodyAfter':
+		': eadem doctrina quae Catechismi, multo brevior, interrogationibus et responsionibus conscripta. Decima fere parte minor est nec quicquam praesupponit.',
+	'schola.bible.heading': 'Si Scripturam numquam legisti',
+	'schola.bible.library':
+		'Non unus liber est sed septuaginta tres, per mille amplius annos conscripti et eo ordine collecti quem Ecclesia statuit — non quo res gestae sunt, neque quo facillime leguntur. Plerique a prima pagina incipiunt et post paucas hebdomadas desinunt, in longo capite legis antiquae, quia nemo adhuc eis dixit quorsum haec pertineant.',
+	'schola.bible.step.gospel': 'Ab Evangelio incipe',
+	'schola.bible.start':
+		'Unus e quattuor brevibus libris de vita Iesu, intus potius quam in fronte. Non nostrum hoc consilium est: Concilium Ecclesiae petiit ut recte uti Scriptura doceantur, «praesertim Novo Testamento et ante omnia Evangeliis». Nullum unum nominavit, nec nos nominabimus.',
+	'schola.bible.whichGospel':
+		'Tria vulgo suadentur, tribus de causis diversis. Quodlibet eorum bonus locus est ubi sis.',
+	'schola.bible.gospel.mark':
+		'Brevissimum. Totum uno post meridiem legere potes, et unum perfecisse initio plus valet quam optimum elegisse.',
+	'schola.bible.gospel.luke':
+		'Scriptum est cuidam extra fidem qui rem ordine digestam habere volebat — quod fortasse tu ipse es. Recta in Actus Apostolorum procedit, ideoque revera prior pars est libri longioris.',
+	'schola.bible.gospel.john':
+		'Illud quod aperte dicit cur scriptum sit: «ut credatis». Verbis simplicibus, et recta ad quaestionem quis sit Iesus accedit.',
+	'schola.bible.step.acts': 'Deinde quid postea acciderit',
+	'schola.bible.thenActs':
+		'Cum unum perfeceris, lege quid fecerint, illo abeunte, qui eum noverant.',
+	'schola.bible.acts.why':
+		'Triginta anni post Evangeliorum finem: pauci decem homines timentes, et quomodo id quod viderant ad ultimam imperii partem pervenerit.',
+	'schola.bible.step.old': 'Deinde pars antiquior',
+	'schola.bible.thenOld':
+		'Non a prima pagina, neque tota. Pauca loca narrationem ferunt, eaque sunt ad quae Evangelia identidem respiciunt.',
+	'schola.bible.ot.beginnings': 'Quomodo incipiat, et quomodo depravetur.',
+	'schola.bible.ot.promise': 'Una familia, et promissum ei factum quod omnes eius superstat.',
+	'schola.bible.ot.exodus': 'Populus e servitute eductus, et lex ei ad vivendum data.',
+	'schola.bible.ot.psalms':
+		'Non narratio: centum quinquaginta preces et cantica. Unum tantum lege, quolibet ordine. Ecclesia haec cotidie adhuc orat.',
+	'schola.bible.bothWays':
+		'Agnosces quaedam, idque propositum est, non casus. Ecclesia libros antiquiores in lumine Christi legit et recentiores in lumine eorum quae praecesserunt — utraque pars alteram explicat, ideoque neutra sola legitur.',
+	'schola.guide.heading': 'Quomodo circumeas',
+	'schola.guide.lede':
+		'Textus tota pagina est; cetera omnia instrumenta sunt quae neglegere potes donec ea velis.',
+	'schola.guide.top.heading': 'Tabula in summa pagina omni',
+	'schola.guide.reading.heading': 'Tabula supra textum',
+	'schola.feature.search':
+		'Locum in capsam superiorem inscribe — caput et versum, numerum paragraphi, nomen documenti — et scribenti complet. Preme / vel Ctrl+K undecumque, et ? pro ceteris compendiis.',
+	'schola.feature.languages':
+		'Interfacies et textus separatim eliguntur, ut opus una lingua legas dum pyxides in alia manent. Ubi opus plures editiones tua lingua habet, inter eas quoque eligis.',
+	'schola.feature.settings':
+		'Magnitudo textus, lux vel tenebrae, color sepiae, et quantum apparatus iuxta textum velis.',
+	'schola.feature.offline':
+		'Adde sedem ad primam tabulam tuam et sicut applicatio aperitur. Opera integra transferre potes ut sine rete legas.',
+	'schola.feature.contents':
+		'Divisiones operis in quo es — libri, partes, capita — ut intus te moveas nec ad initium redeas.',
+	'schola.feature.compare':
+		'Duae eiusdem loci editiones, iuxta positae — Latinum iuxta linguam tuam, vel una translatio iuxta alteram.',
+	'schola.feature.apparatus':
+		'Notae ipsius editionis, et quilibet commentarius in textum scriptus, iuxta eum offeruntur, non infra. Citationes intra textum vincula sunt, ut locus eo ducat quo spectat.',
+	'schola.feature.focus':
+		'Omnia praeter textum tollit. Exitus ibi manet ubi tabula erat, ne quid post eam captum sit.',
+	'schola.books.heading': 'Quae hic sint, et quomodo citentur',
+	'schola.books.lede':
+		'Horum quisque diversum librorum genus est, et quisque proprio numero designatur. Exempla formam ostendunt: tale quid in capsam quaerendi inscribe et ad locum pervenies.',
+	'schola.cite.label': 'Citatur',
+	'schola.what.scripture':
+		'Scripturae ut eas Ecclesia accipit, in utroque Testamento. Cetera omnia hic in earum lumine leguntur.',
+	'schola.cite.scripture': 'libro, capite et versu, iis compendiis quae tua editio imprimit',
+	'schola.what.catechism':
+		'Summa eorum quae Ecclesia Catholica credit, uno volumine. Non ipse fons est: Scripturam, Patres, liturgiam et Ecclesiae doctrinam colligit, et quisque numerus unde id quod dicit veniat indicat.',
+	'schola.cite.catechism': 'numero, a prima usque ad ultimam paginam continuo',
+	'schola.what.compendium':
+		'Eadem doctrina interrogationibus et responsionibus exposita, decima fere parte brevior.',
+	'schola.cite.compendium': 'numero interrogationis',
+	'schola.what.magisterium':
+		'Quae Pontifices et Concilia revera scripserunt — litterae encyclicae, constitutiones, decreta, declarationes — quodque ad certum tempus certamque quaestionem directum. Quodque a primis verbis Latinis nominatur.',
+	'schola.cite.magisterium': 'nomine documenti, deinde numero sectionis intra illud',
+	'schola.what.social':
+		'Doctrina Ecclesiae de labore, dominio, familia, re publica et pace, ex illis documentis in unum librum collecta.',
+	'schola.cite.social': 'numero, sub siglo quo opus se ipsum designat',
+	'schola.what.law': 'Ius potius quam doctrina. Quid Ecclesia exigat dicit, et emendatur.',
+	'schola.cite.law': 'canone, quo nomine eius partes numeratae appellantur',
+	'schola.what.doctors':
+		'Theologi quos Ecclesia Doctores nominavit. Nullam auctoritatem publicam fert, quantuscumque sit auctor.',
+	'schola.cite.doctors': 'parte, deinde quaestione — divisionibus ipsius Summae',
+	'schola.what.prayers': 'Verba quibus Ecclesia orat, Latino iuxta posito.',
+	'schola.cite.prayers': 'nomine; nulli sunt numeri citandi',
+	'schola.places.heading': 'Non textus, sed loca huius sedis',
+	'schola.what.library':
+		'Omnia sedis opera uno indice, secundum res potius quam secundum genus digesta.',
+	'schola.what.calendar':
+		'Dies liturgicus — tempus, color, et quis colatur — pro ea regione cuius calendarium sequeris.',
+	'schola.what.bookmarks':
+		'Loci quos signasti, et ubi in quoque opere ultimo desiisti. Utraque in hoc navigatro manent nec usquam mittuntur.',
 	'ccc.noCounterpart': 'Nihil respondens in altero opere',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations

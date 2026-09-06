@@ -72,6 +72,98 @@ export const sq: Dictionary = {
 	'nav.learn': 'Mëso',
 	'library.landing.tagline':
 		'I gjithë korpusi, raft pas rafti — bashkë me vendin ku e latë dhe me atë që keni shënuar.',
+	'schola.landing.title': 'Nga t’ia nisni',
+	'schola.landing.tagline':
+		'Një udhërrëfyes i shkurtër për atë që gjendet këtu: çfarë është secili prej këtyre librave, si shkruhet një referencë për të, si gjendet një pasazh, dhe radhë leximi që Kisha ka propozuar.',
+	'schola.start.heading': 'Nëse e gjitha kjo është e re për ju',
+	'schola.start.body': 'Fillimi më i mirë është ',
+	'schola.start.bodyAfter':
+		': i njëjti mësim si i Katekizmit, shumë më i shkurtër, shkruar në pyetje dhe përgjigje. Është rreth një e dhjeta e gjatësisë dhe nuk merr asgjë të mirëqenë.',
+	'schola.bible.heading': 'Nëse nuk e keni lexuar kurrë Biblën',
+	'schola.bible.library':
+		'Nuk është një libër por shtatëdhjetë e tre, shkruar përgjatë më shumë se një mijë vjetësh dhe të lidhur në atë radhë ku Kisha u ndal — jo radha në të cilën ndodhën gjërat, dhe jo ajo që lexohet më lehtë. Shumica fillon në faqen e parë dhe ndalet ca javë më vonë, në një kapitull të gjatë ligji të lashtë, sepse askush nuk u ka thënë ende përse shërben.',
+	'schola.bible.step.gospel': 'Filloni me një Ungjill',
+	'schola.bible.start':
+		'Një nga katër libra të shkurtër për jetën e Jezusit, thellë brenda dhe jo në ballë. Nuk është ideja jonë: një Koncil i Kishës kërkoi që të mësohej përdorimi i drejtë i Shkrimit, „sidomos i Besëlidhjes së Re dhe mbi të gjitha i Ungjijve“. Nuk emëroi asnjë veç e veç, dhe as ne nuk do të emërojmë.',
+	'schola.bible.whichGospel':
+		'Tre zakonisht propozohen, për tri arsye të ndryshme. Cilido prej tyre është një vend i mirë ku të jesh.',
+	'schola.bible.gospel.mark':
+		'Më i shkurtri. Mund ta lexoni të tërin në një pasdite, dhe të kesh mbaruar një vlen më shumë, në fillim, sesa të kesh zgjedhur më të mirin.',
+	'schola.bible.gospel.luke':
+		'Shkruar për dikë jashtë besimit që donte historinë të vënë me radhë — që mund të jeni pikërisht ju. Vazhdon drejtpërdrejt në Veprat e Apostujve, prandaj është në të vërtetë gjysma e parë e një libri më të gjatë.',
+	'schola.bible.gospel.john':
+		'Ai që e thotë hapur pse u shkrua: „që ju të besoni“. Fjalë të thjeshta, dhe shkon drejt te pyetja se kush është Jezusi.',
+	'schola.bible.step.acts': 'Pastaj çfarë ndodhi më tej',
+	'schola.bible.thenActs':
+		'Kur të keni mbaruar një, lexoni çfarë bënë ata që e njihnin, pasi ai iku.',
+	'schola.bible.acts.why':
+		'Tridhjetë vjetët pas fundit të Ungjijve: ca dhjetëra njerëz të frikësuar, dhe si ajo që kishin parë arriti në skajin tjetër të perandorisë.',
+	'schola.bible.step.old': 'Pastaj gjysma më e vjetër',
+	'schola.bible.thenOld':
+		'Jo nga faqja e parë, dhe jo e gjitha. Pak vende e mbajnë rrëfimin, dhe pikërisht tek ato Ungjijtë kthehen vazhdimisht.',
+	'schola.bible.ot.beginnings': 'Si fillon, dhe si shkon keq.',
+	'schola.bible.ot.promise':
+		'Një familje, dhe një premtim dhënë asaj që i mbijeton të gjithëve në të.',
+	'schola.bible.ot.exodus':
+		'Një popull i nxjerrë nga skllavëria, dhe një ligj dhënë atij për të jetuar.',
+	'schola.bible.ot.psalms':
+		'Jo një rrëfim: njëqind e pesëdhjetë lutje dhe këngë. Lexoni një nga një, në çfarëdo radhe. Kisha i lutet ende çdo ditë.',
+	'schola.bible.bothWays':
+		'Do të njihni gjëra, dhe kjo është qëllimi e jo një rastësi. Kisha i lexon librat më të vjetër në dritën e Krishtit dhe ata më të rinj në dritën e asaj që erdhi më parë — secila gjysmë shpjegon tjetrën, dhe prandaj asnjëra nuk lexohet vetëm.',
+	'schola.guide.heading': 'Si të orientoheni',
+	'schola.guide.lede':
+		'Teksti është e gjithë faqja; gjithçka tjetër është një komandë që mund ta shpërfillni derisa ta doni.',
+	'schola.guide.top.heading': 'Shiriti në krye të çdo faqeje',
+	'schola.guide.reading.heading': 'Shiriti mbi një tekst',
+	'schola.feature.search':
+		'Shkruani një referencë në kutinë lart — kapitull dhe varg, një numër paragrafi, emrin e një dokumenti — dhe e plotëson ndërsa shkruani. Shtypni / ose Ctrl+K nga kudo, dhe ? për shkurtoret e tjera.',
+	'schola.feature.languages':
+		'Ndërfaqja dhe teksti zgjidhen veç e veç, kështu që mund të lexoni një vepër në një gjuhë ndërsa butonat mbeten në një tjetër. Aty ku një vepër ka disa botime në gjuhën tuaj, zgjidhni edhe midis tyre.',
+	'schola.feature.settings':
+		'Madhësia e tekstit, e çelët apo e errët, sepia, dhe sa nga aparati doni pranë tekstit.',
+	'schola.feature.offline':
+		'Shtojeni faqen në ekranin kryesor dhe hapet si një aplikacion. Mund të shkarkoni vepra të tëra për t’i lexuar pa lidhje.',
+	'schola.feature.contents':
+		'Ndarjet e veprës ku ndodheni — libra, pjesë, kapituj — që të lëvizni brenda saj pa u kthyer në fillim.',
+	'schola.feature.compare':
+		'Dy botime të të njëjtit pasazh, krah për krah — latinishtja pranë gjuhës suaj, ose një përkthim pranë një tjetri.',
+	'schola.feature.apparatus':
+		'Shënimet e vetë botimit, dhe çdo koment i shkruar mbi tekstin, ofrohen pranë tij e jo poshtë tij. Citimet brenda tekstit janë lidhje, kështu që një referencë të çon aty ku tregon.',
+	'schola.feature.focus':
+		'Pastron gjithçka veç tekstit. Dalja mbetet aty ku ishte shiriti, që asgjë të mos mbetet e zënë pas tij.',
+	'schola.books.heading': 'Çfarë gjendet këtu, dhe si citohet',
+	'schola.books.lede':
+		'Secili prej tyre është një lloj tjetër libri, dhe secilit i referohemi me një numër të vetin. Shembujt tregojnë formën: shkruani një të tillë në kutinë e kërkimit dhe mbërrini te pasazhi.',
+	'schola.cite.label': 'Citohet',
+	'schola.what.scripture':
+		'Shkrimet ashtu si i merr Kisha, në të dyja Besëlidhjet. Gjithçka tjetër këtu lexohet në dritën e tyre.',
+	'schola.cite.scripture': 'libri, kapitulli dhe vargu, në shkurtesat që shtyp botimi juaj',
+	'schola.what.catechism':
+		'Një përmbledhje e asaj që beson Kisha Katolike, në një vëllim të vetëm. Ai vetë nuk është burim: mbledh Shkrimin, Etërit, liturgjinë dhe mësimin e Kishës, dhe çdo numër thotë prej nga vjen ajo që pohon.',
+	'schola.cite.catechism': 'sipas numrit, që rrjedh pa ndërprerje nga faqja e parë te e fundit',
+	'schola.what.compendium':
+		'I njëjti mësim i paraqitur në pyetje dhe përgjigje, në rreth një të dhjetën e gjatësisë.',
+	'schola.cite.compendium': 'sipas numrit të pyetjes',
+	'schola.what.magisterium':
+		'Ajo që papët dhe koncilet kanë shkruar në të vërtetë — enciklika, kushtetuta, dekrete, deklarata — secila drejtuar një çasti të caktuar dhe një çështjeje të caktuar. Secila njihet nga fjalët e saj të para në latinisht.',
+	'schola.cite.magisterium': 'sipas emrit të dokumentit, pastaj një numri seksioni brenda tij',
+	'schola.what.social':
+		'Mësimi i Kishës për punën, pronën, familjen, politikën dhe paqen, mbledhur prej atyre dokumenteve në një libër të vetëm.',
+	'schola.cite.social': 'sipas numrit, nën siglën që vepra përdor për vetveten',
+	'schola.what.law': 'Ligj e jo doktrinë. Thotë çfarë kërkon Kisha, dhe ndryshohet.',
+	'schola.cite.law': 'sipas kanonit, siç quhen njësitë e tij të numëruara',
+	'schola.what.doctors':
+		'Teologët që Kisha i ka shpallur Doktorë. Nuk mbart asnjë autoritet zyrtar, sado i madh të jetë autori.',
+	'schola.cite.doctors': 'sipas pjesës, pastaj çështjes — ndarjet e vetë Summa-s',
+	'schola.what.prayers': 'Fjalët me të cilat lutet Kisha, me latinishten pranë.',
+	'schola.cite.prayers': 'sipas emrit; nuk ka numra për të cituar',
+	'schola.places.heading': 'Jo tekste, por vende të kësaj faqeje',
+	'schola.what.library':
+		'Të gjitha veprat e faqes në një listë, të grupuara sipas lëndës e jo sipas llojit.',
+	'schola.what.calendar':
+		'Dita liturgjike — koha, ngjyra dhe kush kremtohet — për vendin kalendarin e të cilit ndiqni.',
+	'schola.what.bookmarks':
+		'Pasazhet që keni shënuar, dhe ku e latë së fundi në secilën vepër. Të dyja mbeten në këtë shfletues dhe nuk dërgohen askund.',
 	'jumpbox.placeholder': 'Shko te… (p.sh. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Kërko',
 	'jumpbox.hint': 'Shtypni / ose Ctrl+K për të shkuar te një referencë',
@@ -123,8 +215,17 @@ export const sq: Dictionary = {
 		'<strong>Katekizmi</strong> e parashtron doktrinën katolike në 2.865 paragrafë të numëruar. <strong>Përmbledhja</strong> e rithotë të njëjtën doktrinë në 598 pyetje e përgjigje, sipas së njëjtës skemë.',
 	'ccc.landing.pairTagline':
 		'Katekizmi i Kishës Katolike në 2 865 numra, dhe Përmbledhja e tij në 598 pyetje.',
+	'compendium.landing.title': 'Përmbledhja e Katekizmit',
+	'compendium.landing.tagline': 'Pyetje dhe përgjigje që përmbledhin Katekizmin e Kishës Katolike.',
+	'compendium.question': 'Pyetje',
+	'compendium.answer': 'Përgjigje',
+	'compendium.tableOfContents': 'Përmbajtja',
+	'compendium.prevQuestion': 'Pyetja e mëparshme',
+	'compendium.nextQuestion': 'Pyetja në vijim',
+	'compendium.condenses': 'Përmbledh KKK ¶¶',
 	'ccc.abbrev': 'KKK',
 	'compendium.abbrev': 'Përmbl.',
+	'compendium.noQuestionNumber': 'Pa numër pyetjeje në këtë korpus',
 	'document.library.tagline':
 		'Enciklika, kushtetuta koncilore, dekrete dhe deklarata të Magjisterit.',
 	'doctores.landing.title': 'Doktorët e Kishës',

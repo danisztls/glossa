@@ -77,6 +77,101 @@ export const id: Dictionary = {
 	'nav.learn': 'Belajar',
 	'library.landing.tagline':
 		'Seluruh koleksi, rak demi rak — beserta tempat Anda berhenti dan apa yang Anda tandai.',
+	'schola.landing.title': 'Mulai dari mana',
+	'schola.landing.tagline':
+		'Panduan singkat atas apa yang ada di sini: apa masing-masing kitab ini, bagaimana rujukan kepadanya ditulis, bagaimana menemukan suatu bagian, dan urutan bacaan yang telah diusulkan Gereja.',
+	'schola.start.heading': 'Jika semua ini baru bagi Anda',
+	'schola.start.body': 'Awal yang paling baik adalah ',
+	'schola.start.bodyAfter':
+		': ajaran yang sama seperti Katekismus, jauh lebih ringkas, ditulis dalam tanya jawab. Panjangnya kira-kira sepersepuluh dan tidak mengandaikan apa pun.',
+	'schola.bible.heading': 'Jika Anda belum pernah membaca Alkitab',
+	'schola.bible.library':
+		'Ia bukan satu kitab melainkan tujuh puluh tiga, ditulis selama lebih dari seribu tahun dan dihimpun dalam urutan yang ditetapkan Gereja — bukan urutan terjadinya peristiwa, dan bukan urutan yang paling mudah dibaca. Kebanyakan orang mulai pada halaman pertama dan berhenti beberapa minggu kemudian, di tengah bab panjang tentang hukum purba, sebab belum ada yang memberi tahu mereka untuk apa itu.',
+	'schola.bible.step.gospel': 'Mulailah dengan sebuah Injil',
+	'schola.bible.start':
+		'Salah satu dari empat kitab pendek tentang kehidupan Yesus, jauh di dalam dan bukan di depan. Ini bukan gagasan kami: sebuah Konsili Gereja meminta agar diajarkan penggunaan Kitab Suci yang benar, „terutama Perjanjian Baru dan di atas segalanya Injil“. Konsili itu tidak menyebut satu pun secara khusus, dan kami pun tidak.',
+	'schola.bible.whichGospel':
+		'Tiga biasanya disarankan, dengan tiga alasan yang berbeda. Mana pun di antaranya adalah tempat yang baik untuk berada.',
+	'schola.bible.gospel.mark':
+		'Yang terpendek. Anda dapat membacanya seluruhnya dalam satu petang, dan pada awalnya menyelesaikan satu lebih berharga daripada memilih yang terbaik.',
+	'schola.bible.gospel.luke':
+		'Ditulis untuk seseorang di luar iman yang menginginkan kisah itu dicatat menurut urutannya — yang boleh jadi persis Anda. Ia berlanjut langsung ke Kisah Para Rasul, sehingga sebenarnya merupakan paruh pertama sebuah kitab yang lebih panjang.',
+	'schola.bible.gospel.john':
+		'Yang terus terang menyatakan mengapa ia ditulis: „supaya kamu percaya“. Kata-kata sederhana, dan langsung menuju pertanyaan siapakah Yesus itu.',
+	'schola.bible.step.acts': 'Lalu apa yang terjadi sesudahnya',
+	'schola.bible.thenActs':
+		'Setelah Anda menyelesaikan satu, bacalah apa yang dilakukan mereka yang mengenal-Nya sesudah Ia pergi.',
+	'schola.bible.acts.why':
+		'Tiga puluh tahun setelah Injil berakhir: beberapa lusin orang yang ketakutan, dan bagaimana apa yang mereka lihat sampai ke ujung lain kekaisaran.',
+	'schola.bible.step.old': 'Lalu paruh yang lebih tua',
+	'schola.bible.thenOld':
+		'Bukan dari halaman pertama, dan bukan seluruhnya. Beberapa tempat membawa kisah itu, dan justru ke sanalah Injil terus-menerus menunjuk kembali.',
+	'schola.bible.ot.beginnings': 'Bagaimana ia bermula, dan bagaimana ia menjadi rusak.',
+	'schola.bible.ot.promise':
+		'Satu keluarga, dan sebuah janji kepadanya yang melampaui semua orang di dalamnya.',
+	'schola.bible.ot.exodus':
+		'Suatu bangsa yang dibawa keluar dari perbudakan, dan hukum yang diberikan kepadanya untuk hidup.',
+	'schola.bible.ot.psalms':
+		'Bukan kisah: seratus lima puluh doa dan nyanyian. Bacalah satu per satu, dalam urutan mana pun. Gereja masih mendoakannya setiap hari.',
+	'schola.bible.bothWays':
+		'Anda akan mengenali banyak hal, dan itulah maksudnya, bukan kebetulan. Gereja membaca kitab-kitab yang lebih tua dalam terang Kristus dan yang lebih baru dalam terang apa yang mendahuluinya — masing-masing paruh menjelaskan yang lain, dan karena itu tak satu pun dibaca sendirian.',
+	'schola.guide.heading': 'Menemukan jalan',
+	'schola.guide.lede':
+		'Teks itulah seluruh halaman; selebihnya adalah kendali yang boleh Anda abaikan sampai Anda menginginkannya.',
+	'schola.guide.top.heading': 'Bilah di puncak setiap halaman',
+	'schola.guide.reading.heading': 'Bilah di atas sebuah teks',
+	'schola.feature.search':
+		'Ketik sebuah rujukan di kotak paling atas — bab dan ayat, nomor alinea, nama sebuah dokumen — dan ia melengkapinya sambil Anda mengetik. Tekan / atau Ctrl+K dari mana saja, dan ? untuk pintasan lainnya.',
+	'schola.feature.languages':
+		'Antarmuka dan teks dipilih secara terpisah, sehingga Anda dapat membaca sebuah karya dalam satu bahasa sementara tombol-tombolnya tetap dalam bahasa lain. Di mana sebuah karya memiliki beberapa edisi dalam bahasa Anda, Anda memilih di antaranya pula.',
+	'schola.feature.settings':
+		'Ukuran teks, terang atau gelap, sepia, dan seberapa banyak catatan yang Anda kehendaki di samping teks.',
+	'schola.feature.offline':
+		'Tambahkan situs ini ke layar utama Anda dan ia terbuka seperti aplikasi. Anda dapat mengunduh karya-karya utuh untuk dibaca tanpa koneksi.',
+	'schola.feature.contents':
+		'Pembagian karya tempat Anda berada — kitab, bagian, bab — supaya Anda dapat bergerak di dalamnya tanpa kembali ke awal.',
+	'schola.feature.compare':
+		'Dua edisi dari bagian yang sama, berdampingan — bahasa Latin di samping bahasa Anda sendiri, atau satu terjemahan di samping yang lain.',
+	'schola.feature.apparatus':
+		'Catatan edisi itu sendiri, dan setiap tafsir yang ditulis atas teks, disajikan di sampingnya dan bukan di bawahnya. Kutipan di dalam teks adalah pranala, sehingga sebuah rujukan menuju ke tempat yang ditunjuknya.',
+	'schola.feature.focus':
+		'Membersihkan segalanya kecuali teks. Jalan keluar tetap di tempat bilah tadi berada, sehingga tidak ada yang terkurung di baliknya.',
+	'schola.books.heading': 'Apa yang ada di sini, dan bagaimana dikutip',
+	'schola.books.lede':
+		'Masing-masing ini adalah jenis kitab yang berbeda, dan masing-masing dirujuk dengan nomornya sendiri. Contoh-contohnya menunjukkan bentuknya: ketik yang serupa di kotak pencarian dan Anda tiba pada bagian itu.',
+	'schola.cite.label': 'Dikutip sebagai',
+	'schola.what.scripture':
+		'Kitab Suci sebagaimana diterima Gereja, dalam kedua Perjanjian. Segala sesuatu yang lain di sini dibaca dalam terangnya.',
+	'schola.cite.scripture': 'kitab, bab dan ayat, dalam singkatan yang dicetak edisi Anda sendiri',
+	'schola.what.catechism':
+		'Ringkasan apa yang diimani Gereja Katolik, dalam satu jilid. Ia sendiri bukan sumber: ia menghimpun Kitab Suci, para Bapa, liturgi dan ajaran Gereja, dan setiap nomor menyebutkan dari mana asal apa yang dikatakannya.',
+	'schola.cite.catechism':
+		'menurut nomor, berjalan tanpa putus dari halaman pertama sampai terakhir',
+	'schola.what.compendium':
+		'Ajaran yang sama disajikan dalam tanya jawab, kira-kira sepersepuluh panjangnya.',
+	'schola.cite.compendium': 'menurut nomor pertanyaan',
+	'schola.what.magisterium':
+		'Apa yang sungguh-sungguh ditulis para paus dan konsili — ensiklik, konstitusi, dekret, deklarasi — masing-masing ditujukan kepada suatu saat tertentu dan suatu persoalan tertentu. Masing-masing dikenal menurut kata-kata pembukanya dalam bahasa Latin.',
+	'schola.cite.magisterium': 'menurut nama dokumen, lalu nomor bagian di dalamnya',
+	'schola.what.social':
+		'Ajaran Gereja tentang kerja, milik, keluarga, politik dan perdamaian, dihimpun dari dokumen-dokumen itu ke dalam satu kitab.',
+	'schola.cite.social':
+		'menurut nomor, di bawah singkatan yang dipakai karya itu untuk dirinya sendiri',
+	'schola.what.law':
+		'Hukum dan bukan ajaran. Ia menyatakan apa yang dituntut Gereja, dan ia diubah dari waktu ke waktu.',
+	'schola.cite.law': 'menurut kanon, sebutan bagi satuan-satuannya yang bernomor',
+	'schola.what.doctors':
+		'Para teolog yang telah dinyatakan Gereja sebagai Pujangga. Itu tidak membawa wewenang resmi, betapapun besar penulisnya.',
+	'schola.cite.doctors': 'menurut bagian, lalu persoalan — pembagian Summa itu sendiri',
+	'schola.what.prayers': 'Kata-kata yang didoakan Gereja, dengan bahasa Latin di sampingnya.',
+	'schola.cite.prayers': 'menurut nama; tidak ada nomor untuk dikutip',
+	'schola.places.heading': 'Bukan teks, melainkan tempat-tempat di situs ini',
+	'schola.what.library':
+		'Semua karya situs ini dalam satu daftar, dikelompokkan menurut pokok dan bukan menurut jenis.',
+	'schola.what.calendar':
+		'Hari liturgi — masa, warna, dan siapa yang diperingati — bagi negara yang kalendernya Anda ikuti.',
+	'schola.what.bookmarks':
+		'Bagian-bagian yang telah Anda tandai, dan di mana Anda terakhir berhenti dalam tiap karya. Keduanya disimpan di peramban ini dan tidak dikirim ke mana pun.',
 	'jumpbox.placeholder': 'Lompat ke… (mis. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Cari',
 	'jumpbox.hint': 'Tekan / atau Ctrl+K untuk melompat ke suatu rujukan',
@@ -128,8 +223,17 @@ export const id: Dictionary = {
 		'<strong>Katekismus</strong> memaparkan ajaran Katolik dalam 2.865 alinea bernomor. <strong>Kompendium</strong> menyajikan ajaran yang sama sebagai 598 tanya jawab, menurut kerangka yang sama.',
 	'ccc.landing.pairTagline':
 		'Katekismus Gereja Katolik dalam 2.865 nomor, dan Kompendiumnya dalam 598 pertanyaan.',
+	'compendium.landing.title': 'Kompendium Katekismus',
+	'compendium.landing.tagline': 'Tanya jawab yang meringkas Katekismus Gereja Katolik.',
+	'compendium.question': 'Pertanyaan',
+	'compendium.answer': 'Jawaban',
+	'compendium.tableOfContents': 'Daftar Isi',
+	'compendium.prevQuestion': 'Pertanyaan sebelumnya',
+	'compendium.nextQuestion': 'Pertanyaan berikutnya',
+	'compendium.condenses': 'Meringkas KGK ¶¶',
 	'ccc.abbrev': 'KGK',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'Tidak ada nomor pertanyaan dalam korpus ini',
 	'document.library.tagline': 'Ensiklik, konstitusi konsili, dekret, dan deklarasi Magisterium.',
 	'doctores.landing.title': 'Pujangga Gereja',
 	'doctores.landing.tagline': 'Karya-karya teologis para Bapa dan Pujangga Gereja.',

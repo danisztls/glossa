@@ -168,34 +168,42 @@ assertion.**
 **A page joins `CHROME_PATHS` only when its own strings exist in every
 interface language.** `route-titles.mjs` states the rule — a cluster whose
 Portuguese member is described in English is worse than no cluster, because it
-tells a search engine the page is Portuguese and then serves English — and two
-pages are held out by it today. `/calendarium` is the purest chrome page on the
-site, holding no corpus text at all, and its 44 `calendar.*` keys are written in
-three dictionaries; `/catechismus/compendium` is described by
-`compendium.landing.*`, which fourteen carry. Both are in `STATIC_PATHS`, so
-both exist, answer 200 and are indexable at their bare address. Each is one line
-plus a `CHROME_KEYS` entry on the day its strings are translated.
+tells a search engine the page is Portuguese and then serves English — and one
+page is held out by it today. `/calendarium` is the purest chrome page on the
+site, holding no corpus text at all, and its 75 `calendar.*` keys are written in
+two dictionaries with a third partway (2026-09-06). It is in `STATIC_PATHS`, so
+it exists, answers 200 and is indexable at its bare address. It is one line plus
+a `CHROME_KEYS` entry on the day its strings are translated.
+
+**`/catechismus/compendium` joined on 2026-09-06**, its nine outstanding
+`compendium.*` keys written into the twenty-three dictionaries that lacked
+them.
 
 **So "should this be a chrome path" is two questions, not one**: is every word
 on the page the interface, and is the interface actually written. The first was
 always the test; the second is what the two omissions taught.
 
-**`/schola` is the third page held out, and it is the one that shows the rule
+**`/schola` was the third page held out, and it is the one that showed the rule
 is not a technicality.** The learning portal (2026-09-04) is addressed to the
 reader with no vocabulary yet — `audiences.md` §5, who does not know the
 Compendium is a shorter book — which is the reader least able to make anything
 of an English page, so claiming it in 37 languages would be false exactly where
-being false costs most. Its 19 `schola.*` keys are in `en`. What keeps that
-bill small is that the page names no work, book or division in its own words:
-every step of every route is titled from the corpus, already in the reader's
-content language.
+being false costs most.
 
-**None of the three is excluded; all three are waiting.** A page joins on the
+**IT JOINED ON 2026-09-06 BY TRANSLATING THE PAGE, NOT THE HEAD, AND THAT IS
+THE ENTRY WORTH KEEPING.** `CHROME_KEYS` reads two strings per page, so
+`schola.landing.title` and `schola.landing.tagline` in thirty-six dictionaries
+would have opened the gate — and shipped a cluster declaring in 37 languages a
+page whose remaining 56 keys are English teaching prose. All 58 were written
+instead. **The coded gate is on the head; the claim an `hreflang` cluster makes
+is about the page.** Where the two come apart, the page is what has to be true.
+
+**Nothing here is excluded; what is left is waiting.** A page joins on the
 day its strings exist everywhere — one line in `CHROME_PATHS` plus a
 `CHROME_KEYS` entry, with `sitemap.test.ts` and `shell-head.test.ts` following
 by arithmetic — and `assertNamed` fails the sync if a key is missing anywhere,
 which is what makes publishing early impossible rather than merely unwise.
-`PLAN.md` §Three pages are unpublished is the current state; the counts here
+`PLAN.md` §Pages that are unpublished is the current state; the counts here
 are dated and rot.
 
 ## Which edition a reader gets

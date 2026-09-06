@@ -554,8 +554,9 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **The chrome section is headed by the controls' own keys** — `jumpbox.short`,
   `settings.label`, `compare.enter` — so a row and the control it describes
   cannot be called two different things in a translated interface. Only the
-  sentence under each is new writing, which is what still holds this page out
-  of `CHROME_PATHS`.
+  sentence under each is new writing, which is what held this page out of
+  `CHROME_PATHS` until those sentences were translated (2026-09-06) — **a new
+  one now costs thirty-six dictionaries, not a deferral.**
 - **IT IS TWO LISTS, BECAUSE THE SITE HAS TWO BARS** (2026-09-06). Four
   controls are in the header of every page and four appear only once there is a
   text on the screen; run together as one list of nine, the guide sent a reader
@@ -1017,12 +1018,19 @@ than remembering to add it to a list.**
 
 **A page joins `CHROME_PATHS` only when its own title and description strings
 exist in EVERY interface language**, which is a translation gate and not a
-routing one — see `site/docs/addresses.md` §Two tables. `/calendarium`,
-`/catechismus/compendium` and `/schola` are all in `STATIC_PATHS` and not on
-that list today, so each answers 200 and is indexable at its bare address and
-none is published. **They are waiting, not excluded** — each joins on the day
-its strings are translated, one line plus a `CHROME_KEYS` entry, and `PLAN.md`
-§Three pages are unpublished holds the table of what each is waiting on.
+routing one — see `site/docs/addresses.md` §Two tables. `/calendarium` is in
+`STATIC_PATHS` and not on that list today, so it answers 200 and is indexable
+at its bare address and is not published. **It is waiting, not excluded** — it
+joins on the day its strings are translated, one line plus a `CHROME_KEYS`
+entry, and `PLAN.md` §Pages that are unpublished holds what it is waiting on.
+
+**`/catechismus/compendium` AND `/schola` JOINED ON 2026-09-06, AND THE SECOND
+IS WHY THE GATE IS ON THE PAGE AND NOT THE HEAD.** The Compendium needed nine
+`compendium.*` keys in twenty-three dictionaries; `/schola` needed all 58 of
+its own in thirty-six, because two keys would have satisfied `CHROME_KEYS`
+while leaving a cluster in 37 languages over a page of English prose — which
+is the thing the gate exists to refuse. **Where the coded gate and the argued
+one come apart, translate the page.**
 
 **A cluster is thirty-five URLs, and the unprefixed one is not the English
 page.** One prefixed member per interface language plus the bare path, which

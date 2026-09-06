@@ -76,6 +76,101 @@ export const tl: Dictionary = {
 	'nav.learn': 'Matuto',
 	'library.landing.tagline':
 		'Ang buong koleksiyon, istante bawat istante — kasama ang huling binasa mo at ang mga minarkahan mo.',
+	'schola.landing.title': 'Saan magsisimula',
+	'schola.landing.tagline':
+		'Isang maikling patnubay sa kung ano ang narito: kung ano ang bawat isa sa mga aklat na ito, paano isinusulat ang sanggunian dito, paano makakita ng isang bahagi, at mga ayos ng pagbabasa na iminungkahi ng Simbahan.',
+	'schola.start.heading': 'Kung bago sa inyo ang lahat ng ito',
+	'schola.start.body': 'Ang pinakamainam na simula ay ang ',
+	'schola.start.bodyAfter':
+		': ang mismong turo ng Katesismo, higit na maikli, nakasulat sa tanong at sagot. Mga ikasampung bahagi lamang ang haba nito at wala itong ipinapalagay.',
+	'schola.bible.heading': 'Kung hindi pa ninyo nababasa ang Bibliya',
+	'schola.bible.library':
+		'Hindi ito iisang aklat kundi pitumpu’t tatlo, isinulat sa loob ng mahigit isang libong taon at tinipon sa ayos na pinanindigan ng Simbahan — hindi sa ayos ng pagkakasunod ng mga pangyayari, at hindi sa ayos na pinakamadaling basahin. Karamihan ay nagsisimula sa unang pahina at humihinto makalipas ang ilang linggo, sa mahabang kabanata ng sinaunang batas, dahil wala pang nagsabi sa kanila kung para saan ito.',
+	'schola.bible.step.gospel': 'Magsimula sa isang Ebanghelyo',
+	'schola.bible.start':
+		'Isa sa apat na maiikling aklat tungkol sa buhay ni Jesus, malalim sa loob at hindi sa unahan. Hindi ito aming ideya: hiniling ng isang Konsilyo ng Simbahan na ituro ang wastong paggamit ng Kasulatan, „lalo na ng Bagong Tipan at higit sa lahat ng mga Ebanghelyo“. Wala itong tinukoy na isa, at hindi rin kami tutukoy.',
+	'schola.bible.whichGospel':
+		'Tatlo ang karaniwang iminumungkahi, sa tatlong magkaibang dahilan. Alinman sa mga ito ay mabuting kinalalagyan.',
+	'schola.bible.gospel.mark':
+		'Ang pinakamaikli. Mababasa ninyo ito nang buo sa isang hapon, at sa simula ay higit na mahalaga ang makatapos ng isa kaysa sa makapili ng pinakamahusay.',
+	'schola.bible.gospel.luke':
+		'Isinulat para sa isang nasa labas ng pananampalataya na nais na maisatitik nang maayos ang salaysay — na maaaring kayo mismo. Tuloy-tuloy itong pumapasok sa Mga Gawa ng mga Apostol, kaya sa totoo lang ay unang kalahati ito ng isang mas mahabang aklat.',
+	'schola.bible.gospel.john':
+		'Ang tahasang nagsasabi kung bakit ito isinulat: „upang kayo ay sumampalataya“. Payak na mga salita, at deretsong tinutungo ang tanong kung sino si Jesus.',
+	'schola.bible.step.acts': 'Pagkatapos ay ang sumunod na nangyari',
+	'schola.bible.thenActs':
+		'Kapag natapos ninyo ang isa, basahin ninyo kung ano ang ginawa ng mga nakakilala sa kanya matapos siyang umalis.',
+	'schola.bible.acts.why':
+		'Ang tatlumpung taon matapos matapos ang mga Ebanghelyo: ilang dosenang takot na tao, at kung paanong ang kanilang nakita ay nakarating sa kabilang dulo ng imperyo.',
+	'schola.bible.step.old': 'Pagkatapos ang mas lumang kalahati',
+	'schola.bible.thenOld':
+		'Hindi mula sa unang pahina, at hindi ang lahat. Iilang bahagi ang nagdadala ng salaysay, at iyon mismo ang laging binabalikan ng mga Ebanghelyo.',
+	'schola.bible.ot.beginnings': 'Kung paano ito nagsisimula, at kung paano ito nasisira.',
+	'schola.bible.ot.promise':
+		'Isang angkan, at isang pangakong ibinigay dito na nakahihigit sa lahat ng nasa loob nito.',
+	'schola.bible.ot.exodus':
+		'Isang bayang inilabas mula sa pagkaalipin, at isang batas na ibinigay upang kanilang ikabuhay.',
+	'schola.bible.ot.psalms':
+		'Hindi salaysay: isang daan at limampung panalangin at awit. Isa-isahin ninyo, sa anumang ayos. Dinarasal pa rin ito ng Simbahan araw-araw.',
+	'schola.bible.bothWays':
+		'May makikilala kayong mga bagay, at iyon ang layunin at hindi pagkakataon lamang. Binabasa ng Simbahan ang mas lumang mga aklat sa liwanag ni Kristo at ang mas bago sa liwanag ng nauna — bawat kalahati ay nagpapaliwanag sa isa, at kaya walang isa man sa kanila ang binabasang mag-isa.',
+	'schola.guide.heading': 'Paano mapapasok ang paligid',
+	'schola.guide.lede':
+		'Ang teksto ang buong pahina; ang lahat ng iba ay kontrol na maaari ninyong palampasin hanggang kailanganin ninyo.',
+	'schola.guide.top.heading': 'Ang bareta sa itaas ng bawat pahina',
+	'schola.guide.reading.heading': 'Ang bareta sa ibabaw ng isang teksto',
+	'schola.feature.search':
+		'Mag-type ng sanggunian sa kahon sa itaas — kabanata at talata, bilang ng bahagi, pangalan ng isang dokumento — at kinukumpleto ito habang nagta-type kayo. Pindutin ang / o Ctrl+K mula saanman, at ang ? para sa iba pang pindutan.',
+	'schola.feature.languages':
+		'Magkahiwalay na pinipili ang interface at ang teksto, kaya mababasa ninyo ang isang akda sa isang wika habang nananatili sa iba ang mga pindutan. Kung may ilang edisyon ang isang akda sa inyong wika, pumipili rin kayo sa mga iyon.',
+	'schola.feature.settings':
+		'Laki ng teksto, maliwanag o madilim, sepia, at kung gaano karaming tala ang nais ninyong nasa tabi ng teksto.',
+	'schola.feature.offline':
+		'Idagdag ninyo ang pook na ito sa inyong home screen at bubukas ito na parang app. Maaari ninyong i-download ang buong akda upang basahin nang walang koneksyon.',
+	'schola.feature.contents':
+		'Ang mga bahagi ng akdang kinalalagyan ninyo — mga aklat, bahagi, kabanata — upang makagalaw sa loob nito nang hindi bumabalik sa simula.',
+	'schola.feature.compare':
+		'Dalawang edisyon ng iisang bahagi, magkatabi — ang Latin katabi ng sarili ninyong wika, o isang salin katabi ng isa pa.',
+	'schola.feature.apparatus':
+		'Ang sariling mga tala ng edisyon, at anumang komentaryong isinulat sa teksto, ay inihahain sa tabi nito at hindi sa ilalim. Ang mga sipi sa loob ng teksto ay mga link, kaya ang sanggunian ay tumutungo sa itinuturo nito.',
+	'schola.feature.focus':
+		'Inaalis ang lahat maliban sa teksto. Nananatili ang labasan sa kinaroroonan ng bareta, upang walang makulong sa likod nito.',
+	'schola.books.heading': 'Ano ang narito, at paano ito sinisipi',
+	'schola.books.lede':
+		'Bawat isa sa mga ito ay ibang uri ng aklat, at bawat isa ay tinutukoy sa pamamagitan ng sariling bilang. Ipinapakita ng mga halimbawa ang anyo: mag-type ng ganoon sa kahon ng paghahanap at mararating ninyo ang bahagi.',
+	'schola.cite.label': 'Sinisipi bilang',
+	'schola.what.scripture':
+		'Ang Kasulatan gaya ng pagtanggap dito ng Simbahan, sa dalawang Tipan. Ang lahat ng iba rito ay binabasa sa liwanag nito.',
+	'schola.cite.scripture':
+		'aklat, kabanata at talata, sa mga daglat na inililimbag ng sarili ninyong edisyon',
+	'schola.what.catechism':
+		'Isang buod ng pinaniniwalaan ng Simbahang Katoliko, sa iisang tomo. Hindi ito mismo ang pinagmulan: tinitipon nito ang Kasulatan, ang mga Ama, ang liturhiya at ang turo ng Simbahan, at sinasabi ng bawat bilang kung saan nagmula ang sinasabi nito.',
+	'schola.cite.catechism': 'ayon sa bilang, tuloy-tuloy mula sa unang pahina hanggang sa huli',
+	'schola.what.compendium':
+		'Ang mismong turo na inilahad sa tanong at sagot, mga ikasampung bahagi ng haba.',
+	'schola.cite.compendium': 'ayon sa bilang ng tanong',
+	'schola.what.magisterium':
+		'Ang aktuwal na isinulat ng mga papa at ng mga konsilyo — mga ensiklika, konstitusyon, dekreto, deklarasyon — bawat isa ay tumutugon sa isang tiyak na sandali at isang tiyak na suliranin. Bawat isa ay kilala sa unang mga salita nito sa Latin.',
+	'schola.cite.magisterium': 'ayon sa pangalan ng dokumento, saka sa bilang ng bahagi sa loob nito',
+	'schola.what.social':
+		'Ang turo ng Simbahan tungkol sa paggawa, ari-arian, pamilya, pulitika at kapayapaan, tinipon mula sa mga dokumentong iyon sa iisang aklat.',
+	'schola.cite.social':
+		'ayon sa bilang, sa ilalim ng daglat na ginagamit ng akda para sa sarili nito',
+	'schola.what.law':
+		'Batas at hindi doktrina. Sinasabi nito ang hinihingi ng Simbahan, at ito ay sinusugan.',
+	'schola.cite.law': 'ayon sa kanon, ang tawag sa mga bilang nitong yunit',
+	'schola.what.doctors':
+		'Ang mga teologong ipinahayag ng Simbahan na mga Doktor. Wala itong opisyal na awtoridad, gaano man kadakila ang may-akda.',
+	'schola.cite.doctors': 'ayon sa bahagi, saka sa tanong — ang sariling paghahati ng Summa',
+	'schola.what.prayers': 'Ang mga salitang idinarasal ng Simbahan, kasama ang Latin sa tabi.',
+	'schola.cite.prayers': 'ayon sa pangalan; walang bilang na masisipi',
+	'schola.places.heading': 'Hindi mga teksto, kundi mga pook sa pahinang ito',
+	'schola.what.library':
+		'Lahat ng akda ng pook na ito sa iisang talaan, pinagpangkat ayon sa paksa at hindi ayon sa uri.',
+	'schola.what.calendar':
+		'Ang araw ng liturhiya — panahon, kulay, at kung sino ang ginugunita — para sa bansang sinusunod ninyo ang kalendaryo.',
+	'schola.what.bookmarks':
+		'Ang mga bahaging minarkahan ninyo, at kung saan kayo huling tumigil sa bawat akda. Parehong nananatili sa browser na ito at hindi ipinapadala kahit saan.',
 	'jumpbox.placeholder': 'Pumunta sa… (hal. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Maghanap',
 	'jumpbox.hint': 'Pindutin ang / o Ctrl+K upang pumunta sa isang sanggunian',
@@ -127,8 +222,18 @@ export const tl: Dictionary = {
 		'<strong>Ang Katesismo</strong> ay naglalahad ng turong Katoliko sa 2,865 binilang na talata. <strong>Ang Kompendyo</strong> ay muling naglalahad ng gayunding turo sa 598 tanong at sagot, sa gayunding balangkas.',
 	'ccc.landing.pairTagline':
 		'Ang Katesismo ng Simbahang Katoliko sa 2,865 bilang, at ang Kompendyo nito sa 598 tanong.',
+	'compendium.landing.title': 'Kompendyo ng Katesismo',
+	'compendium.landing.tagline':
+		'Mga tanong at sagot na naglalagom sa Katesismo ng Simbahang Katoliko.',
+	'compendium.question': 'Tanong',
+	'compendium.answer': 'Sagot',
+	'compendium.tableOfContents': 'Talaan ng Nilalaman',
+	'compendium.prevQuestion': 'Nakaraang tanong',
+	'compendium.nextQuestion': 'Susunod na tanong',
+	'compendium.condenses': 'Naglalagom sa KSK ¶¶',
 	'ccc.abbrev': 'KSK',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'Walang bilang ng tanong sa korpus na ito',
 	'document.library.tagline':
 		'Mga ensiklika, konstitusyong konsiliyar, dekreto, at pahayag ng Magisterium.',
 	'doctores.landing.title': 'Mga Doktor ng Simbahan',

@@ -69,6 +69,95 @@ export const hr: Dictionary = {
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':
 		'Cijeli korpus, polica po polica — s mjestom na kojem ste stali i onim što ste označili.',
+	'schola.landing.title': 'Odakle početi',
+	'schola.landing.tagline':
+		'Kratak vodič kroz ono što je ovdje: što je svaka od ovih knjiga, kako se piše navod za nju, kako naći mjesto, i redoslijedi čitanja koje je Crkva predložila.',
+	'schola.start.heading': 'Ako vam je sve ovo novo',
+	'schola.start.body': 'Najbolji je početak ',
+	'schola.start.bodyAfter':
+		': isti nauk kao u Katekizmu, mnogo kraći, pisan u pitanjima i odgovorima. Otprilike je desetinu duljine i ništa ne pretpostavlja.',
+	'schola.bible.heading': 'Ako nikada niste čitali Bibliju',
+	'schola.bible.library':
+		'Nije jedna knjiga nego sedamdeset i tri, pisane kroz više od tisuću godina i uvezane redom koji je Crkva ustalila — ne redom kojim su se stvari zbile, ni onim koji se najlakše čita. Većina počne na prvoj stranici i prestane nekoliko tjedana poslije, usred dugoga poglavlja drevnoga zakona, jer im nitko još nije rekao čemu to služi.',
+	'schola.bible.step.gospel': 'Počnite evanđeljem',
+	'schola.bible.start':
+		'Jedna od četiri kratke knjige o Isusovu životu, duboko unutra a ne sprijeda. Nije to naša zamisao: sabor Crkve tražio je da se poučava pravilna uporaba Pisma, „osobito Novoga zavjeta i prije svega evanđelja“. Nijedno nije imenovao posebno, pa nećemo ni mi.',
+	'schola.bible.whichGospel':
+		'Tri se obično predlažu, iz triju različitih razloga. Bilo koje od njih dobro je mjesto na kojem biti.',
+	'schola.bible.gospel.mark':
+		'Najkraće. Možete ga pročitati cijelo u jedno poslijepodne, a dovršiti jedno na početku vrijedi više nego izabrati najbolje.',
+	'schola.bible.gospel.luke':
+		'Napisano za nekoga izvan vjere tko je htio priču zapisanu redom — što možete biti upravo vi. Nastavlja se ravno u Djela apostolska, pa je zapravo prva polovica dulje knjige.',
+	'schola.bible.gospel.john':
+		'Ono koje otvoreno kaže zašto je napisano: „da vjerujete“. Jednostavne riječi, i ide ravno na pitanje tko je Isus.',
+	'schola.bible.step.acts': 'Zatim što se dogodilo poslije',
+	'schola.bible.thenActs':
+		'Kad dovršite jedno, pročitajte što su, nakon njegova odlaska, učinili oni koji su ga poznavali.',
+	'schola.bible.acts.why':
+		'Trideset godina nakon svršetka evanđelja: nekoliko desetaka uplašenih ljudi, i kako je ono što su vidjeli doprlo do drugoga kraja carstva.',
+	'schola.bible.step.old': 'Zatim starija polovica',
+	'schola.bible.thenOld':
+		'Ne od prve stranice, i ne cijela. Nekoliko mjesta nosi pripovijest, i upravo su to ona na koja se evanđelja neprestano vraćaju.',
+	'schola.bible.ot.beginnings': 'Kako počinje i kako pođe po zlu.',
+	'schola.bible.ot.promise': 'Jedna obitelj i obećanje dano njoj koje nadživi sve u njoj.',
+	'schola.bible.ot.exodus': 'Narod izveden iz ropstva i zakon dan mu da po njemu živi.',
+	'schola.bible.ot.psalms':
+		'Nije pripovijest: sto pedeset molitava i pjesama. Čitajte po jedan, bilo kojim redom. Crkva ih i danas moli svaki dan.',
+	'schola.bible.bothWays':
+		'Prepoznavat ćete stvari, i u tome je smisao, a nije slučajnost. Crkva čita starije knjige u svjetlu Kristovu a novije u svjetlu onoga što je bilo prije — svaka polovica objašnjava drugu, i zato se nijedna ne čita sama.',
+	'schola.guide.heading': 'Kako se snaći',
+	'schola.guide.lede':
+		'Tekst je cijela stranica; sve ostalo je naredba koju možete zanemariti dok je ne poželite.',
+	'schola.guide.top.heading': 'Traka na vrhu svake stranice',
+	'schola.guide.reading.heading': 'Traka iznad teksta',
+	'schola.feature.search':
+		'Upišite navod u okvir na vrhu — poglavlje i redak, broj odlomka, ime dokumenta — i dovršava ga dok tipkate. Pritisnite / ili Ctrl+K odakle god, i ? za ostale prečace.',
+	'schola.feature.languages':
+		'Sučelje i tekst biraju se odvojeno, pa možete čitati djelo na jednom jeziku dok gumbi ostaju na drugom. Gdje djelo ima više izdanja na vašem jeziku, birate i među njima.',
+	'schola.feature.settings':
+		'Veličina teksta, svijetlo ili tamno, sepija, i koliko aparata želite uz tekst.',
+	'schola.feature.offline':
+		'Dodajte stranicu na početni zaslon i otvara se kao aplikacija. Cijela djela možete preuzeti i čitati bez veze.',
+	'schola.feature.contents':
+		'Podjele djela u kojem ste — knjige, dijelovi, poglavlja — da se krećete unutar njega bez vraćanja na početak.',
+	'schola.feature.compare':
+		'Dva izdanja istoga mjesta jedno uz drugo — latinski uz vaš vlastiti jezik, ili jedan prijevod uz drugi.',
+	'schola.feature.apparatus':
+		'Vlastite bilješke izdanja i svaki komentar napisan uz tekst nude se pokraj njega, a ne ispod. Navodi unutar teksta su poveznice, pa uputnica vodi onamo kamo pokazuje.',
+	'schola.feature.focus':
+		'Ukloni sve osim teksta. Izlaz ostaje gdje je bila traka, da ništa ne ostane zarobljeno iza nje.',
+	'schola.books.heading': 'Što je ovdje i kako se navodi',
+	'schola.books.lede':
+		'Svaka je od ovih knjiga druge vrste, i na svaku se upućuje vlastitim brojem. Primjeri pokazuju oblik: upišite takav u okvir za traženje i stižete na mjesto.',
+	'schola.cite.label': 'Navodi se',
+	'schola.what.scripture':
+		'Pismo kako ga Crkva prima, u oba Zavjeta. Sve ostalo ovdje čita se u njegovu svjetlu.',
+	'schola.cite.scripture': 'knjiga, poglavlje i redak, u kraticama koje tiska vaše izdanje',
+	'schola.what.catechism':
+		'Sažetak onoga u što Katolička Crkva vjeruje, u jednom svesku. Sam nije vrelo: prikuplja Pismo, oce, bogoslužje i nauk Crkve, i svaki broj kaže odakle dolazi ono što tvrdi.',
+	'schola.cite.catechism': 'po broju, koji teče neprekinuto od prve stranice do posljednje',
+	'schola.what.compendium':
+		'Isti nauk izložen u pitanjima i odgovorima, otprilike u desetini duljine.',
+	'schola.cite.compendium': 'po broju pitanja',
+	'schola.what.magisterium':
+		'Ono što su pape i sabori doista napisali — enciklike, konstitucije, dekreti, deklaracije — svaki upravljen određenom trenutku i određenom pitanju. Svaki je poznat po svojim početnim latinskim riječima.',
+	'schola.cite.magisterium': 'po imenu dokumenta, zatim broju odjeljka u njemu',
+	'schola.what.social':
+		'Nauk Crkve o radu, vlasništvu, obitelji, politici i miru, prikupljen iz tih dokumenata u jednu knjigu.',
+	'schola.cite.social': 'po broju, pod kraticom kojom se djelo samo označuje',
+	'schola.what.law': 'Pravo a ne nauk. Kaže što Crkva traži, i mijenja se.',
+	'schola.cite.law': 'po kanonu, kako se zovu njegove brojčane jedinice',
+	'schola.what.doctors':
+		'Bogoslovi koje je Crkva proglasila naučiteljima. Ne nosi nikakvu službenu vlast, koliko god velik bio pisac.',
+	'schola.cite.doctors': 'po dijelu, zatim pitanju — vlastitim podjelama Sume',
+	'schola.what.prayers': 'Riječi kojima se Crkva moli, s latinskim uz njih.',
+	'schola.cite.prayers': 'po imenu; nema brojeva za navođenje',
+	'schola.places.heading': 'Ne tekstovi, nego mjesta na ovoj stranici',
+	'schola.what.library': 'Sva djela stranice u jednom popisu, skupljena po predmetu a ne po vrsti.',
+	'schola.what.calendar':
+		'Bogoslužni dan — vrijeme, boja i tko se slavi — za zemlju čiji kalendar slijedite.',
+	'schola.what.bookmarks':
+		'Mjesta koja ste označili, i gdje ste posljednji put stali u svakom djelu. Oboje ostaje u ovom pregledniku i ne šalje se nikamo.',
 	'jumpbox.placeholder': 'Idi na… (npr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Traži',
 	'jumpbox.hint': 'Pritisnite / ili Ctrl+K za skok na navod',
@@ -121,8 +210,17 @@ export const hr: Dictionary = {
 		'<strong>Katekizam</strong> izlaže katolički nauk u 2865 numeriranih odlomaka. <strong>Kompendij</strong> isti nauk donosi kao 598 pitanja i odgovora, prema istom rasporedu.',
 	'ccc.landing.pairTagline':
 		'Katekizam Katoličke Crkve u 2865 brojeva i njegov Kompendij u 598 pitanja.',
+	'compendium.landing.title': 'Kompendij Katekizma',
+	'compendium.landing.tagline': 'Pitanja i odgovori koji sažimlju Katekizam Katoličke Crkve.',
+	'compendium.question': 'Pitanje',
+	'compendium.answer': 'Odgovor',
+	'compendium.tableOfContents': 'Sadržaj',
+	'compendium.prevQuestion': 'Prethodno pitanje',
+	'compendium.nextQuestion': 'Sljedeće pitanje',
+	'compendium.condenses': 'Sažimlje KKC ¶¶',
 	'ccc.abbrev': 'KKC',
 	'compendium.abbrev': 'Komp.',
+	'compendium.noQuestionNumber': 'U ovom korpusu nema broja pitanja',
 	'document.library.tagline':
 		'Enciklike, koncilske konstitucije, dekreti i deklaracije Učiteljstva.',
 	'doctores.landing.title': 'Naučitelji Crkve',

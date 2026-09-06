@@ -42,6 +42,100 @@ export const ro: Dictionary = {
 	'nav.learn': 'Învață',
 	'library.landing.tagline':
 		'Întregul corpus, raft cu raft — împreună cu locul unde ați rămas și cu ce ați marcat.',
+	'schola.landing.title': 'De unde să începeți',
+	'schola.landing.tagline':
+		'Un ghid scurt al celor de aici: ce este fiecare dintre aceste cărți, cum se scrie o trimitere la ea, cum se găsește un pasaj, și ordini de lectură pe care Biserica le-a propus.',
+	'schola.start.heading': 'Dacă toate acestea vă sunt noi',
+	'schola.start.body': 'Începeți cu ',
+	'schola.start.bodyAfter':
+		': aceeași învățătură ca a Catehismului, mult mai scurtă, scrisă în întrebări și răspunsuri. Are cam a zecea parte din întindere și nu presupune nimic.',
+	'schola.bible.heading': 'Dacă nu ați citit niciodată Biblia',
+	'schola.bible.library':
+		'Nu este o carte, ci șaptezeci și trei, scrise de-a lungul a peste o mie de ani și strânse în ordinea pe care Biserica a stabilit-o — nu ordinea în care s-au petrecut lucrurile și nici cea care se citește cel mai ușor. Cei mai mulți încep la prima pagină și se opresc câteva săptămâni mai târziu, într-un capitol lung de lege veche, fiindcă nimeni nu le-a spus încă la ce folosește.',
+	'schola.bible.step.gospel': 'Începeți cu o Evanghelie',
+	'schola.bible.start':
+		'Una dintre cele patru cărți scurte despre viața lui Isus, mult înăuntru și nu în față. Ideea nu este a noastră: un Conciliu al Bisericii a cerut să fie învățată dreapta folosire a Scripturii, „mai ales a Noului Testament și înainte de toate a Evangheliilor”. Nu a numit niciuna anume, și nici noi nu o vom face.',
+	'schola.bible.whichGospel':
+		'Trei sunt de obicei propuse, din trei motive diferite. Oricare dintre ele este un loc bun în care să fiți.',
+	'schola.bible.gospel.mark':
+		'Cea mai scurtă. O puteți citi în întregime într-o după-amiază, iar a fi terminat una prețuiește mai mult, la început, decât a fi ales-o pe cea mai bună.',
+	'schola.bible.gospel.luke':
+		'Scrisă pentru cineva din afara credinței care voia povestirea așezată în ordine — ceea ce s-ar putea să fiți chiar dumneavoastră. Se continuă direct în Faptele Apostolilor, așa că este de fapt prima jumătate a unei cărți mai lungi.',
+	'schola.bible.gospel.john':
+		'Cea care spune deschis de ce a fost scrisă: „ca voi să credeți”. Cuvinte simple, și merge drept la întrebarea cine este Isus.',
+	'schola.bible.step.acts': 'Apoi ce s-a întâmplat mai departe',
+	'schola.bible.thenActs':
+		'Când ați terminat una, citiți ce au făcut, după plecarea lui, cei care îl cunoscuseră.',
+	'schola.bible.acts.why':
+		'Cei treizeci de ani de după sfârșitul Evangheliilor: câteva zeci de oameni înspăimântați, și cum ceea ce văzuseră a ajuns la celălalt capăt al imperiului.',
+	'schola.bible.step.old': 'Apoi jumătatea mai veche',
+	'schola.bible.thenOld':
+		'Nu de la prima pagină și nu toată. Câteva locuri poartă povestirea, și sunt tocmai acelea la care Evangheliile trimit necontenit.',
+	'schola.bible.ot.beginnings': 'Cum începe și cum o ia razna.',
+	'schola.bible.ot.promise':
+		'O familie, și o făgăduință făcută ei care îi supraviețuiește tuturor.',
+	'schola.bible.ot.exodus': 'Un popor scos din robie, și o lege dată lui spre a trăi.',
+	'schola.bible.ot.psalms':
+		'Nu o povestire: o sută cincizeci de rugăciuni și cântări. Citiți câte una, în orice ordine. Biserica le rostește și astăzi în fiecare zi.',
+	'schola.bible.bothWays':
+		'Veți recunoaște lucruri, iar acesta este rostul, nu o întâmplare. Biserica citește cărțile mai vechi în lumina lui Cristos și pe cele mai noi în lumina a ceea ce a fost înainte — fiecare jumătate o lămurește pe cealaltă, și de aceea niciuna nu se citește singură.',
+	'schola.guide.heading': 'Cum să vă orientați',
+	'schola.guide.lede':
+		'Textul este toată pagina; tot restul este un control pe care îl puteți ignora până când îl doriți.',
+	'schola.guide.top.heading': 'Bara din capul fiecărei pagini',
+	'schola.guide.reading.heading': 'Bara de deasupra unui text',
+	'schola.feature.search':
+		'Scrieți o trimitere în caseta de sus — capitol și verset, un număr de paragraf, numele unui document — și o completează pe măsură ce scrieți. Apăsați / sau Ctrl+K de oriunde, și ? pentru celelalte scurtături.',
+	'schola.feature.languages':
+		'Interfața și textul se aleg separat, așa că puteți citi o operă într-o limbă în timp ce butoanele rămân în alta. Acolo unde o operă are mai multe ediții în limba dumneavoastră, alegeți și între acelea.',
+	'schola.feature.settings':
+		'Mărimea textului, luminos sau întunecat, sepia, și cât din aparat vreți alături de text.',
+	'schola.feature.offline':
+		'Adăugați situl pe ecranul de pornire și se deschide ca o aplicație. Puteți descărca opere întregi spre a le citi fără conexiune.',
+	'schola.feature.contents':
+		'Diviziunile operei în care vă aflați — cărți, părți, capitole — ca să vă mișcați înăuntrul ei fără a vă întoarce la început.',
+	'schola.feature.compare':
+		'Două ediții ale aceluiași pasaj, una lângă alta — latina alături de limba dumneavoastră, sau o traducere alături de alta.',
+	'schola.feature.apparatus':
+		'Notele proprii ale unei ediții, și orice comentariu scris pe text, sunt oferite alături de el, nu dedesubt. Citările dinăuntrul textului sunt legături, așa că o trimitere duce unde arată.',
+	'schola.feature.focus':
+		'Înlătură tot în afară de text. Ieșirea rămâne unde era bara, ca nimic să nu fie prins în spatele ei.',
+	'schola.books.heading': 'Ce se află aici și cum se citează',
+	'schola.books.lede':
+		'Fiecare dintre acestea este un alt fel de carte, și la fiecare se trimite printr-un număr propriu. Exemplele arată forma: scrieți unul asemenea în caseta de căutare și ajungeți la pasaj.',
+	'schola.cite.label': 'Se citează',
+	'schola.what.scripture':
+		'Scripturile așa cum le primește Biserica, în ambele Testamente. Tot restul de aici se citește în lumina lor.',
+	'schola.cite.scripture':
+		'carte, capitol și verset, în prescurtările pe care le tipărește ediția dumneavoastră',
+	'schola.what.catechism':
+		'Un rezumat a ceea ce crede Biserica Catolică, într-un singur volum. El însuși nu este izvor: adună Scriptura, Părinții, liturgia și învățătura Bisericii, și fiecare paragraf spune de unde vine ceea ce afirmă.',
+	'schola.cite.catechism':
+		'după numărul paragrafului, curgând neîntrerupt de la prima pagină la ultima',
+	'schola.what.compendium':
+		'Aceeași învățătură așezată în întrebări și răspunsuri, la cam a zecea parte din întindere.',
+	'schola.cite.compendium': 'după numărul întrebării',
+	'schola.what.magisterium':
+		'Ceea ce papii și conciliile au scris cu adevărat — enciclice, constituții, decrete, declarații — fiecare adresat unui moment anume și unei chestiuni anume. Fiecare este cunoscut după cuvintele lui de început în latină.',
+	'schola.cite.magisterium': 'după numele documentului, apoi un număr de secțiune dinăuntrul lui',
+	'schola.what.social':
+		'Învățătura Bisericii despre muncă, proprietate, familie, politică și pace, strânsă din acele documente într-o singură carte.',
+	'schola.cite.social':
+		'după numărul paragrafului, sub sigla pe care opera o folosește pentru sine',
+	'schola.what.law': 'Drept, nu doctrină. Spune ce cere Biserica, și se amendează.',
+	'schola.cite.law': 'după canon, cum se numesc unitățile lui numerotate',
+	'schola.what.doctors':
+		'Teologii pe care Biserica i-a numit Învățători. Nu poartă nicio autoritate oficială, oricât de mare ar fi autorul.',
+	'schola.cite.doctors': 'după parte, apoi chestiune — diviziunile proprii ale Summei',
+	'schola.what.prayers': 'Cuvintele cu care se roagă Biserica, având latina alături.',
+	'schola.cite.prayers': 'după nume; nu sunt numere de citat',
+	'schola.places.heading': 'Nu texte, ci locuri de pe acest sit',
+	'schola.what.library':
+		'Toate operele sitului într-o singură listă, grupate după subiect, nu după fel.',
+	'schola.what.calendar':
+		'Ziua liturgică — timpul, culoarea și cine este prăznuit — pentru țara al cărei calendar îl urmați.',
+	'schola.what.bookmarks':
+		'Pasajele pe care le-ați însemnat, și unde ați rămas ultima dată în fiecare operă. Amândouă se păstrează în acest navigator și nu se trimit nicăieri.',
 	'ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
 	'jumpbox.placeholder': 'Salt la… (ex. ioan 3,16, ccc 1234)',
 	'jumpbox.short': 'Caută',

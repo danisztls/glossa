@@ -68,6 +68,99 @@ export const lt: Dictionary = {
 	'nav.learn': 'Mokytis',
 	'library.landing.tagline':
 		'Visas rinkinys, lentyna po lentynos — su tuo, kur baigėte skaityti, ir tuo, ką pažymėjote.',
+	'schola.landing.title': 'Nuo ko pradėti',
+	'schola.landing.tagline':
+		'Trumpas vadovas po tai, kas čia yra: kas yra kiekviena iš šių knygų, kaip užrašoma nuoroda į ją, kaip rasti vietą, ir skaitymo tvarkos, kurias Bažnyčia yra pasiūliusi.',
+	'schola.start.heading': 'Jei visa tai jums nauja',
+	'schola.start.body': 'Geriausia pradžia — ',
+	'schola.start.bodyAfter':
+		': tas pats mokymas kaip Katekizme, kur kas trumpesnis, surašytas klausimais ir atsakymais. Jis maždaug dešimt kartų trumpesnis ir nieko iš anksto nesuponuoja.',
+	'schola.bible.heading': 'Jei niekada neskaitėte Šventojo Rašto',
+	'schola.bible.library':
+		'Tai ne viena knyga, o septyniasdešimt trys, rašytos daugiau nei tūkstantį metų ir surinktos ta tvarka, kurią nustatė Bažnyčia — ne ta, kuria įvykiai vyko, ir ne ta, kurią lengviausia skaityti. Daugelis pradeda nuo pirmo puslapio ir po kelių savaičių liaujasi, ilgame senovinio įstatymo skyriuje, nes niekas jiems dar nepasakė, kam tai skirta.',
+	'schola.bible.step.gospel': 'Pradėkite nuo Evangelijos',
+	'schola.bible.start':
+		'Viena iš keturių trumpų knygų apie Jėzaus gyvenimą, giliai viduje, o ne priekyje. Tai ne mūsų sumanymas: Bažnyčios Susirinkimas prašė mokyti teisingai naudotis Šventuoju Raštu, „ypač Naujuoju Testamentu ir pirmiausia Evangelijomis“. Jis neįvardijo nė vienos atskirai, ir mes neįvardysime.',
+	'schola.bible.whichGospel':
+		'Trys paprastai siūlomos, dėl trijų skirtingų priežasčių. Bet kuri iš jų yra gera vieta būti.',
+	'schola.bible.gospel.mark':
+		'Trumpiausia. Ją galite perskaityti visą per vieną popietę, o pabaigti vieną pradžioje vertingiau, negu išsirinkti geriausią.',
+	'schola.bible.gospel.luke':
+		'Parašyta žmogui už tikėjimo ribų, norėjusiam, kad viskas būtų surašyta iš eilės — o tai galbūt esate būtent jūs. Ji tiesiog pereina į Apaštalų darbus, taigi iš tikrųjų yra ilgesnės knygos pirmoji pusė.',
+	'schola.bible.gospel.john':
+		'Ta, kuri tiesiai pasako, kodėl parašyta: „kad tikėtumėte“. Paprasti žodžiai, ir eina tiesiai prie klausimo, kas yra Jėzus.',
+	'schola.bible.step.acts': 'Paskui — kas buvo toliau',
+	'schola.bible.thenActs':
+		'Pabaigę vieną, perskaitykite, ką po jo išėjimo padarė tie, kurie jį pažinojo.',
+	'schola.bible.acts.why':
+		'Trisdešimt metų po Evangelijų pabaigos: keliolika išsigandusių žmonių ir tai, kaip tai, ką jie matė, pasiekė kitą imperijos galą.',
+	'schola.bible.step.old': 'Paskui senesnioji pusė',
+	'schola.bible.thenOld':
+		'Ne nuo pirmo puslapio ir ne visa. Kelios vietos neša pasakojimą, ir būtent į jas Evangelijos nuolat grąžina.',
+	'schola.bible.ot.beginnings': 'Kaip prasideda ir kaip nueina šuniui ant uodegos.',
+	'schola.bible.ot.promise': 'Viena šeima ir jai duotas pažadas, pergyvenantis visus joje.',
+	'schola.bible.ot.exodus':
+		'Tauta, išvesta iš vergovės, ir jai duotas įstatymas, pagal kurį gyventi.',
+	'schola.bible.ot.psalms':
+		'Ne pasakojimas: šimtas penkiasdešimt maldų ir giesmių. Skaitykite po vieną, bet kokia tvarka. Bažnyčia jas tebekalba kasdien.',
+	'schola.bible.bothWays':
+		'Atpažinsite dalykus, ir tai yra esmė, o ne sutapimas. Bažnyčia senesnes knygas skaito Kristaus šviesoje, o naujesnes — to, kas buvo anksčiau, šviesoje: kiekviena pusė aiškina kitą, ir todėl nė viena neskaitoma viena.',
+	'schola.guide.heading': 'Kaip čia susigaudyti',
+	'schola.guide.lede':
+		'Tekstas yra visas puslapis; visa kita — valdiklis, kurio galite nepaisyti, kol jo neprireiks.',
+	'schola.guide.top.heading': 'Juosta kiekvieno puslapio viršuje',
+	'schola.guide.reading.heading': 'Juosta virš teksto',
+	'schola.feature.search':
+		'Įrašykite nuorodą į viršuje esantį langelį — skyrių ir eilutę, pastraipos numerį, dokumento pavadinimą — ir ji papildoma jums berašant. Iš bet kur spauskite / arba Ctrl+K, o ? parodo kitus trumpinius.',
+	'schola.feature.languages':
+		'Sąsaja ir tekstas renkami atskirai, tad veikalą galite skaityti viena kalba, o mygtukai lieka kita. Kur veikalas turi kelis leidimus jūsų kalba, renkatės ir tarp jų.',
+	'schola.feature.settings':
+		'Teksto dydis, šviesus ar tamsus, sepija, ir kiek aparato norite šalia teksto.',
+	'schola.feature.offline':
+		'Pridėkite svetainę prie pradžios ekrano ir ji atsivers kaip programėlė. Ištisus veikalus galite atsisiųsti ir skaityti be ryšio.',
+	'schola.feature.contents':
+		'Veikalo, kuriame esate, skirstymas — knygos, dalys, skyriai — kad judėtumėte jo viduje negrįždami į pradžią.',
+	'schola.feature.compare':
+		'Du to paties teksto leidimai greta — lotynų kalba šalia jūsų pačių kalbos, arba vienas vertimas šalia kito.',
+	'schola.feature.apparatus':
+		'Leidimo paties pastabos ir bet koks tekstui parašytas komentaras siūlomi šalia jo, o ne po juo. Citatos teksto viduje yra nuorodos, tad nuoroda veda ten, kur rodo.',
+	'schola.feature.focus':
+		'Nuvalo viską, išskyrus tekstą. Išėjimas lieka ten, kur buvo juosta, kad niekas neliktų už jos.',
+	'schola.books.heading': 'Kas čia yra ir kaip cituojama',
+	'schola.books.lede':
+		'Kiekviena iš jų yra kitokios rūšies knyga, ir į kiekvieną nurodoma savu skaičiumi. Pavyzdžiai rodo formą: įrašykite panašų į paieškos langelį ir atsidursite prie vietos.',
+	'schola.cite.label': 'Cituojama',
+	'schola.what.scripture':
+		'Šventasis Raštas, kaip jį priima Bažnyčia, abiejuose Testamentuose. Visa kita čia skaitoma jo šviesoje.',
+	'schola.cite.scripture':
+		'knyga, skyrius ir eilutė, tais trumpiniais, kuriuos spausdina jūsų leidimas',
+	'schola.what.catechism':
+		'Santrauka to, kuo tiki Katalikų Bažnyčia, viename tome. Pats jis nėra šaltinis: jis sutelkia Šventąjį Raštą, Tėvus, liturgiją ir Bažnyčios mokymą, ir kiekviena pastraipa nurodo, iš kur tai, ką ji teigia.',
+	'schola.cite.catechism':
+		'pagal pastraipos numerį, einantį be pertrūkio nuo pirmo puslapio iki paskutinio',
+	'schola.what.compendium':
+		'Tas pats mokymas, išdėstytas klausimais ir atsakymais, maždaug dešimtadaliu apimties.',
+	'schola.cite.compendium': 'pagal klausimo numerį',
+	'schola.what.magisterium':
+		'Tai, ką popiežiai ir susirinkimai iš tikrųjų parašė — enciklikos, konstitucijos, dekretai, deklaracijos — kiekvienas skirtas tam tikrai akimirkai ir tam tikram klausimui. Kiekvienas žinomas pagal savo pirmuosius lotyniškus žodžius.',
+	'schola.cite.magisterium': 'pagal dokumento pavadinimą, paskui skirsnio numerį jame',
+	'schola.what.social':
+		'Bažnyčios mokymas apie darbą, nuosavybę, šeimą, politiką ir taiką, surinktas iš tų dokumentų į vieną knygą.',
+	'schola.cite.social': 'pagal pastraipos numerį, po ta santrumpa, kuria veikalas vadina pats save',
+	'schola.what.law': 'Teisė, o ne mokymas. Ji sako, ko Bažnyčia reikalauja, ir yra keičiama.',
+	'schola.cite.law': 'pagal kanoną — taip vadinami jos sunumeruoti vienetai',
+	'schola.what.doctors':
+		'Teologai, kuriuos Bažnyčia paskelbė mokytojais. Tai neturi jokios oficialios galios, koks didis bebūtų autorius.',
+	'schola.cite.doctors': 'pagal dalį, paskui klausimą — pačios Sumos skirstymą',
+	'schola.what.prayers': 'Žodžiai, kuriais meldžiasi Bažnyčia, su lotyniškais greta.',
+	'schola.cite.prayers': 'pagal pavadinimą; nėra numerių, kuriuos būtų galima cituoti',
+	'schola.places.heading': 'Ne tekstai, o šios svetainės vietos',
+	'schola.what.library':
+		'Visi svetainės veikalai viename sąraše, sugrupuoti pagal dalyką, o ne pagal rūšį.',
+	'schola.what.calendar':
+		'Liturginė diena — laikas, spalva ir kas minimas — tos šalies, kurios kalendoriaus laikotės.',
+	'schola.what.bookmarks':
+		'Vietos, kurias pažymėjote, ir ties kuo paskutinį kartą sustojote kiekviename veikale. Abu dalykai lieka šioje naršyklėje ir niekur nesiunčiami.',
 	'jumpbox.placeholder': 'Pereiti prie… (pvz. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Ieškoti',
 	'jumpbox.hint': 'Paspauskite / arba Ctrl+K, kad pereitumėte prie nuorodos',
@@ -119,8 +212,18 @@ export const lt: Dictionary = {
 		'<strong>Katekizmas</strong> išdėsto katalikų tikėjimo mokymą 2 865 numeruotuose punktuose. <strong>Santrauka</strong> pagal tą patį planą pateikia tą patį mokymą 598 klausimais ir atsakymais.',
 	'ccc.landing.pairTagline':
 		'Katalikų Bažnyčios katekizmas 2865 numeriuose ir jo Santrauka 598 klausimuose.',
+	'compendium.landing.title': 'Katekizmo santrauka',
+	'compendium.landing.tagline':
+		'Klausimai ir atsakymai, glaustai perteikiantys Katalikų Bažnyčios katekizmą.',
+	'compendium.question': 'Klausimas',
+	'compendium.answer': 'Atsakymas',
+	'compendium.tableOfContents': 'Turinys',
+	'compendium.prevQuestion': 'Ankstesnis klausimas',
+	'compendium.nextQuestion': 'Kitas klausimas',
+	'compendium.condenses': 'Glaudžia KBK ¶¶',
 	'ccc.abbrev': 'KBK',
 	'compendium.abbrev': 'Santr.',
+	'compendium.noQuestionNumber': 'Šiame tekstyne nėra klausimo numerio',
 	'document.library.tagline':
 		'Enciklikos, Susirinkimo konstitucijos, dekretai ir Magisteriumo deklaracijos.',
 	'doctores.landing.title': 'Bažnyčios mokytojai',

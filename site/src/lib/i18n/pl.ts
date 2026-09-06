@@ -41,6 +41,98 @@ export const pl: Dictionary = {
 	'nav.learn': 'Nauka',
 	'library.landing.tagline':
 		'Cały zbiór, półka po półce — wraz z miejscem, w którym przerwałeś, i tym, co zaznaczyłeś.',
+	'schola.landing.title': 'Od czego zacząć',
+	'schola.landing.tagline':
+		'Krótki przewodnik po tym, co tu jest: czym jest każda z tych ksiąg, jak zapisuje się jej odsyłacz, jak znaleźć fragment, i porządki czytania, które Kościół zaproponował.',
+	'schola.start.heading': 'Jeśli to dla Ciebie nowe',
+	'schola.start.body': 'Zacznij od ',
+	'schola.start.bodyAfter':
+		': ta sama nauka co w Katechizmie, o wiele krótsza, zapisana w pytaniach i odpowiedziach. Ma około jednej dziesiątej objętości i niczego nie zakłada.',
+	'schola.bible.heading': 'Jeśli nigdy nie czytałeś Biblii',
+	'schola.bible.library':
+		'To nie jedna księga, lecz siedemdziesiąt trzy, pisane przez ponad tysiąc lat i zebrane w porządku, który ustalił Kościół — nie w porządku, w jakim rzeczy się działy, i nie w tym, który czyta się najłatwiej. Większość zaczyna od pierwszej strony i przerywa kilka tygodni później, w długim rozdziale starożytnego prawa, bo nic im jeszcze nie powiedziało, po co to jest.',
+	'schola.bible.step.gospel': 'Zacznij od Ewangelii',
+	'schola.bible.start':
+		'Jedna z czterech krótkich ksiąg o życiu Jezusa, głęboko w środku, a nie na początku. To nie nasz pomysł: Sobór Kościoła prosił, by uczono właściwego korzystania z Pisma, „zwłaszcza Nowego Testamentu, a przede wszystkim Ewangelii”. Nie wskazał żadnej z osobna, i my też nie wskażemy.',
+	'schola.bible.whichGospel':
+		'Trzy bywają zwykle proponowane, z trzech różnych powodów. Każda z nich jest dobrym miejscem, by w nim być.',
+	'schola.bible.gospel.mark':
+		'Najkrótsza. Możesz ją przeczytać w całości w jedno popołudnie, a skończyć jedną znaczy na początku więcej niż wybrać najlepszą.',
+	'schola.bible.gospel.luke':
+		'Napisana dla kogoś spoza wiary, kto chciał mieć rzecz spisaną po kolei — czym możesz być właśnie Ty. Przechodzi wprost w Dzieje Apostolskie, jest więc naprawdę pierwszą połową dłuższej księgi.',
+	'schola.bible.gospel.john':
+		'Ta, która wprost mówi, po co została napisana: „abyście wierzyli”. Proste słowa, i idzie prosto do pytania, kim jest Jezus.',
+	'schola.bible.step.acts': 'Potem, co stało się dalej',
+	'schola.bible.thenActs':
+		'Gdy skończysz jedną, przeczytaj, co po Jego odejściu robili ci, którzy Go znali.',
+	'schola.bible.acts.why':
+		'Trzydzieści lat po końcu Ewangelii: kilkadziesiąt przestraszonych osób i to, jak, co widzieli, dotarło na drugi kraniec cesarstwa.',
+	'schola.bible.step.old': 'Potem starsza połowa',
+	'schola.bible.thenOld':
+		'Nie od pierwszej strony i nie w całości. Kilka miejsc niesie opowieść, i są to te, do których Ewangelie wciąż odsyłają.',
+	'schola.bible.ot.beginnings': 'Jak się zaczyna i jak się psuje.',
+	'schola.bible.ot.promise':
+		'Jedna rodzina i dana jej obietnica, która przeżywa wszystkich w niej.',
+	'schola.bible.ot.exodus': 'Lud wyprowadzony z niewoli i dane mu prawo, wedle którego ma żyć.',
+	'schola.bible.ot.psalms':
+		'Nie opowieść: sto pięćdziesiąt modlitw i pieśni. Czytaj po jednym, w dowolnej kolejności. Kościół wciąż odmawia je codziennie.',
+	'schola.bible.bothWays':
+		'Będziesz rozpoznawał rzeczy, i o to właśnie chodzi, a nie o zbieg okoliczności. Kościół czyta księgi starsze w świetle Chrystusa, a nowsze w świetle tego, co było przedtem — każda połowa tłumaczy drugą, i dlatego żadnej nie czyta się osobno.',
+	'schola.guide.heading': 'Jak się tu poruszać',
+	'schola.guide.lede':
+		'Tekst jest całą stroną; wszystko inne to element sterujący, który możesz pomijać, dopóki go nie zechcesz.',
+	'schola.guide.top.heading': 'Pasek na górze każdej strony',
+	'schola.guide.reading.heading': 'Pasek nad tekstem',
+	'schola.feature.search':
+		'Wpisz odsyłacz w pole u góry — rozdział i werset, numer punktu, nazwę dokumentu — a uzupełni go w trakcie pisania. Naciśnij / albo Ctrl+K skądkolwiek, i ? po pozostałe skróty.',
+	'schola.feature.languages':
+		'Interfejs i tekst wybiera się osobno, więc możesz czytać dzieło w jednym języku, gdy przyciski zostają w innym. Tam, gdzie dzieło ma kilka wydań w Twoim języku, wybierasz i między nimi.',
+	'schola.feature.settings':
+		'Wielkość tekstu, jasno lub ciemno, sepia, i ile aparatu chcesz obok tekstu.',
+	'schola.feature.offline':
+		'Dodaj stronę do ekranu głównego, a otworzy się jak aplikacja. Możesz pobrać całe dzieła i czytać bez połączenia.',
+	'schola.feature.contents':
+		'Podziały dzieła, w którym jesteś — księgi, części, rozdziały — byś mógł poruszać się w nim bez wracania na początek.',
+	'schola.feature.compare':
+		'Dwa wydania tego samego miejsca obok siebie — łacina obok Twojego języka albo jeden przekład obok drugiego.',
+	'schola.feature.apparatus':
+		'Własne przypisy wydania i wszelki komentarz napisany do tekstu są podawane obok niego, a nie pod nim. Cytaty wewnątrz tekstu są odnośnikami, więc odsyłacz prowadzi tam, gdzie wskazuje.',
+	'schola.feature.focus':
+		'Usuwa wszystko poza tekstem. Wyjście zostaje tam, gdzie był pasek, żeby nic nie zostało za nim uwięzione.',
+	'schola.books.heading': 'Co tu jest i jak się to cytuje',
+	'schola.books.lede':
+		'Każda z tych ksiąg jest innego rodzaju i do każdej odsyła się własnym numerem. Przykłady pokazują postać: wpisz podobny w pole wyszukiwania, a trafisz na miejsce.',
+	'schola.cite.label': 'Cytowane jako',
+	'schola.what.scripture':
+		'Pismo Święte, jak je Kościół przyjmuje, w obu Testamentach. Wszystko inne tutaj czyta się w jego świetle.',
+	'schola.cite.scripture': 'księga, rozdział i werset, w skrótach, które drukuje Twoje wydanie',
+	'schola.what.catechism':
+		'Streszczenie tego, w co wierzy Kościół katolicki, w jednym tomie. Sam nie jest źródłem: zbiera Pismo, Ojców, liturgię i nauczanie Kościoła, a każdy punkt mówi, skąd pochodzi to, co głosi.',
+	'schola.cite.catechism':
+		'według numeru punktu, biegnącego bez przerwy od pierwszej strony do ostatniej',
+	'schola.what.compendium':
+		'Ta sama nauka wyłożona w pytaniach i odpowiedziach, mniej więcej dziesięciokrotnie krótsza.',
+	'schola.cite.compendium': 'według numeru pytania',
+	'schola.what.magisterium':
+		'To, co papieże i sobory rzeczywiście napisali — encykliki, konstytucje, dekrety, deklaracje — każde skierowane do określonej chwili i określonej sprawy. Każde znane jest po swoich pierwszych słowach po łacinie.',
+	'schola.cite.magisterium': 'według nazwy dokumentu, a potem numeru punktu w nim',
+	'schola.what.social':
+		'Nauczanie Kościoła o pracy, własności, rodzinie, polityce i pokoju, zebrane z tych dokumentów w jedną księgę.',
+	'schola.cite.social': 'według numeru punktu, pod skrótem, którym dzieło samo się określa',
+	'schola.what.law': 'Prawo, a nie doktryna. Mówi, czego Kościół wymaga, i bywa nowelizowane.',
+	'schola.cite.law': 'według kanonu, bo tak nazywają się jego numerowane jednostki',
+	'schola.what.doctors':
+		'Teologowie, których Kościół ogłosił Doktorami. Nie niesie to żadnej urzędowej powagi, jakkolwiek wielki byłby autor.',
+	'schola.cite.doctors': 'według części, potem kwestii — własnych podziałów Sumy',
+	'schola.what.prayers': 'Słowa, którymi Kościół się modli, z łaciną obok.',
+	'schola.cite.prayers': 'po nazwie; nie ma numerów do cytowania',
+	'schola.places.heading': 'Nie teksty, lecz miejsca na tej stronie',
+	'schola.what.library':
+		'Wszystkie dzieła strony w jednym wykazie, pogrupowane według przedmiotu, a nie rodzaju.',
+	'schola.what.calendar':
+		'Dzień liturgiczny — okres, kolor i kogo się wspomina — dla kraju, którego kalendarz zachowujesz.',
+	'schola.what.bookmarks':
+		'Fragmenty, które zaznaczyłeś, i miejsce, na którym ostatnio stanąłeś w każdym dziele. Jedno i drugie zostaje w tej przeglądarce i nigdzie nie jest wysyłane.',
 	'ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
 	'jumpbox.placeholder': 'Przejdź do… (np. jan 3,16, ccc 1234)',
 	'jumpbox.short': 'Szukaj',

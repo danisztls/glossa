@@ -41,6 +41,97 @@ export const sl: Dictionary = {
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':
 		'Celotna zbirka, polica za polico — z mestom, kjer ste ostali, in tem, kar ste označili.',
+	'schola.landing.title': 'Kje začeti',
+	'schola.landing.tagline':
+		'Kratek vodnik po tem, kar je tu: kaj je vsaka od teh knjig, kako se zapiše navedba zanjo, kako najti odlomek, in beriva, ki jih je Cerkev predlagala.',
+	'schola.start.heading': 'Če vam je vse to novo',
+	'schola.start.body': 'Najboljši začetek je ',
+	'schola.start.bodyAfter':
+		': isti nauk kakor v katekizmu, veliko krajši, zapisan v vprašanjih in odgovorih. Obsega približno desetino in ničesar ne predpostavlja.',
+	'schola.bible.heading': 'Če Svetega pisma niste nikoli brali',
+	'schola.bible.library':
+		'Ni ena knjiga, ampak triinsedemdeset, pisanih čez več kakor tisoč let in zbranih v redu, ki ga je določila Cerkev — ne v redu, po katerem so se stvari zgodile, in ne v tistem, ki se najlaže bere. Večina začne na prvi strani in neha nekaj tednov pozneje, sredi dolgega poglavja starodavnega zakona, ker jim še nihče ni povedal, čemu je to.',
+	'schola.bible.step.gospel': 'Začnite z evangelijem',
+	'schola.bible.start':
+		'Ena od štirih kratkih knjig o Jezusovem življenju, globoko znotraj in ne spredaj. Zamisel ni naša: cerkveni koncil je prosil, naj se uči prava raba Svetega pisma, »zlasti Nove zaveze in predvsem evangelijev«. Nobenega ni imenoval posebej, in tudi mi ga ne bomo.',
+	'schola.bible.whichGospel':
+		'Trije se navadno predlagajo, iz treh različnih razlogov. Kateri koli od njih je dober kraj, kjer biti.',
+	'schola.bible.gospel.mark':
+		'Najkrajši. Preberete ga lahko v celoti v enem popoldnevu, in na začetku je več vredno enega končati kakor izbrati najboljšega.',
+	'schola.bible.gospel.luke':
+		'Napisan za nekoga zunaj vere, ki je hotel zgodbo zapisano po vrsti — kar ste morda prav vi. Nadaljuje se naravnost v Apostolska dela, tako da je v resnici prva polovica daljše knjige.',
+	'schola.bible.gospel.john':
+		'Tisti, ki naravnost pove, zakaj je bil napisan: »da bi verovali«. Preproste besede, in gre naravnost k vprašanju, kdo je Jezus.',
+	'schola.bible.step.acts': 'Nato, kaj se je zgodilo potem',
+	'schola.bible.thenActs':
+		'Ko boste enega končali, preberite, kaj so po njegovem odhodu storili tisti, ki so ga poznali.',
+	'schola.bible.acts.why':
+		'Trideset let po koncu evangelijev: nekaj deset prestrašenih ljudi, in to, kako je tisto, kar so videli, prišlo na drugi konec cesarstva.',
+	'schola.bible.step.old': 'Nato starejša polovica',
+	'schola.bible.thenOld':
+		'Ne od prve strani in ne vsa. Nekaj mest nosi pripoved, in prav nanje evangeliji vedno znova kažejo nazaj.',
+	'schola.bible.ot.beginnings': 'Kako se začne in kako gre narobe.',
+	'schola.bible.ot.promise': 'Ena družina in obljuba, dana njej, ki preživi vse v njej.',
+	'schola.bible.ot.exodus':
+		'Ljudstvo, izpeljano iz sužnosti, in postava, dana mu, da bi po njej živelo.',
+	'schola.bible.ot.psalms':
+		'Ne pripoved: sto petdeset molitev in pesmi. Berite po eno, v poljubnem redu. Cerkev jih moli vsak dan še danes.',
+	'schola.bible.bothWays':
+		'Marsikaj boste prepoznali, in prav to je namen, ne naključje. Cerkev bere starejše knjige v luči Kristusa in novejše v luči tega, kar je bilo prej — vsaka polovica pojasnjuje drugo, in zato se nobena ne bere sama.',
+	'schola.guide.heading': 'Kako se znajti',
+	'schola.guide.lede':
+		'Besedilo je vsa stran; vse drugo je gumb, ki ga lahko prezrete, dokler ga ne potrebujete.',
+	'schola.guide.top.heading': 'Vrstica na vrhu vsake strani',
+	'schola.guide.reading.heading': 'Vrstica nad besedilom',
+	'schola.feature.search':
+		'Vtipkajte navedbo v polje na vrhu — poglavje in vrstico, številko člena, ime dokumenta — in dopolni jo med tipkanjem. Pritisnite / ali Ctrl+K od koder koli, in ? za druge bližnjice.',
+	'schola.feature.languages':
+		'Vmesnik in besedilo se izbirata ločeno, tako da lahko delo berete v enem jeziku, medtem ko gumbi ostanejo v drugem. Kjer ima delo več izdaj v vašem jeziku, izbirate tudi med njimi.',
+	'schola.feature.settings':
+		'Velikost besedila, svetlo ali temno, sepija, in koliko aparata hočete ob besedilu.',
+	'schola.feature.offline':
+		'Dodajte spletišče na začetni zaslon in odpre se kakor aplikacija. Cela dela lahko prenesete in jih berete brez povezave.',
+	'schola.feature.contents':
+		'Razdelitve dela, v katerem ste — knjige, deli, poglavja — da se premikate po njem, ne da bi se vračali na začetek.',
+	'schola.feature.compare':
+		'Dve izdaji istega odlomka druga ob drugi — latinščina ob vašem jeziku, ali en prevod ob drugem.',
+	'schola.feature.apparatus':
+		'Lastne opombe izdaje in vsak komentar, napisan k besedilu, so ponujeni ob njem in ne pod njim. Navedbe znotraj besedila so povezave, tako da napotilo vodi tja, kamor kaže.',
+	'schola.feature.focus':
+		'Počisti vse razen besedila. Izhod ostane tam, kjer je bila vrstica, da nič ne obtiči za njo.',
+	'schola.books.heading': 'Kaj je tu in kako se navaja',
+	'schola.books.lede':
+		'Vsaka od teh knjig je druge vrste, in na vsako se sklicuje z lastno številko. Zgledi kažejo obliko: vtipkajte kaj takega v iskalno polje in pristanete pri odlomku.',
+	'schola.cite.label': 'Navaja se',
+	'schola.what.scripture':
+		'Sveto pismo, kakor ga Cerkev prejema, v obeh zavezah. Vse drugo tu se bere v njegovi luči.',
+	'schola.cite.scripture': 'knjiga, poglavje in vrstica, v okrajšavah, ki jih tiska vaša izdaja',
+	'schola.what.catechism':
+		'Povzetek tega, kar katoliška Cerkev veruje, v enem zvezku. Sam ni vir: zbira Sveto pismo, očete, bogoslužje in nauk Cerkve, in vsak člen pove, od kod je tisto, kar trdi.',
+	'schola.cite.catechism': 'po številki člena, ki teče neprekinjeno od prve strani do zadnje',
+	'schola.what.compendium':
+		'Isti nauk, podan v vprašanjih in odgovorih, v približno desetini obsega.',
+	'schola.cite.compendium': 'po številki vprašanja',
+	'schola.what.magisterium':
+		'Kar so papeži in koncili dejansko napisali — okrožnice, konstitucije, odloki, izjave — vsak naslovljen na določen trenutek in določeno vprašanje. Vsak je znan po svojih začetnih latinskih besedah.',
+	'schola.cite.magisterium': 'po imenu dokumenta, nato po številki razdelka v njem',
+	'schola.what.social':
+		'Nauk Cerkve o delu, lastnini, družini, politiki in miru, zbran iz teh dokumentov v eno knjigo.',
+	'schola.cite.social': 'po številki člena, pod kratico, ki jo delo rabi zase',
+	'schola.what.law': 'Pravo in ne nauk. Pove, kaj Cerkev zahteva, in se spreminja.',
+	'schola.cite.law': 'po kanonu, kakor se imenujejo njegove oštevilčene enote',
+	'schola.what.doctors':
+		'Teologi, ki jih je Cerkev razglasila za učitelje. Ne nosi nobene uradne avtoritete, naj bo pisec še tako velik.',
+	'schola.cite.doctors': 'po delu, nato vprašanju — lastnih razdelitvah Summe',
+	'schola.what.prayers': 'Besede, s katerimi Cerkev moli, z latinščino ob njih.',
+	'schola.cite.prayers': 'po imenu; ni številk za navajanje',
+	'schola.places.heading': 'Ne besedila, ampak kraji na tem spletišču',
+	'schola.what.library':
+		'Vsa dela spletišča v enem seznamu, razvrščena po predmetu in ne po vrsti.',
+	'schola.what.calendar':
+		'Bogoslužni dan — čas, barva in kdo se obhaja — za deželo, katere koledar se držite.',
+	'schola.what.bookmarks':
+		'Odlomki, ki ste jih označili, in kje ste nazadnje ostali pri vsakem delu. Oboje ostaja v tem brskalniku in se nikamor ne pošilja.',
 	'ccc.noCounterpart': 'Ni ustreznika v drugem delu',
 	'jumpbox.placeholder': 'Skoči na… (npr. janez 3,16, ccc 1234)',
 	'jumpbox.short': 'Iskanje',

@@ -60,6 +60,10 @@ function chromeFixture(): RouteTitles['chrome'] {
 			'Catechism of the Catholic Church — Glossa Catholica',
 			'Doctrine in 2,865 paragraphs.'
 		],
+		'/catechismus/compendium': [
+			'Compendium of the Catechism — Glossa Catholica',
+			'Questions and answers summarizing the Catechism.'
+		],
 		'/documenta': ['Magisterium — Glossa Catholica', 'Encyclicals and conciliar documents.'],
 		'/doctrina-socialis': [
 			'Compendium of the Social Doctrine of the Church — Glossa Catholica',
@@ -69,6 +73,7 @@ function chromeFixture(): RouteTitles['chrome'] {
 		'/doctores': ['Doctors of the Church — Glossa Catholica', 'The Fathers and Doctors.'],
 		'/doctores/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
 		'/preces': ['Common Prayers — Glossa Catholica', 'Prayers with the Latin alongside.'],
+		'/schola': ['Where to begin — Glossa Catholica', 'A short guide to what is here.'],
 		'/colophon': ['Colophon — Glossa Catholica', 'What this site is.']
 	};
 	return Object.fromEntries(

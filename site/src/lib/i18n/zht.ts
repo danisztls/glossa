@@ -76,6 +76,84 @@ export const zht: Dictionary = {
 	'nav.library': '書庫',
 	'nav.learn': '學習',
 	'library.landing.tagline': '全部書目，一架一架——連同你讀到的地方和你標記的內容。',
+	'schola.landing.title': '從何處入手',
+	'schola.landing.tagline':
+		'對此處所有內容的簡要指引：這些書各是什麼，其引文如何書寫，如何找到一處經文，以及教會所提出的閱讀次第。',
+	'schola.start.heading': '若這一切對您都是新的',
+	'schola.start.body': '最好的起點是',
+	'schola.start.bodyAfter':
+		'：與《天主教教理》相同的道理，篇幅短得多，以問答寫成。約為其十分之一長，且不預設任何前提。',
+	'schola.bible.heading': '若您從未讀過聖經',
+	'schola.bible.library':
+		'它不是一部書，而是七十三部，寫成於一千多年之間，依教會所定的次序編在一起——不是事情發生的次序，也不是最易閱讀的次序。多數人從第一頁開始，幾週後便停在古代律法的某個長章裡，因為還沒有人告訴他們這是為了什麼。',
+	'schola.bible.step.gospel': '從一部福音開始',
+	'schola.bible.start':
+		'關於耶穌生平的四部短書之一，位置頗靠裡，而非在最前。這並非我們的主意：教會的一次大公會議要求教導正確使用聖經，「尤其是新約，而首要的是福音」。它沒有單獨指名哪一部，我們也不指名。',
+	'schola.bible.whichGospel': '通常推薦三部，各有不同的理由。其中任何一部都是好的所在。',
+	'schola.bible.gospel.mark':
+		'最短的一部。一個下午即可讀完，而在起頭，讀完一部比選中最好的一部更有價值。',
+	'schola.bible.gospel.luke':
+		'為一位信仰之外、想要把事情按次序記下來的人而寫——那也許正是您。它徑直接入宗徒大事錄，所以實際上是一部更長的書的前半。',
+	'schola.bible.gospel.john':
+		'直言其寫作緣由的一部：「為叫你們信」。文辭平易，直趨耶穌是誰這一問題。',
+	'schola.bible.step.acts': '然後是此後所發生的事',
+	'schola.bible.thenActs': '讀完一部之後，再讀那些認識他的人在他離去以後做了什麼。',
+	'schola.bible.acts.why':
+		'福音結束後的三十年：數十個驚惶的人，以及他們所見之事如何傳到帝國的另一端。',
+	'schola.bible.step.old': '然後是更古的那一半',
+	'schola.bible.thenOld':
+		'不從第一頁起，也不必全讀。有幾處承載著這個故事，正是福音一再回指的地方。',
+	'schola.bible.ot.beginnings': '起初如何，又如何敗壞。',
+	'schola.bible.ot.promise': '一個家族，以及向它所許的、比其中所有人都長久的應許。',
+	'schola.bible.ot.exodus': '一個民族被領出為奴之地，並領受了賴以生活的法律。',
+	'schola.bible.ot.psalms':
+		'不是故事：一百五十篇祈禱與歌詠。一次讀一篇，次序不拘。教會至今每日仍以此祈禱。',
+	'schola.bible.bothWays':
+		'您會認出一些東西，這正是用意所在，而非巧合。教會在基督的光中讀較古的書卷，又在此前所有的光中讀較新的書卷——兩半彼此解釋，因此沒有一半是獨自閱讀的。',
+	'schola.guide.heading': '如何找到方向',
+	'schola.guide.lede': '正文即是整頁；其餘一切都是控制項，在您想用之前盡可不理。',
+	'schola.guide.top.heading': '每頁頂端的列',
+	'schola.guide.reading.heading': '正文上方的列',
+	'schola.feature.search':
+		'在頂端的框中鍵入一處引文——章與節、條目編號、某份文獻的名稱——它會隨打隨補全。在任何地方按 / 或 Ctrl+K，按 ? 可見其餘快捷鍵。',
+	'schola.feature.languages':
+		'介面與正文分別選擇，因此您可用一種語言閱讀作品，而按鈕仍留在另一種語言。若某作品在您的語言中有數個版本，您也可在其間選擇。',
+	'schola.feature.settings': '字級，淺色或深色，棕褐色，以及您希望在正文旁保留多少註釋。',
+	'schola.feature.offline':
+		'把本站加到主畫面，它便如應用程式一般開啟。您可下載整部作品，在沒有連線時閱讀。',
+	'schola.feature.contents': '您所在作品的分部——卷、部、章——以便在其中移動而不必回到開頭。',
+	'schola.feature.compare':
+		'同一處經文的兩個版本並列——拉丁文與您自己的語言並列，或一種譯本與另一種並列。',
+	'schola.feature.apparatus':
+		'版本自身的註釋，以及為正文所寫的任何註解，都置於正文之旁而非其下。正文之內的引證是連結，因此引文所指即所至。',
+	'schola.feature.focus': '清去正文以外的一切。出口仍留在列原本的位置，使一切不致被關在其後。',
+	'schola.books.heading': '此處有什麼，以及如何引用',
+	'schola.books.lede':
+		'這些各是不同種類的書，各以自己的編號被引用。示例顯示其形式：照樣在搜尋框中鍵入，便可抵達那一處。',
+	'schola.cite.label': '引用作',
+	'schola.what.scripture': '教會所領受的聖經，包括新舊兩約。此處其餘一切都在其光中閱讀。',
+	'schola.cite.scripture': '書卷、章與節，用您自己的版本所印的簡稱',
+	'schola.what.catechism':
+		'天主教會所信的撮要，合為一冊。它本身不是源頭：它匯集聖經、教父、禮儀與教會的訓導，而每一條都指明其所言出自何處。',
+	'schola.cite.catechism': '按條目編號，自首頁至末頁連續不斷',
+	'schola.what.compendium': '同一道理以問答陳述，篇幅約為十分之一。',
+	'schola.cite.compendium': '按問題編號',
+	'schola.what.magisterium':
+		'教宗與大公會議實際所寫的——通諭、憲章、法令、宣言——各自針對特定的時刻與特定的問題。每一份都以其拉丁文起首之語為名。',
+	'schola.cite.magisterium': '按文獻名稱，再按其中的節次編號',
+	'schola.what.social': '教會關於勞動、財產、家庭、政治與和平的訓導，自那些文獻中輯成一書。',
+	'schola.cite.social': '按條目編號，並冠以該書自用的簡稱',
+	'schola.what.law': '是法律而非教義。它規定教會所要求的，並且會被修訂。',
+	'schola.cite.law': '按條，此即其編號單位之名',
+	'schola.what.doctors': '教會所冊封為聖師的神學家。無論作者何等偉大，這都不具官方權威。',
+	'schola.cite.doctors': '按部，再按題——《神學大全》自身的分法',
+	'schola.what.prayers': '教會所祈禱的言辭，旁附拉丁文。',
+	'schola.cite.prayers': '按名稱；無編號可引',
+	'schola.places.heading': '不是文本，而是本站的去處',
+	'schola.what.library': '本站所有作品彙為一表，按主題而非按種類分組。',
+	'schola.what.calendar': '禮儀日——節期、顏色與所紀念者——依您所遵循之國家的日曆。',
+	'schola.what.bookmarks':
+		'您所標記的經文，以及您在每部作品中上次讀到之處。二者都保存在此瀏覽器中，不發往任何地方。',
 	'jumpbox.placeholder': '前往…（例：若 3:16、ccc 1234）',
 	'jumpbox.short': '搜尋',
 	'jumpbox.hint': '按 / 或 Ctrl+K 跳至引處',
@@ -125,8 +203,17 @@ export const zht: Dictionary = {
 	'ccc.landing.tagline':
 		'<strong>《教理》</strong>以 2,865 個編號段落闡述天主教教義。<strong>《簡編》</strong>依同一綱目，以 598 個問答重述同一教義。',
 	'ccc.landing.pairTagline': '《天主教教理》共 2,865 條，其《簡編》共 598 問。',
+	'compendium.landing.title': '教理簡編',
+	'compendium.landing.tagline': '以問答方式撮述《天主教教理》。',
+	'compendium.question': '問',
+	'compendium.answer': '答',
+	'compendium.tableOfContents': '目錄',
+	'compendium.prevQuestion': '上一問',
+	'compendium.nextQuestion': '下一問',
+	'compendium.condenses': '撮述教理 ¶¶',
 	'ccc.abbrev': '教理',
 	'compendium.abbrev': '簡編',
+	'compendium.noQuestionNumber': '此文庫中沒有問題編號',
 	'document.library.tagline': '通諭、大公會議憲章、法令，以及訓導權的宣言。',
 	'doctores.landing.title': '教會聖師',
 	'doctores.landing.tagline': '教會教父與聖師的神學著作。',

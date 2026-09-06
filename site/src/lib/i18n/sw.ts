@@ -76,6 +76,99 @@ export const sw: Dictionary = {
 	'nav.learn': 'Jifunze',
 	'library.landing.tagline':
 		'Mkusanyo mzima, rafu kwa rafu — pamoja na mahali ulipoishia na ulichoweka alama.',
+	'schola.landing.title': 'Pa kuanzia',
+	'schola.landing.tagline':
+		'Mwongozo mfupi wa yaliyomo hapa: kila kimoja cha vitabu hivi ni nini, rejeo lake huandikwaje, jinsi ya kupata kifungu, na mipango ya kusoma ambayo Kanisa limependekeza.',
+	'schola.start.heading': 'Kama haya yote ni mapya kwako',
+	'schola.start.body': 'Mwanzo ulio bora ni ',
+	'schola.start.bodyAfter':
+		': mafundisho yale yale ya Katekisimu, mafupi zaidi, yaliyoandikwa kwa maswali na majibu. Ni kama sehemu ya kumi ya urefu wake, wala haudhanii chochote.',
+	'schola.bible.heading': 'Kama hujawahi kusoma Biblia',
+	'schola.bible.library':
+		'Si kitabu kimoja bali sabini na vitatu, vilivyoandikwa kwa zaidi ya miaka elfu moja na kufungwa pamoja katika mpangilio ambao Kanisa lilikubaliana nao — si mpangilio wa jinsi mambo yalivyotokea, wala si ule ulio rahisi zaidi kusoma. Wengi huanza ukurasa wa kwanza na kuacha wiki chache baadaye, katikati ya sura ndefu ya sheria ya kale, kwa sababu bado hakuna aliyewaambia ni kwa ajili ya nini.',
+	'schola.bible.step.gospel': 'Anza na Injili',
+	'schola.bible.start':
+		'Kimojawapo cha vitabu vinne vifupi kuhusu maisha ya Yesu, ndani kabisa wala si mbele. Si wazo letu: Mtaguso wa Kanisa uliomba kwamba matumizi sahihi ya Maandiko yafundishwe, „hasa ya Agano Jipya na zaidi ya yote ya Injili“. Haukutaja hata kimoja peke yake, wala sisi hatutataja.',
+	'schola.bible.whichGospel':
+		'Vitatu hupendekezwa kwa kawaida, kwa sababu tatu tofauti. Chochote kati yake ni mahali pazuri pa kuwako.',
+	'schola.bible.gospel.mark':
+		'Kifupi zaidi. Waweza kukisoma chote kwa alasiri moja, na mwanzoni kumaliza kimoja kunathamani zaidi kuliko kuchagua kilicho bora.',
+	'schola.bible.gospel.luke':
+		'Kiliandikwa kwa mtu wa nje ya imani aliyetaka habari iandikwe kwa mpangilio — jambo linaloweza kuwa wewe hasa. Kinaendelea moja kwa moja hadi Matendo ya Mitume, kwa hiyo kwa kweli ni nusu ya kwanza ya kitabu kirefu zaidi.',
+	'schola.bible.gospel.john':
+		'Kile kisemacho waziwazi kwa nini kiliandikwa: „ili mpate kuamini“. Maneno rahisi, nacho kinaenda moja kwa moja kwenye swali la Yesu ni nani.',
+	'schola.bible.step.acts': 'Kisha yale yaliyofuata',
+	'schola.bible.thenActs':
+		'Ukiisha kumaliza kimoja, soma yale waliyoyafanya wale waliomjua baada ya kuondoka kwake.',
+	'schola.bible.acts.why':
+		'Miaka thelathini baada ya Injili kuisha: watu dazani chache waliokuwa na hofu, na jinsi yale waliyoyaona yalivyofika upande wa pili wa milki.',
+	'schola.bible.step.old': 'Kisha nusu ya zamani zaidi',
+	'schola.bible.thenOld':
+		'Si kuanzia ukurasa wa kwanza, wala si yote. Mahali machache hubeba habari, nayo ndiyo yale ambayo Injili huendelea kuyaelekeza nyuma.',
+	'schola.bible.ot.beginnings': 'Jinsi inavyoanza, na jinsi inavyoharibika.',
+	'schola.bible.ot.promise':
+		'Jamaa moja, na ahadi iliyotolewa kwake inayodumu kuliko wote waliomo.',
+	'schola.bible.ot.exodus': 'Taifa lililotolewa utumwani, na sheria waliyopewa ili waishi kwayo.',
+	'schola.bible.ot.psalms':
+		'Si habari: sala na nyimbo mia moja na hamsini. Soma moja kwa wakati, kwa mpangilio wowote. Kanisa bado huziomba kila siku.',
+	'schola.bible.bothWays':
+		'Utatambua mambo, na hilo ndilo kusudi wala si sadfa. Kanisa husoma vitabu vya kale katika nuru ya Kristo na vile vipya katika nuru ya yaliyotangulia — kila nusu huieleza nyingine, na ndiyo sababu hakuna inayosomwa peke yake.',
+	'schola.guide.heading': 'Jinsi ya kujielekeza',
+	'schola.guide.lede':
+		'Maandishi ndiyo ukurasa wote; kila kingine ni kidhibiti unachoweza kupuuza mpaka ukitake.',
+	'schola.guide.top.heading': 'Utepe ulio juu ya kila ukurasa',
+	'schola.guide.reading.heading': 'Utepe ulio juu ya maandishi',
+	'schola.feature.search':
+		'Andika rejeo katika kisanduku cha juu — sura na mstari, nambari ya kifungu, jina la hati — nalo hujikamilisha unapoandika. Bonyeza / au Ctrl+K ukiwa popote, na ? kwa njia nyingine za mkato.',
+	'schola.feature.languages':
+		'Kiolesura na maandishi huchaguliwa kando, hivyo waweza kusoma kazi kwa lugha moja huku vitufe vikibaki kwa lugha nyingine. Pale kazi ina matoleo kadhaa katika lugha yako, wachagua kati yake pia.',
+	'schola.feature.settings':
+		'Ukubwa wa maandishi, mwanga au giza, sepia, na kiasi cha vielelezo unachotaka kando ya maandishi.',
+	'schola.feature.offline':
+		'Ongeza tovuti hii kwenye skrini yako ya mwanzo nayo hufunguka kama programu. Waweza kupakua kazi nzima ili kuzisoma bila mtandao.',
+	'schola.feature.contents':
+		'Mgawanyo wa kazi uliyomo — vitabu, sehemu, sura — ili uweze kuzunguka ndani yake bila kurudi mwanzoni.',
+	'schola.feature.compare':
+		'Matoleo mawili ya kifungu kilekile, kando kwa kando — Kilatini kando ya lugha yako mwenyewe, au tafsiri moja kando ya nyingine.',
+	'schola.feature.apparatus':
+		'Maelezo ya toleo lenyewe, na ufafanuzi wowote ulioandikwa juu ya maandishi, hutolewa kando yake wala si chini yake. Manukuu yaliyo ndani ya maandishi ni viungo, hivyo rejeo huelekea pale linapoashiria.',
+	'schola.feature.focus':
+		'Huondoa kila kitu isipokuwa maandishi. Njia ya kutoka hubaki pale utepe ulipokuwa, ili kisiwepo kinachonaswa nyuma yake.',
+	'schola.books.heading': 'Kilichopo hapa, na jinsi kinavyonukuliwa',
+	'schola.books.lede':
+		'Kila kimoja cha hivi ni aina tofauti ya kitabu, na kila kimoja hurejewa kwa nambari yake mwenyewe. Mifano huonyesha umbo lake: andika kama hiyo katika kisanduku cha kutafuta nawe utafika kwenye kifungu.',
+	'schola.cite.label': 'Hunukuliwa',
+	'schola.what.scripture':
+		'Maandiko kama Kanisa linavyoyapokea, katika Maagano yote mawili. Kila kingine hapa husomwa katika nuru yake.',
+	'schola.cite.scripture': 'kitabu, sura na mstari, kwa vifupisho ambavyo toleo lako huchapa',
+	'schola.what.catechism':
+		'Muhtasari wa yale Kanisa Katoliki linayoamini, katika juzuu moja. Lenyewe si chanzo: hukusanya Maandiko, Mababa, liturujia na mafundisho ya Kanisa, na kila kifungu husema yale yaliyosemwa yametoka wapi.',
+	'schola.cite.catechism':
+		'kwa nambari ya kifungu, ikienda bila kukatika toka ukurasa wa kwanza hadi wa mwisho',
+	'schola.what.compendium':
+		'Mafundisho yale yale yakiwekwa kwa maswali na majibu, kwa kama sehemu ya kumi ya urefu.',
+	'schola.cite.compendium': 'kwa nambari ya swali',
+	'schola.what.magisterium':
+		'Yale ambayo mapapa na mitaguso wameandika hasa — waraka, katiba, amri, matamko — kila kimoja kikilenga wakati fulani na swali fulani. Kila kimoja hujulikana kwa maneno yake ya kwanza ya Kilatini.',
+	'schola.cite.magisterium': 'kwa jina la hati, kisha nambari ya sehemu iliyomo',
+	'schola.what.social':
+		'Mafundisho ya Kanisa kuhusu kazi, mali, familia, siasa na amani, yakikusanywa kutoka hati hizo katika kitabu kimoja.',
+	'schola.cite.social':
+		'kwa nambari ya kifungu, chini ya kifupisho ambacho kazi hiyo hujitumia yenyewe',
+	'schola.what.law': 'Sheria wala si mafundisho. Husema yale Kanisa linayodai, nayo hurekebishwa.',
+	'schola.cite.law': 'kwa kanuni, ndivyo vitengo vyake vyenye nambari vinavyoitwa',
+	'schola.what.doctors':
+		'Wanateolojia ambao Kanisa limewatangaza kuwa Walimu. Haibebi mamlaka rasmi, hata mwandishi awe mkuu kiasi gani.',
+	'schola.cite.doctors': 'kwa sehemu, kisha swali — migawanyo ya Summa yenyewe',
+	'schola.what.prayers': 'Maneno ambayo Kanisa huyaomba, yakiwa na Kilatini kando yake.',
+	'schola.cite.prayers': 'kwa jina; hakuna nambari za kunukuu',
+	'schola.places.heading': 'Si maandishi, bali mahali pa tovuti hii',
+	'schola.what.library':
+		'Kazi zote za tovuti katika orodha moja, zikipangwa kwa somo wala si kwa aina.',
+	'schola.what.calendar':
+		'Siku ya liturujia — majira, rangi, na anayekumbukwa — kwa nchi ambayo kalenda yake unaifuata.',
+	'schola.what.bookmarks':
+		'Vifungu ulivyoviweka alama, na mahali ulipoishia mwisho katika kila kazi. Vyote viwili hubaki katika kivinjari hiki wala havitumwi popote.',
 	'jumpbox.placeholder': 'Nenda kwa… (mf. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Tafuta',
 	'jumpbox.hint': 'Bonyeza / au Ctrl+K kwenda kwenye rejeo',
@@ -128,8 +221,17 @@ export const sw: Dictionary = {
 		'<strong>Katekisimu</strong> inaeleza mafundisho ya Kikatoliki katika aya 2,865 zenye namba. <strong>Muhtasari</strong> unaeleza mafundisho hayo hayo kwa maswali na majibu 598, kwa mpangilio uleule.',
 	'ccc.landing.pairTagline':
 		'Katekisimu ya Kanisa Katoliki katika vifungu 2,865, na Muhtasari wake katika maswali 598.',
+	'compendium.landing.title': 'Muhtasari wa Katekisimu',
+	'compendium.landing.tagline': 'Maswali na majibu yanayofupisha Katekisimu ya Kanisa Katoliki.',
+	'compendium.question': 'Swali',
+	'compendium.answer': 'Jibu',
+	'compendium.tableOfContents': 'Yaliyomo',
+	'compendium.prevQuestion': 'Swali lililotangulia',
+	'compendium.nextQuestion': 'Swali linalofuata',
+	'compendium.condenses': 'Yafupisha KKK ¶¶',
 	'ccc.abbrev': 'KKK',
 	'compendium.abbrev': 'Muht.',
+	'compendium.noQuestionNumber': 'Hakuna nambari ya swali katika korpasi hii',
 	'document.library.tagline':
 		'Waraka wa kipapa, katiba za mtaguso, amri na matamko ya Mafundisho ya Kanisa.',
 	'doctores.landing.title': 'Walimu wa Kanisa',

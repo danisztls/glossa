@@ -43,6 +43,101 @@ export const fr: Dictionary = {
 	'nav.learn': 'Apprendre',
 	'library.landing.tagline':
 		'L’ensemble du corpus, rayon par rayon — avec l’endroit où vous vous êtes arrêté et ce que vous avez marqué.',
+	'schola.landing.title': 'Par où commencer',
+	'schola.landing.tagline':
+		'Un guide bref de ce qui se trouve ici : ce qu’est chacun de ces livres, comment s’écrit une citation, comment trouver un passage, et des ordres de lecture que l’Église a proposés.',
+	'schola.start.heading': 'Si tout cela est nouveau pour vous',
+	'schola.start.body': 'Commencez par l’',
+	'schola.start.bodyAfter':
+		' : le même enseignement que le Catéchisme, beaucoup plus court, écrit en questions et réponses. Il fait environ le dixième de sa longueur et ne suppose rien.',
+	'schola.bible.heading': 'Si vous n’avez jamais lu la Bible',
+	'schola.bible.library':
+		'Ce n’est pas un livre mais soixante-treize, écrits sur plus de mille ans et réunis dans l’ordre que l’Église a fixé — non l’ordre où les événements se sont produits, ni celui qui se lit le plus aisément. La plupart des gens commencent à la première page et s’arrêtent quelques semaines plus tard, dans un long chapitre de loi ancienne, parce que rien ne leur a encore dit à quoi cela sert.',
+	'schola.bible.step.gospel': 'Commencez par un Évangile',
+	'schola.bible.start':
+		'L’un des quatre livres brefs sur la vie de Jésus, bien à l’intérieur et non en tête. L’idée n’est pas de nous : un Concile de l’Église a demandé que soit enseigné le juste usage de l’Écriture, « surtout du Nouveau Testament et avant tout des Évangiles ». Il n’en a désigné aucun en particulier, et nous non plus.',
+	'schola.bible.whichGospel':
+		'Trois sont couramment proposés, pour trois raisons différentes. N’importe lequel est un bon endroit où se trouver.',
+	'schola.bible.gospel.mark':
+		'Le plus court. Vous pouvez le lire en entier en une après-midi, et en avoir fini un vaut mieux, au départ, que d’avoir choisi le meilleur.',
+	'schola.bible.gospel.luke':
+		'Écrit pour quelqu’un du dehors qui voulait le récit mis en ordre — ce qui est peut-être exactement votre cas. Il enchaîne directement sur les Actes des Apôtres : c’est en réalité la première moitié d’un livre plus long.',
+	'schola.bible.gospel.john':
+		'Celui qui dit franchement pourquoi il a été écrit : « afin que vous croyiez ». Des mots simples, et il va droit à la question de savoir qui est Jésus.',
+	'schola.bible.step.acts': 'Puis ce qui s’est passé ensuite',
+	'schola.bible.thenActs':
+		'Quand vous en aurez fini un, lisez ce qu’ont fait, après son départ, ceux qui l’avaient connu.',
+	'schola.bible.acts.why':
+		'Les trente ans qui suivent la fin des Évangiles : quelques dizaines de gens effrayés, et comment ce qu’ils avaient vu a atteint l’autre bout de l’empire.',
+	'schola.bible.step.old': 'Puis la moitié plus ancienne',
+	'schola.bible.thenOld':
+		'Pas depuis la première page, et pas en entier. Quelques endroits portent le récit, et ce sont ceux vers lesquels les Évangiles ne cessent de renvoyer.',
+	'schola.bible.ot.beginnings': 'Comment cela commence, et comment cela tourne mal.',
+	'schola.bible.ot.promise':
+		'Une famille, et une promesse qui lui est faite et survit à tous les siens.',
+	'schola.bible.ot.exodus':
+		'Un peuple tiré de l’esclavage, et une loi qui lui est donnée pour vivre.',
+	'schola.bible.ot.psalms':
+		'Non un récit : cent cinquante prières et chants. Lisez-en un à la fois, dans n’importe quel ordre. L’Église les prie encore chaque jour.',
+	'schola.bible.bothWays':
+		'Vous reconnaîtrez des choses, et c’est le but plutôt qu’une coïncidence. L’Église lit les livres anciens à la lumière du Christ et les récents à la lumière de ce qui a précédé — chaque moitié explique l’autre, et c’est pourquoi aucune ne se lit seule.',
+	'schola.guide.heading': 'S’orienter',
+	'schola.guide.lede':
+		'Le texte est toute la page ; le reste est une commande que vous pouvez ignorer jusqu’à en avoir besoin.',
+	'schola.guide.top.heading': 'La barre en haut de chaque page',
+	'schola.guide.reading.heading': 'La barre au-dessus d’un texte',
+	'schola.feature.search':
+		'Tapez une référence dans la case du haut — un chapitre et un verset, un numéro de paragraphe, le nom d’un document — et elle se complète à mesure. Appuyez sur / ou Ctrl+K depuis n’importe où, et sur ? pour les autres raccourcis.',
+	'schola.feature.languages':
+		'L’interface et le texte se choisissent séparément : vous pouvez lire une œuvre dans une langue pendant que les boutons restent dans une autre. Là où une œuvre a plusieurs éditions dans votre langue, vous choisissez aussi entre elles.',
+	'schola.feature.settings':
+		'Taille du texte, clair ou sombre, sépia, et quelle part de l’apparat vous voulez à côté du texte.',
+	'schola.feature.offline':
+		'Ajoutez le site à votre écran d’accueil et il s’ouvre comme une application. Vous pouvez télécharger des œuvres entières pour les lire hors ligne.',
+	'schola.feature.contents':
+		'Les divisions de l’œuvre où vous êtes — livres, parties, chapitres — pour vous y déplacer sans revenir au début.',
+	'schola.feature.compare':
+		'Deux éditions du même passage, côte à côte — le latin à côté de votre propre langue, ou une traduction à côté d’une autre.',
+	'schola.feature.apparatus':
+		'Les notes propres à une édition, et tout commentaire écrit sur le texte, sont offerts à côté de lui et non en dessous. Les citations dans le texte sont des liens : une référence mène là où elle pointe.',
+	'schola.feature.focus':
+		'Efface tout sauf le texte. La sortie reste où était la barre, pour que rien ne soit pris derrière.',
+	'schola.books.heading': 'Ce qui est ici, et comment cela se cite',
+	'schola.books.lede':
+		'Chacun de ces livres est d’un genre différent, et chacun se désigne par un numéro qui lui est propre. Les exemples montrent la forme : tapez-en un semblable dans la case de recherche et vous arrivez au passage.',
+	'schola.cite.label': 'Se cite',
+	'schola.what.scripture':
+		'Les Écritures telles que l’Église les reçoit, dans les deux Testaments. Tout le reste ici se lit à leur lumière.',
+	'schola.cite.scripture':
+		'livre, chapitre et verset, dans les abréviations qu’imprime votre propre édition',
+	'schola.what.catechism':
+		'Un résumé de ce que croit l’Église catholique, en un seul volume. Il n’est pas lui-même une source : il rassemble l’Écriture, les Pères, la liturgie et l’enseignement de l’Église, et chaque numéro dit d’où vient ce qu’il avance.',
+	'schola.cite.catechism':
+		'par numéro, courant sans interruption de la première page à la dernière',
+	'schola.what.compendium':
+		'Le même enseignement exposé en questions et réponses, au dixième environ de la longueur.',
+	'schola.cite.compendium': 'par numéro de question',
+	'schola.what.magisterium':
+		'Ce que les papes et les conciles ont effectivement écrit — encycliques, constitutions, décrets, déclarations — chacun adressé à un moment et à une question déterminés. Chacun est connu par ses premiers mots latins.',
+	'schola.cite.magisterium': 'par le nom du document, puis un numéro de section à l’intérieur',
+	'schola.what.social':
+		'L’enseignement de l’Église sur le travail, la propriété, la famille, la politique et la paix, recueilli de ces documents en un seul livre.',
+	'schola.cite.social': 'par numéro, sous le sigle que l’ouvrage emploie pour lui-même',
+	'schola.what.law':
+		'Du droit et non de la doctrine. Il dit ce que l’Église exige, et il est amendé.',
+	'schola.cite.law': 'par canon, nom que portent ses unités numérotées',
+	'schola.what.doctors':
+		'Les théologiens que l’Église a déclarés Docteurs. Cela ne porte aucune autorité officielle, si grand que soit l’auteur.',
+	'schola.cite.doctors': 'par partie, puis question — les divisions propres à la Somme',
+	'schola.what.prayers': 'Les paroles que l’Église prie, avec le latin à côté.',
+	'schola.cite.prayers': 'par leur nom ; il n’y a pas de numéros à citer',
+	'schola.places.heading': 'Non des textes, mais des lieux de ce site',
+	'schola.what.library':
+		'Toutes les œuvres du site en une liste, groupées par sujet et non par genre.',
+	'schola.what.calendar':
+		'Le jour liturgique — temps, couleur, et qui est fêté — pour le pays dont vous suivez le calendrier.',
+	'schola.what.bookmarks':
+		'Les passages que vous avez marqués, et où vous vous êtes arrêté dans chaque œuvre. Les deux restent dans ce navigateur et ne sont envoyés nulle part.',
 	'ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
 	'jumpbox.placeholder': 'Aller à… (p. ex. jean 3,16, ccc 1234)',
 	'jumpbox.short': 'Rechercher',
