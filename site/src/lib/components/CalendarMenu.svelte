@@ -101,7 +101,12 @@
 	import { bcp47, t } from '$lib/i18n.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { matchesQuery } from '$lib/highlight';
-	import { CALENDAR_REGIONS, SUBDIVISION_NAMES, TERRITORY_CALENDARS } from '$lib/calendar/national';
+	import {
+		ensureNationalCalendars,
+		residentRegions,
+		residentTerritories
+	} from '$lib/calendar/layers.svelte';
+	import { SUBDIVISION_NAMES } from '$lib/calendar/national/subdivisions';
 	import { Menu } from './menu.svelte';
 
 	interface Props {
@@ -118,6 +123,25 @@
 	const menu = new Menu();
 	let query = $state('');
 	let filterEl: HTMLInputElement | undefined = $state();
+
+	/**
+	 * THE PANEL'S CONTENTS ARE FETCHED, THE TRIGGER'S ARE NOT.
+	 *
+	 * `layers.svelte.ts` says why the eighty-five layer files are not a static
+	 * import here: this component is on the home page, which is the page every
+	 * reader boots. What that costs is one wait, and it is spent on the one
+	 * interaction that can afford it — a reader who opens the picker is about
+	 * to read ninety-six flags. `pointerenter` starts it a moment earlier for
+	 * anyone who reaches for it with a pointer; opening is what guarantees it.
+	 *
+	 * The trigger owes nothing to that fetch, which is the part worth keeping:
+	 * a flag is arithmetic on the code and a name is `Intl`'s, so the control
+	 * says which calendar the reader keeps from the first frame, whether or not
+	 * the panel behind it has arrived.
+	 */
+	$effect(() => {
+		if (menu.open) void ensureNationalCalendars();
+	});
 
 	/**
 	 * The flag of a territory.
@@ -179,19 +203,22 @@
 	 *  takes Oman and Yemen out with Southern Arabia's layer and the Faroes
 	 *  and Greenland out with Denmark's — correct, since what is held for a
 	 *  country is held for everyone who keeps that country's calendar. */
+	const territories = $derived(residentTerritories());
 	const regions = $derived(
-		CALENDAR_REGIONS.map((region) => {
-			const collator = new Intl.Collator(bcp47(lang));
-			const cells = region.territories
-				.filter((code) => TERRITORY_CALENDARS[code])
-				.map((code) => ({
-					code,
-					name: territoryName(code, lang),
-					flag: flag(code)
-				}))
-				.sort((a, b) => collator.compare(a.name, b.name));
-			return { id: region.id, cells };
-		}).filter((region) => region.cells.length > 0)
+		(residentRegions() ?? [])
+			.map((region) => {
+				const collator = new Intl.Collator(bcp47(lang));
+				const cells = region.territories
+					.filter((code) => territories?.[code])
+					.map((code) => ({
+						code,
+						name: territoryName(code, lang),
+						flag: flag(code)
+					}))
+					.sort((a, b) => collator.compare(a.name, b.name));
+				return { id: region.id, cells };
+			})
+			.filter((region) => region.cells.length > 0)
 	);
 
 	const filtered = $derived(
@@ -207,9 +234,12 @@
 
 	const matches = $derived(filtered.flatMap((region) => region.cells));
 
-	const currentCell = $derived(regions.flatMap((r) => r.cells).find((cell) => cell.code === value));
-	const currentName = $derived(value === 'general' ? generalName : (currentCell?.name ?? value));
-	const currentFlag = $derived(value === 'general' ? GENERAL_MARK : (currentCell?.flag ?? ''));
+	/** Read off `value` ALONE and never out of `regions`, so the trigger names
+	 *  the reader's calendar before the panel's table has been fetched — see
+	 *  the effect above. It found its own cell in the region list until
+	 *  2026-09-06, which was the same two strings by a longer route. */
+	const currentName = $derived(value === 'general' ? generalName : territoryName(value, lang));
+	const currentFlag = $derived(value === 'general' ? GENERAL_MARK : flag(value));
 
 	// The box is what the panel is for at this size, so it takes focus on open
 	// — a reader who already knows their country types three letters and is
@@ -247,6 +277,7 @@
 		aria-label={`${t('calendar.calendar')}: ${currentName}`}
 		title={currentName}
 		onclick={menu.toggle}
+		onpointerenter={() => void ensureNationalCalendars()}
 	>
 		<span class="flag" aria-hidden="true">{currentFlag}</span>
 		<span class="trigger-name">{currentName}</span>
@@ -289,7 +320,12 @@
 					</li>
 				</ul>
 			{/if}
-			{#if matches.length === 0}
+			{#if !territories}
+				<!-- The table is in flight (see the effect above). Nothing is said
+				     rather than "no matches", which would be a wrong answer to a
+				     filter that has not been asked yet — and the general cell above
+				     is already on screen, being the one row that needs no table. -->
+			{:else if matches.length === 0}
 				<p class="menu-empty">{t('menu.noMatches')}</p>
 			{:else}
 				{#each filtered as region (region.id)}

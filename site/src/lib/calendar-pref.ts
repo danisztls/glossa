@@ -80,14 +80,17 @@ export function detectedTerritory(): string | undefined {
  * The territory `/calendarium` opens in for a reader who did not name one,
  * or `undefined` to stay in the general calendar.
  *
- * THE ORDER IS THE ARGUMENT AND IT IS THE ONLY THING HERE. A `?c=` in the
- * address wins outright — that is the sharing rule at the top of this file,
- * and it is why this answers `undefined` rather than a territory when one is
- * present, since a page that already has its answer must not be handed a
- * second one. Then what the reader chose here before, because it is their own
- * word. Then where the network says they are, because the alternative is not
- * "no guess": opening a reader in Lisbon on Rome's calendar is a guess too,
- * and the one that is wrong more often.
+ * THE ORDER IS THE ARGUMENT AND IT IS THE ONLY THING HERE: what the reader
+ * chose here before, because it is their own word; then where the network
+ * says they are, because the alternative is not "no guess" — opening a reader
+ * in Lisbon on Rome's calendar is a guess too, and the one that is wrong more
+ * often.
+ *
+ * A `?c=` OUTRANKS BOTH AND IS NOT ARGUED HERE. It is the sharing rule at the
+ * top of this file, and it belongs to the page that HAS an address for a
+ * calendar: `/calendarium` returns before it reaches this, and the home page
+ * — which shows today in the reader's own calendar and has no `?c=` in its
+ * grammar — has nothing to check.
  *
  * `??` AND NOT `||` IN THE MIDDLE, which is the whole reason `'general'` is
  * stored rather than cleared: a reader who went back to the general calendar
@@ -96,20 +99,21 @@ export function detectedTerritory(): string | undefined {
  * then the only state meaning nobody has said anything yet.
  *
  * `published` IS PASSED IN AND NOT IMPORTED. `TERRITORY_CALENDARS` is derived
- * from eighty-five layer files, and this module is imported for a string in
- * `localStorage`; a static import of the calendar data here would put the
- * whole of it wherever this is read, which is the boot-chunk trap
- * site/CLAUDE.md names three ways of falling into. It is also what makes the
- * ordering testable in Node, where neither `localStorage` nor `document`
- * exists and both readers above answer `undefined` for the wrong reason.
+ * from eighty-five layer files that build a 184 KB chunk, and this module is
+ * imported for a string in `localStorage`; a static import of the calendar
+ * data here would put the whole of it wherever this is read, which is the
+ * boot-chunk trap site/CLAUDE.md names three ways of falling into. The home
+ * page passes what `layers.svelte.ts` has FETCHED for exactly that reason,
+ * and `/calendarium` its own static import, which is a page whose subject is
+ * the layers. It is also what makes the ordering testable in Node, where
+ * neither `localStorage` nor `document` exists and both readers above answer
+ * `undefined` for the wrong reason.
  */
 export function openingTerritory(
-	url: URL,
 	stored: string | undefined,
 	detected: string | undefined,
 	published: Record<string, string>
 ): string | undefined {
-	if (url.searchParams.has('c')) return undefined;
 	const opening = stored ?? detected;
 	if (!opening || opening === 'general' || !published[opening]) return undefined;
 	return opening;

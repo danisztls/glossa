@@ -11,8 +11,6 @@ const PUBLISHED: Record<string, string> = {
 	il: 'ps'
 };
 
-const at = (search: string) => new URL(`https://glossacatholica.org/calendarium${search}`);
-
 describe('the country the edge resolved', () => {
 	it('is the territory id, lowercased', () => {
 		expect(geoTerritory('BR')).toBe('br');
@@ -30,7 +28,7 @@ describe('the country the edge resolved', () => {
 		// the same filter every unlisted country meets.
 		expect(geoTerritory('XX')).toBe('xx');
 		expect(geoTerritory('T1')).toBeUndefined();
-		expect(openingTerritory(at(''), undefined, 'xx', PUBLISHED)).toBeUndefined();
+		expect(openingTerritory(undefined, 'xx', PUBLISHED)).toBeUndefined();
 	});
 
 	it('refuses anything not shaped like a country code', () => {
@@ -54,43 +52,39 @@ describe('the country the edge resolved', () => {
 	});
 });
 
-describe('what /calendarium opens in', () => {
-	it('leaves a `?c=` alone: a shared link re-homes nobody', () => {
-		expect(openingTerritory(at('?c=pt'), 'br', 'br', PUBLISHED)).toBeUndefined();
-		// Including one this page will itself reject — the URL has said its
-		// piece either way, and the page has already resolved it.
-		expect(openingTerritory(at('?c=zz'), 'br', 'br', PUBLISHED)).toBeUndefined();
-	});
-
+describe('the calendar a page opens in', () => {
+	// A `?c=` outranks both of these and is not tested here: the address
+	// belongs to the page that has one, and `/calendarium` returns before it
+	// reaches this function.
 	it('prefers what the reader chose to where they are', () => {
-		expect(openingTerritory(at(''), 'br', 'pt', PUBLISHED)).toBe('br');
+		expect(openingTerritory('br', 'pt', PUBLISHED)).toBe('br');
 	});
 
 	it('treats a stored general calendar as the choice it is', () => {
 		// The single most important line here: `??` and not `||`. A reader who
 		// went back to the general calendar must not be re-homed by geography.
-		expect(openingTerritory(at(''), 'general', 'br', PUBLISHED)).toBeUndefined();
+		expect(openingTerritory('general', 'br', PUBLISHED)).toBeUndefined();
 	});
 
 	it('falls to geolocation only where nothing is stored', () => {
-		expect(openingTerritory(at(''), undefined, 'br', PUBLISHED)).toBe('br');
-		expect(openingTerritory(at(''), undefined, 'gb-sct', PUBLISHED)).toBe('gb-sct');
+		expect(openingTerritory(undefined, 'br', PUBLISHED)).toBe('br');
+		expect(openingTerritory(undefined, 'gb-sct', PUBLISHED)).toBe('gb-sct');
 	});
 
 	it('stays general where a code names no published calendar', () => {
 		// A held or withdrawn calendar and a country with none behave alike,
 		// and so does a stored id that has stopped being published.
-		expect(openingTerritory(at(''), undefined, 'de', PUBLISHED)).toBeUndefined();
-		expect(openingTerritory(at(''), 'de', undefined, PUBLISHED)).toBeUndefined();
+		expect(openingTerritory(undefined, 'de', PUBLISHED)).toBeUndefined();
+		expect(openingTerritory('de', undefined, PUBLISHED)).toBeUndefined();
 	});
 
 	it('opens in the calendar a covered territory keeps, under its own id', () => {
 		// `il` keeps the Latin Patriarchate's `ps`, and the page resolves that
 		// through the map; what is remembered and shown is the territory.
-		expect(openingTerritory(at(''), undefined, 'il', PUBLISHED)).toBe('il');
+		expect(openingTerritory(undefined, 'il', PUBLISHED)).toBe('il');
 	});
 
 	it('stays general with nothing to go on', () => {
-		expect(openingTerritory(at(''), undefined, undefined, PUBLISHED)).toBeUndefined();
+		expect(openingTerritory(undefined, undefined, PUBLISHED)).toBeUndefined();
 	});
 });

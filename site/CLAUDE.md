@@ -2492,6 +2492,16 @@ its parameter, because a territory is a fact about a person in a way a column
 layout is not. It is applied by writing `?c=` into the address on mount, never
 by holding a value beside the URL (§docs/calendar.md).
 
+**THE CONTROLS LIVE IN THE DAY CARD, AND THE HOME PAGE CARRIES THE PICKER**
+(2026-09-06). `LiturgicalDayCard` takes a `controls` snippet — top right,
+above the name under `44rem` — because the controls answer WHICH DAY and the
+card is that answer; the home page shows the calendar its reader keeps because
+it now has the control that makes that claim correctable. **The eighty-five
+layer files are a 184 KB chunk and the home page is the boot route**, so it
+reads them through `calendar/layers.svelte.ts` — lazy DATA behind synchronous
+readers, `names.svelte.ts`'s arrangement — and never imports `./national`,
+which only `/calendarium` may do (§docs/calendar.md).
+
 **AND A READER WHO HAS NEVER CHOSEN OPENS WHERE THEY ARE** (2026-09-06,
 `geo.ts`): Cloudflare's country, written onto the shell's `<html>` as
 `data-geo` by the worker already rewriting the head, ranked below the stored

@@ -99,7 +99,8 @@
  * error a group keyed on celebration ids would have made.
  */
 
-import type { NationalCalendar } from '../types';
+import type { CalendarOptions, NationalCalendar } from '../types';
+import { SUBDIVISION_NAMES } from './subdivisions';
 import { HELD_CALENDARS } from './held';
 import { ANDORRA } from './ad';
 import { SOUTHERN_ARABIA } from './ae';
@@ -429,6 +430,21 @@ export const TERRITORY_CALENDARS: Record<string, string> = Object.fromEntries(
 );
 
 /**
+ * What `liturgicalDay` computes under, for a territory the reader picked.
+ *
+ * ONE DEFINITION, BECAUSE TWO PAGES ASK. `/calendarium` resolves the
+ * territory it was given in `?c=` and the home page the one the reader keeps,
+ * and a second spelling of "look the layer up and wrap it" is a second place
+ * for the general calendar's `{}` to be got wrong. An unknown territory —
+ * a typo, a held calendar, a country with none — is the general calendar,
+ * which is the same answer every other reader of `TERRITORY_CALENDARS` gives.
+ */
+export function calendarOptionsFor(territory: string): CalendarOptions {
+	const layer = NATIONAL_CALENDARS[TERRITORY_CALENDARS[territory]];
+	return layer ? { nationalCalendar: layer } : {};
+}
+
+/**
  * GCatholic's own code for a calendar against the layer it belongs to.
  *
  * READ BY `oracle.test.ts` AND BY NOTHING ELSE, and it exists because the
@@ -460,19 +476,6 @@ export const CALENDAR_FEED_IDS: Record<string, string> = {
 	'VN-H': 'vn'
 };
 
-/**
- * The three territories `Intl.DisplayNames` cannot name.
- *
- * England, Scotland and Wales keep three different calendars and none of them
- * has an ISO 3166-1 country code, so their ids are 3166-2 SUBDIVISION tags
- * and `Intl.DisplayNames({ type: 'region' })` answers nothing for them. Every
- * other territory here is named by the platform in the reader's own language,
- * which is the whole reason there is no table of country names in this repo;
- * these three are English-only until someone asks otherwise, which is better
- * than the alternative of a bare `GB-ENG`.
- */
-export const SUBDIVISION_NAMES: Record<string, string> = {
-	'gb-eng': 'England',
-	'gb-sct': 'Scotland',
-	'gb-wls': 'Wales'
-};
+/** Re-exported so that `./index` is still the one address for the picker's
+ *  tables; `./subdivisions` exists to be importable without them. */
+export { SUBDIVISION_NAMES };

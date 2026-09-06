@@ -416,6 +416,30 @@
 		text-align: center;
 	}
 	/*
+	 * ON A PHONE THE ROW SPANS THE LIST IT PAGES, and it did not: three items
+	 * 0.4rem apart, left-packed, left the two arrows huddled either side of
+	 * the month's name in the corner of a screen the list below fills edge to
+	 * edge — the name reading as though it belonged to the arrows rather than
+	 * to the month underneath. Spread, each arrow sits over the end of the row
+	 * it turns, which is also the far side of the thumb's reach from the
+	 * other.
+	 *
+	 * NARROW ONLY. At the full `--landing-width` the same rule would put two
+	 * 2rem buttons forty characters apart with a name adrift between them; the
+	 * huddle IS the arrangement there, and `min-inline-size` is what keeps it
+	 * still as the reader pages. That minimum has to go here, or the name
+	 * stops centring on the screens where it is wider than the space left.
+	 */
+	@media (max-width: 34rem) {
+		header {
+			justify-content: space-between;
+		}
+		header h2 {
+			flex: 1;
+			min-inline-size: 0;
+		}
+	}
+	/*
 	 * THE SAME SIZE AS THE CONTROLS ABOVE, which they were not: `.menu-trigger`
 	 * is the site header's 2.25rem square at 1rem, and the row at the top of
 	 * this page sets its own controls to 2rem at 0.8rem because a page's

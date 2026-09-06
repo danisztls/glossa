@@ -84,17 +84,18 @@
 	 * the card carries the celebration's name as its own heading, and a rule
 	 * reading "Today" above it is a second title over one object.
 	 *
-	 * ONE THING IT DELIBERATELY DOES NOT DO. It shows the GENERAL calendar,
-	 * not the reader's country. That was once for want of anything to read —
-	 * the territory lived in `/calendarium`'s `?c=` and nowhere else — and
-	 * both halves of that have since gone: `calendar-pref.ts` stores the
-	 * picker's choice, and `geo.ts` guesses a country for a reader who has
-	 * never made one. The reason it still shows the general calendar is the
-	 * one that was doing the work all along: THERE IS NO PICKER ON THIS PAGE.
-	 * `/calendarium` may open in Brazil because the control that says so is on
-	 * screen and one press corrects it; a national solemnity under a bare
-	 * "Today" here would be an unattributed claim about the reader with
-	 * nothing to correct it by.
+	 * IT SHOWS THE READER'S OWN CALENDAR, AND ONLY BECAUSE IT CARRIES THE
+	 * PICKER. It showed the general calendar to everyone until 2026-09-06, and
+	 * the reason given was that the territory lived in `/calendarium`'s `?c=`
+	 * and nowhere else, so this page had nothing to read; what was actually
+	 * doing the work was the second half of that sentence — a national
+	 * solemnity under a bare "Today", with no control beside it, is an
+	 * unattributed claim about the reader and nothing to correct it by. So the
+	 * two arrived together: `calendar-pref.ts` (a stored choice, or the edge's
+	 * guess) says which calendar, and the picker in the card's corner is how a
+	 * reader says otherwise in the place the claim is being made. It shares
+	 * that corner with the way out to `/calendarium` (`more`), which is the
+	 * other thing a reader wants from a day they did not come here to read.
 	 *
 	 * It DOES print the day's readings, which this docblock denied until
 	 * 2026-09-06. They come with the card and not from here — `DayReadings`
@@ -140,11 +141,23 @@
 	import { listWorksOfType } from '$lib/corpus';
 	import { scriptureSpecimen } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
-	import { liturgicalDay, toDayNumber, type LiturgicalDay } from '$lib/calendar';
+	import { liturgicalDay, toDayNumber, type CalendarOptions } from '$lib/calendar';
+	import {
+		ensureNationalCalendars,
+		residentOptions,
+		residentTerritories
+	} from '$lib/calendar/layers.svelte';
+	import {
+		detectedTerritory,
+		openingTerritory,
+		rememberTerritory,
+		storedTerritory
+	} from '$lib/calendar-pref';
+	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import ShelfGrid from '$lib/components/ShelfGrid.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import type { WorkType } from '$lib/types';
 
 	/*
@@ -244,10 +257,54 @@
 	// Read on mount rather than derived: it is the client's clock, which does
 	// not exist while the shell is being served. A prerendered "today" would be
 	// the day this build was made.
-	let day: LiturgicalDay | undefined = $state();
+	let todayNumber: number | undefined = $state();
+
+	/**
+	 * THE CALENDAR THE READER KEEPS, AND WHAT IT COSTS TO SHOW IT HERE.
+	 *
+	 * This page showed the general calendar to everyone until 2026-09-06, for
+	 * want of anywhere to put a control (see the docblock above) and for want
+	 * of anything to read: the territory lived in `/calendarium`'s `?c=` and
+	 * nowhere else. Both are gone — the picker sits in the card, and
+	 * `calendar-pref.ts` holds the choice and the edge's guess — so the day at
+	 * the top of the site is now the day the reader actually keeps.
+	 *
+	 * WHAT IS NOT ALLOWED IS A STATIC IMPORT OF THE LAYERS. Eighty-five files
+	 * build a 184 KB chunk and this is the page every reader boots, so the
+	 * table is fetched (`layers.svelte.ts`) and only for a reader who turns
+	 * out to keep a national calendar. The card renders the general calendar
+	 * until it lands and re-renders when it does — the same degradation a
+	 * celebration's name has while its language's table is in flight, and
+	 * visible only on the days the two calendars disagree.
+	 */
+	let territory = $state('general');
+	let options = $derived<CalendarOptions>(
+		territory === 'general' ? {} : (residentOptions(territory) ?? {})
+	);
+	let day = $derived(todayNumber === undefined ? undefined : liturgicalDay(todayNumber, options));
+
+	/** A calendar chosen here is a calendar the reader KEEPS — the same rule
+	 *  `/calendarium`'s picker follows, and the same storage, so choosing
+	 *  Brazil here opens Brazil there. The table is already resident by the
+	 *  time a cell can be pressed: the panel it was pressed in needed it. */
+	function choose(id: string) {
+		rememberTerritory(id);
+		territory = id;
+	}
 
 	onMount(() => {
-		day = liturgicalDay(localToday());
+		todayNumber = localToday();
+		const stored = storedTerritory();
+		const detected = detectedTerritory();
+		// Nothing to fetch where the answer is already on screen: a reader with
+		// no preference and no guessable country, and one who chose the general
+		// calendar, both keep the calendar this page already renders.
+		// `openingTerritory` decides it again, once there is a table to decide
+		// against.
+		if ((stored ?? detected ?? 'general') === 'general') return;
+		void ensureNationalCalendars().then(() => {
+			territory = openingTerritory(stored, detected, residentTerritories() ?? {}) ?? 'general';
+		});
 	});
 </script>
 
@@ -260,10 +317,24 @@
 	{#if day}
 		<section class="today" aria-labelledby="today-heading">
 			<h2 id="today-heading" class="visually-hidden">{t('calendar.today')}</h2>
+			{#snippet calendarPicker()}
+				<!-- The one control on this page, and the same one `/calendarium`
+				     carries: a reader who keeps Brazil's calendar meets it here
+				     first, and correcting a wrong guess is one press in the place
+				     the guess is showing. -->
+				<div class="picker">
+					<CalendarMenu value={territory} lang={i18n.lang} onchoose={choose} />
+				</div>
+			{/snippet}
 			<!-- The way to the calendar is a glyph in the card's own corner, not a
 			     line under it — `LiturgicalDayCard`'s `more` prop says why, and
-			     `/calendarium` passes nothing because it IS the destination. -->
-			<LiturgicalDayCard {day} more={{ href: '/calendarium', label: t('calendar.title') }} />
+			     `/calendarium` passes nothing because it IS the destination. It
+			     shares that corner with the picker above. -->
+			<LiturgicalDayCard
+				{day}
+				controls={calendarPicker}
+				more={{ href: '/calendarium', label: t('calendar.title') }}
+			/>
 		</section>
 	{/if}
 
@@ -369,6 +440,23 @@
 	 */
 	.today {
 		margin-top: 1.5rem;
+	}
+	/*
+	 * THE PICKER WEARS THE PAGE'S FURNITURE SIZE, not the site header's.
+	 * `.menu-trigger` is a 2.25rem square at 1rem (styles/menus.css) and
+	 * `/calendarium`'s control row sets its own to 2rem at 0.8rem, on the
+	 * argument that a page's own controls are smaller than the chrome's. This
+	 * is the same control in the same card, so it is the same size — the two
+	 * cards are what a reader compares. `.wide` is the padding for a trigger
+	 * carrying a label rather than an icon; naming the value here keeps it
+	 * beside the height it goes with.
+	 */
+	.picker :global(.menu-trigger) {
+		height: 2rem;
+		font-size: 0.8rem;
+	}
+	.picker :global(.menu-trigger.wide) {
+		padding-inline: 0.6rem;
 	}
 
 	/* THE CATALOGUE DRAWS ITSELF, so this page styles none of it —

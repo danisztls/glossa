@@ -276,11 +276,11 @@
 	 * address does not already name one.
 	 *
 	 * THREE ANSWERS IN ORDER — a `?c=` in the address, then what the reader
-	 * chose here before, then where the edge says they are — and the order is
-	 * `openingTerritory`'s to argue, along with why a stored `'general'` stops
-	 * the chain where an absent key does not. It is passed the readers and the
-	 * published map rather than importing either, so what happens here is the
-	 * mirroring and nothing else.
+	 * chose here before, then where the edge says they are. The address is
+	 * settled by the early return, because it is this page's own and the home
+	 * page has no such parameter; `openingTerritory` argues the other two,
+	 * along with why a stored `'general'` stops the chain where an absent key
+	 * does not. What is left here is the mirroring.
 	 *
 	 * It writes the territory into `?c=` rather than holding it beside the URL,
 	 * because this page's whole contract is that the address reproduces what is
@@ -304,12 +304,8 @@
 	 * chose the general calendar back.
 	 */
 	onMount(() => {
-		const opening = openingTerritory(
-			page.url,
-			storedTerritory(),
-			detectedTerritory(),
-			TERRITORY_CALENDARS
-		);
+		if (page.url.searchParams.has('c')) return;
+		const opening = openingTerritory(storedTerritory(), detectedTerritory(), TERRITORY_CALENDARS);
 		if (!opening) return;
 		territory = opening;
 		mirror();
@@ -401,8 +397,14 @@
 	<h1>{t('calendar.title')}</h1>
 	<p class="page-tagline landing-measure">{t('calendar.tagline')}</p>
 
-	<div class="controls">
-		<!--
+	{#snippet controls()}
+		<!-- TWO WRAPPERS, ONE JOB EACH: the card's `.controls` decides WHERE
+		     this sits (corner, or on top on a phone) and this one decides what
+		     a row of the page's own furniture looks like. Neither can do the
+		     other's, since a snippet's markup is scoped to the page that wrote
+		     it and the box around it to the component that placed it. -->
+		<div class="control-row">
+			<!--
 			THE FIELD PRINTS THE DATE THE WAY THE PAGE WRITES DATES, which a
 			native date input cannot be made to do: its format comes from the
 			operating system's locale rather than from the interface language,
@@ -413,37 +415,42 @@
 			over it is what is read. The card below no longer prints the date,
 			because THIS is where the date is now.
 		-->
-		<div class="date-field">
-			<input
-				type="date"
-				bind:this={dateEl}
-				aria-label={t('calendar.date')}
-				value={selectedIso}
-				oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
-				onkeydown={() => (typing = true)}
-				onclick={openPicker}
-			/>
-			<span class="date-face" aria-hidden="true">
-				<Icon name="calendar" />
-				<span class="date-text">
-					<span>{formatPromulgated(selectedIso, lang)}</span>
-					<span class="date-widest">{widestDate}</span>
+			<div class="date-field">
+				<input
+					type="date"
+					bind:this={dateEl}
+					aria-label={t('calendar.date')}
+					value={selectedIso}
+					oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
+					onkeydown={() => (typing = true)}
+					onclick={openPicker}
+				/>
+				<span class="date-face" aria-hidden="true">
+					<Icon name="calendar" />
+					<span class="date-text">
+						<span>{formatPromulgated(selectedIso, lang)}</span>
+						<span class="date-widest">{widestDate}</span>
+					</span>
 				</span>
-			</span>
-		</div>
-		<!-- Beside the date and not down beside the month's arrows, because it
+			</div>
+			<!-- Beside the date and not down beside the month's arrows, because it
 		     is the same control as the date field: both answer WHICH DAY, and
 		     the one that answers "the one I am living in" belongs with them.
 		     Down there it read as a third month control. -->
-		<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
-			{t('calendar.today')}
-		</button>
-		<CalendarMenu value={territory} {lang} onchoose={choose} />
-	</div>
+			<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
+				{t('calendar.today')}
+			</button>
+			<CalendarMenu value={territory} {lang} onchoose={choose} />
+		</div>
+	{/snippet}
 
 	{#if day}
-		<LiturgicalDayCard {day} heading="h2" showDate={false} />
+		<LiturgicalDayCard {day} heading="h2" showDate={false} {controls} />
 	{:else}
+		<!-- The controls are inside the card, so a date with no day would take
+		     them off the page and strand the reader on the date that did it.
+		     They are rendered loose here, in the same row, for that one case. -->
+		<div class="orphan-controls">{@render controls()}</div>
 		<!-- Only reachable for a date outside any year this can build, which
 		     the date input makes hard to ask for. Saying so is better than
 		     an empty page. -->
@@ -486,16 +493,23 @@
 	 * It is not: it names a DAY, which is what the two controls beside it here
 	 * do.
 	 */
-	.controls {
+	.control-row {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.4rem;
-		/* The margin below is the one gap on this page that has to be said
-		   out loud: the card beneath is a bordered box and the controls are
-		   loose elements, so without it they read as its lid. */
-		margin: 0.9rem 0 1.1rem;
 		font-family: var(--font-sans);
+	}
+	/*
+	 * THEY MOVED INSIDE THE CARD ON 2026-09-06 and the margin they used to
+	 * carry went with them. It was there because a bordered box under a line
+	 * of loose controls reads as its lid — which was the tell, not a spacing
+	 * bug: the controls answer WHICH DAY and the card is the answer, so they
+	 * belong in it. `LiturgicalDayCard`'s `controls` prop is the arrangement,
+	 * and the home page's card takes the same one with one control in it.
+	 */
+	.orphan-controls {
+		margin-bottom: 1.1rem;
 	}
 	/*
 	 * EVERY CONTROL ON THIS PAGE, ONE HEIGHT AND ONE PADDING, smaller than the
@@ -512,14 +526,14 @@
 	 * Three controls, three paddings, in a row four centimetres wide. One
 	 * value, named once, and the date face below takes it too.
 	 */
-	.controls {
+	.control-row {
 		--control-padding: 0.6rem;
 	}
-	.controls :global(.menu-trigger) {
+	.control-row :global(.menu-trigger) {
 		height: 2rem;
 		font-size: 0.8rem;
 	}
-	.controls :global(.menu-trigger.wide) {
+	.control-row :global(.menu-trigger.wide) {
 		padding-inline: var(--control-padding);
 	}
 	/*

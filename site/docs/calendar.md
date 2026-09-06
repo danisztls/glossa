@@ -518,6 +518,48 @@ filters it — which also means a country with no calendar, a calendar held by
 `held.ts`, and Cloudflare's own non-answers (`XX` for unknown, `T1` for a Tor
 exit) all degrade the same way a typed `?c=` does, to the general calendar.
 
+### The controls moved into the card, and the home page got the same one
+
+**A bordered box under a line of loose controls reads as its lid**, which the
+control row's own margin was there to deny (2026-09-06). That was the tell
+rather than a spacing problem: the date, Today and the picker all answer WHICH
+DAY, the card is that answer, and controls that change a thing belong to it.
+`LiturgicalDayCard` takes them as a `controls` snippet — top right, and above
+the name on a phone (`column-reverse`, so they stay last in the DOM and a
+screen reader still meets the day first).
+
+**Which is what let the home page keep a calendar at all.** It showed the
+general calendar to everyone, and the reason recorded on the page was that the
+territory lived in `?c=` and nowhere else — but the durable half of that
+argument was the other one: a national solemnity under a bare "Today", with no
+control beside it, is an unattributed claim about the reader. The picker is
+that control, so the claim is now correctable in the place it is made, and the
+site's front page opens in the calendar its reader keeps.
+
+**The layers are fetched there, never imported.** Eighty-five files build a
+184 KB chunk and the home page is the one every reader boots, so
+`calendar/layers.svelte.ts` holds a lazy registry — `names.svelte.ts`'s
+arrangement one directory up, and the same accounting: the cost of a country is
+paid by the reader who keeps one. `/calendarium` still imports `./national`
+outright, the layers being its subject. Three consequences worth knowing:
+
+- **The card renders the general calendar until the chunk lands**, then
+  re-renders. Visible only on the days two calendars disagree, and it is the
+  same degradation a celebration's name has while its language's table is in
+  flight.
+- **A reader who keeps the general calendar fetches nothing**, because the
+  page checks what it would be fetching FOR before asking.
+- **The picker's trigger owes the fetch nothing.** A flag is arithmetic on the
+  ISO code and a name is `Intl.DisplayNames`', so the control says which
+  calendar the reader keeps from the first frame; only the panel behind it
+  waits, and it primes on `pointerenter` as well as on open.
+
+**The month's arrows spread to the edges on a phone** and stay huddled around
+the month's name above `34rem`. Left-packed, the two arrows sat either side of
+the name in the corner of a screen the day list fills edge to edge, so the name
+read as belonging to the arrows rather than to the month under it; at the full
+column width the same rule would put two 2rem buttons forty characters apart.
+
 **The date field prints the date the way the page writes dates, and a native
 `<input type="date">` cannot be made to** (2026-09-05). Its format comes from
 the operating system's locale rather than from the interface language, so a

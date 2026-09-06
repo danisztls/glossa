@@ -29,6 +29,7 @@
 	} from '$lib/calendar';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
 	import { primeLectionary, readingsFor } from '$lib/lectionary';
 	import DayReadings from './DayReadings.svelte';
@@ -36,6 +37,20 @@
 
 	interface Props {
 		day: LiturgicalDay;
+		/**
+		 * The controls that decide WHICH DAY this is — the date field, Today
+		 * and the calendar picker on `/calendarium`, the calendar picker alone
+		 * on the home page.
+		 *
+		 * THEY BELONG IN THE CARD BECAUSE THE CARD IS THE ANSWER THEY CHANGE.
+		 * They stood above it on `/calendarium` until 2026-09-06, in a row of
+		 * their own, and the arrangement had two costs: a bordered box under a
+		 * line of loose controls reads as a lid, and the home page — which
+		 * shows one day and had nowhere to put a control — could not offer the
+		 * picker at all, so it was stuck in the general calendar however the
+		 * reader had answered the same question next door.
+		 */
+		controls?: Snippet;
 		/** Render the heading as the page's `h1` rather than an `h2`. */
 		heading?: 'h1' | 'h2';
 		/**
@@ -62,7 +77,7 @@
 		 */
 		more?: { href: string; label: string };
 	}
-	let { day, heading = 'h2', showDate = true, more }: Props = $props();
+	let { day, heading = 'h2', controls, showDate = true, more }: Props = $props();
 
 	let lang = $derived(i18n.lang);
 
@@ -165,24 +180,37 @@
 		</div>
 
 		<!--
-			THE WAY OUT IS A GLYPH IN THE CORNER, and was a sentence under the
-			card until 2026-09-06. `Liturgical Calendar →` sat below the box as
-			the home page's only trailing link, which read as a caption on the
-			card rather than as part of it and put the one control the card has
-			outside its own border. In the corner it belongs to the card, and it
-			takes the row's height rather than the header's — `align-items:
-			start`, so a celebration whose name runs to three lines does not
-			carry it down the box.
-
-			`title` AND `aria-label` carry the same string, which is the rule for
-			every icon-only control on the site (`.menu-trigger`'s own): the
-			glyph is `aria-hidden` by `Icon.svelte`'s enforcement, so without the
-			label the link announces its href.
+			THE CORNER HOLDS BOTH: what changes the day, and the way out of the
+			card. On a narrow screen it goes ON TOP of the name (`grid-row`
+			below) while staying LAST in the DOM, so a screen reader and a
+			keyboard meet the day before the controls that change it.
 		-->
-		{#if more}
-			<a class="day-more" href={more.href} aria-label={more.label} title={more.label}>
-				<Icon name="calendar" />
-			</a>
+		{#if controls || more}
+			<div class="corner">
+				{#if controls}
+					<div class="controls">{@render controls()}</div>
+				{/if}
+				<!--
+					THE WAY OUT IS A GLYPH IN THE CORNER, and was a sentence under
+					the card until 2026-09-06. `Liturgical Calendar →` sat below the
+					box as the home page's only trailing link, which read as a
+					caption on the card rather than as part of it and put the one
+					control the card has outside its own border. In the corner it
+					belongs to the card, and it takes the row's height rather than
+					the header's — `align-items: start`, so a celebration whose name
+					runs to three lines does not carry it down the box.
+
+					`title` AND `aria-label` carry the same string, which is the rule
+					for every icon-only control on the site (`.menu-trigger`'s own):
+					the glyph is `aria-hidden` by `Icon.svelte`'s enforcement, so
+					without the label the link announces its href.
+				-->
+				{#if more}
+					<a class="day-more" href={more.href} aria-label={more.label} title={more.label}>
+						<Icon name="calendar" />
+					</a>
+				{/if}
+			</div>
 		{/if}
 	</header>
 
@@ -266,19 +294,61 @@
 		padding: 1rem 1.25rem;
 	}
 	/*
-	 * THE HEADER IS TWO COLUMNS: everything the day says, and the way out.
-	 * `minmax(0, 1fr)` so a long celebration name wraps inside its own column
-	 * rather than pushing the glyph off the card, and `align-items: start` so
-	 * the glyph stays level with the first line of a heading that wraps.
+	 * THE HEADER IS TWO COLUMNS: everything the day says, and the corner that
+	 * changes or leaves it. `minmax(0, 1fr)` so a long celebration name wraps
+	 * inside its own column rather than pushing the corner off the card, and
+	 * `align-items: start` so the corner stays level with the first line of a
+	 * heading that wraps — a control centred against a box whose height is the
+	 * length of a saint's title moves for reasons the reader cannot see.
 	 *
-	 * The corner is empty on `/calendarium`, which passes no `more` — the grid
-	 * costs that card nothing, an absent second item taking no track.
+	 * The corner is empty on a card given neither `controls` nor `more` — the
+	 * grid costs that card nothing, an absent second item taking no track.
 	 */
 	header {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: start;
 		column-gap: 0.75rem;
+	}
+	/*
+	 * The two corner items are one row and wrap together: `/calendarium` puts
+	 * three controls here and the home page a picker and the way out, and on
+	 * the narrow layout below they are a row across the top of the card.
+	 *
+	 * `center` HERE AND `start` ON THE HEADER, which are not the same question.
+	 * The header's keeps the whole corner level with the first line of a name
+	 * that wraps; this one centres a 1.75rem glyph against a 2rem trigger,
+	 * which top-aligned sit a couple of pixels apart for no reason a reader
+	 * could name.
+	 */
+	.corner {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	/*
+	 * 44rem is where `/calendarium`'s three controls stop leaving a readable
+	 * measure beside them — a date field, Today and the picker are about 20rem
+	 * and a saint with an office is longer than that. The home page's picker
+	 * and glyph would fit for another 10rem and stack here anyway: one
+	 * breakpoint that both pages meet is worth more than two that are each
+	 * exactly right, since what a reader compares is the two cards.
+	 *
+	 * The rows are ASSIGNED rather than reversed, which is what lets the
+	 * corner stay last in the DOM — see the markup — and is why this is a grid
+	 * rather than a flex column-reverse.
+	 */
+	@media (max-width: 44rem) {
+		header {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.corner {
+			grid-row: 1;
+			flex-wrap: wrap;
+		}
+		.head-text {
+			grid-row: 2;
+		}
 	}
 	/*
 	 * `.menu-trigger`'s shape without its file: a rounded square the size of a
