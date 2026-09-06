@@ -480,6 +480,44 @@ a value beside the URL — this page's contract is that the address reproduces t
 screen, and a page showing Brazil under a bare `/calendarium` would hand out
 links that show the sender Brazil and the recipient Rome.
 
+**And a reader who has never chosen opens where they are** (2026-09-06,
+`geo.ts`). Cloudflare resolves the connecting address to a country, `worker.ts`
+writes it onto the shell's `<html>` as `data-geo`, and `openingTerritory` ranks
+the three answers: `?c=` in the address, then the stored choice, then the
+country. **The middle rung is why `'general'` is stored rather than cleared** —
+a reader who went back to the general calendar has made a choice, and `??`
+stops the chain on it where `||` would have re-homed them by geography every
+visit. Nothing is fetched, no permission is asked, and nothing about the reader
+leaves the document served to them: the worker is invoked on that navigation
+anyway (`site/docs/edge.md`), and the answer was already in the connection.
+
+**The browser's locale is the other free signal and is a worse one.** `en-US`
+is what a phone says in Lagos, Manila and Dublin alike, and an interface
+language is a fact about what someone READS rather than about which
+conference's calendar they keep — which is exactly why `ui-langs.ts` negotiates
+the language from `navigator.languages` and this does not. **The guess is not
+remembered**, unlike that negotiation, which writes its answer back: a language
+list is a setting made once, an address is where the reader is now, and a
+pinned country would hold someone who moved, or who read one page through a
+VPN, in a territory they never picked under a key that claims they did.
+
+**The United Kingdom is the one place a country code is not the answer**, and
+Northern Ireland is deliberately unanswered. England, Scotland and Wales keep
+three calendars and `gb` names none of them, so the hint comes from
+Cloudflare's first-level region — `ENG`, `SCT`, `WLS`; `NIR` belongs to the
+Irish conference rather than to any of the three, and answering `ie` off our
+own inference would open a reader in one country on another country's calendar.
+A `gb` with no region resolves to nothing at all rather than to the most
+populous of the three: a reader in Glasgow shown England's calendar would be
+shown a calendar somebody appears to have chosen for them.
+
+**What the edge cannot do is decide whether a code names a calendar.**
+`TERRITORY_CALENDARS` is derived from eighty-five layer files and the worker
+carries names and manifests only, so `geo.ts` normalises a code and the client
+filters it — which also means a country with no calendar, a calendar held by
+`held.ts`, and Cloudflare's own non-answers (`XX` for unknown, `T1` for a Tor
+exit) all degrade the same way a typed `?c=` does, to the general calendar.
+
 **The date field prints the date the way the page writes dates, and a native
 `<input type="date">` cannot be made to** (2026-09-05). Its format comes from
 the operating system's locale rather than from the interface language, so a

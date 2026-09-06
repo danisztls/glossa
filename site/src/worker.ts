@@ -1,5 +1,6 @@
 import type { Apparatus } from './lib/apparatus';
 import { bookFromLegacySlug, bookSlug } from './lib/address';
+import { GEO_ATTRIBUTE, geoTerritory } from './lib/geo';
 import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
 import { isUiLang } from './lib/ui-langs';
 import {
@@ -16,6 +17,24 @@ import { pruneExpired, recordSession, type D1Database } from './lib/usage-store'
 
 interface AssetFetcher {
 	fetch(request: Request): Promise<Response>;
+}
+
+/**
+ * The two `request.cf` fields this worker reads, hand-declared like
+ * `AssetFetcher` below and for the same reason. Both are geolocation of the
+ * connecting address and nothing else: the country the beacon counts
+ * (site/docs/usage.md) and, for the United Kingdom alone, the first-level
+ * region that says which of its three calendars a reader keeps (`lib/geo.ts`).
+ */
+interface CfProperties {
+	/** The two-letter country code, equal to `CF-IPCountry`. */
+	country?: string | null;
+	/** The ISO 3166-2 code for the first-level region, `ENG` for England. */
+	regionCode?: string | null;
+}
+
+function cfOf(request: Request): CfProperties | undefined {
+	return (request as Request & { cf?: CfProperties }).cf;
 }
 
 interface Env {
@@ -102,7 +121,7 @@ async function handleBeacon(request: Request, env: Env, ctx: ExecutionContext): 
 	// The one field the client does not send and cannot influence. `XX` when
 	// Cloudflare has no answer, so the column is never null and the report
 	// never has to special-case it.
-	const country = (request as Request & { cf?: { country?: string } }).cf?.country ?? 'XX';
+	const country = cfOf(request)?.country ?? 'XX';
 
 	ctx.waitUntil(recordSession(env.USAGE, payload, country, Date.now()));
 	return accepted;
@@ -275,25 +294,47 @@ async function notFoundShell(request: Request, assets: AssetFetcher): Promise<Re
  * an address whose name the tables do not carry, and the answer then is the
  * shell exactly as the build emitted it: the page still titles itself at
  * hydration, so what is lost is the name a crawler reads, not the page.
+ *
+ * ## The one thing here that varies by READER rather than by address
+ *
+ * `data-geo` — the country Cloudflare resolved the connecting address to, for
+ * `/calendarium` to open in rather than in Rome (`lib/geo.ts`). It is written
+ * INDEPENDENTLY of the head, on every navigation and not only on the
+ * calendar's: the shell is one document and the router moves between
+ * addresses without fetching another, so the attribute has to be true of
+ * whichever page the reader happened to boot on.
+ *
+ * It varies a response that caches key by URL alone, which is the objection
+ * `shell-head.ts` states against negotiating the `<head>` on `Accept-Language`
+ * — and the two answers differ because the caches do. Every cache that holds
+ * this document is the reader's OWN: `_headers` leaves HTML at Cloudflare's
+ * `max-age=0, must-revalidate`, `wrangler.jsonc` turns Workers Cache off, and
+ * the service worker's copy is that browser's copy. Nothing shared stores it,
+ * so nobody is served somebody else's country. The `<head>` is a different
+ * case because what reads it is a crawler, and a crawler is not a reader whose
+ * own country could be the right answer.
  */
 function withHead(
 	response: Response,
 	pathname: string,
 	manifest: RouteManifest,
 	titles: RouteTitles | undefined,
-	apparatus: Apparatus | undefined
+	apparatus: Apparatus | undefined,
+	geo: string | undefined
 ): Response {
 	const head = titles && headFor(pathname, manifest, titles, apparatus);
-	if (!head) return response;
-	const attrs = htmlAttrs(head);
-	return new HTMLRewriter()
-		.on('html', {
-			element(element) {
-				if (!attrs) return;
-				element.setAttribute('lang', attrs.lang);
-				element.setAttribute('dir', attrs.dir);
-			}
-		})
+	if (!head && !geo) return response;
+	const attrs = head && htmlAttrs(head);
+	const rewriter = new HTMLRewriter().on('html', {
+		element(element) {
+			if (geo) element.setAttribute(GEO_ATTRIBUTE, geo);
+			if (!attrs) return;
+			element.setAttribute('lang', attrs.lang);
+			element.setAttribute('dir', attrs.dir);
+		}
+	});
+	if (!head) return rewriter.transform(response);
+	return rewriter
 		.on('title', {
 			element(element) {
 				element.setInnerContent(head.title);
@@ -389,7 +430,15 @@ export default {
 		]);
 		// A 404 is titled too — it is the one page whose name a crawler reads
 		// and acts on — and `/404` is where `STATIC_HEADS` keeps that name.
-		return withHead(shell, canonical ? url.pathname : '/404', manifest, titles, apparatus);
+		const cf = cfOf(request);
+		return withHead(
+			shell,
+			canonical ? url.pathname : '/404',
+			manifest,
+			titles,
+			apparatus,
+			geoTerritory(cf?.country, cf?.regionCode)
+		);
 	},
 
 	/**

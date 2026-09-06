@@ -160,6 +160,43 @@ and the PNG committed, since it shells out to `woff2_decompress` and
 `rsvg-convert`. Nothing on this site fetches the file, which puts it in
 `CRAWLER_FILES` and in the `run_worker_first` negations.
 
+## The one attribute that varies by reader
+
+**`data-geo` on `<html>` is the country Cloudflare resolved the connecting
+address to** (2026-09-06), so `/calendarium` opens in the reader's own calendar
+rather than in Rome's before they have chosen one — `site/docs/calendar.md`
+argues the ordering it feeds, `src/lib/geo.ts` the normalisation. It rides on
+an invocation already spent: the worker is running to decide 200 against 404
+and is already rewriting the head, so this costs one `setAttribute` and no
+request of its own. It is written on **every** navigation and not only the
+calendar's, because the shell is one document and the router moves between
+addresses without fetching another.
+
+**It varies a response that caches key by URL alone, which is the objection
+`shell-head.ts` raises against negotiating the `<head>` on `Accept-Language`**
+— and the two get different answers because the caches differ. Every cache
+that holds this document is the reader's own: `static/_headers` leaves HTML at
+Cloudflare's `max-age=0, must-revalidate`, `wrangler.jsonc` turns Workers Cache
+off, and the service worker's copy is that browser's copy. Nothing shared
+stores it, so nobody is served somebody else's country. **That is now a second
+reason `cache.enabled` stays false**, and the one that would fail silently: a
+shared cache in front of this worker would hand one reader's country to the
+next, and the only symptom is a calendar opening in the wrong country.
+
+**The service worker freezes it for one entrance.** `/` is in the precache
+list, so it is served cache-first and its copy carries whatever country was
+resolved when the shell was installed; every other navigation is
+network-first and gets a fresh one. So a reader who boots at the home page
+and clicks through to `/calendarium` is answered from the shell they
+installed, until the next deploy rolls the version-scoped cache. That is the
+right trade rather than a defect to fix: a country is stable in a way that
+makes a stale copy nearly always right, the guess is only ever consulted for
+a reader who has chosen nothing, and one press of the picker replaces it with
+a stored choice that outranks it for good.
+
+The `<head>` is the opposite case and stays reader-blind, because what reads it
+is a crawler — there is no "their own country" to be right about.
+
 ## `lastmod`
 
 **The sitemap dates each URL from the English text, because that is the text

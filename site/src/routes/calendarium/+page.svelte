@@ -95,7 +95,12 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
-	import { rememberTerritory, storedTerritory } from '$lib/calendar-pref';
+	import {
+		detectedTerritory,
+		openingTerritory,
+		rememberTerritory,
+		storedTerritory
+	} from '$lib/calendar-pref';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 
@@ -151,11 +156,11 @@
 	 * built from the published list, so an id withdrawn by `held.ts` resolves
 	 * to nothing in exactly the same way a typo does.
 	 *
-	 * WHAT "ABSENT" MEANS IS ANSWERED BY THE READER'S OWN PREFERENCE before it
-	 * falls back to the general calendar — see `onMount` below and
-	 * `calendar-pref.ts`. The URL stays the one thing this component derives
-	 * from; the preference only decides what the URL says when the reader
-	 * arrives without one.
+	 * WHAT "ABSENT" MEANS IS ANSWERED BY THE READER'S OWN PREFERENCE, THEN BY
+	 * WHERE THEY ARE, before it falls back to the general calendar — see
+	 * `onMount` below and `calendar-pref.ts`. The URL stays the one thing this
+	 * component derives from; those two only decide what the URL says when the
+	 * reader arrives without one.
 	 */
 	function territoryIn(url: URL): string {
 		const raw = url.searchParams.get('c');
@@ -267,8 +272,15 @@
 	}
 
 	/**
-	 * The remembered calendar, applied ONCE, on arrival, and only where the
+	 * The reader's calendar, applied ONCE, on arrival, and only where the
 	 * address does not already name one.
+	 *
+	 * THREE ANSWERS IN ORDER — a `?c=` in the address, then what the reader
+	 * chose here before, then where the edge says they are — and the order is
+	 * `openingTerritory`'s to argue, along with why a stored `'general'` stops
+	 * the chain where an absent key does not. It is passed the readers and the
+	 * published map rather than importing either, so what happens here is the
+	 * mirroring and nothing else.
 	 *
 	 * It writes the territory into `?c=` rather than holding it beside the URL,
 	 * because this page's whole contract is that the address reproduces what is
@@ -292,10 +304,14 @@
 	 * chose the general calendar back.
 	 */
 	onMount(() => {
-		if (page.url.searchParams.has('c')) return;
-		const saved = storedTerritory();
-		if (!saved || saved === 'general' || !TERRITORY_CALENDARS[saved]) return;
-		territory = saved;
+		const opening = openingTerritory(
+			page.url,
+			storedTerritory(),
+			detectedTerritory(),
+			TERRITORY_CALENDARS
+		);
+		if (!opening) return;
+		territory = opening;
 		mirror();
 	});
 

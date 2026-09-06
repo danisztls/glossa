@@ -2492,6 +2492,15 @@ its parameter, because a territory is a fact about a person in a way a column
 layout is not. It is applied by writing `?c=` into the address on mount, never
 by holding a value beside the URL (§docs/calendar.md).
 
+**AND A READER WHO HAS NEVER CHOSEN OPENS WHERE THEY ARE** (2026-09-06,
+`geo.ts`): Cloudflare's country, written onto the shell's `<html>` as
+`data-geo` by the worker already rewriting the head, ranked below the stored
+choice by `openingTerritory` — `??` and not `||`, which is what makes a stored
+`'general'` a choice rather than an absence. **It is the only thing in the
+served document that varies by reader**, so it is a second reason
+`wrangler.jsonc`'s `cache.enabled` stays false: a shared cache would hand one
+reader's country to the next (§docs/edge.md, §docs/calendar.md).
+
 **`?c=` NAMES A TERRITORY, NOT A LAYER** (2026-09-04): four cells select `ps`,
 and with the layer stored the trigger printed the alphabetically first, so
 choosing Israel answered "Cyprus". `TERRITORY_CALENDARS` resolves it, and a

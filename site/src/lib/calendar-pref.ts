@@ -20,9 +20,13 @@
  * `'general'` IS STORED RATHER THAN CLEARED. A reader who has been in the
  * Brazilian calendar and goes back to the general one has made a choice, and
  * an absent key would read as "never chose" and put them back in Brazil on
- * the next visit.
+ * the next visit. That distinction is what `detectedTerritory` below rests
+ * on: the two states an absent key used to share are now "never chose, guess"
+ * and "chose the general calendar, leave it alone", and only the first is
+ * guessed at.
  */
 
+import { GEO_ATTRIBUTE } from './geo';
 import { readStoredString, writeStoredString } from './storage';
 
 const STORAGE_KEY = 'glossa:calendar-territory';
@@ -38,4 +42,75 @@ export function storedTerritory(): string | undefined {
 
 export function rememberTerritory(id: string): void {
 	writeStoredString(STORAGE_KEY, id);
+}
+
+/**
+ * The territory the edge's geolocation suggests, for a reader who has never
+ * chosen one — read off the attribute `src/worker.ts` wrote on the shell's
+ * `<html>`, which `lib/geo.ts` argues for and normalises.
+ *
+ * A GUESS RANKS BELOW A CHOICE AND ABOVE THE DEFAULT, which is the whole of
+ * the ordering: `?c=` beats the preference for the sharing reason above, the
+ * preference beats this because it is the reader's own word, and this beats
+ * the general calendar because opening a reader in Lisbon on Rome's calendar
+ * is also a guess — just the one that is wrong more often.
+ *
+ * IT IS NOT REMEMBERED, unlike the language negotiation in `i18n.svelte.ts`,
+ * which writes its detected answer back so later visits stay stable. The two
+ * differ in what a stale guess costs. A browser's language list is a setting
+ * the reader made once and rarely revisits, so pinning it is the stable
+ * answer; an address is a fact about where the reader is now, and a reader
+ * who moves country, or who read one page through a VPN, would otherwise be
+ * held in a territory they never picked by a key that claims they did. Not
+ * writing keeps `storedTerritory` meaning exactly one thing — the reader
+ * pressed something — and leaves this free to be right again tomorrow.
+ *
+ * Undefined everywhere the attribute is absent, which is every environment
+ * but production: `npm run dev` and `npm run preview` serve the shell without
+ * the worker, so the calendar opens general there. Validating the code is the
+ * caller's job — see `lib/geo.ts` on why the edge cannot know which
+ * territories have a published calendar.
+ */
+export function detectedTerritory(): string | undefined {
+	if (typeof document === 'undefined') return undefined;
+	return document.documentElement.getAttribute(GEO_ATTRIBUTE) || undefined;
+}
+
+/**
+ * The territory `/calendarium` opens in for a reader who did not name one,
+ * or `undefined` to stay in the general calendar.
+ *
+ * THE ORDER IS THE ARGUMENT AND IT IS THE ONLY THING HERE. A `?c=` in the
+ * address wins outright — that is the sharing rule at the top of this file,
+ * and it is why this answers `undefined` rather than a territory when one is
+ * present, since a page that already has its answer must not be handed a
+ * second one. Then what the reader chose here before, because it is their own
+ * word. Then where the network says they are, because the alternative is not
+ * "no guess": opening a reader in Lisbon on Rome's calendar is a guess too,
+ * and the one that is wrong more often.
+ *
+ * `??` AND NOT `||` IN THE MIDDLE, which is the whole reason `'general'` is
+ * stored rather than cleared: a reader who went back to the general calendar
+ * has made a choice, it is a stored value, and it stops the chain here rather
+ * than falling through to a country they did not ask for. An absent key is
+ * then the only state meaning nobody has said anything yet.
+ *
+ * `published` IS PASSED IN AND NOT IMPORTED. `TERRITORY_CALENDARS` is derived
+ * from eighty-five layer files, and this module is imported for a string in
+ * `localStorage`; a static import of the calendar data here would put the
+ * whole of it wherever this is read, which is the boot-chunk trap
+ * site/CLAUDE.md names three ways of falling into. It is also what makes the
+ * ordering testable in Node, where neither `localStorage` nor `document`
+ * exists and both readers above answer `undefined` for the wrong reason.
+ */
+export function openingTerritory(
+	url: URL,
+	stored: string | undefined,
+	detected: string | undefined,
+	published: Record<string, string>
+): string | undefined {
+	if (url.searchParams.has('c')) return undefined;
+	const opening = stored ?? detected;
+	if (!opening || opening === 'general' || !published[opening]) return undefined;
+	return opening;
 }

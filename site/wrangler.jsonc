@@ -49,6 +49,13 @@
 	// Configuration §Versioned deployments), so it also survives a rollback and
 	// cannot be re-enabled behind the repo's back without a deploy that shows
 	// up in this file's history.
+	//
+	// SINCE 2026-09-06 THERE IS A SECOND REASON, and it is the one that would
+	// fail silently rather than expensively: the worker writes the reader's
+	// resolved country onto the shell's `<html>` as `data-geo`, for
+	// `/calendarium` to open in (site/docs/edge.md). A cache in front of it
+	// keys by URL, so it would hand one reader's country to the next, and the
+	// only symptom is a calendar opening in the wrong country.
 	"cache": { "enabled": false },
 
 	// Workers Logs, ON, and absent until 2026-09-02. What that absence cost was

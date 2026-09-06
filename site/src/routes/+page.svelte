@@ -85,10 +85,16 @@
 	 * reading "Today" above it is a second title over one object.
 	 *
 	 * ONE THING IT DELIBERATELY DOES NOT DO. It shows the GENERAL calendar,
-	 * not the reader's country: the territory lives in `/calendarium`'s `?c=`
-	 * and is not persisted anywhere, so this page has nothing to read and
-	 * guessing from a browser locale would put a national solemnity in front of
-	 * someone who never chose that country.
+	 * not the reader's country. That was once for want of anything to read —
+	 * the territory lived in `/calendarium`'s `?c=` and nowhere else — and
+	 * both halves of that have since gone: `calendar-pref.ts` stores the
+	 * picker's choice, and `geo.ts` guesses a country for a reader who has
+	 * never made one. The reason it still shows the general calendar is the
+	 * one that was doing the work all along: THERE IS NO PICKER ON THIS PAGE.
+	 * `/calendarium` may open in Brazil because the control that says so is on
+	 * screen and one press corrects it; a national solemnity under a bare
+	 * "Today" here would be an unattributed claim about the reader with
+	 * nothing to correct it by.
 	 *
 	 * It DOES print the day's readings, which this docblock denied until
 	 * 2026-09-06. They come with the card and not from here — `DayReadings`
