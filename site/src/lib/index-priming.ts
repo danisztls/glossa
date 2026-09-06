@@ -41,9 +41,9 @@ const ALL: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'summa', 'docum
  * `/doctores` is not in the nav and the home page does not list it.
  *
  * IT TAKES NO `REFS` BEYOND WHAT IT ALREADY LISTS, unlike every reading shelf
- * below. The home page renders shelf listings, work titles and prayer
- * incipits, and not one line of corpus prose or apparatus — so nothing on it
- * ever resolves a reference, which is the whole of what that set is for.
+ * below. The home page renders shelf listings and work titles, and not one
+ * line of corpus prose or apparatus — so nothing on it ever resolves a
+ * reference, which is the whole of what that set is for.
  */
 const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
 
