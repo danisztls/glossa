@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * The home page: today, the doors, and the notation.
+	 * The home page: today, the catalogue, and the notation.
 	 *
 	 * ## What it was, and why that could not absorb anything more
 	 *
@@ -30,8 +30,8 @@
 	 * whole corpus is addressed by was a thing you found out about by pressing
 	 * `/` on a hunch. The three sections below are those three ways, and the
 	 * order is deliberate: the day is the only surface anyone returns to
-	 * daily, the doors are for the reader who holds no address at all, and the
-	 * specimens are last because the reader who already knows `CCC 1234` types
+	 * daily, the catalogue is for the reader who holds no address at all, and
+	 * the specimens are last because the reader who already knows `CCC 1234` types
 	 * it into the box without reading this page.
 	 *
 	 * WHAT IT BORROWS FROM `/schola` AND `/bibliotheca`, which are the same
@@ -41,16 +41,28 @@
 	 *     sentence saying what is behind it, and this page opened with a name
 	 *     alone — a reader who has never heard of the site got a blackletter
 	 *     wordmark and a liturgical day, and nothing that said what it was.
-	 *   - **Ruled section headings.** Every heading on this page was
-	 *     `visually-hidden`, which is right when a section holds one titled
-	 *     object and wrong when it holds a grid of four. Two of the three are
-	 *     visible now and the day's is not.
+	 *   - **The card**, which is now literally `/bibliotheca`'s: one component
+	 *     (`ShelfCard.svelte`) over one list (`$lib/shelves.ts`) in one grid
+	 *     (`.shelf-grid`), because the two pages offer the same catalogue and a
+	 *     second copy of it would be a second copy to keep true.
 	 *   - **A mark beside the name**, from the vocabulary `/schola`'s own rows
 	 *     are drawn with — `scroll`, `flame`, `book-open` are that page's
 	 *     assignments for these three works, reused rather than re-chosen —
 	 *     set in `/bibliotheca`'s `1lh` box rather than on a baseline.
 	 *   - **The inert specimen chip**, `.cite-example` there and `.specimen`
 	 *     here, for the same reason that page gives: it teaches a SHAPE.
+	 *
+	 * NO SECTION ON THIS PAGE IS TITLED, WHICH IS THE OTHER HALF OF THAT MOVE
+	 * (2026-09-06). The headings were `visually-hidden`, then two of the three
+	 * were made visible on the argument that a rule is right over a grid and
+	 * wrong over one titled object — and then the grid became the catalogue,
+	 * whose seven cards say what they are far better than the words "Where to
+	 * go" over them do. Three sections, three rules, three labels naming what
+	 * is already legible underneath: the page read as a form. Every `h2` is
+	 * hidden again and every one of them still exists, because the outline is
+	 * what a reader moving by heading has and a rule is only what a reader
+	 * looking at the page sees. `/bibliotheca` hides its one for the same
+	 * reason stated the other way round.
 	 *
 	 * WHAT IT DELIBERATELY DOES NOT BORROW IS THE PAINTING. `/schola` and
 	 * `/bibliotheca` each open on one, and `landing-art.ts` holds the two
@@ -102,10 +114,13 @@
 	 * ## What this page costs in translation, and why it is in `CHROME_PATHS`
 	 *
 	 * Three keys: `home.tagline`, `home.doors.heading`, `home.find.heading`.
+	 * The last two are heard and not read — every section here is untitled, and
+	 * a hidden `h2` is what a reader moving by heading gets instead of a rule.
 	 * Everything else is a name or a sentence written for another page in all
-	 * thirty-seven languages — the doors are `nav.*` over each destination's
-	 * own tagline, and the line under the specimens is `jumpbox.hint`. `en.ts` carries the argument for
-	 * keeping `/` on the published list anyway, which is that the root has no
+	 * thirty-seven languages — the catalogue is `$lib/shelves.ts`'s keys, each
+	 * of them the one its own landing page is titled and described by, and the
+	 * line under the specimens is `jumpbox.hint`. `en.ts` carries the argument
+	 * for keeping `/` on the published list anyway, which is that the root has no
 	 * usable remedy: `route-manifest.ts` withholds a page rather than claim it
 	 * in a language it is not written in, and withholding the home page costs
 	 * a sitemap row and an `hreflang` cluster that every other page's ranking
@@ -118,70 +133,37 @@
 	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
 	import { liturgicalDay, toDayNumber, type LiturgicalDay } from '$lib/calendar';
-	import Icon from '$lib/components/Icon.svelte';
-	import type { IconName } from '$lib/components/Icon.svelte';
+	import { visibleShelves } from '$lib/shelves';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
+	import ShelfCard from '$lib/components/ShelfCard.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { WorkType } from '$lib/types';
 
 	/**
-	 * The four doors, in the bar's order minus the Calendar, which is the card
-	 * above rather than a link.
+	 * THE WAY IN IS THE CATALOGUE ITSELF, AND WAS FOUR DOORS UNTIL 2026-09-06.
 	 *
-	 * Every name and sentence is the key its own landing page is titled and
-	 * described by — the rule `scripts/route-titles.mjs` follows for the
-	 * `<head>` and `/bibliotheca` for its shelves. A home page that paraphrased
-	 * the pages it points at would be a third set of sentences to translate
-	 * into 37 languages and a third to keep true.
+	 * The doors were Bible, Prayers, Library and Learn: two works a reader
+	 * wants most, plus two PAGES — and the Library door's whole content was
+	 * "the catalogue is one click that way". A home page whose answer to "what
+	 * is here" is a link to the answer is a page charging a click for a list
+	 * that fits on a screen, and the two works it did name got there by being
+	 * the popular ones rather than by any argument this file could state.
 	 *
-	 * THE ICONS ARE `/schola`'s OWN and were not chosen again here. That page
-	 * draws `scroll` for Scripture, `flame` for the prayers and `book-open`
-	 * for the row that links to `/bibliotheca`; taking a second opinion on any
-	 * of the three would mean the same work wearing two marks on two pages.
-	 * Only the fourth is not `/schola`'s own, because that page illustrates
-	 * every row but itself. It is `graduation-cap`, drawn for `/bibliotheca`'s
-	 * Learn shelf on the day that shelf was unfolded into one card per work —
-	 * so the glyph was already chosen for this exact idea and was left with
-	 * nothing to mark. Reusing it is the rule the other three follow.
+	 * So the seven cards `/bibliotheca` draws are drawn here, from
+	 * `$lib/shelves.ts`, in `ShelfCard`s in a `.shelf-grid` — one list, one
+	 * card, one bed, no copy to keep true. Learn and the Library are named in
+	 * the nav bar, which is where a page rather than a work belongs;
+	 * `/bibliotheca` keeps the Bookmarks card, the painting, and the reason
+	 * both stay off this page (its docblock, §the reader's own shelf).
 	 *
-	 * NO `type` GATE, WHICH THE OTHER TWO LISTS ON THIS PAGE BOTH HAVE. A
-	 * door is a page and not a work: `/bibliotheca` and `/schola` hold no
-	 * corpus text at all and are correct in an empty build, and `/scriptura`
-	 * and `/preces` are the two routes a partial sync is likeliest to be
-	 * synced FOR. Hiding a door because a work type is missing would take the
-	 * reader's way to the page that says the work is missing.
+	 * THE `type` GATE COMES WITH THE LIST and is `visibleShelves()`'s, which
+	 * is the change of mind the doors' own note recorded the other way round: a
+	 * door was a page and correct in an empty build, where a card is a work and
+	 * a card for a work a partial sync did not carry is a door onto an empty
+	 * index. The specimens below are gated on the same test.
 	 */
-	const DOORS = [
-		{
-			href: '/scriptura',
-			icon: 'scroll' as IconName,
-			titleKey: 'nav.bible',
-			taglineKey: 'bible.landing.tagline'
-		},
-		{
-			href: '/preces',
-			icon: 'flame' as IconName,
-			titleKey: 'nav.prayers',
-			taglineKey: 'prayers.landing.tagline'
-		},
-		{
-			href: '/bibliotheca',
-			icon: 'book-open' as IconName,
-			titleKey: 'nav.library',
-			taglineKey: 'library.landing.tagline'
-		},
-		// Last here because it is last on the bar, and the two orders must not
-		// disagree — this block IS the bar with room to say what each door
-		// holds. It pointed at `/catechismus` with the Catechism's own tagline
-		// until 2026-09-04, when Learn got a page of its own (`/schola`).
-		{
-			href: '/schola',
-			icon: 'graduation-cap' as IconName,
-			titleKey: 'nav.learn',
-			taglineKey: 'schola.landing.tagline'
-		}
-	] as const;
+	const shelves = $derived(visibleShelves());
 
 	const has = (type: WorkType) => listWorksOfType(type).length > 0;
 
@@ -272,48 +254,38 @@
 	{#if day}
 		<section class="today" aria-labelledby="today-heading">
 			<h2 id="today-heading" class="visually-hidden">{t('calendar.today')}</h2>
-			<LiturgicalDayCard {day} />
-			<a class="today-more" href="/calendarium">{t('calendar.title')} &rarr;</a>
+			<!-- The way to the calendar is a glyph in the card's own corner, not a
+			     line under it — `LiturgicalDayCard`'s `more` prop says why, and
+			     `/calendarium` passes nothing because it IS the destination. -->
+			<LiturgicalDayCard {day} more={{ href: '/calendarium', label: t('calendar.title') }} />
 		</section>
 	{/if}
 
-	<nav class="doors" aria-labelledby="doors-heading">
-		<h2 id="doors-heading">{t('home.doors.heading')}</h2>
-		<ul>
-			{#each DOORS as door (door.href)}
-				<li>
-					<a class="door" href={door.href}>
-						<!--
-							THE MARK AND THE NAME ARE ONE LINE, which is `.shelf-heading`'s
-							arrangement on `/bibliotheca` and not a second idea: the icon
-							belongs beside the first line of the title rather than centred
-							against the title AND its sentence together. A SPAN and not an
-							`<h3>`, which is the one place the two cards differ — that page
-							is a catalogue of seven named works and a reader moving by
-							heading should meet all seven, where this is a `<nav>` of four
-							doors whose link text is already the name.
-
-							Decorative, so `aria-hidden` — which `Icon.svelte` enforces
-							rather than offers. The name beside it is the name.
-						-->
-						<span class="door-heading">
-							<span class="door-icon"><Icon name={door.icon} /></span>
-							<span class="door-title">{t(door.titleKey)}</span>
-						</span>
-						<!-- `{@html}` on the same terms as `/catechismus`'s masthead:
-						     every string here is a literal in a checked-in dictionary,
-						     named by a key in this file, and nothing is passed through
-						     from the corpus or from a URL. -->
-						<span class="door-tagline">{@html t(door.taglineKey)}</span>
-					</a>
-				</li>
+	<!--
+		A `<nav>` and not a `<section>`, which is the one place this differs from
+		`/bibliotheca`'s copy of the same grid: there the cards are the page's
+		SUBJECT, catalogued, and here they are the way in. The heading is hidden
+		either way — see the docblock; the seven names under it are what a
+		reader is looking at, and a rule reading "Where to go" over them names
+		what the cards already say.
+	-->
+	<nav aria-labelledby="doors-heading">
+		<h2 id="doors-heading" class="visually-hidden">{t('home.doors.heading')}</h2>
+		<ul class="shelf-grid">
+			{#each shelves as shelf (shelf.key)}
+				<ShelfCard
+					href={shelf.href}
+					icon={shelf.icon}
+					title={t(shelf.titleKey)}
+					tagline={t(shelf.taglineKey)}
+				/>
 			{/each}
 		</ul>
 	</nav>
 
 	{#if specimens.length > 0}
 		<section class="find" aria-labelledby="find-heading">
-			<h2 id="find-heading">{t('home.find.heading')}</h2>
+			<h2 id="find-heading" class="visually-hidden">{t('home.find.heading')}</h2>
 			<!--
 				NOT LINKS, AND NOT A LIVE FIELD EITHER. The jump box is a control
 				in the header of every page rather than an address, so this
@@ -353,36 +325,20 @@
 	}
 
 	section,
-	.doors {
+	nav {
 		margin: 2.25rem 0;
 	}
 
-	/*
-	 * The ruled heading `/schola` and `/bibliotheca` both set their sections
-	 * with, down to the declaration.
-	 *
-	 * IT WAS DELETED ON 2026-09-06 AND IS BACK THE SAME DAY, which is worth
-	 * the two lines because the deletion was right. Once "Continue reading"
-	 * left this page, every heading on it was `visually-hidden` and this rule
-	 * styled nothing — a rule with no subject, correctly removed. What brings
-	 * it back is that the page now HAS two sections a reader can see the names
-	 * of, the doors and the notation, and neither is a single titled object.
-	 * The day's heading stays hidden for the reason it always did, so the rule
-	 * is again one short of the headings on the page.
-	 */
-	section h2,
-	.doors h2 {
-		font-family: var(--font-serif);
-		font-size: 1.3rem;
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.4rem;
-		margin: 0 0 1rem;
-	}
+	/* THE RULED HEADING IS GONE AGAIN, and this is the second time. It was
+	   deleted when "Continue reading" left the page and every heading here was
+	   hidden, restored the same day when the doors and the notation were given
+	   visible ones, and deleted for good when the sections stopped being titled
+	   — see the docblock. `/bibliotheca` and `/signata` keep the declarations,
+	   where a heading is still read. */
 
-	/* The day's card already carries the celebration's name as its own
-	   heading, so a rule reading "Today" above it would be a second title over
-	   one object. The heading exists for the document outline and nothing
-	   else. */
+	/* Every `h2` on this page is for the outline and none is drawn. The day's
+	   card is already titled by its celebration, the catalogue by its seven
+	   cards, and the notation by the specimens themselves. */
 	.visually-hidden {
 		position: absolute;
 		width: 1px;
@@ -397,168 +353,18 @@
 
 	/*
 	 * THE DAY SITS IN THE SLOT THE OTHER TWO LANDING PAGES GIVE THEIR BANNER —
-	 * under the title and its sentence, above the first rule. So it takes the
+	 * under the title and its sentence, above the catalogue. So it takes the
 	 * tighter margin a masthead takes there (`1.5rem`) rather than the
-	 * `2.25rem` that separates two ruled sections from each other.
+	 * `2.25rem` that separates the sections from each other.
 	 */
 	.today {
 		margin-top: 1.5rem;
 	}
 
-	.today-more {
-		display: inline-block;
-		margin-top: 0.6rem;
-		font-size: 0.9rem;
-		text-decoration: none;
-	}
-
-	/* The one link here that is a sentence rather than a target, so it promotes
-	   the way a sentence's link does. The arrow stays put: it is part of the
-	   label, and a link that moves under the pointer is a target that moves
-	   under the pointer. */
-	.today-more:hover,
-	.today-more:focus-visible {
-		text-decoration: underline;
-		text-underline-offset: 0.15em;
-	}
-
-	/* --- The doors ---------------------------------------------------------
-	 *
-	 * A `<nav>` because that is what it is: the same five choices the header
-	 * offers, given room to say what each one holds. It is the header's row
-	 * that has to be terse, not this.
-	 *
-	 * THEY STAY CARDS, WHERE `/schola`'s ROWS ARE NOT, and that page's own
-	 * comment is the argument for both: a grid of doors means the reader is
-	 * being asked to CHOOSE BETWEEN them, which is false of a reference list
-	 * read in sequence and is exactly true here. Four boxes is also the count
-	 * that makes it work — sixteen of them is what made the guide's rows read
-	 * as a dashboard.
-	 *
-	 * TWO COLUMNS AT MOST, AND THE MINIMUM IS WHAT ENFORCES IT. The track was
-	 * `minmax(15rem, 1fr)`, which resolves to FOUR columns at the full
-	 * `--landing-width` — and the four doors do not carry four comparable
-	 * sentences. Each tagline is the one its own landing page is described by
-	 * (§DOORS), and those were written for the top of a page rather than for a
-	 * card: `bible.landing.tagline` is one line and `schola.landing.tagline`
-	 * is five, so a row of four equal-height cards was sized by the longest
-	 * and left the first two three-quarters empty.
-	 *
-	 * `24rem` is derived and not chosen by eye. `--landing-width` is 72rem and
-	 * the column pads 1.25rem either side, so 69.5rem is the widest this grid
-	 * is ever laid out in; three tracks would need 3 x 24rem + 2 x 0.75rem =
-	 * 73.5rem and cannot fit, and two need 48.75rem and fit from about 50rem
-	 * of viewport upward. So the grid is 2 x 2 wherever there is room and one
-	 * column on a phone, with no breakpoint to keep in step — and re-deriving
-	 * it is the required move if `--landing-width` changes.
-	 *
-	 * `min(24rem, 100%)` AND NOT A BARE `24rem`, which is the whole reason
-	 * this idiom is written with a `min()` wherever it appears. A grid track's
-	 * minimum is a floor and not a preference: at 390px of viewport the cards
-	 * were laid out 384px wide inside a 350px column and ran off the side of
-	 * the phone, with the section rules above them stopping at the column edge
-	 * to prove it. The `100%` lets the single track collapse to whatever the
-	 * column actually is, and changes nothing at any width where 24rem fits.
-	 */
-	.doors ul {
-		list-style: none;
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
-		/* NO `grid-auto-rows: 1fr`, WHICH `/bibliotheca` DOES SET — the second
-		   place the two grids part company, and for the same underlying reason
-		   as the first. That rule equalises rows, not cards: the two doors in
-		   a row already stretch to each other, and `1fr` additionally makes
-		   row one as tall as row two. Across that page's four short columns
-		   that buys a straight bottom edge; here it makes Bible and Prayers as
-		   tall as Learn's five-line sentence, and at one column — every phone
-		   — it makes all four that tall, which is most of a screen of empty
-		   card. */
-		gap: 0.75rem;
-		margin: 0;
-		padding: 0;
-	}
-
-	/* `height: 100%` rather than a stretched item's default, because the `<li>`
-	   is what the grid stretches and the anchor inside it has to be told to
-	   follow — without it a short card's target stops above the bottom of its
-	   own outline. `/bibliotheca`'s `.shelf` states the same thing; these are
-	   one object on two pages. */
-	.door {
-		display: block;
-		height: 100%;
-		padding: 0.9rem 1rem;
-		text-decoration: none;
-		color: var(--color-text);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-
-	/* `.book-btn`'s hover, which is the same object: a name out of a grid,
-	   leading into the text. */
-	.door:hover,
-	.door:focus-visible {
-		border-color: var(--color-accent);
-	}
-
-	.door:hover .door-title,
-	.door:focus-visible .door-title {
-		color: var(--color-accent);
-	}
-
-	/*
-	 * THE MARK IS CENTRED IN A ONE-LINE BOX AND NOT BASELINE-ALIGNED, which is
-	 * `.shelf-heading`'s correction on `/bibliotheca` and is worth taking here
-	 * rather than rediscovering: a box with no text in it has no baseline of
-	 * its own, so a flex line takes its BOTTOM EDGE as one and a 1em glyph
-	 * stands a full em over capitals that reach about seven tenths. `1lh`
-	 * reads the heading's own line height, so centring a line box against a
-	 * line box needs no font metrics and no nudge — the `margin-block-start`
-	 * that used to sit here was that nudge.
-	 *
-	 * `align-items: start` so the mark stays beside the FIRST line of a title
-	 * that wraps, rather than halfway down two.
-	 */
-	.door-heading {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		align-items: start;
-		column-gap: 0.5rem;
-	}
-
-	/*
-	 * `--color-accent` at three-quarters, and nothing else on the card
-	 * coloured: the mark identifies the door and the title names it, so a
-	 * second saturated element would make the card look like a control. It
-	 * reaches full opacity on hover with the border, so the card answers in
-	 * two places at once. No `line-height` of its own — `1lh` above is reading
-	 * the title's, which is the whole reason that unit is used.
-	 */
-	.door-icon {
-		display: grid;
-		place-items: center;
-		block-size: 1lh;
-		color: var(--color-accent);
-		opacity: 0.75;
-	}
-
-	.door:hover .door-icon,
-	.door:focus-visible .door-icon {
-		opacity: 1;
-	}
-
-	.door-title {
-		font-family: var(--font-serif);
-		font-size: 1.15rem;
-	}
-
-	.door-tagline {
-		display: block;
-		margin-top: 0.3rem;
-		font-size: 0.82rem;
-		line-height: 1.45;
-		color: var(--color-text-muted);
-	}
+	/* THE CARD AND ITS GRID ARE BOTH SHARED, so this page draws neither. The
+	   seven cards are `ShelfCard.svelte` over `$lib/shelves.ts`, laid out in
+	   `.shelf-grid` from `components.css`, and `/bibliotheca` draws the same
+	   three. What is left below belongs to the notation alone. */
 
 	/* --- The notation ------------------------------------------------------
 	 *
@@ -603,7 +409,6 @@
 	}
 
 	@media print {
-		.door,
 		.specimen {
 			background: none;
 			break-inside: avoid;

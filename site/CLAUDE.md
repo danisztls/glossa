@@ -802,14 +802,17 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   rather than letting the text have it: a rail of date/author/kind at the end
   of the title's line, then a column of subject chips beside the blurb. An
   index blurb is not the reading grid and takes no `--measure-cpl`.
-- **The home page's doors mirror the bar's order**, Learn last in both. Two
-  lists of the same five things that disagree is worse than one.
+- **The home page has no doors any more** (2026-09-06, by direction): the
+  section that held four is the catalogue itself, drawn from the same list, card
+  and grid as `/bibliotheca` — a home page whose answer to "what is here" was a
+  link to the answer. Learn and the Library keep their bar entries, a page
+  rather than a work belonging there.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library that held only what the bar left out is
   a leftovers bin, and the label stops meaning anything.
 - **No page in this group writes a SENTENCE of its own except the home page.**
-  Library's shelves and the home page's doors reuse the key each destination is
-  already titled and described by, the same rule `route-titles.mjs` follows for
+  The catalogue's cards reuse the key each destination is already titled and
+  described by, the same rule `route-titles.mjs` follows for
   the `<head>`. Adding a shelf should add no dictionary key; if it does, check
   whether the destination page really has no tagline. The exceptions are
   `ccc.landing.pairTitle` and `ccc.landing.pairTagline` — one card names the
@@ -819,8 +822,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Both are in all 37 since 2026-09-06, the two halves of the name having been
   translated already. `/` is the other exception and has three of its own — see
   its bullet below.
-- **`/bibliotheca`'s shelves ARE the home page's `.door` grid** (2026-09-06),
-  cards across rather than blocks down a 72rem column, each one anchor with
+- **THE CATALOGUE IS ONE OBJECT IN THREE FILES** (2026-09-06) — `$lib/shelves.ts`
+  (the entries and `visibleShelves()`), `ShelfCard.svelte` (the card),
+  `.shelf-grid` in `components.css` (the bed) — because `/bibliotheca` and the
+  home page both draw it and two copies drift the first time a work is
+  ingested. Cards across rather than blocks down a 72rem column, each one anchor with
   **the same glyph `/schola` gives that work** — take the icon from there
   rather than choosing again. One card per work, no nesting: a shelf could hold
   rows and exactly one did, and that one shelf was what kept the card from
@@ -842,10 +848,14 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   still true and needs no container, since one card per work makes the ORDER
   say it. `/doctores` keeps its card and its caveat; the row jumping past that
   caveat into the Summa went.
-- **The last card is Bookmarks and it is not a work** — `/signata`'s section
-  counts as chips where a work card puts its sentence, absent for a reader who
-  has marked nothing (an `auto-fit` grid needs no branch for that).
-- **The home page is the day, the doors and the notation** —
+- **The last card is Bookmarks, it is not a work, and it is UNCONDITIONAL**
+  (2026-09-06): it carried `/signata`'s section counts as chips where a work
+  card puts its sentence, and was hidden on an empty store — a catalogue names
+  what the site HAS, and a door that opens only once you have found the feature
+  elsewhere is shut against the one reader looking for it. It is the one card
+  the home page's copy of this list leaves behind, being the reader's own shelf
+  rather than a work.
+- **The home page is the day, the catalogue and the notation** —
   `organization.md`'s three ways in (by date, by question, by address), in the
   reverse order of expertise. Do not put an index on it: it carried the Bible's
   whole table of contents and the Catechism's whole outline until 2026-09-04,
@@ -855,16 +865,20 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   every first-time reader was arranging the one page a stranger arrives at
   around a state only a returning reader has, and the returning reader got four
   rows of a list one click away. **Everything on the page is now true on a
-  first visit**, which is the test a new section has to pass.
+  first visit**, which is the test a new section has to pass. **The way to the
+  calendar is a glyph in the day card's own corner** (`LiturgicalDayCard`'s
+  `more` prop, passed by nothing else): under the box it read as a caption on
+  the card rather than as part of it.
 - **The notation section describes the jump box and does not open it.** The
   specimens are inert for the reason `/schola`'s are (a specimen teaches a
   SHAPE), three of them because that is what it takes to show the notations
   differ, and the section names the control rather than linking to it — a
   control in the header of every page is not an address, which is the same
-  reason `/schola` describes the settings menu without a link. The day's
-  heading alone stays `visually-hidden`, its card being already titled; the
-  ruled-heading rule was deleted when the page had no visible heading left and
-  is back now that it has two.
+  reason `/schola` describes the settings menu without a link. **No section on
+  that page is titled** (2026-09-06, by direction): every `h2` is
+  `visually-hidden` and every one still exists, since three rules labelling what
+  the cards and specimens under them already say made the page read as a form.
+  The ruled-heading rule has now been deleted twice and is not coming back.
 - **`/` KEPT THREE ENGLISH-ONLY KEYS AND KEPT ITS `CHROME_PATHS` ROW**
   (2026-09-06, by direction) — the one exception to the gate that holds three
   pages unpublished. The keys were translated later the same day and the
@@ -873,18 +887,14 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   leans on, so the next English-only string on `/` inherits it. The gate is on a
   page's name and description, and `/`'s are `home.title` plus five work names,
   written in all 37. `route-manifest.ts` carries why this is not a precedent.
-- **Two columns of doors at most, and `24rem` is what enforces it.** Derived
-  against `--landing-width`, not chosen by eye: at 15rem the track resolved to
-  four, and the four taglines are landing-page sentences of wildly different
-  lengths, so the row was sized by `schola.landing.tagline` and left the first
-  two cards three-quarters empty. Write it `minmax(min(24rem, 100%), 1fr)` — a
-  track minimum is a floor, and the bare form ran the cards off the side of a
-  390px phone. **The doors also do NOT take `/bibliotheca`'s
-  `grid-auto-rows: 1fr`**: that rule equalises ROWS, where cards in one row
-  already stretch to each other, so on four short columns it straightens a
-  bottom edge and on two long ones — and on a phone's one — it makes every door
-  as tall as Learn's sentence. Both divergences have one cause: seven
-  short-tagline cards want to flow and four long-tagline doors do not.
+- **`.shelf-grid` is `minmax(min(16rem, 100%), 1fr)` with `grid-auto-rows: 1fr`,
+  and both pages take it whole.** Four columns at the full `--landing-width` is
+  what a catalogue wants — seven cards down two columns is a screenful of
+  scrolling to see a list that fits on a screen — and equalising the rows buys a
+  straight bottom edge across four short columns. **Write the track minimum with
+  a `min()`**: a bare `24rem` (the home page's, while it had doors) laid the
+  cards out 384px wide inside a 350px column and ran them off the side of a
+  390px phone, with the section rules stopping at the column edge to prove it.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

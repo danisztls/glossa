@@ -29,6 +29,7 @@
 	} from '$lib/calendar';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import Icon from './Icon.svelte';
 	import TermGloss from './TermGloss.svelte';
 
 	interface Props {
@@ -45,8 +46,21 @@
 		 * page answering a question it has just been asked.
 		 */
 		showDate?: boolean;
+		/**
+		 * A way out of the card, drawn as a glyph in its top corner.
+		 *
+		 * The home page passes `/calendarium`, being the one surface that shows
+		 * a day without being the calendar; `/calendarium` passes nothing, a
+		 * link to the page you are on being no link at all. It is a prop rather
+		 * than a fixed anchor for exactly that reason — the card is shared, and
+		 * only its caller knows whether there is anywhere to go.
+		 *
+		 * `label` is the accessible name AND the tooltip: the glyph carries no
+		 * text, so the string is the only thing that says where it leads.
+		 */
+		more?: { href: string; label: string };
 	}
-	let { day, heading = 'h2', showDate = true }: Props = $props();
+	let { day, heading = 'h2', showDate = true, more }: Props = $props();
 
 	let lang = $derived(i18n.lang);
 
@@ -79,15 +93,16 @@
 
 <article class="day">
 	<header>
-		{#if showDate}
-			<p class="date">{formatPromulgated(day.date, lang)}</p>
-		{/if}
-		{#if heading === 'h1'}
-			<h1>{name}</h1>
-		{:else}
-			<h2>{name}</h2>
-		{/if}
-		<!--
+		<div class="head-text">
+			{#if showDate}
+				<p class="date">{formatPromulgated(day.date, lang)}</p>
+			{/if}
+			{#if heading === 'h1'}
+				<h1>{name}</h1>
+			{:else}
+				<h2>{name}</h2>
+			{/if}
+			<!--
 			EVERY WORD ON THIS LINE IS A TERM OF ART and a reader meeting the page
 			for the first time knows none of them: a colour that is a vestment
 			colour, a rank out of the Universal Norms, a season that is not the
@@ -96,35 +111,57 @@
 			`/calendarium` — written once, in the dictionary, so the two cannot
 			come to disagree.
 		-->
-		<p class="meta">
-			<span class="colour">
-				<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
-				<TermGloss
-					term={t(`calendar.colour.${day.colour}`)}
-					gloss={t(`calendar.gloss.colour.${day.colour}`)}
-				/>
-			</span>
-			<span class="rank">
-				<TermGloss
-					term={rankLabel(day.celebration)}
-					gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
-				/>
-			</span>
-			<span class="season"
-				><TermGloss
-					term={seasonName}
-					gloss={t(`calendar.gloss.season.${day.season}`)}
-				/>{weekSuffix}</span
-			>
-		</p>
-		{#if day.celebration.transferredFrom}
-			<!-- Said out loud rather than shown silently on the wrong day: a
-			     solemnity impeded by Holy Week is kept elsewhere, and a reader
-			     looking for it on its own date deserves to know why it moved. -->
-			<p class="transferred">
-				{t('calendar.transferredFrom')}
-				{formatPromulgated(day.celebration.transferredFrom, lang)}
+			<p class="meta">
+				<span class="colour">
+					<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
+					<TermGloss
+						term={t(`calendar.colour.${day.colour}`)}
+						gloss={t(`calendar.gloss.colour.${day.colour}`)}
+					/>
+				</span>
+				<span class="rank">
+					<TermGloss
+						term={rankLabel(day.celebration)}
+						gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
+					/>
+				</span>
+				<span class="season"
+					><TermGloss
+						term={seasonName}
+						gloss={t(`calendar.gloss.season.${day.season}`)}
+					/>{weekSuffix}</span
+				>
 			</p>
+			{#if day.celebration.transferredFrom}
+				<!-- Said out loud rather than shown silently on the wrong day: a
+				     solemnity impeded by Holy Week is kept elsewhere, and a reader
+				     looking for it on its own date deserves to know why it moved. -->
+				<p class="transferred">
+					{t('calendar.transferredFrom')}
+					{formatPromulgated(day.celebration.transferredFrom, lang)}
+				</p>
+			{/if}
+		</div>
+
+		<!--
+			THE WAY OUT IS A GLYPH IN THE CORNER, and was a sentence under the
+			card until 2026-09-06. `Liturgical Calendar →` sat below the box as
+			the home page's only trailing link, which read as a caption on the
+			card rather than as part of it and put the one control the card has
+			outside its own border. In the corner it belongs to the card, and it
+			takes the row's height rather than the header's — `align-items:
+			start`, so a celebration whose name runs to three lines does not
+			carry it down the box.
+
+			`title` AND `aria-label` carry the same string, which is the rule for
+			every icon-only control on the site (`.menu-trigger`'s own): the
+			glyph is `aria-hidden` by `Icon.svelte`'s enforcement, so without the
+			label the link announces its href.
+		-->
+		{#if more}
+			<a class="day-more" href={more.href} aria-label={more.label} title={more.label}>
+				<Icon name="calendar" />
+			</a>
 		{/if}
 	</header>
 
@@ -200,6 +237,42 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		padding: 1rem 1.25rem;
+	}
+	/*
+	 * THE HEADER IS TWO COLUMNS: everything the day says, and the way out.
+	 * `minmax(0, 1fr)` so a long celebration name wraps inside its own column
+	 * rather than pushing the glyph off the card, and `align-items: start` so
+	 * the glyph stays level with the first line of a heading that wraps.
+	 *
+	 * The corner is empty on `/calendarium`, which passes no `more` — the grid
+	 * costs that card nothing, an absent second item taking no track.
+	 */
+	header {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		column-gap: 0.75rem;
+	}
+	/*
+	 * `.menu-trigger`'s shape without its file: a rounded square the size of a
+	 * line, muted at rest and answering with the accent. It is not that class
+	 * because `menus.css` is the CHROME's vocabulary — a control in a bar or a
+	 * panel — and this one lives inside a card in the page's own flow, where
+	 * the trigger's fixed 2.25rem square would out-measure the date beside it.
+	 */
+	.day-more {
+		display: grid;
+		place-items: center;
+		inline-size: 1.75rem;
+		block-size: 1.75rem;
+		border-radius: var(--radius-sm);
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+	.day-more:hover,
+	.day-more:focus-visible {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
 	}
 	.date {
 		margin: 0;
@@ -300,5 +373,13 @@
 	.rank-inline {
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
+	}
+	/* A glyph that opens a page says nothing on paper. `print.css` hides the
+	   site's chrome by selector; this control is inside a card in the flow, so
+	   it has to refuse for itself. */
+	@media print {
+		.day-more {
+			display: none;
+		}
 	}
 </style>

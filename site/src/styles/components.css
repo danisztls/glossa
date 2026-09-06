@@ -160,6 +160,41 @@
 }
 
 /*
+ * THE CATALOGUE GRID — the bed `ShelfCard`s are laid out in.
+ *
+ * Two pages draw the same seven cards: `/bibliotheca`, which is the catalogue,
+ * and the home page, which offers it as the way in for a reader holding no
+ * address. The card is a component and the list is `$lib/shelves.ts`, so the
+ * grid is the last thing the two would have had to keep in step by hand — and
+ * it is here rather than in `ShelfCard` because a grid is a property of the
+ * bed and not of what lies on it.
+ *
+ * `minmax(16rem, 1fr)` resolves to four columns at the full `--landing-width`,
+ * which is what a catalogue wants: the reader is meeting the whole holding at
+ * once, and seven cards down two columns is a screenful of scrolling to see a
+ * list that fits on a screen. `grid-auto-rows: 1fr` equalises the ROWS as well
+ * as the cards within one, which across four short columns buys a straight
+ * bottom edge.
+ *
+ * `min(16rem, 100%)` AND NOT A BARE `16rem`, which is the whole reason this
+ * idiom is written with a `min()` wherever it appears. A grid track's minimum
+ * is a floor and not a preference: at 390px of viewport a bare 24rem laid the
+ * home page's cards out 384px wide inside a 350px column and ran them off the
+ * side of the phone, with the section rules above them stopping at the column
+ * edge to prove it. The `100%` lets the single track collapse to whatever the
+ * column actually is, and changes nothing at any width where 16rem fits.
+ */
+.shelf-grid {
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+	grid-auto-rows: 1fr;
+	gap: 0.75rem;
+	margin: 0;
+	padding: 0;
+}
+
+/*
  * THE PANEL SURFACE — the ground a thing floating over the page is drawn on,
  * and nothing about where it floats.
  *

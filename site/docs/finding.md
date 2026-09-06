@@ -40,8 +40,9 @@ jump box completes `CCC 1`.
 **Learn is LAST on the bar, not first.** It led on the argument that a newcomer
 needs the leftmost item; what that missed is that the four before it are the
 works themselves, so a bar opening with a page about the others reads as a
-preamble to them. The home page's doors mirror the bar's order, and the two must
-not disagree.
+preamble to them. The home page mirrored that order in four doors of its own
+until 2026-09-06, when the doors became the catalogue; the bar is the only list
+of pages now, which is one fewer place for two orders to disagree.
 
 ## The home page is the three ways in, in the order they are needed
 
@@ -53,11 +54,11 @@ whole corpus is addressed by was something a reader found out about by pressing
 which is one click behind a door labelled for someone who does not know they
 need it.
 
-**The day, the doors, then the notation.** The order is the reverse of expertise
-and is deliberate: the day is the only surface anyone returns to daily, the doors
-are for the reader holding no address at all, and the specimens are last because
-the reader who already knows `CCC 1234` types it into the box without reading
-this page.
+**The day, the catalogue, then the notation.** The order is the reverse of
+expertise and is deliberate: the day is the only surface anyone returns to daily,
+the catalogue is for the reader holding no address at all, and the specimens are
+last because the reader who already knows `CCC 1234` types it into the box
+without reading this page.
 
 **The specimens are inert, and three of them, and the section describes a
 control rather than opening one.** All three follow rules stated elsewhere and
@@ -71,9 +72,42 @@ row would be a longer row teaching nothing more. The Bible's is derived from the
 reader's own citation grammar for the reason `/schola`'s is; the others are
 gated on the work being in the build.
 
-**Two sections gained a heading and one deliberately did not.** The day's stays
-`visually-hidden`: the card carries the celebration's name as its own heading, so
-a rule reading "Today" above it is a second title over one object.
+**The middle way in was four doors and is the catalogue itself** (2026-09-06, by
+direction). The doors were Bible, Prayers, Library and Learn — two works a reader
+wants most, plus two PAGES, one of whose entire content was "the catalogue is one
+click that way". A home page whose answer to _what is here_ is a link to the
+answer charges a click for a list that fits on a screen, and the two works it did
+name were there for being popular rather than for any argument the file could
+state. So the seven cards `/bibliotheca` draws are drawn here: one list
+(`$lib/shelves.ts`), one card (`ShelfCard.svelte`), one grid (`.shelf-grid` in
+`components.css`), and no copy of any of the three to keep true when a work is
+ingested. Learn and the Library are named in the nav bar, which is where a page
+rather than a work belongs.
+
+**The `type` gate came with the list, and it is the reverse of what a door
+wanted.** A door was a page and correct in an empty build — `/bibliotheca` and
+`/schola` hold no corpus text — so hiding one because a work type was missing
+would have taken away the reader's way to the page that says the work is missing.
+A card IS a work, and a card for a work a partial sync did not carry is a door
+onto an empty index, so `visibleShelves()` filters and the specimens use the same
+test.
+
+**No section on the page is titled** (2026-09-06, by direction). Every heading was
+`visually-hidden`; two were made visible on the argument that a rule is right over
+a grid of four and wrong over one titled object; then the grid became the
+catalogue, whose seven cards say what they are better than the words "Where to
+go" over them. Three sections, three rules, three labels naming what is legible
+underneath — the page read as a form. Every `h2` is hidden and every one still
+exists, the outline being what a reader moving by heading has and a rule being
+only what a reader looking at the page sees. The day's was always hidden for the
+narrower reason that its card carries the celebration's name as its own heading.
+
+**The way to the calendar is a glyph in the day card's own corner.**
+`Liturgical Calendar →` sat under the box as the page's only trailing link, which
+reads as a caption on the card rather than as part of it, and put the one control
+the card has outside its own border. `LiturgicalDayCard`'s `more` prop is what
+draws it — a prop, because `/calendarium` renders the same card and a link to the
+page you are on is no link at all.
 
 ## `/schola` is a guide, and its examples are specimens
 
@@ -561,19 +595,22 @@ cover a section one heading already names is a larger claim than the page is
 making.
 
 **No page below the bar declares a SENTENCE of its own, and one declares a
-name.** Library's shelves, the home page's doors and the `<head>` all read the
-key the destination page is already titled and described by
-(`scripts/route-titles.mjs`). A catalogue that paraphrased the pages it lists
+name.** The catalogue's cards — on `/bibliotheca` and on the home page, one list
+between them — and the `<head>` all read the key the destination page is
+already titled and described by (`scripts/route-titles.mjs`). A catalogue that
+paraphrased the pages it lists
 would be a second set of sentences to translate into 37 languages and a second
 set to keep true. The one exception is named below, and it is a name.
 
-**THE SHELVES ARE THE HOME PAGE'S DOOR GRID** (2026-09-06) — cards across the
-column, each carrying the glyph `/schola` already assigns that work, where they
-were stacked blocks down 72rem: a column of headings with an ocean to the right
-of each. **It is the same object and not a resemblance**: the same track
-pattern, the same gap, the same card, and the same whole-card anchor. Only the
-track floor differs (16rem against the doors' 15), because a work's tagline is
-a sentence where a door's is a phrase.
+**THE SHELVES ARE CARDS ACROSS THE COLUMN** (2026-09-06), each carrying the
+glyph `/schola` already assigns that work, where they were stacked blocks down
+72rem: a column of headings with an ocean to the right of each. They were the
+home page's `.door` grid — the same track pattern, the same gap, the same card,
+the same whole-card anchor, differing only in the track floor — for as long as
+that page had doors. **It is one object rather than a resemblance now**: the
+home page draws this same catalogue, so the entries are `$lib/shelves.ts`, the
+card is `ShelfCard.svelte` and the bed is `.shelf-grid` in `components.css`,
+and neither page holds a copy of any of the three.
 
 **AND THE WHOLE CARD IS THE ANCHOR ONLY BECAUSE LEARN WAS UNFOLDED.** For one
 commit a shelf could hold rows of its own and exactly one did — Learn, over the

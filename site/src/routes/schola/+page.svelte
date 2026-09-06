@@ -911,8 +911,8 @@
 	 * SET, and makes the set look chosen. It fills to the accent on hover, so
 	 * the same edge is also the answer to being pointed at.
 	 *
-	 * `--radius-md` and no shadow, exactly as the home page's `.door` — this is
-	 * that object, and a second card idiom is how a site stops having one.
+	 * `--radius-md` and no shadow, exactly as `ShelfCard` — this is that object,
+	 * and a second card idiom is how a site stops having one.
 	 */
 	.picks {
 		list-style: none;
@@ -1109,8 +1109,9 @@
 	 * and worse, it says the rows are things to CHOOSE BETWEEN, which is what a
 	 * grid of doors means everywhere else on this site. These rows are not
 	 * doors. They are entries in a reference list, read in sequence, and the
-	 * home page's `.door` idiom was borrowed here for no better reason than
-	 * that it was the nearest thing to hand.
+	 * catalogue card's idiom (`ShelfCard`, drawn on the home page and
+	 * `/bibliotheca`) was borrowed here for no better reason than that it was
+	 * the nearest thing to hand.
 	 *
 	 * So the box is gone and the structure is carried by a rule and a gutter:
 	 * a hairline above each row, the icon standing free in a fixed inline
