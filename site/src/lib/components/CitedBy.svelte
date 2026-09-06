@@ -52,10 +52,10 @@
 	/**
 	 * COMMENTARY STARTS SWITCHED OFF, and it is the only family that does.
 	 *
-	 * It is 36,995 of the reverse index's 84,775 citers — more than the
-	 * Catechism, the documents and the Summa together — so a heavily annotated
-	 * verse answers "who cites this" mostly with one edition's footnotes, which
-	 * is not what the panel is opened for. It is also the one family already on
+	 * The annotated editions cite Scripture more than the Catechism, the
+	 * documents and the Summa together, so a heavily annotated verse answers
+	 * "who cites this" mostly with one edition's footnotes, which is not what
+	 * the panel is opened for. It is also the one family already on
 	 * the page: the reader's own notes hang off the verses above under their
 	 * own marks, so a row here repeats what is a scroll away. Switched on, it
 	 * stays on for the next chapter.
@@ -105,20 +105,6 @@
 		if (hidden.has(family)) hidden.delete(family);
 		else hidden.add(family);
 	}
-
-	/**
-	 * The family whose chip is under the pointer or holding focus, whose rows
-	 * light up while it is.
-	 *
-	 * IT IS A POINTER STATE AND NOT A CSS `:has()` CHAIN, though the chain is
-	 * writable — `.filters:has(.filter[data-family='x']:hover) ~ ul …`. Focus
-	 * is why: a reader tabbing the chips gets the same answer as a reader
-	 * pointing at them, and `:focus-visible` cannot be reached from a sibling
-	 * subtree without repeating the whole selector. It also costs the panel
-	 * nothing when no chip is being touched, which a seven-branch selector
-	 * evaluated on every hover does not.
-	 */
-	let lit = $state<CitedByFamily | null>(null);
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
@@ -141,11 +127,7 @@
 					class="filter"
 					data-family={family.key}
 					aria-pressed={!hidden.has(family.key)}
-					onclick={() => toggle(family.key)}
-					onpointerenter={() => (lit = family.key)}
-					onpointerleave={() => (lit = null)}
-					onfocus={() => (lit = family.key)}
-					onblur={() => (lit = null)}>{t(family.labelKey)}</button
+					onclick={() => toggle(family.key)}>{t(family.labelKey)}</button
 				>
 			{/each}
 		</div>
@@ -164,7 +146,7 @@
 				</span>
 				<span class="sources">
 					{#each row.sources as source (source.key)}
-						<span class="source" class:lit={source.family === lit} data-family={source.family}>
+						<span class="source" data-family={source.family}>
 							<span
 								class="source-label"
 								class:named={source.fullTitle !== null}
@@ -240,11 +222,14 @@
 
 	/*
 	 * The pigment a shelf is marked with, resolved once per element and read
-	 * by the dot rule below. One list for both consumers, because the chip
-	 * and the row it lights carry the same `data-family` and must draw the
+	 * by the mark rule below. One list for both consumers, because the chip
+	 * and the row it stands for carry the same `data-family` and must draw the
 	 * same colour — a legend and its list that can disagree is worse than no
-	 * legend. The values, the argument for there being seven, and what
-	 * `data-mono` does to them are all in `tokens.css`.
+	 * legend. The values, the argument for the set, and what `data-mono` does
+	 * to them are all in `tokens.css`; the panel spends every pigment there
+	 * but `--pigment-bible`, Scripture being what is READ here and never a
+	 * citer of itself. `/schola` maps the same tokens onto its own row keys,
+	 * and `pigments.test.ts` is what keeps the two from drifting.
 	 */
 	[data-family='catechism'] {
 		--pigment: var(--pigment-catechism);
@@ -271,9 +256,25 @@
 	/*
 	 * The mark itself, on the chip and on every group it stands for.
 	 *
+	 * A SQUARE AND NOT A CIRCLE, which is what this was first. A filled circle
+	 * in front of a word is a bullet wherever it appears, so every group read
+	 * as a list item introducing itself. A square does not: it reads as a
+	 * swatch, which is what a mark shared with a legend above it should read
+	 * as. Turned corners at a twelfth of the side, because a hard rectangle
+	 * two pixels wide reads as a rendering artefact rather than a mark.
+	 *
+	 * DRAWN, NEVER SET, and the reason is NOT the bytes — the glyph is real
+	 * and reachable. `U+25AA` is in Source Sans 3's own release TTF, so it
+	 * would join `source-sans-3-marks.woff2` for about a hundred bytes on a
+	 * face already precached (`fonts.css`). It is drawn because a square is
+	 * a shape CSS makes exactly: `em`-sized, aligned by rule rather than by
+	 * a face's own metrics, with no swap and no fallback to whatever the
+	 * system serves. Reach for the subset when the mark is a DRAWING nobody
+	 * can compute — a hedera, a manicule — and not for a rectangle.
+	 *
 	 * `background` is declared twice on purpose: a browser without
 	 * `color-mix()` drops the second declaration as invalid and keeps the
-	 * first, so the dot is a muted grey rather than absent. The fallback is
+	 * first, so the mark is a muted grey rather than absent. The fallback is
 	 * exactly what `data-mono` resolves to, which is the state this ornament
 	 * is designed to be legible without.
 	 */
@@ -281,11 +282,13 @@
 	.source-label::before {
 		content: '';
 		display: inline-block;
-		inline-size: 0.4em;
-		block-size: 0.4em;
-		border-radius: 50%;
-		margin-inline-end: 0.4em;
-		vertical-align: 0.08em;
+		inline-size: 0.42em;
+		block-size: 0.42em;
+		border-radius: 0.035em;
+		margin-inline-end: 0.45em;
+		/* Sits on the x-height's middle rather than the baseline, which is
+		   where a printed `▪` sets and where the eye expects a swatch. */
+		vertical-align: 0.06em;
 		background: var(--color-text-muted);
 		background: var(--pigment, var(--color-text-muted));
 	}
@@ -347,22 +350,6 @@
 	   CCC cites some Bible verses twenty times, and that is one line. */
 	.source {
 		font-variant-numeric: tabular-nums;
-	}
-
-	/*
-	 * A group lights up while its own chip is hovered or focused.
-	 *
-	 * `box-shadow` AND NOT PADDING, so the wash has room to breathe without
-	 * costing a single pixel of layout: padding here would either eat the
-	 * 0.7rem column gap or reflow a 237-reference panel under the reader's
-	 * pointer, and both are worse than a tight highlight. Nothing animates —
-	 * this follows the pointer, and a fade would still be catching up as it
-	 * moves to the next chip.
-	 */
-	.source.lit {
-		background: var(--color-bg-elevated);
-		box-shadow: 0 0 0 0.2rem var(--color-bg-elevated);
-		border-radius: var(--radius-sm);
 	}
 
 	/* The work's name, said once per group. Quiet relative to the numbers

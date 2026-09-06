@@ -1656,15 +1656,15 @@ holds the rationale. What must be true before touching it:
   and drops the rest, defaulting to the Bible edition they would open. The
   chapter page passes the edition ON SCREEN instead, being the one page where
   the two differ — it falls back when the preferred edition lacks the chapter.
-- **The panel's filter toggles a FAMILY, and the seven cover all eight
-  kinds.** `CitedByFamily` in `cited-by.ts` maps them onto the library's own
+- **The panel's filter toggles a FAMILY, and every citer kind belongs to
+  one.** `CitedByFamily` in `cited-by.ts` maps them onto the library's own
   sections (the Catechism and its Compendium share one); a family that covered
   only some kinds would leave the rest permanently on. Every label is a key a
   page already uses, so a family costs no new string in 37 dictionaries.
-- **The family dots are ORNAMENT, and the shelf is named beside every one of
-  them.** Eight `--pigment-*` tokens, each `color-mix(in oklab, <seed> 50%,
-var(--color-text-muted))` so one definition serves four themes and
-  `data-mono` collapses all of them with `--pigment-strength: 0%`. Judge a seed
+- **The family marks are ORNAMENT, and the shelf is named beside every one of
+  them.** One `--pigment-*` token per shelf, each `color-mix(in oklab, <seed>
+50%, var(--color-text-muted))` so one definition serves every theme, and
+  `data-mono` turns the set off with `--pigment-strength: 0%`. Judge a seed
   by what it MIXES to — a near-neutral one resolves to no colour at all — and by
   how far that lands from the rest (`--pigment-bible`'s minium is 4.7 from the
   Catechism's red; vermilion, the obvious first try, was 1.2). If a pigment ever
@@ -1672,9 +1672,17 @@ var(--color-text-muted))` so one definition serves four themes and
   cannot pay it. `src/lib/pigments.test.ts` is the bookkeeping: the set, the
   mix, the mono dial, and no `var(--pigment-…)` naming a token that does not
   exist.
-- **Commentary starts switched OFF and is the only family that does** — 36,995
-  of the index's 84,775 citers, and the one family already on the page under
-  its own marks. So the buttons are drawn whenever pressing one would change
+- **ONE mark for every family, and it is drawn rather than set.** A square, not
+  a circle: a filled circle before a word is a bullet wherever it appears. `▪`
+  is in Source Sans 3's release TTF and would cost about a hundred bytes on the
+  marks face — it is a CSS box anyway, because a rectangle is a shape CSS makes
+  exactly and a subset is for a mark nobody can compute. A mark PER family was
+  measured and is not available: what the originals add beyond the subsets is
+  fill-and-size variants of three shapes, which at this size is one shape each,
+  so distinct marks need a font chosen for ornaments.
+- **Commentary starts switched OFF and is the only family that does** — the
+  largest family in the index by a wide margin (the sync prints the tally), and
+  the one family already on the page under its own marks. So the buttons are drawn whenever pressing one would change
   something, a lone hidden family included, or a chapter cited by nothing but
   its own apparatus would show an empty panel with no way to open it.
 
@@ -1912,9 +1920,15 @@ it at all — worth 2,745 links, +31% on the work's apparatus.
   subset (Google files U+2020 under `latin-ext`, 158 KB), so
   `static/fonts/source-sans-3-marks.woff2` is a 1.1 KB single-codepoint subset
   under its own family, precached with the core faces; `fonts.css` records the
-  `pyftsubset` line. **`‡`, `※` and `⁂` are not reachable at any price** —
-  checked with fontTools, Google's subsets do not carry them, so a second mark
-  needs a different source font, not a different range. `sidenotes.test.ts`
+  `pyftsubset` line. **"`‡`, `※` and `⁂` are not reachable at any
+  price" WAS HALF WRONG AND THE HALF MATTERS** (corrected 2026-09-06): that was
+  measured over Google's subsets, which partition a font by Unicode RANGE, and
+  a glyph outside every range they define is dropped even where the original
+  has it. Read against the release TTFs, `‡` is in both text families and
+  `※`/`⁂` are in neither — so the first needs a wider subset of a font already
+  here, and only the other two need a different source font. EB Garamond's own
+  original carries `❦` and `☞`. **Ask what the FONT has, never what the subset
+  ships.** `sidenotes.test.ts`
   pins the codepoint against `fonts.css`'s `unicode-range`, because a mark and
   a face that disagree render in a system font and nothing fails.
 - **It sets nothing in the margin, at any width** — the mark opens a card, the

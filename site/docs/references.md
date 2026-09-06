@@ -143,12 +143,12 @@ verse as ten works, so the panel shows the reader's own language and no other
 — `citedSources`' `commentaryLang`, defaulting to the Bible edition they would
 open, and taken from the edition actually on screen by the chapter page, which
 is the only page that can differ from the preference (it falls back when its
-preferred edition has no text for the chapter). Haydock alone cites Scripture
-11,491 times; without the rule, nine apparatuses a reader cannot read stand
-beside the one they can.
+preferred edition has no text for the chapter). Without the rule, every other edition's
+apparatus stands beside the one this reader can actually open, and the
+annotated editions between them are the largest family in the index.
 
 **The panel filters by SHELF and not by kind, so no citer can be
-unfilterable.** `CitedByFamily` maps the eight kinds onto seven of the
+unfilterable.** `CitedByFamily` maps every citer kind onto one of the
 library's own sections — the Catechism and its Compendium are one answer to
 "show me the Catechism", and the rest are one each. Coarser than the kinds
 because a Bible verse cited two hundred times is scanned for a shelf, not for
@@ -159,10 +159,10 @@ change what is shown — more than one family present, or a family that starts
 switched off. Switched-off is the MARKED state, because all but one family
 start on and the panel's loudest thing must not be its own control.
 
-**Commentary is the one family that starts off**, and the reason is the
-measurement above turned around: it is 36,995 of the index's 84,775 citers,
-more than the Catechism, the documents and the Summa together, so a heavily
-annotated verse answers "who cites this" mostly with one edition's footnotes.
+**Commentary is the one family that starts off**, and the reason is the point
+above turned around: the annotated editions cite Scripture more than the
+Catechism, the documents and the Summa together, so a heavily annotated verse
+answers "who cites this" mostly with one edition's footnotes.
 It is also the one family already on the page — the reader's own notes hang off
 the verses under their own marks — so the row repeats what is a scroll away.
 That is why the control is drawn for a LONE hidden family too: a chapter cited
@@ -171,29 +171,46 @@ way to open it.
 
 **The pigments are ornament and are allowed to be, because the shelf is named
 in the same breath.** Each family's chip and each group in the list carry the
-same dot in one of seven low-chroma pigments (`--pigment-*` in `tokens.css`),
-and nothing anywhere is told apart by one: the work's name is beside every dot,
-so a reader under `data-mono` — where `--pigment-strength: 0%` resolves all
-seven to one grey — loses nothing. That is the line to hold. The moment a
+same mark in that shelf's low-chroma pigment (`--pigment-*` in
+`tokens.css`), and nothing anywhere is told apart by one: the work's name is beside every dot,
+so a reader under `data-mono` — where `--pigment-strength: 0%` resolves the
+whole set to one grey — loses nothing. That is the line to hold. The moment a
 pigment is the only thing saying which work a row belongs to, this stops being
-decoration and owes WCAG 1.4.1, which seven hues cannot pay: the monochrome
-palette has three greys at dE 8.6, and the site's own two data colours already
-fall to dE 10.6 under deuteranopia.
+decoration and owes WCAG 1.4.1, which a family of hues this size cannot pay:
+the monochrome palette has three greys at dE 8.6, and the site's own two data
+colours already fall to dE 10.6 under deuteranopia.
 
 **One definition serves every theme, because the mix adapts and the literal
 does not.** Each pigment is `color-mix(in oklab, <seed> 50%, var(--color-text-muted))`,
-so the same seven seeds come out darker on paper and lighter on a dark ground
-with nothing repeated in the four theme blocks — and `oklab` rather than sRGB
+so the same seeds come out darker on paper and lighter on a dark ground with
+nothing repeated per theme — and `oklab` rather than sRGB
 because an sRGB path from ultramarine to a warm grey runs through a muddy
 violet that half these pigments would land in. They resolve to chroma
-0.033–0.084 across a lightness band of 0.05, so the dots differ in hue and in
+0.033–0.084 across a lightness band of 0.05, so the marks differ in hue and in
 almost nothing else. **Judge a new seed by what it mixes to**: the commentary's
 first slate was already near neutral and resolved to chroma 0.017, an
 accidental grey sitting among six colours.
 
-**Hovering or focusing a chip lights that family's rows** — `box-shadow` rather
-than padding, so a 237-reference panel cannot reflow under the reader's
-pointer. It is a pointer state in the component and not a `:has()` chain
-through the sibling list, because focus has to answer the same way as hover and
-`:focus-visible` is not reachable across that subtree without repeating the
-selector seven times.
+**A square and not a circle, and drawn rather than set.** A filled circle in
+front of a word is a bullet wherever it appears, so every group read as a list
+item introducing itself; a square reads as a swatch, which is what a mark
+shared with the legend above it should read as. It is a CSS box rather than a
+`▪`, and the reason is not cost — `U+25AA` is in Source Sans 3's own release
+TTF and would join the existing marks subset for about a hundred bytes on a
+face already precached. A square is simply a shape CSS makes exactly: `em`
+sized, aligned by rule rather than by a face's metrics, with no swap and no
+fallback to whatever the system serves. **Subset for a mark nobody can
+compute** — a hedera, a manicule — **and draw a rectangle.**
+
+**One symbol per family was measured and is not available**, which is worth
+recording because the obvious answer looks available. Of the ornament
+codepoints, all four families in this tree ship only `†`, `¶`, `§`, `•`
+and `*` — and most of those are already spoken for in the immediate vicinity
+(`¶29` is the Catechism's own reference label in this panel, `§8` the
+document's, `†` the commentary marker in the verses above). The originals hold
+more than the subsets do (`‡` in both text faces, `❦` and `☞` in EB Garamond,
+the geometric shapes in Source Sans 3), but what they hold is fill-and-size
+variants of three shapes — `▪ ■`, `◆ ◊`, `● ◦` — which at a mark this size is
+one shape each. `❖` is in neither original at all. A distinguishable mark per
+family needs a font chosen for its ornaments, which is a design decision about
+what sits beside Garamond, not a subsetting one.
