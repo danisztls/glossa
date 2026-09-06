@@ -100,9 +100,10 @@ export const CHROME_PATHS = [
  *
  *   - `/calendarium` holds no corpus text at all, which makes it the purest
  *     chrome page on the site, and its 75 `calendar.*` keys are written in
- *     `en` and `pt`, with `la` partway (2026-09-06). The other 33
- *     dictionaries fall through to English per key (`i18n.svelte.ts`). The
- *     page is also still being built.
+ *     `en`, `pt` and `la` — the last completed 2026-09-06, its primer and its
+ *     twenty-four glosses. The other 34 dictionaries fall through to English
+ *     per key (`i18n.svelte.ts`), and are the whole of what is left. The page
+ *     is also still being built.
  *
  * It is in `STATIC_PATHS`, so it exists, answers 200 and is indexable at its
  * bare address; it is not claimed in a language it is not written in.

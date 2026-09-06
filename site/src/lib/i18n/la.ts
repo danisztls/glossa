@@ -520,5 +520,65 @@ export const la: Dictionary = {
 	'calendar.rank.optional-memorial': 'Memoria ad libitum',
 	'calendar.rank.commemoration': 'Commemoratio',
 	'calendar.rank.sunday': 'Dominica',
-	'calendar.rank.weekday': 'Feria'
+	'calendar.rank.weekday': 'Feria',
+	/* See `en.ts`: each gloss is shown twice, behind the term in the day's
+	   card and in the primer at the foot of `/calendarium`. Where the Missal
+	   itself glosses one of these words this takes its wording -- Easter Time
+	   as `magna dominica` and a Sunday that `praevalet` are the General Norms'
+	   own, and a reader who chose Latin chrome will meet them again there. */
+	'calendar.gloss.season.advent':
+		'Quattuor hebdomadae ante Nativitatem: praeparatio ad adventum Domini, et initium anni Ecclesiae.',
+	'calendar.gloss.season.christmas':
+		'A die Nativitatis usque ad Baptisma Domini, quo ortus Domini et manifestatio eius mundo celebrantur.',
+	'calendar.gloss.season.lent':
+		'Quadraginta dies a feria quarta Cinerum usque ad Missam vespertinam in Cena Domini: paenitentia, eleemosyna et praeparatio ad Pascha.',
+	'calendar.gloss.season.triduum':
+		'Tres dies a vespere feriae quintae in Cena Domini usque ad vesperum Dominicae Paschae — passio, mors et resurrectio Domini, totiusque anni culmen.',
+	'calendar.gloss.season.easter':
+		'Quinquaginta dies a Pascha usque ad Pentecosten, veluti unus dies festus acti — «magna dominica».',
+	'calendar.gloss.season.ordinary':
+		'Triginta tres vel triginta quattuor hebdomadae extra cetera tempora. Non «quaelibet» sed ordinatae: numeris signantur, et Ecclesia vitam doctrinamque Domini ex ordine percurrit. Duobus spatiis decurrit — post Tempus Nativitatis usque ad Quadragesimam, et post Pentecosten usque ad Adventum.',
+	'calendar.gloss.rank.solemnity':
+		'Summus gradus: Pascha, Nativitas, Ascensio, patronus loci proprius. Cum Gloria et Credo celebratur, et a vesperis diei praecedentis incipit.',
+	'calendar.gloss.rank.feast':
+		'Intra ipsum diem celebratur. Apostoli et evangelistae, et dies maiores Domini et Beatae Mariae Virginis.',
+	'calendar.gloss.rank.memorial':
+		'Sanctus die suo recolitur, intra Missam et Officium temporis currentis. Ubicumque servatur, obligatoria est.',
+	'calendar.gloss.rank.optional-memorial':
+		'Servari potest vel omitti, prout sacerdos aut communitas elegerit. Si omittitur, dies simpliciter feria est.',
+	'calendar.gloss.rank.commemoration':
+		'Id quod memoria in Quadragesima fit: oratio Missae feriali addita, quam alioquin tempus integram servat.',
+	'calendar.gloss.rank.sunday':
+		'Dies festus primigenius — dies Domini, omni hebdomada a resurrectione servatus. Sola sollemnitas aut festum Domini ei praevalere potest, in Adventu autem, Quadragesima et Tempore Paschali ne haec quidem.',
+	'calendar.gloss.rank.weekday':
+		'Dies nullam celebrationem propriam habens. Missa et Officium ipsius temporis sunt, unde apparet cur tempus noscere intersit.',
+	'calendar.gloss.colour.white':
+		'Laetitia. Tempus Paschale et Tempus Nativitatis, dies Domini praeter passionis, Beata Maria Virgo, angeli, et sancti qui martyres non fuerunt.',
+	'calendar.gloss.colour.red':
+		'Sanguis et ignis. Dominica in Palmis et feria sexta in Passione Domini, Pentecoste, apostoli et evangelistae, et martyres.',
+	'calendar.gloss.colour.green': 'Tempus per annum: color spei et rerum crescentium.',
+	'calendar.gloss.colour.violet':
+		'Adventus et Quadragesima; adhibetur etiam in Missis defunctorum.',
+	'calendar.gloss.colour.rose':
+		'Bis in anno adhibetur — dominica Gaudete, tertia Adventus, et dominica Laetare, quarta Quadragesimae — ubi ieiunium levatur et finis prospicitur.',
+	'calendar.gloss.colour.black': 'Adhiberi potest in Missis defunctorum.',
+	'calendar.gloss.colour.blue':
+		'Privilegium coloris caerulei: in Immaculata Conceptione adhibetur in Hispania, in Philippinis et in paucis aliis locis quibus Sancta Sedes id concessit.',
+	'calendar.gloss.sundayCycle':
+		'Lectiones dominicales per tres annos decurrunt — A, B et C — Matthaeo, Marco et Luca per vices lectis, Ioanne autem per Quadragesimam et Tempus Paschale. Cyclus dominica prima Adventus vertitur, cum anno Ecclesiae.',
+	'calendar.gloss.weekdayCycle':
+		'Lectiones feriales per duos annos decurrunt, I et II: lectio prior mutatur, Evangelium non mutatur. Annus liturgicus ab anno civili quo finitur nominatur — anni impares I sunt, pares II.',
+	'calendar.gloss.psalterWeek':
+		'Liturgia Horarum psalmos per quattuor hebdomadas distribuit, I ad IV, per annum repetitas. Hic indicatur cuius hebdomadae psalmi hodierni sint, iis qui Horas orant.',
+	'calendar.gloss.obligation':
+		'Dies quo fideles Missae participare tenentur et ab operibus quae id impediant abstinere. Omnis dominica, et ceteri dies quos singulae Episcoporum Conferentiae statuerunt.',
+	'calendar.primer.title': 'Haec tibi nova sunt?',
+	'calendar.primer.lead':
+		'Ecclesia annum proprium servat. Ab Adventu incipit, circa Pascha vertitur, et cuique diei nomen, gradum et colorem tribuit — quae decernunt quid illo die in Missa et in Liturgia Horarum oretur et legatur. Itaque «Dominica XXIII per annum» velut locus citatus est: sacerdoti, choro, cuilibet domi oranti indicat quae orationes et lectiones hodiernae sint.',
+	'calendar.primer.seasons': 'Tempora',
+	'calendar.primer.ranks': 'Quid dies esse possit',
+	'calendar.primer.colours': 'Colores',
+	'calendar.primer.cycles': 'Cycli',
+	'calendar.primer.cyclesLead':
+		'Tres numeri, qui simul indicant quae lectiones et psalmi hodie assignentur.'
 };

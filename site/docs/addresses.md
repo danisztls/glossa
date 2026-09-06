@@ -171,9 +171,9 @@ Portuguese member is described in English is worse than no cluster, because it
 tells a search engine the page is Portuguese and then serves English — and one
 page is held out by it today. `/calendarium` is the purest chrome page on the
 site, holding no corpus text at all, and its 75 `calendar.*` keys are written in
-two dictionaries with a third partway (2026-09-06). It is in `STATIC_PATHS`, so
-it exists, answers 200 and is indexable at its bare address. It is one line plus
-a `CHROME_KEYS` entry on the day its strings are translated.
+three dictionaries — `en`, `pt` and, since 2026-09-06, `la`. It is in
+`STATIC_PATHS`, so it exists, answers 200 and is indexable at its bare address.
+It is one line plus a `CHROME_KEYS` entry on the day its strings are translated.
 
 **`/catechismus/compendium` joined on 2026-09-06**, its nine outstanding
 `compendium.*` keys written into the twenty-three dictionaries that lacked
