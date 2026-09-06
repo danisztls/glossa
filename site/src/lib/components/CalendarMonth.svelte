@@ -366,6 +366,11 @@
 			"Hide plain weekdays" name the ACTION, and a reader who arrives with
 			the pointer already on the button is told what it does rather than
 			what it did. The state belongs to the control, not to its name.
+
+			THE GLYPH IS WHERE THE STATE SHOWS: a solid eye while the plain days
+			are listed, a dashed one while they are not. Not `eye-off`, whose
+			struck-through eye says "hidden from you" — these rows are the
+			reader's own choice not to list, and nothing is being withheld.
 		-->
 		<button
 			type="button"
@@ -375,7 +380,7 @@
 			title={t('calendar.plainDays')}
 			onclick={() => (showPlain = !showPlain)}
 		>
-			<Icon name="eye" />
+			<Icon name={showPlain ? 'eye' : 'eye-dashed'} />
 		</button>
 	</header>
 

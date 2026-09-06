@@ -664,7 +664,10 @@ say something — but it is a judgement about what a reader wants, and one
 counting the days of a month wants the month. So it is a press at the end of
 the listing's own header, where what it changes is on screen: `aria-pressed`
 carries the state and the label names the rows in both of them, which is the
-rule every toggle on this site follows. It is neither in `?d=` nor remembered —
+rule every toggle on this site follows. The glyph is where the state shows — a
+solid eye listing them, a dashed one not — and deliberately not `eye-off`,
+whose struck-through eye would say "hidden from you" about rows the reader
+chose not to list. It is neither in `?d=` nor remembered —
 the address reproduces WHICH DAY, and how many rows are drawn under it is not a
 fact about the day.
 

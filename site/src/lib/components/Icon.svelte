@@ -43,6 +43,10 @@
 	import X from '@lucide/svelte/icons/x';
 	import Bookmark from '@lucide/svelte/icons/bookmark';
 	import Eye from '@lucide/svelte/icons/eye';
+	// The same eye drawn in a dashed outline — an OFF state for a toggle whose
+	// on state is `eye`, where `eye-off` (the struck-through one) would say
+	// "hidden from you" about rows the reader is choosing not to list.
+	import EyeDashed from '@lucide/svelte/icons/eye-dashed';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Link from '@lucide/svelte/icons/link';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
@@ -151,6 +155,7 @@
 		x: X,
 		bookmark: Bookmark,
 		eye: Eye,
+		'eye-dashed': EyeDashed,
 		copy: Copy,
 		link: Link,
 		'trash-2': Trash2,
