@@ -69,13 +69,16 @@
 	 * (`CalendarMonth.svelte`), so the card above changes only when the reader
 	 * changes the day.
 	 *
-	 * ## Two things this page will not do
+	 * ## One thing this page will not do
 	 *
 	 * It does not paint itself in the day's liturgical colour — see
-	 * `LiturgicalDayCard.svelte`. And it does not tell a reader what to read at
-	 * Mass: the lectionary's citations are a work this corpus does not hold,
-	 * and the cycle letters are stated as facts about the year rather than
-	 * dressed up as an answer the site cannot give.
+	 * `LiturgicalDayCard.svelte`.
+	 *
+	 * It DOES now tell a reader what is read at Mass, which this docblock
+	 * denied until 2026-09-06: the citations are the card's, through
+	 * `DayReadings`, and they are citations resolved through this site's own
+	 * editions rather than the text of any conference's lectionary. What that
+	 * still cannot say is in `site/docs/lectionary.md` §THE GAPS.
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';

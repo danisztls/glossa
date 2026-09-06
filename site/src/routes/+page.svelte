@@ -84,14 +84,16 @@
 	 * the card carries the celebration's name as its own heading, and a rule
 	 * reading "Today" above it is a second title over one object.
 	 *
-	 * TWO THINGS IT DELIBERATELY DOES NOT DO. It shows the GENERAL calendar,
+	 * ONE THING IT DELIBERATELY DOES NOT DO. It shows the GENERAL calendar,
 	 * not the reader's country: the territory lives in `/calendarium`'s `?c=`
 	 * and is not persisted anywhere, so this page has nothing to read and
 	 * guessing from a browser locale would put a national solemnity in front of
-	 * someone who never chose that country. And it does not print the day's
-	 * readings — the lectionary is a work this corpus does not hold, and the
-	 * cycle letters on `/calendarium` are stated as facts about the year rather
-	 * than dressed up as an answer the site cannot give.
+	 * someone who never chose that country.
+	 *
+	 * It DOES print the day's readings, which this docblock denied until
+	 * 2026-09-06. They come with the card and not from here — `DayReadings`
+	 * inside `LiturgicalDayCard`, fetched rather than imported so the table
+	 * stays out of this page's boot chunk.
 	 *
 	 * ## Continue reading is on `/signata`, and is not coming back here
 	 *

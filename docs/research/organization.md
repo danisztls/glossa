@@ -16,8 +16,10 @@ failed, the axis the Social Doctrine was sorted on twice before it settled,
 and an exclusion the calendar falsified within a day. A design document
 that is edited until it agrees with the code is a second copy of the code.
 
-Three things came out differently in the building and are marked **[built
-differently]** where they appear. Counts carry the date they were taken.
+What came out differently in the building is marked **[built differently]**
+where it appears, and the marks accumulate as later work falsifies more of
+this — grep for them rather than trusting a count here. Counts carry the
+date they were taken.
 
 It exists because the navigation was built one work at a time. On
 2026-09-03 the bar held six items and by the next morning seven, and the
@@ -168,6 +170,11 @@ With Library holding the map, the home page can stop being an index:
   is absent by choice (§Liturgical scope), so Today states the day and its
   cycle letters and links into `/calendarium`, and the reading links are a
   later addition to a block that already exists.
+  **[built differently]** It carries them, from 2026-09-06, and the last
+  clause is why it cost nothing: the readings went into the CARD, so both
+  this block and `/calendarium` got them from one change and neither page
+  knows about a lectionary. The prediction was right about the shape and
+  wrong only about "cannot yet".
 - **The four doors**, and a link into Library.
 - Nothing else. The full indices already exist at `/scriptura`,
   `/catechismus`, `/documenta`, `/doctrina-socialis`, `/ius-canonicum` and
@@ -364,6 +371,24 @@ the same species as `oracles/` in the corpus repo — an editorial table
 nothing regenerates, tracked, treated as write-once. The root `CLAUDE.md`
 already describes that slot.
 
+**[built differently]** Both halves of that paragraph were wrong, and the
+second one only because the first was. It IS scraped: USCCB publishes a
+page per day carrying the OLM's own lectionary numbers with explicit slot
+markup, so 916 of them are in `raw/usccb-readings/` and `raw/` means what
+it always means. Nothing is hand-read, so nothing is `oracles/`-shaped —
+the parse lands in `build/` like every other scrape, and the checking runs
+the other way: the 1981 typical edition's archive.org scan is read by
+`pipeline/scrapers/olm.py` purely to diff the crawl against, and is refused
+as a source for the reason `site/docs/lectionary.md` §3 measures.
+
+**[built differently]** And what remained was not the table. The table is
+INTERIM: `rules.ts` computes the lectionary number from the liturgical day
+by arithmetic — Easter's weekdays are `255 + 6·week + (weekday − 1)` — so a
+reader asking for 2040 is answered without anyone having crawled it, and
+the crawl became the oracle over the rules rather than the answer. That is
+the same move the calendar made, one layer up. Sourcing was the easy half;
+what took the work was proving the arithmetic against 862 crawled days.
+
 **The calendar shipped with this exclusion stated, and it left the lookup
 key behind.** `site/docs/calendar.md`
 gives the reason in the same terms used here — the readings are a work the
@@ -509,8 +534,10 @@ two would be swept up by rebuilding the pages named, and four would not.
    removes nothing; Library costs a page that does not exist and removes
    three items at once. The cheap one does not shrink the bar and the one
    that shrinks it is not cheap.
-5. Whether Today's readings wait for the lectionary or Today ships without
-   them. The block is buildable now (§The home page) and would answer §2's
-   first question immediately; shipping it twice is a small cost against
-   leaving the only daily-return surface unreachable from the home page
-   for as long as sourcing a lectionary takes.
+5. ~~Whether Today's readings wait for the lectionary or Today ships without
+   them.~~ Answered by events on 2026-09-06 — Today shipped without them and
+   the lectionary followed, so the cost of shipping twice was paid and was
+   the small one predicted. The second shipment was one component inside the
+   card, which is the part the question could not see: it was framed as a
+   choice about the home page and turned out to be a choice about
+   `LiturgicalDayCard`.
