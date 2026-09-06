@@ -133,12 +133,59 @@ prose this project authors with "Do not evaluate, recommend, or contextualize",
 anything that reads like one. A page of our own reading advice would fail all
 three; a page reporting what the sources set out fails none.
 
-**One paragraph is the exception, and it says so on the page.** The note at the
+**Two passages are the exception, and both say so on the page.** The note at the
 top of `/schola` recommends the Compendium to a newcomer in the site's own
-voice, and carries `schola.start.attribution` — "A note from this site, not from
-any of the works below" — directly beneath it. It is `PLAN.md` gap 16's general
-problem, provenance marking, answered by hand in the one place this page creates
-it. **A second such paragraph needs the same mark or it needs not to exist.**
+voice, and the Bible section under it proposes a first reading path; each
+carries `schola.start.attribution` — "A note from this site, not from any of the
+works below" — directly beneath it. It is `PLAN.md` gap 16's general problem,
+provenance marking, answered by hand in the one place this page creates it. **A
+third such passage needs the same mark or it needs not to exist.**
+
+**THE MARK IS A RULE DOWN THE INLINE START, and it is deliberately the only
+thing on the page drawn that way.** `.house-note` and `.suggestion` share it, so
+a reader learns once what "this is the site talking" looks like and does not
+have to read an attribution line to tell recommending from reporting. It is also
+why the Bible section's rows are NOT `.steps`: that numbered gutter belongs to
+the routes, which are orders somebody else set out, and lending it to our own
+suggestion would make the two read as peers.
+
+## The Bible section proposes a path, because nobody else publishes one
+
+**The Church states a narrative frame and never a reading plan, and that
+asymmetry is the whole warrant for this section existing.** Three documents were
+read looking for one and none of them has it:
+
+- **`Dei Verbum` 25** asks bishops to give the faithful "suitable instruction in
+  the right use of the divine books, **especially the New Testament and above
+  all the Gospels**". That is a priority, and it is the strongest thing any
+  magisterial text says about where to start — but it names no single Gospel and
+  no sequence after it.
+- **`Verbum Domini` 41** says the Old Testament is read in the light of Christ
+  and the New in the light of the Old. That is a HERMENEUTIC, not an order.
+  Conflating the two is the usual error, and it is used to justify both
+  "therefore start with the Old Testament" and "therefore skip it".
+- **CCC 54-64**, the stages of revelation, is theology and not a syllabus: it
+  divides salvation history into named stages and cites no books to read. Every
+  year-long plan on sale takes that frame and supplies the missing list itself.
+
+**So the section is ours, is marked as ours, and says so in its own last
+paragraph** — that a numbered year-long plan is one person's arrangement
+published by somebody, not something the Church laid down.
+
+**WHICH GOSPEL IS LEFT OPEN, WITH THE ARGUMENT ATTACHED.** Mark (shortest,
+finishing one beats choosing the best one), Luke (written for an outsider who
+wanted the story in order, and runs on into Acts), John (says outright why it
+was written) are all genuinely argued for and no document settles it. The page
+offers the three with their reasons and adds no fourth row saying which is
+right — the same instinct as the jump box offering both readings of a divergent
+psalm rather than picking one.
+
+**Every row is the reader's own Bible.** `passage()` names a book as their
+edition names it and checks the chapter exists before it links, so a book an
+edition does not carry drops out of the list rather than 404ing; the extents
+(`1-11`, `12-50`) are numerals and cost no dictionary. The two documents are
+cited by their own Latin names through `documentWorkIdFor`, so a reader who has
+chosen an edition of Dei Verbum keeps it.
 
 **Nothing on the page is written twice.** Every step is titled by the corpus, so
 it arrives in the reader's content language and cannot fall behind an ingestion;

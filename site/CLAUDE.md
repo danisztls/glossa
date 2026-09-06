@@ -552,10 +552,22 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   sentence under each is new writing, which is what still holds this page out
   of `CHROME_PATHS`.
 - **`/schola` reports orders and never invents one.** Each route cites the
-  document in this corpus that states it (`learning-routes.ts`); the one
-  paragraph in the site's own voice carries `schola.start.attribution` on the
-  page, because `docs/writing-descriptions.md` forbids recommending and this
-  recommends. A second such paragraph needs the same mark or must not exist.
+  document in this corpus that states it (`learning-routes.ts`); the two
+  passages in the site's own voice — the note at the top and the Bible section
+  under it — each carry `schola.start.attribution` on the page, because
+  `docs/writing-descriptions.md` forbids recommending and they recommend. A
+  third such passage needs the same mark or must not exist.
+- **The mark is a rule down the inline start**, `.house-note` and `.suggestion`
+  sharing one declaration, and it is the only thing on the page drawn that way:
+  a reader learns once what "the site talking" looks like. It is also why the
+  Bible section's rows are NOT `.steps` — that numbered gutter belongs to the
+  sourced routes, and lending it out would make the two read as peers.
+- **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
+  why that section can exist at all and why it has to be ours. `Dei Verbum` 25
+  names a priority ("above all the Gospels") and no sequence; `Verbum Domini`
+  41 gives a hermeneutic, not an order; CCC 54-64's stages of revelation cite
+  no books. Which Gospel to open first is genuinely contested, so the page
+  offers the three that are argued for with their arguments and picks none.
 - **A sourced order still has to be a BEGINNER'S order.** The Council's
   sixteen documents, ranked by the Council's own genres, met the first test and
   failed the second; the route is gone and `learning-routes.ts` holds the note.

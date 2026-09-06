@@ -96,6 +96,7 @@
 		getCccStructure,
 		getCompendiumStructure,
 		getDocumentGroup,
+		getDocumentManifest,
 		getPrayerMeta,
 		getWork,
 		hasBookIntro,
@@ -407,6 +408,87 @@
 				: undefined
 		};
 	});
+
+	/**
+	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS
+	 *
+	 * Everything else here reports: a route is an order some document states,
+	 * a shelf says what a work is, a citation shows what its number means. This
+	 * section RECOMMENDS, and so it carries `schola.start.attribution` under it
+	 * — the same mark the note at the top of the page carries, for the same
+	 * reason `docs/writing-descriptions.md` gives. **A third such passage would
+	 * need the mark too, or it must not exist.**
+	 *
+	 * WHY IT IS OURS AND CANNOT BE ANYONE ELSE'S. The Church states a NARRATIVE
+	 * FRAME and never a reading plan: `Dei Verbum` 25 asks that the faithful be
+	 * taught the right use of Scripture "especially the New Testament and above
+	 * all the Gospels", which is a priority and not a sequence; `Verbum Domini`
+	 * 41 says the two Testaments are read in each other's light, which is a way
+	 * of reading and not an order to read in; and CCC 54-64's stages of
+	 * revelation are theology, not a syllabus — they name no books. Every
+	 * year-long plan on sale takes that frame and supplies the book list
+	 * itself. So does this, at a quarter of the length; the difference is that
+	 * it says so.
+	 *
+	 * WHICH GOSPEL IS A REAL DISAGREEMENT and the page leaves it open, offering
+	 * the three that are actually argued for with the argument attached rather
+	 * than picking one and presenting the pick as settled. That is the same
+	 * instinct as the jump box offering both readings of a divergent psalm.
+	 *
+	 * EVERY ROW IS THE READER'S OWN BIBLE. `passage` names a book as their
+	 * edition names it and checks the chapter exists before it links; a book an
+	 * edition does not carry drops out of the list rather than 404ing. The two
+	 * documents are cited by their own Latin names, read from the edition the
+	 * reader would land in.
+	 */
+	interface Passage {
+		label: string;
+		href: string;
+	}
+
+	const passage = (osis: string, chapter: number, extent?: string): Passage | undefined => {
+		const book = bibleWorkId ? getBook(bibleWorkId, osis) : undefined;
+		if (!book?.chapters.some((c) => c.n === chapter)) return undefined;
+		return {
+			// The extent is a pair of numerals and needs no dictionary; the name
+			// is the edition's own, so a Portuguese reader is sent to "Gênesis
+			// 1-11" and never to somebody else's spelling of it.
+			label: extent ? `${book.name} ${extent}` : book.name,
+			href: hrefFor({ kind: 'bible', osis, chapter })
+		};
+	};
+
+	/** A document cited the way the books list above teaches — its own name,
+	 *  then a section number inside it. `documentWorkIdFor` rather than the
+	 *  bare default, so a reader who has chosen an edition of that document
+	 *  keeps it. */
+	const documentCite = (slug: string, n: number): Passage | undefined => {
+		const workId = content.documentWorkIdFor(slug);
+		const title = workId ? getDocumentManifest(workId)?.short_title : undefined;
+		return title
+			? { label: `${title} ${n}`, href: hrefFor({ kind: 'document', slug, n }) }
+			: undefined;
+	};
+
+	const gospels = $derived(
+		(['mark', 'luke', 'john'] as const)
+			.map((osis) => ({ key: osis, at: passage(osis, 1) }))
+			.filter((row) => row.at !== undefined)
+	);
+	const acts = $derived(passage('acts', 1));
+	const oldTestament = $derived(
+		[
+			{ key: 'beginnings', at: passage('gen', 1, '1–11') },
+			{ key: 'promise', at: passage('gen', 12, '12–50') },
+			{ key: 'exodus', at: passage('exod', 1, '1–20') },
+			{ key: 'psalms', at: passage('ps', 1) }
+		].filter((row) => row.at !== undefined)
+	);
+	const deiVerbum = $derived(documentCite('dei-verbum', 25));
+	const verbumDomini = $derived(documentCite('verbum-domini', 41));
+
+	/** Nothing to suggest where the corpus carries no Gospel to suggest. */
+	const showBiblePath = $derived(gospels.length > 0);
 </script>
 
 <svelte:head>
@@ -441,6 +523,72 @@
 		<p>{t('schola.start.body')}</p>
 		<p class="attribution">{t('schola.start.attribution')}</p>
 	</section>
+
+	<!--
+		THE SUGGESTION, and it wears the mark. `.suggestion` is `.house-note`'s
+		accent rule at section scale, which is the page's one visual for "this is
+		us talking" — learned once at the note above, reused here rather than
+		invented. The attribution at the foot is the same string that note
+		carries, because it is the same claim.
+
+		It sits directly under that note deliberately: the two together are the
+		page's title, and a reader who wants to start today should not have to
+		pass a grid of chrome to be told how.
+	-->
+	{#if showBiblePath}
+		<section class="suggestion landing-measure" aria-labelledby="bible-heading">
+			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
+			<p>{t('schola.bible.library')}</p>
+			<p>
+				{t('schola.bible.start')}
+				{#if deiVerbum}
+					<a class="source" href={deiVerbum.href}>{deiVerbum.label}</a>
+				{/if}
+			</p>
+
+			<p class="lead-in">{t('schola.bible.whichGospel')}</p>
+			<!-- Three answers, each with its reason, and no fourth row saying which
+			     is right. The disagreement is real, no document settles it, and a
+			     page that picked one would be reporting its own preference as the
+			     answer to a question the reader could have weighed themselves. -->
+			<ul class="path">
+				{#each gospels as gospel (gospel.key)}
+					<li>
+						<a class="passage" href={gospel.at?.href}>{gospel.at?.label}</a>
+						<span class="reason">{t(`schola.bible.gospel.${gospel.key}`)}</span>
+					</li>
+				{/each}
+			</ul>
+
+			{#if acts}
+				<p>
+					{t('schola.bible.thenActs')}
+					<a class="passage" href={acts.href}>{acts.label}</a>
+				</p>
+			{/if}
+
+			<p>{t('schola.bible.thenOld')}</p>
+			<ul class="path">
+				{#each oldTestament as step (step.key)}
+					<li>
+						<a class="passage" href={step.at?.href}>{step.at?.label}</a>
+						<span class="reason">{t(`schola.bible.ot.${step.key}`)}</span>
+					</li>
+				{/each}
+			</ul>
+			<p>
+				{t('schola.bible.bothWays')}
+				{#if verbumDomini}
+					<a class="source" href={verbumDomini.href}>{verbumDomini.label}</a>
+				{/if}
+			</p>
+
+			<p>{t('schola.bible.how')}</p>
+			<p>{t('schola.bible.plans')}</p>
+
+			<p class="attribution">{t('schola.start.attribution')}</p>
+		</section>
+	{/if}
 
 	<section aria-labelledby="guide-heading">
 		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
@@ -572,13 +720,87 @@
 		border: 0;
 	}
 
-	/* The note is set off by a rule on its inline start rather than by a box:
-	   a card would make it look like a callout the works below produced, and
-	   what it needs to look like is somebody talking. */
-	.house-note {
-		margin: 1.75rem 0 2.5rem;
+	/*
+	 * THE PAGE'S OWN VOICE IS ONE RULE DOWN THE INLINE START, and both places
+	 * that speak in it wear it. A card would make either look like a callout
+	 * the works below produced, and what they need to look like is somebody
+	 * talking. Learning the mark once is the whole reason the two share it:
+	 * every other thing on this page reports, these two recommend, and the
+	 * reader should be able to see which is which without reading the
+	 * attribution line every time.
+	 */
+	.house-note,
+	.suggestion {
 		padding-inline-start: 1rem;
 		border-inline-start: 3px solid var(--color-accent);
+	}
+
+	.house-note {
+		margin: 1.75rem 0;
+	}
+
+	.suggestion {
+		margin: 0 0 2.5rem;
+	}
+
+	/* Inside the accent rule the heading needs no second edge — the rule has
+	   already said where this region begins. */
+	.suggestion h2 {
+		border-bottom: 0;
+		margin-block: 0 0.6rem;
+		padding-bottom: 0;
+	}
+
+	.suggestion p {
+		margin: 0 0 0.75rem;
+	}
+
+	/* A line that introduces the list under it, so it sits closer to the list
+	   than to the paragraph it follows. */
+	.lead-in {
+		margin-bottom: 0.35rem !important;
+	}
+
+	/*
+	 * THE ROWS ARE NOT `.steps`, DELIBERATELY. That numbered gutter belongs to
+	 * the routes below, which are orders somebody else set out; giving our own
+	 * suggestion the same drawing would make the two read as peers and undo
+	 * what the accent rule is for. These are a plain list: the book, then why.
+	 */
+	.path {
+		list-style: none;
+		margin: 0 0 1rem;
+		padding: 0;
+	}
+
+	.path li {
+		margin-bottom: 0.4rem;
+	}
+
+	.passage {
+		font-family: var(--font-serif);
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.passage:hover,
+	.passage:focus-visible {
+		color: var(--color-accent);
+		text-decoration: underline;
+	}
+
+	.reason {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+
+	/* The warrant, where there is one: small, muted, and a link, so a reader
+	   who doubts that the Church said this can go and read the section that
+	   says it. `.route-source`'s treatment one level in. */
+	.source {
+		font-size: 0.85rem;
+		white-space: nowrap;
 	}
 
 	.house-note p {

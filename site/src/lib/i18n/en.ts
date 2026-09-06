@@ -93,6 +93,52 @@ export const en: Dictionary = {
 	'schola.start.body':
 		'If you are new to this, begin with the Compendium of the Catechism: the same teaching, much shorter, written as questions and answers.',
 	'schola.start.attribution': 'A note from this site, not from any of the works below',
+
+	// THE SECOND PLACE THIS SITE SPEAKS FOR ITSELF, and the last one allowed.
+	// It carries `schola.start.attribution` under it, exactly as the note above
+	// does, because it does the same forbidden thing: it recommends.
+	//
+	// WHY IT HAS TO BE OURS. The Church states a narrative frame and never a
+	// reading plan. `Dei Verbum` 25 asks that the faithful be taught the right
+	// use of Scripture "especially the New Testament and above all the
+	// Gospels" — a priority, not a sequence. `Verbum Domini` 41 says the two
+	// Testaments are read in each other's light — a way of reading, not an
+	// order. CCC 54-64's stages of revelation name no books at all. Every
+	// year-long plan on sale supplies the missing list itself; so does this,
+	// and the difference is that it says so.
+	//
+	// WRITTEN FOR SOMEONE WITH NO FORMATION AT ALL — who cannot name a book of
+	// the Bible and has not met the word "Gospel". Short sentences, no term of
+	// art used before it is explained, and no sentence that assumes the reader
+	// has already decided to believe any of it.
+	'schola.bible.heading': 'If you have never read the Bible',
+	'schola.bible.library':
+		'It is not one book. It is seventy-three, written by many people over more than a thousand years, and they are bound in the order the Church settled on — which is not the order the events happened in, and not the order that is easiest to read. Most people open it at the first page and start there. Most people stop a few weeks later, somewhere in a long chapter of ancient law, because nothing has yet told them what any of it is for.',
+	'schola.bible.start':
+		'So start with a Gospel instead. The Gospels are four short books about the life of Jesus, and they are a long way in — the Bible does not begin with them. Starting there is not our idea: a Council of the Church asked that people be taught the right use of these books “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
+	'schola.bible.whichGospel':
+		'Which of the four is a genuine disagreement, and nobody settles it for you. Three are commonly suggested, for three different reasons — any of them is a good place to be:',
+	'schola.bible.gospel.mark':
+		'The shortest. You can read the whole thing in an afternoon, and having finished one is worth more at the start than having chosen the best one.',
+	'schola.bible.gospel.luke':
+		'Written for someone outside the faith who wanted the story set down in order — which may be exactly you. It runs straight on into the Acts of the Apostles, so it is really the first half of a longer book.',
+	'schola.bible.gospel.john':
+		'The one that says outright why it was written: “that you may believe”. Plain words, and it goes straight at the question of who Jesus is.',
+	'schola.bible.thenActs':
+		'When you have finished one, read what the people who knew him did next:',
+	'schola.bible.thenOld':
+		'Then go back into the older half — but not to the first page, and not all of it. A few places carry the story, and they are the ones the Gospels keep pointing back to:',
+	'schola.bible.ot.beginnings': 'How it begins, and how it goes wrong.',
+	'schola.bible.ot.promise': 'One family, and a promise made to it that outlives everyone in it.',
+	'schola.bible.ot.exodus': 'A people brought out of slavery, and given a law to live by.',
+	'schola.bible.ot.psalms':
+		'Not a story: a hundred and fifty prayers and songs. Read one at a time, in any order. The Church still prays these every day.',
+	'schola.bible.bothWays':
+		'You will recognise things, and that is the point rather than a coincidence. The Church reads the older books in the light of Christ and the newer ones in the light of what came before — each half explains the other, which is why neither is read alone.',
+	'schola.bible.how':
+		'A little on most days beats a lot once. Read slowly enough to notice when a line stops you, and then stop there rather than pushing on. Pray around the reading and not only after it — the same Council put it plainly: we speak to God when we pray, and we listen to him when we read. And do not set out to finish. This is not a task with an end; people who have read it all their lives are still starting again.',
+	'schola.bible.plans':
+		'You will also find year-long plans that number the books and set a daily schedule, and they can be a real help. It is worth knowing what they are: one person’s arrangement of the material, published by somebody, and not something the Church has laid down. The Church gives the story and leaves the timetable to you.',
 	'schola.route.pillars.title': 'The four pillars',
 	'schola.route.pillars.source': 'The plan the Catechism sets out for itself',
 	'schola.route.gospels.title': 'The Gospels, and then Acts',
