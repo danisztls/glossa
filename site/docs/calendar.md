@@ -246,14 +246,42 @@ the one interaction with no navigation behind it was the one with no motion.
 
 So the ownership is inverted rather than the mechanism patched. The date and the
 calendar are `$state` on the page, **seeded from `page.url` and written back to
-the address bar with shallow `replaceState`** — and `page.url` freezing is now a
-fact about a value nothing reads. Two things keep that honest: the builder sets
-both parameters unconditionally, so a stale base cannot carry a stale answer;
-and the arrival path — the remembered calendar applied under a bare
-`/calendarium` — still uses `goto`, because shallow routing throws in dev before
-the router has started and a page's `onMount` runs inside that window. **A URL
-parameter that no `load` reads does not need a navigation to change**, and one
-that some `load` does read cannot be changed without one.
+the address bar** — and `page.url` freezing is now a fact about a value nothing
+reads, kept honest by a builder that sets both parameters unconditionally, so a
+stale base cannot carry a stale answer. **A URL parameter that no `load` reads
+does not need a navigation to change**, and one that some `load` does read
+cannot be changed without one.
+
+**And the flinch survived that, because `$app/navigation`'s `replaceState` is
+not the cheap half of `goto`** (2026-09-05). Its last two lines are
+`page.state = state` and a `root.$set` handing the whole tree a freshly cloned
+`page`, so a shallow write still costs a prop update over every component in
+the app. The page writes `history.replaceState` itself now, carrying
+`history.state` over wholesale — the router keeps its history and navigation
+indices in there and compares them on `popstate` — and updating only
+`sveltekit:pageurl`, which is the address the router would otherwise restore
+this entry to. In dev kit warns once that this conflicts with the router; the
+warning is aimed at the write that drops that bookkeeping, and there is no
+un-warned door to the same thing. The arrival path stopped being an exception
+with it: `goto` was there because shallow routing throws before the router has
+started and `onMount` runs inside that window, and a bare history write has no
+such guard.
+
+**How it was finally caught is the transferable part, and it is not a layout
+technique.** Three rounds of measuring boxes said the header's nav grew ~34px
+and the document a line, for two frames, on every click — which reads as a
+reflow and is not one. `document.fonts.status` was going `loaded` ->
+`loading` -> `loaded` in the same window, and every nav link was scaling by the
+same ~1.13 together: the document was re-resolving its `@font-face` rules and
+rendering in a system fallback until it finished. **A flicker that moves the
+chrome on a page the chrome knows nothing about is a document-wide restyle
+rather than a layout bug**, and `document.fonts`' `loading` / `loadingdone`
+events name the faces in one click. Two false leads are worth naming because
+both were plausible and both were wrong: `scrollbar-gutter` (ruled out —
+`clientWidth` never moved) and Chrome's scroll anchoring (ruled out —
+`scrollY` never moved). The reader's own clue was better than either: the
+flicker stopped after a round trip through a mobile viewport, which is a font
+and scrollbar state change, not a layout one.
 
 **The country picker is a grid of flags.** The reader of that control is not
 weighing alternatives, they are looking for their own country, which they

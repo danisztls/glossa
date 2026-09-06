@@ -79,7 +79,6 @@
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { goto, replaceState } from '$app/navigation';
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
 	import CalendarPrimer from '$lib/components/CalendarPrimer.svelte';
@@ -186,39 +185,62 @@
 	/**
 	 * ## The address bar follows, and no longer drives
 	 *
-	 * `replaceState` from `$app/navigation` — shallow routing, which writes
-	 * `history` and `page.state` and deliberately never touches `page.url`.
-	 *
-	 * THAT PROPERTY WAS THE BUG AND IS NOW THE DESIGN, and the two states of
-	 * this page are worth keeping straight. It began shallow while both values
-	 * were DERIVED from `page.url`, so the address changed under every click
-	 * and the page stayed on today's date for its whole life — two ideas of
+	 * The two states of this page are worth keeping straight. It began with
+	 * both values DERIVED from `page.url` and written by shallow routing —
+	 * which never assigns `page.url` — so the address changed under every click
+	 * and the page stayed on today's date for its whole life: two ideas of
 	 * where it was, one of them shown. The repair was `goto`, which does update
 	 * `page.url`; what `goto` also does is run a navigation, and a navigation
 	 * here is a re-entry into the root layout's `load` (it reads `url`, so it
 	 * re-runs on every one), a `root.$set` over the whole component tree, a
 	 * focus pass and a scroll pass — the entire router lifecycle, for a page
 	 * that fetches nothing and computes every date it shows from arithmetic.
-	 * The reader saw it as a flinch on every single click, in both axes,
-	 * settling back where it started: the same day stepped to twice looked the
-	 * same afterwards and still moved in between. Paging the month never did
-	 * it, because paging is local state and touches no router — which is what
-	 * named the culprit.
 	 *
-	 * So the ownership is inverted rather than the mechanism patched. The
+	 * So the ownership was inverted rather than the mechanism patched: the
 	 * controls hold the state, the URL is seeded from once and written to
-	 * after, and `page.url` being frozen is now simply a fact about a value
-	 * nothing reads: `addressFor` sets both parameters unconditionally, so a
-	 * stale base cannot carry a stale answer.
+	 * after, and `page.url` going stale is now a fact about a value nothing
+	 * reads — `addressFor` sets both parameters unconditionally, so a stale
+	 * base cannot carry a stale answer.
 	 *
-	 * There is no `noScroll`/`keepFocus` to pass because there is nothing to
-	 * suppress — shallow routing scrolls nothing and blurs nothing. It also
-	 * replaces rather than pushes, which is what the `goto` asked for by flag:
-	 * stepping a day is not a destination, and a reader who walked through a
-	 * week is still one Back press from the page they arrived from.
+	 * ## AND THE WRITE IS `history`'s, NOT `$app/navigation`'s
+	 *
+	 * Which is the part that took three attempts, because `replaceState` from
+	 * `$app/navigation` is not the cheap half of `goto`. Its last two lines
+	 * (kit's `client.js`) are `page.state = state` and a `root.$set` handing
+	 * the whole tree a freshly cloned `page` — so a shallow write still costs
+	 * a prop update over every component in the app, `<svelte:head>` included.
+	 *
+	 * WHAT THAT COST LOOKED LIKE was not a re-render. It was the document
+	 * re-resolving its `@font-face` rules: `document.fonts` went `loaded` ->
+	 * `loading` -> `loaded` on every click, and for the two frames in between
+	 * every glyph on the page fell back to a system face — the header's five
+	 * nav links measurably ~13% wider together, the document a line taller,
+	 * then both back. A reader reads that as the page flinching and settling,
+	 * which is exactly how it was reported, twice, and it is why the earlier
+	 * repairs kept missing: nothing was moving, everything was being redrawn in
+	 * a different typeface. Paging the month never did it, because paging is
+	 * local state and writes no history — which is what named the culprit both
+	 * times.
+	 *
+	 * So the address is written by hand. `history.state` is carried over
+	 * WHOLESALE rather than rebuilt, because the router keeps its own
+	 * bookkeeping in there — the history and navigation indices it compares on
+	 * `popstate`, and the shallow-routing state — and dropping any of it would
+	 * turn the next Back press into a full navigation. The one key that is
+	 * ours to update is `sveltekit:pageurl`: it holds the address the router
+	 * will restore this entry to, so leaving it alone would send a reader who
+	 * walked a week and pressed Back to the day they arrived on.
+	 *
+	 * In dev, kit patches `history.replaceState` to warn once that it conflicts
+	 * with the router. It is aimed at exactly the mistake this avoids — a write
+	 * that clobbers the bookkeeping above — and there is no un-warned door to
+	 * the same thing.
 	 */
+	const PAGE_URL_KEY = 'sveltekit:pageurl';
+
 	function mirror() {
-		replaceState(addressFor(), page.state);
+		const url = addressFor();
+		history.replaceState({ ...history.state, [PAGE_URL_KEY]: url.href }, '', url);
 	}
 
 	function go(iso: string) {
@@ -251,13 +273,16 @@
 	 * `/calendarium` would hand out links that show the sender Brazil and the
 	 * recipient Rome.
 	 *
-	 * `goto` HERE AND `replaceState` EVERYWHERE ELSE, which is the one place
-	 * the two mechanisms meet. Shallow routing throws in dev when the router
-	 * has not finished starting, and a page's `onMount` runs inside that
-	 * window — Svelte flushes the mount effects a microtask before the client
-	 * router sets its own started flag. `goto` has no such guard, this runs at
-	 * most once per visit, and it runs while the page is still arriving, which
-	 * is the one moment a navigation costs the reader nothing to look at.
+	 * IT MIRRORS LIKE EVERY OTHER WRITE, which it could not while the write
+	 * was `$app/navigation`'s: shallow routing throws in dev before the router
+	 * has finished starting, and a page's `onMount` runs inside that window —
+	 * Svelte flushes the mount effects a microtask before the client router
+	 * sets its own started flag. `goto` was the exception that bought its way
+	 * past the guard. `history.replaceState` has no guard to buy past, and by
+	 * the time anything mounts the router has already written its bookkeeping
+	 * into `history.state` for `mirror` to carry forward (kit's `client.js`
+	 * creates that entry inside `start`, well before it builds the root), so
+	 * the page holds one mechanism now instead of two.
 	 *
 	 * `onMount` and not `$effect`: this must happen on arrival and never again,
 	 * and an effect over `territory` would fight the reader every time they
@@ -268,7 +293,7 @@
 		const saved = storedTerritory();
 		if (!saved || saved === 'general' || !TERRITORY_CALENDARS[saved]) return;
 		territory = saved;
-		goto(addressFor(), { replaceState: true, noScroll: true, keepFocus: true });
+		mirror();
 	});
 
 	/**

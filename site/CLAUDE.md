@@ -2090,13 +2090,23 @@ in every direction: no console error, no `check` failure, no test.
 
 **A URL PARAMETER NO `load` READS DOES NOT NEED A NAVIGATION TO CHANGE** — so
 the fix above was the wrong half, and this page holds the day and the calendar
-as `$state`, seeded from `page.url` and mirrored back with shallow
-`replaceState` (2026-09-05, §The liturgical calendar). `goto` per click ran the
-root layout's `load`, a `root.$set` over the tree and a focus and scroll pass
-for a page that fetches nothing, and the reader saw it as a flinch on every
-click that settled back where it started; paging the month, which is local
-state and touches no router, was the control that did not flinch. `goto`
-survives only on arrival, where `onMount` runs before shallow routing is legal.
+as `$state`, seeded from `page.url` and mirrored back (2026-09-05, §The
+liturgical calendar). `goto` per click ran the root layout's `load`, a
+`root.$set` over the tree and a focus and scroll pass for a page that fetches
+nothing; paging the month, which is local state and touches no router, was the
+control that did not flinch.
+
+**NOR DOES IT NEED `$app/navigation`, WHOSE `replaceState` ENDS IN A
+`root.$set` OVER THE WHOLE TREE** — so the flinch outlived the paragraph above
+and the page writes `history.replaceState` itself, carrying `history.state`
+over wholesale and updating only `sveltekit:pageurl` (2026-09-05, §The
+liturgical calendar). What that prop update looked like was not a re-render:
+`document.fonts` went `loading` on every click and the document spent two
+frames in a fallback face — the nav's links ~13% wider together, the page a
+line taller, then both back. **A flicker that moves the chrome on a page the
+chrome knows nothing about is a document-wide restyle, not a layout bug**, and
+`document.fonts`' `loading`/`loadingdone` events name it in one click where
+four rounds of measuring boxes did not.
 
 **THE PAGE EXPLAINS ITS OWN VOCABULARY** (2026-09-04). Every word on the day's
 card is a term of art — a vestment colour, a rank out of the Universal Norms, a
