@@ -1270,10 +1270,26 @@ export interface DocumentSection {
 
 export type PrayerKind = 'simple' | 'dialogic' | 'group';
 
-/** Beyond the CCC/Compendium's `prose`/`quote` pair (types.ts, above):
- *  `versicle`/`response` are the leader/assembly halves of a dialogic
- *  prayer (the Angelus's V./R.). */
-export type PrayerBlockKind = 'prose' | 'versicle' | 'response';
+/**
+ * Beyond the CCC/Compendium's `prose`/`quote` pair (types.ts, above):
+ * `versicle`/`response` are the leader/assembly halves of a dialogic prayer
+ * (the Angelus's V./R.), and `attribution` is the credit the page prints under
+ * the prayer — `(Pope Francis, Amoris Laetitia, 325)`, `(Saint Alphonsus
+ * Liguori)`.
+ *
+ * IT IS DECLARED IN THE CURATION AND NEVER RECOGNISED HERE. A line wholly
+ * inside parentheses is not evidence of a credit: the Rosary's groups print
+ * `(on Monday and Saturday)` as a rubric and four Spanish prayers print
+ * `(tradición española)` inside the prayer's own run, so the shape says
+ * nothing and the curated file says everything (`lift_attribution`, in the
+ * corpus).
+ *
+ * `petitions` IS A FOURTH KIND THIS UNION DOES NOT NAME, and that is a known
+ * gap rather than an oversight — the corpus emits it for the litanies, with
+ * the held response and the invocations under it, and nothing here reads any
+ * of that. `PLAN.md` §A litany is a structure the corpus already holds.
+ */
+export type PrayerBlockKind = 'prose' | 'versicle' | 'response' | 'attribution';
 
 export interface PrayerBlock {
 	/** Absent means `'prose'` — see `CccBlock.kind`. */

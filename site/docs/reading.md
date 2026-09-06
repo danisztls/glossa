@@ -38,6 +38,15 @@ lemma begins four characters in, kept one. The quoted run keeps its kind, so it
 still lights when the note opens — the highlight simply begins after the
 versal, which is where a printed edition begins it.
 
+**A prayer's credit is a block, not a last line, and the curation is what says
+so.** `(Pope Francis, Amoris Laetitia, 325)` renders in `.copyright-notice`'s
+three signals — sans, smaller, muted — because it is the same kind of statement
+about a prayer that the notice makes about a work; the space above it is what
+sets it apart, and it is wider than the gap between the prayer's own blocks,
+since a credit run at that distance reads as a stanza that changed voice. The
+site never recognises one: `kind: 'attribution'` arrives from the corpus, where
+a parenthesised line is proof of nothing (`docs/corpus-schema.md`).
+
 **A label is not glossed by its letter.** The prayers print `V.`/`R.` and
 `D.`/`C.` for the same two parts, so the explanation behind each hangs off the
 block's kind — `TermGloss`, the same dotted underline `/calendarium` teaches on

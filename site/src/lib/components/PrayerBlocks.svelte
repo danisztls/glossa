@@ -209,6 +209,19 @@
 				>{/if}
 			<span class="prayer-line-text">{@render body(line)}</span>
 		</p>
+	{:else if line.kind === 'attribution'}
+		<!-- THE CREDIT THE PAGE PRINTS UNDER THE PRAYER, and it is not a line of
+		     the prayer: it says who wrote what is above it, in the source's own
+		     words and parentheses (docs/corpus-schema.md). Set apart the way the
+		     rest of this site sets what it says ABOUT a text rather than the text
+		     — sans, smaller, muted — which is `.copyright-notice`'s treatment and
+		     the reason it needs no colour of its own.
+
+		     `<p>` and not `<cite>`: what stands here is a person as often as a
+		     work ("Saint Alphonsus Liguori"), and `<cite>` names the work. The
+		     line stays exactly as the source set it, brackets included, so
+		     nothing here has to decide which it is. -->
+		<p class="prayer-attribution" class:block-end={line.last}>{@render body(line)}</p>
 	{:else if line.verse}
 		<p class="prayer-verse-line" class:block-end={line.last}>{@render body(line)}</p>
 	{:else}
@@ -224,13 +237,42 @@
 <style>
 	.prayer-prose,
 	.prayer-verse-line,
-	.prayer-line {
+	.prayer-line,
+	.prayer-attribution {
 		margin: 0;
 	}
 
 	.prayer-prose.block-end,
 	.prayer-verse-line.block-end {
 		margin-block-end: 1rem;
+	}
+
+	/*
+	 * `.copyright-notice`'s three signals — sans, smaller, muted — because this
+	 * is the same kind of statement made about a prayer instead of a work, and
+	 * a fourth signal would be a second vocabulary for one idea. The `em` is
+	 * the prayer's own enlarged type, so `--font-size-min` floors it the way
+	 * every other relative reduction on this site does.
+	 *
+	 * THE SPACE ABOVE IS WHAT SETS IT APART, and it is larger than the gap
+	 * between the prayer's own blocks (1rem): run at that distance in a
+	 * different face, a credit reads as a stanza that has changed voice.
+	 *
+	 * AND IT KEEPS THE ORDINARY GAP BELOW, because a credit is not always the
+	 * last thing on the page. The Spiritual Communion is TWO acts, each with
+	 * its own author, so St Alphonsus's line has Cardinal Merry del Val's
+	 * prayer under it — and with no space beneath, the credit sat against the
+	 * versal opening that prayer and read as its heading rather than as the
+	 * previous one's signature. The asymmetry is the whole device: nearer to
+	 * what it credits than to what follows.
+	 */
+	.prayer-attribution {
+		margin-block-start: 1.4rem;
+		margin-block-end: 1rem;
+		font-family: var(--font-sans);
+		font-size: max(var(--font-size-min), 0.72em);
+		line-height: 1.5;
+		color: var(--color-text-muted);
 	}
 
 	/*
