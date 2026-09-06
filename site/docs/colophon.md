@@ -80,14 +80,14 @@ and the name is in the wordmark at every address, so a disclaimer only a reader
 who navigates to the colophon meets does not reach as far as the thing it
 disclaims. `footer.notEndorsed` says **"the Holy See"** rather than "the
 Vatican", which names the state and not the authority. **It is as short as it
-is because of where it sits**: the same footer band carries a link to the full
-statement, so it need not carry its own context. That link was the line
-directly above it until 2026-09-06 and is now the last entry of the footer's
-Pages column — a column over rather than a line up, which is why the wording
-stands; take the colophon out of the footer and this sentence has to grow. Both
-lines of the imprint stay the same SIZE and FACE — set either larger and the
-stack reads as a heading with a caption rather than as an imprint — and the
-motto is marked as a device instead, in small capitals.
+is because of where it sits**: the line two above it links to the full
+statement, so it need not carry its own context. That was tested on 2026-09-06,
+when the link spent an hour as an entry in the footer's own index and came back
+— being somewhere in the same footer is not the same claim as being two lines
+up, and take the colophon out of the footer and this sentence has to grow. The
+three lines stay the same SIZE and FACE — set one larger and the stack reads as
+a heading with captions rather than as an imprint — and the motto is marked as
+a device instead, in small capitals.
 
 **Neither of the two marks beside it is encumbered, and that was checked rather
 than assumed.** _Ad maiorem Dei gloriam_ long ago passed into general Catholic

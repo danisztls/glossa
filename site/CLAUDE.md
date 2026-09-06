@@ -537,12 +537,15 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   `visibleShelves()` and a five-entry `FOOTER_PAGES` beside `NAV_ITEMS` (the
   band itself is §Languages). A bar has one line and a footer has none, so they
   answer different questions rather than being one list at two lengths — do not
-  compose either from the other. `/colophon` closes the Pages column
-  (2026-09-06, by direction), having been the imprint's own line; keep it in the
-  footer wherever it goes, since `footer.notEndorsed` is short on the strength
-  of the full statement being in the same band. Every label was already in all
-  37 dictionaries; the three new keys are the column heads and the `<nav>`'s own
-  name, which must differ from `nav.menu` or two landmarks announce as "Menu".
+  compose either from the other, and do not put `/colophon` in one — it closed
+  the Pages column for an hour and went back to the imprint, where
+  `footer.notEndorsed` is short on the strength of the full statement being two
+  lines under it (2026-09-06, both by direction). **The works run into two
+  tracks with `column-count`**, which is a use of the SPACE and not a second
+  group: one list, one heading, the browser choosing the break, and both groups
+  four rows deep. Every label was already in all 37 dictionaries; the three new
+  keys are the column heads and the `<nav>`'s own name, which must differ from
+  `nav.menu` or two landmarks announce as "Menu".
 - **`Learn` names `/schola`, a guide, and not the Catechism.** It pointed at
   `/catechismus` for one day: a table of divisions is unusable by the reader
   the word was chosen for, who cannot yet name a part (`audiences.md` §5). The
@@ -2847,34 +2850,35 @@ provoked by the NAME and the name is in the wordmark at every address the site
 answers, so the disclaimer has to reach as far as it does. It says "the Holy
 See" and not "the Vatican" (the state, not the authority) nor "ecclesiastical
 approbation" (exact, and unreadable in a footer). **It is this short because of
-where it sits** — the colophon is in the same band, so it need not carry its own
-context; move the colophon out of the FOOTER and it would have to say more.
-Every dictionary carries it.
+where it sits** — the colophon link is the line two above it, so it need not
+carry its own context; move it away from that link and it would have to say
+more. **That was tested on 2026-09-06**: the link joined the footer's index for
+an hour and came back, because being somewhere in the same footer is not the
+same claim as being two lines up. Every dictionary carries it.
 
-**The lines are one chrome, and that is load-bearing rather than lazy.** Motto
-and disclaimer — one column, `.site-footer p` in one rule, spacing from
-`line-height` rather than margins so the even leading is one number. Give either
-its own FACE or its own STEP and the stack reads as a heading with a caption
-instead of an imprint. **The colophon link was the first of the three and joined
-the index on 2026-09-06** (by direction): it is a page like the four beside it
-and looks like one, and what it cost is the adjacency the paragraph above was
-argued from — a column over rather than a line up. **The motto is set as a
-DEVICE** — `font-variant-caps: small-caps`, 0.06em of tracking, full-strength
-ink, and none of the three channels the rule forbids. Weight was the
-alternative and is wrong at 0.8rem, where bold reads as emphasis inside a
-sentence; this is a formula, not a sentence. **The build id was a fourth line
+**The lines are one chrome, and that is load-bearing rather than lazy.**
+Colophon link, motto, disclaimer — one column, `.site-footer p` in one rule,
+spacing from `line-height` rather than margins so the even leading is one
+number. Give any of them its own FACE or its own STEP and the stack reads as a
+heading with captions instead of an imprint. **The motto is set as a DEVICE** —
+`font-variant-caps: small-caps`, 0.06em of tracking, full-strength ink, and none
+of the three channels the rule forbids. Weight was the alternative and is wrong
+at 0.8rem, where bold reads as emphasis inside a sentence; this is a formula,
+not a sentence. **The build id was a fourth line
 here until 2026-09-06 and is now the foot of `AdvancedSheet`** — a dialog opens
 over the document already loaded, so it answers "did this update land" about the
 page in front of you exactly as the footer did, without spending a line of the
 imprint on the one reader who asks.
 
-**No link is left in the imprint to make an exception for, and the rule the
-exception taught is the one to keep: REACH FOR THE GLOBAL RULE BEFORE WRITING A
-FOOTER-LOCAL ONE.** That block once overrode `a` back to `--color-text-muted`
-with no underline, which left the footer's only link indistinguishable from the
-statements under it — an affordance disguised as a caption — and the fix was to
-DELETE the override rather than add anything. It is the standing direction for
-the next link anybody puts in an imprint.
+**The colophon link is the imprint's one exception, and it was made by
+DELETING.** The footer overrode `a` back to `--color-text-muted` with no
+underline, which left the only link in that block indistinguishable from the two
+statements below — an affordance disguised as a caption. The override is gone,
+so `base.css`'s own rule applies: `--color-link`, underline at 35% of its
+colour, solid on hover, like every other link on the site. **REACH FOR THE
+GLOBAL RULE BEFORE WRITING A FOOTER-LOCAL ONE**; the size and leading are
+untouched, so the stack is still one chrome and only the clickable thing looks
+clickable.
 
 **The index's links are the other half of the same rule.** A column of names is
 a list-shaped surface, so it drops the resting underline as the header's nav and

@@ -183,9 +183,16 @@
 	 * header, beside the jump box), and Bible and Prayers are on the bar and
 	 * in the works column, where they belong as texts.
 	 *
-	 * `/colophon` IS here since 2026-09-06 and used to be the imprint's own
-	 * line; the entry below carries what that cost. No Home, for the reason the
-	 * bar gives — the brand link is one, and this would be a third.
+	 * `/colophon` IS NOT HERE, AND IT SPENT AN HOUR HERE — closing this column,
+	 * looking like the four pages above it — before going back to the imprint
+	 * (2026-09-06, both by direction). What the index cannot give it is the
+	 * adjacency `footer.notEndorsed` is written against: that disclaimer is the
+	 * one-sentence form of `colophon.whatThisIsStanding` and is short because
+	 * the full statement is two lines under it, not merely somewhere in the same
+	 * footer. Recorded so the move is not made a third time.
+	 *
+	 * No Home either, for the reason the bar gives — the brand link is one, and
+	 * this would be a third.
 	 */
 	const FOOTER_PAGES = [
 		{ href: '/bibliotheca', key: 'nav.library' },
@@ -195,18 +202,7 @@
 		// the reader has marked. `/signata` is reached from the header by a
 		// glyph, which is a control rather than a name — this is the only place
 		// on the site that says the word.
-		{ href: '/signata', key: 'nav.bookmarks' },
-		// LAST, AND IT WAS THE IMPRINT'S OWN LINE UNTIL 2026-09-06 (by
-		// direction). It is a page like the four above it and now looks like
-		// one; what it costs is the adjacency `footer.notEndorsed` was written
-		// against — that line is the one-sentence form of
-		// `colophon.whatThisIsStanding` and was short because the full statement
-		// was the line directly above it. It is still in this footer and still
-		// one click away, a column over rather than a line up, which is the
-		// weaker form of the same argument and the reason the disclaimer's
-		// wording does not have to change. Last in the column because it is the
-		// page about the site rather than a way into it.
-		{ href: '/colophon', key: 'colophon.title' }
+		{ href: '/signata', key: 'nav.bookmarks' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
@@ -548,21 +544,18 @@
 			<div class="imprint">
 				<JerusalemCross class="footer-cross" />
 				<!--
-				TWO LINES SINCE THE COLOPHON LINK JOINED THE INDEX, and what is left
-				is only the site speaking about itself — a device and a standing
-				statement, with nothing in the block to click. The uniformity rule
-				that governed three lines still governs these two: neither is a
-				heading for the other, and setting the disclaimer larger would make
-				it an announcement rather than an imprint.
+				Three lines in one chrome, and the uniformity is the point: none of
+				them is a heading for the others. The colophon link leads because it
+				is the way OUT of the footer; the motto and the standing statement
+				are the site speaking about itself, and setting either one larger
+				would make it an announcement rather than an imprint.
 
-				THE MOTTO IS THE ONE THING HERE SET APART, in small capitals and at
-				the full text colour (by direction). That is not a step in size or a
-				second face — the two would make the stack a heading with a caption
-				under it, which is what this block has always refused. Small capitals
-				are how a printed imprint marks a DEVICE: the words are not a
-				sentence about the site, they are the thing the site says, and with
-				the colophon link gone there is no other line in the block for the
-				eye to start on.
+				THE MOTTO IS THE ONE THING SET APART, in small capitals and at the
+				full text colour (by direction). That is not a step in size, a second
+				face or a weight — any of the three would make the stack a heading
+				with captions under it, which is what this block refuses. Small
+				capitals are how a printed imprint marks a DEVICE: the words are not
+				a sentence about the site, they are the thing the site says.
 
 				`lang="la"` on the motto for the reason every reading region declares
 				the language of its own text: this is Latin sitting in a page that may
@@ -572,15 +565,15 @@
 				sentence to render in the reader's language.
 
 				`footer.notEndorsed` is the one-line form of
-				`colophon.whatThisIsStanding`, which the index at the other end of
-				this band reaches. It was the line directly under that link until
-				2026-09-06 and the shortness was argued from the adjacency; the full
-				statement is still one click away and still inside this footer, so
-				what changed is the distance and not the fact. Keep the two in the
-				same band: move the colophon out of the footer altogether and this
-				line would have to carry its own context.
+				`colophon.whatThisIsStanding`, which the link two lines above it
+				reaches. That proximity is what lets it be this short: it does not
+				have to carry its own context, because the full statement is one click
+				away and in view. It was moved into the index for an hour and brought
+				back for exactly this — being somewhere in the same footer is not the
+				same claim as being two lines up.
 			-->
 				<div>
+					<p><a href="/colophon">{t('colophon.title')}</a></p>
 					<p class="motto" lang="la">Ad maiorem Dei gloriam</p>
 					<p>{t('footer.notEndorsed')}</p>
 				</div>
@@ -606,7 +599,7 @@
 			reader never mentions.
 		-->
 			<nav class="footer-nav" aria-label={t('nav.sections')}>
-				<div class="footer-group">
+				<div class="footer-group footer-works">
 					<h2>{t('nav.works')}</h2>
 					<!--
 					`navKey ?? titleKey` is the catalogue's own rule for a name in
@@ -955,11 +948,42 @@
 	}
 
 	/*
+	 * THE WORKS RUN INTO TWO TRACKS, AND THE SPLIT MEANS NOTHING (by direction).
+	 * It is `column-count` on the list and not a second `<ul>` under a second
+	 * heading, because there is no second group: the works are one list and the
+	 * only thing being divided is the space it occupies. Multicol is the one
+	 * feature that says exactly that — the DOM keeps one list in reading order,
+	 * a screen reader is read one list of works, and the browser decides where
+	 * to break it (4 and 3, balanced, which nothing here asks for by number).
+	 *
+	 * WHAT IT BUYS IS A SQUARER FOOTER, which is the whole brief. Seven works
+	 * against four pages left the index three rows taller on one side than the
+	 * other and stacked well past the imprint beside it; flowed into two tracks
+	 * both groups are four rows, so the band has one depth and the mark is not
+	 * standing alone against a long column.
+	 *
+	 * `break-inside: avoid` on the row: a name that wrapped could otherwise put
+	 * its second line at the top of the next track, where it reads as an entry
+	 * of its own — and "Doctors of the Church" is exactly long enough to wrap.
+	 * The gutter is the one between the groups, so all three tracks are evenly
+	 * spaced and none of them announces which two belong together.
+	 */
+	.footer-works ul {
+		column-count: 2;
+		column-gap: clamp(1.5rem, 8vw, 3.5rem);
+	}
+
+	.footer-works li {
+		break-inside: avoid;
+	}
+
+	/*
 	 * NO UNDERLINE AT REST, WHICH IS NOT AN EXEMPTION BUT THE RULE. `base.css`
 	 * keeps the underline for a link inside a SENTENCE and records that every
 	 * list-shaped surface on the site has opted out by hand — the header's
-	 * nav, the index cards, the document rows. A column of names is that
-	 * shape, and since 2026-09-06 every link in this footer is in it.
+	 * nav, the index cards, the document rows. A column of names is that shape;
+	 * the imprint's colophon link is not, and keeps its underline, which is
+	 * what distinguishes that block's one affordance from this one's.
 	 *
 	 * `aria-current` marks the page the reader is on exactly as the bar does,
 	 * and needs none of the width reservation that rule carries: these are
@@ -1050,21 +1074,25 @@
 	}
 
 	/*
-	 * BOTH LINES, ONE RULE, which is what keeps them one chrome: give either
-	 * its own SIZE or its own FACE and the stack stops reading as an imprint
-	 * and starts reading as a heading with a caption.
+	 * ALL THREE LINES, ONE RULE, which is what keeps them one chrome: give any
+	 * of them its own SIZE or its own FACE and the stack stops reading as an
+	 * imprint and starts reading as a heading with captions.
 	 *
 	 * Spacing comes from `line-height` rather than margins, because stacked
 	 * lines of one size want even leading, and margins between them would be a
 	 * second number saying the same thing.
 	 *
-	 * There is no link left in this block to make an exception for. It carried
-	 * the colophon's until 2026-09-06 and the rule then was that the exception
-	 * is made by DELETING — the block used to override `a` back to the muted
-	 * colour with no underline, which left the footer's only link
-	 * indistinguishable from the statements under it, an affordance disguised
-	 * as a caption. Worth keeping because it is the standing direction for the
-	 * next link anybody puts in an imprint: let `base.css` have it.
+	 * THE COLOPHON LINK IS THE ONE DELIBERATE EXCEPTION, and it is made by
+	 * DELETING rather than adding. This block used to override `a` back to the
+	 * muted colour with no underline, which left the only link in it
+	 * indistinguishable from the two statements below — an affordance disguised
+	 * as a caption. With the override gone it is simply a link: `base.css`
+	 * gives it `--color-link` and an underline at 35% of its own colour that
+	 * goes solid on hover, exactly as every other link on the site does. Same
+	 * size and same leading as its neighbours, so the stack is still one
+	 * chrome; only the thing that is clickable looks clickable. The standing
+	 * direction for the next link anybody puts in an imprint: let `base.css`
+	 * have it.
 	 */
 	.site-footer p {
 		margin: 0;
@@ -1105,12 +1133,13 @@
 	 * edge, and a block sitting hard against the start margin of a narrow screen
 	 * with the whole gutter on the other side is lopsided rather than aligned.
 	 *
-	 * 46rem is where the imprint and the two link columns stop fitting side by
-	 * side — measured, not the header's 720px, because the two bands hold
-	 * different things and a shared number here would be a coincidence dressed
-	 * as a decision.
+	 * 54rem is where the imprint and the index stop fitting side by side —
+	 * measured, and re-measured when the works took a second track, since that
+	 * is what the number is about. It is not the header's 720px: the two bands
+	 * hold different things, and a shared number here would be a coincidence
+	 * dressed as a decision.
 	 */
-	@media (max-width: 46rem) {
+	@media (max-width: 54rem) {
 		.site-footer {
 			text-align: center;
 		}
@@ -1130,6 +1159,22 @@
 
 		.imprint {
 			justify-content: center;
+		}
+	}
+
+	/*
+	 * AND ON A PHONE THE WORKS ARE ONE TRACK AGAIN, which is a DIFFERENT
+	 * question from the one above and so a different number. That breakpoint
+	 * asks whether two blocks fit side by side; this one asks whether three
+	 * tracks of names fit across a phone, and they do not — the longest work
+	 * name is about 121px, so three tracks and their gutters need ~352px
+	 * against the 288px a 320px screen leaves inside its padding. Two tracks
+	 * fit, which is what the index falls back to and what it was before the
+	 * works were split at all.
+	 */
+	@media (max-width: 30rem) {
+		.footer-works ul {
+			column-count: 1;
 		}
 	}
 </style>

@@ -76,25 +76,29 @@ header it is a glyph, which is a control rather than a name — this is the only
 place on the site that says the word), and the Bible and the Prayers are on the
 bar and in the works column, where they belong as texts.
 
-**`/colophon` closes the Pages column, and it was the imprint's own line for a
-day** (2026-09-06, by direction). It is a page like the four above it and now
-looks like one. What it costs is the adjacency `footer.notEndorsed` was written
-against: that one-line disclaimer is the one-sentence form of
-`colophon.whatThisIsStanding` and was short because the full statement sat
-directly above it. It is still in this footer and still one click away, a column
-over rather than a line up — the weaker form of the same argument, and why the
-wording does not change. **Move the colophon out of the footer altogether and
-the disclaimer has to carry its own context.** No Home entry was added: that is
-the argument the bar already makes about the brand link, one screen further from
-it.
+**`/colophon` is not in either column, and it spent an hour in one**
+(2026-09-06, both by direction). It closed the Pages column, looking like the
+four pages above it, and went back to the imprint because that is where
+`footer.notEndorsed` needs it: the disclaimer is the one-sentence form of
+`colophon.whatThisIsStanding` and is short because the full statement is two
+lines under it — **being somewhere in the same footer is not the same claim as
+being two lines up.** Recorded so the move is not made a third time. No Home
+entry either: that is the argument the bar already makes about the brand link,
+one screen further from it.
 
-**The imprint kept the mark, the motto and the disclaimer, and the motto is now
-set as a DEVICE** — small capitals, 0.06em of tracking, full-strength ink. The
-block's standing rule is that no line in it may take its own size or its own
-face, or the stack reads as a heading with a caption; small capitals spend
-neither. Weight was the alternative and is wrong at this size, where bold reads
-as emphasis inside a sentence — and this is a formula, not a sentence. With the
-colophon link gone there is nothing else in the block for the eye to start on.
+**The works run into two tracks and the split means nothing** (2026-09-06, by
+direction). It is `column-count` on the one list, not a second list under a
+second heading — there is no second group, and multicol is the feature that
+says so: one list in the DOM, in reading order, with the browser choosing the
+break. What it buys is a squarer footer. Seven works against four pages left the
+index three rows taller on one side and stacked well past the imprint beside it;
+flowed into two tracks both groups are four rows, so the band has one depth.
+
+**The motto is set as a DEVICE** — small capitals, 0.06em of tracking,
+full-strength ink. The imprint's standing rule is that no line in it may take
+its own size or its own face, or the stack reads as a heading with captions;
+small capitals spend neither. Weight was the alternative and is wrong at this
+size, where bold reads as emphasis inside a sentence, and this is a formula.
 
 **It cost three English strings and not one link.** Every name in it was already
 written in all thirty-seven languages, because the footer invents no destination
