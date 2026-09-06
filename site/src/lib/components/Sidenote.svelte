@@ -52,6 +52,7 @@
 	 */
 	import type { VerseNote } from '$lib/types';
 	import { NoteCard, NoteDialog, overflowsCard } from '$lib/sidenotes.svelte';
+	import { afterHeadword } from '$lib/lemma';
 	import { t } from '$lib/i18n.svelte';
 	import { linkifyInline, plainTextNodes } from '$lib/inline-html';
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
@@ -121,6 +122,17 @@
 	let { label, note, lang, work, lemmaMarked = false, onopen }: Props = $props();
 
 	/**
+	 * The note as the panel sets it, which is not quite as the source stored
+	 * it: with the headword marked in the verse instead of printed here, the
+	 * comma or full stop that JOINED the two is left leading the panel —
+	 * `, como os outros reis do oriente`, `. O dom da profecia` — and the word
+	 * after it opens the card in lower case. `afterHeadword` drops the one and
+	 * raises the other; only where `lemmaMarked`, since a card still printing
+	 * its headword is the source's own line and is set as the source set it.
+	 */
+	const body = $derived(lemmaMarked ? afterHeadword(note?.text ?? '') : (note?.text ?? ''));
+
+	/**
 	 * A GLOSS NAMES OTHER PLACES IN THE BOOK, and that is most of what a gloss
 	 * is for: Challoner's notes cite Scripture 168 times and Matos Soares's
 	 * 267, "See Nm. 18,19", "the annotations, 3 Kings 22". They rendered as
@@ -134,7 +146,7 @@
 	 * that is commentary.
 	 */
 	const nodes = $derived(
-		linkifyInline(plainTextNodes(note?.text ?? ''), (text) => linkifyProse(text, { lang, work }))
+		linkifyInline(plainTextNodes(body), (text) => linkifyProse(text, { lang, work }))
 	);
 
 	function hrefFor(seg: RefSegment): string | undefined {

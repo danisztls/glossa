@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { splitLemma } from './lemma';
+import { afterHeadword, splitLemma } from './lemma';
 
 /*
  * Every case here is a real one, quoted from the corpus, because what this
@@ -114,5 +114,75 @@ describe('splitLemma', () => {
 	it('has nothing to say about a note with no lemma', () => {
 		expect(splitLemma('And God said', undefined)).toBeUndefined();
 		expect(splitLemma('And God said', '  ')).toBeUndefined();
+	});
+});
+
+/*
+ * What a note is left holding once the verse is marking its headword: the
+ * punctuation the source printed between the two, and the lower-case word
+ * behind it. Every case is Matos Soares's, where 1,084 of the 1,377 marked
+ * headwords carry a join.
+ */
+describe('afterHeadword', () => {
+	// Genesis 1:14, the shape in the report: the note continues the words the
+	// verse is lighting, and the comma that carried the reader from one to the
+	// other has nothing left to join.
+	it('drops the comma or full stop that joined the headword', () => {
+		expect(afterHeadword(', que auxiliem os viajantes, navegantes, agricultores, etc.')).toBe(
+			'Que auxiliem os viajantes, navegantes, agricultores, etc.'
+		);
+		expect(afterHeadword('. O dom da profecia não consistia somente em predizer o futuro')).toBe(
+			'O dom da profecia não consistia somente em predizer o futuro'
+		);
+		expect(afterHeadword(': o véu colocado entre o Santo e o Santo dos Santos')).toBe(
+			'O véu colocado entre o Santo e o Santo dos Santos'
+		);
+	});
+
+	// Genesis 1:5, where the join is the elision printed after the catchword,
+	// and Mark 6:5, where it is both at once.
+	it('drops an elision, alone or with what follows it', () => {
+		expect(afterHeadword('... isto é, desde o principio até ao fim da semana.')).toBe(
+			'Isto é, desde o principio até ao fim da semana.'
+		);
+		expect(afterHeadword('..., não porque lhe faltasse o poder')).toBe(
+			'Não porque lhe faltasse o poder'
+		);
+	});
+
+	// The note's own first character, which is not the join: an opening quote
+	// after the elision (Jeremias 6:26) and a parenthesis the note opens on
+	// (John 5:39, Douay). The run stops at either, and the capital goes on the
+	// first LETTER rather than on whatever character happens to be first.
+	it('keeps a quotation or parenthesis the note opens with', () => {
+		expect(afterHeadword('... "causada pela lembrança do povo Ingrato')).toBe(
+			'"Causada pela lembrança do povo Ingrato'
+		);
+		expect(afterHeadword('("Scrutamini"), It is not a command for all')).toBe(
+			'("Scrutamini"), It is not a command for all'
+		);
+	});
+
+	// Haydock and Challoner write their notes as sentences: 0 of the Douay's
+	// 1,806 marked headwords carry a join at all, and every one is already
+	// capitalised, so this is the identity over that whole edition.
+	it('leaves a note that never had one', () => {
+		expect(afterHeadword('She was his lawful wife, but of an inferior degree.')).toBe(
+			'She was his lawful wife, but of an inferior degree.'
+		);
+	});
+
+	// A script with no case at all, which is most of what the fifteen prayer
+	// commentaries are written in: raising a letter that has no capital must
+	// leave the note exactly as it stood.
+	it('leaves a script that does not case', () => {
+		expect(afterHeadword('信仰宣认以「我信天主」开始')).toBe('信仰宣认以「我信天主」开始');
+	});
+
+	// Psalm 6:4 in Matos Soares, whose whole remark is the join. A panel that
+	// opened empty would read as a failure to load.
+	it('keeps a note that is nothing but its join', () => {
+		expect(afterHeadword('?')).toBe('?');
+		expect(afterHeadword('')).toBe('');
 	});
 });

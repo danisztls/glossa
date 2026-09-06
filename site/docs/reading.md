@@ -185,6 +185,19 @@ and **none of Martini's 18,658**, whose markers all sit at position 0 and whose
 lemma prints its own elision. So the note keeps its headword wherever the verse
 could not mark it, carried by one prop.
 
+**The join goes with the headword it joined, and the capital takes its place.**
+A source stores the punctuation between the two as the note's first characters —
+`Salomão` heads the note and `, como os outros reis do oriente` continues it —
+so a panel that stops printing the headword opens on a stray comma and then on
+a lower-case word; 1,084 of the 1,377 headwords Matos Soares marks carry a
+join, and the Douay's notes, written as sentences, carry none. `afterHeadword`
+drops the run of punctuation and nothing else — an opening quote or parenthesis
+is the note's own, and the letter raised is the first one after it — because
+what on paper is the second half of a line the reader has just read is on
+screen the whole of what the card says. **One letter, and no word rewritten**:
+a note that is nothing but its join keeps it rather than opening empty, and a
+script with no capitals is left as it stands.
+
 **On paper the mark is permanent, because nothing there opens** — a dotted
 underline rather than the wash. **And the card is rendered even for a note that
 opens a dialog, because of PAPER**: a closed popover is `display: none`, so

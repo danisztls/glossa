@@ -181,3 +181,49 @@ export function splitLemma(text: string, lemma: string | undefined): LemmaSplit 
 	// stopped one character before it would read as a slip.
 	return { head: text.slice(0, at), lemma: text.slice(at) };
 }
+
+/**
+ * The punctuation a printed apparatus sets BETWEEN a headword and the remark
+ * that follows it, which is stored as the note's first characters and is not
+ * the note's own.
+ *
+ * Matos Soares heads a note `Salomão` and goes on `, como os outros reis do
+ * oriente, pensava…`; the comma is the join, and it is invisible only while the
+ * headword is printed in front of it. 1,084 of the 1,377 headwords his edition
+ * marks carry one — the Douay's notes are written as sentences and carry none.
+ */
+const JOINER = /^[\s.,;:!?…\-–—]+/u;
+
+/**
+ * The note as a panel sets it where the TEXT is marking the headword: the join
+ * dropped, and the first letter raised into the place it left.
+ *
+ * ONLY WHAT CARRIES NO WORDS IS DROPPED, and only from the front: an opening
+ * quote or parenthesis is the note's own first character — `("Scrutamini"), It
+ * is not a command` — so the run stops at anything a join could not be made of,
+ * and the letter raised is the first one after it.
+ *
+ * THE CAPITAL IS WHAT MAKES THE PANEL A SENTENCE. A note whose headword has
+ * been taken out of it opens mid-clause — `que auxiliem os viajantes` — which
+ * on paper is the second half of a line the reader has just read and on screen
+ * is the whole of what the card says. Nothing else is touched: this raises one
+ * letter and rewrites no word.
+ *
+ * A NOTE THAT IS NOTHING BUT ITS JOIN KEEPS IT. Psalm 6:4's whole remark in
+ * Matos Soares is `?`, and a panel that opened empty would read as a failure to
+ * load rather than as the source being that short.
+ */
+export function afterHeadword(text: string): string {
+	const rest = text.replace(JOINER, '');
+	const at = rest.search(WORD);
+	if (at === -1) return text;
+
+	// By code point, and refused where the case mapping is not one character for
+	// one: German's `ß` uppercases to `SS`, which is a respelling and not a
+	// capital. Nothing in the corpus opens on one — the guard is what keeps that
+	// from being a fact anybody has to remember.
+	const first = String.fromCodePoint(rest.codePointAt(at)!);
+	const raised = first.toUpperCase();
+	if (raised.length !== first.length) return rest;
+	return rest.slice(0, at) + raised + rest.slice(at + first.length);
+}

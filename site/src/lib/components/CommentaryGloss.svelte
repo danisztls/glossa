@@ -72,6 +72,7 @@
 	import { linkifyProse } from '$lib/refs-grammar';
 	import type { RefSegment } from '$lib/refs-grammar';
 	import { linkifyInline, parseInlineMarked, plainTextNodes } from '$lib/inline-html';
+	import { afterHeadword } from '$lib/lemma';
 	import { refHref } from '$lib/refs';
 	import { getWork } from '$lib/corpus';
 	import { hrefFor as hrefForAddress } from '$lib/address';
@@ -252,9 +253,15 @@
 	 * Position is what the numeral is for, so it is kept.
 	 */
 	function nodesOf(note: CommentaryNote) {
+		// AND WITHOUT THE JOIN, where the text is marking the headword rather
+		// than the card printing it: the comma or full stop the source set
+		// between the two is stored as the note's first characters, so the card
+		// would open on it and then on a lower-case word (`afterHeadword`, and
+		// `Sidenote`'s `body` for the same rule over the same corpus).
+		const body = (text: string) => (lemmaMarked ? afterHeadword(text) : text);
 		const source = note.text_marked
-			? parseInlineMarked(note.text_marked)
-			: plainTextNodes(note.text);
+			? parseInlineMarked(body(note.text_marked))
+			: plainTextNodes(body(note.text));
 		return linkifyInline(source, (text: string) => linkifyProse(text, { lang, work, sameChapter }));
 	}
 </script>

@@ -2212,12 +2212,13 @@ not.
   plainly: **a class name borrowed across a component boundary in Svelte is
   silently unstyled.** Two components rendering one class means the rule is
   global, and the file to put it in is `reading-chrome.css`.
-- **The panel drops the punctuation that JOINED the headword to the note**
-  (`dropJoiner`, 2026-09-06) — a source stores it as the note's first
-  characters, so hiding the headword opened 1,084 of Matos Soares's 1,377
-  marked notes on a stray `, ` or `. `. Only punctuation, only from the front:
-  a quote or parenthesis is the note's own, and a note that is nothing but its
-  join keeps it.
+- **The panel drops the punctuation that JOINED the headword to the note and
+  raises the letter behind it** (`afterHeadword`, 2026-09-06) — a source stores
+  the join as the note's first characters, so hiding the headword opened 1,084
+  of Matos Soares's 1,377 marked notes on a stray `, ` or `. ` and a lower-case
+  word. Only punctuation, only from the front, and one letter: a quote or
+  parenthesis is the note's own, a note that is nothing but its join keeps it,
+  and an uncased script is left alone.
 - **Refusing is a first-class outcome**: `lemmaMarked` is true exactly when
   the words were located and is the one prop that suppresses the headword —
   the two can never disagree. Dropping the headword unconditionally would have
