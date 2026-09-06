@@ -7,16 +7,19 @@ import { join } from 'node:path';
  * A SOURCE SCAN OVER THE PIGMENTS, because every way this family breaks is
  * silent.
  *
- * `tokens.css` declares one `--pigment-*` per shelf of the corpus, each mixed
- * halfway to that theme's `--color-text-muted`, and `[data-mono]` turns the
- * whole set off with a single `--pigment-strength: 0%`. Two pages spend them —
- * `CitedBy`'s panel dots and `/schola`'s shelf list — and each maps its own
- * vocabulary onto the tokens with a block of attribute selectors, because the
- * panel's keys are citer families and the guide's are its own row keys.
+ * `tokens.css` declares TWO tokens per shelf of the corpus and derives the
+ * second from the first. `--shelf-*` is the literal — a colour somebody would
+ * name out loud, written per theme family because a colour's name lives at a
+ * particular lightness. `--pigment-*` is that literal mixed halfway to the
+ * theme's own `--color-text-muted`, which is a dot's ornament sitting in one
+ * tonal band. `/schola`'s shelf icons take the first, `CitedBy`'s panel marks
+ * take the second, and each page maps its own vocabulary onto them with a block
+ * of attribute selectors — the panel's keys are citer families and the guide's
+ * are its own row keys.
  *
  * WHAT CAN GO WRONG WITHOUT A SYMPTOM:
  *
- * - **A pigment referenced by a name that does not exist.**
+ * - **A token referenced by a name that does not exist.**
  *   `var(--pigment-vermilion)` with no such custom property is not an error;
  *   the declaration is invalid at computed-value time, so the mark falls back
  *   to whatever the `var()` names — or, with no fallback, to the inherited
@@ -24,26 +27,43 @@ import { join } from 'node:path';
  *   This is not hypothetical: `/schola` shipped a parallel family keyed by
  *   pigment NAME (`--pigment-azurite`, `--pigment-folium`) for one commit, and
  *   converging the two is what this file was written for.
+ * - **A shelf that gains a colour in one family and not another.** The literals
+ *   are per-family and the mixes are not, so a `--shelf-*` written into `:root`
+ *   and forgotten in the dark block inherits the light value: a #2e7d32 green
+ *   on a #161313 ground is 2.4:1, and only in dark.
  * - **A pigment that survives monochrome.** That mode's whole claim is that
  *   nothing anywhere is told apart by hue. One live pigment falsifies it, for
  *   exactly the readers it exists for. The dial is one declaration, and so is
  *   the way to lose it.
- * - **A pigment that stops following the theme.** The family is one set of
- *   literals for four palettes, and what adapts is the MIX. A value written
- *   flat would look right on paper and ship a contrast failure in dark alone.
+ * - **A pigment that stops being derived.** Writing a `--pigment-*` as its own
+ *   literal is how a shelf comes to be two colours: the dot and the icon drift,
+ *   and nothing says so because each looks fine alone.
  *
- * What is not bookkeeping is where a pigment may be SET — they resolve to
- * 3.4-4.2:1 on a dark ground, which is a decoration's contrast and not a text
- * colour's. That is arithmetic, and it is argued beside the values.
+ * What is not bookkeeping is where either may be SET. The pigments resolve to a
+ * decoration's contrast and not a text colour's; the shelf colours clear the
+ * 3:1 graphical-object floor and no more. Both are arithmetic, measured once,
+ * and argued beside the values.
  */
 const TOKENS = readFileSync(new URL('../styles/tokens.css', import.meta.url), 'utf8');
 const SRC = fileURLToPath(new URL('..', import.meta.url));
 
-/** The seeded pigments, in declaration order. `--pigment-strength` is the dial
+/** The mixed pigments, in declaration order. `--pigment-strength` is the dial
  *  they are mixed with and `--pigment` is what a consumer resolves one into;
  *  neither is a pigment, and the `color-mix(` anchor is what excludes them. */
 function declared(): string[] {
 	return Array.from(TOKENS.matchAll(/^\t--pigment-([a-z-]+): color-mix\(/gm), (m) => m[1]);
+}
+
+/** Every `--shelf-<name>` set inside one block of the file. */
+function shelvesIn(block: string): Set<string> {
+	return new Set(Array.from(block.matchAll(/--shelf-([a-z-]+)\s*:/g), (m) => m[1]));
+}
+
+function block(afterSelector: string): string {
+	const at = TOKENS.indexOf(afterSelector);
+	expect(at, `no block matching ${afterSelector}`).toBeGreaterThan(-1);
+	const open = TOKENS.indexOf('{', at);
+	return TOKENS.slice(open, TOKENS.indexOf('\n}', open));
 }
 
 /** CSS and HTML comments both, since a `.svelte` file carries either. */
@@ -93,6 +113,37 @@ describe('the shelf pigments', () => {
 		}
 	});
 
+	it('is mixed from a shelf colour rather than from a literal of its own', () => {
+		for (const pigment of pigments) {
+			const at = TOKENS.indexOf(`--pigment-${pigment}: color-mix(`);
+			expect(
+				TOKENS.slice(at, TOKENS.indexOf(');', at)),
+				`--pigment-${pigment} carries its own literal, so the dot and the icon can drift`
+			).toContain(`var(--shelf-${pigment})`);
+		}
+	});
+
+	it('has a shelf colour per pigment, in every family that paints one', () => {
+		const light = shelvesIn(block('\n:root {'));
+		expect([...light].sort()).toEqual([...pigments].sort());
+		for (const [name, selector] of [
+			['auto dark', ":root:not([data-theme='light']) {"],
+			['explicit dark', ":root[data-theme='dark'] {"],
+			['monochrome', ':root[data-mono] {']
+		] as const) {
+			expect([...shelvesIn(block(selector))].sort(), `${name} is missing a shelf`).toEqual(
+				[...light].sort()
+			);
+		}
+	});
+
+	/* Sepia restates none on purpose: a warmer paper is still paper, and each
+	   clears its floor against that ground as written. */
+	it('leaves sepia and OLED to inherit, both being a ground and not a palette', () => {
+		expect(shelvesIn(block(':root[data-sepia] {')).size).toBe(0);
+		expect(shelvesIn(block(":root[data-theme='dark'][data-oled] {")).size).toBe(0);
+	});
+
 	it('is turned off in full by one dial under monochrome', () => {
 		const at = TOKENS.indexOf(':root[data-mono] {');
 		expect(at, 'no [data-mono] rule sets the dial').toBeGreaterThan(-1);
@@ -126,34 +177,17 @@ describe('the shelf pigments', () => {
 	});
 
 	/*
-	 * The second dial, and the one `--pigment-strength` cannot stand in for. A
-	 * mark that overrides chroma — `oklch(from var(--pigment) L C h)`, which is
-	 * how `/schola` gets a legible icon out of a decoration — is unreachable by
-	 * a strength of 0%: under `data-mono` the pigment resolves to a grey, and
-	 * forcing chroma onto a grey invents a hue from whichever way its residue
-	 * points. So the mode has to zero the chroma itself.
+	 * `--pigment-strength: 0%` cannot reach the literals, because they are not
+	 * mixes. The mode has to restate them, and if it ever stops, `/schola`'s
+	 * icons keep their colours in the one mode whose entire contract is that
+	 * nothing anywhere is told apart by hue.
 	 */
-	it('zeroes the icon chroma under monochrome, which strength alone cannot do', () => {
-		const at = TOKENS.indexOf(':root[data-mono] {');
-		expect(TOKENS.slice(at, TOKENS.indexOf('\n}', at))).toContain('--pigment-icon-c: 0;');
-	});
-
-	/*
-	 * Relative colour syntax is young enough to be worth a fallback, and the
-	 * fallback is a declaration ORDER: a browser that cannot parse `oklch(from
-	 * …)` drops that line and keeps the plain one above it. Lose the plain one
-	 * and the mark inherits the body colour instead — on the page whose icons
-	 * are the whole reason the family exists.
-	 */
-	it('declares a flat colour above every relative-colour one', () => {
-		for (const file of walk(SRC)) {
-			const source = stripComments(readFileSync(file, 'utf8'));
-			for (const m of source.matchAll(/\n(\s*)color: oklch\(from var\(--pigment\)/g)) {
-				const before = source.slice(0, m.index).split('\n').at(-1) ?? '';
-				expect(before.trim(), `${file}: no flat fallback above the oklch() colour`).toMatch(
-					/^color:\s*var\(--pigment/
-				);
-			}
+	it('takes the shelf literals back to the muted grey under monochrome', () => {
+		const mono = block(':root[data-mono] {');
+		for (const shelf of pigments) {
+			expect(mono, `--shelf-${shelf} stays coloured under [data-mono]`).toContain(
+				`--shelf-${shelf}: var(--color-text-muted);`
+			);
 		}
 	});
 
@@ -165,18 +199,28 @@ describe('the shelf pigments', () => {
 				used.add(m[1]);
 			}
 		}
-		// `--pigment` bare is what a consumer resolves a token into; `strength`,
-		// `icon-l` and `icon-c` are the three dials. None is a pigment.
-		const known = new Set([...pigments, 'strength', 'icon-l', 'icon-c']);
+		// `--pigment` bare is what a consumer resolves a token into and
+		// `strength` is the dial. Neither is a pigment.
+		const known = new Set([...pigments, 'strength']);
 		expect([...used].filter((name) => !known.has(name)).sort()).toEqual([]);
 	});
 
-	it('is resolved by both consumers into the same per-row property', () => {
-		// `SRC` is `src/`, so both are named from there.
-		for (const consumer of ['lib/components/CitedBy.svelte', 'routes/schola/+page.svelte']) {
-			expect(readFileSync(join(SRC, consumer), 'utf8'), `${consumer} sets no --pigment`).toMatch(
-				/--pigment:\s*var\(--pigment-/
-			);
-		}
+	it('is resolved by each consumer into a per-row property of its own', () => {
+		// `SRC` is `src/`, so both are named from there. The panel takes the
+		// muted mix and the guide takes the literal, which is the whole
+		// difference between the two families.
+		expect(
+			readFileSync(join(SRC, 'lib/components/CitedBy.svelte'), 'utf8'),
+			'the panel sets no --pigment'
+		).toMatch(/--pigment:\s*var\(--pigment-/);
+		expect(
+			readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'),
+			'the guide sets no --shelf'
+		).toMatch(/--shelf:\s*var\(--shelf-/);
+	});
+
+	it('never lets the guide reach for the muted mix, which is the drift to watch', () => {
+		const guide = stripComments(readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'));
+		expect(guide, 'the guide names a --pigment-* in a declaration').not.toMatch(/var\(--pigment-/);
 	});
 });

@@ -435,6 +435,9 @@
 	 * are `--color-text-muted`, the colour of the line they sit on.
 	 * A new consumer owes the same arithmetic before it picks a surface.
 	 *
+	 * THE LITERALS LIVE IN `--shelf-*` ABOVE and these are mixed FROM them, so
+	 * a shelf has one colour and two presentations rather than two colours.
+	 *
 	 * ONE DEFINITION FOR EVERY THEME. Each is mixed toward the theme's own
 	 * `--color-text-muted`, so one set of literals comes out darker on
 	 * paper and lighter on a dark ground with nothing repeated in the four
@@ -469,18 +472,57 @@
 	 * bistre and orpiment all sit between 28° and 81° in OKLCH — so the first
 	 * eight, chosen by pigment identity alone, put four of them inside 52° and
 	 * two more within 46° of each other. At a dot's chroma that is invisible
-	 * and costs nothing; the moment `/schola` asked the same tokens for a
-	 * legible ICON (see `--pigment-icon-c`), four shelves came out four shades
-	 * of the same rust. They are ~42° apart now, each still a pigment somebody
-	 * ground: madder 20, minium 62, orpiment 108, verdigris 152, azurite 200,
-	 * ultramarine 265, Tyrian 305, kermes 340. Where the name can be apt it is
-	 * — ultramarine, the costliest thing in the workshop, for the Magisterium;
-	 * Tyrian purple, the colour of imperial edict, for the Code.
+	 * and costs nothing; the moment `/schola` asked the same colours for a
+	 * legible ICON, four shelves came out four shades of the same rust. They
+	 * are spread round the circle now, each still a pigment somebody ground.
+	 * The literals are in `--shelf-*` above; this block only mutes them.
 	 *
 	 * IT COST THE PANEL NOTHING AND GAVE IT A LITTLE: its closest pair went
 	 * 4.3 -> 4.4 and its worst contrast on a dark ground 3.39 -> 3.87. The
 	 * whole gain is downstream, where the hue is asked to do work.
 	 */
+	/*
+	 * THE SHELF COLOURS — one per shelf of the corpus, and each one a colour
+	 * somebody would name out loud: red, orange, gold, green, teal, blue,
+	 * purple, magenta. `/schola` sets them on a work's icon, and the muted
+	 * `--pigment-*` below is MIXED FROM THEM, so the two surfaces cannot
+	 * disagree about which colour a shelf is.
+	 *
+	 * THEY ARE WRITTEN PER FAMILY, WHICH THE PIGMENTS DELIBERATELY ARE NOT,
+	 * and the reason is the whole lesson of this block. A dot only has to sit
+	 * in a tonal band, so one literal mixed toward each theme's own muted grey
+	 * serves every theme. An ICON has to be recognisable as its colour, and
+	 * **a colour's NAME lives at a particular lightness**: brown is dark
+	 * orange, olive is dark yellow, and navy is dark blue. Held at one
+	 * lightness across the circle — which is what a single literal plus a
+	 * per-theme lightness gives you — the warm half of any palette turns to
+	 * earth tones, and four shelves here came out four shades of the same
+	 * rust. So lightness varies per hue AND per ground, which is two degrees
+	 * of freedom no single literal has.
+	 *
+	 * WHAT THEY OWE, and it is less than the palette above owes. They are set
+	 * on a 1.35rem icon that sits beside the work's own name in words, so
+	 * nothing is told apart by one and none is required to understand
+	 * anything: the bar is 3:1, the graphical-object floor, taken as a
+	 * courtesy rather than as a duty. Measured against every ground of each
+	 * family, worst 4.15 light, 3.43 sepia, 6.11 dark; mutual separation 7.8
+	 * on paper and 8.7 on a dark ground (OKLab x100).
+	 *
+	 * The vocabulary stays the illuminator's, because the palette above
+	 * already speaks it — madder, minium, orpiment, verdigris, azurite,
+	 * ultramarine, Tyrian, kermes — and where the name can be apt it is:
+	 * ultramarine, the costliest thing in the workshop, for the Magisterium,
+	 * and Tyrian purple, the colour of imperial edict, for the Code.
+	 */
+	--shelf-catechism: #c62828;
+	--shelf-bible: #c05621;
+	--shelf-doctors: #977000;
+	--shelf-social-doctrine: #2e7d32;
+	--shelf-commentary: #00707f;
+	--shelf-magisterium: #2a4dab;
+	--shelf-canon-law: #7b2d8e;
+	--shelf-prayer: #b0246b;
+
 	--pigment-strength: 50%;
 	/*
 	 * The Bible's seed joined on 2026-09-06 with `/schola`'s shelf list, which
@@ -489,68 +531,46 @@
 	 * abridged, which is what `catechismPairLang` says everywhere else in the
 	 * codebase.
 	 */
-	--pigment-bible: color-mix(in oklab, #915100 var(--pigment-strength), var(--color-text-muted));
+	--pigment-bible: color-mix(
+		in oklab,
+		var(--shelf-bible) var(--pigment-strength),
+		var(--color-text-muted)
+	);
 	--pigment-catechism: color-mix(
 		in oklab,
-		#a8353e var(--pigment-strength),
+		var(--shelf-catechism) var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-magisterium: color-mix(
 		in oklab,
-		#385db8 var(--pigment-strength),
+		var(--shelf-magisterium) var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-social-doctrine: color-mix(
 		in oklab,
-		#00783a var(--pigment-strength),
+		var(--shelf-social-doctrine) var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-canon-law: color-mix(
 		in oklab,
-		#7847a6 var(--pigment-strength),
+		var(--shelf-canon-law) var(--pigment-strength),
 		var(--color-text-muted)
 	);
-	--pigment-doctors: color-mix(in oklab, #6a6700 var(--pigment-strength), var(--color-text-muted));
-	--pigment-prayer: color-mix(in oklab, #98397e var(--pigment-strength), var(--color-text-muted));
+	--pigment-doctors: color-mix(
+		in oklab,
+		var(--shelf-doctors) var(--pigment-strength),
+		var(--color-text-muted)
+	);
+	--pigment-prayer: color-mix(
+		in oklab,
+		var(--shelf-prayer) var(--pigment-strength),
+		var(--color-text-muted)
+	);
 	--pigment-commentary: color-mix(
 		in oklab,
-		#007277 var(--pigment-strength),
+		var(--shelf-commentary) var(--pigment-strength),
 		var(--color-text-muted)
 	);
-
-	/*
-	 * WHAT A PIGMENT IS DRAWN AT WHERE IT HAS TO BE SEEN RATHER THAN NOTICED.
-	 *
-	 * The mix above is tuned for a 0.4em dot in a column of dots, read against
-	 * its neighbours; `/schola` gives a shelf a 1.35rem ICON standing alone in
-	 * a row, half a page from the next one, and there the mix is too quiet to
-	 * read as a colour at all. Turning `--pigment-strength` up does not fix it
-	 * and makes one thing worse: the seeds are dark and so is a dark ground, so
-	 * more seed is less contrast, 2.34:1 at 85% neat.
-	 *
-	 * So a mark that has to be SEEN keeps the pigment's HUE and takes its
-	 * lightness and chroma from here —
-	 *
-	 *   color: oklch(from var(--pigment) var(--pigment-icon-l)
-	 *                var(--pigment-icon-c) h);
-	 *
-	 * — which is the one arrangement that gets a legible colour in every
-	 * palette from one declaration: lightness is chosen against the ground, so
-	 * contrast is a property of the theme rather than of the pigment, and
-	 * chroma is chosen for the surface. Measured over the eight: separation
-	 * dE(ok) 4.3 -> 8.9 on paper and 8.3 on a dark ground, contrast 5.14 light,
-	 * 4.25 sepia, 7.45 dark. **Always declare the flat `var(--pigment)` above
-	 * it**, exactly as the dot declares its grey: a browser without relative
-	 * colour syntax drops the second line and keeps a muted mark.
-	 *
-	 * `--pigment-icon-c: 0` IS HOW MONOCHROME SURVIVES THIS. `--pigment-strength`
-	 * cannot reach a mark that overrides chroma — under `data-mono` the pigment
-	 * resolves to `--color-text-muted`, and forcing chroma 0.15 onto a grey
-	 * would invent a hue for whatever direction its residue happens to point.
-	 * Both dials are set at the foot of this file.
-	 */
-	--pigment-icon-l: 0.5;
-	--pigment-icon-c: 0.15;
 }
 
 /*
@@ -585,7 +605,9 @@
  */
 
 /* Sepia paper. Presence-only attribute, independent of `data-theme` —
-   see `theme.svelte.ts` on why the two axes are separate. */
+   see `theme.svelte.ts` on why the two axes are separate. It restates no
+   `--shelf-*`: a warmer paper is still paper, and every one of them clears its
+   floor against this ground as written (worst 3.43). */
 :root[data-sepia] {
 	color-scheme: light;
 	--color-bg: #f4ecd8;
@@ -626,14 +648,14 @@
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
 		--color-bookmark: #d9a94a;
-		/* A light mark on a dark ground: the same declaration, the other
-	   side of the page. Chroma is unchanged — it is a property of the
-	   surface, not of the palette. */
-		--pigment-icon-l: 0.76;
-		/* A light mark on a dark ground: the same declaration, the other
-		   side of the page. Chroma is unchanged — it is a property of the
-		   surface, not of the palette. */
-		--pigment-icon-l: 0.76;
+		--shelf-catechism: #ff6b60;
+		--shelf-bible: #f08a3c;
+		--shelf-doctors: #d9b24c;
+		--shelf-social-doctrine: #5fc07a;
+		--shelf-commentary: #3fbcd0;
+		--shelf-magisterium: #8fa8ff;
+		--shelf-canon-law: #c78ae0;
+		--shelf-prayer: #ef7aae;
 		--plate-blend: normal;
 		--plate-filter: brightness(0.82) contrast(0.94);
 	}
@@ -655,6 +677,14 @@
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
 	--color-bookmark: #d9a94a;
+	--shelf-catechism: #ff6b60;
+	--shelf-bible: #f08a3c;
+	--shelf-doctors: #d9b24c;
+	--shelf-social-doctrine: #5fc07a;
+	--shelf-commentary: #3fbcd0;
+	--shelf-magisterium: #8fa8ff;
+	--shelf-canon-law: #c78ae0;
+	--shelf-prayer: #ef7aae;
 	--plate-blend: normal;
 	--plate-filter: brightness(0.82) contrast(0.94);
 }
@@ -830,8 +860,15 @@
  */
 :root[data-mono] {
 	--pigment-strength: 0%;
-	/* And the second dial, which the first cannot reach: a mark that overrides
-	   chroma would otherwise force a hue onto the grey the line above resolves
-	   to. Lightness is left alone — it is answering the ground, not the hue. */
-	--pigment-icon-c: 0;
+	/* And the shelf colours themselves, which the dial above cannot reach: they
+	   are literals rather than mixes, so nothing about `--pigment-strength`
+	   touches them. One grey for every shelf is what this mode means. */
+	--shelf-catechism: var(--color-text-muted);
+	--shelf-bible: var(--color-text-muted);
+	--shelf-doctors: var(--color-text-muted);
+	--shelf-social-doctrine: var(--color-text-muted);
+	--shelf-commentary: var(--color-text-muted);
+	--shelf-magisterium: var(--color-text-muted);
+	--shelf-canon-law: var(--color-text-muted);
+	--shelf-prayer: var(--color-text-muted);
 }

@@ -281,43 +281,37 @@ line of the card. Both owe 4.5:1 and clear it. A
 pigment on 0.8rem text would have shipped a contrast failure in one theme only,
 which is the kind nobody finds.
 
-**A MARK THAT HAS TO BE SEEN KEEPS THE HUE AND TAKES THE REST FROM THE THEME.**
-A 0.4em dot and a 1.35rem icon are not the same surface: the panel reads a
-column of dots in one glance, where a shelf icon stands alone in a row half a
-page from the next and has to be a colour on its own. Two attempts missed before
-this one — at the panel's 50% the family runs chroma 0.026–0.094, invisible
-while scrolling, and turning `--pigment-strength` up buys separation while
-spending contrast on a dark ground, because the seeds are dark and so is the
-ground (2.34:1 at 85% neat). What settles it is
-`oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h)`:
-lightness answers the GROUND, so contrast is a property of the theme rather than
-of the pigment; chroma answers the SURFACE; and only the hue belongs to the
-shelf. Separation dE(ok) 4.3 → 8.9 on paper and 8.3 on a dark ground, contrast
-5.14 light, 4.25 sepia, 7.45 dark. **The flat `var(--pigment)` declared above it
-is the fallback**, exactly as the dot declares its grey above its `color-mix()`:
-a browser without relative colour syntax drops the second line and keeps a muted
-mark rather than a body-coloured one.
+**THE ICONS TAKE THE LITERAL, AND THE PANEL TAKES THE MIX.** `tokens.css` holds
+two tokens per shelf: `--shelf-*`, a colour somebody would name out loud, and
+`--pigment-*`, that same colour mixed halfway to the muted grey. A dot in a
+column of dots is read against its neighbours and only has to sit in a tonal
+band; an icon standing alone in a row, half a page from the next, has to be red
+or blue or green on its own. Deriving the second from the first is what keeps a
+shelf to one colour with two presentations rather than two colours.
 
-**AND THE SEEDS HAD TO BE SPREAD, because a manuscript kit is warm-heavy.**
-Madder, minium, bistre and orpiment genuinely sit between 28° and 81° in OKLCH,
-so the first eight — chosen by picking the pigment each shelf deserved — put
-four of them inside 52° and two more within 46°. At a dot's chroma that costs
-nothing and nobody could see it; the moment an icon asked the same tokens for a
-legible colour, four shelves came out four shades of the same rust. **Pick the
-pigment nearest a slot, not the slot nearest a pigment**: they are ~42° apart
-now — madder 20°, minium 62°, orpiment 108°, verdigris 152°, azurite 200°,
-ultramarine 265°, Tyrian 305°, kermes 340° — each still something somebody
-ground, and apt where it can be, ultramarine for the Magisterium because it was
-the costliest thing in the workshop and Tyrian purple for the Code because it
-was the colour of imperial edict. The panel gained by it too: closest pair
-4.3 → 4.4, worst dark contrast 3.39 → 3.87.
+**Three schemes tried to compute the icon out of the dot before that, and each
+failed the same way.** Turning `--pigment-strength` up buys separation and
+spends contrast on a dark ground, the seeds being dark and the ground darker;
+holding a lightness and a chroma with `oklch(from …)` fixes contrast and still
+produces four earth tones. The reason is one sentence: **a colour's name lives at
+a particular lightness.** Brown is dark orange, olive is dark yellow, navy is
+dark blue — so any scheme that holds one lightness across the hue circle turns
+the warm half of a palette to mud however much chroma it spends. Lightness has
+to vary per hue AND per ground, which is two degrees of freedom no single
+literal has, and that is why `--shelf-*` is written per theme family where
+`--pigment-*` is not.
 
-**`--pigment-icon-c: 0` is how monochrome survives that, and the strength dial
-cannot stand in for it.** A mark that overrides chroma is unreachable by
-`--pigment-strength: 0%`: under that mode the pigment resolves to a grey, and
-forcing 0.15 onto a grey invents a hue out of whichever way its residue points.
-`pigments.test.ts` asserts both dials and the fallback ordering; nothing renders
-under vitest, so a source scan is the only witness there can be.
+**Its floor is 3:1, not 4.5:1, and the reason is what the mark is.** A shelf
+colour lands on a 1.35rem icon that sits beside the work's own name in words:
+nothing is told apart by one and none of them is required to understand
+anything, so the graphical-object bar applies and is taken as a courtesy rather
+than owed. Measured against every ground of each family — worst 4.15 light, 3.43
+sepia, 6.11 dark, separation 7.8 on paper and 8.7 on a dark ground. Sepia and
+OLED restate nothing: each moves a ground rather than a palette.
+
+**Monochrome has to restate the literals**, because `--pigment-strength: 0%`
+reaches only the mixes. Miss that and the page keeps its colours in the one mode
+whose entire contract is that nothing is told apart by hue.
 
 **HUE CARRIES NOTHING BY ITSELF.** Every mark wearing a pigment sits beside the
 work's name in words, so the colour is a second channel over a complete first

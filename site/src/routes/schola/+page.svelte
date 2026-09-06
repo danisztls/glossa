@@ -881,12 +881,11 @@
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		color: var(--pigment, var(--color-accent));
-		color: var(--pigment, var(--color-accent));
-		color: oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h);
+		color: var(--shelf, var(--color-accent));
+		color: var(--shelf, var(--color-accent));
 		margin-inline-start: -0.06em;
-		/* Drawn like the shelf icons and for the same reason. 1.6rem is large
-		   text, a 3:1 floor, which this clears on every ground; `.pick-name`
+		/* The shelf's own colour, like the icons. 1.6rem is large text and owes
+		   3:1, which every shelf colour clears on every ground; `.pick-name`
 		   further down is 1.1rem, owes 4.5:1, and stays on the accent. */
 	}
 
@@ -935,7 +934,7 @@
 		block-size: 100%;
 		padding: 0.8rem 1rem 0.9rem;
 		border: 1px solid var(--color-border);
-		border-block-start: 2px solid color-mix(in srgb, var(--pigment) 45%, var(--color-border));
+		border-block-start: 2px solid color-mix(in srgb, var(--shelf) 45%, var(--color-border));
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
@@ -944,8 +943,8 @@
 
 	.pick:hover,
 	.pick:focus-visible {
-		border-color: var(--pigment);
-		background: color-mix(in srgb, var(--pigment) 5%, var(--color-bg-elevated));
+		border-color: var(--shelf);
+		background: color-mix(in srgb, var(--shelf) 5%, var(--color-bg-elevated));
 	}
 
 	/*
@@ -1113,70 +1112,62 @@
 	 * title's optical centre rather than on its baseline box.
 	 */
 	/*
-	 * THE SHELF'S PIGMENT, resolved once per row and read by the icon, the
-	 * stage figures and the card edges below. `CitedBy`'s own list is the
-	 * model, down to being a set of attribute selectors rather than a value
-	 * threaded through the markup: a colour that has to be interpolated into
-	 * a `style` attribute is a colour no stylesheet can find.
+	 * THE SHELF'S COLOUR, resolved once per row and read by the icon, the stage
+	 * figures and the card edges below. `CitedBy`'s own list is the model, down
+	 * to being a set of attribute selectors rather than a value threaded
+	 * through the markup: a colour that has to be interpolated into a `style`
+	 * attribute is a colour no stylesheet can find.
+	 *
+	 * `--shelf-*` AND NOT `--pigment-*`, WHICH IS THE WHOLE OF WHAT THIS PAGE
+	 * ASKS THAT THE PANEL DOES NOT. A pigment is a dot's ornament, mixed
+	 * halfway to the muted grey so a column of them sits in one tonal band; a
+	 * shelf colour is the literal that pigment is mixed FROM, and it is the one
+	 * a reader would name out loud. This page wants the second — an icon that
+	 * is red, or blue, or green — and `tokens.css` holds both and derives one
+	 * from the other, so they can never disagree about which colour a shelf is.
 	 *
 	 * The Compendium takes the Catechism's — the same teaching abridged — and
 	 * is the only row that shares.
 	 */
 	[data-shelf='scripture'] {
-		--pigment: var(--pigment-bible);
+		--shelf: var(--shelf-bible);
 	}
 	[data-shelf='catechism'],
 	[data-shelf='compendium'] {
-		--pigment: var(--pigment-catechism);
+		--shelf: var(--shelf-catechism);
 	}
 	[data-shelf='magisterium'] {
-		--pigment: var(--pigment-magisterium);
+		--shelf: var(--shelf-magisterium);
 	}
 	[data-shelf='social'] {
-		--pigment: var(--pigment-social-doctrine);
+		--shelf: var(--shelf-social-doctrine);
 	}
 	[data-shelf='law'] {
-		--pigment: var(--pigment-canon-law);
+		--shelf: var(--shelf-canon-law);
 	}
 	[data-shelf='doctors'] {
-		--pigment: var(--pigment-doctors);
+		--shelf: var(--shelf-doctors);
 	}
 	[data-shelf='prayers'] {
-		--pigment: var(--pigment-prayer);
+		--shelf: var(--shelf-prayer);
 	}
 
 	/*
-	 * A MARK THAT HAS TO BE SEEN KEEPS THE PIGMENT'S HUE AND TAKES THE REST
-	 * FROM THE THEME. `CitedBy` spends these at 50% on a 0.4em dot, where a
-	 * whole column sits within one glance and the eye reads them RELATIVE to
-	 * each other; a shelf icon stands alone in a row, half a page from the
-	 * next, and has to be a colour on its own. Two attempts got that wrong
-	 * before this one — the mix at 50% is chroma 0.026-0.094, invisible while
-	 * scrolling; turning `--pigment-strength` up buys separation and spends
-	 * contrast on a dark ground, because the seeds are dark and so is the
-	 * ground.
+	 * ONE DECLARATION, AND IT TOOK THREE TRIES TO GET HERE. The icon wants a
+	 * colour a reader would name; the first two attempts tried to compute one
+	 * out of the muted pigment — turning `--pigment-strength` up, then holding
+	 * a lightness and chroma with `oklch(from …)` — and both failed the same
+	 * way, because **a colour's name lives at a particular lightness**. Brown
+	 * is dark orange and olive is dark yellow, so any scheme that holds one
+	 * lightness across the circle turns the warm half of a palette to earth
+	 * tones however much chroma it spends.
 	 *
-	 * `oklch(from …)` is what settles it. Lightness comes from
-	 * `--pigment-icon-l`, which the palette sets against its own ground, so
-	 * contrast is a property of the THEME; chroma comes from
-	 * `--pigment-icon-c`, chosen for the surface; and only the hue is the
-	 * shelf's. One declaration, legible in five appearance axes, and
-	 * `tokens.css` carries the measurements — separation dE(ok) 4.3 -> 8.9,
-	 * contrast 5.14 light, 4.25 sepia, 7.45 dark.
-	 *
-	 * THE FLAT DECLARATION ABOVE IT IS NOT DECORATION. A browser without
-	 * relative colour syntax drops the second line as invalid and keeps the
-	 * first, so the icon is a muted pigment rather than body-coloured — the
-	 * same two-declaration trick `CitedBy`'s dot uses for `color-mix()`.
-	 *
-	 * Monochrome is handled at the root by `--pigment-icon-c: 0`, and it has
-	 * to be: `--pigment-strength: 0%` alone cannot reach a mark that overrides
-	 * chroma, and forcing 0.15 onto the grey it resolves to would invent a hue
-	 * out of whichever way that grey's residue happens to point.
+	 * A literal per shelf per ground is what has two degrees of freedom, and
+	 * `tokens.css` holds them. Nothing is computed here, so nothing needs a
+	 * fallback declaration under it either.
 	 */
 	.book-icon {
-		color: var(--pigment);
-		color: oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h);
+		color: var(--shelf);
 	}
 
 	.feature-icon,
@@ -1200,18 +1191,13 @@
 	 * nowhere at all, so nothing here should look as though it might.
 	 */
 
-	/* Hover moves the same hue toward the text colour rather than to another
-	   hue: a mark that answers by becoming a different colour is a mark that
-	   was not the row's colour to begin with. The whole `oklch()` is one
-	   operand, so an unsupporting browser drops this declaration entire and
-	   the row simply does not light — which is what it did before it had a
-	   colour at all. */
+	/* Hover moves the same colour toward the text colour rather than to another
+	   one: a mark that answers by becoming a different colour is a mark that was
+	   not the row's colour to begin with. Declared under a flat `--shelf`, which
+	   is what a browser without `color-mix()` keeps. */
 	.book:hover .book-icon {
-		color: color-mix(
-			in oklab,
-			oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h) 72%,
-			var(--color-text)
-		);
+		color: var(--shelf);
+		color: color-mix(in oklab, var(--shelf) 75%, var(--color-text));
 	}
 
 	/*
