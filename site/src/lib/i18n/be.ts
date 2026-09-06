@@ -58,7 +58,7 @@ export const be: Dictionary = {
 	'nav.menu': 'Меню',
 	'nav.summa': 'Сума',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Працягнуць чытанне',
+	'library.continueReading': 'Працягнуць чытанне',
 	'nav.library': 'Бібліятэка',
 	'nav.learn': 'Навучанне',
 	'library.landing.tagline':

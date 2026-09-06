@@ -43,7 +43,14 @@ export const en: Dictionary = {
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Continue reading',
+	// `home.continueReading` until 2026-09-06, and renamed for the second time
+	// on the same reasoning `nav.library` records below: the section is on
+	// `/bibliotheca` alone now — an entrance arranged around a state only a
+	// returning reader has was empty for everyone else — and a `home.*` key on
+	// a page that is not home is a claim the codebase makes and does not keep.
+	// The label is the same words in all thirty-seven languages, so it was
+	// renamed rather than re-translated.
+	'library.continueReading': 'Continue reading',
 	// The Library door, and the page behind it (`routes/bibliotheca/`). The
 	// key was `home.works` and had been written in all thirty-seven languages
 	// for a home-page section that no longer existed — the label is the same
@@ -420,6 +427,19 @@ export const en: Dictionary = {
 	'ccc.nextParagraph': 'Next paragraph',
 	'ccc.inBrief': 'In Brief',
 	'ccc.landing.title': 'Catechism of the Catholic Church',
+	// THE PAIR UNDER ONE NAME, for `/bibliotheca`'s Learn shelf, where the
+	// Catechism and its Compendium are one card leading to the one index that
+	// holds both. `ccc.landing.title` names the Catechism alone and is what
+	// every OTHER surface wants, `/schola`'s row and the `<head>` included, so
+	// this is a second key rather than a rewrite of that one.
+	//
+	// English only for now, deliberately: `t()` falls back key by key, so
+	// every other interface language gets these words rather than a machine
+	// translation nobody has read — and this is a name of two works, which is
+	// the class of string this project translates last. The two halves already
+	// exist translated (`ccc.landing.title`, `compendium.landing.title`) for
+	// whoever writes the rest.
+	'ccc.landing.pairTitle': 'Catechism & Compendium of the Catholic Church',
 	// The page's whole description: `/catechismus` indexes BOTH works, the
 	// Compendium having no index of its own. `**` marks the two names for
 	// emphasis (`boldMarkup.ts`) — inside the sentence rather than around it,

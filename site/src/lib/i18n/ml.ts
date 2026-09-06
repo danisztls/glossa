@@ -64,7 +64,7 @@ export const ml: Dictionary = {
 	'nav.menu': 'മെനു',
 	'nav.summa': 'സുമ്മ',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'വായന തുടരുക',
+	'library.continueReading': 'വായന തുടരുക',
 	'nav.library': 'ഗ്രന്ഥശാല',
 	'nav.learn': 'പഠിക്കുക',
 	'library.landing.tagline':

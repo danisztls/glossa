@@ -53,7 +53,7 @@ export const lt: Dictionary = {
 	'nav.menu': 'Meniu',
 	'nav.summa': 'Suma',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Skaityti toliau',
+	'library.continueReading': 'Skaityti toliau',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mokytis',
 	'library.landing.tagline':

@@ -54,7 +54,7 @@ export const cs: Dictionary = {
 	'nav.menu': 'Nabídka',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Pokračovat ve čtení',
+	'library.continueReading': 'Pokračovat ve čtení',
 	'nav.library': 'Knihovna',
 	'nav.learn': 'Učení',
 	'library.landing.tagline':

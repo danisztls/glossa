@@ -57,7 +57,7 @@ export const sq: Dictionary = {
 	'nav.menu': 'Menyja',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Vazhdo leximin',
+	'library.continueReading': 'Vazhdo leximin',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mëso',
 	'library.landing.tagline':

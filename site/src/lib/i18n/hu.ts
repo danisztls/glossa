@@ -33,7 +33,7 @@ export const hu: Dictionary = {
 	'nav.bookmarks': 'Könyvjelzők',
 	'nav.menu': 'Menü',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Olvasás folytatása',
+	'library.continueReading': 'Olvasás folytatása',
 	'nav.library': 'Könyvtár',
 	'nav.learn': 'Tanulás',
 	'library.landing.tagline':

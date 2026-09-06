@@ -32,7 +32,7 @@ export const sl: Dictionary = {
 	'nav.bookmarks': 'Zaznamki',
 	'nav.menu': 'Meni',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Nadaljujte branje',
+	'library.continueReading': 'Nadaljujte branje',
 	'nav.library': 'Knjižnica',
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':

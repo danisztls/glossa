@@ -34,7 +34,7 @@ export const ru: Dictionary = {
 	'nav.bookmarks': 'Закладки',
 	'nav.menu': 'Меню',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Продолжить чтение',
+	'library.continueReading': 'Продолжить чтение',
 	'nav.library': 'Библиотека',
 	'nav.learn': 'Учиться',
 	'library.landing.tagline':

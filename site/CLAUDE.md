@@ -654,15 +654,33 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library that held only what the bar left out is
   a leftovers bin, and the label stops meaning anything.
-- **No page in this group writes a name or a sentence of its own.** Library's
-  shelves and the home page's doors reuse the key each destination is already
-  titled and described by, the same rule `route-titles.mjs` follows for the
-  `<head>`. Adding a shelf should add no dictionary key; if it does, check
-  whether the destination page really has no tagline.
-- **The home page is the liturgical day plus the doors.** Do not put an index
-  on it. It carried the Bible's whole table of contents and the Catechism's
-  whole outline until 2026-09-04, which is why nothing ingested after them was
-  ever added to it — a WEIGHT problem that reads as a nesting problem.
+- **No page in this group writes a SENTENCE of its own, and exactly one name.**
+  Library's shelves and the home page's doors reuse the key each destination is
+  already titled and described by, the same rule `route-titles.mjs` follows for
+  the `<head>`. Adding a shelf should add no dictionary key; if it does, check
+  whether the destination page really has no tagline. The exception is
+  `ccc.landing.pairTitle` — the Learn shelf names the Catechism and its
+  Compendium as ONE card, and no other surface wants that name (`/schola` lists
+  the two separately, the `<head>` titles `/catechismus` after the Catechism).
+  English-only, falling back key by key.
+- **`/bibliotheca`'s shelves are the home page's `.door` grid** (2026-09-06),
+  cards across rather than six blocks down a 72rem column, each with **the same
+  glyph `/schola` gives that work** — take the icon from there rather than
+  choosing again. The card is NOT one wide anchor the way a door is: two
+  shelves hold their own links, so the heading is the target and the card is
+  the ground.
+- **The Learn shelf is two cards, and the Summa has no row** (2026-09-06). The
+  Compendium of the Catechism was a row beside the Catechism and both led to
+  one index, so the pair is one card; `/doctores` keeps its shelf and its
+  caveat, but the row jumping past that caveat into the Summa went.
+- **The home page is the liturgical day plus the doors, and NOTHING else.** Do
+  not put an index on it. It carried the Bible's whole table of contents and
+  the Catechism's whole outline until 2026-09-04, which is why nothing ingested
+  after them was ever added to it — a WEIGHT problem that reads as a nesting
+  problem. "Continue reading" went on 2026-09-06 for a different reason worth
+  keeping: a section that is EMPTY for every first-time reader was arranging
+  the one page a stranger arrives at around a state only a returning reader
+  has, and the returning reader got four rows of a list one click away.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed
@@ -671,7 +689,9 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **One row per work TYPE in "continue reading", and the types are
   discovered.** `continueRows` reads the reader's own positions; it replaced a
   literal list written when four types existed, under which a reader halfway
-  through the Code got no row.
+  through the Code got no row. It renders on `/bibliotheca` and nowhere else,
+  uncapped, beside the bookmark counts — `library.continueReading`, which was
+  `home.continueReading` until the section moved.
 
 ## `/documenta` filters, and the one editorial file behind them
 

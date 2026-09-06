@@ -60,7 +60,7 @@ export const ko: Dictionary = {
 	'nav.menu': '메뉴',
 	'nav.summa': '신학대전',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': '이어서 읽기',
+	'library.continueReading': '이어서 읽기',
 	'nav.library': '서고',
 	'nav.learn': '배우기',
 	'library.landing.tagline': '전체 장서를 서가별로 — 읽던 자리와 표시해 둔 곳과 함께.',

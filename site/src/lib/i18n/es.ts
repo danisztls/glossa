@@ -34,7 +34,7 @@ export const es: Dictionary = {
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menú',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Seguir leyendo',
+	'library.continueReading': 'Seguir leyendo',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Aprender',
 	'library.landing.tagline':

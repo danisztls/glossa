@@ -61,7 +61,7 @@ export const uk: Dictionary = {
 	'nav.menu': 'Меню',
 	'nav.summa': 'Сума',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Продовжити читання',
+	'library.continueReading': 'Продовжити читання',
 	'nav.library': 'Бібліотека',
 	'nav.learn': 'Навчання',
 	'library.landing.tagline':

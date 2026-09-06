@@ -34,7 +34,7 @@ export const fr: Dictionary = {
 	'nav.bookmarks': 'Signets',
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Reprendre la lecture',
+	'library.continueReading': 'Reprendre la lecture',
 	'nav.library': 'Bibliothèque',
 	'nav.learn': 'Apprendre',
 	'library.landing.tagline':

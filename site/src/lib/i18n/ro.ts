@@ -33,7 +33,7 @@ export const ro: Dictionary = {
 	'nav.bookmarks': 'Semne de carte',
 	'nav.menu': 'Meniu',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Continuați lectura',
+	'library.continueReading': 'Continuați lectura',
 	'nav.library': 'Bibliotecă',
 	'nav.learn': 'Învață',
 	'library.landing.tagline':

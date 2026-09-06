@@ -39,23 +39,24 @@
 	 * cycle letters on `/calendarium` are stated as facts about the year rather
 	 * than dressed up as an answer the site cannot give.
 	 *
-	 * ## Continue reading stays, and is no longer a hand-kept list
+	 * ## Continue reading is on `/bibliotheca` and only there
 	 *
-	 * It was one row per work type over a literal `CONTINUE_TYPES` written when
-	 * four types existed, so a reader halfway through the Code got no row. The
-	 * types are discovered from the reader's own positions now
-	 * (`continueRows`), which is a list that cannot fall behind the corpus.
-	 * Capped here and uncapped on `/bibliotheca`: this page is an entrance and
-	 * that one is the record.
+	 * It was on both, capped at four here and uncapped there, on the reasoning
+	 * that an entrance may show a little of what the record holds. What that
+	 * actually produced was a section between the day and the doors that is
+	 * EMPTY for every reader who has not been here before — so the one page a
+	 * stranger arrives at was arranged around a state only a returning reader
+	 * has, and the returning reader got a truncated copy of a list one click
+	 * away. `/bibliotheca` is the borrowing record beside the catalogue, which
+	 * is where a reader's own place belongs; this page is the day and the
+	 * doors, and both are true on a first visit.
 	 *
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { onMount } from 'svelte';
-	import { getWork } from '$lib/corpus';
 	import { liturgicalDay, toDayNumber, type LiturgicalDay } from '$lib/calendar';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
-	import { continueRows, listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
 
 	/**
@@ -87,21 +88,14 @@
 		return toDayNumber(now.getFullYear(), now.getMonth() + 1, now.getDate());
 	}
 
-	// Both of these are read on mount rather than derived: one is the client's
-	// clock and the other is its localStorage, and neither exists while the
-	// shell is being served. A prerendered "today" would be the day this build
-	// was made.
+	// Read on mount rather than derived: it is the client's clock, which does
+	// not exist while the shell is being served. A prerendered "today" would be
+	// the day this build was made.
 	let day: LiturgicalDay | undefined = $state();
-	let positions: ReadingPosition[] = $state([]);
 
 	onMount(() => {
 		day = liturgicalDay(localToday());
-		positions = listPositions();
 	});
-
-	/** Four at most. A reader with more of them has `/bibliotheca`, where the
-	 *  list is the point rather than a way past the fold. */
-	const continuing = $derived(continueRows(positions, (id) => getWork(id)?.type).slice(0, 4));
 </script>
 
 <div class="landing-column">
@@ -114,17 +108,6 @@
 			<h2 id="today-heading" class="visually-hidden">{t('calendar.today')}</h2>
 			<LiturgicalDayCard {day} />
 			<a class="today-more" href="/calendarium">{t('calendar.title')} &rarr;</a>
-		</section>
-	{/if}
-
-	{#if continuing.length > 0}
-		<section aria-labelledby="continue-heading">
-			<h2 id="continue-heading">{t('home.continueReading')}</h2>
-			<ul class="positions index-list">
-				{#each continuing as position (position.workId)}
-					<li><a href={position.href}>{position.label}</a></li>
-				{/each}
-			</ul>
 		</section>
 	{/if}
 
@@ -161,17 +144,11 @@
 		line-height: inherit;
 	}
 
-	section {
-		margin: 2.25rem 0;
-	}
-
-	section h2 {
-		font-family: var(--font-serif);
-		font-size: 1.3rem;
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.4rem;
-		margin: 0 0 1rem;
-	}
+	/* EVERY HEADING ON THIS PAGE IS HIDDEN, so there is no visible-heading rule
+	   here any more. There was one — serif, 1.3rem, on a rule — and its only
+	   remaining subject after "Continue reading" moved to `/bibliotheca` was a
+	   `.visually-hidden` span, which is a rule styling nothing. `/bibliotheca`
+	   keeps the same declarations, where they still have headings to set. */
 
 	/* The day's card already carries the celebration's name as its own
 	   heading, so a rule reading "Today" above it would be a second title over
@@ -208,10 +185,6 @@
 	.today-more:focus-visible {
 		text-decoration: underline;
 		text-underline-offset: 0.15em;
-	}
-
-	.positions li {
-		padding: 0.35rem 0;
 	}
 
 	/* --- The doors ---------------------------------------------------------

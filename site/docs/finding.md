@@ -301,22 +301,54 @@ when two items reach the SAME place, which is why there is no "Home" entry
 beside the brand link and why a shortcut past an index is not one.
 
 **It holds a catalogue AND a borrowing record**, which is what makes it more
-than an index: the shelves, then where the reader left off, then their marks.
+than an index: where the reader left off and their marks, then the shelves.
 `/signata` remains the full view of the second.
 
-**No page below the bar declares a name or a sentence of its own.** Library's
-shelves, the home page's doors and the `<head>` all read the key the destination
-page is already titled and described by (`scripts/route-titles.mjs`). A
-catalogue that paraphrased the pages it lists would be a second set of sentences
-to translate into 37 languages and a second set to keep true.
+**AND IT IS THE ONLY PAGE THAT HOLDS THE RECORD** (2026-09-06). The home page
+carried "continue reading" too, capped at four against this page's uncapped
+list, on the reasoning that an entrance may show a little of what the record
+holds. What that produced was a section EMPTY for every reader who has not been
+here before — so the one page a stranger arrives at was arranged around a state
+only a returning reader has — while the returning reader got a truncated copy of
+a list one click away. **A surface only a returning reader can fill belongs on
+the page that is about returning.** `home.continueReading` became
+`library.continueReading` in the same commit, the second key on that page
+renamed rather than re-translated (`nav.library` was `home.works`).
+
+**No page below the bar declares a SENTENCE of its own, and one declares a
+name.** Library's shelves, the home page's doors and the `<head>` all read the
+key the destination page is already titled and described by
+(`scripts/route-titles.mjs`). A catalogue that paraphrased the pages it lists
+would be a second set of sentences to translate into 37 languages and a second
+set to keep true. The one exception is named below, and it is a name.
+
+**THE SHELVES ARE THE HOME PAGE'S DOOR GRID** (2026-09-06) — cards across the
+column, each carrying the glyph `/schola` already assigns that work, where they
+were six stacked blocks down 72rem: a column of headings with an ocean to the
+right of each. Two departures from the doors, both forced. A door is one
+card-wide anchor and a shelf cannot be, because two shelves hold their own
+links and an anchor inside an anchor is ambiguous before it is invalid — so the
+heading is the target and the card is the ground it stands on. And the track
+floor is 17rem against the doors' 15, which is where the Learn card's two
+titles stop taking three lines each.
+
+**The Learn shelf is TWO cards and the Summa has none.** The Compendium of the
+Catechism stood as a row beside the Catechism and the two led to one index —
+`/catechismus` holds both, which the sentence under them has always said — so
+the pair is one card named for the pair. That name (`ccc.landing.pairTitle`) is
+the single string on this page written FOR it: `/schola` lists the two works
+separately and the `<head>` titles `/catechismus` after the Catechism alone, so
+no existing key means the pair. `/doctores` keeps its shelf and its caveat; what
+went is the row underneath that jumped past the caveat into an unrevised Summa.
 
 **The home page is the liturgical day and the doors, and nothing else.** It
 rendered the Bible's whole table of contents and then the Catechism's whole
-outline until the same day, and those two blocks were most of its height — which
+outline until 2026-09-04, and those two blocks were most of its height — which
 is why nothing ingested afterwards was ever added to it, neither the Compendium
 of the Social Doctrine nor the Code. **That was a WEIGHT problem and not a
 nesting one**, which is why rearranging the nav into categories kept feeling
-like the fix and kept not being one.
+like the fix and kept not being one. What "continue reading" then cost it was
+not weight but TRUTH: every other thing on that page is true on a first visit.
 
 ## The jump box
 

@@ -54,7 +54,7 @@ export const da: Dictionary = {
 	'nav.menu': 'Menu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Fortsæt læsning',
+	'library.continueReading': 'Fortsæt læsning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lær',
 	'library.landing.tagline':

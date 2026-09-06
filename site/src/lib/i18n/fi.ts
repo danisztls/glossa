@@ -57,7 +57,7 @@ export const fi: Dictionary = {
 	'nav.menu': 'Valikko',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Jatka lukemista',
+	'library.continueReading': 'Jatka lukemista',
 	'nav.library': 'Kirjasto',
 	'nav.learn': 'Opi',
 	'library.landing.tagline':

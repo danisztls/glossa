@@ -72,7 +72,7 @@ export const mg: Dictionary = {
 	'nav.menu': 'Karazana',
 	'nav.summa': 'Somà',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Manohy mamaky',
+	'library.continueReading': 'Manohy mamaky',
 	'nav.library': 'Tranomboky',
 	'nav.learn': 'Mianara',
 	'library.landing.tagline':

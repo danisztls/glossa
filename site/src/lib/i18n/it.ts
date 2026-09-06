@@ -33,7 +33,7 @@ export const it: Dictionary = {
 	'nav.bookmarks': 'Segnalibri',
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Continua a leggere',
+	'library.continueReading': 'Continua a leggere',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Imparare',
 	'library.landing.tagline':

@@ -63,7 +63,7 @@ export const he: Dictionary = {
 	'nav.menu': 'תפריט',
 	'nav.summa': 'סומה',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'המשך קריאה',
+	'library.continueReading': 'המשך קריאה',
 	'nav.library': 'ספרייה',
 	'nav.learn': 'ללמוד',
 	'library.landing.tagline': 'כל האוסף, מדף אחר מדף — עם המקום שבו הפסקת ועם מה שסימנת.',

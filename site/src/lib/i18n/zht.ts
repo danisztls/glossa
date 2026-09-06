@@ -62,7 +62,7 @@ export const zht: Dictionary = {
 	'nav.menu': '選單',
 	'nav.summa': '神學大全',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': '繼續閱讀',
+	'library.continueReading': '繼續閱讀',
 	'nav.library': '書庫',
 	'nav.learn': '學習',
 	'library.landing.tagline': '全部書目，一架一架——連同你讀到的地方和你標記的內容。',

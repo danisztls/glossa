@@ -126,6 +126,10 @@
 	// language while the interface is in another.
 	import MessagesSquare from '@lucide/svelte/icons/messages-square';
 	import Users from '@lucide/svelte/icons/users';
+	// `/bibliotheca`'s Learn shelf, which is the one shelf named for what a
+	// reader DOES with it rather than for what is on it — so its mark is the
+	// only one in the set that is not an object you could pick up.
+	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
 	import Languages from '@lucide/svelte/icons/languages';
 
 	const ICONS = {
@@ -168,6 +172,7 @@
 		flame: Flame,
 		'messages-square': MessagesSquare,
 		users: Users,
+		'graduation-cap': GraduationCap,
 		languages: Languages
 	};
 

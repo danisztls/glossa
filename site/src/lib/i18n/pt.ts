@@ -32,7 +32,7 @@ export const pt: Dictionary = {
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
-	'home.continueReading': 'Continuar lendo',
+	'library.continueReading': 'Continuar lendo',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Aprender',
 	'library.landing.tagline':
