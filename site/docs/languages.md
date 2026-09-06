@@ -96,6 +96,28 @@ pass — a disagreement there swaps every glyph at hydration. (Writing `zht.ts`
 also revealed that `zh.ts` had drifted: its whole colophon was in Traditional
 characters. Nothing mechanical can see that.)
 
+**A TAG THAT CARRIES NO REGION LEAVES THE VARIANT TO THE DICTIONARY, AND
+`pt.ts` DECIDES IT: neutral where a neutral form exists, Brazilian where none
+does** (2026-09-06). Nothing had ever decided this — the file was written in
+European Portuguese, and the calendar strings added later were Brazilian, so
+one dictionary held both. What a mixed variant costs is not style but fact:
+`install.hint.*` names an entry in the reader's own OS menu, and Apple prints
+"Adicionar ao ecrã principal" in Portugal against "Adicionar à Tela de Início"
+in Brazil — different words, different case, a crase in one — so a reader on
+the wrong side is sent looking for something their phone does not print.
+Brazil takes the tie because it is the larger part of the readers, not because
+the tag means Brazil.
+
+**The rule reads in that order, and the first half does most of the work.**
+`inscrever-se`, `site`, `fazer login` and the impersonal third person are read
+on both sides of the Atlantic, so the dictionary spends nothing to be neutral
+there — an explicit `você` and a `para si` are equally marked, and the
+impersonal was the original's voice anyway. What has no shared form takes
+Brazil: seção, gênero, canônico, anônimo, contato; baixar, link, tela,
+aplicativo; the gerund over `estar a`; `“aspas”` over `«aspas»`; `23º` over
+`23.º`. **The place this bites next is any string quoting a platform**, which
+is where being neutral is not on offer at all.
+
 ## Falling back
 
 **Content fallback is per language, at most one neighbour deep, and always ends

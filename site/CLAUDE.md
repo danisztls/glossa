@@ -2212,6 +2212,12 @@ not.
   plainly: **a class name borrowed across a component boundary in Svelte is
   silently unstyled.** Two components rendering one class means the rule is
   global, and the file to put it in is `reading-chrome.css`.
+- **The panel drops the punctuation that JOINED the headword to the note**
+  (`dropJoiner`, 2026-09-06) — a source stores it as the note's first
+  characters, so hiding the headword opened 1,084 of Matos Soares's 1,377
+  marked notes on a stray `, ` or `. `. Only punctuation, only from the front:
+  a quote or parenthesis is the note's own, and a note that is nothing but its
+  join keeps it.
 - **Refusing is a first-class outcome**: `lemmaMarked` is true exactly when
   the words were located and is the one prop that suppresses the headword —
   the two can never disagree. Dropping the headword unconditionally would have
@@ -2838,6 +2844,13 @@ choice, not a country), convert after (`zht` cut to `zh` resolves to
 Simplified). It replaced `lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written
 when the site had two interface languages — so every reader who was not
 Portuguese was shown English dates for a year (§docs/languages.md).
+
+**CUTTING THE REGION MAKES THE DICTIONARY DECIDE THE VARIANT, AND `pt.ts` IS
+WRITTEN NEUTRAL, BRAZILIAN WHERE NO NEUTRAL FORM EXISTS** (2026-09-06). It was
+European, with the later calendar strings already Brazilian; what a mixed
+variant costs is not style but fact — `install.hint.*` quotes an iOS menu
+entry, which Portugal and Brazil print as different words in different case
+(§docs/languages.md).
 
 **A THIRD REASON TO ADD AN INTERFACE LANGUAGE ARRIVED 2026-09-06**, and it is
 neither the corpus nor the reach tier: `ja`, `mt` and `no` joined because
