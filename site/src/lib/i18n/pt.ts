@@ -5,6 +5,21 @@
  * that picks between them). English is the fallback for every key any other
  * dictionary leaves out, so a translation may be partial without breaking a
  * page — `t()` reaches for `en` before it gives up and shows the key.
+ *
+ * ONE `pt`, WRITTEN NEUTRAL, AND BRAZILIAN WHERE NEUTRAL IS NOT ON OFFER.
+ * `pt` carries no region because the site knows languages and not countries
+ * (`dates.ts`, `docs/languages.md`), so this dictionary belongs to no country
+ * either: where both sides of the Atlantic share a form it takes the shared
+ * one — 'inscrever-se', 'site', the impersonal third person rather than an
+ * explicit 'você' or 'si'. Where they share none it takes Brazil, the larger
+ * part of its readers: seção/gênero/canônico/anônimo, baixar, link, tela,
+ * gerund and not 'estar a', “aspas” and not «aspas».
+ *
+ * IT WAS EUROPEAN AND ALREADY DRIFTING — the calendar strings, written later,
+ * were Brazilian while the colophon was not — and a mixed dictionary costs
+ * more than style: `install.hint.*` names an entry in the reader's own OS
+ * menu, so the wrong variant sends them looking for words their phone does
+ * not print.
  */
 
 import type { Dictionary } from '../i18n.svelte';
@@ -18,26 +33,26 @@ export const pt: Dictionary = {
 	'socialDoctrine.landing.title': 'Compêndio da Doutrina Social da Igreja',
 	'socialDoctrine.landing.tagline':
 		'O que a Igreja ensina sobre a vida em sociedade, em 583 números.',
-	'nav.canonLaw': 'Direito Canónico',
-	'canonLaw.landing.title': 'Código de Direito Canónico',
+	'nav.canonLaw': 'Direito Canônico',
+	'canonLaw.landing.title': 'Código de Direito Canônico',
 	'canonLaw.landing.tagline':
 		'O direito da Igreja latina, em 1752 cânones distribuídos por sete livros.',
 	'canonLaw.canon': 'Cân.',
 	'canonLaw.canons': 'Cân.',
-	'canonLaw.prevCanon': 'Cânone anterior',
-	'canonLaw.nextCanon': 'Cânone seguinte',
+	'canonLaw.prevCanon': 'Cânon anterior',
+	'canonLaw.nextCanon': 'Próximo cânon',
 	'canonLaw.readFullTitle': 'Ler o título inteiro',
 	'canonLaw.superseded': 'Redação substituída por',
 	'nav.prayers': 'Orações',
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',
-	'nav.sections': 'Secções',
+	'nav.sections': 'Seções',
 	'nav.works': 'Obras',
 	'nav.pages': 'Páginas',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Continuar lendo',
 	'home.tagline':
-		'Um site de leitura das Escrituras, do Catecismo e dos documentos do Magistério — gratuito, disponível sem ligação e sem nada em que se inscrever.',
+		'Um site de leitura das Escrituras, do Catecismo e dos documentos do Magistério — gratuito, disponível offline e sem nada em que se inscrever.',
 	'home.doors.heading': 'Para onde ir',
 	'home.find.heading': 'Ou escreva uma referência',
 	'nav.library': 'Biblioteca',
@@ -47,67 +62,67 @@ export const pt: Dictionary = {
 	'schola.landing.title': 'Por onde começar',
 	'schola.landing.tagline':
 		'Um guia breve do que está aqui: o que é cada um destes livros, como se escreve uma citação sua, como encontrar uma passagem, e ordens de leitura que a Igreja propôs.',
-	'schola.start.heading': 'Se isto é novo para si',
+	'schola.start.heading': 'Se isto é novo para você',
 	'schola.start.body': 'Comece pelo ',
 	'schola.start.bodyAfter':
 		': o mesmo ensinamento do Catecismo, muito mais curto, escrito em perguntas e respostas. Tem cerca de um décimo da extensão e não pressupõe nada.',
 	'schola.bible.heading': 'Se nunca leu a Bíblia',
 	'schola.bible.library':
-		'Não é um livro, mas setenta e três, escritos ao longo de mais de mil anos e reunidos na ordem que a Igreja fixou — não a ordem em que os acontecimentos se deram, nem a ordem mais fácil de ler. A maioria das pessoas começa na primeira página e desiste umas semanas depois, num longo capítulo de lei antiga, porque nada lhes disse ainda para que serve.',
+		'Não é um livro, mas setenta e três, escritos ao longo de mais de mil anos e reunidos na ordem que a Igreja fixou — não a ordem em que os acontecimentos se deram, nem a ordem mais fácil de ler. A maioria das pessoas começa na primeira página e desiste algumas semanas depois, num longo capítulo de lei antiga, porque nada lhes disse ainda para que ele serve.',
 	'schola.bible.step.gospel': 'Comece por um Evangelho',
 	'schola.bible.start':
-		'Um de quatro livros curtos sobre a vida de Jesus, bem lá dentro e não à frente. A ideia não é nossa: um Concílio da Igreja pediu que se ensinasse o reto uso da Escritura, «sobretudo do Novo Testamento e antes de tudo dos Evangelhos». Não indicou nenhum em particular, e nós também não.',
+		'Um de quatro livros curtos sobre a vida de Jesus, bem lá dentro e não à frente. A ideia não é nossa: um Concílio da Igreja pediu que se ensinasse o reto uso da Escritura, “sobretudo do Novo Testamento e antes de tudo dos Evangelhos”. Não indicou nenhum em particular, e nós também não.',
 	'schola.bible.whichGospel':
-		'Três são habitualmente sugeridos, por três razões diferentes. Qualquer deles é um bom lugar onde estar.',
+		'Três são habitualmente sugeridos, por três razões diferentes. Qualquer deles é um bom lugar para estar.',
 	'schola.bible.gospel.mark':
-		'O mais curto. Pode lê-lo inteiro numa tarde, e ter acabado um vale mais, no princípio, do que ter escolhido o melhor.',
+		'O mais curto. Pode lê-lo inteiro numa tarde, e ter terminado um vale mais, no princípio, do que ter escolhido o melhor.',
 	'schola.bible.gospel.luke':
-		'Escrito para alguém de fora da fé que queria a história posta por ordem — o que pode ser exatamente o seu caso. Continua diretamente nos Atos dos Apóstolos, pelo que é na verdade a primeira metade de um livro mais longo.',
+		'Escrito para alguém de fora da fé que queria a história posta em ordem — o que pode ser exatamente o seu caso. Continua diretamente nos Atos dos Apóstolos, e por isso é na verdade a primeira metade de um livro mais longo.',
 	'schola.bible.gospel.john':
-		'O que diz abertamente por que foi escrito: «para que acrediteis». Palavras simples, e vai direito à questão de quem é Jesus.',
-	'schola.bible.step.acts': 'Depois, o que aconteceu a seguir',
+		'O que diz abertamente por que foi escrito: “para que acrediteis”. Palavras simples, e vai direto à questão de quem é Jesus.',
+	'schola.bible.step.acts': 'Depois, o que aconteceu em seguida',
 	'schola.bible.thenActs':
-		'Quando tiver acabado um, leia o que fizeram, depois de Ele partir, os que o conheceram.',
+		'Quando tiver terminado um, leia o que fizeram, depois de Ele partir, os que o conheceram.',
 	'schola.bible.acts.why':
-		'Os trinta anos após o fim dos Evangelhos: umas dezenas de pessoas assustadas, e como o que tinham visto chegou ao outro extremo do império.',
+		'Os trinta anos após o fim dos Evangelhos: algumas dezenas de pessoas assustadas, e como o que tinham visto chegou ao outro extremo do império.',
 	'schola.bible.step.old': 'Depois, a metade mais antiga',
 	'schola.bible.thenOld':
-		'Não a partir da primeira página, e não toda. Alguns lugares levam a história, e são aqueles para os quais os Evangelhos não param de remeter.',
-	'schola.bible.ot.beginnings': 'Como começa, e como corre mal.',
+		'Não a partir da primeira página, e não toda. Alguns lugares conduzem a história, e são aqueles para os quais os Evangelhos não param de remeter.',
+	'schola.bible.ot.beginnings': 'Como começa, e como dá errado.',
 	'schola.bible.ot.promise':
 		'Uma família, e uma promessa que lhe é feita e sobrevive a todos os seus.',
 	'schola.bible.ot.exodus': 'Um povo tirado da escravidão, e uma lei que lhe é dada para viver.',
 	'schola.bible.ot.psalms':
-		'Não é uma história: são cento e cinquenta orações e cânticos. Leia um de cada vez, por qualquer ordem. A Igreja ainda os reza todos os dias.',
+		'Não é uma história: são cento e cinquenta orações e cânticos. Leia um de cada vez, em qualquer ordem. A Igreja ainda os reza todos os dias.',
 	'schola.bible.bothWays':
-		'Vai reconhecer coisas, e isso é o ponto e não uma coincidência. A Igreja lê os livros mais antigos à luz de Cristo e os mais recentes à luz do que veio antes — cada metade explica a outra, e é por isso que nenhuma se lê sozinha.',
-	'schola.guide.heading': 'Orientar-se',
+		'Vai reconhecer coisas, e isso é o ponto, não uma coincidência. A Igreja lê os livros mais antigos à luz de Cristo e os mais recentes à luz do que veio antes — cada metade explica a outra, e é por isso que nenhuma se lê sozinha.',
+	'schola.guide.heading': 'Como se orientar',
 	'schola.guide.lede':
-		'O texto é toda a página; tudo o resto é um comando que pode ignorar até o querer.',
+		'O texto é toda a página; tudo o mais é um comando que pode ignorar até querer usá-lo.',
 	'schola.guide.top.heading': 'A barra no topo de todas as páginas',
 	'schola.guide.reading.heading': 'A barra acima de um texto',
 	'schola.feature.search':
-		'Escreva uma referência na caixa do topo — capítulo e versículo, número de parágrafo, o nome de um documento — e ela completa-a à medida que escreve. Pressione / ou Ctrl+K a partir de qualquer lugar, e ? para os outros atalhos.',
+		'Escreva uma referência na caixa do topo — capítulo e versículo, número de parágrafo, o nome de um documento — e ela a completa à medida que escreve. Pressione / ou Ctrl+K de qualquer lugar, e ? para os outros atalhos.',
 	'schola.feature.languages':
-		'A interface e o texto escolhem-se em separado, pelo que pode ler uma obra numa língua enquanto os botões ficam noutra. Onde uma obra tem várias edições na sua língua, escolhe também entre essas.',
+		'A interface e o texto são escolhidos separadamente, e por isso pode ler uma obra numa língua enquanto os botões ficam em outra. Onde uma obra tem várias edições na sua língua, escolhe também entre elas.',
 	'schola.feature.settings':
 		'Tamanho do texto, claro ou escuro, sépia, e quanto do aparato quer ao lado do texto.',
 	'schola.feature.offline':
-		'Adicione o site ao ecrã principal e abre como uma aplicação. Pode transferir obras inteiras para ler sem ligação.',
+		'Adicione o site à tela de início e ele abre como um aplicativo. Pode baixar obras inteiras para ler sem conexão.',
 	'schola.feature.contents':
-		'As divisões da obra em que está — livros, partes, capítulos — para se mover dentro dela sem voltar ao princípio.',
+		'As divisões da obra em que está — livros, partes, capítulos — para se mover dentro dela sem voltar ao começo.',
 	'schola.feature.compare':
 		'Duas edições da mesma passagem, lado a lado — o latim ao lado da sua própria língua, ou uma tradução ao lado de outra.',
 	'schola.feature.apparatus':
-		'As notas da própria edição, e qualquer comentário escrito sobre o texto, são oferecidos ao lado dele e não por baixo. As citações dentro do texto são ligações, pelo que uma referência leva aonde aponta.',
+		'As notas da própria edição, e qualquer comentário escrito sobre o texto, são oferecidos ao lado dele e não abaixo. As citações dentro do texto são links, e por isso uma referência leva aonde aponta.',
 	'schola.feature.focus':
 		'Limpa tudo menos o texto. A saída fica onde a barra estava, para que nada fique preso atrás dela.',
 	'schola.books.heading': 'O que está aqui, e como se cita',
 	'schola.books.lede':
-		'Cada um destes é um género de livro diferente, e cada um é referido por um número próprio. Os exemplos mostram a forma: escreva um assim na caixa de busca e chega à passagem.',
+		'Cada um destes é um gênero de livro diferente, e cada um é referido por um número próprio. Os exemplos mostram a forma: escreva um assim na caixa de busca e chega à passagem.',
 	'schola.cite.label': 'Cita-se',
 	'schola.what.scripture':
-		'As Escrituras tal como a Igreja as recebe, nos dois Testamentos. Tudo o resto que está aqui lê-se à luz delas.',
+		'As Escrituras tal como a Igreja as recebe, nos dois Testamentos. Tudo o mais que está aqui se lê à luz delas.',
 	'schola.cite.scripture': 'livro, capítulo e versículo, nas abreviaturas que a sua edição imprime',
 	'schola.what.catechism':
 		'Um resumo do que a Igreja Católica crê, num só volume. Não é ele próprio uma fonte: reúne a Escritura, os Padres, a liturgia e o ensinamento da Igreja, e cada parágrafo diz de onde vem o que afirma.',
@@ -117,12 +132,12 @@ export const pt: Dictionary = {
 	'schola.cite.compendium': 'por número de pergunta',
 	'schola.what.magisterium':
 		'O que os papas e os concílios efetivamente escreveram — encíclicas, constituições, decretos, declarações — cada um dirigido a um momento e a uma questão determinados. Cada um é conhecido pelas suas palavras iniciais em latim.',
-	'schola.cite.magisterium': 'pelo nome do documento, e depois um número de secção dentro dele',
+	'schola.cite.magisterium': 'pelo nome do documento, e depois um número de seção dentro dele',
 	'schola.what.social':
 		'O ensinamento da Igreja sobre o trabalho, a propriedade, a família, a política e a paz, colhido desses documentos num só livro.',
 	'schola.cite.social': 'por número de parágrafo, sob a sigla que a obra usa para si mesma',
-	'schola.what.law': 'Direito e não doutrina. Diz o que a Igreja exige, e é emendado.',
-	'schola.cite.law': 'por cânone, que é como se chamam as suas unidades numeradas',
+	'schola.what.law': 'Direito, e não doutrina. Diz o que a Igreja exige, e é emendado.',
+	'schola.cite.law': 'por cânon, que é como se chamam as suas unidades numeradas',
 	'schola.what.doctors':
 		'Os teólogos que a Igreja declarou Doutores. Não tem autoridade oficial, por maior que seja o seu autor.',
 	'schola.cite.doctors': 'por parte, e depois questão — as divisões próprias da Suma',
@@ -130,11 +145,11 @@ export const pt: Dictionary = {
 	'schola.cite.prayers': 'pelo nome; não há números a citar',
 	'schola.places.heading': 'Não textos, mas lugares deste site',
 	'schola.what.library':
-		'Todas as obras do site numa só lista, agrupadas por assunto e não por género.',
+		'Todas as obras do site numa só lista, agrupadas por assunto e não por gênero.',
 	'schola.what.calendar':
 		'O dia litúrgico — tempo, cor e quem se celebra — para o país cujo calendário segue.',
 	'schola.what.bookmarks':
-		'Passagens que marcou, e onde ficou pela última vez em cada obra. Ambos ficam neste navegador e não são enviados para lado nenhum.',
+		'Passagens que marcou, e onde parou pela última vez em cada obra. Os dois ficam neste navegador e não são enviados para lugar nenhum.',
 	'ccc.noCounterpart': 'Sem correspondência na outra obra',
 	'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',
@@ -142,7 +157,7 @@ export const pt: Dictionary = {
 	'jumpbox.noMatch': 'Nenhum resultado',
 	'jumpbox.suggestions': 'Sugestões',
 
-	'settings.label': 'Definições',
+	'settings.label': 'Configurações',
 	'apparatus.label': 'Aparato',
 	'apparatus.editionNotes': 'Notas desta edição',
 	'apparatus.commentary': 'Comentário',
@@ -161,33 +176,32 @@ export const pt: Dictionary = {
 	'oled.darkOnly': 'Só no modo escuro',
 	'mono.label': 'Monocromático',
 	'mono.hint':
-		'Compõe a página inteira num único cinzento, para que nada se distinga pela cor. O sépia desliga-se enquanto estiver ativo.',
+		'Compõe a página inteira num único cinza, para que nada se distinga pela cor. O sépia é desligado enquanto ele estiver ativo.',
 
 	'advanced.label': 'Avançado',
 	'library.title': 'Biblioteca offline',
-	'library.lede': 'Os textos guardados neste dispositivo abrem sem rede nenhuma.',
+	'library.lede': 'Os textos salvos neste dispositivo abrem sem rede nenhuma.',
 	'library.essentials': 'Orações e Compêndio',
 	'library.illustrations': 'Bíblia (ilustrações)',
 	'library.illustrationsDetail': 'Bíblia (ilustrações, alta resolução)',
 	'library.other': 'Outros textos',
 	'library.everything': 'Tudo',
-	'library.downloadAll': 'Transferir tudo',
-	'library.download': 'Transferir',
+	'library.downloadAll': 'Baixar tudo',
+	'library.download': 'Baixar',
 	'library.downloaded': 'Neste dispositivo',
-	'library.offlineNote': 'Desative o modo offline para transferir.',
+	'library.offlineNote': 'Desative o modo offline para baixar.',
 	'library.remove': 'Remover deste dispositivo',
 	'library.removeConfirm': 'Remover?',
-	'library.forget': 'Remover transferências',
+	'library.forget': 'Remover os downloads',
 	'library.forgetConfirm': 'Remover tudo?',
 	'offline.label': 'Modo offline',
 	'offline.hint':
-		'Não usa a rede de todo: não transfere nada, não procura atualizações, não mede nada. Só abrem os textos que já estão neste dispositivo.',
+		'Não usa a rede de forma alguma: não baixa nada, não procura atualizações, não mede nada. Só abrem os textos que já estão neste dispositivo.',
 	'offline.notDownloaded': 'Não está neste dispositivo',
 	'loadFailed.title': 'Isso não carregou',
-	'loadFailed.hint':
-		'A página existe — algo correu mal ao obtê-la. Tentar de novo costuma resolver.',
+	'loadFailed.hint': 'A página existe — algo falhou ao buscá-la. Tentar de novo costuma resolver.',
 	'loadFailed.retry': 'Tentar de novo',
-	'loadFailed.retrying': 'A tentar…',
+	'loadFailed.retrying': 'Tentando…',
 	'offline.turnOff': 'Desativar o modo offline',
 
 	'fontSize.label': 'Tamanho do texto',
@@ -196,18 +210,21 @@ export const pt: Dictionary = {
 	'print.label': 'Imprimir esta página',
 	'toTop.label': 'Voltar ao topo',
 
-	// "Ecrã Principal" and "Adicionar ao Ecrã Principal" are iOS's own
-	// pt-PT wording — the reader is being told to find that exact entry in
-	// their share sheet, so the string has to match what Apple prints
-	// there rather than read as a natural translation of the English.
+	// "Tela de Início" and "Adicionar à Tela de Início" are iOS's own pt-BR
+	// wording, capitals and crase included — the reader is being told to find
+	// that exact entry in their share sheet, so the string has to match what
+	// Apple prints there rather than read as a natural translation of the
+	// English. THIS IS THE KEY WHERE NEUTRAL IS NOT AVAILABLE AT ALL — Apple
+	// prints "Adicionar ao ecrã principal" in Portugal, a different sentence in
+	// a different case, and no wording is both — so the rule above decides it.
 	'install.label': 'Instalar a Glossa',
-	'install.hint.label': 'Adicionar ao Ecrã Principal',
-	'install.hint.title': 'Adicione a Glossa ao seu Ecrã Principal',
-	'install.hint.stepBefore': 'Abre como uma aplicação e lê-se sem ligação. Toque em',
-	'install.hint.stepAfter': 'e depois em «Adicionar ao Ecrã Principal».',
+	'install.hint.label': 'Adicionar à Tela de Início',
+	'install.hint.title': 'Adicione a Glossa à Tela de Início',
+	'install.hint.stepBefore': 'Abre como um aplicativo e pode ser lida sem conexão. Toque em',
+	'install.hint.stepAfter': 'e depois em “Adicionar à Tela de Início”.',
 	'install.hint.dismiss': 'Dispensar',
 
-	'update.label': 'Está disponível uma nova edição',
+	'update.label': 'Há uma nova edição disponível',
 	'update.title': 'Nova edição pronta',
 	'update.body': 'Recarregue para receber os textos e as correções mais recentes.',
 	'update.action': 'Recarregar',
@@ -282,24 +299,24 @@ export const pt: Dictionary = {
 	'summa.titleFromEdition': 'Título da edição em {lang}',
 	'summa.titlesFromEdition': 'Títulos da edição em {lang} — esta não os imprime',
 	'summa.prologue': 'Prólogo',
-	'summa.objection': 'Objecção',
+	'summa.objection': 'Objeção',
 	'summa.sedContra': 'Em sentido contrário',
 	'summa.corpus': 'Respondo que',
-	'summa.reply': 'Resposta à objecção',
+	'summa.reply': 'Resposta à objeção',
 	'summa.preamble': 'Nota',
 	'summa.prevQuestion': 'Questão anterior',
-	'summa.nextQuestion': 'Questão seguinte',
+	'summa.nextQuestion': 'Próxima questão',
 	'summa.noEditionInYourLanguage': 'A Suma não tem edição na sua língua. Apresentada em {lang}.',
 	'summa.noLatinSupplement':
 		'O Suplemento existe apenas em inglês — foi compilado após a morte de Tomás de Aquino.',
 	'index.division': 'Divisão',
-	'index.showSubsections': 'Mostrar subsecções',
-	'index.hideSubsections': 'Ocultar subsecções',
+	'index.showSubsections': 'Mostrar subseções',
+	'index.hideSubsections': 'Ocultar subseções',
 
 	'prayers.landing.title': 'Orações Comuns',
 	'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
 	'prayers.gloss.versicle':
-		'O versículo — a linha que quem dirige a oração diz ou canta sozinho. A assembleia responde-lhe com a resposta que se segue.',
+		'O versículo — a linha que quem dirige a oração diz ou canta sozinho. A assembleia lhe responde com a resposta que vem em seguida.',
 	'prayers.gloss.response':
 		'A resposta — a linha que a assembleia diz ou canta em conjunto, respondendo ao versículo anterior.',
 	'prayers.tableOfContents': 'Índice',
@@ -336,8 +353,8 @@ export const pt: Dictionary = {
 	'bookmark.emptyHint':
 		'Clique no número de um versículo ou parágrafo e escolha Marcar, ou use o botão de marcador numa página.',
 	'bookmark.deviceOnly':
-		'Os marcadores ficam apenas neste navegador. Não são enviados para lado nenhum, e limpar os dados do navegador remove-os.',
-	'bookmark.unavailable': 'Não está na edição que está a ler',
+		'Os marcadores ficam apenas neste navegador. Não são enviados para lugar nenhum, e limpar os dados do navegador os remove.',
+	'bookmark.unavailable': 'Não está na edição que está lendo',
 
 	'document.library.tagline':
 		'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
@@ -352,7 +369,7 @@ export const pt: Dictionary = {
 	'document.tableOfContents': 'Índice',
 	'document.startReading': 'Começar a leitura',
 	'document.readFullDocument': 'Ler o documento completo',
-	'document.section': 'Secção',
+	'document.section': 'Seção',
 	'document.prevSection': 'Anterior',
 	'document.nextSection': 'Próximo',
 	'document.kind.conciliarConstitution': 'Constituição',
@@ -377,72 +394,72 @@ export const pt: Dictionary = {
 
 	'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',
 
-	'colophon.title': 'Colof\u00e3o',
+	'colophon.title': 'Colofão',
 	'colophon.lede':
-		'O que \u00e9 este site, de onde v\u00eam os seus textos e qual a nossa posi\u00e7\u00e3o quanto \u00e0 sua reprodu\u00e7\u00e3o.',
-	'colophon.whatThisIs': 'O que \u00e9 isto',
+		'O que é este site, de onde vêm os seus textos e qual a nossa posição quanto à sua reprodução.',
+	'colophon.whatThisIs': 'O que é isto',
 	'colophon.whatThisIsBody':
-		'A Glossa Catholica \u00e9 um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magist\u00e9rio, em portugu\u00eas, ingl\u00eas e latim. Existe para ser lido, e nada mais lhe \u00e9 pedido para o ler:',
+		'A Glossa Catholica é um site de leitura das Escrituras, do Catecismo, do Compêndio e dos documentos do Magistério, em português, inglês e latim. Existe para ser lido, e nada mais é pedido para lê-lo:',
 	'colophon.pointFree':
-		'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem subscri\u00e7\u00e3o, nada para comprar.',
-	'colophon.pointNoAds': 'Sem publicidade nem qualquer conte\u00fado patrocinado.',
-	'colophon.pointNoAccounts': 'Sem contas. Nada para registar, nada para iniciar sess\u00e3o.',
+		'Gratuito, e sempre gratuito. Sem barreira de pagamento, sem assinatura, nada para comprar.',
+	'colophon.pointNoAds': 'Sem publicidade nem qualquer conteúdo patrocinado.',
+	'colophon.pointNoAccounts': 'Sem contas. Nada em que se inscrever, nada em que fazer login.',
 	'colophon.pointNoTracking':
-		'Sem scripts de rastreio, sem código de terceiros, sem cookies. Apenas contagens de utilização anónimas, sem nada que o identifique.',
+		'Sem scripts de rastreamento, sem código de terceiros, sem cookies. Apenas contagens de uso anônimas, sem nada que o identifique.',
 	'colophon.pointOffline':
-		'Feito para continuar a funcionar sem liga\u00e7\u00e3o depois da primeira visita, para que uma liga\u00e7\u00e3o fraca n\u00e3o tenha de impedir a leitura.',
+		'Feito para continuar funcionando offline depois da primeira visita, para que uma conexão fraca não precise impedir a leitura.',
 	'colophon.whatThisIsStanding':
 		'Glossa Catholica é uma iniciativa privada de fiéis leigos. Não tem aprovação eclesiástica e não fala com autoridade própria.',
 	'footer.notEndorsed': 'Sem aprovação da Santa Sé',
 	'colophon.textsTitle': 'Os textos',
 	'colophon.textsBody':
-		'Cada texto provém de uma fonte identificada, e cada obra indica a sua edição, a página de origem e a data em que foi obtida. As Escrituras usam traduções de domínio público; o Catecismo, o Compêndio e os documentos do Magistério provêm dos textos publicados pela Santa Sé.',
+		'Cada texto vem de uma fonte identificada, e cada obra indica a sua edição, a página de origem e a data em que foi obtida. As Escrituras usam traduções de domínio público; o Catecismo, o Compêndio e os documentos do Magistério vêm dos textos publicados pela Santa Sé.',
 	'colophon.textsFidelity':
-		'O texto nunca é abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes — uma palavra em falta, uma referência truncada, marcação que engoliu um parágrafo — sempre no sentido do que a própria fonte imprime, nunca no sentido do que julgamos que deveria dizer.',
-	'colophon.countBible': 'edi\u00e7\u00f5es b\u00edblicas',
-	'colophon.countDocuments': 'documentos do Magist\u00e9rio',
+		'O texto nunca é abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes — uma palavra faltando, uma referência truncada, marcação que engoliu um parágrafo — sempre no sentido do que a própria fonte imprime, nunca no sentido do que julgamos que deveria dizer.',
+	'colophon.countBible': 'edições bíblicas',
+	'colophon.countDocuments': 'documentos do Magistério',
 	// Operative rather than descriptive, like `whatThisIsStanding` and
 	// `copyrightBody3`: this is the notice the LGPD argument in
 	// site/docs/usage.md rests on, so a loose line here misstates what the site
 	// does rather than merely reading oddly. Terms are this dictionary's own —
-	// 'código de terceiros' and 'utilização' from `pointNoTracking`.
+	// 'código de terceiros' and 'uso' from `pointNoTracking`.
 	'colophon.privacyTitle': 'Privacidade',
 	'colophon.privacyBody1':
 		'Sem contas, sem cookies, sem publicidade, sem código de terceiros. Nada aqui o segue para fora deste site.',
 	'colophon.privacyBody2':
-		'Contamos, isso sim, como o site é utilizado: uma medição por visita, com cada campo em intervalos e não em valores — quanto tempo ficou, quantas vezes já nos visitou, que obras abriu. O país é contado à parte, sem nada que o ligue ao resto. Descreve uma visita, não um visitante, e é conservada durante {days} dias.',
+		'Contamos, isso sim, como o site é usado: uma medição por visita, com cada campo em faixas e não em valores exatos — quanto tempo ficou, quantas vezes já nos visitou, que obras abriu. O país é contado à parte, sem nada que o ligue ao resto. Descreve uma visita, não um visitante, e é conservada por {days} dias.',
 	'colophon.privacyBody3':
-		'Nunca são enviados: o que escreve na caixa de pesquisa, que passagem tinha aberta, ou qualquer coisa que permita reconhecer de novo o seu dispositivo. As suas definições, marcadores e textos descarregados ficam no seu dispositivo.',
-	'colophon.copyrightTitle': 'Direitos de autor',
+		'Nunca são enviados: o que escreve na caixa de busca, que passagem estava aberta, ou qualquer coisa que permita reconhecer o seu dispositivo de novo. Suas configurações, marcadores e textos baixados ficam no seu dispositivo.',
+	'colophon.copyrightTitle': 'Direitos autorais',
 	'colophon.copyrightBody1':
 		'O Catecismo, o Compêndio e os documentos do Magistério pertencem aos seus titulares de direitos — principalmente a Libreria Editrice Vaticana e o Dicastério para a Comunicação.',
 	'colophon.copyrightBody2':
-		'Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e liga à página de onde foi retirada.',
+		'Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e traz o link da página de onde foi retirada.',
 	'colophon.copyrightBody3':
-		'Se detiver direitos sobre algum texto aqui presente e preferir que não seja publicado, escreva-nos.',
-	'colophon.contactTitle': 'Contacto',
-	'colophon.contactBody': 'Para qualquer assunto, incluindo o acima:',
+		'Se detiver direitos sobre algum texto aqui presente e preferir que não seja publicado, escreva para nós.',
+	'colophon.contactTitle': 'Contato',
+	'colophon.contactBody': 'Para qualquer assunto, inclusive o acima:',
 	'colophon.contactPending':
-		'Ainda n\u00e3o foi definido um endere\u00e7o de contacto. Este site n\u00e3o deve ser tornado p\u00fablico enquanto n\u00e3o o tiver \u2014 o compromisso acima n\u00e3o tem sentido sem uma forma de nos contactar.',
+		'Ainda não foi definido um endereço de contato. Este site não deve ser tornado público enquanto não o tiver — o compromisso acima não faz sentido sem uma forma de nos escrever.',
 	'colophon.illustrationsTitle': 'As ilustrações',
 	'colophon.illustrationsBody':
 		'A Bíblia traz as gravuras de Gustave Doré, cada uma junto ao versículo que representa — o último e o maior dos seus ciclos bíblicos, gravado em madeira a partir dos seus desenhos e impresso com o texto, não reunido no fim do volume.',
 	'colophon.illustrationsRights':
-		'Estão em domínio público, como mostram as datas abaixo, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito de autor novo.',
+		'Estão em domínio público, como mostram as datas abaixo, e a reprodução fotográfica fiel de uma gravura em domínio público não gera direito autoral novo.',
 	'colophon.countPlates': 'gravuras',
 	'colophon.countPlateChapters': 'capítulos ilustrados',
 	'plates.scansBy': 'Digitalizações fornecidas por',
 	'plates.enlarge': 'Ampliar {title}',
 	'plates.zoom': 'Zoom',
 	'art.about': 'Sobre esta imagem',
-	'art.detail': 'pormenor',
+	'art.detail': 'detalhe',
 	'colophon.typeTitle': 'Os tipos',
 	'colophon.typeBody':
-		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na década de 1590 — a tradição humanista em que a Igreja imprime desde o Renascimento. O seu cirílico é das mesmas mãos, mas não renasce de nada: nunca se gravou um Garamond cirílico, pelo que o russo é composto numa forma desenhada para conviver com o resto.',
+		'Composto em EB Garamond, o renascimento por Georg Duffner e Octavio Pardo dos tipos que Claude Garamont gravou na década de 1590 — a tradição humanista em que a Igreja imprime desde o Renascimento. O seu cirílico é das mesmas mãos, mas não renasce de nada: nunca se gravou um Garamond cirílico, e por isso o russo é composto numa forma desenhada para conviver com o resto.',
 	'colophon.typeArabic':
-		'O árabe fica-lhe inteiramente fora do alcance e é composto em Amiri — o renascimento por Khaled Hosny do naskh gravado para a imprensa de Bulaq, no Cairo, em 1905, escolhido pelo mesmo raciocínio que a letra do texto: um tipo de livro histórico preciso e não um desenho contemporâneo.',
+		'O árabe está inteiramente fora do alcance dele e é composto em Amiri — o renascimento por Khaled Hosny do naskh gravado para a imprensa de Bulaq, no Cairo, em 1905, escolhido pelo mesmo raciocínio que a letra do texto: um tipo de livro histórico preciso e não um desenho contemporâneo.',
 	'colophon.typeInitials':
-		'As iniciais são Pirata One, uma letra gótica cujas maiúsculas permanecem legíveis no tamanho que uma capitular exige, e — para o russo — Ponomar, que reproduz o tipo eslavo eclesiástico da Imprensa Sinodal. Ponomar compõe a inicial e nunca o texto: uma encíclica moderna composta inteiramente em tipo sinodal diria algo falso sobre o que ela é. Todas têm licença SIL Open Font License e são servidas a partir deste sítio e não de terceiros, de modo que ler uma página nada exige do servidor de outrem.',
+		'As iniciais são Pirata One, uma letra gótica cujas maiúsculas continuam legíveis no tamanho que uma capitular exige, e — para o russo — Ponomar, que reproduz o tipo eslavo eclesiástico da Imprensa Sinodal. Ponomar compõe a inicial e nunca o texto: uma encíclica moderna composta inteiramente em tipo sinodal diria algo falso sobre o que ela é. Todas têm licença SIL Open Font License e são servidas a partir deste site, e não de terceiros, de modo que ler uma página não exige nada do servidor de mais ninguém.',
 	'refs.citedIn': 'Citado em',
 	'refs.externalVolume': 'Volume {volume} em {host} — PDF digitalizado',
 	'bible.wholeChapter': 'Este capítulo',
@@ -462,10 +479,10 @@ export const pt: Dictionary = {
 	'notFound.title': 'Nada neste endereço',
 	'notFound.lede': 'A página que pediu não está aqui.',
 	'notFound.body':
-		'A ligação pode estar mal escrita ou desatualizada, ou pode apontar para um texto que este sítio não contém.',
+		'O link pode estar mal escrito ou desatualizado, ou pode apontar para um texto que este site não contém.',
 	'notFound.searchHint':
-		'Se souber a referência que procura — um livro e capítulo, um parágrafo do Catecismo — escreva-a na caixa de pesquisa no topo desta página.',
-	'notFound.credit': 'Baseado em British Library, Royal MS 10 E IV, f.\u200a49v',
+		'Se souber a referência que procura — um livro e capítulo, um parágrafo do Catecismo — escreva-a na caixa de busca no topo desta página.',
+	'notFound.credit': 'Baseado em British Library, Royal MS 10 E IV, f. 49v',
 	'notFound.elsewhere': 'Ou comece por uma destas:',
 	'notFound.home': 'Início',
 
@@ -474,7 +491,7 @@ export const pt: Dictionary = {
 	'compare.missing': 'Não presente nesta edição',
 	'compare.versificationNote':
 		'Estas duas edições dividem os versículos deste capítulo de forma diferente em alguns pontos (uma variante textual, não uma escolha de tradução) — o mesmo número de versículo nem sempre assinala a mesma frase nas duas colunas.',
-	'compare.loading': 'A carregar o segundo idioma…',
+	'compare.loading': 'Carregando o segundo idioma…',
 	'ui.close': 'Fechar',
 	'shortcuts.title': 'Atalhos de teclado',
 	'shortcuts.betweenDocuments': 'Entre documentos',
@@ -488,16 +505,16 @@ export const pt: Dictionary = {
 		'O Calendário Romano Geral, calculado para qualquer dia — o tempo, o grau e a cor.',
 	'calendar.calendar': 'Calendário',
 	'calendar.which.general': 'Calendário Romano Geral',
-	'calendar.filter': 'Procurar países',
+	'calendar.filter': 'Buscar países',
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Américas',
 	'calendar.region.africa': 'África',
-	'calendar.region.middleEast': 'Médio Oriente',
+	'calendar.region.middleEast': 'Oriente Médio',
 	'calendar.region.asia': 'Ásia',
 	'calendar.region.oceania': 'Oceania',
 	'calendar.today': 'Hoje',
 	'calendar.previousMonth': 'Mês anterior',
-	'calendar.nextMonth': 'Mês seguinte',
+	'calendar.nextMonth': 'Próximo mês',
 	'calendar.plainDays': 'Dias feriais',
 	'calendar.noSuchDay': 'Nenhum dia litúrgico é calculado para essa data.',
 	'calendar.week': 'semana',
@@ -528,7 +545,7 @@ export const pt: Dictionary = {
 	'lectionary.about': 'Sobre estas leituras',
 	'lectionary.caveat':
 		'As passagens indicadas pelo Ordo Lectionum Missae, ligadas às edições ' +
-		'deste sítio — não a tradução proclamada numa igreja em particular, e ' +
+		'deste site — não a tradução proclamada numa igreja em particular, e ' +
 		'uma conferência episcopal pode adaptar o esquema.',
 	'calendar.transferredFrom': 'Transferido de',
 	'calendar.season.advent': 'Advento',
@@ -597,10 +614,10 @@ export const pt: Dictionary = {
 	'calendar.gloss.psalterWeek':
 		'A Liturgia das Horas distribui os salmos por quatro semanas, I a IV, que se repetem ao longo do ano. Esta é a semana cujos salmos são os de hoje, para quem reza as Horas.',
 	'calendar.gloss.obligation':
-		'Dia em que os fiéis são obrigados a participar da Missa e a abster-se dos trabalhos que o impeçam. Todos os domingos, e os demais dias que cada conferência episcopal determinou.',
+		'Dia em que os fiéis são obrigados a participar da Missa e a se abster dos trabalhos que o impeçam. Todos os domingos, e os demais dias que cada conferência episcopal determinou.',
 	'calendar.primer.title': 'Primeira vez por aqui?',
 	'calendar.primer.lead':
-		'A Igreja guarda um ano próprio. Começa no Advento, gira em torno da Páscoa e dá a cada dia um nome, um grau e uma cor — e são eles que decidem o que se reza e se lê na Missa e na Liturgia das Horas naquele dia. Assim, “23.º Domingo do Tempo Comum” é um endereço: diz a um sacerdote, a um coro ou a quem reza em casa quais orações e leituras são as de hoje.',
+		'A Igreja guarda um ano próprio. Começa no Advento, gira em torno da Páscoa e dá a cada dia um nome, um grau e uma cor — e são eles que decidem o que se reza e se lê na Missa e na Liturgia das Horas naquele dia. Assim, “23º Domingo do Tempo Comum” é um endereço: diz a um sacerdote, a um coro ou a quem reza em casa quais orações e leituras são as de hoje.',
 	'calendar.primer.seasons': 'Os tempos',
 	'calendar.primer.ranks': 'O que um dia pode ser',
 	'calendar.primer.colours': 'As cores',
