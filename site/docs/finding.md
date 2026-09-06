@@ -602,12 +602,16 @@ address space states it without being asked.
 
 **The last card is Bookmarks, and it is the only one that is not a work.** It
 reads exactly like the other seven — name, glyph, and `/signata`'s own tagline —
-and is absent for a reader who has marked nothing, which an `auto-fit` grid
-needs no branch to handle. It carried `/signata`'s section counts as chips
-where a work card carries its sentence, on the argument that the shape of a
-collection says more than a total about whether it is worth opening. It says
-that to whoever wrote it; on the page it was `1 1`, numbers with nothing naming
-what they counted, in the one slot a reader had learned to read as a sentence.
+and is there whether or not the reader has marked anything (2026-09-06; it was
+hidden on an empty store until then). A catalogue names what the site has, and
+hiding the one door to marking until a reader has already found marking
+elsewhere shuts it against the only person looking for it; the empty case is
+`/signata`'s to answer, and it answers in words. It carried `/signata`'s section
+counts as chips where a work card carries its sentence, on the argument that the
+shape of a collection says more than a total about whether it is worth opening.
+It says that to whoever wrote it; on the page it was `1 1`, numbers with nothing
+naming what they counted, in the one slot a reader had learned to read as a
+sentence.
 
 **Every card is the height of the tallest** (`grid-auto-rows: 1fr`), because a
 grid of cards is read as a grid and a short row of them under a tall one reads

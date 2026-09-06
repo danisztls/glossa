@@ -35,6 +35,15 @@
 	 * needs to look different, since the thing that tells it apart is that it
 	 * is the reader's own shelf and the sentence says so.
 	 *
+	 * IT IS UNCONDITIONAL, AND WAS HIDDEN WHILE THE STORE WAS EMPTY UNTIL
+	 * 2026-09-06. Hiding it read as tidiness and was the opposite: this page is
+	 * the catalogue of what the site HAS, marking is one of the things it does,
+	 * and a door that opens only once you have already found the feature
+	 * elsewhere is shut against exactly the reader who needed it. Nothing is
+	 * behind it that the empty case cannot hold — `/signata` answers a reader
+	 * with no marks in its own words (`bookmark.empty`, `bookmark.emptyHint`),
+	 * which is a sentence, where a missing card is a silence.
+	 *
 	 * IT CARRIED A ROW OF COUNTS UNTIL 2026-09-06, one chip per section of
 	 * `/signata` in that page's order, on the argument that the shape of what
 	 * you have marked says more than a total about whether it is worth
@@ -75,7 +84,6 @@
 	 *
 	 * `docs/research/organization.md` is the design this implements.
 	 */
-	import { bookmarks } from '$lib/bookmarks.svelte';
 	import { listWorksOfType } from '$lib/corpus';
 	import { t } from '$lib/i18n.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
@@ -283,21 +291,20 @@
 				understood. One link and not a second copy of that page's list:
 				this says what is there, and that page is the reading of it.
 
-				Absent until mount and absent for a reader who has marked
-				nothing, which the `auto-fit` grid needs no branch for — the
-				last cell simply is not there.
+				No branch on the store, and there was one until 2026-09-06:
+				a catalogue that omitted a shelf until the reader had already
+				used it would be hiding the way in from the one person
+				looking for it. The docblock has the rest.
 			-->
-			{#if bookmarks.list.length > 0}
-				<li>
-					<a class="shelf" href="/signata">
-						<h3 class="shelf-heading">
-							<span class="shelf-icon"><Icon name="bookmark" /></span>
-							<span class="shelf-title">{t('bookmark.library')}</span>
-						</h3>
-						<span class="shelf-tagline">{t('bookmark.library.tagline')}</span>
-					</a>
-				</li>
-			{/if}
+			<li>
+				<a class="shelf" href="/signata">
+					<h3 class="shelf-heading">
+						<span class="shelf-icon"><Icon name="bookmark" /></span>
+						<span class="shelf-title">{t('bookmark.library')}</span>
+					</h3>
+					<span class="shelf-tagline">{t('bookmark.library.tagline')}</span>
+				</a>
+			</li>
 		</ul>
 	</section>
 
