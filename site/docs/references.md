@@ -18,6 +18,27 @@ are Nahum and Acts. Rules that would guess (a bare `cf. 1212`, a commentary
 title naming the book it comments on) stay off until they can be read rather
 than inferred.
 
+**A citation naming several passages is several links, because an address
+holds one span.** `Ps 95:1-2, 6-7, 8-9` parses to the verse set it names and
+nothing was ever wrong about that; what was wrong is that a single link over
+the whole string had to spell the set as `?v=1-9`, which appointed four verses
+nobody cited and titled the hover card `Psalms 94:1-9` to say so. The parser
+now hands back the comma-chained GROUPS as well as the set (`citationParts`),
+`citationPieces` gives each one an address of its own, and the string on the
+page is reproduced character for character around them — the book and chapter
+inside the first link, the source's own `, ` between them as text. A group
+whose verses do not resolve is drawn as text rather than degraded to the
+chapter: the words under it read `98-99` and a chapter link is one the reader
+cannot tell from a working one.
+
+**The groups are not on `RefSegment` and are re-read from `raw` instead.** A
+segment carries what an address is built from; how the source PUNCTUATED it is
+wanted by two surfaces and would otherwise appear in all 87 scripture
+expectations in `refs.test.ts`. `citationParts` re-runs the same primitives
+over the same string under the same config, so it cannot disagree with the
+parse it re-runs — pass it the opts the segment was parsed with and that stays
+true.
+
 **A reference grammar is per content language, and English is not a neutral
 default.** The premise that a language with no table would merely under-link
 was wrong: under English, the bare `Joh`/`Io`/`Jn` matched inside `1 Joh 2,20`

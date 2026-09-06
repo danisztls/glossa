@@ -28,7 +28,12 @@ import {
 	workIdToEdition
 } from './corpus';
 import { hrefFor, summaPartSlug, type Address } from './address';
-import { citesVulgateNumbering, setDocumentTitleSource, type RefSegment } from './refs-grammar';
+import {
+	citationParts,
+	citesVulgateNumbering,
+	setDocumentTitleSource,
+	type RefSegment
+} from './refs-grammar';
 import { isDivergentBook, resolveVulgate, type VulgateAddress } from './versification';
 
 export * from './refs-grammar';
@@ -313,6 +318,79 @@ export function refHref(
 ): string | undefined {
 	const address = refAddress(seg, ctx);
 	return address && hrefFor(address);
+}
+
+/** One drawable run of a citation: the characters, and where they lead if
+ *  they lead anywhere. Concatenating every `text` reproduces `seg.raw`. */
+export interface CitationPiece {
+	text: string;
+	href?: string;
+}
+
+/**
+ * A scripture citation split into one link per PASSAGE, where the source named
+ * several.
+ *
+ * `Psalm 95:1-2, 6-7, 8-9` is three passages and was one link over all of
+ * them — and because an `Address` carries a single span, that link claimed
+ * `?v=1-9`: the reader was sent to a passage four verses longer than the one
+ * appointed, and the hover card titled itself `Psalms 94:1-9` to prove it. The
+ * verse SET was never wrong (`refAddress` reads `seg.verses`, which holds
+ * exactly what was cited); what was wrong is that one address cannot say
+ * "1-2 and 6-9" and nothing noticed it was being asked to.
+ *
+ * So the groups the source printed get an address each — `citationParts` is
+ * where they come from — and the string is reproduced character for character
+ * around them: the book and chapter ride inside the first link, the source's
+ * own `, ` between groups stays plain text. A group whose address does not
+ * resolve degrades to text on its own, which is the module's under-linking
+ * rule at a finer grain than it used to be able to reach.
+ *
+ * ONE PIECE IS THE ORDINARY ANSWER. A single-group citation (`Ez 33:7-9`) and
+ * a whole-chapter one are unchanged, and so is every non-scripture segment —
+ * a document siglum's locus is not verses and is validated elsewhere.
+ */
+export function citationPieces(
+	seg: RefSegment,
+	ctx: { bibleWorkId?: string; lang?: string; work?: string }
+): CitationPiece[] {
+	const whole = (): CitationPiece[] => {
+		const href = refHref(seg, ctx);
+		return [{ text: seg.kind === 'text' ? seg.text : seg.raw, ...(href ? { href } : {}) }];
+	};
+	if (seg.kind !== 'scripture') return whole();
+	const { book, groups } = citationParts(seg, { lang: ctx.lang, work: ctx.work });
+	if (groups.length < 2) return whole();
+
+	const pieces: CitationPiece[] = [];
+	let cursor = 0;
+	let linked = 0;
+	for (const group of groups) {
+		const start = book.length + group.start;
+		const end = book.length + group.end;
+		// Everything since the last group — the book and chapter before the
+		// first, the source's separator after that. It joins the first link so
+		// that `Psalm 95:1-2` is one anchor rather than a bare `1-2` with the
+		// book left dangling beside it.
+		if (start > cursor && pieces.length) pieces.push({ text: seg.raw.slice(cursor, start) });
+		// THE VERSE IS REQUIRED HERE AND NOT ELSEWHERE. `refAddress` degrades a
+		// citation whose verse it cannot place to the chapter alone, which is
+		// right for a whole citation and wrong for a fragment of one: the words
+		// under the link would read `98-99` and the link would open the top of
+		// the chapter, which a reader cannot tell from a working one. A group
+		// that cannot be placed is drawn as text.
+		const address = refAddress({ ...seg, verses: group.verses }, ctx);
+		const href =
+			address?.kind === 'bible' && address.from !== undefined ? hrefFor(address) : undefined;
+		if (href) linked++;
+		pieces.push({ text: seg.raw.slice(pieces.length ? start : 0, end), ...(href ? { href } : {}) });
+		cursor = end;
+	}
+	if (cursor < seg.raw.length) pieces.push({ text: seg.raw.slice(cursor) });
+	// Nothing placed — the chapter is missing from this edition, or the whole
+	// locus is out of range. Split, that is a citation drawn as dead text where
+	// it used to reach at least the chapter; whole, it is what it always was.
+	return linked ? pieces : whole();
 }
 
 /**

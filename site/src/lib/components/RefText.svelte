@@ -41,8 +41,16 @@
 	 * own -- `SiglumGloss` says why. The ordering above is unchanged and the
 	 * priority with it: a siglum this corpus can answer is answered here, and
 	 * only one it cannot offers the way out.
+	 *
+	 * AND STILL THREE WHERE ONE CITATION NAMES SEVERAL PASSAGES, which is the
+	 * one place a segment draws more than one link: `Ps 95:1-2, 6-7, 8-9` is
+	 * three anchors, one per group, because an address holds a single span and
+	 * a single link over the lot claimed `?v=1-9` -- four verses nobody cited.
+	 * `citationPieces` decides the split and reproduces the source's own
+	 * punctuation between them, so the string on the page is unchanged; what
+	 * changes is where each part of it goes.
 	 */
-	import { glossOf, normalizeCitationSpacing, parseRefs, refHref } from '$lib/refs';
+	import { citationPieces, glossOf, normalizeCitationSpacing, parseRefs } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import { i18n } from '$lib/i18n.svelte';
 	import SiglumGloss from './SiglumGloss.svelte';
@@ -72,10 +80,12 @@
 <span class={className}>
 	{#each segments as seg, i (i)}
 		{#if seg.kind === 'text'}{seg.text}{:else}
-			{@const href = refHref(seg, { bibleWorkId, lang: effectiveLang, work })}
+			{@const pieces = citationPieces(seg, { bibleWorkId, lang: effectiveLang, work })}
 			{@const gloss = glossOf(seg)}
-			{#if href}
-				<a class="ref-link" {href}>{seg.raw}</a>
+			{#if pieces.some((p) => p.href)}
+				{#each pieces as piece, p (p)}{#if piece.href}<a class="ref-link" href={piece.href}
+							>{piece.text}</a
+						>{:else}{piece.text}{/if}{/each}
 			{:else if gloss}
 				<SiglumGloss
 					label={seg.raw}

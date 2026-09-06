@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+	citationParts,
+	citationPieces,
 	expandIbidem,
 	glossOf,
 	linkifyProse,
@@ -1696,6 +1698,110 @@ describe('refHref', () => {
 		expect(
 			refHref({ kind: 'scripture', osis: 'gen', chapter: 1, verses: [1], raw: 'Gen 1:1' }, {})
 		).toBeUndefined();
+	});
+
+	describe('a citation naming several passages is several links', () => {
+		const scripture = (text: string) => {
+			const seg = parseRefs(text)[0];
+			if (seg.kind !== 'scripture') throw new Error(`not a scripture segment: ${text}`);
+			return seg;
+		};
+
+		it('gives each passage its own address and reproduces the string around them', () => {
+			// The whole point: verses 3-5 of John 1 are not cited and no link
+			// may claim them. One link over the lot emitted `?v=1-7`.
+			const pieces = citationPieces(scripture('Jn 1:1-2, 6-7'), {
+				bibleWorkId: 'bible.cpdv.en'
+			});
+			expect(pieces).toEqual([
+				{ text: 'Jn 1:1-2', href: '/scriptura/ioannes/1?v=1-2#v1' },
+				{ text: ', ' },
+				{ text: '6-7', href: '/scriptura/ioannes/1?v=6-7#v6' }
+			]);
+			expect(pieces.map((p) => p.text).join('')).toBe('Jn 1:1-2, 6-7');
+		});
+
+		it('leaves a single passage as one piece', () => {
+			expect(citationPieces(scripture('Jn 1:1-7'), { bibleWorkId: 'bible.cpdv.en' })).toEqual([
+				{ text: 'Jn 1:1-7', href: '/scriptura/ioannes/1?v=1-7#v1' }
+			]);
+		});
+
+		it('converts each passage of a divergent book on its own', () => {
+			// Ps 22 is Vulgate Ps 21; the two passages convert independently
+			// and neither may be offset from the other's answer.
+			expect(citationPieces(scripture('Ps 22:2, 14-16'), { bibleWorkId: 'bible.cpdv.en' })).toEqual(
+				[
+					{ text: 'Ps 22:2', href: '/scriptura/psalmi/21#v2' },
+					{ text: ', ' },
+					{ text: '14-16', href: '/scriptura/psalmi/21?v=14-16#v14' }
+				]
+			);
+		});
+
+		it('drops one passage to text without dropping the others', () => {
+			// Genesis 1 has 13 verses in the fixture. Under-linking the passage
+			// that does not exist is the module's rule; taking the citation
+			// down with it is not.
+			const pieces = citationPieces(scripture('Gen 1:1-2, 98-99'), {
+				bibleWorkId: 'bible.cpdv.en'
+			});
+			expect(pieces.map((p) => p.href)).toEqual([
+				'/scriptura/genesis/1?v=1-2#v1',
+				undefined,
+				undefined
+			]);
+			expect(pieces.map((p) => p.text).join('')).toBe('Gen 1:1-2, 98-99');
+		});
+
+		it('is one piece for a segment that is not scripture', () => {
+			const segs = parseRefs('DV 3');
+			expect(citationPieces(segs[0], {})).toEqual([
+				{ text: 'DV 3', href: '/documenta/dei-verbum#s3' }
+			]);
+		});
+	});
+
+	describe('citationParts', () => {
+		const parts = (text: string, opts?: { lang?: string }) => {
+			const seg = parseRefs(text, opts)[0];
+			if (seg.kind !== 'scripture') throw new Error(`not a scripture segment: ${text}`);
+			return citationParts(seg, opts);
+		};
+
+		it('splits the printed book off its locus and groups the locus', () => {
+			expect(parts('Psalm 95:1-2, 6-7, 8-9')).toEqual({
+				book: 'Psalm ',
+				locus: '95:1-2, 6-7, 8-9',
+				groups: [
+					{ start: 3, end: 6, verses: [1, 2] },
+					{ start: 8, end: 11, verses: [6, 7] },
+					{ start: 13, end: 16, verses: [8, 9] }
+				]
+			});
+		});
+
+		it('keeps a subdivision letter inside the group that printed it', () => {
+			const { groups, locus } = parts('Isaiah 63:16b-17, 19b');
+			expect(groups.map((g) => locus.slice(g.start, g.end))).toEqual(['16b-17', '19b']);
+		});
+
+		it('reads a bookless continuation clause as locus alone', () => {
+			const seg = parseRefs('Isaiah 63:1; 64:2-7').filter((s) => s.kind === 'scripture')[1];
+			expect(citationParts(seg)).toMatchObject({ book: '', locus: '64:2-7' });
+		});
+
+		it('groups a single-chapter book, whose leading number is a verse', () => {
+			expect(parts('Jude 17, 20b-25')).toMatchObject({ book: 'Jude ', locus: '17, 20b-25' });
+			expect(parts('Jude 17, 20b-25').groups.map((g) => g.verses)).toEqual([
+				[17],
+				[20, 21, 22, 23, 24, 25]
+			]);
+		});
+
+		it('has no groups for a whole-chapter reference', () => {
+			expect(parts('Gen 3').groups).toEqual([]);
+		});
 	});
 
 	it('returns undefined for a book absent from the given edition (fixture only has gen + john)', () => {

@@ -119,6 +119,30 @@ export interface ExternalSource {
 	label: string;
 }
 
+/**
+ * One comma-chained item of a printed verse list — `6-7` in `Ps 95:1-2, 6-7,
+ * 8-9` — with where it sits in the string it was read out of.
+ *
+ * IT IS NOT ON `RefSegment`, and that is a deliberate refusal rather than an
+ * omission. A segment carries `verses`, which is the citation's whole verse
+ * SET and the only thing an address is built from; the groups are how the
+ * source PRINTED that set, wanted by the two surfaces that redraw a citation
+ * (`RefText`, which links each group separately, and the lectionary, which
+ * re-letters one in the reader's own language) and by nothing else. Put on
+ * every segment it would appear in all 87 of `refs.test.ts`'s expectations
+ * for the sake of two callers. `citationParts` re-reads it from `raw` with
+ * the same primitives instead, which cannot disagree with the parse it
+ * re-runs.
+ */
+export interface VerseGroup {
+	/** Offset of the group's first character, within whatever string it was parsed from. */
+	start: number;
+	/** Offset one past its last character. */
+	end: number;
+	/** The verses it names, ascending, ranges expanded — `[6, 7]` for `6-7`. */
+	verses: number[];
+}
+
 export type RefSegment =
 	| { kind: 'text'; text: string }
 	| {
@@ -2968,13 +2992,30 @@ function leadNum(match: string): number {
  * CCC paragraphs, and every disagreement traced to this case, with this one
  * correct each time.
  */
-function parseVerseList(s: string, primarySep: string): { verses: number[]; consumed: number } {
+function parseVerseList(
+	s: string,
+	primarySep: string
+): { verses: number[]; groups: VerseGroup[]; consumed: number } {
 	const lead = /^ */.exec(s)![0];
 	let pos = lead.length;
 	const verses: number[] = [];
+	const groups: VerseGroup[] = [];
+	// The group being read, closed at the foot of each turn of the loop. A
+	// group is one comma-chained item — `6-7` in `Ps 95:1-2, 6-7` — and the
+	// list's verses are the concatenation of theirs, which is why they are
+	// pushed here and read back out by `slice` rather than accumulated twice.
+	let groupStart = pos;
+	let groupFrom = 0;
+	const closeGroup = () => {
+		if (verses.length > groupFrom) {
+			groups.push({ start: groupStart, end: pos, verses: verses.slice(groupFrom) });
+			groupFrom = verses.length;
+		}
+	};
 	while (true) {
 		const m = LEAD_NUM_RE.exec(s.slice(pos));
 		if (!m) break;
+		groupStart = pos;
 		const start = leadNum(m[0]);
 		pos += m[0].length;
 		if (s[pos] === '-' || s[pos] === '–' || s[pos] === '‑') {
@@ -3002,6 +3043,7 @@ function parseVerseList(s: string, primarySep: string): { verses: number[]; cons
 				for (let v = start; v <= end; v++) verses.push(v);
 			} else if (crossesChapters) {
 				verses.push(start);
+				closeGroup();
 				break;
 			} else {
 				verses.push(start);
@@ -3009,6 +3051,7 @@ function parseVerseList(s: string, primarySep: string): { verses: number[]; cons
 		} else {
 			verses.push(start);
 		}
+		closeGroup();
 		if (s[pos] === ',' || s[pos] === '.') {
 			const look = s.slice(pos + 1);
 			const stripped = look.replace(/^ +/, '');
@@ -3019,7 +3062,7 @@ function parseVerseList(s: string, primarySep: string): { verses: number[]; cons
 		}
 		break;
 	}
-	return { verses: [...new Set(verses)].sort((a, b) => a - b), consumed: pos };
+	return { verses: [...new Set(verses)].sort((a, b) => a - b), groups, consumed: pos };
 }
 
 /**
@@ -3082,8 +3125,8 @@ function parseChapterVerses(
 	s: string,
 	cfg: LangConfig,
 	romanChapters: boolean | 'lowercase' = false
-): { chapter: number | null; verses: number[]; consumed: number } {
-	const none = { chapter: null, verses: [], consumed: 0 };
+): RefNumbers {
+	const none = { chapter: null, verses: [], groups: [], consumed: 0 };
 	let chapter: number | null = null;
 	let pos = 0;
 	let roman = false;
@@ -3116,22 +3159,39 @@ function parseChapterVerses(
 	const gap = /^ */.exec(rest)![0];
 	const afterGap = rest.slice(gap.length);
 	if (afterGap[0] === cfg.primarySep || cfg.extraChapterVerseSeparators.includes(afterGap[0])) {
-		const { verses, consumed } = parseVerseList(afterGap.slice(1), cfg.primarySep);
+		const { verses, groups, consumed } = parseVerseList(afterGap.slice(1), cfg.primarySep);
 		// A separator with no verse after it is punctuation, not a locator:
 		// the "." ending "Cf. Ez 36." is the sentence's full stop, and
 		// consuming it would pull the period inside the rendered link.
 		if (verses.length > 0) {
 			if (roman && verses[0] > MAX_VERSE) return none;
-			return { chapter, verses, consumed: pos + gap.length + 1 + consumed };
+			const base = pos + gap.length + 1;
+			return { chapter, verses, groups: shiftGroups(groups, base), consumed: base + consumed };
 		}
 	}
 	if (cfg.allowBareSeparators && (rest[0] === '.' || rest[0] === ' ') && /\d/.test(rest[1] ?? '')) {
-		const { verses, consumed } = parseVerseList(rest.slice(1), cfg.primarySep);
+		const { verses, groups, consumed } = parseVerseList(rest.slice(1), cfg.primarySep);
 		if (roman && verses[0] > MAX_VERSE) return none;
-		return { chapter, verses, consumed: pos + 1 + consumed };
+		return { chapter, verses, groups: shiftGroups(groups, pos + 1), consumed: pos + 1 + consumed };
 	}
 	if (roman) return none; // a Roman chapter never stands alone — see the docblock
-	return { chapter, verses: [], consumed: pos };
+	return { chapter, verses: [], groups: [], consumed: pos };
+}
+
+/** What the number parsers answer with: the locus read, and where its groups
+ *  sit in the string they were read from (see `VerseGroup`). */
+interface RefNumbers {
+	chapter: number | null;
+	verses: number[];
+	groups: VerseGroup[];
+	consumed: number;
+}
+
+/** The same groups, offset into a longer string — every level of the number
+ *  grammar parses a suffix of what its caller had, so the spans have to be
+ *  rebased on the way back up or they name the wrong characters. */
+function shiftGroups(groups: VerseGroup[], by: number): VerseGroup[] {
+	return by === 0 ? groups : groups.map((g) => ({ ...g, start: g.start + by, end: g.end + by }));
 }
 
 /**
@@ -3139,17 +3199,20 @@ function parseChapterVerses(
  * chapter number — so a bare leading number is a *verse*, not a chapter.
  * Tolerates a redundant explicit "1<sep>" prefix if the source gives one.
  */
-function parseSingleChapterRef(
-	s: string,
-	cfg: LangConfig
-): { chapter: number | null; verses: number[]; consumed: number } {
-	if (!/^\d/.test(s)) return { chapter: null, verses: [], consumed: 0 };
+function parseSingleChapterRef(s: string, cfg: LangConfig): RefNumbers {
+	const none = { chapter: null, verses: [], groups: [], consumed: 0 };
+	if (!/^\d/.test(s)) return none;
 	const redundantPrefix = '1' + cfg.primarySep;
 	const body = s.startsWith(redundantPrefix) ? s.slice(redundantPrefix.length) : s;
 	const prefixLen = s.startsWith(redundantPrefix) ? redundantPrefix.length : 0;
-	const { verses, consumed } = parseVerseList(body, cfg.primarySep);
-	if (verses.length === 0) return { chapter: null, verses: [], consumed: 0 };
-	return { chapter: 1, verses, consumed: prefixLen + consumed };
+	const { verses, groups, consumed } = parseVerseList(body, cfg.primarySep);
+	if (verses.length === 0) return none;
+	return {
+		chapter: 1,
+		verses,
+		groups: shiftGroups(groups, prefixLen),
+		consumed: prefixLen + consumed
+	};
 }
 
 function parseRefNumbers(
@@ -3157,7 +3220,7 @@ function parseRefNumbers(
 	cfg: LangConfig,
 	osis: string,
 	romanChapters: boolean | 'lowercase' = false
-): { chapter: number | null; verses: number[]; consumed: number } {
+): RefNumbers {
 	// A mark between the book abbreviation and its locus separates those two,
 	// not the locus's chapter from its verse, so discard it before the normal
 	// grammar runs. PT's archive writes a comma ("1 Cor, 13, 12") or a stray
@@ -3174,7 +3237,11 @@ function parseRefNumbers(
 	const parsed = SINGLE_CHAPTER_BOOKS.has(osis)
 		? parseSingleChapterRef(body, cfg)
 		: parseChapterVerses(body, cfg, romanChapters);
-	return { ...parsed, consumed: parsed.consumed + bookPunctuation.length };
+	return {
+		...parsed,
+		groups: shiftGroups(parsed.groups, bookPunctuation.length),
+		consumed: parsed.consumed + bookPunctuation.length
+	};
 }
 
 // --------------------------------------------------------------------------
@@ -4252,6 +4319,56 @@ export function parseRefs(text: string, opts?: RefsOpts): RefSegment[] {
 	if (!text) return [];
 	if (isBareNumberList(text)) return parseBareCccList(text);
 	return parseCitationClauses(text, configFor(opts?.lang, opts?.work));
+}
+
+/** How one scripture citation was PRINTED, taken apart. */
+export interface CitationParts {
+	/** The book name as the source spelled it, plus whatever separated it from
+	 *  the numbers (`Psalm `, `1 Corinthians `, `Col., `). Empty for a
+	 *  bookless continuation clause, whose book is the previous one's. */
+	book: string;
+	/** Everything after that — `95:1-2, 6-7, 8-9`, `17, 20b-25`, `64:2-7`. */
+	locus: string;
+	/** The locus's comma-chained groups, offset within `locus`. Empty for a
+	 *  whole-chapter reference, which names no verse to group. */
+	groups: VerseGroup[];
+}
+
+/**
+ * A scripture segment's `raw`, taken apart into the book as printed and the
+ * groups of its locus — for the two surfaces that REDRAW a citation instead of
+ * reproducing it: `RefText`, which gives each group a link of its own so that
+ * `Ps 95:1-2, 6-7` stops claiming verses 3 to 5, and the lectionary card,
+ * which writes the book in the reader's own language.
+ *
+ * IT RE-RUNS THE PARSE RATHER THAN REMEMBERING IT, and `VerseGroup`'s docblock
+ * says why the alternative was refused. What makes re-running safe is that it
+ * is the same parse: `raw` begins at the book match by construction, the same
+ * `LangConfig` decides both times, and the same `findBookAt` /
+ * `BOOK_CHAPTER_GAP_RE` / `parseRefNumbers` answer. Pass the opts the segment
+ * was parsed with — a citation read under one language's table and taken apart
+ * under another's is the one way this can disagree with itself.
+ *
+ * A raw the parse cannot re-read is returned whole as the locus with no
+ * groups, which every caller already has to handle: it is what a whole-chapter
+ * reference looks like, and both draw one link over the lot.
+ */
+export function citationParts(
+	seg: Extract<RefSegment, { kind: 'scripture' }>,
+	opts?: RefsOpts
+): CitationParts {
+	const cfg = configFor(opts?.lang, opts?.work);
+	const bm = findBookAt(cfg, seg.raw, 0);
+	// `matchStart === 0` and not merely "a book was found": a continuation
+	// clause's raw is `64:2-7`, and a book matched further along it would be
+	// something inside the numbers, not the citation's own.
+	const bookEnd =
+		bm && bm.matchStart === 0
+			? bm.matchEnd + BOOK_CHAPTER_GAP_RE.exec(seg.raw.slice(bm.matchEnd))![0].length
+			: 0;
+	const locus = seg.raw.slice(bookEnd);
+	const cv = parseRefNumbers(locus, cfg, seg.osis, true);
+	return { book: seg.raw.slice(0, bookEnd), locus, groups: cv.groups };
 }
 
 /**

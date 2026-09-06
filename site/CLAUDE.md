@@ -1766,6 +1766,16 @@ edition and the refusal only ever cost the citation (all 141 of `ccc.mg`'s
 document citations linked nowhere). The section check stays strict against
 whichever edition that picks.
 
+**A citation naming several passages is several links** (2026-09-06,
+§References). `Ps 95:1-2, 6-7, 8-9` was one link, and an `Address` holds one
+span, so it claimed `?v=1-9` — four verses nobody cited. `parseVerseList`
+returns the comma-chained groups now, `citationParts` re-reads them off a
+segment's `raw` (deliberately not a field on `RefSegment`, which would land in
+all 87 scripture expectations in `refs.test.ts` for two callers), and
+`citationPieces` addresses each. **A component calling either that or
+`refHref` owes the three `REFS` indexes**, and `index-priming.test.ts` scans
+for both names.
+
 The six tags with **no** config (`hu ro sl sv zh en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by
 bare number and their prose prints no Scripture locator, so the English table

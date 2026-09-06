@@ -146,11 +146,14 @@ describe('every route that resolves a reference is primed for one', () => {
 			.filter((resolved) => source.has(resolved));
 	}
 
-	/** A component calls `refHref` itself, or renders one that does. `refHref`
-	 *  is `refs.ts`'s single entry point for turning a reference into a link,
-	 *  and it is what reads the three registries. */
+	/** A component turns a reference into a link itself, or renders one that
+	 *  does. Both names go through `refAddress`, which is what reads the three
+	 *  registries: `refHref` is the one-link answer, `citationPieces` the
+	 *  one-per-passage answer a multi-passage citation takes. A component
+	 *  calling either owes the indexes. */
+	const RESOLVES_RE = /\b(?:refHref|citationPieces)\s*\(/;
 	const resolvers = new Set(
-		[...source].filter(([, text]) => /\brefHref\s*\(/.test(text)).map(([path]) => path)
+		[...source].filter(([, text]) => RESOLVES_RE.test(text)).map(([path]) => path)
 	);
 	for (let added = true; added;) {
 		added = false;
