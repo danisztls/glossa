@@ -727,6 +727,14 @@ record.
   eight editions that print the same 2,865 paragraphs, and `audit.py
 divisions`, which now reports the Chinese agreeing with all eight on every
   part, section, chapter, article and in-brief.
+- **AN EDITION WHOSE HEADINGS ARE MEASURED MUST NOT BE RE-ASKED ON THE TEXT'S
+  SHAPE**, which is what `LANG_CONFIG['zht']['measured_headings']` switches
+  off: bold is the only signal an HTML mirror gives and says nothing about
+  level, so `opens_new_matter` guesses where this edition prints 18pt over its
+  creed table and 16pt over 祈禱是甚麼？ against a 12pt body. Asking anyway put
+  both creeds inside §184 and the Thérèse definition inside §2558, under a
+  passing `validate` and a clean `divisions` — found by diffing the build, not
+  by any check.
 
 **Two editions print an abbreviations table, and they are not the same
 table.** French serves 58 sigla, Latin 119, parsed into `abbreviations.json`
