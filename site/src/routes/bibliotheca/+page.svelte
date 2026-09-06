@@ -324,6 +324,13 @@
 		text over a painting has to hold its contrast across five appearance axes
 		and does not need to.
 
+		AND IT WAS RECROPPED THE SAME DAY, out of the 2.5:1 band a masthead
+		wanted and into the painting's own 1.69:1. A banner is a strip and had
+		to cut the room down to the shelf Jerome sits at; a tailpiece owes the
+		slot no ratio, so it keeps the floor, the doorway and the arcade — which
+		are what make the room a library rather than a desk. `assets/README.md`
+		has the box.
+
 		No `eager`: nothing above the fold now, so it loads lazily and the
 		shelves have the connection to themselves. The credit stays where
 		`ArtFigure` puts it, one press behind the `info` glyph — decoration is

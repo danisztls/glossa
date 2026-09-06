@@ -19,9 +19,9 @@
  * picture in the set for its masthead.
  *
  * `assets/README.md` keeps the source URL, SHA-256 and crop line for all six,
- * so a page that wants one back gets it from one fetch and one crop — which is
- * the whole reason no master is kept and the whole reason deleting one is
- * cheap. **The FILENAMES are the derivation's names and not the pages' roles**
+ * so a page that wants one back gets it from one fetch and one crop — which
+ * is the whole reason deleting one is cheap. **The FILENAMES are the
+ * derivation's names and not the pages' roles**
  * (`hero-jerome` is now Library's, `gospels-preaching` is now the only
  * picture on `/schola`); renaming them would mean re-deriving both assets and
  * rewriting the table that reproduces them, to fix nothing a reader can see.
@@ -84,11 +84,17 @@
  * ## Re-deriving one
  *
  * `assets/README.md` records the source URL, the SHA-256 of the file that was
- * downloaded, and the crop box and encoder line for each. No master is kept:
- * these are faithful crops with no retouching, so the command reproduces the
- * asset exactly, and the masters are tens of megabytes in a public repository.
- * The reynard drollery keeps its master because it was cut and painted by hand
- * and no command reproduces it.
+ * downloaded, and the crop box and encoder line for each. A faithful crop
+ * keeps no master: the command reproduces the asset exactly and a master is
+ * tens of megabytes in a public repository, so the recipe is the copy.
+ *
+ * **TWO OF THE THREE ARE NOT FAITHFUL CROPS AND BOTH KEEP THEIR MASTERS.**
+ * The reynard drollery was cut and painted by hand, and `hero-jerome` was
+ * tone-corrected by hand on 2026-09-06 — brightened and pulled open, because
+ * the National Gallery's photograph is dark and yellow and the shelves behind
+ * Jerome close into one brown at the size a tailpiece is read. No command
+ * reproduces either, and hand work with no master is gone the next time the
+ * ratio changes, which is exactly what changed that day.
  */
 
 import heroJerome from '$lib/assets/schola/hero-jerome.avif';
@@ -109,12 +115,27 @@ export interface Artwork {
 	source: string;
 }
 
-const BANNER = { width: 1800, height: 720 } as const;
+/**
+ * THE TWO ARE NO LONGER ONE SHAPE, and `BANNER` — a `{ width: 1800, height:
+ * 720 }` spread into both — went with the assumption. A banner IS 2.5:1
+ * whatever hangs under it, and `/bibliotheca`'s picture stopped being one on
+ * 2026-09-06 when it moved under the last shelf. A tailpiece closes a page
+ * instead of heading it, so its height is the painting's business rather than
+ * the slot's: Jerome is a man in a ROOM, and a 2.5:1 band kept the shelf he
+ * sits at and cut away the floor, the doorway and the arcade that make the
+ * room a library at all.
+ *
+ * Nothing in the CSS ever wanted the ratio. `ArtFigure`'s image is
+ * `inline-size: 100%; block-size: auto`, so these two numbers are the
+ * intrinsic pixels and their whole job is to reserve the right box before the
+ * file lands. Per picture is what they always meant.
+ */
 
-/** One banner per landing page, keyed by the page's own path segment. */
+/** One painting per landing page, keyed by the page's own path segment. */
 export const BANNERS: Readonly<Record<string, Artwork>> = {
 	schola: {
-		...BANNER,
+		width: 1800,
+		height: 720,
 		src: gospelsPreaching,
 		credit:
 			'Rembrandt van Rijn, Christ Preaching (“La Petite Tombe”), c. 1657. Metropolitan Museum of Art.',
@@ -124,7 +145,8 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 			'https://commons.wikimedia.org/wiki/File:Christ_Preaching,_called_La_Petite_Tombe_MET_DP832290.jpg'
 	},
 	bibliotheca: {
-		...BANNER,
+		width: 1800,
+		height: 1063,
 		src: heroJerome,
 		credit: 'Antonello da Messina, Saint Jerome in his Study, c. 1475. National Gallery, London.',
 		detail: true,
