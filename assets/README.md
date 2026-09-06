@@ -1,8 +1,11 @@
 # Source masters for site imagery
 
-Unoptimized originals for images that ship from `site/src/lib/assets/`. Nothing
-here is built, imported or deployed — it is kept so an asset can be re-derived
-without going back to the source archive and redoing the cutting by hand.
+Unoptimized originals for images that ship from `site/src/lib/assets/`, and the
+recipes for the ones whose original is not kept. Nothing here is built, imported
+or deployed — it is kept so an asset can be re-derived without going back to the
+source archive and redoing the cutting by hand. One master is neither here nor
+gone: the Library's Jerome is 12 MB and lives in `glossa-corpus` under LFS, for
+the reason its section gives.
 
 ## The 404 page's drollery
 
@@ -87,26 +90,29 @@ The six rows below are kept rather than deleted: the derivation is the only
 record of what those files were, the crop boxes were the expensive part, and
 somebody restoring one should not have to find the scans again.
 
-**One master is kept, and it was none until 2026-09-06.** A faithful crop — no
-retouching, nothing invented — is reproduced byte for byte by the two commands
-below, so the recipe IS the copy and keeping the original would put tens of
-megabytes of JPEG in a public repository to save a download. The SHA-256 is of
-the file as fetched from Commons, so a scan replaced upstream is detected rather
-than silently re-cropped.
+**No master here, and one master elsewhere.** A faithful crop — no retouching,
+nothing invented — is reproduced byte for byte by the two commands below, so the
+recipe IS the copy and keeping the original would put tens of megabytes of JPEG
+in a public repository to save a download. The SHA-256 is of the file as fetched
+from Commons, so a scan replaced upstream is detected rather than silently
+re-cropped.
 
 **`hero-jerome` is the exception: it is a crop AND a hand tone-correction**,
 brightened and pulled open (mean 0.24 → 0.34, standard deviation 0.11 → 0.21
 against the same box on the Commons scan), because the National Gallery's
 photograph is dark and yellow and the shelves behind Jerome go to a single brown
-at the size a tailpiece is read. **No command reproduces that**, which is the
+at the size the page draws them. **No command reproduces that**, which is the
 drollery's rule above and not a new one — hand work keeps its master or it is
-gone the next time the ratio changes. So the crop box below places the picture
-and no longer derives it: `assets/hero-jerome-adjusted.jpg` is what was encoded.
+gone the next time the slot wants a different shape.
 
-That file is 4731×2794, sha256 `4a86f4ad5a88c064…`, and it is the crop box below
-already applied — so re-deriving it is the encode line alone. The Commons row
-stays: it is still where the licence, the provenance and the unretouched scan
-are.
+**So its master is `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus`**,
+tracked there through git-lfs beside the Doré scans: 12 MB is not something a
+public repository should hand every future clone, and the private one already
+carries binaries that size for exactly this reason. The file is 4731×2794,
+sha256 `4a86f4ad5a88c064…`, and it is the Commons crop plus the tone-correction
+already applied — so what the box column below holds for this row is a second
+crop, taken on that file rather than on the scan. The Commons row stays where it
+is: it is still the licence, the provenance and the unretouched original.
 
 Fetch (`{name}.jpg`, from `https://upload.wikimedia.org/wikipedia/commons/…`):
 
@@ -125,11 +131,19 @@ Fetch (`{name}.jpg`, from `https://upload.wikimedia.org/wikipedia/commons/…`):
 
 Crop and encode. The crop box is `WxH+X+Y` on the master. A banner is 2.5:1 at
 1800px and the withdrawn vignettes were square at 400px; **`hero-jerome` is
-neither, since 2026-09-06** — it stopped being a banner when it moved under
-`/bibliotheca`'s last shelf, and a tailpiece owes the slot no ratio, so it is
-1800×1063 and its height is the painting's. A 2.5:1 band kept the shelf Jerome
-sits at and cut away the floor, the doorway and the arcade, which are what make
-the room a library.
+neither, since 2026-09-06.** It stopped being a banner when it moved under
+`/bibliotheca`'s last shelf, and it is now the one row here whose out size is
+not a slot: the page draws it 300px tall with `object-fit: cover` and a press
+opens the file whole, so the encode answers "how much painting is worth
+shipping" and the CSS answers "how much page it may take". 1600×727 is the first
+question's answer — the study, the shelves, the lion and the arcade, with the
+ceiling beams and the front of the checkerboard floor gone, which is 205 KB
+against 357 for the whole room.
+
+Its box is taken on the adjusted master and centred vertically: 2150 of that
+file's 2794 rows, 322 off each end. Centring is not a nicety — `cover` crops
+from the middle, so a band that is not centred on the file is a band the page
+will centre again.
 
 **The boxes were chosen by eye and are the only judgement in the derivation** —
 every one of them was got wrong at least once and corrected against the output,
@@ -142,18 +156,21 @@ magick "$master" -crop "$box" +repage -resize "${W}x${H}!" out.png
 avifenc -q 65 -s 0 -y 420 --jobs all out.png "site/src/lib/assets/schola/$name.avif"
 ```
 
-| name                  | crop box             | out       |
-| --------------------- | -------------------- | --------- |
-| hero-jerome           | `4731x2794+0+2275`   | 1800×1063 |
-| ~~pillars-disputa~~   | `1845x738+0+680`     | 1800×720  |
-| gospels-preaching     | `3300x1320+150+560`  | 1800×720  |
-| ~~social-gleaners~~   | `5354x2142+0+1250`   | 1800×720  |
-| ~~shelf-scripture~~   | `6911x6911+0+400`    | 400×400   |
-| ~~shelf-catechism~~   | `3480x3480+429+0`    | 400×400   |
-| ~~shelf-magisterium~~ | `3340x3340+358+0`    | 400×400   |
-| ~~shelf-law~~         | `2008x2008+0+500`    | 400×400   |
-| ~~shelf-theologian~~  | `3360x3360+123+3150` | 400×400   |
-| ~~shelf-prayers~~     | `2400x2400+240+600`  | 400×400   |
+| name                  | crop box             | out      |
+| --------------------- | -------------------- | -------- |
+| hero-jerome           | `4731x2150+0+322`†   | 1600×727 |
+| ~~pillars-disputa~~   | `1845x738+0+680`     | 1800×720 |
+| gospels-preaching     | `3300x1320+150+560`  | 1800×720 |
+| ~~social-gleaners~~   | `5354x2142+0+1250`   | 1800×720 |
+| ~~shelf-scripture~~   | `6911x6911+0+400`    | 400×400  |
+| ~~shelf-catechism~~   | `3480x3480+429+0`    | 400×400  |
+| ~~shelf-magisterium~~ | `3340x3340+358+0`    | 400×400  |
+| ~~shelf-law~~         | `2008x2008+0+500`    | 400×400  |
+| ~~shelf-theologian~~  | `3360x3360+123+3150` | 400×400  |
+| ~~shelf-prayers~~     | `2400x2400+240+600`  | 400×400  |
+
+† On `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus`, not on the
+Commons scan. Every other box here is on the file the fetch table names.
 
 **`gospels-preaching` is the one exception to the encoder line**: it is a
 monochrome etching, so it is converted with `-colorspace Gray` and encoded
@@ -166,7 +183,7 @@ invented filigree here, so the finer chroma buys nothing on a photograph of a
 painting. `-s 0` for the same reason it is used above — encoded by hand once,
 so the slowest speed is free.
 
-Total shipped (2026-09-06): 728 KB across three files, none of them `eager` —
+Total shipped (2026-09-06): 579 KB across three files, none of them `eager` —
 both paintings are below the fold at every viewport and the drollery is on a
 page nobody meant to reach.
 They are Vite build assets under `_app/immutable/`, so they are negated from

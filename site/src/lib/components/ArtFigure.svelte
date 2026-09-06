@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * One of `/schola`'s paintings, with its attribution behind the same
+	 * One of the two landing-page paintings, with its attribution behind the same
 	 * control a Doré plate's caption uses.
 	 *
 	 * ## Why the credit is a card and not a line
@@ -14,14 +14,17 @@
 	 * than written a fourth time.
 	 *
 	 * WHAT IT DOES NOT SHARE WITH `Plate.svelte` IS THE MARKUP, which is
-	 * `floating.svelte.ts`'s own stated rule — only the mechanism moved into
-	 * that class, because these panels want different widths and type and
-	 * Svelte's scoped classes stop at the component boundary. This is a
-	 * separate component for a reason of its own besides: a plate is a
-	 * zoomable engraving with an `srcset`, a `PlateViewer` and a title of its
-	 * own in the caption, and none of those exist here. A painting on a
-	 * landing page is illustration; there is nothing to zoom into and nothing
-	 * to read.
+	 * `floating.svelte.ts`'s own stated rule — only the mechanism moved into that
+	 * class, because these panels want different widths and type and Svelte's
+	 * scoped classes stop at the component boundary. It stays a separate
+	 * component for a reason of its own: a plate carries an `srcset` over two
+	 * renditions and a title of its own in the caption, and neither exists here —
+	 * one file, and an identification rather than a name.
+	 *
+	 * **IT DOES SHARE `PlateViewer` NOW, SINCE 2026-09-06, and the sentence that
+	 * used to sit here said it never would.** "There is nothing to zoom into" was
+	 * true of a banner drawn whole and stopped being true the moment
+	 * `--art-height` cropped one: see below.
 	 *
 	 * ## The card is one link
 	 *
@@ -62,10 +65,33 @@
 	 * box before it has a byte and nothing below shifts when the file lands.
 	 * `eager` is for a picture above the fold; everything else is `lazy` and
 	 * costs nothing until the reader arrives at it.
+	 *
+	 * ## THE PAGE SETS THE HEIGHT, AND THE PICTURE IS CROPPED TO IT
+	 *
+	 * `--art-height` is the one knob, unset by default and therefore `auto`,
+	 * which is what `/schola`'s banner still gets: the file's own ratio, whole.
+	 * `/bibliotheca` sets 300px, and `object-fit: cover` then draws a band across
+	 * the middle of the painting rather than letting a picture that is a ROOM
+	 * take half the page under a catalogue. A component-level prop was the other
+	 * option and this is not one: the number is a fact about how much room that
+	 * page has after its shelves, which is the page's business and nothing this
+	 * file could ever decide.
+	 *
+	 * ## AND THE PICTURE OPENS OVER THE PAGE, on `Plate.svelte`'s reasoning
+	 * arrived at from the opposite direction. A plate opens because the file
+	 * holds more DETAIL than the reading column can draw; this opens because the
+	 * band holds less PICTURE than the file has — cover keeps the middle and the
+	 * reader who wants Jerome's shelves, his lion and his floor cannot get to
+	 * them otherwise. Same `PlateViewer`, generalized on 2026-09-06 to take a
+	 * picture rather than a plate, and `plates.enlarge` reused as the label
+	 * rather than adding a string to thirty-seven dictionaries to say the same
+	 * word.
 	 */
 	import type { Artwork } from '$lib/landing-art';
 	import Icon from '$lib/components/Icon.svelte';
+	import PlateViewer from '$lib/components/PlateViewer.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
+	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
 		art: Artwork;
@@ -79,9 +105,37 @@
 		label: string;
 		/** Above the fold. The hero, and nothing else. */
 		eager?: boolean;
+		/**
+		 *  THE PICTURE OPENS OVER THE PAGE. Set it where `--art-height` is set and
+		 *  nowhere else: a band is a WINDOW on the file, and a reader who can see
+		 *  only the middle of a room needs a way to the rest of it. A picture drawn
+		 *  whole has nothing behind it, and making it a control would promise one.
+		 */
+		expandable?: boolean;
 	}
 
-	let { art, credit, label, eager = false }: Props = $props();
+	let { art, credit, label, eager = false, expandable = false }: Props = $props();
+
+	/**
+	 * The viewer, mounted only once it has been asked for — `Plate.svelte`'s
+	 * arrangement and its argument, which holds here for a smaller reason: a
+	 * landing page renders one of these, but a dialog holding a second
+	 * `<img>` for a picture nobody has asked to see is still a second fetch
+	 * waiting to happen.
+	 *
+	 * `viewerSrc` is read off the inline image at the moment of the click and
+	 * never rebuilt: it is the file the browser actually chose and therefore
+	 * the one already in the cache, which is what makes opening free.
+	 */
+	let imgEl: HTMLImageElement | undefined = $state();
+	let openerEl: HTMLButtonElement | undefined = $state();
+	let viewerSrc = $state('');
+	let viewing = $state(false);
+
+	function openViewer() {
+		viewerSrc = imgEl?.currentSrc || imgEl?.src || '';
+		if (viewerSrc) viewing = true;
+	}
 
 	// Per INSTANCE: a page renders several of these and `popovertarget` needs a
 	// distinct id to name. `$props.id()` has to be a bare variable declaration
@@ -91,16 +145,27 @@
 </script>
 
 <figure class="art">
-	<img
-		class="plate"
-		class:paper={art.paper}
-		src={art.src}
-		width={art.width}
-		height={art.height}
-		alt=""
-		loading={eager ? 'eager' : 'lazy'}
-		decoding="async"
-	/>
+	<!-- A button and not an image with a handler on it, for every reason
+	     `Plate.svelte` gives: the tab stop, Enter and Space, the focus ring and
+	     the announcement that this is a control at all come from the element
+	     being one. `aria-haspopup` says which kind, so the page changing out
+	     from under the reader is not a surprise. The label names the picture
+	     it enlarges, which is the credit, since these have no title on the
+	     page. -->
+	{#if expandable}
+		<button
+			bind:this={openerEl}
+			type="button"
+			class="art-open"
+			aria-haspopup="dialog"
+			aria-label={t('plates.enlarge').replace('{title}', credit)}
+			onclick={openViewer}
+		>
+			{@render picture()}
+		</button>
+	{:else}
+		{@render picture()}
+	{/if}
 	<figcaption>
 		<button
 			bind:this={card.trigger}
@@ -145,16 +210,78 @@
 	</figcaption>
 </figure>
 
+<!-- One `<img>`, rendered in or out of the opener. Written twice it would
+     be two places to keep the blend, the loading and the intrinsic size
+     agreeing, which is the bug this shape exists to make impossible. -->
+{#snippet picture()}
+	<img
+		bind:this={imgEl}
+		class="plate"
+		class:paper={art.paper}
+		src={art.src}
+		width={art.width}
+		height={art.height}
+		alt=""
+		loading={eager ? 'eager' : 'lazy'}
+		decoding="async"
+	/>
+{/snippet}
+
+{#if viewing}
+	<!-- Focus is put back by hand: the dialog restores it as it closes, but
+	     this component unmounts it in the same turn, so a keyboard reader
+	     whose focus went with it would land at the top of the document
+	     instead of on the picture they were standing on. -->
+	<PlateViewer
+		width={art.width}
+		height={art.height}
+		{credit}
+		src={viewerSrc}
+		onclosed={() => {
+			viewing = false;
+			openerEl?.focus();
+		}}
+	/>
+{/if}
+
 <style>
 	.art {
 		margin: 0;
 		position: relative;
 	}
 
+	/* `Plate.svelte`'s opener exactly, minus the `zoom-in` cursor: this one
+	   does not magnify, it uncovers — the band is a window on the file and
+	   what a click opens is the rest of the picture. */
+	.art-open {
+		appearance: none;
+		display: block;
+		inline-size: 100%;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: inherit;
+		cursor: pointer;
+	}
+
+	.art-open:focus-visible {
+		outline: 2px solid var(--color-focus-ring);
+		outline-offset: 3px;
+	}
+
+	/*
+	 * `--art-height` IS THE PAGE'S, and unset it is `auto` — the file's own
+	 * ratio, which is what a banner wants. A page that gives it a number gets
+	 * a band: `cover` fills that box from the middle of the picture and
+	 * crops what will not fit, which is why the shipped file is cropped to
+	 * the study and no further (`assets/README.md`).
+	 */
 	.plate {
 		display: block;
 		inline-size: 100%;
-		block-size: auto;
+		block-size: var(--art-height, auto);
+		object-fit: cover;
 		border-radius: var(--radius-md);
 		filter: var(--plate-filter);
 	}
@@ -262,6 +389,16 @@
 		.plate {
 			mix-blend-mode: normal;
 			filter: none;
+		}
+
+		.art-open {
+			cursor: auto;
+		}
+
+		/* Paper has no viewer to open, so the band is not a window on
+		   anything — the whole picture prints. */
+		.plate {
+			block-size: auto;
 		}
 
 		.caption-trigger {

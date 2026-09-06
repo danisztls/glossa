@@ -826,11 +826,13 @@ export const en: Dictionary = {
 	// than in every dictionary — which is why the pictures cost two keys between
 	// them. Rendered in parentheses after the identification.
 	//
-	// IT IS NOT A LIE AND IT IS NOT AN APOLOGY. Every banner is a horizontal
-	// band cut out of a much taller painting — Antonello's Jerome is 4731×6000
-	// and the band is 1892px tall, taken 2050px down — so a credit with no
-	// "(detail)" beside it would tell a reader the work itself is that shape.
-	// `assets/README.md` holds each crop box.
+	// IT IS NOT A LIE AND IT IS NOT AN APOLOGY. Both pictures are horizontal
+	// bands cut out of much taller paintings — Antonello's Jerome is 4731×6000
+	// and what ships is 1600×727 — so a credit with no "(detail)" beside it
+	// would tell a reader the work itself is that shape. It stays true of the
+	// Library's, which a press now opens over the page: what opens is the
+	// shipped file whole, not the panel. `assets/README.md` holds each crop
+	// box.
 	'art.detail': 'detail',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':

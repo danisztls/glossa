@@ -77,8 +77,8 @@
 	 * which is right, because the text is what they came for.
 	 */
 	import type { Plate } from '$lib/plates';
-	import { PLATE_SIZES } from '$lib/plates';
-	import { plateSrc, plateSrcset } from '$lib/plate-src';
+	import { PLATE_SIZES, PLATE_DETAIL_WIDTH } from '$lib/plates';
+	import { plateSrc, plateSrcset, plateDetailSrc } from '$lib/plate-src';
 	import Icon from '$lib/components/Icon.svelte';
 	import PlateViewer from '$lib/components/PlateViewer.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
@@ -219,9 +219,13 @@
 		     returned to the top of the document instead of to the picture they
 		     were standing on. -->
 		<PlateViewer
-			{plate}
+			title={plate.title}
+			width={plate.width}
+			height={plate.height}
 			{credit}
 			src={viewerSrc}
+			detailSrc={plateDetailSrc(plate.id)}
+			detailWidth={PLATE_DETAIL_WIDTH}
 			onclosed={() => {
 				viewing = false;
 				openerEl?.focus();

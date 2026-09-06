@@ -180,11 +180,13 @@
 		and does not need to.
 
 		AND IT WAS RECROPPED THE SAME DAY, out of the 2.5:1 band a masthead
-		wanted and into the painting's own 1.69:1. A banner is a strip and had
-		to cut the room down to the shelf Jerome sits at; a tailpiece owes the
-		slot no ratio, so it keeps the floor, the doorway and the arcade — which
-		are what make the room a library rather than a desk. `assets/README.md`
-		has the box.
+		wanted and into the study itself, which is a room and not a strip. What
+		is drawn here is still a band — 300px, `--art-height` below — but it is
+		a WINDOW on that file rather than the whole of it, and pressing the
+		picture opens the rest over the page. So the two questions came apart:
+		how much painting is worth shipping, and how much page a picture may
+		take under a catalogue. `assets/README.md` has the box, `ArtFigure` the
+		reasoning.
 
 		No `eager`: nothing above the fold now, so it loads lazily and the
 		shelves have the connection to themselves. The credit stays where
@@ -197,6 +199,7 @@
 			art={BANNERS.bibliotheca}
 			credit={creditOf(BANNERS.bibliotheca)}
 			label={t('art.about')}
+			expandable
 		/>
 	</div>
 </div>
@@ -211,6 +214,26 @@
 	 */
 	.tailpiece {
 		margin: 2.5rem 0 0;
+		/*
+		 * A BAND, AND THE NUMBER IS THIS PAGE'S TO SET. `ArtFigure` reads
+		 * `--art-height` and crops to it with `object-fit: cover`; unset it
+		 * draws the file whole, which is what `/schola`'s banner still does.
+		 * At the file's own ratio this painting is 739px tall at the column's
+		 * full width — half the page, under a catalogue the reader came for.
+		 * 300 is an ornament; the rest of the picture is one press away, which
+		 * is what makes cropping it here cost the reader nothing.
+		 *
+		 * Shorter on a phone because the box is narrower and `cover` takes its
+		 * crop off the SIDES there: 300px against a 320px column would keep a
+		 * vertical slice through the middle of the room and call it a band.
+		 */
+		--art-height: 300px;
+	}
+
+	@media (max-width: 40rem) {
+		.tailpiece {
+			--art-height: 180px;
+		}
 	}
 
 	section {

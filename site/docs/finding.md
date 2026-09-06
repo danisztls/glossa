@@ -534,9 +534,12 @@ writes it down.
 asset in `landing-art.ts` — and the only interface words in the whole set are
 "detail" and the name of the control that shows a credit. Images are `alt=""`
 with the identification in the caption, `Plate.svelte`'s arrangement. They are
-public-domain works newly cut from Commons scans and no master is kept:
-faithful crops with no retouching, so `assets/README.md`'s recorded URL,
-SHA-256 and crop box reproduce each one exactly. **A colour painting must not
+public-domain works newly cut from Commons scans, and a faithful crop keeps no
+master: no retouching, nothing invented, so `assets/README.md`'s recorded URL,
+SHA-256 and crop box reproduce it exactly. **Jerome's is not faithful and
+therefore keeps one** — cropped and tone-corrected by hand on 2026-09-06, which
+no command reproduces — and the 12 MB source is in `glossa-corpus` under LFS
+rather than in this public repository. **A colour painting must not
 take `--plate-blend`** — that token is tuned to multiply a grey scan's white
 paper away and turns an oil into mud — and under `[data-mono]` every one is
 desaturated, because a reader who asked for one grey ramp did not ask for
@@ -675,6 +678,17 @@ picture between them and every door on the site. Below the last card it is
 decoration, loads lazily since nothing is above the fold, and keeps its credit
 behind `ArtFigure`'s trigger — where a picture sits in a page's argument is a
 separate question from whether the page says whose it is.
+
+**And it is a 300px BAND, which is a window and not the picture.** Drawn at its
+own ratio the painting is 739px tall at the column's full width — half the page,
+under the catalogue the reader came for — so `--art-height` fixes the height and
+`object-fit: cover` crops to it, 180px on a phone where the box is narrower and
+the crop comes off the sides instead. **What makes that free is that pressing it
+opens the whole file** over the page, in the same viewer a Doré plate uses. The
+two questions came apart that day and had been one: how much painting is worth
+shipping (1600×727, the study and no further) and how much page a picture may
+take (300px). Only a cropped picture gets the control — a picture drawn whole
+has nothing behind it, and making it a control would promise one.
 
 **The home page is the liturgical day and the doors, and nothing else.** It
 rendered the Bible's whole table of contents and then the Catechism's whole

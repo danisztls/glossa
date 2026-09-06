@@ -746,25 +746,30 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   remaining route failed it too. That route also shipped filtering on
   `document_kind` alone, which put two Vatican I constitutions at the head of
   it — a `kind` is not a provenance.
-- **ONE BANNER PER LANDING PAGE, and the two survivors swapped pages.**
-  Antonello's Jerome — a man alone in a room full of books — heads
+- **ONE PICTURE PER LANDING PAGE, and the two survivors swapped pages.**
+  Antonello's Jerome — a man alone in a room full of books — closes
   `/bibliotheca`; Rembrandt's preaching Christ heads `/schola`, which is about
   being taught. They were the other way round only because `/schola` was
   illustrated first and took the best picture for its masthead. The other two
   went with the routes they stood over, and their rows in `assets/README.md`
   are struck through rather than deleted: a URL, a SHA-256 and a crop box bring
   a picture back with one command, which is what makes deleting one cheap.
-- **A caption says "(detail)" because every banner IS one** — a horizontal band
-  cut out of a much taller painting (Jerome is 4731×6000; the band is 1892px
-  tall, taken 2050px down). Without it the credit would tell a reader the work
-  itself is that shape. `art.detail` and `art.about` are the two keys the whole
-  set costs, and they are `art.*` rather than `schola.*` because two pages read
-  them.
-- **The page's artworks are public domain and cost two dictionary keys.**
-  A caption is `Artist, Title, year. Institution.`, held in `landing-art.ts`;
-  no master is kept, because `assets/README.md`'s URL, SHA-256 and crop box
-  re-derive a faithful crop exactly. Only ink on a white sheet may take
+- **A caption says "(detail)" because both pictures ARE one** — a horizontal
+  band cut out of a much taller painting (Jerome is 4731×6000; what ships is
+  1600×727). Without it the credit would tell a reader the work itself is that
+  shape. `art.detail` and `art.about` are the two keys the whole set costs,
+  and they are `art.*` rather than `schola.*` because two pages read them.
+- **The page's artworks are public domain and cost two dictionary keys.** A
+  caption is `Artist, Title, year. Institution.`, held in `landing-art.ts`; a
+  faithful crop keeps no master, because `assets/README.md`'s URL, SHA-256 and
+  crop box re-derive it exactly. Only ink on a white sheet may take
   `--plate-blend`, and `[data-mono]` desaturates every one.
+- **HAND WORK KEEPS ITS MASTER, AND JEROME'S IS IN THE CORPUS** (2026-09-06).
+  That one is a crop AND a tone-correction made by hand, so no command
+  reproduces it and the recipe stopped being the copy: the 12 MB source is
+  `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus` under LFS, this
+  repository being public. The drollery's 777 KB master stays here — the rule
+  is the bytes, not the principle.
 - **A CREDIT IS BEHIND THE CAPTION TRIGGER, NOT SET UNDER THE PICTURE.**
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because
@@ -842,6 +847,16 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   one. **The painting is below the last card, not above the title**: a reader
   arriving at a catalogue wants the catalogue, and it is decoration there
   rather than the page's subject.
+- **AND IT IS A 300px BAND THAT OPENS TO THE WHOLE PICTURE** (2026-09-06).
+  `ArtFigure` reads `--art-height` — unset, so `/schola`'s banner is unchanged
+  — and crops to it with `object-fit: cover`; at its own ratio Jerome is 739px
+  tall at the column's full width, which is half the page under a catalogue.
+  What makes cropping free is that the band is a WINDOW: `expandable` puts the
+  picture in `PlateViewer`, generalized that day to take a picture rather than
+  a plate (`detailSrc`/`detailWidth` are props, absent here, so the zoom
+  ceiling is the file's own width). Set the prop only where the height is set
+  — a picture drawn whole has nothing behind it, and making it a control would
+  promise one.
 - **There is no Learn shelf, and the Summa has no row** (2026-09-06). The
   Catechism and its Compendium are one card (`/catechismus` indexes both);
   the Compendium of the Social Doctrine is its own. The taxonomy argument that

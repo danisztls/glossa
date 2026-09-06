@@ -1,10 +1,10 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
  * each on `/schola` and `/bibliotheca`, and no other picture on either. A
- * banner over `/schola`'s title; on `/bibliotheca` a tailpiece under the last
- * shelf since 2026-09-06, because a catalogue's reader came for the catalogue
- * and `BANNERS` is now the derivation's name rather than the role, the same
- * way the filenames are.
+ * banner over `/schola`'s title; on `/bibliotheca` a 300px band under the
+ * last shelf since 2026-09-06, opening to the whole picture on a press,
+ * because a catalogue's reader came for the catalogue. `BANNERS` is now the
+ * derivation's name rather than the role, the same way the filenames are.
  *
  * ## IT WAS FOUR OVER ONE PAGE, AND IS TWO OVER TWO
  *
@@ -90,11 +90,20 @@
  *
  * **TWO OF THE THREE ARE NOT FAITHFUL CROPS AND BOTH KEEP THEIR MASTERS.**
  * The reynard drollery was cut and painted by hand, and `hero-jerome` was
- * tone-corrected by hand on 2026-09-06 — brightened and pulled open, because
- * the National Gallery's photograph is dark and yellow and the shelves behind
- * Jerome close into one brown at the size a tailpiece is read. No command
- * reproduces either, and hand work with no master is gone the next time the
- * ratio changes, which is exactly what changed that day.
+ * cropped and tone-corrected by hand on 2026-09-06 — brightened and pulled
+ * open, because the National Gallery's photograph is dark and yellow and the
+ * shelves behind Jerome close into one brown at the size the page draws them.
+ * No command reproduces either, and hand work with no master is gone the next
+ * time the slot wants a different shape, which is exactly what happened that
+ * day.
+ *
+ * **AND JEROME'S MASTER IS NOT IN THIS REPOSITORY.** It is 12 MB, this
+ * repository is public, and the corpus repo already tracks binaries that size
+ * through LFS for the Doré scans — so it is
+ * `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus`, which is
+ * `authored/` by that repo's own second question: the site serves what comes
+ * off it, and a person decided it here. The drollery's master stays put at
+ * 777 KB, because the rule is the bytes and not the principle.
  */
 
 import heroJerome from '$lib/assets/schola/hero-jerome.avif';
@@ -119,16 +128,19 @@ export interface Artwork {
  * THE TWO ARE NO LONGER ONE SHAPE, and `BANNER` — a `{ width: 1800, height:
  * 720 }` spread into both — went with the assumption. A banner IS 2.5:1
  * whatever hangs under it, and `/bibliotheca`'s picture stopped being one on
- * 2026-09-06 when it moved under the last shelf. A tailpiece closes a page
- * instead of heading it, so its height is the painting's business rather than
- * the slot's: Jerome is a man in a ROOM, and a 2.5:1 band kept the shelf he
- * sits at and cut away the floor, the doorway and the arcade that make the
- * room a library at all.
+ * 2026-09-06 when it moved under the last shelf.
  *
- * Nothing in the CSS ever wanted the ratio. `ArtFigure`'s image is
- * `inline-size: 100%; block-size: auto`, so these two numbers are the
- * intrinsic pixels and their whole job is to reserve the right box before the
- * file lands. Per picture is what they always meant.
+ * **THE FILE'S RATIO AND THE SLOT'S ARE NOW TWO DIFFERENT QUESTIONS, which is
+ * why one constant could not answer both.** `hero-jerome` is 1600×727,
+ * cropped to the study and no tighter, because that is how much painting is
+ * worth having; `/bibliotheca` draws it 300px tall with `object-fit: cover`,
+ * because that is how much page a tailpiece may take under a catalogue.
+ * Nothing is lost between the two — the band is a window, and a press opens
+ * the file whole in `PlateViewer`.
+ *
+ * So these two numbers are the intrinsic pixels and nothing more: the `<img>`
+ * attributes, the ratio the viewer's stage reserves. They stopped being a
+ * layout instruction the moment `--art-height` existed.
  */
 
 /** One painting per landing page, keyed by the page's own path segment. */
@@ -145,8 +157,8 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 			'https://commons.wikimedia.org/wiki/File:Christ_Preaching,_called_La_Petite_Tombe_MET_DP832290.jpg'
 	},
 	bibliotheca: {
-		width: 1800,
-		height: 1063,
+		width: 1600,
+		height: 727,
 		src: heroJerome,
 		credit: 'Antonello da Messina, Saint Jerome in his Study, c. 1475. National Gallery, London.',
 		detail: true,

@@ -1,7 +1,19 @@
 <script lang="ts">
 	/**
-	 * One plate, over the whole page, at the size the file it already
+	 * One picture, over the whole page, at the size the file it already
 	 * downloaded can actually draw.
+	 *
+	 * IT TAKES A PICTURE AND NOT A PLATE, since 2026-09-06. It was written for
+	 * Doré and knew it — it read `plate.id` to build the zoom rendition's URL and
+	 * imported `PLATE_DETAIL_WIDTH` to size it — and the Library's Antonello
+	 * wanted the same view for a different reason: the page draws that painting
+	 * as a 300px band under the catalogue, so what a click opens is not more
+	 * DETAIL but the rest of the PICTURE. Everything this component is for was
+	 * already right for that; only the two lines that knew where a plate's bigger
+	 * file lives were wrong, and they are props now (`detailSrc`, `detailWidth`,
+	 * both optional). A caller with no second rendition gets a viewer whose zoom
+	 * ceiling is the loaded file's own width, which is the state an offline plate
+	 * has always been in here.
 	 *
 	 * THE READING COLUMN IS 40rem AND THE FILE IS 1200px WIDE, and that gap is
 	 * the entire argument for this component. `PLATE_SIZES` asks for the plate
@@ -76,20 +88,37 @@
 	 * `isolation` note in the CSS.
 	 */
 	import { tick } from 'svelte';
-	import type { Plate } from '$lib/plates';
-	import { PLATE_DETAIL_WIDTH } from '$lib/plates';
-	import { plateDetailSrc } from '$lib/plate-src';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
-		plate: Plate;
+		/** The picture's intrinsic pixels, for the ratio the stage reserves and
+		 *  for the `<img>`'s own attributes. */
+		width: number;
+		height: number;
+		/** The picture's own name, shown in the caption and used as the view's
+		 *  accessible name. A plate has one; a painting on a landing page does
+		 *  not — there the identification IS the credit, and `credit` alone
+		 *  names the view rather than being said twice under it. */
+		title?: string;
 		/** The rendition the inline `<img>` resolved and downloaded, as its
 		 *  `currentSrc`. Passed rather than rebuilt from `plateSrcset` so that
 		 *  this is the same file, already in the HTTP cache: which of the two
 		 *  renditions it is depends on the reader's viewport and pixel ratio,
 		 *  and only the browser knows the answer. */
 		src: string;
+		/**
+		 * A BIGGER FILE THE ZOOM MAY FETCH, and its width. Both or neither.
+		 *
+		 * The plates have one — 2000px, in no `srcset` so that only an
+		 * explicit zoom can ask for it. A landing page's painting does not:
+		 * it ships one rendition, the zoom ceiling falls back to that file's
+		 * own natural width, and `canZoom` decides from the geometry whether
+		 * there is anything left to reach. Passed rather than derived here so
+		 * this view knows nothing about plates.
+		 */
+		detailSrc?: string;
+		detailWidth?: number;
 		/** The collection's attribution, composed and localized by the route,
 		 *  exactly as `Plate` receives it. Shown outright here rather than
 		 *  behind a control: there is nothing else in this view to crowd. */
@@ -99,7 +128,12 @@
 		onclosed: () => void;
 	}
 
-	let { plate, src, credit, onclosed }: Props = $props();
+	let { width, height, title, src, detailSrc, detailWidth, credit, onclosed }: Props = $props();
+
+	/** What names this view, in the caption and to a screen reader: the
+	 *  picture's title where it has one, and its credit where the credit is
+	 *  the identification. */
+	const name = $derived(title || credit || '');
 
 	let dialogEl: HTMLDialogElement | undefined = $state();
 	let stageEl: HTMLDivElement | undefined = $state();
@@ -134,14 +168,14 @@
 	 * on every plate. Both simply return this view to the ceiling it had
 	 * before the rendition existed, which is a working view.
 	 */
-	const detailHref = $derived(plateDetailSrc(plate.id));
+	const detailHref = $derived(detailSrc ?? '');
 	let detailStatus = $state<'idle' | 'loading' | 'ready' | 'failed'>('idle');
 
 	/** What is actually on the element. The loaded rendition until the bigger
 	 *  file has DECODED — not merely loaded — so the swap cannot flash. */
 	const shown = $derived(detailStatus === 'ready' && detailHref ? detailHref : src);
 
-	const ratio = $derived(plate.width / plate.height);
+	const ratio = $derived(width / height);
 
 	/** How wide the plate is drawn when it fits: whichever of the stage's two
 	 *  dimensions binds first. */
@@ -157,7 +191,7 @@
 	 * the answer only where there is no bigger file to be had.
 	 */
 	const zoomWidth = $derived(
-		detailHref && detailStatus !== 'failed' ? PLATE_DETAIL_WIDTH : natural
+		detailHref && detailWidth && detailStatus !== 'failed' ? detailWidth : natural
 	);
 
 	/** 1.15 rather than any headroom at all: below about a sixth, the reader
@@ -270,7 +304,7 @@
 <dialog
 	bind:this={dialogEl}
 	class="dialog-bare sheet plate-viewer"
-	aria-label={plate.title}
+	aria-label={name}
 	onclose={onclosed}
 	onclick={onSurfaceClick}
 >
@@ -339,7 +373,7 @@
 			disabled={!canZoom}
 			aria-pressed={canZoom ? zoomed : undefined}
 			aria-label={canZoom ? t('plates.zoom') : undefined}
-			style:--plate-ratio={`${plate.width} / ${plate.height}`}
+			style:--plate-ratio={`${width} / ${height}`}
 			style:--plate-fit={fitWidth > 0 ? `${fitWidth}px` : '100%'}
 			style:--plate-zoom={`${zoomWidth}px`}
 			onclick={onPictureClick}
@@ -347,9 +381,9 @@
 			<img
 				bind:this={imgEl}
 				src={shown}
-				alt={canZoom ? '' : plate.title}
-				width={plate.width}
-				height={plate.height}
+				alt={canZoom ? '' : name}
+				{width}
+				{height}
 				decoding="async"
 				onload={() => (natural = imgEl?.naturalWidth ?? 0)}
 			/>
@@ -357,7 +391,13 @@
 	</div>
 
 	<div class="viewer-caption">
-		<span class="viewer-title">{plate.title}</span>
+		<!-- Small caps, which is a plate title's clothes and not a sentence's.
+		     A painting has no title here and its identification goes to the
+		     credit line below, so the slot is skipped rather than filled with
+		     the credit set in a face it was not written for. -->
+		{#if title}
+			<span class="viewer-title">{title}</span>
+		{/if}
 		{#if credit}
 			<span class="viewer-credit">{credit}</span>
 		{/if}
