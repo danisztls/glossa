@@ -31,6 +31,9 @@ export const pt: Dictionary = {
 	'nav.prayers': 'Orações',
 	'nav.bookmarks': 'Marcadores',
 	'nav.menu': 'Menu',
+	'nav.sections': 'Secções',
+	'nav.works': 'Obras',
+	'nav.pages': 'Páginas',
 	'home.title': 'Glossa Catholica',
 	'reading.continue': 'Continuar lendo',
 	'home.tagline':
