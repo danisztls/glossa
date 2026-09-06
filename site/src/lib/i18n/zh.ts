@@ -235,6 +235,8 @@ export const zh: Dictionary = {
 	'index.division': '分部',
 	'prayers.landing.title': '常用祈祷文',
 	'prayers.landing.tagline': '祈祷文并列拉丁文本。',
+	'prayers.gloss.versicle': '启应中的启句——由领祷者独自诵念或咏唱的一行，会众以随后的答句回应。',
+	'prayers.gloss.response': '启应中的答句——由会众一同诵念或咏唱的一行，回应前面的启句。',
 	'prayers.seeAlso': '另见',
 	'anchor.actions': '对该引处的操作',
 	'anchor.copy': '复制文本',

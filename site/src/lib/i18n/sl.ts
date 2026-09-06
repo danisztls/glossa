@@ -280,6 +280,10 @@ export const sl: Dictionary = {
 	'index.hideSubsections': 'Skrij podpoglavja',
 	'prayers.landing.title': 'Molitve',
 	'prayers.landing.tagline': 'Molitve z latinskim besedilom ob strani.',
+	'prayers.gloss.versicle':
+		'Vrstica, ki jo tisti, ki vodi molitev, izgovori ali zapoje sam; zbrani mu odgovorijo z odgovorom, ki sledi.',
+	'prayers.gloss.response':
+		'Vrstica, ki jo zbrani izgovorijo ali zapojejo skupaj, v odgovor na vrstico voditelja pred njo.',
 	'prayers.tableOfContents': 'Kazalo',
 	'prayers.seeAlso': 'Glej tudi',
 	'prayers.prevPrayer': 'Prejšnja molitev',

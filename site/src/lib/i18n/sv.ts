@@ -278,6 +278,10 @@ export const sv: Dictionary = {
 	'index.hideSubsections': 'Dölj underavsnitt',
 	'prayers.landing.title': 'Böner',
 	'prayers.landing.tagline': 'Böner med den latinska texten bredvid.',
+	'prayers.gloss.versicle':
+		'Versikeln — raden som den som leder bönen läser eller sjunger ensam. Församlingen svarar med svaret som följer.',
+	'prayers.gloss.response':
+		'Svaret — raden som församlingen läser eller sjunger tillsammans, till svar på versikeln före den.',
 	'prayers.tableOfContents': 'Innehåll',
 	'prayers.seeAlso': 'Se även',
 	'prayers.prevPrayer': 'Föregående bön',

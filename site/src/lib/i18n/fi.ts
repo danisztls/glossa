@@ -245,6 +245,10 @@ export const fi: Dictionary = {
 	'index.division': 'Jakso',
 	'prayers.landing.title': 'Tavalliset rukoukset',
 	'prayers.landing.tagline': 'Rukoukset latinankielisen tekstin rinnalla.',
+	'prayers.gloss.versicle':
+		'Versikkeli — säe, jonka rukousta johtava lausuu tai laulaa yksin. Seurakunta vastaa siihen seuraavalla vastauksella.',
+	'prayers.gloss.response':
+		'Vastaus — säe, jonka seurakunta lausuu tai laulaa yhdessä vastaukseksi edeltävään versikkeliin.',
 	'prayers.seeAlso': 'Katso myös',
 	'anchor.actions': 'Viitteen toiminnot',
 	'anchor.copy': 'Kopioi teksti',

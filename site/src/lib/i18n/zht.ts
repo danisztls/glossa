@@ -230,6 +230,8 @@ export const zht: Dictionary = {
 	'index.division': '分部',
 	'prayers.landing.title': '常用祈禱經文',
 	'prayers.landing.tagline': '祈禱經文並列拉丁文本。',
+	'prayers.gloss.versicle': '啟應中的啟句——由領禱者獨自誦念或詠唱的一行，會眾以隨後的答句回應。',
+	'prayers.gloss.response': '啟應中的答句——由會眾一同誦念或詠唱的一行，回應前面的啟句。',
 	'prayers.seeAlso': '另見',
 	'anchor.actions': '對該引處的操作',
 	'anchor.copy': '複製文本',

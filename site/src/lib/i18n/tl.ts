@@ -251,6 +251,10 @@ export const tl: Dictionary = {
 	'index.division': 'Bahagi',
 	'prayers.landing.title': 'Karaniwang mga Panalangin',
 	'prayers.landing.tagline': 'Mga panalangin na may katabing tekstong Latin.',
+	'prayers.gloss.versicle':
+		'Ang linyang binibigkas o inaawit nang mag-isa ng namumuno sa panalangin; sinasagot ito ng kapulungan sa sagot na kasunod.',
+	'prayers.gloss.response':
+		'Ang linyang binibigkas o inaawit nang sabay-sabay ng kapulungan, bilang sagot sa linyang nauna rito.',
 	'prayers.seeAlso': 'Tingnan din',
 	'anchor.actions': 'Mga gawain sa sanggunian',
 	'anchor.copy': 'Kopyahin ang teksto',

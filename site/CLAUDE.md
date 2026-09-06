@@ -2335,6 +2335,19 @@ new is this:
   verse's card may hold several notes at one mark, where the headword divides
   one authority's remark from the next; a prayer's holds exactly one, always
   anchored.
+- **AND IT SHARES ITS LINE WITH THE INITIAL, which took extracting the rule to
+  a module to state safely** (2026-09-06). A prayer set in verse takes a
+  one-line versal on its opening line (`.drop-cap-versal`, dropcaps.css —
+  three lines would indent lines the SOURCE broke, since every printed line is
+  its own `<p>` and a float overflows one); that line is also where the
+  apparatus's first mark tends to fall, and the four glossed English prayers
+  are the Pater, the Ave and both Creeds, every one of them verse. So "a
+  glossed line takes no initial" would have been the whole feature switched
+  off. `prayerCap` sets both wherever the first segment is plain text — the
+  proof that the note quotes nothing the cap promotes — and stands down where
+  it is not. `prayer-cap.ts` is a module for this project's standing reason:
+  the slice is an offset into a string `buildSegments` has already cut, and
+  `.svelte` files are where logic goes to be untested.
 
 **And the prayers' apparatus rides `essentials`, which is automatic** —
 the one commentary in the corpus that may. `WAVE_FOR_KIND`'s own rule puts a

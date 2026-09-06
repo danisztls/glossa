@@ -249,6 +249,10 @@ export const sw: Dictionary = {
 	'index.division': 'Mgawanyo',
 	'prayers.landing.title': 'Sala za Kawaida',
 	'prayers.landing.tagline': 'Sala pamoja na maandishi ya Kilatini kando.',
+	'prayers.gloss.versicle':
+		'Mstari ambao anayeongoza sala huusema au kuuimba peke yake; waliokusanyika hujibu kwa jibu linalofuata.',
+	'prayers.gloss.response':
+		'Mstari ambao waliokusanyika huusema au kuuimba pamoja, wakijibu mstari wa kiongozi uliotangulia.',
 	'prayers.seeAlso': 'Tazama pia',
 	'anchor.actions': 'Vitendo kwa rejeo',
 	'anchor.copy': 'Nakili maandishi',

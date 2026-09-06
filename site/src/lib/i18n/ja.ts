@@ -213,6 +213,9 @@ export const ja: Dictionary = {
 	'index.division': '区分',
 	'prayers.landing.title': '共通の祈り',
 	'prayers.landing.tagline': 'ラテン語の本文をかたわらに置いた祈り。',
+	'prayers.gloss.versicle':
+		'先唱句 — 祈りを導く者がひとりで唱え、または歌う行。会衆は次の応唱で答えます。',
+	'prayers.gloss.response': '応唱 — 会衆がともに唱え、または歌う行で、前の先唱句に答えるものです。',
 	'prayers.seeAlso': 'あわせて',
 	'anchor.actions': '参照の操作',
 	'anchor.copy': '本文をコピー',

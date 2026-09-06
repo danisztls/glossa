@@ -282,6 +282,10 @@ export const it: Dictionary = {
 	'index.hideSubsections': 'Nascondi sottosezioni',
 	'prayers.landing.title': 'Preghiere comuni',
 	'prayers.landing.tagline': 'Preghiere con il testo latino a fronte.',
+	'prayers.gloss.versicle':
+		'Il versetto — la riga che chi guida la preghiera dice o canta da solo. L’assemblea gli risponde con la risposta che segue.',
+	'prayers.gloss.response':
+		'La risposta — la riga che l’assemblea dice o canta insieme, rispondendo al versetto che la precede.',
 	'prayers.tableOfContents': 'Indice',
 	'prayers.seeAlso': 'Vedi anche',
 	'prayers.prevPrayer': 'Preghiera precedente',

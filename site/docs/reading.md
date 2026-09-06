@@ -13,6 +13,21 @@ silently does nothing is more surprising than an inert sepia row that says why.
 the work wrote is EB Garamond, what we wrote _about_ the work is Source Sans. A
 heading is a title until it says otherwise.
 
+**An initial is sized in lines, so the number of lines it may take is decided
+by whose lines they are.** Where a wrap is the viewport's, three lines is a
+flourish; where the source printed the break — verse — the indent lands on
+lines a reader is meant to read as new, so a prayer set in verse takes the
+one-line versal instead (`.drop-cap-versal`, dropcaps.css, which derives its
+two constants from the faces' real vertical metrics rather than by eye). The
+property that makes it safe is not the size but the box: at one line the float
+ends inside the `<p>` that opened it, and a float only reaches what follows it.
+
+**A label is not glossed by its letter.** The prayers print `V.`/`R.` and
+`D.`/`C.` for the same two parts, so the explanation behind each hangs off the
+block's kind — `TermGloss`, the same dotted underline `/calendarium` teaches on
+`Memorial`, with `lang` declared because a reading column says the CONTENT
+language and the gloss is chrome.
+
 **A scoped rule cannot reach into a child component, and the failure is
 silent.** Svelte scopes an ancestor selector with a hard class, so `.division p`
 stops matching once that element is rendered by a shared component — no error,

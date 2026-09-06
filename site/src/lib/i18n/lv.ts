@@ -244,6 +244,10 @@ export const lv: Dictionary = {
 	'index.division': 'Iedaļa',
 	'prayers.landing.title': 'Ikdienas lūgšanas',
 	'prayers.landing.tagline': 'Lūgšanas ar latīņu tekstu blakus.',
+	'prayers.gloss.versicle':
+		'Versikuls — rinda, ko lūgšanas vadītājs saka vai dzied viens pats. Draudze atbild ar tālāk sekojošo atbildi.',
+	'prayers.gloss.response':
+		'Atbilde — rinda, ko draudze saka vai dzied kopā, atbildot uz iepriekšējo versikulu.',
 	'prayers.seeAlso': 'Skatiet arī',
 	'anchor.actions': 'Darbības ar atsauci',
 	'anchor.copy': 'Kopēt tekstu',

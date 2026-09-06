@@ -625,6 +625,15 @@ export const en: Dictionary = {
 	'prayers.landing.title': 'Common Prayers',
 	'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
 	'prayers.tableOfContents': 'Table of Contents',
+	// What the letter in a dialogue's margin means — `PrayerBlocks` opens these
+	// from the label itself. Keyed by the block's ROLE and never by the letter,
+	// because the corpus prints four (V./R. in English and Portuguese, D./C. in
+	// French and Portuguese) for the same two parts: an expansion would be
+	// wrong for three of them, so these name who speaks instead.
+	'prayers.gloss.versicle':
+		'The versicle — the line the one leading the prayer says or sings alone. The assembly answers it with the response that follows.',
+	'prayers.gloss.response':
+		'The response — the line the assembly says or sings together, answering the versicle before it.',
 	// The heading over the passages under a glossed prayer — the Gospel it is
 	// drawn from, the Catechism's article on it, the Compendium's questions.
 	// "See also" and not "Sources": the Ave's second half is nobody's Scripture,

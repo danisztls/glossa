@@ -240,6 +240,10 @@ export const da: Dictionary = {
 	'index.division': 'Afdeling',
 	'prayers.landing.title': 'Almindelige bønner',
 	'prayers.landing.tagline': 'Bønner med den latinske tekst ved siden af.',
+	'prayers.gloss.versicle':
+		'Versiklen — den linje, som den, der leder bønnen, siger eller synger alene. Forsamlingen svarer med svaret, der følger.',
+	'prayers.gloss.response':
+		'Svaret — den linje, forsamlingen siger eller synger sammen som svar på versiklen foran.',
 	'prayers.seeAlso': 'Se også',
 	'anchor.actions': 'Handlinger for henvisningen',
 	'anchor.copy': 'Kopiér tekst',

@@ -244,6 +244,10 @@ export const nl: Dictionary = {
 	'index.division': 'Onderdeel',
 	'prayers.landing.title': 'Gebruikelijke gebeden',
 	'prayers.landing.tagline': 'Gebeden met de Latijnse tekst ernaast.',
+	'prayers.gloss.versicle':
+		'Het versikel — de regel die de voorganger alleen zegt of zingt. De gemeenschap antwoordt daarop met het antwoord dat volgt.',
+	'prayers.gloss.response':
+		'Het antwoord — de regel die de gemeenschap samen zegt of zingt, als antwoord op het versikel ervoor.',
 	'prayers.seeAlso': 'Zie ook',
 	'anchor.actions': 'Acties bij de verwijzing',
 	'anchor.copy': 'Tekst kopiëren',

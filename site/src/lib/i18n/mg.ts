@@ -255,6 +255,10 @@ export const mg: Dictionary = {
 	'compendium.noQuestionNumber': 'Tsy misy laharana fanontaniana amin’ity vondron-dahatsoratra ity',
 	'prayers.landing.title': 'Vavaka Fahazarana',
 	'prayers.landing.tagline': 'Vavaka miaraka amin’ny soratra latina eo anilany.',
+	'prayers.gloss.versicle':
+		'Ny andalana tononin’ny mpitarika ny vavaka na hirainy irery; valian’ny mpivavaka amin’ny valiny manaraka izany.',
+	'prayers.gloss.response':
+		'Ny andalana tononin’ny mpivavaka rehetra miaraka na hirainy, ho valin’ny andalan’ny mpitarika teo aloha.',
 	'prayers.seeAlso': 'Jereo koa',
 	'anchor.actions': 'Asa amin’ny fanondroana',
 	'anchor.copy': 'Adikao ny lahatsoratra',

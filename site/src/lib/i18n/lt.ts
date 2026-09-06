@@ -241,6 +241,10 @@ export const lt: Dictionary = {
 	'index.division': 'Dalis',
 	'prayers.landing.title': 'Bendrosios maldos',
 	'prayers.landing.tagline': 'Maldos su greta pateiktu lotynišku tekstu.',
+	'prayers.gloss.versicle':
+		'Versikulas — eilutė, kurią vienas taria ar gieda maldai vadovaujantis. Susirinkusieji atsako toliau einančiu atsakymu.',
+	'prayers.gloss.response':
+		'Atsakymas — eilutė, kurią susirinkusieji taria ar gieda kartu, atsakydami į prieš tai einantį versikulą.',
 	'prayers.seeAlso': 'Taip pat žiūrėkite',
 	'anchor.actions': 'Veiksmai su nuoroda',
 	'anchor.copy': 'Kopijuoti tekstą',

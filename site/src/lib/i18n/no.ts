@@ -216,6 +216,10 @@ export const no: Dictionary = {
 	'index.division': 'Inndeling',
 	'prayers.landing.title': 'Vanlige bønner',
 	'prayers.landing.tagline': 'Bønner med den latinske teksten ved siden av.',
+	'prayers.gloss.versicle':
+		'Versikkelen — linjen den som leder bønnen sier eller synger alene. Forsamlingen svarer med svaret som følger.',
+	'prayers.gloss.response':
+		'Svaret — linjen forsamlingen sier eller synger sammen, som svar på versikkelen foran.',
 	'prayers.seeAlso': 'Se også',
 	'anchor.actions': 'Handlinger for henvisning',
 	'anchor.copy': 'Kopier tekst',

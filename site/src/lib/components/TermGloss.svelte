@@ -13,11 +13,21 @@
 	 * IT IS A SEPARATE COMPONENT FOR ONE REASON THAT MATTERS: what that one
 	 * glosses is a siglum as some publisher PRINTED it, expanded in the
 	 * citation's own language and carrying an outbound address for the volume.
-	 * This glosses a word the interface itself chose, in the reader's own
-	 * language, with nowhere to send them — so it declares no `lang` (the panel
-	 * inherits the document's, which is the right one here) and has no source
-	 * line. Sharing the component would mean two callers disagreeing about
-	 * whether the panel's contents are content or chrome.
+	 * This glosses a word in the reader's own language, with nowhere to send
+	 * them, and has no source line. Sharing the component would mean two
+	 * callers disagreeing about whether the panel's contents are content or
+	 * chrome.
+	 *
+	 * `lang` IS OPTIONAL AND IS THE PANEL'S, NEVER THE TERM'S. The panel is
+	 * rendered inline beside the button, so it inherits `lang` down the DOM
+	 * however the top layer paints it — which is right on `/calendarium`, where
+	 * both the word and its explanation are the interface's, and wrong inside a
+	 * reading column, which declares the CONTENT language on the region. The
+	 * prayers' `V.`/`R.` is the case that separates the two: the letter is the
+	 * source's and stays in the text's language, while the sentence explaining
+	 * it is chrome and has to say so, or it sets a Portuguese gloss in the font
+	 * fallback and the screen-reader voice of whatever the prayer is written
+	 * in. Callers whose page and text agree pass nothing and keep inheriting.
 	 *
 	 * THE TOP LAYER IS WHAT MAKES THE GLOSS SAFE INSIDE A BOX. The day's card
 	 * on `/calendarium` was held to a fixed height with `overflow-y: auto` for
@@ -35,8 +45,11 @@
 		term: string;
 		/** What it means, in a sentence or two. */
 		gloss: string;
+		/** The language the gloss is written in, where that is not the one the
+		    panel would inherit — see the docblock. */
+		lang?: string;
 	}
-	let { term, gloss }: Props = $props();
+	let { term, gloss, lang }: Props = $props();
 
 	// See `SiglumGloss` on why these are bare top-level declarations, and why
 	// the id is per INSTANCE: a page prints `Memorial` on thirty rows and each
@@ -58,6 +71,7 @@
 	id={card.id}
 	popover="auto"
 	role="note"
+	{lang}
 	ontoggle={card.onToggle}
 	onpointerenter={card.onPointerEnter}
 	onpointerleave={card.onPointerLeave}
@@ -99,6 +113,11 @@
 		font-family: var(--font-sans);
 		font-size: 0.85rem;
 		font-style: normal;
+		/* Beside `font-style` for its reason, and reached the day the prayers'
+		   `V.` was glossed: that label is set bold in its own column, and a card
+		   that inherits the weight of the word it explains sets two sentences of
+		   chrome in the emphasis of the term. */
+		font-weight: 400;
 		line-height: 1.5;
 		color: var(--color-text);
 		overflow-wrap: break-word;

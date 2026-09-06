@@ -110,12 +110,60 @@
  *
  * Only the family changes. `size-adjust` on the @font-face normalises
  * Ponomar's cap height to the one the scale above is derived from, so the
- * three-line arithmetic and the phone breakpoint below both stay correct
- * without a second set of constants.
+ * three-line arithmetic, the one-line versal and the phone breakpoint below
+ * all stay correct without a second set of constants.
  */
 :not(:root)[lang='ru'] .drop-cap-letter,
 :not(:root)[lang='be'] .drop-cap-letter {
 	font-family: 'Ponomar Dropcap', var(--font-serif);
+}
+
+/*
+ * ONE LINE, FOR VERSE — the versal, and the reason it is a different device
+ * rather than the same one made smaller.
+ *
+ * A drop cap is sized in LINES and the lines beside it indent around it, which
+ * is right where those lines are the viewport's and wrong where they are the
+ * source's. A float overflows its own paragraph, and `PrayerBlocks` gives every
+ * printed line a `<p>` of its own, so a three-line cap on a seven-line prayer
+ * reached into the two `<p>`s below it and indented `santificado` and `venha`
+ * until they read as continuations of the first line. THE FIX IS A BOX THAT
+ * FITS INSIDE ITS OWN LINE: at one line the float ends before the paragraph
+ * does, so nothing after it can be indented, whatever the source broke the
+ * text into.
+ *
+ * Derived the way the three-line cap above is, and against the same two
+ * constants — `.reading-text`'s 1.65 line-height and the faces' real vertical
+ * metrics (EB Garamond 1.007 ascent / 0.298 descent / 0.650 cap; Pirata One
+ * 1.006 / 0.279 / 0.793). Recompute together if either moves.
+ *
+ * Sizing. "One line" here means the line BOX, top to baseline — a cap height
+ * equal to one line's depth is the only enlargement that fits without
+ * overflowing into the line above. Body's first baseline sits at
+ * (1.65 - 1.305) / 2 + 1.007 = 1.180em below the line-box top, so cap height =
+ * 1.180em and font-size = 1.180 / 0.793 = 1.487em. Against a body capital's
+ * 0.650em that is 1.8x — a versal, which is what one line can carry, and not
+ * the 4.98em ornament three lines can.
+ *
+ * Placement. The glyph's position inside the float is what `line-height` buys:
+ * the box is 1.487 x L, the content area is (1.006 + 0.279) x 1.487 = 1.911em,
+ * and the baseline lands half the difference plus the ascent below the box top.
+ * Solving that for a baseline at 1.180em gives L = 0.859, which puts the cap's
+ * top on the line-box top exactly. Every other value of `line-height` slides
+ * the letter up or down against the text beside it; it is not slack.
+ *
+ * Wrapping. The box is 1.487 x 0.859 = 1.277em against a 1.650em line, so
+ * there is 0.37em of clearance — the three-line rule's trap (a box that spills
+ * one pixel into the next line and indents it) cannot be reached from here.
+ *
+ * No phone rule, and the specificity that beats the breakpoint below is
+ * deliberate. What shrinks the three-line cap on a narrow measure is that it
+ * indents three lines to a third of their width; this indents one line by
+ * about an em and a half, which a 36-character measure carries unchanged.
+ */
+.drop-cap-letter.drop-cap-versal {
+	--drop-cap-scale: 1.487;
+	line-height: 0.859;
 }
 
 /*

@@ -240,6 +240,10 @@ export const ko: Dictionary = {
 	'index.division': '구분',
 	'prayers.landing.title': '일반 기도문',
 	'prayers.landing.tagline': '라틴어 본문을 나란히 실은 기도문.',
+	'prayers.gloss.versicle':
+		'선창 — 기도를 이끄는 이가 혼자 바치거나 노래하는 구절입니다. 회중은 뒤따르는 응답으로 답합니다.',
+	'prayers.gloss.response':
+		'응답 — 회중이 함께 바치거나 노래하는 구절로, 앞의 선창에 답하는 것입니다.',
 	'prayers.seeAlso': '함께 보기',
 	'anchor.actions': '인용에 대한 동작',
 	'anchor.copy': '본문 복사',

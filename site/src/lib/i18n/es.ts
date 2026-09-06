@@ -282,6 +282,10 @@ export const es: Dictionary = {
 	'index.hideSubsections': 'Ocultar subsecciones',
 	'prayers.landing.title': 'Oraciones comunes',
 	'prayers.landing.tagline': 'Oraciones con el texto latino al lado.',
+	'prayers.gloss.versicle':
+		'El versículo — la línea que dice o canta a solas quien dirige la oración. La asamblea le contesta con la respuesta que sigue.',
+	'prayers.gloss.response':
+		'La respuesta — la línea que la asamblea dice o canta a una, contestando al versículo anterior.',
 	'prayers.tableOfContents': 'Índice',
 	'prayers.seeAlso': 'Véase también',
 	'prayers.prevPrayer': 'Oración anterior',

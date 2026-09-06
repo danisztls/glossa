@@ -213,6 +213,26 @@ describe('UI_LANGS and the dictionaries', () => {
 		}
 	});
 
+	/**
+	 * A DIALOGUE'S LABEL IS GLOSSED BY ITS ROLE AND NEVER BY ITS LETTER, and
+	 * this is the guard on the half of that rule a reader cannot see.
+	 *
+	 * `PrayerBlocks` picks the key off `line.kind`, which the schema allows two
+	 * values a labelled block can take; the corpus prints FOUR letters for them
+	 * (V./R. in English and Portuguese, D./C. in French and Portuguese). The
+	 * mistake the shape invites is a gloss per letter — `prayers.gloss.V` — and
+	 * it is invisible until a reader opens the one edition that prints the
+	 * other pair, so the check runs in both directions the calendar's does.
+	 */
+	it('glosses both halves of a dialogue, and nothing that is not one', async () => {
+		const en = await dictionaryFor('en');
+		const glossed = Object.keys(en)
+			.map((k) => k.match(/^prayers\.gloss\.(.+)$/))
+			.filter((m) => m !== null)
+			.map((m) => m[1]);
+		expect(glossed.sort()).toEqual(['response', 'versicle']);
+	});
+
 	// Every placeholder is substituted by the caller with `.replace('{x}', …)`,
 	// so a translation that drops or misspells one silently loses the word it
 	// stood for — a sentence with no language name in it, or a plate's control

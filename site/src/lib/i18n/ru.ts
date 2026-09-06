@@ -282,6 +282,10 @@ export const ru: Dictionary = {
 	'index.hideSubsections': 'Скрыть подразделы',
 	'prayers.landing.title': 'Общие молитвы',
 	'prayers.landing.tagline': 'Молитвы с латинским текстом рядом.',
+	'prayers.gloss.versicle':
+		'Версикул — строка, которую предстоятель произносит или поёт один. Собравшиеся отвечают на неё следующим далее ответом.',
+	'prayers.gloss.response':
+		'Ответ — строка, которую собравшиеся произносят или поют вместе, отвечая на предшествующий версикул.',
 	'prayers.tableOfContents': 'Оглавление',
 	'prayers.seeAlso': 'См. также',
 	'prayers.prevPrayer': 'Предыдущая молитва',

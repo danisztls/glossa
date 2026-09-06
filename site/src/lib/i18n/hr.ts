@@ -238,6 +238,10 @@ export const hr: Dictionary = {
 	'index.division': 'Dioba',
 	'prayers.landing.title': 'Uobičajene molitve',
 	'prayers.landing.tagline': 'Molitve s latinskim tekstom uz njih.',
+	'prayers.gloss.versicle':
+		'Redak koji sam izgovara ili pjeva onaj tko predvodi molitvu; zajednica mu odgovara odgovorom koji slijedi.',
+	'prayers.gloss.response':
+		'Redak koji zajednica izgovara ili pjeva zajedno, odgovarajući na redak predvoditelja prije njega.',
 	'prayers.seeAlso': 'Vidi također',
 	'anchor.actions': 'Radnje nad navodom',
 	'anchor.copy': 'Kopiraj tekst',

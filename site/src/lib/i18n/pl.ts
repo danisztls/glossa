@@ -280,6 +280,10 @@ export const pl: Dictionary = {
 	'index.hideSubsections': 'Ukryj podrozdziały',
 	'prayers.landing.title': 'Modlitwy codzienne',
 	'prayers.landing.tagline': 'Modlitwy z tekstem łacińskim obok.',
+	'prayers.gloss.versicle':
+		'Werset — wers, który prowadzący modlitwę mówi lub śpiewa sam. Zgromadzenie odpowiada na niego następującą dalej odpowiedzią.',
+	'prayers.gloss.response':
+		'Odpowiedź — wers, który zgromadzenie mówi lub śpiewa razem, odpowiadając na poprzedzający go werset.',
 	'prayers.tableOfContents': 'Spis treści',
 	'prayers.seeAlso': 'Zobacz także',
 	'prayers.prevPrayer': 'Poprzednia modlitwa',

@@ -240,6 +240,10 @@ export const cs: Dictionary = {
 	'index.division': 'Oddíl',
 	'prayers.landing.title': 'Běžné modlitby',
 	'prayers.landing.tagline': 'Modlitby s latinským textem vedle.',
+	'prayers.gloss.versicle':
+		'Verš — řádek, který sám říká nebo zpívá ten, kdo modlitbu vede. Shromáždění mu odpovídá odpovědí, jež následuje.',
+	'prayers.gloss.response':
+		'Odpověď — řádek, který shromáždění říká nebo zpívá společně jako odpověď na předcházející verš.',
 	'prayers.seeAlso': 'Viz také',
 	'anchor.actions': 'Akce k odkazu',
 	'anchor.copy': 'Kopírovat text',

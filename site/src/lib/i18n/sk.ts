@@ -239,6 +239,10 @@ export const sk: Dictionary = {
 	'index.division': 'Oddiel',
 	'prayers.landing.title': 'Bežné modlitby',
 	'prayers.landing.tagline': 'Modlitby s latinským textom vedľa.',
+	'prayers.gloss.versicle':
+		'Verš — riadok, ktorý ten, kto vedie modlitbu, hovorí alebo spieva sám. Zhromaždenie mu odpovedá odpoveďou, ktorá nasleduje.',
+	'prayers.gloss.response':
+		'Odpoveď — riadok, ktorý zhromaždenie hovorí alebo spieva spoločne ako odpoveď na predchádzajúci verš.',
 	'prayers.seeAlso': 'Pozri aj',
 	'anchor.actions': 'Akcie k odkazu',
 	'anchor.copy': 'Kopírovať text',

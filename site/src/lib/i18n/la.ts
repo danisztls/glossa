@@ -306,6 +306,10 @@ export const la: Dictionary = {
 	'index.hideSubsections': 'Absconde partes minores',
 	'prayers.landing.title': 'Preces communes',
 	'prayers.landing.tagline': 'Preces, adiuncto textu Latino.',
+	'prayers.gloss.versicle':
+		'Versiculus — linea quam is qui precem ducit solus dicit vel canit. Cui congregatio responso sequenti respondet.',
+	'prayers.gloss.response':
+		'Responsum — linea quam congregatio simul dicit vel canit, versiculo praecedenti respondens.',
 	'prayers.tableOfContents': 'Index precum',
 	'prayers.seeAlso': 'Vide etiam',
 	'prayers.prevPrayer': 'Prex prior',

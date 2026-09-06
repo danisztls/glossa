@@ -239,6 +239,8 @@ export const he: Dictionary = {
 	'index.division': 'חלוקה',
 	'prayers.landing.title': 'תפילות נפוצות',
 	'prayers.landing.tagline': 'תפילות עם הטקסט הלטיני לצדן.',
+	'prayers.gloss.versicle': 'הפסוק שמוביל התפילה אומר או שר לבדו; הקהל משיב עליו בתשובה שאחריו.',
+	'prayers.gloss.response': 'התשובה שהקהל אומר או שר יחד, בתשובה לפסוק שלפניה.',
 	'prayers.seeAlso': 'ראו גם',
 	'anchor.actions': 'פעולות על ההפניה',
 	'anchor.copy': 'העתקת הטקסט',

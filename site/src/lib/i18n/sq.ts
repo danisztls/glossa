@@ -243,6 +243,10 @@ export const sq: Dictionary = {
 	'index.division': 'Ndarja',
 	'prayers.landing.title': 'Lutje të përbashkëta',
 	'prayers.landing.tagline': 'Lutje me tekstin latin përkrah.',
+	'prayers.gloss.versicle':
+		'Vargu që e thotë ose e këndon vetëm ai që drejton lutjen; bashkësia i përgjigjet me përgjigjen që vjen më pas.',
+	'prayers.gloss.response':
+		'Vargu që bashkësia e thotë ose e këndon së bashku, si përgjigje ndaj vargut para tij.',
 	'prayers.seeAlso': 'Shih edhe',
 	'anchor.actions': 'Veprime mbi referencën',
 	'anchor.copy': 'Kopjo tekstin',

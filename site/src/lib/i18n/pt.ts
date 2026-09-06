@@ -295,6 +295,10 @@ export const pt: Dictionary = {
 
 	'prayers.landing.title': 'Orações Comuns',
 	'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
+	'prayers.gloss.versicle':
+		'O versículo — a linha que quem dirige a oração diz ou canta sozinho. A assembleia responde-lhe com a resposta que se segue.',
+	'prayers.gloss.response':
+		'A resposta — a linha que a assembleia diz ou canta em conjunto, respondendo ao versículo anterior.',
 	'prayers.tableOfContents': 'Índice',
 	'prayers.seeAlso': 'Veja também',
 	'prayers.prevPrayer': 'Oração anterior',

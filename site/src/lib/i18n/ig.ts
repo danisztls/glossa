@@ -249,6 +249,10 @@ export const ig: Dictionary = {
 	'index.division': 'Nkewa',
 	'prayers.landing.title': 'Ekpere Nkịtị',
 	'prayers.landing.tagline': 'Ekpere ya na ederede Latin n’akụkụ ya.',
+	'prayers.gloss.versicle':
+		'Ahịrị onye na-edu ekpere na-ekwu ma ọ bụ na-abụ naanị ya; ọgbakọ ahụ na-eji nzaghachi na-esote ya zaa ya.',
+	'prayers.gloss.response':
+		'Ahịrị ọgbakọ ahụ na-ekwu ma ọ bụ na-abụ ọnụ, na-azaghachi ahịrị onye ndu buru ya ụzọ.',
 	'prayers.seeAlso': 'Lekwaa',
 	'anchor.actions': 'Ihe ị ga-eme na nrụtụaka',
 	'anchor.copy': 'Detuo ederede',

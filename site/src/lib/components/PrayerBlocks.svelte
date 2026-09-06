@@ -27,18 +27,33 @@
 	"R." is content a reader following along in a missal expects to hear
 	announced, the same way the label is expected to be SEEN in print — so a
 	screen reader gets it too, read inline before the line it prefixes.
+
+	AND THE LABEL EXPLAINS ITSELF, because an abbreviation is only obvious to
+	someone who has already met it: "V." is a whole word (versicle) reduced to
+	a letter, and a reader who has not stood in a church while one was sung has
+	nothing to expand it from. `TermGloss` is the site's device for exactly
+	that — the dotted underline that means "an explanation is behind this word"
+	— and it is the same one `/calendarium` teaches on `Memorial` and `Violet`.
+
+	THE GLOSS IS KEYED BY `line.kind` AND THE LABEL IS NOT, which is the whole
+	reason two strings cover four letters. What the reader is being told is who
+	speaks the line, and that is the block's kind; the letter standing for it is
+	whatever the source printed. So "V." and "D." open the same explanation, and
+	it names the role rather than expanding the abbreviation — an expansion
+	would be wrong for three of the four labels in the corpus.
 -->
 <script lang="ts">
 	import InlineText from './InlineText.svelte';
 	import CommentaryGloss from './CommentaryGloss.svelte';
-	import type { InlineNode } from '$lib/inline-html';
+	import TermGloss from './TermGloss.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import { plainLine, type PrayerLine } from '$lib/prayer-lines';
 	import { buildSegments, type PlacedAnchor } from '$lib/annotated-segments';
 	import type {
 		PlacedPrayerCommentary,
 		PrayerCommentaryPlacement
 	} from '$lib/commentary-placement';
-	import { splitDropCap } from '$lib/dropcap';
+	import { prayerCap, capNodes, capSegments, type PrayerCap } from '$lib/prayer-cap';
 
 	interface Props {
 		lines: PrayerLine[];
@@ -100,67 +115,23 @@
 	}
 
 	/**
-	 * The opening of a PROSE block, split into the pieces `dropcaps.css`'s
-	 * `.drop-cap-letter` / `.drop-cap-lead` need — null wherever no initial is
-	 * warranted. `splitDropCap` decides that for the text (it declines a digit,
-	 * a lowercase opening and a joining script, $lib/dropcap.ts); what this
-	 * decides is which lines may ask at all.
-	 *
-	 * VERSE TAKES NO INITIAL, and the whole of 2026-09-03 was spent finding out
-	 * why. A drop cap is a device for the top of a column of running prose: the
-	 * letter is sized in LINES and the lines beside it indent around it, which
-	 * is right where those lines are the viewport's and wrong where they are the
-	 * source's — a three-line cap on the Pai Nosso indented `santificado` and
-	 * `venha` so that two printed lines read as continuations of the first. A
-	 * one-line versal fixes that (nothing is left to indent) and was set on
-	 * every line opening on a capital, which the lowercase rule keeps to about
-	 * one line in five. What it could not fix is that verse does not want the
-	 * device at all: a prayer is seven lines under its own `<h1>`, so the eye
-	 * already has its way in and each initial only competes with the heading two
-	 * lines above it. Long running text needs an entry point; a hymn does not.
-	 *
-	 * So the initial belongs to a block the source printed as ONE RUN — the
-	 * Memorare, the three Eastern prayers, the Act of Contrition — where there
-	 * is a paragraph for the cap to bite into and the lines beside it really are
-	 * wraps. And only to the FIRST such block: a later one is a further
-	 * paragraph of the same prayer, not a second beginning. `ProseBlocks`
-	 * excludes a `quote` block for the neighbouring reason (a blockquote is a
-	 * second opening competing with the cap); a prayer has no such block.
-	 *
-	 * The split comes off the line's first TEXT run rather than off its markup:
-	 * a line opening `<i>Sancta Maria</i>` would otherwise put a tag inside the
-	 * initial.
+	 * The initial this line takes, or null. `prayer-cap.ts` holds the whole
+	 * decision and the arithmetic behind it; what this adds is the two things
+	 * only the component knows — the caller's `dropCap`, and whether an
+	 * apparatus has cut this line.
 	 */
 	function capFor(line: PrayerLine) {
-		// AND NOT TO A DIALOGUE'S OPENING TURN, which is a layout fact rather
-		// than a judgment: a versicle's text sits in a flex item, a flex item is
-		// a block formatting context, and so it CONTAINS the cap's float instead
-		// of letting it escape. The Angelus opens `V. The Angel of the Lord
-		// declared unto Mary.` — one line — so the cap would stand alone in a row
-		// three lines tall with the label beside its shoulder and nothing wrapped
-		// around it. Three prayers in the corpus open this way (EN, FR and PT
-		// Angelus); every other opening block is prose.
-		// AND NOT TO A GLOSSED LINE. A drop cap owns the opening of a run and a
-		// commentary's first mark may fall inside those same words; rather than
-		// arbitrate, the initial stands down — it is a flourish and the mark is
-		// the apparatus. Unreachable today (every glossed prayer is set as
-		// verse, which takes no initial anyway) and cheaper to state than to
-		// rediscover.
-		if (byLine[line.n]?.length) return null;
-		if (!dropCap || line.verse || line.kind !== 'prose') return null;
-		if (!(line.block === 0 && line.first)) return null;
-		const head = line.nodes[0];
-		if (head?.kind !== 'text') return null;
-		const split = splitDropCap(head.text);
-		if (split.first === '') return null;
-		const restNodes: InlineNode[] = [{ kind: 'text', text: split.rest }, ...line.nodes.slice(1)];
-		return { ...split, restNodes };
+		return prayerCap(line, {
+			dropCap,
+			segments: byLine[line.n]?.length ? segmentsFor(line) : undefined
+		});
 	}
 </script>
 
 <!-- The initial, in the two pieces `dropcaps.css` sets: the letter, and the
-     punctuation that leads into it at body size on its shoulder. -->
-{#snippet capMark(c: { lead: string; first: string })}<span class="drop-cap-letter"
+     punctuation that leads into it at body size on its shoulder. `versal` is
+     the one-line size verse takes — see `capFor`. -->
+{#snippet capMark(c: PrayerCap)}<span class="drop-cap-letter" class:drop-cap-versal={c.versal}
 		>{#if c.lead}<span class="drop-cap-lead">{c.lead}</span>{/if}{c.first}</span
 	>{/snippet}
 
@@ -190,9 +161,9 @@
      `AnnotatedText` does it inside a verse: a `<span>` that says nothing and a
      class that lights, never a `<mark>`. -->
 {#snippet body(line: PrayerLine)}{@const c =
-		capFor(
-			line
-		)}{#if byLine[line.n]?.length}{#each segmentsFor(line) as seg, i (i)}{#if seg.kind === 'mark'}{@render gloss(
+		capFor(line)}{#if byLine[line.n]?.length}{#if c}{@render capMark(
+				c
+			)}{/if}{#each c ? capSegments(segmentsFor(line), c.consumed) : segmentsFor(line) as seg, i (i)}{#if seg.kind === 'mark'}{@render gloss(
 					placed[seg.mark],
 					seg.mark
 				)}{:else if seg.kind === 'quoted'}<span
@@ -200,7 +171,9 @@
 					class:highlighted={open[seg.mark]}>{seg.text}</span
 				>{:else if seg.kind === 'text'}{seg.text}{/if}{/each}{:else if c}{@render capMark(
 			c
-		)}<InlineText nodes={c.restNodes} />{:else}<InlineText nodes={line.nodes} />{/if}{/snippet}
+		)}<InlineText nodes={capNodes(line, c)} />{:else}<InlineText
+			nodes={line.nodes}
+		/>{/if}{/snippet}
 
 <!--
 	VERSE AND PROSE ARE SET DIFFERENTLY, and which one a line is is not a field
@@ -223,8 +196,17 @@
 			<!-- The column is reserved for every line of a LABELLED block, so the
 			     turn's continuation lines stay under its own opening rather than
 			     stepping back to the margin; a block whose source prints no label
-			     reserves nothing. -->
-			{#if line.labelled}<span class="prayer-line-label">{line.label ?? ''}</span>{/if}
+			     reserves nothing — which is why the column survives an empty
+			     span and the gloss sits inside it rather than replacing it. -->
+			{#if line.labelled}<span class="prayer-line-label"
+					>{#if line.label}<TermGloss
+							term={line.label}
+							gloss={t(
+								line.kind === 'versicle' ? 'prayers.gloss.versicle' : 'prayers.gloss.response'
+							)}
+							lang={i18n.lang}
+						/>{/if}</span
+				>{/if}
 			<span class="prayer-line-text">{@render body(line)}</span>
 		</p>
 	{:else if line.verse}

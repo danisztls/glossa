@@ -251,6 +251,10 @@ export const hi: Dictionary = {
 	'index.division': 'विभाग',
 	'prayers.landing.title': 'सामान्य प्रार्थनाएँ',
 	'prayers.landing.tagline': 'लातीनी पाठ के साथ प्रार्थनाएँ।',
+	'prayers.gloss.versicle':
+		'वह पंक्ति जिसे प्रार्थना का संचालन करने वाला अकेले कहता या गाता है; उपस्थित लोग आगे आने वाले उत्तर से इसका जवाब देते हैं।',
+	'prayers.gloss.response':
+		'वह पंक्ति जिसे उपस्थित लोग एक साथ कहते या गाते हैं, अपने से पहले की पंक्ति के उत्तर में।',
 	'prayers.seeAlso': 'यह भी देखें',
 	'anchor.actions': 'सन्दर्भ पर कार्य',
 	'anchor.copy': 'पाठ की नकल करें',

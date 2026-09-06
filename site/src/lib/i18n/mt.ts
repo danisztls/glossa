@@ -221,6 +221,10 @@ export const mt: Dictionary = {
 	'index.division': 'Diviżjoni',
 	'prayers.landing.title': 'Talb Komuni',
 	'prayers.landing.tagline': 'Talb bit-test Latin ħdejh.',
+	'prayers.gloss.versicle':
+		'Il-vers — ir-ringiela li min imexxi t-talba jgħid jew ikanta waħdu. Il-ġemgħa twieġbu bit-tweġiba li ġejja.',
+	'prayers.gloss.response':
+		'It-tweġiba — ir-ringiela li l-ġemgħa tgħid jew tkanta flimkien, bi tweġiba għall-vers ta’ qabel.',
 	'prayers.seeAlso': 'Ara wkoll',
 	'anchor.actions': 'Azzjonijiet tar-referenza',
 	'anchor.copy': 'Ikkopja t-test',

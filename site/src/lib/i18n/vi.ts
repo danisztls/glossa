@@ -246,6 +246,10 @@ export const vi: Dictionary = {
 	'index.division': 'Phân mục',
 	'prayers.landing.title': 'Kinh nguyện thông thường',
 	'prayers.landing.tagline': 'Các kinh nguyện kèm bản văn Latinh bên cạnh.',
+	'prayers.gloss.versicle':
+		'Câu xướng — dòng mà người chủ sự đọc hoặc hát một mình. Cộng đoàn đáp lại bằng câu đáp theo sau.',
+	'prayers.gloss.response':
+		'Câu đáp — dòng mà cộng đoàn cùng nhau đọc hoặc hát, đáp lại câu xướng trước đó.',
 	'prayers.seeAlso': 'Xem thêm',
 	'anchor.actions': 'Thao tác với trưng dẫn',
 	'anchor.copy': 'Chép bản văn',

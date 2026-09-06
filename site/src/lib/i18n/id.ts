@@ -251,6 +251,10 @@ export const id: Dictionary = {
 	'index.division': 'Bagian',
 	'prayers.landing.title': 'Doa-doa Umum',
 	'prayers.landing.tagline': 'Doa dengan teks Latin di sampingnya.',
+	'prayers.gloss.versicle':
+		'Baris yang diucapkan atau dinyanyikan sendiri oleh pemimpin doa; umat menjawabnya dengan jawaban yang menyusul.',
+	'prayers.gloss.response':
+		'Baris yang diucapkan atau dinyanyikan umat bersama-sama, sebagai jawaban atas baris pemimpin sebelumnya.',
 	'prayers.seeAlso': 'Lihat juga',
 	'anchor.actions': 'Tindakan atas rujukan',
 	'anchor.copy': 'Salin teks',

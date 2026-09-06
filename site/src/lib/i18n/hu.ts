@@ -284,6 +284,10 @@ export const hu: Dictionary = {
 	'index.hideSubsections': 'Alfejezetek elrejtése',
 	'prayers.landing.title': 'Imádságok',
 	'prayers.landing.tagline': 'Imádságok a latin szöveggel együtt.',
+	'prayers.gloss.versicle':
+		'A verzikulus — az a sor, amelyet az imádságot vezető egyedül mond vagy énekel. A közösség az utána következő válasszal felel rá.',
+	'prayers.gloss.response':
+		'A válasz — az a sor, amelyet a közösség együtt mond vagy énekel, felelve az előtte álló verzikulusra.',
 	'prayers.tableOfContents': 'Tartalomjegyzék',
 	'prayers.seeAlso': 'Lásd még',
 	'prayers.prevPrayer': 'Előző imádság',
