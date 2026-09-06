@@ -471,8 +471,24 @@
 	<footer class="site-footer">
 		<div class="footer-inner">
 			<!-- Two grid tracks, so the mark can never reflow the lines. Written
-			     in reading order and never positioned, so RTL needs nothing. -->
-			<div class="imprint">
+			     in reading order and never positioned, so RTL needs nothing.
+
+			     THE WHOLE BLOCK IS THE LINK TO `/colophon`, because every word in
+			     it is a short form of something that page says at length: the
+			     motto is what the site is for, `footer.notEndorsed` is one
+			     sentence of `colophon.whatThisIsStanding`, and the cross is the
+			     mark the colophon explains. A reader who stops on the disclaimer
+			     wants the rest of it, and it was two columns away in the index.
+
+			     No `aria-label`: the link's name is the lines it is drawn from,
+			     which is long but true. `title` names the destination for a
+			     reader who hovers the mark and expects a word. -->
+			<a
+				class="imprint"
+				href="/colophon"
+				title={t('colophon.title')}
+				aria-current={isActive('/colophon') ? 'page' : undefined}
+			>
 				<JerusalemCross class="footer-cross" />
 				<!-- `lang="la"` because this is Latin in a page that may be in any
 				     of thirty-odd languages. Untranslated on purpose: a motto is a
@@ -486,7 +502,7 @@
 					<p class="motto" lang="la">Ad maiorem Dei gloriam</p>
 					<p>{t('footer.notEndorsed')}</p>
 				</div>
-			</div>
+			</a>
 
 			<!-- `nav.sections` rather than `nav.menu`: the header's list already
 			     holds that name, and two landmarks announced alike tell a reader
@@ -838,13 +854,39 @@
 	}
 
 	/* Two tracks, so the mark cannot reflow the lines; `start` because the band
-	   already places the block. */
+	   already places the block.
+
+	   It is an `<a>` and carries none of a link's skin: the motto and the
+	   standing statement keep the sizes and inks they had, so the block reads
+	   as the imprint it is and not as a paragraph-shaped button. */
 	.imprint {
 		display: grid;
 		grid-template-columns: auto auto;
 		align-items: center;
 		justify-content: start;
 		gap: 0.9rem;
+		color: inherit;
+		text-decoration-line: none;
+	}
+
+	/*
+	 * THE MARK ANSWERS, and the motto's underline arrives with it. The accent
+	 * on the cross is the event a reader watches for — it is the one figure in
+	 * the band — but `data-mono` has no accent to give (`base.css` on why the
+	 * site's links keep a rule under them at rest), so a colour-only hover
+	 * would leave that mode with nothing at all. The underline is what says
+	 * `link` there; the cross is what makes it worth pointing at.
+	 */
+	.imprint:hover :global(.footer-cross),
+	.imprint:focus-visible :global(.footer-cross) {
+		color: var(--color-accent);
+	}
+
+	.imprint:hover .motto,
+	.imprint:focus-visible .motto {
+		text-decoration-line: underline;
+		text-decoration-color: currentColor;
+		text-underline-offset: 0.15em;
 	}
 
 	/*
@@ -901,19 +943,83 @@
 			text-align: start;
 		}
 
+		/*
+		 * AND THE IMPRINT GOES LAST. Side by side it leads the band, which is
+		 * right — a mark and a standing disclaimer at the start of the footer.
+		 * Stacked it put four lines of furniture between the end of the page
+		 * and the only links the footer has, so a reader scrolling to the
+		 * bottom for the index met the small print first.
+		 *
+		 * `order` rather than a move in the markup, because the wide layout
+		 * wants the DOM order it has. It does cost something now that the
+		 * block is a link: on a phone it is the footer's FIRST tab stop and
+		 * its LAST line. One stop out of place, and the page it goes to is
+		 * also the last entry of the index below it — a keyboard reader who
+		 * tabs straight past it meets `/colophon` again where it looks like
+		 * it belongs.
+		 */
 		.imprint {
+			order: 1;
 			justify-content: center;
 		}
 	}
 
-	/* Four tracks side by side do not fit a phone, so the GROUPS stack and each
-	   keeps its two — which is the right half to give up: a group's tracks are
-	   one list and the two groups are not. The single track sizes to the wider
-	   group and both stretch to it, so the head rules align on both edges. */
+	/* Four tracks side by side do not fit a phone, so the GROUPS stack — and
+	   the tracks inside them go too. Two columns of two or three short names
+	   on a 360px screen are a table of ragged stubs whose gutter is wider than
+	   half its entries; the same names set as a running line fill the width
+	   they are given and cost fewer rows than the grid did. Each group is then
+	   one heading and one sentence of links, which is what a phone footer is
+	   for: the whole index visible without a column to scan. */
 	@media (max-width: 40rem) {
 		.footer-nav {
 			grid-template-columns: minmax(0, auto);
 			gap: 1.5rem 0;
+		}
+
+		/* ON THE GROUP, not on the nav: the band above already centres
+		   everything else it stacks, and the `start` the wider stacked layout
+		   sets is for a COLUMN, whose ragged right edge centred is a mess. Each
+		   group here is a heading over one running line, and both take the
+		   band's own axis — the heading by inheriting this, the line by the
+		   `justify-content` below, since `text-align` does not reach inside a
+		   flex container. */
+		.footer-group {
+			text-align: center;
+		}
+
+		/* `column-count` is undone rather than left to lose to `display: flex`:
+		   multicol does not apply to a flex container, and a rule that only
+		   works because another one overrules it is a rule nobody can move. */
+		.footer-works ul,
+		.footer-pages ul {
+			column-count: initial;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			column-gap: 0.5rem;
+		}
+
+		/*
+		 * ⸱ is U+2E31 WORD SEPARATOR MIDDLE DOT, which is the character for
+		 * exactly this and not `·` (U+00B7), the mathematician's dot the card's
+		 * `.meta` uses between phrases. Drawn in CSS, as every separator on
+		 * this site is, so no screen reader reads it out.
+		 *
+		 * AFTER the item and never before the next one: the line wraps two or
+		 * three times at this width, and a separator that leads its item starts
+		 * a wrapped line with a dot, which reads as a bullet. Trailing, it
+		 * closes the line it ends and every line begins with a word. `:last-of-type`
+		 * so the sentence has no dangling one.
+		 */
+		.footer-group li:not(:last-of-type)::after {
+			content: '⸱';
+			margin-inline-start: 0.5rem;
+			/* The links' own ink, not `--color-border`: a rule drawn across a
+			   ground may sit at the edge of visibility, but a mark ON the line
+			   has to read as punctuation between two words, and at 0.8rem the
+			   border grey was a speck. */
+			color: var(--color-text-muted);
 		}
 	}
 </style>
