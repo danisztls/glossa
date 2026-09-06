@@ -11,6 +11,7 @@ import { getCanonicalBook, getDocumentGroup, getPrayerMeta, getWork } from './co
 import { content, type WorkTypeKey } from './content.svelte';
 import { hrefFor, summaPartSlug } from './address';
 import { baseLang } from './lang-names';
+import { chapterVerseSep } from './citation-style';
 import type { Citer } from './types';
 
 /** One reference inside a source group — "¶425", "§22". */
@@ -279,7 +280,10 @@ export function citedSources(citers: Citer[], commentaryLang?: string): CitedByS
 					{ label, fullTitle: manifest.title !== label ? manifest.title : null },
 					{
 						key: `${citer.osis}:${citer.chapter}:${citer.verse}`,
-						label: `${bookName(citer.osis)} ${citer.chapter}:${citer.verse}`,
+						// The mark is the reader's edition's, never a literal — this
+						// label sits beside `bookName`'s answer, out of that same
+						// edition, and links into it. `citation-style.ts` says why.
+						label: `${bookName(citer.osis)} ${citer.chapter}${chapterVerseSep()}${citer.verse}`,
 						href: hrefFor({
 							kind: 'bible',
 							osis: citer.osis,

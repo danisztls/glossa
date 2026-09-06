@@ -1779,9 +1779,14 @@ surfaces compose one — the day's readings, `PrayerReferences`, and the two
 notation specimens, which share `scriptureSpecimen` rather than the six
 duplicated lines they each carried. The book form still differs per surface and
 each difference is argued; the punctuation may not, and `PrayerReferences`'
-literal `:` showed a Portuguese reader `Lucas 1:28`. `content.langFor('bible')`
-is the input at all four, safe because `vulgateNumbering` is a property of a
-WORK and never of a language.
+literal `:` showed a Portuguese reader `Lucas 1:28`. `chapterVerseSep()` in
+`citation-style.ts` is the call, safe because `vulgateNumbering` is a property
+of a WORK and never of a language. **`citation-punctuation.test.ts` scans the
+source for the literal** — nothing else can see it, a hardcoded `:` being
+correct in the language of whoever typed it — and it found two more the day it
+was written, `CitedBy`'s verse label and the link preview card's own title. Its
+discriminator is a space before the chapter, which is what tells a citation
+from a key and is why a comparison string must be spelled like a key.
 
 **A citation naming several passages is several links** (2026-09-06,
 §References). `Ps 95:1-2, 6-7, 8-9` was one link, and an `Address` holds one

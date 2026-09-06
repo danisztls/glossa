@@ -45,10 +45,29 @@ lectionary card was reported for, in a component nobody had looked at.
 
 **The language is the EDITION's, not the interface's**, because the link opens
 that edition: labelling it in another language's convention describes a page
-the reader is not being taken to. `content.langFor('bible')` is the input at
-all four. It is safe against the versification trap because `vulgateNumbering`
-is a property of a WORK and never of a language — naming a language cannot
-switch off the Hebrew-to-Vulgate conversion.
+the reader is not being taken to. `chapterVerseSep()` in `citation-style.ts` is
+that call for the three surfaces that read the reader's own edition; the two
+pure functions (`scriptureSpecimen`, `localizeCite`) take a language as an
+argument, which is what lets them be tested in eleven of them. It is safe
+against the versification trap because `vulgateNumbering` is a property of a
+WORK and never of a language — naming a language cannot switch off the
+Hebrew-to-Vulgate conversion.
+
+**`citation-punctuation.test.ts` is what keeps the literal from coming back,
+and it found two more the day it was written.** A hardcoded `:` compiles,
+types, renders, and is correct in the language of whoever wrote it; the only
+reader who can see the defect is one of the eight whose grammar puts a comma
+there, and nothing that runs in `npm test` renders a component. So the
+assertion is about the SOURCE — `pigments.test.ts`'s move for a colour
+literal. **Its discriminator is a space**: a citation a reader sees has one
+before the chapter (`Lucas 1,28`) where an internal key has a colon
+(`luke:1:28`), so the several dedupe keys, `LATE_MERGE` lookups and cache keys
+that look identical to a regex need no exemption list — and a comparison
+string written like a label is a defect of its own, which is why
+`lectionary/cite.ts`'s is colon-separated. Three occurrences were known when
+it was written; the scan added `CitedBy`'s verse label and the link preview
+card's own title, which is how `Psalms 94:1-9` came to head a card on a page
+with no other English on it.
 
 **The groups are not on `RefSegment` and are re-read from `raw` instead.** A
 segment carries what an address is built from; how the source PUNCTUATED it is

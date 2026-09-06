@@ -139,11 +139,15 @@ export function localizeCite(cite: string, lang: string, cf?: string): Localized
 }
 
 /** Every scripture segment of a parse, as the only thing about it that must
- *  survive being rewritten: which book, which chapter, which verses. */
+ *  survive being rewritten: which book, which chapter, which verses.
+ *
+ *  Written as a KEY and not as a citation — colon-separated throughout, no
+ *  space — because it is compared and never shown. A comparison string spelled
+ *  like a label is what `citation-punctuation.test.ts` cannot tell from one. */
 function addresses(segments: RefSegment[]): string[] {
 	return segments
 		.filter((s) => s.kind === 'scripture')
-		.map((s) => `${s.osis} ${s.chapter}:${s.verses.join(',')}`);
+		.map((s) => `${s.osis}:${s.chapter}:${s.verses.join(',')}`);
 }
 
 /**

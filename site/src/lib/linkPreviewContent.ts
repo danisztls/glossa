@@ -51,6 +51,7 @@ import {
 import { summaPartFromSlug, type PreviewTarget } from './address';
 import { summaQuestionLabel } from './summa-titles';
 import { content } from './content.svelte';
+import { chapterVerseSep } from './citation-style';
 import { i18n } from './i18n.svelte';
 import { ensureAllIndexes } from './corpus-index';
 import { displayTitle } from './titles';
@@ -166,10 +167,15 @@ async function resolveBible(
 		// versification note): showing nothing is honest, a made-up excerpt is
 		// not.
 		if (selected.length === 0) return undefined;
+		// The mark is the reader's edition's and not a literal, `book.name`
+		// beside it having come out of that same edition — `citation-style.ts`
+		// says why. This is the card's own heading, so a colon here was the one
+		// English word on a Portuguese reader's screen.
+		const sep = chapterVerseSep();
 		const title =
 			target.from === target.to
-				? `${book.name} ${target.chapter}:${target.from}`
-				: `${book.name} ${target.chapter}:${target.from}-${target.to}`;
+				? `${book.name} ${target.chapter}${sep}${target.from}`
+				: `${book.name} ${target.chapter}${sep}${target.from}-${target.to}`;
 		return { title, text: selected.map((v) => `${v.n} ${v.text}`).join(' ') };
 	}
 
