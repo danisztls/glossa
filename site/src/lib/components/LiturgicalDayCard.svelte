@@ -158,72 +158,72 @@
 
 <article class="day">
 	<header>
-		<div class="head-text">
-			<!--
-				THE DATE LEADS THE CARD, on both pages, and it spent an afternoon
-				in the corner beside the controls (2026-09-06). What was wrong
-				there is what the corner IS: furniture — the things that change
-				the day or leave it. The date is not furniture, it is the first
-				thing the card says, and it belongs where a reader looks first
-				rather than at the far end of a row of buttons.
-			-->
-			{#if showDate}
-				<p class="date">
-					{formatPromulgated(day.date, lang)}{#if relative}<span class="relative">{relative}</span
-						>{/if}
-				</p>
-			{/if}
-			{#if heading === 'h1'}
-				<h1>{name}</h1>
-			{:else}
-				<h2>{name}</h2>
-			{/if}
-			<!--
-			EVERY WORD ON THIS LINE IS A TERM OF ART and a reader meeting the page
-			for the first time knows none of them: a colour that is a vestment
-			colour, a rank out of the Universal Norms, a season that is not the
-			English word. Each carries its own explanation (`TermGloss`), and the
-			same sentences are set out whole in the primer at the foot of
-			`/calendarium` — written once, in the dictionary, so the two cannot
-			come to disagree.
-		-->
-			<p class="meta">
-				<span class="colour">
-					<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
-					<TermGloss
-						term={t(`calendar.colour.${day.colour}`)}
-						gloss={t(`calendar.gloss.colour.${day.colour}`)}
-					/>
-				</span>
-				<span class="rank">
-					<TermGloss
-						term={rankLabel(day.celebration)}
-						gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
-					/>
-				</span>
-				<span class="season"
-					><TermGloss
-						term={seasonName}
-						gloss={t(`calendar.gloss.season.${day.season}`)}
-					/>{weekSuffix}</span
-				>
-			</p>
-			{#if day.celebration.transferredFrom}
-				<!-- Said out loud rather than shown silently on the wrong day: a
-				     solemnity impeded by Holy Week is kept elsewhere, and a reader
-				     looking for it on its own date deserves to know why it moved. -->
-				<p class="transferred">
-					{t('calendar.transferredFrom')}
-					{formatPromulgated(day.celebration.transferredFrom, lang)}
-				</p>
-			{/if}
-		</div>
-
 		<!--
-			THE CORNER HOLDS BOTH: what changes the day, and the way out of the
-			card. On a narrow screen it goes ON TOP of the name (`grid-row`
-			below) while staying LAST in the DOM, so a screen reader and a
-			keyboard meet the day before the controls that change it.
+			THE DATE LEADS THE CARD, on both pages, and it spent an afternoon
+			in the corner beside the controls (2026-09-06). What was wrong
+			there is what the corner IS: furniture — the things that change
+			the day or leave it. The date is not furniture, it is the first
+			thing the card says, and it belongs where a reader looks first
+			rather than at the far end of a row of buttons.
+		-->
+		{#if showDate}
+			<p class="date">
+				{formatPromulgated(day.date, lang)}{#if relative}<span class="relative">{relative}</span
+					>{/if}
+			</p>
+		{/if}
+		{#if heading === 'h1'}
+			<h1>{name}</h1>
+		{:else}
+			<h2>{name}</h2>
+		{/if}
+		<!--
+		EVERY WORD ON THIS LINE IS A TERM OF ART and a reader meeting the page
+		for the first time knows none of them: a colour that is a vestment
+		colour, a rank out of the Universal Norms, a season that is not the
+		English word. Each carries its own explanation (`TermGloss`), and the
+		same sentences are set out whole in the primer at the foot of
+		`/calendarium` — written once, in the dictionary, so the two cannot
+		come to disagree.
+	-->
+		<p class="meta">
+			<span class="colour">
+				<span class="swatch" data-colour={day.colour} aria-hidden="true"></span>
+				<TermGloss
+					term={t(`calendar.colour.${day.colour}`)}
+					gloss={t(`calendar.gloss.colour.${day.colour}`)}
+				/>
+			</span>
+			<span class="rank">
+				<TermGloss
+					term={rankLabel(day.celebration)}
+					gloss={t(`calendar.gloss.rank.${day.celebration.rank}`)}
+				/>
+			</span>
+			<span class="season"
+				><TermGloss
+					term={seasonName}
+					gloss={t(`calendar.gloss.season.${day.season}`)}
+				/>{weekSuffix}</span
+			>
+		</p>
+		{#if day.celebration.transferredFrom}
+			<!-- Said out loud rather than shown silently on the wrong day: a
+			     solemnity impeded by Holy Week is kept elsewhere, and a reader
+			     looking for it on its own date deserves to know why it moved. -->
+			<p class="transferred">
+				{t('calendar.transferredFrom')}
+				{formatPromulgated(day.celebration.transferredFrom, lang)}
+			</p>
+		{/if}
+		<!--
+			THE CORNER HOLDS BOTH: what changes the day, and the way out of
+			the card. It rides the DATE'S LINE, at the far right of it, while
+			staying LAST in the DOM, so a screen reader and a keyboard meet
+			the day before the controls that change it. Until 2026-09-06 it
+			was a column of the header and went above the name on a narrow
+			screen, where two glyphs took a whole line of a phone directly
+			over the shortest line the card has.
 		-->
 		{#if controls || more}
 			<div class="corner">
@@ -236,9 +236,9 @@
 					box as the home page's only trailing link, which read as a
 					caption on the card rather than as part of it and put the one
 					control the card has outside its own border. In the corner it
-					belongs to the card, and it takes the row's height rather than
-					the header's — `align-items: start`, so a celebration whose name
-					runs to three lines does not carry it down the box.
+					belongs to the card, and it sits on the date's line, so a
+					celebration whose name runs to three lines does not carry it
+					down the box.
 
 					`title` AND `aria-label` carry the same string, which is the rule
 					for every icon-only control on the site (`.menu-trigger`'s own):
@@ -334,12 +334,20 @@
 		padding: 1rem 1.25rem;
 	}
 	/*
-	 * THE HEADER IS TWO COLUMNS: everything the day says, and the corner that
-	 * changes or leaves it. `minmax(0, 1fr)` so a long celebration name wraps
-	 * inside its own column rather than pushing the corner off the card, and
-	 * `align-items: start` so the corner stays level with the first line of a
-	 * heading that wraps — a control centred against a box whose height is the
-	 * length of a saint's title moves for reasons the reader cannot see.
+	 * THE HEADER IS ONE COLUMN AND A CORNER ON ITS FIRST LINE. The corner used
+	 * to be a column of the header, level with the top of the whole block; it
+	 * now shares the DATE'S row and nothing else's, which is the same place on
+	 * a wide screen and one line saved on a narrow one — the date is the
+	 * shortest line the card has, and the two glyphs beside it were taking a
+	 * line of their own above the name.
+	 *
+	 * `minmax(0, 1fr)` so a long celebration name wraps inside its own column
+	 * rather than pushing the corner off the card. Everything else in here is
+	 * column 1 and finds its own row; only the corner is placed, which is what
+	 * lets it stay LAST in the DOM — see the markup. Placing it by hand is
+	 * also what dissolved `.head-text`: the text needed a wrapper of its own
+	 * while it was one item of a two-column header, and the header IS that
+	 * block now. One layout at every width, so there is no breakpoint here.
 	 *
 	 * The corner is empty on a card given neither `controls` nor `more` — the
 	 * grid costs that card nothing, an absent second item taking no track.
@@ -347,23 +355,30 @@
 	header {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: start;
+		align-items: center;
 		column-gap: 0.75rem;
 	}
+	header > * {
+		grid-column: 1;
+	}
 	/*
-	 * The two corner items are one row and wrap together: `/calendarium` puts
-	 * three controls here and the home page a picker and the way out, and on
-	 * the narrow layout below they are a row across the top of the card.
+	 * The two corner items are one row: `/calendarium` puts the picker here and
+	 * the home page the picker and the way out. `end` because the row is as
+	 * wide as the card and the corner is furniture — it belongs at the edge the
+	 * date's line runs to, not floating a word away from it.
 	 *
-	 * `center` HERE AND `start` ON THE HEADER, which are not the same question.
-	 * The header's keeps the whole corner level with the first line of a name
-	 * that wraps; this one centres a 1.75rem glyph against a 2rem trigger,
-	 * which top-aligned sit a couple of pixels apart for no reason a reader
-	 * could name.
+	 * `center` HERE AND on the grid above, which are not the same question.
+	 * The grid's sits a 1.75rem trigger against a 0.85rem date rather than
+	 * hanging it off the top of the line; this one centres a 1.75rem glyph
+	 * against a 2rem trigger, which top-aligned sit a couple of pixels apart
+	 * for no reason a reader could name.
 	 */
 	.corner {
+		grid-column: 2;
+		grid-row: 1;
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
 		gap: 0.4rem;
 	}
 	/*
@@ -399,30 +414,6 @@
 		border-color: transparent;
 		background: var(--color-bg-elevated);
 		color: var(--color-accent);
-	}
-	/*
-	 * 44rem is where `/calendarium`'s three controls stop leaving a readable
-	 * measure beside them — a date field, Today and the picker are about 20rem
-	 * and a saint with an office is longer than that. The home page's picker
-	 * and glyph would fit for another 10rem and stack here anyway: one
-	 * breakpoint that both pages meet is worth more than two that are each
-	 * exactly right, since what a reader compares is the two cards.
-	 *
-	 * The rows are ASSIGNED rather than reversed, which is what lets the
-	 * corner stay last in the DOM — see the markup — and is why this is a grid
-	 * rather than a flex column-reverse.
-	 */
-	@media (max-width: 44rem) {
-		header {
-			grid-template-columns: minmax(0, 1fr);
-		}
-		.corner {
-			grid-row: 1;
-			flex-wrap: wrap;
-		}
-		.head-text {
-			grid-row: 2;
-		}
 	}
 	/*
 	 * `.menu-trigger`'s shape without its file: a rounded square the size of a
