@@ -582,14 +582,44 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   titles has the whole suggestion. The numbered gutter belonged to the sourced
   routes and says "somebody authorised this sequence"; what makes it honest
   here is the heading (the reader's own question) and `†` on the two sentences
-  that lean on a document. And here the cards ARE cards, where the books section
-  argues the opposite for its own rows: a catalogue entry is read, and these are
-  CHOSEN BETWEEN.
-- **THE ADVICE SECTIONS TAKE THE WHOLE COLUMN, and the measure goes on the
-  PARAGRAPHS.** `.landing-measure` on a `<section>` caps its heading rule too,
-  so "If you have never read the Bible" ruled two-thirds of the way across a
-  page whose every other rule ran full width — the last section read as though
-  it belonged to a narrower document.
+  that lean on a document. **The numeral is IN the title**, not in a gutter
+  beside it: a 2.25rem column bought a straight edge down three figures and
+  charged every paragraph and card in the section an indent from the page's own
+  margin, which is the shape of a quotation. And here the cards ARE cards, where
+  the books section argues the opposite for its own rows: a catalogue entry is
+  read, and these are CHOSEN BETWEEN. **Every card carries a reason, the
+  single-book stage included** — a card's second line is not for telling one
+  book from another, it is for telling a reader who has never opened a Bible
+  what they would be opening.
+- **NOTHING ON `/schola` IS MEASURED, and that took two passes.**
+  `.landing-measure` on a `<section>` caps its heading rule too, so "If you have
+  never read the Bible" ruled two-thirds of the way across a page whose every
+  other rule ran full width. Moving it to the paragraphs fixed the rules and
+  left the real complaint: a 40rem paragraph in a 72rem column breaks against a
+  wall the page never draws, beside grids and cards that run the full width.
+  **Leading carries a long line where a cap would fence it** — 1.62 on the
+  running prose. The other landing pages still measure their prose; this one
+  has the most of it and was the first to look wrong.
+- **THE PICTURE IS THE HINGE, NOT THE MASTHEAD** (2026-09-06). It sits between
+  the two sections that LIST — the chrome, then the works and their notation —
+  and the two that ADVISE, which is the one place on the page where the voice
+  changes and the only change nothing else marks. Above the title it announced
+  the page before the page said anything, and delayed the one sentence a
+  newcomer needs by a banner's height. `/bibliotheca` keeps the same component
+  as a masthead: one `ArtFigure`, two rules around it.
+- **AN ACCENT IS THE CHEAPEST STRUCTURE ON A LANDING PAGE.** Four sections
+  divided by four hairlines in the same grey as every card border is a page with
+  no landmarks; the section rules, the stage numerals, the citation specimens
+  and the cards' top edges all take `--color-accent`, mixed toward the border or
+  the ground rather than filled. **No new hue** — `--color-initial`,
+  `--color-apparatus` and `--color-bookmark` carry meaning site-wide and
+  spending one decoratively here would cost that meaning everywhere.
+- **A CARD'S NAME IS ACCENT AT REST, because the card IS a link.** Holding the
+  colour back for hover reads on a touch screen — where there is no hover — as a
+  paragraph in a box.
+- **A `†` CARRIES NO `title`.** Those links get the site's own preview card, and
+  the platform's tooltip draws on top of it. The `aria-label` stays, and it is
+  what announces the document.
 - **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
   why that section can exist at all and why it has to be ours. `Dei Verbum` 25
   names a priority ("above all the Gospels") and no sequence; `Verbum Domini`

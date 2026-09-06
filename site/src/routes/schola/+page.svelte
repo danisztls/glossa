@@ -89,10 +89,19 @@
 	 *
 	 * `.landing-column`, not `.content-column`: `layout.css` carries the
 	 * argument, which is that `--content-width` is a count of CHARACTERS and
-	 * this page's content is banners, two grids and a numbered list. The prose
-	 * that is still prose keeps a measure of its own through
-	 * `.landing-measure`. `/`, `/bibliotheca` and `/documenta` are the same
-	 * kind of page and take the same column.
+	 * this page's content is a band, two grids and three numbered stages. `/`,
+	 * `/bibliotheca` and `/documenta` are the same kind of page and take the
+	 * same column.
+	 *
+	 * **NOTHING ON IT IS MEASURED** (2026-09-06). Every paragraph ran at
+	 * `.landing-measure`'s 40rem inside the 72rem column, which put a wall down
+	 * the middle of the page that the page itself never drew — text stopping at
+	 * an edge, beside grids and cards running the full width. Leading carries a
+	 * long line instead; the style block holds the rule.
+	 *
+	 * **AND THE PICTURE IS NOT A MASTHEAD.** It sits between the two sections
+	 * that LIST and the two that ADVISE, which is the one place on the page
+	 * where the voice changes and the only change nothing else marks.
 	 */
 	import { getBook, getDocumentManifest, listWorksOfType } from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
@@ -389,29 +398,20 @@
 	A LANDING COLUMN, NOT A READING ONE. `layout.css` says why the two are
 	different: `--content-width` holds 62.4 characters of prose, and this page's
 	content is banners, two grids and a numbered list. The prose on it takes
-	`.landing-measure` instead, which is the measure without the column.
+	the leading carries the line instead.
 
-	`eager` is passed for the hero alone. Every other picture is below the fold
-	on every viewport, and `loading="lazy"` with the intrinsic size declared
-	means the browser reserves the box and fetches nothing until the reader
-	arrives at it.
+	Nothing here is `eager`. The one picture is below the fold at every
+	viewport, and `loading="lazy"` with the intrinsic size declared means the
+	browser reserves the box and fetches nothing until the reader arrives at
+	it.
 -->
 <div class="landing-column">
-	<div class="masthead">
-		<ArtFigure
-			art={BANNERS.schola}
-			credit={creditOf(BANNERS.schola)}
-			label={t('art.about')}
-			eager
-		/>
-	</div>
-
 	<h1>{t('schola.landing.title')}</h1>
-	<p class="page-tagline landing-measure">{t('schola.landing.tagline')}</p>
+	<p class="page-tagline">{t('schola.landing.tagline')}</p>
 
 	<section aria-labelledby="guide-heading">
 		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
-		<p class="section-lede landing-measure">{t('schola.guide.lede')}</p>
+		<p class="section-lede">{t('schola.guide.lede')}</p>
 		<ul class="feature-grid">
 			{#each FEATURES as feature (feature.key)}
 				<li class="feature">
@@ -435,7 +435,7 @@
 
 	<section aria-labelledby="books-heading">
 		<h2 id="books-heading">{t('schola.books.heading')}</h2>
-		<p class="section-lede landing-measure">{t('schola.books.lede')}</p>
+		<p class="section-lede">{t('schola.books.lede')}</p>
 		<ul class="book-grid">
 			{#each works as work (work.key)}
 				<li class="book">
@@ -479,6 +479,30 @@
 		</ul>
 	</section>
 	<!--
+		THE PICTURE IS THE HINGE, AND IT WAS THE MASTHEAD UNTIL 2026-09-06.
+
+		Above the title it was doing the job a masthead does — announcing a page
+		before the page says anything — and this page's first job is to say what
+		it is, in a sentence a newcomer can read. Rembrandt's preaching Christ
+		got the reader's whole first screen and delayed that sentence by the
+		height of a banner.
+
+		Here it does something no masthead can: the page turns at this line. Two
+		sections above it list what exists — the chrome, then the works and their
+		notation — and two below it ADVISE. That is a change of voice with no
+		other mark on it, and a band across the column is the mark, read before
+		anyone works out why. A picture of somebody being taught is also the
+		right picture for exactly this seam.
+
+		`lazy` now rather than `eager`: it is below the fold at every viewport,
+		and the intrinsic size is declared, so the browser reserves the box and
+		fetches nothing until the reader gets here.
+	-->
+	<div class="hinge">
+		<ArtFigure art={BANNERS.schola} credit={creditOf(BANNERS.schola)} label={t('art.about')} />
+	</div>
+
+	<!--
 		THE ONE PARAGRAPH ON THIS SITE THAT RECOMMENDS RATHER THAN DESCRIBES, and
 		it is a section now rather than a stray paragraph under the tagline. It
 		had a heading all along — `schola.start.attribution`, read only by screen
@@ -494,7 +518,7 @@
 	-->
 	<section aria-labelledby="start-heading">
 		<h2 id="start-heading">{t('schola.start.heading')}</h2>
-		<p class="landing-measure">
+		<p>
 			{t('schola.start.body')}
 			<a href="/catechismus/compendium">{t('compendium.landing.title')}</a>{t(
 				'schola.start.bodyAfter'
@@ -530,88 +554,100 @@
 	{#if showBiblePath}
 		<section class="suggestion" aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
-			<p class="section-lede landing-measure">{t('schola.bible.library')}</p>
+			<p class="section-lede">{t('schola.bible.library')}</p>
 
 			<ol class="stages">
 				<!--
-					The numeral is drawn rather than left to the list marker, because
-					`list-style: none` is what lets the gutter be a serif figure at
-					the title's size. It is `aria-hidden`: the `<ol>` already tells a
-					screen reader this is an ordered list of three, and a spoken "1"
-					before every title would be the count twice.
+					THE NUMERAL IS IN THE TITLE, not in a gutter beside it. It was a
+					2.25rem column with the whole stage indented past it, which
+					bought a tidy edge for the figures and cost the thing that
+					matters more: every paragraph and every card in the section
+					started an indent in from the page's own margin, so the section
+					read as a quotation of itself. A figure at the head of its own
+					heading numbers the stage just as well and leaves the content on
+					the same line as everything above it.
+
+					It is drawn rather than left to the list marker, because
+					`list-style: none` is what lets it be a serif figure at the
+					title's size. `aria-hidden`: the `<ol>` already tells a screen
+					reader this is an ordered list of three, and a spoken "1" before
+					every title would be the count twice.
 				-->
 				<li class="stage">
-					<p class="stage-n" aria-hidden="true">1</p>
-					<div class="stage-body">
-						<h3>{t('schola.bible.step.gospel')}</h3>
-						<p class="stage-why landing-measure">
-							{t('schola.bible.start')}{#if deiVerbum}<a
-									class="source-mark"
-									href={deiVerbum.href}
-									title={deiVerbum.label}
-									aria-label={deiVerbum.label}>†</a
-								>{/if}
-						</p>
-						<p class="stage-why landing-measure">{t('schola.bible.whichGospel')}</p>
-						<!-- Three answers, each with its reason, and no fourth row
+					<h3><span class="stage-n" aria-hidden="true">1</span>{t('schola.bible.step.gospel')}</h3>
+					<p class="stage-why">
+						{t('schola.bible.start')}{#if deiVerbum}<a
+								class="source-mark"
+								href={deiVerbum.href}
+								aria-label={deiVerbum.label}>†</a
+							>{/if}
+					</p>
+					<p class="stage-why">{t('schola.bible.whichGospel')}</p>
+					<!-- Three answers, each with its reason, and no fourth row
 						     saying which is right. The disagreement is real, no
 						     document settles it, and a page that picked one would be
 						     reporting its own preference as the answer to a question
 						     the reader could have weighed themselves. -->
-						<ul class="picks">
-							{#each gospels as gospel (gospel.key)}
-								<li>
-									<a class="pick" href={gospel.at?.href}>
-										<span class="pick-name">{gospel.at?.label}</span>
-										<span class="pick-why">{t(`schola.bible.gospel.${gospel.key}`)}</span>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
+					<ul class="picks">
+						{#each gospels as gospel (gospel.key)}
+							<li>
+								<a class="pick" href={gospel.at?.href}>
+									<span class="pick-name">{gospel.at?.label}</span>
+									<span class="pick-why">{t(`schola.bible.gospel.${gospel.key}`)}</span>
+								</a>
+							</li>
+						{/each}
+					</ul>
 				</li>
 
 				{#if acts}
 					<li class="stage">
-						<p class="stage-n" aria-hidden="true">2</p>
-						<div class="stage-body">
-							<h3>{t('schola.bible.step.acts')}</h3>
-							<p class="stage-why landing-measure">{t('schola.bible.thenActs')}</p>
-							<ul class="picks">
-								<li>
-									<a class="pick" href={acts.href}>
-										<span class="pick-name">{acts.label}</span>
-									</a>
-								</li>
-							</ul>
-						</div>
+						<h3>
+							<span class="stage-n" aria-hidden="true">2</span>{t('schola.bible.step.acts')}
+						</h3>
+						<p class="stage-why">{t('schola.bible.thenActs')}</p>
+						<!-- ONE CARD IS STILL A CARD WITH A REASON ON IT. This one had
+						     only a name for a day, because the stage above it has three
+						     books to tell apart and this stage has one — which is an
+						     argument about DISAMBIGUATION and not about what a card is
+						     for. A reader who does not know what Acts is learns nothing
+						     from the word "Acts", and the six cards around it all say
+						     what they are. -->
+						<ul class="picks">
+							<li>
+								<a class="pick" href={acts.href}>
+									<span class="pick-name">{acts.label}</span>
+									<span class="pick-why">{t('schola.bible.acts.why')}</span>
+								</a>
+							</li>
+						</ul>
 					</li>
 				{/if}
 
 				<li class="stage">
-					<p class="stage-n" aria-hidden="true">{acts ? 3 : 2}</p>
-					<div class="stage-body">
-						<h3>{t('schola.bible.step.old')}</h3>
-						<p class="stage-why landing-measure">{t('schola.bible.thenOld')}</p>
-						<ul class="picks">
-							{#each oldTestament as step (step.key)}
-								<li>
-									<a class="pick" href={step.at?.href}>
-										<span class="pick-name">{step.at?.label}</span>
-										<span class="pick-why">{t(`schola.bible.ot.${step.key}`)}</span>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
+					<h3>
+						<span class="stage-n" aria-hidden="true">{acts ? 3 : 2}</span>{t(
+							'schola.bible.step.old'
+						)}
+					</h3>
+					<p class="stage-why">{t('schola.bible.thenOld')}</p>
+					<ul class="picks">
+						{#each oldTestament as step (step.key)}
+							<li>
+								<a class="pick" href={step.at?.href}>
+									<span class="pick-name">{step.at?.label}</span>
+									<span class="pick-why">{t(`schola.bible.ot.${step.key}`)}</span>
+								</a>
+							</li>
+						{/each}
+					</ul>
 				</li>
 			</ol>
 
-			<p class="landing-measure">
+			<p class="closing">
 				{t('schola.bible.bothWays')}{#if verbumDomini}<a
 						class="source-mark"
 						href={verbumDomini.href}
-						title={verbumDomini.label}
 						aria-label={verbumDomini.label}>†</a
 					>{/if}
 			</p>
@@ -621,14 +657,19 @@
 
 <style>
 	/*
-	 * THE MASTHEAD IS ABOVE THE TITLE, NOT BEHIND IT. Text over a painting has
-	 * to hold its contrast across five appearance axes — light, sepia, dark,
-	 * OLED and monochrome — and none of them is negotiable on a page whose
-	 * readers are the ones least able to work around a bad one. A band above
-	 * the title costs nothing and survives all five.
+	 * THE PICTURE IS A BAND ACROSS THE COLUMN, NOT A PLATE INSIDE IT, and it is
+	 * never text on a painting: contrast would have to hold across five
+	 * appearance axes — light, sepia, dark, OLED and monochrome — and none of
+	 * them is negotiable on a page whose readers are the ones least able to work
+	 * around a bad one.
+	 *
+	 * The margins are generous and UNEQUAL — more above than below — because the
+	 * band closes what is above it and introduces what is under it. `/bibliotheca`
+	 * keeps the same picture as a masthead, and the two arrangements are the same
+	 * component with a different rule around it.
 	 */
-	.masthead {
-		margin: 0 0 1.5rem;
+	.hinge {
+		margin: 3rem 0 2.25rem;
 	}
 
 	h1 {
@@ -651,64 +692,81 @@
 	 * paragraph under a question is answering it; nothing has to be drawn around
 	 * it to say so.
 	 *
-	 * IT TAKES THE WHOLE COLUMN, and carried `.landing-measure` on the section
-	 * itself until 2026-09-05. That capped the section at 40rem, so its heading
-	 * rule stopped two-thirds of the way across the page while every other
-	 * section's ran the full width — the page looked as though its last section
-	 * belonged to a narrower document. The measure belongs on the PARAGRAPHS,
-	 * which is where every other section on this page carries it, and the
-	 * stages fill the column the same way the two grids above do.
+	 * NOTHING ON THIS PAGE IS MEASURED ANY MORE, and `.landing-measure` came off
+	 * in two passes. It was on the `<section>` first, which capped the heading
+	 * rule too, so this section ruled two-thirds of the way across a page whose
+	 * every other rule ran full width. Moving it to the paragraphs fixed the
+	 * rules and left the real complaint standing: a 40rem paragraph in a 72rem
+	 * column breaks against an edge the page does not draw, and it does it
+	 * mid-section, beside grids and cards that DO run the full width. A reader
+	 * sees text stopping at a wall that is not there.
+	 *
+	 * So the prose runs the column, and what keeps a long line readable is
+	 * leading rather than a cap: `1.62` on the running paragraphs, against the
+	 * ~1.5 they inherit. The cards are what break the section up now, and they
+	 * cap themselves at 14rem tracks.
 	 */
 	.suggestion {
 		margin: 0 0 2.5rem;
 	}
 
+	/* The running prose of the two sections that advise — the lede, the reason
+	   under a stage title, and the closing paragraph — none of which sits in a
+	   card. */
+	.section-lede,
+	.stage-why,
+	.closing,
+	section[aria-labelledby='start-heading'] p {
+		line-height: 1.62;
+	}
+
 	/*
-	 * THREE STAGES IN A SERIF GUTTER. The numeral is the whole navigation: a
-	 * reader who takes in nothing but `1 Start with a Gospel / 2 Then what
-	 * happened next / 3 Then the older half` has the suggestion entire, which
-	 * is the most this section can hope for from someone who has never opened a
-	 * Bible. Everything else in the stage is for the reader who did not stop.
+	 * THREE STAGES, AND THE NUMERAL IS THE WHOLE NAVIGATION: a reader who takes
+	 * in nothing but `1 Start with a Gospel / 2 Then what happened next / 3 Then
+	 * the older half` has the suggestion entire, which is the most this section
+	 * can hope for from someone who has never opened a Bible. Everything else in
+	 * a stage is for the reader who did not stop there.
 	 *
-	 * Accent, at half opacity, and never a filled circle: the numeral is a
-	 * position in a list, not a step in a process the reader is being marched
-	 * through. Tabular figures so the gutter is one straight edge.
+	 * IT SITS IN THE HEADING AND NOT IN A GUTTER BESIDE IT. The gutter was a
+	 * 2.25rem column with the stage indented past it, which bought a straight
+	 * edge down three figures and charged every paragraph and every card in the
+	 * section an indent from the page's own margin — so the section stood in
+	 * from everything above it, which is the shape of a quotation. Nothing else
+	 * on the page indents, and this section is not quoting anyone.
+	 *
+	 * Accent, and never a filled circle: it marks a position in a list, not a
+	 * step in a process the reader is being marched through.
 	 */
 	.stages {
 		list-style: none;
 		display: grid;
-		gap: 1.75rem;
+		gap: 2rem;
 		margin: 0 0 1.5rem;
 		padding: 0;
 	}
 
-	.stage {
-		display: grid;
-		grid-template-columns: 2.25rem 1fr;
-		gap: 0 1rem;
-		align-items: start;
-	}
-
-	.stage-n {
-		margin: 0;
-		font-family: var(--font-serif);
-		font-size: 1.75rem;
-		line-height: 1;
-		text-align: end;
-		font-variant-numeric: tabular-nums;
-		color: var(--color-accent);
-		opacity: 0.5;
-	}
-
 	.stage h3 {
+		display: flex;
+		align-items: baseline;
+		gap: 0.55rem;
 		font-family: var(--font-serif);
-		font-size: 1.1rem;
+		font-size: 1.15rem;
 		margin: 0 0 0.35rem;
 	}
 
+	/* Optically aligned rather than boxed: a figure's own side bearing would
+	   otherwise set the title a hair further in than the paragraph under it. */
+	.stage-n {
+		font-size: 1.6rem;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+		color: var(--color-accent);
+		margin-inline-start: -0.06em;
+	}
+
 	.stage-why {
-		margin: 0 0 0.6rem;
-		font-size: 0.9rem;
+		margin: 0 0 0.7rem;
+		font-size: 0.92rem;
 		color: var(--color-text-muted);
 	}
 
@@ -724,12 +782,22 @@
 	 * `auto-fill` rather than `auto-fit`, so the stage with one book in it gets
 	 * one tile the size of the others instead of a single card stretched across
 	 * the column. The empty tracks are the point.
+	 *
+	 * THE CARD WEARS AN ACCENT RULE ACROSS ITS HEAD, and that is the one place
+	 * on this page a border says something rather than merely bounding a box.
+	 * Seven cards in a hairline the colour of every other hairline read as seven
+	 * empty boxes with words in them; a coloured edge along the top makes them a
+	 * SET, and makes the set look chosen. It fills to the accent on hover, so
+	 * the same edge is also the answer to being pointed at.
+	 *
+	 * `--radius-md` and no shadow, exactly as the home page's `.door` — this is
+	 * that object, and a second card idiom is how a site stops having one.
 	 */
 	.picks {
 		list-style: none;
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-		gap: 0.6rem;
+		gap: 0.7rem;
 		margin: 0;
 		padding: 0;
 	}
@@ -737,10 +805,11 @@
 	.pick {
 		display: flex;
 		flex-direction: column;
-		gap: 0.3rem;
+		gap: 0.35rem;
 		block-size: 100%;
-		padding: 0.7rem 0.85rem;
+		padding: 0.8rem 1rem 0.9rem;
 		border: 1px solid var(--color-border);
+		border-block-start: 2px solid color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
@@ -750,20 +819,26 @@
 	.pick:hover,
 	.pick:focus-visible {
 		border-color: var(--color-accent);
+		background: color-mix(in srgb, var(--color-accent) 5%, var(--color-bg-elevated));
 	}
 
+	/*
+	 * THE NAME IS ACCENT AT REST, because the card IS a link and nothing else
+	 * about it said so. It sat in body colour with the accent held back for
+	 * hover, which reads on a touch screen — where there is no hover — as seven
+	 * paragraphs in boxes. Every other link on this site is coloured before it
+	 * is pointed at.
+	 */
 	.pick-name {
 		font-family: var(--font-serif);
-		font-size: 1.05rem;
-	}
-
-	.pick:hover .pick-name,
-	.pick:focus-visible .pick-name {
+		font-size: 1.1rem;
+		line-height: 1.25;
 		color: var(--color-accent);
 	}
 
 	.pick-why {
 		font-size: 0.85rem;
+		line-height: 1.45;
 		color: var(--color-text-muted);
 	}
 
@@ -805,10 +880,18 @@
 		text-decoration: underline;
 	}
 
+	/*
+	 * THE RULE UNDER A HEADING IS TINTED, and it is the cheapest accent on the
+	 * page. Four sections divided by four hairlines in the same grey as every
+	 * border in every card is a page with no landmarks in it — the eye has
+	 * nothing to count. A rule the colour of the site's own red, mixed a third
+	 * of the way from the border, reads as a division rather than as an edge,
+	 * and it costs one declaration and no new token.
+	 */
 	section h2 {
 		font-family: var(--font-serif);
 		font-size: 1.3rem;
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 32%, var(--color-border));
 		padding-bottom: 0.4rem;
 		margin: 2.25rem 0 0.4rem;
 	}
@@ -901,7 +984,6 @@
 		line-height: 1;
 		margin-block-start: 0.12rem;
 		color: var(--color-accent);
-		opacity: 0.75;
 	}
 
 	/*
@@ -914,7 +996,7 @@
 	 */
 	.book:hover .book-icon,
 	.feature:has(a):hover .feature-icon {
-		opacity: 1;
+		color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
 	}
 
 	/*
@@ -995,11 +1077,16 @@
 		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
-		color: var(--color-text);
 		text-decoration: none;
-		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
-		background: var(--color-bg-elevated);
+		/* The notation carries the accent because the notation IS the lesson —
+		   read down the trailing edge of the grid and the column of specimens is
+		   the only thing on the page that has to be noticed twice. Tinted rather
+		   than filled: it is a specimen, not a control, and a solid accent chip
+		   would read as a button to press. */
+		color: var(--color-accent);
+		border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+		background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg-elevated));
 	}
 
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,

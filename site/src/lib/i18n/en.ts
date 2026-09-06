@@ -148,6 +148,13 @@ export const en: Dictionary = {
 	'schola.bible.step.acts': 'Then what happened next',
 	'schola.bible.thenActs':
 		'When you have finished one, read what the people who knew him did after he was gone.',
+	// A card with only a name on it for a day, on the reasoning that the stage
+	// above has three books to tell apart and this one has a single book to
+	// name. That is an argument about DISAMBIGUATION, and a card's second line
+	// is not for telling one book from another — it is for telling a reader who
+	// has never opened a Bible what they would be opening.
+	'schola.bible.acts.why':
+		'The thirty years after the Gospels end: a few dozen frightened people, and how what they had seen reached the far side of the empire.',
 	'schola.bible.step.old': 'Then the older half',
 	'schola.bible.thenOld':
 		'Not from the first page, and not all of it. A few places carry the story, and they are the ones the Gospels keep pointing back to.',

@@ -196,12 +196,55 @@ asked to do: a catalogue entry is READ, and these are CHOSEN BETWEEN — which o
 three Gospels, which of four places. A grid of doors is what "pick one" looks
 like everywhere else on this site.
 
-**The section takes the whole column**, and carried `.landing-measure` on the
-`<section>` itself until the same day. That capped it at 40rem, so its heading
-rule stopped two-thirds of the way across a page whose every other rule ran the
-full width, and the last section read as though it belonged to a narrower
-document. The measure belongs on the PARAGRAPHS, which is where every other
-section on the page carries it.
+**NOTHING ON THE PAGE IS MEASURED, and the measure came off in two passes.** It
+was on the `<section>` first, which caps the heading rule too — so this section
+ruled two-thirds of the way across a page whose every other rule ran full width,
+and the last section read as though it belonged to a narrower document. Moving
+it to the paragraphs fixed the rules and left the real complaint standing: **a
+40rem paragraph in a 72rem column breaks against a wall the page does not
+draw**, and it does it mid-section, beside grids and cards that run the full
+width. What carries a long line now is LEADING — 1.62 on the running prose,
+against the ~1.5 it inherits — because leading makes a line easier to return
+from and a cap draws an edge. The cards are what break the section up, and they
+cap themselves at 14rem tracks.
+
+**The numeral is in the title, not in a gutter beside it.** The gutter was a
+2.25rem column with the stage indented past it: a straight edge down three
+figures, bought by charging every paragraph and every card in the section an
+indent from the page's own margin. Nothing else on the page indents, and an
+indented block is the shape of a quotation — which is the second time this
+section has accidentally drawn itself as one.
+
+**Every card carries a reason, including the stage with one book in it.** Acts
+shipped as a bare name for a day, on the reasoning that the stage above has
+three Gospels to tell apart and this one has a single book to name. That is an
+argument about DISAMBIGUATION, and a card's second line is not for telling one
+book from another — it is for telling a reader who has never opened a Bible what
+they would be opening. The word "Acts" tells them nothing.
+
+**THE PICTURE IS THE PAGE'S HINGE** (2026-09-06). It was the masthead, above the
+`h1`, where it announced the page before the page said anything and delayed the
+one sentence a newcomer needs by a banner's height. It now sits between the two
+sections that LIST — the chrome, then the works and their notation — and the two
+that ADVISE. That is the one place on the page where the voice changes, and it
+was the only change with no mark on it; a band across the column is read as a
+turn before anyone works out why. A picture of somebody being taught is the
+right picture for that seam, and `/bibliotheca` keeps the same component as a
+masthead — one `ArtFigure`, two rules around it.
+
+**AN ACCENT IS THE CHEAPEST STRUCTURE A LANDING PAGE HAS.** Four sections
+divided by four hairlines in the same grey as every card border leaves the eye
+nothing to count. The section rules, the stage numerals, the citation specimens
+and the cards' top edges all take `--color-accent` — mixed toward the border or
+toward the ground, never filled, because a solid accent chip reads as a button.
+**No new hue**: `--color-initial`, `--color-apparatus` and `--color-bookmark`
+carry meaning across the whole site, and spending one decoratively here would
+cost that meaning everywhere. A card's NAME is accent at rest rather than on
+hover, because the card is a link and a touch screen has no hover.
+
+**A `†` carries no `title`.** The platform's own tooltip draws on top of the
+site's link-preview card, so the mark's name was covering the thing the mark
+opens. The `aria-label` stays and is what announces the document.
 
 ## The Bible section proposes a path, because nobody else publishes one
 
