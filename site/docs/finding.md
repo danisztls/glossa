@@ -143,30 +143,22 @@ approbation, and `audiences.md` §9 exists to catch anything that reads like one
 What changed is not the rule but where the exception is drawn: two places on
 this one page advise, and they are the only two on the site.
 
-**Two passages advise. One wears the attribution and one no longer does.** The
-note at the top of `/schola` recommends the Compendium to a newcomer and carries
-`schola.start.attribution` — "A note from this site, not from any of the works
-below" — directly beneath it; that is `PLAN.md` gap 16's general problem,
-provenance marking, answered by hand. **The Bible section carried the same line
-until 2026-09-05 and it was removed by direction**, along with the two
-paragraphs that were purely ours: how to pace the reading, and what a year-long
-plan is. What is left leans on its citations rather than on our say-so — the
-priority is Dei Verbum's, the hermeneutic is Verbum Domini's, and the three
-Gospels are offered with their arguments rather than ranked — so the section is
-closer to reporting than it was, which is the honest reading of why the line
-could go. It is still the one place on the site that advises without a mark, and
-that is worth knowing before a third is added.
+**Two sections advise, and what marks them is their HEADINGS.** "If you are new
+to this" recommends the Compendium; "If you have never read the Bible" proposes
+a first reading path. Every other section on the page is titled by what it lists
+— "Finding your way around", "What is here, and how it is cited" — so a section
+titled with the reader's own question is visibly answering it, and a paragraph
+under such a question is visibly advice.
 
-**THE MARK IS A SENTENCE, NOT A BORDER, and it was a border for a day.** Both
-passages carried an accent rule down their inline start, on the argument that a
-reader should be able to see which paragraphs recommend without reading the
-attribution every time. What it produced was a blockquote — the one shape on the
-web that means "somebody else said this" — drawn around the two passages nobody
-else said, and the indent made the longest prose on the page the hardest to read.
-It is gone; the attribution line does the work, in words, where it cannot be
-misread as decoration. **A visual convention that has to be learned is worth
-less than a sentence that explains itself**, and it is worth strictly less than
-nothing when the convention already means something else.
+**Both of the earlier marks are gone, and each failed differently.** The accent
+rule down the inline start was a blockquote — the one shape on the web that
+means "somebody else said this" — drawn around the two passages nobody else
+said, and the indent made the page's longest prose its hardest to read. The
+attribution line under the note ("A note from this site, not from any of the
+works below") was small print explaining a distinction the layout was already
+failing to draw. **A visual convention that has to be learned is worth less than
+a sentence that explains itself, and a caption is worth less than a heading that
+makes the caption unnecessary.**
 
 The Bible section's rows are still not a numbered gutter, and for a reason that
 survives all of this: that drawing belonged to the sourced routes and says "this
@@ -228,7 +220,7 @@ writes it down.
 
 **THE PICTURES COST TWO KEYS, because a caption is not a sentence.** Each is
 `Artist, Title, year. Institution.` — proper nouns and a date, held beside the
-asset in `schola-art.ts` — and the only interface words in the whole set are
+asset in `landing-art.ts` — and the only interface words in the whole set are
 "detail" and the name of the control that shows a credit. Images are `alt=""`
 with the identification in the caption, `Plate.svelte`'s arrangement. They are
 public-domain works newly cut from Commons scans and no master is kept:

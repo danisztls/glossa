@@ -109,7 +109,7 @@
 	// the balance is law rather than doctrine, the quill is one author writing
 	// under his own name, and the votive flame is prayer. They replaced six
 	// paintings, which read as pictures to look at while reading a definition
-	// — see `schola-art.ts` on why that was the wrong section for illustration.
+	// — see `landing-art.ts` on why that was the wrong section for illustration.
 	import Scroll from '@lucide/svelte/icons/scroll';
 	import BookMarked from '@lucide/svelte/icons/book-marked';
 	import Landmark from '@lucide/svelte/icons/landmark';

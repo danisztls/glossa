@@ -68,7 +68,7 @@ the drawing.
 
 Public-domain paintings illustrating the learning portal — one over the page's
 title and one over the reading suggestion. The identifications, the licence
-position and the `paper` flag are in `site/src/lib/schola-art.ts`; this section
+position and the `paper` flag are in `site/src/lib/landing-art.ts`; this section
 is the derivation.
 
 **Two of the four banners went with the routes they stood over** (2026-09-05):

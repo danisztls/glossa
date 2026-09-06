@@ -1,18 +1,27 @@
 /**
- * The public-domain paintings `/schola` is illustrated with: the masthead, and
- * the banner over the reading suggestion.
+ * The public-domain paintings the landing pages are illustrated with: one
+ * banner each over `/schola` and `/bibliotheca`, and no other picture on
+ * either.
  *
- * ## IT WAS FOUR, AND THE OTHER TWO WENT WITH THE ROUTES THEY STOOD OVER
+ * ## IT WAS FOUR OVER ONE PAGE, AND IS TWO OVER TWO
  *
  * Raphael's *Disputa* headed "The four pillars" and Millet's *Gleaners* headed
  * "The Church's social teaching"; both routes were removed on 2026-09-05, and a
  * banner with nothing under it is a picture the reader downloads for no reason.
- * Rembrandt's preaching Christ stays because the section that replaced the
- * Gospels route is the one place on the page where somebody is being taught,
- * which is what it draws. `assets/README.md` keeps the source URL, SHA-256 and
- * crop line for all of them, so a route that comes back gets its picture back
- * with one command — which is the whole reason no master is kept and the whole
- * reason deleting one is cheap.
+ * The two that survived then swapped pages, which is the arrangement each was
+ * always better suited to: **Antonello's Jerome is a man alone in a room full
+ * of books, which is a library**, and **Rembrandt's preaching Christ is
+ * somebody being taught, which is what `/schola` is**. They had been the other
+ * way round only because `/schola` was illustrated first and took the best
+ * picture in the set for its masthead.
+ *
+ * `assets/README.md` keeps the source URL, SHA-256 and crop line for all six,
+ * so a page that wants one back gets it from one fetch and one crop — which is
+ * the whole reason no master is kept and the whole reason deleting one is
+ * cheap. **The FILENAMES are the derivation's names and not the pages' roles**
+ * (`hero-jerome` is now Library's, `gospels-preaching` is now the only
+ * picture on `/schola`); renaming them would mean re-deriving both assets and
+ * rewriting the table that reproduces them, to fix nothing a reader can see.
  *
  * ## Why this file holds prose that is not in a dictionary
  *
@@ -99,18 +108,9 @@ export interface Artwork {
 
 const BANNER = { width: 1800, height: 720 } as const;
 
-/** The banner over the page's title, and the one over the reading suggestion. */
+/** One banner per landing page, keyed by the page's own path segment. */
 export const BANNERS: Readonly<Record<string, Artwork>> = {
-	hero: {
-		...BANNER,
-		src: heroJerome,
-		credit: 'Antonello da Messina, Saint Jerome in his Study, c. 1475. National Gallery, London.',
-		detail: true,
-		paper: false,
-		source:
-			'https://commons.wikimedia.org/wiki/File:Antonello_da_Messina_-_St_Jerome_in_his_study_-_National_Gallery_London.jpg'
-	},
-	gospels: {
+	schola: {
 		...BANNER,
 		src: gospelsPreaching,
 		credit:
@@ -119,5 +119,14 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		paper: true,
 		source:
 			'https://commons.wikimedia.org/wiki/File:Christ_Preaching,_called_La_Petite_Tombe_MET_DP832290.jpg'
+	},
+	bibliotheca: {
+		...BANNER,
+		src: heroJerome,
+		credit: 'Antonello da Messina, Saint Jerome in his Study, c. 1475. National Gallery, London.',
+		detail: true,
+		paper: false,
+		source:
+			'https://commons.wikimedia.org/wiki/File:Antonello_da_Messina_-_St_Jerome_in_his_study_-_National_Gallery_London.jpg'
 	}
 };

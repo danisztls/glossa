@@ -47,7 +47,7 @@
 	 * `eager` is for a picture above the fold; everything else is `lazy` and
 	 * costs nothing until the reader arrives at it.
 	 */
-	import type { Artwork } from '$lib/schola-art';
+	import type { Artwork } from '$lib/landing-art';
 	import Icon from '$lib/components/Icon.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
 
@@ -133,7 +133,7 @@
 	/*
 	 * A PAINTING MUST NOT TAKE `--plate-blend`. That token multiplies a grey
 	 * scan's white paper away into the page and is tuned for exactly that; an
-	 * oil painting put through it goes to mud. Only the works `schola-art.ts`
+	 * oil painting put through it goes to mud. Only the works `landing-art.ts`
 	 * marks `paper` — ink on a white sheet — get it.
 	 */
 	.plate.paper {

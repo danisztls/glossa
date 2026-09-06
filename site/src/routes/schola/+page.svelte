@@ -78,7 +78,7 @@
 	 *
 	 * **The pictures cost two keys between them**: an artwork's caption is
 	 * `Artist, Title, year. Institution.` and carries no sentence to translate
-	 * (`schola-art.ts`) — the word "detail" and the name of the control that
+	 * (`landing-art.ts`) — the word "detail" and the name of the control that
 	 * shows a credit.
 	 *
 	 * ## THIS IS A LANDING PAGE AND IS LAID OUT AS ONE
@@ -105,7 +105,7 @@
 	import { hrefFor } from '$lib/address';
 	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
-	import { BANNERS, type Artwork } from '$lib/schola-art';
+	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { IconName } from '$lib/components/Icon.svelte';
@@ -116,8 +116,7 @@
 	// passed down for the reason `Plate.svelte` gives about its own credit: the
 	// page that knows what a picture is is the page that writes the line, and
 	// `ArtFigure` then needs no dictionary of its own.
-	const creditOf = (art: Artwork) =>
-		art.credit + (art.detail ? ` (${t('schola.art.detail')})` : '');
+	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 
 	// --- The languages the worked citations resolve in -----------------------
 	//
@@ -341,18 +340,20 @@
 	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS
 	 *
 	 * Everything else here reports: a row says what a work is, a citation shows
-	 * what its number means. This section RECOMMENDS, which
-	 * `docs/writing-descriptions.md` forbids of the descriptions.
+	 * what its number means. This section and "If you are new to this" above it
+	 * RECOMMEND, which `docs/writing-descriptions.md` forbids of the
+	 * descriptions.
 	 *
-	 * IT CARRIED `schola.start.attribution` AND NO LONGER DOES (2026-09-05, by
-	 * direction). What went with that line is the two paragraphs that were
-	 * purely ours — how to pace the reading, and what a year-long plan is — so
-	 * what is left leans on its two citations rather than on our say-so: the
-	 * priority is Dei Verbum's, the hermeneutic is Verbum Domini's, and the
-	 * three Gospels are offered with their arguments rather than ranked. The
-	 * note at the top of the page keeps the mark; this section is now the one
-	 * place that advises without wearing one, which is worth knowing before
-	 * adding a third.
+	 * NEITHER IS MARKED ANY LONGER (2026-09-05, by direction). Both wore an
+	 * accent rule that read as a blockquote, and this one also carried a line
+	 * of small print naming its author; the line went with the two paragraphs
+	 * that were purely ours — how to pace the reading, and what a year-long
+	 * plan is. What is left leans on its two citations rather than on our
+	 * say-so: the priority is Dei Verbum's, the hermeneutic is Verbum Domini's,
+	 * and the three Gospels are offered with their arguments rather than
+	 * ranked. **Both sections are headed by the reader's own question**, which
+	 * is what now tells advice from inventory — worth knowing before a third
+	 * is added.
 	 *
 	 * WHY IT IS OURS AND CANNOT BE ANYONE ELSE'S. The Church states a NARRATIVE
 	 * FRAME and never a reading plan: `Dei Verbum` 25 asks that the faithful be
@@ -443,95 +444,16 @@
 -->
 <div class="landing-column">
 	<div class="masthead">
-		<ArtFigure art={BANNERS.hero} credit={creditOf(BANNERS.hero)} label={t('art.about')} eager />
+		<ArtFigure
+			art={BANNERS.schola}
+			credit={creditOf(BANNERS.schola)}
+			label={t('art.about')}
+			eager
+		/>
 	</div>
 
 	<h1>{t('schola.landing.title')}</h1>
 	<p class="page-tagline landing-measure">{t('schola.landing.tagline')}</p>
-
-	<!-- The one paragraph on this site that recommends rather than describes,
-	     and it says so underneath. Deliberately NOT set apart by any styling:
-	     it is addressed to the reader as directly as anything here, and what
-	     marks it is the sentence naming its author, not a shape around it. -->
-	<section class="house-note landing-measure" aria-labelledby="house-note-heading">
-		<h2 id="house-note-heading" class="visually-hidden">{t('schola.start.attribution')}</h2>
-		<p>{t('schola.start.body')}</p>
-		<p class="attribution">{t('schola.start.attribution')}</p>
-	</section>
-
-	<!--
-		THE SUGGESTION. It sits directly under the note above deliberately: the
-		two together are the page's title, and a reader who wants to start today
-		should not have to pass a grid of chrome to be told how.
-
-		It is set as ordinary prose — see the style block on why the accent rule
-		that used to set both of them apart is gone.
-	-->
-	{#if showBiblePath}
-		<!-- The banner that stood over the Gospels route, which this section
-		     replaces. Rembrandt's preaching Christ is the one picture in the set
-		     that is about people being TAUGHT, which is what this is. -->
-		{#if BANNERS.gospels}
-			<div class="suggestion-plate">
-				<ArtFigure
-					art={BANNERS.gospels}
-					credit={creditOf(BANNERS.gospels)}
-					label={t('art.about')}
-				/>
-			</div>
-		{/if}
-		<section class="suggestion landing-measure" aria-labelledby="bible-heading">
-			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
-			<p>{t('schola.bible.library')}</p>
-			<p>
-				{t('schola.bible.start')}{#if deiVerbum}<a
-						class="source-mark"
-						href={deiVerbum.href}
-						title={deiVerbum.label}
-						aria-label={deiVerbum.label}>†</a
-					>{/if}
-			</p>
-
-			<p class="lead-in">{t('schola.bible.whichGospel')}</p>
-			<!-- Three answers, each with its reason, and no fourth row saying which
-			     is right. The disagreement is real, no document settles it, and a
-			     page that picked one would be reporting its own preference as the
-			     answer to a question the reader could have weighed themselves. -->
-			<ul class="path">
-				{#each gospels as gospel (gospel.key)}
-					<li>
-						<a class="passage" href={gospel.at?.href}>{gospel.at?.label}</a>
-						<span class="reason">{t(`schola.bible.gospel.${gospel.key}`)}</span>
-					</li>
-				{/each}
-			</ul>
-
-			{#if acts}
-				<p>
-					{t('schola.bible.thenActs')}
-					<a class="passage" href={acts.href}>{acts.label}</a>
-				</p>
-			{/if}
-
-			<p>{t('schola.bible.thenOld')}</p>
-			<ul class="path">
-				{#each oldTestament as step (step.key)}
-					<li>
-						<a class="passage" href={step.at?.href}>{step.at?.label}</a>
-						<span class="reason">{t(`schola.bible.ot.${step.key}`)}</span>
-					</li>
-				{/each}
-			</ul>
-			<p>
-				{t('schola.bible.bothWays')}{#if verbumDomini}<a
-						class="source-mark"
-						href={verbumDomini.href}
-						title={verbumDomini.label}
-						aria-label={verbumDomini.label}>†</a
-					>{/if}
-			</p>
-		</section>
-	{/if}
 
 	<section aria-labelledby="guide-heading">
 		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
@@ -610,6 +532,91 @@
 			{/each}
 		</ul>
 	</section>
+	<!--
+		THE ONE PARAGRAPH ON THIS SITE THAT RECOMMENDS RATHER THAN DESCRIBES, and
+		it is a section now rather than a stray paragraph under the tagline. It
+		had a heading all along — `schola.start.attribution`, read only by screen
+		readers — and a line of small print under it saying whose advice it was.
+		Both are gone: the heading is the reader's own question, and a page whose
+		every other section is a list of what exists does not need a caption to
+		say that a paragraph beginning "begin with" is advice.
+
+		It sits after the two reference sections, not before them: a reader who
+		arrives knowing nothing is better served by seeing what is here first,
+		and a reader who wants to be told where to start finds this and the
+		Bible section together at the foot.
+	-->
+	<section aria-labelledby="start-heading">
+		<h2 id="start-heading">{t('schola.start.heading')}</h2>
+		<p class="landing-measure">
+			{t('schola.start.body')}
+			<a href="/catechismus/compendium">{t('compendium.landing.title')}</a>{t(
+				'schola.start.bodyAfter'
+			)}
+		</p>
+	</section>
+
+	<!--
+		THE SUGGESTION. It sits directly under the note above deliberately: the
+		two together are the page's title, and a reader who wants to start today
+		should not have to pass a grid of chrome to be told how.
+
+		It is set as ordinary prose — see the style block on why the accent rule
+		that used to set both of them apart is gone.
+	-->
+	{#if showBiblePath}
+		<section class="suggestion landing-measure" aria-labelledby="bible-heading">
+			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
+			<p>{t('schola.bible.library')}</p>
+			<p>
+				{t('schola.bible.start')}{#if deiVerbum}<a
+						class="source-mark"
+						href={deiVerbum.href}
+						title={deiVerbum.label}
+						aria-label={deiVerbum.label}>†</a
+					>{/if}
+			</p>
+
+			<p class="lead-in">{t('schola.bible.whichGospel')}</p>
+			<!-- Three answers, each with its reason, and no fourth row saying which
+			     is right. The disagreement is real, no document settles it, and a
+			     page that picked one would be reporting its own preference as the
+			     answer to a question the reader could have weighed themselves. -->
+			<ul class="path">
+				{#each gospels as gospel (gospel.key)}
+					<li>
+						<a class="passage" href={gospel.at?.href}>{gospel.at?.label}</a>
+						<span class="reason">{t(`schola.bible.gospel.${gospel.key}`)}</span>
+					</li>
+				{/each}
+			</ul>
+
+			{#if acts}
+				<p>
+					{t('schola.bible.thenActs')}
+					<a class="passage" href={acts.href}>{acts.label}</a>
+				</p>
+			{/if}
+
+			<p>{t('schola.bible.thenOld')}</p>
+			<ul class="path">
+				{#each oldTestament as step (step.key)}
+					<li>
+						<a class="passage" href={step.at?.href}>{step.at?.label}</a>
+						<span class="reason">{t(`schola.bible.ot.${step.key}`)}</span>
+					</li>
+				{/each}
+			</ul>
+			<p>
+				{t('schola.bible.bothWays')}{#if verbumDomini}<a
+						class="source-mark"
+						href={verbumDomini.href}
+						title={verbumDomini.label}
+						aria-label={verbumDomini.label}>†</a
+					>{/if}
+			</p>
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -629,46 +636,23 @@
 		margin: 0 0 0.5rem;
 	}
 
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
-		padding: 0;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-		border: 0;
-	}
-
 	/*
-	 * THE PAGE'S OWN VOICE IS NOT DRAWN, AND USED TO BE. Both of these carried
-	 * an accent rule down their inline start, on the argument that a reader
-	 * should be able to see which passages recommend without reading the
-	 * attribution line every time. What that actually produced was a blockquote
-	 * — the one shape on the web that means "somebody else said this", set
-	 * around the two passages nobody else said — and the indent it forced made
-	 * the longest prose on the page the hardest to read. **The provenance mark
-	 * is a SENTENCE, not a border**: `schola.start.attribution` under the note,
-	 * in words, where it cannot be misread as decoration or as a quotation.
+	 * THE PAGE'S OWN VOICE IS NOT DRAWN, AND USED TO BE. The two sections that
+	 * advise carried an accent rule down their inline start, on the argument
+	 * that a reader should see which passages recommend without reading an
+	 * attribution line every time. What that produced was a blockquote — the one
+	 * shape on the web that means "somebody else said this", set around the two
+	 * passages nobody else said — and the indent made the longest prose on the
+	 * page the hardest to read. The attribution line went with it.
 	 *
-	 * So these are two ordinary sections now. Their headings take `section h2`
-	 * like every other one, their paragraphs run at the page's own measure and
-	 * indent by nothing.
+	 * WHAT MARKS THEM NOW IS THEIR HEADINGS, which are the reader's own
+	 * questions — "If you are new to this", "If you have never read the Bible" —
+	 * where every other section on the page is titled by what it lists. A
+	 * paragraph under a question is answering it; nothing has to be drawn around
+	 * it to say so.
 	 */
-	.house-note {
-		margin: 1.75rem 0 2rem;
-	}
-
 	.suggestion {
 		margin: 0 0 2.5rem;
-	}
-
-	/* The banner sits directly above the heading, so the standard 2.25rem of
-	   air over a section would open a hole between a picture and the thing it
-	   illustrates. */
-	.suggestion h2 {
-		margin-block-start: 0;
 	}
 
 	/* A line that introduces the list under it, so it sits closer to the list
@@ -748,22 +732,6 @@
 	.source-mark:hover,
 	.source-mark:focus-visible {
 		text-decoration: underline;
-	}
-
-	/* The banner belongs to the section under it and takes the gap a heading
-	   would otherwise carry, which is the arrangement the routes' own banners
-	   had. */
-	.suggestion-plate {
-		margin: 0.5rem 0 1.25rem;
-	}
-
-	/* THE ONLY MARK THE SITE'S OWN VOICE NOW CARRIES, so it says what it means
-	   in words rather than leaning on a border to imply it. Muted and small
-	   because it is apparatus about the paragraph above, not a second claim. */
-	.attribution {
-		margin-block-start: 0.4rem;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
 	}
 
 	section h2 {
@@ -878,8 +846,22 @@
 		opacity: 1;
 	}
 
+	/*
+	 * `flex: 1` IS WHAT PUTS THE SPECIMEN ON THE TRAILING EDGE. `.book-head`
+	 * spaces its two children apart, but a flex item is only as wide as its
+	 * content unless it is told to grow — so the chip was pushed to the end of
+	 * the TEXT rather than to the end of the row, and every card aligned its
+	 * notation somewhere different depending on how long its description ran.
+	 * The column of notations down the grid is the whole point of putting it up
+	 * there, and one declaration is the difference between having it and not.
+	 *
+	 * `min-width: 0` stays for the ordinary reason: a flex item's floor is its
+	 * content's intrinsic width, which a long unbroken title would otherwise
+	 * push the row past.
+	 */
 	.feature-text,
 	.book-text {
+		flex: 1;
 		min-width: 0;
 	}
 

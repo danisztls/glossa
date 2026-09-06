@@ -52,6 +52,8 @@
 	import { getWork, listWorksOfType } from '$lib/corpus';
 	import { continueRows, listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { t } from '$lib/i18n.svelte';
+	import { BANNERS, type Artwork } from '$lib/landing-art';
+	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import type { WorkType } from '$lib/types';
 
 	interface Entry {
@@ -212,6 +214,11 @@
 		}
 		return [...counts.values()].sort((a, b) => a.order - b.order);
 	});
+
+	// The identification, plus the one interface word in it — composed here and
+	// passed down, the arrangement `Plate.svelte` argues for: the page that
+	// knows what a picture is is the page that writes the line.
+	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 </script>
 
 <svelte:head>
@@ -219,6 +226,26 @@
 </svelte:head>
 
 <div class="landing-column">
+	<!--
+		THE ONE PICTURE ON THIS PAGE, and it is Antonello's Jerome: a man alone
+		in a room full of books, which is what a library is. It headed `/schola`
+		until 2026-09-05 and moved here because that page is about being taught
+		and this one is about what is on the shelf — `landing-art.ts` holds the
+		swap and the credit. Above the title rather than behind it, for the
+		reason that file gives: text over a painting has to hold its contrast
+		across five appearance axes and does not need to.
+
+		`eager`, because it is the first thing on the page at every viewport.
+	-->
+	<div class="masthead">
+		<ArtFigure
+			art={BANNERS.bibliotheca}
+			credit={creditOf(BANNERS.bibliotheca)}
+			label={t('art.about')}
+			eager
+		/>
+	</div>
+
 	<h1>{t('nav.library')}</h1>
 	<p class="page-tagline landing-measure">{t('library.landing.tagline')}</p>
 
@@ -286,6 +313,11 @@
 </div>
 
 <style>
+	/* The banner takes the whole column and the title follows it. */
+	.masthead {
+		margin: 0 0 1.5rem;
+	}
+
 	section {
 		margin: 2.25rem 0;
 	}

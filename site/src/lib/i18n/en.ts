@@ -85,14 +85,21 @@ export const en: Dictionary = {
 	'schola.landing.title': 'Where to begin',
 	'schola.landing.tagline':
 		'A short guide to what is here: what each of these books is, how a citation of it is written, how to find a passage, and orders for reading that the Church has set out.',
-	// THE ONE PLACE THIS SITE SPEAKS FOR ITSELF, and the attribution below it
-	// is not decoration: everything else on the page reports what a document
-	// says, and this recommends. `docs/writing-descriptions.md` forbids exactly
-	// that of the descriptions, so the departure is marked where a reader can
-	// see it rather than left to be inferred.
-	'schola.start.body':
-		'If you are new to this, begin with the Compendium of the Catechism: the same teaching, much shorter, written as questions and answers.',
-	'schola.start.attribution': 'A note from this site, not from any of the works below',
+	// THE ONE PLACE THIS SITE SPEAKS FOR ITSELF. It has a heading of its own
+	// now — the reader's own question — where it was a stray paragraph under
+	// the page's tagline with a line of small print beneath saying whose advice
+	// it was. Both the accent rule that set it apart and that line are gone: a
+	// page whose every other section lists what exists does not need a caption
+	// to say that a paragraph beginning "begin with" is advice.
+	//
+	// SPLIT AROUND THE LINK, because the work it recommends is a page a reader
+	// should be able to open from the sentence naming it. The two halves are
+	// one sentence and must be translated as one — `install.hint.*` is split
+	// around a glyph for the same reason and carries the same warning.
+	'schola.start.heading': 'If you are new to this',
+	'schola.start.body': 'Begin with the ',
+	'schola.start.bodyAfter':
+		': the same teaching as the Catechism, much shorter, written as questions and answers. It is about a tenth the length and assumes nothing.',
 
 	// THE SECOND PLACE THIS SITE SPEAKS FOR ITSELF, and the last one allowed.
 	// It carries `schola.start.attribution` under it, exactly as the note above
@@ -203,11 +210,6 @@ export const en: Dictionary = {
 	'schola.cite.doctors': 'by part, then question — the Summa’s own divisions',
 	'schola.what.prayers': 'The words the Church prays, with the Latin beside them.',
 	'schola.cite.prayers': 'by name; there are no numbers to cite',
-	// The only interface word in an artwork's caption. Everything else in one
-	// is a proper noun and a date, held beside the asset in `schola-art.ts`
-	// rather than in every dictionary — which is why the pictures cost two keys
-	// between them. Rendered in parentheses after the identification.
-	'schola.art.detail': 'detail',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.
@@ -698,6 +700,17 @@ export const en: Dictionary = {
 	// A picture, not a plate: these illustrate a landing page and there is
 	// nothing to enlarge and no title on screen.
 	'art.about': 'About this picture',
+	// The only interface word in an artwork's caption. Everything else in one is
+	// a proper noun and a date, held beside the asset in `landing-art.ts` rather
+	// than in every dictionary — which is why the pictures cost two keys between
+	// them. Rendered in parentheses after the identification.
+	//
+	// IT IS NOT A LIE AND IT IS NOT AN APOLOGY. Every banner is a horizontal
+	// band cut out of a much taller painting — Antonello's Jerome is 4731×6000
+	// and the band is 1892px tall, taken 2050px down — so a credit with no
+	// "(detail)" beside it would tell a reader the work itself is that shape.
+	// `assets/README.md` holds each crop box.
+	'art.detail': 'detail',
 	'colophon.typeTitle': 'The type',
 	'colophon.typeBody':
 		'Set in EB Garamond, Georg Duffner and Octavio Pardo\u2019s revival of the types Claude Garamont cut in the 1590s \u2014 the humanist tradition the Church has printed in since the Renaissance. Its Cyrillic is by the same hands but revives nothing: no Garamond Cyrillic was ever cut, so the Russian is set in a form drawn to sit beside the rest.',

@@ -558,18 +558,17 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   the Bible section, which recommends; the Catechism's pillars and the
   Compendium's parts have no successor and need none — `/catechismus` IS that
   plan. `site/docs/finding.md` keeps the three defects those routes paid for.
-- **Two passages advise; the note at the top wears the attribution and the
-  Bible section no longer does** (removed by direction, with the two purely
-  editorial paragraphs beside it). What is left leans on `Dei Verbum` 25 and
-  `Verbum Domini` 41 rather than on our say-so. It is the one place on the site
-  that advises without a mark — know that before adding a third.
-- **The mark is a SENTENCE, not a border.** Both passages wore an accent rule
-  down the inline start for a day; it read as a blockquote — the one shape that
-  means "somebody else said this" — around the two passages nobody else said,
-  and the indent made the page's longest prose its hardest to read. Neither is
-  set apart now. A visual convention that must be learned is worth less than a
-  line that explains itself, and worth less than nothing when the convention
-  already means something else.
+- **Two sections advise, and their HEADINGS are what mark them** — "If you are
+  new to this", "If you have never read the Bible". Every other section is
+  titled by what it lists, so a section titled with the reader's own question is
+  visibly answering it. Both earlier marks are gone: the accent rule read as a
+  blockquote around the two passages nobody else said, and the attribution line
+  was small print explaining a distinction the layout was failing to draw. A
+  convention that must be learned is worth less than a sentence that explains
+  itself, and a caption is worth less than a heading that makes it unnecessary.
+- **What is left leans on `Dei Verbum` 25 and `Verbum Domini` 41** rather than
+  on our say-so — the priority is the Council's, the hermeneutic is Benedict's,
+  and the three Gospels are offered with their arguments rather than ranked.
 - **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
   why that section can exist at all and why it has to be ours. `Dei Verbum` 25
   names a priority ("above all the Gospels") and no sequence; `Verbum Domini`
@@ -582,12 +581,22 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   remaining route failed it too. That route also shipped filtering on
   `document_kind` alone, which put two Vatican I constitutions at the head of
   it — a `kind` is not a provenance.
-- **Two of the four banners went with the routes they stood over**, and their
-  rows in `assets/README.md` are struck through rather than deleted: a URL, a
-  SHA-256 and a crop box bring a picture back with one command, which is what
-  makes deleting one cheap.
+- **ONE BANNER PER LANDING PAGE, and the two survivors swapped pages.**
+  Antonello's Jerome — a man alone in a room full of books — heads
+  `/bibliotheca`; Rembrandt's preaching Christ heads `/schola`, which is about
+  being taught. They were the other way round only because `/schola` was
+  illustrated first and took the best picture for its masthead. The other two
+  went with the routes they stood over, and their rows in `assets/README.md`
+  are struck through rather than deleted: a URL, a SHA-256 and a crop box bring
+  a picture back with one command, which is what makes deleting one cheap.
+- **A caption says "(detail)" because every banner IS one** — a horizontal band
+  cut out of a much taller painting (Jerome is 4731×6000; the band is 1892px
+  tall, taken 2050px down). Without it the credit would tell a reader the work
+  itself is that shape. `art.detail` and `art.about` are the two keys the whole
+  set costs, and they are `art.*` rather than `schola.*` because two pages read
+  them.
 - **The page's artworks are public domain and cost two dictionary keys.**
-  A caption is `Artist, Title, year. Institution.`, held in `schola-art.ts`;
+  A caption is `Artist, Title, year. Institution.`, held in `landing-art.ts`;
   no master is kept, because `assets/README.md`'s URL, SHA-256 and crop box
   re-derive a faithful crop exactly. Only ink on a white sheet may take
   `--plate-blend`, and `[data-mono]` desaturates every one.
