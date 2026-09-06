@@ -493,6 +493,18 @@
 			     they have gone in a circle. The `<h2>`s are real headings so the
 			     groups exist for a reader moving by heading. -->
 			<nav class="footer-nav" aria-label={t('nav.sections')}>
+				<div class="footer-group footer-pages">
+					<h2>{t('nav.pages')}</h2>
+					<ul>
+						{#each FOOTER_PAGES as item (item.href)}
+							<li>
+								<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+									{t(item.key)}
+								</a>
+							</li>
+						{/each}
+					</ul>
+				</div>
 				<div class="footer-group footer-works">
 					<h2>{t('nav.works')}</h2>
 					<!-- The catalogue's own list and order (`$lib/shelves.ts`), so
@@ -503,18 +515,6 @@
 							<li>
 								<a href={shelf.href} aria-current={isActive(shelf.href) ? 'page' : undefined}>
 									{t(shelf.navKey ?? shelf.titleKey)}
-								</a>
-							</li>
-						{/each}
-					</ul>
-				</div>
-				<div class="footer-group footer-pages">
-					<h2>{t('nav.pages')}</h2>
-					<ul>
-						{#each FOOTER_PAGES as item (item.href)}
-							<li>
-								<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
-									{t(item.key)}
 								</a>
 							</li>
 						{/each}
@@ -755,9 +755,10 @@
 		padding-block: 2.25rem 2.75rem;
 		text-align: start;
 		font-size: 0.8rem;
-		/* One number: the imprint's lines, the index's rows, and the mark's size
-		   are all measured from it. */
+		/* The imprint's lines, the index's rows, and the mark's size are all
+		   measured from these two. */
 		--imprint-leading: 1.9;
+		--motto-step: 1.1;
 	}
 
 	/* `.header-bar`'s container, restated. The two bands share a margin, not a
@@ -805,10 +806,7 @@
 	 * picks the break. No gutter inside a group — the head rule marks the
 	 * grouping, and the gap that has to survive is the one BETWEEN groups.
 	 */
-	.footer-works ul {
-		column-count: 3;
-	}
-
+	.footer-works ul,
 	.footer-pages ul {
 		column-count: 2;
 	}
@@ -853,21 +851,20 @@
 	 * `:global` because the class is passed into a component, and a `font-size`
 	 * because the SVG is declared at 1em.
 	 *
-	 * Sized FROM the lines beside it — two of them, at the footer's own
-	 * font-size, plus a little, so it stands slightly proud of the block and
-	 * follows it if either number moves. `1em` in `font-size` resolves against
-	 * the parent. Full ink where the lines are muted: a heraldic figure faded
-	 * to match small print reads as a watermark. It should not go below about
-	 * 36px, where the potent bars and crosslets start closing up.
+	 * Sized FROM the lines beside it — the leading times the two lines' own
+	 * sizes, plus a little, so it stands slightly proud of the block and stays
+	 * that way if any of those numbers moves. `1em` in `font-size` resolves
+	 * against the parent. Full ink where the lines are muted: a heraldic figure
+	 * faded to match small print reads as a watermark. It should not go below
+	 * about 36px, where the potent bars and crosslets start closing up.
 	 */
 	.site-footer :global(.footer-cross) {
-		font-size: calc(2 * var(--imprint-leading) * 1em + 0.4rem);
+		font-size: calc(var(--imprint-leading) * (1em + var(--motto-step) * 1em) + 0.4rem);
 		color: var(--color-text);
 	}
 
-	/* One size and one face across both lines, or the block reads as a heading
-	   with a caption. Leading does the spacing, so margins would be a second
-	   number saying the same thing. */
+	/* One face across both lines, and the leading does the spacing, so margins
+	   would be a second number saying the same thing. */
 	.site-footer p {
 		margin: 0;
 		color: var(--color-text-muted);
@@ -879,6 +876,7 @@
 	   where the subset dropped `smcp`, which is why it is not `all-small-caps`;
 	   the tracking is what makes capitals readable at this size. */
 	.motto {
+		font-size: calc(var(--motto-step) * 1em);
 		font-variant-caps: small-caps;
 		font-weight: 900;
 		letter-spacing: 0.06em;
@@ -908,11 +906,14 @@
 		}
 	}
 
-	/* Five tracks of names do not fit a phone; two do. */
+	/* Four tracks side by side do not fit a phone, so the GROUPS stack and each
+	   keeps its two — which is the right half to give up: a group's tracks are
+	   one list and the two groups are not. The single track sizes to the wider
+	   group and both stretch to it, so the head rules align on both edges. */
 	@media (max-width: 40rem) {
-		.footer-works ul,
-		.footer-pages ul {
-			column-count: 1;
+		.footer-nav {
+			grid-template-columns: minmax(0, auto);
+			gap: 1.5rem 0;
 		}
 	}
 </style>

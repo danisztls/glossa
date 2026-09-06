@@ -82,9 +82,9 @@ disclaims. `footer.notEndorsed` says **"the Holy See"** rather than "the
 Vatican", which names the state and not the authority. **It is as short as it
 is because the colophon is reachable from the same footer** — the link is the
 last entry of the index there. Take it out of the FOOTER and this sentence has
-to grow. The imprint's two lines keep one SIZE and one FACE, or the block reads
-as a heading with a caption; the motto is marked as a device instead, in small
-capitals at the top of the weight axis.
+to grow. The imprint's two lines keep one FACE, and the motto is marked as the
+device: small capitals, a tenth over the disclaimer's size, at the top of the
+weight axis.
 
 **Neither of the two marks beside it is encumbered, and that was checked rather
 than assumed.** _Ad maiorem Dei gloriam_ long ago passed into general Catholic

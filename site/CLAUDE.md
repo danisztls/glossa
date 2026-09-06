@@ -2870,11 +2870,12 @@ grow. Every dictionary carries it.
 
 **The imprint's lines are one chrome, and that is load-bearing rather than
 lazy.** Motto and disclaimer, one column, `.site-footer p` in one rule, spacing
-from `line-height` so the even leading is one number. Give either its own FACE
-or its own STEP and the block reads as a heading with a caption. The motto
-spends the other channels instead — small caps, tracking, `font-weight: 900`,
-which is the top of Source Sans 3's declared `200 900` axis and so an
-interpolation rather than a synthesised bold. **The build id was a third line
+from `line-height` so the even leading is one number. One FACE across both, and
+the motto is set as the device: small caps, tracking, a tenth over the
+disclaimer's size, and `font-weight: 900`, which is the top of Source Sans 3's
+declared `200 900` axis and so an interpolation rather than a synthesised bold.
+Both the step and the leading are custom properties because the mark's size is
+computed from them. **The build id was a third line
 here until 2026-09-06 and is now the foot of `AdvancedSheet`** — a dialog opens
 over the document already loaded, so it answers "did this update land" about the
 page in front of you exactly as the footer did, without spending a line of the
