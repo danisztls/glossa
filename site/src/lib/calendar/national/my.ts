@@ -44,7 +44,7 @@ export const MALAYSIA: NationalCalendar = {
 	observances: [
 		{
 			at: '09-15',
-			observance: { id: 'malaysia-day', names: { en: 'Malaysia Day' } }
+			observance: { id: 'malaysia-day', names: { en: 'Malaysia Day' }, replacesDay: true }
 		}
 	],
 	overrides: {

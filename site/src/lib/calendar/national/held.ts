@@ -25,23 +25,35 @@
  *
  * THE NUMBERS ARE THE EVIDENCE AND THEY ARE SMALL. Each is out of 1,095 days
  * (three years) per calendar: most differ on one to five, and the largest is
- * twelve. That is what makes holding them the right call rather than an
+ * eight. That is what makes holding them the right call rather than an
  * overreaction — the layers are close, and the remaining differences are the
  * kind that a person has to read a conference's own ordo to settle. Measured
  * 2026-09-06; re-run `npm run verify:calendar` after touching a layer and
  * update the row.
  *
- * A THIRD OF THE DIVERGENCES WERE THE DERIVATION'S AND NOT THE ENGINE'S
- * (2026-09-06, 155 days down to 110). `derive_national_calendars.py` wrote a
- * celebration's date as a standing `moves` row whenever it saw it away from
- * its general date, even where it had seen it ONCE — so England kept Saint
- * George on 28 April for ever because 23 April 2025 fell inside the Octave of
- * Easter, and Scotland kept Saint Andrew on 1 December because 30 November
- * 2025 was the First Sunday of Advent. Both are the engine's n. 60 to work
- * out. Scotland went from seventeen divergent days to one and Russia to none.
- * **The lesson is not about calendars: a generator that turns one
- * observation into a standing rule states something the evidence does not,
- * and the layers it writes then look like engine defects.**
+ * TWO FIFTHS OF THE DIVERGENCES WERE THE DERIVATION'S AND NOT THE ENGINE'S
+ * (2026-09-06, 155 days down to 96), and both defects were in the generator
+ * rather than in `year.ts`:
+ *
+ *   - **A standing `moves` row written from ONE year's sighting.** England
+ *     kept Saint George on 28 April for ever because 23 April 2025 fell
+ *     inside the Octave of Easter, and Scotland kept Saint Andrew on
+ *     1 December because 30 November 2025 was the First Sunday of Advent —
+ *     both the engine's n. 60 to work out, neither anything a conference did.
+ *     A standing move now needs every year that could have contradicted it,
+ *     and a year the celebration is absent from contradicts nothing. Scotland
+ *     went from seventeen divergent days to one, and Russia to none.
+ *   - **`replacesDay` computed and then dropped on the way to the file**,
+ *     which is worse than never computing it: the analysis had the answer,
+ *     `Observance` had the field and `year.ts` had the branch, and only the
+ *     renderer's line was missing — so Spain looked like the only country
+ *     whose Ember Days replace the ferial day, because Spain is hand-written.
+ *     Bosnia went from twelve to three.
+ *
+ * **The lesson is not about calendars: a generator that turns one observation
+ * into a standing rule, or computes an answer it does not print, writes
+ * layers that read as engine defects — and the engine is where everybody then
+ * looks.**
  *
  * The recurring causes, none of which a layer can state today:
  *
@@ -65,7 +77,7 @@ export const HELD_CALENDARS: Record<string, { days: number; names: number; feed:
 	ae: { days: 3, names: 0, feed: 'AE-arab0' },
 	ao: { days: 1, names: 0, feed: 'AO' },
 	au: { days: 4, names: 0, feed: 'AU' },
-	ba: { days: 12, names: 0, feed: 'BA' },
+	ba: { days: 3, names: 0, feed: 'BA' },
 	cv: { days: 8, names: 0, feed: 'CV' },
 	dk: { days: 3, names: 0, feed: 'DK-kobe0' },
 	ec: { days: 5, names: 0, feed: 'EC' },
@@ -74,13 +86,13 @@ export const HELD_CALENDARS: Record<string, { days: number; names: number; feed:
 	'gb-sct': { days: 1, names: 0, feed: 'QS' },
 	'gb-wls': { days: 6, names: 1, feed: 'QW' },
 	ht: { days: 3, names: 0, feed: 'HT' },
-	id: { days: 3, names: 0, feed: 'ID' },
+	id: { days: 1, names: 0, feed: 'ID' },
 	ie: { days: 2, names: 2, feed: 'IE' },
 	mo: { days: 3, names: 0, feed: 'MO' },
 	mp: { days: 3, names: 0, feed: 'MP' },
 	mt: { days: 3, names: 0, feed: 'MT' },
 	nz: { days: 1, names: 0, feed: 'NZ' },
-	pr: { days: 4, names: 1, feed: 'PR' },
+	pr: { days: 1, names: 1, feed: 'PR' },
 	pt: { days: 3, names: 0, feed: 'PT' },
 	rw: { days: 4, names: 0, feed: 'RW' },
 	sg: { days: 3, names: 0, feed: 'SG' },

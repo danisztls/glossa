@@ -1427,11 +1427,20 @@ def render(layer: dict, group: str | None = None) -> str:
             row = obs["row"]
             at = f"'{obs['mmdds'][0]}'" if len(obs["mmdds"]) == 1 else rule_literal(obs)
             colour = f", colour: '{row['colour']}'" if row["colour"] != "white" else ""
+            # `replacesDay` WAS COMPUTED AND THEN DROPPED ON THE WAY TO THE
+            # FILE, which is worse than never computing it: the analysis had
+            # the answer, `Observance` had the field, `year.ts` had the branch,
+            # and only this line was missing -- so every derived layer printed
+            # its Ember Days BESIDE the ferial day the feed prints them
+            # INSTEAD of, and Spain looked like the only country that does it
+            # because Spain is hand-written. Twelve of Bosnia's divergent days
+            # were this one omission.
+            replaces = ", replacesDay: true" if obs["replacesDay"] else ""
             body.append(
                 f"\t\t{{\n\t\t\tat: {at},"
                 f"\n\t\t\tobservance: {{ id: '{slug(row['name'])}', "
                 f"names: {names_literal({'en': row['name'], 'local': row['local']}, anchor)}"
-                f"{colour} }}\n\t\t}},"
+                f"{colour}{replaces} }}\n\t\t}},"
             )
         body.append("\t],")
 

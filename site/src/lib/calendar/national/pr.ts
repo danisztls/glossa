@@ -156,7 +156,8 @@ export const PUERTO_RICO: NationalCalendar = {
 				names: {
 					es: 'Témporas de Acción de Gracias y Petición por la Actividad Humana',
 					en: 'Thanksgiving Day'
-				}
+				},
+				replacesDay: true
 			}
 		}
 	],

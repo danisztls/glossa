@@ -437,7 +437,8 @@ export const LUXEMBOURG: NationalCalendar = {
 			observance: {
 				id: 'holy-spirit',
 				names: { fr: 'L’Esprit Saint', en: 'The Holy Spirit' },
-				colour: 'red'
+				colour: 'red',
+				replacesDay: true
 			}
 		}
 	],
