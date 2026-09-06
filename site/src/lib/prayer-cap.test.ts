@@ -20,10 +20,28 @@ describe('which line takes an initial', () => {
 		expect(caps.map((c) => c?.first ?? null)).toEqual(['O', null]);
 	});
 
-	it('gives a later block none, a further paragraph not being a second beginning', () => {
-		const lines = linesOf(verse('Hail Mary,<br>full of grace.'), verse('Holy Mary.'));
+	it("gives a prose prayer's later block none, a further paragraph being no second beginning", () => {
+		const lines = linesOf(
+			verse('Remember, O most gracious Virgin Mary.'),
+			verse('Inspired by this confidence.')
+		);
 		const later = lines.filter((line) => line.block === 1);
 		expect(later.map((line) => prayerCap(line, { dropCap: true }))).toEqual([null]);
+	});
+
+	/* The Regina Caeli's shape: a stanza, `Let us pray;`, then a collect. Each
+	   block is a movement the source set apart, so each opens with an initial —
+	   and every one of them at the one-line size, the prayer being verse even
+	   where the block it opens is a single run. */
+	it("gives every block of a verse prayer's an initial, at the one size", () => {
+		const lines = linesOf(
+			verse('Queen of heaven, rejoice.<br>The Son whom you merited to bear.'),
+			verse('Let us pray;'),
+			verse('O God, who through the resurrection of your Son.')
+		);
+		const caps = lines.map((line) => prayerCap(line, { dropCap: true }));
+		expect(caps.map((c) => c?.first ?? null)).toEqual(['Q', null, 'L', 'O']);
+		expect(caps.filter((c) => c !== null).every((c) => c.versal)).toBe(true);
 	});
 
 	it('takes the caller at its word when it says these lines open nothing', () => {
@@ -55,11 +73,24 @@ describe('which line takes an initial', () => {
 });
 
 describe('which size it takes', () => {
-	it('sets verse as a versal and a block printed as one run as a drop cap', () => {
+	it('reads the size off the PRAYER and never off the block it opens', () => {
 		const [broken] = linesOf(verse('Thy kingdom come.<br>Thy will be done.'));
 		const [run] = linesOf(verse('Remember, O most gracious Virgin Mary, that never was it known.'));
 		expect(prayerCap(broken, { dropCap: true })?.versal).toBe(true);
 		expect(prayerCap(run, { dropCap: true })?.versal).toBe(false);
+	});
+
+	/* The `Let us pray;` case, and the reason the size cannot be `line.verse`:
+	   a three-line cap on a four-word paragraph overflows it into the collect
+	   below and indents that, which is the bug the versal exists to prevent. */
+	it('keeps the versal on a single-run block inside a verse prayer', () => {
+		const lines = linesOf(verse('Queen of heaven.<br>Rejoice, alleluia.'), verse('Let us pray;'));
+		const cap = prayerCap(
+			lines.find((line) => line.block === 1)!,
+			{ dropCap: true }
+		);
+		expect(cap?.first).toBe('L');
+		expect(cap?.versal).toBe(true);
 	});
 });
 
@@ -85,14 +116,21 @@ describe('the initial and the apparatus on one line', () => {
 	const text = 'Our Father who art in heaven,';
 	const [line] = linesOf(verse(text));
 
-	/** `buildSegments`' shape, written out: the run before the quoted words,
-	 *  the words themselves, and the mark that follows them. */
+	/** `buildSegments`' shape, written out: the run before the quoted words, the
+	 *  words themselves, and the mark that follows them.
+	 *
+	 *  EMPTY RUNS ARE OMITTED, which is `buildSegments`' own `push` guard and
+	 *  not a tidying choice here — a lemma at character zero produces a
+	 *  `quoted` first segment and no empty `text` before it, and a fixture that
+	 *  wrote one would test a shape the real function cannot emit. */
 	function segmentsAt(at: number, quoted: string): Segment[] {
+		const before = text.slice(0, at);
+		const after = text.slice(at + quoted.length);
 		return [
-			{ kind: 'text', text: text.slice(0, at) },
+			...(before === '' ? [] : ([{ kind: 'text', text: before }] as Segment[])),
 			{ kind: 'quoted', text: quoted, mark: 0 },
 			{ kind: 'mark', mark: 0 },
-			{ kind: 'text', text: text.slice(at + quoted.length) }
+			...(after === '' ? [] : ([{ kind: 'text', text: after }] as Segment[]))
 		];
 	}
 
@@ -103,18 +141,38 @@ describe('the initial and the apparatus on one line', () => {
 		expect(segmentText(capSegments(segments, cap.consumed))).toBe(text.slice(1));
 	});
 
-	it('stands down where the note quotes the opening word itself', () => {
-		expect(prayerCap(line, { dropCap: true, segments: segmentsAt(0, 'Our Father') })).toBeNull();
+	/* The Creed and the Ave open on their own first lemma — `I believe in God`
+	   and `Hail Mary`, both from character zero — so this is the case that
+	   decides whether three of the four glossed prayers have an initial at all.
+	   The letter comes out of the quoted run and the run KEEPS ITS KIND, so the
+	   rest of it still lights when the note opens. */
+	it('takes its letter out of the quoted words when they open the line', () => {
+		const segments = segmentsAt(0, 'Our Father');
+		const cap = prayerCap(line, { dropCap: true, segments })!;
+		expect(cap.first).toBe('O');
+		const cut = capSegments(segments, cap.consumed);
+		expect(cut[0]).toEqual({ kind: 'quoted', text: 'ur Father', mark: 0 });
+		expect(cap.lead + cap.first + segmentText(cut)).toBe(text);
 	});
 
-	it('stands down where the quoted words begin inside the letter', () => {
-		// A first segment shorter than the cap consumed: slicing it would eat
-		// into the words the note is lighting.
+	/* The two guards, and neither shape is reachable from today's corpus — a
+	   prayer anchor always quotes at least a word, and `buildSegments` never
+	   opens with a mark. They are here because the alternative to refusing is
+	   slicing past the run the cap owns and into somebody else's, which is the
+	   failure mode that loses a word of a prayer without erring. */
+	it('stands down where the opening run is shorter than the letter', () => {
 		const segments: Segment[] = [
-			{ kind: 'text', text: '' },
-			{ kind: 'quoted', text: 'Our', mark: 0 },
+			{ kind: 'quoted', text: '', mark: 0 },
 			{ kind: 'mark', mark: 0 },
-			{ kind: 'text', text: text.slice(3) }
+			{ kind: 'text', text }
+		];
+		expect(prayerCap(line, { dropCap: true, segments })).toBeNull();
+	});
+
+	it('stands down where the opening run carries no text at all', () => {
+		const segments: Segment[] = [
+			{ kind: 'mark', mark: 0 },
+			{ kind: 'text', text }
 		];
 		expect(prayerCap(line, { dropCap: true, segments })).toBeNull();
 	});

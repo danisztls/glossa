@@ -2343,11 +2343,17 @@ new is this:
   apparatus's first mark tends to fall, and the four glossed English prayers
   are the Pater, the Ave and both Creeds, every one of them verse. So "a
   glossed line takes no initial" would have been the whole feature switched
-  off. `prayerCap` sets both wherever the first segment is plain text — the
-  proof that the note quotes nothing the cap promotes — and stands down where
-  it is not. `prayer-cap.ts` is a module for this project's standing reason:
-  the slice is an offset into a string `buildSegments` has already cut, and
-  `.svelte` files are where logic goes to be untested.
+  off — and refusing only a CONTENDED opening was barely better, three of the
+  four opening on their own first lemma (`I believe in God`, `Hail Mary`, both
+  from character zero). `prayerCap` takes the letter out of whatever run opens
+  the line, quoted words included, and `capSegments` keeps that run's kind so
+  the rest of it still lights. **Which blocks take one and at which size are
+  both properties of the PRAYER** (`opensInVerse`, `prayer-lines.ts`), never of
+  the block: sized block by block, `Let us pray;` gets a three-line cap that
+  overflows four words into the collect below. `prayer-cap.ts` is a module for
+  this project's standing reason: the slice is an offset into a string
+  `buildSegments` has already cut, and `.svelte` files are where logic goes to
+  be untested.
 
 **And the prayers' apparatus rides `essentials`, which is automatic** —
 the one commentary in the corpus that may. `WAVE_FOR_KIND`'s own rule puts a

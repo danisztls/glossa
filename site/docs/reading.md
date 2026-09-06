@@ -22,6 +22,22 @@ two constants from the faces' real vertical metrics rather than by eye). The
 property that makes it safe is not the size but the box: at one line the float
 ends inside the `<p>` that opened it, and a float only reaches what follows it.
 
+**Both halves of that are a property of the PRAYER, never of the block.** A
+verse prayer takes an initial at every block — a stanza, then `Let us pray;`,
+then a collect are three movements the source set apart — and a prose prayer
+only at its first, a second paragraph of one run being no second beginning.
+Sizing block by block instead is what puts a three-line cap on `Let us pray;`,
+whose float then overflows four words into the collect and indents it.
+
+**And the initial takes its letter out of the apparatus's own words when they
+open the line.** Refusing a contended opening sounds safer and is decided by
+where somebody else's quotation happens to start: three of the four glossed
+English prayers open on their first lemma (`I believe in God`, `Hail Mary`),
+so it withheld the initial from the Creed and the Ave while the Pater, whose
+lemma begins four characters in, kept one. The quoted run keeps its kind, so it
+still lights when the note opens — the highlight simply begins after the
+versal, which is where a printed edition begins it.
+
 **A label is not glossed by its letter.** The prayers print `V.`/`R.` and
 `D.`/`C.` for the same two parts, so the explanation behind each hangs off the
 block's kind — `TermGloss`, the same dotted underline `/calendarium` teaches on

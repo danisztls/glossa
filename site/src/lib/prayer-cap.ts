@@ -33,28 +33,40 @@ export interface PrayerCap extends DropCapSplit {
 }
 
 /**
- * VERSE TAKES A ONE-LINE VERSAL AND PROSE TAKES THE THREE-LINE CAP, which is
- * the same initial at the two sizes the setting can carry.
+ * A PRAYER SET IN VERSE TAKES A ONE-LINE VERSAL AT EVERY BLOCK; A PRAYER SET
+ * AS PROSE TAKES THE THREE-LINE CAP ONCE. Both halves are decided by
+ * `opensInVerse`, which is a property of the PRAYER — never by `line.verse`,
+ * which is a property of the block this line came out of.
  *
- * A drop cap is sized in LINES and the lines beside it indent around it — right
- * where those lines are the viewport's, wrong where they are the source's.
- * `PrayerBlocks` gives every printed line a `<p>` of its own and a float
- * overflows its own paragraph, so the three-line cap reached down into the two
- * `<p>`s below it: the Pai Nosso indented `santificado` and `venha` until they
- * read as continuations of the first line. At one line the float ends inside
- * the paragraph that opened it and there is nothing left for it to indent.
+ * The SIZE is what that first buys. A drop cap is sized in LINES and the lines
+ * beside it indent around it — right where those lines are the viewport's,
+ * wrong where they are the source's. `PrayerBlocks` gives every printed line a
+ * `<p>` of its own and a float overflows its own paragraph, so the three-line
+ * cap reached down into the two `<p>`s below it: the Pai Nosso indented
+ * `santificado` and `venha` until they read as continuations of the first line.
+ * At one line the float ends inside the paragraph that opened it and there is
+ * nothing left for it to indent.
  *
- * `line.verse` IS the size, and nothing else distinguishes the two: it says the
- * source broke this block into lines, and a line the source printed is the
- * thing a three-line cap would indent (`prayer-lines.ts`).
+ * **And a verse prayer's later blocks are sized by the prayer for a reason the
+ * line cannot see.** The Regina Caeli is a stanza, then `Let us pray;`, then a
+ * collect — two single-run blocks under verse. Sized line by line those two
+ * would take the three-line cap, and the one on `Let us pray;` would overflow
+ * its four-word paragraph straight into the collect below and indent it, which
+ * is the bug this whole rule exists to prevent. An initial's size belongs to
+ * the setting it stands in, not to the block it happens to open.
  *
- * ONE INITIAL PER PRAYER EITHER WAY, on the opening line of the opening block.
- * A versal on every capitalised line was tried on 2026-09-03 and is the wrong
+ * WHICH BLOCKS is the other half, and the two settings genuinely differ. A
+ * prose prayer's second block is a further paragraph of one run — not a second
+ * beginning, which is `ProseBlocks`'s rule for excluding a `quote` block,
+ * arrived at from the other side. A verse prayer's second block is a MOVEMENT:
+ * the stanza ends, the rubric turns, the collect begins, and the source set
+ * each apart on purpose. So a verse prayer takes an initial at every block's
+ * first line and a prose prayer only at its first.
+ *
+ * NOT ON EVERY CAPITALISED LINE, which was tried on 2026-09-03 and is the wrong
  * reading of the device: the lowercase rule fires it on about one line in five,
  * so it lands mid-stanza wherever a line happens to open on a capital rather
- * than where the prayer begins. A later block is a further paragraph of the
- * same prayer, not a second beginning — which is `ProseBlocks`'s rule for
- * excluding a `quote` block, arrived at from the other side.
+ * than where something begins.
  *
  * `splitDropCap` decides the rest for the text itself: it declines a digit, a
  * lowercase opening and a joining script ($lib/dropcap.ts).
@@ -83,7 +95,8 @@ export function prayerCap(
 	// FR and PT Angelus); every other opening block is prose, and since the
 	// initial goes on the opening block alone, such a prayer takes none at all.
 	if (!opts.dropCap || line.kind !== 'prose') return null;
-	if (!(line.block === 0 && line.first)) return null;
+	if (!line.first) return null;
+	if (!(line.block === 0 || line.opensInVerse)) return null;
 	// The split comes off the line's first TEXT run rather than off its markup:
 	// a line opening `<i>Sancta Maria</i>` would otherwise put a tag inside the
 	// initial.
@@ -92,24 +105,28 @@ export function prayerCap(
 	const split = splitDropCap(head.text);
 	if (split.first === '') return null;
 	const consumed = head.text.length - split.rest.length;
-	// AND NOT WHERE A NOTE QUOTES THE OPENING WORD ITSELF. The initial and the
-	// apparatus contend over exactly one thing: the characters the cap promotes.
-	// The segments say whether they are contended — a first segment that is
-	// plain text means the first lemma begins after them, and the two devices
-	// are then simply in different places on the same line. Where the lemma
-	// starts at the head, the letter would have to be lifted out of the words a
-	// note is lighting, and the flourish stands down instead: it is an ornament
-	// and the mark is the apparatus.
+	// THE INITIAL IS LIFTED OUT OF WHATEVER RUN OPENS THE LINE, THE WORDS A NOTE
+	// QUOTES INCLUDED, and the corpus is what settled that. Three of the four
+	// glossed English prayers open on their own first lemma — the Creed's first
+	// note quotes `I believe in God`, the Ave's quotes `Hail Mary`, both from
+	// character zero — so refusing a contended opening refused the initial on
+	// three of the four best-known prayers in the collection while the Pater,
+	// whose first lemma begins four characters in, kept one. A rule whose
+	// outcome is decided by where somebody else's quotation happens to start is
+	// not a typographic rule.
 	//
-	// IT USED TO STAND DOWN FOR ANY GLOSSED LINE, which was safe while verse
-	// took no initial at all and became the whole of the feature once it did —
-	// the four glossed English prayers (`commentary.preces.en`) are the Pater,
-	// the Ave and both Creeds, every one of them verse.
+	// So the cap takes its letter and the lemma keeps the rest: the highlight a
+	// note draws when it opens begins after the initial, which is what a printed
+	// edition does — a versal belongs to the page, not to the sentence it opens,
+	// and it is the most visible thing on the line either way. What is still
+	// refused is an opening the cap cannot be taken out of at all: a first
+	// segment carrying no text (a mark at position zero), or one shorter than
+	// the letter, where slicing would reach into the run after it.
 	if (opts.segments) {
-		const first = opts.segments[0];
-		if (first?.kind !== 'text' || first.text.length < consumed) return null;
+		const first = headOf(opts.segments);
+		if (first === undefined || first.length < consumed) return null;
 	}
-	return { ...split, versal: line.verse, consumed };
+	return { ...split, versal: line.opensInVerse, consumed };
 }
 
 /**
@@ -121,12 +138,23 @@ export function capNodes(line: PrayerLine, cap: PrayerCap): PrayerLine['nodes'] 
 }
 
 /**
+ * The opening run's text, whatever KIND of run it is — plain text, an edition's
+ * lemma, or the words a commentary quotes. `mark` and `note` carry none and
+ * answer undefined, which is what `prayerCap` refuses on.
+ */
+function headOf(segments: Segment[]): string | undefined {
+	const head = segments[0];
+	return head && 'text' in head ? head.text : undefined;
+}
+
+/**
  * The same, for a line the apparatus has already cut. `prayerCap` has
- * guaranteed the first segment is text and long enough, so this can only ever
- * shorten a run it owns.
+ * guaranteed the first run carries text and is long enough, so this can only
+ * ever shorten a run it owns — and it keeps that run's KIND, so a lemma the cap
+ * came out of still lights the rest of itself when its note opens.
  */
 export function capSegments(segments: Segment[], consumed: number): Segment[] {
 	const [head, ...rest] = segments;
-	if (head?.kind !== 'text') return segments;
+	if (!head || !('text' in head)) return segments;
 	return [{ ...head, text: head.text.slice(consumed) }, ...rest];
 }

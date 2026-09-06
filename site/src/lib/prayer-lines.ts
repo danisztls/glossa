@@ -36,6 +36,17 @@ export interface PrayerLine {
 	 *  below is the source's own, not the viewport's. False for a block printed
 	 *  as one run, whose only lines are wraps. */
 	verse: boolean;
+	/**
+	 * The prayer's OPENING block was broken into lines, and so the prayer is set
+	 * as verse.
+	 *
+	 * A fact about the whole prayer rather than about this line, which is
+	 * exactly why it is a field: a compare cell IS one line, and nothing in a
+	 * lone line says what the block above it looked like. It decides both halves
+	 * of the initial — which blocks take one, and at which of the two sizes —
+	 * see `prayer-cap.ts`.
+	 */
+	opensInVerse: boolean;
 	/** Index of the block this line came from. Zero is the prayer's opening,
 	 *  which is the one place a block printed as one run takes an initial. */
 	block: number;
@@ -66,8 +77,12 @@ function escapeText(text: string): string {
  */
 export function prayerLines(blocks: PrayerBlock[]): PrayerLine[] {
 	const out: PrayerLine[] = [];
+	// Read off the opening block, which is walked before any line is pushed, so
+	// every line carries it rather than half of them.
+	let opensInVerse = false;
 	blocks.forEach((block, index) => {
 		const ls = splitLines(parseInlineHtml(block.html ?? escapeText(block.text)));
+		if (index === 0) opensInVerse = ls.length > 1;
 		ls.forEach((nodes, i) => {
 			out.push({
 				n: out.length,
@@ -76,6 +91,7 @@ export function prayerLines(blocks: PrayerBlock[]): PrayerLine[] {
 				labelled: block.label !== undefined,
 				nodes,
 				verse: ls.length > 1,
+				opensInVerse,
 				block: index,
 				first: i === 0,
 				last: i === ls.length - 1
