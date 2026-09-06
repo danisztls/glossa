@@ -607,13 +607,36 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   the page before the page said anything, and delayed the one sentence a
   newcomer needs by a banner's height. `/bibliotheca` keeps the same component
   as a masthead: one `ArtFigure`, two rules around it.
-- **AN ACCENT IS THE CHEAPEST STRUCTURE ON A LANDING PAGE.** Four sections
-  divided by four hairlines in the same grey as every card border is a page with
-  no landmarks; the section rules, the stage numerals, the citation specimens
-  and the cards' top edges all take `--color-accent`, mixed toward the border or
-  the ground rather than filled. **No new hue** — `--color-initial`,
-  `--color-apparatus` and `--color-bookmark` carry meaning site-wide and
-  spending one decoratively here would cost that meaning everywhere.
+- **AN ACCENT IS THE CHEAPEST STRUCTURE ON A LANDING PAGE.** The section rules
+  and the chrome icons take `--color-accent`, mixed toward the border or the
+  ground rather than filled — four sections divided by four hairlines in the
+  same grey as every card border is a page with no landmarks in it.
+- **THE SHELF LIST TAKES `--pigment-*`, THE SAME TOKENS `CitedBy` DOTS ITSELF
+  WITH** (2026-09-06), so a work wears one colour wherever the site names it.
+  Eight rows whose icons were eight identical red glyphs made a stripe down the
+  gutter that said nothing; a colour per shelf makes the mark carry the row, and
+  the Bible section is minium throughout because every card in it opens the
+  Bible. The row carries its key as `data-shelf` and the style block maps that
+  to a token, which is `CitedBy`'s own arrangement — the map has to exist
+  because this page's keys are its own (`social`, `law`) and the panel's are
+  citer families. `--pigment-bible` was added for it; the Compendium borrows the
+  Catechism's, being the same teaching abridged.
+- **THE FAMILY SHIPPED TWICE IN ONE DAY, ONCE FROM EACH SIDE, AND MAIN'S WON.**
+  `/schola` had its own `--pigment-*` keyed by pigment NAME with four hand-kept
+  palette blocks; `CitedBy`'s is keyed by shelf and mixes toward each theme's
+  `--color-text-muted`, so one definition serves four themes and `data-mono`
+  needs one dial rather than four rules. Convergence cost the guide nothing it
+  wanted. **Two independent designs reaching for `--pigment-*` in one afternoon
+  is what a shared vocabulary looks like when it is right and what a collision
+  looks like when it is not** — check `tokens.css` before opening a token
+  family, not after.
+- **WHERE A PIGMENT MAY GO IS ARITHMETIC.** The family resolves to 3.4-4.2:1 on
+  a dark ground, which is a decoration's contrast and not a text colour's — so
+  `/schola` spends it on a 1.35rem icon, on the 1.6rem serif stage figures
+  (large text, a 3:1 floor it clears) and on card borders and washes, and its
+  words and notation chips stay `--color-accent`. Hue is the second channel and
+  never the first: every mark sits beside the work's own name, which is what
+  lets `data-mono` turn the set off and lose nothing.
 - **A CARD'S NAME IS ACCENT AT REST, because the card IS a link.** Holding the
   colour back for hover reads on a touch screen — where there is no hover — as a
   paragraph in a box.
@@ -1580,12 +1603,16 @@ holds the rationale. What must be true before touching it:
   only some kinds would leave the rest permanently on. Every label is a key a
   page already uses, so a family costs no new string in 37 dictionaries.
 - **The family dots are ORNAMENT, and the shelf is named beside every one of
-  them.** Seven `--pigment-*` tokens, each `color-mix(in oklab, <seed> 50%,
+  them.** Eight `--pigment-*` tokens, each `color-mix(in oklab, <seed> 50%,
 var(--color-text-muted))` so one definition serves four themes and
-  `data-mono` collapses all seven with `--pigment-strength: 0%`. Judge a seed
-  by what it MIXES to — a near-neutral one resolves to no colour at all. If a
-  pigment ever becomes the only thing saying which work a row is, it owes
-  WCAG 1.4.1 and cannot pay it.
+  `data-mono` collapses all of them with `--pigment-strength: 0%`. Judge a seed
+  by what it MIXES to — a near-neutral one resolves to no colour at all — and by
+  how far that lands from the rest (`--pigment-bible`'s minium is 4.7 from the
+  Catechism's red; vermilion, the obvious first try, was 1.2). If a pigment ever
+  becomes the only thing saying which work a row is, it owes WCAG 1.4.1 and
+  cannot pay it. `src/lib/pigments.test.ts` is the bookkeeping: the set, the
+  mix, the mono dial, and no `var(--pigment-…)` naming a token that does not
+  exist.
 - **Commentary starts switched OFF and is the only family that does** — 36,995
   of the index's 84,775 citers, and the one family already on the page under
   its own marks. So the buttons are drawn whenever pressing one would change

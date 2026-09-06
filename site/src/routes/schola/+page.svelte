@@ -177,6 +177,32 @@
 	 *
 	 * Each is titled by the key its own landing page is titled by, so no name
 	 * on this page is written twice.
+	 *
+	 * ## EACH ROW CARRIES A PIGMENT, AND THE PIGMENT IS THE SHELF
+	 *
+	 * Eight rows whose icons were eight identical red glyphs made a stripe
+	 * down the gutter that said nothing — the mark was pure decoration beside
+	 * a name that was doing all the work. A colour per shelf makes the mark
+	 * carry the row.
+	 *
+	 * **THE PIGMENT IS `tokens.css`'s, THE SAME ONE `CitedBy` DOTS ITSELF
+	 * WITH**, so a work wears one colour wherever the site names it and a
+	 * shelf that gains a pigment gains it in both places at once. The row
+	 * carries its key as `data-shelf` and the style block maps that to a
+	 * token, which is `CitedBy`'s own arrangement one page over — the map has
+	 * to be written somewhere, because this page's keys are its own (`social`,
+	 * `law`) and the panel's are citer families. The Compendium is the one row
+	 * that borrows: it takes the Catechism's, being the same teaching
+	 * abridged, which is what `catechismPairLang` says everywhere else in this
+	 * codebase.
+	 *
+	 * **WHERE A PIGMENT MAY GO IS ARITHMETIC, NOT TASTE.** The family is
+	 * mixed halfway to `--color-text-muted` and resolves to 3.4-4.2:1 on a
+	 * dark ground, so it is a decoration and `tokens.css` says so. This page
+	 * spends it on the row's 1.35rem icon — beside the work's own name, so
+	 * nothing is told apart by colour alone — and on the Bible section's
+	 * stage figures and card edges. The words and the notation chips stay
+	 * `--color-accent`, which owes 4.5:1 and clears it.
 	 */
 	const WORKS = [
 		{
@@ -438,40 +464,42 @@
 		<p class="section-lede">{t('schola.books.lede')}</p>
 		<ul class="book-grid">
 			{#each works as work (work.key)}
-				<li class="book">
+				<li class="book" data-shelf={work.key}>
 					<span class="book-icon"><Icon name={work.icon} /></span>
 					<div class="book-text">
+						<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
+						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
 						<!--
-							THE SPECIMEN SITS ON THE TITLE LINE, not at the foot of the
-							card, and that is what makes this section teachable at a
-							glance: read down the trailing edge and you get `Jn 3:16`,
-							`CCC 1234`, `Comp. 123`, `Dei Verbum 12`, `CSDC 123`,
-							`Can. 123`, `STh I, 12` — the page's whole lesson in one
-							sweep, beside the work each belongs to.
+							THE SPECIMEN IS ON THE "CITED AS" ROW, and it sat on the title
+							line until 2026-09-06. Both put it on the trailing edge — the
+							column of notations down the grid is the point, and it is the
+							page's whole lesson in one sweep — but on the title line it was
+							a chip beside a work's NAME, which is the one thing on the row
+							it is not an example of. Here it stands at the end of the
+							sentence that says what its number counts, which is the pair a
+							reader has to hold together: `CCC 1234` and "by paragraph
+							number, running unbroken from the first page to the last".
 
-							It also fixes the sentence underneath. "Cited as" used to be a
-							label, then a chip, then an em dash, then a clause — four
-							pieces of one line, wrapping badly. With the chip gone the
-							label and the clause are simply a sentence: "Cited as by
-							paragraph number, running unbroken from the first page to the
-							last" reads as English, which the row never did before.
+							The label and the clause are still a sentence and the chip
+							does not break it, because the chip is not IN it — it is
+							pushed to the far edge of the same line. "Cited as" was a
+							label, then a chip, then an em dash, then a clause once, which
+							wrapped badly and read as nothing.
 
 							The chip is not a link and the row's heading is: one door per
 							row, and it opens on the work rather than on a paragraph of
-							it. The "Cited as" line runs for every work, including the
-							one with no specimen — prayers are cited by name, and that
-							sentence is the whole answer for them.
+							it. The row runs for every work, including the one with no
+							specimen — prayers are cited by name, and that sentence is the
+							whole answer for them.
 						-->
-						<div class="book-head">
-							<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
+						<p class="book-cite">
+							<span>
+								<span class="cite-label">{t('schola.cite.label')}</span>
+								{t(`schola.cite.${work.key}`)}
+							</span>
 							{#if specimens[work.key]}
 								<span class="cite-example">{specimens[work.key]}</span>
 							{/if}
-						</div>
-						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
-						<p class="book-cite">
-							<span class="cite-label">{t('schola.cite.label')}</span>
-							{t(`schola.cite.${work.key}`)}
 						</p>
 					</div>
 				</li>
@@ -552,7 +580,11 @@
 		numbering it is clearer than pretending it has none.
 	-->
 	{#if showBiblePath}
-		<section class="suggestion" aria-labelledby="bible-heading">
+		<!-- Minium throughout, because every card in it opens the Bible: the
+		     colour is the shelf, so a section that is entirely one shelf is
+		     entirely one colour. It is the pigment the Scripture row above
+		     wears, which is where a reader can have learnt it. -->
+		<section class="suggestion" data-shelf="scripture" aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
 			<p class="section-lede">{t('schola.bible.library')}</p>
 
@@ -760,8 +792,10 @@
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		color: var(--color-accent);
+		color: var(--pigment, var(--color-accent));
 		margin-inline-start: -0.06em;
+		/* 1.6rem is large text: a 3:1 floor, which this family clears
+		   everywhere. `.pick-name` two rules down is 1.1rem and does not. */
 	}
 
 	.stage-why {
@@ -809,7 +843,7 @@
 		block-size: 100%;
 		padding: 0.8rem 1rem 0.9rem;
 		border: 1px solid var(--color-border);
-		border-block-start: 2px solid color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+		border-block-start: 2px solid color-mix(in srgb, var(--pigment) 45%, var(--color-border));
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 		color: var(--color-text);
@@ -818,8 +852,8 @@
 
 	.pick:hover,
 	.pick:focus-visible {
-		border-color: var(--color-accent);
-		background: color-mix(in srgb, var(--color-accent) 5%, var(--color-bg-elevated));
+		border-color: var(--pigment);
+		background: color-mix(in srgb, var(--pigment) 5%, var(--color-bg-elevated));
 	}
 
 	/*
@@ -828,6 +862,17 @@
 	 * hover, which reads on a touch screen — where there is no hover — as seven
 	 * paragraphs in boxes. Every other link on this site is coloured before it
 	 * is pointed at.
+	 */
+	/*
+	 * ACCENT AND NOT THE SHELF'S PIGMENT, though the card's edge is that
+	 * pigment: 1.1rem is not large text, so this owes 4.5:1, and the pigment
+	 * family is mixed halfway to the muted grey and does not clear it on a
+	 * dark ground. The rule above the name is what carries the colour, and a
+	 * border owes nothing.
+	 *
+	 * It is coloured AT REST rather than on hover, because the card is a link
+	 * and nothing else about it said so — holding the colour back reads on a
+	 * touch screen, where there is no hover, as a paragraph in a box.
 	 */
 	.pick-name {
 		font-family: var(--font-serif);
@@ -868,6 +913,7 @@
 	 */
 	.source-mark {
 		margin-inline-start: 0.15em;
+		color: var(--color-accent);
 		font-size: 0.75em;
 		vertical-align: super;
 		line-height: 0;
@@ -974,6 +1020,49 @@
 	 * row look like a control. Nudged down by the cap height so it sits on the
 	 * title's optical centre rather than on its baseline box.
 	 */
+	/*
+	 * THE SHELF'S PIGMENT, resolved once per row and read by the icon, the
+	 * stage figures and the card edges below. `CitedBy`'s own list is the
+	 * model, down to being a set of attribute selectors rather than a value
+	 * threaded through the markup: a colour that has to be interpolated into
+	 * a `style` attribute is a colour no stylesheet can find.
+	 *
+	 * The Compendium takes the Catechism's — the same teaching abridged — and
+	 * is the only row that shares.
+	 */
+	[data-shelf='scripture'] {
+		--pigment: var(--pigment-bible);
+	}
+	[data-shelf='catechism'],
+	[data-shelf='compendium'] {
+		--pigment: var(--pigment-catechism);
+	}
+	[data-shelf='magisterium'] {
+		--pigment: var(--pigment-magisterium);
+	}
+	[data-shelf='social'] {
+		--pigment: var(--pigment-social-doctrine);
+	}
+	[data-shelf='law'] {
+		--pigment: var(--pigment-canon-law);
+	}
+	[data-shelf='doctors'] {
+		--pigment: var(--pigment-doctors);
+	}
+	[data-shelf='prayers'] {
+		--pigment: var(--pigment-prayer);
+	}
+
+	/*
+	 * Declared twice on purpose, which is the trick `CitedBy`'s dot uses: a
+	 * browser without `color-mix()` drops the pigment as invalid and keeps
+	 * the accent, so the icon is the house red rather than the body colour.
+	 */
+	.book-icon {
+		color: var(--color-accent);
+		color: var(--pigment, var(--color-accent));
+	}
+
 	.feature-icon,
 	.book-icon {
 		flex: 0 0 auto;
@@ -994,9 +1083,12 @@
 	 * the list would have to keep in step with its own `href` field. With no
 	 * border left to light, the mark is what answers.
 	 */
-	.book:hover .book-icon,
 	.feature:has(a):hover .feature-icon {
 		color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
+	}
+
+	.book:hover .book-icon {
+		color: color-mix(in srgb, var(--pigment) 70%, var(--color-text));
 	}
 
 	/*
@@ -1018,30 +1110,11 @@
 		min-width: 0;
 	}
 
-	/*
-	 * The title and its specimen on one line, the specimen pushed to the
-	 * trailing edge so the notations form a column of their own down the grid.
-	 * Baselines, not boxes: a serif title and a sans chip have different box
-	 * heights and agreeing on the line they sit on is what makes the pair read
-	 * as one row.
-	 */
-	.book-head {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 0.75rem;
-		margin-block-end: 0.25rem;
-	}
-
 	.feature h3,
 	.book h3 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		margin: 0 0 0.2rem;
-	}
-
-	.book-head h3 {
-		margin: 0;
 	}
 
 	.feature p,
@@ -1059,7 +1132,21 @@
 	 * box is what says "put this in the box at the top"; tabular figures for
 	 * the same reason the step gutter has them.
 	 */
+	/*
+	 * The sentence and its specimen on one line, the specimen pushed to the
+	 * trailing edge so the notations form a column of their own down the grid.
+	 * Baselines, not boxes: a sentence at 0.8rem and a chip with its own
+	 * padding have different box heights, and agreeing on the line they sit on
+	 * is what makes the pair read as one row rather than as two things.
+	 *
+	 * `gap` is generous because the two are not a phrase — the sentence ends,
+	 * and the specimen is an exhibit beside it.
+	 */
 	.book-cite {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
 		margin: 0.5rem 0 0;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);

@@ -234,13 +234,59 @@ masthead — one `ArtFigure`, two rules around it.
 
 **AN ACCENT IS THE CHEAPEST STRUCTURE A LANDING PAGE HAS.** Four sections
 divided by four hairlines in the same grey as every card border leaves the eye
-nothing to count. The section rules, the stage numerals, the citation specimens
-and the cards' top edges all take `--color-accent` — mixed toward the border or
-toward the ground, never filled, because a solid accent chip reads as a button.
-**No new hue**: `--color-initial`, `--color-apparatus` and `--color-bookmark`
-carry meaning across the whole site, and spending one decoratively here would
-cost that meaning everywhere. A card's NAME is accent at rest rather than on
+nothing to count. The section rules and the chrome icons take `--color-accent` —
+mixed toward the border or toward the ground, never filled, because a solid
+accent chip reads as a button. A card's NAME is coloured at rest rather than on
 hover, because the card is a link and a touch screen has no hover.
+
+**AND THE SHELF LIST TAKES A PIGMENT PER SHELF** (2026-09-06). Eight rows whose
+icons were eight identical red glyphs made a stripe down the gutter that carried
+nothing: the mark was decoration beside a name doing all the work. Now the icon,
+the specimen chip and the row's hover all take that shelf's colour, and the
+Bible section further down is vermilion throughout — every card in it opens the
+Bible, so a reader who met vermilion on the Scripture row meets it again where
+the suggestion sends them.
+
+**They are the site's own `--pigment-*`, and that family shipped twice in one
+day.** `/schola`'s first version defined eight of them keyed by PIGMENT NAME —
+azurite, verdigris, folium, iron gall — with a hand-kept block per palette
+family; `CitedBy`'s panel, landing on main the same afternoon, defined seven
+keyed by SHELF, each `color-mix(in oklab, <seed> 50%, var(--color-text-muted))`
+so that one definition serves four themes and `data-mono` needs a single dial
+(`--pigment-strength: 0%`) rather than four rules. Main's is better on both
+counts and already had a consumer, so the guide converged onto it and lost
+nothing it wanted. **Two independent designs reaching for the same token prefix
+in one afternoon is what a shared vocabulary looks like when it works and what a
+collision looks like when it does not**; the lesson is to read `tokens.css`
+before opening a family, not after.
+
+**`--pigment-bible` is what the guide added**, because the panel had no shelf
+for Scripture: minium, red lead, the pigment a rubricator opened a book with and
+the one "miniature" is named after. A seed is judged by what it MIXES to, never
+by the literal — minium resolves 4.7 (OKLab ×100) from the Catechism's red,
+wider than the family's own closest pair at 4.3, where vermilion, the obvious
+first try, resolves 1.2 away and would have given two shelves one colour. The
+Compendium takes no seed and wears the Catechism's, being the same teaching
+abridged.
+
+**WHERE A PIGMENT MAY GO IS ARITHMETIC, NOT TASTE.** Mixed halfway to the muted
+grey, the family resolves to 3.4–4.2:1 on a dark ground — a decoration's
+contrast, which is exactly what `tokens.css` says it is. So the guide spends it
+on the row's 1.35rem icon, on the 1.6rem serif figures that number the stages
+(large text, a 3:1 floor the family clears), and on the cards' borders and
+hover washes, which are not text at all. The card names, the running words and
+the notation chips stay `--color-accent`, which owes 4.5:1 and clears it. A
+pigment on 0.8rem text would have shipped a contrast failure in one theme only,
+which is the kind nobody finds.
+
+**HUE CARRIES NOTHING BY ITSELF.** Every mark wearing a pigment sits beside the
+work's name in words, so the colour is a second channel over a complete first
+one — which is what lets `data-mono` turn the whole family off and lose nothing.
+`src/lib/pigments.test.ts` does the bookkeeping, because every way this breaks
+is silent: a `var(--pigment-…)` naming nothing falls back past an invalid
+declaration and reads as a design choice; a value written flat instead of mixed
+looks right on paper and fails in dark alone; and one pigment the dial does not
+reach falsifies monochrome for exactly the readers it exists for.
 
 **A `†` carries no `title`.** The platform's own tooltip draws on top of the
 site's link-preview card, so the mark's name was covering the thing the mark

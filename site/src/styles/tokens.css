@@ -408,22 +408,34 @@
 
 	/*
 	 * THE PIGMENTS ARE DECORATION AND CARRY NOTHING, which is the whole
-	 * licence for there being seven of them where the palette above spends
+	 * licence for there being eight of them where the palette above spends
 	 * three. `CitedBy`'s panel marks each citing shelf with a dot in this
-	 * family; the shelf is NAMED in the same breath, every time, so a reader
-	 * who cannot tell two of these apart — or sees none of them, under
-	 * `data-mono` — loses nothing at all. Nothing may ever be told apart by
+	 * family and `/schola`'s shelf list marks each row's icon with the same
+	 * one, so a work wears one colour wherever the site names it. The shelf is
+	 * NAMED in the same breath, every time, so a reader who cannot tell two of
+	 * these apart — or sees none of them, under `data-mono` — loses nothing at
+	 * all. Nothing may ever be told apart by
 	 * one of these alone: the moment a pigment is the only thing saying which
 	 * work a row belongs to, this stops being ornament and owes WCAG 1.4.1.
 	 *
-	 * THEY ARE NEVER SET ON TEXT, only on a 0.4em dot, which is why they are
-	 * free of the contrast duty every colour above carries. The chip and the
-	 * row take the SAME dot rather than the chip taking the hue as its label
-	 * colour: 0.8rem text in seven muted pigments would owe 4.5:1 seven times
-	 * over, and would have to be loud enough to earn it.
+	 * THEY ARE NEVER SET ON BODY TEXT, only on a 0.4em dot, which is why they
+	 * are free of the contrast duty every colour above carries. The chip and
+	 * the row take the SAME dot rather than the chip taking the hue as its
+	 * label colour: 0.8rem text in a muted pigment would owe 4.5:1 once per
+	 * shelf, and every one would have to be loud enough to earn it.
+	 *
+	 * **THE NUMBERS SAY WHERE THE LINE IS, and it is not a matter of taste.**
+	 * On a dark ground the family resolves to 3.4-4.2:1 (measured against
+	 * `--color-bg` and `--color-bg-elevated`), so a pigment on 0.8rem text
+	 * would ship a contrast failure in one theme only. `/schola` spends them
+	 * on a 1.35rem icon standing beside the work's own name, on the 1.6rem
+	 * serif figure that numbers a stage — LARGE text, a 3:1 floor, which the
+	 * whole family clears — and on card borders and washes, which are not text
+	 * at all. Its running words and its notation chips stay `--color-accent`.
+	 * A new consumer owes the same arithmetic before it picks a surface.
 	 *
 	 * ONE DEFINITION FOR EVERY THEME. Each is mixed toward the theme's own
-	 * `--color-text-muted`, so the same seven literals come out darker on
+	 * `--color-text-muted`, so one set of literals comes out darker on
 	 * paper and lighter on a dark ground with nothing repeated in the four
 	 * blocks below — the mix is what adapts, not the value. `oklab` because
 	 * the interpolation is perceptual: an sRGB mix of ultramarine and a warm
@@ -431,27 +443,42 @@
 	 * in it.
 	 *
 	 * `--pigment-strength` is the one dial, and `data-mono` sets it to 0%:
-	 * every pigment then resolves to `--color-text-muted` exactly, seven dots
-	 * in one grey, which is what that mode's contract requires — "nothing
+	 * every pigment then resolves to `--color-text-muted` exactly — every dot
+	 * and every icon in one grey, which is what that mode's contract requires — "nothing
 	 * anywhere is told apart by hue". Sepia and OLED need no override for the
 	 * same reason they need none for the accent: they move the ground, and
 	 * the mix follows the text colour that sits on it.
 	 *
 	 * The vocabulary is the illuminator's, because the palette above already
-	 * speaks it — rubric red, ground lapis, gold — and seven invented UI hues
-	 * beside those three would read as a different application.
+	 * speaks it — rubric red, ground lapis, gold — and a rank of invented UI
+	 * hues beside those three would read as a different application.
 	 *
 	 * WHAT THE MIX ACTUALLY RESOLVES TO, measured on paper: chroma 0.033 to
 	 * 0.084 and lightness 0.47 to 0.52 — one tonal band, differing in hue and
-	 * in almost nothing else, which is what keeps seven dots down a panel from
-	 * reading as seven weights. Closest pair is verdigris and the commentary
-	 * teal at dE(ok) 0.043. Three seeds were moved to get there and the
+	 * in almost nothing else, which is what keeps a column of dots from reading
+	 * as a column of weights. Closest pair is verdigris and the commentary teal
+	 * at dE(ok) 0.043. Three seeds were moved to get there and the
 	 * failure they had is worth naming: a seed already near neutral comes out
 	 * of a 50% mix with a warm grey as no colour at all — the commentary's
 	 * first slate resolved to chroma 0.017, an accidental grey among six
 	 * hues. Check a new seed by what it MIXES to, never by the literal.
 	 */
 	--pigment-strength: 50%;
+	/*
+	 * SCRIPTURE IS MINIUM — red lead, the pigment a rubricator opened a book
+	 * with and the one the word "miniature" is named after. It joined on
+	 * 2026-09-06 with `/schola`'s shelf list, which needed a mark for the
+	 * Bible and for the Compendium; the Compendium takes no seed of its own
+	 * and wears the Catechism's, being the same teaching abridged, which is
+	 * what `catechismPairLang` already says everywhere else in the codebase.
+	 *
+	 * The seed was chosen by what it MIXES to, per the paragraph above, and by
+	 * how far that lands from the rest: dE(ok) 4.7 from the Catechism's red,
+	 * which is its nearest neighbour and wider than the family's own closest
+	 * pair (4.3). Vermilion was the obvious first try and resolves 1.2 away
+	 * from that red — two shelves in one colour.
+	 */
+	--pigment-bible: color-mix(in oklab, #c0561c var(--pigment-strength), var(--color-text-muted));
 	--pigment-catechism: color-mix(
 		in oklab,
 		#a8332a var(--pigment-strength),
@@ -744,7 +771,8 @@
 /*
  * One rule for all four monochrome blocks above, because `data-mono` is
  * presence-only and none of them sets this: the decorative pigments collapse
- * to `--color-text-muted` exactly, so the panel's dots are seven of one grey.
+ * to `--color-text-muted` exactly, so the panel's dots and the guide's shelf
+ * icons are all one grey.
  * See `--pigment-strength` where it is declared.
  */
 :root[data-mono] {
