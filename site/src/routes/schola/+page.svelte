@@ -583,7 +583,7 @@
 			"and how it is cited", with nothing.
 		-->
 		<h3 class="group">{t('schola.places.heading')}</h3>
-		<ul class="book-grid">
+		<ul class="book-grid places">
 			{#each PLACES as place (place.key)}
 				<li class="book">
 					<span class="book-icon"><Icon name={place.icon} /></span>
@@ -734,7 +734,7 @@
 						     for. A reader who does not know what Acts is learns nothing
 						     from the word "Acts", and the six cards around it all say
 						     what they are. -->
-						<ul class="picks">
+						<ul class="picks lone">
 							<li>
 								<a class="pick" href={acts.href}>
 									<span class="pick-name">{acts.label}</span>
@@ -927,6 +927,21 @@
 		padding: 0;
 	}
 
+	/*
+	 * A CARD PER BOOK, AND A COLOUR PER CARD. The section is Scripture and
+	 * takes minium throughout — its stage figures still do — but eight cards
+	 * in one colour is eight identical objects the reader has to read to tell
+	 * apart, which is the thing a card grid is supposed to save them. So the
+	 * cards walk the ramp: it distinguishes Mark from Luke from John and
+	 * claims nothing about any of them, which is right, because nothing about
+	 * a Gospel is red.
+	 *
+	 * The colour is in the head rule AND a wash of the ground, because a 2px
+	 * edge alone is not enough to tell a card from its neighbour at a glance —
+	 * and the wash is what a card can afford where its NAME cannot: 1.1rem of
+	 * serif owes 4.5:1 and these literals clear 3:1, so the name stays on the
+	 * accent and the box carries the colour.
+	 */
 	.pick {
 		display: flex;
 		flex-direction: column;
@@ -934,17 +949,41 @@
 		block-size: 100%;
 		padding: 0.8rem 1rem 0.9rem;
 		border: 1px solid var(--color-border);
-		border-block-start: 2px solid color-mix(in srgb, var(--shelf) 45%, var(--color-border));
+		border-block-start: 2px solid color-mix(in srgb, var(--shelf) 55%, var(--color-border));
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
+		background: color-mix(in oklab, var(--shelf) 7%, var(--color-bg-elevated));
 		color: var(--color-text);
 		text-decoration: none;
+	}
+
+	/*
+	 * Each list restarts the walk, so a stage of three and a stage of four both
+	 * begin at the same colour. That is deliberate — a stage is a group, and
+	 * the eye reads the cards inside one against each other rather than across
+	 * the section. The single card of stage two is the exception, taking a
+	 * position no neighbour of it uses.
+	 */
+	.picks li:nth-child(1) .pick {
+		--shelf: var(--hue-1);
+	}
+	.picks li:nth-child(2) .pick {
+		--shelf: var(--hue-3);
+	}
+	.picks li:nth-child(3) .pick {
+		--shelf: var(--hue-5);
+	}
+	.picks li:nth-child(4) .pick {
+		--shelf: var(--hue-7);
+	}
+	.picks.lone .pick {
+		--shelf: var(--hue-4);
 	}
 
 	.pick:hover,
 	.pick:focus-visible {
 		border-color: var(--shelf);
-		background: color-mix(in srgb, var(--shelf) 5%, var(--color-bg-elevated));
+		background: color-mix(in oklab, var(--shelf) 14%, var(--color-bg-elevated));
 	}
 
 	/*
@@ -1189,9 +1228,63 @@
 		margin-block-start: 0.12rem;
 	}
 
-	/* The chrome is one kind of thing, so its marks are one colour. */
+	/*
+	 * THE CHROME'S MARKS WALK THE RAMP, and this file argued the opposite for a
+	 * day: the controls are one KIND of thing, so one colour. That is true of
+	 * what they are and wrong about what the mark is for. Eight identical
+	 * glyphs down two grids are eight marks a reader's eye slides over — the
+	 * icon stops being a way in to the row and becomes texture beside it. The
+	 * colour claims nothing here (`--hue-*` in `tokens.css` exists to say so),
+	 * it only keeps a row from blurring into its neighbour.
+	 *
+	 * The two bars continue one walk rather than each restarting, so no colour
+	 * appears twice in the section — the second grid is `:nth-of-type(2)`,
+	 * the `h3` between them being a heading and not a list.
+	 */
 	.feature-icon {
-		color: var(--color-accent);
+		color: var(--mark, var(--color-accent));
+	}
+
+	.feature-grid:nth-of-type(1) .feature:nth-child(1) {
+		--mark: var(--hue-1);
+	}
+	.feature-grid:nth-of-type(1) .feature:nth-child(2) {
+		--mark: var(--hue-2);
+	}
+	.feature-grid:nth-of-type(1) .feature:nth-child(3) {
+		--mark: var(--hue-3);
+	}
+	.feature-grid:nth-of-type(1) .feature:nth-child(4) {
+		--mark: var(--hue-4);
+	}
+	.feature-grid:nth-of-type(2) .feature:nth-child(1) {
+		--mark: var(--hue-5);
+	}
+	.feature-grid:nth-of-type(2) .feature:nth-child(2) {
+		--mark: var(--hue-6);
+	}
+	.feature-grid:nth-of-type(2) .feature:nth-child(3) {
+		--mark: var(--hue-7);
+	}
+	.feature-grid:nth-of-type(2) .feature:nth-child(4) {
+		--mark: var(--hue-8);
+	}
+
+	/*
+	 * THE THREE THAT ARE PLACES take the ramp too, and not a shelf colour —
+	 * they are not shelves, and `--shelf-library` would be a token asserting
+	 * that they were. Positions 2, 5 and 8 rather than 1, 2 and 3: three rows
+	 * standing alone under their own heading want the widest gaps the ramp
+	 * has, where a run of eight wants its neighbours separated.
+	 */
+	.places .book:nth-child(1) {
+		--shelf: var(--hue-2);
+	}
+	.places .book:nth-child(2) {
+		--shelf: var(--hue-5);
+	}
+	.places .book:nth-child(3) {
+		--shelf: var(--hue-8);
 	}
 
 	/*

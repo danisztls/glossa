@@ -242,6 +242,29 @@ describe('the shelf pigments', () => {
 		}
 	});
 
+	/*
+	 * The ordered ramp is ALIASES, and that is what makes it free. Each
+	 * `--hue-N` points at a `--shelf-*`, so it follows every theme family and
+	 * `[data-mono]` flattens all of them through the values they point at. A
+	 * literal written into one would be a colour outside the palette: right on
+	 * paper, wrong on a dark ground, and still coloured in the mode whose whole
+	 * contract is that nothing is told apart by hue.
+	 */
+	it('is an ordered alias of the shelf colours, never a set of literals', () => {
+		const ramp = Array.from(TOKENS.matchAll(/^\t--hue-(\d+): ([^;]+);/gm));
+		expect(ramp.length, 'no --hue-* ramp').toBe(pigments.length);
+		expect(ramp.map((m) => Number(m[1]))).toEqual(pigments.map((_, i) => i + 1));
+		const pointed = new Set<string>();
+		for (const [, n, value] of ramp) {
+			const at = /^var\(--shelf-([a-z-]+)\)$/.exec(value.trim());
+			expect(at, `--hue-${n} is ${value.trim()} rather than a --shelf-* alias`).not.toBeNull();
+			pointed.add(at![1]);
+		}
+		// Every shelf exactly once, so the ramp is a permutation and no colour
+		// is unreachable through it.
+		expect([...pointed].sort()).toEqual([...pigments].sort());
+	});
+
 	it('never lets the guide reach for the muted mix, which is the drift to watch', () => {
 		const guide = stripComments(readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'));
 		expect(guide, 'the guide names a --pigment-* in a declaration').not.toMatch(/var\(--pigment-/);

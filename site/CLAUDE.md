@@ -668,6 +668,18 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   now: **a rule that sizes both kinds of icon may not colour either**; colour is
   stated per kind, after. `pigments.test.ts` fails if that rule regains a
   `color`.
+- **`--hue-1` … `--hue-8` ARE THE SAME EIGHT IN AN ORDER, FOR LISTS THAT WANT
+  VARIETY AND NOT IDENTITY.** A shelf colour is a claim — the Catechism is that
+  red wherever the site names it — and most coloured lists make no claim: the
+  chrome guide's controls, the three rows that are pages rather than texts, the
+  books of the reading suggestion. There the colour keeps a row from blurring
+  into its neighbour and asserts nothing, which naming `--shelf-catechism` on a
+  search icon would not. They are ALIASES, so each follows its theme family and
+  `data-mono` flattens them through what they point at; `pigments.test.ts`
+  fails on a literal written into one, and on a ramp that is not a permutation
+  of the shelves. **The order is interleaved rather than spectral** — walked in
+  declaration order a list gets red beside orange beside gold, three warm
+  neighbours a reader has to look at twice.
 - **A COLOUR'S NAME LIVES AT A PARTICULAR LIGHTNESS, and that is why the
   literals are per theme family where the mixes are not.** Brown is dark orange,
   olive is dark yellow, navy is dark blue. Three schemes tried to compute a

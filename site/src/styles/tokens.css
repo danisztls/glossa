@@ -523,6 +523,38 @@
 	--shelf-canon-law: #7b2d8e;
 	--shelf-prayer: #b0246b;
 
+	/*
+	 * THE SAME EIGHT, IN AN ORDER, FOR LISTS THAT WANT VARIETY AND NOT
+	 * IDENTITY.
+	 *
+	 * A shelf colour is a CLAIM: the Catechism is that red wherever the site
+	 * names it, and `CitedBy` dots itself with the muted mix of the same
+	 * value. Most coloured lists are not making a claim — the chrome guide's
+	 * eight controls, the three pages that are not texts, the books of a
+	 * reading suggestion — and there the colour is doing one job, which is
+	 * keeping a row from blurring into the row beside it. Naming
+	 * `--shelf-catechism` in one of those would assert something false;
+	 * `--hue-1` asserts nothing, which is the whole point of it.
+	 *
+	 * THEY ARE ALIASES AND NOT NEW LITERALS, so every one follows its theme
+	 * family and `[data-mono]` flattens all eight through the values they
+	 * point at. A ninth colour must be a ninth `--shelf-*` first.
+	 *
+	 * THE ORDER IS INTERLEAVED RATHER THAN SPECTRAL, and that is the only
+	 * design in it: walked in the order the shelves are declared, a list gets
+	 * red beside orange beside gold, which is three warm neighbours a reader
+	 * has to look twice at. Stepping across the circle instead puts the widest
+	 * available gap between any two positions a list will use adjacently.
+	 */
+	--hue-1: var(--shelf-catechism);
+	--hue-2: var(--shelf-magisterium);
+	--hue-3: var(--shelf-doctors);
+	--hue-4: var(--shelf-canon-law);
+	--hue-5: var(--shelf-social-doctrine);
+	--hue-6: var(--shelf-bible);
+	--hue-7: var(--shelf-commentary);
+	--hue-8: var(--shelf-prayer);
+
 	--pigment-strength: 50%;
 	/*
 	 * The Bible's seed joined on 2026-09-06 with `/schola`'s shelf list, which

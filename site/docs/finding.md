@@ -328,6 +328,32 @@ than owed. Measured against every ground of each family — worst 4.15 light, 3.
 sepia, 6.11 dark, separation 7.8 on paper and 8.7 on a dark ground. Sepia and
 OLED restate nothing: each moves a ground rather than a palette.
 
+**FOUR LISTS ON THE PAGE ARE COLOURED AND ONLY ONE OF THEM MEANS ANYTHING BY
+IT.** The shelf list's colour is identity: a work wears it wherever the site
+names it, and `CitedBy` marks the same work with the muted mix of the same
+value. The chrome guide's eight controls, the three rows that are pages rather
+than texts, and the eight books of the reading suggestion are not shelves and
+must not borrow a shelf's token — `--shelf-catechism` on a search icon would
+assert something false. They walk `--hue-1` … `--hue-8` instead, which is the
+same eight values in an order and asserts nothing; the colour there does one
+job, which is keeping a row from blurring into the row beside it.
+
+That is a reversal of what this file said for a day, which was that the chrome
+is one KIND of thing and so takes one colour. True of what the controls are, and
+wrong about what the mark is for: eight identical glyphs down two grids stop
+being a way into a row and become texture beside it. **The ramp is interleaved
+rather than spectral** — walked in the shelves' own order a list gets red beside
+orange beside gold, three warm neighbours — and it is aliases rather than
+literals, so every position follows its theme and monochrome flattens the lot
+through the values it points at.
+
+**A card can afford a colour its name cannot.** The reading suggestion's cards
+carry theirs in the head rule and in a 7% wash of the ground, because a 2px edge
+alone does not separate one card from the next at a glance; the card's NAME
+stays on the accent, since 1.1rem of serif owes 4.5:1 and these literals clear
+3:1. The stage figures stay minium throughout — the section is Scripture, and
+that much is a claim.
+
 **Monochrome has to restate the literals**, because `--pigment-strength: 0%`
 reaches only the mixes. Miss that and the page keeps its colours in the one mode
 whose entire contract is that nothing is told apart by hue.
