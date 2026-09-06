@@ -138,6 +138,20 @@ describe('placePrayerCommentary', () => {
 		}
 	});
 
+	// WHY THE PLACEMENT BELONGS TO THE CALLER AND NOT TO THE RENDERER (compare
+	// mode, 2026-09-05). A compare cell IS a printed line, so `PrayerBlocks` is
+	// handed one at a time; placing over that line alone loses the half of a
+	// quotation the edition set above it, and the note falls out of the
+	// apparatus entirely rather than lighting the words the line does print.
+	it('needs every line to place a quotation that crosses a break', () => {
+		const notes = [note('a', 'Full of grace, the Lord is with thee')];
+		const whole = placePrayerCommentary(AVE, [entry('commentary.preces.en', notes)]);
+		const alone = placePrayerCommentary([AVE[1]], [entry('commentary.preces.en', notes)]);
+		expect(whole.byLine[1]).toHaveLength(1);
+		expect(alone.byLine[0]).toEqual([]);
+		expect(alone.unplaced).toHaveLength(1);
+	});
+
 	// NOTHING IS RENDERED AT THE FOOT OF A PRAYER, so `unplaced` is the one
 	// thing that could go wrong in silence: the pipeline stores only notes that
 	// quote a clause, and a note that lost its place here would simply not

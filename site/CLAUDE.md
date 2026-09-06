@@ -1775,7 +1775,7 @@ a `Prayer.slug`, not a verse — the Catechism on the Ave and the Compendium on
 the Pater, over fifteen languages (`pipeline/CLAUDE.md` for what it reads and
 why Haydock is not in it). It contributes no route and no name, it is still
 fetched only when it is switched on, and the mark is the same dagger. What is
-new is exactly four things:
+new is this:
 
 - **`manifest.addresses` is the branch, and both scrapers write it.**
   `sync-corpus.mjs` reads it before it opens the work's directory, which is
@@ -1831,6 +1831,13 @@ new is exactly four things:
   half its readers the wrong one; the siglum comes from that source work's own
   `short_title` in the corpus (`CCC` everywhere, `Compêndio`/`Lilla katekesen`
   per edition), never a literal.
+- **BOTH COLUMNS ARE GLOSSED WHILE COMPARING** (2026-09-05), where the Bible's
+  chapter route still suppresses its commentary — that route's second column
+  takes the apparatus lane, and this one has no lane to take. Each column reads
+  its own edition's commentary, and the placement is the ROUTE's, over the whole
+  prayer, because a compare cell is one line and a quotation may cross a break
+  (`site/docs/reading.md` §The apparatus). One switch still: the choice is
+  stored per family, so both columns move together (`commentaryFamily`).
 - **The card does not print the headword, because the line is lighting it.**
   `CommentaryGloss` takes `lemmaMarked`, which is `Sidenote`'s rule one
   apparatus over: print the headword only where the words could not be marked.

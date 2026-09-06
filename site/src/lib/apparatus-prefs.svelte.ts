@@ -149,8 +149,8 @@ function withMembership(list: string[], id: string, present: boolean): string[] 
  * A COMMENTARY'S CHOICE IS NOT PER LANGUAGE, and this is the whole of how.
  *
  * `commentary.preces.*` is fifteen works, one per language, and the reader
- * meets exactly one of them — whichever annotates the edition in front of
- * them. Stored per work id, switching the apparatus off under the English Ave
+ * meets whichever annotates the edition in front of them — two of them while
+ * comparing. Stored per work id, switching the apparatus off under the English Ave
  * would leave it on under the Portuguese one, and a reader who turned it off
  * would meet it again on the next prayer they opened in another language.
  * Stored per FAMILY — `commentary.preces`, the id without its language, which
@@ -160,8 +160,13 @@ function withMembership(list: string[], id: string, present: boolean): string[] 
  * An edition's own notes are NOT family-scoped and must not be: the
  * Douay-Rheims and the CPDV are two editions with two apparatuses, and a
  * reader turning one off has said nothing about the other.
+ *
+ * EXPORTED BECAUSE A COMPARED PAGE MEETS TWO OF THEM (2026-09-05). The prayer
+ * route shows a second column with its own edition's commentary, and the two
+ * works share this family — so the menu lists one switch, deduped by this,
+ * rather than two rows with the same title that move together.
  */
-function familyOf(workId: string): string {
+export function commentaryFamily(workId: string): string {
 	const parts = workId.split('.');
 	return parts.length > 2 ? parts.slice(0, 2).join('.') : workId;
 }
@@ -173,7 +178,7 @@ function familyOf(workId: string): string {
  *  storage once at module load, so a legacy value cannot be put in front of it
  *  from a test without exporting the class for no other reason. */
 function has(list: string[], workId: string): boolean {
-	return list.includes(familyOf(workId)) || list.includes(workId);
+	return list.includes(commentaryFamily(workId)) || list.includes(workId);
 }
 
 /** The list with this commentary present or absent. It always drops the full
@@ -182,8 +187,8 @@ function has(list: string[], workId: string): boolean {
 function withCommentary(list: string[], workId: string, present: boolean): string[] {
 	const set = new Set(list);
 	set.delete(workId);
-	set.delete(familyOf(workId));
-	if (present) set.add(familyOf(workId));
+	set.delete(commentaryFamily(workId));
+	if (present) set.add(commentaryFamily(workId));
 	return [...set].sort();
 }
 

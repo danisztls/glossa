@@ -33,8 +33,11 @@
 	import CommentaryGloss from './CommentaryGloss.svelte';
 	import type { InlineNode } from '$lib/inline-html';
 	import { plainLine, type PrayerLine } from '$lib/prayer-lines';
-	import { buildSegments } from '$lib/annotated-segments';
-	import { placePrayerCommentary, type CommentaryEntry } from '$lib/commentary-placement';
+	import { buildSegments, type PlacedAnchor } from '$lib/annotated-segments';
+	import type {
+		PlacedPrayerCommentary,
+		PrayerCommentaryPlacement
+	} from '$lib/commentary-placement';
 	import { splitDropCap } from '$lib/dropcap';
 
 	interface Props {
@@ -45,46 +48,55 @@
 		    `blocks` are its closing prayer, printed below four mystery groups. */
 		dropCap?: boolean;
 		/**
-		 * The commentaries switched on for this prayer, with their notes on it.
+		 * Where this prayer's switched-on commentaries put their marks —
+		 * `placePrayerCommentary` over the WHOLE prayer, indexed by `line.n`.
 		 *
-		 * RENDERED HERE AND NOT BY THE ROUTE, for `AnnotatedText`'s reason: a
-		 * mark sits at the words its note quotes, and only the component that
-		 * owns a line can cut it. Absent while comparing — two columns of a
-		 * prayer are already two texts to hold in view, and an apparatus is a
-		 * third.
+		 * THE CUT IS MADE HERE AND THE PLACEMENT IS NOT, and compare mode is the
+		 * reason for the split. A mark sits at the words its note quotes, so
+		 * only the component that owns a line can cut it (`AnnotatedText`'s
+		 * reason) — but a compare cell IS one line, and a placement taken over
+		 * one line would lose a lemma the edition set across a break and could
+		 * find the wrong occurrence of a repeated phrase. So the caller places
+		 * over every line and each cell renders its own; `prayerTexts` is the
+		 * argument to place over.
 		 */
-		commentary?: CommentaryEntry[];
+		placement?: PrayerCommentaryPlacement;
+		/**
+		 * Which marks are open, by their index in `placed` — one array per
+		 * COLUMN, not per instance.
+		 *
+		 * A quotation the edition set across a break lights every line it covers
+		 * while its card is open, and while comparing those lines are separate
+		 * cells and so separate instances of this component. State kept here
+		 * would light only the line that carries the dagger. A single column
+		 * passes nothing and keeps its own.
+		 */
+		openMarks?: (boolean | undefined)[];
 	}
 
-	let { lines, dropCap = false, commentary }: Props = $props();
+	let { lines, dropCap = false, placement, openMarks }: Props = $props();
 
-	/**
-	 * The lines as the strings an anchor is an offset into, and where each
-	 * commentary's marks fall among them.
-	 *
-	 * A line that is not plain text contributes an empty string, so no lemma
-	 * can be found in it — see `plainLine`, which is the same refusal one layer
-	 * down. Nothing in the corpus reaches that case: every glossed prayer is
-	 * plain text throughout, and a note that lost its place would simply not
-	 * render (`placePrayerCommentary`'s `unplaced`).
-	 */
-	const texts = $derived(lines.map((line) => plainLine(line) ?? ''));
-	const placement = $derived(placePrayerCommentary(texts, commentary));
+	/** Read through these rather than off `placement`, so the marks a line
+	 *  carries and the notes behind one are the same two lookups whether or not
+	 *  an apparatus is switched on at all. */
+	const placed = $derived<PlacedPrayerCommentary[]>(placement?.placed ?? []);
+	const byLine = $derived<PlacedAnchor[][]>(placement?.byLine ?? []);
 
-	/** Which inline commentary marks are open, by their index in `placed`. */
-	let openMarks: (boolean | undefined)[] = $state([]);
+	let ownMarks: (boolean | undefined)[] = $state([]);
+	const open = $derived(openMarks ?? ownMarks);
 
 	/** One line's text cut at the words its notes quote. `buildSegments` is
 	 *  `AnnotatedText`'s, handed the simplest input it has: one text piece, no
 	 *  edition lemmas (a prayer carries no footnote apparatus of its own) and
-	 *  this line's marks. */
+	 *  this line's marks.
+	 *
+	 *  The text comes off the LINE and the marks off `line.n`, never off a
+	 *  position in `lines`: this component is handed the whole prayer in one
+	 *  column and a single line in a compare cell, and only the line's own
+	 *  number means the same thing in both. */
 	function segmentsFor(line: PrayerLine) {
-		return buildSegments(
-			texts[line.n],
-			[{ text: texts[line.n] }],
-			new Map(),
-			placement.byLine[line.n] ?? []
-		);
+		const text = plainLine(line) ?? '';
+		return buildSegments(text, [{ text }], new Map(), byLine[line.n] ?? []);
 	}
 
 	/**
@@ -134,7 +146,7 @@
 		// the apparatus. Unreachable today (every glossed prayer is set as
 		// verse, which takes no initial anyway) and cheaper to state than to
 		// rediscover.
-		if (placement.byLine[line.n]?.length) return null;
+		if (byLine[line.n]?.length) return null;
 		if (!dropCap || line.verse || line.kind !== 'prose') return null;
 		if (!(line.block === 0 && line.first)) return null;
 		const head = line.nodes[0];
@@ -156,13 +168,13 @@
      `lemmaMarked` unconditionally: every note this apparatus stores quotes a
      clause of the prayer and every one of them anchors, so the card would
      otherwise print a headword the line beside it is already lighting. -->
-{#snippet gloss(entry: (typeof placement.placed)[number], mark: number | undefined)}
+{#snippet gloss(entry: PlacedPrayerCommentary, mark: number | undefined)}
 	<CommentaryGloss
 		notes={entry.notes}
 		lang={entry.work.language}
 		work={entry.work.id}
 		title={entry.work.short_title || entry.work.title}
-		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
+		onopen={mark === undefined ? undefined : (on: boolean) => (open[mark] = on)}
 		lemmaMarked
 	/>
 {/snippet}
@@ -173,12 +185,12 @@
 {#snippet body(line: PrayerLine)}{@const c =
 		capFor(
 			line
-		)}{#if placement.byLine[line.n]?.length}{#each segmentsFor(line) as seg, i (i)}{#if seg.kind === 'mark'}{@render gloss(
-					placement.placed[seg.mark],
+		)}{#if byLine[line.n]?.length}{#each segmentsFor(line) as seg, i (i)}{#if seg.kind === 'mark'}{@render gloss(
+					placed[seg.mark],
 					seg.mark
 				)}{:else if seg.kind === 'quoted'}<span
 					class="note-lemma"
-					class:highlighted={openMarks[seg.mark]}>{seg.text}</span
+					class:highlighted={open[seg.mark]}>{seg.text}</span
 				>{:else if seg.kind === 'text'}{seg.text}{/if}{/each}{:else if c}{@render capMark(
 			c
 		)}<InlineText nodes={c.restNodes} />{:else}<InlineText nodes={line.nodes} />{/if}{/snippet}

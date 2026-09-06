@@ -70,7 +70,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { pairPrayerLines, prayerLines, type PrayerRow } from '$lib/prayer-lines';
+	import { pairPrayerLines, prayerLines, prayerTexts, type PrayerRow } from '$lib/prayer-lines';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
 		adoptCompareFromUrl,
@@ -83,10 +83,14 @@
 		prayerCommentariesAt,
 		resolveEditionTag
 	} from '$lib/corpus';
-	import { apparatusPrefs, commentaryDefaultsOn } from '$lib/apparatus-prefs.svelte';
+	import {
+		apparatusPrefs,
+		commentaryDefaultsOn,
+		commentaryFamily
+	} from '$lib/apparatus-prefs.svelte';
 	import { prayerNotesFor } from '$lib/commentary.svelte';
 	import { prayerReferences } from '$lib/corpus-index';
-	import type { CommentaryEntry } from '$lib/commentary-placement';
+	import { placePrayerCommentary, type CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
 	import CompareField from '$lib/components/CompareField.svelte';
@@ -171,25 +175,84 @@
 	const secondary = $derived(comparisons.find((c) => c.work.id === compareTarget));
 	const compareActive = $derived(secondary !== undefined);
 
+	/** The same question asked of the SECOND column, which is another edition
+	 *  and therefore another commentary work — which is what
+	 *  `prayerCommentariesAt` taking an edition is for. Nothing is fetched
+	 *  until it is read; `prayerNotesFor` starts the load. */
+	const secondaryCommentaries = $derived(
+		compareActive ? prayerCommentariesAt(data.slug, secondary?.work.id) : []
+	);
+
 	/**
-	 * The notes to set inside the prayer, one entry per enabled commentary.
-	 *
-	 * SUPPRESSED WHILE COMPARING, for the chapter route's reason read across:
-	 * there the apparatus lane is spent, here the two columns are already two
-	 * texts to hold level line by line, and a mark inside one of them would cut
-	 * a row that compare mode is trying to keep paired. Nothing is fetched
-	 * either — `prayerNotesFor` starts a load only when it is asked.
+	 * ONE SWITCH, THOUGH A COMPARED PAGE HOLDS TWO COMMENTARY WORKS. The choice
+	 * is stored per FAMILY (`commentaryFamily`), so the two already move
+	 * together and listing both would print one title twice. The reader's own
+	 * edition is named where it has a commentary, and the second column's
+	 * stands in for a prayer the reader's edition does not gloss — which is the
+	 * case the switch would otherwise be missing from entirely, with marks in
+	 * the other column and nothing to turn them off.
 	 */
-	const commentary = $derived.by(() => {
+	const apparatusCommentaries = $derived.by(() => {
+		const out: WorkManifest[] = [];
+		for (const work of [...commentaries, ...secondaryCommentaries]) {
+			const family = commentaryFamily(work.id);
+			if (!out.some((seen) => commentaryFamily(seen.id) === family)) out.push(work);
+		}
+		return out;
+	});
+
+	/**
+	 * The notes to set inside ONE column, one entry per switched-on commentary.
+	 *
+	 * BOTH COLUMNS ARE GLOSSED WHILE COMPARING, each out of its own edition's
+	 * commentary (2026-09-05). That is what keying the apparatus on the edition
+	 * was always for: a lemma quotes the wording of the edition it was written
+	 * on, so the Latin Ave's notes are the ones that can anchor in the Latin
+	 * column and the English ones in the English. The marks do not correspond
+	 * across a row — the Catechism quotes different clauses in each language,
+	 * eight in the English Our Father against five in the Hungarian — and that
+	 * is each edition's own apparatus rather than a misalignment.
+	 *
+	 * IT WAS SUPPRESSED HERE UNTIL THEN, on the chapter route's reason read
+	 * across: there the second column takes the width the apparatus was using.
+	 * This route has no such lane to spend — the mark is inline and its card is
+	 * anchored to it (`CommentaryGloss` sets nothing in the margin at any
+	 * width) — so all the suppression bought was a switch reading "on" over two
+	 * texts carrying no marks.
+	 */
+	function commentaryFor(works: WorkManifest[]): CommentaryEntry[] {
 		const out: CommentaryEntry[] = [];
-		if (compareActive || !current) return out;
-		for (const work of commentaries) {
+		for (const work of works) {
 			if (!enabled(work)) continue;
 			const notes = prayerNotesFor(work.id, data.slug);
 			if (notes.length > 0) out.push({ work, notes });
 		}
 		return out;
-	});
+	}
+
+	/**
+	 * Each column's printed lines, and where its commentary's marks fall.
+	 *
+	 * PLACED OVER THE WHOLE PRAYER AND HANDED DOWN, because a compare cell is a
+	 * single line and the anchoring is not a per-line question: the cursor walks
+	 * the lines once, and a lemma the edition set across a break spans two of
+	 * them. `PrayerBlocks` cuts the line it is given and looks its marks up by
+	 * `line.n`, which means the same thing in both arrangements.
+	 */
+	const primaryLines = $derived(current ? prayerLines(current.prayer.blocks) : []);
+	const secondaryLines = $derived(secondary ? prayerLines(secondary.prayer.blocks) : []);
+	const primaryPlacement = $derived(
+		placePrayerCommentary(prayerTexts(primaryLines), commentaryFor(commentaries))
+	);
+	const secondaryPlacement = $derived(
+		placePrayerCommentary(prayerTexts(secondaryLines), commentaryFor(secondaryCommentaries))
+	);
+
+	/** One open-mark array per COLUMN, held here because a compare cell is one
+	 *  line: a quotation crossing a break lights two lines, which are two cells,
+	 *  and neither could light the other from state of its own. */
+	const primaryOpen: (boolean | undefined)[] = $state([]);
+	const secondaryOpen: (boolean | undefined)[] = $state([]);
 
 	/** ON UNLESS THE READER TURNED IT OFF, which `default_on` says and no other
 	 *  commentary in the corpus does — `CommentaryManifest.default_on` carries
@@ -232,9 +295,8 @@
 	 * rather than a key to look up.
 	 */
 	const compareRows = $derived.by(() => {
-		const prayer = current?.prayer;
-		if (!prayer || !secondary) return [];
-		return pairPrayerLines(prayerLines(prayer.blocks), prayerLines(secondary.prayer.blocks));
+		if (!current || !secondary) return [];
+		return pairPrayerLines(primaryLines, secondaryLines);
 	});
 
 	const hasToc = $derived((current?.prayer.groups?.length ?? 0) > 0);
@@ -472,7 +534,10 @@
      edition carries `instructions` without them, so the one test covers both. -->
 {#snippet prayerBody(p: Prayer, bodyLang: string)}
 	{@render prayerPreamble(p, bodyLang)}
-	<PrayerBlocks lines={prayerLines(p.blocks)} dropCap={p.kind !== 'group'} {commentary} />
+	<!-- `primaryLines` and not `p`'s own: this snippet renders the reader's
+	     edition and nothing else (compare mode goes through the cells below), so
+	     the lines here are the ones its placement was taken over. -->
+	<PrayerBlocks lines={primaryLines} dropCap={p.kind !== 'group'} placement={primaryPlacement} />
 	<!-- Under the whole text and not under a block: these name the prayer, the
 	     way the notes name its clauses. `bodyLang` rather than the reader's
 	     interface language, because a siglum is the SOURCE work's own short
@@ -513,11 +578,15 @@
 {#snippet leftCell(row: PrayerRow)}<PrayerBlocks
 		lines={row.lines}
 		dropCap={current?.prayer.kind !== 'group'}
+		placement={primaryPlacement}
+		openMarks={primaryOpen}
 	/>{/snippet}
 
 {#snippet rightCell(row: PrayerRow)}<PrayerBlocks
 		lines={row.lines}
 		dropCap={secondary?.prayer.kind !== 'group'}
+		placement={secondaryPlacement}
+		openMarks={secondaryOpen}
 	/>{/snippet}
 
 <!-- EVERYTHING THAT IS NOT A LINE, in the band above the first row.
@@ -578,7 +647,7 @@
 				canCompare={comparisons.length > 0}
 				{compareActive}
 				onToggleCompare={toggleCompare}
-				apparatus={{ commentaries }}
+				apparatus={{ commentaries: apparatusCommentaries }}
 				comparison={{
 					editions: comparisons.map((c) => c.work),
 					current: compareTarget,

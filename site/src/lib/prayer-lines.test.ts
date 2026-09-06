@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { pairPrayerLines, prayerLines } from './prayer-lines';
+import { pairPrayerLines, plainLine, prayerLines, prayerTexts } from './prayer-lines';
 import type { PrayerBlock } from './types';
 
 /*
@@ -118,5 +118,38 @@ describe('pairPrayerLines', () => {
 		const rows = pairPrayerLines([], []);
 		expect(rows).toHaveLength(1);
 		expect(rows[0].left.lines).toEqual([]);
+	});
+});
+
+describe('prayerTexts', () => {
+	it('gives one string per line, in printed order', () => {
+		const lines = prayerLines([
+			text({ html: 'Pai Nosso<br />santificado' }),
+			text({ html: 'venha' })
+		]);
+		expect(prayerTexts(lines)).toEqual(['Pai Nosso', 'santificado', 'venha']);
+	});
+
+	it('gives an empty string for a line no anchor can be an offset into', () => {
+		// `plainLine`'s refusal, carried up: a line with markup in it is one the
+		// reader is not seeing as a plain string, so no headword may be found in
+		// it. Nothing in the corpus reaches this — a prayer block's html carries
+		// `<br>` and nothing else.
+		expect(prayerTexts(prayerLines([text({ html: 'Sancta <i>Maria</i>' })]))).toEqual(['']);
+	});
+
+	// THE INVARIANT THE COMPARED APPARATUS RESTS ON. The placement is taken over
+	// the whole prayer and a cell renders one line of it, looking its marks up
+	// by `line.n` — so `n` has to be the line's index in `prayerTexts`, across
+	// blocks and after pairing has cut the list into rows. Were it ever numbered
+	// per block, every mark past the first block would land on the wrong line
+	// with nothing erroring.
+	it('is indexed by `line.n`, which is what a compare cell looks its marks up by', () => {
+		const lines = prayerLines([text({ html: 'a<br />b' }), text({ html: 'c' })]);
+		const texts = prayerTexts(lines);
+		for (const row of pairPrayerLines(lines, [...lines])) {
+			const line = row.left.lines[0];
+			expect(texts[line.n]).toBe(plainLine(line));
+		}
 	});
 });

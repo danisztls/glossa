@@ -152,3 +152,18 @@ export function plainLine(line: PrayerLine): string | undefined {
 	if (!line.nodes.every((node) => node.kind === 'text')) return undefined;
 	return line.nodes.map((node) => (node.kind === 'text' ? node.text : '')).join('');
 }
+
+/**
+ * A WHOLE prayer as the strings its commentary anchors are offsets into, in
+ * printed order — which is the only order they can be read in: the cursor
+ * walks the lines once, and a lemma the edition set across a break spans two
+ * of them (`anchorCommentaryLines`).
+ *
+ * SO THE PLACEMENT IS THE CALLER'S, NOT THE RENDERER'S. Compare mode hands
+ * `PrayerBlocks` one line at a time — a cell is a printed line — and a
+ * placement taken over that one line would find neither the second half of a
+ * spanning lemma nor the right occurrence of a phrase the prayer repeats.
+ */
+export function prayerTexts(lines: readonly PrayerLine[]): string[] {
+	return lines.map((line) => plainLine(line) ?? '');
+}

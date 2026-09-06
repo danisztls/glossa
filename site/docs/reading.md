@@ -109,6 +109,29 @@ and precisely where Challoner is often explaining why his verse says what the
 column beside it does not. A gloss opening as a block could not have been
 restored there: it would push one column out of alignment with the other.
 
+**A prayer's commentary survives comparison; a chapter's still does not, and
+the difference is the lane.** The Bible's notes go because two reading columns
+plus the aside leave about 10rem of the 17rem the notes live in — there is
+nowhere to set them. A prayer's apparatus never used that lane: its mark is
+inline and its card is anchored to the mark, so a second column costs it
+nothing, and suppressing it bought only a switch reading "on" over a text with
+no marks in it. Both columns are glossed now, each out of its OWN edition's
+commentary, which is what keying the apparatus on the edition was always for —
+a lemma quotes the wording of the edition it was written on, so only the Latin
+Ave's notes can anchor in the Latin column. The marks do not correspond across
+a row, since the Catechism quotes eight clauses of the English Our Father and
+five of the Hungarian; that is each edition's own apparatus rather than a
+misalignment.
+
+**And the placement had to leave the renderer for that to be possible.** A
+compare cell IS a printed line, and anchoring is not a per-line question: the
+cursor walks the prayer once, so a placement taken over one line loses a
+quotation the edition set across a break and can find the wrong occurrence of a
+phrase the prayer repeats. The route places over the whole prayer
+(`prayerTexts`) and each cell renders its own line, looking its marks up by
+`line.n` — the one number that means the same thing in a column of thirty lines
+and in a cell of one.
+
 **A headword is set twice on paper and once on a screen.** A printed annotated
 Bible repeats the lemma at the head of the note because the note is at the foot
 of the page; on screen the note opens FROM the words. The verse marks it
