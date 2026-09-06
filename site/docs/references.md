@@ -133,3 +133,27 @@ document would have shown them something. It goes through
 section check, not the language**: a section absent from the edition the reader
 will actually get still refuses the anchor, and a title degrades to the landing
 page.
+
+**Every citer but one is an EDITION-FREE ADDRESS, and the one that is not
+decides how the panel is read.** `CCC ¶27` opens in whatever Catechism the
+reader reads, so eight editions of it collapse to one citer and there is
+nothing to choose between; an `annotation` names the edition, because
+Challoner's note is Challoner's, in English. Ten annotated editions cite one
+verse as ten works, so the panel shows the reader's own language and no other
+— `citedSources`' `commentaryLang`, defaulting to the Bible edition they would
+open, and taken from the edition actually on screen by the chapter page, which
+is the only page that can differ from the preference (it falls back when its
+preferred edition has no text for the chapter). Haydock alone cites Scripture
+11,491 times; without the rule, nine apparatuses a reader cannot read stand
+beside the one they can.
+
+**The panel filters by SHELF and not by kind, so no citer can be
+unfilterable.** `CitedByFamily` maps the eight kinds onto seven of the
+library's own sections — the Catechism and its Compendium are one answer to
+"show me the Catechism", and the rest are one each. Coarser than the kinds
+because a Bible verse cited two hundred times is scanned for a shelf, not for
+a work; total because a family that covered only the kinds someone remembered
+would leave the rest permanently on, which is worse than no filter. The
+buttons are drawn from the rows and appear only where there are two or more
+families to choose between, and switched-off is the marked state: everything
+starts on, so the panel's loudest thing must not be its own control.

@@ -1497,6 +1497,17 @@ holds the rationale. What must be true before touching it:
 - **A commentary's verse number is `verse` and an edition's is `n`**
   (docs/corpus-schema.md §Commentary). Read wrong it is silent: the citer
   serializes with the key absent and the page links to `#vundefined`.
+- **An `annotation` is shown in ONE language and every other citer in all of
+  them.** Only this kind names an edition, so ten annotated editions cite one
+  verse as ten works; `citedSources`' `commentaryLang` keeps the reader's own
+  and drops the rest, defaulting to the Bible edition they would open. The
+  chapter page passes the edition ON SCREEN instead, being the one page where
+  the two differ — it falls back when the preferred edition lacks the chapter.
+- **The panel's filter toggles a FAMILY, and the seven cover all eight
+  kinds.** `CitedByFamily` in `cited-by.ts` maps them onto the library's own
+  sections (the Catechism and its Compendium share one); a family that covered
+  only some kinds would leave the rest permanently on. Every label is a key a
+  page already uses, so a family costs no new string in 37 dictionaries.
 
 ## Running prose is an apparatus, not decoration
 

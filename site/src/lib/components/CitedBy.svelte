@@ -18,11 +18,14 @@
 	 * Lumen Gentium §22 is cited by 26 places; naming each reference's work
 	 * separately would be most of the panel.
 	 */
-	import type { CitedByRow } from '$lib/cited-by';
+	import { SvelteSet } from 'svelte/reactivity';
+	import { CITED_BY_FAMILIES, type CitedByFamily, type CitedByRow } from '$lib/cited-by';
+	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
 		/** The panel's own heading — `t('refs.citedIn')` at every call site so
-		 *  far, but passed rather than read so the component needs no i18n. */
+		 *  far, but passed rather than read so no caller has to agree with any
+		 *  other on what this panel is called. */
 		heading: string;
 		/** Unique within the page: two panels on one page would otherwise share
 		 *  an `aria-labelledby` target. */
@@ -32,9 +35,55 @@
 
 	let { heading, headingId = 'cited-in-heading', rows }: Props = $props();
 
-	const total = $derived(
-		rows.reduce((sum, row) => sum + row.sources.reduce((n, s) => n + s.refs.length, 0), 0)
+	/**
+	 * The families this panel actually holds, in the library's order.
+	 *
+	 * DERIVED FROM THE ROWS AND NOT FIXED, because a button that filters
+	 * nothing is a button that teaches the reader the filter does nothing: a
+	 * Catechism paragraph cited only by the Summa would otherwise offer six
+	 * toggles with one outcome between them.
+	 */
+	const families = $derived(
+		CITED_BY_FAMILIES.filter((family) =>
+			rows.some((row) => row.sources.some((source) => source.family === family.key))
+		)
 	);
+
+	/**
+	 * Which families are switched OFF, rather than which are on.
+	 *
+	 * The empty set is the default and means "everything", which is what makes
+	 * the filter additive-free: a family appearing in the corpus later shows up
+	 * without anyone having opted into it. Kept across navigations within a
+	 * route — a reader who has just hidden the commentary means it for the next
+	 * chapter too, not only for this one.
+	 */
+	let hidden = $state(new SvelteSet<CitedByFamily>());
+
+	/**
+	 * WHEN ONE FAMILY IS ALL THERE IS, no filter is applied and none is shown
+	 * — including the case where a stale `hidden` entry from a busier page
+	 * would otherwise empty the panel with no visible control to undo it.
+	 */
+	const shown = $derived(
+		families.length < 2
+			? rows
+			: rows
+					.map((row) => ({
+						...row,
+						sources: row.sources.filter((source) => !hidden.has(source.family))
+					}))
+					.filter((row) => row.sources.length > 0)
+	);
+
+	const total = $derived(
+		shown.reduce((sum, row) => sum + row.sources.reduce((n, s) => n + s.refs.length, 0), 0)
+	);
+
+	function toggle(family: CitedByFamily) {
+		if (hidden.has(family)) hidden.delete(family);
+		else hidden.add(family);
+	}
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
@@ -42,8 +91,27 @@
 		{heading}
 		<span class="count">{total}</span>
 	</h2>
+	{#if families.length > 1}
+		<!--
+			Toggles, not a single-choice control: the reader is narrowing a list
+			they can already see, and narrowing it to two shelves is as ordinary
+			as narrowing it to one. `aria-pressed` carries the state, which is
+			why each button keeps one label in both — the same rule the plate
+			zoom follows.
+		-->
+		<div class="filters" role="group" aria-labelledby={headingId}>
+			{#each families as family (family.key)}
+				<button
+					type="button"
+					class="filter"
+					aria-pressed={!hidden.has(family.key)}
+					onclick={() => toggle(family.key)}>{t(family.labelKey)}</button
+				>
+			{/each}
+		</div>
+	{/if}
 	<ul>
-		{#each rows as row (row.key)}
+		{#each shown as row (row.key)}
 			<li>
 				<span class="address">
 					{#if row.href}
@@ -99,6 +167,45 @@
 		border-radius: var(--radius-sm);
 		padding: 0 0.3rem;
 		letter-spacing: 0;
+	}
+
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin: 0 0 0.7rem;
+	}
+
+	/* NOT the solid-accent `.on` the sidebars and `/documenta`'s facets use,
+	   and the difference is which way the default runs. There one row out of
+	   many is current, so the accent marks the exception; here every family
+	   starts switched on, so that treatment would paint the whole row solid
+	   and make the loudest thing in an apparatus footer the control rather
+	   than the citations. On is the plain state; off is what is marked. */
+	.filter {
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		padding: 0.1rem 0.5rem;
+		background: none;
+		font: inherit;
+		font-size: 0.8rem;
+		color: var(--color-text);
+		cursor: pointer;
+	}
+
+	.filter:hover {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	/* Switched off: still legible, so the reader can see what they have put
+	   away and press it again — greying it to the point of disappearing would
+	   make the filter a one-way door on a touch screen. */
+	.filter[aria-pressed='false'] {
+		color: var(--color-text-muted);
+		border-style: dashed;
+		text-decoration: line-through;
+		text-decoration-thickness: 1px;
 	}
 
 	ul {

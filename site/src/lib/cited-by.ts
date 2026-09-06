@@ -10,6 +10,7 @@
 import { getCanonicalBook, getDocumentGroup, getPrayerMeta, getWork } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
 import { hrefFor, summaPartSlug } from './address';
+import { baseLang } from './lang-names';
 import type { Citer } from './types';
 
 /** One reference inside a source group — "¶425", "§22". */
@@ -19,9 +20,51 @@ export interface CitedByRef {
 	href: string;
 }
 
+/**
+ * The shelf a citing work sits on, and the unit the panel's filter toggles.
+ *
+ * COARSER THAN `Citer['kind']` ON PURPOSE. Eight kinds is a menu; what a
+ * reader wants of a Bible verse cited two hundred times is "show me the
+ * magisterium" or "hide the commentary", and the Catechism and its Compendium
+ * are one answer to that question rather than two. Every kind belongs to
+ * exactly one family, so no citer can be left unfilterable — a family that
+ * covered only the kinds someone remembered would leave the rest permanently
+ * on, which is worse than no filter at all.
+ *
+ * THE NAMES ARE THE SITE'S OWN, taken from the library's sections
+ * (`nav.*`), because these buttons name places a reader has already been
+ * rather than a taxonomy invented for this panel — which is also why the
+ * Code of Canon Law is its own family and not folded into the magisterium:
+ * the library lists it separately.
+ */
+export type CitedByFamily =
+	'catechism' | 'magisterium' | 'socialDoctrine' | 'canonLaw' | 'doctors' | 'prayer' | 'commentary';
+
+/**
+ * The families in the order the filter offers them, each with the key it is
+ * labelled by. The order is the library's, not the index's: a reader scanning
+ * the buttons is scanning the site's own shelf order.
+ *
+ * EVERY KEY IS ONE A PAGE ALREADY USES, so a family costs no new string in
+ * thirty-seven dictionaries. `apparatus.commentary` is written in two of them
+ * and falls back to English in the rest — which is what the apparatus panel
+ * further up the same page already does with it, so the two agree.
+ */
+export const CITED_BY_FAMILIES: readonly { key: CitedByFamily; labelKey: string }[] = [
+	{ key: 'catechism', labelKey: 'nav.ccc' },
+	{ key: 'magisterium', labelKey: 'nav.magisterium' },
+	{ key: 'socialDoctrine', labelKey: 'nav.socialDoctrine' },
+	{ key: 'canonLaw', labelKey: 'nav.canonLaw' },
+	{ key: 'doctors', labelKey: 'doctores.landing.title' },
+	{ key: 'prayer', labelKey: 'nav.prayers' },
+	{ key: 'commentary', labelKey: 'apparatus.commentary' }
+];
+
 /** A work citing this address, with every place in it that does. */
 export interface CitedBySource {
 	key: string;
+	/** The shelf this work sits on — what the panel's filter toggles. */
+	family: CitedByFamily;
 	/** The short name shown in the row — "CCC", "Lumen Gentium". */
 	label: string;
 	/** The work's full name, shown on hover; `null` when it adds nothing. */
@@ -71,6 +114,7 @@ export function documentCitedSource(slug: string, sections: number[]): CitedBySo
 	const label = manifest.short_title || manifest.title;
 	return {
 		key: `doc:${slug}`,
+		family: 'magisterium',
 		label,
 		fullTitle: manifest.title !== label ? manifest.title : null,
 		refs: sections.map((n) => ({
@@ -125,21 +169,38 @@ function workNames(type: WorkTypeKey): { label: string; fullTitle: string | null
  * the same argument `documentCitedSource` makes for a slug with no manifest:
  * it can only mean the index outlived the work, and a bare id is not
  * something to put in front of a reader.
+ *
+ * COMMENTARY IS SHOWN IN ONE LANGUAGE — the reader's own — and this is the
+ * only kind that is filtered rather than grouped. Every other citer is an
+ * edition-free address: "CCC ¶27" opens in whatever Catechism the reader
+ * reads, so two editions of it collapse to one citer and there is nothing to
+ * choose between. An annotation is the opposite: Challoner's note IS
+ * Challoner's, in English, and ten annotated editions cite one verse as ten
+ * separate works. Listing all of them would put nine apparatuses a reader
+ * cannot read beside the one they can, and the count is not small — Haydock
+ * alone cites Scripture 11,491 times. `commentaryLang` is the edition
+ * actually on screen where a page knows it, and otherwise the Bible edition
+ * this reader would open.
  */
-export function citedSources(citers: Citer[]): CitedBySource[] {
+export function citedSources(citers: Citer[], commentaryLang?: string): CitedBySource[] {
 	/** @see `CitedBySource.key` — insertion order is `Citer`'s own order,
 	 *  which the builder wrote in `CITER_KINDS` order. */
 	const groups = new Map<string, CitedBySource>();
 	const into = (
+		family: CitedByFamily,
 		key: string,
 		names: { label: string; fullTitle: string | null } | null,
 		ref: CitedByRef
 	) => {
 		if (!names) return;
 		let group = groups.get(key);
-		if (!group) groups.set(key, (group = { key, ...names, refs: [] }));
+		if (!group) groups.set(key, (group = { key, family, ...names, refs: [] }));
 		group.refs.push(ref);
 	};
+
+	/** @see the docblock above — the one language of commentary this reader is
+	 *  offered, defaulting to the Bible edition they would open. */
+	const notesLang = commentaryLang ?? content.langFor('bible');
 
 	/** Sections of one document, gathered before `documentCitedSource` is
 	 *  asked, so a document cited at three sections is one group. */
@@ -148,35 +209,35 @@ export function citedSources(citers: Citer[]): CitedBySource[] {
 	for (const citer of citers) {
 		switch (citer.kind) {
 			case 'ccc':
-				into('ccc', workNames('catechism'), {
+				into('catechism', 'ccc', workNames('catechism'), {
 					key: citer.n,
 					label: `¶${citer.n}`,
 					href: hrefFor({ kind: 'ccc', n: citer.n })
 				});
 				break;
 			case 'compendium':
-				into('compendium', workNames('compendium'), {
+				into('catechism', 'compendium', workNames('compendium'), {
 					key: citer.n,
 					label: `${citer.n}`,
 					href: hrefFor({ kind: 'compendium', n: citer.n })
 				});
 				break;
 			case 'socialDoctrine':
-				into('socialDoctrine', workNames('social-doctrine'), {
+				into('socialDoctrine', 'socialDoctrine', workNames('social-doctrine'), {
 					key: citer.n,
 					label: `${citer.n}`,
 					href: hrefFor({ kind: 'socialDoctrine', n: citer.n })
 				});
 				break;
 			case 'canonLaw':
-				into('canonLaw', workNames('canon-law'), {
+				into('canonLaw', 'canonLaw', workNames('canon-law'), {
 					key: citer.n,
 					label: `${citer.n}`,
 					href: hrefFor({ kind: 'canonLaw', n: citer.n })
 				});
 				break;
 			case 'summa':
-				into('summa', workNames('summa'), {
+				into('doctors', 'summa', workNames('summa'), {
 					key: `${citer.part}:${citer.question}:${citer.article ?? ''}`,
 					// The form every citation of the Summa prints, and the one
 					// `refs-grammar.ts` reads back: part, question, article.
@@ -192,7 +253,7 @@ export function citedSources(citers: Citer[]): CitedBySource[] {
 			case 'prayer': {
 				const meta = getPrayerMeta(content.langFor('prayer'), citer.slug);
 				if (!meta) break;
-				into('prayer', workNames('prayer'), {
+				into('prayer', 'prayer', workNames('prayer'), {
 					key: citer.slug,
 					// The prayer's own name, not its number: a collection is
 					// read by title and its numbering is an ordering, not an
@@ -210,9 +271,10 @@ export function citedSources(citers: Citer[]): CitedBySource[] {
 			}
 			case 'annotation': {
 				const manifest = getWork(citer.work);
-				if (!manifest) break;
+				if (!manifest || baseLang(manifest.language) !== notesLang) break;
 				const label = manifest.short_title || manifest.title;
 				into(
+					'commentary',
 					`annotation:${citer.work}`,
 					{ label, fullTitle: manifest.title !== label ? manifest.title : null },
 					{

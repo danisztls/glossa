@@ -473,6 +473,16 @@
 	});
 
 	/**
+	 * The language the annotations in that panel are shown in — the edition on
+	 * screen and not the reader's stored preference, because those two differ
+	 * exactly when the preferred edition has no text for this chapter and the
+	 * page has fallen back to another. Every other page lets `citedSources`
+	 * read the preference; only this one knows which edition the reader is
+	 * actually looking at.
+	 */
+	const editionLang = $derived(baseLang(getWork(workId)?.language ?? content.langFor('bible')));
+
+	/**
 	 * One row per cited verse, carrying every place in the corpus that cites
 	 * it. The verse scaffold is built once and shared, which is the whole
 	 * point of a single panel: the reader looks up a verse, not a work.
@@ -499,7 +509,7 @@
 					label: verse === 0 ? t('bible.wholeChapter') : `${t('bible.verseAbbrev')}\u00a0${verse}`,
 					...(verse !== 0 && present ? { href: `#v${verse}` } : {}),
 					...(verse !== 0 && !present ? { note: t('bible.verseNotInEdition') } : {}),
-					sources: citedSources(scriptureCitations.get(verse) ?? [])
+					sources: citedSources(scriptureCitations.get(verse) ?? [], editionLang)
 				};
 			})
 			.filter((row) => row.sources.length > 0)
