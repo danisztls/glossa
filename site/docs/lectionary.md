@@ -131,28 +131,67 @@ witness on the three slots it carries, and remains worth having as a
 cross-check on the universal calendar against the US adaptation — that is the
 one thing it can do that the scan cannot, being free of OCR.
 
-### 5. What the psalms still owe
+### 5. What the psalms owed, and did not
 
-`versification.ts` converts the Hebrew/Vulgate chapter shift and REFUSES the
-verse-level offset, naming the orphan-psalm table as the prerequisite. USCCB's
-NAB psalms use exactly the convention that needs it. Until that table exists a
-psalm's CHAPTER is right and its verse numbers are the source's.
+This section claimed the opposite until it was measured, and the correction is
+the useful part. `versification.ts` converts the Hebrew/Vulgate chapter shift
+and REFUSES the verse-level one, naming the orphan-psalm table — which psalms
+carry a superscription — as the prerequisite. USCCB's psalms were recorded here
+as the convention that needs it.
 
-### 6. Two calendar defects this feature found
+**They are not.** The NAB counts a superscription as a verse exactly as the
+Vulgate does, so the chapter shift alone lands every citation on the right text
+and the verse number never moves. `Psalm 51:3` is the Miserere, `Psalm 4:2` is
+`Cum invocarem`, `Psalm 30:2` is `Exaltabo te` — each a verse the KJV
+convention calls 1 — and every psalm in the table whose title is its own verse
+agrees. The claim had been reasoned from what the NAB is rather than read off
+what it prints.
 
-Both are `$lib/calendar`'s, not the lectionary's, and both are recorded where
-they were found rather than worked around:
+`psalms-oracle.test.ts` is the standing check: every psalm verse the table
+cites must land inside the psalm it maps to. It found one real defect on its
+first run, which is the answer to whether it was worth writing — Vulgate Ps 55
+joins the two halves of Psalm 56's refrain into one verse, so `Psalm 56:12`
+and `56:13` had been resolving to real, existing, WRONG text and only `56:14`
+overran loudly. Three `LATE_MERGE` rows fixed it.
+
+What the check cannot see: a merge whose overflow verse no citation happens to
+reach leaves the verses before it silently wrong. The corpus holds no
+modern-numbered psalter to diff against — every shipped edition is a Vulgate
+one — so there is no sweep for this, only the citations actually made.
+
+### 6. Two calendar defects this feature found — fixed, not a gap
+
+Both were `$lib/calendar`'s rather than the lectionary's, and both were found
+by diffing the rules against the crawl, which is what a second witness is for:
+the calendar's own GCatholic oracle passed on both, because its window is
+2025–2027 and neither year is in it. Kept here because the way they were found
+is the reusable part.
 
 - **St Joseph, 2028.** 19 March is the Third Sunday of Lent, so he is
-  impeded. USCCB transfers him FORWARD to the Monday, which is what the
-  Universal Norms require; the engine transfers him backward to the Saturday.
-  `rules.test.ts`'s `CALENDAR_DIVERGENCE` holds the two dates.
+  impeded, and USCCB transfers him FORWARD to the Monday. The engine sent him
+  backward, because the direction was a flag on the celebration — set from
+  the Holy Week case, where anticipating IS right (15 March in 2008). The fix
+  was to stop stating a direction: n. 60's "closest day not listed under
+  nn. 1–8" is closest in EITHER direction, ties going forward, which gives
+  the Monday off a Lenten Sunday and the Saturday out of Holy Week from one
+  rule. It also gives the Immaculate Conception her Monday, the commonest
+  transfer there is. The Annunciation is the exception and is now stated as
+  one: n. 61 NAMES its destination, the Monday after the Second Sunday of
+  Easter, which is not the closest free day and cannot be found by looking.
 - **There is no First Sunday of Ordinary Time.** The Sunday of that week is
   the Baptism of the Lord and the next is the SECOND; the book numbers from 64
-  and prints no 61. The engine emits an Ordinary week-1 Sunday in a year where
-  the Baptism is displaced to the Monday (15 January 2023). `sundayNumber`
-  states what the book states rather than working around it, which also keeps
-  a reader in such a year from being handed the wrong Sunday.
+  and prints no 61. `temporal.ts` counted the weeks from the day the season
+  starts, so a year where the Baptism is displaced to the Monday left five
+  weekdays instead of six and every Sunday came out a week early — 15 January
+  2023 was emitted as a First Sunday that does not exist. The count is
+  anchored on the Sunday now. `sundayNumber` clamped the week to 2 while this
+  stood, and the clamp is gone, because it repaired exactly one day of the
+  many that were wrong. The weekdays were right throughout; every SUNDAY of
+  such a year's first part was a week early, and clamping only lifts the
+  first of them. `days.oracle.json` holds 15 January 2023 — the clamped day,
+  number 64 — and not the 22nd, which would still have read as the Second
+  Sunday when it is the Third. A workaround that repairs precisely the case
+  the oracle can see is the shape to distrust.
 
 ## Running it
 

@@ -94,6 +94,17 @@
  * KJV/RSV-style (title-unnumbered) Psalm references, that table has to be
  * built and verified against the corpus first — flagged here, not guessed.
  *
+ * **THE CONSUMER ARRIVED AND DID NOT NEED IT** (2026-09-06). The lectionary
+ * cites psalms as USCCB prints them, which is the NAB's numbering, and the
+ * NAB counts a superscription as a verse exactly as the Vulgate does — so
+ * the chapter shift alone is still the whole conversion. `Psalm 51:3` is the
+ * Miserere and `Psalm 4:2` is `Cum invocarem`, both a verse the KJV
+ * convention calls 1, and about twenty psalms whose title is its own verse
+ * agree. `lectionary/psalms-oracle.test.ts` holds the check: every psalm
+ * verse the table cites lands inside the psalm it maps to. So the orphan-
+ * psalm table remains unbuilt for the original reason and not for want of
+ * anyone needing it — no source this corpus reads numbers psalms that way.
+ *
  * ## Design
  *
  * Pure and dependency-free: no corpus import. `toVulgateCandidates` takes a
@@ -304,7 +315,27 @@ const LATE_MERGE = new Map<string, { chapter: number; verse: number }>([
 	['acts:7:57', { chapter: 7, verse: 56 }],
 	['acts:7:58', { chapter: 7, verse: 57 }],
 	['acts:7:59', { chapter: 7, verse: 58 }],
-	['acts:7:60', { chapter: 7, verse: 59 }]
+	['acts:7:60', { chapter: 7, verse: 59 }],
+	// Psalm 56 (Vulgate 55): the Vulgate joins the two halves of the refrain
+	// into 55:11 — "In Deo laudabo verbum, in Domino laudabo sermonem" and "in
+	// Deo speravi, non timebo quid faciat mihi homo" are one verse there and
+	// two in Hebrew — so the tail runs one ahead from 56:12 on. All four
+	// shipped Vulgate psalters agree (`clementina.la`, `cpdv.en`,
+	// `douay-rheims.en`, `matos-soares.pt`), and 55:12 is "In me sunt Deus
+	// vota tua" against 55:13's "Quoniam eripuisti animam meam de morte".
+	//
+	// KEYED BY THE VULGATE CHAPTER AND THE HEBREW VERSE, because this table is
+	// consulted AFTER the book mapper has already moved 56 to 55. Every other
+	// entry here is in a book whose chapters do not shift, so the distinction
+	// is invisible in them and is stated once, here, where it is not.
+	//
+	// The lectionary is what found it: `Psalm 56:10c-12, 13-14` overran the
+	// end of a 13-verse psalm, and the two verses before the overrun had been
+	// resolving to real, existing, WRONG text — the failure this table's
+	// docblock says to expect.
+	['ps:55:12', { chapter: 55, verse: 11 }],
+	['ps:55:13', { chapter: 55, verse: 12 }],
+	['ps:55:14', { chapter: 55, verse: 13 }]
 ]);
 
 /**

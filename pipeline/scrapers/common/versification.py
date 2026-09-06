@@ -20,6 +20,14 @@ a citation pointed PAST the end of a chapter -- Acts 7:60 in a 59-verse Acts 7
 -- which fails loudly and is easy to catch. The verses just before it do not:
 they resolve to real, existing, wrong text, and nothing complains. That is why
 conversion is applied unconditionally rather than only when a lookup fails.
+
+SOME `late_merge` ROWS ARE UNREACHABLE HERE AND ARE SUPPOSED TO BE. The table
+is a mirror of the site's, and the site keys a psalm's row by the VULGATE
+chapter its mapper already produced -- `ps:55:12` for Hebrew Ps 56:12. Psalms
+is wholesale-divergent, so `to_vulgate` raises before any lookup and never
+reads those rows. Do not "fix" the ordering to reach them: without the mapper
+that produced the 55 there is nothing to look them up with, which is the whole
+reason the three books refuse rather than convert.
 """
 
 from __future__ import annotations

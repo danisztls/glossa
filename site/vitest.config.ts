@@ -54,7 +54,8 @@ export default defineConfig({
 		exclude: [
 			'node_modules/**',
 			'src/lib/calendar/oracle.test.ts',
-			'src/lib/lectionary/olm-oracle.test.ts'
+			'src/lib/lectionary/olm-oracle.test.ts',
+			'src/lib/lectionary/psalms-oracle.test.ts'
 		],
 		environment: 'node'
 	}
