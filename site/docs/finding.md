@@ -644,34 +644,31 @@ check, and the site has no visual regression suite. `layout-placement.test.ts`
 reads the `class="…"` attributes under `src/routes/` and is what catches the
 next one.
 
-**Date, author and kind ride the title's line.** They were a second line under
-it, which was right in a 56rem column and wrong the moment the page got a wider
-one: the description is capped at its own 60ch, so the right half of every row
-was empty while three facts that would have filled it sat stacked underneath.
-In the rail they cost 298 rows a line each and read down the page as a column.
-They are inside the anchor, which is what `.index-link` already intends; the
-subject chips stay outside it, being buttons.
+**A card is four stacked full-width blocks**: title with its kind chip at the
+end of the line, date and author, the description, the subjects. The title row
+is `.index-link`'s own title-and-chip shape, the one `/preces`,
+`/doctores/summa` and `/colophon` share and the one the both-ends hover is
+written for; the chips stay outside the anchor, being buttons.
 
-**And the SECOND line of the row is two columns, for the half of that defect
-the rail could not reach.** With the facts moved up, the description and the
-subject chips were still two full-width blocks under the title — and since the
-description keeps a measure, the right third of the row was empty again one
-line down. **A blurb cannot be widened out of it**: 62rem of 0.9rem sans is
-about 130 characters, twice a measure, and removing the cap only trades an
-empty column for an unreadable line. So the space goes to the thing that has
-no measure to keep: the description holds 34rem (~74 characters) and the chips
-flow into whatever is left, which at full width is about 25rem.
+**The description carries no max-width, and getting there took two wrong
+answers** (2026-09-06, by direction). It was capped at 60ch inside a 62rem
+track, so the right half of every row was empty — and twice that emptiness was
+read as a PLACEMENT problem and filled by moving something into it. First
+date, author and kind went up into a rail at the end of the title's line.
+That left the same hole one line down, so the subject chips then went into a
+second column beside the blurb. Each attempt cost something: the rail made
+three facts read twice, once at a title's end and once as a column down the
+page, and the chip column left the space under a short chip list empty
+instead.
 
-**The measure is the element's own and the grid is the extra**, not the other
-way round — below the query there is no track to keep it, and that is exactly
-where an uncapped blurb runs the width of a phone-to-laptop column. The query
-is **64rem and not the aside's 80rem**, the one number here that is not
-inherited: between the two the aside is gone and the column is at
-`--landing-width`, so the row is at its WIDEST there. What the query protects
-is the chip track, which below 64rem would set one word to a line. The first
-track is a LENGTH and the second `1fr`, because the list track is itself
-flexible between 80 and 86rem and the prose column is the one thing in the
-squeeze that must not move.
+**It was a WIDTH problem, and the answer was the text having the width.** The
+argument against it was that 62rem of 0.9rem sans is about 130 characters,
+twice a measure — true, and it measures the wrong thing. `--measure-cpl`
+governs running prose read line after line, and this is two or three sentences
+under a title, read as a block to decide whether to open a document. **Nothing
+in an index is set in the reading grid's measure.** With the description
+filling the row there is no empty half left for anything to be moved into, and
+the rows lost half their height on the way.
 
 **The count prints a fraction only once there is one.** `298 / 298` is a ratio
 saying nothing, and a page that opens with one reads as a state the reader is

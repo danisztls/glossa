@@ -474,28 +474,33 @@
 					{@const description = describe(row)}
 					<li class="index-row">
 						<!--
-							DATE, AUTHOR AND KIND RIDE THE TITLE'S LINE, in a rail at the
-							end of it. They were a second line under the title until the
-							page got a column wider than a measure, at which point the
-							description — capped at its own 60ch — left the whole right
-							half of every row empty while three facts that would have
-							filled it sat stacked underneath. Up here they use the width,
-							they cost 298 rows a line each, and they read down the page as
-							a column of dates and kinds rather than as an item of every
-							row in turn.
+							THE CARD IS FOUR STACKED BLOCKS, each taking the row's whole
+							width: title and kind on one line, then date and author, then
+							the description, then the subjects.
 
-							INSIDE THE ANCHOR, which is what `.index-link`'s docblock
-							already intends — the whole row is the link, and the space
-							between its ends is part of the target. The tags below stay
-							outside it: they are buttons, and a button inside an anchor is
-							not markup a browser will honour.
+							THE RAIL IS GONE (2026-09-06, by direction). Date, author and
+							kind rode the end of the title's line for a day, on the
+							argument that the right half of the row was empty because the
+							description kept a 60ch measure. That read the emptiness as a
+							placement problem when it was a WIDTH one: the answer the page
+							wanted was the description filling the column, and with it
+							filling there is no empty half for the three facts to be
+							moved into. Under the rail they were also read twice — once at
+							the end of a title and once as a column down the page — where
+							a line of their own is read once.
+
+							THE KIND STAYS AT THE END OF THE TITLE'S LINE, which is not
+							the rail: it is `.index-link`'s own title-and-chip shape, the
+							one `/preces`, `/doctores/summa` and `/colophon` all take, and
+							the hover that answers on both ends of the row is written for
+							it (styles/components.css).
 
 							Date and author, no "Promulgated" label: in a list where every
 							row carries one, the label is hundreds of repetitions of a word
-							that the date's own format already implies. The AUTHOR is new
-							here and earns its place by the list going flat — with the
-							pontificate headings gone it is the one fact a row would
-							otherwise have lost.
+							that the date's own format already implies. The AUTHOR earns
+							its place by the list going flat — with the pontificate
+							headings gone it is the one fact a row would otherwise have
+							lost.
 
 							No copyright line. Every document in this corpus is under the
 							identical Libreria Editrice Vaticana notice, so repeating it per
@@ -510,60 +515,36 @@
 						-->
 						<a href={hrefFor({ kind: 'document', slug: row.slug })} class="doc-link index-link">
 							<span class="doc-title index-title">{@render marked(row.manifest.title)}</span>
-							<span class="doc-rail">
-								<span class="doc-meta label-micro">
-									<time datetime={row.manifest.promulgated}>
-										{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
-									</time>
-									<span class="doc-author">{@render marked(row.manifest.pontiff_or_council)}</span>
-								</span>
-								<span class="doc-kind chip"
-									>{@render marked(documentKindLabel(row.manifest.document_kind))}</span
-								>
-							</span>
+							<span class="doc-kind chip"
+								>{@render marked(documentKindLabel(row.manifest.document_kind))}</span
+							>
 						</a>
-						<!--
-							THE DESCRIPTION AND THE SUBJECTS SIT SIDE BY SIDE, which is
-							what this wrapper is for and its only job. Both were
-							full-width blocks under the title, and since the description
-							is capped at its own measure that left the right third of
-							every row empty a second time — the same defect the rail
-							above fixed on the title's line, one line down. A blurb
-							cannot be widened out of it: 62rem of 0.9rem sans is ~130
-							characters, which is twice a measure. So the space goes to
-							the thing that has no measure to keep, and the chips flow
-							into it instead of stacking under the prose.
-
-							GRID ONLY WHERE THE ROW CAN HOLD BOTH, which is not the
-							breakpoint the aside arrives at — see the query below.
-							Narrower than that the two stack, and the description keeps
-							its measure on its own.
-						-->
-						{#if description || row.tags.length > 0}
-							<div class="doc-body">
-								{#if description}
-									<p class="doc-description">{@render marked(description)}</p>
-								{/if}
-								{#if row.tags.length > 0}
-									<!-- Each tag is a control, not decoration: seeing what a
-									     document is filed under and being unable to ask for the
-									     rest of that shelf is the worse half of a tag. -->
-									<ul class="doc-tags">
-										{#each row.tags as tag, i (tag)}
-											<li>
-												<button
-													type="button"
-													class="doc-tag"
-													class:on={selectedTags.includes(row.tagKeys[i])}
-													aria-pressed={selectedTags.includes(row.tagKeys[i])}
-													onclick={() => toggle('tags', row.tagKeys[i])}
-													>{@render marked(tag)}</button
-												>
-											</li>
-										{/each}
-									</ul>
-								{/if}
-							</div>
+						<p class="doc-meta label-micro">
+							<time datetime={row.manifest.promulgated}>
+								{formatPromulgated(row.manifest.promulgated, row.manifest.language)}
+							</time>
+							<span class="doc-author">{@render marked(row.manifest.pontiff_or_council)}</span>
+						</p>
+						{#if description}
+							<p class="doc-description">{@render marked(description)}</p>
+						{/if}
+						{#if row.tags.length > 0}
+							<!-- Each tag is a control, not decoration: seeing what a
+							     document is filed under and being unable to ask for the
+							     rest of that shelf is the worse half of a tag. -->
+							<ul class="doc-tags">
+								{#each row.tags as tag, i (tag)}
+									<li>
+										<button
+											type="button"
+											class="doc-tag"
+											class:on={selectedTags.includes(row.tagKeys[i])}
+											aria-pressed={selectedTags.includes(row.tagKeys[i])}
+											onclick={() => toggle('tags', row.tagKeys[i])}>{@render marked(tag)}</button
+										>
+									</li>
+								{/each}
+							</ul>
 						{/if}
 					</li>
 				{/each}
@@ -725,37 +706,11 @@
 		font-size: 1.15rem;
 	}
 
-	/*
-	 * THE RAIL AT THE END OF THE TITLE'S LINE — date, author, kind.
-	 *
-	 * `.index-link`'s own `justify-content: space-between` is what puts it
-	 * there, so the primitive is untouched and `/preces`, `/doctores/summa`
-	 * and `/colophon` keep the plain title-and-chip row they share. What this
-	 * adds is only that the end of the row now holds three things instead of
-	 * one.
-	 *
-	 * WRAPPING IS THE NARROW LAYOUT AND NEEDS NO QUERY. Below the grid the
-	 * column is a phone's, the title takes the whole of it and the rail falls
-	 * to a line of its own — where `space-between` leaves a single item at the
-	 * start, which is exactly where the meta line used to be. A
-	 * `margin-inline-start: auto` here would have kept it pinned right on that
-	 * wrapped line, which is the one place it should not be.
-	 */
-	.doc-rail {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.35rem 0.75rem;
-	}
-
-	.doc-link {
-		flex-wrap: wrap;
-	}
-
 	/* Tabular figures so dates align down the column; the author follows behind
 	   a separator drawn in CSS rather than typed into the markup, so it
 	   vanishes with the element it belongs to. */
 	.doc-meta {
+		margin: 0.3rem 0 0;
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -765,62 +720,23 @@
 		color: var(--color-border);
 	}
 
-	.doc-body {
-		margin-top: 0.35rem;
-	}
-
 	/*
-	 * THE SECOND LINE OF THE ROW IS TWO COLUMNS, above the breakpoint where
-	 * there is width to divide. The first is a measure and stays one — 34rem
-	 * is ~74 characters of this face at 0.9rem, the widest a muted grey blurb
-	 * reads at; the second takes whatever the track has left, which at 62rem
-	 * is about 25rem of chips.
+	 * NO MAX-WIDTH, WHICH IS THE POINT OF THE BLOCK (2026-09-06, by
+	 * direction). It was 60ch, then briefly 34rem beside a column of chips,
+	 * and both were a measure held inside a track more than twice as wide —
+	 * so every row ended in an empty half, and the two attempts to fill that
+	 * half moved things into it instead of letting the text have it.
 	 *
-	 * A LENGTH FOR THE FIRST TRACK AND `1fr` FOR THE SECOND, not the reverse.
-	 * The list track is itself flexible between 80 and 86rem (styles/
-	 * layout.css), so a fractional split would shrink the prose column in the
-	 * squeeze — which is the one thing here that must not move. The chips have
-	 * no measure to lose, so they absorb it.
-	 *
-	 * 64rem AND NOT THE 80rem THE ASIDE APPEARS AT, which is the one number
-	 * here that is not inherited. Between the two the aside is gone and the
-	 * column is at its own `--landing-width`, so the row is at its WIDEST there
-	 * — the band where a single-column body wastes the most. What the query has
-	 * to protect is the chip track: below 64rem the row cannot hold a measure
-	 * and a column of chips at once, and the tags would set one word to a line.
+	 * The description now runs the row, which is `--index-width` (62rem) once
+	 * the aside is beside it and `--landing-width` in the band below that.
+	 * That IS a long line by the reading grid's standard, and it is not the
+	 * reading grid: this is two or three sentences under a title in an index,
+	 * read as a block to decide whether to open a document, not a page of
+	 * prose read line after line. `--measure-cpl` governs the works
+	 * themselves; nothing here is set in it.
 	 */
-	@media (min-width: 64rem) {
-		.doc-body {
-			display: grid;
-			grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
-			gap: 0.35rem 2.5rem;
-			align-items: start;
-		}
-
-		/* A document nobody has read yet has chips and no blurb. Left in the
-		   second track it would sit against the right edge with the prose
-		   column empty beside it, which is the defect this grid exists to
-		   remove, arriving from the other side. */
-		.doc-body > .doc-tags:only-child {
-			grid-column: 1 / -1;
-		}
-
-		/* In the grid the two start on the same line, so the gap that
-		   separated them when stacked is the grid's to draw. */
-		.doc-body > .doc-tags {
-			margin-top: 0;
-		}
-	}
-
-	/* THE MEASURE IS THE ELEMENT'S OWN and not the grid track's, because below
-	   the query above there is no track to keep it — the column is the page's
-	   whole width there, and a blurb left uncapped set 130 characters to a
-	   line, which is the fault this row was being rearranged to fix arriving
-	   from the other direction. It was 60ch; 34rem is ~74 of this face at
-	   0.9rem, and a rem so that it and the grid track are one number. */
 	.doc-description {
-		margin: 0;
-		max-width: 34rem;
+		margin: 0.35rem 0 0;
 		font-size: 0.9rem;
 		color: var(--color-text-muted);
 	}

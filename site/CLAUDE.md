@@ -717,11 +717,14 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   the reading track empty beside it, and nothing errors. That shipped for a
   day; `layout-placement.test.ts` is what catches the next one. Its width is
   `--index-width` (62rem) and deliberately not `--landing-width`: an index is
-  sized by its row's first line, not by a grid of shelves. **Its SECOND line
-  is two columns above 64rem** — the description at a 34rem measure, the
-  subject chips in what is left — because a blurb cannot be widened out of an
-  empty right half without setting 130 characters to a line. 64rem and not the
-  aside's 80rem: between the two the row is at its widest.
+  sized by its row's first line, not by a grid of shelves. **A document card
+  is four stacked full-width blocks** — title and kind, date and author, the
+  description, the subjects — and **the description carries NO max-width**
+  (2026-09-06, by direction). Two attempts to fill the empty half a 60ch
+  measure left in a 62rem track failed the same way, by moving things into it
+  rather than letting the text have it: a rail of date/author/kind at the end
+  of the title's line, then a column of subject chips beside the blurb. An
+  index blurb is not the reading grid and takes no `--measure-cpl`.
 - **The home page's doors mirror the bar's order**, Learn last in both. Two
   lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
