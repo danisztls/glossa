@@ -454,59 +454,103 @@
 	 * speaks it — rubric red, ground lapis, gold — and a rank of invented UI
 	 * hues beside those three would read as a different application.
 	 *
-	 * WHAT THE MIX ACTUALLY RESOLVES TO, measured on paper: chroma 0.033 to
-	 * 0.084 and lightness 0.47 to 0.52 — one tonal band, differing in hue and
+	 * WHAT THE MIX ACTUALLY RESOLVES TO, measured on paper: chroma 0.039 to
+	 * 0.080 and lightness 0.47 to 0.52 — one tonal band, differing in hue and
 	 * in almost nothing else, which is what keeps a column of dots from reading
-	 * as a column of weights. Closest pair is verdigris and the commentary teal
-	 * at dE(ok) 0.043. Three seeds were moved to get there and the
-	 * failure they had is worth naming: a seed already near neutral comes out
-	 * of a 50% mix with a warm grey as no colour at all — the commentary's
-	 * first slate resolved to chroma 0.017, an accidental grey among six
-	 * hues. Check a new seed by what it MIXES to, never by the literal.
+	 * as a column of weights. Closest pair is minium and orpiment at dE(ok)
+	 * 0.044. A seed already near neutral comes out of a 50% mix with a warm
+	 * grey as no colour at all — the commentary's first slate resolved to
+	 * chroma 0.017, an accidental grey among the rest. Check a new seed by what
+	 * it MIXES to, never by the literal.
+	 *
+	 * THE SEEDS ARE SPREAD ROUND THE HUE CIRCLE, ONE SLOT EACH, and getting
+	 * there meant picking the pigment nearest a slot rather than the slot
+	 * nearest a pigment. **A manuscript kit is warm-heavy** — madder, minium,
+	 * bistre and orpiment all sit between 28° and 81° in OKLCH — so the first
+	 * eight, chosen by pigment identity alone, put four of them inside 52° and
+	 * two more within 46° of each other. At a dot's chroma that is invisible
+	 * and costs nothing; the moment `/schola` asked the same tokens for a
+	 * legible ICON (see `--pigment-icon-c`), four shelves came out four shades
+	 * of the same rust. They are ~42° apart now, each still a pigment somebody
+	 * ground: madder 20, minium 62, orpiment 108, verdigris 152, azurite 200,
+	 * ultramarine 265, Tyrian 305, kermes 340. Where the name can be apt it is
+	 * — ultramarine, the costliest thing in the workshop, for the Magisterium;
+	 * Tyrian purple, the colour of imperial edict, for the Code.
+	 *
+	 * IT COST THE PANEL NOTHING AND GAVE IT A LITTLE: its closest pair went
+	 * 4.3 -> 4.4 and its worst contrast on a dark ground 3.39 -> 3.87. The
+	 * whole gain is downstream, where the hue is asked to do work.
 	 */
 	--pigment-strength: 50%;
 	/*
-	 * SCRIPTURE IS MINIUM — red lead, the pigment a rubricator opened a book
-	 * with and the one the word "miniature" is named after. It joined on
-	 * 2026-09-06 with `/schola`'s shelf list, which needed a mark for the
-	 * Bible and for the Compendium; the Compendium takes no seed of its own
-	 * and wears the Catechism's, being the same teaching abridged, which is
-	 * what `catechismPairLang` already says everywhere else in the codebase.
-	 *
-	 * The seed was chosen by what it MIXES to, per the paragraph above, and by
-	 * how far that lands from the rest: dE(ok) 4.7 from the Catechism's red,
-	 * which is its nearest neighbour and wider than the family's own closest
-	 * pair (4.3). Vermilion was the obvious first try and resolves 1.2 away
-	 * from that red — two shelves in one colour.
+	 * The Bible's seed joined on 2026-09-06 with `/schola`'s shelf list, which
+	 * needed a mark for Scripture and for the Compendium; the Compendium takes
+	 * no seed of its own and wears the Catechism's, being the same teaching
+	 * abridged, which is what `catechismPairLang` says everywhere else in the
+	 * codebase.
 	 */
-	--pigment-bible: color-mix(in oklab, #c0561c var(--pigment-strength), var(--color-text-muted));
+	--pigment-bible: color-mix(in oklab, #915100 var(--pigment-strength), var(--color-text-muted));
 	--pigment-catechism: color-mix(
 		in oklab,
-		#a8332a var(--pigment-strength),
+		#a8353e var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-magisterium: color-mix(
 		in oklab,
-		#2a4a9e var(--pigment-strength),
+		#385db8 var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-social-doctrine: color-mix(
 		in oklab,
-		#1c6b4a var(--pigment-strength),
+		#00783a var(--pigment-strength),
 		var(--color-text-muted)
 	);
 	--pigment-canon-law: color-mix(
 		in oklab,
-		#6b4423 var(--pigment-strength),
+		#7847a6 var(--pigment-strength),
 		var(--color-text-muted)
 	);
-	--pigment-doctors: color-mix(in oklab, #8a6410 var(--pigment-strength), var(--color-text-muted));
-	--pigment-prayer: color-mix(in oklab, #6b3a6e var(--pigment-strength), var(--color-text-muted));
+	--pigment-doctors: color-mix(in oklab, #6a6700 var(--pigment-strength), var(--color-text-muted));
+	--pigment-prayer: color-mix(in oklab, #98397e var(--pigment-strength), var(--color-text-muted));
 	--pigment-commentary: color-mix(
 		in oklab,
-		#1f6b7f var(--pigment-strength),
+		#007277 var(--pigment-strength),
 		var(--color-text-muted)
 	);
+
+	/*
+	 * WHAT A PIGMENT IS DRAWN AT WHERE IT HAS TO BE SEEN RATHER THAN NOTICED.
+	 *
+	 * The mix above is tuned for a 0.4em dot in a column of dots, read against
+	 * its neighbours; `/schola` gives a shelf a 1.35rem ICON standing alone in
+	 * a row, half a page from the next one, and there the mix is too quiet to
+	 * read as a colour at all. Turning `--pigment-strength` up does not fix it
+	 * and makes one thing worse: the seeds are dark and so is a dark ground, so
+	 * more seed is less contrast, 2.34:1 at 85% neat.
+	 *
+	 * So a mark that has to be SEEN keeps the pigment's HUE and takes its
+	 * lightness and chroma from here —
+	 *
+	 *   color: oklch(from var(--pigment) var(--pigment-icon-l)
+	 *                var(--pigment-icon-c) h);
+	 *
+	 * — which is the one arrangement that gets a legible colour in every
+	 * palette from one declaration: lightness is chosen against the ground, so
+	 * contrast is a property of the theme rather than of the pigment, and
+	 * chroma is chosen for the surface. Measured over the eight: separation
+	 * dE(ok) 4.3 -> 8.9 on paper and 8.3 on a dark ground, contrast 5.14 light,
+	 * 4.25 sepia, 7.45 dark. **Always declare the flat `var(--pigment)` above
+	 * it**, exactly as the dot declares its grey: a browser without relative
+	 * colour syntax drops the second line and keeps a muted mark.
+	 *
+	 * `--pigment-icon-c: 0` IS HOW MONOCHROME SURVIVES THIS. `--pigment-strength`
+	 * cannot reach a mark that overrides chroma — under `data-mono` the pigment
+	 * resolves to `--color-text-muted`, and forcing chroma 0.15 onto a grey
+	 * would invent a hue for whatever direction its residue happens to point.
+	 * Both dials are set at the foot of this file.
+	 */
+	--pigment-icon-l: 0.5;
+	--pigment-icon-c: 0.15;
 }
 
 /*
@@ -582,6 +626,14 @@
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
 		--color-bookmark: #d9a94a;
+		/* A light mark on a dark ground: the same declaration, the other
+	   side of the page. Chroma is unchanged — it is a property of the
+	   surface, not of the palette. */
+		--pigment-icon-l: 0.76;
+		/* A light mark on a dark ground: the same declaration, the other
+		   side of the page. Chroma is unchanged — it is a property of the
+		   surface, not of the palette. */
+		--pigment-icon-l: 0.76;
 		--plate-blend: normal;
 		--plate-filter: brightness(0.82) contrast(0.94);
 	}
@@ -778,4 +830,8 @@
  */
 :root[data-mono] {
 	--pigment-strength: 0%;
+	/* And the second dial, which the first cannot reach: a mark that overrides
+	   chroma would otherwise force a hue onto the grey the line above resolves
+	   to. Lightness is left alone — it is answering the ground, not the hue. */
+	--pigment-icon-c: 0;
 }

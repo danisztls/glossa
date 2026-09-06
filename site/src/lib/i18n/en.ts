@@ -174,31 +174,36 @@ export const en: Dictionary = {
 	// `compare.enter`, …), so a reader who reads a row and then goes looking
 	// for the control finds the same word. Only the sentence is new writing.
 	//
-	// Each says what the thing DOES and, where it costs the reader something to
-	// know, where it lives. None of them recommends: the one paragraph on this
-	// page that recommends is `schola.start.body`, and a second would need the
-	// same attribution beneath it.
+	// Each says what the thing DOES. None of them recommends: the one paragraph
+	// on this page that recommends is `schola.start.body`.
+	//
+	// WHERE A CONTROL LIVES IS NOW THE GROUP HEADING RATHER THAN A CLAUSE, and
+	// the two headings are the whole reason this list is two lists. Four of
+	// these are in the header of every page and four appear only once there is
+	// a text on the screen; run together, the guide told a reader to look for
+	// the compare button on a page that correctly does not have one. Translate
+	// the pair as a matched pair — they are read against each other.
 	'schola.guide.heading': 'Finding your way around',
 	'schola.guide.lede':
 		'The text is the whole of the page; everything else is a control you can ignore until you want it.',
+	'schola.guide.top.heading': 'The bar at the top of every page',
+	'schola.guide.reading.heading': 'The bar above a text',
 	'schola.feature.search':
 		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type. Press / or Ctrl+K from anywhere, and ? for the other shortcuts.',
-	'schola.feature.library':
-		'Every work on the site in one list, with where you last left off and everything you have marked.',
 	'schola.feature.languages':
 		'The interface and the text are chosen separately, so you can read a work in one language while the buttons stay in another. Where a work has several editions in your language, you choose between those too.',
+	'schola.feature.settings':
+		'Text size, light or dark, sepia, and how much of the apparatus you want beside the text.',
+	'schola.feature.offline':
+		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
+	'schola.feature.contents':
+		'The divisions of the work you are in — books, parts, chapters — so you can move about inside it without going back to the start.',
 	'schola.feature.compare':
 		'Two editions of the same passage, side by side — the Latin beside your own language, or one translation beside another.',
 	'schola.feature.apparatus':
 		'An edition’s own footnotes, and any commentary written on the text, are offered beside it rather than under it. Citations inside the text are links, so a reference goes where it points.',
-	'schola.feature.marks':
-		'Mark a passage to come back to. Marks are kept in this browser and are not sent anywhere.',
-	'schola.feature.settings':
-		'Text size, light or dark, sepia, and a focus mode that clears everything but the text.',
-	'schola.feature.calendar':
-		'The liturgical day — season, colour, and who is kept — for the country whose calendar you follow.',
-	'schola.feature.offline':
-		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
+	'schola.feature.focus':
+		'Clears everything but the text. The way out stays where the bar was, so nothing is trapped behind it.',
 
 	// WHAT EACH WORK IS, AND WHAT ITS NUMBER MEANS. Two sentences per work: the
 	// first is what kind of thing it is and what authority it carries, the
@@ -238,6 +243,21 @@ export const en: Dictionary = {
 	'schola.cite.doctors': 'by part, then question — the Summa’s own divisions',
 	'schola.what.prayers': 'The words the Church prays, with the Latin beside them.',
 	'schola.cite.prayers': 'by name; there are no numbers to cite',
+
+	// THE THREE THAT ARE PAGES AND NOT TEXTS, so they take a `what` line and no
+	// `cite` line at all: a calendar is addressed by a date and a bookmark by
+	// whatever the reader marked, and inventing a notation for either would
+	// teach a citation form that does not exist. They were rows in the chrome
+	// guide above until 2026-09-06; a reader looking for the Library wants
+	// somewhere to go rather than a button, which is the section they are in
+	// now. Each is titled by the key its own destination is labelled by.
+	'schola.places.heading': 'Not texts, but places on this site',
+	'schola.what.library':
+		'Every work on the site in one list, grouped by subject rather than by kind.',
+	'schola.what.calendar':
+		'The liturgical day — season, colour, and who is kept — for the country whose calendar you follow.',
+	'schola.what.bookmarks':
+		'Passages you have marked, and where you last left off in each work. Both are kept in this browser and are not sent anywhere.',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.

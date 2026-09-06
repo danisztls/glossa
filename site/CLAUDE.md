@@ -556,6 +556,23 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   cannot be called two different things in a translated interface. Only the
   sentence under each is new writing, which is what still holds this page out
   of `CHROME_PATHS`.
+- **IT IS TWO LISTS, BECAUSE THE SITE HAS TWO BARS** (2026-09-06). Four
+  controls are in the header of every page and four appear only once there is a
+  text on the screen; run together as one list of nine, the guide sent a reader
+  looking for the compare button to a landing page that correctly does not have
+  one. **A guide to the chrome that does not say WHERE a control is has not
+  finished the sentence**, and the group heading is where that belongs rather
+  than a clause inside each row.
+- **NOTHING IN THAT SECTION IS A PAGE ANY MORE.** Library, Calendar and
+  Bookmarks were rows in it and are addresses, not controls — a reader looking
+  for the Library wants somewhere to go. They are a group under the works now,
+  carrying a `what` line and no `cite` line, because a calendar is addressed by
+  a date and a bookmark by whatever the reader marked; inventing a notation for
+  either would teach a citation form that does not exist. What is left in the
+  guide is exactly what no link can reach, so no row there lights on hover.
+- **Headings run h2 section, h3 group, h4 row.** Adding the groups pushed every
+  row's title down a level across the page: a heading tree that skips a level
+  is one a screen reader reads as a mistake.
 - **`/schola`'s SOURCED ROUTES ARE GONE** (2026-09-05) and `learning-routes.ts`
   with them. Each cited the document in this corpus that stated its order,
   which was a sound rule that produced a page whose most useful sentence for a
@@ -630,18 +647,32 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   is what a shared vocabulary looks like when it is right and what a collision
   looks like when it is not** — check `tokens.css` before opening a token
   family, not after.
-- **`/schola` TURNS THE DIAL UP TO 85%, AND GATES IT OFF MONOCHROME.** A dot
-  and an icon are not the same surface: `CitedBy` reads a column of dots in one
-  glance, where a shelf icon stands alone half a page from the next and has to
-  be a colour on its own — at 50% the family runs chroma 0.026-0.094, which a
-  reader comparing side by side can tell apart and a reader scrolling cannot.
-  Strength alone spends contrast on a dark ground (the seeds are dark and so is
-  the ground), so the icons are mixed 85% toward `--color-text` afterwards,
-  which moves a pigment AWAY from the ground in either family. Separation
-  4.3 -> 6.2, contrast up on paper and sepia and still over 3:1 in dark.
-  **`data-mono` sets the dial on the ROOT, so any override below beats it** —
-  `:root:not([data-mono])` is what keeps that mode's contract, and
-  `pigments.test.ts` fails on an ungated one.
+- **A MARK THAT HAS TO BE SEEN KEEPS THE HUE AND TAKES THE REST FROM THE
+  THEME.** A dot and an icon are not the same surface: `CitedBy` reads a column
+  of dots in one glance, where a shelf icon stands alone half a page from the
+  next and has to be a colour on its own. Two attempts got it wrong — the mix at
+  50% is chroma 0.026-0.094, invisible while scrolling, and turning
+  `--pigment-strength` up buys separation while spending contrast on a dark
+  ground, because the seeds are dark and so is the ground.
+  `oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h)` is
+  the arrangement that works: lightness answers the GROUND so contrast is a
+  property of the theme, chroma answers the SURFACE, and only the hue is the
+  shelf's. **Always declare the flat `var(--pigment)` above it** — a browser
+  without relative colour syntax drops the line and keeps a muted mark.
+- **THE SEEDS ARE SPREAD ROUND THE HUE CIRCLE, and a manuscript kit fights
+  that.** Madder, minium, bistre and orpiment all sit between 28° and 81° in
+  OKLCH, so the first eight — chosen by pigment identity — put four shelves
+  inside 52°. At a dot's chroma that is invisible and free; the moment an icon
+  asked the same tokens for a legible colour, four shelves came out four shades
+  of the same rust. They are ~42° apart now, each still a pigment somebody
+  ground, and the panel gained a little by it (closest pair 4.3 -> 4.4, worst
+  dark contrast 3.39 -> 3.87). **Pick the pigment nearest a slot, not the slot
+  nearest a pigment.**
+- **`--pigment-icon-c: 0` IS HOW MONOCHROME SURVIVES THAT**, and
+  `--pigment-strength: 0%` cannot stand in for it: a mark that overrides chroma
+  is unreachable by the strength dial, and forcing chroma onto the grey it
+  resolves to would invent a hue from whichever way that grey's residue points.
+  `pigments.test.ts` asserts both dials and the flat fallback.
 - **WHERE A PIGMENT MAY GO IS ARITHMETIC.** The family resolves to 3.4-4.2:1 on
   a dark ground, which is a decoration's contrast and not a text colour's — so
   `/schola` spends it on a 1.35rem icon, on the 1.6rem serif stage figures

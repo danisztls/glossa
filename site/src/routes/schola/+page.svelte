@@ -131,34 +131,48 @@
 
 	/**
 	 * THE CHROME, NAMED BY ITS OWN CONTROLS. Every `nameKey` here is the key
-	 * the button, menu or page it describes is already labelled by, so a reader
-	 * who reads this row and then goes looking for it finds the same word — and
-	 * so a translated interface never disagrees with its own guide. Only the
-	 * sentence is written here.
+	 * the button or menu it describes is already labelled by, so a reader who
+	 * reads a row and then goes looking for the control finds the same word —
+	 * and so a translated interface never disagrees with its own guide. Only
+	 * the sentence under each is written here.
 	 *
-	 * `href` where the feature IS a page and nothing where it is a control on
-	 * one: a link to "the settings menu" would have to open a menu that lives
-	 * in the header of whatever page the reader is on, and there is no address
-	 * for that.
+	 * ## IT IS TWO LISTS, BECAUSE THE SITE HAS TWO BARS
+	 *
+	 * One flat list of nine ran a search box, a table of contents, a calendar
+	 * and an install prompt together as though a reader would meet them in one
+	 * place, and they will not: four are in the header of every page and four
+	 * appear only once there is a text on the screen. **A guide to the chrome
+	 * that does not say WHERE a control is has not finished the sentence** —
+	 * the reader who cannot find the compare button is looking for it on a
+	 * landing page, where it correctly does not exist.
+	 *
+	 * NOTHING HERE IS A PAGE ANY MORE, so `Feature` carries no `href`. Library,
+	 * Calendar and Bookmarks were rows in this list and are addresses, not
+	 * controls; they moved to the section below, which is the list of what is
+	 * on the site. What is left is exactly what a link cannot reach — a menu
+	 * that opens in the header of whatever page the reader is on has no address
+	 * to give them.
 	 */
 	interface Feature {
 		key: string;
 		icon: IconName;
 		nameKey: string;
-		/** Set only where the feature IS a page. */
-		href?: string;
 	}
 
-	const FEATURES: readonly Feature[] = [
+	/** The header, on every page including this one. */
+	const TOP_BAR: readonly Feature[] = [
 		{ key: 'search', icon: 'search', nameKey: 'jumpbox.short' },
-		{ key: 'library', icon: 'book-open', nameKey: 'nav.library', href: '/bibliotheca' },
 		{ key: 'languages', icon: 'languages', nameKey: 'lang.label' },
+		{ key: 'settings', icon: 'sliders-horizontal', nameKey: 'settings.label' },
+		{ key: 'offline', icon: 'download', nameKey: 'install.label' }
+	];
+
+	/** The bar that appears above a text and nowhere else (`ReadingBar`). */
+	const READING_BAR: readonly Feature[] = [
+		{ key: 'contents', icon: 'table-of-contents', nameKey: 'document.tableOfContents' },
 		{ key: 'compare', icon: 'columns-2', nameKey: 'compare.enter' },
 		{ key: 'apparatus', icon: 'notebook-pen', nameKey: 'apparatus.label' },
-		{ key: 'marks', icon: 'bookmark', nameKey: 'bookmark.library', href: '/signata' },
-		{ key: 'settings', icon: 'sliders-horizontal', nameKey: 'settings.label' },
-		{ key: 'calendar', icon: 'calendar', nameKey: 'nav.calendar', href: '/calendarium' },
-		{ key: 'offline', icon: 'download', nameKey: 'install.label' }
+		{ key: 'focus', icon: 'eye', nameKey: 'zen.enter' }
 	];
 
 	/**
@@ -261,6 +275,40 @@
 			titleKey: 'prayers.landing.title',
 			href: '/preces',
 			type: 'prayer'
+		}
+	] as const;
+
+	/**
+	 * NOT TEXTS, BUT PLACES — and they are in the works section rather than in
+	 * the chrome guide above because that is what they are. A reader looking
+	 * for the Library is looking for somewhere to go, not for a button to
+	 * press; the guide answers "what does this control do" and this section
+	 * answers "what is on this site".
+	 *
+	 * They carry no specimen and no "Cited as" line, having no notation to
+	 * teach: a calendar is addressed by a date and a bookmark by whatever the
+	 * reader marked. That absence is the reason they are a group of their own
+	 * under the eight rather than eleven rows in one grid — a row missing the
+	 * one line every other row has reads as a row with something wrong with it.
+	 */
+	const PLACES = [
+		{
+			key: 'library',
+			icon: 'book-open' as IconName,
+			titleKey: 'nav.library',
+			href: '/bibliotheca'
+		},
+		{
+			key: 'calendar',
+			icon: 'calendar' as IconName,
+			titleKey: 'nav.calendar',
+			href: '/calendarium'
+		},
+		{
+			key: 'bookmarks',
+			icon: 'bookmark' as IconName,
+			titleKey: 'bookmark.library',
+			href: '/signata'
 		}
 	] as const;
 
@@ -439,20 +487,39 @@
 	<section aria-labelledby="guide-heading">
 		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
 		<p class="section-lede">{t('schola.guide.lede')}</p>
+
+		<!--
+			TWO GROUPS, BECAUSE THERE ARE TWO BARS AND A READER MEETS THEM IN
+			DIFFERENT PLACES. The heading of each is where the controls under it
+			live, so a reader who cannot find the compare button learns from the
+			heading that it is not on the page they are looking at.
+
+			`h3` for the group and `h4` for a control, which is what pushed every
+			row's title down a level across the page: a heading tree that skips
+			is a heading tree a screen reader reads as a mistake.
+		-->
+		<h3 class="group">{t('schola.guide.top.heading')}</h3>
 		<ul class="feature-grid">
-			{#each FEATURES as feature (feature.key)}
+			{#each TOP_BAR as feature (feature.key)}
 				<li class="feature">
 					<!-- Decorative, so `aria-hidden` — which `Icon.svelte` enforces
 					     rather than offers. The name beside it is the name. -->
 					<span class="feature-icon"><Icon name={feature.icon} /></span>
 					<div class="feature-text">
-						<h3>
-							{#if feature.href}
-								<a href={feature.href}>{t(feature.nameKey)}</a>
-							{:else}
-								{t(feature.nameKey)}
-							{/if}
-						</h3>
+						<h4>{t(feature.nameKey)}</h4>
+						<p>{t(`schola.feature.${feature.key}`)}</p>
+					</div>
+				</li>
+			{/each}
+		</ul>
+
+		<h3 class="group">{t('schola.guide.reading.heading')}</h3>
+		<ul class="feature-grid">
+			{#each READING_BAR as feature (feature.key)}
+				<li class="feature">
+					<span class="feature-icon"><Icon name={feature.icon} /></span>
+					<div class="feature-text">
+						<h4>{t(feature.nameKey)}</h4>
 						<p>{t(`schola.feature.${feature.key}`)}</p>
 					</div>
 				</li>
@@ -468,7 +535,7 @@
 				<li class="book" data-shelf={work.key}>
 					<span class="book-icon"><Icon name={work.icon} /></span>
 					<div class="book-text">
-						<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
+						<h4><a href={work.href}>{t(work.titleKey)}</a></h4>
 						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
 						<!--
 							THE SPECIMEN IS ON THE "CITED AS" ROW, and it sat on the title
@@ -502,6 +569,27 @@
 								<span class="cite-example">{specimens[work.key]}</span>
 							{/if}
 						</p>
+					</div>
+				</li>
+			{/each}
+		</ul>
+
+		<!--
+			THE THREE THAT ARE PAGES RATHER THAN TEXTS. They were rows in the
+			chrome guide above until 2026-09-06 and did not belong there: a
+			reader looking for the Library wants somewhere to go, not a button.
+			Here they answer the section's own question — what is on this site —
+			and the group heading is what says they answer the other half of it,
+			"and how it is cited", with nothing.
+		-->
+		<h3 class="group">{t('schola.places.heading')}</h3>
+		<ul class="book-grid">
+			{#each PLACES as place (place.key)}
+				<li class="book">
+					<span class="book-icon"><Icon name={place.icon} /></span>
+					<div class="book-text">
+						<h4><a href={place.href}>{t(place.titleKey)}</a></h4>
+						<p class="book-what">{t(`schola.what.${place.key}`)}</p>
 					</div>
 				</li>
 			{/each}
@@ -793,12 +881,13 @@
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		color: var(--color-accent);
-		color: color-mix(in oklab, var(--pigment) 85%, var(--color-text));
+		color: var(--pigment, var(--color-accent));
+		color: var(--pigment, var(--color-accent));
+		color: oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h);
 		margin-inline-start: -0.06em;
-		/* Lifted like the shelf icons, and for the same reason. 1.6rem is large
-		   text: a 3:1 floor, which the lifted family clears everywhere.
-		   `.pick-name` further down is 1.1rem and does not. */
+		/* Drawn like the shelf icons and for the same reason. 1.6rem is large
+		   text, a 3:1 floor, which this clears on every ground; `.pick-name`
+		   further down is 1.1rem, owes 4.5:1, and stays on the accent. */
 	}
 
 	.stage-why {
@@ -1057,49 +1146,37 @@
 	}
 
 	/*
-	 * THE DIAL IS TURNED UP HERE, because a dot and an icon are not the same
-	 * surface. `CitedBy` spends these at 50% on a 0.4em dot, where a whole
-	 * column of them sits within one glance and the eye reads them RELATIVE to
+	 * A MARK THAT HAS TO BE SEEN KEEPS THE PIGMENT'S HUE AND TAKES THE REST
+	 * FROM THE THEME. `CitedBy` spends these at 50% on a 0.4em dot, where a
+	 * whole column sits within one glance and the eye reads them RELATIVE to
 	 * each other; a shelf icon stands alone in a row, half a page from the
-	 * next one, and has to read as a colour on its own. At 50% the family runs
-	 * chroma 0.026-0.094 — eight marks that a reader comparing them side by
-	 * side can tell apart and a reader scrolling past cannot.
+	 * next, and has to be a colour on its own. Two attempts got that wrong
+	 * before this one — the mix at 50% is chroma 0.026-0.094, invisible while
+	 * scrolling; turning `--pigment-strength` up buys separation and spends
+	 * contrast on a dark ground, because the seeds are dark and so is the
+	 * ground.
 	 *
-	 * 85% of the seed, then 85% of THAT against the theme's own text colour,
-	 * and the second mix is what makes the first affordable. Strength alone
-	 * buys separation and spends contrast on a dark ground — the seeds are
-	 * dark and so is the ground, so more seed is less legible, 2.34:1 at 85%
-	 * neat. Mixing toward `--color-text` moves a pigment AWAY from the ground
-	 * in either family, darker on paper and lighter on a dark one, and costs
-	 * only what it takes back from chroma.
+	 * `oklch(from …)` is what settles it. Lightness comes from
+	 * `--pigment-icon-l`, which the palette sets against its own ground, so
+	 * contrast is a property of the THEME; chroma comes from
+	 * `--pigment-icon-c`, chosen for the surface; and only the hue is the
+	 * shelf's. One declaration, legible in five appearance axes, and
+	 * `tokens.css` carries the measurements — separation dE(ok) 4.3 -> 8.9,
+	 * contrast 5.14 light, 4.25 sepia, 7.45 dark.
 	 *
-	 * Measured over the eight, against `--color-bg`, `--color-bg-elevated` and
-	 * OLED black: separation 4.3 -> 6.2 (OKLab x100), chroma 0.049-0.118, and
-	 * contrast 4.70 -> 5.37 on paper, 3.70 -> 4.13 on sepia, 3.39 -> 3.17 on a
-	 * dark ground. Only the last is a loss and it stays above 3:1, which is
-	 * more than a decoration beside its own name in words has to clear.
+	 * THE FLAT DECLARATION ABOVE IT IS NOT DECORATION. A browser without
+	 * relative colour syntax drops the second line as invalid and keeps the
+	 * first, so the icon is a muted pigment rather than body-coloured — the
+	 * same two-declaration trick `CitedBy`'s dot uses for `color-mix()`.
 	 *
-	 * `:root:not([data-mono])` IS LOAD-BEARING. `data-mono` sets the dial to
-	 * 0% on the root, and a rule further down the tree would beat it — this
-	 * page would keep its colours in the one mode whose whole contract is that
-	 * nothing anywhere is told apart by hue. Gated, the override does not
-	 * apply there and the root's 0% inherits down as it should. The lift needs
-	 * no gate: under mono `--pigment` is already `--color-text-muted`, and
-	 * mixing a grey toward the text colour gives a grey.
-	 */
-	:global(:root:not([data-mono])) .book-grid,
-	:global(:root:not([data-mono])) .suggestion {
-		--pigment-strength: 85%;
-	}
-
-	/*
-	 * Declared twice on purpose, which is the trick `CitedBy`'s dot uses: a
-	 * browser without `color-mix()` drops the pigment as invalid and keeps
-	 * the accent, so the icon is the house red rather than the body colour.
+	 * Monochrome is handled at the root by `--pigment-icon-c: 0`, and it has
+	 * to be: `--pigment-strength: 0%` alone cannot reach a mark that overrides
+	 * chroma, and forcing 0.15 onto the grey it resolves to would invent a hue
+	 * out of whichever way that grey's residue happens to point.
 	 */
 	.book-icon {
-		color: var(--color-accent);
-		color: color-mix(in oklab, var(--pigment) 85%, var(--color-text));
+		color: var(--pigment);
+		color: oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h);
 	}
 
 	.feature-icon,
@@ -1115,22 +1192,26 @@
 	}
 
 	/*
-	 * HOVER ANSWERS ONLY WHERE THE ROW LEADS SOMEWHERE. Every book row is a
-	 * link to that work; a feature row is one only where the feature IS a page
-	 * — three of the nine — and the rest describe a control in the header that
-	 * no address opens. `:has(a)` is the difference, rather than a second class
-	 * the list would have to keep in step with its own `href` field. With no
-	 * border left to light, the mark is what answers.
+	 * NO FEATURE ROW LIGHTS ON HOVER ANY MORE, and it is not an omission. Three
+	 * of the nine used to be pages, so `:has(a)` lit exactly those and left the
+	 * six that describe a menu inert — the honest answer to "does this row go
+	 * anywhere". The three that were pages have moved to the works section,
+	 * where every row is a link and every row answers; what is left here goes
+	 * nowhere at all, so nothing here should look as though it might.
 	 */
-	.feature:has(a):hover .feature-icon {
-		color: color-mix(in srgb, var(--color-accent) 80%, var(--color-text));
-	}
 
-	/* Hover deepens the same mix rather than changing the hue: a mark that
-	   answers by becoming a different colour is a mark that was not the row's
-	   colour to begin with. */
+	/* Hover moves the same hue toward the text colour rather than to another
+	   hue: a mark that answers by becoming a different colour is a mark that
+	   was not the row's colour to begin with. The whole `oklch()` is one
+	   operand, so an unsupporting browser drops this declaration entire and
+	   the row simply does not light — which is what it did before it had a
+	   colour at all. */
 	.book:hover .book-icon {
-		color: color-mix(in oklab, var(--pigment) 60%, var(--color-text));
+		color: color-mix(
+			in oklab,
+			oklch(from var(--pigment) var(--pigment-icon-l) var(--pigment-icon-c) h) 72%,
+			var(--color-text)
+		);
 	}
 
 	/*
@@ -1152,8 +1233,30 @@
 		min-width: 0;
 	}
 
-	.feature h3,
-	.book h3 {
+	/*
+	 * A GROUP INSIDE A SECTION: the bar a control lives on, or the fact that a
+	 * row has no citation form. Serif like every other heading here, but
+	 * without `section h2`'s rule — a second horizontal line one level down
+	 * would divide the section it is inside, which is the opposite of what a
+	 * subheading does.
+	 */
+	.group {
+		font-family: var(--font-serif);
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 1.5rem 0 0.6rem;
+		color: var(--color-text-muted);
+	}
+
+	/* The first group sits directly under the section's lede and needs none of
+	   that air; the lede is already the introduction it would be separating
+	   itself from. */
+	.section-lede + .group {
+		margin-block-start: 0;
+	}
+
+	.feature h4,
+	.book h4 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		margin: 0 0 0.2rem;

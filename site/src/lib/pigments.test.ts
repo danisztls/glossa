@@ -46,6 +46,11 @@ function declared(): string[] {
 	return Array.from(TOKENS.matchAll(/^\t--pigment-([a-z-]+): color-mix\(/gm), (m) => m[1]);
 }
 
+/** CSS and HTML comments both, since a `.svelte` file carries either. */
+function stripComments(source: string): string {
+	return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/<!--[\s\S]*?-->/g, '');
+}
+
 function walk(dir: string): string[] {
 	return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
 		const path = join(dir, entry.name);
@@ -106,17 +111,48 @@ describe('the shelf pigments', () => {
 	it('lets a consumer turn the dial up only outside monochrome', () => {
 		for (const file of walk(SRC)) {
 			if (file.endsWith('tokens.css')) continue;
-			const source = readFileSync(file, 'utf8');
+			// Comments go first, over the WHOLE file rather than per slice: the
+			// paragraphs explaining this gate quote the declaration verbatim, and
+			// a slice that starts inside one leaves it unterminated and unstripped.
+			const source = stripComments(readFileSync(file, 'utf8'));
 			for (const m of source.matchAll(/--pigment-strength:\s*(\d+)%/g)) {
-				// Comments stripped first: the paragraph ABOVE this very rule
-				// explains the gate, and matching prose would pass every time.
-				const rule = source
-					.slice(source.lastIndexOf('}', m.index), m.index)
-					.replace(/\/\*[\s\S]*?\*\//g, '');
+				const rule = source.slice(source.lastIndexOf('}', m.index), m.index);
 				expect(
 					rule,
 					`${file} sets --pigment-strength: ${m[1]}% without excluding [data-mono]`
 				).toContain(':not([data-mono])');
+			}
+		}
+	});
+
+	/*
+	 * The second dial, and the one `--pigment-strength` cannot stand in for. A
+	 * mark that overrides chroma — `oklch(from var(--pigment) L C h)`, which is
+	 * how `/schola` gets a legible icon out of a decoration — is unreachable by
+	 * a strength of 0%: under `data-mono` the pigment resolves to a grey, and
+	 * forcing chroma onto a grey invents a hue from whichever way its residue
+	 * points. So the mode has to zero the chroma itself.
+	 */
+	it('zeroes the icon chroma under monochrome, which strength alone cannot do', () => {
+		const at = TOKENS.indexOf(':root[data-mono] {');
+		expect(TOKENS.slice(at, TOKENS.indexOf('\n}', at))).toContain('--pigment-icon-c: 0;');
+	});
+
+	/*
+	 * Relative colour syntax is young enough to be worth a fallback, and the
+	 * fallback is a declaration ORDER: a browser that cannot parse `oklch(from
+	 * …)` drops that line and keeps the plain one above it. Lose the plain one
+	 * and the mark inherits the body colour instead — on the page whose icons
+	 * are the whole reason the family exists.
+	 */
+	it('declares a flat colour above every relative-colour one', () => {
+		for (const file of walk(SRC)) {
+			const source = stripComments(readFileSync(file, 'utf8'));
+			for (const m of source.matchAll(/\n(\s*)color: oklch\(from var\(--pigment\)/g)) {
+				const before = source.slice(0, m.index).split('\n').at(-1) ?? '';
+				expect(before.trim(), `${file}: no flat fallback above the oklch() colour`).toMatch(
+					/^color:\s*var\(--pigment/
+				);
 			}
 		}
 	});
@@ -129,7 +165,9 @@ describe('the shelf pigments', () => {
 				used.add(m[1]);
 			}
 		}
-		const known = new Set([...pigments, 'strength']);
+		// `--pigment` bare is what a consumer resolves a token into; `strength`,
+		// `icon-l` and `icon-c` are the three dials. None is a pigment.
+		const known = new Set([...pigments, 'strength', 'icon-l', 'icon-c']);
 		expect([...used].filter((name) => !known.has(name)).sort()).toEqual([]);
 	});
 
