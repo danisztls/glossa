@@ -90,64 +90,79 @@ that control is already labelled by (`jumpbox.short`, `settings.label`,
 control finds the same word, and a translated interface cannot disagree with its
 own guide. Only the sentence under each is new writing.
 
-## `/schola` reports orders; it does not recommend them
+## The sourced routes are gone, and what they were is worth keeping
 
-**Every route on the learning portal is an order some document in this corpus
-states, and carries the address that states it.** The four pillars are the
-Catechism's own plan at `/catechismus/13`; the Gospels are in the canon's order
-under Dei Verbum's urging to read Scripture; the social teaching follows the
-Compendium's own parts. `learning-routes.ts` holds the rule, and its builders
-take their data as arguments so the route whose ordering rule is least obvious
-can be tested at all — the fixtures carry no Social Doctrine.
+**Three of them, and the rule behind them was sound.** Every route on the page
+was an order some document in this corpus states, carrying the address that
+states it: the four pillars were the Catechism's own plan at `/catechismus/13`,
+the Gospels stood in the canon's order under Dei Verbum's urging to read
+Scripture, the social teaching followed the Compendium's own parts.
+`learning-routes.ts` held the rule and its builders took their data as
+arguments, so the route whose ordering rule was least obvious could be tested at
+all — the fixtures carry no Social Doctrine.
 
-**A SOURCED ORDER IS NOT SUFFICIENT, AND THE COUNCIL IS WHERE THAT WAS
-LEARNED.** A route listed the Council's documents ranked by the Council's own
-three genres — constitutions, decrees, declarations — which is a real ordering
-made by the body that wrote them, and it was on the page for one day. Sixteen
-documents is not a beginner's reading order, and this page is for
-`audiences.md` §5. **The test a route has to pass is therefore both halves:
-somebody else stated the order, AND the order is one a newcomer can start on.**
-The Council is reached from Library and from `/documenta`, where each of the
-sixteen carries the summary written by reading it.
+**They went on 2026-09-05, and the reason is not that the rule was wrong.** The
+rule produced a page whose most useful sentence for a newcomer was the one it
+would not say. A reader who cannot name a book of the Bible is not served by the
+canon's order restated; they are served by being told to open one Gospel, which
+no document states. The Gospels route's place is taken by the Bible section
+above, which recommends and is written as ours. The other two have no successor
+and need none: a reader who wants the Catechism's plan reads `/catechismus`,
+which IS that plan, and the Compendium's arrangement is its own table of
+contents.
 
-**It also shipped with two documents that were not the Council's.** The builder
-filtered on `document_kind` alone, so `vati.dei-filius` and
-`vati.pastor-aeternus` — Vatican I, 1870 — stood at the head of a list titled
-"The Second Vatican Council", and they were the only two entries in it a reader
-could not read: Italian and Latin, nothing else. The genuine sixteen carry
-twelve to fourteen editions each, English among them. **A `kind` is not a
-provenance**; when a filter is a claim about who made something, filter on who
-made it.
+**Three lessons paid for by those routes survive them**, and each cost a real
+defect:
 
-**And the Social Doctrine route opened on a masthead.** `csdc.*/structure.json`
-begins with the work's own title, which `docs/writing-descriptions.md` names
-outright — "The document's own title is not a heading… it is a masthead, not an
-internal division" — so the route read as though the book were a part of
-itself. `socialRoute` matches it against the work's own title rather than
-guessing from the node's shape, because that node also absorbed the
-Introduction: the two share a paragraph, so the range cannot tell them apart.
+- **A SOURCED ORDER IS NOT SUFFICIENT, AND THE COUNCIL IS WHERE THAT WAS
+  LEARNED.** A route listed the Council's documents ranked by the Council's own
+  three genres — constitutions, decrees, declarations — a real ordering made by
+  the body that wrote them, and it lasted one day. Sixteen documents is not a
+  beginner's reading order. **The test was therefore always both halves:
+  somebody else stated the order, AND a newcomer can start on it.** In the end
+  the second half ate the first.
+- **A `kind` is not a provenance.** That route filtered on `document_kind`
+  alone, so `vati.dei-filius` and `vati.pastor-aeternus` — Vatican I, 1870 —
+  stood at the head of a list titled "The Second Vatican Council", and they were
+  the only two entries in it a reader could not read: Italian and Latin, nothing
+  else. When a filter is a claim about who made something, filter on who made
+  it.
+- **A work's own title is not a division of itself.** The Social Doctrine route
+  opened on the masthead, because `csdc.*/structure.json` begins with it and
+  that node had absorbed the Introduction — the two share a paragraph, so the
+  range cannot tell them apart. `socialRoute` matched it against the work's own
+  title rather than guessing from the node's shape.
 
-**That is not fastidiousness.** `docs/writing-descriptions.md` binds the only
-prose this project authors with "Do not evaluate, recommend, or contextualize",
-`/colophon` disclaims any approbation, and `audiences.md` §9 exists to catch
-anything that reads like one. A page of our own reading advice would fail all
-three; a page reporting what the sources set out fails none.
+The module and its tests were deleted rather than left unimported; git holds
+them, and a route that comes back comes back with this section as its brief.
 
-**Two passages are the exception, and both say so on the page.** The note at the
-top of `/schola` recommends the Compendium to a newcomer in the site's own
-voice, and the Bible section under it proposes a first reading path; each
-carries `schola.start.attribution` — "A note from this site, not from any of the
-works below" — directly beneath it. It is `PLAN.md` gap 16's general problem,
-provenance marking, answered by hand in the one place this page creates it. **A
-third such passage needs the same mark or it needs not to exist.**
+**The prohibition those routes obeyed still binds everything else.**
+`docs/writing-descriptions.md` binds the only prose this project authors with
+"Do not evaluate, recommend, or contextualize", `/colophon` disclaims any
+approbation, and `audiences.md` §9 exists to catch anything that reads like one.
+What changed is not the rule but where the exception is drawn: two places on
+this one page advise, and they are the only two on the site.
+
+**Two passages advise. One wears the attribution and one no longer does.** The
+note at the top of `/schola` recommends the Compendium to a newcomer and carries
+`schola.start.attribution` — "A note from this site, not from any of the works
+below" — directly beneath it; that is `PLAN.md` gap 16's general problem,
+provenance marking, answered by hand. **The Bible section carried the same line
+until 2026-09-05 and it was removed by direction**, along with the two
+paragraphs that were purely ours: how to pace the reading, and what a year-long
+plan is. What is left leans on its citations rather than on our say-so — the
+priority is Dei Verbum's, the hermeneutic is Verbum Domini's, and the three
+Gospels are offered with their arguments rather than ranked — so the section is
+closer to reporting than it was, which is the honest reading of why the line
+could go. It is still the one place on the site that advises without a mark, and
+that is worth knowing before a third is added.
 
 **THE MARK IS A RULE DOWN THE INLINE START, and it is deliberately the only
 thing on the page drawn that way.** `.house-note` and `.suggestion` share it, so
-a reader learns once what "this is the site talking" looks like and does not
-have to read an attribution line to tell recommending from reporting. It is also
-why the Bible section's rows are NOT `.steps`: that numbered gutter belongs to
-the routes, which are orders somebody else set out, and lending it to our own
-suggestion would make the two read as peers.
+a reader learns once what "this is the site talking" looks like. It is also why
+the Bible section's rows are not a numbered gutter: that drawing belonged to the
+sourced routes, and it says "this is a sequence somebody authorised", which a
+choice of three Gospels is not.
 
 ## The Bible section proposes a path, because nobody else publishes one
 
@@ -168,10 +183,6 @@ read looking for one and none of them has it:
   divides salvation history into named stages and cites no books to read. Every
   year-long plan on sale takes that frame and supplies the missing list itself.
 
-**So the section is ours, is marked as ours, and says so in its own last
-paragraph** — that a numbered year-long plan is one person's arrangement
-published by somebody, not something the Church laid down.
-
 **WHICH GOSPEL IS LEFT OPEN, WITH THE ARGUMENT ATTACHED.** Mark (shortest,
 finishing one beats choosing the best one), Luke (written for an outsider who
 wanted the story in order, and runs on into Acts), John (says outright why it
@@ -187,14 +198,25 @@ edition does not carry drops out of the list rather than 404ing; the extents
 cited by their own Latin names through `documentWorkIdFor`, so a reader who has
 chosen an edition of Dei Verbum keeps it.
 
-**Nothing on the page is written twice.** Every step is titled by the corpus, so
-it arrives in the reader's content language and cannot fall behind an ingestion;
-the shelves below reuse each destination's own `*.landing.tagline`. The
-`schola.*` keys are the page's name, the route names, the sentence citing each
-source, and the ones saying what kind of thing each shelf holds. That last
-group is the section §5 actually stops at: not where a work is, but what
-authority it carries — that the Summa is one theologian's book, that the Code is
-law rather than doctrine.
+**THE TWO CITATIONS ARE DAGGERS, NOT NAMES SET INTO THE SENTENCE.** Two Latin
+titles and two numbers inside two paragraphs of deliberately plain writing broke
+them exactly where they should have read straight through, and a reader who has
+not yet met the word "Gospel" is not helped by meeting "Verbum Domini 41"
+mid-clause. `†` is the site's existing mark for "there is a source here" and has
+a one-codepoint font of its own that is already precached; `‡` is not reachable
+at any price. It is superscripted by `vertical-align` and not by the glyph — a
+dagger is drawn baseline-to-cap like a letter — and the link carries an
+`aria-label`, because its only content is a mark.
+
+**No name on the page is written twice.** Every work is titled by the key its
+own landing page is titled by, every feature by the key its own control is
+labelled by, and every book in the reading suggestion by the reader's own
+edition — so a name arrives in the reader's content language and cannot fall
+behind an ingestion. The `schola.*` keys are the page's name and its SENTENCES:
+what each work is, what its unit of citation is called, what each control does,
+and the reading suggestion. That is the part §5 actually stops at — not where a
+work is, but what authority it carries and what `CCC 1` means when somebody
+writes it down.
 
 **THE PICTURES COST TWO KEYS, because a caption is not a sentence.** Each is
 `Artist, Title, year. Institution.` — proper nouns and a date, held beside the

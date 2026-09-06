@@ -551,28 +551,37 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   cannot be called two different things in a translated interface. Only the
   sentence under each is new writing, which is what still holds this page out
   of `CHROME_PATHS`.
-- **`/schola` reports orders and never invents one.** Each route cites the
-  document in this corpus that states it (`learning-routes.ts`); the two
-  passages in the site's own voice — the note at the top and the Bible section
-  under it — each carry `schola.start.attribution` on the page, because
-  `docs/writing-descriptions.md` forbids recommending and they recommend. A
-  third such passage needs the same mark or must not exist.
+- **`/schola`'s SOURCED ROUTES ARE GONE** (2026-09-05) and `learning-routes.ts`
+  with them. Each cited the document in this corpus that stated its order,
+  which was a sound rule that produced a page whose most useful sentence for a
+  newcomer was the one it would not say. The Gospels route's place is taken by
+  the Bible section, which recommends; the Catechism's pillars and the
+  Compendium's parts have no successor and need none — `/catechismus` IS that
+  plan. `site/docs/finding.md` keeps the three defects those routes paid for.
+- **Two passages advise; the note at the top wears the attribution and the
+  Bible section no longer does** (removed by direction, with the two purely
+  editorial paragraphs beside it). What is left leans on `Dei Verbum` 25 and
+  `Verbum Domini` 41 rather than on our say-so. It is the one place on the site
+  that advises without a mark — know that before adding a third.
 - **The mark is a rule down the inline start**, `.house-note` and `.suggestion`
-  sharing one declaration, and it is the only thing on the page drawn that way:
-  a reader learns once what "the site talking" looks like. It is also why the
-  Bible section's rows are NOT `.steps` — that numbered gutter belongs to the
-  sourced routes, and lending it out would make the two read as peers.
+  sharing one declaration: a reader learns once what "the site talking" looks
+  like.
 - **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
   why that section can exist at all and why it has to be ours. `Dei Verbum` 25
   names a priority ("above all the Gospels") and no sequence; `Verbum Domini`
   41 gives a hermeneutic, not an order; CCC 54-64's stages of revelation cite
   no books. Which Gospel to open first is genuinely contested, so the page
   offers the three that are argued for with their arguments and picks none.
-- **A sourced order still has to be a BEGINNER'S order.** The Council's
-  sixteen documents, ranked by the Council's own genres, met the first test and
-  failed the second; the route is gone and `learning-routes.ts` holds the note.
-  It also shipped filtering on `document_kind` alone, which put two Vatican I
-  constitutions at the head of it — a `kind` is not a provenance.
+- **A sourced order still has to be a BEGINNER'S order**, and in the end that
+  second test ate the first. The Council's sixteen documents, ranked by the
+  Council's own genres, met the first and failed the second; a year later every
+  remaining route failed it too. That route also shipped filtering on
+  `document_kind` alone, which put two Vatican I constitutions at the head of
+  it — a `kind` is not a provenance.
+- **Two of the four banners went with the routes they stood over**, and their
+  rows in `assets/README.md` are struck through rather than deleted: a URL, a
+  SHA-256 and a crop box bring a picture back with one command, which is what
+  makes deleting one cheap.
 - **The page's artworks are public domain and cost two dictionary keys.**
   A caption is `Artist, Title, year. Institution.`, held in `schola-art.ts`;
   no master is kept, because `assets/README.md`'s URL, SHA-256 and crop box

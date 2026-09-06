@@ -113,9 +113,9 @@ export const en: Dictionary = {
 	// has already decided to believe any of it.
 	'schola.bible.heading': 'If you have never read the Bible',
 	'schola.bible.library':
-		'It is not one book. It is seventy-three, written by many people over more than a thousand years, and they are bound in the order the Church settled on — which is not the order the events happened in, and not the order that is easiest to read. Most people open it at the first page and start there. Most people stop a few weeks later, somewhere in a long chapter of ancient law, because nothing has yet told them what any of it is for.',
+		'It is not one book but seventy-three, written over more than a thousand years and bound in the order the Church settled on — not the order events happened in, and not the order that is easiest to read. Most people start at the first page and stop a few weeks later, in a long chapter of ancient law, because nothing has yet told them what it is for.',
 	'schola.bible.start':
-		'So start with a Gospel instead. The Gospels are four short books about the life of Jesus, and they are a long way in — the Bible does not begin with them. Starting there is not our idea: a Council of the Church asked that people be taught the right use of these books “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
+		'So start with a Gospel — one of four short books about the life of Jesus, a long way in rather than at the front. That is not our idea: a Council of the Church asked that people be taught the right use of Scripture “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
 	'schola.bible.whichGospel':
 		'Which of the four is a genuine disagreement, and nobody settles it for you. Three are commonly suggested, for three different reasons — any of them is a good place to be:',
 	'schola.bible.gospel.mark':
@@ -135,17 +135,6 @@ export const en: Dictionary = {
 		'Not a story: a hundred and fifty prayers and songs. Read one at a time, in any order. The Church still prays these every day.',
 	'schola.bible.bothWays':
 		'You will recognise things, and that is the point rather than a coincidence. The Church reads the older books in the light of Christ and the newer ones in the light of what came before — each half explains the other, which is why neither is read alone.',
-	'schola.bible.how':
-		'A little on most days beats a lot once. Read slowly enough to notice when a line stops you, and then stop there rather than pushing on. Pray around the reading and not only after it — the same Council put it plainly: we speak to God when we pray, and we listen to him when we read. And do not set out to finish. This is not a task with an end; people who have read it all their lives are still starting again.',
-	'schola.bible.plans':
-		'You will also find year-long plans that number the books and set a daily schedule, and they can be a real help. It is worth knowing what they are: one person’s arrangement of the material, published by somebody, and not something the Church has laid down. The Church gives the story and leaves the timetable to you.',
-	'schola.route.pillars.title': 'The four pillars',
-	'schola.route.pillars.source': 'The plan the Catechism sets out for itself',
-	'schola.route.gospels.title': 'The Gospels, and then Acts',
-	'schola.route.gospels.source':
-		'The Council urges frequent reading of Scripture; the order here is the canon’s own',
-	'schola.route.social.title': 'The Church’s social teaching',
-	'schola.route.social.source': 'The Compendium’s own arrangement, part by part',
 	// THE CHROME, ONE SENTENCE EACH. The heading beside each of these is the
 	// key the control itself is labelled by (`jumpbox.short`, `settings.label`,
 	// `compare.enter`, …), so a reader who reads a row and then goes looking

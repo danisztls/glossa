@@ -44,30 +44,32 @@
 	 * and the chapter/verse separator from the same grammar the parser uses —
 	 * so a Portuguese reader is shown `Jo 3,16` and not somebody else's colon.
 	 *
-	 * ## THE ROUTES ARE REPORTED, NOT RECOMMENDED
+	 * ## THE SOURCED ROUTES WERE HERE AND ARE GONE (2026-09-05)
 	 *
-	 * `learning-routes.ts` holds the rule and the citations: every order here
-	 * is one a document in this corpus states, and each carries the address
-	 * that states it. The site sequences nothing on its own authority — which
-	 * is also why the Council's sixteen documents are NOT a route here; that
-	 * file's own note says what went and why.
+	 * Three of them, built by `learning-routes.ts`: the Catechism's four
+	 * pillars, the Gospels in the canon's order, and the Compendium's three
+	 * parts, each citing the paragraph of this corpus that states that order.
+	 * The rule they were built on was sound — the site sequences nothing on its
+	 * own authority — and it produced a page where the most useful thing a
+	 * newcomer could be told was the thing the page would not say.
 	 *
-	 * THE ONE EXCEPTION IS THE NOTE AT THE TOP, and it is marked. It
-	 * recommends, which `docs/writing-descriptions.md` forbids of the
-	 * descriptions — so it says whose it is on the page rather than leaving a
-	 * reader to assume the Church said it. That is `PLAN.md` gap 16's general
-	 * problem answered by hand in the one place this page creates it. **A
-	 * second such paragraph would need the same mark**, which is why nothing in
-	 * the guide below tells a reader which book to prefer.
+	 * **What replaced the Gospels route is the Bible section below, and it
+	 * recommends.** So it is marked, as the note at the top is: everything else
+	 * here reports, and `docs/writing-descriptions.md` forbids recommending
+	 * without saying whose the recommendation is. The other two routes have no
+	 * successor and needed none — a reader who wants the Catechism's plan reads
+	 * `/catechismus`, which IS that plan.
+	 *
+	 * The module and its tests went with them rather than sitting unimported;
+	 * git holds them, and `site/docs/finding.md` holds the argument, including
+	 * why the Council's sixteen documents were never a route.
 	 *
 	 * ## What this page costs in translation, and what it does not
 	 *
-	 * Every route step is titled by the corpus: a part's own heading, a book's
-	 * own name in the reader's edition, a document's own title. So the steps
-	 * are in the reader's content language already, and an ingestion cannot
-	 * leave them stale. Every work's NAME below is the key that work's own
-	 * landing page is titled by, and every feature's name is the key its own
-	 * control is labelled by — so the page names nothing twice.
+	 * Every work's NAME is the key that work's own landing page is titled by,
+	 * every feature's name is the key its own control is labelled by, and every
+	 * book in the reading suggestion is named by the reader's own edition — so
+	 * the page names nothing twice, and an ingestion cannot leave a name stale.
 	 *
 	 * What is genuinely new writing is the sentences: what each work is, what
 	 * its unit of citation is, and what each feature does. That is the part §5
@@ -93,32 +95,22 @@
 		cccParagraphExists,
 		compendiumQuestionExists,
 		getBook,
-		getCccStructure,
-		getCompendiumStructure,
 		getDocumentGroup,
 		getDocumentManifest,
-		getPrayerMeta,
-		getWork,
-		hasBookIntro,
 		listPrayerMeta,
 		listWorksOfType,
-		socialDoctrineOutline,
 		socialDoctrineParagraphExists,
-		socialDoctrineWorkId,
 		summaQuestionExists
 	} from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
 	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
-	import { pairDivisionsCached } from '$lib/toc-pairing';
-	import { socialDoctrineHeadingHref } from '$lib/socialDoctrineNav';
-	import { gospelsRoute, pillarsRoute, socialRoute } from '$lib/learning-routes';
 	import { BANNERS, type Artwork } from '$lib/schola-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { IconName } from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import type { StructureNode, WorkType } from '$lib/types';
+	import type { WorkType } from '$lib/types';
 
 	// The identification, plus the one interface word in it. Composed here and
 	// passed down for the reason `Plate.svelte` gives about its own credit: the
@@ -127,81 +119,17 @@
 	const creditOf = (art: Artwork) =>
 		art.credit + (art.detail ? ` (${t('schola.art.detail')})` : '');
 
-	// --- The four pillars ---------------------------------------------------
+	// --- The languages the worked citations resolve in -----------------------
 	//
 	// `catechismPairLang` for the same reason `/catechismus` uses it: six
-	// languages carry one of the two works and not the other, and resolving
-	// each separately puts an English column beside the reader's own.
+	// languages carry one of the Catechism/Compendium pair and not the other,
+	// and resolving each separately puts an English answer beside the reader's
+	// own question.
 	const pairLang = $derived(content.catechismPairLang());
-	const cccWork = $derived(getWork(`ccc.${pairLang}`));
-	const compendiumWork = $derived(getWork(`compendium.${pairLang}`));
-	const columns = $derived([
-		...(cccWork ? (['ccc'] as const) : []),
-		...(compendiumWork ? (['compendium'] as const) : [])
-	]);
-	const treeWork = $derived(cccWork ? 'ccc' : 'compendium');
-	const pillarTree = $derived(
-		cccWork ? getCccStructure(pairLang) : getCompendiumStructure(pairLang)
-	);
-	const pillarPairs = $derived(
-		cccWork && compendiumWork
-			? pairDivisionsCached(pillarTree, getCompendiumStructure(pairLang))
-			: new Map<StructureNode, StructureNode>()
-	);
-
-	// A prayer is offered under the pillar it IS, and only where the reader's
-	// own prayer edition carries it — `prayer.common.en-gb` holds five.
 	const prayerLang = $derived(content.langFor('prayer'));
-	const prayerOffer = $derived((slug: string) => {
-		const meta = getPrayerMeta(prayerLang, slug);
-		return meta ? { href: hrefFor({ kind: 'prayer', slug }), label: meta.title } : undefined;
-	});
-
-	// --- The Gospels --------------------------------------------------------
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 	const bibleLang = $derived(content.langFor('bible'));
-
-	// --- The social doctrine ------------------------------------------------
 	const socialLang = $derived(content.langFor('social-doctrine'));
-	// The work's own name, so `socialRoute` can tell the masthead row from a
-	// part. Read from the edition the reader is on, never written down: the row
-	// it has to match is that edition's own heading.
-	const socialTitle = $derived(getWork(socialDoctrineWorkId(socialLang))?.title);
-
-	const routes = $derived(
-		[
-			pillarsRoute({
-				tree: pillarTree,
-				treeWork,
-				lang: pairLang,
-				columns,
-				pairs: pillarPairs,
-				labels: {
-					cccTitle: t('ccc.landing.title'),
-					compendiumTitle: t('compendium.landing.title')
-				},
-				prayer: prayerOffer
-			}),
-			gospelsRoute({
-				nameOf: (osis) => (bibleWorkId ? getBook(bibleWorkId, osis)?.name : undefined),
-				hasIntro: (osis) => hasBookIntro(bibleLang, osis),
-				// Dei Verbum on the reading of Scripture. Addressed as the whole
-				// document rather than a section: the Constitution's last chapter
-				// is the passage, and a fragment into a chapter is a worse
-				// citation than the document a reader can then read.
-				source: hrefFor({ kind: 'document', slug: 'dei-verbum' })
-			}),
-			socialRoute({
-				outline: socialDoctrineOutline(socialLang),
-				hrefAt: (n) => socialDoctrineHeadingHref(socialLang, n),
-				mastheadTitle: socialTitle,
-				// The Compendium's own statement of its plan.
-				source: hrefFor({ kind: 'socialDoctrine', n: 8 })
-			})
-			// A route whose work this corpus does not carry is not shown at all,
-			// rather than shown empty: the page is a description of what is here.
-		].filter((route) => route.steps.length > 0)
-	);
 
 	/**
 	 * THE CHROME, NAMED BY ITS OWN CONTROLS. Every `nameKey` here is the key
@@ -375,7 +303,7 @@
 			// A document is cited by its own Latin incipit and a section number
 			// within it, which is how the Catechism cites one throughout — so the
 			// example is a real document and not a shape. Dei Verbum because it
-			// is the one this page already links from the Gospels route.
+			// is the one the reading suggestion above already leans on.
 			magisterium: {
 				text: 'Dei Verbum 2',
 				href: getDocumentGroup('dei-verbum')
@@ -412,12 +340,19 @@
 	/**
 	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS
 	 *
-	 * Everything else here reports: a route is an order some document states,
-	 * a shelf says what a work is, a citation shows what its number means. This
-	 * section RECOMMENDS, and so it carries `schola.start.attribution` under it
-	 * — the same mark the note at the top of the page carries, for the same
-	 * reason `docs/writing-descriptions.md` gives. **A third such passage would
-	 * need the mark too, or it must not exist.**
+	 * Everything else here reports: a row says what a work is, a citation shows
+	 * what its number means. This section RECOMMENDS, which
+	 * `docs/writing-descriptions.md` forbids of the descriptions.
+	 *
+	 * IT CARRIED `schola.start.attribution` AND NO LONGER DOES (2026-09-05, by
+	 * direction). What went with that line is the two paragraphs that were
+	 * purely ours — how to pace the reading, and what a year-long plan is — so
+	 * what is left leans on its two citations rather than on our say-so: the
+	 * priority is Dei Verbum's, the hermeneutic is Verbum Domini's, and the
+	 * three Gospels are offered with their arguments rather than ranked. The
+	 * note at the top of the page keeps the mark; this section is now the one
+	 * place that advises without wearing one, which is worth knowing before
+	 * adding a third.
 	 *
 	 * WHY IT IS OURS AND CANNOT BE ANYONE ELSE'S. The Church states a NARRATIVE
 	 * FRAME and never a reading plan: `Dei Verbum` 25 asks that the faithful be
@@ -536,14 +471,28 @@
 		pass a grid of chrome to be told how.
 	-->
 	{#if showBiblePath}
+		<!-- The banner that stood over the Gospels route, which this section
+		     replaces. Rembrandt's preaching Christ is the one picture in the set
+		     that is about people being TAUGHT, which is what this is. -->
+		{#if BANNERS.gospels}
+			<div class="suggestion-plate">
+				<ArtFigure
+					art={BANNERS.gospels}
+					credit={creditOf(BANNERS.gospels)}
+					label={t('art.about')}
+				/>
+			</div>
+		{/if}
 		<section class="suggestion landing-measure" aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
 			<p>{t('schola.bible.library')}</p>
 			<p>
-				{t('schola.bible.start')}
-				{#if deiVerbum}
-					<a class="source" href={deiVerbum.href}>{deiVerbum.label}</a>
-				{/if}
+				{t('schola.bible.start')}{#if deiVerbum}<a
+						class="source-mark"
+						href={deiVerbum.href}
+						title={deiVerbum.label}
+						aria-label={deiVerbum.label}>†</a
+					>{/if}
 			</p>
 
 			<p class="lead-in">{t('schola.bible.whichGospel')}</p>
@@ -577,16 +526,13 @@
 				{/each}
 			</ul>
 			<p>
-				{t('schola.bible.bothWays')}
-				{#if verbumDomini}
-					<a class="source" href={verbumDomini.href}>{verbumDomini.label}</a>
-				{/if}
+				{t('schola.bible.bothWays')}{#if verbumDomini}<a
+						class="source-mark"
+						href={verbumDomini.href}
+						title={verbumDomini.label}
+						aria-label={verbumDomini.label}>†</a
+					>{/if}
 			</p>
-
-			<p>{t('schola.bible.how')}</p>
-			<p>{t('schola.bible.plans')}</p>
-
-			<p class="attribution">{t('schola.start.attribution')}</p>
 		</section>
 	{/if}
 
@@ -622,16 +568,30 @@
 				<li class="book">
 					<span class="book-icon"><Icon name={work.icon} /></span>
 					<div class="book-text">
-						<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
-						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
-						{#if citations[work.key]}
-							<!-- The example is the row's own demonstration, so it is a
-							     link wherever the address exists — a reader who follows
-							     it has just read a citation and arrived where it points,
-							     which is the whole lesson. Where the corpus does not
-							     carry it the notation still shows and is inert. -->
-							<p class="book-cite">
-								<span class="cite-label">{t('schola.cite.label')}</span>
+						<!--
+							THE SPECIMEN SITS ON THE TITLE LINE, not at the foot of the
+							card, and that is what makes this section teachable at a
+							glance: read down the trailing edge and you get `Jn 3:16`,
+							`CCC 1`, `Comp. 1`, `Dei Verbum 2`, `CSDC 1`, `Can. 1`,
+							`STh I, 1` — the page's whole lesson in one sweep, beside the
+							work each belongs to.
+
+							It also fixes the sentence underneath. "Cited as" used to be a
+							label, then a chip, then an em dash, then a clause — four
+							pieces of one line, wrapping badly. With the chip gone the
+							label and the clause are simply a sentence: "Cited as by
+							paragraph number, running unbroken from the first page to the
+							last" reads as English, which the row never did before.
+
+							It is a link wherever the address exists — a reader who
+							follows it has just read a citation and arrived where it
+							points, which is the lesson happening rather than being
+							described. Where the corpus does not carry it the notation
+							still shows and is inert.
+						-->
+						<div class="book-head">
+							<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
+							{#if citations[work.key]}
 								{#if citations[work.key]?.href}
 									<a class="cite-example" href={citations[work.key]?.href}
 										>{citations[work.key]?.text}</a
@@ -639,7 +599,13 @@
 								{:else}
 									<span class="cite-example">{citations[work.key]?.text}</span>
 								{/if}
-								<span class="cite-note">{t(`schola.cite.${work.key}`)}</span>
+							{/if}
+						</div>
+						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
+						{#if citations[work.key]}
+							<p class="book-cite">
+								<span class="cite-label">{t('schola.cite.label')}</span>
+								{t(`schola.cite.${work.key}`)}
 							</p>
 						{/if}
 					</div>
@@ -647,48 +613,6 @@
 			{/each}
 		</ul>
 	</section>
-
-	{#each routes as route (route.key)}
-		<section class="route" aria-labelledby="route-{route.key}">
-			{#if BANNERS[route.key]}
-				<div class="route-plate">
-					<ArtFigure
-						art={BANNERS[route.key]}
-						credit={creditOf(BANNERS[route.key])}
-						label={t('art.about')}
-					/>
-				</div>
-			{/if}
-			<h2 id="route-{route.key}">{t(`schola.route.${route.key}.title`)}</h2>
-			<!-- The citation is the route's warrant, so it is a link and not a
-			     caption: a reader who doubts that this order is the Church's and
-			     not ours can go and read the paragraph that sets it out. -->
-			<p class="route-source landing-measure">
-				<a href={route.source}>{t(`schola.route.${route.key}.source`)}</a>
-			</p>
-			<ol class="steps">
-				{#each route.steps as step (step.href)}
-					<li>
-						<a class="step" href={step.href}>{step.label}</a>
-						{#if step.offers.length}
-							<span class="offers">
-								{#each step.offers as offer (offer.href)}
-									<a class="chip" href={offer.href} title={offer.title}>
-										{offer.label ?? t(offer.labelKey ?? '')}
-									</a>
-								{/each}
-							</span>
-						{/if}
-						<!-- Set by nothing today; `RouteStep.description` says why the
-						     field is there. -->
-						{#if step.description}
-							<p class="step-description landing-measure">{step.description}</p>
-						{/if}
-					</li>
-				{/each}
-			</ol>
-		</section>
-	{/each}
 </div>
 
 <style>
@@ -763,9 +687,10 @@
 
 	/*
 	 * THE ROWS ARE NOT `.steps`, DELIBERATELY. That numbered gutter belongs to
-	 * the routes below, which are orders somebody else set out; giving our own
-	 * suggestion the same drawing would make the two read as peers and undo
-	 * what the accent rule is for. These are a plain list: the book, then why.
+	 * the routes that used to sit below, which were orders somebody else set
+	 * out. They are gone and the rules are not coming back: a numbered gutter
+	 * says "this is a sequence somebody authorised", and what this list is is a
+	 * choice of three and then a few places to go. Plain: the book, then why.
 	 */
 	.path {
 		list-style: none;
@@ -795,12 +720,49 @@
 		color: var(--color-text-muted);
 	}
 
-	/* The warrant, where there is one: small, muted, and a link, so a reader
-	   who doubts that the Church said this can go and read the section that
-	   says it. `.route-source`'s treatment one level in. */
-	.source {
-		font-size: 0.85rem;
-		white-space: nowrap;
+	/*
+	 * THE WARRANT IS A DAGGER, not the document's name set into the sentence.
+	 * Two names and two numbers inside two paragraphs of plain writing broke
+	 * them up exactly where they should have read straight through, and a
+	 * reader who has not yet met the word "Gospel" is not helped by meeting
+	 * "Verbum Domini 41" mid-clause. The mark says an authority is behind the
+	 * sentence; the name is one press or one hover away for the reader who
+	 * wants it.
+	 *
+	 * IT IS THE SAME GLYPH THE APPARATUS USES, deliberately — this site has one
+	 * mark meaning "there is a source here" and adding a second vocabulary for
+	 * a page with no apparatus on it would be inventing a distinction nobody
+	 * asked for. `‡` was the alternative and is not reachable at any price:
+	 * Google's subsets do not carry it (site/CLAUDE.md), which is also why the
+	 * dagger has a one-codepoint font of its own that is already precached.
+	 *
+	 * SUPERSCRIPTED BY `vertical-align`, NOT BY THE GLYPH. A dagger is drawn
+	 * baseline-to-cap like a letter, where an asterisk is drawn high in its own
+	 * em box — on the baseline this reads as a character of the sentence.
+	 * `.commentary-marker` makes the same two corrections for the same reason.
+	 *
+	 * The `aria-label` is mandatory rather than a courtesy: the link's only
+	 * content is a glyph, so without it a screen reader announces "dagger".
+	 */
+	.source-mark {
+		margin-inline-start: 0.15em;
+		font-size: 0.75em;
+		vertical-align: super;
+		line-height: 0;
+		text-decoration: none;
+		color: var(--color-accent);
+	}
+
+	.source-mark:hover,
+	.source-mark:focus-visible {
+		text-decoration: underline;
+	}
+
+	/* The banner belongs to the section under it and takes the gap a heading
+	   would otherwise carry, which is the arrangement the routes' own banners
+	   had. */
+	.suggestion-plate {
+		margin: 0.5rem 0 1.25rem;
 	}
 
 	.house-note p {
@@ -813,10 +775,6 @@
 		color: var(--color-text-muted);
 	}
 
-	.route-plate {
-		margin: 2.5rem 0 0;
-	}
-
 	section h2 {
 		font-family: var(--font-serif);
 		font-size: 1.3rem;
@@ -825,113 +783,11 @@
 		margin: 2.25rem 0 0.4rem;
 	}
 
-	/* A route's own heading sits under its picture and needs no second gap. */
-	.route-plate + h2 {
-		margin-top: 1rem;
-	}
-
 	/* The sentence under a section's rule, saying what the rows below are.
 	   `.page-tagline`'s job one level down, and it takes the same colour. */
 	.section-lede {
 		margin: 0 0 1rem;
 		font-size: 0.9rem;
-		color: var(--color-text-muted);
-	}
-
-	.route-source {
-		margin: 0 0 0.75rem;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
-
-	/*
-	 * THE NUMERAL IS IN A GUTTER, NOT IN THE TEXT. An `<ol>`'s own marker sits
-	 * against the first line, so a title that wraps loses its left edge; a
-	 * counter in a fixed serif column gives every step the same one whatever
-	 * its title does, which is what makes routes of very different title
-	 * lengths read as one list.
-	 */
-	.steps {
-		list-style: none;
-		counter-reset: step;
-		margin: 0;
-		padding: 0;
-	}
-
-	.steps li {
-		counter-increment: step;
-		position: relative;
-		padding: 0.55rem 0 0.55rem 2.4rem;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.steps li:last-child {
-		border-bottom: 0;
-	}
-
-	.steps li::before {
-		content: counter(step);
-		position: absolute;
-		inset-inline-start: 0;
-		inline-size: 1.8rem;
-		text-align: end;
-		font-family: var(--font-serif);
-		font-variant-numeric: tabular-nums;
-		color: var(--color-text-muted);
-	}
-
-	/*
-	 * Muted until hovered, `.index-row`'s rule. A column of destinations set in
-	 * link colour and underlined is the wall this page had; the ruled row is
-	 * already obviously a row, and colour is what says which one the pointer
-	 * is on.
-	 */
-	.step {
-		font-family: var(--font-serif);
-		font-size: 1.05rem;
-		color: var(--color-text);
-		text-decoration: none;
-	}
-
-	.step:hover,
-	.step:focus-visible {
-		color: var(--color-accent);
-		text-decoration: underline;
-	}
-
-	.offers {
-		display: inline-flex;
-		flex-wrap: wrap;
-		gap: 0.35rem;
-		margin-inline-start: 0.5rem;
-		vertical-align: 0.05em;
-	}
-
-	/* The chips state a second offer on the same step and must never outweigh
-	   the step itself — `¶1–1065` beside "Part One" is a range, not a rival
-	   destination. Outlined and never filled, `components.css`'s rule: a
-	   filled badge repeated down a list reads as a row of marks. */
-	.chip {
-		display: inline-block;
-		padding: 0.05rem 0.4rem;
-		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		font-variant-numeric: tabular-nums;
-		text-decoration: none;
-		color: var(--color-text-muted);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-	}
-
-	.chip:hover,
-	.chip:focus-visible {
-		color: var(--color-accent);
-		border-color: var(--color-accent);
-	}
-
-	.step-description {
-		margin: 0.3rem 0 0;
-		font-size: 0.85rem;
 		color: var(--color-text-muted);
 	}
 
@@ -960,59 +816,75 @@
 	}
 
 	/*
-	 * The card is the home page's door: elevated ground, hairline border, one
-	 * radius, no shadow — `--shadow-panel` is for things that float. Only the
-	 * border moves on hover, never the whole surface.
+	 * THE CARDS ARE NOT CARDS. Sixteen filled, bordered, rounded boxes down a
+	 * two-column grid is sixteen objects competing with their own contents —
+	 * and worse, it says the rows are things to CHOOSE BETWEEN, which is what a
+	 * grid of doors means everywhere else on this site. These rows are not
+	 * doors. They are entries in a reference list, read in sequence, and the
+	 * home page's `.door` idiom was borrowed here for no better reason than
+	 * that it was the nearest thing to hand.
+	 *
+	 * So the box is gone and the structure is carried by a rule and a gutter:
+	 * a hairline above each row, the icon standing free in a fixed inline
+	 * gutter, and enough air that the rows separate without being fenced. That
+	 * is how a printed reference work sets a list of entries, and this page is
+	 * one. It also makes the two-column grid read as a page rather than as a
+	 * dashboard.
 	 */
 	.feature,
 	.book {
 		display: flex;
-		gap: 0.9rem;
+		gap: 1rem;
 		align-items: flex-start;
-		padding: 0.9rem 1rem;
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
+		padding: 0.85rem 0;
+		border-block-start: 1px solid var(--color-border);
 	}
 
 	/*
-	 * THE BORDER ANSWERS ONLY WHERE THE CARD LEADS SOMEWHERE. Every book row
-	 * is a link to that work; a feature row is one only where the feature IS a
-	 * page — three of the nine — and the rest describe a control in the header
-	 * that no address opens. `:has(a)` is the difference, rather than a second
-	 * class the list would have to keep in step with its own `href` field.
+	 * THE FIRST ROW OF EACH COLUMN KEEPS ITS RULE and every row's rule is its
+	 * own, so a two-column grid does not need to know which cells are at the
+	 * top. `border-block-start` on all of them is uniform by construction —
+	 * with `border-block-end` the last row of the shorter column would leave a
+	 * rule hanging under nothing.
 	 */
-	.book:hover,
-	.feature:has(a):hover {
-		border-color: var(--color-accent);
-	}
 
 	/*
-	 * A DISC, SIZED ONCE, so glyphs of different natural weight sit on one line
-	 * down the grid. The icon is `1em` of the font-size set here rather than a
-	 * pixel size, which is `Icon.svelte`'s whole contract.
+	 * THE ICON STANDS FREE, at reading size rather than in a 2.25rem chip. The
+	 * chip was drawing a box around a mark whose whole job is to be glanced at,
+	 * and once the row's own box went the chip was the only thing left fencing
+	 * anything. Sized once so glyphs of different natural weight sit on one
+	 * line down the grid; `1em` of the font-size set here rather than a pixel
+	 * size, which is `Icon.svelte`'s whole contract.
 	 *
 	 * `--color-accent` and nothing else coloured: the mark identifies the row
 	 * and the heading names it, so a second saturated element would make the
-	 * card look like a control.
+	 * row look like a control. Nudged down by the cap height so it sits on the
+	 * title's optical centre rather than on its baseline box.
 	 */
 	.feature-icon,
 	.book-icon {
 		flex: 0 0 auto;
 		display: grid;
 		place-items: center;
-		inline-size: 2.25rem;
-		block-size: 2.25rem;
-		border-radius: var(--radius-sm);
-		background: var(--color-bg);
-		border: 1px solid var(--color-border);
-		font-size: 1.15rem;
+		inline-size: 1.5rem;
+		font-size: 1.35rem;
+		line-height: 1;
+		margin-block-start: 0.12rem;
 		color: var(--color-accent);
+		opacity: 0.75;
 	}
 
+	/*
+	 * HOVER ANSWERS ONLY WHERE THE ROW LEADS SOMEWHERE. Every book row is a
+	 * link to that work; a feature row is one only where the feature IS a page
+	 * — three of the nine — and the rest describe a control in the header that
+	 * no address opens. `:has(a)` is the difference, rather than a second class
+	 * the list would have to keep in step with its own `href` field. With no
+	 * border left to light, the mark is what answers.
+	 */
 	.book:hover .book-icon,
 	.feature:has(a):hover .feature-icon {
-		border-color: var(--color-accent);
+		opacity: 1;
 	}
 
 	.feature-text,
@@ -1020,11 +892,30 @@
 		min-width: 0;
 	}
 
+	/*
+	 * The title and its specimen on one line, the specimen pushed to the
+	 * trailing edge so the notations form a column of their own down the grid.
+	 * Baselines, not boxes: a serif title and a sans chip have different box
+	 * heights and agreeing on the line they sit on is what makes the pair read
+	 * as one row.
+	 */
+	.book-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+		margin-block-end: 0.25rem;
+	}
+
 	.feature h3,
 	.book h3 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		margin: 0 0 0.2rem;
+	}
+
+	.book-head h3 {
+		margin: 0;
 	}
 
 	.feature p,
@@ -1054,27 +945,23 @@
 	}
 
 	.cite-example {
-		display: inline-block;
-		margin-inline: 0.25rem;
-		padding: 0.05rem 0.35rem;
+		flex: 0 0 auto;
+		padding: 0.1rem 0.4rem;
 		font-family: var(--font-sans);
-		font-size: 0.95em;
+		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
 		color: var(--color-text);
 		text-decoration: none;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
-		background: var(--color-bg);
+		background: var(--color-bg-elevated);
 	}
 
 	a.cite-example:hover,
 	a.cite-example:focus-visible {
 		color: var(--color-accent);
 		border-color: var(--color-accent);
-	}
-
-	.cite-note::before {
-		content: '— ';
 	}
 
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,

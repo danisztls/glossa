@@ -1,6 +1,18 @@
 /**
  * The public-domain paintings `/schola` is illustrated with: the masthead, and
- * one banner over each route.
+ * the banner over the reading suggestion.
+ *
+ * ## IT WAS FOUR, AND THE OTHER TWO WENT WITH THE ROUTES THEY STOOD OVER
+ *
+ * Raphael's *Disputa* headed "The four pillars" and Millet's *Gleaners* headed
+ * "The Church's social teaching"; both routes were removed on 2026-09-05, and a
+ * banner with nothing under it is a picture the reader downloads for no reason.
+ * Rembrandt's preaching Christ stays because the section that replaced the
+ * Gospels route is the one place on the page where somebody is being taught,
+ * which is what it draws. `assets/README.md` keeps the source URL, SHA-256 and
+ * crop line for all of them, so a route that comes back gets its picture back
+ * with one command — which is the whole reason no master is kept and the whole
+ * reason deleting one is cheap.
  *
  * ## Why this file holds prose that is not in a dictionary
  *
@@ -12,8 +24,8 @@
  * the name of the control that shows the credit — are keys.
  *
  * The images are `alt=""` and the credit carries the identification, the
- * arrangement `Plate.svelte` already uses for Doré: an illustration beside a
- * route is not information the page would be incomplete without, and a screen
+ * arrangement `Plate.svelte` already uses for Doré: an illustration over a
+ * section is not information the page would be incomplete without, and a screen
  * reader that reads out "Antonello da Messina, Saint Jerome in his Study,
  * c. 1475" twice — once as alt, once as caption — is worse served than one
  * that reads it once. `ArtFigure.svelte` puts the credit behind the same
@@ -33,14 +45,15 @@
  * belongs to the row, reads at a glance, and does not compete with the
  * sentence beside it — which is what that section is FOR.
  *
- * They are `Icon.svelte` names, chosen on the shelf's own axis (see
- * `/schola`'s `SHELVES`), and they cost no bytes: `@lucide/svelte` tree-shakes
+ * They are `Icon.svelte` names, chosen on each work's own axis (see
+ * `/schola`'s `WORKS`), and they cost no bytes: `@lucide/svelte` tree-shakes
  * to the icons actually named. That also took 147 KB of AVIF out of the build.
  *
  * ## Public domain, and how far that is checked
  *
- * The latest death here is Millet, 1875, so every work is out of copyright in
- * every jurisdiction. A faithful photograph of a flat public-domain work
+ * The latest death here is Rembrandt, 1669, so every work is out of copyright
+ * in every jurisdiction — it was Millet, 1875, until his *Gleaners* left with
+ * the social-teaching route. A faithful photograph of a flat public-domain work
  * originates no new copyright of its own — the position
  * `pipeline/scrapers/dore/dore.py` argues at length for the engravings, citing
  * Bridgeman v. Corel, and it is the same position here. `source` is the
@@ -52,9 +65,9 @@
  * Ink on a WHITE sheet, which the Rembrandt etching alone is. It takes
  * `--plate-blend`, so the paper multiplies away into the page the way an
  * engraving in a reading column does. A painting must not: the blend is tuned
- * for a grey scan on white and turns an oil into mud. Under `[data-mono]` all
- * four are desaturated instead: a reader who asked for one grey ramp is not
- * handed three colour paintings.
+ * for a grey scan on white and turns an oil into mud. Under `[data-mono]` both
+ * are desaturated instead: a reader who asked for one grey ramp is not handed
+ * an oil painting.
  *
  * ## Re-deriving one
  *
@@ -67,9 +80,7 @@
  */
 
 import heroJerome from '$lib/assets/schola/hero-jerome.avif';
-import pillarsDisputa from '$lib/assets/schola/pillars-disputa.avif';
 import gospelsPreaching from '$lib/assets/schola/gospels-preaching.avif';
-import socialGleaners from '$lib/assets/schola/social-gleaners.avif';
 
 export interface Artwork {
 	/** The hashed build-asset URL Vite resolved the import to. */
@@ -88,7 +99,7 @@ export interface Artwork {
 
 const BANNER = { width: 1800, height: 720 } as const;
 
-/** The banner over the page's title, and over each route. */
+/** The banner over the page's title, and the one over the reading suggestion. */
 export const BANNERS: Readonly<Record<string, Artwork>> = {
 	hero: {
 		...BANNER,
@@ -99,15 +110,6 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		source:
 			'https://commons.wikimedia.org/wiki/File:Antonello_da_Messina_-_St_Jerome_in_his_study_-_National_Gallery_London.jpg'
 	},
-	pillars: {
-		...BANNER,
-		src: pillarsDisputa,
-		credit: 'Raphael, Disputation of the Holy Sacrament, 1509–11. Stanza della Segnatura, Vatican.',
-		detail: true,
-		paper: false,
-		source:
-			'https://commons.wikimedia.org/wiki/File:Sanzio,_Raffaello_-_Disputa_del_Sacramento_-_1508-1511_-_hi_res.jpg'
-	},
 	gospels: {
 		...BANNER,
 		src: gospelsPreaching,
@@ -117,14 +119,5 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		paper: true,
 		source:
 			'https://commons.wikimedia.org/wiki/File:Christ_Preaching,_called_La_Petite_Tombe_MET_DP832290.jpg'
-	},
-	social: {
-		...BANNER,
-		src: socialGleaners,
-		credit: 'Jean-François Millet, The Gleaners, 1857. Musée d’Orsay, Paris.',
-		detail: true,
-		paper: false,
-		source:
-			'https://commons.wikimedia.org/wiki/File:Jean-Fran%C3%A7ois_Millet_-_Gleaners_-_Google_Art_Project_2.jpg'
 	}
 };
