@@ -328,7 +328,6 @@ export const la: Dictionary = {
 	// siglum is CCE — as in French. `refparse.ts` still reads only `ccc`;
 	// this key names the work in prose, it does not decide what the search
 	// box accepts.
-	'bible.cccAbbrev': 'CCE',
 	'bible.wholeChapter': 'Hoc caput',
 	'bible.verseNotInEdition':
 		'Hic numerus versus in hac editione non est — vide notam in fonte paginae',

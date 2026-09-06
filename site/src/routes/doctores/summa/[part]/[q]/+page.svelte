@@ -39,6 +39,7 @@
 	import { content } from '$lib/content.svelte';
 	import {
 		compareColumnLabel,
+		getSummaCitations,
 		languageDisplayName,
 		summaOutline,
 		summaTitleFor
@@ -60,10 +61,12 @@
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
+	import CitedBy from '$lib/components/CitedBy.svelte';
 	import SummaDivisions from '$lib/components/SummaDivisions.svelte';
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { summaQuestionLabel, summaTitleParts } from '$lib/summa-titles';
-	import { hrefFor, summaPartSlug } from '$lib/address';
+	import { hrefFor, summaPartFromSlug, summaPartSlug } from '$lib/address';
+	import { citedSources, type CitedByRow } from '$lib/cited-by';
 	import type { SummaArticle } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -176,6 +179,44 @@
 	 *  own, so this is what tells the shared sidebar they are addressable —
 	 *  the same mechanism a document's tail headings already use. */
 	const linkableAnchors = $derived(new Set(articleNumbers.map((a) => `a${a}`)));
+
+	/**
+	 * Who cites this question, one row per article — the half of the Summa's
+	 * apparatus that had nowhere to go until 2026-09-05.
+	 *
+	 * MOST OF IT IS THE SUMMA CITING ITSELF, and that is the point rather than
+	 * an accident: CCEL marked 5,180 self-citations with anchors naming their
+	 * exact target, so `Q[74], A[2]` — a string that names no part and is
+	 * unparseable alone — is a real address the source stated. Standing on
+	 * I q. 74 a. 2 there was no way to learn which articles argue from it. The
+	 * Catechism and the encyclicals cite the Summa too, and arrive in the same
+	 * rows through the same builder.
+	 *
+	 * `data.part` is the URL slug and the index is keyed by the grammar's own
+	 * part label, which is what every citation of the Summa prints;
+	 * `summaPartFromSlug` is the one conversion, made here because this is the
+	 * one place that has a URL.
+	 *
+	 * The `null` key holds citations naming the question and no article of it,
+	 * and leads the panel — the way a document's at-large row precedes its
+	 * sections.
+	 */
+	const citations = $derived(getSummaCitations(summaPartFromSlug(data.part) ?? data.part, data.n));
+
+	const citedInRows: CitedByRow[] = $derived(
+		[...citations.keys()]
+			.sort((a, b) => (a === null ? -1 : b === null ? 1 : a - b))
+			.map((article) => ({
+				key: article ?? 'question',
+				label:
+					article === null
+						? `${t('summa.questionShort')} ${data.n}`
+						: `${t('summa.articleShort')} ${article}`,
+				...(article === null ? {} : { href: `#a${article}` }),
+				sources: citedSources(citations.get(article) ?? [])
+			}))
+			.filter((row) => row.sources.length > 0)
+	);
 
 	// A question with no articles has nothing `alignByNumber` can align — see
 	// the module docblock.
@@ -514,6 +555,10 @@
 						</section>
 					{/each}
 				</div>
+			{/if}
+
+			{#if citedInRows.length > 0}
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
 			{/if}
 
 			<UnitNav

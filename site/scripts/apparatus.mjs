@@ -74,8 +74,7 @@ function idsOfType(manifests, type) {
  * @param {{
  *   manifests: Record<string, any>,
  *   descriptions: Record<string, Record<string, { text: string, origin: string }>>,
- *   xrefs: { ccc: number, refs: { osis: string, chapter: number }[] }[],
- *   documentXrefs: { work: string, n: number, refs: { osis: string, chapter: number }[] }[],
+ *   scriptureCitations: { citer: { kind: string, n?: number, slug?: string }, refs: { osis: string, chapter: number }[] }[],
  *   cccCompendium: Record<string, [number, number][]>,
  *   cccCitations: { ccc: number, cited_by: { kind: string, slug?: string }[] }[]
  * }} input
@@ -83,8 +82,7 @@ function idsOfType(manifests, type) {
 export function buildApparatus({
 	manifests,
 	descriptions,
-	xrefs,
-	documentXrefs,
+	scriptureCitations,
 	cccCompendium,
 	cccCitations
 }) {
@@ -97,18 +95,25 @@ export function buildApparatus({
 	// cites, and that chapter names the paragraph back. The reverse direction is
 	// the one no other index in the corpus holds, and it is the whole reason a
 	// Bible chapter has anything to link to at all.
-	for (const entry of xrefs) {
-		for (const ref of entry.refs ?? []) {
-			push(bible, chapterKey(ref), 'ccc', entry.ccc);
-			push(ccc, String(entry.ccc), 'bible', chapterKey(ref));
-		}
-	}
 	/** @type {Record<string, { bible?: string[] }>} */
 	const docs = {};
-	for (const entry of documentXrefs) {
-		for (const ref of entry.refs ?? []) {
-			push(bible, chapterKey(ref), 'docs', entry.work);
-			push(docs, entry.work, 'bible', chapterKey(ref));
+	// THE CATECHISM AND THE DOCUMENTS ALONE, out of the eight kinds the
+	// scripture index now holds. This table is served to a crawler that
+	// renders nothing, and every address in it has to be one the edge can
+	// NAME from `route-titles.json`: a Haydock note and a Bible edition's own
+	// note are addressed as the verse they hang on, which the Bible half of
+	// this table already covers, and the rest would need a name apiece for a
+	// budget (`PER_KIND`) that is already full. What a machine reading this
+	// gets is unchanged; what moved is only where the two kinds are read from.
+	for (const { citer, refs } of scriptureCitations) {
+		for (const ref of refs ?? []) {
+			if (citer.kind === 'ccc' && citer.n !== undefined) {
+				push(bible, chapterKey(ref), 'ccc', citer.n);
+				push(ccc, String(citer.n), 'bible', chapterKey(ref));
+			} else if (citer.kind === 'document' && citer.slug) {
+				push(bible, chapterKey(ref), 'docs', citer.slug);
+				push(docs, citer.slug, 'bible', chapterKey(ref));
+			}
 		}
 	}
 	for (const entry of cccCitations) {

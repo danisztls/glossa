@@ -433,9 +433,9 @@ export function partitionAssets(input: PartitionInput): AssetPartition {
 	}));
 	const contentUrls = new Set(contentEntries.map((entry) => entry.path));
 
-	// Data the app fetches on demand but which is not corpus TEXT: the four
-	// citation tables (`xrefs.svelte.ts`) and the translated document
-	// descriptions. They are content-hashed build assets like the corpus is,
+	// Data the app fetches on demand but which is not corpus TEXT: the
+	// citation indexes (`xrefs.svelte.ts`, three whole-work tables plus one
+	// file per Bible book) and the translated document descriptions. They are content-hashed build assets like the corpus is,
 	// so they belong in the permanent content cache on the same terms —
 	// immutable, stored on first read, outliving deploys — and they must NOT
 	// be in the install precache, which would download 715 KB of citation

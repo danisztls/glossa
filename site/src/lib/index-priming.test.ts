@@ -14,9 +14,14 @@ import { indexesForPath } from './index-priming';
  *  its own. */
 const REFS = ['bible', 'summa', 'document'];
 
+/** `REFS` plus the one registry the "cited in" panel reads and `refAddress`
+ *  does not: a prayer citer is named by its TITLE. The prayers cite Scripture
+ *  and nothing else, so only the Bible chapter can meet one. */
+const SCRIPTURE = ['bible', 'summa', 'document', 'prayer'];
+
 describe('indexesForPath', () => {
 	it('gives each reading shelf its own index', () => {
-		expect(indexesForPath('/scriptura/iosue/1')).toEqual(REFS);
+		expect(indexesForPath('/scriptura/iosue/1')).toEqual(SCRIPTURE);
 		expect(indexesForPath('/documenta/lumen-gentium')).toEqual(REFS);
 		expect(indexesForPath('/preces/rosarium')).toEqual([...REFS, 'prayer']);
 		expect(indexesForPath('/doctores/summa/i/1')).toEqual(REFS);
@@ -58,7 +63,7 @@ describe('indexesForPath', () => {
 		// `/es/scriptura/iosue/1` is served and canonicalizes to the bare path
 		// (site/CLAUDE.md, "A reading address takes a language prefix as an ENTRY
 		// POINT"), so it must prime the same index.
-		expect(indexesForPath('/es/scriptura/iosue/1')).toEqual(REFS);
+		expect(indexesForPath('/es/scriptura/iosue/1')).toEqual(SCRIPTURE);
 		expect(indexesForPath('/pt/preces/rosarium')).toEqual([...REFS, 'prayer']);
 	});
 

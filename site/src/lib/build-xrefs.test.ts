@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import {
-	buildCccBibleXrefs,
 	buildCitationXrefs,
-	buildDocumentBibleXrefs,
-	checkXrefsAgainstCorpus
+	buildScriptureRefs,
+	checkXrefsAgainstCorpus,
+	invertScriptureRefs
 } from '../../scripts/build-xrefs.mjs';
 import { expandIbidem, parseRefs, setDocumentTitleSource } from './refs-grammar';
 
@@ -24,14 +24,23 @@ function para(
 	};
 }
 
-describe('buildCccBibleXrefs', () => {
+/** The refs one citing unit produces, which is what most of these assert. */
+function refsOf(units: Parameters<typeof buildScriptureRefs>[0]) {
+	return buildScriptureRefs(units)[0]?.refs ?? [];
+}
+
+describe('buildScriptureRefs', () => {
 	it('reads footnote citations in the language of the edition', () => {
-		const xrefs = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(1, [{ marker: '1', text: 'Cf. Acts 2:41; 8:12-13.' }])] }
+		const xrefs = buildScriptureRefs([
+			{
+				citer: { kind: 'ccc', n: 1 },
+				lang: 'en',
+				unit: para(1, [{ marker: '1', text: 'Cf. Acts 2:41; 8:12-13.' }])
+			}
 		]);
 		expect(xrefs).toEqual([
 			{
-				ccc: 1,
+				citer: { kind: 'ccc', n: 1 },
 				refs: [
 					{ osis: 'acts', chapter: 2, verses: [41], cf: true },
 					{ osis: 'acts', chapter: 8, verses: [12, 13], cf: true }
@@ -41,56 +50,91 @@ describe('buildCccBibleXrefs', () => {
 	});
 
 	it('reads a Portuguese inline locator from its `label`, the field the renderer shows', () => {
-		const xrefs = buildCccBibleXrefs([
-			{
-				lang: 'pt',
-				paragraphs: [
-					para(2, [{ marker: 'inline1', text: 'Mt 28, 19-20', label: '(Mt 28, 19-20)' }])
-				]
-			}
-		]);
-		expect(xrefs[0].refs).toEqual([{ osis: 'matt', chapter: 28, verses: [19, 20] }]);
+		expect(
+			refsOf([
+				{
+					citer: { kind: 'ccc', n: 2 },
+					lang: 'pt',
+					unit: para(2, [{ marker: 'inline1', text: 'Mt 28, 19-20', label: '(Mt 28, 19-20)' }])
+				}
+			])
+		).toEqual([{ osis: 'matt', chapter: 28, verses: [19, 20] }]);
 	});
 
 	it('reads a reference the body names in its own sentence, with no citation apparatus at all', () => {
-		const xrefs = buildCccBibleXrefs([
-			{ lang: 'pt', paragraphs: [para(207, [], ['(«Eu estarei contigo» – Ex 3, 12)'])] }
-		]);
-		expect(xrefs[0].refs).toEqual([{ osis: 'exod', chapter: 3, verses: [12] }]);
+		expect(
+			refsOf([
+				{
+					citer: { kind: 'ccc', n: 207 },
+					lang: 'pt',
+					unit: para(207, [], ['(«Eu estarei contigo» – Ex 3, 12)'])
+				}
+			])
+		).toEqual([{ osis: 'exod', chapter: 3, verses: [12] }]);
 	});
 
 	it('unions the two editions rather than trusting either alone', () => {
 		// The same paragraph, cited differently in each language: EN footnotes
-		// one verse, PT prints the neighbouring one inline. Both are real.
-		const xrefs = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(9, [{ marker: '1', text: 'Mk 10:18.' }])] },
-			{
-				lang: 'pt',
-				paragraphs: [para(9, [{ marker: 'inline1', text: 'Mc 10, 19', label: '(Mc 10, 19)' }])]
-			}
+		// one verse, PT prints the neighbouring one inline. Both are real, and
+		// what makes them one entry is that both units name the same citer.
+		expect(
+			buildScriptureRefs([
+				{
+					citer: { kind: 'ccc', n: 9 },
+					lang: 'en',
+					unit: para(9, [{ marker: '1', text: 'Mk 10:18.' }])
+				},
+				{
+					citer: { kind: 'ccc', n: 9 },
+					lang: 'pt',
+					unit: para(9, [{ marker: 'inline1', text: 'Mc 10, 19', label: '(Mc 10, 19)' }])
+				}
+			])
+		).toEqual([
+			{ citer: { kind: 'ccc', n: 9 }, refs: [{ osis: 'mark', chapter: 10, verses: [18, 19] }] }
 		]);
-		expect(xrefs).toEqual([{ ccc: 9, refs: [{ osis: 'mark', chapter: 10, verses: [18, 19] }] }]);
 	});
 
 	it('keeps "cf." only when every edition prints it as one', () => {
-		const cfBoth = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(9, [{ marker: '1', text: 'Cf. Mk 10:18.' }])] },
-			{ lang: 'pt', paragraphs: [para(9, [{ marker: '2', text: 'Cf. Mc 10, 18.' }])] }
+		const cfBoth = refsOf([
+			{
+				citer: { kind: 'ccc', n: 9 },
+				lang: 'en',
+				unit: para(9, [{ marker: '1', text: 'Cf. Mk 10:18.' }])
+			},
+			{
+				citer: { kind: 'ccc', n: 9 },
+				lang: 'pt',
+				unit: para(9, [{ marker: '2', text: 'Cf. Mc 10, 18.' }])
+			}
 		]);
-		expect(cfBoth[0].refs[0].cf).toBe(true);
+		expect(cfBoth[0].cf).toBe(true);
 
-		const quotedInOne = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(9, [{ marker: '1', text: 'Cf. Mk 10:18.' }])] },
-			{ lang: 'pt', paragraphs: [para(9, [{ marker: '2', text: 'Mc 10, 18.' }])] }
+		const quotedInOne = refsOf([
+			{
+				citer: { kind: 'ccc', n: 9 },
+				lang: 'en',
+				unit: para(9, [{ marker: '1', text: 'Cf. Mk 10:18.' }])
+			},
+			{
+				citer: { kind: 'ccc', n: 9 },
+				lang: 'pt',
+				unit: para(9, [{ marker: '2', text: 'Mc 10, 18.' }])
+			}
 		]);
-		expect(quotedInOne[0].refs[0].cf).toBeUndefined();
+		expect(quotedInOne[0].cf).toBeUndefined();
 	});
 
 	it('keeps a whole-chapter reference separate from a verse-level one', () => {
-		const xrefs = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(9, [{ marker: '1', text: 'Ezek 16; Ezek 16:8.' }])] }
-		]);
-		expect(xrefs[0].refs).toEqual([
+		expect(
+			refsOf([
+				{
+					citer: { kind: 'ccc', n: 9 },
+					lang: 'en',
+					unit: para(9, [{ marker: '1', text: 'Ezek 16; Ezek 16:8.' }])
+				}
+			])
+		).toEqual([
 			{ osis: 'ezek', chapter: 16, verses: [] },
 			{ osis: 'ezek', chapter: 16, verses: [8] }
 		]);
@@ -98,75 +142,259 @@ describe('buildCccBibleXrefs', () => {
 
 	it("converts a Hebrew-numbered citation into the corpus's Vulgate address space", () => {
 		// Ps 95 (Hebrew) is Ps 94 (Vulgate) — the numbering the corpus stores.
-		const xrefs = buildCccBibleXrefs([
-			{ lang: 'en', paragraphs: [para(2628, [{ marker: '1', text: 'Cf. Ps 95:1-6.' }])] }
-		]);
-		expect(xrefs[0].refs).toEqual([
-			{ osis: 'ps', chapter: 94, verses: [1, 2, 3, 4, 5, 6], cf: true }
-		]);
+		expect(
+			refsOf([
+				{
+					citer: { kind: 'ccc', n: 2628 },
+					lang: 'en',
+					unit: para(2628, [{ marker: '1', text: 'Cf. Ps 95:1-6.' }])
+				}
+			])
+		).toEqual([{ osis: 'ps', chapter: 94, verses: [1, 2, 3, 4, 5, 6], cf: true }]);
 	});
 
-	it('omits paragraphs with no scripture references', () => {
+	it('omits a unit with no scripture references', () => {
 		expect(
-			buildCccBibleXrefs([
-				{ lang: 'en', paragraphs: [para(1, [{ marker: '1', text: 'LG 12.' }]), para(2, [])] }
+			buildScriptureRefs([
+				{
+					citer: { kind: 'ccc', n: 1 },
+					lang: 'en',
+					unit: para(1, [{ marker: '1', text: 'LG 12.' }])
+				},
+				{ citer: { kind: 'ccc', n: 2 }, lang: 'en', unit: para(2, []) }
 			])
 		).toEqual([]);
 	});
-});
 
-describe('buildDocumentBibleXrefs', () => {
-	it("keys by slug and unions a document's two editions", () => {
-		const xrefs = buildDocumentBibleXrefs([
+	it("unions a document's two editions under one edition-free citer", () => {
+		expect(
+			buildScriptureRefs([
+				{
+					citer: { kind: 'document', slug: 'lumen-gentium', n: 8 },
+					lang: 'en',
+					unit: para(8, [{ marker: '1', text: 'Cf. Eph 4:16.' }])
+				},
+				{
+					citer: { kind: 'document', slug: 'lumen-gentium', n: 8 },
+					lang: 'pt',
+					unit: para(8, [{ marker: '1', text: 'Cf. Ef 4, 15.' }])
+				}
+			])
+		).toEqual([
 			{
-				slug: 'lumen-gentium',
-				lang: 'en',
-				sections: [para(8, [{ marker: '1', text: 'Cf. Eph 4:16.' }])]
-			},
-			{
-				slug: 'lumen-gentium',
-				lang: 'pt',
-				sections: [para(8, [{ marker: '1', text: 'Cf. Ef 4, 15.' }])]
-			}
-		]);
-		expect(xrefs).toEqual([
-			{
-				work: 'lumen-gentium',
-				n: 8,
+				citer: { kind: 'document', slug: 'lumen-gentium', n: 8 },
 				refs: [{ osis: 'eph', chapter: 4, verses: [15, 16], cf: true }]
 			}
 		]);
 	});
 
-	it('orders by slug then section, and omits sections that cite no scripture', () => {
-		const xrefs = buildDocumentBibleXrefs([
+	it('orders by kind, then by the address inside it', () => {
+		const xrefs = buildScriptureRefs([
 			{
-				slug: 'gaudium-et-spes',
+				citer: { kind: 'document', slug: 'gaudium-et-spes', n: 22 },
 				lang: 'en',
-				sections: [
-					para(22, [{ marker: '1', text: 'Rom 8:29.' }]),
-					para(12, [{ marker: '1', text: 'Gen 1:26.' }]),
-					para(1, [{ marker: '1', text: 'AAS 58 (1966) 1026.' }])
-				]
+				unit: para(22, [{ marker: '1', text: 'Rom 8:29.' }])
 			},
-			{ slug: 'ad-gentes', lang: 'en', sections: [para(2, [{ marker: '1', text: 'Eph 1:10.' }])] }
+			{
+				citer: { kind: 'document', slug: 'ad-gentes', n: 2 },
+				lang: 'en',
+				unit: para(2, [{ marker: '1', text: 'Eph 1:10.' }])
+			},
+			{
+				citer: { kind: 'ccc', n: 400 },
+				lang: 'en',
+				unit: para(400, [{ marker: '1', text: 'Gen 1:26.' }])
+			}
 		]);
-		expect(xrefs.map((x) => [x.work, x.n])).toEqual([
-			['ad-gentes', 2],
-			['gaudium-et-spes', 12],
-			['gaudium-et-spes', 22]
+		expect(xrefs.map((x) => x.citer)).toEqual([
+			{ kind: 'ccc', n: 400 },
+			{ kind: 'document', slug: 'ad-gentes', n: 2 },
+			{ kind: 'document', slug: 'gaudium-et-spes', n: 22 }
 		]);
 	});
 
 	it('reads a document body the same way it reads its footnotes', () => {
-		const xrefs = buildDocumentBibleXrefs([
+		expect(
+			refsOf([
+				{
+					citer: { kind: 'document', slug: 'evangelium-vitae', n: 3 },
+					lang: 'en',
+					unit: para(3, [], ['"I came that they may have life" (Jn 10:10).'])
+				}
+			])
+		).toEqual([{ osis: 'john', chapter: 10, verses: [10] }]);
+	});
+
+	it("reads a Summa article's prose, a prayer's citation and an annotated verse's note", () => {
+		const xrefs = buildScriptureRefs([
 			{
-				slug: 'evangelium-vitae',
+				citer: { kind: 'summa', part: 'I', question: 1, article: 1 },
 				lang: 'en',
-				sections: [para(3, [], ['"I came that they may have life" (Jn 10:10).'])]
+				work: 'summa.en',
+				unit: { blocks: [{ html: 'Seek not the things that are too high (Ecclus. 3:22).' }] }
+			},
+			{
+				citer: { kind: 'prayer', slug: 'rosary' },
+				lang: 'en',
+				work: 'prayer.common.en',
+				unit: { citations: [{ marker: '1', text: 'Lk 1:26-27' }] }
+			},
+			{
+				citer: {
+					kind: 'annotation',
+					work: 'bible.douay-rheims.en',
+					osis: 'matt',
+					chapter: 1,
+					verse: 1
+				},
+				lang: 'en',
+				work: 'bible.douay-rheims.en',
+				unit: { blocks: [{ text: 'The bill of a divorce is called a little book (Gen. 5:1).' }] }
 			}
 		]);
-		expect(xrefs[0].refs).toEqual([{ osis: 'john', chapter: 10, verses: [10] }]);
+		expect(xrefs).toEqual([
+			{
+				citer: { kind: 'summa', part: 'I', question: 1, article: 1 },
+				refs: [{ osis: 'sir', chapter: 3, verses: [22] }]
+			},
+			{
+				citer: { kind: 'prayer', slug: 'rosary' },
+				refs: [{ osis: 'luke', chapter: 1, verses: [26, 27] }]
+			},
+			{
+				citer: {
+					kind: 'annotation',
+					work: 'bible.douay-rheims.en',
+					osis: 'matt',
+					chapter: 1,
+					verse: 1
+				},
+				refs: [{ osis: 'gen', chapter: 5, verses: [1] }]
+			}
+		]);
+	});
+
+	it('drops the reference a note makes to its own chapter, and keeps the rest', () => {
+		// The circularity docs/link-surface.md #12 left open: a note glossing
+		// Matthew 1 that points at Matthew 1 is pointing at the page the reader
+		// already has open. Genesis is another book and stands.
+		expect(
+			refsOf([
+				{
+					citer: {
+						kind: 'annotation',
+						work: 'bible.douay-rheims.en',
+						osis: 'matt',
+						chapter: 1,
+						verse: 1
+					},
+					lang: 'en',
+					work: 'bible.douay-rheims.en',
+					unit: { blocks: [{ text: 'See Matt. 1:16, and Gen. 5:1.' }] }
+				}
+			])
+		).toEqual([{ osis: 'gen', chapter: 5, verses: [1] }]);
+	});
+
+	it('keeps two annotated editions apart where it unions two editions of one work', () => {
+		// Challoner's note is not Allioli's, so both are listed; the Catechism
+		// in two languages is one Catechism, and is not.
+		const xrefs = buildScriptureRefs([
+			{
+				citer: {
+					kind: 'annotation',
+					work: 'bible.douay-rheims.en',
+					osis: 'john',
+					chapter: 1,
+					verse: 1
+				},
+				lang: 'en',
+				work: 'bible.douay-rheims.en',
+				unit: { blocks: [{ text: 'Gen. 1:1.' }] }
+			},
+			{
+				citer: {
+					kind: 'annotation',
+					work: 'bible.allioli.de',
+					osis: 'john',
+					chapter: 1,
+					verse: 1
+				},
+				lang: 'de',
+				work: 'bible.allioli.de',
+				unit: { blocks: [{ text: 'Gen 1, 1.' }] }
+			}
+		]);
+		expect(xrefs).toHaveLength(2);
+	});
+});
+
+describe('invertScriptureRefs', () => {
+	it('keys by book, chapter and verse, with the citers in kind order', () => {
+		expect(
+			invertScriptureRefs([
+				{
+					citer: { kind: 'document', slug: 'lumen-gentium', n: 8 },
+					refs: [{ osis: 'eph', chapter: 4, verses: [15, 16] }]
+				},
+				{ citer: { kind: 'ccc', n: 792 }, refs: [{ osis: 'eph', chapter: 4, verses: [16] }] }
+			])
+		).toEqual({
+			eph: {
+				'4': {
+					'15': [{ kind: 'document', slug: 'lumen-gentium', n: 8 }],
+					'16': [
+						{ kind: 'ccc', n: 792 },
+						{ kind: 'document', slug: 'lumen-gentium', n: 8 }
+					]
+				}
+			}
+		});
+	});
+
+	it('files a whole-chapter reference under verse 0 rather than across the chapter', () => {
+		const index = invertScriptureRefs([
+			{ citer: { kind: 'ccc', n: 31 }, refs: [{ osis: 'gen', chapter: 1, verses: [] }] }
+		]);
+		expect(index.gen['1']).toEqual({ '0': [{ kind: 'ccc', n: 31 }] });
+	});
+
+	it('lists a citer once however many of its references reach one verse', () => {
+		const index = invertScriptureRefs([
+			{
+				citer: { kind: 'ccc', n: 31 },
+				refs: [
+					{ osis: 'gen', chapter: 1, verses: [1] },
+					{ osis: 'gen', chapter: 1, verses: [1] }
+				]
+			}
+		]);
+		expect(index.gen['1']['1']).toEqual([{ kind: 'ccc', n: 31 }]);
+	});
+});
+
+describe('checkXrefsAgainstCorpus', () => {
+	it('names the citer of a reference past the end of a chapter', () => {
+		expect(
+			checkXrefsAgainstCorpus(
+				[
+					{
+						citer: { kind: 'summa', part: 'I-II', question: 79, article: 1 },
+						refs: [{ osis: 'gen', chapter: 1, verses: [31, 99] }]
+					}
+				],
+				new Map([['gen:1', 31]])
+			)
+		).toEqual(['summa I-II 79.1: gen 1:99 — past end of chapter (31)']);
+	});
+
+	it('reports a chapter no edition has', () => {
+		expect(
+			checkXrefsAgainstCorpus(
+				[{ citer: { kind: 'ccc', n: 1 }, refs: [{ osis: 'gen', chapter: 99, verses: [] }] }],
+				new Map()
+			)
+		).toEqual(['ccc 1: gen 99 — chapter not in any edition']);
 	});
 });
 
@@ -189,6 +417,10 @@ describe('buildCitationXrefs', () => {
 	const has = (slug: string, n: number) =>
 		(slug === 'lumen-gentium' && n <= 69) || (slug === 'gaudium-et-spes' && n <= 93);
 
+	/** I q. 1 has ten articles; nothing else in this fixture corpus exists. */
+	const hasArticle = (part: string, question: number, article: number | null) =>
+		part === 'I' && question === 1 && (article === null || article <= 10);
+
 	it('records which CCC paragraph cites which document section', () => {
 		const { documents } = buildCitationXrefs(
 			[
@@ -204,7 +436,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'gaudium-et-spes', n: 22, cited_by: [{ kind: 'ccc', n: 359 }] },
@@ -225,7 +458,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'gaudium-et-spes', n: null, cited_by: [{ kind: 'ccc', n: 1 }] },
@@ -253,7 +487,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([{ work: 'lumen-gentium', n: 8, cited_by: [{ kind: 'ccc', n: 1 }] }]);
 	});
@@ -268,7 +503,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{
@@ -294,7 +530,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			(n) => n === 1234
+			(n) => n === 1234,
+			hasArticle
 		);
 		expect(ccc).toEqual([
 			{ ccc: 1234, cited_by: [{ kind: 'document', slug: 'dei-verbum', n: 4 }] }
@@ -313,7 +550,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		// `n: null` because `has` does not claim Dei Verbum has a section 2 —
 		// the number is captured and validated, never trusted.
@@ -333,7 +571,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
@@ -359,7 +598,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
@@ -386,7 +626,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
@@ -408,7 +649,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{
@@ -442,7 +684,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
@@ -482,7 +725,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
@@ -509,7 +753,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] }
@@ -530,7 +775,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{ work: 'lumen-gentium', n: 12, cited_by: [{ kind: 'ccc', n: 1 }] },
@@ -555,7 +801,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([
 			{
@@ -579,7 +826,8 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			(n) => n === 2417 || n === 2418
+			(n) => n === 2417 || n === 2418,
+			hasArticle
 		);
 		expect(ccc).toEqual([
 			{ ccc: 2417, cited_by: [{ kind: 'document', slug: 'dei-verbum', n: 1 }] },
@@ -598,6 +846,28 @@ describe('buildCitationXrefs', () => {
 		);
 	});
 
+	it('reads nothing from a unit marked scriptureOnly', () => {
+		// The Italian Rosary prints its Gospel locators with no book —
+		// `1,26-28.30-31` for Luke 1 — and a bare number list reads as bare
+		// Catechism paragraph numbers. The prayers' apparatus cites Scripture
+		// and nothing else, so every such segment is a misparse; the scripture
+		// pass still reads the same unit.
+		const { ccc } = buildCitationXrefs(
+			[
+				{
+					citer: { kind: 'prayer', slug: 'rosary' },
+					lang: 'it',
+					unit: para(1, [{ marker: '1', text: '1,26-28.30-31' }]),
+					scriptureOnly: true
+				}
+			],
+			has,
+			() => true,
+			hasArticle
+		);
+		expect(ccc).toEqual([]);
+	});
+
 	it('ignores prose, because the grammar links no document title outside an apparatus', () => {
 		const { documents } = buildCitationXrefs(
 			[
@@ -608,51 +878,9 @@ describe('buildCitationXrefs', () => {
 				}
 			],
 			has,
-			() => true
+			() => true,
+			hasArticle
 		);
 		expect(documents).toEqual([]);
-	});
-});
-
-describe('checkXrefsAgainstCorpus', () => {
-	const chapterVerses = new Map([
-		['acts', 0],
-		['acts:2', 47]
-	]);
-
-	it('reports a verse past the end of its chapter', () => {
-		expect(
-			checkXrefsAgainstCorpus(
-				[{ ccc: 1, refs: [{ osis: 'acts', chapter: 2, verses: [41, 99] }] }],
-				chapterVerses
-			)
-		).toEqual(['ccc 1: acts 2:99 — past end of chapter (47)']);
-	});
-
-	it('reports a chapter no edition has', () => {
-		expect(
-			checkXrefsAgainstCorpus(
-				[{ ccc: 1, refs: [{ osis: 'acts', chapter: 99, verses: [] }] }],
-				chapterVerses
-			)
-		).toEqual(['ccc 1: acts 99 — chapter not in any edition']);
-	});
-
-	it('names a document by slug and section, a CCC entry by paragraph', () => {
-		expect(
-			checkXrefsAgainstCorpus(
-				[{ work: 'lumen-gentium', n: 8, refs: [{ osis: 'acts', chapter: 2, verses: [99] }] }],
-				chapterVerses
-			)
-		).toEqual(['lumen-gentium 8: acts 2:99 — past end of chapter (47)']);
-	});
-
-	it('is silent on references that resolve', () => {
-		expect(
-			checkXrefsAgainstCorpus(
-				[{ ccc: 1, refs: [{ osis: 'acts', chapter: 2, verses: [41] }] }],
-				chapterVerses
-			)
-		).toEqual([]);
 	});
 });

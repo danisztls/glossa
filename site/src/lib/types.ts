@@ -1081,7 +1081,7 @@ export interface CompendiumQuestion {
 	ccc_refs: string;
 }
 
-// --- Cross-references (xrefs/ccc-bible.json, generated) --------------------
+// --- Cross-references (derived at build; never committed) ------------------
 
 export interface ScriptureRef {
 	osis: string;
@@ -1092,41 +1092,53 @@ export interface ScriptureRef {
 	cf?: boolean;
 }
 
-export interface CccBibleXref {
-	ccc: number;
-	refs: ScriptureRef[];
-}
-
 /**
- * The same relation for magisterial documents: which SECTION of which
- * document cites which verses.
+ * A place in the corpus that cites something — one entry in a reverse
+ * citation index, and the address a "cited by" row links to.
  *
- * Keyed by the document's edition-free `slug` (`"lumen-gentium"`), not a work
- * id, because that is what a link addresses and because the two language
- * editions of one document are unioned into a single entry — see
- * `scripts/build-xrefs.mjs`.
+ * EIGHT KINDS, WHERE THERE WERE TWO. Until 2026-09-05 the reverse indexes
+ * read the Catechism and the magisterial documents alone, so the Summa,
+ * Haydock, the prayers, the Compendium, the Compendium of the Social
+ * Doctrine, the Code and the Bible editions' own notes all cited forward and
+ * were invisible backward — a verse's cited-by list omitted every one of the
+ * works that cite Scripture most (docs/link-surface.md #12). Each kind here
+ * is one variant of `Address` and resolves through `hrefFor`.
+ *
+ * `annotation` is the one that names no division of a work: a note in a Bible
+ * edition's own apparatus, or in a commentary addressing that Bible, hanging
+ * off the verse at `osis`/`chapter`/`verse`. It carries `work` because two
+ * annotated editions are two different apparatuses — Challoner's note is not
+ * Allioli's — where two editions of the Catechism are one Catechism.
  */
-export interface DocumentBibleXref {
-	work: string;
-	n: number;
-	refs: ScriptureRef[];
-}
+export type Citer =
+	| { kind: 'ccc'; n: number }
+	| { kind: 'compendium'; n: number }
+	| { kind: 'document'; slug: string; n: number }
+	| { kind: 'socialDoctrine'; n: number }
+	| { kind: 'canonLaw'; n: number }
+	| { kind: 'summa'; part: string; question: number; article: number | null }
+	| { kind: 'prayer'; slug: string }
+	| { kind: 'annotation'; work: string; osis: string; chapter: number; verse: number };
 
 /**
- * A unit that cites something — one entry in a reverse citation index.
- * `slug` is present only for `kind: 'document'`, where `n` is a section
- * number; for `kind: 'ccc'` it is a paragraph number.
+ * One book's slice of the reverse scripture index: chapter -> verse ->
+ * everything in the corpus that cites it.
+ *
+ * BOTH KEYS ARE STRINGS because they are JSON object keys, and verse `0` is
+ * the whole-chapter sentinel `ScriptureRef.verses: []` stands for — the work
+ * cited the chapter and not a verse in it, which is a weaker claim than
+ * citing every verse and a stronger one than citing none.
+ *
+ * Sharded per book and already inverted (`scripts/build-xrefs.mjs`): a Bible
+ * chapter fetches its own book and nothing else, which is what lets the index
+ * hold every citer in the corpus rather than two of them.
  */
-export interface Citer {
-	kind: 'ccc' | 'document';
-	slug?: string;
-	n: number;
-}
+export type ScriptureCitationsFile = Record<string, Record<string, Citer[]>>;
 
 /**
- * Who cites one document address — the non-scripture counterpart of
- * `DocumentBibleXref`, derived by `scripts/build-xrefs.mjs` and keyed the
- * same way, by edition-free slug.
+ * Who cites one document address, derived by `scripts/build-xrefs.mjs` and
+ * keyed by edition-free slug — what a link addresses, and what unions the
+ * two language editions of one document into a single entry.
  *
  * `n` is `null` for a citation that names the document without naming a
  * section it has: a bare siglum ("cf. GS"), a spelled-out title with no
@@ -1144,6 +1156,26 @@ export interface DocumentCitationXref {
 /** Who cites one Catechism paragraph. The other direction of the same pass. */
 export interface CccCitationXref {
 	ccc: number;
+	cited_by: Citer[];
+}
+
+/**
+ * Who cites one article of the Summa — the same pass again, over an address
+ * three levels deep.
+ *
+ * `article` is `null` for a citation naming only a question, which is the
+ * `null` `RefSegment`'s own `article` carries and means the same thing there:
+ * the source named the question and no article of it.
+ *
+ * Most of this index is the Summa citing ITSELF, and it is the one reverse
+ * index that reads a stored address rather than a parsed citation — CCEL
+ * marked each self-citation with an anchor naming its target, and the visible
+ * text ("Q[74], A[2]") names no part at all. See `parseStoredRef`.
+ */
+export interface SummaCitationXref {
+	part: string;
+	question: number;
+	article: number | null;
 	cited_by: Citer[];
 }
 

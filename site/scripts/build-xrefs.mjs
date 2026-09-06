@@ -23,6 +23,13 @@
  * vice versa, and both are the same Catechism citing the same verse. The two
  * editions' references are therefore UNIONED per paragraph — see
  * `mergeRefs` for what that does with `cf` and with duplicate verses.
+ *
+ * And coverage is every WORK TYPE, which it was not until 2026-09-05: this
+ * file read the Catechism and the magisterial documents and nothing else, so
+ * the four bodies of text that cite Scripture most were invisible to a reader
+ * standing on the verse (`Citer`, and docs/link-surface.md #12). The index it
+ * emits is sharded by book and already inverted, which is what made that
+ * affordable — `invertScriptureRefs`.
  */
 
 import {
@@ -30,22 +37,25 @@ import {
 	expandIbidem,
 	linkifyProse,
 	normalizeCitationSpacing,
-	parseRefs
+	parseRefs,
+	parseStoredRef
 } from '../src/lib/refs-grammar.ts';
 import { toVulgateCandidates } from '../src/lib/versification.ts';
 
 /**
  * @typedef {import('../src/lib/types.ts').ScriptureRef} ScriptureRef
- * @typedef {import('../src/lib/types.ts').CccBibleXref} CccBibleXref
- * @typedef {import('../src/lib/types.ts').DocumentBibleXref} DocumentBibleXref
  *
  * A citation as `paragraphs.json`/`sections.json` store one; `label` is set
  * only on the ones the source printed inline (docs/corpus-schema.md §CCC).
  * @typedef {{ marker: string, text?: string, label?: string }} Citation
  *
- * Any numbered unit carrying an apparatus — a CCC paragraph, a document
- * section. Only the two fields read here are named.
- * @typedef {{ n: number, citations?: Citation[], blocks?: { text_marked?: string, html?: string, text?: string }[] }} Unit
+ * Anything that carries an apparatus or prose — a CCC paragraph, a document
+ * section, a Summa article, a prayer, a note hanging off a verse. It has no
+ * number of its own here: what a unit IS called is the `Citer` beside it, so
+ * this is only the two fields that are READ. The caller synthesizes one where
+ * the corpus stores something else (a Rosary mystery's single `citation`, a
+ * verse's `notes`), which costs one object and buys one reader.
+ * @typedef {{ citations?: Citation[], blocks?: { text_marked?: string, html?: string, text?: string }[] }} Unit
  */
 
 /**
@@ -237,96 +247,338 @@ function refsForUnit(unit, lang, work) {
 }
 
 /**
- * Build the CCC → Bible index from every CCC edition present.
- *
- * `editions` is `[{ lang, paragraphs }]`. Output is the wire shape
- * `corpus-index.ts` loads: `[{ ccc, refs }]`, ordered by paragraph, entries
- * with no references omitted.
- */
 /**
- * @param {{ lang: string, work?: string, paragraphs: Unit[] }[]} editions
- * @returns {CccBibleXref[]}
+ * WHO CAN CITE — every unit of the corpus that carries an apparatus or prose,
+ * named by the address a reader can be sent to, which is what a "cited by"
+ * row has to be able to say.
+ *
+ * IT USED TO BE TWO KINDS AND IS EIGHT (docs/link-surface.md #12). The index
+ * read the Catechism and the magisterial documents and nothing else, so a
+ * verse's cited-by list omitted the four bodies of text in this corpus that
+ * cite Scripture MOST — the Bible editions' own notes, the Summa, Haydock and
+ * the prayers — plus the Compendium, the Compendium of the Social Doctrine
+ * and the Code, ingested after that row was written. The forward direction
+ * had resolved for every one of them for months: the units existed and were
+ * simply never handed to this file.
+ *
+ * `annotation` IS THE ONE THAT IS NOT A DIVISION OF A WORK: a note hanging
+ * off a verse, either in a Bible edition's own apparatus or in a commentary
+ * that addresses that Bible. It carries the work id, and that is the answer
+ * to the question the row deferred — whether an edition's notes may be citers
+ * at all. They may, AS THE EDITION: two editions of one Catechism are one
+ * Catechism and are unioned by producing the same citer, but Challoner's note
+ * is not Allioli's and never was, so an annotation names the apparatus that
+ * wrote it rather than the Scripture it sits beside. What the row called
+ * circular is real, and is narrower than it looked — see `isSelfReference`.
+ *
+ * @typedef {{ kind: 'ccc', n: number }
+ *   | { kind: 'compendium', n: number }
+ *   | { kind: 'document', slug: string, n: number }
+ *   | { kind: 'socialDoctrine', n: number }
+ *   | { kind: 'canonLaw', n: number }
+ *   | { kind: 'summa', part: string, question: number, article: number | null }
+ *   | { kind: 'prayer', slug: string }
+ *   | { kind: 'annotation', work: string, osis: string, chapter: number, verse: number }} Citer
+ *
+ * A citing unit with the address that names it; `lang`/`work` are the parse
+ * configuration, exactly as `refsForUnit` wants them.
+ *
+ * `scriptureOnly` withholds the unit from `buildCitationXrefs` — see there for
+ * the one work that sets it and why a bookless locator is the reason.
+ * @typedef {{ citer: Citer, lang: string, work?: string, unit: Unit, scriptureOnly?: boolean }} CitingUnit
+ *
+ * @typedef {{ citer: Citer, refs: ScriptureRef[] }} ScriptureCitation
  */
-export function buildCccBibleXrefs(editions) {
-	/** @type {Map<number, ScriptureRef[]>} */
-	const byParagraph = new Map();
-	for (const { lang, work, paragraphs } of editions) {
-		for (const p of paragraphs) {
-			const refs = refsForUnit(p, lang, work);
-			if (refs.length === 0) continue;
-			const list = byParagraph.get(p.n);
-			if (list) list.push(...refs);
-			else byParagraph.set(p.n, refs);
-		}
-	}
-	return [...byParagraph.keys()]
-		.sort((a, b) => a - b)
-		.map((n) => ({ ccc: n, refs: mergeRefs(byParagraph.get(n) ?? []) }));
+
+/** Presentation order, and the order every citer list is written in. */
+const CITER_KINDS = [
+	'ccc',
+	'compendium',
+	'document',
+	'socialDoctrine',
+	'canonLaw',
+	'summa',
+	'prayer',
+	'annotation'
+];
+
+/**
+ * A citer's identity: two citers with the same key are the same place, and
+ * one place is listed once however many times it cites an address.
+ *
+ * This is also the edition-union rule, and it is the whole of it. A CCC
+ * paragraph is `ccc 1` in all eight editions, so eight units collapse to one
+ * citer; a document section is its slug and its number, and collapses the
+ * same way. An annotation carries its work id and so does NOT collapse, which
+ * is what carrying it is for.
+ *
+ * @param {Citer} citer
+ * @returns {string}
+ */
+export function citerKey(citer) {
+	const parts =
+		citer.kind === 'document'
+			? [citer.slug, citer.n]
+			: citer.kind === 'summa'
+				? [citer.part, citer.question, citer.article ?? '']
+				: citer.kind === 'prayer'
+					? [citer.slug]
+					: citer.kind === 'annotation'
+						? [citer.work, citer.osis, citer.chapter, citer.verse]
+						: [citer.n];
+	return [citer.kind, ...parts].join(' ');
 }
 
 /**
- * Build the document → Bible index from every ingested magisterial document.
+ * Deterministic order for a citer list: by kind, then by the address within
+ * it, numbers numerically.
  *
- * `editions` is `[{ slug, lang, sections }]` — one entry per WORK FILE, so a
- * document with an English and a Portuguese edition appears twice and its
- * references are unioned, exactly as the two Catechism editions are.
- *
- * Keyed by `slug` rather than work id because that is what a link addresses:
- * `/documenta/{slug}#s{n}` is edition-free (site/docs/addresses.md's URL
- * convention), and the reader's own language preference decides which edition
- * that page opens in. Output is `[{ work, n, refs }]`, ordered by slug then
- * section, entries with no references omitted.
- *
- * @param {{ slug: string, lang: string, work?: string, sections: Unit[] }[]} editions
- * @returns {DocumentBibleXref[]}
+ * @param {Citer} a
+ * @param {Citer} b
+ * @returns {number}
  */
-export function buildDocumentBibleXrefs(editions) {
-	/** @type {Map<string, Map<number, ScriptureRef[]>>} */
-	const bySlug = new Map();
-	for (const { slug, lang, work, sections } of editions) {
-		for (const section of sections) {
-			const refs = refsForUnit(section, lang, work);
-			if (refs.length === 0) continue;
-			let byUnit = bySlug.get(slug);
-			if (!byUnit) bySlug.set(slug, (byUnit = new Map()));
-			const list = byUnit.get(section.n);
-			if (list) list.push(...refs);
-			else byUnit.set(section.n, refs);
+export function compareCiters(a, b) {
+	const byKind = CITER_KINDS.indexOf(a.kind) - CITER_KINDS.indexOf(b.kind);
+	if (byKind !== 0 || a.kind !== b.kind) return byKind;
+	if (a.kind === 'document' && b.kind === 'document') {
+		return a.slug.localeCompare(b.slug) || a.n - b.n;
+	}
+	if (a.kind === 'prayer' && b.kind === 'prayer') return a.slug.localeCompare(b.slug);
+	if (a.kind === 'summa' && b.kind === 'summa') {
+		return (
+			a.part.localeCompare(b.part) || a.question - b.question || (a.article ?? 0) - (b.article ?? 0)
+		);
+	}
+	if (a.kind === 'annotation' && b.kind === 'annotation') {
+		return (
+			a.work.localeCompare(b.work) ||
+			a.osis.localeCompare(b.osis) ||
+			a.chapter - b.chapter ||
+			a.verse - b.verse
+		);
+	}
+	return /** @type {{ n: number }} */ (a).n - /** @type {{ n: number }} */ (b).n;
+}
+
+/**
+ * The WORK a citer belongs to, which is the unit an `Ibid.` chain runs
+ * through — and never the citer itself, whose address changes at every
+ * footnote.
+ *
+ * Only reached where the caller passes no corpus work id, which is one
+ * edition of one work and is what the sync always hands over; the composite
+ * is for a caller that parses under a bare language.
+ *
+ * @param {Citer} citer
+ * @returns {string}
+ */
+function citerWorkKey(citer) {
+	if (citer.kind === 'document') return `document ${citer.slug}`;
+	if (citer.kind === 'annotation') return `annotation ${citer.work}`;
+	return citer.kind;
+}
+
+/**
+ * A citer as one phrase for a console report — see `checkXrefsAgainstCorpus`.
+ * @param {Citer} citer
+ * @returns {string}
+ */
+export function citerLabel(citer) {
+	switch (citer.kind) {
+		case 'document':
+			return `${citer.slug} ${citer.n}`;
+		case 'summa':
+			return `summa ${citer.part} ${citer.question}${citer.article === null ? '' : `.${citer.article}`}`;
+		case 'prayer':
+			return `prayer ${citer.slug}`;
+		case 'annotation':
+			return `${citer.work} ${citer.osis} ${citer.chapter}:${citer.verse}`;
+		default:
+			return `${citer.kind} ${citer.n}`;
+	}
+}
+
+/**
+ * A reference that points at the page it is printed on.
+ *
+ * THIS IS THE CIRCULARITY THE ROW NAMED, and it is only ever an annotation's:
+ * a note glossing Matthew 5 that says "Matt. v. 31" names the chapter the
+ * reader already has open, and a row telling them the apparatus beside the
+ * text mentions the text is not a cross-reference. It is the same argument as
+ * the document-cites-itself drop below, one work type over — a document's
+ * sections share one page, and an edition's notes share one chapter.
+ *
+ * The CHAPTER and not the verse, deliberately: a note at verse 3 pointing to
+ * verse 31 is pointing inside its own page either way.
+ *
+ * A note pointing at another chapter, or another book, is kept — that is a
+ * real cross-reference, and it is the great majority of them.
+ *
+ * @param {Citer} citer
+ * @param {ScriptureRef} ref
+ * @returns {boolean}
+ */
+function isSelfReference(citer, ref) {
+	return citer.kind === 'annotation' && citer.osis === ref.osis && citer.chapter === ref.chapter;
+}
+
+/**
+ * Every Scripture reference the corpus makes, per citing address.
+ *
+ * ONE PASS OVER EVERY WORK TYPE, where there were two functions over two of
+ * them. What differs between a Catechism paragraph, an encyclical section, a
+ * Summa article, a prayer and a Haydock note is only what the address is
+ * CALLED: `refsForUnit` already reads any of them, because a unit carrying
+ * `citations` and `blocks` is the shape they all store.
+ *
+ * @param {CitingUnit[]} units
+ * @returns {ScriptureCitation[]}
+ */
+export function buildScriptureRefs(units) {
+	/** @type {Map<string, { citer: Citer, refs: ScriptureRef[] }>} */
+	const byCiter = new Map();
+	for (const { citer, lang, work, unit } of units) {
+		const refs = refsForUnit(unit, lang, work);
+		if (refs.length === 0) continue;
+		const key = citerKey(citer);
+		const seen = byCiter.get(key);
+		if (seen) seen.refs.push(...refs);
+		else byCiter.set(key, { citer, refs });
+	}
+	/** @type {ScriptureCitation[]} */
+	const out = [];
+	for (const { citer, refs } of byCiter.values()) {
+		const merged = mergeRefs(refs).filter((ref) => !isSelfReference(citer, ref));
+		if (merged.length > 0) out.push({ citer, refs: merged });
+	}
+	return out.sort((a, b) => compareCiters(a.citer, b.citer));
+}
+
+/**
+ * The same relation read backwards, and SHARDED BY BOOK — the file a Bible
+ * chapter actually fetches.
+ *
+ * INVERTED HERE RATHER THAN IN THE BROWSER, which is the change that made the
+ * other six citers affordable. `xrefs.svelte.ts` used to fetch two forward
+ * tables (`xrefs.json` and `document-xrefs.json`, 993 KB between them) whose
+ * ONLY consumer was a lazy inversion it ran on the first Bible chapter that
+ * asked — nothing ever read them forward, because a forward link is one the
+ * grammar renders from the citation string itself with nothing stored. Adding
+ * the Summa, Haydock, the prayers and seven annotated Bible editions to a
+ * whole-corpus table that every reading page downloads was not an option;
+ * adding them to one book's slice is a file of a few tens of kilobytes,
+ * fetched by the chapter that wants it and then cached for good (the service
+ * worker's deferred tier takes every immutable `.json` that is not corpus
+ * text — `sw-policy.ts`).
+ *
+ * A WHOLE-CHAPTER REFERENCE (`verses: []`) lands under the sentinel verse 0,
+ * the convention `ScriptureRef` and the reader's page already share:
+ * expanding it across the chapter would claim citations the source never
+ * made, and dropping it would lose one it did.
+ *
+ * @param {ScriptureCitation[]} citations
+ * @returns {Record<string, Record<string, Record<string, Citer[]>>>} osis ->
+ *   chapter -> verse (0 = the chapter as a whole) -> citers
+ */
+export function invertScriptureRefs(citations) {
+	/** @type {Map<string, Map<number, Map<number, { citer: Citer, key: string }[]>>>} */
+	const books = new Map();
+	for (const { citer, refs } of citations) {
+		const key = citerKey(citer);
+		for (const ref of refs) {
+			let chapters = books.get(ref.osis);
+			if (!chapters) books.set(ref.osis, (chapters = new Map()));
+			let verses = chapters.get(ref.chapter);
+			if (!verses) chapters.set(ref.chapter, (verses = new Map()));
+			for (const verse of ref.verses.length > 0 ? ref.verses : [0]) {
+				let list = verses.get(verse);
+				if (!list) verses.set(verse, (list = []));
+				// One citer per address however many of its references reach
+				// it: a note naming a verse twice is one note.
+				if (!list.some((entry) => entry.key === key)) list.push({ citer, key });
+			}
 		}
 	}
-	/** @type {DocumentBibleXref[]} */
-	const out = [];
-	for (const slug of [...bySlug.keys()].sort()) {
-		const byUnit = bySlug.get(slug);
-		if (!byUnit) continue;
-		for (const n of [...byUnit.keys()].sort((a, b) => a - b)) {
-			out.push({ work: slug, n, refs: mergeRefs(byUnit.get(n) ?? []) });
+	/** @type {Record<string, Record<string, Record<string, Citer[]>>>} */
+	const out = {};
+	for (const osis of [...books.keys()].sort()) {
+		const chapters = books.get(osis);
+		if (!chapters) continue;
+		/** @type {Record<string, Record<string, Citer[]>>} */
+		const chaptersOut = {};
+		for (const chapter of [...chapters.keys()].sort((a, b) => a - b)) {
+			const verses = chapters.get(chapter);
+			if (!verses) continue;
+			/** @type {Record<string, Citer[]>} */
+			const versesOut = {};
+			for (const verse of [...verses.keys()].sort((a, b) => a - b)) {
+				versesOut[verse] = (verses.get(verse) ?? [])
+					.map((entry) => entry.citer)
+					.sort(compareCiters);
+			}
+			chaptersOut[chapter] = versesOut;
 		}
+		out[osis] = chaptersOut;
 	}
 	return out;
 }
 
 /**
  * The non-scripture half of the same derivation: who cites this document
- * section, and who cites this Catechism paragraph.
+ * section, who cites this Catechism paragraph, and who cites this article of
+ * the Summa.
  *
  * THE FORWARD DIRECTION HAS BEEN RENDERED FOR A WHILE and this is its
  * missing counterpart (docs/link-surface.md #12). A CCC footnote reading
  * "LG 12" already becomes a link to Lumen Gentium §12; standing on Lumen
  * Gentium §12 there was no way to learn the Catechism cites it. Same shape as
- * the two Bible indexes above — derived on every build, by the same grammar
+ * the scripture index above — derived on every build, by the same grammar
  * that renders the links, never committed — and for the same reason: a second
  * implementation of the citation grammar is what this file exists to have
  * stopped having.
  *
- * WHAT COUNTS AS A CITER is every unit that carries an apparatus: a CCC
- * paragraph and a document section. Both are read through `parseRefs` over
- * their CITATIONS and not, unlike the scripture pass, over their prose:
- * `linkifyProse` finds scripture locators anywhere in a sentence and emits
- * nothing else, so a document named in running text is not linked on the page
- * either. Scanning prose here would therefore have been work that could only
- * ever return scripture segments this function discards. If that limit is
- * ever lifted in the grammar, this is a caller that wants the lift.
+ * WHAT COUNTS AS A CITER is the same list the scripture pass reads, and it
+ * grew with it: what used to be a CCC paragraph and a document section is now
+ * every kind in `Citer`. Two of those changed what this half reports rather
+ * than only what the Bible page shows — the Compendium of the Social Doctrine
+ * and the Code cite the documents and the Catechism heavily, and were
+ * invisible backward for as long as they had been ingested.
+ *
+ * CITATIONS, and not, unlike the scripture pass, prose: `linkifyProse` finds
+ * scripture locators anywhere in a sentence and emits nothing else, so a
+ * document named in running text is not linked on the page either. Scanning
+ * prose here would therefore have been work that could only ever return
+ * scripture segments this function discards. If that limit is ever lifted in
+ * the grammar, this is a caller that wants the lift.
+ *
+ * WHAT IS READ BESIDES A CITATION IS A STORED ADDRESS, and that is not prose
+ * either. CCEL marks each of the Summa's 5,180 self-citations with an anchor
+ * naming its exact target, which the scraper carries across as
+ * `data-ref="summa:I:74:2"` (`parseStoredRef`, in the grammar, for why the
+ * visible text of those citations is unparseable in isolation). It is a
+ * reference the SOURCE stated, in a block that has no `citations` array at
+ * all, so a pass that read only citations could never see it — and it is the
+ * whole of what the Summa says about itself.
+ *
+ * A UNIT MARKED `scriptureOnly` IS NOT READ HERE AT ALL, and the prayers are
+ * the only work that sets it. Their apparatus is a Scripture apparatus and
+ * nothing else — a mystery of the Rosary prints the Gospel passage it is
+ * meditated on, which is every one of the collection's citations across all
+ * twenty editions. So a `ccc`, `document` or `summa` segment out of a prayer
+ * citation is a MISPARSE by construction, and the Italian edition prints the
+ * shape that produces one: its locators are bookless (`1,26-28.30-31` for
+ * Luke 1), and a bare number list reads as bare paragraph numbers. It named
+ * 27 Catechism paragraphs, every one of them wrong, and each would have
+ * rendered as a link under a real paragraph.
+ *
+ * Fixing the grammar was the other option and is the wrong lever: bare numbers
+ * are a real citation form in the apparatus this reads everywhere else. What
+ * makes withholding right rather than convenient is that the corpus already
+ * answers this question by a checked route — `build/prayer-references/` holds
+ * which Catechism article and which Compendium questions treat each prayer,
+ * authored in the pipeline and validated there, and the prayer page renders
+ * it. A guessed index beside a curated one is the second implementation this
+ * file exists to have stopped having.
  *
  * TWO THINGS ARE DROPPED, both deliberately:
  *
@@ -334,6 +586,10 @@ export function buildDocumentBibleXrefs(editions) {
  *     Gentium", and a panel telling a reader that §22 is cited by §1 of the
  *     document they are already reading is noise wearing the clothes of a
  *     cross-reference. Same slug in and out is dropped whatever the sections.
+ *     The Summa is NOT the same case and is not dropped: its parts, questions
+ *     and articles are separate addresses on separate pages, so `I-II 79.1`
+ *     citing `I 3.4` is a cross-reference by every test this file applies to
+ *     one document citing another.
  *   - **A section number the target does not have.** `sectionExists` is the
  *     same validation `refAddress` performs before it will render a link, and
  *     for the same reason: "Humani generis 561" is an AAS page number and
@@ -379,28 +635,36 @@ export function buildDocumentBibleXrefs(editions) {
  * address, none of which this corpus holds, so there was never a link to
  * inherit.
  *
- * @typedef {{ kind: 'ccc' | 'document', slug?: string, n: number }} Citer
  * @typedef {{ work: string, n: number | null, cited_by: Citer[] }} DocumentCitationXref
  * @typedef {{ ccc: number, cited_by: Citer[] }} CccCitationXref
+ * @typedef {{ part: string, question: number, article: number | null, cited_by: Citer[] }} SummaCitationXref
  *
- * @param {{ citer: Citer & { slug?: string }, lang: string, work?: string, unit: Unit }[]} units
+ * @param {CitingUnit[]} units
  *   every citing unit, each already carrying the address that names it
  * @param {(slug: string, n: number) => boolean} sectionExists
  * @param {(n: number) => boolean} paragraphExists
- * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[] }}
+ * @param {(part: string, question: number, article: number | null) => boolean} summaExists
+ * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[], summa: SummaCitationXref[] }}
  */
-export function buildCitationXrefs(units, sectionExists, paragraphExists) {
+export function buildCitationXrefs(units, sectionExists, paragraphExists, summaExists) {
 	/** `slug` -> section number (or `''` for the document at large) -> citers */
 	/** @type {Map<string, Map<string, Citer[]>>} */
 	const documents = new Map();
 	/** @type {Map<number, Citer[]>} */
 	const ccc = new Map();
+	/** `part:question:article` (article empty for a question-level address) */
+	/** @type {Map<string, Citer[]>} */
+	const summa = new Map();
 
 	/**
 	 * One `Ibid.` chain per EDITION — a work in one language — because that
 	 * is the unit a footnote sequence runs through. The units of one edition
 	 * arrive here contiguous and in order, so the chain is a running pair
 	 * rather than an index.
+	 *
+	 * Keyed on the corpus work id where the caller has one, which IS an
+	 * edition; the composite is the fallback for a caller that does not pass
+	 * one (the unit tests, which parse under a bare language).
 	 */
 	/** @type {Map<string, { marker: number | null, named: NamedWork | null }>} */
 	const chains = new Map();
@@ -412,13 +676,41 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 		// on LG 12 is concerned. The two language editions of one work arrive
 		// as separate units with the same address, which is the other half of
 		// what this collapses.
-		if (!list.some((c) => c.kind === citer.kind && c.slug === citer.slug && c.n === citer.n)) {
-			list.push(citer);
-		}
+		const key = citerKey(citer);
+		if (!list.some((c) => citerKey(c) === key)) list.push(citer);
 	};
 
-	for (const { citer, lang, work, unit } of units) {
-		const chainKey = `${citer.kind}\u0000${citer.slug ?? ''}\u0000${lang}`;
+	/** @param {Citer} citer @param {import('../src/lib/refs-grammar.ts').RefSegment} seg */
+	const record = (citer, seg) => {
+		if (seg.kind === 'ccc') {
+			if (citer.kind === 'ccc' || !paragraphExists(seg.n)) return;
+			let list = ccc.get(seg.n);
+			if (!list) ccc.set(seg.n, (list = []));
+			addOnce(list, citer);
+			return;
+		}
+		if (seg.kind === 'summa') {
+			if (!summaExists(seg.part, seg.question, seg.article)) return;
+			const key = `${seg.part}:${seg.question}:${seg.article ?? ''}`;
+			let list = summa.get(key);
+			if (!list) summa.set(key, (list = []));
+			addOnce(list, citer);
+			return;
+		}
+		if (seg.kind !== 'document' || !seg.slug) return;
+		if (citer.kind === 'document' && seg.slug === citer.slug) return;
+		const n = firstSection(seg.locus);
+		const key = n !== null && sectionExists(seg.slug, n) ? String(n) : '';
+		let byUnit = documents.get(seg.slug);
+		if (!byUnit) documents.set(seg.slug, (byUnit = new Map()));
+		let list = byUnit.get(key);
+		if (!list) byUnit.set(key, (list = []));
+		addOnce(list, citer);
+	};
+
+	for (const { citer, lang, work, unit, scriptureOnly } of units) {
+		if (scriptureOnly) continue;
+		const chainKey = work ?? `${citerWorkKey(citer)} ${lang}`;
 		let chain = chains.get(chainKey);
 		if (!chain) chains.set(chainKey, (chain = { marker: null, named: null }));
 
@@ -440,32 +732,19 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 				chain.marker = marker;
 				chain.named = lastNamedWork(segments);
 			}
-			for (const seg of segments) {
-				if (seg.kind === 'ccc') {
-					if (citer.kind === 'ccc' || !paragraphExists(seg.n)) continue;
-					let list = ccc.get(seg.n);
-					if (!list) ccc.set(seg.n, (list = []));
-					addOnce(list, citer);
-					continue;
-				}
-				if (seg.kind !== 'document' || !seg.slug || seg.slug === citer.slug) continue;
-				const n = firstSection(seg.locus);
-				const key = n !== null && sectionExists(seg.slug, n) ? String(n) : '';
-				let byUnit = documents.get(seg.slug);
-				if (!byUnit) documents.set(seg.slug, (byUnit = new Map()));
-				let list = byUnit.get(key);
-				if (!list) byUnit.set(key, (list = []));
-				addOnce(list, citer);
+			for (const seg of segments) record(citer, seg);
+		}
+
+		for (const block of unit.blocks ?? []) {
+			for (const address of storedAddresses(block.html)) {
+				const seg = parseStoredRef(address, address);
+				if (seg) record(citer, seg);
 			}
 		}
 	}
 
 	/** @param {Citer[]} list */
-	const ordered = (list) =>
-		[...list].sort(
-			(a, b) =>
-				(a.slug ?? '').localeCompare(b.slug ?? '') || a.kind.localeCompare(b.kind) || a.n - b.n
-		);
+	const ordered = (list) => [...list].sort(compareCiters);
 
 	/** @type {DocumentCitationXref[]} */
 	const documentsOut = [];
@@ -484,12 +763,47 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists) {
 		}
 	}
 
+	/** @type {SummaCitationXref[]} */
+	const summaOut = [];
+	for (const key of [...summa.keys()].sort()) {
+		const [part, question, article] = key.split(':');
+		summaOut.push({
+			part,
+			question: +question,
+			// A question-level anchor leads its own articles, for the reason
+			// the document-at-large entry leads its sections.
+			article: article === '' ? null : +article,
+			cited_by: ordered(summa.get(key) ?? [])
+		});
+	}
+	summaOut.sort(
+		(a, b) =>
+			a.part.localeCompare(b.part) || a.question - b.question || (a.article ?? 0) - (b.article ?? 0)
+	);
+
 	return {
 		documents: documentsOut,
 		ccc: [...ccc.keys()]
 			.sort((a, b) => a - b)
-			.map((n) => ({ ccc: n, cited_by: ordered(ccc.get(n) ?? []) }))
+			.map((n) => ({ ccc: n, cited_by: ordered(ccc.get(n) ?? []) })),
+		summa: summaOut
 	};
+}
+
+/**
+ * Every `data-ref` address in one block of stored HTML.
+ *
+ * Read with a regex rather than by parsing, exactly as `inline-html.ts`'s
+ * `DATA_REF` reads it on the page: the corpus writes the attribute, this is
+ * a build script, and an HTML parser here would be a second reading of the
+ * same markup the renderer already has one of.
+ *
+ * @param {string | undefined} html
+ * @returns {string[]}
+ */
+function storedAddresses(html) {
+	if (!html) return [];
+	return [...html.matchAll(/\bdata-ref="([^"]*)"/g)].map((m) => m[1]);
 }
 
 /**
@@ -583,15 +897,15 @@ function firstSection(locus) {
  * fixes the Vatican's typesetting is a build nobody can run.
  */
 /**
- * @param {(CccBibleXref | DocumentBibleXref)[]} xrefs
+ * @param {ScriptureCitation[]} citations
  * @param {Map<string, number>} chapterVerses `osis:chapter` -> highest verse number in any edition
  * @returns {string[]}
  */
-export function checkXrefsAgainstCorpus(xrefs, chapterVerses) {
+export function checkXrefsAgainstCorpus(citations, chapterVerses) {
 	/** @type {string[]} */
 	const problems = [];
-	for (const entry of xrefs) {
-		const where = 'ccc' in entry ? `ccc ${entry.ccc}` : `${entry.work} ${entry.n}`;
+	for (const entry of citations) {
+		const where = citerLabel(entry.citer);
 		for (const ref of entry.refs) {
 			const max = chapterVerses.get(`${ref.osis}:${ref.chapter}`);
 			if (max === undefined) {

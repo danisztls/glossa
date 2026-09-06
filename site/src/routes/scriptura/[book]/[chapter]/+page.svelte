@@ -5,8 +5,7 @@
 		baseLang,
 		compareColumnLabel,
 		getAdjacentChapterAcrossBooks,
-		getCccCitationsForChapter,
-		getDocumentCitationsForChapter,
+		getScriptureCitationsForChapter,
 		getBook,
 		getWork,
 		listEditions
@@ -29,7 +28,7 @@
 	import { DORE_WORK_ID, getPlates } from '$lib/plates.svelte';
 	import { plateCredits } from '$lib/corpus-index';
 	import { placePlates } from '$lib/plates';
-	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import { citedSources, type CitedByRow } from '$lib/cited-by';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
@@ -391,7 +390,7 @@
 	 * into the client bundle already (`corpus.ts`'s docblock, "THE SPLIT THIS
 	 * LEADS TO") rather than fetched per page.
 	 */
-	const cccCitations = $derived(getCccCitationsForChapter(data.osis, data.chapterN));
+	const scriptureCitations = $derived(getScriptureCitationsForChapter(data.osis, data.chapterN));
 
 	/**
 	 * Verse-keyed rows, in verse order, with the whole-chapter bucket (0)
@@ -473,13 +472,17 @@
 		);
 	});
 
-	const documentCitations = $derived(getDocumentCitationsForChapter(data.osis, data.chapterN));
-
 	/**
-	 * One row per cited verse, carrying every work that cites it — the
-	 * Catechism first, then the documents by display title. The verse scaffold
-	 * is built once and shared, which is the whole point of a single panel:
-	 * the reader looks up a verse, not a work.
+	 * One row per cited verse, carrying every place in the corpus that cites
+	 * it. The verse scaffold is built once and shared, which is the whole
+	 * point of a single panel: the reader looks up a verse, not a work.
+	 *
+	 * IT USED TO BE THE CATECHISM AND THE DOCUMENTS and is now everything —
+	 * the Summa, Haydock, the prayers, the Compendium, the Social Doctrine,
+	 * the Code, and the annotated editions' own notes (docs/link-surface.md
+	 * #12). The grouping that used to be written out here is `citedSources`,
+	 * shared with the three other pages that render this panel, because a
+	 * kind added to the index has to reach all four or it reaches none.
 	 *
 	 * Verse 0 is the corpus's whole-chapter citation sentinel (`verses: []`):
 	 * the work cited the chapter, not a verse in it, and saying so is more
@@ -487,35 +490,16 @@
 	 * `href` for the same reason — there is nothing in the page to scroll to.
 	 */
 	const citedInRows: CitedByRow[] = $derived(
-		[...new Set([...cccCitations.keys(), ...documentCitations.keys()])]
+		[...scriptureCitations.keys()]
 			.sort((a, b) => a - b)
 			.map((verse) => {
-				const paragraphs = cccCitations.get(verse) ?? [];
-				const ccc: CitedBySource[] = paragraphs.length
-					? [
-							{
-								key: 'ccc',
-								label: t('bible.cccAbbrev'),
-								fullTitle: t('ccc.landing.title'),
-								refs: paragraphs.map((n) => ({
-									key: n,
-									label: `¶${n}`,
-									href: hrefFor({ kind: 'ccc', n })
-								}))
-							}
-						]
-					: [];
-				const documents = (documentCitations.get(verse) ?? [])
-					.map((entry) => documentCitedSource(entry.slug, entry.sections))
-					.filter((source): source is CitedBySource => source !== null)
-					.sort((a, b) => a.label.localeCompare(b.label));
 				const present = chapterVerseNumbers.has(verse);
 				return {
 					key: verse,
 					label: verse === 0 ? t('bible.wholeChapter') : `${t('bible.verseAbbrev')}\u00a0${verse}`,
 					...(verse !== 0 && present ? { href: `#v${verse}` } : {}),
 					...(verse !== 0 && !present ? { note: t('bible.verseNotInEdition') } : {}),
-					sources: [...ccc, ...documents]
+					sources: citedSources(scriptureCitations.get(verse) ?? [])
 				};
 			})
 			.filter((row) => row.sources.length > 0)

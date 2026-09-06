@@ -75,10 +75,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
-	buildCccBibleXrefs,
 	buildCitationXrefs,
-	buildDocumentBibleXrefs,
-	checkXrefsAgainstCorpus
+	buildScriptureRefs,
+	checkXrefsAgainstCorpus,
+	invertScriptureRefs
 } from './build-xrefs.mjs';
 
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
@@ -819,6 +819,130 @@ const canonLawIndex = {}; // workId -> { sectionNumbers } -- keyed by WORK ID
 // its own outline in the content tier.
 const canonLawNumbers = []; // canonical URL existence, unioned across editions
 const canonLawEditions = []; // [{ lang, work, sections, structure }] -- the reading-unit pass
+/**
+ * EVERY PLACE IN THE CORPUS THAT CITES ANYTHING, in one list, each carrying
+ * the address a reader can be sent to — the input to both reverse indexes
+ * (`build-xrefs.mjs`'s `Citer` for what may be in it and why).
+ *
+ * IT IS FILLED FROM INSIDE THE WORK LOOP for the seven kinds whose units are
+ * not accumulated for anything else, and from `cccEditions`/`documentEditions`
+ * after it for the two that are. Order matters exactly once: `Ibid.` is
+ * resolved against the citation immediately before it, so the units of one
+ * edition must arrive contiguous and in their own order. Both halves satisfy
+ * that, and nothing sorts this array.
+ *
+ * @type {import('./build-xrefs.mjs').CitingUnit[]}
+ */
+const citingUnits = [];
+
+/**
+ * A prayer's citations, flattened out of wherever the collection keeps them.
+ *
+ * ONE `citation` PER UNIT, not a `citations` array: the Rosary's mysteries
+ * each print the Gospel passage they are meditated on, one reference apiece,
+ * and `prayers.json` stores it as a single object on the mystery
+ * (docs/corpus-schema.md §Prayers). Walked generically rather than reached
+ * for at `groups[].items[].citation`, because the walk is three lines and the
+ * path is a fact about one prayer in one collection.
+ *
+ * @param {unknown} node
+ * @returns {{ marker: string, text?: string, label?: string }[]}
+ */
+function prayerCitations(node) {
+	if (Array.isArray(node)) return node.flatMap(prayerCitations);
+	if (!node || typeof node !== 'object') return [];
+	const entry = /** @type {Record<string, unknown>} */ (node);
+	const own = entry.citation;
+	return [
+		...(own && typeof own === 'object'
+			? [/** @type {{ marker: string, text?: string }} */ (own)]
+			: []),
+		...Object.entries(entry).flatMap(([key, value]) =>
+			key === 'citation' ? [] : prayerCitations(value)
+		)
+	];
+}
+
+/**
+ * A prayer's prose, from every block the collection sets — the prayer's own
+ * lines, and a group's meditations, which is where the twelve Scripture
+ * references the grammar reads in prayer prose actually are.
+ *
+ * @param {unknown} node
+ * @returns {{ text: string }[]}
+ */
+function prayerBlocks(node) {
+	if (Array.isArray(node)) return node.flatMap(prayerBlocks);
+	if (!node || typeof node !== 'object') return [];
+	const entry = /** @type {Record<string, unknown>} */ (node);
+	return [
+		...(typeof entry.text === 'string' ? [{ text: entry.text }] : []),
+		...(typeof entry.meditation === 'string' ? [{ text: entry.meditation }] : []),
+		...Object.values(entry).flatMap(prayerBlocks)
+	];
+}
+
+/**
+ * The citing units of one annotated Bible book — a note in an edition's own
+ * apparatus, or in a commentary addressing that edition.
+ *
+ * `notes` NEST (Haydock's authorities carry footnotes of their own), so this
+ * recurses; a note's `text` is what `Sidenote` and `CommentaryGloss` render
+ * and so is what is read, `text_marked` being the same words with the marker
+ * tokens still in them.
+ *
+ * NO `sameChapter`, deliberately, and that is `refsForUnit`'s doing rather
+ * than an omission here: the citer's own chapter is dropped from its
+ * references anyway (`isSelfReference`), so the one thing that option finds
+ * is the one thing this index does not keep. The page's two renderers differ
+ * on it — `CommentaryGloss` passes an address and `Sidenote` does not — and
+ * an index that read either apparatus more widely than the page draws it
+ * would be claiming links a reader cannot follow.
+ *
+ * @param {string} workId
+ * @param {string} lang
+ * @param {{ osis: string, chapters: { n: number, verses?: { n?: number, verse?: number, notes?: unknown[] }[] }[] }} book
+ */
+function collectAnnotations(workId, lang, book) {
+	/** @param {unknown[]} notes @param {string[]} out */
+	const texts = (notes, out) => {
+		for (const note of notes) {
+			if (!note || typeof note !== 'object') continue;
+			const entry = /** @type {{ text?: string, notes?: unknown[] }} */ (note);
+			if (typeof entry.text === 'string') out.push(entry.text);
+			if (Array.isArray(entry.notes)) texts(entry.notes, out);
+		}
+	};
+	for (const chapter of book.chapters) {
+		for (const verse of chapter.verses ?? []) {
+			if (!Array.isArray(verse.notes) || verse.notes.length === 0) continue;
+			// `n` IN AN EDITION AND `verse` IN A COMMENTARY (docs/corpus-schema.md
+			// §Commentary): a commentary's unit ADDRESSES a verse rather than
+			// being one, so it names the number rather than carrying it. Read
+			// wrong this is silent — the citer comes out with `verse:
+			// undefined`, which serializes as an absent key and reaches the
+			// page as a link to `#vundefined`.
+			const n = verse.n ?? verse.verse;
+			if (typeof n !== 'number') continue;
+			/** @type {string[]} */
+			const out = [];
+			texts(verse.notes, out);
+			if (out.length === 0) continue;
+			citingUnits.push({
+				citer: {
+					kind: 'annotation',
+					work: workId,
+					osis: book.osis,
+					chapter: chapter.n,
+					verse: n
+				},
+				lang,
+				work: workId,
+				unit: { blocks: out.map((text) => ({ text })) }
+			});
+		}
+	}
+}
 const prayerIndex = {}; // lang -> { structure, prayers } -- keyed by bare LANG, matching the Compendium
 // (one canonical work per language), per the task brief's own instruction to
 // follow that shape rather than the Documents one above: today there is
@@ -1389,6 +1513,9 @@ for (const workId of workIds) {
 			if (storedHebrew && isDivergentBook(book.osis)) {
 				book.chapters = toVulgateChapters(book.osis, book.chapters, workId);
 			}
+			// AFTER the versification conversion, so the note's own address is
+			// in the same space as the references it makes.
+			collectAnnotations(workId, manifest.language, book);
 			books.push({
 				osis: book.osis,
 				name: book.name,
@@ -1569,6 +1696,16 @@ for (const workId of workIds) {
 			if (!file.endsWith('.json')) continue;
 			const book = readJson(path.join(booksDir, file));
 			const ordered = [...book.chapters].sort((a, b) => a.n - b.n);
+			// A COMMENTARY IS A CITER AND A PRAYER COMMENTARY IS NOT, which is
+			// the same `addresses` branch one screen up read for a second
+			// purpose. `commentary.preces.*` reprints the Catechism and the
+			// Compendium beside a prayer — its notes ARE those paragraphs, each
+			// named in the note's own `locus` — so counting the reference to
+			// the quotation rather than to the work would file one citation
+			// twice under two labels, once as the Catechism and once as an
+			// apparatus quoting it. Haydock ADDRESSES the verse in his own
+			// voice, and that is the difference this reads.
+			collectAnnotations(workId, manifest.language, book);
 			books.push({
 				osis: book.osis,
 				order: book.order,
@@ -1690,6 +1827,22 @@ for (const workId of workIds) {
 
 		for (const question of questions) {
 			mark({ kind: 'compendium', n: question.n }, question, workId, manifest.language);
+			// The answer's prose and the question itself; `ccc_refs` is NOT
+			// read here, because the Compendium's references to the Catechism
+			// are `condensation.ts`'s index and saying "condenses" as "cites"
+			// is the distinction that index exists to keep (docs/link-surface.md
+			// #12). What is left is the Scripture the answers quote.
+			citingUnits.push({
+				citer: { kind: 'compendium', n: question.n },
+				lang,
+				work: workId,
+				unit: {
+					blocks: [
+						...(question.answer_blocks ?? []),
+						...(question.question ? [{ text: question.question }] : [])
+					]
+				}
+			});
 		}
 		for (const [from, to] of chapterSpans(structure, COMPENDIUM_CHAPTER_KINDS)) {
 			const span = questions.filter((q) => q.n >= from && q.n <= to);
@@ -1784,6 +1937,21 @@ for (const workId of workIds) {
 
 		for (const prayer of prayers) {
 			mark({ kind: 'prayer', slug: prayer.slug }, prayer, workId, manifest.language);
+			// A prayer's apparatus is one `citation` per unit rather than a
+			// `citations` array — the Rosary's twenty mysteries print the
+			// Gospel passage each is meditated on, and nothing else in the
+			// collection cites at all. Flattened into the shape every other
+			// citer arrives in rather than teaching the builder a second one.
+			citingUnits.push({
+				citer: { kind: 'prayer', slug: prayer.slug },
+				lang,
+				work: workId,
+				unit: { citations: prayerCitations(prayer), blocks: prayerBlocks(prayer) },
+				// A Scripture apparatus and nothing else — `buildCitationXrefs`
+				// says what the Italian edition's bookless locators cost, and
+				// where the prayers' non-Scripture relations really live.
+				scriptureOnly: true
+			});
 		}
 
 		// Kept WHOLE per language (see this module's docblock) -- ~40 KB raw
@@ -1853,6 +2021,42 @@ for (const workId of workIds) {
 				workId,
 				manifest.language
 			);
+			// AN ARTICLE IS A CITER, NOT A QUESTION — a question's page is
+			// the whole of it and an article is a fragment on that page, so
+			// `I-II 79.1` is the finest address the Summa's own citations
+			// name and the one worth reporting. The question's prologue has
+			// no article to hang on and takes `article: null`, exactly as a
+			// citation naming only a question does.
+			//
+			// `question.part` and not `slug`: a `Citer` carries the grammar's
+			// own part LABEL (`I-II`), which is what `parseStoredRef` and
+			// every citation of the Summa produce, and `summaPartSlug` turns
+			// it into a URL at the one place that builds one.
+			if (question.prologue) {
+				citingUnits.push({
+					citer: { kind: 'summa', part: question.part, question: question.n, article: null },
+					lang,
+					work: workId,
+					unit: { blocks: question.prologue }
+				});
+			}
+			for (const article of question.articles ?? []) {
+				citingUnits.push({
+					citer: { kind: 'summa', part: question.part, question: question.n, article: article.n },
+					lang,
+					work: workId,
+					unit: { blocks: (article.divisions ?? []).flatMap((d) => d.blocks ?? []) }
+				});
+			}
+			// The two article-less questions carry their divisions directly.
+			if (question.divisions) {
+				citingUnits.push({
+					citer: { kind: 'summa', part: question.part, question: question.n, article: null },
+					lang,
+					work: workId,
+					unit: { blocks: question.divisions.flatMap((d) => d.blocks ?? []) }
+				});
+			}
 			const relPath = `content/${workId}/questions/${slug}/${question.n}.json`;
 			writeJson(path.join(destDir, relPath), question);
 			contentManifest.push({
@@ -1888,6 +2092,12 @@ for (const workId of workIds) {
 
 		for (const section of sections) {
 			mark({ kind: 'canonLaw', n: section.n }, section, workId, manifest.language);
+			citingUnits.push({
+				citer: { kind: 'canonLaw', n: section.n },
+				lang,
+				work: workId,
+				unit: section
+			});
 		}
 
 		// `{ header, nodes }` and not a bare array, for the reason the branch
@@ -1945,6 +2155,20 @@ for (const workId of workIds) {
 
 		for (const section of sections) {
 			mark({ kind: 'socialDoctrine', n: section.n }, section, workId, manifest.language);
+			// A DOCUMENT'S FILES, SO A DOCUMENT'S CITING UNIT — `sections.json`
+			// stores `citations` and `blocks` exactly as an encyclical does,
+			// which is why these two work types needed no shape of their own
+			// here. What they needed was to be handed over at all: both were
+			// ingested after the reverse index was written and neither was
+			// ever added to it, so 6,603 linkable citations in the Compendium
+			// of the Social Doctrine named documents and paragraphs that could
+			// not say so back.
+			citingUnits.push({
+				citer: { kind: 'socialDoctrine', n: section.n },
+				lang,
+				work: workId,
+				unit: section
+			});
 		}
 
 		// The outline goes to the CONTENT tier, exactly as a document's does
@@ -2664,9 +2888,9 @@ writeJson(
 );
 
 /**
- * CCC -> Bible cross-references, DERIVED here rather than read from the
+ * The reverse citation indexes, DERIVED here rather than read from the
  * corpus. `corpus/xrefs/ccc-bible.json` used to be a committed file built by
- * a separate Python parser; it is now computed from `corpus/build/` on every
+ * a separate Python parser; they are computed from `corpus/build/` on every
  * build by the site's own citation grammar. See `build-xrefs.mjs` for why,
  * and site/docs/references.md.
  */
@@ -2685,23 +2909,66 @@ for (const [workId, manifest] of Object.entries(manifests)) {
 }
 setDocumentTitleSource(() => [...documentGroups.values()]);
 
-const xrefs = buildCccBibleXrefs(cccEditions);
-writeJson(path.join(indexDir, 'xrefs.json'), xrefs);
-const documentXrefs = buildDocumentBibleXrefs(documentEditions);
-writeJson(path.join(indexDir, 'document-xrefs.json'), documentXrefs);
-const xrefsSynced = xrefs.length > 0;
+// The two work types whose units are accumulated for other passes join the
+// list here, after the seven the work loop pushed — see `citingUnits`.
+for (const { lang, work, paragraphs } of cccEditions) {
+	for (const p of paragraphs) {
+		citingUnits.push({ citer: { kind: 'ccc', n: p.n }, lang, work, unit: p });
+	}
+}
+for (const { slug, lang, work, sections } of documentEditions) {
+	for (const section of sections) {
+		citingUnits.push({
+			citer: { kind: 'document', slug, n: section.n },
+			lang,
+			work,
+			unit: section
+		});
+	}
+}
 
 /**
- * The same derivation for the citations that are NOT scripture: which CCC
- * paragraph or document section cites which document section, reversed, so
- * a document can say who cites it. docs/link-surface.md #12; the forward
- * direction has rendered since 2026-08-25 and this is its counterpart.
+ * Every Scripture reference the corpus makes, inverted and written one file
+ * per book.
  *
- * Both validators come from what was just read rather than from the site's
- * corpus helpers, which this script cannot import: `sectionNumbers` is
- * already indexed per document above, and the Catechism's paragraph numbers
- * per edition. A section is real if ANY edition of that document has it, the
- * same union rule the scripture pass applies to references.
+ * SHARDED, WHICH IS WHY THIS IS AFFORDABLE. Two whole-corpus forward tables
+ * (`xrefs.json` and `document-xrefs.json`, 993 KB) were written here until
+ * 2026-09-05 and inverted in the browser by the first Bible chapter that
+ * asked; nothing read them forward, and widening them from two citers to
+ * eight would have put megabytes in front of every reading page. A book is
+ * the unit a chapter page can fetch, and `sw-policy.ts` files it in the
+ * deferred tier with the rest of the immutable JSON, so it is cached on
+ * first read and never precached.
+ */
+const scriptureCitations = buildScriptureRefs(citingUnits);
+const scriptureByBook = invertScriptureRefs(scriptureCitations);
+for (const [osis, chapters] of Object.entries(scriptureByBook)) {
+	writeJson(path.join(indexDir, 'scripture-citations', `${osis}.json`), chapters);
+}
+const xrefsSynced = scriptureCitations.length > 0;
+const citedVerses = Object.values(scriptureByBook).reduce(
+	(total, chapters) =>
+		total + Object.values(chapters).reduce((sum, verses) => sum + Object.keys(verses).length, 0),
+	0
+);
+console.log(
+	`[sync-corpus] scripture citation index: ${scriptureCitations.length} citing addresses over ` +
+		`${citedVerses} cited verses in ${Object.keys(scriptureByBook).length} book(s)`
+);
+
+/**
+ * The same derivation for the citations that are NOT scripture: which unit of
+ * the corpus cites which document section, Catechism paragraph or Summa
+ * article, reversed, so each can say who cites it. docs/link-surface.md #12;
+ * the forward direction has rendered since 2026-08-25 and this is its
+ * counterpart.
+ *
+ * All three validators come from what was just read rather than from the
+ * site's corpus helpers, which this script cannot import: `sectionNumbers` is
+ * already indexed per document above, the Catechism's paragraph numbers per
+ * edition, and the Summa's questions and articles per part. An address is
+ * real if ANY edition has it, the same union rule the scripture pass applies
+ * to references.
  */
 const sectionsBySlug = new Map();
 for (const { slug, sections } of documentEditions) {
@@ -2711,6 +2978,20 @@ for (const { slug, sections } of documentEditions) {
 }
 const cccParagraphSet = new Set();
 for (const { paragraphs } of cccEditions) for (const p of paragraphs) cccParagraphSet.add(p.n);
+// Keyed by the grammar's own part LABEL (`I-II`), which is what a citation
+// and a stored `data-ref` both produce; `summaIndex` is keyed by language and
+// its questions carry the same label, so no slug conversion happens until a
+// URL is built.
+const summaArticles = new Map();
+for (const { questions } of Object.values(summaIndex)) {
+	for (const question of questions) {
+		let byQuestion = summaArticles.get(question.part);
+		if (!byQuestion) summaArticles.set(question.part, (byQuestion = new Map()));
+		const known = byQuestion.get(question.n) ?? new Set();
+		for (const article of question.articles) known.add(article);
+		byQuestion.set(question.n, known);
+	}
+}
 
 /**
  * Which Compendium questions condense which Catechism paragraphs — the one
@@ -2735,32 +3016,24 @@ console.log(
 			: '')
 );
 
-const citingUnits = [];
-for (const { lang, work, paragraphs } of cccEditions) {
-	for (const p of paragraphs) {
-		citingUnits.push({ citer: { kind: 'ccc', n: p.n }, lang, work, unit: p });
-	}
-}
-for (const { slug, lang, work, sections } of documentEditions) {
-	for (const section of sections) {
-		citingUnits.push({
-			citer: { kind: 'document', slug, n: section.n },
-			lang,
-			work,
-			unit: section
-		});
-	}
-}
 const citationXrefs = buildCitationXrefs(
 	citingUnits,
 	(slug, n) => sectionsBySlug.get(slug)?.has(n) ?? false,
-	(n) => cccParagraphSet.has(n)
+	(n) => cccParagraphSet.has(n),
+	// A question-level citation validates against the question; an article
+	// against the article list, unioned across the two editions.
+	(part, question, article) => {
+		const articles = summaArticles.get(part)?.get(question);
+		return articles !== undefined && (article === null || articles.has(article));
+	}
 );
 writeJson(path.join(indexDir, 'document-citations.json'), citationXrefs.documents);
 writeJson(path.join(indexDir, 'ccc-citations.json'), citationXrefs.ccc);
+writeJson(path.join(indexDir, 'summa-citations.json'), citationXrefs.summa);
 console.log(
-	`[sync-corpus] reverse citation index: ${citationXrefs.documents.length} document addresses ` +
-		`and ${citationXrefs.ccc.length} Catechism paragraphs have a citer`
+	`[sync-corpus] reverse citation index: ${citationXrefs.documents.length} document addresses, ` +
+		`${citationXrefs.ccc.length} Catechism paragraphs and ${citationXrefs.summa.length} Summa ` +
+		`addresses have a citer`
 );
 
 // How much of the apparatus the grammar reads, against the committed
@@ -2830,7 +3103,7 @@ if (xrefsSynced) {
 			}
 		}
 	}
-	const problems = checkXrefsAgainstCorpus([...xrefs, ...documentXrefs], chapterVerses);
+	const problems = checkXrefsAgainstCorpus(scriptureCitations, chapterVerses);
 	if (problems.length > 0) {
 		console.warn(
 			`[sync-corpus] ${problems.length} scripture reference(s) point outside the corpus ` +
@@ -3029,8 +3302,7 @@ writeJson(routeTitlesPath, routeTitles);
 const apparatus = buildApparatus({
 	manifests,
 	descriptions,
-	xrefs,
-	documentXrefs,
+	scriptureCitations,
 	cccCompendium: condensation.map,
 	cccCitations: citationXrefs.ccc
 });
@@ -3150,9 +3422,7 @@ const indexBytes = [
 	'compendium-index.json',
 	'summa-index.json',
 	'document-index.json',
-	'prayer-index.json',
-	'xrefs.json',
-	'document-xrefs.json'
+	'prayer-index.json'
 ]
 	.map((f) => path.join(indexDir, f))
 	.filter(existsSync)
@@ -3160,7 +3430,7 @@ const indexBytes = [
 
 console.log(
 	`[sync-corpus] Built corpus-data/ from ${buildSrc}: ${registeredWorkIds.length} work(s), ` +
-		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${xrefs.length} CCC and ${documentXrefs.length} document xref entries` : ''}. ` +
+		`${contentManifest.length} content file(s)${xrefsSynced ? `, plus ${scriptureCitations.length} citing addresses over ${citedVerses} verses` : ''}. ` +
 		`Index tier: ${(indexBytes / 1000).toFixed(0)} KB raw. ` +
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
 		`${Object.keys(translatedDescriptions).length} language file(s). ` +

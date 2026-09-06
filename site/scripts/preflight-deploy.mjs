@@ -62,7 +62,7 @@ const MIN_CONTENT_ASSETS = 100;
  * file that ships as a fetched asset and one compiled into the boot chunk is
  * `query: '?url'` — one word, no error either way, and the symptom is only that
  * the site got slower for everyone. It has happened repeatedly: the document
- * outlines (414 KB), the xref tables (715 KB), and `content-manifest.json`,
+ * outlines (414 KB), the citation indexes (715 KB), and `content-manifest.json`,
  * which `corpus-assets.ts`'s docblock says must never be reached from a page
  * and which two later imports put in `nodes/0.js` anyway — 1.59 MB, unnoticed,
  * until the whole boot payload was measured on 2026-09-03 and came to 6.30 MB.

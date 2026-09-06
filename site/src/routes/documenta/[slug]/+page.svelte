@@ -32,7 +32,7 @@
 	import ReferenceNumber from '$lib/components/ReferenceNumber.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import CitedBy from '$lib/components/CitedBy.svelte';
-	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import { citedSources, type CitedByRow } from '$lib/cited-by';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
@@ -65,7 +65,6 @@
 	import { splitUnnumbered } from '$lib/document-unnumbered';
 	import { t } from '$lib/i18n.svelte';
 	import type {
-		Citer,
 		DocumentAppendixUnit,
 		DocumentSection,
 		DocumentNode,
@@ -414,36 +413,6 @@
 	 * title needs none: it is the work's own Latin incipit.
 	 */
 	const citations = $derived(getDocumentCitations(data.slug));
-
-	function citedSources(citers: Citer[]): CitedBySource[] {
-		const paragraphs = citers.filter((c) => c.kind === 'ccc').map((c) => c.n);
-		const ccc: CitedBySource[] = paragraphs.length
-			? [
-					{
-						key: 'ccc',
-						label: t('bible.cccAbbrev'),
-						fullTitle: t('ccc.landing.title'),
-						refs: paragraphs.map((n) => ({
-							key: n,
-							label: `¶${n}`,
-							href: hrefFor({ kind: 'ccc', n })
-						}))
-					}
-				]
-			: [];
-		const bySlug = new Map<string, number[]>();
-		for (const citer of citers) {
-			if (citer.kind !== 'document' || !citer.slug) continue;
-			const list = bySlug.get(citer.slug);
-			if (list) list.push(citer.n);
-			else bySlug.set(citer.slug, [citer.n]);
-		}
-		const documents = [...bySlug]
-			.map(([slug, sections]) => documentCitedSource(slug, sections))
-			.filter((source): source is CitedBySource => source !== null)
-			.sort((a, b) => a.label.localeCompare(b.label));
-		return [...ccc, ...documents];
-	}
 
 	const citedInRows: CitedByRow[] = $derived(
 		[...citations.keys()]

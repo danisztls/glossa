@@ -17,7 +17,7 @@
 	import StructureSidebarToc from '$lib/components/StructureSidebarToc.svelte';
 	import { OUTLINE_KINDS } from '$lib/components/structureToc';
 	import CitedBy from '$lib/components/CitedBy.svelte';
-	import { documentCitedSource, type CitedByRow, type CitedBySource } from '$lib/cited-by';
+	import { citedSources, type CitedByRow } from '$lib/cited-by';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareCopyrightField from '$lib/components/CompareCopyrightField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
@@ -126,19 +126,7 @@
 	);
 
 	const citedInRows: CitedByRow[] = $derived.by(() => {
-		const citers = getCccCitations(data.n);
-		if (citers.length === 0) return [];
-		const bySlug = new Map<string, number[]>();
-		for (const citer of citers) {
-			if (citer.kind !== 'document' || !citer.slug) continue;
-			const list = bySlug.get(citer.slug);
-			if (list) list.push(citer.n);
-			else bySlug.set(citer.slug, [citer.n]);
-		}
-		const sources = [...bySlug]
-			.map(([slug, sections]) => documentCitedSource(slug, sections))
-			.filter((source): source is CitedBySource => source !== null)
-			.sort((a, b) => a.label.localeCompare(b.label));
+		const sources = citedSources(getCccCitations(data.n));
 		return sources.length > 0 ? [{ key: data.n, label: `¶${data.n}`, sources }] : [];
 	});
 

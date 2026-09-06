@@ -73,10 +73,7 @@ import type {
 	BibleBook,
 	BibleIntro,
 	CccAbbreviation,
-	CccBibleXref,
-	CccCitationXref,
-	DocumentBibleXref,
-	DocumentCitationXref,
+	ScriptureCitationsFile,
 	CccNode,
 	CccParagraph,
 	CompendiumQuestion,
@@ -143,7 +140,7 @@ import compendiumPtManifest from './fixtures/compendium.pt/manifest.json';
 import compendiumPtStructure from './fixtures/compendium.pt/structure.json';
 import fixtureCompendiumPtQuestions from './fixtures/compendium.pt/questions.json';
 
-import fixtureXrefs from './fixtures/xrefs/ccc-bible.json';
+import fixtureXrefs from './fixtures/xrefs/scripture-citations.json';
 
 import { buildCondensationMap, type CondensationMap } from './condensation';
 // `./content-urls` is reached by `await import()` inside `ensureContentIndex`
@@ -739,7 +736,7 @@ export const summaQuestionMetas: Record<string, SummaQuestionMeta[]> = USE_REAL_
  * Which Compendium questions condense which Catechism paragraphs, voted
  * across every edition at sync time (`condensation.ts`).
  *
- * EAGER, unlike the four citation tables next to it, and the measurement is
+ * EAGER, unlike the citation indexes next to it, and the measurement is
  * why: those are 715 KB of apparatus that renders BELOW the text it
  * annotates, so arriving after first paint costs nothing. This is 16 KB, and
  * one of its consumers is a row in the Catechism's table of contents —
@@ -870,17 +867,21 @@ export const prayerMetasByLang: Record<string, PrayerMeta[]> = USE_REAL_CORPUS ?
  * `xrefs.svelte.ts` fetches them after first paint; this exports only their
  * URLs. They were eager until 2026-08-25 on a "small enough to stay in the
  * eager tier" argument that was written when `xrefs.json` was the only one of
- * them and measured 30 KB gzipped. Four tables later they are 715 KB raw /
+ * them and measured 30 KB gzipped. Four tables later they were 715 KB raw /
  * ~69 KB gzipped — the largest thing the boot chunk carried, in front of first
  * paint on every route including the ones that never read a byte of it.
  *
+ * Three of them now, plus one file per Bible book: the two FORWARD tables are
+ * gone, inverted at build and sharded (`scripts/build-xrefs.mjs`), and each
+ * table is fetched by the page that reads it rather than all four together.
+ *
  * The fixture half stays synchronous and stays here, because there is nothing
- * to fetch: `fixtureXrefs` is already in memory, and the other three tables
- * are empty under fixtures anyway (the fixture corpus has no documents, so a
- * citation index over them would have nothing to point at).
+ * to fetch: `fixtureXrefs` is already in memory, and the three whole-work
+ * tables are empty under fixtures anyway (the fixture corpus has no documents,
+ * so a citation index over them would have nothing to point at).
  */
 const realXrefUrls = import.meta.glob(
-	'./corpus-data/index/{xrefs,document-xrefs,document-citations,ccc-citations}.json',
+	'./corpus-data/index/{document-citations,ccc-citations,summa-citations}.json',
 	{ eager: true, query: '?url', import: 'default' }
 ) as Record<string, string>;
 
@@ -889,17 +890,37 @@ function xrefUrl(name: string): string | undefined {
 }
 
 export const xrefUrls = {
-	cccBible: xrefUrl('xrefs'),
-	documentBible: xrefUrl('document-xrefs'),
 	documentCitations: xrefUrl('document-citations'),
-	cccCitations: xrefUrl('ccc-citations')
+	cccCitations: xrefUrl('ccc-citations'),
+	summaCitations: xrefUrl('summa-citations')
 };
 
-/** The fixture CCC→Bible table, in the shape the queries want. Only ever
+/**
+ * The scripture index, one file per book — 73 URLs, and no content.
+ *
+ * An eager glob over a directory holding 5.5 MB sounds like exactly what this
+ * file's header forbids, and is not: `query: '?url'` makes each entry a
+ * content-hashed URL STRING, so what enters the boot chunk is 73 short
+ * strings. Dropping that option would inline every byte (site/CLAUDE.md's
+ * first silent way to fatten the payload), which is why the option is worth a
+ * comment rather than a glance.
+ */
+const realScriptureCitationUrls = import.meta.glob(
+	'./corpus-data/index/scripture-citations/*.json',
+	{ eager: true, query: '?url', import: 'default' }
+) as Record<string, string>;
+
+/** Where one book's slice of the reverse scripture index lives; `undefined`
+ *  where nothing in the corpus cites that book at all, which is an ordinary
+ *  answer (`xrefs.svelte.ts` reads it as an empty index, never as a failure). */
+export function scriptureCitationUrl(osis: string): string | undefined {
+	return realScriptureCitationUrls[`./corpus-data/index/scripture-citations/${osis}.json`];
+}
+
+/** The fixture scripture index, in the shape the queries want. Only ever
  *  consulted when `USE_REAL_CORPUS` is false — see `xrefs.svelte.ts`. */
-export const cccBibleXrefsByCcc: Map<number, CccBibleXref['refs']> = new Map(
-	(fixtureXrefs as CccBibleXref[]).map((entry) => [entry.ccc, entry.refs])
-);
+export const fixtureScriptureCitations: Record<string, ScriptureCitationsFile> =
+	fixtureXrefs as Record<string, ScriptureCitationsFile>;
 
 // --- Content tier: fixtures (whole, in-memory) vs. real (URL + fetch) -----
 

@@ -1418,6 +1418,37 @@ matched nothing rather than something wrong. `scripts/reference-coverage.mjs`
 is what says when that stops being true — and it did, for `ar`/`pl`/`ru`,
 which got tables the day a work landed in them.
 
+## The reverse index reads every work, and is sharded per book
+
+`build-xrefs.mjs` emits the "cited in" apparatus; `site/docs/references.md`
+holds the rationale. What must be true before touching it:
+
+- **`Citer` is eight kinds and adding a ninth is one place, not five.**
+  `cited-by.ts`'s `citedSources` groups every kind for all four pages that
+  render `CitedBy` (Bible chapter, CCC paragraph, document, Summa question).
+  Each page grouped its own until 2026-09-05, and each could see only the two
+  kinds the index then held.
+- **The scripture index is emitted INVERTED and sharded per book**
+  (`index/scripture-citations/{osis}.json`). The two forward tables it
+  replaced were 993 KB fetched by every reading page and read forward by
+  nothing. Do not add a whole-corpus citation table back: 5.7 MB raw over 73
+  files is affordable only because a chapter fetches one of them.
+- **`query: '?url'` on that glob is load-bearing** — without it Vite compiles
+  5.7 MB of index into the boot chunk, silently (§The boot payload has a
+  ceiling).
+- **An `annotation` citer names the EDITION, not the Bible.** Two annotated
+  editions are two apparatuses; two editions of one Catechism are one
+  Catechism and collapse to one citer. The circularity the row deferred on is
+  narrower than it looked and is dropped by `isSelfReference`: a note's
+  references to its own chapter.
+- **A prayer-addressed commentary is not a citer.** `commentary.preces.*`
+  reprints the Catechism and the Compendium beside a prayer, each note naming
+  its source in its own `locus`, so counting it would file one citation twice
+  under two labels.
+- **A commentary's verse number is `verse` and an edition's is `n`**
+  (docs/corpus-schema.md §Commentary). Read wrong it is silent: the citer
+  serializes with the key absent and the page links to `#vundefined`.
+
 ## Running prose is an apparatus, not decoration
 
 **Three of the eight Catechism editions print no footnotes at all** (de

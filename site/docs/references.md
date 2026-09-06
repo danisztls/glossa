@@ -95,6 +95,33 @@ it, so expanding it would file a citation the source never made.
 section is one number deep where a verse address is two, so "Ibid., 14." after
 "Rom. 10:17" cannot be assigned to a chapter or a verse without guessing.
 
+**An index nobody reads forward should not be stored forward.** The reverse
+"cited in" apparatus was two whole-corpus tables of `citer -> verses`, 993 KB,
+fetched by every reading page and inverted in the browser on the first Bible
+chapter that asked — and never read in the direction they were written, because
+a forward link is one the grammar renders from the citation string with nothing
+stored. Inverted at build and sharded per book, the same apparatus went from
+two citing works to **eight** (the Compendium, the Compendium of the Social
+Doctrine, the Code, the Summa, the prayers, and the annotated editions' own
+notes joined the Catechism and the documents) while what a chapter fetches
+FELL: one book, 39 KB gzipped for Matthew and a few for most.
+
+**A note's own chapter is dropped from its references, and that is the answer
+to "may an edition's apparatus be a citer at all".** It may, AS THE EDITION —
+Challoner's note is not Allioli's, so an `annotation` carries its work id where
+two editions of one Catechism collapse to one citer. What was really circular
+is narrower: a note glossing Matthew 5 that says "Matt. v. 31" names the page
+the reader already has open, which is the document-cites-itself drop one work
+type over.
+
+**Reading an apparatus is what turns a numbering table from wrong-in-principle
+to wrong-in-evidence.** `bible.allioli.de` joined `WORK_CONFIGS` on
+`vulgateNumbering` alone — the only entry there that is about numbering and not
+about the books of Kings — because its note at 1 Chronicles 16:7 prints
+`Ps 95,1-13` and the Hebrew conversion sent it to a psalm with eleven verses.
+172 of its references resolved outside the corpus; 96 of them stopped. The
+manifest had said `psalm_numbering: "vulgate"` all along, and nothing read it.
+
 **A document is addressed in the reader's language or not at all — and that
 refusal bought nothing.** `refAddress` looked up the exact `manifests[lang]`
 edition and emitted no link where there was none, on the argument that a

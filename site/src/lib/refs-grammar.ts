@@ -2334,6 +2334,30 @@ const CONFIG_ES_DOUAY: LangConfig = {
 	),
 	vulgateNumbering: true
 };
+/**
+ * Allioli: the German table unchanged, and the Vulgate Psalter.
+ *
+ * THE ONLY ENTRY HERE THAT IS ABOUT NUMBERING ALONE. Every other work on this
+ * list is here because it NAMES the books of Kings the Douay way, and carries
+ * `vulgateNumbering` along as the other half of one tradition; this one is
+ * here for the Psalter and nothing else, so the book table is
+ * `CONFIG_DE` verbatim — no evidence was measured for the naming, and a remap
+ * on a guess is what this list exists to refuse.
+ *
+ * The evidence is the edition's own manifest (`psalm_numbering: "vulgate"`)
+ * and 172 references that resolve outside the corpus without it: the note at
+ * 1 Chronicles 16:7 prints `Ps 95,1-13` and `Ps 105,47.48`, and the Vulgate's
+ * Psalm 95 has thirteen verses where the Hebrew conversion's 94 has eleven.
+ * An apparatus cites the text it sits in, and this edition's text is
+ * Vulgate-numbered.
+ *
+ * `bible.kaldi.hu` carries the same manifest field and needs no entry: it
+ * prints no notes, so it cites nothing. `bible.crampon.fr` is the opposite
+ * case and also needs none — its Psalter is stored Hebrew (the sync converts
+ * the TEXT), so its notes cite Hebrew numbers and the conversion is right.
+ */
+const CONFIG_DE_VULGATE: LangConfig = { ...CONFIG_DE, vulgateNumbering: true };
+
 const CONFIG_IT_MARTINI: LangConfig = {
 	...romanceConfig(
 		remapBookVariants(BOOK_VARIANTS_IT, KINGS_IT_MODERN, KINGS_IT_DOUAY),
@@ -2491,6 +2515,7 @@ const WORK_CONFIGS: Record<string, LangConfig> = {
 	'summa.en': CONFIG_EN_DOUAY,
 	'encyclical.aeterni-patris.en': CONFIG_EN_DOUAY,
 	'encyclical.diuturnum.en': CONFIG_EN_DOUAY,
+	'bible.allioli.de': CONFIG_DE_VULGATE,
 	'bible.straubinger.es': CONFIG_ES_DOUAY,
 	'bible.martini.it': CONFIG_IT_MARTINI,
 	// 1,335 references, and the only entry that widens the table as well as

@@ -84,6 +84,28 @@ const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'p
 const REFS: readonly IndexName[] = ['bible', 'summa', 'document'];
 
 /**
+ * What the "cited in" panel needs on top of `REFS`, which is the prayers and
+ * nothing else.
+ *
+ * `citedSources` names eight kinds of citer and reads a registry for exactly
+ * one of them. The other seven are named from `manifests`, which `+layout.ts`
+ * primes on every path (`ensureCoreIndex`) — `content.workIdFor` resolves an
+ * edition out of the manifests alone, and an `annotation` reads its book name
+ * out of the Bible index `REFS` already carries. A prayer is the exception
+ * because it is named by its own TITLE rather than by a number, and titles
+ * live in `prayer-index.json` (138 KB raw, 22 KB gzipped).
+ *
+ * IT IS THE SCRIPTURE SHELF'S ALONE, and what makes that safe is the BUILDER
+ * rather than the corpus. A prayer's unit is marked `scriptureOnly` and never
+ * reaches `buildCitationXrefs` at all (see there for the bookless Italian
+ * locator that cost 27 wrong Catechism links), so a prayer citer cannot occur
+ * in the document, Catechism or Summa index by construction. Reasoning from
+ * what the prayers happen to cite would have been the fragile version of this
+ * sentence, and was wrong when it was written.
+ */
+const CITERS: readonly IndexName[] = ['prayer'];
+
+/**
  * A shelf's own indexes plus `REFS`, ordered as `ALL` orders them so that the
  * answer does not depend on how the entry happened to be written.
  */
@@ -102,7 +124,7 @@ function withRefs(...own: readonly IndexName[]): readonly IndexName[] {
  * other.
  */
 const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
-	scriptura: withRefs('bible'),
+	scriptura: withRefs('bible', ...CITERS),
 	catechismus: withRefs('ccc', 'compendium'),
 	documenta: withRefs('document'),
 	// The prayers themselves carry no links — `PrayerBlocks` renders through

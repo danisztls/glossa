@@ -1732,21 +1732,22 @@ export function getAdjacentCompendiumQuestionNumber(
 
 // --- Cross-references -------------------------------------------------
 //
-// The four citation tables and every query over them moved to
-// `xrefs.svelte.ts` on 2026-08-25, because they are the largest thing the boot
-// chunk was carrying for pages that never ask: 715 KB raw / ~69 KB gzipped of
-// reverse-lookup apparatus, eagerly inlined into the bundle every route
-// `modulepreload`s. They are re-exported here so no call site had to change —
-// see that module for how the load is triggered and why nothing had to become
+// The reverse citation indexes and every query over them moved to
+// `xrefs.svelte.ts` on 2026-08-25, and were sharded per book on 2026-09-05.
+// They were the largest thing the boot chunk carried for pages that never
+// ask: 715 KB raw / ~69 KB gzipped of reverse-lookup apparatus, eagerly
+// inlined into the bundle every route `modulepreload`s. They are three
+// whole-work tables plus one file per Bible book now, each fetched by the
+// page that reads it — a Catechism paragraph costs 2.6 KB gzipped, a Bible
+// chapter its own book. Re-exported here so no call site had to change; see
+// that module for how the load is triggered and why nothing had to become
 // `await`.
 
 export {
-	getCccBibleXrefs,
 	getCccCitations,
-	getCccCitationsForChapter,
 	getDocumentCitations,
-	getDocumentCitationsForChapter,
-	type DocumentCitation
+	getScriptureCitationsForChapter,
+	getSummaCitations
 } from './xrefs.svelte';
 
 // --- Documents: index-backed (registry, structure, existence, sync) -------

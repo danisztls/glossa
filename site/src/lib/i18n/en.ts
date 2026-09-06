@@ -728,7 +728,6 @@ export const en: Dictionary = {
 	// page being read offline the link is dead and this is the only warning of
 	// that there can be. `{volume}` is "58 (1966)", `{host}` "vatican.va".
 	'refs.externalVolume': 'Volume {volume} at {host} — scanned PDF',
-	'bible.cccAbbrev': 'CCC',
 	'bible.wholeChapter': 'This chapter',
 	'bible.verseNotInEdition':
 		'This verse number is not in this edition — see the note in the page source',

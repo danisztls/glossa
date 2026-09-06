@@ -1,29 +1,44 @@
 /**
- * The four citation tables, fetched after first paint instead of shipped in
- * the boot chunk.
+ * The reverse citation indexes, fetched after first paint instead of shipped
+ * in the boot chunk.
  *
- * WHY THIS MODULE EXISTS. These are the largest thing the boot bundle carried
- * for pages that never ask for it: `document-xrefs.json` (366 KB raw),
- * `xrefs.json` (215 KB), `document-citations.json` (134 KB) and
- * `ccc-citations.json` — 715 KB raw, ~69 KB gzipped, eagerly inlined into the
- * one chunk every route `modulepreload`s. Nothing on the home page, a prayer,
- * a Compendium question or a Summa article reads a byte of it. With `ssr =
- * false` that weight sits squarely in front of first paint on every route.
+ * WHY THIS MODULE EXISTS. These were the largest thing the boot bundle
+ * carried for pages that never ask for it — 715 KB raw, ~69 KB gzipped,
+ * eagerly inlined into the one chunk every route `modulepreload`s. Nothing on
+ * the home page, a prayer or a Compendium question reads a byte of it. With
+ * `ssr = false` that weight sits squarely in front of first paint on every
+ * route.
  *
- * WHAT THEY ARE. Reading apparatus, not reading text: which verses a
- * Catechism paragraph cites, and — the reverse direction — which paragraphs
- * and which magisterial sections cite the verse a reader is looking at. Every
- * one of them renders BELOW the text it annotates. Arriving a moment after
- * first paint is the correct trade for a body of text that arrives sooner;
- * arriving before the text it annotates was never worth anything.
+ * WHAT THEY ARE. Reading apparatus, not reading text: which places in the
+ * corpus cite the verse, the Catechism paragraph, the document section or the
+ * Summa article a reader is looking at. Every one of them renders BELOW the
+ * text it annotates. Arriving a moment after first paint is the correct trade
+ * for a body of text that arrives sooner; arriving before the text it
+ * annotates was never worth anything.
+ *
+ * FOUR TABLES BECAME THREE PLUS SEVENTY-THREE, and the shape is the point.
+ * Two of the four were FORWARD tables (`xrefs.json`, `document-xrefs.json`,
+ * 993 KB) whose only consumer was a lazy inversion this module ran on the
+ * first Bible chapter that asked — the forward direction is a link the
+ * grammar renders from the citation string itself, so nothing ever read them
+ * forward. They are inverted at build time now and sharded by book
+ * (`scripts/build-xrefs.mjs`), which is what let the index grow from two
+ * citers to eight without any page paying for the growth: a Bible chapter
+ * fetches its own book (39 KB gzipped for Matthew, the worst; a few
+ * kilobytes for most), and every other route fetches none of them.
+ *
+ * AND EACH TABLE IS FETCHED BY THE PAGE THAT WANTS IT. The four used to
+ * arrive in one `Promise.all`, so a Catechism paragraph downloaded the
+ * documents' index and the Summa's. They are four independent lazy loads now:
+ * a CCC page costs 2.6 KB gzipped where it cost 69.
  *
  * WHY NOTHING HAD TO BECOME `await`. The query functions read a `$state`
  * holder and kick off the load on first call. A caller inside a `$derived` —
- * which is all four of them, in the Bible chapter, CCC paragraph and document
- * routes — therefore registers a dependency on the holder in the same breath
- * that it asks for the data. It gets an empty result now and re-runs itself
- * when the tables land. No call site changed, no `load()` gained an await, and
- * a page that never asks never fetches.
+ * which is all of them, in the Bible chapter, CCC paragraph, document and
+ * Summa routes — therefore registers a dependency on the holder in the same
+ * breath that it asks for the data. It gets an empty result now and re-runs
+ * itself when the table lands. No call site changed, no `load()` gained an
+ * await, and a page that never asks never fetches.
  *
  * FIXTURES ARE SYNCHRONOUS. Under vitest (`!USE_REAL_CORPUS`) the tables are
  * the hand-authored fixtures, present from module load, so tests observe the
@@ -33,282 +48,223 @@
 
 import {
 	USE_REAL_CORPUS,
-	cccBibleXrefsByCcc as fixtureCccBibleXrefsByCcc,
+	fixtureScriptureCitations,
+	scriptureCitationUrl,
 	xrefUrls
 } from './corpus-index';
 import type {
 	CccCitationXref,
 	Citer,
-	DocumentBibleXref,
 	DocumentCitationXref,
-	ScriptureRef
+	ScriptureCitationsFile,
+	SummaCitationXref
 } from './types';
 
-interface XrefTables {
-	cccBibleXrefsByCcc: Map<number, ScriptureRef[]>;
-	documentBibleXrefs: DocumentBibleXref[];
-	documentCitationXrefs: DocumentCitationXref[];
-	cccCitationXrefs: CccCitationXref[];
-}
-
-const EMPTY: XrefTables = {
-	cccBibleXrefsByCcc: new Map(),
-	documentBibleXrefs: [],
-	documentCitationXrefs: [],
-	cccCitationXrefs: []
-};
-
 /**
- * Held in an object rather than a bare `let` so the value can be replaced from
- * outside a component and every reader still sees it — the standard shape for
- * cross-module `$state`.
- */
-const store = $state<{ tables: XrefTables | null }>({
-	tables: USE_REAL_CORPUS ? null : { ...EMPTY, cccBibleXrefsByCcc: fixtureCccBibleXrefsByCcc }
-});
-
-let loading: Promise<void> | null = null;
-
-/**
- * Read the tables, starting the fetch if this is the first ask.
+ * One lazily-fetched table.
  *
- * Returns empty rather than a promise, which is what lets the callers stay
- * synchronous — see this module's docblock. Reading `store.tables` here is
- * also what registers the dependency in a calling `$derived`, so the same line
- * both triggers the load and arranges for the re-run.
+ * A CLASS BECAUSE THERE ARE NOW FOUR OF THEM, and the shape each one needs is
+ * the same three lines: hold a `$state` slot, start the fetch on the first
+ * read, and hand back the fallback until it lands. Written out four times it
+ * was four chances to forget the `catch` — a failed apparatus fetch must not
+ * take the page with it, and must not be retried on a loop either.
+ *
+ * The rejection is swallowed and the slot is filled with the empty value, so
+ * a broken build costs the reader the cross-reference footers and keeps the
+ * text. Deliberately NOT `retryable-once.ts`: this is the case that module's
+ * docblock excludes, a memo whose failure is meant to be terminal for the
+ * session rather than retried on every render.
  */
-function tables(): XrefTables {
-	const loaded = store.tables;
-	if (loaded) return loaded;
-	loading ??= load();
-	return EMPTY;
+class LazyTable<T> {
+	#state = $state<{ value: T | null }>({ value: null });
+	#loading: Promise<void> | null = null;
+	readonly #empty: T;
+	readonly #url: () => string | undefined;
+
+	constructor(url: () => string | undefined, empty: T, fixture?: T) {
+		this.#url = url;
+		this.#empty = empty;
+		if (!USE_REAL_CORPUS) this.#state.value = fixture ?? empty;
+	}
+
+	/** Read it, starting the fetch if this is the first ask. Reading the
+	 *  `$state` slot here is what registers the dependency in a calling
+	 *  `$derived`, so the same line both triggers the load and arranges for
+	 *  the re-run. */
+	get(): T {
+		const loaded = this.#state.value;
+		if (loaded) return loaded;
+		this.#loading ??= this.#load();
+		return this.#empty;
+	}
+
+	async #load(): Promise<void> {
+		this.#state.value = await fetchJson<T>(this.#url(), this.#empty);
+	}
 }
 
-async function load(): Promise<void> {
+/**
+ * A fetched JSON table, or the fallback.
+ *
+ * `url` undefined means the file is not in this build at all — a fixture
+ * build, or a book nothing in the corpus cites — which is an ordinary answer
+ * and not an error.
+ */
+async function fetchJson<T>(url: string | undefined, fallback: T): Promise<T> {
+	if (!url) return fallback;
 	try {
-		const [ccc, documents, documentCiters, cccCiters] = await Promise.all([
-			fetchTable<{ ccc: number; refs: ScriptureRef[] }[]>(xrefUrls.cccBible),
-			fetchTable<DocumentBibleXref[]>(xrefUrls.documentBible),
-			fetchTable<DocumentCitationXref[]>(xrefUrls.documentCitations),
-			fetchTable<CccCitationXref[]>(xrefUrls.cccCitations)
-		]);
-		store.tables = {
-			cccBibleXrefsByCcc: new Map(ccc.map((entry) => [entry.ccc, entry.refs])),
-			documentBibleXrefs: documents,
-			documentCitationXrefs: documentCiters,
-			cccCitationXrefs: cccCiters
-		};
+		const response = await fetch(url);
+		if (!response.ok) throw new Error(`xrefs: failed to fetch ${url} (${response.status})`);
+		return (await response.json()) as T;
 	} catch (err) {
-		// A failed apparatus fetch must not take the page with it: the reader
-		// loses the cross-reference footers and keeps the text. Left unresolved
-		// rather than retried, so a broken build does not spin.
-		console.error('[xrefs] failed to load the citation tables', err);
-		store.tables = EMPTY;
+		console.error('[xrefs] failed to load a citation table', err);
+		return fallback;
 	}
-	// Every memo below is derived from `store.tables`; clearing them here is
-	// what makes the first post-load call rebuild rather than serve the empty
-	// indexes it built while the fetch was in flight.
-	cccBibleReverseIndex = null;
-	documentBibleReverseIndex = null;
-	documentCitationIndex = null;
-	cccCitationIndex = null;
 }
 
-async function fetchTable<T>(url: string | undefined): Promise<T> {
-	if (!url) return [] as T;
-	const response = await fetch(url);
-	if (!response.ok) throw new Error(`xrefs: failed to fetch ${url} (${response.status})`);
-	return response.json() as Promise<T>;
+// --- The scripture index, one book at a time -------------------------------
+
+/**
+ * Books already fetched, and a counter that moves when one lands.
+ *
+ * THE COUNTER IS NOT BELT AND BRACES. A `$derived` that asks for a book
+ * nothing has fetched yet reads a MISSING property of the map; making a
+ * re-run depend on that alone would rest on the state proxy tracking absent
+ * keys, which it does, but which is also the kind of thing a refactor
+ * silently breaks. `generation` is read on every call, so the dependency
+ * exists whatever the key did.
+ */
+const scripture = $state<{
+	books: Record<string, ScriptureCitationsFile>;
+	generation: number;
+}>({
+	books: USE_REAL_CORPUS ? {} : fixtureScriptureCitations,
+	generation: 0
+});
+const requested = new Set<string>();
+
+function scriptureBook(osis: string): ScriptureCitationsFile | undefined {
+	// Read first, so the dependency is registered before any early return.
+	void scripture.generation;
+	const held = scripture.books[osis];
+	if (held || !USE_REAL_CORPUS) return held;
+	if (!requested.has(osis)) {
+		requested.add(osis);
+		void fetchJson<ScriptureCitationsFile>(scriptureCitationUrl(osis), {}).then((file) => {
+			scripture.books[osis] = file;
+			// Incremented off the CURRENT value, never off one read before the
+			// fetch: two books in flight at once would otherwise write the same
+			// number and the second landing would notify nobody.
+			scripture.generation += 1;
+		});
+	}
+	return undefined;
 }
 
 /**
- * Scripture references for a CCC paragraph (xrefs/ccc-bible.json, derived —
- * see docs/corpus-schema.md). References are edition-independent (OSIS +
- * chapter + verse); resolve against whichever Bible edition the reader has
- * open. Index-backed (small — see corpus-index.ts): empty array when the
- * paragraph has none, or the xrefs file itself is absent (fixtures without
- * one).
+ * Everything in the corpus that cites one chapter, keyed by verse number
+ * (0 = the chapter as a whole). Empty map when nothing cites it.
+ *
+ * Scoped to a chapter rather than exposing the book because that is exactly
+ * what a reading page needs, and it keeps the shape callers iterate small
+ * enough to hand straight to a template.
+ *
+ * VERSE 0 IS THE WHOLE-CHAPTER SENTINEL and callers render it as a
+ * chapter-level row. A work that cited the chapter did not cite each verse in
+ * it, and did cite something; the sentinel is what says both.
  */
-export function getCccBibleXrefs(cccN: number): ScriptureRef[] {
-	return tables().cccBibleXrefsByCcc.get(cccN) ?? [];
-}
-
-/**
- * The REVERSE direction of the same data: which CCC paragraphs cite a given
- * chapter, grouped by verse.
- *
- * docs/decisions.md calls bidirectional CCC-Bible linking the flagship v1
- * feature, and only the forward half (`getCccBibleXrefs`) ever shipped: a
- * reader could go from a Catechism paragraph to the verse it cites, but a
- * reader in the Bible had no way to learn that the verse in front of them is
- * cited in the Catechism at all. This is the other half, and it needs no new
- * corpus data -- the same `xrefs/ccc-bible.json` inverted.
- *
- * INVERTED LAZILY AND ONCE, on the first Bible chapter that asks. The
- * forward file is ~3,800 refs over 1,198 paragraphs; building the reverse
- * map eagerly at module load would put that work on every page in the site,
- * including the ones that never open a Bible chapter. Building it per-call
- * would put it on every chapter navigation. The memo is the obvious middle,
- * and the data is immutable once loaded.
- *
- * A WHOLE-CHAPTER CITATION (`verses: []`, the corpus's convention -- see
- * `ScriptureRef`) is recorded under the sentinel key 0 rather than being
- * dropped or expanded across every verse in the chapter. Expanding it would
- * claim the Catechism cites each verse individually, which is a different
- * and stronger statement than what it actually did; dropping it would lose a
- * real citation. Callers render key 0 as a chapter-level note.
- */
-type CccCitationsByVerse = Map<number, number[]>;
-let cccBibleReverseIndex: Map<string, CccCitationsByVerse> | null = null;
-
-function reverseKey(osis: string, chapter: number): string {
-	return `${osis}:${chapter}`;
-}
-
-function buildCccBibleReverseIndex(): Map<string, CccCitationsByVerse> {
-	const index = new Map<string, CccCitationsByVerse>();
-	for (const [cccN, refs] of tables().cccBibleXrefsByCcc) {
-		for (const ref of refs) {
-			const key = reverseKey(ref.osis, ref.chapter);
-			let byVerse = index.get(key);
-			if (!byVerse) index.set(key, (byVerse = new Map()));
-			// `[0]` rather than `ref.verses` when empty -- see the docblock.
-			for (const verse of ref.verses.length > 0 ? ref.verses : [0]) {
-				const list = byVerse.get(verse);
-				if (list) {
-					// The same paragraph can cite the same verse twice (a "cf."
-					// repeat in a long footnote); the reader wants one link.
-					if (!list.includes(cccN)) list.push(cccN);
-				} else {
-					byVerse.set(verse, [cccN]);
-				}
-			}
-		}
-	}
-	for (const byVerse of index.values()) {
-		for (const list of byVerse.values()) list.sort((a, b) => a - b);
-	}
-	return index;
-}
-
-/**
- * CCC paragraph numbers citing each verse of one chapter, keyed by verse
- * number (0 = the chapter as a whole). Empty map when nothing cites it.
- *
- * Scoped to a chapter rather than exposing the whole reverse index because
- * that is exactly what a reading page needs, and it keeps the shape that
- * callers iterate small enough to hand straight to a template.
- */
-export function getCccCitationsForChapter(osis: string, chapter: number): CccCitationsByVerse {
-	cccBibleReverseIndex ??= buildCccBibleReverseIndex();
-	return cccBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
-}
-
-/**
- * The same relation for the magisterial documents: which SECTION of which
- * document cites each verse of one chapter.
- *
- * Grouped by document here rather than left as a flat list, because that is
- * the shape the reader wants and the shape the page renders — one label per
- * work with its section numbers beside it ("Lumen Gentium §8 §22"), not the
- * work's name repeated once per section. Sections within a document come out
- * ascending; the documents themselves are left in the index's own order,
- * which is alphabetical by slug, and the page re-sorts by display title since
- * the title is what a reader actually scans.
- *
- * Same lazy-once inversion as the CCC index above, and for the same reason:
- * ~1,900 entries is real work to invert, and no page outside a Bible chapter
- * ever asks for it. `verses: []` (a whole-chapter citation) lands under the
- * sentinel key 0, identically.
- */
-export interface DocumentCitation {
-	slug: string;
-	sections: number[];
-}
-type DocumentCitationsByVerse = Map<number, DocumentCitation[]>;
-
-let documentBibleReverseIndex: Map<string, DocumentCitationsByVerse> | null = null;
-
-function buildDocumentBibleReverseIndex(): Map<string, DocumentCitationsByVerse> {
-	const index = new Map<string, DocumentCitationsByVerse>();
-	for (const entry of tables().documentBibleXrefs) {
-		for (const ref of entry.refs) {
-			const key = reverseKey(ref.osis, ref.chapter);
-			let byVerse = index.get(key);
-			if (!byVerse) index.set(key, (byVerse = new Map()));
-			for (const verse of ref.verses.length > 0 ? ref.verses : [0]) {
-				let works = byVerse.get(verse);
-				if (!works) byVerse.set(verse, (works = []));
-				const existing = works.find((w) => w.slug === entry.work);
-				if (existing) {
-					// One section can cite the same verse from two of its
-					// citations; the reader wants one link.
-					if (!existing.sections.includes(entry.n)) existing.sections.push(entry.n);
-				} else {
-					works.push({ slug: entry.work, sections: [entry.n] });
-				}
-			}
-		}
-	}
-	for (const byVerse of index.values()) {
-		for (const works of byVerse.values()) {
-			for (const work of works) work.sections.sort((a, b) => a - b);
-		}
-	}
-	return index;
-}
-
-export function getDocumentCitationsForChapter(
+export function getScriptureCitationsForChapter(
 	osis: string,
 	chapter: number
-): DocumentCitationsByVerse {
-	documentBibleReverseIndex ??= buildDocumentBibleReverseIndex();
-	return documentBibleReverseIndex.get(reverseKey(osis, chapter)) ?? new Map();
+): Map<number, Citer[]> {
+	const verses = scriptureBook(osis)?.[String(chapter)];
+	if (!verses) return new Map();
+	return new Map(Object.entries(verses).map(([verse, citers]) => [Number(verse), citers]));
 }
+
+// --- The three whole-work tables -------------------------------------------
+
+const documentCitations = new LazyTable<DocumentCitationXref[]>(
+	() => xrefUrls.documentCitations,
+	[]
+);
+const cccCitations = new LazyTable<CccCitationXref[]>(() => xrefUrls.cccCitations, []);
+const summaCitations = new LazyTable<SummaCitationXref[]>(() => xrefUrls.summaCitations, []);
 
 /**
- * The non-scripture reverse index: who cites this document, and who cites
- * this Catechism paragraph.
+ * These three are ALREADY INVERTED, unlike the scripture index, which is why
+ * nothing here inverts anything: they have no forward use — a forward link is
+ * one the grammar renders from the citation string itself, with nothing
+ * stored — so the builder emits them in the only shape anything reads them
+ * in (`scripts/build-xrefs.mjs`).
  *
- * ALREADY INVERTED, unlike the two above, which is why there is no lazy build
- * here. Those two invert a forward index the site also needs forward (a
- * paragraph's own references); this one has no forward use — the forward
- * direction is a link the grammar renders from the citation string itself,
- * with nothing stored. So the builder emits it in the only shape anything
- * reads it in (`scripts/build-xrefs.mjs`).
- *
- * Grouped by section for the same reason `DocumentCitation` groups by work:
- * the reader is standing on one section and wants that section's citers, not
- * a flat list to filter. The `null` key holds the citations that name the
- * document without naming a section of it — see `DocumentCitationXref`.
+ * What is memoised is the grouping by address, which is a linear pass over
+ * the table and would otherwise run on every navigation.
  */
-let documentCitationIndex: Map<string, Map<number | null, Citer[]>> | null = null;
-
-function buildDocumentCitationIndex(): Map<string, Map<number | null, Citer[]>> {
-	const index = new Map<string, Map<number | null, Citer[]>>();
-	for (const entry of tables().documentCitationXrefs) {
-		let bySection = index.get(entry.work);
-		if (!bySection) index.set(entry.work, (bySection = new Map()));
-		bySection.set(entry.n, entry.cited_by);
-	}
-	return index;
-}
+let documentIndex: Map<string, Map<number | null, Citer[]>> | null = null;
+let documentIndexFrom: DocumentCitationXref[] | null = null;
 
 /**
  * Every citer of one document, keyed by the section cited (`null` = the
  * document at large). Empty map when nothing cites it.
+ *
+ * Grouped by section because the reader is standing on one section and wants
+ * that section's citers, not a flat list to filter. The `null` key holds the
+ * citations that name the document without naming a section — see
+ * `DocumentCitationXref`.
  */
 export function getDocumentCitations(slug: string): Map<number | null, Citer[]> {
-	documentCitationIndex ??= buildDocumentCitationIndex();
-	return documentCitationIndex.get(slug) ?? new Map();
+	const table = documentCitations.get();
+	// Keyed on the TABLE and not a boolean, so the memo rebuilds exactly once
+	// when the fetch lands and never again.
+	if (documentIndexFrom !== table) {
+		documentIndexFrom = table;
+		documentIndex = new Map();
+		for (const entry of table) {
+			let bySection = documentIndex.get(entry.work);
+			if (!bySection) documentIndex.set(entry.work, (bySection = new Map()));
+			bySection.set(entry.n, entry.cited_by);
+		}
+	}
+	return documentIndex?.get(slug) ?? new Map();
 }
 
-let cccCitationIndex: Map<number, Citer[]> | null = null;
+let cccIndex: Map<number, Citer[]> | null = null;
+let cccIndexFrom: CccCitationXref[] | null = null;
 
 /** Who cites one Catechism paragraph. Empty array when nothing does. */
 export function getCccCitations(cccN: number): Citer[] {
-	cccCitationIndex ??= new Map(
-		tables().cccCitationXrefs.map((entry) => [entry.ccc, entry.cited_by])
-	);
-	return cccCitationIndex.get(cccN) ?? [];
+	const table = cccCitations.get();
+	if (cccIndexFrom !== table) {
+		cccIndexFrom = table;
+		cccIndex = new Map(table.map((entry) => [entry.ccc, entry.cited_by]));
+	}
+	return cccIndex?.get(cccN) ?? [];
+}
+
+let summaIndex: Map<string, Map<number | null, Citer[]>> | null = null;
+let summaIndexFrom: SummaCitationXref[] | null = null;
+
+/**
+ * Every citer of one question of the Summa, keyed by the article cited
+ * (`null` = the question at large).
+ *
+ * `part` is the grammar's own label (`I-II`), not the URL slug — the same
+ * spelling `parseStoredRef` and every citation of the Summa produce, so
+ * nothing in the index has to know how a part is written into an address.
+ * The page converts with `summaPartFromSlug`.
+ */
+export function getSummaCitations(part: string, question: number): Map<number | null, Citer[]> {
+	const table = summaCitations.get();
+	if (summaIndexFrom !== table) {
+		summaIndexFrom = table;
+		summaIndex = new Map();
+		for (const entry of table) {
+			const key = `${entry.part}:${entry.question}`;
+			let byArticle = summaIndex.get(key);
+			if (!byArticle) summaIndex.set(key, (byArticle = new Map()));
+			byArticle.set(entry.article, entry.cited_by);
+		}
+	}
+	return summaIndex?.get(`${part}:${question}`) ?? new Map();
 }

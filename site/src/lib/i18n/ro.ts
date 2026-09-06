@@ -286,7 +286,6 @@ export const ro: Dictionary = {
 		'Inițialele sunt Pirata One, o literă gotică ale cărei majuscule rămân lizibile la mărimea pe care o cere o inițială, iar — pentru rusă — Ponomar, care reproduce litera slavonă bisericească a Tipografiei Sinodale. Ponomar culege inițiala și niciodată textul: o enciclică modernă culeasă în întregime cu literă sinodală ar spune despre sine ceva neadevărat. Toate sunt licențiate sub SIL Open Font License și sunt servite de pe acest sit, nu de la terți, așa încât citirea unei pagini nu cere nimic de la serverul nimănui altcuiva.',
 	'refs.citedIn': 'Citat în',
 	'refs.externalVolume': 'Volumul {volume} pe {host} — PDF scanat',
-	'bible.cccAbbrev': 'CBC',
 	'bible.wholeChapter': 'Acest capitol',
 	'bible.verseNotInEdition':
 		'Acest număr de verset nu se află în această ediție — vedeți nota din sursa paginii',
