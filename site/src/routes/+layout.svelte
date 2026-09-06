@@ -156,53 +156,27 @@
 	] as const;
 
 	/**
-	 * THE FOOTER NAMES EVERY PAGE, WHICH IS WHY THE BAR DOES NOT HAVE TO.
+	 * The footer's index of pages, beside `visibleShelves()`'s works. The bar
+	 * above stops at five doors because a bar is one line; the footer has no
+	 * such limit, so it can name everything and the bar never has to grow.
 	 *
-	 * The five doors above are a bar's answer to a reader moving THROUGH the
-	 * site, and the argument for stopping at five is a width argument: a bar
-	 * has one line and every future work would want a slot in it. A footer has
-	 * neither constraint. It is read by someone who has reached the end of a
-	 * page and is deciding where to go instead, and it can afford to be the
-	 * index of what is here — so the two lists are not duplicates of each other
-	 * at different lengths, they answer different questions, and the bar keeps
-	 * its end state precisely BECAUSE the full list exists somewhere.
+	 * Written out rather than derived from `NAV_ITEMS`: Bookmarks is here and
+	 * not on the bar, and the Bible and the Prayers are on the bar but belong
+	 * in the works column. No Home — the brand link is already one.
 	 *
-	 * TWO COLUMNS, AND THE SPLIT IS THE ONE `/bibliotheca` ALREADY DRAWS: the
-	 * works are the texts this site reproduces, the pages are what it made
-	 * around them. The works column is `visibleShelves()` — the same call the
-	 * catalogue and the home page make, in the same order — because a second
-	 * hand-written list of works is a list that parts company with the first
-	 * one the next time something is ingested, and because the gate is the one
-	 * that matters here too: a card for a work a partial sync did not carry is
-	 * a door onto an empty index, and so is a link.
-	 *
-	 * The pages column is written out, and it is not `NAV_ITEMS` minus its
-	 * works. Composing it that way would make the footer's contents a
-	 * consequence of an edit to the bar, which is a coupling neither list
-	 * wants: Bookmarks is here and not on the bar (it is a control in the
-	 * header, beside the jump box), and Bible and Prayers are on the bar and
-	 * in the works column, where they belong as texts.
-	 *
-	 * `/colophon` IS NOT HERE, AND IT SPENT AN HOUR HERE — closing this column,
-	 * looking like the four pages above it — before going back to the imprint
-	 * (2026-09-06, both by direction). What the index cannot give it is the
-	 * adjacency `footer.notEndorsed` is written against: that disclaimer is the
-	 * one-sentence form of `colophon.whatThisIsStanding` and is short because
-	 * the full statement is two lines under it, not merely somewhere in the same
-	 * footer. Recorded so the move is not made a third time.
-	 *
-	 * No Home either, for the reason the bar gives — the brand link is one, and
-	 * this would be a third.
+	 * `/colophon` last. `footer.notEndorsed` in the imprint is the one-sentence
+	 * form of `colophon.whatThisIsStanding` and is short because that statement
+	 * is reachable from the same footer; move this link out of the footer and
+	 * the disclaimer has to grow.
 	 */
 	const FOOTER_PAGES = [
 		{ href: '/bibliotheca', key: 'nav.library' },
 		{ href: '/calendarium', key: 'nav.calendar' },
 		{ href: '/schola', key: 'nav.learn' },
-		// The one entry that is nobody's text and not a door on the bar: what
-		// the reader has marked. `/signata` is reached from the header by a
-		// glyph, which is a control rather than a name — this is the only place
+		// The header reaches `/signata` by a glyph, so this is the only place
 		// on the site that says the word.
-		{ href: '/signata', key: 'nav.bookmarks' }
+		{ href: '/signata', key: 'nav.bookmarks' },
+		{ href: '/colophon', key: 'colophon.title' }
 	] as const;
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
@@ -481,133 +455,49 @@
 	</main>
 
 	<!--
-		The colophon is deliberately in a footer rather than the navbar: it is
-		not a reading section and shouldn't compete with the four that are.
-		But it does have to be reachable from every page — docs/research/
-		copyright.md §5's posture rests on the position being stated openly,
-		and a page nobody can find states it to nobody.
+		The imprint and the index at opposite ends of one band. `.footer-inner`
+		repeats `.header-bar`'s container, so both bands sit on the same margins
+		and the cross lands under the wordmark; change one and change the other.
 
-		THE SAME ARGUMENT ONE STEP FURTHER is why the standing statement is here
-		and not only there. Can. 216 CIC reserves the name "Catholic" to
-		undertakings holding the consent of competent ecclesiastical authority;
-		this site holds none, and the name is on every page, so the disclaimer
-		has to be too. `colophon.whatThisIsStanding` says it in full to a reader
-		who went looking; `footer.notEndorsed` says it in a line to one who did
-		not. It names the Holy See rather than "the Vatican" (which is the state)
-		and rather than "ecclesiastical approbation" (which is a term of art a
-		footer cannot carry).
+		The colophon is deliberately in a footer rather than the navbar: it is
+		not a reading section and shouldn't compete with the ones that are. But
+		it does have to be reachable from every page — docs/research/copyright.md
+		§5's posture rests on the position being stated openly, and a page nobody
+		can find states it to nobody. Same argument one step further for the
+		standing statement below: Can. 216 reserves the name "Catholic" to
+		undertakings holding ecclesiastical consent, this site holds none, and
+		the name is on every page, so the disclaimer has to be too.
 	-->
 	<footer class="site-footer">
-		<!--
-			ONE BAND ON THE HEADER'S OWN MARGINS, which is the whole of the
-			arrangement: `.footer-inner` is `.header-bar`'s container (90rem,
-			`margin-inline: auto`, 1rem of inline padding), so the mark below sits
-			on the same line as the wordmark above it and the index ends where the
-			header's controls end. The page is then bracketed by two bands with one
-			set of margins rather than by a header laid out to the window and a
-			footer centred on its own contents.
-
-			IT WAS TWO STACKED CENTRED BLOCKS FOR ONE COMMIT AND THAT IS THE DEFECT
-			IT FIXES. The index centred its two tracks as a pair, the imprint
-			centred the mark and the lines as another, and the lines centred inside
-			that — three axes, none of which agreed, because a centred pair of
-			columns of unequal width does not put its text on the page's midline.
-			Nothing was misaligned by a rule; there was no rule to be aligned to.
-			An edge is what a column of links can be measured against, so the two
-			blocks take opposite edges and the space between them is a gutter
-			rather than the room left over.
-		-->
 		<div class="footer-inner">
-			<!--
-			The mark and the lines are ONE group in TWO grid columns, which is why
-			they need a wrapper at all: the grid is what makes "cross, then text" a
-			single thing to place. Two tracks rather than one row is what keeps the
-			mark from ever reaching the text — it sits beside the lines and can
-			never reflow them. Written in reading order and never positioned, so RTL
-			needs nothing: in Arabic and Hebrew the columns reverse and the mark
-			lands on the inline-start side, which is still the header's margin.
-
-			FIRST IN THE DOCUMENT, WHERE IT USED TO BE LAST. The visual order is the
-			document order and no `order` property is involved — the imprint is the
-			site signing the page and the index is a list, so a screen reader
-			reaching the footer landmark is told whose site this is before it is
-			offered every address on it. It also puts the mark at the start margin
-			under the brand, which is the arrangement's whole point.
-
-			This replaced an absolutely-positioned mark in the inline-start lane,
-			which is why `.site-footer` has no outsized inline padding any more:
-			that padding existed ONLY to reserve the lane symmetrically so the
-			centred lines stayed on the footer's true midline. With the mark in the
-			flow there is no lane, and with the block on an edge there is no midline
-			to hold it to.
-		-->
+			<!-- Two grid tracks, so the mark can never reflow the lines. Written
+			     in reading order and never positioned, so RTL needs nothing. -->
 			<div class="imprint">
 				<JerusalemCross class="footer-cross" />
-				<!--
-				Three lines in one chrome, and the uniformity is the point: none of
-				them is a heading for the others. The colophon link leads because it
-				is the way OUT of the footer; the motto and the standing statement
-				are the site speaking about itself, and setting either one larger
-				would make it an announcement rather than an imprint.
+				<!-- `lang="la"` because this is Latin in a page that may be in any
+				     of thirty-odd languages. Untranslated on purpose: a motto is a
+				     fixed form of words.
 
-				THE MOTTO IS THE ONE THING SET APART, in small capitals and at the
-				full text colour (by direction). That is not a step in size, a second
-				face or a weight — any of the three would make the stack a heading
-				with captions under it, which is what this block refuses. Small
-				capitals are how a printed imprint marks a DEVICE: the words are not
-				a sentence about the site, they are the thing the site says.
-
-				`lang="la"` on the motto for the reason every reading region declares
-				the language of its own text: this is Latin sitting in a page that may
-				be in any of thirty-four languages, and a screen reader told nothing
-				better will pronounce it as though it were the surrounding one.
-				Untranslated on purpose: a motto is a fixed form of words, not a
-				sentence to render in the reader's language.
-
-				`footer.notEndorsed` is the one-line form of
-				`colophon.whatThisIsStanding`, which the link two lines above it
-				reaches. That proximity is what lets it be this short: it does not
-				have to carry its own context, because the full statement is one click
-				away and in view. It was moved into the index for an hour and brought
-				back for exactly this — being somewhere in the same footer is not the
-				same claim as being two lines up.
-			-->
+				     `footer.notEndorsed` is `colophon.whatThisIsStanding` in one
+				     line. It names the Holy See rather than "the Vatican" (the
+				     state, not the authority) and rather than "ecclesiastical
+				     approbation" (a term of art a footer cannot carry). -->
 				<div>
-					<p><a href="/colophon">{t('colophon.title')}</a></p>
 					<p class="motto" lang="la">Ad maiorem Dei gloriam</p>
 					<p>{t('footer.notEndorsed')}</p>
 				</div>
 			</div>
 
-			<!--
-			THE INDEX OF THE WHOLE SITE, at the other edge of the same band. No rule
-			between it and the imprint: a line there would make the pair read as two
-			footers side by side, when what is wanted is one band that carries a
-			signature at one end and addresses at the other.
-
-			`aria-label` and not `aria-labelledby` pointing at one of the two
-			column heads: neither head names the landmark, they name a half of
-			it each. `nav.sections` is its own word for the same reason the
-			header's list is called "Menu" — a landmark a screen reader reads
-			out has to be named for what it is, and both names have to be
-			different or the reader is told they have gone in a circle.
-
-			The two `<h2>`s are real headings and not styled paragraphs. They
-			land on every page's outline, which is the point: a reader moving by
-			heading gets the site's index at the foot of whatever they were
-			reading, and a "Works" that is only bold text is a label a screen
-			reader never mentions.
-		-->
+			<!-- `nav.sections` rather than `nav.menu`: the header's list already
+			     holds that name, and two landmarks announced alike tell a reader
+			     they have gone in a circle. The `<h2>`s are real headings so the
+			     groups exist for a reader moving by heading. -->
 			<nav class="footer-nav" aria-label={t('nav.sections')}>
 				<div class="footer-group footer-works">
 					<h2>{t('nav.works')}</h2>
-					<!--
-					`navKey ?? titleKey` is the catalogue's own rule for a name in
-					a list of links; `shelves.ts` argues it beside the one entry
-					that sets it. Keyed on `shelf.key` because the href is not
-					unique in principle — two shelves could share a landing page
-					before they share an identity.
-				-->
+					<!-- The catalogue's own list and order (`$lib/shelves.ts`), so
+					     the footer cannot disagree with `/bibliotheca` and inherits
+					     its gate: no link to a work this build did not sync. -->
 					<ul>
 						{#each visibleShelves() as shelf (shelf.key)}
 							<li>
@@ -618,7 +508,7 @@
 						{/each}
 					</ul>
 				</div>
-				<div class="footer-group">
+				<div class="footer-group footer-pages">
 					<h2>{t('nav.pages')}</h2>
 					<ul>
 						{#each FOOTER_PAGES as item (item.href)}
@@ -862,37 +752,20 @@
 
 	.site-footer {
 		border-top: 1px solid var(--color-border);
-		/* Inline padding lives on `.footer-inner`, which carries the header's,
-		   so the two bands share one margin. Block padding is the footer's own
-		   and is generous at the foot: this is the end of the document, and the
-		   space under the last line is what says so. */
 		padding-block: 2.25rem 2.75rem;
 		text-align: start;
 		font-size: 0.8rem;
+		/* One number: the imprint's lines, the index's rows, and the mark's size
+		   are all measured from it. */
+		--imprint-leading: 1.9;
 	}
 
-	/*
-	 * `.header-bar`'s CONTAINER, RESTATED RATHER THAN SHARED — 90rem and
-	 * `margin-inline: auto` with 1rem of inline padding, the three declarations
-	 * that decide where a band's contents begin and end. A shared class is for
-	 * a pattern with several unrelated callers; this is two bands bracketing one
-	 * page, and the thing they share is a MARGIN, not a component. Change one
-	 * and change the other: the cross sitting under the wordmark is the whole
-	 * arrangement, and it is a resemblance maintained by hand.
-	 *
-	 * `space-between` and not a gap: the two blocks are anchored to opposite
-	 * edges, so the space between them is what is left of the band rather than
-	 * a number anyone chose. `align-items: start` puts the imprint's first line
-	 * and the two column heads on one line across the whole footer.
-	 *
-	 * `flex-wrap` is the safety net and not the phone layout — a reader at 200%
-	 * text size overflows a row long before the media query below fires, and a
-	 * wrapped band is merely stacked where an unwrapped one is cut off.
-	 */
+	/* `.header-bar`'s container, restated. The two bands share a margin, not a
+	   component — change one and change the other. */
 	.footer-inner {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
+		justify-content: space-evenly;
 		align-items: start;
 		gap: 2rem 3rem;
 		max-width: 90rem;
@@ -900,38 +773,18 @@
 		padding-inline: 1rem;
 	}
 
-	/*
-	 * TWO COLUMNS THAT STAY TWO COLUMNS. Each is the width of its own longest
-	 * name (`auto` tracks, never `1fr`), so the two lists have one edge each and
-	 * neither is stretched to meet the other — a column of links is read down
-	 * its start edge, and a track wider than its widest name puts that edge
-	 * nowhere in particular.
-	 *
-	 * It does not collapse to one column on a phone. Every name stacked is a
-	 * footer taller than the reading it follows; two columns of short words fit
-	 * a 320px screen, and the gutter is what gives if anything has to — hence
-	 * the `clamp`, which is one declaration doing what a media query would.
-	 */
 	.footer-nav {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, auto));
 		gap: 0 clamp(1.5rem, 8vw, 3.5rem);
 	}
 
-	/*
-	 * OUR LABEL, SO THE INTERFACE FACE — `base.css` states the rule and the
-	 * exception together: a heading takes the text face because it names a
-	 * division of the WORK, and a heading that is entirely our own word for a
-	 * group of links does not. "Works" and "Pages" are ours.
-	 *
-	 * Same size as everything else in the footer and separated by weight
-	 * alone. A column head set larger would be an announcement, which is the
-	 * argument the imprint's three lines are already built on — the whole
-	 * footer is one chrome, and small print with two subheadings in it is
-	 * still small print.
-	 */
+	/* The rule spans the group's tracks because the `<h2>` is a block and the
+	   group is as wide as its own list — so it must never be given a width. */
 	.footer-group h2 {
-		margin: 0 0 0.35rem;
+		margin: 0 0 0.45rem;
+		padding-bottom: 0.3rem;
+		border-bottom: 1px solid var(--color-border);
 		font-family: var(--font-sans);
 		font-size: inherit;
 		font-weight: 600;
@@ -942,62 +795,43 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
-		/* The imprint's leading, so the two blocks read as one column of small
-		   print rather than as a list above a signature. */
-		line-height: 1.9;
+		line-height: var(--imprint-leading);
 	}
 
 	/*
-	 * THE WORKS RUN INTO TWO TRACKS, AND THE SPLIT MEANS NOTHING (by direction).
-	 * It is `column-count` on the list and not a second `<ul>` under a second
-	 * heading, because there is no second group: the works are one list and the
-	 * only thing being divided is the space it occupies. Multicol is the one
-	 * feature that says exactly that — the DOM keeps one list in reading order,
-	 * a screen reader is read one list of works, and the browser decides where
-	 * to break it (4 and 3, balanced, which nothing here asks for by number).
-	 *
-	 * WHAT IT BUYS IS A SQUARER FOOTER, which is the whole brief. Seven works
-	 * against four pages left the index three rows taller on one side than the
-	 * other and stacked well past the imprint beside it; flowed into two tracks
-	 * both groups are four rows, so the band has one depth and the mark is not
-	 * standing alone against a long column.
-	 *
-	 * `break-inside: avoid` on the row: a name that wrapped could otherwise put
-	 * its second line at the top of the next track, where it reads as an entry
-	 * of its own — and "Doctors of the Church" is exactly long enough to wrap.
-	 * The gutter is the one between the groups, so all three tracks are evenly
-	 * spaced and none of them announces which two belong together.
+	 * The tracks are a use of the space and not a second group, which is why
+	 * this is `column-count` on the one list rather than several lists under
+	 * several headings: the DOM keeps one list in reading order and the browser
+	 * picks the break. No gutter inside a group — the head rule marks the
+	 * grouping, and the gap that has to survive is the one BETWEEN groups.
 	 */
 	.footer-works ul {
-		column-count: 2;
-		column-gap: clamp(1.5rem, 8vw, 3.5rem);
+		column-count: 3;
 	}
 
-	.footer-works li {
+	.footer-pages ul {
+		column-count: 2;
+	}
+
+	/* A wrapped name would otherwise put its second line atop the next track,
+	   where it reads as an entry of its own. */
+	.footer-group li {
 		break-inside: avoid;
 	}
 
-	/*
-	 * NO UNDERLINE AT REST, WHICH IS NOT AN EXEMPTION BUT THE RULE. `base.css`
-	 * keeps the underline for a link inside a SENTENCE and records that every
-	 * list-shaped surface on the site has opted out by hand — the header's
-	 * nav, the index cards, the document rows. A column of names is that shape;
-	 * the imprint's colophon link is not, and keeps its underline, which is
-	 * what distinguishes that block's one affordance from this one's.
-	 *
-	 * `aria-current` marks the page the reader is on exactly as the bar does,
-	 * and needs none of the width reservation that rule carries: these are
-	 * stacked rows, so a label that grows when it turns bold pushes nothing
-	 * along.
-	 */
+	/* No resting underline, as every list-shaped link surface here. The hover is
+	   that underline arriving, which is `base.css`'s own event: only the LINE is
+	   declared, so the colour comes from `a:hover` and the thickness and offset
+	   from `a`. The ink moves too, because colour alone says nothing under
+	   `data-mono`. */
 	.footer-nav a {
-		/* The LINE alone, never the `text-decoration` shorthand: that shorthand
-		   resets thickness and colour with it, and those two are `base.css`'s
-		   (`from-font`, and 35% of the link's own ink) — dropping them here
-		   would mean restating them in the hover rule below to get the site's
-		   own underline back. */
 		text-decoration-line: none;
 		color: var(--color-text-muted);
+	}
+
+	.footer-nav a:hover {
+		color: var(--color-text);
+		text-decoration-line: underline;
 	}
 
 	.footer-nav a[aria-current='page'] {
@@ -1005,49 +839,8 @@
 		font-weight: 600;
 	}
 
-	/*
-	 * THE HOVER IS THE UNDERLINE ARRIVING, WHICH IS THE SITE'S OWN EVENT AND
-	 * NOT A NEW ONE. `base.css` argues it at length for links in prose: the
-	 * mark sits at 35% of the link's colour at rest and goes solid on hover,
-	 * and "the interaction is the underline ARRIVING". A list-shaped surface
-	 * drops the resting mark, so what is left to arrive is the whole line —
-	 * the same event, one step further, rather than a footer-local invention.
-	 * Only the LINE is declared here: its colour comes from `a:hover` in that
-	 * file, its thickness and offset from `a`, so the mark drawn under a footer
-	 * link is the same mark drawn under a link in a Catechism paragraph.
-	 *
-	 * The ink moves with it, to `--color-text`, which is exactly what the
-	 * header's bar and sheet do (`.primary-nav a:hover`). Two channels because
-	 * one of them is colour: a hover that were colour alone would say nothing
-	 * under `data-mono`, where the palette is one hue by contract.
-	 *
-	 * NO BACKGROUND, though the header's sheet uses one. That row is full-width
-	 * and its ground says which of a column of tap targets is under the finger;
-	 * these are text-width links in a two-column index, where a ground would
-	 * draw a box the size of the word and read as a chip.
-	 *
-	 * `:focus-visible` is deliberately absent: `base.css` already gives it the
-	 * same treatment as `:hover`, and the focus RING is what a keyboard reader
-	 * is actually following.
-	 */
-	.footer-nav a:hover {
-		color: var(--color-text);
-		text-decoration-line: underline;
-	}
-
-	/*
-	 * TWO COLUMNS, AND THE POINT IS THAT THE MARK CANNOT REACH THE TEXT. Each
-	 * sits in a track of its own, so the cross is beside the lines without
-	 * being in with them: it cannot reflow them, wrap around them, or shift the
-	 * one it happens to sit level with. A flex row did this until it did not —
-	 * `flex-wrap` let the mark drop onto the text's line at narrow widths,
-	 * which is exactly the interference two tracks rule out.
-	 *
-	 * `justify-content: start` rather than `center`: the block is placed by the
-	 * band above and sits on the header's margin, so centring it inside itself
-	 * would be a second alignment fighting the first. Each track stays the width
-	 * of its own content either way.
-	 */
+	/* Two tracks, so the mark cannot reflow the lines; `start` because the band
+	   already places the block. */
 	.imprint {
 		display: grid;
 		grid-template-columns: auto auto;
@@ -1057,88 +850,43 @@
 	}
 
 	/*
-	 * `:global` because the class is passed into a component — the convention
-	 * `Icon.svelte`'s consumers already follow — and the size is a `font-size`
-	 * because the SVG is declared at 1em, so one number scales it.
+	 * `:global` because the class is passed into a component, and a `font-size`
+	 * because the SVG is declared at 1em.
 	 *
-	 * Full text colour and no opacity, where the three lines beside it are
-	 * muted: the mark is the one thing in the footer that is not apparatus, and
-	 * a heraldic figure faded to match small print reads as a watermark someone
-	 * forgot to remove. 2.5rem because the potent bars and the four crosslets
-	 * are real internal detail — below about 36px they start closing up, so
-	 * this is the mark's floor rather than a preference.
+	 * Sized FROM the lines beside it — two of them, at the footer's own
+	 * font-size, plus a little, so it stands slightly proud of the block and
+	 * follows it if either number moves. `1em` in `font-size` resolves against
+	 * the parent. Full ink where the lines are muted: a heraldic figure faded
+	 * to match small print reads as a watermark. It should not go below about
+	 * 36px, where the potent bars and crosslets start closing up.
 	 */
 	.site-footer :global(.footer-cross) {
-		font-size: 2.5rem;
+		font-size: calc(2 * var(--imprint-leading) * 1em + 0.4rem);
 		color: var(--color-text);
 	}
 
-	/*
-	 * ALL THREE LINES, ONE RULE, which is what keeps them one chrome: give any
-	 * of them its own SIZE or its own FACE and the stack stops reading as an
-	 * imprint and starts reading as a heading with captions.
-	 *
-	 * Spacing comes from `line-height` rather than margins, because stacked
-	 * lines of one size want even leading, and margins between them would be a
-	 * second number saying the same thing.
-	 *
-	 * THE COLOPHON LINK IS THE ONE DELIBERATE EXCEPTION, and it is made by
-	 * DELETING rather than adding. This block used to override `a` back to the
-	 * muted colour with no underline, which left the only link in it
-	 * indistinguishable from the two statements below — an affordance disguised
-	 * as a caption. With the override gone it is simply a link: `base.css`
-	 * gives it `--color-link` and an underline at 35% of its own colour that
-	 * goes solid on hover, exactly as every other link on the site does. Same
-	 * size and same leading as its neighbours, so the stack is still one
-	 * chrome; only the thing that is clickable looks clickable. The standing
-	 * direction for the next link anybody puts in an imprint: let `base.css`
-	 * have it.
-	 */
+	/* One size and one face across both lines, or the block reads as a heading
+	   with a caption. Leading does the spacing, so margins would be a second
+	   number saying the same thing. */
 	.site-footer p {
 		margin: 0;
 		color: var(--color-text-muted);
-		line-height: 1.9;
+		line-height: var(--imprint-leading);
 	}
 
-	/*
-	 * THE DEVICE, AND EVERY CHANNEL IT SPENDS IS ONE THE RULE ABOVE ALLOWS.
-	 * Small capitals and full-strength ink — not a step in size, not a second
-	 * face, not a weight. Weight was the obvious alternative and is the wrong
-	 * one: at 0.8rem a bold line reads as emphasis inside a sentence, and this
-	 * is not a sentence but a formula, set the way an imprint has always set a
-	 * device.
-	 *
-	 * SYNTHESISED WHERE THE FACE HAS NO `smcp`, WHICH IS FINE AND IS WHY IT IS
-	 * `small-caps` AND NOT `all-small-caps`. Google's subsets partition a
-	 * family by Unicode range and may drop the feature; every engine draws
-	 * scaled capitals when a font cannot answer `small-caps`, so the line is
-	 * never left as ordinary lower case. A subset audit is what `fonts.css`
-	 * would need if this were ever a hard requirement, and it is not.
-	 *
-	 * The tracking is what makes capitals readable at this size — letterforms
-	 * of one height need the extra room between them — and 0.06em is the least
-	 * that does it. `lang="la"` is on the element for the reason the markup
-	 * gives; it costs nothing here and is not what this rule selects on.
-	 */
+	/* 900 is the top of Source Sans 3's declared `200 900` axis, so this is an
+	   interpolation rather than a synthesised bold. Small caps are synthesised
+	   where the subset dropped `smcp`, which is why it is not `all-small-caps`;
+	   the tracking is what makes capitals readable at this size. */
 	.motto {
 		font-variant-caps: small-caps;
+		font-weight: 900;
 		letter-spacing: 0.06em;
 		color: var(--color-text);
 	}
 
-	/*
-	 * BELOW THE BAND'S OWN WIDTH THE FOOTER IS CENTRED AGAIN, and that is not a
-	 * retreat to the arrangement this replaced. Two edges are worth having when
-	 * there is a band between them; stacked in one column there is only one
-	 * edge, and a block sitting hard against the start margin of a narrow screen
-	 * with the whole gutter on the other side is lopsided rather than aligned.
-	 *
-	 * 54rem is where the imprint and the index stop fitting side by side —
-	 * measured, and re-measured when the works took a second track, since that
-	 * is what the number is about. It is not the header's 720px: the two bands
-	 * hold different things, and a shared number here would be a coincidence
-	 * dressed as a decision.
-	 */
+	/* Stacked, the band has one edge rather than two, so it centres instead.
+	   54rem is where the imprint and the index stop fitting side by side. */
 	@media (max-width: 54rem) {
 		.site-footer {
 			text-align: center;
@@ -1150,8 +898,6 @@
 			gap: 2rem;
 		}
 
-		/* The columns keep their own start edges — the pair is centred, the
-		   names inside it are not, for the reason `.footer-nav` gives. */
 		.footer-nav {
 			justify-content: center;
 			text-align: start;
@@ -1162,18 +908,10 @@
 		}
 	}
 
-	/*
-	 * AND ON A PHONE THE WORKS ARE ONE TRACK AGAIN, which is a DIFFERENT
-	 * question from the one above and so a different number. That breakpoint
-	 * asks whether two blocks fit side by side; this one asks whether three
-	 * tracks of names fit across a phone, and they do not — the longest work
-	 * name is about 121px, so three tracks and their gutters need ~352px
-	 * against the 288px a 320px screen leaves inside its padding. Two tracks
-	 * fit, which is what the index falls back to and what it was before the
-	 * works were split at all.
-	 */
-	@media (max-width: 30rem) {
-		.footer-works ul {
+	/* Five tracks of names do not fit a phone; two do. */
+	@media (max-width: 40rem) {
+		.footer-works ul,
+		.footer-pages ul {
 			column-count: 1;
 		}
 	}

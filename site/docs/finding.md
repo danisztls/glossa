@@ -47,58 +47,35 @@ to disagree.
 
 ## The footer names everything, which is what lets the bar stop at five
 
-**The bar's end state is a width argument, and a footer has no width**
-(2026-09-06). A bar is one line read on the way through a page, so every work
-ingested would want a slot in it and the answer had to be doors; the footer is
-read by somebody who has reached the END of a page and is deciding where to go
-instead, and it can afford to be the index of what is here. The two are not the
-same list at two lengths — they answer different questions, and **the bar keeps
-its end state precisely because the full list exists somewhere.** Before this
-the site had no page naming every destination at all: `/bibliotheca` names every
-WORK, and Learn, the Calendar and Bookmarks appear on no single surface with
+**The bar's end state is a width argument, and a footer has no width.** A bar is
+one line read on the way through a page, so every work ingested would want a
+slot in it and the answer had to be doors; the footer is read by somebody who
+has reached the END of a page and is deciding where to go instead. The two are
+not the same list at two lengths — they answer different questions, and the bar
+keeps its end state precisely because the full list exists somewhere. Before
+this the site had no surface naming every destination: `/bibliotheca` names
+every WORK, and Learn, the Calendar and Bookmarks appeared on no single one with
 them.
 
-**Two columns, and the split is the one `/bibliotheca` already draws** — a work
-is text somebody else wrote and this site reproduces, a page is something this
-site made. They sit at the end of the footer's band, opposite the imprint, on
-the header's own margins; `site/CLAUDE.md` §Languages carries that arrangement
-and what the stacked-and-centred version of it got wrong. The works column is
-`visibleShelves()`, the same call the catalogue
-and the home page make and in the same order: a second hand-written list of
-works parts company with the first one the next time something is ingested, and
-the gate matters here for the reason it matters there — a link to a work a
-partial sync did not carry is a door onto an empty index.
+**Works and pages, which is the split `/bibliotheca` already draws** — a work is
+text somebody else wrote and this site reproduces, a page is something this site
+made. The works come from `visibleShelves()`, the catalogue's own call, so the
+two cannot disagree and the footer inherits the gate: a link to a work a partial
+sync did not carry is a door onto an empty index. The pages are written out and
+deliberately not `NAV_ITEMS` minus its works, which would make the footer's
+contents a consequence of an edit to the bar.
 
-**The pages column is written out, and it is deliberately not `NAV_ITEMS` minus
-its works.** Composing it that way would make the footer's contents a
-consequence of an edit to the bar. Bookmarks is in it and not on the bar (in the
-header it is a glyph, which is a control rather than a name — this is the only
-place on the site that says the word), and the Bible and the Prayers are on the
-bar and in the works column, where they belong as texts.
+**`/colophon` is in the index; `footer.notEndorsed` stays in the imprint.** That
+one-line disclaimer is the one-sentence form of `colophon.whatThisIsStanding`
+and is short because the full statement is reachable from the same footer — move
+the link out of the footer and the sentence has to grow. No Home entry: that is
+the argument the bar already makes about the brand link.
 
-**`/colophon` is not in either column, and it spent an hour in one**
-(2026-09-06, both by direction). It closed the Pages column, looking like the
-four pages above it, and went back to the imprint because that is where
-`footer.notEndorsed` needs it: the disclaimer is the one-sentence form of
-`colophon.whatThisIsStanding` and is short because the full statement is two
-lines under it — **being somewhere in the same footer is not the same claim as
-being two lines up.** Recorded so the move is not made a third time. No Home
-entry either: that is the argument the bar already makes about the brand link,
-one screen further from it.
-
-**The works run into two tracks and the split means nothing** (2026-09-06, by
-direction). It is `column-count` on the one list, not a second list under a
-second heading — there is no second group, and multicol is the feature that
-says so: one list in the DOM, in reading order, with the browser choosing the
-break. What it buys is a squarer footer. Seven works against four pages left the
-index three rows taller on one side and stacked well past the imprint beside it;
-flowed into two tracks both groups are four rows, so the band has one depth.
-
-**The motto is set as a DEVICE** — small capitals, 0.06em of tracking,
-full-strength ink. The imprint's standing rule is that no line in it may take
-its own size or its own face, or the stack reads as a heading with captions;
-small capitals spend neither. Weight was the alternative and is wrong at this
-size, where bold reads as emphasis inside a sentence, and this is a formula.
+**The imprint and the index take opposite ends of one band on the header's own
+margins**, so the cross lands under the wordmark. Stacked and centred, as it was
+first drawn, it had three axes that could not agree — a centred pair of columns
+of unequal width does not put its text on the page's midline, and there was no
+rule for any of them to be measured to.
 
 **It cost three English strings and not one link.** Every name in it was already
 written in all thirty-seven languages, because the footer invents no destination
