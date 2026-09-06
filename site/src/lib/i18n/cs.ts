@@ -354,5 +354,59 @@ export const cs: Dictionary = {
 	'calendar.rank.optional-memorial': 'Nezávazná památka',
 	'calendar.rank.commemoration': 'Připomínka',
 	'calendar.rank.sunday': 'Neděle',
-	'calendar.rank.weekday': 'Všední den'
+	'calendar.rank.weekday': 'Všední den',
+	'calendar.gloss.season.advent':
+		'Čtyři týdny před Vánocemi: příprava na příchod Páně a začátek církevního roku.',
+	'calendar.gloss.season.christmas':
+		'Od Narození Páně po Křest Páně, kdy se slaví narození Páně a jeho zjevení světu.',
+	'calendar.gloss.season.lent':
+		'Čtyřicet dní od Popeleční středy po večerní mši na Památku Večeře Páně: pokání, almužna a příprava na Velikonoce.',
+	'calendar.gloss.season.triduum':
+		'Tři dny od večera Zeleného čtvrtka po večer Neděle zmrtvýchvstání — utrpení, smrt a vzkříšení Páně, vrchol celého roku.',
+	'calendar.gloss.season.easter':
+		'Padesát dní od Velikonoc do Seslání Ducha Svatého, slavených jako jediná slavnost — „jedna veliká neděle“.',
+	'calendar.gloss.season.ordinary':
+		'Třicet tři nebo třicet čtyři týdnů mimo ostatní doby. Ne „obyčejné“, nýbrž uspořádané: týdny jsou počítány a církev čte průběžně život a učení Páně. Přichází ve dvou úsecích — po době vánoční až do postní doby a po Seslání Ducha Svatého až do adventu.',
+	'calendar.gloss.rank.solemnity':
+		'Nejvyšší stupeň: Velikonoce, Vánoce, Nanebevstoupení, patron místa. Slaví se s Gloria a Credo a začíná už předchozí večer.',
+	'calendar.gloss.rank.feast':
+		'Slaví se v rámci samotného dne. Apoštolové a evangelisté a větší dny Páně a Panny Marie.',
+	'calendar.gloss.rank.memorial':
+		'Světec připomínaný ve svůj den, uvnitř mše a officia dané doby. Závazná tam, kde se slaví.',
+	'calendar.gloss.rank.optional-memorial':
+		'Může se slavit i neslavit, podle volby kněze nebo společenství. Neslaví-li se, je den prostě všední den.',
+	'calendar.gloss.rank.commemoration':
+		'Čím se památka stává v postní době: modlitba přidaná ke mši všedního dne, kterou doba jinak ponechává celou.',
+	'calendar.gloss.rank.sunday':
+		'Původní svátek — den Páně, slavený každý týden od vzkříšení. Jen slavnost nebo svátek Páně jej může vytlačit, a v adventu, postní a velikonoční době ani ty ne.',
+	'calendar.gloss.rank.weekday':
+		'Den bez vlastní slavnosti. Mše i officium jsou z dané doby — a právě to činí dobu tím, co stojí za poznání.',
+	'calendar.gloss.colour.white':
+		'Radost. Velikonoční a vánoční doba, dny Páně mimo jeho utrpení, Panna Maria, andělé a světci, kteří nebyli mučedníky.',
+	'calendar.gloss.colour.red':
+		'Krev a oheň. Květná neděle a Velký pátek, Seslání Ducha Svatého, apoštolové a evangelisté a mučedníci.',
+	'calendar.gloss.colour.green': 'Liturgické mezidobí: barva naděje a toho, co roste.',
+	'calendar.gloss.colour.violet': 'Advent a postní doba, a také při mších za zemřelé.',
+	'calendar.gloss.colour.rose':
+		'Užívá se dvakrát do roka — o neděli Gaudete, třetí adventní, a o neděli Laetare, čtvrté postní — kde se půst rozjasňuje a konec je na dohled.',
+	'calendar.gloss.colour.black': 'Smí se užít při mších za zemřelé.',
+	'calendar.gloss.colour.blue':
+		'Výsada modré: užívá se o Neposkvrněném početí ve Španělsku, na Filipínách a v nemnoha dalších místech, jimž ji Svatý stolec udělil.',
+	'calendar.gloss.sundayCycle':
+		'Nedělní čtení běží ve třech letech — A, B a C — a čtou se postupně Matouš, Marek a Lukáš, s Janem v postní a velikonoční době. Cyklus se mění o první neděli adventní, spolu s církevním rokem.',
+	'calendar.gloss.weekdayCycle':
+		'Čtení všedních dnů běží ve dvou letech, I a II: první čtení se mění, evangelium ne. Liturgický rok se jmenuje podle občanského roku, v němž končí — liché roky jsou I, sudé II.',
+	'calendar.gloss.psalterWeek':
+		'Denní modlitba církve rozděluje žalmy do čtyř týdnů, I až IV, jež se během roku opakují. Toto je týden, jehož žalmy patří dnešku, pro každého, kdo se modlí hodinky.',
+	'calendar.gloss.obligation':
+		'Den, kdy jsou věřící vázáni účastnit se mše a zdržet se prací, které by jim v tom bránily. Každá neděle a další dny, jež určila příslušná biskupská konference.',
+	'calendar.primer.title': 'Jste tu poprvé?',
+	'calendar.primer.lead':
+		'Církev zachovává vlastní rok. Začíná adventem, otáčí se kolem Velikonoc a dává každému dni jméno, stupeň a barvu — a ty rozhodují, co se ten den modlí a čte při mši a v denní modlitbě církve. „Třiadvacátá neděle v mezidobí“ je tedy adresa: říká knězi, sboru nebo komukoli, kdo se modlí doma, které modlitby a čtení patří dnešku.',
+	'calendar.primer.seasons': 'Liturgické doby',
+	'calendar.primer.ranks': 'Čím může den být',
+	'calendar.primer.colours': 'Barvy',
+	'calendar.primer.cycles': 'Cykly',
+	'calendar.primer.cyclesLead':
+		'Tři počitadla, která dohromady říkají, která čtení a žalmy jsou určeny na dnešek.'
 };

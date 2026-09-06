@@ -361,5 +361,59 @@ export const fi: Dictionary = {
 	'calendar.rank.optional-memorial': 'Vapaaehtoinen muistopäivä',
 	'calendar.rank.commemoration': 'Muistaminen',
 	'calendar.rank.sunday': 'Sunnuntai',
-	'calendar.rank.weekday': 'Arkipäivä'
+	'calendar.rank.weekday': 'Arkipäivä',
+	'calendar.gloss.season.advent':
+		'Neljä viikkoa ennen joulua: valmistautuminen Herran tulemiseen ja kirkkovuoden alku.',
+	'calendar.gloss.season.christmas':
+		'Joulusta Herran kasteeseen, jolloin vietetään Herran syntymää ja hänen ilmestymistään maailmalle.',
+	'calendar.gloss.season.lent':
+		'Neljäkymmentä päivää tuhkakeskiviikosta Herran ehtoollisen iltamessuun: katumus, almu ja valmistautuminen pääsiäiseen.',
+	'calendar.gloss.season.triduum':
+		'Kolme päivää kiirastorstain illasta pääsiäissunnuntain iltaan — Herran kärsimys, kuolema ja ylösnousemus, koko vuoden huippu.',
+	'calendar.gloss.season.easter':
+		'Viisikymmentä päivää pääsiäisestä helluntaihin, vietettynä yhtenä ainoana juhlana — ”yhtenä suurena sunnuntaina”.',
+	'calendar.gloss.season.ordinary':
+		'Kolmekymmentäkolme tai kolmekymmentäneljä viikkoa muiden aikojen ulkopuolella. Ei ”tavallinen” vaan järjestetty: viikot on numeroitu, ja kirkko lukee Herran elämän ja opetuksen läpi järjestyksessä. Se tulee kahdessa jaksossa — joulunajan jälkeen paastonaikaan asti, ja helluntain jälkeen adventtiin asti.',
+	'calendar.gloss.rank.solemnity':
+		'Korkein aste: pääsiäinen, joulu, taivaaseenastuminen, paikan oma suojeluspyhä. Vietetään Kunnia- ja uskontunnustuksen kanssa, ja alkaa edellisenä iltana.',
+	'calendar.gloss.rank.feast':
+		'Vietetään itse päivän sisällä. Apostolit ja evankelistat sekä Herran ja Neitsyt Marian suuremmat päivät.',
+	'calendar.gloss.rank.memorial':
+		'Pyhä, jota muistetaan omana päivänään, ajanjakson oman messun ja hetkipalveluksen sisällä. Velvoittava siellä, missä sitä vietetään.',
+	'calendar.gloss.rank.optional-memorial':
+		'Voidaan viettää tai olla viettämättä, papin tai yhteisön valinnan mukaan. Viettämättä jätettynä päivä on yksinkertaisesti arkipäivä.',
+	'calendar.gloss.rank.commemoration':
+		'Se, miksi muistopäivä muuttuu paastonaikana: rukous, joka lisätään arkipäivän messuun, jonka aika muutoin säilyttää ehjänä.',
+	'calendar.gloss.rank.sunday':
+		'Alkuperäinen juhlapäivä — Herran päivä, vietetty joka viikko ylösnousemuksesta lähtien. Vain juhlapyhä tai Herran juhla saa syrjäyttää sen, eivätkä adventissa, paastonaikana ja pääsiäisaikana edes ne.',
+	'calendar.gloss.rank.weekday':
+		'Päivä ilman omaa viettoa. Messu ja hetkipalvelus ovat ajanjakson omia — mikä tekee ajanjaksosta sen, mikä kannattaa tuntea.',
+	'calendar.gloss.colour.white':
+		'Ilo. Pääsiäis- ja jouluaika, Herran päivät hänen kärsimyksensä ulkopuolella, Neitsyt Maria, enkelit ja ne pyhät, jotka eivät olleet marttyyreja.',
+	'calendar.gloss.colour.red':
+		'Veri ja tuli. Palmusunnuntai ja pitkäperjantai, helluntai, apostolit ja evankelistat sekä marttyyrit.',
+	'calendar.gloss.colour.green': 'Kirkkovuoden tavallinen aika: toivon ja kasvavan väri.',
+	'calendar.gloss.colour.violet': 'Adventti ja paastonaika, ja käytetään myös vainajien messuissa.',
+	'calendar.gloss.colour.rose':
+		'Käytetään kahdesti vuodessa — Gaudete-sunnuntaina, adventin kolmantena, ja Laetare-sunnuntaina, paaston neljäntenä — missä paasto kevenee ja loppu on näkyvissä.',
+	'calendar.gloss.colour.black': 'Voidaan käyttää vainajien messuissa.',
+	'calendar.gloss.colour.blue':
+		'Sinisen erioikeus: käytetään Neitsyt Marian perisynnittömän sikiämisen juhlassa Espanjassa, Filippiineillä ja niissä harvoissa muissa paikoissa, joille Pyhä istuin on sen myöntänyt.',
+	'calendar.gloss.sundayCycle':
+		'Sunnuntain lukukappaleet kulkevat kolmen vuoden yli — A, B ja C — lukien vuorollaan Matteusta, Markusta ja Luukasta, Johanneksen kanssa paastonaikana ja pääsiäisaikana. Kierto vaihtuu adventin ensimmäisenä sunnuntaina, kirkkovuoden mukana.',
+	'calendar.gloss.weekdayCycle':
+		'Arkipäivien lukukappaleet kulkevat kahden vuoden yli, I ja II: ensimmäinen lukukappale vaihtuu, evankeliumi ei. Liturginen vuosi nimetään sen kalenterivuoden mukaan, johon se päättyy — parittomat vuodet ovat I, parilliset II.',
+	'calendar.gloss.psalterWeek':
+		'Hetkipalvelus jakaa psalmit neljälle viikolle, I–IV, jotka toistuvat läpi vuoden. Tämä on se viikko, jonka psalmit ovat tämän päivän, jokaiselle joka rukoilee hetkipalvelusta.',
+	'calendar.gloss.obligation':
+		'Päivä, jona uskovat ovat velvollisia osallistumaan messuun ja pidättäytymään töistä, jotka sen estäisivät. Jokainen sunnuntai, ja ne muut päivät, jotka kukin piispainkokous on määrännyt.',
+	'calendar.primer.title': 'Ensimmäistä kertaa täällä?',
+	'calendar.primer.lead':
+		'Kirkko pitää omaa vuottaan. Se alkaa adventista, kääntyy pääsiäisen ympäri, ja antaa jokaiselle päivälle nimen, asteen ja värin — ja ne ratkaisevat, mitä sinä päivänä rukoillaan ja luetaan messussa ja hetkipalveluksessa. Niinpä ”kirkkovuoden 23. sunnuntai” on osoite: se kertoo papille, kuorolle tai kotona rukoilevalle, mitkä rukoukset ja lukukappaleet kuuluvat tähän päivään.',
+	'calendar.primer.seasons': 'Ajanjaksot',
+	'calendar.primer.ranks': 'Mitä päivä voi olla',
+	'calendar.primer.colours': 'Värit',
+	'calendar.primer.cycles': 'Kierrot',
+	'calendar.primer.cyclesLead':
+		'Kolme laskuria, jotka yhdessä kertovat, mitkä lukukappaleet ja psalmit on määrätty tälle päivälle.'
 };

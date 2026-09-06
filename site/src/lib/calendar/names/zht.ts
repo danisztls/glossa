@@ -17,6 +17,18 @@
  * FINDING: `zht` is one tag over two usages, and it means a reader in Taipei
  * meets Hong Kong's spelling of Agatha.
  *
+ * THE DIVISION IS THE SANCTORALE'S ALONE. Hong Kong, Macau and Taiwan print
+ * the Proper of Time below identically — the same week numerals, the same
+ * weekday characters, the same patterns — so nothing in `zhtTemporal` was
+ * chosen between.
+ *
+ * AND THERE IS NO SIMPLIFIED EDITION TO WEIGH AGAINST EITHER. GCatholic
+ * publishes Chinese under one code, `zt`, in three territories, all of them
+ * Traditional; `zh` is an interface language here with no calendar of its own
+ * anywhere in the feeds, and converting these by script would produce a text
+ * nobody published. That reader gets English, which is what a language with no
+ * source gets.
+ *
  * The Proper of Time is here too: the days the Missal names outright at the
  * end of the record below, and the pieces the other 285 days of the year are
  * composed from in `zhtTemporal` under it.

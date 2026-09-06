@@ -379,5 +379,60 @@ export const mg: Dictionary = {
 	'calendar.rank.optional-memorial': 'Fahatsiarovana an-tsitrapo',
 	'calendar.rank.commemoration': 'Fampahatsiarovana',
 	'calendar.rank.sunday': 'Alahady',
-	'calendar.rank.weekday': 'Andro tsotra'
+	'calendar.rank.weekday': 'Andro tsotra',
+	'calendar.gloss.season.advent':
+		'Ny herinandro efatra alohan’ny Noely: fiomanana amin’ny fahatongavan’ny Tompo sy fiandohan’ny taonan’ny Fiangonana.',
+	'calendar.gloss.season.christmas':
+		'Manomboka amin’ny Noely ka hatramin’ny Batemin’ny Tompo, ankalazana ny nahaterahan’ny Tompo sy ny nisehoany tamin’izao tontolo izao.',
+	'calendar.gloss.season.lent':
+		'Ny efapolo andro manomboka amin’ny Alarobian’ny Lavenona ka hatramin’ny Lamesan’ny hariva amin’ny Fanasan’ny Tompo: fivalozana, fiantrana ary fiomanana ho amin’ny Paska.',
+	'calendar.gloss.season.triduum':
+		'Ny telo andro manomboka amin’ny harivan’ny Alakamisy Masina ka hatramin’ny harivan’ny Alahadin’ny Paska — ny fijalian’ny Tompo, ny fahafatesany sy ny fitsanganany, tampon’ny taona manontolo.',
+	'calendar.gloss.season.easter':
+		'Ny dimampolo andro manomboka amin’ny Paska ka hatramin’ny Pantekôty, ankalazaina toy ny fety tokana — „Alahady lehibe iray“.',
+	'calendar.gloss.season.ordinary':
+		'Ny herinandro telopolo sy telo na telopolo sy efatra ivelan’ny fotoana hafa. Tsy „tsotra“ fa milamina: isaina ny herinandro, ary vakin’ny Fiangonana misesy ny fiainana sy ny fampianaran’ny Tompo. Tonga amin’ny fizarana roa izy — aorian’ny fotoan’ny Noely ka hatramin’ny Karemy, ary aorian’ny Pantekôty ka hatramin’ny Fiaviana.',
+	'calendar.gloss.rank.solemnity':
+		'Ny ambaratonga ambony indrindra: ny Paska, ny Noely, ny Niakarana, ny mpiaro ny toerana iray. Ankalazaina miaraka amin’ny Voninahitra sy ny Fanekem-pinoana, ary manomboka ny harivan’ny andro alohany.',
+	'calendar.gloss.rank.feast':
+		'Ankalazaina ao anatin’ny andro ihany. Ny apôstôly sy ny evanjelista, ary ny andro lehibe kokoa an’ny Tompo sy ny Masina Maria.',
+	'calendar.gloss.rank.memorial':
+		'Olomasina tsarovana amin’ny androny, ao anatin’ny Lamesa sy ny Litorjian’ny Ora amin’io fotoana io. Voatery any amin’izay ankalazana azy.',
+	'calendar.gloss.rank.optional-memorial':
+		'Azo ankalazaina na tsia, arakaraka ny safidin’ny pretra na ny fiangonana. Raha tsy ankalazaina, dia andro tsotra fotsiny ilay andro.',
+	'calendar.gloss.rank.commemoration':
+		'Izay ivadihan’ny fahatsiarovana mandritra ny Karemy: vavaka ampiana amin’ny Lamesan’ny andro tsotra, izay tazomin’ny fotoana manontolo raha tsy izany.',
+	'calendar.gloss.rank.sunday':
+		'Ny fety voalohany — ny Andron’ny Tompo, ankalazaina isan-kerinandro hatramin’ny fitsanganana tamin’ny maty. Ny fety lehibe na ny fetin’ny Tompo ihany no afaka manesotra azy, ary amin’ny Fiaviana, ny Karemy sy ny fotoam-Paska dia na dia ireo aza tsia.',
+	'calendar.gloss.rank.weekday':
+		'Andro tsy manana fankalazana manokana. Ny Lamesa sy ny Litorjian’ny Ora dia an’ilay fotoana — ka izany no mahatonga ilay fotoana ho zavatra tokony ho fantatra.',
+	'calendar.gloss.colour.white':
+		'Fifaliana. Ny fotoam-Paska sy ny fotoan’ny Noely, ny andron’ny Tompo ivelan’ny fijaliany, ny Masina Maria, ny anjely, ary ny olomasina izay tsy maritiora.',
+	'calendar.gloss.colour.red':
+		'Ra sy afo. Ny Alahadin’ny Sampankazo sy ny Zoma Masina, ny Pantekôty, ny apôstôly sy ny evanjelista, ary ny maritiora.',
+	'calendar.gloss.colour.green': 'Ny Fotoana Tsotra: ny lokon’ny fanantenana sy ny zavatra maniry.',
+	'calendar.gloss.colour.violet':
+		'Ny Fiaviana sy ny Karemy, ary anaovana koa amin’ny Lamesa ho an’ny maty.',
+	'calendar.gloss.colour.rose':
+		'Anaovana indroa isan-taona — amin’ny Alahady Gaudete, fahatelon’ny Fiaviana, sy amin’ny Alahady Laetare, fahefatry ny Karemy — izay ihamaivanan’ny fifadian-kanina ka hita ny fiafarany.',
+	'calendar.gloss.colour.black': 'Azo anaovana amin’ny Lamesa ho an’ny maty.',
+	'calendar.gloss.colour.blue':
+		'Ny tombontsoan’ny manga: anaovana amin’ny Fitorontoronana tsy voaloto tany Espaina, any Filipina ary any amin’ireo toerana vitsy hafa nomen’ny Fiketrahana Masina izany.',
+	'calendar.gloss.sundayCycle':
+		'Ny vakiteny amin’ny Alahady dia mandeha mandritra ny telo taona — A, B ary C — mamaky tsirairay an’i Matio, Marka ary Lioka, miaraka amin’i Joany mandritra ny Karemy sy ny fotoam-Paska. Miova ny tsingerina amin’ny Alahady voalohan’ny Fiaviana, miaraka amin’ny taonan’ny Fiangonana.',
+	'calendar.gloss.weekdayCycle':
+		'Ny vakiteny amin’ny andro tsotra dia mandeha mandritra ny roa taona, I sy II: miova ny vakiteny voalohany, fa ny Evanjely tsia. Ny taona litorjika dia antsoina araka ny taona sivily iafarany — ny taona tsy ankasa dia I, ny ankasa dia II.',
+	'calendar.gloss.psalterWeek':
+		'Mizara ny salamo amin’ny herinandro efatra ny Litorjian’ny Ora, I ka hatramin’ny IV, izay miverimberina mandritra ny taona. Ity no herinandro izay salamo androany, ho an’izay rehetra mivavaka ny Ora.',
+	'calendar.gloss.obligation':
+		'Andro izay tsy maintsy andraisan’ny mpino anjara amin’ny Lamesa sy ifadiany ny asa izay hisakana izany. Ny Alahady rehetra, sy ireo andro hafa notapahin’ny kaonferansan’ny eveka tsirairay.',
+	'calendar.primer.title': 'Vao tonga eto?',
+	'calendar.primer.lead':
+		'Manana taona manokana ny Fiangonana. Manomboka amin’ny Fiaviana izy, mihodina manodidina ny Paska, ary manome anarana, ambaratonga sy loko ho an’ny andro tsirairay — ary ireo no mamaritra izay ivavahana sy vakiana amin’io andro io amin’ny Lamesa sy ny Litorjian’ny Ora. Koa ny „Alahady fahatelo amby roapolo mandavantaona“ dia adiresy: milaza amin’ny pretra, amin’ny antoko mpihira, na amin’izay mivavaka an-trano, izay vavaka sy vakiteny an’ny androany.',
+	'calendar.primer.seasons': 'Ny fotoana',
+	'calendar.primer.ranks': 'Izay mety ho andro iray',
+	'calendar.primer.colours': 'Ny loko',
+	'calendar.primer.cycles': 'Ny tsingerina',
+	'calendar.primer.cyclesLead':
+		'Mpanisa telo izay milaza miaraka izay vakiteny sy salamo voatendry ho androany.'
 };

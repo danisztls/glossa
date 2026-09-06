@@ -168,18 +168,20 @@ assertion.**
 **A page joins `CHROME_PATHS` only when its own strings exist in every
 interface language.** `route-titles.mjs` states the rule — a cluster whose
 Portuguese member is described in English is worse than no cluster, because it
-tells a search engine the page is Portuguese and then serves English — and one
-page is held out by it today. `/calendarium` is the purest chrome page on the
-site, holding no corpus text at all, and its 75 `calendar.*` keys split in two.
-The 44 the page labels itself with are written in all 37 since 2026-09-06; the
-31 that teach those words — `calendar.gloss.*` and `calendar.primer.*`, prose
-rather than labels — are written in `en`, `pt` and `la` alone. Both of the keys
-`CHROME_KEYS` would read are labels, so the coded gate would pass while the
-argued one fails, which is the `/schola` lesson again. It is in `STATIC_PATHS`,
-so it exists, answers 200 and is indexable at its bare address. It is one line
-plus a `CHROME_KEYS` entry on the day the other 31 are translated.
+tells a search engine the page is Portuguese and then serves English. **No page
+is held out by it today** (2026-09-06); the last three joined that day.
 
-**`/catechismus/compendium` joined on 2026-09-06**, its nine outstanding
+**`/calendarium` was the clearest case of the rule and the last to go.** It is
+the purest chrome page on the site, holding no corpus text at all, and its 75
+`calendar.*` keys split in two: the 44 the page labels itself with — the date
+controls, the regions, the seasons, ranks and colours — and the 31 that TEACH
+those words, `calendar.gloss.*` and `calendar.primer.*`, which are prose. Both
+of the keys `CHROME_KEYS` reads are labels, so the coded gate would have opened
+on the first 44 alone and published, in 37 languages, a page labelled in the
+reader's language whose every gloss and whose whole primer was English. All 75
+are in all 37 now.
+
+**`/catechismus/compendium` joined the same day**, its nine outstanding
 `compendium.*` keys written into the twenty-three dictionaries that lacked
 them.
 
@@ -187,7 +189,7 @@ them.
 on the page the interface, and is the interface actually written. The first was
 always the test; the second is what the two omissions taught.
 
-**`/schola` was the third page held out, and it is the one that showed the rule
+**`/schola` was the other page held out, and it is the one that showed the rule
 is not a technicality.** The learning portal (2026-09-04) is addressed to the
 reader with no vocabulary yet — `audiences.md` §5, who does not know the
 Compendium is a shorter book — which is the reader least able to make anything

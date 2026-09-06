@@ -354,5 +354,59 @@ export const sk: Dictionary = {
 	'calendar.rank.optional-memorial': 'Ľubovoľná spomienka',
 	'calendar.rank.commemoration': 'Pripomienka',
 	'calendar.rank.sunday': 'Nedeľa',
-	'calendar.rank.weekday': 'Féria'
+	'calendar.rank.weekday': 'Féria',
+	'calendar.gloss.season.advent':
+		'Štyri týždne pred Vianocami: príprava na príchod Pána a začiatok cirkevného roka.',
+	'calendar.gloss.season.christmas':
+		'Od Narodenia Pána po Krst Krista Pána, keď sa slávi narodenie Pána a jeho zjavenie svetu.',
+	'calendar.gloss.season.lent':
+		'Štyridsať dní od Popolcovej stredy po večernú svätú omšu na Pamiatku Pánovej večere: pokánie, almužna a príprava na Veľkú noc.',
+	'calendar.gloss.season.triduum':
+		'Tri dni od večera Zeleného štvrtka po večer Veľkonočnej nedele — utrpenie, smrť a zmŕtvychvstanie Pána, vrchol celého roka.',
+	'calendar.gloss.season.easter':
+		'Päťdesiat dní od Veľkej noci po Zoslanie Ducha Svätého, slávených ako jediná slávnosť — „jedna veľká nedeľa“.',
+	'calendar.gloss.season.ordinary':
+		'Tridsaťtri alebo tridsaťštyri týždňov mimo ostatných období. Nie „obyčajné“, ale usporiadané: týždne sú počítané a Cirkev číta postupne život a učenie Pána. Prichádza v dvoch úsekoch — po vianočnom období až do pôstneho, a po Zoslaní Ducha Svätého až do adventu.',
+	'calendar.gloss.rank.solemnity':
+		'Najvyšší stupeň: Veľká noc, Vianoce, Nanebovstúpenie, patrón miesta. Slávi sa so Sláva a Verím a začína sa predchádzajúci večer.',
+	'calendar.gloss.rank.feast':
+		'Slávi sa v rámci samotného dňa. Apoštoli a evanjelisti a väčšie dni Pána a Panny Márie.',
+	'calendar.gloss.rank.memorial':
+		'Svätec pripomínaný vo svoj deň, vnútri svätej omše a ofícia daného obdobia. Záväzná tam, kde sa slávi.',
+	'calendar.gloss.rank.optional-memorial':
+		'Môže sa sláviť alebo nie, podľa voľby kňaza alebo spoločenstva. Ak sa neslávi, deň je jednoducho féria.',
+	'calendar.gloss.rank.commemoration':
+		'Čím sa spomienka stáva v pôstnom období: modlitba pridaná k omši fériového dňa, ktorú obdobie inak ponecháva celú.',
+	'calendar.gloss.rank.sunday':
+		'Pôvodný sviatok — deň Pána, slávený každý týždeň od zmŕtvychvstania. Iba slávnosť alebo sviatok Pána ho môže vytlačiť, a v advente, pôstnom a veľkonočnom období ani tie nie.',
+	'calendar.gloss.rank.weekday':
+		'Deň bez vlastného slávenia. Omša aj ofícium sú z daného obdobia — a práve to robí obdobie tým, čo stojí za poznanie.',
+	'calendar.gloss.colour.white':
+		'Radosť. Veľkonočné a vianočné obdobie, dni Pána mimo jeho utrpenia, Panna Mária, anjeli a svätí, ktorí neboli mučeníkmi.',
+	'calendar.gloss.colour.red':
+		'Krv a oheň. Kvetná nedeľa a Veľký piatok, Zoslanie Ducha Svätého, apoštoli a evanjelisti a mučeníci.',
+	'calendar.gloss.colour.green': 'Obdobie cez rok: farba nádeje a toho, čo rastie.',
+	'calendar.gloss.colour.violet': 'Advent a pôstne obdobie, a aj pri omšiach za zosnulých.',
+	'calendar.gloss.colour.rose':
+		'Používa sa dvakrát do roka — v nedeľu Gaudete, tretiu adventnú, a v nedeľu Laetare, štvrtú pôstnu — keď sa pôst rozjasňuje a koniec je na dohľad.',
+	'calendar.gloss.colour.black': 'Môže sa použiť pri omšiach za zosnulých.',
+	'calendar.gloss.colour.blue':
+		'Výsada modrej: používa sa na Nepoškvrnené počatie v Španielsku, na Filipínach a v nemnohých ďalších miestach, ktorým ju Svätá stolica udelila.',
+	'calendar.gloss.sundayCycle':
+		'Nedeľné čítania bežia v troch rokoch — A, B a C — a číta sa postupne Matúš, Marek a Lukáš, s Jánom v pôstnom a veľkonočnom období. Cyklus sa mení na prvú adventnú nedeľu, spolu s cirkevným rokom.',
+	'calendar.gloss.weekdayCycle':
+		'Čítania na fériové dni bežia v dvoch rokoch, I a II: prvé čítanie sa mení, evanjelium nie. Liturgický rok sa volá podľa občianskeho roka, v ktorom sa končí — nepárne roky sú I, párne II.',
+	'calendar.gloss.psalterWeek':
+		'Liturgia hodín rozdeľuje žalmy do štyroch týždňov, I až IV, ktoré sa počas roka opakujú. Toto je týždeň, ktorého žalmy patria dnešku, pre každého, kto sa modlí hodinky.',
+	'calendar.gloss.obligation':
+		'Deň, keď sú veriaci viazaní zúčastniť sa na svätej omši a zdržať sa prác, ktoré by im v tom bránili. Každá nedeľa a ďalšie dni, ktoré určila príslušná biskupská konferencia.',
+	'calendar.primer.title': 'Ste tu prvýkrát?',
+	'calendar.primer.lead':
+		'Cirkev zachováva vlastný rok. Začína adventom, otáča sa okolo Veľkej noci a dáva každému dňu meno, stupeň a farbu — a tie rozhodujú, čo sa v ten deň modlí a číta pri svätej omši a v liturgii hodín. „Dvadsiata tretia nedeľa v období cez rok“ je teda adresa: hovorí kňazovi, zboru alebo komukoľvek, kto sa modlí doma, ktoré modlitby a čítania patria dnešku.',
+	'calendar.primer.seasons': 'Liturgické obdobia',
+	'calendar.primer.ranks': 'Čím môže deň byť',
+	'calendar.primer.colours': 'Farby',
+	'calendar.primer.cycles': 'Cykly',
+	'calendar.primer.cyclesLead':
+		'Tri počítadlá, ktoré spolu hovoria, ktoré čítania a žalmy sú určené na dnešok.'
 };

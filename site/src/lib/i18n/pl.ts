@@ -483,5 +483,59 @@ export const pl: Dictionary = {
 	'calendar.rank.optional-memorial': 'Wspomnienie dowolne',
 	'calendar.rank.commemoration': 'Komemoracja',
 	'calendar.rank.sunday': 'Niedziela',
-	'calendar.rank.weekday': 'Dzień powszedni'
+	'calendar.rank.weekday': 'Dzień powszedni',
+	'calendar.gloss.season.advent':
+		'Cztery tygodnie przed Bożym Narodzeniem: przygotowanie na przyjście Pana i początek roku Kościoła.',
+	'calendar.gloss.season.christmas':
+		'Od Bożego Narodzenia do Chrztu Pańskiego, w obchodzie narodzenia Pana i Jego objawienia się światu.',
+	'calendar.gloss.season.lent':
+		'Czterdzieści dni od Środy Popielcowej do Mszy Wieczerzy Pańskiej: pokuta, jałmużna i przygotowanie do Wielkanocy.',
+	'calendar.gloss.season.triduum':
+		'Trzy dni od wieczoru Wielkiego Czwartku do wieczoru Niedzieli Wielkanocnej — męka, śmierć i zmartwychwstanie Pana, szczyt całego roku.',
+	'calendar.gloss.season.easter':
+		'Pięćdziesiąt dni od Wielkanocy do Zesłania Ducha Świętego, obchodzonych jako jedno święto — „jedna wielka niedziela”.',
+	'calendar.gloss.season.ordinary':
+		'Trzydzieści trzy albo trzydzieści cztery tygodnie poza pozostałymi okresami. Nie „zwyczajny” w sensie byle jaki, lecz uporządkowany: tygodnie są policzone, a Kościół czyta po kolei życie i naukę Pana. Przychodzi w dwóch odcinkach — po okresie Narodzenia aż do Wielkiego Postu, i po Zesłaniu Ducha Świętego aż do Adwentu.',
+	'calendar.gloss.rank.solemnity':
+		'Najwyższy stopień: Wielkanoc, Boże Narodzenie, Wniebowstąpienie, patron miejsca. Obchodzona z Chwała i Wierzę, i zaczyna się poprzedniego wieczoru.',
+	'calendar.gloss.rank.feast':
+		'Obchodzone w obrębie samego dnia. Apostołowie i ewangeliści oraz większe dni Pańskie i maryjne.',
+	'calendar.gloss.rank.memorial':
+		'Święty wspominany w swoim dniu, wewnątrz Mszy i Oficjum danego okresu. Obowiązkowe tam, gdzie jest obchodzone.',
+	'calendar.gloss.rank.optional-memorial':
+		'Można je obchodzić albo nie, wedle wyboru kapłana lub wspólnoty. Nieobchodzone, dzień jest po prostu dniem powszednim.',
+	'calendar.gloss.rank.commemoration':
+		'To, czym staje się wspomnienie w Wielkim Poście: modlitwa dodana do Mszy dnia powszedniego, którą okres poza tym zachowuje w całości.',
+	'calendar.gloss.rank.sunday':
+		'Pierwotne święto — Dzień Pański, obchodzony co tydzień od zmartwychwstania. Tylko uroczystość albo święto Pańskie może go ustąpić, a w Adwencie, Wielkim Poście i okresie wielkanocnym nawet one nie.',
+	'calendar.gloss.rank.weekday':
+		'Dzień bez własnego obchodu. Msza i Oficjum są te z okresu — i to właśnie czyni okres rzeczą wartą poznania.',
+	'calendar.gloss.colour.white':
+		'Radość. Okres wielkanocny i Narodzenia, dni Pańskie poza Jego męką, Matka Boża, aniołowie i święci, którzy nie byli męczennikami.',
+	'calendar.gloss.colour.red':
+		'Krew i ogień. Niedziela Palmowa i Wielki Piątek, Zesłanie Ducha Świętego, apostołowie i ewangeliści oraz męczennicy.',
+	'calendar.gloss.colour.green': 'Okres zwykły: barwa nadziei i tego, co rośnie.',
+	'calendar.gloss.colour.violet': 'Adwent i Wielki Post, a także we Mszach za zmarłych.',
+	'calendar.gloss.colour.rose':
+		'Używana dwa razy w roku — w niedzielę Gaudete, trzecią Adwentu, i w niedzielę Laetare, czwartą Wielkiego Postu — gdy post się rozjaśnia, a koniec jest już blisko.',
+	'calendar.gloss.colour.black': 'Może być używana we Mszach za zmarłych.',
+	'calendar.gloss.colour.blue':
+		'Przywilej błękitu: używany w uroczystość Niepokalanego Poczęcia w Hiszpanii, na Filipinach i w nielicznych innych miejscach, którym Stolica Apostolska go udzieliła.',
+	'calendar.gloss.sundayCycle':
+		'Czytania niedzielne biegną przez trzy lata — A, B i C — czytając kolejno Mateusza, Marka i Łukasza, a Jana w Wielkim Poście i okresie wielkanocnym. Cykl zmienia się w pierwszą niedzielę Adwentu, wraz z rokiem Kościoła.',
+	'calendar.gloss.weekdayCycle':
+		'Czytania dni powszednich biegną przez dwa lata, I i II: pierwsze czytanie się zmienia, Ewangelia nie. Rok liturgiczny bierze nazwę od roku kalendarzowego, w którym się kończy — lata nieparzyste to I, parzyste II.',
+	'calendar.gloss.psalterWeek':
+		'Liturgia godzin rozkłada psalmy na cztery tygodnie, od I do IV, powtarzające się przez rok. To jest tydzień, którego psalmy przypadają na dziś, dla każdego, kto odmawia godziny.',
+	'calendar.gloss.obligation':
+		'Dzień, w którym wierni są zobowiązani uczestniczyć we Mszy i powstrzymać się od prac, które by im to uniemożliwiły. Każda niedziela oraz pozostałe dni, które wyznaczyła dana konferencja biskupów.',
+	'calendar.primer.title': 'Pierwszy raz tutaj?',
+	'calendar.primer.lead':
+		'Kościół zachowuje własny rok. Zaczyna się Adwentem, obraca się wokół Wielkanocy i daje każdemu dniowi nazwę, stopień i barwę — a te rozstrzygają, co danego dnia modli się i czyta we Mszy i w Liturgii godzin. Tak więc „dwudziesta trzecia niedziela okresu zwykłego” jest adresem: mówi kapłanowi, scholi albo każdemu modlącemu się w domu, które modlitwy i czytania należą do dzisiaj.',
+	'calendar.primer.seasons': 'Okresy',
+	'calendar.primer.ranks': 'Czym może być dzień',
+	'calendar.primer.colours': 'Barwy',
+	'calendar.primer.cycles': 'Cykle',
+	'calendar.primer.cyclesLead':
+		'Trzy liczniki, które razem mówią, jakie czytania i psalmy przypadają na dziś.'
 };

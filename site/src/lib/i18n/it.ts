@@ -486,5 +486,59 @@ export const it: Dictionary = {
 	'calendar.rank.optional-memorial': 'Memoria facoltativa',
 	'calendar.rank.commemoration': 'Commemorazione',
 	'calendar.rank.sunday': 'Domenica',
-	'calendar.rank.weekday': 'Feria'
+	'calendar.rank.weekday': 'Feria',
+	'calendar.gloss.season.advent':
+		'Le quattro settimane prima del Natale: preparazione alla venuta del Signore, e inizio dell’anno della Chiesa.',
+	'calendar.gloss.season.christmas':
+		'Dal Natale al Battesimo del Signore, celebrando la nascita del Signore e la sua manifestazione al mondo.',
+	'calendar.gloss.season.lent':
+		'I quaranta giorni dal Mercoledì delle Ceneri alla Messa vespertina nella Cena del Signore: penitenza, elemosina e preparazione alla Pasqua.',
+	'calendar.gloss.season.triduum':
+		'I tre giorni dalla sera del Giovedì Santo alla sera della Domenica di Pasqua — passione, morte e risurrezione del Signore, e culmine di tutto l’anno.',
+	'calendar.gloss.season.easter':
+		'I cinquanta giorni dalla Pasqua alla Pentecoste, celebrati come un’unica festa — «una sola grande domenica».',
+	'calendar.gloss.season.ordinary':
+		'Le trentatré o trentaquattro settimane fuori dagli altri tempi. Non tempo «qualunque» ma ordinato: le settimane sono contate, e la Chiesa legge di seguito la vita e l’insegnamento del Signore. Viene in due tratti — dopo il tempo di Natale fino alla Quaresima, e dopo la Pentecoste fino all’Avvento.',
+	'calendar.gloss.rank.solemnity':
+		'Il grado più alto: la Pasqua, il Natale, l’Ascensione, il patrono di un luogo. Si celebra con il Gloria e il Credo, e comincia la sera prima.',
+	'calendar.gloss.rank.feast':
+		'Si celebra entro il giorno stesso. Gli apostoli e gli evangelisti, e i giorni maggiori del Signore e della Madonna.',
+	'calendar.gloss.rank.memorial':
+		'Un santo ricordato nel suo giorno, dentro la Messa e l’Ufficio del tempo. Obbligatoria dove si celebra.',
+	'calendar.gloss.rank.optional-memorial':
+		'Si può celebrare o no, a scelta del sacerdote o della comunità. Se non si celebra, il giorno è semplicemente la feria.',
+	'calendar.gloss.rank.commemoration':
+		'Ciò che una memoria diventa in Quaresima: un’orazione aggiunta alla Messa feriale, che il tempo per il resto mantiene intera.',
+	'calendar.gloss.rank.sunday':
+		'La festa prima — il Giorno del Signore, celebrato ogni settimana dalla risurrezione. Solo una solennità o una festa del Signore può spostarla, e in Avvento, Quaresima e tempo pasquale nemmeno quelle.',
+	'calendar.gloss.rank.weekday':
+		'Un giorno senza celebrazione propria. La Messa e l’Ufficio sono quelli del tempo, ed è questo a rendere il tempo la cosa da conoscere.',
+	'calendar.gloss.colour.white':
+		'Gioia. Tempo pasquale e tempo di Natale, i giorni del Signore fuori dalla sua passione, la Madonna, gli angeli, e i santi che non furono martiri.',
+	'calendar.gloss.colour.red':
+		'Sangue e fuoco. Domenica delle Palme e Venerdì Santo, la Pentecoste, gli apostoli e gli evangelisti, e i martiri.',
+	'calendar.gloss.colour.green': 'Tempo ordinario: il colore della speranza e di ciò che cresce.',
+	'calendar.gloss.colour.violet': 'Avvento e Quaresima, e portato anche nelle Messe per i defunti.',
+	'calendar.gloss.colour.rose':
+		'Portato due volte l’anno — la domenica Gaudete, terza d’Avvento, e la domenica Laetare, quarta di Quaresima — dove il digiuno si alleggerisce e la fine è in vista.',
+	'calendar.gloss.colour.black': 'Può essere portato nelle Messe per i defunti.',
+	'calendar.gloss.colour.blue':
+		'Il privilegio dell’azzurro: portato per l’Immacolata Concezione in Spagna, nelle Filippine e nei pochi altri luoghi a cui la Santa Sede l’ha concesso.',
+	'calendar.gloss.sundayCycle':
+		'Le letture domenicali corrono su tre anni — A, B e C — leggendo a turno Matteo, Marco e Luca, con Giovanni lungo la Quaresima e il tempo pasquale. Il ciclo cambia alla prima domenica d’Avvento, con l’anno della Chiesa.',
+	'calendar.gloss.weekdayCycle':
+		'Le letture feriali corrono su due anni, I e II: la prima lettura cambia, il Vangelo no. Un anno liturgico prende il nome dall’anno civile in cui finisce — gli anni dispari sono I, i pari II.',
+	'calendar.gloss.psalterWeek':
+		'La Liturgia delle Ore distribuisce i salmi su quattro settimane, dalla I alla IV, che si ripetono lungo l’anno. Questa è la settimana i cui salmi sono quelli di oggi, per chi prega le Ore.',
+	'calendar.gloss.obligation':
+		'Giorno in cui i fedeli sono tenuti a partecipare alla Messa e ad astenersi dai lavori che lo impedirebbero. Tutte le domeniche, e gli altri giorni che ciascuna conferenza episcopale ha determinato.',
+	'calendar.primer.title': 'È la prima volta?',
+	'calendar.primer.lead':
+		'La Chiesa custodisce un anno suo. Comincia con l’Avvento, gira intorno alla Pasqua e dà a ogni giorno un nome, un grado e un colore — e questi decidono che cosa si prega e si legge quel giorno alla Messa e nella Liturgia delle Ore. Così «ventitreesima domenica del tempo ordinario» è un indirizzo: dice a un sacerdote, a un coro, o a chi prega in casa, quali orazioni e quali letture sono quelle di oggi.',
+	'calendar.primer.seasons': 'I tempi',
+	'calendar.primer.ranks': 'Che cosa può essere un giorno',
+	'calendar.primer.colours': 'I colori',
+	'calendar.primer.cycles': 'I cicli',
+	'calendar.primer.cyclesLead':
+		'Tre contatori che, insieme, dicono quali letture e quali salmi sono assegnati a oggi.'
 };

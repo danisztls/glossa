@@ -355,5 +355,59 @@ export const ko: Dictionary = {
 	'calendar.rank.optional-memorial': '자유 기념일',
 	'calendar.rank.commemoration': '기념',
 	'calendar.rank.sunday': '주일',
-	'calendar.rank.weekday': '평일'
+	'calendar.rank.weekday': '평일',
+	'calendar.gloss.season.advent':
+		'성탄 전 네 주간. 주님의 오심을 준비하는 때이며, 교회 전례력의 시작입니다.',
+	'calendar.gloss.season.christmas':
+		'성탄부터 주님 세례 축일까지, 주님의 탄생과 세상에 드러나심을 기념합니다.',
+	'calendar.gloss.season.lent':
+		'재의 수요일부터 주님 만찬 저녁 미사까지의 사십 일. 참회와 자선, 그리고 부활을 향한 준비의 때입니다.',
+	'calendar.gloss.season.triduum':
+		'성목요일 저녁부터 부활 주일 저녁까지의 사흘 — 주님의 수난과 죽음과 부활이며, 한 해 전체의 정점입니다.',
+	'calendar.gloss.season.easter':
+		'부활부터 성령 강림까지의 오십 일. 하나의 축제로 지내며 — „하나의 큰 주일“이라 불립니다.',
+	'calendar.gloss.season.ordinary':
+		'다른 시기 밖의 서른세 주간 또는 서른네 주간. „평범한“ 때가 아니라 차례가 매겨진 때입니다. 주간마다 번호가 붙고, 교회는 주님의 생애와 가르침을 차례로 읽어 나갑니다. 두 토막으로 나뉘어 옵니다 — 성탄 시기 뒤부터 사순 시기까지, 그리고 성령 강림 뒤부터 대림 시기까지.',
+	'calendar.gloss.rank.solemnity':
+		'가장 높은 등급. 부활, 성탄, 주님 승천, 그 지역의 수호 성인 등입니다. 대영광송과 신경을 바치며, 전날 저녁부터 시작합니다.',
+	'calendar.gloss.rank.feast':
+		'그날 안에서 지냅니다. 사도와 복음사가, 그리고 주님과 성모님의 더 큰 날들입니다.',
+	'calendar.gloss.rank.memorial':
+		'성인을 그분의 날에 기억하며, 그 시기의 미사와 시간 전례 안에서 지냅니다. 지내는 곳에서는 의무입니다.',
+	'calendar.gloss.rank.optional-memorial':
+		'사제나 공동체의 선택에 따라 지낼 수도, 지내지 않을 수도 있습니다. 지내지 않으면 그날은 그냥 평일입니다.',
+	'calendar.gloss.rank.commemoration':
+		'사순 시기에 기념일이 되는 모습입니다. 평일 미사에 기도 하나를 덧붙이는 것으로, 나머지는 그 시기가 그대로 지킵니다.',
+	'calendar.gloss.rank.sunday':
+		'가장 처음의 축일 — 주님의 날이며, 부활 이래 매주 지내 왔습니다. 대축일이나 주님의 축일만이 이를 대신할 수 있고, 대림·사순·부활 시기에는 그것들조차 대신할 수 없습니다.',
+	'calendar.gloss.rank.weekday':
+		'고유한 경축이 없는 날. 미사와 시간 전례는 그 시기의 것이며 — 바로 그 때문에 시기를 아는 것이 값집니다.',
+	'calendar.gloss.colour.white':
+		'기쁨. 부활 시기와 성탄 시기, 수난을 제외한 주님의 날들, 성모님, 천사들, 그리고 순교자가 아닌 성인들입니다.',
+	'calendar.gloss.colour.red':
+		'피와 불. 주님 수난 성지 주일과 성금요일, 성령 강림, 사도와 복음사가, 그리고 순교자들입니다.',
+	'calendar.gloss.colour.green': '연중 시기. 희망의 빛깔이며, 자라나는 것들의 빛깔입니다.',
+	'calendar.gloss.colour.violet': '대림 시기와 사순 시기, 그리고 위령 미사에서도 입습니다.',
+	'calendar.gloss.colour.rose':
+		'한 해에 두 번 입습니다 — 대림 제3주일인 가우데테 주일과 사순 제4주일인 라에타레 주일. 재계가 누그러지고 끝이 보이는 날들입니다.',
+	'calendar.gloss.colour.black': '위령 미사에서 입을 수 있습니다.',
+	'calendar.gloss.colour.blue':
+		'푸른색의 특전. 스페인과 필리핀, 그리고 성좌가 이를 허락한 소수의 지역에서 원죄 없이 잉태되신 동정 마리아 대축일에 입습니다.',
+	'calendar.gloss.sundayCycle':
+		'주일 독서는 세 해에 걸쳐 — 가해, 나해, 다해 — 마태오, 마르코, 루카를 차례로 읽고, 사순과 부활 시기에는 요한을 읽습니다. 주기는 교회 전례력과 함께 대림 제1주일에 바뀝니다.',
+	'calendar.gloss.weekdayCycle':
+		'평일 독서는 두 해에 걸쳐 홀수해와 짝수해로 나뉩니다. 제1독서는 바뀌고 복음은 바뀌지 않습니다. 전례력의 해는 그 해가 끝나는 서기 연도로 부르며 — 홀수 해가 홀수해, 짝수 해가 짝수해입니다.',
+	'calendar.gloss.psalterWeek':
+		'시간 전례는 시편을 네 주간, 제1주간부터 제4주간까지로 나누어 한 해 동안 되풀이합니다. 오늘의 시편이 어느 주간의 것인지를 알려 주며, 시간 전례를 바치는 이를 위한 것입니다.',
+	'calendar.gloss.obligation':
+		'신자들이 미사에 참여하고 이를 방해하는 노동을 삼갈 의무가 있는 날입니다. 모든 주일과, 각 주교회의가 정한 그 밖의 날들입니다.',
+	'calendar.primer.title': '처음이신가요?',
+	'calendar.primer.lead':
+		'교회는 고유한 한 해를 지냅니다. 대림 시기에 시작하여 부활을 중심으로 돌며, 하루하루에 이름과 등급과 빛깔을 줍니다 — 그리고 그것들이 그날 미사와 시간 전례에서 무엇을 기도하고 읽을지를 정합니다. 그러므로 „연중 제23주일“은 하나의 주소입니다. 사제에게, 성가대에게, 집에서 기도하는 이에게 오늘에 속한 기도와 독서가 무엇인지를 알려 줍니다.',
+	'calendar.primer.seasons': '전례 시기',
+	'calendar.primer.ranks': '하루가 될 수 있는 것',
+	'calendar.primer.colours': '빛깔',
+	'calendar.primer.cycles': '주기',
+	'calendar.primer.cyclesLead':
+		'세 가지 셈이 함께 오늘에 정해진 독서와 시편이 무엇인지를 알려 줍니다.'
 };

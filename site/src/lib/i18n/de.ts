@@ -489,5 +489,60 @@ export const de: Dictionary = {
 	'calendar.rank.optional-memorial': 'Nicht gebotener Gedenktag',
 	'calendar.rank.commemoration': 'Kommemoration',
 	'calendar.rank.sunday': 'Sonntag',
-	'calendar.rank.weekday': 'Wochentag'
+	'calendar.rank.weekday': 'Wochentag',
+	'calendar.gloss.season.advent':
+		'Die vier Wochen vor Weihnachten: Vorbereitung auf das Kommen des Herrn und Beginn des Kirchenjahres.',
+	'calendar.gloss.season.christmas':
+		'Vom Weihnachtstag bis zur Taufe des Herrn — die Geburt des Herrn und seine Erscheinung vor der Welt.',
+	'calendar.gloss.season.lent':
+		'Die vierzig Tage vom Aschermittwoch bis zur Abendmesse vom Letzten Abendmahl: Buße, Almosen und Vorbereitung auf Ostern.',
+	'calendar.gloss.season.triduum':
+		'Die drei Tage vom Abend des Gründonnerstags bis zum Abend des Ostersonntags — Leiden, Tod und Auferstehung des Herrn, und der Höhepunkt des ganzen Jahres.',
+	'calendar.gloss.season.easter':
+		'Die fünfzig Tage von Ostern bis Pfingsten, als ein einziges Fest begangen — „ein einziger großer Sonntag“.',
+	'calendar.gloss.season.ordinary':
+		'Die dreiunddreißig oder vierunddreißig Wochen außerhalb der übrigen Zeiten. Nicht „gewöhnlich“, sondern geordnet: die Wochen sind gezählt, und die Kirche liest das Leben und die Lehre des Herrn fortlaufend. Sie kommt in zwei Abschnitten — nach der Weihnachtszeit bis zur Fastenzeit, und nach Pfingsten bis zum Advent.',
+	'calendar.gloss.rank.solemnity':
+		'Der höchste Rang: Ostern, Weihnachten, Christi Himmelfahrt, der eigene Patron eines Ortes. Mit Gloria und Credo begangen, und am Vorabend beginnend.',
+	'calendar.gloss.rank.feast':
+		'Innerhalb des Tages selbst begangen. Die Apostel und Evangelisten und die größeren Tage des Herrn und Unserer Lieben Frau.',
+	'calendar.gloss.rank.memorial':
+		'Ein Heiliger, an seinem Tag im Messformular und im Stundengebet der Zeit begangen. Verpflichtend, wo er gehalten wird.',
+	'calendar.gloss.rank.optional-memorial':
+		'Kann gehalten werden oder nicht, wie der Priester oder die Gemeinde es wählt. Bleibt er ungehalten, ist der Tag einfach der Wochentag.',
+	'calendar.gloss.rank.commemoration':
+		'Was ein Gedenktag in der Fastenzeit wird: ein Gebet, das der Messe des Wochentags hinzugefügt wird, die die Zeit im Übrigen unangetastet lässt.',
+	'calendar.gloss.rank.sunday':
+		'Der ursprüngliche Festtag — der Tag des Herrn, seit der Auferstehung jede Woche begangen. Nur ein Hochfest oder ein Herrenfest darf ihn verdrängen, und in Advent, Fastenzeit und Osterzeit nicht einmal diese.',
+	'calendar.gloss.rank.weekday':
+		'Ein Tag ohne eigene Feier. Messe und Stundengebet sind die der Zeit — was die Zeit zu dem macht, was zu wissen sich lohnt.',
+	'calendar.gloss.colour.white':
+		'Freude. Oster- und Weihnachtszeit, die Tage des Herrn außerhalb seines Leidens, Unsere Liebe Frau, die Engel und die Heiligen, die nicht Märtyrer waren.',
+	'calendar.gloss.colour.red':
+		'Blut und Feuer. Palmsonntag und Karfreitag, Pfingsten, die Apostel und Evangelisten und die Märtyrer.',
+	'calendar.gloss.colour.green':
+		'Die Zeit im Jahreskreis: die Farbe der Hoffnung und des Wachsenden.',
+	'calendar.gloss.colour.violet': 'Advent und Fastenzeit, und auch in Messen für die Verstorbenen.',
+	'calendar.gloss.colour.rose':
+		'Zweimal im Jahr getragen — am Sonntag Gaudete, dem dritten des Advents, und am Sonntag Laetare, dem vierten der Fastenzeit — wo das Fasten sich lichtet und das Ende in Sicht ist.',
+	'calendar.gloss.colour.black': 'Darf in Messen für die Verstorbenen getragen werden.',
+	'calendar.gloss.colour.blue':
+		'Das Blau-Privileg: getragen zur Unbefleckten Empfängnis in Spanien, auf den Philippinen und an den wenigen anderen Orten, denen der Heilige Stuhl es gewährt hat.',
+	'calendar.gloss.sundayCycle':
+		'Die Sonntagslesungen laufen über drei Jahre — A, B und C — und lesen der Reihe nach Matthäus, Markus und Lukas, mit Johannes durch Fastenzeit und Osterzeit. Der Zyklus wechselt am ersten Adventssonntag, mit dem Kirchenjahr.',
+	'calendar.gloss.weekdayCycle':
+		'Die Wochentagslesungen laufen über zwei Jahre, I und II: die erste Lesung wechselt, das Evangelium nicht. Ein Kirchenjahr trägt den Namen des Kalenderjahres, in dem es endet — ungerade Jahre sind I, gerade Jahre II.',
+	'calendar.gloss.psalterWeek':
+		'Das Stundengebet verteilt die Psalmen auf vier Wochen, I bis IV, die sich durch das Jahr wiederholen. Dies ist die Woche, deren Psalmen heute an der Reihe sind, für alle, die die Horen beten.',
+	'calendar.gloss.obligation':
+		'Ein Tag, an dem die Gläubigen verpflichtet sind, an der Messe teilzunehmen und Arbeiten zu unterlassen, die sie daran hindern würden. Jeder Sonntag, und die weiteren Tage, die jede Bischofskonferenz bestimmt hat.',
+	'calendar.primer.title': 'Zum ersten Mal hier?',
+	'calendar.primer.lead':
+		'Die Kirche hält ein eigenes Jahr. Es beginnt mit dem Advent, dreht sich um Ostern und gibt jedem Tag einen Namen, einen Rang und eine Farbe — und die entscheiden, was an diesem Tag in der Messe und im Stundengebet gebetet und gelesen wird. „Dreiundzwanzigster Sonntag im Jahreskreis“ ist also eine Adresse: sie sagt einem Priester, einem Chor oder jedem, der zu Hause betet, welche Gebete und Lesungen zu heute gehören.',
+	'calendar.primer.seasons': 'Die Zeiten',
+	'calendar.primer.ranks': 'Was ein Tag sein kann',
+	'calendar.primer.colours': 'Die Farben',
+	'calendar.primer.cycles': 'Die Zyklen',
+	'calendar.primer.cyclesLead':
+		'Drei Zähler, die zusammen sagen, welche Lesungen und Psalmen für heute vorgesehen sind.'
 };

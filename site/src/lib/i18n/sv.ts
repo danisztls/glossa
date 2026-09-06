@@ -483,5 +483,59 @@ export const sv: Dictionary = {
 	'calendar.rank.optional-memorial': 'Fri minnesdag',
 	'calendar.rank.commemoration': 'Åminnelse',
 	'calendar.rank.sunday': 'Söndag',
-	'calendar.rank.weekday': 'Vardag'
+	'calendar.rank.weekday': 'Vardag',
+	'calendar.gloss.season.advent':
+		'De fyra veckorna före jul: förberedelse för Herrens ankomst och början på kyrkoåret.',
+	'calendar.gloss.season.christmas':
+		'Från juldagen till Herrens dop, då Herrens födelse och hans uppenbarelse för världen firas.',
+	'calendar.gloss.season.lent':
+		'De fyrtio dagarna från askonsdagen till kvällsmässan om Herrens sista måltid: bot, allmosa och förberedelse för påsken.',
+	'calendar.gloss.season.triduum':
+		'De tre dagarna från skärtorsdagens kväll till påskdagens kväll — Herrens lidande, död och uppståndelse, och höjdpunkten på hela året.',
+	'calendar.gloss.season.easter':
+		'De femtio dagarna från påsk till pingst, firade som en enda fest — ”en enda stor söndag”.',
+	'calendar.gloss.season.ordinary':
+		'De trettiotre eller trettiofyra veckorna utanför de övriga tiderna. Inte ”vanlig” utan ordnad: veckorna räknas, och kyrkan läser Herrens liv och undervisning i följd. Den kommer i två sträckor — efter jultiden fram till fastan, och efter pingst fram till advent.',
+	'calendar.gloss.rank.solemnity':
+		'Den högsta graden: påsk, jul, Kristi himmelsfärd, en plats eget skyddshelgon. Firas med Gloria och trosbekännelsen, och börjar kvällen innan.',
+	'calendar.gloss.rank.feast':
+		'Firas inom dagen själv. Apostlarna och evangelisterna, och Herrens och Vår Frus större dagar.',
+	'calendar.gloss.rank.memorial':
+		'Ett helgon som åminns på sin dag, inom tidens egen mässa och tidebön. Obligatorisk där den firas.',
+	'calendar.gloss.rank.optional-memorial':
+		'Får firas eller inte, som prästen eller församlingen väljer. Firas den inte är dagen helt enkelt vardagen.',
+	'calendar.gloss.rank.commemoration':
+		'Vad en åminnelse blir under fastan: en bön som läggs till vardagsmässan, som tiden i övrigt håller hel.',
+	'calendar.gloss.rank.sunday':
+		'Den ursprungliga högtiden — Herrens dag, firad varje vecka sedan uppståndelsen. Endast en högtid eller en Herrens fest får tränga undan den, och under advent, fastan och påsktiden inte ens de.',
+	'calendar.gloss.rank.weekday':
+		'En dag utan eget firande. Mässan och tidebönen är tidens — vilket är det som gör tiden värd att känna till.',
+	'calendar.gloss.colour.white':
+		'Glädje. Påsktiden och jultiden, Herrens dagar utanför hans lidande, Vår Fru, änglarna, och de helgon som inte var martyrer.',
+	'calendar.gloss.colour.red':
+		'Blod och eld. Palmsöndagen och långfredagen, pingsten, apostlarna och evangelisterna, och martyrerna.',
+	'calendar.gloss.colour.green': 'Tiden under året: hoppets färg, och det växandes.',
+	'calendar.gloss.colour.violet': 'Advent och fastan, och bärs också vid mässor för de avlidna.',
+	'calendar.gloss.colour.rose':
+		'Bärs två gånger om året — på söndagen Gaudete, den tredje i advent, och på söndagen Laetare, den fjärde i fastan — där fastan lättar och slutet är i sikte.',
+	'calendar.gloss.colour.black': 'Får bäras vid mässor för de avlidna.',
+	'calendar.gloss.colour.blue':
+		'Det blå privilegiet: bärs på Marie obefläckade avlelse i Spanien, på Filippinerna och på de få andra platser som Heliga stolen har beviljat det.',
+	'calendar.gloss.sundayCycle':
+		'Söndagsläsningarna löper över tre år — A, B och C — och läser Matteus, Markus och Lukas i tur och ordning, med Johannes genom fastan och påsktiden. Cykeln vänder på första söndagen i advent, med kyrkoåret.',
+	'calendar.gloss.weekdayCycle':
+		'Vardagsläsningarna löper över två år, I och II: den första läsningen växlar, evangeliet inte. Ett liturgiskt år heter efter det kalenderår det slutar i — udda år är I, jämna år II.',
+	'calendar.gloss.psalterWeek':
+		'Tidegärden fördelar psalmerna över fyra veckor, I till IV, som upprepas genom året. Detta är den vecka vars psalmer är dagens, för den som ber tidegärden.',
+	'calendar.gloss.obligation':
+		'En dag då de troende är skyldiga att delta i mässan och avstå från arbete som skulle hindra dem. Varje söndag, och de övriga dagar som varje biskopskonferens har bestämt.',
+	'calendar.primer.title': 'Ny här?',
+	'calendar.primer.lead':
+		'Kyrkan håller ett eget år. Det börjar med advent, vänder kring påsken, och ger varje dag ett namn, en grad och en färg — och de avgör vad som bes och läses den dagen i mässan och i tidegärden. Så ”tjugotredje söndagen under året” är en adress: den säger en präst, en kör eller den som ber hemma vilka böner och läsningar som hör till i dag.',
+	'calendar.primer.seasons': 'Tiderna',
+	'calendar.primer.ranks': 'Vad en dag kan vara',
+	'calendar.primer.colours': 'Färgerna',
+	'calendar.primer.cycles': 'Cyklerna',
+	'calendar.primer.cyclesLead':
+		'Tre räknare som tillsammans säger vilka läsningar och psalmer som är bestämda för i dag.'
 };

@@ -353,5 +353,59 @@ export const hr: Dictionary = {
 	'calendar.rank.optional-memorial': 'Neobvezni spomendan',
 	'calendar.rank.commemoration': 'Spomen',
 	'calendar.rank.sunday': 'Nedjelja',
-	'calendar.rank.weekday': 'Ferija'
+	'calendar.rank.weekday': 'Ferija',
+	'calendar.gloss.season.advent':
+		'Četiri tjedna prije Božića: priprava za dolazak Gospodnji i početak crkvene godine.',
+	'calendar.gloss.season.christmas':
+		'Od Božića do Krštenja Gospodinova, u slavljenju Gospodinova rođenja i njegova očitovanja svijetu.',
+	'calendar.gloss.season.lent':
+		'Četrdeset dana od Pepelnice do večernje mise Večere Gospodnje: pokora, milostinja i priprava za Uskrs.',
+	'calendar.gloss.season.triduum':
+		'Tri dana od večeri Velikoga četvrtka do večeri Uskrsne nedjelje — muka, smrt i uskrsnuće Gospodnje, vrhunac cijele godine.',
+	'calendar.gloss.season.easter':
+		'Pedeset dana od Uskrsa do Duhova, slavljenih kao jedna jedina svetkovina — „jedna velika nedjelja”.',
+	'calendar.gloss.season.ordinary':
+		'Trideset tri ili trideset četiri tjedna izvan ostalih vremena. Nije „obično” nego uređeno: tjedni su izbrojeni, a Crkva čita redom život i nauk Gospodnji. Dolazi u dva dijela — poslije božićnoga vremena do korizme, i poslije Duhova do došašća.',
+	'calendar.gloss.rank.solemnity':
+		'Najviši stupanj: Uskrs, Božić, Uzašašće, zaštitnik mjesta. Slavi se sa Slava i Vjerovanjem i počinje prethodne večeri.',
+	'calendar.gloss.rank.feast':
+		'Slavi se unutar samoga dana. Apostoli i evanđelisti te veći dani Gospodnji i Gospini.',
+	'calendar.gloss.rank.memorial':
+		'Svetac koji se spominje na svoj dan, unutar mise i časoslova toga vremena. Obvezan ondje gdje se slavi.',
+	'calendar.gloss.rank.optional-memorial':
+		'Može se slaviti ili ne, po izboru svećenika ili zajednice. Ako se ne slavi, dan je jednostavno svagdan.',
+	'calendar.gloss.rank.commemoration':
+		'Ono što spomendan postaje u korizmi: molitva pridodana svagdanjoj misi, koju vrijeme inače čuva cijelu.',
+	'calendar.gloss.rank.sunday':
+		'Prvotni blagdan — dan Gospodnji, slavljen svakoga tjedna od uskrsnuća. Samo svetkovina ili blagdan Gospodnji smiju ga potisnuti, a u došašću, korizmi i vazmenom vremenu ni oni.',
+	'calendar.gloss.rank.weekday':
+		'Dan bez vlastita slavlja. Misa i časoslov jesu oni od vremena — a to je ono što vrijeme čini vrijednim poznavanja.',
+	'calendar.gloss.colour.white':
+		'Radost. Vazmeno i božićno vrijeme, dani Gospodnji izvan njegove muke, Gospa, anđeli i sveci koji nisu bili mučenici.',
+	'calendar.gloss.colour.red':
+		'Krv i oganj. Cvjetnica i Veliki petak, Duhovi, apostoli i evanđelisti te mučenici.',
+	'calendar.gloss.colour.green': 'Vrijeme kroz godinu: boja nade i onoga što raste.',
+	'calendar.gloss.colour.violet': 'Došašće i korizma, a nosi se i u misama za pokojne.',
+	'calendar.gloss.colour.rose':
+		'Nosi se dvaput godišnje — u nedjelju Gaudete, treću došašća, i u nedjelju Laetare, četvrtu korizme — gdje se post razvedrava i kraj je na vidiku.',
+	'calendar.gloss.colour.black': 'Smije se nositi u misama za pokojne.',
+	'calendar.gloss.colour.blue':
+		'Povlastica plave: nosi se na Bezgrešno začeće u Španjolskoj, na Filipinima i u ono malo drugih mjesta kojima ju je Sveta Stolica podijelila.',
+	'calendar.gloss.sundayCycle':
+		'Nedjeljna čitanja teku kroz tri godine — A, B i C — čitajući redom Mateja, Marka i Luku, s Ivanom kroz korizmu i vazmeno vrijeme. Ciklus se mijenja prve nedjelje došašća, zajedno s crkvenom godinom.',
+	'calendar.gloss.weekdayCycle':
+		'Svagdanja čitanja teku kroz dvije godine, I i II: prvo čitanje se mijenja, evanđelje ne. Liturgijska godina nosi ime građanske godine u kojoj završava — neparne godine su I, parne II.',
+	'calendar.gloss.psalterWeek':
+		'Časoslov raspoređuje psalme na četiri tjedna, od I do IV, koji se ponavljaju kroz godinu. Ovo je tjedan čiji su psalmi današnji, za svakoga tko moli časoslov.',
+	'calendar.gloss.obligation':
+		'Dan u koji su vjernici dužni sudjelovati na misi i suzdržati se od poslova koji bi ih u tome priječili. Svaka nedjelja i ostali dani koje je odredila pojedina biskupska konferencija.',
+	'calendar.primer.title': 'Prvi put ovdje?',
+	'calendar.primer.lead':
+		'Crkva čuva vlastitu godinu. Počinje došašćem, okreće se oko Uskrsa i svakomu danu daje ime, stupanj i boju — a oni odlučuju što se toga dana moli i čita na misi i u časoslovu. Tako je „dvadeset treća nedjelja kroz godinu” adresa: govori svećeniku, zboru ili bilo komu tko moli kod kuće koje molitve i koja čitanja pripadaju današnjem danu.',
+	'calendar.primer.seasons': 'Liturgijska vremena',
+	'calendar.primer.ranks': 'Što dan može biti',
+	'calendar.primer.colours': 'Boje',
+	'calendar.primer.cycles': 'Ciklusi',
+	'calendar.primer.cyclesLead':
+		'Tri brojača koji zajedno kazuju koja su čitanja i psalmi određeni za danas.'
 };

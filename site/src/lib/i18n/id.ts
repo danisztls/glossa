@@ -367,5 +367,59 @@ export const id: Dictionary = {
 	'calendar.rank.optional-memorial': 'Peringatan fakultatif',
 	'calendar.rank.commemoration': 'Kenangan',
 	'calendar.rank.sunday': 'Hari Minggu',
-	'calendar.rank.weekday': 'Hari biasa'
+	'calendar.rank.weekday': 'Hari biasa',
+	'calendar.gloss.season.advent':
+		'Empat pekan sebelum Natal: persiapan menyambut kedatangan Tuhan, dan awal tahun Gereja.',
+	'calendar.gloss.season.christmas':
+		'Dari Hari Natal sampai Pembaptisan Tuhan, merayakan kelahiran Tuhan dan penampakan-Nya kepada dunia.',
+	'calendar.gloss.season.lent':
+		'Empat puluh hari dari Rabu Abu sampai Misa sore Perjamuan Tuhan: pertobatan, sedekah, dan persiapan menyambut Paskah.',
+	'calendar.gloss.season.triduum':
+		'Tiga hari dari sore Kamis Putih sampai sore Minggu Paskah — sengsara, wafat, dan kebangkitan Tuhan, puncak seluruh tahun.',
+	'calendar.gloss.season.easter':
+		'Lima puluh hari dari Paskah sampai Pentakosta, dirayakan sebagai satu pesta tunggal — „satu hari Minggu yang besar“.',
+	'calendar.gloss.season.ordinary':
+		'Tiga puluh tiga atau tiga puluh empat pekan di luar masa-masa lain. Bukan „biasa saja“ melainkan tertata: pekan-pekannya dihitung, dan Gereja membaca hidup serta ajaran Tuhan berturut-turut. Ia datang dalam dua penggal — sesudah Masa Natal sampai Prapaskah, dan sesudah Pentakosta sampai Adven.',
+	'calendar.gloss.rank.solemnity':
+		'Tingkat tertinggi: Paskah, Natal, Kenaikan, pelindung suatu tempat. Dirayakan dengan Kemuliaan dan Syahadat, dan dimulai pada sore sebelumnya.',
+	'calendar.gloss.rank.feast':
+		'Dirayakan di dalam hari itu sendiri. Para rasul dan penginjil, serta hari-hari yang lebih besar dari Tuhan dan Santa Perawan Maria.',
+	'calendar.gloss.rank.memorial':
+		'Seorang kudus yang dikenang pada harinya, di dalam Misa dan Ibadat Harian masa itu. Wajib di tempat ia dirayakan.',
+	'calendar.gloss.rank.optional-memorial':
+		'Boleh dirayakan atau tidak, sesuai pilihan imam atau jemaat. Bila tidak dirayakan, hari itu sekadar hari biasa.',
+	'calendar.gloss.rank.commemoration':
+		'Yang terjadi pada suatu peringatan dalam masa Prapaskah: sebuah doa yang ditambahkan pada Misa hari biasa, yang selebihnya dipertahankan utuh oleh masa itu.',
+	'calendar.gloss.rank.sunday':
+		'Hari raya yang pertama — Hari Tuhan, dirayakan tiap pekan sejak kebangkitan. Hanya hari raya atau pesta Tuhan yang boleh menggesernya, dan pada Adven, Prapaskah, dan Masa Paskah bahkan itu pun tidak.',
+	'calendar.gloss.rank.weekday':
+		'Hari tanpa perayaan sendiri. Misa dan Ibadat Harian adalah milik masanya — dan justru itulah yang membuat masa liturgi layak dikenal.',
+	'calendar.gloss.colour.white':
+		'Sukacita. Masa Paskah dan Masa Natal, hari-hari Tuhan di luar sengsara-Nya, Santa Perawan Maria, para malaikat, dan para kudus yang bukan martir.',
+	'calendar.gloss.colour.red':
+		'Darah dan api. Minggu Palma dan Jumat Agung, Pentakosta, para rasul dan penginjil, serta para martir.',
+	'calendar.gloss.colour.green': 'Masa Biasa: warna harapan, dan warna hal-hal yang bertumbuh.',
+	'calendar.gloss.colour.violet': 'Adven dan Prapaskah, dan dikenakan pula pada Misa arwah.',
+	'calendar.gloss.colour.rose':
+		'Dikenakan dua kali setahun — pada Minggu Gaudete, Minggu ketiga Adven, dan Minggu Laetare, Minggu keempat Prapaskah — di mana puasa melonggar dan akhirnya sudah tampak.',
+	'calendar.gloss.colour.black': 'Boleh dikenakan pada Misa arwah.',
+	'calendar.gloss.colour.blue':
+		'Hak istimewa warna biru: dikenakan pada Maria Dikandung Tanpa Noda di Spanyol, di Filipina, dan di sedikit tempat lain yang telah diberi izin oleh Takhta Suci.',
+	'calendar.gloss.sundayCycle':
+		'Bacaan hari Minggu berjalan dalam tiga tahun — A, B, dan C — membaca Matius, Markus, dan Lukas bergantian, dengan Yohanes sepanjang Prapaskah dan Masa Paskah. Siklusnya berganti pada Minggu Adven I, bersama tahun Gereja.',
+	'calendar.gloss.weekdayCycle':
+		'Bacaan hari biasa berjalan dalam dua tahun, I dan II: bacaan pertama berganti, Injilnya tidak. Suatu tahun liturgi dinamai menurut tahun kalender tempat ia berakhir — tahun ganjil adalah I, tahun genap II.',
+	'calendar.gloss.psalterWeek':
+		'Ibadat Harian membagi mazmur atas empat pekan, I sampai IV, yang berulang sepanjang tahun. Inilah pekan yang mazmurnya berlaku hari ini, bagi siapa pun yang mendoakan Ibadat Harian.',
+	'calendar.gloss.obligation':
+		'Hari ketika umat beriman wajib mengambil bagian dalam Misa dan menjauhi pekerjaan yang menghalanginya. Setiap hari Minggu, dan hari-hari lain yang telah ditetapkan oleh masing-masing konferensi para uskup.',
+	'calendar.primer.title': 'Baru di sini?',
+	'calendar.primer.lead':
+		'Gereja memelihara tahunnya sendiri. Ia mulai dengan Adven, berputar di sekitar Paskah, dan memberi setiap hari sebuah nama, sebuah tingkat, dan sebuah warna — dan ketiganya menentukan apa yang didoakan dan dibacakan pada hari itu dalam Misa dan Ibadat Harian. Jadi „Hari Minggu Biasa XXIII“ adalah sebuah alamat: ia memberitahu seorang imam, sebuah paduan suara, atau siapa pun yang berdoa di rumah, doa dan bacaan mana yang menjadi milik hari ini.',
+	'calendar.primer.seasons': 'Masa-masa liturgi',
+	'calendar.primer.ranks': 'Suatu hari bisa menjadi apa',
+	'calendar.primer.colours': 'Warna-warna',
+	'calendar.primer.cycles': 'Siklus-siklus',
+	'calendar.primer.cyclesLead':
+		'Tiga penghitung yang bersama-sama menyatakan bacaan dan mazmur mana yang ditentukan untuk hari ini.'
 };

@@ -486,5 +486,59 @@ export const es: Dictionary = {
 	'calendar.rank.optional-memorial': 'Memoria libre',
 	'calendar.rank.commemoration': 'Conmemoración',
 	'calendar.rank.sunday': 'Domingo',
-	'calendar.rank.weekday': 'Feria'
+	'calendar.rank.weekday': 'Feria',
+	'calendar.gloss.season.advent':
+		'Las cuatro semanas antes de la Navidad: preparación para la venida del Señor, y comienzo del año de la Iglesia.',
+	'calendar.gloss.season.christmas':
+		'De la Navidad al Bautismo del Señor, celebrando el nacimiento del Señor y su manifestación al mundo.',
+	'calendar.gloss.season.lent':
+		'Los cuarenta días desde el Miércoles de Ceniza hasta la Misa vespertina de la Cena del Señor: penitencia, limosna y preparación para la Pascua.',
+	'calendar.gloss.season.triduum':
+		'Los tres días desde la tarde del Jueves Santo hasta la tarde del Domingo de Pascua — pasión, muerte y resurrección del Señor, y cumbre de todo el año.',
+	'calendar.gloss.season.easter':
+		'Los cincuenta días de la Pascua a Pentecostés, celebrados como una sola fiesta — «un solo gran domingo».',
+	'calendar.gloss.season.ordinary':
+		'Las treinta y tres o treinta y cuatro semanas fuera de los demás tiempos. No es tiempo «cualquiera» sino ordenado: las semanas van contadas, y la Iglesia lee de corrido la vida y la enseñanza del Señor. Viene en dos tramos — después del tiempo de Navidad hasta la Cuaresma, y después de Pentecostés hasta el Adviento.',
+	'calendar.gloss.rank.solemnity':
+		'El grado más alto: la Pascua, la Navidad, la Ascensión, el patrono del lugar. Se celebra con Gloria y Credo, y empieza la tarde anterior.',
+	'calendar.gloss.rank.feast':
+		'Se celebra dentro del día mismo. Los apóstoles y evangelistas, y los días mayores del Señor y de Nuestra Señora.',
+	'calendar.gloss.rank.memorial':
+		'Un santo recordado en su día, dentro de la Misa y del Oficio del tiempo. Obligatoria donde se celebra.',
+	'calendar.gloss.rank.optional-memorial':
+		'Puede celebrarse o no, a elección del sacerdote o de la comunidad. Si no se celebra, el día es simplemente la feria.',
+	'calendar.gloss.rank.commemoration':
+		'En lo que se convierte una memoria durante la Cuaresma: una oración añadida a la Misa ferial, que el tiempo por lo demás conserva entera.',
+	'calendar.gloss.rank.sunday':
+		'La fiesta primera — el Día del Señor, celebrado cada semana desde la resurrección. Sólo una solemnidad o una fiesta del Señor puede desplazarlo, y en Adviento, Cuaresma y tiempo pascual ni siquiera ésas.',
+	'calendar.gloss.rank.weekday':
+		'Un día sin celebración propia. La Misa y el Oficio son los del tiempo, que es lo que hace que valga la pena conocer el tiempo.',
+	'calendar.gloss.colour.white':
+		'Alegría. Tiempo pascual y tiempo de Navidad, los días del Señor fuera de su pasión, Nuestra Señora, los ángeles, y los santos que no fueron mártires.',
+	'calendar.gloss.colour.red':
+		'Sangre y fuego. Domingo de Ramos y Viernes Santo, Pentecostés, los apóstoles y evangelistas, y los mártires.',
+	'calendar.gloss.colour.green': 'Tiempo ordinario: el color de la esperanza y de lo que crece.',
+	'calendar.gloss.colour.violet': 'Adviento y Cuaresma, y también en las Misas por los difuntos.',
+	'calendar.gloss.colour.rose':
+		'Se usa dos veces al año — el domingo Gaudete, tercero de Adviento, y el domingo Laetare, cuarto de Cuaresma — cuando el ayuno se aligera y el término está a la vista.',
+	'calendar.gloss.colour.black': 'Puede usarse en las Misas por los difuntos.',
+	'calendar.gloss.colour.blue':
+		'El privilegio del azul: se usa en la Inmaculada Concepción en España, en Filipinas y en los pocos otros lugares a los que la Santa Sede lo ha concedido.',
+	'calendar.gloss.sundayCycle':
+		'Las lecturas dominicales corren en tres años — A, B y C — leyendo por turno a Mateo, Marcos y Lucas, con Juan en la Cuaresma y el tiempo pascual. El ciclo cambia el primer domingo de Adviento, con el año de la Iglesia.',
+	'calendar.gloss.weekdayCycle':
+		'Las lecturas feriales corren en dos años, I y II: la primera lectura cambia, el evangelio no. Un año litúrgico lleva el nombre del año civil en que termina — los años impares son I, los pares II.',
+	'calendar.gloss.psalterWeek':
+		'La Liturgia de las Horas reparte los salmos en cuatro semanas, de la I a la IV, que se repiten a lo largo del año. Ésta es la semana cuyos salmos son los de hoy, para quien reza las Horas.',
+	'calendar.gloss.obligation':
+		'Día en que los fieles están obligados a participar en la Misa y a abstenerse de los trabajos que lo impidan. Todos los domingos, y los demás días que cada conferencia episcopal ha determinado.',
+	'calendar.primer.title': '¿Es la primera vez?',
+	'calendar.primer.lead':
+		'La Iglesia guarda un año propio. Empieza en Adviento, gira en torno a la Pascua y da a cada día un nombre, un grado y un color — y ésos deciden qué se reza y se lee ese día en la Misa y en la Liturgia de las Horas. Así «domingo vigesimotercero del tiempo ordinario» es una dirección: dice a un sacerdote, a un coro o a quien reza en casa qué oraciones y qué lecturas son las de hoy.',
+	'calendar.primer.seasons': 'Los tiempos',
+	'calendar.primer.ranks': 'Lo que un día puede ser',
+	'calendar.primer.colours': 'Los colores',
+	'calendar.primer.cycles': 'Los ciclos',
+	'calendar.primer.cyclesLead':
+		'Tres contadores que, juntos, dicen qué lecturas y qué salmos están señalados para hoy.'
 };

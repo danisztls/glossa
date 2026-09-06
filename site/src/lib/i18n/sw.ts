@@ -364,5 +364,59 @@ export const sw: Dictionary = {
 	'calendar.rank.optional-memorial': 'Kumbukumbu ya hiari',
 	'calendar.rank.commemoration': 'Ukumbusho',
 	'calendar.rank.sunday': 'Dominika',
-	'calendar.rank.weekday': 'Siku ya kawaida'
+	'calendar.rank.weekday': 'Siku ya kawaida',
+	'calendar.gloss.season.advent':
+		'Majuma manne kabla ya Krismasi: maandalizi ya kuja kwa Bwana na mwanzo wa mwaka wa Kanisa.',
+	'calendar.gloss.season.christmas':
+		'Kutoka Krismasi hadi Ubatizo wa Bwana, kuadhimisha kuzaliwa kwa Bwana na kudhihirika kwake kwa ulimwengu.',
+	'calendar.gloss.season.lent':
+		'Siku arobaini kutoka Jumatano ya Majivu hadi Misa ya jioni ya Karamu ya Bwana: toba, sadaka na maandalizi ya Pasaka.',
+	'calendar.gloss.season.triduum':
+		'Siku tatu kutoka jioni ya Alhamisi Kuu hadi jioni ya Jumapili ya Pasaka — mateso, kifo na ufufuko wa Bwana, na kilele cha mwaka mzima.',
+	'calendar.gloss.season.easter':
+		'Siku hamsini kutoka Pasaka hadi Pentekoste, zikiadhimishwa kama sikukuu moja — „Jumapili moja kubwa“.',
+	'calendar.gloss.season.ordinary':
+		'Majuma thelathini na matatu au thelathini na manne nje ya nyakati nyingine. Si „ya kawaida“ bali yenye mpangilio: majuma yanahesabiwa, na Kanisa husoma maisha na mafundisho ya Bwana kwa mfuatano. Huja katika sehemu mbili — baada ya wakati wa Krismasi hadi Kwaresima, na baada ya Pentekoste hadi Majilio.',
+	'calendar.gloss.rank.solemnity':
+		'Daraja la juu kabisa: Pasaka, Krismasi, Kupaa, msimamizi wa mahali. Huadhimishwa kwa Utukufu na Kanuni ya Imani, na huanza jioni iliyotangulia.',
+	'calendar.gloss.rank.feast':
+		'Huadhimishwa ndani ya siku yenyewe. Mitume na wainjilisti, na siku kubwa zaidi za Bwana na za Bikira Maria.',
+	'calendar.gloss.rank.memorial':
+		'Mtakatifu anayekumbukwa siku yake, ndani ya Misa na Liturujia ya Vipindi ya wakati huo. Ni ya lazima pale inapoadhimishwa.',
+	'calendar.gloss.rank.optional-memorial':
+		'Yaweza kuadhimishwa au isiadhimishwe, kwa chaguo la padre au jumuiya. Isipoadhimishwa, siku ni siku ya kawaida tu.',
+	'calendar.gloss.rank.commemoration':
+		'Kile ambacho ukumbusho hugeuka kuwa wakati wa Kwaresima: sala inayoongezwa kwenye Misa ya siku ya kawaida, ambayo wakati huo huibakiza nzima.',
+	'calendar.gloss.rank.sunday':
+		'Sikukuu ya kwanza kabisa — Siku ya Bwana, iliyoadhimishwa kila juma tangu ufufuko. Ni sherehe tu au sikukuu ya Bwana inayoweza kuiondoa, na katika Majilio, Kwaresima na wakati wa Pasaka hata hizo haziwezi.',
+	'calendar.gloss.rank.weekday':
+		'Siku isiyo na adhimisho lake mwenyewe. Misa na Liturujia ya Vipindi ni za wakati huo — ndicho kinachofanya wakati kuwa kitu cha kujua.',
+	'calendar.gloss.colour.white':
+		'Furaha. Wakati wa Pasaka na wa Krismasi, siku za Bwana nje ya mateso yake, Bikira Maria, malaika, na watakatifu ambao hawakuwa mashahidi.',
+	'calendar.gloss.colour.red':
+		'Damu na moto. Jumapili ya Matawi na Ijumaa Kuu, Pentekoste, mitume na wainjilisti, na mashahidi.',
+	'calendar.gloss.colour.green': 'Wakati wa Kawaida: rangi ya matumaini, na ya vinavyokua.',
+	'calendar.gloss.colour.violet': 'Majilio na Kwaresima, na huvaliwa pia katika Misa za marehemu.',
+	'calendar.gloss.colour.rose':
+		'Huvaliwa mara mbili kwa mwaka — Jumapili ya Gaudete, ya tatu ya Majilio, na Jumapili ya Laetare, ya nne ya Kwaresima — pale mfungo unapopunguka na mwisho unaonekana.',
+	'calendar.gloss.colour.black': 'Yaweza kuvaliwa katika Misa za marehemu.',
+	'calendar.gloss.colour.blue':
+		'Upendeleo wa bluu: huvaliwa kwa Mimba Safi nchini Hispania, Ufilipino na mahali pengine pachache ambapo Kiti Kitakatifu kimeruhusu.',
+	'calendar.gloss.sundayCycle':
+		'Masomo ya Jumapili hupita katika miaka mitatu — A, B na C — yakisoma Mathayo, Marko na Luka kwa zamu, pamoja na Yohane katika Kwaresima na wakati wa Pasaka. Mzunguko hugeuka Jumapili ya kwanza ya Majilio, pamoja na mwaka wa Kanisa.',
+	'calendar.gloss.weekdayCycle':
+		'Masomo ya siku za kawaida hupita katika miaka miwili, I na II: somo la kwanza hubadilika, Injili haibadiliki. Mwaka wa kiliturujia huitwa kwa jina la mwaka wa kalenda unaomalizikia — miaka isiyo shufwa ni I, iliyo shufwa ni II.',
+	'calendar.gloss.psalterWeek':
+		'Liturujia ya Vipindi hugawa zaburi katika majuma manne, I hadi IV, yanayorudiwa mwaka mzima. Hili ndilo juma ambalo zaburi zake ni za leo, kwa yeyote anayesali Vipindi.',
+	'calendar.gloss.obligation':
+		'Siku ambayo waamini wanawajibika kushiriki Misa na kujiepusha na kazi zinazoweza kuwazuia. Kila Jumapili, na siku nyingine ambazo kila baraza la maaskofu limeamua.',
+	'calendar.primer.title': 'Ni mara yako ya kwanza?',
+	'calendar.primer.lead':
+		'Kanisa lina mwaka wake. Huanza kwa Majilio, huzunguka Pasaka, na humpa kila siku jina, daraja na rangi — na hivyo huamua kinachosaliwa na kusomwa siku hiyo katika Misa na katika Liturujia ya Vipindi. Hivyo „Jumapili ya ishirini na tatu ya Mwaka wa Kawaida“ ni anwani: humwambia padre, kwaya, au yeyote anayesali nyumbani ni sala zipi na masomo yapi ya leo.',
+	'calendar.primer.seasons': 'Nyakati',
+	'calendar.primer.ranks': 'Siku inaweza kuwa nini',
+	'calendar.primer.colours': 'Rangi',
+	'calendar.primer.cycles': 'Mizunguko',
+	'calendar.primer.cyclesLead':
+		'Vihesabu vitatu ambavyo kwa pamoja husema ni masomo yapi na zaburi zipi zilizowekwa kwa leo.'
 };

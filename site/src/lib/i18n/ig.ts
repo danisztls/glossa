@@ -364,5 +364,59 @@ export const ig: Dictionary = {
 	'calendar.rank.optional-memorial': 'Ncheta nhọrọ',
 	'calendar.rank.commemoration': 'Ichetara',
 	'calendar.rank.sunday': 'Ụbọchị Ụka',
-	'calendar.rank.weekday': 'Ụbọchị nkịtị'
+	'calendar.rank.weekday': 'Ụbọchị nkịtị',
+	'calendar.gloss.season.advent':
+		'Izu anọ tupu Ekeresimesi: nkwadebe maka ọbịbịa nke Onyenwe anyị, na mmalite nke afọ nke Chọọchị.',
+	'calendar.gloss.season.christmas':
+		'Site na Ekeresimesi ruo na Baptizim nke Onyenwe anyị, na-eme ememe ọmụmụ nke Onyenwe anyị na ngosipụta ya nye ụwa.',
+	'calendar.gloss.season.lent':
+		'Ụbọchị iri anọ site na Wenezdee Ntụ ruo na Emume Abalị nke Nri Anyasị Onyenwe anyị: nchegharị, inye onyinye, na nkwadebe maka Ista.',
+	'calendar.gloss.season.triduum':
+		'Ụbọchị atọ site na mgbede Tọzdee Dị Nsọ ruo na mgbede Sọnde Ista — ahụhụ, ọnwụ na mbilite n’ọnwụ nke Onyenwe anyị, na elu kacha elu nke afọ dum.',
+	'calendar.gloss.season.easter':
+		'Ụbọchị iri ise site na Ista ruo na Pentikost, nke a na-eme dịka otu ememe — „otu nnukwu Sọnde“.',
+	'calendar.gloss.season.ordinary':
+		'Izu iri atọ na atọ ma ọ bụ iri atọ na anọ nke dị n’èzí oge ndị ọzọ. Ọ bụghị „nkịtị“ kama e hazichara ya: a na-agụ izu ndị ahụ ọnụ, Chọọchị na-agụkwa ndụ na nkuzi Onyenwe anyị n’usoro. Ọ na-abịa n’akụkụ abụọ — mgbe oge Ekeresimesi gasịrị ruo Nnukwu Obubu Ọnụ, na mgbe Pentikost gasịrị ruo oge Advent.',
+	'calendar.gloss.rank.solemnity':
+		'Ọkwa kacha elu: Ista, Ekeresimesi, Ịrịgo Elu, onye nlekọta nke ebe. A na-eme ya na Otuto na Nkwenye, ọ na-amalitekwa n’abalị bu ya ụzọ.',
+	'calendar.gloss.rank.feast':
+		'A na-eme ya n’ime ụbọchị ahụ n’onwe ya. Ndịozi na ndị ode oziọma, na ụbọchị ndị ka ukwuu nke Onyenwe anyị na nke Nne anyị.',
+	'calendar.gloss.rank.memorial':
+		'Onye nsọ nke a na-echeta n’ụbọchị ya, n’ime Emume na Ekpere Awa nke oge ahụ. Ọ bụ iwu ebe ọ bụla a na-eme ya.',
+	'calendar.gloss.rank.optional-memorial':
+		'Enwere ike ime ya ma ọ bụ ghara ime ya, dịka ụkọchukwu ma ọ bụ ọgbakọ họọrọ. Ọ bụrụ na e meghị ya, ụbọchị ahụ bụ nanị ụbọchị nkịtị.',
+	'calendar.gloss.rank.commemoration':
+		'Ihe ncheta na-aghọ n’oge Nnukwu Obubu Ọnụ: ekpere e tinyekwuru na Emume nke ụbọchị nkịtị, nke oge ahụ na-echekwa ndị fọdụrụ n’uju ya.',
+	'calendar.gloss.rank.sunday':
+		'Ememe mbụ — Ụbọchị Onyenwe anyị, nke a na-eme kwa izu kemgbe mbilite n’ọnwụ. Naanị ememe ukwu ma ọ bụ ememe nke Onyenwe anyị nwere ike ịnọchi ya, na n’oge Advent, Nnukwu Obubu Ọnụ na oge Ista ọ bụladị ha enweghị ike.',
+	'calendar.gloss.rank.weekday':
+		'Ụbọchị na-enweghị ememe nke ya. Emume na Ekpere Awa bụ nke oge ahụ — nke ahụ mere oge ji bụrụ ihe kwesịrị ịmata.',
+	'calendar.gloss.colour.white':
+		'Ọṅụ. Oge Ista na oge Ekeresimesi, ụbọchị Onyenwe anyị na-abụghị nke ahụhụ ya, Nne anyị, ndị mmụọ ozi, na ndị nsọ na-abụghị ndị mgbochitaram.',
+	'calendar.gloss.colour.red':
+		'Ọbara na ọkụ. Sọnde Igu na Fraịdee Dị Nsọ, Pentikost, ndịozi na ndị ode oziọma, na ndị mgbochitaram.',
+	'calendar.gloss.colour.green': 'Oge Nkịtị: agba nke olileanya, na nke ihe na-eto eto.',
+	'calendar.gloss.colour.violet':
+		'Advent na Nnukwu Obubu Ọnụ, a na-eyikwa ya na Emume maka ndị nwụrụ anwụ.',
+	'calendar.gloss.colour.rose':
+		'A na-eyi ya ugboro abụọ n’afọ — Sọnde Gaudete, nke atọ nke Advent, na Sọnde Laetare, nke anọ nke Nnukwu Obubu Ọnụ — ebe obubu ọnụ na-adị mfe, njedebe na-apụtakwa ìhè.',
+	'calendar.gloss.colour.black': 'Enwere ike iyi ya na Emume maka ndị nwụrụ anwụ.',
+	'calendar.gloss.colour.blue':
+		'Ihe ùgwù nke acha anụnụ anụnụ: a na-eyi ya n’ememe Nchụta Na-enweghị Ntụpọ na Spen, na Filipin, na ebe ole na ole ndị ọzọ Oche Nsọ nyere ya.',
+	'calendar.gloss.sundayCycle':
+		'Ọgụgụ Sọnde na-agba afọ atọ — A, B na C — na-agụ Matiu, Mak na Luk n’otu n’otu, ya na Jọn n’oge Nnukwu Obubu Ọnụ na oge Ista. Okirikiri ahụ na-atụgharị na Sọnde mbụ nke Advent, ya na afọ nke Chọọchị.',
+	'calendar.gloss.weekdayCycle':
+		'Ọgụgụ ụbọchị nkịtị na-agba afọ abụọ, I na II: ọgụgụ mbụ na-agbanwe, Oziọma anaghị agbanwe. A na-akpọ afọ ememe aha afọ kalenda nke ọ na-akwụsị na ya — afọ ndị na-abụghị abụọ abụọ bụ I, ndị bụ abụọ abụọ bụ II.',
+	'calendar.gloss.psalterWeek':
+		'Ekpere Awa na-ekesa abụ ọma n’izu anọ, I ruo IV, nke na-emeghachi n’afọ dum. Nke a bụ izu nke abụ ọma ya bụ nke taa, maka onye ọ bụla na-ekpe Ekpere Awa.',
+	'calendar.gloss.obligation':
+		'Ụbọchị nke ndị kwere ekwe ji n’aka ịsonye na Emume na ịzere ọrụ ndị ga-egbochi ya. Sọnde ọ bụla, na ụbọchị ndị ọzọ nke ọgbakọ ndị bishọp nke ọ bụla kpebiri.',
+	'calendar.primer.title': 'Ọ bụ nke mbụ gị?',
+	'calendar.primer.lead':
+		'Chọọchị na-edobe afọ nke ya. Ọ na-amalite na Advent, na-atụgharị gburugburu Ista, ma na-enye ụbọchị ọ bụla aha, ọkwa na agba — ndị a na-ekpebikwa ihe a na-ekpe n’ekpere ma gụọ n’ụbọchị ahụ n’Emume na n’Ekpere Awa. Ya mere „Sọnde nke iri abụọ na atọ n’Oge Nkịtị“ bụ adreesị: ọ na-agwa ụkọchukwu, ndị ọbụ abụ, ma ọ bụ onye ọ bụla na-ekpe ekpere n’ụlọ, ekpere na ọgụgụ ndị bụ nke taa.',
+	'calendar.primer.seasons': 'Oge ndị ahụ',
+	'calendar.primer.ranks': 'Ihe ụbọchị nwere ike ịbụ',
+	'calendar.primer.colours': 'Agba ndị ahụ',
+	'calendar.primer.cycles': 'Okirikiri ndị ahụ',
+	'calendar.primer.cyclesLead': 'Ihe ọnụọgụ atọ nke, n’ọnụ, na-ekwu ọgụgụ na abụ ọma e debeere taa.'
 };

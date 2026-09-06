@@ -358,5 +358,59 @@ export const sq: Dictionary = {
 	'calendar.rank.optional-memorial': 'Kujtim i lirë',
 	'calendar.rank.commemoration': 'Përkujtim',
 	'calendar.rank.sunday': 'E diel',
-	'calendar.rank.weekday': 'Ditë jave'
+	'calendar.rank.weekday': 'Ditë jave',
+	'calendar.gloss.season.advent':
+		'Katër javët para Krishtlindjes: përgatitje për ardhjen e Zotit dhe fillimi i vitit të Kishës.',
+	'calendar.gloss.season.christmas':
+		'Nga Krishtlindja deri te Pagëzimi i Zotit, duke kremtuar lindjen e Zotit dhe shfaqjen e tij para botës.',
+	'calendar.gloss.season.lent':
+		'Dyzet ditët nga e Mërkura e Përhirit deri te Mesha e mbrëmjes së Darkës së Zotit: pendesë, lëmoshë dhe përgatitje për Pashkët.',
+	'calendar.gloss.season.triduum':
+		'Tri ditët nga mbrëmja e së Enjtes së Madhe deri në mbrëmjen e së Dielës së Pashkëve — vuajtja, vdekja dhe ngjallja e Zotit, kulmi i tërë vitit.',
+	'calendar.gloss.season.easter':
+		'Të pesëdhjetë ditët nga Pashkët deri te Rrëshajët, të kremtuara si një festë e vetme — „një e diel e madhe“.',
+	'calendar.gloss.season.ordinary':
+		'Tridhjetë e tri ose tridhjetë e katër javët jashtë kohëve të tjera. Jo „e zakonshme“ por e renditur: javët numërohen dhe Kisha lexon me radhë jetën dhe mësimin e Zotit. Vjen në dy pjesë — pas kohës së Krishtlindjes deri në Kreshmë, dhe pas Rrëshajëve deri në Ardhje.',
+	'calendar.gloss.rank.solemnity':
+		'Shkalla më e lartë: Pashkët, Krishtlindja, Ngjitja në qiell, shenjtori mbrojtës i një vendi. Kremtohet me Lavdi dhe Kredo dhe fillon mbrëmjen paraardhëse.',
+	'calendar.gloss.rank.feast':
+		'Kremtohet brenda vetë ditës. Apostujt dhe ungjilltarët, dhe ditët më të mëdha të Zotit dhe të Zojës.',
+	'calendar.gloss.rank.memorial':
+		'Një shenjtor i kujtuar në ditën e tij, brenda Meshës dhe Liturgjisë së Orëve të asaj kohe. E detyrueshme atje ku kremtohet.',
+	'calendar.gloss.rank.optional-memorial':
+		'Mund të kremtohet ose jo, sipas zgjedhjes së priftit apo bashkësisë. Nëse nuk kremtohet, dita është thjesht ditë e javës.',
+	'calendar.gloss.rank.commemoration':
+		'Ajo në të cilën kthehet një përkujtim gjatë Kreshmës: një lutje e shtuar Meshës së ditës, të cilën koha përndryshe e ruan të plotë.',
+	'calendar.gloss.rank.sunday':
+		'Festa e parë — dita e Zotit, e kremtuar çdo javë që nga ngjallja. Vetëm një kremte ose një festë e Zotit mund ta zhvendosë, dhe në Ardhje, Kreshmë e kohë pashkësh as ato.',
+	'calendar.gloss.rank.weekday':
+		'Ditë pa kremtim të vetin. Mesha dhe Liturgjia e Orëve janë të asaj kohe — dhe pikërisht kjo e bën kohën diçka që ia vlen të njihet.',
+	'calendar.gloss.colour.white':
+		'Gëzim. Koha e Pashkëve dhe e Krishtlindjes, ditët e Zotit jashtë vuajtjes së tij, Zoja, engjëjt, dhe shenjtorët që nuk qenë martirë.',
+	'calendar.gloss.colour.red':
+		'Gjak dhe zjarr. E diela e Palmave dhe e Premtja e Madhe, Rrëshajët, apostujt dhe ungjilltarët, dhe martirët.',
+	'calendar.gloss.colour.green': 'Koha e zakonshme: ngjyra e shpresës dhe e asaj që rritet.',
+	'calendar.gloss.colour.violet': 'Ardhja dhe Kreshma, dhe vishet edhe në Meshët për të vdekurit.',
+	'calendar.gloss.colour.rose':
+		'Vishet dy herë në vit — të dielën Gaudete, të tretën e Ardhjes, dhe të dielën Laetare, të katërtën e Kreshmës — ku agjërimi zbutet dhe fundi duket.',
+	'calendar.gloss.colour.black': 'Mund të vishet në Meshët për të vdekurit.',
+	'calendar.gloss.colour.blue':
+		'Privilegji i së kaltrës: vishet për Zanafillën e Papërlyer në Spanjë, në Filipine dhe në ato pak vende të tjera që Selia e Shenjtë ua ka dhënë.',
+	'calendar.gloss.sundayCycle':
+		'Leximet e së dielës rrjedhin në tre vjet — A, B dhe C — duke lexuar me radhë Mateun, Markun dhe Lukën, me Gjonin gjatë Kreshmës dhe kohës së Pashkëve. Cikli ndërrohet të dielën e parë të Ardhjes, bashkë me vitin e Kishës.',
+	'calendar.gloss.weekdayCycle':
+		'Leximet e ditëve të javës rrjedhin në dy vjet, I dhe II: leximi i parë ndryshon, Ungjilli jo. Viti liturgjik merr emrin e vitit civil në të cilin mbaron — vitet tek janë I, ato çift II.',
+	'calendar.gloss.psalterWeek':
+		'Liturgjia e Orëve i shpërndan psalmet në katër javë, nga I te IV, që përsëriten gjatë vitit. Kjo është java, psalmet e së cilës janë të sotmet, për këdo që lut Orët.',
+	'calendar.gloss.obligation':
+		'Ditë në të cilën besimtarët janë të detyruar të marrin pjesë në Meshë dhe të përmbahen nga punët që do t’ua pengonin. Çdo e diel, dhe ditët e tjera që ka caktuar secila konferencë ipeshkvnore.',
+	'calendar.primer.title': 'Për herë të parë këtu?',
+	'calendar.primer.lead':
+		'Kisha mban një vit të vetin. Fillon me Ardhjen, rrotullohet rreth Pashkëve dhe i jep secilës ditë një emër, një shkallë dhe një ngjyrë — dhe këto vendosin çfarë lutet e lexohet atë ditë në Meshë dhe në Liturgjinë e Orëve. Kështu „e diela e njëzet e tretë e kohës së zakonshme“ është një adresë: i thotë një prifti, një kori ose kujtdo që lutet në shtëpi cilat lutje dhe lexime i përkasin sotit.',
+	'calendar.primer.seasons': 'Kohët',
+	'calendar.primer.ranks': 'Çfarë mund të jetë një ditë',
+	'calendar.primer.colours': 'Ngjyrat',
+	'calendar.primer.cycles': 'Ciklet',
+	'calendar.primer.cyclesLead':
+		'Tre numërues që, së bashku, thonë cilat lexime dhe psalme janë caktuar për sot.'
 };

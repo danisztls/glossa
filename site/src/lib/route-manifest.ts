@@ -73,77 +73,62 @@ export const CHROME_PATHS = [
 	'/doctores',
 	'/doctores/summa',
 	'/preces',
-	// The guide, last for the reason Learn is last in the bar and in the home
-	// page's doors. It joined on 2026-09-06 with its 58 `schola.*` keys.
+	// The two doors of the bar that are not shelves, in the bar's own order.
+	// The calendar joined on 2026-09-06 with the 31 `calendar.gloss.*` and
+	// `calendar.primer.*` keys that teach its vocabulary; the guide the same
+	// day with its 58 `schola.*` keys.
+	'/calendarium',
 	'/schola',
 	'/colophon'
 ] as const;
 
 /**
- * ONE PAGE IS CHROME BY THIS TEST AND BELONGS ON THIS LIST, and is held off it
- * by one thing: **a cluster claims a page is written in 37 languages, and
- * `/calendarium` is not yet.**
+ * THE LIST WAS SHORT OF THREE PAGES ON 2026-09-06 AND IS SHORT OF NONE, and
+ * what each of them cost is the part worth keeping.
  *
- * **IT IS WAITING, NOT EXCLUDED.** It joins the list above the day its strings
- * are translated — one line here plus a `CHROME_KEYS` entry in
- * `scripts/route-titles.mjs`, and nothing else moves, because
- * `sitemap.test.ts` and `shell-head.test.ts` are written as arithmetic over
- * `CHROME_PATHS.length`. Until then it is unpublished: no language prefix,
- * no `hreflang` cluster, no sitemap row, and no per-page `<title>` or
- * description at the edge. `PLAN.md` §Pages that are unpublished carries the
- * table of what it is waiting on and is the place to look for the current
- * state; the counts below are dated and rot.
+ * The rule is `scripts/route-titles.mjs`'s: a cluster claims a page is
+ * written in 37 languages, and a cluster whose Portuguese member is described
+ * in English is worse than no cluster, because it tells a search engine the
+ * page is Portuguese and then serves English. **The gate is on the head, and
+ * the claim is about the page**; where the two come apart, translate the page.
  *
- * `scripts/route-titles.mjs` states the rule this enforces — a cluster whose
- * Portuguese member is described in English is worse than no cluster, because
- * it tells a search engine the page is Portuguese and then serves English.
+ *   - `/ius-canonicum` was missing because nobody had added it. Its
+ *     `canonLaw.landing.*` keys were already in all 37, so it joined the day
+ *     the omission was found.
+ *   - `/catechismus/compendium` needed nine `compendium.*` keys in
+ *     twenty-three dictionaries.
+ *   - `/schola` needed all 58 of its own in thirty-six, because that page is
+ *     addressed to the reader who has no vocabulary yet
+ *     (`docs/research/audiences.md` §5) and title-plus-tagline alone would
+ *     have satisfied the gate as CODED while breaking it as ARGUED — a cluster
+ *     in 37 languages over a page of English prose.
+ *   - `/calendarium` cost the most and is the clearest case of the same
+ *     thing. It holds no corpus text at all, which makes it the purest chrome
+ *     page on the site, and its 75 `calendar.*` keys SPLIT IN TWO: the 44 the
+ *     page labels itself with — the date controls, the regions, the seasons,
+ *     ranks and colours — and the 31 that TEACH those words, `calendar.gloss.*`
+ *     and `calendar.primer.*`, which are prose. `calendar.title` and
+ *     `calendar.tagline` are both label keys, so the CODED gate would have
+ *     opened on the first 44 alone and published a page labelled in the
+ *     reader's language whose every gloss and whose whole primer was English.
+ *     All 75 are in all 37 now.
  *
- *   - `/calendarium` holds no corpus text at all, which makes it the purest
- *     chrome page on the site, and its 75 `calendar.*` keys SPLIT IN TWO. The
- *     44 the page labels itself with — the date controls, the regions, the
- *     seasons, ranks and colours — are written in all 37 since 2026-09-06.
- *     The 31 that TEACH those words are not: `calendar.gloss.*` and
- *     `calendar.primer.*` are prose, they are written in `en`, `pt` and `la`,
- *     and the other 34 fall through to English per key (`i18n.svelte.ts`). A
- *     reader in those 34 would meet a page labelled in their language whose
- *     every gloss and whose whole primer is English, which is the ARGUED gate
- *     failing while the coded one passes — `calendar.title` and
- *     `calendar.tagline` are both label keys and would open it. The page is
- *     also still being built.
+ * **`/` IS THE ONE EXCEPTION TO THE ARGUED GATE, AND IT IS TAKEN RATHER THAN
+ * OVERLOOKED** (2026-09-06, by direction). Its rewrite added three
+ * English-only keys — `home.tagline` and two section headings, all three
+ * translated later the same day — and the remedy the other four took is not
+ * available to the root: withholding the home page costs the sitemap row and
+ * the `hreflang` cluster that every other page's ranking leans on, which is a
+ * worse outcome than a heading falling through to English. The exception is
+ * kept written down because it is the ROOT's, not those keys': the next
+ * English-only string on `/` inherits it. What the rule actually protects is
+ * intact either way, because the gate is on a page's NAME and DESCRIPTION and
+ * not on its body: `/`'s `<title>` is `home.title` and its description is
+ * composed by `scripts/route-titles.mjs` from five work names, and all six are
+ * written in all 37.
  *
- * It is in `STATIC_PATHS`, so it exists, answers 200 and is indexable at its
- * bare address; it is not claimed in a language it is not written in.
- *
- * **THE OTHER TWO WERE PUBLISHED ON 2026-09-06, AND WHAT EACH COST IS THE
- * POINT.** `/catechismus/compendium` needed nine `compendium.*` keys in
- * twenty-three dictionaries; `/schola` needed all 58 of its own in
- * thirty-six, because that page is addressed to the reader who has no
- * vocabulary yet (`docs/research/audiences.md` §5) and title-plus-tagline
- * alone would have satisfied the gate as CODED while breaking it as ARGUED —
- * a cluster in 37 languages over a page of English. **The gate is on the head,
- * and the claim is about the page**; where the two come apart, translate the
- * page.
- *
- * `/ius-canonicum` was missing for a different reason — nobody added it — and
- * its `canonLaw.landing.*` keys were already in all 37, which is why it joined
- * the list above on the day the omission was found and these did not.
- *
- * **`/` IS THE ONE EXCEPTION, AND IT IS TAKEN RATHER THAN OVERLOOKED**
- * (2026-09-06, by direction). Its rewrite added three English-only keys —
- * `home.tagline` and two section headings, all three translated later the same
- * day — and the remedy above is not available to the root: withholding the home
- * page costs the sitemap row and the `hreflang` cluster that every other page's
- * ranking leans on, which is a worse outcome than a heading falling through to
- * English. The exception is kept written down because it is the ROOT's, not
- * these keys': the next English-only string on `/` inherits it. What the rule
- * actually protects is intact either way, because the gate is on a page's NAME
- * and DESCRIPTION and not on its body: `/`'s `<title>` is `home.title` and its
- * description is composed by `scripts/route-titles.mjs` from five work names,
- * and all six are written in all 37. Everything else on the page is a name or
- * a sentence another page already wrote — each door is `nav.*` over its
- * destination's own tagline. **This is not a precedent for the three above**,
- * each of which has a page's worth of English and a remedy that costs it
- * nothing it cannot get back.
+ * `/signata` and `/404` are static and stay off the list for a different
+ * reason entirely, given above: both are `noindex`.
  */
 
 const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);

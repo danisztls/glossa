@@ -362,5 +362,60 @@ export const vi: Dictionary = {
 	'calendar.rank.optional-memorial': 'Lễ nhớ tùy ý',
 	'calendar.rank.commemoration': 'Kỷ niệm',
 	'calendar.rank.sunday': 'Chúa nhật',
-	'calendar.rank.weekday': 'Ngày thường'
+	'calendar.rank.weekday': 'Ngày thường',
+	'calendar.gloss.season.advent':
+		'Bốn tuần trước lễ Giáng Sinh: chuẩn bị cho việc Chúa đến, và khởi đầu năm của Hội Thánh.',
+	'calendar.gloss.season.christmas':
+		'Từ lễ Giáng Sinh đến lễ Chúa Giêsu chịu phép rửa, mừng việc Chúa giáng sinh và tỏ mình ra cho thế gian.',
+	'calendar.gloss.season.lent':
+		'Bốn mươi ngày từ thứ Tư Lễ Tro đến thánh lễ chiều Tiệc Ly: sám hối, bố thí và chuẩn bị mừng lễ Phục Sinh.',
+	'calendar.gloss.season.triduum':
+		'Ba ngày từ chiều thứ Năm Tuần Thánh đến chiều Chúa Nhật Phục Sinh — cuộc thương khó, cái chết và sự phục sinh của Chúa, tột đỉnh của cả năm.',
+	'calendar.gloss.season.easter':
+		'Năm mươi ngày từ lễ Phục Sinh đến lễ Hiện Xuống, được mừng như một đại lễ duy nhất — „một Chúa Nhật lớn“.',
+	'calendar.gloss.season.ordinary':
+		'Ba mươi ba hoặc ba mươi bốn tuần ngoài các mùa khác. Không phải „tầm thường“ mà là có trật tự: các tuần được đánh số, và Hội Thánh đọc liên tục cuộc đời và giáo huấn của Chúa. Mùa này đến trong hai chặng — sau mùa Giáng Sinh cho đến mùa Chay, và sau lễ Hiện Xuống cho đến mùa Vọng.',
+	'calendar.gloss.rank.solemnity':
+		'Bậc cao nhất: lễ Phục Sinh, lễ Giáng Sinh, lễ Chúa Lên Trời, thánh bổn mạng của một nơi. Được cử hành với kinh Vinh Danh và kinh Tin Kính, và bắt đầu từ chiều hôm trước.',
+	'calendar.gloss.rank.feast':
+		'Được cử hành trong chính ngày ấy. Các tông đồ và thánh sử, cùng những ngày lớn hơn của Chúa và của Đức Mẹ.',
+	'calendar.gloss.rank.memorial':
+		'Một vị thánh được nhớ đến trong ngày của ngài, bên trong thánh lễ và Các Giờ Kinh Phụng Vụ của mùa ấy. Bắt buộc ở nơi được cử hành.',
+	'calendar.gloss.rank.optional-memorial':
+		'Có thể cử hành hay không, tùy linh mục hoặc cộng đoàn chọn. Nếu không cử hành, ngày ấy chỉ đơn thuần là ngày trong tuần.',
+	'calendar.gloss.rank.commemoration':
+		'Điều mà một lễ nhớ trở thành trong mùa Chay: một lời nguyện thêm vào thánh lễ ngày thường, mà mùa Chay vẫn giữ nguyên vẹn phần còn lại.',
+	'calendar.gloss.rank.sunday':
+		'Ngày lễ đầu tiên — Ngày của Chúa, được mừng mỗi tuần từ khi Chúa sống lại. Chỉ một lễ trọng hoặc một lễ kính Chúa mới được thay thế, và trong mùa Vọng, mùa Chay và mùa Phục Sinh thì ngay cả những lễ ấy cũng không.',
+	'calendar.gloss.rank.weekday':
+		'Ngày không có lễ riêng. Thánh lễ và Các Giờ Kinh Phụng Vụ là của mùa — chính điều đó khiến mùa phụng vụ đáng biết đến.',
+	'calendar.gloss.colour.white':
+		'Niềm vui. Mùa Phục Sinh và mùa Giáng Sinh, các ngày lễ về Chúa ngoài cuộc thương khó, Đức Mẹ, các thiên thần, và các thánh không phải là tử đạo.',
+	'calendar.gloss.colour.red':
+		'Máu và lửa. Chúa Nhật Lễ Lá và thứ Sáu Tuần Thánh, lễ Hiện Xuống, các tông đồ và thánh sử, cùng các thánh tử đạo.',
+	'calendar.gloss.colour.green': 'Mùa Thường Niên: màu của hy vọng, và của những gì đang lớn lên.',
+	'calendar.gloss.colour.violet':
+		'Mùa Vọng và mùa Chay, và cũng dùng trong các thánh lễ cầu cho người qua đời.',
+	'calendar.gloss.colour.rose':
+		'Dùng hai lần trong năm — Chúa Nhật Gaudete, Chúa Nhật thứ ba mùa Vọng, và Chúa Nhật Laetare, Chúa Nhật thứ tư mùa Chay — khi việc chay tịnh dịu bớt và đã thấy được đích đến.',
+	'calendar.gloss.colour.black': 'Có thể dùng trong các thánh lễ cầu cho người qua đời.',
+	'calendar.gloss.colour.blue':
+		'Đặc ân màu xanh: dùng trong lễ Đức Mẹ Vô Nhiễm Nguyên Tội tại Tây Ban Nha, Philippines và ít nơi khác được Tòa Thánh ban phép.',
+	'calendar.gloss.sundayCycle':
+		'Các bài đọc Chúa Nhật chạy theo ba năm — A, B và C — lần lượt đọc Mátthêu, Máccô và Luca, cùng với Gioan trong mùa Chay và mùa Phục Sinh. Chu kỳ đổi vào Chúa Nhật thứ nhất mùa Vọng, cùng với năm của Hội Thánh.',
+	'calendar.gloss.weekdayCycle':
+		'Các bài đọc ngày thường chạy theo hai năm, I và II: bài đọc thứ nhất thay đổi, Tin Mừng thì không. Một năm phụng vụ mang tên năm dương lịch mà nó kết thúc — năm lẻ là I, năm chẵn là II.',
+	'calendar.gloss.psalterWeek':
+		'Các Giờ Kinh Phụng Vụ chia các thánh vịnh theo bốn tuần, I đến IV, lặp lại suốt năm. Đây là tuần mà các thánh vịnh của nó là của hôm nay, dành cho ai đọc Các Giờ Kinh.',
+	'calendar.gloss.obligation':
+		'Ngày mà các tín hữu buộc phải tham dự thánh lễ và kiêng những việc làm cản trở điều đó. Mọi Chúa Nhật, và những ngày khác mà mỗi hội đồng giám mục đã ấn định.',
+	'calendar.primer.title': 'Lần đầu đến đây?',
+	'calendar.primer.lead':
+		'Hội Thánh giữ một năm riêng. Năm ấy bắt đầu với mùa Vọng, xoay quanh lễ Phục Sinh, và cho mỗi ngày một tên gọi, một bậc lễ và một màu — và những điều ấy quyết định hôm đó đọc và cầu nguyện những gì trong thánh lễ và trong Các Giờ Kinh Phụng Vụ. Vì thế „Chúa Nhật thứ hai mươi ba Mùa Thường Niên“ là một địa chỉ: nó cho linh mục, ca đoàn, hay bất cứ ai cầu nguyện tại nhà biết những lời nguyện và bài đọc nào thuộc về hôm nay.',
+	'calendar.primer.seasons': 'Các mùa phụng vụ',
+	'calendar.primer.ranks': 'Một ngày có thể là gì',
+	'calendar.primer.colours': 'Các màu',
+	'calendar.primer.cycles': 'Các chu kỳ',
+	'calendar.primer.cyclesLead':
+		'Ba bộ đếm, cùng nhau cho biết những bài đọc và thánh vịnh nào được chỉ định cho hôm nay.'
 };

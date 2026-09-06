@@ -355,5 +355,59 @@ export const da: Dictionary = {
 	'calendar.rank.optional-memorial': 'Valgfri mindedag',
 	'calendar.rank.commemoration': 'Ihukommelse',
 	'calendar.rank.sunday': 'Søndag',
-	'calendar.rank.weekday': 'Hverdag'
+	'calendar.rank.weekday': 'Hverdag',
+	'calendar.gloss.season.advent':
+		'De fire uger før jul: forberedelse til Herrens komme og begyndelsen på kirkeåret.',
+	'calendar.gloss.season.christmas':
+		'Fra juledag til Herrens dåb, hvor Herrens fødsel og hans åbenbaring for verden fejres.',
+	'calendar.gloss.season.lent':
+		'De fyrre dage fra askeonsdag til aftenmessen om Herrens nadver: bod, almisse og forberedelse til påsken.',
+	'calendar.gloss.season.triduum':
+		'De tre dage fra skærtorsdag aften til påskesøndag aften — Herrens lidelse, død og opstandelse, og højdepunktet i hele året.',
+	'calendar.gloss.season.easter':
+		'De halvtreds dage fra påske til pinse, fejret som én eneste fest — „én stor søndag“.',
+	'calendar.gloss.season.ordinary':
+		'De treogtredive eller fireogtredive uger uden for de øvrige tider. Ikke „almindelig“, men ordnet: ugerne tælles, og Kirken læser Herrens liv og lære fortløbende. Den kommer i to stræk — efter juletiden indtil fasten, og efter pinse indtil advent.',
+	'calendar.gloss.rank.solemnity':
+		'Den højeste grad: påske, jul, Kristi himmelfart, et steds egen værnehelgen. Fejres med Gloria og trosbekendelsen, og begynder aftenen før.',
+	'calendar.gloss.rank.feast':
+		'Fejres inden for dagen selv. Apostlene og evangelisterne, og Herrens og Vor Frues større dage.',
+	'calendar.gloss.rank.memorial':
+		'En helgen, der mindes på sin dag, inden for tidens egen messe og tidebøn. Obligatorisk, hvor den holdes.',
+	'calendar.gloss.rank.optional-memorial':
+		'Kan holdes eller ej, som præsten eller menigheden vælger. Holdes den ikke, er dagen simpelthen hverdagen.',
+	'calendar.gloss.rank.commemoration':
+		'Hvad en mindedag bliver i fasten: en bøn føjet til hverdagsmessen, som tiden i øvrigt bevarer hel.',
+	'calendar.gloss.rank.sunday':
+		'Den oprindelige festdag — Herrens dag, fejret hver uge siden opstandelsen. Kun en højtid eller en Herrens fest må fortrænge den, og i advent, faste og påsketid ikke engang de.',
+	'calendar.gloss.rank.weekday':
+		'En dag uden egen fejring. Messen og tidebønnen er tidens — og det er dét, der gør tiden værd at kende.',
+	'calendar.gloss.colour.white':
+		'Glæde. Påske- og juletid, Herrens dage uden for hans lidelse, Vor Frue, englene, og de helgener, der ikke var martyrer.',
+	'calendar.gloss.colour.red':
+		'Blod og ild. Palmesøndag og langfredag, pinsen, apostlene og evangelisterne, og martyrerne.',
+	'calendar.gloss.colour.green': 'Tiden over året: håbets farve, og det voksendes.',
+	'calendar.gloss.colour.violet': 'Advent og faste, og bæres også ved messer for de afdøde.',
+	'calendar.gloss.colour.rose':
+		'Bæres to gange om året — på søndagen Gaudete, den tredje i advent, og på søndagen Laetare, den fjerde i fasten — hvor fasten lysner og enden er i sigte.',
+	'calendar.gloss.colour.black': 'Må bæres ved messer for de afdøde.',
+	'calendar.gloss.colour.blue':
+		'Det blå privilegium: bæres ved Marias uplettede undfangelse i Spanien, på Filippinerne og de få andre steder, som Den Hellige Stol har givet det til.',
+	'calendar.gloss.sundayCycle':
+		'Søndagslæsningerne løber over tre år — A, B og C — og læser Matthæus, Markus og Lukas på skift, med Johannes gennem fasten og påsketiden. Cyklussen skifter på første søndag i advent, med kirkeåret.',
+	'calendar.gloss.weekdayCycle':
+		'Hverdagslæsningerne løber over to år, I og II: den første læsning skifter, evangeliet ikke. Et liturgisk år hedder efter det kalenderår, det slutter i — ulige år er I, lige år II.',
+	'calendar.gloss.psalterWeek':
+		'Tidebønnen fordeler salmerne over fire uger, I til IV, som gentages gennem året. Dette er den uge, hvis salmer er dagens, for den, der beder tidebønnerne.',
+	'calendar.gloss.obligation':
+		'En dag, hvor de troende er forpligtet til at deltage i messen og afholde sig fra arbejde, der ville forhindre det. Hver søndag, og de øvrige dage, som den enkelte bispekonference har bestemt.',
+	'calendar.primer.title': 'Ny her?',
+	'calendar.primer.lead':
+		'Kirken holder sit eget år. Det begynder med advent, drejer om påsken, og giver hver dag et navn, en grad og en farve — og de afgør, hvad der bedes og læses den dag ved messen og i tidebønnen. Så „treogtyvende søndag over året“ er en adresse: den siger en præst, et kor eller enhver, der beder hjemme, hvilke bønner og læsninger der hører til i dag.',
+	'calendar.primer.seasons': 'Tiderne',
+	'calendar.primer.ranks': 'Hvad en dag kan være',
+	'calendar.primer.colours': 'Farverne',
+	'calendar.primer.cycles': 'Cyklusserne',
+	'calendar.primer.cyclesLead':
+		'Tre tællere, som tilsammen siger, hvilke læsninger og salmer der er bestemt for i dag.'
 };

@@ -360,5 +360,60 @@ export const nl: Dictionary = {
 	'calendar.rank.optional-memorial': 'Vrije gedachtenis',
 	'calendar.rank.commemoration': 'Herdenking',
 	'calendar.rank.sunday': 'Zondag',
-	'calendar.rank.weekday': 'Weekdag'
+	'calendar.rank.weekday': 'Weekdag',
+	'calendar.gloss.season.advent':
+		'De vier weken vóór Kerstmis: voorbereiding op de komst van de Heer, en het begin van het jaar van de Kerk.',
+	'calendar.gloss.season.christmas':
+		'Van Kerstmis tot de Doop van de Heer, waarin de geboorte van de Heer en zijn verschijning aan de wereld gevierd worden.',
+	'calendar.gloss.season.lent':
+		'De veertig dagen van Aswoensdag tot de avondmis van het Laatste Avondmaal: boete, aalmoes en voorbereiding op Pasen.',
+	'calendar.gloss.season.triduum':
+		'De drie dagen van de avond van Witte Donderdag tot de avond van Paaszondag — lijden, dood en verrijzenis van de Heer, en de top van heel het jaar.',
+	'calendar.gloss.season.easter':
+		'De vijftig dagen van Pasen tot Pinksteren, gevierd als één enkel feest — „één grote zondag”.',
+	'calendar.gloss.season.ordinary':
+		'De drieëndertig of vierendertig weken buiten de andere tijden. Niet „gewoon” maar geordend: de weken worden geteld, en de Kerk leest het leven en het onderricht van de Heer doorlopend. Hij komt in twee stukken — na de kersttijd tot de veertigdagentijd, en na Pinksteren tot de advent.',
+	'calendar.gloss.rank.solemnity':
+		'De hoogste rang: Pasen, Kerstmis, Hemelvaart, de patroon van een plaats. Gevierd met Gloria en Credo, en beginnend op de vooravond.',
+	'calendar.gloss.rank.feast':
+		'Gevierd binnen de dag zelf. De apostelen en evangelisten, en de grotere dagen van de Heer en van Onze-Lieve-Vrouw.',
+	'calendar.gloss.rank.memorial':
+		'Een heilige die op zijn of haar dag herdacht wordt, binnen de mis en het officie van de tijd. Verplicht waar zij gevierd wordt.',
+	'calendar.gloss.rank.optional-memorial':
+		'Mag gevierd worden of niet, naar keuze van de priester of de gemeenschap. Wordt zij niet gevierd, dan is de dag eenvoudig de weekdag.',
+	'calendar.gloss.rank.commemoration':
+		'Wat een gedachtenis in de veertigdagentijd wordt: een gebed toegevoegd aan de mis van de weekdag, die de tijd voor het overige heel laat.',
+	'calendar.gloss.rank.sunday':
+		'Het oorspronkelijke feest — de dag des Heren, elke week gevierd sinds de verrijzenis. Alleen een hoogfeest of een feest van de Heer mag hem verdringen, en in de advent, de veertigdagentijd en de paastijd zelfs die niet.',
+	'calendar.gloss.rank.weekday':
+		'Een dag zonder eigen viering. De mis en het officie zijn die van de tijd, wat de tijd de moeite van het kennen waard maakt.',
+	'calendar.gloss.colour.white':
+		'Vreugde. Paastijd en kersttijd, de dagen van de Heer buiten zijn lijden, Onze-Lieve-Vrouw, de engelen, en de heiligen die geen martelaar waren.',
+	'calendar.gloss.colour.red':
+		'Bloed en vuur. Palmzondag en Goede Vrijdag, Pinksteren, de apostelen en evangelisten, en de martelaren.',
+	'calendar.gloss.colour.green': 'De tijd door het jaar: de kleur van de hoop en van wat groeit.',
+	'calendar.gloss.colour.violet':
+		'Advent en veertigdagentijd, en ook gedragen in missen voor de overledenen.',
+	'calendar.gloss.colour.rose':
+		'Tweemaal per jaar gedragen — op zondag Gaudete, de derde van de advent, en op zondag Laetare, de vierde van de veertigdagentijd — waar het vasten lichter wordt en het einde in zicht komt.',
+	'calendar.gloss.colour.black': 'Mag gedragen worden in missen voor de overledenen.',
+	'calendar.gloss.colour.blue':
+		'Het voorrecht van het blauw: gedragen op Onbevlekte Ontvangenis in Spanje, op de Filipijnen en in de weinige andere plaatsen waaraan de Heilige Stoel het verleend heeft.',
+	'calendar.gloss.sundayCycle':
+		'De zondagslezingen lopen over drie jaar — A, B en C — waarin om beurten Matteüs, Marcus en Lucas gelezen worden, met Johannes door de veertigdagentijd en de paastijd. De cyclus wisselt op de eerste zondag van de advent, met het jaar van de Kerk.',
+	'calendar.gloss.weekdayCycle':
+		'De weekdaglezingen lopen over twee jaar, I en II: de eerste lezing verandert, het evangelie niet. Een liturgisch jaar heet naar het kalenderjaar waarin het eindigt — oneven jaren zijn I, even jaren II.',
+	'calendar.gloss.psalterWeek':
+		'Het getijdengebed verdeelt de psalmen over vier weken, I tot IV, die zich door het jaar heen herhalen. Dit is de week wier psalmen die van vandaag zijn, voor wie de getijden bidt.',
+	'calendar.gloss.obligation':
+		'Een dag waarop de gelovigen gehouden zijn aan de mis deel te nemen en zich te onthouden van werk dat hen zou verhinderen. Elke zondag, en de overige dagen die elke bisschoppenconferentie heeft vastgesteld.',
+	'calendar.primer.title': 'Nieuw hier?',
+	'calendar.primer.lead':
+		'De Kerk houdt een eigen jaar. Het begint met de advent, draait om Pasen, en geeft elke dag een naam, een rang en een kleur — en die bepalen wat er die dag gebeden en gelezen wordt in de mis en in het getijdengebed. Zo is „drieëntwintigste zondag door het jaar” een adres: het zegt een priester, een koor of wie thuis bidt welke gebeden en lezingen bij vandaag horen.',
+	'calendar.primer.seasons': 'De tijden',
+	'calendar.primer.ranks': 'Wat een dag kan zijn',
+	'calendar.primer.colours': 'De kleuren',
+	'calendar.primer.cycles': 'De cycli',
+	'calendar.primer.cyclesLead':
+		'Drie tellers die samen zeggen welke lezingen en psalmen voor vandaag bestemd zijn.'
 };

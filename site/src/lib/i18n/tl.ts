@@ -367,5 +367,61 @@ export const tl: Dictionary = {
 	'calendar.rank.optional-memorial': 'Malayang paggunita',
 	'calendar.rank.commemoration': 'Pag-alaala',
 	'calendar.rank.sunday': 'Linggo',
-	'calendar.rank.weekday': 'Karaniwang araw'
+	'calendar.rank.weekday': 'Karaniwang araw',
+	'calendar.gloss.season.advent':
+		'Ang apat na linggo bago ang Pasko: paghahanda sa pagdating ng Panginoon, at simula ng taon ng Simbahan.',
+	'calendar.gloss.season.christmas':
+		'Mula sa Pasko hanggang sa Pagbibinyag sa Panginoon, ipinagdiriwang ang pagsilang ng Panginoon at ang kanyang pagpapakita sa sanlibutan.',
+	'calendar.gloss.season.lent':
+		'Ang apatnapung araw mula Miyerkules ng Abo hanggang sa Misa sa gabi ng Huling Hapunan ng Panginoon: pagsisisi, limos, at paghahanda sa Pasko ng Pagkabuhay.',
+	'calendar.gloss.season.triduum':
+		'Ang tatlong araw mula sa gabi ng Huwebes Santo hanggang sa gabi ng Linggo ng Pagkabuhay — ang pagpapakasakit, kamatayan at muling pagkabuhay ng Panginoon, at ang rurok ng buong taon.',
+	'calendar.gloss.season.easter':
+		'Ang limampung araw mula sa Pasko ng Pagkabuhay hanggang Pentekostes, ipinagdiriwang bilang iisang kapistahan — „iisang malaking Linggo“.',
+	'calendar.gloss.season.ordinary':
+		'Ang tatlumpu’t tatlo o tatlumpu’t apat na linggo sa labas ng ibang panahon. Hindi „pangkaraniwan“ kundi nakaayos: binibilang ang mga linggo, at sunud-sunod na binabasa ng Simbahan ang buhay at aral ng Panginoon. Dumarating ito sa dalawang bahagi — pagkatapos ng Panahon ng Pasko hanggang sa Kuwaresma, at pagkatapos ng Pentekostes hanggang sa Adbiyento.',
+	'calendar.gloss.rank.solemnity':
+		'Ang pinakamataas na antas: ang Pasko ng Pagkabuhay, ang Pasko, ang Pag-akyat sa Langit, ang patron ng isang lugar. Ipinagdiriwang nang may Papuri at Sumasampalataya, at nagsisimula sa gabi bago nito.',
+	'calendar.gloss.rank.feast':
+		'Ipinagdiriwang sa loob mismo ng araw. Ang mga apostol at ebanghelista, at ang mas malalaking araw ng Panginoon at ng Mahal na Birhen.',
+	'calendar.gloss.rank.memorial':
+		'Isang santong ginugunita sa kanyang araw, sa loob ng Misa at Liturhiya ng mga Oras ng panahong iyon. Sapilitan saanman ito ipinagdiriwang.',
+	'calendar.gloss.rank.optional-memorial':
+		'Maaaring ipagdiwang o hindi, ayon sa pili ng pari o ng pamayanan. Kung hindi ipinagdiwang, ang araw ay simpleng araw ng linggo.',
+	'calendar.gloss.rank.commemoration':
+		'Ang nagiging anyo ng paggunita sa Kuwaresma: isang panalanging idinaragdag sa Misa ng karaniwang araw, na buo namang pinananatili ng panahon.',
+	'calendar.gloss.rank.sunday':
+		'Ang unang kapistahan — ang Araw ng Panginoon, ipinagdiriwang tuwing linggo mula pa sa muling pagkabuhay. Dakilang kapistahan lamang o kapistahan ng Panginoon ang makapagpapalit nito, at sa Adbiyento, Kuwaresma at Panahon ng Pagkabuhay ay kahit ang mga iyon ay hindi.',
+	'calendar.gloss.rank.weekday':
+		'Araw na walang sariling pagdiriwang. Ang Misa at ang Liturhiya ng mga Oras ay sa panahon — na siyang dahilan kung bakit sulit malaman ang panahon.',
+	'calendar.gloss.colour.white':
+		'Galak. Panahon ng Pagkabuhay at ng Pasko, ang mga araw ng Panginoon maliban sa kanyang pagpapakasakit, ang Mahal na Birhen, ang mga anghel, at ang mga santong hindi martir.',
+	'calendar.gloss.colour.red':
+		'Dugo at apoy. Linggo ng Palaspas at Biyernes Santo, Pentekostes, ang mga apostol at ebanghelista, at ang mga martir.',
+	'calendar.gloss.colour.green':
+		'Karaniwang Panahon: ang kulay ng pag-asa, at ng mga bagay na lumalago.',
+	'calendar.gloss.colour.violet':
+		'Adbiyento at Kuwaresma, at isinusuot din sa mga Misa para sa mga yumao.',
+	'calendar.gloss.colour.rose':
+		'Isinusuot dalawang beses sa isang taon — sa Linggong Gaudete, ang ikatlo ng Adbiyento, at sa Linggong Laetare, ang ikaapat ng Kuwaresma — kung saan gumagaan ang pag-aayuno at natatanaw na ang wakas.',
+	'calendar.gloss.colour.black': 'Maaaring isuot sa mga Misa para sa mga yumao.',
+	'calendar.gloss.colour.blue':
+		'Ang pribilehiyo ng asul: isinusuot sa Kalinis-linisang Paglilihi sa Espanya, sa Pilipinas, at sa iilang ibang pook na pinagkalooban nito ng Santa Sede.',
+	'calendar.gloss.sundayCycle':
+		'Ang mga pagbasa sa Linggo ay umiikot sa tatlong taon — A, B at C — sunod-sunod na binabasa sina Mateo, Marcos at Lucas, kasama si Juan sa Kuwaresma at Panahon ng Pagkabuhay. Nagpapalit ang siklo sa unang Linggo ng Adbiyento, kasabay ng taon ng Simbahan.',
+	'calendar.gloss.weekdayCycle':
+		'Ang mga pagbasa sa karaniwang araw ay umiikot sa dalawang taon, I at II: nagbabago ang unang pagbasa, ang Ebanghelyo ay hindi. Ang isang taong liturhiko ay ipinapangalan sa taong pansibil na kinatatapusan nito — ang mga taong gansal ay I, ang mga taong pares ay II.',
+	'calendar.gloss.psalterWeek':
+		'Hinahati ng Liturhiya ng mga Oras ang mga salmo sa apat na linggo, I hanggang IV, na inuulit sa buong taon. Ito ang linggo na ang mga salmo ay para sa ngayon, para sa sinumang dumadalangin ng mga Oras.',
+	'calendar.gloss.obligation':
+		'Araw na obligado ang mga mananampalatayang makibahagi sa Misa at umiwas sa mga gawaing hahadlang dito. Bawat Linggo, at ang iba pang araw na itinakda ng bawat kumperensya ng mga obispo.',
+	'calendar.primer.title': 'Bago ka rito?',
+	'calendar.primer.lead':
+		'May sariling taon ang Simbahan. Nagsisimula ito sa Adbiyento, umiikot sa Pasko ng Pagkabuhay, at binibigyan ang bawat araw ng pangalan, antas at kulay — at ang mga ito ang nagpapasya kung ano ang idinadalangin at binabasa sa araw na iyon sa Misa at sa Liturhiya ng mga Oras. Kaya ang „ikadalawampu’t tatlong Linggo sa Karaniwang Panahon“ ay isang adres: sinasabi nito sa pari, sa koro, o sa sinumang nagdarasal sa bahay kung aling mga panalangin at pagbasa ang para sa araw na ito.',
+	'calendar.primer.seasons': 'Ang mga panahon',
+	'calendar.primer.ranks': 'Ano ang maaaring maging isang araw',
+	'calendar.primer.colours': 'Ang mga kulay',
+	'calendar.primer.cycles': 'Ang mga siklo',
+	'calendar.primer.cyclesLead':
+		'Tatlong pambilang na sama-samang nagsasabi kung aling mga pagbasa at salmo ang nakatakda para sa araw na ito.'
 };

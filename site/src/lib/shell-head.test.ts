@@ -73,6 +73,10 @@ function chromeFixture(): RouteTitles['chrome'] {
 		'/doctores': ['Doctors of the Church — Glossa Catholica', 'The Fathers and Doctors.'],
 		'/doctores/summa': ['Summa Theologiae — Glossa Catholica', 'Thomas Aquinas.'],
 		'/preces': ['Common Prayers — Glossa Catholica', 'Prayers with the Latin alongside.'],
+		'/calendarium': [
+			'Liturgical Calendar — Glossa Catholica',
+			'What day it is in the Church’s year.'
+		],
 		'/schola': ['Where to begin — Glossa Catholica', 'A short guide to what is here.'],
 		'/colophon': ['Colophon — Glossa Catholica', 'What this site is.']
 	};

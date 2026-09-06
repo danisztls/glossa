@@ -489,5 +489,60 @@ export const hu: Dictionary = {
 	'calendar.rank.optional-memorial': 'Szabadon választható emléknap',
 	'calendar.rank.commemoration': 'Megemlékezés',
 	'calendar.rank.sunday': 'Vasárnap',
-	'calendar.rank.weekday': 'Köznap'
+	'calendar.rank.weekday': 'Köznap',
+	'calendar.gloss.season.advent':
+		'A karácsony előtti négy hét: készület az Úr eljövetelére és az egyházi év kezdete.',
+	'calendar.gloss.season.christmas':
+		'Karácsonytól Urunk megkeresztelkedéséig, az Úr születésének és a világ előtti megjelenésének ünneplése.',
+	'calendar.gloss.season.lent':
+		'A negyven nap hamvazószerdától az utolsó vacsora esti miséjéig: bűnbánat, alamizsna és készület a húsvétra.',
+	'calendar.gloss.season.triduum':
+		'A három nap nagycsütörtök estéjétől húsvétvasárnap estéjéig — az Úr szenvedése, halála és feltámadása, az egész év csúcsa.',
+	'calendar.gloss.season.easter':
+		'Az ötven nap húsvéttól pünkösdig, egyetlen ünnepként megülve — „egyetlen nagy vasárnap”.',
+	'calendar.gloss.season.ordinary':
+		'A harminchárom vagy harmincnégy hét a többi időszakon kívül. Nem „közönséges”, hanem rendezett: a heteket számozzák, és az Egyház folyamatosan olvassa az Úr életét és tanítását. Két szakaszban jön — a karácsonyi idő után nagyböjtig, és pünkösd után adventig.',
+	'calendar.gloss.rank.solemnity':
+		'A legmagasabb fokozat: húsvét, karácsony, mennybemenetel, egy hely védőszentje. Dicsőséggel és Hiszekeggyel ülik meg, és az előző este kezdődik.',
+	'calendar.gloss.rank.feast':
+		'Magán a napon belül ülik meg. Az apostolok és evangelisták, valamint az Úr és a Boldogságos Szűz nagyobb napjai.',
+	'calendar.gloss.rank.memorial':
+		'Egy szent, akiről a maga napján emlékeznek meg, az adott időszak miséjén és zsolozsmáján belül. Kötelező ott, ahol megülik.',
+	'calendar.gloss.rank.optional-memorial':
+		'Megülhető vagy nem, a pap vagy a közösség választása szerint. Ha nem ülik meg, a nap egyszerűen köznap.',
+	'calendar.gloss.rank.commemoration':
+		'Ami az emléknapból nagyböjtben lesz: egy könyörgés, amelyet a köznapi miséhez tesznek hozzá, amelyet az időszak egyébként érintetlenül hagy.',
+	'calendar.gloss.rank.sunday':
+		'Az eredeti ünnep — az Úr napja, a feltámadás óta minden héten megülve. Csak főünnep vagy az Úr ünnepe szoríthatja ki, adventben, nagyböjtben és a húsvéti időben pedig még azok sem.',
+	'calendar.gloss.rank.weekday':
+		'Nap saját ünneplés nélkül. A mise és a zsolozsma az időszaké — és éppen ez teszi az időszakot érdemessé a megismerésre.',
+	'calendar.gloss.colour.white':
+		'Öröm. Húsvéti és karácsonyi idő, az Úr napjai szenvedésén kívül, a Boldogságos Szűz, az angyalok és azok a szentek, akik nem voltak vértanúk.',
+	'calendar.gloss.colour.red':
+		'Vér és tűz. Virágvasárnap és nagypéntek, pünkösd, az apostolok és evangelisták, valamint a vértanúk.',
+	'calendar.gloss.colour.green': 'Évközi idő: a remény és a növekvő dolgok színe.',
+	'calendar.gloss.colour.violet':
+		'Advent és nagyböjt, és viselik a halottakért mondott miséken is.',
+	'calendar.gloss.colour.rose':
+		'Évente kétszer viselik — Gaudete vasárnapján, advent harmadikán, és Laetare vasárnapján, nagyböjt negyedikén — ahol a böjt felderül és a vég már látszik.',
+	'calendar.gloss.colour.black': 'Viselhető a halottakért mondott miséken.',
+	'calendar.gloss.colour.blue':
+		'A kék kiváltsága: a Szeplőtelen Fogantatás ünnepén viselik Spanyolországban, a Fülöp-szigeteken és azon a néhány más helyen, amelyeknek a Szentszék megadta.',
+	'calendar.gloss.sundayCycle':
+		'A vasárnapi olvasmányok három éven át futnak — A, B és C —, sorra olvasva Mátét, Márkot és Lukácsot, Jánossal nagyböjtben és a húsvéti időben. A ciklus advent első vasárnapján fordul, az egyházi évvel együtt.',
+	'calendar.gloss.weekdayCycle':
+		'A köznapi olvasmányok két éven át futnak, I és II: az első olvasmány változik, az evangélium nem. A liturgikus év arról a naptári évről kapja a nevét, amelyben véget ér — a páratlan évek I, a párosak II.',
+	'calendar.gloss.psalterWeek':
+		'A zsolozsma négy hétre osztja a zsoltárokat, I-től IV-ig, amelyek az év során ismétlődnek. Ez az a hét, amelynek zsoltárai a maiak, annak, aki a zsolozsmát végzi.',
+	'calendar.gloss.obligation':
+		'Nap, amelyen a hívek kötelesek részt venni a szentmisén, és tartózkodni azoktól a munkáktól, amelyek ezt megakadályoznák. Minden vasárnap, és a további napok, amelyeket az egyes püspöki konferenciák meghatároztak.',
+	'calendar.primer.title': 'Először jár itt?',
+	'calendar.primer.lead':
+		'Az Egyház saját évet tart. Adventtel kezdődik, húsvét körül fordul, és minden napnak nevet, fokozatot és színt ad — ezek pedig eldöntik, mit imádkoznak és olvasnak azon a napon a szentmisén és a zsolozsmában. Így az „évközi huszonharmadik vasárnap” egy cím: megmondja a papnak, a kórusnak vagy bárkinek, aki otthon imádkozik, mely imádságok és olvasmányok tartoznak a mai naphoz.',
+	'calendar.primer.seasons': 'Az időszakok',
+	'calendar.primer.ranks': 'Mi lehet egy nap',
+	'calendar.primer.colours': 'A színek',
+	'calendar.primer.cycles': 'A ciklusok',
+	'calendar.primer.cyclesLead':
+		'Három számláló, amelyek együtt megmondják, mely olvasmányok és zsoltárok vannak mára rendelve.'
 };

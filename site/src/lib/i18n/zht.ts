@@ -340,5 +340,54 @@ export const zht: Dictionary = {
 	'calendar.rank.optional-memorial': '自由紀念',
 	'calendar.rank.commemoration': '紀念禮',
 	'calendar.rank.sunday': '主日',
-	'calendar.rank.weekday': '平日'
+	'calendar.rank.weekday': '平日',
+	'calendar.gloss.season.advent': '聖誕節前的四週：預備主的來臨，也是教會年度的開始。',
+	'calendar.gloss.season.christmas': '從聖誕節到主受洗節，慶祝主的誕生和祂向世界的顯現。',
+	'calendar.gloss.season.lent':
+		'從聖灰禮儀星期三到主的晚餐彌撒的四十天：補贖、施捨，以及為復活節的預備。',
+	'calendar.gloss.season.triduum':
+		'從聖週四晚上到復活主日晚上的三天——主的苦難、死亡與復活，是整個年度的頂峰。',
+	'calendar.gloss.season.easter':
+		'從復活節到聖神降臨節的五十天，作為一個整體的慶節來慶祝——「一個偉大的主日」。',
+	'calendar.gloss.season.ordinary':
+		'在其他時期以外的三十三或三十四週。不是「平常」，而是有次序的：週次是編號的，教會依次誦讀主的生平與教導。它分兩段而來——聖誕期之後直到四旬期，以及聖神降臨節之後直到將臨期。',
+	'calendar.gloss.rank.solemnity':
+		'最高的等級：復活節、聖誕節、耶穌升天、一地的主保。以光榮頌和信經慶祝，並從前一日晚上開始。',
+	'calendar.gloss.rank.feast': '在當日之內慶祝。宗徒與聖史，以及主和聖母較大的日子。',
+	'calendar.gloss.rank.memorial':
+		'在聖人自己的日子紀念他，在該時期本有的彌撒與日課之內。凡舉行之處皆有義務。',
+	'calendar.gloss.rank.optional-memorial':
+		'可舉行也可不舉行，由司鐸或團體選擇。若不舉行，該日便只是平日。',
+	'calendar.gloss.rank.commemoration':
+		'紀念在四旬期中所變成的樣子：在平日彌撒中加上一段禱詞，其餘仍保持該時期的完整。',
+	'calendar.gloss.rank.sunday':
+		'最初的慶節——主的日子，自復活以來每週慶祝。只有節日或主的慶日可以取代它，而在將臨期、四旬期和復活期，連這些也不可以。',
+	'calendar.gloss.rank.weekday':
+		'沒有自身慶祝的日子。彌撒與日課都屬於該時期——這正是使時期值得認識的地方。',
+	'calendar.gloss.colour.white':
+		'喜樂。復活期與聖誕期，主的日子（苦難以外者）、聖母、天使，以及並非殉道者的聖人。',
+	'calendar.gloss.colour.red': '血與火。聖枝主日與聖週五、聖神降臨節、宗徒與聖史，以及殉道者。',
+	'calendar.gloss.colour.green': '常年期：希望的顏色，也是生長之物的顏色。',
+	'calendar.gloss.colour.violet': '將臨期與四旬期，也用於為亡者舉行的彌撒。',
+	'calendar.gloss.colour.rose':
+		'一年用兩次——將臨期第三主日（Gaudete）與四旬期第四主日（Laetare）——齋戒轉輕、終點在望之時。',
+	'calendar.gloss.colour.black': '可用於為亡者舉行的彌撒。',
+	'calendar.gloss.colour.blue':
+		'藍色的特權：在西班牙、菲律賓以及聖座所准許的少數其他地方，於聖母無染原罪節使用。',
+	'calendar.gloss.sundayCycle':
+		'主日讀經歷三年而行——甲年、乙年、丙年——依次誦讀瑪竇、馬爾谷與路加，四旬期與復活期則讀若望。週期在將臨期第一主日隨教會年度更換。',
+	'calendar.gloss.weekdayCycle':
+		'平日讀經歷兩年而行，單年與雙年：第一篇讀經更換，福音不換。禮儀年以其結束的公曆年份命名——奇數年為單年，偶數年為雙年。',
+	'calendar.gloss.psalterWeek':
+		'時辰頌禱將聖詠分佈於四週，第一週至第四週，全年循環。這是說今天的聖詠屬於哪一週，為誦念時辰頌禱的人而設。',
+	'calendar.gloss.obligation':
+		'信友有義務參與彌撒、並避免妨礙參與的工作的日子。每個主日，以及各主教團所規定的其他日子。',
+	'calendar.primer.title': '初次接觸？',
+	'calendar.primer.lead':
+		'教會守著自己的一年。它從將臨期開始，環繞復活節而轉，並給每一天一個名稱、一個等級和一種顏色——這些決定了當天在彌撒和時辰頌禱中所祈禱與誦讀的內容。因此「常年期第二十三主日」是一個地址：它告訴司鐸、唱經班，或在家祈禱的人，哪些禱文與讀經屬於今天。',
+	'calendar.primer.seasons': '禮儀時期',
+	'calendar.primer.ranks': '一天可以是什麼',
+	'calendar.primer.colours': '顏色',
+	'calendar.primer.cycles': '週期',
+	'calendar.primer.cyclesLead': '三個計數，合起來說明今天所指定的讀經與聖詠。'
 };

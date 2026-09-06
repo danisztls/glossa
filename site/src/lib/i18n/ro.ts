@@ -489,5 +489,60 @@ export const ro: Dictionary = {
 	'calendar.rank.optional-memorial': 'Memorial facultativ',
 	'calendar.rank.commemoration': 'Comemorare',
 	'calendar.rank.sunday': 'Duminică',
-	'calendar.rank.weekday': 'Zi de rând'
+	'calendar.rank.weekday': 'Zi de rând',
+	'calendar.gloss.season.advent':
+		'Cele patru săptămâni dinaintea Crăciunului: pregătire pentru venirea Domnului și începutul anului Bisericii.',
+	'calendar.gloss.season.christmas':
+		'De la Crăciun la Botezul Domnului, celebrând nașterea Domnului și arătarea sa lumii.',
+	'calendar.gloss.season.lent':
+		'Cele patruzeci de zile de la Miercurea Cenușii până la Liturghia de seară a Cinei Domnului: pocăință, milostenie și pregătire pentru Paști.',
+	'calendar.gloss.season.triduum':
+		'Cele trei zile de la seara Joii Sfinte până la seara Duminicii Paștilor — patima, moartea și învierea Domnului, culmea întregului an.',
+	'calendar.gloss.season.easter':
+		'Cele cincizeci de zile de la Paști la Rusalii, celebrate ca o singură sărbătoare — „o singură mare duminică”.',
+	'calendar.gloss.season.ordinary':
+		'Cele treizeci și trei sau treizeci și patru de săptămâni din afara celorlalte timpuri. Nu „oarecare”, ci rânduit: săptămânile sunt numărate, iar Biserica citește pe rând viața și învățătura Domnului. Vine în două părți — după timpul Crăciunului până în Postul Mare, și după Rusalii până în Advent.',
+	'calendar.gloss.rank.solemnity':
+		'Cel mai înalt grad: Paștile, Crăciunul, Înălțarea, patronul unui loc. Se celebrează cu Mărire și Crez și începe în seara dinainte.',
+	'calendar.gloss.rank.feast':
+		'Se celebrează în cuprinsul zilei înseși. Apostolii și evangheliștii, și zilele mai mari ale Domnului și ale Preacuratei.',
+	'calendar.gloss.rank.memorial':
+		'Un sfânt pomenit în ziua sa, în cadrul Liturghiei și Oficiului timpului. Obligatorie acolo unde se ține.',
+	'calendar.gloss.rank.optional-memorial':
+		'Poate fi ținută sau nu, la alegerea preotului sau a comunității. Dacă nu este ținută, ziua este pur și simplu zi de rând.',
+	'calendar.gloss.rank.commemoration':
+		'Ceea ce devine o comemorare în Postul Mare: o rugăciune adăugată Liturghiei de rând, pe care timpul o păstrează în rest întreagă.',
+	'calendar.gloss.rank.sunday':
+		'Sărbătoarea dintâi — ziua Domnului, ținută în fiecare săptămână de la înviere. Doar o solemnitate sau o sărbătoare a Domnului o poate înlocui, iar în Advent, Postul Mare și timpul pascal nici acelea.',
+	'calendar.gloss.rank.weekday':
+		'Zi fără celebrare proprie. Liturghia și Oficiul sunt ale timpului — și tocmai asta face timpul vrednic de cunoscut.',
+	'calendar.gloss.colour.white':
+		'Bucurie. Timpul pascal și timpul Crăciunului, zilele Domnului în afara patimii sale, Preacurata, îngerii și sfinții care nu au fost martiri.',
+	'calendar.gloss.colour.red':
+		'Sânge și foc. Duminica Floriilor și Vinerea Sfântă, Rusaliile, apostolii și evangheliștii, și martirii.',
+	'calendar.gloss.colour.green': 'Timpul de peste an: culoarea speranței și a ceea ce crește.',
+	'calendar.gloss.colour.violet':
+		'Adventul și Postul Mare, și se poartă și la Liturghiile pentru cei răposați.',
+	'calendar.gloss.colour.rose':
+		'Se poartă de două ori pe an — în duminica Gaudete, a treia din Advent, și în duminica Laetare, a patra din Postul Mare — acolo unde postul se luminează și sfârșitul se vede.',
+	'calendar.gloss.colour.black': 'Poate fi purtat la Liturghiile pentru cei răposați.',
+	'calendar.gloss.colour.blue':
+		'Privilegiul albastrului: se poartă la Neprihănita Zămislire în Spania, în Filipine și în puținele alte locuri cărora Sfântul Scaun l-a acordat.',
+	'calendar.gloss.sundayCycle':
+		'Lecturile duminicale se desfășoară pe trei ani — A, B și C — citind pe rând pe Matei, Marcu și Luca, cu Ioan în Postul Mare și în timpul pascal. Ciclul se schimbă în prima duminică din Advent, odată cu anul Bisericii.',
+	'calendar.gloss.weekdayCycle':
+		'Lecturile de peste săptămână se desfășoară pe doi ani, I și II: prima lectură se schimbă, Evanghelia nu. Un an liturgic poartă numele anului civil în care se încheie — anii impari sunt I, cei pari II.',
+	'calendar.gloss.psalterWeek':
+		'Liturgia orelor împarte psalmii pe patru săptămâni, de la I la IV, care se repetă de-a lungul anului. Aceasta este săptămâna ai cărei psalmi sunt cei de azi, pentru oricine se roagă orele.',
+	'calendar.gloss.obligation':
+		'Zi în care credincioșii sunt obligați să ia parte la Liturghie și să se abțină de la muncile care i-ar împiedica. Toate duminicile, și celelalte zile pe care le-a stabilit fiecare conferință episcopală.',
+	'calendar.primer.title': 'Prima dată aici?',
+	'calendar.primer.lead':
+		'Biserica ține un an al ei. Începe cu Adventul, se învârte în jurul Paștilor și dă fiecărei zile un nume, un grad și o culoare — iar acestea hotărăsc ce se roagă și ce se citește în ziua aceea la Liturghie și în Liturgia orelor. Astfel „duminica a douăzeci și treia de peste an” este o adresă: îi spune unui preot, unui cor sau oricui se roagă acasă ce rugăciuni și ce lecturi sunt ale zilei de azi.',
+	'calendar.primer.seasons': 'Timpurile',
+	'calendar.primer.ranks': 'Ce poate fi o zi',
+	'calendar.primer.colours': 'Culorile',
+	'calendar.primer.cycles': 'Ciclurile',
+	'calendar.primer.cyclesLead':
+		'Trei numărători care, împreună, spun ce lecturi și ce psalmi sunt rânduiți pentru azi.'
 };

@@ -482,5 +482,59 @@ export const sl: Dictionary = {
 	'calendar.rank.optional-memorial': 'Neobvezni god',
 	'calendar.rank.commemoration': 'Spomin',
 	'calendar.rank.sunday': 'Nedelja',
-	'calendar.rank.weekday': 'Delavnik'
+	'calendar.rank.weekday': 'Delavnik',
+	'calendar.gloss.season.advent':
+		'Štirje tedni pred božičem: priprava na Gospodov prihod in začetek cerkvenega leta.',
+	'calendar.gloss.season.christmas':
+		'Od božiča do Jezusovega krsta, ko se obhaja Gospodovo rojstvo in njegovo razodetje svetu.',
+	'calendar.gloss.season.lent':
+		'Štirideset dni od pepelnične srede do večerne maše Gospodove večerje: pokora, miloščina in priprava na veliko noč.',
+	'calendar.gloss.season.triduum':
+		'Trije dnevi od večera velikega četrtka do večera velikonočne nedelje — Gospodovo trpljenje, smrt in vstajenje, vrhunec vsega leta.',
+	'calendar.gloss.season.easter':
+		'Petdeset dni od velike noči do binkošti, obhajanih kot en sam praznik — „ena velika nedelja“.',
+	'calendar.gloss.season.ordinary':
+		'Triintrideset ali štiriintrideset tednov zunaj drugih časov. Ne „navaden“, ampak urejen: tedni so šteti, Cerkev pa zaporedoma bere Gospodovo življenje in nauk. Prihaja v dveh delih — po božičnem času do posta, in po binkoštih do adventa.',
+	'calendar.gloss.rank.solemnity':
+		'Najvišja stopnja: velika noč, božič, vnebohod, zavetnik kraja. Obhaja se s Slavo in Vero ter se začne prejšnji večer.',
+	'calendar.gloss.rank.feast':
+		'Obhaja se znotraj samega dne. Apostoli in evangelisti ter večji Gospodovi in Marijini dnevi.',
+	'calendar.gloss.rank.memorial':
+		'Svetnik, ki se ga spominjamo na njegov dan, znotraj maše in bogoslužnega branja tega časa. Obvezen tam, kjer se obhaja.',
+	'calendar.gloss.rank.optional-memorial':
+		'Lahko se obhaja ali ne, po izbiri duhovnika ali občestva. Če se ne obhaja, je dan preprosto delavnik.',
+	'calendar.gloss.rank.commemoration':
+		'To, kar god postane v postnem času: molitev, dodana delavniški maši, ki jo čas sicer ohranja celo.',
+	'calendar.gloss.rank.sunday':
+		'Prvotni praznik — Gospodov dan, obhajan vsak teden od vstajenja. Le slovesni praznik ali Gospodov praznik ga sme izriniti, v adventu, postu in velikonočnem času pa niti ta ne.',
+	'calendar.gloss.rank.weekday':
+		'Dan brez lastnega obhajanja. Maša in bogoslužno branje sta iz danega časa — in prav to dela čas vrednega poznavanja.',
+	'calendar.gloss.colour.white':
+		'Veselje. Velikonočni in božični čas, Gospodovi dnevi zunaj njegovega trpljenja, Marija, angeli in svetniki, ki niso bili mučenci.',
+	'calendar.gloss.colour.red':
+		'Kri in ogenj. Cvetna nedelja in veliki petek, binkošti, apostoli in evangelisti ter mučenci.',
+	'calendar.gloss.colour.green': 'Med letom: barva upanja in tega, kar raste.',
+	'calendar.gloss.colour.violet': 'Advent in postni čas, nosi pa se tudi pri mašah za rajne.',
+	'calendar.gloss.colour.rose':
+		'Nosi se dvakrat na leto — na nedeljo Gaudete, tretjo adventno, in na nedeljo Laetare, četrto postno — kjer se post razsvetli in konec je na vidiku.',
+	'calendar.gloss.colour.black': 'Sme se nositi pri mašah za rajne.',
+	'calendar.gloss.colour.blue':
+		'Prednost modre: nosi se ob Brezmadežnem spočetju v Španiji, na Filipinih in v redkih drugih krajih, ki jim jo je Sveti sedež podelil.',
+	'calendar.gloss.sundayCycle':
+		'Nedeljska berila tečejo v treh letih — A, B in C — in po vrsti berejo Mateja, Marka in Luka, z Janezom skozi postni in velikonočni čas. Cikel se zamenja na prvo adventno nedeljo, skupaj s cerkvenim letom.',
+	'calendar.gloss.weekdayCycle':
+		'Delavniška berila tečejo v dveh letih, I in II: prvo berilo se menja, evangelij ne. Liturgično leto se imenuje po koledarskem letu, v katerem se konča — liha leta so I, soda II.',
+	'calendar.gloss.psalterWeek':
+		'Bogoslužje ur razporeja psalme na štiri tedne, od I do IV, ki se ponavljajo skozi leto. To je teden, čigar psalmi so današnji, za vsakogar, ki moli ure.',
+	'calendar.gloss.obligation':
+		'Dan, ko so verniki dolžni udeležiti se maše in se vzdržati del, ki bi jim to preprečila. Vsaka nedelja in drugi dnevi, ki jih je določila posamezna škofovska konferenca.',
+	'calendar.primer.title': 'Ste tu prvič?',
+	'calendar.primer.lead':
+		'Cerkev ohranja svoje lastno leto. Začne se z adventom, se obrača okrog velike noči in vsakemu dnevu da ime, stopnjo in barvo — te pa odločajo, kaj se ta dan moli in bere pri maši in v bogoslužju ur. Tako je „triindvajseta nedelja med letom“ naslov: duhovniku, zboru ali komur koli, ki moli doma, pove, katere molitve in berila pripadajo današnjemu dnevu.',
+	'calendar.primer.seasons': 'Liturgični časi',
+	'calendar.primer.ranks': 'Kaj je lahko dan',
+	'calendar.primer.colours': 'Barve',
+	'calendar.primer.cycles': 'Cikli',
+	'calendar.primer.cyclesLead':
+		'Trije števci, ki skupaj povedo, katera berila in psalmi so določeni za danes.'
 };

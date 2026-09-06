@@ -1049,19 +1049,20 @@ than remembering to add it to a list.**
 
 **A page joins `CHROME_PATHS` only when its own title and description strings
 exist in EVERY interface language**, which is a translation gate and not a
-routing one — see `site/docs/addresses.md` §Two tables. `/calendarium` is in
-`STATIC_PATHS` and not on that list today, so it answers 200 and is indexable
-at its bare address and is not published. **It is waiting, not excluded** — it
-joins on the day its strings are translated, one line plus a `CHROME_KEYS`
-entry, and `PLAN.md` §Pages that are unpublished holds what it is waiting on.
+routing one — see `site/docs/addresses.md` §Two tables. **Nothing is held out
+by it today** (2026-09-06): the last three joined that day and `PLAN.md` keeps
+what each cost.
 
-**`/catechismus/compendium` AND `/schola` JOINED ON 2026-09-06, AND THE SECOND
-IS WHY THE GATE IS ON THE PAGE AND NOT THE HEAD.** The Compendium needed nine
-`compendium.*` keys in twenty-three dictionaries; `/schola` needed all 58 of
-its own in thirty-six, because two keys would have satisfied `CHROME_KEYS`
-while leaving a cluster in 37 languages over a page of English prose — which
-is the thing the gate exists to refuse. **Where the coded gate and the argued
-one come apart, translate the page.**
+**`/catechismus/compendium`, `/schola` AND `/calendarium` JOINED ON 2026-09-06,
+AND THE LAST TWO ARE WHY THE GATE IS ON THE PAGE AND NOT THE HEAD.** The
+Compendium needed nine `compendium.*` keys in twenty-three dictionaries;
+`/schola` needed all 58 of its own in thirty-six and `/calendarium` all 31 of
+its glosses and its primer in thirty-four, because two keys apiece would have
+satisfied `CHROME_KEYS` while leaving a cluster in 37 languages over a page of
+English prose — which is the thing the gate exists to refuse. Both pages teach
+a vocabulary to the reader who has none, so both are the case where being false
+costs most. **Where the coded gate and the argued one come apart, translate the
+page.**
 
 **A cluster is thirty-five URLs, and the unprefixed one is not the English
 page.** One prefixed member per interface language plus the bare path, which

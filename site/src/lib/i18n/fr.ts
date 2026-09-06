@@ -490,5 +490,61 @@ export const fr: Dictionary = {
 	'calendar.rank.optional-memorial': 'Mémoire facultative',
 	'calendar.rank.commemoration': 'Commémoraison',
 	'calendar.rank.sunday': 'Dimanche',
-	'calendar.rank.weekday': 'Férie'
+	'calendar.rank.weekday': 'Férie',
+	'calendar.gloss.season.advent':
+		'Les quatre semaines avant Noël : préparation à la venue du Seigneur, et commencement de l’année de l’Église.',
+	'calendar.gloss.season.christmas':
+		'De Noël au Baptême du Seigneur, célébrant la naissance du Seigneur et sa manifestation au monde.',
+	'calendar.gloss.season.lent':
+		'Les quarante jours du mercredi des Cendres à la messe du soir de la Cène du Seigneur : pénitence, aumône et préparation à Pâques.',
+	'calendar.gloss.season.triduum':
+		'Les trois jours du soir du Jeudi saint au soir du dimanche de Pâques — passion, mort et résurrection du Seigneur, et sommet de toute l’année.',
+	'calendar.gloss.season.easter':
+		'Les cinquante jours de Pâques à la Pentecôte, célébrés comme une seule fête — « un seul grand dimanche ».',
+	'calendar.gloss.season.ordinary':
+		'Les trente-trois ou trente-quatre semaines hors des autres temps. Non pas « quelconque » mais ordonné : les semaines sont comptées, et l’Église lit d’un bout à l’autre la vie et l’enseignement du Seigneur. Il vient en deux tranches — après le temps de Noël jusqu’au Carême, et après la Pentecôte jusqu’à l’Avent.',
+	'calendar.gloss.rank.solemnity':
+		'Le rang le plus élevé : Pâques, Noël, l’Ascension, le patron d’un lieu. Célébrée avec le Gloria et le Credo, et commençant la veille au soir.',
+	'calendar.gloss.rank.feast':
+		'Célébrée dans la journée même. Les apôtres et les évangélistes, et les grands jours du Seigneur et de Notre-Dame.',
+	'calendar.gloss.rank.memorial':
+		'Un saint fait mémoire en son jour, dans la messe et l’office du temps. Obligatoire là où elle est célébrée.',
+	'calendar.gloss.rank.optional-memorial':
+		'Peut être célébrée ou non, au choix du prêtre ou de la communauté. Si elle ne l’est pas, le jour est simplement la férie.',
+	'calendar.gloss.rank.commemoration':
+		'Ce que devient une mémoire pendant le Carême : une oraison ajoutée à la messe fériale, que le temps garde par ailleurs entière.',
+	'calendar.gloss.rank.sunday':
+		'La fête première — le jour du Seigneur, célébré chaque semaine depuis la résurrection. Seule une solennité ou une fête du Seigneur peut l’écarter, et pendant l’Avent, le Carême et le temps pascal, pas même celles-là.',
+	'calendar.gloss.rank.weekday':
+		'Un jour sans célébration propre. La messe et l’office sont ceux du temps, ce qui rend le temps digne d’être connu.',
+	'calendar.gloss.colour.white':
+		'La joie. Temps pascal et temps de Noël, les jours du Seigneur hors de sa passion, Notre-Dame, les anges, et les saints qui ne furent pas martyrs.',
+	'calendar.gloss.colour.red':
+		'Le sang et le feu. Le dimanche des Rameaux et le Vendredi saint, la Pentecôte, les apôtres et les évangélistes, et les martyrs.',
+	'calendar.gloss.colour.green':
+		'Le temps ordinaire : la couleur de l’espérance et de ce qui croît.',
+	'calendar.gloss.colour.violet':
+		'L’Avent et le Carême, et porté aussi aux messes pour les défunts.',
+	'calendar.gloss.colour.rose':
+		'Porté deux fois l’an — le dimanche Gaudete, troisième de l’Avent, et le dimanche Laetare, quatrième du Carême — là où le jeûne s’allège et où la fin est en vue.',
+	'calendar.gloss.colour.black': 'Peut être porté aux messes pour les défunts.',
+	'calendar.gloss.colour.blue':
+		'Le privilège du bleu : porté pour l’Immaculée Conception en Espagne, aux Philippines et dans les quelques autres lieux auxquels le Saint-Siège l’a accordé.',
+	'calendar.gloss.sundayCycle':
+		'Les lectures dominicales courent sur trois ans — A, B et C — lisant tour à tour Matthieu, Marc et Luc, avec Jean pendant le Carême et le temps pascal. Le cycle tourne au premier dimanche de l’Avent, avec l’année de l’Église.',
+	'calendar.gloss.weekdayCycle':
+		'Les lectures fériales courent sur deux ans, I et II : la première lecture change, l’évangile non. Une année liturgique porte le nom de l’année civile où elle s’achève — les années impaires sont I, les paires II.',
+	'calendar.gloss.psalterWeek':
+		'La liturgie des Heures répartit les psaumes sur quatre semaines, I à IV, qui se répètent au long de l’année. Voici de quelle semaine sont les psaumes d’aujourd’hui, pour qui prie les Heures.',
+	'calendar.gloss.obligation':
+		'Un jour où les fidèles sont tenus de participer à la messe et de s’abstenir des travaux qui les en empêcheraient. Tous les dimanches, et les autres jours que chaque conférence des évêques a déterminés.',
+	'calendar.primer.title': 'Vous découvrez ?',
+	'calendar.primer.lead':
+		'L’Église tient une année qui lui est propre. Elle commence à l’Avent, tourne autour de Pâques, et donne à chaque jour un nom, un rang et une couleur — et ceux-ci décident de ce qui est prié et lu ce jour-là à la messe et à la liturgie des Heures. Ainsi « vingt-troisième dimanche du temps ordinaire » est une adresse : elle dit à un prêtre, à un chœur, ou à qui prie chez soi, quelles prières et quelles lectures sont celles d’aujourd’hui.',
+	'calendar.primer.seasons': 'Les temps',
+	'calendar.primer.ranks': 'Ce qu’un jour peut être',
+	'calendar.primer.colours': 'Les couleurs',
+	'calendar.primer.cycles': 'Les cycles',
+	'calendar.primer.cyclesLead':
+		'Trois compteurs qui, ensemble, disent quelles lectures et quels psaumes sont prévus pour aujourd’hui.'
 };

@@ -359,5 +359,59 @@ export const lv: Dictionary = {
 	'calendar.rank.optional-memorial': 'Brīvas izvēles piemiņas diena',
 	'calendar.rank.commemoration': 'Piemiņa',
 	'calendar.rank.sunday': 'Svētdiena',
-	'calendar.rank.weekday': 'Darbdiena'
+	'calendar.rank.weekday': 'Darbdiena',
+	'calendar.gloss.season.advent':
+		'Četras nedēļas pirms Ziemassvētkiem: sagatavošanās Kunga atnākšanai un Baznīcas gada sākums.',
+	'calendar.gloss.season.christmas':
+		'No Ziemassvētkiem līdz Kunga kristīšanai, svinot Kunga dzimšanu un viņa parādīšanos pasaulei.',
+	'calendar.gloss.season.lent':
+		'Četrdesmit dienas no Pelnu trešdienas līdz Kunga Vakarēdiena vakara Misei: gandarīšana, žēlsirdības dāvanas un sagatavošanās Lieldienām.',
+	'calendar.gloss.season.triduum':
+		'Trīs dienas no Lielās ceturtdienas vakara līdz Lieldienu svētdienas vakaram — Kunga ciešanas, nāve un augšāmcelšanās, visa gada virsotne.',
+	'calendar.gloss.season.easter':
+		'Piecdesmit dienas no Lieldienām līdz Vasarsvētkiem, svinētas kā vieni vienīgi svētki — „viena liela svētdiena”.',
+	'calendar.gloss.season.ordinary':
+		'Trīsdesmit trīs vai trīsdesmit četras nedēļas ārpus pārējiem laikiem. Nevis „parasts”, bet sakārtots: nedēļas ir skaitītas, un Baznīca pēc kārtas lasa Kunga dzīvi un mācību. Tas nāk divos posmos — pēc Ziemassvētku laika līdz gavēnim, un pēc Vasarsvētkiem līdz Adventam.',
+	'calendar.gloss.rank.solemnity':
+		'Augstākā pakāpe: Lieldienas, Ziemassvētki, Debeskāpšana, vietas aizbildnis. Svin ar Gods Dievam un Ticības apliecinājumu, un sākas iepriekšējā vakarā.',
+	'calendar.gloss.rank.feast':
+		'Svin pašā dienā. Apustuļi un evaņģēlisti, kā arī lielākās Kunga un Dievmātes dienas.',
+	'calendar.gloss.rank.memorial':
+		'Svētais, ko piemin viņa dienā, attiecīgā laika Mises un Stundu liturģijas ietvaros. Obligāta tur, kur to svin.',
+	'calendar.gloss.rank.optional-memorial':
+		'Var svinēt vai nesvinēt, pēc priestera vai kopienas izvēles. Ja nesvin, diena ir vienkārši darbdiena.',
+	'calendar.gloss.rank.commemoration':
+		'Tas, par ko piemiņas diena kļūst gavēnī: lūgšana, kas pievienota darbdienas Misei, kuru laiks citādi patur veselu.',
+	'calendar.gloss.rank.sunday':
+		'Pirmatnējie svētki — Kunga diena, svinēta ik nedēļu kopš augšāmcelšanās. Tikai lieli svētki vai Kunga svētki drīkst to aizstāt, bet Adventā, gavēnī un Lieldienu laikā pat tie ne.',
+	'calendar.gloss.rank.weekday':
+		'Diena bez pašas svinēšanas. Mise un Stundu liturģija ir no attiecīgā laika — un tieši tas padara laiku vērtu zināšanas.',
+	'calendar.gloss.colour.white':
+		'Prieks. Lieldienu un Ziemassvētku laiks, Kunga dienas ārpus viņa ciešanām, Dievmāte, eņģeļi un tie svētie, kas nebija mocekļi.',
+	'calendar.gloss.colour.red':
+		'Asinis un uguns. Pūpolsvētdiena un Lielā piektdiena, Vasarsvētki, apustuļi un evaņģēlisti, kā arī mocekļi.',
+	'calendar.gloss.colour.green': 'Parastais liturģiskais laiks: cerības krāsa un tā, kas aug.',
+	'calendar.gloss.colour.violet': 'Advents un gavēnis, un to nēsā arī Misēs par mirušajiem.',
+	'calendar.gloss.colour.rose':
+		'Nēsā divreiz gadā — Gaudete svētdienā, trešajā Adventa, un Laetare svētdienā, ceturtajā gavēņa — kur gavēnis atvieglojas un beigas ir redzamas.',
+	'calendar.gloss.colour.black': 'Drīkst nēsāt Misēs par mirušajiem.',
+	'calendar.gloss.colour.blue':
+		'Zilās krāsas privilēģija: nēsā Vissvētākās Jaunavas Marijas bezvainīgās ieņemšanas svētkos Spānijā, Filipīnās un tajās nedaudzajās citās vietās, kurām Svētais Krēsls to piešķīris.',
+	'calendar.gloss.sundayCycle':
+		'Svētdienas lasījumi rit trīs gados — A, B un C — pēc kārtas lasot Mateju, Marku un Lūkasu, ar Jāni gavēnī un Lieldienu laikā. Cikls mainās pirmajā Adventa svētdienā, kopā ar Baznīcas gadu.',
+	'calendar.gloss.weekdayCycle':
+		'Darbdienu lasījumi rit divos gados, I un II: pirmais lasījums mainās, Evaņģēlijs ne. Liturģiskais gads tiek nosaukts pēc kalendārā gada, kurā tas beidzas — nepāra gadi ir I, pāra gadi II.',
+	'calendar.gloss.psalterWeek':
+		'Stundu liturģija sadala psalmus četrās nedēļās, no I līdz IV, kas atkārtojas visu gadu. Šī ir nedēļa, kuras psalmi ir šodienas, ikvienam, kas lūdzas stundas.',
+	'calendar.gloss.obligation':
+		'Diena, kurā ticīgajiem ir pienākums piedalīties Misē un atturēties no darbiem, kas to traucētu. Katra svētdiena, un pārējās dienas, ko noteikusi attiecīgā bīskapu konference.',
+	'calendar.primer.title': 'Pirmo reizi šeit?',
+	'calendar.primer.lead':
+		'Baznīca tur savu gadu. Tas sākas ar Adventu, griežas ap Lieldienām un dod katrai dienai vārdu, pakāpi un krāsu — un tie izšķir, ko šajā dienā lūdz un lasa Misē un Stundu liturģijā. Tā „divdesmit trešā parastā liturģiskā laika svētdiena” ir adrese: tā pasaka priesterim, korim vai ikvienam, kas lūdzas mājās, kuras lūgšanas un lasījumi pieder šodienai.',
+	'calendar.primer.seasons': 'Liturģiskie laiki',
+	'calendar.primer.ranks': 'Kas diena var būt',
+	'calendar.primer.colours': 'Krāsas',
+	'calendar.primer.cycles': 'Cikli',
+	'calendar.primer.cyclesLead':
+		'Trīs skaitītāji, kas kopā pasaka, kuri lasījumi un psalmi ir noteikti šodienai.'
 };

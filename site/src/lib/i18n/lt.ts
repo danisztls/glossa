@@ -356,5 +356,59 @@ export const lt: Dictionary = {
 	'calendar.rank.optional-memorial': 'Neprivalomas minėjimas',
 	'calendar.rank.commemoration': 'Paminėjimas',
 	'calendar.rank.sunday': 'Sekmadienis',
-	'calendar.rank.weekday': 'Šiokiadienis'
+	'calendar.rank.weekday': 'Šiokiadienis',
+	'calendar.gloss.season.advent':
+		'Keturios savaitės prieš Kalėdas: pasirengimas Viešpaties atėjimui ir Bažnyčios metų pradžia.',
+	'calendar.gloss.season.christmas':
+		'Nuo Kalėdų iki Kristaus Krikšto, švenčiant Viešpaties gimimą ir jo apsireiškimą pasauliui.',
+	'calendar.gloss.season.lent':
+		'Keturiasdešimt dienų nuo Pelenų trečiadienio iki vakarinių Viešpaties Vakarienės Mišių: atgaila, išmalda ir pasirengimas Velykoms.',
+	'calendar.gloss.season.triduum':
+		'Trys dienos nuo Didžiojo ketvirtadienio vakaro iki Velykų sekmadienio vakaro — Viešpaties kančia, mirtis ir prisikėlimas, viso ligurginių metų viršūnė.',
+	'calendar.gloss.season.easter':
+		'Penkiasdešimt dienų nuo Velykų iki Sekminių, švenčiamų kaip viena vienintelė šventė — „vienas didis sekmadienis“.',
+	'calendar.gloss.season.ordinary':
+		'Trisdešimt trys arba trisdešimt keturios savaitės už kitų laikotarpių ribų. Ne „paprastas“, o sutvarkytas: savaitės suskaičiuotos, o Bažnyčia iš eilės skaito Viešpaties gyvenimą ir mokymą. Ateina dviem tarpsniais — po Kalėdų laiko iki gavėnios, ir po Sekminių iki advento.',
+	'calendar.gloss.rank.solemnity':
+		'Aukščiausias laipsnis: Velykos, Kalėdos, Žengimas į dangų, vietos globėjas. Švenčiama su Garbė ir Tikiu, ir prasideda ankstesnį vakarą.',
+	'calendar.gloss.rank.feast':
+		'Švenčiama pačios dienos ribose. Apaštalai ir evangelistai bei didesnės Viešpaties ir Švč. Mergelės Marijos dienos.',
+	'calendar.gloss.rank.memorial':
+		'Šventasis, minimas savo dieną, to laikotarpio Mišiose ir Valandų liturgijoje. Privalomas ten, kur švenčiamas.',
+	'calendar.gloss.rank.optional-memorial':
+		'Gali būti švenčiamas arba ne, kunigo ar bendruomenės pasirinkimu. Nešvenčiamas, diena yra tiesiog šiokiadienis.',
+	'calendar.gloss.rank.commemoration':
+		'Kuo minėjimas tampa gavėnioje: malda, pridėta prie šiokiadienio Mišių, kurias laikotarpis kitaip išlaiko visas.',
+	'calendar.gloss.rank.sunday':
+		'Pirmoji šventė — Viešpaties diena, švenčiama kas savaitę nuo prisikėlimo. Tik iškilmė arba Viešpaties šventė gali ją nustumti, o advente, gavėnioje ir Velykų laike net ir tos ne.',
+	'calendar.gloss.rank.weekday':
+		'Diena be savo šventimo. Mišios ir Valandų liturgija yra to laikotarpio — būtent tai ir daro laikotarpį vertą pažinti.',
+	'calendar.gloss.colour.white':
+		'Džiaugsmas. Velykų ir Kalėdų laikas, Viešpaties dienos už jo kančios ribų, Švč. Mergelė Marija, angelai ir šventieji, kurie nebuvo kankiniai.',
+	'calendar.gloss.colour.red':
+		'Kraujas ir ugnis. Verbų sekmadienis ir Didysis penktadienis, Sekminės, apaštalai ir evangelistai bei kankiniai.',
+	'calendar.gloss.colour.green': 'Eilinis laikas: vilties ir to, kas auga, spalva.',
+	'calendar.gloss.colour.violet': 'Adventas ir gavėnia, taip pat dėvima Mišiose už mirusiuosius.',
+	'calendar.gloss.colour.rose':
+		'Dėvima du kartus per metus — Gaudete sekmadienį, trečiąjį advento, ir Laetare sekmadienį, ketvirtąjį gavėnios — kur pasninkas prašviesėja ir pabaiga jau matoma.',
+	'calendar.gloss.colour.black': 'Gali būti dėvima Mišiose už mirusiuosius.',
+	'calendar.gloss.colour.blue':
+		'Mėlynos privilegija: dėvima per Švč. Mergelės Marijos Nekaltąjį Prasidėjimą Ispanijoje, Filipinuose ir tose nedaugelyje kitų vietų, kurioms Šventasis Sostas ją suteikė.',
+	'calendar.gloss.sundayCycle':
+		'Sekmadienio skaitiniai eina per trejus metus — A, B ir C — paeiliui skaitant Matą, Morkų ir Luką, o Joną gavėnioje ir Velykų laike. Ciklas keičiasi pirmąjį advento sekmadienį, kartu su Bažnyčios metais.',
+	'calendar.gloss.weekdayCycle':
+		'Šiokiadienių skaitiniai eina per dvejus metus, I ir II: pirmasis skaitinys keičiasi, Evangelija ne. Liturginiai metai vadinami pagal kalendorinius metus, kuriais baigiasi — nelyginiai metai yra I, lyginiai II.',
+	'calendar.gloss.psalterWeek':
+		'Valandų liturgija paskirsto psalmes per keturias savaites, nuo I iki IV, kurios kartojasi visus metus. Tai savaitė, kurios psalmės yra šiandienos, kiekvienam, kas kalba valandas.',
+	'calendar.gloss.obligation':
+		'Diena, kurią tikintieji privalo dalyvauti Mišiose ir susilaikyti nuo darbų, kurie tam trukdytų. Kiekvienas sekmadienis ir kitos dienos, kurias nustatė kiekviena vyskupų konferencija.',
+	'calendar.primer.title': 'Pirmą kartą čia?',
+	'calendar.primer.lead':
+		'Bažnyčia laikosi savo metų. Jie prasideda adventu, sukasi apie Velykas ir kiekvienai dienai duoda vardą, laipsnį ir spalvą — o šie nulemia, kas tą dieną meldžiama ir skaitoma Mišiose bei Valandų liturgijoje. Taigi „dvidešimt trečiasis eilinis sekmadienis“ yra adresas: jis kunigui, chorui ar kiekvienam, kas meldžiasi namuose, pasako, kurios maldos ir kurie skaitiniai priklauso šiandienai.',
+	'calendar.primer.seasons': 'Liturginiai laikotarpiai',
+	'calendar.primer.ranks': 'Kuo diena gali būti',
+	'calendar.primer.colours': 'Spalvos',
+	'calendar.primer.cycles': 'Ciklai',
+	'calendar.primer.cyclesLead':
+		'Trys skaitikliai, kurie kartu pasako, kurie skaitiniai ir psalmės skirti šiandienai.'
 };

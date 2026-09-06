@@ -37,51 +37,43 @@ are published**, the rest being held in `national/held.ts` with the count of
 days each still differs on. What follows is what that work located and
 deliberately did not do.
 
-### Pages that are unpublished, and what each is waiting on
+### Every chrome page is published, and what the last three cost
 
-**`/calendarium` is in `STATIC_PATHS` and not in `CHROME_PATHS`**
-(`site/src/lib/route-manifest.ts`). It answers 200 and is indexable at its bare
-address, and it does not take a language prefix, sit in an `hreflang` cluster,
-appear in a sitemap row, or get a per-page `<title>` or description at the edge —
-`scripts/route-titles.mjs` keys its map off that second list.
+**Nothing is in `STATIC_PATHS` and out of `CHROME_PATHS` any more**
+(`site/src/lib/route-manifest.ts`). This section held a table of pages that
+answered 200 at their bare address and were otherwise unclaimed — no language
+prefix, no `hreflang` cluster, no sitemap row, no per-page `<title>` at the
+edge, `scripts/route-titles.mjs` keying its map off the second list. It is
+kept because the rule the table enforced is the thing to carry.
 
-**This is a translation gate, not an omission, and it started as one.** The
-omission was real on 2026-09-04: `/calendarium` and `/ius-canonicum` were in
-NEITHER table and answered 404 to every cold load. Fixing that separated the
-two questions a chrome path asks — is every word on the page the interface, and
-is the interface actually written — and what remains below passes the first and
-fails the second. `chromeNames` deliberately does not fall back to English,
-because a cluster whose Portuguese member is described in English tells a search
-engine the page is Portuguese and then serves English. `/ius-canonicum` was
-published the same day precisely because its `canonLaw.landing.*` keys were
-already in all 37.
+**It was a translation gate, and it started as an omission.** On 2026-09-04
+`/calendarium` and `/ius-canonicum` were in NEITHER table and answered 404 to
+every cold load. Fixing that separated the two questions a chrome path asks —
+is every word on the page the interface, and is the interface actually
+written — and `/ius-canonicum` was published the same day precisely because its
+`canonLaw.landing.*` keys were already in all 37. `chromeNames` deliberately
+does not fall back to English: a cluster whose Portuguese member is described
+in English tells a search engine the page is Portuguese and then serves
+English.
 
-| page           | waits on                                          | in                                      |
-| -------------- | ------------------------------------------------- | --------------------------------------- |
-| `/calendarium` | 31 `calendar.*` keys — the glosses and the primer | en, pt, la; its 44 labels are in all 37 |
-
-**It costs one line in `CHROME_PATHS` plus a `CHROME_KEYS` entry in
-`scripts/route-titles.mjs`, and nothing else moves.** `sitemap.test.ts` and
-`shell-head.test.ts` are written as arithmetic over `CHROME_PATHS.length`, so
-they follow; `assertNamed` fails the sync if a key is missing anywhere, which
-is what makes publishing early impossible rather than merely unwise. It depends
-on nothing else in this file.
-
-**TWO PAGES LEFT THIS TABLE ON 2026-09-06, AND THE SECOND SET THE RULE.**
+**THE LAST THREE WENT ON 2026-09-06, AND THE SECOND AND THIRD SET THE RULE.**
 `/catechismus/compendium` needed nine `compendium.*` keys in twenty-three
-dictionaries. `/schola` needed all 58 of its own in thirty-six — the head takes
-only a title and a tagline, so two keys apiece would have opened the gate and
-declared, in 37 languages, a page whose remaining 56 keys are English teaching
-prose. **The coded gate is on the head; the claim a cluster makes is about the
-page**, and where they come apart the page is what has to be true.
+dictionaries. `/schola` needed all 58 of its own in thirty-six, and
+`/calendarium` all 31 of its glosses and its primer in thirty-four — in both
+cases the head takes only a title and a tagline, so two keys apiece would have
+opened the coded gate and declared, in 37 languages, a page whose remaining
+prose is English. **The coded gate is on the head; the claim a cluster makes is
+about the page**, and where they come apart the page is what has to be true.
 
-**`/schola` was the one to weigh separately, and translation was the way out.**
-The learning portal is written FOR the reader who has no vocabulary yet
-(`docs/research/audiences.md` §5), so shipping it as an English cluster would
-have been false exactly where being false costs most — and leaving it
-unpublished cost that same reader a page a search engine could not offer them
-in their language. Both directions were bad, which is what made writing the
-58 keys the answer rather than a nicety.
+**`/schola` and `/calendarium` are the same case twice, and both are the case
+where translating is the only way out.** The learning portal is written FOR the
+reader who has no vocabulary yet (`docs/research/audiences.md` §5); the
+calendar's 31 remaining keys are the ones that TEACH a vocabulary — what a
+solemnity is, what violet means, what a psalter week counts. Shipping either as
+an English cluster would have been false exactly where being false costs most,
+and leaving either unpublished cost that same reader a page a search engine
+could not offer them in their language. Both directions were bad, which is what
+made writing the strings the answer rather than a nicety.
 
 ### Decisions only the person directing the work can take
 
