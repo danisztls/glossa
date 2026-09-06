@@ -2752,6 +2752,13 @@ Simplified). It replaced `lang.startsWith('pt') ? 'pt-PT' : 'en-US'`, written
 when the site had two interface languages — so every reader who was not
 Portuguese was shown English dates for a year (§docs/languages.md).
 
+**A THIRD REASON TO ADD AN INTERFACE LANGUAGE ARRIVED 2026-09-06**, and it is
+neither the corpus nor the reach tier: `ja`, `mt` and `no` joined because
+`calendar/names/` names every day of the year in them, read off the calendars
+GCatholic publishes for Japan, Malta and Norway. A whole surface the site can
+answer, and no chrome to put around it — the Malagasy combination arriving from
+the calendar's side rather than the corpus's.
+
 **Still do not derive one list from the other.** The lists equalized and
 separated four times in eight days; the rule survives the flip and reads the
 other way now: an interface language is no longer evidence that the corpus
