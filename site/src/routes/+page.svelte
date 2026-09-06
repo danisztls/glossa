@@ -321,10 +321,9 @@
 				<!-- The one control on this page, and the same one `/calendarium`
 				     carries: a reader who keeps Brazil's calendar meets it here
 				     first, and correcting a wrong guess is one press in the place
-				     the guess is showing. -->
-				<div class="picker">
-					<CalendarMenu value={territory} lang={i18n.lang} onchoose={choose} />
-				</div>
+				     the guess is showing. Bare, with no wrapper of its own — the
+				     card's corner sizes and skins what it is given. -->
+				<CalendarMenu value={territory} lang={i18n.lang} onchoose={choose} />
 			{/snippet}
 			<!-- The way to the calendar is a glyph in the card's own corner, not a
 			     line under it — `LiturgicalDayCard`'s `more` prop says why, and
@@ -440,23 +439,6 @@
 	 */
 	.today {
 		margin-top: 1.5rem;
-	}
-	/*
-	 * THE PICKER WEARS THE PAGE'S FURNITURE SIZE, not the site header's.
-	 * `.menu-trigger` is a 2.25rem square at 1rem (styles/menus.css) and
-	 * `/calendarium`'s control row sets its own to 2rem at 0.8rem, on the
-	 * argument that a page's own controls are smaller than the chrome's. This
-	 * is the same control in the same card, so it is the same size — the two
-	 * cards are what a reader compares. `.wide` is the padding for a trigger
-	 * carrying a label rather than an icon; naming the value here keeps it
-	 * beside the height it goes with.
-	 */
-	.picker :global(.menu-trigger) {
-		height: 2rem;
-		font-size: 0.8rem;
-	}
-	.picker :global(.menu-trigger.wide) {
-		padding-inline: 0.6rem;
 	}
 
 	/* THE CATALOGUE DRAWS ITSELF, so this page styles none of it —

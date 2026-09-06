@@ -574,6 +574,24 @@ DAY, the card is that answer, and controls that change a thing belong to it.
 the name on a phone (`column-reverse`, so they stay last in the DOM and a
 screen reader still meets the day first).
 
+**EVERYTHING IN THAT CORNER IS BORDERLESS AND THE PICKER IS A FLAG ALONE**
+(2026-09-06). Boxed, the controls were three bordered rectangles a centimetre
+inside a bordered card, which reads as a second card rather than as the
+furniture of the first; muted until pointed at, they say "control" quite as
+clearly at that size, and `.day-more` was already drawn that way. The picker
+lost its name for a related reason and one of its own: `General Roman Calendar`
+is up to sixteen characters in a row that has to fit beside a celebration's
+name, and the flag is the same answer at a glyph's width — the name stays as
+the `title` and the `aria-label`, which is the rule every icon-only control on
+the site follows. The row now fits on one line on a phone, where it wrapped to
+two.
+
+**The home card prints the date where `/calendarium` keeps its date field.**
+Same corner, same height, first item — that page's first control answers WHICH
+DAY and this says which day it is. A card that shows one day and cannot be
+asked for another has no field to put there, so it is a `<p>` and not a
+control.
+
 **Which is what let the home page keep a calendar at all.** It showed the
 general calendar to everyone, and the reason recorded on the page was that the
 territory lived in `?c=` and nowhere else — but the durable half of that

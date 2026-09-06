@@ -130,9 +130,6 @@
 <article class="day">
 	<header>
 		<div class="head-text">
-			{#if showDate}
-				<p class="date">{formatPromulgated(day.date, lang)}</p>
-			{/if}
 			{#if heading === 'h1'}
 				<h1>{name}</h1>
 			{:else}
@@ -185,8 +182,18 @@
 			below) while staying LAST in the DOM, so a screen reader and a
 			keyboard meet the day before the controls that change it.
 		-->
-		{#if controls || more}
+		{#if showDate || controls || more}
 			<div class="corner">
+				<!-- THE SAME PLACE `/calendarium` KEEPS ITS DATE FIELD, and this is
+				     the reading of it: that page's first control answers WHICH DAY
+				     and this says which day it is. A card that shows one day and
+				     cannot be asked for another has no field to put there, so it
+				     prints the date instead — which is why this is a `<p>` wearing
+				     the row's height and not a control wearing its own. It led the
+				     text column until 2026-09-06, above the celebration's name. -->
+				{#if showDate}
+					<p class="date">{formatPromulgated(day.date, lang)}</p>
+				{/if}
 				{#if controls}
 					<div class="controls">{@render controls()}</div>
 				{/if}
@@ -327,6 +334,40 @@
 		gap: 0.4rem;
 	}
 	/*
+	 * EVERY CONTROL IN THIS CORNER IS BORDERLESS, which is `.day-more`'s look
+	 * below applied to the company it keeps. Boxed, they were three or four
+	 * bordered rectangles inside a bordered card, a centimetre from its
+	 * corner: a box inside a box reads as a second card rather than as the
+	 * furniture of the first. Muted at rest and answering with the accent over
+	 * an elevated ground says "control" quite as clearly at this size, and it
+	 * is what the reading bar already does with its own toggles.
+	 *
+	 * `.menu-trigger` is the CHROME's vocabulary (`styles/menus.css`) and is
+	 * overridden rather than avoided: the class carries the shape, the
+	 * keyboard behaviour and the panel's positioning, and only its skin is
+	 * wrong in here. The declarations below are exactly that skin — border,
+	 * ground, colour, and the square shrunk from the header's 2.25rem to the
+	 * 1.75rem the glyph and the date share.
+	 */
+	.corner :global(.menu-trigger) {
+		width: 1.75rem;
+		height: 1.75rem;
+		border-color: transparent;
+		background: transparent;
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
+	}
+	.corner :global(.menu-trigger.wide) {
+		width: auto;
+		padding-inline: 0.4rem;
+	}
+	.corner :global(.menu-trigger:hover),
+	.corner :global(.menu-trigger:focus-visible) {
+		border-color: transparent;
+		background: var(--color-bg-elevated);
+		color: var(--color-accent);
+	}
+	/*
 	 * 44rem is where `/calendarium`'s three controls stop leaving a readable
 	 * measure beside them — a date field, Today and the picker are about 20rem
 	 * and a saint with an office is longer than that. The home page's picker
@@ -371,10 +412,19 @@
 		color: var(--color-accent);
 		background: var(--color-bg-elevated);
 	}
+	/* A row item now rather than a line of its own: the height the controls
+	   beside it take, so the corner has one baseline, and `nowrap` because a
+	   date broken over two lines would set the height of everything in it. */
 	.date {
+		display: flex;
+		align-items: center;
+		block-size: 1.75rem;
 		margin: 0;
-		font-size: 0.85rem;
+		padding-inline: 0.15rem;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
 		color: var(--color-text-muted);
+		white-space: nowrap;
 	}
 	h1,
 	h2 {

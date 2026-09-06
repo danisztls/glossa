@@ -271,7 +271,7 @@
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
-		class="menu-trigger wide calendar-trigger"
+		class="menu-trigger calendar-trigger"
 		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={`${t('calendar.calendar')}: ${currentName}`}
@@ -280,7 +280,6 @@
 		onpointerenter={() => void ensureNationalCalendars()}
 	>
 		<span class="flag" aria-hidden="true">{currentFlag}</span>
-		<span class="trigger-name">{currentName}</span>
 	</button>
 	{#if menu.open}
 		<!-- A `<div>` rather than the `<ul>` the plain panels are: this one holds
@@ -361,18 +360,24 @@
 </div>
 
 <style>
-	/* Wide enough for the longest of the names it prints ("General Roman
-	   Calendar"), and capped so a long one in another language truncates
-	   rather than pushing the controls row into a second line. */
+	/*
+	 * THE FLAG IS THE WHOLE TRIGGER, and it printed the calendar's name beside
+	 * it until 2026-09-06. The name is what the control is FOR, so this is not
+	 * an obvious trade — what settles it is where the control now lives. In
+	 * the corner of the day card it shares a row with the date and the way
+	 * out, and "General Roman Calendar" is up to sixteen characters that push
+	 * that row onto a second line on a phone and crowd the celebration's name
+	 * on a screen. A flag is the same answer at a glyph's width, and it is
+	 * what the reader will scan for in the panel it opens.
+	 *
+	 * NOTHING IS TAKEN FROM A READER WHO CANNOT SEE IT. The name is the
+	 * `aria-label` and the `title` — announced, and on hover — which is the
+	 * rule every icon-only control on this site follows (`.day-more`'s own
+	 * note). It is also the trigger's only text, so `.menu-trigger` rather
+	 * than `.menu-trigger.wide`: that modifier is the padding a LABEL needs.
+	 */
 	.calendar-trigger {
-		max-width: min(16rem, 60vw);
 		font-size: 0.85rem;
-	}
-
-	.trigger-name {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.calendar-panel {

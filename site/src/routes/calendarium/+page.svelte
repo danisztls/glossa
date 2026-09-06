@@ -512,36 +512,30 @@
 		margin-bottom: 1.1rem;
 	}
 	/*
-	 * EVERY CONTROL ON THIS PAGE, ONE HEIGHT AND ONE PADDING, smaller than the
-	 * chrome's default — this row is a page's own furniture rather than the
-	 * site header's, and `CalendarMonth`'s two month arrows answer to the same
-	 * rule from their own file.
+	 * THE HEIGHT AND THE PADDING ARE THE CARD'S NOW. `LiturgicalDayCard`'s
+	 * `.corner` sizes and skins every `.menu-trigger` inside it — 1.75rem,
+	 * borderless, muted until pointed at — and the rules that used to be here
+	 * were the same declarations one specificity tie away from it. What this
+	 * page still owns is the ROW (above) and the field below, which is its own
+	 * markup and wears no shared class.
 	 *
-	 * THE PADDING HAS TO BE SAID HERE BECAUSE `.menu-trigger` IS A SQUARE.
-	 * That class is an icon button — `width: 2.25rem; padding: 0` — and `.wide`
-	 * is what a trigger carrying a LABEL wears (`styles/menus.css`). Today was
-	 * wearing the square: as a flex item it could not shrink below its own
-	 * word, so it came out exactly as wide as `Today` with no side padding at
-	 * all, beside a calendar button with 0.6rem and a date field with 0.5rem.
-	 * Three controls, three paddings, in a row four centimetres wide. One
-	 * value, named once, and the date face below takes it too.
+	 * The one place that loses is the orphan row: a date outside any year this
+	 * can build renders the controls outside a card, where the corner's skin
+	 * does not reach and `.menu-trigger`'s own chrome shows through. That is
+	 * the state where a reader needs the date field to work and nothing else,
+	 * and it is reached by typing a year in five digits.
 	 */
 	.control-row {
-		--control-padding: 0.6rem;
-	}
-	.control-row :global(.menu-trigger) {
-		height: 2rem;
-		font-size: 0.8rem;
-	}
-	.control-row :global(.menu-trigger.wide) {
-		padding-inline: var(--control-padding);
+		--control-padding: 0.4rem;
 	}
 	/*
 	 * DELIBERATELY NOT WEARING `.menu-trigger`, though it restates that class's
 	 * geometry: this is a field the reader types into, not a control that opens
 	 * something, and borrowing the class would make every future edit to the
 	 * chrome's triggers an edit to a date picker as well. What is shared is the
-	 * geometry and the tokens, which is the part that has to agree.
+	 * geometry and the tokens, which is the part that has to agree — including
+	 * the borderless skin the card gives everything in its corner, which this
+	 * matches by hand for the same reason it matches the height by hand.
 	 *
 	 * `font: inherit` is not used here — see styles/base.css on why a control
 	 * that inherits the shorthand and then sets `font-size` comes out 1.5 line
@@ -550,17 +544,18 @@
 	.date-field {
 		position: relative;
 		display: inline-flex;
-		height: 2rem;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		background: var(--color-bg-elevated);
-		color: var(--color-text);
+		height: 1.75rem;
+		border: 1px solid transparent;
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-text-muted);
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		line-height: 1;
 	}
 	.date-field:hover {
-		border-color: var(--color-accent);
+		background: var(--color-bg-elevated);
+		color: var(--color-accent);
 	}
 	/*
 	 * THE INPUT IS THE CONTROL AND THE SPAN IS THE FACE. The input covers the
