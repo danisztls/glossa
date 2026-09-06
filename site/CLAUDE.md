@@ -533,14 +533,16 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   belongs there, on a route in `/schola`; it does **not** get a bar entry. The
   bar was one item per work until 2026-09-04 and had reached seven.
 - **THE FOOTER IS THE FULL INDEX, WHICH IS WHAT LETS THE BAR STOP** (2026-09-06):
-  two columns above the imprint, works then pages, drawn from `visibleShelves()`
-  and a four-entry `FOOTER_PAGES` beside `NAV_ITEMS`. A bar has one line and a
-  footer has none, so they answer different questions rather than being one list
-  at two lengths — do not compose either from the other, and do not repeat
-  `/colophon` there (it is the imprint's link, next to the disclaimer it
-  explains). Every label was already in all 37 dictionaries; the three new keys
-  are the column heads and the `<nav>`'s own name, which must differ from
-  `nav.menu` or two landmarks announce as "Menu".
+  two columns at the end of the footer's band, works then pages, drawn from
+  `visibleShelves()` and a five-entry `FOOTER_PAGES` beside `NAV_ITEMS` (the
+  band itself is §Languages). A bar has one line and a footer has none, so they
+  answer different questions rather than being one list at two lengths — do not
+  compose either from the other. `/colophon` closes the Pages column
+  (2026-09-06, by direction), having been the imprint's own line; keep it in the
+  footer wherever it goes, since `footer.notEndorsed` is short on the strength
+  of the full statement being in the same band. Every label was already in all
+  37 dictionaries; the three new keys are the column heads and the `<nav>`'s own
+  name, which must differ from `nav.menu` or two landmarks announce as "Menu".
 - **`Learn` names `/schola`, a guide, and not the Catechism.** It pointed at
   `/catechismus` for one day: a table of divisions is unusable by the reader
   the word was chosen for, who cannot yet name a part (`audiences.md` §5). The
@@ -2845,28 +2847,47 @@ provoked by the NAME and the name is in the wordmark at every address the site
 answers, so the disclaimer has to reach as far as it does. It says "the Holy
 See" and not "the Vatican" (the state, not the authority) nor "ecclesiastical
 approbation" (exact, and unreadable in a footer). **It is this short because of
-where it sits** — the colophon link is the line directly above it, so it need
-not carry its own context; move it away from that link and it would have to say
-more. Every dictionary carries it.
+where it sits** — the colophon is in the same band, so it need not carry its own
+context; move the colophon out of the FOOTER and it would have to say more.
+Every dictionary carries it.
 
-**The lines are one chrome, and that is load-bearing rather than lazy.**
-Colophon link, motto, disclaimer — one column, `.site-footer p` in one rule,
-spacing from `line-height` rather than margins so the even leading is one
-number. Give the motto its own face or step and the stack reads as a heading
-with two captions instead of an imprint. **The build id was a fourth line here
-until 2026-09-06 and is now the foot of `AdvancedSheet`** — a dialog opens over
-the document already loaded, so it answers "did this update land" about the
+**The lines are one chrome, and that is load-bearing rather than lazy.** Motto
+and disclaimer — one column, `.site-footer p` in one rule, spacing from
+`line-height` rather than margins so the even leading is one number. Give either
+its own FACE or its own STEP and the stack reads as a heading with a caption
+instead of an imprint. **The colophon link was the first of the three and joined
+the index on 2026-09-06** (by direction): it is a page like the four beside it
+and looks like one, and what it cost is the adjacency the paragraph above was
+argued from — a column over rather than a line up. **The motto is set as a
+DEVICE** — `font-variant-caps: small-caps`, 0.06em of tracking, full-strength
+ink, and none of the three channels the rule forbids. Weight was the
+alternative and is wrong at 0.8rem, where bold reads as emphasis inside a
+sentence; this is a formula, not a sentence. **The build id was a fourth line
+here until 2026-09-06 and is now the foot of `AdvancedSheet`** — a dialog opens
+over the document already loaded, so it answers "did this update land" about the
 page in front of you exactly as the footer did, without spending a line of the
 imprint on the one reader who asks.
 
-**The colophon link is the one exception, and it was made by DELETING.** The
-footer overrode `a` back to `--color-text-muted` with `text-decoration: none`,
-which left the only link in it indistinguishable from the two statements below
-— an affordance disguised as a caption. The override is gone, so `base.css`'s
-own rule applies: `--color-link`, underline at 35% of its colour, solid on
-hover, like every other link on the site. **Reach for the global rule before
-writing a footer-local one**; the size and leading are untouched, so the stack
-is still one chrome and only the clickable thing looks clickable.
+**No link is left in the imprint to make an exception for, and the rule the
+exception taught is the one to keep: REACH FOR THE GLOBAL RULE BEFORE WRITING A
+FOOTER-LOCAL ONE.** That block once overrode `a` back to `--color-text-muted`
+with no underline, which left the footer's only link indistinguishable from the
+statements under it — an affordance disguised as a caption — and the fix was to
+DELETE the override rather than add anything. It is the standing direction for
+the next link anybody puts in an imprint.
+
+**The index's links are the other half of the same rule.** A column of names is
+a list-shaped surface, so it drops the resting underline as the header's nav and
+the index cards do — and **the hover is that underline ARRIVING**, which is
+`base.css`'s own event one step further rather than a footer-local invention:
+only `text-decoration-line` is declared, so the colour comes from `a:hover` and
+the thickness and offset from `a`, and the mark under a footer link is the mark
+under a link in a Catechism paragraph. Write the LINE and never the
+`text-decoration` shorthand, which resets those two with it. The ink moves to
+`--color-text` beside it, because a hover that were colour alone would say
+nothing under `data-mono`; no ground, though the header's SHEET uses one — those
+rows are full-width tap targets and these are text-width links, where a ground
+draws a box the size of the word and reads as a chip.
 
 **`JerusalemCross.svelte` is inline SVG because an `<img>` cannot see the
 theme.** `<html>` carries four independent axes — `data-theme`, `data-sepia`,
@@ -2892,24 +2913,33 @@ five-cross figure and nothing else**: no crown, no motto ring, no red-on-white
 in the Order of the Holy Sepulchre's arrangement, because a mark drifting
 toward a specific body's ARMS would contradict the sentence beside it.
 
-**The mark and the lines are ONE centred group in TWO GRID COLUMNS**
-(`.imprint`), and the two tracks are the point: the mark is beside the text
-without being in with it, so it cannot reflow the lines or shift the one it
-sits level with. A flex row did this for one revision and `flex-wrap` let the
-mark drop onto the text's line at narrow widths — exactly the interference two
-tracks rule out. `justify-content: center` centres the PAIR of tracks rather
-than stretching them, which is what holds the group on the footer's midline
-while each column stays its own content's width. Written in reading order and
-never positioned, so **RTL needs nothing** — the columns reverse and the mark
-lands on the right in Arabic and Hebrew.
+**The mark and the lines are ONE group in TWO GRID COLUMNS** (`.imprint`), and
+the two tracks are the point: the mark is beside the text without being in with
+it, so it cannot reflow the lines or shift the one it sits level with. A flex
+row did this for one revision and `flex-wrap` let the mark drop onto the text's
+line at narrow widths — exactly the interference two tracks rule out. Written in
+reading order and never positioned, so **RTL needs nothing** — the columns
+reverse and the mark lands on the inline-start side in Arabic and Hebrew.
+
+**THE FOOTER IS ONE BAND ON THE HEADER'S MARGINS, AND IT WAS TWO CENTRED STACKS
+FOR ONE COMMIT** (2026-09-06): `.footer-inner` restates `.header-bar`'s
+container — 90rem, `margin-inline: auto`, 1rem inline — with the imprint at one
+edge and the index at the other, so the cross sits under the wordmark and the
+page is bracketed by two bands with one set of margins. **A centred pair of
+columns of unequal width does not put its text on the page's midline**, so the
+index, the imprint and the imprint's own lines each centred on a different axis
+and there was no rule for any of them to be wrong against. An edge is what a
+column of links can be measured to. Below 46rem it stacks and re-centres, one
+edge being nothing to align to. **The container is a resemblance maintained by
+hand** — change one band's three declarations and change the other's.
 
 **It was absolutely positioned in the inline-start lane for one revision**, and
 the cost was a trick worth not reintroducing: `.site-footer` needed outsized
 SYMMETRIC inline padding, whose only job was to reserve that lane on both sides
 so the centred lines stayed on the footer's true midline. Pad one side and
 every line shifts by half the difference — wrong in a way nobody can name. With
-the mark in the flow there is no lane, so the padding is back to `1.25rem` and
-a `max-width: 30rem` restack rule is gone entirely.
+the mark in the flow there is no lane, and a `max-width: 30rem` restack rule is
+gone entirely.
 
 `Ad maiorem Dei gloriam` is untranslated and carries `lang="la"`, the only
 Latin in the chrome. None of it prints — `.site-footer` is in `print.css`'s

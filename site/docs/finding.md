@@ -60,7 +60,10 @@ them.
 
 **Two columns, and the split is the one `/bibliotheca` already draws** — a work
 is text somebody else wrote and this site reproduces, a page is something this
-site made. The works column is `visibleShelves()`, the same call the catalogue
+site made. They sit at the end of the footer's band, opposite the imprint, on
+the header's own margins; `site/CLAUDE.md` §Languages carries that arrangement
+and what the stacked-and-centred version of it got wrong. The works column is
+`visibleShelves()`, the same call the catalogue
 and the home page make and in the same order: a second hand-written list of
 works parts company with the first one the next time something is ingested, and
 the gate matters here for the reason it matters there — a link to a work a
@@ -73,12 +76,25 @@ header it is a glyph, which is a control rather than a name — this is the only
 place on the site that says the word), and the Bible and the Prayers are on the
 bar and in the works column, where they belong as texts.
 
-**`/colophon` is not in either column and no Home entry was added.** The
-colophon is the imprint's own link three lines down, where `footer.notEndorsed`
-needs it — that one-line disclaimer can be one line only because the full
-statement is adjacent, and listing it twice in one footer moves it away from the
-sentence it explains. Home is the argument the bar already makes about the brand
-link, one screen further from it.
+**`/colophon` closes the Pages column, and it was the imprint's own line for a
+day** (2026-09-06, by direction). It is a page like the four above it and now
+looks like one. What it costs is the adjacency `footer.notEndorsed` was written
+against: that one-line disclaimer is the one-sentence form of
+`colophon.whatThisIsStanding` and was short because the full statement sat
+directly above it. It is still in this footer and still one click away, a column
+over rather than a line up — the weaker form of the same argument, and why the
+wording does not change. **Move the colophon out of the footer altogether and
+the disclaimer has to carry its own context.** No Home entry was added: that is
+the argument the bar already makes about the brand link, one screen further from
+it.
+
+**The imprint kept the mark, the motto and the disclaimer, and the motto is now
+set as a DEVICE** — small capitals, 0.06em of tracking, full-strength ink. The
+block's standing rule is that no line in it may take its own size or its own
+face, or the stack reads as a heading with a caption; small capitals spend
+neither. Weight was the alternative and is wrong at this size, where bold reads
+as emphasis inside a sentence — and this is a formula, not a sentence. With the
+colophon link gone there is nothing else in the block for the eye to start on.
 
 **It cost three English strings and not one link.** Every name in it was already
 written in all thirty-seven languages, because the footer invents no destination
