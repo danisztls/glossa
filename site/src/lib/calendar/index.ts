@@ -8,7 +8,7 @@
  */
 
 import { type DayNumber, fromDayNumber, parseIsoDate, toDayNumber } from './computus';
-import { residentCelebrationName } from './names.svelte';
+import { residentCelebrationName, residentTemporalName } from './names.svelte';
 import { adventSunday } from './temporal';
 import type { CalendarOptions, Celebration, LiturgicalDay } from './types';
 import { buildYear } from './year';
@@ -128,18 +128,25 @@ export function today(options: CalendarOptions = {}): LiturgicalDay | undefined 
  * stands behind wins; in practice they do not overlap, because `ROWS` names
  * nothing outside those three and no `overrides` row carries a name.
  *
- * The table is consulted whether or not it is resident and never fetches: a
- * miss on the first render falls through to English and re-renders when the
- * chunk lands (`residentCelebrationName`).
+ * A DAY NAMED BY RULE IS COMPOSED AND NOT LOOKED UP. `temporal.ts` names 285
+ * days of a 365-day year by formula, so what the vernacular table holds for
+ * those is the pieces and the pattern, and `parts` is what the celebration
+ * carries to say which (`residentTemporalName`). Only a celebration named by
+ * rule has it; everything else answers from the table above.
+ *
+ * Both tables are consulted whether or not they are resident and neither ever
+ * fetches: a miss on the first render falls through to English and re-renders
+ * when the chunk lands (`residentCelebrationName`).
  */
 export function celebrationName(
-	celebration: { id: string; names: Celebration['names'] },
+	celebration: { id: string; names: Celebration['names']; parts?: Celebration['parts'] },
 	lang: string
 ): string {
 	const base = lang.split('-')[0] as keyof Celebration['names'];
 	return (
 		celebration.names[base] ??
 		residentCelebrationName(base, celebration.id) ??
+		(celebration.parts && residentTemporalName(base, celebration.parts)) ??
 		celebration.names.en ??
 		celebration.names.la ??
 		celebration.names.pt ??

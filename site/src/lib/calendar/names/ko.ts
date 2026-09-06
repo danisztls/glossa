@@ -8,7 +8,13 @@
  * 217 of the Calendar's 218. The one absent is `justin`, which Korea keeps
  * someone else on the day of, so this edition never prints it and it goes on
  * falling back to English — which is what `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `koTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const ko: Record<string, string> = {
 	'basil-gregory': '성 대 바실리오와 나지안조의 성 그레고리오 주교 학자',
 	'holy-name-of-jesus': '예수 성명',
@@ -226,5 +232,94 @@ export const ko: Record<string, string> = {
 	'john-evangelist': '성 요한 사도 복음사가',
 	'holy-innocents': '죄 없는 아기 순교자들',
 	'thomas-becket': '성 토마스 베케트 주교 순교자',
-	'sylvester-i': '성 실베스테르 1세 교황'
+	'sylvester-i': '성 실베스테르 1세 교황',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: '주님 성탄',
+	'holy-family': '예수, 마리아, 요셉의 성가정',
+	'mary-mother-of-god': '천주의 성모 마리아',
+	epiphany: '주님 공현 대축일',
+	'baptism-of-the-lord': '주님 세례 축일',
+	'ash-wednesday': '재의 수요일',
+	'palm-sunday': '주님 수난 성지주일',
+	'holy-thursday': '주님 만찬 성목요일',
+	'good-friday': '주님 수난 성금요일',
+	'holy-saturday': '성토요일',
+	'easter-sunday': '주님 부활 대축일',
+	'easter-2-sunday': '부활 제2주일 (하느님의 자비 주일)',
+	ascension: '주님 승천',
+	pentecost: '성령 강림',
+	trinity: '지극히 거룩하신 삼위일체',
+	'corpus-christi': '지극히 거룩하신 그리스도의 성체 성혈',
+	'sacred-heart': '지극히 거룩하신 예수 성심',
+	'immaculate-heart': '티 없이 깨끗하신 성모 성심',
+	'mary-mother-of-the-church': '교회의 어머니 복되신 동정 마리아',
+	'christ-the-king': '온 누리의 임금이신 우리 주 예수 그리스도 왕'
+};
+
+/**
+ * The Proper of Time in Korean, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const koTemporal: TemporalNames = {
+	days: { 1: '월', 2: '화', 3: '수', 4: '목', 5: '금', 6: '토' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5', 6: '6', 7: '7' },
+	sunday: {
+		advent: '대림 제{week}주일',
+		lent: '사순 제{week}주일',
+		easter: '부활 제{week}주일',
+		ordinary: '연중 제{week}주일'
+	},
+	weekday: {
+		advent: '대림 제{week}주간 {day}요일',
+		lent: '사순 제{week}주간 {day}요일',
+		easter: '부활 제{week}주간 {day}요일',
+		ordinary: '연중 제{week}주간 {day}요일'
+	},
+	holyWeek: '성주간 {day}요일',
+	afterAshes: '재의 예식 다음 {day}요일',
+	afterEpiphany: '주님 공현 대축일 후 {day}요일',
+	christmasWeekday: '주님 공현 대축일 전 {day}요일',
+	easterOctave: '부활 팔일 축제 {day}요일',
+	christmasOctave: '성탄 팔일 축제 제{nth}일'
 };

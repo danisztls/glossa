@@ -9,7 +9,13 @@
  * else on the day of — `blaise` among them — so this edition never prints
  * them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `jaTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const ja: Record<string, string> = {
 	'basil-gregory': '聖バジリオ 聖グレゴリオ（ナジアンズ）司教教会博士',
 	'holy-name-of-jesus': 'イエスのみ名',
@@ -221,5 +227,94 @@ export const ja: Record<string, string> = {
 	'john-evangelist': '聖ヨハネ使徒福音記者',
 	'holy-innocents': '幼児殉教者',
 	'thomas-becket': '聖トマス・ベケット司教殉教者',
-	'sylvester-i': '聖シルベストロ一世教皇'
+	'sylvester-i': '聖シルベストロ一世教皇',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: '主の降誕',
+	'holy-family': '聖家族',
+	'mary-mother-of-god': '神の母聖マリア',
+	epiphany: '主の公現',
+	'baptism-of-the-lord': '主の洗礼',
+	'ash-wednesday': '灰の水曜日',
+	'palm-sunday': '受難の主日（枝の主日）',
+	'holy-thursday': '聖木曜日（主の晩さん）',
+	'good-friday': '聖金曜日（主の受難）',
+	'holy-saturday': '聖土曜日',
+	'easter-sunday': '復活の主日',
+	'easter-2-sunday': '復活節第2主日（神のいつくしみの主日）',
+	ascension: '主の昇天',
+	pentecost: '聖霊降臨の主日',
+	trinity: '三位一体の主日',
+	'corpus-christi': 'キリストの聖体',
+	'sacred-heart': 'イエスのみ心',
+	'immaculate-heart': '聖母のみ心',
+	'mary-mother-of-the-church': '教会の母聖マリア',
+	'christ-the-king': '王であるキリスト'
+};
+
+/**
+ * The Proper of Time in Japanese, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const jaTemporal: TemporalNames = {
+	days: { 1: '月', 2: '火', 3: '水', 4: '木', 5: '金', 6: '土' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5', 6: '6', 7: '7' },
+	sunday: {
+		advent: '待降節第{week}主日',
+		lent: '四旬節第{week}主日',
+		easter: '復活節第{week}主日',
+		ordinary: '年間第{week}主日'
+	},
+	weekday: {
+		advent: '待降節第{week}{day}曜日',
+		lent: '四旬節第{week}{day}曜日',
+		easter: '復活節第{week}{day}曜日',
+		ordinary: '年間第{week}{day}曜日'
+	},
+	holyWeek: '受難の{day}曜日',
+	afterAshes: '灰の水曜日後の{day}曜日',
+	afterEpiphany: '公現後の{day}曜日',
+	christmasWeekday: '公現前の{day}曜日',
+	easterOctave: '復活の{day}曜日',
+	christmasOctave: '主の降誕第{nth}日'
 };

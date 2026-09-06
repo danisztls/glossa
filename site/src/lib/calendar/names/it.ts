@@ -6,7 +6,13 @@
  * things they are not.
  *
  * All 218 of them, in the Calendar's own order.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `itTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const it: Record<string, string> = {
 	'basil-gregory': 'Santi Basilio Magno e Gregorio Nazianzeno, vescovi e dottori della Chiesa',
 	'holy-name-of-jesus': 'Santissimo Nome di Gesù',
@@ -226,5 +232,95 @@ export const it: Record<string, string> = {
 	'john-evangelist': 'San Giovanni, apostolo ed evangelista',
 	'holy-innocents': 'Santi Innocenti, martiri',
 	'thomas-becket': 'San Tommaso Becket, vescovo e martire',
-	'sylvester-i': 'San Silvestro I, papa'
+	'sylvester-i': 'San Silvestro I, papa',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Natale del Signore',
+	'holy-family': 'Santa Famiglia di Gesù, Maria e Giuseppe',
+	'mary-mother-of-god': 'Maria Santissima Madre di Dio',
+	'christmas-2-sunday': 'II Domenica di Natale',
+	epiphany: 'Epifania del Signore',
+	'baptism-of-the-lord': 'Battesimo del Signore',
+	'ash-wednesday': 'Mercoledì delle Ceneri',
+	'palm-sunday': 'Domenica delle Palme e della Passione del Signore',
+	'holy-thursday': 'Giovedì Santo – Cena del Signore',
+	'good-friday': 'Venerdì Santo – Passione del Signore',
+	'holy-saturday': 'Sabato Santo',
+	'easter-sunday': 'Domenica di Pasqua – Risurrezione del Signore',
+	'easter-2-sunday': 'II Domenica di Pasqua (o della Divina Misericordia)',
+	ascension: 'Ascensione del Signore',
+	pentecost: 'Domenica di Pentecoste',
+	trinity: 'Santissima Trinità',
+	'corpus-christi': 'Santissimo Corpo e Sangue di Cristo',
+	'sacred-heart': 'Sacratissimo Cuore di Gesù',
+	'immaculate-heart': 'Cuore Immacolato della Beata Vergine Maria',
+	'mary-mother-of-the-church': 'Beata Maria Vergine Madre della Chiesa',
+	'christ-the-king': 'Nostro Signore Gesù Cristo Re dell’Universo'
+};
+
+/**
+ * The Proper of Time in Italian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const itTemporal: TemporalNames = {
+	days: { 1: 'Lunedì', 2: 'Martedì', 3: 'Mercoledì', 4: 'Giovedì', 5: 'Venerdì', 6: 'Sabato' },
+	weeks: {
+		1: 'I',
+		2: 'II',
+		3: 'III',
+		4: 'IV',
+		5: 'V',
+		6: 'VI',
+		7: 'VII',
+		8: 'VIII',
+		9: 'IX',
+		10: 'X',
+		11: 'XI',
+		12: 'XII',
+		13: 'XIII',
+		14: 'XIV',
+		15: 'XV',
+		16: 'XVI',
+		17: 'XVII',
+		18: 'XVIII',
+		19: 'XIX',
+		20: 'XX',
+		21: 'XXI',
+		22: 'XXII',
+		23: 'XXIII',
+		24: 'XXIV',
+		25: 'XXV',
+		26: 'XXVI',
+		27: 'XXVII',
+		28: 'XXVIII',
+		29: 'XXIX',
+		30: 'XXX',
+		31: 'XXXI',
+		32: 'XXXII',
+		33: 'XXXIII',
+		34: 'XXXIV'
+	},
+	octave: { 5: 'V', 6: 'VI', 7: 'VII' },
+	sunday: {
+		advent: '{week} Domenica di Avvento',
+		lent: '{week} Domenica di Quaresima',
+		easter: '{week} Domenica di Pasqua',
+		ordinary: '{week} Domenica del Tempo Ordinario'
+	},
+	weekday: {
+		advent: '{day} della {week} settimana di Avvento',
+		lent: '{day} della {week} settimana di Quaresima',
+		easter: '{day} della {week} settimana di Pasqua',
+		ordinary: '{day} della {week} settimana del Tempo Ordinario'
+	},
+	holyWeek: '{day} Santo',
+	afterAshes: '{day} dopo le Ceneri',
+	afterEpiphany: '{day} dopo l’Epifania',
+	christmasWeekday: '{day} del Tempo di Natale',
+	easterOctave: '{day} fra l’Ottava di Pasqua',
+	christmasOctave: '{nth} giorno fra l’Ottava di Natale'
 };

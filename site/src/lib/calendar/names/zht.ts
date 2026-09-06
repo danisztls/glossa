@@ -16,7 +16,13 @@
  * against one and the older of the two traditions. IT IS A CHOICE AND NOT A
  * FINDING: `zht` is one tag over two usages, and it means a reader in Taipei
  * meets Hong Kong's spelling of Agatha.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `zhtTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const zht: Record<string, string> = {
 	'basil-gregory': '聖巴西略及聖額我略．納齊安（主教、聖師）',
 	'holy-name-of-jesus': '耶穌聖名',
@@ -234,5 +240,94 @@ export const zht: Record<string, string> = {
 	'john-evangelist': '聖若望（宗徒、聖史）',
 	'holy-innocents': '諸聖嬰孩（殉道）',
 	'thomas-becket': '聖多瑪斯．百克（主教、殉道）',
-	'sylvester-i': '聖西物斯德一世（教宗）'
+	'sylvester-i': '聖西物斯德一世（教宗）',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: '耶穌聖誕',
+	'holy-family': '聖家',
+	'mary-mother-of-god': '天主之母聖瑪利亞',
+	epiphany: '主顯',
+	'baptism-of-the-lord': '主受洗',
+	'ash-wednesday': '聖灰禮儀星期三',
+	'palm-sunday': '基督苦難主日（聖枝主日）',
+	'holy-thursday': '聖週四：主的晚餐',
+	'good-friday': '聖週五：救主受難紀念',
+	'holy-saturday': '聖週六',
+	'easter-sunday': '耶穌復活主日',
+	'easter-2-sunday': '復活期第二主日（救主慈悲主日）',
+	ascension: '耶穌升天',
+	pentecost: '五旬節主日',
+	trinity: '天主聖三',
+	'corpus-christi': '基督聖體聖血',
+	'sacred-heart': '耶穌聖心',
+	'immaculate-heart': '聖母無玷之心',
+	'mary-mother-of-the-church': '教會之母',
+	'christ-the-king': '我們的主、耶穌基督、普世君王'
+};
+
+/**
+ * The Proper of Time in Traditional Chinese, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const zhtTemporal: TemporalNames = {
+	days: { 1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六' },
+	weeks: {
+		1: '一',
+		2: '二',
+		3: '三',
+		4: '四',
+		5: '五',
+		6: '六',
+		7: '七',
+		8: '八',
+		9: '九',
+		10: '十',
+		11: '十一',
+		12: '十二',
+		13: '十三',
+		14: '十四',
+		15: '十五',
+		16: '十六',
+		17: '十七',
+		18: '十八',
+		19: '十九',
+		20: '二十',
+		21: '二十一',
+		22: '二十二',
+		23: '二十三',
+		24: '二十四',
+		25: '二十五',
+		26: '二十六',
+		27: '二十七',
+		28: '二十八',
+		29: '二十九',
+		30: '三十',
+		31: '三十一',
+		32: '三十二',
+		33: '三十三',
+		34: '三十四'
+	},
+	octave: { 5: '五', 6: '六', 7: '七' },
+	sunday: {
+		advent: '將臨期第{week}主日',
+		lent: '四旬期第{week}主日',
+		easter: '復活期第{week}主日',
+		ordinary: '常年期第{week}主日'
+	},
+	weekday: {
+		advent: '將臨期第{week}週星期{day}',
+		lent: '四旬期第{week}週星期{day}',
+		easter: '復活期第{week}週星期{day}',
+		ordinary: '常年期第{week}週星期{day}'
+	},
+	holyWeek: '聖週{day}',
+	afterAshes: '聖灰禮儀後星期{day}',
+	afterEpiphany: '主顯節後星期{day}',
+	christmasWeekday: '聖誕期平日星期{day}',
+	easterOctave: '復活節八日慶祝期星期{day}',
+	christmasOctave: '聖誕慶期第{nth}日'
 };

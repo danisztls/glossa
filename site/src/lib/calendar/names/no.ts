@@ -9,7 +9,13 @@
  * else on the day of — `timothy-titus` among them — so this edition never
  * prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `noTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const no: Record<string, string> = {
 	'basil-gregory':
 		'Den hellige Basilios den store og den hellige Gregor fra Nazianz, biskoper og kirkelærere',
@@ -225,5 +231,95 @@ export const no: Record<string, string> = {
 	'john-evangelist': 'Den hellige Johannes, apostel og evangelist',
 	'holy-innocents': 'De uskyldige barn i Betlehem, martyrer',
 	'thomas-becket': 'Den hellige Thomas Becket, biskop og martyr',
-	'sylvester-i': 'Den hellige Sylvester I, pave'
+	'sylvester-i': 'Den hellige Sylvester I, pave',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Herrens fødselsfest',
+	'holy-family': 'Den Hellige Familie',
+	'mary-mother-of-god': 'Guds hellige mor Maria',
+	'christmas-2-sunday': '2. Søndag etter Jul',
+	epiphany: 'Herrens Åpenbaring',
+	'baptism-of-the-lord': 'Herrens Dåp',
+	'ash-wednesday': 'Askeonsdag',
+	'palm-sunday': 'Palmesøndag',
+	'holy-thursday': 'Skjærtorsdag',
+	'good-friday': 'Langfredag',
+	'holy-saturday': 'Påskeaften',
+	'easter-sunday': 'Påskedag',
+	'easter-2-sunday': '2. Søndag i Påsketiden',
+	ascension: 'Kristi Himmelfart',
+	pentecost: 'Pinsedag',
+	trinity: 'Den Hellige Treenighet',
+	'corpus-christi': 'Festen for Kristi Legeme og Blod',
+	'sacred-heart': 'Jesu Hjertefest',
+	'immaculate-heart': 'Jomfru Marias Rene Hjerte',
+	'mary-mother-of-the-church': 'Den Salige Jomfru Maria, Kirkens Mor',
+	'christ-the-king': 'Kristi Kongefest'
+};
+
+/**
+ * The Proper of Time in Norwegian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const noTemporal: TemporalNames = {
+	days: { 1: 'Mandag', 2: 'Tirsdag', 3: 'Onsdag', 4: 'Torsdag', 5: 'Fredag', 6: 'Lørdag' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5', 6: '6', 7: '7' },
+	sunday: {
+		advent: '{week}. Søndag i Advent',
+		lent: '{week}. Søndag i Fasten',
+		easter: '{week}. Søndag i Påsketiden',
+		ordinary: '{week}. Søndag i det Alminnelige Kirkeår'
+	},
+	weekday: {
+		advent: '{day} i {week}. uke i advent',
+		lent: '{day} i {week}. uke i fasten',
+		easter: '{day} i {week}. uke i påsketiden',
+		ordinary: '{day} i {week}. uke i det alminnelige kirkeår'
+	},
+	holyWeek: '{day} i den Stille Uke',
+	afterAshes: '{day} etter Askeonsdag',
+	afterEpiphany: '{day} etter Herrens Åpenbarings fest',
+	christmasWeekday: '{day} før Herrens Åpenbarings fest',
+	easterOctave: '{day} i 1. uke i påsketiden',
+	christmasOctave: '{nth}. dag i julens oktav'
 };

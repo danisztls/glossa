@@ -9,7 +9,13 @@
  * else on the day of — `our-lady-of-the-rosary` among them — so this edition
  * never prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `viTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const vi: Record<string, string> = {
 	'basil-gregory': 'Thánh Ba-xi-li-ô Cả và thánh Ghê-gô-ri-ô Na-di-en, giám mục, tiến sĩ Hội Thánh',
 	'holy-name-of-jesus': 'Kính Danh rất thánh Chúa Giê-su',
@@ -227,5 +233,94 @@ export const vi: Record<string, string> = {
 	'john-evangelist': 'Thánh Gio-an, tông đồ, tác giả sách Tin Mừng',
 	'holy-innocents': 'Các Thánh Anh Hài, tử đạo',
 	'thomas-becket': 'Thánh Tô-ma Béc-két, giám mục, tử đạo',
-	'sylvester-i': 'Thánh Xin-vet-tê I, giáo hoàng'
+	'sylvester-i': 'Thánh Xin-vet-tê I, giáo hoàng',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Chúa Giáng Sinh',
+	'holy-family': 'Thánh Gia Thất: Chúa Giê-su, Đức Maria và thánh Giu-se',
+	'mary-mother-of-god': 'Thánh Ma-ri-a, Ðức Mẹ Chúa Trời',
+	epiphany: 'Chúa Hiển Linh',
+	'baptism-of-the-lord': 'Chúa Giê-su Chịu Phép Rửa',
+	'ash-wednesday': 'Thứ Tư Lễ Tro',
+	'palm-sunday': 'Chúa Nhật Lễ Lá',
+	'holy-thursday': 'Thứ Năm Tuần Thánh',
+	'good-friday': 'Thứ Sáu Tuần Thánh',
+	'holy-saturday': 'Thứ Bảy Tuần Thánh',
+	'easter-sunday': 'Chúa Nhật Lễ Phục Sinh',
+	'easter-2-sunday': 'Chúa Nhật thứ Hai Mùa Phục Sinh (Kính Lòng Thương Xót Chúa)',
+	ascension: 'Lễ Thăng Thiên',
+	pentecost: 'Lễ Chúa Thánh Thần Hiện Xuống',
+	trinity: 'Lễ Chúa Ba Ngôi',
+	'corpus-christi': 'Lễ Mình Máu Thánh Chúa',
+	'sacred-heart': 'Lễ Trái Tim Cực Thánh Chúa Giê-su',
+	'immaculate-heart': 'Lễ Trái Tim Vô Nhiễm Đức Mẹ Ma-ri-a',
+	'mary-mother-of-the-church': 'Đức Ma-ri-a, Mẹ Hội Thánh',
+	'christ-the-king': 'Lễ Chúa Kitô Vua'
+};
+
+/**
+ * The Proper of Time in Vietnamese, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const viTemporal: TemporalNames = {
+	days: { 1: 'Hai', 2: 'Ba', 3: 'Tư', 4: 'Năm', 5: 'Sáu', 6: 'Bảy' },
+	weeks: {
+		1: 'Nhất',
+		2: 'Hai',
+		3: 'Ba',
+		4: 'Tư',
+		5: 'Năm',
+		6: 'Sáu',
+		7: 'Bảy',
+		8: 'Tám',
+		9: 'Chín',
+		10: 'Mười',
+		11: 'Mười Một',
+		12: 'Mười Hai',
+		13: 'Mười Ba',
+		14: 'Mười Bốn',
+		15: 'Mười Lăm',
+		16: 'Mười Sáu',
+		17: 'Mười Bảy',
+		18: 'Mười Tám',
+		19: 'Mười Chín',
+		20: 'Hai Mươi',
+		21: 'Hai Mươi-Nhất',
+		22: 'Hai Mươi-Hai',
+		23: 'Hai Mươi-Ba',
+		24: 'Hai Mươi-Tư',
+		25: 'Hai Mươi-Năm',
+		26: 'Hai Mươi-Sáu',
+		27: 'Hai Mươi-Bảy',
+		28: 'Hai Mươi-Tám',
+		29: 'Hai Mươi-Chín',
+		30: 'Ba Mươi',
+		31: 'Ba Mươi-Nhất',
+		32: 'Ba Mươi-Hai',
+		33: 'Ba Mươi-Ba',
+		34: 'Ba Mươi-Tư'
+	},
+	octave: { 5: 'năm', 6: 'sáu', 7: 'bẩy' },
+	sunday: {
+		advent: 'Chúa Nhật thứ {week} Mùa Vọng',
+		lent: 'Chúa Nhật thứ {week} Mùa Chay',
+		easter: 'Chúa Nhật thứ {week} Mùa Phục Sinh',
+		ordinary: 'Chúa Nhật thứ {week} Mùa Quanh Năm'
+	},
+	weekday: {
+		advent: 'Thứ {day} trong tuần thứ {week} Mùa Vọng',
+		lent: 'Thứ {day} trong tuần thứ {week} Mùa Chay',
+		easter: 'Thứ {day} trong tuần thứ {week} Mùa Phục Sinh',
+		ordinary: 'Thứ {day} trong tuần thứ {week} Mùa Quanh Năm'
+	},
+	holyWeek: 'Thứ {day} Tuần Thánh',
+	afterAshes: 'Thứ {day} sau Thứ Tư Lễ Tro',
+	afterEpiphany: 'Thứ {day} sau Lễ Hiển Linh',
+	christmasWeekday: 'Thứ {day} trước Lễ Hiển Linh',
+	easterOctave: 'Thứ {day} trong tuần Bát Nhật Lễ Phục Sinh',
+	christmasOctave: 'Ngày thứ {nth} trong tuần Bát Nhật Lễ Giáng Sinh'
 };

@@ -9,7 +9,13 @@
  * else on the day of — `blaise` among them — so this edition never prints
  * them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `svTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const sv: Record<string, string> = {
 	'basil-gregory': 'S:t Basilios den store och S:t Gregorios av Nazianzos',
 	'holy-name-of-jesus': 'Jesu heliga namn',
@@ -224,5 +230,138 @@ export const sv: Record<string, string> = {
 	'john-evangelist': 'S:t Johannes, apostel och evangelist',
 	'holy-innocents': 'De heliga Oskyldiga Barnen i Betlehem, martyrer',
 	'thomas-becket': 'S:t Thomas Becket, biskop och martyr',
-	'sylvester-i': 'S:t Silvester I, påve'
+	'sylvester-i': 'S:t Silvester I, påve',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Juldagen',
+	'holy-family': 'Den Heliga Familjen',
+	'mary-mother-of-god': 'Guds Heliga Moder Marias Högtid',
+	'christmas-2-sunday': 'Andra Söndagen efter Jul',
+	epiphany: 'Epifania– Herrens Uppenbarelse',
+	'baptism-of-the-lord': 'Herrens Dop',
+	'ash-wednesday': 'Askonsdagen',
+	'palm-sunday': 'Palmsöndagen – Passionssöndagen',
+	'holy-thursday': 'Skärtorsdagen',
+	'good-friday': 'Långfredagen – Herrens Lidande och Död',
+	'holy-saturday': 'Påskafton',
+	'easter-sunday': 'Påskdagen – Kristi Uppståndelse',
+	'easter-2-sunday': '2:a Påsksöndagen – Den Gudomliga Barmhärtighetens',
+	ascension: 'Kristi Himmelsfärds Dag',
+	pentecost: 'Pingstdagen',
+	trinity: 'Heliga Trefaldighets Dag',
+	'corpus-christi': 'Kristi Kropps och Blods Högtid',
+	'sacred-heart': 'Jesu Hjärtas Dag',
+	'immaculate-heart': 'Jungfru Marias Obefläckade Hjärta',
+	'mary-mother-of-the-church': 'Den saliga Jungfrun Maria, kyrkans moder',
+	'christ-the-king': 'Kristus Konungens Dag'
+};
+
+/**
+ * The Proper of Time in Swedish, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ *
+ * It does not number its Sundays the way it numbers its weekdays, so nothing
+ * could be carried across to the ones three years of feeds never showed —
+ * Advent week 3; Lent week 4; Ordinary Time week 9. Those Sundays fall back
+ * to English.
+ */
+export const svTemporal: TemporalNames = {
+	days: { 1: 'Måndag', 2: 'Tisdag', 3: 'Onsdag', 4: 'Torsdag', 5: 'Fredag', 6: 'Lördag' },
+	weeks: {
+		1: '1:a',
+		2: '2:a',
+		3: '3:e',
+		4: '4:e',
+		5: '5:e',
+		6: '6:e',
+		7: '7:e',
+		8: '8:e',
+		9: '9:e',
+		10: '10:e',
+		11: '11:e',
+		12: '12:e',
+		13: '13:e',
+		14: '14:e',
+		15: '15:e',
+		16: '16:e',
+		17: '17:e',
+		18: '18:e',
+		19: '19:e',
+		20: '20:e',
+		21: '21:a',
+		22: '22:a',
+		23: '23:e',
+		24: '24:e',
+		25: '25:e',
+		26: '26:e',
+		27: '27:e',
+		28: '28:e',
+		29: '29:e',
+		30: '30:e',
+		31: '31:a',
+		32: '32:a',
+		33: '33:e',
+		34: '34:e'
+	},
+	octave: { 5: 'Femte', 6: 'Sjätte', 7: 'Sjunde' },
+	sunday: {
+		advent: { form: '{week} Söndagen i Advent', weeks: { 1: 'Första', 2: 'Andra', 4: 'Fjärde' } },
+		lent: {
+			form: '{week} Söndagen i Fastan',
+			weeks: { 1: 'Första', 2: 'Andra', 3: 'Tredje', 5: 'Femte' }
+		},
+		easter: { form: '{week}:e Påsksöndagen', weeks: { 3: '3', 4: '4', 5: '5', 6: '6', 7: '7' } },
+		ordinary: {
+			form: '{week} Söndagen »under året«',
+			weeks: {
+				2: '2',
+				3: '3',
+				4: '4',
+				5: '5',
+				6: '6',
+				7: '7',
+				8: '8',
+				10: '10',
+				11: '11',
+				12: '12',
+				13: '13',
+				14: '14',
+				15: '15',
+				16: '16',
+				17: '17',
+				18: '18',
+				19: '19',
+				20: '20',
+				21: '21',
+				22: '22',
+				23: '23',
+				24: '24',
+				25: '25',
+				26: '26',
+				27: '27',
+				28: '28',
+				29: '29',
+				30: '30',
+				31: '31',
+				32: '32',
+				33: '33'
+			}
+		}
+	},
+	weekday: {
+		advent: '{day} i {week} adventsveckan',
+		lent: '{day} i {week} fasteveckan',
+		easter: '{day} i {week} påskveckan',
+		ordinary: '{day} i {week} veckan »under året«'
+	},
+	holyWeek: '{day} i Stilla Veckan',
+	afterAshes: '{day} efter Askonsdag',
+	afterEpiphany: '{day} efter epifania',
+	christmasWeekday: '{day} efter nyårsdagen',
+	easterOctave: '{day} i 1:a påskveckan',
+	christmasOctave: '{nth} dagen i juloktaven'
 };

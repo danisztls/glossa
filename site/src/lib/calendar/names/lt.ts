@@ -9,7 +9,13 @@
  * someone else on the day of — `angela-merici` among them — so this edition
  * never prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `ltTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const lt: Record<string, string> = {
 	'basil-gregory': 'Šv. Bazilijus Didysis ir Grigalius Nazianzietis, vyskupai, Bažnyčios mokytojai',
 	'holy-name-of-jesus': 'Švč. Jėzaus Vardas',
@@ -223,5 +229,105 @@ export const lt: Record<string, string> = {
 	'john-evangelist': 'Šv. Jonas, apaštalas, evangelistas',
 	'holy-innocents': 'Šv. Nekaltieji Vaikeliai, kankiniai',
 	'thomas-becket': 'Šv. Tomas Beketas, vyskupas, kankinys',
-	'sylvester-i': 'Šv. Silvestras I, popiežius'
+	'sylvester-i': 'Šv. Silvestras I, popiežius',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Mūsų Viešpaties Jėzaus Kristaus Gimimas (Kalėdos)',
+	'holy-family': 'Šventoji Šeima: Jėzus, Marija ir Juozapas',
+	'mary-mother-of-god': 'Švč. Mergelė Marija, Dievo Gimdytoja',
+	'christmas-2-sunday': 'II sekmadienis po Kalėdų',
+	epiphany: 'Kristaus Apsireiškimas',
+	'baptism-of-the-lord': 'Kristaus Krikštas',
+	'ash-wednesday': 'Pelenų trečiadienis',
+	'palm-sunday': 'Kristaus kančios (Verbų) sekmadienis',
+	'holy-thursday': 'Didysis ketvirtadienis',
+	'good-friday': 'Didysis penktadienis',
+	'holy-saturday': 'Didysis šeštadienis',
+	'easter-sunday': 'Viešpaties Jėzaus Kristaus Prisikėlimas (Velykos)',
+	'easter-2-sunday': 'II Velykų sekmadienis (Dievo Gailestingumo sekmadienis)',
+	ascension: 'Viešpaties žengimas į dangų',
+	pentecost: 'Šventosios Dvasios atsiuntimas',
+	trinity: 'Švenčiausioji Trejybė',
+	'corpus-christi': 'Švč. Kristaus Kūnas ir Kraujas',
+	'sacred-heart': 'Švč. Jėzaus Širdis',
+	'immaculate-heart': 'Nekaltoji Švč. Mergelės Marijos Širdis',
+	'mary-mother-of-the-church': 'Švč. Mergelė Marija, Bažnyčios Motina',
+	'christ-the-king': 'Kristus, Visatos Valdovas (Kristus Karalius)'
+};
+
+/**
+ * The Proper of Time in Lithuanian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const ltTemporal: TemporalNames = {
+	days: {
+		1: 'Pirmadienis',
+		2: 'Antradienis',
+		3: 'Trečiadienis',
+		4: 'Ketvirtadienis',
+		5: 'Penktadienis',
+		6: 'Šeštadienis'
+	},
+	weeks: {
+		1: 'I',
+		2: 'II',
+		3: 'III',
+		4: 'IV',
+		5: 'V',
+		6: 'VI',
+		7: 'VII',
+		8: 'VIII',
+		9: 'IX',
+		10: 'X',
+		11: 'XI',
+		12: 'XII',
+		13: 'XIII',
+		14: 'XIV',
+		15: 'XV',
+		16: 'XVI',
+		17: 'XVII',
+		18: 'XVIII',
+		19: 'XIX',
+		20: 'XX',
+		21: 'XXI',
+		22: 'XXII',
+		23: 'XXIII',
+		24: 'XXIV',
+		25: 'XXV',
+		26: 'XXVI',
+		27: 'XXVII',
+		28: 'XXVIII',
+		29: 'XXIX',
+		30: 'XXX',
+		31: 'XXXI',
+		32: 'XXXII',
+		33: 'XXXIII',
+		34: 'XXXIV'
+	},
+	octave: { 5: 'penktoji', 6: 'šeštoji', 7: 'septintoji' },
+	sunday: {
+		advent: '{week} Advento sekmadienis',
+		lent: '{week} Gavėnios sekmadienis',
+		easter: '{week} Velykų sekmadienis',
+		ordinary: '{week} eilinis sekmadienis'
+	},
+	weekday: {
+		advent: '{week} Advento savaitė, {day}',
+		lent: '{week} Gavėnios savaitė, {day}',
+		easter: '{week} Velykų savaitė, {day}',
+		ordinary: '{week} eilinė savaitė, {day}'
+	},
+	holyWeek: {
+		form: 'Didysis {day}',
+		days: { 1: 'pirmadienis', 2: 'antradienis', 3: 'trečiadienis' }
+	},
+	afterAshes: '{day} po Pelenės',
+	afterEpiphany: '{day} po Kristaus Apsireiškimo',
+	christmasWeekday: '{day} prieš Kristaus Apsireiškimo',
+	easterOctave: 'I Velykų savaitė, {day}',
+	christmasOctave: 'Kalėdų {nth} diena'
 };

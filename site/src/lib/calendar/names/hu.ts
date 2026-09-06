@@ -9,7 +9,13 @@
  * someone else on the day of — `george` among them — so this edition never
  * prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `huTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const hu: Record<string, string> = {
 	'basil-gregory': 'Nagy Szent Vazul és Nazianzi Szent Gergely püspökök és egyháztanitók',
 	'holy-name-of-jesus': 'Jézus Szent Neve',
@@ -218,5 +224,95 @@ export const hu: Record<string, string> = {
 	'john-evangelist': 'Szent János apostol és evangélista',
 	'holy-innocents': 'Aprószentek, vértanúk',
 	'thomas-becket': 'Becket Szent Tamás püspök és vértanú',
-	'sylvester-i': 'Szent I. Szilveszter pápa'
+	'sylvester-i': 'Szent I. Szilveszter pápa',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Urunk születése – Karácsony',
+	'holy-family': 'A Szent Család: Jézus, Mária és József',
+	'mary-mother-of-god': 'Szűz Mária, Isten anyja',
+	'christmas-2-sunday': 'Karácsony utáni 2. vasárnap',
+	epiphany: 'Urunk megjelenése – Vízkereszt',
+	'baptism-of-the-lord': 'Urunk megkeresztelkedése',
+	'ash-wednesday': 'Hamvazószerda',
+	'palm-sunday': 'Virágvasárnap',
+	'holy-thursday': 'Nagycsütörtök',
+	'good-friday': 'Nagypéntek',
+	'holy-saturday': 'Nagyszombat',
+	'easter-sunday': 'Húsvétvasárnap',
+	'easter-2-sunday': 'Húsvét 2. vasárnapja, az isteni irgalmasság vasárnapja',
+	ascension: 'Urunk mennybemenetele',
+	pentecost: 'Pünkösdvasárnap',
+	trinity: 'Szentháromság vasárnapja',
+	'corpus-christi': 'Krisztus szent teste és vére – Úrnapja',
+	'sacred-heart': 'Jézus Szent Szíve',
+	'immaculate-heart': 'A Boldogságos Szűz Mária Szeplőtelen Szíve',
+	'mary-mother-of-the-church': 'A Boldogságos Szűz Mária, az Egyház Anyja',
+	'christ-the-king': 'Krisztus a Mindenség Királya'
+};
+
+/**
+ * The Proper of Time in Hungarian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const huTemporal: TemporalNames = {
+	days: { 1: 'Hétfő', 2: 'Kedd', 3: 'Szerda', 4: 'Csütörtök', 5: 'Péntek', 6: 'Szombat' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5', 6: '6', 7: '7' },
+	sunday: {
+		advent: 'Advent {week}. vasárnapja',
+		lent: 'Nagyböjt {week}. vasárnap',
+		easter: 'Húsvét {week}. vasárnapja',
+		ordinary: 'Évközi {week}. vasárnap'
+	},
+	weekday: {
+		advent: '{week}. adventi hét {day}',
+		lent: '{week}. nagyböjti hét {day}',
+		easter: 'Húsvét {week}. hét {day}',
+		ordinary: '{week}. évközi hét {day}'
+	},
+	holyWeek: { form: '{day}', days: { 1: 'Nagyhétfő', 2: 'Nagykedd', 3: 'Nagyszerda' } },
+	afterAshes: '{day} hamvazószerda után',
+	afterEpiphany: '{day}, Vízkereszt után',
+	christmasWeekday: '{day}, Vizkereszt előtti',
+	easterOctave: '{day} húsvét nyolcadában',
+	christmasOctave: 'Karácsony nyolcada alatti {nth}. nap'
 };

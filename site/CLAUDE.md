@@ -2685,9 +2685,22 @@ calendar IS the General Calendar plus that conference's propers. **Never join a
 feed on POSITION**: 9 October puts Denis first in Korean and last in Italian, and
 the English name parenthesised at the head of `DESCRIPTION` is the only thing in
 a feed that identifies a celebration across languages. A chunk per language on
-`i18n.svelte.ts`'s accounting (239 KB the set, ~11 KB the reader's own), and
+`i18n.svelte.ts`'s accounting (277 KB the set, ~14 KB the reader's own), and
 `celebrationName` reads `grc.ts` first — **these are not checked and cannot be**,
 the oracle being where they came from (§docs/calendar.md).
+
+**AND 285 OF THE 365 DAYS OF 2026 ARE NAMED BY A FORMULA, WHICH IS NOT A STRING
+TO TRANSCRIBE** (2026-09-06). The sanctorale is the smaller half: 80 days carry
+a name of their own, every Sunday and ferial weekday is composed. GCatholic
+composes them the same way and its `DESCRIPTION` carries the English
+composition, so its feeds are SOLVED for their pieces — fifteen patterns over
+six weekdays and thirty-four numerals, ~1.5 KB a language against 40 KB of
+finished strings — and the solve is checked by rebuilding every observed string
+out of them. **A solve that rebuilds the feed exactly is the wrong one where the
+feed is wrong**: four defects turned up, three outvoted inside the weekday
+family and Croatia's thirteenth week DROPPED, because a numeral in digits can be
+checked against its own key and `Trinaesta` cannot. A celebration carries
+`parts` for this; nothing parses an id (§docs/calendar.md).
 
 ## Languages: the interface is a superset of the content
 

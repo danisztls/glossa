@@ -230,6 +230,74 @@ export interface Celebration {
 	 *  October in 2026 and a calendar for 2025 that shows him is wrong about
 	 *  2025. Absent means "for as long as this table is asked about". */
 	since?: number;
+	/** What a formulaic day is made of, for a language that composes it
+	 *  differently. Set by `temporal.ts` on the days it names by rule and
+	 *  absent on every other celebration (`NameParts`). */
+	parts?: NameParts;
+}
+
+/** The four seasons that count their weeks. Christmas Time names its days by
+ *  their distance from Epiphany and the Triduum names them outright. */
+export type FormulaSeason = Exclude<Season, 'christmas' | 'triduum'>;
+
+/**
+ * What a day named by rule is made of.
+ *
+ * `names` carries the finished Latin, English and Portuguese, because those
+ * three are composed where the day is placed and nothing else needs to know
+ * how. A vernacular table cannot be handed the finished string — it puts the
+ * weekday after the week where English puts it before, inflects the season,
+ * and counts in its own numerals — so it is handed the parts instead and
+ * composes its own (`names/`, `residentTemporalName`).
+ *
+ * `dow` is 0 for Sunday, as `weekday()` returns it.
+ */
+export type NameParts =
+	| { kind: 'sunday'; season: FormulaSeason; week: number }
+	| { kind: 'weekday'; season: FormulaSeason; week: number; dow: number }
+	| { kind: 'holy-week'; dow: number }
+	| { kind: 'after-ashes'; dow: number }
+	| { kind: 'after-epiphany'; dow: number }
+	| { kind: 'christmas-weekday'; dow: number }
+	| { kind: 'easter-octave'; dow: number }
+	| { kind: 'christmas-octave'; nth: number }
+	| { kind: 'december'; dom: number };
+
+/** A numbered piece of a name, sparse: a key with no entry is a day this
+ *  language's calendar was never seen to print, and falls back to English. */
+export type NameTable = Readonly<Record<number, string>>;
+
+/** One pattern, `{day}`/`{week}`/`{nth}` where the pieces go — a bare string
+ *  when the shared tables serve it, and an override when the language counts
+ *  or declines differently here than it does on an ordinary weekday. */
+export type NameForm =
+	string | { readonly form: string; readonly days?: NameTable; readonly weeks?: NameTable };
+
+/**
+ * A language's whole Proper of Time, in pieces.
+ *
+ * Not a table of 285 names but the roughly fifty words they are made of and
+ * the fifteen patterns that arrange them, which is the difference between
+ * three kilobytes a language and forty. Read off GCatholic's feeds and solved
+ * for; `names.svelte.ts` says how, and how far it can be trusted.
+ */
+export interface TemporalNames {
+	/** Monday to Saturday. Sunday is never a slot: the Sunday patterns name it
+	 *  themselves, because half these languages inflect it with the season. */
+	readonly days: NameTable;
+	/** The weeks 1 to 34, as this language numbers an ordinary weekday. */
+	readonly weeks: NameTable;
+	/** The fifth, sixth and seventh days of the Christmas octave. The second,
+	 *  third and fourth are Stephen, John and the Innocents and never show. */
+	readonly octave: NameTable;
+	readonly sunday: Readonly<Record<FormulaSeason, NameForm>>;
+	readonly weekday: Readonly<Record<FormulaSeason, NameForm>>;
+	readonly holyWeek: NameForm;
+	readonly afterAshes: NameForm;
+	readonly afterEpiphany: NameForm;
+	readonly christmasWeekday: NameForm;
+	readonly easterOctave: NameForm;
+	readonly christmasOctave: NameForm;
 }
 
 /** One resolved day of the calendar. */

@@ -6,7 +6,13 @@
  * things they are not.
  *
  * All 218 of them, in the Calendar's own order.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `nlTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const nl: Record<string, string> = {
 	'basil-gregory': 'HH. Basilius de Grote en Gregorius van Nazianze, bisschoppen en kerkleraren',
 	'holy-name-of-jesus': 'De heilige Naam Jezus',
@@ -226,5 +232,137 @@ export const nl: Record<string, string> = {
 	'john-evangelist': 'H. Johannes, apostel en evangelist',
 	'holy-innocents': 'HH. Onnozele Kinderen, martelaren',
 	'thomas-becket': 'H. Thomas Becket, bisschop en martelaar',
-	'sylvester-i': 'H. Silvester I, paus'
+	'sylvester-i': 'H. Silvester I, paus',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Geboorte van de Heer (Kerstmis)',
+	'holy-family': 'Heilige Familie, Jezus, Maria en Jozef',
+	'mary-mother-of-god': 'Heilige Maria, Moeder van God',
+	epiphany: 'Openbaring des Heren',
+	'baptism-of-the-lord': 'Doop van de Heer',
+	'ash-wednesday': 'Aswoensdag',
+	'palm-sunday': 'Palmzondag of Passiezondag',
+	'holy-thursday': 'Witte Donderdag',
+	'good-friday': 'Goede Vrijdag',
+	'holy-saturday': 'Paaszaterdag',
+	'easter-sunday': 'Pasen, Verrijzenis van de Heer',
+	'easter-2-sunday': '2ᵉ Zondag van Pasen',
+	ascension: 'Hemelvaart van de Heer',
+	pentecost: 'Pinksteren',
+	trinity: 'Heilige Drie-Eenheid',
+	'corpus-christi': 'Allerheiligst Sacrament van het Lichaam en Bloed van Christus',
+	'sacred-heart': 'Heilig Hart van Jezus',
+	'immaculate-heart': 'Onbevlekt Hart van Maria',
+	'mary-mother-of-the-church': 'Maria, Moeder van de Kerk',
+	'christ-the-king': 'Christus Koning van het heelal'
+};
+
+/**
+ * The Proper of Time in Dutch, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ *
+ * It does not number its Sundays the way it numbers its weekdays, so nothing
+ * could be carried across to the ones three years of feeds never showed —
+ * Advent week 3; Lent week 4; Ordinary Time week 9. Those Sundays fall back
+ * to English.
+ */
+export const nlTemporal: TemporalNames = {
+	days: { 1: 'Maandag', 2: 'Dinsdag', 3: 'Woensdag', 4: 'Donderdag', 5: 'Vrijdag', 6: 'Zaterdag' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5ᵉ', 6: '6ᵉ', 7: '7ᵉ' },
+	sunday: {
+		advent: { form: '{week} Zondag van de Advent', weeks: { 1: '1ᵉ', 2: '2ᵉ', 4: '4ᵉ' } },
+		lent: { form: '{week} Zondag Veertigdagentijd', weeks: { 1: '1ᵉ', 2: '2ᵉ', 3: '3ᵉ', 5: '5ᵉ' } },
+		easter: {
+			form: '{week} Zondag van Pasen',
+			weeks: { 3: '3ᵉ', 4: '4ᵉ', 5: '5ᵉ', 6: '6ᵉ', 7: '7ᵉ' }
+		},
+		ordinary: {
+			form: '{week} Zondag door het jaar',
+			weeks: {
+				2: '2ᵉ',
+				3: '3ᵉ',
+				4: '4ᵉ',
+				5: '5ᵉ',
+				6: '6ᵉ',
+				7: '7ᵉ',
+				8: '8ᵉ',
+				10: '10ᵉ',
+				11: '11ᵉ',
+				12: '12ᵉ',
+				13: '13ᵉ',
+				14: '14ᵉ',
+				15: '15ᵉ',
+				16: '16ᵉ',
+				17: '17ᵉ',
+				18: '18ᵉ',
+				19: '19ᵉ',
+				20: '20ᵉ',
+				21: '21ᵉ',
+				22: '22ᵉ',
+				23: '23ᵉ',
+				24: '24ᵉ',
+				25: '25ᵉ',
+				26: '26ᵉ',
+				27: '27ᵉ',
+				28: '28ᵉ',
+				29: '29ᵉ',
+				30: '30ᵉ',
+				31: '31ᵉ',
+				32: '32ᵉ',
+				33: '33ᵉ'
+			}
+		}
+	},
+	weekday: {
+		advent: '{day} in week {week} van de Advent',
+		lent: '{day} in week {week} van de Veertigdagentijd',
+		easter: '{day} in week {week} van de Paastijd',
+		ordinary: '{day} in week {week} door het jaar'
+	},
+	holyWeek: 'Heilige {day}',
+	afterAshes: '{day} na Aswoensdag',
+	afterEpiphany: '{day} na Openbaring des Heren',
+	christmasWeekday: '{day} in de kersttijd',
+	easterOctave: '{day} in week 1 van de Paastijd',
+	christmasOctave: '{nth} dag onder het octaaf van Kerstmis'
 };

@@ -9,7 +9,13 @@
  * someone else on the day of — `cyril-methodius` among them — so this
  * edition never prints them and they go on falling back to English, which is
  * what `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `skTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const sk: Record<string, string> = {
 	'basil-gregory': 'Svätých Bazila Veľkého a Gregora Nazianzského, biskupov a učiteľov Cirkvi',
 	'holy-name-of-jesus': 'Najsvätejšieho mena Ježiš',
@@ -224,5 +230,95 @@ export const sk: Record<string, string> = {
 	'john-evangelist': 'Svätého Jána, apoštola a evanjelistu',
 	'holy-innocents': 'Svätých Neviniatok, mučeníkov',
 	'thomas-becket': 'Svätého Tomáša Becketa, biskupa a mučeníka',
-	'sylvester-i': 'Svätého Silvestra I., pápeža'
+	'sylvester-i': 'Svätého Silvestra I., pápeža',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Narodenie Pána',
+	'holy-family': 'Svätej rodiny Ježiša, Márie a Jozefa',
+	'mary-mother-of-god': 'Panny Márie Bohorodičky',
+	'christmas-2-sunday': '2. nedeľa po narodení Pána',
+	epiphany: 'Zjavenie Pána',
+	'baptism-of-the-lord': 'Krst Krista Pána',
+	'ash-wednesday': 'Popolcová streda',
+	'palm-sunday': 'Nedeľa utrpenia Pána',
+	'holy-thursday': 'Štvrtok Veľkého týždňa',
+	'good-friday': 'Veľký piatok – Slávenie utrpenia a smrti Pána',
+	'holy-saturday': 'Biela sobota',
+	'easter-sunday': 'Veľkonočná nedeľa Pánovho zmŕtvychvstania',
+	'easter-2-sunday': '2. Veľkonočná nedeľa (Nedeľa Božieho milosrdenstva)',
+	ascension: 'Nanebovstúpenie Pána',
+	pentecost: 'Zoslanie Ducha Svätého',
+	trinity: 'Najsvätejšej Trojice',
+	'corpus-christi': 'Najsvätejšieho Kristovho Tela a Krvi',
+	'sacred-heart': 'Najsvätejšieho Srdca Ježišovho',
+	'immaculate-heart': 'Nepoškvrneného Srdca Panny Márie',
+	'mary-mother-of-the-church': 'Preblahoslavenej Panny Márie, Matky Cirkvi',
+	'christ-the-king': 'Krista Kráľa'
+};
+
+/**
+ * The Proper of Time in Slovak, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const skTemporal: TemporalNames = {
+	days: { 1: 'Pondelok', 2: 'Utorok', 3: 'Streda', 4: 'Štvrtok', 5: 'Piatok', 6: 'Sobota' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: 'Piaty', 6: 'Šiesty', 7: 'Siedmy' },
+	sunday: {
+		advent: '{week}. adventná nedeľa',
+		lent: '{week}. pôstna nedeľa',
+		easter: '{week}. veľkonočná nedeľa',
+		ordinary: '{week}. nedeľa v Cezročnom období'
+	},
+	weekday: {
+		advent: '{day} po {week}. adventnej nedeli',
+		lent: '{day} po {week}. pôstnej nedeli',
+		easter: '{day} po {week}. veľkonočnej nedeli',
+		ordinary: '{day} {week}. týždňa v Cezročnom období'
+	},
+	holyWeek: '{day} Veľkého týždňa',
+	afterAshes: '{day} po popolcovej strede',
+	afterEpiphany: '{day} po Zjavení Pána',
+	christmasWeekday: '{day} vo Vianočnom období',
+	easterOctave: '{day} vo Veľkonočnej oktáve',
+	christmasOctave: '{nth} deň oktávy narodenia Pána'
 };

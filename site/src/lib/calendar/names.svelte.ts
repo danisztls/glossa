@@ -1,15 +1,21 @@
 /**
- * The General Roman Calendar's celebration names in the twenty languages
- * `grc.ts` does not carry, one lazily-loaded module per language.
+ * The calendar's names in the twenty languages `grc.ts` and `temporal.ts` do
+ * not carry, one lazily-loaded module per language.
+ *
+ * Each module holds two things: a table keyed by celebration id — the General
+ * Roman Calendar's 218, and the twenty-one days of the Proper of Time the
+ * Missal names outright — and the pieces the other 285 days of the year are
+ * composed from, since a formula cannot be transcribed as a string.
  *
  * ## Why they are not in `grc.ts`
  *
  * Because of what they weigh. `ROWS` carries Latin, English and Portuguese
- * for 218 celebrations in about 30 KB; the twenty languages here are 239 KB
- * more, 57 KB of it after gzip, and a reader uses exactly one of them. That is
- * the accounting `i18n.svelte.ts` already does for the interface dictionaries
- * — the cost of a language is paid by the reader who picks it — and a table
- * of saints' names is the same kind of thing as a table of button labels.
+ * for 218 celebrations in about 30 KB; the twenty languages here build to
+ * twenty chunks and 277 KB (2026-09-06, `npm run build`), and a reader uses
+ * exactly one of them — about 14 KB, 5 KB over the wire. That is the
+ * accounting `i18n.svelte.ts` already does for the interface dictionaries —
+ * the cost of a language is paid by the reader who picks it — and a table of
+ * saints' names is the same kind of thing as a table of button labels.
  *
  * `import.meta.glob` for the same reasons it gives: statically analyzable, so
  * Vite emits one chunk per file; and a language is added by dropping a file
@@ -33,6 +39,55 @@
  * the same of 22 June in Latin against English. Joining on position gives
  * Paulinus of Nola the martyrs' name and reads perfectly while doing it.
  *
+ * ## The 285 days a year that are named by a rule
+ *
+ * The larger half, and the one that cannot be transcribed. Of the 365 days of
+ * 2026, 80 carry a name of their own and 285 are composed — every Sunday and
+ * every ferial weekday, `Tuesday of the 11th Week in Ordinary Time`. Storing
+ * those as strings is about 390 rows a language where the sanctorale is 218,
+ * and three years of feeds show only ~345 of them: the ninth week of Ordinary
+ * Time has no Sunday in 2025, 2026 or 2027, and the seventh of Easter is the
+ * Ascension nearly everywhere.
+ *
+ * SO THE FEED IS SOLVED FOR ITS PIECES rather than copied. Two names that
+ * differ in one slot differ in one substring, which locates the slots; what is
+ * left over is the pattern. Fifteen of them — a Sunday and a weekday in each
+ * of four seasons, Holy Week, the days after Ash Wednesday, the two halves of
+ * Christmas Time, the Octave of Easter and the Octave of Christmas — over a
+ * shared table of six weekdays and thirty-four week numerals, with an override
+ * wherever a language declines one of them differently here than it does on an
+ * ordinary weekday (`NameForm` in `types.ts`; Polish's Monday of Holy Week is
+ * `Wielki Poniedziałek`). About 1.5 KB a language, against 40 KB for the
+ * table it replaces. The solve is CHECKED by rebuilding every string the feeds
+ * carry out of the pieces, which is what makes an unobserved week safe.
+ *
+ * AND A SOLVE THAT REBUILDS THE FEED EXACTLY IS THE WRONG ONE WHERE THE FEED
+ * IS WRONG. Four defects turned up, each stated identically in every year and
+ * every territory, so none of them is a stray character to be voted away:
+ * GCatholic's Lithuanian numbers the sixth and seventh weeks of Easter `II`,
+ * its Indonesian numbers the second week of Advent `III`, its Vietnamese sets
+ * a stray `i` into the thirty-second week of Ordinary Time, and its Croatian
+ * prints `3. tjedna kroz godinu` for the thirteenth week. The first three are
+ * outvoted inside the weekday family, where Ordinary Time counts thirty-four
+ * weeks against Advent's three. The fourth is not: a numeral written in digits
+ * can be checked against its own key, so it is DROPPED — `13` is guessable and
+ * `Trinaesta` is not, and thirteen weekdays falling back to English is a
+ * smaller wrong than thirteen weekdays confidently misnumbered.
+ *
+ * WHAT DOES NOT COMPOSE FALLS BACK, and four languages have gaps: Croatian,
+ * Maltese, Dutch and Swedish each number their Sundays differently from their
+ * weekdays, so nothing could be carried across to the two to four Sundays the
+ * feeds never showed. Each file says which. `names.test.ts` asserts that those
+ * four are the whole list, because a table that stopped composing looks on the
+ * page exactly like a language that never had one.
+ *
+ * THE EIGHT DAYS OF ADVENT NAMED BY THEIR DATE ARE NOT TRANSCRIBED AT ALL.
+ * `temporal.ts` calls 19 December `19 December`, which is a date and not a
+ * formula, and `Intl` writes a date in all twenty of these languages — where
+ * GCatholic's own feeds set `Décembre 17` and `Dicembre 17`, its English
+ * template applied to a French and an Italian month. That is the one name here
+ * that is computed rather than read (`decemberDate`).
+ *
  * ## The two things these are not
  *
  * THEY ARE NOT CHECKED. `oracle.test.ts` compares the names this project
@@ -53,6 +108,8 @@
  * less than a book.
  */
 import { untrack } from 'svelte';
+import { bcp47 } from '$lib/ui-langs';
+import type { NameForm, NameParts, NameTable, TemporalNames } from './types';
 
 /**
  * One module per language under `./names/`, none of them statically imported.
@@ -60,7 +117,7 @@ import { untrack } from 'svelte';
  * Unlike `i18n.svelte.ts` there is no exclusion: English is not among these,
  * because English is in `ROWS` and is the fallback every miss lands on.
  */
-const loaders = import.meta.glob<Record<string, Record<string, string>>>('./names/*.ts');
+const loaders = import.meta.glob<Record<string, unknown>>('./names/*.ts');
 
 /** The languages a module exists for, which is what `ensure` will answer to. */
 export const NAMED_LANGS: readonly string[] = Object.keys(loaders)
@@ -73,6 +130,7 @@ export const NAMED_LANGS: readonly string[] = Object.keys(loaders)
  * and switching back is not worth a second request.
  */
 const loaded: Record<string, Record<string, string>> = $state({});
+const loadedTemporal: Record<string, TemporalNames> = $state({});
 
 /**
  * Load one language's table if it exists and is not resident yet.
@@ -86,7 +144,8 @@ export async function ensureCelebrationNames(lang: string): Promise<void> {
 	const loader = loaders[`./names/${base}.ts`];
 	if (!loader || untrack(() => loaded[base])) return;
 	const module = await loader();
-	loaded[base] = module[base];
+	loaded[base] = module[base] as Record<string, string>;
+	loadedTemporal[base] = module[`${base}Temporal`] as TemporalNames;
 }
 
 /**
@@ -99,4 +158,98 @@ export async function ensureCelebrationNames(lang: string): Promise<void> {
  */
 export function residentCelebrationName(lang: string, id: string): string | undefined {
 	return loaded[lang.split('-')[0]]?.[id];
+}
+
+/**
+ * Fill one pattern's `{day}`, `{week}` and `{nth}` from the language's tables.
+ *
+ * Returns undefined rather than a half-filled string wherever a piece is
+ * missing — three years of feeds do not show every week of every season, so a
+ * hole is ordinary and the answer for that day is English (`NameTable`). The
+ * form's own tables win over the shared ones where it carries any: Polish
+ * names Monday of Holy Week `Wielki Poniedziałek` and every other Monday
+ * `Poniedziałek`.
+ */
+function fill(
+	form: NameForm,
+	shared: TemporalNames,
+	values: Partial<Record<'day' | 'week' | 'nth', number>>
+): string | undefined {
+	const spec = typeof form === 'string' ? { form, days: undefined, weeks: undefined } : form;
+	const tables: Record<string, NameTable> = {
+		day: spec.days ?? shared.days,
+		week: spec.weeks ?? shared.weeks,
+		nth: shared.octave
+	};
+	let out = '';
+	let rest = spec.form;
+	for (;;) {
+		const at = rest.indexOf('{');
+		if (at < 0) return out + rest;
+		const end = rest.indexOf('}', at);
+		const slot = rest.slice(at + 1, end) as 'day' | 'week' | 'nth';
+		const n = values[slot];
+		const word = n === undefined ? undefined : tables[slot]?.[n];
+		if (word === undefined) return undefined;
+		out += rest.slice(0, at) + word;
+		rest = rest.slice(end + 1);
+	}
+}
+
+/**
+ * The eight days of Advent that are named by their date and not by a rule.
+ *
+ * The one name here that is not transcribed. `temporal.ts` calls 19 December
+ * `19 December` and `Dia 19 de dezembro`, which is a date rather than a
+ * formula, and `Intl` writes a date in every one of these languages already —
+ * where GCatholic's own feeds set `Décembre 17` and `Dicembre 17`, its English
+ * template applied to a French and an Italian month. Transcribing those would
+ * be transcribing a defect.
+ *
+ * The year is arbitrary and never printed; December is month 11, and `UTC`
+ * keeps the day from sliding under a reader west of Greenwich.
+ */
+function decemberDate(lang: string, dom: number): string | undefined {
+	try {
+		return new Intl.DateTimeFormat(bcp47(lang), {
+			day: 'numeric',
+			month: 'long',
+			timeZone: 'UTC'
+		}).format(new Date(Date.UTC(2001, 11, dom)));
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * A formulaic day's name in `lang` IF THAT TABLE IS RESIDENT, without fetching.
+ *
+ * `residentCelebrationName`'s rule and its reasons exactly, for the 285 days a
+ * year that have no name of their own to look up. The parts come off the
+ * celebration (`NameParts`), so nothing here parses an id.
+ */
+export function residentTemporalName(lang: string, parts: NameParts): string | undefined {
+	const base = lang.split('-')[0];
+	const t = loadedTemporal[base];
+	if (!t) return undefined;
+	switch (parts.kind) {
+		case 'sunday':
+			return fill(t.sunday[parts.season], t, { week: parts.week });
+		case 'weekday':
+			return fill(t.weekday[parts.season], t, { week: parts.week, day: parts.dow });
+		case 'holy-week':
+			return fill(t.holyWeek, t, { day: parts.dow });
+		case 'after-ashes':
+			return fill(t.afterAshes, t, { day: parts.dow });
+		case 'after-epiphany':
+			return fill(t.afterEpiphany, t, { day: parts.dow });
+		case 'christmas-weekday':
+			return fill(t.christmasWeekday, t, { day: parts.dow });
+		case 'easter-octave':
+			return fill(t.easterOctave, t, { day: parts.dow });
+		case 'christmas-octave':
+			return fill(t.christmasOctave, t, { nth: parts.nth });
+		case 'december':
+			return decemberDate(base, parts.dom);
+	}
 }

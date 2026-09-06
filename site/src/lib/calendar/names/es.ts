@@ -13,7 +13,13 @@
  * Rafael, arcángeles`, `El Dulce Nombre de María` against `El Santísimo
  * Nombre de María`. What is here is the American form, on the count alone:
  * there is no sense in which one of the two is the Spanish one.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `esTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const es: Record<string, string> = {
 	'basil-gregory': 'Santos Basilio Magno y Gregorio de Nacianzo, obispos y doctores de la Iglesia',
 	'holy-name-of-jesus': 'El Santísimo Nombre de Jesús',
@@ -234,5 +240,95 @@ export const es: Record<string, string> = {
 	'john-evangelist': 'San Juan, apóstol y evangelista',
 	'holy-innocents': 'Los Santos Inocentes, mártires',
 	'thomas-becket': 'San Tomás Becket, obispo y mártir',
-	'sylvester-i': 'San Silvestre I, papa'
+	'sylvester-i': 'San Silvestre I, papa',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'La Natividad del Señor',
+	'holy-family': 'La Sagrada Familia de Jesús, María y José',
+	'mary-mother-of-god': 'Santa María, Madre de Dios',
+	'christmas-2-sunday': 'II Domingo de Natividad',
+	epiphany: 'La Epifanía del Señor',
+	'baptism-of-the-lord': 'El Bautismo del Señor',
+	'ash-wednesday': 'Miércoles de Ceniza',
+	'palm-sunday': 'Domingo de Ramos en la Pasión del Señor',
+	'holy-thursday': 'Jueves Santo en la Cena del Señor',
+	'good-friday': 'Viernes Santo en la Pasión del Señor',
+	'holy-saturday': 'Sábado Santo de la Sepultura del Señor',
+	'easter-sunday': 'Domingo de Pascua de la Resurrección del Señor',
+	'easter-2-sunday': 'II Domingo de Pascua o de la Divina Misericordia',
+	ascension: 'La Ascensión del Señor',
+	pentecost: 'Domingo de Pentecostés',
+	trinity: 'La Santísima Trinidad',
+	'corpus-christi': 'El Cuerpo y la Sangre Santísimos de Cristo',
+	'sacred-heart': 'El Sagrado Corazón de Jesús',
+	'immaculate-heart': 'El Inmaculado Corazón de María',
+	'mary-mother-of-the-church': 'Bienaventurada Virgen María, Madre de la Iglesia',
+	'christ-the-king': 'Nuestro Señor Jesucristo, Rey del Universo'
+};
+
+/**
+ * The Proper of Time in Spanish, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const esTemporal: TemporalNames = {
+	days: { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado' },
+	weeks: {
+		1: 'I',
+		2: 'II',
+		3: 'III',
+		4: 'IV',
+		5: 'V',
+		6: 'VI',
+		7: 'VII',
+		8: 'VIII',
+		9: 'IX',
+		10: 'X',
+		11: 'XI',
+		12: 'XII',
+		13: 'XIII',
+		14: 'XIV',
+		15: 'XV',
+		16: 'XVI',
+		17: 'XVII',
+		18: 'XVIII',
+		19: 'XIX',
+		20: 'XX',
+		21: 'XXI',
+		22: 'XXII',
+		23: 'XXIII',
+		24: 'XXIV',
+		25: 'XXV',
+		26: 'XXVI',
+		27: 'XXVII',
+		28: 'XXVIII',
+		29: 'XXIX',
+		30: 'XXX',
+		31: 'XXXI',
+		32: 'XXXII',
+		33: 'XXXIII',
+		34: 'XXXIV'
+	},
+	octave: { 5: 'V', 6: 'VI', 7: 'VII' },
+	sunday: {
+		advent: '{week} Domingo de Adviento',
+		lent: '{week} Domingo de Cuaresma',
+		easter: '{week} Domingo de Pascua',
+		ordinary: '{week} Domingo del Tiempo Ordinario'
+	},
+	weekday: {
+		advent: '{day} de la {week} Semana de Adviento',
+		lent: '{day} de la {week} Semana de Cuaresma',
+		easter: '{day} de la {week} Semana de Pascua',
+		ordinary: '{day} de la {week} Semana del Tiempo Ordinario'
+	},
+	holyWeek: '{day} Santo',
+	afterAshes: '{day} después de Ceniza',
+	afterEpiphany: '{day} después de la Epifanía',
+	christmasWeekday: '{day} de la II Semana de Navidad',
+	easterOctave: '{day} de la Octava de Pascua',
+	christmasOctave: 'Día {nth} dentro de la Octava de la Natividad del Señor'
 };

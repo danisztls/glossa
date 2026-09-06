@@ -9,7 +9,13 @@
  * this language keeps someone else on the day of — `scholastica` among them
  * — so this edition never prints them and they go on falling back to
  * English, which is what `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `hrTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const hr: Record<string, string> = {
 	'basil-gregory': 'Sv. Bazilije Veliki i Grgur Nazijanski, biskupi i crkveni naučitelji',
 	'holy-name-of-jesus': 'Presveto Ime Isusovo',
@@ -223,5 +229,144 @@ export const hr: Record<string, string> = {
 	'john-evangelist': 'Sv. Ivan, apostol i evanđelista',
 	'holy-innocents': 'Sv. Nevina Dječica, mučenici',
 	'thomas-becket': 'Sv. Toma Becket, biskup i mučenik',
-	'sylvester-i': 'Sv. Silvestar I., papa'
+	'sylvester-i': 'Sv. Silvestar I., papa',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Rođenje Gospodinovo',
+	'holy-family': 'Sveta Obitelj Isusa Marije i Josipa',
+	'mary-mother-of-god': 'Sv. Marija Bogorodica',
+	'christmas-2-sunday': 'Druga nedjelja po Božiću',
+	epiphany: 'Bogojavljenje',
+	'baptism-of-the-lord': 'Krštenje Gospodinovo',
+	'ash-wednesday': 'Pepelnica',
+	'palm-sunday': 'Nedjelja Muke Gospodnje – Cvjetnica',
+	'holy-thursday': 'Veliki četvrtak – Misa Večere Gospodnje',
+	'good-friday': 'Veliki petak – Petak Muke Gospodnje',
+	'holy-saturday': 'Velika subota',
+	'easter-sunday': 'Nedjelja Uskrsnuća Gospodinova',
+	'easter-2-sunday': 'Druga vazmena nedjelja (Božanskoga milosrđa)',
+	ascension: 'Uzašašće Gospodinovo',
+	pentecost: 'Pedesetnica – Duhovi',
+	trinity: 'Presveto Trojstvo',
+	'corpus-christi': 'Presveto Tijelo i Krv Kristova – Tijelovo',
+	'sacred-heart': 'Presveto Srce Isusovo',
+	'immaculate-heart': 'Bezgrješno Srce Marijino',
+	'mary-mother-of-the-church': 'Bl. Djevica Marija Majka Crkve',
+	'christ-the-king': 'Isus Krist, Kralj svega stvorenja'
+};
+
+/**
+ * The Proper of Time in Croatian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ *
+ * It does not number its Sundays the way it numbers its weekdays, so nothing
+ * could be carried across to the ones three years of feeds never showed —
+ * Advent week 3; Lent week 4. Those Sundays fall back to English.
+ *
+ * And GCatholic misnumbers a week here, in every season and every year of
+ * it, so that week is dropped rather than guessed at — Ordinary Time week
+ * 13. Those days fall back to English too.
+ */
+export const hrTemporal: TemporalNames = {
+	days: { 1: 'Ponedjeljak', 2: 'Utorak', 3: 'Srijeda', 4: 'Četvrtak', 5: 'Petak', 6: 'Subota' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: 'Peti', 6: 'Šesti', 7: 'Sedmi' },
+	sunday: {
+		advent: { form: '{week} nedjelja došašća', weeks: { 1: 'Prva', 2: 'Druga', 4: 'Četvrta' } },
+		lent: {
+			form: '{week} korizmena nedjelja',
+			weeks: { 1: 'Prva', 2: 'Druga', 3: 'Treća', 5: 'Peta' }
+		},
+		easter: {
+			form: '{week} vazmena nedjelja',
+			weeks: { 3: 'Treća', 4: 'Četvrta', 5: 'Peta', 6: 'Šesta', 7: 'Sedma' }
+		},
+		ordinary: {
+			form: '{week} nedjelja kroz godinu',
+			weeks: {
+				2: 'Druga',
+				3: 'Treća',
+				4: 'Četvrta',
+				5: 'Peta',
+				6: 'Šesta',
+				7: 'Sedma',
+				8: 'Osma',
+				9: 'Deveta',
+				10: 'Deseta',
+				11: 'Jedanaesta',
+				12: 'Dvanaesta',
+				13: 'Trinaesta',
+				14: 'Četrnaesta',
+				15: 'Petnaesta',
+				16: 'Šesnaesta',
+				17: 'Sedamnaesta',
+				18: 'Osamnaesta',
+				19: 'Devetnaesta',
+				20: 'Dvadeseta',
+				21: 'Dvadeset i prva',
+				22: 'Dvadeset i druga',
+				23: 'Dvadeset i treća',
+				24: 'Dvadeset i četvrta',
+				25: 'Dvadeset i peta',
+				26: 'Dvadeset i šesta',
+				27: 'Dvadeset i sedma',
+				28: 'Dvadeset i osma',
+				29: 'Dvadeset i deveta',
+				30: 'Trideseta',
+				31: 'Trideset i prva',
+				32: 'Trideset i druga',
+				33: 'Trideset i treća'
+			}
+		}
+	},
+	weekday: {
+		advent: '{day} {week}. tjedna došašća',
+		lent: '{day} {week}. korizmenog tjedna',
+		easter: '{day} {week}. tjedna uskrsnog vremena',
+		ordinary: '{day} {week}. tjedna kroz godinu'
+	},
+	holyWeek: '{day} Velikoga tjedna',
+	afterAshes: '{day} nakon Pepelnice',
+	afterEpiphany: '{day} nakon Bogojavljenja',
+	christmasWeekday: '{day} božićnog vremena',
+	easterOctave: '{day} dan Uskrsne osmine',
+	christmasOctave: '{nth} dan Božićne osmine'
 };

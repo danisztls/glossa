@@ -6,7 +6,13 @@
  * things they are not.
  *
  * All 218 of them, in the Calendar's own order.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `frTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const fr: Record<string, string> = {
 	'basil-gregory':
 		'Saint Basile le Grand et Saint Grégoire de Nazianze, évêques et docteurs de L’Église',
@@ -229,5 +235,95 @@ export const fr: Record<string, string> = {
 	'john-evangelist': 'Saint Jean, apôtre et évangéliste',
 	'holy-innocents': 'Les Saints Innocents, martyrs',
 	'thomas-becket': 'Saint Thomas Becket, évêque et martyr',
-	'sylvester-i': 'Saint Sylvestre Iᵉʳ, pape'
+	'sylvester-i': 'Saint Sylvestre Iᵉʳ, pape',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'La Nativité du Seigneur',
+	'holy-family': 'Sainte Famille',
+	'mary-mother-of-god': 'Sainte Marie, Mère de Dieu',
+	'christmas-2-sunday': '2ᵉ Dimanche de la Nativité',
+	epiphany: 'L’Épiphanie',
+	'baptism-of-the-lord': 'Le Bapteme du Seigneur',
+	'ash-wednesday': 'Mercredi des Cendres',
+	'palm-sunday': 'Dimanche des Rameaux et de la Passion du Seigneur',
+	'holy-thursday': 'Jeudi Saint: La Cène du Seigneur',
+	'good-friday': 'Vendredi Saint: Célébration de la Passion et de la Mort du Seigneur',
+	'holy-saturday': 'Samedi Saint',
+	'easter-sunday': 'Dimanche de Pâques: La Résurrection du Seigneur',
+	'easter-2-sunday': '2ᵉ Dimanche de Pâques ou de la Miséricorde',
+	ascension: 'Ascension du Seigneur',
+	pentecost: 'Dimanche de la Pentecôte',
+	trinity: 'La Très Sainte Trinité',
+	'corpus-christi': 'Le Saint-Sacrement du Corps et du Sang du Christ',
+	'sacred-heart': 'Le Sacré-Cœur de Jésus',
+	'immaculate-heart': 'Le Cœur Immaculé de Marie',
+	'mary-mother-of-the-church': 'Bienheureuse Vierge Marie, Mère de l’Église',
+	'christ-the-king': 'Notre Seigneur Jésus Christ Roi de l’Univers'
+};
+
+/**
+ * The Proper of Time in French, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const frTemporal: TemporalNames = {
+	days: { 1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi' },
+	weeks: {
+		1: '1ᵉʳ',
+		2: '2ᵉ',
+		3: '3ᵉ',
+		4: '4ᵉ',
+		5: '5ᵉ',
+		6: '6ᵉ',
+		7: '7ᵉ',
+		8: '8ᵉ',
+		9: '9ᵉ',
+		10: '10ᵉ',
+		11: '11ᵉ',
+		12: '12ᵉ',
+		13: '13ᵉ',
+		14: '14ᵉ',
+		15: '15ᵉ',
+		16: '16ᵉ',
+		17: '17ᵉ',
+		18: '18ᵉ',
+		19: '19ᵉ',
+		20: '20ᵉ',
+		21: '21ᵉ',
+		22: '22ᵉ',
+		23: '23ᵉ',
+		24: '24ᵉ',
+		25: '25ᵉ',
+		26: '26ᵉ',
+		27: '27ᵉ',
+		28: '28ᵉ',
+		29: '29ᵉ',
+		30: '30ᵉ',
+		31: '31ᵉ',
+		32: '32ᵉ',
+		33: '33ᵉ',
+		34: '34ᵉ'
+	},
+	octave: { 5: '5ᵉ', 6: '6ᵉ', 7: '7ᵉ' },
+	sunday: {
+		advent: '{week} Dimanche de l’Avent',
+		lent: '{week} Dimanche de Carême',
+		easter: '{week} Dimanche de Pâques',
+		ordinary: '{week} Dimanche du Temps Ordinaire'
+	},
+	weekday: {
+		advent: '{day} de la {week} Semaine de l’Avent',
+		lent: '{day} de la {week} Semaine de Carême',
+		easter: '{day} de la {week} Semaine de Pâques',
+		ordinary: '{day} de la {week} Semaine du Temps Ordinaire'
+	},
+	holyWeek: '{day} Saint',
+	afterAshes: '{day} après les Cendres',
+	afterEpiphany: '{day} après l’Épiphanie',
+	christmasWeekday: '{day} du Temps de la Nativité',
+	easterOctave: '{day} dans l’Octave de Pâques',
+	christmasOctave: '{nth} jour dans l’octave de la Nativité'
 };

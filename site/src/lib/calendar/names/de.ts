@@ -6,7 +6,13 @@
  * things they are not.
  *
  * All 218 of them, in the Calendar's own order.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `deTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const de: Record<string, string> = {
 	'basil-gregory': 'Hl. Basilius der Große und hl. Gregor von Nazianz, Bischöfe, Kirchenlehrer',
 	'holy-name-of-jesus': 'Heiligster Name Jesu',
@@ -227,5 +233,95 @@ export const de: Record<string, string> = {
 	'john-evangelist': 'Hl. Johannes, Apostel und Evangelist',
 	'holy-innocents': 'Unschuldige Kinder',
 	'thomas-becket': 'Hl. Thomas Becket, Bischof, Märtyrer',
-	'sylvester-i': 'Hl. Silvester I., Papst'
+	'sylvester-i': 'Hl. Silvester I., Papst',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Hochfest der Geburt des Herrn (Weihnachten)',
+	'holy-family': 'Heilige Familie',
+	'mary-mother-of-god': 'Gottesmutter Maria',
+	'christmas-2-sunday': '2. Sonntag nach Weihnachten',
+	epiphany: 'Erscheinung des Herrn',
+	'baptism-of-the-lord': 'Taufe des Herrn',
+	'ash-wednesday': 'Aschermittwoch',
+	'palm-sunday': 'Palmsonntag',
+	'holy-thursday': 'Gründonnerstag',
+	'good-friday': 'Karfreitag',
+	'holy-saturday': 'Karsamstag',
+	'easter-sunday': 'Hochfest der Auferstehung des Herrn',
+	'easter-2-sunday': '2. Sonntag der Osterzeit (Barmherzigkeitssonntag)',
+	ascension: 'Christi Himmelfahrt',
+	pentecost: 'Pfingsten',
+	trinity: 'Allerheiligste Dreifaltigkeit',
+	'corpus-christi': 'Leib und Blut Christi (Fronleichnam)',
+	'sacred-heart': 'Heiligstes Herz Jesu',
+	'immaculate-heart': 'Unbeflecktes Herz Mariä',
+	'mary-mother-of-the-church': 'Maria, Mutter der Kirche',
+	'christ-the-king': 'Unser Herr Jesus Christus, Königs des Weltalls'
+};
+
+/**
+ * The Proper of Time in German, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const deTemporal: TemporalNames = {
+	days: { 1: 'Montag', 2: 'Dienstag', 3: 'Mittwoch', 4: 'Donnerstag', 5: 'Freitag', 6: 'Samstag' },
+	weeks: {
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+		10: '10',
+		11: '11',
+		12: '12',
+		13: '13',
+		14: '14',
+		15: '15',
+		16: '16',
+		17: '17',
+		18: '18',
+		19: '19',
+		20: '20',
+		21: '21',
+		22: '22',
+		23: '23',
+		24: '24',
+		25: '25',
+		26: '26',
+		27: '27',
+		28: '28',
+		29: '29',
+		30: '30',
+		31: '31',
+		32: '32',
+		33: '33',
+		34: '34'
+	},
+	octave: { 5: '5', 6: '6', 7: '7' },
+	sunday: {
+		advent: '{week}. Adventssonntag',
+		lent: '{week}. Fastensonntag',
+		easter: '{week}. Sonntag der Osterzeit',
+		ordinary: '{week}. Sonntag im Jahreskreis'
+	},
+	weekday: {
+		advent: '{day} der {week}. Adventswoche',
+		lent: '{day} der {week}. Fastenwoche',
+		easter: '{day} der {week}. Osterwoche',
+		ordinary: '{day} der {week}. Woche im Jahreskreis'
+	},
+	holyWeek: '{day} der Karwoche',
+	afterAshes: '{day} nach Aschermittwoch',
+	afterEpiphany: '{day} nach Erscheinung des Herrn',
+	christmasWeekday: '{day} vor Erscheinung des Herrn',
+	easterOctave: '{day} der Osteroktav',
+	christmasOctave: '{nth}. Tag der Weihnachtsoktav'
 };

@@ -9,7 +9,13 @@
  * else on the day of — `vincent-deacon` among them — so this edition never
  * prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `mtTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const mt: Record<string, string> = {
 	'basil-gregory': 'San Bażilju l-kbir u San Girgor Nazjanzenu, isqfijiet u dutturi tal-Knisja',
 	'holy-name-of-jesus': 'L-Isem Imqaddes ta’ Ġesù',
@@ -226,5 +232,154 @@ export const mt: Record<string, string> = {
 	'john-evangelist': 'San Ġwann, appostlu u evanġelista',
 	'holy-innocents': 'Il-Qaddisin Innoċenti Martri',
 	'thomas-becket': 'San Tumas Becket, isqof u martri',
-	'sylvester-i': 'San Silvestru, Papa'
+	'sylvester-i': 'San Silvestru, Papa',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'It-Twelid ta’ Sidna Ġesù Kristu',
+	'holy-family': 'Il-Familja Mqaddsa ta’ Ġesù, Marija u Ġużeppi',
+	'mary-mother-of-god': 'L-Imqaddsa Verġni Marija, Omm Alla',
+	epiphany: 'L-Epifanija tal-Mulej',
+	'baptism-of-the-lord': 'Il-Magħmudija tal-Mulej',
+	'ash-wednesday': 'L-Erbgħa tal-Irmied',
+	'palm-sunday': 'Ħadd il-Palm u l-Passjoni tal-Mulej',
+	'holy-thursday': 'Ħamis ix-Xirka',
+	'good-friday': 'Ġimgħa l-Kbira tal-Passjoni tal-Mulej',
+	'holy-saturday': 'Is-Sibt Imqaddes tal-Għid',
+	'easter-sunday': 'Ħadd il-Għid tal-Qawmien tal-Mulej mill-Imwiet',
+	'easter-2-sunday': 'It-Tieni Ħadd tal-Għid (jew il-Ħadd tal-Ħniena Divina)',
+	ascension: 'Tlugħ il-Mulej fis-Sema',
+	pentecost: 'Għid il-Ħamsin',
+	trinity: 'It-Trinità Qaddisa',
+	'corpus-christi': 'Il-Ġisem u d-Demm Għażiż tal-Mulej',
+	'sacred-heart': 'Il-Qalb Imqaddsa ta’ Ġesù',
+	'immaculate-heart': 'Il-Qalb Bla Tebgħa tal-Imqaddsa Verġni Marija',
+	'mary-mother-of-the-church': 'Marija Omm il-Knisja',
+	'christ-the-king': 'Sidna Ġesù Kristu, Sultan tal-Ħolqien kollu'
+};
+
+/**
+ * The Proper of Time in Maltese, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ *
+ * It does not number its Sundays the way it numbers its weekdays, so nothing
+ * could be carried across to the ones three years of feeds never showed —
+ * Advent week 3; Lent week 4; Eastertide week 7; Ordinary Time week 9. Those
+ * Sundays fall back to English.
+ */
+export const mtTemporal: TemporalNames = {
+	days: {
+		1: 'It-Tnejn',
+		2: 'It-Tlieta',
+		3: 'L-Erbgħa',
+		4: 'Il-Ħamis',
+		5: 'Il-Ġimgħa',
+		6: 'Is-Sibt'
+	},
+	weeks: {
+		1: 'tal-ewwel',
+		2: 'tat-tieni',
+		3: 'tat-tielet',
+		4: 'tar-raba’',
+		5: 'tal-ħames',
+		6: 'tas-sitt',
+		7: 'tas-seba’',
+		8: 'tat-tmien',
+		9: 'tad-disa’',
+		10: 'tal-għaxar',
+		11: 'tal-ħdax-il',
+		12: 'tal-tnax-il',
+		13: 'tat-tlettax-il',
+		14: 'tal-erbatax-il',
+		15: 'tal-ħmistax-il',
+		16: 'tas-sittax-il',
+		17: 'tas-sbatax-il',
+		18: 'tat-tmintax-il',
+		19: 'tad-dsatax-il',
+		20: 'tal-għoxrin',
+		21: 'tal-wieħed u għoxrin',
+		22: 'tat-tnejn u għoxrin',
+		23: 'tat-tlieta u għoxrin',
+		24: 'tal-erbgħa u għoxrin',
+		25: 'tal-ħamsa u għoxrin',
+		26: 'tas-sitta u għoxrin',
+		27: 'tas-sebgħa u għoxrin',
+		28: 'tat-tmienja u għoxrin',
+		29: 'tad-disgħa u għoxrin',
+		30: 'tat-tletin',
+		31: 'tal-wieħed u tletin',
+		32: 'tat-tnejn u tletin',
+		33: 'tat-tlieta u tletin',
+		34: 'tat-erbgħa u tletin'
+	},
+	octave: {
+		5: 'Il-ħames jum fost l-Ottava',
+		6: 'Is-sitt jum fl-Ottava',
+		7: 'Is-seba’ jum fost l-ottava'
+	},
+	sunday: {
+		advent: {
+			form: '{week} Ħadd tal-Avvent',
+			weeks: { 1: 'L-Ewwel', 2: 'It-Tieni', 4: 'Ir-Raba’' }
+		},
+		lent: {
+			form: '{week} Ħadd tar-Randan',
+			weeks: { 1: 'L-ewwel', 2: 'It-tieni', 3: 'It-tielet', 5: 'Il-ħames' }
+		},
+		easter: {
+			form: '{week} Ħadd tal-Għid',
+			weeks: { 3: 'It-Tielet', 4: 'Ir-Raba’', 5: 'Il-ħames', 6: 'Is-Sitt' }
+		},
+		ordinary: {
+			form: '{week} Ħadd taż-Żmien ta’ Matul is-Sena',
+			weeks: {
+				2: 'It-Tieni',
+				3: 'It-Tielet',
+				4: 'Ir-Raba’',
+				5: 'Il-Ħames',
+				6: 'Is-Sitt',
+				7: 'Is-Seba’',
+				8: 'It-Tmien',
+				10: 'L-Għaxar',
+				11: 'Il-Ħdax-il',
+				12: 'L-Tnax-il',
+				13: 'It-Tlettax-il',
+				14: 'L-Erbatax-il',
+				15: 'Il-Ħmistax-il',
+				16: 'Is-Sittax-il',
+				17: 'Is-Sbatax-il',
+				18: 'It-Tmintax-il',
+				19: 'Id-Dsatax-il',
+				20: 'L-Għoxrin',
+				21: 'Il-Wieħed u Għoxrin',
+				22: 'It-Tnejn u Għoxrin',
+				23: 'It-Tlieta u Għoxrin',
+				24: 'L-Erbgħa u Għoxrin',
+				25: 'Il-Ħamsa u Għoxrin',
+				26: 'Is-Sitta u Għoxrin',
+				27: 'Is-Sebgħa u Għoxrin',
+				28: 'It-Tmienja u Għoxrin',
+				29: 'Id-Disgħa u Għoxrin',
+				30: 'It-Tletin',
+				31: 'Il-Wieħed u Tletin',
+				32: 'It-Tnejn u Tletin',
+				33: 'It-Tlieta u Tletin'
+			}
+		}
+	},
+	weekday: {
+		advent: '{day} {week} ġimgħa tal-Avvent',
+		lent: '{day} {week} ġimgħa tar-Randan',
+		easter: '{day} {week} ġimgħa tal-Għid',
+		ordinary: '{day} {week} ġimgħa taż-żmien ta’ matul is-sena'
+	},
+	holyWeek: '{day} tal-Ġimgħa Mqaddsa',
+	afterAshes: '{day} wara l-Erbgħa tal-Irmied',
+	afterEpiphany: '{day} ta’ wara l-Epifanjija',
+	christmasWeekday: '{day} ta’ żmien il-Milied',
+	easterOctave: '{day} tal-Ottava tal-Għid',
+	christmasOctave: '{nth} tal-Milied'
 };

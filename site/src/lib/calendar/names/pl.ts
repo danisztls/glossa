@@ -9,7 +9,13 @@
  * else on the day of — `stanislaus` among them — so this edition never
  * prints them and they go on falling back to English, which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `plTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const pl: Record<string, string> = {
 	'basil-gregory':
 		'Świętych Bazylego Wielkiego i Grzegorza z Nazjanzu, biskupów i doktorów Kościoła',
@@ -218,5 +224,98 @@ export const pl: Record<string, string> = {
 	'john-evangelist': 'Św. Jana, Apostoła i Ewangelisty',
 	'holy-innocents': 'Świętych Młodziaków, męczenników',
 	'thomas-becket': 'Św. Tomasza Becketa, biskupa i męczennika',
-	'sylvester-i': 'Św. Sylwestra I, papieża'
+	'sylvester-i': 'Św. Sylwestra I, papieża',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Narodzenie Pańskie',
+	'holy-family': 'Świętej Rodziny Jezusa, Maryi i Józefa',
+	'mary-mother-of-god': 'Świętej Bożej Rodzicielki Maryi',
+	'christmas-2-sunday': 'II Niedziela po Bożym Narodzeniu',
+	epiphany: 'Objawienie Pańskie',
+	'baptism-of-the-lord': 'Chrzest Pański',
+	'ash-wednesday': 'Środa Popielcowa',
+	'palm-sunday': 'Niedziela Palmowa Męki Pańskiej',
+	'holy-thursday': 'Wielki Czwartek: Wieczerzy Pańskiej',
+	'good-friday': 'Wielki Piątek: Męki Pańskiej',
+	'holy-saturday': 'Wielka Sobota',
+	'easter-sunday': 'Niedziela Zmartwychwstania Pańskiego',
+	'easter-2-sunday': 'II Niedziela Wielkanocna czyli Miłosierdzia Bożego',
+	ascension: 'Wniebowstąpienie Pańskie',
+	pentecost: 'Niedziela Zesłania Ducha Świętego',
+	trinity: 'Najświętszej Trójcy',
+	'corpus-christi': 'Najświętszego Ciała i Krwi Chrystusa',
+	'sacred-heart': 'Najświętszego Serca Pana Jezusa',
+	'immaculate-heart': 'Niepokalanego Serca Najświętszej Maryi Panny',
+	'mary-mother-of-the-church': 'Najświętszej Maryi Panny, Matki Kościoła',
+	'christ-the-king': 'Jezusa Chrystusa, Króla Wszechświata'
+};
+
+/**
+ * The Proper of Time in Polish, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const plTemporal: TemporalNames = {
+	days: { 1: 'Poniedziałek', 2: 'Wtorek', 3: 'Środa', 4: 'Czwartek', 5: 'Piątek', 6: 'Sobota' },
+	weeks: {
+		1: 'I',
+		2: 'II',
+		3: 'III',
+		4: 'IV',
+		5: 'V',
+		6: 'VI',
+		7: 'VII',
+		8: 'VIII',
+		9: 'IX',
+		10: 'X',
+		11: 'XI',
+		12: 'XII',
+		13: 'XIII',
+		14: 'XIV',
+		15: 'XV',
+		16: 'XVI',
+		17: 'XVII',
+		18: 'XVIII',
+		19: 'XIX',
+		20: 'XX',
+		21: 'XXI',
+		22: 'XXII',
+		23: 'XXIII',
+		24: 'XXIV',
+		25: 'XXV',
+		26: 'XXVI',
+		27: 'XXVII',
+		28: 'XXVIII',
+		29: 'XXIX',
+		30: 'XXX',
+		31: 'XXXI',
+		32: 'XXXII',
+		33: 'XXXIII',
+		34: 'XXXIV'
+	},
+	octave: { 5: 'V', 6: 'VI', 7: 'VII' },
+	sunday: {
+		advent: '{week} Niedziela Adwentu',
+		lent: '{week} Niedziela Wielkiego Postu',
+		easter: '{week} Niedziela Wielkanocna',
+		ordinary: '{week} Niedziela Zwykła'
+	},
+	weekday: {
+		advent: '{day} {week} tygodnia Adwentu',
+		lent: '{day} {week} tygodnia Wielkiego Postu',
+		easter: '{day} {week} Tygodnia Wielkanocnego',
+		ordinary: '{day} {week} tygodnia zwykłego'
+	},
+	holyWeek: {
+		form: '{day}',
+		days: { 1: 'Wielki Poniedziałek', 2: 'Wielki Wtorek', 3: 'Wielka Środa' }
+	},
+	afterAshes: '{day} po Popielcu',
+	afterEpiphany: '{day} po Objawieniu Pańskim',
+	christmasWeekday: '{day} przed Objawieniem Pańskim',
+	easterOctave: '{day} w Oktawie Wielkanocy',
+	christmasOctave: '{nth} dzień w oktawie Narodzenia Pańskiego'
 };

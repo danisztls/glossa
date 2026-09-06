@@ -9,7 +9,13 @@
  * Indonesia keeps someone else on the day of, so this edition never prints
  * it and it goes on falling back to English — which is what
  * `celebrationName` is for.
+ *
+ * The Proper of Time is here too: the days the Missal names outright at the
+ * end of the record below, and the pieces the other 285 days of the year are
+ * composed from in `idTemporal` under it.
  */
+import type { TemporalNames } from '../types';
+
 export const id: Record<string, string> = {
 	'basil-gregory': 'S. Basilius Agung dan Gregorius dari Nazianze, uskup dan pujangga Gereja',
 	'holy-name-of-jesus': 'Nama Tersuci Yesus',
@@ -228,5 +234,94 @@ export const id: Record<string, string> = {
 	'john-evangelist': 'S. Yohanes, rasul dan penulis Injil',
 	'holy-innocents': 'Kanak-kanak Suci, martir',
 	'thomas-becket': 'S. Thomas Becket, uskup dan martir',
-	'sylvester-i': 'S. Silvester I, Paus'
+	'sylvester-i': 'S. Silvester I, Paus',
+
+	/* The Proper of Time, for the days the Missal names outright. */
+	christmas: 'Natal',
+	'holy-family': 'Keluarga Kudus, Yesus, Maria dan Yusuf',
+	'mary-mother-of-god': 'Santa Maria Bunda Allah',
+	epiphany: 'Penampakan Tuhan',
+	'baptism-of-the-lord': 'Pembaptisan Tuhan',
+	'ash-wednesday': 'Rabu Abu',
+	'palm-sunday': 'Hari Minggu Palma Mengenangkan Sengsara Tuhan',
+	'holy-thursday': 'Kamas Putih',
+	'good-friday': 'Hari Jumat Agung',
+	'holy-saturday': 'Hari Sabtu Suci',
+	'easter-sunday': 'Paskah Kebangkitan Tuhan',
+	'easter-2-sunday': 'Hari Minggu Paskah II',
+	ascension: 'Kenaikan Tuhan',
+	pentecost: 'Pentakosta',
+	trinity: 'Tritunggal Maha Kudus',
+	'corpus-christi': 'Tubuh dan Darah Kristus',
+	'sacred-heart': 'Hati Yesus Yang Mahakudus',
+	'immaculate-heart': 'Hati Tak Bernoda Santa Perawan Maria',
+	'mary-mother-of-the-church': 'Santa Perawan Maria, Bunda Gereja',
+	'christ-the-king': 'Tuhan Kita Yesus Kristus Raja Semesta Alam'
+};
+
+/**
+ * The Proper of Time in Indonesian, in pieces.
+ *
+ * Not a table of names: the twenty-odd words this language builds a ferial
+ * day out of, and the fifteen patterns that arrange them.
+ * `../names.svelte.ts` has where they came from and how they were solved
+ * for; `../types.ts` has what a `NameForm` is.
+ */
+export const idTemporal: TemporalNames = {
+	days: { 1: 'Senin', 2: 'Selasa', 3: 'Rabu', 4: 'Kamis', 5: 'Jumat', 6: 'Sabtu' },
+	weeks: {
+		1: 'I',
+		2: 'II',
+		3: 'III',
+		4: 'IV',
+		5: 'V',
+		6: 'VI',
+		7: 'VII',
+		8: 'VIII',
+		9: 'IX',
+		10: 'X',
+		11: 'XI',
+		12: 'XII',
+		13: 'XIII',
+		14: 'XIV',
+		15: 'XV',
+		16: 'XVI',
+		17: 'XVII',
+		18: 'XVIII',
+		19: 'XIX',
+		20: 'XX',
+		21: 'XXI',
+		22: 'XXII',
+		23: 'XXIII',
+		24: 'XXIV',
+		25: 'XXV',
+		26: 'XXVI',
+		27: 'XXVII',
+		28: 'XXVIII',
+		29: 'XXIX',
+		30: 'XXX',
+		31: 'XXXI',
+		32: 'XXXII',
+		33: 'XXXIII',
+		34: 'XXXIV'
+	},
+	octave: { 5: 'Kelima', 6: 'Keenam', 7: 'Ketujuh' },
+	sunday: {
+		advent: 'Hari Minggu Adven {week}',
+		lent: 'Hari Minggu Prapaskah {week}',
+		easter: 'Hari Minggu Paskah {week}',
+		ordinary: 'Hari Minggu Biasa {week}'
+	},
+	weekday: {
+		advent: '{day} Pekan Adven {week}',
+		lent: '{day} Pekan Prapaskah {week}',
+		easter: '{day} Pekan Paskah {week}',
+		ordinary: '{day} Pekan Biasa {week}'
+	},
+	holyWeek: 'Hari {day} dalam Pekan Suci',
+	afterAshes: 'Hari {day} ses Rabu Abu',
+	afterEpiphany: '{day} ses Penampakan Tuhan',
+	christmasWeekday: '{day} Pekan Natal II',
+	easterOctave: 'Hari {day} dalam Oktaf Paskah',
+	christmasOctave: 'Hari {nth} Dalam Oktaf Natal'
 };

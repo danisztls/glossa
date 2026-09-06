@@ -267,14 +267,69 @@ wording, and in the twenty new languages there is nothing to make it from. What
 is served there is the source uncorrected, which is worth more than English and
 less than a book. `celebrationName` reads `ROWS` first for that reason.
 
-**A chunk per language, none of them in the boot graph.** The set is 239 KB
-raw and 57 KB gzipped; one language is about 11 KB. That is the accounting
+**A chunk per language, none of them in the boot graph.** The set builds to
+twenty chunks and 277 KB; one language is about 14 KB, 5 KB over the wire
+(2026-09-06, `npm run build`). That is the accounting
 `i18n.svelte.ts` already does for the interface dictionaries, down to the
 `import.meta.glob` and the argument for it, and a table of saints' names is the
 same kind of thing as a table of button labels — the cost of a language is paid
 by the reader who picks it. `names.svelte.ts` holds the loader,
 `LiturgicalDayCard` and `CalendarMonth` ask for it, and a miss renders English
 and re-renders when the chunk lands.
+
+### And the 285 days a year that have no name to transcribe
+
+The sanctorale is the smaller half. Of the 365 days of 2026, **80 carry a name
+of their own and 285 are composed** — every Sunday and every ferial weekday,
+_Tuesday of the 11th Week in Ordinary Time_ — so the transcription above
+reaches eighty days a year and left every other one in English for thirty-four
+of the thirty-seven interface languages. Twenty-one more are the days the
+Missal names outright (Christmas, the Triduum, Corpus Christi), and those
+joined the same record. The rest could not: **a formula is not a string.**
+
+**So the feeds are solved for their pieces rather than copied.** GCatholic
+composes those days the way `temporal.ts` does and its `DESCRIPTION` carries
+the English composition, so a feed is a table of (pattern, weekday, week,
+season) against the vernacular string — and two names differing in one slot
+differ in one substring, which locates the slot. What ships is fifteen patterns
+over a shared table of six weekdays and thirty-four numerals: about 1.5 KB a
+language, against 40 KB for the ~390 finished strings it replaces, and the ~345
+of those the feeds actually show. **The solve is checked by rebuilding every
+observed string out of the pieces**, which is what makes an unobserved week
+safe to compose.
+
+**A solve that rebuilds the feed exactly is the wrong one where the feed is
+wrong**, and four defects turned up — each stated identically in every year and
+every territory, so none is a stray character a vote would clear. GCatholic's
+Lithuanian numbers the sixth and seventh weeks of Easter `II`; its Indonesian
+numbers the second week of Advent `III`; its Vietnamese sets a stray `i` into
+the thirty-second week of Ordinary Time; its Croatian prints `3. tjedna kroz
+godinu` for the thirteenth week. The first three are outvoted inside the
+weekday family, where Ordinary Time counts thirty-four weeks against Advent's
+three. **The fourth is dropped rather than repaired**, and the rule is worth
+carrying: a numeral written in digits can be checked against its own key, so
+`13` is recoverable and `Trinaesta` is not — thirteen weekdays falling back to
+English is a smaller wrong than thirteen weekdays confidently misnumbered.
+
+**What does not compose falls back, and `names.test.ts` names the whole list.**
+Croatian, Maltese, Dutch and Swedish number their Sundays differently from
+their weekdays, so nothing could be carried across to the two to four Sundays
+three years of feeds never showed; each file says which. The test asserts those
+four are the only ones, because a table that stopped composing looks on the
+page exactly like a language that never had one.
+
+**The eight days of Advent named by their date are computed, not read.**
+`temporal.ts` calls 19 December _19 December_, which is a date and not a
+formula, and `Intl` writes a date in all twenty of these languages — where the
+feeds themselves set `Décembre 17` and `Dicembre 17`, GCatholic's English
+template applied to a French and an Italian month. Transcribing those would be
+transcribing a defect.
+
+**A celebration carries `parts` rather than the name being parsed out of its
+id.** `temporal.ts` knows the season, the week and the weekday when it places a
+day; a vernacular table needs exactly those three and nothing else. Reading
+them back off `ordinary-11-2` would work and `christmas-jan-2` would defeat it —
+that id carries a day of the month where the name needs a weekday.
 
 ## The page
 

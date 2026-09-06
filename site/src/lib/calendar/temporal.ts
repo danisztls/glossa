@@ -39,7 +39,7 @@ import {
 	toDayNumber,
 	weekday
 } from './computus';
-import { PRECEDENCE, type Celebration, type Colour, type Season } from './types';
+import { PRECEDENCE, type Celebration, type Colour, type NameParts, type Season } from './types';
 
 /** The dates every other date in the year is measured from. */
 export interface Anchors {
@@ -310,9 +310,10 @@ function day(
 	names: Celebration['names'],
 	rank: Celebration['rank'],
 	precedence: Celebration['precedence'],
-	colour: Colour
+	colour: Colour,
+	parts?: NameParts
 ): Celebration {
-	return { id, names, rank, precedence, colour, source: 'temporal' };
+	return { id, names, rank, precedence, colour, source: 'temporal', ...(parts && { parts }) };
 }
 
 /**
@@ -345,7 +346,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 					sundayOf('advent', week),
 					'sunday',
 					PRECEDENCE.PRINCIPAL,
-					week === 3 ? 'rose' : 'violet'
+					week === 3 ? 'rose' : 'violet',
+					{ kind: 'sunday', season: 'advent', week }
 				)
 			);
 			continue;
@@ -370,7 +372,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 					: weekdayOf('advent', week, dow),
 				'weekday',
 				late ? PRECEDENCE.PRIVILEGED_WEEKDAY : PRECEDENCE.WEEKDAY,
-				'violet'
+				'violet',
+				late ? { kind: 'december', dom } : { kind: 'weekday', season: 'advent', week, dow }
 			)
 		);
 	}
@@ -410,7 +413,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 					},
 					'weekday',
 					PRECEDENCE.PRIVILEGED_WEEKDAY,
-					'white'
+					'white',
+					{ kind: 'christmas-octave', nth: dayOfOctave }
 				)
 			);
 			continue;
@@ -440,7 +444,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 						},
 				'weekday',
 				PRECEDENCE.WEEKDAY,
-				'white'
+				'white',
+				beforeEpiphany ? { kind: 'christmas-weekday', dow } : { kind: 'after-epiphany', dow }
 			)
 		);
 		void month;
@@ -558,14 +563,16 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 						sundayOf('ordinary', week),
 						'sunday',
 						PRECEDENCE.SUNDAY,
-						'green'
+						'green',
+						{ kind: 'sunday', season: 'ordinary', week }
 					)
 				: day(
 						`ordinary-${week}-${dow}`,
 						weekdayOf('ordinary', week, dow),
 						'weekday',
 						PRECEDENCE.WEEKDAY,
-						'green'
+						'green',
+						{ kind: 'weekday', season: 'ordinary', week, dow }
 					)
 		);
 	}
@@ -599,7 +606,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 				},
 				'weekday',
 				PRECEDENCE.PRIVILEGED_WEEKDAY,
-				'violet'
+				'violet',
+				{ kind: 'after-ashes', dow }
 			)
 		);
 	}
@@ -634,7 +642,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 							},
 							'weekday',
 							PRECEDENCE.PRINCIPAL,
-							'violet'
+							'violet',
+							{ kind: 'holy-week', dow }
 						)
 			);
 			continue;
@@ -649,14 +658,16 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 						sundayOf('lent', week),
 						'sunday',
 						PRECEDENCE.PRINCIPAL,
-						week === 4 ? 'rose' : 'violet'
+						week === 4 ? 'rose' : 'violet',
+						{ kind: 'sunday', season: 'lent', week }
 					)
 				: day(
 						`lent-${week}-${dow}`,
 						weekdayOf('lent', week, dow),
 						'weekday',
 						PRECEDENCE.PRIVILEGED_WEEKDAY,
-						'violet'
+						'violet',
+						{ kind: 'weekday', season: 'lent', week, dow }
 					)
 		);
 	}
@@ -742,7 +753,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 				// rank is a solemnity even though nothing is named on the day.
 				'solemnity',
 				PRECEDENCE.PRINCIPAL,
-				'white'
+				'white',
+				{ kind: 'easter-octave', dow }
 			)
 		);
 	}
@@ -765,7 +777,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 						: sundayOf('easter', week),
 					'sunday',
 					PRECEDENCE.PRINCIPAL,
-					'white'
+					'white',
+					{ kind: 'sunday', season: 'easter', week }
 				)
 			);
 			continue;
@@ -779,7 +792,8 @@ export function temporalYear(a: Anchors): Map<DayNumber, TemporalDay> {
 				weekdayOf('easter', week, dow),
 				'weekday',
 				PRECEDENCE.WEEKDAY,
-				'white'
+				'white',
+				{ kind: 'weekday', season: 'easter', week, dow }
 			)
 		);
 	}
