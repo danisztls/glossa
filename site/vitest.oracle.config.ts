@@ -21,7 +21,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	test: {
-		include: ['src/lib/calendar/oracle.test.ts'],
+		include: ['src/lib/calendar/oracle.test.ts', 'src/lib/lectionary/olm-oracle.test.ts'],
 		environment: 'node'
 	}
 });

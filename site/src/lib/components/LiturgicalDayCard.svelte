@@ -30,6 +30,8 @@
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
+	import { primeLectionary, readingsFor } from '$lib/lectionary';
+	import DayReadings from './DayReadings.svelte';
 	import TermGloss from './TermGloss.svelte';
 
 	interface Props {
@@ -75,6 +77,25 @@
 	 */
 	$effect(() => void ensureCelebrationNames(lang));
 	let name = $derived(celebrationName(day.celebration, lang));
+
+	/** The lectionary table is fetched rather than imported, to keep 138 KB out
+	 *  of the boot chunk this card is reached from (`$lib/lectionary` has the
+	 *  argument), so the readings arrive after the first paint. A failure is
+	 *  swallowed deliberately: the readings are an addition to a card that
+	 *  answers perfectly well without them, and an error banner over a day's
+	 *  name would be the page shouting about its own apparatus. */
+	let tableReady = $state(false);
+	$effect(() => {
+		primeLectionary().then(
+			() => (tableReady = true),
+			() => {}
+		);
+	});
+
+	/** Null for any date the lectionary table does not cover, and the card then
+	 *  shows nothing rather than an empty heading — the same posture the rest
+	 *  of this card takes toward a fact it does not have. */
+	let readings = $derived(tableReady ? readingsFor(day) : null);
 
 	/** The season's name — the part a reader may not know, and so the part the
 	 *  gloss hangs on; the week is printed after it as plain text. A week of 0
@@ -195,6 +216,12 @@
 			<dd>{['', 'I', 'II', 'III', 'IV'][day.psalterWeek]}</dd>
 		</div>
 	</dl>
+
+	{#if readings}
+		<!-- Above the optional memorials, because the readings are what a
+		     reader arriving by date came for, and the memorials are context. -->
+		<DayReadings masses={readings} />
+	{/if}
 
 	{#if day.optional.length > 0}
 		<section class="optional">

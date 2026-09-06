@@ -26,6 +26,7 @@ beside the code it governs**, and the entry that says why is one file away:
 | `site/docs/reading.md`         | lanes, apparatus, cards, the Bible's chrome, plates          |
 | `site/docs/finding.md`         | the jump box and `/documenta`'s facets                       |
 | `site/docs/calendar.md`        | the liturgical calendar                                      |
+| `site/docs/lectionary.md`      | the day's readings, the rules that derive them, and the gaps |
 | `site/docs/usage.md`           | the usage beacon and its legal assessment                    |
 | `site/docs/linking-out.md`     | the only outbound links, and what licenses one               |
 | `site/docs/colophon.md`        | can. 216, the disclaimer, the marks                          |

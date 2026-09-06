@@ -71,7 +71,14 @@ describe('indexesForPath', () => {
 		// Five sections: a Bible chapter picker, the Catechism pair, the prayer
 		// groups and the Magisterium's documents. Getting this wrong rendered the
 		// Bible and Magisterium sections empty against a full corpus.
-		const home = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
+		//
+		// `summa` is here for a sixth thing the page does rather than a shelf it
+		// renders: the Today card prints the day's Mass readings, every pericope
+		// is a citation `RefText` resolves, and `refAddress` validates against
+		// the Summa's questions before it mints any link. So the home page owes
+		// `REFS` in full — which is what the scan below demands of every page
+		// that renders a resolver, this one now included.
+		const home = ['bible', 'ccc', 'compendium', 'summa', 'document', 'prayer'];
 		expect(indexesForPath('/')).toEqual(home);
 		expect(indexesForPath('')).toEqual(home);
 		// A bare language prefix IS the home page, so it takes the same set.

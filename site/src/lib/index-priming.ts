@@ -40,12 +40,19 @@ const ALL: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'summa', 'docum
  * against a full corpus. Only the Summa is absent, and deliberately —
  * `/doctores` is not in the nav and the home page does not list it.
  *
- * IT TAKES NO `REFS` BEYOND WHAT IT ALREADY LISTS, unlike every reading shelf
- * below. The home page renders shelf listings and work titles, and not one
- * line of corpus prose or apparatus — so nothing on it ever resolves a
- * reference, which is the whole of what that set is for.
+ * IT TOOK NO `REFS` UNTIL THE READINGS LANDED ON IT, and the reason it does
+ * now is worth keeping: the home page's Today card prints the day's Mass
+ * readings, and a pericope is a citation like any other — `DayReadings`
+ * renders each one through `RefText`, which resolves an address before it
+ * mints a link. So the page that rendered "shelf listings and work titles,
+ * and not one line of corpus prose" now resolves references after all, and
+ * the only index it is missing is the Summa's.
+ *
+ * `index-priming.test.ts` is what said so, by scanning the source for the
+ * components that resolve a reference and demanding every page rendering one
+ * be primed for it — which is the whole reason that test exists.
  */
-const HOME: readonly IndexName[] = ['bible', 'ccc', 'compendium', 'document', 'prayer'];
+const HOME_SHELVES = ['bible', 'ccc', 'compendium', 'document', 'prayer'] as const;
 
 /**
  * The indexes a linkified REFERENCE reads, which every reading shelf owes on
@@ -123,6 +130,10 @@ function withRefs(...own: readonly IndexName[]): readonly IndexName[] {
  * Splitting them would be a fetch saved on one route and a thrown error on the
  * other.
  */
+/** Defined here rather than beside its docblock above, because `withRefs` has
+ *  to exist first and the ordering `withRefs` imposes is the point of it. */
+const HOME: readonly IndexName[] = withRefs(...HOME_SHELVES);
+
 const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
 	scriptura: withRefs('bible', ...CITERS),
 	catechismus: withRefs('ccc', 'compendium'),
@@ -133,6 +144,11 @@ const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
 	// that citation is a `RefText` like any other.
 	preces: withRefs('prayer'),
 	doctores: withRefs('summa'),
+	// The calendar reads no corpus registry for its own subject — it computes
+	// the day — but it prints the day's readings, and every pericope on it is a
+	// citation `RefText` resolves. So it owes `REFS` and nothing else. It fell
+	// through to `ALL` before, which was safe and said nothing.
+	calendarium: withRefs(),
 	// These two read registries that are still eagerly inlined (6.9 KB and
 	// 15.5 KB) for their own text, so `REFS` is the whole of what they need —
 	// which is exactly what made them look like they needed nothing.

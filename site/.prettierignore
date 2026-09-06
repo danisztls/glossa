@@ -10,3 +10,15 @@ package-lock.json
 # out of the hook's scope (root CLAUDE.md, "Linting"). It is an oracle read by
 # tests, never source anyone edits by hand.
 src/lib/calendar/oracle/
+
+# Written by scripts/build-lectionary.mjs from the corpus's USCCB reading
+# pages. Same argument as the rule above: a generated file with its own writer,
+# reformatted here, is a diff on every regeneration and a fight nobody wins. It
+# is committed rather than derived at build time on the precedent of
+# common/book_forms.json -- a derived table that is read as source.
+src/lib/lectionary/table.json
+
+# Written by the same script, and the ORACLE the derived rules are checked
+# against rather than anything the site serves -- `rules.test.ts` is its only
+# reader, which is what keeps it out of every route's chunk.
+src/lib/lectionary/days.oracle.json

@@ -4,7 +4,8 @@ Operational notes for the site. The repo root's `CLAUDE.md` holds the
 corpus-safety rules that apply before any of this (where the corpus lives,
 what may be deleted, the lint hook); **`site/docs/*.md` holds the rationale**
 — `addresses`, `languages`, `references`, `shell`, `edge`, `reading`,
-`finding`, `calendar`, `usage`, `linking-out`, `colophon`, `dev-loop` — with
+`finding`, `calendar`, `lectionary`, `usage`, `linking-out`, `colophon`,
+`dev-loop` — with
 `docs/decisions.md` holding only posture, scope and process.
 
 ## The boot payload has a ceiling, and the deploy enforces it
@@ -2934,3 +2935,36 @@ implementation, since its Python twin went with `pipeline/build/`
 (§Parsing). A wrong chapter does not fail an existence check (`Joel 3:1-5`
 resolves to real but wrong text), so conversion is applied unconditionally
 for divergent books rather than as a fallback.
+
+## The day's readings are COMPUTED, and the crawl is the oracle
+
+`rules.ts` derives the Ordo Lectionum Missae's number from the
+`LiturgicalDay` alone — Easter's weekdays are `255 + 6·week + (weekday − 1)`,
+Ordinary Time's Sundays `61 + 3·(week − 1) + cycle` — so a reader asking for
+2040 is answered by arithmetic and not by whether anybody crawled it. The date
+index that used to ship is `days.oracle.json`, imported by `rules.test.ts` and
+by nothing else, and the rules reproduce every comparable day in it.
+`site/docs/lectionary.md` holds the rest, including a §THE GAPS that is the
+first thing to read before believing this feature about any particular day.
+
+- **`table.json` ships `masses` and NOT `days`.** What set 130 IS has no year
+  in it; which day keeps it is computation. A static import of that table from
+  a component the home page renders is the third of the three silent routes
+  into the boot chunk (§The boot payload) — it is fetched behind
+  `retryableOnce`, and preflight is what says so.
+- **The weekday number does not depend on the weekday cycle**, which looks
+  wrong and is not: the OLM prints Year I and Year II under one number in
+  parallel columns, and the cycle selects a column.
+- **A day can have several Masses and they are not variants** — Christmas is
+  four, the Assumption a Vigil and a Day, Holy Thursday the Chrism and Evening
+  Masses. `FORMULARIES` returns all of them, labelled. The Ascension is NOT
+  one of these: USCCB prints two numbers because six US provinces keep it on
+  the Thursday, which is two calendars rather than two Masses.
+- **A memorial's proper is not always the first half of a `N/M` pair.**
+  `520/317` puts it first and `459/650` second; the Proper of Saints begins at
+  507, and keying by position filed the Passion of John the Baptist under 430,
+  a Thursday in Ordinary Time. The OLM scan oracle is what caught it.
+- **Two calendar defects came out of this and are recorded, not worked
+  around**: St Joseph transferred backward in 2028 where the Universal Norms
+  send him forward, and an Ordinary week-1 Sunday emitted in a year where the
+  Baptism is displaced — there is no First Sunday of Ordinary Time.
