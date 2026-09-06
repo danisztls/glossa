@@ -532,6 +532,15 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Learn. A newly ingested work goes on a shelf in `/bibliotheca` and, where it
   belongs there, on a route in `/schola`; it does **not** get a bar entry. The
   bar was one item per work until 2026-09-04 and had reached seven.
+- **THE FOOTER IS THE FULL INDEX, WHICH IS WHAT LETS THE BAR STOP** (2026-09-06):
+  two columns above the imprint, works then pages, drawn from `visibleShelves()`
+  and a four-entry `FOOTER_PAGES` beside `NAV_ITEMS`. A bar has one line and a
+  footer has none, so they answer different questions rather than being one list
+  at two lengths — do not compose either from the other, and do not repeat
+  `/colophon` there (it is the imprint's link, next to the disclaimer it
+  explains). Every label was already in all 37 dictionaries; the three new keys
+  are the column heads and the `<nav>`'s own name, which must differ from
+  `nav.menu` or two landmarks announce as "Menu".
 - **`Learn` names `/schola`, a guide, and not the Catechism.** It pointed at
   `/catechismus` for one day: a table of divisions is unusable by the reader
   the word was chosen for, who cannot yet name a part (`audiences.md` §5). The

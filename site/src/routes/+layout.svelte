@@ -29,6 +29,9 @@
 	// mid-`showModal()` never opens. See the component's own docblock.
 	import AdvancedSheet from '$lib/components/AdvancedSheet.svelte';
 	import ToTopButton from '$lib/components/ToTopButton.svelte';
+	// The catalogue's own list, borrowed by the footer's index — see
+	// `FOOTER_PAGES` below for why the works are not written out again here.
+	import { visibleShelves } from '$lib/shelves';
 	// Renders its own trigger AND its sheet AND the one window-level keydown
 	// listener behind both, exactly as `JumpBox` does — which is why it sits in
 	// the control row rather than with the overlays below: a modal dialog is in
@@ -152,9 +155,57 @@
 		// `/catechismus` correctly reports.
 	] as const;
 
+	/**
+	 * THE FOOTER NAMES EVERY PAGE, WHICH IS WHY THE BAR DOES NOT HAVE TO.
+	 *
+	 * The five doors above are a bar's answer to a reader moving THROUGH the
+	 * site, and the argument for stopping at five is a width argument: a bar
+	 * has one line and every future work would want a slot in it. A footer has
+	 * neither constraint. It is read by someone who has reached the end of a
+	 * page and is deciding where to go instead, and it can afford to be the
+	 * index of what is here — so the two lists are not duplicates of each other
+	 * at different lengths, they answer different questions, and the bar keeps
+	 * its end state precisely BECAUSE the full list exists somewhere.
+	 *
+	 * TWO COLUMNS, AND THE SPLIT IS THE ONE `/bibliotheca` ALREADY DRAWS: the
+	 * works are the texts this site reproduces, the pages are what it made
+	 * around them. The works column is `visibleShelves()` — the same call the
+	 * catalogue and the home page make, in the same order — because a second
+	 * hand-written list of works is a list that parts company with the first
+	 * one the next time something is ingested, and because the gate is the one
+	 * that matters here too: a card for a work a partial sync did not carry is
+	 * a door onto an empty index, and so is a link.
+	 *
+	 * The pages column is written out, and it is not `NAV_ITEMS` minus its
+	 * works. Composing it that way would make the footer's contents a
+	 * consequence of an edit to the bar, which is a coupling neither list
+	 * wants: Bookmarks is here and not on the bar (it is a control in the
+	 * header, beside the jump box), and Bible and Prayers are on the bar and
+	 * in the works column, where they belong as texts.
+	 *
+	 * `/colophon` is NOT here. It is the imprint's own link two blocks down,
+	 * where `footer.notEndorsed` needs it: that one-line disclaimer can be one
+	 * line only because the full statement is adjacent. Listing it twice in one
+	 * footer would move it away from the sentence it explains and gain nothing.
+	 * No Home either, for the reason the bar gives — the brand link is one, and
+	 * this would be a third.
+	 */
+	const FOOTER_PAGES = [
+		{ href: '/bibliotheca', key: 'nav.library' },
+		{ href: '/calendarium', key: 'nav.calendar' },
+		{ href: '/schola', key: 'nav.learn' },
+		// The one entry that is nobody's text and not a door on the bar: what
+		// the reader has marked. `/signata` is reached from the header by a
+		// glyph, which is a control rather than a name — this is the only place
+		// on the site that says the word.
+		{ href: '/signata', key: 'nav.bookmarks' }
+	] as const;
+
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
 	// Bible). No `'/'` special case is needed now that Home isn't a nav item —
-	// every href here is a real section prefix.
+	// every href here is a real section prefix. The footer's index marks its
+	// current page with the same test, and the two `aria-current`s a reader on
+	// `/scriptura` then gets are both true: two links to the page they are on.
 	function isActive(href: string): boolean {
 		return page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 	}
@@ -444,6 +495,60 @@
 	-->
 	<footer class="site-footer">
 		<!--
+			THE INDEX OF THE WHOLE SITE, above the imprint and separated from it
+			by nothing but space. The imprint is the site speaking about itself
+			and this is the site listing itself; a rule between them would make
+			the pair read as two footers stacked, when what is wanted is one
+			block that starts with addresses and ends with a signature.
+
+			`aria-label` and not `aria-labelledby` pointing at one of the two
+			column heads: neither head names the landmark, they name a half of
+			it each. `nav.sections` is its own word for the same reason the
+			header's list is called "Menu" — a landmark a screen reader reads
+			out has to be named for what it is, and both names have to be
+			different or the reader is told they have gone in a circle.
+
+			The two `<h2>`s are real headings and not styled paragraphs. They
+			land on every page's outline, which is the point: a reader moving by
+			heading gets the site's index at the foot of whatever they were
+			reading, and a "Works" that is only bold text is a label a screen
+			reader never mentions.
+		-->
+		<nav class="footer-nav" aria-label={t('nav.sections')}>
+			<div class="footer-group">
+				<h2>{t('nav.works')}</h2>
+				<!--
+					`navKey ?? titleKey` is the catalogue's own rule for a name in
+					a list of links; `shelves.ts` argues it beside the one entry
+					that sets it. Keyed on `shelf.key` because the href is not
+					unique in principle — two shelves could share a landing page
+					before they share an identity.
+				-->
+				<ul>
+					{#each visibleShelves() as shelf (shelf.key)}
+						<li>
+							<a href={shelf.href} aria-current={isActive(shelf.href) ? 'page' : undefined}>
+								{t(shelf.navKey ?? shelf.titleKey)}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+			<div class="footer-group">
+				<h2>{t('nav.pages')}</h2>
+				<ul>
+					{#each FOOTER_PAGES as item (item.href)}
+						<li>
+							<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+								{t(item.key)}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		</nav>
+
+		<!--
 			The mark and the lines are ONE centred group in TWO grid columns, which
 			is why they need a wrapper at all: the footer centres its contents, and
 			the grid is what makes "cross, then text" a single thing for it to
@@ -719,6 +824,84 @@
 		padding: 1.25rem;
 		text-align: center;
 		font-size: 0.8rem;
+	}
+
+	/*
+	 * TWO COLUMNS THAT STAY TWO COLUMNS, CENTRED AS A PAIR. Same trick as
+	 * `.imprint` below and for the same reason: `justify-content: center`
+	 * centres the two tracks rather than stretching them, so each column is
+	 * the width of its own longest name and the group sits on the footer's
+	 * midline. `text-align: start` inside a centred footer is what makes them
+	 * columns at all — centred link text in a stack of eleven names is a
+	 * ragged shape on both sides with no edge for the eye to run down. `start`
+	 * rather than `left` so Arabic and Hebrew get the same list on the other
+	 * side without a rule of their own.
+	 *
+	 * It does not collapse to one column on a phone. Eleven names stacked is a
+	 * footer taller than the reading it follows; two columns of short words fit
+	 * a 320px screen, and the gutter is what gives if anything has to — hence
+	 * the `clamp`, which is one declaration doing what a media query would.
+	 */
+	.footer-nav {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, auto));
+		justify-content: center;
+		gap: 0 clamp(1.5rem, 8vw, 3.5rem);
+		margin-block-end: 1.75rem;
+		text-align: start;
+	}
+
+	/*
+	 * OUR LABEL, SO THE INTERFACE FACE — `base.css` states the rule and the
+	 * exception together: a heading takes the text face because it names a
+	 * division of the WORK, and a heading that is entirely our own word for a
+	 * group of links does not. "Works" and "Pages" are ours.
+	 *
+	 * Same size as everything else in the footer and separated by weight
+	 * alone. A column head set larger would be an announcement, which is the
+	 * argument the imprint's three lines are already built on — the whole
+	 * footer is one chrome, and small print with two subheadings in it is
+	 * still small print.
+	 */
+	.footer-group h2 {
+		margin: 0 0 0.35rem;
+		font-family: var(--font-sans);
+		font-size: inherit;
+		font-weight: 600;
+		color: var(--color-text);
+	}
+
+	.footer-group ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		/* The imprint's leading, so the two blocks read as one column of small
+		   print rather than as a list above a signature. */
+		line-height: 1.9;
+	}
+
+	/*
+	 * NO UNDERLINE, WHICH IS NOT AN EXEMPTION BUT THE RULE. `base.css` keeps
+	 * the underline for a link inside a SENTENCE and records that every
+	 * list-shaped surface on the site has opted out by hand — the header's
+	 * nav, the index cards, the document rows. A column of names is that
+	 * shape. The colophon link two blocks down is the footer's one link in a
+	 * line of text and keeps its underline, which is what distinguishes the
+	 * imprint's affordance from the index's.
+	 *
+	 * `aria-current` marks the page the reader is on exactly as the bar does,
+	 * and needs none of the width reservation that rule carries: these are
+	 * stacked rows, so a label that grows when it turns bold pushes nothing
+	 * along.
+	 */
+	.footer-nav a {
+		text-decoration: none;
+		color: var(--color-text-muted);
+	}
+
+	.footer-nav a[aria-current='page'] {
+		color: var(--color-text);
+		font-weight: 600;
 	}
 
 	/*

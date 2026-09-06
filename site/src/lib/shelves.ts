@@ -36,6 +36,17 @@ import type { WorkType } from '$lib/types';
 export interface Shelf {
 	key: string;
 	titleKey: string;
+	/**
+	 * THE SAME WORK NAMED FOR A LINE OF LINKS RATHER THAN FOR A CARD, and
+	 * optional because only one entry needs it. A card has three lines and a
+	 * sentence under the name, so it can afford `Catechism & Compendium`; the
+	 * footer's index is a column of bare links, where a title with an
+	 * ampersand in it reads as two entries that failed to separate. Everything
+	 * else is already short enough to be its own short name, and a field
+	 * repeating `titleKey` on six of seven rows is a field nobody would keep
+	 * true. Consumers take `navKey ?? titleKey`.
+	 */
+	navKey?: string;
 	/** THE SAME GLYPH `/schola` GIVES THAT WORK, and taken from there rather
 	 *  than chosen again: the pages that name these works name the same things,
 	 *  and a reader who has learned a mark on one of them has learned it. */
@@ -94,6 +105,7 @@ export const SHELVES: Shelf[] = [
 		// back key by key.
 		key: 'catechism',
 		titleKey: 'ccc.landing.pairTitle',
+		navKey: 'nav.ccc',
 		icon: 'book-marked',
 		href: '/catechismus',
 		taglineKey: 'ccc.landing.pairTagline',

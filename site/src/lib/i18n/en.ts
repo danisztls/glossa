@@ -42,6 +42,27 @@ export const en: Dictionary = {
 	'nav.prayers': 'Prayers',
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',
+	// THE FOOTER'S INDEX, AND THE THREE KEYS IT NEEDED THAT NOTHING ELSE HAD.
+	// Every link in it was already written in all thirty-seven languages —
+	// the bar's five, the catalogue's works, Bookmarks — because the footer
+	// invents no destination the site did not already name. These three are
+	// the frame around them, and they are English-only for now on the rule
+	// this file opens with: `t()` falls back key by key, so a dictionary that
+	// has not been revisited shows two English column heads over links in its
+	// own language rather than a page that fails.
+	//
+	// `nav.sections` is the accessible name of the footer's `<nav>`, and it
+	// exists because `nav.menu` is the header's. Two navigation landmarks
+	// announced as "Menu" is a screen reader telling a reader they are back
+	// where they started.
+	'nav.sections': 'Sections',
+	// The two column heads, and the split is the site's own: a WORK is text
+	// somebody else wrote and this site reproduces, a PAGE is something this
+	// site made — a catalogue, a calendar computed in the browser, a guide,
+	// the reader's own marks. That is the same line `/bibliotheca` draws when
+	// it shelves the works and puts Bookmarks last.
+	'nav.works': 'Works',
+	'nav.pages': 'Pages',
 	'home.title': 'Glossa Catholica',
 	// NAMED FOR WHAT IT IS, NOT FOR WHERE IT RENDERS, and that is the whole
 	// point of the third name in as many days: `home.continueReading`, then

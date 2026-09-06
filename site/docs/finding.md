@@ -1,8 +1,8 @@
 # Finding something
 
-Three surfaces: the nav bar and `/bibliotheca`, which are for a reader who has
-no address; the jump box, which completes one; and `/documenta`, which filters a
-shelf. None of them is a full-text search.
+Four surfaces: the nav bar, the footer's index and `/bibliotheca`, which are for
+a reader who has no address; the jump box, which completes one; and
+`/documenta`, which filters a shelf. None of them is a full-text search.
 
 ## The bar is for the readers who use it least, so it is built for the others
 
@@ -42,7 +42,51 @@ needs the leftmost item; what that missed is that the four before it are the
 works themselves, so a bar opening with a page about the others reads as a
 preamble to them. The home page mirrored that order in four doors of its own
 until 2026-09-06, when the doors became the catalogue; the bar is the only list
-of pages now, which is one fewer place for two orders to disagree.
+of pages a reader meets on the way IN, which is one fewer place for two orders
+to disagree.
+
+## The footer names everything, which is what lets the bar stop at five
+
+**The bar's end state is a width argument, and a footer has no width**
+(2026-09-06). A bar is one line read on the way through a page, so every work
+ingested would want a slot in it and the answer had to be doors; the footer is
+read by somebody who has reached the END of a page and is deciding where to go
+instead, and it can afford to be the index of what is here. The two are not the
+same list at two lengths — they answer different questions, and **the bar keeps
+its end state precisely because the full list exists somewhere.** Before this
+the site had no page naming every destination at all: `/bibliotheca` names every
+WORK, and Learn, the Calendar and Bookmarks appear on no single surface with
+them.
+
+**Two columns, and the split is the one `/bibliotheca` already draws** — a work
+is text somebody else wrote and this site reproduces, a page is something this
+site made. The works column is `visibleShelves()`, the same call the catalogue
+and the home page make and in the same order: a second hand-written list of
+works parts company with the first one the next time something is ingested, and
+the gate matters here for the reason it matters there — a link to a work a
+partial sync did not carry is a door onto an empty index.
+
+**The pages column is written out, and it is deliberately not `NAV_ITEMS` minus
+its works.** Composing it that way would make the footer's contents a
+consequence of an edit to the bar. Bookmarks is in it and not on the bar (in the
+header it is a glyph, which is a control rather than a name — this is the only
+place on the site that says the word), and the Bible and the Prayers are on the
+bar and in the works column, where they belong as texts.
+
+**`/colophon` is not in either column and no Home entry was added.** The
+colophon is the imprint's own link three lines down, where `footer.notEndorsed`
+needs it — that one-line disclaimer can be one line only because the full
+statement is adjacent, and listing it twice in one footer moves it away from the
+sentence it explains. Home is the argument the bar already makes about the brand
+link, one screen further from it.
+
+**It cost three English strings and not one link.** Every name in it was already
+written in all thirty-seven languages, because the footer invents no destination
+the site did not already name; what was new is the two column heads and the
+`<nav>`'s own accessible name, which had to differ from the header's or a screen
+reader announces two landmarks called "Menu". The one entry that needed a
+shorter name got `Shelf.navKey` — a card has a sentence under it and can afford
+`Catechism & Compendium`, a column of bare links cannot.
 
 ## The home page is the three ways in, in the order they are needed
 
