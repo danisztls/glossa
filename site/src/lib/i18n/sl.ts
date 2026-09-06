@@ -450,6 +450,7 @@ export const sl: Dictionary = {
 	'calendar.region.europe': 'Evropa',
 	'calendar.region.americas': 'Amerike',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Bližnji vzhod',
 	'calendar.region.asia': 'Azija',
 	'calendar.region.oceania': 'Oceanija',
 	'calendar.today': 'Danes',

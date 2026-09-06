@@ -322,6 +322,7 @@ export const sk: Dictionary = {
 	'calendar.region.europe': 'Európa',
 	'calendar.region.americas': 'Ameriky',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Blízky východ',
 	'calendar.region.asia': 'Ázia',
 	'calendar.region.oceania': 'Oceánia',
 	'calendar.today': 'Dnes',

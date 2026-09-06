@@ -328,6 +328,7 @@ export const nl: Dictionary = {
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Midden-Oosten',
 	'calendar.region.asia': 'Azië',
 	'calendar.region.oceania': 'Oceanië',
 	'calendar.today': 'Vandaag',

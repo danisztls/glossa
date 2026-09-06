@@ -321,6 +321,7 @@ export const ko: Dictionary = {
 	'calendar.region.europe': '유럽',
 	'calendar.region.americas': '아메리카',
 	'calendar.region.africa': '아프리카',
+	'calendar.region.middleEast': '중동',
 	'calendar.region.asia': '아시아',
 	'calendar.region.oceania': '오세아니아',
 	'calendar.today': '오늘',

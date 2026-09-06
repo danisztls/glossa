@@ -328,6 +328,7 @@ export const be: Dictionary = {
 	'calendar.region.europe': 'Еўропа',
 	'calendar.region.americas': 'Амерыка',
 	'calendar.region.africa': 'Афрыка',
+	'calendar.region.middleEast': 'Блізкі Усход',
 	'calendar.region.asia': 'Азія',
 	'calendar.region.oceania': 'Акіянія',
 	'calendar.today': 'Сёння',

@@ -295,6 +295,7 @@ export const ja: Dictionary = {
 	'calendar.region.europe': 'ヨーロッパ',
 	'calendar.region.americas': 'アメリカ大陸',
 	'calendar.region.africa': 'アフリカ',
+	'calendar.region.middleEast': '中東',
 	'calendar.region.asia': 'アジア',
 	'calendar.region.oceania': 'オセアニア',
 	'calendar.today': '今日',

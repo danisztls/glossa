@@ -302,6 +302,7 @@ export const no: Dictionary = {
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Midtøsten',
 	'calendar.region.asia': 'Asia',
 	'calendar.region.oceania': 'Oseania',
 	'calendar.today': 'I dag',

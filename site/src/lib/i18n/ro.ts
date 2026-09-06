@@ -457,6 +457,7 @@ export const ro: Dictionary = {
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Americile',
 	'calendar.region.africa': 'Africa',
+	'calendar.region.middleEast': 'Orientul Mijlociu',
 	'calendar.region.asia': 'Asia',
 	'calendar.region.oceania': 'Oceania',
 	'calendar.today': 'Astăzi',

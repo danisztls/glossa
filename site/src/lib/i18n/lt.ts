@@ -324,6 +324,7 @@ export const lt: Dictionary = {
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Amerikos',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Artimieji Rytai',
 	'calendar.region.asia': 'Azija',
 	'calendar.region.oceania': 'Okeanija',
 	'calendar.today': 'Šiandien',

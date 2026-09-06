@@ -453,6 +453,7 @@ export const ru: Dictionary = {
 	'calendar.region.europe': 'Европа',
 	'calendar.region.americas': 'Америка',
 	'calendar.region.africa': 'Африка',
+	'calendar.region.middleEast': 'Ближний Восток',
 	'calendar.region.asia': 'Азия',
 	'calendar.region.oceania': 'Океания',
 	'calendar.today': 'Сегодня',

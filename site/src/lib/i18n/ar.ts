@@ -435,6 +435,7 @@ export const ar: Dictionary = {
 	'calendar.region.europe': 'أوروبا',
 	'calendar.region.americas': 'الأمريكتان',
 	'calendar.region.africa': 'أفريقيا',
+	'calendar.region.middleEast': 'الشرق الأوسط',
 	'calendar.region.asia': 'آسيا',
 	'calendar.region.oceania': 'أوقيانوسيا',
 	'calendar.today': 'اليوم',

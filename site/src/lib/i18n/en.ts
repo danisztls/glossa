@@ -966,6 +966,7 @@ export const en: Dictionary = {
 	'calendar.region.europe': 'Europe',
 	'calendar.region.americas': 'The Americas',
 	'calendar.region.africa': 'Africa',
+	'calendar.region.middleEast': 'The Middle East',
 	'calendar.region.asia': 'Asia',
 	'calendar.region.oceania': 'Oceania',
 	'calendar.today': 'Today',

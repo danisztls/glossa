@@ -318,6 +318,7 @@ export const he: Dictionary = {
 	'calendar.region.europe': 'אירופה',
 	'calendar.region.americas': 'אמריקה',
 	'calendar.region.africa': 'אפריקה',
+	'calendar.region.middleEast': 'המזרח התיכון',
 	'calendar.region.asia': 'אסיה',
 	'calendar.region.oceania': 'אוקיאניה',
 	'calendar.today': 'היום',

@@ -305,6 +305,7 @@ export const mt: Dictionary = {
 	'calendar.region.europe': 'Ewropa',
 	'calendar.region.americas': 'L-Ameriki',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Il-Lvant Nofsani',
 	'calendar.region.asia': 'Asja',
 	'calendar.region.oceania': 'Oċeanja',
 	'calendar.today': 'Illum',

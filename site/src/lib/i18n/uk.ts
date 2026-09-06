@@ -329,6 +329,7 @@ export const uk: Dictionary = {
 	'calendar.region.europe': 'Європа',
 	'calendar.region.americas': 'Америки',
 	'calendar.region.africa': 'Африка',
+	'calendar.region.middleEast': 'Близький Схід',
 	'calendar.region.asia': 'Азія',
 	'calendar.region.oceania': 'Океанія',
 	'calendar.today': 'Сьогодні',

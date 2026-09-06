@@ -336,6 +336,7 @@ export const ml: Dictionary = {
 	'calendar.region.europe': 'യൂറോപ്പ്',
 	'calendar.region.americas': 'അമേരിക്കകൾ',
 	'calendar.region.africa': 'ആഫ്രിക്ക',
+	'calendar.region.middleEast': 'മധ്യപൂർവദേശം',
 	'calendar.region.asia': 'ഏഷ്യ',
 	'calendar.region.oceania': 'ഓഷ്യാനിയ',
 	'calendar.today': 'ഇന്ന്',

@@ -306,8 +306,20 @@ export const NATIONAL_CALENDARS: Record<string, NationalCalendar> = Object.fromE
  * FIVE ROWS OF FLAGS BEAT ONE GRID OF NINETY-SIX. The control is scanned
  * rather than read (`CalendarMenu.svelte`), and a scan needs somewhere to
  * start — a reader looking for Ecuador knows which continent it is on before
- * they know what its flag looks like. The regions are GCatholic's own, which
+ * they know what its flag looks like. The regions were GCatholic's own, which
  * is also how the reader will have met this list if they met it there.
+ *
+ * THE MIDDLE EAST IS THE ONE PLACE THIS DEPARTS FROM THE SOURCE (2026-09-06),
+ * and the boundary is drawn by the calendars rather than by geography: the
+ * eleven territories in it are EXACTLY the three vicariates' coverage — the
+ * Latin Patriarchate of Jerusalem for Cyprus, Israel, Jordan and Palestine,
+ * Northern Arabia for Bahrain, Kuwait, Qatar and Saudi Arabia, Southern
+ * Arabia for Oman, the Emirates and Yemen. So the group is not a judgement
+ * about where a country belongs but a statement about whose calendar it
+ * keeps, and it needs no rule for a case nobody has met: every Middle Eastern
+ * territory GCatholic lists is under one of those three. What it buys is the
+ * scan — Asia was twenty-five cells, half of them keeping a calendar named
+ * after somewhere else, and is fourteen now.
  *
  * The order INSIDE a region is not here, deliberately: it is the reader's own
  * alphabet, sorted at render with `Intl.Collator`, because a list of country
@@ -384,33 +396,26 @@ export const CALENDAR_REGIONS: readonly { id: string; territories: readonly stri
 		territories: ['ao', 'cd', 'cv', 'dz', 'ke', 'ng', 'rw', 'sd', 'st', 'tn', 'ug', 'za']
 	},
 	{
+		id: 'middleEast',
+		territories: ['ae', 'bh', 'cy', 'il', 'jo', 'kw', 'om', 'ps', 'qa', 'sa', 'ye']
+	},
+	{
 		id: 'asia',
 		territories: [
-			'ae',
-			'bh',
 			'bn',
-			'cy',
 			'hk',
 			'id',
-			'il',
 			'in',
-			'jo',
 			'jp',
 			'kr',
-			'kw',
 			'mo',
 			'my',
-			'om',
 			'ph',
-			'ps',
-			'qa',
-			'sa',
 			'sg',
 			'th',
 			'tl',
 			'tw',
-			'vn',
-			'ye'
+			'vn'
 		]
 	},
 	{ id: 'oceania', territories: ['au', 'gu', 'mp', 'nz'] }

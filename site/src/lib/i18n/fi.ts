@@ -329,6 +329,7 @@ export const fi: Dictionary = {
 	'calendar.region.europe': 'Eurooppa',
 	'calendar.region.americas': 'Amerikat',
 	'calendar.region.africa': 'Afrikka',
+	'calendar.region.middleEast': 'Lähi-itä',
 	'calendar.region.asia': 'Aasia',
 	'calendar.region.oceania': 'Oseania',
 	'calendar.today': 'Tänään',

@@ -326,6 +326,7 @@ export const sq: Dictionary = {
 	'calendar.region.europe': 'Evropa',
 	'calendar.region.americas': 'Amerikat',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Lindja e Mesme',
 	'calendar.region.asia': 'Azia',
 	'calendar.region.oceania': 'Oqeania',
 	'calendar.today': 'Sot',

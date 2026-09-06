@@ -330,6 +330,7 @@ export const vi: Dictionary = {
 	'calendar.region.europe': 'Châu Âu',
 	'calendar.region.americas': 'Châu Mỹ',
 	'calendar.region.africa': 'Châu Phi',
+	'calendar.region.middleEast': 'Trung Đông',
 	'calendar.region.asia': 'Châu Á',
 	'calendar.region.oceania': 'Châu Đại Dương',
 	'calendar.today': 'Hôm nay',

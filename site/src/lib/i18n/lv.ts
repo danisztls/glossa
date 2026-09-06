@@ -327,6 +327,7 @@ export const lv: Dictionary = {
 	'calendar.region.europe': 'Eiropa',
 	'calendar.region.americas': 'Amerikas',
 	'calendar.region.africa': 'Āfrika',
+	'calendar.region.middleEast': 'Tuvie Austrumi',
 	'calendar.region.asia': 'Āzija',
 	'calendar.region.oceania': 'Okeānija',
 	'calendar.today': 'Šodien',

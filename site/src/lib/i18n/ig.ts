@@ -332,6 +332,7 @@ export const ig: Dictionary = {
 	'calendar.region.europe': 'Yurop',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrịka',
+	'calendar.region.middleEast': 'Etiti Ọwụwa Anyanwụ',
 	'calendar.region.asia': 'Eshia',
 	'calendar.region.oceania': 'Oshenia',
 	'calendar.today': 'Taa',

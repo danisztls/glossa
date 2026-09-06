@@ -458,6 +458,7 @@ export const fr: Dictionary = {
 	'calendar.region.europe': 'Europe',
 	'calendar.region.americas': 'Amériques',
 	'calendar.region.africa': 'Afrique',
+	'calendar.region.middleEast': 'Proche-Orient',
 	'calendar.region.asia': 'Asie',
 	'calendar.region.oceania': 'Océanie',
 	'calendar.today': 'Aujourd’hui',

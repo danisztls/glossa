@@ -347,6 +347,7 @@ export const mg: Dictionary = {
 	'calendar.region.europe': 'Eoropa',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Afovoany Atsinanana',
 	'calendar.region.asia': 'Azia',
 	'calendar.region.oceania': 'Oseania',
 	'calendar.today': 'Androany',

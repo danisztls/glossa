@@ -332,6 +332,7 @@ export const sw: Dictionary = {
 	'calendar.region.europe': 'Ulaya',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Mashariki ya Kati',
 	'calendar.region.asia': 'Asia',
 	'calendar.region.oceania': 'Oceania',
 	'calendar.today': 'Leo',

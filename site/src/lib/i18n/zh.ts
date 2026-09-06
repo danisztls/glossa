@@ -311,6 +311,7 @@ export const zh: Dictionary = {
 	'calendar.region.europe': '欧洲',
 	'calendar.region.americas': '美洲',
 	'calendar.region.africa': '非洲',
+	'calendar.region.middleEast': '中东',
 	'calendar.region.asia': '亚洲',
 	'calendar.region.oceania': '大洋洲',
 	'calendar.today': '今天',

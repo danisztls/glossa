@@ -323,6 +323,7 @@ export const da: Dictionary = {
 	'calendar.region.europe': 'Europa',
 	'calendar.region.americas': 'Amerika',
 	'calendar.region.africa': 'Afrika',
+	'calendar.region.middleEast': 'Mellemøsten',
 	'calendar.region.asia': 'Asien',
 	'calendar.region.oceania': 'Oceanien',
 	'calendar.today': 'I dag',
