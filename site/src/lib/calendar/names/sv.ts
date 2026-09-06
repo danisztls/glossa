@@ -264,10 +264,13 @@ export const sv: Record<string, string> = {
  * `../names.svelte.ts` has where they came from and how they were solved
  * for; `../types.ts` has what a `NameForm` is.
  *
- * It does not number its Sundays the way it numbers its weekdays, so nothing
- * could be carried across to the ones three years of feeds never showed —
- * Advent week 3; Lent week 4; Ordinary Time week 9. Those Sundays fall back
- * to English.
+ * It does not number its Sundays the way it numbers its weekdays, so three
+ * Sunday numerals were settled separately (2026-09-06). Advent week 3 and
+ * Lent week 4 are Gaudete and Laetare, which the solve skipped over the
+ * colour the feeds give them and which the feeds do state — `Tredje Söndagen
+ * i Advent`, `Fjärde Söndagen i Fastan`, in all three years. Ordinary Time
+ * week 9 has no Sunday in 2025, 2026 or 2027 in any calendar, and this column
+ * writes every week as its digits.
  */
 export const svTemporal: TemporalNames = {
 	days: { 1: 'Måndag', 2: 'Tisdag', 3: 'Onsdag', 4: 'Torsdag', 5: 'Fredag', 6: 'Lördag' },
@@ -309,10 +312,13 @@ export const svTemporal: TemporalNames = {
 	},
 	octave: { 5: 'Femte', 6: 'Sjätte', 7: 'Sjunde' },
 	sunday: {
-		advent: { form: '{week} Söndagen i Advent', weeks: { 1: 'Första', 2: 'Andra', 4: 'Fjärde' } },
+		advent: {
+			form: '{week} Söndagen i Advent',
+			weeks: { 1: 'Första', 2: 'Andra', 3: 'Tredje', 4: 'Fjärde' }
+		},
 		lent: {
 			form: '{week} Söndagen i Fastan',
-			weeks: { 1: 'Första', 2: 'Andra', 3: 'Tredje', 5: 'Femte' }
+			weeks: { 1: 'Första', 2: 'Andra', 3: 'Tredje', 4: 'Fjärde', 5: 'Femte' }
 		},
 		easter: { form: '{week}:e Påsksöndagen', weeks: { 3: '3', 4: '4', 5: '5', 6: '6', 7: '7' } },
 		ordinary: {
@@ -325,6 +331,7 @@ export const svTemporal: TemporalNames = {
 				6: '6',
 				7: '7',
 				8: '8',
+				9: '9',
 				10: '10',
 				11: '11',
 				12: '12',

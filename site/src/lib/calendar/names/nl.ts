@@ -265,10 +265,13 @@ export const nl: Record<string, string> = {
  * `../names.svelte.ts` has where they came from and how they were solved
  * for; `../types.ts` has what a `NameForm` is.
  *
- * It does not number its Sundays the way it numbers its weekdays, so nothing
- * could be carried across to the ones three years of feeds never showed —
- * Advent week 3; Lent week 4; Ordinary Time week 9. Those Sundays fall back
- * to English.
+ * It does not number its Sundays the way it numbers its weekdays, so three
+ * Sunday numerals were settled separately (2026-09-06). Advent week 3 and
+ * Lent week 4 are Gaudete and Laetare, which the solve skipped over the
+ * colour the feeds give them and which the feeds do state — `3ᵉ Zondag van de
+ * Advent`, `4ᵉ Zondag Veertigdagentijd`, identical in NL and BE across all
+ * three years. Ordinary Time week 9 has no Sunday in 2025, 2026 or 2027 in
+ * any calendar, and this column writes every week as its digits.
  */
 export const nlTemporal: TemporalNames = {
 	days: { 1: 'Maandag', 2: 'Dinsdag', 3: 'Woensdag', 4: 'Donderdag', 5: 'Vrijdag', 6: 'Zaterdag' },
@@ -310,8 +313,14 @@ export const nlTemporal: TemporalNames = {
 	},
 	octave: { 5: '5ᵉ', 6: '6ᵉ', 7: '7ᵉ' },
 	sunday: {
-		advent: { form: '{week} Zondag van de Advent', weeks: { 1: '1ᵉ', 2: '2ᵉ', 4: '4ᵉ' } },
-		lent: { form: '{week} Zondag Veertigdagentijd', weeks: { 1: '1ᵉ', 2: '2ᵉ', 3: '3ᵉ', 5: '5ᵉ' } },
+		advent: {
+			form: '{week} Zondag van de Advent',
+			weeks: { 1: '1ᵉ', 2: '2ᵉ', 3: '3ᵉ', 4: '4ᵉ' }
+		},
+		lent: {
+			form: '{week} Zondag Veertigdagentijd',
+			weeks: { 1: '1ᵉ', 2: '2ᵉ', 3: '3ᵉ', 4: '4ᵉ', 5: '5ᵉ' }
+		},
 		easter: {
 			form: '{week} Zondag van Pasen',
 			weeks: { 3: '3ᵉ', 4: '4ᵉ', 5: '5ᵉ', 6: '6ᵉ', 7: '7ᵉ' }
@@ -326,6 +335,7 @@ export const nlTemporal: TemporalNames = {
 				6: '6ᵉ',
 				7: '7ᵉ',
 				8: '8ᵉ',
+				9: '9ᵉ',
 				10: '10ᵉ',
 				11: '11ᵉ',
 				12: '12ᵉ',

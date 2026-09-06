@@ -162,14 +162,21 @@ describe('celebrationName over a resident table', () => {
 		expect(name('2026-05-17')).toBe('VII Domenica di Pasqua');
 	});
 
-	// Every day of three years, in every language with a table: a name either
-	// composes whole or is not offered. A half-filled pattern would print its
-	// own placeholder, and only a reader of that language would ever see it.
+	// Every day of thirty-seven years, in every language with a table: a name
+	// either composes whole or is not offered. A half-filled pattern would
+	// print its own placeholder, and only a reader of that language would
+	// ever see it.
+	//
+	// THE SPAN IS NOT THE ORACLE'S THREE YEARS AND MUST NOT BE. The slots
+	// hardest to fill are the ones a short window never reaches — Ordinary
+	// Time's ninth Sunday needs an early Easter and turns up in 15 of these
+	// 37 years — so a three-year run would assert nothing about exactly the
+	// entries that had no witness to be read from.
 	it('never leaves a placeholder in a name', async () => {
 		for (const lang of NAMED_LANGS) await ensureCelebrationNames(lang);
 		const misses = new Map<string, number>();
 		for (const lang of NAMED_LANGS) {
-			for (const year of [2025, 2026, 2027]) {
+			for (let year = 2024; year <= 2060; year++) {
 				for (const day of getYear(year).values()) {
 					const name = celebrationName(day.celebration, lang);
 					expect(name, `${lang} ${day.date}`).not.toContain('{');
@@ -179,12 +186,13 @@ describe('celebrationName over a resident table', () => {
 				}
 			}
 		}
-		// Exactly the four languages whose own files say why, and no others:
-		// each numbers its Sundays differently from its weekdays, so nothing
-		// could be carried across to a week three years of feeds never showed.
-		// A fifth language here is a table that stopped composing, which is
-		// invisible on the page — English is what a miss shows either way.
-		expect([...misses.keys()].sort()).toEqual(['hr', 'mt', 'nl', 'sv']);
-		expect(Math.max(...misses.values())).toBeLessThan(20);
+		// NOTHING FALLS BACK, and the empty list is the whole assertion. Until
+		// 2026-09-06 four languages had gaps here, on the reasoning that a
+		// week the feeds never showed could not be filled; the feeds turned
+		// out to show two of them, and the rest were settled against the
+		// conferences' own pages. A language reappearing here is a table that
+		// stopped composing, which is invisible on the page — English is what
+		// a miss shows either way.
+		expect([...misses.keys()].sort()).toEqual([]);
 	});
 });

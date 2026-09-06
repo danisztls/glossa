@@ -265,10 +265,18 @@ export const mt: Record<string, string> = {
  * `../names.svelte.ts` has where they came from and how they were solved
  * for; `../types.ts` has what a `NameForm` is.
  *
- * It does not number its Sundays the way it numbers its weekdays, so nothing
- * could be carried across to the ones three years of feeds never showed —
- * Advent week 3; Lent week 4; Eastertide week 7; Ordinary Time week 9. Those
- * Sundays fall back to English.
+ * It does not number its Sundays the way it numbers its weekdays, so four
+ * Sunday numerals had to be settled one at a time (2026-09-06). Advent week 3
+ * and Lent week 4 are Gaudete and Laetare, which the solve skipped over the
+ * colour the feeds give them and which the feeds do state — `It-Tielet Ħadd
+ * tal-Avvent`, `Ir-raba’ Ħadd tar-Randan`, in all three years.
+ *
+ * THE OTHER TWO THE FEEDS CANNOT STATE, and they were read off the Maltese
+ * Church's own pages instead. Malta keeps the Ascension on the Sunday, so
+ * Eastertide week 7 has no Sunday here at all: the Archdiocese and Laikos
+ * both print `Is-Seba’ Ħadd tal-Għid` for it. Ordinary Time week 9 has no
+ * Sunday in 2025, 2026 or 2027 in any calendar; Laikos glosses it `Id-Disa’
+ * Ħadd`. Both keep this column's own wording for the rest of the form.
  */
 export const mtTemporal: TemporalNames = {
 	days: {
@@ -323,15 +331,15 @@ export const mtTemporal: TemporalNames = {
 	sunday: {
 		advent: {
 			form: '{week} Ħadd tal-Avvent',
-			weeks: { 1: 'L-Ewwel', 2: 'It-Tieni', 4: 'Ir-Raba’' }
+			weeks: { 1: 'L-Ewwel', 2: 'It-Tieni', 3: 'It-Tielet', 4: 'Ir-Raba’' }
 		},
 		lent: {
 			form: '{week} Ħadd tar-Randan',
-			weeks: { 1: 'L-ewwel', 2: 'It-tieni', 3: 'It-tielet', 5: 'Il-ħames' }
+			weeks: { 1: 'L-ewwel', 2: 'It-tieni', 3: 'It-tielet', 4: 'Ir-raba’', 5: 'Il-ħames' }
 		},
 		easter: {
 			form: '{week} Ħadd tal-Għid',
-			weeks: { 3: 'It-Tielet', 4: 'Ir-Raba’', 5: 'Il-ħames', 6: 'Is-Sitt' }
+			weeks: { 3: 'It-Tielet', 4: 'Ir-Raba’', 5: 'Il-ħames', 6: 'Is-Sitt', 7: 'Is-Seba’' }
 		},
 		ordinary: {
 			form: '{week} Ħadd taż-Żmien ta’ Matul is-Sena',
@@ -343,6 +351,7 @@ export const mtTemporal: TemporalNames = {
 				6: 'Is-Sitt',
 				7: 'Is-Seba’',
 				8: 'It-Tmien',
+				9: 'Id-Disa’',
 				10: 'L-Għaxar',
 				11: 'Il-Ħdax-il',
 				12: 'L-Tnax-il',

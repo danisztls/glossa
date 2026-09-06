@@ -306,17 +306,35 @@ numbers the second week of Advent `III`; its Vietnamese sets a stray `i` into
 the thirty-second week of Ordinary Time; its Croatian prints `3. tjedna kroz
 godinu` for the thirteenth week. The first three are outvoted inside the
 weekday family, where Ordinary Time counts thirty-four weeks against Advent's
-three. **The fourth is dropped rather than repaired**, and the rule is worth
-carrying: a numeral written in digits can be checked against its own key, so
-`13` is recoverable and `Trinaesta` is not — thirteen weekdays falling back to
-English is a smaller wrong than thirteen weekdays confidently misnumbered.
+three. **The fourth has one witness and it is wrong, so it is overruled from
+outside** — Banjaluka numbers 28 June to 5 July 2026 the XIII, which settles
+the number, and the column's own digits settle the spelling.
 
-**What does not compose falls back, and `names.test.ts` names the whole list.**
-Croatian, Maltese, Dutch and Swedish number their Sundays differently from
-their weekdays, so nothing could be carried across to the two to four Sundays
-three years of feeds never showed; each file says which. The test asserts those
-four are the only ones, because a table that stopped composing looks on the
-page exactly like a language that never had one.
+### Dropping a slot was the wrong default, and it cost four languages
+
+Until 2026-09-06 that fourth defect was DROPPED rather than repaired, and
+Croatian, Maltese, Dutch and Swedish each carried two to four Sunday slots
+that fell back to English, on the reasoning that a week the feeds never showed
+could not be filled. **Two of the four were in the feeds all along.** Every one
+of those languages was missing Advent 3 and Lent 4 and no other season's
+middle — which is Gaudete and Laetare, the two days this project paints rose
+and GCatholic paints violet. The solve passed over them for the colour and
+recorded the absence as the source's silence.
+
+**The other slots are genuinely unwitnessed, and that is not the same as
+unknowable.** Malta keeps the Ascension on the Sunday, so Eastertide week 7
+has no Sunday there to observe; Ordinary Time's ninth Sunday needs an earlier
+Easter than 2025, 2026 or 2027 gave, in any calendar. Both were settled
+against the conferences' own pages — the Archdiocese of Malta and Laikos for
+`Is-Seba’ Ħadd tal-Għid` and `Id-Disa’ Ħadd` — in the wording of the column
+they join. **A second witness was a search away in every case**, which is the
+lesson: the feeds are the source these tables were read from, not the limit of
+what can be known about them.
+
+`names.test.ts` now asserts the fallback list is **empty**, over thirty-seven
+years rather than the oracle's three — because the slots hardest to fill are
+exactly the ones a three-year window never reaches, so a short run would
+assert nothing about them.
 
 **The eight days of Advent named by their date are computed, not read.**
 `temporal.ts` calls 19 December _19 December_, which is a date and not a

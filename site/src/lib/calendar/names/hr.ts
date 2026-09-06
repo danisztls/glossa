@@ -263,13 +263,17 @@ export const hr: Record<string, string> = {
  * `../names.svelte.ts` has where they came from and how they were solved
  * for; `../types.ts` has what a `NameForm` is.
  *
- * It does not number its Sundays the way it numbers its weekdays, so nothing
- * could be carried across to the ones three years of feeds never showed —
- * Advent week 3; Lent week 4. Those Sundays fall back to English.
+ * It does not number its Sundays the way it numbers its weekdays, so Gaudete
+ * and Laetare — Advent week 3, Lent week 4 — are the only witnesses to those
+ * two numerals. The solve skipped both days over the colour the feeds give
+ * them, and they were read back off the feeds on 2026-09-06: `Treća nedjelja
+ * došašća` and `Četvrta korizmena nedjelja`, identical in HR and BA across
+ * all three years.
  *
- * And GCatholic misnumbers a week here, in every season and every year of
- * it, so that week is dropped rather than guessed at — Ordinary Time week
- * 13. Those days fall back to English too.
+ * AND GCATHOLIC MISNUMBERS ORDINARY TIME WEEK 13, printing `3. tjedna kroz
+ * godinu` for it in every year and both territories. The week is written out
+ * here as `13` — the Banjaluka diocese numbers 28 June to 5 July 2026 the
+ * XIII, and every other entry in this column is its own digits.
  */
 export const hrTemporal: TemporalNames = {
 	days: { 1: 'Ponedjeljak', 2: 'Utorak', 3: 'Srijeda', 4: 'Četvrtak', 5: 'Petak', 6: 'Subota' },
@@ -286,6 +290,7 @@ export const hrTemporal: TemporalNames = {
 		10: '10',
 		11: '11',
 		12: '12',
+		13: '13',
 		14: '14',
 		15: '15',
 		16: '16',
@@ -310,10 +315,13 @@ export const hrTemporal: TemporalNames = {
 	},
 	octave: { 5: 'Peti', 6: 'Šesti', 7: 'Sedmi' },
 	sunday: {
-		advent: { form: '{week} nedjelja došašća', weeks: { 1: 'Prva', 2: 'Druga', 4: 'Četvrta' } },
+		advent: {
+			form: '{week} nedjelja došašća',
+			weeks: { 1: 'Prva', 2: 'Druga', 3: 'Treća', 4: 'Četvrta' }
+		},
 		lent: {
 			form: '{week} korizmena nedjelja',
-			weeks: { 1: 'Prva', 2: 'Druga', 3: 'Treća', 5: 'Peta' }
+			weeks: { 1: 'Prva', 2: 'Druga', 3: 'Treća', 4: 'Četvrta', 5: 'Peta' }
 		},
 		easter: {
 			form: '{week} vazmena nedjelja',
