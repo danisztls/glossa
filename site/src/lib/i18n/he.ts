@@ -313,7 +313,6 @@ export const he: Dictionary = {
 	'lang.more': 'שפות נוספות',
 	'calendar.title': 'לוח השנה הליטורגי',
 	'calendar.tagline': 'לוח השנה הרומי הכללי, מחושב לכל יום — תקופתו, דרגתו, צבעו.',
-	'calendar.date': 'תאריך',
 	'calendar.calendar': 'לוח שנה',
 	'calendar.which.general': 'לוח השנה הרומי הכללי',
 	'calendar.filter': 'חיפוש מדינות',

@@ -451,7 +451,6 @@ export const es: Dictionary = {
 	'calendar.title': 'Calendario litúrgico',
 	'calendar.tagline':
 		'El Calendario Romano General, calculado para cualquier día: su tiempo, su grado, su color.',
-	'calendar.date': 'Fecha',
 	'calendar.calendar': 'Calendario',
 	'calendar.which.general': 'Calendario Romano General',
 	'calendar.filter': 'Buscar países',

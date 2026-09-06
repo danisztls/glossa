@@ -483,7 +483,6 @@ export const la: Dictionary = {
 	'calendar.title': 'Calendarium Liturgicum',
 	'calendar.tagline':
 		'Calendarium Romanum Generale, in quemlibet diem computatum — tempus, gradus, color.',
-	'calendar.date': 'Dies',
 	'calendar.calendar': 'Calendarium',
 	'calendar.which.general': 'Calendarium Romanum Generale',
 	'calendar.filter': 'Regiones quaerere',
@@ -496,6 +495,7 @@ export const la: Dictionary = {
 	'calendar.today': 'Hodie',
 	'calendar.previousMonth': 'Mensis praecedens',
 	'calendar.nextMonth': 'Mensis sequens',
+	'calendar.plainDays': 'Feriae',
 	'calendar.noSuchDay': 'Nullus dies liturgicus huic diei computatur.',
 	'calendar.week': 'hebdomada',
 	'calendar.alsoToday': 'Item hodie',

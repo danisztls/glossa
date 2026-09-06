@@ -586,11 +586,29 @@ the `title` and the `aria-label`, which is the rule every icon-only control on
 the site follows. The row now fits on one line on a phone, where it wrapped to
 two.
 
-**The home card prints the date where `/calendarium` keeps its date field.**
-Same corner, same height, first item — that page's first control answers WHICH
-DAY and this says which day it is. A card that shows one day and cannot be
-asked for another has no field to put there, so it is a `<p>` and not a
-control.
+**AND THE TWO CARDS BECAME ONE OBJECT LATER THE SAME DAY.** The date field and
+Today went with the borders: both answered WHICH DAY, and the listing under
+them answers it better — a reader picks a day by reading what is on it, where
+the field made them type one blind. What is left in the corner is the calendar
+picker, which is the only control there that changes what the days MEAN, plus
+the way out on the home page. So both cards now read the same: a date, a name,
+the facts under it, and one flag in the corner.
+
+**The date leads the card again**, having spent an afternoon in that corner.
+What was wrong there is what the corner IS — furniture, the things that change
+the day or leave it — where the date is the first thing the card says. It
+carries `today`, `yesterday` or `tomorrow` beside it when the day is one of
+them, which is the relation rather than a second date; for every other day the
+date already says it. **The word is `Intl.RelativeTimeFormat`'s and not three
+dictionary keys**, on `Intl.DisplayNames`' argument for the picker's country
+names: three words in thirty-seven languages is a table nobody would maintain
+and every browser already holds. The calendar's terms of art stay in the
+dictionaries, because those this project translates deliberately.
+
+**What it costs is a distant date**, and that is the whole of the bill: the
+field could be typed into, the listing pages one month at a time, and `?d=` is
+still the address of any day for anyone who edits it. Getting back to today is
+the header's Calendar link, which carries no `?d=`.
 
 **Which is what let the home page keep a calendar at all.** It showed the
 general calendar to everyone, and the reason recorded on the page was that the
@@ -624,53 +642,31 @@ the name in the corner of a screen the day list fills edge to edge, so the name
 read as belonging to the arrows rather than to the month under it; at the full
 column width the same rule would put two 2rem buttons forty characters apart.
 
-**The date field prints the date the way the page writes dates, and a native
-`<input type="date">` cannot be made to** (2026-09-05). Its format comes from
-the operating system's locale rather than from the interface language, so a
-reader on an American machine met `09/17/2026` at the top of a page that says
-"17 de setembro de 2026" everywhere else. The input is still the control — the
-value, the keyboard, the validation and the platform's own calendar popup — and
-a span over it carries `formatPromulgated`, the same function the card used.
-Three details are load-bearing: the input is hidden with `opacity` and never
-`visibility`, `display` or a clip, because those take a control out of the focus
-order on one engine or another; a click anywhere on the field calls
-`showPicker()`, since the platform's picker indicator is invisible along with
-the rest of it; and keyboard focus — `:focus-visible`, so only keyboard —
-uncovers the real input, because typing into segments that cannot be seen is the
-one thing this arrangement could genuinely break. **The card then stopped
-printing the date**, which is what makes the whole trade worth it: the date is
-said once, in the control that sets it. It still prints on the home page, where
-the card stands alone (`showDate`).
+**A DATE FIELD LIVED HERE FOR A DAY AND A HALF** (2026-09-05 to 2026-09-06),
+and what it cost is worth recording because the shape recurs. A native
+`<input type="date">` prints the operating system's date format, not the
+interface language's, so a reader on an American machine met `09/17/2026` at
+the top of a page written in Portuguese; dressing it took a transparent input
+over a rendered face, `showPicker()` on any click because the platform's
+indicator was invisible with it, `opacity` rather than `visibility` so the
+control stayed focusable, a blur-unless-typing rule because `:focus-visible`
+fires on a CLICK in a text-entry control, and a hidden probe of the widest date
+in the reader's language so the box stopped changing width as the day changed.
+Six mechanisms, all correct, for a control the month listing already replaced —
+and the listing shows what is ON each day, which is what a reader is choosing
+by. **The lesson is the ratio**: when a control needs that much machinery to
+behave, the question is whether the page needs the control.
 
-**Three follow-ups the same day, and the first two are one bug seen twice**
-(2026-09-05). `:focus-visible` is not keyboard-only on a text-entry control — a
-browser sets it on a CLICK there too — so clicking the field swapped the face
-for the raw input, and picking a date from the platform's popup left it focused
-and therefore still showing `09/17/2026`, which is the one thing the face
-exists to prevent. **The field lets go once a date is chosen** (`pickDate`),
-except when the reader is TYPING one: a typed date fires `input` the moment the
-last segment lands, and blurring there would eject someone mid-correction, so a
-key sets `typing` and a click clears it. **And the field no longer changes
-width with the day it prints.** The face gives the box its width, so `1 de
-maio` and `28 de setembro` were different boxes and every step to another day
-slid Today and the calendar picker sideways. The widest date is knowable, so it
-is computed — twelve probes on the 28th, which every month has and which is two
-digits — and laid in the same grid cell as the real one, hidden. A
-`min-inline-size` in `rem` would have been a number measured once in one
-language and wrong in the thirty-seventh; `tabular-nums` on the face is what
-makes a two-digit probe an upper bound for a one-digit day.
-
-**And the row has one padding and one height, which took three tries to be
-true.** `.menu-trigger` is the site header's icon SQUARE (`width: 2.25rem;
-padding: 0`) and `.wide` is what a trigger carrying a label wears; Today was
-wearing the square, so as a flex item it could not shrink below its own word
-and came out with no side padding at all, beside a calendar button with 0.6rem
-and a date field with 0.5rem — three controls, three paddings, in a row four
-centimetres wide. One value now, `--control-padding`, named on the row and read
-by the date face and the focused input as well. The month's two arrows join the
-same rule from their own file: they were still the header's 2.25rem square at
-1rem, and they are a third pair of controls on this page — the date field,
-Today and the picker answer WHICH DAY, these answer WHICH MONTH.
+**The month listing can show the days that say nothing, and does not by
+default** (2026-09-06). The filter's argument stands — a third of a month
+reading `Weekday` beside an empty name, between the reader and the days that
+say something — but it is a judgement about what a reader wants, and one
+counting the days of a month wants the month. So it is a press at the end of
+the listing's own header, where what it changes is on screen: `aria-pressed`
+carries the state and the label names the rows in both of them, which is the
+rule every toggle on this site follows. It is neither in `?d=` nor remembered —
+the address reproduces WHICH DAY, and how many rows are drawn under it is not a
+fact about the day.
 
 ### Some layers share their propers, and factoring them out cost the oracle nothing
 
@@ -750,7 +746,7 @@ never chose, and — the clamp not being symmetric — could not be undone by
 pressing back twice. **Turning a page is not choosing.**
 
 `view` is the month on screen and it follows the chosen day ONE WAY: pick a day
-(a row, the date field, Today, a pasted `?d=`) and the listing goes to that day's
+(a row, a pasted `?d=`) and the listing goes to that day's
 month; page the listing and the chosen day stays put. So the two can only
 disagree while the reader is browsing, which is the state the second variable
 exists to allow, and any choice at all resolves it. PageUp/PageDown on a row is
@@ -830,10 +826,12 @@ What is left in the component is the refocus alone — a keyboard move that
 crosses a month replaces every row, so the date to stand on is named before the
 navigation and focused after it.
 
-**And Today moved up to the page's control row**, out of the month header where
-it sat beside the two arrows. Beside two controls that turn a page it read as a
-third month control, and it is not one: it names a DAY, like the date field it
-now stands next to.
+**Today moved up to the page's control row and then off the page altogether**
+(2026-09-05, 2026-09-06). It sat in this header beside the two arrows, where it
+read as a third month control and is not one — it names a DAY — so it joined
+the controls that do. It went with them: the card says `today` beside the date
+when the day is today, which is what the button was for on the day a reader
+could see it, and the header's Calendar link is the way back from any other.
 
 ## The page explains its own vocabulary
 

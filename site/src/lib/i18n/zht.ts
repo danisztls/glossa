@@ -301,7 +301,6 @@ export const zht: Dictionary = {
 	'lang.more': '更多語言',
 	'calendar.title': '禮儀日曆',
 	'calendar.tagline': '羅馬通用日曆，可推算任何一天——那一天的時期、等級與顏色。',
-	'calendar.date': '日期',
 	'calendar.calendar': '日曆',
 	'calendar.which.general': '羅馬通用日曆',
 	'calendar.filter': '搜尋國家或地區',

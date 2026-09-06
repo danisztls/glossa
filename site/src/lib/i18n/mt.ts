@@ -302,7 +302,6 @@ export const mt: Dictionary = {
 	'calendar.title': 'Kalendarju Liturġiku',
 	'calendar.tagline':
 		'Il-Kalendarju Ruman Ġenerali, ikkalkulat għal kull jum — l-istaġun tiegħu, il-grad tiegħu, il-kulur tiegħu.',
-	'calendar.date': 'Data',
 	'calendar.calendar': 'Kalendarju',
 	'calendar.which.general': 'Kalendarju Ruman Ġenerali',
 	'calendar.filter': 'Fittex pajjiżi',

@@ -483,7 +483,6 @@ export const pt: Dictionary = {
 	'calendar.title': 'Calendário Litúrgico',
 	'calendar.tagline':
 		'O Calendário Romano Geral, calculado para qualquer dia — o tempo, o grau e a cor.',
-	'calendar.date': 'Data',
 	'calendar.calendar': 'Calendário',
 	'calendar.which.general': 'Calendário Romano Geral',
 	'calendar.filter': 'Procurar países',
@@ -496,6 +495,7 @@ export const pt: Dictionary = {
 	'calendar.today': 'Hoje',
 	'calendar.previousMonth': 'Mês anterior',
 	'calendar.nextMonth': 'Mês seguinte',
+	'calendar.plainDays': 'Dias feriais',
 	'calendar.noSuchDay': 'Nenhum dia litúrgico é calculado para essa data.',
 	'calendar.week': 'semana',
 	'calendar.alsoToday': 'Também hoje',

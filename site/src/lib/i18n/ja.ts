@@ -291,7 +291,6 @@ export const ja: Dictionary = {
 	'lang.more': '他の言語',
 	'calendar.title': '典礼暦',
 	'calendar.tagline': 'ローマ一般暦を任意の日について計算します — その季節、その等級、その色。',
-	'calendar.date': '日付',
 	'calendar.calendar': '暦',
 	'calendar.which.general': 'ローマ一般暦',
 	'calendar.filter': '国を検索',

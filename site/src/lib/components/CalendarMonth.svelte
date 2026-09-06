@@ -212,6 +212,26 @@
 	 * keys walk off one end of a month into the next — `step` below builds the
 	 * neighbour's list with it.
 	 */
+	/**
+	 * Whether the days that say nothing are listed too.
+	 *
+	 * OFF, AND A CONTROL RATHER THAN A RULE (2026-09-06). The filter's own
+	 * argument above is still the right default — a third of the list saying
+	 * "Weekday" beside an empty name, between the reader and the days that do
+	 * say something — but it is an editorial judgement about what a reader
+	 * wants, and a reader counting the days of a month or looking for one
+	 * particular Tuesday wants the month. So it is a press, in the listing's
+	 * own header, where what it changes is on screen.
+	 *
+	 * COMPONENT STATE AND NOT `?d=`'s COMPANY. The address reproduces WHICH
+	 * DAY the page is showing; how many rows the listing under it draws is not
+	 * a fact about the day, and a parameter for it would ride along in every
+	 * link a reader copies. Nor is it remembered between visits: it is a way
+	 * of looking at one month rather than a preference about calendars, which
+	 * is the line `calendar-pref.ts` draws for the territory.
+	 */
+	let showPlain = $state(false);
+
 	function daysOf(year: number, month: number) {
 		const first = toDayNumber(year, month, 1);
 		return Array.from({ length: monthLength(year, month) }, (_, i) => {
@@ -224,7 +244,9 @@
 				liturgical: liturgicalDay(n, options)
 			};
 		})
-			.filter((d) => rowName(d.liturgical) !== undefined || d.n === selected || d.n === today)
+			.filter(
+				(d) => showPlain || rowName(d.liturgical) !== undefined || d.n === selected || d.n === today
+			)
 			.map((d, i) => ({
 				// The rule that stands in for the grid's columns, decided AFTER
 				// the filter: it marks the first row of each week, and on the
@@ -336,6 +358,24 @@
 			onclick={() => turn(1)}
 		>
 			<Icon name="arrow-right" />
+		</button>
+		<!--
+			ONE NAME IN BOTH STATES, with `aria-pressed` saying which one it is
+			in — `PlateViewer`'s rule for the same shape of control, and the
+			reason a toggle here is not two labels: "Show plain weekdays" and
+			"Hide plain weekdays" name the ACTION, and a reader who arrives with
+			the pointer already on the button is told what it does rather than
+			what it did. The state belongs to the control, not to its name.
+		-->
+		<button
+			type="button"
+			class="menu-trigger step-btn plain-toggle"
+			aria-pressed={showPlain}
+			aria-label={t('calendar.plainDays')}
+			title={t('calendar.plainDays')}
+			onclick={() => (showPlain = !showPlain)}
+		>
+			<Icon name="eye" />
 		</button>
 	</header>
 
@@ -453,6 +493,25 @@
 		width: 2rem;
 		height: 2rem;
 		font-size: 0.8rem;
+	}
+	/*
+	 * THE ONLY CONTROL IN THIS ROW THAT IS NOT ABOUT THE MONTH, so it sits at
+	 * the far end of it rather than beside the arrows: those two turn the page
+	 * and this one changes what is on it. `auto` and not a fixed gap, so it
+	 * holds the right edge of the listing it governs — the rows below run the
+	 * full width, and a control over a list belongs over its end.
+	 */
+	.plain-toggle {
+		margin-inline-start: auto;
+	}
+	/* Off is the default and the quieter state: muted until pressed, then
+	   wearing the accent the pressed toggles in the reading bar wear. */
+	.plain-toggle[aria-pressed='false'] {
+		color: var(--color-text-muted);
+	}
+	.plain-toggle[aria-pressed='true'] {
+		border-color: var(--color-accent);
+		color: var(--color-accent);
 	}
 	/* An arrow is a picture of a direction, not a character, so nothing flips
 	   it under `dir="rtl"` — `UnitNav`'s docblock has the argument. The row

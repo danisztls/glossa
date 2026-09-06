@@ -448,7 +448,6 @@ export const pl: Dictionary = {
 	'calendar.title': 'Kalendarz liturgiczny',
 	'calendar.tagline':
 		'Ogólny kalendarz rzymski, obliczony na dowolny dzień — jego okres, jego stopień, jego kolor.',
-	'calendar.date': 'Data',
 	'calendar.calendar': 'Kalendarz',
 	'calendar.which.general': 'Ogólny kalendarz rzymski',
 	'calendar.filter': 'Szukaj krajów',

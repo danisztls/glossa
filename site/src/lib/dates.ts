@@ -61,8 +61,51 @@ import { bcp47 } from './ui-langs';
  * inline (`i18n.test.ts` scans for it, and allows this name).
  */
 export function dateLocale(lang: string): string {
-	const tag = bcp47(lang.split('-')[0]);
-	return Intl.DateTimeFormat.supportedLocalesOf([tag])[0] ?? 'en-US';
+	return Intl.DateTimeFormat.supportedLocalesOf([intlTag(lang)])[0] ?? 'en-US';
+}
+
+/** The region cut and the script kept — the tag `dateLocale` explains at
+ *  length, factored out when a second constructor came to need it. */
+function intlTag(lang: string): string {
+	return bcp47(lang.split('-')[0]);
+}
+
+/**
+ * The same question asked of `RelativeTimeFormat`, whose locale data is a
+ * different bundle from `DateTimeFormat`'s and could in principle answer
+ * differently. Asking the constructor that will be used is the whole point of
+ * the check — see `dateLocale`, which is where the reasoning is.
+ */
+function relativeLocale(lang: string): string {
+	return Intl.RelativeTimeFormat.supportedLocalesOf([intlTag(lang)])[0] ?? 'en-US';
+}
+
+/**
+ * `today`, `yesterday` or `tomorrow` in the reader's language — `undefined`
+ * for every other day, which is most of them.
+ *
+ * WHY `Intl` AND NOT THREE DICTIONARY KEYS. Three words in thirty-seven
+ * languages is a table nobody would maintain, and every browser already holds
+ * it — the same argument the calendar picker makes for taking its ninety-six
+ * country names from `Intl.DisplayNames` rather than from a file here. The
+ * calendar's own vocabulary (colours, ranks, seasons) IS in the dictionaries,
+ * and correctly: those are terms of art this project translates deliberately,
+ * where `yesterday` is a word the platform knows.
+ *
+ * `numeric: 'auto'` is what makes it a word at all; the default `'always'`
+ * answers "1 day ago". The casing is the locale's own and is left alone: some
+ * languages capitalise the word and most do not, and the site prints it after
+ * a date rather than at the head of a sentence.
+ *
+ * Latin gets English, as it does for the date beside it — `relativeLocale`
+ * falls back the way `dateLocale` does, for the reason stated there.
+ */
+export function relativeDay(offset: number, lang: string): string | undefined {
+	if (!Number.isInteger(offset) || Math.abs(offset) > 1) return undefined;
+	return new Intl.RelativeTimeFormat(relativeLocale(lang), { numeric: 'auto' }).format(
+		offset,
+		'day'
+	);
 }
 
 /**

@@ -329,7 +329,6 @@ export const sw: Dictionary = {
 	'calendar.title': 'Kalenda ya liturujia',
 	'calendar.tagline':
 		'Kalenda Kuu ya Kiroma, iliyokokotolewa kwa siku yoyote — kipindi chake, daraja lake, rangi yake.',
-	'calendar.date': 'Tarehe',
 	'calendar.calendar': 'Kalenda',
 	'calendar.which.general': 'Kalenda Kuu ya Kiroma',
 	'calendar.filter': 'Tafuta nchi',

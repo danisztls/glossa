@@ -320,7 +320,6 @@ export const da: Dictionary = {
 	'calendar.title': 'Liturgisk kalender',
 	'calendar.tagline':
 		'Den almindelige romerske kalender, beregnet for enhver dag — dens tid, dens rang, dens farve.',
-	'calendar.date': 'Dato',
 	'calendar.calendar': 'Kalender',
 	'calendar.which.general': 'Den almindelige romerske kalender',
 	'calendar.filter': 'Søg lande',

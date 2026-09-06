@@ -331,7 +331,6 @@ export const hi: Dictionary = {
 	'calendar.title': 'धर्मविधि पंचांग',
 	'calendar.tagline':
 		'सामान्य रोमन पंचांग, किसी भी दिन के लिए गणना किया गया — उसका काल, उसका दर्जा, उसका रंग।',
-	'calendar.date': 'तिथि',
 	'calendar.calendar': 'पंचांग',
 	'calendar.which.general': 'सामान्य रोमन पंचांग',
 	'calendar.filter': 'देश खोजें',

@@ -318,7 +318,6 @@ export const hr: Dictionary = {
 	'calendar.title': 'Liturgijski kalendar',
 	'calendar.tagline':
 		'Opći rimski kalendar, izračunan za bilo koji dan — njegovo vrijeme, njegov stupanj, njegova boja.',
-	'calendar.date': 'Datum',
 	'calendar.calendar': 'Kalendar',
 	'calendar.which.general': 'Opći rimski kalendar',
 	'calendar.filter': 'Traži zemlje',

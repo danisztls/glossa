@@ -964,7 +964,6 @@ export const en: Dictionary = {
 	'calendar.title': 'Liturgical Calendar',
 	'calendar.tagline':
 		'The General Roman Calendar, computed for any day — its season, its rank, its colour.',
-	'calendar.date': 'Date',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
 	'calendar.filter': 'Search countries',
@@ -981,6 +980,12 @@ export const en: Dictionary = {
 	'calendar.today': 'Today',
 	'calendar.previousMonth': 'Previous month',
 	'calendar.nextMonth': 'Next month',
+	// The listing drops the days that say nothing - a third of a month,
+	// reading "Weekday" beside an empty name - and this shows them. ONE NAME
+	// IN BOTH STATES: `aria-pressed` carries whether they are on screen, so
+	// the label names the rows rather than the action, and it uses the same
+	// word the rank column prints on them.
+	'calendar.plainDays': 'Plain weekdays',
 	'calendar.noSuchDay': 'No liturgical day is computed for that date.',
 	'calendar.week': 'week',
 	'calendar.alsoToday': 'Also kept today',

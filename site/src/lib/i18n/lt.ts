@@ -321,7 +321,6 @@ export const lt: Dictionary = {
 	'calendar.title': 'Liturginis kalendorius',
 	'calendar.tagline':
 		'Bendrasis Romos kalendorius, apskaičiuotas bet kuriai dienai — jos laikas, jos laipsnis, jos spalva.',
-	'calendar.date': 'Data',
 	'calendar.calendar': 'Kalendorius',
 	'calendar.which.general': 'Bendrasis Romos kalendorius',
 	'calendar.filter': 'Ieškoti šalių',

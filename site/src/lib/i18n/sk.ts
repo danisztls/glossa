@@ -319,7 +319,6 @@ export const sk: Dictionary = {
 	'calendar.title': 'Liturgický kalendár',
 	'calendar.tagline':
 		'Všeobecný rímsky kalendár, vypočítaný pre ktorýkoľvek deň — jeho obdobie, jeho stupeň, jeho farba.',
-	'calendar.date': 'Dátum',
 	'calendar.calendar': 'Kalendár',
 	'calendar.which.general': 'Všeobecný rímsky kalendár',
 	'calendar.filter': 'Hľadať krajiny',

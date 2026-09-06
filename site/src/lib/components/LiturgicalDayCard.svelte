@@ -24,10 +24,11 @@
 	import {
 		celebrationName,
 		ensureCelebrationNames,
+		parseIsoDate,
 		type Celebration,
 		type LiturgicalDay
 	} from '$lib/calendar';
-	import { formatPromulgated } from '$lib/dates';
+	import { formatPromulgated, relativeDay } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
@@ -56,13 +57,26 @@
 		/**
 		 * Print the civil date above the celebration's name.
 		 *
-		 * True everywhere the card stands alone — the home page shows today
-		 * and nothing else on it says which day that is. False on
-		 * `/calendarium`, where the date field a centimetre above prints the
-		 * same date in the same words, and a card repeating it would be the
-		 * page answering a question it has just been asked.
+		 * TRUE ON BOTH PAGES SINCE 2026-09-06, and it was false on
+		 * `/calendarium` for as long as that page had a date field: the field
+		 * printed the same date in the same words a centimetre above, and a
+		 * card repeating it would have been the page answering a question it
+		 * had just been asked. The field is gone — the month listing is how a
+		 * day is chosen — so the card says which day it is on both pages, in
+		 * the same place, which is the whole of what is left of the prop.
 		 */
 		showDate?: boolean;
+		/**
+		 * Today, as a day number in the READER'S zone, so the date can be
+		 * named `today`, `yesterday` or `tomorrow` where it is one of them.
+		 *
+		 * PASSED IN RATHER THAN READ HERE, because the clock is not this
+		 * component's to read: both pages already take it once on mount (a
+		 * card rendered from a prerendered shell would otherwise date itself
+		 * to the build), and a second reading could disagree with the first
+		 * across midnight.
+		 */
+		today?: number;
 		/**
 		 * A way out of the card, drawn as a glyph in its top corner.
 		 *
@@ -77,7 +91,7 @@
 		 */
 		more?: { href: string; label: string };
 	}
-	let { day, heading = 'h2', controls, showDate = true, more }: Props = $props();
+	let { day, heading = 'h2', controls, showDate = true, today, more }: Props = $props();
 
 	let lang = $derived(i18n.lang);
 
@@ -122,6 +136,21 @@
 	let seasonName = $derived(t(`calendar.season.${day.season}`));
 	let weekSuffix = $derived(day.week > 0 ? `, ${t('calendar.week')} ${day.week}` : '');
 
+	/**
+	 * `today` / `yesterday` / `tomorrow`, or nothing at all.
+	 *
+	 * It is the RELATION and not a second date: a reader looking at the home
+	 * page wants to know that the day in front of them is the day they are
+	 * living in, and one who has walked three days into next week is told the
+	 * date, which already says it. `dates.ts` argues why the word comes from
+	 * `Intl` rather than from the dictionaries.
+	 */
+	let relative = $derived.by(() => {
+		const n = parseIsoDate(day.date);
+		if (n === undefined || today === undefined) return undefined;
+		return relativeDay(n - today, lang);
+	});
+
 	function rankLabel(c: Celebration): string {
 		return t(`calendar.rank.${c.rank}`);
 	}
@@ -130,6 +159,20 @@
 <article class="day">
 	<header>
 		<div class="head-text">
+			<!--
+				THE DATE LEADS THE CARD, on both pages, and it spent an afternoon
+				in the corner beside the controls (2026-09-06). What was wrong
+				there is what the corner IS: furniture — the things that change
+				the day or leave it. The date is not furniture, it is the first
+				thing the card says, and it belongs where a reader looks first
+				rather than at the far end of a row of buttons.
+			-->
+			{#if showDate}
+				<p class="date">
+					{formatPromulgated(day.date, lang)}{#if relative}<span class="relative">{relative}</span
+						>{/if}
+				</p>
+			{/if}
 			{#if heading === 'h1'}
 				<h1>{name}</h1>
 			{:else}
@@ -182,18 +225,8 @@
 			below) while staying LAST in the DOM, so a screen reader and a
 			keyboard meet the day before the controls that change it.
 		-->
-		{#if showDate || controls || more}
+		{#if controls || more}
 			<div class="corner">
-				<!-- THE SAME PLACE `/calendarium` KEEPS ITS DATE FIELD, and this is
-				     the reading of it: that page's first control answers WHICH DAY
-				     and this says which day it is. A card that shows one day and
-				     cannot be asked for another has no field to put there, so it
-				     prints the date instead — which is why this is a `<p>` wearing
-				     the row's height and not a control wearing its own. It led the
-				     text column until 2026-09-06, above the celebration's name. -->
-				{#if showDate}
-					<p class="date">{formatPromulgated(day.date, lang)}</p>
-				{/if}
 				{#if controls}
 					<div class="controls">{@render controls()}</div>
 				{/if}
@@ -412,19 +445,18 @@
 		color: var(--color-accent);
 		background: var(--color-bg-elevated);
 	}
-	/* A row item now rather than a line of its own: the height the controls
-	   beside it take, so the corner has one baseline, and `nowrap` because a
-	   date broken over two lines would set the height of everything in it. */
 	.date {
-		display: flex;
-		align-items: center;
-		block-size: 1.75rem;
 		margin: 0;
-		padding-inline: 0.15rem;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
+		font-size: 0.85rem;
 		color: var(--color-text-muted);
-		white-space: nowrap;
+	}
+	/* The dot the `.meta` line below uses, for the same reason: the word is a
+	   second fact about the same day rather than part of the date, and drawing
+	   the separator in CSS keeps it out of what a screen reader reads. */
+	.relative::before {
+		content: '·';
+		margin-inline: 0.4rem;
+		color: var(--color-border);
 	}
 	h1,
 	h2 {

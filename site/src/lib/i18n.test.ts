@@ -325,6 +325,11 @@ describe('UI_LANGS and the dictionaries', () => {
 				// can answer for it, falling back to `en-US` where it cannot.
 				// `dates.test.ts` pins both halves of that chain.
 				if (arg.includes('dateLocale(')) continue;
+				// `relativeLocale` is the same shim over the constructor that
+				// actually runs — `Intl.RelativeTimeFormat.supportedLocalesOf`
+				// rather than `DateTimeFormat`'s — and lives beside it in
+				// `dates.ts`. Allowed for `dateLocale`'s reason, not by exception.
+				if (arg.includes('relativeLocale(')) continue;
 				offenders.push(`${path.relative(root, file)}: ${match[0]}${arg.trim()}`);
 			}
 		}

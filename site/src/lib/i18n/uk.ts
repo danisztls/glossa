@@ -326,7 +326,6 @@ export const uk: Dictionary = {
 	'calendar.title': 'Літургійний календар',
 	'calendar.tagline':
 		'Загальний Римський календар, обчислений на будь-який день — його час, його ранг, його колір.',
-	'calendar.date': 'Дата',
 	'calendar.calendar': 'Календар',
 	'calendar.which.general': 'Загальний Римський календар',
 	'calendar.filter': 'Пошук країн',

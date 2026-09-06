@@ -454,7 +454,6 @@ export const ro: Dictionary = {
 	'calendar.title': 'Calendar liturgic',
 	'calendar.tagline':
 		'Calendarul Roman General, calculat pentru orice zi — timpul ei, gradul ei, culoarea ei.',
-	'calendar.date': 'Data',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'Calendarul Roman General',
 	'calendar.filter': 'Caută țări',

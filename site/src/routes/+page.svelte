@@ -331,6 +331,7 @@
 			     shares that corner with the picker above. -->
 			<LiturgicalDayCard
 				{day}
+				today={todayNumber}
 				controls={calendarPicker}
 				more={{ href: '/calendarium', label: t('calendar.title') }}
 			/>

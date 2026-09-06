@@ -2500,6 +2500,14 @@ its parameter, because a territory is a fact about a person in a way a column
 layout is not. It is applied by writing `?c=` into the address on mount, never
 by holding a value beside the URL (§docs/calendar.md).
 
+**AND THEN THERE WAS ONE CONTROL** (2026-09-06). The date field and Today both
+answered WHICH DAY and the month listing answers it better — by showing what is
+on each day — so both went and the picker stayed, being the only one that
+changes what the days MEAN. The card names `today`/`yesterday`/`tomorrow`
+beside the date from `Intl.RelativeTimeFormat`, not from three keys in
+thirty-seven dictionaries, and the listing grew a press that shows the days
+saying nothing (§docs/calendar.md).
+
 **THE CONTROLS LIVE IN THE DAY CARD, AND THE HOME PAGE CARRIES THE PICKER**
 (2026-09-06). `LiturgicalDayCard` takes a `controls` snippet — top right,
 above the name under `44rem` — because the controls answer WHICH DAY and the

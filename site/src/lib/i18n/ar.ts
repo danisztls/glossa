@@ -431,7 +431,6 @@ export const ar: Dictionary = {
 	'zen.exit': 'أنهِ وضع التركيز',
 	'calendar.title': 'التقويم الطقسي',
 	'calendar.tagline': 'التقويم الروماني العام، محسوبًا لأي يوم — زمنه ورتبته ولونه.',
-	'calendar.date': 'التاريخ',
 	'calendar.calendar': 'التقويم',
 	'calendar.which.general': 'التقويم الروماني العام',
 	'calendar.filter': 'ابحث عن البلدان',

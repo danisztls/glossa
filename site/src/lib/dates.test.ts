@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateLocale, formatPromulgated } from './dates';
+import { dateLocale, formatPromulgated, relativeDay } from './dates';
 
 /**
  * The regression these guard is a date rendering ONE DAY EARLY west of
@@ -71,5 +71,35 @@ describe('formatPromulgated', () => {
 		// A corpus defect should stay visible rather than render "Invalid Date".
 		expect(formatPromulgated('', 'en')).toBe('');
 		expect(formatPromulgated('not-a-date', 'en')).toBe('not-a-date');
+	});
+});
+
+describe('relativeDay', () => {
+	it('names the three days a reader has a word for', () => {
+		expect(relativeDay(0, 'en')).toBe('today');
+		expect(relativeDay(-1, 'en')).toBe('yesterday');
+		expect(relativeDay(1, 'en')).toBe('tomorrow');
+	});
+
+	it('is silent about every other day', () => {
+		// The card prints the date for those, which already says it; "in 2
+		// days" beside a date is the arithmetic, not a name.
+		expect(relativeDay(2, 'en')).toBeUndefined();
+		expect(relativeDay(-2, 'en')).toBeUndefined();
+		expect(relativeDay(400, 'en')).toBeUndefined();
+	});
+
+	it('answers in the reader\u2019s own language', () => {
+		// The whole reason this is `Intl` and not three dictionary keys.
+		expect(relativeDay(0, 'pt')).toBe('hoje');
+		expect(relativeDay(-1, 'pl')).toBe('wczoraj');
+	});
+
+	it('converts the app\u2019s own tags, and falls back where Intl cannot answer', () => {
+		// `zht` must not be cut to `zh`, and Latin must reach English rather
+		// than the runtime's default locale — `dateLocale`'s two cases, asked
+		// again of the constructor that actually runs here.
+		expect(relativeDay(0, 'zht')).toBe('今天');
+		expect(relativeDay(0, 'la')).toBe('today');
 	});
 });

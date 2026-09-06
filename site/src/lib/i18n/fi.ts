@@ -326,7 +326,6 @@ export const fi: Dictionary = {
 	'calendar.title': 'Liturginen kalenteri',
 	'calendar.tagline':
 		'Yleinen roomalainen kalenteri, laskettuna mille tahansa päivälle — sen aika, sen arvo, sen väri.',
-	'calendar.date': 'Päivämäärä',
 	'calendar.calendar': 'Kalenteri',
 	'calendar.which.general': 'Yleinen roomalainen kalenteri',
 	'calendar.filter': 'Hae maita',

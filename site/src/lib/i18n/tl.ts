@@ -332,7 +332,6 @@ export const tl: Dictionary = {
 	'calendar.title': 'Kalendaryong liturhiko',
 	'calendar.tagline':
 		'Ang Pangkalahatang Kalendaryong Romano, tinutuos para sa alinmang araw — ang panahon nito, ang antas nito, ang kulay nito.',
-	'calendar.date': 'Petsa',
 	'calendar.calendar': 'Kalendaryo',
 	'calendar.which.general': 'Pangkalahatang Kalendaryong Romano',
 	'calendar.filter': 'Maghanap ng bansa',

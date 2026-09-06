@@ -85,7 +85,6 @@
 	import CalendarMenu from '$lib/components/CalendarMenu.svelte';
 	import CalendarMonth from '$lib/components/CalendarMonth.svelte';
 	import CalendarPrimer from '$lib/components/CalendarPrimer.svelte';
-	import Icon from '$lib/components/Icon.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import {
 		formatIsoDate,
@@ -101,7 +100,6 @@
 		rememberTerritory,
 		storedTerritory
 	} from '$lib/calendar-pref';
-	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
@@ -311,82 +309,8 @@
 		mirror();
 	});
 
-	/**
-	 * The date field, which is a native `<input type="date">` wearing the
-	 * site's clothes — see the style rules. It is held here for one reason: the
-	 * input is transparent, so the platform's own picker indicator is invisible
-	 * with it, and a click anywhere on the field has to open the picker.
-	 *
-	 * `showPicker` THROWS rather than answering falsely where it is unsupported
-	 * or refused without a user gesture, which is why the call is wrapped and
-	 * the failure is silent. Nothing is lost by it: the same click focuses the
-	 * field, the field takes typing, and the month below lists every day.
-	 */
-	let dateEl: HTMLInputElement | undefined = $state();
-	function openPicker() {
-		typing = false;
-		try {
-			dateEl?.showPicker();
-		} catch {
-			/* unsupported, or refused — the field still takes typing */
-		}
-	}
-
-	/**
-	 * THE FIELD LETS GO ONCE THE DATE IS CHOSEN, and it has to, because of what
-	 * focus does to it: `:focus-visible` swaps the site's face for the raw
-	 * input underneath (see the style rules), and a browser sets
-	 * `:focus-visible` on a text-entry control when it is CLICKED, not only
-	 * when it is tabbed to. So picking a date from the platform's popup left
-	 * the field focused and therefore showing the operating system's own
-	 * `09/17/2026` — the exact thing the face exists to prevent — until the
-	 * reader clicked somewhere else. Blurring puts the face back.
-	 *
-	 * EXCEPT WHEN THE READER IS TYPING, which is the one interaction blurring
-	 * would wreck: a date typed segment by segment fires `input` the moment the
-	 * last segment lands, and taking focus away there would eject someone
-	 * mid-correction. `typing` is which of the two is driving — a key sets it,
-	 * a click clears it — and nothing else consults it.
-	 */
-	let typing = false;
-	function pickDate(value: string) {
-		go(value);
-		if (!typing) dateEl?.blur();
-	}
-
 	let lang = $derived(i18n.lang);
-	let selectedIso = $derived(formatIsoDate(selected));
-	/* Its own derived value so that `widestDate` recomputes when the YEAR moves
-	   and not on every step to another day: twelve `Intl.DateTimeFormat`s per
-	   click, to arrive at the string it already had. */
-	let year = $derived(selectedIso.slice(0, 4));
 	let today = $derived(localToday());
-
-	/**
-	 * The widest date this field can ever print in the reader's language.
-	 *
-	 * IT IS RENDERED, HIDDEN, INSIDE THE FIELD, and that is what stops the row
-	 * moving. The face gives the field its width, so the box was as wide as
-	 * whatever date it happened to print — `1 de maio` and `28 de setembro` are
-	 * not the same width — and every step to another day slid the two controls
-	 * beside it left or right. A `min-inline-size` in `rem` would be a number
-	 * measured once in one language and wrong in the next one added; the widest
-	 * date is knowable, so it is computed and laid on top of the real one.
-	 *
-	 * Twelve probes on the 28th, which every month has and which is two digits
-	 * — with `tabular-nums` on the face that makes the probe an upper bound for
-	 * any day of any month. The longest STRING stands in for the widest one:
-	 * within a single language and script the difference is a whole character
-	 * or more, not a hair's width of kerning.
-	 */
-	const widestDate = $derived.by(() => {
-		let widest = '';
-		for (let month = 1; month <= 12; month++) {
-			const probe = formatPromulgated(`${year}-${String(month).padStart(2, '0')}-28`, lang);
-			if (probe.length > widest.length) widest = probe;
-		}
-		return widest;
-	});
 </script>
 
 <svelte:head>
@@ -398,58 +322,20 @@
 	<p class="page-tagline landing-measure">{t('calendar.tagline')}</p>
 
 	{#snippet controls()}
-		<!-- TWO WRAPPERS, ONE JOB EACH: the card's `.controls` decides WHERE
-		     this sits (corner, or on top on a phone) and this one decides what
-		     a row of the page's own furniture looks like. Neither can do the
-		     other's, since a snippet's markup is scoped to the page that wrote
-		     it and the box around it to the component that placed it. -->
-		<div class="control-row">
-			<!--
-			THE FIELD PRINTS THE DATE THE WAY THE PAGE WRITES DATES, which a
-			native date input cannot be made to do: its format comes from the
-			operating system's locale rather than from the interface language,
-			so a reader on an American machine read `09/17/2026` at the top of
-			a page that says "17 de setembro de 2026" everywhere else. The
-			input is still the control — it keeps the value, the keyboard, the
-			validation and the platform's own calendar popup — and the span
-			over it is what is read. The card below no longer prints the date,
-			because THIS is where the date is now.
-		-->
-			<div class="date-field">
-				<input
-					type="date"
-					bind:this={dateEl}
-					aria-label={t('calendar.date')}
-					value={selectedIso}
-					oninput={(e) => pickDate((e.currentTarget as HTMLInputElement).value)}
-					onkeydown={() => (typing = true)}
-					onclick={openPicker}
-				/>
-				<span class="date-face" aria-hidden="true">
-					<Icon name="calendar" />
-					<span class="date-text">
-						<span>{formatPromulgated(selectedIso, lang)}</span>
-						<span class="date-widest">{widestDate}</span>
-					</span>
-				</span>
-			</div>
-			<!-- Beside the date and not down beside the month's arrows, because it
-		     is the same control as the date field: both answer WHICH DAY, and
-		     the one that answers "the one I am living in" belongs with them.
-		     Down there it read as a third month control. -->
-			<button type="button" class="menu-trigger wide" onclick={() => go(formatIsoDate(today))}>
-				{t('calendar.today')}
-			</button>
-			<CalendarMenu value={territory} {lang} onchoose={choose} />
-		</div>
+		<!-- ONE CONTROL, WHICH IS WHY THERE IS NO ROW LEFT. The date field and
+		     Today stood beside this until 2026-09-06 and both were answering a
+		     question the listing below answers better: a reader picks a day by
+		     reading what is on it, and the field made them type one blind. What
+		     the corner keeps is the control that changes what the days MEAN. -->
+		<CalendarMenu value={territory} {lang} onchoose={choose} />
 	{/snippet}
 
 	{#if day}
-		<LiturgicalDayCard {day} heading="h2" showDate={false} {controls} />
+		<LiturgicalDayCard {day} heading="h2" {today} {controls} />
 	{:else}
-		<!-- The controls are inside the card, so a date with no day would take
-		     them off the page and strand the reader on the date that did it.
-		     They are rendered loose here, in the same row, for that one case. -->
+		<!-- The control is inside the card, so a date with no day would take it
+		     off the page and strand the reader on the date that did it. It is
+		     rendered loose here for that one case. -->
 		<div class="orphan-controls">{@render controls()}</div>
 		<!-- Only reachable for a date outside any year this can build, which
 		     the date input makes hard to ask for. Saying so is better than
@@ -464,174 +350,27 @@
 
 <style>
 	/*
-	 * THE CONTROLS ARE CHROME, so they are set in the chrome's own vocabulary
-	 * rather than in a row of browser defaults.
+	 * WHAT IS LEFT OF A CONTROL ROW IS ONE CONTROL.
 	 *
-	 * They used to be a bare `<input type="date">`, a bare `<select>` and
-	 * three bare `<button>`s — five elements wearing whatever the platform
-	 * draws, sitting under a page set in the reading face, a few centimetres
-	 * from a header of bordered 2.25rem squares. Nothing about them was wrong
-	 * except that they belonged to a different site.
+	 * This page carried five bare platform widgets under a `.label-micro`
+	 * caption each, then a tidy row of three wearing the chrome's own classes,
+	 * then that row inside the day card. What finally removed it was asking
+	 * what each control was FOR: the date field and Today both chose a day,
+	 * and the listing below chooses days better — by showing what is on them
+	 * — so both went (2026-09-06) and the calendar picker stayed, being the
+	 * only one that changes what the days MEAN.
 	 *
-	 * What they wear now is what the header wears: `.label-micro` for the
-	 * captions (styles/components.css — the site speaking, as opposed to a
-	 * word from a text) and `.menu-trigger` for the calendar popover
-	 * (styles/menus.css). Those are real reuse and not a copied ruleset: a
-	 * change to the chrome's border or corner radius reaches this row without
-	 * anyone remembering it is here.
-	 */
-	/*
-	 * ONE ROW, EVERY CONTROL, NO CAPTIONS. Each control stood in its own column
-	 * under a `.label-micro` heading — DATE over a date field, CALENDAR over a
-	 * button already carrying a globe and the calendar's name — which is two
-	 * groups of chrome, twice the height, to say what both controls say
-	 * themselves. The caption they had is the `aria-label` now, so nothing was
-	 * taken from a screen reader, only from the screen.
+	 * THE COST IS A DISTANT DATE. The field could be typed into; the listing
+	 * pages a month at a time, and `?d=` is still the address of any day for
+	 * anyone who edits it. What it buys is that the two cards are now the same
+	 * object — a date, a name, and a picker in the corner — which is worth
+	 * more than a control most readers used to jump one month.
 	 *
-	 * Today JOINED THEM from the month listing's header (2026-09-05), where it
-	 * sat beside the two month arrows and was read as a third month control.
-	 * It is not: it names a DAY, which is what the two controls beside it here
-	 * do.
-	 */
-	.control-row {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.4rem;
-		font-family: var(--font-sans);
-	}
-	/*
-	 * THEY MOVED INSIDE THE CARD ON 2026-09-06 and the margin they used to
-	 * carry went with them. It was there because a bordered box under a line
-	 * of loose controls reads as its lid — which was the tell, not a spacing
-	 * bug: the controls answer WHICH DAY and the card is the answer, so they
-	 * belong in it. `LiturgicalDayCard`'s `controls` prop is the arrangement,
-	 * and the home page's card takes the same one with one control in it.
+	 * The picker's size and skin are `LiturgicalDayCard`'s `.corner`, which is
+	 * where it lives; the orphan case below is the one render outside it.
 	 */
 	.orphan-controls {
 		margin-bottom: 1.1rem;
-	}
-	/*
-	 * THE HEIGHT AND THE PADDING ARE THE CARD'S NOW. `LiturgicalDayCard`'s
-	 * `.corner` sizes and skins every `.menu-trigger` inside it — 1.75rem,
-	 * borderless, muted until pointed at — and the rules that used to be here
-	 * were the same declarations one specificity tie away from it. What this
-	 * page still owns is the ROW (above) and the field below, which is its own
-	 * markup and wears no shared class.
-	 *
-	 * The one place that loses is the orphan row: a date outside any year this
-	 * can build renders the controls outside a card, where the corner's skin
-	 * does not reach and `.menu-trigger`'s own chrome shows through. That is
-	 * the state where a reader needs the date field to work and nothing else,
-	 * and it is reached by typing a year in five digits.
-	 */
-	.control-row {
-		--control-padding: 0.4rem;
-	}
-	/*
-	 * DELIBERATELY NOT WEARING `.menu-trigger`, though it restates that class's
-	 * geometry: this is a field the reader types into, not a control that opens
-	 * something, and borrowing the class would make every future edit to the
-	 * chrome's triggers an edit to a date picker as well. What is shared is the
-	 * geometry and the tokens, which is the part that has to agree — including
-	 * the borderless skin the card gives everything in its corner, which this
-	 * matches by hand for the same reason it matches the height by hand.
-	 *
-	 * `font: inherit` is not used here — see styles/base.css on why a control
-	 * that inherits the shorthand and then sets `font-size` comes out 1.5 line
-	 * heights of the BODY tall. The family and size are named separately.
-	 */
-	.date-field {
-		position: relative;
-		display: inline-flex;
-		height: 1.75rem;
-		border: 1px solid transparent;
-		border-radius: var(--radius-sm);
-		background: transparent;
-		color: var(--color-text-muted);
 		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		line-height: 1;
-	}
-	.date-field:hover {
-		background: var(--color-bg-elevated);
-		color: var(--color-accent);
-	}
-	/*
-	 * THE INPUT IS THE CONTROL AND THE SPAN IS THE FACE. The input covers the
-	 * field exactly and is transparent; the span sits under it in the flow and
-	 * is what gives the field its width, so the box is as wide as the date it
-	 * prints in whatever language, and never wider.
-	 *
-	 * `opacity`, and NOT `visibility`, `display` or a clip: those three take a
-	 * control out of the focus order on one engine or another, and the whole
-	 * arrangement rests on this remaining a real, focusable date input with the
-	 * platform's own keyboard behaviour intact.
-	 */
-	.date-field input {
-		position: absolute;
-		inset: 0;
-		inline-size: 100%;
-		block-size: 100%;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		color: var(--color-text);
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		opacity: 0;
-		cursor: pointer;
-	}
-	/*
-	 * A KEYBOARD READER GETS THE REAL FIELD BACK. Typing into segments that
-	 * cannot be seen is the one thing this arrangement could genuinely break,
-	 * so keyboard focus — and only keyboard focus, which is what
-	 * `:focus-visible` means — swaps the face for the input underneath it. The
-	 * face keeps its box (`visibility`, not `display`), so nothing on the row
-	 * moves as it goes.
-	 */
-	.date-field:has(input:focus-visible) {
-		outline: 2px solid var(--color-accent);
-		outline-offset: 1px;
-	}
-	.date-field input:focus-visible {
-		padding-inline: var(--control-padding);
-		opacity: 1;
-		cursor: auto;
-	}
-	.date-field:has(input:focus-visible) .date-face {
-		visibility: hidden;
-	}
-	.date-face {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		padding-inline: var(--control-padding);
-		/* Digits of one width, so that the widest-date probe below is an upper
-		   bound for a one-digit day as well as a two-digit one. */
-		font-variant-numeric: tabular-nums;
-		/* The input is the click target; the face must never intercept one. */
-		pointer-events: none;
-		white-space: nowrap;
-	}
-	/*
-	 * THE DATE AND THE WIDEST DATE IN ONE CELL, which is what holds the row
-	 * still. Both are laid in the same grid area, so the field is as wide as
-	 * the longer of them — always the probe — and stays that width whichever
-	 * day is on screen. Stepping a day used to slide the two controls beside
-	 * it, because the face gives the field its width and a date's width is a
-	 * fact about its month's name.
-	 *
-	 * `visibility`, not `display: none`: a hidden probe still has to be laid
-	 * out, or it sizes nothing.
-	 */
-	.date-text {
-		display: grid;
-	}
-	.date-text > * {
-		grid-area: 1 / 1;
-	}
-	.date-widest {
-		visibility: hidden;
 	}
 </style>
