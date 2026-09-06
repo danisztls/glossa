@@ -802,7 +802,12 @@ const BOOK_VARIANTS_EN: Record<string, string[]> = {
 	jer: ['Jer', 'Jeremiah'],
 	lam: ['Lam', 'Lamentations'],
 	bar: ['Bar', 'Baruch'],
-	ezek: ['Ez', 'Ezek', 'Ezech', 'Ezechiel'],
+	// `Ezekiel` was missing until 2026-09-06 while the Douay's `Ezechiel` was
+	// present, so the ordinary modern spelling did not linkify. The lectionary
+	// oracle is what found it: 13 of the table's pericopes are spelled the way
+	// USCCB and the NAB spell them, and `DayReadings` renders every one of them
+	// through `RefText` — they were rendering as dead text.
+	ezek: ['Ez', 'Ezek', 'Ezekiel', 'Ezech', 'Ezechiel'],
 	dan: ['Dn', 'Dan', 'Daniel'],
 	hos: ['Hos', 'Hosea', 'Osee'],
 	joel: ['Jl', 'Joel'],
