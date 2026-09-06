@@ -43,6 +43,19 @@ parser matches against, and the chapter mark from `grammarSurface`. Where the
 chapter mark is a comma the passages are separated by `.`, which those tables
 already chain a verse list with — the comma cannot do both jobs.
 
+**The book is abbreviated, and English is not exempt.** The tables hold
+abbreviations rather than names, the oracle having derived them from citations
+and citations abbreviating, so for eight of the eleven languages with a table
+an abbreviation is the only form the parser is certain to read back. It is also
+the right form on its own merits: a reading list is where an abbreviation
+belongs, and `/schola` already teaches that notation out of these same two
+functions — printing a full name here would contradict the page that teaches
+the citation form. English took the source's own spelling for a day, on no
+better ground than that it was already there, which put two conventions on one
+card decided by nothing but the reader's language. The source's language is not
+a reason to print differently; the only tag treated specially is one with no
+table.
+
 **The round trip is checked at RENDER, not only in a test.** A localized
 citation must parse, in its new language, to the same books, chapters and
 verses the English one did; where it does not, the English stands. That guard

@@ -3040,7 +3040,10 @@ first thing to read before believing this feature about any particular day.
   `lectionary/cite.ts` rewrites `Ezekiel 33:7-9` to `Ez 33,7-9` out of
   `bookAbbrev` and `grammarSurface` — the parser's own tables, never a form
   written here — and `RefText` then parses it in that language, so there is one
-  renderer and one parser. **The round trip is verified at RENDER**: a rewrite
+  renderer and one parser. **English is not exempt** (`Ez 33:7-9`): it took the
+  source's own spelling for a day and put two conventions on one card, and the
+  abbreviation is what `/schola` teaches as the citation form anyway. **The
+  round trip is verified at RENDER**: a rewrite
   that does not parse back to the same books, chapters and verses is discarded
   and the English stands, which caught three silent mis-readings on its first
   run over the table (`docs/lectionary.md`).

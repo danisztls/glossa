@@ -36,6 +36,13 @@ function addresses(cite: string, lang: string): string[] {
  * what the Catechism happens to cite — so a book it never cites is simply
  * absent and its citations stay English, which is the documented cost of
  * deriving them.
+ *
+ * ENGLISH IS NOT IN IT AND CANNOT BE. What is counted is `lang !== 'en'`, the
+ * only signal there is that a rewrite happened, and English answers `'en'`
+ * whether it rewrote or gave up — the source's language being what "gave up"
+ * falls back to. It is covered instead by the invariant below, which is
+ * checked for every language including the ones with no table, and by the
+ * spot checks above.
  */
 const FLOORS: Record<string, number> = {
 	pt: 0.95,
@@ -60,11 +67,18 @@ describe('localizeCite', () => {
 		expect(localizeCite('Ezekiel 33:7-9', 'zht').text).toBe('則 33:7-9');
 	});
 
+	it('abbreviates for an English reader too, the source’s language being no reason to differ', () => {
+		// It printed the source's own `Ezekiel 33:7-9` for a day, which put two
+		// conventions on one card decided by the reader's language.
+		expect(localizeCite('Ezekiel 33:7-9', 'en')).toEqual({ text: 'Ez 33:7-9', lang: 'en' });
+		// The chapter mark is English's own, so only the book moves.
+		expect(localizeCite('Psalm 95:1-2, 6-7, 8-9', 'en').text).toBe('Ps 95:1-2, 6-7, 8-9');
+	});
+
 	it('separates one passage from the next with a mark the chapter is not using', () => {
 		// `Sl 95,1-2, 6-7` would spend the comma twice. Every Romance table
 		// already chains a verse list on "." — see `parseVerseList`.
 		expect(localizeCite('Psalm 95:1-2, 6-7, 8-9', 'pt').text).toBe('Sl 95,1-2. 6-7. 8-9');
-		expect(localizeCite('Psalm 95:1-2, 6-7, 8-9', 'en').text).toBe('Psalm 95:1-2, 6-7, 8-9');
 	});
 
 	it('keeps the subdivision letters and the continuation clause', () => {
@@ -92,14 +106,19 @@ describe('localizeCite', () => {
 		expect(localizeCite('Jude 17, 20b-25', 'es').lang).toBe('en');
 	});
 
-	it('names the same passages after rewriting, for every citation in the table', () => {
-		for (const lang of Object.keys(FLOORS)) {
+	it('names the same passages after rewriting, for every citation and every language', () => {
+		// The whole invariant, and it is asked of the ANSWER rather than of the
+		// rewrite: whatever comes back must be read under the language that
+		// comes back with it, so a citation left alone is checked as English
+		// and a rewritten one in its own grammar. `hu` is in the list because a
+		// language with no table has to be checked too — it takes the branch
+		// that returns the source, and this is what says the branch is right.
+		for (const lang of [...Object.keys(FLOORS), 'en', 'hu']) {
 			const wrong: string[] = [];
 			for (const cite of CITES) {
 				const out = localizeCite(cite, lang, 'Cf.');
-				if (out.lang === 'en') continue;
 				const before = addresses(cite, 'en');
-				const after = addresses(out.text, lang);
+				const after = addresses(out.text, out.lang);
 				if (before.join(' | ') !== after.join(' | ')) wrong.push(`${lang}: ${cite} → ${out.text}`);
 			}
 			expect(wrong).toEqual([]);

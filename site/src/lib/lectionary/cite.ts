@@ -30,6 +30,22 @@
  * that language's own. Write either by hand and the round trip is where it
  * would be caught.
  *
+ * THE BOOK IS ABBREVIATED, AND ENGLISH IS NOT EXEMPT FROM IT. Two reasons, and
+ * the second is the one that decides: the tables hold abbreviations rather than
+ * names — the oracle derived them from citations, and citations abbreviate — so
+ * a form the parser is certain to read back is an abbreviation for eight of the
+ * eleven languages that have a table at all; and a reading list is where an
+ * abbreviation belongs, every hand missal and parish sheet printing `Ez 33,7-9`.
+ * `/schola` already teaches exactly that notation out of these same two
+ * functions, so printing the full name here would contradict the page that
+ * teaches the citation form.
+ *
+ * English took the source's own spelling for a day, on no better ground than
+ * that it was already there, and the card then carried two conventions decided
+ * by the reader's language: `Ezekiel 33:7-9` for one reader and `Ez 33,7-9` for
+ * the next. The source's language is not a reason to print differently, so the
+ * only tag treated specially here is one with no table.
+ *
  * A CITATION IS LOCALIZED WHOLE OR NOT AT ALL. Half the interface languages
  * have no book table (`hasBookAbbrevs`), and the derived tables that exist are
  * derived from citations, so a book the Catechism never cites is simply absent
@@ -83,7 +99,7 @@ const CF_LEAD_RE = /^(\s*)(?:See|Cf\.?)(\s+)$/i;
 export function localizeCite(cite: string, lang: string, cf?: string): LocalizedCite {
 	const unchanged: LocalizedCite = { text: cite, lang: CITE_SOURCE_LANG };
 	const tag = lang.toLowerCase().split('-')[0];
-	if (tag === CITE_SOURCE_LANG || !hasBookAbbrevs(tag)) return unchanged;
+	if (!hasBookAbbrevs(tag)) return unchanged;
 
 	const segments = parseRefs(cite, { lang: CITE_SOURCE_LANG });
 	const sep = grammarSurface(tag).chapterVerseSep;
