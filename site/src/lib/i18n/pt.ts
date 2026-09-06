@@ -516,6 +516,8 @@ export const pt: Dictionary = {
 	'lectionary.slot.sequence': 'Sequência',
 	'lectionary.or': 'ou',
 	'lectionary.notScripture': 'texto não bíblico',
+	'lectionary.cf': 'Cf.',
+	'lectionary.about': 'Sobre estas leituras',
 	'lectionary.caveat':
 		'As passagens indicadas pelo Ordo Lectionum Missae, ligadas às edições ' +
 		'deste sítio — não a tradução proclamada numa igreja em particular, e ' +

@@ -977,6 +977,13 @@ export const en: Dictionary = {
 	'lectionary.slot.sequence': 'Sequence',
 	'lectionary.or': 'or',
 	'lectionary.notScripture': 'not a scriptural text',
+	// The word the source puts before a passage it points at rather than
+	// appoints — USCCB writes both "See" and "Cf." and this is what both
+	// become, so a citation is not half in the reader's language.
+	'lectionary.cf': 'Cf.',
+	// The `i` beside the heading has no text of its own, so this is its
+	// accessible name and not a courtesy.
+	'lectionary.about': 'About these readings',
 	'lectionary.caveat':
 		'The passages appointed by the Ordo Lectionum Missae, linked to this ' +
 		'site’s own editions — not the translation proclaimed in any particular ' +

@@ -16,6 +16,51 @@ of facts, and this site is a citation resolver. The reading text on USCCB's
 pages is the New American Bible and stays in `raw/`, which is private, where
 nothing downstream of the parse can reach it.
 
+**That sentence is said on the card, behind the `i` beside the heading.** Set
+under the list it was three lines of small print below five lines of citations,
+on a card already carrying the day's name, its season, its rank and its colour
+— the longest text in the block, and read once. It is `ArtFigure`'s
+arrangement: the `info` glyph, a native popover, `role="note"`, which is what
+the rest of the site does with a line that qualifies something rather than
+saying it. **Paper still gets it unconditionally and still under the list** — a
+popover never prints, and the printed copy is the one whose reader cannot press
+anything.
+
+## The citation is an address, so it is written in the reader's language
+
+Everywhere else on this site a citation is a QUOTATION — the work being read
+printed it, in its own language, and reproducing it verbatim is the whole job.
+Here it is not: USCCB printed it, in English, about a passage the reader will
+open in their own edition. So a Portuguese reader met `Ezekiel 33:7-9` under a
+heading, a date and a day's name that were all Portuguese, and nothing on the
+page had said anything in English.
+
+`lectionary/cite.ts` rewrites it — `Ez 33,7-9` — and hands the string back to
+`RefText` to be parsed IN THAT LANGUAGE, so there is still one renderer and one
+parser. Both halves come out of the grammar's own tables rather than being
+written here: the book form from `bookAbbrev`, which returns a variant the
+parser matches against, and the chapter mark from `grammarSurface`. Where the
+chapter mark is a comma the passages are separated by `.`, which those tables
+already chain a verse list with — the comma cannot do both jobs.
+
+**The round trip is checked at RENDER, not only in a test.** A localized
+citation must parse, in its new language, to the same books, chapters and
+verses the English one did; where it does not, the English stands. That guard
+is not precautionary — it caught three mechanisms on its first run over the
+table, each of which produced a citation that still read plausibly:
+`2 Timothy 3:14-4:2` keeps its verse in English, where a `:` after a range's
+far end marks a chapter crossing, and loses it in Portuguese, where that mark
+is unavailable; `Romans 5:12-19 or 5:12, 17-19` GAINED a link to Romans 12,
+PT's `:` being a clause separator; `Baruch 3:9-15, 32-4:4` dropped verse 32.
+
+**A citation is rewritten whole or not at all.** The derived book tables are
+derived from what the Catechism cites, so a book it never cites is absent from
+them; swapping the punctuation and leaving `Ezekiel` standing would produce a
+string the target grammar cannot read, turning an English link into no link.
+Half the interface languages have no table at all and read the source as it
+came. What that costs is measured by `cite.test.ts` — it is a percent or two in
+the Romance languages and a fifth in Polish, Russian and Arabic.
+
 ## Two sources, and neither is asked for the half it reads badly
 
 **USCCB is the SOURCE.** Its daily pages carry explicit slot markup and print

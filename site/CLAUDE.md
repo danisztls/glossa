@@ -3027,3 +3027,13 @@ first thing to read before believing this feature about any particular day.
   around**: St Joseph transferred backward in 2028 where the Universal Norms
   send him forward, and an Ordinary week-1 Sunday emitted in a year where the
   Baptism is displaced — there is no First Sunday of Ordinary Time.
+- **THE CITATION IS AN ADDRESS AND IS WRITTEN IN THE READER'S LANGUAGE**
+  (2026-09-06), which is the one place on the site a citation is not reproduced
+  as its source printed it — everywhere else the source is the work being read.
+  `lectionary/cite.ts` rewrites `Ezekiel 33:7-9` to `Ez 33,7-9` out of
+  `bookAbbrev` and `grammarSurface` — the parser's own tables, never a form
+  written here — and `RefText` then parses it in that language, so there is one
+  renderer and one parser. **The round trip is verified at RENDER**: a rewrite
+  that does not parse back to the same books, chapters and verses is discarded
+  and the English stands, which caught three silent mis-readings on its first
+  run over the table (`docs/lectionary.md`).
