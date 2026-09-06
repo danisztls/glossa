@@ -23,6 +23,22 @@
 	 * landing page is illustration; there is nothing to zoom into and nothing
 	 * to read.
 	 *
+	 * ## The card is one link
+	 *
+	 * The identification IS the anchor, pointing at `source` — the Commons file
+	 * page, which is where the licence tag, the digitizing institution's own
+	 * terms and the master all are. `CopyrightNotice` argues this for a work's
+	 * text and every word holds for a picture: an attribution with no way to
+	 * reach the original asks the reader to take our word for the provenance,
+	 * and it is also the page `assets/README.md` re-derives the crop from, so
+	 * the link is the reproduction recipe as much as the credit. Its clothes
+	 * are that component's too, dotted underline and external-link glyph
+	 * included.
+	 *
+	 * The printed line stays plain text: a Commons URL is a hundred characters
+	 * of ink for a reader who cannot press it, and what paper needs is the
+	 * identification, which it gets.
+	 *
 	 * ## The trigger is the icon alone
 	 *
 	 * A plate's caption trigger has the plate's own title as its content and
@@ -105,8 +121,21 @@
 			popover="auto"
 			role="note"
 			ontoggle={card.onToggle}
-			class="panel-surface floating-panel art-credit">{credit}</span
+			class="panel-surface floating-panel art-credit"
 		>
+			<!-- THE IDENTIFICATION IS THE LINK, on `CopyrightNotice`'s reasoning
+			     and in its clothes: an attribution with no way to reach the
+			     original asks the reader to take our word for it, and the link is
+			     what makes the claim checkable. `landing-art.ts` has held the
+			     Commons file page in `source` since the pictures arrived — it is
+			     where the licence tag, the digitizing institution's terms and the
+			     master all are, which is the same page `assets/README.md` re-derives
+			     the crop from. New tab and `rel="external noopener"`, the site's
+			     rule for every outbound link. -->
+			<a class="source-link" href={art.source} target="_blank" rel="external noopener"
+				>{credit}<Icon name="external-link" class="ext" /></a
+			>
+		</span>
 		<!-- Print gets the credit unconditionally, on `Plate.svelte`'s reasoning:
 		     a printed page leaves this site, and it is the one copy whose reader
 		     cannot press anything. A popover never prints — top layer, and
@@ -187,6 +216,32 @@
 		text-align: start;
 		text-wrap: pretty;
 		overflow-wrap: break-word;
+	}
+
+	/* `CopyrightNotice`'s source link exactly — dotted until the pointer is on
+	   it, and `color: inherit` so the panel reads as a line of prose with one
+	   thing in it rather than as a link with a credit attached. */
+	.source-link {
+		color: inherit;
+		text-decoration-line: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.15em;
+	}
+
+	.source-link:hover,
+	.source-link:focus-visible {
+		color: var(--color-accent);
+		text-decoration-style: solid;
+	}
+
+	/* The two numbers `CopyrightNotice` derives and explains: an inline `<svg>`
+	   puts the BOTTOM of its box on the baseline, so a 1em glyph rises past the
+	   cap height of the words beside it. */
+	.source-link :global(.ext) {
+		width: 0.85em;
+		height: 0.85em;
+		margin-inline-start: 0.28em;
+		vertical-align: -0.18em;
 	}
 
 	.credit-print {

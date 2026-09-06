@@ -690,7 +690,10 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **A CREDIT IS BEHIND THE CAPTION TRIGGER, NOT SET UNDER THE PICTURE.**
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because
-  a printed page cannot be pressed. Its trigger is the `info` glyph alone, so
+  a printed page cannot be pressed. **The credit is the anchor** — Commons'
+  file page, out of `landing-art.ts`'s `source`, which is where the licence and
+  the master are and what `assets/README.md` re-derives from. Its trigger is
+  the `info` glyph alone, so
   the `aria-label` is mandatory rather than a courtesy — and it wears
   `.menu-trigger` and adds only its position, because a control laid on a
   picture is still one of the site's buttons and every other one is a rounded
@@ -741,6 +744,10 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   rows and exactly one did, and that one shelf was what kept the card from
   being an anchor (an `<a>` inside an `<a>`). The `<h3>` lives INSIDE the
   anchor, which is valid and is what keeps seven named things in the outline.
+  Its glyph is centred in a `1lh` box at the start of the text column, not
+  baseline-aligned: a box with no text in it offers its bottom edge as a
+  baseline, so a 1em mark stood a full em over capitals that reach seven
+  tenths.
   Every card is the height of the tallest (`grid-auto-rows: 1fr`), so a long
   tagline costs the whole grid — which is why the Catechism pair has a short
   one. **The painting is below the last card, not above the title**: a reader

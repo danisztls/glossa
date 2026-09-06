@@ -403,17 +403,32 @@
 	}
 
 	/*
-	 * THE MARK SITS ON THE HEADING'S OWN LINE, aligned on the baseline rather
-	 * than centred: the glyph and the name are set at different sizes, and it
-	 * is their baselines that should agree — `.index-link`'s argument, one page
-	 * over. An `<h3>` inside the anchor rather than a `<span>`, because the
-	 * catalogue is seven named things and a reader moving by heading should
-	 * meet all seven; `<a>` takes flow content, so this costs nothing.
+	 * THE MARK SITS ON THE HEADING'S FIRST LINE, centred against it — and it
+	 * used to be baseline-aligned, which is the wrong rule for a glyph even
+	 * though it is the right one for two runs of text. A box with no text in it
+	 * has no baseline of its own, so the flex line took its BOTTOM EDGE as one:
+	 * a 1em square stood on the baseline and rose a full em, where the capitals
+	 * beside it reach about seven tenths of that, and every mark on the page
+	 * floated above its own name. `CopyrightNotice` documents the same fact
+	 * about a bare inline `<svg>` and drops it by hand.
+	 *
+	 * A grid instead, so the glyph is centred in a box exactly ONE LINE tall
+	 * (`1lh`, which is why `.shelf-icon` no longer sets a `line-height` of its
+	 * own — the unit reads the heading's) and the box is placed at the START of
+	 * the text column. Centring a line box against a line box needs no font
+	 * metrics and no magic number, and the Catechism card is what needs the
+	 * `start`: its title runs to two lines and the mark belongs beside the
+	 * first, not halfway down both.
+	 *
+	 * An `<h3>` inside the anchor rather than a `<span>`, because the catalogue
+	 * is seven named things and a reader moving by heading should meet all
+	 * seven; `<a>` takes flow content, so this costs nothing.
 	 */
 	.shelf-heading {
-		display: flex;
-		align-items: baseline;
-		gap: 0.5rem;
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: 0.5rem;
 		font-family: var(--font-serif);
 		font-size: 1.15rem;
 		font-weight: inherit;
@@ -429,10 +444,9 @@
 	 * anywhere the mark lights, the pointer is on the target.
 	 */
 	.shelf-icon {
-		flex: 0 0 auto;
-		display: inline-grid;
+		display: grid;
 		place-items: center;
-		line-height: 1;
+		block-size: 1lh;
 		color: var(--color-accent);
 		opacity: 0.75;
 	}

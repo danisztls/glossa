@@ -384,7 +384,15 @@ paintings.
 `ArtFigure.svelte` puts the identification behind the same caption trigger a
 Doré plate uses — `AnchoredPanel`, native popover, `role="note"`, printed
 unconditionally because the printed copy is the one whose reader cannot press
-anything — so a banner carries no line of small type under it. **The trigger is
+anything — so a banner carries no line of small type under it. **The credit in
+that card IS a link** (2026-09-06), to the Commons file page `landing-art.ts`
+has held in `source` since the pictures arrived: it carries the licence tag,
+the digitizing institution's own terms and the master, and it is the page
+`assets/README.md` re-derives the crop from, so one anchor is both the
+provenance a reader can check and the recipe. `CopyrightNotice`'s clothes,
+dotted underline and external-link glyph, since it is that component's argument
+applied to a picture. The printed line stays plain: a Commons URL is a hundred
+characters of ink for a reader who cannot press it. **The trigger is
 `.menu-trigger`**, the site's own icon button, and carries nothing of its own
 but where it sits: it was a 1.75rem disc for a day, which made the one control
 laid on a picture the one control on the site that was not a rounded square.
