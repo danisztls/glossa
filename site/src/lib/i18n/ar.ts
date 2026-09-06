@@ -32,7 +32,7 @@ export const ar: Dictionary = {
 	'nav.bookmarks': 'العلامات',
 	'nav.menu': 'القائمة',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'متابعة القراءة',
+	'reading.continue': 'متابعة القراءة',
 	'nav.library': 'المكتبة',
 	'nav.learn': 'تعلَّم',
 	'library.landing.tagline': 'المجموعة كاملةً، رفًّا رفًّا — مع موضع توقّفك وما وضعت عليه علامة.',

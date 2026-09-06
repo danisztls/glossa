@@ -66,7 +66,7 @@ export const hi: Dictionary = {
 	'nav.menu': 'मेन्यू',
 	'nav.summa': 'सुम्मा',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'पढ़ना जारी रखें',
+	'reading.continue': 'पढ़ना जारी रखें',
 	'nav.library': 'पुस्तकालय',
 	'nav.learn': 'सीखें',
 	'library.landing.tagline':

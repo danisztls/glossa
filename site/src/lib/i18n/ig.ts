@@ -64,7 +64,7 @@ export const ig: Dictionary = {
 	'nav.menu': 'Menu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Gaa n’ihu ịgụ',
+	'reading.continue': 'Gaa n’ihu ịgụ',
 	'nav.library': 'Ọbá akwụkwọ',
 	'nav.learn': 'Mụta',
 	'library.landing.tagline':

@@ -57,7 +57,7 @@ export const lv: Dictionary = {
 	'nav.menu': 'Izvēlne',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Turpināt lasīt',
+	'reading.continue': 'Turpināt lasīt',
 	'nav.library': 'Bibliotēka',
 	'nav.learn': 'Mācīties',
 	'library.landing.tagline':

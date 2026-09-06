@@ -44,7 +44,7 @@ export const la: Dictionary = {
 	'nav.bookmarks': 'Signata',
 	'nav.menu': 'Index',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Perge legere',
+	'reading.continue': 'Perge legere',
 	'nav.library': 'Bibliotheca',
 	'nav.learn': 'Disce',
 	'library.landing.tagline':

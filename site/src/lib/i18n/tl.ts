@@ -61,7 +61,7 @@ export const tl: Dictionary = {
 	'nav.menu': 'Menu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Magpatuloy sa pagbabasa',
+	'reading.continue': 'Magpatuloy sa pagbabasa',
 	'nav.library': 'Aklatan',
 	'nav.learn': 'Matuto',
 	'library.landing.tagline':

@@ -60,7 +60,7 @@ export const vi: Dictionary = {
 	'nav.menu': 'Trình đơn',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Đọc tiếp',
+	'reading.continue': 'Đọc tiếp',
 	'nav.library': 'Thư viện',
 	'nav.learn': 'Học',
 	'library.landing.tagline':

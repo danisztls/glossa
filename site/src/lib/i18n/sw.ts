@@ -61,7 +61,7 @@ export const sw: Dictionary = {
 	'nav.menu': 'Menyu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Endelea kusoma',
+	'reading.continue': 'Endelea kusoma',
 	'nav.library': 'Maktaba',
 	'nav.learn': 'Jifunze',
 	'library.landing.tagline':

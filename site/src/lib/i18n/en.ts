@@ -43,14 +43,16 @@ export const en: Dictionary = {
 	'nav.bookmarks': 'Bookmarks',
 	'nav.menu': 'Menu',
 	'home.title': 'Glossa Catholica',
-	// `home.continueReading` until 2026-09-06, and renamed for the second time
-	// on the same reasoning `nav.library` records below: the section is on
-	// `/bibliotheca` alone now — an entrance arranged around a state only a
-	// returning reader has was empty for everyone else — and a `home.*` key on
-	// a page that is not home is a claim the codebase makes and does not keep.
-	// The label is the same words in all thirty-seven languages, so it was
-	// renamed rather than re-translated.
-	'library.continueReading': 'Continue reading',
+	// NAMED FOR WHAT IT IS, NOT FOR WHERE IT RENDERS, and that is the whole
+	// point of the third name in as many days: `home.continueReading`, then
+	// `library.continueReading`, then this. The section moved off the home page
+	// (a surface empty for every first-time reader), then off `/bibliotheca`
+	// and onto `/signata`, and each move made the key name a claim the codebase
+	// was no longer keeping. `reading-position.ts` is the module behind it and
+	// the section is that module's one rendering, so the key can now outlive
+	// wherever it is put. The label is the same words in all thirty-seven
+	// languages, so every rename was mechanical rather than re-translated.
+	'reading.continue': 'Continue reading',
 	// The Library door, and the page behind it (`routes/bibliotheca/`). The
 	// key was `home.works` and had been written in all thirty-seven languages
 	// for a home-page section that no longer existed — the label is the same
@@ -65,11 +67,13 @@ export const en: Dictionary = {
 	// an imperative in the Romance languages and Latin, a verbal noun in the
 	// Slavic ones and in Hungarian, where an imperative would read as an order.
 	'nav.learn': 'Learn',
-	// Both halves of what the page holds, in one sentence: the catalogue, and
-	// the reader's own place in it. A library has a catalogue AND a borrowing
-	// record.
-	'library.landing.tagline':
-		'The whole corpus, shelf by shelf — with where you left off and what you have marked.',
+	// What the page holds, which is the catalogue and a way in to the reader's
+	// own marks. It named the reading positions too until 2026-09-06, when
+	// those moved to `/signata`; the other thirty-six dictionaries still carry
+	// the older sentence, which describes a page linking to the record rather
+	// than holding it — a smaller error than English asserting a section that
+	// is not there, and the direction to correct in when anyone revisits them.
+	'library.landing.tagline': 'The whole corpus, shelf by shelf, and what you have marked in it.',
 
 	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//

@@ -62,7 +62,7 @@ export const id: Dictionary = {
 	'nav.menu': 'Menu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Lanjutkan membaca',
+	'reading.continue': 'Lanjutkan membaca',
 	'nav.library': 'Perpustakaan',
 	'nav.learn': 'Belajar',
 	'library.landing.tagline':

@@ -18,10 +18,35 @@
 	 * reader's language does not carry — still renders, with its citation and a
 	 * note, and can still be removed. Silently dropping a reader's own mark
 	 * because we cannot show its text would be the worse failure.
+	 *
+	 * ## AND WHERE THE READER LEFT OFF, WHICH IS NOT A MARK
+	 *
+	 * "Continue reading" was on the home page, then on `/bibliotheca`, and is
+	 * here since 2026-09-06. The two are the same KIND of thing and answer the
+	 * same question a reader arrives with — take me back to where I was — but
+	 * they are opposite in how they got there: a mark is a decision, saved on
+	 * purpose and removable, and a position is a trace the site kept without
+	 * being asked. So they are two sections and not one list, and the trace
+	 * goes FIRST: it is the shorter of the two and the one a reader returning
+	 * mid-chapter came for, where the marks are what they built to come back to
+	 * later.
+	 *
+	 * IT RENDERS OUTSIDE THE EMPTY BRANCH, deliberately. A reader with
+	 * positions and no marks is an ordinary state — nothing here saves a
+	 * position — and putting the section inside `{:else}` would answer them
+	 * with "Nothing marked yet" over a page that knows exactly where they were.
+	 *
+	 * The page's own title and tagline still name the marks alone. That is a
+	 * real cost of the move and the cheaper half of it: renaming a route and
+	 * two translated strings in thirty-seven dictionaries to cover a section
+	 * one heading already names is a larger claim than the page is making.
 	 */
+	import { onMount } from 'svelte';
 	import { bookmarks, type ResolvedBookmark } from '$lib/bookmarks.svelte';
 	import { bookmarkGroup } from '$lib/bookmarkContent';
 	import { compareBookmarks, documentGroupTitle, resolveBookmark } from '$lib/bookmarkContent';
+	import { getWork } from '$lib/corpus';
+	import { continueRows, listPositions, type ReadingPosition } from '$lib/reading-position';
 	import { truncate } from '$lib/linkPreviewContent';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -52,6 +77,17 @@
 		return [...byKey.values()].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 	});
 
+	// `localStorage`, so it is empty until mount and the section renders no
+	// heading over nothing. Uncapped: this page is the record, and the four-row
+	// cap the home page carried was for a surface that had somewhere else to
+	// send the reader.
+	let positions: ReadingPosition[] = $state([]);
+	onMount(() => {
+		positions = listPositions();
+	});
+
+	const continuing = $derived(continueRows(positions, (id) => getWork(id)?.type));
+
 	// The work-type headings deliberately reuse the nav labels rather than
 	// declaring their own strings: they name the same works.
 	function sectionTitle(key: string): string {
@@ -72,6 +108,17 @@
 <article class="content-column library">
 	<h1>{t('bookmark.library')}</h1>
 	<p class="page-tagline">{t('bookmark.library.tagline')}</p>
+
+	{#if continuing.length > 0}
+		<section class="group continuing" aria-labelledby="continue-heading">
+			<h2 id="continue-heading">{t('reading.continue')}</h2>
+			<ul class="positions index-list">
+				{#each continuing as position (position.workId)}
+					<li><a href={position.href}>{position.label}</a></li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
 
 	{#if sections.length === 0}
 		<p class="empty">{t('bookmark.empty')}</p>
@@ -123,6 +170,18 @@
 		font-size: 1.15rem;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.4rem;
+	}
+
+	/* It is a `.group` for the heading and the rule, which are the same object
+	   as a work's section below it, and then takes its top margin back: it
+	   follows the tagline rather than another group, and `2rem` under a
+	   sentence reads as a gap rather than as a division. */
+	.continuing {
+		margin-block-start: 1.5rem;
+	}
+
+	.positions li {
+		padding: 0.35rem 0;
 	}
 
 	/* An `.index-row` (styles/components.css) that is a GRID rather than a

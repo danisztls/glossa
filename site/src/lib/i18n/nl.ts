@@ -56,7 +56,7 @@ export const nl: Dictionary = {
 	'nav.menu': 'Menu',
 	'nav.summa': 'Summa',
 	'home.title': 'Glossa Catholica',
-	'library.continueReading': 'Verder lezen',
+	'reading.continue': 'Verder lezen',
 	'nav.library': 'Bibliotheek',
 	'nav.learn': 'Leren',
 	'library.landing.tagline':

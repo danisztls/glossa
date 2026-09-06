@@ -389,20 +389,33 @@ and cannot become the bin for whatever did not fit. Redundancy is a defect only
 when two items reach the SAME place, which is why there is no "Home" entry
 beside the brand link and why a shortcut past an index is not one.
 
-**It holds a catalogue AND a borrowing record**, which is what makes it more
-than an index: where the reader left off and their marks, then the shelves.
-`/signata` remains the full view of the second.
+**It holds a catalogue and a way in to the record**, which is what makes it
+more than an index: the shelves, then one card for the marks. `/signata` holds
+the record itself.
 
-**AND IT IS THE ONLY PAGE THAT HOLDS THE RECORD** (2026-09-06). The home page
-carried "continue reading" too, capped at four against this page's uncapped
-list, on the reasoning that an entrance may show a little of what the record
-holds. What that produced was a section EMPTY for every reader who has not been
-here before — so the one page a stranger arrives at was arranged around a state
-only a returning reader has — while the returning reader got a truncated copy of
-a list one click away. **A surface only a returning reader can fill belongs on
-the page that is about returning.** `home.continueReading` became
-`library.continueReading` in the same commit, the second key on that page
-renamed rather than re-translated (`nav.library` was `home.works`).
+**"CONTINUE READING" MOVED TWICE IN ONE DAY AND THE TRAIL IS THE ARGUMENT**
+(2026-09-06). It was on the home page, capped at four against this page's
+uncapped copy, on the reasoning that an entrance may show a little of what the
+record holds. What that produced was a section EMPTY for every reader who has
+not been here before — the one page a stranger arrives at, arranged around a
+state only a returning reader has — while the returning reader got a truncated
+copy of a list one click away. It came here, and then went on to `/signata`:
+**a position and a mark answer the same question and are opposite in how they
+got there** — a mark is a decision, saved on purpose and removable, a position
+is a trace the site kept without being asked — so splitting them across two
+pages meant a returning reader had to know which one had kept their place. Two
+sections on one page, not one list, and the trace goes first.
+
+**The key was renamed twice on the way and is `reading.continue` now**, named
+for `reading-position.ts` rather than for a page. `home.continueReading`, then
+`library.continueReading`: each was a claim the codebase stopped keeping within
+hours, and the fix was not a better page name but no page name. (`nav.library`
+was `home.works` for the identical reason a year earlier — the label is the
+same words in every language, so all three renames were mechanical.)
+`/signata`'s own title and tagline still name the marks alone, which is the
+accepted cost: renaming a route and two strings in thirty-seven dictionaries to
+cover a section one heading already names is a larger claim than the page is
+making.
 
 **No page below the bar declares a SENTENCE of its own, and one declares a
 name.** Library's shelves, the home page's doors and the `<head>` all read the
@@ -413,22 +426,40 @@ set to keep true. The one exception is named below, and it is a name.
 
 **THE SHELVES ARE THE HOME PAGE'S DOOR GRID** (2026-09-06) — cards across the
 column, each carrying the glyph `/schola` already assigns that work, where they
-were six stacked blocks down 72rem: a column of headings with an ocean to the
-right of each. Two departures from the doors, both forced. A door is one
-card-wide anchor and a shelf cannot be, because two shelves hold their own
-links and an anchor inside an anchor is ambiguous before it is invalid — so the
-heading is the target and the card is the ground it stands on. And the track
-floor is 17rem against the doors' 15, which is where the Learn card's two
-titles stop taking three lines each.
+were stacked blocks down 72rem: a column of headings with an ocean to the right
+of each. **It is the same object and not a resemblance**: the same track
+pattern, the same gap, the same card, and the same whole-card anchor. Only the
+track floor differs (16rem against the doors' 15), because a work's tagline is
+a sentence where a door's is a phrase.
 
-**The Learn shelf is TWO cards and the Summa has none.** The Compendium of the
-Catechism stood as a row beside the Catechism and the two led to one index —
-`/catechismus` holds both, which the sentence under them has always said — so
-the pair is one card named for the pair. That name (`ccc.landing.pairTitle`) is
-the single string on this page written FOR it: `/schola` lists the two works
-separately and the `<head>` titles `/catechismus` after the Catechism alone, so
-no existing key means the pair. `/doctores` keeps its shelf and its caveat; what
-went is the row underneath that jumped past the caveat into an unrevised Summa.
+**AND THE WHOLE CARD IS THE ANCHOR ONLY BECAUSE LEARN WAS UNFOLDED.** For one
+commit a shelf could hold rows of its own and exactly one did — Learn, over the
+Catechism pair and the Social Doctrine — which forced the heading to be the
+target and left the rest of the card inert, since an `<a>` inside an `<a>` is
+ambiguous before it is invalid. Unfolded, each is its own card and the whole
+apparatus that shape needed goes with it: a second type, a nested list, and
+four rules pulling `.index-row` back into a block, all of it for one group of
+two. **A container holding one group is a heading doing what a position in a
+list already does.** The `<h3>` stays, inside the anchor, which is valid and is
+what keeps every named thing in the outline.
+
+**The Summa has no card and the Catechism's holds two works.** `/catechismus`
+indexes the Catechism AND its Compendium, which the sentence under it has
+always said, so the pair is one card named for the pair —
+`ccc.landing.pairTitle`, the single string on this page written FOR it, since
+`/schola` lists the two works separately and the `<head>` titles `/catechismus`
+after the Catechism alone. `/doctores` keeps its card and its caveat; what went
+is the row underneath that jumped past the caveat into an unrevised Summa. The
+taxonomy that put the Social Doctrine under Learn — synthesis read THROUGH
+against dated acts cited SINGLY, after it had moved three times — is still true
+and needs no container: with one card per work the ORDER states it, and the
+address space states it without being asked.
+
+**The last card is Bookmarks, and it is the only one that is not a work.** It
+carries `/signata`'s own section counts as chips where a work card carries its
+sentence — a bare total says nothing about whether it is worth opening — and it
+is absent for a reader who has marked nothing, which an `auto-fit` grid needs
+no branch to handle.
 
 **The home page is the liturgical day and the doors, and nothing else.** It
 rendered the Bible's whole table of contents and then the Catechism's whole

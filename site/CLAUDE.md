@@ -716,16 +716,23 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   Compendium as ONE card, and no other surface wants that name (`/schola` lists
   the two separately, the `<head>` titles `/catechismus` after the Catechism).
   English-only, falling back key by key.
-- **`/bibliotheca`'s shelves are the home page's `.door` grid** (2026-09-06),
-  cards across rather than six blocks down a 72rem column, each with **the same
-  glyph `/schola` gives that work** — take the icon from there rather than
-  choosing again. The card is NOT one wide anchor the way a door is: two
-  shelves hold their own links, so the heading is the target and the card is
-  the ground.
-- **The Learn shelf is two cards, and the Summa has no row** (2026-09-06). The
-  Compendium of the Catechism was a row beside the Catechism and both led to
-  one index, so the pair is one card; `/doctores` keeps its shelf and its
-  caveat, but the row jumping past that caveat into the Summa went.
+- **`/bibliotheca`'s shelves ARE the home page's `.door` grid** (2026-09-06),
+  cards across rather than blocks down a 72rem column, each one anchor with
+  **the same glyph `/schola` gives that work** — take the icon from there
+  rather than choosing again. One card per work, no nesting: a shelf could hold
+  rows and exactly one did, and that one shelf was what kept the card from
+  being an anchor (an `<a>` inside an `<a>`). The `<h3>` lives INSIDE the
+  anchor, which is valid and is what keeps seven named things in the outline.
+- **There is no Learn shelf, and the Summa has no row** (2026-09-06). The
+  Catechism and its Compendium are one card (`/catechismus` indexes both);
+  the Compendium of the Social Doctrine is its own. The taxonomy argument that
+  grouped them — synthesis read THROUGH against dated acts cited SINGLY — is
+  still true and needs no container, since one card per work makes the ORDER
+  say it. `/doctores` keeps its card and its caveat; the row jumping past that
+  caveat into the Summa went.
+- **The last card is Bookmarks and it is not a work** — `/signata`'s section
+  counts as chips where a work card puts its sentence, absent for a reader who
+  has marked nothing (an `auto-fit` grid needs no branch for that).
 - **The home page is the liturgical day plus the doors, and NOTHING else.** Do
   not put an index on it. It carried the Bible's whole table of contents and
   the Catechism's whole outline until 2026-09-04, which is why nothing ingested
@@ -739,12 +746,22 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   `scripts/export-section-names.mjs` must be re-run and its output committed
   after any `nav.*` or `*.abbrev` change (`section-names.test.ts` fails
   otherwise).
-- **One row per work TYPE in "continue reading", and the types are
-  discovered.** `continueRows` reads the reader's own positions; it replaced a
-  literal list written when four types existed, under which a reader halfway
-  through the Code got no row. It renders on `/bibliotheca` and nowhere else,
-  uncapped, beside the bookmark counts — `library.continueReading`, which was
-  `home.continueReading` until the section moved.
+- **"Continue reading" is on `/signata`, uncapped, above the marks** — home
+  page, then `/bibliotheca`, then there, all on 2026-09-06. A position and a
+  mark answer one question (take me back to where I was) and are opposite in
+  how they got there: a mark is a decision, a position is a trace kept without
+  being asked. Split across two pages, a returning reader had to know which one
+  had kept their place. Two sections, not one list, and the trace goes first.
+  **The key is `reading.continue`, named for `reading-position.ts` and not for
+  a page** — it was `home.continueReading`, then `library.continueReading`, and
+  each rename was the key having made a claim the code stopped keeping.
+- **One row per work TYPE in it, and the types are discovered.** `continueRows`
+  reads the reader's own positions; it replaced a literal list written when
+  four types existed, under which a reader halfway through the Code got no row.
+- **`/signata`'s title and tagline still name the marks alone**, which is the
+  accepted cost of that move: renaming a route and two strings in thirty-seven
+  dictionaries to cover a section one heading already names is a larger claim
+  than the page is making.
 
 ## `/documenta` filters, and the one editorial file behind them
 
