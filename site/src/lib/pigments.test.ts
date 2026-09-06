@@ -219,6 +219,29 @@ describe('the shelf pigments', () => {
 		).toMatch(/--shelf:\s*var\(--shelf-/);
 	});
 
+	/*
+	 * THE ONE THAT ACTUALLY BIT, and it cost three rounds of palette work.
+	 * `.book-icon { color: var(--shelf) }` sat above a
+	 * `.feature-icon, .book-icon { … color: var(--color-accent) }` — same
+	 * specificity, later wins — so every shelf icon was the house red at rest
+	 * and took its colour only from the `:hover` rule one class higher. The
+	 * feature was inverted, nothing errored, `svelte-check` saw two live
+	 * selectors, and every judgement of the colours was made against a hover
+	 * state because that was the only place they appeared.
+	 *
+	 * The invariant that prevents it: **a rule that sizes both kinds of icon
+	 * may not colour either.** Colour is stated per kind, after.
+	 */
+	it('keeps colour out of the rule that sizes both kinds of icon', () => {
+		const guide = readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8');
+		for (const m of stripComments(guide).matchAll(/\.feature-icon,\s*\.book-icon\s*\{([^}]*)\}/g)) {
+			expect(
+				m[1],
+				'the shared icon rule sets a colour, which overrides every per-shelf one below it'
+			).not.toMatch(/(^|[\s;])color\s*:/);
+		}
+	});
+
 	it('never lets the guide reach for the muted mix, which is the drift to watch', () => {
 		const guide = stripComments(readFileSync(join(SRC, 'routes/schola/+page.svelte'), 'utf8'));
 		expect(guide, 'the guide names a --pigment-* in a declaration').not.toMatch(/var\(--pigment-/);

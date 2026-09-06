@@ -655,6 +655,19 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   therefore has one colour and two presentations rather than two colours.
   `pigments.test.ts` fails on a `--pigment-*` written as its own literal, which
   is how the two would come to drift.
+- **THE COLOURS ONLY EVER SHOWED ON HOVER, AND NOTHING FAILED.**
+  `.book-icon { color: var(--shelf) }` sat above a
+  `.feature-icon, .book-icon { … color: var(--color-accent) }` — same
+  specificity, later wins — so every shelf icon was the house red at rest and
+  took its colour only from `.book:hover .book-icon`, one class higher. The
+  feature was inverted: colour on hover, none at rest, where the colour
+  identifies the row and the hover only answers the pointer. **A cascade bug
+  looks exactly like a design problem and will absorb as much design work as
+  you give it** — three rounds went into this palette, every one judged against
+  a hover state, because that was the only place the colours appeared. The rule
+  now: **a rule that sizes both kinds of icon may not colour either**; colour is
+  stated per kind, after. `pigments.test.ts` fails if that rule regains a
+  `color`.
 - **A COLOUR'S NAME LIVES AT A PARTICULAR LIGHTNESS, and that is why the
   literals are per theme family where the mixes are not.** Brown is dark orange,
   olive is dark yellow, navy is dark blue. Three schemes tried to compute a

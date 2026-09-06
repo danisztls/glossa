@@ -1153,23 +1153,31 @@
 	}
 
 	/*
-	 * ONE DECLARATION, AND IT TOOK THREE TRIES TO GET HERE. The icon wants a
-	 * colour a reader would name; the first two attempts tried to compute one
-	 * out of the muted pigment — turning `--pigment-strength` up, then holding
-	 * a lightness and chroma with `oklch(from …)` — and both failed the same
-	 * way, because **a colour's name lives at a particular lightness**. Brown
-	 * is dark orange and olive is dark yellow, so any scheme that holds one
-	 * lightness across the circle turns the warm half of a palette to earth
-	 * tones however much chroma it spends.
+	 * THE SHARED RULE IS GEOMETRY AND CARRIES NO COLOUR, and the reason is a bug
+	 * that ran for four commits.
 	 *
-	 * A literal per shelf per ground is what has two degrees of freedom, and
-	 * `tokens.css` holds them. Nothing is computed here, so nothing needs a
-	 * fallback declaration under it either.
+	 * `.book-icon { color: var(--shelf) }` sat ABOVE a
+	 * `.feature-icon, .book-icon { … color: var(--color-accent) }` that set the
+	 * accent for both. Two selectors, the same specificity, the later one
+	 * winning — so every shelf icon was the house red at rest, while
+	 * `.book:hover .book-icon` at one class higher was the only rule that ever
+	 * showed a shelf its colour. **The feature was inverted: colour appeared on
+	 * hover and vanished at rest**, which is precisely backwards, since the
+	 * colour identifies the row and the hover only answers the pointer.
+	 *
+	 * It is worth naming what it cost, because nothing failed. `svelte-check`
+	 * saw two live selectors, both used. The page rendered. Three rounds of
+	 * work went into the palette — the strength dial, then `oklch(from …)`,
+	 * then a literal per ground — every one of them judged against a hover
+	 * state, because that was the only place the colours were visible.
+	 * **A cascade bug looks exactly like a design problem, and it will absorb
+	 * as much design work as you give it.**
+	 *
+	 * So the shared rule sets size and nothing else, each kind of icon states
+	 * its own colour after it, and `icon-colour.test.ts`-style scanning is not
+	 * needed because `pigments.test.ts` now fails if that rule regains a
+	 * `color`.
 	 */
-	.book-icon {
-		color: var(--shelf);
-	}
-
 	.feature-icon,
 	.book-icon {
 		flex: 0 0 auto;
@@ -1179,7 +1187,24 @@
 		font-size: 1.35rem;
 		line-height: 1;
 		margin-block-start: 0.12rem;
+	}
+
+	/* The chrome is one kind of thing, so its marks are one colour. */
+	.feature-icon {
 		color: var(--color-accent);
+	}
+
+	/*
+	 * A shelf is eight kinds of thing, so its marks are eight colours — the
+	 * literal from `tokens.css`, which is a colour a reader would name rather
+	 * than the muted mix `CitedBy` dots itself with.
+	 *
+	 * The fallback is for the three rows that are PLACES rather than texts:
+	 * Library, Calendar and Bookmarks carry no `data-shelf`, so they take the
+	 * accent, which is the honest answer for a row that is not a shelf.
+	 */
+	.book-icon {
+		color: var(--shelf, var(--color-accent));
 	}
 
 	/*

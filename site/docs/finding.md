@@ -289,6 +289,25 @@ band; an icon standing alone in a row, half a page from the next, has to be red
 or blue or green on its own. Deriving the second from the first is what keeps a
 shelf to one colour with two presentations rather than two colours.
 
+**AND FOR FOUR COMMITS NONE OF IT WAS VISIBLE AT REST.**
+`.book-icon { color: var(--shelf) }` was written above a
+`.feature-icon, .book-icon { … color: var(--color-accent) }` that sized both
+kinds of icon and coloured them too. Two selectors at the same specificity, the
+later one winning — so every shelf icon was the house red until the pointer
+touched it, and `.book:hover .book-icon`, one class higher, was the only rule
+that ever showed a shelf its own colour. The feature was exactly inverted: the
+colour identifies the row and should be there always; the hover only answers the
+pointer and should be the variation.
+
+Nothing failed. `svelte-check` saw two live selectors, both used. The page
+rendered. **A cascade bug looks exactly like a design problem, and it will
+absorb as much design work as it is given** — three rounds went into this
+palette before anyone looked at the cascade, and every one of them was judged
+against a hover state, because that was the only place a colour appeared. The
+invariant that prevents it is one line: **a rule that sizes both kinds of icon
+may not colour either.** Colour is stated per kind, after, and
+`pigments.test.ts` fails if the shared rule regains a `color`.
+
 **Three schemes tried to compute the icon out of the dot before that, and each
 failed the same way.** Turning `--pigment-strength` up buys separation and
 spends contrast on a dark ground, the seeds being dark and the ground darker;
