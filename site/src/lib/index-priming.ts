@@ -138,15 +138,22 @@ const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
 	// which is exactly what made them look like they needed nothing.
 	'doctrina-socialis': withRefs(),
 	'ius-canonicum': withRefs(),
-	// The guide renders no corpus prose — every route step is a LINK titled
-	// from an index, and every worked citation is an address checked against
-	// an index before it is offered — so it takes the shelves it names and no
-	// `REFS`, on the home page's reasoning directly above. `summa` joined when
-	// the books list gained the Doctors' row: `summaQuestionExists` is asked
-	// before `STh I, 1` is drawn as a link. The Code, the Social Doctrine and
-	// the documents are checked too and cost nothing here, reaching `manifests`
-	// and the two inlined registries `+layout.ts` already has on every path.
-	schola: ['bible', 'ccc', 'compendium', 'prayer', 'summa'],
+	// The guide renders no corpus prose and no `REFS`, on the home page's
+	// reasoning directly above. It asked for five shelves until 2026-09-05,
+	// when the citation specimens stopped being links: `cccParagraphExists`,
+	// `compendiumQuestionExists`, `summaQuestionExists` and `listPrayerMeta`
+	// went with them, and four indexes were being loaded to decide whether to
+	// underline eight words. **A route's set is what its code still asks for,
+	// and the check at the foot of `index-priming.test.ts` only catches asking
+	// for TOO LITTLE** — over-priming is invisible and has to be pruned by
+	// hand when the code that needed it goes.
+	//
+	// `bible` is what is left, and it is genuinely needed twice: for the
+	// abbreviation and separator the Scripture specimen is drawn with, and for
+	// the names and chapter counts of the books the reading suggestion offers.
+	// The documents it cites reach `manifests` and the two inlined registries
+	// `+layout.ts` already has on every path.
+	schola: ['bible'],
 	// The one shelf that really does need nothing: the colophon is the site's
 	// own writing about the corpus, and cites it only by title. Listed with an
 	// empty set rather than left out, so a reader of this table can tell "needs

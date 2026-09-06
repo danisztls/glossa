@@ -102,8 +102,14 @@ export const en: Dictionary = {
 		': the same teaching as the Catechism, much shorter, written as questions and answers. It is about a tenth the length and assumes nothing.',
 
 	// THE SECOND PLACE THIS SITE SPEAKS FOR ITSELF, and the last one allowed.
-	// It carries `schola.start.attribution` under it, exactly as the note above
-	// does, because it does the same forbidden thing: it recommends.
+	// Its heading is the reader's own question, which is what tells it apart
+	// from the sections that only list what exists.
+	//
+	// IT IS SET AS THREE NUMBERED STAGES, so the keys come in pairs: a stage
+	// title of three or four words that can be read at a glance, and a blurb
+	// under it for the reader who does not stop there. The title carries the
+	// instruction — translate it as one, not as a noun phrase — and the blurb
+	// carries the reason. Neither repeats the other.
 	//
 	// WHY IT HAS TO BE OURS. The Church states a narrative frame and never a
 	// reading plan. `Dei Verbum` 25 asks that the faithful be taught the right
@@ -121,20 +127,23 @@ export const en: Dictionary = {
 	'schola.bible.heading': 'If you have never read the Bible',
 	'schola.bible.library':
 		'It is not one book but seventy-three, written over more than a thousand years and bound in the order the Church settled on — not the order events happened in, and not the order that is easiest to read. Most people start at the first page and stop a few weeks later, in a long chapter of ancient law, because nothing has yet told them what it is for.',
+	'schola.bible.step.gospel': 'Start with a Gospel',
 	'schola.bible.start':
-		'So start with a Gospel — one of four short books about the life of Jesus, a long way in rather than at the front. That is not our idea: a Council of the Church asked that people be taught the right use of Scripture “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
+		'One of four short books about the life of Jesus, a long way in rather than at the front. That is not our idea: a Council of the Church asked that people be taught the right use of Scripture “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
 	'schola.bible.whichGospel':
-		'Which of the four is a genuine disagreement, and nobody settles it for you. Three are commonly suggested, for three different reasons — any of them is a good place to be:',
+		'Three are commonly suggested, for three different reasons. Any of them is a good place to be.',
 	'schola.bible.gospel.mark':
 		'The shortest. You can read the whole thing in an afternoon, and having finished one is worth more at the start than having chosen the best one.',
 	'schola.bible.gospel.luke':
 		'Written for someone outside the faith who wanted the story set down in order — which may be exactly you. It runs straight on into the Acts of the Apostles, so it is really the first half of a longer book.',
 	'schola.bible.gospel.john':
 		'The one that says outright why it was written: “that you may believe”. Plain words, and it goes straight at the question of who Jesus is.',
+	'schola.bible.step.acts': 'Then what happened next',
 	'schola.bible.thenActs':
-		'When you have finished one, read what the people who knew him did next:',
+		'When you have finished one, read what the people who knew him did after he was gone.',
+	'schola.bible.step.old': 'Then the older half',
 	'schola.bible.thenOld':
-		'Then go back into the older half — but not to the first page, and not all of it. A few places carry the story, and they are the ones the Gospels keep pointing back to:',
+		'Not from the first page, and not all of it. A few places carry the story, and they are the ones the Gospels keep pointing back to.',
 	'schola.bible.ot.beginnings': 'How it begins, and how it goes wrong.',
 	'schola.bible.ot.promise': 'One family, and a promise made to it that outlives everyone in it.',
 	'schola.bible.ot.exodus': 'A people brought out of slavery, and given a law to live by.',
@@ -176,16 +185,17 @@ export const en: Dictionary = {
 	// WHAT EACH WORK IS, AND WHAT ITS NUMBER MEANS. Two sentences per work: the
 	// first is what kind of thing it is and what authority it carries, the
 	// second is what a citation of it names. The heading above each is the key
-	// its own landing page is titled by, and the worked example beside it is
-	// built and existence-checked in the page.
+	// its own landing page is titled by, and the specimen beside it is written
+	// in `SPECIMENS` — a shape, not a reference to anything.
 	//
 	// A citation is the part nothing else on the site teaches. A reader who has
-	// never seen one does not know that `CCC 1` names a PARAGRAPH running
+	// never seen one does not know that `CCC 1234` names a PARAGRAPH running
 	// unbroken through the whole work, or that the Code numbers canons and not
-	// pages — and the jump box reads every one of these notations back.
+	// pages — and the jump box reads every one of these notations back, which
+	// is what the lede sends them to do with one.
 	'schola.books.heading': 'What is here, and how it is cited',
 	'schola.books.lede':
-		'Each of these is a different kind of book, and each is referred to by a number of its own. The examples are live — follow one to see where it lands.',
+		'Each of these is a different kind of book, and each is referred to by a number of its own. The examples show the form: type one like it into the search box and you land on the passage.',
 	'schola.cite.label': 'Cited as',
 	'schola.what.scripture':
 		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',

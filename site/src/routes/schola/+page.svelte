@@ -29,20 +29,24 @@
 	 * first page to the last, and no page on this site said so. That is the
 	 * whole of §5's "vocabulary of the corpus itself", and it is what the books
 	 * section below exists to state: one sentence on what a work is, one on
-	 * what its numbered unit is called, and a worked example that is a link.
+	 * what its numbered unit is called, and a specimen of the notation.
 	 *
-	 * **EVERY EXAMPLE IS CHECKED AGAINST THE CORPUS BEFORE IT IS OFFERED AS A
-	 * LINK.** `citations` asks the same existence predicate the jump box asks
-	 * (`cccParagraphExists`, `canonLawCanonExists`, `summaQuestionExists`, …),
-	 * and where the answer is no the notation is still shown and simply is not
-	 * a link. A guide whose worked example 404s teaches the reader that they
-	 * have misunderstood the notation.
+	 * **THE SPECIMEN IS A SHAPE AND NOT A REFERENCE** (2026-09-05, by
+	 * direction). Each was a live link, existence-checked against the corpus,
+	 * so `CCC 1` could be followed to paragraph 1 — which taught the wrong
+	 * lesson twice over: it sent a reader who was reading a CATALOGUE into the
+	 * middle of a work they had not chosen, and it made the number look
+	 * significant when the only thing this column teaches is the form. The
+	 * numbers are representative now, the chips are inert, and the lede sends
+	 * the reader to type one into the jump box, which is where a notation is
+	 * actually worth something.
 	 *
-	 * The Bible's example is DERIVED rather than written down: the book's
-	 * abbreviation comes from this language's own citation table
-	 * (`bookAbbrev`), falling back to the reader's edition's name for the book,
-	 * and the chapter/verse separator from the same grammar the parser uses —
-	 * so a Portuguese reader is shown `Jo 3,16` and not somebody else's colon.
+	 * The Bible's is still DERIVED rather than written down, because its form
+	 * is the one that changes by language: the abbreviation comes from this
+	 * language's own citation table (`bookAbbrev`), falling back to the
+	 * reader's edition's name for the book, and the chapter/verse separator
+	 * from the same grammar the parser uses — so a Portuguese reader is shown
+	 * `Jo 3,16` and not somebody else's colon.
 	 *
 	 * ## THE SOURCED ROUTES WERE HERE AND ARE GONE (2026-09-05)
 	 *
@@ -90,18 +94,7 @@
 	 * `.landing-measure`. `/`, `/bibliotheca` and `/documenta` are the same
 	 * kind of page and take the same column.
 	 */
-	import {
-		canonLawCanonExists,
-		cccParagraphExists,
-		compendiumQuestionExists,
-		getBook,
-		getDocumentGroup,
-		getDocumentManifest,
-		listPrayerMeta,
-		listWorksOfType,
-		socialDoctrineParagraphExists,
-		summaQuestionExists
-	} from '$lib/corpus';
+	import { getBook, getDocumentManifest, listWorksOfType } from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
 	import { bookAbbrev, grammarSurface } from '$lib/refs-grammar';
 	import { content } from '$lib/content.svelte';
@@ -118,17 +111,14 @@
 	// `ArtFigure` then needs no dictionary of its own.
 	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 
-	// --- The languages the worked citations resolve in -----------------------
+	// --- The reader's own Bible ----------------------------------------------
 	//
-	// `catechismPairLang` for the same reason `/catechismus` uses it: six
-	// languages carry one of the Catechism/Compendium pair and not the other,
-	// and resolving each separately puts an English answer beside the reader's
-	// own question.
-	const pairLang = $derived(content.catechismPairLang());
-	const prayerLang = $derived(content.langFor('prayer'));
+	// The only edition this page resolves, and it resolves two things out of
+	// it: the abbreviation and separator the citation specimen is drawn with,
+	// and the names and chapter counts of the books the reading suggestion
+	// offers. Nothing else on the page addresses a text any more.
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 	const bibleLang = $derived(content.langFor('bible'));
-	const socialLang = $derived(content.langFor('social-doctrine'));
 
 	/**
 	 * THE CHROME, NAMED BY ITS OWN CONTROLS. Every `nameKey` here is the key
@@ -242,33 +232,39 @@
 	const works = $derived(WORKS.filter((work) => has(work.type)));
 
 	/**
-	 * The worked example beside each work: the notation, and the address it
-	 * reaches when that address exists.
+	 * THE SPECIMEN BESIDE EACH WORK, AND IT IS A SHAPE RATHER THAN A REFERENCE.
 	 *
-	 * THE NUMBER IS THE LOWEST ONE, and deliberately: `CCC 1` and `Can. 1` are
-	 * the units every edition of those works has, so the example survives a
-	 * reader whose content language carries an abridged edition, and a reader
-	 * who follows it lands at the beginning of the work rather than in the
-	 * middle of an argument. The sigla — `CSDC`, `STh` — are the works' own and
-	 * are the forms `suggest.ts`'s `SECTIONS` table reads back; the two that
-	 * have a dictionary key (`ccc.abbrev`, `compendium.abbrev`, and `Can.` in
-	 * `canonLaw.canon`) take it, so a reader is shown the siglum their own
-	 * edition prints.
+	 * These were links until 2026-09-05, each existence-checked against the
+	 * corpus so that following `CCC 1` landed on paragraph 1. Two things were
+	 * wrong with that. A reader working down a catalogue was being offered a
+	 * door into the middle of a work they had not chosen; and `1` is a
+	 * meaningful citation, so the column read as eight recommendations rather
+	 * than as eight examples of a form.
+	 *
+	 * SO THE NUMBERS ARE REPRESENTATIVE AND THE CHIPS ARE INERT. Four figures
+	 * for a work with thousands of paragraphs, three for a code of canons, two
+	 * for the sections of a document — the shape of the number is part of what
+	 * the specimen teaches, and `jumpbox.placeholder` shows `ccc 1234` for the
+	 * same reason. `schola.books.lede` sends the reader to type one of these
+	 * into that box, which is the one place a notation is worth having.
+	 *
+	 * The sigla are the works' own and are the forms `suggest.ts`'s `SECTIONS`
+	 * table reads back; the three that have a dictionary key (`ccc.abbrev`,
+	 * `compendium.abbrev`, `canonLaw.canon`) take it, so a reader is shown the
+	 * siglum their own edition prints.
+	 *
+	 * PRAYERS GET NONE, because they have no notation: they are cited by name,
+	 * which is exactly what the sentence under that row says. An invented
+	 * shape there would teach a citation form that does not exist.
 	 */
-	interface Citation {
-		text: string;
-		href?: string;
-	}
-
-	const bibleExample = $derived.by((): Citation | undefined => {
-		// THE READER'S OWN EDITION HAS TO CARRY THE BOOK before the address is
-		// offered, which is the same check every other row makes — and it is
-		// what supplies the fallback name in one step.
+	const bibleSpecimen = $derived.by((): string | undefined => {
+		// THE READER'S OWN EDITION HAS TO CARRY THE BOOK before its name is
+		// printed, and asking supplies the fallback name in the same step.
 		//
 		// `osis` is LOWER-CASE here and everywhere in this corpus (`john`, not
 		// the OSIS standard's `John`): `bookAbbrev` and `getBook` both answer
 		// `undefined` for a spelling they do not hold, so the wrong case fails
-		// by drawing no example at all rather than by erring.
+		// by drawing no specimen at all rather than by erring.
 		const book = bibleWorkId ? getBook(bibleWorkId, 'john') : undefined;
 		if (!book) return undefined;
 		// The abbreviation this language's citation grammar prints, then the
@@ -277,64 +273,22 @@
 		// does not (Hungarian, today), a full name is a correct citation and a
 		// shorter one is not available.
 		const name = bookAbbrev('john', bibleLang) ?? book.name;
-		const sep = grammarSurface(bibleLang).chapterVerseSep;
-		return {
-			text: `${name} 3${sep}16`,
-			href: hrefFor({ kind: 'bible', osis: 'john', chapter: 3, from: 16, to: 16 })
-		};
+		return `${name} 3${grammarSurface(bibleLang).chapterVerseSep}16`;
 	});
 
-	const citations = $derived.by((): Record<string, Citation | undefined> => {
-		const summaPart = 'i';
-		const firstPrayer = listPrayerMeta(prayerLang)[0];
-		return {
-			scripture: bibleExample,
-			catechism: {
-				text: `${t('ccc.abbrev')} 1`,
-				href: cccParagraphExists(pairLang, 1) ? hrefFor({ kind: 'ccc', n: 1 }) : undefined
-			},
-			compendium: {
-				text: `${t('compendium.abbrev')} 1`,
-				href: compendiumQuestionExists(pairLang, 1)
-					? hrefFor({ kind: 'compendium', n: 1 })
-					: undefined
-			},
-			// A document is cited by its own Latin incipit and a section number
-			// within it, which is how the Catechism cites one throughout — so the
-			// example is a real document and not a shape. Dei Verbum because it
-			// is the one the reading suggestion above already leans on.
-			magisterium: {
-				text: 'Dei Verbum 2',
-				href: getDocumentGroup('dei-verbum')
-					? hrefFor({ kind: 'document', slug: 'dei-verbum', n: 2 })
-					: undefined
-			},
-			social: {
-				text: 'CSDC 1',
-				href: socialDoctrineParagraphExists(socialLang, 1)
-					? hrefFor({ kind: 'socialDoctrine', n: 1 })
-					: undefined
-			},
-			law: {
-				text: `${t('canonLaw.canon')} 1`,
-				href: canonLawCanonExists(content.langFor('canon-law'), 1)
-					? hrefFor({ kind: 'canonLaw', n: 1 })
-					: undefined
-			},
-			doctors: {
-				text: 'STh I, 1',
-				href: summaQuestionExists('I', 1)
-					? hrefFor({ kind: 'summa', part: summaPart, question: 1, article: null })
-					: undefined
-			},
-			// The one work with no number to cite, so the example is a prayer
-			// that actually exists in the reader's own edition rather than a
-			// name written down here — the editions carry different sets.
-			prayers: firstPrayer
-				? { text: firstPrayer.title, href: hrefFor({ kind: 'prayer', slug: firstPrayer.slug }) }
-				: undefined
-		};
-	});
+	const specimens = $derived.by((): Record<string, string | undefined> => ({
+		scripture: bibleSpecimen,
+		catechism: `${t('ccc.abbrev')} 1234`,
+		compendium: `${t('compendium.abbrev')} 123`,
+		// A document is cited by its own Latin incipit and a section number
+		// inside it, which is how the Catechism cites one throughout. The
+		// incipit has to be a real one for the form to be legible, and it is
+		// the document the reading suggestion below already leans on.
+		magisterium: 'Dei Verbum 12',
+		social: 'CSDC 123',
+		law: `${t('canonLaw.canon')} 123`,
+		doctors: 'STh I, 12'
+	}));
 
 	/**
 	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS
@@ -491,9 +445,9 @@
 							THE SPECIMEN SITS ON THE TITLE LINE, not at the foot of the
 							card, and that is what makes this section teachable at a
 							glance: read down the trailing edge and you get `Jn 3:16`,
-							`CCC 1`, `Comp. 1`, `Dei Verbum 2`, `CSDC 1`, `Can. 1`,
-							`STh I, 1` — the page's whole lesson in one sweep, beside the
-							work each belongs to.
+							`CCC 1234`, `Comp. 123`, `Dei Verbum 12`, `CSDC 123`,
+							`Can. 123`, `STh I, 12` — the page's whole lesson in one
+							sweep, beside the work each belongs to.
 
 							It also fixes the sentence underneath. "Cited as" used to be a
 							label, then a chip, then an em dash, then a clause — four
@@ -502,31 +456,23 @@
 							paragraph number, running unbroken from the first page to the
 							last" reads as English, which the row never did before.
 
-							It is a link wherever the address exists — a reader who
-							follows it has just read a citation and arrived where it
-							points, which is the lesson happening rather than being
-							described. Where the corpus does not carry it the notation
-							still shows and is inert.
+							The chip is not a link and the row's heading is: one door per
+							row, and it opens on the work rather than on a paragraph of
+							it. The "Cited as" line runs for every work, including the
+							one with no specimen — prayers are cited by name, and that
+							sentence is the whole answer for them.
 						-->
 						<div class="book-head">
 							<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
-							{#if citations[work.key]}
-								{#if citations[work.key]?.href}
-									<a class="cite-example" href={citations[work.key]?.href}
-										>{citations[work.key]?.text}</a
-									>
-								{:else}
-									<span class="cite-example">{citations[work.key]?.text}</span>
-								{/if}
+							{#if specimens[work.key]}
+								<span class="cite-example">{specimens[work.key]}</span>
 							{/if}
 						</div>
 						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
-						{#if citations[work.key]}
-							<p class="book-cite">
-								<span class="cite-label">{t('schola.cite.label')}</span>
-								{t(`schola.cite.${work.key}`)}
-							</p>
-						{/if}
+						<p class="book-cite">
+							<span class="cite-label">{t('schola.cite.label')}</span>
+							{t(`schola.cite.${work.key}`)}
+						</p>
 					</div>
 				</li>
 			{/each}
@@ -557,57 +503,111 @@
 	</section>
 
 	<!--
-		THE SUGGESTION. It sits directly under the note above deliberately: the
-		two together are the page's title, and a reader who wants to start today
-		should not have to pass a grid of chrome to be told how.
+		THE SUGGESTION, SET AS THREE NUMBERED STAGES.
 
-		It is set as ordinary prose — see the style block on why the accent rule
-		that used to set both of them apart is gone.
+		It was a heading, two long paragraphs, a lead-in, a plain list, another
+		paragraph, another lead-in, another plain list and a closing paragraph —
+		nine blocks of undifferentiated prose at the foot of a landing page, and
+		the longest reading on the site outside the corpus itself. A reader who
+		has never opened a Bible is precisely the reader least likely to finish
+		it.
+
+		What it actually says is short: read a Gospel, then Acts, then four
+		places in the older half. So it is drawn as what it is. Each stage is a
+		numeral, a title of three or four words, the reason under it, and the
+		books themselves as things you can press. A reader who reads only the
+		three titles has the whole suggestion; everything else is there for the
+		reader who wants the argument.
+
+		THE NUMERALS ARE HONEST HERE AND WERE NOT BEFORE. `.steps` had a
+		numbered gutter when this page carried the sourced routes, and it went
+		with them: a numbered gutter says "somebody authorised this sequence",
+		which was true of the routes and is not true of this. What makes it
+		honest now is the heading — the reader's own question — and `†` on the
+		two sentences that lean on a document. The order is ours, we say so, and
+		numbering it is clearer than pretending it has none.
 	-->
 	{#if showBiblePath}
-		<section class="suggestion landing-measure" aria-labelledby="bible-heading">
+		<section class="suggestion" aria-labelledby="bible-heading">
 			<h2 id="bible-heading">{t('schola.bible.heading')}</h2>
-			<p>{t('schola.bible.library')}</p>
-			<p>
-				{t('schola.bible.start')}{#if deiVerbum}<a
-						class="source-mark"
-						href={deiVerbum.href}
-						title={deiVerbum.label}
-						aria-label={deiVerbum.label}>†</a
-					>{/if}
-			</p>
+			<p class="section-lede landing-measure">{t('schola.bible.library')}</p>
 
-			<p class="lead-in">{t('schola.bible.whichGospel')}</p>
-			<!-- Three answers, each with its reason, and no fourth row saying which
-			     is right. The disagreement is real, no document settles it, and a
-			     page that picked one would be reporting its own preference as the
-			     answer to a question the reader could have weighed themselves. -->
-			<ul class="path">
-				{#each gospels as gospel (gospel.key)}
-					<li>
-						<a class="passage" href={gospel.at?.href}>{gospel.at?.label}</a>
-						<span class="reason">{t(`schola.bible.gospel.${gospel.key}`)}</span>
+			<ol class="stages">
+				<!--
+					The numeral is drawn rather than left to the list marker, because
+					`list-style: none` is what lets the gutter be a serif figure at
+					the title's size. It is `aria-hidden`: the `<ol>` already tells a
+					screen reader this is an ordered list of three, and a spoken "1"
+					before every title would be the count twice.
+				-->
+				<li class="stage">
+					<p class="stage-n" aria-hidden="true">1</p>
+					<div class="stage-body">
+						<h3>{t('schola.bible.step.gospel')}</h3>
+						<p class="stage-why landing-measure">
+							{t('schola.bible.start')}{#if deiVerbum}<a
+									class="source-mark"
+									href={deiVerbum.href}
+									title={deiVerbum.label}
+									aria-label={deiVerbum.label}>†</a
+								>{/if}
+						</p>
+						<p class="stage-why landing-measure">{t('schola.bible.whichGospel')}</p>
+						<!-- Three answers, each with its reason, and no fourth row
+						     saying which is right. The disagreement is real, no
+						     document settles it, and a page that picked one would be
+						     reporting its own preference as the answer to a question
+						     the reader could have weighed themselves. -->
+						<ul class="picks">
+							{#each gospels as gospel (gospel.key)}
+								<li>
+									<a class="pick" href={gospel.at?.href}>
+										<span class="pick-name">{gospel.at?.label}</span>
+										<span class="pick-why">{t(`schola.bible.gospel.${gospel.key}`)}</span>
+									</a>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				</li>
+
+				{#if acts}
+					<li class="stage">
+						<p class="stage-n" aria-hidden="true">2</p>
+						<div class="stage-body">
+							<h3>{t('schola.bible.step.acts')}</h3>
+							<p class="stage-why landing-measure">{t('schola.bible.thenActs')}</p>
+							<ul class="picks">
+								<li>
+									<a class="pick" href={acts.href}>
+										<span class="pick-name">{acts.label}</span>
+									</a>
+								</li>
+							</ul>
+						</div>
 					</li>
-				{/each}
-			</ul>
+				{/if}
 
-			{#if acts}
-				<p>
-					{t('schola.bible.thenActs')}
-					<a class="passage" href={acts.href}>{acts.label}</a>
-				</p>
-			{/if}
+				<li class="stage">
+					<p class="stage-n" aria-hidden="true">{acts ? 3 : 2}</p>
+					<div class="stage-body">
+						<h3>{t('schola.bible.step.old')}</h3>
+						<p class="stage-why landing-measure">{t('schola.bible.thenOld')}</p>
+						<ul class="picks">
+							{#each oldTestament as step (step.key)}
+								<li>
+									<a class="pick" href={step.at?.href}>
+										<span class="pick-name">{step.at?.label}</span>
+										<span class="pick-why">{t(`schola.bible.ot.${step.key}`)}</span>
+									</a>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				</li>
+			</ol>
 
-			<p>{t('schola.bible.thenOld')}</p>
-			<ul class="path">
-				{#each oldTestament as step (step.key)}
-					<li>
-						<a class="passage" href={step.at?.href}>{step.at?.label}</a>
-						<span class="reason">{t(`schola.bible.ot.${step.key}`)}</span>
-					</li>
-				{/each}
-			</ul>
-			<p>
+			<p class="landing-measure">
 				{t('schola.bible.bothWays')}{#if verbumDomini}<a
 						class="source-mark"
 						href={verbumDomini.href}
@@ -650,48 +650,119 @@
 	 * where every other section on the page is titled by what it lists. A
 	 * paragraph under a question is answering it; nothing has to be drawn around
 	 * it to say so.
+	 *
+	 * IT TAKES THE WHOLE COLUMN, and carried `.landing-measure` on the section
+	 * itself until 2026-09-05. That capped the section at 40rem, so its heading
+	 * rule stopped two-thirds of the way across the page while every other
+	 * section's ran the full width — the page looked as though its last section
+	 * belonged to a narrower document. The measure belongs on the PARAGRAPHS,
+	 * which is where every other section on this page carries it, and the
+	 * stages fill the column the same way the two grids above do.
 	 */
 	.suggestion {
 		margin: 0 0 2.5rem;
 	}
 
-	/* A line that introduces the list under it, so it sits closer to the list
-	   than to the paragraph it follows. */
-	.lead-in {
-		margin-block-end: 0.35rem;
-	}
-
 	/*
-	 * THE ROWS ARE NOT `.steps`, DELIBERATELY. That numbered gutter belongs to
-	 * the routes that used to sit below, which were orders somebody else set
-	 * out. They are gone and the rules are not coming back: a numbered gutter
-	 * says "this is a sequence somebody authorised", and what this list is is a
-	 * choice of three and then a few places to go. Plain: the book, then why.
+	 * THREE STAGES IN A SERIF GUTTER. The numeral is the whole navigation: a
+	 * reader who takes in nothing but `1 Start with a Gospel / 2 Then what
+	 * happened next / 3 Then the older half` has the suggestion entire, which
+	 * is the most this section can hope for from someone who has never opened a
+	 * Bible. Everything else in the stage is for the reader who did not stop.
+	 *
+	 * Accent, at half opacity, and never a filled circle: the numeral is a
+	 * position in a list, not a step in a process the reader is being marched
+	 * through. Tabular figures so the gutter is one straight edge.
 	 */
-	.path {
+	.stages {
 		list-style: none;
-		margin: 0 0 1rem;
+		display: grid;
+		gap: 1.75rem;
+		margin: 0 0 1.5rem;
 		padding: 0;
 	}
 
-	.path li {
-		margin-bottom: 0.4rem;
+	.stage {
+		display: grid;
+		grid-template-columns: 2.25rem 1fr;
+		gap: 0 1rem;
+		align-items: start;
 	}
 
-	.passage {
+	.stage-n {
+		margin: 0;
 		font-family: var(--font-serif);
+		font-size: 1.75rem;
+		line-height: 1;
+		text-align: end;
+		font-variant-numeric: tabular-nums;
+		color: var(--color-accent);
+		opacity: 0.5;
+	}
+
+	.stage h3 {
+		font-family: var(--font-serif);
+		font-size: 1.1rem;
+		margin: 0 0 0.35rem;
+	}
+
+	.stage-why {
+		margin: 0 0 0.6rem;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+	}
+
+	/*
+	 * HERE THE CARDS ARE CARDS, and the books section three sections up argues
+	 * the opposite for its own rows. Both are right, and the difference is what
+	 * the reader is being asked to do. A catalogue entry is read; these are
+	 * CHOSEN BETWEEN — which of three Gospels, which of four places in the older
+	 * half — and a grid of doors is what "pick one" looks like everywhere else
+	 * on this site. The whole tile is the link, so the target is a card and not
+	 * a two-word name.
+	 *
+	 * `auto-fill` rather than `auto-fit`, so the stage with one book in it gets
+	 * one tile the size of the others instead of a single card stretched across
+	 * the column. The empty tracks are the point.
+	 */
+	.picks {
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+		gap: 0.6rem;
+		margin: 0;
+		padding: 0;
+	}
+
+	.pick {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		block-size: 100%;
+		padding: 0.7rem 0.85rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: var(--color-bg-elevated);
 		color: var(--color-text);
 		text-decoration: none;
 	}
 
-	.passage:hover,
-	.passage:focus-visible {
-		color: var(--color-accent);
-		text-decoration: underline;
+	.pick:hover,
+	.pick:focus-visible {
+		border-color: var(--color-accent);
 	}
 
-	.reason {
-		display: block;
+	.pick-name {
+		font-family: var(--font-serif);
+		font-size: 1.05rem;
+	}
+
+	.pick:hover .pick-name,
+	.pick:focus-visible .pick-name {
+		color: var(--color-accent);
+	}
+
+	.pick-why {
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
 	}
@@ -931,19 +1002,18 @@
 		background: var(--color-bg-elevated);
 	}
 
-	a.cite-example:hover,
-	a.cite-example:focus-visible {
-		color: var(--color-accent);
-		border-color: var(--color-accent);
-	}
-
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,
 	   including turning its caption control back into the line it opens. */
 	@media print {
 		.feature,
-		.book {
+		.book,
+		.stage {
 			background: none;
 			break-inside: avoid;
+		}
+
+		.pick {
+			background: none;
 		}
 
 		.cite-example {

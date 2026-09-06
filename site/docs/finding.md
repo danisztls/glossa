@@ -43,7 +43,7 @@ works themselves, so a bar opening with a page about the others reads as a
 preamble to them. The home page's doors mirror the bar's order, and the two must
 not disagree.
 
-## `/schola` is a guide, and its examples are live
+## `/schola` is a guide, and its examples are specimens
 
 **The reference system is the part nothing else on the site teaches.** The
 corpus is addressed by number — `CCC 1`, `Comp. 1`, `CSDC 1`, `Can. 1`,
@@ -55,16 +55,29 @@ numbers canons rather than pages, and no page said so. That is
 one sentence on what it is, one on what its numbered unit is called, and a
 worked example.
 
-**Every example is checked against the corpus before it is drawn as a link.**
-The page asks the same existence predicates the jump box asks —
-`cccParagraphExists`, `compendiumQuestionExists`, `socialDoctrineParagraphExists`,
-`canonLawCanonExists`, `summaQuestionExists`, `getDocumentGroup` — and where the
-answer is no the notation still shows and simply is not a link. A guide whose
-worked example 404s teaches the reader that they have misread the notation.
-**The number in each is the lowest one** (`CCC 1`, not `CCC 1471`): the unit
-every edition has, so the example survives a reader whose content language
-carries an abridgement, and following it lands at the beginning of the work
-rather than in the middle of an argument.
+**AN EXAMPLE IS A SHAPE, NOT A REFERENCE** (2026-09-05, by direction). Each was
+a live link — `CCC 1` to paragraph 1, `Can. 1` to canon 1 — put through the same
+existence predicate the jump box asks (`cccParagraphExists`,
+`compendiumQuestionExists`, `summaQuestionExists`, …) so a specimen could never 404. That was a sound guard on the wrong thing. A reader working down a
+CATALOGUE was being offered a door into the middle of a work they had not
+chosen; and `CCC 1` is a meaningful citation, so a column of lowest numbers read
+as eight recommendations rather than as eight examples of a form.
+
+**So the numbers are representative and the chips are inert**: four figures for
+a work with thousands of paragraphs, three for a code of canons, two for the
+sections of a document. The shape of the number is part of what the specimen
+teaches, `jumpbox.placeholder` already showed `ccc 1234` for that reason, and
+`schola.books.lede` now sends the reader to type one into the jump box — which
+is the one place a notation is worth having. Prayers get no specimen at all,
+because they have no notation: they are cited by name, which the sentence under
+that row says.
+
+**Four indexes went with the predicates.** `/schola` primed `bible`, `ccc`,
+`compendium`, `prayer` and `summa` to decide whether to underline eight words;
+it primes `bible` alone now, which it genuinely needs for the Scripture
+specimen's abbreviation and for the reading suggestion's book names. The check
+at the foot of `index-priming.test.ts` only catches priming too LITTLE, so
+over-priming outlives the code that caused it unless it is pruned by hand.
 
 **The Bible's example is DERIVED and the others are sigla.** The book's
 abbreviation comes from this language's own citation table (`bookAbbrev`),
@@ -160,9 +173,35 @@ failing to draw. **A visual convention that has to be learned is worth less than
 a sentence that explains itself, and a caption is worth less than a heading that
 makes the caption unnecessary.**
 
-The Bible section's rows are still not a numbered gutter, and for a reason that
-survives all of this: that drawing belonged to the sourced routes and says "this
-is a sequence somebody authorised", which a choice of three Gospels is not.
+**THE BIBLE SECTION TOOK THE NUMBERED GUTTER BACK, AND IT IS HONEST NOW.** That
+drawing belonged to the sourced routes, where it said "this is a sequence
+somebody authorised"; it went out with them and stayed out while the section was
+nine blocks of prose. What changed is not the argument but the reading: heading,
+two long paragraphs, a lead-in, a list, a paragraph, another lead-in, another
+list and a closing paragraph is the longest reading on the site outside the
+corpus, at the foot of a landing page, aimed at the reader least likely to
+finish it. What it SAYS is three sentences — read a Gospel, then Acts, then four
+places in the older half — so it is drawn as three numbered stages, each a
+numeral, a title of three or four words, the reason under it, and the books as
+cards that can be pressed. A reader who takes in only the three titles has the
+whole suggestion.
+
+The gutter is honest here because the heading is the reader's own question and
+the two sentences that lean on a document carry `†`. The order is ours, the page
+says so, and numbering it is clearer than pretending it has none.
+
+**And here the cards ARE cards**, where the books section three sections up
+argues the opposite for its own rows. The difference is what the reader is being
+asked to do: a catalogue entry is READ, and these are CHOSEN BETWEEN — which of
+three Gospels, which of four places. A grid of doors is what "pick one" looks
+like everywhere else on this site.
+
+**The section takes the whole column**, and carried `.landing-measure` on the
+`<section>` itself until the same day. That capped it at 40rem, so its heading
+rule stopped two-thirds of the way across a page whose every other rule ran the
+full width, and the last section read as though it belonged to a narrower
+document. The measure belongs on the PARAGRAPHS, which is where every other
+section on the page carries it.
 
 ## The Bible section proposes a path, because nobody else publishes one
 

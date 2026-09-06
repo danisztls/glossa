@@ -538,14 +538,19 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   nothing on `/catechismus` — correctly.
 - **`/schola` TEACHES THE CITATION, which nothing else on the site does.** One
   row per work, flat, each with what the work is, what its numbered unit is
-  called, and a worked example — and **every example is put through the same
-  existence predicate the jump box asks before it is drawn as a link**
-  (`cccParagraphExists`, `canonLawCanonExists`, `summaQuestionExists`, …), with
-  the notation still shown, inert, where the corpus does not carry it. The
-  number is always the lowest one the work has. The Bible's is derived from
-  `bookAbbrev` and `grammarSurface`, so a Portuguese reader reads `Jo 3,16`;
-  note the OSIS ids here are LOWER-CASE (`john`), and the other spelling fails
-  by drawing nothing.
+  called, and a specimen of the notation.
+- **A SPECIMEN IS A SHAPE AND NOT A REFERENCE** (2026-09-05). They were links,
+  existence-checked so a specimen could never 404, and the guard was sound on
+  the wrong thing: `CCC 1` is a meaningful citation, so a column of lowest
+  numbers offered eight doors into the middle of works the reader had not
+  chosen. The numbers are representative now (`CCC 1234`, `Can. 123`) and the
+  chips are inert, `jumpbox.placeholder` having shown `ccc 1234` for the same
+  reason all along; prayers get none, having no notation. Four indexes went with
+  the predicates — `/schola` primes `bible` alone, and **`index-priming.test.ts`
+  only catches priming too LITTLE**, so over-priming has to be pruned by hand.
+  The Bible's specimen stays derived from `bookAbbrev` and `grammarSurface`, so
+  a Portuguese reader reads `Jo 3,16`; note the OSIS ids here are LOWER-CASE
+  (`john`), and the other spelling fails by drawing nothing.
 - **The chrome section is headed by the controls' own keys** — `jumpbox.short`,
   `settings.label`, `compare.enter` — so a row and the control it describes
   cannot be called two different things in a translated interface. Only the
@@ -569,6 +574,22 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
 - **What is left leans on `Dei Verbum` 25 and `Verbum Domini` 41** rather than
   on our say-so — the priority is the Council's, the hermeneutic is Benedict's,
   and the three Gospels are offered with their arguments rather than ranked.
+- **THE BIBLE SECTION IS THREE NUMBERED STAGES, and the gutter is honest here**
+  (2026-09-05). It was nine blocks of undifferentiated prose — the longest
+  reading on the site outside the corpus, at the foot of a landing page, aimed
+  at the reader least likely to finish it — saying three things: a Gospel, then
+  Acts, then four places in the older half. A reader who takes in only the three
+  titles has the whole suggestion. The numbered gutter belonged to the sourced
+  routes and says "somebody authorised this sequence"; what makes it honest
+  here is the heading (the reader's own question) and `†` on the two sentences
+  that lean on a document. And here the cards ARE cards, where the books section
+  argues the opposite for its own rows: a catalogue entry is read, and these are
+  CHOSEN BETWEEN.
+- **THE ADVICE SECTIONS TAKE THE WHOLE COLUMN, and the measure goes on the
+  PARAGRAPHS.** `.landing-measure` on a `<section>` caps its heading rule too,
+  so "If you have never read the Bible" ruled two-thirds of the way across a
+  page whose every other rule ran full width — the last section read as though
+  it belonged to a narrower document.
 - **THE CHURCH STATES A NARRATIVE FRAME AND NEVER A READING PLAN**, which is
   why that section can exist at all and why it has to be ours. `Dei Verbum` 25
   names a priority ("above all the Gospels") and no sequence; `Verbum Domini`
