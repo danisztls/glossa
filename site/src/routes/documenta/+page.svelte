@@ -69,7 +69,7 @@
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
-	import { documentAuthorKey, documentKindLabel } from '$lib/document-labels';
+	import { documentAuthorKey, documentKindKey, documentKindLabel } from '$lib/document-labels';
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { pontificate } from '$lib/pontificates';
@@ -251,8 +251,12 @@
 	const byAuthor = (row: Row) =>
 		selectedAuthors.length === 0 ||
 		selectedAuthors.includes(documentAuthorKey(row.manifest.pontiff_or_council));
+	/* FOLDED, like the author above it — `documentKindKey` files the doctrinal
+	   office's six varieties under the three that partition. The predicate and
+	   the facet have to fold the same way or a selection would match nothing. */
 	const byKind = (row: Row) =>
-		selectedKinds.length === 0 || selectedKinds.includes(row.manifest.document_kind);
+		selectedKinds.length === 0 ||
+		selectedKinds.includes(documentKindKey(row.manifest.document_kind));
 	const byTag = (row: Row) => selectedTags.every((tag) => row.tagKeys.includes(tag));
 	/* The fourth axis. `matchesQuery` returns true on an empty query, so this
 	   needs no branch of its own — and it is AND-ed with the facets like any
@@ -332,7 +336,7 @@
 	const kindFacets = $derived(
 		buildFacet(
 			rows.filter((row) => byAuthor(row) && byTag(row) && bySearch(row)),
-			(row) => [row.manifest.document_kind],
+			(row) => [documentKindKey(row.manifest.document_kind)],
 			(key) => documentKindLabel(key),
 			([, a], [, b]) => b - a
 		)
@@ -518,26 +522,48 @@
 								>
 							</span>
 						</a>
-						{#if description}
-							<p class="doc-description">{@render marked(description)}</p>
-						{/if}
-						{#if row.tags.length > 0}
-							<!-- Each tag is a control, not decoration: seeing what a
-							     document is filed under and being unable to ask for the
-							     rest of that shelf is the worse half of a tag. -->
-							<ul class="doc-tags">
-								{#each row.tags as tag, i (tag)}
-									<li>
-										<button
-											type="button"
-											class="doc-tag"
-											class:on={selectedTags.includes(row.tagKeys[i])}
-											aria-pressed={selectedTags.includes(row.tagKeys[i])}
-											onclick={() => toggle('tags', row.tagKeys[i])}>{@render marked(tag)}</button
-										>
-									</li>
-								{/each}
-							</ul>
+						<!--
+							THE DESCRIPTION AND THE SUBJECTS SIT SIDE BY SIDE, which is
+							what this wrapper is for and its only job. Both were
+							full-width blocks under the title, and since the description
+							is capped at its own measure that left the right third of
+							every row empty a second time — the same defect the rail
+							above fixed on the title's line, one line down. A blurb
+							cannot be widened out of it: 62rem of 0.9rem sans is ~130
+							characters, which is twice a measure. So the space goes to
+							the thing that has no measure to keep, and the chips flow
+							into it instead of stacking under the prose.
+
+							GRID ONLY WHERE THE ROW CAN HOLD BOTH, which is not the
+							breakpoint the aside arrives at — see the query below.
+							Narrower than that the two stack, and the description keeps
+							its measure on its own.
+						-->
+						{#if description || row.tags.length > 0}
+							<div class="doc-body">
+								{#if description}
+									<p class="doc-description">{@render marked(description)}</p>
+								{/if}
+								{#if row.tags.length > 0}
+									<!-- Each tag is a control, not decoration: seeing what a
+									     document is filed under and being unable to ask for the
+									     rest of that shelf is the worse half of a tag. -->
+									<ul class="doc-tags">
+										{#each row.tags as tag, i (tag)}
+											<li>
+												<button
+													type="button"
+													class="doc-tag"
+													class:on={selectedTags.includes(row.tagKeys[i])}
+													aria-pressed={selectedTags.includes(row.tagKeys[i])}
+													onclick={() => toggle('tags', row.tagKeys[i])}
+													>{@render marked(tag)}</button
+												>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
 						{/if}
 					</li>
 				{/each}
@@ -739,11 +765,64 @@
 		color: var(--color-border);
 	}
 
+	.doc-body {
+		margin-top: 0.35rem;
+	}
+
+	/*
+	 * THE SECOND LINE OF THE ROW IS TWO COLUMNS, above the breakpoint where
+	 * there is width to divide. The first is a measure and stays one — 34rem
+	 * is ~74 characters of this face at 0.9rem, the widest a muted grey blurb
+	 * reads at; the second takes whatever the track has left, which at 62rem
+	 * is about 25rem of chips.
+	 *
+	 * A LENGTH FOR THE FIRST TRACK AND `1fr` FOR THE SECOND, not the reverse.
+	 * The list track is itself flexible between 80 and 86rem (styles/
+	 * layout.css), so a fractional split would shrink the prose column in the
+	 * squeeze — which is the one thing here that must not move. The chips have
+	 * no measure to lose, so they absorb it.
+	 *
+	 * 64rem AND NOT THE 80rem THE ASIDE APPEARS AT, which is the one number
+	 * here that is not inherited. Between the two the aside is gone and the
+	 * column is at its own `--landing-width`, so the row is at its WIDEST there
+	 * — the band where a single-column body wastes the most. What the query has
+	 * to protect is the chip track: below 64rem the row cannot hold a measure
+	 * and a column of chips at once, and the tags would set one word to a line.
+	 */
+	@media (min-width: 64rem) {
+		.doc-body {
+			display: grid;
+			grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+			gap: 0.35rem 2.5rem;
+			align-items: start;
+		}
+
+		/* A document nobody has read yet has chips and no blurb. Left in the
+		   second track it would sit against the right edge with the prose
+		   column empty beside it, which is the defect this grid exists to
+		   remove, arriving from the other side. */
+		.doc-body > .doc-tags:only-child {
+			grid-column: 1 / -1;
+		}
+
+		/* In the grid the two start on the same line, so the gap that
+		   separated them when stacked is the grid's to draw. */
+		.doc-body > .doc-tags {
+			margin-top: 0;
+		}
+	}
+
+	/* THE MEASURE IS THE ELEMENT'S OWN and not the grid track's, because below
+	   the query above there is no track to keep it — the column is the page's
+	   whole width there, and a blurb left uncapped set 130 characters to a
+	   line, which is the fault this row was being rearranged to fix arriving
+	   from the other direction. It was 60ch; 34rem is ~74 of this face at
+	   0.9rem, and a rem so that it and the grid track are one number. */
 	.doc-description {
-		margin: 0.35rem 0 0;
+		margin: 0;
+		max-width: 34rem;
 		font-size: 0.9rem;
 		color: var(--color-text-muted);
-		max-width: 60ch;
 	}
 
 	.doc-tags {

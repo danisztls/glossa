@@ -89,6 +89,7 @@
 	 * `CLOUD_SIZE_MAX` is the one constant to turn down — the height barely
 	 * responds to it, because chip count dominates.
 	 */
+	import { untrack } from 'svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { buildTagCloud } from '$lib/tag-cloud';
 
@@ -131,6 +132,18 @@
 	/* Sizes attached, order untouched — `tag-cloud.ts` says why it does not
 	   sort, and the route's `tagFacets` is where the order is decided. */
 	const cloudTags = $derived(buildTagCloud(liveTags));
+
+	/* Whether the subject facet starts open, read ONCE and deliberately not
+	   `$derived`. The `open` attribute is the reader's to set after that, and a
+	   reactive expression fights them for it: a reader who opens the cloud,
+	   picks a term and then unpicks it would have the section shut under their
+	   cursor, because the expression fell back to false. So this answers "was a
+	   subject already chosen when this panel appeared", which is the only
+	   moment the default is anyone's to decide. `untrack` states that in the
+	   code rather than only here, and is what keeps `svelte-check` quiet — a
+	   prop read at init is not reactive anyway, but the warning cannot tell
+	   meaning it from forgetting. */
+	const subjectStartOpen = untrack(() => selected.tags.length > 0);
 </script>
 
 <div class="doc-filters">
@@ -162,14 +175,46 @@
 		{/if}
 	</div>
 
+	<!--
+		The heading of one facet, and the reason each is a `<details>`.
+
+		THREE FACETS OPEN AT ONCE IS TALLER THAN THE ASIDE'S SCROLLPORT — six
+		authors and a closed kind vocabulary would fit, sixteen and thirteen and
+		a cloud of subjects do not — so the panel's own shape was what a reader
+		had to scroll past to reach the axis they wanted. Collapsing is the
+		cheapest thing that gives back a whole panel at a glance, and
+		`<details>` is what the page already reaches for (`.filters-inline` on
+		the route, `.toc-inline` on the document reader): the browser owns the
+		keyboard handling and the ARIA, and find-in-page can open a closed one.
+
+		SUBJECT IS THE ONE CLOSED BY DEFAULT. It is far the tallest — the whole
+		vocabulary at once, where the other two are lists that end — and it is
+		the axis a reader narrows WITH after picking an author or a kind rather
+		than the one they arrive on.
+
+		A CLOSED FACET STILL SAYS WHAT IT IS DOING. The badge is the number of
+		values chosen inside it, so a selection made and then folded away is not
+		a filter the reader has lost track of; it is drawn only when there is
+		one, since a `0` beside every heading is three noughts saying nothing.
+	-->
+	{#snippet facetHead(heading: string, chosenCount: number)}
+		<summary>
+			<h3>{heading}</h3>
+			{#if chosenCount > 0}
+				<span class="facet-chosen">{chosenCount}</span>
+			{/if}
+		</summary>
+	{/snippet}
+
 	{#snippet facetList(
 		heading: string,
 		facet: 'authors' | 'kinds' | 'tags',
 		items: Facet[],
-		chosen: string[]
+		chosen: string[],
+		startOpen: boolean
 	)}
-		<section class="facet">
-			<h3>{heading}</h3>
+		<details class="facet" open={startOpen}>
+			{@render facetHead(heading, chosen.length)}
 			<ul>
 				{#each items as item (item.value)}
 					{@const isOn = chosen.includes(item.value)}
@@ -195,15 +240,18 @@
 					</li>
 				{/each}
 			</ul>
-		</section>
+		</details>
 	{/snippet}
 
-	{@render facetList(t('document.filter.author'), 'authors', authors, selected.authors)}
-	{@render facetList(t('document.filter.kind'), 'kinds', kinds, selected.kinds)}
+	{@render facetList(t('document.filter.author'), 'authors', authors, selected.authors, true)}
+	{@render facetList(t('document.filter.kind'), 'kinds', kinds, selected.kinds, true)}
 
 	{#if cloudTags.length > 0}
-		<section class="facet">
-			<h3>{t('document.filter.subject')}</h3>
+		<!-- Closed unless something in it was already chosen when the panel
+		     appeared — a reader who arrives with a subject set must be able to
+		     see the one they set. `subjectStartOpen` says why it is read once. -->
+		<details class="facet" open={subjectStartOpen}>
+			{@render facetHead(t('document.filter.subject'), selected.tags.length)}
 			<!-- The count is the one thing size cannot carry to a reader who is
 			     not looking, so it goes in a visually-hidden span INSIDE the
 			     button, where it joins the label to make the accessible name
@@ -228,7 +276,7 @@
 					</li>
 				{/each}
 			</ul>
-		</section>
+		</details>
 	{/if}
 </div>
 
@@ -278,8 +326,52 @@
 		text-decoration: underline;
 	}
 
+	/* Tighter than the 1.25rem it was: a heading that can be clicked wants the
+	   space between it and the NEXT heading to read as smaller than the space
+	   inside its own section, or three collapsed facets are three unrelated
+	   rows rather than one list of axes. */
 	.facet {
-		margin-bottom: 1.25rem;
+		margin-bottom: 0.9rem;
+	}
+
+	/* The whole heading row is the toggle, so it takes the row's full width and
+	   the badge rides its end. `list-style: none` plus the WebKit pseudo drops
+	   the browser's own marker; the glyph below is the one the rest of the site
+	   draws, since the default triangle cannot be styled consistently. */
+	.facet > summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.4rem;
+		margin-bottom: 0.35rem;
+		padding: 0.1rem 0.35rem;
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.facet > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.facet > summary:hover {
+		background: var(--color-bg-elevated);
+	}
+
+	.facet > summary::before {
+		content: '▸';
+		color: var(--color-text-muted);
+		font-size: max(var(--font-size-min), 0.8em);
+		display: inline-block;
+	}
+
+	.facet[open] > summary::before {
+		transform: rotate(90deg);
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.facet > summary::before {
+			transition: transform 120ms ease;
+		}
 	}
 
 	.facet h3 {
@@ -287,7 +379,22 @@
 		font-size: 0.8rem;
 		font-weight: 600;
 		color: var(--color-text);
-		margin: 0 0 0.35rem;
+		margin: 0;
+	}
+
+	/* How many values are chosen inside a facet, which is the only thing a
+	   folded one cannot show for itself. Accent, because it is the state the
+	   reader put the panel in — the counts beside the options are facts about
+	   the corpus and stay grey. */
+	.facet-chosen {
+		margin-inline-start: auto;
+		font-variant-numeric: tabular-nums;
+		font-size: 0.7rem;
+		line-height: 1.4;
+		padding: 0.05rem 0.35rem;
+		border-radius: var(--radius-sm);
+		background: var(--color-accent);
+		color: var(--color-accent-contrast);
 	}
 
 	.facet ul {

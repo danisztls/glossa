@@ -644,6 +644,27 @@ In the rail they cost 298 rows a line each and read down the page as a column.
 They are inside the anchor, which is what `.index-link` already intends; the
 subject chips stay outside it, being buttons.
 
+**And the SECOND line of the row is two columns, for the half of that defect
+the rail could not reach.** With the facts moved up, the description and the
+subject chips were still two full-width blocks under the title — and since the
+description keeps a measure, the right third of the row was empty again one
+line down. **A blurb cannot be widened out of it**: 62rem of 0.9rem sans is
+about 130 characters, twice a measure, and removing the cap only trades an
+empty column for an unreadable line. So the space goes to the thing that has
+no measure to keep: the description holds 34rem (~74 characters) and the chips
+flow into whatever is left, which at full width is about 25rem.
+
+**The measure is the element's own and the grid is the extra**, not the other
+way round — below the query there is no track to keep it, and that is exactly
+where an uncapped blurb runs the width of a phone-to-laptop column. The query
+is **64rem and not the aside's 80rem**, the one number here that is not
+inherited: between the two the aside is gone and the column is at
+`--landing-width`, so the row is at its WIDEST there. What the query protects
+is the chip track, which below 64rem would set one word to a line. The first
+track is a LENGTH and the second `1fr`, because the list track is itself
+flexible between 80 and 86rem and the prose column is the one thing in the
+squeeze that must not move.
+
 **The count prints a fraction only once there is one.** `298 / 298` is a ratio
 saying nothing, and a page that opens with one reads as a state the reader is
 already in. It sits on the rule that opens the list, too — it is a fact about
@@ -695,6 +716,32 @@ reached its work whole. `documentAuthorKey` folds the pair for the facet only:
 the name it was issued under, because that is a fact about the document, and the
 search box still reads the raw field so "Congregation" still finds them. **The
 curia is renamed regularly, so this is a table that will grow.**
+
+**The same body then did it to the kind facet, and the fix is the same file.**
+The doctrinal office publishes under six `document_kind` values, so it held
+six of the facet's thirteen rows for 8% of the corpus — and three of those
+rows offered ONE document each, which is the argument the subject vocabulary's
+46 singletons already lost: a facet row that narrows 298 titles to one is a
+worse way of reaching it than its own name. `documentKindKey` keeps the two
+forms that PARTITION — a declaration states what the Church holds, an
+instruction directs what is to be done about it — and files the rest as
+communications: the doctrinal notes and the _Considerations_ under
+`cdf-letter`, the _Responsum ad Dubium_ under `cdf-declaration`, since a reply
+declaring a teaching definitive is a declaration one paragraph long. **The
+predicate and the facet have to fold the same way**, or a selection matches
+nothing; the row's own chip does not fold at all, so a doctrinal note still
+says it is one.
+
+**Each facet is a `<details>`, and subject is the one closed.** Three facets
+open at once is taller than the aside's scrollport — sixteen authors, the
+kinds, and the whole vocabulary — so the panel's own height was what a reader
+scrolled past to reach the axis they wanted. Subject is the tallest and the
+axis a reader narrows WITH rather than arrives on. **Its `open` is read once
+and is deliberately not `$derived`**: a reactive expression takes the
+attribute back off the reader, so opening the cloud, picking a term and
+unpicking it would shut the section under their cursor. A folded facet still
+says what it is doing — the badge on its summary is the number of values
+chosen inside it, drawn only when there is one.
 
 **The author facet prints each pontificate's years, from a table and not from
 the documents.** Twelve regnal names in reverse-chronological order asks the

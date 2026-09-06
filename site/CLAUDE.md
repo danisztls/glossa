@@ -714,7 +714,11 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   the reading track empty beside it, and nothing errors. That shipped for a
   day; `layout-placement.test.ts` is what catches the next one. Its width is
   `--index-width` (62rem) and deliberately not `--landing-width`: an index is
-  sized by its row's first line, not by a grid of shelves.
+  sized by its row's first line, not by a grid of shelves. **Its SECOND line
+  is two columns above 64rem** — the description at a 34rem measure, the
+  subject chips in what is left — because a blurb cannot be widened out of an
+  empty right half without setting 130 characters to a line. 64rem and not the
+  aside's 80rem: between the two the row is at its widest.
 - **The home page's doors mirror the bar's order**, Learn last in both. Two
   lists of the same five things that disagree is worse than one.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
@@ -798,6 +802,18 @@ reverse-chronological list.
   renders at the floor size, and reads as a live chip that does nothing. A
   selected term is always live, so filtering can never make a filter
   unreachable.
+- **The kind facet is FOLDED, like the author one, and by the same file.**
+  `documentKindKey` files `cdf-responsum` under `cdf-declaration` and
+  `cdf-doctrinal-note`/`cdf-considerations` under `cdf-letter`: the doctrinal
+  office held six of the facet's thirteen rows for 8% of the corpus, three of
+  them offering one document each. The predicate and the facet must fold the
+  same way or a selection matches nothing. The row's chip and the search box
+  still read the raw `document_kind` (`src/lib/document-labels.ts`).
+- **Each facet is a `<details>` and SUBJECT IS CLOSED**, being the tallest and
+  the axis a reader narrows with rather than arrives on. Its `open` is read
+  ONCE (`subjectStartOpen`) and is deliberately not `$derived` — a reactive
+  expression shuts the section under a reader who unpicks their last term. The
+  badge on a summary is how many values are chosen inside a folded one.
 - **The author facet's years come from `src/lib/pontificates.ts`, a TABLE.**
   Deriving the span from the documents is wrong in a way that looks right
   (first/last `promulgated` shorts every reign). The corpus CHECKS the table
