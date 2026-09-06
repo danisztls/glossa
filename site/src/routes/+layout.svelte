@@ -767,7 +767,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-evenly;
-		align-items: start;
+		align-items: center;
 		gap: 2rem 3rem;
 		max-width: 90rem;
 		margin-inline: auto;
