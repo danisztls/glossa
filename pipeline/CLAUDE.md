@@ -245,8 +245,13 @@ sl sw vi`) as vocabulary entries. What bites:
 - **`lt` is LATIN on the Vatican II mirror; `sw` is SWAHILI.** The archive
   mirror uses its own codes (`po` Portuguese, `sp` Spanish, `ge` German, `lt`
   Latin, `lv` Latvian, `be` Byelorussian); `VATII_LANG_FROM_URL` reads them off
-  **the index's own link text**. Do not guess them — guessing `sw` gives you
-  Swedish.
+  **the index's own link text**. Guessing `sw` gives you Swedish.
+- **A source language code may not fall through a map unrecognised** —
+  `common/langcodes.py`, which holds the ambiguous sets and raises rather than
+  passing one on. vatican.va spells Latin `lt` where ISO 639-1 spells it `la`
+  and reads `lt` as Lithuanian, so the naive reading is the wrong language and
+  one the same host publishes: nothing downstream can see it. Read the index's
+  own link text and add the row.
 - **Most non-English editions print no paragraph numbers, and that is a property
   of the editions.** 328 print none anywhere (mostly it/la/fr); their whole text
   is stored under the headings the source does print, in `appendix.json`, with
