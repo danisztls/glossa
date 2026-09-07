@@ -386,6 +386,36 @@ and `petitions` block in the collection. So this is a curation question before
 it is a rendering one, with §4's shape: improving what six editions show while
 fourteen show what they always did. Not scoped, deliberately.
 
+## Five catalogue strings rewritten in English and Portuguese
+
+`docs/writing-voice.md` landed 2026-09-07 and the catalogue's taglines were the
+first surface read against it. Five were rewritten in `en` and `pt`; **38
+dictionaries still carry the sentence each of them replaced.**
+
+| Key                        | What the old sentence did                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `doctores.landing.tagline` | claimed the Fathers and Doctors carry "no official authority"                          |
+| `schola.what.doctors`      | the same claim, in the stronger wording, on the guide                                  |
+| `bible.landing.tagline`    | described the act of reading a book rather than naming the work or its size            |
+| `document.library.tagline` | a genre list short of its own shelf, ending in a restatement of the card's title       |
+| `bookmark.library.tagline` | restated the card's title, and did not name the reading position `/signata` also holds |
+
+**Nothing falls back, so nothing is visibly wrong.** `t()` reaches for English
+only where a key is MISSING, and all forty dictionaries carry these five with a
+real translation of the old wording — so the other 38 go on printing the
+superseded sentence in their own language, with nothing marking it stale.
+
+**The two Doctors strings are one claim, and they are the reason this is not
+cosmetic.** "No official authority" is not merely too strong but false: naming
+a Doctor is itself an official act, and the consent of the Fathers is a
+recognised rule for reading Scripture. What is true is the narrower claim about
+the works, and until a dictionary is revisited it asserts the false form in its
+own language. The other three are style and can wait.
+
+Sizing: five keys in 38 dictionaries, no code and no schema. Two notes a
+translation has to carry are on the keys in `en.ts` — _final_ is DEFINITIVE and
+not final in time, and _receives_ is the theological sense.
+
 ## Recommended order
 
 A priority argument, not a dependency one — nothing here gates anything else.

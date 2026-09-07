@@ -118,7 +118,7 @@ export const pt: Dictionary = {
 	'schola.what.law': 'Direito, e não doutrina. Diz o que a Igreja exige, e é emendado.',
 	'schola.cite.law': 'por cânon, que é como se chamam as suas unidades numeradas',
 	'schola.what.doctors':
-		'Os teólogos que a Igreja declarou Doutores. Não tem autoridade oficial, por maior que seja o seu autor.',
+		'Os teólogos que a Igreja declarou Doutores. As suas obras não são infalíveis nem definitivas.',
 	'schola.cite.doctors': 'por parte, e depois questão — as divisões próprias da Suma',
 	'schola.what.prayers': 'As palavras que a Igreja reza, com o latim ao lado.',
 	'schola.cite.prayers': 'pelo nome; não há números a citar',
@@ -221,7 +221,8 @@ export const pt: Dictionary = {
 	'bible.nextChapter': 'Próximo capítulo',
 	'bible.pickBook': 'Livros e capítulos',
 	'bible.landing.title': 'A Bíblia',
-	'bible.landing.tagline': 'Leia toda a Bíblia, livro por livro, capítulo por capítulo.',
+	'bible.landing.tagline':
+		'As Escrituras tal como a Igreja as recebe, em 73 livros nos dois Testamentos.',
 	'bible.landing.random': 'Estou com sorte',
 	'bible.landing.books': 'Livros',
 	'bible.chapterUnavailable': 'Não disponível nesta edição',
@@ -266,7 +267,8 @@ export const pt: Dictionary = {
 	'compendium.noQuestionNumber': 'Sem número de pergunta neste corpus',
 	'nav.summa': 'Suma',
 	'doctores.landing.title': 'Doutores da Igreja',
-	'doctores.landing.tagline': 'As obras teológicas dos Padres e Doutores da Igreja.',
+	'doctores.landing.tagline':
+		'Os Padres e Doutores da Igreja. As suas obras não são infalíveis nem definitivas.',
 	'summa.landing.title': 'Suma Teológica',
 	'summa.landing.tagline': 'Tomás de Aquino, em inglês e no latim em que escreveu.',
 	'summa.tableOfContents': 'Índice',
@@ -327,7 +329,7 @@ export const pt: Dictionary = {
 	'bookmark.add': 'Marcar',
 	'bookmark.remove': 'Remover marcador',
 	'bookmark.library': 'Marcadores',
-	'bookmark.library.tagline': 'Tudo o que marcou durante a leitura.',
+	'bookmark.library.tagline': 'O que marcou, e o ponto onde parou de ler.',
 	'bookmark.empty': 'Ainda não há nada marcado.',
 	'bookmark.emptyHint':
 		'Clique no número de um versículo ou parágrafo e escolha Marcar, ou use o botão de marcador numa página.',
@@ -337,7 +339,7 @@ export const pt: Dictionary = {
 	'bookmark.unavailable': 'Não está na edição que está lendo',
 
 	'document.library.tagline':
-		'Encíclicas, constituições conciliares, decretos e declarações do Magistério.',
+		'O que os papas e os concílios escreveram, cada um dirigido a um momento e a uma questão.',
 	'document.filter.heading': 'Filtros',
 	'document.filter.author': 'Autor',
 	'document.filter.kind': 'Tipo',

@@ -280,8 +280,15 @@ export const en: Dictionary = {
 	'schola.what.law':
 		'Law rather than doctrine. It states what the Church requires, and it is amended.',
 	'schola.cite.law': 'by canon, which is what its numbered units are called',
+	// The second sentence is `doctores.landing.tagline`'s, word for word, and
+	// deliberately not a paraphrase of it: two surfaces making the same claim
+	// about the same works in two wordings is two sentences to keep true, and
+	// this is the claim on which the site must not be found saying two things.
+	// The first sentences differ because the jobs do — the card sits under a
+	// title that already says Doctors and names the category, while this row
+	// has to say what a Doctor IS, which is the whole reason a guide exists.
 	'schola.what.doctors':
-		'The theologians the Church has named Doctors. It carries no official authority, however great its author.',
+		'The theologians the Church has named Doctors. Their works are not infallible or final.',
 	'schola.cite.doctors': 'by part, then question — the Summa’s own divisions',
 	'schola.what.prayers': 'The words the Church prays, with the Latin beside them.',
 	'schola.cite.prayers': 'by name; there are no numbers to cite',
@@ -475,7 +482,20 @@ export const en: Dictionary = {
 	'bible.nextChapter': 'Next chapter',
 	'bible.pickBook': 'Books & chapters',
 	'bible.landing.title': 'The Bible',
-	'bible.landing.tagline': 'Read the whole Bible, book by book, chapter by chapter.',
+	// A tagline says what the work is and how large it is, which is what the
+	// Code's and the Social Doctrine's already do. The line this replaced —
+	// "Read the whole Bible, book by book, chapter by chapter" — said neither:
+	// it described the act of reading a book. 73 is a property of the canon
+	// rather than of what is synced, and every edition in `bible-index.json`
+	// carries it, so it does not rot. It is also the number that tells a
+	// reader holding a 66-book Bible that this is not the same list.
+	//
+	// A translation should keep "receives" in the theological sense — the
+	// canon as the Church has received it, not as it obtained a copy.
+	// `schola.what.scripture` opens with the same clause and is the wording
+	// to follow where a dictionary has already settled one.
+	'bible.landing.tagline':
+		'The Scriptures as the Church receives them, in 73 books across both Testaments.',
 	'bible.landing.random': "I'm feeling lucky",
 	'bible.landing.books': 'Books',
 	// The canonical book/chapter structure is edition-independent, so the
@@ -555,7 +575,21 @@ export const en: Dictionary = {
 	'compendium.noQuestionNumber': 'No question number in this corpus',
 	'nav.summa': 'Summa',
 	'doctores.landing.title': 'Doctors of the Church',
-	'doctores.landing.tagline': 'The theological works of the Fathers and Doctors of the Church.',
+	// The shelf is named for what it will hold — the Summa and the patristic
+	// works — not for what is synced today, which is why the line names the
+	// category and counts nothing.
+	//
+	// It said "no official authority" until 2026-09-07, and that was not
+	// merely strong but false: naming a Doctor is itself an official act, and
+	// the consent of the Fathers is a recognised rule for reading Scripture.
+	// What is true is the narrower claim, and it is made of the WORKS rather
+	// than of their authors — this site can say a book is not the last word;
+	// ranking the standing of the Fathers is not its business.
+	//
+	// A translation should read "final" as DEFINITIVE — not the last word on
+	// a question — and not as final in time.
+	'doctores.landing.tagline':
+		'The Fathers and Doctors of the Church. Their works are not infallible or final.',
 	'summa.landing.title': 'Summa Theologiae',
 	'summa.landing.tagline': 'Thomas Aquinas, in English and in the Latin he wrote.',
 	'summa.tableOfContents': 'Table of Contents',
@@ -650,7 +684,13 @@ export const en: Dictionary = {
 	'bookmark.add': 'Bookmark',
 	'bookmark.remove': 'Remove bookmark',
 	'bookmark.library': 'Bookmarks',
-	'bookmark.library.tagline': 'Everything you have marked while reading.',
+	// "Everything you have marked while reading" restated the card's title and
+	// stopped short of the page: `/signata` also carries Continue reading, and
+	// the reading position is the one thing there that the word Bookmarks does
+	// not name. Second person is right on this card and on no other — it is
+	// the only one about the reader's own act — and `library.landing.tagline`
+	// already says "what you have marked" in every dictionary.
+	'bookmark.library.tagline': 'What you have marked, and where you left off reading.',
 	'bookmark.empty': 'Nothing marked yet.',
 	'bookmark.emptyHint':
 		'Click a verse or paragraph number and choose Bookmark, or use the bookmark button on a page.',
@@ -664,8 +704,19 @@ export const en: Dictionary = {
 	// Documents (encyclicals, conciliar constitutions/decrees/declarations,
 	// docs/corpus-schema.md §Documents) — routes/documenta/** is the
 	// consumer, plus the home page's Magisterium group.
+	// It listed four genres and then restated the card's own title. The list
+	// was also short of the shelf: apostolic exhortations and the doctrinal
+	// documents of the CDF are as permanent here as the encyclicals, and a
+	// list has to be edited every time a genre is ingested where a category
+	// does not.
+	//
+	// What replaced it is the distinction `shelves.ts` itself draws, and the
+	// one that separates this card from the Catechism's: a dated act cited
+	// singly, against a synthesis read through. `schola.what.magisterium`
+	// says the same thing at guide length and keeps the genre list, which is
+	// the right register there and not here.
 	'document.library.tagline':
-		'Encyclicals, conciliar constitutions, decrees, and declarations of the Magisterium.',
+		'What popes and councils have written, each addressed to a moment and a question.',
 	// The `/documenta` filter panel (that route's `+page.svelte`). It replaced
 	// the pontificate table of contents on 2026-08-31: 272 documents is past
 	// what a list of anchors helps with, and the three facets a reader
