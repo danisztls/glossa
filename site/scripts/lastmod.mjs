@@ -97,7 +97,7 @@ export const LEDGER_VERSION = 2;
  *     it and only this one stops it.
  *   - NEW, against a ledger that already holds something. Entries lost in git
  *     rather than in a run — a merge resolved by taking one side whole — are
- *     withdrawn by no sync and arrive at the next one as additions, which the
+ *     withdrawn by no run and arrive at the next one as additions, which the
  *     first test does not measure and the second never saw.
  *
  * Corpus work moves a handful of addresses; a re-parse of one work moves that

@@ -386,8 +386,6 @@ npm run deploy      # build -> preflight -> wrangler deploy
   CI build; a deploy ships one person's working tree.
 - **From a worktree not beside the main checkout, set `CORPUS_DIR`.** Preflight
   refuses a fixture-sized build, so the worst case is a refusal.
-  `GLOSSA_BUILD_DIR` moves `build/` alone, for a worktree parsing its own; the
-  pipeline reads it too and both halves must see the same value.
 - **Deploys are not sandboxed** — `wrangler` needs the Cloudflare API.
 - **The file count is not the thing to watch** (cap 20,000; exactly two of the
   build's files are HTML). `npm run preflight` prints the real number and its
@@ -410,13 +408,11 @@ npm run deploy      # build -> preflight -> wrangler deploy
   corpus from fixtures. **A new derived file belongs in `derivedFiles`**, or it
   is the next one to survive a failure. `lastmod.json` is the deliberate
   exception and says why.
-- **Resolve a `lastmod.json` conflict by keeping both sides' addresses, never
-  by taking one whole.** Three ceilings guard the ledger and only the third
-  sees this: entries lost to a merge are withdrawn by no run, arrive at the
-  next one as additions, and are stamped today, because seeding is inert while
-  `build/` is untracked. Take either side, re-sync, and read the printed line —
-  `0 new` on a checkout that is not fresh is the proof. Which date wins per
-  address barely matters; a dropped address's history is gone.
+- **A `lastmod.json` conflict is resolved by keeping both sides' addresses.**
+  Taking one side whole loses the other's, no run counts them as withdrawn, and
+  the next sync re-dates every one of them today — seeding cannot rescue them
+  while `build/` is untracked. Three ceilings guard the ledger and only the
+  third sees this one, which is why it is a refusal rather than a note here.
 - **Preflight checks the corpus, not the page count**: it refuses a build
   reporting fewer than 100 works or 100 content assets, and a build whose
   reference coverage dropped more than 3% in any family against

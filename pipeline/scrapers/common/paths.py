@@ -127,20 +127,8 @@ def build_root(corpus: Path | None = None) -> Path:
     `audit.py`, `census.py` and `apply_sweep.py` all take a corpus path as an
     argument and each rebuilt `build_root(corpus)` by hand. That is the
     duplication this module exists to prevent, and it is why the parameter is
-    here rather than each of them growing a second literal.
-
-    `$GLOSSA_BUILD_DIR` MOVES ONLY THIS ONE, which is the point of its being
-    separate from `CORPUS_DIR`. A worktree that wants its own parsed output
-    still has to read the same `raw/`, `authored/` and `oracles/` -- those are
-    the expensive, write-once, shared ones -- so pointing `CORPUS_DIR` at a
-    private directory is the wrong instrument: it produces a second empty
-    corpus rather than a second build. An explicit `corpus` argument still
-    wins, since a caller handed a checkout is asking about that checkout.
-    """
-    if corpus is not None:
-        return corpus / "build"
-    env = os.environ.get("GLOSSA_BUILD_DIR")
-    return Path(env).expanduser().resolve() if env else corpus_dir() / "build"
+    here rather than each of them growing a second literal."""
+    return (corpus if corpus is not None else corpus_dir()) / "build"
 
 
 def require_corpus() -> Path:
