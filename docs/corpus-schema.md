@@ -293,35 +293,9 @@ grounds.
         "locus": { "work": "ccc", "n": 2676 },
       },
     ],
-    "references": [
-      {
-        "work": "bible",
-        "osis": "luke",
-        "chapter": 1,
-        "first": 28,
-        "last": 28,
-      },
-      { "work": "ccc", "first": 2676, "last": 2677 },
-      { "work": "compendium", "first": 562, "last": 563 },
-    ],
   },
 ]
 ```
-
-**A NOTE WITHOUT A LEMMA IS NOT STORED, and this arm is the one that says so** (2026-09-05).
-`CommentaryNote.lemma` is optional in the schema and stays optional for Haydock, whose
-unanchored notes hang at the end of the verse they belong to. A prayer has no such place
-until its last line, and an apparatus at the foot of a seven-line text is a paragraph of the
-Catechism reprinted beside the prayer rather than a gloss ON it — so `prayers_glossa.py`
-keeps only the notes that quote a clause — a minority of what it reads, and the script prints
-the table.
-
-**`references` LEFT THIS WORK THE DAY AFTER IT ARRIVED, and where it went is the
-point** (2026-09-05). What a book says about the prayer as a whole is a place to go and
-read it, which is a different KIND of claim from a note — and, unlike a note, it is the
-same claim for every reader. It is one language-free table now, `prayer-references/`
-below. Nothing in a commentary work carries it, and an entry here is its notes and its
-slug and nothing else.
 
 **`locus` is provenance per NOTE, and it exists because one work draws on two books.**
 A manifest names one set of sources; `commentary.preces.{lang}` reads the Catechism on the
