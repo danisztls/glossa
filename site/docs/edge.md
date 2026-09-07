@@ -181,6 +181,15 @@ Adding it found the other two tables:
   breadcrumb has always split off with `documentHeadingParts`. A document's
   outline reaches `displayDocumentTitle`, which by design splits nothing, so
   that table has to be told; its two route titles moved with it.
+- **510 headings over 87 works printed a hyphen where the source meant a
+  dash**, and this one is NOT a correction. vatican.va's English mirror is
+  `iso-8859-1` and carries 2,272 spaced ASCII hyphens and not one dash in any
+  spelling across its 376 files; the French mirror writes `&ndash;` in the very
+  same heading. So the source is not wrong about anything — that is how it
+  spells it everywhere — and `pipeline/corrections/` is for an OUTLIER proved
+  by a corpus-wide count, which this is the opposite of. `restoreDashes` in
+  `finalize` is the `canonLawTitleText` division of labour: the corpus keeps
+  what the publisher printed, the display says what they meant.
 - **235 of the Catechism's 665 did too, and there the fix was a decision to
   reverse.** `normalizeCase`'s docblock had recorded that the marker on a
   `sub` heading "is part of the title rather than a redundant echo of `n`" —

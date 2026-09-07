@@ -525,11 +525,12 @@ export function assertNamed(paths, manifest, titles) {
  * argument nobody is forced to pass needs a check that does not care which
  * producer a table came from — so this reads the OUTPUT rather than the call.
  *
- * All three shapes are artifacts of the source's typography and never of a
+ * All four shapes are artifacts of the source's typography and never of a
  * name: a heading still shouting is one `normalizeCase` did not recognise
  * (the `ann` of `Cann.` is what stopped it), a trailing parenthetical holding
- * a digit is a range the line below the title states again, and a leading
- * marker is an enumerator the page splits off and sets apart.
+ * a digit is a range the line below the title states again, a leading marker
+ * is an enumerator the page splits off and sets apart, and a spaced hyphen is
+ * a dash the source could not encode (`restoreDashes`, titles.ts).
  *
  * @param {import('../src/lib/shell-head.ts').RouteTitles} titles
  */
@@ -552,7 +553,9 @@ function assertSpansDisplayable(titles) {
 						? 'keeps a printed range'
 						: printedMarker(name)
 							? 'keeps a printed list marker'
-							: null;
+							: /\S - \S/u.test(name)
+								? 'keeps a hyphen where the source meant a dash'
+								: null;
 			if (fault) bad.push(`${table}: ${JSON.stringify(name)} — ${fault}`);
 		}
 	}

@@ -21,13 +21,28 @@ describe('displayTitle — contract table', () => {
 		});
 	});
 
+	/** The dash is an EN DASH out, where the source could only write a
+	 *  hyphen — `restoreDashes`, and the mirror carries 2,272 spaced hyphens
+	 *  and not one dash in any spelling. */
 	it('section, 1, \'SECTION ONE "I BELIEVE" - "WE BELIEVE"\' (en)', () => {
 		expect(
 			displayTitle(node('section', 1, 'SECTION ONE "I BELIEVE" - "WE BELIEVE"'), 'en')
 		).toEqual({
 			ordinal: '1.',
-			title: '"I Believe" - "We Believe"'
+			title: '"I Believe" \u2013 "We Believe"'
 		});
+	});
+
+	/** Spaced on both sides and nowhere else: a hyphenated compound and a
+	 *  range keep their hyphen, which is what makes the rule safe to run over
+	 *  every heading in the corpus. */
+	it('leaves a hyphen that is not standing in for a dash', () => {
+		expect(displayTitle(node('sub', null, 'Twenty-first Sunday'), 'en').title).toBe(
+			'Twenty-first Sunday'
+		);
+		expect(displayTitle(node('sub', null, 'Canons 1055-1165'), 'en').title).toBe(
+			'Canons 1055-1165'
+		);
 	});
 
 	it('chapter, 1, "CHAPTER ONE MAN\'S CAPACITY FOR GOD" (en)', () => {

@@ -735,7 +735,14 @@ export function inlineTitleNodes(
 	lang: string
 ): InlineNode[] {
 	const nodes = titleHtml ? parseInlineHtml(titleHtml) : [{ kind: 'text' as const, text: title }];
-	const cased = withTextRuns(nodes, normalizeCaseRuns(textRuns(nodes), normLang(lang)));
+	// `restoreDashes` per RUN, because `finalize` below reaches only the last
+	// one and a heading's dash is usually in the middle. A dash split ACROSS
+	// runs by markup is out of reach and is left alone — the pattern needs its
+	// two spaces in one run to be recognisable at all.
+	const cased = withTextRuns(
+		nodes,
+		normalizeCaseRuns(textRuns(nodes), normLang(lang)).map(restoreDashes)
+	);
 	// Same trailing-colon trim `displayDocumentTitle` applies, on the last
 	// text run so the two forms of a title cannot render differently.
 	for (let i = cased.length - 1; i >= 0; i--) {
@@ -1525,5 +1532,35 @@ export function displayTitle(
  * word-boundary regex ignores it either way) is safe.
  */
 function finalize(title: string): string {
-	return title.replace(/[:\s]+$/, '');
+	return restoreDashes(title.replace(/[:\s]+$/, ''));
+}
+
+/**
+ * The en dash a source meant where it could only write a hyphen.
+ *
+ * `The Eucharist - Source and Summit of Ecclesial Life` is not a hyphenated
+ * anything; it is a dash, and vatican.va's English mirror cannot say so. That
+ * is a measurement rather than a reading: the mirror is `iso-8859-1`, and
+ * across its 376 files it carries **2,272 spaced ASCII hyphens and not one
+ * dash** in any spelling — no `&ndash;`, no `&#150;`, no 0x96, nothing. The
+ * second witness is the French mirror, which CAN write one and does, in the
+ * very same heading: `<li>I. L&rsquo;Eucharistie &ndash; source et sommet`
+ * against `<li>I. The Eucharist - Source and Summit`. En dash and not em,
+ * because that is the character the witness prints.
+ *
+ * **THIS IS DISPLAY AND NOT A CORRECTION, and the corrections file's own
+ * standard is what puts it here.** Every entry in `pipeline/corrections/` is
+ * an OUTLIER proved by a corpus-wide count — the `CE` for `Cf.` one says so
+ * in as many words, "exactly one occurrence vs. 1315". Run the same count
+ * here and it comes back 2,272 of 2,272: this is how the source spells it
+ * everywhere, so there is nothing for a correction to be right about, and the
+ * corpus goes on holding what the publisher printed (`canonLawTitleText` is
+ * the same division of labour one work over).
+ *
+ * SPACED ON BOTH SIDES, which is what keeps it safe: no compound is
+ * hyphenated that way, so there is no word this can reach. 510 headings over
+ * 87 works take it, beside the 397 that already print a real dash.
+ */
+function restoreDashes(text: string): string {
+	return text.replace(/(\S) - (?=\S)/gu, '$1 \u2013 ');
 }

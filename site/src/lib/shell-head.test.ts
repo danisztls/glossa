@@ -103,7 +103,7 @@ const titles: RouteTitles = {
 	books: { gen: 'Genesis', ps: 'Psalms' },
 	cccSpans: [
 		[1, 25, 'Prologue'],
-		[1, 3, 'The life of man - to know and love God'],
+		[1, 3, 'The life of man \u2013 to know and love God'],
 		[325, 349, 'Heaven and Earth'],
 		[325, 421, 'I Believe in God the Father']
 	],
@@ -376,7 +376,8 @@ describe('assertNamed', () => {
 	it.each([
 		['keeps a printed range', 'MARRIAGE (Cann. 1055 - 1165)'],
 		['still ALL-CAPS', 'BISHOPS IN GENERAL'],
-		['keeps a printed list marker', 'I. The Desire for God']
+		['keeps a printed list marker', 'I. The Desire for God'],
+		['keeps a hyphen where the source meant a dash', 'The Eucharist - Source and Summit']
 	])('refuses a span name a page would not print that way — %s', (fault, name) => {
 		const dirty = { ...titles, cccSpans: [...titles.cccSpans, [1, 3, name] as TitledSpan] };
 		expect(() => assertNamed(sitemapPaths(manifest), manifest, dirty)).toThrow(fault);
