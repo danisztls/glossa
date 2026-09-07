@@ -212,7 +212,37 @@ describe('headFor, the corpus', () => {
 	/** The narrowest containing division is the most specific heading true of
 	 *  the paragraph; the widest would title 500 addresses "Part One". */
 	it('places a Catechism paragraph in its innermost division', () => {
-		expect(head('/catechismus/330')?.title).toBe('CCC 330 · Heaven and Earth — Glossa Catholica');
+		expect(head('/catechismus/330')?.title).toBe(
+			'CCC 330 · Heaven and Earth — Catechism of the Catholic Church'
+		);
+	});
+
+	/** `ccc {number}` is what people search, so the title ends with the work
+	 *  the number belongs to rather than the site's own name — and the route
+	 *  says the same thing at hydration, or the tab rearranges on every load
+	 *  (site/docs/edge.md). The brand stays on the breadcrumb. */
+	it('ends a Catechism title with the work and keeps the site on the breadcrumb', () => {
+		const h = head('/catechismus/330')!;
+		expect(h.title).not.toContain('Glossa Catholica');
+		expect(h.crumbs[0].name).toBe('Glossa Catholica');
+	});
+
+	/** The description is the OTHER division — the level above the one the
+	 *  title just named. Repeating the title there spends both lines of a
+	 *  search result saying one thing. */
+	it('describes a Catechism paragraph by the division above its heading', () => {
+		expect(head('/catechismus/330')?.description).toBe(
+			'Paragraph 330 of the Catechism of the Catholic Church, in I Believe in God the Father.'
+		);
+	});
+
+	/** Where there is no level above, the heading itself is the placement
+	 *  rather than nothing: 20 sits in `Prologue` and in no narrower span, so
+	 *  the innermost and the ancestor are the same division. */
+	it('falls back to the heading where a paragraph has no wider division', () => {
+		expect(head('/catechismus/20')?.description).toBe(
+			'Paragraph 20 of the Catechism of the Catholic Church, in Prologue.'
+		);
 	});
 
 	/** The other direction, and it is why both helpers exist: a `caput` page
@@ -225,6 +255,44 @@ describe('headFor, the corpus', () => {
 	it('reads the Compendium at the address it moved to under the Catechism', () => {
 		expect(head('/catechismus/compendium/45')?.title).toContain('Compendium 45');
 		expect(head('/compendium/45')).toBeUndefined();
+	});
+
+	/**
+	 * Every description on this site says WHERE the address sits and stops.
+	 * Each of these carried a clause about what the page offers — "with its
+	 * footnotes, its sources, and the Compendium beside it", "in seven
+	 * languages", "every article, with its objections" — identical on every
+	 * unit of the work, so the half of a search result that varied was the half
+	 * the title had already printed. Removed 2026-09-07 (site/docs/edge.md).
+	 */
+	it('describes an address by where it sits and nothing the site offers', () => {
+		for (const p of [
+			'/scriptura/genesis/1',
+			'/scriptura/genesis/0',
+			'/catechismus/330',
+			'/catechismus/compendium/45',
+			'/doctrina-socialis/160',
+			'/ius-canonicum/216',
+			'/documenta/rerum-novarum',
+			'/preces/ave-maria',
+			'/doctores/summa/i/2'
+		]) {
+			const d = head(p)?.description;
+			expect(d, p).toBeDefined();
+			expect(d, p).not.toMatch(/\bwith (its|every|their)\b/);
+			expect(d, p).not.toMatch(/\bbeside\b|\blinked\b|\bcites?\b/);
+		}
+	});
+
+	/** The same rule the Catechism's takes: the title carries the innermost
+	 *  division, so the description carries the one above it. */
+	it('describes the numbered works by the division above their heading', () => {
+		expect(head('/catechismus/compendium/45')?.description).toBe(
+			'Question 45 of the Compendium of the Catechism of the Catholic Church, in The Profession of Faith.'
+		);
+		expect(head('/ius-canonicum/216')?.description).toBe(
+			'Canon 216 of the Code of Canon Law, in The Obligations and Rights of All the Christian Faithful.'
+		);
 	});
 
 	it('gives a document its author and year rather than the site name', () => {

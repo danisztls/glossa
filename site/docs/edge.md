@@ -108,6 +108,62 @@ and the paragraph spans of every titled division. A name is the imprint of a
 work, the same class of fact `sitemap.xml` already publishes an address for. No
 paragraph, answer or verse reaches the edge, and none may.
 
+**A Catechism paragraph's title ends with the WORK and its description names
+the division ABOVE the one the title carries** (2026-09-07). `ccc {number}` is
+what people search, so the address opens the title and matches the query as
+typed; the tail then has to say whose paragraph 2270 this is, and the site's own
+name is a Latin phrase nobody searching has seen. **The brand is not lost, and
+that is what makes the trade cheap**: the `BreadcrumbList` opens with it, which
+is the line a search result prints above the title. The `caput` route beneath
+had ended with the work all along.
+
+The description carried the innermost heading the title had just printed,
+followed by 62 characters identical on all 2,865 pages — so both lines of a
+search result said one thing, and the half that varied was the half already
+above it. It is the ancestor now (`ancestor` in `shell-head.ts`, beside
+`innermost` and `widestAt`), falling back to the heading where a paragraph sits
+in one division only: "in The Fifth Commandment" places CCC 2270 for somebody
+who typed a number and nothing else. **A description this site writes cannot
+quote the paragraph** — that is the boundary above — so what is left to say is
+where the text sits, and saying it twice is the failure mode to watch for.
+
+**The route's own `<title>` moved in the same commit and had to.** The edge
+writes English from `CATECHISM`; the route writes the reader's language from
+`ccc.landing.title`, which all 40 dictionaries carry. A tail that differs
+between the two is a visible rearrangement on every load, which is the rule
+below.
+
+**EVERY DESCRIPTION LOST ITS TRAILING CLAUSE, not only the Catechism's**
+(2026-09-07, by direction). Each work's said what the page offers — "with the
+Catechism and the documents of the Church that cite it", "with the paragraphs
+of the Catechism it condenses", "in seven languages, beside the division it
+belongs to", "every article, with its objections, its answer and its replies" —
+identical on every unit of that work, so it distinguished nothing and described
+the site rather than the address. **A description says where the address sits
+and stops**; `shell-head.test.ts` scans all nine shapes for the clause coming
+back. The three number-addressed works with span tables took the Catechism's
+ancestor treatment in the same breath, since removing the tail from those left
+the description restating the title exactly.
+
+Two of them are now as thin as the address is: a prayer's description is its
+name, and a document with no written description is its title and imprint.
+That is the honest floor rather than an oversight — the edge holds one fact
+about a prayer and it is already in the title. A thin, true description also
+invites the crawler to write a better one out of the page, which is the only
+way the paragraph itself can reach a snippet at all.
+
+**The Code's spans took the same `clean` its unit names already had.** The
+canon page reads `canonLawSpans` for the innermost division containing the
+canon and the unit page reads `canonLawTitleNames`, and only the second was
+stripping the range the source prints inside a heading — so 86 of 287 spans
+titled a division `MARRIAGE (Cann. 1055 - 1165)` where its own page said
+`Marriage`. Shouting, too, and for the reason `canonLawHeadingParts` records:
+`displayDocumentTitle` re-cases an ALL-CAPS heading, and the `ann` of `Cann.`
+is what stopped it being one. `stripPrintedRange` is one definition in
+`route-titles.mjs` because two tables and `canonLawTitleText` all strip it, and
+a heading that keeps it in one of the three is a division called two different
+things.
+
 **The cost, measured because the objection asked for it**: 6.24 ms mean without
 the rewrite and 6.56 ms with it, against a 10 ms CPU limit the asset subrequest
 already dominates. One extra subrequest per isolate, none per request.

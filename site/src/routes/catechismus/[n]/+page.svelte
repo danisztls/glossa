@@ -146,9 +146,17 @@
 	loads (`innermost` in `shell-head.ts`). Without it 2,865 addresses shared
 	one title but for a number, which is legible in a tab and useless in a
 	history list, a bookmark or a search result.
+
+	IT ENDS WITH THE WORK AND NOT THE SITE, which is `shell-head.ts`'s
+	argument (see its `case 'ccc'`) and has to be made in both places or not
+	at all: the edge writes this title into the shell and the route assigns it
+	again at hydration, so a tail that differs is a visible rearrangement on
+	every load (site/docs/edge.md). `ccc.landing.title` rather than the
+	English constant the edge uses, because a reader has a language and a
+	crawler does not.
 -->
 <svelte:head>
-	<title>CCC {data.n}{headingSuffix()} — {t('home.title')}</title>
+	<title>CCC {data.n}{headingSuffix()} — {t('ccc.landing.title')}</title>
 </svelte:head>
 
 {#snippet leftCell(paragraph: CccParagraph)}

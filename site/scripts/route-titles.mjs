@@ -128,12 +128,18 @@ function titledSpans(nodes, lang) {
  *   before it starts. `Math.max` keeps it to the single paragraph it opens
  *   rather than emitting an inverted span that matches nothing.
  *
+ * `clean` is `documentChapterNames`' argument and runs for the same reason and
+ * in the same order — see its docblock. A caller passing it to one of the two
+ * and not the other gets a work whose division is named one way on its own
+ * page and another in the title of every unit inside it.
+ *
  * @param {{ level: number, title: string, before: number | null }[]} nodes
  * @param {number} last the work's highest paragraph number
  * @param {string} lang
+ * @param {(title: string) => string} [clean]
  * @returns {[number, number, string][]}
  */
-function documentSpans(nodes, last, lang) {
+function documentSpans(nodes, last, lang, clean) {
 	/** @type {[number, number, string][]} */
 	const spans = [];
 	for (const [i, node] of nodes.entries()) {
@@ -143,11 +149,26 @@ function documentSpans(nodes, last, lang) {
 			.slice(i + 1)
 			.find((other) => other.level <= node.level && typeof other.before === 'number');
 		const to = Math.max(from, (next ? Number(next.before) : last + 1) - 1);
-		const { title } = displayDocumentTitle(node.title, lang);
+		const { title } = displayDocumentTitle(clean ? clean(node.title) : node.title, lang);
 		if (title) spans.push([from, to, title]);
 	}
 	return spans;
 }
+
+/**
+ * The canon range the Code's editions print inside a heading —
+ * `MARRIAGE (Cann. 1055 - 1165)`. One definition because two tables strip it
+ * and `canonLawTitleText` strips it on the page; a heading that keeps it in
+ * one of the three is a division called two different things.
+ *
+ * The `(?=[^()]*\d)` is what keeps it a range and not any trailing
+ * parenthetical: it fires only where the brackets hold a digit.
+ *
+ * @param {string} title
+ * @returns {string}
+ */
+const stripPrintedRange = (title) =>
+	title.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || title;
 
 /**
  * Chapter anchor -> the name of the division that opens there.
@@ -227,9 +248,6 @@ export function buildRouteTitles({
 		socialDoctrineChapterNames: csdc
 			? documentChapterNames(csdc.structure, socialDoctrineChapterStarts, csdc.lang)
 			: {},
-		canonLawSpans: cic
-			? documentSpans(cic.structure, Math.max(...cic.sections.map((s) => s.n)), cic.lang)
-			: [],
 		// The canon range the source prints inside a heading is dropped for
 		// the same reason `canonLawTitleText` drops it on the page: five of
 		// the seven editions print it, the line below the title states it
@@ -237,13 +255,23 @@ export function buildRouteTitles({
 		// twice. Kept in step with that function by hand — this file runs
 		// under plain node and cannot import it — INCLUDING the order, which
 		// is why it is a `clean` argument and no longer a pass afterwards.
-		canonLawTitleNames: cic
-			? documentChapterNames(
+		//
+		// BOTH TABLES TAKE IT. The unit pages read the second and every canon
+		// page reads the FIRST, for the innermost division containing it, so
+		// passing it to one alone left 86 of the 287 spans naming a division
+		// `MARRIAGE (Cann. 1055 - 1165)` where its own page says `Marriage` —
+		// shouting because `displayDocumentTitle` re-cases an ALL-CAPS heading
+		// and the `ann` of `Cann.` is what stopped it being one.
+		canonLawSpans: cic
+			? documentSpans(
 					cic.structure,
-					canonLawUnitStarts ?? [],
+					Math.max(...cic.sections.map((s) => s.n)),
 					cic.lang,
-					(title) => title.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || title
+					stripPrintedRange
 				)
+			: [],
+		canonLawTitleNames: cic
+			? documentChapterNames(cic.structure, canonLawUnitStarts ?? [], cic.lang, stripPrintedRange)
 			: {},
 		documents: documentNames(manifests),
 		prayers: prayerNames(prayerIndex),

@@ -267,6 +267,24 @@ function innermost(spans: TitledSpan[], n: number): string | undefined {
 	return best?.[2];
 }
 
+/**
+ * The division ONE LEVEL OUT from the narrowest — the second-narrowest span
+ * containing `n`.
+ *
+ * For the description rather than the title, and the two want different
+ * things: a title that repeats what the description says wastes the only two
+ * lines a search result gets. The title already carries `innermost`, so what
+ * is left to say about the address is where that heading sits, and the level
+ * above it is the one a reader recognises — "The Fifth Commandment" places
+ * CCC 2270 for somebody who typed the number and nothing else.
+ */
+function ancestor(spans: TitledSpan[], n: number): string | undefined {
+	const containing = spans
+		.filter((span) => span[0] <= n && n <= span[1])
+		.sort((a, b) => a[1] - a[0] - (b[1] - b[0]));
+	return containing[1]?.[2];
+}
+
 /** The widest span STARTING at `n` — the division a `caput` page renders,
  *  which is the outermost one that opens there. */
 function widestAt(spans: TitledSpan[], n: number): string | undefined {
@@ -553,8 +571,8 @@ function bodyHead(
 			return {
 				title: `${name} — ${SITE_NAME}`,
 				description: intro
-					? `An introduction to the book of ${book}: what it is, when it was written and how it is read.`
-					: `${book}, chapter ${address.chapter}, with the Catechism and the documents of the Church that cite it.`,
+					? `An introduction to the book of ${book}.`
+					: `${book}, chapter ${address.chapter}, of the Bible.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -569,11 +587,23 @@ function bodyHead(
 
 		case 'ccc': {
 			const where = innermost(titles.cccSpans, address.n);
+			// The level above it, falling back to the heading itself where the
+			// paragraph sits in only one titled division.
+			const place = ancestor(titles.cccSpans, address.n) ?? where;
 			const [prev, next] = neighbours(manifest.ccc, address.n);
 			return {
+				// THE WORK, NOT THE SITE, and the one title on this site where
+				// that choice is worth arguing. `ccc {number}` is what people
+				// type, so the address itself opens the title and matches the
+				// query verbatim; what follows it has to say WHOSE paragraph
+				// 2270 this is, and the site's name does not — it is a Latin
+				// name nobody searching has seen. The brand is not lost: the
+				// `BreadcrumbList` below opens with it, which is the line a
+				// search result prints above the title. The `caput` route
+				// beneath already ended with the work for the same reason.
 				title:
-					clip(where ? `CCC ${address.n} · ${where}` : `CCC ${address.n}`, 60) + ` — ${SITE_NAME}`,
-				description: `Paragraph ${address.n} of the Catechism of the Catholic Church${where ? `, in “${where}”` : ''} — with its footnotes, its sources, and the Compendium beside it.`,
+					clip(where ? `CCC ${address.n} · ${where}` : `CCC ${address.n}`, 60) + ` — ${CATECHISM}`,
+				description: `Paragraph ${address.n} of the Catechism of the Catholic Church${place ? `, in ${place}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -605,11 +635,12 @@ function bodyHead(
 
 		case 'compendium': {
 			const where = innermost(titles.compendiumSpans, address.n);
+			const place = ancestor(titles.compendiumSpans, address.n) ?? where;
 			const [prev, next] = neighbours(manifest.compendium, address.n);
 			const label = `Compendium ${address.n}`;
 			return {
 				title: clip(where ? `${label} · ${where}` : label, 60) + ` — ${SITE_NAME}`,
-				description: `Question ${address.n} of the Compendium of the Catechism of the Catholic Church${where ? `, in “${clip(where, 70)}”` : ''}, with the paragraphs of the Catechism it condenses.`,
+				description: `Question ${address.n} of the Compendium of the Catechism of the Catholic Church${place ? `, in ${clip(place, 70)}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -637,11 +668,12 @@ function bodyHead(
 
 		case 'socialDoctrine': {
 			const where = innermost(titles.socialDoctrineSpans, address.n);
+			const place = ancestor(titles.socialDoctrineSpans, address.n) ?? where;
 			const [prev, next] = neighbours(manifest.socialDoctrine, address.n);
 			const label = `CSDC ${address.n}`;
 			return {
 				title: clip(where ? `${label} · ${where}` : label, 60) + ` — ${SITE_NAME}`,
-				description: `Paragraph ${address.n} of the Compendium of the Social Doctrine of the Church${where ? `, in “${clip(where, 70)}”` : ''} — with its footnotes and every Scripture it cites.`,
+				description: `Paragraph ${address.n} of the Compendium of the Social Doctrine of the Church${place ? `, in ${clip(place, 70)}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -677,11 +709,12 @@ function bodyHead(
 
 		case 'canonLaw': {
 			const where = innermost(titles.canonLawSpans, address.n);
+			const place = ancestor(titles.canonLawSpans, address.n) ?? where;
 			const [prev, next] = neighbours(manifest.canonLaw, address.n);
 			const label = `CIC ${address.n}`;
 			return {
 				title: clip(where ? `${label} · ${where}` : label, 60) + ` — ${SITE_NAME}`,
-				description: `Canon ${address.n} of the Code of Canon Law${where ? `, in “${clip(where, 70)}”` : ''} — in seven languages, beside the division it belongs to.`,
+				description: `Canon ${address.n} of the Code of Canon Law${place ? `, in ${clip(place, 70)}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -718,7 +751,7 @@ function bodyHead(
 			const imprint = [author, year].filter(Boolean).join(', ');
 			return {
 				title: imprint ? `${name} — ${imprint}` : `${name} — ${SITE_NAME}`,
-				description: `${name}${imprint ? `, ${imprint}` : ''} — the full text, with every citation linked to the Scripture and the documents it names.`,
+				description: `${name}${imprint ? `, ${imprint}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -732,7 +765,7 @@ function bodyHead(
 			if (!name) return undefined;
 			return {
 				title: `${name} — ${SITE_NAME}`,
-				description: `${name}, with its source.`,
+				description: `${name}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
@@ -749,7 +782,7 @@ function bodyHead(
 			const [prev, next] = neighbours(manifest.summa[address.part] ?? [], address.question);
 			return {
 				title: clip(name ? `${label} · ${name}` : label, 60) + ` — ${SITE_NAME}`,
-				description: `${SUMMA}, ${part} question ${address.question}${name ? `: ${name}` : ''} — every article, with its objections, its answer and its replies.`,
+				description: `${SUMMA}, ${part} question ${address.question}${name ? `: ${name}` : ''}.`,
 				canonical: pathname,
 				noindex: false,
 				alternates: [],
