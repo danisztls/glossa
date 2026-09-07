@@ -54,6 +54,14 @@ class CorrectionDriftError(RuntimeError):
 
 FIELD_VERSE_NUMBER = "verse_number"
 FIELD_VERSE_DUPLICATE = "verse_duplicate"
+#: The verse's own words. Spelled out because an edition whose file carries
+#: more than one KIND of defect has to say which applier owns an entry, and
+#: `matos_soares.py` -- the first file to use the value -- partitions by
+#: locator instead and so never named it. `kaldi.py` needs the name: its file
+#: holds verse numbers, held duplicates and now verse text, three appliers over
+#: one file, and "everything that is not one of the other two" is the kind of
+#: default that silently adopts the next field somebody files.
+FIELD_VERSE_TEXT = "verse_text"
 
 
 def filed(corrections: Iterable[dict], field: str | None = None) -> list[dict]:
@@ -189,6 +197,92 @@ def apply_verse_corrections(
 
     if full_run:
         require_all_applied(corrections, seen, source="the corpus's raw/")
+    return applied, seen
+
+
+def apply_note_corrections(
+    book_docs: Iterable[dict],
+    corrections: list[dict],
+    full_run: bool,
+    *,
+    source: str,
+) -> tuple[list[dict], set[str]]:
+    """Apply note-scoped corrections to already-parsed apparatus, in place.
+    Returns (applied entries, applied ids).
+
+    WHY THIS IS SHAREABLE, on `apply_verse_corrections`' own argument. A note
+    has no locator in docs/corpus-schema.md -- a verse has one and the notes
+    hang off it -- so the scoping is `{osis, chapter, verse, note}`, where
+    `note` is the note's own printed MARKER and not a position. That is the
+    same shape in every annotated edition here, because the marker is what
+    the source prints and the schema stores (`{"marker", "text"}`), and an
+    edition has no standing to disagree with it any more than it has with
+    the verse locator.
+
+    THREE EDITIONS ANNOTATE AND EACH FOUND THE SAME CLASS OF DEFECT. It began
+    as `douay_rheims.py`'s, filed against Challoner's own transcription typos
+    (`comdemnation` at John 3:19); Straubinger and Martini then both turned out
+    to print a citation that addresses nothing, which is the identical repair
+    one field over. What stayed with the caller is the PARTITION -- douay's
+    file mixes note-scoped entries with verse-scoped ones and splits them by
+    locator scope, and reading a verse entry here would report it as drift.
+
+    `field` defaults to `"text"` and may name any key the note carries, so a
+    marker defect and a text defect are the same entry shape. A note the
+    locator does not resolve to, or a `from` that is not in it, is DRIFT and
+    not a miss: unlike a verse locator, which a `--sample` run legitimately
+    fails to reach, the sample check is the (osis, chapter) scope above it.
+
+    A `from` OCCURRING TWICE IS REFUSED, and that is not a formality. The
+    first entry filed here repaired the second of two citations in one note of
+    Straubinger's, `II Reyes 4, 31`, which is a substring of the CORRECT one
+    eleven words earlier -- so a replace-once turned `III Reyes` into
+    `IIII Reyes` and reported success. pipeline/docs/corrections.md already
+    refuses an unlocatable `from` at the PROPOSING end; this is the same rule
+    where it can still be checked, and the fix is to widen the entry's `from`
+    until it names one place.
+    """
+    index: dict[tuple, dict] = {}
+    scope: set[tuple[str, int]] = set()
+    for book in book_docs:
+        for chap in book["chapters"]:
+            scope.add((book["osis"], chap["n"]))
+            for unit in [*chap["verses"], *(chap.get("headings") or [])]:
+                for note in unit.get("notes") or []:
+                    index[(book["osis"], chap["n"], unit.get("n"), note["marker"])] = (
+                        note
+                    )
+
+    applied: list[dict] = []
+    seen: set[str] = set()
+    for c in filed(corrections):
+        loc = c["locator"]
+        if (loc["osis"], loc["chapter"]) not in scope:
+            continue  # out of scope for this run (e.g. --sample)
+        note = index.get(
+            (loc["osis"], loc["chapter"], loc.get("verse"), str(loc["note"]))
+        )
+        field = c.get("field", "text")
+        if note is None or c["from"] not in (note.get(field) or ""):
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: expected {field} {c['from']!r} not found on note "
+                f"{loc['note']} at {loc['osis']} {loc['chapter']}:{loc.get('verse')} "
+                f"(source drift -- re-verify against {source} and update or remove it)"
+            )
+        occurrences = note[field].count(c["from"])
+        if occurrences > 1:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: {field} {c['from']!r} occurs {occurrences} times "
+                f"on note {loc['note']} at {loc['osis']} {loc['chapter']}:{loc.get('verse')} "
+                "-- widen `from` until it names one place, since this replaces the FIRST "
+                "match and the others are as likely to be the defect"
+            )
+        note[field] = note[field].replace(c["from"], c["to"], 1)
+        applied.append(dict(c))
+        seen.add(c["id"])
+
+    if full_run:
+        require_all_applied(corrections, seen, source=source)
     return applied, seen
 
 

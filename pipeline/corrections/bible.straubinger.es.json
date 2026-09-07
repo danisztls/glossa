@@ -313,5 +313,20 @@
     "reason": "A forward-jump mislabel, not a duplicate: \"...24, 25, 28\" with nothing labelled 26 or 27 anywhere on the page. 26 elements total on the page, matching both the Decalogue's usual count and bible.clementina.la's Exodus 20 (26 verses).",
     "evidence": "raw/straubinger/exodo/20.html, the first <span class=\"v-texto\" data-v=\"28\">…</span> in the chapter: \"Tampoco subirás por gradas a mi altar, para que no se descubra allí tu desnudez.” if !supportFootnotes endif\"",
     "added": "2026-08-28"
+  },
+  {
+    "id": "straubinger.es-1chr25.1-note-ii-reyes",
+    "locator": {
+      "osis": "1chr",
+      "chapter": 25,
+      "verse": 1,
+      "note": "1"
+    },
+    "field": "text",
+    "from": "con Etán (cf. 15, 17; II Reyes 4, 31 y nota)",
+    "to": "con Etán (cf. 15, 17; III Reyes 4, 31 y nota)",
+    "reason": "The note cites the same verse twice and names two different books for it. Straubinger follows the Vulgate's numbering throughout -- I/II Reyes are the books of Samuel, III/IV Reyes the books of Kings -- and the verse being cited is 1 Kings 4:31, which this edition prints as 'Era más sabio que todos los hombres: más que Etán; el ezrahita, más que Hernán, Calcol y Dardá'. That is the one verse in Scripture naming both men the note is discussing. Its first citation, 'III Reyes 4, 31' for Hemán, is right; the second, 'II Reyes 4, 31' for Etán, addresses nothing at all -- 2 Samuel 4 ends at verse 12 in this edition and in bible.clementina.la. A dropped I in the numeral, and the note's own correct use of the form eleven words earlier is the witness that licenses the repair (pipeline/docs/corrections.md, 'The edition's own inconsistency'). `from` carries the whole parenthesis because 'II Reyes 4, 31' is a substring of the correct citation above it, and this layer replaces the first match.",
+    "evidence": "raw/straubinger/1cronicas/25.html, the note on 25:1: 'El nombre de Hemán (cf. III Reyes 4, 31) está en el epígrafe del Salmo 87, y Jedutún es tal vez el mismo que Iditún, cuyo nombre llevan tres Salmos (Salmos 38; 61; 76). Algunos lo identifican con Etán (cf. 15, 17; II Reyes 4, 31 y nota).' -- build/bible.straubinger.es/books/2sam.json chapter 4 holds 11 verses ending at 12; books/1kgs.json 4:31 is the verse quoted above.",
+    "added": "2026-09-07"
   }
 ]

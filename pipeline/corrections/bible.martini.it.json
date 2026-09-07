@@ -1,0 +1,62 @@
+[
+  {
+    "id": "martini.it-2kgs16.17-note-i-reg-vii",
+    "locator": {
+      "osis": "2kgs",
+      "chapter": 16,
+      "verse": 17,
+      "note": "3125"
+    },
+    "field": "text",
+    "from": "Vedi I. Reg. VII. 28.",
+    "to": "Vedi III. Reg. VII. 28.",
+    "reason": "The note glosses Ahaz stripping the bases and the lavers, and sends the reader to where they were made. Under the four-Regum scheme this edition's notes use throughout, I. Reg. is 1 Samuel, whose chapter 7 ends at verse 17 -- so the citation addresses nothing. III. Reg. VII (1 Kings 7) is Solomon's bronze work, and verse 28 is the one sentence about the bases themselves. The repair is the book numeral and only the book numeral, in the note's own Roman notation; the scheme is left alone, which is the distinction the module docblock draws.",
+    "evidence": "raw/martini/2-re/016.html, note n3125 on 16,17: `<em>Prese le basi... e le conche, ec.</em> Vedi I. Reg. VII. 28.` -- build/bible.martini.it/books/1sam.json chapter 7 holds 17 verses; books/1kgs.json 4 7:28 reads 'E il lavoro delle basi era di piu pezzi: e dove questi si incastravano insieme eranvi de lavori di scultura.'",
+    "added": "2026-09-07"
+  },
+  {
+    "id": "martini.it-1kgs5.7-note-2-reg-xvii",
+    "locator": {
+      "osis": "1kgs",
+      "chapter": 5,
+      "verse": 7,
+      "note": "2753"
+    },
+    "field": "text",
+    "from": "e gli Assiri v 2. Reg. XVII. 32.",
+    "to": "e gli Assiri v 4. Reg. XVII. 32.",
+    "reason": "The note lists gentiles who came to fear the God of Israel and cites one place for each. Its own earlier citation in the same sentence, I. Reg. IV. for the Philistines, is correct under the four-Regum scheme and is the witness for how this note numbers -- so 2. Reg. is 2 Samuel, whose chapter 17 ends at verse 29 and addresses nothing. The Assyrians settled in Samaria are 4. Reg. XVII (2 Kings 17), and verse 32 is exactly the sentence the note needs: 'E con tutto questo adoravano il Signore.' The repair keeps the note's own Arabic notation.",
+    "evidence": "raw/martini/1-re/005.html, note n2753 on 5,7: `Cosi si dice che temerono il vero Dio i Filistei. I. Reg. IV..e Dario, Don. VI. lo. . e Seleuco, Vers. 2 Maccab. III., e gli Assiri v 2. Reg. XVII. 32.` -- build/bible.martini.it/books/2sam.json chapter 17 holds 29 verses; books/2kgs.json 17:32 is the verse quoted above.",
+    "added": "2026-09-07"
+  },
+  {
+    "id": "martini.it-isa39.1-note-4-reg-xx-22",
+    "locator": {
+      "osis": "isa",
+      "chapter": 39,
+      "verse": 1,
+      "note": "9555"
+    },
+    "field": "text",
+    "from": "4. Reg. XX. 22.",
+    "to": "4. Reg. XX. 12.",
+    "reason": "The note says the whole of Isaiah 39 has already been read and commented on at the place it names, and the place it names does not exist: 2 Kings 20 ends at verse 21 in this edition. The parallel begins at 2 Kings 20:12, whose opening words are this edition's own for Isaiah 39:1 -- 'In quel tempo ... Baladan, ... re di Babilonia, mando lettere, e doni ad Ezechia, avendo saputo com' egli era stato ammalato' -- and Martini prints a note there (n3178), which is what 'gia letto e illustrato' points at. A single-digit substitution, decided by content and not by the numeral.",
+    "evidence": "raw/martini/isaia/039.html, note n9555 on 39,1: `<em>In quel tempo ec.</em>Tutto quello, che leggesi in questo capitolo, lo abbiamo gia letto e illustrato 4. Reg. XX. 22.` -- build/bible.martini.it/books/2kgs.json chapter 20 holds 21 verses, its verse 12 opens 'In quel tempo Berodach Baladan, figliuolo di Baladan, re di Babilonia, mando lettere, e doni ad Ezechia', and carries note n3178.",
+    "added": "2026-09-07"
+  },
+  {
+    "id": "martini.it-lam2.6-note-4-reg-xxiv-21",
+    "locator": {
+      "osis": "lam",
+      "chapter": 2,
+      "verse": 6,
+      "note": "10689"
+    },
+    "field": "text",
+    "from": "fu messo a morte, 4. Reg. XXIV. 21.",
+    "to": "fu messo a morte, 4. Reg. XXV. 21.",
+    "reason": "The note says the high priest Saraia was put to death and cites two places for it. The second, Jerem. LII, is Jeremiah 52, the chapter that recounts the executions at Riblah; the first names 2 Kings 24, which ends at verse 20 and addresses nothing. 2 Kings 25 is that chapter's twin -- Saraia is taken at 25:18 and killed at 25:21, 'E il re di Babilonia li fece uccidere in Reblatha' -- so the chapter numeral is one short, which is what a paired citation makes checkable.",
+    "evidence": "raw/martini/lamentazioni/002.html, note n10689 on 2,6: `Il pontefice Saraia nel tempo stesso fu messo a morte, 4. Reg. XXIV. 21. Jerem. LII. 10. II.` -- build/bible.martini.it/books/2kgs.json chapter 24 holds 20 verses; 25:21 is the verse quoted above, and 25:18 names 'Saraia primo Sacerdote'.",
+    "added": "2026-09-07"
+  }
+]

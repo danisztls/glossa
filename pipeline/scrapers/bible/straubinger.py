@@ -132,6 +132,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     FIELD_VERSE_NUMBER,
     CorrectionDriftError,
+    apply_note_corrections,
     build_root,
     captured_at,
     chapter_opening_letter,
@@ -334,6 +335,14 @@ def abbrevs_for(osis: str, name: str) -> list[str]:
 # because a mislabelled verse here usually collides with a real verse of the
 # same printed number elsewhere in the chapter, and the raw label alone does
 # not say which of the two a correction means.
+#
+# A SECOND KIND SINCE 2026-09-07, in the NOTES rather than the verses, and it
+# is the same defect one body of text over: Straubinger's own apparatus prints
+# a citation that addresses nothing. `common.apply_note_corrections` is the
+# applier (written for `douay_rheims.py`, shared once this edition and Martini
+# both needed it), and it runs AFTER parsing, on `book_docs` -- a note is
+# reached by the verse it hangs off, so there is nothing for it to do until the
+# verses are settled and the number corrections above have run.
 # --------------------------------------------------------------------------
 
 
@@ -374,6 +383,19 @@ def apply_verse_number_corrections(
     require_all_applied(
         corrections, applied_ids, field=FIELD_VERSE_NUMBER, source="raw/straubinger/"
     )
+
+
+def note_scoped(corrections: list[dict]) -> list[dict]:
+    """The entries `common.apply_note_corrections` owns.
+
+    THE PARTITION IS THE ONE THING THAT STAYS PER SOURCE (that function's own
+    docstring), and here it is the presence of `note` in the locator, exactly
+    as in `douay_rheims.py`. It cannot be `field` the way the verse-number
+    partition is: a note correction repairs the note's `text`, and so does a
+    verse correction repair a verse's -- the field says WHICH TEXT, and only
+    the locator says which unit.
+    """
+    return [c for c in corrections if "note" in c["locator"]]
 
 
 # Phantom verse elements: not verses at all, but a broken continuation of an
@@ -1135,6 +1157,13 @@ def main() -> int:
 
     try:
         apply_verse_number_corrections(verse_fixes, applied_correction_ids, corrections)
+        _note_applied, note_ids = apply_note_corrections(
+            book_docs,
+            note_scoped(corrections),
+            full_run=True,
+            source="raw/straubinger/",
+        )
+        applied_correction_ids |= note_ids
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
         return 1

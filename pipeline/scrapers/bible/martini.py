@@ -59,10 +59,11 @@ source's own HTML corrupts a handful of opening tags:
     with anything else.
 
 Both are markup corruptions, not text typos -- the words on either side are
-untouched -- so neither goes through `pipeline/corrections/`, which this
-edition currently files none of: no source-text defect (a wrong WORD) has
-been found here, only these markup glitches and the locator-drift cases
-below, neither of which admits a single obviously-correct rewrite.
+untouched -- so neither goes through `pipeline/corrections/`. Repairing a
+corrupted tag restores the source rather than amending it, which is the line
+pipeline/docs/corrections.md draws ("Broken markup is the parser's business").
+What this edition DOES file there is four wrong-address citations in the
+notes; see the Kings paragraph below.
 
 UNANCHORED NOTES: 50 of 17,277 notes (0.3%) carry no HREF anywhere on their
 page. Per docs/corpus-schema.md ("Every token must have a note entry. A note
@@ -105,6 +106,22 @@ site's own reference grammar resolves this ambiguity by work
 rewriting a citation inside a note here would be an editorial act this
 scraper has no standing to take.
 
+FOUR OF THOSE CITATIONS ADDRESS NOTHING, AND THAT IS A DIFFERENT QUESTION
+(2026-09-07, `pipeline/corrections/bible.martini.it.json`). Translating the
+scheme is editorial; a numeral naming a chapter or verse that does not exist
+in the book it names is a defect with a known correct value, which is the
+class that layer exists for. Each of the four is decided by the CONTENT the
+note is pointing at, never by arithmetic on the numeral: `I. Reg. VII. 28`
+for Solomon's lavers (1 Samuel 7 ends at 17; III Reg. VII. 28 is "il lavoro
+delle basi"), `2. Reg. XVII. 32` for the Assyrians resettled in Samaria
+(2 Samuel 17 ends at 29; 4 Reg. XVII. 32 is the verse), `4. Reg. XX. 22`
+for Isaiah 39's parallel (2 Kings 20 ends at 21; verse 12 opens with the
+same words Isaiah 39:1 does) and `4. Reg. XXIV. 21` for Seraiah's execution
+(2 Kings 24 ends at 20; 25:21 is Riblah, and the note's own second citation,
+Jer. LII, is that chapter's parallel). Each `to` keeps the note's OWN
+notation, Roman or Arabic as printed, so the repair is the numeral and
+nothing else. `common.apply_note_corrections` is the applier.
+
 ONLY MARTINI WAS CAPTURED, ONLY MARTINI IS PARSED. scrutatio.it's own
 edition-switcher menu links to a dozen other translations from every page
 (CEI, Nuova Vulgata, Douay, King James, ...), several under active publisher
@@ -136,9 +153,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import (
+    CorrectionDriftError,
+    apply_note_corrections,
     build_root,
     captured_at,
     chapter_opening_letter,
+    corrections_receipt,
+    load_corrections,
     raw_root,
     require_corpus,
     write_stamped_json,
@@ -628,7 +649,7 @@ def retrieved_at() -> str:
     return captured_at(raw_dir() / "index.html") or datetime.now(UTC).date().isoformat()
 
 
-def write_output(book_docs: list[dict], generated_at: str) -> None:
+def write_output(book_docs: list[dict], generated_at: str, receipt: dict) -> None:
     manifest = {
         "id": WORK_ID,
         "type": "bible",
@@ -642,11 +663,13 @@ def write_output(book_docs: list[dict], generated_at: str) -> None:
         "generated_at": generated_at,
         "psalm_numbering": "vulgate",
         "books": [b["osis"] for b in book_docs],
+        "corrections_applied": receipt["count"],
     }
     write_stamped_json(
         work_dir(),
         {
             "manifest.json": manifest,
+            "corrections-applied.json": receipt,
             **{f"books/{b['osis']}.json": b for b in book_docs},
         },
         generated_at,
@@ -657,6 +680,21 @@ def main() -> int:
     require_corpus()
 
     book_docs, anomalies, xref_count = run_scrape()
+
+    # Corrections before the census, so a number printed below describes what
+    # is about to be written rather than what was read. Every entry filed
+    # against this edition is note-scoped (see the docblock's Kings paragraph),
+    # so `apply_note_corrections` owns the whole file and the partition other
+    # editions need is not one this one has yet.
+    corrections = load_corrections(WORK_ID)
+    try:
+        applied, _seen = apply_note_corrections(
+            book_docs, corrections, full_run=True, source="raw/martini/"
+        )
+    except CorrectionDriftError as exc:
+        print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
+        return 1
+
     counts = census(book_docs)
     print_summary(counts, xref_count)
 
@@ -679,7 +717,14 @@ def main() -> int:
         return 1
 
     generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    write_output(book_docs, generated_at)
+    receipt = corrections_receipt(WORK_ID, applied, corrections, generated_at)
+    print(
+        f"\nCorrections layer: {receipt['count']} applied, "
+        f"{len(receipt['unresolved'])} documented unresolved/not-a-defect "
+        "(see corrections-applied.json)"
+    )
+
+    write_output(book_docs, generated_at, receipt)
     print(f"\nWrote {len(book_docs)} book file(s) to {work_dir()}")
 
     return 0

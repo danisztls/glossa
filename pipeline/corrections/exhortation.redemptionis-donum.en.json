@@ -1,0 +1,14 @@
+[
+  {
+    "id": "redemptionis-donum.en-missing-space-after-quote",
+    "locator": {
+      "raw_substring": "Expression&quot;of Baptismal"
+    },
+    "field": "raw_text",
+    "from": "Expression&quot;of Baptismal",
+    "to": "Expression&quot; of Baptismal",
+    "reason": "The heading before §7 omits the space between the closing quotation mark and the preposition that follows it, so a browser renders 'Religious Profession Is a \"Fuller Expression\"of Baptismal Consecration'. A defect in the HTML export rather than a reading: the space is required by the sentence and no other reading is possible. The source's own three other `&quot;of` sequences in this file each open a quotation and are correctly spaced before the mark, so the omission is this heading's alone. Not a parser matter -- `strip_tags` never touched it, there being no tag boundary here; the characters are simply adjacent in the source.",
+    "evidence": "corpus/raw/vatican-docs/exhortation__redemptionis-donum__en.html:812: `<p><b><i>Religious Profession Is a &quot;Fuller Expression&quot;of Baptismal Consecration </i></b></p>` -- the phrase is quoted from Lumen gentium 44 and appears correctly spaced in this document's own body at §7: 'is deeply rooted in baptismal consecration and is a fuller expression of it.&quot;(25)'.",
+    "added": "2026-09-07"
+  }
+]

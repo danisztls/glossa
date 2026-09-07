@@ -371,5 +371,19 @@
     "reason": "The source anchors and prints this verse's locator as 'Zsid 13,26'. Chapter 13 has only 25 verses (bible.clementina.la agrees), so '26' addresses nothing and leaves verse 25 unprinted. A plausible digit transposition (25 -> 26); content is the deciding evidence, not the label.",
     "evidence": "raw/kaldi/zsid/szoveg.html:1989-1991: `<p class=vers><a name=\"65:013.026\"></a>Zsid 13,26</p><p class=MsoNormal>Kegyelem mindnyájotokkal. Amen.</p>` -- bible.clementina.la heb 13:25: 'Gratia cum omnibus vobis. Amen.' -- the same sentence.",
     "added": "2026-08-28"
+  },
+  {
+    "id": "kaldi.hu-isa7.14-emmannel",
+    "locator": {
+      "osis": "isa",
+      "chapter": 7,
+      "verse": 14
+    },
+    "field": "verse_text",
+    "from": "Emmánnelnek",
+    "to": "Emmánuelnek",
+    "reason": "The source misprints Emmanuel as 'Emmánnelnek' at the one verse the name comes from -- an n for a u, which is the substitution a Word-exported transcription of this text makes most easily. The edition's own pages carry the correct spelling everywhere else, including where they gloss this very verse, so the correct value is the source's own and nothing is invented: a mechanical defect of the class pipeline/docs/corrections.md admits, not a variant reading.",
+    "evidence": "raw/kaldi/iz/szoveg.html:1278: `és fiat szűl, és neve Emmánnelnek fog hivatni.` -- against this edition's own spelling in the chapter summary above it (iz/szoveg.html:1205, `Emmánuel`) and at Iz 8:8 (iz/szoveg.html:1386, `oh Emmánuel!`); its own note on this verse (iz/jegyzet.html:1514) writes `Emmánuelnek fogja nevezni`; Matthew quoting it (mt/szoveg.html:595) writes `Emmánuelnek fog hivatni`; and Micah's note (mik/jegyzet2.html:605) quotes it correctly while citing `Iz. 7,14.` by name.",
+    "added": "2026-09-07"
   }
 ]

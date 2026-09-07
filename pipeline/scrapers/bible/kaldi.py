@@ -116,6 +116,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import (
     FIELD_VERSE_DUPLICATE,
     FIELD_VERSE_NUMBER,
+    FIELD_VERSE_TEXT,
     CorrectionDriftError,
     build_root,
     captured_at,
@@ -565,13 +566,21 @@ def parse_book(osis: str, html_text: str, anomalies: list[Anomaly]) -> ParsedBoo
 
 
 # --------------------------------------------------------------------------
-# Verse-number corrections (pipeline/docs/corrections.md)
+# Corrections (pipeline/docs/corrections.md)
 #
-# These fix the printed/anchored VERSE NUMBER, not verse text, so they do not
-# fit `common.apply_verse_corrections` (which only ever edits `text`) and get
-# their own small applier here -- the same reasoning `douay_rheims.py` gives
-# for its note-scoped and segment-scoped corrections living beside it rather
-# than in `common`.
+# THREE APPLIERS OVER ONE FILE, and the reason none of them is
+# `common.apply_verse_corrections` is the same in each case: that function
+# walks `(osis, chapters)` pairs of the SCHEMA's shape, where a chapter is a
+# dict and a verse is `{"n", "text"}`. This parse is not that shape yet --
+# `ParsedChapter.verses` is `dict[int, str]`, keyed by the number the source
+# printed, which is exactly what lets a `verse_number` entry re-key one and a
+# `verse_duplicate` entry recover the loser of a collision. `finalize_book`
+# converts to the schema afterwards, and by then the numbers are settled.
+#
+# So the appliers stay here, the same reasoning `douay_rheims.py` gives for its
+# note-scoped and segment-scoped corrections living beside it. What is shared
+# is what pipeline/docs/corrections.md owns rather than an edition: `filed`,
+# `require_all_applied`, and the field names.
 # --------------------------------------------------------------------------
 
 
@@ -649,6 +658,43 @@ def apply_verse_duplicate_corrections(
     if full_run:
         require_all_applied(
             corrections, seen_ids, field=FIELD_VERSE_DUPLICATE, source="raw/kaldi/"
+        )
+    return applied
+
+
+def apply_verse_text_corrections(
+    books: dict[str, ParsedBook], corrections: list[dict], full_run: bool
+) -> list[dict]:
+    """Repair the WORDS of a verse, where the other two repair its number.
+
+    Same three outcomes as everywhere in this layer -- a book the run never
+    built is out of scope, a `from` that is not there is drift, and an entry
+    that matched nothing on a full run is drift too. Scope is per BOOK here
+    rather than per chapter: `--sample` keeps whole books (`SAMPLE_BOOKS`), so
+    a chapter of a book that was built is a chapter that was read.
+    """
+    applied: list[dict] = []
+    seen_ids: set[str] = set()
+    for c in filed(corrections, FIELD_VERSE_TEXT):
+        loc = c["locator"]
+        book = books.get(loc["osis"])
+        if book is None:
+            continue  # out of scope for this run (e.g. --sample)
+        chapter = book.chapters.get(loc["chapter"])
+        text = chapter.verses.get(loc["verse"]) if chapter else None
+        if text is None or c["from"] not in text:
+            raise CorrectionDriftError(
+                f"correction {c['id']!r}: expected text {c['from']!r} not found at "
+                f"{loc['osis']} {loc['chapter']}:{loc['verse']} (source drift -- "
+                "re-verify against raw/kaldi/ and update or remove it)"
+            )
+        chapter.verses[loc["verse"]] = text.replace(c["from"], c["to"], 1)
+        applied.append(dict(c))
+        seen_ids.add(c["id"])
+
+    if full_run:
+        require_all_applied(
+            corrections, seen_ids, field=FIELD_VERSE_TEXT, source="raw/kaldi/"
         )
     return applied
 
@@ -927,6 +973,9 @@ def main() -> int:
             parsed, corrections, full_run=not args.sample
         )
         applied += apply_verse_duplicate_corrections(
+            parsed, corrections, full_run=not args.sample
+        )
+        applied += apply_verse_text_corrections(
             parsed, corrections, full_run=not args.sample
         )
     except CorrectionDriftError as exc:

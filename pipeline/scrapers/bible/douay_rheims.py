@@ -70,6 +70,7 @@ from common import (
     CorrectionDriftError,
     Fetcher,
     FetchPolicy,
+    apply_note_corrections,
     apply_verse_corrections,
     build_root,
     captured_at,
@@ -540,56 +541,15 @@ def validate(book_docs: list[dict], sample: bool) -> tuple[bool, list[str]]:
 #     own typos (`comdemnation` at John 3:19). A locator naming a note is
 #     scoped by adding `"note": "1"`; those entries are held back from the
 #     shared function, which would read them as drift.
+#
+# THE SECOND OF THOSE MOVED TO `common` ON 2026-09-07, and only the partition
+# stayed. `apply_note_corrections` was written here and is now Straubinger's
+# and Martini's too -- both print a note citation that addresses nothing, which
+# is this repair one field over -- and its rules are the ones no edition is
+# entitled to differ on: the `{osis, chapter, verse, note}` scoping, the marker
+# being what the source PRINTS, and the three outcomes. What is per-source is
+# which entries are note-scoped, and that is `by_scope` below.
 # --------------------------------------------------------------------------
-
-
-def apply_note_corrections(
-    book_docs: list[dict], corrections: list[dict], full_run: bool
-):
-    """Apply the `note`-scoped corrections. Same three outcomes as the verse
-    layer: out of scope, drift, or applied."""
-    index: dict[tuple, dict] = {}
-    scope: set[tuple[str, int]] = set()
-    for book in book_docs:
-        for chap in book["chapters"]:
-            scope.add((book["osis"], chap["n"]))
-            for unit in [*chap["verses"], *(chap.get("headings") or [])]:
-                for note in unit.get("notes") or []:
-                    index[(book["osis"], chap["n"], unit.get("n"), note["marker"])] = (
-                        note
-                    )
-
-    applied: list[dict] = []
-    for c in corrections:
-        if c.get("resolution"):
-            continue
-        loc = c["locator"]
-        if (loc["osis"], loc["chapter"]) not in scope:
-            continue
-        note = index.get(
-            (loc["osis"], loc["chapter"], loc.get("verse"), str(loc["note"]))
-        )
-        field = c.get("field", "text")
-        if note is None or c["from"] not in (note.get(field) or ""):
-            raise CorrectionDriftError(
-                f"correction {c['id']!r}: expected {field} {c['from']!r} not found on note "
-                f"{loc['note']} at {loc['osis']} {loc['chapter']}:{loc.get('verse')} "
-                "(source drift -- re-verify against corpus/raw/ and update or remove it)"
-            )
-        note[field] = note[field].replace(c["from"], c["to"], 1)
-        applied.append(dict(c))
-
-    if full_run:
-        missing = [
-            c["id"]
-            for c in corrections
-            if not c.get("resolution") and c["id"] not in {a["id"] for a in applied}
-        ]
-        if missing:
-            raise CorrectionDriftError(
-                f"note corrections never matched during full run: {missing}"
-            )
-    return applied
 
 
 def mirror_into_marked(book_docs: list[dict], applied: list[dict]) -> None:
@@ -798,8 +758,11 @@ def main() -> int:
             seg_applied
             + applied
             + apply_note_corrections(
-                book_docs, by_scope["note"], full_run=not args.sample
-            )
+                book_docs,
+                by_scope["note"],
+                full_run=not args.sample,
+                source="corpus/raw/",
+            )[0]
         )
     except CorrectionDriftError as exc:
         print(f"\nCORRECTIONS DRIFT GUARD FAILED: {exc}", file=sys.stderr)
