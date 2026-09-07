@@ -553,7 +553,6 @@ export const mg: Dictionary = {
 	'lectionary.slot.gospel': 'Evanjely',
 	'lectionary.slot.sequence': 'Sekansa',
 	'lectionary.or': 'na',
-	'lectionary.notScripture': 'tsy lahatsoratra avy amin’ny Soratra Masina',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'Momba ireto vakiteny ireto',
 	'lectionary.caveat':

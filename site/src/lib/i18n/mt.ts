@@ -508,7 +508,6 @@ export const mt: Dictionary = {
 	'lectionary.slot.gospel': 'Evanġelju',
 	'lectionary.slot.sequence': 'Sekwenza',
 	'lectionary.or': 'jew',
-	'lectionary.notScripture': 'mhux test tal-Iskrittura',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'Dwar dan il-qari',
 	'lectionary.caveat':

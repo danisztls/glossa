@@ -530,7 +530,6 @@ export const uk: Dictionary = {
 	'lectionary.slot.gospel': 'Євангеліє',
 	'lectionary.slot.sequence': 'Секвенція',
 	'lectionary.or': 'або',
-	'lectionary.notScripture': 'не текст Писання',
 	'lectionary.cf': 'Пор.',
 	'lectionary.about': 'Про ці читання',
 	'lectionary.caveat':

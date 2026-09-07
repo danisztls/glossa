@@ -516,7 +516,6 @@ export const he: Dictionary = {
 	'lectionary.slot.gospel': 'בשורה',
 	'lectionary.slot.sequence': 'רצף',
 	'lectionary.or': 'או',
-	'lectionary.notScripture': 'אינו טקסט מקראי',
 	'lectionary.cf': 'השוו׳',
 	'lectionary.about': 'על הקריאות האלה',
 	'lectionary.caveat':

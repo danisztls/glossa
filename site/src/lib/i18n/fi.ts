@@ -531,7 +531,6 @@ export const fi: Dictionary = {
 	'lectionary.slot.gospel': 'Evankeliumi',
 	'lectionary.slot.sequence': 'Sekvenssi',
 	'lectionary.or': 'tai',
-	'lectionary.notScripture': 'ei raamatunteksti',
 	'lectionary.cf': 'Vrt.',
 	'lectionary.about': 'Näistä lukukappaleista',
 	'lectionary.caveat':

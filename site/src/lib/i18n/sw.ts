@@ -533,7 +533,6 @@ export const sw: Dictionary = {
 	'lectionary.slot.gospel': 'Injili',
 	'lectionary.slot.sequence': 'Mfuatano',
 	'lectionary.or': 'au',
-	'lectionary.notScripture': 'si maandiko matakatifu',
 	'lectionary.cf': 'Ling.',
 	'lectionary.about': 'Kuhusu masomo haya',
 	'lectionary.caveat':

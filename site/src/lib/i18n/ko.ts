@@ -523,7 +523,6 @@ export const ko: Dictionary = {
 	'lectionary.slot.gospel': '복음',
 	'lectionary.slot.sequence': '부속가',
 	'lectionary.or': '또는',
-	'lectionary.notScripture': '성경 본문이 아님',
 	'lectionary.cf': '참조',
 	'lectionary.about': '이 독서에 대하여',
 	'lectionary.caveat':

@@ -200,9 +200,11 @@
 							<p class="unresolved">{t('liturgy.passageWithheld')}</p>
 						{/if}
 					{:else}
-						<!-- No address because the text is not Scripture: Christmas Day's
-						     acclamation, the Easter sequences. -->
-						<p class="unscriptured">{t('lectionary.notScripture')}</p>
+						<!-- Christmas Day's acclamation, the Easter sequences: the source
+						     prints the words and no address, so there is nothing to resolve
+						     and the words are the lectionary's own. `lectionary.textMissing`
+						     argues why the line names the absence rather than the text. -->
+						<p class="text-missing">{t('lectionary.textMissing')}</p>
 					{/if}
 				</section>
 			{/each}
@@ -324,7 +326,7 @@
 		font-variant-numeric: tabular-nums;
 	}
 	.unresolved,
-	.unscriptured {
+	.text-missing {
 		margin: 0.35rem 0 0;
 		font-size: 0.85rem;
 		font-style: italic;

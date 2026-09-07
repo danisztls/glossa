@@ -529,7 +529,6 @@ export const be: Dictionary = {
 	'lectionary.slot.gospel': 'Евангелле',
 	'lectionary.slot.sequence': 'Секвенцыя',
 	'lectionary.or': 'або',
-	'lectionary.notScripture': 'не тэкст Пісання',
 	'lectionary.cf': 'Параўн.',
 	'lectionary.about': 'Пра гэтыя чытанні',
 	'lectionary.caveat':

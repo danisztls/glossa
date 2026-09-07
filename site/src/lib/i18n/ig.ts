@@ -533,7 +533,6 @@ export const ig: Dictionary = {
 	'lectionary.slot.gospel': 'Oziọma',
 	'lectionary.slot.sequence': 'Usoro Abụ',
 	'lectionary.or': 'ma ọ bụ',
-	'lectionary.notScripture': 'ọ bụghị ederede Akwụkwọ Nsọ',
 	'lectionary.cf': 'Tụny.',
 	'lectionary.about': 'Maka ọgụgụ ndị a',
 	'lectionary.caveat':

@@ -527,7 +527,6 @@ export const lv: Dictionary = {
 	'lectionary.slot.gospel': 'Evaņģēlijs',
 	'lectionary.slot.sequence': 'Sekvence',
 	'lectionary.or': 'vai',
-	'lectionary.notScripture': 'nav Svēto Rakstu teksts',
 	'lectionary.cf': 'Sal.',
 	'lectionary.about': 'Par šiem lasījumiem',
 	'lectionary.caveat':

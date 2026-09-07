@@ -510,7 +510,6 @@ export const zh: Dictionary = {
 	'lectionary.slot.gospel': '福音',
 	'lectionary.slot.sequence': '继抒咏',
 	'lectionary.or': '或',
-	'lectionary.notScripture': '并非圣经经文',
 	'lectionary.cf': '参',
 	'lectionary.about': '关于这些读经',
 	'lectionary.caveat':

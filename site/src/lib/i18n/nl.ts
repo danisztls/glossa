@@ -530,7 +530,6 @@ export const nl: Dictionary = {
 	'lectionary.slot.gospel': 'Evangelie',
 	'lectionary.slot.sequence': 'Sequentia',
 	'lectionary.or': 'of',
-	'lectionary.notScripture': 'geen bijbeltekst',
 	'lectionary.cf': 'Vgl.',
 	'lectionary.about': 'Over deze lezingen',
 	'lectionary.caveat':

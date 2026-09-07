@@ -527,7 +527,6 @@ export const sq: Dictionary = {
 	'lectionary.slot.gospel': 'Ungjilli',
 	'lectionary.slot.sequence': 'Sekuenca',
 	'lectionary.or': 'ose',
-	'lectionary.notScripture': 'jo tekst biblik',
 	'lectionary.cf': 'Krh.',
 	'lectionary.about': 'Rreth këtyre leximeve',
 	'lectionary.caveat':

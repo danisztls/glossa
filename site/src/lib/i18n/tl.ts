@@ -537,7 +537,6 @@ export const tl: Dictionary = {
 	'lectionary.slot.gospel': 'Ebanghelyo',
 	'lectionary.slot.sequence': 'Sekwensya',
 	'lectionary.or': 'o',
-	'lectionary.notScripture': 'hindi tekstong mula sa Kasulatan',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'Tungkol sa mga pagbasang ito',
 	'lectionary.caveat':

@@ -523,7 +523,6 @@ export const hr: Dictionary = {
 	'lectionary.slot.gospel': 'Evanđelje',
 	'lectionary.slot.sequence': 'Sekvencija',
 	'lectionary.or': 'ili',
-	'lectionary.notScripture': 'nije biblijski tekst',
 	'lectionary.cf': 'Usp.',
 	'lectionary.about': 'O ovim čitanjima',
 	'lectionary.caveat':

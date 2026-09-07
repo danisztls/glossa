@@ -525,7 +525,6 @@ export const lt: Dictionary = {
 	'lectionary.slot.gospel': 'Evangelija',
 	'lectionary.slot.sequence': 'Sekvencija',
 	'lectionary.or': 'arba',
-	'lectionary.notScripture': 'ne Šventojo Rašto tekstas',
 	'lectionary.cf': 'Plg.',
 	'lectionary.about': 'Apie šiuos skaitinius',
 	'lectionary.caveat':

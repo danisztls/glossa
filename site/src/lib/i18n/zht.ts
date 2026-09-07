@@ -505,7 +505,6 @@ export const zht: Dictionary = {
 	'lectionary.slot.gospel': '福音',
 	'lectionary.slot.sequence': '繼抒詠',
 	'lectionary.or': '或',
-	'lectionary.notScripture': '非聖經經文',
 	'lectionary.cf': '參',
 	'lectionary.about': '關於這些讀經',
 	'lectionary.caveat':

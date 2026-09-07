@@ -537,7 +537,6 @@ export const id: Dictionary = {
 	'lectionary.slot.gospel': 'Injil',
 	'lectionary.slot.sequence': 'Sekuensia',
 	'lectionary.or': 'atau',
-	'lectionary.notScripture': 'bukan teks Kitab Suci',
 	'lectionary.cf': 'Bdk.',
 	'lectionary.about': 'Tentang bacaan ini',
 	'lectionary.caveat':

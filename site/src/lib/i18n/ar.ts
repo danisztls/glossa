@@ -488,7 +488,6 @@ export const ar: Dictionary = {
 	'lectionary.slot.gospel': 'الإنجيل',
 	'lectionary.slot.sequence': 'التتالية',
 	'lectionary.or': 'أو',
-	'lectionary.notScripture': 'ليس نصًّا من الكتاب المقدّس',
 	'lectionary.cf': 'قارن',
 	'lectionary.about': 'عن هذه القراءات',
 	'lectionary.caveat':

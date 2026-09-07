@@ -532,7 +532,6 @@ export const vi: Dictionary = {
 	'lectionary.slot.gospel': 'Tin Mừng',
 	'lectionary.slot.sequence': 'Ca Tiếp Liên',
 	'lectionary.or': 'hoặc',
-	'lectionary.notScripture': 'không phải là bản văn Kinh Thánh',
 	'lectionary.cf': 'X.',
 	'lectionary.about': 'Về các bài đọc này',
 	'lectionary.caveat':

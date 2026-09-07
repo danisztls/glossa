@@ -506,7 +506,6 @@ export const hu: Dictionary = {
 	'lectionary.slot.gospel': 'Evangélium',
 	'lectionary.slot.sequence': 'Szekvencia',
 	'lectionary.or': 'vagy',
-	'lectionary.notScripture': 'nem szentírási szöveg',
 	'lectionary.cf': 'Vö.',
 	'lectionary.about': 'Az olvasmányokról',
 	'lectionary.caveat':

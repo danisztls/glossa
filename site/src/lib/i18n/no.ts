@@ -504,7 +504,6 @@ export const no: Dictionary = {
 	'lectionary.slot.gospel': 'Evangelium',
 	'lectionary.slot.sequence': 'Sekvens',
 	'lectionary.or': 'eller',
-	'lectionary.notScripture': 'ikke en skrifttekst',
 	'lectionary.cf': 'Jf.',
 	'lectionary.about': 'Om disse lesningene',
 	'lectionary.caveat':

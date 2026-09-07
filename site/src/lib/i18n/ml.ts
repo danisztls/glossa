@@ -537,7 +537,6 @@ export const ml: Dictionary = {
 	'lectionary.slot.gospel': 'സുവിശേഷം',
 	'lectionary.slot.sequence': 'സീക്വൻസ്',
 	'lectionary.or': 'അല്ലെങ്കിൽ',
-	'lectionary.notScripture': 'വിശുദ്ധ ഗ്രന്ഥഭാഗമല്ല',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'ഈ വായനകളെക്കുറിച്ച്',
 	'lectionary.caveat':

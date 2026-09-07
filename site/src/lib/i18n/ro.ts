@@ -506,7 +506,6 @@ export const ro: Dictionary = {
 	'lectionary.slot.gospel': 'Evanghelia',
 	'lectionary.slot.sequence': 'Secvența',
 	'lectionary.or': 'sau',
-	'lectionary.notScripture': 'nu este un text scripturistic',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'Despre aceste lecturi',
 	'lectionary.caveat':

@@ -534,7 +534,6 @@ export const la: Dictionary = {
 	'lectionary.slot.gospel': 'Evangelium',
 	'lectionary.slot.sequence': 'Sequentia',
 	'lectionary.or': 'vel',
-	'lectionary.notScripture': 'non ex Sacra Scriptura',
 	'lectionary.cf': 'Cf.',
 	'lectionary.about': 'De his lectionibus',
 	'lectionary.caveat':

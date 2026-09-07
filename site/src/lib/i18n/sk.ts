@@ -523,7 +523,6 @@ export const sk: Dictionary = {
 	'lectionary.slot.gospel': 'Evanjelium',
 	'lectionary.slot.sequence': 'Sekvencia',
 	'lectionary.or': 'alebo',
-	'lectionary.notScripture': 'nie je biblický text',
 	'lectionary.cf': 'Porov.',
 	'lectionary.about': 'O týchto čítaniach',
 	'lectionary.caveat':

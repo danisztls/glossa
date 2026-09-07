@@ -495,7 +495,6 @@ export const ja: Dictionary = {
 	'lectionary.slot.gospel': '福音朗読',
 	'lectionary.slot.sequence': '続唱',
 	'lectionary.or': 'または',
-	'lectionary.notScripture': '聖書本文ではありません',
 	'lectionary.cf': '参照',
 	'lectionary.about': 'この朗読について',
 	'lectionary.caveat':

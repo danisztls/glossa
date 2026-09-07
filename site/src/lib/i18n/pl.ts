@@ -500,7 +500,6 @@ export const pl: Dictionary = {
 	'lectionary.slot.gospel': 'Ewangelia',
 	'lectionary.slot.sequence': 'Sekwencja',
 	'lectionary.or': 'lub',
-	'lectionary.notScripture': 'nie jest tekstem biblijnym',
 	'lectionary.cf': 'Por.',
 	'lectionary.about': 'O tych czytaniach',
 	'lectionary.caveat':

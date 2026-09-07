@@ -1043,7 +1043,20 @@ export const en: Dictionary = {
 	'lectionary.slot.gospel': 'Gospel',
 	'lectionary.slot.sequence': 'Sequence',
 	'lectionary.or': 'or',
-	'lectionary.notScripture': 'not a scriptural text',
+	// A slot whose text this site does not hold: the source printed an antiphon
+	// or a sequence and NO address for it, so there is nothing to resolve and
+	// the words are the lectionary's own.
+	//
+	// IT SAYS WHAT IS MISSING AND NOT WHAT THE TEXT IS. It read `not a
+	// scriptural text` until 2026-09-07, which asserted something about the
+	// text on evidence that was only about the SOURCE — and was over-strong for
+	// a verse like "The seed is the word of God, Christ is the sower", which
+	// USCCB prints with no address because it is composed rather than quoted.
+	// The key was renamed rather than reworded, so that thirty-nine
+	// translations of the old claim could not go on making it.
+	// `bible.noteMissing` and `ccc.noParagraphNumber` are the same sentence
+	// about other absences.
+	'lectionary.textMissing': 'Not in this corpus',
 	// The word the source puts before a passage it points at rather than
 	// appoints — USCCB writes both "See" and "Cf." and this is what both
 	// become, so a citation is not half in the reader's language.

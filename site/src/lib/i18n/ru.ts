@@ -502,7 +502,6 @@ export const ru: Dictionary = {
 	'lectionary.slot.gospel': 'Евангелие',
 	'lectionary.slot.sequence': 'Секвенция',
 	'lectionary.or': 'или',
-	'lectionary.notScripture': 'не текст из Писания',
 	'lectionary.cf': 'Ср.',
 	'lectionary.about': 'Об этих чтениях',
 	'lectionary.caveat':

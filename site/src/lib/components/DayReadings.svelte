@@ -34,11 +34,13 @@
 	 * everywhere else the citation is a quotation of the work being read. Here
 	 * it is an address, and an address has no language.
 	 *
-	 * A PERICOPE WITH NO CITATION IS PRINTED AS ITS NAME AND NOTHING ELSE.
-	 * Christmas Day's acclamation and the Easter sequences are not Scripture,
-	 * so the source prints no address for them; showing an empty link, or
-	 * dropping the row, would each say something false — that the site lost a
-	 * citation, or that the Mass has no sequence.
+	 * A PERICOPE WITH NO CITATION KEEPS ITS ROW AND SAYS WHAT IS MISSING.
+	 * Christmas Day's acclamation and the Easter sequences are printed by the
+	 * source with their words and no address, so there is nothing to resolve and
+	 * the words are the lectionary's own; showing an empty link, or dropping the
+	 * row, would each say something false — that the site lost a citation, or
+	 * that the Mass has no sequence. `lectionary.textMissing` argues why the
+	 * line names the absence rather than the text.
 	 */
 	import { content } from '$lib/content.svelte';
 	import { AnchoredPanel } from '$lib/floating.svelte';
@@ -147,8 +149,11 @@
 									</span>
 								{/each}
 							{:else}
-								<!-- No address because the text is not Scripture. -->
-								<span class="unscriptured">{t('lectionary.notScripture')}</span>
+								<!-- The source printed an antiphon or a sequence and no address
+								     for it, so there is nothing to resolve and the words are the
+								     lectionary's own. What is said is what is MISSING, not what
+								     the text is — `lectionary.textMissing` has the argument. -->
+								<span class="text-missing">{t('lectionary.textMissing')}</span>
 							{/if}
 						</dd>
 					</div>
@@ -246,7 +251,7 @@
 		font-style: italic;
 		margin: 0 0.15rem 0 0.35rem;
 	}
-	.unscriptured {
+	.text-missing {
 		color: var(--color-text-muted);
 		font-style: italic;
 	}
@@ -280,7 +285,7 @@
 	 * it was the one thing on the card aligned to nothing.
 	 */
 	.read-on {
-		margin: 0.7rem 0 0;
+		margin: 0.35rem 0 0;
 	}
 	.read-link {
 		color: var(--color-link);

@@ -358,20 +358,34 @@ change with `reference-coverage`'s baseline attached to it and not a patch on
 the way past. The fourth is `verseExtent` refusing to express a range that
 straddles a Vulgate psalm split as one span, which is correct and stays.
 
-### 8. The psalm has no response, and the reference for one is already on the page
+### 8. Three slots the site cannot fill, and the line that divides them
 
-The site prints which verses of the psalm are sung and not the RESPONSE sung
-between them — the half of the responsorial psalm a congregation actually says.
-Nothing about it is captured today: `parse_day` reads each slot's
-`<div class="address">` and nothing of the `content-body` beside it, so the
-marker is discarded with the text it introduces.
+The psalm's RESPONSE, the uncited gospel ACCLAMATIONS and the SEQUENCES are the
+three things a reader misses on a page of this day's liturgy. All three are on
+the source page and none of them is captured: `parse_day` reads each slot's
+`<div class="address">` and nothing of the `content-body` beside it, so
+everything but a citation is discarded at the parse.
 
-**The wording is the NAB's and must stay in `raw/`; the reference is a fact and
-need not.** USCCB prints the response with its own locus in parentheses —
+**THE LINE THAT DIVIDES THEM IS ADDRESS FROM TEXT, AND IT DECIDES EVERYTHING
+ELSE.** An address is a fact and has no language: this site resolves one into
+whichever Bible edition the reader has open, which is the whole of what
+`/calendarium/liturgia` does. A text is USCCB's, in English, and capturing it
+would put English words on a site whose interface is in thirty-seven languages
+and whose Bibles are in ten — under a heading, a date and a day's name that
+were all the reader's own. That is the same failure `cite.ts` was written
+against, one layer down, and it is on top of the rights problem this file opens
+with: the words are the lectionary's translation, which is exactly what stays
+in `raw/`.
+
+So the three are not one gap but two, and only one of them is cheap.
+
+#### The response HAS an address
+
+USCCB prints it with its own locus in parentheses —
 `R. (2) O Lord, hear my prayer, and let my cry come to you.` — so what is
-missing is an address this site resolves like any other, not a text it may not
-reproduce. Measured **2026-09-07** over the 907 psalm slots in the cache: **885
-carry a parenthesised reference** and 22 print the response with none.
+missing is an address like any other. Measured **2026-09-07** over the 907
+psalm slots in the cache: **885 carry a parenthesised reference** and 22 print
+the response with none.
 
 | Shape                             | Count | Example                      |
 | --------------------------------- | ----- | ---------------------------- |
@@ -385,21 +399,54 @@ carry a parenthesised reference** and 22 print the response with none.
 SITE makes.** `(2)` under `Psalm 102:2-3, 16-18, 19-21` means Ps 102:2; the
 corpus would store the parenthesised string exactly as printed and the
 composition would happen where every other citation is composed. The rule the
-scraper would follow is the one it already follows everywhere: record what is
-there, infer nothing.
+scraper follows is the one it follows everywhere: record what is there, infer
+nothing.
 
-**What it would cost**, if it is taken up: a second capture group in `_SLOT`,
-an offline re-parse (`--years 2026-2028 --offline`, no crawl — `raw/` holds
-every page), a `response` field carried through `scripts/build-lectionary.mjs`
-into `table.json`, and one row per psalm on both surfaces.
+**What it would cost**: a second capture group in `_SLOT`, an offline re-parse
+(`--years 2026-2028 --offline`, no crawl — `raw/` holds every page), a
+`response` field carried through `scripts/build-lectionary.mjs` into
+`table.json`, and one row per psalm on both surfaces.
 
-**Two things it would not fix.** The `and`-chained and some `see`/`cf.` forms
+**What it would still not give.** The `and`-chained and some `see`/`cf.` forms
 land on exactly the two grammar shapes §7 measures, so a share of responses
 would show a citation and no text. And a response rendered in the reader's own
 edition diverges from the sung words further than a reading does — a response is
 a chant text tuned to be repeatable, and `Psalm 102:2` in the Douay is not the
 line anybody answers with. That is the same trade the readings already make,
 made somewhere it shows more.
+
+#### The acclamation and the sequence have only TEXT
+
+The 44 acclamations and 5 sequences that print `Not in this corpus` — of 526
+and 13 slots respectively — are not a capture failure. USCCB gives them no
+address because there is none to give: the words are the Missal's own composed
+antiphons rather than pericopes, and its markup says so in as many words, the
+`<a href>` reading `route?<nolink>`. What stands there is
+
+- Christmas Day: _A holy day has dawned upon us. Come, you nations, and adore
+  the Lord._
+- an Advent weekday: _Come, Lord, bring us your peace, that we may rejoice
+  before you with a perfect heart._
+- Lent: _The seed is the word of God, Christ is the sower; all who come to him
+  will live for ever._
+- 28 October, under the source's own heading `Alleluia See Te Deum`: the Te
+  Deum.
+
+**Capturing any of it is capturing English, and that is the whole objection.**
+There is no address to resolve, so there is no version of this that reaches a
+reader in their own language — a German or Malagasy reader would meet one
+English paragraph in the middle of a page otherwise wholly theirs. The
+alternative is a translation this project would be making up, which is a thing
+it does not do to a liturgical text.
+
+**The five uncaptured sequences are a smaller case inside the same one.** Eight
+of the thirteen already carry something: the source prints the sequence's NAME
+where a citation goes, so `Victimae paschali laudes` and `Lauda Sion` reach
+`table.json` in the `cite` field and render as the plain text they are. The
+five that print nothing at all are the ones USCCB heads `Sequence` with no name
+after it. Filling those five is a name apiece, in Latin, which no language has
+to translate — the one piece of this section that could be done without going
+English-only, and worth doing on its own if it is ever done at all.
 
 ## Running it
 

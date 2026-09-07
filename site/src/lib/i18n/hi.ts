@@ -536,7 +536,6 @@ export const hi: Dictionary = {
 	'lectionary.slot.gospel': 'सुसमाचार',
 	'lectionary.slot.sequence': 'अनुक्रम',
 	'lectionary.or': 'अथवा',
-	'lectionary.notScripture': 'धर्मग्रंथ का पाठ नहीं',
 	'lectionary.cf': 'तु.',
 	'lectionary.about': 'इन पाठों के विषय में',
 	'lectionary.caveat':

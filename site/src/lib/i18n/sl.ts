@@ -503,7 +503,6 @@ export const sl: Dictionary = {
 	'lectionary.slot.gospel': 'Evangelij',
 	'lectionary.slot.sequence': 'Sekvenca',
 	'lectionary.or': 'ali',
-	'lectionary.notScripture': 'ni svetopisemsko besedilo',
 	'lectionary.cf': 'Prim.',
 	'lectionary.about': 'O teh berilih',
 	'lectionary.caveat':
