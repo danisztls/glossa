@@ -164,7 +164,6 @@ from common import (  # noqa: E402
     authored_root,
     binary_identity,
     build_root,
-    corpus_dir,
     oracles_root,
     raw_root,
 )
@@ -182,7 +181,16 @@ CIC_LANGS = ",".join(sorted(C.EDITIONS))
 #: corpus's works still lists only works. Deleting `build/` does not delete it,
 #: which is why the `outputs` fingerprint exists: the record then describes
 #: work directories that are gone, and every stage runs.
-STATE_PATH = corpus_dir() / ".rebuild-state.json"
+#:
+#: NAMED AFTER THE BUILD DIRECTORY, because `$GLOSSA_BUILD_DIR` lets two
+#: worktrees point at two builds and a shared state file would make
+#: `--changed-only` lie about the one it was not written for -- the failure
+#: this record exists to prevent, told with a citation. Sibling build
+#: directories can share a parent (`/scratch/build-a`, `/scratch/build-b`)
+#: where their own paths cannot collide, so the name has to carry which.
+#: It was `.rebuild-state.json` until 2026-09-07; the rename costs one full
+#: rebuild, once, which is what losing this file has always cost.
+STATE_PATH = build_root().parent / f".{build_root().name}-state.json"
 
 STATE_COMMENT = [
     "What each stage's inputs looked like the last time it ran and exited 0.",

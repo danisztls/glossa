@@ -60,6 +60,14 @@ correction. So check for a running `rebuild.py` (`pgrep -f pipeline/rebuild.py`,
 sandbox off) before the re-parse, verify _after_ the sync, and expect the revert
 until the fix is on the branch other sessions build from.
 
+**`GLOSSA_BUILD_DIR` ends that, at 781 MB and one rebuild per worktree.** It
+moves `build/` alone -- `raw/` stays shared, which is the whole reason it is
+not `CORPUS_DIR` -- and `rebuild.py`'s state file follows it, named after the
+build directory so two worktrees cannot share one record and have
+`--changed-only` lie. Set it for both halves or neither: parsing into one
+directory and syncing from another is silent. What it costs is the visibility
+above -- your branch stops seeing what other branches parsed.
+
 **The second tell is a coverage fall in a family your branch never touched.** A
 full rebuild from a worktree twelve commits behind main re-parsed the corpus
 with the older `vatican_docs.py`, and the sync refused the build over
@@ -95,7 +103,8 @@ comparison judges it.
 **Resolve the build path through `common.build_root()`, never by hand.** It
 takes an optional corpus argument for callers handed one (`audit.py`,
 `census.py`, `apply_sweep.py`). The site's single construction is `buildSrc` in
-`scripts/sync-corpus.mjs`.
+`scripts/sync-corpus.mjs`. Both read `$GLOSSA_BUILD_DIR`, and a hand-built
+`corpus / "build"` reads neither.
 
 ## The scrapers' layout
 

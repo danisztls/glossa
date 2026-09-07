@@ -24,6 +24,11 @@ scraper's `main()` and dies with the path it tried — every scraper creates its
 output with `parents=True` and would otherwise write a phantom corpus somewhere
 nobody looks. The site warns and falls back to fixtures.
 
+**`GLOSSA_BUILD_DIR` moves `build/` alone**, for a worktree that wants its own
+parsed output while still reading one `raw/`. Both halves honour it and both
+must see the same value, or a worktree parses into one directory and syncs from
+another.
+
 ### Four directories, and only one is safe to delete
 
 | Path        | What                                                                                                                                       | Rule                        |
@@ -47,9 +52,11 @@ made one**, because the curation reads its witnesses out of `build/`. Run in the
 ordinary order every prayer would agree with itself and the check would pass for
 the worst possible reason.
 
-**`build/` is shared by every worktree**, so it may hold output another
-session's branch wrote. The site's sync excludes and warns about work types it
-does not know; their presence is not corruption.
+**`build/` is shared by every worktree unless `GLOSSA_BUILD_DIR` says
+otherwise**, so it may hold output another session's branch wrote. The site's
+sync excludes and warns about work types it does not know; their presence is
+not corruption. Sharing costs 781 MB and one ~19s rebuild to end, and buys
+cross-branch visibility that is sometimes what you want.
 
 ### Output regenerable only from a previous copy of itself is not regenerable
 

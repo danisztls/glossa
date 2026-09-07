@@ -463,7 +463,25 @@ function compactRun(nums) {
 	return nums.length;
 }
 
-const buildSrc = path.join(corpusDir, 'build');
+/**
+ * The parsed output this run reads — `<corpus>/build`, or `$GLOSSA_BUILD_DIR`.
+ *
+ * The override MOVES ONLY THIS, not `corpusDir`, and the split is the point.
+ * `build/` is the one of the corpus's four directories that is derived, cheap
+ * and safe to delete, so it is the only one a worktree has any reason to keep
+ * to itself; `raw/` is 2.7 GB of fetches nobody wants a second copy of, and
+ * `authored/`/`oracles/` are tracked. Pointing `CORPUS_DIR` at a private
+ * directory to get a private build is therefore the wrong instrument — it
+ * yields a second empty corpus, which this script reads as no corpus at all.
+ *
+ * Spelled the same way as the pipeline's `$GLOSSA_BUILD_DIR`
+ * (`common/paths.py:build_root`), for `CORPUS_DIR`'s reason: one exported
+ * variable has to move both halves, or a worktree parses into one directory
+ * and syncs from another.
+ */
+const buildSrc = process.env.GLOSSA_BUILD_DIR
+	? path.resolve(process.env.GLOSSA_BUILD_DIR)
+	: path.join(corpusDir, 'build');
 
 /**
  * The inputs this run reads and the outputs it writes, fingerprinted. See
@@ -510,7 +528,13 @@ function syncFingerprint() {
 			siteRoot
 		),
 		ledger: contentDigest([lastmodPath], siteRoot),
-		corpus: treeDigest([buildSrc], corpusDir),
+		// Based on `buildSrc` rather than `corpusDir`: under
+		// `$GLOSSA_BUILD_DIR` the build is not inside the corpus at all, and
+		// relative paths out of it would fold `../..` into every key. Keyed on
+		// the tree's own root the digest says the same thing wherever the tree
+		// sits, which is what makes two worktrees holding identical builds
+		// agree rather than each forcing the other's next run.
+		corpus: treeDigest([buildSrc], buildSrc),
 		outputs: treeDigest([destDir, ...derivedFiles], siteRoot)
 	};
 }
@@ -629,7 +653,12 @@ if (!existsSync(buildSrc)) {
 	console.warn(
 		`[sync-corpus] No corpus found at ${buildSrc} -- corpus.ts will fall back to its bundled ` +
 			`fixtures. The corpus is a separate, private repository (pipeline/docs/corpus.md, ` +
-			`2026-08-23): clone it beside this one as glossa-corpus/, or set CORPUS_DIR.`
+			`2026-08-23): clone it beside this one as glossa-corpus/, or set CORPUS_DIR. ` +
+			(process.env.GLOSSA_BUILD_DIR
+				? `GLOSSA_BUILD_DIR is set, so this path is its value and not the corpus at ` +
+					`${corpusDir}; a worktree's own build has to be parsed before it can be synced ` +
+					`(pipeline/rebuild.py).`
+				: `A worktree with its own build sets GLOSSA_BUILD_DIR.`)
 	);
 	process.exit(0);
 }
@@ -3336,6 +3365,28 @@ const lastmod = resolveLastmod({
 	 */
 	const held = Object.keys(previousLedger).length;
 	const lost = held === 0 ? 0 : removed / held;
+	/*
+	 * AND ARRIVAL NEEDS ONE TOO, against a ledger that already holds something.
+	 *
+	 * The two ceilings above both watch a single run. Neither can see the step
+	 * that happens BETWEEN two runs, in git: a merge, a reset or a checkout
+	 * that resolves this file by taking one side whole. Entries the other side
+	 * held are then simply gone, no sync ever counted them as withdrawn, and
+	 * the next ordinary run finds them `added` -- which the `changed` ceiling
+	 * does not measure and the `withdrawn` one never saw.
+	 *
+	 * They are then stamped TODAY, because seeding is inert: `build/` is
+	 * untracked in the corpus, so `corpusTracksBuild()` is false and
+	 * `resolveLastmod` falls through `seed ?? today` for every one of them.
+	 * The result is the 2026-08-28 shape reached by a different road, and it
+	 * is the road `$GLOSSA_BUILD_DIR` opens -- while every worktree synced
+	 * from one shared build the two ledgers held the same addresses and
+	 * differed only in dates, so taking a side whole was nearly free.
+	 *
+	 * A ledger that holds nothing is the first run and adds everything, which
+	 * is the seeding case and must stay free.
+	 */
+	const arrived = held === 0 ? 0 : added / Math.max(total, 1);
 	const ceiling = `${(CHANGE_CEILING * 100).toFixed(0)}%`;
 	const refusals = [];
 	if (share > CHANGE_CEILING) {
@@ -3343,6 +3394,13 @@ const lastmod = resolveLastmod({
 	}
 	if (lost > CHANGE_CEILING) {
 		refusals.push(`${removed} of ${held} ledger addresses withdrew (${(lost * 100).toFixed(1)}%)`);
+	}
+	if (arrived > CHANGE_CEILING) {
+		refusals.push(
+			`${added} of ${total} addresses are new to a ledger holding ${held} ` +
+				`(${(arrived * 100).toFixed(1)}%) -- a resolved merge that took one side whole ` +
+				`loses the other's entries, and every lost entry is re-dated today`
+		);
 	}
 	if (refusals.length > 0 && !process.argv.includes('--accept-lastmod')) {
 		// Not a warning. A sitemap that claims a quarter of the corpus changed

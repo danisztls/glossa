@@ -89,11 +89,16 @@ export const LEDGER_VERSION = 2;
 
 /**
  * The share of already-known addresses that may change in one build before this
- * refuses to write — and, applied a second time by `sync-corpus.mjs`, the share
- * of the ledger's own addresses that may WITHDRAW. That second use is not
- * symmetry for its own sake: a run that loads no corpus at all changes nothing
- * and withdraws everything, so the first test passes it and only the second
- * stops it.
+ * refuses to write. `sync-corpus.mjs` applies it to two more shares, and
+ * neither is symmetry for its own sake — each names a run the others pass:
+ *
+ *   - WITHDRAWN, against what the ledger held. A run that loads no corpus at
+ *     all changes nothing and withdraws everything, so the first test passes
+ *     it and only this one stops it.
+ *   - NEW, against a ledger that already holds something. Entries lost in git
+ *     rather than in a run — a merge resolved by taking one side whole — are
+ *     withdrawn by no sync and arrive at the next one as additions, which the
+ *     first test does not measure and the second never saw.
  *
  * Corpus work moves a handful of addresses; a re-parse of one work moves that
  * work's. What no legitimate change does is move a quarter of the corpus at
