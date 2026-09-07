@@ -198,6 +198,13 @@ pipeline/scrapers/
   - **A `[9-14]` on an entry is an annotation, not a title.** It drops the fuzzy
     match below threshold exactly where outline and body also disagree, and the
     entry then nests one tier too deep.
+- **A contents list is printed as a table, and `drop_table_of_contents` may
+  only drop what looks like one.** Its entries stand next to each other and
+  each is vouched for by a heading the document prints in its place — which is
+  what separates a trailing outline from `dei-verbum.de`'s endnote groups
+  headed `Kapitel 2:` .. `Kapitel 6:`, five duplicates of the body's own
+  chapters that took their notes with them. Its CAPTION is the exception and
+  needs neither test: measured, no work in the corpus has one inside its body.
 - **`--slugs` naming only exhortations used to parse nothing and exit 0**
   (`run_phase2` `continue`d past the whole iteration when no encyclicals
   survived the filter). It is the recommended way to check a parser fix on one

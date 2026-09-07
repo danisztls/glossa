@@ -3615,6 +3615,22 @@ _TOC_TITLE_WORDS = frozenset(
     }
 )
 
+# The same words plus the five an UNLINKED outline turned out to print, read
+# off the 46 works whose caption stood as a structure node
+# (`drop_table_of_contents`, which is the only caller). Kept apart from the
+# table above rather than folded into it: that one is closed against a
+# measurement over the 81 pages carrying a LINKED outline, and those pages do
+# not print these -- widening it moves `toc_link_span` and
+# `extract_toc_outline` too, which is a different claim and wants its own
+# measurement.
+_TOC_CAPTION_WORDS = _TOC_TITLE_WORDS | {
+    "contents",
+    "sommario",
+    "sumário",
+    "obsah",
+    "kazalo",
+}
+
 
 def is_toc_title(text: str) -> bool:
     """Whether a printed line is the heading a page puts over its own table
@@ -3627,6 +3643,12 @@ def is_toc_title(text: str) -> bool:
     heading of its own -- `verbum-domini.en` opened with a level-3 node
     called INDEX, `sacramentum-caritatis.it` with a level-4 INDICE."""
     return _norm_heading(text).strip(" .:") in _TOC_TITLE_WORDS
+
+
+def _is_toc_caption(text: str) -> bool:
+    """`is_toc_title` widened to the unlinked outlines -- see
+    `_TOC_CAPTION_WORDS`."""
+    return _norm_heading(text).strip(" .:") in _TOC_CAPTION_WORDS
 
 
 def _in_blockquote(body_html: str, span_start: int, pos: int) -> bool:
@@ -4134,6 +4156,14 @@ def apply_toc_outline(
     return levels, promoted
 
 
+def _drop(blocks: list[Block], doomed: set[int]) -> list[str]:
+    """Remove those blocks and return what they said, in printed order."""
+    dropped = [blocks[i].text for i in sorted(doomed)]
+    for i in sorted(doomed, reverse=True):
+        del blocks[i]
+    return dropped
+
+
 def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     """Remove the page's own table of contents from the block stream, in
     place, and return the texts dropped (for the run summary -- this is
@@ -4200,53 +4230,114 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
         repeated heading is a coincidence a real document can easily produce
         (per-part introductions, a repeated ARTICLE label); a whole run of
         them repeating in order is a table of contents.
+
+    A TABLE OF CONTENTS IS NOT ALWAYS AT THE FRONT. The rule above ran over
+    the pre-body blocks alone, and 15 works print their outline AFTER the
+    text -- `ecclesia-in-asia.en` prints a second full index below the papal
+    signature, and all ten of its captions stood as top-level nodes with no
+    address. So the same rule runs over a second window, the blocks after the
+    LAST numbered paragraph, matched against the headings of the body above
+    them; the two windows are counted apart, so a trailing outline needs its
+    own two duplicates and cannot be dropped on the strength of the front
+    one. Everything between the two windows is the body and is never a
+    candidate, which is the positional guard doing the same work it does for
+    a signature in `drop_page_furniture`.
+
+    THE CAPTION OVER THE LIST is dropped on its own text, needing neither a
+    window nor a duplicate: `INDEX`, `Sommaire`, `Spis treści` name the table
+    rather than repeating anything in it, so no rule above can ever see one --
+    and it survived in 46 works, where, being an unpopped heading, it adopted
+    the document's real opening divisions as its children. What licenses so
+    flat a rule is that of those 46 not one sits inside a body, and four of
+    them number no paragraph anywhere, so a window would have missed them.
     """
     first_numbered: int | None = None
+    last_numbered = -1
     for idx, blk in enumerate(blocks):
         if not blk.is_heading and match_para_num(blk.raw):
-            first_numbered = idx
-            break
+            if first_numbered is None:
+                first_numbered = idx
+            last_numbered = idx
+    # The caption is decided before that guard and without a window, because
+    # neither serves it: MEASURED over the 46 works that carried one as a
+    # structure node, not one sits inside a body, and four of them number no
+    # paragraph anywhere -- `samaritanus-bonus.pl` prints `Spis treści` and
+    # nothing the guard below can find. A block whose whole text is the word
+    # a page puts over its own contents list is not a section of it.
+    doomed = {i for i, blk in enumerate(blocks) if _is_toc_caption(blk.text)}
+
     if first_numbered is None:
-        # No numbered section anywhere -- an unnumbered document (or a
-        # parse this function has no business second-guessing). Leave it be.
-        return []
+        # No numbered section anywhere -- an unnumbered document (or a parse
+        # this function has no business second-guessing). Nothing but the
+        # caption above is safe to decide here.
+        return _drop(blocks, doomed)
 
     heading_idx = [i for i, blk in enumerate(blocks) if blk.is_heading]
-    # Every pre-body block, not only the ones the walker already reads as
-    # headings: see the docstring's note on why a printed TOC is only
-    # half bold.
-    candidates = [i for i in range(first_numbered) if blocks[i].text.strip()]
-    if not candidates:
-        return []
 
-    duplicated: list[int] = []
-    for i in candidates:
-        sig_i = match_label(blocks[i].text)
-        norm_i = _norm_heading(blocks[i].text)
-        for j in heading_idx:
-            if j <= i:
-                continue
-            if sig_i is not None:
-                # Labelled: identity is (kind, number), subtitle ignored.
-                if match_label(blocks[j].text) == sig_i:
-                    duplicated.append(i)
+    def duplicated_in(candidates: list[int], *, trailing: bool) -> list[int]:
+        """Which candidates a heading on the body side of them repeats."""
+        found: list[int] = []
+        for i in candidates:
+            sig_i = match_label(blocks[i].text)
+            norm_i = _norm_heading(blocks[i].text)
+            for j in heading_idx:
+                if j > last_numbered:
+                    # The witness has to be a heading the document prints in
+                    # its place, so one outline cannot vouch for the other:
+                    # everything past the last numbered paragraph is either
+                    # the trailing outline itself or the matter around it.
+                    continue
+                if not trailing and j <= i:
+                    continue
+                if sig_i is not None:
+                    # Labelled: identity is (kind, number), subtitle ignored.
+                    if match_label(blocks[j].text) == sig_i:
+                        found.append(i)
+                        break
+                    continue
+                # Unlabelled: the body heading is a whole-word prefix of the
+                # TOC entry. The `+ " "` is what keeps a short later heading
+                # from prefix-matching an unrelated longer one.
+                norm_j = _norm_heading(blocks[j].text)
+                if norm_j and (norm_i == norm_j or norm_i.startswith(norm_j + " ")):
+                    found.append(i)
                     break
+        return found if len(found) >= 2 else []
+
+    def printed_together(candidates: list[int], matched: list[int]) -> set[int]:
+        """The matched blocks that a printed list would have put in one run.
+
+        THE TRAILING WINDOW NEEDS THIS AND THE FRONT ONE DOES NOT, because
+        what follows a document is not only its outline. `dei-verbum.de`
+        prints its endnotes in six groups headed `Kapitel 2:` .. `Kapitel
+        6:`, and to `match_label` those are the body's own six chapters
+        repeated -- five duplicates, a clean pass of the rule above, and the
+        notes under them go out with the headings. A table of contents is
+        printed as a table: its entries are consecutive, and a group heading
+        with the notes it heads underneath is not. So only a run of
+        candidates standing next to each other (a caption is part of its own
+        run) can be dropped, and it still needs its own two duplicates."""
+        keep = set(matched)
+        printed: set[int] = set()
+        run: list[int] = []
+        for i in (*candidates, None):
+            if i is not None and (i in keep or _is_toc_caption(blocks[i].text)):
+                run.append(i)
                 continue
-            # Unlabelled: the body heading is a whole-word prefix of the
-            # TOC entry. The `+ " "` is what keeps a short later heading
-            # from prefix-matching an unrelated longer one.
-            norm_j = _norm_heading(blocks[j].text)
-            if norm_j and (norm_i == norm_j or norm_i.startswith(norm_j + " ")):
-                duplicated.append(i)
-                break
+            if sum(1 for j in run if j in keep) >= 2:
+                printed |= set(run)
+            run = []
+        return printed
 
-    if len(duplicated) < 2:
-        return []
+    # Every block outside the body, not only the ones the walker already
+    # reads as headings: see the docstring's note on why a printed TOC is
+    # only half bold.
+    front = [i for i in range(first_numbered) if blocks[i].text.strip()]
+    back = [i for i in range(last_numbered + 1, len(blocks)) if blocks[i].text.strip()]
 
-    dropped = [blocks[i].text for i in duplicated]
-    for i in reversed(duplicated):
-        del blocks[i]
-    return dropped
+    doomed |= set(duplicated_in(front, trailing=False))
+    doomed |= printed_together(back, duplicated_in(back, trailing=True))
+    return _drop(blocks, doomed)
 
 
 #: The single letters a division in this corpus is ever numbered with.
@@ -4886,22 +4977,51 @@ _LANG_BAR_ONE_RE = re.compile(
 _LANG_BAR_RE = re.compile(
     rf"^\[?\s*{_LANG_CODE}\s*(?:{_LANG_BAR_SEP}\s*{_LANG_CODE}\s*)+\]?$"
 )
+#: The regnal name a pope signs with, in every spelling this corpus prints.
+#:
+#: THE LIST IS THE WHOLE OF THE RULE, so it is written from what the corpus
+#: shows rather than from who the popes were. It held eighteen Latin, English
+#: and Portuguese spellings and dropped 153 signatures on them; the 226 that
+#: survived were the same handful of men signing in Italian, Spanish, French,
+#: German, Polish, Hungarian, Croatian, Finnish, Swahili and Vietnamese --
+#: `LEONE PP. XIII` alone 53 times. A signature is not a heading in any
+#: language, and reading English is what made it look like one.
+_PAPAL_NAME = (
+    r"PIUS|PIO|PIE|PIJ"
+    r"|LEONE|LEON|LEAO|LEO"
+    r"|IOANNES|JOANNES|JOHANNES|JOHN|JUAN|JEAN|GIOVANNI|GIOAN|JOAO|JAN|IVAN"
+    r"|YOHANE|JANOS"
+    r"|PAULUS|PAULO|PAOLO|PABLO|PAVAO|PAAVALI|PHAOLO|PAUL|PAWE[LŁ]|PAL"
+    r"|BENEDICTUS|BENEDICT[OU]?|BENEDETTO|BENEDIKTO|BENEDIKT|BENEDEK|BENOIT"
+    r"|BENTO|BENE[ĐD]ICTO"
+    r"|FRANCISCUS|FRANCESCO|FRANCISCO|FRANCOIS|FRANZISKUS|FRANCISZEK"
+    r"|FRANCIS|FRANJO|FERENC"
+    r"|GREGORIUS|GREGORIO|GREGOIRE|GREGORY"
+)
+#: The word for the office, which the line may carry instead of or beside the
+#: numeral. `fold` has stripped the accents by here but not the Polish z with
+#: a dot, which is a letter of its own and decomposes to nothing.
+_PAPAL_STYLE = r"PAPA|PAPST|POPE|PAPE|PAPIE[ZŻ]"
+#: `PP.` for *Papa Pontifex*, printed with every arrangement of its spaces and
+#: full stops the typesetters managed: `PP. XII`, `PP.XI`, `PP . X`,
+#: `P. P. VI`.
+_PAPAL_PP = r"P\s*\.?\s*P\s*\.?"
+_PAPAL_NAMES = rf"(?:{_PAPAL_NAME})(?:[\s-]+(?:{_PAPAL_NAME}))?"
 _PAPAL_SIGNATURE_RE = re.compile(
-    r"^(?:PAPA\s+)?"
-    r"(?:PIUS|PIO|LEO|LEAO|IOANNES|JOANNES|JOAO|JOHN|PAULUS|PAUL|PAULO"
-    r"|BENEDICTUS|BENEDICT|BENTO|FRANCISCUS|FRANCIS|GREGORIUS|GREGORY)"
-    r"(?:\s+(?:PAULUS|PAULO|PAUL|XXIII))?"
-    # `PP.` sits on either side of the numeral. `PIO PP. XII` is the common
-    # form; divini-redemptoris.pt signs `PIO XI PP.`, which the fixed order
-    # missed, leaving the signature in the outline as a top-level heading
-    # with nothing under it.
-    r"(?:\s+PP\.?)?"
-    r"(?:\s+[IVXLC]+)?"
-    r"(?:\s+PP\.?)?"
-    # `PAPA` may be set off by a comma, and the English mirrors write `POPE`:
-    # `LEAO XIII, PAPA` and `PIUS XII POPE` both stood as childless top-level
-    # headings until this said so.
-    r"(?:\s*,?\s+(?:PAPA|POPE))?\.?$"
+    rf"^(?:"
+    # The name first, which is how every language here prints it but one:
+    # `[PAPA] Leo [PAPA] [PP.] XIII [PP.] [, PAPA]`.
+    rf"(?:(?:{_PAPAL_STYLE})\s+)?{_PAPAL_NAMES}(?:\s+(?:{_PAPAL_STYLE}))?"
+    rf"(?:\s*{_PAPAL_PP})?\s*(?:[IVXLC]+)?(?:\s*{_PAPAL_PP})?"
+    rf"(?:\s*,?\s*(?:{_PAPAL_STYLE}))?"
+    # The numeral first, which is how Hungarian prints an ordinal before a
+    # name: `II. Janos Pal papa`, `XVI. Benedek papa`. Eighteen nodes, and
+    # the name list is what keeps this from taking `II. Az evangelizacio`.
+    rf"|(?:[IVXLC]+)\s*\.\s*{_PAPAL_NAMES}(?:\s*,?\s*(?:{_PAPAL_STYLE}))?"
+    # The office and the numeral, the name lost to the markup:
+    # `fulgens-radiatur.es` splits `PIO PAPA XII` across two blocks.
+    rf"|(?:{_PAPAL_STYLE})\s+(?:[IVXLC]+)"
+    rf")\s*\.?$"
 )
 
 
@@ -4915,7 +5035,9 @@ def drop_page_furniture(blocks: list[Block]) -> list[str]:
     `IOANNES PAULUS PP. II`, ...) and 15 copies of vatican.va's own
     language navigation bar, `[ AR - BE - CS - DE - EN - ES - ... ]`. Both
     are bold and centered, so they read as headings and surface in a
-    reader's table of contents as entries with nothing under them.
+    reader's table of contents as entries with nothing under them. That
+    signature count was 153 of 379, and the remaining 226 were the same
+    lines in languages `_PAPAL_NAME` could not spell.
 
     The signature test is POSITIONAL as well as textual: a papal name is
     dropped only after the last numbered paragraph, which is the only place

@@ -154,25 +154,49 @@ documents in the family nobody had ever checked. Ten agree with the parse and
 across the whole corpus**, because a defect seen once in a family of 1,447
 works is a lead and not a finding.
 
-**Nothing here is fixed.** Each entry names its population so the blast radius
-of a fix can be predicted before it is written.
+**Each entry names its population so the blast radius of a fix can be predicted
+before it is written**, which is the whole use of this half of the note. Four
+have since been fixed and say so in their own heading; the rest have not.
 
-## 6. The residue of §1's fix, in three shapes
+## 6. The residue of §1's fix, in three shapes — TWO FIXED
 
 §1 taught `drop_table_of_contents` to remove a pre-body heading that a later
 heading duplicates. Three things survive that rule, and each wants a different
 change:
 
-- **The caption over the list — 44 works.** `INDEX` / `ÍNDICE` / `INDICE` /
-  `INHALT` / `SPIS TREŚCI` names the table but nothing later duplicates the
-  word, so the caption stays; and being an unpopped heading it adopts the
-  document's real opening divisions as its children. 38 exhortations, 6
-  Vatican II documents, 9 languages. No encyclical.
-- **A ToC printed AFTER the body — 15 works.** The guard only considers blocks
-  before the first numbered paragraph, so a trailing contents list is never a
-  candidate. `ecclesia-in-asia.en` prints a second full index after the papal
-  signature and all ten of its captions survive as level-1 nodes with
-  `before: null`. 6 Vatican II, 5 exhortations, 4 encyclicals.
+- **The caption over the list — 44 works. FIXED.** `INDEX` / `ÍNDICE` /
+  `INDICE` / `INHALT` / `SPIS TREŚCI` names the table but nothing later
+  duplicates the word, so the caption stays; and being an unpopped heading it
+  adopts the document's real opening divisions as its children. 38
+  exhortations, 6 Vatican II documents, 9 languages. No encyclical. The
+  measurement that settled the fix is that **not one of the 46 sits inside a
+  body**, so the caption needs no window and none of the duplicate machinery:
+  it is dropped on its own text, which is what reaches the four unnumbered
+  documents (`samaritanus-bonus.pl`) the window would never have covered.
+  `_TOC_CAPTION_WORDS` is `_TOC_TITLE_WORDS` plus the five an unlinked outline
+  turned out to print, kept apart because that table is closed against a
+  measurement over LINKED outlines and widening it moves two other readers.
+- **A ToC printed AFTER the body — 15 works. FIXED, 2 left.** The guard only
+  considered blocks before the first numbered paragraph, so a trailing
+  contents list was never a candidate. `ecclesia-in-asia.en` prints a second
+  full index after the papal signature and all ten of its captions survived as
+  level-1 nodes with `before: null`. 6 Vatican II, 5 exhortations, 4
+  encyclicals. The same rule now runs over a second window — the blocks after
+  the LAST numbered paragraph, judged by the body's headings — with two
+  guards it needed and the front window does not:
+  - **The witness must be a heading printed in its place.** Neither window may
+    vouch for the other, or a front outline and a trailing one certify each
+    other and both go.
+  - **A printed table is contiguous.** `dei-verbum.de` prints its endnotes in
+    six groups headed `Kapitel 2:` .. `Kapitel 6:`, which to `match_label` are
+    the body's own six chapters repeated — five duplicates, a clean pass, and
+    the notes under them go out with the headings. A group heading with its
+    notes underneath is not a run; a contents list is.
+
+  The two left are `ecclesia-in-america.es` and `querida-amazonia.ar`, and
+  they are §2 rather than this: their bodies' sub-headings were never detected
+  at all, so the trailing outline has nothing to be a duplicate OF.
+
 - **Entries promoted to headings — 44 nodes in 6 works.** The match is on
   exact text, so an entry whose case differs from the body it points at is
   never deduped and becomes a node of its own. The signature is exact and
@@ -267,18 +291,28 @@ In the first two the document's own printed contents list is the discriminator
 
 ## 11. Smaller things, each with its population
 
-- **The papal signature as a heading — 92 works.** `PAULUS P. P. VI`,
+- **The papal signature as a heading — 92 works. FIXED.** `PAULUS P. P. VI`,
   `LEONE PP. XIII`, `JUAN PP. XXIII` print in the same
   `<p style="text-align: center;"><b>` as every chapter heading in those
   editions and become level-1 nodes with `before: null`. 87 encyclicals, 5
   exhortations, overwhelmingly it/es/la — which is why the en/pt sweeps never
-  saw it.
-- **The drop cap as a heading — 11 nodes in 5 works.** A styled first letter is
-  its own bold element: `ecclesia-in-america.en` stores a level-1 heading titled
-  `W` and then a paragraph beginning "e thank you, Lord Jesus,". Also `.fr` and
-  `.it`, plus Croatian `eccl-de-euch.hr` (5) and `ecclesia-in-europa.hr` (3),
-  where the caps sit mid-body and break a chapter opening rather than a prayer.
-  This one damages the text a reader sees.
+  saw it. `_PAPAL_SIGNATURE_RE` was eighteen Latin, English and Portuguese
+  spellings; the 226 nodes that survived it were the same handful of men
+  signing in ten more languages, so the fix is the name list read off the
+  corpus rather than off the papal succession, plus the two arrangements
+  English does not have — Hungarian's `XVI. Benedek pápa` puts the ordinal
+  first, and `P. P.` is printed with every combination of its spaces and
+  stops. One node is left, `lumen-gentium.pt`, and the positional guard is
+  why: the Fathers' subscriptions below it are numbered.
+- **The drop cap as a heading — 11 nodes in 5 works. FIXED.** A styled first
+  letter is its own bold element: `ecclesia-in-america.en` stores a level-1
+  heading titled `W` and then a paragraph beginning "e thank you, Lord Jesus,".
+  Also `.fr` and `.it`, plus Croatian `eccl-de-euch.hr` (5) and
+  `ecclesia-in-europa.hr` (3), where the caps sit mid-body and break a chapter
+  opening rather than a prayer. This one damages the text a reader sees.
+  `repair_drop_caps` gives the letter back to the word it heads;
+  `_DIVISION_LETTERS` is measured, since 129 of the 141 one-letter titles in
+  the corpus are real `I`/`V`/`X` divisions.
 - **The first of two adjacent pre-body headings swallowed — 6 works.**
   `reconciliatio-et-paenitentia.en` prints `INTRODUCTION` then `ORIGIN AND
 MEANING OF THE DOCUMENT`, both before §1; the second is kept and the first
