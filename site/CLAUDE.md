@@ -2295,10 +2295,13 @@ parses an id.
 - **The card leaves in two directions and they are drawn differently.** The
   corner's glyph (`more`) is a SIDEWAYS move — the same day on another surface,
   which is `/calendarium` from the home and liturgy pages and nothing from
-  `/calendarium` itself. The word at the foot (`read`) is DOWNWARD, into the
-  day's liturgy, and it is `LinkPreview`'s "Open" marker at the card's scale:
-  small caps in the link colour. Two glyphs in one corner were two buttons the
-  reader had to hover to tell apart, and neither said there was more to read.
+  `/calendarium` itself. **The word at the foot of the READINGS (`read`) is
+  downward**, into the passages, and it is drawn where it is because of what it
+  offers: more of that one section, not more of the card, whose other parts are
+  the day's rank, its colour and its optional memorials. `LiturgicalDayCard`
+  only forwards the prop; `DayReadings` draws it, as `LinkPreview`'s "Open"
+  marker at that list's scale. A day the lectionary cannot answer for therefore
+  shows no link, which is correct — there is nothing further to read.
   **The visible word is "Read" and the accessible name contains it** — an
   `aria-label` of "The day's liturgy" over a link reading "Read" gives voice
   control two names for one target.
@@ -2732,9 +2735,11 @@ measures what still prints no passage.
   `refAddress` degrades that to the chapter alone, which is right for an anchor
   and would be fifty verses printed where five were cited; the two verse-less
   answers are told apart by what was ASKED, not by what came back.
-- **The caveat is on the page and not behind the card's `i` glyph.** The bigger
-  the passage, the louder the qualifier: a mark a reader has to press is not
-  something saying "this is not your parish's translation".
+- **The caveat is behind the same `i` here as on the card**, and paper gets it
+  unconditionally under the list on both. One arrangement for a line that
+  qualifies something rather than saying it — `ArtFigure`'s — and a page of
+  Scripture is where a paragraph of small print over the first reading would be
+  least read, not most.
 - **It is a READING page and is laid out as one**: `.content-column` and a
   `ReadingBar`, not `.landing-column`, and the passages are `.reading-text`, so
   the face, the measure and the reader's own size setting are the ones a

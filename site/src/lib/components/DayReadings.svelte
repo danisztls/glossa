@@ -50,8 +50,25 @@
 
 	interface Props {
 		masses: MassReadings[];
+		/**
+		 * The way from this list of citations to the page that sets the passages
+		 * out, printed as a word at the foot of the list.
+		 *
+		 * IT BELONGS TO THE READINGS AND NOT TO THE CARD, which is the whole
+		 * reason it is a prop here rather than in `LiturgicalDayCard`. What it
+		 * offers is more of THIS — the same pericopes, at length — so it sits
+		 * where they end, not in a corner of a card whose other four sections are
+		 * about the day's rank, its colour and its optional memorials. It follows
+		 * from that placement that a day the lectionary cannot answer for shows no
+		 * link, which is correct: there is nothing further to read.
+		 *
+		 * `title` is the accessible name and the tooltip both; `label` is what is
+		 * printed. See `LinkPreview`'s `ref.preview.open`, whose marker this is at
+		 * this list's scale.
+		 */
+		read?: { href: string; label: string; title: string };
 	}
-	let { masses }: Props = $props();
+	let { masses, read }: Props = $props();
 
 	// Per INSTANCE, and the home page and the calendar can both be on screen
 	// with one of these each: `$props.id()` has to be a bare declaration, so it
@@ -139,6 +156,18 @@
 			</dl>
 		</div>
 	{/each}
+
+	<!-- LAST OF THE LIST, because it is what the list continues into. Printed as
+	     a word rather than drawn as a glyph — `LinkPreview`'s "Open" marker at
+	     this scale — and `title` carries the accessible name, which contains the
+	     visible word rather than replacing it. -->
+	{#if read}
+		<p class="read-on">
+			<a class="read-link" href={read.href} title={read.title} aria-label={read.title}
+				>{read.label}</a
+			>
+		</p>
+	{/if}
 
 	<!-- Paper gets it unconditionally, and under the list where it used to
 	     stand for everyone, on `ArtFigure`'s reasoning: a popover never prints
@@ -236,6 +265,37 @@
 		display: none;
 	}
 
+	/*
+	 * `LinkPreview`'s "Open" marker at this list's scale: link colour, 0.66rem,
+	 * 600, uppercased in CSS rather than in the dictionaries so a script with no
+	 * case (ar) is left alone by the property instead of having a shouting
+	 * translation written for it.
+	 *
+	 * On a row of its own at the list's end rather than floated onto a last
+	 * line, because what it follows is a `<dl>` and not a paragraph — there is
+	 * no last line for it to ride. It takes the row's end, which is the corner
+	 * the eye leaves a two-column list from.
+	 */
+	.read-on {
+		margin: 0.7rem 0 0;
+		text-align: end;
+	}
+	.read-link {
+		color: var(--color-link);
+		font-family: var(--font-sans);
+		font-size: 0.66rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.read-link:hover,
+	.read-link:focus-visible {
+		text-decoration: underline;
+		text-underline-offset: 0.25em;
+	}
+
 	@media (max-width: 26rem) {
 		/* Two columns stop helping once the label column is most of the width:
 		   the citation is the answer and gets the full measure. */
@@ -252,6 +312,12 @@
 	@media print {
 		/* The control becomes the line it opens. */
 		.about {
+			display: none;
+		}
+		/* A link is nothing on paper, and the page it leads to is this list with
+		   its passages set out — which is the page to print if that is what was
+		   wanted. */
+		.read-on {
 			display: none;
 		}
 		.caveat-print {

@@ -93,28 +93,16 @@
 		 */
 		more?: { href: string; label: string };
 		/**
-		 * The way DOWN, into the day's liturgy: a word rather than a glyph, at
-		 * the foot of the card.
+		 * The way DOWN, into the day's liturgy — handed straight to
+		 * `DayReadings`, which is where it is drawn and which owns why.
 		 *
-		 * IT IS NOT A SECOND CORNER GLYPH, and the difference between the two is
-		 * the whole reason there are two props. The corner holds the furniture —
-		 * what changes the day, and the sideways move to a page showing the same
-		 * day differently — and a reader scanning it is choosing a view. This is
-		 * the card saying there is MORE OF THIS to read, which is the last thing
-		 * on a card rather than the first, and a glyph in a row of glyphs
-		 * announced none of that: two icons in one corner are two buttons the
-		 * reader has to hover to tell apart.
-		 *
-		 * It is `LinkPreview`'s "Open" marker at the card's scale — small caps in
-		 * the link colour, floated to the end of the last line — which is
-		 * already this site's word for "the thing you are looking at continues
-		 * over here".
-		 *
-		 * `label` is what is PRINTED and `title` is the accessible name, which
-		 * is the opposite of `more` and has to be: "Read" alone tells a screen
-		 * reader nothing, and an accessible name that does not contain the
-		 * visible word breaks the label-in-name rule. So the name is the longer
-		 * sentence and the visible word is inside it.
+		 * IT IS NOT A SECOND CORNER GLYPH, and it is not the card's at all. The
+		 * corner holds the furniture — what changes the day, and the sideways
+		 * move to a page showing the same day differently — and a reader
+		 * scanning it is choosing a view. This one offers MORE OF ONE SECTION,
+		 * the readings, so it belongs at the end of that section rather than at
+		 * the foot of a card whose other parts are the day's rank, its colour
+		 * and its optional memorials.
 		 */
 		read?: { href: string; label: string; title: string };
 		/**
@@ -333,7 +321,7 @@
 	{#if showReadings && readings}
 		<!-- Above the optional memorials, because the readings are what a
 		     reader arriving by date came for, and the memorials are context. -->
-		<DayReadings masses={readings} />
+		<DayReadings masses={readings} {read} />
 	{/if}
 
 	{#if day.optional.length > 0}
@@ -370,20 +358,6 @@
 			</ul>
 		</section>
 	{/if}
-
-	<!--
-		LAST, BECAUSE IT IS WHAT COMES NEXT. Everything above is the day; this
-		says the day continues on another page, and a reader reaches it having
-		read what it is offering more of. `title` is the accessible name and the
-		tooltip both — see the prop.
-	-->
-	{#if read}
-		<p class="read-on">
-			<a class="read-link" href={read.href} title={read.title} aria-label={read.title}
-				>{read.label}</a
-			>
-		</p>
-	{/if}
 </article>
 
 <style>
@@ -391,38 +365,6 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		padding: 1rem 1.25rem;
-	}
-	/*
-	 * `LinkPreview`'s "Open" marker, at this card's scale and on a line of its
-	 * own rather than floated: there the label trails a paragraph of preview
-	 * text and lands at the end of its last line, and here what it follows is a
-	 * definition list and two optional sections — blocks, with no last line for
-	 * it to ride. So it takes the row and the row's end, which is the same
-	 * place the eye leaves the card from.
-	 *
-	 * Every value below is that marker's: link colour, 0.66rem, 600, uppercased
-	 * in CSS rather than in the dictionaries so a script with no case (ar) is
-	 * left alone by the property instead of having a shouting translation
-	 * written for it.
-	 */
-	.read-on {
-		margin: 1rem 0 0;
-		text-align: end;
-	}
-	.read-link {
-		color: var(--color-link);
-		font-family: var(--font-sans);
-		font-size: 0.66rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		text-decoration: none;
-		white-space: nowrap;
-	}
-	.read-link:hover,
-	.read-link:focus-visible {
-		text-decoration: underline;
-		text-underline-offset: 0.25em;
 	}
 	/*
 	 * THE HEADER IS ONE COLUMN AND A CORNER ON ITS FIRST LINE. The corner used

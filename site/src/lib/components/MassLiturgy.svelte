@@ -6,17 +6,17 @@
 	 * deliberately not one component: that one is a LIST OF CITATIONS on a card
 	 * that also carries the day's name, its rank and its colour, and this is the
 	 * passages themselves on a page whose whole subject they are. A single
-	 * component with a `full` flag would have been two layouts, two type scales
-	 * and two arguments about the caveat behind one boolean.
+	 * component with a `full` flag would have been two layouts and two type
+	 * scales behind one boolean.
 	 *
-	 * THE CAVEAT IS SET OUT, NOT PUT BEHIND A MARK, and that is the one place
-	 * this deliberately disagrees with the card. `DayReadings` moved it into a
-	 * popover because three lines of small print under five lines of citations
-	 * was the longest text in the block; here the block is a page of Scripture,
-	 * and a reader who has just read a first reading, a psalm and a gospel under
-	 * today's date will take them for what is read at their parish unless
-	 * something says otherwise. The bigger the page, the louder the qualifier
-	 * has to be.
+	 * THE CAVEAT IS BEHIND THE SAME `i` IT IS BEHIND ON THE CARD, and the two
+	 * surfaces agree deliberately. It is the site's one arrangement for a line
+	 * that QUALIFIES something rather than saying it — `ArtFigure`'s, and
+	 * `DayReadings`' — and a page of Scripture is where a paragraph of small
+	 * print set over the first reading would be least read, not most. Paper
+	 * still gets it unconditionally and under the list, because a popover never
+	 * prints and the printed copy is the one whose reader cannot press
+	 * anything.
 	 *
 	 * THE TEXT IS THE READER'S OWN EDITION AND CARRIES NONE OF ITS APPARATUS.
 	 * `AnnotatedText` renders a chapter's footnote marks on `/scriptura`, and
@@ -27,7 +27,9 @@
 	 */
 	import { content } from '$lib/content.svelte';
 	import { chapterVerseSep } from '$lib/citation-style';
+	import { AnchoredPanel } from '$lib/floating.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
+	import Icon from './Icon.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
 	import { localizeCite } from '$lib/lectionary/cite';
 	import { loadPassage, runIsBroken, type PassageResult, type PassageRun } from '$lib/liturgy';
@@ -39,6 +41,11 @@
 		masses: MassReadings[];
 	}
 	let { masses }: Props = $props();
+
+	// Per INSTANCE, exactly as `DayReadings` does it: `$props.id()` has to be a
+	// bare declaration, so it cannot be passed straight to the constructor.
+	const uid = $props.id();
+	const card = new AnchoredPanel(uid);
 
 	/**
 	 * The Bible edition's language and not the interface's — `DayReadings` has
@@ -109,11 +116,30 @@
 </script>
 
 <section class="mass-liturgy" aria-labelledby="liturgy-readings">
-	<h2 id="liturgy-readings">{t('lectionary.heading')}</h2>
-	<!-- `role="note"` — ARIA's own word for content ancillary to the thing it
-	     hangs off, which `DayReadings` uses for the same sentence behind its
-	     mark. Here it is simply on the page. -->
-	<p class="caveat" role="note">{t('lectionary.caveat')}</p>
+	<div class="head">
+		<h2 id="liturgy-readings">{t('lectionary.heading')}</h2>
+		<button
+			bind:this={card.trigger}
+			type="button"
+			class="menu-trigger about"
+			popovertarget={card.id}
+			aria-expanded={card.open}
+			aria-label={t('lectionary.about')}
+		>
+			<Icon name="info" class="hint" />
+		</button>
+		<!-- `role="note"` — ARIA's own word for content ancillary to the thing
+		     it hangs off, which this exactly is. Not `tooltip`, which describes
+		     its anchor and is summoned rather than asked for. -->
+		<span
+			bind:this={card.panel}
+			id={card.id}
+			popover="auto"
+			role="note"
+			ontoggle={card.onToggle}
+			class="panel-surface floating-panel caveat">{t('lectionary.caveat')}</span
+		>
+	</div>
 
 	{#each masses as mass (mass.olm)}
 		<article class="mass">
@@ -182,21 +208,51 @@
 			{/each}
 		</article>
 	{/each}
+
+	<!-- Paper gets it unconditionally and at the foot, `DayReadings`' reasoning
+	     word for word: a popover never prints — top layer, and closed besides —
+	     and this is the one copy whose reader cannot press anything.
+	     `aria-hidden` so it is not read twice. -->
+	<p class="caveat-print" aria-hidden="true">{t('lectionary.caveat')}</p>
 </section>
 
 <style>
 	.mass-liturgy {
 		margin-top: 2rem;
 	}
+	/* The heading and its mark on one line, the mark sized to the heading and
+	   not to the page — `DayReadings`' own `.head`, at this one's type size. */
+	.head {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
 	h2 {
 		margin: 0;
 		font-size: 1.05rem;
 	}
+	/* `.menu-trigger` is the site's button and this adds only its size: the
+	   header's 2.25rem square is a control in a bar, and this one stands beside
+	   the heading it qualifies. */
+	.about {
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+	/* `SiglumGloss`'s card at this one's measure: where it goes is
+	   `.floating-panel` in app.css, and what is left here is that a sentence and
+	   a half wants a narrower column than a paragraph of commentary. */
 	.caveat {
-		margin: 0.4rem 0 0;
+		max-inline-size: min(22rem, calc(100vw - 1rem));
+		padding: 0.5rem 0.7rem;
 		font-size: 0.8rem;
 		line-height: 1.5;
 		color: var(--color-text-muted);
+		overflow-wrap: break-word;
+	}
+	.caveat-print {
+		display: none;
 	}
 	.mass {
 		margin-top: 1.5rem;
@@ -273,5 +329,21 @@
 		font-size: 0.85rem;
 		font-style: italic;
 		color: var(--color-text-muted);
+	}
+
+	@media print {
+		/* The control becomes the line it opens. */
+		.about {
+			display: none;
+		}
+		.caveat-print {
+			display: block;
+			margin: 1.5rem 0 0;
+			padding-top: 0.7rem;
+			border-top: 1px solid var(--color-border);
+			font-size: 0.75rem;
+			line-height: 1.45;
+			color: var(--color-text-muted);
+		}
 	}
 </style>

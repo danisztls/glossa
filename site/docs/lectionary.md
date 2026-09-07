@@ -21,24 +21,19 @@ nothing downstream of the parse can reach it.
 sentence above by one clause: the words it prints are the reader's own Bible
 edition, which this site already serves a chapter at a time at `/scriptura`,
 reached by resolving a citation exactly as every other citation on the site is
-resolved. Nothing of the source's own text is anywhere near it. What changes
-with length is only how loudly the qualifier has to be said — see below.
+resolved. Nothing of the source's own text is anywhere near it.
 
-**On the card that sentence is behind the `i` beside the heading.** Set under
-the list it was three lines of small print below five lines of citations, on a
-card already carrying the day's name, its season, its rank and its colour — the
-longest text in the block, and read once. It is `ArtFigure`'s arrangement: the
-`info` glyph, a native popover, `role="note"`, which is what the rest of the
-site does with a line that qualifies something rather than saying it. **Paper
-still gets it unconditionally and still under the list** — a popover never
-prints, and the printed copy is the one whose reader cannot press anything.
-
-**On `/calendarium/liturgia` it is on the page.** A reader who has just read a
-first reading, a psalm and a gospel under today's date will take them for what
-is read at their parish unless something says otherwise, and a mark they have
-to press is not something saying otherwise. The bigger the page, the louder the
-qualifier: the card's list of five addresses can hold the note behind a glyph;
-a page of Scripture cannot.
+**That sentence is behind the `i` beside the heading, on both surfaces.** Set
+under the list it was three lines of small print below five lines of citations,
+on a card already carrying the day's name, its season, its rank and its colour —
+the longest text in the block, and read once; over a page of Scripture it is the
+paragraph a reader skips to reach the first reading. It is `ArtFigure`'s
+arrangement: the `info` glyph, a native popover, `role="note"`, which is what
+the rest of the site does with a line that qualifies something rather than
+saying it, and the card and the liturgy page agree rather than each deciding.
+**Paper still gets it unconditionally and still under the list** — a popover
+never prints, and the printed copy is the one whose reader cannot press
+anything.
 
 ## The citation is an address, so it is written in the reader's language
 
@@ -141,6 +136,14 @@ through Easter Time and the Angelus through the rest of the year, and the
 Rosary's mysteries for the weekday, which the corpus states in
 `PrayerGroupEntry.days` rather than leaving this site to read a rubric written
 in the content language.
+
+**The way in is a word at the foot of the READINGS, not of the card.**
+`DayReadings` draws it and `LiturgicalDayCard` only forwards the prop, because
+what it offers is more of that one section: the card's other parts are the day's
+rank, its colour and its optional memorials, and a link under all of them offers
+more of nothing in particular. It is `LinkPreview`'s "Open" marker at the list's
+scale, and it is absent on a day the lectionary cannot answer for, which is
+right — there is nothing further to read.
 
 **Which makes it a reading page, and it takes a reading page's shape.**
 `.content-column` and a `ReadingBar`; the passages carry `.reading-text`, so
