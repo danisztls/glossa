@@ -4249,6 +4249,97 @@ def drop_table_of_contents(blocks: list[Block], match_label) -> list[str]:
     return dropped
 
 
+#: The single letters a division in this corpus is ever numbered with.
+#:
+#: MEASURED, NOT REASONED FROM THE NUMERAL SYSTEM. 141 structure nodes across
+#: 100 works carry a one-letter title, and they fall into two groups with
+#: nothing in between: `I` (93), `V` (36) and `X` (1) are real divisions --
+#: `cdf.persona-humana.en` is numbered I to X -- and the other 11 are drop
+#: caps. `D`, `L`, `C` and `M` are Roman numerals too and are deliberately
+#: absent: a division numbered five hundred does not occur, and `D` is one of
+#: the eleven (`eccl-de-euch.hr`'s DRUGO POGLAVLJE).
+_DIVISION_LETTERS = frozenset("IVX")
+
+
+def repair_drop_caps(blocks: list[Block]) -> list[str]:
+    """A styled first LETTER is not a heading. Returns what was repaired.
+
+    THE DEFECT, and it is the one in this file a reader meets directly:
+    `ecclesia-in-america.en` prints its closing prayer with an ornamental
+    initial, which the source sets as its own bold element -- so the tree
+    stores a level-1 node titled `W` and the prayer under it begins "e thank
+    you, Lord Jesus,". Eleven nodes across five works, in two shapes:
+
+      - **The letter belongs to the words below it** (`ecclesia-in-america`
+        in en, fr and it). The next block opens on a lower-case letter, which
+        is a word missing its head, so the two are REJOINED and nothing is
+        lost. This is the half that repairs the text.
+      - **The letter is all that survives of a heading** (`eccl-de-euch.hr`,
+        `ecclesia-in-europa.hr`, eight nodes). The Croatian mirror sets the
+        chapter's first letter inside the `<p>` and the REST OF THE WORD
+        outside it -- `<p align="center">P</p>` then a bare `RVO POGLAVLJE`
+        in a `<font>` -- so the parser never sees "PRVO POGLAVLJE" at all.
+        The remainder is already absent from `build/`; what the letter can
+        still do is stand in the outline as a division, which is worse than
+        nothing for the sidebar, `route-titles.json` and any reading unit
+        split on the tree. It is dropped and reported.
+
+    (The second shape is RECOVERABLE and this does not attempt it: the `<a
+    name="PRVO%20POGLAVLJE">` around the letter holds the whole heading, and
+    reading it would want `_anchor_titles_itself`'s machinery pointed at the
+    anchor's NAME rather than its text. A separate fix, and a larger one.)
+
+    WHAT KEEPS THIS OFF REAL DIVISIONS is `_DIVISION_LETTERS` rather than the
+    length of the title: 129 of the 141 one-letter titles in the corpus are
+    `I`, `V` or `X` and every one of them is a division the source numbered.
+    A rule reading "a one-character title is not a title" would delete all of
+    them -- the same trap `_LANG_BAR_RE` records, where `II` and `IV` are two
+    letters and a bar of one code is not evidence of anything.
+
+    The rejoin is refused unless the stored html opens on the same lower-case
+    letter as the text does. A block whose html opens on a tag would take the
+    letter OUTSIDE that tag, which is a different repair from the one this
+    can verify, and there is none in the corpus today.
+
+    A REPAIRED BLOCK IS THEN AN ORDINARY UNNUMBERED ONE, and the walker treats
+    it as every other unnumbered block: `add_continuation` folds it into the
+    paragraph above. So `ecclesia-in-america`'s closing prayer joins the
+    sentence that introduces it instead of standing under a phantom division
+    called `W`, and its `<br/>` line breaks -- which are what set it as verse
+    -- are untouched. That is the walker's rule rather than this function's,
+    and it is the right trade: the paragraph break is the source's, the
+    division was not."""
+    repaired: list[str] = []
+    doomed: list[int] = []
+    for i, blk in enumerate(blocks):
+        if not blk.is_heading:
+            continue
+        letter = " ".join(blk.text.split()).strip(" .")
+        if len(letter) != 1 or not letter.isalpha():
+            continue
+        if letter.upper() in _DIVISION_LETTERS:
+            continue
+        nxt = blocks[i + 1] if i + 1 < len(blocks) else None
+        joins = (
+            nxt is not None
+            and not nxt.is_heading
+            and nxt.text[:1].islower()
+            and nxt.html[:1] == nxt.text[:1]
+        )
+        if joins:
+            nxt.text = letter + nxt.text
+            nxt.html = letter + nxt.html
+            nxt.raw = letter + nxt.raw
+            repaired.append(f"{letter!r} rejoined to {nxt.text[:40]!r}")
+        else:
+            repaired.append(f"{letter!r} dropped (heads no word)")
+        doomed.append(i)
+
+    for i in reversed(doomed):
+        del blocks[i]
+    return repaired
+
+
 def _opens_a_numbered_paragraph(blocks: list[Block], i: int) -> bool:
     """Whether the next block that is not a heading carries a paragraph number.
 
@@ -6759,6 +6850,13 @@ def parse_document(
                 + ", ".join(repr(t[:40]) for t in toc_promoted[:5])
                 + (" ..." if len(toc_promoted) > 5 else "")
             )
+
+    # An ornamental first letter set as its own element. Before the merge, so
+    # a drop cap cannot be folded into the heading below it as a label, and
+    # after the outline, whose entries are matched on whole titles and never
+    # on a letter. See repair_drop_caps.
+    for note in repair_drop_caps(blocks):
+        state.anomalies.append(f"drop cap read as a heading: {note}")
 
     # A division's identifier, name and subtitle are printed as separate
     # paragraphs; they are one heading. See merge_heading_lines.
