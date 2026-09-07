@@ -1491,8 +1491,17 @@ SERIES_RE = re.compile(
 #: its own check and needs no second edition to contradict it. DERIVED, not
 #: looked up: 98.71% of the corpus's 19,782 AAS references satisfy the first
 #: of these and the exceptions are transpositions (`AAS 38 (1991)` for 83,
-#: `AAS 191 (2009)` for 101), and 11 of the 13 distinct ASS volumes in range
-#: satisfy the second.
+#: `AAS 191 (2009)` for 101).
+#:
+#: THE TWO ARMS OF THIS ARE NOT EQUALLY STRONG, and the ASS one is a LEAD.
+#: AAS is one volume a year, so the offset is exact. ASS is not: a third of
+#: its 41 volumes span two years, the offset holds against the FIRST of them,
+#: and a citation is free to name either. Measured 2026-09-07 over the
+#: corpus's in-series ASS references at volume >= 9: 27 distinct
+#: (volume, year) pairs, 21 satisfying the offset and 6 not — and `ASS 19
+#: (1887)` and `ASS 29 (1897)` are two of the six, both correct, both naming
+#: their volume's second year. So an ASS `volume-year` row is a candidate to
+#: read, never a verdict; only AAS gates.
 SERIES_OFFSET = {"AAS": 1908, "ASS": 1867}
 
 #: Acta Sanctae Sedis ceased with volume 41 in 1908 and Acta Apostolicae
@@ -1501,14 +1510,28 @@ SERIES_OFFSET = {"AAS": 1908, "ASS": 1867}
 #: every one is arithmetically perfect read as AAS.
 SERIES_ASS_LAST_YEAR = 1908
 
-#: The Acta Sanctae Sedis' first volumes span two years apiece and the offset
-#: does not hold across them. The corpus holds two such references, which is
-#: too few to found a table on and too few to be worth reporting as leads.
-SERIES_ASS_IRREGULAR_BELOW = 4
+#: WHERE THE ASS OFFSET STARTS HOLDING, read off the publisher's own index
+#: rather than guessed -- the 41-row table in `site/src/lib/refs-grammar.ts`,
+#: which is that series' volume-to-year list in full because the filenames do
+#: not derive. Volumes 1-8 span years irregularly (1 is 1865-66, 2 AND 3 are
+#: both 1867, 5 is 1869-70, 8 is 1874-75), so `year - volume` is 1861-1866
+#: across them and never 1867; from volume 9 (1876) on it holds.
+#:
+#: IT WAS 4 UNTIL 2026-09-07, on a guess that the irregularity stopped after
+#: the two-year volumes at the head of the series. It does not, and the
+#: corpus pays for it: `ASS 4 (1868)`, `ASS 5 (1869)` and three of
+#: `ASS 8 (1874)` are correct against that index and were all reported as
+#: `volume-year` defects. A bound that is too low manufactures defects out of
+#: good citations, which is the direction that wastes a reader's afternoon.
+SERIES_ASS_IRREGULAR_BELOW = 9
 
 
 def series_fault(name: str, volume: int, year: int) -> str | None:
-    """What is impossible about one series reference, or None."""
+    """What is impossible about one series reference, or None.
+
+    Read an `ASS`/`volume-year` row as a lead and an `AAS` one as a fault --
+    see `SERIES_OFFSET`, which measures the difference.
+    """
     if name == "ASS":
         if year > SERIES_ASS_LAST_YEAR:
             return "aas-misspelled"

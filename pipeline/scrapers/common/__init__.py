@@ -114,6 +114,13 @@ from .files import (
     write_if_changed,
     write_stamped_json,
 )
+from .langcodes import (
+    AMBIGUOUS_CORPUS_TAGS,
+    AMBIGUOUS_SOURCE_CODES,
+    AmbiguousLangCode,
+    corpus_lang,
+    source_code,
+)
 from .overrides import OverrideDriftError, apply_overrides, load_overrides
 from .paths import (
     ABSENT_SOURCES_PATH,
@@ -146,6 +153,8 @@ from .versification import (
 
 __all__ = [
     "ABSENT_SOURCES_PATH",
+    "AMBIGUOUS_CORPUS_TAGS",
+    "AMBIGUOUS_SOURCE_CODES",
     "BOOK_FORMS_PATH",
     "CHAPTER_OPENING_PUNCT",
     "CORRECTIONS_DIR",
@@ -157,6 +166,7 @@ __all__ = [
     "PARSE_BASELINE_PATH",
     "TRANSLATIONS_CHECKED_PATH",
     "AbsentSources",
+    "AmbiguousLangCode",
     "BinaryMissingError",
     "CorrectionDriftError",
     "FetchError",
@@ -175,6 +185,7 @@ __all__ = [
     "captured_at",
     "chapter_opening_letter",
     "corpus_dir",
+    "corpus_lang",
     "corrections_receipt",
     "download_resumable",
     "file_has_text",
@@ -200,6 +211,7 @@ __all__ = [
     "run_binary",
     "sample_run_writes_nothing",
     "source_captured_at",
+    "source_code",
     "to_vulgate",
     "urllib_transport",
     "write_if_changed",

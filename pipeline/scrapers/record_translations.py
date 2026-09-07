@@ -63,7 +63,9 @@ ANCHOR_ORDER = ("en", "it", "la", "pt", "es", "fr", "de", "pl", "ar", "ru")
 #: not the same absence as a stub that offers nothing. The edition EXISTS;
 #: vatican.va publishes it in a format nothing here reads. Matching the
 #: language suffix is what makes it evidence -- every page links siblings'
-#: PDFs too. The mirror's own codes apply, so Latin arrives as `_lt`.
+#: PDFs too. The mirror's own codes apply, so Latin arrives as `_lt` --
+#: `common.AMBIGUOUS_SOURCE_CODES` is why that row may not be assumed and may
+#: not be inverted: read as the corpus tag it means Lithuanian.
 _PDF_HREF_RE = re.compile(r'href="(/content/dam/[^"]+?_([a-z]{2})\.pdf)"')
 PDF_LANG_FROM_SUFFIX = {"lt": "la"}
 
@@ -82,9 +84,19 @@ def raw_pages() -> list[tuple[str, str, str, Path]]:
 
 
 def pdf_for(html: str, lang: str) -> str | None:
-    """The page's link to its own text as a PDF in `lang`, if it prints one."""
+    """The page's link to its own text as a PDF in `lang`, if it prints one.
+
+    Compared through `corpus_lang` rather than a bare `.get(suffix, suffix)`:
+    the fall-through matched `_lt.pdf` against a page asked for in `lt`, which
+    would offer a Lithuanian reader the Latin edition. Latent only because no
+    document family here parses Lithuanian yet -- exactly the shape that stops
+    being latent the day one does.
+    """
     for href, suffix in _PDF_HREF_RE.findall(html):
-        if PDF_LANG_FROM_SUFFIX.get(suffix, suffix) == lang:
+        tag = common.corpus_lang(
+            suffix, PDF_LANG_FROM_SUFFIX, source="a page's own PDF link"
+        )
+        if tag == lang:
             return href
     return None
 

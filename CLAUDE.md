@@ -127,17 +127,54 @@ only decides _when_ something runs.
 
 ## Documentation conventions
 
-- **No bare inventory counts** (works, editions, languages) here or in `docs/` —
-  they rot silently as the corpus grows. Point at what derives the number
-  (`rebuild.py --list`, the sync's printed tables, `works.json`) or date-stamp
-  it. Keep a number only where it is the evidence for an argument.
-- **A session lesson goes to the `docs/` file beside the code it governs** —
-  `pipeline/docs/` or `site/docs/`, listed in `docs/decisions.md`'s table. Only
-  a project-wide rule goes in `docs/decisions.md` itself. The CLAUDE.md for that
-  half gets the rule, one clause of evidence, and the pointer.
-- **One claim, then at most one clause of evidence.** The measurement that
-  justified a rule is in the commit that made it; an entry that retells it is an
-  entry nobody finishes.
+**Every CLAUDE.md is read in full at the start of every session, by an agent,
+before it knows what the task is.** That is what these rules cost and what they
+are for. A page nobody finishes is worse than a page half the length, because
+the rule that would have stopped a mistake is on it either way.
+
+**Four tiers, and the test is who has to read it.**
+
+| Where                   | Holds                                                  |
+| ----------------------- | ------------------------------------------------------ |
+| `CLAUDE.md` (each half) | what must be true before a file is touched             |
+| `docs/decisions.md`     | project-wide posture, scope and process — nothing else |
+| `*/docs/*.md`           | the rationale, beside the code it governs              |
+| the commit              | the measurement, the diff, the day, the story          |
+
+A session lesson goes to the `docs/` file beside the code
+(`pipeline/docs/`, `site/docs/`; the table at the top of `docs/decisions.md`
+names them). The CLAUDE.md for that half gets **the rule, one clause of
+evidence, and the pointer** — not a third copy.
+
+**An entry is one claim and at most one clause of evidence.** The shape:
+
+> **A citation correction needs a witness inside the edition.**
+> `find-gazette-siglum.py` proposes `AAS` → `ASS` only where the edition writes
+> both sigla at pre-1909 citations.
+
+Not the shape: what was tried first, what it measured, who was wrong, what it
+felt like. **The commit that changed a rule is where its story lives**, and it
+is one `git log -S` away from anybody who wants it.
+
+**Write the rule, not the incident.** A defect is worth an entry only as the
+general form it taught — "a heuristic tuned to a misprint cannot tell a misprint
+from a restart" earns its line; "the Vatican I canons came out renumbered"
+does not. If the general form will not come, the entry is a commit message.
+
+**No bare inventory counts** (works, editions, languages) here or in `docs/` —
+they rot silently as the corpus grows. Point at what derives the number
+(`rebuild.py --list`, the sync's printed tables, `works.json`) or date-stamp it.
+**Keep a number only where it IS the evidence for the claim beside it**: `0 of
+18,658` says why Martini gets no lemmas and has to stay; "202 works" is a fact
+about last Tuesday.
+
+**Adding is also deleting.** Before an entry goes in, look for the one it
+supersedes. Both halves of a rule that has moved is how a file gets to three
+thousand lines, and the older half is the one an agent acts on first.
+
+**Prefer the plain sentence.** ALL-CAPS emphasis, a bold clause per line and a
+paragraph arguing with itself all read as urgency, and when everything is urgent
+the reader skims — which is the failure these files exist to prevent.
 
 ## Sandbox quirks that waste time
 

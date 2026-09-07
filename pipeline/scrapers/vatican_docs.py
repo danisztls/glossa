@@ -265,6 +265,7 @@ from common import (
     build_root,
     captured_at,
     corpus_dir,
+    corpus_lang,
     corrections_receipt,
     fold,
     fold_index,
@@ -276,6 +277,7 @@ from common import (
     read_text_or_none,
     require_corpus,
     roman_to_int,
+    source_code,
     write_stamped_json,
 )
 
@@ -5197,8 +5199,19 @@ _VATII_LINK_RE = re.compile(
 #: `Dei Verbum` alone -- whose Nostra Aetate counterpart IS html and was
 #: captured, which is why Hebrew looked complete. Both confirmed live on
 #: 2026-09-02: 200, `application/pdf`.
+#:
+#: THE CHINESE BRANCH CAPTURES NO LANGUAGE CODE, deliberately. It matches only
+#: `_zh-t`, so the edition is Traditional by construction and the tag is
+#: `zht` -- the corpus tags the SCRIPT (`ccc.zht`, `prayer.common.zht`). The
+#: code was captured and read through `VATII_LANG_FROM_URL` until 2026-09-07,
+#: which has no `zh` row, so it fell through and filed sixteen documents'
+#: Traditional Chinese under `zh` in every Vatican II manifest's
+#: `translations` -- Simplified, which vatican.va does not publish here. The
+#: ledger's whole job is to tell a checked absence from an unchecked one, and
+#: it was asserting the wrong presence instead. `common.corpus_lang` is what
+#: refuses the fall-through now.
 _VATII_PDF_LINK_RE = re.compile(
-    r'href="/chinese/concilio/vat-ii_([a-z-]+)_(zh)-t\.pdf"'
+    r'href="/chinese/concilio/vat-ii_([a-z-]+)_zh-t\.pdf"'
     r'|href="documents/vat-ii_(?:const|decl|decree)_\d{8}_([a-z-]+)_([a-z]{2})\.pdf"'
 )
 
@@ -5258,16 +5271,17 @@ def discover_vatii(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
         )
         ref.lang_urls[lang] = VATII_DOC_BASE + _fname
     for m in _VATII_PDF_LINK_RE.finditer(text):
-        zh_slug, zh_lang, slug, lang = m.groups()
+        zh_slug, slug, lang = m.groups()
         ref = by_slug.get(zh_slug or slug)
         if ref is None:
             continue  # a PDF for a document with no HTML edition at all
-        code = zh_lang or lang
-        ref.pdf_lang_urls[VATII_LANG_FROM_URL.get(code, code)] = (
-            f"https://www.vatican.va/chinese/concilio/vat-ii_{zh_slug}_zh-t.pdf"
-            if zh_slug
-            else VATII_DOC_BASE + m.group(0).split('"')[1].removeprefix("documents/")
-        )
+        if zh_slug:
+            tag = "zht"  # the path says `_zh-t`; see `_VATII_PDF_LINK_RE`
+            url = f"https://www.vatican.va/chinese/concilio/vat-ii_{zh_slug}_zh-t.pdf"
+        else:
+            tag = corpus_lang(lang, VATII_LANG_FROM_URL, source="the Vatican II index")
+            url = VATII_DOC_BASE + m.group(0).split('"')[1].removeprefix("documents/")
+        ref.pdf_lang_urls[tag] = url
     return list(by_slug.values()), [
         f"discovered {len(by_slug)} Vatican II documents from index (expected 16)"
     ]
@@ -8226,8 +8240,16 @@ def url_lang_key(ref: DocRef, lang: str) -> str:
     DocRef.lang_urls is keyed by whatever the *source* used, so this
     translates the work-level tag into the right dict key per family. The
     tables are `IndexFamily.lang_to_url`, collected into `FAMILY_LANG_TO_URL`;
-    a family absent from it is on the modern shell."""
-    return FAMILY_LANG_TO_URL.get(ref.family, MODERN_LANG_TO_URL).get(lang, lang)
+    a family absent from it is on the modern shell.
+
+    THE FALL-THROUGH IS GUARDED FOR ONE TAG, and `common.source_code` says
+    which: `lt` means Lithuanian here and asks vatican.va for Latin, which it
+    answers. Every other divergence 404s, and a 404 is reported."""
+    return source_code(
+        lang,
+        FAMILY_LANG_TO_URL.get(ref.family, MODERN_LANG_TO_URL),
+        family=ref.family,
+    )
 
 
 # --------------------------------------------------------------------------
