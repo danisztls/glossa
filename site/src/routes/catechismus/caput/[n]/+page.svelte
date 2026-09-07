@@ -360,7 +360,7 @@
 			     rather than with the title it opens on. Shown in compare mode
 			     too — the Compendium is not a third column, it is one link. -->
 			{#if compendiumChapter}
-				<p class="condensed-in">
+				<p class="condensed-in" data-link-preview="hover">
 					{t('ccc.condensedIn')}:
 					<a href={compendiumChapter.href}>{compendiumChapter.label}</a>
 				</p>

@@ -1807,6 +1807,19 @@ all 87 scripture expectations in `refs.test.ts` for two callers), and
 `refHref` owes the three `REFS` indexes**, and `index-priming.test.ts` scans
 for both names.
 
+**A TAP PEEKS AT ANY CITATION, and `data-link-preview` marks NAVIGATION
+rather than citations** (2026-09-06, §docs/reading.md). The tap path was an
+allowlist of `.ref-link, .inline-ref` — two of the dozen generators that emit
+citations — so a prayer's "See also", a "Cited in" chip, a CCC paragraph's
+`related` numbers and the `†` sourcing a reading order previewed under a
+cursor and navigated under a thumb. `citation-links.ts` is the one classifier
+now, and the marker has three states: absent peeks on both gestures, `"hover"`
+peeks on the pointer only (the jump box, the reading picks, the bookmark
+rows — chosen in order to GO there), `"off"` never (a crumb, prev/next, a
+sidebar TOC — the page the reader is already on). `usage.ts` deliberately kept
+the two classes: widening what counts as a citation followed is a step in a
+reported series, not a consequence of a change to the card.
+
 The six tags with **no** config (`hu ro sl sv zh en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by
 bare number and their prose prints no Scripture locator, so the English table

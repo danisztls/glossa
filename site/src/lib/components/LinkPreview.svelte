@@ -17,10 +17,12 @@
 	 * (`Element.closest('a[href]')`), and asks `address.ts` whether
 	 * that href names previewable content. Every existing internal link gets a
 	 * preview for free, and so does every link any future page adds — nobody
-	 * has to remember this feature exists to get it. Navigation contexts can
-	 * opt out with `data-link-preview="off"` on the link OR any ancestor. That
-	 * keeps a TOC from previewing every destination and lets chapter readers
-	 * exempt a unit-number link when the very same unit is already on screen.
+	 * has to remember this feature exists to get it. Which links those are, and
+	 * which of hover and tap each one answers, is `citation-links.ts`'s
+	 * `data-link-preview` marker — read there, not here. Navigation contexts
+	 * opt out on the link OR any ancestor, which keeps a TOC from previewing
+	 * every destination and lets chapter readers exempt a unit-number link when
+	 * the very same unit is already on screen.
 	 *
 	 * ONE REUSABLE OVERLAY, not one instance per link: at most one preview is
 	 * ever relevant (the reader has one pointer and one focus), so a single
@@ -63,7 +65,8 @@
 	 * ever true again for some part of the site.
 	 */
 	import { goto } from '$app/navigation';
-	import { previewTarget, type PreviewTarget } from '$lib/address';
+	import type { PreviewTarget } from '$lib/address';
+	import { citationLink } from '$lib/citation-links';
 	import { resolvePreview, type ResolvedPreview } from '$lib/linkPreviewContent';
 	import { computePanelPosition, canHover, HOVER_OPEN_MS, HOVER_CLOSE_MS } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
@@ -72,20 +75,6 @@
 	// shared with the footnote marker's own hover card: the same gesture over
 	// the same prose, which cannot want two different numbers.
 	const TOOLTIP_ID = 'link-preview-tooltip';
-
-	// The one place this component knows anything about a specific link, and
-	// the reason is that the touch path is not free the way the hover path is.
-	// Hovering costs the reader nothing, so it previews every internal content
-	// link the site emits; tapping costs a tap, so it previews only the links
-	// where a glance is the likely intent — inline citations inside prose
-	// (`RefText.svelte`'s `.ref-link`, `ProseBlocks.svelte`'s
-	// `.inline-ref`). Table-of-contents entries and jump-box results are the
-	// opposite case: the reader picked them in order to GO there, and taxing
-	// that with a peek would be an obstacle, not a feature. They keep their
-	// plain one-tap navigation, and still preview on hover. Prev/next nav was
-	// on that list until it stopped previewing at all — `UnitNav` now carries
-	// `data-link-preview="off"`, for the reason its own docblock gives.
-	const TAP_PREVIEW_SELECTOR = 'a.ref-link, a.inline-ref';
 
 	// The tracked anchor IS the state machine's key: `undefined` means nothing
 	// is being previewed, and comparing a newly-hovered element against this
@@ -166,20 +155,6 @@
 		tapHref = undefined;
 	}
 
-	function findMatch(
-		start: EventTarget | null
-	): { el: HTMLAnchorElement; target: PreviewTarget } | undefined {
-		if (!(start instanceof Element)) return undefined;
-		const a = start.closest('a[href]');
-		if (!(a instanceof HTMLAnchorElement)) return undefined;
-		// A preview is supplementary reading context, not navigation chrome.
-		// The marker is intentionally inherited: a TOC can opt out once on its
-		// `<nav>` rather than making every row remember this global feature.
-		if (a.closest('[data-link-preview="off"]')) return undefined;
-		const parsed = previewTarget(a.getAttribute('href'));
-		return parsed ? { el: a, target: parsed } : undefined;
-	}
-
 	/**
 	 * Flip to 'loading' and fetch. `onMissing` is what to do when the href
 	 * looked previewable but resolved to nothing (withheld work, missing
@@ -245,14 +220,14 @@
 
 	function onPointerOver(e: PointerEvent) {
 		if (!canHover()) return;
-		const match = findMatch(e.target);
+		const match = citationLink(e.target);
 		if (!match) return;
 		beginShow(match.el, match.target);
 	}
 
 	function onPointerOut(e: PointerEvent) {
 		if (!anchorEl) return;
-		const leaving = findMatch(e.target);
+		const leaving = citationLink(e.target);
 		if (!leaving || leaving.el !== anchorEl) return;
 		// Moving between two inline fragments the *same* link's text wraps
 		// across (a multi-line citation) fires pointerout/pointerover pairs
@@ -271,12 +246,12 @@
 	// touch screen — no state between "not touching" and "activated" — so the
 	// preview can only come out of the tap itself, which means the first tap
 	// on a citation peeks and a second tap follows through. That trade is
-	// worth taking for THIS content specifically: these links are dense
-	// inline citations ("cf. 1212", "Jn 3:5") inside something the reader is
-	// in the middle of, and the common intent is to glance, not to leave. The
-	// costs are paid down deliberately below — the peek is instant (no hover
-	// delay to sit through), the whole card is the follow-through target (not
-	// a second precise tap on a four-character link), and the card says so.
+	// worth taking for a citation specifically: these links name a passage
+	// inside something the reader is in the middle of, and the common intent
+	// is to glance, not to leave. The costs are paid down deliberately below —
+	// the peek is instant (no hover delay to sit through), the whole card is
+	// the follow-through target (not a second precise tap on a four-character
+	// link), and the card says so.
 	//
 	// Escape hatches, so a reader who wanted to navigate is never trapped:
 	// tapping the same link again goes there, and so does a tap on a link
@@ -301,8 +276,11 @@
 		// Open-in-new-tab and friends. Rare on touch, free to honour.
 		if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-		const match = findMatch(e.target);
-		if (!match || !match.el.matches(TAP_PREVIEW_SELECTOR)) {
+		const match = citationLink(e.target);
+		// A destination — a jump-box result, a reading pick, a bookmark row —
+		// was chosen in order to GO there. It previews under a cursor, which
+		// costs nothing, and never under a thumb, which costs the tap.
+		if (!match || match.kind !== 'citation') {
 			dismiss(); // a tap anywhere else closes the peek
 			return;
 		}
@@ -342,7 +320,7 @@
 
 	function onFocusIn(e: FocusEvent) {
 		if (openedByTap) return;
-		const match = findMatch(e.target);
+		const match = citationLink(e.target);
 		if (!match) return;
 		beginShow(match.el, match.target);
 	}

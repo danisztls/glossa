@@ -694,7 +694,7 @@
 						     document settles it, and a page that picked one would be
 						     reporting its own preference as the answer to a question
 						     the reader could have weighed themselves. -->
-					<ul class="picks">
+					<ul class="picks" data-link-preview="hover">
 						{#each gospels as gospel (gospel.key)}
 							<li>
 								<a class="pick" href={gospel.at?.href}>
@@ -719,7 +719,7 @@
 						     for. A reader who does not know what Acts is learns nothing
 						     from the word "Acts", and the six cards around it all say
 						     what they are. -->
-						<ul class="picks lone">
+						<ul class="picks lone" data-link-preview="hover">
 							<li>
 								<a class="pick" href={acts.href}>
 									<span class="pick-name">{acts.label}</span>
@@ -737,7 +737,7 @@
 						)}
 					</h3>
 					<p class="stage-why">{t('schola.bible.thenOld')}</p>
-					<ul class="picks">
+					<ul class="picks" data-link-preview="hover">
 						{#each oldTestament as step (step.key)}
 							<li>
 								<a class="pick" href={step.at?.href}>

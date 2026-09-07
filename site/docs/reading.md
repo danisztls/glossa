@@ -131,6 +131,20 @@ meaningful. What blocked a preview inside a citation was the top layer, not
 nesting; making the overlay a popover puts both in the layer, `manual` rather
 than `auto`, since an `auto` popover light-dismisses the one it was opened from.
 
+**A tap peeks at a citation, and the marker that decides which links those
+are names NAVIGATION rather than citations.** It was an allowlist of two CSS
+classes on the argument that a hover is free and a tap is not — right about the
+gesture, wrong about the instrument: citations come out of about a dozen
+generators and two of them wore a class the list knew, so a prayer's "See
+also", a "Cited in" chip, a paragraph's `related` numbers and the `†` that
+sources a reading order peeked on a desktop and on a phone did not.
+`citation-links.ts` inverts it into the shape the hover path already had — a
+link previews unless a marker says otherwise — and gives the marker a third
+state, since the jump box and the reading picks want the free glance under a
+cursor and the plain one-tap navigation under a thumb, which `off` and absent
+between them cannot say. What stays `off` is what names the page the reader is
+standing on: a crumb, prev/next, a sidebar table of contents.
+
 **A panel placed by measurement is a family.** `.floating-panel` holds the
 declarations three components had each written out and `floating.ts` holds where
 they go. What deliberately did not move is everything that differs — top layer

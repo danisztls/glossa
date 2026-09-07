@@ -112,7 +112,7 @@
 	{#if continuing.length > 0}
 		<section class="group continuing" aria-labelledby="continue-heading">
 			<h2 id="continue-heading">{t('reading.continue')}</h2>
-			<ul class="positions index-list">
+			<ul class="positions index-list" data-link-preview="hover">
 				{#each continuing as position (position.workId)}
 					<li><a href={position.href}>{position.label}</a></li>
 				{/each}
@@ -127,7 +127,7 @@
 		{#each sections as section (section.key)}
 			<section class="group">
 				<h2>{section.title}</h2>
-				<ul class="rows index-list">
+				<ul class="rows index-list" data-link-preview="hover">
 					{#each section.items as item (item.href)}
 						<li class="row index-row">
 							{#await resolveBookmark(item.target)}

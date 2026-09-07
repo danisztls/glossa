@@ -508,7 +508,16 @@
 		</form>
 
 		{#if suggestions.length > 0}
-			<ul bind:this={listEl} id="jump-listbox" role="listbox" aria-label={t('jumpbox.suggestions')}>
+			<!-- A result previews under a cursor and never under a thumb: the
+			     reader typed an address in order to GO to it, so a peek in the way
+			     of the tap is an obstacle. See `citation-links.ts`. -->
+			<ul
+				bind:this={listEl}
+				id="jump-listbox"
+				role="listbox"
+				aria-label={t('jumpbox.suggestions')}
+				data-link-preview="hover"
+			>
 				{#each suggestions as suggestion, index (suggestion.href)}
 					<li
 						id={optionId(index)}

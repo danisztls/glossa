@@ -245,9 +245,17 @@ class UsageSession {
 		// site's citation links are produced in about a dozen places
 		// (`RefText.svelte`, `linkifyProse`, the readers' footers), and a
 		// measurement each of them has to remember to call is a measurement
-		// that silently stops being true. The selector is `LinkPreview`'s
-		// `TAP_PREVIEW_SELECTOR`; capture phase, so a handler that stops
-		// propagation cannot hide the click.
+		// that silently stops being true. Capture phase, so a handler that
+		// stops propagation cannot hide the click.
+		//
+		// THE SELECTOR IS NARROWER THAN `citation-links.ts`'s RULE, and
+		// deliberately stays its own literal. It used to be `LinkPreview`'s
+		// tap allowlist, which was the same two classes; when that inverted to
+		// "every previewable link a marker has not excused", following it here
+		// would have been a step change in a reported series — `refs` would
+		// jump the day it shipped, for a reason no reader of the series could
+		// see. Widening it is a decision about the measurement, to be taken
+		// once and at a date, not a consequence of a change to the card.
 		addEventListener(
 			'click',
 			(event) => {

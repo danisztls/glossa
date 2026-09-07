@@ -122,7 +122,7 @@
 				<h2>{t('summa.part')} {part}</h2>
 
 				{#if headings.length > 0}
-					<ul class="treatises index-list">
+					<ul class="treatises index-list" data-link-preview="hover">
 						{#each headings as heading (heading.title + heading.before)}
 							<li>
 								{#if heading.before !== null}
@@ -144,7 +144,7 @@
 					</ul>
 				{/if}
 
-				<ol class="questions index-list">
+				<ol class="questions index-list" data-link-preview="hover">
 					{#each partQuestions as question (question.n)}
 						{@const named = summaTitleFor(lang, part, question.n)}
 						<li>
