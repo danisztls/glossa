@@ -48,6 +48,11 @@ where a route already waits. Adding a reading route means adding it to
 `BY_SEGMENT` there; an unknown path primes everything, which costs a fetch and
 is the only direction that mapping may be wrong in.
 
+**A `+page.ts` `load` opens with `await parent()`, always.** SvelteKit starts a
+route's whole branch of `load`s at once, so the layout's priming does not
+resolve first — `/catechismus/caput/{n}` answered a 404 on a paragraph the
+corpus holds (site/docs/shell.md); `index-priming.test.ts` scans for the wait.
+
 **A shelf needs the indexes its text is read FROM and the indexes its text
 POINTS AT.** `refs.ts`'s `refAddress` validates an address from render before it
 mints a link, against the Bible's books, the Summa's questions and the

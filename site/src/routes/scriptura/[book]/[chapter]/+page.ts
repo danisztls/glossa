@@ -55,7 +55,10 @@ interface BiblePageData {
  * costs a single small fetch; the shape is what keeps adding Portuguese from
  * being a route change.
  */
-export const load: PageLoad = async ({ params, url }): Promise<BiblePageData> => {
+export const load: PageLoad = async ({ params, url, parent }): Promise<BiblePageData> => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const chapterN = Number(params.chapter);
 
 	// THE SEGMENT IS A LATIN SLUG AND THE CORPUS IS KEYED ON OSIS, so it is

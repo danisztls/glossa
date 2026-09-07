@@ -279,3 +279,72 @@ describe('every route that reads an index directly is primed for it', () => {
 		expect(indexesForPath(url)).toEqual(expect.arrayContaining([...wanted]));
 	});
 });
+
+/**
+ * THE THIRD WAY, and it is not about the mapping at all: a route whose entry is
+ * in `BY_SEGMENT`, whose primer runs, and which reads the registry anyway
+ * before the fetch lands.
+ *
+ * SvelteKit starts a route's whole branch of `load`s at once — `node_ids.map(…)`
+ * into a `Promise.all` in `runtime/client/client.js` — so `+layout.ts`'s
+ * priming does NOT resolve before `+page.ts` runs, and `await parent()` is the
+ * only thing that orders them. `/catechismus/caput/{n}` threw `cccLangs: the
+ * ccc index was read before it was primed` on a cold index in dev, and in
+ * production answered a 404 on a paragraph the corpus holds. Two files stated
+ * the opposite premise in a docblock, which is how it survived.
+ *
+ * THE RULE IS FLAT BECAUSE THE SILENT HALF IS WIDER THAN THE GUARDED ONE.
+ * Only the six per-work-type registries are behind `requireIndex`; `manifests`
+ * is behind nothing, so `getWork()` returning `undefined` puts every reading
+ * route's 404 branch in the race — the shelves whose own registries are inlined
+ * included, which is exactly where a per-route judgement would let it back in.
+ * So every `+page.ts` load waits, and no route argues its way out.
+ *
+ * Nothing runnable catches this either: under fixtures the registries are
+ * populated at module load, so a load that never waits is correct in every
+ * test. Same move as the two scans above.
+ */
+describe('every page load waits for the layout that primes it', () => {
+	const SRC = new URL('..', import.meta.url);
+
+	function pageLoads(dir: string): string[] {
+		return readdirSync(new URL(dir, SRC), { withFileTypes: true }).flatMap((entry) =>
+			entry.isDirectory()
+				? pageLoads(`${dir}${entry.name}/`)
+				: entry.name === '+page.ts'
+					? [`${dir}${entry.name}`]
+					: []
+		);
+	}
+
+	/** Every `+page.ts` that exports a `load` at all — the ones with none are
+	 *  route components whose data comes from the layout, and wait by existing. */
+	const loads = pageLoads('routes/').filter((path) =>
+		/export (?:const|(?:async )?function) load\b/.test(readFileSync(new URL(path, SRC), 'utf8'))
+	);
+
+	it('finds the loads', () => {
+		// So the scan cannot pass by finding nothing — if the routes move or the
+		// declaration is spelled another way, this says so rather than going quiet.
+		expect(loads).toContain('routes/catechismus/caput/[n]/+page.ts');
+		expect(loads.length).toBeGreaterThan(10);
+	});
+
+	it.each(loads)('%s', (path) => {
+		// Comments come out first: every one of these files explains the wait in
+		// a line above it, and what the scan asks is what the CODE does before it.
+		const text = readFileSync(new URL(path, SRC), 'utf8')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.replace(/\/\/[^\n]*/g, '');
+		// FIRST, not merely present: a wait placed after the first synchronous
+		// read is the bug with a line of ceremony in front of it. A signature
+		// ends `) {`, `) => {` or `): Type => {`, and one of them holds a
+		// `() =>` of its own — hence the lazy reach for the LAST closing paren.
+		const opens =
+			/export (?:const|(?:async )?function) load\b[\s\S]*?\)\s*(?::[^={]*?)?\s*(?:=>)?\s*\{\s*await parent\(\);/;
+		expect(
+			opens.test(text),
+			`${path} must open its load with \`await parent()\` — see src/routes/+layout.ts`
+		).toBe(true);
+	});
+});

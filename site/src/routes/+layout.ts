@@ -49,6 +49,34 @@ export const ssr = false;
  *
  * The primers run CONCURRENTLY with the dictionary, not after it: they are
  * separate network reads and neither needs the other's answer.
+ *
+ * AND SO DOES EVERY `+page.ts` LOAD ON THIS ROUTE — which is the one thing
+ * this arrangement needs from the pages, and the one thing it cannot get by
+ * itself. SvelteKit launches a route's whole branch of `load`s at once
+ * (`node_ids.map(…)` into a `Promise.all`, `runtime/client/client.js`); a
+ * layout's does NOT resolve before its page's, and `await parent()` is the
+ * only thing that orders them. So a page load that opens with a synchronous
+ * registry read — and every reading route's does, `cccLangs()`,
+ * `compendiumLangs()`, `getWork()` — reads it while the fetch above is still
+ * in flight, and gets whatever an empty registry says.
+ *
+ * WHAT THAT LOOKS LIKE IS TWO DIFFERENT BUGS, and only one of them is loud.
+ * `/catechismus/caput/{n}` on a cold ccc index threw `cccLangs: the ccc index
+ * was read before it was primed` in dev; in production `requireIndex` only
+ * warns, so `cccLangs()` returned `[]`, no language produced a chapter, and
+ * the load answered `error(404, 'No CCC chapter contains this paragraph')` —
+ * a reader told an address does not exist while its text was arriving. The
+ * silent half is wider than the guarded one: `manifests` is behind no
+ * `requireIndex` at all, so `getWork()` returning nothing turns EVERY reading
+ * route's 404 branch into a race, including the shelves whose own registries
+ * are inlined and look like they need no primer.
+ *
+ * The rule is therefore flat and takes no per-route judgement: **a `+page.ts`
+ * `load` awaits `parent()` before it reads anything.** It costs nothing — the
+ * page's own first fetch could not have started before the index it addresses
+ * arrived anyway — and `index-priming.test.ts` scans the route tree for it,
+ * because under fixtures every registry is populated at module load and a load
+ * that never waits passes every runnable test.
  */
 const PRIMERS: Record<IndexName, () => Promise<void>> = {
 	bible: ensureBibleIndex,

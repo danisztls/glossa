@@ -43,7 +43,10 @@ interface CccLangData {
 	chapter: { start: number; end: number; node: CccNode } | undefined;
 }
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, parent }) => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const n = Number(params.n);
 
 	// Embed every language the corpus has this paragraph in, keyed by bare

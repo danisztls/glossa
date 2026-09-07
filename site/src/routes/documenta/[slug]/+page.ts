@@ -84,7 +84,10 @@ export interface DocumentPageData {
 	embeddedAppendix?: DocumentAppendixUnit[];
 }
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, parent }) => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const slug = params.slug;
 	const group = getDocumentGroup(slug);
 	if (!group) error(404, 'Document not found in this corpus');

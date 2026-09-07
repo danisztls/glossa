@@ -65,6 +65,20 @@ index — and two other shelves failed the same way SILENTLY, since only the
 scripture check is behind `requireIndex` and the others read an empty registry,
 concluded the corpus does not hold the target, and rendered dead text.
 
+**A layout's `load` does not resolve before its page's, and two docblocks said
+it did.** SvelteKit starts a route's whole branch at once, so `+layout.ts`'s
+priming raced every `+page.ts` that opens with a synchronous registry read —
+`/catechismus/caput/{n}` threw `cccLangs: … read before it was primed` on a
+cold index in dev and answered a 404 on a paragraph the corpus holds in
+production. `await parent()` is the only thing that orders them.
+
+**The rule is flat because the silent half is wider than the guarded one.**
+Only the six per-work-type registries are behind `requireIndex`; `manifests` is
+behind nothing, so an unprimed `getWork()` puts every reading route's 404
+branch in the same race — including the shelves whose own registries are
+inlined, which is exactly where a per-route judgement would have let it back
+in. Every `+page.ts` load waits, and `index-priming.test.ts` scans for it.
+
 **Asynchrony was pushed to the ARRIVAL of the data, never to its readers.** Two
 dozen synchronous readers are called from render and keep their signatures; the
 registries are the same mutable objects, filled in place by primers that

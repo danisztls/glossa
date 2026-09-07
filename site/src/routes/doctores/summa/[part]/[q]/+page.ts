@@ -27,7 +27,10 @@ export interface SummaQuestionByLang {
  * `content.langFor('summa')` and taking what `byLang` actually has, in the
  * fallback order `corpus.ts` declares.
  */
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, parent }) => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const part = summaPartFromSlug(params.part);
 	if (!part) error(404, 'No such part of the Summa');
 

@@ -17,10 +17,21 @@ import { redirect } from '@sveltejs/kit';
  * its own unprefixed path and losing the published address a search result
  * points at.
  *
- * The parent layout's `load` has already awaited `i18n.set(uilang)` -- a
- * layout load resolves before its page's -- so the language is applied and
- * persisted by the time this runs, and the reader lands on a page that is
- * already in the right language rather than one that changes into it.
+ * `await parent()` IS THE WHOLE POINT OF THE REDIRECT BEING DELAYED. The
+ * parent layout's `load` awaits `i18n.set(uilang)` so that the reader lands on
+ * a page already in the right language rather than one that changes into it --
+ * and this said in as many words that "a layout load resolves before its
+ * page's", which is not true of SvelteKit and never was. A route's `load`s all
+ * start at once and `parent()` is the only thing that orders them, so the
+ * redirect used to fire while `set` was still fetching a dictionary: the
+ * reader arrived in the OLD language and watched it swap, which is the exact
+ * flash this route exists to avoid. See `src/routes/+layout.ts`, where the
+ * same premise cost a 404 on an address the corpus holds.
+ *
+ * It also waits on the ROOT layout's primers, which is not a delay so much as
+ * a move: `indexesForPath` gives `/es/scriptura/iosue/1` the indexes
+ * `/scriptura/iosue/1` needs, so the wait after the redirect is the one that
+ * disappears, and the reader spends it on the address they typed.
  *
  * A `load` redirect REPLACES the history entry, so Back does not bounce off
  * the doorway.
@@ -31,7 +42,16 @@ import { redirect } from '@sveltejs/kit';
  * makes reading `location` here unconditional and safe, and dropping the hash
  * would lose the verse a shared `/es/scriptura/ioannes/3#v16` names.
  */
-export function load({ params, url }: { params: { rest: string }; url: URL }) {
+export async function load({
+	params,
+	url,
+	parent
+}: {
+	params: { rest: string };
+	url: URL;
+	parent: () => Promise<unknown>;
+}) {
+	await parent();
 	const hash = typeof location === 'undefined' ? '' : location.hash;
 	redirect(307, `/${params.rest}${url.search}${hash}`);
 }

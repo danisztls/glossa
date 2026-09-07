@@ -17,7 +17,10 @@ interface CompendiumQuestionByLang {
 	next?: { n: number };
 }
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, parent }) => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const n = Number(params.n);
 
 	// Compendium URLs stay edition-free (site/docs/addresses.md: `/catechismus/compendium/1`,

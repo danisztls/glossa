@@ -34,7 +34,10 @@ interface CanonLawLangData {
 	title: [number, number] | undefined;
 }
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, parent }) => {
+	// Runs CONCURRENTLY with the layout that primes this route's indexes
+	// unless it waits — `src/routes/+layout.ts` has the whole of why.
+	await parent();
 	const n = Number(params.n);
 
 	const byLang: Partial<Record<string, CanonLawLangData>> = {};
