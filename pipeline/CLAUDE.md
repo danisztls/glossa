@@ -152,7 +152,11 @@ pipeline/scrapers/
   `site/src/lib/refs-grammar.ts` links with, and Python cannot import the
   TypeScript. After changing `BOOK_VARIANTS_EN`/`BOOK_VARIANTS_PT`:
   `cd site && node scripts/export-book-forms.mjs`, commit both.
-  `site/src/lib/book-forms.test.ts` fails when the two differ.
+  `site/src/lib/book-forms.test.ts` fails when the two differ. **Re-run the
+  Kings adjudication after any table change** — which forms a scheme covers is a
+  measurement, and a citation is evidence only where one reading addresses a
+  verse that does not exist. Widening the table moves what resolves to nothing,
+  which is where the next source defect shows up.
 - **`common/paths.py` computes the repo root as `parents[3]`** and asserts the
   result contains `pipeline/scrapers`. Getting it wrong yields paths that are
   merely _absent_ — `load_corrections` reads a missing directory as "no

@@ -25,13 +25,13 @@ be bolted onto the CPDV -- Challoner's notes are anchored to Douay-Rheims
 wording, so attaching them to a different translation would be an editorial
 act. Annotation means this edition, and only this edition.
 
-WHAT IS INGESTED HERE AND WHAT IS NOT. Everything the source carries is
-captured -- verses, notes, arguments, headings. Nothing is RENDERED by the
-site yet: `PLAN.md` #3 (footnotes as sidenotes) is a stated prerequisite for
-showing a gloss at all, because "a gloss must never be confusable with its
-source, visually or structurally" (docs/decisions.md §Posture). Capturing now and
-rendering later costs one crawl instead of two, which is the whole of
-docs/link-surface.md's "re-parse, never re-crawl".
+WHAT IS INGESTED HERE. Everything the source carries -- verses, notes,
+arguments, headings -- and all of it now renders, `Sidenote.svelte` giving the
+gloss its own marker, surface and `lang` so that "a gloss must never be
+confusable with its source, visually or structurally" (docs/decisions.md
+§Posture) survives the arrangement. It was captured before any of that existed,
+which cost one crawl instead of two: docs/link-surface.md's "re-parse, never
+re-crawl".
 
 THE ORACLE THIS EDITION HAS AND THE OTHER THREE DID NOT. `bible.clementina.la`
 is the Clementine Vulgate -- the text Challoner revised the Douay against, in

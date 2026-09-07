@@ -1290,8 +1290,8 @@ export type PrayerKind = 'simple' | 'dialogic' | 'group';
  * corpus's `kind` into this union, so while the union was three names wide a
  * fourth flowed through typed as one of them and no consumer could err. The
  * reader gets `html`'s alternating lines where the source has a call and a
- * refrain; closing that is a rendering decision (`PLAN.md` §A litany is a
- * structure the corpus already holds). Declaring the kind is what makes the
+ * refrain; closing that is a rendering decision (`PLAN.md` §The `petitions`
+ * block is a projection loss). Declaring the kind is what makes the
  * gap visible to a `switch` rather than invisible to the compiler.
  */
 export type PrayerBlockKind = 'prose' | 'versicle' | 'response' | 'petitions' | 'attribution';

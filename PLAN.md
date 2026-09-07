@@ -16,7 +16,6 @@ estimate; an unscoped item says so rather than guessing.
 | --- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | **What the cross-language oracle should assert when Latin is present** | `check_language_symmetry` reads a section-number mismatch as a parsing defect, which is reasonable between two independent translations. Latin is the text the vernaculars translate, so a Latin/vernacular mismatch may be what translation _is_. Detailed below.                                                                                                                                                                                                                      | Nothing. The comparison is already n-way over every edition present and names the one that deviates alone; what is undecided is what it concludes.                                                                                                                                                       | Not sized, deliberately — a decision before it is a change. The change it implies is small.                                                                                                                                                                                                                                                                                      |
 | 2   | **Full-text search** (prebuilt client-side index)                      | Promised in the original v1 scope. Nothing exists: `JumpBox` resolves _addresses_; `site/scripts/` holds no index builder.                                                                                                                                                                                                                                                                                                                                                              | Corpus size. "Prebuilt" needs real index-size engineering, and the corpus is no longer two languages.                                                                                                                                                                                                    | Not sized — no prototype. Index format, build-vs-runtime, and per-work vs corpus-wide indexing are all open.                                                                                                                                                                                                                                                                     |
-| 3   | **Numbered citations as sidenotes**                                    | The Bible's notes render in the margin (`Sidenote.svelte`). The CCC's and the documents' numbered citations still use `CitationDisclosure.svelte`'s inline expando. Arguably correct — a citation is a few words on demand, a gloss is a paragraph meant to be in view — but worth deciding rather than drifting.                                                                                                                                                                       | Nothing. The margin layout, breakpoint and note-key rule all exist.                                                                                                                                                                                                                                      | Estimate: small, possibly zero. The open question is whether citations _should_ move.                                                                                                                                                                                                                                                                                            |
 | 5   | **CCC `related` (marginal concordance)**                               | The print Catechism's margin numbers — the internal concordance pointing each paragraph at others on the same theme — are absent from every vatican.va mirror in all editions. The field is ready and emitted `[]` everywhere, with the absence recorded in each manifest.                                                                                                                                                                                                              | A non-vatican.va source (`link-surface.md` names scborromeo.org, catholiccrossreference.online). Nothing in the pipeline or schema is missing.                                                                                                                                                           | Not sized — depends on the source chosen.                                                                                                                                                                                                                                                                                                                                        |
 | 6   | **Compendium Appendix B formulas**                                     | Appendix B's doctrinal formula lists are deliberately separate from the prayers work (`docs/corpus-schema.md`).                                                                                                                                                                                                                                                                                                                                                                         | A dedicated scope and parser for non-prayer formula lists.                                                                                                                                                                                                                                               | Not sized.                                                                                                                                                                                                                                                                                                                                                                       |
 | 9   | **Disclosing edition divergence to the reader**                        | A reader following a citation into Psalm 13 or Acts 14 gets real, plausible, **wrong** text with nothing marking it; Acts 14 is 20 consecutive verses where the same number names different text in two editions. Behind it sit **101 unread silent-case candidates** from `--shifted`.                                                                                                                                                                                                 | §5 of `docs/research/bible-edition-divergence.md` needs the classification exported as data the site can read, not a Python dict. The candidates need reading.                                                                                                                                           | Estimate: small for §5 (a data export and one advisory). The 101 candidates are their own pass.                                                                                                                                                                                                                                                                                  |
@@ -200,12 +199,6 @@ same answer.
   divergence is not confined to the Psalter — 156 of `bible.crampon.fr`'s 294
   diverging chapters lie outside `ps`/`mal`/`joel`. Renaming it is a schema
   decision.
-- **Martini's apparatus cites in Latin book forms the Italian table does not
-  hold.** With Roman chapters read, the residue is the books: `Matth.`, `Isai.`,
-  `Psal.`, `Luc.`, `Marc.`, `Esod.` and their kin resolve to nothing, and
-  `2. Esd.` resolves to Ezra rather than Nehemiah because the Italian table has
-  no numbered Esdras forms. This is the "run the prose scan and read what
-  resolves to nothing" pass; Martini is its largest single target.
 - **`bible.kaldi.hu` gets no `WORK_CONFIGS` row until its notes land.** The
   built edition has no notes at all — 1,333 chapter summaries and 15 headings,
   with zero citation-shaped tokens across all 1,501. Its apparatus is the
@@ -239,37 +232,22 @@ same answer.
   Catechism defects — so the exclusion now costs more than it saves. The
   reasoning was also half right: Esther holds real loss _and_ real divergence at
   once, and only reading the text tells them apart.
-- **Five source defects to file.** Straubinger's note at 1 Chr 25 writes
-  `III Reyes 4, 31` and then `II Reyes 4, 31` for the same verse, one note
-  apart. Martini's four each name a chapter of Kings with a numeral one off the
-  one he uses everywhere else: `I. Reg. VII. 28`, `2. Reg. XVII. 32`,
-  `4. Reg. XX. 22`, `4. Reg. XXIV. 21`. All five are wrong-address defects of
-  the class `pipeline/corrections/` exists for. Re-run that measurement after
-  any book-table change.
-- **Source defects observed and not filed.** `bible.kaldi.hu`'s Isaiah 7:14
-  prints "Emmánnelnek" for "Emmánuelnek", corroborated by Matthew 1:23 quoting
-  the verse correctly. Martini drops 13 notes whose printed locator names a
-  verse absent from their page (2 Corinthians 6's notes numbered `6,19`–`6,23`
-  are verbatim about 2 Cor 7:1–4); they are logged as anomalies and are the best
-  candidates for hand-adjudication.
-- **The three blocked languages should say so on the colophon.** A reader in
-  `sv`, `sl` or `ar` currently gets English scripture under their own chrome
-  with no explanation.
+- **Martini's 13 dropped notes want hand-adjudication.** Each has a printed
+  locator naming a verse absent from its page — 2 Corinthians 6's notes numbered
+  `6,19`–`6,23` are verbatim about 2 Cor 7:1–4. The scraper logs them as
+  anomalies rather than guessing.
 
 ## The document structure trees
 
 `docs/research/document-structure-defects.md` §2 is still the largest open item.
-Nothing here is fixed; below is what a fix would have to cover.
+Below is what a fix would have to cover.
 
-**Three defects are visible on the page rather than in the tree:**
+**Two defects are visible on the page rather than in the tree:**
 
 - **18 works open §1 with a wall of their own table of contents** —
   `sacramentum-caritatis.hu` prepends 60 of its own headings to its first
   paragraph, `africae-munus.en` 37, `africae-munus.es` 31. The document's
   opening sentence is below the fold.
-- **`ecclesia-in-america.en` stores a heading titled `W` followed by a paragraph
-  beginning "e thank you, Lord Jesus,"** — a drop cap read as a division. 11
-  nodes in 5 works.
 - **`santateresa-delbambinogesu.en` is missing three of its four chapter
   headings from the build** — present in `raw/` once each, absent from
   `sections.json` and `structure.json` both. The only confirmed text loss found,
@@ -284,15 +262,18 @@ consumers that never render the page.
 
 | Defect                                                       | Works     | How it was measured                                         |
 | ------------------------------------------------------------ | --------- | ----------------------------------------------------------- |
-| Index caption survives as a node and adopts the opening      | 44        | a structure title matching `INDEX`/`ÍNDICE`/`INHALT`/…      |
-| Papal signature stored as a heading                          | 92        | a title matching `PAULUS P. P. VI`, `LEONE PP. XIII`, …     |
 | Leaked ToC entries left in §1's body                         | 18        | §1's text contains 2+ titles of later headings              |
-| A ToC printed _after_ the body, never a dedup candidate      | 15        | 2+ duplicated titles whose surplus copy has `before: null`  |
 | ToC entries promoted to headings (44 nodes)                  | 6         | a title still ending in its target's span, `[31]`, `[1-6]`  |
-| Drop cap read as a heading (11 nodes)                        | 5         | a title that is one stray letter                            |
 | First of two adjacent pre-body headings swallowed            | 6         | oracle `MISSING` at `before=1`, then read on the raw page   |
 | Closing block nested a tier too deep                         | 10        | 3+ nodes after the last level-1, >1 tier below its siblings |
 | Tiers flattened — **3 confirmed, 25 strong, 157 candidates** | see below | census markup column, one document at a time                |
+
+**Three works still carry a node their rule should have taken, and all three are
+§2 cases.** `ecclesia-in-america.es` and `querida-amazonia.ar` keep a trailing
+outline because their bodies' sub-headings were never detected at all, so it has
+nothing to be a duplicate of; `lumen-gentium.pt` keeps its papal signature
+because the Fathers' subscriptions below it are numbered. Each wants the
+detector fixed, not the guard widened.
 
 **Two numbers deliberately not given.** Tier flattening is the important
 population and the least knowable: 157 works have 40+ headings and only two
@@ -326,19 +307,15 @@ tree and a usable one in `ecclesia-in-oceania.en` (19 headings),
 is a change to `vatican_docs.py`, which parses ~450 documents across several
 page templates, so each costs the blast-radius measurement in
 `docs/writing-descriptions.md` — snapshot, `rebuild.py --only documents`, diff —
-now ~18s. **The 378 ToC oracles are the regression suite this work was missing**:
-`audit.py toc` reports 72 disagreements, a number a correct fix lowers and an
-overreaching one raises. Per-item sizing is estimated, not measured: the drop
-cap, the index caption and the trailing ToC look like a predicate apiece; the
-tier discriminator is one predicate plus a re-levelling pass;
-`santateresa`'s unemphasised headings are a detector change whose blast radius
-is genuinely unknown, because loosening the emphasis requirement is exactly what
-would start reading ordinary prose as headings.
+now ~18s. **The ToC oracles are the regression suite this work needs**:
+`audit.py toc` derives the count — 70 of 377 disagreeing on 2026-09-07 — and a
+correct fix lowers it where an overreaching one raises it. Per-item sizing is
+estimated, not measured: the tier discriminator is one predicate plus a
+re-levelling pass; `santateresa`'s unemphasised headings are a detector change
+whose blast radius is genuinely unknown, because loosening the emphasis
+requirement is exactly what would start reading ordinary prose as headings.
 
-**One filing, not a parser change.** `exhortation.redemptionis-donum.en`'s
-heading before §7 reads `Religious Profession Is a "Fuller Expression"of
-Baptismal Consecration` — no space after the quotation mark, `&quot;of Baptismal`
-in the source. Two others are left alone as reader-invisible:
+**Two source defects left alone as reader-invisible.**
 `christifideles-laici.en` prints "Lay Faithtul" and `"Criteria of
 Ecclesiality"for Lay Groups`.
 
@@ -389,11 +366,10 @@ are unaffected. **The site is that consumer**: it reads the `html`, prints 108
 alternating lines, and the reader sees an undifferentiated column where the
 source has a call and a refrain.
 
-**`petitions` is also not in the schema.** `PrayerBlockKind` is
-`'prose' | 'versicle' | 'response'`; `prayer-lines.ts` writes
-`kind: block.kind ?? 'prose'` and the JSON is cast, so a fourth kind flows
-through typed as one of the three and nothing errs. Declaring it is the first
-step and is worth doing even if nothing else here is.
+**The kind is declared and nothing renders it.** `PrayerBlockKind` names
+`petitions`, so the gap answers a `switch` rather than flowing through cast as
+`prose` — which makes what follows a decision to take rather than a defect to
+find.
 
 **One structure, five presentations, inside one prayer.** The English Litany
 alone stores its call-and-response as a `prose` block whose lines alternate (the
@@ -414,12 +390,11 @@ fourteen show what they always did. Not scoped, deliberately.
 
 A priority argument, not a dependency one — nothing here gates anything else.
 
-1. **The structure trees' three reader-visible defects** — the leaked contents
-   opening §1 (18 works), the drop cap read as a heading (5), and
-   `santateresa-delbambinogesu.en`'s three lost headings; then the tier
-   discriminator. Above everything that adds coverage, because these three are
-   what a reader meets on the page, and the ToC oracles now tell a fix from a
-   regression.
+1. **The structure trees' two reader-visible defects** — the leaked contents
+   opening §1 (18 works) and `santateresa-delbambinogesu.en`'s three lost
+   headings; then the tier discriminator. Above everything that adds coverage,
+   because both are what a reader meets on the page, and the ToC oracles tell a
+   fix from a regression.
 2. **#9's reader-facing disclosure**, and alongside it the 101 unread
    silent-case candidates — reading them is the only way to find another Acts
    14, and there is no tool left to write for it.

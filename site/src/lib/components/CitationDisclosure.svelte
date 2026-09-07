@@ -4,17 +4,17 @@
 	 * citation it names.
 	 *
 	 * WHERE THERE IS A MARGIN, THE CITATION IS SET IN IT — open, beside the
-	 * line that raises it, in the same `.margin-note` an annotated edition's
-	 * gloss gets (`Sidenote.svelte`, `sidenotes.svelte.ts`). This component
-	 * used to argue the opposite: that a source is a few words wanted only on
-	 * demand, and so belongs behind a control. That reasoning was about a
-	 * disclosure that pushes the rest of the page down — the mechanism
-	 * `PLAN.md` #3 names as the one the designed reading experience replaces
-	 * — and it stops applying the moment the note costs the text nothing,
-	 * which is what the margin is. What a reader actually wants to know of a
-	 * quoted sentence is where it comes from, and 3,698 of the Catechism's
-	 * citations average 26 characters: short enough to sit in a 13rem column
-	 * without ever being fetched.
+	 * line that raises it, and it is now the ONLY apparatus in `.margin-note`
+	 * (`sidenotes.svelte.ts`; an annotated edition's gloss left the gutter on
+	 * 2026-09-01, see `Sidenote.svelte`). This component used to argue the
+	 * opposite: that a source is a few words wanted only on demand, and so
+	 * belongs behind a control. That reasoning was about a disclosure that
+	 * pushes the rest of the page down, and it stops applying the moment the
+	 * note costs the text nothing, which is what the margin is. What a reader
+	 * actually wants to know of a quoted sentence is where it comes from, and
+	 * 3,698 of the Catechism's citations average 26 characters: short enough to
+	 * sit in a 13rem column without ever being fetched. The asymmetry with a
+	 * gloss is the whole argument and is written out in `site/docs/reading.md`.
 	 *
 	 * AND WHERE THERE IS ONE, THE MARKER NO LONGER OPENS A POPOVER — the two
 	 * apparatuses now agree about this, having parted company over it until
