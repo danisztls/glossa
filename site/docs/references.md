@@ -283,3 +283,29 @@ variants of three shapes — `▪ ■`, `◆ ◊`, `● ◦` — which at a mark
 one shape each. `❖` is in neither original at all. A distinguishable mark per
 family needs a font chosen for its ornaments, which is a design decision about
 what sits beside Garamond, not a subsetting one.
+
+## The panel closes the page, and it folds
+
+(2026-09-06.) Two changes to where the panel sits rather than to what it holds,
+and one argument behind both: it is apparatus, and it is not short — Matthew 25
+draws 237 references across its verses.
+
+**Prev/next moved ABOVE it** on the three routes that draw both. Under it, the
+way to the next chapter sat below a screen or two of citations a reader who
+wanted the next chapter never asked for; above it, the two things a reader
+reaches for at the foot of a page — onward, and the escape hatch beside it on
+the Catechism's paragraph pages — stay together, and the apparatus is what
+closes the page. `UnitNav`'s own docblock carries the rule, its first line
+having said "the last thing on every reading page" since there was nothing under
+it.
+
+**And the panel is a `<details>`, remembered across pages**
+(`storedCitedInOpen`, `glossa:cited-in`). Open is the default and the key is
+absent while it holds — the difference from the default, which is what every
+preference in this codebase stores. It is ONE preference for all four routes
+because a reader who folded the panel away under a Bible chapter has said what
+they think of it under a Catechism paragraph too; per-page state would ask the
+same reader the same question at every address. `<details>` rather than a
+boolean and a button for `/documenta`'s reason: the browser owns the keyboard
+handling, the ARIA and find-in-page, and none of it is worth reimplementing for
+a chevron.

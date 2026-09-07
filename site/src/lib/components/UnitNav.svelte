@@ -1,7 +1,14 @@
 <!--
-	Previous/next along a work's own sequence — the last thing on every reading
-	page that has a neighbour: Bible chapter, CCC paragraph, Compendium
-	question, Summa question, prayer.
+	Previous/next along a work's own sequence — the last thing under the text on
+	every reading page that has a neighbour: Bible chapter, CCC paragraph,
+	Compendium question, Summa question, prayer.
+
+	LAST OF THE TEXT, BUT ABOVE THE "CITED IN" PANEL where a page has one
+	(2026-09-06). That panel is apparatus and it is not short — Matthew 25
+	draws 237 references — so under it the way onward sat below a screen or two
+	of citations a reader who wants the next chapter never asked for. Above it
+	the two things a foot-of-page reader reaches for, onward and the escape
+	hatch beside it, stay together and the apparatus closes the page.
 
 	SIX COPIES OF THIS EXISTED, differing only in the href shape and the words.
 	Each rebuilt the same skeleton, including the one part of it that is not

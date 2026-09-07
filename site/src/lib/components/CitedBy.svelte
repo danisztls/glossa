@@ -19,7 +19,13 @@
 	 * separately would be most of the panel.
 	 */
 	import { SvelteSet } from 'svelte/reactivity';
-	import { CITED_BY_FAMILIES, type CitedByFamily, type CitedByRow } from '$lib/cited-by';
+	import {
+		CITED_BY_FAMILIES,
+		rememberCitedInOpen,
+		storedCitedInOpen,
+		type CitedByFamily,
+		type CitedByRow
+	} from '$lib/cited-by';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -75,6 +81,28 @@
 	let hidden = $state(new SvelteSet<CitedByFamily>(HIDDEN_BY_DEFAULT));
 
 	/**
+	 * WHETHER THE PANEL IS FOLDED OPEN, and the reader's answer outlives the
+	 * page (`storedCitedInOpen`). Open is the default and the panel was always
+	 * open before this: a chapter's citations can run past the text they hang
+	 * on — Matthew 25 draws 237 — so a reader who wants the way onward rather
+	 * than the apparatus was scrolling past it at every address.
+	 *
+	 * `<details>` rather than a `$state` boolean and a button, which is
+	 * `/documenta`'s table of contents' reasoning: the browser owns this
+	 * widget's keyboard handling, its ARIA and its find-in-page behaviour
+	 * (Chrome and Firefox open a closed one to show a match), and none of that
+	 * is worth reimplementing for a chevron. Read ONCE at creation rather than
+	 * derived — a reactive read would fold the panel shut under the reader on
+	 * any page that re-runs this.
+	 */
+	let open = $state(storedCitedInOpen());
+
+	function fold(next: boolean) {
+		open = next;
+		rememberCitedInOpen(next);
+	}
+
+	/**
 	 * THE CONTROL IS DRAWN EXACTLY WHEN PRESSING IT WOULD CHANGE SOMETHING,
 	 * and the filter runs exactly when the control is drawn — so the panel can
 	 * never hide a row behind a button that is not on the page. A lone family
@@ -108,61 +136,69 @@
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
-	<h2 id={headingId} class="label-micro">
-		{heading}
-		<span class="count">{total}</span>
-	</h2>
-	{#if filtering}
-		<!--
-			Toggles, not a single-choice control: the reader is narrowing a list
-			they can already see, and narrowing it to two shelves is as ordinary
-			as narrowing it to one. `aria-pressed` carries the state, which is
-			why each button keeps one label in both — the same rule the plate
-			zoom follows.
-		-->
-		<div class="filters" role="group" aria-labelledby={headingId}>
-			{#each families as family (family.key)}
-				<button
-					type="button"
-					class="filter"
-					data-family={family.key}
-					aria-pressed={!hidden.has(family.key)}
-					onclick={() => toggle(family.key)}>{t(family.labelKey)}</button
-				>
+	<details class="cited-in-fold" {open} ontoggle={(event) => fold(event.currentTarget.open)}>
+		<!-- The count lives INSIDE the heading, `<summary>` taking phrasing
+		     content or one heading and not a heading with a sibling beside it —
+		     `/documenta`'s disclosure met the same rule. Folded, that number is
+		     the one thing the row can still say. -->
+		<summary>
+			<h2 id={headingId} class="label-micro">
+				{heading}
+				<span class="count">{total}</span>
+			</h2>
+		</summary>
+		{#if filtering}
+			<!--
+				Toggles, not a single-choice control: the reader is narrowing a list
+				they can already see, and narrowing it to two shelves is as ordinary
+				as narrowing it to one. `aria-pressed` carries the state, which is
+				why each button keeps one label in both — the same rule the plate
+				zoom follows.
+			-->
+			<div class="filters" role="group" aria-labelledby={headingId}>
+				{#each families as family (family.key)}
+					<button
+						type="button"
+						class="filter"
+						data-family={family.key}
+						aria-pressed={!hidden.has(family.key)}
+						onclick={() => toggle(family.key)}>{t(family.labelKey)}</button
+					>
+				{/each}
+			</div>
+		{/if}
+		<ul>
+			{#each shown as row (row.key)}
+				<li>
+					<span class="address">
+						{#if row.href}
+							<a href={row.href}>{row.label}</a>
+						{:else if row.note}
+							<span class="address-absent" title={row.note}>{row.label}</span>
+						{:else}
+							{row.label}
+						{/if}
+					</span>
+					<span class="sources">
+						{#each row.sources as source (source.key)}
+							<span class="source" data-family={source.family}>
+								<span
+									class="source-label"
+									class:named={source.fullTitle !== null}
+									title={source.fullTitle ?? undefined}>{source.label}</span
+								><span class="refs"
+									>({#each source.refs as ref, i (ref.key)}{#if i > 0}<span
+												class="sep"
+												aria-hidden="true">·</span
+											><wbr />{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
+								>
+							</span>
+						{/each}
+					</span>
+				</li>
 			{/each}
-		</div>
-	{/if}
-	<ul>
-		{#each shown as row (row.key)}
-			<li>
-				<span class="address">
-					{#if row.href}
-						<a href={row.href}>{row.label}</a>
-					{:else if row.note}
-						<span class="address-absent" title={row.note}>{row.label}</span>
-					{:else}
-						{row.label}
-					{/if}
-				</span>
-				<span class="sources">
-					{#each row.sources as source (source.key)}
-						<span class="source" data-family={source.family}>
-							<span
-								class="source-label"
-								class:named={source.fullTitle !== null}
-								title={source.fullTitle ?? undefined}>{source.label}</span
-							><span class="refs"
-								>({#each source.refs as ref, i (ref.key)}{#if i > 0}<span
-											class="sep"
-											aria-hidden="true">·</span
-										><wbr />{/if}<a href={ref.href}>{ref.label}</a>{/each})</span
-							>
-						</span>
-					{/each}
-				</span>
-			</li>
-		{/each}
-	</ul>
+		</ul>
+	</details>
 </section>
 
 <style>
@@ -173,10 +209,67 @@
 		font-size: 0.85rem;
 	}
 
+	/* THE ROW IS THE WHOLE CLOSED STATE, so it carries what the heading used to:
+	   the label, the count, and now the chevron. `list-style: none` is what
+	   removes the native triangle in Chrome and Firefox (a `summary` is a list
+	   item), the `::-webkit-` rule the same removal for older Safari. Drawn
+	   rather than native because the marker sizes with the font and takes no
+	   transition. */
+	.cited-in-fold > summary {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.cited-in-fold > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	/* A 44px target where the pointer is coarse and a 1.2rem row where it is
+	   not — the same trade `/documenta`'s disclosure makes. */
+	@media (pointer: coarse) {
+		.cited-in-fold > summary {
+			padding-block: 0.4rem;
+		}
+	}
+
+	/* The gap under the heading belongs to the OPEN state: closed, it would be
+	   a panel's worth of space under a single row. */
+	.cited-in-fold[open] > summary {
+		margin-bottom: 0.6rem;
+	}
+
+	/* Points down closed and up open — "the list comes down from here". Two
+	   borders on a rotated square rather than an icon import for one 8px mark,
+	   and it inherits `currentColor` that way. */
+	.cited-in-fold > summary::after {
+		content: '';
+		flex: none;
+		margin-inline-start: auto;
+		width: 0.4rem;
+		height: 0.4rem;
+		border-inline-end: 1.5px solid var(--color-text-muted);
+		border-bottom: 1.5px solid var(--color-text-muted);
+		transform: translateY(-0.1em) rotate(45deg);
+		transition: transform 0.15s ease;
+	}
+
+	.cited-in-fold[open] > summary::after {
+		transform: translateY(0.1em) rotate(-135deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cited-in-fold > summary::after {
+			transition: none;
+		}
+	}
+
 	/* Our label for the panel, not a heading the work wrote — interface face,
 	   like every other uppercase letterspaced label. */
 	.cited-in h2 {
-		margin: 0 0 0.6rem;
+		margin: 0;
 		font-weight: 600;
 		display: flex;
 		align-items: center;

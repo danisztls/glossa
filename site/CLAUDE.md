@@ -1875,6 +1875,11 @@ holds the rationale. What must be true before touching it:
   measured and is not available: what the originals add beyond the subsets is
   fill-and-size variants of three shapes, which at this size is one shape each,
   so distinct marks need a font chosen for ornaments.
+- **The panel CLOSES the page and it FOLDS** (2026-09-06): prev/next sits above
+  it on all three routes that draw both, and the open state is one stored
+  preference for all four (`glossa:cited-in`, open by default) — a reader who
+  folded away 237 references under Matthew 25 has said the same about a
+  Catechism paragraph. §docs/references.md.
 - **Commentary starts switched OFF and is the only family that does** — the
   largest family in the index by a wide margin (the sync prints the tally), and
   the one family already on the page under its own marks. So the buttons are drawn whenever pressing one would change

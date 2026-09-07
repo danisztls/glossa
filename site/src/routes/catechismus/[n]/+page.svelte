@@ -323,10 +323,6 @@
 				</p>
 			{/if}
 
-			{#if citedInRows.length > 0}
-				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
-			{/if}
-
 			{#if editions.current.chapter}
 				{@const dt = displayTitle(editions.current.chapter.node, editions.lang)}
 				<!--
@@ -370,6 +366,10 @@
 					full: `${t('ccc.nextParagraph')} ${editions.current.next.n}`
 				}}
 			/>
+
+			{#if citedInRows.length > 0}
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
+			{/if}
 		</article>
 
 		<!-- Hidden below 80rem, alongside `.reading-layout`'s own breakpoint

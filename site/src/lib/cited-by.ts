@@ -12,6 +12,7 @@ import { content, type WorkTypeKey } from './content.svelte';
 import { hrefFor, summaPartSlug } from './address';
 import { baseLang } from './lang-names';
 import { chapterVerseSep } from './citation-style';
+import { readStoredString, writeStoredString } from './storage';
 import type { Citer } from './types';
 
 /** One reference inside a source group — "¶425", "§22". */
@@ -320,4 +321,33 @@ function bookName(osis: string): string {
 	const names = getCanonicalBook(osis)?.namesByWorkId ?? {};
 	const preferred = content.workIdFor('bible');
 	return (preferred && names[preferred]) || Object.values(names)[0] || osis;
+}
+
+/**
+ * Whether the panel is folded open, remembered across pages.
+ *
+ * IT IS ONE PREFERENCE FOR ALL FOUR ROUTES, which is the whole of why it is
+ * stored rather than kept in the component: the panel is apparatus at the foot
+ * of a Bible chapter, a Catechism paragraph, a document and a Summa question,
+ * and a reader who folded it away on one of them has said what they think of
+ * it on the others. Per-page state would ask the same reader the same question
+ * at every address.
+ *
+ * WHAT IS STORED IS THE DIFFERENCE FROM THE DEFAULT — the key is absent while
+ * the panel is open, which is `storage.ts`'s own two-state contract and the
+ * rule `apparatus-prefs.svelte.ts` argues at length. Open is the default
+ * because the panel is what a reader who scrolled this far came for.
+ *
+ * A PAIR OF FUNCTIONS AND NOT A STORE, unlike `compare-pref`: one panel is
+ * rendered per page and it reads this once, at its own creation, so there is
+ * no second reader for a `$state` to keep in step with.
+ */
+const CITED_IN_KEY = 'glossa:cited-in';
+
+export function storedCitedInOpen(): boolean {
+	return readStoredString(CITED_IN_KEY) !== 'closed';
+}
+
+export function rememberCitedInOpen(open: boolean): void {
+	writeStoredString(CITED_IN_KEY, open ? undefined : 'closed');
 }

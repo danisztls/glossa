@@ -557,10 +557,6 @@
 				</div>
 			{/if}
 
-			{#if citedInRows.length > 0}
-				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
-			{/if}
-
 			<UnitNav
 				ariaLabel="Question navigation"
 				prev={editions.current.prev && {
@@ -586,6 +582,10 @@
 					full: `${t('summa.nextQuestion')} ${editions.current.next.n}`
 				}}
 			/>
+
+			{#if citedInRows.length > 0}
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
+			{/if}
 		</article>
 
 		<!-- Hidden below `.reading-layout`'s own 80rem breakpoint, where the

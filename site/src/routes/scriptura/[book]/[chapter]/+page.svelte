@@ -862,10 +862,6 @@
 				</div>
 			{/if}
 
-			{#if citedInRows.length > 0}
-				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
-			{/if}
-
 			<UnitNav
 				ariaLabel="Chapter navigation"
 				prev={prev && {
@@ -879,6 +875,10 @@
 					full: t('bible.nextChapter')
 				}}
 			/>
+
+			{#if citedInRows.length > 0}
+				<CitedBy heading={t('refs.citedIn')} rows={citedInRows} />
+			{/if}
 		</article>
 
 		<!-- Hidden below 80rem (app.css), where `bookList` above stands in for
