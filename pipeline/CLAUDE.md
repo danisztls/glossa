@@ -1254,10 +1254,10 @@ have, in scattered places, is the parser.
 ### `audit.py balance` — loss inside a unit
 
 Per-unit text length against the sibling edition, normalised by the pair's own
-median. Run it over the CCC, the Compendium, the prayers and the Summa;
-deliberately not over the documents (a section number is not the same section in
-both editions — `coverage` is the instrument there) or the Bible (versification
-divergence, not loss). It reports and never fails.
+median. Run it over the CCC, the Compendium, the prayers, the Summa and the
+Bible; deliberately not over the documents (a section number is not the same
+section in both editions — `coverage` is the instrument there). It reports and
+never fails.
 
 **It scales quadratically, and that is what makes it worth running** — the
 all-pairs matrix found the Swedish Compendium storing 39 answers as nothing but
@@ -1265,6 +1265,20 @@ their own reference line, which against English alone would have read as one
 more terse translation. Its first Catechism run produced 375 outliers and three
 real defects. **Read the count, not the list**: each defect was one edition far
 outside a band the other seven agreed on.
+
+**Where the address space is fixed only down to a division, that division is
+the precondition** — not a widened band. Scripture's is fixed at the chapter,
+so verses are compared only inside chapters whose verse-number sets agree;
+requiring it took the unanimous leads from 405 to 113 and what went was the
+documented divergence. That is why the Bible is in now and was not before: two
+editions can disagree about verse shape and cannot say which of them is
+speaking, and the corpus holds nine.
+
+**An all-pairs report has to rank or nobody reads it.** Nine editions are 36
+pairs, so one bad verse is eight rows eight places apart; a lead is a unit where
+one edition is outside the band against every other edition comparable there,
+ranked by how many. It is a sort order and not a verdict — the vote convicts
+only in `refs`, below.
 
 ### `audit.py refs` — the one oracle allowed to VOTE
 
@@ -1366,7 +1380,10 @@ sharpened it: `bible.clementina.la` is the text the CPDV was translated from, so
 where it, the CPDV and Matos Soares disagree about verse shape the Latin is
 evidence, not a third opinion. Those disagreements are **edition divergence, not
 defects** — `docs/research/bible-edition-divergence.md` has the four kinds and
-why calling them defects invites someone to "fix" a faithful text.
+why calling them defects invites someone to "fix" a faithful text. That is a
+rule about verse SHAPE and not about the text under a shape both editions
+agree on, which is what `balance` reads once the chapters that disagree are
+out (§`audit.py balance`).
 
 ## `lectionary.py` is a source and `olm.py` is the oracle over it
 

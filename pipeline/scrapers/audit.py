@@ -59,23 +59,35 @@ against the corpus as it stood, those four questions were the only ones
 outside the band, at 0.13-0.41x; the fifth-worst sat at 0.77x, and the
 work's whole range was 0.13-1.49x.
 
-WHERE IT DOES NOT APPLY, both established by measuring rather than by
-assumption:
+WHERE IT DOES NOT APPLY is the DOCUMENTS, established by measuring rather
+than by assumption. A section number is not the same section in both
+editions: `mediator-dei` EN section 23 is PT sections 21-22; the numbering
+drifts wherever a translation splits or joins a paragraph, and
+`check-symmetry` passes because both editions have the same COUNT. Comparing
+8,942 units across the 103 EN/PT document pairs put 650 of them outside the
+band -- 7.3%, against one unit in 6,154 for the types kept -- and the ones
+inspected were all drift. Document truncation is what `coverage` above is
+for, and it is the better instrument: it needs no sibling edition and says
+how much was lost.
 
-  - **Documents.** A section number is not the same section in both
-    editions. `mediator-dei` EN section 23 is PT sections 21-22; the
-    numbering drifts wherever a translation splits or joins a paragraph,
-    and `check-symmetry` passes because both editions have the same COUNT.
-    Comparing 8,942 units across the 103 EN/PT document pairs put 650 of
-    them outside the band -- 7.3%, against one unit in 6,154 for the types
-    kept -- and the ones inspected were all drift. Document truncation is
-    what `coverage` above is for, and it is the better instrument: it needs
-    no sibling edition and says how much was lost.
-  - **The Bible.** 95 outliers in 35,743 verses (cpdv.en against
-    clementina.la), concentrated in Esther -- which is the documented
-    versification divergence, not a defect (docs/research/bible-edition-
-    divergence.md). Reading verse-shape asymmetry as a defect there is the
-    specific mistake CLAUDE.md warns against.
+THE BIBLE WAS OUT FOR THAT REASON AND IS BACK, and what changed is the
+number of witnesses rather than anybody's mind. The exclusion was measured
+over the two editions there were: 95 outliers in 35,743 verses (cpdv.en
+against clementina.la), concentrated in Esther, which is the documented
+versification divergence and not a defect (docs/research/bible-edition-
+divergence.md). Two editions can disagree about verse shape and cannot tell
+you which of them is speaking. Nine can, and the corpus now holds nine.
+
+The precondition a document cannot meet, Scripture does meet at the CHAPTER:
+where two editions divide a chapter into the same verse numbers, verse 3 is
+the same verse, and where they do not, `comparable_units` skips it rather
+than widening a band to swallow it. Requiring that took the unanimous leads
+from 405 to 113, and what it took out was the divergence -- Esther, the
+Song, the Psalms' titles, Crampon's Hebrew versification. What it left
+includes `bible.matos-soares.pt` storing Lamentations 5:5 as a single full
+stop, `bible.straubinger.es` holding 1 Kings 1:2 inside 1:1 with its printed
+number still in the prose, and `bible.clementina.la` at Daniel 3:88 stopping
+where all eight others continue.
 
 It reports and never fails, the same footing as the Summa's cross-language
 oracle -- but unlike that one, its findings have not all been the edition
@@ -86,11 +98,19 @@ never printed (0.49x), and `summa.en` III q. 26 a. 2 had a 5,150-character
 editorial note stored as the continuation of `ad 3` (2.35x). All three were
 fixed on 2026-08-25 (pipeline/docs/oracles.md).
 
-What is left is the noise floor, and it is worth naming so nobody re-opens
-it: `ccc.en` ¶230 at 2.12x prints its Augustine citation inline where the
-Portuguese footnotes it. Gating is still not offered, because the band that
-would clear that row is wide enough to have missed ¶2436 anyway -- the value
-here is a short list somebody reads, not a build that stops.
+WHAT A BAND CANNOT DO, A COUNT CAN. Gating is still not offered -- the band
+that would clear `ccc.en` ¶230, which prints its Augustine citation inline
+where the Portuguese footnotes it, is wide enough to have missed ¶2436
+anyway. What replaced it is the vote in `measure_balance`: a lead is a unit
+where one edition sits outside the band against EVERY other edition
+comparable there, and the report ranks by how many that is. Sorting by it
+put `ccc.de` ¶2265, which stops two sentences before every other edition
+does, and `ccc.mg` ¶1589, which has lost the Nazianzen quotation from
+between its own two, at the top of a list they had been in unread.
+
+READ IT DIRECTIONALLY, as `divisions` below says at more length. An edition
+alone in one book or one chapter is that edition's own division; one
+scattered across the corpus is the parser.
 
 THE FIFTH AUDIT, `divisions`, is cross-language symmetry asking about the
 STRUCTURE TREE rather than about units at all -- and it exists because the
@@ -708,8 +728,10 @@ def report_withheld(rows: list[dict]) -> int:
 
 #: Work types whose unit number means the same thing in every edition, which
 #: is the whole precondition for comparing unit against unit. See the module
-#: docstring for what was measured to leave `document` and `bible` out.
-BALANCE_TYPES = ("catechism", "compendium", "prayer", "summa")
+#: docstring for what was measured to leave `document` out. The Bible meets
+#: the precondition only inside a chapter both editions divide the same way,
+#: which `comparable_units` is what enforces.
+BALANCE_TYPES = ("bible", "catechism", "compendium", "prayer", "summa")
 
 #: Below this many shared units a median ratio is not a norm, it is an
 #: opinion. It also drops `prayer.common.en-gb` (five prayers, a regional
@@ -730,8 +752,22 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
 
     The key is whatever the edition is addressed by, which differs per type:
     a paragraph number, a question number, a prayer slug, a Summa
-    part/question/article triple. It is compared for equality and nothing
-    else, so its shape only has to be stable across editions."""
+    part/question/article triple, a Bible book/chapter/verse triple. It is
+    compared for equality and nothing else, so its shape only has to be
+    stable across editions."""
+    if work_type == "bible":
+        # The books are read off disk rather than off `manifest.books`, for
+        # the same reason `divisions` reads the tree rather than a count: a
+        # book listed and not written is exactly the kind of loss this audit
+        # is looking for, and a manifest-driven walk would raise on it
+        # instead of reporting it.
+        return {
+            (book["osis"], chapter["n"], verse["n"]): verse.get("text") or ""
+            for path in sorted((work / "books").glob("*.json"))
+            for book in (json.loads(path.read_text()),)
+            for chapter in book["chapters"]
+            for verse in chapter["verses"]
+        }
     if work_type == "catechism":
         return {
             p["n"]: p.get("text") or ""
@@ -796,27 +832,50 @@ def unit_texts(work: Path, work_type: str) -> dict | None:
     return None
 
 
+def edition_key(work_id: str, work_type: str) -> tuple[str, str]:
+    """`(work, edition)` split off a work id -- where the EDITION is what the
+    corpus addresses one published text by, and that is not always the
+    language.
+
+    Every type but one holds at most one edition per language, so the
+    language tag identifies the edition and the split is the last
+    dot-component: `ccc.pt`, `prayer.common.en-gb`. The Bible is the
+    exception the schema allows (corpus-schema.md), and it is not a corner
+    case here -- `bible.cpdv.en` and `bible.douay-rheims.en` are two English
+    editions of one base, and it is precisely their disagreeing that makes a
+    reading the English tradition's habit rather than one translator's. So a
+    Bible id splits after its first component and its edition key carries
+    both slug and language."""
+    if work_type == "bible":
+        base, _, edition = work_id.partition(".")
+        return base, edition
+    base, _, lang = work_id.rpartition(".")
+    return base, lang
+
+
 def language_groups(
     corpus: Path,
     types: tuple[str, ...] = BALANCE_TYPES,
     min_editions: int = 2,
 ) -> dict[str, dict[str, Path]]:
-    """`base work id -> {language tag: work directory}`. The language is the
-    last dot-component of the work id and may carry a region
-    (`prayer.common.en-gb`).
+    """`base work id -> {edition key: work directory}`, split by
+    `edition_key`.
 
     `types` defaults to the comparable ones because every caller but
     `apparatus` is a cross-language check and `document` is exactly what
-    those cannot compare. `min_editions` is 1 for the two apparatus checks
-    that convict an edition on its own evidence -- a grouping that drops
-    single-edition works is right for a comparison and silently wrong for
-    an audit that does not need a comparison."""
+    those cannot compare. `bible` is in that default and reaches only
+    `balance`: `divisions` reads a `structure.json` no Bible has and skips
+    it, and `refs` tests the type itself. `min_editions` is 1 for the two
+    apparatus checks that convict an edition on its own evidence -- a
+    grouping that drops single-edition works is right for a comparison and
+    silently wrong for an audit that does not need a comparison."""
     groups: dict[str, dict[str, Path]] = collections.defaultdict(dict)
     for work in sorted((common.build_root(corpus)).iterdir()):
         manifest = work / "manifest.json"
         if not work.is_dir() or not manifest.exists():
             continue
-        if json.loads(manifest.read_text()).get("type") not in types:
+        work_type = json.loads(manifest.read_text()).get("type")
+        if work_type not in types:
             continue
         if (work / "witnesses.json").exists():
             # A DERIVED edition: built from the other editions of this same
@@ -828,20 +887,57 @@ def language_groups(
             # Rosary has no mysteries because the source prints none, which
             # is a fact about the source and not a finding about anything.
             continue
-        base, _, lang = work.name.rpartition(".")
-        if base and lang:
-            groups[base][lang] = work
+        base, edition = edition_key(work.name, work_type)
+        if base and edition:
+            groups[base][edition] = work
     return {base: langs for base, langs in groups.items() if len(langs) >= min_editions}
 
 
-def balance_pair(a_texts: dict, b_texts: dict) -> dict | None:
+def comparable_units(work_type: str, a_texts: dict, b_texts: dict) -> set | None:
+    """The units of `a` whose number names the same text in `b`, or None when
+    the whole address space qualifies and nothing has to be excluded.
+
+    THE BIBLE IS THE ONE TYPE THAT NEEDS THIS, and it is why the audit could
+    not take it before. Everywhere else the address space is fixed by
+    construction -- the CCC is paragraphs 1-2865 in every edition -- so a
+    unit number is the same unit or the check has nothing to stand on.
+    Scripture's is fixed only down to the chapter: where two editions divide
+    a chapter into a different number of verses, verse 3 is different words
+    in each, and the ratio measures the division rather than the parse. The
+    verse-number set is the exact test for that, so it is the precondition
+    rather than a band widened to swallow the consequences.
+
+    It is the same cut that keeps `document` out entirely, made where the
+    Bible offers what a document cannot: a division whose sets can be
+    compared. Measured over the nine editions, requiring it dropped the
+    unanimous leads from 405 to 113, and what it dropped was the documented
+    divergence -- Esther, the Song, the Psalms' titles, Crampon's Hebrew
+    versification (docs/research/bible-edition-divergence.md)."""
+    if work_type != "bible":
+        return None
+    chapters: dict[tuple, set] = collections.defaultdict(set)
+    theirs: dict[tuple, set] = collections.defaultdict(set)
+    for book, chapter, verse in a_texts:
+        chapters[(book, chapter)].add(verse)
+    for book, chapter, verse in b_texts:
+        theirs[(book, chapter)].add(verse)
+    agree = {c for c, verses in chapters.items() if verses == theirs.get(c)}
+    return {k for k in a_texts if (k[0], k[1]) in agree}
+
+
+def balance_pair(a_texts: dict, b_texts: dict, work_type: str) -> dict | None:
     """One edition pair measured: the median length ratio between them, and
     every unit whose own ratio departs from it.
 
-    A unit stored empty on one side and not the other is reported separately
-    rather than as an infinite ratio -- it is the same finding at its limit,
-    and it is the one shape where the number would say nothing."""
-    shared = [k for k in a_texts if k in b_texts]
+    A unit one side stores empty is left out of the ratios rather than given
+    an infinite one -- it is the same finding at its limit, and the one shape
+    where the number would say nothing. `measure_balance` reports it per WORK,
+    with membership, because both are facts about the work and neither gains
+    anything from being restated once per pair."""
+    universe = comparable_units(work_type, a_texts, b_texts)
+    a_keys = [k for k in a_texts if universe is None or k in universe]
+    b_keys = [k for k in b_texts if universe is None or k in universe]
+    shared = [k for k in a_keys if k in b_texts]
     both = [k for k in shared if a_texts[k] and b_texts[k]]
     if len(both) < BALANCE_MIN_UNITS:
         return None
@@ -854,19 +950,53 @@ def balance_pair(a_texts: dict, b_texts: dict) -> dict | None:
     return {
         "shared": len(shared),
         "compared": len(both),
+        # The units behind that count, which `measure_balance` needs to give
+        # the vote a per-unit denominator and pops before the row is kept:
+        # 36 Bible pairs carry 1.2 million of them and no reader wants one.
+        "compared_keys": both,
         "median": median,
-        "only_a": sorted((k for k in a_texts if k not in b_texts), key=str),
-        "only_b": sorted((k for k in b_texts if k not in a_texts), key=str),
-        "empty": sorted(
-            (k for k in shared if bool(a_texts[k]) != bool(b_texts[k])), key=str
-        ),
+        # Units the precondition excluded, counted and not listed: where they
+        # exist they are thousands, and what divides differently is a
+        # question for `edition_check.py`, which asks it chapter by chapter
+        # against the Clementine.
+        "incomparable": 0 if universe is None else len(a_texts) - len(universe),
+        # Counted here and named per WORK rather than per pair: which units an
+        # edition lacks is one fact about the work, and 91 prayer pairs
+        # restated it 91 times.
+        "only_a": len([k for k in a_keys if k not in b_texts]),
+        "only_b": len([k for k in b_keys if k not in a_texts]),
         "outliers": [r for r in rows if r[0] < BALANCE_LOW or r[0] > BALANCE_HIGH],
         "range": (rows[0][0], rows[-1][0]),
     }
 
 
-def measure_balance(corpus: Path) -> list[dict]:
-    rows = []
+def measure_balance(corpus: Path) -> dict:
+    """`{"pairs": [...], "leads": [...]}` -- the all-pairs measurement, and
+    that measurement read as a vote.
+
+    WHY THE FINDINGS ARE NOT THE PAIRS. The measurement is quadratic and what
+    a person reads must not be: nine Bible editions are 36 pairs, so one bad
+    verse arrives as eight rows sorted eight places apart, in a list nobody
+    reaches the end of. The Catechism was already that shape at nine editions
+    -- `ccc.de` §2158 is one paragraph reported eight times.
+
+    A LEAD IS AN EDITION ALONE AGAINST EVERY OTHER ONE COMPARABLE AT THAT
+    UNIT, and the denominator is per unit rather than per work because
+    comparability is: a chapter Crampon divides its own way costs that verse
+    a witness, not the whole edition.
+
+    THE VOTE RANKS AND DOES NOT CONVICT, which is where this stops short of
+    `refs`. There the editions print copies of one assertion, so the modal
+    set is an oracle. Here they translate prose, which an edition is entitled
+    to do differently, so the strongest claim available is still "an edition
+    alone against the rest is a lead". What counting buys is the ORDER, and
+    at nine editions that is the difference between a report and a list."""
+    pairs, works = [], []
+    votes: dict[tuple, collections.Counter] = collections.defaultdict(
+        collections.Counter
+    )
+    witnesses: collections.Counter = collections.Counter()
+    stored: dict[tuple, int] = {}
     for base, langs in sorted(language_groups(corpus).items()):
         work_type = json.loads(
             (next(iter(langs.values())) / "manifest.json").read_text()
@@ -876,42 +1006,155 @@ def measure_balance(corpus: Path) -> list[dict]:
             got = unit_texts(work, work_type)
             if got is not None:
                 texts[lang] = got
-        for a, b in itertools.combinations(sorted(texts), 2):
-            measured = balance_pair(texts[a], texts[b])
-            if measured is not None:
-                rows.append({"work": base, "a": a, "b": b, **measured})
-    return rows
-
-
-def report_balance(rows: list[dict], limit: int) -> int:
-    total = sum(r["outliers"].__len__() for r in rows)
-    print(
-        f"{len(rows)} edition pair(s) compared, "
-        f"{sum(r['compared'] for r in rows):,} units, {total} outside "
-        f"[{BALANCE_LOW}, {BALANCE_HIGH}]x the pair's own median.\n"
-    )
-    for row in rows:
-        lo, hi = row["range"]
-        print(
-            f"{row['work']}  {row['a']}:{row['b']}  {row['compared']:,} units, "
-            f"median {row['median']:.2f}x, skew {lo:.2f}-{hi:.2f}"
+        if len(texts) < 2:
+            continue
+        held: dict = collections.defaultdict(list)
+        for lang, units in texts.items():
+            for unit, text in units.items():
+                held[unit].append((lang, bool(text)))
+        works.append(
+            {
+                "work": base,
+                "type": work_type,
+                "editions": sorted(texts),
+                "units": len(held),
+                # A unit no edition is missing is the ordinary case and says
+                # nothing; these two are the membership findings, and they are
+                # `check-symmetry`'s subject reported here only because this
+                # audit has the texts open.
+                "partial": sorted(
+                    (
+                        {
+                            "unit": unit,
+                            "missing": sorted(set(texts) - {e for e, _ in have}),
+                        }
+                        for unit, have in held.items()
+                        if len(have) < len(texts)
+                    ),
+                    key=lambda r: str(r["unit"]),
+                ),
+                "empty": sorted(
+                    (
+                        {
+                            "unit": unit,
+                            "editions": sorted(e for e, filled in have if not filled),
+                        }
+                        for unit, have in held.items()
+                        if any(not filled for _, filled in have)
+                    ),
+                    key=lambda r: str(r["unit"]),
+                ),
+            }
         )
-        for key, label in (("only_a", row["a"]), ("only_b", row["b"])):
-            if row[key]:
-                print(
-                    f"    {len(row[key])} unit(s) in {label} only: "
-                    f"{', '.join(str(k) for k in row[key][:8])}"
-                    f"{' ...' if len(row[key]) > 8 else ''}"
-                )
-        for key in row["empty"]:
-            print(f"    EMPTY   {key}: stored on one side only")
-        for skew, key, a_len, b_len in row["outliers"][:limit]:
-            print(
-                f"    {'SHORT' if skew < 1 else 'LONG ':7} {skew:6.2f}x  {key!s:<14} "
-                f"{row['a']} {a_len:6,}c  {row['b']} {b_len:6,}c"
+        for a, b in itertools.combinations(sorted(texts), 2):
+            measured = balance_pair(texts[a], texts[b], work_type)
+            if measured is None:
+                continue
+            for key in measured.pop("compared_keys"):
+                witnesses[(base, key, a)] += 1
+                witnesses[(base, key, b)] += 1
+            for skew, key, a_len, b_len in measured["outliers"]:
+                longer, shorter = (a, b) if skew > 1 else (b, a)
+                votes[(base, key, longer)]["long"] += 1
+                votes[(base, key, shorter)]["short"] += 1
+                stored[(base, key, a)] = a_len
+                stored[(base, key, b)] = b_len
+            pairs.append({"work": base, "a": a, "b": b, **measured})
+    leads = []
+    for (work, unit, edition), counted in votes.items():
+        against = max(counted["long"], counted["short"])
+        if against and against == witnesses[(work, unit, edition)]:
+            leads.append(
+                {
+                    "work": work,
+                    "unit": unit,
+                    "edition": edition,
+                    "direction": "long"
+                    if counted["long"] > counted["short"]
+                    else "short",
+                    "against": against,
+                    "stored": stored[(work, unit, edition)],
+                }
             )
-        if len(row["outliers"]) > limit:
-            print(f"    ... {len(row['outliers']) - limit} more")
+    leads.sort(key=lambda r: (-r["against"], r["work"], r["edition"], str(r["unit"])))
+    return {"works": works, "pairs": pairs, "leads": leads}
+
+
+def unit_label(unit) -> str:
+    """A unit key as an address a person can look up. Tuples are the two types
+    keyed by one: a Bible verse and a Summa article."""
+    if isinstance(unit, (list, tuple)) and len(unit) == 3 and isinstance(unit[1], int):
+        return f"{unit[0]} {unit[1]}:{unit[2]}"
+    if isinstance(unit, (list, tuple)):
+        return " ".join(str(part) for part in unit)
+    return str(unit)
+
+
+def report_balance(measured: dict, limit: int) -> int:
+    pairs, leads = measured["pairs"], measured["leads"]
+    total = sum(len(r["outliers"]) for r in pairs)
+    print(
+        f"{len(pairs)} edition pair(s) compared, "
+        f"{sum(r['compared'] for r in pairs):,} units, {total} outside "
+        f"[{BALANCE_LOW}, {BALANCE_HIGH}]x the pair's own median; "
+        f"{len(leads)} unit(s) where one edition stands alone.\n"
+    )
+    for entry in measured["works"]:
+        rows = [r for r in pairs if r["work"] == entry["work"]]
+        if not rows:
+            continue
+        skipped = sum(r["incomparable"] for r in rows)
+        print(
+            f"{entry['work']}  {len(entry['editions'])} editions, {len(rows)} "
+            f"pair(s), {sum(r['compared'] for r in rows):,} comparisons, median "
+            f"{min(r['median'] for r in rows):.2f}-"
+            f"{max(r['median'] for r in rows):.2f}x"
+            + (
+                f"; {skipped:,} unit(s) skipped where a pair divides a chapter "
+                "differently"
+                if skipped
+                else ""
+            )
+        )
+        if entry["partial"]:
+            # Named eight at a time and never `--limit` at a time: WHICH units
+            # an edition lacks is `check-symmetry`'s question and, for a
+            # Bible, `edition_check.py`'s, which asks it chapter by chapter
+            # against the Clementine. Here it is context for the comparison
+            # below, and 2,429 verse numbers would bury it.
+            print(
+                f"    {len(entry['partial'])} unit(s) not in every edition: "
+                + ", ".join(
+                    f"{unit_label(r['unit'])} (not in {', '.join(r['missing'])})"
+                    for r in entry["partial"][:8]
+                )
+                + (" ..." if len(entry["partial"]) > 8 else "")
+            )
+        for row in entry["empty"]:
+            print(
+                f"    EMPTY {unit_label(row['unit'])}: stored empty in "
+                f"{', '.join(row['editions'])}"
+            )
+    print()
+    shown = leads[:limit]
+    for lead in shown:
+        print(
+            f"{lead['direction'].upper():5}  {lead['work']}.{lead['edition']:<16} "
+            f"{unit_label(lead['unit']):<22} {lead['stored']:6,}c  against all "
+            f"{lead['against']} other edition(s)"
+        )
+    if len(leads) > len(shown):
+        print(f"... {len(leads) - len(shown)} more")
+        by_edition = collections.Counter(
+            f"{lead['work']}.{lead['edition']}" for lead in leads
+        )
+        print(
+            "    "
+            + ", ".join(f"{name} {n}" for name, n in by_edition.most_common())
+            + "\n    Read the tally directionally: an edition alone in one book "
+            "or one chapter is that edition's own division; one scattered across "
+            "the corpus is the parser."
+        )
     # Not gated, for the reason the module docstring gives: a skew is a
     # finding to adjudicate, and the two standing against ccc.en would turn
     # `audit.py all` red without telling anyone anything new.

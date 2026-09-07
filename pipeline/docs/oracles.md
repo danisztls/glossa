@@ -16,8 +16,10 @@ another, and the reason each exists is the gap in the one before it.
   a floor is gated.
 - **Balance** (`audit.py balance`) — per-unit length against the sibling
   edition, normalized by the pair's own median. Run over the CCC, Compendium,
-  prayers and Summa; deliberately not over documents (a section number is not
-  the same section in both editions) or the Bible.
+  prayers, Summa and the Bible; deliberately not over documents (a section
+  number is not the same section in both editions). It reports a lead where one
+  edition sits outside the band against every other edition comparable at that
+  unit, ranked by how many that is.
 - **Divisions** (`audit.py divisions`) — structure trees compared by paragraph
   span. The one check that is not per-unit, and therefore the only one that can
   see a division that never got built.
@@ -61,6 +63,15 @@ points**: an edition doing something the others do not, consistently and
 everywhere, is that edition; an edition missing something the others all have,
 in scattered places, is a parser.
 
+**Where the address space is fixed only down to a division, that division is
+the precondition.** Scripture's is fixed at the chapter and not at the verse,
+so `balance` compares verses only inside chapters whose verse-number sets
+agree; requiring that took its unanimous leads from 405 to 113, and what went
+was the divergence — Esther, the Song, the Psalms' titles, Crampon's Hebrew
+versification. It is the same cut that keeps the documents out entirely, made
+where the Bible offers what a document does not: a division whose sets can be
+compared.
+
 **A second transcription of the same printing is the only check that sees a
 hole.** `bible.matos-soares.pt` keeps liriocatolico's verses despite taking its
 apparatus from vulgata.online, because that transcription is missing 247 verses
@@ -79,6 +90,13 @@ renderings of an assertion, which is what licenses a vote at all. Everything
 else in the ladder compares prose length, typography or structure — things an
 edition is entitled to differ about — so the strongest any of them may say is
 "an edition alone against the rest is a lead".
+
+**A count that may not convict may still RANK, and at nine editions it has
+to.** `balance` is all-pairs, so nine editions are 36 pairs and one bad verse
+arrives as eight rows sorted eight places apart; counting how many editions an
+edition stands alone against is what turns that into a list somebody reads. It
+is a sort order and not a verdict: `ccc.de` §2265, which stops two sentences
+before the other eight, had been in the report since that edition landed.
 
 **The shape of a disagreement names its culprit, which is why `refs` reports a
 classification and not a count.** A subset or superset held consistently is the
