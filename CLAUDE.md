@@ -187,3 +187,8 @@ the reader skims — which is the failure these files exist to prevent.
 - `git commit` needs the gpg-agent socket under `/run/user/$UID/gnupg/`, which
   the sandbox cannot write; signing fails with `No agent running`. Run commits
   with the sandbox off.
+- **A sandboxed `npm run dev` cannot be curled**, by the agent that started it
+  or by any other: each tool call gets its own network namespace, so the port
+  answers `Connection refused` from everywhere including the host. Verifying a
+  page in a browser is the person's job — `! CORPUS_DIR=… npm run dev` — and an
+  agent's own checks are `vite build`, `preflight` and the unit tests.
