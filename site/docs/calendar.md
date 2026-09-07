@@ -667,9 +667,13 @@ carries the state and the label names the rows in both of them, which is the
 rule every toggle on this site follows. The glyph is where the state shows — a
 solid eye listing them, a dashed one not — and deliberately not `eye-off`,
 whose struck-through eye would say "hidden from you" about rows the reader
-chose not to list. It is neither in `?d=` nor remembered —
-the address reproduces WHICH DAY, and how many rows are drawn under it is not a
-fact about the day.
+chose not to list. It is not in `?d=` — the address reproduces WHICH DAY, and
+how many rows are drawn under it is not a fact about the day — but it IS
+remembered (`glossa:calendar-plain-days`, beside the territory in
+`calendar-pref.ts`), which was decided the other way for two days. A reader
+counting the days of a month is counting them next month too, and the press is
+on the listing's own header, which they meet again at every page of the
+calendar.
 
 ### Some layers share their propers, and factoring them out cost the oracle nothing
 

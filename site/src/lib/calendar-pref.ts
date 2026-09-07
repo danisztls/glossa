@@ -45,6 +45,33 @@ export function rememberTerritory(id: string): void {
 }
 
 /**
+ * Whether the month listing draws the days that say nothing — the eye in
+ * `CalendarMonth`'s header.
+ *
+ * IT IS A PREFERENCE AND NOT A WAY OF LOOKING AT ONE MONTH, which is the
+ * reverse of what this file said until 2026-09-06 (the argument is kept in the
+ * component, beside the state it now seeds). A reader who wants to count the
+ * days of a month wants to count them next month too, and a control that
+ * forgets is one they operate again at every page of the calendar. It stays out
+ * of `?d=`/`?c=` for the reason those two are IN it: the address reproduces
+ * which day the page shows, and how many rows the listing draws is not a fact
+ * about the day.
+ *
+ * Stored as the DIFFERENCE from the default, like everything else here: the key
+ * is absent while the plain days are hidden, which is what a reader who has
+ * never pressed the eye gets.
+ */
+const PLAIN_DAYS_KEY = 'glossa:calendar-plain-days';
+
+export function storedPlainDays(): boolean {
+	return readStoredString(PLAIN_DAYS_KEY) === 'on';
+}
+
+export function rememberPlainDays(shown: boolean): void {
+	writeStoredString(PLAIN_DAYS_KEY, shown ? 'on' : undefined);
+}
+
+/**
  * The territory the edge's geolocation suggests, for a reader who has never
  * chosen one — read off the attribute `src/worker.ts` wrote on the shell's
  * `<html>`, which `lib/geo.ts` argues for and normalises.

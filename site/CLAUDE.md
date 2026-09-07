@@ -2524,7 +2524,8 @@ on each day — so both went and the picker stayed, being the only one that
 changes what the days MEAN. The card names `today`/`yesterday`/`tomorrow`
 beside the date from `Intl.RelativeTimeFormat`, not from three keys in
 thirty-seven dictionaries, and the listing grew a press that shows the days
-saying nothing (§docs/calendar.md).
+saying nothing — remembered since 2026-09-06, a reader counting a month's days
+counting next month's too (§docs/calendar.md).
 
 **THE CONTROLS LIVE IN THE DAY CARD, AND THE HOME PAGE CARRIES THE PICKER**
 (2026-09-06). `LiturgicalDayCard` takes a `controls` snippet — top right,

@@ -75,6 +75,7 @@
 		type DayNumber,
 		type LiturgicalDay
 	} from '$lib/calendar';
+	import { rememberPlainDays, storedPlainDays } from '$lib/calendar-pref';
 	import { dateLocale } from '$lib/dates';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
@@ -226,11 +227,22 @@
 	 * COMPONENT STATE AND NOT `?d=`'s COMPANY. The address reproduces WHICH
 	 * DAY the page is showing; how many rows the listing under it draws is not
 	 * a fact about the day, and a parameter for it would ride along in every
-	 * link a reader copies. Nor is it remembered between visits: it is a way
-	 * of looking at one month rather than a preference about calendars, which
-	 * is the line `calendar-pref.ts` draws for the territory.
+	 * link a reader copies.
+	 *
+	 * IT IS REMEMBERED BETWEEN VISITS, THOUGH, and that half was decided the
+	 * other way for two days (2026-09-06). The reasoning against was that this
+	 * is a way of looking at one month rather than a preference about
+	 * calendars — but a reader counting the days of a month is counting them
+	 * next month too, and the press is on the listing's own header, which a
+	 * reader meets again at every page of the calendar. `calendar-pref.ts`
+	 * holds the key beside the territory's.
 	 */
-	let showPlain = $state(false);
+	let showPlain = $state(storedPlainDays());
+
+	function togglePlain() {
+		showPlain = !showPlain;
+		rememberPlainDays(showPlain);
+	}
 
 	function daysOf(year: number, month: number) {
 		const first = toDayNumber(year, month, 1);
@@ -378,7 +390,7 @@
 			aria-pressed={showPlain}
 			aria-label={t('calendar.plainDays')}
 			title={t('calendar.plainDays')}
-			onclick={() => (showPlain = !showPlain)}
+			onclick={togglePlain}
 		>
 			<Icon name={showPlain ? 'eye' : 'eye-dashed'} />
 		</button>
