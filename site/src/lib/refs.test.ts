@@ -7,6 +7,7 @@ import {
 	linkifyProse,
 	normalizeCitationSpacing,
 	parseRefs,
+	passageSpans,
 	refHref,
 	scriptureSpecimen,
 	type RefSegment
@@ -2650,5 +2651,126 @@ describe('scriptureSpecimen', () => {
 		// Bible has not got. `undefined` rather than a guess.
 		expect(scriptureSpecimen('bible.cpdv.en', 'en', 'tob')).toBeUndefined();
 		expect(scriptureSpecimen(undefined, 'en')).toBeUndefined();
+	});
+});
+
+/**
+ * `passageSpans` — the citation read as VERSES rather than as a destination.
+ *
+ * The mocked registry above is what makes this testable at all: Malachi's four
+ * chapters are consecutive, so a crossing has somewhere to land, and John's
+ * are 1 and 3, so one has somewhere to fail.
+ */
+describe('passageSpans', () => {
+	const CTX = { bibleWorkId: 'bible.cpdv.en', lang: 'en' };
+
+	it('reads a plain range', () => {
+		expect(passageSpans('John 1:1-5', CTX)).toEqual([{ osis: 'john', chapter: 1, from: 1, to: 5 }]);
+	});
+
+	it('gives each comma-chained group its own span', () => {
+		// The same split `citationPieces` gives each group its own LINK for, and
+		// for the same reason: one span over the lot would claim verses 3 to 5,
+		// which this citation does not appoint.
+		expect(passageSpans('John 1:1-2, 6-7', CTX)).toEqual([
+			{ osis: 'john', chapter: 1, from: 1, to: 2 },
+			{ osis: 'john', chapter: 1, from: 6, to: 7 }
+		]);
+	});
+
+	it('reads a bare chapter as the whole of it', () => {
+		expect(passageSpans('John 3', CTX)).toEqual([{ osis: 'john', chapter: 3, from: 1, to: 36 }]);
+	});
+
+	it('drops the “Cf.” the lectionary prints before an acclamation', () => {
+		expect(passageSpans('Cf. John 1:14', CTX)).toEqual([
+			{ osis: 'john', chapter: 1, from: 14, to: 14 }
+		]);
+	});
+
+	it('crosses a chapter boundary', () => {
+		// The whole reason this exists beside `citationPieces`, which stops at
+		// `Malachi 1:10` and draws `-2:2` as text: the head runs to the end of
+		// its own chapter and the landing chapter starts at its first verse.
+		expect(passageSpans('Malachi 1:10-2:2', CTX)).toEqual([
+			{ osis: 'mal', chapter: 1, from: 10, to: 14 },
+			{ osis: 'mal', chapter: 2, from: 1, to: 2 }
+		]);
+	});
+
+	it('names the chapters a crossing jumps over, in full', () => {
+		expect(passageSpans('Malachi 1:14-3:2', CTX)).toEqual([
+			{ osis: 'mal', chapter: 1, from: 14, to: 14 },
+			{ osis: 'mal', chapter: 2, from: 1, to: 17 },
+			{ osis: 'mal', chapter: 3, from: 1, to: 2 }
+		]);
+	});
+
+	it('crosses out of the last group, not out of the first', () => {
+		expect(passageSpans('Malachi 1:2-3, 10-2:2', CTX)).toEqual([
+			{ osis: 'mal', chapter: 1, from: 2, to: 3 },
+			{ osis: 'mal', chapter: 1, from: 10, to: 14 },
+			{ osis: 'mal', chapter: 2, from: 1, to: 2 }
+		]);
+	});
+
+	it('reads the semicolon that joins two clauses of one pericope', () => {
+		// `Genesis 2:7-9; 3:1-7` is one first reading printed as two loci, and
+		// the second carries no book of its own — the grammar has already given
+		// it the first's.
+		expect(passageSpans('Malachi 1:2-3; 3:1-4', CTX)).toEqual([
+			{ osis: 'mal', chapter: 1, from: 2, to: 3 },
+			{ osis: 'mal', chapter: 3, from: 1, to: 4 }
+		]);
+	});
+
+	it('reads a clause chain that names a second book', () => {
+		// An acclamation can be two verses of two books — `1 Sm 3:9; Jn 6:68c`.
+		expect(passageSpans('Malachi 1:2; John 3:16', CTX)).toEqual([
+			{ osis: 'mal', chapter: 1, from: 2, to: 2 },
+			{ osis: 'john', chapter: 3, from: 16, to: 16 }
+		]);
+	});
+
+	it('refuses a clause chain one of whose clauses it cannot place', () => {
+		// Whole or nothing applies to the pericope, not to each clause: half a
+		// first reading printed as though it were all of it is the failure this
+		// function exists to refuse.
+		expect(passageSpans('Malachi 1:2-3; 9:1-4', CTX)).toBeUndefined();
+	});
+
+	it('refuses a crossing over a chapter this edition has not got', () => {
+		// John 2 is absent from the registry, so `John 1:1-3:5` cannot be given
+		// whole — and a passage printed with a chapter missing from the middle
+		// is the one thing a reader cannot detect.
+		expect(passageSpans('John 1:1-3:5', CTX)).toBeUndefined();
+	});
+
+	it('refuses a citation with anything left over', () => {
+		// The lectionary splits an alternative into `orElse` and each half is
+		// resolved on its own; a string still carrying both names more than one
+		// passage, and this answers for one.
+		expect(passageSpans('John 1:1-5 or 1:1-3', CTX)).toBeUndefined();
+	});
+
+	it('refuses a book, a chapter or a verse the edition does not carry', () => {
+		expect(passageSpans('Tobit 1:1-3', CTX)).toBeUndefined();
+		expect(passageSpans('John 2:1-5', CTX)).toBeUndefined();
+		// A real chapter, and verses past its end: John 1 stops at 51.
+		expect(passageSpans('John 1:60-64', CTX)).toBeUndefined();
+	});
+
+	it('clamps a range that overruns the chapter rather than refusing it', () => {
+		// The citation names verses 48 to 60 and the chapter stops at 51. The
+		// span is what exists — the same clamp `verseExtent` applies to a link,
+		// so the text and the anchor cannot disagree about where a passage ends.
+		expect(passageSpans('John 1:48-60', CTX)).toEqual([
+			{ osis: 'john', chapter: 1, from: 48, to: 51 }
+		]);
+	});
+
+	it('answers nothing without an edition to answer against', () => {
+		expect(passageSpans('John 1:1-5', { lang: 'en' })).toBeUndefined();
+		expect(passageSpans('', CTX)).toBeUndefined();
 	});
 });

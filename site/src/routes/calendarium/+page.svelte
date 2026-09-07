@@ -311,6 +311,20 @@
 
 	let lang = $derived(i18n.lang);
 	let today = $derived(localToday());
+
+	/**
+	 * The day's liturgy, at the day and the calendar this page is showing.
+	 *
+	 * Built from the two values this component owns rather than from
+	 * `page.url`, which goes stale the moment `mirror` writes (see there) —
+	 * `addressFor` sets both parameters unconditionally for the same reason,
+	 * and this is the second reader of the same fact.
+	 */
+	let liturgyHref = $derived(
+		`/calendarium/liturgia?d=${formatIsoDate(selected)}${
+			territory === 'general' ? '' : `&c=${territory}`
+		}`
+	);
 </script>
 
 <svelte:head>
@@ -331,7 +345,16 @@
 	{/snippet}
 
 	{#if day}
-		<LiturgicalDayCard {day} heading="h2" {today} {controls} />
+		<!-- The one way out of this card, in the corner beside the picker: the
+		     day's liturgy, which is this page's own subject read at length.
+		     There is no calendar glyph here because this IS the calendar. -->
+		<LiturgicalDayCard
+			{day}
+			heading="h2"
+			{today}
+			{controls}
+			more={[{ href: liturgyHref, label: t('liturgy.title'), icon: 'scroll' }]}
+		/>
 	{:else}
 		<!-- The control is inside the card, so a date with no day would take it
 		     off the page and strand the reader on the date that did it. It is

@@ -26,7 +26,8 @@ import {
 	listDocuments,
 	summaArticleExists,
 	summaQuestionExists,
-	workIdToEdition
+	workIdToEdition,
+	type BibleBookMeta
 } from './corpus';
 import { hrefFor, summaPartSlug, type Address } from './address';
 import {
@@ -34,6 +35,8 @@ import {
 	citationParts,
 	citesVulgateNumbering,
 	grammarSurface,
+	normalizeCitationSpacing,
+	parseRefs,
 	setDocumentTitleSource,
 	type RefSegment
 } from './refs-grammar';
@@ -394,6 +397,204 @@ export function citationPieces(
 	// locus is out of range. Split, that is a citation drawn as dead text where
 	// it used to reach at least the chapter; whole, it is what it always was.
 	return linked ? pieces : whole();
+}
+
+/** One run of consecutive verses inside one chapter, with both ends named. */
+export interface PassageSpan {
+	osis: string;
+	chapter: number;
+	from: number;
+	to: number;
+}
+
+/**
+ * What a chapter-crossing citation leaves behind: `-4:2` after `2 Timothy
+ * 3:14`, `-4:4` after `Baruch 3:9-15, 32`.
+ *
+ * A scripture SEGMENT holds one chapter — the type says so — so the grammar
+ * stops at the first chapter's numbers and hands the rest back as text. That
+ * is right for `RefText`, where an address holds one chapter too and a second
+ * link would have to be minted for the remainder; it is wrong for a caller
+ * that wants the passage rather than the anchor, which is what this reads.
+ *
+ * The verse may carry the lectionary's part letter (`4:2a`), which is ignored:
+ * a verse is the finest thing this corpus is addressed by.
+ */
+const CROSSING_TAIL_RE = /^\s*[-–—]\s*(\d{1,3})\s*[:,.]\s*(\d{1,3})[a-z]?\s*$/;
+
+/**
+ * The semicolon a lectionary citation joins two clauses of one pericope with:
+ * `Genesis 2:7-9; 3:1-7`, `Hebrews 4:14-16; 5:7-9`, `1 Sm 3:9; Jn 6:68c`.
+ *
+ * It is the ONE piece of leftover text that means "and also", and the grammar
+ * already does the hard half — the clause after it parses as a segment of its
+ * own, carrying the previous clause's book where the source did not repeat it.
+ */
+const CLAUSE_SEP_RE = /^\s*;\s*$/;
+
+/**
+ * Every verse a citation names, as spans into the reader's own Bible edition —
+ * or `undefined` where the citation cannot be read WHOLE.
+ *
+ * ## Why this exists beside `citationPieces`
+ *
+ * They answer different questions. `citationPieces` asks where a citation
+ * LEADS, and under-links: a piece it cannot place is drawn as text, which
+ * costs a link and says nothing false. This asks what a citation SAYS, and a
+ * partial answer to that is not a smaller answer but a wrong one — a reader
+ * cannot tell a pericope printed short from one printed whole, which is the
+ * condition `lectionary/cite.ts` refuses one citation at a time and
+ * `national/held.ts` refuses a whole calendar layer for.
+ *
+ * So it is all or nothing: a citation with anything in it this module cannot
+ * place resolves to `undefined`, and the caller prints the citation alone.
+ *
+ * ## It crosses chapters, which nothing else here does
+ *
+ * `Genesis 1:1-2:2` is one pericope and two chapters, and the intervening
+ * chapters — `Gen 1:1-3:5` has all of chapter 2 inside it — are named in full.
+ * Their lengths come from the edition's own index rather than from any table
+ * here: the last verse of a chapter is a fact about the edition open in front
+ * of this reader, and the two Vulgate editions and the two modern ones do not
+ * always agree on it.
+ *
+ * ## Conversion is `refAddress`'s, not a second copy
+ *
+ * Every span is minted by calling `refAddress` on a segment, including the
+ * synthetic one naming the chapter a crossing lands in — so the Hebrew-to-
+ * Vulgate mapping, the late-merge tables and the `vulgateNumbering` opt-out
+ * all apply here exactly as they apply to the link, and the text under a
+ * citation cannot come from a different chapter than the link above it. A
+ * crossing whose two ends convert into the same chapter, or backwards, is
+ * refused rather than straightened.
+ */
+export function passageSpans(
+	text: string,
+	ctx: { bibleWorkId?: string; lang?: string; work?: string }
+): PassageSpan[] | undefined {
+	if (!ctx.bibleWorkId || !text.trim()) return undefined;
+	const parsed = parseRefs(normalizeCitationSpacing(text), {
+		lang: ctx.lang,
+		work: ctx.work
+	}).filter((seg) => seg.kind !== 'text' || seg.text.trim() !== '');
+
+	// `Cf. Acts 16:14b` is the acclamation's ordinary shape and the `Cf.` is
+	// its own text segment, in whichever language the citation was written in.
+	// The segment that follows says so itself — the grammar sets `cf` — which
+	// is what lets this drop the word without a table of the fourteen ways to
+	// spell it.
+	const segments =
+		parsed[0]?.kind === 'text' && parsed[1]?.kind === 'scripture' && parsed[1].cf
+			? parsed.slice(1)
+			: parsed;
+
+	if (segments[0]?.kind !== 'scripture') return undefined;
+
+	const books = new Map<string, BibleBookMeta | undefined>();
+	const bookOf = (osis: string) => {
+		if (!books.has(osis)) books.set(osis, findBookByAbbrev(ctx.bibleWorkId as string, osis));
+		return books.get(osis);
+	};
+	const lastVerseOf = (osis: string, n: number): number | undefined => {
+		const chapter = bookOf(osis)?.chapters.find((c) => c.n === n);
+		if (!chapter || chapter.verses.length === 0) return undefined;
+		return Math.max(...chapter.verses.map((v) => v.n));
+	};
+
+	/**
+	 * One group of one clause, resolved.
+	 *
+	 * A group naming NO verse is the whole chapter — `Ionas 3` appoints all of
+	 * it. A group that named verses and placed none is not: `refAddress`
+	 * degrades that to the chapter alone, which is right for an anchor (the
+	 * reader lands on the chapter rather than nowhere) and would be a passage
+	 * of fifty verses printed where five were cited. So the two from-less
+	 * answers are told apart by what was ASKED, not by what came back.
+	 */
+	const spanFor = (
+		seg: Extract<RefSegment, { kind: 'scripture' }>,
+		verses: number[]
+	): PassageSpan | undefined => {
+		const address = refAddress({ ...seg, verses }, ctx);
+		if (address?.kind !== 'bible') return undefined;
+		if (address.from === undefined) {
+			if (verses.length > 0) return undefined;
+			const end = lastVerseOf(seg.osis, address.chapter);
+			return end === undefined
+				? undefined
+				: { osis: seg.osis, chapter: address.chapter, from: 1, to: end };
+		}
+		return {
+			osis: seg.osis,
+			chapter: address.chapter,
+			from: address.from,
+			to: address.to ?? address.from
+		};
+	};
+
+	const spans: PassageSpan[] = [];
+	let clause: Extract<RefSegment, { kind: 'scripture' }> | undefined;
+	for (const seg of segments) {
+		if (seg.kind === 'scripture') {
+			if (!bookOf(seg.osis)) return undefined;
+			// The source's own comma-chained groups, each its own span: `Ps
+			// 95:1-2, 6-7` is two runs and not one nine-verse block, which is the
+			// same reason `citationPieces` gives each of them its own link.
+			const { groups } = citationParts(seg, { lang: ctx.lang, work: ctx.work });
+			for (const verses of groups.length ? groups.map((g) => g.verses) : [seg.verses]) {
+				const span = spanFor(seg, verses);
+				if (!span) return undefined;
+				spans.push(span);
+			}
+			clause = seg;
+			continue;
+		}
+		if (seg.kind !== 'text') return undefined;
+		// The semicolon between two clauses of one pericope. It carries nothing
+		// of its own: the clause after it is a segment like any other, and a
+		// bookless one has already been given the previous clause's book by the
+		// grammar.
+		if (CLAUSE_SEP_RE.test(seg.text)) continue;
+
+		const crossing = CROSSING_TAIL_RE.exec(seg.text);
+		const last = spans[spans.length - 1];
+		if (!crossing || !clause || !last) return undefined;
+
+		// The crossing runs off the end of the group it left, so that group's
+		// own end is the chapter's.
+		const chapterEnd = lastVerseOf(last.osis, last.chapter);
+		if (chapterEnd === undefined || chapterEnd < last.from) return undefined;
+		last.to = chapterEnd;
+
+		// The landing chapter, resolved through `refAddress` like every other
+		// span: a synthetic segment naming it and its verses 1..n is the
+		// cheapest way to say "this chapter, converted the way its clause was".
+		const landing = refAddress(
+			{
+				...clause,
+				chapter: Number(crossing[1]),
+				verses: Array.from({ length: Number(crossing[2]) }, (_, i) => i + 1)
+			},
+			ctx
+		);
+		if (landing?.kind !== 'bible' || landing.from === undefined) return undefined;
+		if (landing.chapter <= last.chapter) return undefined;
+
+		// Whatever the crossing jumped OVER — `Gen 1:1-3:5` holds all of
+		// chapter 2 — named in full rather than skipped.
+		for (let n = last.chapter + 1; n < landing.chapter; n++) {
+			const end = lastVerseOf(last.osis, n);
+			if (end === undefined) return undefined;
+			spans.push({ osis: last.osis, chapter: n, from: 1, to: end });
+		}
+		spans.push({
+			osis: last.osis,
+			chapter: landing.chapter,
+			from: landing.from,
+			to: landing.to ?? landing.from
+		});
+	}
+	return spans.length ? spans : undefined;
 }
 
 /**

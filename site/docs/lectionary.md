@@ -6,7 +6,7 @@ say**. The calendar half is `site/docs/calendar.md`; the scrapers are
 `pipeline/scrapers/lectionary.py` (the source) and `pipeline/scrapers/olm.py`
 (the oracle).
 
-## Citations, never the text
+## The source's citations, never the source's text
 
 The site prints WHICH passages are appointed and resolves each through its own
 editions. It is not a Missal and not the translation read aloud anywhere. The
@@ -16,15 +16,29 @@ of facts, and this site is a citation resolver. The reading text on USCCB's
 pages is the New American Bible and stays in `raw/`, which is private, where
 nothing downstream of the parse can reach it.
 
-**That sentence is said on the card, behind the `i` beside the heading.** Set
-under the list it was three lines of small print below five lines of citations,
-on a card already carrying the day's name, its season, its rank and its colour
-— the longest text in the block, and read once. It is `ArtFigure`'s
-arrangement: the `info` glyph, a native popover, `role="note"`, which is what
-the rest of the site does with a line that qualifies something rather than
-saying it. **Paper still gets it unconditionally and still under the list** — a
-popover never prints, and the printed copy is the one whose reader cannot press
-anything.
+**Which is a rule about whose words, not about how many.**
+`/calendarium/liturgia` sets each pericope out in full and does not weaken the
+sentence above by one clause: the words it prints are the reader's own Bible
+edition, which this site already serves a chapter at a time at `/scriptura`,
+reached by resolving a citation exactly as every other citation on the site is
+resolved. Nothing of the source's own text is anywhere near it. What changes
+with length is only how loudly the qualifier has to be said — see below.
+
+**On the card that sentence is behind the `i` beside the heading.** Set under
+the list it was three lines of small print below five lines of citations, on a
+card already carrying the day's name, its season, its rank and its colour — the
+longest text in the block, and read once. It is `ArtFigure`'s arrangement: the
+`info` glyph, a native popover, `role="note"`, which is what the rest of the
+site does with a line that qualifies something rather than saying it. **Paper
+still gets it unconditionally and still under the list** — a popover never
+prints, and the printed copy is the one whose reader cannot press anything.
+
+**On `/calendarium/liturgia` it is on the page.** A reader who has just read a
+first reading, a psalm and a gospel under today's date will take them for what
+is read at their parish unless something says otherwise, and a mark they have
+to press is not something saying otherwise. The bigger the page, the louder the
+qualifier: the card's list of five addresses can hold the note behind a glyph;
+a page of Scripture cannot.
 
 ## The citation is an address, so it is written in the reader's language
 
@@ -118,6 +132,44 @@ because six United States provinces keep it on the Thursday and the rest
 transfer it to the Sunday. That is two CALENDARS, not two Masses; the calendar
 has already chosen, and offering both would show every reader a Mass they are
 not at.
+
+## `/calendarium/liturgia`: the passages, whole or not at all
+
+The card lists the day's citations; this page sets out the verses under each of
+them, and adds the two prayers a rubric appoints to a day — the Regina Caeli
+through Easter Time and the Angelus through the rest of the year, and the
+Rosary's mysteries for the weekday, which the corpus states in
+`PrayerGroupEntry.days` rather than leaving this site to read a rubric written
+in the content language.
+
+**Whole or not at all is the whole design.** `refs.ts`'s `passageSpans` reads a
+citation as VERSES where `citationPieces` reads it as a DESTINATION, and the
+two under-answer in opposite directions: a piece that cannot be placed is drawn
+as text, which costs a link and says nothing false, while a passage that cannot
+be given entire is not printed at all. **A reader cannot tell a pericope
+printed short from one printed whole** — the condition `cite.ts` refuses one
+citation at a time and `national/held.ts` refuses a whole calendar layer for.
+
+**It crosses chapters, and nothing else in the reference system does.** An
+`Address` holds one chapter, so `Genesis 1:1-2:2` is one link and one verse to
+`RefText`; here it is the two chapters it names, with any chapter the crossing
+jumps over given in full and its length read off the edition's own index rather
+than a table. It also reads the semicolon that joins two clauses of one
+pericope (`Genesis 2:7-9; 3:1-7`) — the grammar already parses the second
+clause as a segment carrying the first's book.
+
+**Every span is minted by `refAddress`**, including the synthetic segment
+naming the chapter a crossing lands in, so the Hebrew-to-Vulgate mapping, the
+late-merge tables and the `vulgateNumbering` opt-out apply here exactly as they
+apply to the link — the text under a citation cannot come from a chapter the
+link above it does not open.
+
+**A citation naming verses and placing none is not a whole chapter.**
+`refAddress` degrades that case to the chapter alone, which is right for an
+anchor and would be fifty verses printed where five were cited; the two
+verse-less answers are told apart by what was ASKED, not by what came back.
+`John 1:60-64` is the shape, and it was printing all of John 1 until the test
+for it existed.
 
 ## THE GAPS
 
@@ -250,6 +302,33 @@ is the reusable part.
   number 64 — and not the 22nd, which would still have read as the Second
   Sunday when it is the Third. A workaround that repairs precisely the case
   the oracle can see is the shape to distrust.
+
+### 7. One citation in nine prints no passage, and two grammar shapes are most of it
+
+Measured **2026-09-07** over the 1,782 distinct citations in `table.json`,
+each localized as the page localizes it and resolved against the
+Douay-Rheims: **1,592 give a passage** (70 of them crossing a chapter) and
+**190 do not**. The residue is not scattered. Bucketed by what the grammar
+left unconsumed:
+
+| Shape                                  | Count | Example                               |
+| -------------------------------------- | ----- | ------------------------------------- |
+| verse groups chained with `and` or `&` | ~48   | `Psalm 33:4-5, 6-7, 12-13, 20 and 22` |
+| a part letter past the first           | ~44   | `Psalm 25:4-5ab, 6 and 7bc, 8-9`      |
+| an alternative left inside `cite`      | 10    | `Mark 10:2-16 or 10:2-12`             |
+| verses lost to a Vulgate psalm split   | 8     | `Psalm 116:10, 15, 16-17, 18-19`      |
+
+**Almost all of it is the responsorial psalm**, which is the slot whose
+citations are the most finely divided, so the psalm is the pericope most often
+left as a bare citation on a page where everything around it prints.
+
+The first two are `refs-grammar.ts`'s and not this feature's: `LEAD_NUM_RE`
+takes a single trailing letter and the locus parser chains on commas and dots
+and not on a conjunction. **Fixing either would change every citation on the
+site**, gaining links in `citationPieces` as well as passages here, so it is a
+change with `reference-coverage`'s baseline attached to it and not a patch on
+the way past. The fourth is `verseExtent` refusing to express a range that
+straddles a Vulgate psalm split as one span, which is correct and stays.
 
 ## Running it
 

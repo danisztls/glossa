@@ -2289,7 +2289,14 @@ parses an id.
   citation, so it is not a reading address; as a chrome path it would put an
   unbounded set of URLs into the sitemap for pages that are pure computation.
   The calendar sits beside it in `?c=`, never written for the general calendar —
-  the default is an absence, not a value.
+  the default is an absence, not a value. **`/calendarium/liturgia` takes the
+  same two parameters**, so walking between the two pages keeps both the day and
+  the country.
+- **The card's corner holds the ways OUT, and there may be more than one.**
+  `more` is a list: the home page offers the liturgy and the calendar,
+  `/calendarium` the liturgy alone (a link to the page you are on is no link),
+  the liturgy page the calendar back. Each entry names its own glyph, because
+  two destinations drawn with one are two identical buttons.
 - **`replaceState` from `$app/navigation` does not update `page.url`**, and
   every control on this page was inert because of it: shallow routing sets
   `page.state` and calls `history.replaceState`, and assigns `page.url` nowhere,
@@ -2696,3 +2703,33 @@ first thing to read before believing this feature about any particular day.
   round trip is verified at RENDER**: a rewrite that does not parse back to the
   same books, chapters and verses is discarded and the English stands, which
   caught three silent mis-readings on its first run over the table.
+
+### `/calendarium/liturgia` prints the passages
+
+The card lists the day's citations; this page sets out the verses under each,
+out of the reader's own Bible edition, and adds the two prayers a rubric
+appoints to a day. `site/docs/lectionary.md` holds the design and a §7 that
+measures what still prints no passage.
+
+- **A pericope is printed whole or not at all.** `refs.ts`'s `passageSpans`
+  reads a citation as VERSES where `citationPieces` reads it as a DESTINATION,
+  and the two under-answer in opposite directions: an unplaceable piece is
+  drawn as text and says nothing false, where a passage cut short cannot be
+  told from a complete one.
+- **It crosses chapters, and nothing else in the reference system does** — an
+  `Address` holds one, so `Genesis 1:1-2:2` is one link and two chapters of
+  text. Chapter lengths come off the edition's own index, never a table here.
+- **Every span is minted by `refAddress`**, the synthetic segment naming a
+  crossing's landing chapter included, so the Vulgate mapping applies here
+  exactly as it applies to the link and the text cannot come from a chapter the
+  link does not open.
+- **A citation naming verses and placing none is not a whole chapter.**
+  `refAddress` degrades that to the chapter alone, which is right for an anchor
+  and would be fifty verses printed where five were cited; the two verse-less
+  answers are told apart by what was ASKED, not by what came back.
+- **The caveat is on the page and not behind the card's `i` glyph.** The bigger
+  the passage, the louder the qualifier: a mark a reader has to press is not
+  something saying "this is not your parish's translation".
+- **It is in `STATIC_PATHS` and not in `CHROME_PATHS`** — it must answer a cold
+  load, and it must not declare a 37-language cluster over a body that is
+  corpus text in whichever edition the reader has open.

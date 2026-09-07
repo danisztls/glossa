@@ -146,9 +146,15 @@ const BY_SEGMENT: Readonly<Record<string, readonly IndexName[]>> = {
 	doctores: withRefs('summa'),
 	// The calendar reads no corpus registry for its own subject — it computes
 	// the day — but it prints the day's readings, and every pericope on it is a
-	// citation `RefText` resolves. So it owes `REFS` and nothing else. It fell
-	// through to `ALL` before, which was safe and said nothing.
-	calendarium: withRefs(),
+	// citation `RefText` resolves. So it owes `REFS`. It fell through to `ALL`
+	// before, which was safe and said nothing.
+	//
+	// `prayer` is `/calendarium/liturgia`'s, which names the Marian antiphon
+	// and the Rosary's mysteries for the day. This table keys on the FIRST
+	// SEGMENT and nothing more (see the docblock), so `/calendarium` pays for
+	// it too — an index its own page never reads. That is the permissive
+	// direction, which is the only one this may be wrong in.
+	calendarium: withRefs('prayer'),
 	// These two read registries that are still eagerly inlined (6.9 KB and
 	// 15.5 KB) for their own text, so `REFS` is the whole of what they need —
 	// which is exactly what made them look like they needed nothing.

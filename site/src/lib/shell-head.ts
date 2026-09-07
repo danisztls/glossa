@@ -224,6 +224,15 @@ const STATIC_HEADS: Record<
 		title: `${PRAYERS} — ${SITE_NAME}`,
 		description: `The common prayers of the Church, with their sources.`
 	},
+	// `/calendarium` itself is in `CHROME_PATHS` and gets its head from
+	// `route-titles.json` in every language; this one is not, so it gets a
+	// fixed English head here — the same arrangement `/colophon` has, and for
+	// the same reason: a page whose strings are not yet in every dictionary
+	// must not claim to be.
+	'/calendarium/liturgia': {
+		title: `The day's liturgy — ${SITE_NAME}`,
+		description: `The Mass readings appointed for a day, set out in full from this library's own editions, with the day's prayers.`
+	},
 	'/colophon': {
 		title: `Colophon — ${SITE_NAME}`,
 		description: `How this library is made: where each text came from, who holds rights in it, and how the site is built.`

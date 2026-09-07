@@ -32,6 +32,7 @@
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Snippet } from 'svelte';
 	import Icon from './Icon.svelte';
+	import type { IconName } from './Icon.svelte';
 	import { primeLectionary, readingsFor } from '$lib/lectionary';
 	import DayReadings from './DayReadings.svelte';
 	import TermGloss from './TermGloss.svelte';
@@ -78,20 +79,42 @@
 		 */
 		today?: number;
 		/**
-		 * A way out of the card, drawn as a glyph in its top corner.
+		 * The ways out of the card, drawn as glyphs in its top corner.
 		 *
-		 * The home page passes `/calendarium`, being the one surface that shows
-		 * a day without being the calendar; `/calendarium` passes nothing, a
-		 * link to the page you are on being no link at all. It is a prop rather
-		 * than a fixed anchor for exactly that reason — the card is shared, and
-		 * only its caller knows whether there is anywhere to go.
+		 * ONE OR TWO, AND NEVER A FIXED ANCHOR, because only the caller knows
+		 * where there is anywhere to go: the home page offers both the calendar
+		 * and the day's liturgy, `/calendarium` offers the liturgy alone (a link
+		 * to the page you are on being no link at all), and the liturgy page
+		 * offers the calendar back. It was a single object until the liturgy
+		 * page existed; a list is the same prop once there are two destinations
+		 * rather than a second prop beside it.
 		 *
 		 * `label` is the accessible name AND the tooltip: the glyph carries no
-		 * text, so the string is the only thing that says where it leads.
+		 * text, so the string is the only thing that says where it leads —
+		 * which is also why each entry names its OWN icon. Two ways out drawn
+		 * with one glyph would be two identical buttons going to different
+		 * places.
 		 */
-		more?: { href: string; label: string };
+		more?: { href: string; label: string; icon: IconName }[];
+		/**
+		 * Print the day's Mass readings as citations.
+		 *
+		 * FALSE ON EXACTLY ONE PAGE, `/calendarium/liturgia`, which prints the
+		 * same citations as the headings of the passages themselves. The card
+		 * would otherwise say them twice on the one page where they are the
+		 * whole subject.
+		 */
+		showReadings?: boolean;
 	}
-	let { day, heading = 'h2', controls, showDate = true, today, more }: Props = $props();
+	let {
+		day,
+		heading = 'h2',
+		controls,
+		showDate = true,
+		today,
+		more,
+		showReadings = true
+	}: Props = $props();
 
 	let lang = $derived(i18n.lang);
 
@@ -225,7 +248,7 @@
 			screen, where two glyphs took a whole line of a phone directly
 			over the shortest line the card has.
 		-->
-		{#if controls || more}
+		{#if controls || more?.length}
 			<div class="corner">
 				{#if controls}
 					<div class="controls">{@render controls()}</div>
@@ -245,11 +268,11 @@
 					the glyph is `aria-hidden` by `Icon.svelte`'s enforcement, so
 					without the label the link announces its href.
 				-->
-				{#if more}
-					<a class="day-more" href={more.href} aria-label={more.label} title={more.label}>
-						<Icon name="calendar" />
+				{#each more ?? [] as way (way.href)}
+					<a class="day-more" href={way.href} aria-label={way.label} title={way.label}>
+						<Icon name={way.icon} />
 					</a>
-				{/if}
+				{/each}
 			</div>
 		{/if}
 	</header>
@@ -285,7 +308,7 @@
 		</div>
 	</dl>
 
-	{#if readings}
+	{#if showReadings && readings}
 		<!-- Above the optional memorials, because the readings are what a
 		     reader arriving by date came for, and the memorials are context. -->
 		<DayReadings masses={readings} />

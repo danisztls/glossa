@@ -228,6 +228,14 @@ const STATIC_PATHS = new Set([
 	'/ius-canonicum',
 	// The one page here whose subject is not a text at all.
 	'/calendarium',
+	// The day's liturgy, at `?d=`. It is HERE AND NOT IN `CHROME_PATHS`, which
+	// is the distinction those two tables draw: it must answer 200 to a cold
+	// load and a shared link, and it must not declare a cluster in 37 languages
+	// — its body is corpus text in whichever Bible edition the reader has open,
+	// so the page a crawler is served is not the page the `hreflang` would
+	// claim. `/calendarium` is chrome and stays chrome; this is the reading
+	// under it.
+	'/calendarium/liturgia',
 	'/doctores',
 	'/doctores/summa',
 	'/preces',

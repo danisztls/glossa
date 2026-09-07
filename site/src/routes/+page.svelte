@@ -292,6 +292,21 @@
 		territory = id;
 	}
 
+	/**
+	 * The two addresses the card's corner leads to, carrying the calendar the
+	 * reader keeps.
+	 *
+	 * NOT THE DATE, deliberately: this card is always today, and both
+	 * destinations open on today when nothing says otherwise — a `?d=` here
+	 * would freeze a link copied off the home page to the day it was copied.
+	 * `?c=` is different, being a fact about the reader rather than about the
+	 * moment, and it is absent for the general calendar on `/calendarium`'s own
+	 * reasoning: `?c=general` is a parameter that says nothing.
+	 */
+	const territoryQuery = $derived(territory === 'general' ? '' : `?c=${territory}`);
+	const calendarHref = $derived(`/calendarium${territoryQuery}`);
+	const liturgyHref = $derived(`/calendarium/liturgia${territoryQuery}`);
+
 	onMount(() => {
 		todayNumber = localToday();
 		const stored = storedTerritory();
@@ -325,15 +340,20 @@
 				     card's corner sizes and skins what it is given. -->
 				<CalendarMenu value={territory} lang={i18n.lang} onchoose={choose} />
 			{/snippet}
-			<!-- The way to the calendar is a glyph in the card's own corner, not a
-			     line under it — `LiturgicalDayCard`'s `more` prop says why, and
-			     `/calendarium` passes nothing because it IS the destination. It
-			     shares that corner with the picker above. -->
+			<!-- The two ways out are glyphs in the card's own corner, not lines
+			     under it — `LiturgicalDayCard`'s `more` prop says why. The
+			     liturgy leads, being the deeper page: the calendar answers WHICH
+			     day this is, which the card in front of the reader has already
+			     done, and the liturgy answers what is read on it. Both share the
+			     corner with the picker above. -->
 			<LiturgicalDayCard
 				{day}
 				today={todayNumber}
 				controls={calendarPicker}
-				more={{ href: '/calendarium', label: t('calendar.title') }}
+				more={[
+					{ href: liturgyHref, label: t('liturgy.title'), icon: 'scroll' },
+					{ href: calendarHref, label: t('calendar.title'), icon: 'calendar' }
+				]}
 			/>
 		</section>
 	{/if}
