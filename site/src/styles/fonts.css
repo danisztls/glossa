@@ -8,6 +8,14 @@
  * design. Every rule that USES a face names `--font-serif` / `--font-sans`
  * / `--font-display` from `tokens.css`; nothing outside this file names a
  * family directly.
+ *
+ * NOT ONE FILE BELOW CARRIES `smcp`. The subsets declare `liga`, `locl`,
+ * `frac` and the figure features and stop there, so every small cap on this
+ * site is SYNTHESISED — a capital the browser scales down. That is why
+ * nothing here uses `font-variant-caps: all-small-caps`, which under
+ * synthesis is not a texture but only everything-one-size-smaller, with the
+ * capitals it should have stood beside gone too. `small-caps` keeps the two
+ * tiers and is what `.breadcrumb` and `.motto` both use.
  */
 
 /*

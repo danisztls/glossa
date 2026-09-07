@@ -61,12 +61,48 @@
  * caps a crumb at the line, which is the one case the docblock allows it to
  * break inside itself — a crumb that alone is wider than the column.
  */
+/*
+ * SMALL CAPS, AND NOT `all-small-caps`, WHICH IS A FACT ABOUT THE FILES IN
+ * `static/fonts/` rather than a preference. Not one face this site ships
+ * carries `smcp` — the EB Garamond subsets declare `liga`, `locl`, `frac` and
+ * the figure features and nothing else — so every small cap here is
+ * SYNTHESISED, drawn by the browser as a capital scaled down. `.motto` in
+ * `+layout.svelte` reached the same conclusion first and this follows it.
+ *
+ * The difference the synthesis makes is the whole choice. Under a real
+ * `smcp`, `all-small-caps` is a texture: separately drawn glyphs, weighted to
+ * stand beside the capitals they replace. Under scaling it is only
+ * everything-one-size-smaller, and the trail loses the capital that says
+ * `Genesis` is a name — six crumbs of uniform grey at 0.85rem, thinned by the
+ * scaling, on the one line that tells a reader where they are. `small-caps`
+ * lowers the lowercase and leaves the capitals standing, which is the two
+ * tiers a running head has always had.
+ *
+ * IT REACHES `.ordinal` AND DOES NOTHING TO IT, which is the other half of
+ * why this variant and not the other. That span is already
+ * `text-transform: uppercase` (`.label-micro`, and `dt.ordinal`'s roman
+ * numerals are capitals anyway), and `small-caps` maps only lowercase — so
+ * `BOOK I` is untouched, where `all-small-caps` would have shrunk an already
+ * uppercased label a second time and flattened the ordinal/title distinction
+ * the `.ordinal` rule below sets up.
+ *
+ * `font-variant`, NOT `text-transform`: the text is unchanged, so a crumb is
+ * still copied, found and announced as it was written. Uncased scripts —
+ * Arabic, Hebrew — are unaffected, and the trail there is what it always was.
+ *
+ * The tracking is what capitals want at this size and is the same 0.02–0.06em
+ * range every other small-capped line here uses. It widens the trail slightly,
+ * which the flex row already absorbs by wrapping between crumbs — the Code of
+ * Canon Law's six-crumb trail is where that shows.
+ */
 .breadcrumb {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 0 0.35em;
 	font-size: 0.85rem;
+	font-variant-caps: small-caps;
+	letter-spacing: 0.02em;
 	color: var(--color-text-muted);
 	margin-bottom: 0.75rem;
 }
