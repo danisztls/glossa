@@ -396,6 +396,10 @@ export const pt: Dictionary = {
 		'Cada texto vem de uma fonte identificada, e cada obra indica a sua edição, a página de origem e a data em que foi obtida. As Escrituras usam traduções de domínio público; o Catecismo, o Compêndio e os documentos do Magistério vêm dos textos publicados pela Santa Sé.',
 	'colophon.textsFidelity':
 		'O texto nunca é abreviado, nunca parafraseado, nunca reescrito e nunca colocado junto a publicidade. Corrigimos defeitos evidentes — uma palavra faltando, uma referência truncada, marcação que engoliu um parágrafo — sempre no sentido do que a própria fonte imprime, nunca no sentido do que julgamos que deveria dizer.',
+	'colophon.textsLanguages':
+		'A interface alcança mais línguas do que a biblioteca. Onde não temos a Escritura na língua em que se está lendo, o texto aparece na língua mais próxima de que dispomos, normalmente o inglês; a obra indica sempre de que edição se trata.',
+	'colophon.textsLanguagesBlocked':
+		'Em três delas isso não é questão de tempo. Nunca houve uma Bíblia católica em sueco livre de direitos — as versões suecas livres são luteranas e afastam-se do latim justamente nos versículos em que a diferença pesa. O esloveno e o árabe têm cada um a sua Bíblia católica antiga o bastante para ser livre, e nenhuma das duas sobrevive senão como fotografias das suas páginas.',
 	'colophon.countBible': 'edições bíblicas',
 	'colophon.countDocuments': 'documentos do Magistério',
 	// Operative rather than descriptive, like `whatThisIsStanding` and

@@ -20,12 +20,37 @@
 	import { isUnpublished, listDocuments, listWorks } from '$lib/corpus';
 	import { plateCredits } from '$lib/corpus-index';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
-	import { CONTACT_EMAIL } from '$lib/colophon';
+	import { BLOCKED_BIBLE_LANGS, CONTACT_EMAIL } from '$lib/colophon';
+	import { baseLang } from '$lib/lang-names';
 	import { t } from '$lib/i18n.svelte';
 	import { RETENTION_DAYS } from '$lib/usage-store';
 
 	const works = listWorks();
 	const bibleEditions = works.filter((w) => w.type === 'bible').length;
+
+	/**
+	 * Whether the three blocked languages are still blocked, read off the
+	 * corpus rather than trusted — the work counts' rule, applied to a claim
+	 * instead of to a number.
+	 *
+	 * The paragraph it gates says two things no manifest carries: that Swedish
+	 * has no acceptable text in existence and that the Slovenian and Arabic
+	 * ones are undigitised. What the corpus CAN answer is whether the gap is
+	 * still open, so an edition arriving in any of the three withdraws the
+	 * statement instead of leaving this page contradicting the library. It is
+	 * all three or none: the sentence names them together and gives one reason
+	 * for the first and another for the other two, so it cannot be narrowed by
+	 * dropping a name from a list (`BLOCKED_BIBLE_LANGS`).
+	 *
+	 * It reads the manifests rather than being asserted in vitest because
+	 * vitest never sees the real corpus: the fixtures are two Bible books in
+	 * one language, so a test here would agree with the claim without having
+	 * checked anything the deploy will serve.
+	 */
+	const bibleLangs = new Set(
+		works.filter((w) => w.type === 'bible').map((w) => baseLang(w.language ?? ''))
+	);
+	const scriptureBlocked = BLOCKED_BIBLE_LANGS.every((lang) => !bibleLangs.has(lang));
 
 	/**
 	 * Documents whose text this site actually SERVES, which is not the same as
@@ -135,6 +160,22 @@
 			reader is the one it is owed to.
 		-->
 		<p>{t('colophon.textsFidelity')}</p>
+		<!--
+			WHY A READER MAY BE LOOKING AT ENGLISH SCRIPTURE UNDER THEIR OWN
+			CHROME. The interface is a superset of the corpus, so most interface
+			languages have no Bible edition and fall through
+			`CONTENT_LANG_FALLBACK` silently — which is the right behaviour and
+			the wrong silence, since nothing on the site said the gap existed.
+
+			Two paragraphs and not one: the first is true of every language with
+			no edition and is a statement about the library; the second is about
+			three languages where the gap will not close by anyone working
+			harder, and is gated on the corpus still agreeing (`scriptureBlocked`).
+		-->
+		<p>{t('colophon.textsLanguages')}</p>
+		{#if scriptureBlocked}
+			<p>{t('colophon.textsLanguagesBlocked')}</p>
+		{/if}
 		<p class="counts">
 			{bibleEditions}
 			{t('colophon.countBible')} · {documentCount}

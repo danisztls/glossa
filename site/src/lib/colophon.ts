@@ -24,3 +24,28 @@
  * so it reads to someone with no Latin as well as it does to someone with it.
  */
 export const CONTACT_EMAIL: string | null = 'curator@glossacatholica.org';
+
+/**
+ * The interface languages whose Scripture gap is CLOSED rather than merely
+ * open — `docs/research/bible-texts.md` §The three that are blocked.
+ *
+ * Most languages without a Bible edition are waiting on somebody's time:
+ * Polish, Russian and Romanian each have a chosen text, captured and
+ * unparsed. These three are not. Swedish has no public-domain Catholic
+ * translation in existence — the alternatives are Lutheran and fail the
+ * survey's own litmus at Luke 1:28 — and the Slovenian (Wolf, 1856–59) and
+ * Arabic (Mosul, 1875–78) ones exist as scans nobody has turned into text,
+ * so reaching them is an OCR project rather than an ingestion.
+ *
+ * A reader in any of the three gets English Scripture under their own chrome,
+ * and said colophon paragraph is the only place the site explains why.
+ *
+ * IT IS A LIST SO THE PAGE CAN CHECK IT, and the check is the point: the
+ * paragraph names the three languages and their two reasons in prose, which
+ * no corpus can derive, so the one thing that CAN be derived — whether the
+ * gap is still there — is what gates the paragraph. An edition arriving in
+ * any of them withdraws the whole statement rather than leaving a page
+ * asserting a blockage the library disproves. Rewrite the sentence then;
+ * do not simply delete the language from this list.
+ */
+export const BLOCKED_BIBLE_LANGS = ['sv', 'sl', 'ar'] as const;

@@ -776,6 +776,26 @@ export const en: Dictionary = {
 		'Every text comes from a named source, and every work records its edition, its source page and the date it was retrieved. Scripture uses public-domain translations; the Catechism, the Compendium and the magisterial documents come from the Holy See\u2019s own published texts.',
 	'colophon.textsFidelity':
 		'The text is never abridged, never paraphrased, never rewritten, and never placed beside advertising. We do repair plain defects \u2014 a dropped word, a mangled citation, markup that swallowed a paragraph \u2014 always toward what the source itself prints, never toward what we think it should say.',
+	// WHY THE SCRIPTURE MAY BE IN ENGLISH ON A PAGE WHOSE CHROME IS NOT. The
+	// interface reaches further than the corpus does, so a reader in most of
+	// these languages meets a Bible in English and nothing anywhere said why.
+	//
+	// The second paragraph is the part that could not be derived and the part
+	// worth saying: for three languages the gap is not somebody's unfinished
+	// work. Swedish has no public-domain Catholic translation in existence;
+	// the Slovenian and Arabic ones do exist and have never been typed up.
+	// `docs/research/bible-texts.md` §The three that are blocked holds the
+	// evidence for each, down to the verse the Swedish alternatives fail at.
+	//
+	// It NAMES the three rather than interpolating a list, because the two
+	// halves of the sentence are two different reasons and a list cannot carry
+	// them. The colophon page renders it only while the corpus still agrees
+	// that all three lack an edition (`BLOCKED_BIBLE_LANGS`) — a claim about
+	// the world, checked against the one part of it a manifest can answer.
+	'colophon.textsLanguages':
+		'The interface reaches further than the library does. Where we hold no Scripture in the language you are reading in, the text is shown in the nearest language we do hold, which is usually English; the work you are reading always names the edition it is.',
+	'colophon.textsLanguagesBlocked':
+		'For three of them that is not a matter of time. There has never been a Catholic Bible in Swedish that is out of copyright — the free Swedish versions are Lutheran, and depart from the Latin at the verses the difference turns on. Slovenian and Arabic both have a Catholic Bible old enough to be free, and neither survives as anything but photographs of its pages.',
 	'colophon.countBible': 'Bible editions',
 	'colophon.countDocuments': 'magisterial documents',
 	// The expansion of `colophon.pointNoTracking`, which stays where it is as

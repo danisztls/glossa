@@ -367,6 +367,10 @@ export const sv: Dictionary = {
 		'Varje text kommer från en namngiven källa, och varje verk anger sin utgåva, sin källsida och datumet då den hämtades. Skriften använder översättningar i public domain; katekesen, kompendiet och läroämbetets dokument kommer från Heliga stolens egna publicerade texter.',
 	'colophon.textsFidelity':
 		'Texten förkortas aldrig, parafraseras aldrig, skrivs aldrig om och placeras aldrig intill reklam. Däremot rättar vi uppenbara fel — ett bortfallet ord, en förvanskad hänvisning, en uppmärkning som svalt ett stycke — alltid mot vad källan själv trycker, aldrig mot vad vi tycker att den borde säga.',
+	'colophon.textsLanguages':
+		'Gränssnittet räcker längre än biblioteket. Där vi inte har Skriften på det språk du läser på visas texten på det närmaste språk vi har, oftast engelska; verket du läser anger alltid vilken utgåva det är.',
+	'colophon.textsLanguagesBlocked':
+		'För tre av dem är det inte en fråga om tid. Det har aldrig funnits en katolsk bibel på svenska som är fri från upphovsrätt — de fria svenska versionerna är lutherska och avviker från latinet just vid de verser där skillnaden betyder något. Slovenskan och arabiskan har var sin katolsk bibel gammal nog att vara fri, och ingen av dem finns kvar annat än som fotografier av sina sidor.',
 	'colophon.countBible': 'bibelutgåvor',
 	'colophon.countDocuments': 'dokument från läroämbetet',
 	'colophon.privacyTitle': 'Integritet',

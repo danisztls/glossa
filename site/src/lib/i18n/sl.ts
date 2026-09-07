@@ -367,6 +367,10 @@ export const sl: Dictionary = {
 		'Vsako besedilo prihaja iz imenovanega vira, vsako delo pa beleži svojo izdajo, izvorno stran in datum prevzema. Sveto pismo uporablja prevode v javni lasti; katekizem, kompendij in dokumenti učiteljstva prihajajo iz besedil, ki jih je objavil Sveti sedež sam.',
 	'colophon.textsFidelity':
 		'Besedilo nikoli ni okrajšano, nikoli parafrazirano, nikoli na novo napisano in nikoli postavljeno ob oglas. Očitne napake pa popravljamo — izpadlo besedo, popačeno navedbo, oznake, ki so požrle odstavek — vselej v smeri tega, kar vir sam tiska, nikoli v smeri tega, kar bi po našem mnenju moralo pisati.',
+	'colophon.textsLanguages':
+		'Vmesnik seže dlje kakor knjižnica. Kjer Svetega pisma nimamo v jeziku, v katerem berete, je besedilo prikazano v najbližjem jeziku, ki ga imamo, običajno v angleščini; delo, ki ga berete, vselej pove, katera izdaja je.',
+	'colophon.textsLanguagesBlocked':
+		'Pri treh od njih to ni vprašanje časa. Katoliškega Svetega pisma v švedščini, ki bi bilo prosto avtorskih pravic, ni bilo nikoli — proste švedske različice so luteranske in se od latinščine ločijo prav pri tistih vrsticah, kjer je razlika pomembna. Slovenščina in arabščina imata vsaka svoje katoliško Sveto pismo, dovolj staro, da je prosto, a nobeno se ni ohranilo drugače kakor v fotografijah svojih strani.',
 	'colophon.countBible': 'svetopisemskih izdaj',
 	'colophon.countDocuments': 'dokumentov učiteljstva',
 	'colophon.privacyTitle': 'Zasebnost',
