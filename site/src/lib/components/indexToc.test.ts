@@ -176,6 +176,59 @@ describe('indexRows over a document-derived outline', () => {
 	});
 });
 
+// `IndexRow.key` keys the `{#each}` that draws the index, and Svelte throws
+// `each_key_duplicate` on a repeat — the whole route renders blank rather than
+// a row twice. An outline that repeats a title at one span is a parse defect
+// (`ccc.pt` had five, out of one restated running banner), but the index draws
+// four works out of a corpus every worktree regenerates, so it may not depend
+// on the data being well-formed.
+describe('row keys', () => {
+	const clean = [
+		node('part', 1, 'Part One', [1, 10], [node('chapter', 1, 'Chapter', [1, 10])]),
+		node('part', 2, 'Part Two', [11, 20])
+	];
+	const twins = [
+		node(
+			'part',
+			2,
+			'Part',
+			[1, 10],
+			[
+				node('sub', null, 'Banner', [null, null]),
+				node('chapter', 1, 'Chapter', [1, 10], [node('sub', null, 'Banner', [null, null])]),
+				node('sub', null, 'Banner', [null, null])
+			]
+		)
+	];
+
+	// A well-formed outline keys exactly as it did before the guard, or every
+	// reader's open rows move the day one is added.
+	it('leaves a row that stands alone keyed by its own rowKey', () => {
+		const rows = indexRows(clean);
+		expect(rows.map((row) => row.key)).toEqual(rows.map((row) => rowKey(row.node)));
+	});
+
+	it('numbers the repeats of a title the outline states more than once', () => {
+		const rows = indexRows(twins);
+		expect(rows).toHaveLength(new Set(rows.map((row) => row.key)).size);
+		expect(rows.filter((row) => row.node.title === 'Banner').map((row) => row.key)).toEqual([
+			'Banner|-',
+			'Banner|-#2',
+			'Banner|-#3'
+		]);
+	});
+
+	// `ancestors` is what decides visibility, so it has to carry the SAME
+	// disambiguated key the row itself does — otherwise a collapsed twin hides
+	// its namesake's children.
+	it('hangs a child off the disambiguated key of its own parent', () => {
+		const rows = indexRows(twins);
+		const chapter = rows.find((row) => row.node.title === 'Chapter');
+		const nested = rows.find((row) => row.ancestors.length === 2);
+		expect(nested?.ancestors).toEqual([rows[0].key, chapter?.key]);
+	});
+});
+
 // One work's chip on an index row. Its address comes from `hrefFor` via the
 // caller rather than a base path to concatenate, which is what lets an
 // article point into its chapter and a condensing run point at a question —

@@ -46,7 +46,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import type { StructureNode } from '$lib/types';
 	import type { IndexRow } from './indexToc';
-	import { indexRows, rowKey, type RowLink } from './indexToc';
+	import { indexRows, type RowLink } from './indexToc';
 	import { marker } from './structureToc';
 
 	/**
@@ -214,8 +214,7 @@
 
 	const visible = (row: IndexRow) => row.ancestors.every((key, i) => openAt(key, i));
 
-	function toggle(node: StructureNode) {
-		const key = rowKey(node);
+	function toggle(key: string) {
 		if (toggled.has(key)) toggled.delete(key);
 		else toggled.add(key);
 	}
@@ -232,7 +231,7 @@
 			class:open={isOpen}
 			aria-expanded={isOpen}
 			aria-label={`${isOpen ? t('index.hideSubsections') : t('index.showSubsections')}: ${title}`}
-			onclick={() => toggle(row.node)}
+			onclick={() => toggle(row.key)}
 		>
 			<ChevronRight size={14} aria-hidden="true" />
 		</button>
@@ -265,11 +264,11 @@
 	<!-- `role="list"` because `list-style: none` drops the list role in Safari,
 	     and this is the markup carrying the outline now that the table is gone. -->
 	<ul class="index-rows" role="list">
-		{#each rows as row (rowKey(row.node))}
+		{#each rows as row (row.key)}
 			{@const dt = heading(row.node, lang)}
 			{@const anchor = row.node.paragraphs[0]}
 			{@const label = dt.marker}
-			{@const isOpen = openAt(rowKey(row.node), row.depth)}
+			{@const isOpen = openAt(row.key, row.depth)}
 			{@const rowRank = rank(row.node, row.depth)}
 			{@const stacked = STACKED_RANKS.has(rowRank) && !!label}
 			{@const href = rowHref?.(row.node)}
