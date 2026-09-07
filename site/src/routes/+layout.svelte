@@ -40,6 +40,7 @@
 	// markup (`rel="prev"`, `.reference-number`), so no route registers
 	// anything.
 	import Shortcuts from '$lib/components/Shortcuts.svelte';
+	import { installAnchorGlide } from '$lib/anchor-scroll';
 
 	let { children } = $props();
 
@@ -303,6 +304,16 @@
 	 * an update has actually landed rather than merely been offered again.
 	 */
 	onMount(() => usage.start(version));
+
+	/**
+	 * Fragment jumps within the page the reader is on — a table of contents
+	 * row, a verse number — glided rather than cut. One document-level listener
+	 * for the whole session, here for the reason the three above are: the
+	 * layout mounts once, and no reading route should have to remember that a
+	 * global exists. `$lib/anchor-scroll.ts` argues why it replays the browser's
+	 * jump instead of taking the click.
+	 */
+	onMount(() => installAnchorGlide());
 
 	/**
 	 * Sections visited, from the one place that already knows about every

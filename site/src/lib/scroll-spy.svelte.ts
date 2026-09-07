@@ -30,7 +30,9 @@
  * Measurement is `requestAnimationFrame`-throttled: scroll fires far more
  * often than the screen updates, and `getBoundingClientRect` forces layout.
  * The frame is scheduled only in response to a scroll or resize, never on a
- * standing loop, so an idle page costs nothing.
+ * standing loop, so an idle page costs nothing. The one loop it does hold is
+ * bounded by an animation the site is running (`springScrolling`, below), and
+ * it exists to take FEWER measurements rather than more.
  *
  * ## The reference line
  *
@@ -48,6 +50,9 @@
  * no fallback guess before the first measurement — the position is
  * `undefined`, which the sidebar already handles as "no position known".
  */
+
+import { onFragmentAsked } from './anchor-scroll';
+import { springScrolling } from './smooth-scroll';
 
 /** Fraction of the viewport height at which a unit counts as reached. */
 const REFERENCE_LINE = 1 / 3;
@@ -89,10 +94,10 @@ export function useScrollSpy(getTargets: () => readonly SpyTarget[]): ScrollSpy 
 		// search. A missing id is dropped rather than treated as position
 		// zero — the caller's list and the rendered content can disagree
 		// (unaddressable front matter, a language whose edition lacks a unit).
-		const entries: { el: HTMLElement; n: number }[] = [];
+		const entries: { id: string; el: HTMLElement; n: number }[] = [];
 		for (const [id, n] of targets) {
 			const el = document.getElementById(id);
-			if (el) entries.push({ el, n });
+			if (el) entries.push({ id, el, n });
 		}
 		if (entries.length === 0) {
 			current = undefined;
@@ -147,13 +152,99 @@ export function useScrollSpy(getTargets: () => readonly SpyTarget[]): ScrollSpy 
 		let frame = 0;
 		function schedule() {
 			if (frame) return; // already queued for this frame
-			frame = requestAnimationFrame(() => {
+			frame = requestAnimationFrame(function step() {
+				// A SCROLL THE SITE IS PERFORMING REPORTS ONCE, AT ITS
+				// DESTINATION. The reader chose that destination; the offsets
+				// between are not positions they asked about, and answering for
+				// each of them is expensive in a way no other consumer of this
+				// spy makes obvious — `StructureSidebarToc` renders only the
+				// branch containing the current row, so every intermediate
+				// answer mounts and unmounts a subtree, lays out its text for
+				// the first time (where a `unicode-range` subset is requested,
+				// and `font-display: swap` then restyles the document) and
+				// forces a layout from `revealRow`. A jump crossed forty
+				// sections and cost one of those; a glide crossing the same
+				// forty cost forty, and the document visibly reflowed under it.
+				//
+				// So the frame is kept alive rather than dropped, and the
+				// measurement is taken on the first frame after the animation
+				// stops — however it stopped, since `springScrolling` goes false
+				// on arrival, on a cancel, and on the drift check handing the
+				// page back to the reader. Dropping the frame instead would
+				// leave the position stale wherever the last write lands
+				// exactly where the page already was and fires no scroll event.
+				if (springScrolling()) {
+					frame = requestAnimationFrame(step);
+					return;
+				}
 				frame = 0;
+				if (adopted) {
+					adopted = false;
+					return;
+				}
 				measure();
 			});
 		}
 
 		measure();
+		// A UNIT THE READER ASKED FOR IS REPORTED AT THE ASKING, not when the
+		// page finishes moving. It is the same answer the measurement below
+		// would reach a glide later — the fragment names the unit outright,
+		// where the reference line infers one — so taking it early costs
+		// nothing and is what keeps the sidebar from trailing the page it
+		// describes. An id belonging to some other page furniture matches no
+		// entry and is ignored rather than blanking the position.
+		//
+		// AND IT OUTRANKS THE ARRIVAL MEASUREMENT, which is `adopted`. The
+		// fragment jump parks the unit's top just under the reading bar, well
+		// above a reference line a third of the way down — so on a section
+		// shorter than the gap between them, the line falls into the NEXT unit
+		// and the measurement taken on arrival answers §43 to a reader who
+		// asked for §42. That was true of the instant jump too and was over
+		// before anyone saw it; at the end of a glide it is a visible flip.
+		// The reader's own request stands until the reader moves the page
+		// themselves, so exactly one measurement is skipped.
+		let adopted = false;
+		const unlisten = onFragmentAsked((id) => {
+			const hit = unitAt(id);
+			if (hit === undefined) return;
+			current = hit;
+			adopted = true;
+		});
+
+		/**
+		 * Which unit a fragment id stands for.
+		 *
+		 * AN ID IS RARELY ONE OF THE TARGETS, and that is not a defect in the
+		 * caller: a document's table of contents rows address the HEADING
+		 * (`rowHref`, structureToc.ts — `#s{n}` lands on the section after it,
+		 * which puts the heading itself off the top of the screen), while the
+		 * spy tracks the numbered sections. Matching on the id alone therefore
+		 * answered nothing for most rows on the one route this all exists for,
+		 * and the highlight waited for the measurement at the end of the travel
+		 * — which is the lag `onFragmentAsked` was added to remove.
+		 *
+		 * So an unknown id is placed rather than dropped: the unit is the first
+		 * one AT or AFTER it, which is the section a heading introduces and the
+		 * section itself when the id is a section's. By document position and
+		 * not by geometry, so it costs no layout and needs no tolerance — with
+		 * an ancestor counted as a hit, since a heading may be rendered inside
+		 * the very section it opens.
+		 */
+		function unitAt(id: string): number | undefined {
+			const exact = entries.find((entry) => entry.id === id);
+			if (exact) return exact.n;
+			const el = document.getElementById(id);
+			if (!el) return undefined;
+			const at = entries.find((entry) => {
+				if (entry.el === el) return true;
+				const pos = el.compareDocumentPosition(entry.el);
+				return Boolean(
+					pos & Node.DOCUMENT_POSITION_FOLLOWING || pos & Node.DOCUMENT_POSITION_CONTAINS
+				);
+			});
+			return at?.n;
+		}
 		window.addEventListener('scroll', schedule, { passive: true });
 		// A resize moves both the reference line and the layout the tops were
 		// measured against, so it needs the same treatment as a scroll.
@@ -161,6 +252,7 @@ export function useScrollSpy(getTargets: () => readonly SpyTarget[]): ScrollSpy 
 
 		return () => {
 			if (frame) cancelAnimationFrame(frame);
+			unlisten();
 			window.removeEventListener('scroll', schedule);
 			window.removeEventListener('resize', schedule);
 		};

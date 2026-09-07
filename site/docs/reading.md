@@ -408,6 +408,113 @@ the window it was measuring would feed straight back into itself — and
 inert but still scrollable, so arrowing through a list would move the page the
 reader comes back to.
 
+**The spring answers three movements now, and the two later ones are capped.**
+It was written for the keyboard step, whose distance is one reference number;
+the return-to-top button and every same-page fragment jump reach it through
+`glideScrollTo`, whose distance is however far the reader has read. A spring
+settles in a constant time whatever the distance, so peak speed is
+`ω·distance/e` and scales without limit — over a whole part of the Catechism
+that is a strobe of text nobody reads, at a frame cost nobody asked for. The
+surplus is jumped and the last `GLIDE_VIEWPORTS` (1.5) are glided, which is
+the whole of `glideStart`. A viewport and a half rather than one: at exactly
+one screen the reader sees a page they have not read scroll past and nothing
+of where they were, which is a cut with a delay in front of it.
+
+**A fragment jump is REPLAYED, never intercepted, and that is what makes it
+safe.** A table of contents row on `/documenta/[slug]` — the whole document on
+one page, so its sidebar links `#s{n}` — is not only a scroll: it is a history
+entry, a `hashchange`, a focus move, and, where the router recognises it, an
+update to `page.url`. Taking the click means owning every one, and the two
+that cannot be owned cheaply are the ones that matter. A `history.pushState`
+written by hand copies `sveltekit:history` onto the new entry, so Back lands on
+an index SvelteKit reads as no movement at all; and `goto()`, the sanctioned way
+to stay in sync, runs the whole navigation machinery — `load`, a `root.$set`
+over the tree — for a scroll, which is the cost §The liturgical calendar
+measured down to the font restyle it provoked. So `$lib/anchor-scroll` lets the
+browser jump exactly as it did, notes where the page was on the way into the
+click, and on the scroll that follows puts it back and glides. Everything above
+happens untouched, and every guess in it fails toward no animation — which is
+the behaviour it replaced — rather than toward a jump that lands elsewhere.
+
+**The rewind is invisible by the event loop's own ordering, not by luck.** A
+`scroll` event is dispatched in the rendering update's scroll steps, which run
+before that frame's animation callbacks and before it paints; the frame that
+would have shown the page at the target shows it back at the origin instead.
+Both writes — the rewind and the glide's first — are inside that one handler,
+so nothing is ever painted in two places. The click also cancels any spring
+still running, or the spring's own per-frame writes would be read as the jump.
+
+**A COMPUTED SCROLL REPORTS ITS DESTINATION AND NOTHING ON THE WAY, and the
+glide is what made that a requirement.** The scroll spy answers "where is the
+reader"; while the site is performing the scroll the reader already chose the
+answer, and every offset between is a question nobody asked. Answering them is
+not free on the one page where the spy drives a tree:
+`StructureSidebarToc` renders only the branch containing the current row, so
+each intermediate answer mounts and unmounts a subtree, lays its text out for
+the first time — which is where a `unicode-range` subset is requested and
+`font-display: swap` then restyles the document — and forces a layout from
+`revealRow`. A jump across forty sections cost one of those. A glide across the
+same forty cost forty, and `/documenta/[slug]` visibly reflowed under a moving
+viewport. `springScrolling()` is the gate, and the spy keeps its frame alive
+rather than dropping it: the measurement is taken on the first frame after the
+animation stops, however it stopped, because the spring's last write can land
+exactly where the page already was and fire no scroll event to wake it.
+
+**THE UNIT A READER ASKED FOR IS REPORTED AT THE ASKING, and the gate above is
+why it had to be.** With the spy quiet through the travel, the sidebar held its
+old row for the whole half second and then snapped — the table of contents
+trailing the page it describes, which is the lag the gate bought. So
+`anchor-scroll` announces the fragment on the click (`onFragmentAsked`) and the
+spy adopts it before the browser has moved anything. It is not a shortcut for
+the measurement but a better answer than one: the fragment names the unit
+outright, where the reference line infers a unit from a viewport offset, and
+the reader is at §42 from the moment they ask for it whatever the scrollport is
+doing.
+
+It also OUTRANKS the arrival measurement, for one measurement only. The jump
+parks the unit's top just under the reading bar, well above a line a third of
+the way down the viewport — so on a section shorter than the gap between them
+the line falls into the next unit, and the measurement taken on arrival answers
+§43 to a reader who asked for §42. That was always true and was over before
+anyone saw it; at the end of a glide it is a visible flip. The request stands
+until the reader moves the page themselves.
+
+**THE GLIDE FOLLOWS THE ELEMENT, NOT THE OFFSET THE ELEMENT STOOD AT.** The
+browser computes a fragment's landing offset once, before any of the travel has
+happened, and half a second is long enough for the page to stop agreeing with
+it — a font arriving and swapping re-measures every line above the target. Two
+things then go wrong and the second is worse: the reader lands at a
+neighbouring heading, and the browser's own scroll anchoring compensates for
+the shift by moving the scrollport, which `DRIFT_TOLERANCE` reads as somebody
+else scrolling, so the spring abandons the glide mid-flight. `glideScrollToElement`
+takes the element with the browser's offset for it, stores the DIFFERENCE
+between the two, and re-derives the target every frame: layout moving the
+element retargets the spring and is forgiven the drift, while the reader moving
+the page still takes it over. The caller keeps handing over the browser's own
+number rather than re-deriving it, so `scroll-padding-top` and any
+`scroll-margin` on the element are accounted for without this code knowing they
+exist.
+
+**AND THE SIDEBAR STOPPED RESIZING, which is what was moving.** `.reading-aside`
+was `max-height` with `overflow-y: auto` and no reserved scrollbar lane, and it
+renders only the branch holding the current row — so crossing a section changed
+the list's height, which crossed the cap, which brought a scrollbar in, which
+took its width out of the content box and re-wrapped every row; and where an
+article is shorter than its sidebar the grid row sizes to the aside, so the
+resizing could reach the document. It is a fixed `height` with
+`scrollbar-gutter: stable` now, which costs nothing visible — the element draws
+no background and no border, so the surplus beside a short table of contents is
+empty page either way. `html` had the same reservation and the same argument
+(base.css) since the day `/scriptura` was caught stepping sideways; the two
+other scroll containers on the page had never been given it.
+
+**Only a link to the page the reader is on arms it.** A cross-page deep link
+scrolls too — SvelteKit calls `scrollIntoView()` once the new route has
+rendered — and gliding there would animate a page the reader has not seen yet,
+from a top they never occupied. `samePageFragment` is that gate and the
+three-frame deadline is its second half, short enough that a route resolving
+from cache cannot land inside it.
+
 ## Focus mode
 
 **It is `print.css`'s hidden list, read as a screen instead of as paper.**

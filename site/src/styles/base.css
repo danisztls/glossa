@@ -56,7 +56,7 @@ html {
 	 * the viewport the more carefully someone had tuned one.
 	 */
 	/* The sticky chrome's height, as one token: the scroll inset below and the
-	   sidebars' own `top`/`max-height` (`.reading-aside`, `.index-aside`) all
+	   sidebars' own `top`/`height` (`.reading-aside`, `.index-aside`) all
 	   have to clear the same chrome, and three copies of one expression drift.
 	   It is a single term today — it was a sum while the site header was
 	   sticky too — and stays a token for that reason and for the fallback,

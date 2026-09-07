@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { hasSettled, stepSpring, type SpringState } from './smooth-scroll';
+import {
+	GLIDE_VIEWPORTS,
+	glideStart,
+	hasSettled,
+	stepSpring,
+	type SpringState
+} from './smooth-scroll';
 
 const AT_REST = (position: number): SpringState => ({ position, velocity: 0 });
 
@@ -85,5 +91,36 @@ describe('hasSettled', () => {
 
 	it('agrees with the spring: a settled run reports settled', () => {
 		expect(hasSettled(run(AT_REST(0), 1000, 800), 1000)).toBe(true);
+	});
+});
+
+describe('glideStart', () => {
+	const VIEWPORT = 800;
+	const LIMIT = VIEWPORT * GLIDE_VIEWPORTS;
+
+	it('skips nothing inside the limit, in either direction', () => {
+		expect(glideStart(600, 0, VIEWPORT)).toBe(600);
+		expect(glideStart(0, 600, VIEWPORT)).toBe(0);
+		expect(glideStart(LIMIT, 0, VIEWPORT)).toBe(LIMIT);
+	});
+
+	it('pulls a long haul up to the limit on the side it came from', () => {
+		// Reading the Catechism at 30,000px and asking for the top.
+		expect(glideStart(30_000, 0, VIEWPORT)).toBe(LIMIT);
+		// And the same distance downward: a table of contents row at the end of
+		// a document the reader is at the start of.
+		expect(glideStart(0, 30_000, VIEWPORT)).toBe(30_000 - LIMIT);
+	});
+
+	it('never crosses the target, which would reverse the direction of travel', () => {
+		for (const [from, to] of [
+			[30_000, 0],
+			[0, 30_000],
+			[900, 400],
+			[400, 900]
+		]) {
+			const start = glideStart(from, to, VIEWPORT);
+			expect(Math.sign(start - to) || Math.sign(from - to)).toBe(Math.sign(from - to) || 0);
+		}
 	});
 });

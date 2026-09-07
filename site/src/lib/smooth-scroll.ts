@@ -1,6 +1,12 @@
 /**
- * The page's own scroll animation, for the one movement the site computes
- * itself: a keyboard step from one reference number to the next.
+ * The page's own scroll animation, for every movement the site computes
+ * itself: a keyboard step from one reference number to the next, the way back
+ * to the top, and the fragment jumps `anchor-scroll.ts` replays.
+ *
+ * The step is the one that SHAPED it, and the rest of this docblock argues
+ * from it — it is the hardest case, being the one whose target moves while the
+ * animation is running. The other two go through `glideScrollTo` below, which
+ * is this with a cap on how much travel it will show.
  *
  * WHY NOT `behavior: 'smooth'`, WHICH THIS REPLACES. The native animation is
  * a fixed curve of the browser's choosing, and it has one property this
@@ -105,6 +111,34 @@ export function hasSettled(state: SpringState, target: number): boolean {
 	);
 }
 
+/**
+ * How much travel a glide may actually SHOW, in viewport heights.
+ *
+ * The spring settles in a constant time whatever the distance, so peak speed
+ * is `ω·distance/e` and scales without limit — over a whole part of the
+ * Catechism that is a strobe of text nobody reads, at a frame cost nobody
+ * asked for. A jump covers the surplus and the spring covers the last leg.
+ *
+ * A viewport and a half rather than one: at exactly one screen the reader
+ * sees a page of text they have not read scroll past and nothing of where
+ * they were, which is a cut with a delay in front of it rather than a move.
+ */
+export const GLIDE_VIEWPORTS = 1.5;
+
+/**
+ * Where a glide to `to` should begin, given the page is at `from`.
+ *
+ * Inside the limit it is `from` — nothing is skipped, and the short hops
+ * (a heading two screens down) glide the whole way. Past it, the start is
+ * pulled to the limit on the SIDE the reader is coming from, so the direction
+ * of travel is still the direction they moved.
+ */
+export function glideStart(from: number, to: number, viewport: number): number {
+	const distance = from - to;
+	const limit = viewport * GLIDE_VIEWPORTS;
+	return Math.abs(distance) <= limit ? from : to + Math.sign(distance) * limit;
+}
+
 /* ------------------------------------------------------------------------ *
  * The DOM half. One animation at a time, because there is one document
  * scrollport and a second spring pulling at it would be two hands on the
@@ -117,6 +151,13 @@ let state: SpringState = { position: 0, velocity: 0 };
 let lastFrameTime = 0;
 /** What this module last asked the page to be, for the drift check. */
 let written = 0;
+/** The element a glide is following, if it was given one. */
+let anchor: HTMLElement | null = null;
+/** How far the scroll offset that SHOWS `anchor` sits from `anchor`'s own top
+ *  in the document — the browser's own answer to where a fragment lands
+ *  (`scroll-padding-top`, in practice), kept as a difference so that it stays
+ *  true wherever the element moves to. */
+let anchorOffset = 0;
 
 /**
  * Glide the page to `top`.
@@ -132,6 +173,7 @@ let written = 0;
  */
 export function springScrollTo(top: number): void {
 	target = top;
+	anchor = null;
 
 	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 		cancelSpringScroll();
@@ -146,14 +188,84 @@ export function springScrollTo(top: number): void {
 	frame = requestAnimationFrame(tick);
 }
 
+/**
+ * `springScrollTo` with the travel capped — the form to reach for whenever the
+ * distance is the reader's to choose rather than a step of one reference
+ * number, which is the only caller small enough not to need it.
+ *
+ * The jump and the spring's first frame land in one rendering update, so the
+ * page is never painted at the intermediate position.
+ */
+export function glideScrollTo(top: number): void {
+	const start = glideStart(window.scrollY, top, window.innerHeight);
+	if (start !== window.scrollY) window.scrollTo({ top: start, behavior: 'auto' });
+	springScrollTo(top);
+}
+
+/**
+ * `glideScrollTo`, but to an ELEMENT — the form every fragment jump wants.
+ *
+ * `top` is where the destination is right now, which the caller has from the
+ * browser: it is what the browser itself scrolled to, so the whole of
+ * `scroll-padding-top` and any `scroll-margin` on the element is already in it
+ * and nothing here has to re-derive them. What is stored is the DIFFERENCE
+ * between that offset and the element's own place in the document, which is
+ * the part that stays true if the element moves.
+ */
+export function glideScrollToElement(el: HTMLElement, top: number): void {
+	glideScrollTo(top);
+	// Nothing is animating: a reader who asked for less motion is already
+	// there, and there is no frame in which to follow anything.
+	if (!frame) return;
+	anchor = el;
+	anchorOffset = top - (el.getBoundingClientRect().top + window.scrollY);
+}
+
+/**
+ * Is this module driving the scrollport right now?
+ *
+ * For the scroll-position consumers that answer "where is the READER" — the
+ * scroll spy, and anything else that reads a position to decide what to show.
+ * A scroll the site is performing has a destination that was already chosen,
+ * and every offset on the way to it is one nobody asked a question about, so
+ * reporting them is work with no reader behind it.
+ */
+export function springScrolling(): boolean {
+	return frame !== 0;
+}
+
 /** Stop wherever the page has got to. */
 export function cancelSpringScroll(): void {
 	if (frame) cancelAnimationFrame(frame);
 	frame = 0;
+	anchor = null;
 }
 
 function tick(now: number): void {
 	frame = 0;
+
+	// A GLIDE THAT WAS GIVEN AN ELEMENT FOLLOWS THE ELEMENT. The offset a
+	// fragment lands at is computed once, before any of the travel has
+	// happened, and half a second is long enough for the page to stop agreeing
+	// with it: a font arriving and swapping re-measures every line above the
+	// target, and the reader ends up at a neighbouring heading. Worse, the
+	// browser's own scroll anchoring compensates for that shift by moving the
+	// scrollport — which reads here as somebody else scrolling, so the drift
+	// check below would abandon the glide mid-flight rather than merely land
+	// short. Re-deriving the target from the element each frame answers both:
+	// the destination is the element, not the number it stood at.
+	if (anchor) {
+		const want = anchor.getBoundingClientRect().top + window.scrollY + anchorOffset;
+		if (want !== target) {
+			// The page moved because the DOCUMENT moved, so adopt the new
+			// position rather than reading it as the reader taking over —
+			// carrying the spring's own position along by the same amount, or
+			// the next write would yank the page back by the shift.
+			state.position += window.scrollY - written;
+			written = window.scrollY;
+			target = want;
+		}
+	}
 
 	// Somebody else moved the page — see DRIFT_TOLERANCE. Their scroll wins;
 	// this one is abandoned where it stands rather than fought for a frame.
@@ -165,6 +277,7 @@ function tick(now: number): void {
 
 	if (hasSettled(state, target)) {
 		window.scrollTo({ top: target, behavior: 'auto' });
+		anchor = null;
 		return;
 	}
 

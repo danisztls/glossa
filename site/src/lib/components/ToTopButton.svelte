@@ -42,6 +42,7 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import { glideScrollTo } from '$lib/smooth-scroll';
 
 	let visible = $state(false);
 
@@ -88,12 +89,17 @@
 	});
 
 	function toTop() {
-		// `scroll-behavior` is not set globally, so the smoothness is asked for
-		// here — and withdrawn for a reader who has asked their system for less
-		// motion, since a full page-height glide is exactly the kind of travel
-		// that setting is about.
-		const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		window.scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' });
+		// DELIBERATELY NOT `behavior: 'smooth'`, which this replaces: Blink scales
+		// the native curve's duration with the distance it covers, so the further
+		// a reader had got the slower this button became — backwards, on the long
+		// pages it exists for at all. The spring settles in a constant ~0.47s from
+		// any offset (`$lib/smooth-scroll` argues the shape), and makes the
+		// reduced-motion check itself, so there is one place it can be got wrong.
+		//
+		// `glideScrollTo` and not `springScrollTo` because the distance here is
+		// however far the reader has read: `GLIDE_VIEWPORTS` is what keeps a
+		// return from the far end of a Catechism part a move rather than a strobe.
+		glideScrollTo(0);
 	}
 </script>
 

@@ -484,8 +484,26 @@
 		   container would run off the bottom of the screen by however much
 		   it was pushed down. */
 		top: calc(var(--sticky-chrome-height) + 1.5rem);
-		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
+		/* HEIGHT AND NOT `max-height`, so the box stops resizing under its own
+		   contents. The sidebar renders only the branch holding the current
+		   row, so the list gets taller and shorter every time the reader
+		   crosses a section — and where the article is shorter than the aside
+		   the grid row sizes to the aside (the hazard `body`'s floor in
+		   base.css already names), so that resizing can reach the document
+		   itself. Fixing the height costs nothing visible: this element draws
+		   no background and no border, so the surplus beside a short table of
+		   contents is empty page either way. */
+		height: calc(100vh - var(--sticky-chrome-height) - 3rem);
 		overflow-y: auto;
+		/* `html`'s argument (base.css), one box in, and the height above does not
+		   cover it: a branch expanding past the box still brings a scrollbar,
+		   which takes its width out of the content and re-wraps every row in
+		   the list. A table of contents reflowing beside the text is the same
+		   complaint as the site stepping sideways on navigation. It was
+		   reachable by scrolling all along and unmissable once a fragment jump
+		   became a glide, which paints the rearrangement over half a second of
+		   moving page instead of hiding it inside a cut. */
+		scrollbar-gutter: stable;
 		overscroll-behavior: contain;
 		font-size: 0.9rem;
 	}
@@ -495,8 +513,13 @@
 		position: sticky;
 		/* Same chrome compensation as `.reading-aside` above. */
 		top: calc(var(--sticky-chrome-height) + 1.5rem);
-		max-height: calc(100vh - var(--sticky-chrome-height) - 3rem);
+		/* Fixed for `.reading-aside`'s reason, met here through a different
+		   control: the facet panel's `<details>` fold and unfold. */
+		height: calc(100vh - var(--sticky-chrome-height) - 3rem);
 		overflow-y: auto;
+		/* Same reservation as `.reading-aside`, and for the second half of the
+		   same reason: this one's list is filtered as the reader types. */
+		scrollbar-gutter: stable;
 		overscroll-behavior: contain;
 		font-size: 0.9rem;
 	}

@@ -430,6 +430,14 @@
 	nav {
 		font-family: var(--font-sans);
 		font-size: 0.85rem;
+		/* Fills the scroll container it was given, rather than sitting in the
+		   top of it: `.reading-aside` has a definite height now (layout.css),
+		   so a content-sized list left the landmark ending partway down a box
+		   the reader can still scroll and point at. `min-` and not `height`, so
+		   a list longer than the box still grows and the aside still scrolls —
+		   and so the two OTHER places this renders, the reading bar's panel and
+		   `TocMenu`, resolve it against an indefinite height and get `auto`. */
+		min-height: 100%;
 	}
 
 	/* Compounds naturally with each level of real DOM nesting (`.toc-level`

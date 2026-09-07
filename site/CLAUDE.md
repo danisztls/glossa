@@ -2417,6 +2417,36 @@ keeps both position and velocity continuous, so nothing restarts. It yields to
 any other scroll by noticing the page is not where it left it — one check that
 catches the wheel, the scrollbar and the keys alike.
 
+**It answers three movements, and the two whose distance the READER chooses go
+through `glideScrollTo`** — the way back to the top and every same-page
+fragment jump. A spring settles in constant time whatever the distance, so peak
+speed is `ω·distance/e`: `glideStart` jumps the surplus and glides the last
+`GLIDE_VIEWPORTS` (1.5), or a table of contents row at the far end of
+`/documenta/[slug]` strobes a part of the Catechism past the reader.
+
+**A FRAGMENT JUMP IS REPLAYED, NEVER INTERCEPTED** (`$lib/anchor-scroll`): the
+browser jumps, and this rewinds the page to where the click found it and then
+glides. Taking the click would mean owning the history entry, the `hashchange`
+and `page.url` — and a hand-written `pushState` duplicates `sveltekit:history`,
+so Back lands on an index the router reads as no movement at all.
+
+**AND IT TARGETS THE ELEMENT, NOT THE OFFSET THE ELEMENT STOOD AT**
+(`glideScrollToElement`). The browser computes that offset before any of the
+travel; a font swap above the target re-measures it mid-glide, and the scroll
+anchoring that compensates trips `DRIFT_TOLERANCE` — so the reader landed at a
+neighbouring heading, or was abandoned short of one.
+
+**A SCROLL THE SITE PERFORMS REPORTS ITS DESTINATION AND NOTHING ON THE WAY**,
+and the unit a reader ASKED for is reported at the click (`onFragmentAsked`)
+rather than measured on arrival. The sidebar renders only the branch holding
+the current row, so each intermediate answer mounts a subtree and lays out its
+text — forty of those per glide where a jump had cost one.
+
+**`.reading-aside` AND `.index-aside` TAKE A FIXED `height` AND
+`scrollbar-gutter: stable`**, being the two scroll containers `html`'s own
+reservation (base.css) had never reached: expanding a branch changed the list's
+height, brought a scrollbar in, and re-wrapped every row.
+
 ## Focus mode: print's hidden list, with three exceptions and one gate
 
 `data-zen` on `<html>` (`$lib/zen.svelte.ts`, a fifth axis written exactly as
