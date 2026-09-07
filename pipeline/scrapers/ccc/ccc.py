@@ -915,6 +915,20 @@ KIND_MAP = {
 }
 
 
+def _restates_banner(banner_title: str, text: str) -> bool:
+    """Whether `text` is the tail of `banner_title` -- the second line of a
+    running banner whose first line was just merged into the division it
+    names. Compared case- and space-insensitively because the two lines are
+    assembled by different paths: the banner's title was joined from bold
+    blocks with a single space, this one flattened out of a `<br />`."""
+
+    def fold(s: str) -> str:
+        return re.sub(r"\s+", " ", s).strip().casefold()
+
+    tail = fold(text)
+    return bool(tail) and fold(banner_title).endswith(tail)
+
+
 class Node:
     """A division of the work.
 
@@ -1204,6 +1218,12 @@ class ScrapeState:
         #: by the next numbered paragraph and by any real heading -- both of
         #: which end the run the header opened. See `process_page`.
         self.open_display_header: str | None = None
+        #: The node a heading push just MERGED into as a restated running
+        #: banner, or None. Set by `push_heading`'s `same_heading` branch and
+        #: cleared by the next push or the next paragraph, so it names the
+        #: banner only while the block after it is being read -- which is the
+        #: whole window `take_mini_header` needs. See `_restates_banner`.
+        self.repeated_banner: Node | None = None
         #: (header, block text) for every block dropped as matter under a
         #: mini-header rather than kept as the previous paragraph's
         #: continuation.
@@ -1239,6 +1259,7 @@ class ScrapeState:
         being processed, because that is where the footnote table for this
         heading lives -- the same reason `finalize_open_paragraph` resolves a
         paragraph's citations against `current_footnote_table`."""
+        self.repeated_banner = None
         self.finalize_open_paragraph()
         title, citations, missing = resolve_markers(
             marked_title, self.current_footnote_table
@@ -1310,6 +1331,7 @@ class ScrapeState:
         )
         if same_heading:
             self.stack.append(prev)
+            self.repeated_banner = prev
             return
         node = Node(kind, n, title, level, title_marked, citations)
         parent_children.append(node)
@@ -1346,7 +1368,24 @@ class ScrapeState:
         matters is the Decalogue table between §§2051 and 2052: its four
         headers are followed by display matter and not by a paragraph, so the
         rule that saved §2051 its 2,562 characters keeps holding without a
-        clause of its own."""
+        clause of its own.
+
+        A RESTATED RUNNING BANNER'S SECOND LINE IS NOT A HEADING, and it
+        reaches here only because one edition declines to bold it the second
+        time. PT reprints `SEGUNDA PARTE` / `A CELEBRAÇÃO DO MISTÉRIO CRISTÃO`
+        atop all seven pages of Part Two, bolding both lines on the first page
+        and only the ordinal on the other six -- so `push_heading` merges the
+        ordinal into the Part it already opened (`same_heading`) and the title
+        line arrives here unbolded, with a real Section heading behind it to
+        make `opens_new_matter` true. Five `sub` nodes named after the Part
+        they hang off, none of them owning a paragraph. `repeated_banner` is
+        the window that identifies them: the heading immediately before this
+        block was a banner MERGED rather than opened, and this block finishes
+        its title."""
+        banner = self.repeated_banner
+        if banner is not None and _restates_banner(banner.title, text):
+            self.dropped.append(text)
+            return
         self.open_display_header = text
         if not is_division:
             self.dropped.append(text)
@@ -1355,6 +1394,7 @@ class ScrapeState:
 
     # -- paragraphs ------------------------------------------------------
     def start_paragraph(self, n: int, kind: str, text: str) -> None:
+        self.repeated_banner = None
         in_brief = bool(self.stack) and self.stack[-1].kind == "in_brief"
         para = Paragraph(n=n, in_brief=in_brief)
         para.blocks.append(BlockOut(kind, text))

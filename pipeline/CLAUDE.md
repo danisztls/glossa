@@ -673,6 +673,13 @@ forty-three PDFs it publishes instead (`zht`, 2026-09-05), and captures Arabic i
   `citations: []` by construction and their stored text is longer; the
   Chinese prints no apparatus at all. That is the edition, not a gap — see
   `docs/corpus-schema.md`, and read `audit.py balance` with it in mind.
+- **A RUNNING BANNER RESTATED WITH ONLY ITS FIRST LINE BOLDED IS NOT A
+  HEADING** (2026-09-06). PT reprints the Part Two banner atop all seven of its
+  pages and bolds the title line only on the first, so the other six reached
+  `take_mini_header` as divisions — and the five junk `sub` nodes stood between
+  the Section banner's restatements, which `same_heading` merges only into the
+  immediately preceding sibling, splitting that part's two sections into six.
+  `_restates_banner` is the guard; `pipeline/docs/parsing.md` has the shape.
 
 ### The Chinese edition is read from geometry, and it declares what it cannot give
 

@@ -127,6 +127,19 @@ other editions' paragraph text is character-identical across the change.
 1.3×, which is `audit.py balance`'s own measure and the reason that audit
 exists.
 
+**AND A RUNNING BANNER'S SECOND LINE IS NEITHER, when only its first line is
+bolded the second time.** PT reprints `SEGUNDA PARTE` over `A CELEBRAÇÃO DO
+MISTÉRIO CRISTÃO` atop all seven pages of Part Two and bolds both lines only on
+the first, so `push_heading` merged the ordinal into the Part it had already
+opened and the title line went to `take_mini_header`, which read a real Section
+heading behind it and called it a division. **The cost was not the five junk
+`sub` nodes but where they stood**: `same_heading` merges a repeated banner into
+the immediately preceding sibling only, so a node between two restatements
+fragmented Part Two's two sections into six — `PRIMEIRA SECÇÃO` as 1076–1134 and
+1135–1209, `SEGUNDA SECÇÃO` as four. `_restates_banner` drops a mini-header that
+finishes the title of a banner just MERGED rather than opened; `repeated_banner`
+is the one-block window that says which, and no other edition moves.
+
 ## Document families
 
 **Word writes `_edn`/`_ednref` when the author used endnotes.** Same export,
