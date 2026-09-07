@@ -273,12 +273,14 @@
 	 *
 	 * On a row of its own at the list's end rather than floated onto a last
 	 * line, because what it follows is a `<dl>` and not a paragraph — there is
-	 * no last line for it to ride. It takes the row's end, which is the corner
-	 * the eye leaves a two-column list from.
+	 * no last line for it to ride.
+	 *
+	 * AT THE INLINE START, which is the edge every label in the list above
+	 * begins from and the edge the card's own text is set against. Ranged right
+	 * it was the one thing on the card aligned to nothing.
 	 */
 	.read-on {
 		margin: 0.7rem 0 0;
-		text-align: end;
 	}
 	.read-link {
 		color: var(--color-link);
