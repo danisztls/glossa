@@ -969,35 +969,119 @@
 	   on a 360px screen are a table of ragged stubs whose gutter is wider than
 	   half its entries; the same names set as a running line fill the width
 	   they are given and cost fewer rows than the grid did. Each group is then
-	   one heading and one sentence of links, which is what a phone footer is
-	   for: the whole index visible without a column to scan. */
+	   one sentence that opens with its own name — "Pages: Library ⸱ …" — which
+	   is what a phone footer is for: the whole index visible without a column
+	   to scan. */
 	@media (max-width: 40rem) {
+		/* A gap answers to what it separates, and it has to answer to what it
+		   sits BESIDE. The stacked groups took 1.5rem when each was a heading
+		   over a block; as two sentences that was two unrelated bands with the
+		   footer's ground between them, and 0.5rem was the correction — which
+		   overshot, because a group is itself several lines now and 0.5rem on
+		   top of a 1.5 leading barely beats the space between two lines of the
+		   same sentence. 1rem is the distance that reads as a break between
+		   two things rather than a wrap within one. */
 		.footer-nav {
 			grid-template-columns: minmax(0, auto);
-			gap: 1.5rem 0;
+			gap: 1rem 0;
 		}
 
-		/* ON THE GROUP, not on the nav: the band above already centres
-		   everything else it stacks, and the `start` the wider stacked layout
-		   sets is for a COLUMN, whose ragged right edge centred is a mess. Each
-		   group here is a heading over one running line, and both take the
-		   band's own axis — the heading by inheriting this, the line by the
-		   `justify-content` below, since `text-align` does not reach inside a
-		   flex container. */
+		/*
+		 * A GROUP IS ONE WRAPPING ROW AND THE `<ul>` DISSOLVES INTO IT. The
+		 * heading, every name and every separator are flex items of the same
+		 * row, so `display: contents` on the list is what puts them there —
+		 * its box goes, its children stay where they are in the tree, and the
+		 * list is still a list to a screen reader. Nothing else here can make
+		 * the heading share the line: as a flex ITEM the `<ul>`'s hypothetical
+		 * width is its max-content, so a wrapping row always breaks between
+		 * the two and the heading is back above the list it names.
+		 *
+		 * INLINE FLOW WAS THE FIRST ATTEMPT AND IT IS THE INSTRUCTIVE ONE. It
+		 * gets the wrapping and the centring for free, but a line breaks only
+		 * where its text offers an opportunity — and the only real whitespace
+		 * in this row is the space after the colon and the spaces INSIDE
+		 * multi-word names. Between the items there is none: Svelte trims the
+		 * whitespace at the edges of an element's children, so nothing
+		 * separates one `<li>` from the next, and the separator is drawn
+		 * rather than typed. So the run of names moved as one indivisible
+		 * block — `PAGES:` alone on its own line with all five links beneath
+		 * it — while the one place the line COULD break was the middle of a
+		 * name: `Social / Doctrine`, `Canon / Law`, each reading as two
+		 * entries.
+		 *
+		 * `.breadcrumb` had already answered this and its docblock says so in
+		 * as many words: a crumb wraps as a unit, which is what a flex row
+		 * buys and inline flow could not. The three rules that follow are that
+		 * one's, including the `flex: 0 0 auto` — a flex item shrinks before
+		 * the row wraps, so without it a long name is squeezed narrow and
+		 * wraps inside itself, which is the same stack of fragments by another
+		 * route. `max-width` caps an item at the line, the one case where a
+		 * name may still break inside itself.
+		 *
+		 * `justify-content` AND NOT `text-align`, which does not reach into a
+		 * flex container: the stacked band centres everything else it holds,
+		 * and each group here is a sentence rather than the column whose
+		 * ragged edge the wider layout starts flush.
+		 *
+		 * 1.5 AND NOT `--imprint-leading`. The 1.9 the imprint keeps is for
+		 * lines that are each their own entry, where the air is what separates
+		 * them; these lines are one sentence broken by the width of a phone,
+		 * and at 1.9 they drift apart into a list of three things. The leading
+		 * is also the whole of the row gap — `gap`'s first value is 0 for that
+		 * reason.
+		 */
 		.footer-group {
-			text-align: center;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: center;
+			gap: 0 0.5rem;
+			line-height: 1.5;
 		}
 
-		/* `column-count` is undone rather than left to lose to `display: flex`:
-		   multicol does not apply to a flex container, and a rule that only
-		   works because another one overrules it is a rule nobody can move. */
+		/* `column-count` is undone as well as the box: multicol does not apply
+		   to a box that is not generated, and a rule that only works because
+		   another one overrules it is a rule nobody can move.
+
+		   THE LEADING HAS TO BE HANDED BACK, which is the trap in
+		   `display: contents`: the box goes, the ELEMENT does not, so it still
+		   sits between the group and the names for everything that inherits.
+		   The wide layout's 1.9 would otherwise reach the items straight past
+		   the 1.5 set on the row they are now in. */
 		.footer-works ul,
 		.footer-pages ul {
 			column-count: initial;
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			column-gap: 0.5rem;
+			display: contents;
+			line-height: inherit;
+		}
+
+		.footer-group li {
+			flex: 0 0 auto;
+			max-width: 100%;
+		}
+
+		/* The rule under the heading goes with the stacking — a border-bottom
+		   on a word run into the line it names is an underline, the one mark
+		   this footer spends on hover. Uppercase takes over what it did: run
+		   in, a heading set like the names beside it is just the sentence's
+		   first word, and capitals make it a label again. It is the mark
+		   `.label-micro` uses site-wide for a word saying what kind of thing
+		   follows, with its tracking, which capitals want at this size.
+		   `text-transform` and not a dictionary written in capitals: the
+		   string stays as its translator wrote it, so it is read and searched
+		   as a word. */
+		.footer-group h2 {
+			margin: 0;
+			padding: 0;
+			border-bottom: 0;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+
+		/* Drawn, like every separator here, and for the same reason: it is
+		   punctuation between the label and the list, not a word in either. */
+		.footer-group h2::after {
+			content: ':';
 		}
 
 		/*
@@ -1011,9 +1095,16 @@
 		 * a wrapped line with a dot, which reads as a bullet. Trailing, it
 		 * closes the line it ends and every line begins with a word. `:last-of-type`
 		 * so the sentence has no dangling one.
+		 *
+		 * IT RIDES WITH ITS OWN ITEM rather than sitting between two, which is
+		 * what makes the rule above about where a line breaks true: the flex
+		 * row breaks between items, and the dot is part of the one it closes,
+		 * so it can never begin a line.
 		 */
 		.footer-group li:not(:last-of-type)::after {
 			content: '⸱';
+			/* The leading side only: the row's own `column-gap` opens the
+			   other, and a margin here as well would count the space twice. */
 			margin-inline-start: 0.5rem;
 			/* The links' own ink, not `--color-border`: a rule drawn across a
 			   ground may sit at the edge of visibility, but a mark ON the line
