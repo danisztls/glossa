@@ -955,6 +955,13 @@ graph** (an `@id` reference resolves only within the same page's graph) and
 authority on the publisher). No Wikidata ids, no `inLanguage` — both would be
 guesses, and a guessed imprint is worse than a gap.
 
+**The kinds a build owes an imprint and an address are the CORPUS's, not a list
+beside it.** `assertApparatus` reads every `manifest.type` and refuses one that
+`WORK_KINDS` in `apparatus.mjs` does not answer for — iterating the imprint
+table instead asks only whether the kinds it HAS are filled in, which the Code
+of Canon Law and the Compendium of the Social Doctrine were routed, titled and
+served past.
+
 **None of this costs an invocation.** `env.ASSETS.fetch()` from inside the
 worker is a SUBREQUEST — issued once per isolate in one `Promise.all` with the
 shell — and the files are negated in `run_worker_first`, so a crawler reaches

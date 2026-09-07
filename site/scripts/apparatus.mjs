@@ -71,6 +71,101 @@ function idsOfType(manifests, type) {
 }
 
 /**
+ * Every work type a manifest may carry, and what the two files publish for it:
+ * the imprint key, the name that key is published under, and the address space
+ * the work occupies.
+ *
+ * ONE TABLE BECAUSE THERE WERE TWO, and a work absent from both passed both.
+ * The Code of Canon Law and the Compendium of the Social Doctrine were routed,
+ * titled and served while `works.json` named no address under `/ius-canonicum`
+ * or `/doctrina-socialis` and `shell-head.ts` asked for a `canonLaw` imprint
+ * this file had never been given — a breadcrumb and no publisher, on every one
+ * of those addresses. `assertApparatus` reads the types the CORPUS holds and
+ * demands each be here.
+ *
+ * `key` IS WHAT `WORK_OF` IN `shell-head.ts` ASKS FOR, spelled the same. It is
+ * the site's name for the work and not the manifest's type string, because the
+ * edge addresses a work by what it is called there (`ccc`, not `catechism`).
+ */
+const WORK_KINDS = {
+	bible: { key: 'bible', name: 'Sacred Scripture', address: '/scriptura/{book}/{chapter}' },
+	catechism: {
+		key: 'ccc',
+		name: 'Catechism of the Catholic Church',
+		address: '/catechismus/{n}'
+	},
+	compendium: {
+		key: 'compendium',
+		name: 'Compendium of the Catechism of the Catholic Church',
+		address: '/catechismus/compendium/{n}'
+	},
+	'canon-law': { key: 'canonLaw', name: 'Code of Canon Law', address: '/ius-canonicum/{n}' },
+	'social-doctrine': {
+		key: 'socialDoctrine',
+		// The name the edge already prints on every one of these pages
+		// (`SOCIAL_DOCTRINE` in `shell-head.ts`), not the manifest title: a work
+		// called one thing in the breadcrumb and another in the structured data
+		// is two works to a parser.
+		name: 'Compendium of the Social Doctrine',
+		address: '/doctrina-socialis/{n}'
+	},
+	summa: {
+		key: 'summa',
+		name: 'Summa Theologiae',
+		address: '/doctores/summa/{part}/{question}'
+	},
+	prayer: { key: 'prayer', name: 'Common Prayers', address: '/preces/{slug}' },
+	commentary: {
+		// Its own imprint, not the annotated edition's, though the two are read
+		// at one address. A commentary is a separate work with a separate author
+		// and a separate rights position — Haydock died in 1849 and Challoner in
+		// 1781 — and folding it into the Bible's imprint would credit the
+		// translation for words it does not contain.
+		key: 'commentary',
+		name: 'Commentary',
+		// THE ADDRESS OF THE WORK IT ANNOTATES, because a commentary has none of
+		// its own (docs/corpus-schema.md §Commentary). That is not a gap in this
+		// table: `works.json` exists so a machine can read what is here without
+		// crawling ~6,000 pages, and the true answer to "where do I find
+		// Haydock" is "at the verse he comments on". A reader following this
+		// address gets the verse and, having asked for the apparatus, the note
+		// beside it.
+		address: '/scriptura/{book}/{chapter}'
+	},
+	document: {
+		// The collection, not a work: each document carries its own source URL in
+		// `imprint`, which is finer and is what a citation wants. The publisher is
+		// read off a served edition all the same, so a change at the source
+		// reaches this table on the next sync.
+		key: 'document',
+		name: 'Documents of the Magisterium',
+		address: '/documenta/{slug}',
+		collection: true
+	},
+	// An introduction is chapter 0 of its book, so it has no address and no
+	// imprint of its own: a crawler asking who published it is asking about the
+	// Bible edition the chapter belongs to, and `WORK_OF` answers `bible`.
+	'bible-intro': { servedWith: 'bible' }
+};
+
+/** Work type -> the imprint of the edition a crawler is served, for every type
+ *  that has an imprint of its own. */
+function imprintTable(manifests) {
+	/** @type {Record<string, any>} */
+	const works = {};
+	for (const [type, kind] of Object.entries(WORK_KINDS)) {
+		if (kind.servedWith) continue;
+		works[kind.key] = {
+			...imprintOf(manifests, idsOfType(manifests, type), kind.name),
+			// A collection's own source URL would be an index page, and the
+			// per-document one above is the URL to cite.
+			...(kind.collection ? { source: null } : {})
+		};
+	}
+	return works;
+}
+
+/**
  * @param {{
  *   manifests: Record<string, any>,
  *   descriptions: Record<string, Record<string, { text: string, origin: string }>>,
@@ -152,36 +247,7 @@ export function buildApparatus({
 
 	return {
 		version: APPARATUS_VERSION,
-		works: {
-			bible: imprintOf(manifests, idsOfType(manifests, 'bible'), 'Sacred Scripture'),
-			ccc: imprintOf(
-				manifests,
-				idsOfType(manifests, 'catechism'),
-				'Catechism of the Catholic Church'
-			),
-			compendium: imprintOf(
-				manifests,
-				idsOfType(manifests, 'compendium'),
-				'Compendium of the Catechism of the Catholic Church'
-			),
-			summa: imprintOf(manifests, idsOfType(manifests, 'summa'), 'Summa Theologiae'),
-			prayer: imprintOf(manifests, idsOfType(manifests, 'prayer'), 'Common Prayers'),
-			// Its own imprint, not the annotated edition's, though the two are
-			// read at one address. A commentary is a separate work with a
-			// separate author and a separate rights position — Haydock died in
-			// 1849 and Challoner in 1781 — and folding it into the Bible's
-			// imprint would credit the translation for words it does not
-			// contain.
-			commentary: imprintOf(manifests, idsOfType(manifests, 'commentary'), 'Commentary'),
-			// The collection, not a work: each document carries its own source
-			// URL in `imprint` above, which is finer and is what a citation wants.
-			// The publisher is read off a served edition all the same, so a change
-			// at the source reaches this table on the next sync.
-			document: {
-				...imprintOf(manifests, idsOfType(manifests, 'document'), 'Documents of the Magisterium'),
-				source: null
-			}
-		},
+		works: imprintTable(manifests),
 		descriptions: documentDescriptions,
 		imprint,
 		bible,
@@ -214,30 +280,18 @@ export function buildWorks({ manifests, descriptions, origin }) {
 	/** @type {any[]} */
 	const works = [];
 
-	const ADDRESSES = {
-		bible: '/scriptura/{book}/{chapter}',
-		catechism: '/catechismus/{n}',
-		compendium: '/catechismus/compendium/{n}',
-		summa: '/doctores/summa/{part}/{question}',
-		prayer: '/preces/{slug}',
-		// THE ADDRESS OF THE WORK IT ANNOTATES, because a commentary has none
-		// of its own (docs/corpus-schema.md §Commentary). That is not a gap in
-		// this table: `works.json` exists so a machine can read what is here
-		// without crawling ~6,000 pages, and the true answer to "where do I
-		// find Haydock" is "at the verse he comments on". A reader following
-		// this address gets the verse and, having asked for the apparatus, the
-		// note beside it.
-		commentary: '/scriptura/{book}/{chapter}'
-	};
-
-	for (const [type, address] of Object.entries(ADDRESSES)) {
+	// THE ADDRESSES ARE `WORK_KINDS`, not a list beside it. A collection is
+	// enumerated per document by the loop below rather than per edition, and a
+	// type served inside another work's address space has no entry of its own.
+	for (const [type, kind] of Object.entries(WORK_KINDS)) {
+		if (kind.servedWith || kind.collection) continue;
 		for (const id of idsOfType(manifests, type).sort()) {
 			const manifest = manifests[id];
 			works.push({
 				id,
 				kind: type,
 				title: manifest.title || id,
-				address,
+				address: kind.address,
 				languages: [manifest.language],
 				edition: manifest.edition || null,
 				publisher: manifest.copyright?.holder ?? null,
@@ -280,12 +334,36 @@ export function buildWorks({ manifests, descriptions, origin }) {
  * that never run JavaScript see an empty apparatus, and none of them reports
  * back.
  */
-export function assertApparatus(apparatus, works) {
+export function assertApparatus(apparatus, works, manifests) {
 	const problems = [];
 	if (!Object.keys(apparatus.bible).length) problems.push('no Bible chapter has a citer');
 	if (!Object.keys(apparatus.ccc).length) problems.push('no Catechism paragraph has an apparatus');
 	if (!Object.keys(apparatus.descriptions).length) problems.push('no document has a description');
 	if (!Object.keys(apparatus.docs).length) problems.push('no document cites Scripture');
+
+	// THE EXPECTED KINDS ARE THE CORPUS'S OWN, which is the difference between
+	// this check and the one it replaces. Iterating `apparatus.works` asks
+	// whether every kind the table HAS is filled in, and a work type the table
+	// never heard of passes that question by not being asked it — which is how
+	// every edition of the Code and of the Compendium of the Social Doctrine was
+	// routed, titled and served with no publisher and no address in
+	// `works.json`.
+	const addresses = works.works.map((work) => work.address);
+	for (const type of new Set(Object.values(manifests).map((manifest) => manifest.type))) {
+		const kind = WORK_KINDS[type];
+		if (!kind) {
+			problems.push(`${type}: a work type with no imprint kind and no address (see WORK_KINDS)`);
+			continue;
+		}
+		if (kind.servedWith) continue;
+		if (!apparatus.works[kind.key]) problems.push(`${type}: no imprint under \`${kind.key}\``);
+		// The literal head of the address, since a collection's entries carry a
+		// slug where the table carries `{slug}`.
+		const prefix = kind.address.split('{')[0];
+		if (!addresses.some((address) => address.startsWith(prefix)))
+			problems.push(`${type}: nothing at ${kind.address} in works.json`);
+	}
+
 	for (const [kind, imprint] of Object.entries(apparatus.works)) {
 		// A public-domain kind has no publisher and no notice BY DEFINITION,
 		// which this check could not distinguish from a kind whose imprint was

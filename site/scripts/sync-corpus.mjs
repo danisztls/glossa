@@ -3289,7 +3289,7 @@ const apparatus = buildApparatus({
 	cccCitations: citationXrefs.ccc
 });
 const works = buildWorks({ manifests, descriptions, origin: ORIGIN });
-assertApparatus(apparatus, works);
+assertApparatus(apparatus, works, manifests);
 writeJson(apparatusPath, apparatus);
 writeJson(worksPath, works);
 console.log(

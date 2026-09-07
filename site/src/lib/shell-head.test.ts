@@ -712,6 +712,22 @@ const apparatus: Apparatus = {
 			source: 'https://sacredbible.org/catholic/index.htm'
 		},
 		compendium: { name: 'Compendium', publisher: null, notice: null, source: null },
+		canonLaw: {
+			name: 'Code of Canon Law',
+			publisher: 'Libreria Editrice Vaticana / Dicastery for Communication',
+			notice: 'Copyright © Dicastery for Communication – Libreria Editrice Vaticana',
+			source:
+				'https://www.vatican.va/archive/cod-iuris-canonici/eng/documents/cic_introduction_en.html',
+			rights: 'copyrighted'
+		},
+		socialDoctrine: {
+			name: 'Compendium of the Social Doctrine',
+			publisher: 'Libreria Editrice Vaticana / Dicastery for Communication',
+			notice: 'Copyright © Dicastery for Communication – Libreria Editrice Vaticana',
+			source:
+				'https://www.vatican.va/roman_curia/pontifical_councils/justpeace/documents/rc_pc_justpeace_doc_20060526_compendio-dott-soc_en.html',
+			rights: 'copyrighted'
+		},
 		summa: { name: 'Summa Theologiae', publisher: null, notice: null, source: null },
 		prayer: { name: 'Common Prayers', publisher: null, notice: null, source: null }
 	},
@@ -824,6 +840,23 @@ describe('the apparatus', () => {
 		expect(unit.author.name).toBe('Leo XIII');
 		expect(unit.datePublished).toBe('1891-05-15');
 		expect(unit.isBasedOn).toContain('vatican.va');
+	});
+
+	/**
+	 * `WORK_OF` asks this table by key, and a key it does not hold answers
+	 * nothing: the Code and the Compendium of the Social Doctrine shipped a
+	 * breadcrumb and no work node at every one of their addresses.
+	 */
+	it('names the publisher of every work the table is asked for', () => {
+		for (const [path, name] of [
+			['/ius-canonicum/216', 'Code of Canon Law'],
+			['/doctrina-socialis/160', 'Compendium of the Social Doctrine']
+		]) {
+			const work = graphById(headHtml(withApparatus(path), ORIGIN), '#work');
+			expect(work.name, path).toBe(name);
+			expect(work.publisher.name, path).toContain('Libreria Editrice Vaticana');
+			expect(work.isBasedOn, path).toContain('vatican.va');
+		}
 	});
 
 	/**
