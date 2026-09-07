@@ -2430,6 +2430,10 @@ behaviour. The selectors are `print.css`'s, which argues each one in place —
   without the gate a reader who left it on would meet the home page with no
   header, no footer and no way back. A new page that should honour focus mode
   needs a `ReadingBar`, not an entry in a list.
+- **Off below 641px, the button hidden at 640px** (2026-09-06, reversing the
+  note in `ZenToggle`). A phone has no sidebar left to hide, and the gate is
+  on the RULES and not only the button for the reason above at a different
+  width: the preference outlives the viewport.
 - **Nothing moves.** Everything hidden is hidden with `opacity: 0` and
   `visibility: hidden` together, never with `display: none`: the pair paints
   nothing and still holds every box, so the header keeps its height and the

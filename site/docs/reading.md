@@ -450,6 +450,18 @@ with no header, no footer and nothing that put them back. One selector makes
 "the way out is always on screen" true rather than usually true, and costs less
 than a route table that would then have to be kept in step.
 
+**It stops at 641px, and the button stops at 640px.** On a phone the sidebar
+and the second column are already gone, so all the mode has left to take away
+is the header, the footer and the bar's own controls — two strips at the ends
+of a screen the reader scrolls past in one flick. `ZenToggle` hides its button
+below the shortcut sheet's own breakpoint and `zen.css` gates every rule above
+the complementary one, in px for the reason `Shortcuts` gives. Gating the
+RULES and not only the button is the `:has(.reading-bar)` argument at a
+different width: the preference outlives the viewport, so a reader who chose
+focus mode at a desk and opened the site on a phone would otherwise meet a
+page with no header, no footer and no visible way out. The attribute is inert
+there rather than cleared, so the desk it was chosen on still has it.
+
 **The header is emptied leaf by leaf, and the trap is worth stating because
 the site relies on its inverse elsewhere.** `JumpBox` and `Shortcuts` each
 render trigger and `<dialog>` as siblings inside the control row, so hiding the

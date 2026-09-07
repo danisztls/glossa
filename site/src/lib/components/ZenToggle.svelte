@@ -34,11 +34,20 @@
 	Either way it stays outside `.reading-bar-editions`, whose three controls
 	read as one phrase that a fourth would break.
 
-	NOT HIDDEN ON A PHONE, unlike the shortcut sheet's trigger beside it in the
-	header. That one is hidden below 640px because it describes eight keys
-	nobody has; this one is worth MORE on a small screen, not less — the
-	sidebar is already gone there and the chrome is a larger share of what the
-	reader can see at once.
+	HIDDEN ON A PHONE, at the shortcut sheet's own breakpoint — and that is the
+	reverse of what this file argued for two days (2026-09-06). The old
+	argument was that the mode is worth MORE on a small screen, the sidebar
+	being already gone there and the chrome a larger share of what fits. What
+	it missed is that this is the same sentence read the other way: with the
+	sidebar and the second column already gone, all the mode has left to take
+	away is the header, the footer and this bar's own controls — two strips at
+	the ends of a screen the reader scrolls past in one flick. It buys a band
+	of pixels and spends the way to everything else.
+
+	`styles/zen.css` STOPS AT THE SAME WIDTH, and that half is not optional.
+	The preference outlives the viewport, so hiding only the button would leave
+	a reader who chose focus mode at a desk holding a phone with no header, no
+	footer and nothing on screen that undoes it.
 -->
 <script lang="ts">
 	import Icon from './Icon.svelte';
@@ -74,5 +83,15 @@
 		color: var(--color-accent-contrast);
 		background: var(--color-accent);
 		border-color: var(--color-accent);
+	}
+
+	/* See the docblock. `640px` and not `40rem`, matching `Shortcuts` exactly:
+	   `styles/zen.css` hands over at `641px`, and at a non-default root size a
+	   rem here would open a band where the button is visible and pressing it
+	   does nothing. */
+	@media (max-width: 640px) {
+		.zen-toggle {
+			display: none;
+		}
 	}
 </style>

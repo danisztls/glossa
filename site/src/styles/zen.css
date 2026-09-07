@@ -54,6 +54,26 @@
  *     which work this is. It is one muted line above the title and it
  *     scrolls away with the title.
  *
+ * ## Nothing here applies on a phone (2026-09-06)
+ *
+ * The mode is off below 641px, and `ZenToggle` hides its button at the
+ * complementary `max-width: 640px` — the same pair, in the same unit and for
+ * the same reason, as the shortcut sheet's trigger and card (`Shortcuts`).
+ * A phone has no sidebar and no second column to take away: what is left to
+ * hide is the header, the footer and the bar's own controls, which is a strip
+ * at each end of a screen the reader is scrolling past anyway. The mode gives
+ * back a band of chrome and takes the way to everything else.
+ *
+ * THE MEDIA QUERY IS ON THE RULES AND NOT ONLY ON THE BUTTON, which is the
+ * `:has(.reading-bar)` argument at a different width. The preference persists
+ * and outlives the viewport: a reader who switched focus mode on at a desk and
+ * opens the site on their phone, or drags a window narrow, would meet a page
+ * with no header, no footer and — the button now being gone — nothing that
+ * puts them back. Gating the rules means the attribute is simply inert there;
+ * it is still set, still stored, and the desktop it was chosen on still has
+ * it. Escape still exits (`shortcuts.ts`), for a narrow window that does have
+ * a keyboard.
+ *
  * ## Why every rule is gated on `:has(.reading-bar)`
  *
  * The preference persists, and the toggle lives in the reading bar — so on
@@ -90,56 +110,61 @@
  * exception costs nothing while they are shut.
  */
 
-/* The header keeps its height and stops painting. `border-bottom-COLOR`, not
-   `border-bottom: 0` — the width is one pixel of layout, and this file spends
-   none. */
-html[data-zen]:has(.reading-bar) .site-header {
-	background: transparent;
-	border-bottom-color: transparent;
-}
+/* See the docblock: the rules and the button hand over at the same width,
+   written in px so a non-default root size cannot leave a band where one is
+   true and the other is not. */
+@media (min-width: 641px) {
+	/* The header keeps its height and stops painting. `border-bottom-COLOR`, not
+	   `border-bottom: 0` — the width is one pixel of layout, and this file spends
+	   none. */
+	html[data-zen]:has(.reading-bar) .site-header {
+		background: transparent;
+		border-bottom-color: transparent;
+	}
 
-/*
- * Everything the mode hides, in one list, because they are all hidden the same
- * way and the pair only reads as a decision when it is written once.
- *
- * THE HEADER GOES LEAF BY LEAF — the wordmark, the nav, and every
- * `.menu-trigger` in the row — for the dialogs' sake (see the docblock).
- *
- * The rest is STANDING chrome: it is on the page because the page is this
- * site, not because anything happened. What is left alone by that rule is the
- * class of overlay that appears in answer to an event — `UpdateBanner` when a
- * new version has actually deployed — which a reader has asked to be told
- * about and which is gone again once they have.
- *
- * The two asides are already `display: none` below 80rem (`layout.css`), so
- * hiding them at every width is a state the reading routes are built for
- * rather than a new one: the bar's own contents panel is what stands in, and
- * in focus mode that is hidden too.
- *
- * THE BAR IS EMPTIED, NOT RESTYLED — it keeps its background, its rule and its
- * height, and only its contents go. That is not timidity about the look: an
- * opaque bar is what stops the text from sliding under an invisible edge as it
- * scrolls, and the border is what explains where it went. `> *` and not a
- * descendant selector: the toggle is a direct child, and so is
- * `.reading-bar-editions`, the wrapper that keeps the three edition controls
- * wrapping as one phrase. Reaching further in would hide the toggle's own
- * icon, and the two exceptions beside it keep an open panel visible — see the
- * docblock. Its siblings holding their boxes is also what keeps the toggle on
- * the same pixel in both modes, so the button that leaves the mode is where
- * the button that entered it was.
- */
-html[data-zen]:has(.reading-bar) .site-header .brand,
-html[data-zen]:has(.reading-bar) .site-header .primary-nav,
-html[data-zen]:has(.reading-bar) .site-header .menu-trigger,
-html[data-zen]:has(.reading-bar) .site-footer,
-html[data-zen]:has(.reading-bar) .reading-aside,
-html[data-zen]:has(.reading-bar) .index-aside,
-html[data-zen]:has(.reading-bar) .mobile-picker,
-html[data-zen]:has(.reading-bar) .toc-inline,
-html[data-zen]:has(.reading-bar) .install-hint,
-html[data-zen]:has(.reading-bar) .to-top,
-html[data-zen]:has(.reading-bar) .compare-toolbar,
-html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle, dialog, [popover]) {
-	opacity: 0;
-	visibility: hidden;
+	/*
+	 * Everything the mode hides, in one list, because they are all hidden the same
+	 * way and the pair only reads as a decision when it is written once.
+	 *
+	 * THE HEADER GOES LEAF BY LEAF — the wordmark, the nav, and every
+	 * `.menu-trigger` in the row — for the dialogs' sake (see the docblock).
+	 *
+	 * The rest is STANDING chrome: it is on the page because the page is this
+	 * site, not because anything happened. What is left alone by that rule is the
+	 * class of overlay that appears in answer to an event — `UpdateBanner` when a
+	 * new version has actually deployed — which a reader has asked to be told
+	 * about and which is gone again once they have.
+	 *
+	 * The two asides are already `display: none` below 80rem (`layout.css`), so
+	 * hiding them at every width is a state the reading routes are built for
+	 * rather than a new one: the bar's own contents panel is what stands in, and
+	 * in focus mode that is hidden too.
+	 *
+	 * THE BAR IS EMPTIED, NOT RESTYLED — it keeps its background, its rule and its
+	 * height, and only its contents go. That is not timidity about the look: an
+	 * opaque bar is what stops the text from sliding under an invisible edge as it
+	 * scrolls, and the border is what explains where it went. `> *` and not a
+	 * descendant selector: the toggle is a direct child, and so is
+	 * `.reading-bar-editions`, the wrapper that keeps the three edition controls
+	 * wrapping as one phrase. Reaching further in would hide the toggle's own
+	 * icon, and the two exceptions beside it keep an open panel visible — see the
+	 * docblock. Its siblings holding their boxes is also what keeps the toggle on
+	 * the same pixel in both modes, so the button that leaves the mode is where
+	 * the button that entered it was.
+	 */
+	html[data-zen]:has(.reading-bar) .site-header .brand,
+	html[data-zen]:has(.reading-bar) .site-header .primary-nav,
+	html[data-zen]:has(.reading-bar) .site-header .menu-trigger,
+	html[data-zen]:has(.reading-bar) .site-footer,
+	html[data-zen]:has(.reading-bar) .reading-aside,
+	html[data-zen]:has(.reading-bar) .index-aside,
+	html[data-zen]:has(.reading-bar) .mobile-picker,
+	html[data-zen]:has(.reading-bar) .toc-inline,
+	html[data-zen]:has(.reading-bar) .install-hint,
+	html[data-zen]:has(.reading-bar) .to-top,
+	html[data-zen]:has(.reading-bar) .compare-toolbar,
+	html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle, dialog, [popover]) {
+		opacity: 0;
+		visibility: hidden;
+	}
 }
