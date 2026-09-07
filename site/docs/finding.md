@@ -31,8 +31,8 @@ read as an order.
 page behind it did not do.** A table of divisions is exactly right for a reader
 who knows the outline and useless to one who cannot name a part — which is the
 reader the word "Learn" was chosen for. `/schola` is the page it opens now: a
-guide to what each work IS, what a citation of it looks like, what the chrome
-around the text does, and the orders for reading the Church has set out. The
+guide to what each work IS, what a citation of it looks like, and the orders for
+reading the Church has set out. The
 Catechism is therefore the one work here with no door of its own, and nothing
 became unreachable — the guide's first row opens it, Library shelves it, and the
 jump box completes `CCC 1`.
@@ -186,6 +186,18 @@ numbers canons rather than pages, and no page said so. That is
 one sentence on what it is, one on what its numbered unit is called, and a
 worked example.
 
+**IDENTIFIED, NOT CITED** (2026-09-07, by direction). The section is headed
+"What is here, and how it is identified" and each row's label is "Identified",
+where both said "cited". To cite is exactly what these numbers are for, and it
+is a word the reader this section is written for does not have yet —
+`audiences.md` §5 stops at "the vocabulary of the corpus itself", and the label
+was a piece of that vocabulary standing at the head of the line meant to teach
+it. The KEYS stay `schola.cite.*`: the works are cited by these numbers, which
+is a fact about the world and the right name for a string; the label is what a
+reader reads. **The label and the clause under it are one sentence** — every
+value opens with the preposition ("by paragraph number"), so the label has to be
+the participle that reads into it, and the pair has to be translated together.
+
 **AN EXAMPLE IS A SHAPE, NOT A REFERENCE** (2026-09-05, by direction). Each was
 a live link — `CCC 1` to paragraph 1, `Can. 1` to canon 1 — put through the same
 existence predicate the jump box asks (`cccParagraphExists`,
@@ -226,13 +238,100 @@ nested work took its parent's definition and had no citation form of its own,
 and the Compendium of the Catechism, the Compendium of the Social Doctrine and
 the Summa are precisely the three a newcomer has heard named and cannot place.
 
-**The chrome gets a section of its own, named by its own controls.** The search
-box, Library, the language and edition menus, comparison, the apparatus, marks,
-the settings panel, the calendar and offline reading — each headed by the key
-that control is already labelled by (`jumpbox.short`, `settings.label`,
-`compare.enter`, …), so a reader who reads a row and goes looking for the
-control finds the same word, and a translated interface cannot disagree with its
-own guide. Only the sentence under each is new writing.
+**The chrome had a section of its own here and does not any more** (2026-09-07)
+— it is the sheet the `?` button opens, and the section below is the argument.
+What this page kept is what it is better at: the works, their citation forms,
+and the three destinations that are not texts.
+
+## The guide to the chrome is a sheet, and it answers for the page it opens on
+
+**A guide to the controls, printed on a page of its own, describes controls the
+reader cannot see while they read it.** That was the shape of `/schola`'s first
+section, and it had already paid once for the problem: the rows were split into
+two groups headed "The bar at the top of every page" and "The bar above a text",
+because run together the list told a reader to look for the compare button on a
+landing page, which correctly does not have one. A heading is the best a page
+can do. It is still describing a button that is not there.
+
+**In the sheet the rows are read beside the controls they name, so the sheet
+draws only the rows whose control is on the page.** A group with nothing on this
+page is dropped with its heading rather than left standing over an empty list —
+and the last group standing loses its heading too, because a heading
+distinguishes one list from another and over the only list in the sheet it is a
+line above one row. On `/` that is Search; on a Bible chapter it is Search and
+the four reading-bar controls under two headings; in focus mode it is the toggle
+that leaves the mode, because the mode has hidden the rest.
+
+**A row has to teach something the control does not**, which is what the list
+lost two rows to (2026-09-07, by direction). Opening the settings panel or the
+language menu explains either of them completely; the jump box's notation and
+the fact that whole works download for offline reading are guessable from
+nothing, and those are the two the header keeps. The reading bar's four all
+qualify — nothing on the page says a second edition can be set beside the first,
+or that an edition's own footnotes are available at all.
+
+**The jump box then has a section rather than a row, because its lesson is a
+notation and a notation has to be shown.** Three pairs, and the arrow between
+them is the whole grammar: `catechism 101 → ccc 101`, the name a reader already
+has beside the short form the work is cited by, both landing on the same
+paragraph. Nothing in them is written down — the left column is what
+`suggest.ts` matches (`nav.ccc` and `nav.canonLaw` are in its own `SECTIONS`
+table by those very keys, and the reader's edition supplies the book's name),
+the right is the siglum `/schola` teaches out of the keys `citation-label.ts`
+writes a bookmark with. A hard-coded pair would be English, and would be a form
+nobody had checked the parser still reads.
+
+**Both halves are spelled the way a reader may type them: lower case, no
+stops.** `fold` ignores case and accents and `sectionForm` drops every
+separator from a section keyword, so `comp. 123` and `comp 123` are one input —
+printing the stop teaches punctuation that does not matter and a capital teaches
+a shift key the box ignores. The lowercasing is locale-aware, since these are
+words in the reader's language rather than identifiers; the price is a German
+noun printed against its own spelling, paid because the chip idiom already says
+"something to type" rather than something to read.
+
+**The sheet opens on that section and no longer on a sentence about the page.**
+It led with "The text is the whole of the page; everything else is a control you
+can ignore until you want it" — true, and an instruction to ignore what the
+reader had just opened a panel to ask about.
+
+**The page answers in its own markup: `data-help="search"` on the control, a set
+of keys collected at open time, `$lib/help.ts` turning that set into rows.** No
+route registers anything, no context store, no list of selectors in the sheet to
+keep in step with eight components — the same bargain the keyboard step already
+strikes with `rel="prev"`, which is the address sitting in the one element whose
+job is to be that link. `help.test.ts` scans the source in both directions,
+because both failures are silent and both look exactly like a control that is
+simply not on this page: a described row nothing marks can never be drawn, and a
+marked control no row describes was marked for nothing.
+
+**Present in the markup is not the question, so every hit is put through
+`checkVisibility`.** The table of contents is a sidebar above 80rem and a panel
+in the reading bar below it; both are in the document at every width, and
+`layout.css` hands one to the reader and takes the other away. The same reading
+is what empties the sheet in focus mode, where `zen.css` hides the chrome with
+`visibility` rather than removing it. It is read at open time for that reason
+rather than once — which controls a page shows changes with the route, the width
+and the mode.
+
+**The button is named Help and prints `?`.** It was "Keyboard shortcuts", which
+was the whole of the sheet; the guide is now the larger half, and a sheet
+holding both needs the name the reader already reaches for. The keys keep their
+own heading inside it — `shortcuts.title`, the key that named the sheet — and
+they are the one section a width takes away: the trigger is on every width now,
+where it stopped at 640px, and the clusters are what a phone does not get. That
+inversion is the point. A phone reader has the least room for a control to
+explain itself in place, and eight keycaps drawn for a device with no keyboard
+would push the rows that do apply below the fold.
+
+**Every row is still named by the key its own control is labelled by**
+(`jumpbox.short`, `compare.enter`, `document.tableOfContents`, …), so a reader
+who reads a row and goes looking for the control finds the same word, and a
+translated interface cannot disagree with its own guide. **The icon is the glyph
+that control draws**, for the same reason and with the same failure mode: the
+focus row was set in `eye` for a day, where `ZenToggle` has always drawn
+`maximize`, so the row named a mark that is nowhere in the bar. Only the
+sentence under each (`help.feature.*`) is written for the list.
 
 ## The sourced routes are gone, and what they were is worth keeping
 
@@ -406,7 +505,7 @@ contrast, which is exactly what `tokens.css` says it is. So the guide spends it
 on the row's 1.35rem icon, on the 1.6rem serif figures that number the stages
 (large text, a 3:1 floor the family clears), and on the cards' borders and
 hover washes, which are not text at all. The card names, the running words and
-the notation chips are `--color-text-muted` — the colour of the "Cited as"
+the notation chips are `--color-text-muted` — the colour of the "Identified"
 line they sit on, since an accent chip was the loudest thing on the quietest
 line of the card. Both owe 4.5:1 and clear it. A
 pigment on 0.8rem text would have shipped a contrast failure in one theme only,

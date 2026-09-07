@@ -82,11 +82,11 @@ export const lt: Dictionary = {
 	'schola.landing.title': 'Nuo ko pradėti',
 	'schola.landing.tagline':
 		'Trumpas vadovas po tai, kas čia yra: kas yra kiekviena iš šių knygų, kaip užrašoma nuoroda į ją, kaip rasti vietą, ir skaitymo tvarkos, kurias Bažnyčia yra pasiūliusi.',
-	'schola.start.heading': 'Jei visa tai jums nauja',
+	'schola.start.heading': 'Ar katalikybė jums nauja?',
 	'schola.start.body': 'Geriausia pradžia — ',
 	'schola.start.bodyAfter':
 		': tas pats mokymas kaip Katekizme, kur kas trumpesnis, surašytas klausimais ir atsakymais. Jis maždaug dešimt kartų trumpesnis ir nieko iš anksto nesuponuoja.',
-	'schola.bible.heading': 'Jei niekada neskaitėte Šventojo Rašto',
+	'schola.bible.heading': 'Niekada neskaitėte Šventojo Rašto?',
 	'schola.bible.library':
 		'Tai ne viena knyga, o septyniasdešimt trys, rašytos daugiau nei tūkstantį metų ir surinktos ta tvarka, kurią nustatė Bažnyčia — ne ta, kuria įvykiai vyko, ir ne ta, kurią lengviausia skaityti. Daugelis pradeda nuo pirmo puslapio ir po kelių savaičių liaujasi, ilgame senovinio įstatymo skyriuje, nes niekas jiems dar nepasakė, kam tai skirta.',
 	'schola.bible.step.gospel': 'Pradėkite nuo Evangelijos',
@@ -116,31 +116,10 @@ export const lt: Dictionary = {
 		'Ne pasakojimas: šimtas penkiasdešimt maldų ir giesmių. Skaitykite po vieną, bet kokia tvarka. Bažnyčia jas tebekalba kasdien.',
 	'schola.bible.bothWays':
 		'Atpažinsite dalykus, ir tai yra esmė, o ne sutapimas. Bažnyčia senesnes knygas skaito Kristaus šviesoje, o naujesnes — to, kas buvo anksčiau, šviesoje: kiekviena pusė aiškina kitą, ir todėl nė viena neskaitoma viena.',
-	'schola.guide.heading': 'Kaip čia susigaudyti',
-	'schola.guide.lede':
-		'Tekstas yra visas puslapis; visa kita — valdiklis, kurio galite nepaisyti, kol jo neprireiks.',
-	'schola.guide.top.heading': 'Juosta kiekvieno puslapio viršuje',
-	'schola.guide.reading.heading': 'Juosta virš teksto',
-	'schola.feature.search':
-		'Įrašykite nuorodą į viršuje esantį langelį — skyrių ir eilutę, pastraipos numerį, dokumento pavadinimą — ir ji papildoma jums berašant. Iš bet kur spauskite / arba Ctrl+K, o ? parodo kitus trumpinius.',
-	'schola.feature.languages':
-		'Sąsaja ir tekstas renkami atskirai, tad veikalą galite skaityti viena kalba, o mygtukai lieka kita. Kur veikalas turi kelis leidimus jūsų kalba, renkatės ir tarp jų.',
-	'schola.feature.settings':
-		'Teksto dydis, šviesus ar tamsus, sepija, ir kiek aparato norite šalia teksto.',
-	'schola.feature.offline':
-		'Pridėkite svetainę prie pradžios ekrano ir ji atsivers kaip programėlė. Ištisus veikalus galite atsisiųsti ir skaityti be ryšio.',
-	'schola.feature.contents':
-		'Veikalo, kuriame esate, skirstymas — knygos, dalys, skyriai — kad judėtumėte jo viduje negrįždami į pradžią.',
-	'schola.feature.compare':
-		'Du to paties teksto leidimai greta — lotynų kalba šalia jūsų pačių kalbos, arba vienas vertimas šalia kito.',
-	'schola.feature.apparatus':
-		'Leidimo paties pastabos ir bet koks tekstui parašytas komentaras siūlomi šalia jo, o ne po juo. Citatos teksto viduje yra nuorodos, tad nuoroda veda ten, kur rodo.',
-	'schola.feature.focus':
-		'Nuvalo viską, išskyrus tekstą. Išėjimas lieka ten, kur buvo juosta, kad niekas neliktų už jos.',
-	'schola.books.heading': 'Kas čia yra ir kaip cituojama',
+	'schola.books.heading': 'Kas čia yra ir kaip tai nurodoma',
 	'schola.books.lede':
 		'Kiekviena iš jų yra kitokios rūšies knyga, ir į kiekvieną nurodoma savu skaičiumi. Pavyzdžiai rodo formą: įrašykite panašų į paieškos langelį ir atsidursite prie vietos.',
-	'schola.cite.label': 'Cituojama',
+	'schola.cite.label': 'Nurodoma',
 	'schola.what.scripture':
 		'Šventasis Raštas, kaip jį priima Bažnyčia, abiejuose Testamentuose. Visa kita čia skaitoma jo šviesoje.',
 	'schola.cite.scripture':
@@ -488,6 +467,21 @@ export const lt: Dictionary = {
 	'shortcuts.betweenDocuments': 'Tarp dokumentų',
 	'shortcuts.withinDocument': 'Dokumento viduje',
 	'shortcuts.show': 'Rodyti šį sąrašą',
+	'help.title': 'Pagalba',
+	'help.top.heading': 'Juosta kiekvieno puslapio viršuje',
+	'help.reading.heading': 'Juosta virš teksto',
+	'help.feature.search':
+		'Įrašykite nuorodą į viršuje esantį langelį — skyrių ir eilutę, pastraipos numerį, dokumento pavadinimą — ir ji papildoma jums berašant.',
+	'help.feature.offline':
+		'Pridėkite svetainę prie pradžios ekrano ir ji atsivers kaip programėlė. Ištisus veikalus galite atsisiųsti ir skaityti be ryšio.',
+	'help.feature.contents':
+		'Veikalo, kuriame esate, skirstymas — knygos, dalys, skyriai — kad judėtumėte jo viduje negrįždami į pradžią.',
+	'help.feature.compare':
+		'Du to paties teksto leidimai greta — lotynų kalba šalia jūsų pačių kalbos, arba vienas vertimas šalia kito.',
+	'help.feature.apparatus':
+		'Leidimo paties pastabos ir bet koks tekstui parašytas komentaras siūlomi šalia jo, o ne po juo. Citatos teksto viduje yra nuorodos, tad nuoroda veda ten, kur rodo.',
+	'help.feature.focus':
+		'Nuvalo viską, išskyrus tekstą. Išėjimas lieka ten, kur buvo juosta, kad niekas neliktų už jos.',
 	'zen.enter': 'Susikaupimo veiksena',
 	'zen.exit': 'Išjungti susikaupimo veikseną',
 	'nav.calendar': 'Kalendorius',

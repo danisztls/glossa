@@ -676,7 +676,12 @@
 			/>
 		</article>
 
-		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
+		<aside
+			class="reading-aside desktop-picker"
+			aria-label={t('bible.pickBook')}
+			role="navigation"
+			data-help="contents"
+		>
 			<BookChapterPicker
 				currentWorkId={workId}
 				currentOsis={data.osis}
@@ -894,7 +899,12 @@
 	     entirely in compare mode — see app.css's `.reading-layout.compare`
 	     docblock: the second text column takes the room the sidebar would
 	     have used, at every width, rather than the other way around. -->
-		<aside class="reading-aside desktop-picker" aria-label={t('bible.pickBook')} role="navigation">
+		<aside
+			class="reading-aside desktop-picker"
+			aria-label={t('bible.pickBook')}
+			role="navigation"
+			data-help="contents"
+		>
 			<BookChapterPicker
 				currentWorkId={workId}
 				currentOsis={data.osis}

@@ -65,11 +65,11 @@ export const ja: Dictionary = {
 	'schola.landing.title': 'どこから始めるか',
 	'schola.landing.tagline':
 		'ここにあるものの短い案内 — それぞれの書物が何であるか、その引用はどう書かれるか、箇所をどう探すか、そして教会が示してきた読書の順序。',
-	'schola.start.heading': 'はじめての方へ',
+	'schola.start.heading': 'カトリックははじめてですか？',
 	'schola.start.body': 'まずは',
 	'schola.start.bodyAfter':
 		'から。カテキズムと同じ教えを、はるかに短く、問いと答えの形で述べたものです。分量はおよそ十分の一で、前提知識を求めません。',
-	'schola.bible.heading': '聖書を読んだことがない方へ',
+	'schola.bible.heading': '聖書ははじめてですか？',
 	'schola.bible.library':
 		'聖書は一冊の本ではなく七十三の書物です。千年以上をかけて書かれ、教会が定めた順に綴じられています — 出来事の起こった順でも、読みやすい順でもありません。多くの人は最初の頁から読み始め、数週間後、古代の律法の長い章のなかで止めてしまいます。それが何のためのものか、まだ誰も告げていないからです。',
 	'schola.bible.step.gospel': '福音書から始める',
@@ -98,31 +98,10 @@ export const ja: Dictionary = {
 		'物語ではありません。百五十の祈りと歌です。一つずつ、どの順でも読めます。教会は今も毎日これを祈っています。',
 	'schola.bible.bothWays':
 		'見覚えのあるものに出会うはずです。それは偶然ではなく、むしろ要点です。教会は古い書をキリストの光のもとで読み、新しい書を先立つものの光のもとで読みます — 互いが互いを説き明かすので、どちらも単独では読まれません。',
-	'schola.guide.heading': 'この場所の歩き方',
-	'schola.guide.lede':
-		'本文がページのすべてです。それ以外はすべて操作であり、必要になるまで無視して構いません。',
-	'schola.guide.top.heading': 'どのページにもある上のバー',
-	'schola.guide.reading.heading': '本文の上のバー',
-	'schola.feature.search':
-		'上の欄に参照を入力してください — 章と節、項の番号、文書の名前 — 入力しながら補完されます。どこからでも / か Ctrl+K を、他のショートカットは ? を押してください。',
-	'schola.feature.languages':
-		'インターフェースと本文は別々に選べます。ボタンは一つの言語のまま、作品を別の言語で読めます。あなたの言語に版が複数あるときは、そのなかからも選べます。',
-	'schola.feature.settings':
-		'文字の大きさ、明暗、セピア、そして本文のかたわらにどれだけの註を置くか。',
-	'schola.feature.offline':
-		'ホーム画面に追加すればアプリのように開きます。作品をまるごとダウンロードして、接続なしで読めます。',
-	'schola.feature.contents':
-		'いま開いている作品の区分 — 巻、部、章 — 最初に戻らずに内部を移動できます。',
-	'schola.feature.compare':
-		'同じ箇所の二つの版を並べて — ラテン語をあなたの言語のかたわらに、あるいは一つの翻訳を別の翻訳のかたわらに。',
-	'schola.feature.apparatus':
-		'版そのものの脚註と、本文に書かれた注解は、下ではなくかたわらに置かれます。本文中の引用はリンクなので、参照はそれが指す先へ運びます。',
-	'schola.feature.focus':
-		'本文以外をすべて消します。出口はバーのあった場所に残るので、何も閉じ込められません。',
-	'schola.books.heading': 'ここにあるものと、その引用のしかた',
+	'schola.books.heading': 'ここにあるものと、その示し方',
 	'schola.books.lede':
 		'これらはそれぞれ種類の異なる書物であり、それぞれ固有の番号で参照されます。例はその形を示しています。同じように検索欄に入力すれば、その箇所に着きます。',
-	'schola.cite.label': '引用の形',
+	'schola.cite.label': '示し方',
 	'schola.what.scripture':
 		'教会が受け取ったままの聖書、旧新両約。ここにある他のすべては、その光のもとで読まれます。',
 	'schola.cite.scripture': '書名・章・節。あなたの版が印刷している略号で',
@@ -459,6 +438,21 @@ export const ja: Dictionary = {
 	'shortcuts.betweenDocuments': '文書間',
 	'shortcuts.withinDocument': '文書内',
 	'shortcuts.show': 'この一覧を表示',
+	'help.title': 'ヘルプ',
+	'help.top.heading': 'どのページにもある上のバー',
+	'help.reading.heading': '本文の上のバー',
+	'help.feature.search':
+		'上の欄に参照を入力してください — 章と節、項の番号、文書の名前 — 入力しながら補完されます。',
+	'help.feature.offline':
+		'ホーム画面に追加すればアプリのように開きます。作品をまるごとダウンロードして、接続なしで読めます。',
+	'help.feature.contents':
+		'いま開いている作品の区分 — 巻、部、章 — 最初に戻らずに内部を移動できます。',
+	'help.feature.compare':
+		'同じ箇所の二つの版を並べて — ラテン語をあなたの言語のかたわらに、あるいは一つの翻訳を別の翻訳のかたわらに。',
+	'help.feature.apparatus':
+		'版そのものの脚註と、本文に書かれた注解は、下ではなくかたわらに置かれます。本文中の引用はリンクなので、参照はそれが指す先へ運びます。',
+	'help.feature.focus':
+		'本文以外をすべて消します。出口はバーのあった場所に残るので、何も閉じ込められません。',
 	'zen.enter': '集中モード',
 	'zen.exit': '集中モードを終了',
 	'nav.calendar': '暦',

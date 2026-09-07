@@ -57,11 +57,11 @@ export const fr: Dictionary = {
 	'schola.landing.title': 'Par où commencer',
 	'schola.landing.tagline':
 		'Un guide bref de ce qui se trouve ici : ce qu’est chacun de ces livres, comment s’écrit une citation, comment trouver un passage, et des ordres de lecture que l’Église a proposés.',
-	'schola.start.heading': 'Si tout cela est nouveau pour vous',
+	'schola.start.heading': 'Vous découvrez le catholicisme ?',
 	'schola.start.body': 'Commencez par l’',
 	'schola.start.bodyAfter':
 		' : le même enseignement que le Catéchisme, beaucoup plus court, écrit en questions et réponses. Il fait environ le dixième de sa longueur et ne suppose rien.',
-	'schola.bible.heading': 'Si vous n’avez jamais lu la Bible',
+	'schola.bible.heading': 'Jamais lu la Bible ?',
 	'schola.bible.library':
 		'Ce n’est pas un livre mais soixante-treize, écrits sur plus de mille ans et réunis dans l’ordre que l’Église a fixé — non l’ordre où les événements se sont produits, ni celui qui se lit le plus aisément. La plupart des gens commencent à la première page et s’arrêtent quelques semaines plus tard, dans un long chapitre de loi ancienne, parce que rien ne leur a encore dit à quoi cela sert.',
 	'schola.bible.step.gospel': 'Commencez par un Évangile',
@@ -92,31 +92,10 @@ export const fr: Dictionary = {
 		'Non un récit : cent cinquante prières et chants. Lisez-en un à la fois, dans n’importe quel ordre. L’Église les prie encore chaque jour.',
 	'schola.bible.bothWays':
 		'Vous reconnaîtrez des choses, et c’est le but plutôt qu’une coïncidence. L’Église lit les livres anciens à la lumière du Christ et les récents à la lumière de ce qui a précédé — chaque moitié explique l’autre, et c’est pourquoi aucune ne se lit seule.',
-	'schola.guide.heading': 'S’orienter',
-	'schola.guide.lede':
-		'Le texte est toute la page ; le reste est une commande que vous pouvez ignorer jusqu’à en avoir besoin.',
-	'schola.guide.top.heading': 'La barre en haut de chaque page',
-	'schola.guide.reading.heading': 'La barre au-dessus d’un texte',
-	'schola.feature.search':
-		'Tapez une référence dans la case du haut — un chapitre et un verset, un numéro de paragraphe, le nom d’un document — et elle se complète à mesure. Appuyez sur / ou Ctrl+K depuis n’importe où, et sur ? pour les autres raccourcis.',
-	'schola.feature.languages':
-		'L’interface et le texte se choisissent séparément : vous pouvez lire une œuvre dans une langue pendant que les boutons restent dans une autre. Là où une œuvre a plusieurs éditions dans votre langue, vous choisissez aussi entre elles.',
-	'schola.feature.settings':
-		'Taille du texte, clair ou sombre, sépia, et quelle part de l’apparat vous voulez à côté du texte.',
-	'schola.feature.offline':
-		'Ajoutez le site à votre écran d’accueil et il s’ouvre comme une application. Vous pouvez télécharger des œuvres entières pour les lire hors ligne.',
-	'schola.feature.contents':
-		'Les divisions de l’œuvre où vous êtes — livres, parties, chapitres — pour vous y déplacer sans revenir au début.',
-	'schola.feature.compare':
-		'Deux éditions du même passage, côte à côte — le latin à côté de votre propre langue, ou une traduction à côté d’une autre.',
-	'schola.feature.apparatus':
-		'Les notes propres à une édition, et tout commentaire écrit sur le texte, sont offerts à côté de lui et non en dessous. Les citations dans le texte sont des liens : une référence mène là où elle pointe.',
-	'schola.feature.focus':
-		'Efface tout sauf le texte. La sortie reste où était la barre, pour que rien ne soit pris derrière.',
-	'schola.books.heading': 'Ce qui est ici, et comment cela se cite',
+	'schola.books.heading': 'Ce qui est ici, et comment cela s’identifie',
 	'schola.books.lede':
 		'Chacun de ces livres est d’un genre différent, et chacun se désigne par un numéro qui lui est propre. Les exemples montrent la forme : tapez-en un semblable dans la case de recherche et vous arrivez au passage.',
-	'schola.cite.label': 'Se cite',
+	'schola.cite.label': 'S’identifie',
 	'schola.what.scripture':
 		'Les Écritures telles que l’Église les reçoit, dans les deux Testaments. Tout le reste ici se lit à leur lumière.',
 	'schola.cite.scripture':
@@ -470,6 +449,21 @@ export const fr: Dictionary = {
 	'shortcuts.betweenDocuments': 'Entre les documents',
 	'shortcuts.withinDocument': 'Dans le document',
 	'shortcuts.show': 'Afficher cette liste',
+	'help.title': 'Aide',
+	'help.top.heading': 'La barre en haut de chaque page',
+	'help.reading.heading': 'La barre au-dessus d’un texte',
+	'help.feature.search':
+		'Tapez une référence dans la case du haut — un chapitre et un verset, un numéro de paragraphe, le nom d’un document — et elle se complète à mesure.',
+	'help.feature.offline':
+		'Ajoutez le site à votre écran d’accueil et il s’ouvre comme une application. Vous pouvez télécharger des œuvres entières pour les lire hors ligne.',
+	'help.feature.contents':
+		'Les divisions de l’œuvre où vous êtes — livres, parties, chapitres — pour vous y déplacer sans revenir au début.',
+	'help.feature.compare':
+		'Deux éditions du même passage, côte à côte — le latin à côté de votre propre langue, ou une traduction à côté d’une autre.',
+	'help.feature.apparatus':
+		'Les notes propres à une édition, et tout commentaire écrit sur le texte, sont offerts à côté de lui et non en dessous. Les citations dans le texte sont des liens : une référence mène là où elle pointe.',
+	'help.feature.focus':
+		'Efface tout sauf le texte. La sortie reste où était la barre, pour que rien ne soit pris derrière.',
 	'zen.enter': 'Mode concentration',
 	'zen.exit': 'Quitter le mode concentration',
 	'nav.calendar': 'Calendrier',

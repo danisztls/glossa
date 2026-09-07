@@ -61,6 +61,7 @@
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger"
+		data-help="apparatus"
 		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={t('apparatus.label')}

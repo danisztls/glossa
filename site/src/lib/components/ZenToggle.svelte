@@ -63,6 +63,7 @@
 <button
 	type="button"
 	class="menu-trigger zen-toggle"
+	data-help="focus"
 	class:active={zen.on}
 	aria-pressed={zen.on}
 	aria-label={label}
@@ -85,7 +86,8 @@
 		border-color: var(--color-accent);
 	}
 
-	/* See the docblock. `640px` and not `40rem`, matching `Shortcuts` exactly:
+	/* See the docblock. `640px` and not `40rem`, matching the help sheet's
+	   card exactly (`Help.svelte`):
 	   `styles/zen.css` hands over at `641px`, and at a non-default root size a
 	   rem here would open a band where the button is visible and pressing it
 	   does nothing. */

@@ -69,7 +69,7 @@
 	});
 </script>
 
-<nav class="index-sidebar-toc" aria-label={heading} data-link-preview="off">
+<nav class="index-sidebar-toc" aria-label={heading} data-help="contents" data-link-preview="off">
 	<h2 class="sidebar-toc-heading">
 		<span>{heading}</span>
 		{#if headingNote}

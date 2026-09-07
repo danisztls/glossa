@@ -55,11 +55,11 @@ export const sl: Dictionary = {
 	'schola.landing.title': 'Kje začeti',
 	'schola.landing.tagline':
 		'Kratek vodnik po tem, kar je tu: kaj je vsaka od teh knjig, kako se zapiše navedba zanjo, kako najti odlomek, in beriva, ki jih je Cerkev predlagala.',
-	'schola.start.heading': 'Če vam je vse to novo',
+	'schola.start.heading': 'Novi v katolištvu?',
 	'schola.start.body': 'Najboljši začetek je ',
 	'schola.start.bodyAfter':
 		': isti nauk kakor v katekizmu, veliko krajši, zapisan v vprašanjih in odgovorih. Obsega približno desetino in ničesar ne predpostavlja.',
-	'schola.bible.heading': 'Če Svetega pisma niste nikoli brali',
+	'schola.bible.heading': 'Svetega pisma niste nikoli brali?',
 	'schola.bible.library':
 		'Ni ena knjiga, ampak triinsedemdeset, pisanih čez več kakor tisoč let in zbranih v redu, ki ga je določila Cerkev — ne v redu, po katerem so se stvari zgodile, in ne v tistem, ki se najlaže bere. Večina začne na prvi strani in neha nekaj tednov pozneje, sredi dolgega poglavja starodavnega zakona, ker jim še nihče ni povedal, čemu je to.',
 	'schola.bible.step.gospel': 'Začnite z evangelijem',
@@ -89,31 +89,10 @@ export const sl: Dictionary = {
 		'Ne pripoved: sto petdeset molitev in pesmi. Berite po eno, v poljubnem redu. Cerkev jih moli vsak dan še danes.',
 	'schola.bible.bothWays':
 		'Marsikaj boste prepoznali, in prav to je namen, ne naključje. Cerkev bere starejše knjige v luči Kristusa in novejše v luči tega, kar je bilo prej — vsaka polovica pojasnjuje drugo, in zato se nobena ne bere sama.',
-	'schola.guide.heading': 'Kako se znajti',
-	'schola.guide.lede':
-		'Besedilo je vsa stran; vse drugo je gumb, ki ga lahko prezrete, dokler ga ne potrebujete.',
-	'schola.guide.top.heading': 'Vrstica na vrhu vsake strani',
-	'schola.guide.reading.heading': 'Vrstica nad besedilom',
-	'schola.feature.search':
-		'Vtipkajte navedbo v polje na vrhu — poglavje in vrstico, številko člena, ime dokumenta — in dopolni jo med tipkanjem. Pritisnite / ali Ctrl+K od koder koli, in ? za druge bližnjice.',
-	'schola.feature.languages':
-		'Vmesnik in besedilo se izbirata ločeno, tako da lahko delo berete v enem jeziku, medtem ko gumbi ostanejo v drugem. Kjer ima delo več izdaj v vašem jeziku, izbirate tudi med njimi.',
-	'schola.feature.settings':
-		'Velikost besedila, svetlo ali temno, sepija, in koliko aparata hočete ob besedilu.',
-	'schola.feature.offline':
-		'Dodajte spletišče na začetni zaslon in odpre se kakor aplikacija. Cela dela lahko prenesete in jih berete brez povezave.',
-	'schola.feature.contents':
-		'Razdelitve dela, v katerem ste — knjige, deli, poglavja — da se premikate po njem, ne da bi se vračali na začetek.',
-	'schola.feature.compare':
-		'Dve izdaji istega odlomka druga ob drugi — latinščina ob vašem jeziku, ali en prevod ob drugem.',
-	'schola.feature.apparatus':
-		'Lastne opombe izdaje in vsak komentar, napisan k besedilu, so ponujeni ob njem in ne pod njim. Navedbe znotraj besedila so povezave, tako da napotilo vodi tja, kamor kaže.',
-	'schola.feature.focus':
-		'Počisti vse razen besedila. Izhod ostane tam, kjer je bila vrstica, da nič ne obtiči za njo.',
-	'schola.books.heading': 'Kaj je tu in kako se navaja',
+	'schola.books.heading': 'Kaj je tu in kako se označuje',
 	'schola.books.lede':
 		'Vsaka od teh knjig je druge vrste, in na vsako se sklicuje z lastno številko. Zgledi kažejo obliko: vtipkajte kaj takega v iskalno polje in pristanete pri odlomku.',
-	'schola.cite.label': 'Navaja se',
+	'schola.cite.label': 'Označuje se',
 	'schola.what.scripture':
 		'Sveto pismo, kakor ga Cerkev prejema, v obeh zavezah. Vse drugo tu se bere v njegovi luči.',
 	'schola.cite.scripture': 'knjiga, poglavje in vrstica, v okrajšavah, ki jih tiska vaša izdaja',
@@ -462,6 +441,21 @@ export const sl: Dictionary = {
 	'shortcuts.betweenDocuments': 'Med dokumenti',
 	'shortcuts.withinDocument': 'Znotraj dokumenta',
 	'shortcuts.show': 'Pokaži ta seznam',
+	'help.title': 'Pomoč',
+	'help.top.heading': 'Vrstica na vrhu vsake strani',
+	'help.reading.heading': 'Vrstica nad besedilom',
+	'help.feature.search':
+		'Vtipkajte navedbo v polje na vrhu — poglavje in vrstico, številko člena, ime dokumenta — in dopolni jo med tipkanjem.',
+	'help.feature.offline':
+		'Dodajte spletišče na začetni zaslon in odpre se kakor aplikacija. Cela dela lahko prenesete in jih berete brez povezave.',
+	'help.feature.contents':
+		'Razdelitve dela, v katerem ste — knjige, deli, poglavja — da se premikate po njem, ne da bi se vračali na začetek.',
+	'help.feature.compare':
+		'Dve izdaji istega odlomka druga ob drugi — latinščina ob vašem jeziku, ali en prevod ob drugem.',
+	'help.feature.apparatus':
+		'Lastne opombe izdaje in vsak komentar, napisan k besedilu, so ponujeni ob njem in ne pod njim. Navedbe znotraj besedila so povezave, tako da napotilo vodi tja, kamor kaže.',
+	'help.feature.focus':
+		'Počisti vse razen besedila. Izhod ostane tam, kjer je bila vrstica, da nič ne obtiči za njo.',
 	'zen.enter': 'Način zbranosti',
 	'zen.exit': 'Zapusti način zbranosti',
 	'nav.calendar': 'Koledar',

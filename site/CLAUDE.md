@@ -566,29 +566,49 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   The Bible's specimen stays derived from `bookAbbrev` and `grammarSurface`, so
   a Portuguese reader reads `Jo 3,16`; note the OSIS ids here are LOWER-CASE
   (`john`), and the other spelling fails by drawing nothing.
-- **The chrome section is headed by the controls' own keys** — `jumpbox.short`,
-  `settings.label`, `compare.enter` — so a row and the control it describes
-  cannot be called two different things in a translated interface. Only the
-  sentence under each is new writing, which is what held this page out of
-  `CHROME_PATHS` until those sentences were translated (2026-09-06) — **a new
-  one now costs thirty-six dictionaries, not a deferral.**
-- **IT IS TWO LISTS, BECAUSE THE SITE HAS TWO BARS** (2026-09-06). Four
-  controls are in the header of every page and four appear only once there is a
-  text on the screen; run together as one list of nine, the guide sent a reader
-  looking for the compare button to a landing page that correctly does not have
-  one. **A guide to the chrome that does not say WHERE a control is has not
-  finished the sentence**, and the group heading is where that belongs rather
-  than a clause inside each row.
-- **NOTHING IN THAT SECTION IS A PAGE ANY MORE.** Library, Calendar and
-  Bookmarks were rows in it and are addresses, not controls — a reader looking
-  for the Library wants somewhere to go. They are a group under the works now,
-  carrying a `what` line and no `cite` line, because a calendar is addressed by
-  a date and a bookmark by whatever the reader marked; inventing a notation for
-  either would teach a citation form that does not exist. What is left in the
-  guide is exactly what no link can reach, so no row there lights on hover.
-- **Headings run h2 section, h3 group, h4 row.** Adding the groups pushed every
-  row's title down a level across the page: a heading tree that skips a level
-  is one a screen reader reads as a mistake.
+- **THE CHROME GUIDE IS NOT ON THIS PAGE ANY MORE** (2026-09-07): it is the
+  sheet `?` opens, `Help.svelte` over `$lib/help.ts`, and the button is named
+  Help rather than Keyboard shortcuts. A guide printed on a page of its own
+  describes controls the reader cannot see while reading it; **the sheet draws
+  only the rows whose control is on the page in front of them**, which it learns
+  from `data-help="<key>"` on the control itself plus `checkVisibility` — no
+  route registers anything, and the same reading is what empties the sheet in
+  focus mode. `help.test.ts` scans the source both ways, because a described row
+  nothing marks and a marked control no row describes both look exactly like a
+  control that is simply not on this page. `site/docs/finding.md` argues it.
+- **Rows are still named by their control's own key** — `jumpbox.short`,
+  `compare.enter`, `document.tableOfContents` — so a row and the control it
+  describes cannot be called two different things in a translated interface, and
+  **the icon is the glyph that control draws**: the focus row said `eye` for a
+  day where `ZenToggle` has always drawn `maximize`. Only the sentence under
+  each (`help.feature.*`) is new writing, and a new one costs thirty-six
+  dictionaries rather than a deferral.
+- **A ROW HAS TO TEACH SOMETHING THE CONTROL DOES NOT.** The settings and
+  language rows went on 2026-09-07, by direction: opening either explains it in
+  full, where the jump box's notation and the fact that whole works download for
+  offline reading are guessable from nothing. Group headings say WHERE, which is
+  why there are two of them.
+- **THE JUMP BOX HAS A SECTION, NOT A ROW**, because its lesson is a notation:
+  three pairs, `catechism 101 → ccc 101`, drawn by `searchExamples()` out of the
+  keys `suggest.ts` matches and `/schola` teaches — never written down, or the
+  examples would be English and unchecked. **Both halves are lower case with no
+  stops**, since `fold` and `sectionForm` ignore both, and the lowercasing is
+  locale-aware. The sheet no longer opens with a sentence telling the reader
+  that everything but the text can be ignored.
+- **`/schola` says IDENTIFIED where it said CITED** (2026-09-07, by direction),
+  heading and row label both. The keys stay `schola.cite.*` — the works are
+  cited by these numbers, and that is the right name for a string — but "cite"
+  is a word the reader of that section does not have yet. **The label and the
+  clause under it are one sentence**: every value opens with the preposition, so
+  the label is the participle that reads into it.
+- **NOTHING IN THAT GUIDE IS A PAGE.** Library, Calendar and Bookmarks were rows
+  in it and are addresses, not controls — a reader looking for the Library wants
+  somewhere to go. They are a group under `/schola`'s works now, carrying a
+  `what` line and no `cite` line, because a calendar is addressed by a date and a
+  bookmark by whatever the reader marked. What the sheet holds is exactly what no
+  link can reach.
+- **Headings run h2 section, h3 group, h4 row**, on the page and in the sheet: a
+  heading tree that skips a level is one a screen reader reads as a mistake.
 - **`/schola`'s SOURCED ROUTES ARE GONE** (2026-09-05) and `learning-routes.ts`
   with them. Each cited the document in this corpus that stated its order,
   which was a sound rule that produced a page whose most useful sentence for a
@@ -596,8 +616,9 @@ Rationale in `site/docs/finding.md`; what must be true before you touch it:
   the Bible section, which recommends; the Catechism's pillars and the
   Compendium's parts have no successor and need none — `/catechismus` IS that
   plan. `site/docs/finding.md` keeps the three defects those routes paid for.
-- **Two sections advise, and their HEADINGS are what mark them** — "If you are
-  new to this", "If you have never read the Bible". Every other section is
+- **Two sections advise, and their HEADINGS are what mark them** — "New to
+  Catholicism?", "Never read the Bible?" (the reader's own question since
+  2026-09-07, by direction). Every other section is
   titled by what it lists, so a section titled with the reader's own question is
   visibly answering it. Both earlier marks are gone: the accent rule read as a
   blockquote around the two passages nobody else said, and the attribution line
@@ -2497,7 +2518,7 @@ behaviour. The selectors are `print.css`'s, which argues each one in place —
   header's height on every toggle. Add rules in that form, or the mode stops
   being free to leave on.
 - **Hiding a container that holds a `<dialog>` disables the dialog, and both
-  properties do it.** `JumpBox` and `Shortcuts` render trigger and `<dialog>`
+  properties do it.** `JumpBox` and `Help` render trigger and `<dialog>`
   as siblings inside `.site-header`, so only the triggers are hidden;
   `display: none` would take the dialog out of the box tree (`layout.css`
   relies on that for `TocMenu`) and `visibility` inherits through the top

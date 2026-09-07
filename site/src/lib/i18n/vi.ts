@@ -89,11 +89,11 @@ export const vi: Dictionary = {
 	'schola.landing.title': 'Bắt đầu từ đâu',
 	'schola.landing.tagline':
 		'Một chỉ dẫn ngắn về những gì có ở đây: mỗi cuốn sách này là gì, một trưng dẫn nó được viết thế nào, tìm một đoạn ra sao, và những thứ tự đọc mà Hội Thánh đã đề nghị.',
-	'schola.start.heading': 'Nếu tất cả những điều này còn mới với bạn',
+	'schola.start.heading': 'Mới biết đến Công giáo?',
 	'schola.start.body': 'Khởi đầu tốt nhất là ',
 	'schola.start.bodyAfter':
 		': cùng một giáo huấn như Sách Giáo lý, ngắn hơn nhiều, viết theo lối hỏi thưa. Nó dài chừng một phần mười và không giả định điều gì trước.',
-	'schola.bible.heading': 'Nếu bạn chưa bao giờ đọc Kinh Thánh',
+	'schola.bible.heading': 'Chưa bao giờ đọc Kinh Thánh?',
 	'schola.bible.library':
 		'Đó không phải một cuốn sách mà là bảy mươi ba cuốn, viết trong hơn một ngàn năm và đóng lại theo thứ tự Hội Thánh đã định — không phải thứ tự các việc đã xảy ra, cũng không phải thứ tự dễ đọc nhất. Phần đông bắt đầu ở trang thứ nhất rồi vài tuần sau bỏ dở, giữa một chương dài của luật cổ, bởi chưa ai nói cho họ biết nó dùng để làm gì.',
 	'schola.bible.step.gospel': 'Hãy bắt đầu bằng một sách Tin Mừng',
@@ -124,31 +124,10 @@ export const vi: Dictionary = {
 		'Không phải một câu chuyện: một trăm năm mươi lời kinh và bài ca. Hãy đọc từng bài, theo thứ tự nào cũng được. Hội Thánh vẫn đọc những bài này mỗi ngày.',
 	'schola.bible.bothWays':
 		'Bạn sẽ nhận ra nhiều điều, và đó là chủ ý chứ không phải tình cờ. Hội Thánh đọc các sách cổ hơn dưới ánh sáng Đức Kitô và các sách mới hơn dưới ánh sáng những gì đi trước — mỗi nửa giải thích nửa kia, và vì thế không nửa nào được đọc riêng một mình.',
-	'schola.guide.heading': 'Tìm đường',
-	'schola.guide.lede':
-		'Bản văn là cả trang; mọi thứ còn lại là một nút điều khiển mà bạn có thể bỏ qua cho tới khi cần đến.',
-	'schola.guide.top.heading': 'Thanh ở đầu mỗi trang',
-	'schola.guide.reading.heading': 'Thanh phía trên một bản văn',
-	'schola.feature.search':
-		'Gõ một trưng dẫn vào ô trên cùng — chương và câu, một số mục, tên một văn kiện — và nó tự hoàn tất khi bạn gõ. Bấm / hoặc Ctrl+K từ bất cứ đâu, và ? để xem các phím tắt khác.',
-	'schola.feature.languages':
-		'Giao diện và bản văn được chọn riêng, nên bạn có thể đọc một tác phẩm bằng một ngôn ngữ trong khi các nút vẫn ở ngôn ngữ khác. Nơi một tác phẩm có nhiều bản in trong ngôn ngữ của bạn, bạn cũng chọn giữa chúng.',
-	'schola.feature.settings':
-		'Cỡ chữ, sáng hay tối, sắc nâu, và bạn muốn bao nhiêu phần chú giải nằm cạnh bản văn.',
-	'schola.feature.offline':
-		'Thêm trang này vào màn hình chính thì nó mở ra như một ứng dụng. Bạn có thể tải trọn các tác phẩm để đọc khi không có kết nối.',
-	'schola.feature.contents':
-		'Các phân chia của tác phẩm bạn đang ở trong — quyển, phần, chương — để đi lại bên trong nó mà không phải trở về đầu.',
-	'schola.feature.compare':
-		'Hai bản in của cùng một đoạn, đặt cạnh nhau — tiếng Latinh bên cạnh ngôn ngữ của bạn, hoặc bản dịch này bên cạnh bản dịch kia.',
-	'schola.feature.apparatus':
-		'Các chú thích của chính bản in, và mọi lời chú giải viết về bản văn, được đặt bên cạnh chứ không phải bên dưới. Những trưng dẫn trong bản văn là liên kết, nên một quy chiếu dẫn tới đúng nơi nó chỉ.',
-	'schola.feature.focus':
-		'Dọn hết mọi thứ trừ bản văn. Lối ra vẫn ở nơi thanh vốn nằm, để không gì bị kẹt phía sau.',
-	'schola.books.heading': 'Ở đây có gì, và trưng dẫn thế nào',
+	'schola.books.heading': 'Ở đây có gì, và được xác định thế nào',
 	'schola.books.lede':
 		'Mỗi cuốn trong số này là một loại sách khác nhau, và mỗi cuốn được quy chiếu bằng một con số riêng. Các thí dụ cho thấy dạng thức: gõ một dạng như thế vào ô tìm và bạn tới đúng đoạn.',
-	'schola.cite.label': 'Trưng dẫn là',
+	'schola.cite.label': 'Xác định',
 	'schola.what.scripture':
 		'Kinh Thánh như Hội Thánh lãnh nhận, trong cả hai Giao ước. Mọi thứ khác ở đây được đọc dưới ánh sáng của nó.',
 	'schola.cite.scripture': 'sách, chương và câu, theo các chữ tắt mà bản in của bạn dùng',
@@ -495,6 +474,21 @@ export const vi: Dictionary = {
 	'shortcuts.betweenDocuments': 'Giữa các bản văn',
 	'shortcuts.withinDocument': 'Trong một bản văn',
 	'shortcuts.show': 'Hiện danh sách này',
+	'help.title': 'Trợ giúp',
+	'help.top.heading': 'Thanh ở đầu mỗi trang',
+	'help.reading.heading': 'Thanh phía trên một bản văn',
+	'help.feature.search':
+		'Gõ một trưng dẫn vào ô trên cùng — chương và câu, một số mục, tên một văn kiện — và nó tự hoàn tất khi bạn gõ.',
+	'help.feature.offline':
+		'Thêm trang này vào màn hình chính thì nó mở ra như một ứng dụng. Bạn có thể tải trọn các tác phẩm để đọc khi không có kết nối.',
+	'help.feature.contents':
+		'Các phân chia của tác phẩm bạn đang ở trong — quyển, phần, chương — để đi lại bên trong nó mà không phải trở về đầu.',
+	'help.feature.compare':
+		'Hai bản in của cùng một đoạn, đặt cạnh nhau — tiếng Latinh bên cạnh ngôn ngữ của bạn, hoặc bản dịch này bên cạnh bản dịch kia.',
+	'help.feature.apparatus':
+		'Các chú thích của chính bản in, và mọi lời chú giải viết về bản văn, được đặt bên cạnh chứ không phải bên dưới. Những trưng dẫn trong bản văn là liên kết, nên một quy chiếu dẫn tới đúng nơi nó chỉ.',
+	'help.feature.focus':
+		'Dọn hết mọi thứ trừ bản văn. Lối ra vẫn ở nơi thanh vốn nằm, để không gì bị kẹt phía sau.',
 	'zen.enter': 'Chế độ tập trung',
 	'zen.exit': 'Rời chế độ tập trung',
 	'nav.calendar': 'Lịch',

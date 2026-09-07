@@ -544,7 +544,12 @@
 {/snippet}
 
 {#snippet prayerToc(p: Prayer)}
-	<nav class="prayer-toc" aria-label={t('prayers.tableOfContents')} data-link-preview="off">
+	<nav
+		class="prayer-toc"
+		aria-label={t('prayers.tableOfContents')}
+		data-help="contents"
+		data-link-preview="off"
+	>
 		<h2 class="label-micro">{t('prayers.tableOfContents')}</h2>
 		<ol>
 			{#each p.groups ?? [] as group (group.name)}

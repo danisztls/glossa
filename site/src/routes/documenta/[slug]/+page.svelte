@@ -710,6 +710,7 @@
 					<nav
 						class="toc-inline"
 						aria-label={t('document.tableOfContents')}
+						data-help="contents"
 						data-link-preview="off"
 					>
 						<details class="toc-disclosure">

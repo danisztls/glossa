@@ -59,11 +59,11 @@ export const la: Dictionary = {
 	'schola.landing.title': 'Unde incipiendum',
 	'schola.landing.tagline':
 		'Brevis index eorum quae hic habentur: quid sit quisque horum librorum, quomodo eius locus citetur, quomodo locus inveniatur, et ordines legendi quos Ecclesia proposuit.',
-	'schola.start.heading': 'Si haec tibi nova sunt',
+	'schola.start.heading': 'Estne tibi nova fides catholica?',
 	'schola.start.body': 'Optimum initium est ',
 	'schola.start.bodyAfter':
 		': eadem doctrina quae Catechismi, multo brevior, interrogationibus et responsionibus conscripta. Decima fere parte minor est nec quicquam praesupponit.',
-	'schola.bible.heading': 'Si Scripturam numquam legisti',
+	'schola.bible.heading': 'Numquam Scripturam legisti?',
 	'schola.bible.library':
 		'Non unus liber est sed septuaginta tres, per mille amplius annos conscripti et eo ordine collecti quem Ecclesia statuit — non quo res gestae sunt, neque quo facillime leguntur. Plerique a prima pagina incipiunt et post paucas hebdomadas desinunt, in longo capite legis antiquae, quia nemo adhuc eis dixit quorsum haec pertineant.',
 	'schola.bible.step.gospel': 'Ab Evangelio incipe',
@@ -92,31 +92,10 @@ export const la: Dictionary = {
 		'Non narratio: centum quinquaginta preces et cantica. Unum tantum lege, quolibet ordine. Ecclesia haec cotidie adhuc orat.',
 	'schola.bible.bothWays':
 		'Agnosces quaedam, idque propositum est, non casus. Ecclesia libros antiquiores in lumine Christi legit et recentiores in lumine eorum quae praecesserunt — utraque pars alteram explicat, ideoque neutra sola legitur.',
-	'schola.guide.heading': 'Quomodo circumeas',
-	'schola.guide.lede':
-		'Textus tota pagina est; cetera omnia instrumenta sunt quae neglegere potes donec ea velis.',
-	'schola.guide.top.heading': 'Tabula in summa pagina omni',
-	'schola.guide.reading.heading': 'Tabula supra textum',
-	'schola.feature.search':
-		'Locum in capsam superiorem inscribe — caput et versum, numerum paragraphi, nomen documenti — et scribenti complet. Preme / vel Ctrl+K undecumque, et ? pro ceteris compendiis.',
-	'schola.feature.languages':
-		'Interfacies et textus separatim eliguntur, ut opus una lingua legas dum pyxides in alia manent. Ubi opus plures editiones tua lingua habet, inter eas quoque eligis.',
-	'schola.feature.settings':
-		'Magnitudo textus, lux vel tenebrae, color sepiae, et quantum apparatus iuxta textum velis.',
-	'schola.feature.offline':
-		'Adde sedem ad primam tabulam tuam et sicut applicatio aperitur. Opera integra transferre potes ut sine rete legas.',
-	'schola.feature.contents':
-		'Divisiones operis in quo es — libri, partes, capita — ut intus te moveas nec ad initium redeas.',
-	'schola.feature.compare':
-		'Duae eiusdem loci editiones, iuxta positae — Latinum iuxta linguam tuam, vel una translatio iuxta alteram.',
-	'schola.feature.apparatus':
-		'Notae ipsius editionis, et quilibet commentarius in textum scriptus, iuxta eum offeruntur, non infra. Citationes intra textum vincula sunt, ut locus eo ducat quo spectat.',
-	'schola.feature.focus':
-		'Omnia praeter textum tollit. Exitus ibi manet ubi tabula erat, ne quid post eam captum sit.',
-	'schola.books.heading': 'Quae hic sint, et quomodo citentur',
+	'schola.books.heading': 'Quae hic sint, et quomodo designentur',
 	'schola.books.lede':
 		'Horum quisque diversum librorum genus est, et quisque proprio numero designatur. Exempla formam ostendunt: tale quid in capsam quaerendi inscribe et ad locum pervenies.',
-	'schola.cite.label': 'Citatur',
+	'schola.cite.label': 'Designatur',
 	'schola.what.scripture':
 		'Scripturae ut eas Ecclesia accipit, in utroque Testamento. Cetera omnia hic in earum lumine leguntur.',
 	'schola.cite.scripture': 'libro, capite et versu, iis compendiis quae tua editio imprimit',
@@ -497,6 +476,21 @@ export const la: Dictionary = {
 	'shortcuts.betweenDocuments': 'Inter documenta',
 	'shortcuts.withinDocument': 'Intra documentum',
 	'shortcuts.show': 'Hunc indicem ostendere',
+	'help.title': 'Auxilium',
+	'help.top.heading': 'Tabula in summa pagina omni',
+	'help.reading.heading': 'Tabula supra textum',
+	'help.feature.search':
+		'Locum in capsam superiorem inscribe — caput et versum, numerum paragraphi, nomen documenti — et scribenti complet.',
+	'help.feature.offline':
+		'Adde sedem ad primam tabulam tuam et sicut applicatio aperitur. Opera integra transferre potes ut sine rete legas.',
+	'help.feature.contents':
+		'Divisiones operis in quo es — libri, partes, capita — ut intus te moveas nec ad initium redeas.',
+	'help.feature.compare':
+		'Duae eiusdem loci editiones, iuxta positae — Latinum iuxta linguam tuam, vel una translatio iuxta alteram.',
+	'help.feature.apparatus':
+		'Notae ipsius editionis, et quilibet commentarius in textum scriptus, iuxta eum offeruntur, non infra. Citationes intra textum vincula sunt, ut locus eo ducat quo spectat.',
+	'help.feature.focus':
+		'Omnia praeter textum tollit. Exitus ibi manet ubi tabula erat, ne quid post eam captum sit.',
 	'zen.enter': 'Modum intentionis ini',
 	'zen.exit': 'Modum intentionis relinque',
 	'nav.calendar': 'Calendarium',

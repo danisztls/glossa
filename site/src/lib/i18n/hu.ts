@@ -56,11 +56,11 @@ export const hu: Dictionary = {
 	'schola.landing.title': 'Hol kezdje',
 	'schola.landing.tagline':
 		'Rövid útmutató ahhoz, ami itt van: mi az egyes könyvek mivolta, hogyan írjuk le a rájuk való hivatkozást, hogyan találunk meg egy helyet, és milyen olvasási rendeket ajánlott az Egyház.',
-	'schola.start.heading': 'Ha ez mind új Önnek',
+	'schola.start.heading': 'Új Önnek a katolikus hit?',
 	'schola.start.body': 'Kezdje ezzel: ',
 	'schola.start.bodyAfter':
 		' — ugyanaz a tanítás, mint a Katekizmusban, sokkal rövidebben, kérdésekben és feleletekben. Körülbelül tizedakkora terjedelmű, és semmit sem tételez föl.',
-	'schola.bible.heading': 'Ha még sosem olvasta a Szentírást',
+	'schola.bible.heading': 'Még sosem olvasta a Szentírást?',
 	'schola.bible.library':
 		'Nem egy könyv, hanem hetvenhárom, több mint ezer év alatt írva, és abban a rendben egybekötve, amelyben az Egyház megállapodott — nem az események rendjében, és nem is a legkönnyebben olvashatóban. A legtöbben az első lapon kezdik, és néhány héttel később abbahagyják, egy hosszú, ősi törvényről szóló fejezetben, mert még senki sem mondta meg nekik, mire való.',
 	'schola.bible.step.gospel': 'Kezdje egy evangéliummal',
@@ -90,31 +90,10 @@ export const hu: Dictionary = {
 		'Nem történet: százötven imádság és ének. Egyszerre egyet olvasson, bármilyen sorrendben. Az Egyház mind a mai napig naponta imádkozza őket.',
 	'schola.bible.bothWays':
 		'Ismerős dolgokra fog bukkanni, és ez a lényeg, nem véletlen egybeesés. Az Egyház a régebbi könyveket Krisztus fényében olvassa, az újabbakat pedig annak fényében, ami előttük volt — mindegyik fél magyarázza a másikat, s ezért egyiket sem olvassuk magában.',
-	'schola.guide.heading': 'Tájékozódás',
-	'schola.guide.lede':
-		'A szöveg maga az egész oldal; minden más vezérlőelem, amelyet figyelmen kívül hagyhat, amíg nincs rá szüksége.',
-	'schola.guide.top.heading': 'A sáv minden oldal tetején',
-	'schola.guide.reading.heading': 'A szöveg fölötti sáv',
-	'schola.feature.search':
-		'Írjon be egy hivatkozást a felső mezőbe — fejezetet és verset, egy pont számát, egy dokumentum nevét —, és gépelés közben kiegészíti. Bárhonnan nyomja meg a / vagy a Ctrl+K billentyűt, a ? pedig a többi gyorsbillentyűt mutatja.',
-	'schola.feature.languages':
-		'A felület és a szöveg külön választható, így egy művet olvashat az egyik nyelven, míg a gombok a másikon maradnak. Ahol egy műnek több kiadása van az Ön nyelvén, azok között is választ.',
-	'schola.feature.settings':
-		'Betűméret, világos vagy sötét, szépia, és hogy mennyit kér a jegyzetapparátusból a szöveg mellé.',
-	'schola.feature.offline':
-		'Tegye ki az oldalt a kezdőképernyőre, és alkalmazásként nyílik meg. Egész műveket letölthet, hogy kapcsolat nélkül olvassa őket.',
-	'schola.feature.contents':
-		'Annak a műnek a tagolása, amelyben van — könyvek, részek, fejezetek —, hogy mozogni tudjon benne anélkül, hogy visszatérne az elejére.',
-	'schola.feature.compare':
-		'Ugyanannak a helynek két kiadása egymás mellett — a latin az Ön nyelve mellett, vagy egyik fordítás a másik mellett.',
-	'schola.feature.apparatus':
-		'A kiadás saját jegyzetei és a szöveghez írt bármely magyarázat mellette jelenik meg, nem alatta. A szövegen belüli hivatkozások linkek, így egy utalás oda visz, ahová mutat.',
-	'schola.feature.focus':
-		'Mindent eltüntet a szövegen kívül. A kiút ott marad, ahol a sáv volt, hogy semmi ne rekedjen mögötte.',
-	'schola.books.heading': 'Mi van itt, és hogyan hivatkozunk rá',
+	'schola.books.heading': 'Mi van itt, és hogyan azonosítjuk',
 	'schola.books.lede':
 		'Mindegyikük másfajta könyv, és mindegyikre saját számmal hivatkozunk. A példák a formát mutatják: írjon be egy hasonlót a keresőmezőbe, és a helyre jut.',
-	'schola.cite.label': 'Hivatkozása',
+	'schola.cite.label': 'Azonosítása',
 	'schola.what.scripture':
 		'A Szentírás úgy, ahogyan az Egyház elfogadja, mindkét Szövetségben. Itt minden mást ennek fényében olvasunk.',
 	'schola.cite.scripture':
@@ -469,6 +448,21 @@ export const hu: Dictionary = {
 	'shortcuts.betweenDocuments': 'Dokumentumok között',
 	'shortcuts.withinDocument': 'A dokumentumon belül',
 	'shortcuts.show': 'Lista megjelenítése',
+	'help.title': 'Súgó',
+	'help.top.heading': 'A sáv minden oldal tetején',
+	'help.reading.heading': 'A szöveg fölötti sáv',
+	'help.feature.search':
+		'Írjon be egy hivatkozást a felső mezőbe — fejezetet és verset, egy pont számát, egy dokumentum nevét —, és gépelés közben kiegészíti.',
+	'help.feature.offline':
+		'Tegye ki az oldalt a kezdőképernyőre, és alkalmazásként nyílik meg. Egész műveket letölthet, hogy kapcsolat nélkül olvassa őket.',
+	'help.feature.contents':
+		'Annak a műnek a tagolása, amelyben van — könyvek, részek, fejezetek —, hogy mozogni tudjon benne anélkül, hogy visszatérne az elejére.',
+	'help.feature.compare':
+		'Ugyanannak a helynek két kiadása egymás mellett — a latin az Ön nyelve mellett, vagy egyik fordítás a másik mellett.',
+	'help.feature.apparatus':
+		'A kiadás saját jegyzetei és a szöveghez írt bármely magyarázat mellette jelenik meg, nem alatta. A szövegen belüli hivatkozások linkek, így egy utalás oda visz, ahová mutat.',
+	'help.feature.focus':
+		'Mindent eltüntet a szövegen kívül. A kiút ott marad, ahol a sáv volt, hogy semmi ne rekedjen mögötte.',
 	'zen.enter': 'Fókusz mód',
 	'zen.exit': 'Fókusz mód bezárása',
 	'nav.calendar': 'Naptár',

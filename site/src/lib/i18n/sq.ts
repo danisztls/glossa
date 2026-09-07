@@ -86,11 +86,11 @@ export const sq: Dictionary = {
 	'schola.landing.title': 'Nga t’ia nisni',
 	'schola.landing.tagline':
 		'Një udhërrëfyes i shkurtër për atë që gjendet këtu: çfarë është secili prej këtyre librave, si shkruhet një referencë për të, si gjendet një pasazh, dhe radhë leximi që Kisha ka propozuar.',
-	'schola.start.heading': 'Nëse e gjitha kjo është e re për ju',
+	'schola.start.heading': 'I ri në katolicizëm?',
 	'schola.start.body': 'Fillimi më i mirë është ',
 	'schola.start.bodyAfter':
 		': i njëjti mësim si i Katekizmit, shumë më i shkurtër, shkruar në pyetje dhe përgjigje. Është rreth një e dhjeta e gjatësisë dhe nuk merr asgjë të mirëqenë.',
-	'schola.bible.heading': 'Nëse nuk e keni lexuar kurrë Biblën',
+	'schola.bible.heading': 'Nuk e keni lexuar kurrë Biblën?',
 	'schola.bible.library':
 		'Nuk është një libër por shtatëdhjetë e tre, shkruar përgjatë më shumë se një mijë vjetësh dhe të lidhur në atë radhë ku Kisha u ndal — jo radha në të cilën ndodhën gjërat, dhe jo ajo që lexohet më lehtë. Shumica fillon në faqen e parë dhe ndalet ca javë më vonë, në një kapitull të gjatë ligji të lashtë, sepse askush nuk u ka thënë ende përse shërben.',
 	'schola.bible.step.gospel': 'Filloni me një Ungjill',
@@ -121,31 +121,10 @@ export const sq: Dictionary = {
 		'Jo një rrëfim: njëqind e pesëdhjetë lutje dhe këngë. Lexoni një nga një, në çfarëdo radhe. Kisha i lutet ende çdo ditë.',
 	'schola.bible.bothWays':
 		'Do të njihni gjëra, dhe kjo është qëllimi e jo një rastësi. Kisha i lexon librat më të vjetër në dritën e Krishtit dhe ata më të rinj në dritën e asaj që erdhi më parë — secila gjysmë shpjegon tjetrën, dhe prandaj asnjëra nuk lexohet vetëm.',
-	'schola.guide.heading': 'Si të orientoheni',
-	'schola.guide.lede':
-		'Teksti është e gjithë faqja; gjithçka tjetër është një komandë që mund ta shpërfillni derisa ta doni.',
-	'schola.guide.top.heading': 'Shiriti në krye të çdo faqeje',
-	'schola.guide.reading.heading': 'Shiriti mbi një tekst',
-	'schola.feature.search':
-		'Shkruani një referencë në kutinë lart — kapitull dhe varg, një numër paragrafi, emrin e një dokumenti — dhe e plotëson ndërsa shkruani. Shtypni / ose Ctrl+K nga kudo, dhe ? për shkurtoret e tjera.',
-	'schola.feature.languages':
-		'Ndërfaqja dhe teksti zgjidhen veç e veç, kështu që mund të lexoni një vepër në një gjuhë ndërsa butonat mbeten në një tjetër. Aty ku një vepër ka disa botime në gjuhën tuaj, zgjidhni edhe midis tyre.',
-	'schola.feature.settings':
-		'Madhësia e tekstit, e çelët apo e errët, sepia, dhe sa nga aparati doni pranë tekstit.',
-	'schola.feature.offline':
-		'Shtojeni faqen në ekranin kryesor dhe hapet si një aplikacion. Mund të shkarkoni vepra të tëra për t’i lexuar pa lidhje.',
-	'schola.feature.contents':
-		'Ndarjet e veprës ku ndodheni — libra, pjesë, kapituj — që të lëvizni brenda saj pa u kthyer në fillim.',
-	'schola.feature.compare':
-		'Dy botime të të njëjtit pasazh, krah për krah — latinishtja pranë gjuhës suaj, ose një përkthim pranë një tjetri.',
-	'schola.feature.apparatus':
-		'Shënimet e vetë botimit, dhe çdo koment i shkruar mbi tekstin, ofrohen pranë tij e jo poshtë tij. Citimet brenda tekstit janë lidhje, kështu që një referencë të çon aty ku tregon.',
-	'schola.feature.focus':
-		'Pastron gjithçka veç tekstit. Dalja mbetet aty ku ishte shiriti, që asgjë të mos mbetet e zënë pas tij.',
-	'schola.books.heading': 'Çfarë gjendet këtu, dhe si citohet',
+	'schola.books.heading': 'Çfarë gjendet këtu, dhe si identifikohet',
 	'schola.books.lede':
 		'Secili prej tyre është një lloj tjetër libri, dhe secilit i referohemi me një numër të vetin. Shembujt tregojnë formën: shkruani një të tillë në kutinë e kërkimit dhe mbërrini te pasazhi.',
-	'schola.cite.label': 'Citohet',
+	'schola.cite.label': 'Identifikohet',
 	'schola.what.scripture':
 		'Shkrimet ashtu si i merr Kisha, në të dyja Besëlidhjet. Gjithçka tjetër këtu lexohet në dritën e tyre.',
 	'schola.cite.scripture': 'libri, kapitulli dhe vargu, në shkurtesat që shtyp botimi juaj',
@@ -490,6 +469,21 @@ export const sq: Dictionary = {
 	'shortcuts.betweenDocuments': 'Midis dokumenteve',
 	'shortcuts.withinDocument': 'Brenda dokumentit',
 	'shortcuts.show': 'Shfaq këtë listë',
+	'help.title': 'Ndihmë',
+	'help.top.heading': 'Shiriti në krye të çdo faqeje',
+	'help.reading.heading': 'Shiriti mbi një tekst',
+	'help.feature.search':
+		'Shkruani një referencë në kutinë lart — kapitull dhe varg, një numër paragrafi, emrin e një dokumenti — dhe e plotëson ndërsa shkruani.',
+	'help.feature.offline':
+		'Shtojeni faqen në ekranin kryesor dhe hapet si një aplikacion. Mund të shkarkoni vepra të tëra për t’i lexuar pa lidhje.',
+	'help.feature.contents':
+		'Ndarjet e veprës ku ndodheni — libra, pjesë, kapituj — që të lëvizni brenda saj pa u kthyer në fillim.',
+	'help.feature.compare':
+		'Dy botime të të njëjtit pasazh, krah për krah — latinishtja pranë gjuhës suaj, ose një përkthim pranë një tjetri.',
+	'help.feature.apparatus':
+		'Shënimet e vetë botimit, dhe çdo koment i shkruar mbi tekstin, ofrohen pranë tij e jo poshtë tij. Citimet brenda tekstit janë lidhje, kështu që një referencë të çon aty ku tregon.',
+	'help.feature.focus':
+		'Pastron gjithçka veç tekstit. Dalja mbetet aty ku ishte shiriti, që asgjë të mos mbetet e zënë pas tij.',
 	'zen.enter': 'Mënyra e fokusit',
 	'zen.exit': 'Dil nga mënyra e fokusit',
 	'nav.calendar': 'Kalendari',

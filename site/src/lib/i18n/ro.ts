@@ -56,11 +56,11 @@ export const ro: Dictionary = {
 	'schola.landing.title': 'De unde să începeți',
 	'schola.landing.tagline':
 		'Un ghid scurt al celor de aici: ce este fiecare dintre aceste cărți, cum se scrie o trimitere la ea, cum se găsește un pasaj, și ordini de lectură pe care Biserica le-a propus.',
-	'schola.start.heading': 'Dacă toate acestea vă sunt noi',
+	'schola.start.heading': 'Nou în catolicism?',
 	'schola.start.body': 'Începeți cu ',
 	'schola.start.bodyAfter':
 		': aceeași învățătură ca a Catehismului, mult mai scurtă, scrisă în întrebări și răspunsuri. Are cam a zecea parte din întindere și nu presupune nimic.',
-	'schola.bible.heading': 'Dacă nu ați citit niciodată Biblia',
+	'schola.bible.heading': 'Nu ați citit niciodată Biblia?',
 	'schola.bible.library':
 		'Nu este o carte, ci șaptezeci și trei, scrise de-a lungul a peste o mie de ani și strânse în ordinea pe care Biserica a stabilit-o — nu ordinea în care s-au petrecut lucrurile și nici cea care se citește cel mai ușor. Cei mai mulți încep la prima pagină și se opresc câteva săptămâni mai târziu, într-un capitol lung de lege veche, fiindcă nimeni nu le-a spus încă la ce folosește.',
 	'schola.bible.step.gospel': 'Începeți cu o Evanghelie',
@@ -90,31 +90,10 @@ export const ro: Dictionary = {
 		'Nu o povestire: o sută cincizeci de rugăciuni și cântări. Citiți câte una, în orice ordine. Biserica le rostește și astăzi în fiecare zi.',
 	'schola.bible.bothWays':
 		'Veți recunoaște lucruri, iar acesta este rostul, nu o întâmplare. Biserica citește cărțile mai vechi în lumina lui Cristos și pe cele mai noi în lumina a ceea ce a fost înainte — fiecare jumătate o lămurește pe cealaltă, și de aceea niciuna nu se citește singură.',
-	'schola.guide.heading': 'Cum să vă orientați',
-	'schola.guide.lede':
-		'Textul este toată pagina; tot restul este un control pe care îl puteți ignora până când îl doriți.',
-	'schola.guide.top.heading': 'Bara din capul fiecărei pagini',
-	'schola.guide.reading.heading': 'Bara de deasupra unui text',
-	'schola.feature.search':
-		'Scrieți o trimitere în caseta de sus — capitol și verset, un număr de paragraf, numele unui document — și o completează pe măsură ce scrieți. Apăsați / sau Ctrl+K de oriunde, și ? pentru celelalte scurtături.',
-	'schola.feature.languages':
-		'Interfața și textul se aleg separat, așa că puteți citi o operă într-o limbă în timp ce butoanele rămân în alta. Acolo unde o operă are mai multe ediții în limba dumneavoastră, alegeți și între acelea.',
-	'schola.feature.settings':
-		'Mărimea textului, luminos sau întunecat, sepia, și cât din aparat vreți alături de text.',
-	'schola.feature.offline':
-		'Adăugați situl pe ecranul de pornire și se deschide ca o aplicație. Puteți descărca opere întregi spre a le citi fără conexiune.',
-	'schola.feature.contents':
-		'Diviziunile operei în care vă aflați — cărți, părți, capitole — ca să vă mișcați înăuntrul ei fără a vă întoarce la început.',
-	'schola.feature.compare':
-		'Două ediții ale aceluiași pasaj, una lângă alta — latina alături de limba dumneavoastră, sau o traducere alături de alta.',
-	'schola.feature.apparatus':
-		'Notele proprii ale unei ediții, și orice comentariu scris pe text, sunt oferite alături de el, nu dedesubt. Citările dinăuntrul textului sunt legături, așa că o trimitere duce unde arată.',
-	'schola.feature.focus':
-		'Înlătură tot în afară de text. Ieșirea rămâne unde era bara, ca nimic să nu fie prins în spatele ei.',
-	'schola.books.heading': 'Ce se află aici și cum se citează',
+	'schola.books.heading': 'Ce se află aici și cum se identifică',
 	'schola.books.lede':
 		'Fiecare dintre acestea este un alt fel de carte, și la fiecare se trimite printr-un număr propriu. Exemplele arată forma: scrieți unul asemenea în caseta de căutare și ajungeți la pasaj.',
-	'schola.cite.label': 'Se citează',
+	'schola.cite.label': 'Se identifică',
 	'schola.what.scripture':
 		'Scripturile așa cum le primește Biserica, în ambele Testamente. Tot restul de aici se citește în lumina lor.',
 	'schola.cite.scripture':
@@ -469,6 +448,21 @@ export const ro: Dictionary = {
 	'shortcuts.betweenDocuments': 'Între documente',
 	'shortcuts.withinDocument': 'În document',
 	'shortcuts.show': 'Afișează această listă',
+	'help.title': 'Ajutor',
+	'help.top.heading': 'Bara din capul fiecărei pagini',
+	'help.reading.heading': 'Bara de deasupra unui text',
+	'help.feature.search':
+		'Scrieți o trimitere în caseta de sus — capitol și verset, un număr de paragraf, numele unui document — și o completează pe măsură ce scrieți.',
+	'help.feature.offline':
+		'Adăugați situl pe ecranul de pornire și se deschide ca o aplicație. Puteți descărca opere întregi spre a le citi fără conexiune.',
+	'help.feature.contents':
+		'Diviziunile operei în care vă aflați — cărți, părți, capitole — ca să vă mișcați înăuntrul ei fără a vă întoarce la început.',
+	'help.feature.compare':
+		'Două ediții ale aceluiași pasaj, una lângă alta — latina alături de limba dumneavoastră, sau o traducere alături de alta.',
+	'help.feature.apparatus':
+		'Notele proprii ale unei ediții, și orice comentariu scris pe text, sunt oferite alături de el, nu dedesubt. Citările dinăuntrul textului sunt legături, așa că o trimitere duce unde arată.',
+	'help.feature.focus':
+		'Înlătură tot în afară de text. Ieșirea rămâne unde era bara, ca nimic să nu fie prins în spatele ei.',
 	'zen.enter': 'Mod de concentrare',
 	'zen.exit': 'Ieșiți din modul de concentrare',
 	'nav.calendar': 'Calendar',

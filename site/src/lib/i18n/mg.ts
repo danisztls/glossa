@@ -99,11 +99,11 @@ export const mg: Dictionary = {
 	'schola.landing.title': 'Aiza no hanombohana',
 	'schola.landing.tagline':
 		'Torolàlana fohy momba izay eto: inona avy ireo boky ireo, ahoana no anoratana ny fanondroana azy, ahoana no ahitana andalana, ary filaharam-pamakiana natolotry ny Fiangonana.',
-	'schola.start.heading': 'Raha vaovao aminao izany rehetra izany',
+	'schola.start.heading': 'Vaovao aminao ve ny finoana katolika?',
 	'schola.start.body': 'Ny fiandohana tsara indrindra dia ny ',
 	'schola.start.bodyAfter':
 		': izany fampianarana izany ihany ao amin’ny Katesizy, fohy kokoa lavitra, voasoratra amin’ny fanontaniana sy valiny. Ampahafolon’ny halavany eo ho eo izy, ary tsy mihevitra mialoha na inona na inona.',
-	'schola.bible.heading': 'Raha tsy namaky Baiboly mihitsy ianao',
+	'schola.bible.heading': 'Tsy namaky Baiboly mihitsy ianao?',
 	'schola.bible.library':
 		'Tsy boky iray izy fa telo amby fitopolo, nosoratana nandritra ny arivo taona mahery ary nafatotra araka ny filaharana nifikiran’ny Fiangonana — tsy ny filaharan’ny zava-nitranga, ary tsy ny mora vakiana indrindra. Ny ankamaroan’ny olona manomboka amin’ny pejy voalohany ka mijanona herinandro vitsivitsy any aoriana, ao anaty toko lava iray misy lalàna fahiny, satria mbola tsy nisy nilaza taminy hoe ho an’ny inona izany.',
 	'schola.bible.step.gospel': 'Manombohana amin’ny Evanjely',
@@ -134,31 +134,10 @@ export const mg: Dictionary = {
 		'Tsy tantara: vavaka sy hira dimam-polo amby zato. Vakio tsirairay, na amin’ny filaharana inona na inona. Mbola vakin’ny Fiangonana isan’andro izy ireo.',
 	'schola.bible.bothWays':
 		'Hahafantatra zavatra ianao, ary izany no tanjona fa tsy kisendrasendra. Ny Fiangonana mamaky ny boky taloha amin’ny fahazavan’i Kristy ary ny vaovao kokoa amin’ny fahazavan’izay teo aloha — samy manazava ny hafa ny antsasany tsirairay, ka izany no tsy amakiana na dia iray aza irery.',
-	'schola.guide.heading': 'Ny fomba hitadiavana lalana',
-	'schola.guide.lede':
-		'Ny lahatsoratra no pejy manontolo; izay rehetra sisa dia fitaovana azonao hodian-tsy hita mandra-pilanao azy.',
-	'schola.guide.top.heading': 'Ny tsipika eo an-tampon’ny pejy tsirairay',
-	'schola.guide.reading.heading': 'Ny tsipika eo ambonin’ny lahatsoratra',
-	'schola.feature.search':
-		'Soraty ao amin’ny boaty ambony ny fanondroana — toko sy andininy, laharan’andalana, anaran’antontan-taratasy — dia tanterahiny izany rehefa manoratra ianao. Tsindrio ny / na Ctrl+K avy aiza avy aiza, ary ny ? ho an’ny hafa.',
-	'schola.feature.languages':
-		'Misaraka ny fifidianana ny endrika sy ny lahatsoratra, ka azonao vakiana amin’ny fiteny iray ny asa soratra nefa mijanona amin’ny hafa ny bokotra. Rehefa manana famoahana maromaro amin’ny fiteninao ny asa soratra, dia misafidy eo amin’izy ireo koa ianao.',
-	'schola.feature.settings':
-		'Haben’ny soratra, mazava na maizina, sepia, ary ny habetsahan’ny fanamarihana tianao eo anilan’ny lahatsoratra.',
-	'schola.feature.offline':
-		'Ampio amin’ny efijerinao voalohany ity tranonkala ity dia hisokatra toy ny rindrankajy. Azonao alaina manontolo ny asa soratra mba hovakiana na tsy misy fifandraisana aza.',
-	'schola.feature.contents':
-		'Ny fizaran’ny asa soratra misy anao — boky, fizarana, toko — mba hifindranao ao anatiny nefa tsy miverina any am-piandohana.',
-	'schola.feature.compare':
-		'Famoahana roa amin’ny andalana iray ihany, mifanila — ny latina eo anilan’ny fiteninao, na ny fandikan-teny iray eo anilan’ny hafa.',
-	'schola.feature.apparatus':
-		'Ny fanamarihan’ny famoahana sy izay fanazavana rehetra nosoratana momba ny lahatsoratra dia atolotra eo anilany fa tsy eo ambaniny. Rohy ny teny nalaina ao anatin’ny lahatsoratra, ka mankany amin’izay tondroiny ny fanondroana.',
-	'schola.feature.focus':
-		'Manesotra ny zavatra rehetra afa-tsy ny lahatsoratra. Mijanona eo amin’ny toerana nisy ny tsipika ny fivoahana, mba tsy hisy voafandrika ao ambadika.',
 	'schola.books.heading': 'Izay eto, sy ny fomba anondroana azy',
 	'schola.books.lede':
 		'Samy karazana boky hafa avy ireo, ary samy tondroina amin’ny laharana manokana. Ny ohatra dia mampiseho ny endriny: soraty ao amin’ny boaty fikarohana ny toy izany dia ho tonga eo amin’ilay andalana ianao.',
-	'schola.cite.label': 'Tondroina hoe',
+	'schola.cite.label': 'Tondroina',
 	'schola.what.scripture':
 		'Ny Soratra Masina araka ny andraisan’ny Fiangonana azy, amin’ny Testamenta roa. Ny zavatra rehetra hafa eto dia vakiana amin’ny fahazavany.',
 	'schola.cite.scripture':
@@ -516,6 +495,21 @@ export const mg: Dictionary = {
 	'shortcuts.betweenDocuments': 'Eo anelanelan’ny antontan-taratasy',
 	'shortcuts.withinDocument': 'Ao anatin’ny antontan-taratasy',
 	'shortcuts.show': 'Asehoy ity lisitra ity',
+	'help.title': 'Fanampiana',
+	'help.top.heading': 'Ny tsipika eo an-tampon’ny pejy tsirairay',
+	'help.reading.heading': 'Ny tsipika eo ambonin’ny lahatsoratra',
+	'help.feature.search':
+		'Soraty ao amin’ny boaty ambony ny fanondroana — toko sy andininy, laharan’andalana, anaran’antontan-taratasy — dia tanterahiny izany rehefa manoratra ianao.',
+	'help.feature.offline':
+		'Ampio amin’ny efijerinao voalohany ity tranonkala ity dia hisokatra toy ny rindrankajy. Azonao alaina manontolo ny asa soratra mba hovakiana na tsy misy fifandraisana aza.',
+	'help.feature.contents':
+		'Ny fizaran’ny asa soratra misy anao — boky, fizarana, toko — mba hifindranao ao anatiny nefa tsy miverina any am-piandohana.',
+	'help.feature.compare':
+		'Famoahana roa amin’ny andalana iray ihany, mifanila — ny latina eo anilan’ny fiteninao, na ny fandikan-teny iray eo anilan’ny hafa.',
+	'help.feature.apparatus':
+		'Ny fanamarihan’ny famoahana sy izay fanazavana rehetra nosoratana momba ny lahatsoratra dia atolotra eo anilany fa tsy eo ambaniny. Rohy ny teny nalaina ao anatin’ny lahatsoratra, ka mankany amin’izay tondroiny ny fanondroana.',
+	'help.feature.focus':
+		'Manesotra ny zavatra rehetra afa-tsy ny lahatsoratra. Mijanona eo amin’ny toerana nisy ny tsipika ny fivoahana, mba tsy hisy voafandrika ao ambadika.',
 	'zen.enter': 'Fomba fifantohana',
 	'zen.exit': 'Miala amin’ny fomba fifantohana',
 	'nav.calendar': 'Tetiandro',

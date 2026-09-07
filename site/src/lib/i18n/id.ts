@@ -91,11 +91,11 @@ export const id: Dictionary = {
 	'schola.landing.title': 'Mulai dari mana',
 	'schola.landing.tagline':
 		'Panduan singkat atas apa yang ada di sini: apa masing-masing kitab ini, bagaimana rujukan kepadanya ditulis, bagaimana menemukan suatu bagian, dan urutan bacaan yang telah diusulkan Gereja.',
-	'schola.start.heading': 'Jika semua ini baru bagi Anda',
+	'schola.start.heading': 'Baru mengenal Katolik?',
 	'schola.start.body': 'Awal yang paling baik adalah ',
 	'schola.start.bodyAfter':
 		': ajaran yang sama seperti Katekismus, jauh lebih ringkas, ditulis dalam tanya jawab. Panjangnya kira-kira sepersepuluh dan tidak mengandaikan apa pun.',
-	'schola.bible.heading': 'Jika Anda belum pernah membaca Alkitab',
+	'schola.bible.heading': 'Belum pernah membaca Alkitab?',
 	'schola.bible.library':
 		'Ia bukan satu kitab melainkan tujuh puluh tiga, ditulis selama lebih dari seribu tahun dan dihimpun dalam urutan yang ditetapkan Gereja — bukan urutan terjadinya peristiwa, dan bukan urutan yang paling mudah dibaca. Kebanyakan orang mulai pada halaman pertama dan berhenti beberapa minggu kemudian, di tengah bab panjang tentang hukum purba, sebab belum ada yang memberi tahu mereka untuk apa itu.',
 	'schola.bible.step.gospel': 'Mulailah dengan sebuah Injil',
@@ -126,31 +126,10 @@ export const id: Dictionary = {
 		'Bukan kisah: seratus lima puluh doa dan nyanyian. Bacalah satu per satu, dalam urutan mana pun. Gereja masih mendoakannya setiap hari.',
 	'schola.bible.bothWays':
 		'Anda akan mengenali banyak hal, dan itulah maksudnya, bukan kebetulan. Gereja membaca kitab-kitab yang lebih tua dalam terang Kristus dan yang lebih baru dalam terang apa yang mendahuluinya — masing-masing paruh menjelaskan yang lain, dan karena itu tak satu pun dibaca sendirian.',
-	'schola.guide.heading': 'Menemukan jalan',
-	'schola.guide.lede':
-		'Teks itulah seluruh halaman; selebihnya adalah kendali yang boleh Anda abaikan sampai Anda menginginkannya.',
-	'schola.guide.top.heading': 'Bilah di puncak setiap halaman',
-	'schola.guide.reading.heading': 'Bilah di atas sebuah teks',
-	'schola.feature.search':
-		'Ketik sebuah rujukan di kotak paling atas — bab dan ayat, nomor alinea, nama sebuah dokumen — dan ia melengkapinya sambil Anda mengetik. Tekan / atau Ctrl+K dari mana saja, dan ? untuk pintasan lainnya.',
-	'schola.feature.languages':
-		'Antarmuka dan teks dipilih secara terpisah, sehingga Anda dapat membaca sebuah karya dalam satu bahasa sementara tombol-tombolnya tetap dalam bahasa lain. Di mana sebuah karya memiliki beberapa edisi dalam bahasa Anda, Anda memilih di antaranya pula.',
-	'schola.feature.settings':
-		'Ukuran teks, terang atau gelap, sepia, dan seberapa banyak catatan yang Anda kehendaki di samping teks.',
-	'schola.feature.offline':
-		'Tambahkan situs ini ke layar utama Anda dan ia terbuka seperti aplikasi. Anda dapat mengunduh karya-karya utuh untuk dibaca tanpa koneksi.',
-	'schola.feature.contents':
-		'Pembagian karya tempat Anda berada — kitab, bagian, bab — supaya Anda dapat bergerak di dalamnya tanpa kembali ke awal.',
-	'schola.feature.compare':
-		'Dua edisi dari bagian yang sama, berdampingan — bahasa Latin di samping bahasa Anda sendiri, atau satu terjemahan di samping yang lain.',
-	'schola.feature.apparatus':
-		'Catatan edisi itu sendiri, dan setiap tafsir yang ditulis atas teks, disajikan di sampingnya dan bukan di bawahnya. Kutipan di dalam teks adalah pranala, sehingga sebuah rujukan menuju ke tempat yang ditunjuknya.',
-	'schola.feature.focus':
-		'Membersihkan segalanya kecuali teks. Jalan keluar tetap di tempat bilah tadi berada, sehingga tidak ada yang terkurung di baliknya.',
-	'schola.books.heading': 'Apa yang ada di sini, dan bagaimana dikutip',
+	'schola.books.heading': 'Apa yang ada di sini, dan bagaimana dikenali',
 	'schola.books.lede':
 		'Masing-masing ini adalah jenis kitab yang berbeda, dan masing-masing dirujuk dengan nomornya sendiri. Contoh-contohnya menunjukkan bentuknya: ketik yang serupa di kotak pencarian dan Anda tiba pada bagian itu.',
-	'schola.cite.label': 'Dikutip sebagai',
+	'schola.cite.label': 'Dikenali',
 	'schola.what.scripture':
 		'Kitab Suci sebagaimana diterima Gereja, dalam kedua Perjanjian. Segala sesuatu yang lain di sini dibaca dalam terangnya.',
 	'schola.cite.scripture': 'kitab, bab dan ayat, dalam singkatan yang dicetak edisi Anda sendiri',
@@ -500,6 +479,21 @@ export const id: Dictionary = {
 	'shortcuts.betweenDocuments': 'Antar dokumen',
 	'shortcuts.withinDocument': 'Di dalam dokumen',
 	'shortcuts.show': 'Tampilkan daftar ini',
+	'help.title': 'Bantuan',
+	'help.top.heading': 'Bilah di puncak setiap halaman',
+	'help.reading.heading': 'Bilah di atas sebuah teks',
+	'help.feature.search':
+		'Ketik sebuah rujukan di kotak paling atas — bab dan ayat, nomor alinea, nama sebuah dokumen — dan ia melengkapinya sambil Anda mengetik.',
+	'help.feature.offline':
+		'Tambahkan situs ini ke layar utama Anda dan ia terbuka seperti aplikasi. Anda dapat mengunduh karya-karya utuh untuk dibaca tanpa koneksi.',
+	'help.feature.contents':
+		'Pembagian karya tempat Anda berada — kitab, bagian, bab — supaya Anda dapat bergerak di dalamnya tanpa kembali ke awal.',
+	'help.feature.compare':
+		'Dua edisi dari bagian yang sama, berdampingan — bahasa Latin di samping bahasa Anda sendiri, atau satu terjemahan di samping yang lain.',
+	'help.feature.apparatus':
+		'Catatan edisi itu sendiri, dan setiap tafsir yang ditulis atas teks, disajikan di sampingnya dan bukan di bawahnya. Kutipan di dalam teks adalah pranala, sehingga sebuah rujukan menuju ke tempat yang ditunjuknya.',
+	'help.feature.focus':
+		'Membersihkan segalanya kecuali teks. Jalan keluar tetap di tempat bilah tadi berada, sehingga tidak ada yang terkurung di baliknya.',
 	'zen.enter': 'Mode fokus',
 	'zen.exit': 'Keluar dari mode fokus',
 	'nav.calendar': 'Kalender',

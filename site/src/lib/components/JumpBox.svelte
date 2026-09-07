@@ -456,6 +456,7 @@
 <button
 	type="button"
 	class="menu-trigger wide trigger"
+	data-help="search"
 	onclick={openBox}
 	aria-haspopup="dialog"
 	aria-label={t('jumpbox.placeholder')}
@@ -609,7 +610,7 @@
 	   activation target.
 
 	   THIS USED TO HIDE A `/` HINT HERE TOO. The hint is gone from every width
-	   now, and `Shortcuts.svelte`'s trigger says why: a row can afford to name
+	   now, and `Help.svelte`'s trigger says why: a row can afford to name
 	   one key, and the key worth naming is the one whose control is otherwise
 	   invisible. `/` still opens this box. */
 	@media (max-width: 640px) {

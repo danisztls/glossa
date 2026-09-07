@@ -57,11 +57,11 @@ export const es: Dictionary = {
 	'schola.landing.title': 'Por dónde empezar',
 	'schola.landing.tagline':
 		'Una guía breve de lo que hay aquí: qué es cada uno de estos libros, cómo se escribe una cita suya, cómo encontrar un pasaje, y órdenes de lectura que la Iglesia ha propuesto.',
-	'schola.start.heading': 'Si esto es nuevo para ti',
+	'schola.start.heading': '¿Nuevo en el catolicismo?',
 	'schola.start.body': 'Empieza por el ',
 	'schola.start.bodyAfter':
 		': la misma enseñanza del Catecismo, mucho más breve, escrita en preguntas y respuestas. Tiene cerca de una décima parte de su extensión y no da nada por supuesto.',
-	'schola.bible.heading': 'Si nunca has leído la Biblia',
+	'schola.bible.heading': '¿Nunca has leído la Biblia?',
 	'schola.bible.library':
 		'No es un libro sino setenta y tres, escritos a lo largo de más de mil años y reunidos en el orden que la Iglesia fijó — no el orden en que ocurrieron los hechos, ni el más fácil de leer. La mayoría empieza por la primera página y lo deja unas semanas después, en un largo capítulo de ley antigua, porque nada le ha dicho todavía para qué sirve.',
 	'schola.bible.step.gospel': 'Empieza por un Evangelio',
@@ -91,31 +91,10 @@ export const es: Dictionary = {
 		'No es un relato: son ciento cincuenta oraciones y cantos. Lee uno cada vez, en cualquier orden. La Iglesia sigue rezándolos a diario.',
 	'schola.bible.bothWays':
 		'Reconocerás cosas, y eso es lo que se busca, no una coincidencia. La Iglesia lee los libros antiguos a la luz de Cristo y los nuevos a la luz de lo que vino antes — cada mitad explica la otra, y por eso ninguna se lee sola.',
-	'schola.guide.heading': 'Orientarse',
-	'schola.guide.lede':
-		'El texto es toda la página; lo demás es un control que puedes ignorar hasta que lo quieras.',
-	'schola.guide.top.heading': 'La barra en lo alto de cada página',
-	'schola.guide.reading.heading': 'La barra sobre un texto',
-	'schola.feature.search':
-		'Escribe una referencia en la caja de arriba — capítulo y versículo, número de párrafo, el nombre de un documento — y la completa mientras escribes. Pulsa / o Ctrl+K desde cualquier sitio, y ? para los demás atajos.',
-	'schola.feature.languages':
-		'La interfaz y el texto se eligen por separado, así que puedes leer una obra en una lengua mientras los botones siguen en otra. Donde una obra tiene varias ediciones en tu lengua, eliges también entre ellas.',
-	'schola.feature.settings':
-		'Tamaño del texto, claro u oscuro, sepia, y cuánto del aparato quieres junto al texto.',
-	'schola.feature.offline':
-		'Añade el sitio a tu pantalla de inicio y se abre como una aplicación. Puedes descargar obras enteras para leerlas sin conexión.',
-	'schola.feature.contents':
-		'Las divisiones de la obra en la que estás — libros, partes, capítulos — para moverte dentro de ella sin volver al principio.',
-	'schola.feature.compare':
-		'Dos ediciones del mismo pasaje, una al lado de otra — el latín junto a tu propia lengua, o una traducción junto a otra.',
-	'schola.feature.apparatus':
-		'Las notas de la edición misma, y cualquier comentario escrito sobre el texto, se ofrecen a su lado y no debajo. Las citas dentro del texto son enlaces, así que una referencia lleva adonde apunta.',
-	'schola.feature.focus':
-		'Despeja todo menos el texto. La salida queda donde estaba la barra, para que nada quede atrapado detrás.',
-	'schola.books.heading': 'Qué hay aquí, y cómo se cita',
+	'schola.books.heading': 'Qué hay aquí, y cómo se identifica',
 	'schola.books.lede':
 		'Cada uno de estos es una clase distinta de libro, y a cada uno se le remite por un número propio. Los ejemplos muestran la forma: escribe uno así en la caja de búsqueda y llegas al pasaje.',
-	'schola.cite.label': 'Se cita',
+	'schola.cite.label': 'Se identifica',
 	'schola.what.scripture':
 		'Las Escrituras tal como la Iglesia las recibe, en ambos Testamentos. Todo lo demás que hay aquí se lee a su luz.',
 	'schola.cite.scripture':
@@ -466,6 +445,21 @@ export const es: Dictionary = {
 	'shortcuts.betweenDocuments': 'Entre documentos',
 	'shortcuts.withinDocument': 'Dentro del documento',
 	'shortcuts.show': 'Mostrar esta lista',
+	'help.title': 'Ayuda',
+	'help.top.heading': 'La barra en lo alto de cada página',
+	'help.reading.heading': 'La barra sobre un texto',
+	'help.feature.search':
+		'Escribe una referencia en la caja de arriba — capítulo y versículo, número de párrafo, el nombre de un documento — y la completa mientras escribes.',
+	'help.feature.offline':
+		'Añade el sitio a tu pantalla de inicio y se abre como una aplicación. Puedes descargar obras enteras para leerlas sin conexión.',
+	'help.feature.contents':
+		'Las divisiones de la obra en la que estás — libros, partes, capítulos — para moverte dentro de ella sin volver al principio.',
+	'help.feature.compare':
+		'Dos ediciones del mismo pasaje, una al lado de otra — el latín junto a tu propia lengua, o una traducción junto a otra.',
+	'help.feature.apparatus':
+		'Las notas de la edición misma, y cualquier comentario escrito sobre el texto, se ofrecen a su lado y no debajo. Las citas dentro del texto son enlaces, así que una referencia lleva adonde apunta.',
+	'help.feature.focus':
+		'Despeja todo menos el texto. La salida queda donde estaba la barra, para que nada quede atrapado detrás.',
 	'zen.enter': 'Modo de concentración',
 	'zen.exit': 'Salir del modo de concentración',
 	'nav.calendar': 'Calendario',

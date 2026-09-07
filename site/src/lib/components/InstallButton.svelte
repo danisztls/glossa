@@ -33,6 +33,7 @@
 	<button
 		type="button"
 		class="menu-trigger install-button"
+		data-help="offline"
 		aria-label={label}
 		title={label}
 		onclick={() => install.prompt()}

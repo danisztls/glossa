@@ -93,11 +93,11 @@ export const ig: Dictionary = {
 	'schola.landing.title': 'Ebe ị ga-amalite',
 	'schola.landing.tagline':
 		"Nduzi dị mkpirikpi banyere ihe dị ebe a: ihe akwụkwọ ọ bụla n'ime ndị a bụ, otú e si ede nrụtụaka ya, otú i si achọta akụkụ, na usoro ọgụgụ ndị Chọọchị tụpụtara.",
-	'schola.start.heading': 'Ọ bụrụ na ihe ndị a niile bụ ihe ọhụrụ nye gị',
+	'schola.start.heading': 'Ị bụ ọhụrụ na okpukpe Katọlik?',
 	'schola.start.body': 'Mmalite kacha mma bụ ',
 	'schola.start.bodyAfter':
 		": otu ozizi ahụ dị na Katekizim, dị mkpirikpi karị, e dere n'ajụjụ na azịza. Ọ bụ ihe dị ka otu ụzọ n'ụzọ iri nke ogologo ya, ọ dịghịkwa ihe ọ na-eche na ị maara.",
-	'schola.bible.heading': 'Ọ bụrụ na ị gụtụbeghị Baịbụl',
+	'schola.bible.heading': 'Ị gụtụbeghị Baịbụl?',
 	'schola.bible.library':
 		"Ọ bụghị otu akwụkwọ kama iri asaa na atọ, ndị e dere ihe karịrị otu puku afọ ma kegbaa n'usoro Chọọchị kwadoro — ọ bụghị usoro ihe ndị ahụ mere, ọ bụghịkwa nke kacha mfe ịgụ. Ọtụtụ mmadụ na-amalite na peeji nke mbụ ma kwụsị izu ole na ole ka e mesịrị, n'ime ogologo isi nke iwu oge ochie, n'ihi na o nwebeghị onye gwara ha ihe ọ bụ maka ya.",
 	'schola.bible.step.gospel': "Malite site n'otu Oziọma",
@@ -126,31 +126,10 @@ export const ig: Dictionary = {
 		"Ọ bụghị akụkọ: ekpere na abụ narị na iri ise. Gụọ otu n'otu, n'usoro ọ bụla. Chọọchị ka na-ekpe ha kwa ụbọchị.",
 	'schola.bible.bothWays':
 		"Ị ga-amata ihe ụfọdụ, nke ahụ bụkwa ebumnuche ọ bụghị ihe mberede. Chọọchị na-agụ akwụkwọ ndị ochie n'ìhè Kraịst, na-agụkwa ndị ọhụrụ n'ìhè nke ihe buru ụzọ — akụkụ ọ bụla na-akọwa ibe ya, ọ bụkwa ya mere na a naghị agụ nke ọ bụla naanị ya.",
-	'schola.guide.heading': 'Otú i si achọta ụzọ',
-	'schola.guide.lede':
-		'Ederede ahụ bụ peeji ahụ dum; ihe niile ọzọ bụ njikwa ị nwere ike ileghara anya ruo mgbe ị chọrọ ya.',
-	'schola.guide.top.heading': "Ogwe dị n'elu peeji ọ bụla",
-	'schola.guide.reading.heading': "Ogwe dị n'elu ederede",
-	'schola.feature.search':
-		"Pịnye nrụtụaka n'igbe dị n'elu — isi na amaokwu, nọmba paragraf, aha akwụkwọ — ọ na-emecha ya ka ị na-apị. Pịa / ma ọ bụ Ctrl+K site ebe ọ bụla, na ? maka ụzọ mkpirisi ndị ọzọ.",
-	'schola.feature.languages':
-		"A na-ahọrọ ihuenyo na ederede iche iche, ya mere ị nwere ike ịgụ ọrụ n'otu asụsụ ebe bọtịnụ ndị ahụ nọgidere n'asụsụ ọzọ. Ebe ọrụ nwere mbipụta dị iche iche n'asụsụ gị, ị na-ahọrọkwa n'etiti ha.",
-	'schola.feature.settings':
-		"Nha ederede, ìhè ma ọ bụ ọchịchịrị, agba sepia, na ole nkọwa ị chọrọ n'akụkụ ederede.",
-	'schola.feature.offline':
-		"Tinye saịtị a n'ihuenyo mmalite gị, ọ ga-emeghe ka ngwa. Ị nwere ike ibudata ọrụ ndị zuru ezu iji gụọ ha n'enweghị njikọ.",
-	'schola.feature.contents':
-		"Nkewa nke ọrụ ị nọ n'ime ya — akwụkwọ, akụkụ, isi — ka ị nwee ike ịgagharị n'ime ya n'alaghachighị na mmalite.",
-	'schola.feature.compare':
-		"Mbipụta abụọ nke otu akụkụ ahụ, n'akụkụ ibe ha — Latin n'akụkụ asụsụ nke gị, ma ọ bụ otu ntụgharị n'akụkụ ọzọ.",
-	'schola.feature.apparatus':
-		"Ihe odide nke mbipụta n'onwe ya, na nkọwa ọ bụla e dere n'ederede, ka a na-enye n'akụkụ ya ọ bụghị n'okpuru ya. Ihe ndị e hotara n'ime ederede bụ njikọ, ya mere nrụtụaka na-aga ebe ọ na-atụ aka.",
-	'schola.feature.focus':
-		"Na-ewepụ ihe niile ma e wezụga ederede. Ụzọ ọpụpụ na-anọgide ebe ogwe ahụ dịbu, ka ihe ọ bụla ghara ijide n'azụ ya.",
-	'schola.books.heading': 'Ihe dị ebe a, na otú e si ehota ya',
+	'schola.books.heading': 'Ihe dị ebe a, na otú e si amata ya',
 	'schola.books.lede':
 		"Nke ọ bụla n'ime ndị a bụ ụdị akwụkwọ dị iche, a na-arụtụkwa aka na nke ọ bụla site na nọmba nke ya. Ihe atụ na-egosi ụdị ya: pịnye otu dị ka ya n'igbe nchọta, ị ga-erute akụkụ ahụ.",
-	'schola.cite.label': 'A na-ehota ya',
+	'schola.cite.label': 'A na-amata ya',
 	'schola.what.scripture':
 		"Akwụkwọ Nsọ dị ka Chọọchị si anabata ya, n'Ọgbụgba Ndụ abụọ ahụ. Ihe niile ọzọ dị ebe a ka a na-agụ n'ìhè ha.",
 	'schola.cite.scripture': "akwụkwọ, isi na amaokwu, n'ụdị mkpirisi mbipụta nke gị na-ebipụta",
@@ -496,6 +475,21 @@ export const ig: Dictionary = {
 	'shortcuts.betweenDocuments': 'N’agbata akwụkwọ ozi',
 	'shortcuts.withinDocument': 'N’ime akwụkwọ ozi ahụ',
 	'shortcuts.show': 'Gosi ndepụta a',
+	'help.title': 'Enyemaka',
+	'help.top.heading': "Ogwe dị n'elu peeji ọ bụla",
+	'help.reading.heading': "Ogwe dị n'elu ederede",
+	'help.feature.search':
+		"Pịnye nrụtụaka n'igbe dị n'elu — isi na amaokwu, nọmba paragraf, aha akwụkwọ — ọ na-emecha ya ka ị na-apị.",
+	'help.feature.offline':
+		"Tinye saịtị a n'ihuenyo mmalite gị, ọ ga-emeghe ka ngwa. Ị nwere ike ibudata ọrụ ndị zuru ezu iji gụọ ha n'enweghị njikọ.",
+	'help.feature.contents':
+		"Nkewa nke ọrụ ị nọ n'ime ya — akwụkwọ, akụkụ, isi — ka ị nwee ike ịgagharị n'ime ya n'alaghachighị na mmalite.",
+	'help.feature.compare':
+		"Mbipụta abụọ nke otu akụkụ ahụ, n'akụkụ ibe ha — Latin n'akụkụ asụsụ nke gị, ma ọ bụ otu ntụgharị n'akụkụ ọzọ.",
+	'help.feature.apparatus':
+		"Ihe odide nke mbipụta n'onwe ya, na nkọwa ọ bụla e dere n'ederede, ka a na-enye n'akụkụ ya ọ bụghị n'okpuru ya. Ihe ndị e hotara n'ime ederede bụ njikọ, ya mere nrụtụaka na-aga ebe ọ na-atụ aka.",
+	'help.feature.focus':
+		"Na-ewepụ ihe niile ma e wezụga ederede. Ụzọ ọpụpụ na-anọgide ebe ogwe ahụ dịbu, ka ihe ọ bụla ghara ijide n'azụ ya.",
 	'zen.enter': 'Ụdị Ntụkwasị Uche',
 	'zen.exit': 'Pụọ na Ụdị Ntụkwasị Uche',
 	'nav.calendar': 'Kalenda',

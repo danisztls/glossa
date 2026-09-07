@@ -57,11 +57,11 @@ export const de: Dictionary = {
 	'schola.landing.title': 'Wo anfangen',
 	'schola.landing.tagline':
 		'Ein kurzer Wegweiser durch das, was hier steht: was jedes dieser Bücher ist, wie man es zitiert, wie man eine Stelle findet, und Leseordnungen, die die Kirche vorgelegt hat.',
-	'schola.start.heading': 'Wenn Ihnen das alles neu ist',
+	'schola.start.heading': 'Neu im katholischen Glauben?',
 	'schola.start.body': 'Beginnen Sie mit dem ',
 	'schola.start.bodyAfter':
 		': dieselbe Lehre wie im Katechismus, viel kürzer, in Fragen und Antworten geschrieben. Es hat etwa ein Zehntel des Umfangs und setzt nichts voraus.',
-	'schola.bible.heading': 'Wenn Sie die Bibel nie gelesen haben',
+	'schola.bible.heading': 'Noch nie die Bibel gelesen?',
 	'schola.bible.library':
 		'Sie ist nicht ein Buch, sondern dreiundsiebzig, über mehr als tausend Jahre geschrieben und in der Ordnung zusammengestellt, auf die die Kirche sich festgelegt hat — nicht in der Ordnung des Geschehens und nicht in der, die sich am leichtesten liest. Die meisten fangen auf der ersten Seite an und hören ein paar Wochen später auf, in einem langen Kapitel altem Recht, weil ihnen noch niemand gesagt hat, wozu das da ist.',
 	'schola.bible.step.gospel': 'Fangen Sie mit einem Evangelium an',
@@ -92,31 +92,10 @@ export const de: Dictionary = {
 		'Keine Erzählung: hundertfünfzig Gebete und Lieder. Lesen Sie eines nach dem anderen, in beliebiger Reihenfolge. Die Kirche betet sie bis heute täglich.',
 	'schola.bible.bothWays':
 		'Sie werden Dinge wiedererkennen, und das ist der Sinn und kein Zufall. Die Kirche liest die älteren Bücher im Licht Christi und die neueren im Licht dessen, was vorher war — jede Hälfte erklärt die andere, und darum wird keine allein gelesen.',
-	'schola.guide.heading': 'Sich zurechtfinden',
-	'schola.guide.lede':
-		'Der Text ist die ganze Seite; alles andere ist ein Bedienelement, das Sie übergehen können, bis Sie es brauchen.',
-	'schola.guide.top.heading': 'Die Leiste oben auf jeder Seite',
-	'schola.guide.reading.heading': 'Die Leiste über einem Text',
-	'schola.feature.search':
-		'Geben Sie oben eine Stelle in das Feld ein — Kapitel und Vers, eine Nummer, den Namen eines Dokumentes — und es ergänzt sie beim Tippen. Drücken Sie von überall / oder Strg+K, und ? für die übrigen Tastenkürzel.',
-	'schola.feature.languages':
-		'Oberfläche und Text werden getrennt gewählt, Sie können also ein Werk in einer Sprache lesen, während die Schaltflächen in einer anderen bleiben. Wo ein Werk mehrere Ausgaben in Ihrer Sprache hat, wählen Sie auch zwischen diesen.',
-	'schola.feature.settings':
-		'Schriftgröße, hell oder dunkel, Sepia, und wie viel vom Apparat Sie neben dem Text haben wollen.',
-	'schola.feature.offline':
-		'Legen Sie die Seite auf Ihren Startbildschirm, und sie öffnet sich wie eine App. Sie können ganze Werke herunterladen und ohne Verbindung lesen.',
-	'schola.feature.contents':
-		'Die Gliederung des Werkes, in dem Sie sind — Bücher, Teile, Kapitel — damit Sie sich darin bewegen können, ohne an den Anfang zurückzugehen.',
-	'schola.feature.compare':
-		'Zwei Ausgaben derselben Stelle nebeneinander — das Lateinische neben Ihrer eigenen Sprache, oder eine Übersetzung neben einer anderen.',
-	'schola.feature.apparatus':
-		'Die eigenen Anmerkungen einer Ausgabe und jeder zum Text geschriebene Kommentar werden daneben angeboten und nicht darunter. Zitate im Text sind Verweise, eine Stelle führt also dorthin, wohin sie zeigt.',
-	'schola.feature.focus':
-		'Räumt alles außer dem Text weg. Der Weg hinaus bleibt, wo die Leiste war, damit nichts dahinter eingeschlossen ist.',
-	'schola.books.heading': 'Was hier steht, und wie es zitiert wird',
+	'schola.books.heading': 'Was hier steht, und wie es identifiziert wird',
 	'schola.books.lede':
 		'Jedes davon ist eine andere Art Buch, und auf jedes wird mit einer eigenen Zahl verwiesen. Die Beispiele zeigen die Form: tippen Sie eines davon in das Suchfeld, und Sie landen bei der Stelle.',
-	'schola.cite.label': 'Zitiert als',
+	'schola.cite.label': 'Identifiziert',
 	'schola.what.scripture':
 		'Die Schrift, wie die Kirche sie empfängt, in beiden Testamenten. Alles andere hier wird in ihrem Licht gelesen.',
 	'schola.cite.scripture':
@@ -469,6 +448,21 @@ export const de: Dictionary = {
 	'shortcuts.betweenDocuments': 'Zwischen Dokumenten',
 	'shortcuts.withinDocument': 'Innerhalb des Dokuments',
 	'shortcuts.show': 'Diese Liste anzeigen',
+	'help.title': 'Hilfe',
+	'help.top.heading': 'Die Leiste oben auf jeder Seite',
+	'help.reading.heading': 'Die Leiste über einem Text',
+	'help.feature.search':
+		'Geben Sie oben eine Stelle in das Feld ein — Kapitel und Vers, eine Nummer, den Namen eines Dokumentes — und es ergänzt sie beim Tippen.',
+	'help.feature.offline':
+		'Legen Sie die Seite auf Ihren Startbildschirm, und sie öffnet sich wie eine App. Sie können ganze Werke herunterladen und ohne Verbindung lesen.',
+	'help.feature.contents':
+		'Die Gliederung des Werkes, in dem Sie sind — Bücher, Teile, Kapitel — damit Sie sich darin bewegen können, ohne an den Anfang zurückzugehen.',
+	'help.feature.compare':
+		'Zwei Ausgaben derselben Stelle nebeneinander — das Lateinische neben Ihrer eigenen Sprache, oder eine Übersetzung neben einer anderen.',
+	'help.feature.apparatus':
+		'Die eigenen Anmerkungen einer Ausgabe und jeder zum Text geschriebene Kommentar werden daneben angeboten und nicht darunter. Zitate im Text sind Verweise, eine Stelle führt also dorthin, wohin sie zeigt.',
+	'help.feature.focus':
+		'Räumt alles außer dem Text weg. Der Weg hinaus bleibt, wo die Leiste war, damit nichts dahinter eingeschlossen ist.',
 	'zen.enter': 'Fokusmodus',
 	'zen.exit': 'Fokusmodus beenden',
 	'nav.calendar': 'Kalender',

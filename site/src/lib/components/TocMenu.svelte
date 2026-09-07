@@ -250,6 +250,7 @@
 		type="button"
 		bind:this={triggerEl}
 		class="menu-trigger"
+		data-help="contents"
 		aria-haspopup="dialog"
 		aria-expanded={open}
 		aria-label={label}

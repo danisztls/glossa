@@ -56,11 +56,11 @@ export const it: Dictionary = {
 	'schola.landing.title': 'Da dove cominciare',
 	'schola.landing.tagline':
 		'Una guida breve a quel che c’è qui: che cosa è ciascuno di questi libri, come se ne scrive una citazione, come trovare un passo, e ordini di lettura che la Chiesa ha proposto.',
-	'schola.start.heading': 'Se è la prima volta',
+	'schola.start.heading': 'Nuovo al cattolicesimo?',
 	'schola.start.body': 'Comincia dal ',
 	'schola.start.bodyAfter':
 		': lo stesso insegnamento del Catechismo, molto più breve, scritto in domande e risposte. È lungo circa un decimo e non dà nulla per scontato.',
-	'schola.bible.heading': 'Se non hai mai letto la Bibbia',
+	'schola.bible.heading': 'Non hai mai letto la Bibbia?',
 	'schola.bible.library':
 		'Non è un libro ma settantatré, scritti nell’arco di più di mille anni e raccolti nell’ordine che la Chiesa ha stabilito — non l’ordine in cui i fatti sono accaduti, né quello più facile da leggere. I più cominciano dalla prima pagina e smettono qualche settimana dopo, in un lungo capitolo di legge antica, perché nulla ha ancora detto loro a che cosa serva.',
 	'schola.bible.step.gospel': 'Comincia da un Vangelo',
@@ -90,31 +90,10 @@ export const it: Dictionary = {
 		'Non un racconto: centocinquanta preghiere e canti. Leggine uno per volta, in qualunque ordine. La Chiesa li prega ancora ogni giorno.',
 	'schola.bible.bothWays':
 		'Riconoscerai delle cose, e questo è il punto e non una coincidenza. La Chiesa legge i libri antichi alla luce di Cristo e quelli recenti alla luce di ciò che è venuto prima — ciascuna metà spiega l’altra, ed è per questo che nessuna si legge da sola.',
-	'schola.guide.heading': 'Orientarsi',
-	'schola.guide.lede':
-		'Il testo è tutta la pagina; il resto è un comando che puoi ignorare finché non ti serve.',
-	'schola.guide.top.heading': 'La barra in cima a ogni pagina',
-	'schola.guide.reading.heading': 'La barra sopra un testo',
-	'schola.feature.search':
-		'Scrivi un riferimento nella casella in alto — capitolo e versetto, numero di paragrafo, il nome di un documento — e lo completa mentre scrivi. Premi / o Ctrl+K da qualunque punto, e ? per le altre scorciatoie.',
-	'schola.feature.languages':
-		'L’interfaccia e il testo si scelgono separatamente, così puoi leggere un’opera in una lingua mentre i pulsanti restano in un’altra. Dove un’opera ha più edizioni nella tua lingua, scegli anche fra quelle.',
-	'schola.feature.settings':
-		'Dimensione del testo, chiaro o scuro, seppia, e quanto apparato vuoi accanto al testo.',
-	'schola.feature.offline':
-		'Aggiungi il sito alla schermata iniziale e si apre come un’app. Puoi scaricare opere intere per leggerle senza connessione.',
-	'schola.feature.contents':
-		'Le divisioni dell’opera in cui ti trovi — libri, parti, capitoli — per muoverti al suo interno senza tornare all’inizio.',
-	'schola.feature.compare':
-		'Due edizioni dello stesso passo, affiancate — il latino accanto alla tua lingua, o una traduzione accanto a un’altra.',
-	'schola.feature.apparatus':
-		'Le note proprie di un’edizione, e qualunque commento scritto sul testo, sono offerti accanto a esso e non sotto. Le citazioni dentro il testo sono collegamenti: un riferimento porta dove punta.',
-	'schola.feature.focus':
-		'Toglie tutto tranne il testo. L’uscita resta dov’era la barra, così nulla rimane intrappolato dietro.',
-	'schola.books.heading': 'Che cosa c’è qui, e come si cita',
+	'schola.books.heading': 'Che cosa c’è qui, e come si identifica',
 	'schola.books.lede':
 		'Ognuno di questi è un genere di libro diverso, e ognuno si richiama con un numero proprio. Gli esempi mostrano la forma: scrivine uno simile nella casella di ricerca e arrivi al passo.',
-	'schola.cite.label': 'Si cita',
+	'schola.cite.label': 'Si identifica',
 	'schola.what.scripture':
 		'Le Scritture come la Chiesa le riceve, in entrambi i Testamenti. Tutto il resto qui si legge alla loro luce.',
 	'schola.cite.scripture':
@@ -466,6 +445,21 @@ export const it: Dictionary = {
 	'shortcuts.betweenDocuments': 'Tra i documenti',
 	'shortcuts.withinDocument': 'Nel documento',
 	'shortcuts.show': 'Mostra questo elenco',
+	'help.title': 'Aiuto',
+	'help.top.heading': 'La barra in cima a ogni pagina',
+	'help.reading.heading': 'La barra sopra un testo',
+	'help.feature.search':
+		'Scrivi un riferimento nella casella in alto — capitolo e versetto, numero di paragrafo, il nome di un documento — e lo completa mentre scrivi.',
+	'help.feature.offline':
+		'Aggiungi il sito alla schermata iniziale e si apre come un’app. Puoi scaricare opere intere per leggerle senza connessione.',
+	'help.feature.contents':
+		'Le divisioni dell’opera in cui ti trovi — libri, parti, capitoli — per muoverti al suo interno senza tornare all’inizio.',
+	'help.feature.compare':
+		'Due edizioni dello stesso passo, affiancate — il latino accanto alla tua lingua, o una traduzione accanto a un’altra.',
+	'help.feature.apparatus':
+		'Le note proprie di un’edizione, e qualunque commento scritto sul testo, sono offerti accanto a esso e non sotto. Le citazioni dentro il testo sono collegamenti: un riferimento porta dove punta.',
+	'help.feature.focus':
+		'Toglie tutto tranne il testo. L’uscita resta dov’era la barra, così nulla rimane intrappolato dietro.',
 	'zen.enter': 'Modalità concentrazione',
 	'zen.exit': 'Esci dalla modalità concentrazione',
 	'nav.calendar': 'Calendario',

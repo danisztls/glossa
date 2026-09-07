@@ -171,7 +171,7 @@ export const en: Dictionary = {
 	// should be able to open from the sentence naming it. The two halves are
 	// one sentence and must be translated as one — `install.hint.*` is split
 	// around a glyph for the same reason and carries the same warning.
-	'schola.start.heading': 'If you are new to this',
+	'schola.start.heading': 'New to Catholicism?',
 	'schola.start.body': 'Begin with the ',
 	'schola.start.bodyAfter':
 		': the same teaching as the Catechism, much shorter, written as questions and answers. It is about a tenth the length and assumes nothing.',
@@ -199,7 +199,7 @@ export const en: Dictionary = {
 	// the Bible and has not met the word "Gospel". Short sentences, no term of
 	// art used before it is explained, and no sentence that assumes the reader
 	// has already decided to believe any of it.
-	'schola.bible.heading': 'If you have never read the Bible',
+	'schola.bible.heading': 'Never read the Bible?',
 	'schola.bible.library':
 		'It is not one book but seventy-three, written over more than a thousand years and bound in the order the Church settled on — not the order events happened in, and not the order that is easiest to read. Most people start at the first page and stop a few weeks later, in a long chapter of ancient law, because nothing has yet told them what it is for.',
 	'schola.bible.step.gospel': 'Start with a Gospel',
@@ -233,42 +233,6 @@ export const en: Dictionary = {
 		'Not a story: a hundred and fifty prayers and songs. Read one at a time, in any order. The Church still prays these every day.',
 	'schola.bible.bothWays':
 		'You will recognise things, and that is the point rather than a coincidence. The Church reads the older books in the light of Christ and the newer ones in the light of what came before — each half explains the other, which is why neither is read alone.',
-	// THE CHROME, ONE SENTENCE EACH. The heading beside each of these is the
-	// key the control itself is labelled by (`jumpbox.short`, `settings.label`,
-	// `compare.enter`, …), so a reader who reads a row and then goes looking
-	// for the control finds the same word. Only the sentence is new writing.
-	//
-	// Each says what the thing DOES. None of them recommends: the one paragraph
-	// on this page that recommends is `schola.start.body`.
-	//
-	// WHERE A CONTROL LIVES IS NOW THE GROUP HEADING RATHER THAN A CLAUSE, and
-	// the two headings are the whole reason this list is two lists. Four of
-	// these are in the header of every page and four appear only once there is
-	// a text on the screen; run together, the guide told a reader to look for
-	// the compare button on a page that correctly does not have one. Translate
-	// the pair as a matched pair — they are read against each other.
-	'schola.guide.heading': 'Finding your way around',
-	'schola.guide.lede':
-		'The text is the whole of the page; everything else is a control you can ignore until you want it.',
-	'schola.guide.top.heading': 'The bar at the top of every page',
-	'schola.guide.reading.heading': 'The bar above a text',
-	'schola.feature.search':
-		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type. Press / or Ctrl+K from anywhere, and ? for the other shortcuts.',
-	'schola.feature.languages':
-		'The interface and the text are chosen separately, so you can read a work in one language while the buttons stay in another. Where a work has several editions in your language, you choose between those too.',
-	'schola.feature.settings':
-		'Text size, light or dark, sepia, and how much of the apparatus you want beside the text.',
-	'schola.feature.offline':
-		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
-	'schola.feature.contents':
-		'The divisions of the work you are in — books, parts, chapters — so you can move about inside it without going back to the start.',
-	'schola.feature.compare':
-		'Two editions of the same passage, side by side — the Latin beside your own language, or one translation beside another.',
-	'schola.feature.apparatus':
-		'An edition’s own footnotes, and any commentary written on the text, are offered beside it rather than under it. Citations inside the text are links, so a reference goes where it points.',
-	'schola.feature.focus':
-		'Clears everything but the text. The way out stays where the bar was, so nothing is trapped behind it.',
-
 	// WHAT EACH WORK IS, AND WHAT ITS NUMBER MEANS. Two sentences per work: the
 	// first is what kind of thing it is and what authority it carries, the
 	// second is what a citation of it names. The heading above each is the key
@@ -280,10 +244,24 @@ export const en: Dictionary = {
 	// unbroken through the whole work, or that the Code numbers canons and not
 	// pages — and the jump box reads every one of these notations back, which
 	// is what the lede sends them to do with one.
-	'schola.books.heading': 'What is here, and how it is cited',
+	//
+	// IDENTIFIED, NOT CITED (2026-09-07, by direction). "Cite" is the word for
+	// what these numbers are for and it is a word the reader this section is
+	// written for does not have yet — `audiences.md` §5 stops at the vocabulary
+	// of the corpus, and the label was part of that vocabulary. The keys stay
+	// `schola.cite.*`: the works ARE cited by these numbers, which is a fact
+	// about the world and the right name for the strings; the label is what the
+	// reader reads.
+	//
+	// **THE LABEL AND THE CLAUSE UNDER IT ARE ONE SENTENCE.** Every
+	// `schola.cite.*` value opens with the preposition — "by paragraph number",
+	// "by canon" — so the label has to be the participle that reads into it:
+	// "Identified" + "by paragraph number". Translate the pair together, and
+	// keep whichever half of the preposition your language puts where.
+	'schola.books.heading': 'What is here, and how it is identified',
 	'schola.books.lede':
 		'Each of these is a different kind of book, and each is referred to by a number of its own. The examples show the form: type one like it into the search box and you land on the passage.',
-	'schola.cite.label': 'Cited as',
+	'schola.cite.label': 'Identified',
 	'schola.what.scripture':
 		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',
 	'schola.cite.scripture': 'book, chapter and verse, in the abbreviations your own edition prints',
@@ -951,6 +929,36 @@ export const en: Dictionary = {
 	'shortcuts.betweenDocuments': 'Between documents',
 	'shortcuts.withinDocument': 'Within the document',
 	'shortcuts.show': 'Show this list',
+
+	// THE CHROME, ONE SENTENCE EACH — the sheet the `?` button opens, which was
+	// a section of `/schola` until 2026-09-07 (`site/docs/finding.md`). The
+	// heading beside each of these is the key the control itself is labelled by
+	// (`jumpbox.short`, `settings.label`, `compare.enter`, …), so a reader who
+	// reads a row and then goes looking for the control finds the same word.
+	// Only the sentence is new writing.
+	//
+	// Each says what the thing DOES, and none of them recommends.
+	//
+	// WHERE A CONTROL LIVES IS THE GROUP HEADING, and the two headings are the
+	// whole reason this is two lists. The sheet draws only the rows whose
+	// control is on the page in front of the reader, so a heading is what says
+	// which bar the ones under it are on. Translate the pair as a matched pair
+	// — they are read against each other.
+	'help.title': 'Help',
+	'help.top.heading': 'The bar at the top of every page',
+	'help.reading.heading': 'The bar above a text',
+	'help.feature.search':
+		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type.',
+	'help.feature.offline':
+		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
+	'help.feature.contents':
+		'The divisions of the work you are in — books, parts, chapters — so you can move about inside it without going back to the start.',
+	'help.feature.compare':
+		'Two editions of the same passage, side by side — the Latin beside your own language, or one translation beside another.',
+	'help.feature.apparatus':
+		'An edition’s own footnotes, and any commentary written on the text, are offered beside it rather than under it. Citations inside the text are links, so a reference goes where it points.',
+	'help.feature.focus':
+		'Clears everything but the text. The way out stays where the bar was, so nothing is trapped behind it.',
 	// Focus mode — `ZenToggle.svelte`, and the `Esc` row of the shortcut sheet.
 	// The code calls it `zen`, after the editors that popularised the
 	// arrangement; the reader is told "focus", because this site publishes the

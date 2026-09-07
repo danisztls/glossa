@@ -95,11 +95,11 @@ export const zh: Dictionary = {
 	'schola.landing.title': '从何处入手',
 	'schola.landing.tagline':
 		'对此处所有内容的简要指引：这些书各是什么，其引文如何书写，如何找到一处经文，以及教会所提出的阅读次第。',
-	'schola.start.heading': '若这一切对您都是新的',
+	'schola.start.heading': '初次接触天主教？',
 	'schola.start.body': '最好的起点是',
 	'schola.start.bodyAfter':
 		'：与《天主教教理》相同的道理，篇幅短得多，以问答写成。约为其十分之一长，且不预设任何前提。',
-	'schola.bible.heading': '若您从未读过圣经',
+	'schola.bible.heading': '从未读过圣经？',
 	'schola.bible.library':
 		'它不是一部书，而是七十三部，写成于一千多年之间，依教会所定的次序编在一起——不是事情发生的次序，也不是最易阅读的次序。多数人从第一页开始，几周后便停在古代律法的某个长章里，因为还没有人告诉他们这是为了什么。',
 	'schola.bible.step.gospel': '从一部福音开始',
@@ -126,27 +126,10 @@ export const zh: Dictionary = {
 		'不是故事：一百五十篇祈祷与歌咏。一次读一篇，次序不拘。教会至今每日仍以此祈祷。',
 	'schola.bible.bothWays':
 		'您会认出一些东西，这正是用意所在，而非巧合。教会在基督的光中读较古的书卷，又在此前所有的光中读较新的书卷——两半彼此解释，因此没有一半是独自阅读的。',
-	'schola.guide.heading': '如何找到方向',
-	'schola.guide.lede': '正文即是整页；其余一切都是控件，在您想用之前尽可不理。',
-	'schola.guide.top.heading': '每页顶端的栏',
-	'schola.guide.reading.heading': '正文上方的栏',
-	'schola.feature.search':
-		'在顶端的框中键入一处引文——章与节、条目编号、某份文献的名称——它会随打随补全。在任何地方按 / 或 Ctrl+K，按 ? 可见其余快捷键。',
-	'schola.feature.languages':
-		'界面与正文分别选择，因此您可用一种语言阅读作品，而按钮仍留在另一种语言。若某作品在您的语言中有数个版本，您也可在其间选择。',
-	'schola.feature.settings': '字号，浅色或深色，棕褐色，以及您希望在正文旁保留多少注释。',
-	'schola.feature.offline':
-		'把本站加到主屏幕，它便如应用一般开启。您可下载整部作品，在没有连接时阅读。',
-	'schola.feature.contents': '您所在作品的分部——卷、部、章——以便在其中移动而不必回到开头。',
-	'schola.feature.compare':
-		'同一处经文的两个版本并列——拉丁文与您自己的语言并列，或一种译本与另一种并列。',
-	'schola.feature.apparatus':
-		'版本自身的注释，以及为正文所写的任何注解，都置于正文之旁而非其下。正文之内的引证是链接，因此引文所指即所至。',
-	'schola.feature.focus': '清去正文以外的一切。出口仍留在栏原本的位置，使一切不致被关在其后。',
-	'schola.books.heading': '此处有什么，以及如何引用',
+	'schola.books.heading': '此处有什么，以及如何标识',
 	'schola.books.lede':
 		'这些各是不同种类的书，各以自己的编号被引用。示例显示其形式：照样在搜索框中键入，便可抵达那一处。',
-	'schola.cite.label': '引用作',
+	'schola.cite.label': '标识',
 	'schola.what.scripture': '教会所领受的圣经，包括新旧两约。此处其余一切都在其光中阅读。',
 	'schola.cite.scripture': '书卷、章与节，用您自己的版本所印的简称',
 	'schola.what.catechism':
@@ -470,6 +453,19 @@ export const zh: Dictionary = {
 	'shortcuts.betweenDocuments': '在文献之间',
 	'shortcuts.withinDocument': '在文献内部',
 	'shortcuts.show': '显示此列表',
+	'help.title': '帮助',
+	'help.top.heading': '每页顶端的栏',
+	'help.reading.heading': '正文上方的栏',
+	'help.feature.search':
+		'在顶端的框中键入一处引文——章与节、条目编号、某份文献的名称——它会随打随补全。',
+	'help.feature.offline':
+		'把本站加到主屏幕，它便如应用一般开启。您可下载整部作品，在没有连接时阅读。',
+	'help.feature.contents': '您所在作品的分部——卷、部、章——以便在其中移动而不必回到开头。',
+	'help.feature.compare':
+		'同一处经文的两个版本并列——拉丁文与您自己的语言并列，或一种译本与另一种并列。',
+	'help.feature.apparatus':
+		'版本自身的注释，以及为正文所写的任何注解，都置于正文之旁而非其下。正文之内的引证是链接，因此引文所指即所至。',
+	'help.feature.focus': '清去正文以外的一切。出口仍留在栏原本的位置，使一切不致被关在其后。',
 	'zen.enter': '专注模式',
 	'zen.exit': '退出专注模式',
 	'nav.calendar': '日历',

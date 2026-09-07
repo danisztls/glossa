@@ -66,11 +66,11 @@ export const mt: Dictionary = {
 	'schola.landing.title': 'Minn fejn tibda',
 	'schola.landing.tagline':
 		'Gwida qasira għal dak li hawn: x’inhu kull wieħed minn dawn il-kotba, kif tinkiteb ċitazzjoni tiegħu, kif issib silta, u ordnijiet ta’ qari li l-Knisja stess fasslet.',
-	'schola.start.heading': 'Jekk dan huwa ġdid għalik',
+	'schola.start.heading': 'Ġdid għall-Kattoliċiżmu?',
 	'schola.start.body': 'Ibda bil-',
 	'schola.start.bodyAfter':
 		': l-istess tagħlim tal-Katekiżmu, ħafna iqsar, miktub bħala mistoqsijiet u tweġibiet. Huwa madwar wieħed minn kull għaxra fit-tul u ma jassumi xejn.',
-	'schola.bible.heading': 'Jekk qatt ma qrajt il-Bibbja',
+	'schola.bible.heading': 'Qatt ma qrajt il-Bibbja?',
 	'schola.bible.library':
 		'Mhijiex ktieb wieħed imma tlieta u sebgħin, miktuba fuq aktar minn elf sena u marbuta fl-ordni li l-Knisja stabbiliet — mhux l-ordni li fih ġraw il-ġrajjiet, u mhux l-ordni l-aktar faċli għall-qari. Ħafna jibdew mill-ewwel paġna u jieqfu ftit ġimgħat wara, f’xi kapitlu twil ta’ liġi antika, għax xejn għadu ma qalilhom għalxiex hi.',
 	'schola.bible.step.gospel': 'Ibda b’Evanġelju',
@@ -100,31 +100,10 @@ export const mt: Dictionary = {
 		'Mhux rakkont: mija u ħamsin talba u għanja. Aqra waħda kull darba, fi kwalunkwe ordni. Il-Knisja għadha titlobhom kuljum.',
 	'schola.bible.bothWays':
 		'Se tagħraf affarijiet, u dak huwa l-punt aktar milli koinċidenza. Il-Knisja taqra l-kotba eqdem fid-dawl ta’ Kristu u dawk ġodda fid-dawl ta’ dak li ġie qabel — kull nofs jispjega l-ieħor, u għalhekk l-ebda wieħed ma jinqara waħdu.',
-	'schola.guide.heading': 'Kif issib triqtek',
-	'schola.guide.lede':
-		'It-test huwa l-paġna kollha; kull ħaġa oħra hija kontroll li tista’ tinjora sakemm tridu.',
-	'schola.guide.top.heading': 'Il-bar fuq nett ta’ kull paġna',
-	'schola.guide.reading.heading': 'Il-bar fuq test',
-	'schola.feature.search':
-		'Ittajpja referenza fil-kaxxa ta’ fuq — kapitlu u vers, numru ta’ paragrafu, isem ta’ dokument — u titlesta waħedha waqt li tikteb. Agħfas / jew Ctrl+K minn kullimkien, u ? għall-kumbinazzjonijiet l-oħra.',
-	'schola.feature.languages':
-		'L-interfaċċa u t-test jintgħażlu separatament, mela tista’ taqra xogħol b’lingwa waħda filwaqt li l-buttuni jibqgħu b’oħra. Fejn xogħol għandu diversi edizzjonijiet bil-lingwa tiegħek, tagħżel bejniethom ukoll.',
-	'schola.feature.settings':
-		'Daqs tat-test, dawl jew dlam, sepja, u kemm mill-apparat trid ħdejn it-test.',
-	'schola.feature.offline':
-		'Żid is-sit mal-iskrin prinċipali u jinfetaħ bħal app. Tista’ tniżżel xogħlijiet sħaħ biex taqrahom bla konnessjoni.',
-	'schola.feature.contents':
-		'Id-diviżjonijiet tax-xogħol li qiegħed fih — kotba, partijiet, kapitli — biex tiċċaqlaq ġo fih bla ma terġa’ lura għall-bidu.',
-	'schola.feature.compare':
-		'Żewġ edizzjonijiet tal-istess silta, ġenb ma’ ġenb — il-Latin ħdejn il-lingwa tiegħek, jew traduzzjoni ħdejn oħra.',
-	'schola.feature.apparatus':
-		'In-noti tal-qiegħ ta’ edizzjoni, u kull kummentarju miktub fuq it-test, jiġu offruti ħdejh aktar milli taħtu. Iċ-ċitazzjonijiet ġewwa t-test huma links, mela referenza tieħdok fejn tipponta.',
-	'schola.feature.focus':
-		'Ineħħi kollox ħlief it-test. Il-ħruġ jibqa’ fejn kien il-bar, mela xejn ma jinqabad warajh.',
-	'schola.books.heading': 'X’hemm hawn, u kif jiġi ċċitat',
+	'schola.books.heading': 'X’hemm hawn, u kif jiġi identifikat',
 	'schola.books.lede':
 		'Kull wieħed minn dawn huwa xorta differenti ta’ ktieb, u kull wieħed jissejjaħ b’numru tiegħu. L-eżempji juru l-forma: ittajpja waħda bħalhom fil-kaxxa tat-tfittxija u tasal fis-silta.',
-	'schola.cite.label': 'Jiġi ċċitat bħala',
+	'schola.cite.label': 'Jiġi identifikat',
 	'schola.what.scripture':
 		'L-Iskrittura kif tirċeviha l-Knisja, fiż-żewġ Testmenti. Kull ħaġa oħra hawn tinqara fid-dawl tagħha.',
 	'schola.cite.scripture': 'ktieb, kapitlu u vers, bit-taqsiriet li tistampa l-edizzjoni tiegħek',
@@ -471,6 +450,21 @@ export const mt: Dictionary = {
 	'shortcuts.betweenDocuments': 'Bejn id-dokumenti',
 	'shortcuts.withinDocument': 'Ġewwa d-dokument',
 	'shortcuts.show': 'Uri din il-lista',
+	'help.title': 'Għajnuna',
+	'help.top.heading': 'Il-bar fuq nett ta’ kull paġna',
+	'help.reading.heading': 'Il-bar fuq test',
+	'help.feature.search':
+		'Ittajpja referenza fil-kaxxa ta’ fuq — kapitlu u vers, numru ta’ paragrafu, isem ta’ dokument — u titlesta waħedha waqt li tikteb.',
+	'help.feature.offline':
+		'Żid is-sit mal-iskrin prinċipali u jinfetaħ bħal app. Tista’ tniżżel xogħlijiet sħaħ biex taqrahom bla konnessjoni.',
+	'help.feature.contents':
+		'Id-diviżjonijiet tax-xogħol li qiegħed fih — kotba, partijiet, kapitli — biex tiċċaqlaq ġo fih bla ma terġa’ lura għall-bidu.',
+	'help.feature.compare':
+		'Żewġ edizzjonijiet tal-istess silta, ġenb ma’ ġenb — il-Latin ħdejn il-lingwa tiegħek, jew traduzzjoni ħdejn oħra.',
+	'help.feature.apparatus':
+		'In-noti tal-qiegħ ta’ edizzjoni, u kull kummentarju miktub fuq it-test, jiġu offruti ħdejh aktar milli taħtu. Iċ-ċitazzjonijiet ġewwa t-test huma links, mela referenza tieħdok fejn tipponta.',
+	'help.feature.focus':
+		'Ineħħi kollox ħlief it-test. Il-ħruġ jibqa’ fejn kien il-bar, mela xejn ma jinqabad warajh.',
 	'zen.enter': 'Modalità Fokus',
 	'zen.exit': 'Oħroġ mill-Modalità Fokus',
 	'nav.calendar': 'Kalendarju',

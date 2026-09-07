@@ -90,11 +90,11 @@ export const sw: Dictionary = {
 	'schola.landing.title': 'Pa kuanzia',
 	'schola.landing.tagline':
 		'Mwongozo mfupi wa yaliyomo hapa: kila kimoja cha vitabu hivi ni nini, rejeo lake huandikwaje, jinsi ya kupata kifungu, na mipango ya kusoma ambayo Kanisa limependekeza.',
-	'schola.start.heading': 'Kama haya yote ni mapya kwako',
+	'schola.start.heading': 'Mgeni katika Ukatoliki?',
 	'schola.start.body': 'Mwanzo ulio bora ni ',
 	'schola.start.bodyAfter':
 		': mafundisho yale yale ya Katekisimu, mafupi zaidi, yaliyoandikwa kwa maswali na majibu. Ni kama sehemu ya kumi ya urefu wake, wala haudhanii chochote.',
-	'schola.bible.heading': 'Kama hujawahi kusoma Biblia',
+	'schola.bible.heading': 'Hujawahi kusoma Biblia?',
 	'schola.bible.library':
 		'Si kitabu kimoja bali sabini na vitatu, vilivyoandikwa kwa zaidi ya miaka elfu moja na kufungwa pamoja katika mpangilio ambao Kanisa lilikubaliana nao — si mpangilio wa jinsi mambo yalivyotokea, wala si ule ulio rahisi zaidi kusoma. Wengi huanza ukurasa wa kwanza na kuacha wiki chache baadaye, katikati ya sura ndefu ya sheria ya kale, kwa sababu bado hakuna aliyewaambia ni kwa ajili ya nini.',
 	'schola.bible.step.gospel': 'Anza na Injili',
@@ -124,31 +124,10 @@ export const sw: Dictionary = {
 		'Si habari: sala na nyimbo mia moja na hamsini. Soma moja kwa wakati, kwa mpangilio wowote. Kanisa bado huziomba kila siku.',
 	'schola.bible.bothWays':
 		'Utatambua mambo, na hilo ndilo kusudi wala si sadfa. Kanisa husoma vitabu vya kale katika nuru ya Kristo na vile vipya katika nuru ya yaliyotangulia — kila nusu huieleza nyingine, na ndiyo sababu hakuna inayosomwa peke yake.',
-	'schola.guide.heading': 'Jinsi ya kujielekeza',
-	'schola.guide.lede':
-		'Maandishi ndiyo ukurasa wote; kila kingine ni kidhibiti unachoweza kupuuza mpaka ukitake.',
-	'schola.guide.top.heading': 'Utepe ulio juu ya kila ukurasa',
-	'schola.guide.reading.heading': 'Utepe ulio juu ya maandishi',
-	'schola.feature.search':
-		'Andika rejeo katika kisanduku cha juu — sura na mstari, nambari ya kifungu, jina la hati — nalo hujikamilisha unapoandika. Bonyeza / au Ctrl+K ukiwa popote, na ? kwa njia nyingine za mkato.',
-	'schola.feature.languages':
-		'Kiolesura na maandishi huchaguliwa kando, hivyo waweza kusoma kazi kwa lugha moja huku vitufe vikibaki kwa lugha nyingine. Pale kazi ina matoleo kadhaa katika lugha yako, wachagua kati yake pia.',
-	'schola.feature.settings':
-		'Ukubwa wa maandishi, mwanga au giza, sepia, na kiasi cha vielelezo unachotaka kando ya maandishi.',
-	'schola.feature.offline':
-		'Ongeza tovuti hii kwenye skrini yako ya mwanzo nayo hufunguka kama programu. Waweza kupakua kazi nzima ili kuzisoma bila mtandao.',
-	'schola.feature.contents':
-		'Mgawanyo wa kazi uliyomo — vitabu, sehemu, sura — ili uweze kuzunguka ndani yake bila kurudi mwanzoni.',
-	'schola.feature.compare':
-		'Matoleo mawili ya kifungu kilekile, kando kwa kando — Kilatini kando ya lugha yako mwenyewe, au tafsiri moja kando ya nyingine.',
-	'schola.feature.apparatus':
-		'Maelezo ya toleo lenyewe, na ufafanuzi wowote ulioandikwa juu ya maandishi, hutolewa kando yake wala si chini yake. Manukuu yaliyo ndani ya maandishi ni viungo, hivyo rejeo huelekea pale linapoashiria.',
-	'schola.feature.focus':
-		'Huondoa kila kitu isipokuwa maandishi. Njia ya kutoka hubaki pale utepe ulipokuwa, ili kisiwepo kinachonaswa nyuma yake.',
-	'schola.books.heading': 'Kilichopo hapa, na jinsi kinavyonukuliwa',
+	'schola.books.heading': 'Kilichopo hapa, na jinsi kinavyotambuliwa',
 	'schola.books.lede':
 		'Kila kimoja cha hivi ni aina tofauti ya kitabu, na kila kimoja hurejewa kwa nambari yake mwenyewe. Mifano huonyesha umbo lake: andika kama hiyo katika kisanduku cha kutafuta nawe utafika kwenye kifungu.',
-	'schola.cite.label': 'Hunukuliwa',
+	'schola.cite.label': 'Hutambuliwa',
 	'schola.what.scripture':
 		'Maandiko kama Kanisa linavyoyapokea, katika Maagano yote mawili. Kila kingine hapa husomwa katika nuru yake.',
 	'schola.cite.scripture': 'kitabu, sura na mstari, kwa vifupisho ambavyo toleo lako huchapa',
@@ -496,6 +475,21 @@ export const sw: Dictionary = {
 	'shortcuts.betweenDocuments': 'Kati ya hati',
 	'shortcuts.withinDocument': 'Ndani ya hati',
 	'shortcuts.show': 'Onyesha orodha hii',
+	'help.title': 'Msaada',
+	'help.top.heading': 'Utepe ulio juu ya kila ukurasa',
+	'help.reading.heading': 'Utepe ulio juu ya maandishi',
+	'help.feature.search':
+		'Andika rejeo katika kisanduku cha juu — sura na mstari, nambari ya kifungu, jina la hati — nalo hujikamilisha unapoandika.',
+	'help.feature.offline':
+		'Ongeza tovuti hii kwenye skrini yako ya mwanzo nayo hufunguka kama programu. Waweza kupakua kazi nzima ili kuzisoma bila mtandao.',
+	'help.feature.contents':
+		'Mgawanyo wa kazi uliyomo — vitabu, sehemu, sura — ili uweze kuzunguka ndani yake bila kurudi mwanzoni.',
+	'help.feature.compare':
+		'Matoleo mawili ya kifungu kilekile, kando kwa kando — Kilatini kando ya lugha yako mwenyewe, au tafsiri moja kando ya nyingine.',
+	'help.feature.apparatus':
+		'Maelezo ya toleo lenyewe, na ufafanuzi wowote ulioandikwa juu ya maandishi, hutolewa kando yake wala si chini yake. Manukuu yaliyo ndani ya maandishi ni viungo, hivyo rejeo huelekea pale linapoashiria.',
+	'help.feature.focus':
+		'Huondoa kila kitu isipokuwa maandishi. Njia ya kutoka hubaki pale utepe ulipokuwa, ili kisiwepo kinachonaswa nyuma yake.',
 	'zen.enter': 'Hali ya umakini',
 	'zen.exit': 'Ondoka kwenye hali ya umakini',
 	'nav.calendar': 'Kalenda',

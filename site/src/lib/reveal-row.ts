@@ -14,7 +14,7 @@
  * smooth scroll already running on it, whether or not the new position
  * differs from the current one. Two of those three lists are driven by
  * `useScrollSpy`, so their current row changes WHILE the page is scrolling;
- * a keyboard reference step (`Shortcuts.svelte`) asks for a smooth scroll,
+ * a keyboard reference step (`Help.svelte`) asks for a smooth scroll,
  * crosses one section boundary on the way, and the sidebar's own bookkeeping
  * cancels the animation underneath it. What the reader sees is a scroll that
  * starts gliding and then stops dead, which reads as the site being janky

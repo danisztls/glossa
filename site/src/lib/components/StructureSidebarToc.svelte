@@ -305,7 +305,7 @@
 	   fires WHILE the page is scrolling. `scrollIntoView` scrolls every
 	   scrollable ancestor up to the viewport, and performing a scroll on the
 	   viewport aborts a smooth scroll already running on it — so a keyboard
-	   reference step (`Shortcuts.svelte`) that crossed a section boundary had
+	   reference step (`Help.svelte`) that crossed a section boundary had
 	   its animation cancelled mid-glide by the sidebar keeping its own place.
 	   `$lib/reveal-row` moves one container's `scrollTop` and cannot touch the
 	   page; `IndexSidebarToc` and `TocMenu` had both already reached the same
@@ -392,7 +392,11 @@
 	</ol>
 {/snippet}
 
-<nav aria-labelledby={HEADING_ID} data-link-preview="off">
+<!-- `data-help="contents"`: this list is the table of contents `Help.svelte`
+     describes, wherever it is rendered — the desktop sidebar, the reading
+     bar's panel, or `/documenta`'s inline disclosure. The sheet collects a
+     SET, so the same key arriving from two of them draws one row. -->
+<nav aria-labelledby={HEADING_ID} data-help="contents" data-link-preview="off">
 	<h2 class="sidebar-toc-heading">
 		<span id={HEADING_ID}>{heading}</span>
 		{#if headingNote}

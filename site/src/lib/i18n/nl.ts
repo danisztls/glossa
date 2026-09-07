@@ -85,11 +85,11 @@ export const nl: Dictionary = {
 	'schola.landing.title': 'Waar te beginnen',
 	'schola.landing.tagline':
 		'Een korte gids bij wat hier staat: wat elk van deze boeken is, hoe een verwijzing ernaar wordt geschreven, hoe u een plaats vindt, en leesordes die de Kerk heeft voorgesteld.',
-	'schola.start.heading': 'Als dit alles nieuw voor u is',
+	'schola.start.heading': 'Nieuw in het katholieke geloof?',
 	'schola.start.body': 'Begin met het ',
 	'schola.start.bodyAfter':
 		': dezelfde leer als de Catechismus, veel korter, geschreven in vragen en antwoorden. Het is ongeveer een tiende zo lang en veronderstelt niets.',
-	'schola.bible.heading': 'Als u de Bijbel nooit gelezen hebt',
+	'schola.bible.heading': 'Nooit de Bijbel gelezen?',
 	'schola.bible.library':
 		'Zij is niet één boek maar drieënzeventig, geschreven over meer dan duizend jaar en gebundeld in de orde waarop de Kerk zich heeft vastgelegd — niet de orde waarin de dingen gebeurden, en niet die welke het gemakkelijkst leest. De meesten beginnen op de eerste bladzijde en houden enkele weken later op, in een lang hoofdstuk oud recht, omdat niemand hun nog heeft gezegd waartoe het dient.',
 	'schola.bible.step.gospel': 'Begin met een evangelie',
@@ -118,31 +118,10 @@ export const nl: Dictionary = {
 		'Geen verhaal: honderdvijftig gebeden en liederen. Lees er één tegelijk, in welke volgorde ook. De Kerk bidt ze nog elke dag.',
 	'schola.bible.bothWays':
 		'U zult dingen herkennen, en dat is de bedoeling en geen toeval. De Kerk leest de oudere boeken in het licht van Christus en de nieuwere in het licht van wat eraan voorafging — elke helft verklaart de andere, en daarom wordt geen van beide alleen gelezen.',
-	'schola.guide.heading': 'De weg vinden',
-	'schola.guide.lede':
-		'De tekst is de hele bladzijde; al het andere is een bedieningselement dat u kunt negeren tot u het wilt.',
-	'schola.guide.top.heading': 'De balk boven aan elke bladzijde',
-	'schola.guide.reading.heading': 'De balk boven een tekst',
-	'schola.feature.search':
-		'Typ een verwijzing in het vak bovenaan — hoofdstuk en vers, een nummer, de naam van een document — en het vult haar aan terwijl u typt. Druk overal op / of Ctrl+K, en op ? voor de overige sneltoetsen.',
-	'schola.feature.languages':
-		'De interface en de tekst worden apart gekozen, zodat u een werk in de ene taal kunt lezen terwijl de knoppen in een andere blijven. Waar een werk meerdere uitgaven in uw taal heeft, kiest u ook daartussen.',
-	'schola.feature.settings':
-		'Tekstgrootte, licht of donker, sepia, en hoeveel van het apparaat u naast de tekst wilt.',
-	'schola.feature.offline':
-		'Zet de site op uw beginscherm en zij opent als een app. U kunt hele werken downloaden om zonder verbinding te lezen.',
-	'schola.feature.contents':
-		'De indelingen van het werk waarin u bent — boeken, delen, hoofdstukken — zodat u zich erbinnen kunt bewegen zonder naar het begin terug te gaan.',
-	'schola.feature.compare':
-		'Twee uitgaven van dezelfde plaats naast elkaar — het Latijn naast uw eigen taal, of de ene vertaling naast de andere.',
-	'schola.feature.apparatus':
-		'De eigen noten van een uitgave, en elke commentaar op de tekst geschreven, worden ernaast aangeboden en niet eronder. Verwijzingen binnen de tekst zijn koppelingen, zodat een verwijzing gaat waar zij heen wijst.',
-	'schola.feature.focus':
-		'Ruimt alles op behalve de tekst. De uitweg blijft waar de balk was, zodat er niets achter opgesloten raakt.',
-	'schola.books.heading': 'Wat hier staat, en hoe het wordt aangehaald',
+	'schola.books.heading': 'Wat hier staat, en hoe het wordt aangeduid',
 	'schola.books.lede':
 		'Elk hiervan is een andere soort boek, en naar elk wordt met een eigen getal verwezen. De voorbeelden tonen de vorm: typ er zo een in het zoekvak en u komt bij de plaats uit.',
-	'schola.cite.label': 'Aangehaald als',
+	'schola.cite.label': 'Aangeduid',
 	'schola.what.scripture':
 		'De Schrift zoals de Kerk haar ontvangt, in beide Testamenten. Al het andere hier wordt in haar licht gelezen.',
 	'schola.cite.scripture': 'boek, hoofdstuk en vers, in de afkortingen die uw eigen uitgave drukt',
@@ -493,6 +472,21 @@ export const nl: Dictionary = {
 	'shortcuts.betweenDocuments': 'Tussen documenten',
 	'shortcuts.withinDocument': 'Binnen het document',
 	'shortcuts.show': 'Toon deze lijst',
+	'help.title': 'Help',
+	'help.top.heading': 'De balk boven aan elke bladzijde',
+	'help.reading.heading': 'De balk boven een tekst',
+	'help.feature.search':
+		'Typ een verwijzing in het vak bovenaan — hoofdstuk en vers, een nummer, de naam van een document — en het vult haar aan terwijl u typt.',
+	'help.feature.offline':
+		'Zet de site op uw beginscherm en zij opent als een app. U kunt hele werken downloaden om zonder verbinding te lezen.',
+	'help.feature.contents':
+		'De indelingen van het werk waarin u bent — boeken, delen, hoofdstukken — zodat u zich erbinnen kunt bewegen zonder naar het begin terug te gaan.',
+	'help.feature.compare':
+		'Twee uitgaven van dezelfde plaats naast elkaar — het Latijn naast uw eigen taal, of de ene vertaling naast de andere.',
+	'help.feature.apparatus':
+		'De eigen noten van een uitgave, en elke commentaar op de tekst geschreven, worden ernaast aangeboden en niet eronder. Verwijzingen binnen de tekst zijn koppelingen, zodat een verwijzing gaat waar zij heen wijst.',
+	'help.feature.focus':
+		'Ruimt alles op behalve de tekst. De uitweg blijft waar de balk was, zodat er niets achter opgesloten raakt.',
 	'zen.enter': 'Focusmodus',
 	'zen.exit': 'Focusmodus verlaten',
 	'nav.calendar': 'Kalender',

@@ -41,6 +41,7 @@
 <button
 	type="button"
 	class="menu-trigger compare-toggle"
+	data-help="compare"
 	class:active
 	aria-pressed={active}
 	aria-label={label}

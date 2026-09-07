@@ -37,9 +37,9 @@
 	// the control row rather than with the overlays below: a modal dialog is in
 	// the top layer, so where it is written decides nothing but where the
 	// BUTTON lands. Every address it acts on is already in the rendered page's
-	// markup (`rel="prev"`, `.reference-number`), so no route registers
-	// anything.
-	import Shortcuts from '$lib/components/Shortcuts.svelte';
+	// markup (`rel="prev"`, `.reference-number`, `data-help`), so no route
+	// registers anything.
+	import Help from '$lib/components/Help.svelte';
 	import { installAnchorGlide } from '$lib/anchor-scroll';
 
 	let { children } = $props();
@@ -390,7 +390,7 @@
 				</a>
 				<LanguageMenu />
 				<SettingsMenu />
-				<Shortcuts />
+				<Help />
 				<!-- Renders nothing unless the browser has actually offered an
 				     install, so on most visits the row is unchanged. -->
 				<InstallButton />

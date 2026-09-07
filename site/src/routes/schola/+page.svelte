@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * `/schola` — a short guide to the site: what is on it, how each work is
-	 * cited, how to find a passage, and orders for reading.
+	 * cited, and orders for reading.
 	 *
 	 * ## The reader this is for, and why nothing else on the site was them
 	 *
@@ -12,8 +12,16 @@
 	 * shorter book, or that the Summa is not magisterial. With §1 they are
 	 * "plausibly most of the traffic". Every other page here answers an
 	 * address. This one answers neither an address nor a question: it says what
-	 * is on the shelf, what a citation of it looks like, and what the chrome
-	 * around the text does.
+	 * is on the shelf and what a citation of it looks like.
+	 *
+	 * **AND IT NO LONGER EXPLAINS THE CHROME** (2026-09-07). Its first section
+	 * did, and those rows are the sheet the `?` button opens now — `$lib/help.ts`
+	 * and `Help.svelte`, with `site/docs/finding.md` holding the argument. A
+	 * guide to the controls printed on a page of its own has to describe
+	 * controls the reader cannot see while they read it; in the sheet they are
+	 * read beside the page they are on, and only the ones that page HAS are
+	 * drawn. What this page kept is what it was always better at: the works,
+	 * their citation forms, and the three destinations that are not texts.
 	 *
 	 * `Learn` pointed at `/catechismus` from the day the bar was rebuilt until
 	 * this page existed, which was a label doing work the page behind it did
@@ -71,14 +79,14 @@
 	 * ## What this page costs in translation, and what it does not
 	 *
 	 * Every work's NAME is the key that work's own landing page is titled by,
-	 * every feature's name is the key its own control is labelled by, and every
-	 * book in the reading suggestion is named by the reader's own edition — so
-	 * the page names nothing twice, and an ingestion cannot leave a name stale.
+	 * and every book in the reading suggestion is named by the reader's own
+	 * edition — so the page names nothing twice, and an ingestion cannot leave
+	 * a name stale.
 	 *
-	 * What is genuinely new writing is the sentences: what each work is, what
-	 * its unit of citation is, and what each feature does. That is the part §5
-	 * stops at, and it was what kept `/schola` out of `CHROME_PATHS` until all
-	 * 58 keys were written in all 37 languages (2026-09-06, `route-manifest.ts`).
+	 * What is genuinely new writing is the sentences: what each work is and
+	 * what its unit of citation is. That is the part §5 stops at, and it was
+	 * what kept `/schola` out of `CHROME_PATHS` until all 58 keys of the day
+	 * were written in all 37 languages (2026-09-06, `route-manifest.ts`).
 	 * **A new sentence on this page is now a string in thirty-six dictionaries,
 	 * not a note in a docblock** — the page is published, so the bill is paid
 	 * up front rather than deferred.
@@ -92,7 +100,7 @@
 	 *
 	 * `.landing-column`, not `.content-column`: `layout.css` carries the
 	 * argument, which is that `--content-width` is a count of CHARACTERS and
-	 * this page's content is a band, two grids and three numbered stages. `/`,
+	 * this page's content is a band, a grid and three numbered stages. `/`,
 	 * `/bibliotheca` and `/documenta` are the same kind of page and take the
 	 * same column.
 	 *
@@ -131,52 +139,6 @@
 	// offers. Nothing else on the page addresses a text any more.
 	const bibleWorkId = $derived(content.workIdFor('bible'));
 	const bibleLang = $derived(content.langFor('bible'));
-
-	/**
-	 * THE CHROME, NAMED BY ITS OWN CONTROLS. Every `nameKey` here is the key
-	 * the button or menu it describes is already labelled by, so a reader who
-	 * reads a row and then goes looking for the control finds the same word —
-	 * and so a translated interface never disagrees with its own guide. Only
-	 * the sentence under each is written here.
-	 *
-	 * ## IT IS TWO LISTS, BECAUSE THE SITE HAS TWO BARS
-	 *
-	 * One flat list of nine ran a search box, a table of contents, a calendar
-	 * and an install prompt together as though a reader would meet them in one
-	 * place, and they will not: four are in the header of every page and four
-	 * appear only once there is a text on the screen. **A guide to the chrome
-	 * that does not say WHERE a control is has not finished the sentence** —
-	 * the reader who cannot find the compare button is looking for it on a
-	 * landing page, where it correctly does not exist.
-	 *
-	 * NOTHING HERE IS A PAGE ANY MORE, so `Feature` carries no `href`. Library,
-	 * Calendar and Bookmarks were rows in this list and are addresses, not
-	 * controls; they moved to the section below, which is the list of what is
-	 * on the site. What is left is exactly what a link cannot reach — a menu
-	 * that opens in the header of whatever page the reader is on has no address
-	 * to give them.
-	 */
-	interface Feature {
-		key: string;
-		icon: IconName;
-		nameKey: string;
-	}
-
-	/** The header, on every page including this one. */
-	const TOP_BAR: readonly Feature[] = [
-		{ key: 'search', icon: 'search', nameKey: 'jumpbox.short' },
-		{ key: 'languages', icon: 'languages', nameKey: 'lang.label' },
-		{ key: 'settings', icon: 'sliders-horizontal', nameKey: 'settings.label' },
-		{ key: 'offline', icon: 'download', nameKey: 'install.label' }
-	];
-
-	/** The bar that appears above a text and nowhere else (`ReadingBar`). */
-	const READING_BAR: readonly Feature[] = [
-		{ key: 'contents', icon: 'table-of-contents', nameKey: 'document.tableOfContents' },
-		{ key: 'compare', icon: 'columns-2', nameKey: 'compare.enter' },
-		{ key: 'apparatus', icon: 'notebook-pen', nameKey: 'apparatus.label' },
-		{ key: 'focus', icon: 'eye', nameKey: 'zen.enter' }
-	];
 
 	/**
 	 * THE BOOKS, BY WHAT KIND OF THING THEY HOLD — which is the axis
@@ -282,7 +244,7 @@
 	 * press; the guide answers "what does this control do" and this section
 	 * answers "what is on this site".
 	 *
-	 * They carry no specimen and no "Cited as" line, having no notation to
+	 * They carry no specimen and no "Identified" line, having no notation to
 	 * teach: a calendar is addressed by a date and a bookmark by whatever the
 	 * reader marked. That absence is the reason they are a group of their own
 	 * under the eight rather than eleven rows in one grid — a row missing the
@@ -469,49 +431,6 @@
 	<h1>{t('schola.landing.title')}</h1>
 	<p class="page-tagline">{t('schola.landing.tagline')}</p>
 
-	<section aria-labelledby="guide-heading">
-		<h2 id="guide-heading">{t('schola.guide.heading')}</h2>
-		<p class="section-lede">{t('schola.guide.lede')}</p>
-
-		<!--
-			TWO GROUPS, BECAUSE THERE ARE TWO BARS AND A READER MEETS THEM IN
-			DIFFERENT PLACES. The heading of each is where the controls under it
-			live, so a reader who cannot find the compare button learns from the
-			heading that it is not on the page they are looking at.
-
-			`h3` for the group and `h4` for a control, which is what pushed every
-			row's title down a level across the page: a heading tree that skips
-			is a heading tree a screen reader reads as a mistake.
-		-->
-		<h3 class="group">{t('schola.guide.top.heading')}</h3>
-		<ul class="feature-grid">
-			{#each TOP_BAR as feature (feature.key)}
-				<li class="feature">
-					<!-- Decorative, so `aria-hidden` — which `Icon.svelte` enforces
-					     rather than offers. The name beside it is the name. -->
-					<span class="feature-icon"><Icon name={feature.icon} /></span>
-					<div class="feature-text">
-						<h4>{t(feature.nameKey)}</h4>
-						<p>{t(`schola.feature.${feature.key}`)}</p>
-					</div>
-				</li>
-			{/each}
-		</ul>
-
-		<h3 class="group">{t('schola.guide.reading.heading')}</h3>
-		<ul class="feature-grid">
-			{#each READING_BAR as feature (feature.key)}
-				<li class="feature">
-					<span class="feature-icon"><Icon name={feature.icon} /></span>
-					<div class="feature-text">
-						<h4>{t(feature.nameKey)}</h4>
-						<p>{t(`schola.feature.${feature.key}`)}</p>
-					</div>
-				</li>
-			{/each}
-		</ul>
-	</section>
-
 	<section aria-labelledby="books-heading">
 		<h2 id="books-heading">{t('schola.books.heading')}</h2>
 		<p class="section-lede">{t('schola.books.lede')}</p>
@@ -535,7 +454,7 @@
 
 							The label and the clause are still a sentence and the chip
 							does not break it, because the chip is not IN it — it is
-							pushed to the far edge of the same line. "Cited as" was a
+							pushed to the far edge of the same line. The label was a
 							label, then a chip, then an em dash, then a clause once, which
 							wrapped badly and read as nothing.
 
@@ -1074,10 +993,11 @@
 	 * `80rem` is where `layout.css` hands the reading grid its aside; reusing
 	 * it rather than inventing a number keeps the site to one idea of "wide".
 	 *
-	 * The two grids are one rule: a guide whose halves disagreed about their
-	 * column count would read as two pages stapled together.
+	 * The chrome guide's own grid was the other half of this rule until
+	 * 2026-09-07, when its rows moved into the sheet the `?` button opens
+	 * (`Help.svelte`, `site/docs/finding.md`). The sheet sets them in one
+	 * column, being 34rem wide at most; what is left here is the catalogue.
 	 */
-	.feature-grid,
 	.book-grid {
 		list-style: none;
 		display: grid;
@@ -1087,7 +1007,6 @@
 	}
 
 	@media (min-width: 80rem) {
-		.feature-grid,
 		.book-grid {
 			grid-template-columns: 1fr 1fr;
 		}
@@ -1110,7 +1029,6 @@
 	 * one. It also makes the two-column grid read as a page rather than as a
 	 * dashboard.
 	 */
-	.feature,
 	.book {
 		display: flex;
 		gap: 1rem;
@@ -1131,58 +1049,11 @@
 	 * THE ICON STANDS FREE, at reading size rather than in a 2.25rem chip. The
 	 * chip was drawing a box around a mark whose whole job is to be glanced at,
 	 * and once the row's own box went the chip was the only thing left fencing
-	 * anything. Sized once so glyphs of different natural weight sit on one
-	 * line down the grid; `1em` of the font-size set here rather than a pixel
-	 * size, which is `Icon.svelte`'s whole contract.
+	 * anything. Sized so glyphs of different natural weight sit on one line
+	 * down the grid; `1em` of the font-size set here rather than a pixel size,
+	 * which is `Icon.svelte`'s whole contract. Nudged down by the cap height so
+	 * it sits on the title's optical centre rather than on its baseline box.
 	 *
-	 * `--color-accent` and nothing else coloured: the mark identifies the row
-	 * and the heading names it, so a second saturated element would make the
-	 * row look like a control. Nudged down by the cap height so it sits on the
-	 * title's optical centre rather than on its baseline box.
-	 */
-	/*
-	 * THE SHARED RULE IS GEOMETRY AND CARRIES NO COLOUR, and the reason is a bug
-	 * that ran for four commits.
-	 *
-	 * `.book-icon { color: var(--shelf) }` sat ABOVE a
-	 * `.feature-icon, .book-icon { … color: var(--color-accent) }` that set the
-	 * accent for both. Two selectors, the same specificity, the later one
-	 * winning — so every shelf icon was the house red at rest, while
-	 * `.book:hover .book-icon` at one class higher was the only rule that ever
-	 * showed a shelf its colour. **The feature was inverted: colour appeared on
-	 * hover and vanished at rest**, which is precisely backwards, since the
-	 * colour identifies the row and the hover only answers the pointer.
-	 *
-	 * It is worth naming what it cost, because nothing failed. `svelte-check`
-	 * saw two live selectors, both used. The page rendered. Three rounds of
-	 * work went into the palette — the strength dial, then `oklch(from …)`,
-	 * then a literal per ground — every one of them judged against a hover
-	 * state, because that was the only place the colours were visible.
-	 * **A cascade bug looks exactly like a design problem, and it will absorb
-	 * as much design work as you give it.**
-	 *
-	 * So the shared rule sets size and nothing else, each kind of icon states
-	 * its own colour after it, and `icon-colour.test.ts`-style scanning is not
-	 * needed because `pigments.test.ts` now fails if that rule regains a
-	 * `color`.
-	 */
-	.feature-icon,
-	.book-icon {
-		flex: 0 0 auto;
-		display: grid;
-		place-items: center;
-		inline-size: 1.5rem;
-		font-size: 1.35rem;
-		line-height: 1;
-		margin-block-start: 0.12rem;
-	}
-
-	/* The chrome is one kind of thing, so its marks are one colour. */
-	.feature-icon {
-		color: var(--color-accent);
-	}
-
-	/*
 	 * ONE ACCENT FOR EVERY MARK ON THE PAGE (2026-09-06, by direction), and it
 	 * replaced a colour per shelf plus an ordered ramp over the chrome guide
 	 * and the three places. What that produced was twenty-odd coloured glyphs
@@ -1195,19 +1066,33 @@
 	 * `--shelf-*` and `--hue-*` are untouched in `tokens.css`: `CitedBy` marks
 	 * every shelf with the muted mix of the first, and the cards below walk the
 	 * second. What is gone is this page asserting a colour per work.
+	 *
+	 * SIZE AND COLOUR ARE ONE RULE NOW, WHERE THEY HAD TO BE TWO, and the bug
+	 * that made them two is worth keeping. `.book-icon { color: var(--shelf) }`
+	 * sat ABOVE a `.feature-icon, .book-icon { … color: var(--color-accent) }`
+	 * that set the accent for both — two selectors, the same specificity, the
+	 * later one winning — so every shelf icon was the house red at rest and
+	 * took its colour only from `.book:hover .book-icon` one class higher.
+	 * **The feature was inverted: colour appeared on hover and vanished at
+	 * rest.** Nothing failed: `svelte-check` saw two live selectors, both used,
+	 * and three rounds of palette work were judged against a hover state
+	 * because that was the only place the colours appeared. **A cascade bug
+	 * looks exactly like a design problem, and it will absorb as much design
+	 * work as you give it.** The guide's rows left for `Help.svelte` on
+	 * 2026-09-07, so there is one kind of icon here and no shared rule to
+	 * override; `pigments.test.ts` still fails a rule that sizes two kinds and
+	 * colours them.
 	 */
 	.book-icon {
+		flex: 0 0 auto;
+		display: grid;
+		place-items: center;
+		inline-size: 1.5rem;
+		font-size: 1.35rem;
+		line-height: 1;
+		margin-block-start: 0.12rem;
 		color: var(--color-accent);
 	}
-
-	/*
-	 * NO FEATURE ROW LIGHTS ON HOVER ANY MORE, and it is not an omission. Three
-	 * of the nine used to be pages, so `:has(a)` lit exactly those and left the
-	 * six that describe a menu inert — the honest answer to "does this row go
-	 * anywhere". The three that were pages have moved to the works section,
-	 * where every row is a link and every row answers; what is left here goes
-	 * nowhere at all, so nothing here should look as though it might.
-	 */
 
 	/* Hover deepens the accent rather than changing it: a mark that answers by
 	   becoming a different colour is a mark that was not the row's colour to
@@ -1231,7 +1116,6 @@
 	 * content's intrinsic width, which a long unbroken title would otherwise
 	 * push the row past.
 	 */
-	.feature-text,
 	.book-text {
 		flex: 1;
 		min-width: 0;
@@ -1252,21 +1136,12 @@
 		color: var(--color-text-muted);
 	}
 
-	/* The first group sits directly under the section's lede and needs none of
-	   that air; the lede is already the introduction it would be separating
-	   itself from. */
-	.section-lede + .group {
-		margin-block-start: 0;
-	}
-
-	.feature h4,
 	.book h4 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		margin: 0 0 0.2rem;
 	}
 
-	.feature p,
 	.book-what {
 		margin: 0;
 		font-size: 0.9rem;
@@ -1307,7 +1182,7 @@
 		text-decoration: none;
 		border-radius: var(--radius-sm);
 		/*
-		 * MUTED, AND IT WORE THE ACCENT FOR A DAY. The chip is on the "Cited as"
+		 * MUTED, AND IT WORE THE ACCENT FOR A DAY. The chip is on the "Identified"
 		 * row now, and that row is 0.8rem of `--color-text-muted` — so an accent
 		 * chip was the loudest thing on the quietest line of the card, shouting
 		 * a sentence it is only the exhibit for. Its own colour is the row's:
@@ -1334,7 +1209,6 @@
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,
 	   including turning its caption control back into the line it opens. */
 	@media print {
-		.feature,
 		.book,
 		.stage {
 			background: none;

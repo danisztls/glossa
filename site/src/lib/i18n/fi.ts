@@ -86,11 +86,11 @@ export const fi: Dictionary = {
 	'schola.landing.title': 'Mistä aloittaa',
 	'schola.landing.tagline':
 		'Lyhyt opas siihen, mitä täällä on: mikä kukin näistä kirjoista on, miten viittaus siihen kirjoitetaan, miten kohta löydetään, ja lukujärjestyksiä, joita kirkko on esittänyt.',
-	'schola.start.heading': 'Jos tämä kaikki on sinulle uutta',
+	'schola.start.heading': 'Onko katolisuus sinulle uutta?',
 	'schola.start.body': 'Paras aloitus on tämä: ',
 	'schola.start.bodyAfter':
 		' — sama opetus kuin Katekismuksessa, paljon lyhyempänä, kysymyksinä ja vastauksina. Se on noin kymmenesosan mittainen eikä oleta mitään.',
-	'schola.bible.heading': 'Jos et ole koskaan lukenut Raamattua',
+	'schola.bible.heading': 'Etkö ole koskaan lukenut Raamattua?',
 	'schola.bible.library':
 		'Se ei ole yksi kirja vaan seitsemänkymmentäkolme, kirjoitettuja yli tuhannen vuoden aikana ja koottuja siihen järjestykseen, johon kirkko päätyi — ei siihen järjestykseen, jossa asiat tapahtuivat, eikä siihen, joka on helpoin lukea. Useimmat aloittavat ensimmäiseltä sivulta ja lopettavat muutamaa viikkoa myöhemmin, keskellä pitkää muinaisen lain lukua, koska kukaan ei ole vielä kertonut heille, mitä varten se on.',
 	'schola.bible.step.gospel': 'Aloita evankeliumista',
@@ -120,31 +120,10 @@ export const fi: Dictionary = {
 		'Ei kertomus: sataviisikymmentä rukousta ja laulua. Lue yksi kerrallaan, missä järjestyksessä tahansa. Kirkko rukoilee näitä yhä joka päivä.',
 	'schola.bible.bothWays':
 		'Tunnistat asioita, ja se on tarkoitus eikä sattuma. Kirkko lukee vanhemmat kirjat Kristuksen valossa ja uudemmat sen valossa mikä tuli ennen — kumpikin puolisko selittää toista, ja siksi kumpaakaan ei lueta yksin.',
-	'schola.guide.heading': 'Miten löydät perille',
-	'schola.guide.lede':
-		'Teksti on koko sivu; kaikki muu on säädin, jonka voit sivuuttaa kunnes haluat sen.',
-	'schola.guide.top.heading': 'Palkki jokaisen sivun yläreunassa',
-	'schola.guide.reading.heading': 'Palkki tekstin yläpuolella',
-	'schola.feature.search':
-		'Kirjoita viite yläreunan kenttään — luku ja jae, kappaleen numero, asiakirjan nimi — ja se täydentyy kirjoittaessasi. Paina mistä tahansa / tai Ctrl+K, ja ? muita pikanäppäimiä varten.',
-	'schola.feature.languages':
-		'Käyttöliittymä ja teksti valitaan erikseen, joten voit lukea teosta yhdellä kielellä painikkeiden pysyessä toisella. Missä teoksesta on useita laitoksia sinun kielelläsi, valitset myös niiden välillä.',
-	'schola.feature.settings':
-		'Tekstin koko, vaalea tai tumma, seepia, ja kuinka paljon selitysaineistoa haluat tekstin viereen.',
-	'schola.feature.offline':
-		'Lisää sivusto aloitusnäytöllesi, niin se avautuu kuin sovellus. Voit ladata kokonaisia teoksia luettavaksi ilman verkkoyhteyttä.',
-	'schola.feature.contents':
-		'Sen teoksen jaottelu, jossa olet — kirjat, osat, luvut — jotta voit liikkua sen sisällä palaamatta alkuun.',
-	'schola.feature.compare':
-		'Saman kohdan kaksi laitosta rinnakkain — latina oman kielesi vierellä, tai käännös toisen käännöksen vierellä.',
-	'schola.feature.apparatus':
-		'Laitoksen omat huomautukset, ja mikä tahansa tekstiin kirjoitettu selitys, tarjotaan sen vierellä eikä sen alla. Tekstin sisäiset viittaukset ovat linkkejä, joten viite vie sinne minne se osoittaa.',
-	'schola.feature.focus':
-		'Siivoaa kaiken muun paitsi tekstin. Ulospääsy jää siihen missä palkki oli, jottei mikään jää sen taakse.',
-	'schola.books.heading': 'Mitä täällä on, ja miten siihen viitataan',
+	'schola.books.heading': 'Mitä täällä on, ja miten se yksilöidään',
 	'schola.books.lede':
 		'Jokainen näistä on eri laji kirja, ja jokaiseen viitataan omalla numerollaan. Esimerkit näyttävät muodon: kirjoita sellainen hakukenttään, niin päädyt kohtaan.',
-	'schola.cite.label': 'Viitataan',
+	'schola.cite.label': 'Yksilöidään',
 	'schola.what.scripture':
 		'Raamattu sellaisena kuin kirkko sen vastaanottaa, molemmissa testamenteissa. Kaikki muu täällä luetaan sen valossa.',
 	'schola.cite.scripture': 'kirja, luku ja jae, niillä lyhenteillä joita oma laitoksesi painaa',
@@ -494,6 +473,21 @@ export const fi: Dictionary = {
 	'shortcuts.betweenDocuments': 'Asiakirjojen välillä',
 	'shortcuts.withinDocument': 'Asiakirjan sisällä',
 	'shortcuts.show': 'Näytä tämä lista',
+	'help.title': 'Ohje',
+	'help.top.heading': 'Palkki jokaisen sivun yläreunassa',
+	'help.reading.heading': 'Palkki tekstin yläpuolella',
+	'help.feature.search':
+		'Kirjoita viite yläreunan kenttään — luku ja jae, kappaleen numero, asiakirjan nimi — ja se täydentyy kirjoittaessasi.',
+	'help.feature.offline':
+		'Lisää sivusto aloitusnäytöllesi, niin se avautuu kuin sovellus. Voit ladata kokonaisia teoksia luettavaksi ilman verkkoyhteyttä.',
+	'help.feature.contents':
+		'Sen teoksen jaottelu, jossa olet — kirjat, osat, luvut — jotta voit liikkua sen sisällä palaamatta alkuun.',
+	'help.feature.compare':
+		'Saman kohdan kaksi laitosta rinnakkain — latina oman kielesi vierellä, tai käännös toisen käännöksen vierellä.',
+	'help.feature.apparatus':
+		'Laitoksen omat huomautukset, ja mikä tahansa tekstiin kirjoitettu selitys, tarjotaan sen vierellä eikä sen alla. Tekstin sisäiset viittaukset ovat linkkejä, joten viite vie sinne minne se osoittaa.',
+	'help.feature.focus':
+		'Siivoaa kaiken muun paitsi tekstin. Ulospääsy jää siihen missä palkki oli, jottei mikään jää sen taakse.',
 	'zen.enter': 'Keskittymistila',
 	'zen.exit': 'Poistu keskittymistilasta',
 	'nav.calendar': 'Kalenteri',

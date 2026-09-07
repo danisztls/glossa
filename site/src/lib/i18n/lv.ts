@@ -86,11 +86,11 @@ export const lv: Dictionary = {
 	'schola.landing.title': 'Ar ko sākt',
 	'schola.landing.tagline':
 		'Īss ceļvedis pa to, kas šeit ir: kas ir katra no šīm grāmatām, kā raksta atsauci uz to, kā atrast vietu, un lasīšanas kārtības, ko Baznīca ir piedāvājusi.',
-	'schola.start.heading': 'Ja tas viss jums ir jauns',
+	'schola.start.heading': 'Vai katolicisms jums ir jauns?',
 	'schola.start.body': 'Vislabākais sākums ir ',
 	'schola.start.bodyAfter':
 		': tā pati mācība, kas katehismā, daudz īsāka, uzrakstīta jautājumos un atbildēs. Tā ir apmēram desmito daļu gara un neko nepieņem par pašsaprotamu.',
-	'schola.bible.heading': 'Ja nekad neesat lasījis Bībeli',
+	'schola.bible.heading': 'Nekad neesat lasījis Bībeli?',
 	'schola.bible.library':
 		'Tā nav viena grāmata, bet septiņdesmit trīs, rakstītas vairāk nekā tūkstoš gadu garumā un sakārtotas tajā secībā, pie kuras Baznīca apstājās — nevis tajā, kādā notikumi risinājās, un ne tajā, kuru ir visvieglāk lasīt. Vairums sāk pirmajā lappusē un pēc dažām nedēļām beidz, garā senā likuma nodaļā, jo neviens vēl nav pateicis, kam tas domāts.',
 	'schola.bible.step.gospel': 'Sāciet ar evaņģēliju',
@@ -120,31 +120,10 @@ export const lv: Dictionary = {
 		'Nav stāsts: simt piecdesmit lūgšanu un dziesmu. Lasiet pa vienai, jebkurā secībā. Baznīca tās joprojām lūdz katru dienu.',
 	'schola.bible.bothWays':
 		'Jūs atpazīsiet lietas, un tā ir jēga, nevis sakritība. Baznīca senākās grāmatas lasa Kristus gaismā un jaunākās — tā gaismā, kas bija pirms tam: katra puse skaidro otru, un tāpēc neviena netiek lasīta viena pati.',
-	'schola.guide.heading': 'Kā šeit orientēties',
-	'schola.guide.lede':
-		'Teksts ir visa lappuse; viss pārējais ir vadīkla, ko varat neievērot, kamēr tā nav vajadzīga.',
-	'schola.guide.top.heading': 'Josla katras lappuses augšā',
-	'schola.guide.reading.heading': 'Josla virs teksta',
-	'schola.feature.search':
-		'Ierakstiet atsauci laukā augšā — nodaļu un pantu, rindkopas numuru, dokumenta nosaukumu — un tā tiek papildināta, jums rakstot. Nospiediet no jebkuras vietas / vai Ctrl+K, un ? pārējām saīsnēm.',
-	'schola.feature.languages':
-		'Saskarne un teksts tiek izvēlēti atsevišķi, tāpēc varat lasīt darbu vienā valodā, kamēr pogas paliek citā. Kur darbam ir vairāki izdevumi jūsu valodā, izvēlaties arī starp tiem.',
-	'schola.feature.settings':
-		'Teksta lielums, gaišs vai tumšs, sēpija, un cik daudz aparāta vēlaties blakus tekstam.',
-	'schola.feature.offline':
-		'Pievienojiet vietni sākuma ekrānam, un tā atvērsies kā lietotne. Varat lejupielādēt veselus darbus, lai lasītu bez savienojuma.',
-	'schola.feature.contents':
-		'Tā darba dalījums, kurā atrodaties — grāmatas, daļas, nodaļas — lai pārvietotos tā iekšienē, neatgriežoties pie sākuma.',
-	'schola.feature.compare':
-		'Divi viena un tā paša fragmenta izdevumi blakus — latīņu valoda blakus jūsu pašu valodai, vai viens tulkojums blakus citam.',
-	'schola.feature.apparatus':
-		'Izdevuma paša piezīmes un jebkurš tekstam rakstīts komentārs tiek piedāvāti tam blakus, nevis zem tā. Atsauces teksta iekšienē ir saites, tāpēc norāde ved turp, kurp tā rāda.',
-	'schola.feature.focus':
-		'Notīra visu, izņemot tekstu. Izeja paliek tur, kur bija josla, lai nekas neieslēgtos aiz tās.',
-	'schola.books.heading': 'Kas šeit ir un kā to citē',
+	'schola.books.heading': 'Kas šeit ir un kā to apzīmē',
 	'schola.books.lede':
 		'Katra no šīm ir cita veida grāmata, un uz katru atsaucas ar savu skaitli. Piemēri rāda formu: ierakstiet līdzīgu meklēšanas laukā, un jūs nonāksiet pie vietas.',
-	'schola.cite.label': 'Citē kā',
+	'schola.cite.label': 'Apzīmē',
 	'schola.what.scripture':
 		'Raksti tādi, kādus tos saņem Baznīca, abās Derībās. Viss pārējais šeit tiek lasīts to gaismā.',
 	'schola.cite.scripture': 'grāmata, nodaļa un pants, tajos saīsinājumos, ko drukā jūsu izdevums',
@@ -490,6 +469,21 @@ export const lv: Dictionary = {
 	'shortcuts.betweenDocuments': 'Starp dokumentiem',
 	'shortcuts.withinDocument': 'Dokumenta iekšienē',
 	'shortcuts.show': 'Rādīt šo sarakstu',
+	'help.title': 'Palīdzība',
+	'help.top.heading': 'Josla katras lappuses augšā',
+	'help.reading.heading': 'Josla virs teksta',
+	'help.feature.search':
+		'Ierakstiet atsauci laukā augšā — nodaļu un pantu, rindkopas numuru, dokumenta nosaukumu — un tā tiek papildināta, jums rakstot.',
+	'help.feature.offline':
+		'Pievienojiet vietni sākuma ekrānam, un tā atvērsies kā lietotne. Varat lejupielādēt veselus darbus, lai lasītu bez savienojuma.',
+	'help.feature.contents':
+		'Tā darba dalījums, kurā atrodaties — grāmatas, daļas, nodaļas — lai pārvietotos tā iekšienē, neatgriežoties pie sākuma.',
+	'help.feature.compare':
+		'Divi viena un tā paša fragmenta izdevumi blakus — latīņu valoda blakus jūsu pašu valodai, vai viens tulkojums blakus citam.',
+	'help.feature.apparatus':
+		'Izdevuma paša piezīmes un jebkurš tekstam rakstīts komentārs tiek piedāvāti tam blakus, nevis zem tā. Atsauces teksta iekšienē ir saites, tāpēc norāde ved turp, kurp tā rāda.',
+	'help.feature.focus':
+		'Notīra visu, izņemot tekstu. Izeja paliek tur, kur bija josla, lai nekas neieslēgtos aiz tās.',
 	'zen.enter': 'Fokusa režīms',
 	'zen.exit': 'Iziet no fokusa režīma',
 	'nav.calendar': 'Kalendārs',

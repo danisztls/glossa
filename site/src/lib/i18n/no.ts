@@ -66,11 +66,11 @@ export const no: Dictionary = {
 	'schola.landing.title': 'Hvor du begynner',
 	'schola.landing.tagline':
 		'En kort veiviser til det som er her: hva hver av disse bøkene er, hvordan en henvisning til den skrives, hvordan du finner et sted, og leseordninger Kirken selv har lagt fram.',
-	'schola.start.heading': 'Om dette er nytt for deg',
+	'schola.start.heading': 'Ny i katolsk tro?',
 	'schola.start.body': 'Begynn med ',
 	'schola.start.bodyAfter':
 		': den samme læren som Katekismen, mye kortere, skrevet som spørsmål og svar. Den er omtrent en tidel så lang og forutsetter ingenting.',
-	'schola.bible.heading': 'Om du aldri har lest Bibelen',
+	'schola.bible.heading': 'Aldri lest Bibelen?',
 	'schola.bible.library':
 		'Den er ikke én bok, men syttitre, skrevet over mer enn tusen år og bundet i den orden Kirken fastsatte — ikke i den orden hendelsene skjedde, og ikke i den orden som er lettest å lese. De fleste begynner på første side og stopper noen uker senere, i et langt kapittel med gammel lov, fordi ingen ennå har fortalt dem hva den er til for.',
 	'schola.bible.step.gospel': 'Begynn med et evangelium',
@@ -99,31 +99,10 @@ export const no: Dictionary = {
 		'Ikke en fortelling: hundre og femti bønner og sanger. Les én om gangen, i hvilken som helst rekkefølge. Kirken ber dem fremdeles hver dag.',
 	'schola.bible.bothWays':
 		'Du vil kjenne igjen ting, og det er poenget snarere enn et sammentreff. Kirken leser de eldre bøkene i Kristi lys og de nyere i lys av det som kom før — hver halvdel forklarer den andre, og derfor leses ingen av dem alene.',
-	'schola.guide.heading': 'Å finne fram',
-	'schola.guide.lede':
-		'Teksten er hele siden; alt annet er en betjening du kan overse til du vil ha den.',
-	'schola.guide.top.heading': 'Linjen øverst på hver side',
-	'schola.guide.reading.heading': 'Linjen over en tekst',
-	'schola.feature.search':
-		'Skriv en henvisning i feltet øverst — kapittel og vers, et avsnittsnummer, navnet på et dokument — og det fullføres mens du skriver. Trykk / eller Ctrl+K hvor som helst, og ? for de andre snarveiene.',
-	'schola.feature.languages':
-		'Grensesnittet og teksten velges hver for seg, så du kan lese et verk på ett språk mens knappene står på et annet. Har et verk flere utgaver på ditt språk, velger du også mellom dem.',
-	'schola.feature.settings':
-		'Tekststørrelse, lyst eller mørkt, sepia, og hvor mye av apparatet du vil ha ved siden av teksten.',
-	'schola.feature.offline':
-		'Legg stedet på hjemskjermen, så åpnes det som en app. Du kan laste ned hele verk og lese dem uten nett.',
-	'schola.feature.contents':
-		'Inndelingene i verket du er i — bøker, deler, kapitler — så du kan flytte deg inni det uten å gå tilbake til begynnelsen.',
-	'schola.feature.compare':
-		'To utgaver av samme sted, side om side — latinen ved siden av ditt eget språk, eller én oversettelse ved siden av en annen.',
-	'schola.feature.apparatus':
-		'En utgaves egne fotnoter, og enhver kommentar skrevet til teksten, tilbys ved siden av den heller enn under den. Henvisninger inne i teksten er lenker, så en referanse fører dit den peker.',
-	'schola.feature.focus':
-		'Rydder bort alt annet enn teksten. Veien ut blir stående der linjen var, så ingenting blir sperret inne bak den.',
-	'schola.books.heading': 'Hva som er her, og hvordan det henvises til',
+	'schola.books.heading': 'Hva som er her, og hvordan det angis',
 	'schola.books.lede':
 		'Hver av disse er en ulik slags bok, og hver blir omtalt med et nummer av sitt eget slag. Eksemplene viser formen: skriv en av dem i søkefeltet, så lander du på stedet.',
-	'schola.cite.label': 'Henvises til som',
+	'schola.cite.label': 'Angis',
 	'schola.what.scripture':
 		'Skriften slik Kirken mottar den, i begge testamenter. Alt annet her leses i dens lys.',
 	'schola.cite.scripture': 'bok, kapittel og vers, med de forkortelsene din egen utgave trykker',
@@ -467,6 +446,21 @@ export const no: Dictionary = {
 	'shortcuts.betweenDocuments': 'Mellom dokumenter',
 	'shortcuts.withinDocument': 'I dokumentet',
 	'shortcuts.show': 'Vis denne listen',
+	'help.title': 'Hjelp',
+	'help.top.heading': 'Linjen øverst på hver side',
+	'help.reading.heading': 'Linjen over en tekst',
+	'help.feature.search':
+		'Skriv en henvisning i feltet øverst — kapittel og vers, et avsnittsnummer, navnet på et dokument — og det fullføres mens du skriver.',
+	'help.feature.offline':
+		'Legg stedet på hjemskjermen, så åpnes det som en app. Du kan laste ned hele verk og lese dem uten nett.',
+	'help.feature.contents':
+		'Inndelingene i verket du er i — bøker, deler, kapitler — så du kan flytte deg inni det uten å gå tilbake til begynnelsen.',
+	'help.feature.compare':
+		'To utgaver av samme sted, side om side — latinen ved siden av ditt eget språk, eller én oversettelse ved siden av en annen.',
+	'help.feature.apparatus':
+		'En utgaves egne fotnoter, og enhver kommentar skrevet til teksten, tilbys ved siden av den heller enn under den. Henvisninger inne i teksten er lenker, så en referanse fører dit den peker.',
+	'help.feature.focus':
+		'Rydder bort alt annet enn teksten. Veien ut blir stående der linjen var, så ingenting blir sperret inne bak den.',
 	'zen.enter': 'Fokusmodus',
 	'zen.exit': 'Forlat fokusmodus',
 	'nav.calendar': 'Kalender',

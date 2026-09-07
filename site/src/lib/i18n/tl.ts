@@ -90,11 +90,11 @@ export const tl: Dictionary = {
 	'schola.landing.title': 'Saan magsisimula',
 	'schola.landing.tagline':
 		'Isang maikling patnubay sa kung ano ang narito: kung ano ang bawat isa sa mga aklat na ito, paano isinusulat ang sanggunian dito, paano makakita ng isang bahagi, at mga ayos ng pagbabasa na iminungkahi ng Simbahan.',
-	'schola.start.heading': 'Kung bago sa inyo ang lahat ng ito',
+	'schola.start.heading': 'Bago sa Katolisismo?',
 	'schola.start.body': 'Ang pinakamainam na simula ay ang ',
 	'schola.start.bodyAfter':
 		': ang mismong turo ng Katesismo, higit na maikli, nakasulat sa tanong at sagot. Mga ikasampung bahagi lamang ang haba nito at wala itong ipinapalagay.',
-	'schola.bible.heading': 'Kung hindi pa ninyo nababasa ang Bibliya',
+	'schola.bible.heading': 'Hindi pa nababasa ang Bibliya?',
 	'schola.bible.library':
 		'Hindi ito iisang aklat kundi pitumpu’t tatlo, isinulat sa loob ng mahigit isang libong taon at tinipon sa ayos na pinanindigan ng Simbahan — hindi sa ayos ng pagkakasunod ng mga pangyayari, at hindi sa ayos na pinakamadaling basahin. Karamihan ay nagsisimula sa unang pahina at humihinto makalipas ang ilang linggo, sa mahabang kabanata ng sinaunang batas, dahil wala pang nagsabi sa kanila kung para saan ito.',
 	'schola.bible.step.gospel': 'Magsimula sa isang Ebanghelyo',
@@ -125,31 +125,10 @@ export const tl: Dictionary = {
 		'Hindi salaysay: isang daan at limampung panalangin at awit. Isa-isahin ninyo, sa anumang ayos. Dinarasal pa rin ito ng Simbahan araw-araw.',
 	'schola.bible.bothWays':
 		'May makikilala kayong mga bagay, at iyon ang layunin at hindi pagkakataon lamang. Binabasa ng Simbahan ang mas lumang mga aklat sa liwanag ni Kristo at ang mas bago sa liwanag ng nauna — bawat kalahati ay nagpapaliwanag sa isa, at kaya walang isa man sa kanila ang binabasang mag-isa.',
-	'schola.guide.heading': 'Paano mapapasok ang paligid',
-	'schola.guide.lede':
-		'Ang teksto ang buong pahina; ang lahat ng iba ay kontrol na maaari ninyong palampasin hanggang kailanganin ninyo.',
-	'schola.guide.top.heading': 'Ang bareta sa itaas ng bawat pahina',
-	'schola.guide.reading.heading': 'Ang bareta sa ibabaw ng isang teksto',
-	'schola.feature.search':
-		'Mag-type ng sanggunian sa kahon sa itaas — kabanata at talata, bilang ng bahagi, pangalan ng isang dokumento — at kinukumpleto ito habang nagta-type kayo. Pindutin ang / o Ctrl+K mula saanman, at ang ? para sa iba pang pindutan.',
-	'schola.feature.languages':
-		'Magkahiwalay na pinipili ang interface at ang teksto, kaya mababasa ninyo ang isang akda sa isang wika habang nananatili sa iba ang mga pindutan. Kung may ilang edisyon ang isang akda sa inyong wika, pumipili rin kayo sa mga iyon.',
-	'schola.feature.settings':
-		'Laki ng teksto, maliwanag o madilim, sepia, at kung gaano karaming tala ang nais ninyong nasa tabi ng teksto.',
-	'schola.feature.offline':
-		'Idagdag ninyo ang pook na ito sa inyong home screen at bubukas ito na parang app. Maaari ninyong i-download ang buong akda upang basahin nang walang koneksyon.',
-	'schola.feature.contents':
-		'Ang mga bahagi ng akdang kinalalagyan ninyo — mga aklat, bahagi, kabanata — upang makagalaw sa loob nito nang hindi bumabalik sa simula.',
-	'schola.feature.compare':
-		'Dalawang edisyon ng iisang bahagi, magkatabi — ang Latin katabi ng sarili ninyong wika, o isang salin katabi ng isa pa.',
-	'schola.feature.apparatus':
-		'Ang sariling mga tala ng edisyon, at anumang komentaryong isinulat sa teksto, ay inihahain sa tabi nito at hindi sa ilalim. Ang mga sipi sa loob ng teksto ay mga link, kaya ang sanggunian ay tumutungo sa itinuturo nito.',
-	'schola.feature.focus':
-		'Inaalis ang lahat maliban sa teksto. Nananatili ang labasan sa kinaroroonan ng bareta, upang walang makulong sa likod nito.',
-	'schola.books.heading': 'Ano ang narito, at paano ito sinisipi',
+	'schola.books.heading': 'Ano ang narito, at paano ito tinutukoy',
 	'schola.books.lede':
 		'Bawat isa sa mga ito ay ibang uri ng aklat, at bawat isa ay tinutukoy sa pamamagitan ng sariling bilang. Ipinapakita ng mga halimbawa ang anyo: mag-type ng ganoon sa kahon ng paghahanap at mararating ninyo ang bahagi.',
-	'schola.cite.label': 'Sinisipi bilang',
+	'schola.cite.label': 'Tinutukoy',
 	'schola.what.scripture':
 		'Ang Kasulatan gaya ng pagtanggap dito ng Simbahan, sa dalawang Tipan. Ang lahat ng iba rito ay binabasa sa liwanag nito.',
 	'schola.cite.scripture':
@@ -500,6 +479,21 @@ export const tl: Dictionary = {
 	'shortcuts.betweenDocuments': 'Sa pagitan ng mga dokumento',
 	'shortcuts.withinDocument': 'Sa loob ng dokumento',
 	'shortcuts.show': 'Ipakita ang talaang ito',
+	'help.title': 'Tulong',
+	'help.top.heading': 'Ang bareta sa itaas ng bawat pahina',
+	'help.reading.heading': 'Ang bareta sa ibabaw ng isang teksto',
+	'help.feature.search':
+		'Mag-type ng sanggunian sa kahon sa itaas — kabanata at talata, bilang ng bahagi, pangalan ng isang dokumento — at kinukumpleto ito habang nagta-type kayo.',
+	'help.feature.offline':
+		'Idagdag ninyo ang pook na ito sa inyong home screen at bubukas ito na parang app. Maaari ninyong i-download ang buong akda upang basahin nang walang koneksyon.',
+	'help.feature.contents':
+		'Ang mga bahagi ng akdang kinalalagyan ninyo — mga aklat, bahagi, kabanata — upang makagalaw sa loob nito nang hindi bumabalik sa simula.',
+	'help.feature.compare':
+		'Dalawang edisyon ng iisang bahagi, magkatabi — ang Latin katabi ng sarili ninyong wika, o isang salin katabi ng isa pa.',
+	'help.feature.apparatus':
+		'Ang sariling mga tala ng edisyon, at anumang komentaryong isinulat sa teksto, ay inihahain sa tabi nito at hindi sa ilalim. Ang mga sipi sa loob ng teksto ay mga link, kaya ang sanggunian ay tumutungo sa itinuturo nito.',
+	'help.feature.focus':
+		'Inaalis ang lahat maliban sa teksto. Nananatili ang labasan sa kinaroroonan ng bareta, upang walang makulong sa likod nito.',
 	'zen.enter': 'Anyo ng Pagtutok',
 	'zen.exit': 'Umalis sa Anyo ng Pagtutok',
 	'nav.calendar': 'Kalendaryo',

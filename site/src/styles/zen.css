@@ -58,7 +58,8 @@
  *
  * The mode is off below 641px, and `ZenToggle` hides its button at the
  * complementary `max-width: 640px` — the same pair, in the same unit and for
- * the same reason, as the shortcut sheet's trigger and card (`Shortcuts`).
+ * the same reason, as the help sheet's own card and its keyboard section
+ * (`Help.svelte`, whose trigger is on every width).
  * A phone has no sidebar and no second column to take away: what is left to
  * hide is the header, the footer and the bar's own controls, which is a strip
  * at each end of a screen the reader is scrolling past anyway. The mode gives
@@ -89,7 +90,7 @@
  *
  * ## Dialogs, and the trap that survives the change of property
  *
- * `JumpBox` and `Shortcuts` sit in `.controls`, and each renders its trigger
+ * `JumpBox` and `Help` sit in `.controls`, and each renders its trigger
  * and its `<dialog>` as siblings inside the same component — so hiding the
  * TRIGGERS, as this file does, leaves the dialogs alone and `/`, Ctrl+K and
  * `?` keep working. Hiding an ancestor would not: `display: none` takes a

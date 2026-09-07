@@ -83,11 +83,11 @@ export const cs: Dictionary = {
 	'schola.landing.title': 'Kde začít',
 	'schola.landing.tagline':
 		'Krátký průvodce tím, co je zde: co je každá z těchto knih, jak se zapisuje odkaz na ni, jak najít místo, a pořádky čtení, které církev navrhla.',
-	'schola.start.heading': 'Je-li vám to všechno nové',
+	'schola.start.heading': 'Nový v katolictví?',
 	'schola.start.body': 'Nejlepší začátek je ',
 	'schola.start.bodyAfter':
 		': totéž učení jako v Katechismu, mnohem kratší, psané v otázkách a odpovědích. Má asi desetinu rozsahu a nic nepředpokládá.',
-	'schola.bible.heading': 'Nečetli-li jste nikdy Bibli',
+	'schola.bible.heading': 'Nikdy jste nečetli Bibli?',
 	'schola.bible.library':
 		'Není to jedna kniha, nýbrž sedmdesát tři, psané po více než tisíc let a svázané v pořádku, na němž se církev ustálila — ne v pořádku, v němž se věci staly, a ne v tom, který se čte nejsnáze. Většina lidí začne na první stránce a po několika týdnech přestane, v dlouhé kapitole starobylého zákona, protože jim ještě nikdo neřekl, k čemu to je.',
 	'schola.bible.step.gospel': 'Začněte evangeliem',
@@ -116,31 +116,10 @@ export const cs: Dictionary = {
 		'Ne vyprávění: sto padesát modliteb a písní. Čtěte po jedné, v libovolném pořadí. Církev se je dodnes modlí každý den.',
 	'schola.bible.bothWays':
 		'Budete poznávat věci, a o to jde, není to náhoda. Církev čte starší knihy ve světle Kristově a novější ve světle toho, co bylo předtím — každá polovina vysvětluje druhou, a proto se žádná nečte sama.',
-	'schola.guide.heading': 'Jak se tu vyznat',
-	'schola.guide.lede':
-		'Text je celá stránka; všechno ostatní je ovládací prvek, který můžete přehlížet, dokud ho nebudete chtít.',
-	'schola.guide.top.heading': 'Lišta v záhlaví každé stránky',
-	'schola.guide.reading.heading': 'Lišta nad textem',
-	'schola.feature.search':
-		'Napište odkaz do pole nahoře — kapitolu a verš, číslo odstavce, název dokumentu — a doplní se vám během psaní. Odkudkoli stiskněte / nebo Ctrl+K, a ? pro ostatní zkratky.',
-	'schola.feature.languages':
-		'Rozhraní a text se volí zvlášť, takže můžete číst dílo v jednom jazyce, zatímco tlačítka zůstanou v jiném. Kde má dílo ve vašem jazyce několik vydání, vybíráte i mezi nimi.',
-	'schola.feature.settings':
-		'Velikost textu, světlý či tmavý režim, sépie, a kolik poznámkového aparátu chcete vedle textu.',
-	'schola.feature.offline':
-		'Přidejte web na domovskou obrazovku a otevře se jako aplikace. Celá díla si můžete stáhnout a číst bez připojení.',
-	'schola.feature.contents':
-		'Členění díla, v němž jste — knihy, části, kapitoly — abyste se v něm pohybovali bez návratu na začátek.',
-	'schola.feature.compare':
-		'Dvě vydání téhož místa vedle sebe — latina vedle vašeho jazyka, nebo jeden překlad vedle druhého.',
-	'schola.feature.apparatus':
-		'Vlastní poznámky vydání a jakýkoli komentář napsaný k textu se nabízejí vedle něj, a ne pod ním. Citace uvnitř textu jsou odkazy, takže odkaz vede tam, kam ukazuje.',
-	'schola.feature.focus':
-		'Odklidí všechno kromě textu. Cesta ven zůstane tam, kde byla lišta, aby za ní nic neuvízlo.',
-	'schola.books.heading': 'Co je zde a jak se to cituje',
+	'schola.books.heading': 'Co je zde a jak se to označuje',
 	'schola.books.lede':
 		'Každá z těchto knih je jiného druhu a na každou se odkazuje vlastním číslem. Příklady ukazují tvar: napište podobný do vyhledávacího pole a dostanete se na místo.',
-	'schola.cite.label': 'Cituje se',
+	'schola.cite.label': 'Označuje se',
 	'schola.what.scripture':
 		'Písmo, jak je církev přijímá, v obou Zákonech. Všechno ostatní zde se čte v jeho světle.',
 	'schola.cite.scripture': 'kniha, kapitola a verš, ve zkratkách, které tiskne vaše vydání',
@@ -486,6 +465,21 @@ export const cs: Dictionary = {
 	'shortcuts.betweenDocuments': 'Mezi dokumenty',
 	'shortcuts.withinDocument': 'Uvnitř dokumentu',
 	'shortcuts.show': 'Zobrazit tento seznam',
+	'help.title': 'Nápověda',
+	'help.top.heading': 'Lišta v záhlaví každé stránky',
+	'help.reading.heading': 'Lišta nad textem',
+	'help.feature.search':
+		'Napište odkaz do pole nahoře — kapitolu a verš, číslo odstavce, název dokumentu — a doplní se vám během psaní.',
+	'help.feature.offline':
+		'Přidejte web na domovskou obrazovku a otevře se jako aplikace. Celá díla si můžete stáhnout a číst bez připojení.',
+	'help.feature.contents':
+		'Členění díla, v němž jste — knihy, části, kapitoly — abyste se v něm pohybovali bez návratu na začátek.',
+	'help.feature.compare':
+		'Dvě vydání téhož místa vedle sebe — latina vedle vašeho jazyka, nebo jeden překlad vedle druhého.',
+	'help.feature.apparatus':
+		'Vlastní poznámky vydání a jakýkoli komentář napsaný k textu se nabízejí vedle něj, a ne pod ním. Citace uvnitř textu jsou odkazy, takže odkaz vede tam, kam ukazuje.',
+	'help.feature.focus':
+		'Odklidí všechno kromě textu. Cesta ven zůstane tam, kde byla lišta, aby za ní nic neuvízlo.',
 	'zen.enter': 'Režim soustředění',
 	'zen.exit': 'Opustit režim soustředění',
 	'nav.calendar': 'Kalendář',

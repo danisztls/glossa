@@ -83,11 +83,11 @@ export const hr: Dictionary = {
 	'schola.landing.title': 'Odakle početi',
 	'schola.landing.tagline':
 		'Kratak vodič kroz ono što je ovdje: što je svaka od ovih knjiga, kako se piše navod za nju, kako naći mjesto, i redoslijedi čitanja koje je Crkva predložila.',
-	'schola.start.heading': 'Ako vam je sve ovo novo',
+	'schola.start.heading': 'Novi u katoličanstvu?',
 	'schola.start.body': 'Najbolji je početak ',
 	'schola.start.bodyAfter':
 		': isti nauk kao u Katekizmu, mnogo kraći, pisan u pitanjima i odgovorima. Otprilike je desetinu duljine i ništa ne pretpostavlja.',
-	'schola.bible.heading': 'Ako nikada niste čitali Bibliju',
+	'schola.bible.heading': 'Nikada niste čitali Bibliju?',
 	'schola.bible.library':
 		'Nije jedna knjiga nego sedamdeset i tri, pisane kroz više od tisuću godina i uvezane redom koji je Crkva ustalila — ne redom kojim su se stvari zbile, ni onim koji se najlakše čita. Većina počne na prvoj stranici i prestane nekoliko tjedana poslije, usred dugoga poglavlja drevnoga zakona, jer im nitko još nije rekao čemu to služi.',
 	'schola.bible.step.gospel': 'Počnite evanđeljem',
@@ -116,31 +116,10 @@ export const hr: Dictionary = {
 		'Nije pripovijest: sto pedeset molitava i pjesama. Čitajte po jedan, bilo kojim redom. Crkva ih i danas moli svaki dan.',
 	'schola.bible.bothWays':
 		'Prepoznavat ćete stvari, i u tome je smisao, a nije slučajnost. Crkva čita starije knjige u svjetlu Kristovu a novije u svjetlu onoga što je bilo prije — svaka polovica objašnjava drugu, i zato se nijedna ne čita sama.',
-	'schola.guide.heading': 'Kako se snaći',
-	'schola.guide.lede':
-		'Tekst je cijela stranica; sve ostalo je naredba koju možete zanemariti dok je ne poželite.',
-	'schola.guide.top.heading': 'Traka na vrhu svake stranice',
-	'schola.guide.reading.heading': 'Traka iznad teksta',
-	'schola.feature.search':
-		'Upišite navod u okvir na vrhu — poglavlje i redak, broj odlomka, ime dokumenta — i dovršava ga dok tipkate. Pritisnite / ili Ctrl+K odakle god, i ? za ostale prečace.',
-	'schola.feature.languages':
-		'Sučelje i tekst biraju se odvojeno, pa možete čitati djelo na jednom jeziku dok gumbi ostaju na drugom. Gdje djelo ima više izdanja na vašem jeziku, birate i među njima.',
-	'schola.feature.settings':
-		'Veličina teksta, svijetlo ili tamno, sepija, i koliko aparata želite uz tekst.',
-	'schola.feature.offline':
-		'Dodajte stranicu na početni zaslon i otvara se kao aplikacija. Cijela djela možete preuzeti i čitati bez veze.',
-	'schola.feature.contents':
-		'Podjele djela u kojem ste — knjige, dijelovi, poglavlja — da se krećete unutar njega bez vraćanja na početak.',
-	'schola.feature.compare':
-		'Dva izdanja istoga mjesta jedno uz drugo — latinski uz vaš vlastiti jezik, ili jedan prijevod uz drugi.',
-	'schola.feature.apparatus':
-		'Vlastite bilješke izdanja i svaki komentar napisan uz tekst nude se pokraj njega, a ne ispod. Navodi unutar teksta su poveznice, pa uputnica vodi onamo kamo pokazuje.',
-	'schola.feature.focus':
-		'Ukloni sve osim teksta. Izlaz ostaje gdje je bila traka, da ništa ne ostane zarobljeno iza nje.',
-	'schola.books.heading': 'Što je ovdje i kako se navodi',
+	'schola.books.heading': 'Što je ovdje i kako se određuje',
 	'schola.books.lede':
 		'Svaka je od ovih knjiga druge vrste, i na svaku se upućuje vlastitim brojem. Primjeri pokazuju oblik: upišite takav u okvir za traženje i stižete na mjesto.',
-	'schola.cite.label': 'Navodi se',
+	'schola.cite.label': 'Određuje se',
 	'schola.what.scripture':
 		'Pismo kako ga Crkva prima, u oba Zavjeta. Sve ostalo ovdje čita se u njegovu svjetlu.',
 	'schola.cite.scripture': 'knjiga, poglavlje i redak, u kraticama koje tiska vaše izdanje',
@@ -486,6 +465,21 @@ export const hr: Dictionary = {
 	'shortcuts.betweenDocuments': 'Između dokumenata',
 	'shortcuts.withinDocument': 'Unutar dokumenta',
 	'shortcuts.show': 'Prikaži ovaj popis',
+	'help.title': 'Pomoć',
+	'help.top.heading': 'Traka na vrhu svake stranice',
+	'help.reading.heading': 'Traka iznad teksta',
+	'help.feature.search':
+		'Upišite navod u okvir na vrhu — poglavlje i redak, broj odlomka, ime dokumenta — i dovršava ga dok tipkate.',
+	'help.feature.offline':
+		'Dodajte stranicu na početni zaslon i otvara se kao aplikacija. Cijela djela možete preuzeti i čitati bez veze.',
+	'help.feature.contents':
+		'Podjele djela u kojem ste — knjige, dijelovi, poglavlja — da se krećete unutar njega bez vraćanja na početak.',
+	'help.feature.compare':
+		'Dva izdanja istoga mjesta jedno uz drugo — latinski uz vaš vlastiti jezik, ili jedan prijevod uz drugi.',
+	'help.feature.apparatus':
+		'Vlastite bilješke izdanja i svaki komentar napisan uz tekst nude se pokraj njega, a ne ispod. Navodi unutar teksta su poveznice, pa uputnica vodi onamo kamo pokazuje.',
+	'help.feature.focus':
+		'Ukloni sve osim teksta. Izlaz ostaje gdje je bila traka, da ništa ne ostane zarobljeno iza nje.',
 	'zen.enter': 'Način fokusa',
 	'zen.exit': 'Izađi iz načina fokusa',
 	'nav.calendar': 'Kalendar',

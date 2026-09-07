@@ -41,7 +41,7 @@
  *
  * It touches no DOM. The environment is `node` under vitest (see
  * `vitest.config.ts`), and the whole point of splitting the matcher from
- * `Shortcuts.svelte` is that the table above is testable at all — there is no
+ * `Help.svelte` is that the table above is testable at all — there is no
  * component test harness in this repository, so logic left in a `.svelte`
  * file is logic nothing checks. The caller supplies the facts that cannot be
  * read off a keystroke (`ShortcutContext` — where focus is, what is open,
@@ -109,7 +109,7 @@ const BLOCK_END = ['KeyS', 'KeyJ', 'ArrowDown'];
  *   - `Space`, `PageUp`/`PageDown`, `Home`/`End` are untouched and still
  *     scroll — see the last test in `shortcuts.test.ts`, which pins that.
  *   - A step that finds nothing returns `null` here or from
- *     `neighbourIndex`, `Shortcuts.svelte` then does not `preventDefault`,
+ *     `neighbourIndex`, `Help.svelte` then does not `preventDefault`,
  *     and the arrow scrolls exactly as it used to. So the keys go back to
  *     scrolling past the last number and before the first, and on every page
  *     with no numbers at all (the home page, the section indexes, the
