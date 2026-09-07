@@ -345,15 +345,15 @@
 	{/snippet}
 
 	{#if day}
-		<!-- The one way out of this card, in the corner beside the picker: the
-		     day's liturgy, which is this page's own subject read at length.
-		     There is no calendar glyph here because this IS the calendar. -->
+		<!-- The one way off this card is downward, into the day's liturgy. The
+		     corner carries no glyph here because the only sideways move it could
+		     offer is this page. -->
 		<LiturgicalDayCard
 			{day}
 			heading="h2"
 			{today}
 			{controls}
-			more={[{ href: liturgyHref, label: t('liturgy.title'), icon: 'scroll' }]}
+			read={{ href: liturgyHref, label: t('liturgy.read'), title: t('liturgy.readTheDay') }}
 		/>
 	{:else}
 		<!-- The control is inside the card, so a date with no day would take it

@@ -142,6 +142,31 @@ Rosary's mysteries for the weekday, which the corpus states in
 `PrayerGroupEntry.days` rather than leaving this site to read a rubric written
 in the content language.
 
+**Which makes it a reading page, and it takes a reading page's shape.**
+`.content-column` and a `ReadingBar`; the passages carry `.reading-text`, so
+they are set in the face, at the measure and under the size adjustment every
+other text on this site is read in. `layout.css` divides `.landing-column` from
+`.content-column` on exactly this question — `--content-width` is a count of
+CHARACTERS, wrong for `/calendarium`'s month of dated rows and right for a
+gospel — and `/preces/{slug}` is the precedent for a reading page with no aside
+being a bare column rather than a one-sided grid.
+
+**A verse number is a `ReferenceNumber` and it points INTO the Bible.** On
+`/scriptura` the number is an in-page `#v{n}` because the chapter is on the
+screen; here the page holds nine verses of it, so the number is the way in, at
+the verse it names, with the same anchor menu (copy, copy link, open, bookmark)
+the reading routes give it. Only a run that OPENS a chapter the previous one did
+not is headed by its number: `…31 1 So the heavens…` is two chapters and reads
+as one, and the citation over the passage has already named the first.
+
+**The bar carries print and the edition picker and nothing else.** Print because
+a day's readings are carried to Mass on paper; the picker because on this page
+the Bible edition is not a preference sitting behind the text but the text
+itself — `EditionMenu`'s route map had to be told the path exists, which is the
+failure that file's own docblock warns about (a work missing from it renders no
+picker and nothing throws). No bookmark: what this address names is a date, and
+the bookmark list is of passages.
+
 **Whole or not at all is the whole design.** `refs.ts`'s `passageSpans` reads a
 citation as VERSES where `citationPieces` reads it as a DESTINATION, and the
 two under-answer in opposite directions: a piece that cannot be placed is drawn

@@ -125,6 +125,13 @@
 		if (pathname === '/ius-canonicum' || pathname.startsWith('/ius-canonicum/')) {
 			return { kind: 'type', type: 'canon-law' };
 		}
+		// The day's liturgy, whose body is Scripture: the pericopes are set out
+		// from the reader's Bible edition, so this picker changes the words on
+		// the page exactly as it does under `/scriptura`. `/calendarium` itself
+		// is not here — it computes a day and holds no corpus text at all.
+		if (pathname === '/calendarium/liturgia') {
+			return { kind: 'type', type: 'bible' };
+		}
 		// The Summa's menu offers English and Latin and no Portuguese, which
 		// is the work's permanent shape rather than a gap (docs/decisions.md
 		// §Scope). `listEditions` is already language-agnostic, so the

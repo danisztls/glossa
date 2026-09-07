@@ -30,7 +30,9 @@
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
 	import { localizeCite } from '$lib/lectionary/cite';
-	import { loadPassage, runIsBroken, type PassageResult } from '$lib/liturgy';
+	import { loadPassage, runIsBroken, type PassageResult, type PassageRun } from '$lib/liturgy';
+	import { hrefFor } from '$lib/address';
+	import ReferenceNumber from './ReferenceNumber.svelte';
 	import RefText from './RefText.svelte';
 
 	interface Props {
@@ -92,6 +94,18 @@
 		const key = slotKey(p, readings);
 		return key ? t(key) : (p.label ?? '');
 	}
+
+	/**
+	 * Where a verse number leads, and what its anchor menu copies.
+	 *
+	 * THE BIBLE'S OWN ADDRESS AND NOT ONE ON THIS PAGE, which is the one place
+	 * this differs from `/scriptura`: there the number is an in-page `#v{n}`
+	 * because the chapter is on the screen. Here it is not — the page holds
+	 * nine verses of it — so the number is a way INTO the chapter, at the verse
+	 * it names. `hrefFor` owns the spelling, as everywhere.
+	 */
+	const verseHref = (run: PassageRun, n: number) =>
+		`${hrefFor({ kind: 'bible', osis: run.osis, chapter: run.chapter })}#v${n}`;
 </script>
 
 <section class="mass-liturgy" aria-labelledby="liturgy-readings">
@@ -126,26 +140,29 @@
 							{/each}
 						</p>
 						{#if passage?.kind === 'passage'}
-							<div class="passage" lang={citeLang}>
+							<div class="passage reading-text" lang={citeLang}>
 								{#each passage.runs as run, r (r)}
 									{@const previous = passage.runs[r - 1]}
-									<!-- The chapter mark rides the run's first verse wherever the
-									     run does not simply continue the last one — the opening,
-									     a crossing, a change of book — so a reader can see which
-									     chapter they are in without the page setting a heading
-									     over four verses. -->
-									{@const opens =
-										previous === undefined ||
-										previous.chapter !== run.chapter ||
-										previous.osis !== run.osis}
+									<!-- A CHAPTER MARK ONLY WHERE THE VERSE NUMBERS WOULD LIE.
+									     Every run but the first restarts its numbering somewhere
+									     the citation above cannot be read for — `…31 1 So the
+									     heavens…` is two chapters and looks like one — so a run
+									     that opens a chapter the previous one did not is headed
+									     by its number. The first run is not: the citation over
+									     the passage has just said which chapter it is. -->
+									{@const opensChapter =
+										previous !== undefined &&
+										(previous.chapter !== run.chapter || previous.osis !== run.osis)}
 									<p class="run" class:broken={runIsBroken(passage.runs, r)}>
-										{#each run.verses as verse, v (verse.n)}<span class="verse"
-												><sup class="n"
-													>{v === 0 && opens
-														? `${run.chapter}${chapterVerseSep()}${verse.n}`
-														: verse.n}</sup
-												>{verse.text}</span
-											>{' '}{/each}
+										{#if opensChapter}<span class="chapter-mark" aria-hidden="true"
+												>{run.chapter}</span
+											>{/if}{#each run.verses as verse (verse.n)}<ReferenceNumber
+												n={verse.n}
+												href={verseHref(run, verse.n)}
+												canonicalHref={verseHref(run, verse.n)}
+												label={`${run.book} ${run.chapter}${chapterVerseSep()}${verse.n}`}
+												placement="inline"
+											/>{verse.text}{' '}{/each}
 									</p>
 								{/each}
 							</div>
@@ -177,7 +194,6 @@
 	}
 	.caveat {
 		margin: 0.4rem 0 0;
-		max-inline-size: var(--content-width);
 		font-size: 0.8rem;
 		line-height: 1.5;
 		color: var(--color-text-muted);
@@ -217,15 +233,12 @@
 		white-space: nowrap;
 		font-weight: 400;
 	}
-	/* The passage keeps a reading measure of its own: the page around it is a
-	   landing column sized for cards and rows, and this is the one thing on it
-	   that is running prose. */
+	/* Face, size and leading are `.reading-text`'s (layout.css) — the same
+	   setting a chapter of Genesis is read in, and the same one the reader's
+	   own size adjustment reaches. Nothing about the type is declared here; the
+	   measure is the column's. */
 	.passage {
 		margin-top: 0.5rem;
-		max-inline-size: var(--content-width);
-		font-family: var(--font-serif);
-		font-size: 1rem;
-		line-height: 1.7;
 	}
 	.run {
 		margin: 0;
@@ -238,14 +251,21 @@
 		padding-top: 0.6rem;
 		border-top: 1px solid var(--color-border);
 	}
-	.n {
-		margin-inline-end: 0.25em;
+	/*
+	 * The chapter number heading a run that opens one, set the way the Bible's
+	 * own reading column would set it: the apparatus colour and the sans face
+	 * of `.reference-number`, a size up from a verse number, sitting on the
+	 * text's own baseline rather than raised. It is `aria-hidden` because every
+	 * verse number beside it already carries the chapter in its accessible
+	 * name.
+	 */
+	.chapter-mark {
+		margin-inline-end: 0.35em;
+		color: var(--color-apparatus);
 		font-family: var(--font-sans);
-		font-size: 0.7em;
-		font-weight: 600;
-		color: var(--color-text-muted);
-		vertical-align: 0.4em;
-		line-height: 0;
+		font-size: 1.05em;
+		font-weight: 650;
+		font-variant-numeric: tabular-nums;
 	}
 	.unresolved,
 	.unscriptured {

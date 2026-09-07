@@ -2292,11 +2292,16 @@ parses an id.
   the default is an absence, not a value. **`/calendarium/liturgia` takes the
   same two parameters**, so walking between the two pages keeps both the day and
   the country.
-- **The card's corner holds the ways OUT, and there may be more than one.**
-  `more` is a list: the home page offers the liturgy and the calendar,
-  `/calendarium` the liturgy alone (a link to the page you are on is no link),
-  the liturgy page the calendar back. Each entry names its own glyph, because
-  two destinations drawn with one are two identical buttons.
+- **The card leaves in two directions and they are drawn differently.** The
+  corner's glyph (`more`) is a SIDEWAYS move — the same day on another surface,
+  which is `/calendarium` from the home and liturgy pages and nothing from
+  `/calendarium` itself. The word at the foot (`read`) is DOWNWARD, into the
+  day's liturgy, and it is `LinkPreview`'s "Open" marker at the card's scale:
+  small caps in the link colour. Two glyphs in one corner were two buttons the
+  reader had to hover to tell apart, and neither said there was more to read.
+  **The visible word is "Read" and the accessible name contains it** — an
+  `aria-label` of "The day's liturgy" over a link reading "Read" gives voice
+  control two names for one target.
 - **`replaceState` from `$app/navigation` does not update `page.url`**, and
   every control on this page was inert because of it: shallow routing sets
   `page.state` and calls `history.replaceState`, and assigns `page.url` nowhere,
@@ -2730,6 +2735,20 @@ measures what still prints no passage.
 - **The caveat is on the page and not behind the card's `i` glyph.** The bigger
   the passage, the louder the qualifier: a mark a reader has to press is not
   something saying "this is not your parish's translation".
+- **It is a READING page and is laid out as one**: `.content-column` and a
+  `ReadingBar`, not `.landing-column`, and the passages are `.reading-text`, so
+  the face, the measure and the reader's own size setting are the ones a
+  chapter of Genesis is read in. A reading page with no aside is a bare column
+  — `/preces/{slug}` is the precedent — not a one-sided grid.
+- **A verse number is a `ReferenceNumber` pointing INTO the Bible**, not at
+  this page: the chapter is not on screen, so `#v{n}` here would name nothing.
+  Only a run that opens a chapter the previous one did not is headed by its
+  number, because that is the only place the restarting numbers would read as
+  one chapter.
+- **The bar carries print and the edition picker.** `EditionMenu`'s route map
+  had to be told this path exists — its own docblock records that a work
+  missing from that map fails by rendering nothing at all — and here the Bible
+  edition is not a preference behind the text but the text itself.
 - **It is in `STATIC_PATHS` and not in `CHROME_PATHS`** — it must answer a cold
   load, and it must not declare a 37-language cluster over a body that is
   corpus text in whichever edition the reader has open.

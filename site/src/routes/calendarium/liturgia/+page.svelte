@@ -33,6 +33,26 @@
 	 * they would be the same citations twice, once compressed and once as the
 	 * headings of the passages under them.
 	 *
+	 * ## Which makes it a READING page, and it is laid out as one
+	 *
+	 * `.content-column` and a `ReadingBar`, not `.landing-column` — the shape
+	 * every page whose body is corpus prose already takes, and the reason
+	 * `layout.css` divides the two: `--content-width` is a count of CHARACTERS,
+	 * which is wrong for a month of dated rows and exactly right for a gospel.
+	 * The passages themselves are `.reading-text`, so the reader's own size
+	 * setting reaches them and the face is the one every other text on this site
+	 * is set in. `/preces/{slug}` is the precedent for the bare column: a
+	 * reading page with no aside is a column, not a one-sided grid.
+	 *
+	 * **The bar carries print and the edition picker and nothing else.** Print,
+	 * because a day's readings are a thing people carry to Mass on paper, and
+	 * the print stylesheet is written about `.content-column`. The picker,
+	 * because on this page the Bible edition is not a preference sitting behind
+	 * the text — it IS the text, and `EditionMenu`'s route map had to be told so
+	 * (its own docblock records that a work missing from that map fails by
+	 * rendering nothing at all). No bookmark: what this address names is a date,
+	 * and the bookmark list is of passages.
+	 *
 	 * ## And what it still is not
 	 *
 	 * A Missal. The schedule is the Ordo Lectionum Missae's and the words are
@@ -46,6 +66,7 @@
 	import DayPrayers from '$lib/components/DayPrayers.svelte';
 	import LiturgicalDayCard from '$lib/components/LiturgicalDayCard.svelte';
 	import MassLiturgy from '$lib/components/MassLiturgy.svelte';
+	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import {
 		formatIsoDate,
 		liturgicalDay,
@@ -121,19 +142,22 @@
 	<title>{t('liturgy.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="landing-column">
+<article class="content-column">
+	<ReadingBar />
 	{#if day}
 		<!-- The card carries the day's identity — its name as the `h1`, its
 		     colour, rank, season and cycles — and nothing on this page repeats
 		     it. Its readings are off: they are the citations of the passages
 		     set out below, and printing both would be the page answering the
-		     same question twice at two lengths. -->
+		     same question twice at two lengths. The way back to the calendar is
+		     the corner glyph, and there is no `read` link because this is what
+		     one leads to. -->
 		<LiturgicalDayCard
 			{day}
 			heading="h1"
 			today={todayNumber}
 			showReadings={false}
-			more={[{ href: backHref, label: t('calendar.title'), icon: 'calendar' }]}
+			more={{ href: backHref, label: t('calendar.title') }}
 		/>
 
 		{#if masses}
@@ -148,4 +172,4 @@
 		<p>{t('calendar.noSuchDay')}</p>
 		<p><a href={backHref}>{t('calendar.title')}</a></p>
 	{/if}
-</div>
+</article>

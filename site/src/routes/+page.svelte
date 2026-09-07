@@ -340,20 +340,16 @@
 				     card's corner sizes and skins what it is given. -->
 				<CalendarMenu value={territory} lang={i18n.lang} onchoose={choose} />
 			{/snippet}
-			<!-- The two ways out are glyphs in the card's own corner, not lines
-			     under it — `LiturgicalDayCard`'s `more` prop says why. The
-			     liturgy leads, being the deeper page: the calendar answers WHICH
-			     day this is, which the card in front of the reader has already
-			     done, and the liturgy answers what is read on it. Both share the
-			     corner with the picker above. -->
+			<!-- Two ways off this card and they are not the same kind of move.
+			     The calendar is a glyph in the corner, beside the picker: it
+			     shows the same day differently. The liturgy is a word at the
+			     foot: it is more of what the card is already showing. -->
 			<LiturgicalDayCard
 				{day}
 				today={todayNumber}
 				controls={calendarPicker}
-				more={[
-					{ href: liturgyHref, label: t('liturgy.title'), icon: 'scroll' },
-					{ href: calendarHref, label: t('calendar.title'), icon: 'calendar' }
-				]}
+				more={{ href: calendarHref, label: t('calendar.title') }}
+				read={{ href: liturgyHref, label: t('liturgy.read'), title: t('liturgy.readTheDay') }}
 			/>
 		</section>
 	{/if}

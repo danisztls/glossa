@@ -1055,13 +1055,22 @@ export const en: Dictionary = {
 		'The passages appointed by the Ordo Lectionum Missae, linked to this ' +
 		'site’s own editions — not the translation proclaimed in any particular ' +
 		'church, and a conference may adapt the schedule.',
-	// `/calendarium/liturgia`. Three keys, and the page is otherwise labelled out
+	// `/calendarium/liturgia`. Five keys, and the page is otherwise labelled out
 	// of `calendar.*` and `lectionary.*`, which are written in all thirty-seven:
 	// it prints the same day, the same slots and the same caveat, at length.
 	// These four are English-only until they are not, on the rule this file
 	// opens with — `t()` falls back key by key — and the page is deliberately
 	// outside `CHROME_PATHS`, so no cluster claims otherwise (`route-manifest.ts`).
 	'liturgy.title': 'The day’s liturgy',
+	// The word at the foot of the day card, printed as small caps by the CSS —
+	// `LinkPreview`'s `ref.preview.open` is the same device and the same
+	// reasoning about where the uppercasing belongs.
+	'liturgy.read': 'Read',
+	// The link's accessible name and its tooltip. It CONTAINS the visible word
+	// above, which is the label-in-name rule: an accessible name of "The day's
+	// liturgy" over a link reading "Read" gives a voice control user two names
+	// for one target.
+	'liturgy.readTheDay': 'Read the day’s liturgy',
 	'liturgy.prayers': 'Prayers for this day',
 	// A citation this corpus cannot resolve WHOLE prints no text at all
 	// (`$lib/liturgy`), and this is what stands in its place — worded as what
