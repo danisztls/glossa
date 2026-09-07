@@ -30,7 +30,9 @@ beside the code it governs:
 
 Companions: `PLAN.md` (what is left), `docs/corpus-schema.md` (the data
 contract), `docs/link-surface.md` (the reference apparatus), `docs/research/`
-(the measurements), `CLAUDE.md` (what has actually bitten someone).
+(the measurements), `docs/writing-voice.md` (how prose a reader reads is
+written) and `docs/writing-descriptions.md` (how a description is read out of
+the corpus), `CLAUDE.md` (what has actually bitten someone).
 
 ---
 
