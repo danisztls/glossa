@@ -352,6 +352,7 @@ export const pt: Dictionary = {
 	'bookmark.empty': 'Ainda não há nada marcado.',
 	'bookmark.emptyHint':
 		'Clique no número de um versículo ou parágrafo e escolha Marcar, ou use o botão de marcador numa página.',
+	'bookmark.about': 'Sobre estes marcadores',
 	'bookmark.deviceOnly':
 		'Os marcadores ficam apenas neste navegador. Não são enviados para lugar nenhum, e limpar os dados do navegador os remove.',
 	'bookmark.unavailable': 'Não está na edição que está lendo',

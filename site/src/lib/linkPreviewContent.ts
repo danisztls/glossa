@@ -30,7 +30,10 @@
  */
 
 import {
+	canonLawTitleFor,
+	canonLawWorkId,
 	getBook,
+	getCanonAsync,
 	getChapter,
 	getCccParagraphAsync,
 	getCompendiumQuestionAsync,
@@ -39,6 +42,8 @@ import {
 	documentSectionText,
 	documentSectionExists,
 	getCompendiumChapterFor,
+	getPrayerAsync,
+	getPrayerMeta,
 	getSocialDoctrineParagraphAsync,
 	getSummaQuestionAsync,
 	isUnpublished,
@@ -49,6 +54,7 @@ import {
 	summaWorkIdFor
 } from './corpus';
 import { summaPartFromSlug, type PreviewTarget } from './address';
+import { citationFor, prayerWorkId } from './citation-label';
 import { summaQuestionLabel } from './summa-titles';
 import { content } from './content.svelte';
 import { chapterVerseSep } from './citation-style';
@@ -130,8 +136,17 @@ function cacheKey(target: PreviewTarget): string | undefined {
 		case 'document': {
 			const workId = content.documentWorkIdFor(target.slug);
 			if (!workId) return undefined;
-			return `document:${workId}:${target.n}`;
+			// `whole` rather than an empty segment: a document has no section
+			// zero, but a key ending in `:` is one typo away from colliding
+			// with one that does.
+			return `document:${workId}:${target.n ?? 'whole'}`;
 		}
+		case 'canonLaw':
+			return `canonLaw:${content.langFor('canon-law')}:${target.n}`;
+		case 'canonLawTitle':
+			return `canonLawTitle:${content.langFor('canon-law')}:${target.n}`;
+		case 'prayer':
+			return `prayer:${content.langFor('prayer')}:${target.slug}`;
 		case 'summa': {
 			const part = summaPartFromSlug(target.part);
 			if (!part) return undefined;
@@ -199,7 +214,13 @@ async function resolveCcc(n: number): Promise<ResolvedUnit | undefined> {
 	// `ProseBlocks.svelte` does NOT use, since that component exists to
 	// render the marked-up version footnotes and inline links depend on. A
 	// hover preview has no business hosting either.
-	return { title: `CCC ${n}`, text: para.text };
+	// `CCC 1` WAS A LITERAL HERE UNTIL 2026-09-07, so a Portuguese reader
+	// hovering a Catechism link got an English siglum over Portuguese prose
+	// (`ccc.abbrev` is `CIC` in pt, `CCE` in la). The same class of defect
+	// `citation-punctuation.test.ts` was written for -- a citation composed in
+	// the language of whoever typed it -- in the half that scan cannot see,
+	// since the mark is not a chapter separator. `citationFor` is the table.
+	return { title: citationFor({ kind: 'ccc', n }), text: para.text };
 }
 
 async function resolveCccChapter(n: number): Promise<ResolvedUnit | undefined> {
@@ -270,11 +291,14 @@ async function resolveSocialDoctrine(n: number, chapter: boolean) {
 	if (chapter && (!span || span[0] !== n)) return undefined;
 	const section = await getSocialDoctrineParagraphAsync(lang, n);
 	if (!section) return undefined;
-	return { title: `CSDC ${n}`, text: documentSectionText(section) };
+	return {
+		title: citationFor({ kind: chapter ? 'socialDoctrineChapter' : 'socialDoctrine', n }),
+		text: documentSectionText(section)
+	};
 }
 
 async function resolveDocument(
-	target: Extract<PreviewTarget, { kind: 'document' }>
+	target: Extract<PreviewTarget, { kind: 'document' }> & { n: number }
 ): Promise<ResolvedUnit | undefined> {
 	// `content.documentWorkIdFor` already applies the same "reader's language,
 	// falling back to whichever edition exists" rule the document's own
@@ -302,8 +326,10 @@ async function resolveDocument(
  * `Q[74], A[2]` in the middle of a reply is exactly the case where a reader
  * wants the text without losing their place.
  *
- * The citation is the scholastic form (`S.Th. II-II, q. 184, a. 3`), matching
- * `bookmarkContent.ts`, and the excerpt is the article's BODY where the
+ * The citation is the scholastic form (`S.Th. II-II, q. 184, a. 3`) -- the
+ * card's own heading, longer than the `STh II-II, 184, 3` a reference is
+ * written as (`citation-label.ts`) because it has room to name the article --
+ * and the excerpt is the article's BODY where the
  * citation names one: `co.` is what a cross-reference to an article almost
  * always means, and the objections that precede it are the position being
  * argued against rather than what the article holds. Showing those first
@@ -342,6 +368,77 @@ async function resolveSummaUnit(
 	};
 }
 
+/**
+ * A whole document — its title and its OPENING section.
+ *
+ * Not the encyclical entire: one chunk, the same read `resolveDocument` makes
+ * for a numbered section, which is what made widening `PreviewTarget` to an
+ * unanchored document link affordable at all. A document whose source prints
+ * no numbered sections resolves to its title alone rather than to nothing —
+ * the address is still real.
+ */
+async function resolveDocumentWhole(slug: string): Promise<ResolvedUnit | undefined> {
+	const workId = content.documentWorkIdFor(slug);
+	if (!workId || isUnpublished(workId)) return undefined;
+	const manifest = getDocumentManifest(workId);
+	if (!manifest) return undefined;
+	const opening = documentSectionExists(workId, 1)
+		? await getDocumentSectionAsync(workId, 1)
+		: undefined;
+	return {
+		title: manifest.short_title,
+		text: opening ? documentSectionText(opening) : ''
+	};
+}
+
+/**
+ * One prayer, whole.
+ *
+ * The one unit here with no excerpt to choose: a prayer is short enough that
+ * its own text IS the preview, and `truncate` decides the rest.
+ */
+async function resolvePrayer(slug: string): Promise<ResolvedUnit | undefined> {
+	const lang = content.langFor('prayer');
+	if (isUnpublished(prayerWorkId(lang))) return undefined;
+	const meta = getPrayerMeta(lang, slug);
+	if (!meta) return undefined;
+	const prayer = await getPrayerAsync(lang, slug);
+	return {
+		title: meta.title,
+		text: prayer ? prayer.blocks.map((b) => b.text).join(' ') : ''
+	};
+}
+
+/**
+ * One canon of the Code, or the opening of one of its titles.
+ *
+ * THE SWITCH BELOW HAD NO CASE FOR EITHER UNTIL 2026-09-07, from the day the
+ * Code was ingested. Nothing errored and nothing was logged: `cacheKey` fell
+ * off its own switch and answered `undefined`, `resolvePreview` read that as
+ * "nothing to show", and the two symptoms were a canon citation that never
+ * peeked anywhere on the site and a bookmarked canon that read "Not in the
+ * edition you are reading" in a library whose other rows resolved. **A switch
+ * over a union type is not exhaustive because it looks exhaustive** — both of
+ * these return `| undefined`, which is exactly what a missing branch returns.
+ *
+ * The excerpt is the canon's own text, `documentSectionText` as the Social
+ * Doctrine's is: this work is a document at the Catechism's kind of address.
+ */
+async function resolveCanonLaw(n: number, title: boolean): Promise<ResolvedUnit | undefined> {
+	const lang = content.langFor('canon-law');
+	if (isUnpublished(canonLawWorkId(lang))) return undefined;
+	// A title is addressed by the canon it OPENS at, so a number inside one
+	// names no title -- the same test `resolveSocialDoctrine` makes of a
+	// chapter span.
+	if (title && canonLawTitleFor(lang, n)?.[0] !== n) return undefined;
+	const canon = await getCanonAsync(lang, n);
+	if (!canon) return undefined;
+	return {
+		title: citationFor({ kind: title ? 'canonLawTitle' : 'canonLaw', n }),
+		text: documentSectionText(canon)
+	};
+}
+
 async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | undefined> {
 	switch (target.kind) {
 		case 'bible':
@@ -355,13 +452,21 @@ async function resolveUncached(target: PreviewTarget): Promise<ResolvedUnit | un
 		case 'compendiumChapter':
 			return resolveCompendiumChapter(target.n);
 		case 'document':
-			return resolveDocument(target);
+			return target.n === undefined
+				? resolveDocumentWhole(target.slug)
+				: resolveDocument({ ...target, n: target.n });
 		case 'socialDoctrine':
 			return resolveSocialDoctrine(target.n, false);
 		case 'socialDoctrineChapter':
 			return resolveSocialDoctrine(target.n, true);
+		case 'canonLaw':
+			return resolveCanonLaw(target.n, false);
+		case 'canonLawTitle':
+			return resolveCanonLaw(target.n, true);
 		case 'summa':
 			return resolveSummaUnit(target);
+		case 'prayer':
+			return resolvePrayer(target.slug);
 	}
 }
 

@@ -414,6 +414,7 @@ export const mg: Dictionary = {
 	'bookmark.empty': 'Mbola tsy misy nomarihina.',
 	'bookmark.emptyHint':
 		'Tsindrio ny laharan’ny andininy na ny andalana ka safidio ny “Marihina”, na ampiasao ny bokotra fanamarihana eo amin’ny pejy.',
+	'bookmark.about': 'Momba ireto fanamarihana ireto',
 	'bookmark.deviceOnly':
 		'Ny fanamarihana dia mitoetra ao amin’ity navigateur ity ihany. Tsy alefa na aiza na aiza izy ireo, ary ny famafana ny angon-drakitry ny navigateur dia mamafa azy.',
 	'bookmark.unavailable': 'Tsy ao amin’ny famoahana vakianao',

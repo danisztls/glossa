@@ -315,17 +315,29 @@ describe('hrefFor / parseHref round trip', () => {
 });
 
 /**
- * An unanchored document link and a prayer are navigation, not quotable units
- * — see `PreviewTarget`'s docblock. Everything else a reader can address, the
- * popover can show.
+ * EVERY ADDRESS A READER CAN NAME, the popover can show — see
+ * `PreviewTarget`'s docblock.
+ *
+ * The two cases below asserted the opposite until 2026-09-07, on the rule that
+ * an unanchored link is navigation rather than a quotable unit. The bookmark
+ * library is what broke it: a reader who marks the Our Father has marked a
+ * unit, and with `/signata`'s excerpt gone those were the only two kinds of row
+ * with a citation and nothing behind it. What replaced the refusal is a marker
+ * on the two index pages that DO mean navigation.
  */
 describe('previewTarget', () => {
-	it('declines a whole document', () => {
-		expect(previewTarget('/documenta/gaudium-et-spes')).toBeUndefined();
+	it('accepts a whole document', () => {
+		expect(previewTarget('/documenta/gaudium-et-spes')).toEqual({
+			kind: 'document',
+			slug: 'gaudium-et-spes'
+		});
 	});
 
-	it('declines a whole prayer', () => {
-		expect(previewTarget('/preces/sub-tuum-praesidium')).toBeUndefined();
+	it('accepts a whole prayer', () => {
+		expect(previewTarget('/preces/sub-tuum-praesidium')).toEqual({
+			kind: 'prayer',
+			slug: 'sub-tuum-praesidium'
+		});
 	});
 
 	it('accepts a document section', () => {

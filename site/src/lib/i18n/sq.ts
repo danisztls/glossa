@@ -389,6 +389,7 @@ export const sq: Dictionary = {
 	'bookmark.empty': 'Ende asgjë e shënuar.',
 	'bookmark.emptyHint':
 		'Klikoni numrin e një vargu ose paragrafi dhe zgjidhni Shëno, ose përdorni butonin e faqeshënuesit në faqe.',
+	'bookmark.about': 'Rreth këtyre faqeshënuesve',
 	'bookmark.deviceOnly':
 		'Faqeshënuesit ruhen vetëm në këtë shfletues. Nuk dërgohen askund, dhe fshirja e të dhënave të shfletuesit i heq.',
 	'bookmark.unavailable': 'Nuk gjendet në botimin që po lexoni',

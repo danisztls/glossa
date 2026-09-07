@@ -329,6 +329,7 @@ export const it: Dictionary = {
 	'bookmark.empty': 'Non hai ancora segnato nulla.',
 	'bookmark.emptyHint':
 		'Fai clic sul numero di un versetto o di un paragrafo e scegli Segna, oppure usa il pulsante segnalibro della pagina.',
+	'bookmark.about': 'Su questi segnalibri',
 	'bookmark.deviceOnly':
 		'I segnalibri restano solo in questo browser. Non vengono inviati da nessuna parte, e cancellare i dati del browser li rimuove.',
 	'bookmark.unavailable': 'Non presente nell’edizione che stai leggendo',

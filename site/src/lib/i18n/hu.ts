@@ -331,6 +331,7 @@ export const hu: Dictionary = {
 	'bookmark.empty': 'Még nincs megjelölve semmi.',
 	'bookmark.emptyHint':
 		'Kattintson egy vers vagy szakasz számára, és válassza a Könyvjelző lehetőséget, vagy használja az oldal könyvjelző gombját.',
+	'bookmark.about': 'A könyvjelzőkről',
 	'bookmark.deviceOnly':
 		'A könyvjelzők csak ebben a böngészőben maradnak meg. Sehová nem küldjük őket, és a böngészőadatok törlése eltávolítja őket.',
 	'bookmark.unavailable': 'Nincs meg abban a kiadásban, amelyet olvas',

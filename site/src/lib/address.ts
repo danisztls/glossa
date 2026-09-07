@@ -531,31 +531,40 @@ function numbered(
 }
 
 /**
- * An address the hover preview can show: everything except a whole prayer and
- * a whole document.
+ * An address the hover preview can show, which since 2026-09-07 is every
+ * address there is.
  *
- * Both exclusions are the same rule -- an unanchored link is navigation, not a
- * quotable unit. `/documenta/{slug}` opens an entire encyclical, and prayers
- * have no inline link surface at all; teaching either one to `PreviewTarget`
- * would silently give every prayer link on the site a popover it does not have
- * today.
+ * IT REFUSED A WHOLE PRAYER AND A WHOLE DOCUMENT, on the rule that an
+ * unanchored link is navigation rather than a quotable unit. The bookmark
+ * library is the case that broke it: a reader who marks the Our Father has
+ * marked a unit, and once the library stopped setting an excerpt under each
+ * row (site/docs/reading.md) the refusal left exactly those two kinds of row
+ * with a citation and nothing behind it.
  *
- * A Summa QUESTION is deliberately not excluded even though it, too, is a
- * page. This work cites itself constantly -- 5,180 of the links on a Summa
- * page point back into the Summa -- and a reader following `Q[74], A[2]`
- * mid-argument wants to see what it says without losing their place, which is
- * exactly the case the preview was built for. A question is a page, but it is
- * also a unit.
+ * THE COST WAS THE OTHER HALF OF THE OLD ARGUMENT AND DOES NOT HOLD EITHER. A
+ * whole-document preview reads the document's FIRST CHUNK — one
+ * `sections/0001-NNNN.json`, a median 33 KB across the corpus — which is what
+ * a `§n` preview already costs, not the encyclical entire; a prayer reads its
+ * language's one prayers file (~90 KB) and every other prayer on the site is
+ * free after it.
+ *
+ * WHAT THE WIDENING DID COST is that the two index pages — `/documenta` and
+ * `/preces` — emit bare links of exactly these kinds and had needed no
+ * `data-link-preview` marker, because this refusal was the marker. They carry
+ * `"hover"` now: a row there is a destination the reader picked in order to go
+ * to it. That is the shape of any future widening here too — the refusal moves
+ * to the surface that means navigation, and this function keeps none.
+ *
+ * A Summa QUESTION was never excluded even though it, too, is a page. This
+ * work cites itself constantly -- 5,180 of the links on a Summa page point
+ * back into the Summa -- and a reader following `Q[74], A[2]` mid-argument
+ * wants to see what it says without losing their place, which is exactly the
+ * case the preview was built for. A question is a page, but it is also a unit.
  */
-export type PreviewTarget =
-	| Exclude<Address, { kind: 'prayer' } | { kind: 'document' }>
-	| { kind: 'document'; slug: string; n: number };
+export type PreviewTarget = Address;
 
-/** `parseHref`, restricted to what the hover preview can show. */
+/** `parseHref`, kept as the name every preview surface calls: it is where a
+ *  refusal would go if the preview ever grows one again. */
 export function previewTarget(href: string | null | undefined): PreviewTarget | undefined {
-	const a = parseHref(href);
-	if (!a) return undefined;
-	if (a.kind === 'prayer') return undefined;
-	if (a.kind === 'document') return a.n === undefined ? undefined : { ...a, n: a.n };
-	return a;
+	return parseHref(href);
 }

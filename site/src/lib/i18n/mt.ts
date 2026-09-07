@@ -335,6 +335,7 @@ export const mt: Dictionary = {
 	'bookmark.empty': 'Xejn immarkat s’issa.',
 	'bookmark.emptyHint':
 		'Ikklikkja n-numru ta’ vers jew paragrafu u agħżel Immarka, jew uża l-buttuna tas-sinjal fuq paġna.',
+	'bookmark.about': 'Dwar dawn is-sinjali',
 	'bookmark.deviceOnly':
 		'Is-sinjali jinżammu f’dan il-browser biss. Ma jintbagħtu mkien, u jekk tħassar id-data tal-browser jitilfu.',
 	'bookmark.unavailable': 'Mhux fl-edizzjoni li qed taqra',

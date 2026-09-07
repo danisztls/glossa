@@ -353,6 +353,7 @@ export const la: Dictionary = {
 	'bookmark.empty': 'Nihil adhuc signatum.',
 	'bookmark.emptyHint':
 		'Numerum versus aut paragraphi tange et “Signa” elige, vel signaculo in pagina utere.',
+	'bookmark.about': 'De his signatis',
 	'bookmark.deviceOnly':
 		'Signata in hoc solo navigatro servantur. Nusquam mittuntur, et memoria navigatri deleta pereunt.',
 	'bookmark.unavailable': 'Non est in editione quam legis',

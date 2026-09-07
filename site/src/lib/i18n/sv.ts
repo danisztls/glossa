@@ -325,6 +325,7 @@ export const sv: Dictionary = {
 	'bookmark.empty': 'Inget markerat ännu.',
 	'bookmark.emptyHint':
 		'Klicka på numret för en vers eller ett stycke och välj Bokmärk, eller använd sidans bokmärkesknapp.',
+	'bookmark.about': 'Om dessa bokmärken',
 	'bookmark.deviceOnly':
 		'Bokmärken sparas endast i den här webbläsaren. De skickas ingenstans, och om du rensar webbläsarens data försvinner de.',
 	'bookmark.unavailable': 'Finns inte i utgåvan du läser',

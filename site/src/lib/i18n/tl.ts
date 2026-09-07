@@ -398,6 +398,7 @@ export const tl: Dictionary = {
 	'bookmark.empty': 'Wala pang minarkahan.',
 	'bookmark.emptyHint':
 		'Pindutin ang bilang ng isang talata o parapo at piliin ang Markahan, o gamitin ang pindutang bookmark sa pahina.',
+	'bookmark.about': 'Tungkol sa mga bookmark na ito',
 	'bookmark.deviceOnly':
 		'Ang mga bookmark ay nananatili sa browser na ito lamang. Hindi ipinapadala saanman, at nawawala ang mga ito kapag binura ang datos ng browser.',
 	'bookmark.unavailable': 'Wala sa edisyong binabasa ninyo',

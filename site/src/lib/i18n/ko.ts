@@ -386,6 +386,7 @@ export const ko: Dictionary = {
 	'bookmark.empty': '아직 표시한 것이 없습니다.',
 	'bookmark.emptyHint':
 		'절이나 항의 번호를 누르고 책갈피를 고르시거나, 쪽에 있는 책갈피 단추를 쓰십시오.',
+	'bookmark.about': '책갈피에 대하여',
 	'bookmark.deviceOnly':
 		'책갈피는 이 브라우저에만 보관됩니다. 어디로도 보내지지 않으며, 브라우저 데이터를 지우면 함께 사라집니다.',
 	'bookmark.unavailable': '지금 읽으시는 판본에는 없습니다',

@@ -44,7 +44,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import { bookmarks } from '$lib/bookmarks.svelte';
 	import { parseHref } from '$lib/address';
-	import { resolveBookmark } from '$lib/bookmarkContent';
+	import { resolveUnitText } from '$lib/linkPreviewContent';
 	import { AnchoredPanel } from '$lib/floating.svelte';
 	import Icon from './Icon.svelte';
 	import type { Menu } from './menu.svelte';
@@ -102,7 +102,7 @@
 
 	async function copyText() {
 		const target = parseHref(canonicalHref);
-		const resolved = target ? await resolveBookmark(target) : undefined;
+		const resolved = target ? await resolveUnitText(target) : undefined;
 		if (!resolved || !resolved.text) {
 			flash('copy', false);
 			return;

@@ -145,6 +145,29 @@ cursor and the plain one-tap navigation under a thumb, which `off` and absent
 between them cannot say. What stays `off` is what names the page the reader is
 standing on: a crumb, prev/next, a sidebar table of contents.
 
+**And the last refusal in `PreviewTarget` was a marker wearing a type's
+clothes.** It declined a whole prayer and an unanchored document on the rule
+that a link with no anchor is navigation rather than a quotable unit. That rule
+was true of the two surfaces where such links are actually emitted — the
+document index and the prayer index — and false of the address itself: a reader
+who marks the Our Father has marked a unit, and the bookmark library is where
+they meet it again. What settled it was the library dropping its excerpt (below):
+the two kinds it could not preview were the two whose rows then had a citation
+and nothing behind them. So the type widened to every `Address`, and the two
+index pages say `"hover"` — which is what they would have said all along had
+anything been able to preview their rows. **A refusal in a type is invisible to
+the surface it is protecting**, and the cost of finding out is a tap that peeks
+where a reader meant to go.
+
+**The library asks for no text at all now, and the excerpt is why it used to.**
+`/signata` set two clamped lines of each marked passage under its citation, so
+opening it fetched one content file per mark — eighty marks, eighty passages, to
+print forty words of each. Every row is a citation in the form `/schola`
+teaches (`citation-label.ts`, off the index tier, no fetch), and the text
+arrives for the one row the reader peeks at. **The excerpt was also what made
+`"hover"` right there**, since a row already said what it was; removing it is
+what moved those rows back into the citation default.
+
 **A panel placed by measurement is a family.** `.floating-panel` holds the
 declarations three components had each written out and `floating.ts` holds where
 they go. What deliberately did not move is everything that differs — top layer

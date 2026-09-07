@@ -676,6 +676,9 @@ export const en: Dictionary = {
 	'bookmark.empty': 'Nothing marked yet.',
 	'bookmark.emptyHint':
 		'Click a verse or paragraph number and choose Bookmark, or use the bookmark button on a page.',
+	// The `i` beside the heading has no text of its own, so this is its
+	// accessible name and not a courtesy.
+	'bookmark.about': 'About these bookmarks',
 	'bookmark.deviceOnly':
 		'Bookmarks are kept in this browser only. They are not sent anywhere, and clearing your browser data removes them.',
 	'bookmark.unavailable': 'Not in the edition you are reading',

@@ -327,6 +327,7 @@ export const sl: Dictionary = {
 	'bookmark.empty': 'Še nič ni označeno.',
 	'bookmark.emptyHint':
 		'Kliknite številko vrstice ali odstavka in izberite Zaznamek ali pa uporabite gumb za zaznamek na strani.',
+	'bookmark.about': 'O teh zaznamkih',
 	'bookmark.deviceOnly':
 		'Zaznamki ostanejo samo v tem brskalniku. Nikamor jih ne pošiljamo, izbris podatkov brskalnika pa jih odstrani.',
 	'bookmark.unavailable': 'Ni v izdaji, ki jo berete',

@@ -254,13 +254,19 @@
 	const borrowedLabel = (lang: string) =>
 		t('summa.titleFromEdition').replace('{lang}', languageDisplayName(lang));
 
-	// Resume-where-you-left-off, keyed by WORK so the reader has one Summa
-	// position rather than one per edition — the address is edition-free and
-	// the fallback may hand them a different edition on the next question.
+	// Resume-where-you-left-off. THE KEY WAS THE LITERAL `'summa'` UNTIL
+	// 2026-09-07, on the reasoning that a reader should have one Summa position
+	// rather than one per edition — sound, and implemented against a work id
+	// this corpus does not have (`summa.la` and `summa.en` are the works). So
+	// `continueRows`, which types a row by `getWork(id)?.type`, dropped every
+	// Summa position before it could be rendered, silently and since the work
+	// was ingested: `/signata` has never offered one. The collapse to one row
+	// per work TYPE is `continueRows`' own job and always was, so passing the
+	// edition's real id gets the intent as well as a row.
 	$effect(() => {
 		if (!editions.current) return;
 		setPosition(
-			'summa',
+			editions.current.work.id,
 			`${t('summa.part')} ${data.part} · ${t('summa.question')} ${data.n}`,
 			page.url.pathname
 		);

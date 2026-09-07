@@ -386,6 +386,7 @@ export const da: Dictionary = {
 	'bookmark.empty': 'Intet markeret endnu.',
 	'bookmark.emptyHint':
 		'Klik på nummeret på et vers eller et afsnit og vælg Bogmærk, eller brug sidens bogmærkeknap.',
+	'bookmark.about': 'Om disse bogmærker',
 	'bookmark.deviceOnly':
 		'Bogmærker gemmes kun i denne browser. De sendes ingen steder hen, og hvis du rydder browserens data, forsvinder de.',
 	'bookmark.unavailable': 'Findes ikke i den udgave, du læser',

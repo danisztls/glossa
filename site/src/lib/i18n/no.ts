@@ -329,6 +329,7 @@ export const no: Dictionary = {
 	'bookmark.empty': 'Ingenting merket ennå.',
 	'bookmark.emptyHint':
 		'Klikk et vers- eller avsnittsnummer og velg Bokmerk, eller bruk bokmerkeknappen på en side.',
+	'bookmark.about': 'Om disse bokmerkene',
 	'bookmark.deviceOnly':
 		'Bokmerker holdes bare i denne nettleseren. De sendes ingen steder, og å tømme nettleserdataene fjerner dem.',
 	'bookmark.unavailable': 'Ikke i utgaven du leser',

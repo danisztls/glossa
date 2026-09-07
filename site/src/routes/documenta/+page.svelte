@@ -469,7 +469,12 @@
 		{#if visible.length === 0}
 			<p class="no-results">{t('document.filter.noResults')}</p>
 		{:else}
-			<ul class="docs index-list">
+			<!-- `"hover"` because a row here is a destination the reader picked in
+			     order to GO to it. It needed no marker until 2026-09-07, when
+			     `PreviewTarget` stopped refusing an unanchored document: the
+			     refusal WAS the marker, and a tap that peeked instead of opening
+			     would have been the whole index. -->
+			<ul class="docs index-list" data-link-preview="hover">
 				{#each visible as row (row.slug)}
 					{@const description = describe(row)}
 					<li class="index-row">

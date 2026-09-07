@@ -1,90 +1,42 @@
 /**
- * Bookmark-target -> title/text resolution, and the library's ordering.
+ * The library's ORDER: which section a bookmark files under, and where it sits
+ * inside it.
  *
  * The corpus-aware half of a bookmark, split from `address.ts` for the same
  * reason `linkPreviewContent.ts` is: this side reads the reader's effective
- * edition off the content store and fetches corpus content, none of which
- * belongs in the unit that parses a string.
+ * edition off the content store, which does not belong in the unit that parses
+ * a string.
  *
  * A bookmark IS an `Address` and nothing else -- no title, no excerpt, no
  * edition, no work id -- because a canonical href is deliberately
  * edition-free, so an address saved while reading the Clementine Vulgate is
  * still the right address when the same reader comes back in Portuguese.
- * Everything a bookmark displays is re-derived here.
+ * Everything a bookmark displays is re-derived.
  *
- * Almost all of it is delegation. Every bookmark whose address the hover
- * preview can already name resolves through `resolveUnitText`, sharing its
- * memo cache -- so a reader who hovered a verse and then bookmarked it pays
- * one read, not two. Only the two addresses the preview deliberately does not
- * cover (a whole prayer, a whole document) are resolved here.
+ * IT RESOLVED TEXT UNTIL 2026-09-07 AND NO LONGER DOES, which is why what is
+ * left is one subject rather than two:
+ *
+ * - The two addresses the hover preview used to refuse (a whole prayer, a
+ *   whole document) were resolved here, in a copy of the same logic. Widening
+ *   `PreviewTarget` (see its docblock) moved them to the one resolver.
+ * - `resolveBookmark` went with them. It existed to be the entry point taking
+ *   an `Address` where `resolveUnitText` took the narrower `PreviewTarget`;
+ *   the two are the same type now, so it was a second name for one function.
+ * - `/signata` asks for no text at all any more. It prints a citation per row
+ *   and no excerpt, and `citation-label.ts` answers that out of the index tier
+ *   with no fetch -- so the page that used to `await` one content file per
+ *   marked passage now awaits none.
  */
 
-import {
-	documentSectionExists,
-	getDocumentManifest,
-	getDocumentSectionAsync,
-	documentSectionText,
-	getPrayerAsync,
-	getPrayerMeta,
-	isUnpublished,
-	listCanonicalBooks
-} from './corpus';
+import { getPrayerMeta, listCanonicalBooks } from './corpus';
+import { citationFor } from './citation-label';
 import { summaPartFromSlug, type Address } from './address';
 import { content } from './content.svelte';
-import { resolveUnitText, type ResolvedUnit } from './linkPreviewContent';
-
-async function resolvePrayer(slug: string): Promise<ResolvedUnit | undefined> {
-	const lang = content.langFor('prayer');
-	if (isUnpublished(`prayers.${lang}`)) return undefined;
-	const meta = getPrayerMeta(lang, slug);
-	if (!meta) return undefined;
-	const prayer = await getPrayerAsync(lang, slug);
-	return {
-		title: meta.title,
-		text: prayer ? prayer.blocks.map((b) => b.text).join(' ') : ''
-	};
-}
-
-async function resolveDocumentWhole(slug: string): Promise<ResolvedUnit | undefined> {
-	const workId = content.documentWorkIdFor(slug);
-	if (!workId || isUnpublished(workId)) return undefined;
-	const manifest = getDocumentManifest(workId);
-	if (!manifest) return undefined;
-
-	// The document's OPENING section, not the whole encyclical -- the same
-	// "preview, not a second reading pane" rule `resolveCccChapter` states.
-	// A document whose source prints no numbered sections resolves to its
-	// title alone rather than to nothing: the address is still real.
-	const opening = documentSectionExists(workId, 1)
-		? await getDocumentSectionAsync(workId, 1)
-		: undefined;
-	return {
-		title: manifest.short_title,
-		text: opening ? documentSectionText(opening) : ''
-	};
-}
 
 /** The parts in the order the work prints them, for `sortKey`. Not
  *  `SUMMA_PART_SLUGS`' key order, which is an object literal's and carries no
  *  promise. */
 const SUMMA_PART_ORDER = ['I', 'I-II', 'II-II', 'III', 'Suppl'];
-
-/** Full text and citation for a bookmark. `undefined` for an address that no
- *  longer resolves -- a withheld work, a slug this edition doesn't carry, a
- *  number outside the corpus -- which the library renders as a dead row it
- *  can still remove, never as an error. */
-export async function resolveBookmark(target: Address): Promise<ResolvedUnit | undefined> {
-	if (target.kind === 'prayer') return resolvePrayer(target.slug);
-	// A document with no section number is the whole document -- the one
-	// bookmarkable address the hover preview deliberately declines, along with
-	// prayers (see `PreviewTarget`).
-	if (target.kind === 'document') {
-		return target.n === undefined
-			? resolveDocumentWhole(target.slug)
-			: resolveUnitText({ ...target, n: target.n });
-	}
-	return resolveUnitText(target);
-}
 
 /** Position within a library section: canonical order, not save order. A
  *  reader scanning their marked verses wants them in the order the Bible
@@ -128,13 +80,12 @@ export function compareBookmarks(a: Address, b: Address): number {
 	return ka[0] - kb[0] || ka[1] - kb[1] || ka[2] - kb[2];
 }
 
-/** The heading a `document:{slug}` library section prints. Falls back to the
- *  slug so a section never renders headless for a document the reader's
- *  language doesn't carry. */
+/** The heading a `document:{slug}` library section prints, which is the
+ *  document's own citation with no section number on it — including the
+ *  fallback to the slug, so a section never renders headless for a document
+ *  the reader's language doesn't carry. */
 export function documentGroupTitle(slug: string): string {
-	const workId = content.documentWorkIdFor(slug);
-	const manifest = workId ? getDocumentManifest(workId) : undefined;
-	return manifest?.short_title ?? slug;
+	return citationFor({ kind: 'document', slug });
 }
 
 /** Which section of the library a bookmark files under, and where that

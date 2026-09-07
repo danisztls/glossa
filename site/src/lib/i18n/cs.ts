@@ -386,6 +386,7 @@ export const cs: Dictionary = {
 	'bookmark.empty': 'Zatím nic označeno.',
 	'bookmark.emptyHint':
 		'Klikněte na číslo verše nebo odstavce a zvolte Přidat záložku, nebo použijte tlačítko záložky na stránce.',
+	'bookmark.about': 'O těchto záložkách',
 	'bookmark.deviceOnly':
 		'Záložky zůstávají jen v tomto prohlížeči. Nikam se neodesílají a vymazání dat prohlížeče je odstraní.',
 	'bookmark.unavailable': 'Není ve vydání, které čtete',

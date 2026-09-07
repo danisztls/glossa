@@ -391,6 +391,7 @@ export const nl: Dictionary = {
 	'bookmark.empty': 'Nog niets gemarkeerd.',
 	'bookmark.emptyHint':
 		'Klik op het nummer van een vers of alinea en kies Markeren, of gebruik de bladwijzerknop op de pagina.',
+	'bookmark.about': 'Over deze bladwijzers',
 	'bookmark.deviceOnly':
 		'Bladwijzers blijven alleen in deze browser. Zij worden nergens heen gestuurd, en het wissen van uw browsergegevens verwijdert ze.',
 	'bookmark.unavailable': 'Niet in de uitgave die u leest',

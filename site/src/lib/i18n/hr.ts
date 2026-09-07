@@ -385,6 +385,7 @@ export const hr: Dictionary = {
 	'bookmark.empty': 'Još ništa nije označeno.',
 	'bookmark.emptyHint':
 		'Kliknite na broj retka ili odlomka i odaberite Označi, ili se poslužite gumbom za oznaku na stranici.',
+	'bookmark.about': 'O ovim oznakama',
 	'bookmark.deviceOnly':
 		'Oznake se čuvaju samo u ovom pregledniku. Nikamo se ne šalju, a brisanje podataka preglednika ih uklanja.',
 	'bookmark.unavailable': 'Nema toga u izdanju koje čitate',

@@ -393,6 +393,7 @@ export const vi: Dictionary = {
 	'bookmark.empty': 'Chưa đánh dấu gì cả.',
 	'bookmark.emptyHint':
 		'Bấm vào số của một câu hoặc một số mục rồi chọn Đánh dấu, hoặc dùng nút dấu trang trên trang.',
+	'bookmark.about': 'Về các dấu trang này',
 	'bookmark.deviceOnly':
 		'Dấu trang chỉ được giữ trong trình duyệt này. Chúng không được gửi đi đâu cả, và xoá dữ liệu trình duyệt sẽ xoá chúng.',
 	'bookmark.unavailable': 'Không có trong bản in bạn đang đọc',

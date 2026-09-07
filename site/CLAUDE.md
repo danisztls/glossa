@@ -1819,11 +1819,31 @@ citations — so a prayer's "See also", a "Cited in" chip, a CCC paragraph's
 `related` numbers and the `†` sourcing a reading order previewed under a
 cursor and navigated under a thumb. `citation-links.ts` is the one classifier
 now, and the marker has three states: absent peeks on both gestures, `"hover"`
-peeks on the pointer only (the jump box, the reading picks, the bookmark
-rows — chosen in order to GO there), `"off"` never (a crumb, prev/next, a
+peeks on the pointer only (the jump box, the reading picks, the two index
+pages — chosen in order to GO there), `"off"` never (a crumb, prev/next, a
 sidebar TOC — the page the reader is already on). `usage.ts` deliberately kept
 the two classes: widening what counts as a citation followed is a step in a
 reported series, not a consequence of a change to the card.
+
+**`PreviewTarget` REFUSED A WHOLE PRAYER AND A WHOLE DOCUMENT AND NOW REFUSES
+NOTHING** (2026-09-07, §docs/reading.md) — the rule was that an unanchored link
+is navigation, and `/signata`'s rows are the counter-case, since a marked
+prayer is a unit and the library stopped setting an excerpt under one. The
+refusal was doing a marker's job: `/documenta` and `/preces` emit exactly those
+two kinds of link, needed no `data-link-preview` because nothing could preview
+them, and carry `"hover"` now. **The bookmark rows left that list in the same
+breath** — with no excerpt, a `"hover"` row is a citation and nothing behind it
+under a thumb. And `linkPreviewContent.ts` had no `canonLaw` case at all since
+the Code was ingested: a switch over a union is not exhaustive because it looks
+exhaustive, and both halves of that one return `| undefined`.
+
+**A `/signata` ROW IS A CITATION, WRITTEN IN THE FORM `/schola` TEACHES**
+(2026-09-07, §docs/finding.md). `citation-label.ts` is the one writer —
+`citationFor` off the index tier, so a library of eighty marks now fetches
+nothing where it used to fetch eighty passages to print two clamped lines of
+each. Its `addressResolves` asks the ROUTE's question ("does following this
+show the reader something"), which is why a division address is checked for a
+division CONTAINING the number and not one opening at it.
 
 The six tags with **no** config (`hu ro sl sv zh en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by

@@ -327,6 +327,7 @@ export const pl: Dictionary = {
 	'bookmark.empty': 'Nic jeszcze nie zaznaczono.',
 	'bookmark.emptyHint':
 		'Kliknij numer wersetu lub akapitu i wybierz Zapisz, albo użyj przycisku zakładki na stronie.',
+	'bookmark.about': 'O tych zakładkach',
 	'bookmark.deviceOnly':
 		'Zakładki są przechowywane tylko w tej przeglądarce. Nie są nigdzie wysyłane, a wyczyszczenie danych przeglądarki je usuwa.',
 	'bookmark.unavailable': 'Nie ma tego w wydaniu, które czytasz',

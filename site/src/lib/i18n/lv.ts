@@ -390,6 +390,7 @@ export const lv: Dictionary = {
 	'bookmark.empty': 'Pagaidām nekas nav atzīmēts.',
 	'bookmark.emptyHint':
 		'Noklikšķiniet uz panta vai rindkopas numura un izvēlieties Atzīmēt, vai izmantojiet lapas grāmatzīmes pogu.',
+	'bookmark.about': 'Par šīm grāmatzīmēm',
 	'bookmark.deviceOnly':
 		'Grāmatzīmes glabājas tikai šajā pārlūkā. Tās nekur netiek sūtītas, un pārlūka datu dzēšana tās noņem.',
 	'bookmark.unavailable': 'Nav tajā izdevumā, ko lasāt',

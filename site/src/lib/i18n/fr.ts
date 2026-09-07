@@ -333,6 +333,7 @@ export const fr: Dictionary = {
 	'bookmark.empty': 'Rien de marqué pour l’instant.',
 	'bookmark.emptyHint':
 		'Cliquez sur le numéro d’un verset ou d’un paragraphe et choisissez Marquer, ou utilisez le bouton de signet de la page.',
+	'bookmark.about': 'À propos de ces signets',
 	'bookmark.deviceOnly':
 		'Les signets sont conservés dans ce navigateur uniquement. Ils ne sont envoyés nulle part, et effacer les données du navigateur les supprime.',
 	'bookmark.unavailable': 'Absent de l’édition que vous lisez',

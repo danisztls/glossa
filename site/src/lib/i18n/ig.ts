@@ -396,6 +396,7 @@ export const ig: Dictionary = {
 	'bookmark.empty': 'Ọ dịghị ihe akara ka ugbu a.',
 	'bookmark.emptyHint':
 		"Pịa nọmba amaokwu ma ọ bụ paragraf wee họrọ Kaa akara, ma ọ bụ jiri bọtịnụ akara akwụkwọ dị n'ibe ahụ.",
+	'bookmark.about': 'Maka akara akwụkwọ ndị a',
 	'bookmark.deviceOnly':
 		"A na-edebe akara akwụkwọ naanị n'ihe nchọgharị a. A naghị eziga ha ebe ọ bụla, na ihichapụ data ihe nchọgharị gị na-ewepụ ha.",
 	'bookmark.unavailable': 'Ọ dịghị na mbipụta ị na-agụ',

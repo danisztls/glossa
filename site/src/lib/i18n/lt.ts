@@ -387,6 +387,7 @@ export const lt: Dictionary = {
 	'bookmark.empty': 'Kol kas nieko nepažymėta.',
 	'bookmark.emptyHint':
 		'Spustelėkite eilutės ar pastraipos numerį ir pasirinkite Pažymėti arba pasinaudokite puslapio žymelės mygtuku.',
+	'bookmark.about': 'Apie šias žymeles',
 	'bookmark.deviceOnly':
 		'Žymelės laikomos tik šioje naršyklėje. Jos niekur nesiunčiamos, o išvalius naršyklės duomenis dingsta.',
 	'bookmark.unavailable': 'Nėra tame leidime, kurį skaitote',

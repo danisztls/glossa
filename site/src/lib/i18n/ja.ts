@@ -324,6 +324,7 @@ export const ja: Dictionary = {
 	'bookmark.empty': 'まだ何も印が付いていません。',
 	'bookmark.emptyHint':
 		'節や項の番号をクリックして「しおりを挟む」を選ぶか、ページのしおりボタンを使ってください。',
+	'bookmark.about': 'しおりについて',
 	'bookmark.deviceOnly':
 		'しおりはこのブラウザにのみ保存されます。どこにも送られず、ブラウザのデータを消すと失われます。',
 	'bookmark.unavailable': 'いま読んでいる版にはありません',

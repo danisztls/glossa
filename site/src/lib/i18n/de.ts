@@ -331,6 +331,7 @@ export const de: Dictionary = {
 	'bookmark.empty': 'Noch nichts markiert.',
 	'bookmark.emptyHint':
 		'Klicken Sie auf die Nummer eines Verses oder Absatzes und wählen Sie Merken, oder nutzen Sie die Lesezeichen-Schaltfläche der Seite.',
+	'bookmark.about': 'Über diese Lesezeichen',
 	'bookmark.deviceOnly':
 		'Lesezeichen bleiben nur in diesem Browser. Sie werden nirgendwohin gesendet, und das Löschen der Browserdaten entfernt sie.',
 	'bookmark.unavailable': 'Nicht in der Ausgabe, die Sie lesen',

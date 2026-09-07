@@ -314,6 +314,7 @@ export const ar: Dictionary = {
 	'bookmark.library.tagline': 'كلّ ما علّمته أثناء القراءة.',
 	'bookmark.empty': 'لم تعلّم شيئًا بعد.',
 	'bookmark.emptyHint': 'انقر رقم آية أو فقرة واختر «احفظ»، أو استعمل زرّ العلامة في الصفحة.',
+	'bookmark.about': 'عن هذه العلامات',
 	'bookmark.deviceOnly':
 		'تُحفَظ العلامات في هذا المتصفّح وحده. لا تُرسَل إلى أيّ مكان، ومحو بيانات المتصفّح يزيلها.',
 	'bookmark.unavailable': 'ليس في الطبعة التي تقرأها',

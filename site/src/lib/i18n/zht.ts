@@ -371,6 +371,7 @@ export const zht: Dictionary = {
 	'bookmark.library.tagline': '您在閱讀時標記過的一切。',
 	'bookmark.empty': '尚未標記任何內容。',
 	'bookmark.emptyHint': '點選節或段的號碼並選擇「加書籤」，或使用頁面上的書籤按鈕。',
+	'bookmark.about': '關於這些書籤',
 	'bookmark.deviceOnly':
 		'書籤只保存在此瀏覽器中。它們不會被送往任何地方，清除瀏覽器資料即會將其刪除。',
 	'bookmark.unavailable': '您所讀的版本中沒有',

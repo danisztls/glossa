@@ -376,6 +376,7 @@ export const zh: Dictionary = {
 	'bookmark.library.tagline': '您在阅读时标记过的一切。',
 	'bookmark.empty': '尚未标记任何内容。',
 	'bookmark.emptyHint': '点击节或段的号码并选择「加书签」，或使用页面上的书签按钮。',
+	'bookmark.about': '关于这些书签',
 	'bookmark.deviceOnly':
 		'书签只保存在此浏览器中。它们不会被送往任何地方，清除浏览器数据即会将其删除。',
 	'bookmark.unavailable': '您所读的版本中没有',

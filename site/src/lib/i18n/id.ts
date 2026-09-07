@@ -398,6 +398,7 @@ export const id: Dictionary = {
 	'bookmark.empty': 'Belum ada yang ditandai.',
 	'bookmark.emptyHint':
 		'Klik nomor ayat atau alinea lalu pilih Tandai, atau gunakan tombol penanda pada halaman.',
+	'bookmark.about': 'Tentang penanda ini',
 	'bookmark.deviceOnly':
 		'Penanda hanya disimpan di peramban ini. Penanda tidak dikirim ke mana pun, dan menghapus data peramban akan menghilangkannya.',
 	'bookmark.unavailable': 'Tidak ada dalam edisi yang Anda baca',

@@ -653,6 +653,38 @@ is a trace the site kept without being asked — so splitting them across two
 pages meant a returning reader had to know which one had kept their place. Two
 sections on one page, not one list, and the trace goes first.
 
+**BOTH SECTIONS PRINT A CITATION NOW, AND THE PAGE STOPPED READING THE CORPUS
+TO DO IT** (2026-09-07). They printed whatever the surface that produced the
+row happened to have said: a position's label is composed by each reading route
+(`CSDC 8` from one, `1. The Sacraments of Christian Initiation` from another,
+`Part II-II · Question 189` from a third), and a mark's was the hover card's
+own heading. This is the ONE page where every work meets in a single column,
+which is exactly where a notation has to be the one the site teaches — so
+`citation-label.ts` writes them all in `/schola`'s forms, out of the reader's
+own edition's abbreviation table.
+
+**What paid for it was the excerpt.** Two clamped lines of the passage under
+each mark meant a content file per row; a citation comes off the index tier and
+costs nothing, and the text now arrives for the one row the reader peeks at.
+That is also what put the rows back in the tap-peek default (`site/docs/reading.md`):
+an excerpt is what made a row self-explanatory enough to justify skipping the
+peek under a thumb.
+
+**A DEAD ROW IS STILL A ROW, and what tells it apart got cheaper rather than
+weaker.** The library learned a mark was dead by fetching its text and getting
+nothing; `addressResolves` asks the index tier instead, and asks the ROUTE's
+question — `/catechismus/caput/{n}` serves the chapter CONTAINING `n`, so a
+marker that demanded `n` open one would have called a working link broken.
+
+**Two defects surfaced from the same corner and neither was in the page.** The
+Summa wrote its reading position under the literal work id `'summa'`, which
+`getWork` cannot resolve, so `continueRows` had dropped every Summa position
+since the work was ingested — the section had never offered one. And the hover
+card titled a Catechism paragraph `CCC 1` as a literal, in English, over
+Portuguese prose that cites it as `CIC`. Both are the shape of defect a page
+that prints one work at a time cannot see: **a column where every work meets is
+a test, and it is the only one either of these would ever have failed.**
+
 **The key was renamed twice on the way and is `reading.continue` now**, named
 for `reading-position.ts` rather than for a page. `home.continueReading`, then
 `library.continueReading`: each was a claim the codebase stopped keeping within

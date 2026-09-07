@@ -50,7 +50,11 @@
 		{#each groups as group (group.id)}
 			<section class="prayer-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
 				<h2 id={`${group.id}-heading`}>{group.title}</h2>
-				<ul class="prayer-list index-list">
+				<!-- `"hover"`: a row here is a destination the reader picked in order
+				     to GO to it. It needed no marker until 2026-09-07, when
+				     `PreviewTarget` stopped refusing a whole prayer — the refusal WAS
+				     the marker. -->
+				<ul class="prayer-list index-list" data-link-preview="hover">
 					{#each group.prayers as meta (meta.slug)}
 						<li class="index-row">
 							<a class="prayer-link" href={hrefFor({ kind: 'prayer', slug: meta.slug })}>

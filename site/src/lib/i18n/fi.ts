@@ -392,6 +392,7 @@ export const fi: Dictionary = {
 	'bookmark.empty': 'Mitään ei ole vielä merkitty.',
 	'bookmark.emptyHint':
 		'Napsauta jakeen tai kappaleen numeroa ja valitse Merkitse, tai käytä sivun kirjanmerkkipainiketta.',
+	'bookmark.about': 'Näistä kirjanmerkeistä',
 	'bookmark.deviceOnly':
 		'Kirjanmerkit säilyvät vain tässä selaimessa. Niitä ei lähetetä mihinkään, ja selaimen tietojen tyhjentäminen poistaa ne.',
 	'bookmark.unavailable': 'Ei siinä laitoksessa, jota luet',

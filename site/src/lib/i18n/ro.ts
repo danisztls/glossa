@@ -331,6 +331,7 @@ export const ro: Dictionary = {
 	'bookmark.empty': 'Nimic marcat încă.',
 	'bookmark.emptyHint':
 		'Dați clic pe numărul unui verset sau al unui paragraf și alegeți Semn de carte, ori folosiți butonul de semn de carte al paginii.',
+	'bookmark.about': 'Despre aceste semne de carte',
 	'bookmark.deviceOnly':
 		'Semnele de carte rămân doar în acest browser. Nu sunt trimise nicăieri, iar ștergerea datelor browserului le elimină.',
 	'bookmark.unavailable': 'Nu se află în ediția pe care o citiți',

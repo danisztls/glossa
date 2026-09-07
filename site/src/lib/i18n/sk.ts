@@ -385,6 +385,7 @@ export const sk: Dictionary = {
 	'bookmark.empty': 'Zatiaľ nič označené.',
 	'bookmark.emptyHint':
 		'Kliknite na číslo verša alebo odseku a zvoľte Pridať záložku, alebo použite tlačidlo záložky na stránke.',
+	'bookmark.about': 'O týchto záložkách',
 	'bookmark.deviceOnly':
 		'Záložky zostávajú len v tomto prehliadači. Nikam sa neodosielajú a vymazanie údajov prehliadača ich odstráni.',
 	'bookmark.unavailable': 'Nie je vo vydaní, ktoré čítate',

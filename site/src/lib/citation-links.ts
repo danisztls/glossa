@@ -66,8 +66,9 @@ export interface CitationLink {
  *
  * `undefined` covers all three ways to not be one: the event was not over an
  * `<a href>` at all, the href names nothing this site can preview
- * (`previewTarget` — an external URL, a bare landing page, a prayer), or the
- * link sits under `data-link-preview="off"`.
+ * (`previewTarget` — an external URL, a chrome page, a malformed address; it
+ * refused a prayer and an unanchored document until 2026-09-07 and refuses
+ * neither now), or the link sits under `data-link-preview="off"`.
  */
 export function citationLink(start: EventTarget | null): CitationLink | undefined {
 	if (!(start instanceof Element)) return undefined;

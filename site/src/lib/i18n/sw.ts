@@ -395,6 +395,7 @@ export const sw: Dictionary = {
 	'bookmark.empty': 'Bado hakuna kilichowekwa alama.',
 	'bookmark.emptyHint':
 		'Bofya nambari ya mstari au ya aya kisha uchague Weka alama, au tumia kitufe cha alamisho kilicho ukurasani.',
+	'bookmark.about': 'Kuhusu alamisho haya',
 	'bookmark.deviceOnly':
 		'Alamisho huhifadhiwa katika kivinjari hiki pekee. Hayatumwi popote, na kufuta data ya kivinjari huyaondoa.',
 	'bookmark.unavailable': 'Hakipo katika toleo unalosoma',
