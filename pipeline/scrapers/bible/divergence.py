@@ -35,25 +35,32 @@ a row on its own.
 
     ./divergence.py                 # the table, and the staleness check
     ./divergence.py --verbose       # + every verse-number set in full
-    ./divergence.py --shifted       # candidates for the silent case (below)
 
-THE SILENT CASE, which `--shifted` looks for and does not decide. Comparing
-verse-number SETS finds only the chapters that are loud about disagreeing. The
-dangerous shape is a chapter whose numbers match while its text has moved
-under them, because nothing anywhere then marks that a citation resolves to
-the wrong sentences. `--shifted` implements the cheap signal the research note
-proposed: inside a chapter whose sets match, flag a verse whose length ratio
-against the Latin is a wild outlier on the chapter's own median. It finds
-candidates for a person to read. It aligns nothing and concludes nothing --
-fuzzy-matching verses across editions to guess a correspondence is exactly the
-invention the source-defect policy forbids.
+THE SILENT CASE IS FOUND ELSEWHERE NOW, and `SILENT` below is the record of
+what has been read rather than the output of a search. Comparing verse-number
+SETS finds only the chapters that are loud about disagreeing; the dangerous
+shape is a chapter whose numbers match while its text has moved under them,
+because nothing then marks that a citation resolves to the wrong sentences.
+This file used to hunt for those with `--shifted`, a length-ratio outlier
+against the Latin inside chapters whose sets agree. `audit.py balance` is the
+same signal with the two things this file cannot give it: all nine editions
+instead of one Latin, and a vote to say which edition is the odd one out. It
+found `acts 14` and `1cor 9` below, so `--shifted` was deleted rather than
+kept in parallel.
+
+WHAT THE NINTH EDITION SAID ABOUT `ps 77`, which is why the vote was worth
+having: `--shifted` saw Matos Soares alone against the Latin and it was
+classified a local re-partition. Straubinger divides it identically, and two
+editions translated from the Hebrew agreeing against the Vulgate is that
+division, not two parsers slipping the same way -- the same rule `audit.py
+refs` states as two editions agreeing on a value being one witness. The entry
+stands with its second witness recorded; what changed is what it means.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import statistics
 import sys
 from pathlib import Path
 
@@ -244,7 +251,11 @@ SILENT: dict[tuple[str, int], tuple[str, str]] = {
         "local-repartition",
         (
             "Matos Soares moves 'Et eiecit a facie eorum Gentes' out of the "
-            "Latin's v54 and into its v55, restoring the boundary at v56."
+            "Latin's v54 and into its v55, restoring the boundary at v56. "
+            "Straubinger divides it at the same word, which is the Hebrew "
+            "division of the psalm and not either translator's slip -- found "
+            "by `audit.py balance` declining to call it a lead, the two "
+            "editions standing together against the other seven."
         ),
     ),
 }
@@ -310,46 +321,10 @@ def side(en: set[int], pt: set[int], la: set[int] | None) -> str:
     return "neither"
 
 
-def shifted_candidates(
-    en: dict[tuple[str, int], dict[int, str]],
-    la: dict[tuple[str, int], dict[int, str]],
-    tag: str,
-) -> list[str]:
-    """Chapters whose verse-number sets MATCH but where some verse is a wild
-    length outlier against the Latin -- the silent case, as candidates only.
-
-    The ratio is taken against the chapter's own median rather than a global
-    constant, because the constant would be a claim about how much longer one
-    language runs than another and this is not the file to make it in. A verse
-    at less than half or more than double its own chapter's ratio is the
-    threshold; it is a dial for finding things to read, not a finding."""
-    out: list[str] = []
-    for key, verses in en.items():
-        base = la.get(key)
-        if base is None or set(base) != set(verses):
-            continue
-        ratios = {n: len(verses[n]) / len(base[n]) for n in verses if len(base[n]) > 0}
-        if len(ratios) < 4:
-            continue
-        median = statistics.median(ratios.values())
-        for n, ratio in sorted(ratios.items()):
-            if ratio < median * 0.5 or ratio > median * 2.0:
-                out.append(
-                    f"{key[0]} {key[1]}:{n}  {tag}/la length ratio {ratio:.2f} "
-                    f"against a chapter median of {median:.2f}"
-                )
-    return out
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--verbose", action="store_true", help="Print every verse-number set."
-    )
-    parser.add_argument(
-        "--shifted",
-        action="store_true",
-        help="Also list candidates for the silent case (same numbers, moved text).",
     )
     args = parser.parse_args()
     require_corpus()
@@ -396,23 +371,9 @@ def main() -> int:
         print(f"  {f'{key[0]} {key[1]}':<{width}}  {kind}")
         if args.verbose:
             print(f"{'':<{width + 4}}  {why}")
-    print(f"  {len(SILENT)} confirmed; --shifted lists what has not been read")
-
-    if args.shifted:
-        candidates = shifted_candidates(en, la, "en") + shifted_candidates(pt, la, "pt")
-        open_ = [
-            c
-            for c in candidates
-            if not c.startswith(tuple(f"{o} {n}:" for o, n in SILENT))
-        ]
-        print(
-            f"\n{len(candidates)} verses in chapters whose number sets agree are wild "
-            f"length outliers against the Latin; {len(candidates) - len(open_)} of them "
-            f"belong to the {len(SILENT)} chapters already confirmed above. The other "
-            f"{len(open_)} are candidates to read, not findings:"
-        )
-        for line in open_:
-            print(f"  {line}")
+    print(
+        f"  {len(SILENT)} confirmed and read; `audit.py balance` is what looks for more"
+    )
 
     unclassified = [k for k in found if k not in KINDS]
     stale = [k for k in KINDS if k not in set(found)]

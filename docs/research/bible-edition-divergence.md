@@ -11,7 +11,7 @@ table below.
 ```sh
 uv run pipeline/scrapers/bible/divergence.py            # the table + the staleness check
 uv run pipeline/scrapers/bible/divergence.py --verbose  # + verse-number sets and evidence
-uv run pipeline/scrapers/bible/divergence.py --shifted  # + the silent-case candidates
+uv run pipeline/scrapers/audit.py balance               # the silent-case search, over all nine
 ```
 
 ## The measurement
@@ -143,13 +143,14 @@ Psalm 13 is where believing otherwise gets the wrong answer.
 The proposal's §3 asked for a way to detect a chapter whose verse numbers match
 while its text has moved under them — the dangerous shape, because nothing
 anywhere marks it and a citation lands on real, plausible, wrong sentences.
-`--shifted` implements the signal proposed there: inside a chapter whose number
-sets agree, flag a verse whose length ratio against the Latin is a wild outlier
-on that chapter's own median. It finds candidates for a person to read; it
-aligns nothing.
+`divergence.py --shifted` implemented the signal proposed there — a length
+ratio against the Latin, inside chapters whose number sets agree — and was
+**deleted on 2026-09-07** for `audit.py balance`, which is the same signal
+with two things it could not have: all nine editions rather than one Latin,
+and a vote to say which edition is the odd one out.
 
-It flags **110 verses** across the two editions. Three chapters have been read
-so far, and one of them is the worst divergence in the corpus:
+Three chapters have been read, and one of them is the worst divergence in the
+corpus:
 
 | locator   | kind                | what happens                                                                                                                                                                                                                                                                    |
 | --------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -162,12 +163,22 @@ not see: the split and the rejoin cancel, the chapter's verse-number set is
 identical in both editions, and every existing check passes. It was invisible
 until something looked at verse _lengths_ rather than verse _numbers_.
 
-**101 candidates remain unread.** Clustering them by chapter is the cheapest
-triage: Acts 14 was the only chapter with five flags, and the two-flag chapters
-that have been read (`1cor 9`, `ps 77`) both turned out to be real local
-re-partitions, which suggests the rest of the two-flag list is worth the time
-and the single-flag list mostly is not. That is a hypothesis from three
-readings, not a finding.
+**The ninth edition reclassified `ps 77`, and that is the argument for the
+vote.** `--shifted` compared Matos Soares against the Latin and saw one
+edition moving text; Straubinger divides the psalm at the same word, and two
+editions translated from the Hebrew agreeing against the Vulgate is a
+division rather than two translators slipping alike. `audit.py balance`
+reports it as no lead at all for exactly that reason — the same rule `refs`
+states as two editions agreeing on a value being one witness. The row stays
+in `SILENT`, with its second witness recorded and its meaning changed.
+
+**What replaces the candidate list is 148 leads over nine editions**, ranked
+by how many editions the odd one out stands against, of which the largest
+clusters are Straubinger (51) and Crampon (37) — both translated from the
+original languages, so both diverging from the Vulgate's division wherever
+the traditions differ. Read the tally directionally before reading a row: an
+edition alone in one book or one chapter is that edition's own division; one
+scattered across the corpus is the parser.
 
 ## Why this matters more than 2.25% suggests
 
@@ -212,9 +223,11 @@ them.
 `KINDS` is the review; the tool is the generator; the check that they still
 describe each other is the part that keeps this from going stale silently.
 
-### 3. Detect the silent case, without guessing — built, mostly unadjudicated
+### 3. Detect the silent case, without guessing — built twice, mostly unadjudicated
 
-`--shifted`, above. 110 candidates, 3 chapters read, 101 outstanding.
+`--shifted` first, against the Latin alone; `audit.py balance` now, over all
+nine editions and with a vote. 3 chapters read; the leads it ranks are the
+outstanding work.
 
 ### 4. Record explicit mappings only where confirmed — done for the 8 that have one
 
@@ -253,9 +266,9 @@ enough for everything above.
 
 Fuzzy-matching verses across editions to guess correspondence is exactly the
 invention `docs/decisions.md` forbids for source defects. Detect, classify,
-disclose, and map only where a person has confirmed the mapping. `--shifted`
-respects this: it ranks candidates by a length ratio and never proposes a
-correspondence.
+disclose, and map only where a person has confirmed the mapping. `audit.py
+balance` respects this: it ranks by a length ratio and a vote, and never
+proposes a correspondence.
 
 ## Note on how this was found
 
