@@ -1284,12 +1284,32 @@ export type PrayerKind = 'simple' | 'dialogic' | 'group';
  * nothing and the curated file says everything (`lift_attribution`, in the
  * corpus).
  *
- * `petitions` IS A FOURTH KIND THIS UNION DOES NOT NAME, and that is a known
- * gap rather than an oversight — the corpus emits it for the litanies, with
- * the held response and the invocations under it, and nothing here reads any
- * of that. `PLAN.md` §A litany is a structure the corpus already holds.
+ * `petitions` is the litany's own kind — invocations under a response held
+ * once — and IT IS NAMED HERE WHILE NOTHING YET RENDERS IT. The distance
+ * between those two is the reason to name it: `prayer-lines.ts` casts the
+ * corpus's `kind` into this union, so while the union was three names wide a
+ * fourth flowed through typed as one of them and no consumer could err. The
+ * reader gets `html`'s alternating lines where the source has a call and a
+ * refrain; closing that is a rendering decision (`PLAN.md` §A litany is a
+ * structure the corpus already holds). Declaring the kind is what makes the
+ * gap visible to a `switch` rather than invisible to the compiler.
  */
-export type PrayerBlockKind = 'prose' | 'versicle' | 'response' | 'attribution';
+export type PrayerBlockKind = 'prose' | 'versicle' | 'response' | 'petitions' | 'attribution';
+
+/**
+ * One call of a litany: the invocation as the source printed it, and whether
+ * the response was printed after it.
+ *
+ * `response_printed` is true for exactly ONE invocation of a block — the one
+ * the page actually set the refrain under — and absent on every other, which
+ * carries it by implication. That implication is what a litany is, and
+ * repeating the response onto the rest would print text the source does not
+ * (docs/corpus-schema.md §Prayers).
+ */
+export interface PrayerInvocation {
+	text: string;
+	response_printed?: boolean;
+}
 
 export interface PrayerBlock {
 	/** Absent means `'prose'` — see `CccBlock.kind`. */
@@ -1319,6 +1339,15 @@ export interface PrayerBlock {
 	 *  canonical V./R. (docs/corpus-schema.md "Prayers"). Present only on
 	 *  `versicle`/`response` blocks -- absent on `prose`. */
 	label?: string;
+	/** The response held over every invocation of a `petitions` block, stored
+	 *  ONCE — `pray for us.` over the Litany of Loreto's fifty-four calls.
+	 *  Present only on `petitions`. */
+	response?: string;
+	/** A `petitions` block's calls, in printed order. `text`/`html` stay
+	 *  alongside and hold the same lines as printed, so a consumer that
+	 *  predates the kind is unaffected — which is exactly what let the kind
+	 *  reach the site unnoticed. Present only on `petitions`. */
+	invocations?: PrayerInvocation[];
 }
 
 /** A prayer's Latin companion text, as the SOURCE prints it: a field on the
