@@ -358,6 +358,49 @@ change with `reference-coverage`'s baseline attached to it and not a patch on
 the way past. The fourth is `verseExtent` refusing to express a range that
 straddles a Vulgate psalm split as one span, which is correct and stays.
 
+### 8. The psalm has no response, and the reference for one is already on the page
+
+The site prints which verses of the psalm are sung and not the RESPONSE sung
+between them — the half of the responsorial psalm a congregation actually says.
+Nothing about it is captured today: `parse_day` reads each slot's
+`<div class="address">` and nothing of the `content-body` beside it, so the
+marker is discarded with the text it introduces.
+
+**The wording is the NAB's and must stay in `raw/`; the reference is a fact and
+need not.** USCCB prints the response with its own locus in parentheses —
+`R. (2) O Lord, hear my prayer, and let my cry come to you.` — so what is
+missing is an address this site resolves like any other, not a text it may not
+reproduce. Measured **2026-09-07** over the 907 psalm slots in the cache: **885
+carry a parenthesised reference** and 22 print the response with none.
+
+| Shape                             | Count | Example                      |
+| --------------------------------- | ----- | ---------------------------- |
+| a verse of the psalm just cited   | 637   | `(7)`, `(2a)`, `(3cd)`       |
+| the same, behind a `see` or `cf.` | 165   | `(see 11)`, `(cf. 1a)`       |
+| a verse of another book           | 43    | `(Lk 15:18)`, `(John 6:68c)` |
+| two verses chained with `and`     | 16    | `(8a and 9a)`                |
+| a different chapter of the Psalms | 13    | `(40:5a)`, `(117:1a)`        |
+
+**A bare verse is relative to the psalm above it, and that is a judgment the
+SITE makes.** `(2)` under `Psalm 102:2-3, 16-18, 19-21` means Ps 102:2; the
+corpus would store the parenthesised string exactly as printed and the
+composition would happen where every other citation is composed. The rule the
+scraper would follow is the one it already follows everywhere: record what is
+there, infer nothing.
+
+**What it would cost**, if it is taken up: a second capture group in `_SLOT`,
+an offline re-parse (`--years 2026-2028 --offline`, no crawl — `raw/` holds
+every page), a `response` field carried through `scripts/build-lectionary.mjs`
+into `table.json`, and one row per psalm on both surfaces.
+
+**Two things it would not fix.** The `and`-chained and some `see`/`cf.` forms
+land on exactly the two grammar shapes §7 measures, so a share of responses
+would show a citation and no text. And a response rendered in the reader's own
+edition diverges from the sung words further than a reading does — a response is
+a chant text tuned to be repeatable, and `Psalm 102:2` in the Douay is not the
+line anybody answers with. That is the same trade the readings already make,
+made somewhere it shows more.
+
 ## Running it
 
     uv run pipeline/scrapers/lectionary.py --years 2026-2028   # the crawl
