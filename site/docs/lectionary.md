@@ -417,7 +417,7 @@ made somewhere it shows more.
 
 #### The acclamation and the sequence have only TEXT
 
-The 44 acclamations and 5 sequences that print `Not in this corpus` — of 526
+The 44 acclamations and 5 sequences that print `Not available here` — of 526
 and 13 slots respectively — are not a capture failure. USCCB gives them no
 address because there is none to give: the words are the Missal's own composed
 antiphons rather than pericopes, and its markup says so in as many words, the

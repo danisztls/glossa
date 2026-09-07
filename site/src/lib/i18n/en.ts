@@ -1043,9 +1043,9 @@ export const en: Dictionary = {
 	'lectionary.slot.gospel': 'Gospel',
 	'lectionary.slot.sequence': 'Sequence',
 	'lectionary.or': 'or',
-	// A slot whose text this site does not hold: the source printed an antiphon
-	// or a sequence and NO address for it, so there is nothing to resolve and
-	// the words are the lectionary's own.
+	// A slot this site does not serve: the source printed an antiphon or a
+	// sequence and NO address for it, so there is nothing to resolve and the
+	// words are the lectionary's own.
 	//
 	// IT SAYS WHAT IS MISSING AND NOT WHAT THE TEXT IS. It read `not a
 	// scriptural text` until 2026-09-07, which asserted something about the
@@ -1054,9 +1054,16 @@ export const en: Dictionary = {
 	// USCCB prints with no address because it is composed rather than quoted.
 	// The key was renamed rather than reworded, so that thirty-nine
 	// translations of the old claim could not go on making it.
-	// `bible.noteMissing` and `ccc.noParagraphNumber` are the same sentence
-	// about other absences.
-	'lectionary.textMissing': 'Not in this corpus',
+	//
+	// AND `here` RATHER THAN `in this corpus`, which is the wording it carried
+	// for a day and which this repository's own vocabulary makes false: `raw/`
+	// holds the page and the words are on it. What is absent is not the text
+	// from the corpus but the text from what the site SERVES, and `here` is the
+	// only one of the two a reader can check. `bible.noteMissing` and
+	// `ccc.noParagraphNumber` keep `corpus` and are right to: a note or a
+	// paragraph number the corpus genuinely does not have is a different
+	// absence, not the same sentence in other words.
+	'lectionary.textMissing': 'Not available here',
 	// The word the source puts before a passage it points at rather than
 	// appoints — USCCB writes both "See" and "Cf." and this is what both
 	// become, so a citation is not half in the reader's language.
