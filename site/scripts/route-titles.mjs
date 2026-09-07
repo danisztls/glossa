@@ -33,7 +33,7 @@ import { CHROME_PATHS, parseChromePath } from '../src/lib/route-manifest.ts';
 import { UI_LANGS } from '../src/lib/ui-langs.ts';
 import { summaQuestionLabel } from '../src/lib/summa-titles.ts';
 import { SITE_NAME, headFor } from '../src/lib/shell-head.ts';
-import { displayDocumentTitle, displayTitle } from '../src/lib/titles.ts';
+import { displayDocumentTitle, displayTitle, printedMarker } from '../src/lib/titles.ts';
 import { SITEMAP_LANGS } from './lastmod.mjs';
 
 /** Bumped when the shape changes, so a worker isolate holding an older file
@@ -171,6 +171,20 @@ const stripPrintedRange = (title) =>
 	title.replace(/\s*\((?=[^()]*\d)[^()]*\)\s*$/u, '').trim() || title;
 
 /**
+ * The list marker a source prints in front of a division's name — `I.`, `a.`,
+ * `a)`. `printedMarker` is `titles.ts`'s, so this cannot drift from what
+ * `documentHeadingParts` splits off on the page.
+ *
+ * `displayTitle` splits it by itself, so the CATECHISM's spans need nothing
+ * here; a document's outline reaches `displayDocumentTitle`, which by design
+ * splits nothing, so the Compendium of the Social Doctrine has to be told.
+ *
+ * @param {string} title
+ * @returns {string}
+ */
+const stripHeadingMarker = (title) => printedMarker(title)?.rest ?? title;
+
+/**
  * Chapter anchor -> the name of the division that opens there.
  *
  * READ OFF THE NODES THAT PRODUCED THE ANCHORS. `sync-corpus.mjs` derives the
@@ -242,11 +256,25 @@ export function buildRouteTitles({
 		books: bookNames(manifests, bibleIndex),
 		cccSpans: structureSpans(cccIndex),
 		compendiumSpans: structureSpans(compendiumIndex),
+		// 223 of the 246 print a marker (`I. MEANING AND UNITY`, `a. God's
+		// dominion`) that the work's own breadcrumb splits off with
+		// `documentHeadingParts` — so without this the title of every unit in a
+		// division named it one way and the page beside it another.
 		socialDoctrineSpans: csdc
-			? documentSpans(csdc.structure, Math.max(...csdc.sections.map((s) => s.n)), csdc.lang)
+			? documentSpans(
+					csdc.structure,
+					Math.max(...csdc.sections.map((s) => s.n)),
+					csdc.lang,
+					stripHeadingMarker
+				)
 			: [],
 		socialDoctrineChapterNames: csdc
-			? documentChapterNames(csdc.structure, socialDoctrineChapterStarts, csdc.lang)
+			? documentChapterNames(
+					csdc.structure,
+					socialDoctrineChapterStarts,
+					csdc.lang,
+					stripHeadingMarker
+				)
 			: {},
 		// The canon range the source prints inside a heading is dropped for
 		// the same reason `canonLawTitleText` drops it on the page: five of
@@ -480,6 +508,59 @@ export function assertNamed(paths, manifest, titles) {
 					.slice(0, 3)
 					.map((group) => group.join(' = '))
 					.join('; ')}`
+		);
+	}
+	assertSpansDisplayable(titles);
+}
+
+/**
+ * What a division may NOT be called in a `<title>`, over all four span tables.
+ *
+ * THE FAILURE THIS EXISTS FOR IS INVISIBLE TO EVERYONE WHO RENDERS. Both
+ * producers take an optional cleaning function that exactly one caller passes,
+ * and omitting it is silently wrong: `canonLawSpans` went without the one
+ * `canonLawTitleNames` had, so 86 of 287 spans named a division
+ * `MARRIAGE (Cann. 1055 - 1165)` where its own page said `Marriage`, and the
+ * only consumer that could see it was one that never reports back. An optional
+ * argument nobody is forced to pass needs a check that does not care which
+ * producer a table came from — so this reads the OUTPUT rather than the call.
+ *
+ * All three shapes are artifacts of the source's typography and never of a
+ * name: a heading still shouting is one `normalizeCase` did not recognise
+ * (the `ann` of `Cann.` is what stopped it), a trailing parenthetical holding
+ * a digit is a range the line below the title states again, and a leading
+ * marker is an enumerator the page splits off and sets apart.
+ *
+ * @param {import('../src/lib/shell-head.ts').RouteTitles} titles
+ */
+function assertSpansDisplayable(titles) {
+	/** @type {[string, import('../src/lib/shell-head.ts').TitledSpan[]][]} */
+	const tables = [
+		['cccSpans', titles.cccSpans],
+		['compendiumSpans', titles.compendiumSpans],
+		['socialDoctrineSpans', titles.socialDoctrineSpans],
+		['canonLawSpans', titles.canonLawSpans]
+	];
+	/** @type {string[]} */
+	const bad = [];
+	for (const [table, spans] of tables) {
+		for (const [, , name] of spans ?? []) {
+			const fault =
+				name === name.toUpperCase() && /\p{Lu}/u.test(name)
+					? 'still ALL-CAPS'
+					: /\([^()]*\d[^()]*\)\s*$/u.test(name)
+						? 'keeps a printed range'
+						: printedMarker(name)
+							? 'keeps a printed list marker'
+							: null;
+			if (fault) bad.push(`${table}: ${JSON.stringify(name)} — ${fault}`);
+		}
+	}
+	if (bad.length) {
+		throw new Error(
+			`route-titles: ${bad.length} span name(s) a page would not print that way; ` +
+				`the table is missing the cleaning its work's own display function does — ` +
+				`${bad.slice(0, 3).join('; ')}`
 		);
 	}
 }

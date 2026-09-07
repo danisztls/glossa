@@ -60,8 +60,10 @@
 		socialDoctrineDivisions(editions.lang).find(({ from }) => from === editions.current?.span?.[0])
 	);
 
+	// `documentHeadingParts`, the same as the breadcrumb below and as the
+	// name the edge writes — see `headingSuffix` on `/doctrina-socialis/[n]`.
 	const heading = $derived(
-		division ? displayDocumentTitle(division.node.title, editions.lang).title : ''
+		division ? documentHeadingParts(division.node.title, editions.lang).title : ''
 	);
 
 	/**

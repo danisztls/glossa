@@ -164,6 +164,33 @@ is what stopped it being one. `stripPrintedRange` is one definition in
 a heading that keeps it in one of the three is a division called two different
 things.
 
+**AND THE SPAN NAMES ARE ASSERTED NOW, because that class of bug is invisible
+to everyone who renders.** Both producers take an optional cleaning function,
+exactly one caller passed it, and omitting it is silently wrong — the page
+titles itself at hydration, so a browser shows the right thing whatever the
+table holds. `assertSpansDisplayable` reads the OUTPUT of all four tables
+rather than the calls, refusing a name that is still ALL-CAPS, keeps a trailing
+parenthetical holding a digit, or keeps a printed list marker; it is
+mutation-tested in all three directions, since a guard that cannot fail is
+worse than none.
+
+Adding it found the other two tables:
+
+- **223 of the Compendium of the Social Doctrine's 246 spans printed a list
+  marker** — `I. MEANING AND UNITY`, `a. God's dominion` — that the work's own
+  breadcrumb has always split off with `documentHeadingParts`. A document's
+  outline reaches `displayDocumentTitle`, which by design splits nothing, so
+  that table has to be told; its two route titles moved with it.
+- **235 of the Catechism's 665 did too, and there the fix was a decision to
+  reverse.** `normalizeCase`'s docblock had recorded that the marker on a
+  `sub` heading "is part of the title rather than a redundant echo of `n`" —
+  true of the echo argument and irrelevant to this one, as
+  `documentHeadingParts` had already worked out for a document: **reading a
+  marker the source printed is not reconstructing one.** `displayTitle` splits
+  it now, `printedMarker` is the single reader of that shape, and the
+  Catechism's pages set the enumerator apart the way every other numbered
+  division on the site already does.
+
 **The cost, measured because the objection asked for it**: 6.24 ms mean without
 the rewrite and 6.56 ms with it, against a 10 ms CPU limit the asset subrequest
 already dominates. One extra subrequest per isolate, none per request.

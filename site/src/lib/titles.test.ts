@@ -51,10 +51,14 @@ describe('displayTitle — contract table', () => {
 		});
 	});
 
-	it('sub, 1, "I. The Desire for God" (en) — roman-numeral marker, left untouched', () => {
+	/** SPLIT SINCE 2026-09-07, and it read `left untouched` until then. The
+	 *  marker is one the SOURCE printed, not a reconstruction of `n` — which
+	 *  is the distinction `documentHeadingParts` drew for a document's outline
+	 *  and this function was not given for a year. */
+	it('sub, 1, "I. The Desire for God" (en) — the printed marker splits off', () => {
 		expect(displayTitle(node('sub', 1, 'I. The Desire for God'), 'en')).toEqual({
-			ordinal: null,
-			title: 'I. The Desire for God'
+			ordinal: 'I.',
+			title: 'The Desire for God'
 		});
 	});
 
@@ -134,12 +138,22 @@ describe('displayTitle — real-corpus edge cases beyond the table', () => {
 
 	// ccc.en has roman-numeral `sub` markers where the rest of the title is
 	// ALSO all-caps ("I. THE CREEDS"), unlike the mixed-case contract example.
-	// The marker stays put; the word after it becomes the effective first
+	// The marker splits off; the word after it becomes the effective first
 	// word (capitalized regardless of the small-word list).
 	it('re-cases the remainder of an all-caps roman-numeral sub title', () => {
 		expect(displayTitle(node('sub', 1, 'I. THE CREEDS'), 'en')).toEqual({
+			ordinal: 'I.',
+			title: 'The Creeds'
+		});
+	});
+
+	/** A marker with nothing after it is the whole heading, and splitting it
+	 *  would leave a row with no text — `printedMarker`'s one refusal, and the
+	 *  reason `displayTitle` can take it unconditionally. */
+	it('leaves a heading that is only a marker exactly as it was', () => {
+		expect(displayTitle(node('sub', null, 'I.'), 'en')).toEqual({
 			ordinal: null,
-			title: 'I. The Creeds'
+			title: 'I.'
 		});
 	});
 

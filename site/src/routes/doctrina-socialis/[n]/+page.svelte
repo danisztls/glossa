@@ -95,7 +95,11 @@
 	 *  `innermost` in `shell-head.ts`; a mismatch is a visible rearrangement
 	 *  on every load. */
 	function headingSuffix(): string {
-		const title = division && displayDocumentTitle(division.node.title, editions.lang).title;
+		// `documentHeadingParts` and not `displayDocumentTitle`: 223 of this
+		// work's 246 divisions print a list marker, the breadcrumb below has
+		// always split it off, and `route-titles.mjs` splits it too — so the
+		// only place `a. God's dominion` survived whole was a title.
+		const title = division && documentHeadingParts(division.node.title, editions.lang).title;
 		return title ? ` · ${title}` : '';
 	}
 </script>

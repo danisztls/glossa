@@ -1392,14 +1392,24 @@ function stripSubOrdinalPrefix(title: string, n: number, lang: Lang): string | n
 /**
  * Strip the redundant kind prefix a source prints and normalize ALL-CAPS.
  *
- * Where recognizing/stripping a prefix would be ambiguous (most notably
- * `ccc.en`'s bare `"SECTION TWO"`, which has no title left over once its
- * own label is removed, and roman-numeral-marker `sub` titles like
- * `"I. The Desire for God"`, where the marker is part of the title rather
- * than a redundant echo of `n`), this leaves the title's structure alone —
- * `ordinal` comes back `null` — and only case-normalizes it. Preferring an
- * unsplit-but-correctly-cased title over a guessed split matches the
- * "leave it untouched over mangling it" rule from the contract.
+ * Where recognizing/stripping a prefix would be ambiguous — most notably
+ * `ccc.en`'s bare `"SECTION TWO"`, which has no title left over once its own
+ * label is removed — this leaves the title's structure alone (`ordinal` comes
+ * back `null`) and only case-normalizes it. Preferring an
+ * unsplit-but-correctly-cased title over a guessed split matches the "leave it
+ * untouched over mangling it" rule from the contract.
+ *
+ * **THIS ONCE COVERED THE PRINTED LIST MARKER TOO, and that was one case too
+ * many** (reversed 2026-09-07). `"I. The Desire for God"` was left whole on
+ * the grounds that the marker "is part of the title rather than a redundant
+ * echo of `n`" — true of the ECHO argument and irrelevant to this one, as
+ * `documentHeadingParts` had already worked out one function down: reading a
+ * marker the source itself printed is not reconstructing one. What it cost was
+ * paid where nobody looks, in the `<title>` of 235 of the Catechism's spans and
+ * every unit inside them — `CCC 1324 · I. The Eucharist - Source and Summit
+ * of…`, where five characters of enumerator are what pushed the phrase past the
+ * clip. `printedMarker` is the one reader of that shape now, and both display
+ * functions go through it.
  */
 /**
  * A DOCUMENT heading's display form. Unlike `displayTitle`, there is no
@@ -1444,14 +1454,29 @@ export function displayDocumentTitle(title: string, lang: string): DisplayTitle 
  */
 const HEADING_MARKER_RE = /^(?:[IVXL]+|\p{L})[.)](?=\s)/u;
 
-export function documentHeadingParts(title: string, lang: string): DisplayTitle {
+/**
+ * The marker and what follows it, or `null` where the heading carries none.
+ *
+ * ONE READER OF `HEADING_MARKER_RE`, because three surfaces split on it —
+ * `documentHeadingParts`, `displayTitle`, and `route-titles.mjs` through
+ * `spanName` — and a heading split one way on its own page and another in the
+ * title of every unit inside it is the defect the Code's printed canon range
+ * had for as long as only one of two tables stripped it.
+ *
+ * A marker with nothing after it is not a marker — it is the whole heading,
+ * and splitting it would leave a row with no text.
+ */
+export function printedMarker(title: string): { marker: string; rest: string } | null {
 	const head = title.trimStart();
 	const match = head.match(HEADING_MARKER_RE);
 	const rest = match ? head.slice(match[0].length).trim() : '';
-	// A marker with nothing after it is not a marker — it is the whole
-	// heading, and splitting it would leave a row with no text.
-	if (!match || !rest) return displayDocumentTitle(title, lang);
-	return { ordinal: match[0], title: finalize(normalizeCase(rest, normLang(lang))) };
+	return match && rest ? { marker: match[0], rest } : null;
+}
+
+export function documentHeadingParts(title: string, lang: string): DisplayTitle {
+	const split = printedMarker(title);
+	if (!split) return displayDocumentTitle(title, lang);
+	return { ordinal: split.marker, title: finalize(normalizeCase(split.rest, normLang(lang))) };
 }
 
 export function displayTitle(
@@ -1478,10 +1503,17 @@ export function displayTitle(
 		}
 	}
 
-	// prologue/in-brief (bare kind-name titles, nothing to strip), roman-
-	// numeral subs, and any part/section/chapter/article that didn't match
-	// the expected prefix (out-of-range `n`, or a genuinely empty remainder
-	// like "SECTION TWO") all land here: no separate ordinal, just casing.
+	// A marker the SOURCE printed, which is not the `n` above and is why this
+	// runs after every branch that reconstructs one: `I. The Desire for God`
+	// is a numeral and a name, and the Catechism sets them apart on the page
+	// exactly as the Social Doctrine's outline does.
+	const printed = printedMarker(title);
+	if (printed) return { ordinal: printed.marker, title: finalize(normalizeCase(printed.rest, L)) };
+
+	// prologue/in-brief (bare kind-name titles, nothing to strip) and any
+	// part/section/chapter/article that didn't match the expected prefix
+	// (out-of-range `n`, or a genuinely empty remainder like "SECTION TWO")
+	// land here: no separate ordinal, just casing.
 	return { ordinal: null, title: finalize(normalizeCase(title, L)) };
 }
 

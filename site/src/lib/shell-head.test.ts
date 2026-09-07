@@ -14,7 +14,8 @@ import {
 	noscriptHtml,
 	SITE_DESCRIPTION,
 	SITE_NAME,
-	type RouteTitles
+	type RouteTitles,
+	type TitledSpan
 } from './shell-head';
 import type { Apparatus } from './apparatus';
 import type { RouteManifest } from './route-manifest';
@@ -102,7 +103,7 @@ const titles: RouteTitles = {
 	books: { gen: 'Genesis', ps: 'Psalms' },
 	cccSpans: [
 		[1, 25, 'Prologue'],
-		[1, 3, 'I. The life of man - to know and love God'],
+		[1, 3, 'The life of man - to know and love God'],
 		[325, 349, 'Heaven and Earth'],
 		[325, 421, 'I Believe in God the Father']
 	],
@@ -361,6 +362,24 @@ describe('headFor, the corpus', () => {
 describe('assertNamed', () => {
 	it('passes over an address space every rule covers', () => {
 		expect(() => assertNamed(sitemapPaths(manifest), manifest, titles)).not.toThrow();
+	});
+
+	/**
+	 * The span check, mutation-tested in all three directions it can fail.
+	 *
+	 * The failure it guards is invisible to everyone who renders: both span
+	 * producers take an optional cleaning function, and the caller that forgets
+	 * it gets a division named one way on its own page and another in the title
+	 * of every unit inside it. `canonLawSpans` did exactly that for as long as
+	 * it existed, and only a consumer that never reports back could see it.
+	 */
+	it.each([
+		['keeps a printed range', 'MARRIAGE (Cann. 1055 - 1165)'],
+		['still ALL-CAPS', 'BISHOPS IN GENERAL'],
+		['keeps a printed list marker', 'I. The Desire for God']
+	])('refuses a span name a page would not print that way — %s', (fault, name) => {
+		const dirty = { ...titles, cccSpans: [...titles.cccSpans, [1, 3, name] as TitledSpan] };
+		expect(() => assertNamed(sitemapPaths(manifest), manifest, dirty)).toThrow(fault);
 	});
 
 	/** The failure it exists for: a work ingested before `shell-head.ts` learns
