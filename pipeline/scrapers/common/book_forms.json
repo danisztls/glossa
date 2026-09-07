@@ -1754,78 +1754,116 @@
 			"Gen"
 		],
 		"exod": [
-			"Es"
+			"Es",
+			"Exod",
+			"Esod",
+			"Erod"
 		],
 		"lev": [
-			"Lv"
+			"Lv",
+			"Levit"
 		],
 		"num": [
-			"Nm"
+			"Nm",
+			"Num"
 		],
 		"deut": [
-			"Dt"
+			"Dt",
+			"Deuter",
+			"Deut"
 		],
 		"josh": [
-			"Gs"
+			"Gs",
+			"Jos"
 		],
 		"judg": [
-			"Gdc"
+			"Gdc",
+			"Jud"
 		],
 		"ezra": [
-			"Esd"
+			"Esd",
+			"1 Esdr",
+			"I Esdr",
+			"1. Esdr",
+			"I. Esdr",
+			"1. Esd",
+			"I. Esd"
 		],
 		"neh": [
-			"Ne"
+			"Ne",
+			"2 Esdr",
+			"II Esdr",
+			"2. Esdr",
+			"II. Esdr",
+			"2. Esd",
+			"II. Esd"
 		],
 		"tob": [
 			"Tb"
 		],
 		"jdt": [
-			"Gdt"
+			"Gdt",
+			"Judith"
 		],
 		"esth": [
 			"Est"
 		],
 		"job": [
-			"Gb"
+			"Gb",
+			"Job"
 		],
 		"ps": [
 			"Sal",
-			"Psalm."
+			"Psalm.",
+			"Ps",
+			"Psal",
+			"Salmo"
 		],
 		"prov": [
 			"Prv",
-			"Pr"
+			"Pr",
+			"Prov"
 		],
 		"eccl": [
-			"Qo"
+			"Qo",
+			"Eccl"
 		],
 		"song": [
 			"Ct"
 		],
 		"wis": [
-			"Sap"
+			"Sap",
+			"Sapient"
 		],
 		"sir": [
-			"Sir"
+			"Sir",
+			"Eccli"
 		],
 		"isa": [
-			"Is"
+			"Is",
+			"Isai",
+			"Isaia"
 		],
 		"jer": [
-			"Ger"
+			"Ger",
+			"Jerem",
+			"Geremia"
 		],
 		"lam": [
 			"Lam"
 		],
 		"ezek": [
-			"Ez"
+			"Ez",
+			"Ezech",
+			"Ezechiele"
 		],
 		"dan": [
-			"Dn"
+			"Dn",
+			"Dan"
 		],
 		"hos": [
-			"Os"
+			"Os",
+			"Osea"
 		],
 		"joel": [
 			"Gl"
@@ -1849,42 +1887,58 @@
 			"Ml"
 		],
 		"matt": [
-			"Mt"
+			"Mt",
+			"Matth",
+			"Matt"
 		],
 		"mark": [
-			"Mc"
+			"Mc",
+			"Marc"
 		],
 		"luke": [
 			"Lc",
-			"Luca"
+			"Luca",
+			"Luc"
 		],
 		"john": [
-			"Gv"
+			"Gv",
+			"Joan",
+			"Jo"
 		],
 		"acts": [
-			"At"
+			"At",
+			"Act",
+			"Atti"
 		],
 		"rom": [
-			"Rm"
+			"Rm",
+			"Rom"
 		],
 		"gal": [
-			"Gal"
+			"Gal",
+			"Galat"
 		],
 		"eph": [
 			"Ef",
-			"Ephes."
+			"Ephes.",
+			"Efes"
 		],
 		"phil": [
-			"Fil"
+			"Fil",
+			"Philip"
 		],
 		"col": [
-			"Col"
+			"Col",
+			"Coloss"
 		],
 		"titus": [
-			"Tt"
+			"Tt",
+			"Tit"
 		],
 		"heb": [
-			"Eb"
+			"Eb",
+			"Hebr",
+			"Heb"
 		],
 		"jas": [
 			"Gc"
@@ -1893,7 +1947,10 @@
 			"Gd"
 		],
 		"rev": [
-			"Ap"
+			"Ap",
+			"Apocal",
+			"Apoc",
+			"Apocalisse"
 		],
 		"1sam": [
 			"1 Sam",
@@ -1956,83 +2013,202 @@
 			"1 Cr",
 			"I Cr",
 			"1Cr",
-			"l Cr"
+			"l Cr",
+			"1 Paral",
+			"I Paral",
+			"1Paral",
+			"1. Paral",
+			"I. Paral",
+			"1.Paral",
+			"I.Paral"
 		],
 		"2chr": [
 			"2 Cr",
 			"II Cr",
-			"2Cr"
+			"2Cr",
+			"2 Paral",
+			"II Paral",
+			"2Paral",
+			"2. Paral",
+			"II. Paral",
+			"2.Paral",
+			"II.Paral"
 		],
 		"1macc": [
 			"1 Mac",
 			"I Mac",
 			"1Mac",
-			"l Mac"
+			"l Mac",
+			"1 Machab",
+			"I Machab",
+			"1Machab",
+			"1. Machab",
+			"I. Machab",
+			"1.Machab",
+			"I.Machab"
 		],
 		"2macc": [
 			"2 Mac",
 			"II Mac",
-			"2Mac"
+			"2Mac",
+			"2 Machab",
+			"II Machab",
+			"2Machab",
+			"2. Machab",
+			"II. Machab",
+			"2.Machab",
+			"II.Machab"
 		],
 		"1cor": [
 			"1 Cor",
 			"I Cor",
 			"1Cor",
-			"l Cor"
+			"l Cor",
+			"1 Cor",
+			"I Cor",
+			"1Cor",
+			"1. Cor",
+			"I. Cor",
+			"1.Cor",
+			"I.Cor"
 		],
 		"2cor": [
 			"2 Cor",
 			"II Cor",
-			"2Cor"
+			"2Cor",
+			"2 Cor",
+			"II Cor",
+			"2Cor",
+			"2. Cor",
+			"II. Cor",
+			"2.Cor",
+			"II.Cor"
 		],
 		"1thess": [
 			"1 Ts",
 			"I Ts",
 			"1Ts",
-			"l Ts"
+			"l Ts",
+			"1 Thessal",
+			"I Thessal",
+			"1Thessal",
+			"1. Thessal",
+			"I. Thessal",
+			"1.Thessal",
+			"I.Thessal",
+			"1 Thess",
+			"I Thess",
+			"1Thess",
+			"1. Thess",
+			"I. Thess",
+			"1.Thess",
+			"I.Thess"
 		],
 		"2thess": [
 			"2 Ts",
 			"II Ts",
-			"2Ts"
+			"2Ts",
+			"2 Thessal",
+			"II Thessal",
+			"2Thessal",
+			"2. Thessal",
+			"II. Thessal",
+			"2.Thessal",
+			"II.Thessal",
+			"2 Thess",
+			"II Thess",
+			"2Thess",
+			"2. Thess",
+			"II. Thess",
+			"2.Thess",
+			"II.Thess"
 		],
 		"1tim": [
 			"1 Tm",
 			"I Tm",
 			"1Tm",
-			"l Tm"
+			"l Tm",
+			"1 Tim",
+			"I Tim",
+			"1Tim",
+			"1. Tim",
+			"I. Tim",
+			"1.Tim",
+			"I.Tim"
 		],
 		"2tim": [
 			"2 Tm",
 			"II Tm",
-			"2Tm"
+			"2Tm",
+			"2 Tim",
+			"II Tim",
+			"2Tim",
+			"2. Tim",
+			"II. Tim",
+			"2.Tim",
+			"II.Tim"
 		],
 		"1pet": [
 			"1 Pt",
 			"I Pt",
 			"1Pt",
-			"l Pt"
+			"l Pt",
+			"1 Pet",
+			"I Pet",
+			"1Pet",
+			"1. Pet",
+			"I. Pet",
+			"1.Pet",
+			"I.Pet"
 		],
 		"2pet": [
 			"2 Pt",
 			"II Pt",
-			"2Pt"
+			"2Pt",
+			"2 Pet",
+			"II Pet",
+			"2Pet",
+			"2. Pet",
+			"II. Pet",
+			"2.Pet",
+			"II.Pet"
 		],
 		"1john": [
 			"1 Gv",
 			"I Gv",
 			"1Gv",
-			"l Gv"
+			"l Gv",
+			"1 Jo",
+			"I Jo",
+			"1Jo",
+			"1. Jo",
+			"I. Jo",
+			"1.Jo",
+			"I.Jo"
 		],
 		"2john": [
 			"2 Gv",
 			"II Gv",
-			"2Gv"
+			"2Gv",
+			"2 Jo",
+			"II Jo",
+			"2Jo",
+			"2. Jo",
+			"II. Jo",
+			"2.Jo",
+			"II.Jo"
 		],
 		"3john": [
 			"3 Gv",
 			"III Gv",
-			"3Gv"
+			"3Gv",
+			"3 Jo",
+			"III Jo",
+			"3Jo",
+			"3. Jo",
+			"III. Jo",
+			"3.Jo",
+			"III.Jo"
 		]
 	},
 	"la": {

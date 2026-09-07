@@ -1249,78 +1249,191 @@ const BOOK_VARIANTS_FR: Record<string, string[]> = {
 	})
 };
 
-const BOOK_VARIANTS_IT: Record<string, string[]> = {
-	// `Gen` and `Pr` are Magnifica Humanitas's forms, not the Catechism's —
-	// the table is per LANGUAGE and the language has ten works.
-	gen: ['Gn', 'Gen'],
-	exod: ['Es'],
-	lev: ['Lv'],
-	num: ['Nm'],
-	deut: ['Dt'],
-	josh: ['Gs'],
-	judg: ['Gdc'],
-	ezra: ['Esd'],
-	neh: ['Ne'],
-	tob: ['Tb'],
-	jdt: ['Gdt'],
-	esth: ['Est'],
-	job: ['Gb'],
-	// `Psalm.` and `Ephes.` are the Latin forms Pius XI's *Ecclesiam Dei*
-	// cites in ("] Psalm. XLIV, 10. ["), the same pre-conciliar habit
-	// `BOOK_VARIANTS_EN` records for the English translations of that era.
-	ps: ['Sal', 'Psalm.'],
-	prov: ['Prv', 'Pr'],
-	eccl: ['Qo'],
-	song: ['Ct'],
-	wis: ['Sap'],
-	sir: ['Sir'],
-	isa: ['Is'],
-	jer: ['Ger'],
-	lam: ['Lam'],
-	ezek: ['Ez'],
-	dan: ['Dn'],
-	hos: ['Os'],
-	// `Gl` is JOEL here. The same two letters are Galatians in Portuguese and
-	// Spanish, which is the clearest single reason these tables are
-	// per-language and never merged into a shared base.
-	joel: ['Gl'],
-	amos: ['Am'],
-	jonah: ['Gio'],
-	mic: ['Mic'],
-	zeph: ['Sof'],
-	zech: ['Zc'],
-	mal: ['Ml'],
-	matt: ['Mt'],
-	mark: ['Mc'],
-	// `Luca` spelled out: this edition names the evangelist in running prose
-	// where it abbreviates in a footnote ("commentando il passo di san Luca
-	// 22,19"), and the prose scan is what found it.
-	luke: ['Lc', 'Luca'],
-	john: ['Gv'],
-	acts: ['At'],
-	rom: ['Rm'],
-	gal: ['Gal'],
-	eph: ['Ef', 'Ephes.'],
-	phil: ['Fil'],
-	col: ['Col'],
-	titus: ['Tt'],
-	heb: ['Eb'],
-	jas: ['Gc'],
-	jude: ['Gd'],
-	rev: ['Ap'],
-	...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
-	...KINGS_IT_MODERN,
-	...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pt'], { lTypo: true, unspaced: true }),
-	...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Gv'], {
-		lTypo: true,
-		unspaced: true
-	})
+/**
+ * THE ITALIAN TABLE'S SECOND HALF, AND THE APPARATUS IT WAS DERIVED FROM.
+ *
+ * Martini prints his notes in 1775 and names the books in LATIN — `Matth.`,
+ * `Isai.`, `Psal.`, `Levit.`, `Joan.`, `Apocal.` — where the modern Italian
+ * citation forms above are `Mt`, `Is`, `Sal`, `Lv`, `Gv`, `Ap`. With none of
+ * them in the table his apparatus resolved 838 citations out of some
+ * eighteen thousand notes, and every one of those 838 came from the handful
+ * of forms the two conventions happen to share (`Gen`, `Sap`, `Ephes.`).
+ *
+ * Read off the residue rather than guessed: the prose scan
+ * (`CLAUDE.md` §Running prose) over `bible.martini.it`'s notes, bucketed by
+ * what resolved to nothing, gave this list in frequency order. **The check is
+ * RANGE, not plausibility** — a form pointed at the wrong book still links,
+ * to a real page about something else, and what says so is a citation whose
+ * chapter or verse runs past the end of the book it was resolved to. Each row
+ * below was accepted only where its links land inside the edition's own text.
+ *
+ * Three rows are decided by that check rather than by the abbreviation:
+ *
+ *   - **`Jud.` is JUDGES**, not Jude and not Judith. 83 citations, every one
+ *     followed by a Roman chapter Jude does not have (`Jud. XIII. 5` is
+ *     Samson's birth, `Jud. XX`-`XXI` the war with Benjamin), and this
+ *     edition spells Judith out.
+ *   - **`Erod.` is EXODUS, and it is a transcription artifact** — an `x` read
+ *     as an `r`, 23 times. `Erod. XXI. 2` and `Erod. XXI. 16` sit beside
+ *     `Deuter. XV. 12` and `Deut. XXIV. 7`, which are those two verses' own
+ *     parallels; `Erod. XIV. 21` is the Red Sea. Kept here rather than filed
+ *     as a correction because the table's whole business is surface forms,
+ *     several already typos (`lTypo`), and because `Erode` is Italian for
+ *     Herod — a repair in the text would have to tell the two apart, where a
+ *     form followed by a chapter numeral cannot be the man.
+ *   - **`Esdras` is numbered the Douay way**, 1 Esdras being Ezra and 2
+ *     Esdras Nehemiah, which the English and Portuguese tables already carry
+ *     and this one did not — so `2. Esdr. XI. 16` resolved through the bare
+ *     `Esd` to Ezra, a book with ten chapters. Spelled out for the reason
+ *     those tables give: the two numbers are two osis keys, which
+ *     `numberedVariants` cannot express.
+ *
+ * `Salmo` is the one full name here that is not Latin: the notes name the
+ * Psalter in Italian where they abbreviate everything else, and `Isaia`,
+ * `Geremia`, `Ezechiele`, `Osea`, `Apocalisse` and `Atti` are the same habit
+ * in the same notes.
+ */
+const BOOK_FORMS_IT_MARTINI: Record<string, string[]> = {
+	exod: ['Exod', 'Esod', 'Erod'],
+	lev: ['Levit'],
+	num: ['Num'],
+	deut: ['Deuter', 'Deut'],
+	josh: ['Jos'],
+	judg: ['Jud'],
+	jdt: ['Judith'],
+	job: ['Job'],
+	ps: ['Ps', 'Psal', 'Salmo'],
+	prov: ['Prov'],
+	eccl: ['Eccl'],
+	wis: ['Sapient'],
+	sir: ['Eccli'],
+	isa: ['Isai', 'Isaia'],
+	jer: ['Jerem', 'Geremia'],
+	ezek: ['Ezech', 'Ezechiele'],
+	dan: ['Dan'],
+	hos: ['Osea'],
+	matt: ['Matth', 'Matt'],
+	mark: ['Marc'],
+	luke: ['Luc'],
+	john: ['Joan', 'Jo'],
+	acts: ['Act', 'Atti'],
+	rom: ['Rom'],
+	gal: ['Galat'],
+	eph: ['Efes'],
+	phil: ['Philip'],
+	col: ['Coloss'],
+	titus: ['Tit'],
+	heb: ['Hebr', 'Heb'],
+	rev: ['Apocal', 'Apoc', 'Apocalisse'],
+	// The Douay numbering of Esdras, spelled out rather than built: see the
+	// docblock above and `BOOK_VARIANTS_EN`'s own note on the same two rows.
+	ezra: ['1 Esdr', 'I Esdr', '1. Esdr', 'I. Esdr', '1. Esd', 'I. Esd'],
+	neh: ['2 Esdr', 'II Esdr', '2. Esdr', 'II. Esdr', '2. Esd', 'II. Esd']
 };
+
+/**
+ * `numDot` because Martini's book NUMBER carries its own full stop — the same
+ * observation `KINGS_IT_OPTS` records, and it holds for every numbered family
+ * he cites, not only the four Kingdoms. `unspaced` for the glued `I.Tim.`,
+ * which the source prints too.
+ */
+const MARTINI_IT_NUMBERED_OPTS = { unspaced: true, numDot: true };
+
+/**
+ * The numbered families in their Latin bases.
+ *
+ * SEPARATE FROM THE TABLE LITERAL AND MERGED IN, never spread beside it: two
+ * `numberedVariants` calls naming one osis key make the second REPLACE the
+ * first inside an object literal (`mergeVariants`' own docblock), and `Cor`
+ * is named twice here — once with the modern Italian options above and once
+ * with Martini's dotted book number.
+ */
+const BOOK_FORMS_IT_MARTINI_NUMBERED = mergeVariants(
+	numberedVariants({ 1: '1chr', 2: '2chr' }, ['Paral'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1macc', 2: '2macc' }, ['Machab'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1thess', 2: '2thess' }, ['Thessal', 'Thess'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tim'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pet'], MARTINI_IT_NUMBERED_OPTS),
+	numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Jo'], MARTINI_IT_NUMBERED_OPTS)
+);
+
+const BOOK_VARIANTS_IT: Record<string, string[]> = mergeVariants(
+	{
+		// `Gen` and `Pr` are Magnifica Humanitas's forms, not the Catechism's —
+		// the table is per LANGUAGE and the language has ten works.
+		gen: ['Gn', 'Gen'],
+		exod: ['Es'],
+		lev: ['Lv'],
+		num: ['Nm'],
+		deut: ['Dt'],
+		josh: ['Gs'],
+		judg: ['Gdc'],
+		ezra: ['Esd'],
+		neh: ['Ne'],
+		tob: ['Tb'],
+		jdt: ['Gdt'],
+		esth: ['Est'],
+		job: ['Gb'],
+		// `Psalm.` and `Ephes.` are the Latin forms Pius XI's *Ecclesiam Dei*
+		// cites in ("] Psalm. XLIV, 10. ["), the same pre-conciliar habit
+		// `BOOK_VARIANTS_EN` records for the English translations of that era.
+		ps: ['Sal', 'Psalm.'],
+		prov: ['Prv', 'Pr'],
+		eccl: ['Qo'],
+		song: ['Ct'],
+		wis: ['Sap'],
+		sir: ['Sir'],
+		isa: ['Is'],
+		jer: ['Ger'],
+		lam: ['Lam'],
+		ezek: ['Ez'],
+		dan: ['Dn'],
+		hos: ['Os'],
+		// `Gl` is JOEL here. The same two letters are Galatians in Portuguese and
+		// Spanish, which is the clearest single reason these tables are
+		// per-language and never merged into a shared base.
+		joel: ['Gl'],
+		amos: ['Am'],
+		jonah: ['Gio'],
+		mic: ['Mic'],
+		zeph: ['Sof'],
+		zech: ['Zc'],
+		mal: ['Ml'],
+		matt: ['Mt'],
+		mark: ['Mc'],
+		// `Luca` spelled out: this edition names the evangelist in running prose
+		// where it abbreviates in a footnote ("commentando il passo di san Luca
+		// 22,19"), and the prose scan is what found it.
+		luke: ['Lc', 'Luca'],
+		john: ['Gv'],
+		acts: ['At'],
+		rom: ['Rm'],
+		gal: ['Gal'],
+		eph: ['Ef', 'Ephes.'],
+		phil: ['Fil'],
+		col: ['Col'],
+		titus: ['Tt'],
+		heb: ['Eb'],
+		jas: ['Gc'],
+		jude: ['Gd'],
+		rev: ['Ap'],
+		...numberedVariants({ 1: '1sam', 2: '2sam' }, ['Sam'], { lTypo: true, unspaced: true }),
+		...KINGS_IT_MODERN,
+		...numberedVariants({ 1: '1chr', 2: '2chr' }, ['Cr'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1macc', 2: '2macc' }, ['Mac'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1cor', 2: '2cor' }, ['Cor'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1thess', 2: '2thess' }, ['Ts'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1tim', 2: '2tim' }, ['Tm'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1pet', 2: '2pet' }, ['Pt'], { lTypo: true, unspaced: true }),
+		...numberedVariants({ 1: '1john', 2: '2john', 3: '3john' }, ['Gv'], {
+			lTypo: true,
+			unspaced: true
+		})
+	},
+	BOOK_FORMS_IT_MARTINI,
+	BOOK_FORMS_IT_MARTINI_NUMBERED
+);
 
 const BOOK_VARIANTS_MG: Record<string, string[]> = {
 	gen: ['Jen'],
