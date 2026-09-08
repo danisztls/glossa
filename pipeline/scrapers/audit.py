@@ -263,14 +263,46 @@ a range rather than the range prints a NARROWER span consistently, and the
 Byelorussian does it ten times out of ten, which is a convention and would
 otherwise have been a fifth of the leads.
 
+THE EIGHTH AUDIT, `trees`, is `divisions` for the documents, which `divisions`
+cannot read at all: a document's `structure.json` is a flat array of
+`{level, title, before}` with no `kind` to count, so every document edition in
+the corpus is outside that check's universe by construction.
+
+`docs/research/document-structure-defects.md` §2 asked for it by name and said
+why. `check-symmetry` compares section-number sets, so `fratelli-tutti` passed
+it with 287 sections on both sides while one edition found eight chapters and
+the other found none. The trees are what the sidebar contents renders and what
+`static/route-titles.json` publishes as each division's paragraph span, so a
+wrong tree is served to consumers that never render the page.
+
+WHAT IT COMPARES IS THE ANCHOR, because that is the only part of a heading two
+editions share: the title is in a different language in each and the level is
+compacted against its own document, while `before` is the publisher's own
+paragraph number. An edition whose outline has one anchor or none is the
+trivial single-node tree, and it is reported without being consulted -- an
+edition that found nothing is not a witness that there is nothing.
+
+DEPTH IS COMPARED AS A STEP AND NOT AS A LEVEL. Levels are compacted to a
+contiguous 1..N per document, so an edition carrying one tier its siblings do
+not shifts every node below it; comparing levels directly reported 184
+disagreements for `csdc.en` where the fact was one extra tier.
+
+AND IT RANKS WITHOUT ADJUDICATING, which is the whole skill in reading it.
+`evangelii-nuntiandi.en` looks exactly like a parse failure at 1 heading
+against a peer median of 82, and is not one: its mirror contains six bold runs
+in the entire document. `familiaris-consortio.la` prints no sub-headings at
+all. Both were settled by reading the raw page, and nothing in the measurement
+could have settled either.
+
   ./audit.py coverage            # ranked table, worst first
   ./audit.py withheld            # marker vs unpublished.json
   ./audit.py toc                 # parsed structure vs the read oracle
   ./audit.py balance             # cross-language text-length symmetry
   ./audit.py divisions           # cross-language structure-tree symmetry
+  ./audit.py trees               # the documents' outlines, compared by anchor
   ./audit.py refs                # cross-language reference-apparatus symmetry
   ./audit.py apparatus           # the documents' footnotes: recall, arithmetic, vote
-  ./audit.py all                 # all seven; exit 1 if any gates
+  ./audit.py all                 # all eight; exit 1 if any gates
 """
 
 from __future__ import annotations
@@ -1266,6 +1298,242 @@ def report_divisions(rows: list[dict], limit: int) -> int:
 
 
 # --------------------------------------------------------------------------
+# Cross-language structure trees
+# --------------------------------------------------------------------------
+
+#: The types whose `structure.json` is the DOCUMENTS' flat array of
+#: `{level, title, before}` rather than the CCC's nested `kind`/`paragraphs`
+#: nodes. `divisions` above reads the nested shape and counts kinds; these
+#: have no kinds to count, which is why they needed a check of their own
+#: (docs/corpus-schema.md, §Documents).
+TREE_TYPES = ("document", "social-doctrine", "canon-law")
+
+#: An outline of one anchor or none is the trivial single-node tree the
+#: schema gives a document with no internal headings. It is not evidence
+#: about where headings are, so it is reported and never consulted.
+TREE_STUB_ANCHORS = 1
+
+#: A collapsed section set makes the tree comparison meaningless rather than
+#: informative -- see `measure_trees`. Same shape as the stub test: a quarter
+#: of the peer median, and only where the peers have enough units for a
+#: quarter to mean anything.
+TREE_COLLAPSE_RATIO = 4
+TREE_COLLAPSE_MIN_PEER = 8
+
+
+def outline(work: Path) -> tuple[list[int], dict[int, int]] | None:
+    """`(anchors, level by anchor)` for one edition, or None when the edition
+    cannot take part in the comparison.
+
+    KEYED BY ANCHOR, WHICH IS THE ONE THING THE EDITIONS SHARE. A document's
+    heading carries a title in its own language and a `level` compacted
+    against its own document; neither identifies a heading across editions.
+    `before` -- the section number the heading precedes -- is the publisher's
+    own paragraph number, printed identically in every translation, so it is
+    the address a heading can be compared at.
+
+    Two editions are excluded rather than compared. One with an EMPTY
+    `sections.json` is typeset as continuous prose and every heading it has is
+    unanchored, exactly the case `check_language_symmetry` skips and for the
+    same reason. One with no `structure.json` was never parsed this far.
+
+    A heading with `before: null` is trailing matter that the numbered flow
+    never reaches (`docs/corpus-schema.md`), so it addresses nothing and is
+    dropped here as `divisions` drops a null-bounded node. Where an anchor
+    carries several headings the SHALLOWEST is kept: an anchor is one position
+    in the outline, and the outer heading is what ranks it."""
+    structure, sections = work / "structure.json", work / "sections.json"
+    if not structure.exists() or not sections.exists():
+        return None
+    if not json.loads(sections.read_text()):
+        return None
+    level: dict[int, int] = {}
+    for node in json.loads(structure.read_text()):
+        anchor = node.get("before")
+        if anchor is None:
+            continue
+        level[anchor] = min(level.get(anchor, node["level"]), node["level"])
+    return sorted(level), level
+
+
+def _steps(anchors: list[int], level: dict[int, int]) -> list[int]:
+    """The tree's shape as the sign of the level change between consecutive
+    anchors: +1 a step in, -1 a step out, 0 a sibling.
+
+    THE SHAPE OF A TREE IS ITS STEPS, NOT THE LEVELS OF ITS NODES, and the
+    difference is the whole reason this function exists. `level` is compacted
+    to a contiguous 1..N per document, so an edition that finds one tier its
+    siblings do not shifts EVERY node below it by one -- comparing levels
+    directly reported 184 disagreements for `csdc.en` where the fact is that
+    it has one more tier than `csdc.pl`. A step survives that shift, so what
+    it reports is a node the editions disagree about the placement OF."""
+    return [
+        (level[b] > level[a]) - (level[b] < level[a])
+        for a, b in itertools.pairwise(anchors)
+    ]
+
+
+def measure_trees(corpus: Path) -> list[dict]:
+    """One row per edition whose outline departs from its siblings', with the
+    three ways it can depart measured separately.
+
+    `docs/research/document-structure-defects.md` §2 asked for exactly this
+    and said why: `check-symmetry` compares section-number sets, so a document
+    whose editions agree on 287 sections passes it while one of them found
+    eight chapters and another found none. The trees are what the sidebar
+    contents renders and what `static/route-titles.json` publishes as each
+    division's paragraph span, so a wrong tree is served to consumers that
+    never render the page.
+
+    THREE MEASURES, BECAUSE THEY NAME THREE DIFFERENT FAULTS:
+
+      - **lacks** -- anchors a majority of the witnesses carry a heading at
+        and this edition does not. The sharpest of the three: the working
+        siblings show what the broken one should produce.
+      - **alone** -- anchors no other witness has a heading at. Read
+        DIRECTIONALLY and against the counts printed beside it. An edition
+        alone at an anchor where its siblings are rich has invented a heading
+        -- a promoted table-of-contents entry, a stanza taken for a title. One
+        alone where its siblings are thin is the only edition that parsed, and
+        the finding is about them: `sollicitudo-rei-socialis.hu` is alone at
+        42 anchors because the other eight editions found seven headings each.
+      - **steps** -- anchors both sides carry but rank differently against
+        the anchor before them. This is `document-structure-defects.md`'s
+        closing-block-a-tier-too-deep class, and `_steps` says why it is
+        measured as a step rather than as a level.
+
+    A STUB IS NOT A WITNESS. An edition whose outline has one anchor or none
+    is the trivial single-node tree, and treating it as evidence that there is
+    no heading at anchor 40 is exactly backwards -- it says only that nothing
+    was found. So stubs are reported (`stub: true`) and excluded from what the
+    others are measured against, which is what stops the three editions of
+    `mediator-dei` reading as one invention of 73 headings and one absence.
+
+    A COLLAPSED SECTION SET MAKES THE TREE QUESTION MOOT, and the row says so
+    rather than leaving it to be discovered. A heading is anchored to a
+    section number, so an edition holding 1 of the 33 sections its siblings
+    hold cannot anchor a heading anywhere; its outline is a symptom, and the
+    work is in `check-symmetry`'s report, not here.
+
+    IT RANKS AND IT DOES NOT ADJUDICATE, which is the one thing to keep in
+    mind while reading the output. `evangelii-nuntiandi.en` reads exactly like
+    a parse failure -- 1 heading against a peer median of 82 -- and is not
+    one: the English mirror contains six bold runs in the whole document, all
+    furniture, and is an unstructured rendering of the same text.
+    `familiaris-consortio.la` is the same, confirmed on the raw page. The
+    comparison produces candidates; the page decides."""
+    rows = []
+    for base, langs in sorted(language_groups(corpus, types=TREE_TYPES).items()):
+        read = {}
+        units = {}
+        for lang, work in langs.items():
+            got = outline(work)
+            if got is not None:
+                read[lang] = got
+                units[lang] = len(json.loads((work / "sections.json").read_text()))
+        witnesses = {
+            lang
+            for lang, (anchors, _) in read.items()
+            if len(anchors) > TREE_STUB_ANCHORS
+        }
+        if len(witnesses) < 2:
+            continue
+        held = collections.Counter()
+        for lang in witnesses:
+            held.update(read[lang][0])
+        agreed = {n for n, c in held.items() if c * 2 > len(witnesses)}
+        for lang, (anchors, level) in sorted(read.items()):
+            peers = sorted(witnesses - {lang})
+            if not peers:
+                continue
+            peer_units = statistics.median_low([units[p] for p in peers])
+            row = {
+                "work": base,
+                "edition": lang,
+                "anchors": len(anchors),
+                "peer_anchors": statistics.median_low([len(read[p][0]) for p in peers]),
+                "witnesses": len(witnesses),
+                "stub": lang not in witnesses,
+                "collapsed": peer_units >= TREE_COLLAPSE_MIN_PEER
+                and units[lang] * TREE_COLLAPSE_RATIO <= peer_units,
+                "lacks": len(agreed - set(anchors)),
+                "alone": sum(1 for n in anchors if held[n] == 1),
+                "steps": 0,
+            }
+            # The step comparison needs a common spine, so it runs over the
+            # anchors every witness carries -- a step between two anchors one
+            # side does not have is not a disagreement about placement.
+            shared = sorted(
+                set.intersection(*(set(read[p][0]) for p in peers)) & set(anchors)
+            )
+            if lang in witnesses and len(shared) > 2:
+                mine = _steps(shared, level)
+                theirs = [
+                    _steps(shared, read[p][1])
+                    for p in peers
+                    if set(shared) <= set(read[p][0])
+                ]
+                for i, step in enumerate(mine):
+                    modal = collections.Counter(t[i] for t in theirs).most_common(1)
+                    if modal and modal[0][1] * 2 > len(theirs) and modal[0][0] != step:
+                        row["steps"] += 1
+            if row["stub"] and row["peer_anchors"] <= TREE_STUB_ANCHORS:
+                continue
+            if row["stub"] or row["lacks"] or row["alone"] or row["steps"]:
+                rows.append(row)
+    # A stub is ranked by what its siblings found, because that is the whole
+    # of what it lost; a partial by how far it strayed from them.
+    rows.sort(
+        key=lambda r: (
+            not r["stub"],
+            -(r["peer_anchors"] if r["stub"] else r["lacks"] + r["alone"] + r["steps"]),
+            r["work"],
+            r["edition"],
+        )
+    )
+    return rows
+
+
+def report_trees(rows: list[dict], limit: int) -> int:
+    stubs = [r for r in rows if r["stub"]]
+    partial = [r for r in rows if not r["stub"]]
+    print(
+        f"{len(rows)} edition(s) whose outline departs from their siblings', "
+        f"across {len({r['work'] for r in rows})} work(s).\n"
+        "Reports only; never gates -- and it RANKS WITHOUT ADJUDICATING: an "
+        "unstructured mirror and\nan unread one look identical from here, so "
+        "the raw page decides. `COLLAPSED SECTIONS`\nmarks an edition holding "
+        "a fraction of its siblings' units, where the outline is a symptom."
+    )
+    print(f"\n{len(stubs)} found no outline at all, against siblings that did:")
+    for row in stubs[:limit]:
+        note = "  COLLAPSED SECTIONS" if row["collapsed"] else ""
+        name = f"{row['work']}.{row['edition']}"
+        print(
+            f"  {name:46s} peer median {row['peer_anchors']:4d} anchors "
+            f"({row['witnesses']} witnesses){note}"
+        )
+    if len(stubs) > limit:
+        print(f"  ... and {len(stubs) - limit} more (raise --limit, or --json)")
+    print(
+        f"\n{len(partial)} found an outline that disagrees. `lacks` are anchors "
+        "the witnesses agree on\nand this edition has not, `alone` anchors only "
+        "it has, `steps` anchors it ranks differently:"
+    )
+    for row in partial[:limit]:
+        note = "  COLLAPSED SECTIONS" if row["collapsed"] else ""
+        name = f"{row['work']}.{row['edition']}"
+        print(
+            f"  {name:46s} {row['anchors']:4d}/{row['peer_anchors']:<4d} anchors  "
+            f"lacks {row['lacks']:3d}  alone {row['alone']:3d}  "
+            f"steps {row['steps']:3d}{note}"
+        )
+    if len(partial) > limit:
+        print(f"  ... and {len(partial) - limit} more (raise --limit, or --json)")
+    return 0
+
+
+# --------------------------------------------------------------------------
 # Cross-language reference apparatus
 # --------------------------------------------------------------------------
 
@@ -2129,6 +2397,7 @@ def main() -> int:
             "toc",
             "balance",
             "divisions",
+            "trees",
             "refs",
             "apparatus",
             "all",
@@ -2153,7 +2422,7 @@ def main() -> int:
     # works, so none pays for the coverage measurement it never looks at.
     # `apparatus` reads raw pages but not the body region, and computes its
     # own.
-    skips_coverage = ("balance", "divisions", "refs", "apparatus")
+    skips_coverage = ("balance", "divisions", "trees", "refs", "apparatus")
     rows = measure(corpus) if args.check not in skips_coverage else []
 
     if args.json:
@@ -2161,6 +2430,8 @@ def main() -> int:
             json.dump(measure_balance(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "divisions":
             json.dump(measure_divisions(corpus), sys.stdout, indent=2, default=str)
+        elif args.check == "trees":
+            json.dump(measure_trees(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "refs":
             json.dump(measure_refs(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "apparatus":
@@ -2188,6 +2459,10 @@ def main() -> int:
         if args.check == "all":
             print()
         status |= report_divisions(measure_divisions(corpus), args.limit)
+    if args.check in ("trees", "all"):
+        if args.check == "all":
+            print()
+        status |= report_trees(measure_trees(corpus), args.limit)
     if args.check in ("refs", "all"):
         if args.check == "all":
             print()
