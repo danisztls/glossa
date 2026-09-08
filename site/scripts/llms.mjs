@@ -27,6 +27,7 @@
  */
 
 import { censusFact } from './census.mjs';
+import { CHROME_PATHS } from '../src/lib/route-manifest.ts';
 
 const TOKEN = /\{\{([A-Z_]+)\}\}/g;
 
@@ -62,6 +63,16 @@ export function llmsFacts(census) {
 		CSDC_MAX: census.maxima.socialDoctrine,
 		CANON_MAX: census.maxima.canonLaw,
 		SUMMA_PARTS: census.summaParts.map((/** @type {string} */ part) => `\`${part}\``).join(', '),
+		// NOT FROM THE CENSUS, AND THE ONLY FACT HERE THAT IS NOT. The census
+		// derives from the corpus; this is a property of the app, and
+		// `sitemap.mjs` already reads the same constant to build the clusters
+		// this sentence describes. Written by hand the list said eight when
+		// there were fourteen, and had been wrong since `/ius-canonicum`
+		// landed: a reader was told `/pt/calendarium` is an entry point that
+		// canonicalizes away, when it is a real page with an `hreflang` set.
+		// The count is deliberately not published beside it — the list
+		// enumerates, so a number would be a second thing to keep true.
+		CHROME_PATHS: CHROME_PATHS.map((path) => `\`${path}\``).join(', '),
 		LANGUAGE_COUNT: census.languages.length,
 		LANGUAGES: census.languages.join(', '),
 		DOCUMENT_COUNT: censusFact(census, 'magisterium', 'documents'),
