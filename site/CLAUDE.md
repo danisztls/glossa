@@ -3,7 +3,8 @@
 Operational notes for the site. The repo root's `CLAUDE.md` holds the
 corpus-safety rules that apply first; **`site/docs/*.md` holds the rationale** —
 `addresses`, `languages`, `references`, `shell`, `edge`, `reading`, `finding`,
-`calendar`, `lectionary`, `usage`, `linking-out`, `colophon`, `dev-loop`.
+`calendar`, `lectionary`, `usage`, `linking-out`, `colophon`, `census`,
+`dev-loop`.
 
 ## The boot payload has a ceiling, and the deploy enforces it
 
@@ -1616,6 +1617,35 @@ holds the rationale.
   under its own marks. The buttons are drawn whenever pressing one would change
   something, a lone hidden family included, or a chapter cited by nothing but
   its own apparatus would show an empty panel with no way to open it.
+
+## Every number a reader sees is derived once
+
+`scripts/census.mjs` writes `index/census.json`; `/bibliotheca/census` renders
+it and `llmsFacts` projects it. `site/docs/census.md` holds the rationale.
+
+- **A count published twice is a count that will disagree with itself.**
+  `llms.mjs` derived nine facts of its own until the census existed, correctly;
+  what it could not do is answer a second consumer. Put a new number here, not
+  in the page that wants it — `censusValue` throws for a row a reader renamed,
+  which is a build failure instead of the word `undefined` in published prose.
+- **A ranking counts distinct citing PLACES, not stored rows.** The index holds
+  one row per (citing address, cited address) pair, so counting rows makes the
+  most-cited chapter the one people quote longest passages from — Matthew 25
+  leads on rows and is sixteenth on places.
+- **A work's account of itself is not evidence of how the library reads it.**
+  An edition's footnotes are excluded from every ranking (they outnumber
+  everything else), and so is a work citing itself — all but a fifteenth of the
+  Summa's citers are the Summa.
+- **A ranking is cut on the COUNT and never on the rank.** Thirteen Catechism
+  paragraphs are cited exactly three times, so a `slice(0, 20)` would publish
+  four of them and drop nine that are cited as often.
+- **A row is written only where the thing it counts is in the build.** The
+  fixtures hold no Code, and a `Canons — 0` row asserts the Church has no law
+  rather than reporting that nothing was synced.
+- **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
+  `/calendarium/liturgia` already stands on, because its `census.*` strings are
+  written in English alone. Its head is fixed and English in `STATIC_HEADS` to
+  match.
 
 ## Running prose is an apparatus, not decoration
 

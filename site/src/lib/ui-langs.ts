@@ -204,6 +204,33 @@ export function bcp47(tag: string): string {
 }
 
 /**
+ * A number in the reader's own formatting — `1,703` or `1.703` or `1 703`.
+ *
+ * HERE BECAUSE `bcp47` IS HERE, and the trap it exists for is the whole
+ * reason this is a function rather than a `toLocaleString` at each call site:
+ * `zht` is a structurally valid tag `Intl` cannot resolve, so it does not
+ * throw — it quietly returns the browser's default locale, which is the exact
+ * outcome passing a language at all is meant to prevent. One reader in
+ * thirty-seven, and no error anywhere.
+ *
+ * `lang` is always passed and never defaulted, because the ambient locale is
+ * the BROWSER's and the interface language is the reader's stated choice: a
+ * Portuguese reader on an English system would otherwise be shown `1,703` on
+ * a page that writes `24,1 MB` two panels away.
+ */
+export function formatNumber(value: number, lang: string, decimals = 0): string {
+	try {
+		return new Intl.NumberFormat(bcp47(lang), {
+			minimumFractionDigits: decimals,
+			maximumFractionDigits: decimals
+		}).format(value);
+	} catch {
+		// An unknown or malformed tag. The number still has to render.
+		return value.toFixed(decimals);
+	}
+}
+
+/**
  * The variants that fold to a tag of their own rather than to their primary
  * subtag, applied by `browserLangs` before the fold below.
  *

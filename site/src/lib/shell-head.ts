@@ -233,6 +233,13 @@ const STATIC_HEADS: Record<
 		title: `The day's liturgy — ${SITE_NAME}`,
 		description: `The Mass readings appointed for a day, set out in full from this library's own editions, with the day's prayers.`
 	},
+	// Same arrangement as `/calendarium/liturgia` above and for the same
+	// reason: not in `CHROME_PATHS`, so its head is fixed and English here
+	// until its strings are written in every dictionary.
+	'/bibliotheca/census': {
+		title: `Census — ${SITE_NAME}`,
+		description: `What this library holds, counted: its editions, languages and addresses, and the passages the rest of the corpus cites most.`
+	},
 	'/colophon': {
 		title: `Colophon — ${SITE_NAME}`,
 		description: `How this library is made: where each text came from, who holds rights in it, and how the site is built.`

@@ -106,6 +106,24 @@
 	</section>
 
 	<!--
+		ONE LINE UNDER THE CATALOGUE, AND NOT AN EIGHTH CARD. `/bibliotheca/census`
+		counts what the cards above open — editions, languages, addresses, and
+		the passages the rest of the corpus cites most — and a card would put it
+		in the grid as if it were a work to read. It is not; it is a fact about
+		the shelf the cards sit on, which is why it reads as a line at the foot
+		of the catalogue rather than as one more door in it.
+
+		IT IS NOT IN THE FOOTER'S INDEX either, though `/signata` and `/colophon`
+		both are. Those are reachable from every page because a reader wants them
+		from wherever they are; this one is about the catalogue, is one click
+		from it, and its label is English in a footer that is written in
+		thirty-seven languages.
+	-->
+	<p class="census-link">
+		<a href="/bibliotheca/census">{t('census.link')}</a>
+	</p>
+
+	<!--
 		THE ONE PICTURE ON THIS PAGE, AND IT IS AT THE BOTTOM. Antonello's
 		Jerome: a man alone in a room full of books, which is what a library is.
 		It headed `/schola` until 2026-09-05 and moved here because that page is
@@ -180,6 +198,14 @@
 
 	section {
 		margin: 2.25rem 0;
+	}
+
+	/* Set as the catalogue's own footnote rather than as a heading: it is a
+	   pointer, and the picture below it is the page's close. */
+	.census-link {
+		margin: -0.75rem 0 0;
+		font-size: 0.92rem;
+		color: var(--color-text-muted);
 	}
 
 	/* THE ONE `h2` LEFT ON THIS PAGE IS HIDDEN, so the rule that set the

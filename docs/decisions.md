@@ -17,6 +17,7 @@ beside the code it governs:
 | `site/docs/addresses.md`       | the URL grammar, work types, editions, commentaries          |
 | `site/docs/languages.md`       | `UiLang` vs `ContentLang`, fallback, tags, language prefixes |
 | `site/docs/references.md`      | reading a printed citation into a link                       |
+| `site/docs/census.md`          | counting the library, and how a ranking is cut               |
 | `site/docs/shell.md`           | the SPA shell, boot payload, chunking, offline               |
 | `site/docs/edge.md`            | the worker, its cost, rate limiting, the head, the sitemap   |
 | `site/docs/reading.md`         | lanes, apparatus, cards, the Bible's chrome, plates          |

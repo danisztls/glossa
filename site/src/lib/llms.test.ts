@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { assertSourcesNamed, llmsFacts, llmsTxt } from '../../scripts/llms.mjs';
+import { buildCensus } from '../../scripts/census.mjs';
 
 const TEMPLATE = readFileSync(
 	path.join(import.meta.dirname, '../../scripts/llms.template.md'),
@@ -16,10 +17,19 @@ const TEMPLATE = readFileSync(
  * named against eleven drawn on.
  */
 const manifest = {
+	version: 1 as const,
+	workCount: 4,
+	contentAssetCount: 12,
+	bible: { gen: [0, 1, 2] },
 	ccc: [1, 2865],
+	cccChapters: [1],
 	compendium: [1, 598],
+	compendiumChapters: [1],
 	socialDoctrine: [1, 583],
+	socialDoctrineChapters: [1],
 	canonLaw: [1, 1752],
+	canonLawTitles: [1],
+	prayers: ['our-father'],
 	summa: { i: [1], 'i-ii': [1], 'ii-ii': [1], iii: [1], suppl: [1] },
 	documents: ['rerum-novarum', 'vita-consecrata']
 };
@@ -31,9 +41,28 @@ const works = {
 };
 const apparatus = { descriptions: { 'rerum-novarum': 'a' } };
 
+/**
+ * THE FACTS ARE THE CENSUS'S NOW, so the fixture is what the census is built
+ * from rather than what `llmsFacts` used to read directly. The join is under
+ * test as much as the projection is: `censusValue` throws for a row that has
+ * been renamed, which is the failure this file exists to catch one step
+ * earlier than a reader would.
+ */
+const census = buildCensus({
+	manifests: {},
+	routeManifest: manifest,
+	works,
+	apparatus,
+	addressCount: 9,
+	uiLangCount: 37,
+	scriptureByBook: {},
+	citationXrefs: { documents: [], ccc: [], summa: [] },
+	summaArticles: new Map()
+});
+
 describe('llmsFacts', () => {
 	it('reads the address space and the languages off the corpus', () => {
-		const facts = llmsFacts({ routeManifest: manifest, works, apparatus });
+		const facts = llmsFacts(census);
 		expect(facts.CCC_MAX).toBe(2865);
 		expect(facts.CANON_MAX).toBe(1752);
 		expect(facts.SUMMA_PARTS).toBe('`i`, `i-ii`, `ii-ii`, `iii`, `suppl`');
@@ -77,12 +106,12 @@ describe('assertSourcesNamed', () => {
 
 describe('the committed template', () => {
 	it('asks for exactly the facts the builder derives', () => {
-		const facts = llmsFacts({ routeManifest: manifest, works, apparatus });
+		const facts = llmsFacts(census);
 		expect(() => llmsTxt(TEMPLATE, facts)).not.toThrow();
 	});
 
 	it('leaves no unsubstituted token in the output', () => {
-		const out = llmsTxt(TEMPLATE, llmsFacts({ routeManifest: manifest, works, apparatus }));
+		const out = llmsTxt(TEMPLATE, llmsFacts(census));
 		expect(out).not.toMatch(/\{\{|-->/);
 	});
 });

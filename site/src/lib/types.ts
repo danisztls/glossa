@@ -1179,6 +1179,45 @@ export interface SummaCitationXref {
 	cited_by: Citer[];
 }
 
+/**
+ * The census — `index/census.json`, written by `scripts/census.mjs` and read
+ * by `/bibliotheca/census` alone.
+ *
+ * IDS AND NUMBERS, NEVER WORDS. A group and a row carry a key that
+ * `src/lib/i18n/en.ts` names; a ranked entry carries the address of the thing
+ * ranked, and the page labels it out of the edition the reader has open. A
+ * label baked in here would be one language's, written at build time, on a
+ * site whose whole arrangement is that a citation is named in the language of
+ * the edition it opens.
+ *
+ * A GROUP OR A ROW MAY BE ABSENT and that is not an error — it means this
+ * build holds nothing of the kind, and the page draws no row rather than a
+ * zero. Which is why `groups` is an array rather than a record: what it
+ * carries is an ORDER as much as a set of numbers, and the order is the
+ * library's own shelves.
+ */
+export interface Census {
+	version: number;
+	groups: { key: string; rows: { key: string; value: number }[] }[];
+	/** Content-language tags, sorted. Published in `llms.txt`, not on the page. */
+	languages: string[];
+	/** Summa part slugs. Published in `llms.txt`, not on the page. */
+	summaParts: string[];
+	/** The highest number each numbered work addresses. `llms.txt` again. */
+	maxima: { ccc: number; compendium: number; socialDoctrine: number; canonLaw: number };
+	/** Every citer kind and how many references it accounts for, largest first.
+	 *  `kind` is `Citer['kind']`, but typed as a string because the census is a
+	 *  wire shape read from a build this app did not necessarily produce. */
+	citers: { kind: string; value: number }[];
+	rankings: {
+		books: { osis: string; value: number }[];
+		chapters: { osis: string; chapter: number; value: number }[];
+		documents: { slug: string; value: number }[];
+		ccc: { n: number; value: number }[];
+		summa: { part: string; question: number; value: number }[];
+	};
+}
+
 // --- Documents (encyclicals, conciliar texts, curial documents) ------------
 //
 // docs/corpus-schema.md §Documents: `structure.json` reuses `StructureNode`

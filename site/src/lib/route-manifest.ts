@@ -245,6 +245,12 @@ const STATIC_PATHS = new Set([
 	// (`docs/research/audiences.md` §5). It holds no corpus text: every step
 	// of every route on it is a link, titled by the work it names.
 	'/schola',
+	// The library's own numbers. HERE AND NOT IN `CHROME_PATHS`, which is the
+	// distinction the two tables draw and the one `/calendarium/liturgia`
+	// already stands on: it must answer 200 to a cold load and a shared link,
+	// and it must not declare a cluster in every interface language while its
+	// own `census.*` strings are written in one.
+	'/bibliotheca/census',
 	// The reader's own bookmark library. Static and corpus-free, like
 	// `/colophon`: what it lists lives in this browser's localStorage, so
 	// there is nothing for the generated manifest to validate against.

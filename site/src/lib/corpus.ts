@@ -133,6 +133,7 @@ import type {
 	CompendiumQuestion,
 	DocumentManifest,
 	CccAbbreviation,
+	Census,
 	DocumentAppendixUnit,
 	DocumentSection,
 	Prayer,
@@ -209,6 +210,7 @@ import {
 	manifests,
 	translatedDescriptionsLocation,
 	documentTagsLocation,
+	censusLocation,
 	prayerContentLocation,
 	prayerMetasByLang,
 	prayerStructures,
@@ -1087,6 +1089,28 @@ export async function loadDocumentTags(): Promise<Record<string, string[]>> {
 	const location = documentTagsLocation();
 	if (!location) return {};
 	return readContent<Record<string, string[]>>(location);
+}
+
+/**
+ * The census — every number this build states about itself, and the five
+ * rankings over the cross-reference index (`scripts/census.mjs`).
+ *
+ * `undefined` for a corpus that has none, which is what the fixtures are and
+ * what a partial sync leaves: `/bibliotheca/census` says the library has not
+ * been counted rather than drawing a page of zeroes. That is the same answer
+ * `loadDocumentTags` gives for an untagged corpus and it is deliberately not
+ * `{}` here — an empty ledger and an absent one look identical to a renderer,
+ * and only one of them is worth a sentence to the reader.
+ *
+ * One request, issued by one page. See `censusLocation` for why it is not in
+ * the boot index.
+ */
+export async function loadCensus(): Promise<Census | undefined> {
+	await ensureContentIndex();
+	if (!USE_REAL_CORPUS) return undefined;
+	const location = censusLocation();
+	if (!location) return undefined;
+	return readContent<Census>(location);
 }
 
 /**

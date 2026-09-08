@@ -83,7 +83,7 @@ import {
 
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { baseLang, languageDisplayName } from '../src/lib/lang-names.ts';
-import { isUiLang } from '../src/lib/ui-langs.ts';
+import { isUiLang, UI_LANGS } from '../src/lib/ui-langs.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
 import { buildCondensationMap } from '../src/lib/condensation.ts';
@@ -104,6 +104,7 @@ import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
 import { assertSourcesNamed, llmsFacts, llmsTxt } from './llms.mjs';
+import { buildCensus } from './census.mjs';
 import {
 	CHANGE_CEILING,
 	fingerprint,
@@ -3368,6 +3369,38 @@ console.log(
 		`works.json lists ${works.works.length} work(s) (${(byteLength(works) / 1024).toFixed(0)} KB)`
 );
 
+/**
+ * The census: the same objects again, counted. LAST of the derived files
+ * because it counts several of them — `apparatus.descriptions` and the
+ * address space the sitemap enumerates are both inputs — and because a number
+ * about this build must be taken after the build has finished producing the
+ * thing it is about.
+ *
+ * It goes to the INDEX tier and is fetched as a URL rather than inlined
+ * (`censusLocation` in `corpus-index.ts`): one page asks for it, and it
+ * answers neither "does this address exist" nor "where does the text live",
+ * which is the eager/lazy line that file's header draws.
+ */
+const census = buildCensus({
+	manifests,
+	routeManifest,
+	works,
+	apparatus,
+	addressCount: sitemapPaths(routeManifest).length,
+	uiLangCount: UI_LANGS.length,
+	scriptureByBook,
+	citationXrefs,
+	summaArticles
+});
+writeJson(path.join(indexDir, 'census.json'), census);
+console.log(
+	`[sync-corpus] census: ${census.groups.length} group(s) over ` +
+		`${census.groups.reduce((n, g) => n + g.rows.length, 0)} counted rows; ` +
+		`${Object.entries(census.rankings)
+			.map(([key, rows]) => `${rows.length} ${key}`)
+			.join(', ')} ranked (${(byteLength(census) / 1024).toFixed(1)} KB)`
+);
+
 // Per-address `<lastmod>`, resolved against the committed ledger: an address
 // whose text is byte-identical to the last build keeps the date it already had,
 // however many times the site is rebuilt. See scripts/lastmod.mjs — the value
@@ -3488,7 +3521,7 @@ writeFileSync(sitemapPath, sitemapXml(routeManifest, lastmod.dates));
 // `assertSourcesNamed` throws rather than warns — see scripts/llms.mjs.
 const llmsTemplate = readFileSync(llmsTemplatePath, 'utf8');
 assertSourcesNamed(llmsTemplate, works);
-writeFileSync(llmsPath, llmsTxt(llmsTemplate, llmsFacts({ routeManifest, works, apparatus })));
+writeFileSync(llmsPath, llmsTxt(llmsTemplate, llmsFacts(census)));
 
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content

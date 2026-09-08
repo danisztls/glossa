@@ -365,14 +365,17 @@ export function compareCiters(a, b) {
  * through — and never the citer itself, whose address changes at every
  * footnote.
  *
- * Only reached where the caller passes no corpus work id, which is one
+ * Only reached HERE where the caller passes no corpus work id, which is one
  * edition of one work and is what the sync always hands over; the composite
- * is for a caller that parses under a bare language.
+ * is for a caller that parses under a bare language. Exported because
+ * `scripts/census.mjs` asks the same question of a cited address — whether a
+ * citer is the cited work talking about itself — and a second spelling of
+ * "which work is this citer part of" is a second thing to keep true.
  *
  * @param {Citer} citer
  * @returns {string}
  */
-function citerWorkKey(citer) {
+export function citerWorkKey(citer) {
 	if (citer.kind === 'document') return `document ${citer.slug}`;
 	if (citer.kind === 'annotation') return `annotation ${citer.work}`;
 	return citer.kind;

@@ -26,6 +26,8 @@
  * being generated — it was not, while it was maintained by hand.
  */
 
+import { censusValue } from './census.mjs';
+
 const TOKEN = /\{\{([A-Z_]+)\}\}/g;
 
 /**
@@ -40,33 +42,30 @@ function hostOf(url) {
 }
 
 /**
- * The values the template asks for, read off the same objects the sync has
- * already built. `routeManifest` answers for the address space, `works` for
- * who published what and in which languages, `apparatus` for how much of the
- * commentary is ours.
+ * The values the template asks for, projected out of the census.
  *
- * @param {object} input
- * @param {Record<string, any>} input.routeManifest
- * @param {{works: {source?: string | null, languages?: string[]}[]}} input.works
- * @param {{descriptions: Record<string, string>}} input.apparatus
+ * THIS FILE DERIVED THEM ITSELF UNTIL THE CENSUS EXISTED, off `routeManifest`,
+ * `works` and `apparatus` in three lines that were each correct. What changed
+ * is that a second consumer arrived: `/bibliotheca/census` states the document
+ * count to a reader, this file states it to a machine, and two derivations of
+ * one fact are two things to keep true. `censusValue` throws for a row it
+ * cannot find, so a renamed row fails the build here rather than shipping the
+ * word `undefined` inside a published sentence.
+ *
+ * @param {ReturnType<typeof import('./census.mjs').buildCensus>} census
  * @returns {Record<string, string | number>}
  */
-export function llmsFacts({ routeManifest, works, apparatus }) {
-	const languages = [
-		...new Set(works.works.flatMap((/** @type {{languages?: string[]}} */ w) => w.languages ?? []))
-	].sort();
+export function llmsFacts(census) {
 	return {
-		CCC_MAX: Math.max(...routeManifest.ccc),
-		COMPENDIUM_MAX: Math.max(...routeManifest.compendium),
-		CSDC_MAX: Math.max(...routeManifest.socialDoctrine),
-		CANON_MAX: Math.max(...routeManifest.canonLaw),
-		SUMMA_PARTS: Object.keys(routeManifest.summa)
-			.map((part) => `\`${part}\``)
-			.join(', '),
-		LANGUAGE_COUNT: languages.length,
-		LANGUAGES: languages.join(', '),
-		DOCUMENT_COUNT: routeManifest.documents.length,
-		DESCRIPTION_COUNT: Object.keys(apparatus.descriptions).length
+		CCC_MAX: census.maxima.ccc,
+		COMPENDIUM_MAX: census.maxima.compendium,
+		CSDC_MAX: census.maxima.socialDoctrine,
+		CANON_MAX: census.maxima.canonLaw,
+		SUMMA_PARTS: census.summaParts.map((/** @type {string} */ part) => `\`${part}\``).join(', '),
+		LANGUAGE_COUNT: census.languages.length,
+		LANGUAGES: census.languages.join(', '),
+		DOCUMENT_COUNT: censusValue(census, 'magisterium', 'documents'),
+		DESCRIPTION_COUNT: censusValue(census, 'magisterium', 'documentDescriptions')
 	};
 }
 

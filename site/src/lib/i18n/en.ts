@@ -139,6 +139,99 @@ export const en: Dictionary = {
 	// is not there, and the direction to correct in when anyone revisits them.
 	'library.landing.tagline': 'The whole corpus, shelf by shelf, and what you have marked in it.',
 
+	// --- `/bibliotheca/census`, the library counted (`routes/bibliotheca/census/`)
+	//
+	// ENGLISH ONLY, AND THAT IS WHY THE PAGE IS NOT IN `CHROME_PATHS`. `t()`
+	// falls back key by key, so every interface renders this page with its
+	// own chrome around English labels; what it must not do is declare an
+	// `hreflang` cluster in 37 languages over strings written in one
+	// (`route-manifest.ts` argues the gate). The numbers themselves need no
+	// dictionary — a digit is a digit — and every name on the page is the
+	// corpus's own, out of the edition the reader has open.
+	//
+	// NOT ONE GROUP HEADING IS WRITTEN HERE except the two that name nothing
+	// on a shelf. The library's sections already have names in all 37
+	// (`CENSUS_GROUP_KEYS` in `census.ts` maps each group onto the key its own
+	// landing page is titled by), and a second set of headings for the same
+	// shelves would be a second set to keep true, on the rule `shelves.ts`
+	// states for the catalogue.
+	'census.title': 'Census',
+	'census.tagline': 'What this library holds, counted — and what the rest of it cites most.',
+	// The two sections, named for the two questions the page answers rather
+	// than for the shape of the data under them ("Totals" / "Tables" would
+	// describe the markup and not the subject).
+	'census.holdings': 'What is here',
+	'census.cited': 'What is cited',
+	'census.citers': 'Where the cross-references come from',
+	// The two group headings the shelves do not supply.
+	'census.group.library': 'The whole collection',
+	'census.group.apparatus': 'The apparatus',
+	// THE METHOD, STATED ONCE AND ABOVE THE TABLES, because both of its
+	// clauses change what the numbers mean and a reader who meets them after
+	// the tables has already read them wrongly. `site/docs/census.md` carries
+	// the measurements behind each.
+	'census.method':
+		'A ranking counts the distinct places that cite a passage, not how many verses a quotation runs to. An edition’s own footnotes are left out, and so is a work citing itself: neither is evidence of how the rest of the library reads it.',
+	'census.derived': 'Every number here is counted when the site is built.',
+	'census.unavailable':
+		'This build has not been counted. The census is written when the corpus is synced, and a site built from the sample texts has none.',
+	// The number column's accessible name. The rows are addresses and counts,
+	// so the count needs saying once for a reader who cannot see the column
+	// head sitting over it.
+	'census.timesCited': 'Places that cite it',
+	'census.rank.books': 'Books of Scripture',
+	'census.rank.chapters': 'Chapters of Scripture',
+	'census.rank.documents': 'Documents of the Magisterium',
+	'census.rank.ccc': 'Paragraphs of the Catechism',
+	'census.rank.summa': 'Questions of the Summa',
+	// The ledger's rows. One key per row rather than a shared `Editions`
+	// mapped onto seven of them: the groups sit one under another down a
+	// single column, and a column reading "Editions" seven times says less
+	// than one that names the work each time it could be mistaken.
+	'census.row.editions': 'Editions',
+	'census.row.contentLanguages': 'Languages of the texts',
+	'census.row.interfaceLanguages': 'Languages of the interface',
+	'census.row.addresses': 'Addresses',
+	'census.row.contentFiles': 'Files of text',
+	'census.row.bibleEditions': 'Editions',
+	'census.row.books': 'Books',
+	'census.row.chapters': 'Chapters',
+	'census.row.introductions': 'Book introductions',
+	'census.row.annotatedEditions': 'Annotated editions',
+	'census.row.cccEditions': 'Editions of the Catechism',
+	'census.row.cccParagraphs': 'Paragraphs of the Catechism',
+	'census.row.cccDivisions': 'Divisions of the Catechism',
+	'census.row.compendiumEditions': 'Editions of the Compendium',
+	'census.row.compendiumQuestions': 'Questions of the Compendium',
+	'census.row.compendiumDivisions': 'Divisions of the Compendium',
+	'census.row.socialDoctrineEditions': 'Editions',
+	'census.row.socialDoctrineParagraphs': 'Paragraphs',
+	'census.row.socialDoctrineChapters': 'Chapters',
+	'census.row.prayerEditions': 'Editions',
+	'census.row.prayers': 'Prayers',
+	'census.row.canonLawEditions': 'Editions',
+	'census.row.canons': 'Canons',
+	'census.row.canonLawTitles': 'Titles',
+	'census.row.documents': 'Documents',
+	'census.row.documentEditions': 'Editions',
+	// Not "Descriptions": what the number counts is how many documents carry
+	// one, and the clause is where the page says the prose is this project's
+	// rather than the publisher's — which is the one thing on this page that
+	// is not somebody else's fact.
+	'census.row.documentDescriptions': 'Described in our own words',
+	'census.row.summaEditions': 'Editions',
+	'census.row.summaParts': 'Parts',
+	'census.row.summaQuestions': 'Questions',
+	'census.row.summaArticles': 'Articles',
+	'census.row.references': 'Cross-references',
+	'census.row.referencesFromNotes': 'Of those, an edition’s own notes',
+	'census.row.citedVerses': 'Verses cited',
+	'census.row.citedDocumentSections': 'Document sections cited',
+	'census.row.citedCccParagraphs': 'Catechism paragraphs cited',
+	'census.row.citedSummaArticles': 'Summa addresses cited',
+	// The link on `/bibliotheca` that opens all of the above.
+	'census.link': 'The library, counted',
+
 	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//
 	// NOT ONE OF THESE KEYS IS A NAME. Every book, part and document named on

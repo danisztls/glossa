@@ -416,6 +416,42 @@ Sizing: five keys in 38 dictionaries, no code and no schema. Two notes a
 translation has to carry are on the keys in `en.ts` — _final_ is DEFINITIVE and
 not final in time, and _receives_ is the theological sense.
 
+## `/bibliotheca/census` is written in one language of forty
+
+The library counted — the ledger and the five citation rankings — shipped
+2026-09-08 with its 54 `census.*` keys in English alone, and is deliberately
+**not in `CHROME_PATHS`** on that account (`site/docs/census.md`,
+`route-manifest.ts`). `/calendarium/liturgia` stands in the same place for a
+different reason.
+
+**Nothing is visibly broken and the page is not English-only.** `t()` falls
+back key by key, so every interface renders it with its own chrome around
+English labels, and the numbers — which are most of the page — need no
+dictionary at all. What is withheld is the published address: no
+`/{lang}/bibliotheca/census`, no `hreflang` cluster, and one sitemap row where
+a chrome page has forty-one. Its `<head>` is fixed English in `STATIC_HEADS`
+rather than built per language from `route-titles.json`.
+
+**The gate is the ARGUED one and not the coded one**, which is what makes this
+larger than it looks. `census.title` and `census.tagline` alone would satisfy
+`CHROME_KEYS` and publish a cluster in forty languages over 37 English row
+labels — the exact failure `/calendarium` cost 75 keys to avoid. Every
+`census.*` key has to be written, or the page stays where it is.
+
+Promotion is then four edits: the keys in the remaining 39 dictionaries, the
+path into `CHROME_PATHS`, an entry in `route-titles.mjs`'s `CHROME_KEYS`
+(`census.title` / `census.tagline`), and the `STATIC_HEADS` entry deleted so
+the per-language head takes over. `census.test.ts` already asserts that every
+key the builder can emit exists in `en`; nothing asserts the other 39, by
+design — `t()`'s per-key fallback is what makes a partial dictionary safe.
+
+Sizing: 54 keys in 39 dictionaries, then four small edits and no schema. **37
+of the 54 are ledger row labels** — one or two words each, and most of them a
+word the dictionary already carries elsewhere ("Editions", "Chapters",
+"Paragraphs"), so the translation is shorter than the count suggests. The
+sentences that need care are `census.method`, which states the three rules the
+rankings are counted by, and `census.unavailable`.
+
 ## Recommended order
 
 A priority argument, not a dependency one — nothing here gates anything else.

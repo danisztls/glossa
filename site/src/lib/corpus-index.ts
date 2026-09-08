@@ -542,6 +542,18 @@ const realDocumentTagUrls = import.meta.glob('./corpus-data/index/document-tags.
 	import: 'default'
 }) as Record<string, string>;
 
+// The census: `index/census.json`, every number this build can state about
+// itself (`scripts/census.mjs`). A URL and not an eager inline for the reason
+// at the head of this file, and it is the clearest case of it — exactly one
+// page fetches this, and a count answers neither "does this address exist" nor
+// "where does its text live". Inlined it would be a table of ledger rows and
+// five rankings parsed before the first paint of every Bible chapter.
+const realCensusUrls = import.meta.glob('./corpus-data/index/census.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 /**
  * True once corpus-data/ has been synced from a real corpus checkout —
  * except under vitest, which always uses the fixtures.
@@ -1085,6 +1097,18 @@ export function translatedDescriptionsLocation(lang: string): ContentLocation | 
 export function documentTagsLocation(): ContentLocation | undefined {
 	const relPath = 'index/document-tags.json';
 	const url = realDocumentTagUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
+}
+
+/**
+ * Where the census lives, or undefined when this build has none — which is
+ * the ordinary state under the fixtures and after a partial sync, and is not
+ * an error: `/bibliotheca/census` then says the library has not been counted
+ * rather than drawing a page of zeroes.
+ */
+export function censusLocation(): ContentLocation | undefined {
+	const relPath = 'index/census.json';
+	const url = realCensusUrls[`./corpus-data/${relPath}`];
 	return url ? { relPath, url } : undefined;
 }
 
