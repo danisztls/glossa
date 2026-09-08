@@ -144,28 +144,66 @@ export const en: Dictionary = {
 	// ENGLISH ONLY, AND THAT IS WHY THE PAGE IS NOT IN `CHROME_PATHS`. `t()`
 	// falls back key by key, so every interface renders this page with its
 	// own chrome around English labels; what it must not do is declare an
-	// `hreflang` cluster in 37 languages over strings written in one
-	// (`route-manifest.ts` argues the gate). The numbers themselves need no
-	// dictionary — a digit is a digit — and every name on the page is the
-	// corpus's own, out of the edition the reader has open.
+	// `hreflang` cluster in every language over strings written in one
+	// (`route-manifest.ts` argues the gate, `PLAN.md` sizes the promotion).
+	// The numbers need no dictionary — a digit is a digit — and every name in
+	// a ranking is the corpus's own, out of the edition the reader has open.
 	//
-	// NOT ONE GROUP HEADING IS WRITTEN HERE except the two that name nothing
-	// on a shelf. The library's sections already have names in all 37
-	// (`CENSUS_GROUP_KEYS` in `census.ts` maps each group onto the key its own
-	// landing page is titled by), and a second set of headings for the same
-	// shelves would be a second set to keep true, on the rule `shelves.ts`
-	// states for the catalogue.
+	// NOT ONE SHELF HEADING IS WRITTEN HERE except the two that name nothing
+	// on a shelf. The library's sections already have names everywhere
+	// (`CENSUS_SHELF_KEYS` in `census.ts` maps each onto the key its own
+	// landing page is titled by), on the rule `shelves.ts` states for the
+	// catalogue: a second set of headings for the same shelves is a second set
+	// to keep true.
 	'census.title': 'Census',
-	'census.tagline': 'What this library holds, counted — and what the rest of it cites most.',
-	// The two sections, named for the two questions the page answers rather
-	// than for the shape of the data under them ("Totals" / "Tables" would
-	// describe the markup and not the subject).
+	'census.tagline': 'How far this library reaches, counted.',
+	// The three sections, named for the questions they answer rather than for
+	// the shape of the data under them — "Totals" and "Tables" would describe
+	// the markup.
 	'census.holdings': 'What is here',
+	'census.reach': 'What a reader can reach',
 	'census.cited': 'What is cited',
 	'census.citers': 'Where the cross-references come from',
-	// The two group headings the shelves do not supply.
-	'census.group.library': 'The whole collection',
-	'census.group.apparatus': 'The apparatus',
+	// The two shelf headings the library's own sections do not supply.
+	'census.shelf.library': 'The whole collection',
+	'census.shelf.apparatus': 'The apparatus',
+	// THE SENTENCES. One per shelf, with its numbers substituted in by
+	// `censusProse` — every `{placeholder}` is a fact the build derives, and
+	// `census.test.ts` fails on one without the other in either direction.
+	//
+	// A SENTENCE AND NOT A ROW OF COUNTS, and the apparatus is why: as a list
+	// of six numbers under a total, four of them summed to a fifth of it and
+	// read as broken. They were not — a cross-reference is an edge and those
+	// were its endpoints — but nothing on the list said so. Prose can state a
+	// relation; a column of figures can only invite arithmetic.
+	'census.prose.library':
+		'{editions} editions of {works} works, in {contentLanguages} of the languages they were written or translated into, at {addresses} addresses. The interface itself speaks {interfaceLanguages}.',
+	'census.prose.bible':
+		'{books} books between them, in {languages} languages — {editions} editions, {annotated} of them carrying a commentary.',
+	'census.prose.catechism':
+		'The Catechism’s {paragraphs} paragraphs in {languages} languages, and its Compendium’s {questions} questions in {compendiumLanguages}.',
+	'census.prose.socialDoctrine': '{paragraphs} paragraphs, in {languages} languages.',
+	'census.prose.prayer': '{prayers} prayers, in {languages} languages.',
+	'census.prose.canonLaw': '{canons} canons, in {languages} languages.',
+	// "described here" is where the page says which prose on this site is its
+	// own rather than a publisher's — the one thing here that is not somebody
+	// else's fact.
+	'census.prose.magisterium':
+		'{documents} documents in {languages} languages, {described} of them described here in our own words.',
+	// Named for the work and not for the shelf, because the shelf holds one
+	// work: "{n} books" will be true when a second Doctor lands and is a
+	// generous way to describe one.
+	'census.prose.doctores':
+		'The Summa Theologiae — {questions} questions in {parts} parts, {articles} articles — in {languages} languages.',
+	'census.prose.apparatus':
+		'{references} cross-references, running from {citingPlaces} citing places to {citedAddresses} cited addresses. {fromNotes} of them are an edition’s own footnotes.',
+	// The matrix. One line above it, because a reader meeting a grid of forty
+	// columns needs to know what a cell is before the shape means anything.
+	'census.reachLede':
+		'Each column is one of the languages the interface speaks, ordered by how much of the library it carries. A filled cell is a work a reader of that language can read in full.',
+	'census.reachRow': '{languages} of {total} languages · {of} addressable',
+	'census.reachCell': '{value} of {of}',
+	'census.reachNone': 'nothing in this language',
 	// THE METHOD, STATED ONCE AND ABOVE THE TABLES, because both of its
 	// clauses change what the numbers mean and a reader who meets them after
 	// the tables has already read them wrongly. `site/docs/census.md` carries
@@ -177,58 +215,13 @@ export const en: Dictionary = {
 		'This build has not been counted. The census is written when the corpus is synced, and a site built from the sample texts has none.',
 	// The number column's accessible name. The rows are addresses and counts,
 	// so the count needs saying once for a reader who cannot see the column
-	// head sitting over it.
+	// head over it.
 	'census.timesCited': 'Places that cite it',
 	'census.rank.books': 'Books of Scripture',
 	'census.rank.chapters': 'Chapters of Scripture',
 	'census.rank.documents': 'Documents of the Magisterium',
 	'census.rank.ccc': 'Paragraphs of the Catechism',
 	'census.rank.summa': 'Questions of the Summa',
-	// The ledger's rows. One key per row rather than a shared `Editions`
-	// mapped onto seven of them: the groups sit one under another down a
-	// single column, and a column reading "Editions" seven times says less
-	// than one that names the work each time it could be mistaken.
-	'census.row.editions': 'Editions',
-	'census.row.contentLanguages': 'Languages of the texts',
-	'census.row.interfaceLanguages': 'Languages of the interface',
-	'census.row.addresses': 'Addresses',
-	'census.row.contentFiles': 'Files of text',
-	'census.row.bibleEditions': 'Editions',
-	'census.row.books': 'Books',
-	'census.row.chapters': 'Chapters',
-	'census.row.introductions': 'Book introductions',
-	'census.row.annotatedEditions': 'Annotated editions',
-	'census.row.cccEditions': 'Editions of the Catechism',
-	'census.row.cccParagraphs': 'Paragraphs of the Catechism',
-	'census.row.cccDivisions': 'Divisions of the Catechism',
-	'census.row.compendiumEditions': 'Editions of the Compendium',
-	'census.row.compendiumQuestions': 'Questions of the Compendium',
-	'census.row.compendiumDivisions': 'Divisions of the Compendium',
-	'census.row.socialDoctrineEditions': 'Editions',
-	'census.row.socialDoctrineParagraphs': 'Paragraphs',
-	'census.row.socialDoctrineChapters': 'Chapters',
-	'census.row.prayerEditions': 'Editions',
-	'census.row.prayers': 'Prayers',
-	'census.row.canonLawEditions': 'Editions',
-	'census.row.canons': 'Canons',
-	'census.row.canonLawTitles': 'Titles',
-	'census.row.documents': 'Documents',
-	'census.row.documentEditions': 'Editions',
-	// Not "Descriptions": what the number counts is how many documents carry
-	// one, and the clause is where the page says the prose is this project's
-	// rather than the publisher's — which is the one thing on this page that
-	// is not somebody else's fact.
-	'census.row.documentDescriptions': 'Described in our own words',
-	'census.row.summaEditions': 'Editions',
-	'census.row.summaParts': 'Parts',
-	'census.row.summaQuestions': 'Questions',
-	'census.row.summaArticles': 'Articles',
-	'census.row.references': 'Cross-references',
-	'census.row.referencesFromNotes': 'Of those, an edition’s own notes',
-	'census.row.citedVerses': 'Verses cited',
-	'census.row.citedDocumentSections': 'Document sections cited',
-	'census.row.citedCccParagraphs': 'Catechism paragraphs cited',
-	'census.row.citedSummaArticles': 'Summa addresses cited',
 	// The link on `/bibliotheca` that opens all of the above.
 	'census.link': 'The library, counted',
 

@@ -110,6 +110,13 @@ import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
 import { assertSourcesNamed, llmsFacts, llmsTxt } from './llms.mjs';
 import { buildCensus } from './census.mjs';
 import {
+	compareLanguageCoverage,
+	describePairs,
+	languageCoverage,
+	readBaseline as readLanguageBaseline,
+	writeReport as writeLanguageCoverage
+} from './language-coverage.mjs';
+import {
 	CHANGE_CEILING,
 	fingerprint,
 	readLedger,
@@ -3491,19 +3498,73 @@ const census = buildCensus({
 	works,
 	apparatus,
 	addressCount: sitemapPaths(routeManifest).length,
-	uiLangCount: UI_LANGS.length,
+	uiLangs: UI_LANGS,
+	// The per-language registries the coverage matrix is unioned from. Passed
+	// rather than re-read: these are the same objects the index tier is written
+	// out of, so a cell cannot claim a reach the build did not produce.
+	bibleIndex,
+	cccEditions,
+	compendiumEditions,
+	socialDoctrineEditions,
+	canonLawEditions,
+	prayerIndex,
+	documentEditions,
+	summaIndex,
 	scriptureByBook,
 	citationXrefs,
 	summaArticles
 });
 writeJson(path.join(indexDir, 'census.json'), census);
 console.log(
-	`[sync-corpus] census: ${census.groups.length} group(s) over ` +
-		`${census.groups.reduce((n, g) => n + g.rows.length, 0)} counted rows; ` +
-		`${Object.entries(census.rankings)
+	`[sync-corpus] census: ${census.shelves.length} shelf/shelves; coverage over ` +
+		`${census.coverage.rows.length} work(s) x ${census.coverage.languages.length} interface ` +
+		`language(s); ${Object.entries(census.rankings)
 			.map(([key, rows]) => `${rows.length} ${key}`)
 			.join(', ')} ranked (${(byteLength(census) / 1024).toFixed(1)} KB)`
 );
+console.log(
+	`[sync-corpus] language coverage:\n` +
+		census.coverage.rows
+			.map((row) => {
+				const held = row.values.filter((v) => v > 0).length;
+				const full = row.values.filter((v) => v >= row.of).length;
+				return (
+					`  ${row.key.padEnd(16)} ${String(held).padStart(2)} language(s) reach it, ` +
+					`${full} in full (of ${row.of})`
+				);
+			})
+			.join('\n')
+);
+
+/**
+ * The same coverage as a set of (work, language) pairs, against the committed
+ * baseline. Loud and non-fatal here; `preflight-deploy.mjs` is where a loss
+ * refuses to ship — the arrangement `reference-coverage.mjs` already has, for
+ * a failure it cannot see: that one measures the citations a work MAKES, this
+ * one whether a reader in a given language has the work at all.
+ */
+const coverageNow = languageCoverage(census);
+writeLanguageCoverage(coverageNow);
+const languageBaseline = readLanguageBaseline();
+if (!languageBaseline) {
+	console.warn(
+		`[sync-corpus] no scripts/language-coverage.baseline.json — run ` +
+			`\`npm run language:accept\` to record what this build offers.`
+	);
+} else {
+	const { lost, gained } = compareLanguageCoverage(coverageNow, languageBaseline);
+	if (gained.length) {
+		console.log(`[sync-corpus] language coverage GAINED: ${describePairs(gained)}`);
+	}
+	if (lost.length) {
+		console.warn(
+			`[sync-corpus] LANGUAGE COVERAGE LOST ${lost.length} (work, language) pair(s): ` +
+				`${describePairs(lost)}\n` +
+				`  A reader in that language can no longer open that work. Fix the sync, or ` +
+				`\`npm run language:accept\` if the withdrawal is intended.`
+		);
+	}
+}
 
 // Per-address `<lastmod>`, resolved against the committed ledger: an address
 // whose text is byte-identical to the last build keeps the date it already had,

@@ -1,6 +1,6 @@
 /**
- * The census: every number this site states about itself, derived in one pass
- * from the objects the sync has already built.
+ * The census: what this library reaches, derived in one pass from the objects
+ * the sync has already built.
  *
  * WHY IT IS A MODULE AND NOT A PAGE'S OWN ARITHMETIC. `llms.mjs` derived nine
  * facts here — the Catechism's last paragraph, the document count, the
@@ -14,12 +14,20 @@
  * arrangement in which the file for machines and the page for readers can
  * disagree about how many documents there are.
  *
- * NOTHING HERE IS A LABEL. Every row is a key and a number, and the words
- * belong to `src/lib/i18n/en.ts`; every ranked entry is an id and a number,
- * and the name belongs to the edition the reader has open. A book is `matt`
- * here and `Matthew`, `Mateus` or `Matthaeus` on the page, out of their own
- * Bible — which is the rule `citation-style.ts` states for a composed
- * citation, for the same reason: the row links into that edition.
+ * EVERY NUMBER IS A FRACTION, OR IT IS ONE OF FOUR. That is the whole of what
+ * changed in version 2, and it is the page's own argument: an inventory count
+ * says how big, and a fraction says how far. `Canons 1,752` is unanchored —
+ * a reader cannot tell whether it is good — where `the Code in 7 of 40
+ * languages` is the same shape of fact and is immediately a judgement. So the
+ * 37-row ledger became `coverage`, one number per (work, language), and the
+ * four scale figures that survive are a single sentence rather than a table.
+ *
+ * NOTHING HERE IS A LABEL. A shelf's facts are numbers under names the
+ * dictionary spells; every ranked entry is an address, and its name belongs
+ * to the edition the reader has open. A book is `matt` here and `Matthew`,
+ * `Mateus` or `Matthaeus` on the page, out of their own Bible — the rule
+ * `citation-style.ts` states for a composed citation, for the same reason:
+ * the row links into that edition.
  *
  * WHAT MAY GO IN IS `scripts/apparatus.mjs`'s rule with one addition. A count
  * is nobody's property: how many editions of the Catechism this library holds
@@ -33,7 +41,7 @@
 import { citerKey, citerWorkKey } from './build-xrefs.mjs';
 
 /** Bumped when the shape changes; `src/lib/census.ts` declares the reader's copy. */
-export const CENSUS_VERSION = 1;
+export const CENSUS_VERSION = 2;
 
 /**
  * How many entries a ranking publishes — a ceiling, never a quota.
@@ -44,6 +52,49 @@ export const CENSUS_VERSION = 1;
  * difference between one row and the next is a single citation.
  */
 export const RANK_LIMIT = 20;
+
+/**
+ * The eight works the coverage matrix has a row for, each with the address
+ * space it offers and how to count what one language reaches of it.
+ *
+ * A ROW PER WORK AND NOT PER SHELF, which is the one place this table departs
+ * from `shelves.ts`. The Catechism's shelf holds two works whose language
+ * sets differ by five, and a single row over their union would report a
+ * coverage neither of them has. Everywhere else a shelf is one work and the
+ * two orders agree.
+ *
+ * THE DENOMINATOR IS THE UNION ACROSS EVERY EDITION, so a cell reads "how
+ * much of what this library offers can I reach in my own language". It is the
+ * same denominator down a column, which is what makes the eight rows
+ * comparable — the property the whole matrix exists for, and the one a
+ * per-row scale would destroy.
+ */
+/** @type {{ key: string, of: (rm: import('../src/lib/route-manifest.ts').RouteManifest) => number }[]} */
+const COVERAGE_ROWS = [
+	{ key: 'bible', of: (rm) => countChapters(rm.bible) },
+	{ key: 'catechism', of: (rm) => rm.ccc.length },
+	{ key: 'compendium', of: (rm) => rm.compendium.length },
+	{ key: 'socialDoctrine', of: (rm) => rm.socialDoctrine.length },
+	{ key: 'prayer', of: (rm) => rm.prayers.length },
+	{ key: 'canonLaw', of: (rm) => rm.canonLaw.length },
+	{ key: 'magisterium', of: (rm) => rm.documents.length },
+	{ key: 'doctores', of: (rm) => countQuestions(rm.summa) }
+];
+
+/** Chapters across every book, never counting 0 — that is a book introduction
+ *  and not a chapter of the book (docs/corpus-schema.md). */
+function countChapters(/** @type {Record<string, number[]>} */ bible) {
+	return Object.values(bible).reduce((n, list) => n + list.filter((c) => c !== 0).length, 0);
+}
+
+function countQuestions(/** @type {Record<string, number[]>} */ summa) {
+	return Object.values(summa).reduce((n, qs) => n + qs.length, 0);
+}
+
+/** A work's bare content language — `en-GB` and `en` are one column. */
+function baseLanguage(/** @type {string | undefined} */ tag) {
+	return String(tag ?? '').split('-')[0];
+}
 
 /**
  * The top of a tally, cut on the COUNT and never on the rank.
@@ -139,47 +190,33 @@ export function countsTowardsRank(citer, self) {
 }
 
 /**
- * `groups` as a lookup, so a consumer can ask for one number by name.
+ * One shelf's fact, by name.
  *
- * THROWS FOR A ROW THAT IS NOT THERE, which is the whole reason it exists.
+ * THROWS FOR A FACT THAT IS NOT THERE, which is the whole reason it exists.
  * `llms.txt` interpolates two of these into published prose, and a renamed
- * row would otherwise reach a reader as the word `undefined` in a sentence
+ * fact would otherwise reach a reader as the word `undefined` in a sentence
  * about how many documents this library holds. `llmsTxt`'s own
  * both-directions check, one layer down.
  *
  * @param {ReturnType<typeof buildCensus>} census
- * @param {string} group
- * @param {string} row
+ * @param {string} shelf
+ * @param {string} fact
  * @returns {number}
  */
-export function censusValue(census, group, row) {
-	const found = census.groups.find((g) => g.key === group)?.rows.find((r) => r.key === row);
-	if (!found) {
+export function censusFact(census, shelf, fact) {
+	const found = census.shelves.find((s) => s.key === shelf)?.facts[fact];
+	if (found === undefined) {
 		throw new Error(
-			`census: no row \`${group}.${row}\`. A consumer asked for a number this build does not ` +
-				`derive — either the row was renamed in scripts/census.mjs and its readers were not, ` +
-				`or the ask is a typo. Publishing \`undefined\` is the failure this throw replaces.`
+			`census: no fact \`${shelf}.${fact}\`. A consumer asked for a number this build does not ` +
+				`derive — either it was renamed in scripts/census.mjs and its readers were not, or the ` +
+				`ask is a typo. Publishing \`undefined\` is the failure this throw replaces.`
 		);
 	}
-	return found.value;
+	return found;
 }
 
 /**
  * Every number, in the order the page reads them.
- *
- * THE GROUPS ARE THE LIBRARY'S OWN SHELVES, in `shelves.ts`'s order, with the
- * whole collection before them and the apparatus after — because that is an
- * order the reader already knows, and a page of numbers is hard enough to
- * enter without a taxonomy of its own. `library` counts what sits on no shelf
- * (every edition, every language, every address); `apparatus` counts what
- * this project derived rather than reproduced, and is the one group whose
- * subject is the site instead of the texts.
- *
- * A GROUP WITH NO ROWS IS DROPPED, and that is not a tidy-up: the vitest
- * fixtures carry three Bible editions, two Catechisms and no Code at all, and
- * a "Canon Law — 0" row would be this page asserting the Church has no code
- * of law when what is missing is a sync. `visibleShelves()` gates the
- * catalogue on the same test for the same reason.
  *
  * @param {object} input
  * @param {Record<string, any>} input.manifests every work manifest, by id
@@ -187,52 +224,165 @@ export function censusValue(census, group, row) {
  * @param {{works: {languages?: string[]}[]}} input.works
  * @param {{descriptions: Record<string, string>}} input.apparatus
  * @param {number} input.addressCount canonical URLs, as the sitemap counts them
- * @param {number} input.uiLangCount interface languages
+ * @param {readonly string[]} input.uiLangs the interface languages, in their own order
+ * @param {Record<string, {books: {osis: string, chapters: {n: number}[]}[]}>} input.bibleIndex workId -> books
+ * @param {{lang: string, paragraphs: {n: number}[]}[]} input.cccEditions
+ * @param {{lang: string, questions: {n: number}[]}[]} input.compendiumEditions
+ * @param {{lang: string, sections: {n: number}[]}[]} input.socialDoctrineEditions
+ * @param {{lang: string, sections: {n: number}[]}[]} input.canonLawEditions
+ * @param {Record<string, {prayers: unknown[]}>} input.prayerIndex lang -> prayers
+ * @param {{slug: string, lang: string}[]} input.documentEditions
+ * @param {Record<string, {questions: unknown[]}>} input.summaIndex lang -> questions
  * @param {Record<string, Record<string, Record<string, import('../src/lib/types.ts').Citer[]>>>} input.scriptureByBook
  * @param {{documents: any[], ccc: any[], summa: any[]}} input.citationXrefs
  * @param {Map<string, Map<number, Set<number>>>} input.summaArticles part -> question -> articles
  */
-export function buildCensus({
-	manifests,
-	routeManifest,
-	works,
-	apparatus,
-	addressCount,
-	uiLangCount,
-	scriptureByBook,
-	citationXrefs,
-	summaArticles
-}) {
+export function buildCensus(input) {
+	const {
+		manifests,
+		routeManifest,
+		works,
+		apparatus,
+		addressCount,
+		uiLangs,
+		bibleIndex,
+		cccEditions,
+		compendiumEditions,
+		socialDoctrineEditions,
+		canonLawEditions,
+		prayerIndex,
+		documentEditions,
+		summaIndex,
+		scriptureByBook,
+		citationXrefs,
+		summaArticles
+	} = input;
+
 	const editionsOfType = (/** @type {string} */ type) =>
 		Object.values(manifests).filter((m) => m.type === type).length;
-
 	const languages = [...new Set(works.works.flatMap((w) => w.languages ?? []))].sort();
 
-	// Chapter 0 is a book introduction and not a chapter of the book
-	// (docs/corpus-schema.md §Book introductions), so it is counted as what it
-	// is on a row of its own rather than inflating the chapter total.
-	const bibleChapters = Object.values(routeManifest.bible);
-	const chapters = bibleChapters.reduce((n, list) => n + list.filter((c) => c !== 0).length, 0);
-	const introductions = bibleChapters.filter((list) => list.includes(0)).length;
+	// --- Coverage: one number per (work, language) --------------------------
+	/** @type {Record<string, Map<string, Set<unknown>>>} */
+	const reach = {};
+	const into = (
+		/** @type {string} */ row,
+		/** @type {string} */ lang,
+		/** @type {unknown[]} */ ids
+	) => {
+		const l = baseLanguage(lang);
+		if (!l) return;
+		const byLang = (reach[row] ??= new Map());
+		let set = byLang.get(l);
+		if (!set) byLang.set(l, (set = new Set()));
+		for (const id of ids) set.add(id);
+	};
 
-	const summaQuestions = Object.values(routeManifest.summa).reduce((n, qs) => n + qs.length, 0);
-	let summaArticleCount = 0;
-	for (const byQuestion of summaArticles.values()) {
-		for (const articles of byQuestion.values()) summaArticleCount += articles.size;
+	for (const [workId, work] of Object.entries(bibleIndex)) {
+		const lang = manifests[workId]?.language;
+		for (const book of work.books) {
+			// The union PER LANGUAGE, not per edition: two editions of one
+			// language between them offer what either offers, which is what a
+			// reader of that language can actually reach.
+			into(
+				'bible',
+				lang,
+				book.chapters.filter((c) => c.n !== 0).map((c) => `${book.osis} ${c.n}`)
+			);
+		}
 	}
+	for (const { lang, paragraphs } of cccEditions)
+		into(
+			'catechism',
+			lang,
+			paragraphs.map((p) => p.n)
+		);
+	for (const { lang, questions } of compendiumEditions)
+		into(
+			'compendium',
+			lang,
+			questions.map((q) => q.n)
+		);
+	for (const { lang, sections } of socialDoctrineEditions)
+		into(
+			'socialDoctrine',
+			lang,
+			sections.map((s) => s.n)
+		);
+	for (const { lang, sections } of canonLawEditions)
+		into(
+			'canonLaw',
+			lang,
+			sections.map((s) => s.n)
+		);
+	for (const [lang, entry] of Object.entries(prayerIndex))
+		into(
+			'prayer',
+			lang,
+			entry.prayers.map((/** @type {any} */ p) => p.slug)
+		);
+	for (const { slug, lang } of documentEditions) into('magisterium', lang, [slug]);
+	for (const [lang, entry] of Object.entries(summaIndex))
+		into(
+			'doctores',
+			lang,
+			entry.questions.map((/** @type {any} */ q) => `${q.part} ${q.n}`)
+		);
 
-	// --- The tallies, each index walked exactly once ------------------------
+	const coverageRows = COVERAGE_ROWS.map(({ key, of }) => ({
+		key,
+		of: of(routeManifest),
+		byLang: reach[key] ?? new Map()
+	}));
+
+	/**
+	 * The language order, DERIVED and shared by every row.
+	 *
+	 * By how much of the whole library the language carries — the sum of its
+	 * eight fractions — so the matrix comes out as a staircase and the eye
+	 * reads the shape before it reads a cell. Derived rather than chosen
+	 * because any hand-made order is an editorial claim about which languages
+	 * matter, which is exactly what a page of measurements must not make.
+	 * Ties break on the tag, so a rebuild produces the same file.
+	 *
+	 * ALL FORTY STAY IN, including the seven that carry nothing. The empty
+	 * tail is the finding — it is `PLAN.md` gap 15 drawn rather than argued —
+	 * and a matrix that listed only the languages with something in them would
+	 * be this page flattering the library.
+	 */
+	const score = (/** @type {string} */ lang) =>
+		coverageRows.reduce((sum, r) => sum + (r.of ? (r.byLang.get(lang)?.size ?? 0) / r.of : 0), 0);
+	const ordered = [...uiLangs].sort((a, b) => score(b) - score(a) || a.localeCompare(b));
+
+	const coverage = {
+		languages: ordered,
+		rows: coverageRows
+			.filter((r) => r.of > 0)
+			.map((r) => ({
+				key: r.key,
+				of: r.of,
+				values: ordered.map((lang) => r.byLang.get(lang)?.size ?? 0)
+			}))
+	};
+
+	// --- The apparatus, walked once ----------------------------------------
 	/** @type {Map<string, Set<string>>} */ const byBook = new Map();
 	/** @type {Map<string, Set<string>>} */ const byChapter = new Map();
 	/** @type {Map<string, number>} */ const byCiterKind = new Map();
-	let scriptureRefs = 0;
-	let citedVerses = 0;
+	/** Every distinct place in the corpus that cites anything, and every
+	 *  distinct address cited — the two ENDPOINTS of the cross-references,
+	 *  which is why neither is a part of their total. */
+	const citingPlaces = new Set();
+	const citedAddresses = new Set();
+	let references = 0;
+
 	for (const [osis, book] of Object.entries(scriptureByBook)) {
 		for (const [chapter, verses] of Object.entries(book)) {
-			for (const citers of Object.values(verses)) {
-				citedVerses++;
+			for (const [verse, citers] of Object.entries(verses)) {
+				citedAddresses.add(`bible ${osis} ${chapter} ${verse}`);
 				for (const citer of citers) {
-					scriptureRefs++;
+					references++;
+					citingPlaces.add(citerKey(citer));
 					byCiterKind.set(citer.kind, (byCiterKind.get(citer.kind) ?? 0) + 1);
 					if (!countsTowardsRank(citer)) continue;
 					tallyCiter(byBook, osis, citer);
@@ -245,98 +395,128 @@ export function buildCensus({
 	/** One reverse index, tallied onto whatever key its rows are addressed by. */
 	const tallyXrefs = (
 		/** @type {any[]} */ rows,
-		/** @type {(row: any) => [string, string]} */ at
+		/** @type {(row: any) => [string, string, string]} */ at
 	) => {
 		/** @type {Map<string, Set<string>>} */ const tally = new Map();
-		let total = 0;
 		for (const row of rows) {
-			const [id, self] = at(row);
+			const [id, self, address] = at(row);
+			citedAddresses.add(address);
 			for (const citer of row.cited_by) {
-				total++;
+				references++;
+				citingPlaces.add(citerKey(citer));
 				byCiterKind.set(citer.kind, (byCiterKind.get(citer.kind) ?? 0) + 1);
 				if (countsTowardsRank(citer, self)) tallyCiter(tally, id, citer);
 			}
 		}
-		return { tally, total };
+		return tally;
 	};
 
-	const documents = tallyXrefs(citationXrefs.documents, (r) => [r.work, `document ${r.work}`]);
-	const ccc = tallyXrefs(citationXrefs.ccc, (r) => [String(r.ccc), 'ccc']);
-	const summa = tallyXrefs(citationXrefs.summa, (r) => [`${r.part} ${r.question}`, 'summa']);
+	const documents = tallyXrefs(citationXrefs.documents, (r) => [
+		r.work,
+		`document ${r.work}`,
+		`document ${r.work} ${r.n}`
+	]);
+	const ccc = tallyXrefs(citationXrefs.ccc, (r) => [String(r.ccc), 'ccc', `ccc ${r.ccc}`]);
+	const summa = tallyXrefs(citationXrefs.summa, (r) => [
+		`${r.part} ${r.question}`,
+		'summa',
+		`summa ${r.part} ${r.question} ${r.article}`
+	]);
 
-	const references = scriptureRefs + documents.total + ccc.total + summa.total;
+	let summaArticleCount = 0;
+	for (const byQuestion of summaArticles.values()) {
+		for (const articles of byQuestion.values()) summaArticleCount += articles.size;
+	}
 
-	// --- The ledger ---------------------------------------------------------
-	/** @type {{ key: string, rows: { key: string, value: number }[] }[]} */
-	const groups = [];
-	/** A row is written only where the thing it counts is in this build. */
-	const group = (/** @type {string} */ key, /** @type {[string, number][]} */ rows) => {
-		const kept = rows.filter(([, value]) => value > 0).map(([k, value]) => ({ key: k, value }));
-		if (kept.length) groups.push({ key, rows: kept });
+	// --- The shelves, each a bag of numbers for one sentence -----------------
+	/** @type {{ key: string, facts: Record<string, number> }[]} */
+	const shelves = [];
+	/**
+	 * A shelf is written only where the thing it counts is in this build.
+	 *
+	 * The vitest fixtures carry three Bible editions, two Catechisms and no
+	 * Code at all, and a sentence reading "the Code of Canon Law in 0
+	 * languages" is this page asserting the Church has no law when what is
+	 * missing is a sync. `visibleShelves()` gates the catalogue on the same
+	 * test for the same reason. `gate` is the fact that must be non-zero for
+	 * the sentence to be true of anything.
+	 */
+	const shelf = (
+		/** @type {string} */ key,
+		/** @type {number} */ gate,
+		/** @type {Record<string, number>} */ facts
+	) => {
+		if (gate > 0) shelves.push({ key, facts });
 	};
 
-	group('library', [
-		['editions', Object.keys(manifests).length],
-		['contentLanguages', languages.length],
-		['interfaceLanguages', uiLangCount],
-		['addresses', addressCount],
-		['contentFiles', routeManifest.contentAssetCount]
-	]);
-	group('bible', [
-		['bibleEditions', editionsOfType('bible')],
-		['books', Object.keys(routeManifest.bible).length],
-		['chapters', chapters],
-		['introductions', introductions],
-		['annotatedEditions', editionsOfType('commentary')]
-	]);
-	group('catechism', [
-		['cccEditions', editionsOfType('catechism')],
-		['cccParagraphs', routeManifest.ccc.length],
-		['cccDivisions', routeManifest.cccChapters.length],
-		['compendiumEditions', editionsOfType('compendium')],
-		['compendiumQuestions', routeManifest.compendium.length],
-		['compendiumDivisions', routeManifest.compendiumChapters.length]
-	]);
-	group('socialDoctrine', [
-		['socialDoctrineEditions', editionsOfType('social-doctrine')],
-		['socialDoctrineParagraphs', routeManifest.socialDoctrine.length],
-		['socialDoctrineChapters', routeManifest.socialDoctrineChapters.length]
-	]);
-	group('prayer', [
-		['prayerEditions', editionsOfType('prayer')],
-		['prayers', routeManifest.prayers.length]
-	]);
-	group('canonLaw', [
-		['canonLawEditions', editionsOfType('canon-law')],
-		['canons', routeManifest.canonLaw.length],
-		['canonLawTitles', routeManifest.canonLawTitles.length]
-	]);
-	group('magisterium', [
-		['documents', routeManifest.documents.length],
-		['documentEditions', editionsOfType('document')],
-		['documentDescriptions', Object.keys(apparatus.descriptions).length]
-	]);
-	group('summa', [
-		['summaEditions', editionsOfType('summa')],
-		['summaParts', Object.keys(routeManifest.summa).length],
-		['summaQuestions', summaQuestions],
-		['summaArticles', summaArticleCount]
-	]);
-	group('apparatus', [
-		['references', references],
-		['referencesFromNotes', byCiterKind.get('annotation') ?? 0],
-		['citedVerses', citedVerses],
-		['citedDocumentSections', citationXrefs.documents.length],
-		['citedCccParagraphs', citationXrefs.ccc.length],
-		['citedSummaArticles', citationXrefs.summa.length]
-	]);
+	const langsIn = (/** @type {string} */ row) => reach[row]?.size ?? 0;
+
+	shelf('library', Object.keys(manifests).length, {
+		interfaceLanguages: uiLangs.length,
+		works: works.works.length,
+		editions: Object.keys(manifests).length,
+		contentLanguages: languages.length,
+		addresses: addressCount
+	});
+	shelf('bible', editionsOfType('bible'), {
+		books: Object.keys(routeManifest.bible).length,
+		languages: langsIn('bible'),
+		editions: editionsOfType('bible'),
+		annotated: editionsOfType('commentary')
+	});
+	shelf('catechism', editionsOfType('catechism'), {
+		languages: langsIn('catechism'),
+		paragraphs: routeManifest.ccc.length,
+		compendiumLanguages: langsIn('compendium'),
+		questions: routeManifest.compendium.length
+	});
+	shelf('socialDoctrine', editionsOfType('social-doctrine'), {
+		languages: langsIn('socialDoctrine'),
+		paragraphs: routeManifest.socialDoctrine.length
+	});
+	shelf('prayer', editionsOfType('prayer'), {
+		prayers: routeManifest.prayers.length,
+		languages: langsIn('prayer')
+	});
+	shelf('canonLaw', editionsOfType('canon-law'), {
+		canons: routeManifest.canonLaw.length,
+		languages: langsIn('canonLaw')
+	});
+	shelf('magisterium', routeManifest.documents.length, {
+		documents: routeManifest.documents.length,
+		languages: langsIn('magisterium'),
+		described: Object.keys(apparatus.descriptions).length
+	});
+	shelf('doctores', editionsOfType('summa'), {
+		questions: countQuestions(routeManifest.summa),
+		parts: Object.keys(routeManifest.summa).length,
+		articles: summaArticleCount,
+		languages: langsIn('doctores')
+	});
+	/**
+	 * THE ONE SENTENCE THAT HAS TO STATE ITS OWN UNITS. A cross-reference is
+	 * an EDGE and the two counts beside it are its ENDPOINTS, so they do not
+	 * sum to it and were never meant to — 22,170 cited verses plus the three
+	 * other indexes' addresses is the cited total, not a quarter of the
+	 * references. Set out as a list of counts that was exactly the reading it
+	 * invited, and someone did the addition and found it short by four fifths.
+	 * The sentence says "from X places to Y addresses", which is self-checking:
+	 * the two are visibly the ends of one arrow rather than parts of a sum.
+	 */
+	shelf('apparatus', references, {
+		references,
+		citingPlaces: citingPlaces.size,
+		citedAddresses: citedAddresses.size,
+		fromNotes: byCiterKind.get('annotation') ?? 0
+	});
 
 	const headOf = (/** @type {string} */ id) => id.slice(0, id.lastIndexOf(' '));
 	const numberIn = (/** @type {string} */ id) => Number(id.slice(id.lastIndexOf(' ') + 1));
 
 	return {
 		version: CENSUS_VERSION,
-		groups,
+		shelves,
+		coverage,
 		/**
 		 * The three things `llms.txt` needs that are not counts. They are here
 		 * rather than derived a second time in `llms.mjs` for this file's whole
@@ -353,8 +533,8 @@ export function buildCensus({
 		},
 		/**
 		 * Every citer kind and how many references it accounts for, largest
-		 * first — the rankings' other direction, and what makes
-		 * `referencesFromNotes` legible rather than surprising.
+		 * first — the rankings' other direction, and what makes `fromNotes`
+		 * legible rather than surprising.
 		 */
 		citers: [...byCiterKind]
 			.map(([kind, value]) => ({ kind, value }))
@@ -369,15 +549,15 @@ export function buildCensus({
 				chapter: numberIn(id),
 				value
 			})),
-			documents: topOf(documents.tally, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
+			documents: topOf(documents, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
 				slug: id,
 				value
 			})),
-			ccc: topOf(ccc.tally, (a, b) => Number(a) - Number(b)).map(({ id, value }) => ({
+			ccc: topOf(ccc, (a, b) => Number(a) - Number(b)).map(({ id, value }) => ({
 				n: Number(id),
 				value
 			})),
-			summa: topOf(summa.tally, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
+			summa: topOf(summa, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
 				part: headOf(id),
 				question: numberIn(id),
 				value

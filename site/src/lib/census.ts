@@ -155,47 +155,133 @@ export function rankedSumma(census: Census): CensusRankRow[] {
 }
 
 /**
- * The i18n key heading each ledger group.
+ * The i18n key naming each shelf and each coverage row.
  *
- * SEVEN OF THE NINE ARE A KEY THE SITE ALREADY HAS, and that is the same rule
- * `shelves.ts` states for the catalogue: a group here is a shelf there, so it
- * is headed by whatever that shelf's own landing page is titled by and costs
- * no string in thirty-seven dictionaries. `ccc.landing.pairTitle` heads the
- * Catechism's group because the group holds the Compendium's rows too, which
- * is exactly the pair that key was written for.
+ * EIGHT OF TEN ARE A KEY THE SITE ALREADY HAS, which is `shelves.ts`'s rule
+ * for the catalogue: a name here is a name there, so it is whatever that
+ * shelf's own landing page is titled by and costs no string in any
+ * dictionary. The two exceptions name nothing on a shelf — everything at
+ * once, and the cross-reference index this project derived rather than
+ * reproduced.
  *
- * The two exceptions name nothing on a shelf — everything at once, and the
- * cross-reference index this project derived rather than reproduced — so
- * they are the page's own and are written in `en.ts` alone.
+ * `catechism` IS THE PAIR IN THE PROSE AND THE CATECHISM ALONE IN THE MATRIX,
+ * the one key that means two things. The shelf holds two works whose language
+ * sets differ by five, so its sentence names both and the matrix gives each a
+ * row — a single row over their union would report a coverage neither work
+ * has. `ccc.landing.pairTitle` heads the sentence, `nav.ccc` the row, and
+ * both are already written everywhere.
  */
-export const CENSUS_GROUP_KEYS: Readonly<Record<string, string>> = {
-	library: 'census.group.library',
+export const CENSUS_SHELF_KEYS: Readonly<Record<string, string>> = {
+	library: 'census.shelf.library',
 	bible: 'nav.bible',
 	catechism: 'ccc.landing.pairTitle',
+	compendium: 'nav.compendium',
 	socialDoctrine: 'nav.socialDoctrine',
 	prayer: 'nav.prayers',
 	canonLaw: 'nav.canonLaw',
 	magisterium: 'nav.magisterium',
-	summa: 'summa.landing.title',
-	apparatus: 'census.group.apparatus'
+	doctores: 'doctores.landing.title',
+	apparatus: 'census.shelf.apparatus'
 };
 
+/** The matrix's row heading — the shelf's name except for the Catechism, see
+ *  `CENSUS_SHELF_KEYS`. */
+const COVERAGE_ROW_KEYS: Readonly<Record<string, string>> = {
+	...CENSUS_SHELF_KEYS,
+	catechism: 'nav.ccc'
+};
+
+/** One shelf as a heading and a sentence its numbers go into. */
+export interface CensusShelf {
+	key: string;
+	labelKey: string;
+	proseKey: string;
+	facts: Record<string, number>;
+}
+
 /**
- * The ledger's groups, dropping one this file has no heading for — the same
- * answer `citerBreakdown` gives an unnamed citer kind, for the same reason.
+ * The shelves, dropping one this file has no name for — the same answer
+ * `citerBreakdown` gives an unnamed citer kind, and `headFor` an address it
+ * has no rule for: the page is still right about everything else it says.
  */
-export function ledgerGroups(
-	census: Census
-): { key: string; labelKey: string; rows: { key: string; labelKey: string; value: number }[] }[] {
-	return census.groups
-		.filter((group) => CENSUS_GROUP_KEYS[group.key])
-		.map((group) => ({
-			key: group.key,
-			labelKey: CENSUS_GROUP_KEYS[group.key],
-			rows: group.rows.map((row) => ({
-				key: row.key,
-				labelKey: `census.row.${row.key}`,
-				value: row.value
+export function censusShelves(census: Census): CensusShelf[] {
+	return census.shelves
+		.filter((shelf) => CENSUS_SHELF_KEYS[shelf.key])
+		.map((shelf) => ({
+			key: shelf.key,
+			labelKey: CENSUS_SHELF_KEYS[shelf.key],
+			proseKey: `census.prose.${shelf.key}`,
+			facts: shelf.facts
+		}));
+}
+
+/**
+ * A shelf's sentence with its numbers in it.
+ *
+ * PROSE AND NOT A TABLE OF ROWS, which is what the ledger was until a reader
+ * added four of its numbers up and found them a fifth of the total they sat
+ * under. They were right and the rows were right: cross-references are EDGES
+ * and the counts beside them were their ENDPOINTS, two units on one list with
+ * nothing saying so. A list of bare numbers invites the addition; a sentence
+ * states the relation, and `census.prose.apparatus` now reads "from X places
+ * to Y addresses", which cannot be misread as a sum.
+ *
+ * EVERY FACT MUST HAVE A PLACEHOLDER AND EVERY PLACEHOLDER A FACT, asserted
+ * both ways in `census.test.ts` over a census built to carry every shelf. A
+ * fact with no placeholder is a number this build computes and no longer
+ * publishes — `llmsTxt`'s quiet failure one surface over; a placeholder with
+ * no fact reaches a reader as the literal `{documents}`. Neither can be seen
+ * by reading the output, so neither is left to review.
+ *
+ * `format` rather than the raw number, so a count is in the reader's own
+ * notation on a page that is nothing but counts.
+ */
+export function censusProse(
+	sentence: string,
+	facts: Record<string, number>,
+	format: (value: number) => string
+): string {
+	let out = sentence;
+	for (const [name, value] of Object.entries(facts)) {
+		out = out.replaceAll(`{${name}}`, format(value));
+	}
+	return out;
+}
+
+/** One row of the coverage matrix: a work, and what each language reaches of it. */
+export interface CensusCoverageRow {
+	key: string;
+	labelKey: string;
+	/** The address space this work offers, unioned across every edition. */
+	of: number;
+	/** How many languages reach any of it — the row's own headline. */
+	languages: number;
+	cells: { lang: string; value: number; fraction: number }[];
+}
+
+/**
+ * The coverage matrix: one row per work, one cell per interface language.
+ *
+ * THE LANGUAGE ORDER IS THE FILE'S, NOT THIS FUNCTION'S. It is derived at
+ * build from how much of the whole library each language carries and shared
+ * by every row, which is the only reason the rows are worth stacking: what
+ * the matrix shows is a comparison DOWN a column. Re-sorting here would be a
+ * second order over the same data, and the first thing it would break is the
+ * staircase that makes the picture readable.
+ */
+export function coverageRows(census: Census): CensusCoverageRow[] {
+	const langs = census.coverage.languages;
+	return census.coverage.rows
+		.filter((row) => COVERAGE_ROW_KEYS[row.key])
+		.map((row) => ({
+			key: row.key,
+			labelKey: COVERAGE_ROW_KEYS[row.key],
+			of: row.of,
+			languages: row.values.filter((v) => v > 0).length,
+			cells: row.values.map((value, i) => ({
+				lang: langs[i],
+				value,
+				fraction: row.of ? value / row.of : 0
 			}))
 		}));
 }
@@ -205,16 +291,20 @@ export function ledgerGroups(
  * cross-references come from.
  *
  * EVERY KEY IS ONE A PAGE ALREADY USES, so the breakdown costs no new string
- * in thirty-seven dictionaries — `CITED_BY_FAMILIES` takes the same approach
- * and for the same reason. It is per KIND rather than per family here because
- * this table has no filter to drive: what it answers is "who does the citing",
- * and the Catechism and its Compendium are two different answers to that even
- * though they are one answer to "show me the Catechism".
+ * in any dictionary — `CITED_BY_FAMILIES` takes the same approach and for the
+ * same reason. It is per KIND rather than per family here because this table
+ * has no filter to drive: what it answers is "who does the citing", and the
+ * Catechism and its Compendium are two different answers to that even though
+ * they are one answer to "show me the Catechism".
+ *
+ * `summa` IS NAMED FOR ITS SHELF and not for the work. Every other row here,
+ * and every shelf above, is a section of the library; one row naming a single
+ * book among nine naming shelves reads as a different kind of thing.
  */
 export const CITER_KIND_KEYS: Readonly<Record<string, string>> = {
 	annotation: 'apparatus.commentary',
 	document: 'nav.magisterium',
-	summa: 'summa.landing.title',
+	summa: 'doctores.landing.title',
 	ccc: 'nav.ccc',
 	socialDoctrine: 'nav.socialDoctrine',
 	compendium: 'nav.compendium',

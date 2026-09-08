@@ -54,7 +54,20 @@ const census = buildCensus({
 	works,
 	apparatus,
 	addressCount: 9,
-	uiLangCount: 37,
+	uiLangs: ['en', 'la'],
+	// Empty and spelled out rather than defaulted inside the builder: what
+	// `llms.txt` reads is the address space and the languages, so a census
+	// with no per-language registries is exactly the right fixture here — and
+	// a builder that quietly tolerated a missing one would turn a forgotten
+	// argument into an empty coverage matrix nobody could see was empty.
+	bibleIndex: {},
+	cccEditions: [],
+	compendiumEditions: [],
+	socialDoctrineEditions: [],
+	canonLawEditions: [],
+	prayerIndex: {},
+	documentEditions: [],
+	summaIndex: {},
 	scriptureByBook: {},
 	citationXrefs: { documents: [], ccc: [], summa: [] },
 	summaArticles: new Map()

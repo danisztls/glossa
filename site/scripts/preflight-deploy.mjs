@@ -36,6 +36,11 @@ import { readdirSync, existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compareCoverage, readBaseline } from './reference-coverage.mjs';
+import {
+	compareLanguageCoverage,
+	describePairs,
+	readBaseline as readLanguageBaseline
+} from './language-coverage.mjs';
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const buildDir = process.argv[2]
@@ -165,6 +170,33 @@ if (regressions.length > 0) {
 		`reference coverage dropped below the baseline:\n` +
 			regressions.map((r) => `  ${r}`).join('\n') +
 			`\n  Fix the grammar, or \`npm run coverage:accept\` if the drop is intended.`
+	);
+}
+
+// 3b. LANGUAGE COVERAGE. The other half of the word, and a failure the check
+//     above cannot see: that one measures the citations a work MAKES, this one
+//     whether a reader in a given language has the work at all. The route
+//     manifest unions across editions, so a withdrawn edition leaves every
+//     address valid and says nothing. See `language-coverage.mjs`;
+//     `npm run language:accept` records an intended withdrawal.
+const languagePath = path.join(buildDir, 'language-coverage.json');
+if (!existsSync(languagePath)) {
+	fail('missing language-coverage.json — the build predates the coverage report. Rebuild.');
+}
+const languageBaseline = readLanguageBaseline();
+if (!languageBaseline) {
+	fail('no scripts/language-coverage.baseline.json — run `npm run language:accept` after a sync.');
+}
+const { lost } = compareLanguageCoverage(
+	JSON.parse(readFileSync(languagePath, 'utf8')),
+	languageBaseline
+);
+if (lost.length > 0) {
+	fail(
+		`language coverage dropped: ${lost.length} (work, language) pair(s) the baseline has and ` +
+			`this build does not —\n  ${describePairs(lost)}\n` +
+			`  A reader in that language can no longer open that work. Fix the sync, or ` +
+			`\`npm run language:accept\` if the withdrawal is intended.`
 	);
 }
 

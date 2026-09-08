@@ -1,30 +1,41 @@
 <script lang="ts">
 	/**
-	 * The library counted: a ledger of what this build holds, and five
-	 * rankings over the cross-reference index.
+	 * The library counted: what it holds in a sentence per shelf, how far each
+	 * work reaches across the interface languages, and what the rest of the
+	 * corpus cites most.
 	 *
-	 * ## Why the numbers are not on `/bibliotheca`
+	 * ## Every number is a fraction, or it is one of four
 	 *
-	 * The catalogue answers "what is here" in the sense a reader arrives with
-	 * — which shelves are there and which one do I want — and it answers it in
-	 * seven cards. A ledger answers the same words in the other sense, and a
-	 * reader who came for the Bible does not want thirty-three counts between
-	 * them and the door. So this is a page under the catalogue rather than a
-	 * section of it, and the catalogue carries one line down to it.
+	 * The page opened with a 37-row ledger and read as noise — correctly, and
+	 * not because 37 is many. Every row answered "how many" and none answered
+	 * "out of what": `Canons 1,752` is unanchored, and a reader cannot tell
+	 * whether it is good. `the Code in 7 of 40 languages` is the same shape of
+	 * fact and is immediately a judgement. So the inventory went, the four
+	 * scale figures that survive are one sentence, and what replaced the table
+	 * is `coverage` — one number per work per language, which is the question
+	 * about this library a reader actually arrives with.
 	 *
-	 * ## Nothing on it is typed
+	 * ## One matrix, not eight graphs
 	 *
-	 * Every number is `scripts/census.mjs`'s, derived at build from the same
-	 * objects the sync writes the sitemap, `apparatus.json` and `llms.txt`
-	 * from — so this page and the file a crawler reads cannot disagree about
-	 * how many documents there are. That is the whole reason the census is a
-	 * module and not this page's own arithmetic, and `site/docs/census.md`
-	 * carries the argument.
+	 * The rows were nearly drawn per shelf, beside each shelf's sentence. What
+	 * that loses is the only thing worth drawing them for: the comparison DOWN
+	 * a column. In one grid, sharing one language order and one scale, the
+	 * eight rows fall into a staircase and the page argues without a word —
+	 * six languages carry most of the library and seven carry nothing at all.
+	 * Split into eight figures they are eight unrelated bar charts.
 	 *
-	 * It is also why there is no fallback content. A build with no census
-	 * (the vitest fixtures, a partial sync) says so in one sentence rather
-	 * than drawing a table of zeroes, because a zero here is a claim about
-	 * the Church's texts and not about this build.
+	 * The order is derived at build (`scripts/census.mjs`) and not chosen
+	 * here: any hand-made order is an editorial claim about which languages
+	 * matter, which is precisely what a page of measurements must not make.
+	 *
+	 * ## Why the sentences are sentences
+	 *
+	 * A shelf's numbers are interpolated into one line of prose rather than
+	 * set as rows, and the apparatus is the argument. As six figures under a
+	 * total, four of them summed to a fifth of it and read as broken — they
+	 * were not, a cross-reference being an edge and those being its endpoints,
+	 * but nothing on the list said so. A column of figures can only invite
+	 * arithmetic; a sentence can state a relation.
 	 *
 	 * ## The rankings are the reader's own edition
 	 *
@@ -40,23 +51,27 @@
 	 * entry of `BY_SEGMENT`. Do not add one on the strength of what
 	 * `/bibliotheca` renders: the catalogue reads `manifests` alone, so a
 	 * narrow entry looks right and would silently empty three of the five
-	 * rankings here. `index-priming.test.ts` cannot catch it either, because it
-	 * scans what a PAGE imports from `$lib/corpus` and every reader this page
-	 * uses is one module further in.
+	 * rankings here. `index-priming.test.ts` cannot catch it either, because
+	 * it scans what a PAGE imports from `$lib/corpus` and every reader this
+	 * page uses is one module further in.
 	 *
 	 * ## Not in `CHROME_PATHS`
 	 *
 	 * The page's own strings are English (`census.*` in `en.ts`), so it takes
 	 * no `/{lang}/` prefix and declares no `hreflang` cluster —
-	 * `/calendarium/liturgia`'s arrangement, argued in `route-manifest.ts`. It
-	 * is in `STATIC_PATHS` and `STATIC_HEADS`, which is what makes it answer
-	 * 200 to a cold load and a shared link.
+	 * `/calendarium/liturgia`'s arrangement, argued in `route-manifest.ts` and
+	 * sized in `PLAN.md`. It is in `STATIC_PATHS` and `STATIC_HEADS`, which is
+	 * what makes it answer 200 to a cold load and a shared link.
+	 *
+	 * `site/docs/census.md` is the rationale for all of it.
 	 */
 	import { t, i18n } from '$lib/i18n.svelte';
 	import { loadCensus } from '$lib/corpus';
 	import {
+		censusProse,
+		censusShelves,
 		citerBreakdown,
-		ledgerGroups,
+		coverageRows,
 		rankedBooks,
 		rankedCcc,
 		rankedChapters,
@@ -65,20 +80,16 @@
 		type CensusRankRow
 	} from '$lib/census';
 	import { formatNumber } from '$lib/ui-langs';
+	import { languageDisplayName } from '$lib/lang-names';
 	import type { Census } from '$lib/types';
 
 	/**
-	 * `$state` + `$effect` rather than an `await` in the template, and rather
-	 * than a `load()`: the file is one request for the whole page and the
-	 * chrome around it should paint without waiting on it — `/documenta`'s
-	 * tags are fetched exactly this way and for the same reason.
-	 *
 	 * THREE STATES AND NOT TWO, because `undefined` means three different
-	 * things and only one of them is worth a sentence. In flight, the page
-	 * says nothing; absent, it says this build was not counted; THREW, it says
-	 * what `LoadFailed` says — the page exists and the request dropped — and
-	 * offers the retry, because telling a reader one retry from the numbers
-	 * that there are none is `NotFound`'s wrong answer one component over.
+	 * things and only one is worth a sentence. In flight, the page says
+	 * nothing; absent, it says this build was not counted; THREW, it says what
+	 * `LoadFailed` says — the page exists and the request dropped — and offers
+	 * the retry, because telling a reader one retry from the numbers that
+	 * there are none is `NotFound`'s wrong answer one component over.
 	 * `invalidateAll()` is not the remedy here (nothing was loaded by a
 	 * `load()`), so the retry re-runs the fetch itself.
 	 */
@@ -104,6 +115,13 @@
 		};
 	});
 
+	/** Every count on the page, in the reader's own number formatting. */
+	const n = (value: number) => formatNumber(value, i18n.lang);
+
+	const shelves = $derived(census ? censusShelves(census) : []);
+	const coverage = $derived(census ? coverageRows(census) : []);
+	const citers = $derived(census ? citerBreakdown(census) : []);
+
 	/**
 	 * The five rankings in the order the library is read, each with the
 	 * heading that says what unit it ranks.
@@ -127,11 +145,12 @@
 			: []
 	);
 
-	const groups = $derived(census ? ledgerGroups(census) : []);
-	const citers = $derived(census ? citerBreakdown(census) : []);
-
-	/** Every count on the page, in the reader's own number formatting. */
-	const n = (value: number) => formatNumber(value, i18n.lang);
+	/** A cell's accessible value — `1,334 of 1,334`, or the plain statement
+	 *  that there is none, which reads better than `0 of 1,334`. */
+	const cellLabel = (value: number, of: number) =>
+		value === 0
+			? t('census.reachNone')
+			: t('census.reachCell').replace('{value}', n(value)).replace('{of}', n(of));
 </script>
 
 <svelte:head>
@@ -161,38 +180,95 @@
 	{:else}
 		<section aria-labelledby="holdings-heading">
 			<h2 id="holdings-heading">{t('census.holdings')}</h2>
-			<!--
-				A DESCRIPTION LIST PER GROUP, not one table with a group column.
-				Each group is a term-and-value list about a different subject,
-				and `<dl>` is the element that says so — a `<table>` would claim
-				the rows share a dimension they do not (five editions of the
-				Catechism and 2,865 paragraphs are not two values of one
-				variable). It also degrades to a readable column on a phone
-				with no horizontal scroll, which a two-column table does not.
-			-->
-			<div class="ledger">
-				{#each groups as group (group.key)}
-					<section class="group" aria-labelledby="group-{group.key}">
-						<h3 id="group-{group.key}">{t(group.labelKey)}</h3>
-						<dl>
-							{#each group.rows as row (row.key)}
-								<div class="row">
-									<dt>{t(row.labelKey)}</dt>
-									<dd>{n(row.value)}</dd>
-								</div>
-							{/each}
-						</dl>
-					</section>
+			<!-- A description list, because that is what this is: a term and a
+			     statement about it, nine times. Not a table — the sentences
+			     share no dimension — and not headings, which would put nine
+			     entries in the document outline for one paragraph each. -->
+			<dl class="shelves">
+				{#each shelves as shelf (shelf.key)}
+					<div class="shelf">
+						<dt>{t(shelf.labelKey)}</dt>
+						<dd>{censusProse(t(shelf.proseKey), shelf.facts, n)}</dd>
+					</div>
 				{/each}
-			</div>
+			</dl>
 		</section>
+
+		{#if coverage.length}
+			<section aria-labelledby="reach-heading">
+				<h2 id="reach-heading">{t('census.reach')}</h2>
+				<p class="lede landing-measure">{t('census.reachLede')}</p>
+
+				<!--
+					A REAL TABLE, and the one thing on this page that earns the
+					element: the rows share a dimension, every column is the
+					same question asked of a different language, and the header
+					cells are what let a screen reader say which language a cell
+					belongs to without the reader counting positions.
+
+					IT SCROLLS AS ONE. Forty columns do not fit a phone, and
+					every wrapping alternative breaks what the matrix is for —
+					a wrapped row no longer lines up with the row above it. So
+					the whole grid scrolls together inside its own box and the
+					alignment survives at every width. The box is focusable
+					because a scroll container a keyboard cannot reach is a
+					region a keyboard reader cannot see the right-hand end of.
+				-->
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<!-- A SCROLL CONTAINER MUST BE FOCUSABLE, and the lint rule that
+				     objects to it is answering a different question. WCAG 2.1.1
+				     is why: a region that scrolls and cannot be reached from a
+				     keyboard hides everything past its right edge from anyone
+				     not using a pointer, which here is thirty of the forty
+				     languages. `role="region"` plus the section's own heading is
+				     what gives it a name once it is in the tab order. -->
+				<div class="matrix-scroll" tabindex="0" role="region" aria-labelledby="reach-heading">
+					<table class="matrix">
+						<thead>
+							<tr>
+								<th scope="col" class="corner">
+									<span class="visually-hidden">{t('nav.works')}</span>
+								</th>
+								{#each census.coverage.languages as lang (lang)}
+									<th scope="col" title={languageDisplayName(lang)}>{lang}</th>
+								{/each}
+							</tr>
+						</thead>
+						<tbody>
+							{#each coverage as row (row.key)}
+								<tr>
+									<th scope="row">
+										<span class="work">{t(row.labelKey)}</span>
+										<span class="row-count">
+											{t('census.reachRow')
+												.replace('{languages}', n(row.languages))
+												.replace('{total}', n(row.cells.length))
+												.replace('{of}', n(row.of))}
+										</span>
+									</th>
+									{#each row.cells as cell (cell.lang)}
+										<td class:none={cell.value === 0}>
+											<!-- The bar is presentational; the value is text a
+											     screen reader reads, because a height is not a
+											     number to anyone who cannot see it. -->
+											<span class="bar" style="--fill: {cell.fraction}" aria-hidden="true"></span>
+											<span class="visually-hidden">{cellLabel(cell.value, row.of)}</span>
+										</td>
+									{/each}
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		{/if}
 
 		<section aria-labelledby="cited-heading">
 			<h2 id="cited-heading">{t('census.cited')}</h2>
 			<!-- THE METHOD BEFORE THE TABLES. Both of its clauses change what
 			     the numbers mean, and a reader who meets them afterwards has
 			     already read the tables wrongly. -->
-			<p class="method landing-measure">{t('census.method')}</p>
+			<p class="lede landing-measure">{t('census.method')}</p>
 
 			<div class="rankings">
 				{#each rankings as [key, rows] (key)}
@@ -200,9 +276,7 @@
 						<h3 id="rank-{key}">{t(`census.rank.${key}`)}</h3>
 						<!-- An ordered list, because the order IS the content: a
 						     screen reader announcing "3 of 20" is reading the rank,
-						     which is the one thing a bare list would drop. The
-						     number after each row is the count, named once by the
-						     column's own `title` on the value. -->
+						     which is the one thing a bare list would drop. -->
 						<ol>
 							{#each rows as row (row.key)}
 								<li>
@@ -221,10 +295,8 @@
 				<h2 id="citers-heading">{t('census.citers')}</h2>
 				<!-- THE OTHER DIRECTION, AND WHY THE COMMENTARY ROW IS HERE AT
 				     ALL. The rankings above leave an edition's own footnotes
-				     out; this table is where the reader can see how much that
-				     is, and it is the largest row in it. Left unsaid, the
-				     apparatus totals in the ledger would not add up to
-				     anything a reader could check. -->
+				     out; this is where a reader can see how much that is, and
+				     it is the largest row in it. -->
 				<dl class="citers">
 					{#each citers as citer (citer.key)}
 						<div class="row">
@@ -262,64 +334,139 @@
 		color: var(--color-text-muted);
 	}
 
+	.lede {
+		margin: 0 0 1rem;
+		color: var(--color-text-muted);
+	}
+
+	/* --- The shelves, one sentence each ------------------------------------ */
+
+	.shelves {
+		margin: 0;
+		/* Two columns where there is room: nine one-line entries down a 72rem
+		   page is a narrow column of text with an ocean beside it. `auto-fit`
+		   rather than a breakpoint, because how many fit is a function of the
+		   width and not of a device. */
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+		gap: 0.35rem 2.5rem;
+	}
+
+	.shelf {
+		padding: 0.4rem 0;
+		border-bottom: 1px solid var(--color-border);
+		break-inside: avoid;
+	}
+
+	.shelves dt {
+		font-family: var(--font-serif);
+		font-weight: 600;
+	}
+
+	.shelves dd {
+		margin: 0;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* --- The matrix -------------------------------------------------------- */
+
 	/*
-	 * TWO COLUMNS WHERE THERE IS ROOM AND ONE WHERE THERE IS NOT, by
-	 * `auto-fit` rather than a breakpoint: the groups are between two and six
-	 * rows each, so a fixed two-column grid leaves a ragged hole under the
-	 * short ones and a fixed one-column list wastes half a desktop column.
-	 * `minmax(17rem, 1fr)` is the width at which the longest label
-	 * ("Of those, an edition's own notes") stops wrapping.
+	 * `overflow-x` on a wrapper and never on the table itself: a scroll
+	 * container has to be focusable to be reachable from a keyboard, and
+	 * `tabindex` on a `<table>` would put the whole grid in the tab order as
+	 * one stop with no way to scroll it.
 	 */
-	.ledger,
+	.matrix-scroll {
+		overflow-x: auto;
+		padding-bottom: 0.5rem;
+	}
+
+	.matrix {
+		border-collapse: collapse;
+		font-size: 0.72rem;
+		font-family: var(--font-sans);
+	}
+
+	.matrix th[scope='col'] {
+		font-weight: 400;
+		color: var(--color-text-muted);
+		text-align: center;
+		padding: 0 0 0.3rem;
+		min-width: 1.45rem;
+	}
+
+	.matrix th[scope='row'] {
+		text-align: left;
+		font-weight: 400;
+		padding: 0 0.9rem 0 0;
+		white-space: nowrap;
+		vertical-align: middle;
+	}
+
+	.matrix .corner {
+		min-width: 0;
+	}
+
+	.work {
+		display: block;
+		font-family: var(--font-serif);
+		font-size: 0.92rem;
+		color: var(--color-text);
+	}
+
+	/* The row's own headline, so the matrix answers "how many languages"
+	   without the reader counting cells. */
+	.row-count {
+		display: block;
+		font-size: 0.68rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.matrix td {
+		padding: 1px;
+		height: 1.5rem;
+		vertical-align: bottom;
+	}
+
+	/*
+	 * A BAR RISING IN THE CELL, not a tint. Fill is a geometric channel, so
+	 * the matrix survives `data-mono` — where `--pigment-strength: 0%`
+	 * collapses the whole palette to one grey — with nothing lost. A tinted
+	 * cell would carry its entire value in colour, which is the line
+	 * `site/docs/references.md` draws for the family marks, and this is the
+	 * case it was drawn for: here the fill IS the datum.
+	 */
+	.bar {
+		display: block;
+		width: 100%;
+		height: calc(var(--fill) * 100%);
+		min-height: 2px;
+		background: var(--color-text-muted);
+		border-radius: 1px;
+	}
+
+	/* A language with nothing gets a hairline rather than an empty box: the
+	   cell must still read as a cell, or a run of them looks like the table
+	   stopped. */
+	.matrix td.none .bar {
+		height: 1px;
+		min-height: 1px;
+		background: var(--color-border);
+	}
+
+	/* --- The rankings ------------------------------------------------------ */
+
 	.rankings {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
 		gap: 1.5rem 2.5rem;
 	}
 
-	.group,
 	.ranking {
 		margin: 0;
-		/* `break-inside` for the print stylesheet: a group split across a page
-		   break is a heading on one page and its numbers on the next. */
 		break-inside: avoid;
-	}
-
-	dl {
-		margin: 0;
-	}
-
-	/*
-	 * THE LEADER IS A BORDER AND NOT A ROW OF DOTS. A dotted leader is what a
-	 * printed index uses and it reads well at a printed index's density; here
-	 * the rows are short and the values narrow, and a hairline under each is
-	 * enough to carry the eye across without drawing a texture over the whole
-	 * column. `align-items: baseline` so the label and the number sit on one
-	 * line however the label wraps.
-	 */
-	.row {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-		padding: 0.3rem 0;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.row:last-child {
-		border-bottom: none;
-	}
-
-	dt {
-		color: var(--color-text-muted);
-	}
-
-	dd {
-		margin: 0;
-		/* Tabular figures so a column of numbers lines up on its digits, which
-		   is the whole reason a ledger is set in a column. */
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
 	}
 
 	ol {
@@ -371,14 +518,41 @@
 		color: var(--color-text-muted);
 	}
 
-	.method,
-	.derived,
-	.notice {
+	/* --- The citer breakdown and the page's own furniture ------------------- */
+
+	.citers {
+		/* One list and not a grid: eight rows, and a reader compares them
+		   against each other rather than reading them as separate subjects. */
+		max-width: 28rem;
+		margin: 0;
+	}
+
+	.citers .row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.3rem 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.citers .row:last-child {
+		border-bottom: none;
+	}
+
+	.citers dt {
 		color: var(--color-text-muted);
 	}
 
-	.method {
-		margin: 0 0 1.25rem;
+	.citers dd {
+		margin: 0;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.derived,
+	.notice {
+		color: var(--color-text-muted);
 	}
 
 	.derived {
@@ -386,10 +560,16 @@
 		font-size: 0.9rem;
 	}
 
-	.citers {
-		/* One list and not a grid: eight rows, and a reader compares them
-		   against each other rather than reading them as separate subjects. */
-		max-width: 28rem;
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
 	}
 
 	/* `LoadFailed`'s chip and `NotDownloaded`'s before it — the third place

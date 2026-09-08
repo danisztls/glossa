@@ -1183,22 +1183,38 @@ export interface SummaCitationXref {
  * The census — `index/census.json`, written by `scripts/census.mjs` and read
  * by `/bibliotheca/census` alone.
  *
- * IDS AND NUMBERS, NEVER WORDS. A group and a row carry a key that
+ * IDS AND NUMBERS, NEVER WORDS. A shelf and a coverage row carry a key that
  * `src/lib/i18n/en.ts` names; a ranked entry carries the address of the thing
  * ranked, and the page labels it out of the edition the reader has open. A
  * label baked in here would be one language's, written at build time, on a
  * site whose whole arrangement is that a citation is named in the language of
  * the edition it opens.
  *
- * A GROUP OR A ROW MAY BE ABSENT and that is not an error — it means this
- * build holds nothing of the kind, and the page draws no row rather than a
- * zero. Which is why `groups` is an array rather than a record: what it
- * carries is an ORDER as much as a set of numbers, and the order is the
- * library's own shelves.
+ * A SHELF OR A ROW MAY BE ABSENT and that is not an error — it means this
+ * build holds nothing of the kind, and the page writes no sentence rather
+ * than one asserting the Church has no code of law. Which is why `shelves` is
+ * an array rather than a record: what it carries is an ORDER as much as a set
+ * of numbers, and the order is the library's own.
  */
 export interface Census {
 	version: number;
-	groups: { key: string; rows: { key: string; value: number }[] }[];
+	/** One bag of numbers per shelf, in reading order. The page interpolates
+	 *  them into that shelf's sentence — every fact has a placeholder and every
+	 *  placeholder a fact, asserted both ways in `census.test.ts`. */
+	shelves: { key: string; facts: Record<string, number> }[];
+	/**
+	 * One number per (work, interface language): how much of what that work
+	 * offers a reader of that language can reach.
+	 *
+	 * `languages` is the order every row is written in — derived at build from
+	 * how much of the whole library each language carries, so the rows stack
+	 * into a staircase and can be compared down a column. `values` is parallel
+	 * to it, and `of` is the denominator, unioned across every edition.
+	 */
+	coverage: {
+		languages: string[];
+		rows: { key: string; of: number; values: number[] }[];
+	};
 	/** Content-language tags, sorted. Published in `llms.txt`, not on the page. */
 	languages: string[];
 	/** Summa part slugs. Published in `llms.txt`, not on the page. */

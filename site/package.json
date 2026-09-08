@@ -25,6 +25,7 @@
 		"export": "node scripts/export-book-forms.mjs && node scripts/export-versification.mjs && node scripts/export-section-names.mjs",
 		"security-txt": "node scripts/write-security-txt.mjs",
 		"coverage:accept": "node scripts/reference-coverage.mjs --accept",
+		"language:accept": "node scripts/language-coverage.mjs --accept",
 		"lastmod:accept": "node scripts/sync-corpus.mjs --accept-lastmod",
 		"preflight": "node scripts/preflight-deploy.mjs",
 		"deploy": "npm run build && npm run preflight && wrangler deploy",

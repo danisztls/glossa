@@ -1,25 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { buildCensus, censusValue, countsTowardsRank, topOf } from '../../scripts/census.mjs';
-import { CENSUS_GROUP_KEYS, CITER_KIND_KEYS } from './census';
+import { buildCensus, censusFact, countsTowardsRank, topOf } from '../../scripts/census.mjs';
+import { CENSUS_SHELF_KEYS, CITER_KIND_KEYS, censusProse, coverageRows } from './census';
 import { en } from './i18n/en';
-import type { Citer } from './types';
+import type { Census, Citer } from './types';
 
 /**
  * The census, over a corpus small enough to count by hand.
  *
  * WHAT IS UNDER TEST IS THE MEASUREMENT AND NOT THE ARITHMETIC. Summing a
- * list is not where this goes wrong; the three decisions are — which citers
- * count, whether a citer that cites four verses of one chapter counts once or
- * four times, and where a ranking is allowed to stop. Each has a corpus
- * condition behind it that a plain sum would report the wrong answer for, and
- * each is asserted below against a fixture built to contain that condition.
+ * list is not where this goes wrong; the decisions are — which citers count,
+ * whether a citer that cites four verses of one chapter counts once or four
+ * times, where a ranking is allowed to stop, and what a coverage cell is a
+ * fraction OF. Each has a corpus condition behind it that a plain sum would
+ * answer wrongly, and each is asserted below against a fixture built to
+ * contain that condition.
  *
  * The last block is the one that catches an ordinary edit: every key the
- * builder can emit has to be a string somebody wrote, or the page renders a
- * dotted key at a reader.
+ * builder can emit has to be a string somebody wrote, and every fact has to
+ * have somewhere in a sentence to go.
  */
 
-/** Two citers of one address, one of which is an edition's own footnote. */
 const doc = (slug: string, n: number): Citer => ({ kind: 'document', slug, n });
 const note = (verse: number): Citer => ({
 	kind: 'annotation',
@@ -34,7 +34,7 @@ const routeManifest = {
 	workCount: 5,
 	contentAssetCount: 40,
 	// Genesis carries an introduction (chapter 0) and John does not, which is
-	// what separates the `chapters` row from the `introductions` one.
+	// what keeps the coverage denominator off by exactly that one.
 	bible: { gen: [0, 1, 2], john: [1] },
 	ccc: [1, 2],
 	cccChapters: [1],
@@ -54,19 +54,61 @@ const manifests = {
 	'bible.clementina.la': { type: 'bible', language: 'la' },
 	'commentary.haydock.en': { type: 'commentary', language: 'en' },
 	'ccc.en': { type: 'catechism', language: 'en' },
+	'ccc.la': { type: 'catechism', language: 'la' },
+	'compendium.en': { type: 'compendium', language: 'en' },
+	'csdc.en': { type: 'social-doctrine', language: 'en' },
+	'cic.en': { type: 'canon-law', language: 'en' },
+	'prayer.en': { type: 'prayer', language: 'en' },
+	'summa.en': { type: 'summa', language: 'en' },
 	'vatii.lumen-gentium.en': { type: 'document', language: 'en' },
-	'encyclical.rerum-novarum.en': { type: 'document', language: 'en' }
+	'encyclical.rerum-novarum.en': { type: 'document', language: 'en' },
+	'encyclical.rerum-novarum.la': { type: 'document', language: 'la' }
 };
 
 const works = { works: [{ source: 'https://vatican.va/x', languages: ['en', 'la'] }] };
 
-const census = buildCensus({
+/** Three interface languages, one of which the corpus has nothing in. */
+const uiLangs = ['en', 'la', 'ja'] as const;
+
+const input = {
 	manifests,
 	routeManifest,
 	works,
 	apparatus: { descriptions: { 'lumen-gentium': 'a' } },
 	addressCount: 11,
-	uiLangCount: 37,
+	uiLangs,
+	// English has both books; Latin has Genesis only — a partial reach, which
+	// is what makes a coverage cell a fraction rather than a tick.
+	bibleIndex: {
+		'bible.cpdv.en': {
+			books: [
+				{ osis: 'gen', chapters: [{ n: 0 }, { n: 1 }, { n: 2 }] },
+				{ osis: 'john', chapters: [{ n: 1 }] }
+			]
+		},
+		'bible.clementina.la': { books: [{ osis: 'gen', chapters: [{ n: 1 }, { n: 2 }] }] }
+	},
+	cccEditions: [
+		{ lang: 'en', paragraphs: [{ n: 1 }, { n: 2 }] },
+		{ lang: 'la', paragraphs: [{ n: 1 }] }
+	],
+	compendiumEditions: [{ lang: 'en', questions: [{ n: 1 }] }],
+	socialDoctrineEditions: [{ lang: 'en', sections: [{ n: 1 }, { n: 2 }, { n: 3 }] }],
+	canonLawEditions: [{ lang: 'en', sections: [{ n: 1 }, { n: 2 }] }],
+	prayerIndex: { en: { prayers: [{ slug: 'our-father' }] } },
+	documentEditions: [
+		{ slug: 'lumen-gentium', lang: 'en' },
+		{ slug: 'rerum-novarum', lang: 'en' },
+		{ slug: 'rerum-novarum', lang: 'la' }
+	],
+	summaIndex: {
+		en: {
+			questions: [
+				{ part: 'I', n: 1 },
+				{ part: 'I', n: 2 }
+			]
+		}
+	},
 	scriptureByBook: {
 		matt: {
 			// ONE citer over four verses of one chapter, beside three notes on
@@ -79,9 +121,7 @@ const census = buildCensus({
 				'6': [doc('lumen-gentium', 8), note(6)]
 			},
 			// Two distinct places, so this chapter outranks the one above.
-			'25': {
-				'40': [doc('rerum-novarum', 1), doc('lumen-gentium', 9)]
-			}
+			'25': { '40': [doc('rerum-novarum', 1), doc('lumen-gentium', 9)] }
 		}
 	},
 	citationXrefs: {
@@ -95,33 +135,43 @@ const census = buildCensus({
 		summa: [{ part: 'I', question: 1, article: 1, cited_by: [doc('lumen-gentium', 8)] }]
 	},
 	summaArticles: new Map([['I', new Map([[1, new Set([1, 2])]])]])
-});
+};
+
+const census = buildCensus(input);
 
 describe('the tally', () => {
 	it('counts a citing place once however many verses it cites', () => {
-		const matt5 = census.rankings.chapters.find((c) => c.chapter === 5);
-		expect(matt5?.value).toBe(1);
+		expect(census.rankings.chapters.find((c) => c.chapter === 5)?.value).toBe(1);
 	});
 
 	it('ranks by citing places, so the chapter cited by two works leads', () => {
 		expect(census.rankings.chapters.map((c) => c.chapter)).toEqual([25, 5]);
 	});
 
-	it("leaves an edition's own notes out of a ranking and keeps them in the ledger", () => {
+	it("leaves an edition's own notes out of a ranking and keeps them in the count", () => {
 		// Matthew is cited by three distinct places — Lumen Gentium §8 and §9
 		// and Rerum Novarum §1 — beside three of Haydock's notes, which the
-		// ledger counts and the ranking does not.
+		// apparatus sentence counts and the ranking does not.
 		expect(census.rankings.books).toEqual([{ osis: 'matt', value: 3 }]);
-		expect(censusValue(census, 'apparatus', 'referencesFromNotes')).toBe(3);
+		expect(censusFact(census, 'apparatus', 'fromNotes')).toBe(3);
 	});
 
 	it('drops a work citing itself, so a document cited only by itself is not ranked', () => {
 		expect(census.rankings.documents.map((d) => d.slug)).toEqual(['rerum-novarum']);
 	});
 
-	it('still counts every reference in the ledger, self-citation and notes alike', () => {
+	/**
+	 * THE READING THAT MADE THE LEDGER PROSE. A cross-reference is an edge and
+	 * the two counts beside it are its endpoints, so they do not sum to it —
+	 * which is exactly what a list of bare figures invited someone to try.
+	 */
+	it('counts references as edges and the two endpoint totals as nodes', () => {
 		// 9 rows in the scripture index + 2 document + 1 ccc + 1 summa.
-		expect(censusValue(census, 'apparatus', 'references')).toBe(13);
+		expect(censusFact(census, 'apparatus', 'references')).toBe(13);
+		// Four distinct citing places: LG 8, LG 9, LG 40, RN 1, plus 3 notes.
+		expect(censusFact(census, 'apparatus', 'citingPlaces')).toBe(7);
+		// Five verses + 2 document sections + 1 paragraph + 1 article.
+		expect(censusFact(census, 'apparatus', 'citedAddresses')).toBe(9);
 	});
 
 	it('breaks the citers down by kind, largest first', () => {
@@ -132,37 +182,64 @@ describe('the tally', () => {
 	});
 });
 
-describe('the ledger', () => {
-	it('counts a book introduction as an introduction and not as a chapter', () => {
-		expect(censusValue(census, 'bible', 'chapters')).toBe(3);
-		expect(censusValue(census, 'bible', 'introductions')).toBe(1);
+describe('coverage', () => {
+	const row = (key: string) => census.coverage.rows.find((r) => r.key === key);
+	const cell = (key: string, lang: string) =>
+		row(key)?.values[census.coverage.languages.indexOf(lang)];
+
+	it('counts a book introduction out of the denominator', () => {
+		// gen 1, gen 2, john 1 — chapter 0 is an introduction, not a chapter.
+		expect(row('bible')?.of).toBe(3);
 	});
 
-	it('counts editions by manifest type', () => {
-		expect(censusValue(census, 'bible', 'bibleEditions')).toBe(2);
-		expect(censusValue(census, 'bible', 'annotatedEditions')).toBe(1);
-		expect(censusValue(census, 'magisterium', 'documentEditions')).toBe(2);
+	it('unions a language across its editions and reports a partial reach', () => {
+		expect(cell('bible', 'en')).toBe(3);
+		expect(cell('bible', 'la')).toBe(2);
+		expect(cell('bible', 'ja')).toBe(0);
 	});
 
-	/**
-	 * The corpus condition this exists for: the fixtures hold no Code and no
-	 * prayers, and a `Canons — 0` row is this page asserting the Church has no
-	 * law rather than reporting that nothing was synced.
-	 */
-	it('writes no row and no group for a work type this build does not hold', () => {
+	it('gives the Catechism and its Compendium a row each, not their union', () => {
+		expect(cell('catechism', 'la')).toBe(1);
+		expect(cell('compendium', 'la')).toBe(0);
+	});
+
+	it('counts a document once per language however many editions carry it', () => {
+		expect(row('magisterium')?.of).toBe(2);
+		expect(cell('magisterium', 'en')).toBe(2);
+		expect(cell('magisterium', 'la')).toBe(1);
+	});
+
+	/** The order is the picture: a language carrying more of the library comes
+	 *  first, and the empty ones fall to the end where the tail is the finding. */
+	it('orders the languages by how much of the whole library they carry', () => {
+		expect(census.coverage.languages).toEqual(['en', 'la', 'ja']);
+	});
+
+	it('keeps a language that carries nothing, because the tail is the finding', () => {
+		expect(census.coverage.languages).toContain('ja');
+		for (const r of census.coverage.rows) {
+			expect(r.values).toHaveLength(3);
+		}
+	});
+
+	it('turns each cell into a fraction of its own row', () => {
+		const rows = coverageRows(census as unknown as Census);
+		const bible = rows.find((r) => r.key === 'bible');
+		expect(bible?.cells.map((c) => c.fraction)).toEqual([1, 2 / 3, 0]);
+		expect(bible?.languages).toBe(2);
+	});
+});
+
+describe('the shelves', () => {
+	it('names a shelf only where this build holds the thing it counts', () => {
 		const empty = buildCensus({
+			...input,
 			manifests: {},
 			routeManifest: { ...routeManifest, canonLaw: [], canonLawTitles: [] },
-			works,
-			apparatus: { descriptions: {} },
-			addressCount: 1,
-			uiLangCount: 1,
-			scriptureByBook: {},
-			citationXrefs: { documents: [], ccc: [], summa: [] },
-			summaArticles: new Map()
+			canonLawEditions: []
 		});
-		expect(empty.groups.map((g) => g.key)).not.toContain('canonLaw');
-		expect(() => censusValue(empty, 'canonLaw', 'canons')).toThrow(/no row/);
+		expect(empty.shelves.map((s) => s.key)).not.toContain('canonLaw');
+		expect(() => censusFact(empty, 'canonLaw', 'canons')).toThrow(/no fact/);
 	});
 
 	it('carries the three things llms.txt needs that are not counts', () => {
@@ -188,13 +265,15 @@ describe('topOf', () => {
 	 * about those four that nothing supports.
 	 */
 	it('cuts on the count, never through a tie', () => {
-		const rows = topOf(tally({ a: 5, b: 3, c: 3, d: 3 }), compare, 3);
-		expect(rows.map((r) => r.id)).toEqual(['a']);
+		expect(topOf(tally({ a: 5, b: 3, c: 3, d: 3 }), compare, 3).map((r) => r.id)).toEqual(['a']);
 	});
 
 	it('takes a whole band that fits exactly', () => {
-		const rows = topOf(tally({ a: 5, b: 3, c: 3 }), compare, 3);
-		expect(rows.map((r) => r.id)).toEqual(['a', 'b', 'c']);
+		expect(topOf(tally({ a: 5, b: 3, c: 3 }), compare, 3).map((r) => r.id)).toEqual([
+			'a',
+			'b',
+			'c'
+		]);
 	});
 
 	it('publishes nothing rather than an arbitrary half of one band', () => {
@@ -202,8 +281,10 @@ describe('topOf', () => {
 	});
 
 	it('orders a band by the tie-break, so a rebuild produces the same file', () => {
-		const rows = topOf(tally({ zeta: 2, alpha: 2 }), compare, 4);
-		expect(rows.map((r) => r.id)).toEqual(['alpha', 'zeta']);
+		expect(topOf(tally({ zeta: 2, alpha: 2 }), compare, 4).map((r) => r.id)).toEqual([
+			'alpha',
+			'zeta'
+		]);
 	});
 });
 
@@ -224,27 +305,55 @@ describe('countsTowardsRank', () => {
 	});
 });
 
+describe('censusProse', () => {
+	it('substitutes every fact through the reader’s own formatter', () => {
+		const out = censusProse('{a} of {b}', { a: 1704, b: 2 }, (v) => v.toLocaleString('pt-BR'));
+		expect(out).toBe('1.704 of 2');
+	});
+
+	it('replaces a placeholder that occurs more than once', () => {
+		expect(censusProse('{a}/{a}', { a: 3 }, String)).toBe('3/3');
+	});
+});
+
 /**
- * THE PAGE RENDERS `t(key)` FOR EVERY ROW IT IS GIVEN, and `t()` shows the key
- * itself when nothing answers — so a row added to `scripts/census.mjs` without
- * a string reaches a reader as `census.row.canonLawTitles`. Nothing in
+ * THE PAGE RENDERS `t(key)` FOR EVERYTHING IT IS GIVEN, and `t()` shows the
+ * key itself when nothing answers — so a shelf added to `scripts/census.mjs`
+ * without a string reaches a reader as `census.prose.lectionary`. Nothing in
  * `npm test` renders a component, so the assertion is about the DICTIONARY,
  * which is `pigments.test.ts`'s move for a colour literal and
  * `citation-punctuation.test.ts`'s for a hardcoded colon.
  *
- * It runs over a census built to hold every group, which is what makes it a
- * check on the builder rather than on a list somebody kept in step by hand.
+ * The placeholder pair is the half that cannot be seen by reading the output.
+ * A fact with no placeholder is a number this build still computes and no
+ * longer publishes — `llmsTxt`'s quiet failure one surface over; a
+ * placeholder with no fact reaches a reader as the literal `{documents}`.
  */
 describe('every key the builder emits is a string somebody wrote', () => {
 	const strings = en as Record<string, string>;
 
-	it.each(census.groups.map((g) => g.key))('names the group %s', (key) => {
-		expect(CENSUS_GROUP_KEYS[key], `no heading key for group \`${key}\``).toBeTruthy();
-		expect(strings[CENSUS_GROUP_KEYS[key]]).toBeTruthy();
+	it.each(census.shelves.map((s) => s.key))('names the shelf %s', (key) => {
+		expect(CENSUS_SHELF_KEYS[key], `no heading key for shelf \`${key}\``).toBeTruthy();
+		expect(strings[CENSUS_SHELF_KEYS[key]]).toBeTruthy();
+		expect(strings[`census.prose.${key}`], `no sentence for shelf \`${key}\``).toBeTruthy();
 	});
 
-	it.each(census.groups.flatMap((g) => g.rows.map((r) => r.key)))('names the row %s', (key) => {
-		expect(strings[`census.row.${key}`], `no string for \`census.row.${key}\``).toBeTruthy();
+	it.each(census.shelves.map((s) => [s.key, s.facts] as const))(
+		'%s: every fact has a placeholder and every placeholder a fact',
+		(key, facts) => {
+			const sentence = strings[`census.prose.${key}`];
+			const asked = [...sentence.matchAll(/\{([a-zA-Z]+)\}/g)].map((m) => m[1]);
+			expect([...asked].sort(), `placeholders in census.prose.${key}`).toEqual(
+				Object.keys(facts).sort()
+			);
+		}
+	);
+
+	it.each(census.coverage.rows.map((r) => r.key))('names the coverage row %s', (key) => {
+		const rows = coverageRows(census as unknown as Census);
+		const row = rows.find((r) => r.key === key);
+		expect(row, `coverage row \`${key}\` has no label key`).toBeTruthy();
+		expect(strings[row!.labelKey]).toBeTruthy();
 	});
 
 	it.each(Object.keys(census.rankings))('names the ranking %s', (key) => {
@@ -260,6 +369,11 @@ describe('every key the builder emits is a string somebody wrote', () => {
 			'census.title',
 			'census.tagline',
 			'census.holdings',
+			'census.reach',
+			'census.reachLede',
+			'census.reachRow',
+			'census.reachCell',
+			'census.reachNone',
 			'census.cited',
 			'census.citers',
 			'census.method',
@@ -270,5 +384,15 @@ describe('every key the builder emits is a string somebody wrote', () => {
 		]) {
 			expect(strings[key], `no string for \`${key}\``).toBeTruthy();
 		}
+	});
+
+	/** The matrix's own two sentences carry placeholders the page substitutes
+	 *  by hand, so they are checked the same way the shelves' are. */
+	it('keeps the placeholders the matrix substitutes', () => {
+		expect(strings['census.reachRow']).toContain('{languages}');
+		expect(strings['census.reachRow']).toContain('{total}');
+		expect(strings['census.reachRow']).toContain('{of}');
+		expect(strings['census.reachCell']).toContain('{value}');
+		expect(strings['census.reachCell']).toContain('{of}');
 	});
 });

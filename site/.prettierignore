@@ -22,3 +22,12 @@ src/lib/lectionary/table.json
 # against rather than anything the site serves -- `rules.test.ts` is its only
 # reader, which is what keeps it out of every route's chunk.
 src/lib/lectionary/days.oracle.json
+
+# Written by scripts/language-coverage.mjs, which sorts its keys and its
+# language lists because the baseline is read as a DIFF -- that ordering is the
+# whole point of the file. Prettier collapses a short array onto one line and
+# wraps a long one, so it and the writer disagree about every work with fewer
+# than about eight languages, and each would undo the other on every sync.
+# Same argument as the two rules above. The report is the same bytes, shipped.
+scripts/language-coverage.baseline.json
+static/language-coverage.json

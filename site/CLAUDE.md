@@ -1621,13 +1621,22 @@ holds the rationale.
 ## Every number a reader sees is derived once
 
 `scripts/census.mjs` writes `index/census.json`; `/bibliotheca/census` renders
-it and `llmsFacts` projects it. `site/docs/census.md` holds the rationale.
+it, `llmsFacts` projects it and `scripts/language-coverage.mjs` gates the
+deploy on it. `site/docs/census.md` holds the rationale.
 
 - **A count published twice is a count that will disagree with itself.**
   `llms.mjs` derived nine facts of its own until the census existed, correctly;
-  what it could not do is answer a second consumer. Put a new number here, not
-  in the page that wants it — `censusValue` throws for a row a reader renamed,
-  which is a build failure instead of the word `undefined` in published prose.
+  what it could not do is answer a second consumer. Put a new number there, not
+  in the page that wants it — `censusFact` throws for a renamed one, which is a
+  build failure instead of the word `undefined` in published prose.
+- **An inventory count says how big; a fraction says how far, and only the
+  second belongs on the page.** `Canons 1,752` is unanchored and a reader
+  cannot tell whether it is good; `the Code in 7 of 40 languages` is a
+  judgement. The 37-row ledger that opened this page went for that reason.
+- **A row of bare figures invites arithmetic, so a shelf's numbers are a
+  sentence.** Four of the apparatus counts summed to a fifth of the total they
+  sat under and read as broken; they were not, a cross-reference being an EDGE
+  and those being its ENDPOINTS. Prose can state a relation.
 - **A ranking counts distinct citing PLACES, not stored rows.** The index holds
   one row per (citing address, cited address) pair, so counting rows makes the
   most-cited chapter the one people quote longest passages from — Matthew 25
@@ -1638,14 +1647,20 @@ it and `llmsFacts` projects it. `site/docs/census.md` holds the rationale.
   Summa's citers are the Summa.
 - **A ranking is cut on the COUNT and never on the rank.** Thirteen Catechism
   paragraphs are cited exactly three times, so a `slice(0, 20)` would publish
-  four of them and drop nine that are cited as often.
-- **A row is written only where the thing it counts is in the build.** The
-  fixtures hold no Code, and a `Canons — 0` row asserts the Church has no law
-  rather than reporting that nothing was synced.
+  four of them and drop nine cited as often.
+- **A shelf is written only where the build holds what it counts.** The
+  fixtures hold no Code, and "the Code of Canon Law in 0 languages" asserts the
+  Church has no law rather than reporting that nothing was synced.
+- **`language-coverage.baseline.json` records PRESENCE and never proportion**,
+  and `npm run language:accept` is how a withdrawal lands as a diff. Amounts
+  would churn on every ingest, which is the noise a regression has to stand out
+  from; a SET also catches a swap that leaves the count unchanged. Completeness
+  inside an edition is deliberately not gated — the matrix shows it as a
+  partial bar instead.
 - **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
   `/calendarium/liturgia` already stands on, because its `census.*` strings are
   written in English alone. Its head is fixed and English in `STATIC_HEADS` to
-  match.
+  match; `PLAN.md` sizes the promotion.
 
 ## Running prose is an apparatus, not decoration
 

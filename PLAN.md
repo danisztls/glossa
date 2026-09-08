@@ -437,7 +437,7 @@ not final in time, and _receives_ is the theological sense.
 ## `/bibliotheca/census` is written in one language of forty
 
 The library counted — the ledger and the five citation rankings — shipped
-2026-09-08 with its 54 `census.*` keys in English alone, and is deliberately
+2026-09-08 with its 31 `census.*` keys in English alone, and is deliberately
 **not in `CHROME_PATHS`** on that account (`site/docs/census.md`,
 `route-manifest.ts`). `/calendarium/liturgia` stands in the same place for a
 different reason.
@@ -452,9 +452,10 @@ rather than built per language from `route-titles.json`.
 
 **The gate is the ARGUED one and not the coded one**, which is what makes this
 larger than it looks. `census.title` and `census.tagline` alone would satisfy
-`CHROME_KEYS` and publish a cluster in forty languages over 37 English row
-labels — the exact failure `/calendarium` cost 75 keys to avoid. Every
-`census.*` key has to be written, or the page stays where it is.
+`CHROME_KEYS` and publish a cluster in forty languages over nine English shelf
+sentences and the matrix’s own labels — the exact failure `/calendarium` cost
+75 keys to avoid. Every `census.*` key has to be written, or the page stays
+where it is.
 
 Promotion is then four edits: the keys in the remaining 39 dictionaries, the
 path into `CHROME_PATHS`, an entry in `route-titles.mjs`'s `CHROME_KEYS`
@@ -463,12 +464,13 @@ the per-language head takes over. `census.test.ts` already asserts that every
 key the builder can emit exists in `en`; nothing asserts the other 39, by
 design — `t()`'s per-key fallback is what makes a partial dictionary safe.
 
-Sizing: 54 keys in 39 dictionaries, then four small edits and no schema. **37
-of the 54 are ledger row labels** — one or two words each, and most of them a
-word the dictionary already carries elsewhere ("Editions", "Chapters",
-"Paragraphs"), so the translation is shorter than the count suggests. The
-sentences that need care are `census.method`, which states the three rules the
-rankings are counted by, and `census.unavailable`.
+Sizing: 31 keys in 39 dictionaries, then four small edits and no schema. **Nine
+of the 31 are the shelf sentences**, each carrying `{placeholder}` tokens a
+translation must keep — `i18n.test.ts` checks exactly that, and
+`census.test.ts` derives the expected set from the builder. The three that need
+care are `census.method`, which states the rules the rankings are counted by,
+`census.reachLede`, which says what a cell of the matrix means, and
+`census.unavailable`.
 
 ## The colophon's Participate section exists in two languages
 

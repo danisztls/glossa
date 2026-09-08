@@ -26,7 +26,7 @@
  * being generated — it was not, while it was maintained by hand.
  */
 
-import { censusValue } from './census.mjs';
+import { censusFact } from './census.mjs';
 
 const TOKEN = /\{\{([A-Z_]+)\}\}/g;
 
@@ -48,8 +48,8 @@ function hostOf(url) {
  * `works` and `apparatus` in three lines that were each correct. What changed
  * is that a second consumer arrived: `/bibliotheca/census` states the document
  * count to a reader, this file states it to a machine, and two derivations of
- * one fact are two things to keep true. `censusValue` throws for a row it
- * cannot find, so a renamed row fails the build here rather than shipping the
+ * one fact are two things to keep true. `censusFact` throws for a fact it
+ * cannot find, so a renamed fact fails the build here rather than shipping the
  * word `undefined` inside a published sentence.
  *
  * @param {ReturnType<typeof import('./census.mjs').buildCensus>} census
@@ -64,8 +64,8 @@ export function llmsFacts(census) {
 		SUMMA_PARTS: census.summaParts.map((/** @type {string} */ part) => `\`${part}\``).join(', '),
 		LANGUAGE_COUNT: census.languages.length,
 		LANGUAGES: census.languages.join(', '),
-		DOCUMENT_COUNT: censusValue(census, 'magisterium', 'documents'),
-		DESCRIPTION_COUNT: censusValue(census, 'magisterium', 'documentDescriptions')
+		DOCUMENT_COUNT: censusFact(census, 'magisterium', 'documents'),
+		DESCRIPTION_COUNT: censusFact(census, 'magisterium', 'described')
 	};
 }
 
