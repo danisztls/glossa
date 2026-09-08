@@ -869,6 +869,29 @@ def is_full_italic(inner_html: str) -> bool:
     return _emphasis_covers(inner_html, _ITALIC_SPAN_RE)
 
 
+#: A pair of parentheses around a whole block, and nothing else outside them.
+_PARENTHESISED_RE = re.compile(r"^\s*\(\s*(.*?)\s*\)\s*$", re.DOTALL)
+
+
+def is_parenthesised_italic(inner_html: str) -> bool:
+    """`is_full_italic` of a line the source has put in brackets.
+
+    A HEADING A SOURCE PARENTHESISES IS STILL THAT HEADING. The Latvian
+    Vatican II mirror prints every sub-heading it has as
+    `(<i>Liturgija Baznicas noslepuma</i>)`, brackets outside the emphasis,
+    across six of its decrees -- so `is_full_italic` reads the brackets as
+    text the italics do not cover and the whole convention is invisible.
+    `_toc_line_key` already unwraps them on the comparison side, for
+    `sacrosanctum-concilium.hu`'s `(A Zsinat celja)`.
+
+    Separate from `is_full_italic` rather than folded into it, because that
+    one's exactness is load-bearing (see its docstring): this is only ever
+    asked by `promote_italic_heading_run`, which decides on a RUN and not on
+    one line. A single bracketed italic aside stays prose."""
+    m = _PARENTHESISED_RE.match(inner_html)
+    return m is not None and is_full_italic(m.group(1))
+
+
 _CENTERED_RE = re.compile(
     r'align\s*=\s*["\']?center|text-align:\s*center', re.IGNORECASE
 )
@@ -4749,7 +4772,7 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
         and has_words(blk.text)
         and not blk.indented
-        and is_full_italic(blk.raw)
+        and (is_full_italic(blk.raw) or is_parenthesised_italic(blk.raw))
     ]
     # THE RUN IS ESTABLISHED BY THE BODY, and a pre-body block only joins
     # one that already exists. Counting the two together lets a single
