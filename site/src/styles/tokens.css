@@ -131,16 +131,32 @@
 	--text-cap-height: 0.65;
 
 	/*
-	 * WHAT MAKES TWO FACES THE SAME SIZE, WHICH IS NOT THE SAME FONT-SIZE.
+	 * WHAT MAKES TWO FACES THE SAME SIZE, WHICH IS NEITHER THE SAME FONT-SIZE
+	 * NOR THE SAME X-HEIGHT.
 	 *
-	 * A face's apparent size is its x-height, not its em. EB Garamond's is
-	 * 0.400em and Source Sans 3's is 0.486em, so set at one font-size the sans
-	 * reads 21% larger — which is what a reader sees, and it made the reading
-	 * size setting mean two different things depending on the face.
+	 * Set at one font-size, Source Sans 3 reads larger than EB Garamond. The
+	 * obvious normaliser is x-height — 0.400em against 0.486em — and it is
+	 * the wrong one HERE, which is worth stating because it is the standard
+	 * advice for pairing faces. EB Garamond is an old-style: a small x-height
+	 * with long extenders, its ascenders reaching as high as the sans's
+	 * (0.705 against 0.712) and its descenders 39% deeper. Match the
+	 * x-heights and every part of the letter that is not the x-height —
+	 * caps, ascenders, descenders — stands about 20% taller on the serif, and
+	 * the serif is now the one that reads big. Shipped at 0.823 for one
+	 * commit, and that is exactly what it looked like.
 	 *
-	 * This is the ratio that cancels it, applied to `.reading-text`'s
-	 * font-size (`styles/layout.css`) and to everything measured against it.
-	 * 1 for the default face, by construction.
+	 * SO THE MEASUREMENT IS THE ONE THIS FILE ALREADY MAKES HORIZONTALLY.
+	 * `--prose-char-advance` is a frequency-weighted mean advance over the
+	 * corpus; this is a frequency-weighted mean INK HEIGHT over the same
+	 * text — the vertical extent of each glyph the corpus is actually made
+	 * of, weighted by how often it appears. 0.5100em for EB Garamond against
+	 * 0.5697 for Source Sans 3 over 79.3M inked characters, and the ratio is
+	 * this. It needs no judgement about which part of the letter matters,
+	 * because it weighs every part by how much of it the reader meets.
+	 *
+	 * Applied to `.reading-text`'s font-size (`styles/layout.css`) and to
+	 * everything measured against it. 1 for the default face, by
+	 * construction.
 	 *
 	 * NOT `size-adjust` ON THE @font-face, which is the CSS built for exactly
 	 * this and is the wrong half of it here. That descriptor shrinks the
@@ -743,13 +759,13 @@
  * grown from 65.5M characters to 95.2M since that measurement, and 0.4% is
  * what that growth moved it by, so the serif's number is left alone.
  *
- * THE COLUMN COMES OUT NARROWER, WHICH IS NOT A CONTRADICTION. The face is
- * 9.3% wider per character and is set 17.7% smaller to match x-heights, so a
- * line of 62.4 characters is 27.5rem against the serif's 30.7 — a shorter
- * line of the same count, at the same apparent size, which is what holding
- * the measure in CHARACTERS means. Neither face reaches the 56rem ceiling
+ * THE COLUMN COMES OUT SLIGHTLY NARROWER, WHICH IS NOT A CONTRADICTION. The
+ * face is 9.3% wider per character and is set 10.5% smaller to match apparent
+ * size, so a line of 62.4 characters is 29.9rem against the serif's 30.7 — a
+ * marginally shorter line of the same count, which is what holding the
+ * measure in CHARACTERS means. Neither face reaches the 56rem ceiling
  * anywhere in the reading-size range: the serif wants 55.3rem at the 1.8
- * maximum and the sans 49.5rem.
+ * maximum and the sans 53.9rem.
  *
  * The metrics are this face's `hhea`, the same table the defaults came from.
  * `styles/dropcaps.css` derives the initial's three sizes from them, so the
@@ -776,12 +792,11 @@
 	--text-descent: 0.4;
 	--text-cap-height: 0.66;
 	--prose-char-advance: 0.4121;
-	/* 0.400 / 0.486, the two faces' declared x-heights — see
-	   `--face-size-adjust` above for why the ratio is the one that makes the
-	   reader's size setting mean the same thing in both faces. Declared
-	   values rather than the `x` outline (0.405 / 0.4861), which is the same
-	   convention `dropcaps.css` takes for the cap heights beside it. */
-	--face-size-adjust: 0.823;
+	/* 0.5100 / 0.5697, the two faces' frequency-weighted mean ink heights over
+	   the corpus — `--face-size-adjust` above for why that and not the
+	   x-heights, which put this at 0.823 and made the serif the face that
+	   read large. */
+	--face-size-adjust: 0.895;
 }
 
 /*

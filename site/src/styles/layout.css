@@ -556,8 +556,9 @@
 	/* THE READER'S SIZE, TIMES WHAT THE FACE NEEDS TO MEET IT. The scale is
 	   the reader's own setting (TypeMenu.svelte / prefs.svelte.ts); the
 	   adjustment is the ratio that makes one setting mean one apparent size
-	   in either face, since Source Sans 3 sets 21% larger than EB Garamond at
-	   a given font-size — `--face-size-adjust` in tokens.css argues it.
+	   in either face, since Source Sans 3 puts 12% more ink on the page than
+	   EB Garamond at a given font-size — `--face-size-adjust` in tokens.css
+	   argues it, and says why the answer is not the x-height.
 
 	   Neither is applied to chrome. Both are read by the two lengths measured
 	   against this type (`--content-width`, `--compare-gutter`), and by

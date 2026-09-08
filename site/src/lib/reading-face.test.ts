@@ -81,10 +81,18 @@ const FACES = {
 	}
 };
 
-/** Each face's x-height, read off the font files with fontTools and written
- *  here because a test may not open a woff2. `--face-size-adjust` is the
- *  ratio of these two and nothing else. */
-const X_HEIGHT = { serif: 0.4, sans: 0.486 };
+/**
+ * Each face's frequency-weighted mean ink height over the corpus — the mean
+ * vertical extent of the glyphs the corpus is actually made of, measured off
+ * the font files with fontTools and written here because a test may not open a
+ * woff2 or walk the corpus. `--face-size-adjust` is the ratio of these two.
+ *
+ * NOT THE X-HEIGHTS (0.400 / 0.486), which is the standard way to pair two
+ * faces and is wrong for these two: EB Garamond's small x-height comes with
+ * long extenders, so matching there leaves its caps and ascenders 20% taller
+ * and the serif reading larger than the sans. That shipped for one commit.
+ */
+const INK_HEIGHT = { serif: 0.51, sans: 0.5697 };
 
 /** The three initials, each with the `line-height` that turns its font-size
  *  into a float box and the budget in body lines that box may not exceed.
@@ -124,13 +132,14 @@ describe('the reader’s text face', () => {
 	});
 
 	/**
-	 * THE READING SIZE HAS TO MEAN THE SAME THING IN BOTH FACES, and what a
-	 * reader perceives as size is x-height rather than the em. Source Sans 3
-	 * sets 21% larger than EB Garamond at one font-size, so without this the
-	 * face picker was also a size control nobody asked for.
+	 * THE READING SIZE HAS TO MEAN THE SAME THING IN BOTH FACES, or the face
+	 * picker is also a size control nobody asked for. What a reader perceives
+	 * as size is how much letter is on the page, which is what the ink height
+	 * above measures — see it for why this is not the x-height.
 	 */
-	it('sets both faces to the same x-height at one reading size', () => {
-		const rendered = (face: 'serif' | 'sans') => X_HEIGHT[face] * FACES[face]['--face-size-adjust'];
+	it('sets both faces to the same apparent size at one reading size', () => {
+		const rendered = (face: 'serif' | 'sans') =>
+			INK_HEIGHT[face] * FACES[face]['--face-size-adjust'];
 		expect(rendered('sans')).toBeCloseTo(rendered('serif'), 3);
 	});
 

@@ -36,7 +36,16 @@ and **both halves are needed**: the preference is one per reader and the panel
 is one per page, so hiding the row alone would switch Amiri out with nothing on
 screen saying why.
 
-**A second face is four numbers, not a family.** The measure is denominated in
+**Matching two faces is not matching their x-heights**, which is the standard
+advice and is wrong for these two. EB Garamond is an old-style — small
+x-height, long extenders — so at matched x-heights its caps and ascenders stand
+20% taller than the sans's and the serif becomes the face that reads large. The
+normaliser is a frequency-weighted mean **ink height** over the corpus, the
+vertical twin of `--prose-char-advance` and measured the same way: it weighs
+every part of the letter by how often a reader meets it, and needs no judgement
+about which part counts.
+
+**A second face is five numbers, not a family.** The measure is denominated in
 the reading font, so the face carries its own advance
 (`--prose-char-advance`, measured over the corpus the way the first was:
 0.4121 against 0.3771 when the method was re-run on EB Garamond as a control)
