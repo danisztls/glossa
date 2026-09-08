@@ -14,6 +14,14 @@
 	route. A prop would mean each of the seventeen callers of `ReadingBar`
 	threading through a value none of them decides.
 
+	WHETHER THIS BUTTON IS DRAWN AT ALL IS a route's answer, and that is the
+	other question — `ReadingBar`'s `zen` prop, which `/calendarium/liturgia`
+	is alone in passing false. It is not the same fact worn as a prop: the
+	store says what the reader chose, the prop says whether this page offers
+	the choice, and `styles/zen.css` gates on this element being here rather
+	than on the bar, so the second answer is the mode's off switch and not a
+	way to hide its button while the hiding goes on.
+
 	IT IS THE FIRST CONTROL IN THE ROW, placed by where it has to be FOUND
 	rather than by what it acts on — the only control in the bar placed that
 	way. Once it is pressed it is the only thing on the bar a reader can see,

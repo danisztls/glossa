@@ -626,12 +626,23 @@ still takes a click and is still announced; `visibility: hidden` is what
 removes it from the tab order, from hit testing and from the accessibility
 tree, and it is the half that keeps the box.
 
-**Every rule is gated on `:has(.reading-bar)`, and the gate is the feature.**
-The preference outlives a navigation and the only control that clears it is in
-the bar, so on a page with no bar a reader who left it on would meet a site
-with no header, no footer and nothing that put them back. One selector makes
-"the way out is always on screen" true rather than usually true, and costs less
-than a route table that would then have to be kept in step.
+**Every rule is gated on `:has(.zen-toggle)`, and the gate is the feature.**
+The preference outlives a navigation and the only control that clears it is
+that button, so on a page without one a reader who left the mode on would meet
+a site with no header, no footer and nothing that put them back. One selector
+makes "the way out is always on screen" true rather than usually true, and
+costs less than a route table that would then have to be kept in step.
+
+It read `:has(.reading-bar)` until a bar could carry no toggle, which was the
+same claim while every bar rendered one. `/calendarium/liturgia` renders a bar
+and passes `zen={false}`: the mode takes away the furniture standing around a
+text, and that page has no aside, no comparison, no unit nav and no
+breadcrumb — all it could hide is the header the reader needs to reach another
+day, which is the phone argument below at every width. Under the old gate that
+page would have been stripped anyway, with the button that undoes it gone; a
+gate names the control it depends on, not the container that usually holds it.
+The prop is therefore off rather than merely hidden, and a reader who chose the
+mode elsewhere meets this page whole.
 
 **It stops at 641px, and the button stops at 640px.** On a phone the sidebar
 and the second column are already gone, so all the mode has left to take away
@@ -640,7 +651,7 @@ of a screen the reader scrolls past in one flick. `ZenToggle` hides its button
 below the width where the help sheet stops drawing its keyboard section, and
 `zen.css` gates every rule above the complementary one — the same pair, in px
 for the reason `Help` gives. Gating the
-RULES and not only the button is the `:has(.reading-bar)` argument at a
+RULES and not only the button is the `:has(.zen-toggle)` argument at a
 different width: the preference outlives the viewport, so a reader who chose
 focus mode at a desk and opened the site on a phone would otherwise meet a
 page with no header, no footer and no visible way out. The attribute is inert

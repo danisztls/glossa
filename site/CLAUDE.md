@@ -2132,11 +2132,14 @@ re-argue them here; add to both or neither.**
   way out), `.breadcrumb` stays (print's own exception, and with the header and
   sidebar gone it is the only thing left saying which chapter of which work this
   is).
-- **Every rule is gated on `:has(.reading-bar)`.** The preference persists
-  across navigations and the only control that turns it off is in the bar, so
-  without the gate a reader who left it on would meet the home page with no
-  header, no footer and no way back. **A new page that should honour focus mode
-  needs a `ReadingBar`, not an entry in a list.**
+- **Every rule is gated on `:has(.zen-toggle)`, so the toggle is the feature.**
+  The preference persists across navigations and that button is the only
+  control that turns it off, so without the gate a reader who left it on would
+  meet the home page with no header, no footer and no way back. **A page
+  honours focus mode by rendering the toggle** — every `ReadingBar` does unless
+  it is passed `zen={false}`, which is off rather than merely hidden.
+  `/calendarium/liturgia` is the one that declines it: a page whose only
+  hideable chrome is the header the reader needs to reach another day.
 - **Off below 641px, the button hidden at 640px.** A phone has no sidebar left
   to hide, and the gate is on the RULES and not only the button, for the reason
   above at a different width: the preference outlives the viewport.

@@ -53,6 +53,17 @@
 	 * rendering nothing at all). No bookmark: what this address names is a date,
 	 * and the bookmark list is of passages.
 	 *
+	 * **And no focus mode** (`zen={false}`). The mode takes away the furniture
+	 * standing around a text — the sidebar, the second column, the bar's own
+	 * controls — and this page has none of it: no aside, no comparison, no unit
+	 * nav and no breadcrumb. What is left for it to hide is the header and the
+	 * footer, and the header is how a reader reaches another day, this being the
+	 * one reading page whose subject is fixed by the address rather than walked
+	 * to from within. That is the phone argument (`ZenToggle`) at every width:
+	 * the mode would buy a band of pixels and spend the way to everything else.
+	 * `styles/zen.css` gates on the toggle, so declining it here means a reader
+	 * who left the mode on elsewhere meets this page whole rather than stripped.
+	 *
 	 * ## And what it still is not
 	 *
 	 * A Missal. The schedule is the Ordo Lectionum Missae's and the words are
@@ -143,7 +154,7 @@
 </svelte:head>
 
 <article class="content-column">
-	<ReadingBar />
+	<ReadingBar zen={false} />
 	{#if day}
 		<!-- The card carries the day's identity — its name as the `h1`, its
 		     colour, rank, season and cycles — and nothing on this page repeats

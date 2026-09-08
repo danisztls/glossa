@@ -17,10 +17,11 @@
  * reader-facing wording, and the two are allowed to differ.
  *
  * THE ATTRIBUTE ALONE IS NOT THE FEATURE — see `styles/zen.css`, which gates
- * every rule on `:has(.reading-bar)`. Nothing here needs to know which route
+ * every rule on `:has(.zen-toggle)`. Nothing here needs to know which route
  * is showing, and deliberately cannot: the preference outlives a navigation
  * (a reader working through a 287-section encyclical crosses many), and the
- * stylesheet is what declines to apply it on a page with no way back out.
+ * stylesheet is what declines to apply it where there is no way back out —
+ * on a page with no bar, and on one whose bar declines the toggle.
  *
  * `app.html` applies the stored value before first paint, alongside the theme
  * and the font scale, so a returning reader does not watch the site header

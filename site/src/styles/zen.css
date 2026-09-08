@@ -66,7 +66,7 @@
  * back a band of chrome and takes the way to everything else.
  *
  * THE MEDIA QUERY IS ON THE RULES AND NOT ONLY ON THE BUTTON, which is the
- * `:has(.reading-bar)` argument at a different width. The preference persists
+ * `:has(.zen-toggle)` argument at a different width. The preference persists
  * and outlives the viewport: a reader who switched focus mode on at a desk and
  * opens the site on their phone, or drags a window narrow, would meet a page
  * with no header, no footer and — the button now being gone — nothing that
@@ -75,15 +75,23 @@
  * it. Escape still exits (`shortcuts.ts`), for a narrow window that does have
  * a keyboard.
  *
- * ## Why every rule is gated on `:has(.reading-bar)`
+ * ## Why every rule is gated on `:has(.zen-toggle)`
  *
- * The preference persists, and the toggle lives in the reading bar — so on
- * a page with no bar (the home page, `/signata`, `/colophon`,
- * `/calendarium`) a reader who had switched it on would meet a site with no
- * header, no footer and no control anywhere that put them back. The gate is
- * what makes the promise "the way out is always on screen" true rather than
- * merely usually true, and it costs one selector rather than a route table
- * this file would then have to be kept in step with.
+ * The preference persists and the toggle is the only control that clears it,
+ * so the gate is the toggle's own presence: these rules apply exactly where
+ * the way out is on screen. Without it, a page that offers no toggle (the
+ * home page, `/signata`, `/colophon`, `/calendarium`) would meet a reader who
+ * had switched the mode on with no header, no footer and no control anywhere
+ * that put them back. The gate makes that promise true rather than merely
+ * usually true, and it costs one selector rather than a route table this file
+ * would then have to be kept in step with.
+ *
+ * IT GATED ON `:has(.reading-bar)` UNTIL A BAR COULD CARRY NO TOGGLE. The two
+ * said the same thing while every bar rendered one; `/calendarium/liturgia`
+ * renders a bar and declines the mode (`ReadingBar`'s `zen` prop), and under
+ * the old gate the reader would have got the hiding without the way out. The
+ * lesson is that a gate should name the control it depends on, not the
+ * container that usually holds it.
  *
  * A browser without `:has()` drops these rules entirely and the mode simply
  * does nothing, which is the right direction to fail in.
@@ -118,7 +126,7 @@
 	/* The header keeps its height and stops painting. `border-bottom-COLOR`, not
 	   `border-bottom: 0` — the width is one pixel of layout, and this file spends
 	   none. */
-	html[data-zen]:has(.reading-bar) .site-header {
+	html[data-zen]:has(.zen-toggle) .site-header {
 		background: transparent;
 		border-bottom-color: transparent;
 	}
@@ -153,18 +161,18 @@
 	 * the same pixel in both modes, so the button that leaves the mode is where
 	 * the button that entered it was.
 	 */
-	html[data-zen]:has(.reading-bar) .site-header .brand,
-	html[data-zen]:has(.reading-bar) .site-header .primary-nav,
-	html[data-zen]:has(.reading-bar) .site-header .menu-trigger,
-	html[data-zen]:has(.reading-bar) .site-footer,
-	html[data-zen]:has(.reading-bar) .reading-aside,
-	html[data-zen]:has(.reading-bar) .index-aside,
-	html[data-zen]:has(.reading-bar) .mobile-picker,
-	html[data-zen]:has(.reading-bar) .toc-inline,
-	html[data-zen]:has(.reading-bar) .install-hint,
-	html[data-zen]:has(.reading-bar) .to-top,
-	html[data-zen]:has(.reading-bar) .compare-toolbar,
-	html[data-zen]:has(.reading-bar) .reading-bar > *:not(.zen-toggle, dialog, [popover]) {
+	html[data-zen]:has(.zen-toggle) .site-header .brand,
+	html[data-zen]:has(.zen-toggle) .site-header .primary-nav,
+	html[data-zen]:has(.zen-toggle) .site-header .menu-trigger,
+	html[data-zen]:has(.zen-toggle) .site-footer,
+	html[data-zen]:has(.zen-toggle) .reading-aside,
+	html[data-zen]:has(.zen-toggle) .index-aside,
+	html[data-zen]:has(.zen-toggle) .mobile-picker,
+	html[data-zen]:has(.zen-toggle) .toc-inline,
+	html[data-zen]:has(.zen-toggle) .install-hint,
+	html[data-zen]:has(.zen-toggle) .to-top,
+	html[data-zen]:has(.zen-toggle) .compare-toolbar,
+	html[data-zen]:has(.zen-toggle) .reading-bar > *:not(.zen-toggle, dialog, [popover]) {
 		opacity: 0;
 		visibility: hidden;
 	}

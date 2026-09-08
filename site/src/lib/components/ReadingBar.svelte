@@ -226,6 +226,14 @@
 		 *  takes. An object rather than loose props for the reason `comparison`
 		 *  is one: the pair is meaningless apart. */
 		apparatus?: ApparatusChoices;
+		/** Offer focus mode. On everywhere this bar is, and off only where the
+		 *  chrome the mode would hide is the way through the page rather than
+		 *  furniture around a text — `/calendarium/liturgia`, which argues it.
+		 *  `styles/zen.css` gates every rule on the toggle's own presence, so
+		 *  passing `false` turns the mode off here rather than merely hiding
+		 *  its button: a reader who left it on elsewhere meets this page
+		 *  whole. */
+		zen?: boolean;
 	}
 
 	let {
@@ -238,7 +246,8 @@
 		onToggleCompare,
 		comparison,
 		randomVerse = false,
-		apparatus
+		apparatus,
+		zen = true
 	}: Props = $props();
 
 	/**
@@ -268,14 +277,17 @@
 	     way out of focus mode is placed by where it must be found rather than
 	     by what it acts on, and `styles/zen.css` for the `> *:not(.zen-toggle,
 	     dialog, [popover])` rule that leaves this one visible when it is
-	     pressed. Rendered by every caller, index routes included — a table of
-	     contents is a page a reader reads down as much as a chapter is. -->
-	<ZenToggle />
+	     pressed. Rendered by default, index routes included — a table of
+	     contents is a page a reader reads down as much as a chapter is — and
+	     its absence is what turns the mode off, not merely its button. -->
+	{#if zen}
+		<ZenToggle />
+	{/if}
 	<!-- The second of the two reader-level controls; `TypeMenu`'s own docblock
-	     holds why the size and the face left the header. Unlike the toggle
-	     above it this is NOT rendered by every caller — focus mode has chrome
-	     to take away on any page that has a bar, and this one has type to set
-	     only where there is `.reading-text`. See `textSize`. -->
+	     holds why the size and the face left the header. Each is opt-out for
+	     its own reason: there is type to set only where there is
+	     `.reading-text`, and focus mode is declined where the chrome it would
+	     hide is the way through the page. See `textSize` and `zen`. -->
 	{#if textSize}
 		<TypeMenu />
 	{/if}
