@@ -374,6 +374,11 @@ STAGES: tuple[Stage, ...] = (
         ("vati", "--lang", "all", "--offline"),
         ("vati.*",),
     ),
+    # Everything on the modern `content/{pontiff}/...` shell, in one stage
+    # because it is one crawl: `phase2` walks a pontificate once and asks each
+    # of its three indexes in turn. `--letters` is a selection rather than an
+    # index -- `V.APOSTOLIC_LETTERS` names the documents and holds the
+    # measurement behind them, the same posture `V.CDF_DOCUMENTS` takes.
     Stage(
         "encyclicals",
         "documents",
@@ -381,12 +386,13 @@ STAGES: tuple[Stage, ...] = (
         (
             "phase2",
             "--exhortations",
+            "--letters",
             "--offered-only",
             "--offline",
             "--langs",
             PHASE2_LANGS,
         ),
-        ("encyclical.*", "exhortation.*"),
+        ("encyclical.*", "exhortation.*", "letter.*"),
     ),
     # The Dicastery for the Doctrine of the Faith. `--lang` is the readable
     # subset derived by the scraper, not a list typed here, for the reason

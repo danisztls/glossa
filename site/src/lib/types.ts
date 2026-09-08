@@ -303,6 +303,7 @@ export type DocumentKind =
 	| 'encyclical'
 	| 'apostolic-exhortation'
 	| 'apostolic-constitution'
+	| 'apostolic-letter'
 	| 'cdf-declaration'
 	| 'cdf-instruction'
 	| 'cdf-letter'

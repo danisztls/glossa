@@ -3,8 +3,9 @@
 # requires-python = ">=3.12"
 # dependencies = []
 # ///
-"""Vatican II documents, papal encyclicals, apostolic exhortations, and CDF
-documents, from vatican.va -- in every language the Holy See publishes them in
+"""Vatican II documents, papal encyclicals, apostolic exhortations and
+letters, and CDF documents, from vatican.va -- in every language the Holy See
+publishes them in
 that this parser has a division vocabulary for (see `DIVISIONS`): ar, de, en,
 es, fr, it, la, pl, pt, ru. It read English and Portuguese alone until
 2026-08-29; `pipeline/docs/languages.md` has why that stopped being the
@@ -154,6 +155,8 @@ exact shape):
   Vatican II index: https://www.vatican.va/archive/hist_councils/ii_vatican_council/index.htm
   Encyclical index (per pontiff): https://www.vatican.va/content/{pontiff}/en/encyclicals.index.html
   Apostolic exhortation index (per pontiff): .../content/{pontiff}/en/apost_exhortations.index.html
+  Apostolic letter index (per pontiff): .../content/{pontiff}/en/apost_letters.index.html
+    -- read, but not published whole: `APOSTOLIC_LETTERS` selects from it.
 
 Usage:
   uv run pipeline/scrapers/vatican_docs.py phase1 [--lang all|both|LANGS] [--sample]
@@ -6025,6 +6028,7 @@ def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
 
 _ENCYC_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/encyclicals/documents/([a-z0-9_.-]+)\.html"'
 _EXH_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/apost_exhortations/documents/([a-z0-9_.-]+)\.html"'
+_APL_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/apost_letters/documents/([a-z0-9_.-]+)\.html"'
 
 _DATE_SLUG_RE = re.compile(r"_(\d{8})_([a-z0-9-]+)$")
 _DATE_SLUG_RE_MODERN = re.compile(r"^(\d{8})-([a-z0-9-]+)$")
@@ -6317,6 +6321,104 @@ def discover_exhortations(
                 date8,
                 {"en": en_url},
             )
+        )
+    return refs, notes
+
+
+# --------------------------------------------------------------------------
+# Apostolic letters
+#
+# The second family whose SELECTION is an argument rather than an
+# enumeration, and it runs on the phase-2 path rather than `run_family`
+# because it is on the modern shell: one substitution reaches every edition,
+# the page's own switcher says which of them exist, and `--offered-only`
+# already spends nothing asking about the rest. `run_family` is for the
+# archive mirrors, whose filenames are not one substitution apart.
+#
+# A 200 IS NOT AN EDITION here, which is the trap this family shares with the
+# encyclicals: `/de/.../octogesima-adveniens.html` answers 200 with an empty
+# shell, on no index and in no switcher, and only `StubPageError` tells it
+# from a German translation.
+# --------------------------------------------------------------------------
+
+#: What this family publishes: `(pontiff, promulgated, source slug)`, and the
+#: corpus slug is the source's own -- unlike the CDF, whose filenames name
+#: a document's SUBJECT, this index names each letter after its incipit and
+#: `document_title` manufactures the title from it.
+#:
+#: WHY A TABLE AND NOT THE INDEX. 568 letters across twelve pontificates, and
+#: the overwhelming majority confer a title on one church or name a patron
+#: for one diocese: Paul VI alone signed five separate letters called
+#: `quantum-utilitatis`, each elevating a different basilica. Publishing all
+#: of them is not the decision publishing every encyclical is, so the same
+#: question `CDF_DOCUMENTS` asks was asked here -- which of them can this
+#: corpus LINK -- by scanning all 100,602 citation strings in `build/` for
+#: each of the 568 slugs. Octogesima Adveniens is the answer and it is not
+#: close: 422 citations, 414 of them carrying a paragraph number, across 14
+#: works in every language the corpus holds. The runner-up, Maximum Illud, has
+#: 136; nothing else clears 70 without the count being an artefact of a slug
+#: short enough to match ordinary prose (`in-hoc`, `quamquam`, `de-institutione`).
+#:
+#: THE KEY IS THE PONTIFF AND THE DATE AS WELL AS THE SLUG, for the reason
+#: `CDF_DOCUMENTS` is keyed by date: a slug is not unique here even within one
+#: pontificate, and a table keyed by slug alone would publish whichever of the
+#: five `quantum-utilitatis` letters the index happened to list first.
+APOSTOLIC_LETTERS = {
+    ("paul-vi", "1971-05-14", "octogesima-adveniens"),
+}
+
+
+def discover_letters(
+    fetcher: Fetcher, pontiff_slug: str, display_name: str
+) -> tuple[list[DocRef], list[str]]:
+    """One pontificate's apostolic letters, filtered to `APOSTOLIC_LETTERS`.
+
+    Same shape as `discover_exhortations` -- the English index, one DocRef per
+    document, every other language derived by `translation_url_for` -- with
+    the table applied at discovery rather than afterwards. A table entry the
+    index does not list is reported rather than passed over: it means the key
+    is stale or the source renamed the file, which is the same failure
+    `discover_cdf` reports and for the same reason."""
+    notes: list[str] = []
+    wanted = {(p, d, s) for p, d, s in APOSTOLIC_LETTERS if p == pontiff_slug}
+    if not wanted:
+        return [], notes
+    en_re = re.compile(_APL_LINK_RE_TMPL.format(slug=pontiff_slug, lang="en"))
+    fnames = _index_links(
+        fetcher,
+        f"https://www.vatican.va/content/{pontiff_slug}/en/apost_letters.index.html",
+        f"index__letters__{pontiff_slug}.html",
+        en_re,
+    )
+    refs: list[DocRef] = []
+    seen: set[tuple[str, str, str]] = set()
+    for fname in fnames:
+        parsed = parse_date_slug(fname)
+        if parsed is None:
+            continue
+        date8, slug = parsed
+        promulgated = parse_promulgation_date(date8)
+        key = (pontiff_slug, promulgated or "", slug)
+        if key not in wanted or key in seen:
+            continue
+        seen.add(key)
+        refs.append(
+            DocRef(
+                "letter",
+                "apostolic-letter",
+                slug,
+                display_name,
+                date8,
+                {
+                    "en": f"https://www.vatican.va/content/{pontiff_slug}/en"
+                    f"/apost_letters/documents/{fname}.html"
+                },
+            )
+        )
+    for key in sorted(wanted - seen):
+        notes.append(
+            f"{key[2]}: APOSTOLIC_LETTERS names {key}, which the English index "
+            "does not list -- a stale key, or the index renamed the file"
         )
     return refs, notes
 
@@ -6745,9 +6847,14 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
 #: encyclical and exhortation pages in `raw/`: 1,736 of them print one, and
 #: it is EXACT rather than generous -- `signum-magnum` lists en, it, la, pt
 #: and omits the de/es/fr URLs that answer 200 with an empty shell.
+#:
+#: `apost_letters` is here because that family is on the same shell and the
+#: filter is worth exactly as much: Octogesima Adveniens names six editions
+#: and the seventh URL that answers 200 -- German -- is the empty shell the
+#: `signum-magnum` measurement above describes.
 _SWITCHER_RE = re.compile(
     r'href="/content/[a-z0-9-]+/([a-z_]{2,5})/'
-    r'(?:encyclicals|apost_exhortations)/documents/[^"]+"'
+    r'(?:encyclicals|apost_exhortations|apost_letters)/documents/[^"]+"'
 )
 
 
@@ -9747,6 +9854,7 @@ def run_phase2(
     time_budget: float | None,
     limit: int | None,
     include_exhortations: bool,
+    include_letters: bool = False,
     skip_written: bool = False,
     doc_slugs: list[str] | None = None,
     jobs: int = 1,
@@ -9933,6 +10041,26 @@ def run_phase2(
                     ):
                         return results
                     submit_doc(ref, quiet=True)
+                    touch_crawl_lock(lock_path)
+                    drain()
+            if include_letters:
+                drain(0)  # same grouping guarantee as above
+                apl_refs, apl_notes = discover_letters(fetcher, slug, display)
+                for note in apl_notes:
+                    print(f"  [discover-apl] {note}")
+                if doc_slugs is not None:
+                    apl_refs = [r for r in apl_refs if r.slug in doc_slugs]
+                for ref in apl_refs:
+                    if (
+                        time_budget is not None
+                        and time.monotonic() - start > time_budget
+                    ):
+                        return results
+                    # Not quiet, unlike the exhortations: this family is a
+                    # handful of documents chosen one at a time, so its
+                    # per-document line is the whole report rather than noise
+                    # inside a pontificate's worth of them.
+                    submit_doc(ref, quiet=False)
                     touch_crawl_lock(lock_path)
                     drain()
         # A `SLUG_TITLES` entry for a slug the origin no longer publishes is
@@ -10853,6 +10981,12 @@ def main() -> int:
         help="also crawl apostolic exhortations per pontificate",
     )
     p2.add_argument(
+        "--letters",
+        action="store_true",
+        help="also crawl the apostolic letters in APOSTOLIC_LETTERS, which is "
+        "a selection and not the index -- see that table for what it measures",
+    )
+    p2.add_argument(
         "--slugs",
         default=None,
         help="comma-separated document slugs; default: every document discovered",
@@ -11008,6 +11142,7 @@ def main() -> int:
                 args.time_budget,
                 args.limit,
                 args.exhortations,
+                include_letters=args.letters,
                 skip_written=args.skip_written,
                 doc_slugs=doc_slugs,
                 jobs=args.jobs,

@@ -906,6 +906,7 @@ export const en: Dictionary = {
 	'document.kind.encyclical': 'Encyclical',
 	'document.kind.apostolicExhortation': 'Apostolic Exhortation',
 	'document.kind.apostolicConstitution': 'Apostolic Constitution',
+	'document.kind.apostolicLetter': 'Apostolic Letter',
 	'document.kind.cdfDeclaration': 'CDF Declaration',
 	'document.kind.cdfInstruction': 'CDF Instruction',
 	'document.kind.cdfLetter': 'CDF Letter',
@@ -918,6 +919,7 @@ export const en: Dictionary = {
 	'document.kindPlural.encyclical': 'Encyclicals',
 	'document.kindPlural.apostolicExhortation': 'Apostolic Exhortations',
 	'document.kindPlural.apostolicConstitution': 'Apostolic Constitutions',
+	'document.kindPlural.apostolicLetter': 'Apostolic Letters',
 	'document.kindPlural.cdfDeclaration': 'CDF Declarations',
 
 	// A citation whose source text is a confirmed gap in the source page

@@ -603,6 +603,28 @@ Promoting Integral Human Development, which the page's masthead names and the
 field does not — that field is what `/documenta` facets on, and a joint string
 is a facet of one that neither body's own row reaches.
 
+## Apostolic letters are a selection, not an index
+
+`letter.{slug}.{lang}`, discovered by `phase2 --letters`. The second family
+whose membership is an argument, and it takes the CDF's criterion rather than a
+new one.
+
+- **The selection is what the corpus can LINK.** 568 letters across twelve
+  pontificates, and most of them confer a title on one church — Paul VI signed
+  five called `quantum-utilitatis`. Scanning all 100,602 citation strings in
+  `build/` for each slug answers Octogesima Adveniens and little else: 422
+  citations, 414 carrying a paragraph number, across 14 works. Re-run that
+  measurement before growing `APOSTOLIC_LETTERS`; the numbers go in the commit.
+- **The key is the pontiff and the date as well as the slug**, `CDF_DOCUMENTS`'
+  reason met again — a slug is not unique even within one pontificate.
+- **It is on the phase-2 path and not `run_family`**, because it is on the
+  modern shell: one substitution reaches every edition and `--offered-only`
+  spends nothing asking about the rest. `_SWITCHER_RE` had to learn the
+  directory, or that filter reads every language as unoffered.
+- **A 200 is not an edition.** German answers 200 for Octogesima Adveniens with
+  an empty shell, on no index and in no switcher; only `StubPageError` tells it
+  from a translation.
+
 ## The Catechism is nine editions in four page formats
 
 `ccc.py` reads every language vatican.va publishes the CCC in as HTML (`de en es

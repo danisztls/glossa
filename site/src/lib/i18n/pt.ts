@@ -367,6 +367,7 @@ export const pt: Dictionary = {
 	'document.kind.encyclical': 'Encíclica',
 	'document.kind.apostolicExhortation': 'Exortação Apostólica',
 	'document.kind.apostolicConstitution': 'Constituição Apostólica',
+	'document.kind.apostolicLetter': 'Carta Apostólica',
 	'document.kind.cdfDeclaration': 'Declaração da CDF',
 	'document.kind.cdfInstruction': 'Instrução da CDF',
 	'document.kind.cdfLetter': 'Carta da CDF',
@@ -379,6 +380,7 @@ export const pt: Dictionary = {
 	'document.kindPlural.encyclical': 'Encíclicas',
 	'document.kindPlural.apostolicExhortation': 'Exortações Apostólicas',
 	'document.kindPlural.apostolicConstitution': 'Constituições Apostólicas',
+	'document.kindPlural.apostolicLetter': 'Cartas Apostólicas',
 	'document.kindPlural.cdfDeclaration': 'Declarações da CDF',
 
 	'citation.unavailable': 'Sem texto de fonte disponível para esta nota.',

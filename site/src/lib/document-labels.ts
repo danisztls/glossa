@@ -27,6 +27,7 @@ const KIND_KEYS: Record<string, string> = {
 	encyclical: 'document.kind.encyclical',
 	'apostolic-exhortation': 'document.kind.apostolicExhortation',
 	'apostolic-constitution': 'document.kind.apostolicConstitution',
+	'apostolic-letter': 'document.kind.apostolicLetter',
 	// The doctrinal-office kinds. Every one carries the `CDF ` prefix its
 	// label already had, including the four documents the Dicastery issued
 	// under its post-2022 name: this is a FACET in `/documenta`, and `cdf-`
