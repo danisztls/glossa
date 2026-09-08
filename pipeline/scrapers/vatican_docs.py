@@ -5053,6 +5053,26 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     if not numbered:
         return []
     lo, hi = numbered[0], numbered[-1]
+    # A NUMBER THAT GOES BACKWARDS IS NOT A PARAGRAPH NUMBER, and it is the
+    # only thing separating these two: `santateresa-delbambinogesu.en` prints
+    # its four chapter headings as `<p style="text-align: center;">2. The
+    # little way of trust and love</p>`, numbered 1..4 while the body is at
+    # 6, 9, 20 and 30. The leading numeral read as an address, so three of the
+    # four were absorbed into the paragraph below them and vanished from the
+    # build entirely, while the first became a phantom §7 holding three words
+    # and pushed two real sections off their addresses. `laudate-deum.en` is
+    # the control -- same shape, same inline numeral, kept because it prints
+    # them bold. Requiring the number to go backwards is what keeps a short
+    # centred paragraph that IS numbered out of the run: a paragraph
+    # continues the document's count, and a chapter heading restarts.
+    seen, restarts = 0, set()
+    for i, b in enumerate(blocks):
+        pm = None if b.is_heading else match_para_num(b.raw)
+        if pm is None:
+            continue
+        if pm[0] <= seen:
+            restarts.add(i)
+        seen = max(seen, pm[0])
     # THE RUN IS THE WHOLE RUN, including the members some earlier pass has
     # already claimed. Counting only the unclaimed ones let a document lose
     # exactly the markers another pass had missed: `ad-petri.en` prints its
@@ -5077,8 +5097,15 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
         and b.style in (0, _STYLE_SMALLER)
         and not is_full_bold(b.raw)
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
-        and match_para_num(b.raw) is None
-        and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+        # Either it carries no number at all, or the number it carries goes
+        # backwards and so is not one (see `restarts` above).
+        and (
+            i in restarts
+            or (
+                match_para_num(b.raw) is None
+                and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+            )
+        )
         and has_words(b.text)
         and not b.indented
     ]
