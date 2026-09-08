@@ -31,3 +31,12 @@ src/lib/lectionary/days.oracle.json
 # Same argument as the two rules above. The report is the same bytes, shipped.
 scripts/language-coverage.baseline.json
 static/language-coverage.json
+
+# The rules above are all "prettier and a writer would fight". THIS ONE IS A
+# DIFFERENT REASON: Cloudflare's `_headers` format is a path line then indented
+# `Name: value` lines, prettier infers no parser for an extensionless file and
+# says so on STDERR while exiting 0 -- which is exactly the shape
+# `.githooks/pre-commit` reads as a failure, so committing an edit to this file
+# was refused with a message about parsers. It went unnoticed for as long as it
+# did because the file had not been touched since the hook existed.
+static/_headers

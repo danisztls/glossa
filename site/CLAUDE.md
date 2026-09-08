@@ -238,7 +238,7 @@ and absent as a plausible 200:
 | `/catechismus/999999`  | **200**, the shell | 404                           |
 | `/scriptura/josh/1`    | **200**, the shell | 301 → `/scriptura/iosue/1`    |
 | `<title>` on a chapter | `Glossa Catholica` | `Joshua 1 — Glossa Catholica` |
-| `_headers`             | not read           | `Parsed 3 valid header rules` |
+| `_headers`             | not read           | `Parsed 6 valid header rules` |
 
 So the head-rewriting half of this file, the route manifest's 404s, the OSIS
 301s and the cache policy are all unverifiable under `preview`.
@@ -399,6 +399,13 @@ npm run deploy      # build -> preflight -> wrangler deploy
   the whole site goes dark until 00:00 UTC. (A cold visitor filling the offline
   library was ~2,240 invocations, about fifty readers a day.) Anything new in
   `static/` still works un-negated; it silently costs an invocation per request.
+- **A `.txt` in `static/` needs its charset declared in `_headers`, or its
+  typography is mojibake.** Cloudflare infers `text/plain` from the extension
+  and appends no charset, so the reader's browser default decodes it —
+  `llms.txt`'s em dashes arrived as `â€”` for as long as the file has existed.
+  Only the extensionless formats need it: `.html`, JSON and `.xml` each declare
+  their own. `_headers` itself is in `.prettierignore`, prettier having no
+  parser for it and the hook reading its complaint as a failure.
 - **A failed sync leaves nothing that looks synced.** `sync-corpus.mjs` clears
   `corpus-routes.json`, `route-titles.json`, `apparatus.json`, `works.json`,
   `sitemap.xml` and `reference-coverage.json` in the same breath as it wipes

@@ -1,5 +1,6 @@
-# Cache policy for the static host (Cloudflare Workers static assets reads this
-# file out of the deployed asset directory and does not serve it).
+# Cache policy and content type for the static host (Cloudflare Workers static
+# assets reads this file out of the deployed asset directory and does not serve
+# it).
 #
 # Cloudflare's default for every asset is `max-age=0, must-revalidate`, which is
 # correct for anything whose URL can outlive its contents — every prerendered
@@ -20,3 +21,25 @@
 
 /icons/*
   Cache-Control: public, max-age=2592000
+
+# A `.txt` is served `text/plain` with NO charset, and a `text/plain` without
+# one is decoded by the reader's browser default rather than as UTF-8. Every em
+# dash in `llms.txt` — 24 of them, in prose written for a machine deciding
+# whether to trust this site — arrived as `â€”`, the windows-1252 reading of the
+# UTF-8 bytes. Nothing is wrong with the file: the header was silent and the
+# guess was wrong.
+#
+# The site's other text formats declare it themselves and are not listed here:
+# `.html` carries `<meta charset>`, JSON is UTF-8 by RFC 8259, and `.xml`
+# carries its own declaration. These three are the ones that cannot.
+# `security.txt` is ASCII today and is listed anyway — it is generated, and a
+# file whose correctness depends on nobody adding a typographic mark to it is
+# the one that will get one.
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/.well-known/security.txt
+  Content-Type: text/plain; charset=utf-8
