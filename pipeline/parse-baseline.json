@@ -462,7 +462,7 @@
     },
     "encyclical.laudato-si.ar": {
       "status": "validation-failed",
-      "problems": 107
+      "problems": 106
     },
     "encyclical.laudato-si.be": {
       "status": "validation-failed",
@@ -784,10 +784,6 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "exhortation.ecclesia-in-africa.de": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "exhortation.ecclesia-in-africa.en": {
       "status": "validation-failed",
       "problems": 122
@@ -847,10 +843,6 @@
     "exhortation.evangelii-nuntiandi.fr": {
       "status": "validation-failed",
       "problems": 1
-    },
-    "exhortation.evangelii-nuntiandi.lv": {
-      "status": "validation-failed",
-      "problems": 2
     },
     "exhortation.familiaris-consortio.de": {
       "status": "validation-failed",
