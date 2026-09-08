@@ -336,12 +336,9 @@ on the list and correct — six bold runs in the whole English mirror, all
 furniture. `evangelii-nuntiandi.la` (7 anchors) and `.hu` (8) want the same
 check before anyone calls them damaged.
 
-**Two markup classes named and not taken.** Hungarian numbered italics —
-`<em>2. <a name=…>Title</a></em>`, which `promote_italic_heading_run` excludes
-under the guard that keeps section numbers out of a run (`ut-unum-sint.hu`, 5
-anchors against 32) — and the bold and bold-italic residue
-(`fratelli-tutti.sl` 67/87 with 26 anchors only it has,
-`ecclesia-in-africa.de` 76/100).
+**One markup class named and not taken**: the bold and bold-italic residue,
+`fratelli-tutti.sl` at 67 of its siblings' 87 anchors with 26 nobody else has,
+`ecclesia-in-africa.de` at 76 of 100.
 
 **22 editions in 19 works hold a fraction of their siblings' SECTIONS**, marked
 `COLLAPSED SECTIONS` in the report. There the outline is a symptom and the
@@ -540,9 +537,9 @@ it survives the crossing. The note is on the key.
 A priority argument, not a dependency one — nothing here gates anything else.
 
 1. **The structure trees, down the worklist `audit.py trees` now prints** — the
-   two markup classes first, since each is a predicate and the ToC oracles tell
-   a fix from a regression; then the stubs one raw page at a time, which is the
-   only way to tell an unstructured mirror from an unread one. Above everything
+   bold residue first, since it is a predicate and the ToC oracles tell a fix
+   from a regression; then the stubs one raw page at a time, which is the only
+   way to tell an unstructured mirror from an unread one. Above everything
    that adds coverage, because a wrong tree is served to consumers that never
    render the page.
 2. **#9's 124 unread leads** — reading them is the only way to find another

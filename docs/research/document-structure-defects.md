@@ -146,11 +146,20 @@ none of them reaches a document that was already right.
 
 ### What is left, named
 
-- **Two markup classes not yet taken.** Hungarian numbered italics —
-  `<em>2. <a name=…>Title</a></em>`, excluded from the italic run by the guard
-  that keeps section numbers out (`ut-unum-sint.hu`, 5 anchors against 32) — and
-  the bold and bold-italic residue (`fratelli-tutti.sl` 67/87 with 26 anchors
-  only it has, `ecclesia-in-africa.de` 76/100).
+- **The bold and bold-italic residue**, the one markup class left untaken:
+  `fratelli-tutti.sl` holds 67 of its siblings' 87 anchors and 26 nobody else
+  has, `ecclesia-in-africa.de` 76 of 100.
+
+  Hungarian numbered italics — `<em>2. <a name=…>Title</a></em>`, which the
+  italic run refused under the guard that keeps section numbers out — were the
+  other, and are FIXED: the same "a number that goes backwards is not a
+  paragraph number" test §8 gave the centred run admits them, since
+  `ut-unum-sint.hu` counts 1..10 and restarts while its body runs on. It went
+  from 5 anchors to its siblings' 32, `africae-munus.es` and `.pt` from 53 to
+  58, and `familiaris-consortio.en` from 37 disagreements with its hand-read
+  contents to 16 — 21 of the corpus's 524, from four promoted headings, because
+  a heading read as a paragraph also displaces every section number after it.
+
 - **22 editions in 19 works hold a fraction of their siblings' SECTIONS**, which
   the report marks `COLLAPSED SECTIONS`. There the outline is a symptom and the
   defect is upstream of it: `lumen-gentium.ar` and `ecclesiam.fr` store one

@@ -4756,11 +4756,18 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
     Numbered paragraphs are excluded explicitly: italic is also how some
     pages wrap an ordinary numbered paragraph (Redemptor Hominis EN's
     `<p><b><i>10 . The human dimension...`), and turning one into a
-    heading would cost a section rather than gain a heading."""
+    heading would cost a section rather than gain a heading. THE EXCEPTION
+    IS A NUMBER THAT GOES BACKWARDS (`numbering_restarts`, the same test the
+    centred run uses): `ut-unum-sint.hu` prints its sub-headings as
+    `<p><em>2. <a name=...>Az okumenikus ut</a></em></p>`, counting 1..10
+    and then restarting at 1 while the body runs on, so the blanket
+    exclusion cost it 27 of its 32 headings. A paragraph continues the
+    count; a heading restarts it."""
     numbered = [
         i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
     ]
     body_start = numbered[0] if numbered else -1
+    restarts = numbering_restarts(blocks)
     candidates = [
         i
         for i, blk in enumerate(blocks)
@@ -4768,8 +4775,13 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         and not blk.is_heading
         and blk.kind != "quote"
         and len(blk.text) <= _ITALIC_HEADING_MAX_CHARS
-        and match_para_num(blk.raw) is None
-        and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
+        and (
+            i in restarts
+            or (
+                match_para_num(blk.raw) is None
+                and _SECTION_TITLE_HEADING_RE.match(blk.text) is None
+            )
+        )
         and has_words(blk.text)
         and not blk.indented
         and (is_full_italic(blk.raw) or is_parenthesised_italic(blk.raw))
@@ -5110,6 +5122,32 @@ def extract_document_header(
     return drop_orphan_close_tags(joined).strip(), dropped
 
 
+def numbering_restarts(blocks: list[Block]) -> set[int]:
+    """Which numbered blocks carry a number that goes BACKWARDS.
+
+    A NUMBER THAT GOES BACKWARDS IS NOT A PARAGRAPH NUMBER, and it is the
+    only thing separating these two: `santateresa-delbambinogesu.en` prints
+    its four chapter headings as `<p style="text-align: center;">2. The
+    little way of trust and love</p>`, numbered 1..4 while the body is at
+    6, 9, 20 and 30. The leading numeral read as an address, so three of the
+    four were absorbed into the paragraph below them and vanished from the
+    build entirely, while the first became a phantom §7 holding three words
+    and pushed two real sections off their addresses. `laudate-deum.en` is
+    the control -- same shape, same inline numeral, kept because it prints
+    them bold. A paragraph continues the document's count; a heading
+    restarts it, which is why this and not "is it short" or "is it centred"
+    is what lets a numbered block into a heading run."""
+    seen, restarts = 0, set()
+    for i, b in enumerate(blocks):
+        pm = None if b.is_heading else match_para_num(b.raw)
+        if pm is None:
+            continue
+        if pm[0] <= seen:
+            restarts.add(i)
+        seen = max(seen, pm[0])
+    return restarts
+
+
 def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     """Recover headings the source centres but never emphasises.
 
@@ -5129,26 +5167,7 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     if not numbered:
         return []
     lo, hi = numbered[0], numbered[-1]
-    # A NUMBER THAT GOES BACKWARDS IS NOT A PARAGRAPH NUMBER, and it is the
-    # only thing separating these two: `santateresa-delbambinogesu.en` prints
-    # its four chapter headings as `<p style="text-align: center;">2. The
-    # little way of trust and love</p>`, numbered 1..4 while the body is at
-    # 6, 9, 20 and 30. The leading numeral read as an address, so three of the
-    # four were absorbed into the paragraph below them and vanished from the
-    # build entirely, while the first became a phantom §7 holding three words
-    # and pushed two real sections off their addresses. `laudate-deum.en` is
-    # the control -- same shape, same inline numeral, kept because it prints
-    # them bold. Requiring the number to go backwards is what keeps a short
-    # centred paragraph that IS numbered out of the run: a paragraph
-    # continues the document's count, and a chapter heading restarts.
-    seen, restarts = 0, set()
-    for i, b in enumerate(blocks):
-        pm = None if b.is_heading else match_para_num(b.raw)
-        if pm is None:
-            continue
-        if pm[0] <= seen:
-            restarts.add(i)
-        seen = max(seen, pm[0])
+    restarts = numbering_restarts(blocks)
     # THE RUN IS THE WHOLE RUN, including the members some earlier pass has
     # already claimed. Counting only the unclaimed ones let a document lose
     # exactly the markers another pass had missed: `ad-petri.en` prints its

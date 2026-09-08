@@ -224,12 +224,15 @@ pipeline/scrapers/
   entry, `sacrosanctum-concilium.hu` links all 128 at anchors the page never
   defines. Guarded by pointing at three DIFFERENT paragraphs, and refused
   outright on a page whose body never starts.
-- **A number that goes backwards is not a paragraph number.**
-  `promote_plain_centered_run` may take a numbered block into an unemphasised
-  centred run on that evidence alone: `santateresa-delbambinogesu.en` heads its
-  four chapters `1.`..`4.` while the body is at 6, 9, 20 and 30, and reading
-  those as addresses cost three headings outright and put two sections at the
-  wrong number. A paragraph continues the count; a chapter heading restarts it.
+- **A number that goes backwards is not a paragraph number**, and it is the
+  only thing that lets a numbered block into a heading run
+  (`numbering_restarts`, used by the centred pass and the italic one).
+  `santateresa-delbambinogesu.en` heads its four chapters `1.`..`4.` while the
+  body is at 6, 9, 20 and 30, and reading those as addresses cost three
+  headings outright and put two sections at the wrong number;
+  `ut-unum-sint.hu` counts its sub-headings 1..10 and then restarts, and the
+  blanket exclusion cost it 27 of 32. A paragraph continues the document's
+  count; a heading restarts it.
 - **Bold is a heading tier, and leaving it out of the rank flattens three into
   two.** `<p align="left"><b><i>…</i></b></p>` is the middle tier and
   `<p align="left"><i>…</i></p>` the one below; `heading_style_rank` ranked
