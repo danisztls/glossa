@@ -18,13 +18,27 @@
   grammar that lets the address be written without a fetch. The rights
   position is stated once, in full, and is not to be weakened by an edit.
 
-  IT CLAIMS NOTHING AS ITS OWN, AND SAYS WHERE PROSE CAME FROM INSTEAD. The
-  section below naming the descriptions and the apparatus was headed "What here
-  is ours" and granted permission to quote them — an ownership claim and a
-  claim to the standing to license it, neither of which a file about
-  attribution has to make. Provenance answers the same question and is
-  checkable: what a publisher published, and what was written here. Rights held
-  by OTHERS are still stated plainly, which is deference and stays.
+  IT CLAIMS NOTHING AS ITS OWN AND GRANTS NOTHING TO ANYONE. Those are two
+  edits and the second is the one to hold. The section below naming the
+  descriptions and the apparatus was headed "What here is ours" and told the
+  reader they may quote them; the heading went first, and the permission stayed
+  a while longer as "Attribute a quotation of either to this site", which reads
+  as a grant with an attribution condition attached. Both are gone. What is
+  left is provenance — what a publisher published, and what was written here —
+  which answers the reader's real question and is checkable, where a permission
+  is a claim to standing.
+
+  THE CROSS-REFERENCES ARE WHY THE SECOND EDIT MATTERS MOST. A description is
+  prose written here and its authorship is not in doubt; the apparatus is a
+  reading of the publishers' own footnotes, and offering a licence over it is
+  offering one over somebody else's work. `colophon.participateRights` already
+  carries the rule in the other direction — a licence is the rights holder's to
+  give — and this file may not act as though it were one.
+
+  Rights held by OTHERS are still stated plainly, which is deference and stays.
+  So does the tagline's "Free to read": it was "Free", beside a sentence about
+  verbatim reproduction, where it can be read as a statement about the licence
+  rather than the price.
 
   This is the colophon's own position, arrived at separately and first
   (`site/docs/colophon.md`): a paragraph claiming the arrangement and the
@@ -35,7 +49,7 @@
 
 # Glossa Catholica
 
-> One stable address for every citable unit of the central Catholic texts: each chapter and verse of the Bible, each paragraph of the Catechism, of its Compendium and of the Compendium of the Social Doctrine of the Church, each canon of the Code of Canon Law, each article of the Summa Theologiae, each numbered section of {{DOCUMENT_COUNT}} magisterial documents, and the common prayers. The texts are reproduced verbatim from their publishers in {{LANGUAGE_COUNT}} languages and cross-referenced to one another. Free, ad-free, account-free, offline-first. **Cite the publisher for the words; link here for the place.**
+> One stable address for every citable unit of the central Catholic texts: each chapter and verse of the Bible, each paragraph of the Catechism, of its Compendium and of the Compendium of the Social Doctrine of the Church, each canon of the Code of Canon Law, each article of the Summa Theologiae, each numbered section of {{DOCUMENT_COUNT}} magisterial documents, and the common prayers. The texts are reproduced verbatim from their publishers in {{LANGUAGE_COUNT}} languages and cross-referenced to one another. Free to read, ad-free, account-free, offline-first. **Cite the publisher for the words; link here for the place.**
 
 ## What this site asks of you
 
@@ -113,12 +127,12 @@ What the shell itself carries, per address, is the title of the unit, a descript
 
 ## What was written here
 
-Two things on this site are not reproduced from a publisher; both were written here. Attribute a quotation of either to this site:
+Two things on this site are not reproduced from a publisher; both were written here:
 
 - The **descriptions of the magisterial documents** — a short account of what each one argues, written by reading it.
 - The **cross-reference apparatus**: which paragraphs of the Catechism cite a given chapter of Scripture, which documents cite a given paragraph, which Compendium question condenses which paragraphs.
 
-Everything else on the site belongs to the publishers below. The colophon states the position in full.
+That is a statement of provenance and not a grant. **Nothing in this file licenses the reuse of anything, these two included.** Everything else on the site belongs to the publishers below, and permission for it is theirs to give and not this site's. The colophon states the position in full.
 
 ## Where the texts come from
 
