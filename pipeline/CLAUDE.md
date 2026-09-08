@@ -224,15 +224,23 @@ pipeline/scrapers/
   entry, `sacrosanctum-concilium.hu` links all 128 at anchors the page never
   defines. Guarded by pointing at three DIFFERENT paragraphs, and refused
   outright on a page whose body never starts.
-- **A number that goes backwards is not a paragraph number**, and it is the
-  only thing that lets a numbered block into a heading run
-  (`numbering_restarts`, used by the centred pass and the italic one).
+- **A leading number is a section's address only while it continues the
+  document's count**, and the two ways of failing that carry the two costs.
+  **Backwards is a heading** (`numbering_restarts`, used by the centred pass
+  and the italic one) — that is the only thing that lets a numbered block into
+  a heading run.
   `santateresa-delbambinogesu.en` heads its four chapters `1.`..`4.` while the
   body is at 6, 9, 20 and 30, and reading those as addresses cost three
   headings outright and put two sections at the wrong number;
   `ut-unum-sint.hu` counts its sub-headings 1..10 and then restarts, and the
-  blanket exclusion cost it 27 of 32. A paragraph continues the document's
-  count; a heading restarts it.
+  blanket exclusion cost it 27 of 32. **Hundreds ahead is a date**
+  (`numbering_leaps`), and that one costs the document rather than a heading:
+  `evangelii-nuntiandi.lv` opens two paragraphs `1974. gada …`, Latvian's
+  ordinal year carrying the same trailing period a section number does, and
+  every real number after it read as going backwards and merged into it — 5
+  sections stored of 82. Refused only once the count has started, since a
+  mirror may publish a fragment and number it where the original does
+  (`humani-generis-redemptionem.fr` prints one paragraph and calls it 102).
 - **Bold is a heading tier, and leaving it out of the rank flattens three into
   two.** `<p align="left"><b><i>…</i></b></p>` is the middle tier and
   `<p align="left"><i>…</i></p>` the one below; `heading_style_rank` ranked

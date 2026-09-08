@@ -5122,6 +5122,39 @@ def extract_document_header(
     return drop_orphan_close_tags(joined).strip(), dropped
 
 
+#: How far ahead of the running count a leading number may sit and still be
+#: read as the next section. Measured over every document edition in the
+#: corpus: the largest jump between consecutive stored section numbers is 23,
+#: and the only two above it are both this defect rather than a gap. Set well
+#: clear of the real ones, because the cost of refusing a number that IS a
+#: section is a lost address and the cost of accepting a date is the rest of
+#: the document.
+_SECTION_NUMBER_MAX_LEAP = 100
+
+
+def numbering_leaps(blocks: list[Block]) -> set[int]:
+    """Which numbered blocks carry a number the document cannot have reached.
+
+    The counterpart of `numbering_restarts`: a section number continues a
+    count, so it is neither behind the running total nor hundreds ahead of
+    it. `evangelii-nuntiandi.lv` prints `1974.` -- a year, in a language that
+    writes ordinal years with a trailing period -- where its count stood at
+    3, and every real number after it then read as going backwards.
+
+    The running total deliberately does NOT advance past a leap: one date
+    must not license the next."""
+    seen, leaps = 0, set()
+    for i, b in enumerate(blocks):
+        pm = None if b.is_heading else match_para_num(b.raw)
+        if pm is None:
+            continue
+        if pm[0] > seen + _SECTION_NUMBER_MAX_LEAP:
+            leaps.add(i)
+            continue
+        seen = max(seen, pm[0])
+    return leaps
+
+
 def numbering_restarts(blocks: list[Block]) -> set[int]:
     """Which numbered blocks carry a number that goes BACKWARDS.
 
@@ -5259,6 +5292,7 @@ def promote_plain_caps_run(blocks: list[Block]) -> list[str]:
     if not numbered:
         return []
     lo, hi = numbered[0], numbered[-1]
+    leaps = numbering_leaps(blocks)
     peers = [
         i
         for i, b in enumerate(blocks)
@@ -5267,8 +5301,24 @@ def promote_plain_caps_run(blocks: list[Block]) -> list[str]:
         and not b.style & _STYLE_ITALIC
         and not is_full_bold(b.raw)
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
-        and match_para_num(b.raw) is None
-        and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+        # A number the document could not have reached is a DATE, and this
+        # is the one place a numbered block may join the run.
+        # `evangelii-nuntiandi.lv` centres `1974. GADA SINODES NOTEIKTAJA
+        # VIRZIENA` over its fourth section -- a Latvian ordinal year, which
+        # carries the same trailing period a section number does -- and
+        # reading it as an address stopped the numbering dead: 4 and
+        # everything after it went backwards against 1974 and merged into
+        # it, leaving 5 sections of 82. The bound is what keeps a heading
+        # that IS numbered out: `donum-vitae.en` heads its sections
+        # `2. IS PRENATAL DIAGNOSIS MORALLY LICIT?` in capitals, and those
+        # numbers continue the count.
+        and (
+            i in leaps
+            or (
+                match_para_num(b.raw) is None
+                and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+            )
+        )
         and not b.indented
         and is_all_caps(b.text)
     ]
@@ -7965,7 +8015,31 @@ def parse_document(
             None  # set when a size-1 gap can be closed by pending_first_block
         )
         if cand is not None:
-            if state.last_n is None or cand == state.last_n + 1:
+            if (
+                state.last_n is not None
+                and cand > state.last_n + _SECTION_NUMBER_MAX_LEAP
+            ):
+                # A NUMBER THE DOCUMENT COULD NOT HAVE REACHED IS A DATE, and
+                # the cost of reading one as an address is not one wrong
+                # address but every address after it: the numbers that follow
+                # go BACKWARDS against it and merge into it as continuations.
+                # `evangelii-nuntiandi.lv` opens two paragraphs `1974. gada
+                # ...` -- Latvian writes an ordinal year with the trailing
+                # period a section number has -- and stored 5 sections of 82.
+                # Left to fall through as prose, which is what it is; the
+                # anomaly is reported because a refused number is a claim.
+                #
+                # ONLY ONCE THE COUNT HAS STARTED. A mirror may publish a
+                # fragment and number it where the original does:
+                # `humani-generis-redemptionem.fr` prints one paragraph and
+                # calls it 102, and refusing that leaves the edition with no
+                # addresses at all rather than with the one it prints.
+                state.anomalies.append(
+                    f"leading number {cand} refused after section "
+                    f"{state.last_n}: too far ahead to be an address, read as "
+                    f"text: {b.text[:60]!r}"
+                )
+            elif state.last_n is None or cand == state.last_n + 1:
                 is_new = True
             elif cand > state.last_n + 1:
                 is_new = True

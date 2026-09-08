@@ -340,11 +340,14 @@ check before anyone calls them damaged.
 `fratelli-tutti.sl` at 67 of its siblings' 87 anchors with 26 nobody else has,
 `ecclesia-in-africa.de` at 76 of 100.
 
-**22 editions in 19 works hold a fraction of their siblings' SECTIONS**, marked
+**21 editions in 18 works hold a fraction of their siblings' SECTIONS**, marked
 `COLLAPSED SECTIONS` in the report. There the outline is a symptom and the
 defect is upstream of the heading detector — `lumen-gentium.ar` and
 `ecclesiam.fr` store one anchor against peer medians of 67 and 45 — so they
-belong to `coverage` and are not sized here.
+belong to `coverage` and are not sized here. Two came out as a single wrong
+number apiece, one the parser's and one the source's, each costing the rest of
+its document; read the rest the same way before reading them as heading
+defects.
 
 **Populations measured before the check existed, still open:**
 

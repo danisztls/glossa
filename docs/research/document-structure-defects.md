@@ -160,11 +160,22 @@ none of them reaches a document that was already right.
   contents to 16 — 21 of the corpus's 524, from four promoted headings, because
   a heading read as a paragraph also displaces every section number after it.
 
-- **22 editions in 19 works hold a fraction of their siblings' SECTIONS**, which
-  the report marks `COLLAPSED SECTIONS`. There the outline is a symptom and the
-  defect is upstream of it: `lumen-gentium.ar` and `ecclesiam.fr` store one
-  anchor against peer medians of 67 and 45. These belong to `coverage`, not to
-  the heading detector.
+- **21 editions in 18 works hold a fraction of their siblings' SECTIONS**,
+  which the report marks `COLLAPSED SECTIONS`. There the outline is a symptom
+  and the defect is upstream of it: `lumen-gentium.ar` and `ecclesiam.fr` store
+  one anchor against peer medians of 67 and 45.
+
+  **Two of these were one wrong number each, and each cost the rest of its
+  document**, because a section number that is not one stops the count dead:
+  every real number after it goes backwards against it and merges into it.
+  `evangelii-nuntiandi.lv` stored 5 sections of 82 against a Latvian ordinal
+  year, `1974. gada …`, written with the trailing period a section number
+  carries — a parser fault, fixed in `numbering_leaps`. `ecclesia-in-africa.de`
+  stored 107 of 144 because the German mirror prints section 107 as `2107.` —
+  a source fault, filed in `pipeline/corrections/`. **The class is worth
+  looking for before the heading detector is**: one character, and the second
+  half of an apostolic exhortation has no address.
+
 - **The stubs still want reading one at a time**, because §13 is real: an
   unstructured mirror and an unparsed one are the same row.
 
