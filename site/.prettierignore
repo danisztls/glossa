@@ -32,6 +32,13 @@ src/lib/lectionary/days.oracle.json
 scripts/language-coverage.baseline.json
 static/language-coverage.json
 
+# Written by pipeline/scrapers/bible/divergence.py --export, which owns the
+# classification because it also verifies it against the editions on every run.
+# Same argument as the rules above: prettier collapses a short array onto one
+# line where the Python writer keeps it expanded, so the two would undo each
+# other on every export. The script fails when the committed file falls behind.
+src/lib/divergence.json
+
 # The rules above are all "prettier and a writer would fight". THIS ONE IS A
 # DIFFERENT REASON: Cloudflare's `_headers` format is a path line then indented
 # `Name: value` lines, prettier infers no parser for an extensionless file and

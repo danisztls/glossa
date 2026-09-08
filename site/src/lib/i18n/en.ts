@@ -1121,6 +1121,26 @@ export const en: Dictionary = {
 	'bible.note': 'Note',
 	'bible.noteMissing': 'This note is missing from the corpus',
 	'bible.chapterArgument': 'Argument',
+	// The reading view's advisory for a chapter the editions here divide
+	// differently ($lib/divergence.ts, docs/research/bible-edition-divergence.md).
+	// One sentence per kind, because the kinds differ in what a reader is owed:
+	// a `merge-split` costs one number, an `arrangement` costs the whole book,
+	// and a `span-shift` costs nothing visible at all. Plain and unalarmed,
+	// like `compare.versificationNote` — a disclosed limitation is not an error.
+	// The label is not printed; it tells assistive technology this is apparatus.
+	'bible.divergence.label': 'A note on this chapter’s verse numbers',
+	'bible.divergence.arrangement':
+		'The editions here arrange this book differently, so one chapter and verse number names different text in each.',
+	'bible.divergence.merge-split':
+		'One edition here divides a verse in this chapter that the other keeps whole, so the numbers after it are one apart.',
+	'bible.divergence.re-division':
+		'The editions here divide this passage into verses on different principles, so one number does not name the same words in each.',
+	'bible.divergence.textual-variant':
+		'One edition here carries words in this chapter that the other does not; the difference is in the text, not in the numbering.',
+	'bible.divergence.span-shift':
+		'The editions here count the same verses in this chapter, but across a span in the middle the same number names different text.',
+	'bible.divergence.local-repartition':
+		'One edition here moves a clause across a verse boundary in this chapter and restores it a verse or two later, so a citation can land beside the wrong sentence.',
 	'ccc.readFullChapter': 'Read the full chapter',
 	'ccc.noParagraphNumber': 'No paragraph number in this corpus',
 	'copyright.sourceTitle': 'Open the original source page',

@@ -36,6 +36,7 @@
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
 	import UnitNav from '$lib/components/UnitNav.svelte';
 	import { alignByNumber, numberSetsDiffer, pickComparisonEdition } from '$lib/compare';
+	import { divergenceFor, divergenceKey } from '$lib/divergence';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
 		adoptCompareFromUrl,
@@ -209,6 +210,14 @@
 				)
 			: false
 	);
+
+	/** What is known about the editions dividing THIS chapter differently, read
+	 *  rather than computed — see `$lib/divergence.ts`. It is shown in the
+	 *  reading view because that is where a citation lands: Acts 14 runs 1-27
+	 *  in both editions, so nothing that compares numbers can see that twenty
+	 *  of its verses name different text, and a reader who never opened compare
+	 *  mode is exposed exactly as much as one who did. */
+	const divergence = $derived(divergenceFor(data.osis, data.chapterN));
 
 	const prev = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'prev'));
 	const next = $derived(getAdjacentChapterAcrossBooks(workId, data.osis, data.chapterN, 'next'));
@@ -804,6 +813,20 @@
 				{/if}
 			{/if}
 
+			<!-- Above the text and in BOTH modes: the reader who followed a
+			     citation here never opened the comparison, and Acts 14's verse
+			     numbers agree across the editions while its text does not, so
+			     nothing further down the page could say this. Muted and
+			     unalarmed, the posture `.verse-absent` and the unpublished
+			     notice already take — a limitation we have read and disclosed
+			     is not an error. In the READER's language, unlike the chapter
+			     argument above it: this is our sentence, not the edition's. -->
+			{#if divergence}
+				<p class="divergence-note" aria-label={t('bible.divergence.label')}>
+					{t(divergenceKey(divergence.kind))}
+				</p>
+			{/if}
+
 			{#if compareActive && secondary}
 				<CompareGrid
 					rows={compareRows}
@@ -824,7 +847,7 @@
 						// verses it had named. Same wash, one row at a time.
 						emphasized: isHighlighted(n)
 					})}
-					note={compareVersesDiffer ? t('compare.versificationNote') : undefined}
+					note={compareVersesDiffer && !divergence ? t('compare.versificationNote') : undefined}
 				/>
 			{:else}
 				<div class="reading-text" lang={current.work.language}>
@@ -951,6 +974,15 @@
 
 	.copyright-notice {
 		margin: 0.15rem 0 0;
+	}
+
+	/* The same treatment as `.compare-note`, which is the other disclosure on
+	   this page, so the two read as one voice rather than two severities. */
+	.divergence-note {
+		margin: 0.75rem 0 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+		font-style: italic;
 	}
 
 	/* "Introduction", under the book's name — the counterpart of the chapter

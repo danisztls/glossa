@@ -465,6 +465,19 @@ export const pt: Dictionary = {
 	'bible.note': 'Nota',
 	'bible.noteMissing': 'Esta nota falta no corpus',
 	'bible.chapterArgument': 'Argumento',
+	'bible.divergence.label': 'Uma nota sobre a numeração deste capítulo',
+	'bible.divergence.arrangement':
+		'As edições aqui dispõem este livro de modo diferente, de forma que um mesmo capítulo e versículo designa texto diferente em cada uma.',
+	'bible.divergence.merge-split':
+		'Uma das edições aqui divide um versículo deste capítulo que a outra mantém inteiro, de forma que os números seguintes ficam com uma unidade de diferença.',
+	'bible.divergence.re-division':
+		'As edições aqui dividem esta passagem em versículos por princípios diferentes, de forma que um mesmo número não designa as mesmas palavras em cada uma.',
+	'bible.divergence.textual-variant':
+		'Uma das edições aqui traz neste capítulo palavras que a outra não traz; a diferença está no texto, não na numeração.',
+	'bible.divergence.span-shift':
+		'As edições aqui contam os mesmos versículos neste capítulo, mas ao longo de um trecho no meio o mesmo número designa texto diferente.',
+	'bible.divergence.local-repartition':
+		'Uma das edições aqui desloca uma oração para além de um limite de versículo neste capítulo e a restitui um ou dois versículos adiante, de forma que uma citação pode cair ao lado da frase errada.',
 	'ccc.readFullChapter': 'Ler o capítulo completo',
 	'ccc.noParagraphNumber': 'Sem número de parágrafo neste corpus',
 	'copyright.sourceTitle': 'Abrir a página de origem',

@@ -278,16 +278,34 @@ Acts 14's mapping is known too — `en 6 ↔ pt 6+7`, `en 7–25 ↔ pt 8–26`,
 `en 26+27 ↔ pt 27` — and is recorded in `SILENT` rather than `MAPPINGS`,
 because its chapter does not appear in the number-set table at all.
 
-### 5. Disclose in the reading view, not only in compare mode — not built
+### 5. Disclose in the reading view, not only in compare mode — done
 
-A reader following a citation into Psalm 13 or Acts 14 is exposed whether or
-not they opened the comparison. If a chapter is in the divergence table, the
-reading view should say so — quietly, the way `.verse-absent` and the
-unpublished notice already say what the site does not know.
+`divergence.py --export` writes `site/src/lib/divergence.json` and the script
+fails when the committed file falls behind the table above; `$lib/divergence.ts`
+reads it and `/scriptura/{book}/{chapter}` prints one muted line above the text,
+in both modes, in the reader's own language. `KINDS` stays the owner because it
+is a review a person wrote beside the tool that verifies it — the mirror of
+`scripts/export-versification.mjs`, which sends the site's tables the other way.
 
-This is the one proposal item that needs the table to be _data_ rather than a
-Python dict the site cannot read. Nothing else does, which is why the dict was
-enough for everything above.
+**The `kind` crosses and the `why` does not.** The kind is the field that says
+what a reader is owed, and the site turns it into a sentence; the `why` is
+English prose written for whoever reads this table next, and shipping it would
+put one language's editorial note in front of forty languages' readers. So a
+new kind costs one string rather than a translation of a paragraph, and
+`divergence.test.ts` fails on a kind no dictionary spells.
+
+**The note is shown to every edition's reader, and that is the point of §2 of
+`decisions.md`.** Reader URLs are edition-free, so a chapter these editions
+divide differently is ambiguous for whoever follows a citation into it —
+including a reader in Straubinger, whose edition this table was not measured
+over. Filtering the note to the two editions measured would tell the rest of the
+corpus's readers that their chapter is settled, which is the claim that cannot
+be made.
+
+**Compare mode's own note stands down where this one renders**, rather than
+saying the same thing twice: `numberSetsDiffer` fires on exactly the chapters
+whose sets differ, which are a subset of these, and the kind names what the set
+comparison could only imply.
 
 ### 6. Do not align by text similarity — held
 
