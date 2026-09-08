@@ -233,7 +233,10 @@ export const en: Dictionary = {
 	'census.rank.chapters': 'Chapters of Scripture',
 	'census.rank.documents': 'Documents of the Magisterium',
 	'census.rank.ccc': 'Paragraphs of the Catechism',
-	'census.rank.summa': 'Questions of the Summa',
+	// There is no `census.rank.summa`: the Summa's rows are named by
+	// `doctores.landing.title`, the shelf's own name, which is what
+	// `CENSUS_SHELF_KEYS` and `CITER_KIND_KEYS` already do for it — one name
+	// among four naming shelves must not be a single book (`rankLabelKey`).
 	// THE THREE `i` BUTTONS, and each names what it is about rather than saying
 	// "more information": a trigger with no text of its own is read out by its
 	// label alone, and three buttons called the same thing on one page are

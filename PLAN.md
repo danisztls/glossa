@@ -470,7 +470,7 @@ not final in time, and _receives_ is the theological sense.
 ## `/bibliotheca/census` is written in one language of forty
 
 The library counted — the ledger, the coverage matrix and the citation ranking —
-shipped 2026-09-08 with its 35 `census.*` keys in English alone, and is
+shipped 2026-09-08 with its 34 `census.*` keys in English alone, and is
 deliberately **not in `CHROME_PATHS`** on that account (`site/docs/census.md`,
 `route-manifest.ts`). `/calendarium/liturgia` stands in the same place for a
 different reason.
@@ -497,8 +497,8 @@ the per-language head takes over. `census.test.ts` already asserts that every
 key the builder can emit exists in `en`; nothing asserts the other 39, by
 design — `t()`'s per-key fallback is what makes a partial dictionary safe.
 
-Sizing: 35 keys in 39 dictionaries, then four small edits and no schema. **Nine
-of the 35 are the shelf sentences**, each carrying `{placeholder}` tokens a
+Sizing: 34 keys in 39 dictionaries, then four small edits and no schema. **Nine
+of the 34 are the shelf sentences**, each carrying `{placeholder}` tokens a
 translation must keep — `i18n.test.ts` checks exactly that, and
 `census.test.ts` derives the expected set from the builder. The three that need
 care are `census.method`, which states the rules the rankings are counted by,

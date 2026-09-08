@@ -132,11 +132,15 @@ is state.
 for one revision, which is the defect `/calendarium` records one page over: a
 bold heading is wider, so the first column grew, all forty language columns
 moved with it, and the cell being pointed at slid out from under the pointer.
-Colour and a `box-shadow` rule instead — paint reserves nothing, so unlike a
-transparent border there is no placeholder to keep in step. The readout is held
-to one line by the same rule and its height is reserved whether or not it says
-anything; it carries no `aria-live`, a pointer readout being forty
-interruptions a row where each cell already reads its own value.
+The readout is held to one line by the same rule and its height is reserved
+whether or not it says anything; it carries no `aria-live`, a pointer readout
+being forty interruptions a row where each cell already reads its own value.
+
+**What replaced the weight is colour and nothing else.** A painted underline
+stood under the two lit headings for one revision and was a second mark for a
+state the colour already carried: a cell, its row and its column all turning
+accent is one mark in three places, where a rule under two of them is a
+different mark on the same event.
 
 **Every row carries the glyph its work already has, in the accent.**
 `CENSUS_ICONS` takes them from `shelves.ts` and `/schola` rather than choosing
@@ -243,6 +247,13 @@ the same counts.
 **A row is marked and not labelled.** The kind is the glyph of the work it
 belongs to, with the name behind it for a screen reader; set out as visible text
 it was the kind repeated down twenty rows.
+
+**The Summa's kind is named for its SHELF** — `doctores.landing.title`, which
+is what `CENSUS_SHELF_KEYS` and `CITER_KIND_KEYS` already call it. Four of the
+five names are sections of the library, and one naming a single book among them
+reads as a different kind of thing; `rankLabelKey` is the map, and
+`census.rank.summa` went with it, a fifth string saying the same about a
+narrower subject.
 
 **And a row names its own work, because nothing over it does any more.** The
 Catechism's paragraphs were `¶1883` and the Summa's questions a bare `I-II 184`,

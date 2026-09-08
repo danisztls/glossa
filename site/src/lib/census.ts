@@ -69,6 +69,28 @@ export const RANK_LIMIT = 20;
 export const RANK_KINDS = ['books', 'chapters', 'documents', 'ccc', 'summa'] as const;
 export const RANK_HIDDEN_BY_DEFAULT: readonly string[] = ['books'];
 
+/**
+ * The name of each kind, for its chip and for the hidden name behind its rows'
+ * marks.
+ *
+ * THE SUMMA'S IS ITS SHELF'S, which is `CENSUS_SHELF_KEYS`' rule and
+ * `CITER_KIND_KEYS`' before it: every other name on this page is a section of
+ * the library, and one naming a single book among four naming shelves reads as
+ * a different kind of thing. It also costs no string — `doctores.landing.title`
+ * is what `/doctores` calls itself and is already written wherever that page
+ * is, where `census.rank.summa` was a fifth sentence to translate saying the
+ * same thing about a narrower subject.
+ */
+const RANK_LABEL_KEYS: Readonly<Record<string, string>> = {
+	books: 'census.rank.books',
+	chapters: 'census.rank.chapters',
+	documents: 'census.rank.documents',
+	ccc: 'census.rank.ccc',
+	summa: 'doctores.landing.title'
+};
+
+export const rankLabelKey = (kind: string) => RANK_LABEL_KEYS[kind] ?? `census.rank.${kind}`;
+
 /** The glyph each kind's rows carry — the mark of the work they belong to,
  *  which is why Scripture's two kinds share one. */
 const RANK_ICONS: Readonly<Record<string, string>> = {

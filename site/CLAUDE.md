@@ -1686,8 +1686,9 @@ deploy on it. `site/docs/census.md` holds the rationale.
 - **A hover mark here may not change a text metric**, which is
   `/calendarium`'s rule met a second time: the lit headings went bold, so the
   first column grew, forty language columns moved, and the cell under the
-  pointer slid out from under it. Colour and a `box-shadow` rule — paint
-  reserves nothing, so there is no transparent placeholder to keep in step.
+  pointer slid out from under it. What marks the lit cell, its row and its
+  column is colour alone — one mark in three places, where a rule under two of
+  them would be a second mark for one event.
 - **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
   `/calendarium/liturgia` already stands on, because its `census.*` strings are
   written in English alone. Its head is fixed and English in `STATIC_HEADS` to

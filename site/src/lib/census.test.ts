@@ -10,6 +10,7 @@ import {
 	censusShelves,
 	coverageRows,
 	mergedRanking,
+	rankLabelKey,
 	rankedCcc,
 	rankedSumma
 } from './census';
@@ -501,8 +502,16 @@ describe('the ranking kinds', () => {
 
 	it('names a heading for every kind', () => {
 		for (const kind of RANK_KINDS) {
-			expect(en[`census.rank.${kind}`], `no heading for \`${kind}\``).toBeTruthy();
+			expect(en[rankLabelKey(kind)], `no heading for \`${kind}\``).toBeTruthy();
 		}
+	});
+
+	/** The Summa's rows are named by the SHELF, not by the book — the rule
+	 *  `CENSUS_SHELF_KEYS` and `CITER_KIND_KEYS` already follow for it, and the
+	 *  reason `census.rank.summa` no longer exists. */
+	it('names the Summa for its shelf and spends no string on it', () => {
+		expect(rankLabelKey('summa')).toBe('doctores.landing.title');
+		expect(en['census.rank.summa']).toBeUndefined();
 	});
 });
 
@@ -575,7 +584,7 @@ describe('every key the builder emits is a string somebody wrote', () => {
 	});
 
 	it.each(Object.keys(census.rankings))('names the ranking %s', (key) => {
-		expect(strings[`census.rank.${key}`]).toBeTruthy();
+		expect(strings[rankLabelKey(key)]).toBeTruthy();
 	});
 
 	it.each(Object.entries(CITER_KIND_KEYS))('names the citer kind %s', (_kind, key) => {

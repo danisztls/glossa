@@ -85,6 +85,7 @@
 		citerBreakdown,
 		coverageRows,
 		mergedRanking,
+		rankLabelKey,
 		rankedBooks,
 		rankedCcc,
 		rankedChapters,
@@ -465,7 +466,7 @@
 							type="button"
 							class="filter"
 							aria-pressed={!hidden.has(key)}
-							onclick={() => toggle(key)}>{t(`census.rank.${key}`)}</button
+							onclick={() => toggle(key)}>{t(rankLabelKey(key))}</button
 						>
 					{/each}
 				</div>
@@ -485,9 +486,9 @@
 						     visible text it was the kind repeated down twenty rows,
 						     which is the noise this page was rebuilt to lose. -->
 						{#if row.icon}
-							<span class="shelf-icon" title={t(`census.rank.${row.kind}`)}>
+							<span class="shelf-icon" title={t(rankLabelKey(row.kind))}>
 								<Icon name={row.icon} />
-								<span class="visually-hidden">{t(`census.rank.${row.kind}`)}</span>
+								<span class="visually-hidden">{t(rankLabelKey(row.kind))}</span>
 							</span>
 						{/if}
 						<a href={row.href} title={row.fullTitle ?? undefined}>{row.label}</a>
@@ -775,15 +776,16 @@
 	 * `min-width` on the column heads makes it worse rather than safer, since
 	 * a two-letter tag in bold is what overruns it.
 	 *
-	 * Colour and a painted rule instead. `box-shadow` is paint: it reserves
-	 * nothing and shifts nothing, so unlike a transparent border there is no
-	 * placeholder to keep in step with the lit state. Both headings take the
-	 * accent the lit cell takes, so the row, the column and the cell read as
-	 * one mark rather than three things happening at once.
+	 * COLOUR AND NOTHING ELSE. A painted underline stood here for one revision
+	 * and was a second mark for a state the colour already carries: three
+	 * things change at once when a cell is pointed at — the cell, its row and
+	 * its column — and each of them turning accent is one mark in three places,
+	 * where a rule under two of them is a different mark on the same event.
+	 * Both headings take the accent the lit cell takes, and that is the whole
+	 * of it.
 	 */
 	.matrix th.lit {
 		color: var(--color-accent);
-		box-shadow: inset 0 -2px 0 var(--color-accent);
 	}
 
 	/* `.work` sets its own colour, so the rule above cannot reach it. */
