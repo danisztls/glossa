@@ -404,6 +404,20 @@ const ARRANGEMENTS: Record<string, Record<string, readonly (readonly [Span, Span
 	'greek-interleaved': { esth: ESTHER_GREEK_INTERLEAVED }
 };
 
+/** The row covering `chapter:verse`, applied; `undefined` where none does. */
+function throughSpans(
+	rows: readonly (readonly [Span, Span])[],
+	chapter: number,
+	verse: number
+): { chapter: number; verse: number } | undefined {
+	for (const [from, to] of rows) {
+		if (chapter === from[0] && verse >= from[1] && verse <= from[2]) {
+			return { chapter: to[0], verse: to[1] + (verse - from[1]) };
+		}
+	}
+	return undefined;
+}
+
 /** Whether `arrangement` re-addresses this book at all. */
 export function isArrangedBook(arrangement: string, osis: string): boolean {
 	return ARRANGEMENTS[arrangement]?.[osis] !== undefined;
@@ -426,12 +440,186 @@ export function arrangedToVulgate(
 	chapter: number,
 	verse: number
 ): { chapter: number; verse: number } | undefined {
-	for (const [from, to] of ARRANGEMENTS[arrangement]?.[osis] ?? []) {
-		if (chapter === from[0] && verse >= from[1] && verse <= from[2]) {
-			return { chapter: to[0], verse: to[1] + (verse - from[1]) };
-		}
+	return throughSpans(ARRANGEMENTS[arrangement]?.[osis] ?? [], chapter, verse);
+}
+
+// --------------------------------------------------------------------------
+// Renumbered chapters: one edition's LABELS, in the chapter it printed them in
+//
+// The third and last thing `sync-corpus.mjs` re-addresses, and the narrowest.
+// An arrangement moves text BETWEEN chapters; this moves nothing at all —
+// every verse stays where the edition printed it and only its number changes.
+// Six chapters across four editions, each verified against
+// `bible.clementina.la` verse by verse (see PLAN.md's table for the shapes).
+//
+// Keyed by WORK ID and not by a manifest field, which is the one structural
+// difference from the two tables above. `psalm_numbering` and
+// `book_arrangement` record what an edition says about ITSELF — a numbering
+// tradition it follows, a way it chose to print a book — and a scraper can
+// write them down. These rows are not a fact any edition declares. They were
+// MEASURED, by reading a chapter beside the Clementine's, and the edition they
+// are true of is the only name they have.
+//
+// Not a numbering tradition, so — like an arrangement and unlike
+// `psalm_numbering` — this must never touch a citation. A reader typing
+// `Ps 147:1` means the Vulgate's, not the number Douay-Rheims prints over
+// that verse. `sync-corpus.mjs` is the only permitted caller.
+//
+// TWO SHAPES, and telling them apart is the whole reason this is a table of
+// spans rather than a per-chapter offset:
+//
+//   - Three editions keep the HEBREW's continuous numbering through the second
+//     half of a psalm the Vulgate splits, so the whole chapter is shifted:
+//     `ps` 147 is numbered 12-20 where the Clementine numbers 1-9, and
+//     Douay-Rheims's `ps` 115 is numbered 10-19 for 1-10. A constant offset.
+//   - Two chapters are at Clementine addresses nearly throughout and diverge
+//     at ONE point. Douay-Rheims's `wis` 18 agrees to verse 24 and prints its
+//     last verse as 26; `bible.straubinger.es`'s `2sam` 13 joins the
+//     Clementine's 3 to its own 2, labels the Clementine's 4 as 3, skips 4 to
+//     resynchronise, and agrees from 5 on. An offset over either would move
+//     thirty-odd verses that are already right.
+//
+// Each row set is TOTAL over the chapter it claims and identity elsewhere, so
+// a verse the table does not cover in a chapter it names means the edition was
+// re-parsed into a shape these rows no longer describe. `edition_check.py`
+// re-derives the same comparison from the two editions on every run.
+//
+// Straubinger's `2sam` 13 keeps a verse 39 the Clementine does not have: the
+// edition divides the Clementine's 38 in two, and a division is not a
+// numbering error. Nothing can cite it, and inventing a merge to hide it would
+// put two verses at one address.
+// --------------------------------------------------------------------------
+
+const RENUMBERED: Record<string, Record<string, readonly (readonly [Span, Span])[]>> = {
+	'bible.allioli.de': {
+		ps: [
+			[
+				[147, 12, 20],
+				[147, 1, 9]
+			]
+		]
+	},
+	'bible.douay-rheims.en': {
+		ps: [
+			[
+				[115, 10, 19],
+				[115, 1, 10]
+			],
+			[
+				[147, 12, 20],
+				[147, 1, 9]
+			]
+		],
+		wis: [
+			[
+				[18, 1, 24],
+				[18, 1, 24]
+			],
+			[
+				[18, 26, 26],
+				[18, 25, 25]
+			] // the Vulgate's 18:25, "His autem cessit qui exterminabat"
+		]
+	},
+	'bible.kaldi.hu': {
+		ps: [
+			[
+				[147, 12, 20],
+				[147, 1, 9]
+			]
+		]
+	},
+	'bible.straubinger.es': {
+		'2sam': [
+			[
+				[13, 1, 2],
+				[13, 1, 2]
+			], // its 2 carries the Clementine's 2 AND 3; 3 has no verse here
+			[
+				[13, 3, 3],
+				[13, 4, 4]
+			], // "Qui dixit ad eum: Quare sic attenuaris"
+			[
+				[13, 5, 39],
+				[13, 5, 39]
+			] // agreed from here; 39 is the tail of the Clementine's 38
+		]
 	}
-	return undefined;
+};
+
+/** Whether this edition renumbers this book's verses anywhere. */
+export function isRenumberedBook(workId: string, osis: string): boolean {
+	return RENUMBERED[workId]?.[osis] !== undefined;
+}
+
+/**
+ * One verse of a renumbered edition at its canonical Vulgate address.
+ *
+ * `undefined` both for a chapter the table does not claim — the ordinary case,
+ * where the caller passes the verse through unchanged — and for a verse
+ * missing from a chapter it DOES claim, which is a defect. The two are
+ * distinguished by `chapterIsRenumbered`, so the caller can pass one through
+ * and raise on the other.
+ */
+export function renumberedToVulgate(
+	workId: string,
+	osis: string,
+	chapter: number,
+	verse: number
+): { chapter: number; verse: number } | undefined {
+	return throughSpans(RENUMBERED[workId]?.[osis] ?? [], chapter, verse);
+}
+
+/** Whether any row of this edition's table claims this chapter. */
+export function chapterIsRenumbered(workId: string, osis: string, chapter: number): boolean {
+	return (RENUMBERED[workId]?.[osis] ?? []).some(([from]) => from[0] === chapter);
+}
+
+/**
+ * The lowest source and target verse of a renumbered chapter, for an anchor
+ * that sits ABOVE the chapter's first verse rather than at one of them.
+ *
+ * `bible.douay-rheims.en` prints a heading over the whole of `ps` 115 and
+ * `ps` 147 and anchors it at `before_verse: 1`, which is not a verse of either
+ * chapter in its own numbering — those begin at 10 and 12 — nor of the
+ * Clementine's, which begin at 1 and have the heading nowhere. The schema has
+ * no field for a heading belonging to a chapter rather than to a verse
+ * (docs/corpus-schema.md, "Headings are presentation"), so re-addressing it to
+ * the chapter's own first verse is what keeps it where the source prints it.
+ * `bible.kaldi.hu` anchors the same Ps 147 heading at its first real verse,
+ * which is what an in-range anchor looks like and needs none of this.
+ *
+ * Deliberately not folded into `renumberedToVulgate`: a verse below the rows
+ * is a defect, and only a caller that knows it holds an ANCHOR may read it as
+ * "above the chapter" instead.
+ */
+export function renumberedChapterHead(
+	workId: string,
+	osis: string,
+	chapter: number
+): { source: number; target: number } | undefined {
+	let head: { source: number; target: number } | undefined;
+	for (const [from, to] of RENUMBERED[workId]?.[osis] ?? []) {
+		if (from[0] !== chapter) continue;
+		if (head === undefined || from[1] < head.source) head = { source: from[1], target: to[1] };
+	}
+	return head;
+}
+
+/** A span table as plain JSON, sorted so the export is byte-stable. */
+function spanTableJson(table: Record<string, Record<string, readonly (readonly [Span, Span])[]>>) {
+	return Object.fromEntries(
+		Object.entries(table)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([name, books]) => [
+				name,
+				Object.fromEntries(
+					Object.entries(books)
+						.sort(([a], [b]) => a.localeCompare(b))
+						.map(([osis, rows]) => [osis, rows.map(([from, to]) => [[...from], [...to]])])
+				)
+			])
+	);
 }
 
 // --------------------------------------------------------------------------
@@ -611,16 +799,11 @@ export const VERSIFICATION_TABLE = {
 	// above. `divergence.py` reads them from the exported JSON to check the
 	// bijection against the editions themselves; it held its own copy for one
 	// commit, which is the drift this export exists to prevent.
-	arrangements: Object.fromEntries(
-		Object.entries(ARRANGEMENTS)
-			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([name, books]) => [
-				name,
-				Object.fromEntries(
-					Object.entries(books)
-						.sort(([a], [b]) => a.localeCompare(b))
-						.map(([osis, rows]) => [osis, rows.map(([from, to]) => [[...from], [...to]])])
-				)
-			])
-	)
+	arrangements: spanTableJson(ARRANGEMENTS),
+	// Keyed by work id where the arrangements are keyed by a manifest field —
+	// see the table's own comment. It crosses over for the same reason and to
+	// the same kind of consumer: `edition_check.py` reports a chapter whose
+	// labels disagree with the Clementine's, and needs to know which of them
+	// the sync already answers for.
+	renumbered: spanTableJson(RENUMBERED)
 };

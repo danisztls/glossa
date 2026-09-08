@@ -86,6 +86,25 @@ def to_vulgate(osis: str, chapter: int, verse: int | None) -> tuple[int, int | N
     return moved["chapter"], moved["verse"]
 
 
+def renumbered_chapters(work_id: str, osis: str) -> set[int]:
+    """The chapters of `work_id`'s `osis` whose verse LABELS the sync re-addresses.
+
+    Six chapters across four editions number their verses differently from the
+    Clementine while printing the text in the same chapter -- three keep the
+    Hebrew's continuous numbering through the second half of a split psalm, two
+    diverge at a single verse. `sync-corpus.mjs` re-addresses them, so a check
+    here that reported them would be naming a defect the site has already
+    answered for. Keyed by WORK ID and not by a manifest field: unlike a
+    numbering or an arrangement, this is not something an edition declares
+    about itself -- it was measured against the Clementine.
+
+    Data, like `arrangement`, and read here only to be SUBTRACTED. Empty for a
+    book, or an edition, that renumbers nothing.
+    """
+    rows = _table().get("renumbered", {}).get(work_id, {}).get(osis, [])
+    return {source[0] for source, _ in rows}
+
+
 def arrangement(
     name: str, osis: str
 ) -> list[tuple[tuple[int, int, int], tuple[int, int, int]]]:

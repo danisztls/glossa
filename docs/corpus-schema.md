@@ -358,11 +358,13 @@ The corpus's address space is Vulgate chapter/verse. Two fields say an edition's
 | `psalm_numbering`  | the numbering TRADITION the text is numbered in     | yes — the same mapper resolves references |
 | `book_arrangement` | where this EDITION chose to print a book's material | never                                     |
 
+**A third fact has no field here, and that is the point.** Six chapters across four editions number their verses differently from the Clementine while printing the text in the same chapter — `bible.douay-rheims.en`'s Ps 147 is numbered 12–20 for the Vulgate's 1–9. No edition declares this about itself; it was measured by reading each chapter beside `bible.clementina.la`. A manifest field records what a source said, so the rows are keyed by work id in `site/src/lib/versification.ts` (`RENUMBERED`) and applied at the same seam. **Ask which side knows the fact before adding a field for it.**
+
 `bible.cpdv.en` is the only edition with an arrangement (`"greek-interleaved"`): it prints the Greek additions to Esther where they fall in the story rather than appended as 10:4–16:24, so its stored Esther has fifteen chapters. A reader typing "Esther 13" still means the Vulgate's 13, which is why an arrangement must never be applied to a reference — only to the edition's own text, once, in `sync-corpus.mjs`.
 
 Both are stored as printed and converted on the way to the site, because `raw/` and `build/` are the record of what the source said. The rows live in `site/src/lib/versification.ts`; `pipeline/scrapers/bible/divergence.py` re-derives the bijection they claim from the editions on every run.
 
-**An arrangement may leave a verse gap, and that is honest.** CPDV prints as one verse what the Vulgate divides into 4:12 and 4:13, so the renumbered edition has no 4:13 — its words are all at 4:12. Splitting the sentence to fill the address would be inventing a division the edition never printed.
+**An arrangement may leave a verse gap, and that is honest.** CPDV prints as one verse what the Vulgate divides into 4:12 and 4:13, so the renumbered edition has no 4:13 — its words are all at 4:12. Splitting the sentence to fill the address would be inventing a division the edition never printed. `bible.straubinger.es`'s 2 Samuel 13 leaves one the same way and keeps a verse 39 the Clementine has no address for, its edition dividing the Clementine's 38 in two. A gap under-serves one citation; a merge would put two verses at one address.
 
 ## Catechism — `structure.json`
 

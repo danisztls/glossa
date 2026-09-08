@@ -151,6 +151,7 @@ from .versification import (
     WholesaleDivergence,
     arrangement,
     is_wholesale_divergent,
+    renumbered_chapters,
     to_vulgate,
 )
 
@@ -211,6 +212,7 @@ __all__ = [
     "read_bytes_or_none",
     "read_text_or_none",
     "record_capture",
+    "renumbered_chapters",
     "require_all_applied",
     "require_corpus",
     "roman_to_int",

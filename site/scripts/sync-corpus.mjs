@@ -96,8 +96,12 @@ import {
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
 import {
 	arrangedToVulgate,
+	chapterIsRenumbered,
 	isArrangedBook,
 	isDivergentBook,
+	isRenumberedBook,
+	renumberedChapterHead,
+	renumberedToVulgate,
 	toVulgateCandidates
 } from '../src/lib/versification.ts';
 import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
@@ -396,6 +400,93 @@ const arrangedVerseMapper = (arrangement, osis, workId) => (chapter, verse) => {
 };
 
 /**
+ * One verse of a RENUMBERED chapter at its Vulgate address.
+ *
+ * Two failures to keep apart. A chapter no row claims is the ordinary case —
+ * nearly every chapter of these four editions — and passes through with its
+ * own number. A verse missing from a chapter the table DOES claim is a defect
+ * and raises: the rows are total over the chapter they name, so a hole in one
+ * means a re-parse changed the shape the table was measured against.
+ */
+const renumberedVerseMapper = (workId, osis) => (chapter, verse) => {
+	const target = renumberedToVulgate(workId, osis, chapter, verse);
+	if (target) return target;
+	if (chapterIsRenumbered(workId, osis, chapter)) {
+		throw new Error(
+			`${workId} ${osis} ${chapter}:${verse}: no row renumbers this verse, but its ` +
+				`chapter is renumbered — the edition no longer has the shape ` +
+				`site/src/lib/versification.ts describes`
+		);
+	}
+	return { chapter, verse };
+};
+
+/**
+ * A HEADING's anchor in a renumbered chapter, which may sit above the
+ * chapter's first verse where a verse may not.
+ *
+ * Everything at or inside the rows goes through the verse mapper unchanged;
+ * only an anchor below them is re-read, as the head of the chapter. See
+ * `renumberedChapterHead` for why Douay-Rheims has two of those and why
+ * folding the rule into the verse mapper would hide a real defect.
+ */
+const renumberedAnchorMapper = (workId, osis) => (chapter, verse) => {
+	const head = renumberedChapterHead(workId, osis, chapter);
+	if (head !== undefined && verse < head.source) return { chapter, verse: head.target };
+	return renumberedVerseMapper(workId, osis)(chapter, verse);
+};
+
+/**
+ * One book's RENUMBERED chapters relabelled in place, the rest left alone.
+ *
+ * Deliberately not `toVulgateChapters`, which is the right tool for the other
+ * two callers and the wrong one here. That function rebuilds a book from
+ * scratch because a chapter can split across two and two can merge into one;
+ * a renumbering moves nothing between chapters, and rebuilding anyway costs
+ * more than it looks. **A chapter is fingerprinted by `JSON.stringify`**
+ * (`lastmod.mjs`), so re-emitting an untouched chapter with its keys in a new
+ * order changes its digest — and the ledger then dates every chapter of the
+ * book today. Two chapters of `bible.douay-rheims.en` changed and 169
+ * addresses moved, which is a `lastmod` a crawler is entitled to believe.
+ *
+ * Untouched chapters keep their object identity, so the rest of the book is
+ * byte-identical. Within a claimed chapter the spreads preserve key order too
+ * — overwriting an existing key leaves it where it was — so only the numbers
+ * differ.
+ */
+function renumberChapters(workId, osis, chapters) {
+	const mapVerse = renumberedVerseMapper(workId, osis);
+	const mapAnchor = renumberedAnchorMapper(workId, osis);
+	return chapters.map((ch) => {
+		if (!chapterIsRenumbered(workId, osis, ch.n)) return ch;
+		// The in-place rewrite rests on a renumbering never moving a verse to
+		// another chapter, which every row of the table satisfies today. Said
+		// out loud rather than assumed: a row that broke it would silently
+		// leave the verse under the wrong chapter's number.
+		const inChapter = (from, to) => {
+			if (to.chapter !== ch.n) {
+				throw new Error(
+					`${workId} ${osis} ${ch.n}:${from} renumbers to chapter ${to.chapter} — ` +
+						`a renumbering may only relabel within its own chapter`
+				);
+			}
+			return to.verse;
+		};
+		const out = {
+			...ch,
+			verses: ch.verses.map((v) => ({ ...v, n: inChapter(v.n, mapVerse(ch.n, v.n)) }))
+		};
+		if (ch.headings) {
+			out.headings = ch.headings.map((h) => ({
+				...h,
+				before_verse: inChapter(h.before_verse, mapAnchor(ch.n, h.before_verse))
+			}));
+		}
+		return out;
+	});
+}
+
+/**
  * One book's chapters re-addressed into the corpus's canonical Vulgate
  * numbering, verse by verse through `mapVerse`.
  *
@@ -405,6 +496,10 @@ const arrangedVerseMapper = (arrangement, osis, workId) => (chapter, verse) => {
  * for, and both have to become one address space before anything downstream —
  * the routes, the xref index, compare mode, the Doré anchors — can assume the
  * uniformity all of them already assume.
+ *
+ * `renumberChapters` above is the third re-addressing and deliberately NOT a
+ * third caller: it moves nothing between chapters, so it has no need of the
+ * rebuild this does, and paying for one costs the lastmod ledger.
  *
  * A source chapter can SPLIT across two target chapters and two can MERGE into
  * one, so chapters are rebuilt from scratch rather than relabelled: Heb 9 and
@@ -1604,6 +1699,15 @@ for (const workId of workIds) {
 					workId,
 					arrangedVerseMapper(arrangement, book.osis, workId)
 				);
+			}
+			// The third fact, and the one no manifest field declares: a chapter
+			// this edition numbers differently from the Clementine while
+			// printing its text in the same chapter. Keyed by work id for that
+			// reason — see the table's comment in `versification.ts`. It
+			// relabels in place rather than going through `toVulgateChapters`,
+			// which is what keeps the rest of the book byte-identical.
+			if (isRenumberedBook(workId, book.osis)) {
+				book.chapters = renumberChapters(workId, book.osis, book.chapters);
 			}
 			// AFTER the versification conversion, so the note's own address is
 			// in the same space as the references it makes.

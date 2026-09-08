@@ -28,11 +28,18 @@ import json
 import re
 import sys
 import unicodedata
+from collections.abc import Container
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import build_root, is_wholesale_divergent, require_corpus
+from common import (
+    arrangement,
+    build_root,
+    is_wholesale_divergent,
+    renumbered_chapters,
+    require_corpus,
+)
 
 #: The 73 lowercase OSIS codes in canonical order. Not derived from an existing
 #: edition at runtime: a new edition must be checkable against the canon even
@@ -224,9 +231,18 @@ def check_unit(rep: Report, where: str, unit: dict) -> None:
 
 
 def check_book(
-    rep: Report, path: Path, osis: str, expect_order: int | None
+    rep: Report,
+    path: Path,
+    osis: str,
+    expect_order: int | None,
+    reconciled: Container[int] = (),
 ) -> dict[int, tuple[int, int]]:
-    """One `books/{osis}.json`. Returns `{chapter: (verse count, highest verse)}`."""
+    """One `books/{osis}.json`. Returns `{chapter: (verse count, highest verse)}`.
+
+    `reconciled` names the chapters `sync-corpus.mjs` re-addresses, whose
+    heading anchors are read against the CLEMENTINE's numbering rather than
+    this edition's -- see the heading check below.
+    """
     doc = json.loads(path.read_text(encoding="utf-8"))
     if doc.get("osis") != osis:
         rep.error(f"{osis}: osis field is {doc.get('osis')!r}, filename says {osis!r}")
@@ -275,8 +291,22 @@ def check_book(
         for h in ch.get("headings") or []:
             bv = h.get("before_verse")
             if bv not in seen_v:
-                rep.error(
+                # A heading above the whole chapter, in a chapter the sync
+                # renumbers, is the one case this is not a defect: the schema
+                # has no field for a heading belonging to a chapter rather than
+                # to a verse, and `sync-corpus.mjs` re-addresses the anchor to
+                # the chapter's own first verse. Anything else -- including an
+                # anchor INSIDE the chapter's range that still names no verse
+                # -- is the error it always was.
+                head = n in reconciled and isinstance(bv, int) and bv < min(seen_v)
+                say = rep.note if head else rep.error
+                say(
                     f"{osis} {n}: heading before_verse {bv!r} is not a verse here"
+                    + (
+                        " — the sync re-addresses it to the chapter's first"
+                        if head
+                        else ""
+                    )
                 )
             if (lvl := h.get("level")) is not None and lvl not in (1, 2, 3, 4):
                 rep.error(f"{osis} {n}: heading level {lvl!r} outside 1–4")
@@ -371,7 +401,9 @@ def check_work(work: str, ref: dict | None) -> Report:
         if not p.is_file():
             rep.error(f"{osis}: books/{osis}.json is missing")
             continue
-        shapes[osis] = check_book(rep, p, osis, order_of.get(osis))
+        shapes[osis] = check_book(
+            rep, p, osis, order_of.get(osis), renumbered_chapters(work, osis)
+        )
     for stray in sorted((root / "books").glob("*.json")):
         if stray.stem not in CANON:
             rep.error(f"books/{stray.name} is not a canonical OSIS code")
@@ -389,24 +421,35 @@ def check_work(work: str, ref: dict | None) -> Report:
     #: for the Psalter and the divergence is not confined to it -- see the note
     #: this check emits below.
     hebrew = manifest.get("psalm_numbering") == "hebrew"
+    arranged = manifest.get("book_arrangement")
     diverging = renumbered = 0
     for osis, ours in shapes.items():
         theirs = ref.get(osis) or {}
+        reconciled = renumbered_chapters(work, osis)
         gone = sorted(set(theirs) - set(ours))
         if gone:
-            # A Hebrew-numbered edition is SUPPOSED to be short a chapter in
-            # the three books that diverge wholesale: Hebrew Malachi has 3
-            # chapters where the Vulgate has 4 (Heb 3:19-24 = Vulg 4:1-6), and
-            # Joel is the mirror image. `bible.crampon.fr` prints Malachi 3
-            # with 24 verses and no chapter 4, which is the edition being
-            # correct, not a dropped chapter -- so this is a note there and an
-            # error everywhere else.
-            expected = hebrew and is_wholesale_divergent(osis)
-            say = rep.note if expected else rep.error
+            # Two editions are SUPPOSED to be short a chapter here, each for a
+            # reason its own manifest declares, and both are answered at the
+            # sync. A Hebrew-numbered edition loses one in the three books that
+            # diverge wholesale: Hebrew Malachi has 3 chapters where the
+            # Vulgate has 4 (Heb 3:19-24 = Vulg 4:1-6), and Joel is the mirror
+            # image, so `bible.crampon.fr` prints Malachi 3 with 24 verses and
+            # no chapter 4. An ARRANGED edition loses one because it prints the
+            # passage somewhere else: `bible.cpdv.en` interleaves the Greek
+            # additions to Esther, so it has no chapter 16 and a citation to
+            # `Esther 16` resolves in it anyway. Both are the edition being
+            # correct, not a dropped chapter -- a note there, an error
+            # everywhere else.
+            if hebrew and is_wholesale_divergent(osis):
+                why = " — expected, this book diverges wholesale"
+            elif arranged and arrangement(arranged, osis):
+                why = f" — expected, the {arranged!r} arrangement re-addresses it at the sync"
+            else:
+                why = ""
+            say = rep.note if why else rep.error
             say(
                 f"{osis}: {len(gone)} chapter(s) present in {REFERENCE} and absent "
-                f"here: {gone[:8]}{' …' if len(gone) > 8 else ''}"
-                + (" — expected, this book diverges wholesale" if expected else "")
+                f"here: {gone[:8]}{' …' if len(gone) > 8 else ''}" + why
             )
         for n in sorted(set(ours) & set(theirs)):
             if ours[n] == theirs[n]:
@@ -417,6 +460,14 @@ def check_work(work: str, ref: dict | None) -> Report:
                 # Same count, different labels -- flagged apart from ordinary
                 # divergence because no count-based check can see it and every
                 # citation into the chapter lands somewhere wrong.
+                #
+                # Unless the sync already re-addresses it. That table is the
+                # ANSWER to this note, derived by reading exactly the chapters
+                # it reported, so leaving the note standing would keep naming a
+                # defect somebody has fixed -- and a check nobody can clear is
+                # a check nobody reads.
+                if n in reconciled:
+                    continue
                 renumbered += 1
                 rep.note(
                     f"{osis} {n}: RENUMBERED — {n_here} verses in both, but "

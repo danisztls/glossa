@@ -125,49 +125,55 @@ the rest are held in `national/held.ts` with the count of days each differs on.
 Found by `pipeline/scrapers/bible/edition_check.py`, which should be run over
 any edition anyone touches.
 
-- **`bible.cpdv.en` has no Esther 16, and its Esther 15 is short.** The book
-  stops at chapter 15 with 14 verses where `bible.clementina.la` has 19 —
-  roughly 29 verses of the Greek additions missing from a live edition, since
-  the edition was ingested. Every check the corpus had was per-unit; this is a
-  missing unit. Diagnose before fixing: a dropped last chapter and a source gap
-  want different responses.
-- **`bible.douay-rheims.en` anchors headings on verses that do not exist** —
-  `ps` 115 and 147 both carry a heading at `before_verse: 1`, but those Vulgate
-  psalms begin at verses 10 and 12. The fix depends on whether the source prints
-  the heading above the psalm as a whole (in which case the schema has no field
-  for it, and that is the finding) or above its first real verse.
+- **Three of `bible.matos-soares.pt`'s notes are a headword with nothing after
+  it** — `esth` 12:6, `1pet` 2:2 and `1pet` 3:4 each carry the whole note in
+  `lemma` and an empty `text`, so the card opens on nothing. The shape says
+  what happened: `Até aqui o proémio.` is a remark about the passage and not a
+  quotation from it, and the parser reads a note's opening clause as its
+  headword. **A field that is optional in the schema and mandatory in the
+  parser is where this class hides** — fix it where the split is decided, not
+  by moving three strings.
 
-### Chapters whose verses are numbered differently
+### Chapters at an address the Clementine does not give them
 
-| Edition                 | Chapter  | Verses | Numbered | Clementine |
-| ----------------------- | -------- | ------ | -------- | ---------- |
-| `bible.allioli.de`      | Ps 147   | 9      | 12–20    | 1–9        |
-| `bible.douay-rheims.en` | Ps 147   | 9      | 12–20    | 1–9        |
-| `bible.kaldi.hu`        | Ps 147   | 9      | 12–20    | 1–9        |
-| `bible.douay-rheims.en` | Ps 115   | 10     | 10–19    | 1–10       |
-| `bible.crampon.fr`      | Ps 55    | 13     | 12–24    | 1–13       |
-| `bible.douay-rheims.en` | Wis 18   | 25     | 2–26     | 1–25       |
-| `bible.kaldi.hu`        | Heb 13   | 25     | 2–26     | 1–25       |
-| `bible.straubinger.es`  | 2 Sam 13 | 38     | 2–39     | 1–38       |
+Six are reconciled: three editions keep the Hebrew's continuous numbering
+through the second half of a psalm the Vulgate splits, and two chapters diverge
+at a single verse. `versification.ts`'s `RENUMBERED` holds the rows and
+`sync-corpus.mjs` applies them, beside the Crampon and CPDV branches.
 
-**`Ps 147:1` resolves in the Clementine and resolves to nothing in three other
-editions.** The Psalms cases are one convention, not three bugs: where the
-Vulgate splits a Hebrew psalm across two chapters, these editions keep the
-Hebrew's continuous numbering in the second half. Three independent editions do
-it, so it is the editions being editions — but the corpus's address space is the
-Clementine's, and nothing reconciles them.
+What is left is the same defect where no count-based check can see it.
+`edition_check.py`'s RENUMBERED note fires only where an edition and the
+Clementine agree on a chapter's verse COUNT, which is a coincidence — 2 Samuel
+13 qualified because a merge and a split cancelled out. **A chapter whose verse
+labels are not `1..n` and whose last label is not the Clementine's last** is the
+test that does not depend on the coincidence, and it finds nineteen more:
 
-Two things follow. **This is not a parse defect and must not be "fixed" in the
-scrapers** — the stored text follows the source. And **it was invisible to every
-check the project had**: round-trip, coverage, symmetry and `balance` are all
+| Edition                | Shape                      | Chapters                                                     |
+| ---------------------- | -------------------------- | ------------------------------------------------------------ |
+| `bible.straubinger.es` | begins at verse 2          | Jer 47, Job 18, Job 19, Ps 85, Ps 96, Ps 102, Ps 121, Zeph 2 |
+| `bible.straubinger.es` | a label skipped, and short | Josh 4, Judg 5, Lev 2, Num 13, Num 20, Sir 29                |
+| `bible.allioli.de`     | a label skipped, and short | Sir 29                                                       |
+| `bible.kaldi.hu`       | a label skipped, and short | Sir 29                                                       |
+| `bible.crampon.fr`     | a label skipped, and short | Lev 6                                                        |
+
+**A skipped label is usually the edition staying aligned, not losing its
+place.** 62 of Straubinger's 77 label-gapped chapters run to the Clementine's
+own last verse: the edition joins two verses, skips the number it did not use,
+and every verse after the join is back at its Clementine address. That is why
+these nineteen have to be read one at a time rather than offset.
+
+The first group is a different animal again and is probably not an addressing
+question at all: Straubinger's Ps 85 verses 2–17 are the Clementine's 2–17
+(`Custodi animam meam` at 2 in both) and only verse 1, the superscription with
+`Inclina Domine aurem tuam`, is missing. Read those as absent text before
+reading them as wrong numbers.
+
+**Not a parse defect, and it must not be "fixed" in the scrapers** — the stored
+text follows the source, checked at `raw/`: Straubinger's own page prints no
+verse 4 in 2 Samuel 13 (`id="v-3"` then `id="v-5"`). It was invisible to every
+check the project had: round-trip, coverage, symmetry and `balance` are all
 per-unit or per-count, and a chapter with the right number of verses under the
-wrong labels passes all four. It also explains `bible.douay-rheims.en`'s two
-heading errors above; fixing the numbering answers the heading question.
-
-**Open decision: where reconciliation belongs** — a per-edition verse-offset map
-consulted at read time, or a conversion in `sync-corpus.mjs` alongside the
-Psalter conversion Crampon already needs. Same shape of problem; probably the
-same answer.
+wrong labels passes all four.
 
 ### Decisions, not tasks
 

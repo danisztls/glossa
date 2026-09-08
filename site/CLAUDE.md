@@ -2626,14 +2626,49 @@ is applied unconditionally for divergent books rather than as a fallback.
 
 **An edition stored in another numbering is converted at the sync, never at
 render** — `sync-corpus.mjs` is the one seam, and downstream there are no
-exceptions to Vulgate numbering. Two editions need it and they need it for
-different reasons, which is why `psalm_numbering` and `book_arrangement` are two
-fields: a numbering is a tradition a CITATION can also be phrased in, so its
-mapper resolves references too; an arrangement is where one edition chose to
-print a passage, and applying it to a citation would move "Esther 13" under
-every reference into the book. **A permutation is not a paraphrase** — CPDV's
-Esther carries all 274 of its verses onto the Vulgate's 275, so re-addressing it
-costs no text (`divergence.py` re-derives that bijection every run).
+exceptions to Vulgate numbering. Three tables feed it and none may be folded
+into another, because each answers a different question about where its rows
+came from:
+
+- **`psalm_numbering`** is a tradition a CITATION can also be phrased in, so
+  its mapper is what `refs.ts` resolves references with. `bible.crampon.fr`.
+- **`book_arrangement`** is where one edition chose to print a passage, and
+  applying it to a citation would move "Esther 13" under every reference into
+  the book. `bible.cpdv.en`. **A permutation is not a paraphrase** — CPDV's
+  Esther carries all 274 of its verses onto the Vulgate's 275, so re-addressing
+  it costs no text (`divergence.py` re-derives that bijection every run).
+- **`RENUMBERED`** is one edition's LABELS in the chapter it printed them in,
+  and it is keyed by WORK ID because it is the one of the three no manifest
+  declares — the other two record what an edition says about itself and a
+  scraper writes them down; these rows were measured against the Clementine.
+  Six chapters, four editions. Never reachable from a citation, for
+  `book_arrangement`'s reason.
+
+**Rows, not offsets, and the two shapes are why.** Three editions shift a whole
+chapter (Ps 147 numbered 12–20 for the Vulgate's 1–9); two agree with the
+Clementine nearly throughout and diverge at one verse, so an offset over
+`bible.straubinger.es`'s 2 Samuel 13 would move thirty-odd verses that are
+already right.
+
+**A heading may be anchored above a chapter's first verse where a verse may
+not**, which is why `toVulgateChapters` takes a `mapAnchor` beside its
+`mapVerse`. Douay-Rheims prints one over the whole of Ps 115 and Ps 147 at
+`before_verse: 1` — no verse of either chapter in either numbering — and the
+schema has no field for a heading belonging to a chapter. Folding the rule into
+the verse mapper would silence a real defect.
+
+**Re-emitting an unchanged unit dates it today**, so the renumbering relabels
+in place instead of going through `toVulgateChapters`. That function rebuilds a
+book from scratch — right where a chapter can split or merge, and free-looking
+everywhere else — but `lastmod.mjs` fingerprints a chapter with
+`JSON.stringify`, and a rebuilt object serialises its keys in a new order. Two
+chapters changed and the ledger moved 169 addresses. **Anything that rewrites
+stored units owes the ledger a check of how many it claims to have touched.**
+
+**A check that reports what the sync already answers is a check nobody
+clears.** `edition_check.py` reads the exported tables and downgrades exactly
+those chapters to notes; `PLAN.md` holds what is left, which is the same defect
+where a count-based comparison cannot see it.
 
 ## The footer imprint
 

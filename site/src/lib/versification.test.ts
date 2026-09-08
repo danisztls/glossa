@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
 	arrangedToVulgate,
+	chapterIsRenumbered,
 	isArrangedBook,
 	isDivergentBook,
+	isRenumberedBook,
+	renumberedChapterHead,
+	renumberedToVulgate,
 	resolveVulgate,
 	toVulgateCandidates
 } from './versification';
@@ -464,5 +468,135 @@ describe("arrangements — an edition's own text, never a citation", () => {
 		expect(arrangedToVulgate('greek-interleaved', 'esth', 16, 1)).toBeUndefined();
 		expect(arrangedToVulgate('greek-interleaved', 'gen', 1, 1)).toBeUndefined();
 		expect(arrangedToVulgate('no-such-arrangement', 'esth', 1, 1)).toBeUndefined();
+	});
+});
+
+describe("renumbered chapters — an edition's own labels, never a citation", () => {
+	/**
+	 * The same negative property the arrangements have, and for the same
+	 * reason: a reader typing `Ps 147:1` means the Vulgate's first verse of
+	 * that psalm, not the verse Douay-Rheims prints the number 1 over — which
+	 * is no verse at all, that chapter beginning at 12. If this table ever
+	 * leaked into `toVulgateCandidates` every citation into four editions'
+	 * six chapters would move.
+	 */
+	it('leaves references into the renumbered chapters exactly where they were', () => {
+		expect(toVulgateCandidates('wis', 18, 26)).toEqual([{ osis: 'wis', chapter: 18, verse: 26 }]);
+		expect(toVulgateCandidates('2sam', 13, 3)).toEqual([{ osis: '2sam', chapter: 13, verse: 3 }]);
+	});
+
+	it('claims a book only for the edition that renumbers it', () => {
+		expect(isRenumberedBook('bible.douay-rheims.en', 'ps')).toBe(true);
+		expect(isRenumberedBook('bible.douay-rheims.en', 'wis')).toBe(true);
+		expect(isRenumberedBook('bible.douay-rheims.en', 'gen')).toBe(false);
+		expect(isRenumberedBook('bible.allioli.de', 'wis')).toBe(false);
+		expect(isRenumberedBook('bible.clementina.la', 'ps')).toBe(false);
+	});
+
+	// The Hebrew's continuous numbering through the second half of a psalm the
+	// Vulgate splits — three editions, one convention. Each endpoint was read
+	// against `bible.clementina.la`.
+	it('shifts the second half of a split psalm back to 1', () => {
+		for (const workId of ['bible.allioli.de', 'bible.douay-rheims.en', 'bible.kaldi.hu']) {
+			expect(renumberedToVulgate(workId, 'ps', 147, 12)).toEqual({ chapter: 147, verse: 1 });
+			expect(renumberedToVulgate(workId, 'ps', 147, 20)).toEqual({ chapter: 147, verse: 9 });
+		}
+		// "Credidi, propter quod locutus sum" is the Clementine's 115:1
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'ps', 115, 10)).toEqual({
+			chapter: 115,
+			verse: 1
+		});
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'ps', 115, 19)).toEqual({
+			chapter: 115,
+			verse: 10
+		});
+	});
+
+	/**
+	 * The two rows a chapter-wide offset would destroy. Both chapters agree
+	 * with the Clementine over nearly their whole length and diverge at one
+	 * point, so all but one or two of their verses must come through with the
+	 * number they already have.
+	 */
+	it('moves one verse of Wisdom 18 and leaves the other twenty-four', () => {
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'wis', 18, 1)).toEqual({
+			chapter: 18,
+			verse: 1
+		});
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'wis', 18, 24)).toEqual({
+			chapter: 18,
+			verse: 24
+		});
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'wis', 18, 26)).toEqual({
+			chapter: 18,
+			verse: 25
+		});
+		// 25 is not a label this edition prints, and no row invents one
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'wis', 18, 25)).toBeUndefined();
+	});
+
+	it('relabels one verse of 2 Samuel 13 and realigns from the fifth', () => {
+		const at = (v: number) => renumberedToVulgate('bible.straubinger.es', '2sam', 13, v);
+		expect(at(2)).toEqual({ chapter: 13, verse: 2 }); // carries the Clementine's 2 AND 3
+		expect(at(3)).toEqual({ chapter: 13, verse: 4 }); // "Qui dixit ad eum"
+		expect(at(4)).toBeUndefined(); // a label the source does not print
+		expect(at(5)).toEqual({ chapter: 13, verse: 5 });
+		expect(at(38)).toEqual({ chapter: 13, verse: 38 });
+		// The edition divides the Clementine's 38 in two and keeps a 39th
+		// verse. A division is not a numbering error, so nothing merges it —
+		// which would need two verses at one address.
+		expect(at(39)).toEqual({ chapter: 13, verse: 39 });
+	});
+
+	it('claims no address twice, in any edition', () => {
+		for (const [workId, books] of [
+			['bible.allioli.de', { ps: [147] }],
+			['bible.douay-rheims.en', { ps: [115, 147], wis: [18] }],
+			['bible.kaldi.hu', { ps: [147] }],
+			['bible.straubinger.es', { '2sam': [13] }]
+		] as [string, Record<string, number[]>][]) {
+			for (const [osis, chapters] of Object.entries(books)) {
+				const targets: string[] = [];
+				for (const c of chapters) {
+					for (let v = 1; v <= 60; v += 1) {
+						const t = renumberedToVulgate(workId, osis, c, v);
+						if (t) targets.push(`${t.chapter}:${t.verse}`);
+					}
+				}
+				expect(new Set(targets).size).toBe(targets.length);
+			}
+		}
+	});
+
+	it('tells a chapter it does not claim from a hole in one it does', () => {
+		// Genesis is untouched, so `sync-corpus.mjs` passes it through …
+		expect(chapterIsRenumbered('bible.douay-rheims.en', 'ps', 23)).toBe(false);
+		// … where a missing verse of a claimed chapter is a defect and raises.
+		expect(chapterIsRenumbered('bible.douay-rheims.en', 'wis', 18)).toBe(true);
+		expect(renumberedToVulgate('bible.douay-rheims.en', 'wis', 18, 25)).toBeUndefined();
+	});
+
+	/**
+	 * Douay-Rheims prints a heading over the whole of Ps 115 and Ps 147 and
+	 * anchors it at `before_verse: 1`, a verse neither chapter has in either
+	 * numbering. It is the head of the chapter, so it re-addresses to the
+	 * chapter's own first verse — and this is deliberately a separate reader,
+	 * so a VERSE below the rows still raises.
+	 */
+	it('gives a chapter-head anchor the chapter’s first verse', () => {
+		expect(renumberedChapterHead('bible.douay-rheims.en', 'ps', 115)).toEqual({
+			source: 10,
+			target: 1
+		});
+		expect(renumberedChapterHead('bible.douay-rheims.en', 'ps', 147)).toEqual({
+			source: 12,
+			target: 1
+		});
+		// Wisdom's rows start at 1, so nothing can sit below them
+		expect(renumberedChapterHead('bible.douay-rheims.en', 'wis', 18)).toEqual({
+			source: 1,
+			target: 1
+		});
+		expect(renumberedChapterHead('bible.douay-rheims.en', 'ps', 23)).toBeUndefined();
 	});
 });
