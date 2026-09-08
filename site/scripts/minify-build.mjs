@@ -59,13 +59,12 @@
  * JavaScript that re-minifies to itself, and the check passes while the bytes
  * regress. A scan for comment syntax fires on the output whatever produced it.
  *
- * **Four files carry comments and keep them, deliberately** (decided
+ * **Three files carry comments and keep them, deliberately** (decided
  * 2026-08-28), which is why the audit scans by file type rather than sweeping
  * every byte of text in the build:
  *
  * | file                        | why the comments stay                        |
  * | --------------------------- | -------------------------------------------- |
- * | `robots.txt`                | Its 22 lines say why there is no `Disallow` and why the sitemap is the only link graph. Addressed to the operator reading the file. |
  * | `.well-known/security.txt`  | The scope statement to a researcher IS the file's substance (RFC 9116 asks for three fields; the prose is what makes a report actionable). |
  * | `fonts/OFL-*.txt`           | Licences. The SIL OFL requires the notice be kept. |
  * | `_headers`                  | Read by Cloudflare out of the deployed directory and never served, so its comments are never on the wire at all. |

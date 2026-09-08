@@ -438,8 +438,10 @@ npm run deploy      # build -> preflight -> wrangler deploy
   is. The audit scans HTML, JS, CSS and XML and deliberately not JSON. A vendor
   licence banner is the realistic first failure — keep it and record it in the
   script's `ALLOWED` rather than deleting a copyright notice to quiet a build.
-  `robots.txt`, `.well-known/security.txt`, the `fonts/OFL-*.txt` licences and
-  `_headers` keep their comments on purpose.
+  `.well-known/security.txt`, the `fonts/OFL-*.txt` licences and `_headers`
+  keep their comments on purpose. `robots.txt` is four directive lines and no
+  prose: what it used to explain is `docs/decisions.md` §Indexable and
+  `shellLinks`' docblock, and five places pointed at the file for it.
 
 ## The bar is five doors, and adding a work does not add one
 

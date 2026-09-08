@@ -40,3 +40,10 @@ static/language-coverage.json
 # was refused with a message about parsers. It went unnoticed for as long as it
 # did because the file had not been touched since the hook existed.
 static/_headers
+
+# Same failure, same reason: prettier has no parser for `.txt` either, so
+# editing `robots.txt` or a font licence was refused by the hook with a message
+# about parsers. None of these is a format prettier has an opinion about —
+# `robots.txt` is directives, `security.txt` is RFC 9116 fields, the OFL files
+# are licence text that may not be reflowed at all.
+static/**/*.txt

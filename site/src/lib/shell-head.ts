@@ -57,7 +57,9 @@ export const SITE_NAME = 'Glossa Catholica';
  * canonical under `http://`, which points at a different URL from the one the
  * sitemap advertises; and a preview or verification hostname would declare
  * ITSELF canonical, which is precisely the duplicate the `Disallow: /` at
- * launch existed to prevent (see static/robots.txt). Naming production is
+ * launch existed to prevent (`docs/decisions.md`, Posture: Indexable — that
+ * blanket block and the `noindex` header were set together and lifted
+ * together). Naming production is
  * right in both cases: a preview that says "the real one is over there" is
  * exactly what a preview should say.
  */
@@ -147,7 +149,7 @@ export interface ShellHead {
 	/** Where a consumer that does not run JavaScript can go from here. The
 	 *  cross-references between texts are written by script, so without these
 	 *  the corpus has no link graph at all and `sitemap.xml` is the only way
-	 *  in — see `static/robots.txt`, which says so. */
+	 *  in. `shellLinks` below argues it. */
 	links: Crumb[];
 	/**
 	 * The prose THIS SITE wrote about the thing at this address.
@@ -996,7 +998,8 @@ function graphFor(head: ShellHead, origin: string): unknown {
 /**
  * The links a consumer that does not run JavaScript can follow from here.
  *
- * `robots.txt` already states the problem this solves: the site is one SPA
+ * The problem it solves, stated here because this is where it is solved and
+ * `robots.txt` carries no prose any more: the site is one SPA
  * shell and every cross-reference between texts is written by script, so the
  * corpus has no link graph at all to a crawler that does not render, and
  * `sitemap.xml` is the only flat statement that these ~6,000 addresses exist.

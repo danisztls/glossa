@@ -505,7 +505,7 @@ describe('noscriptHtml', () => {
 	const html = noscriptHtml(head('/catechismus/330')!);
 
 	/** The corpus has no link graph at all to a consumer that does not render:
-	 *  every cross-reference is written by script (see static/robots.txt). */
+	 *  every cross-reference is written by script (`shellLinks`' docblock). */
 	it('offers the neighbouring addresses as real links', () => {
 		// The fixture's Catechism is 1, 2, 330, so 2 is what precedes 330 here.
 		expect(html).toContain('<a href="/catechismus/2">');

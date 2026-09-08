@@ -1,38 +1,4 @@
-# Everything here is meant to be found, cited and linked to. There is no
-# Disallow.
-#
-# The site has no private area, no account, and no search-result or filter URLs
-# that multiply into a crawl trap: every address is a canonical citation
-# (`/scriptura/{osis}/{chapter}`, `/catechismus/{n}`, …), and an address that is
-# not one gets a real 404 from the edge worker rather than the shell with a 200.
-# So there is nothing here a crawler can reach that we would rather it did not
-# spend a request on.
-#
-# This file said `Disallow: /` until launch, to keep the verification-only
-# Cloudflare hostname out of the index. The other half of that block lived in
-# site/static/_headers as `X-Robots-Tag: noindex, nofollow`, and the two were
-# always to be undone together — noted here because a robots.txt that permits
-# everything is not by itself evidence that the header does too. `Disallow`
-# governs the fetch; the header governs the indexing.
-
 User-agent: *
 Disallow:
 
-# The site is one SPA shell: every address returns the same document, and the
-# cross-reference links between texts are written by JavaScript, so none of
-# them exists for a crawler that does not render. Two things answer that, and
-# they answer different halves of it. The sitemap is the flat statement that
-# these ~6,000 canonical citations exist -- generated from the same route
-# manifest the edge worker validates against (site/scripts/sitemap.mjs), so it
-# cannot advertise an address that 404s. It cannot say what is NEAR what, so
-# since 2026-08-28 the edge also writes a <noscript> into each page carrying
-# its parent index and its neighbouring addresses as real links
-# (site/src/lib/shell-head.ts).
-#
-# A page is served in the interface language its path names -- /pt/catechismus
-# is the Portuguese chrome -- and the unprefixed path negotiates. Every one of
-# those declares the whole cluster in <link rel="alternate" hreflang>, with the
-# unprefixed path as x-default. The READING addresses below them are not
-# translated and take no prefix: /catechismus/330 is the same citation whoever
-# reads it, and which edition renders there is the reader's own preference.
 Sitemap: https://glossacatholica.org/sitemap.xml
