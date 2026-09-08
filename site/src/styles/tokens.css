@@ -145,14 +145,28 @@
 	 * the serif is now the one that reads big. Shipped at 0.823 for one
 	 * commit, and that is exactly what it looked like.
 	 *
-	 * SO THE MEASUREMENT IS THE ONE THIS FILE ALREADY MAKES HORIZONTALLY.
-	 * `--prose-char-advance` is a frequency-weighted mean advance over the
-	 * corpus; this is a frequency-weighted mean INK HEIGHT over the same
-	 * text — the vertical extent of each glyph the corpus is actually made
-	 * of, weighted by how often it appears. 0.5100em for EB Garamond against
-	 * 0.5697 for Source Sans 3 over 79.3M inked characters, and the ratio is
-	 * this. It needs no judgement about which part of the letter matters,
-	 * because it weighs every part by how much of it the reader meets.
+	 * TWO MEASUREMENTS BRACKET THE ANSWER, AND NEITHER IS IT. Both are
+	 * frequency-weighted over the corpus, the way `--prose-char-advance` is
+	 * horizontally, over 79.3M inked characters:
+	 *
+	 *   mean ink HEIGHT   0.5100 : 0.5697  ->  0.895
+	 *   mean ink AREA     0.1894 : 0.1999  ->  0.973 as a linear scale
+	 *
+	 * They disagree because Source Sans 3 is set looser and lighter than it
+	 * is tall: its glyphs run 12% taller than EB Garamond's but only 5%
+	 * larger in area, since Garamond fits tighter and draws wider letters on
+	 * a shorter body. Match the heights and the sans reads a little small;
+	 * match the ink and it reads a little large. Both were shipped and both
+	 * were reported, which is the only reason this comment can say so.
+	 *
+	 * 0.93 IS BETWEEN THEM AND IS CALIBRATED, NOT MEASURED — the geometric
+	 * mean of the two, which is also where the reports put the crossover. It
+	 * is the one number here that a person's eye is the oracle for, and that
+	 * is not a failure of the method: a single scalar can equalise two faces
+	 * along ONE axis, and these two differ in shape rather than in scale, so
+	 * some residual is arithmetic rather than taste. What the brackets buy is
+	 * that the residual is small and the value cannot drift far without
+	 * failing `reading-face.test.ts`.
 	 *
 	 * Applied to `.reading-text`'s font-size (`styles/layout.css`) and to
 	 * everything measured against it. 1 for the default face, by
@@ -759,13 +773,16 @@
  * grown from 65.5M characters to 95.2M since that measurement, and 0.4% is
  * what that growth moved it by, so the serif's number is left alone.
  *
- * THE COLUMN COMES OUT SLIGHTLY NARROWER, WHICH IS NOT A CONTRADICTION. The
- * face is 9.3% wider per character and is set 10.5% smaller to match apparent
- * size, so a line of 62.4 characters is 29.9rem against the serif's 30.7 — a
- * marginally shorter line of the same count, which is what holding the
- * measure in CHARACTERS means. Neither face reaches the 56rem ceiling
- * anywhere in the reading-size range: the serif wants 55.3rem at the 1.8
- * maximum and the sans 53.9rem.
+ * THE COLUMN COMES OUT A SHADE WIDER. The face is 9.3% wider per character
+ * and set 7% smaller to match apparent size, so a line of 62.4 characters is
+ * 31.1rem against the serif's 30.7.
+ *
+ * AND IT IS THE FACE THAT NOW GRAZES THE 56rem CEILING: 55.96rem at the 1.8
+ * maximum, against the serif's 55.3. Still under, so the measure holds at
+ * 62.4 characters across the whole range — but this is the pair of numbers to
+ * recheck if `--face-size-adjust` is ever raised, if `MAX_FONT_SCALE` is, or
+ * if a third face arrives. `reading-face.test.ts` walks every step of both
+ * faces against the 55-65 band and is what would catch it.
  *
  * The metrics are this face's `hhea`, the same table the defaults came from.
  * `styles/dropcaps.css` derives the initial's three sizes from them, so the
@@ -792,11 +809,10 @@
 	--text-descent: 0.4;
 	--text-cap-height: 0.66;
 	--prose-char-advance: 0.4121;
-	/* 0.5100 / 0.5697, the two faces' frequency-weighted mean ink heights over
-	   the corpus — `--face-size-adjust` above for why that and not the
-	   x-heights, which put this at 0.823 and made the serif the face that
-	   read large. */
-	--face-size-adjust: 0.895;
+	/* Between the two measurements `--face-size-adjust` above brackets it
+	   with, and read against the page: the x-heights put it at 0.823 and the
+	   serif read large, the ink heights at 0.895 and the sans read small. */
+	--face-size-adjust: 0.93;
 }
 
 /*

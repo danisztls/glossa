@@ -82,17 +82,25 @@ const FACES = {
 };
 
 /**
- * Each face's frequency-weighted mean ink height over the corpus — the mean
- * vertical extent of the glyphs the corpus is actually made of, measured off
- * the font files with fontTools and written here because a test may not open a
- * woff2 or walk the corpus. `--face-size-adjust` is the ratio of these two.
+ * WHAT THE FACE ADJUSTMENT IS ALLOWED TO BE, which is a range and not a value.
  *
- * NOT THE X-HEIGHTS (0.400 / 0.486), which is the standard way to pair two
- * faces and is wrong for these two: EB Garamond's small x-height comes with
- * long extenders, so matching there leaves its caps and ascenders 20% taller
- * and the serif reading larger than the sans. That shipped for one commit.
+ * Two frequency-weighted measurements over the corpus bracket it, both taken
+ * off the font files with fontTools and written here because a test may not
+ * open a woff2 or walk the corpus: matching the faces' mean ink HEIGHT gives
+ * 0.895, matching their mean ink AREA gives 0.973 as a linear scale. They
+ * disagree because Source Sans 3 is set looser and lighter than it is tall,
+ * and the value in the stylesheet is calibrated between them against the
+ * rendered page.
+ *
+ * So this cannot assert a number — it asserts that the number stays inside
+ * what was measured. Outside the bracket is not a judgement call: 1.0 is no
+ * adjustment at all and the sans reads visibly large, and 0.823 is the
+ * x-height match, which is the standard advice for pairing faces and is wrong
+ * for these two — EB Garamond's small x-height comes with long extenders, so
+ * matching there leaves its caps and ascenders 20% taller and the SERIF
+ * reading large. Both of those shipped, one commit each, and were reported.
  */
-const INK_HEIGHT = { serif: 0.51, sans: 0.5697 };
+const BRACKET = { byInkHeight: 0.895, byInkArea: 0.973 };
 
 /** The three initials, each with the `line-height` that turns its font-size
  *  into a float box and the budget in body lines that box may not exceed.
@@ -133,14 +141,22 @@ describe('the reader’s text face', () => {
 
 	/**
 	 * THE READING SIZE HAS TO MEAN THE SAME THING IN BOTH FACES, or the face
-	 * picker is also a size control nobody asked for. What a reader perceives
-	 * as size is how much letter is on the page, which is what the ink height
-	 * above measures — see it for why this is not the x-height.
+	 * picker is also a size control nobody asked for. `BRACKET` above holds
+	 * why this checks a range: a single scalar can equalise two faces along
+	 * one axis and these differ in shape, so the last few percent is an
+	 * optical call and the measurements are what keep it honest.
 	 */
-	it('sets both faces to the same apparent size at one reading size', () => {
-		const rendered = (face: 'serif' | 'sans') =>
-			INK_HEIGHT[face] * FACES[face]['--face-size-adjust'];
-		expect(rendered('sans')).toBeCloseTo(rendered('serif'), 3);
+	it('keeps the face adjustment inside what the two measurements bracket', () => {
+		const adjust = FACES.sans['--face-size-adjust'];
+		expect(adjust).toBeGreaterThanOrEqual(BRACKET.byInkHeight);
+		expect(adjust).toBeLessThanOrEqual(BRACKET.byInkArea);
+	});
+
+	// The default face is the one every measurement is stated against, so its
+	// adjustment is 1 by construction rather than by measurement. A value here
+	// would mean the serif had been quietly resized to meet the sans.
+	it('leaves the default face unadjusted', () => {
+		expect(FACES.serif['--face-size-adjust']).toBe(1);
 	});
 
 	// `--content-width` clamps at 56rem, so past some reading scale the column
