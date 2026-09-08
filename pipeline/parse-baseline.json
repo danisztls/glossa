@@ -4,7 +4,7 @@
     "produces and how many problems it reports. This is a floor, not a target:",
     "a run exits nonzero when a work fails that is not in here, when a work's",
     "failure changes kind, or when one accumulates problems. It says nothing",
-    "about whether the corpus is good -- see docs/decisions.md, Parsing.",
+    "about whether the corpus is good -- see pipeline/docs/parsing.md.",
     "Written only by `--accept-baseline`, which is a deliberate act."
   ],
   "works": {
@@ -980,10 +980,6 @@
       "status": "validation-failed",
       "problems": 16
     },
-    "vatii.ad-gentes.fr": {
-      "status": "validation-failed",
-      "problems": 2
-    },
     "vatii.apostolicam-actuositatem.ar": {
       "status": "validation-failed",
       "problems": 3
@@ -998,7 +994,7 @@
     },
     "vatii.apostolicam-actuositatem.fr": {
       "status": "validation-failed",
-      "problems": 2
+      "problems": 1
     },
     "vatii.christus-dominus.cs": {
       "status": "validation-failed",
@@ -1036,10 +1032,6 @@
       "status": "validation-failed",
       "problems": 9
     },
-    "vatii.dignitatis-humanae.fr": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "vatii.dignitatis-humanae.la": {
       "status": "validation-failed",
       "problems": 1
@@ -1056,17 +1048,13 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.gaudium-et-spes.fr": {
-      "status": "validation-failed",
-      "problems": 2
-    },
     "vatii.gaudium-et-spes.it": {
       "status": "validation-failed",
-      "problems": 3
+      "problems": 1
     },
     "vatii.gaudium-et-spes.la": {
       "status": "validation-failed",
-      "problems": 3
+      "problems": 1
     },
     "vatii.gaudium-et-spes.sw": {
       "status": "validation-failed",
@@ -1104,10 +1092,6 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "vatii.inter-mirifica.fr": {
-      "status": "validation-failed",
-      "problems": 2
-    },
     "vatii.inter-mirifica.la": {
       "status": "validation-failed",
       "problems": 2
@@ -1121,10 +1105,6 @@
       "problems": 4
     },
     "vatii.lumen-gentium.en": {
-      "status": "validation-failed",
-      "problems": 2
-    },
-    "vatii.lumen-gentium.fr": {
       "status": "validation-failed",
       "problems": 2
     },
@@ -1200,10 +1180,6 @@
       "status": "validation-failed",
       "problems": 22
     },
-    "vatii.presbyterorum-ordinis.fr": {
-      "status": "validation-failed",
-      "problems": 1
-    },
     "vatii.sacrosanctum-concilium.ar": {
       "status": "validation-failed",
       "problems": 20
@@ -1213,10 +1189,6 @@
       "problems": 18
     },
     "vatii.sacrosanctum-concilium.de": {
-      "status": "validation-failed",
-      "problems": 1
-    },
-    "vatii.sacrosanctum-concilium.fr": {
       "status": "validation-failed",
       "problems": 1
     },
@@ -1231,10 +1203,6 @@
     "vatii.unitatis-redintegratio.cs": {
       "status": "validation-failed",
       "problems": 10
-    },
-    "vatii.unitatis-redintegratio.fr": {
-      "status": "validation-failed",
-      "problems": 2
     },
     "vatii.unitatis-redintegratio.hu": {
       "status": "validation-failed",
