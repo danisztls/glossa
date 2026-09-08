@@ -188,13 +188,10 @@
 	 * No floor, though one was considered. Clamping the low end up would put
 	 * the 80% setting at 66.4 cpl — outside the band this token exists to
 	 * hold. 24.6rem at 62.4 cpl is an ordinary book measure.
+	 *
+	 * The width itself is declared BELOW THIS BLOCK, because more than one
+	 * element has to compute it. See the note on the shared rule.
 	 */
-	--content-width: min(
-		calc(
-			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) * var(--reading-scale, 1)
-		),
-		56rem
-	);
 
 	/*
 	 * THE WIDTH OF A PAGE THAT IS NOT PROSE — `.landing-column` in layout.css,
@@ -623,6 +620,73 @@
 		in oklab,
 		var(--shelf-commentary) var(--pigment-strength),
 		var(--color-text-muted)
+	);
+}
+
+/*
+ * THE MEASURE, COMPUTED WHEREVER ITS INPUTS ARE SET — and the one selector
+ * list in this file that exists because of how custom properties resolve
+ * rather than because of how a page looks.
+ *
+ * A custom property's computed value is its specified value WITH THE `var()`s
+ * ALREADY SUBSTITUTED, for the element it is declared on; descendants inherit
+ * that computed value. So `--content-width` declared on `:root` alone is
+ * 62.4 x 0.3787 x 1.3rem forever, and a rule further down the tree that sets
+ * `--measure-cpl` or `--prose-char-advance` changes nothing at all. It is not
+ * a cascade problem and no specificity fixes it: the substitution has already
+ * happened by the time the descendant is reached.
+ *
+ * `routes/preces/[slug]` USES that fact deliberately, to set prayers 1.1x
+ * larger without widening their column, and says so. What it cost is the rule
+ * below.
+ *
+ * THE PER-SCRIPT MEASURE HAD NEVER WORKED, and that is what found this.
+ * `styles/direction.css` carries an advance for each script the corpus is
+ * written in — Latin 0.3787, Cyrillic 0.4331, Arabic 0.4774, Han 0.9757 with
+ * a 40-character target — each set on the reading REGION, `[lang='ru']` and
+ * its siblings, which is a descendant of the column and of the grid that
+ * sizes it. Not one of them was ever read. Every edition in the corpus has
+ * been set in the Latin column since the first of those rules was written:
+ * about 54 characters a line in Russian, 49.5 in Arabic, 24.2 in Traditional
+ * Chinese against the 30-45 that script wants. Each rule's comment describes
+ * the column it was meant to produce, which is the only place that column
+ * existed.
+ *
+ * THE FIX IS TO DECLARE THE WIDTH ON THE GRID TOO, and the grid is the
+ * highest element that can know: `.reading-layout` is a per-route element and
+ * `:has()` reads the language off the reading text inside it, so no route
+ * markup changes and the language lists stay in `direction.css` where the
+ * rest of the per-script knowledge is. Every one of the consumers of this
+ * token is that element or below it — its own `grid-template-columns` and
+ * `--margin-lane` (`layout.css`), the column's `max-width`, and compare
+ * mode's doubled track.
+ *
+ * ONE DECLARATION, TWO SELECTORS. The expression is written once and computed
+ * per matching element, against whatever that element's inputs are. Two
+ * copies of it is how the 56rem ceiling and the reading scale drift apart.
+ *
+ * NOT IN COMPARE MODE, which `:not(.compare)` excludes and which is a real
+ * limitation rather than an oversight. One grid has one track width, and a
+ * comparison sets a Han edition beside a Latin one — sizing both at the Han
+ * measure would give the English column about 130 characters a line, which is
+ * worse than what the Han column gets now. Two measures in one grid is a
+ * change to `compare.css`'s track arithmetic, not to this rule.
+ *
+ * `/preces` WITHOUT A TABLE OF CONTENTS IS THE ONE READING PAGE THIS MISSES:
+ * it carries `.reading-layout` only when it has one, and takes the root
+ * measure otherwise — which is what every page took until now, so it is
+ * where the repair stops rather than something it broke.
+ *
+ * A browser without `:has()` gets the root measure everywhere, which is
+ * today's behaviour and the direction this should fail in.
+ */
+:root,
+.reading-layout:not(.compare) {
+	--content-width: min(
+		calc(
+			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) * var(--reading-scale, 1)
+		),
+		56rem
 	);
 }
 

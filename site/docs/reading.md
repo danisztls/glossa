@@ -41,6 +41,21 @@ and nothing written further down can move it. That is why the face is an
 attribute on `<html>`, and it is the same fact `/preces` uses in the other
 direction to set prayers larger without widening their column.
 
+**Which is how a whole mechanism ran for a year without running.** Every
+per-script advance in `direction.css` — Cyrillic, Arabic, Han, and the Latin
+reset guarding them — was written on the reading region, a descendant of the
+grid that sizes the column, so no edition in any script was ever set at its own
+measure. The comments described the columns they were meant to produce. The
+width is declared on `.reading-layout` as well as `:root` now, and the scripts
+reach it with `:has()`; `reading-face.test.ts` fails on a measure token set
+anywhere the width is not computed.
+
+**A repair whose evidence is a comment needs a test, not a better comment.**
+Nothing here threw, logged or looked broken: a column of the wrong width is a
+column. The rule the test states is the general one — an input to a derived
+custom property may only be set on an element that derived value is declared
+for — and it is worth more than the four rules it caught.
+
 **An initial is sized in lines, so the number of lines it may take is decided
 by whose lines they are.** Where a wrap is the viewport's, three lines is a
 flourish; where the source printed the break — verse — the indent lands on

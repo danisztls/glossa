@@ -37,38 +37,96 @@
 	direction: ltr;
 	unicode-bidi: isolate;
 	/*
-	 * THE MEASURE IS PER-SCRIPT, and this reset is what keeps it from leaking.
-	 *
-	 * `--prose-char-advance` (see the token's own docblock) is a property of
-	 * the script, not of the site: measured over the corpus editions
-	 * themselves, Latin runs 0.3787em per character, Cyrillic 0.4331 and
-	 * Arabic 0.4774. Left at the Latin figure, the column tuned to 62.4
-	 * characters delivers 54.6 in Russian and 49.5 in Arabic — the second of
-	 * those well outside the 55-65 band the whole derivation exists to hold.
-	 *
-	 * Restating the Latin default HERE rather than relying on `:root` is the
-	 * point of the rule. An Arabic interface sets `lang="ar"` on the document
-	 * element, and every one of the 351 works with no Arabic edition then
-	 * renders inside it in a region declaring its own `lang`. Without this
-	 * line those regions would inherit Arabic's advance and set English at a
-	 * measure computed for Naskh.
+	 * NO `--prose-char-advance` RESET HERE ANY MORE, and its absence is the
+	 * repair rather than a deletion. It restated the Latin default to stop an
+	 * Arabic interface's advance leaking into the 351 works with no Arabic
+	 * edition — a leak that cannot happen, because every advance below is
+	 * scoped `:not(:root)` and so the document element is always Latin's. It
+	 * was guarding a direction the value cannot travel, and doing it on an
+	 * element the measure does not read. See the block below.
 	 */
-	--prose-char-advance: 0.3787;
 }
+
+/*
+ * THE MEASURE IS PER-SCRIPT, AND IT IS SET ON THE GRID, NOT ON THE TEXT.
+ *
+ * `--prose-char-advance` (see the token's own docblock) is a property of the
+ * script, not of the site: measured over the corpus editions themselves,
+ * Latin runs 0.3787em per character, Cyrillic 0.4331, Arabic 0.4774 and Han
+ * 0.9757. Left at the Latin figure, the column tuned to 62.4 characters
+ * delivers 54.6 in Russian and 49.5 in Arabic — the second well outside the
+ * 55-65 band the whole derivation exists to hold.
+ *
+ * EVERY ONE OF THESE USED TO BE WRITTEN ON THE READING REGION, `[lang='ru']`
+ * and its siblings, and not one of them was ever read. `--content-width` is a
+ * custom property holding `var()`s, so it substitutes its inputs on the
+ * element it is declared for and inherits the RESULT; a token set on a
+ * descendant of that element arrives too late to be part of the answer.
+ * Every edition in the corpus was set in the Latin column, in every script,
+ * for as long as these rules have existed. `styles/tokens.css` carries the
+ * mechanism and declares the width on `.reading-layout` as well as `:root`
+ * so that these rules have an element to speak to; `reading-face.test.ts`
+ * fails on a token set anywhere else.
+ *
+ * `:has()` IS WHAT KEEPS THE LANGUAGE LISTS HERE. The layout does not carry
+ * the work's language — it holds chrome in the interface's language too, so
+ * `lang` on it would be a lie about the sidebar — and the reading text does.
+ * Reading it back up from the text is what lets these rules stay a list of
+ * scripts in the file that owns per-script knowledge, with no attribute
+ * threaded through eleven routes.
+ *
+ * COMPARE MODE IS EXCLUDED, because one grid has one track width and a
+ * comparison can pair two scripts. `tokens.css` argues that.
+ *
+ * THESE ARE ALL EB GARAMOND MEASUREMENTS. The reader's sans face has its own
+ * Latin figure and no per-script ones; a Cyrillic edition read in Source Sans
+ * 3 is measured for the serif. That is a smaller error than the one above and
+ * is left standing rather than guessed at.
+ */
 
 /*
  * THE ADVANCE IS A PROPERTY OF THE SCRIPT, so the selector has to name every
  * language written in it — which for a year it did not. `ru` was the only
  * Cyrillic edition in the corpus when this was written; there are now 31
- * Byelorussian works and Ukrainian chrome, and all of them were being set at
- * the LATIN figure, delivering about 54 characters to a column tuned for 62.
- * Read this list as "the Cyrillic languages the corpus holds", not as a list
- * of works, and add to it whenever a Cyrillic language is ingested.
+ * Byelorussian works and Ukrainian chrome. Read this list as "the Cyrillic
+ * languages the corpus holds", not as a list of works, and add to it whenever
+ * a Cyrillic language is ingested.
  */
-:not(:root)[lang='ru'],
-:not(:root)[lang='be'],
-:not(:root)[lang='uk'] {
+.reading-layout:not(.compare):has(.reading-text:is([lang='ru'], [lang='be'], [lang='uk'])) {
 	--prose-char-advance: 0.4331;
+}
+
+.reading-layout:not(.compare):has(.reading-text[lang='ar']) {
+	--prose-char-advance: 0.4774;
+}
+
+/*
+ * MEASURED THE SAME WAY THE OTHERS WERE: 0.9757em per character over the
+ * edition's 370,496 characters, of which 95% are full-width Han and the rest
+ * are the half-width digits and brackets of its Scripture locators.
+ *
+ * AND THE CHARACTER TARGET MOVES WITH IT, which no other script here has
+ * needed. `--measure-cpl` is 62.4 because "55-65 characters per line is where
+ * this type sets well" — a rule about Latin, and a Han line of 62 characters
+ * is half again the widest a Chinese book sets. 30-45 is the band for this
+ * script; 40 is inside it and is a judgement rather than a measurement, which
+ * is the honest way to say it. The column comes out at 50.7rem against
+ * Latin's 30.7 — wider on the page and shorter in characters, which is what a
+ * script carrying more per character and spending 2.6 times the width on one
+ * wants.
+ *
+ * AND THE 56rem CEILING BINDS HERE, WHERE IT NEVER DOES FOR LATIN. A column
+ * this wide reaches it at a reading scale of 1.10, so past that the line gets
+ * shorter rather than wider: 36.8 characters at 1.2, 31.5 at 1.4, out of the
+ * band from 1.5 up, and 24.5 at the 1.8 maximum — about what the Latin column
+ * was giving this text at every size. That ceiling is the grid's arithmetic,
+ * not a number this rule may raise, so a Han reader who wants both the
+ * largest type and a full line is asking for a page shape the aside does not
+ * leave room for.
+ */
+.reading-layout:not(.compare):has(.reading-text[lang='zht']) {
+	--prose-char-advance: 0.9757;
+	--measure-cpl: 40;
 }
 
 /*
@@ -87,15 +145,14 @@
  */
 :not(:root)[lang='ar'] {
 	direction: rtl;
-	--prose-char-advance: 0.4774;
 }
 
 /*
  * No advance figure of its own: unlike Arabic, whose 0.4774 was measured over
  * a 250k-character edition, the two Hebrew works are short and a figure read
- * off them would be noise. The Latin default inherited from the block above
- * is the honest placeholder until there is enough Hebrew to measure, and it
- * errs toward a narrower column rather than a wider one.
+ * off them would be noise. The Latin default is the honest placeholder until
+ * there is enough Hebrew to measure, and it errs toward a narrower column
+ * rather than a wider one — so there is no `:has()` rule for Hebrew above.
  */
 :not(:root)[lang='he'] {
 	direction: rtl;
@@ -223,20 +280,16 @@
 		'EB Garamond Variable', 'Songti TC', 'Noto Serif CJK TC', 'Source Han Serif TC', 'PMingLiU',
 		'MingLiU', serif;
 	/*
-	 * MEASURED THE SAME WAY THE OTHERS WERE: 0.9757em per character over the
-	 * edition's 370,496 characters, of which 95% are full-width Han and the
-	 * rest are the half-width digits and brackets of its Scripture locators.
+	 * THE MEASURE FOR THIS SCRIPT IS NOT HERE, AND CANNOT BE. It was — an
+	 * advance of 0.9757em and a 40-character target, set on this very rule —
+	 * and neither was ever read: `--content-width` is declared on `:root` and
+	 * substitutes its inputs there, so a token set on the reading region is
+	 * a value nothing computes against. Both now sit in `styles/tokens.css`,
+	 * on the grid that sizes the column, with the arithmetic and the
+	 * measurement that produced them.
 	 *
-	 * AND THE CHARACTER TARGET MOVES WITH IT, which no other script here has
-	 * needed. `--measure-cpl` is 62.4 because "55-65 characters per line is
-	 * where this type sets well" — a rule about Latin, and a Han line of 62
-	 * characters is half again the widest a Chinese book sets. 30-45 is the
-	 * band for this script; 40 is inside it and is a judgement rather than a
-	 * measurement, which is the honest way to say it. The column comes out at
-	 * 39em against Latin's 23.6 — wider on the page and shorter in
-	 * characters, which is what a script carrying more per character and
-	 * spending 2.6 times the width on one wants.
+	 * What stays here is the FAMILY, which is what this file is for: a family
+	 * is read at the element it is set on, so the region is the right place
+	 * for it and the wrong place for a width.
 	 */
-	--prose-char-advance: 0.9757;
-	--measure-cpl: 40;
 }

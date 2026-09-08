@@ -168,3 +168,114 @@ describe('the reader’s text face', () => {
 		expect(appHtml).not.toContain("'data-face', 'serif'");
 	});
 });
+
+/**
+ * A TOKEN THE MEASURE READS MAY ONLY BE SET WHERE THE MEASURE IS DECLARED.
+ *
+ * `--content-width` is a custom property whose value holds `var()`s, and those
+ * are substituted for the element it is DECLARED on — descendants inherit the
+ * result, not the expression. So a rule further down the tree that sets
+ * `--measure-cpl` or `--prose-char-advance` changes nothing, and changes it
+ * silently: the page paints, at the width the other script wanted.
+ *
+ * That is not hypothetical. `direction.css` measured the Traditional Chinese
+ * edition at 0.9757em per character and set a 40-character target on the
+ * reading region, and both were dead on arrival — the Han text was set in the
+ * Latin column, 24.2 characters to the line, for as long as the edition has
+ * been on the site. The comment beside them described the column they were
+ * meant to produce, which is the only place that column ever existed.
+ *
+ * So this is a scan for the shape rather than for that instance: every
+ * selector that sets either input must be one the width is declared for.
+ * `styles/tokens.css` carries the argument; `routes/preces/[slug]` is the
+ * same rule used deliberately, and sets neither of these two.
+ */
+describe('the measure', () => {
+	const STYLES = new URL('../styles/', import.meta.url);
+	// Comments first, and not as tidiness: these files argue at length, a
+	// selector may not contain `/`, and a `*/` two lines above a rule is
+	// enough to make the rule invisible to the scan below.
+	const sheets = ['tokens.css', 'direction.css', 'layout.css', 'compare.css'].map((name) => ({
+		name,
+		css: readFileSync(new URL(name, STYLES), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+	}));
+
+	/** The selectors a declaration of `prop` appears under, as written. Rules
+	 *  here are one selector list per `{`, which is what makes this a regex.
+	 *
+	 *  Unanchored, deliberately: a `\}` at the front would be CONSUMED by each
+	 *  match and so could not also open the next one, which silently halves
+	 *  the rules seen wherever two sit back to back — which is exactly where
+	 *  the pair this checks now sits. `;` is excluded from the selector so a
+	 *  capture cannot run backwards into the declaration above it. */
+	function settersOf(css: string, prop: string): string[] {
+		const out: string[] = [];
+		for (const match of css.matchAll(/([^{}@/;]+?)\s*\{([^{}]*)\}/gs)) {
+			if (new RegExp(`(^|;|\\s)${prop}\\s*:`).test(match[2])) {
+				out.push(match[1].replace(/\s+/g, ' ').trim());
+			}
+		}
+		return out;
+	}
+
+	/** One selector list into its selectors. Not `split(',')`: a comma inside
+	 *  `:is(…)` or `:has(…)` groups arguments rather than ending a selector,
+	 *  and cutting there invents selectors like `[lang='be']` that the file
+	 *  never wrote — which reads exactly like the defect this checks for. */
+	function selectors(list: string): string[] {
+		const out: string[] = [];
+		let depth = 0;
+		let current = '';
+		for (const ch of list) {
+			if (ch === '(' || ch === '[') depth++;
+			else if (ch === ')' || ch === ']') depth--;
+			if (ch === ',' && depth === 0) {
+				out.push(current.trim());
+				current = '';
+			} else current += ch;
+		}
+		if (current.trim()) out.push(current.trim());
+		return out;
+	}
+
+	const declaresWidth = new Set(
+		sheets.flatMap(({ css }) => settersOf(css, '--content-width').flatMap(selectors))
+	);
+
+	it('declares the width somewhere, on the document element at least', () => {
+		expect(declaresWidth.has(':root')).toBe(true);
+	});
+
+	/**
+	 * Whether `selector` can only ever match elements the width is declared
+	 * for. Same selector qualifies, and so does one that REFINES it — a
+	 * compound like `:root[data-face='sans']`, which is still the document
+	 * element and so still substitutes into the `:root` declaration beside it.
+	 *
+	 * What must not qualify is a DESCENDANT of one, which is the whole bug:
+	 * the remainder after the prefix may not begin with a combinator, because
+	 * that is the point at which the selector stops naming the same box.
+	 */
+	function refines(selector: string, base: string): boolean {
+		if (selector === base) return true;
+		if (!selector.startsWith(base)) return false;
+		return !/^[\s>+~]/.test(selector.slice(base.length));
+	}
+
+	it.each(['--measure-cpl', '--prose-char-advance'])(
+		'sets %s only on an element the width is computed for',
+		(prop) => {
+			for (const { name, css } of sheets) {
+				for (const selector of settersOf(css, prop)) {
+					for (const one of selectors(selector)) {
+						expect(
+							[...declaresWidth].some((base) => refines(one, base)),
+							`${name} sets ${prop} on \`${one}\`, which is not an element --content-width ` +
+								`is declared for — the token will be inherited past, never read`
+						).toBe(true);
+					}
+				}
+			}
+		}
+	);
+});
