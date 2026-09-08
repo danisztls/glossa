@@ -164,9 +164,14 @@ export const en: Dictionary = {
 	'census.reach': 'What a reader can reach',
 	'census.cited': 'What is cited',
 	'census.citers': 'Where the cross-references come from',
-	// The two shelf headings the library's own sections do not supply.
-	'census.shelf.library': 'The whole collection',
-	'census.shelf.apparatus': 'The apparatus',
+	// The two shelf headings the library's own sections do not supply, and the
+	// two that name no shelf: they lead the list side by side, because the
+	// collection and the apparatus over it are the frame the seven works sit
+	// in. Bare nouns and not "The whole collection" — every other heading here
+	// is the name of a work with no article in front of it, and a definite
+	// article on two entries of nine reads as a different kind of entry.
+	'census.shelf.library': 'Collection',
+	'census.shelf.apparatus': 'Apparatus',
 	// THE SENTENCES. One per shelf, with its numbers substituted in by
 	// `censusProse` — every `{placeholder}` is a fact the build derives, and
 	// `census.test.ts` fails on one without the other in either direction.
@@ -217,13 +222,18 @@ export const en: Dictionary = {
 	// so the count needs saying once for a reader who cannot see the column
 	// head over it.
 	'census.timesCited': 'Places that cite it',
+	// One heading per table, and the same five strings label the chips that
+	// show and hide them — a chip named anything else would be a sixth name
+	// for a table already named on the page.
 	'census.rank.books': 'Books of Scripture',
 	'census.rank.chapters': 'Chapters of Scripture',
 	'census.rank.documents': 'Documents of the Magisterium',
 	'census.rank.ccc': 'Paragraphs of the Catechism',
 	'census.rank.summa': 'Questions of the Summa',
-	// The link on `/bibliotheca` that opens all of the above.
-	'census.link': 'The library, counted',
+	// The chips' group label. `CitedBy` points its filters at the panel's own
+	// heading; here the heading is "What is cited", which names the section and
+	// not the choice, so the group says what pressing one does.
+	'census.rankFilter': 'Which tables to show',
 
 	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//

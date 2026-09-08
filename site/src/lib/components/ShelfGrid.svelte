@@ -54,6 +54,21 @@
 	import ShelfCard from './ShelfCard.svelte';
 	import { t } from '$lib/i18n.svelte';
 
+	interface Props {
+		/**
+		 * Whether to draw the census card, and it is a PROP because the two
+		 * pages genuinely differ here — the one place this component admits
+		 * that, and it admits it as a declaration rather than as a card one
+		 * page appends by hand, which is the arrangement this file exists to
+		 * end. `/bibliotheca` is the catalogue, and how far the catalogue
+		 * reaches is a fact about it; the home page offers a reader holding no
+		 * address a way IN, and a count is not one.
+		 */
+		census?: boolean;
+	}
+
+	let { census = false }: Props = $props();
+
 	const shelves = $derived(visibleShelves());
 </script>
 
@@ -80,6 +95,28 @@
 		title={t('bookmark.library')}
 		tagline={t('bookmark.library.tagline')}
 	/>
+
+	<!--
+		THE CENSUS, LAST, and it is a card now where it was a line under the
+		grid. The argument for the line was that a count is a fact about the
+		shelf the cards sit on rather than a work to read — true, and the same
+		is true of Bookmarks, which has been a card in this grid since the day
+		the grid existed. What the line actually bought was a way in that a
+		reader scanning a bed of cards does not see.
+
+		Its title and sentence are `/bibliotheca/census`'s own, so it obeys the
+		rule every card here obeys: no entry in the catalogue writes a sentence
+		of its own. That retired `census.link`, which was a third name for the
+		same page.
+	-->
+	{#if census}
+		<ShelfCard
+			href="/bibliotheca/census"
+			icon="chart-column"
+			title={t('census.title')}
+			tagline={t('census.tagline')}
+		/>
+	{/if}
 </ul>
 
 <style>

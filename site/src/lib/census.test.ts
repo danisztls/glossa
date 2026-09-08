@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildCensus, censusFact, countsTowardsRank, topOf } from '../../scripts/census.mjs';
-import { CENSUS_SHELF_KEYS, CITER_KIND_KEYS, censusProse, coverageRows } from './census';
+import {
+	CENSUS_ICONS,
+	CENSUS_SHELF_KEYS,
+	CITER_KIND_KEYS,
+	censusProse,
+	censusShelves,
+	coverageRows
+} from './census';
 import { en } from './i18n/en';
 import type { Census, Citer } from './types';
 
@@ -247,6 +254,58 @@ describe('the shelves', () => {
 		expect(census.summaParts).toEqual(['i']);
 		expect(census.maxima.ccc).toBe(2);
 	});
+
+	/**
+	 * The two entries that name nothing on a shelf lead the list TOGETHER, and
+	 * the builder's order does not put them there — it opens on the collection
+	 * and closes on the apparatus. The page lays the sentences out in a
+	 * two-column grid filled row by row, so this order is what puts the pair on
+	 * one row; asserted here because nothing about the rendered page can say it.
+	 */
+	it('leads with the collection and the apparatus, in that order', () => {
+		const keys = censusShelves(census as unknown as Census).map((shelf) => shelf.key);
+		expect(keys.slice(0, 2)).toEqual(['library', 'apparatus']);
+	});
+
+	it('keeps the builder’s order for everything else', () => {
+		const built = census.shelves
+			.map((shelf) => shelf.key)
+			.filter((key) => key !== 'library' && key !== 'apparatus');
+		const shown = censusShelves(census as unknown as Census)
+			.map((shelf) => shelf.key)
+			.slice(2);
+		expect(shown).toEqual(built);
+	});
+});
+
+/**
+ * EVERY NAMED ENTRY HAS A GLYPH, both ways round. A shelf or a matrix row with
+ * no icon renders its name with a gap where its neighbours have a mark, and an
+ * icon keyed to nothing is a mark for an entry that no longer exists — neither
+ * is visible in the output, and the second survives a rename of the entry it
+ * was drawn for.
+ */
+describe('the glyphs', () => {
+	it('gives every shelf and every coverage row a mark', () => {
+		for (const key of Object.keys(CENSUS_SHELF_KEYS)) {
+			expect(CENSUS_ICONS[key], `no icon for \`${key}\``).toBeTruthy();
+		}
+	});
+
+	it('draws no mark for an entry the census does not name', () => {
+		for (const key of Object.keys(CENSUS_ICONS)) {
+			expect(CENSUS_SHELF_KEYS[key], `icon \`${key}\` names no shelf`).toBeTruthy();
+		}
+	});
+
+	it('carries the mark through to the rows the page renders', () => {
+		for (const row of coverageRows(census as unknown as Census)) {
+			expect(row.icon, `no icon on coverage row \`${row.key}\``).toBeTruthy();
+		}
+		for (const shelf of censusShelves(census as unknown as Census)) {
+			expect(shelf.icon, `no icon on shelf \`${shelf.key}\``).toBeTruthy();
+		}
+	});
 });
 
 describe('topOf', () => {
@@ -380,7 +439,7 @@ describe('every key the builder emits is a string somebody wrote', () => {
 			'census.derived',
 			'census.unavailable',
 			'census.timesCited',
-			'census.link'
+			'census.rankFilter'
 		]) {
 			expect(strings[key], `no string for \`${key}\``).toBeTruthy();
 		}

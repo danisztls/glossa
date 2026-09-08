@@ -145,6 +145,15 @@
 	// rather than "bigger"; `case-sensitive` is the same two letters meaning
 	// something else entirely to anyone who has used a search field.
 	import ALargeSmall from '@lucide/svelte/icons/a-large-small';
+	// THE CENSUS'S TWO, and they are the two rows on that page that name no
+	// shelf. Books standing on a shelf for the collection as a whole — the one
+	// mark in the set that draws several works rather than one — and the bar
+	// chart for the census itself, which is the page's own middle: a grid of
+	// rising bars, and the card on `/bibliotheca` opens onto it. The apparatus
+	// takes `link`, which the set already has: a cross-reference IS a link,
+	// and drawing it as anything else would invent a second mark for it.
+	import Library from '@lucide/svelte/icons/library';
+	import ChartColumn from '@lucide/svelte/icons/chart-column';
 
 	const ICONS = {
 		search: Search,
@@ -189,7 +198,9 @@
 		users: Users,
 		'graduation-cap': GraduationCap,
 		languages: Languages,
-		'a-large-small': ALargeSmall
+		'a-large-small': ALargeSmall,
+		library: Library,
+		'chart-column': ChartColumn
 	};
 
 	export type IconName = keyof typeof ICONS;

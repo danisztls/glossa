@@ -27,13 +27,26 @@
 	 * both are one click away in the bar — leaving them out is what would turn
 	 * this page into a leftovers bin.
 	 *
-	 * ## A catalogue, and one card that is not a work
+	 * ## A catalogue, and two cards that are not works
 	 *
-	 * The last card is Bookmarks, over a link to `/signata`, and it is neither
-	 * this page's invention nor this page's alone: `ShelfGrid.svelte` draws the
-	 * whole bed, the home page renders the same one, and that component's
-	 * docblock carries the argument for the card, for its position last, and for
-	 * its being drawn whether or not the reader has marked anything.
+	 * Bookmarks, over a link to `/signata`, and the census, over
+	 * `/bibliotheca/census`. Neither is this page's invention:
+	 * `ShelfGrid.svelte` draws the whole bed, the home page renders the same
+	 * one, and that component's docblock carries the argument for each card and
+	 * for its position.
+	 *
+	 * **The census card is the one thing the two pages differ by, and it is a
+	 * PROP** (`<ShelfGrid census />`) rather than a card appended here — which
+	 * is the arrangement that component exists to have ended. How far the
+	 * catalogue reaches is a fact about the catalogue, and this page is the
+	 * catalogue; the home page offers a way in to the works, and a count is not
+	 * one. It was a line under the grid until then, on the argument that a card
+	 * would put it in the bed as though it were a work to read. What the line
+	 * bought was a way in that a reader scanning a bed of cards does not see.
+	 *
+	 * It is still not in the footer's index, though `/signata` and `/colophon`
+	 * both are: those are wanted from every page, this one is about the
+	 * catalogue and is one click from it.
 	 *
 	 * **THE READING POSITIONS ARE NOT HERE, AND THE TRAIL IS THE ARGUMENT.**
 	 * "Continue reading" was on the home page beside the doors, moved here on
@@ -102,26 +115,8 @@
 			around it — the catalogue is this page's subject, where it is the
 			home page's way in — and the painting at the foot.
 		-->
-		<ShelfGrid />
+		<ShelfGrid census />
 	</section>
-
-	<!--
-		ONE LINE UNDER THE CATALOGUE, AND NOT AN EIGHTH CARD. `/bibliotheca/census`
-		counts what the cards above open — editions, languages, addresses, and
-		the passages the rest of the corpus cites most — and a card would put it
-		in the grid as if it were a work to read. It is not; it is a fact about
-		the shelf the cards sit on, which is why it reads as a line at the foot
-		of the catalogue rather than as one more door in it.
-
-		IT IS NOT IN THE FOOTER'S INDEX either, though `/signata` and `/colophon`
-		both are. Those are reachable from every page because a reader wants them
-		from wherever they are; this one is about the catalogue, is one click
-		from it, and its label is English in a footer that is written in
-		thirty-seven languages.
-	-->
-	<p class="census-link">
-		<a href="/bibliotheca/census">{t('census.link')}</a>
-	</p>
 
 	<!--
 		THE ONE PICTURE ON THIS PAGE, AND IT IS AT THE BOTTOM. Antonello's
@@ -198,14 +193,6 @@
 
 	section {
 		margin: 2.25rem 0;
-	}
-
-	/* Set as the catalogue's own footnote rather than as a heading: it is a
-	   pointer, and the picture below it is the page's close. */
-	.census-link {
-		margin: -0.75rem 0 0;
-		font-size: 0.92rem;
-		color: var(--color-text-muted);
 	}
 
 	/* THE ONE `h2` LEFT ON THIS PAGE IS HIDDEN, so the rule that set the

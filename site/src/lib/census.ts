@@ -23,6 +23,7 @@ import { getCanonicalBook, getDocumentGroup } from './corpus';
 import { content } from './content.svelte';
 import { hrefFor, summaPartSlug } from './address';
 import type { Census } from './types';
+import type { IconName } from './components/Icon.svelte';
 
 /** One line of a ranking: what it names, where it goes, how often it is cited. */
 export interface CensusRankRow {
@@ -191,11 +192,61 @@ const COVERAGE_ROW_KEYS: Readonly<Record<string, string>> = {
 	catechism: 'nav.ccc'
 };
 
+/**
+ * THE MARK EACH ENTRY ALREADY HAS ELSEWHERE, and taken from there rather than
+ * chosen again: `shelves.ts` draws the catalogue's cards with these and
+ * `/schola` lists the same works under the same glyphs, so a reader who has
+ * learned a mark on either page has learned it here. `shelves.ts` states the
+ * rule; this is a third surface obeying it.
+ *
+ * IT IS A MAP AND NOT A FIELD ON `Shelf` because the key spaces differ: the
+ * catalogue has one card for the Catechism and its Compendium, and the matrix
+ * has a row for each — the pair's coverage is not one number
+ * (`COVERAGE_ROW_KEYS`, and `site/docs/census.md` on why the rows are works).
+ * The Compendium's glyph is `/schola`'s, which is where it has one.
+ *
+ * The two with no card are the two that name no shelf, and `Icon.svelte`
+ * carries the argument for both.
+ */
+export const CENSUS_ICONS: Readonly<Record<string, IconName>> = {
+	library: 'library',
+	bible: 'scroll',
+	catechism: 'book-marked',
+	compendium: 'messages-square',
+	socialDoctrine: 'users',
+	prayer: 'flame',
+	canonLaw: 'scale',
+	magisterium: 'landmark',
+	doctores: 'feather',
+	apparatus: 'link'
+};
+
+/**
+ * Reading order on the page, which is not the order the builder writes.
+ *
+ * The collection as a whole and the apparatus over it are the two entries that
+ * name nothing on a shelf — they are the frame the seven works sit inside, not
+ * items in the list — so they lead it together on one row. Written out, the
+ * builder's order would open on the collection and close on the apparatus four
+ * rows later, with the pair reading as a first item and a last one.
+ *
+ * Everything else keeps the builder's order, which is the order a reader meets
+ * the Church's texts (`shelves.ts`). `sort` is stable, so saying where two
+ * entries go says nothing about the rest.
+ */
+const SHELF_LEAD = ['library', 'apparatus'];
+
+const lead = (key: string) => {
+	const at = SHELF_LEAD.indexOf(key);
+	return at === -1 ? SHELF_LEAD.length : at;
+};
+
 /** One shelf as a heading and a sentence its numbers go into. */
 export interface CensusShelf {
 	key: string;
 	labelKey: string;
 	proseKey: string;
+	icon: IconName | undefined;
 	facts: Record<string, number>;
 }
 
@@ -211,8 +262,10 @@ export function censusShelves(census: Census): CensusShelf[] {
 			key: shelf.key,
 			labelKey: CENSUS_SHELF_KEYS[shelf.key],
 			proseKey: `census.prose.${shelf.key}`,
+			icon: CENSUS_ICONS[shelf.key],
 			facts: shelf.facts
-		}));
+		}))
+		.sort((a, b) => lead(a.key) - lead(b.key));
 }
 
 /**
@@ -252,6 +305,7 @@ export function censusProse(
 export interface CensusCoverageRow {
 	key: string;
 	labelKey: string;
+	icon: IconName | undefined;
 	/** The address space this work offers, unioned across every edition. */
 	of: number;
 	/** How many languages reach any of it — the row's own headline. */
@@ -276,6 +330,7 @@ export function coverageRows(census: Census): CensusCoverageRow[] {
 		.map((row) => ({
 			key: row.key,
 			labelKey: COVERAGE_ROW_KEYS[row.key],
+			icon: CENSUS_ICONS[row.key],
 			of: row.of,
 			languages: row.values.filter((v) => v > 0).length,
 			cells: row.values.map((value, i) => ({

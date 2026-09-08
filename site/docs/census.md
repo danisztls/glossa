@@ -83,6 +83,24 @@ matrix survives `data-mono` — where the whole palette collapses to one grey �
 with nothing lost. `site/docs/references.md` draws that line for the family
 marks, and this is the case it was drawn for: here the fill IS the datum.
 
+**The bar is ink, and it was `--color-text-muted` first.** That token is what
+this page sets its secondary prose in, so three hundred cells of it read as a
+matrix switched off rather than a matrix full, and the staircase the whole
+arrangement exists to draw was the faintest thing on the page. It is
+`color-mix(in srgb, var(--color-text) 80%, var(--color-bg))` — two tokens and no
+literal, so all five appearance axes follow, and a fifth of the way to the ground
+because at this density a black column is a wall.
+
+**Every row carries the glyph its work already has.** `CENSUS_ICONS` takes them
+from `shelves.ts` and `/schola` rather than choosing again, which is the rule
+`shelves.ts` states for the catalogue and this is a third surface obeying it: a
+reader who has learned a mark on either page has learned it here. It is a map
+and not a field on `Shelf` because the key spaces differ — the catalogue has one
+card for the Catechism and its Compendium, and the matrix has a row for each.
+Only the two entries that name no shelf needed a mark of their own, and neither
+is new writing: books on a shelf for the collection, and `link` for the
+apparatus, a cross-reference being a link.
+
 ## The three decisions the rankings rest on
 
 Each changes the answer, and each has a corpus condition behind it. All are
@@ -119,6 +137,16 @@ four of them and drop nine cited exactly as often. `topOf` takes whole bands
 while the next one still fits, so a table comes out shorter than the limit
 rather than arbitrary at the bottom — which is why neither the Catechism's
 ranking nor the Summa's fills its twenty rows.
+
+**The chips filter which TABLES are drawn, not who did the citing**, and that is
+the cut's doing rather than a shortcut. `CitedBy`'s filter narrows by citing
+family and this one cannot: the cut above is computed at build time on the total
+count, so re-ranking a stored top twenty by one family would publish that
+family's real top only where the two happen to agree and a wrong one everywhere
+else. Filtering by family means a cut per subset, which is a different file and
+not a control. What these narrow is what the reader can already see. The drawing
+is that panel's — on is plain, off is struck through — because a reader meets the
+same control doing the same job on two pages.
 
 ## Monitoring it
 
@@ -194,8 +222,21 @@ imports from `$lib/corpus` and these readers are one module further in, inside
 renders (`manifests` alone) would empty three of the five rankings and throw
 nothing.
 
-**One line at the foot of `/bibliotheca` opens it, and it is not a card.** A
-card would put it in the grid as though it were a work to read; it is a fact
-about the shelf the cards sit on. It is not in the footer's index either: those
-entries are wanted from every page, this one is about the catalogue and is one
-click from it, and its label is English in a footer written in every language.
+**A card at the end of `/bibliotheca`'s grid opens it, and it was a line under
+the grid first.** The argument for the line was that a card would put a count in
+the bed as though it were a work to read — true, and equally true of Bookmarks,
+which has been a card there since the grid existed. What the line bought was a
+way in that a reader scanning a bed of cards does not see.
+
+**The card is a PROP on `ShelfGrid`, not a card the page appends.** That
+component exists because `/bibliotheca` and the home page had each assembled the
+catalogue and promptly disagreed about what it contains; a declared difference is
+not that failure returning. The difference itself is real: how far the catalogue
+reaches is a fact about the catalogue, and the home page offers a reader holding
+no address a way in to the WORKS.
+
+Its title and sentence are the census page's own, so it obeys the rule every card
+there obeys — no entry in the catalogue writes a sentence of its own. That
+retired `census.link`. It is still not in the footer's index: those entries are
+wanted from every page, this one is about the catalogue and is one click from
+it, and its label is English in a footer written in every language.

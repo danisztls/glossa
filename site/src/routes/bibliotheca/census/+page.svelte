@@ -79,6 +79,8 @@
 		rankedSumma,
 		type CensusRankRow
 	} from '$lib/census';
+	import { SvelteSet } from 'svelte/reactivity';
+	import Icon from '$lib/components/Icon.svelte';
 	import { formatNumber } from '$lib/ui-langs';
 	import { languageDisplayName } from '$lib/lang-names';
 	import type { Census } from '$lib/types';
@@ -145,6 +147,31 @@
 			: []
 	);
 
+	/**
+	 * WHICH RANKING TABLES ARE SWITCHED OFF, rather than which are on — the
+	 * store `CitedBy` keeps, for its reason: a ranking added later shows up
+	 * without anyone having opted into it, and there is no default here that is
+	 * not "on" for an omission to have to imply.
+	 *
+	 * IT FILTERS WHICH TABLES ARE DRAWN AND NOT WHO DID THE CITING, which is
+	 * the one way this differs from that panel and it is not a shortcut. A
+	 * ranking is cut at build time on the total count, taking whole tie-bands
+	 * while the next still fits (`topOf`); re-ranking a stored top twenty by
+	 * one citing family would publish the top of THAT family's list only where
+	 * the two happen to agree, and silently publish a wrong one everywhere
+	 * else. The cut would have to be recomputed per subset, which is a
+	 * different file and not a control. What this narrows is what a reader can
+	 * already see — five tables, of which they may want two.
+	 */
+	let hidden = $state(new SvelteSet<string>());
+
+	const shownRankings = $derived(rankings.filter(([key]) => !hidden.has(key)));
+
+	function toggle(key: string) {
+		if (hidden.has(key)) hidden.delete(key);
+		else hidden.add(key);
+	}
+
 	/** A cell's accessible value — `1,334 of 1,334`, or the plain statement
 	 *  that there is none, which reads better than `0 of 1,334`. */
 	const cellLabel = (value: number, of: number) =>
@@ -187,7 +214,14 @@
 			<dl class="shelves">
 				{#each shelves as shelf (shelf.key)}
 					<div class="shelf">
-						<dt>{t(shelf.labelKey)}</dt>
+						<dt>
+							<!-- The glyph is the one the catalogue's card for this shelf
+							     draws and `/schola` lists it under, taken from
+							     `CENSUS_ICONS` rather than chosen again. Decorative:
+							     the name is beside it in words. -->
+							{#if shelf.icon}<span class="shelf-icon"><Icon name={shelf.icon} /></span>{/if}
+							{t(shelf.labelKey)}
+						</dt>
 						<dd>{censusProse(t(shelf.proseKey), shelf.facts, n)}</dd>
 					</div>
 				{/each}
@@ -238,7 +272,10 @@
 							{#each coverage as row (row.key)}
 								<tr>
 									<th scope="row">
-										<span class="work">{t(row.labelKey)}</span>
+										<span class="work">
+											{#if row.icon}<span class="shelf-icon"><Icon name={row.icon} /></span>{/if}
+											{t(row.labelKey)}
+										</span>
 										<span class="row-count">
 											{t('census.reachRow')
 												.replace('{languages}', n(row.languages))
@@ -270,8 +307,32 @@
 			     already read the tables wrongly. -->
 			<p class="lede landing-measure">{t('census.method')}</p>
 
+			{#if rankings.length > 1}
+				<!--
+					Toggles and not a single choice, which is `CitedBy`'s
+					arrangement and its argument: the reader is narrowing a list
+					already in front of them, and narrowing it to two tables is
+					as ordinary as narrowing it to one. `aria-pressed` carries the
+					state, so each chip keeps one label in both.
+
+					A chip is named by the heading of the table it shows — the
+					table is already named on the page, and a second name for it
+					would be a string to translate and a thing to keep true.
+				-->
+				<div class="filters" role="group" aria-label={t('census.rankFilter')}>
+					{#each rankings as [key] (key)}
+						<button
+							type="button"
+							class="filter"
+							aria-pressed={!hidden.has(key)}
+							onclick={() => toggle(key)}>{t(`census.rank.${key}`)}</button
+						>
+					{/each}
+				</div>
+			{/if}
+
 			<div class="rankings">
-				{#each rankings as [key, rows] (key)}
+				{#each shownRankings as [key, rows] (key)}
 					<section class="ranking" aria-labelledby="rank-{key}">
 						<h3 id="rank-{key}">{t(`census.rank.${key}`)}</h3>
 						<!-- An ordered list, because the order IS the content: a
@@ -363,6 +424,34 @@
 		font-weight: 600;
 	}
 
+	/*
+	 * The shelf's own glyph, in both places it appears — the sentence's term
+	 * and the matrix's row heading. Centred in a `1lh` box at the start of the
+	 * line rather than set on the baseline, which is `ShelfCard`'s arrangement
+	 * and for its reason: a box with no text in it offers its bottom edge as a
+	 * baseline, so a 1em mark stands a full em over capitals reaching seven
+	 * tenths of one.
+	 *
+	 * Muted and not accent. There are eighteen of them on the page against the
+	 * catalogue's eight, and at this size a mark repeated down two columns is
+	 * the page's texture rather than an accent on any one row — which is
+	 * `/schola`'s finding about its own eight, one step further along.
+	 */
+	.shelf-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		block-size: 1lh;
+		margin-inline-end: 0.3rem;
+		vertical-align: text-bottom;
+		color: var(--color-text-muted);
+	}
+
+	.shelf-icon :global(svg) {
+		inline-size: 0.95em;
+		block-size: 0.95em;
+	}
+
 	.shelves dd {
 		margin: 0;
 		color: var(--color-text-muted);
@@ -438,12 +527,26 @@
 	 * `site/docs/references.md` draws for the family marks, and this is the
 	 * case it was drawn for: here the fill IS the datum.
 	 */
+	/*
+	 * INK, not the muted grey the bars were drawn in first. That token is what
+	 * this page sets its secondary prose in, so 320 cells of it read as
+	 * something switched off — a matrix greyed out rather than a matrix full —
+	 * and the staircase the whole arrangement is for was the faintest thing on
+	 * the page. Mixed a fifth of the way to the ground so a full column is a
+	 * dark bar and not a black one, which at this density is a wall.
+	 *
+	 * Two tokens and no literal, so all five appearance axes follow: on paper
+	 * it darkens toward the text colour, at night it lightens toward it, and
+	 * `data-mono` changes nothing because there was no hue to lose. The FILL is
+	 * still the datum (`site/docs/census.md`) — the colour only has to let a
+	 * reader see it.
+	 */
 	.bar {
 		display: block;
 		width: 100%;
 		height: calc(var(--fill) * 100%);
 		min-height: 2px;
-		background: var(--color-text-muted);
+		background: color-mix(in srgb, var(--color-text) 80%, var(--color-bg));
 		border-radius: 1px;
 	}
 
@@ -457,6 +560,50 @@
 	}
 
 	/* --- The rankings ------------------------------------------------------ */
+
+	/*
+	 * `CitedBy`'s chips, and deliberately the same drawing: a reader meets
+	 * these two controls doing the same job on two pages, and the one on the
+	 * apparatus panel is the one they meet oftener. On is the plain state and
+	 * off is what is marked, for that panel's reason — every table starts
+	 * shown, so an accent fill would paint the whole row solid and make the
+	 * loudest thing in the section its control.
+	 *
+	 * The pigment half is not copied. There a chip stands for a shelf and
+	 * carries that shelf's mark, so the colour is the legend; here a chip
+	 * stands for a table named beside it in words.
+	 */
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin: 0 0 1rem;
+	}
+
+	.filter {
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		padding: 0.1rem 0.5rem;
+		background: none;
+		font: inherit;
+		font-size: 0.8rem;
+		color: var(--color-text);
+		cursor: pointer;
+	}
+
+	.filter:hover {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	/* Still legible switched off, so a reader can see what they have put away
+	   and press it again. */
+	.filter[aria-pressed='false'] {
+		color: var(--color-text-muted);
+		border-style: dashed;
+		text-decoration: line-through;
+		text-decoration-thickness: 1px;
+	}
 
 	.rankings {
 		display: grid;

@@ -638,11 +638,15 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   synthesis read THROUGH against dated acts cited SINGLY — is still true and
   needs no container, since one card per work makes the ORDER say it.
   `/doctores` keeps its card and its caveat.
-- **The last card is Bookmarks, it is not a work, and it is unconditional.** A
-  catalogue names what the site HAS, and a door that opens only once you have
-  found the feature elsewhere is shut against the one reader looking for it. It
-  has no row in `$lib/shelves.ts` and needs none, which is why `ShelfCard` takes
-  strings.
+- **The last two cards are not works.** Bookmarks is unconditional on both
+  pages — a catalogue names what the site HAS, and a door that opens only once
+  you have found the feature elsewhere is shut against the one reader looking
+  for it. The census card is `/bibliotheca`'s alone and is a PROP
+  (`<ShelfGrid census />`), which is the only difference between the two pages
+  and is declared rather than appended: how far the catalogue reaches is a fact
+  about the catalogue, where the home page is a way in to the works. Neither
+  has a row in `$lib/shelves.ts` and neither needs one, which is why
+  `ShelfCard` takes strings.
 - **No page in this group writes a sentence of its own except the home page.**
   The catalogue's cards reuse the key each destination is already titled and
   described by, the same rule `route-titles.mjs` follows for the `<head>`.
@@ -1657,6 +1661,12 @@ deploy on it. `site/docs/census.md` holds the rationale.
   from; a SET also catches a swap that leaves the count unchanged. Completeness
   inside an edition is deliberately not gated — the matrix shows it as a
   partial bar instead.
+- **A control may narrow what is DRAWN and never what was counted.** The
+  rankings' chips show and hide whole tables; filtering them by citing family
+  would re-rank a top twenty that was cut at build time on the total, which
+  publishes a wrong ranking wherever the two orders differ.
+- **A glyph on this page is one the work already has** (`CENSUS_ICONS`), taken
+  from `shelves.ts` and `/schola` — the catalogue's rule, on a third surface.
 - **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
   `/calendarium/liturgia` already stands on, because its `census.*` strings are
   written in English alone. Its head is fixed and English in `STATIC_HEADS` to
