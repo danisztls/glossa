@@ -865,7 +865,7 @@ def write_output(
         "a 'Hebrew numbering' aside, a Gospel superscription); since no "
         "content field stores chapter titles, each is filed unanchored "
         "against the chapter's first verse, per the schema's own rule for a "
-        "note the source prints with no anchor. book-intro.de (59 per-book "
+        "note the source prints with no anchor. bible-intro.de (59 per-book "
         "introduction essays, in raw/allioli/front/book-intro/) is not built "
         "here -- book introductions are a separate work, keyed by language, "
         "not edition."

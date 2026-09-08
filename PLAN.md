@@ -217,13 +217,18 @@ wrong labels passes all four.
 
 ### Content captured and deliberately not built
 
-- **Book introductions for two languages.** `raw/allioli/front/` holds 59
-  per-book introduction essays and `raw/straubinger/` holds Straubinger's own
-  (1 Samuel's runs ~1,400 words). Both belong to `bible-intro.{lang}`, a work
-  keyed by language rather than edition. The schema is not hypothetical:
-  `bible-intro.en` is built, has its own `manifest.type` branch in
-  `sync-corpus.mjs` and its own `bible-intro-index.json`, and carries
-  `shared_preface_with`. Two more editions read into a shape that exists.
+- **Book introductions for two languages.** `raw/allioli/front/book-intro/`
+  holds 59 essays covering all 73 books — nine of them are one preface printed
+  across several volumes, `Moses` across the whole Pentateuch — and every
+  `raw/straubinger/{book}/index.html` carries Straubinger's own in an
+  `intro-texto` block (352 words at 1 Samuel, ~30,000 over the 73). Both belong
+  to `bible-intro.{lang}`, a work keyed by language rather than edition. The
+  schema is not hypothetical: `bible-intro.en` is built, has its own
+  `manifest.type` branch in `sync-corpus.mjs` and its own
+  `bible-intro-index.json`, and carries `shared_preface_with` — which the
+  Pentateuch preface extends from 2→1 to 5→1. Two more editions read into a
+  shape that exists. German also has `einleitung.wikitext`, an introduction to
+  the whole Bible; chapter 0 addresses a book, so it has nowhere to go.
 - **Hungarian's second apparatus layer.** The source is 73 books × 3 pages —
   `szoveg`, `jegyzet`, `jegyzet2` — sharing one anchor scheme. The schema's
   `notes` is one field; the other layer is captured and unread.
