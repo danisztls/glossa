@@ -140,6 +140,20 @@ fragmented Part Two's two sections into six — `PRIMEIRA SECÇÃO` as 1076–11
 finishes the title of a banner just MERGED rather than opened; `repeated_banner`
 is the one-block window that says which, and no other edition moves.
 
+**A CITATION MAY INTRODUCE ITS QUOTATION INSTEAD OF FOLLOWING IT, and where it
+does the book is not in the parenthesis.** Five of the Holy Rosary micro-site's
+six editions trail each mystery's meditation with the whole locator; Italian
+heads it — `Dal Vangelo secondo Luca (1,26-28.30-31)` — and sets the passage in
+the paragraph beneath. Read as the other five are read, the formula became all
+twenty Italian meditations (25 characters against the others' ~300) and chapter
+and verse with no book became all twenty citations, which can never resolve.
+The lead-in is a table per language (`ROSARY_CITATION_LEADIN`), matched exactly
+like `ROSARY_INSTRUCTIONS_HEADING`, so a book nobody has chosen a siglum for
+fails naming the formula. **The siglum is ours and the locator is the page's**:
+`refs-grammar.ts` reads `Luca` and `Apocalisse` but not `Matteo`, `Marco` or
+`Giovanni`, so a citation in the page's own words would have resolved for two
+books of five.
+
 ## Document families
 
 **Word writes `_edn`/`_ednref` when the author used endnotes.** Same export,

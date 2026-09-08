@@ -43,6 +43,16 @@ reading, it is a bug**, and no per-unit check could see it.
 relocation as loss.** Learned three times — the masthead, the appendix, the
 Summa's non-Aquinas divisions.
 
+**A presence check cannot tell a quotation from the sentence that introduces
+one, and the check that could see the difference does not gate.** Every Italian
+Rosary mystery held `Dal Vangelo secondo Luca` where the other five editions
+hold the passage: the parse gate asked only that meditation and citation be
+non-empty, and both were. Balance ranked it the whole time — 0.35 against that
+pair's 0.49 cut — which is the shape of the standing gap, not a second defect:
+**a lead that is ranked and never read costs the same as a check that was never
+written.** The gate now asks the field to be an address rather than a value; a
+citation opening on a digit names no book.
+
 ## What an oracle may claim
 
 **An oracle records the page, not the corpus.** Where a correction is filed the

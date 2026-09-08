@@ -4167,6 +4167,50 @@ _ROSARY_MYSTERY_TITLE_RE = re.compile(r"<b[^>]*>(.*?)</b>", re.IGNORECASE | re.D
 _ROSARY_SCRIPTURE_CITATION_RE = re.compile(r"\s*\(([^()]*)\)([.!])?\s*$")
 
 
+#: Languages whose mystery pages HEAD the quotation with a formula naming the
+#: book and print only chapter and verse in the parenthesis -- `Dal Vangelo
+#: secondo Luca (1,26-28.30-31)`, the passage itself in the paragraph below.
+#: The other five print the quotation first and trail the whole citation after
+#: it, which is what `split_rosary_meditation_citation` reads.
+#:
+#: Matched EXACTLY, the same discipline as ROSARY_INSTRUCTIONS_HEADING: a
+#: formula this table does not know is a book nobody has chosen a siglum for,
+#: and it fails naming the formula rather than storing a locator with no book
+#: on the front of it.
+#:
+#: THE SIGLUM IS OURS AND THE LOCATOR IS THE PAGE'S. The page spells the
+#: evangelist out in running prose, and `refs-grammar.ts`'s Italian table
+#: reads `Luca` and `Apocalisse` but not `Matteo`, `Marco` or `Giovanni` --
+#: so a citation composed of the page's own words would resolve for two books
+#: of the five. Composing the abbreviated form is what makes it an address the
+#: site can follow; the curation entry declares the composition.
+ROSARY_CITATION_LEADIN: dict[str, dict[str, str]] = {
+    "it": {
+        "Dal Vangelo secondo Matteo": "Mt",
+        "Dal Vangelo secondo Marco": "Mc",
+        "Dal Vangelo secondo Luca": "Lc",
+        "Dal Vangelo secondo Giovanni": "Gv",
+        "Dal libro dell’Apocalisse": "Ap",
+    }
+}
+
+
+def rosary_heading_citation(text: str, lang: str, filename: str) -> PrayerCitation:
+    """Read the citation out of the formula that INTRODUCES a meditation,
+    where the book is in the prose and only the locator is in the parenthesis.
+    """
+    match = _ROSARY_SCRIPTURE_CITATION_RE.search(text)
+    if match is None or not match.group(1).strip():
+        raise RuntimeError(
+            f"{lang} {filename}: Scripture lead-in {text!r} has no locator"
+        )
+    formula = text[: match.start()].rstrip()
+    siglum = ROSARY_CITATION_LEADIN[lang].get(formula)
+    if siglum is None:
+        raise RuntimeError(f"{lang} {filename}: unknown Scripture lead-in {formula!r}")
+    return PrayerCitation("1", f"{siglum} {match.group(1).strip()}")
+
+
 def split_rosary_meditation_citation(
     text: str, lang: str, filename: str
 ) -> tuple[str, PrayerCitation]:
@@ -4220,9 +4264,24 @@ def parse_rosary_mystery_page(
             raise RuntimeError(
                 f"{lang} {expected_filename}: mystery cell {title!r} has no meditation"
             )
-        meditation, citation = split_rosary_meditation_citation(
-            body[0], lang, expected_filename
-        )
+        # THE CITATION IS NOT ALWAYS AT THE END, AND WHERE IT IS NOT, THE
+        # BOOK IS NOT IN THE PARENTHESIS. Italian heads each mystery with
+        # `Dal Vangelo secondo Luca (1,26-28.30-31)` and sets the passage in
+        # the paragraph beneath; reading `body[0]` as the meditation stored
+        # that formula as the whole quotation, and its parenthesis -- chapter
+        # and verse with no book -- as the whole citation.
+        if lang in ROSARY_CITATION_LEADIN:
+            if len(body) < 2:
+                raise RuntimeError(
+                    f"{lang} {expected_filename}: mystery cell {title!r} has a "
+                    "Scripture lead-in and no quotation under it"
+                )
+            citation = rosary_heading_citation(body[0], lang, expected_filename)
+            meditation = body[1]
+        else:
+            meditation, citation = split_rosary_meditation_citation(
+                body[0], lang, expected_filename
+            )
         items.append(MysteryItem(title, meditation, citation))
     return items
 
@@ -4672,6 +4731,17 @@ def validate_prayers(lang: str, prayers: list[Prayer]) -> list[str]:
                 ):
                     problems.append(
                         f"{lang} {p.slug}: incomplete mystery in {g.name!r}"
+                    )
+                # A PRESENCE CHECK CANNOT TELL A QUOTATION FROM THE SENTENCE
+                # THAT INTRODUCES ONE. The two above passed for every Italian
+                # mystery while the meditation was `Dal Vangelo secondo Luca`
+                # and the citation was `1,26-28.30-31`: both fields were
+                # non-empty and neither was an address. A citation opening on
+                # a digit names no book, so it can never resolve.
+                if item.citation is not None and not item.citation.text[:1].isalpha():
+                    problems.append(
+                        f"{lang} {p.slug}: mystery citation {item.citation.text!r} "
+                        f"names no book in {g.name!r}"
                     )
         for text in collect_texts(p):
             if "<" in text or ">" in text:
