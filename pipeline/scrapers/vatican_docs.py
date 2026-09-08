@@ -5138,6 +5138,74 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
     return [blocks[i].text for i in candidates]
 
 
+#: How many cased letters a block must hold before its being all-capitals
+#: says anything. Below this the block is a siglum, a numeral with a letter
+#: in it, or an initial -- `II`, `AAS`, `N.` -- not a title.
+_CAPS_HEADING_MIN_LETTERS = 4
+
+
+def is_all_caps(text: str) -> bool:
+    """Every letter in `text` is a capital, and there are enough of them.
+
+    EVERY letter, not most: a heading the source sets in capitals is set in
+    capitals, and a 90% test admits a sentence that opens with an
+    abbreviation. A caseless script fails this on the first clause rather
+    than passing it vacuously -- no Arabic or Hebrew letter is `isupper`, so
+    a page in one of them contributes no candidates at all."""
+    letters = [c for c in text if c.isalpha()]
+    return len(letters) >= _CAPS_HEADING_MIN_LETTERS and all(
+        c.isupper() for c in letters
+    )
+
+
+def promote_plain_caps_run(blocks: list[Block]) -> list[str]:
+    """Recover headings the source sets in capitals and marks up not at all.
+
+    THE THIRD WAY A MIRROR CAN PRINT A SUB-HEADING, after bold and italic.
+    `vita-consecrata.la` prints all 111 of its sub-headings as
+    `<p align="left">TRANSFORMATI CHRISTI EFFIGIES </p>` -- flush left, no
+    emphasis, no size change, nothing but the capitals -- over unnumbered
+    prose, and its Portuguese sibling prints the same 111 in ordinary type.
+    Read as body text they were not merely unranked: each opened its section
+    with its own title as the first words. `laudato-si.sl`, `laudato-si.lv`,
+    `fratelli-tutti.vi` and `dilexit-nos.be` do the same, 229 headings
+    between the five (`audit.py trees`).
+
+    GATED LIKE THE CENTRED RUN AND FOR A SHARPER REASON. Capitals are how a
+    page shouts, so outside the numbered body they are mostly furniture --
+    the masthead, the language bar, `NOTES`, a signature -- and inside it
+    they are a convention or nothing. So only runs of >= 3 count, and only
+    blocks between the first numbered paragraph and the last. Emphasis of any
+    kind disqualifies: a bold or italic capital line is already claimed by the
+    two passes above, and admitting it here would let them pad this run."""
+    numbered = [
+        i for i, b in enumerate(blocks) if not b.is_heading and match_para_num(b.raw)
+    ]
+    if not numbered:
+        return []
+    lo, hi = numbered[0], numbered[-1]
+    peers = [
+        i
+        for i, b in enumerate(blocks)
+        if lo < i < hi
+        and b.kind != "quote"
+        and not b.style & _STYLE_ITALIC
+        and not is_full_bold(b.raw)
+        and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
+        and match_para_num(b.raw) is None
+        and _SECTION_TITLE_HEADING_RE.match(b.text) is None
+        and not b.indented
+        and is_all_caps(b.text)
+    ]
+    if len(peers) < _ITALIC_HEADING_MIN_RUN:
+        return []
+    candidates = [i for i in peers if not blocks[i].is_heading]
+    candidates = [i for i in candidates if not _heads_nothing(blocks, i, candidates)]
+    for i in candidates:
+        blocks[i].is_heading = True
+    return [blocks[i].text for i in candidates]
+
+
 _HEADING_LETTER_RE = re.compile(r"[^\W\d_]", re.UNICODE)
 
 
@@ -7204,6 +7272,15 @@ def parse_document(
             f"plain centered heading run promoted ({len(plain)}): "
             + ", ".join(repr(t[:40]) for t in plain[:5])
             + (" ..." if len(plain) > 5 else "")
+        )
+
+    # After the masthead is gone, which is where a page's capitals mostly are.
+    caps = promote_plain_caps_run(blocks)
+    if caps:
+        state.anomalies.append(
+            f"plain capitals heading run promoted ({len(caps)}): "
+            + ", ".join(repr(t[:40]) for t in caps[:5])
+            + (" ..." if len(caps) > 5 else "")
         )
 
     for text in drop_table_of_contents(blocks, match_label):
