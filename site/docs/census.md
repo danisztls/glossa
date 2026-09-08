@@ -54,10 +54,40 @@ still computes and no longer publishes — `llmsTxt`'s quiet failure one surface
 over; a placeholder with no fact reaches a reader as the literal `{documents}`.
 Neither can be seen by reading the output.
 
+## A line that qualifies goes behind the `i`
+
+Three of them — how a cell of the matrix reads, the two rules a ranking is
+counted by, and that every number here is derived at build. Each is the `info`
+glyph beside the heading it belongs to, over a native popover with
+`role="note"`: `DayReadings`' arrangement, which is `ArtFigure`'s, and the
+site's one answer to a sentence of small print.
+
+**What goes behind the glyph is a METHOD and never a NUMBER.** Those three say
+how the page was counted, and a reader who never presses one reads every figure
+on the page correctly and only lacks the argument for it. `census.citersLede`
+therefore stays visible: it carries the two totals that keep the column under it
+from being read as short of the ledger's, and a fact behind a control is a fact
+most readers do not have.
+
+**The glyph is on the HEADING, not in a line under it.** The method's two
+clauses change what the ranking means, so they have to be reachable from above
+the table — where three lines of small print between a heading and its own table
+are read once and skipped at every later visit.
+
+**Paper gets all three unconditionally**, under what each qualifies. A popover
+never prints — top layer, and closed besides — and the printed page is the one
+copy whose reader cannot press anything. `aria-hidden`, so a screen reader does
+not meet each note twice.
+
 ## The matrix
 
 One row per work, one column per interface language, one cell per pair: how
 much of what that work offers a reader of that language can reach.
+
+**It is headed "Multilingual coverage"** where its neighbours are named for the
+question they answer ("What is here", "What is cited"). This is the one section
+a reader arrives looking for by name — does this library have my language — and
+the heading it replaces described the axis without naming the subject.
 
 **One grid and not eight figures.** Drawn per shelf beside each shelf's
 sentence, the rows lose the only thing worth drawing them for — the comparison
@@ -92,13 +122,20 @@ and never a literal, which is what carries it through the five appearance axes
 and flattens it to grey under `data-mono`, where the fill still carries every
 datum.
 
-**The cell under the pointer takes the accent, and its two headings take
-weight.** A readout above the grid names the work, the language and the
-percentage. Three things and one of them cannot be done in CSS: a column heading
-is not an ancestor, a sibling or a descendant of the cell below it, so the
-hovered cell is state. Its line's height is reserved whether or not it says
-anything — appearing in the flow would shove the matrix under the reader's own
-hand — and it carries no `aria-live`, a pointer readout being forty
+**The cell under the pointer takes the accent, and so do its row and column
+headings.** A readout above the grid names the work, the language and the
+percentage. One of the three cannot be done in CSS — a column heading is not an
+ancestor, a sibling or a descendant of the cell below it — so the hovered cell
+is state.
+
+**Nothing about that hover may change a text metric.** The headings went bold
+for one revision, which is the defect `/calendarium` records one page over: a
+bold heading is wider, so the first column grew, all forty language columns
+moved with it, and the cell being pointed at slid out from under the pointer.
+Colour and a `box-shadow` rule instead — paint reserves nothing, so unlike a
+transparent border there is no placeholder to keep in step. The readout is held
+to one line by the same rule and its height is reserved whether or not it says
+anything; it carries no `aria-live`, a pointer readout being forty
 interruptions a row where each cell already reads its own value.
 
 **Every row carries the glyph its work already has, in the accent.**
@@ -206,6 +243,15 @@ the same counts.
 **A row is marked and not labelled.** The kind is the glyph of the work it
 belongs to, with the name behind it for a screen reader; set out as visible text
 it was the kind repeated down twenty rows.
+
+**And a row names its own work, because nothing over it does any more.** The
+Catechism's paragraphs were `¶1883` and the Summa's questions a bare `I-II 184`,
+which is right under a heading reading "Paragraphs of the Catechism" and wrong
+in a merged table. `citationFor` writes both now — the site's one notation, out
+of the tables `/schola` teaches from — so they read `CCC 1883` and `STh I-II,
+184`, and the siglum is `ccc.abbrev` in the reader's own language rather than
+three letters spelled here. A page that teaches `CCC 1234` and ranks `¶1234` has
+taught nothing.
 
 ## Monitoring it
 

@@ -22,6 +22,7 @@
 import { getCanonicalBook, getDocumentGroup } from './corpus';
 import { content } from './content.svelte';
 import { hrefFor, summaPartSlug } from './address';
+import { citationFor } from './citation-label';
 import type { Census } from './types';
 import type { IconName } from './components/Icon.svelte';
 
@@ -166,36 +167,52 @@ export function rankedDocuments(census: Census): CensusRankRow[] {
 }
 
 /**
- * The Catechism's paragraphs, labelled `¶1883` — the mark this site already
- * uses for a Catechism locus everywhere a number appears without the work's
- * name beside it (`cited-by.ts`, `ReferenceNumber`).
+ * The Catechism's paragraphs, labelled `CCC 1883`.
+ *
+ * IT WAS `¶1883` WHILE THE TABLE HAD A HEADING. That mark is what this site
+ * uses for a Catechism locus wherever the work is already named beside it
+ * (`cited-by.ts`, `ReferenceNumber`), and the table used to be headed
+ * "Paragraphs of the Catechism". Merged into one ranking there is no such
+ * heading, so a row has to name its own work — which is what a citation is.
+ *
+ * `citationFor` WRITES IT, and this file spells nothing. That module is the
+ * site's one notation, read out of the tables `/schola` teaches from, so the
+ * siglum is `ccc.abbrev` in the reader's own language rather than a literal
+ * three letters. A page that teaches `CCC 1234` and then ranks `¶1234` has
+ * taught nothing.
  */
 export function rankedCcc(census: Census): CensusRankRow[] {
-	return census.rankings.ccc.map(({ n, value }) => ({
-		key: String(n),
-		label: `¶${n}`,
-		fullTitle: null,
-		href: hrefFor({ kind: 'ccc', n }),
-		value
-	}));
+	return census.rankings.ccc.map(({ n, value }) => {
+		const at = { kind: 'ccc', n } as const;
+		return { key: String(n), label: citationFor(at), fullTitle: null, href: hrefFor(at), value };
+	});
 }
 
 /**
- * The Summa's questions, in the form every citation of it prints and
- * `refs-grammar.ts` reads back: part, then question.
+ * The Summa's questions, labelled `STh I-II, 184` — `citationFor` again, for
+ * the Catechism's reason: a row in a merged table names its own work.
  *
- * The part label is the grammar's own (`I-II`) and is not translated, because
- * it is not a word — it is the address, and the same three characters in
- * every edition and every language.
+ * `STh` AND NOT `S. Th.` because that is the specimen `/schola` teaches, and
+ * `citation-label.ts` records why. The part is the work's own spelling
+ * (`I-II`) and is not translated, being the address rather than a word — the
+ * same three characters in every edition and every language.
  */
 export function rankedSumma(census: Census): CensusRankRow[] {
-	return census.rankings.summa.map(({ part, question, value }) => ({
-		key: `${part} ${question}`,
-		label: `${part} ${question}`,
-		fullTitle: null,
-		href: hrefFor({ kind: 'summa', part: summaPartSlug(part), question, article: null }),
-		value
-	}));
+	return census.rankings.summa.map(({ part, question, value }) => {
+		const at = {
+			kind: 'summa',
+			part: summaPartSlug(part),
+			question,
+			article: null
+		} as const;
+		return {
+			key: `${part} ${question}`,
+			label: citationFor(at),
+			fullTitle: null,
+			href: hrefFor(at),
+			value
+		};
+	});
 }
 
 /**

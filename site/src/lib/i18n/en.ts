@@ -161,7 +161,11 @@ export const en: Dictionary = {
 	// the shape of the data under them — "Totals" and "Tables" would describe
 	// the markup.
 	'census.holdings': 'What is here',
-	'census.reach': 'What a reader can reach',
+	// NAMED FOR WHAT IT MEASURES, where its neighbours are named for the
+	// question they answer. The matrix is the one section of the page a reader
+	// arrives looking for by name — "does this library have my language" — and
+	// "What a reader can reach" describes the axis without naming the subject.
+	'census.reach': 'Multilingual coverage',
 	'census.cited': 'What is cited',
 	'census.citers': 'Where the cross-references come from',
 	// The two shelf headings the library's own sections do not supply, and the
@@ -230,6 +234,14 @@ export const en: Dictionary = {
 	'census.rank.documents': 'Documents of the Magisterium',
 	'census.rank.ccc': 'Paragraphs of the Catechism',
 	'census.rank.summa': 'Questions of the Summa',
+	// THE THREE `i` BUTTONS, and each names what it is about rather than saying
+	// "more information": a trigger with no text of its own is read out by its
+	// label alone, and three buttons called the same thing on one page are
+	// three buttons a screen reader cannot tell apart. `art.about`,
+	// `bookmark.about` and `lectionary.about` are the same shape.
+	'census.about.derived': 'About these numbers',
+	'census.about.reach': 'About this coverage',
+	'census.about.cited': 'About this ranking',
 	// The chips' group label. `CitedBy` points its filters at the panel's own
 	// heading; here the heading is "What is cited", which names the section and
 	// not the choice, so the group says what pressing one does.

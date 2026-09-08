@@ -9,7 +9,9 @@ import {
 	censusProse,
 	censusShelves,
 	coverageRows,
-	mergedRanking
+	mergedRanking,
+	rankedCcc,
+	rankedSumma
 } from './census';
 import { en } from './i18n/en';
 import type { Census, Citer } from './types';
@@ -421,6 +423,28 @@ describe('the two cuts agree', () => {
 	}
 });
 
+/**
+ * A ROW IN A MERGED TABLE NAMES ITS OWN WORK, because there is no longer a
+ * heading over it doing so. Both labels come from `citationFor` — the site's
+ * one notation, read out of the tables `/schola` teaches from — and what is
+ * asserted here is that they are not spelled in this file: a page that teaches
+ * `CCC 1234` and ranks `¶1234` has taught nothing.
+ */
+describe('a ranked row is written as a citation', () => {
+	it('gives a Catechism paragraph the siglum the interface uses for it', () => {
+		const rows = rankedCcc(census as unknown as Census);
+		expect(rows.length).toBeGreaterThan(0);
+		expect(rows[0].label).toBe(`${en['ccc.abbrev']} ${rows[0].key}`);
+	});
+
+	it('gives a Summa question the scholastic short form, not a bare part', () => {
+		const rows = rankedSumma(census as unknown as Census);
+		expect(rows.length).toBeGreaterThan(0);
+		// `STh` and not `S.Th.`: `/schola`'s specimen is what the site teaches.
+		expect(rows[0].label).toMatch(/^STh [IV-]+, \d+$/);
+	});
+});
+
 describe('mergedRanking', () => {
 	const rows = (key: string, counts: Record<string, number>) => ({
 		key,
@@ -574,7 +598,13 @@ describe('every key the builder emits is a string somebody wrote', () => {
 			'census.derived',
 			'census.unavailable',
 			'census.timesCited',
-			'census.rankFilter'
+			'census.rankFilter',
+			// One per `i` button. A trigger with no text of its own is read out
+			// by its label alone, so a missing one is a button announced as
+			// nothing at all.
+			'census.about.derived',
+			'census.about.reach',
+			'census.about.cited'
 		]) {
 			expect(strings[key], `no string for \`${key}\``).toBeTruthy();
 		}

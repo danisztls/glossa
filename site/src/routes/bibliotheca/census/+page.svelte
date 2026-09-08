@@ -93,6 +93,7 @@
 		type CensusRankRow
 	} from '$lib/census';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { AnchoredPanel } from '$lib/floating.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { formatNumber } from '$lib/ui-langs';
 	import { languageDisplayName } from '$lib/lang-names';
@@ -129,6 +130,29 @@
 			stale = true;
 		};
 	});
+
+	/**
+	 * THE THREE LINES THAT QUALIFY RATHER THAN SAY, each behind the `i` beside
+	 * the heading it belongs to — `DayReadings`' arrangement, which is
+	 * `ArtFigure`'s, and the site's one answer to a sentence of small print.
+	 *
+	 * WHAT GOES BEHIND THE GLYPH IS A METHOD AND NEVER A NUMBER. These three
+	 * say how the page was counted; a reader who never presses them reads every
+	 * figure correctly and only lacks the argument for it. `census.citersLede`
+	 * stays on the page for exactly that reason — it carries the two totals
+	 * that stop the column under it from being read as short of the ledger's,
+	 * and a fact hidden behind a control is a fact most readers do not have.
+	 *
+	 * `$props.id()` has to be a bare declaration, so the three ids are suffixed
+	 * off one: three panels can be open on this page and each needs a name a
+	 * `popovertarget` can call.
+	 */
+	const uid = $props.id();
+	const hints = {
+		derived: new AnchoredPanel(`${uid}-derived`),
+		reach: new AnchoredPanel(`${uid}-reach`),
+		cited: new AnchoredPanel(`${uid}-cited`)
+	};
 
 	/** Every count on the page, in the reader's own number formatting. */
 	const n = (value: number) => formatNumber(value, i18n.lang);
@@ -231,9 +255,42 @@
 	<title>{t('census.title')} — {t('home.title')}</title>
 </svelte:head>
 
+<!--
+	THE `i` AND WHAT IT OPENS, three times over, and a snippet because three
+	copies of a trigger and a popover is three places for one of them to lose
+	its `aria-label`. `role="note"` is ARIA's own word for content ancillary to
+	the thing it hangs off, which this exactly is — not `tooltip`, which
+	describes its anchor and is summoned rather than asked for. The trigger has
+	no text of its own, so the label is mandatory and not a courtesy.
+-->
+{#snippet hint(panel: AnchoredPanel, label: string, text: string)}
+	<button
+		bind:this={panel.trigger}
+		type="button"
+		class="menu-trigger about"
+		popovertarget={panel.id}
+		aria-expanded={panel.open}
+		aria-label={label}
+	>
+		<Icon name="info" />
+	</button>
+	<span
+		bind:this={panel.panel}
+		id={panel.id}
+		popover="auto"
+		role="note"
+		ontoggle={panel.onToggle}
+		class="panel-surface floating-panel caveat">{text}</span
+	>
+{/snippet}
+
 <div class="landing-column">
-	<h1>{t('census.title')}</h1>
+	<div class="head">
+		<h1>{t('census.title')}</h1>
+		{@render hint(hints.derived, t('census.about.derived'), t('census.derived'))}
+	</div>
 	<p class="page-tagline landing-measure">{t('census.tagline')}</p>
+	<p class="caveat-print" aria-hidden="true">{t('census.derived')}</p>
 
 	{#if phase === 'failed'}
 		<!-- `loadFailed.*` rather than strings of this page's own: it is the
@@ -277,8 +334,10 @@
 
 		{#if coverage.length}
 			<section aria-labelledby="reach-heading">
-				<h2 id="reach-heading">{t('census.reach')}</h2>
-				<p class="lede landing-measure">{t('census.reachLede')}</p>
+				<div class="head">
+					<h2 id="reach-heading">{t('census.reach')}</h2>
+					{@render hint(hints.reach, t('census.about.reach'), t('census.reachLede'))}
+				</div>
 
 				<!--
 					A REAL TABLE, and the one thing on this page that earns the
@@ -367,15 +426,26 @@
 						</tbody>
 					</table>
 				</div>
+				<!-- Paper gets it unconditionally, under what it qualifies, on
+				     `DayReadings`' reasoning: a popover never prints — top
+				     layer, and closed besides — and this is the one copy whose
+				     reader cannot press anything. `aria-hidden` so a screen
+				     reader does not meet it twice. -->
+				<p class="caveat-print" aria-hidden="true">{t('census.reachLede')}</p>
 			</section>
 		{/if}
 
 		<section aria-labelledby="cited-heading">
-			<h2 id="cited-heading">{t('census.cited')}</h2>
-			<!-- THE METHOD BEFORE THE TABLES. Both of its clauses change what
-			     the numbers mean, and a reader who meets them afterwards has
-			     already read the tables wrongly. -->
-			<p class="lede landing-measure">{t('census.method')}</p>
+			<div class="head">
+				<h2 id="cited-heading">{t('census.cited')}</h2>
+				<!-- THE METHOD IS ON THE HEADING and not a line under it. Both of
+				     its clauses change what the numbers mean, so it has to be
+				     reachable from above the table rather than met after it —
+				     which is what a glyph ON the heading is, where three lines of
+				     small print between a heading and its own table are read once
+				     and skipped thereafter. -->
+				{@render hint(hints.cited, t('census.about.cited'), t('census.method'))}
+			</div>
 
 			{#if rankings.length > 1}
 				<!--
@@ -425,6 +495,7 @@
 					</li>
 				{/each}
 			</ol>
+			<p class="caveat-print" aria-hidden="true">{t('census.method')}</p>
 		</section>
 
 		{#if citers.length}
@@ -452,8 +523,6 @@
 				</dl>
 			</section>
 		{/if}
-
-		<p class="derived landing-measure">{t('census.derived')}</p>
 	{/if}
 </div>
 
@@ -474,6 +543,67 @@
 	.lede {
 		margin: 0 0 1rem;
 		color: var(--color-text-muted);
+	}
+
+	/*
+	 * A HEADING AND THE `i` THAT QUALIFIES IT, on one row. The glyph belongs to
+	 * the heading rather than to the section, which is what puts it above the
+	 * table instead of in a line of small print between the two — and a
+	 * heading's own bottom rule still runs the width of the column, because the
+	 * flex row is what carries it.
+	 */
+	.head {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+	}
+
+	.head h2 {
+		flex: 1 1 auto;
+	}
+
+	/* `.menu-trigger` is the site's button and this adds only its size and
+	   colour — `DayReadings` sizes its own the same way, against the type it
+	   stands beside. `align-self` keeps it off the heading's rule. */
+	.about {
+		flex: none;
+		align-self: center;
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+
+	/* `SiglumGloss`'s card at this one's measure: where it goes is
+	   `.floating-panel` in app.css, and what is left here is that a sentence
+	   or two wants a narrower column than a paragraph of commentary. */
+	.caveat {
+		max-inline-size: min(24rem, calc(100vw - 1rem));
+		padding: 0.5rem 0.7rem;
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+		overflow-wrap: break-word;
+	}
+
+	.caveat-print {
+		display: none;
+	}
+
+	@media print {
+		/* Each control becomes the line it opens. */
+		.about {
+			display: none;
+		}
+
+		.caveat-print {
+			display: block;
+			margin: 0.7rem 0 0;
+			max-inline-size: 40rem;
+			font-size: 0.75rem;
+			line-height: 1.45;
+			color: var(--color-text-muted);
+		}
 	}
 
 	/* --- The shelves, one sentence each ------------------------------------ */
@@ -634,9 +764,31 @@
 		background: var(--color-accent);
 	}
 
+	/*
+	 * THE LIT ROW AND COLUMN, AND NOTHING HERE MAY CHANGE A TEXT METRIC.
+	 *
+	 * It was `font-weight: 700` for one revision, which is the defect
+	 * `/calendarium` already records: a heading that goes bold under the
+	 * pointer is WIDER than it was, so the first column grew, all forty
+	 * language columns moved with it, and the cell being pointed at slid out
+	 * from under the pointer — a hover that moves what it is pointing at.
+	 * `min-width` on the column heads makes it worse rather than safer, since
+	 * a two-letter tag in bold is what overruns it.
+	 *
+	 * Colour and a painted rule instead. `box-shadow` is paint: it reserves
+	 * nothing and shifts nothing, so unlike a transparent border there is no
+	 * placeholder to keep in step with the lit state. Both headings take the
+	 * accent the lit cell takes, so the row, the column and the cell read as
+	 * one mark rather than three things happening at once.
+	 */
 	.matrix th.lit {
-		color: var(--color-text);
-		font-weight: 700;
+		color: var(--color-accent);
+		box-shadow: inset 0 -2px 0 var(--color-accent);
+	}
+
+	/* `.work` sets its own colour, so the rule above cannot reach it. */
+	.matrix th[scope='row'].lit .work {
+		color: var(--color-accent);
 	}
 
 	/*
@@ -652,6 +804,15 @@
 		font-size: 0.9rem;
 		font-variant-numeric: tabular-nums;
 		color: var(--color-text-muted);
+		/* ONE LINE ALWAYS, for the reason the height is reserved at all: the
+		   longest reading here is a work, a language, a percentage and a
+		   fraction, which wraps in a narrow window and pushes the matrix down
+		   under the pointer that asked for it. Truncating loses the tail of a
+		   line the reader can restore by moving one cell; wrapping moves the
+		   grid they are reading. */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	/* A language with nothing gets a hairline rather than an empty box: the
@@ -801,14 +962,8 @@
 		white-space: nowrap;
 	}
 
-	.derived,
 	.notice {
 		color: var(--color-text-muted);
-	}
-
-	.derived {
-		margin-top: 2.5rem;
-		font-size: 0.9rem;
 	}
 
 	.visually-hidden {

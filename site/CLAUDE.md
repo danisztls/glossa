@@ -1683,6 +1683,11 @@ deploy on it. `site/docs/census.md` holds the rationale.
 - **The matrix is `--color-apparatus` and the hovered cell is the accent**, so
   the page spends two colours: one on what is named, one on what is measured.
   A token and never a literal, which is what survives `data-mono`.
+- **A hover mark here may not change a text metric**, which is
+  `/calendarium`'s rule met a second time: the lit headings went bold, so the
+  first column grew, forty language columns moved, and the cell under the
+  pointer slid out from under it. Colour and a `box-shadow` rule — paint
+  reserves nothing, so there is no transparent placeholder to keep in step.
 - **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
   `/calendarium/liturgia` already stands on, because its `census.*` strings are
   written in English alone. Its head is fixed and English in `STATIC_HEADS` to
