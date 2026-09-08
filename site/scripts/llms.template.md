@@ -18,38 +18,32 @@
   grammar that lets the address be written without a fetch. The rights
   position is stated once, in full, and is not to be weakened by an edit.
 
-  IT CLAIMS NOTHING AS ITS OWN AND GRANTS NOTHING TO ANYONE. Those are two
-  edits and the second is the one to hold. The section below naming the
-  descriptions and the apparatus was headed "What here is ours" and told the
-  reader they may quote them; the heading went first, and the permission stayed
-  a while longer as "Attribute a quotation of either to this site", which reads
-  as a grant with an attribution condition attached. Both are gone. What is
-  left is provenance — what a publisher published, and what was written here —
-  which answers the reader's real question and is checkable, where a permission
-  is a claim to standing.
+  IT CLAIMS NOTHING AS ITS OWN AND ANSWERS NOTHING ABOUT REUSE, IN EITHER
+  DIRECTION. The section below naming the descriptions and the apparatus was
+  headed "What here is ours" and told the reader they may quote them; the
+  permission then survived a while as "Attribute a quotation of either to this
+  site", which is the same grant with a condition on it. Both are gone and
+  NOTHING REPLACED THEM — in particular, no sentence saying reuse is not
+  licensed. **A denial is a position, and a file that takes one has invited the
+  reader to hold it to that one.** Silence is not an oversight here.
 
-  THE CROSS-REFERENCES ARE WHY THE SECOND EDIT MATTERS MOST. A description is
-  prose written here and its authorship is not in doubt; the apparatus is a
-  reading of the publishers' own footnotes, and offering a licence over it is
-  offering one over somebody else's work. `colophon.participateRights` already
-  carries the rule in the other direction — a licence is the rights holder's to
-  give — and this file may not act as though it were one.
+  That is the colophon's shape too (`site/docs/colophon.md`): a paragraph
+  claiming the arrangement and the descriptions was drafted and removed, and the
+  page "claims nothing rather than claiming it in the weakest available place".
+  It did not replace the claim with a disclaimer either.
 
-  Rights held by OTHERS are still stated plainly, which is deference and stays.
-  So does the tagline's "Free to read": it was "Free", beside a sentence about
-  verbatim reproduction, where it can be read as a statement about the licence
-  rather than the price.
+  The cross-references are why the question is left alone rather than answered
+  carefully. A description is prose written here and its authorship is not in
+  doubt; the apparatus is a reading of the publishers' own footnotes, so a
+  grant AND a refusal over it are both statements about somebody else's work.
 
-  This is the colophon's own position, arrived at separately and first
-  (`site/docs/colophon.md`): a paragraph claiming the arrangement and the
-  descriptions was drafted and removed, and the page "claims nothing rather
-  than claiming it in the weakest available place". This file was the last
-  surface still claiming it, in the strongest wording on the site.
+  So: say where prose came from, state the rights held by OTHERS plainly — that
+  is deference and stays — and answer nothing about permission.
 -->
 
 # Glossa Catholica
 
-> One stable address for every citable unit of the central Catholic texts: each chapter and verse of the Bible, each paragraph of the Catechism, of its Compendium and of the Compendium of the Social Doctrine of the Church, each canon of the Code of Canon Law, each article of the Summa Theologiae, each numbered section of {{DOCUMENT_COUNT}} magisterial documents, and the common prayers. The texts are reproduced verbatim from their publishers in {{LANGUAGE_COUNT}} languages and cross-referenced to one another. Free to read, ad-free, account-free, offline-first. **Cite the publisher for the words; link here for the place.**
+> One stable address for every citable unit of the central Catholic texts: each chapter and verse of the Bible, each paragraph of the Catechism, of its Compendium and of the Compendium of the Social Doctrine of the Church, each canon of the Code of Canon Law, each article of the Summa Theologiae, each numbered section of {{DOCUMENT_COUNT}} magisterial documents, and the common prayers. The texts are reproduced verbatim from their publishers in {{LANGUAGE_COUNT}} languages and cross-referenced to one another. Free, ad-free, account-free, offline-first. **Cite the publisher for the words; link here for the place.**
 
 ## What this site asks of you
 
@@ -132,7 +126,7 @@ Two things on this site are not reproduced from a publisher; both were written h
 - The **descriptions of the magisterial documents** — a short account of what each one argues, written by reading it.
 - The **cross-reference apparatus**: which paragraphs of the Catechism cite a given chapter of Scripture, which documents cite a given paragraph, which Compendium question condenses which paragraphs.
 
-That is a statement of provenance and not a grant. **Nothing in this file licenses the reuse of anything, these two included.** Everything else on the site belongs to the publishers below, and permission for it is theirs to give and not this site's. The colophon states the position in full.
+Everything else on the site belongs to the publishers below. The colophon states the position in full.
 
 ## Where the texts come from
 
