@@ -884,10 +884,12 @@ def is_indented(outer_html: str, inner_html: str) -> bool:
 # term would have nothing to promote and one more way to invent a tier.
 _HTML_DEFAULT_FONT_SIZE = 3
 # The rank's bits, low to high. Italic stays at bit 0 because `parse_document`
-# finds a heading's peer-but-for-the-italics with `style ^ 1`.
+# finds a heading's peer-but-for-the-italics with `style ^ 1`, and the bold
+# bit goes above it so that flipping one still means only the italics.
 _STYLE_ITALIC = 1
-_STYLE_SMALLER = 2
-_STYLE_FLUSH_LEFT = 4
+_STYLE_UNBOLD = 2
+_STYLE_SMALLER = 4
+_STYLE_FLUSH_LEFT = 8
 
 _FONT_SIZE_SPAN_RE = re.compile(
     r'<font\b[^>]*\bsize\s*=\s*["\']?([+-]?\d+)[^>]*>(.*?)</font>',
@@ -940,10 +942,20 @@ def heading_style_rank(
     The corpus distinguishes heading tiers visually and does so consistently
     (docs/research/description-pass-2026-08.md): centered headings outrank
     left-aligned ones, within either a full-size heading outranks a shrunken
-    one, and within either of those a plain-bold heading outranks a
-    bold-italic one. `haurietis-aquas.pt` splits 7 centered against 21 left
-    bold-italic, `sacrosanctum-concilium.pt` 16 against 83,
-    `deus-caritas-est.pt` 5 against 13.
+    one, within either of those a bold heading outranks an unemphasised one,
+    and within any of those a plain heading outranks an italic one.
+    `haurietis-aquas.pt` splits 7 centered against 21 left bold-italic,
+    `sacrosanctum-concilium.pt` 16 against 83, `deus-caritas-est.pt` 5
+    against 13.
+
+    THE BOLD BIT IS WHAT SEPARATES A DOCUMENT'S THIRD TIER FROM ITS SECOND.
+    `<p align="left"><b><i>…</i></b></p>` is the middle tier and
+    `<p align="left"><i>…</i></p>` the one below it; ranked on centring,
+    size and italics alone the two are one rank, and the tree stores two
+    tiers where the page prints three -- `ecclesia-in-oceania.en` (19
+    headings), `gaudete-et-exsultate.en` (30), `familiaris-consortio.en`.
+    Three readers who could not see each other's work named the same cause
+    (docs/research/document-structure-defects.md §7).
 
     Ranks are compared only WITHIN one document and then compacted to
     contiguous levels, so the absolute numbers carry no meaning across works
@@ -960,10 +972,18 @@ def heading_style_rank(
     # containing either -- so they are peers, and giving the anchored ones the
     # emphasised rank is what says so.
     italic = anchor_titled or bool(re.search(r"<(i|em)\b", inner_html, re.IGNORECASE))
+    # An anchor-titled heading is NOT bold either, and saying so is what keeps
+    # the paragraph above true: it carries no emphasis, so it belongs with the
+    # unemphasised italic tier and not with the bold-italic one above it.
+    # `fratelli-tutti.en` prints `<p><a name=…></a>SHATTERED DREAMS</p>` and
+    # `<p><i><a name=…></a>The end of historical consciousness</i></p>` under
+    # the same chapters, and its hand-read table of contents makes them peers.
+    bold = bool(re.search(r"<(b|strong)\b", inner_html, re.IGNORECASE))
     smaller = heading_font_size(inner_html) < _HTML_DEFAULT_FONT_SIZE
     return (
         (0 if centered else _STYLE_FLUSH_LEFT)
         + (_STYLE_SMALLER if smaller else 0)
+        + (0 if bold else _STYLE_UNBOLD)
         + (_STYLE_ITALIC if italic else 0)
     )
 
@@ -5092,9 +5112,10 @@ def promote_plain_centered_run(blocks: list[Block]) -> list[str]:
         if lo < i < hi
         and b.kind != "quote"
         # centred and not italic; not bold either, or it would be a heading
-        # already. The size bit is masked off rather than required to be 0 --
-        # a centred plain run set small is still a centred plain run.
-        and b.style in (0, _STYLE_SMALLER)
+        # already. The size and bold bits are masked off rather than required
+        # to be 0 -- a centred plain run set small is still a centred plain
+        # run, and `is_full_bold` is the sharper of the two bold tests.
+        and not b.style & (_STYLE_FLUSH_LEFT | _STYLE_ITALIC)
         and not is_full_bold(b.raw)
         and len(b.text) <= _ITALIC_HEADING_MAX_CHARS
         # Either it carries no number at all, or the number it carries goes
