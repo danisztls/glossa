@@ -49,7 +49,12 @@ the worst possible reason.
 
 **`build/` is shared by every worktree**, so it may hold output another
 session's branch wrote. The site's sync excludes and warns about work types it
-does not know; their presence is not corruption.
+does not know; their presence is not corruption. **A measurement over `build/`
+is only about the branch that wrote it last**, and for a work both branches
+build that is not visible in the file listing — an oracle count read while
+another worktree's parse was running reported this branch's own fixes as
+absent. Re-run this branch's rebuild before reading, and check for a running
+parse if a number moves without a change.
 
 ### Output regenerable only from a previous copy of itself is not regenerable
 
