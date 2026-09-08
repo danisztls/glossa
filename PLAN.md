@@ -244,12 +244,6 @@ wrong labels passes all four.
 
 ### Checks and filings to revisit
 
-- **`audit.py balance` still excludes the Bible**, on the reasoning that Esther
-  divergence reads as loss. With nine editions an edition-specific defect has
-  eight witnesses against it, which is the configuration that found all three
-  Catechism defects — so the exclusion now costs more than it saves. The
-  reasoning was also half right: Esther holds real loss _and_ real divergence at
-  once, and only reading the text tells them apart.
 - **Martini's 13 dropped notes want hand-adjudication.** Each has a printed
   locator naming a verse absent from its page — 2 Corinthians 6's notes numbered
   `6,19`–`6,23` are verbatim about 2 Cor 7:1–4. The scraper logs them as
