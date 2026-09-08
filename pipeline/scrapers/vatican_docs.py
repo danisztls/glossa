@@ -235,6 +235,7 @@ follow whichever checkout the code being run lives in.
 from __future__ import annotations
 
 import argparse
+import bisect
 import collections
 import contextlib
 import difflib
@@ -3592,6 +3593,24 @@ _BLOCKQUOTE_RE = re.compile(r"<(/?)blockquote(?=[\s>])", re.IGNORECASE)
 # prints, so the prefix rules miss and the fuzzy ratio falls to 0.84 against a
 # threshold of 0.90 -- entirely on the eight characters of the annotation.
 _TOC_RANGE_RE = re.compile(r"\s*\[\s*\d+\s*(?:[-\u2013\u2014]\s*\d+\s*)?\]\s*$")
+# The same annotation, in either bracket -- `Az igazs\u00e1g eledele(2)`. Kept
+# apart from the table above, which produces the stored TITLE of an outline
+# entry: a parenthesised number at the end of a heading is sometimes a date
+# (`fratelli-tutti.sl` prints `Drugi vatikanski koncil (1962-1965)`), so it
+# may be ignored when matching a line to the heading it copied and must not
+# be cut out of a title.
+_TOC_ANNOTATION_RE = re.compile(
+    r"\s*[\[(]\s*\d+\s*(?:[-\u2013\u2014]\s*\d+\s*)?[\])]\s*$"
+)
+# The same annotation printed BEFORE the title rather than after it.
+# `sacrosanctum-concilium.hu` lists `5. A h\u00fasv\u00e9ti miszt\u00e9rium`, where the body
+# prints that number as the paragraph's own and the title alone as the
+# heading -- so outline and body agree about every word and match on none.
+# Arabic and delimited: `I.` and `A.` are division labels the body reprints
+# WITH their title, so they stay. It is cut from both sides of the
+# comparison, which is what keeps the two spellings comparable and is also
+# its cost -- two entries differing only in their number read alike.
+_TOC_ADDRESS_RE = re.compile(r"^\s*\d{1,4}\s*[.)]\s+")
 # What a page calls its own table of contents, casefolded. A CLOSED table
 # and not a pattern, because the paragraph above an outline is as often the
 # document's title (`CASTI CONNUBII`, `DOMINUM ET VIVIFICANTEM`), its first
@@ -3677,6 +3696,66 @@ def _in_blockquote(body_html: str, span_start: int, pos: int) -> bool:
     return depth > 0
 
 
+def _toc_line_key(text: str) -> str:
+    """A printed line, keyed for comparison with the line a table of contents
+    copied it from -- normalized, and without the address the outline
+    annotates its entries with at either end and the body prints as the
+    paragraph's own number or not at all."""
+    text = _TOC_ANNOTATION_RE.sub("", text.strip()).strip()
+    # A heading a page sets in parentheses is the heading, and its outline
+    # need not agree about the brackets: `sacrosanctum-concilium.hu` lists
+    # `5. A húsvéti misztérium` and prints `(A húsvéti misztérium)` over the
+    # paragraph. Only where they enclose the WHOLE line, so a title ending in
+    # a scripture reference keeps it.
+    if text.startswith("(") and text.endswith(")"):
+        text = text[1:-1]
+    return _norm_heading(_TOC_ADDRESS_RE.sub("", text.strip(), count=1))
+
+
+def _toc_printed_lines(body_html: str) -> dict[str, list[int]]:
+    """Every printed line of the page, keyed, against the ends of the
+    paragraphs that print it, in document order.
+
+    A "line" is `_printed_lines_from`'s unit -- what the page breaks -- which
+    is the unit a heading occupies and the unit an outline lists. Keeping the
+    positions is what makes "printed AGAIN, below this one" answerable
+    without re-reading the document once per paragraph."""
+    lines: dict[str, list[int]] = {}
+    for para in _TOC_PARA_RE.finditer(body_html):
+        for line in _BR_RE.split(para.group(2)):
+            key = _toc_line_key(strip_tags(line))
+            if key:
+                lines.setdefault(key, []).append(para.end())
+    return lines
+
+
+def _reprinted_below(
+    inner_html: str, printed: dict[str, list[int]], para_end: int
+) -> tuple[list[int], int]:
+    """Where each of this paragraph's lines is printed again below it, and
+    how many lines it has.
+
+    Lines too short to be a heading are counted on neither side: a stray
+    `&nbsp;` is not evidence in either direction (`_extend_toc_tail`). It is
+    the PRINTED line that has to be long enough and not the key made of it,
+    because the key drops the entry's address -- `africae-munus.en` prints
+    `2. Islam [94]` and would otherwise have a row of nothing."""
+    targets, total = [], 0
+    for line in _BR_RE.split(inner_html):
+        text = strip_tags(line)
+        if len(_norm_heading(text)) < _TOC_MIN_TITLE_CHARS:
+            continue
+        key = _toc_line_key(text)
+        if not key:
+            continue
+        total += 1
+        where = printed.get(key, [])
+        i = bisect.bisect_right(where, para_end)
+        if i < len(where):
+            targets.append(where[i])
+    return targets, total
+
+
 def toc_link_span(body_html: str) -> tuple[int, int] | None:
     """The character span of the page's own printed table of contents, or
     None where it prints none.
@@ -3730,13 +3809,93 @@ def toc_link_span(body_html: str) -> tuple[int, int] | None:
             end = max(end, para.end())
     start = _extend_toc_head(body_html, start)
     end = _extend_toc_tail(body_html, end)
-    for para in _TOC_PARA_RE.finditer(body_html[start:end]):
-        if match_para_num(para.group(2)) and not _is_toc_row(para.group(2)):
+    printed = _toc_printed_lines(body_html)
+    for para in _TOC_PARA_RE.finditer(body_html, start, end):
+        if match_para_num(para.group(2)) and not _is_toc_row(
+            para.group(2), printed, para.end()
+        ):
             return None
     return start, end
 
 
-def _is_toc_row(inner_html: str) -> bool:
+def toc_reprint_span(body_html: str) -> tuple[int, int] | None:
+    """The span of a table of contents the page prints with no usable link,
+    or None where it prints none.
+
+    `toc_link_span` finds an outline by its forward links, which is exact and
+    which four page shapes in this corpus give it nothing to work with:
+    `evangelii-gaudium.nl` and `csdc.sw` link no entry at all,
+    `sacrosanctum-concilium.hu` links all 128 of them at anchors the page
+    never defines, and `evangelii-gaudium.hu` prints its outline as one
+    paragraph of 95 lines. Each of those became the opening of section 1 --
+    the document's own contents, printed as its first words, which is the one
+    defect in `docs/research/document-structure-defects.md` a reader meets
+    directly.
+
+    A TABLE OF CONTENTS SAYS NOTHING OF ITS OWN. Every line it prints is a
+    line the document prints again below it, which is the property the links
+    were only ever a proxy for, and it is what a masthead does not have: a
+    document's title and address are said once. So a paragraph is a row of
+    the outline when MOST of its lines are printed again below it as whole
+    lines -- most rather than all, because a page is free to typeset a title
+    slightly differently in its outline than in its body, and this test has
+    nothing else holding it up.
+
+    Then the span runs from the first row to the last, whatever lies between
+    (§6: a printed table is contiguous), which is what carries the entries
+    the outline prints in a shape of their own -- part titles, captions, the
+    lines a body merges and an outline breaks.
+
+    TWO GUARDS, and each answers a way the reprint alone is not enough:
+
+      - The rows must point at `_TOC_MIN_ENTRIES` DIFFERENT paragraphs. A
+        title printed across three lines and repeated below is three
+        reprinted lines and one place -- `dignitatis-humanae.cs` prints its
+        subtitle in the masthead and again as the first heading -- where a
+        table of contents is a list of somewhere else.
+      - The walk stops where the body starts, at the first numbered paragraph
+        that is not itself a row (`_is_toc_row`), which is `toc_link_span`'s
+        guard and is load-bearing for the same reason. A page it never
+        reaches gets no span at all: 328 editions in this corpus number
+        nothing, so nothing on them says where an outline would end -- and
+        they have no numbered section for one to leak into either, which is
+        the whole of what this fixes."""
+    printed = _toc_printed_lines(body_html)
+    read: list[tuple[re.Match[str], list[int], int]] = []
+    reached_body = False
+    for para in _TOC_PARA_RE.finditer(body_html):
+        if match_para_num(para.group(2)) and not _is_toc_row(
+            para.group(2), printed, para.end()
+        ):
+            reached_body = True
+            break
+        read.append((para, *_reprinted_below(para.group(2), printed, para.end())))
+    if not reached_body:
+        return None
+
+    rows = [i for i, (_, hits, total) in enumerate(read) if len(hits) * 2 > total >= 2]
+    if not rows:
+        return None
+    targets = {target for i in rows for target in read[i][1]}
+    if len(targets) < _TOC_MIN_ENTRIES:
+        return None
+
+    # A ONE-LINE ROW IS NOT EVIDENCE ALONE AND IS EVIDENCE BESIDE ONE THAT
+    # IS. The majority test above needs two lines to be a majority of, so an
+    # entry the page prints on a paragraph of its own can only be reached
+    # from a row already found: `sacrosanctum-concilium.hu` sets `Bevezetés`
+    # that way, above the four entries under it. Backwards only, and only
+    # over paragraphs printed again below IN FULL -- `_extend_toc_tail`'s
+    # rule, at the other end of the same table.
+    first = rows[0]
+    while (
+        first and read[first - 1][2] and len(read[first - 1][1]) == read[first - 1][2]
+    ):
+        first -= 1
+    return _extend_toc_head(body_html, read[first][0].start()), read[rows[-1]][0].end()
+
+
+def _is_toc_row(inner_html: str, printed: dict[str, list[int]], para_end: int) -> bool:
     """Is this numbered paragraph a table-of-contents ROW rather than a
     numbered section that happens to sit inside the candidate span?
 
@@ -3759,12 +3918,19 @@ def _is_toc_row(inner_html: str) -> bool:
     happens to contain, and it keeps disqualifying the span exactly as
     before.
 
-    Requires a link, so a paragraph with none is never a row: an outline
-    printed as plain text is carried by the span it sits inside (see the
-    docstring above), never by this."""
+    A ROW THE PAGE DID NOT LINK ANSWERS THE SAME QUESTION WITHOUT ONE, and
+    has to: `africae-munus` indents its third tier as `1. Living in
+    accordance with Christ's justice [24-25]`, plain text inside the outline
+    it links everywhere else, and that one row read as the document's
+    paragraph 1 and disqualified the whole 5 KB span in five languages. The
+    discriminator is the outline's own -- every line printed again below it,
+    as a whole line (`toc_reprint_span`) -- and here it must be EVERY line,
+    not most: this is the one thing that can overrule the guard separating a
+    table of contents from a body, so it answers for all of what it reads."""
     links = list(_INPAGE_LINK_RE.finditer(inner_html))
     if not links:
-        return False
+        hits, total = _reprinted_below(inner_html, printed, para_end)
+        return total > 0 and len(hits) == total
     gaps = [inner_html[: links[0].start()]]
     gaps += [inner_html[a.end() : b.start()] for a, b in itertools.pairwise(links)]
     gaps.append(inner_html[links[-1].end() :])
@@ -6833,14 +6999,31 @@ def parse_document(
     # were swept into the document's first numbered section --
     # `magnifica-humanitas` opened §1 with its own table of contents in eight
     # of its nine editions, and `divini-redemptoris.pt` with all four of its
-    # part titles. Both functions stay: this one is exact where the page
-    # links its outline, and that one still covers a table of contents typeset
-    # without links, which nothing in the corpus has yet but the older shell
-    # could plausibly produce.
+    # part titles.
+    #
+    # THREE FUNCTIONS, because a page can print an outline three ways and
+    # each is exact about one of them: `toc_link_span` where the entries link
+    # forward, `toc_reprint_span` where they do not link at all or link
+    # nowhere, and `drop_table_of_contents` for the entries that became
+    # headings. Both spans are measured against the same body, overlapping
+    # ones merged and the rest removed from the end, so neither moves the
+    # other's offsets. Where a page gives both they are usually the same
+    # region, and where one reaches further -- `verbum-domini` links its
+    # outline and then prints four unlinked entries past the last link -- the
+    # union is what goes.
     toc_html = body_html
-    toc_span = toc_link_span(body_html)
-    if toc_span is not None:
-        body_html = body_html[: toc_span[0]] + body_html[toc_span[1] :]
+    toc_spans: list[tuple[int, int]] = []
+    for start, end in sorted(
+        span
+        for span in (toc_link_span(body_html), toc_reprint_span(body_html))
+        if span is not None
+    ):
+        if toc_spans and start <= toc_spans[-1][1]:
+            toc_spans[-1] = (toc_spans[-1][0], max(toc_spans[-1][1], end))
+        else:
+            toc_spans.append((start, end))
+    for start, end in reversed(toc_spans):
+        body_html = body_html[:start] + body_html[end:]
 
     marker_template = detect_marker_template(body_html + foot_html)
     footnote_table, chapter_footnote_table = build_footnote_table(foot_html)
