@@ -6509,10 +6509,21 @@ CDF_DOCUMENTS = {
     ("2016-08-15", "ad-resurgendum-cum-christo"): (
         "ad-resurgendum-cum-christo", "cdf-instruction",
         "Ad Resurgendum cum Christo"),
-    # The four most recent, cited by this corpus 13, 0, 26 and 40 times.
+    # The five most recent, cited by this corpus 8, 13, 0, 26 and 40 times.
     # Samaritanus Bonus is the one with no citations at all, and is here
     # because it is the standing answer on the question Iura et Bona opened
     # -- which the corpus does cite, 26 times.
+    #
+    # The slug is the FULL incipit and the source's is a truncation of it
+    # (`oeconomicae-et-pecuniariae`), the break `SLUG_TITLES` documents for
+    # `mater` and `populorum`. It is also the first JOINT document here --
+    # issued with the Dicastery for Promoting Integral Human Development,
+    # which the page's masthead names and `pontiff_or_council` does not,
+    # because that field is what `/documenta` facets on and a joint string is
+    # a facet of one that neither body's own row reaches.
+    ("2018-01-06", "oeconomicae-et-pecuniariae"): (
+        "oeconomicae-et-pecuniariae-quaestiones", "cdf-considerations",
+        "Oeconomicae et Pecuniariae Quaestiones"),
     ("2018-02-22", "placuit-deo"): (
         "placuit-deo", "cdf-letter", "Placuit Deo"),
     ("2020-07-14", "samaritanus-bonus"): (

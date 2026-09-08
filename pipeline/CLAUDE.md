@@ -597,6 +597,12 @@ six documents in 2025 alone. Four kinds of gap, four different decisions:
 
 Plus the parsed editions withheld in `site/unpublished.json`.
 
+**A joint document has one `pontiff_or_council` and it is not the whole truth.**
+_Oeconomicae et Pecuniariae Quaestiones_ was issued with the Dicastery for
+Promoting Integral Human Development, which the page's masthead names and the
+field does not — that field is what `/documenta` facets on, and a joint string
+is a facet of one that neither body's own row reaches.
+
 ## The Catechism is nine editions in four page formats
 
 `ccc.py` reads every language vatican.va publishes the CCC in as HTML (`de en es
