@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { isDivergentBook, resolveVulgate, toVulgateCandidates } from './versification';
+import {
+	arrangedToVulgate,
+	isArrangedBook,
+	isDivergentBook,
+	resolveVulgate,
+	toVulgateCandidates
+} from './versification';
 
 /**
  * Ground truth pulled from the real corpus (`corpus/build/bible.cpdv.en`),
@@ -373,5 +379,90 @@ describe('toVulgateCandidates — late-merge chapters', () => {
 		expect(toVulgateCandidates('acts', 7)).toEqual([
 			{ osis: 'acts', chapter: 7, verse: undefined }
 		]);
+	});
+});
+
+describe("arrangements — an edition's own text, never a citation", () => {
+	/**
+	 * THE PROPERTY THAT MATTERS MOST IS THE NEGATIVE ONE. `bible.cpdv.en`
+	 * interleaves the Greek additions to Esther, so its stored chapter 13 is
+	 * the Vulgate's 16 — but a reader typing "Esther 13", and every citation
+	 * in the magisterial corpus, means the Vulgate's 13. If the arrangement
+	 * ever leaked into `toVulgateCandidates` the whole book would silently
+	 * move under every reference into it, which is the failure the two
+	 * separate entry points exist to make impossible.
+	 */
+	it('leaves references into Esther exactly where they were', () => {
+		expect(toVulgateCandidates('esth', 13, 1)).toEqual([{ osis: 'esth', chapter: 13, verse: 1 }]);
+		expect(toVulgateCandidates('esth', 16, 24)).toEqual([{ osis: 'esth', chapter: 16, verse: 24 }]);
+		expect(isDivergentBook('esth')).toBe(false);
+	});
+
+	it('claims Esther for the CPDV arrangement and nothing else', () => {
+		expect(isArrangedBook('greek-interleaved', 'esth')).toBe(true);
+		expect(isArrangedBook('greek-interleaved', 'ps')).toBe(false);
+		expect(isArrangedBook('vulgate', 'esth')).toBe(false);
+	});
+
+	// The four seams a person read, and the reason the table is not arithmetic
+	// — see versification.ts. Each was checked against `bible.douay-rheims.en`
+	// at the target address.
+	it('carries the second edict to Esther 16', () => {
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 13, 1)).toEqual({
+			chapter: 16,
+			verse: 1
+		});
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 13, 24)).toEqual({
+			chapter: 16,
+			verse: 24
+		});
+		// and the same CPDV chapter resumes the Hebrew book five verses later
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 13, 25)).toEqual({
+			chapter: 8,
+			verse: 13
+		});
+	});
+
+	it('runs backwards where Mardochai’s charge is told out of order', () => {
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 7, 10)).toEqual({
+			chapter: 15,
+			verse: 2
+		});
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 7, 16)).toEqual({
+			chapter: 15,
+			verse: 1
+		});
+	});
+
+	it('puts the merged verse at the first of its two Vulgate addresses', () => {
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 7, 14)).toEqual({
+			chapter: 4,
+			verse: 12
+		});
+		// 4:13 is then an address with no verse of its own in this edition —
+		// nothing maps ONTO it, which is what leaves the honest gap.
+		const targets = [];
+		for (let c = 1; c <= 15; c += 1) {
+			for (let v = 1; v <= 40; v += 1) {
+				const t = arrangedToVulgate('greek-interleaved', 'esth', c, v);
+				if (t) targets.push(`${t.chapter}:${t.verse}`);
+			}
+		}
+		expect(targets).not.toContain('4:13');
+		expect(targets).toContain('4:12');
+		expect(new Set(targets).size).toBe(targets.length); // no address claimed twice
+	});
+
+	it('moves the Ptolemy colophon to the end of the book', () => {
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 15, 14)).toEqual({
+			chapter: 11,
+			verse: 1
+		});
+	});
+
+	it('is undefined for a verse no row covers, rather than passing it through', () => {
+		expect(arrangedToVulgate('greek-interleaved', 'esth', 16, 1)).toBeUndefined();
+		expect(arrangedToVulgate('greek-interleaved', 'gen', 1, 1)).toBeUndefined();
+		expect(arrangedToVulgate('no-such-arrangement', 'esth', 1, 1)).toBeUndefined();
 	});
 });

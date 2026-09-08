@@ -94,7 +94,12 @@ import {
 	plateImageName
 } from '../src/lib/plates.ts';
 import { pairDivisions } from '../src/lib/toc-pairing.ts';
-import { isDivergentBook, toVulgateCandidates } from '../src/lib/versification.ts';
+import {
+	arrangedToVulgate,
+	isArrangedBook,
+	isDivergentBook,
+	toVulgateCandidates
+} from '../src/lib/versification.ts';
 import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
@@ -347,27 +352,72 @@ const BIBLE_CHAPTER_CHUNK_TARGET_BYTES = 150_000;
 const CONTENT_FILE_CEILING_BYTES = 200_000;
 
 /**
- * One book's chapters re-addressed from Hebrew numbering into the Vulgate.
+ * One verse of a Hebrew-numbered edition at its Vulgate address.
  *
- * Verse by verse, through `toVulgateCandidates` — the same function
- * `refs.ts` resolves a citation with, so an edition's own text and a citation
- * into it cannot disagree about where a verse lives. At VERSE level the mapper
- * is unambiguous (it returns two candidates only for a whole-chapter reference
- * with no verse, which never occurs here), so the single candidate is taken and
- * a second one would be a bug worth hearing about rather than a choice.
+ * Through `toVulgateCandidates` — the same function `refs.ts` resolves a
+ * citation with, so an edition's own text and a citation into it cannot
+ * disagree about where a verse lives. At VERSE level the mapper is unambiguous
+ * (it returns two candidates only for a whole-chapter reference with no verse,
+ * which never occurs here), so the single candidate is taken and a second one
+ * would be a bug worth hearing about rather than a choice.
+ */
+const hebrewVerseMapper = (osis, workId) => (chapter, verse) => {
+	const candidates = toVulgateCandidates(osis, chapter, verse);
+	if (candidates.length !== 1) {
+		throw new Error(
+			`${workId} ${osis} ${chapter}:${verse}: ${candidates.length} Vulgate ` +
+				`candidates for one verse — the mapper should be unambiguous here`
+		);
+	}
+	return { chapter: candidates[0].chapter, verse: candidates[0].verse };
+};
+
+/**
+ * One verse of an ARRANGED edition at its Vulgate address.
  *
- * A Hebrew chapter can SPLIT across two Vulgate chapters and two can MERGE into
+ * The table is total over the book it claims, so an uncovered verse is a
+ * defect and this raises rather than passing the verse through: keeping the
+ * edition's own number would leave a verse of the Greek appendix sitting at a
+ * Hebrew chapter's address, silently, which is the whole failure being fixed.
+ * A re-parse that changes a verse division under `bible.cpdv.en`'s Esther is
+ * what would trip it, and `divergence.py` says the same thing one run earlier.
+ */
+const arrangedVerseMapper = (arrangement, osis, workId) => (chapter, verse) => {
+	const target = arrangedToVulgate(arrangement, osis, chapter, verse);
+	if (!target) {
+		throw new Error(
+			`${workId} ${osis} ${chapter}:${verse}: no row of the '${arrangement}' ` +
+				`arrangement covers this verse — the edition no longer has the shape ` +
+				`site/src/lib/versification.ts describes`
+		);
+	}
+	return target;
+};
+
+/**
+ * One book's chapters re-addressed into the corpus's canonical Vulgate
+ * numbering, verse by verse through `mapVerse`.
+ *
+ * TWO CALLERS, TWO REASONS, ONE SEAM. `bible.crampon.fr` stores a Hebrew
+ * Psalter and `bible.cpdv.en` stores an Esther arranged around the Greek
+ * additions; both are what their source printed, which is what the corpus is
+ * for, and both have to become one address space before anything downstream —
+ * the routes, the xref index, compare mode, the Doré anchors — can assume the
+ * uniformity all of them already assume.
+ *
+ * A source chapter can SPLIT across two target chapters and two can MERGE into
  * one, so chapters are rebuilt from scratch rather than relabelled: Heb 9 and
- * Heb 10 both land in Vulg 9, and Heb 116 lands partly in Vulg 114 and partly
- * in Vulg 115. Verse-level `notes`/`text_marked` ride along on the verse object
- * untouched — they belong to the verse, not to its number.
+ * Heb 10 both land in Vulg 9, Heb 116 lands partly in Vulg 114 and partly in
+ * Vulg 115, and CPDV's Esther 7 lands in four different Vulgate chapters.
+ * Verse-level `notes`/`text_marked` ride along on the verse object untouched —
+ * they belong to the verse, not to its number.
  *
  * `summary` and `headings` follow the verse they sit before, which is the only
  * defensible rule when a chapter splits: a heading is addressed by its verse
  * (docs/corpus-schema.md, "Headings are presentation"), and a summary belongs
  * to whichever Vulgate chapter its chapter's first verse landed in.
  */
-function toVulgateChapters(osis, chapters, workId) {
+function toVulgateChapters(osis, chapters, workId, mapVerse) {
 	const byChapter = new Map();
 	const chapterOf = (n) => {
 		let ch = byChapter.get(n);
@@ -377,19 +427,12 @@ function toVulgateChapters(osis, chapters, workId) {
 	for (const source of chapters) {
 		let firstTarget;
 		for (const verse of source.verses) {
-			const candidates = toVulgateCandidates(osis, source.n, verse.n);
-			if (candidates.length !== 1) {
-				throw new Error(
-					`${workId} ${osis} ${source.n}:${verse.n}: ${candidates.length} Vulgate ` +
-						`candidates for one verse — the mapper should be unambiguous here`
-				);
-			}
-			const { chapter, verse: n } = candidates[0];
+			const { chapter, verse: n } = mapVerse(source.n, verse.n);
 			firstTarget ??= chapter;
 			chapterOf(chapter).verses.push({ ...verse, n });
 		}
 		for (const heading of source.headings ?? []) {
-			const [target] = toVulgateCandidates(osis, source.n, heading.before_verse);
+			const target = mapVerse(source.n, heading.before_verse);
 			const ch = chapterOf(target.chapter);
 			(ch.headings ??= []).push({ ...heading, before_verse: target.verse });
 		}
@@ -1528,12 +1571,38 @@ for (const workId of workIds) {
 		// of the corpus that can import the real mapper. Everything below this
 		// line — both tiers, the routes, the xref index — then sees one address
 		// space, which is what every consumer already assumes.
+		//
+		// `book_arrangement` is the second such fact and it is a DIFFERENT one,
+		// which is why it is a second field and a second branch rather than a
+		// widened `psalm_numbering`. Hebrew numbering is a tradition a
+		// reference can be phrased in, so its mapper is also what resolves a
+		// citation; an arrangement is one edition's decision about where to
+		// print a passage, and applying it to a citation would be wrong — a
+		// reader typing "Esther 13" means the Vulgate's 13. `bible.cpdv.en` is
+		// the only edition with one: it interleaves the Greek additions to
+		// Esther instead of appending them, so at `/scriptura/esther/16` it had
+		// nothing to show and at the other fifteen it showed the wrong chapter
+		// without saying so.
 		const storedHebrew = manifest.psalm_numbering === 'hebrew';
+		const arrangement = manifest.book_arrangement;
 		for (const entry of readdirSync(booksDir).sort()) {
 			if (!entry.endsWith('.json')) continue;
 			const book = readJson(path.join(booksDir, entry));
 			if (storedHebrew && isDivergentBook(book.osis)) {
-				book.chapters = toVulgateChapters(book.osis, book.chapters, workId);
+				book.chapters = toVulgateChapters(
+					book.osis,
+					book.chapters,
+					workId,
+					hebrewVerseMapper(book.osis, workId)
+				);
+			}
+			if (arrangement && isArrangedBook(arrangement, book.osis)) {
+				book.chapters = toVulgateChapters(
+					book.osis,
+					book.chapters,
+					workId,
+					arrangedVerseMapper(arrangement, book.osis, workId)
+				);
 			}
 			// AFTER the versification conversion, so the note's own address is
 			// in the same space as the references it makes.

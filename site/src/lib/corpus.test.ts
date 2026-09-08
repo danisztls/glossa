@@ -378,9 +378,10 @@ describe('preferred edition', () => {
 		// took the first edition that HAD the chapter, which is registry order,
 		// which is another language — in production `bible.allioli.de`, so the
 		// reader met German while the Douay-Rheims sat one chain step away with
-		// the chapter in their own. It is the only address that reaches the
-		// branch: every other edition carries every chapter of the canonical
-		// union, Crampon's Hebrew numbering included, which the sync converts.
+		// the chapter in their own. It was the last address that reached the
+		// branch — `book_arrangement` closed it at the sync — so this now pins
+		// a policy nothing in the corpus exercises, which is the point of
+		// pinning it: the next edition with a gap must not re-decide it.
 		const present = listEditions('bible').filter((w) => w.id !== 'bible.cpdv.en');
 		expect(editionInLang(present, 'en')?.id).toBe('bible.douay-rheims.en');
 		// The assertion that discriminates in THESE fixtures, where the English

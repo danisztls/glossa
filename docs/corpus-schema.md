@@ -89,6 +89,7 @@ stored — see "Cross-references" below.
   "generated_at": "2026-08-14T12:00:00Z",
   // bible-only:
   "psalm_numbering": "vulgate", // per edition: "vulgate" | "hebrew" (bible.crampon.fr is hebrew; the rest Vulgate/Septuagint)
+  "book_arrangement": "greek-interleaved", // optional; only bible.cpdv.en has one. See below
   "books": ["gen", "exod", "…"], // the 73 lowercase OSIS codes in this work's canonical order
   // commentary-only, and REQUIRED there:
   "annotates": "bible.douay-rheims.en", // the work whose addresses this one's units name
@@ -347,6 +348,21 @@ OT (46): `gen exod lev num deut josh judg ruth 1sam 2sam 1kgs 2kgs 1chr 2chr ezr
 NT (27): `matt mark luke john acts rom 1cor 2cor gal eph phil col 1thess 2thess 1tim 2tim titus phlm heb jas 1pet 2pet 1john 2john 3john jude rev`
 
 Esther and Daniel include their deuterocanonical portions as the edition prints them (do not split into separate books). Baruch includes the Letter of Jeremiah as chapter 6 if the edition prints it so.
+
+### `book_arrangement` — where an edition prints a passage, not how it numbers one
+
+The corpus's address space is Vulgate chapter/verse. Two fields say an edition's stored text does not use it, and they are different facts:
+
+| Field              | Says                                                | Also applies to a citation?               |
+| ------------------ | --------------------------------------------------- | ----------------------------------------- |
+| `psalm_numbering`  | the numbering TRADITION the text is numbered in     | yes — the same mapper resolves references |
+| `book_arrangement` | where this EDITION chose to print a book's material | never                                     |
+
+`bible.cpdv.en` is the only edition with an arrangement (`"greek-interleaved"`): it prints the Greek additions to Esther where they fall in the story rather than appended as 10:4–16:24, so its stored Esther has fifteen chapters. A reader typing "Esther 13" still means the Vulgate's 13, which is why an arrangement must never be applied to a reference — only to the edition's own text, once, in `sync-corpus.mjs`.
+
+Both are stored as printed and converted on the way to the site, because `raw/` and `build/` are the record of what the source said. The rows live in `site/src/lib/versification.ts`; `pipeline/scrapers/bible/divergence.py` re-derives the bijection they claim from the editions on every run.
+
+**An arrangement may leave a verse gap, and that is honest.** CPDV prints as one verse what the Vulgate divides into 4:12 and 4:13, so the renumbered edition has no 4:13 — its words are all at 4:12. Splitting the sentence to fill the address would be inventing a division the edition never printed.
 
 ## Catechism — `structure.json`
 

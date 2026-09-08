@@ -68,14 +68,19 @@
 	 * while the Douay-Rheims sat one chain step away with the chapter in their
 	 * own language.
 	 *
-	 * `esth 16` is the ONLY address that reaches this branch, measured over the
-	 * synced corpus rather than over `build/`: the CPDV interleaves the Greek
-	 * additions where the Vulgate appends them (`divergence.py`'s `arrangement`
-	 * rows), and no chapter is missing from any other edition. Crampon's
-	 * Hebrew-numbered Joel and Malachi look like two more in `build/` and are
-	 * not — `sync-corpus.mjs` converts that edition into the canonical Vulgate
-	 * numbering before the site sees it, which is what makes this list one
-	 * entry long and why it must be measured after the sync.
+	 * NOTHING REACHES THIS BRANCH TODAY, and it stays anyway. `esth 16` was the
+	 * last address that did, and `book_arrangement` closed it at the sync
+	 * (docs/corpus-schema.md) — so every edition now carries every chapter of
+	 * the canonical union and the substitution is dead code until an edition
+	 * arrives that does not. Keeping it is the same bet the picker already
+	 * makes: `chaptersInEdition` in `BookChapterPicker` greys a chapter an
+	 * edition lacks, and both would otherwise have to be written under pressure
+	 * the day one appears.
+	 *
+	 * Measure that claim over the SYNCED corpus and never over `build/`, where
+	 * three addresses look absent and are not: the CPDV's Esther is stored as
+	 * the source printed it, and Crampon's Joel and Malachi are stored in his
+	 * Hebrew numbering. All three are canonical by the time the site sees them.
 	 */
 	const availableWorkIds = $derived(Object.keys(data.byWorkId));
 

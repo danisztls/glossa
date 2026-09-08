@@ -90,6 +90,33 @@ _count_ as well; the rest disagree just as completely and silently. Nothing
 here maps chapter-to-chapter, and no table entry could make `/scriptura/esth/4`
 mean one thing.
 
+**It maps by verse, and that is the whole book.** The `greek-interleaved`
+arrangement in `site/src/lib/versification.ts` — beside the mappers, because
+`sync-corpus.mjs` is what applies it, and read back here through the generated
+`common/versification.json` — carries all 274 CPDV verses onto all 275 Vulgate
+ones in 26 ranges: a permutation, with one merge (CPDV 7:14 is Vulgate 4:12 and
+4:13). So the additions displace the Hebrew book without rewriting it, and
+"Esther 16" — the second edict, the form the magisterial corpus cites — is CPDV
+13:1–24. Three places move material the Vulgate prints twice or out of sequence
+and no arithmetic finds them: Mardochai's charge (Vulgate 15:1–3) splits across
+CPDV 7:10–11 and 7:16, running backwards; Esther's approach to the king is told
+twice and CPDV keeps both (Vulgate 15:4–19 then 5:1–2); the Ptolemy colophon
+(Vulgate 11:1) moves from the head of the appendix to the end of the book. The
+ranges were proposed by a lexical matcher against `bible.douay-rheims.en` and
+then read one seam at a time — the matcher was wrong about six of them, which
+is why what is recorded is a bijection `divergence.py` re-derives from the two
+editions on every run rather than the matcher's output.
+
+**And it is applied, so the sixteen rows above describe `build/` alone.**
+`bible.cpdv.en`'s manifest declares `book_arrangement: "greek-interleaved"` and
+`sync-corpus.mjs` re-addresses the book on the way to the site, the same seam
+that already converts Crampon's Hebrew Psalter — so the reader's Esther 16 is
+the second edict in every edition, and a citation into any of the sixteen
+chapters lands on the passage it names. The rows stay because `build/` stays
+what the source printed; they would only go if the CPDV changed its mind.
+One address is left honestly empty: CPDV prints Vulgate 4:12 and 4:13 as a
+single verse, so the renumbered edition has 4:12 carrying both and no 4:13.
+
 ### The Song of Songs is an editorial reading imposed on the numbers
 
 CPDV re-divides the Song by **speaker**, prints the attribution inside the

@@ -84,3 +84,19 @@ def to_vulgate(osis: str, chapter: int, verse: int | None) -> tuple[int, int | N
     if moved is None:
         return chapter, verse
     return moved["chapter"], moved["verse"]
+
+
+def arrangement(
+    name: str, osis: str
+) -> list[tuple[tuple[int, int, int], tuple[int, int, int]]]:
+    """One book's rows of an EDITION's arrangement, `((chapter, first, last),
+    (chapter, first, last))` from the edition's numbering to the Vulgate's.
+
+    Data, so unlike the three wholesale mappers it does cross over -- but only
+    to be CHECKED here. `sync-corpus.mjs` is the one caller that applies an
+    arrangement, because applying it is a transform on an edition's text and
+    the corpus stores what the source printed. Empty for a book the
+    arrangement does not re-address.
+    """
+    rows = _table().get("arrangements", {}).get(name, {}).get(osis, [])
+    return [(tuple(a), tuple(b)) for a, b in rows]

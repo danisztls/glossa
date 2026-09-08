@@ -39,8 +39,10 @@ notes, his 1,307 chapter arguments, and Haydock's 45,747-note catena.
   (`introductions.py`'s docstring argues the graft); Doré's plate anchors were decided
   against the Douay-Rheims; `WORK_CONFIGS` carries its Douay book-naming.
 - **Esther.** The Douay-Rheims prints the sixteen-chapter Vulgate arrangement the corpus
-  canonicalizes on. The CPDV's fifteen mean a Douay-style "Esther 16" — the form the
-  magisterial corpus prints — does not resolve in the default edition.
+  canonicalizes on, where the CPDV's fifteen interleave the Greek additions. This was an
+  argument for the Douay while it stood; it no longer is. The CPDV's Esther is re-addressed
+  at the sync (`book_arrangement`, `docs/corpus-schema.md`) and "Esther 16" now resolves in
+  both English editions.
 
 **What it costs, and why it was accepted.** The register: "The Lord ruleth me: and I shall
 want nothing" against "The Lord directs me, and nothing will be lacking to me." Every
@@ -77,7 +79,7 @@ Caveats, eyes open:
 - **The translator is personally fringe**: published failed dated prophecies (nuclear attack on NYC in 2010, tribulation 2009, etc. — [catalogue](https://americanloons.blogspot.com/2013/06/583-ronald-conte-jr.html)); community reputation on r/Catholicism is "translation by a crackpot." **No evidence the eschatology leaked into the text** (Revelation reads conventionally; no annotations exist for it to hide in), but nobody has systematically audited it.
 - **No scholarly review of its Latin fidelity exists** — it is ignored rather than refuted. Since CPDV, Challoner, and the Clementine Vulgate are all PD and machine-readable, a systematic three-way diff is feasible in-project and would answer "how many more Matt 1:25s are there." Potential site feature.
 - Still corrected via a running errata — **date-stamp any ingested text** (latest known: Feb 2025 errata).
-- **Edition quirk found at scrape time (2026-08-14)**: the CPDV prints **Esther in 15 chapters**, renumbering the Greek additions, vs the Vulgate/Challoner 16-chapter arrangement (verified against the cached source: chapter headings 1–15, no `{16:n}` markers). Corpus follows the source. Affects reference resolution: Douay-style "Esther 16" refs won't resolve in CPDV.
+- **Edition quirk found at scrape time (2026-08-14)**: the CPDV prints **Esther in 15 chapters**, interleaving the Greek additions, vs the Vulgate/Challoner 16-chapter arrangement (verified against the cached source: chapter headings 1–15, no `{16:n}` markers). `build/` still follows the source, because that is what `build/` is for; the site sees it re-addressed. The correspondence turned out to be a permutation of whole verses — nothing rewritten, one merge — which is why re-addressing was possible at all (`docs/research/bible-edition-divergence.md`).
 
 ## Matos Soares assessment
 

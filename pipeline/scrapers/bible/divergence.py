@@ -68,7 +68,7 @@ from pathlib import Path
 # here and why the import below it is not at the top of the file.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import build_root, require_corpus
+from common import arrangement, build_root, require_corpus
 
 # The vernacular pair whose disagreement defines a row, then the two witnesses
 # reported beside it. EN and PT are what the reader actually chooses between
@@ -95,7 +95,8 @@ EDITIONS = {
 #
 #   arrangement     The book's material is ordered differently by tradition.
 #                   Nothing maps chapter-to-chapter; the whole book is a
-#                   different shape. Esther, and only Esther.
+#                   different shape. Esther, and only Esther. Mappable after
+#                   all, but by VERSE and for the book at once -- see below.
 #   re-division     One edition divides the same words into more verses by a
 #                   principle it applies throughout the passage. Mappable in
 #                   bulk, but only by reading the passage as a whole.
@@ -115,7 +116,9 @@ KINDS: dict[tuple[str, int], tuple[str, str]] = {
                 "CPDV 2 the eunuchs' plot (Vulgate 12), and the Hebrew Esther "
                 "starts at CPDV 3. Every chapter of the book names different text "
                 "in the two editions; the 16 rows here are only the chapters loud "
-                "enough about it to differ in verse COUNT as well."
+                "enough about it to differ in verse COUNT as well. What the "
+                "additions move past is not rewritten -- the arrangement table is the whole "
+                "book verse for verse, and it is a permutation with one merge."
             ),
         )
         for n in range(1, 17)
@@ -217,12 +220,12 @@ KINDS: dict[tuple[str, int], tuple[str, str]] = {
     ),
 }
 
-# Only `merge-split` rows appear here, and that is the point of the kinds: an
-# `arrangement` row has no chapter-level correspondence to record, a
-# `re-division` row has one only for the passage as a whole, and a
-# `textual-variant` row is not a numbering question. Read `en 22 <-> pt 22+23`
-# as "what CPDV numbers 22, Matos Soares numbers 22 and 23"; verses before the
-# split correspond one-to-one and are not listed.
+# Only `merge-split` rows appear here, because a `re-division` row has a
+# correspondence only for the passage as a whole and a `textual-variant` row is
+# not a numbering question. Read `en 22 <-> pt 22+23` as "what CPDV numbers 22,
+# Matos Soares numbers 22 and 23"; verses before the split correspond one-to-one
+# and are not listed. The `arrangement` rows are absent for the opposite reason
+# -- their correspondence is a whole book at once; Esther's is below.
 SILENT: dict[tuple[str, int], tuple[str, str]] = {
     ("acts", 14): (
         "span-shift",
@@ -274,6 +277,94 @@ MAPPINGS: dict[tuple[str, int], str] = {
     ("sir", 29): "en 33 <-> pt 33+34; en 34 <-> pt 35",
     ("2thess", 2): "en 10 <-> pt 10+11; en 11-16 <-> pt 12-17",
 }
+
+# --------------------------------------------------------------------------
+# Esther: the whole book, verse by verse, CPDV against the Vulgate.
+#
+# The sixteen `arrangement` rows above say no chapter maps to a chapter. This
+# says what does map, which is every verse -- and it is READ here rather than
+# stored here. The table lives in `site/src/lib/versification.ts`, because
+# `sync-corpus.mjs` is what applies it to the CPDV's text, and it crosses to
+# this side through the generated `common/versification.json` on the same
+# terms as `late_merge`: one copy, exported, never hand-edited. This file held
+# its own copy for one commit, which is exactly the drift that export exists
+# to prevent.
+#
+# What stays here is the CHECK, which is the half this file is for. A
+# correspondence nobody re-derives is a snapshot of the day somebody read it,
+# so `check_esther` asserts the claim the table makes -- that it is a
+# PERMUTATION, every one of CPDV's 274 verses and every one of the Vulgate's
+# 275 claimed exactly once, the single verse of difference being one merge --
+# against the two editions themselves, every run.
+# --------------------------------------------------------------------------
+
+#: The rows, as exported from the site. `bible.cpdv.en`'s arrangement is named
+#: by its own manifest (`book_arrangement`); it is spelled out here because
+#: this file reads the two editions directly and has no manifest in hand.
+ESTHER_ROWS = arrangement("greek-interleaved", "esth")
+
+#: The CPDV verses that carry more than one Vulgate verse. Declared rather than
+#: inferred from a row's span lengths, so that a length mismatch introduced by
+#: an edited row fails the check instead of being read as a second merge.
+ESTHER_MERGED: set[tuple[int, int]] = {(7, 14)}
+
+
+def check_esther(
+    en: dict[tuple[str, int], dict[int, str]],
+    la: dict[tuple[str, int], dict[int, str]],
+) -> list[str]:
+    """The Esther arrangement against the two editions it describes -- every
+    way it could have stopped being true, as a list of complaints.
+
+    The table is only worth keeping if it is checked, for the reason the
+    docblock gives about `KINDS`: a correspondence nobody re-derives is a
+    snapshot of the day somebody read it. So this asserts the bijection rather
+    than the ranges -- that each edition's every verse is claimed exactly once
+    and that both sides of a row are the same length -- which is what fails if
+    a re-parse changes a verse division under either edition."""
+    problems: list[str] = []
+
+    def verses(
+        ed: dict[tuple[str, int], dict[int, str]], tag: str
+    ) -> dict[tuple[int, int], int]:
+        out: dict[tuple[int, int], int] = {}
+        for (osis, chapter), vs in ed.items():
+            if osis == "esth":
+                for n in vs:
+                    out[(chapter, n)] = 0
+        if not out:
+            problems.append(f"{tag} has no book of Esther")
+        return out
+
+    seen_en, seen_la = verses(en, "EN"), verses(la, "LA")
+    for cp, vg in ESTHER_ROWS:
+        for span, seen, tag in ((cp, seen_en, "CPDV"), (vg, seen_la, "Vulgate")):
+            chapter, lo, hi = span
+            for n in range(lo, hi + 1):
+                if (chapter, n) not in seen:
+                    problems.append(
+                        f"{tag} {chapter}:{n} is named by the table and does not exist"
+                    )
+                else:
+                    seen[(chapter, n)] += 1
+        merged = (cp[0], cp[1]) in ESTHER_MERGED
+        if (cp[2] - cp[1]) != (vg[2] - vg[1]) and not merged:
+            problems.append(
+                f"CPDV {cp[0]}:{cp[1]}-{cp[2]} and Vulgate {vg[0]}:{vg[1]}-{vg[2]} "
+                f"are different lengths and the row is not a declared merge"
+            )
+        if merged and cp[1] != cp[2]:
+            problems.append(
+                f"CPDV {cp[0]}:{cp[1]} is declared a merge but its row spans verses"
+            )
+
+    for seen, tag in ((seen_en, "CPDV"), (seen_la, "Vulgate")):
+        for (chapter, n), count in sorted(seen.items()):
+            if count != 1:
+                problems.append(
+                    f"{tag} {chapter}:{n} is claimed {count} times by the table, not once"
+                )
+    return problems
 
 
 def load(work_id: str) -> dict[tuple[str, int], dict[int, str]]:
@@ -366,6 +457,20 @@ def main() -> int:
 
     print("\n" + "  ".join(f"{k}: {v}" for k, v in sorted(counts.items())))
 
+    esther = check_esther(en, la)
+    n_en = sum(c[2] - c[1] + 1 for c, _ in ESTHER_ROWS)
+    n_la = sum(v[2] - v[1] + 1 for _, v in ESTHER_ROWS)
+    print(
+        f"\nEsther, the one arrangement: {len(ESTHER_ROWS)} ranges carry all {n_en} CPDV "
+        f"verses onto all {n_la} Vulgate ones, {len(ESTHER_MERGED)} of them merged"
+    )
+    if args.verbose:
+        for cp, vg in ESTHER_ROWS:
+            print(
+                f"    CPDV {cp[0]}:{cp[1]}-{cp[2]}".ljust(24)
+                + f"= VULG {vg[0]}:{vg[1]}-{vg[2]}"
+            )
+
     print("\nSilent divergence -- verse-number sets AGREE, text has moved:")
     for key, (kind, why) in sorted(SILENT.items(), key=lambda kv: order(kv[0], books)):
         print(f"  {f'{key[0]} {key[1]}':<{width}}  {kind}")
@@ -386,12 +491,21 @@ def main() -> int:
                 f"\n{label}: {', '.join(f'{o} {n}' for o, n in sorted(keys))}\n"
                 f"  -- {fix}, and update docs/research/bible-edition-divergence.md"
             )
-    if unclassified or stale:
+    if esther:
+        print("\nESTHER: the verse table no longer describes the two editions:")
+        for problem in esther:
+            print(f"  {problem}")
+        print(
+            "  -- read the seam that moved and correct the table in "
+            "site/src/lib/versification.ts,\n     then re-run scripts/export-versification.mjs. "
+            "Never widen a range to fit."
+        )
+    if unclassified or stale or esther:
         return 1
 
     print(
-        f"\nOK: all {len(found)} diverging chapters are classified, and every "
-        "classified chapter still diverges"
+        f"\nOK: all {len(found)} diverging chapters are classified, every "
+        "classified chapter still diverges, and Esther's verse table is a bijection"
     )
     return 0
 

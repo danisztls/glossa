@@ -149,6 +149,7 @@ from .text import (
 from .translations import load_translations_checked
 from .versification import (
     WholesaleDivergence,
+    arrangement,
     is_wholesale_divergent,
     to_vulgate,
 )
@@ -180,6 +181,7 @@ __all__ = [
     "apply_note_corrections",
     "apply_overrides",
     "apply_verse_corrections",
+    "arrangement",
     "authored_root",
     "binary_identity",
     "binary_path",

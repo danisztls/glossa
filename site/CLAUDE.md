@@ -2594,6 +2594,17 @@ since its Python twin was deleted as drift. **A wrong chapter does not fail an
 existence check** (`Joel 3:1-5` resolves to real but wrong text), so conversion
 is applied unconditionally for divergent books rather than as a fallback.
 
+**An edition stored in another numbering is converted at the sync, never at
+render** — `sync-corpus.mjs` is the one seam, and downstream there are no
+exceptions to Vulgate numbering. Two editions need it and they need it for
+different reasons, which is why `psalm_numbering` and `book_arrangement` are two
+fields: a numbering is a tradition a CITATION can also be phrased in, so its
+mapper resolves references too; an arrangement is where one edition chose to
+print a passage, and applying it to a citation would move "Esther 13" under
+every reference into the book. **A permutation is not a paraphrase** — CPDV's
+Esther carries all 274 of its verses onto the Vulgate's 275, so re-addressing it
+costs no text (`divergence.py` re-derives that bijection every run).
+
 ## The footer imprint
 
 **The standing statement is in the FOOTER of every page, not only on the

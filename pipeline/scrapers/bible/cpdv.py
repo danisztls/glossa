@@ -405,6 +405,16 @@ def write_output(
         "notes": notes,
         "generated_at": generated_at,
         "psalm_numbering": "vulgate",
+        # THE PSALTER IS VULGATE AND ESTHER IS NOT, which is why these are two
+        # fields and not one. This edition prints the Greek additions to Esther
+        # where they belong in the story instead of appended as 10:4-16:24, so
+        # its Esther has fifteen chapters and not one of them names the text
+        # the corpus addresses at that number. Stored as printed, because
+        # `raw/` and this output are the record of what the source said;
+        # `sync-corpus.mjs` re-addresses it on the way to the site, the same
+        # seam that already converts Crampon's Hebrew Psalter. The rows are in
+        # `site/src/lib/versification.ts` and `divergence.py` checks them.
+        "book_arrangement": "greek-interleaved",
         "books": [b["osis"] for b in book_docs],
         "corrections_applied": corrections_applied,
     }

@@ -253,6 +253,188 @@ function mapJoel(chapter: number, verse?: number): { chapter: number; verse?: nu
 }
 
 // --------------------------------------------------------------------------
+// Arrangements: an EDITION's stored text, not a numbering tradition
+//
+// Everything above converts a REFERENCE phrased in Hebrew/Masoretic numbering.
+// This converts one edition's own text, and the two must not be confused: a
+// reader typing "Esther 13" means the Vulgate's chapter 13, and running that
+// through the table below would move it to 16 and be wrong. Only
+// `sync-corpus.mjs` may apply an arrangement, and only to the edition whose
+// manifest declares it (`book_arrangement`, docs/corpus-schema.md).
+//
+// `bible.cpdv.en` is the first and only: it prints the Greek additions where
+// they belong in the story rather than appended as 10:4-16:24, so its Esther
+// has fifteen chapters and none of them names the text the corpus addresses at
+// that number. Nothing else in the book is rewritten — the rows below carry
+// all 274 of its verses onto all 275 Vulgate ones, which is a permutation, and
+// `pipeline/scrapers/bible/divergence.py` re-derives that bijection from the
+// two editions on every run rather than trusting this comment.
+//
+// ONE ROW IS NOT ONE-TO-ONE. CPDV 7:14 prints as a single verse what the
+// Vulgate divides into 4:12 ("And when Mardochai had heard this,") and 4:13,
+// so its text lands whole at 4:12 and 4:13 has no verse of its own in this
+// edition. That is a gap in the numbering and not in the text; splitting the
+// CPDV's sentence to fill it would be inventing a division it never printed,
+// and the schema allows a verse gap precisely so this can be said honestly.
+//
+// Three seams move material the Vulgate prints twice or out of sequence, and
+// no arithmetic finds them — each was read against `bible.douay-rheims.en`,
+// the same base text in the same language at the Vulgate's numbers:
+//   - Vulgate 15:1-3 is Mardochai's charge, which 4:8 has already narrated.
+//     CPDV files its WORDS at 7:10-11 and the narrator's SUMMARY of them at
+//     7:16 — the one row here that runs backwards.
+//   - Vulgate 15:4-19 and 5:1-2 tell Esther's approach to the king twice,
+//     Greek then Hebrew. CPDV keeps both, in that order.
+//   - Vulgate 11:1, the Ptolemy colophon, moves from the head of the appendix
+//     to the last verse of the book.
+// --------------------------------------------------------------------------
+
+/** `[chapter, first verse, last verse]`, inclusive. */
+type Span = readonly [number, number, number];
+
+/** CPDV's Esther onto the Vulgate's, in reading order down the CPDV. */
+const ESTHER_GREEK_INTERLEAVED: readonly (readonly [Span, Span])[] = [
+	[
+		[1, 1, 11],
+		[11, 2, 12]
+	], // Mardochai's dream
+	[
+		[2, 1, 6],
+		[12, 1, 6]
+	], // the eunuchs' plot
+	[
+		[3, 1, 22],
+		[1, 1, 22]
+	], // the Hebrew book begins
+	[
+		[4, 1, 23],
+		[2, 1, 23]
+	],
+	[
+		[5, 1, 13],
+		[3, 1, 13]
+	],
+	[
+		[6, 1, 7],
+		[13, 1, 7]
+	], // the first edict, where it is sent
+	[
+		[6, 8, 9],
+		[3, 14, 15]
+	],
+	[
+		[7, 1, 9],
+		[4, 1, 9]
+	],
+	[
+		[7, 10, 11],
+		[15, 2, 3]
+	], // the charge, as its own words
+	[
+		[7, 12, 13],
+		[4, 10, 11]
+	],
+	[
+		[7, 14, 14],
+		[4, 12, 13]
+	], // THE MERGE — see above
+	[
+		[7, 15, 15],
+		[4, 14, 14]
+	],
+	[
+		[7, 16, 16],
+		[15, 1, 1]
+	], // the charge again, as the narrator's summary
+	[
+		[7, 17, 19],
+		[4, 15, 17]
+	],
+	[
+		[7, 20, 30],
+		[13, 8, 18]
+	], // Mardochai's prayer
+	[
+		[8, 1, 19],
+		[14, 1, 19]
+	], // Esther's prayer
+	[
+		[9, 1, 16],
+		[15, 4, 19]
+	], // before the king — Greek telling
+	[
+		[9, 17, 30],
+		[5, 1, 14]
+	], // and again — Hebrew telling
+	[
+		[10, 1, 14],
+		[6, 1, 14]
+	],
+	[
+		[11, 1, 10],
+		[7, 1, 10]
+	],
+	[
+		[12, 1, 12],
+		[8, 1, 12]
+	],
+	[
+		[13, 1, 24],
+		[16, 1, 24]
+	], // the second edict — "Esther 16"
+	[
+		[13, 25, 29],
+		[8, 13, 17]
+	],
+	[
+		[14, 1, 32],
+		[9, 1, 32]
+	],
+	[
+		[15, 1, 13],
+		[10, 1, 13]
+	],
+	[
+		[15, 14, 14],
+		[11, 1, 1]
+	] // the Ptolemy colophon, at the end
+];
+
+const ARRANGEMENTS: Record<string, Record<string, readonly (readonly [Span, Span])[]>> = {
+	'greek-interleaved': { esth: ESTHER_GREEK_INTERLEAVED }
+};
+
+/** Whether `arrangement` re-addresses this book at all. */
+export function isArrangedBook(arrangement: string, osis: string): boolean {
+	return ARRANGEMENTS[arrangement]?.[osis] !== undefined;
+}
+
+/**
+ * One verse of an arranged edition at its canonical Vulgate address.
+ *
+ * `undefined` when no row covers the verse, which for a book this arrangement
+ * claims is a defect and not a pass-through: the table is total over the
+ * edition, so an uncovered verse means the edition was re-parsed into a shape
+ * the table no longer describes. The caller raises rather than guessing —
+ * silently keeping the CPDV's own number would put a verse of the Greek
+ * appendix at a Hebrew chapter's address, which is the failure this whole
+ * module exists to prevent.
+ */
+export function arrangedToVulgate(
+	arrangement: string,
+	osis: string,
+	chapter: number,
+	verse: number
+): { chapter: number; verse: number } | undefined {
+	for (const [from, to] of ARRANGEMENTS[arrangement]?.[osis] ?? []) {
+		if (chapter === from[0] && verse >= from[1] && verse <= from[2]) {
+			return { chapter: to[0], verse: to[1] + (verse - from[1]) };
+		}
+	}
+	return undefined;
+}
+
+// --------------------------------------------------------------------------
 // Public API
 // --------------------------------------------------------------------------
 
@@ -424,5 +606,21 @@ export const VERSIFICATION_TABLE = {
 		[...LATE_MERGE.entries()]
 			.sort(([a], [b]) => a.localeCompare(b))
 			.map(([key, value]) => [key, value])
+	),
+	// The arrangements ARE data and so they do cross, unlike the three mappers
+	// above. `divergence.py` reads them from the exported JSON to check the
+	// bijection against the editions themselves; it held its own copy for one
+	// commit, which is the drift this export exists to prevent.
+	arrangements: Object.fromEntries(
+		Object.entries(ARRANGEMENTS)
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([name, books]) => [
+				name,
+				Object.fromEntries(
+					Object.entries(books)
+						.sort(([a], [b]) => a.localeCompare(b))
+						.map(([osis, rows]) => [osis, rows.map(([from, to]) => [[...from], [...to]])])
+				)
+			])
 	)
 };
