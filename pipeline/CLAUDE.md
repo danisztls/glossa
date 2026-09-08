@@ -215,6 +215,28 @@ pipeline/scrapers/
   headed `Kapitel 2:` .. `Kapitel 6:`, five duplicates of the body's own
   chapters that took their notes with them. Its CAPTION is the exception and
   needs neither test: measured, no work in the corpus has one inside its body.
+- **A table of contents says nothing of its own, and that is what finds one
+  the page did not link** (`toc_reprint_span`). Every line it prints is a line
+  the document prints again below it — the property the forward links were
+  only a proxy for — so a paragraph is a row where most of its lines are, and
+  a masthead is not, because a document's title is said once. It reaches the
+  outlines the link rule cannot see at all: `evangelii-gaudium.nl` links no
+  entry, `sacrosanctum-concilium.hu` links all 128 at anchors the page never
+  defines. Guarded by pointing at three DIFFERENT paragraphs, and refused
+  outright on a page whose body never starts.
+- **A number that goes backwards is not a paragraph number.**
+  `promote_plain_centered_run` may take a numbered block into an unemphasised
+  centred run on that evidence alone: `santateresa-delbambinogesu.en` heads its
+  four chapters `1.`..`4.` while the body is at 6, 9, 20 and 30, and reading
+  those as addresses cost three headings outright and put two sections at the
+  wrong number. A paragraph continues the count; a chapter heading restarts it.
+- **Bold is a heading tier, and leaving it out of the rank flattens three into
+  two.** `<p align="left"><b><i>…</i></b></p>` is the middle tier and
+  `<p align="left"><i>…</i></p>` the one below; `heading_style_rank` ranked
+  centring, size and italics and nothing else. The bit sits between size and
+  italic so `style ^ 1` still means "the same but for the italics" — and an
+  anchor-titled heading is unbold as well as italic, since it carries no
+  emphasis at all (`fratelli-tutti.en` makes the two shapes peers).
 - **`--slugs` naming only exhortations used to parse nothing and exit 0**
   (`run_phase2` `continue`d past the whole iteration when no encyclicals
   survived the filter). It is the recommended way to check a parser fix on one

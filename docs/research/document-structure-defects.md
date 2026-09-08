@@ -155,8 +155,8 @@ across the whole corpus**, because a defect seen once in a family of 1,447
 works is a lead and not a finding.
 
 **Each entry names its population so the blast radius of a fix can be predicted
-before it is written**, which is the whole use of this half of the note. Four
-have since been fixed and say so in their own heading; the rest have not.
+before it is written**, which is the whole use of this half of the note. Seven
+have since been fixed and say so where they are recorded; the rest have not.
 
 ## 6. The residue of §1's fix, in three shapes — TWO FIXED
 
@@ -208,12 +208,28 @@ change:
 
 The same case-insensitivity leaves the entries in the BODY where they are not
 promoted: measured as "§1 contains the text of 2+ headings that occur later",
-**18 works**, 17 of them exhortations — `sacramentum-caritatis.hu` (60 leaked
-headings inside §1), `africae-munus.en` (37), `africae-munus.es` (31). This is
-the one defect in this note a reader sees directly: the document opens with a
-wall of its own contents.
+**18 works when this was written and 35 by 2026-09-08**, `sacrosanctum-concilium.hu`
+(83 leaked headings inside §1), `sacramentum-caritatis.hu` (68),
+`africae-munus.en` (44). This was the one defect in this note a reader saw
+directly: the document opened with a wall of its own contents.
 
-## 7. Tiers flattened — three documents confirmed, and the discriminator
+**FIXED, 2026-09-08, in `toc_reprint_span`.** Every one of these prints an
+outline the link rule could not see — no link at all (`evangelii-gaudium.nl`,
+`csdc.sw`), 128 links to anchors the page never defines
+(`sacrosanctum-concilium.hu`), or one paragraph of 95 lines
+(`evangelii-gaudium.hu`) — plus five editions of `africae-munus`, whose
+unlinked third tier read as the body's paragraph 1 and disqualified the whole
+span. **A table of contents says nothing of its own**: every line it prints is
+a line the document prints again below it, which is the property the links
+were a proxy for and the property a masthead lacks. So a paragraph is a row
+where MOST of its lines are reprinted below as whole lines, the span runs from
+the first row to the last, and two guards keep it honest — the rows must point
+at three DIFFERENT paragraphs (a subtitle printed twice is one place), and a
+page whose body never starts, as the 328 editions that number nothing do not,
+gets no span at all. 24 works changed and nothing else did; `africae-munus.en`
+went from 39 disagreements with its hand-read contents to 10.
+
+## 7. Tiers flattened — three documents confirmed — FIXED
 
 Three readers who could not see each other's work found the same thing and
 named the same cause. The page prints three tiers and the tree stores two:
@@ -234,7 +250,25 @@ headings with every single one at level 1**, including
 `sacrosanctum-concilium.hu` (130), three editions of `evangelii-nuntiandi`
 (91 each) and three of `christifideles-laici` (74 each).
 
-## 8. A heading the detector cannot see, and one document's text lost
+**FIXED, 2026-09-08.** `heading_style_rank` modelled centring, size and
+italics and said nothing about bold, so the two markups above are one rank.
+A fourth bit, between the size bit and the italic one, ranks a bold heading
+above an unemphasised one and leaves `style ^ 1` still meaning "the same but
+for the italics". 103 works changed, **every one of them in `structure.json`
+alone** — this moves a tree and cannot move a word of text — and the ToC
+oracles fell from 561 disagreements to 524, `divino-afflante-spiritu.pt` from
+18 to none.
+
+**An anchor-titled heading is not bold either, and that is the whole of what
+the fix got wrong first.** Giving it the emphasised rank — on the reasoning
+that it carries no emphasis and would otherwise sink below the tier it is
+printed among — split `fratelli-tutti.en`'s two shapes,
+`<p><a name=…></a>SHATTERED DREAMS</p>` and
+`<p><i><a name=…></a>The end of historical consciousness</i></p>`, which its
+hand-read contents makes peers: 45 disagreements, from none. Unemphasised
+means unemphasised in both bits, and the two land on the same rank again.
+
+## 8. A heading the detector cannot see, and one document's text lost — FIXED
 
 `santateresa-delbambinogesu.en` prints its four chapter headings as plain
 centred numbered text — `<p style="text-align: center;">N. Title</p>`, no bold,
@@ -250,6 +284,20 @@ at §10 and `sections.json` still totals 53, so no count check sees it.
 shape, numeral inline — "1. The Global Climate Crisis" — and loses none,
 because it prints them BOLD. The detector is not confused by the inline
 numeral; it requires emphasis this one document does not supply.
+
+**FIXED, 2026-09-08, in `promote_plain_centered_run`.** That pass already
+recovers an unemphasised centred run and excluded these four for carrying a
+number — the gate that keeps ordinary numbered paragraphs out of a run.
+**A number that goes backwards is not a paragraph number**: these read 1..4
+while the body is at 6, 9, 20 and 30, and a paragraph continues the
+document's count where a chapter heading restarts it. Seven works changed and
+all seven gained headings the page prints — `donum-vitae.hu` eleven,
+`africae-munus.sw` twenty, `pacem.pt` its parts — with santateresa's phantom
+§7 gone and its two displaced sections back at their own addresses.
+`sacerdotalis.en` recovered a heading its hand-read contents transcribed
+without the numeral the page prints, so the oracle counts the recovery as two
+differences; `laudate-deum.en`'s oracle keeps the numeral, which is the
+convention, and that one wants re-reading rather than the parse.
 
 ## 9. Prose loss across the family: two blocks, and two wrong answers first
 

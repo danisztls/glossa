@@ -254,31 +254,18 @@ wrong labels passes all four.
 `docs/research/document-structure-defects.md` §2 is still the largest open item.
 Below is what a fix would have to cover.
 
-**Two defects are visible on the page rather than in the tree:**
-
-- **18 works open §1 with a wall of their own table of contents** —
-  `sacramentum-caritatis.hu` prepends 60 of its own headings to its first
-  paragraph, `africae-munus.en` 37, `africae-munus.es` 31. The document's
-  opening sentence is below the fold.
-- **`santateresa-delbambinogesu.en` is missing three of its four chapter
-  headings from the build** — present in `raw/` once each, absent from
-  `sections.json` and `structure.json` both. The only confirmed text loss found,
-  and no count check sees it because `sections.json` still totals 53.
-
-Everything else is the tree, which the sidebar contents renders, which a
+What is left is the tree, which the sidebar contents renders, which a
 per-division reading view would split on, and which `static/route-titles.json`
 publishes as each division's paragraph span — so a wrong tree is served to
 consumers that never render the page.
 
 **Populations, measured across all 1,447 works:**
 
-| Defect                                                       | Works     | How it was measured                                         |
-| ------------------------------------------------------------ | --------- | ----------------------------------------------------------- |
-| Leaked ToC entries left in §1's body                         | 18        | §1's text contains 2+ titles of later headings              |
-| ToC entries promoted to headings (44 nodes)                  | 6         | a title still ending in its target's span, `[31]`, `[1-6]`  |
-| First of two adjacent pre-body headings swallowed            | 6         | oracle `MISSING` at `before=1`, then read on the raw page   |
-| Closing block nested a tier too deep                         | 10        | 3+ nodes after the last level-1, >1 tier below its siblings |
-| Tiers flattened — **3 confirmed, 25 strong, 157 candidates** | see below | census markup column, one document at a time                |
+| Defect                                            | Works | How it was measured                                         |
+| ------------------------------------------------- | ----- | ----------------------------------------------------------- |
+| ToC entries promoted to headings (44 nodes)       | 6     | a title still ending in its target's span, `[31]`, `[1-6]`  |
+| First of two adjacent pre-body headings swallowed | 6     | oracle `MISSING` at `before=1`, then read on the raw page   |
+| Closing block nested a tier too deep              | 10    | 3+ nodes after the last level-1, >1 tier below its siblings |
 
 **Three works still carry a node their rule should have taken, and all three are
 §2 cases.** `ecclesia-in-america.es` and `querida-amazonia.ar` keep a trailing
@@ -287,16 +274,10 @@ nothing to be a duplicate of; `lumen-gentium.pt` keeps its papal signature
 because the Fathers' subscriptions below it are numbered. Each wants the
 detector fixed, not the guard widened.
 
-**Two numbers deliberately not given.** Tier flattening is the important
-population and the least knowable: 157 works have 40+ headings and only two
-levels, but a long document with two _genuine_ tiers looks identical from
-outside. The tighter signal is total collapse — **25 works carry 25+ headings
-with every one at level 1**, including `sacrosanctum-concilium.hu` (130) and
-three editions each of `evangelii-nuntiandi` (91) and `christifideles-laici`
-(74). The promoted-prayer-stanza defect has 2 confirmed and no population,
-because the obvious test ("an address-less heading that is a full sentence")
-returns 67 works of which most are correct — Latin, French and Italian end a
-real heading with a full stop by convention.
+**One number deliberately not given.** The promoted-prayer-stanza defect has 2
+confirmed and no population, because the obvious test ("an address-less heading
+that is a full sentence") returns 67 works of which most are correct — Latin,
+French and Italian end a real heading with a full stop by convention.
 
 **What to do first.** §2's recommendation stands: compare structure trees across
 languages rather than section sets, turning a manual audit into a ranked
@@ -308,24 +289,14 @@ rendering of the same text. So the cross-language pass produces candidates and
 the raw page decides. `evangelii-nuntiandi.la` (7) and `.hu` (8) want that check
 before anyone calls them damaged.
 
-**The single highest-value fix** is the tier discriminator: three readers
-working independently named the same rule, that `<p align="left"><b><i>…</i></b></p>`
-is the middle tier and `<p align="left"><i>…</i></p>` the tier below it, and the
-parser treats them as one. One predicate, and the difference between a two-level
-tree and a usable one in `ecclesia-in-oceania.en` (19 headings),
-`gaudete-et-exsultate.en` (30) and `familiaris-consortio.en`.
-
 **Sizing.** Nothing here gates anything else and nothing is blocked. Every item
 is a change to `vatican_docs.py`, which parses ~450 documents across several
 page templates, so each costs the blast-radius measurement in
 `docs/writing-descriptions.md` — snapshot, `rebuild.py --only documents`, diff —
 now ~18s. **The ToC oracles are the regression suite this work needs**:
-`audit.py toc` derives the count — 70 of 377 disagreeing on 2026-09-07 — and a
-correct fix lowers it where an overreaching one raises it. Per-item sizing is
-estimated, not measured: the tier discriminator is one predicate plus a
-re-levelling pass; `santateresa`'s unemphasised headings are a detector change
-whose blast radius is genuinely unknown, because loosening the emphasis
-requirement is exactly what would start reading ordinary prose as headings.
+`audit.py toc` derives the count — 68 of 377 disagreeing, 524 differences, on
+2026-09-08 — and a correct fix lowers it where an overreaching one raises it.
+Per-item sizing is estimated, not measured.
 
 **Two source defects left alone as reader-invisible.**
 `christifideles-laici.en` prints "Lay Faithtul" and `"Criteria of
@@ -488,11 +459,10 @@ it survives the crossing. The note is on the key.
 
 A priority argument, not a dependency one — nothing here gates anything else.
 
-1. **The structure trees' two reader-visible defects** — the leaked contents
-   opening §1 (18 works) and `santateresa-delbambinogesu.en`'s three lost
-   headings; then the tier discriminator. Above everything that adds coverage,
-   because both are what a reader meets on the page, and the ToC oracles tell a
-   fix from a regression.
+1. **The structure trees** — §2's cross-language comparison, turning the
+   remaining populations above into a ranked worklist. Above everything that
+   adds coverage, because a wrong tree is served to consumers that never render
+   the page, and the ToC oracles tell a fix from a regression.
 2. **#9's reader-facing disclosure**, and alongside it the unread silent-case
    leads — reading them is the only way to find another Acts 14, and the tool
    that ranks them is `audit.py balance`.
