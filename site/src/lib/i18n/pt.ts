@@ -183,9 +183,14 @@ export const pt: Dictionary = {
 	'loadFailed.retrying': 'Tentando…',
 	'offline.turnOff': 'Desativar o modo offline',
 
+	'type.label': 'Tamanho do texto e fonte',
 	'fontSize.label': 'Tamanho do texto',
 	'fontSize.larger': 'Aumentar texto',
 	'fontSize.smaller': 'Diminuir texto',
+	'fontSize.reset': 'Tamanho padrão do texto',
+	'face.label': 'Fonte',
+	'face.serif': 'Serif',
+	'face.sans': 'Sans',
 	'print.label': 'Imprimir esta página',
 	'toTop.label': 'Voltar ao topo',
 

@@ -13,10 +13,10 @@
 	Gathering them here means the bar is the same object before and after —
 	only the comparison picker appears, next to the toggle that summoned it.
 
-	ONE FLAT ROW, IN A FIXED ORDER: focus, contents, bookmark, print, roll,
-	edition, compare, second edition. The page-level buttons come first and the
-	text-level controls follow, so the row runs from what is being read to how
-	it is being read. The table of contents heads that run: it is the one
+	ONE FLAT ROW, IN A FIXED ORDER: focus, type, contents, bookmark,
+	print, roll, edition, compare, second edition. The page-level buttons come
+	first and the text-level controls follow, so the row runs from what is being
+	read to how it is being read. The table of contents heads that run: it is the one
 	control that does not act on this page at all — it leaves it — and it is
 	the sidebar's narrow-screen stand-in (`TocMenu`), which a reader looks for
 	at the start of the chrome rather than among the controls that change how
@@ -33,6 +33,19 @@
 	the middle of a bar that looks empty. First, it is at the edge the row
 	packs against and the edge every line of the text below begins from, in
 	both modes and without moving.
+
+	TYPE SITS BESIDE IT, AND THE PAIR IS THE ONE GROUP HERE THAT BELONGS TO
+	THE READER rather than to the page. Every other control in the row answers
+	a question about this address — which contents, which edition, compared
+	with what, saved or printed — and is spent once the reader leaves it.
+	These two are properties of the person: chosen once and carried across
+	every work and every visit (`$lib/zen.svelte.ts`, `$lib/prefs.svelte.ts`),
+	true of the page before it is opened rather than decided while reading it.
+	So they head the row together, ahead of the page-level actions, and the
+	axis the rest of the row runs along starts after them. `TypeMenu` owns why
+	the size and the face left the header at all, and `textSize` below owns
+	why the pair still parts company on the index routes.
+
 	The roll joins the second group and sits last in it: it is the
 	only one of those that leaves the page, and the only one not every
 	route renders (see `randomVerse` below), so putting it at that group's
@@ -77,9 +90,10 @@
 	chapter titles and which parts they see (the Summa has four under Latin
 	and five under English), and before this it could only be changed by
 	opening a text first. The rest drops out — an index page has no unit to
-	bookmark, and `PrintButton`'s own docblock is the argument against
-	printing one — so `bookmarkHref` and `print` are optional and those pages
-	pass neither. Scripture keeps the roll, which is a page-level action on a
+	bookmark, `PrintButton`'s own docblock is the argument against printing
+	one, and an index sets no `.reading-text` for the size stepper to move —
+	so `bookmarkHref`, `print` and `textSize` are optional and those pages
+	pass none of them. Scripture keeps the roll, which is a page-level action on a
 	page that IS scripture: from `/scriptura` it is the one entry point that
 	needs no decision, next to a book list asking for eighty of them.
 
@@ -99,6 +113,7 @@
 	import type { WorkManifest } from '$lib/types';
 	import CompareToggle from './CompareToggle.svelte';
 	import ZenToggle from './ZenToggle.svelte';
+	import TypeMenu from './TypeMenu.svelte';
 	import BookmarkButton from './BookmarkButton.svelte';
 	import PrintButton from './PrintButton.svelte';
 	import RandomVerseButton from './RandomVerseButton.svelte';
@@ -156,6 +171,25 @@
 		 *  reading layouts, so on an index the button has nothing
 		 *  page-specific to ask for. */
 		print?: boolean;
+		/** Offer the type panel — the reading size and the reading face. On
+		 *  wherever the page sets `.reading-text`, which is what both settings
+		 *  act on, and off on the index routes, which set none: a book list
+		 *  and a table of questions are chrome type, and `--landing-width` in
+		 *  `styles/tokens.css` carries the argument for why that kind of page
+		 *  is not measured in characters at all.
+		 *
+		 *  OFF THERE IS NOT THE SAME AS INERT THERE, which is why this is a
+		 *  prop and not a shrug. Two of those pages (`/scriptura`,
+		 *  `/doctores/summa`) hold their list in `.content-column`, whose
+		 *  width IS `--content-width` and does move with the setting — so a
+		 *  stepper left on them would slide the column in and out while the
+		 *  type it is measured for stayed put, which reads as a bug in a way
+		 *  that doing nothing at all does not.
+		 *
+		 *  It goes off with `print` at every call site today and is still its
+		 *  own prop: each names a capability of the page rather than a kind of
+		 *  route, and a page can gain or lose one without the other. */
+		textSize?: boolean;
 		/** Whether there is anything to compare against at all. False hides the
 		 *  toggle outright rather than disabling it — the same "hide, don't
 		 *  disable" posture `EditionMenu` and `CompareToggle` already take.
@@ -198,6 +232,7 @@
 		toc,
 		bookmarkHref,
 		print = true,
+		textSize = true,
 		canCompare = false,
 		compareActive = false,
 		onToggleCompare,
@@ -236,6 +271,14 @@
 	     pressed. Rendered by every caller, index routes included — a table of
 	     contents is a page a reader reads down as much as a chapter is. -->
 	<ZenToggle />
+	<!-- The second of the two reader-level controls; `TypeMenu`'s own docblock
+	     holds why the size and the face left the header. Unlike the toggle
+	     above it this is NOT rendered by every caller — focus mode has chrome
+	     to take away on any page that has a bar, and this one has type to set
+	     only where there is `.reading-text`. See `textSize`. -->
+	{#if textSize}
+		<TypeMenu />
+	{/if}
 	{#if toc}
 		<TocMenu label={toc.label} content={toc.content} />
 	{/if}

@@ -139,6 +139,12 @@
 	// them, which is the same distinction the shelf was named for.
 	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
 	import Languages from '@lucide/svelte/icons/languages';
+	// A large A beside a small one — the mark every reading app wears for text
+	// size, and the only glyph in this set that is literally two specimens of
+	// the thing it changes. `type` draws a compositor's T and says "typography"
+	// rather than "bigger"; `case-sensitive` is the same two letters meaning
+	// something else entirely to anyone who has used a search field.
+	import ALargeSmall from '@lucide/svelte/icons/a-large-small';
 
 	const ICONS = {
 		search: Search,
@@ -182,7 +188,8 @@
 		'messages-square': MessagesSquare,
 		users: Users,
 		'graduation-cap': GraduationCap,
-		languages: Languages
+		languages: Languages,
+		'a-large-small': ALargeSmall
 	};
 
 	export type IconName = keyof typeof ICONS;

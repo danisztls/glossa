@@ -512,9 +512,11 @@
  * A PANEL'S ROWS: one label over one full-height control, and the drawn
  * switch that is the commonest of those controls.
  *
- * Global for the reason the primitive above is: two components render this
- * shape now -- `SettingsMenu` (dark mode, sepia, OLED, monochrome, reading
- * size) and `ApparatusMenu` (which apparatus is set beside the text) -- and
+ * Global for the reason the primitive above is: three components render this
+ * shape now -- `SettingsMenu` (dark mode, sepia, OLED, monochrome),
+ * `ApparatusMenu` (which apparatus is set beside the text) and
+ * `TypeMenu` (how the reading text is set — its size and its face — in the
+ * reading bar rather than the header) -- and
  * Svelte's per-component scoping has no way to share a block, so the
  * alternative is two copies of it that drift. They were `SettingsMenu`'s
  * own until 2026-09-01, which meant the second panel to reuse the class
@@ -595,4 +597,53 @@
 	line-height: 1.2;
 	white-space: nowrap;
 	color: var(--color-text-muted);
+}
+
+/*
+ * PICK ONE OF THESE: a single bordered box divided by hairlines, rather than
+ * two or three separate buttons, so the group reads as a radio set rather
+ * than as a row of things to press. `SettingsMenu`'s dark mode has three
+ * cells and `TypeMenu`'s face has two.
+ *
+ * It joined the block above when the second panel wanted it, which is the
+ * same move `.field` made and the same reason: these were `SettingsMenu`'s
+ * scoped rules, and a second component naming the classes would have
+ * rendered with none of them and no error anywhere.
+ */
+.segmented {
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	gap: 0;
+}
+
+.segment {
+	flex: 1;
+	min-width: 0;
+	height: 100%;
+	padding: 0 0.2rem;
+	border: 0;
+	background: var(--color-bg-elevated);
+	color: var(--color-text);
+	/* Small caps-height text with a little tracking: at two or three cells
+	   across a panel this narrow the words are chips, not prose, and uppercase
+	   keeps them legible at a size where mixed case would not be. */
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.segment + .segment {
+	border-inline-start: 1px solid var(--color-border);
+}
+
+.segment:hover:not(.current) {
+	color: var(--color-accent);
+}
+
+.segment.current {
+	background: var(--color-accent);
+	color: var(--color-accent-contrast);
 }

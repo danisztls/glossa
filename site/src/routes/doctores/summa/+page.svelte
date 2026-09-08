@@ -110,7 +110,7 @@
 		     with it, which is the work's shape rather than a gap. Guarded on
 		     `work` like the copyright notice at the foot. -->
 		{#if work}
-			<ReadingBar print={false} />
+			<ReadingBar print={false} textSize={false} />
 		{/if}
 		<header>
 			<h1>{t('summa.landing.title')}</h1>

@@ -46,7 +46,7 @@
 		     bookmark or print — see `ReadingBar`. Guarded on `work` like the
 		     notice below, so a corpus that failed to sync leaves no empty rule. -->
 		{#if work}
-			<ReadingBar print={false} randomVerse />
+			<ReadingBar print={false} textSize={false} randomVerse />
 		{/if}
 		<h1>{t('bible.landing.title')}</h1>
 		<p class="page-tagline">{t('bible.landing.tagline')}</p>

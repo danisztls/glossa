@@ -1,7 +1,13 @@
 <!--
 	The reader's settings, in one popover: dark mode, the sepia paper tint, the
-	OLED true-black ground, the monochrome palette, the reading text size — and,
-	below the divider, the way into everything about the network.
+	OLED true-black ground, the monochrome palette — and, below the divider,
+	the way into everything about the network.
+
+	THE READING SIZE WAS A SIXTH ROW HERE and is now the reading bar's
+	(`TypeMenu`), which holds the argument. What it leaves behind is a
+	panel whose every row is true of the page the reader is on: this trigger
+	is in the header of all of them, and the size stepper was the one control
+	in it that did nothing on most.
 
 	IT WAS `AppearanceMenu` UNTIL OFFLINE MODE, and the rename is the honest
 	half of that change. Everything above the divider is still the one question
@@ -18,7 +24,7 @@
 	`AUTOMATIC_WAVES`), and the Scripture, magisterium and Summa waves are
 	23-28 MB each that somebody has to ask for. So the switch and the library
 	are one subject read in one order, and neither belongs in the front row of
-	the one panel every reader opens to change the text size. Both live in
+	the panel a reader opens to change how the page looks. Both live in
 	`AdvancedSheet.svelte`, which the row below opens; all this panel keeps is
 	the door.
 
@@ -43,11 +49,13 @@
 	EVERY ROW IS BUILT TO ONE TEMPLATE: a `.field-label` over a
 	`.field-control` of fixed height, and the control fills the panel's width.
 	That is what makes the panel read as balanced rather than as a stack of
-	unrelated widgets — the segmented dark-mode control and the size stepper
-	are both a full-width bar of three cells, and the two switches share their
-	row height. Each switch's note sits BESIDE it, in the same row, rather
-	than under it, so that a change of mode doesn't make one row taller than
-	the rest.
+	unrelated widgets — the segmented dark-mode control is a full-width bar of
+	three cells, and the three switches share their row height. Each switch's
+	note sits BESIDE it, in the same row, rather than under it, so that a
+	change of mode doesn't make one row taller than the rest. The template is
+	`styles/menus.css`'s, shared with `ApparatusMenu` and `TypeMenu`,
+	which is why the stepper's silhouette still matches the segmented control
+	here from another bar.
 
 	SEPIA AND OLED ARE THE SAME ROW MIRRORED, and they are adjacent so that
 	reads as deliberate: sepia yields to dark, OLED needs it, and so exactly
@@ -65,40 +73,27 @@
 	"monochrome" names the result without saying what the page gives up for
 	it. What it does is app.css's monochrome section.
 
-	NOTHING HERE CLOSES THE PANEL. `FontSizeMenu` already worked that way (a
-	reader stepping the size up wants to keep clicking and watching), and the
-	same is true of every control now that they share a panel: comparing dark
-	against light means flipping back and forth. Escape and an outside click
-	still close it, via the shared `Menu` in `./menu.svelte.ts`.
+	NOTHING HERE CLOSES THE PANEL, which the size stepper wanted first (a
+	reader stepping it up wants to keep clicking and watching) and every
+	control here wants for itself: comparing dark against light means flipping
+	back and forth. Escape and an outside click still close it, via the shared
+	`Menu` in `./menu.svelte.ts`.
+
+	THE ARROW KEYS WENT WITH THE STEPPER, and nothing else in the panel
+	notices: the handler they lived in was already gated on the focus being
+	inside `.stepper`, so an arrow pressed on a switch or a segment did
+	nothing then and does nothing now. This panel's keydown is the shared
+	`Menu`'s unaltered — Escape and no more. Tab still walks the rows.
 -->
 <script lang="ts">
 	import { appearance, DARK_MODES } from '$lib/theme.svelte';
 	import { library } from '$lib/library.svelte';
-	import { fontScale, MIN_FONT_SCALE, MAX_FONT_SCALE } from '$lib/prefs.svelte';
 	import Icon from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
 	const menu = new Menu();
-
-	const percent = $derived(Math.round(fontScale.value * 100));
-
-	// Escape comes from the shared `Menu`; the arrow keys are this menu's own
-	// and step the text size. They are gated on the focused element being one
-	// of the stepper's buttons, because the panel also holds a set of radio
-	// buttons where an arrow key means something else entirely.
-	function onPanelKeydown(e: KeyboardEvent) {
-		menu.onPanelKeydown(e);
-		if (!(e.target instanceof Element) || !e.target.closest('.stepper')) return;
-		if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-			e.preventDefault();
-			fontScale.increase();
-		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-			e.preventDefault();
-			fontScale.decrease();
-		}
-	}
 </script>
 
 <svelte:window onclick={menu.onWindowClick} />
@@ -123,7 +118,7 @@
 			role="menu"
 			tabindex="-1"
 			aria-label={t('settings.label')}
-			onkeydown={onPanelKeydown}
+			onkeydown={menu.onPanelKeydown}
 		>
 			<!-- The layout wrappers are `role="none"` so the menuitems inside them
 			     still read as direct children of the menu — the same job the other
@@ -208,33 +203,6 @@
 				</div>
 			</div>
 
-			<div class="field" role="none">
-				<span class="field-label label-micro">{t('fontSize.label')}</span>
-				<div class="field-control stepper" role="none">
-					<button
-						type="button"
-						role="menuitem"
-						class="step-btn"
-						aria-label={t('fontSize.smaller')}
-						disabled={fontScale.value <= MIN_FONT_SCALE}
-						onclick={() => fontScale.decrease()}
-					>
-						<Icon name="minus" />
-					</button>
-					<output class="value" aria-live="polite">{percent}%</output>
-					<button
-						type="button"
-						role="menuitem"
-						class="step-btn"
-						aria-label={t('fontSize.larger')}
-						disabled={fontScale.value >= MAX_FONT_SCALE}
-						onclick={() => fontScale.increase()}
-					>
-						<Icon name="plus" />
-					</button>
-				</div>
-			</div>
-
 			<!-- The one part that is not about how the page looks, which is why
 			     it takes the divider the appearance rows deliberately do
 			     without: that rule was about not carving up ONE subject, and
@@ -283,49 +251,12 @@
 	   which is why the shared label is uppercase in the first place. It ran a
 	   step smaller here (0.68rem) than everywhere else, which was not a
 	   decision anyone made. */
-	/* Even spacing between the fields, and no rule between the theme rows and
-	   the size stepper: a divider would have made one of the gaps larger than
-	   the others, which is the imbalance it was meant to organize. */
-	/* One control, three cells: a single bordered box divided by hairlines,
-	   rather than three separate buttons, so the group reads as "pick one of
-	   these" the way a radio set should. */
-	.segmented {
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		overflow: hidden;
-		gap: 0;
-	}
-
-	.segment {
-		flex: 1;
-		min-width: 0;
-		height: 100%;
-		padding: 0 0.2rem;
-		border: 0;
-		background: var(--color-bg-elevated);
-		color: var(--color-text);
-		/* Small caps-height text with a little tracking: at three cells across
-		   a 12rem panel the words are chips, not prose, and uppercase keeps
-		   them legible at a size where mixed case would not be. */
-		font-size: 0.72rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		line-height: 1;
-		cursor: pointer;
-	}
-
-	.segment + .segment {
-		border-inline-start: 1px solid var(--color-border);
-	}
-
-	.segment:hover:not(.current) {
-		color: var(--color-accent);
-	}
-
-	.segment.current {
-		background: var(--color-accent);
-		color: var(--color-accent-contrast);
-	}
+	/* Even spacing between the fields, and no rule between the theme rows:
+	   a divider would have made one of the gaps larger than the others,
+	   which is the imbalance it was meant to organize. */
+	/* `.segmented` / `.segment` are in `styles/menus.css` with the rest of
+	   the row template — `TypeMenu` picks a face with the same control, and
+	   Svelte's scoping cannot share a block. */
 
 	/* Dimmed whole, rather than by recolouring the label: the label sits
 	   outside the button now, and is already muted. */
@@ -336,33 +267,6 @@
 	   out of it. If a translation ever outgrows the space the panel widens
 	   (up to `.menu-panel`'s max-width) instead, which is the visible
 	   failure rather than the silent one. */
-	/* Laid out like the segmented control above it — the two ends of a
-	   full-width bar with the reading between them — so the panel's two
-	   multi-part controls have the same silhouette. */
-	.stepper {
-		justify-content: space-between;
-	}
-
-	.step-btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: var(--control-height);
-		height: 100%;
-		padding: 0;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		background: var(--color-bg-elevated);
-		color: var(--color-text);
-		font-size: 0.8rem;
-		cursor: pointer;
-	}
-
-	.step-btn:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
-	}
-
 	/* THE ONE DIVIDER IN THE PANEL, and the argument against the others is what
 	   justifies this one: a rule between two appearance rows would have made
 	   one gap larger than the rest and organised nothing, because those rows
@@ -373,13 +277,5 @@
 		margin-block-start: 0.55rem;
 		border-block-start: 1px solid var(--color-border);
 		padding-block-start: 0.55rem;
-	}
-
-	.value {
-		flex: 1;
-		text-align: center;
-		font-variant-numeric: tabular-nums;
-		font-size: 0.8rem;
-		color: var(--color-text);
 	}
 </style>

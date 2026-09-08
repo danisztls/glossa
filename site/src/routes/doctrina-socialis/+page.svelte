@@ -103,7 +103,7 @@
 	     edition — the same bar `/catechismus` carries, guarded the same way:
 	     with no manifest there is no edition to offer. -->
 	{#if work}
-		<ReadingBar print={false} />
+		<ReadingBar print={false} textSize={false} />
 	{/if}
 
 	<h1>{t('socialDoctrine.landing.title')}</h1>

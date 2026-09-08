@@ -235,6 +235,14 @@
 				if (s >= 0.8 && s <= 1.8) {
 					document.documentElement.style.setProperty('--reading-scale', String(s));
 				}
+				// The reader's text face, for the same reason and with more at
+				// stake than the size: the face decides the measure
+				// (`--prose-char-advance`, tokens.css), so applying it after
+				// hydration would reflow every line of the page rather than
+				// resize it. Only 'sans' is written — absent is the serif.
+				if (localStorage.getItem('glossa:face') === 'sans') {
+					document.documentElement.setAttribute('data-face', 'sans');
+				}
 			} catch (e) {}
 			try {
 				// Focus mode (src/lib/zen.svelte.ts), applied here for the same

@@ -553,7 +553,7 @@
 
 .reading-text {
 	font-family: var(--font-serif);
-	/* Multiplied by the reader's fine-adjustment (SettingsMenu.svelte /
+	/* Multiplied by the reader's fine-adjustment (TypeMenu.svelte /
 	   prefs.svelte.ts), never applied to chrome — this custom property is
 	   only ever read here, so nothing outside the reading column resizes
 	   when the reader adjusts text size. The `, 1` fallback covers the
@@ -561,4 +561,25 @@
 	   :root default above or the inline style has taken effect. */
 	font-size: calc(var(--reading-base) * var(--reading-scale, 1));
 	line-height: 1.65;
+}
+
+/*
+ * THE READER'S SECOND TEXT FACE. `:root[data-face='sans']` in `tokens.css`
+ * carries the argument for offering one and the metrics that follow it; this
+ * is the family, and it is the only declaration the switch needs.
+ *
+ * A RULE HERE RATHER THAN A TOKEN, and the reason is the per-script
+ * overrides. `styles/direction.css` redefines BOTH `--font-serif` and
+ * `--font-sans` on the reading region for Han, Cyrillic, Arabic and Hebrew,
+ * so the family has to be read at that region to pick them up. A
+ * `--font-reading: var(--font-sans)` on `:root` would resolve against
+ * `:root`'s chain at computed-value time and hand every script the Latin
+ * fallback list — the same substitution rule `--content-width` turns on, in
+ * the direction that loses information rather than the one that keeps it.
+ *
+ * (0,3,0) against `.reading-text`'s (0,1,0), so it wins wherever it applies
+ * and nothing else in this file needs to know about it.
+ */
+:root[data-face='sans'] .reading-text {
+	font-family: var(--font-sans);
 }

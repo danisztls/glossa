@@ -187,9 +187,14 @@ export const la: Dictionary = {
 	'loadFailed.retrying': 'Conatur…',
 	'offline.turnOff': 'Modum sine rete claudere',
 
+	'type.label': 'Magnitudo et forma litterarum',
 	'fontSize.label': 'Magnitudo textus',
 	'fontSize.larger': 'Litterae maiores',
 	'fontSize.smaller': 'Litterae minores',
+	'fontSize.reset': 'Magnitudo textus solita',
+	'face.label': 'Forma litterarum',
+	'face.serif': 'Cum serifis',
+	'face.sans': 'Sine serifis',
 	'print.label': 'Hanc paginam imprime',
 	'toTop.label': 'Ad summum paginae redi',
 	// iOS ships no Latin, so the quoted button CANNOT match what the reader

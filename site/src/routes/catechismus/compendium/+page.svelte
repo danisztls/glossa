@@ -73,7 +73,7 @@
 
 <div class="index-column">
 	{#if work}
-		<ReadingBar print={false} />
+		<ReadingBar print={false} textSize={false} />
 	{/if}
 
 	<h1>{t('compendium.landing.title')}</h1>

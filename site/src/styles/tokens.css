@@ -113,6 +113,24 @@
 	--reading-scale: 1;
 
 	/*
+	 * THE TEXT FACE'S OWN METRICS, WHICH FOUR OTHER NUMBERS ARE DERIVED FROM.
+	 *
+	 * These are EB Garamond's, read off the font's `hhea` (its `OS/2` typo
+	 * metrics agree, and it sets USE_TYPO_METRICS, so this is what a browser
+	 * lays a line box out with) and its `OS/2` cap height. They were literals
+	 * inside `styles/dropcaps.css`, spelled out in prose in three separate
+	 * derivations; they are tokens because the reader can now choose a second
+	 * text face (`:root[data-face]` below), and a constant that changes with
+	 * the face cannot go on being written into the arithmetic that reads it.
+	 *
+	 * `--prose-char-advance` belongs to this group and is stated with the
+	 * measure below, where the arithmetic that consumes it lives.
+	 */
+	--text-ascent: 1.007;
+	--text-descent: 0.298;
+	--text-cap-height: 0.65;
+
+	/*
 	 * THE MEASURE IS DENOMINATED IN THE READING FONT, NOT IN `ch`.
 	 *
 	 * Characters-per-line is what governs readability, so the width is stated
@@ -147,7 +165,10 @@
 	   subset, so those fall through `--font-serif` to a system face whose
 	   metrics we don't have. `64ch` was no better there — "0" came from EB
 	   Garamond either way — so this is a standing limitation rather than a
-	   regression, and it is two works out of 359. */
+	   regression, and it is two works out of 359.
+
+	   The reader's second face carries its own, measured the same way —
+	   `:root[data-face='sans']` below. */
 	--prose-char-advance: 0.3787;
 	/* Target characters per line. 55-65 is where this type sets well; 62.4 is
 	   what the corpus actually measured at under the old 64ch, kept so the
@@ -603,6 +624,67 @@
 		var(--shelf-commentary) var(--pigment-strength),
 		var(--color-text-muted)
 	);
+}
+
+/*
+ * THE SECOND TEXT FACE — Source Sans 3, the face this site already sets its
+ * own writing in, offered as an alternative for the reading text.
+ *
+ * WHY THERE IS ONE. EB Garamond is the right face for what the works wrote
+ * and is a hard face for some people to read: fine hairlines, old-style
+ * figures that drop below the baseline, a modest x-height. Source Sans 3 is
+ * already downloaded on every visit for the chrome, so the alternative costs
+ * a reader nothing but this block.
+ *
+ * IT IS ON `:root` BECAUSE `--content-width` IS. A custom property's value is
+ * substituted at computed-value time on the element it is declared for, so
+ * `--content-width` — declared in the block above — resolves against
+ * `:root`'s `--prose-char-advance` and nothing a descendant says about that
+ * token can move the column afterwards. `routes/preces/[slug]` relies on the
+ * same fact in the other direction, to make prayers larger without widening
+ * their column. A face override written on `.reading-text` would change the
+ * type and leave the measure set for the other face.
+ *
+ * THE ADVANCE IS MEASURED, NOT SCALED FROM THE OTHER ONE. Frequency-weighted
+ * mean advance of Source Sans 3 wght 400 over the same corpus text the
+ * serif's number was taken over: 0.4121em, per language between 0.3980 (lv)
+ * and 0.4404 (id). The method was checked by re-running it on EB Garamond,
+ * which returned 0.3771 against the 0.3787 committed above — the corpus has
+ * grown from 65.5M characters to 95.2M since that measurement, and 0.4% is
+ * what that growth moved it by, so the serif's number is left alone.
+ *
+ * The face is 9.3% wider per character, so the column is 9.3% wider to hold
+ * the same 62.4 of them: 33.4rem at the default size against the serif's
+ * 30.6rem. The 56rem ceiling starts binding at a 1.68 reading scale rather
+ * than at 1.83, so the top two steps of the size stepper set slightly short
+ * of the target — 58.1 characters at 1.8, still inside the 55-65 band the
+ * measure exists to hold.
+ *
+ * The metrics are this face's `hhea`, the same table the defaults came from.
+ * `styles/dropcaps.css` derives the initial's three sizes from them, so the
+ * cap follows the face without a second set of constants.
+ *
+ * NOT `--font-serif`. That token is read by chrome as well as by the reading
+ * text, and `styles/direction.css` overrides it per script — the Han reading
+ * region names its own Ming chain there. Redefining it on `:root` would
+ * resolve that chain away and set the whole site's serif besides. The family
+ * is switched by a rule on `.reading-text` itself (`styles/layout.css`),
+ * which is the element those per-script rules land on.
+ *
+ * A NON-LATIN READING REGION GETS LESS OUT OF THIS, and the limitation is the
+ * one the advance above already carries. `direction.css` gives the Han region
+ * a curated `--font-serif` and no `--font-sans`, so a reader who switches
+ * faces inside `ccc.zht` falls through to whatever Han face their system
+ * offers rather than to a list this project chose. Both numbers here are
+ * Latin measurements too. This is a standing limitation of a preference
+ * written for the corpus's Latin-script bulk, not a defect to fix by guessing
+ * at metrics for faces we do not ship.
+ */
+:root[data-face='sans'] {
+	--text-ascent: 1.024;
+	--text-descent: 0.4;
+	--text-cap-height: 0.66;
+	--prose-char-advance: 0.4121;
 }
 
 /*

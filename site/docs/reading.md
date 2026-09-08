@@ -9,9 +9,37 @@ one value answer two questions. Sepia yields to dark because no dark-sepia
 palette exists, and it is **suspended, not cleared** — a dark control that
 silently does nothing is more surprising than an inert sepia row that says why.
 
+**A control belongs on the surface its effect is visible on.** The reading-size
+stepper was a row in the header's settings panel, which is on every page; what
+it moves is `.reading-text` and the column measured against it, which exists on
+exactly the routes that render a reading bar. It is in that bar now
+(`TypeMenu`), and off on the index routes it does not reach — two of which
+hold their list in `.content-column` and so would have slid in and out under
+type that never changed.
+
 **Two faces, split on authorship rather than on chrome-versus-content.** What
 the work wrote is EB Garamond, what we wrote _about_ the work is Source Sans. A
 heading is a title until it says otherwise.
+
+**And the reader may set the work in the other one.** The split above is the
+default, not a claim that Garamond is legible to everybody — fine hairlines,
+old-style figures and a modest x-height are what some readers cannot manage,
+and the sans is on the device already. `TypeMenu` offers it.
+
+**A second face is four numbers, not a family.** The measure is denominated in
+the reading font, so the face carries its own advance
+(`--prose-char-advance`, measured over the corpus the way the first was:
+0.4121 against 0.3771 when the method was re-run on EB Garamond as a control)
+and the initial's three sizes are derived from its cap height, ascent and
+descent. Those were literals inside the derivations until there was a second
+face to feed them.
+
+**A token that a descendant overrides is not a token the column reads.** A
+custom property is substituted for the element it is declared on, so
+`--content-width` — declared on `:root` — resolves against `:root`'s advance
+and nothing written further down can move it. That is why the face is an
+attribute on `<html>`, and it is the same fact `/preces` uses in the other
+direction to set prayers larger without widening their column.
 
 **An initial is sized in lines, so the number of lines it may take is decided
 by whose lines they are.** Where a wrap is the viewport's, three lines is a

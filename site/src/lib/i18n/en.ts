@@ -518,9 +518,28 @@ export const en: Dictionary = {
 	'loadFailed.retrying': 'Trying…',
 	'offline.turnOff': 'Turn off offline mode',
 
+	// THE READING BAR'S TYPE PANEL — `TypeMenu.svelte`; the store is
+	// prefs.svelte.ts. `type.label` names the panel and its "Aa" trigger, and
+	// has to cover both rows, which is why the trigger stopped reading
+	// `fontSize.label`: that key names the size row and nothing else.
+	'type.label': 'Text size and typeface',
 	'fontSize.label': 'Text size',
 	'fontSize.larger': 'Larger text',
 	'fontSize.smaller': 'Smaller text',
+	// The percentage reading is itself the button back to 100%, so this is an
+	// accessible name a reader never sees.
+	'fontSize.reset': 'Default text size',
+	// THE FACES ARE NAMED BY CLASS AND NOT BY FONT — "Serif", never "EB
+	// Garamond" — because the site may set the text in another face and the
+	// reader's stored choice outlives the name. It is also the vocabulary the
+	// advice a low-vision or dyslexic reader has been given is written in.
+	// KEEP BOTH SHORT: two cells of one segmented control in a ~9rem panel,
+	// uppercase at 0.72rem, so about eight characters each before the panel
+	// widens. A language takes its own typographers' short pair — `de` Serif /
+	// Grotesk, `ja` 明朝 / ゴシック — rather than a literal translation.
+	'face.label': 'Typeface',
+	'face.serif': 'Serif',
+	'face.sans': 'Sans',
 	'print.label': 'Print this page',
 	'toTop.label': 'Return to top',
 
