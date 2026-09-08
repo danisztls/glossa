@@ -780,23 +780,56 @@ def _emphasis_covers(
 _ANCHOR_TITLE_RE = re.compile(
     r"^\s*<a\s+name=\"([^\"]+)\"\s*>\s*</a>\s*([^<]{1,120}?)\s*$", re.IGNORECASE
 )
+#: The same anchor with the title INSIDE it rather than after it.
+_ANCHOR_WRAPS_TITLE_RE = re.compile(
+    r"^\s*<a\s+name=\"([^\"]+)\"\s*>\s*([^<]{1,120}?)\s*</a>\s*$", re.IGNORECASE
+)
+
+
+def _anchor_names_its_text(m: re.Match[str] | None) -> bool:
+    """Whether a matched anchor's NAME spells the text beside it.
+
+    `unquote` is what makes the two comparable: without it
+    `Une_%C3%A9ternelle_nouveaut%C3%A9` normalises to a name with `c3a9` in
+    it and matches nothing."""
+    if m is None:
+        return False
+    name = re.sub(r"[^a-z0-9]+", "", urllib.parse.unquote(m.group(1)).lower())
+    text = re.sub(r"[^a-z0-9]+", "", ihtml.unescape(m.group(2)).lower())
+    return bool(name) and bool(text) and (name == text or text.startswith(name))
 
 
 def _anchor_titles_itself(inner_html: str) -> bool:
-    """An empty named anchor whose NAME is the text that follows it.
+    """An EMPTY named anchor whose name is the text that follows it.
 
     `<p><a name="SHATTERED_DREAMS"></a>SHATTERED DREAMS</p>` -- no bold, no
     italic, no centring, nothing `is_full_bold` or either recovery pass can
     see. The anchor is the signal: an empty `<a name>` exists to be linked TO,
     and one whose name spells the paragraph's own text is a heading the page
     means a table of contents to point at. Body prose never carries one.
-    """
-    m = _ANCHOR_TITLE_RE.match(inner_html)
-    if m is None:
-        return False
-    name = re.sub(r"[^a-z0-9]+", "", m.group(1).lower())
-    text = re.sub(r"[^a-z0-9]+", "", ihtml.unescape(m.group(2)).lower())
-    return bool(name) and bool(text) and (name == text or text.startswith(name))
+
+    This is the form `heading_style_rank` also reads as unemphasised, and the
+    one `_anchor_wraps_its_title` deliberately is not -- see there."""
+    return _anchor_names_its_text(_ANCHOR_TITLE_RE.match(inner_html))
+
+
+def _anchor_wraps_its_title(inner_html: str) -> bool:
+    """A named anchor AROUND the whole of the block's text, naming it.
+
+    `<p><a name="Une_%C3%A9ternelle_nouveaut%C3%A9">Une eternelle nouveaute
+    </a></p>`: the same signal as `_anchor_titles_itself` in the other
+    arrangement, and `evangelii-gaudium` prints all 59 of its sub-headings
+    this way in French and German.
+
+    IT SAYS THE BLOCK IS A HEADING AND NOTHING ABOUT HOW IT IS PAINTED, which
+    is where it parts company with the empty form. There the anchor sits
+    inside whatever emphasis the block has, so an anchor and no emphasis is a
+    statement about the tier; here the anchor IS the block, and a page may
+    anchor some of one tier and not the rest. `caritas-in-veritate.pt` prints
+    `<p align="center">CAPITULO I</p>` and anchors chapters II to VI
+    identically otherwise -- ranking the five as unemphasised split a tier the
+    page prints as one, and cost chapter I its label."""
+    return _anchor_names_its_text(_ANCHOR_WRAPS_TITLE_RE.match(inner_html))
 
 
 def is_full_bold(inner_html: str) -> bool:
@@ -7197,6 +7230,7 @@ def parse_document(
         inner, kind = block_kind(m)
         is_bq = kind == "blockquote"
         anchor_titled = _anchor_titles_itself(inner)
+        anchor_wrapped = _anchor_wraps_its_title(inner)
         if kind == "center":
             # Always a heading candidate, not gated on is_full_bold: LG's
             # "CHAPTER VII" (uniquely among its 8 chapters) is printed
@@ -7208,7 +7242,11 @@ def parse_document(
             # this is safe rather than a special case for one document.
             is_heading = True
         else:
-            is_heading = (is_full_bold(inner) or anchor_titled) if not is_bq else False
+            is_heading = (
+                (is_full_bold(inner) or anchor_titled or anchor_wrapped)
+                if not is_bq
+                else False
+            )
         marked = mark_footnotes(inner, marker_template)
         text = strip_tags(marked)
         if not text:
