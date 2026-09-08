@@ -190,6 +190,7 @@ export const mt: Dictionary = {
 	'fontSize.medium': 'Medju',
 	'fontSize.large': 'Kbir',
 	'fontSize.xlarge': 'Kbir ħafna',
+	'fontSize.xxlarge': 'L-akbar',
 	'face.label': 'Tipa tal-ittri',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

@@ -208,6 +208,7 @@ export const he: Dictionary = {
 	'fontSize.medium': 'בינוני',
 	'fontSize.large': 'גדול',
 	'fontSize.xlarge': 'גדול מאוד',
+	'fontSize.xxlarge': 'הגדול ביותר',
 	'face.label': 'גופן',
 	'face.serif': 'סריף',
 	'face.sans': 'סן־סריף',

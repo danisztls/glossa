@@ -182,6 +182,7 @@ export const ro: Dictionary = {
 	'fontSize.medium': 'Mediu',
 	'fontSize.large': 'Mare',
 	'fontSize.xlarge': 'Foarte mare',
+	'fontSize.xxlarge': 'Maxim',
 	'face.label': 'Font',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

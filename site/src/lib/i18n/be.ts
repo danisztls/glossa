@@ -208,6 +208,7 @@ export const be: Dictionary = {
 	'fontSize.medium': 'Сярэдні',
 	'fontSize.large': 'Вялікі',
 	'fontSize.xlarge': 'Вельмі вялікі',
+	'fontSize.xxlarge': 'Найбуйнейшы',
 	'face.label': 'Шрыфт',
 	'face.serif': 'Антыква',
 	'face.sans': 'Гратэск',

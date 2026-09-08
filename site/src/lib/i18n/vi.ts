@@ -211,6 +211,7 @@ export const vi: Dictionary = {
 	'fontSize.medium': 'Vừa',
 	'fontSize.large': 'Lớn',
 	'fontSize.xlarge': 'Rất lớn',
+	'fontSize.xxlarge': 'Lớn nhất',
 	'face.label': 'Kiểu chữ',
 	'face.serif': 'Có chân',
 	'face.sans': 'Không chân',

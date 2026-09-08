@@ -215,6 +215,7 @@ export const ig: Dictionary = {
 	'fontSize.medium': 'Nkezi',
 	'fontSize.large': 'Buru ibu',
 	'fontSize.xlarge': 'Buru ibu nke ukwuu',
+	'fontSize.xxlarge': 'Kachasị ibu',
 	'face.label': 'Ụdị odide',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

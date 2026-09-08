@@ -209,6 +209,7 @@ export const nl: Dictionary = {
 	'fontSize.medium': 'Middel',
 	'fontSize.large': 'Groot',
 	'fontSize.xlarge': 'Extra groot',
+	'fontSize.xxlarge': 'Grootst',
 	'face.label': 'Lettertype',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

@@ -33,7 +33,7 @@
 	reader trying a size or the other face wants to keep clicking and watching
 	the text behind the panel reflow.
 
-	THE SIZE IS A RAIL OF FOUR STOPS, AND THE REASON IS THE MEASURE. It was a
+	THE SIZE IS A RAIL OF FIVE STOPS, AND THE REASON IS THE MEASURE. It was a
 	`[−] 120% [+]` stepper over eleven values. The reading column is
 	`--measure-cpl` characters wide, so it grows with the setting, and the grid
 	centres it — which means every press slid the column's start edge, the bar
@@ -42,13 +42,13 @@
 	and a quarter of the viewport. The travel cannot go: the column IS the
 	size, and pinning it while the type moved would be the bug. What can go is
 	the repetition. One click lands anywhere on the rail. `prefs.svelte.ts`
-	carries the four values and why they are those four.
+	carries the five values and why they are spaced as they are.
 
 	NO PERCENTAGE AND NO RESET. The number was a readout the stepper needed —
 	with eleven indistinguishable states a reader had no other way to know
 	where they were, and no way home from 180% but eight clicks — and it was
-	the button back to 100% for that reason. Four labelled stops with the
-	current one filled say both things in the shape of the control, and the
+	the button back to 100% for that reason. Five labelled stops with the
+	current one accented say both things in the shape of the control, and the
 	default is the second dot, one click away from anywhere.
 
 	THE ARROW KEYS MOVE ALONG THE RAIL, gated on the focus being inside it —
@@ -206,7 +206,7 @@
 	}
 
 	/*
-	 * Four hit targets filling the row edge to edge, each with its dot in the
+	 * Five hit targets filling the row edge to edge, each with its dot in the
 	 * middle: a rail is a thing you click AT rather than a set of buttons you
 	 * click ON, and a gap between the stops would be a place a click lands on
 	 * nothing.
@@ -228,7 +228,9 @@
 		inset-inline: var(--half-stop);
 		inset-block-start: calc(50% - 0.5px);
 		height: 1px;
-		background: var(--color-border);
+		/* Half the dots' own weight: the line joins the stops and is not one
+		   of them, and at `--color-border` it was not visible at all. */
+		background: color-mix(in oklab, var(--color-text-muted) 50%, transparent);
 	}
 
 	.stop {
@@ -246,28 +248,33 @@
 
 	/*
 	 * THE DOTS GROW ALONG THE RAIL, which is what the control says instead of
-	 * a word. Four wordless stops of one size would be four identical things
+	 * a word. Five wordless stops of one size would be five identical things
 	 * in a row with no clue which end is which; a size ramp is legible before
 	 * the tooltip arrives and in every language without being translated. The
 	 * names are still there for anyone who hovers, and for a screen reader,
 	 * where the ramp says nothing at all.
+	 *
+	 * FILLED AND `--color-text-muted`, WHICH IS A CORRECTION. They were hollow
+	 * with a `--color-border` edge, and that token is the faintest thing in the
+	 * palette (`#ddd9d0` on the light ground) — right for a box outline, where
+	 * a rectangle of it encloses a whole control, and far too little for a 6px
+	 * ring, which is nearly all edge. A disc of the text colour is the same
+	 * mark at the weight the rest of the panel is set in.
 	 */
 	.dot {
-		width: calc(0.32rem + var(--i) * 0.08rem);
+		width: calc(0.36rem + var(--i) * 0.06rem);
 		aspect-ratio: 1;
 		border-radius: 50%;
-		border: 1px solid var(--color-border);
-		/* Opaque, so the rule behind the rail stops at the dot rather than
-		   running through it. */
-		background: var(--color-bg-elevated);
+		background: var(--color-text-muted);
 	}
 
+	/* The pointer darkens rather than accents: the accent is what says WHICH
+	   stop is current, and a hover wearing it claims a choice not yet made. */
 	.stop:hover .dot {
-		border-color: var(--color-accent);
+		background: var(--color-text);
 	}
 
 	.stop.current .dot {
 		background: var(--color-accent);
-		border-color: var(--color-accent);
 	}
 </style>

@@ -185,6 +185,7 @@ export const no: Dictionary = {
 	'fontSize.medium': 'Middels',
 	'fontSize.large': 'Stor',
 	'fontSize.xlarge': 'Ekstra stor',
+	'fontSize.xxlarge': 'Størst',
 	'face.label': 'Skrift',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

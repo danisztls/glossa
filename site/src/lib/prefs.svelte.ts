@@ -28,7 +28,7 @@
  */
 
 /**
- * FOUR SIZES ON A RAIL, NOT ELEVEN STEPS ON A STEPPER.
+ * FIVE SIZES ON A RAIL, NOT ELEVEN STEPS ON A STEPPER.
  *
  * It was `[−] 120% [+]` over 0.8–1.8 in steps of 0.1, and the arithmetic that
  * makes this site's column a MEASURE is what made that shape wrong. The
@@ -46,8 +46,17 @@
  * THE RANGE IS UNCHANGED AND ONLY THE MIDDLE IS COARSER. 1.8 is the largest
  * size that still holds the measure — `--content-width`'s 56rem ceiling starts
  * binding at 1.83 (`styles/tokens.css`) — and 0.8 is the floor the stepper
- * already had. What is gone is the eight values between, which existed because
- * a stepper has to have a step and not because anybody wanted 1.1.
+ * already had. What is gone is the six values between, which existed because a
+ * stepper has to have a step and not because anybody wanted 1.1.
+ *
+ * THE RUNGS ARE A RATIO AND NOT A DIFFERENCE, which is why the gaps widen
+ * along the rail: 1.25, 1.20, 1.208, 1.241. Apparent size is multiplicative —
+ * 1.0 to 1.2 is the same step to the eye that 1.5 to 1.8 is — so an evenly
+ * spaced ladder in absolute terms would crowd the top and strand the bottom.
+ * It also puts the default on the SECOND rung rather than the middle one,
+ * deliberately: the range is asymmetric because the need is — a reader who
+ * cannot read the default needs it much larger, and 0.8 is already as small as
+ * the measure is worth setting.
  *
  * ORDER IS THE CONTRACT: `TypeMenu` lays these out left to right along the
  * rail and steps between neighbours with the arrow keys, so this array is the
@@ -56,8 +65,9 @@
 export const FONT_SIZES = [
 	{ name: 'small', scale: 0.8 },
 	{ name: 'medium', scale: 1 },
-	{ name: 'large', scale: 1.3 },
-	{ name: 'xlarge', scale: 1.8 }
+	{ name: 'large', scale: 1.2 },
+	{ name: 'xlarge', scale: 1.45 },
+	{ name: 'xxlarge', scale: 1.8 }
 ] as const;
 
 export type FontSizeName = (typeof FONT_SIZES)[number]['name'];

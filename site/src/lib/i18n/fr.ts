@@ -184,6 +184,7 @@ export const fr: Dictionary = {
 	'fontSize.medium': 'Moyen',
 	'fontSize.large': 'Grand',
 	'fontSize.xlarge': 'Très grand',
+	'fontSize.xxlarge': 'Maximum',
 	'face.label': 'Police',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

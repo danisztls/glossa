@@ -181,6 +181,7 @@ export const ru: Dictionary = {
 	'fontSize.medium': 'Средний',
 	'fontSize.large': 'Крупный',
 	'fontSize.xlarge': 'Очень крупный',
+	'fontSize.xxlarge': 'Максимальный',
 	'face.label': 'Шрифт',
 	'face.serif': 'Антиква',
 	'face.sans': 'Гротеск',

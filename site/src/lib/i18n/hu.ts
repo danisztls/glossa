@@ -180,6 +180,7 @@ export const hu: Dictionary = {
 	'fontSize.medium': 'Közepes',
 	'fontSize.large': 'Nagy',
 	'fontSize.xlarge': 'Nagyon nagy',
+	'fontSize.xxlarge': 'Legnagyobb',
 	'face.label': 'Betűtípus',
 	'face.serif': 'Talpas',
 	'face.sans': 'Talpatlan',

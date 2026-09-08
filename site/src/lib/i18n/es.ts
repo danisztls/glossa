@@ -181,6 +181,7 @@ export const es: Dictionary = {
 	'fontSize.medium': 'Mediano',
 	'fontSize.large': 'Grande',
 	'fontSize.xlarge': 'Muy grande',
+	'fontSize.xxlarge': 'Máximo',
 	'face.label': 'Tipo de letra',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

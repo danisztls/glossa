@@ -189,6 +189,7 @@ export const pt: Dictionary = {
 	'fontSize.medium': 'Médio',
 	'fontSize.large': 'Grande',
 	'fontSize.xlarge': 'Muito grande',
+	'fontSize.xxlarge': 'Máximo',
 	'face.label': 'Fonte',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

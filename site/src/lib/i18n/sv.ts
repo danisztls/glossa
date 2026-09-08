@@ -177,6 +177,7 @@ export const sv: Dictionary = {
 	'fontSize.medium': 'Mellan',
 	'fontSize.large': 'Stor',
 	'fontSize.xlarge': 'Extra stor',
+	'fontSize.xxlarge': 'Störst',
 	'face.label': 'Typsnitt',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

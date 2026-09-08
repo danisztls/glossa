@@ -218,6 +218,7 @@ export const hi: Dictionary = {
 	'fontSize.medium': 'मध्यम',
 	'fontSize.large': 'बड़ा',
 	'fontSize.xlarge': 'बहुत बड़ा',
+	'fontSize.xxlarge': 'सबसे बड़ा',
 	'face.label': 'फ़ॉन्ट',
 	'face.serif': 'सेरिफ़',
 	'face.sans': 'सैन्स',

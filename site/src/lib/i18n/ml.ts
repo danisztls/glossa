@@ -218,6 +218,7 @@ export const ml: Dictionary = {
 	'fontSize.medium': 'ഇടത്തരം',
 	'fontSize.large': 'വലുത്',
 	'fontSize.xlarge': 'വളരെ വലുത്',
+	'fontSize.xxlarge': 'ഏറ്റവും വലുത്',
 	'face.label': 'അക്ഷരരൂപം',
 	'face.serif': 'സെരിഫ്',
 	'face.sans': 'സാൻസ്',

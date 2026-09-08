@@ -20,7 +20,7 @@ type that never changed.
 **A measured column moves when the size does, so the size control cannot be a
 stepper.** The column is 62.4 characters wide and the grid centres it, so it
 runs 24.6rem to 55.3rem across the range and every press slid the panel about
-25px sideways; four stops on a rail (`FONT_SIZES`) is one click.
+25px sideways; five stops on a rail (`FONT_SIZES`) is one click.
 
 **Two faces, split on authorship rather than on chrome-versus-content.** What
 the work wrote is EB Garamond, what we wrote _about_ the work is Source Sans. A

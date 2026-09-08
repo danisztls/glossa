@@ -182,6 +182,7 @@ export const de: Dictionary = {
 	'fontSize.medium': 'Mittel',
 	'fontSize.large': 'Groß',
 	'fontSize.xlarge': 'Sehr groß',
+	'fontSize.xxlarge': 'Größte',
 	'face.label': 'Schriftart',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

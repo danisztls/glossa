@@ -209,6 +209,7 @@ export const lv: Dictionary = {
 	'fontSize.medium': 'Vidējs',
 	'fontSize.large': 'Liels',
 	'fontSize.xlarge': 'Ļoti liels',
+	'fontSize.xxlarge': 'Lielākais',
 	'face.label': 'Fonts',
 	'face.serif': 'Šerifi',
 	'face.sans': 'Bez šerifiem',

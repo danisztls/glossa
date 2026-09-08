@@ -206,6 +206,7 @@ export const lt: Dictionary = {
 	'fontSize.medium': 'Vidutinis',
 	'fontSize.large': 'Didelis',
 	'fontSize.xlarge': 'Labai didelis',
+	'fontSize.xxlarge': 'Didžiausias',
 	'face.label': 'Šriftas',
 	'face.serif': 'Serifinis',
 	'face.sans': 'Beserifis',

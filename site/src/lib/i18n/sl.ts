@@ -178,6 +178,7 @@ export const sl: Dictionary = {
 	'fontSize.medium': 'Srednje',
 	'fontSize.large': 'Veliko',
 	'fontSize.xlarge': 'Zelo veliko',
+	'fontSize.xxlarge': 'Največje',
 	'face.label': 'Pisava',
 	'face.serif': 'Serifna',
 	'face.sans': 'Neserifna',

@@ -208,6 +208,7 @@ export const fi: Dictionary = {
 	'fontSize.medium': 'Keskikoko',
 	'fontSize.large': 'Suuri',
 	'fontSize.xlarge': 'Erittäin suuri',
+	'fontSize.xxlarge': 'Suurin',
 	'face.label': 'Kirjasin',
 	'face.serif': 'Antiikva',
 	'face.sans': 'Groteski',

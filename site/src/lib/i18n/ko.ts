@@ -208,6 +208,7 @@ export const ko: Dictionary = {
 	'fontSize.medium': '보통',
 	'fontSize.large': '크게',
 	'fontSize.xlarge': '아주 크게',
+	'fontSize.xxlarge': '가장 크게',
 	'face.label': '서체',
 	'face.serif': '명조',
 	'face.sans': '고딕',

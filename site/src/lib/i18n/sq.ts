@@ -209,6 +209,7 @@ export const sq: Dictionary = {
 	'fontSize.medium': 'Mesatar',
 	'fontSize.large': 'I madh',
 	'fontSize.xlarge': 'Shumë i madh',
+	'fontSize.xxlarge': 'Më i madhi',
 	'face.label': 'Shkronjat',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

@@ -171,6 +171,7 @@ export const ar: Dictionary = {
 	'fontSize.medium': 'متوسط',
 	'fontSize.large': 'كبير',
 	'fontSize.xlarge': 'كبير جدًّا',
+	'fontSize.xxlarge': 'الأكبر',
 	'face.label': 'نوع الخطّ',
 	'face.serif': 'مذيّل',
 	'face.sans': 'غير مذيّل',

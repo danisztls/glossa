@@ -217,6 +217,7 @@ export const id: Dictionary = {
 	'fontSize.medium': 'Sedang',
 	'fontSize.large': 'Besar',
 	'fontSize.xlarge': 'Sangat besar',
+	'fontSize.xxlarge': 'Terbesar',
 	'face.label': 'Jenis huruf',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

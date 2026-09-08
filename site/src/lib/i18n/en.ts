@@ -563,7 +563,7 @@ export const en: Dictionary = {
 	// `fontSize.label`: that key names the size row and nothing else.
 	'type.label': 'Text size and typeface',
 	'fontSize.label': 'Text size',
-	// THE FOUR STOPS ON THE SIZE RAIL, in order. The dots are wordless — they
+	// THE FIVE STOPS ON THE SIZE RAIL, in order. The dots are wordless — they
 	// grow along the rail, which is what says which end is which without a word
 	// to translate — so these are the tooltip and the accessible name, and the
 	// only place the sizes are named at all. Keep them to a word or two: one is
@@ -572,6 +572,7 @@ export const en: Dictionary = {
 	'fontSize.medium': 'Medium',
 	'fontSize.large': 'Large',
 	'fontSize.xlarge': 'Extra large',
+	'fontSize.xxlarge': 'Largest',
 	// THE FACES ARE NAMED BY CLASS AND NOT BY FONT — "Serif", never "EB
 	// Garamond" — because the site may set the text in another face and the
 	// reader's stored choice outlives the name. It is also the vocabulary the

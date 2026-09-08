@@ -201,6 +201,7 @@ export const zht: Dictionary = {
 	'fontSize.medium': '中',
 	'fontSize.large': '大',
 	'fontSize.xlarge': '特大',
+	'fontSize.xxlarge': '最大',
 	'face.label': '字體',
 	'face.serif': '襯線',
 	'face.sans': '無襯線',

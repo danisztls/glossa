@@ -203,6 +203,7 @@ export const hr: Dictionary = {
 	'fontSize.medium': 'Srednji',
 	'fontSize.large': 'Veliki',
 	'fontSize.xlarge': 'Vrlo velik',
+	'fontSize.xxlarge': 'Najveći',
 	'face.label': 'Pismo',
 	'face.serif': 'Serifno',
 	'face.sans': 'Bezserifno',

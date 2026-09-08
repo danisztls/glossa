@@ -216,6 +216,7 @@ export const tl: Dictionary = {
 	'fontSize.medium': 'Katamtaman',
 	'fontSize.large': 'Malaki',
 	'fontSize.xlarge': 'Napakalaki',
+	'fontSize.xxlarge': 'Pinakamalaki',
 	'face.label': 'Uri ng letra',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

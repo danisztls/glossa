@@ -210,6 +210,7 @@ export const uk: Dictionary = {
 	'fontSize.medium': 'Середній',
 	'fontSize.large': 'Великий',
 	'fontSize.xlarge': 'Дуже великий',
+	'fontSize.xxlarge': 'Найбільший',
 	'face.label': 'Шрифт',
 	'face.serif': 'Антиква',
 	'face.sans': 'Гротеск',

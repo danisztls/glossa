@@ -183,6 +183,7 @@ export const ja: Dictionary = {
 	'fontSize.medium': '中',
 	'fontSize.large': '大',
 	'fontSize.xlarge': '特大',
+	'fontSize.xxlarge': '最大',
 	'face.label': '書体',
 	'face.serif': '明朝',
 	'face.sans': 'ゴシック',

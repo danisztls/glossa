@@ -180,6 +180,7 @@ export const it: Dictionary = {
 	'fontSize.medium': 'Medio',
 	'fontSize.large': 'Grande',
 	'fontSize.xlarge': 'Molto grande',
+	'fontSize.xxlarge': 'Massimo',
 	'face.label': 'Carattere',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

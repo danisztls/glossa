@@ -205,6 +205,7 @@ export const sk: Dictionary = {
 	'fontSize.medium': 'Stredný',
 	'fontSize.large': 'Veľký',
 	'fontSize.xlarge': 'Veľmi veľký',
+	'fontSize.xxlarge': 'Najväčší',
 	'face.label': 'Písmo',
 	'face.serif': 'Pätkové',
 	'face.sans': 'Bezpätkové',

@@ -204,6 +204,7 @@ export const da: Dictionary = {
 	'fontSize.medium': 'Mellem',
 	'fontSize.large': 'Stor',
 	'fontSize.xlarge': 'Ekstra stor',
+	'fontSize.xxlarge': 'Størst',
 	'face.label': 'Skrift',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

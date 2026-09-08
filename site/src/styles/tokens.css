@@ -237,7 +237,7 @@
 	 * own comment true — the aside never shrinks to make room for the text.
 	 *
 	 * It is a rail, not a constraint. At the top stop of `FONT_SIZES` (1.8,
-	 * `prefs.svelte.ts`) the column wants 55.3rem, so across the four sizes
+	 * `prefs.svelte.ts`) the column wants 55.3rem, so across the five sizes
 	 * offered it never binds; it starts binding at 1.83, i.e. only if that
 	 * stop is ever raised.
 	 *

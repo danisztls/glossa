@@ -206,6 +206,7 @@ export const zh: Dictionary = {
 	'fontSize.medium': '中',
 	'fontSize.large': '大',
 	'fontSize.xlarge': '特大',
+	'fontSize.xxlarge': '最大',
 	'face.label': '字体',
 	'face.serif': '衬线',
 	'face.sans': '无衬线',
