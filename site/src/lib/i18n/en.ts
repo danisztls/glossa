@@ -964,6 +964,33 @@ export const en: Dictionary = {
 		'Each work displays its rights holder\u2019s own copyright notice, in their wording, and links to the page it was taken from.',
 	'colophon.copyrightBody3':
 		'If you hold rights in any text here and would rather it were not published, write to us.',
+	// NOT A DONATION ASK, AND THE HEADING IS WHERE THAT IS LOST. The list
+	// under "what this is" promises there is nothing to buy, and a heading a
+	// reader takes for an appeal contradicts it before the body can explain.
+	// "Contribute" was the first heading here and went for exactly that:
+	// English carries it, Portuguese "Contribuir" reads as money, and forty
+	// dictionaries would each have had to notice on their own. This one has a
+	// cognate in most of them, which is the point — it arrives in the next
+	// language as the same word rather than as a translator's choice. Nothing
+	// in this section asks for money, and the heading must not say otherwise.
+	//
+	// Two items, and neither of them enumerates. A defect is easier to see from
+	// outside the site than in, and a licence is the rights holder's to give.
+	// The list is not closed and does not need a line saying so: the section
+	// below it opens "for anything at all", one address for both.
+	//
+	// It does NOT say what a defect looks like. `colophon.textsFidelity`, two
+	// sections up, already names a dropped word and a mangled citation and
+	// promises they get repaired, so a second list here reads as padding.
+	//
+	// `colophon.copyrightBody3` is the same address for the opposite request —
+	// a rights holder asking for a text to come down — and the two sit a
+	// section apart so neither reads as a condition of the other.
+	'colophon.participateTitle': 'Participate',
+	'colophon.participateBody': 'Write to us if:',
+	'colophon.participateDefect': 'you have found a defect.',
+	'colophon.participateRights':
+		'you hold the rights to a text you think belongs here, and would let it be published.',
 	'colophon.contactTitle': 'Contact',
 	'colophon.contactBody': 'For anything at all, including the above:',
 	'colophon.contactPending':

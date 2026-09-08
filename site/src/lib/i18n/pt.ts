@@ -423,6 +423,11 @@ export const pt: Dictionary = {
 		'Cada obra apresenta o aviso de direitos do seu titular, nas palavras dele, e traz o link da página de onde foi retirada.',
 	'colophon.copyrightBody3':
 		'Se detiver direitos sobre algum texto aqui presente e preferir que não seja publicado, escreva para nós.',
+	'colophon.participateTitle': 'Participar',
+	'colophon.participateBody': 'Escreva para nós se:',
+	'colophon.participateDefect': 'encontrou um defeito.',
+	'colophon.participateRights':
+		'detém direitos sobre um texto que julga que deveria estar aqui, e permitiria que fosse publicado.',
 	'colophon.contactTitle': 'Contato',
 	'colophon.contactBody': 'Para qualquer assunto, inclusive o acima:',
 	'colophon.contactPending':

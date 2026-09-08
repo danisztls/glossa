@@ -105,6 +105,7 @@
 		{ href: '#type', label: t('colophon.typeTitle') },
 		{ href: '#privacy', label: t('colophon.privacyTitle') },
 		{ href: '#copyright', label: t('colophon.copyrightTitle') },
+		{ href: '#participate', label: t('colophon.participateTitle') },
 		{ href: '#contact', label: t('colophon.contactTitle') }
 	]);
 </script>
@@ -266,6 +267,25 @@
 		<p>{t('colophon.copyrightBody1')}</p>
 		<p>{t('colophon.copyrightBody2')}</p>
 		<p><strong>{t('colophon.copyrightBody3')}</strong></p>
+
+		<!--
+			After the copyright section and before the address, which is the only
+			place it reads right: the paragraph above ends by asking a rights holder
+			to write if they want a text taken down, and this asks a different reader
+			to write for the opposite reason. Both then meet the one address.
+
+			The same `ul.plain` as "what this is", and deliberately: that list is the
+			five things a reader is promised, and this is the two asked of them in
+			return — nothing here is a payment, which is the thing the heading has
+			to survive translation without becoming (see the key's own note in
+			i18n/en.ts).
+		-->
+		<h2 id="participate" class="label-micro">{t('colophon.participateTitle')}</h2>
+		<p>{t('colophon.participateBody')}</p>
+		<ul class="plain">
+			<li>{t('colophon.participateDefect')}</li>
+			<li>{t('colophon.participateRights')}</li>
+		</ul>
 
 		<h2 id="contact" class="label-micro">{t('colophon.contactTitle')}</h2>
 		{#if CONTACT_EMAIL}

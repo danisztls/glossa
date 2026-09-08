@@ -470,6 +470,24 @@ word the dictionary already carries elsewhere ("Editions", "Chapters",
 sentences that need care are `census.method`, which states the three rules the
 rankings are counted by, and `census.unavailable`.
 
+## The colophon's Participate section exists in two languages
+
+Four new keys (`colophon.participate*`), between the copyright section and the
+address: write if you found a defect, or if you hold rights in a text that
+belongs here. It is the counterpart to `colophon.copyrightBody3`, which invites
+the opposite request.
+
+**These are NEW keys, so the other 38 dictionaries fall back to English** —
+visibly, in the middle of a page otherwise in the reader's own language. That is
+the ordinary cost of a new string and not a defect; it is the opposite of the
+five catalogue strings, which are translated and stale.
+
+The heading is the part a translation can get wrong. Two sections up the page
+promises there is nothing to buy, so it must not name a payment: "Contribute"
+was the first heading written here and went because Portuguese "Contribuir"
+reads as money. `Participate` has a cognate in most of the forty, which is why
+it survives the crossing. The note is on the key.
+
 ## Recommended order
 
 A priority argument, not a dependency one — nothing here gates anything else.
