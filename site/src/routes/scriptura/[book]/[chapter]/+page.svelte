@@ -4,6 +4,7 @@
 	import {
 		baseLang,
 		compareColumnLabel,
+		editionInLang,
 		getAdjacentChapterAcrossBooks,
 		getScriptureCitationsForChapter,
 		getBook,
@@ -56,10 +57,25 @@
 	 * switching edition or interface language re-renders this page in place,
 	 * with no navigation and no refetch.
 	 *
-	 * Falls back to whichever edition IS present when the preferred one has no
+	 * Falls back to an edition that IS present when the preferred one has no
 	 * text for this chapter, rather than showing a blank page: the same
 	 * "degrade, don't 404 a page with real content" posture `ccc/[n]` and
 	 * `documents/[slug]` already take.
+	 *
+	 * WHICH edition is `editionInLang`'s decision and not this list's order,
+	 * because registry order answered `bible.allioli.de` — so a reader on the
+	 * CPDV, whose Esther stops at 15, met German at `/scriptura/esther/16`
+	 * while the Douay-Rheims sat one chain step away with the chapter in their
+	 * own language.
+	 *
+	 * `esth 16` is the ONLY address that reaches this branch, measured over the
+	 * synced corpus rather than over `build/`: the CPDV interleaves the Greek
+	 * additions where the Vulgate appends them (`divergence.py`'s `arrangement`
+	 * rows), and no chapter is missing from any other edition. Crampon's
+	 * Hebrew-numbered Joel and Malachi look like two more in `build/` and are
+	 * not — `sync-corpus.mjs` converts that edition into the canonical Vulgate
+	 * numbering before the site sees it, which is what makes this list one
+	 * entry long and why it must be measured after the sync.
 	 */
 	const availableWorkIds = $derived(Object.keys(data.byWorkId));
 
@@ -80,7 +96,14 @@
 			// the picker and the chapter nav, whether or not its LANGUAGE has an
 			// introduction to show.
 			if (introMode) return preferred ?? listEditions('bible')[0]?.id;
-			return preferred && data.byWorkId[preferred] ? preferred : availableWorkIds[0];
+			if (preferred && data.byWorkId[preferred]) return preferred;
+			// `langFor` and not `i18n.lang`: a reader who explicitly chose an
+			// edition in another language chose that LANGUAGE too, and the
+			// substitute they are owed is its other edition before it is any
+			// neighbour's. `availableWorkIds[0]` still ends the chain, for an
+			// address that no language of the chain has an edition of at all.
+			const present = listEditions('bible').filter((w) => data.byWorkId[w.id]);
+			return editionInLang(present, content.langFor('bible'))?.id ?? availableWorkIds[0];
 		})()
 	);
 	const current = $derived(data.byWorkId[workId]);

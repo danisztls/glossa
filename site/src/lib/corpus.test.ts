@@ -372,6 +372,24 @@ describe('preferred edition', () => {
 		expect(defaultWorkId('bible', 'de')).toBe('bible.douay-rheims.en');
 	});
 
+	it('substitutes within the reader’s language when a chapter is absent from their edition', () => {
+		// `/scriptura/esther/16` in the CPDV, whose Esther runs to 15 because it
+		// interleaves the Greek additions instead of appending them. The route
+		// took the first edition that HAD the chapter, which is registry order,
+		// which is another language — in production `bible.allioli.de`, so the
+		// reader met German while the Douay-Rheims sat one chain step away with
+		// the chapter in their own. It is the only address that reaches the
+		// branch: every other edition carries every chapter of the canonical
+		// union, Crampon's Hebrew numbering included, which the sync converts.
+		const present = listEditions('bible').filter((w) => w.id !== 'bible.cpdv.en');
+		expect(editionInLang(present, 'en')?.id).toBe('bible.douay-rheims.en');
+		// The assertion that discriminates in THESE fixtures, where the English
+		// pair happens to sort first and so agrees with order by accident: a
+		// Latin reader must get the Clementina, not the head of the list.
+		expect(present[0].id).toBe('bible.douay-rheims.en');
+		expect(editionInLang(present, 'la')?.id).toBe('bible.clementina.la');
+	});
+
 	it('ends every fallback row in English then Latin', () => {
 		// The invariant the rows are allowed to differ underneath: whatever a
 		// language prefers, the chain can always answer, because English is the
