@@ -5326,30 +5326,52 @@ def numbering_is_in_headings(blocks: list[Block]) -> bool:
       they produced four ~18,000-character "paragraphs" against a PT
       sibling that has none to check them by.
 
-      The Roman exemption is not a loophole: Redemptor Hominis, Laborem
+      The division exemption is not a loophole: Redemptor Hominis, Laborem
       Exercens and Dives in Misericordia all print "I. INHERITANCE",
       "II. THE MYSTERY OF THE REDEMPTION" between their numbered sections,
       and those are a COARSER tier above them, not a finer one underneath.
       Requiring nothing at all between the numbers took all three to zero
-      sections -- 64 real ones lost -- which is what this clause prevents."""
-    numbered: list[int] = []
-    span: list[bool] = []  # is_numbered, per heading, in document order
-    allowed: list[bool] = []  # numbered, or a coarser Roman division
-    for b in blocks:
-        if b.is_heading:
-            m = _SECTION_TITLE_HEADING_RE.match(b.text)
-            span.append(m is not None)
-            allowed.append(
-                m is not None or _ROMAN_DIVISION_RE.match(b.text) is not None
-            )
-            if m is not None:
-                numbered.append(int(m.group(1)))
+      sections -- 64 real ones lost -- which is what this clause prevents.
+
+      THE ROMAN NUMERAL WAS ONLY EVER ONE WAY OF SAYING "ABOVE", and a
+      document says it in two others. `CHAPITRE II` says it in words, and
+      `merge_heading_lines` has already put it in `label`. `EXPOSE
+      PRELIMINAIRE` says it in paint, and `heading_style_rank` has already
+      measured that -- so a heading printed more prominently than the least
+      prominent of the numbers is above them too. Both are the same claim as
+      the Roman clause and neither weakens it: Miranda Prorsus's fifteen
+      blockers are unlabelled and set exactly like its four numbers, so they
+      still refuse the document.
+
+      This is what the French Vatican II mirror needed. It prints each
+      article's number inside its title -- `<p><b><i>2. Participation des
+      laics a la mission de l'Eglise</i></b>` over unnumbered prose -- with
+      its chapters between them, so reading `CHAPITRE` as a finer division
+      refused the whole convention: `apostolicam-actuositatem.fr` stored 1
+      of its 33 articles and sent the other 32 to the appendix, addressed by
+      nothing, against eleven siblings that have them all. Nine editions of
+      that mirror were in that state, `gaudium-et-spes` in four languages
+      among them."""
+    heads = [b for b in blocks if b.is_heading]
+    marks = [_SECTION_TITLE_HEADING_RE.match(b.text) for b in heads]
+    numbered = [int(m.group(1)) for m in marks if m is not None]
     if len(numbered) < _TITLE_NUMBERING_MIN_RUN:
         return False
     if any(b <= a for a, b in itertools.pairwise(numbered)):
         return False
+    # The least prominent tier the numbers themselves are printed in. A
+    # heading the source paints ABOVE that is a coarser division; one painted
+    # level with them or below is a finer one, and the numbers are an outline.
+    finest = max(b.style for b, m in zip(heads, marks, strict=True) if m is not None)
+    span = [m is not None for m in marks]
     lo, hi = span.index(True), len(span) - span[::-1].index(True)
-    return all(allowed[lo:hi])
+    return all(
+        m is not None
+        or bool(b.label)
+        or b.style < finest
+        or _ROMAN_DIVISION_RE.match(b.text) is not None
+        for b, m in zip(heads[lo:hi], marks[lo:hi], strict=True)
+    )
 
 
 _ROMAN_DIVISION_RE = re.compile(r"^[IVXLCDM]+\s*\.\s")
