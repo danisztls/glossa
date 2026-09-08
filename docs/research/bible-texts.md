@@ -483,6 +483,32 @@ Keep **Torres Amat** (`paxetbon.com`, 73 books at `/biblia/{libro}/{cap}`) as th
 public-domain fallback if the exposure is ever refused, and as a second witness
 for `audit.py balance`.
 
+**The Spanish book introductions are truncated at source, and `bible-intro.es`
+cannot be built complete from any digital witness.** Each
+`/biblia/{libro}/` page carries one under the label "Introducción de Monseñor
+Straubinger", and all 73 are captured, but only 56 of them are Straubinger's:
+
+- **56 end on his own `†`** and are complete.
+- **15 are cut mid-word at exactly 4,000 decoded characters** — Génesis,
+  Levítico, Deuteronomio, Josué, Salmos, Eclesiastés, Cantares, Sabiduría,
+  Eclesiástico, Daniel, Hechos, Romanos, 1 Pedro, 1 Juan, Apocalipsis. The
+  clamp is the server's, not the capture's: the live page and a Wayback
+  snapshot from five months earlier both stop at the same word, so it is a
+  property of the site's stored data. Its own `/data/` JSON, where the
+  unclipped text would be, is `Disallow:`.
+- **2 are not Straubinger at all.** Números and 1 Tesalonicenses carry a modern
+  editorial summary in their place — no `†`, half the median length, and
+  Números explains its book as "reunidas por la tradición sacerdotal", which
+  is source criticism a 1944 Catholic introduction does not write. The label
+  above them is the site's, and it is wrong; ingesting them under his name
+  would publish a false attribution.
+
+`bibliastraubinger.com` carries no introductions at all — 1,414 posts, all
+chapters, and its 77 categories have empty descriptions — so the second witness
+that repairs its five missing chapters cannot repair these. A complete
+`bible-intro.es` needs the print edition, which is a digitisation project and
+not an ingestion.
+
 **Italian — Martini, `scrutatio.it`.** Book ids 1–73 at
 `/bibbia/lettura/it/martini/{book}/{chapter}`; verses marked
 `<sup id="vid{n}" class="idvers">`, with cross-references attached as popovers.
