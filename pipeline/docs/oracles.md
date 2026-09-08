@@ -23,6 +23,11 @@ another, and the reason each exists is the gap in the one before it.
 - **Divisions** (`audit.py divisions`) — structure trees compared by paragraph
   span. The one check that is not per-unit, and therefore the only one that can
   see a division that never got built.
+- **Trees** (`audit.py trees`) — the same question asked of the flat
+  `structure.json` the documents, the social doctrine and canon law store, which
+  `divisions` cannot read and which therefore had no cross-language check at
+  all. Compared by the section number a heading precedes, since that is the only
+  part of a heading that survives translation.
 - **Reference apparatus** (`audit.py refs`) — the Catechism paragraph numbers
   each Compendium question prints beside itself, across all fourteen editions.
   The only check here that may take a vote; see below.
@@ -53,6 +58,22 @@ pair's 0.49 cut — which is the shape of the standing gap, not a second defect:
 written.** The gate now asks the field to be an address rather than a value; a
 citation opening on a digit names no book.
 
+**Silence is not testimony, and a majority that counts it convicts the
+witness.** `trees` reads an edition against its siblings; `mediator-dei.es`
+carries 89 headings and one sibling that parsed at all, and while that sibling's
+single node counted as a vote the Spanish edition was the one accused of
+inventing 73. An edition with no outline is reported in its own right and never
+consulted about anyone else's. The same shape is why `divisions`' in-brief gap
+was read the way it was: three editions agreeing are three witnesses, one
+edition finding nothing is none.
+
+**A comparison of absolute depths measures the tree; a comparison of the STEPS
+between depths measures the shape.** One extra tier at the root shifts every
+level in the document, so `csdc.en` reported 184 disagreements for a fact that
+is one number. Comparing the sign of the step between consecutive shared
+anchors dropped the corpus-wide figure by an order of magnitude and left only
+editions that genuinely nest a heading differently from their siblings.
+
 ## What an oracle may claim
 
 **An oracle records the page, not the corpus.** Where a correction is filed the
@@ -81,6 +102,19 @@ was the divergence — Esther, the Song, the Psalms' titles, Crampon's Hebrew
 versification. It is the same cut that keeps the documents out entirely, made
 where the Bible offers what a document does not: a division whose sets can be
 compared.
+
+**A lead says a unit is wrong; the units beside it say in what way.** The two
+answers a reader has to separate by hand are "this edition divides the passage
+elsewhere" and "this text is not here", and the window of three units answers
+it without reading a word: text that moved is still in the window, text that is
+gone is not. Requiring every comparable edition to agree leaves the leads in
+three piles, and only two of them are worth a person's reading.
+
+**Calibrate on the fraction of the anomaly recovered, never on the band.** A
+band is a statement about a ratio, and a one-character verse is outside every
+band whether or not its neighbours explain it — `lam 5:5` read as `moved` until
+the test asked how much of its own shortfall the widened window still showed.
+The band finds the lead; it cannot also judge it.
 
 **A second transcription of the same printing is the only check that sees a
 hole.** `bible.matos-soares.pt` keeps liriocatolico's verses despite taking its

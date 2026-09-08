@@ -18,7 +18,7 @@ estimate; an unscoped item says so rather than guessing.
 | 2   | **Full-text search** (prebuilt client-side index)                      | Promised in the original v1 scope. Nothing exists: `JumpBox` resolves _addresses_; `site/scripts/` holds no index builder.                                                                                                                                                                                                                                                                                                                                                              | Corpus size. "Prebuilt" needs real index-size engineering, and the corpus is no longer two languages.                                                                                                                                                                                                                                                                            | Not sized — no prototype. Index format, build-vs-runtime, and per-work vs corpus-wide indexing are all open.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 5   | **CCC `related` (marginal concordance)**                               | The print Catechism's margin numbers — the internal concordance pointing each paragraph at others on the same theme — are absent from every vatican.va mirror in all editions. The field is ready and emitted `[]` everywhere, with the absence recorded in each manifest.                                                                                                                                                                                                              | A non-vatican.va source (`link-surface.md` names scborromeo.org, catholiccrossreference.online). Nothing in the pipeline or schema is missing.                                                                                                                                                                                                                                   | Not sized — depends on the source chosen.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 6   | **Compendium Appendix B formulas**                                     | Appendix B's doctrinal formula lists are deliberately separate from the prayers work (`docs/corpus-schema.md`).                                                                                                                                                                                                                                                                                                                                                                         | A dedicated scope and parser for non-prayer formula lists.                                                                                                                                                                                                                                                                                                                       | Not sized.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| 9   | **Disclosing edition divergence to the reader**                        | A reader following a citation into Psalm 13 or Acts 14 gets real, plausible, **wrong** text with nothing marking it; Acts 14 is 20 consecutive verses where the same number names different text in two editions. Behind it sit the unread silent-case leads `audit.py balance` ranks over all nine editions.                                                                                                                                                                           | §5 of `docs/research/bible-edition-divergence.md` needs the classification exported as data the site can read, not a Python dict. The leads need reading.                                                                                                                                                                                                                        | Estimate: small for §5 (a data export and one advisory). The leads are their own pass.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 9   | **The divergences nobody has found yet**                               | A reader following a citation into a chapter the editions divide differently now meets a line saying so, in their own language, in both reading modes. That covers the 34 chapters `divergence.py` knows. An unfound one is still real, plausible, **wrong** text with nothing marking it, and Acts 14 — 20 consecutive verses where one number names different text in two editions — was found by a person reading.                                                                   | Nothing on the delivery side: a confirmed find is a row in `divergence.py`'s table, and `--export` carries it to the reader with no further code. It needs the leads read. `audit.py balance` triages its 153 into 25 `moved`, 49 `absent` and 77 `mixed`; 126 of them are unread.                                                                                               | Not sized — per lead, and the reading is the whole of it. Two read so far, and one of the two was not a divergence but the Crampon defect recorded below.                                                                                                                                                                                                                                                                                                                                                                                            |
 | 13  | **The CCC's Arabic edition, and the PDF-only document editions**       | `ar` reads 24 documents and no Catechism. Twenty-seven document editions exist on vatican.va as PDF and as nothing else — ten on the modern shell, seventeen on the Vatican II mirror. **26 are now in `raw/`** and four are read exactly (`docs/research/pdf-editions.md` §10): the 27th is published empty and `evangelii-gaudium.ar` is a scan.                                                                                                                                      | `common/pdf_document.py` renders a PDF as the markup `parse_document` reads; the Catechism's readers are `scrapers/common/pdf.py`, `scrapers/ccc/compendium_pdf.py`, `scrapers/ccc/ccc_pdf.py`, with `rebuild.py`'s `readers` fingerprint. Arabic extends them rather than rewriting them. Four Compendium residues in `docs/research/pdf-editions.md` §8b are in the same code. | Measured 2026-09-08 for the documents: four editions equal their siblings on both section set and citation count; three want their note apparatus read (one finds no markers, one finds 508 against a sibling's 288), and no stage writes any of them to `build/` yet. The 16 Chinese and 4 RTL editions are unread. **Arabic Catechism, measured 2026-08-31: 2,852 of 2,865 paragraph numbers, poppler-only** (MuPDF fragments RTL lines) — the work is normalisation, not extraction, the Allah ligature decomposing in visual order ~4,900 times. |
 | 15  | **A Bible in every interface language**                                | The rest read Scripture in English through `CONTENT_LANG_FALLBACK`. The largest coverage gap left, and the one a reader notices first. The research is finished (`docs/research/bible-texts.md` §One Bible per interface language).                                                                                                                                                                                                                                                     | What remains is Polish, Russian and Romanian. None is blocked on a parser; each is blocked on a decision stated below.                                                                                                                                                                                                                                                           | Per language: one scraper against a known source with a known markup shape. All three are MediaWiki (`ru`/`ro` plain wikitext; `fr` transcluded from ProofreadPage). Romanian most expensive — versification survey first. **`sv`, `sl` and `ar` are blocked and are not sizing questions**: `sv` has no doctrinally acceptable text, `sl` and `ar` are blocked on digitisation.                                                                                                                                                                     |
 | 18  | **Documents are discovered from one language's index**                 | `vatican_docs.py` reads the ENGLISH index and derives every sibling-language URL by substituting the language segment into the English path, so our map of what exists is one language's map. Where the two indexes spell a document's URL differently the sibling probe 404s, and the absence is recorded as the source's. Ten Pius XI encyclicals are affected, _Non Abbiamo Bisogno_ — written in Italian — among them. Detailed below.                                              | Nothing in the schema or the parser. It is a discovery pass and a re-probe, and it needs the network: these URLs were never fetched, so `raw/` cannot answer for them.                                                                                                                                                                                                           | Measured 2026-09-08: **at least 19 editions** are provably reachable and currently recorded as absent (10 `it`, 6 `la`, 3 `es`, off the Italian indexes alone). The document count is unlikely to move for encyclicals — the two indexes list the same 217/218 — and is **unmeasured for the other 76 documents**, whose indexes are cached in one language only.                                                                                                                                                                                    |
@@ -249,6 +249,17 @@ wrong labels passes all four.
   locator naming a verse absent from its page — 2 Corinthians 6's notes numbered
   `6,19`–`6,23` are verbatim about 2 Cor 7:1–4. The scraper logs them as
   anomalies rather than guessing.
+- **`bible.crampon.fr` stores 12 editorial arguments as verse text**, across 6
+  books: `john 13:38` ends with the whole argument of chapter 14 (558 characters
+  against the peers' 110–140), `ps 45:18` with the title and argument of the
+  psalm after it. Found by `audit.py balance`'s `absent` leads (gap 9).
+  `crampon.py` captures verse text from any `<p>` — a whitelist that excludes
+  all three spellings of the argument `<div>` for free — and these arguments
+  are the ones the source typesets in a `<p>`. The discriminator is structural
+  and measured clean over all 101 raw pages: **an anchorless paragraph whose
+  text is wholly emphasis plus parenthesised verse ranges is not verse text** —
+  19 matches, every one an argument or page furniture, against the 465
+  anchorless paragraphs that are genuine verse continuations.
 
 ## Gap 18 — the map is drawn from the English index
 
@@ -319,15 +330,37 @@ only as honest as its denominator.
 
 ## The document structure trees
 
-`docs/research/document-structure-defects.md` §2 is still the largest open item.
-Below is what a fix would have to cover.
+`docs/research/document-structure-defects.md` §2 has its check now —
+`audit.py trees`, which compares the flat `structure.json` the documents store
+by the section number each heading precedes — and four parser classes have come
+out of it. Below is what the worklist still holds.
 
-What is left is the tree, which the sidebar contents renders, which a
+What is at stake is the tree, which the sidebar contents renders, which a
 per-division reading view would split on, and which `static/route-titles.json`
 publishes as each division's paragraph span — so a wrong tree is served to
 consumers that never render the page.
 
-**Populations, measured across all 1,447 works:**
+**The worklist on 2026-09-08: 529 editions across 126 works depart from their
+siblings' outline**, 63 of them holding no outline at all. It ranks and does not
+adjudicate, so every row ends at the raw page: `evangelii-nuntiandi.en` is first
+on the list and correct — six bold runs in the whole English mirror, all
+furniture. `evangelii-nuntiandi.la` (7 anchors) and `.hu` (8) want the same
+check before anyone calls them damaged.
+
+**Two markup classes named and not taken.** Hungarian numbered italics —
+`<em>2. <a name=…>Title</a></em>`, which `promote_italic_heading_run` excludes
+under the guard that keeps section numbers out of a run (`ut-unum-sint.hu`, 5
+anchors against 32) — and the bold and bold-italic residue
+(`fratelli-tutti.sl` 67/87 with 26 anchors only it has,
+`ecclesia-in-africa.de` 76/100).
+
+**22 editions in 19 works hold a fraction of their siblings' SECTIONS**, marked
+`COLLAPSED SECTIONS` in the report. There the outline is a symptom and the
+defect is upstream of the heading detector — `lumen-gentium.ar` and
+`ecclesiam.fr` store one anchor against peer medians of 67 and 45 — so they
+belong to `coverage` and are not sized here.
+
+**Populations measured before the check existed, still open:**
 
 | Defect                                            | Works | How it was measured                                         |
 | ------------------------------------------------- | ----- | ----------------------------------------------------------- |
@@ -346,16 +379,6 @@ detector fixed, not the guard widened.
 confirmed and no population, because the obvious test ("an address-less heading
 that is a full sentence") returns 67 works of which most are correct — Latin,
 French and Italian end a real heading with a full stop by convention.
-
-**What to do first.** §2's recommendation stands: compare structure trees across
-languages rather than section sets, turning a manual audit into a ranked
-worklist. **The oracle ranks but does not adjudicate** — `evangelii-nuntiandi`
-reads exactly like §2's `fratelli-tutti` case (de/es/fr/it/lv at 91 headings, hr
-100, pt 89, **en at 1**) and is not a parse failure: the English mirror contains
-six bold runs in the whole document, all furniture. It is an unstructured
-rendering of the same text. So the cross-language pass produces candidates and
-the raw page decides. `evangelii-nuntiandi.la` (7) and `.hu` (8) want that check
-before anyone calls them damaged.
 
 **Sizing.** Nothing here gates anything else and nothing is blocked. Every item
 is a change to `vatican_docs.py`, which parses ~450 documents across several
@@ -527,13 +550,16 @@ it survives the crossing. The note is on the key.
 
 A priority argument, not a dependency one — nothing here gates anything else.
 
-1. **The structure trees** — §2's cross-language comparison, turning the
-   remaining populations above into a ranked worklist. Above everything that
-   adds coverage, because a wrong tree is served to consumers that never render
-   the page, and the ToC oracles tell a fix from a regression.
-2. **#9's reader-facing disclosure**, and alongside it the unread silent-case
-   leads — reading them is the only way to find another Acts 14, and the tool
-   that ranks them is `audit.py balance`.
+1. **The structure trees, down the worklist `audit.py trees` now prints** — the
+   two markup classes first, since each is a predicate and the ToC oracles tell
+   a fix from a regression; then the stubs one raw page at a time, which is the
+   only way to tell an unstructured mirror from an unread one. Above everything
+   that adds coverage, because a wrong tree is served to consumers that never
+   render the page.
+2. **The Crampon argument leak, then the rest of #9's leads** — the leak is
+   diagnosed and its discriminator measured, so it is a predicate and a
+   re-parse; the 126 unread leads are the only way to find another Acts 14, and
+   `audit.py balance` has sorted them into the two piles worth reading.
 3. **#15's three remaining languages** — Polish, Russian, Romanian. What is left
    is not scraping but the three decisions above, none of which is a parser's to
    take. (Spanish shipped with `bible.straubinger.es` recorded as

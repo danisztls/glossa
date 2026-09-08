@@ -1,8 +1,9 @@
 # Structure-tree defects in the Magisterium corpus
 
-Findings from 2026-08-16, recorded for a later fix. **Nothing here is fixed
-except the table-of-contents defect in §1**, which was found first and fixed
-at the time. Everything after it is diagnosed and left alone deliberately.
+Findings from 2026-08-16, recorded for a later fix. Only §1 was fixed at the
+time; everything after it was diagnosed and left alone deliberately. **A
+section says in its own heading whether it has since been fixed** — the rest
+have not been.
 
 Section text is not in question anywhere in this note. `sections.json` is
 sound; it is `structure.json` — the tree of Parts, Chapters, Articles and bold
@@ -41,7 +42,7 @@ pre-body heading is dropped when a later heading duplicates it, requiring at
 least two such duplicates before anything is removed. Re-parsing the 16
 Vatican II documents left every artifact byte-identical, so the guard holds.
 
-## 2. Headings not detected at all — NOT FIXED
+## 2. Headings not detected at all — THE CHECK IS BUILT, FOUR CLASSES FIXED
 
 The larger problem. Measured across 339 document works:
 
@@ -97,6 +98,66 @@ cases, because the working side shows what the broken side should produce.
 Only after that is it worth asking why detection fails on the English pages —
 likely a heading-markup variant `is_full_bold` misses, and likely fixable once
 there are paired examples to compare.
+
+### The check, built 2026-09-08 — `audit.py trees`
+
+A sibling pass rather than an extension, because `divisions` reads the nested
+`structure.json` and the documents store a flat one. It compares by the section
+number a heading precedes — the only part of a heading that survives
+translation — and by the sign of the step in level between consecutive shared
+anchors rather than the level itself, and it refuses to treat an edition that
+found no outline as a witness about anyone else's. Each of those three is a
+general fact about this kind of oracle and is argued in
+`pipeline/docs/oracles.md`; the step comparison is what leaves 203 editions in
+76 works genuinely nesting a heading where their siblings do not, against the
+thousands a level comparison reports.
+
+**529 editions across 126 works depart from their siblings' outline**, 63 of
+them with no outline at all against siblings that have one. That is the ranked
+worklist §2 asked for, and it ranks without adjudicating: `evangelii-nuntiandi.en`
+is first on it and correct (§13).
+
+### What the worklist held: four classes, all fixed
+
+Each was found by reading the raw markup above every anchor a top-ranked edition
+lacked, and each is a general form rather than a document:
+
+- **A division above the numbers may say so in words or in paint, not only in
+  Roman numerals.** `numbering_is_in_headings` refuses to read a numbered run as
+  the outline when a coarser heading interrupts it, and knew only the numeral.
+  `gaudium-et-spes` stored 0–1 sections in ar/de/it/la and 10 in fr against its
+  peers' 93, all of it blocked by an unlabelled `EXPOSÉ PRÉLIMINAIRE` that says
+  "above" by being set above. **16 editions, 888 addresses.**
+- **Capitals with no emphasis are a heading.** Two promotion passes recovered an
+  italic run and a plain centred one; a plain all-caps run was the third and had
+  no pass. **26 editions, 389 headings.**
+- **An anchor around a heading names it as surely as one before it.**
+  `<a name="X">X</a>` and `<a name="X"></a>X` are one claim. **10 editions, 135
+  headings** — with the caveat that only the empty form may speak for the
+  heading's STYLE, since `caritas-in-veritate.pt` anchors chapters II–VI and
+  prints chapter I plain, and ranking all six as anchor-titled cost chapter I
+  its label.
+- **Brackets around an italic line do not stop it being a heading.** The Latvian
+  council prints its whole outline as `(<i>…</i>)`, which the italic pass tested
+  whole and missed.
+
+The ToC oracles held at 68 of 377 works and 524 differences across all four, so
+none of them reaches a document that was already right.
+
+### What is left, named
+
+- **Two markup classes not yet taken.** Hungarian numbered italics —
+  `<em>2. <a name=…>Title</a></em>`, excluded from the italic run by the guard
+  that keeps section numbers out (`ut-unum-sint.hu`, 5 anchors against 32) — and
+  the bold and bold-italic residue (`fratelli-tutti.sl` 67/87 with 26 anchors
+  only it has, `ecclesia-in-africa.de` 76/100).
+- **22 editions in 19 works hold a fraction of their siblings' SECTIONS**, which
+  the report marks `COLLAPSED SECTIONS`. There the outline is a symptom and the
+  defect is upstream of it: `lumen-gentium.ar` and `ecclesiam.fr` store one
+  anchor against peer medians of 67 and 45. These belong to `coverage`, not to
+  the heading detector.
+- **The stubs still want reading one at a time**, because §13 is real: an
+  unstructured mirror and an unparsed one are the same row.
 
 ## 3. Consequence for choosing a reading unit
 

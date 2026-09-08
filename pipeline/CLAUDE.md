@@ -237,6 +237,26 @@ pipeline/scrapers/
   italic so `style ^ 1` still means "the same but for the italics" — and an
   anchor-titled heading is unbold as well as italic, since it carries no
   emphasis at all (`fratelli-tutti.en` makes the two shapes peers).
+- **A division above the numbers may say so in words or in paint, not only in
+  Roman numerals.** `numbering_is_in_headings` decides whether a numbered run is
+  the document's outline or its paragraph addresses, and a coarser heading in
+  the middle of the run is what refuses it; recognising only the numeral cost 16
+  editions 888 addresses. `gaudium-et-spes.fr` stored 10 sections against its
+  peers' 93 because `EXPOSÉ PRÉLIMINAIRE` carries no numeral and no label and is
+  simply painted above the numbers below it.
+- **Capitals with no emphasis are the third way a mirror prints a heading.**
+  `promote_plain_caps_run` runs after the italic and the centred pass and takes
+  an unindented all-caps run inside the numbered body — 389 headings in 26
+  editions — under the same guard as the others, that a heading heads text.
+- **An anchor AROUND a heading names it as surely as one before it, but only
+  the empty form may speak for the heading's style.** The two are one claim for
+  detection (135 headings in 10 editions) and not for rank:
+  `caritas-in-veritate.pt` anchors chapters II–VI and prints chapter I plain, so
+  ranking the wrapping form as anchor-titled made five of six italic, dropped
+  them out of the centred run, and lost chapter I its label.
+- **Brackets around an italic line do not stop it being a heading.**
+  `promote_italic_heading_run` tested the block whole, so the Latvian council's
+  `(<i>…</i>)` outline was invisible to it.
 - **`--slugs` naming only exhortations used to parse nothing and exit 0**
   (`run_phase2` `continue`d past the whole iteration when no encyclicals
   survived the filter). It is the recommended way to check a parser fix on one
@@ -1295,6 +1315,27 @@ else sees it. **Read it directionally**: an edition doing something the others
 do not, consistently, is that edition; an edition missing what the others all
 have, in scattered places, is the parser.
 
+### `audit.py trees` — the documents' outlines
+
+`divisions` reads the nested `structure.json` the Catechism and the Compendium
+store. The documents, the social doctrine and canon law store a FLAT list, so
+every one of their editions sat outside every cross-language check there was.
+`trees` is that check, and like `balance` it ranks without adjudicating — its
+own report says so, because an unstructured mirror and an unread one are
+identical from here (`evangelii-nuntiandi.en` tops the list and is correct).
+
+- **Compare by ANCHOR.** The title is translated and the level is relative, so
+  the only part of a heading two editions can be said to share is the section
+  number it precedes.
+- **Compare the SIGN of the step between anchors, not the level.** An edition
+  carrying one extra tier disagrees at every node it has — `csdc.en` reported
+  184 — where what happened is one number added to all of them.
+- **An edition that found nothing is not a witness that there is nothing.** An
+  edition with at most one anchor is reported and never consulted:
+  `mediator-dei.es` has 89 headings and one sibling that parsed at all, and
+  counting that sibling as a witness made the working edition the one inventing
+  73 headings.
+
 ### `audit.py balance` — loss inside a unit
 
 Per-unit text length against the sibling edition, normalised by the pair's own
@@ -1323,6 +1364,17 @@ pairs, so one bad verse is eight rows eight places apart; a lead is a unit where
 one edition is outside the band against every other edition comparable there,
 ranked by how many. It is a sort order and not a verdict — the vote convicts
 only in `refs`, below.
+
+**What a lead means is answered by the units BESIDE it.** A unit short by an
+amount its neighbours carry is a division the edition draws elsewhere; a unit
+whose whole neighbourhood is short too is text that is not there. Measure it as
+the fraction of the lead's own anomaly the three-unit window still shows, and
+require every comparable edition to agree: 153 leads sort into 25 `moved`, 49
+`absent` and 77 `mixed`, and only the last two are worth a person's reading.
+**The statistic has to be a fraction of the anomaly, not a band** — a
+one-character verse is outside any band both before and after the window is
+widened, so `lam 5:5` read as `moved` until the test asked how much of its
+shortfall the window recovered.
 
 ### `audit.py refs` — the one oracle allowed to VOTE
 
