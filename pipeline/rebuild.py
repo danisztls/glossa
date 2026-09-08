@@ -318,7 +318,7 @@ STAGES: tuple[Stage, ...] = (
         "bible",
         "bible/introductions.py",
         ("--offline",),
-        ("bible-intro.*",),
+        ("bible-intro.en",),
     ),
     # The one stage that reads another's output: Haydock's notes address the
     # Douay-Rheims, so that edition's chapter and verse numbering is both the
@@ -337,6 +337,16 @@ STAGES: tuple[Stage, ...] = (
     Stage("crampon", "bible", "bible/crampon.py", outputs=("bible.crampon.*",)),
     Stage(
         "straubinger", "bible", "bible/straubinger.py", outputs=("bible.straubinger.*",)
+    ),
+    # Reads that edition's own book list as its mapping oracle, so it follows
+    # it for the same reason `haydock` follows `douay-rheims`. Its input is the
+    # same capture, and it asks for nothing over the network.
+    Stage(
+        "bible-intro-es",
+        "bible",
+        "bible/introductions_es.py",
+        outputs=("bible-intro.es",),
+        needs=("straubinger",),
     ),
     Stage(
         "summa",

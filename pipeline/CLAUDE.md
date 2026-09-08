@@ -161,6 +161,12 @@ pipeline/scrapers/
   result contains `pipeline/scrapers`. Getting it wrong yields paths that are
   merely _absent_ — `load_corrections` reads a missing directory as "no
   corrections filed", a silent corpus-wide no-op.
+- **A fetch that succeeded is no evidence the source published the whole text**,
+  and a truncation stored in the source's own data is the one capture regret
+  re-parsing cannot fix. 15 of Straubinger's 73 book introductions stop mid-word
+  at 4,000 characters, in the live page and an archived copy alike, so
+  `introductions_es.py` reads completeness off the text — his `†` closes the
+  other 56 — and builds only what is whole (`docs/research/bible-texts.md`).
 
 ## Scraping vatican.va
 
