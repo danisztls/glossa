@@ -194,11 +194,18 @@ export const en: Dictionary = {
 	'census.prose.socialDoctrine': '{paragraphs} paragraphs, in {languages} languages.',
 	'census.prose.prayer': '{prayers} prayers, in {languages} languages.',
 	'census.prose.canonLaw': '{canons} canons, in {languages} languages.',
-	// "described here" is where the page says which prose on this site is its
-	// own rather than a publisher's — the one thing here that is not somebody
-	// else's fact.
+	// "described here" is where the page says which prose on this site was
+	// written here rather than by a publisher — the one thing here that is not
+	// somebody else's fact.
+	//
+	// It ended "described here in our own words" until the possessive went.
+	// Saying where prose CAME FROM is what a reader needs and is checkable;
+	// saying it is ours is a claim to standing, and `docs/colophon.md` settled
+	// that the site claims nothing rather than claiming it in the weakest
+	// available place. `llms.txt` was corrected in the same breath, and
+	// `docs/writing-voice.md` carries the rule.
 	'census.prose.magisterium':
-		'{documents} documents in {languages} languages, {described} of them described here in our own words.',
+		'{documents} documents in {languages} languages, {described} of them described here.',
 	// Named for the work and not for the shelf, because the shelf holds one
 	// work: "{n} books" will be true when a second Doctor lands and is a
 	// generous way to describe one.

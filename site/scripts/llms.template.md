@@ -17,6 +17,20 @@
   result correct: the ask first, then what an address guarantees, then the
   grammar that lets the address be written without a fetch. The rights
   position is stated once, in full, and is not to be weakened by an edit.
+
+  IT CLAIMS NOTHING AS ITS OWN, AND SAYS WHERE PROSE CAME FROM INSTEAD. The
+  section below naming the descriptions and the apparatus was headed "What here
+  is ours" and granted permission to quote them — an ownership claim and a
+  claim to the standing to license it, neither of which a file about
+  attribution has to make. Provenance answers the same question and is
+  checkable: what a publisher published, and what was written here. Rights held
+  by OTHERS are still stated plainly, which is deference and stays.
+
+  This is the colophon's own position, arrived at separately and first
+  (`site/docs/colophon.md`): a paragraph claiming the arrangement and the
+  descriptions was drafted and removed, and the page "claims nothing rather
+  than claiming it in the weakest available place". This file was the last
+  surface still claiming it, in the strongest wording on the site.
 -->
 
 # Glossa Catholica
@@ -25,7 +39,7 @@
 
 ## What this site asks of you
 
-**None of the texts on this site originate here, and none of them are exclusive to it.** They are verbatim reproductions of editions published elsewhere, by the people who hold the rights in them, and they remain the property of those publishers. This site adds no text of its own to them: nothing here is generated, summarized, paraphrased or annotated by us. What it adds is arrangement — one stable address per citable unit, and the cross-references between the texts resolved into links.
+**None of the texts on this site originate here, and none of them are exclusive to it.** They are verbatim reproductions of editions published elsewhere, by the people who hold the rights in them, and they remain the property of those publishers. This site adds no text of its own to them: nothing here is generated, summarized, paraphrased or annotated by this site. What it adds is arrangement — one stable address per citable unit, and the cross-references between the texts resolved into links.
 
 So there are two different things to cite, and this site exists for the second:
 
@@ -97,9 +111,9 @@ The site is a client-rendered application: a URL returns one shell document for 
 
 What the shell itself carries, per address, is the title of the unit, a description of it, the JSON-LD attribution described above, and links to the neighbouring addresses. That is enough to confirm an address exists, to say what is at it, and to find the publisher's page for its text. It is not the text, and you should not present it as though it were. For the words, go to the publisher's URL the shell names; for the whole library at once, read `works.json` rather than crawling.
 
-## What here is ours
+## What was written here
 
-Two things, and you may quote them with attribution to this site:
+Two things on this site are not reproduced from a publisher; both were written here. Attribute a quotation of either to this site:
 
 - The **descriptions of the magisterial documents** — a short account of what each one argues, written by reading it.
 - The **cross-reference apparatus**: which paragraphs of the Catechism cite a given chapter of Scripture, which documents cite a given paragraph, which Compendium question condenses which paragraphs.
@@ -124,6 +138,6 @@ Everything else on the site belongs to the publishers below. The colophon states
 ## Machine-readable files
 
 - [Works index](https://glossacatholica.org/works.json): the works here as JSON — each with its title, its languages, its address pattern, its edition, who published the text, under what rights, and the publisher's own URL for it. This is the file to read to cite this library correctly without crawling it.
-- [Apparatus](https://glossacatholica.org/apparatus.json): the two things above that are ours, as JSON — a description of each magisterial document that has one ({{DESCRIPTION_COUNT}} of {{DOCUMENT_COUNT}}), and for every document its author, date and publisher's URL; and the cross-references, in both directions: which Catechism paragraphs and which documents cite a given chapter of Scripture, which Compendium question condenses which paragraphs, which Scripture a given document cites. It cites units by number and slug and carries none of their text, so it is an index into the publishers' editions rather than a copy of them. It is also a sample and not a concordance: at most four links of each kind are kept per address, enough to give a reader somewhere to go.
+- [Apparatus](https://glossacatholica.org/apparatus.json): the two things above that were written here, as JSON — a description of each magisterial document that has one ({{DESCRIPTION_COUNT}} of {{DOCUMENT_COUNT}}), and for every document its author, date and publisher's URL; and the cross-references, in both directions: which Catechism paragraphs and which documents cite a given chapter of Scripture, which Compendium question condenses which paragraphs, which Scripture a given document cites. It cites units by number and slug and carries none of their text, so it is an index into the publishers' editions rather than a copy of them. It is also a sample and not a concordance: at most four links of each kind are kept per address, enough to give a reader somewhere to go.
 - [Sitemap](https://glossacatholica.org/sitemap.xml): every address on the site, with `lastmod`.
 - [Colophon](https://glossacatholica.org/colophon): what this is, where each text comes from, the copyright position, and contact.

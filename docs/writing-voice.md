@@ -72,6 +72,14 @@ under can. 216, not a modesty pose. Nothing may imply the site acts in the
 Church's name, and nothing may imply a text has been approved because it is
 here.
 
+**Claim no ownership either. Say where prose came from.** _"Described here"_,
+never _"described in our own words"_; `llms.txt` names what was written here
+rather than what is _ours_, and grants nobody permission to quote it.
+Provenance does the same work for the reader and is checkable, where a
+possessive is a claim to standing the site has decided not to make
+(`site/docs/colophon.md`). Rights held by OTHERS are still stated plainly —
+that is the deference above and is not the same move.
+
 **Say what is missing, to the reader's face.** _"A contact address has not
 been set yet. This site should not be made public until it has one."_ /
 _"There has never been a Catholic Bible in Swedish that is out of copyright."_
