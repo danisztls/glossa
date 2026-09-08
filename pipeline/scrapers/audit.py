@@ -1002,6 +1002,108 @@ def balance_pair(a_texts: dict, b_texts: dict, work_type: str) -> dict | None:
     }
 
 
+#: How much of a lead's own shortfall the units beside it have to carry before
+#: the text counts as having moved rather than gone, and how little before it
+#: counts as gone. Wide apart on purpose: what falls between them is the pile
+#: a person reads, and a threshold that empties that pile is a threshold that
+#: has stopped measuring anything.
+NEIGHBOURHOOD_MOVED, NEIGHBOURHOOD_ABSENT = 0.75, 0.25
+
+#: Below this many characters an anomaly is too small to divide by: the
+#: quotient swings wildly on a unit whose expected and stored lengths differ
+#: by a word.
+NEIGHBOURHOOD_MIN_CHARS = 20
+
+
+def unit_neighbours(unit) -> tuple | None:
+    """The two units either side of `unit`, or None where the type does not
+    number its units in a sequence.
+
+    A prayer's slug is the one key that has no neighbour: the collection is a
+    set of named texts and the prayer before `anima-christi` is whichever one
+    sorts there. Every other key ends in a number inside a container -- a
+    verse in its chapter, an article in its question, a paragraph in the whole
+    work -- and the container is the key with that number taken off."""
+    if isinstance(unit, bool):  # `True + 1` is 2, and nothing here is a flag
+        return None
+    if isinstance(unit, int):
+        return (unit - 1, unit + 1)
+    if isinstance(unit, (list, tuple)) and isinstance(unit[-1], int):
+        head, n = tuple(unit[:-1]), unit[-1]
+        return ((*head, n - 1), (*head, n + 1))
+    return None
+
+
+def neighbourhood_verdict(
+    texts: dict[str, dict], medians: dict[tuple[str, str], float], edition: str, unit
+) -> str | None:
+    """Whether the text a lead is missing (or holding) is in the units beside
+    it: `moved`, `absent`, or `mixed`.
+
+    THE QUESTION A LENGTH RATIO CANNOT ANSWER ON ITS OWN. An edition alone at
+    one unit has either divided the text differently from its siblings or lost
+    it, and those are opposite findings with opposite remedies -- the first is
+    a row for `divergence.py`'s `SILENT`, the second is a parse defect. What
+    separates them is one unit either side: `matos-soares.pt` at 1 Corinthians
+    9:9 holds a third of what the others do because it pulled a clause up into
+    its v8, so the THREE verses together balance; a verse that simply stopped
+    early leaves the window short as well.
+
+    MEASURED AS A FRACTION OF THE ANOMALY, not as a second band. A window is
+    three units wide, so asking only whether it falls inside `[0.5, 2.0]`
+    dilutes a small loss into two ordinary neighbours: `matos-soares.pt`
+    stores Lamentations 5:5 as a single full stop and its window balances
+    perfectly. What is asked instead is how much of the unit's own shortfall
+    the window still carries. Against each witness, the unit's expected length
+    is what that witness holds times the pair's median, so the shortfall is a
+    number of characters and the window's shortfall is the same number summed
+    over three units -- `recovered` is one minus their quotient, and it is 1
+    where the neighbours hold every character the unit gave up and 0 where
+    nothing near it does.
+
+    So `moved` is `recovered >= 0.75` against every witness and `absent` is
+    `<= 0.25` against every one; `mixed` is everything else, and mixed is the
+    pile to read. Nothing shorter than reading the passage separates a
+    re-partition a neighbour half-absorbs from a loss beside a long verse.
+
+    None where the type numbers no sequence (`unit_neighbours`), or where no
+    witness could be compared."""
+    keys = unit_neighbours(unit)
+    if keys is None or edition not in texts:
+        return None
+    window = (unit, *keys)
+    recovered = []
+    for other, units in texts.items():
+        if other == edition:
+            continue
+        pair = (edition, other) if edition < other else (other, edition)
+        median = medians.get(pair)
+        if median is None:
+            continue
+        # `medians` is keyed in sorted order and holds `len(a)/len(b)`, so a
+        # witness's length is scaled into this edition's own by the median or
+        # by its reciprocal, depending which side of the pair this edition is.
+        factor = median if edition < other else 1 / median
+
+        def gap(where, units=units, factor=factor) -> float:
+            return sum(
+                len(units.get(k) or "") * factor - len(texts[edition].get(k) or "")
+                for k in where
+            )
+
+        own = gap((unit,))
+        if abs(own) < NEIGHBOURHOOD_MIN_CHARS:
+            continue
+        recovered.append(1 - gap(window) / own)
+    if not recovered:
+        return None
+    if all(r >= NEIGHBOURHOOD_MOVED for r in recovered):
+        return "moved"
+    if all(r <= NEIGHBOURHOOD_ABSENT for r in recovered):
+        return "absent"
+    return "mixed"
+
+
 def measure_balance(corpus: Path) -> dict:
     """`{"pairs": [...], "leads": [...]}` -- the all-pairs measurement, and
     that measurement read as a vote.
@@ -1023,12 +1125,13 @@ def measure_balance(corpus: Path) -> dict:
     to do differently, so the strongest claim available is still "an edition
     alone against the rest is a lead". What counting buys is the ORDER, and
     at nine editions that is the difference between a report and a list."""
-    pairs, works = [], []
+    pairs, works, leads = [], [], []
     votes: dict[tuple, collections.Counter] = collections.defaultdict(
         collections.Counter
     )
     witnesses: collections.Counter = collections.Counter()
     stored: dict[tuple, int] = {}
+    medians: dict[tuple[str, str], float] = {}
     for base, langs in sorted(language_groups(corpus).items()):
         work_type = json.loads(
             (next(iter(langs.values())) / "manifest.json").read_text()
@@ -1082,6 +1185,7 @@ def measure_balance(corpus: Path) -> dict:
             measured = balance_pair(texts[a], texts[b], work_type)
             if measured is None:
                 continue
+            medians[(a, b)] = measured["median"]
             for key in measured.pop("compared_keys"):
                 witnesses[(base, key, a)] += 1
                 witnesses[(base, key, b)] += 1
@@ -1092,10 +1196,16 @@ def measure_balance(corpus: Path) -> dict:
                 stored[(base, key, a)] = a_len
                 stored[(base, key, b)] = b_len
             pairs.append({"work": base, "a": a, "b": b, **measured})
-    leads = []
-    for (work, unit, edition), counted in votes.items():
-        against = max(counted["long"], counted["short"])
-        if against and against == witnesses[(work, unit, edition)]:
+        # Resolved per work, while this work's texts are still open: the
+        # neighbourhood test below has to read the units beside the lead, and
+        # holding every work's texts to the end costs the whole corpus in
+        # memory for the sake of one loop.
+        for (work, unit, edition), counted in votes.items():
+            if work != base:
+                continue
+            against = max(counted["long"], counted["short"])
+            if not against or against != witnesses[(work, unit, edition)]:
+                continue
             leads.append(
                 {
                     "work": work,
@@ -1106,8 +1216,15 @@ def measure_balance(corpus: Path) -> dict:
                     else "short",
                     "against": against,
                     "stored": stored[(work, unit, edition)],
+                    "neighbourhood": neighbourhood_verdict(
+                        texts, medians, edition, unit
+                    ),
                 }
             )
+        votes.clear()
+        witnesses.clear()
+        stored.clear()
+        medians.clear()
     leads.sort(key=lambda r: (-r["against"], r["work"], r["edition"], str(r["unit"])))
     return {"works": works, "pairs": pairs, "leads": leads}
 
@@ -1168,12 +1285,24 @@ def report_balance(measured: dict, limit: int) -> int:
                 f"{', '.join(row['editions'])}"
             )
     print()
+    verdicts = collections.Counter(lead["neighbourhood"] for lead in leads)
+    print(
+        f"{len(leads)} lead(s), read by whether the units either side hold what "
+        "the lead does not:\n"
+        f"  moved {verdicts['moved']} -- the text is next door, so the edition "
+        "divides the passage differently\n"
+        f"  absent {verdicts['absent']} -- the neighbourhood is short too, so "
+        "the text is not in it\n"
+        f"  mixed {verdicts['mixed']}, unmeasurable {verdicts[None]} -- the "
+        "window disagrees with itself, or has nothing to compare"
+    )
+    print()
     shown = leads[:limit]
     for lead in shown:
         print(
             f"{lead['direction'].upper():5}  {lead['work']}.{lead['edition']:<16} "
             f"{unit_label(lead['unit']):<22} {lead['stored']:6,}c  against all "
-            f"{lead['against']} other edition(s)"
+            f"{lead['against']} other edition(s)  {lead['neighbourhood'] or '-'}"
         )
     if len(leads) > len(shown):
         print(f"... {len(leads) - len(shown)} more")
