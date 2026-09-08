@@ -44,6 +44,25 @@ is block-level. The substituted space was hiding real source defects behind a
 code rule, and stripping whitespace afterwards cannot work because this corpus
 prints spaced punctuation on purpose.
 
+**A whitelist keeps out everything nobody enumerated, and the exception it
+lets in is told apart by how it is SET, not by what encloses it.** Crampon's
+editorial arguments have three mutually inconsistent wrappers, which is why
+verse text is captured only from inside a `<p>` — and twenty of those
+arguments are typeset in a `<p>` after all. The second rule names no wrapper
+either: an argument carries no verse anchor, says everything it says in
+emphasis, and prints outside that emphasis nothing but parenthesised verse
+ranges. 861 anchorless paragraphs that are genuine verse text match none of
+the three. **A rule about what a block SAYS can only fire when the block
+closes**, so the walker marks its buffers on the way in and takes the
+paragraph back out on the way out rather than deciding at the opening tag.
+
+**A footnote belongs to the text it is printed in, not to the address that
+happens to be open.** `matt 20:34` carried the cross-reference for Matthew
+21:1, because the marker sits in chapter 21's argument; when the argument
+goes the note goes with it. Reported as an anomaly rather than reattached —
+where in the next verse it belongs is not on the page, which is Martini's 13
+dropped notes again.
+
 **A missing heading is a claim about the parser until the raw page is opened.**
 All three editions recorded as "omitting" a Compendium heading were printing
 it. The subsequence check reports what it did not find, and "not found" was

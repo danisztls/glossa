@@ -48,6 +48,22 @@ running verse text (the word after a drop-cap, and a tribal name in the
 Blessing of Jacob at Genesis 49), for the genuine text -- so it is left fully
 transparent rather than stripped.
 
+THE ONE ARGUMENT THE WHITELIST DOES NOT COVER. Twenty paragraphs in the 87
+pages print an argument inside a `<p>` after all -- fourteen of them while a
+verse is open, so `john 13:38` ended with the whole argument of chapter 14
+(558 characters against the peers' 110-140) and `ps 45:18` with the title and
+argument of the psalm after it. There is no wrapper to name here either, so
+the discriminator is again structural, and it is about how the paragraph is
+SET rather than what encloses it: an argument carries no verse anchor of its
+own, says everything it says in emphasis (`<i>`, `<em>`, `<span class="sc">`),
+and prints outside that emphasis nothing but parenthesised verse ranges and
+punctuation. Verse text does none of those three things -- measured over
+every captured page, 20 paragraphs match and 861 anchorless paragraphs that
+are genuine verse continuations match none. The decision cannot be taken when
+the `<p>` opens, since what a paragraph says is known only at its close, so
+`VerseWalker` marks the buffers on the way in and takes the paragraph back
+out on the way out (`para_is_argument`, `drop_paragraph`).
+
 WHAT THIS COSTS: the acrostic Hebrew-letter labels in Lamentations 1-4
 (`ALEPH.`, `BETH.`, ...) sit as a bare, classless `<div>` between two `<p>`
 elements -- a real part of the printed page, attributable to no single verse
@@ -330,6 +346,15 @@ VERSE_ID_RE = re.compile(r"^(\d+)-(\d+)$")
 MARKER_DIGITS_RE = re.compile(r"\d+")
 MARKER_TOKEN_RE = re.compile(r"⟦([^⟦⟧]+)⟧")
 
+# The arguments the `<p>`-only whitelist does not reach, told apart
+# from verse text by how they are set rather than by what wraps them: see
+# "THE ONE ARGUMENT THE WHITELIST DOES NOT COVER" in the module docstring.
+EMPHASIS_TAGS = {"i", "em"}
+# A parenthesised verse range -- digits and separators, and nothing else, so
+# an ordinary "(voir Gen. i, 3)" inside running text is not one.
+VERSE_RANGE_RE = re.compile(r"\(\s*[\d\s.,;:\-–—]+\)")
+WORDY_RE = re.compile(r"[^\W_]", re.UNICODE)
+
 NAME_LINK_RE = re.compile(
     r'<a href="//fr\.wikisource\.org/wiki/Bible_Crampon_1923/([^"?]+)"[^>]*>([^<]+)</a>'
 )
@@ -446,11 +471,65 @@ class VerseWalker(HTMLParser):
         self.sidenote_active = False
         self.sidenote_buf: list[str] = []
 
+        # One outermost `<p>` at a time, so an argument the whitelist admits
+        # can be taken back out at `</p>` -- the only point where what the
+        # paragraph says is known. `para_mark` is a pair of BUFFER LENGTHS
+        # rather than list indices, because the footnote finaliser rewrites
+        # both buffers as a single joined element.
+        self.emph_stack: list[bool] = []
+        self.emph_depth = 0
+        self.para_mark: tuple[int, int] | None = None
+        self.para_anchored = False
+        self.para_plain: list[str] = []
+        self.para_emph: list[str] = []
+        self.para_notes: set[str] = set()
+
     # -- buffering -----------------------------------------------------
     def _emit(self, s: str) -> None:
         if self.content_depth > 0 and self.skip_depth == 0:
             self.buf_text.append(s)
             self.buf_marked.append(s)
+            (self.para_emph if self.emph_depth else self.para_plain).append(s)
+
+    def para_is_argument(self) -> bool:
+        """Is the paragraph just closed one of Crampon's own arguments?
+
+        It is when it holds no verse anchor of its own, says something in
+        emphasis, and prints outside that emphasis nothing but parenthesised
+        verse ranges and punctuation. Measured over all 87 captured pages:
+        20 paragraphs match, every one an argument, a psalm's summary line or
+        page furniture, against 861 anchorless paragraphs that are genuine
+        verse continuations and match none.
+        """
+        if self.para_anchored or not WORDY_RE.search("".join(self.para_emph)):
+            return False
+        plain = VERSE_RANGE_RE.sub("", "".join(self.para_plain))
+        return not WORDY_RE.search(plain)
+
+    def drop_paragraph(self) -> None:
+        """Take the paragraph just closed back out of the open verse.
+
+        A footnote the argument carried goes out with it, and says so: its
+        printed locator names the passage the ARGUMENT covers, so keeping it
+        would file the next chapter's cross-reference under this chapter's
+        last verse (`matt 20:34` held the note for Matthew 21:1). Reported
+        rather than reattached -- same posture as martini.py's 13 dropped
+        notes, since where in the verse it belongs is not on the page.
+        """
+        if self.para_mark is None:
+            return
+        text, marked = "".join(self.buf_text), "".join(self.buf_marked)
+        keep_text, keep_marked = self.para_mark
+        self.buf_text = [text[: min(keep_text, len(text))]]
+        self.buf_marked = [marked[: min(keep_marked, len(marked))]]
+        lost = sorted(set(self.verse_notes) - self.para_notes)
+        for marker in lost:
+            del self.verse_notes[marker]
+        if lost and self.cur_ch is not None:
+            self.anomalies.append(
+                f"{self.cur_ch}:{self.cur_v}: editorial argument dropped, and "
+                f"note(s) {', '.join(lost)} printed inside it with it"
+            )
 
     def flush_verse(self) -> None:
         # Before the FIRST anchor of the page, any text captured (the
@@ -492,6 +571,7 @@ class VerseWalker(HTMLParser):
 
         verse_m = VERSE_ID_RE.match(idv) if tag == "span" else None
         if verse_m:
+            self.para_anchored = True
             self.flush_verse()
             self.cur_ch, self.cur_v = int(verse_m.group(1)), int(verse_m.group(2))
             is_skip = True  # hides the printed verse-number digit itself
@@ -524,16 +604,29 @@ class VerseWalker(HTMLParser):
         # wedged positive after the first heading, silently discarding every
         # verse for the rest of the page. Only tags that will actually be
         # popped may push.
+        is_emph = tag in EMPHASIS_TAGS or (tag == "span" and "sc" in classes)
         if tag not in VOID_TAGS:
             self.tag_stack.append(entering_skip)
             if entering_skip:
                 self.skip_depth += 1
+            self.emph_stack.append(is_emph)
+            if is_emph:
+                self.emph_depth += 1
 
         if self.ref_active and tag == "a" and self.ref_href is None:
             href = a.get("href") or ""
             self.ref_href = href.removeprefix("#")
 
         if tag == "p":
+            if self.content_depth == 0:
+                self.para_mark = (
+                    len("".join(self.buf_text)),
+                    len("".join(self.buf_marked)),
+                )
+                self.para_anchored = False
+                self.para_plain = []
+                self.para_emph = []
+                self.para_notes = set(self.verse_notes)
             # Guard space: a verse's own text can legitimately span more than
             # one <p> (e.g. Gen 1:31's closing refrain is its own paragraph;
             # see the module docstring's chapter-boundary discussion), and
@@ -550,6 +643,10 @@ class VerseWalker(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == "p":
             self.content_depth = max(0, self.content_depth - 1)
+            if self.content_depth == 0:
+                if self.para_is_argument():
+                    self.drop_paragraph()
+                self.para_mark = None
 
         finalize_ref = tag == "sup" and self.ref_active
         finalize_sidenote = tag == "span" and self.sidenote_active
@@ -557,6 +654,9 @@ class VerseWalker(HTMLParser):
         popped = self.tag_stack.pop() if self.tag_stack else False
         if popped:
             self.skip_depth = max(0, self.skip_depth - 1)
+        popped_emph = self.emph_stack.pop() if self.emph_stack else False
+        if popped_emph:
+            self.emph_depth = max(0, self.emph_depth - 1)
 
         if finalize_ref:
             # Right-strip the gap before the (removed) sup on BOTH buffers,
@@ -914,7 +1014,12 @@ NOTES = (
     "(italic Latin/Hebrew terms in running text and in notes); the acrostic "
     "Hebrew-letter labels (ALEPH., BETH., ...) printed between verses in "
     "Lamentations 1-4, which sit outside any single verse's own paragraph "
-    "and are dropped rather than mis-attached; a footnote's opening "
+    "and are dropped rather than mis-attached; the three footnotes printed "
+    "inside a chapter argument rather than inside a verse (Dan 3:23 note "
+    "30, Dan 12:13 note 151, Matt 20:34 note 158 -- the last is the "
+    "cross-reference for Matt 21:1), which leave with the argument they "
+    "annotate rather than stay under whichever verse was open; a "
+    "footnote's opening "
     "italicised lemma is not split out as a separate `lemma` field (unlike "
     "bible.douay-rheims.en) -- notes carry marker + full text only. Six "
     "verses (Jdt 6:21, 10:20, 13:31; 1 Mac 10:89, 12:54; 2 Mac 10:38) sit "
