@@ -173,9 +173,10 @@ export const sv: Dictionary = {
 
 	'type.label': 'Textstorlek och typsnitt',
 	'fontSize.label': 'Textstorlek',
-	'fontSize.larger': 'Större text',
-	'fontSize.smaller': 'Mindre text',
-	'fontSize.reset': 'Standardtextstorlek',
+	'fontSize.small': 'Liten',
+	'fontSize.medium': 'Mellan',
+	'fontSize.large': 'Stor',
+	'fontSize.xlarge': 'Extra stor',
 	'face.label': 'Typsnitt',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

@@ -13,7 +13,7 @@
  * an absolute font size: `app.css` sets the actual base
  * reading size in `rem`/`em` and multiplies it by this custom property, so
  * this module never needs to know or care what that base size is — it only
- * ever nudges it up or down.
+ * ever multiplies it.
  *
  * `app.html`'s pre-hydration script applies the stored scale (alongside the
  * stored theme, see `theme.svelte.ts`) before first paint, so reading text
@@ -27,23 +27,58 @@
  * setting moves nothing a reader can see.
  */
 
-export const MIN_FONT_SCALE = 0.8;
-export const MAX_FONT_SCALE = 1.8;
-export const FONT_SCALE_STEP = 0.1;
+/**
+ * FOUR SIZES ON A RAIL, NOT ELEVEN STEPS ON A STEPPER.
+ *
+ * It was `[−] 120% [+]` over 0.8–1.8 in steps of 0.1, and the arithmetic that
+ * makes this site's column a MEASURE is what made that shape wrong. The
+ * reading column is `--measure-cpl` characters wide, so it grows with the
+ * setting — 24.6rem at the bottom of the range and 55.3rem at the top — and
+ * the grid centres it, so every press moved the column's start edge, and the
+ * bar packed against it, and the panel hanging off the bar, about 25px
+ * sideways. A reader crossing the range chased their own button through ten
+ * presses and a quarter of the viewport.
+ *
+ * A ladder is one click. The travel is still there — it has to be, the column
+ * IS the size — but a reader arrives in one gesture rather than pursuing the
+ * control through every intermediate one on the way.
+ *
+ * THE RANGE IS UNCHANGED AND ONLY THE MIDDLE IS COARSER. 1.8 is the largest
+ * size that still holds the measure — `--content-width`'s 56rem ceiling starts
+ * binding at 1.83 (`styles/tokens.css`) — and 0.8 is the floor the stepper
+ * already had. What is gone is the eight values between, which existed because
+ * a stepper has to have a step and not because anybody wanted 1.1.
+ *
+ * ORDER IS THE CONTRACT: `TypeMenu` lays these out left to right along the
+ * rail and steps between neighbours with the arrow keys, so this array is the
+ * control's geometry, not just its values.
+ */
+export const FONT_SIZES = [
+	{ name: 'small', scale: 0.8 },
+	{ name: 'medium', scale: 1 },
+	{ name: 'large', scale: 1.3 },
+	{ name: 'xlarge', scale: 1.8 }
+] as const;
+
+export type FontSizeName = (typeof FONT_SIZES)[number]['name'];
+
 export const DEFAULT_FONT_SCALE = 1;
 
 import { readStoredString, writeStoredString } from './storage';
 
 const STORAGE_KEY = 'glossa:font-scale';
 
-/** Round to the same precision as `FONT_SCALE_STEP` to avoid float drift (0.1 + 0.1 + 0.1 …). */
-function roundToStep(value: number): number {
-	const decimals = (FONT_SCALE_STEP.toString().split('.')[1] ?? '').length;
-	return Number(value.toFixed(decimals));
-}
-
-function clamp(value: number): number {
-	return Math.min(MAX_FONT_SCALE, Math.max(MIN_FONT_SCALE, roundToStep(value)));
+/** The rung nearest `value`. Every scale this module admits is one of the
+ *  four, so this is the clamp and the quantiser at once: out-of-range lands on
+ *  the end it ran past, and anything between rungs lands on the closer. */
+function snap(value: number): number {
+	// `reduce<number>` rather than an inferred accumulator: the ladder is
+	// `as const`, so every `scale` is its own literal type and the inferred
+	// fold would be an accumulator that only ever admits 0.8.
+	return FONT_SIZES.reduce<number>(
+		(best, size) => (Math.abs(size.scale - value) < Math.abs(best - value) ? size.scale : best),
+		FONT_SIZES[0].scale
+	);
 }
 
 /**
@@ -59,7 +94,18 @@ function readStored(): number {
 	if (typeof localStorage === 'undefined') return DEFAULT_FONT_SCALE;
 	const raw = localStorage.getItem(STORAGE_KEY);
 	const parsed = raw === null ? NaN : Number(raw);
-	return Number.isFinite(parsed) ? clamp(parsed) : DEFAULT_FONT_SCALE;
+	if (!Number.isFinite(parsed)) return DEFAULT_FONT_SCALE;
+	const snapped = snap(parsed);
+	// A SCALE FROM THE STEPPER ERA IS MIGRATED, NOT RE-APPLIED. `app.html` has
+	// already painted whatever was stored — 1.4, say — and re-applying the
+	// nearest rung here would resize the page after first paint, which is the
+	// one failure this module is built to avoid. So the new value is written to
+	// storage and the reader keeps the size they had for this visit; the next
+	// load paints the rung. The rail marks it as current meanwhile, and the
+	// discrepancy it is lying about is at most 0.15 of a scale, for one visit,
+	// once ever.
+	if (snapped !== parsed) writeStoredString(STORAGE_KEY, String(snapped));
+	return snapped;
 }
 
 function apply(value: number) {
@@ -73,20 +119,8 @@ class FontScaleStore {
 	value: number = $state(readStored());
 
 	set(v: number) {
-		this.value = clamp(v);
+		this.value = snap(v);
 		apply(this.value);
-	}
-
-	increase() {
-		this.set(this.value + FONT_SCALE_STEP);
-	}
-
-	decrease() {
-		this.set(this.value - FONT_SCALE_STEP);
-	}
-
-	reset() {
-		this.set(DEFAULT_FONT_SCALE);
 	}
 }
 

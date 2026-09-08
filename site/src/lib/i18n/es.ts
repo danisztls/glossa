@@ -177,9 +177,10 @@ export const es: Dictionary = {
 
 	'type.label': 'Tamaño y tipo de letra',
 	'fontSize.label': 'Tamaño del texto',
-	'fontSize.larger': 'Texto más grande',
-	'fontSize.smaller': 'Texto más pequeño',
-	'fontSize.reset': 'Tamaño de texto predeterminado',
+	'fontSize.small': 'Pequeño',
+	'fontSize.medium': 'Mediano',
+	'fontSize.large': 'Grande',
+	'fontSize.xlarge': 'Muy grande',
 	'face.label': 'Tipo de letra',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

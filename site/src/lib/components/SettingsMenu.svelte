@@ -6,7 +6,7 @@
 	THE READING SIZE WAS A SIXTH ROW HERE and is now the reading bar's
 	(`TypeMenu`), which holds the argument. What it leaves behind is a
 	panel whose every row is true of the page the reader is on: this trigger
-	is in the header of all of them, and the size stepper was the one control
+	is in the header of all of them, and the reading size was the one control
 	in it that did nothing on most.
 
 	IT WAS `AppearanceMenu` UNTIL OFFLINE MODE, and the rename is the honest
@@ -36,8 +36,8 @@
 	room to say what the switch costs.
 
 	WHY ONE MENU. These were two triggers in the header — a palette icon for a
-	four-item theme list (auto/light/dark/sepia) and an "Aa" icon for the size
-	stepper. Two icons for one question ("how does this page look to me?") is
+	four-item theme list (auto/light/dark/sepia) and an "Aa" icon for the
+	reading size. Two icons for one question ("how does this page look to me?") is
 	one too many in a row that already holds search, language, print and
 	install; and the theme list itself conflated two independent choices,
 	since picking sepia there silently meant "and stop following the system's
@@ -54,8 +54,8 @@
 	note sits BESIDE it, in the same row, rather than under it, so that a
 	change of mode doesn't make one row taller than the rest. The template is
 	`styles/menus.css`'s, shared with `ApparatusMenu` and `TypeMenu`,
-	which is why the stepper's silhouette still matches the segmented control
-	here from another bar.
+	which is why the size rail's silhouette still matches the segmented
+	control here from another bar.
 
 	SEPIA AND OLED ARE THE SAME ROW MIRRORED, and they are adjacent so that
 	reads as deliberate: sepia yields to dark, OLED needs it, and so exactly
@@ -73,15 +73,15 @@
 	"monochrome" names the result without saying what the page gives up for
 	it. What it does is app.css's monochrome section.
 
-	NOTHING HERE CLOSES THE PANEL, which the size stepper wanted first (a
-	reader stepping it up wants to keep clicking and watching) and every
+	NOTHING HERE CLOSES THE PANEL, which the reading size wanted first (a
+	reader trying a larger one wants to keep clicking and watching) and every
 	control here wants for itself: comparing dark against light means flipping
 	back and forth. Escape and an outside click still close it, via the shared
 	`Menu` in `./menu.svelte.ts`.
 
-	THE ARROW KEYS WENT WITH THE STEPPER, and nothing else in the panel
+	THE ARROW KEYS WENT WITH THE SIZE CONTROL, and nothing else in the panel
 	notices: the handler they lived in was already gated on the focus being
-	inside `.stepper`, so an arrow pressed on a switch or a segment did
+	inside that control, so an arrow pressed on a switch or a segment did
 	nothing then and does nothing now. This panel's keydown is the shared
 	`Menu`'s unaltered — Escape and no more. Tab still walks the rows.
 -->

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { FONT_SIZES } from './prefs.svelte';
 
 /**
  * THE READER'S TEXT FACE, AND THE FOUR NUMBERS THAT MOVE WITH IT.
@@ -162,11 +163,14 @@ describe('the reader’s text face', () => {
 	// `--content-width` clamps at 56rem, so past some reading scale the column
 	// stops holding 62.4 characters and starts holding fewer. That is allowed;
 	// leaving the 55-65 band the measure exists to hold is not.
-	it('keeps both faces inside the 55-65 character band at every step', () => {
+	it('keeps both faces inside the 55-65 character band at every stop', () => {
 		const base = 1.3;
 		const cpl = 62.4;
 		for (const [face, vars] of Object.entries(FACES)) {
-			for (let scale = 0.8; scale <= 1.8001; scale += 0.1) {
+			// The four the rail offers, read from the store rather than swept:
+			// a scale nothing can select is not a measure anyone reads at, and
+			// the ends of the range are what the band is tight against.
+			for (const { scale } of FONT_SIZES) {
 				// The rendered size carries the face adjustment, so the measure
 				// has to as well or the column is sized for type the page is not
 				// setting — which is the same mistake as measuring for the
@@ -175,8 +179,8 @@ describe('the reader’s text face', () => {
 				const advance = vars['--prose-char-advance'];
 				const width = Math.min(cpl * advance * size, 56);
 				const actual = width / (advance * size);
-				expect(actual, `${face} at ${scale.toFixed(1)}`).toBeGreaterThanOrEqual(55);
-				expect(actual, `${face} at ${scale.toFixed(1)}`).toBeLessThanOrEqual(65);
+				expect(actual, `${face} at ${scale}`).toBeGreaterThanOrEqual(55);
+				expect(actual, `${face} at ${scale}`).toBeLessThanOrEqual(65);
 			}
 		}
 	});

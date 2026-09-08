@@ -174,9 +174,10 @@ export const sl: Dictionary = {
 
 	'type.label': 'Velikost besedila in pisava',
 	'fontSize.label': 'Velikost besedila',
-	'fontSize.larger': 'Večje besedilo',
-	'fontSize.smaller': 'Manjše besedilo',
-	'fontSize.reset': 'Privzeta velikost besedila',
+	'fontSize.small': 'Majhno',
+	'fontSize.medium': 'Srednje',
+	'fontSize.large': 'Veliko',
+	'fontSize.xlarge': 'Zelo veliko',
 	'face.label': 'Pisava',
 	'face.serif': 'Serifna',
 	'face.sans': 'Neserifna',

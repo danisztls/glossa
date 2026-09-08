@@ -236,9 +236,10 @@
 	 * Holding the column at or under that is what keeps the 80rem breakpoint's
 	 * own comment true — the aside never shrinks to make room for the text.
 	 *
-	 * It is a rail, not a constraint. At `MAX_FONT_SCALE` 1.8 the column wants
-	 * 55.3rem, so across the range `prefs.svelte.ts` offers it never binds; it
-	 * starts binding at 1.83, i.e. only if that maximum is ever raised.
+	 * It is a rail, not a constraint. At the top stop of `FONT_SIZES` (1.8,
+	 * `prefs.svelte.ts`) the column wants 55.3rem, so across the four sizes
+	 * offered it never binds; it starts binding at 1.83, i.e. only if that
+	 * stop is ever raised.
 	 *
 	 * No floor, though one was considered. Clamping the low end up would put
 	 * the 80% setting at 66.4 cpl — outside the band this token exists to
@@ -777,12 +778,12 @@
  * and set 7% smaller to match apparent size, so a line of 62.4 characters is
  * 31.1rem against the serif's 30.7.
  *
- * AND IT IS THE FACE THAT NOW GRAZES THE 56rem CEILING: 55.96rem at the 1.8
- * maximum, against the serif's 55.3. Still under, so the measure holds at
+ * AND IT IS THE FACE THAT NOW GRAZES THE 56rem CEILING: 55.96rem at the top
+ * stop, 1.8, against the serif's 55.3. Still under, so the measure holds at
  * 62.4 characters across the whole range — but this is the pair of numbers to
- * recheck if `--face-size-adjust` is ever raised, if `MAX_FONT_SCALE` is, or
- * if a third face arrives. `reading-face.test.ts` walks every step of both
- * faces against the 55-65 band and is what would catch it.
+ * recheck if `--face-size-adjust` is ever raised, if that stop is, or if a
+ * third face arrives. `reading-face.test.ts` walks every stop of both faces
+ * against the 55-65 band and is what would catch it.
  *
  * The metrics are this face's `hhea`, the same table the defaults came from.
  * `styles/dropcaps.css` derives the initial's three sizes from them, so the

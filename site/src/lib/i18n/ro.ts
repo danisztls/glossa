@@ -178,9 +178,10 @@ export const ro: Dictionary = {
 
 	'type.label': 'Mărimea textului și fontul',
 	'fontSize.label': 'Mărimea textului',
-	'fontSize.larger': 'Text mai mare',
-	'fontSize.smaller': 'Text mai mic',
-	'fontSize.reset': 'Mărimea implicită a textului',
+	'fontSize.small': 'Mic',
+	'fontSize.medium': 'Mediu',
+	'fontSize.large': 'Mare',
+	'fontSize.xlarge': 'Foarte mare',
 	'face.label': 'Font',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

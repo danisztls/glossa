@@ -176,9 +176,10 @@ export const hu: Dictionary = {
 
 	'type.label': 'Betűméret és betűtípus',
 	'fontSize.label': 'Betűméret',
-	'fontSize.larger': 'Nagyobb betű',
-	'fontSize.smaller': 'Kisebb betű',
-	'fontSize.reset': 'Alapértelmezett betűméret',
+	'fontSize.small': 'Kicsi',
+	'fontSize.medium': 'Közepes',
+	'fontSize.large': 'Nagy',
+	'fontSize.xlarge': 'Nagyon nagy',
 	'face.label': 'Betűtípus',
 	'face.serif': 'Talpas',
 	'face.sans': 'Talpatlan',

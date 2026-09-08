@@ -167,9 +167,10 @@ export const ar: Dictionary = {
 
 	'type.label': 'حجم النصّ ونوع الخطّ',
 	'fontSize.label': 'حجم النصّ',
-	'fontSize.larger': 'نصّ أكبر',
-	'fontSize.smaller': 'نصّ أصغر',
-	'fontSize.reset': 'حجم النصّ الافتراضيّ',
+	'fontSize.small': 'صغير',
+	'fontSize.medium': 'متوسط',
+	'fontSize.large': 'كبير',
+	'fontSize.xlarge': 'كبير جدًّا',
 	'face.label': 'نوع الخطّ',
 	'face.serif': 'مذيّل',
 	'face.sans': 'غير مذيّل',

@@ -176,9 +176,10 @@ export const it: Dictionary = {
 
 	'type.label': 'Dimensione e carattere del testo',
 	'fontSize.label': 'Dimensione del testo',
-	'fontSize.larger': 'Testo più grande',
-	'fontSize.smaller': 'Testo più piccolo',
-	'fontSize.reset': 'Dimensione predefinita del testo',
+	'fontSize.small': 'Piccolo',
+	'fontSize.medium': 'Medio',
+	'fontSize.large': 'Grande',
+	'fontSize.xlarge': 'Molto grande',
 	'face.label': 'Carattere',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

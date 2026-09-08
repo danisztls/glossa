@@ -189,9 +189,10 @@ export const la: Dictionary = {
 
 	'type.label': 'Magnitudo et forma litterarum',
 	'fontSize.label': 'Magnitudo textus',
-	'fontSize.larger': 'Litterae maiores',
-	'fontSize.smaller': 'Litterae minores',
-	'fontSize.reset': 'Magnitudo textus solita',
+	'fontSize.small': 'Parvae',
+	'fontSize.medium': 'Mediae',
+	'fontSize.large': 'Magnae',
+	'fontSize.xlarge': 'Maximae',
 	'face.label': 'Forma litterarum',
 	'face.serif': 'Cum serifis',
 	'face.sans': 'Sine serifis',

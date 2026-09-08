@@ -180,9 +180,10 @@ export const fr: Dictionary = {
 
 	'type.label': 'Taille du texte et police',
 	'fontSize.label': 'Taille du texte',
-	'fontSize.larger': 'Texte plus grand',
-	'fontSize.smaller': 'Texte plus petit',
-	'fontSize.reset': 'Taille de texte par défaut',
+	'fontSize.small': 'Petit',
+	'fontSize.medium': 'Moyen',
+	'fontSize.large': 'Grand',
+	'fontSize.xlarge': 'Très grand',
 	'face.label': 'Police',
 	'face.serif': 'Serif',
 	'face.sans': 'Sans',

@@ -175,9 +175,10 @@ export const pl: Dictionary = {
 
 	'type.label': 'Wielkość tekstu i krój pisma',
 	'fontSize.label': 'Wielkość tekstu',
-	'fontSize.larger': 'Większy tekst',
-	'fontSize.smaller': 'Mniejszy tekst',
-	'fontSize.reset': 'Domyślna wielkość tekstu',
+	'fontSize.small': 'Mały',
+	'fontSize.medium': 'Średni',
+	'fontSize.large': 'Duży',
+	'fontSize.xlarge': 'Bardzo duży',
 	'face.label': 'Krój pisma',
 	'face.serif': 'Szeryf',
 	'face.sans': 'Groteska',

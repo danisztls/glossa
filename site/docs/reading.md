@@ -9,13 +9,18 @@ one value answer two questions. Sepia yields to dark because no dark-sepia
 palette exists, and it is **suspended, not cleared** — a dark control that
 silently does nothing is more surprising than an inert sepia row that says why.
 
-**A control belongs on the surface its effect is visible on.** The reading-size
-stepper was a row in the header's settings panel, which is on every page; what
+**A control belongs on the surface its effect is visible on.** The reading size
+was a row in the header's settings panel, which is on every page; what
 it moves is `.reading-text` and the column measured against it, which exists on
 exactly the routes that render a reading bar. It is in that bar now
 (`TypeMenu`), and off on the index routes it does not reach — two of which
 hold their list in `.content-column` and so would have slid in and out under
 type that never changed.
+
+**A measured column moves when the size does, so the size control cannot be a
+stepper.** The column is 62.4 characters wide and the grid centres it, so it
+runs 24.6rem to 55.3rem across the range and every press slid the panel about
+25px sideways; four stops on a rail (`FONT_SIZES`) is one click.
 
 **Two faces, split on authorship rather than on chrome-versus-content.** What
 the work wrote is EB Garamond, what we wrote _about_ the work is Source Sans. A

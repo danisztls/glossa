@@ -177,9 +177,10 @@ export const ru: Dictionary = {
 
 	'type.label': 'Размер текста и шрифт',
 	'fontSize.label': 'Размер текста',
-	'fontSize.larger': 'Крупнее',
-	'fontSize.smaller': 'Мельче',
-	'fontSize.reset': 'Стандартный размер текста',
+	'fontSize.small': 'Мелкий',
+	'fontSize.medium': 'Средний',
+	'fontSize.large': 'Крупный',
+	'fontSize.xlarge': 'Очень крупный',
 	'face.label': 'Шрифт',
 	'face.serif': 'Антиква',
 	'face.sans': 'Гротеск',

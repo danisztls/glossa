@@ -178,9 +178,10 @@ export const de: Dictionary = {
 
 	'type.label': 'Schriftgröße und Schriftart',
 	'fontSize.label': 'Schriftgröße',
-	'fontSize.larger': 'Größere Schrift',
-	'fontSize.smaller': 'Kleinere Schrift',
-	'fontSize.reset': 'Standardschriftgröße',
+	'fontSize.small': 'Klein',
+	'fontSize.medium': 'Mittel',
+	'fontSize.large': 'Groß',
+	'fontSize.xlarge': 'Sehr groß',
 	'face.label': 'Schriftart',
 	'face.serif': 'Serif',
 	'face.sans': 'Grotesk',

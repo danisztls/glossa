@@ -91,7 +91,7 @@
 	and five under English), and before this it could only be changed by
 	opening a text first. The rest drops out — an index page has no unit to
 	bookmark, `PrintButton`'s own docblock is the argument against printing
-	one, and an index sets no `.reading-text` for the size stepper to move —
+	one, and an index sets no `.reading-text` for the size rail to move —
 	so `bookmarkHref`, `print` and `textSize` are optional and those pages
 	pass none of them. Scripture keeps the roll, which is a page-level action on a
 	page that IS scripture: from `/scriptura` it is the one entry point that
@@ -182,9 +182,9 @@
 		 *  prop and not a shrug. Two of those pages (`/scriptura`,
 		 *  `/doctores/summa`) hold their list in `.content-column`, whose
 		 *  width IS `--content-width` and does move with the setting — so a
-		 *  stepper left on them would slide the column in and out while the
-		 *  type it is measured for stayed put, which reads as a bug in a way
-		 *  that doing nothing at all does not.
+		 *  rail left on them would slide the column in and out while the type
+		 *  it is measured for stayed put, which reads as a bug in a way that
+		 *  doing nothing at all does not.
 		 *
 		 *  It goes off with `print` at every call site today and is still its
 		 *  own prop: each names a capability of the page rather than a kind of

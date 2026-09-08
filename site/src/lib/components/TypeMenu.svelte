@@ -25,30 +25,43 @@
 
 	A PANEL AND NOT INLINE CONTROLS, which the bar has room for at desktop
 	widths and not at a phone's. Every other control in that row is one
-	icon-sized trigger; a bare `[-] 120% [+]` beside a two-cell face picker
-	would be the widest thing in a row that already carries two edition names
-	as wide as "Bíblia Sagrada (Matos Soares)" and wraps beneath them. The
-	panel costs one click to open and none to keep open, which is the trade
-	`SettingsMenu`'s "nothing here closes the panel" rule already made for
-	this control: a reader stepping the size or trying the other face wants to
-	keep clicking and watching the text behind the panel reflow.
+	icon-sized trigger; a size rail beside a two-cell face picker would be the
+	widest thing in a row that already carries two edition names as wide as
+	"Bíblia Sagrada (Matos Soares)" and wraps beneath them. The panel costs one
+	click to open and none to keep open, which is the trade `SettingsMenu`'s
+	"nothing here closes the panel" rule already made for this control: a
+	reader trying a size or the other face wants to keep clicking and watching
+	the text behind the panel reflow.
+
+	THE SIZE IS A RAIL OF FOUR STOPS, AND THE REASON IS THE MEASURE. It was a
+	`[−] 120% [+]` stepper over eleven values. The reading column is
+	`--measure-cpl` characters wide, so it grows with the setting, and the grid
+	centres it — which means every press slid the column's start edge, the bar
+	packed against it and this panel hanging off the bar about 25px sideways,
+	and a reader crossing the range chased their own button through ten presses
+	and a quarter of the viewport. The travel cannot go: the column IS the
+	size, and pinning it while the type moved would be the bug. What can go is
+	the repetition. One click lands anywhere on the rail. `prefs.svelte.ts`
+	carries the four values and why they are those four.
+
+	NO PERCENTAGE AND NO RESET. The number was a readout the stepper needed —
+	with eleven indistinguishable states a reader had no other way to know
+	where they were, and no way home from 180% but eight clicks — and it was
+	the button back to 100% for that reason. Four labelled stops with the
+	current one filled say both things in the shape of the control, and the
+	default is the second dot, one click away from anywhere.
+
+	THE ARROW KEYS MOVE ALONG THE RAIL, gated on the focus being inside it —
+	the face row is a radio group where an arrow means "the other face", which
+	the browser does not do for `<button role=menuitemradio>` but which a
+	reader may reasonably expect, and resizing the type from it would be the
+	wrong answer either way. Left and right follow the rail's own direction, so
+	an Arabic interface — where the rail runs the other way — steps toward the
+	key that was pressed rather than away from it.
 
 	Built to the shared row template (`.field`, `.segmented` in
 	`styles/menus.css`), so the two rows here and the four in `SettingsMenu`
 	are one family and a third preference is a `<div class="field">`.
-
-	THE PERCENTAGE IS A BUTTON, not a readout. The stepper had no way home
-	from 180% but eight clicks on the other arrow, and the one place a reader
-	looks while stepping is the number. Its `aria-live` stays, so the value is
-	still announced as it changes; `disabled` at 100% is what says the button
-	is spent rather than broken.
-
-	THE ARROW KEYS STEP THE SIZE, and they are gated on the focus being inside
-	the stepper — the face row is a radio group where an arrow means "the
-	other face", which the browser does not do for `<button role=menuitemradio>`
-	but which a reader may reasonably expect, and stepping the type size from
-	it would be the wrong answer either way. `SettingsMenu` carried the same
-	gate for the same reason before this panel existed.
 
 	Hidden in focus mode with the rest of the bar, `ZenToggle` excepted
 	(`styles/zen.css`). That is not a regression — the settings panel's
@@ -57,14 +70,7 @@
 	that the bar carries the way back out and nothing else.
 -->
 <script lang="ts">
-	import {
-		fontScale,
-		readingFace,
-		DEFAULT_FONT_SCALE,
-		MIN_FONT_SCALE,
-		MAX_FONT_SCALE,
-		type ReadingFace
-	} from '$lib/prefs.svelte';
+	import { fontScale, readingFace, FONT_SIZES, type ReadingFace } from '$lib/prefs.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
@@ -72,22 +78,33 @@
 
 	const menu = new Menu();
 
-	const percent = $derived(Math.round(fontScale.value * 100));
-
 	/** Serif first: it is the default, and the row reads left to right from
 	 *  what the reader has unless they said otherwise. */
 	const FACES: ReadingFace[] = ['serif', 'sans'];
 
 	function onPanelKeydown(e: KeyboardEvent) {
 		menu.onPanelKeydown(e);
-		if (!(e.target instanceof Element) || !e.target.closest('.stepper')) return;
-		if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-			e.preventDefault();
-			fontScale.increase();
-		} else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-			e.preventDefault();
-			fontScale.decrease();
-		}
+		if (!(e.target instanceof Element)) return;
+		const rail = e.target.closest('.rail');
+		if (!rail) return;
+
+		// The rail is a row flex container, so it already runs right to left in
+		// an Arabic interface and the physical arrow keys have to follow it.
+		// Read back rather than assumed: the interface language and the
+		// language being read are different questions, and only the computed
+		// direction answers the one this control is laid out by.
+		const rtl = getComputedStyle(rail).direction === 'rtl';
+		const forward = e.key === 'ArrowUp' || e.key === (rtl ? 'ArrowLeft' : 'ArrowRight');
+		const back = e.key === 'ArrowDown' || e.key === (rtl ? 'ArrowRight' : 'ArrowLeft');
+		if (!forward && !back) return;
+		e.preventDefault();
+
+		const at = FONT_SIZES.findIndex((size) => size.scale === fontScale.value);
+		const next = Math.max(0, Math.min(FONT_SIZES.length - 1, at + (forward ? 1 : -1)));
+		fontScale.set(FONT_SIZES[next].scale);
+		// Focus follows the selection, as it does in a radio group: the stop
+		// the reader just chose is the one the next arrow steps from.
+		rail.querySelectorAll<HTMLElement>('.stop')[next]?.focus();
 	}
 </script>
 
@@ -117,38 +134,28 @@
 		>
 			<div class="field" role="none">
 				<span class="field-label label-micro">{t('fontSize.label')}</span>
-				<div class="field-control stepper" role="none">
-					<button
-						type="button"
-						role="menuitem"
-						class="step-btn"
-						aria-label={t('fontSize.smaller')}
-						disabled={fontScale.value <= MIN_FONT_SCALE}
-						onclick={() => fontScale.decrease()}
-					>
-						<Icon name="minus" />
-					</button>
-					<button
-						type="button"
-						role="menuitem"
-						class="value"
-						aria-label={t('fontSize.reset')}
-						aria-live="polite"
-						disabled={fontScale.value === DEFAULT_FONT_SCALE}
-						onclick={() => fontScale.reset()}
-					>
-						{percent}%
-					</button>
-					<button
-						type="button"
-						role="menuitem"
-						class="step-btn"
-						aria-label={t('fontSize.larger')}
-						disabled={fontScale.value >= MAX_FONT_SCALE}
-						onclick={() => fontScale.increase()}
-					>
-						<Icon name="plus" />
-					</button>
+				<div
+					class="field-control rail"
+					style="--half-stop: {50 / FONT_SIZES.length}%"
+					role="group"
+					aria-label={t('fontSize.label')}
+				>
+					{#each FONT_SIZES as size, i (size.scale)}
+						{@const current = fontScale.value === size.scale}
+						<button
+							type="button"
+							role="menuitemradio"
+							aria-checked={current}
+							class="stop"
+							class:current
+							style="--i: {i}"
+							aria-label={t(`fontSize.${size.name}`)}
+							title={t(`fontSize.${size.name}`)}
+							onclick={() => fontScale.set(size.scale)}
+						>
+							<span class="dot"></span>
+						</button>
+					{/each}
 				</div>
 			</div>
 
@@ -198,59 +205,69 @@
 		--control-height: 1.7rem;
 	}
 
-	/* Laid out like the segmented control below it — the two ends of a
-	   full-width bar with the reading between them — so the panel's two
-	   multi-part controls have the same silhouette. */
-	.stepper {
-		justify-content: space-between;
+	/*
+	 * Four hit targets filling the row edge to edge, each with its dot in the
+	 * middle: a rail is a thing you click AT rather than a set of buttons you
+	 * click ON, and a gap between the stops would be a place a click lands on
+	 * nothing.
+	 */
+	.rail {
+		position: relative;
+		gap: 0;
 	}
 
-	.step-btn {
-		display: inline-flex;
+	/*
+	 * The line the stops sit on. It runs from the first dot's centre to the
+	 * last, which is half a stop in from either end. The template computes it
+	 * from the count rather than writing it as a number here, so the rail
+	 * keeps its ends if `FONT_SIZES` ever gains or loses a rung.
+	 */
+	.rail::before {
+		content: '';
+		position: absolute;
+		inset-inline: var(--half-stop);
+		inset-block-start: calc(50% - 0.5px);
+		height: 1px;
+		background: var(--color-border);
+	}
+
+	.stop {
+		position: relative;
+		flex: 1;
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: var(--control-height);
-		height: 100%;
-		padding: 0;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		background: var(--color-bg-elevated);
-		color: var(--color-text);
-		font-size: 0.8rem;
-		cursor: pointer;
-	}
-
-	.step-btn:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
-	}
-
-	/* A button wearing no chrome at all: the reading is what it was, and the
-	   affordance is that it responds to the pointer. A bordered cell here
-	   would make the row read as three buttons of equal weight, where two of
-	   them are the control and this one is a way back. */
-	.value {
-		flex: 1;
 		height: 100%;
 		padding: 0;
 		border: 0;
 		background: none;
-		text-align: center;
-		font: inherit;
-		font-variant-numeric: tabular-nums;
-		font-size: 0.8rem;
-		line-height: 1;
-		color: var(--color-text);
 		cursor: pointer;
 	}
 
-	.value:hover:not(:disabled) {
-		color: var(--color-accent);
+	/*
+	 * THE DOTS GROW ALONG THE RAIL, which is what the control says instead of
+	 * a word. Four wordless stops of one size would be four identical things
+	 * in a row with no clue which end is which; a size ramp is legible before
+	 * the tooltip arrives and in every language without being translated. The
+	 * names are still there for anyone who hovers, and for a screen reader,
+	 * where the ramp says nothing at all.
+	 */
+	.dot {
+		width: calc(0.32rem + var(--i) * 0.08rem);
+		aspect-ratio: 1;
+		border-radius: 50%;
+		border: 1px solid var(--color-border);
+		/* Opaque, so the rule behind the rail stops at the dot rather than
+		   running through it. */
+		background: var(--color-bg-elevated);
 	}
 
-	/* Not dimmed at rest — it is still the reading, and a greyed number would
-	   say the size itself was unavailable. Only the pointer changes. */
-	.value:disabled {
-		cursor: default;
+	.stop:hover .dot {
+		border-color: var(--color-accent);
+	}
+
+	.stop.current .dot {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 </style>
