@@ -21,6 +21,7 @@ estimate; an unscoped item says so rather than guessing.
 | 9   | **Disclosing edition divergence to the reader**                        | A reader following a citation into Psalm 13 or Acts 14 gets real, plausible, **wrong** text with nothing marking it; Acts 14 is 20 consecutive verses where the same number names different text in two editions. Behind it sit the unread silent-case leads `audit.py balance` ranks over all nine editions.                                                                                                                                                                           | §5 of `docs/research/bible-edition-divergence.md` needs the classification exported as data the site can read, not a Python dict. The leads need reading.                                                                                                                                                                                                                        | Estimate: small for §5 (a data export and one advisory). The leads are their own pass.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | 13  | **The CCC's Arabic edition, and the PDF-only document editions**       | `ar` reads 24 documents and no Catechism. Twenty-seven document editions exist on vatican.va as PDF and as nothing else — ten on the modern shell, seventeen on the Vatican II mirror. **26 are now in `raw/`** and four are read exactly (`docs/research/pdf-editions.md` §10): the 27th is published empty and `evangelii-gaudium.ar` is a scan.                                                                                                                                      | `common/pdf_document.py` renders a PDF as the markup `parse_document` reads; the Catechism's readers are `scrapers/common/pdf.py`, `scrapers/ccc/compendium_pdf.py`, `scrapers/ccc/ccc_pdf.py`, with `rebuild.py`'s `readers` fingerprint. Arabic extends them rather than rewriting them. Four Compendium residues in `docs/research/pdf-editions.md` §8b are in the same code. | Measured 2026-09-08 for the documents: four editions equal their siblings on both section set and citation count; three want their note apparatus read (one finds no markers, one finds 508 against a sibling's 288), and no stage writes any of them to `build/` yet. The 16 Chinese and 4 RTL editions are unread. **Arabic Catechism, measured 2026-08-31: 2,852 of 2,865 paragraph numbers, poppler-only** (MuPDF fragments RTL lines) — the work is normalisation, not extraction, the Allah ligature decomposing in visual order ~4,900 times. |
 | 15  | **A Bible in every interface language**                                | The rest read Scripture in English through `CONTENT_LANG_FALLBACK`. The largest coverage gap left, and the one a reader notices first. The research is finished (`docs/research/bible-texts.md` §One Bible per interface language).                                                                                                                                                                                                                                                     | What remains is Polish, Russian and Romanian. None is blocked on a parser; each is blocked on a decision stated below.                                                                                                                                                                                                                                                           | Per language: one scraper against a known source with a known markup shape. All three are MediaWiki (`ru`/`ro` plain wikitext; `fr` transcluded from ProofreadPage). Romanian most expensive — versification survey first. **`sv`, `sl` and `ar` are blocked and are not sizing questions**: `sv` has no doctrinally acceptable text, `sl` and `ar` are blocked on digitisation.                                                                                                                                                                     |
+| 18  | **Documents are discovered from one language's index**                 | `vatican_docs.py` reads the ENGLISH index and derives every sibling-language URL by substituting the language segment into the English path, so our map of what exists is one language's map. Where the two indexes spell a document's URL differently the sibling probe 404s, and the absence is recorded as the source's. Ten Pius XI encyclicals are affected, _Non Abbiamo Bisogno_ — written in Italian — among them. Detailed below.                                              | Nothing in the schema or the parser. It is a discovery pass and a re-probe, and it needs the network: these URLs were never fetched, so `raw/` cannot answer for them.                                                                                                                                                                                                           | Measured 2026-09-08: **at least 19 editions** are provably reachable and currently recorded as absent (10 `it`, 6 `la`, 3 `es`, off the Italian indexes alone). The document count is unlikely to move for encyclicals — the two indexes list the same 217/218 — and is **unmeasured for the other 76 documents**, whose indexes are cached in one language only.                                                                                                                                                                                    |
 | 10  | **Denzinger, Roman Catechism, Vatican I**                              | Denzinger is Herder-copyrighted and never a vatican.va publication. The Roman Catechism and Vatican I were not found on vatican.va under any URL tried; Vatican I's absence is not conclusively confirmed (no sitemap search attempted). `docs/research/vatican-documents.md` §2, §5.                                                                                                                                                                                                   | —                                                                                                                                                                                                                                                                                                                                                                                | Out of scope, not sized.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 16  | **Provenance marking — which prose on a page is ours**                 | `site/descriptions.json` holds descriptions written here by reading a document, merged onto `manifest.description` at sync time and served on `/documenta`, in `apparatus.json` and in the shell `<head>` as `prose`. It is the one running text on this site nobody else holds rights in, and a reader cannot tell it from the publisher's own summary. A colophon sentence was drafted and removed: a reader meets that prose beside a document, not on the colophon.                 | Nothing on the data side — the descriptions are already their own tier. It is a rendering and copy decision. Interacts with `site/docs/edge.md`'s "names, never text" rule: the edge already serves a description as `prose`.                                                                                                                                                    | Not sized. The marker is small; deciding what it _says_ is the work, and whether it needs a word in thirty-four dictionaries or can be non-verbal.                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 17  | **A site-wide subject vocabulary**                                     | `site/document-tags.json` is a closed vocabulary keyed by document slug and facets `/documenta` alone. Extending it across CCC divisions, canons and Compendium questions would give the site its first **topical** entry — the only surface serving the two largest reader groups (`docs/research/audiences.md` §1, §5) by subject without waiting for gap 2. It is also gap 5 generalised: the print Catechism's own answer to "what else belongs here", derived rather than scraped. | The vocabulary discipline that already governs `document-tags.json` (`sync-corpus.mjs` exits 1 on an unlisted term, an unknown slug, a case-duplicate or a padded tag) has to extend to whatever new key space the terms attach to.                                                                                                                                              | Not sized. The machinery is small; assigning terms to the CCC's paragraphs and the Code's canons is editorial rather than mechanical.                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -248,6 +249,73 @@ wrong labels passes all four.
   locator naming a verse absent from its page — 2 Corinthians 6's notes numbered
   `6,19`–`6,23` are verbatim about 2 Cor 7:1–4. The scraper logs them as
   anomalies rather than guessing.
+
+## Gap 18 — the map is drawn from the English index
+
+`vatican_docs.py` discovers a document from a pontiff's ENGLISH index and
+derives every other language's URL from the English one by substituting the
+language segment (`VaticanDocument.base_lang`, `FALLBACK_INDEX_LANGS`). So the
+corpus's answer to "what exists" is one language's answer, and its answer to
+"in which languages" is a guess checked only against a URL that guess built.
+
+**Ten encyclicals are read wrong, and the source says so in its own indexes.**
+vatican.va writes the date digits into the path, and for these ten the English
+index writes them the other way round from every other language's:
+
+```
+EN  /content/pius-xi/en/encyclicals/documents/hf_p-xi_enc_29061931_non-abbiamo-bisogno.html
+IT  /content/pius-xi/it/encyclicals/documents/hf_p-xi_enc_19310629_non-abbiamo-bisogno.html
+```
+
+Substituting `en` → `it` asks for a page that does not exist, so
+`absent-sources.json` holds `/it/…29061931…` as a definitive 404 — and the same
+for `es`, `fr`, `de`, `la` and the rest, sixteen languages per document. The
+ten are `non-abbiamo-bisogno`, `nova-impendet`, `rite-expiatis`,
+`iniquis-afflictisque`, `acerba-animi`, `caritate-christi-compulsi`,
+`dilectissima-nobis`, `ingravescentibus-malis`, `rerum-ecclesiae` and
+`maximam-gravissimamque`.
+
+**The name is what makes it undeniable.** _Non Abbiamo Bisogno_ is an
+encyclical Pius XI wrote in Italian, and this corpus holds it in English alone.
+A recorded absence that contradicts the document's own title is not a fact about
+the publisher.
+
+**A wrong 404 is stickier than a wrong parse.** `absent-sources.json` is one of
+the four files the root `CLAUDE.md` names as regenerable only from a previous
+copy of itself: a re-parse preserves it and a rebuild into an empty `build/`
+loses it. Nothing in the pipeline re-asks a question already answered no, so
+these absences persist until something deletes the rows.
+
+**Nineteen editions are recoverable from pages already in `raw/`**, read off the
+Italian indexes: ten Italian, six Latin, three Spanish. That is a floor and not
+an estimate — the probe never reached a real page, so no document's own language
+bar has been read.
+
+**What is measured and what is not.** For encyclicals the two indexes list the
+same documents (218 English, 217 Italian; the one extra is
+`nos-es-muy-conocida`, the duplicate the scraper already folds), so the
+DENOMINATOR is sound there and what is lost is editions. The other 76 documents
+— 33 exhortations, 25 CDF, 16 Vatican II, 2 Vatican I — have their index cached
+in **one language only** and have never been compared, so for those it is
+unknown whether the English index lists everything.
+
+**The fix is a union, not a second crawl of the same thing.** Discover from the
+Italian index beside the English one and match on `(pontiff, kind, slug tail)`
+rather than on the full document id, the date digits being exactly what differs;
+where the two disagree about a path, both are real and the document has two
+addresses. Then drop the affected rows from `absent-sources.json` and re-probe.
+Italian is the first language to add because it is the one the Holy See
+publishes most completely, and because it is already the fallback the discovery
+code knows about.
+
+**It is a re-crawl and not a re-parse, which is the one thing here that costs
+something.** `docs/link-surface.md`'s insurance policy — any capture regret is
+fixed by re-parsing — does not cover a page nobody ever fetched.
+
+**What it buys is the census.** `/bibliotheca/census` reports the magisterium at
+287 of 298 documents in English against 263 in Italian, which reads as a claim
+about vatican.va and is partly a claim about our crawl. A coverage matrix is
+only as honest as its denominator.
 
 ## The document structure trees
 
@@ -479,5 +547,9 @@ A priority argument, not a dependency one — nothing here gates anything else.
 5. **#2 search** — the largest unscoped item; needs a prototype before it can be
    planned.
 6. **#1's cross-language oracle** — what the symmetry check should assert.
-7. **#5 `related` / #6 Appendix B** — lowest urgency; each needs a research pass
+7. **#18's Italian discovery pass** — nineteen recoverable editions and a
+   denominator that is currently one language's. Placed here rather than higher
+   because it is the only item on this list that needs the network, and the
+   ten defective rows are known by name meanwhile.
+8. **#5 `related` / #6 Appendix B** — lowest urgency; each needs a research pass
    in `docs/research/` style before implementation is scopeable.
