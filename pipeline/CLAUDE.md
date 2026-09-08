@@ -327,7 +327,23 @@ sl sw vi`) as vocabulary entries. What bites:
 - **`pdf-only` is the one status that does not mean absent.** The English
   _Amoris Laetitia_ is one. On the modern shell the evidence is a
   `/content/dam/` href whose language suffix matches the page (Latin arrives as
-  `_lt`).
+  `_lt`). `capture-pdfs` fetches every edition the ledger and the
+  Vatican II index record that way, reading each URL off the page that
+  established the status rather than a table of its own.
+- **A 200 carrying no body is not a capture.** The Traditional Chinese _Inter
+  Mirifica_ the mirror's index links answers `content-length: 0`, and `Fetcher`
+  cannot tell an empty document from an empty answer — so the capture path
+  deletes the file and withdraws its date (`common.forget_capture`), because a
+  zero-byte page under write-once `raw/` would still carry evidence of a
+  retrieval. `docs/research/pdf-editions.md` §10.
+- **A PDF edition is rendered as markup, not parsed a second time.**
+  `common/pdf_document.py` recovers only what a PDF has and a page does not —
+  the folios, the note block, the raised markers, the paragraph breaks — and
+  hands `parse_document` the block stream it already reads, so a PDF edition
+  gets the structure walk, the corrections and the ledgers unchanged. Four of
+  the seven Latin-script editions come out equal to their siblings on both
+  section set and citation count; `docs/research/pdf-editions.md` §10 has the
+  table and the three measurements that decided the reader.
 - **A discovery regex narrowed to what the parser can read silently narrows what
   the LEDGER can know.** `_VATII_LINK_RE` required `.html`, so the Vatican II
   index's Traditional Chinese PDFs (all sixteen documents, at
@@ -1225,7 +1241,7 @@ uv run pipeline/derive_national_calendars.py --all --write    # write them
 - **What it will not derive** is stated in each generated file rather than
   guessed: holy days of obligation (the feeds do not mark them), `displacedBy`
   on a move, and any proper whose date fits neither a fixed day, an offset from
-  Easter, nor an _n_th weekday. Those become a `NOT DERIVED` comment block.
+  Easter, nor an \_n_th weekday. Those become a `NOT DERIVED` comment block.
 - **`SHARED_PROPERS` names groups of calendars whose propers agree, and the tool
   takes the INTERSECTION** — it never trusts the table for content. A date
   enters a group only where every member holds an identical entry list on it,

@@ -41,7 +41,6 @@ from __future__ import annotations
 import argparse
 import collections
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -59,16 +58,6 @@ FAMILIES = ("encyclical", "exhortation", "vatii")
 #: order so that re-running this cannot move a record to a different sibling.
 ANCHOR_ORDER = ("en", "it", "la", "pt", "es", "fr", "de", "pl", "ar", "ru")
 
-#: A stub that offers the document as a PDF *in the language asked for* is
-#: not the same absence as a stub that offers nothing. The edition EXISTS;
-#: vatican.va publishes it in a format nothing here reads. Matching the
-#: language suffix is what makes it evidence -- every page links siblings'
-#: PDFs too. The mirror's own codes apply, so Latin arrives as `_lt` --
-#: `common.AMBIGUOUS_SOURCE_CODES` is why that row may not be assumed and may
-#: not be inverted: read as the corpus tag it means Lithuanian.
-_PDF_HREF_RE = re.compile(r'href="(/content/dam/[^"]+?_([a-z]{2})\.pdf)"')
-PDF_LANG_FROM_SUFFIX = {"lt": "la"}
-
 
 def raw_pages() -> list[tuple[str, str, str, Path]]:
     """`(family, slug, lang, path)` for every document page under `raw/`."""
@@ -83,22 +72,12 @@ def raw_pages() -> list[tuple[str, str, str, Path]]:
     return out
 
 
-def pdf_for(html: str, lang: str) -> str | None:
-    """The page's link to its own text as a PDF in `lang`, if it prints one.
-
-    Compared through `corpus_lang` rather than a bare `.get(suffix, suffix)`:
-    the fall-through matched `_lt.pdf` against a page asked for in `lt`, which
-    would offer a Lithuanian reader the Latin edition. Latent only because no
-    document family here parses Lithuanian yet -- exactly the shape that stops
-    being latent the day one does.
-    """
-    for href, suffix in _PDF_HREF_RE.findall(html):
-        tag = common.corpus_lang(
-            suffix, PDF_LANG_FROM_SUFFIX, source="a page's own PDF link"
-        )
-        if tag == lang:
-            return href
-    return None
+#: What a page offers instead of its own text. Both the regex and the
+#: language-suffix reasoning moved to `vatican_docs.pdf_for` on 2026-09-08,
+#: when `capture-pdfs` became its second caller: the status recorded here and
+#: the file fetched there have to be about the same edition, and two copies
+#: of a language table are how they stop being.
+pdf_for = V.pdf_for
 
 
 def classify(path: Path, lang: str, work_id: str) -> tuple[str, str]:

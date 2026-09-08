@@ -267,14 +267,17 @@ from common import (
     corpus_dir,
     corpus_lang,
     corrections_receipt,
+    download_resumable,
     fold,
     fold_index,
+    forget_capture,
     json_text,
     load_corrections,
     load_overrides,
     load_translations_checked,
     looks_like_number_typo,
     read_text_or_none,
+    record_capture,
     require_corpus,
     roman_to_int,
     source_code,
@@ -8428,6 +8431,46 @@ def cache_name_for(ref: DocRef, lang: str) -> str:
     return f"{ref.family}__{ref.slug}__{lang}.html"
 
 
+def pdf_cache_name_for(family: str, slug: str, lang: str) -> str:
+    """Where an edition's PDF sits under `raw/`, beside its shell page.
+
+    The same stem as the HTML, so the two halves of one edition sort
+    together and `record_translations.raw_pages()` -- which globs `*.html`
+    -- cannot mistake one for the other."""
+    return f"{family}__{slug}__{lang}.pdf"
+
+
+#: A stub that offers the document as a PDF *in the language asked for* is
+#: not the same absence as a stub that offers nothing. The edition EXISTS;
+#: vatican.va publishes it in a format nothing here reads. Matching the
+#: language suffix is what makes it evidence -- every page links siblings'
+#: PDFs too. The mirror's own codes apply, so Latin arrives as `_lt` --
+#: `common.AMBIGUOUS_SOURCE_CODES` is why that row may not be assumed and may
+#: not be inverted: read as the corpus tag it means Lithuanian.
+_PDF_HREF_RE = re.compile(r'href="(/content/dam/[^"]+?_([a-z]{2})\.pdf)"')
+PDF_LANG_FROM_SUFFIX = {"lt": "la"}
+
+
+def pdf_for(html: str, lang: str) -> str | None:
+    """The page's link to its own text as a PDF in `lang`, if it prints one.
+
+    Compared through `corpus_lang` rather than a bare `.get(suffix, suffix)`:
+    the fall-through matched `_lt.pdf` against a page asked for in `lt`, which
+    would offer a Lithuanian reader the Latin edition. Latent only because no
+    document family here parses Lithuanian yet -- exactly the shape that stops
+    being latent the day one does.
+
+    Lives here rather than in `record_translations.py`, which had it first,
+    because two callers now need it and the second one FETCHES what it finds:
+    a copy that drifted would put the wrong language's text under a raw name
+    that asserts the right one."""
+    for href, suffix in _PDF_HREF_RE.findall(html):
+        tag = corpus_lang(suffix, PDF_LANG_FROM_SUFFIX, source="a page's own PDF link")
+        if tag == lang:
+            return href
+    return None
+
+
 #: The modern `content/{pontiff}/{lang}/...` pages use the standard tag for
 #: every language but one. Read off the switcher of the one document that
 #: offers Hebrew (`exhortation.ecclesia-in-medio-oriente`), which links
@@ -10009,6 +10052,166 @@ def report_cdf_census(fetcher: Fetcher, unselected: bool) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------
+# Capturing the editions this parser cannot read
+# --------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class PdfEdition:
+    """One edition vatican.va publishes as a PDF and as nothing else."""
+
+    family: str
+    slug: str
+    lang: str
+    url: str
+    #: How this project learned of it, which is also where it would go if the
+    #: Holy See replaced the PDF with HTML: "index" for an edition the Vatican
+    #: II mirror's index links directly, "shell" for one a modern content page
+    #: offers in place of its own text.
+    found: str
+
+    @property
+    def cache_name(self) -> str:
+        return pdf_cache_name_for(self.family, self.slug, self.lang)
+
+
+def pdf_only_editions(fetcher: Fetcher) -> tuple[list[PdfEdition], list[str]]:
+    """Every `pdf-only` document edition, with the URL that would fetch it.
+
+    BOTH SOURCES ARE READ RATHER THAN LISTED, and they are read from what is
+    already on disk: the Vatican II index off its cached copy, the modern
+    shells off the pages whose refusal is what established the status. A
+    hand-written table of twenty-seven URLs would be a fourth ledger of the
+    kind `common/translations.py` exists to avoid -- and it would go stale
+    silently the day one of them becomes HTML.
+
+    The ledger says WHICH editions are `pdf-only`; the page says WHERE the
+    PDF is. Neither can answer the other's question: the status is a
+    deliberate record (`record_translations.py`), and the href is a property
+    of the page as fetched."""
+    seen: set[tuple[str, str, str]] = set()
+    out: list[PdfEdition] = []
+    notes: list[str] = []
+
+    refs, _ = discover_vatii(fetcher)
+    for ref in sorted(refs, key=lambda r: r.slug):
+        for lang, url in sorted(ref.pdf_lang_urls.items()):
+            # A language the mirror offers BOTH ways is not pdf-only, and
+            # the HTML is what this parser reads. `discover_vatii` records
+            # every PDF the index links, which is the right thing for it to
+            # do and the wrong set to fetch.
+            if lang in ref.lang_urls:
+                continue
+            key = (ref.family, ref.slug, lang)
+            seen.add(key)
+            out.append(PdfEdition(ref.family, ref.slug, lang, url, "index"))
+
+    for work_id, langs in sorted(TRANSLATIONS_CHECKED.items()):
+        family, _, rest = work_id.partition(".")
+        slug, _, _anchor = rest.rpartition(".")
+        if not slug:
+            continue
+        for lang, record in sorted(langs.items()):
+            if record.get("status") != "pdf-only":
+                continue
+            key = (family, slug, lang)
+            if key in seen:
+                continue
+            seen.add(key)
+            page = RAW_ROOT / f"{family}__{slug}__{lang}.html"
+            html = read_text_or_none(page)
+            if html is None:
+                notes.append(
+                    f"{work_id} [{lang}]: recorded pdf-only, but the shell page "
+                    f"that says so is not under raw/ ({page.name})"
+                )
+                continue
+            href = pdf_for(html, lang)
+            if href is None:
+                notes.append(
+                    f"{work_id} [{lang}]: recorded pdf-only, but {page.name} no "
+                    "longer links a PDF in that language -- re-run "
+                    "record_translations.py before trusting the status"
+                )
+                continue
+            out.append(
+                PdfEdition(family, slug, lang, "https://www.vatican.va" + href, "shell")
+            )
+    return out, notes
+
+
+def run_pdf_capture(
+    fetcher: Fetcher, only: list[str] | None, dry_run: bool
+) -> tuple[int, int, int]:
+    """Fetch every `pdf-only` edition into `raw/`. Returns (got, had, failed).
+
+    Nothing parses these yet, and that is not a reason to defer the capture:
+    a fetch is the one part of this project that costs someone else's server
+    and cannot be redone from what we hold (`docs/link-surface.md`). Reading
+    them is a re-parse away once there is a reader; not having them is a
+    re-crawl away, forever."""
+    editions, notes = pdf_only_editions(fetcher)
+    for note in notes:
+        print(f"  [note] {note}")
+    if only:
+        wanted = set(only)
+        editions = [e for e in editions if e.slug in wanted]
+    print(
+        f"{len(editions)} pdf-only edition(s) of {len({e.slug for e in editions})} document(s)"
+    )
+    got = had = failed = 0
+    for ed in editions:
+        dest = RAW_ROOT / ed.cache_name
+        if fetcher.cached(ed.cache_name) is not None:
+            had += 1
+            print(
+                f"  {ed.lang:4s} cached   {dest.stat().st_size:>10,d} B  {ed.cache_name}"
+            )
+            continue
+        if dry_run:
+            print(f"  {ed.lang:4s} would    {ed.url}")
+            continue
+        data, err = fetcher.try_fetch(ed.url, ed.cache_name)
+        if data:
+            got += 1
+            print(f"  {ed.lang:4s} fetched  {len(data):>10,d} B  {ed.cache_name}")
+            continue
+        if data is not None:
+            # A 200 CARRYING NOTHING IS NOT A CAPTURE. The Traditional
+            # Chinese `Inter Mirifica` the mirror's index links answers
+            # `content-length: 0` and has since 2023-02-22; no other filename
+            # under `/chinese/concilio/` serves it, and the directory is 403.
+            # `Fetcher` cannot tell an empty document from an empty answer
+            # and writes the file either way, so the file and its capture
+            # date are withdrawn here rather than left to assert that this
+            # edition was captured.
+            dest.unlink(missing_ok=True)
+            forget_capture(dest)
+            failed += 1
+            print(
+                f"  {ed.lang:4s} EMPTY    {ed.cache_name}: the origin answered "
+                "200 with no body; nothing written"
+            )
+            continue
+        # The same second choice `ccc.py` makes, for the same reason: a PDF
+        # vatican.va's edge drops mid-transfer cannot be fixed by retrying,
+        # because each retry starts from zero, but it can be resumed.
+        size, rerr = download_resumable(ed.url, dest, policy=VATICAN_POLICY)
+        if rerr is None:
+            # `download_resumable` writes the file itself and so never
+            # reaches `Fetcher`'s capture record; without this the resumed
+            # half of a crawl would carry no retrieval date at all.
+            record_capture(dest)
+            got += 1
+            print(f"  {ed.lang:4s} resumed  {size:>10,d} B  {ed.cache_name}")
+            continue
+        failed += 1
+        print(f"  {ed.lang:4s} FAILED   {ed.cache_name}: {err}; resuming: {rerr}")
+    print(f"\n{got} fetched, {had} already on disk, {failed} failed")
+    return got, had, failed
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -10151,6 +10354,21 @@ def main() -> int:
         "check-symmetry",
         help="cross-language section-set check over already-written corpus/build/ (no fetches, no parsing)",
     )
+    pc = sub.add_parser(
+        "capture-pdfs",
+        parents=[net],
+        help="fetch every edition recorded pdf-only into corpus/raw/ -- the "
+        "editions that exist and that nothing here reads yet",
+    )
+    pc.add_argument(
+        "--only",
+        help="comma-separated document slugs, for fetching one document's PDFs",
+    )
+    pc.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the URL of every edition that would be fetched and stop",
+    )
 
     args = ap.parse_args()
     # Fail before any directory is created; see common.require_corpus().
@@ -10263,6 +10481,13 @@ def main() -> int:
         ok = report_run(results, fetcher, args.accept_baseline)
         report_symmetry(check_language_symmetry(known=sections_from_results(results)))
         return 0 if ok else 1
+
+    if args.cmd == "capture-pdfs":
+        _got, _had, failed = run_pdf_capture(
+            fetcher, args.only.split(",") if args.only else None, args.dry_run
+        )
+        report_fetching(fetcher)
+        return 1 if failed else 0
 
     if args.cmd == "discover-cdf":
         return report_cdf_census(fetcher, args.unselected)

@@ -84,7 +84,12 @@ from .binaries import (
     run_binary,
 )
 from .book_forms import BOOK_FORMS_PATH, book_form_pattern, book_forms
-from .captured import captured_at, record_capture, source_captured_at
+from .captured import (
+    captured_at,
+    forget_capture,
+    record_capture,
+    source_captured_at,
+)
 from .corrections import (
     FIELD_VERSE_DUPLICATE,
     FIELD_VERSE_NUMBER,
@@ -200,6 +205,7 @@ __all__ = [
     "filed_work_ids",
     "fold",
     "fold_index",
+    "forget_capture",
     "httpx_transport",
     "is_wholesale_divergent",
     "json_text",

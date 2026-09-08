@@ -88,6 +88,37 @@ def source_captured_at(source_dir: Path) -> str | None:
     return min(dates) if dates else None
 
 
+def forget_capture(page: Path) -> None:
+    """Drop `page`'s capture record, for a write that was not a capture.
+
+    THE ONLY CALLER IS A FETCH THAT SUCCEEDED AND BROUGHT NOTHING BACK.
+    vatican.va serves the Traditional Chinese `Inter Mirifica` its own index
+    links as a 200 with `content-length: 0`, and `Fetcher` -- which cannot
+    tell an empty document from an empty answer, and should not try -- writes
+    the file and stamps it. A zero-byte page under `raw/` is worse than no
+    page: `raw/` is write-once, so the stamp would stand as evidence that the
+    edition was captured on that day.
+
+    Not an undo for an unwanted fetch. The request was made; what is being
+    withdrawn is the claim that it returned a document."""
+    try:
+        rel = page.resolve().relative_to(raw_root().resolve())
+    except ValueError:
+        return
+    if len(rel.parts) < 2:
+        return
+    source_dir = raw_root() / rel.parts[0]
+    entries = dict(load_captured(source_dir))
+    if entries.pop(str(Path(*rel.parts[1:])), None) is None:
+        return
+    path = source_dir / CAPTURED_AT_NAME
+    _cache[path] = entries
+    write_if_changed(
+        path,
+        json.dumps(dict(sorted(entries.items())), indent=2, ensure_ascii=False) + "\n",
+    )
+
+
 def record_capture(page: Path, when: str | None = None) -> None:
     """Note that `page` was fetched today (or on `when`).
 

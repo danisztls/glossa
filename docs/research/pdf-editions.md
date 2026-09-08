@@ -195,7 +195,7 @@ The four Compendia are done. Still deferred, with the measurements taken 2026-08
 
 - ~~**The Chinese Catechism**~~ — **built and shipping, 2026-09-05** (`ccc.zht`, 2,860 paragraphs). §9a records what the build settled and where this section was wrong.
 - **The Arabic Catechism** — 5 files mapping onto the Prologue and the four Parts. 2,852 of 2,865 paragraph numbers once the regex tolerates a combining mark or `«` between the bidi controls and the number, leaving 13 to read individually. **poppler only**: MuPDF fragments RTL lines, splitting single words across three. Also prints no footnote apparatus. §3's "does not round-trip" finding is confirmed and quantified — the Allah ligature decomposes in visual order, giving **2,312 occurrences of `هللا` for `الله` and 2,561 of `هلل`, against 30 correct spellings**. The text's commonest word is mis-spelled roughly 4,900 times before any normalisation, which is why it is deferred and why its normalisation must stay separable from extraction.
-- **The six documents**, including the English _Amoris Laetitia_. Untouched by this pass. §7 step 3 still reads correctly, and the `common/pdf.py` it wanted now exists.
+- ~~**The six documents**~~ — **captured and read, 2026-09-08**; §10 records what the capture found and how far the reading got. They were twenty-seven by then, not six.
 
 ## 9a. The Chinese Catechism, as built (2026-09-05)
 
@@ -259,3 +259,73 @@ with no note anywhere; both are dropped as apparatus. `citations: []` stands.
 
 **Publication is still the other half, and §9's judgement that it is the
 harder one stands**: a `zht` book table in `refs-grammar.ts` and a CJK face.
+
+## 10. The documents, captured and read (2026-09-08)
+
+**Six was ten by the time anything fetched them, and twenty-seven counting the
+mirror.** `translations-checked.json` gained four more modern-shell editions on
+the day §2 was written (`fratelli-tutti` nl and uk, `laudato-si` uk,
+`laudate-deum` uk), and `discover_vatii` found seventeen on the Vatican II index
+four days later — Traditional Chinese for all sixteen documents plus Hebrew for
+_Dei Verbum_. §2's table is the survey's own count and is left as it stands.
+
+**Twenty-six of the twenty-seven are on disk; the twenty-seventh does not
+exist.** vatican.va answers the Traditional Chinese _Inter Mirifica_ its own
+index links with `200` and `content-length: 0`, and has since its
+`last-modified` of 2023-02-22. No other filename under `/chinese/concilio/`
+serves it and the directory itself is 403, so there is no second witness on the
+host. `vatican_docs.py capture-pdfs` refuses a body of zero bytes rather than
+writing the file: a zero-byte page under write-once `raw/` would carry a capture
+date, and the date is evidence.
+
+**One of the twenty-six is a scan and stays out of scope.**
+`evangelii-gaudium.ar` is 12.5 MB of images across 223 pages with 9,505
+characters of text layer — its French front matter and the loose numerals of its
+own apparatus, no Arabic body text at all. It is `wujek_1599_ia`'s case, and the
+capture is still worth having: OCR over a file already held is a re-parse.
+
+**Every other edition carries a real text layer**, confirming §3 over the whole
+set: 26 files, 8 producers, 44,807 to 346,748 characters.
+
+### What the reader gets right, and where it is measured
+
+`common/pdf_document.py` renders a PDF as the markup `parse_document` reads,
+rather than parsing it a second time — so an edition read from a PDF comes out
+shaped like an edition read from the mirror, corrections and structure walk
+included. Against the sibling editions already in `build/`, on the seven
+Latin-script editions:
+
+| edition              | sections   | citations   |
+| -------------------- | ---------- | ----------- |
+| `amoris-laetitia.en` | 325 = 325  | 391 = 391   |
+| `verbum-domini.la`   | 124 = 124  | 382 = 382   |
+| `lumen-fidei.pl`     | 60 = 60    | 50 = 50     |
+| `laudato-si.uk`      | 246 = 246  | 172 = 172   |
+| `fratelli-tutti.nl`  | 287 = 287  | 1 of 288    |
+| `fratelli-tutti.uk`  | 286 of 287 | 508 for 288 |
+| `laudate-deum.uk`    | 73 = 73    | 0 of 44     |
+
+Four are exact on both axes. What is left is the note apparatus of three
+editions, in both directions — one finds no markers, one finds nearly twice as
+many as its siblings — and one missing section.
+
+### Three measurements that decided the reader
+
+- **A folio is not near the edge of the page.** `amoris-laetitia.en` sets its
+  page numbers in the body face 29pt below the last note, inside the bottom
+  eighth and outside the bottom twelfth; a fixed fraction of the page height
+  left the folio in place, the walk up from the foot met a body-sized row at
+  once, and the notes on 88 of 264 pages read as text. The test is the page's
+  own setting: a row of nothing but a number, first or last on its page, and
+  more than a line away from the text.
+- **There is no gap beneath the body size to put a threshold in.**
+  `amoris-laetitia.en` sets its notes at 54-77% of the body and
+  `verbum-domini.la` at 85%, so any ratio is right for one and silently costs
+  the other its whole apparatus. What separates them is being smaller at all,
+  with the note's own NUMBER — 38-55% of its row in every edition — carrying
+  the judgment.
+- **A repetition test for running heads is a frequency test over the book.**
+  Normalising digits away made `260 Ibid., 50.` into `# Ibid., #.`, which this
+  document's note list prints on more than eight pages, so a real footnote was
+  dropped as furniture and its citation resolved to nothing. Counted over the
+  first row of each page, which is where a head is.
