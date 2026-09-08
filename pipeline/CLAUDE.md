@@ -268,6 +268,18 @@ pipeline/scrapers/
 - **Brackets around an italic line do not stop it being a heading.**
   `promote_italic_heading_run` tested the block whole, so the Latvian council's
   `(<i>…</i>)` outline was invisible to it.
+- **A rule ABOVE the text is not the lid of a footnote list.** The last `<hr>`
+  is the weakest of the four footnote signals — the other three read the
+  apparatus, this one guesses at furniture — so it is believed only where it
+  leaves a footnote list's worth below it (`_HR_MAX_SHARE`). Measured over every
+  raw page: of the 1,008 that boundary on it, 1,003 leave at most 26.1% of the
+  region below the rule and five leave at least 96.9%, with nothing in between.
+- **An unnumbered edition is empty when it has no CHARACTERS, not when it has no
+  block.** Four of those five were the Hungarian Rerum Novarum, Arcanum, Humanae
+  Vitae and Redemptionis Donum, sitting in the corpus as works whose whole text
+  had been read as notes and thrown away — 0 sections, one unit holding the
+  page's printed contents list, and a clean validation, because the stub test
+  asked for a block and a contents list is one.
 - **`--slugs` naming only exhortations used to parse nothing and exit 0**
   (`run_phase2` `continue`d past the whole iteration when no encyclicals
   survived the filter). It is the recommended way to check a parser fix on one

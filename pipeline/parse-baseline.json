@@ -404,6 +404,10 @@
       "status": "validation-failed",
       "problems": 1
     },
+    "encyclical.humanae-vitae.hu": {
+      "status": "validation-failed",
+      "problems": 2
+    },
     "encyclical.humanae-vitae.pt": {
       "status": "validation-failed",
       "problems": 1
@@ -629,6 +633,10 @@
       "problems": 1
     },
     "encyclical.rerum-novarum.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "encyclical.rerum-novarum.hu": {
       "status": "validation-failed",
       "problems": 1
     },

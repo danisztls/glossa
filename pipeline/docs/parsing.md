@@ -214,6 +214,26 @@ calls it `he`.
 `BOLD_BARE_NUM_RE` — which is how all sixteen Czech Vatican II editions print
 their numbers. `sacrosanctum-concilium.cs` went from 9 sections to 130.
 
+**A horizontal rule is evidence of a lid only where it is near the bottom.**
+The other three footnote signals read the apparatus; the last `<hr>` guesses
+that a rule means "notes follow", and a page whose only rule sits ABOVE its text
+means the opposite by it — front matter cut off from the document. Both readings
+are furniture and neither is stated, so the SIZE of what is being called a
+footnote list is the only thing that separates them. Measured over every raw
+page: 1,008 boundary on this signal and they do not form a spectrum — 1,003
+leave at most 26.1% of the region below the rule and five leave at least 96.9%,
+with nothing in between, so `_HR_MAX_SHARE` is not a tuning parameter.
+
+**Empty is measured in characters, not in blocks.** The five were the Hungarian
+Rerum Novarum, Arcanum, Humanae Vitae and Redemptionis Donum, each of which had
+been in the corpus as a work whose whole text was filed as notes and discarded —
+0 sections, one unnumbered unit holding the page's printed table of contents,
+and a clean validation, because the stub test asked whether an unnumbered
+edition had a BLOCK and never whether it had any text. A contents list is ~1,100
+characters and the shortest genuine unnumbered edition is tens of thousands, so
+`STUB_CONTENT_MIN_CHARS` separates them with the margin it was already chosen
+for.
+
 ## Vatican I: the walk is forked and nothing else is
 
 **The schema held and the walk did not.** _Pastor Aeternus_ prints no number

@@ -1424,11 +1424,51 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
         candidates.append((start, "restarted bare-numbered definition run"))
     hrs = list(_HR_RE.finditer(html))
     if hrs:
-        candidates.append((hrs[-1].start(), "last <hr>"))
+        at = hrs[-1].start()
+        earliest = min((c[0] for c in candidates), default=None)
+        # Asked only where the rule would actually decide. `strip_tags` over
+        # a whole page twice is the most expensive call in this file, and a
+        # page that has already shown its apparatus -- a heading, a definition
+        # anchor, a numbered run -- boundaries on that whatever a rule says.
+        if (earliest is None or at < earliest) and _hr_is_a_lid(html, at):
+            candidates.append((at, "last <hr>"))
     if not candidates:
         return None, "no signal"
     candidates.sort()
     return candidates[0]
+
+
+#: What share of the content region's text the last `<hr>` may leave BELOW it
+#: and still be read as the lid of a footnote list.
+#:
+#: A RULE IS EVIDENCE OF A LID ONLY WHERE IT IS NEAR THE BOTTOM. The other
+#: three signals read the apparatus; this one guesses that a horizontal rule
+#: means "notes follow", and a page whose only rule sits ABOVE its text means
+#: the opposite by it -- front matter separated from the document. Both
+#: readings are furniture and neither is stated, so the size of what is being
+#: called a footnote list is the only thing that tells them apart.
+#:
+#: Measured over every page in `raw/vatican-docs`: 1,008 boundary on this
+#: signal, and they do not form a spectrum. 1,003 of them leave at most 26.1%
+#: of the region below the rule -- notes, a colophon, a copyright line -- and
+#: five leave at least 96.9%, which is the document. There is nothing in
+#: between, so the threshold is not a tuning parameter; half is where
+#: `_FN_RUN_SHARE` already draws the same distinction.
+#:
+#: The five are the defect this was written for: the Hungarian editions of
+#: Rerum Novarum, Arcanum, Humanae Vitae and Redemptionis Donum print a rule
+#: under their table of contents, and all four have been in the corpus as
+#: works whose whole text was filed as notes and discarded -- 0 sections, one
+#: appendix entry holding the contents list, and a clean validation, because
+#: nothing asked whether an unnumbered edition had any text in it. It does
+#: now: see `validate_document`.
+_HR_MAX_SHARE = 0.5
+
+
+def _hr_is_a_lid(html: str, at: int) -> bool:
+    """Whether the last `<hr>` leaves a footnote list's worth below it."""
+    total = len(strip_tags(html))
+    return total == 0 or len(strip_tags(html[at:])) <= _HR_MAX_SHARE * total
 
 
 #: How many consecutive definitions it takes to be a footnote LIST. Three is
@@ -8257,11 +8297,24 @@ def parse_document(
     # that prints no paragraph numbers is a real document whose whole text is
     # in `appendix.json` (Pascendi PT, Quadragesimo Anno PT, Vigilanti Cura
     # EN). Both halves have to be empty.
-    if not state.sections and not any(u["blocks"] for u in state.appendix):
+    #
+    # EMPTY IS MEASURED IN CHARACTERS, NOT IN BLOCKS. A block is not a
+    # document: the Hungarian Rerum Novarum, Arcanum, Humanae Vitae and
+    # Redemptionis Donum each parsed to ONE unnumbered unit holding the page's
+    # printed table of contents and nothing else -- their whole text having
+    # been read as footnotes (`_HR_MAX_SHARE`) -- and every one of them
+    # satisfied "has a block", raised nothing, validated clean and went into
+    # the corpus as a document with no text. The threshold is the one
+    # `STUB_CONTENT_MIN_CHARS` already sets, and it sits nowhere near either
+    # side: those contents lists run to ~1,100 characters and the shortest
+    # genuine unnumbered edition to tens of thousands.
+    appendix_chars = sum(len(b.text) for u in state.appendix for b in u["blocks"])
+    if not state.sections and appendix_chars < STUB_CONTENT_MIN_CHARS:
         raise StubPageError(
-            "parsed to no sections and no unnumbered content -- the page "
-            "carries a masthead and no document (the text is published "
-            "elsewhere, typically as a PDF), not a parse this scraper lost"
+            f"parsed to no sections and {appendix_chars} characters of "
+            "unnumbered content -- the page carries a masthead and no "
+            "document (the text is published elsewhere, typically as a PDF), "
+            "not a parse this scraper lost"
         )
 
     return ParseResult(
