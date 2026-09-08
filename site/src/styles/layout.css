@@ -553,13 +553,21 @@
 
 .reading-text {
 	font-family: var(--font-serif);
-	/* Multiplied by the reader's fine-adjustment (TypeMenu.svelte /
-	   prefs.svelte.ts), never applied to chrome — this custom property is
-	   only ever read here, so nothing outside the reading column resizes
-	   when the reader adjusts text size. The `, 1` fallback covers the
-	   (vanishingly rare) case of this rule evaluating before either the
-	   :root default above or the inline style has taken effect. */
-	font-size: calc(var(--reading-base) * var(--reading-scale, 1));
+	/* THE READER'S SIZE, TIMES WHAT THE FACE NEEDS TO MEET IT. The scale is
+	   the reader's own setting (TypeMenu.svelte / prefs.svelte.ts); the
+	   adjustment is the ratio that makes one setting mean one apparent size
+	   in either face, since Source Sans 3 sets 21% larger than EB Garamond at
+	   a given font-size — `--face-size-adjust` in tokens.css argues it.
+
+	   Neither is applied to chrome. Both are read by the two lengths measured
+	   against this type (`--content-width`, `--compare-gutter`), and by
+	   nothing else, so adjusting the reading size moves the reading column
+	   and leaves the rest of the page where it was.
+
+	   The `, 1` fallbacks cover the (vanishingly rare) case of this rule
+	   evaluating before either the :root default above or the inline style
+	   has taken effect. */
+	font-size: calc(var(--reading-base) * var(--reading-scale, 1) * var(--face-size-adjust, 1));
 	line-height: 1.65;
 }
 

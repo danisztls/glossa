@@ -69,15 +69,22 @@ const FACES = {
 		'--text-ascent': Number(serif['--text-ascent']),
 		'--text-descent': Number(serif['--text-descent']),
 		'--text-cap-height': Number(serif['--text-cap-height']),
-		'--prose-char-advance': Number(serif['--prose-char-advance'])
+		'--prose-char-advance': Number(serif['--prose-char-advance']),
+		'--face-size-adjust': Number(serif['--face-size-adjust'])
 	},
 	sans: {
 		'--text-ascent': Number(sans['--text-ascent']),
 		'--text-descent': Number(sans['--text-descent']),
 		'--text-cap-height': Number(sans['--text-cap-height']),
-		'--prose-char-advance': Number(sans['--prose-char-advance'])
+		'--prose-char-advance': Number(sans['--prose-char-advance']),
+		'--face-size-adjust': Number(sans['--face-size-adjust'])
 	}
 };
+
+/** Each face's x-height, read off the font files with fontTools and written
+ *  here because a test may not open a woff2. `--face-size-adjust` is the
+ *  ratio of these two and nothing else. */
+const X_HEIGHT = { serif: 0.4, sans: 0.486 };
 
 /** The three initials, each with the `line-height` that turns its font-size
  *  into a float box and the budget in body lines that box may not exceed.
@@ -116,6 +123,17 @@ describe('the reader’s text face', () => {
 		expect(FACES.sans['--prose-char-advance']).toBeGreaterThan(FACES.serif['--prose-char-advance']);
 	});
 
+	/**
+	 * THE READING SIZE HAS TO MEAN THE SAME THING IN BOTH FACES, and what a
+	 * reader perceives as size is x-height rather than the em. Source Sans 3
+	 * sets 21% larger than EB Garamond at one font-size, so without this the
+	 * face picker was also a size control nobody asked for.
+	 */
+	it('sets both faces to the same x-height at one reading size', () => {
+		const rendered = (face: 'serif' | 'sans') => X_HEIGHT[face] * FACES[face]['--face-size-adjust'];
+		expect(rendered('sans')).toBeCloseTo(rendered('serif'), 3);
+	});
+
 	// `--content-width` clamps at 56rem, so past some reading scale the column
 	// stops holding 62.4 characters and starts holding fewer. That is allowed;
 	// leaving the 55-65 band the measure exists to hold is not.
@@ -124,12 +142,39 @@ describe('the reader’s text face', () => {
 		const cpl = 62.4;
 		for (const [face, vars] of Object.entries(FACES)) {
 			for (let scale = 0.8; scale <= 1.8001; scale += 0.1) {
+				// The rendered size carries the face adjustment, so the measure
+				// has to as well or the column is sized for type the page is not
+				// setting — which is the same mistake as measuring for the
+				// other face, one step further in.
+				const size = base * scale * vars['--face-size-adjust'];
 				const advance = vars['--prose-char-advance'];
-				const width = Math.min(cpl * advance * base * scale, 56);
-				const actual = width / (advance * base * scale);
+				const width = Math.min(cpl * advance * size, 56);
+				const actual = width / (advance * size);
 				expect(actual, `${face} at ${scale.toFixed(1)}`).toBeGreaterThanOrEqual(55);
 				expect(actual, `${face} at ${scale.toFixed(1)}`).toBeLessThanOrEqual(65);
 			}
+		}
+	});
+
+	/**
+	 * The adjustment has to reach the measure and the compare gutter, not just
+	 * the font-size — a column measured for an unadjusted size is off by 17.7%
+	 * in the sans, which is a whole face's worth of error and looks like a
+	 * design choice rather than a bug.
+	 */
+	it('carries the face adjustment into everything measured against the type', () => {
+		const layout = readFileSync(new URL('../styles/layout.css', import.meta.url), 'utf8');
+		const from = layout.indexOf('.reading-text {');
+		// To the rule's own close, not a fixed span: these rules carry more
+		// comment than declaration, and a window sized to the code silently
+		// stops covering it the moment somebody explains something.
+		const rule = layout.slice(from, layout.indexOf('\n}', from));
+		expect(rule, '.reading-text').toContain('var(--face-size-adjust, 1)');
+		for (const token of ['--content-width', '--compare-gutter']) {
+			const at = tokens.indexOf(`${token}:`);
+			expect(tokens.slice(at, tokens.indexOf(';', at)), token).toContain(
+				'var(--face-size-adjust, 1)'
+			);
 		}
 	});
 

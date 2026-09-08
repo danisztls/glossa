@@ -90,7 +90,7 @@
 	   number riding it grows with the reader's setting, but the track holding
 	   that number did not, so at 180% a four-digit address was being asked to
 	   fit a width measured for 100%. */
-	--compare-gutter: calc(3.5rem * var(--reading-scale, 1));
+	--compare-gutter: calc(3.5rem * var(--reading-scale, 1) * var(--face-size-adjust, 1));
 
 	/* Base reading size before the reader's fine adjustment is applied —
 	   see `.reading-text` below and `$lib/prefs.svelte.ts`. */
@@ -129,6 +129,31 @@
 	--text-ascent: 1.007;
 	--text-descent: 0.298;
 	--text-cap-height: 0.65;
+
+	/*
+	 * WHAT MAKES TWO FACES THE SAME SIZE, WHICH IS NOT THE SAME FONT-SIZE.
+	 *
+	 * A face's apparent size is its x-height, not its em. EB Garamond's is
+	 * 0.400em and Source Sans 3's is 0.486em, so set at one font-size the sans
+	 * reads 21% larger — which is what a reader sees, and it made the reading
+	 * size setting mean two different things depending on the face.
+	 *
+	 * This is the ratio that cancels it, applied to `.reading-text`'s
+	 * font-size (`styles/layout.css`) and to everything measured against it.
+	 * 1 for the default face, by construction.
+	 *
+	 * NOT `size-adjust` ON THE @font-face, which is the CSS built for exactly
+	 * this and is the wrong half of it here. That descriptor shrinks the
+	 * glyphs inside an unchanged em, so the line-height, the drop cap's box
+	 * and the measure would all still be computed for a size the text no
+	 * longer is — a sans set to match Garamond's x-height would carry
+	 * Garamond's leading around smaller letters. Multiplying the font-size
+	 * takes the whole setting with it: leading, initial and column shrink in
+	 * proportion, and the page is the same page in another face. It would also
+	 * have meant a second @font-face family, since the chrome wants Source
+	 * Sans at its own size.
+	 */
+	--face-size-adjust: 1;
 
 	/*
 	 * THE MEASURE IS DENOMINATED IN THE READING FONT, NOT IN `ch`.
@@ -684,7 +709,8 @@
 .reading-layout:not(.compare) {
 	--content-width: min(
 		calc(
-			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) * var(--reading-scale, 1)
+			var(--measure-cpl) * var(--prose-char-advance) * var(--reading-base) *
+				var(--reading-scale, 1) * var(--face-size-adjust, 1)
 		),
 		56rem
 	);
@@ -717,12 +743,13 @@
  * grown from 65.5M characters to 95.2M since that measurement, and 0.4% is
  * what that growth moved it by, so the serif's number is left alone.
  *
- * The face is 9.3% wider per character, so the column is 9.3% wider to hold
- * the same 62.4 of them: 33.4rem at the default size against the serif's
- * 30.6rem. The 56rem ceiling starts binding at a 1.68 reading scale rather
- * than at 1.83, so the top two steps of the size stepper set slightly short
- * of the target — 58.1 characters at 1.8, still inside the 55-65 band the
- * measure exists to hold.
+ * THE COLUMN COMES OUT NARROWER, WHICH IS NOT A CONTRADICTION. The face is
+ * 9.3% wider per character and is set 17.7% smaller to match x-heights, so a
+ * line of 62.4 characters is 27.5rem against the serif's 30.7 — a shorter
+ * line of the same count, at the same apparent size, which is what holding
+ * the measure in CHARACTERS means. Neither face reaches the 56rem ceiling
+ * anywhere in the reading-size range: the serif wants 55.3rem at the 1.8
+ * maximum and the sans 49.5rem.
  *
  * The metrics are this face's `hhea`, the same table the defaults came from.
  * `styles/dropcaps.css` derives the initial's three sizes from them, so the
@@ -749,6 +776,12 @@
 	--text-descent: 0.4;
 	--text-cap-height: 0.66;
 	--prose-char-advance: 0.4121;
+	/* 0.400 / 0.486, the two faces' declared x-heights — see
+	   `--face-size-adjust` above for why the ratio is the one that makes the
+	   reader's size setting mean the same thing in both faces. Declared
+	   values rather than the `x` outline (0.405 / 0.4861), which is the same
+	   convention `dropcaps.css` takes for the cap heights beside it. */
+	--face-size-adjust: 0.823;
 }
 
 /*
