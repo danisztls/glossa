@@ -26,6 +26,16 @@ default, not a claim that Garamond is legible to everybody — fine hairlines,
 old-style figures and a modest x-height are what some readers cannot manage,
 and the sans is on the device already. `TypeMenu` offers it.
 
+**Whether a script has two faces is a question about the script.** Latin and
+Cyrillic do and this site ships both cuts; Han's pair is Ming and Gothic, named
+now for the reading regions as it already was for the chrome, out of the
+reader's own system faces because a Han webfont is megabytes and is never
+coming. Arabic's axis is naskh against kufi, which is not the same question in
+another alphabet — so the row is hidden there and the family rules exclude it,
+and **both halves are needed**: the preference is one per reader and the panel
+is one per page, so hiding the row alone would switch Amiri out with nothing on
+screen saying why.
+
 **A second face is four numbers, not a family.** The measure is denominated in
 the reading font, so the face carries its own advance
 (`--prose-char-advance`, measured over the corpus the way the first was:

@@ -190,6 +190,48 @@ describe('the reader’s text face', () => {
  * `styles/tokens.css` carries the argument; `routes/preces/[slug]` is the
  * same rule used deliberately, and sets neither of these two.
  */
+/**
+ * ARABIC IS NOT OFFERED THE SECOND FACE, and the two halves of that have to
+ * stay together or the reader gets the worse of both.
+ *
+ * The preference is one per reader and the panel is one per page: choosing the
+ * sans face anywhere carries `data-face='sans'` into every work afterwards. So
+ * hiding the row without excluding the family switches Amiri out with nothing
+ * on screen to say why, and excluding the family without hiding the row leaves
+ * a control that does nothing. `styles/direction.css` argues it; this keeps
+ * the halves in step.
+ */
+describe('the face Arabic is not offered', () => {
+	const styles = ['layout.css', 'dropcaps.css'].map((name) => ({
+		name,
+		css: readFileSync(new URL(`../styles/${name}`, import.meta.url), 'utf8').replace(
+			/\/\*[\s\S]*?\*\//g,
+			''
+		)
+	}));
+
+	it.each(styles)('excludes Arabic from the sans family rule in $name', ({ css }) => {
+		const rules = [...css.matchAll(/([^{}@/;]*\[data-face='sans'\][^{}@/;]*)\{/g)].map((m) =>
+			m[1].replace(/\s+/g, ' ').trim()
+		);
+		expect(rules.length).toBeGreaterThan(0);
+		for (const rule of rules) {
+			expect(rule, `${rule} would set an Arabic region in the sans face`).toContain(
+				":not([lang='ar'])"
+			);
+		}
+	});
+
+	it('hides the face row over Arabic text', () => {
+		const direction = readFileSync(new URL('../styles/direction.css', import.meta.url), 'utf8');
+		expect(direction).toContain(":root:has(.reading-text[lang='ar']) .face-field");
+		// The handle has to exist on the row, or the rule above hides nothing —
+		// an unmatched class is not an error in CSS or in Svelte.
+		const menu = readFileSync(new URL('./components/TypeMenu.svelte', import.meta.url), 'utf8');
+		expect(menu).toContain('class="field face-field"');
+	});
+});
+
 describe('the measure', () => {
 	const STYLES = new URL('../styles/', import.meta.url);
 	// Comments first, and not as tidiness: these files argue at length, a

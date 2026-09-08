@@ -243,9 +243,10 @@
  * the page set in a face they did not choose.
  *
  * A rule and not a token, for `layout.css`'s reason: the per-script chains
- * `direction.css` writes have to be read at the reading region.
+ * `direction.css` writes have to be read at the reading region. Arabic is
+ * excluded there and here, on the same argument and by the same means.
  */
-:root[data-face='sans'] .drop-cap-lead {
+:root[data-face='sans'] .reading-text:not([lang='ar']) .drop-cap-lead {
 	font-family: var(--font-sans);
 }
 

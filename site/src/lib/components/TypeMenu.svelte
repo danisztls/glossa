@@ -154,8 +154,17 @@
 
 			<!-- The same segmented control `SettingsMenu` picks a dark mode with,
 			     and `menuitemradio` for the same reason: the two faces are
-			     alternatives, where the apparatus panel's rows are not. -->
-			<div class="field" role="none">
+			     alternatives, where the apparatus panel's rows are not.
+
+			     `.face-field` IS A HANDLE FOR A STYLESHEET, not a style of its
+			     own: `styles/direction.css` hides this row over Arabic text,
+			     where serif and sans name a distinction the script does not
+			     have, and does it there because the same block excludes Arabic
+			     from the face rules themselves. One fact, one place. The row
+			     is hidden and not disabled — it is inapplicable here rather
+			     than unavailable — so nothing in this component needs to know
+			     which language is being read. -->
+			<div class="field face-field" role="none">
 				<span class="field-label label-micro">{t('face.label')}</span>
 				<div class="field-control segmented" role="group" aria-label={t('face.label')}>
 					{#each FACES as face (face)}

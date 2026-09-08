@@ -579,7 +579,13 @@
  *
  * (0,3,0) against `.reading-text`'s (0,1,0), so it wins wherever it applies
  * and nothing else in this file needs to know about it.
+ *
+ * ARABIC IS EXCLUDED IN THE SELECTOR RATHER THAN OVERRIDDEN AFTERWARDS — the
+ * script has no serif/sans axis to offer, and `styles/direction.css` carries
+ * that argument and hides the control to match. An exclusion for `zen.css`'s
+ * reason: an override has to out-specify the rule it is fighting, which puts
+ * the exception one careless selector away from losing silently.
  */
-:root[data-face='sans'] .reading-text {
+:root[data-face='sans'] .reading-text:not([lang='ar']) {
 	font-family: var(--font-sans);
 }

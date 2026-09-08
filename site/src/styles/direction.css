@@ -105,6 +105,13 @@
  * edition's 370,496 characters, of which 95% are full-width Han and the rest
  * are the half-width digits and brackets of its Scripture locators.
  *
+ * SIMPLIFIED TAKES THE SAME NUMBER, which is a choice and not an omission.
+ * `prayer.common.zh` is a thousand characters of Han and re-measures at
+ * 0.9561 — but a thousand characters is a sample, not a measurement, and the
+ * difference is one prayer's worth of punctuation. Both scripts are 95%
+ * full-width and the figure with the large sample behind it is the better
+ * answer for both.
+ *
  * AND THE CHARACTER TARGET MOVES WITH IT, which no other script here has
  * needed. `--measure-cpl` is 62.4 because "55-65 characters per line is where
  * this type sets well" — a rule about Latin, and a Han line of 62 characters
@@ -124,7 +131,7 @@
  * largest type and a full line is asking for a page shape the aside does not
  * leave room for.
  */
-.reading-layout:not(.compare):has(.reading-text[lang='zht']) {
+.reading-layout:not(.compare):has(.reading-text:is([lang='zht'], [lang='zh'])) {
 	--prose-char-advance: 0.9757;
 	--measure-cpl: 40;
 }
@@ -172,6 +179,45 @@
  */
 .reading-text[lang='ar'] {
 	line-height: 1.9;
+}
+
+/*
+ * ARABIC IS NOT OFFERED THE READER'S SECOND FACE, and this is the one script
+ * where that is a statement about the writing system rather than about what
+ * we happen to ship.
+ *
+ * Serif and sans is a Latin distinction — the presence or absence of a finish
+ * on a stem. Arabic's own axis is naskh against kufi, which is a different
+ * cut of the letter and not the same question asked of another alphabet; a
+ * picker offering "serif / sans" over Arabic text is naming something the
+ * script does not have. Under it the switch would drop Amiri, a face this
+ * project chose and vendors, for whatever `--font-sans` falls through to on
+ * the reader's machine. There is no version of that trade worth making.
+ *
+ * TWO HALVES, AND BOTH ARE NEEDED. The preference is one per reader and the
+ * panel is one per page, so a reader who chooses the sans face in Genesis
+ * still carries `data-face='sans'` into `nostra-aetate.ar` — hiding the row
+ * alone would leave the face switched with nothing on screen saying so. So
+ * `layout.css` and `dropcaps.css` exclude `[lang='ar']` from the family rules
+ * (the text keeps Amiri whatever the attribute says) and this hides the row
+ * that would claim otherwise.
+ *
+ * `:root:has()` because the panel and the text are in different subtrees —
+ * the reading bar is chrome and the reading text is the page — so the
+ * document element is the nearest thing that sees both. `zen.css` reaches for
+ * the same shape for the same reason.
+ *
+ * IT HIDES IN COMPARE TOO, where one column may be Arabic and the other not.
+ * That costs the Latin column its picker, and the alternative is a control
+ * that silently governs half of what the reader is looking at. Hiding is the
+ * honest half of an imperfect pair.
+ *
+ * `display: none` rather than a disabled state: the row is not unavailable,
+ * it is inapplicable, and the same treatment takes it out of the tab order
+ * and the accessibility tree instead of leaving something to explain.
+ */
+:root:has(.reading-text[lang='ar']) .face-field {
+	display: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -275,21 +321,60 @@
    hand it every numeral and every parenthesis in a Scripture locator —
    `(創 10:5)` set with the digits as wide as the characters. Per-glyph
    fallback answers the Latin before the question reaches them. */
+/*
+ * AND THE GOTHIC CHAIN BESIDE THE MING ONE, because the reader may now ask
+ * for a sans reading face and Han is a script where that request means
+ * something exact: Ming and Gothic are the two ways this text is set, and the
+ * interface already names its own pair a few blocks up (`:lang(zh-Hant)`).
+ * Without this the switch fell out of the curated list into whatever the
+ * browser's default `sans-serif` resolves to.
+ *
+ * NO WEBFONT, HERE OR EVER — the block heading above settles that, and a Han
+ * subset is megabytes against a boot payload with a ceiling. "Shipping a sans
+ * face" for this script means naming the ones the reader already has, in the
+ * order this project would choose them, which is what the serif line beside
+ * it does too.
+ *
+ * SOURCE SANS FIRST, for the reason EB Garamond is first above and the
+ * chrome's own chains give at length: fallback is per glyph and left to
+ * right, the Han faces carry full-width Latin, and a Scripture locator whose
+ * digits are as wide as the characters is what naming one first buys.
+ */
 :not(:root)[lang='zht'] {
 	--font-serif:
 		'EB Garamond Variable', 'Songti TC', 'Noto Serif CJK TC', 'Source Han Serif TC', 'PMingLiU',
 		'MingLiU', serif;
+	--font-sans:
+		'Source Sans 3 Variable', 'PingFang TC', 'Hiragino Sans CNS', 'Microsoft JhengHei',
+		'Noto Sans CJK TC', 'Source Han Sans TC', sans-serif;
 	/*
 	 * THE MEASURE FOR THIS SCRIPT IS NOT HERE, AND CANNOT BE. It was — an
 	 * advance of 0.9757em and a 40-character target, set on this very rule —
 	 * and neither was ever read: `--content-width` is declared on `:root` and
 	 * substitutes its inputs there, so a token set on the reading region is
-	 * a value nothing computes against. Both now sit in `styles/tokens.css`,
-	 * on the grid that sizes the column, with the arithmetic and the
-	 * measurement that produced them.
+	 * a value nothing computes against. Both sit on `.reading-layout` now,
+	 * with the other per-script advances above, where the grid can read them.
 	 *
 	 * What stays here is the FAMILY, which is what this file is for: a family
 	 * is read at the element it is set on, so the region is the right place
 	 * for it and the wrong place for a width.
 	 */
+}
+
+/*
+ * SIMPLIFIED CHINESE, which had no reading rule at all — neither face, though
+ * `prayer.common.zh` has been in the corpus as long as its Traditional
+ * sibling and the chrome has named both stacks since Han became an interface
+ * language. It was being set in EB Garamond falling through to whatever the
+ * system offered, in a script the site otherwise curates carefully.
+ *
+ * The families are the Simplified cuts of the two above; `MingLiU` and
+ * `PMingLiU` are Traditional-only and are `SimSun` here.
+ */
+:not(:root)[lang='zh'] {
+	--font-serif:
+		'EB Garamond Variable', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'SimSun', serif;
+	--font-sans:
+		'Source Sans 3 Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+		'Noto Sans CJK SC', 'Source Han Sans SC', sans-serif;
 }
