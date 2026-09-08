@@ -1,0 +1,14 @@
+[
+  {
+    "id": "ecclesia-in-africa.de-section-107-printed-2107",
+    "locator": {
+      "raw_substring": "<p>2107. Wenn die Verk&uuml;ndigung"
+    },
+    "field": "raw_text",
+    "from": "<p>2107. Wenn die Verk&uuml;ndigung",
+    "to": "<p>107. Wenn die Verk&uuml;ndigung",
+    "reason": "The German mirror numbers section 107 as '2107.', between a correctly numbered 106 and 108. Section numbers must ascend, so 108 and everything after it read as ordinary prose and fell into 2107's body: the edition stored 107 sections where all seven of its siblings store 144, and 37 sections of the document -- the whole of chapters VI and VII and the conclusion -- had no address. One character in the source, and the second half of an apostolic exhortation is unciteable. The correct value is not inferred from the gap alone: this paragraph is the German of the text every sibling numbers 107.",
+    "evidence": "corpus/raw/vatican-docs/exhortation__ecclesia-in-africa__de.html: `...Verteidigung der Menschenrechte.210</p> <p>2107. Wenn die Verkündigung der Gerechtigkeit und des Friedens wesentlicher Bestandteil...`, where the paragraphs on either side are `<p> <font size=\"3\"> 106.` and `<p> <font size=\"3\"> 108.`. The English §107 opens 'If the proclamation of justice and peace is an integral part of the task of evangelization' and the French §107 'Si l'annonce de la justice et de la paix fait partie intégrante', which is this paragraph. '2107' occurs once in the file, and the preceding paragraph closes with footnote marker 210.",
+    "added": "2026-09-08"
+  }
+]
