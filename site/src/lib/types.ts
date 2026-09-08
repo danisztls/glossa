@@ -1221,10 +1221,17 @@ export interface Census {
 	summaParts: string[];
 	/** The highest number each numbered work addresses. `llms.txt` again. */
 	maxima: { ccc: number; compendium: number; socialDoctrine: number; canonLaw: number };
-	/** Every citer kind and how many references it accounts for, largest first.
-	 *  `kind` is `Citer['kind']`, but typed as a string because the census is a
-	 *  wire shape read from a build this app did not necessarily produce. */
+	/** Every citer kind and how many of the COUNTED references it accounts for,
+	 *  largest first — an edition's own footnotes and a work citing itself are
+	 *  absent, because the list is printed under the rankings and describes
+	 *  them. `kind` is `Citer['kind']`, but typed as a string because the
+	 *  census is a wire shape read from a build this app did not necessarily
+	 *  produce. */
 	citers: { kind: string; value: number }[];
+	/** What that list sums to, against the apparatus shelf's `references`. The
+	 *  page prints both, so a column of numbers under a total is never short of
+	 *  it with nothing saying why. */
+	countedReferences: number;
 	rankings: {
 		books: { osis: string; value: number }[];
 		chapters: { osis: string; chapter: number; value: number }[];

@@ -1661,12 +1661,28 @@ deploy on it. `site/docs/census.md` holds the rationale.
   from; a SET also catches a swap that leaves the count unchanged. Completeness
   inside an edition is deliberately not gated — the matrix shows it as a
   partial bar instead.
-- **A control may narrow what is DRAWN and never what was counted.** The
-  rankings' chips show and hide whole tables; filtering them by citing family
-  would re-rank a top twenty that was cut at build time on the total, which
+- **The five rankings are one, and the chips narrow WHAT IS RANKED.** Merging
+  the stored tops is the exact top of the union — a row in the merged top
+  twenty is in its own kind's top twenty — which is what makes a filter over
+  KINDS safe. A filter over citing families would not be: those counts were
+  summed at build time, so re-ranking a stored top twenty by one family
   publishes a wrong ranking wherever the two orders differ.
+- **Books start switched off, the one kind that does.** A book's count is every
+  place citing any chapter of it, so beside its own chapters it is an aggregate
+  answering the table twice — measured, the top twenty of everything is
+  eighteen books and two documents.
+- **The breakdown under a ranking counts what the ranking counts.** Over every
+  reference, `annotation` headed it — the largest number in the section, for a
+  family no table above it counts. `countsTowardsRank` gates that tally now, so
+  the row cannot return through an edit that forgets why it went, and
+  `countedReferences` is what stops the remaining column from reading as short
+  of a stated total.
 - **A glyph on this page is one the work already has** (`CENSUS_ICONS`), taken
-  from `shelves.ts` and `/schola` — the catalogue's rule, on a third surface.
+  from `shelves.ts` and `/schola` — the catalogue's rule, on a third surface —
+  and it is the accent, one accent for all of them.
+- **The matrix is `--color-apparatus` and the hovered cell is the accent**, so
+  the page spends two colours: one on what is named, one on what is measured.
+  A token and never a literal, which is what survives `data-mono`.
 - **The page is in `STATIC_PATHS` and NOT in `CHROME_PATHS`** — the arrangement
   `/calendarium/liturgia` already stands on, because its `census.*` strings are
   written in English alone. Its head is fixed and English in `STATIC_HEADS` to

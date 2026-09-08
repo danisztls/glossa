@@ -4,9 +4,12 @@ import {
 	CENSUS_ICONS,
 	CENSUS_SHELF_KEYS,
 	CITER_KIND_KEYS,
+	RANK_HIDDEN_BY_DEFAULT,
+	RANK_KINDS,
 	censusProse,
 	censusShelves,
-	coverageRows
+	coverageRows,
+	mergedRanking
 } from './census';
 import { en } from './i18n/en';
 import type { Census, Citer } from './types';
@@ -155,12 +158,14 @@ describe('the tally', () => {
 		expect(census.rankings.chapters.map((c) => c.chapter)).toEqual([25, 5]);
 	});
 
-	it("leaves an edition's own notes out of a ranking and keeps them in the count", () => {
+	it("leaves an edition's own notes out of the ranking and out of the breakdown", () => {
 		// Matthew is cited by three distinct places — Lumen Gentium §8 and §9
 		// and Rerum Novarum §1 — beside three of Haydock's notes, which the
-		// apparatus sentence counts and the ranking does not.
+		// apparatus's own total counts and neither the ranking nor the
+		// breakdown printed under it does.
 		expect(census.rankings.books).toEqual([{ osis: 'matt', value: 3 }]);
-		expect(censusFact(census, 'apparatus', 'fromNotes')).toBe(3);
+		expect(census.citers.map((c) => c.kind)).not.toContain('annotation');
+		expect(censusFact(census, 'apparatus', 'references')).toBe(13);
 	});
 
 	it('drops a work citing itself, so a document cited only by itself is not ranked', () => {
@@ -181,11 +186,24 @@ describe('the tally', () => {
 		expect(censusFact(census, 'apparatus', 'citedAddresses')).toBe(9);
 	});
 
-	it('breaks the citers down by kind, largest first', () => {
-		expect(census.citers).toEqual([
-			{ kind: 'document', value: 10 },
-			{ kind: 'annotation', value: 3 }
-		]);
+	/**
+	 * The breakdown counts what a RANKING counts, which is why it falls short
+	 * of the apparatus's own total: three of the thirteen references are an
+	 * edition's own notes, and the tenth is Lumen Gentium citing itself.
+	 */
+	it('breaks the counted citers down by kind, largest first', () => {
+		expect(census.citers).toEqual([{ kind: 'document', value: 9 }]);
+	});
+
+	/**
+	 * THE ARITHMETIC THE PAGE PRINTS. Dropping the notes from that list is what
+	 * opens a gap between it and the stated total, so the number closing the
+	 * gap is derived here rather than added up on the page.
+	 */
+	it('states what the breakdown sums to', () => {
+		const summed = census.citers.reduce((n, c) => n + c.value, 0);
+		expect(census.countedReferences).toBe(summed);
+		expect(census.countedReferences).toBeLessThan(censusFact(census, 'apparatus', 'references'));
 	});
 });
 
@@ -344,6 +362,123 @@ describe('topOf', () => {
 			'alpha',
 			'zeta'
 		]);
+	});
+});
+
+/**
+ * ONE RULE, TWO IMPLEMENTATIONS, AND THIS IS WHAT MAKES THAT SAFE.
+ *
+ * `topOf` cuts the builder's `Map` of citer sets under Node; `mergedRanking`
+ * cuts rows already named out of the reader's own edition. They cannot be one
+ * function and they must not disagree — a page that splits a tie the file did
+ * not is a ranking whose bottom row is arbitrary in exactly the way the rule
+ * exists to prevent. So both are run over the same counts.
+ */
+describe('the two cuts agree', () => {
+	const cases: Record<string, number>[] = [
+		{ a: 5, b: 4, c: 3 },
+		{ a: 5, b: 3, c: 3 },
+		{ a: 1, b: 1, c: 1 },
+		{ a: 9, b: 9, c: 2, d: 2, e: 2 },
+		{}
+	];
+
+	for (const counts of cases) {
+		for (const limit of [1, 2, 3, 5]) {
+			it(`${JSON.stringify(counts)} cut at ${limit}`, () => {
+				const byTopOf = topOf(
+					new Map(
+						Object.entries(counts).map(([id, n]) => [
+							id,
+							new Set(Array.from({ length: n }, (_, i) => `c${i}`))
+						])
+					),
+					(a, b) => a.localeCompare(b),
+					limit
+				).map((r) => r.id);
+
+				const byMerge = mergedRanking(
+					[
+						{
+							key: 'books',
+							rows: Object.entries(counts)
+								.map(([key, value]) => ({
+									key,
+									label: key,
+									fullTitle: null,
+									href: '/',
+									value
+								}))
+								.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key))
+						}
+					],
+					limit
+				).map((r) => r.key);
+
+				expect(byMerge).toEqual(byTopOf);
+			});
+		}
+	}
+});
+
+describe('mergedRanking', () => {
+	const rows = (key: string, counts: Record<string, number>) => ({
+		key,
+		rows: Object.entries(counts)
+			.map(([k, value]) => ({ key: k, label: k, fullTitle: null, href: '/', value }))
+			.sort((a, b) => b.value - a.value || a.key.localeCompare(b.key))
+	});
+
+	it('interleaves the kinds by count, so one table ranks them together', () => {
+		const merged = mergedRanking(
+			[rows('documents', { lg: 9, gs: 4 }), rows('ccc', { '1': 7, '2': 3 })],
+			10
+		);
+		expect(merged.map((r) => [r.kind, r.value])).toEqual([
+			['documents', 9],
+			['ccc', 7],
+			['documents', 4],
+			['ccc', 3]
+		]);
+	});
+
+	it('marks every row with the glyph of the work it belongs to', () => {
+		const merged = mergedRanking([rows('chapters', { a: 1 }), rows('summa', { b: 1 })], 10);
+		expect(merged.find((r) => r.kind === 'chapters')?.icon).toBe('scroll');
+		expect(merged.find((r) => r.kind === 'summa')?.icon).toBe('feather');
+	});
+
+	/**
+	 * The property the kind filter rests on: dropping a kind re-cuts the table
+	 * rather than leaving a hole in it, so what a reader sees is always the
+	 * real top of what they asked for.
+	 */
+	it('re-cuts when a kind is dropped, rather than leaving its rows out', () => {
+		const both = [rows('books', { m: 90, j: 80 }), rows('ccc', { '1': 5, '2': 4, '3': 3 })];
+		expect(mergedRanking(both, 2).map((r) => r.key)).toEqual(['m', 'j']);
+		expect(mergedRanking(both.slice(1), 2).map((r) => r.key)).toEqual(['1', '2']);
+	});
+
+	it('is empty when every kind is switched off', () => {
+		expect(mergedRanking([], 20)).toEqual([]);
+	});
+});
+
+/**
+ * The one kind that starts hidden, and it is hidden because it is an
+ * AGGREGATE: a book's count is every place citing any chapter of it, so shown
+ * beside its own chapters it answers the table twice. Measured over the real
+ * corpus, the top twenty of everything is eighteen books and two documents.
+ */
+describe('the ranking kinds', () => {
+	it('starts with the books switched off and nothing else', () => {
+		expect(RANK_HIDDEN_BY_DEFAULT).toEqual(['books']);
+	});
+
+	it('names a heading for every kind', () => {
+		for (const kind of RANK_KINDS) {
+			expect(en[`census.rank.${kind}`], `no heading for \`${kind}\``).toBeTruthy();
+		}
 	});
 });
 

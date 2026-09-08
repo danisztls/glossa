@@ -35,6 +35,49 @@ export interface CensusRankRow {
 	value: number;
 }
 
+/** A row of the one table, carrying the kind it came from so it can be marked
+ *  and filtered. */
+export interface CensusRankedRow extends CensusRankRow {
+	kind: string;
+	icon: IconName | undefined;
+}
+
+/**
+ * `topOf`'s limit, restated on this side because this side cuts too.
+ *
+ * `census.test.ts` runs the builder's cut and this one over the same counts
+ * and asserts they agree, which is what makes two implementations of one rule
+ * safe. They cannot be one function: the builder cuts a `Map` of citer sets
+ * written by Node, and this cuts rows already named out of the reader's own
+ * edition.
+ */
+export const RANK_LIMIT = 20;
+
+/**
+ * The kinds, in the order the library is read.
+ *
+ * `books` IS FIRST AND STARTS SWITCHED OFF, the one that does — `CitedBy`'s
+ * arrangement, and the same argument at a different scale. A book's count is
+ * every place citing any chapter of it, so it is an AGGREGATE of the rows
+ * below it: Matthew's 2,110 contains Matthew 5's 321. Shown together the two
+ * are not comparable and the table answers itself twice — measured, the top
+ * twenty of everything is eighteen books and two documents, with the Catechism
+ * and the Summa unreachable. Switched off, the table opens on the documents
+ * and chapters, and one press puts the books back.
+ */
+export const RANK_KINDS = ['books', 'chapters', 'documents', 'ccc', 'summa'] as const;
+export const RANK_HIDDEN_BY_DEFAULT: readonly string[] = ['books'];
+
+/** The glyph each kind's rows carry — the mark of the work they belong to,
+ *  which is why Scripture's two kinds share one. */
+const RANK_ICONS: Readonly<Record<string, string>> = {
+	books: 'bible',
+	chapters: 'bible',
+	documents: 'magisterium',
+	ccc: 'catechism',
+	summa: 'doctores'
+};
+
 /**
  * A book's name in the edition this reader would actually open.
  *
@@ -355,9 +398,14 @@ export function coverageRows(census: Census): CensusCoverageRow[] {
  * `summa` IS NAMED FOR ITS SHELF and not for the work. Every other row here,
  * and every shelf above, is a section of the library; one row naming a single
  * book among nine naming shelves reads as a different kind of thing.
+ *
+ * THERE IS NO `annotation` ROW AND THE BUILDER IS WHY. The census counts this
+ * breakdown over the references a ranking counts, and `countsTowardsRank`
+ * refuses an edition's own footnotes — so the kind never reaches this map. A
+ * key here would be a row for a family no table on the page counts, printed
+ * directly under those tables, and it was the largest number in the section.
  */
 export const CITER_KIND_KEYS: Readonly<Record<string, string>> = {
-	annotation: 'apparatus.commentary',
 	document: 'nav.magisterium',
 	summa: 'doctores.landing.title',
 	ccc: 'nav.ccc',
@@ -379,4 +427,62 @@ export function citerBreakdown(census: Census): { key: string; labelKey: string;
 	return census.citers
 		.filter(({ kind }) => CITER_KIND_KEYS[kind])
 		.map(({ kind, value }) => ({ key: kind, labelKey: CITER_KIND_KEYS[kind], value }));
+}
+
+/**
+ * The two numbers the breakdown's own sentence needs: what its rows sum to,
+ * and the total they are a part of.
+ *
+ * BOTH OR NEITHER. A column of counts under a stated total that it falls two
+ * fifths short of is the reading this page was rebuilt to stop, and dropping
+ * the commentary row is exactly what opens that gap — 41,842 references that
+ * no ranking counts and no row now names. The sentence closes it by saying
+ * which of the two totals the rows below are.
+ */
+export function citedTotals(census: Census): { counted: number; references: number } | undefined {
+	const references = census.shelves.find((shelf) => shelf.key === 'apparatus')?.facts.references;
+	if (references === undefined || census.countedReferences === undefined) return undefined;
+	return { counted: census.countedReferences, references };
+}
+
+/**
+ * The five rankings merged into one table, cut on the count.
+ *
+ * THE MERGE OF STORED TOPS IS THE EXACT TOP OF THE UNION, which is what makes
+ * a filter over kinds safe here where a filter over citing families would not
+ * be. A row in the union's top N is in its own kind's top N, its kind's list
+ * being a subset of the union — so nothing the merge needs was left out of the
+ * file. And a band this cut can afford is one that kind could afford too: the
+ * merged list has at least as many rows above any level, so its remaining room
+ * at that level is never greater.
+ *
+ * THE CUT IS `topOf`'s AND IS WRITTEN OUT AGAIN. A `slice` would split a tie —
+ * publishing four of thirteen Catechism paragraphs cited exactly three times —
+ * so whole bands are taken while the next still fits. `census.test.ts` runs
+ * both implementations over the same counts.
+ *
+ * Ordering within a band is by kind and then by the row's own key, so a
+ * rebuild over an unchanged corpus draws the same table.
+ */
+export function mergedRanking(
+	rankings: { key: string; rows: CensusRankRow[] }[],
+	limit = RANK_LIMIT
+): CensusRankedRow[] {
+	const rows = rankings
+		.flatMap(({ key, rows }) =>
+			rows.map((row) => ({ ...row, kind: key, icon: CENSUS_ICONS[RANK_ICONS[key]] }))
+		)
+		.sort(
+			(a, b) => b.value - a.value || a.kind.localeCompare(b.kind) || a.key.localeCompare(b.key)
+		);
+
+	let kept = 0;
+	for (let i = 0; i < rows.length;) {
+		let j = i;
+		while (j < rows.length && rows[j].value === rows[i].value) j++;
+		if (j > limit) break;
+		kept = j;
+		i = j;
+	}
+	return rows.slice(0, kept);
 }

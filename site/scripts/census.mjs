@@ -40,8 +40,14 @@
 
 import { citerKey, citerWorkKey } from './build-xrefs.mjs';
 
-/** Bumped when the shape changes; `src/lib/census.ts` declares the reader's copy. */
-export const CENSUS_VERSION = 2;
+/**
+ * Bumped when the shape changes; `src/lib/census.ts` declares the reader's
+ * copy. 3 dropped `fromNotes` and narrowed `citers` to the references a
+ * ranking counts, which is a change of MEANING rather than of field — the
+ * kind a version number exists for, since nothing about the old shape reads
+ * as wrong.
+ */
+export const CENSUS_VERSION = 3;
 
 /**
  * How many entries a ranking publishes — a ceiling, never a quota.
@@ -369,6 +375,23 @@ export function buildCensus(input) {
 	/** @type {Map<string, Set<string>>} */ const byBook = new Map();
 	/** @type {Map<string, Set<string>>} */ const byChapter = new Map();
 	/** @type {Map<string, number>} */ const byCiterKind = new Map();
+	/**
+	 * The same tally over the references a RANKING COUNTS, which is the one
+	 * the page publishes.
+	 *
+	 * Two tallies and not one, because the breakdown sits under the rankings
+	 * and has to describe them. Counting every reference put `annotation` at
+	 * the head of it — 41,842 against everything else's 61,152 — for a family
+	 * no table above it counts, and a row can only be read as bearing on what
+	 * it is printed under. `byCiterKind` stays because the total is what
+	 * `references` is, and a breakdown that names four fifths of a stated
+	 * total without saying so is the arithmetic this file already answered
+	 * for once.
+	 */
+	/** @type {Map<string, number>} */ const byCountedKind = new Map();
+	/** Every reference a ranking counts — what `byCountedKind` sums to, and
+	 *  the number that makes the difference between the two legible. */
+	let counted = 0;
 	/** Every distinct place in the corpus that cites anything, and every
 	 *  distinct address cited — the two ENDPOINTS of the cross-references,
 	 *  which is why neither is a part of their total. */
@@ -385,6 +408,8 @@ export function buildCensus(input) {
 					citingPlaces.add(citerKey(citer));
 					byCiterKind.set(citer.kind, (byCiterKind.get(citer.kind) ?? 0) + 1);
 					if (!countsTowardsRank(citer)) continue;
+					counted++;
+					byCountedKind.set(citer.kind, (byCountedKind.get(citer.kind) ?? 0) + 1);
 					tallyCiter(byBook, osis, citer);
 					tallyCiter(byChapter, `${osis} ${chapter}`, citer);
 				}
@@ -405,7 +430,10 @@ export function buildCensus(input) {
 				references++;
 				citingPlaces.add(citerKey(citer));
 				byCiterKind.set(citer.kind, (byCiterKind.get(citer.kind) ?? 0) + 1);
-				if (countsTowardsRank(citer, self)) tallyCiter(tally, id, citer);
+				if (!countsTowardsRank(citer, self)) continue;
+				counted++;
+				byCountedKind.set(citer.kind, (byCountedKind.get(citer.kind) ?? 0) + 1);
+				tallyCiter(tally, id, citer);
 			}
 		}
 		return tally;
@@ -506,8 +534,7 @@ export function buildCensus(input) {
 	shelf('apparatus', references, {
 		references,
 		citingPlaces: citingPlaces.size,
-		citedAddresses: citedAddresses.size,
-		fromNotes: byCiterKind.get('annotation') ?? 0
+		citedAddresses: citedAddresses.size
 	});
 
 	const headOf = (/** @type {string} */ id) => id.slice(0, id.lastIndexOf(' '));
@@ -532,13 +559,22 @@ export function buildCensus(input) {
 			canonLaw: Math.max(...routeManifest.canonLaw)
 		},
 		/**
-		 * Every citer kind and how many references it accounts for, largest
-		 * first — the rankings' other direction, and what makes `fromNotes`
-		 * legible rather than surprising.
+		 * Every citer kind and how many of the COUNTED references it accounts
+		 * for, largest first — the rankings' other direction, and printed under
+		 * them.
+		 *
+		 * `annotation` cannot appear here, by construction rather than by a
+		 * filter: `countsTowardsRank` refuses it, so it is never added. That is
+		 * the property worth having — an excluded family cannot come back into
+		 * this list through a later edit that forgets why it was dropped.
 		 */
-		citers: [...byCiterKind]
+		citers: [...byCountedKind]
 			.map(([kind, value]) => ({ kind, value }))
 			.sort((a, b) => b.value - a.value || a.kind.localeCompare(b.kind)),
+		/** What that list sums to, so the page can say so. Without it the
+		 *  breakdown is a column of numbers under a stated total it does not
+		 *  reach, which is the reading this file exists to have stopped. */
+		countedReferences: counted,
 		rankings: {
 			books: topOf(byBook, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
 				osis: id,

@@ -201,7 +201,7 @@ export const en: Dictionary = {
 	'census.prose.doctores':
 		'The Summa Theologiae — {questions} questions in {parts} parts, {articles} articles — in {languages} languages.',
 	'census.prose.apparatus':
-		'{references} cross-references, running from {citingPlaces} citing places to {citedAddresses} cited addresses. {fromNotes} of them are an edition’s own footnotes.',
+		'{references} cross-references, running from {citingPlaces} citing places to {citedAddresses} cited addresses.',
 	// The matrix. One line above it, because a reader meeting a grid of forty
 	// columns needs to know what a cell is before the shape means anything.
 	'census.reachLede':
@@ -233,7 +233,14 @@ export const en: Dictionary = {
 	// The chips' group label. `CitedBy` points its filters at the panel's own
 	// heading; here the heading is "What is cited", which names the section and
 	// not the choice, so the group says what pressing one does.
-	'census.rankFilter': 'Which tables to show',
+	'census.rankFilter': 'What to rank',
+	// UNDER THE BREAKDOWN, AND IT CLOSES AN ARITHMETIC. The rows below name
+	// only the citers a ranking counts, so they sum to less than the total the
+	// ledger states — this says by how much and refers back to the rules that
+	// took the difference out, rather than printing a row for a family no
+	// table on this page counts.
+	'census.citersLede':
+		'{counted} of the {references} cross-references count towards the ranking above. The rest are set aside by the two rules under it.',
 
 	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//

@@ -37,7 +37,16 @@
 	 * but nothing on the list said so. A column of figures can only invite
 	 * arithmetic; a sentence can state a relation.
 	 *
-	 * ## The rankings are the reader's own edition
+	 * ## One ranking, and the chips narrow what is in it
+	 *
+	 * Five tables ranked five different units, and a reader comparing them had
+	 * to hold five scales at once. Merged, the rows are comparable and the
+	 * chips do the separating — safely, because merging the stored tops is the
+	 * exact top of the union (`mergedRanking`). Books start switched off, the
+	 * one kind that does: a book's count is every place citing any chapter of
+	 * it, so beside its own chapters it answers the table twice.
+	 *
+	 * ## A ranked row is the reader's own edition
 	 *
 	 * A ranked row is an id in the file and a name on the page, out of
 	 * whichever Bible, document or Catechism this reader would open — which is
@@ -51,7 +60,7 @@
 	 * entry of `BY_SEGMENT`. Do not add one on the strength of what
 	 * `/bibliotheca` renders: the catalogue reads `manifests` alone, so a
 	 * narrow entry looks right and would silently empty three of the five
-	 * rankings here. `index-priming.test.ts` cannot catch it either, because
+	 * kinds here. `index-priming.test.ts` cannot catch it either, because
 	 * it scans what a PAGE imports from `$lib/corpus` and every reader this
 	 * page uses is one module further in.
 	 *
@@ -68,10 +77,14 @@
 	import { t, i18n } from '$lib/i18n.svelte';
 	import { loadCensus } from '$lib/corpus';
 	import {
+		RANK_HIDDEN_BY_DEFAULT,
+		RANK_KINDS,
 		censusProse,
 		censusShelves,
+		citedTotals,
 		citerBreakdown,
 		coverageRows,
+		mergedRanking,
 		rankedBooks,
 		rankedCcc,
 		rankedChapters,
@@ -125,27 +138,29 @@
 	const citers = $derived(census ? citerBreakdown(census) : []);
 
 	/**
-	 * The five rankings in the order the library is read, each with the
-	 * heading that says what unit it ranks.
+	 * The five kinds, each named out of the reader's own edition — what the
+	 * chips switch and what the one table is merged from.
 	 *
 	 * DERIVED PER RENDER rather than memoised, and it must be: every label in
 	 * it comes out of the reader's own edition, so a language change or an
 	 * edition change has to re-run this. It is five short array maps over at
 	 * most twenty rows each.
 	 */
-	const rankings = $derived(
-		census
-			? (
-					[
-						['books', rankedBooks(census)],
-						['chapters', rankedChapters(census)],
-						['documents', rankedDocuments(census)],
-						['ccc', rankedCcc(census)],
-						['summa', rankedSumma(census)]
-					] as [string, CensusRankRow[]][]
-				).filter(([, rows]) => rows.length > 0)
-			: []
-	);
+	const rankings = $derived.by(() => {
+		if (!census) return [];
+		const rows: Record<string, CensusRankRow[]> = {
+			books: rankedBooks(census),
+			chapters: rankedChapters(census),
+			documents: rankedDocuments(census),
+			ccc: rankedCcc(census),
+			summa: rankedSumma(census)
+		};
+		return RANK_KINDS.map((key) => ({ key, rows: rows[key] })).filter(
+			({ rows }) => rows.length > 0
+		);
+	});
+
+	const totals = $derived(census ? citedTotals(census) : undefined);
 
 	/**
 	 * WHICH RANKING TABLES ARE SWITCHED OFF, rather than which are on — the
@@ -153,19 +168,20 @@
 	 * without anyone having opted into it, and there is no default here that is
 	 * not "on" for an omission to have to imply.
 	 *
-	 * IT FILTERS WHICH TABLES ARE DRAWN AND NOT WHO DID THE CITING, which is
-	 * the one way this differs from that panel and it is not a shortcut. A
-	 * ranking is cut at build time on the total count, taking whole tie-bands
-	 * while the next still fits (`topOf`); re-ranking a stored top twenty by
-	 * one citing family would publish the top of THAT family's list only where
-	 * the two happen to agree, and silently publish a wrong one everywhere
-	 * else. The cut would have to be recomputed per subset, which is a
-	 * different file and not a control. What this narrows is what a reader can
-	 * already see — five tables, of which they may want two.
+	 * IT FILTERS WHAT IS RANKED AND NOT WHO DID THE CITING, which is the one
+	 * way this differs from that panel and it is not a shortcut. Narrowing by
+	 * KIND is exact: a row in the merged top twenty is in its own kind's top
+	 * twenty, so nothing the subset needs was left out of the file
+	 * (`mergedRanking`). Narrowing by CITING FAMILY is not: those counts were
+	 * summed at build time, and re-ranking a stored top twenty by one family
+	 * would publish the top of that family's list only where the two happen to
+	 * agree. That would need a cut per subset, which is a different file and
+	 * not a control.
 	 */
-	let hidden = $state(new SvelteSet<string>());
+	let hidden = $state(new SvelteSet<string>(RANK_HIDDEN_BY_DEFAULT));
 
-	const shownRankings = $derived(rankings.filter(([key]) => !hidden.has(key)));
+	/** One table over whichever kinds are switched on, cut on the count. */
+	const ranked = $derived(mergedRanking(rankings.filter(({ key }) => !hidden.has(key))));
 
 	function toggle(key: string) {
 		if (hidden.has(key)) hidden.delete(key);
@@ -178,6 +194,37 @@
 		value === 0
 			? t('census.reachNone')
 			: t('census.reachCell').replace('{value}', n(value)).replace('{of}', n(of));
+
+	/**
+	 * WHICH CELL THE POINTER IS OVER, and it is state rather than CSS because
+	 * two of the three things it drives cannot be reached with a selector: a
+	 * column heading is not an ancestor, a sibling or a descendant of the cell
+	 * under it, and the readout is a paragraph outside the table.
+	 *
+	 * Cleared on leaving the table rather than on leaving a cell, so moving
+	 * between two cells never blanks the readout between them.
+	 */
+	let hover = $state<{ row: string; lang: string } | undefined>();
+
+	/** The percentage, rounded to whole numbers except where that would round
+	 *  a language that has something down to nothing. `formatNumber` carries
+	 *  the reader's own separators, and the `%` is `Intl`'s. */
+	const percent = (fraction: number) => {
+		const whole = fraction * 100;
+		const decimals = whole > 0 && whole < 1 ? 1 : 0;
+		return formatNumber(whole, i18n.lang, decimals) + '%';
+	};
+
+	/** The readout over the matrix: a work, a language and how far the one
+	 *  reaches in the other. */
+	const reading = $derived.by(() => {
+		const at = hover;
+		if (!at) return undefined;
+		const row = coverage.find((r) => r.key === at.row);
+		const cell = row?.cells.find((c) => c.lang === at.lang);
+		if (!row || !cell) return undefined;
+		return `${t(row.labelKey)} · ${languageDisplayName(cell.lang)} · ${percent(cell.fraction)} — ${cellLabel(cell.value, row.of)}`;
+	});
 </script>
 
 <svelte:head>
@@ -248,7 +295,17 @@
 					because a scroll container a keyboard cannot reach is a
 					region a keyboard reader cannot see the right-hand end of.
 				-->
-				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<!-- THE READOUT, AND ITS HEIGHT IS RESERVED. It names the cell
+				     under the pointer, and it is one line whether or not there
+				     is a cell: appearing and disappearing in the flow would
+				     shove the whole matrix up and down under the reader's own
+				     hand, which is `/calendarium`'s rule about a surface that
+				     must not move under a pointer. `aria-live` is deliberately
+				     absent — a pointer readout announced on every cell crossed
+				     is forty interruptions a row, and the same fact is already
+				     in each cell's own text. -->
+				<p class="reading" aria-hidden={!reading}>{reading ?? ''}</p>
+
 				<!-- A SCROLL CONTAINER MUST BE FOCUSABLE, and the lint rule that
 				     objects to it is answering a different question. WCAG 2.1.1
 				     is why: a region that scrolls and cannot be reached from a
@@ -256,7 +313,14 @@
 				     not using a pointer, which here is thirty of the forty
 				     languages. `role="region"` plus the section's own heading is
 				     what gives it a name once it is in the tab order. -->
-				<div class="matrix-scroll" tabindex="0" role="region" aria-labelledby="reach-heading">
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<div
+					class="matrix-scroll"
+					tabindex="0"
+					role="region"
+					aria-labelledby="reach-heading"
+					onmouseleave={() => (hover = undefined)}
+				>
 					<table class="matrix">
 						<thead>
 							<tr>
@@ -264,14 +328,16 @@
 									<span class="visually-hidden">{t('nav.works')}</span>
 								</th>
 								{#each census.coverage.languages as lang (lang)}
-									<th scope="col" title={languageDisplayName(lang)}>{lang}</th>
+									<th scope="col" class:lit={hover?.lang === lang} title={languageDisplayName(lang)}
+										>{lang}</th
+									>
 								{/each}
 							</tr>
 						</thead>
 						<tbody>
 							{#each coverage as row (row.key)}
 								<tr>
-									<th scope="row">
+									<th scope="row" class:lit={hover?.row === row.key}>
 										<span class="work">
 											{#if row.icon}<span class="shelf-icon"><Icon name={row.icon} /></span>{/if}
 											{t(row.labelKey)}
@@ -284,7 +350,11 @@
 										</span>
 									</th>
 									{#each row.cells as cell (cell.lang)}
-										<td class:none={cell.value === 0}>
+										<td
+											class:none={cell.value === 0}
+											class:lit={hover?.row === row.key && hover?.lang === cell.lang}
+											onmouseenter={() => (hover = { row: row.key, lang: cell.lang })}
+										>
 											<!-- The bar is presentational; the value is text a
 											     screen reader reads, because a height is not a
 											     number to anyone who cannot see it. -->
@@ -320,7 +390,7 @@
 					would be a string to translate and a thing to keep true.
 				-->
 				<div class="filters" role="group" aria-label={t('census.rankFilter')}>
-					{#each rankings as [key] (key)}
+					{#each rankings as { key } (key)}
 						<button
 							type="button"
 							class="filter"
@@ -331,33 +401,47 @@
 				</div>
 			{/if}
 
-			<div class="rankings">
-				{#each shownRankings as [key, rows] (key)}
-					<section class="ranking" aria-labelledby="rank-{key}">
-						<h3 id="rank-{key}">{t(`census.rank.${key}`)}</h3>
-						<!-- An ordered list, because the order IS the content: a
-						     screen reader announcing "3 of 20" is reading the rank,
-						     which is the one thing a bare list would drop. -->
-						<ol>
-							{#each rows as row (row.key)}
-								<li>
-									<a href={row.href} title={row.fullTitle ?? undefined}>{row.label}</a>
-									<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
-								</li>
-							{/each}
-						</ol>
-					</section>
+			<!-- ONE ORDERED LIST AND NOT FIVE, because the order IS the content:
+			     a screen reader announcing "3 of 20" is reading the rank, which
+			     is the one thing a bare list would drop. Each row carries the
+			     mark of the work it belongs to, so a table holding four kinds
+			     at once still says what each row is. -->
+			<ol class="ranking">
+				{#each ranked as row (row.kind + ' ' + row.key)}
+					<li>
+						<!-- The mark says what the row is, and the name behind it says
+						     so in words — for a screen reader, and for anyone who
+						     cannot tell a quill from a scroll at 0.95em. Set out as
+						     visible text it was the kind repeated down twenty rows,
+						     which is the noise this page was rebuilt to lose. -->
+						{#if row.icon}
+							<span class="shelf-icon" title={t(`census.rank.${row.kind}`)}>
+								<Icon name={row.icon} />
+								<span class="visually-hidden">{t(`census.rank.${row.kind}`)}</span>
+							</span>
+						{/if}
+						<a href={row.href} title={row.fullTitle ?? undefined}>{row.label}</a>
+						<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
+					</li>
 				{/each}
-			</div>
+			</ol>
 		</section>
 
 		{#if citers.length}
 			<section aria-labelledby="citers-heading">
 				<h2 id="citers-heading">{t('census.citers')}</h2>
-				<!-- THE OTHER DIRECTION, AND WHY THE COMMENTARY ROW IS HERE AT
-				     ALL. The rankings above leave an edition's own footnotes
-				     out; this is where a reader can see how much that is, and
-				     it is the largest row in it. -->
+				<!-- THE OTHER DIRECTION, and it counts what the ranking counts:
+				     an edition's own footnotes are not a row here, because they
+				     are not a row up there either. The sentence says what the
+				     rows sum to, which is what stops a column of counts under a
+				     stated total from being read as short of it. -->
+				{#if totals}
+					<p class="lede landing-measure">
+						{t('census.citersLede')
+							.replace('{counted}', n(totals.counted))
+							.replace('{references}', n(totals.references))}
+					</p>
+				{/if}
 				<dl class="citers">
 					{#each citers as citer (citer.key)}
 						<div class="row">
@@ -385,14 +469,6 @@
 		margin: 0 0 0.75rem;
 		padding-bottom: 0.35rem;
 		border-bottom: 1px solid var(--color-border);
-	}
-
-	h3 {
-		font-family: var(--font-serif);
-		font-size: 1.02rem;
-		font-weight: 600;
-		margin: 0 0 0.5rem;
-		color: var(--color-text-muted);
 	}
 
 	.lede {
@@ -432,10 +508,10 @@
 	 * baseline, so a 1em mark stands a full em over capitals reaching seven
 	 * tenths of one.
 	 *
-	 * Muted and not accent. There are eighteen of them on the page against the
-	 * catalogue's eight, and at this size a mark repeated down two columns is
-	 * the page's texture rather than an accent on any one row — which is
-	 * `/schola`'s finding about its own eight, one step further along.
+	 * THE ACCENT, which is `/schola`'s treatment of its own marks and the one
+	 * this page had no colour of at all. One accent and not a colour per work:
+	 * past a certain count a colour stops picking a row out and becomes the
+	 * page's texture, and there are more marks here than on that page.
 	 */
 	.shelf-icon {
 		display: inline-flex;
@@ -444,7 +520,7 @@
 		block-size: 1lh;
 		margin-inline-end: 0.3rem;
 		vertical-align: text-bottom;
-		color: var(--color-text-muted);
+		color: var(--color-accent);
 	}
 
 	.shelf-icon :global(svg) {
@@ -528,26 +604,54 @@
 	 * case it was drawn for: here the fill IS the datum.
 	 */
 	/*
-	 * INK, not the muted grey the bars were drawn in first. That token is what
-	 * this page sets its secondary prose in, so 320 cells of it read as
-	 * something switched off — a matrix greyed out rather than a matrix full —
-	 * and the staircase the whole arrangement is for was the faintest thing on
-	 * the page. Mixed a fifth of the way to the ground so a full column is a
-	 * dark bar and not a black one, which at this density is a wall.
+	 * GROUND LAPIS — `--color-apparatus`, the hue this palette already spends
+	 * on the citation apparatus, and the second thing on the page that is a
+	 * measurement rather than a word. It was the muted grey first, which is
+	 * what this page sets its secondary prose in, so three hundred cells of it
+	 * read as a matrix switched off rather than one full.
 	 *
-	 * Two tokens and no literal, so all five appearance axes follow: on paper
-	 * it darkens toward the text colour, at night it lightens toward it, and
-	 * `data-mono` changes nothing because there was no hue to lose. The FILL is
-	 * still the datum (`site/docs/census.md`) — the colour only has to let a
-	 * reader see it.
+	 * A TOKEN AND NOT A LITERAL, which is what makes it survive the five
+	 * appearance axes: the token is #22409a on paper, a pale cornflower at
+	 * night, and grey under `data-mono` — where the FILL still carries every
+	 * datum, which is why this may be a colour at all
+	 * (`site/docs/references.md`, `site/docs/census.md`).
 	 */
 	.bar {
 		display: block;
 		width: 100%;
 		height: calc(var(--fill) * 100%);
 		min-height: 2px;
-		background: color-mix(in srgb, var(--color-text) 80%, var(--color-bg));
+		background: var(--color-apparatus);
 		border-radius: 1px;
+	}
+
+	/* The cell under the pointer, and the two headings that name it. The cell
+	   takes the accent — the page's other colour, so the one cell being read
+	   is told from the three hundred being compared — and the headings take
+	   weight and the text colour, which is a change a reader can see at 0.75rem
+	   where a colour alone is not. */
+	.matrix td.lit .bar {
+		background: var(--color-accent);
+	}
+
+	.matrix th.lit {
+		color: var(--color-text);
+		font-weight: 700;
+	}
+
+	/*
+	 * THE READOUT, and its height is reserved whether or not it says anything
+	 * — `min-height` on the line rather than a conditional block, so the matrix
+	 * under it never moves while a reader runs along a row. It sits above the
+	 * grid because the grid scrolls sideways and a line under it would be the
+	 * first thing off the bottom of a phone.
+	 */
+	.reading {
+		min-height: 1.5em;
+		margin: 0 0 0.4rem;
+		font-size: 0.9rem;
+		font-variant-numeric: tabular-nums;
+		color: var(--color-text-muted);
 	}
 
 	/* A language with nothing gets a hairline rather than an empty box: the
@@ -605,15 +709,15 @@
 		text-decoration-thickness: 1px;
 	}
 
-	.rankings {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-		gap: 1.5rem 2.5rem;
-	}
-
+	/* ONE COLUMN AND NOT FIVE. The five tables were a grid of short lists, and
+	   a grid is right where the lists are separate questions; merged into one
+	   ranking the rows are comparable, so they belong under one another. Capped
+	   at `.landing-measure`'s width — a ranked row is a name and a number, and
+	   a rule 72rem long between two of them is a page pretending to be a
+	   table. */
 	.ranking {
 		margin: 0;
-		break-inside: avoid;
+		max-inline-size: 40rem;
 	}
 
 	ol {

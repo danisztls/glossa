@@ -83,23 +83,38 @@ matrix survives `data-mono` — where the whole palette collapses to one grey �
 with nothing lost. `site/docs/references.md` draws that line for the family
 marks, and this is the case it was drawn for: here the fill IS the datum.
 
-**The bar is ink, and it was `--color-text-muted` first.** That token is what
-this page sets its secondary prose in, so three hundred cells of it read as a
-matrix switched off rather than a matrix full, and the staircase the whole
-arrangement exists to draw was the faintest thing on the page. It is
-`color-mix(in srgb, var(--color-text) 80%, var(--color-bg))` — two tokens and no
-literal, so all five appearance axes follow, and a fifth of the way to the ground
-because at this density a black column is a wall.
+**The bar is ground lapis, and it was `--color-text-muted` first.** That token
+is what this page sets its secondary prose in, so three hundred cells of it read
+as a matrix switched off rather than a matrix full, and the staircase the whole
+arrangement exists to draw was the faintest thing on the page. It takes
+`--color-apparatus`, the hue the palette already spends on citation — a token
+and never a literal, which is what carries it through the five appearance axes
+and flattens it to grey under `data-mono`, where the fill still carries every
+datum.
 
-**Every row carries the glyph its work already has.** `CENSUS_ICONS` takes them
-from `shelves.ts` and `/schola` rather than choosing again, which is the rule
-`shelves.ts` states for the catalogue and this is a third surface obeying it: a
-reader who has learned a mark on either page has learned it here. It is a map
-and not a field on `Shelf` because the key spaces differ — the catalogue has one
-card for the Catechism and its Compendium, and the matrix has a row for each.
-Only the two entries that name no shelf needed a mark of their own, and neither
-is new writing: books on a shelf for the collection, and `link` for the
-apparatus, a cross-reference being a link.
+**The cell under the pointer takes the accent, and its two headings take
+weight.** A readout above the grid names the work, the language and the
+percentage. Three things and one of them cannot be done in CSS: a column heading
+is not an ancestor, a sibling or a descendant of the cell below it, so the
+hovered cell is state. Its line's height is reserved whether or not it says
+anything — appearing in the flow would shove the matrix under the reader's own
+hand — and it carries no `aria-live`, a pointer readout being forty
+interruptions a row where each cell already reads its own value.
+
+**Every row carries the glyph its work already has, in the accent.**
+`CENSUS_ICONS` takes them from `shelves.ts` and `/schola` rather than choosing
+again, which is the rule `shelves.ts` states for the catalogue and this is a
+third surface obeying it: a reader who has learned a mark on either page has
+learned it here. It is a map and not a field on `Shelf` because the key spaces
+differ — the catalogue has one card for the Catechism and its Compendium, and
+the matrix has a row for each. Only the two entries that name no shelf needed a
+mark of their own, and neither is new writing: books on a shelf for the
+collection, and `link` for the apparatus, a cross-reference being a link.
+
+**One accent and not a colour per work**, which is `/schola`'s finding: past a
+certain count a colour stops picking a row out and becomes the page's texture,
+and there are more marks here than on that page. So the page has exactly two
+colours — the accent on what is named, lapis on what is measured.
 
 ## The three decisions the rankings rest on
 
@@ -115,13 +130,27 @@ a fact about how long the passages quoted from it are. Counted as citing
 places, Matthew 25 is sixteenth, and Matthew 5, Romans 8 and John 1 lead.
 `citerKey` is the identity, the same one the index was built with.
 
-**An edition's own footnotes are not counted.** 41,842 of the corpus's
-references are `annotation` against 47,855 of everything else, so a ranking
-that counted them would report which verses Haydock glossed. The "Cited in"
-panel starts commentary switched off on the same measurement
+**An edition's own footnotes are not counted.** A ranking that counted them
+would report which verses Haydock glossed — they outnumber everything else. The
+"Cited in" panel starts commentary switched off on the same measurement
 (`site/docs/references.md`); here it is left out rather than offered behind a
 control, because a ranking has no per-row filter to fall back on and a number
 that changes when a toggle moves is not a rank.
+
+**And the breakdown under the ranking counts what the ranking counts**, which
+is a second decision and the one that took a row off the page. Counted over
+every reference, `annotation` headed that list — the largest number in the
+section, for a family no table above it counts, and a row can only be read as
+bearing on what it is printed under. `countsTowardsRank` now gates the tally
+that feeds it, so the kind cannot come back through a later edit that forgets
+why it went.
+
+**Dropping it opens an arithmetic, and `countedReferences` closes it.** The rows
+sum to a little over half the total the ledger states, and a column of counts
+under a stated total it falls short of is the reading this page was rebuilt to
+stop. So the census derives what the rows sum to and the page says it: N of the
+M cross-references count towards the ranking, the rest set aside by the two
+rules above it. Naming the difference is what a row for it was doing badly.
 
 **A work citing itself is not counted either — the same rule one work in.**
 Lumen Gentium §8 citing §22 is an internal cross-reference, and counting it
@@ -138,15 +167,45 @@ while the next one still fits, so a table comes out shorter than the limit
 rather than arbitrary at the bottom — which is why neither the Catechism's
 ranking nor the Summa's fills its twenty rows.
 
-**The chips filter which TABLES are drawn, not who did the citing**, and that is
-the cut's doing rather than a shortcut. `CitedBy`'s filter narrows by citing
-family and this one cannot: the cut above is computed at build time on the total
-count, so re-ranking a stored top twenty by one family would publish that
-family's real top only where the two happen to agree and a wrong one everywhere
-else. Filtering by family means a cut per subset, which is a different file and
-not a control. What these narrow is what the reader can already see. The drawing
-is that panel's — on is plain, off is struck through — because a reader meets the
+## One ranking, and the chips narrow what is in it
+
+Five tables became one on 2026-09-08. They ranked five different units and a
+reader comparing them had to hold five scales at once; merged, the rows are
+comparable and the chips do the separating.
+
+**Merging the stored tops is the EXACT top of the union.** A row in the merged
+top twenty is in its own kind's top twenty, its kind's list being a subset of
+the union — so nothing the merge needs was left out of the file. And a band the
+merged cut can afford is one that kind could afford too, the merged list having
+at least as many rows above any level. That is what makes a filter over kinds
+safe, and it is a property of the KIND filter alone.
+
+**The chips narrow what is ranked, not who did the citing.** `CitedBy`'s filter
+narrows by citing family and this one cannot: those counts were summed at build
+time, so re-ranking a stored top twenty by one family would publish that
+family's real top only where the two happen to agree. Filtering by family means
+a cut per subset, which is a different file and not a control. The drawing is
+that panel's — on is plain, off is struck through — because a reader meets the
 same control doing the same job on two pages.
+
+**Books start switched OFF, the one kind that does**, and it is `CitedBy`'s
+commentary rule at a different scale. A book's count is every place citing any
+chapter of it, so it is an AGGREGATE of the chapter rows beside it: Matthew's
+2,110 contains Matthew 5's 321. Measured, the top twenty of everything is
+eighteen books and two documents, with the Catechism and the Summa unreachable —
+the table answering itself twice. Switched off it opens on Lumen Gentium,
+Gaudium et Spes, Romans 8 and Matthew 5, and one press puts the books back.
+
+**The cut is written twice and the two are pinned against each other.** `topOf`
+cuts the builder's map of citer sets under Node; `mergedRanking` cuts rows
+already named out of the reader's own edition. They cannot be one function, and
+a page that split a tie the file did not would be arbitrary at the bottom in
+exactly the way the rule exists to prevent — so `census.test.ts` runs both over
+the same counts.
+
+**A row is marked and not labelled.** The kind is the glyph of the work it
+belongs to, with the name behind it for a screen reader; set out as visible text
+it was the kind repeated down twenty rows.
 
 ## Monitoring it
 
