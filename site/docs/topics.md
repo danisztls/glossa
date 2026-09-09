@@ -100,24 +100,6 @@ coupling nobody looks for when they move an entry.
 slug is an address and has to name the same thing in every language, while a
 cluster appears in no URL and is a dictionary key exactly as `doorway` is.
 
-A search box sits at the top of the aside, above the table of contents, and it is the only control there. `/documenta`
-earns a facet panel because 298 rows carry axes invisible in the list — author,
-kind, date; this page is already sixteen named shelves, so a doorway or cluster
-filter would collapse the structure that _is_ the page. What no grouping gives
-is the reader who arrives holding words rather than a place, which is the half
-of the audience `docs/research/audiences.md` found bouncing off a jump box that
-completes citations they do not have. It matches title and question, folded for
-case and diacritics (`topic-search.ts` — `cremacao` has to find _cremação_), and
-the table of contents narrows with the list so it never offers an anchor that
-has left the page. It is rendered **twice** — the aside is gone below 80rem and
-search is the one control a phone reader most needs here — which is the same
-duplication `/documenta` pays for its filter panel; both copies bind one piece
-of state, and exactly one is in the accessibility tree at any width.
-
-The sidebar lists **clusters and nothing else**. Four rows would be a table of
-contents for a page nobody needs help with; one row per topic would be the page
-printed twice, which is the failure `IndexSidebarToc`'s own docblock names.
-
 **A shelf is closed until it is opened.** The cluster layer removed the wall
 three shelves at a time and left a page a hundred and sixteen rows tall, which
 is the same complaint one level up. Every cluster is a `<details>`, shut by
@@ -126,11 +108,38 @@ own table of contents, four doorways over sixteen named shelves, and the reader
 opens the one they came for. Two things follow. A live query forces every
 surviving shelf open, or a search matching three questions would show three
 closed headings and read as no results; and the search does not record what it
-opened, so clearing the box puts the page back as the reader had it. A sidebar
-row is an anchor at the cluster's own id, and a browser opens a closed
-`<details>` only for a target _inside_ one — so the page opens the cluster a
-fragment names, or every row of the table of contents would land on a heading
-and stop.
+opened, so clearing the box puts the page back as the reader had it. A browser
+opens a closed `<details>` only for a target _inside_ one, and these ids are on
+the element itself, so the page opens the cluster a fragment names — nothing
+here writes such a link any more, and somebody else's bookmark is exactly the
+case that has to keep working.
+
+**Which is what retired the aside.** It held a table of contents listing the
+sixteen clusters and, above that, the search box; with the shelves shut the page
+is that table of contents, so the sidebar was a second copy of the thing it
+pointed at. The aside also cost the search box a **second element** — it is
+`display: none` below 80rem, so the control had to be rendered again above the
+list, one query in two boxes with one of them always hidden. Both are gone. The
+search box sits under the tagline in the column, at every width, and is the only
+control on the page.
+
+`/documenta` earns a facet panel because 298 rows carry axes invisible in the
+list — author, kind, date; this page is already sixteen named shelves, so a
+doorway or cluster filter would collapse the structure that _is_ the page. What
+no grouping gives is the reader who arrives holding words rather than a place,
+which is the half of the audience `docs/research/audiences.md` found bouncing
+off a jump box that completes citations they do not have. The box matches title
+and question, folded for case and diacritics (`topic-search.ts` — `cremacao` has
+to find _cremação_), and it keeps the tagline's measure rather than the column's:
+a field three times the length of the line above it reads as another page's
+furniture.
+
+**The list is one, two or three columns**, by viewport rather than by a fixed
+pair — a topic is a short title over a one-line question, so a single column
+spends a third of its width and makes the page three times as tall as it needs to
+be. The thresholds (46rem, 75rem) are this page's own content and not the site's
+layout breakpoints; the second is where the viewport can give the column its
+whole width, which is what a third cell needs.
 
 **On a phone the question is dropped and the title carries the row.** At 360px
 a one-line question wraps to three, so eight topics are thirty-two lines of grey

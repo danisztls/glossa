@@ -423,7 +423,7 @@
 			rule: it is the instrument a reader who knows a word reaches for
 			FIRST, and a control that has to be opened before it can be used is
 			one most readers never find. So it sits above the panel, always shown,
-			exactly as `/quaestiones` shows `TopicSearch` above its list.
+			where `/quaestiones` keeps its own box for the same reason.
 		-->
 		<div class="search-inline">
 			<DocumentSearch bind:query />

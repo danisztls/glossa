@@ -906,8 +906,8 @@ reverse-chronological list.
 - **The search box is `DocumentSearch.svelte`, OUTSIDE that disclosure.** Inside
   the panel it was folded away with it below 80rem — the coarse instrument, shut
   by default, on the layout where a reader most needs it. It is rendered twice
-  for the same reason the panel is, and `/quaestiones` splits `TopicSearch` off
-  the same way.
+  for the same reason the panel is, and `/quaestiones` keeps its own box in the
+  column for the same reason.
 - **The filters are deliberately not in the URL** — `?auctor=` would be a change
   to the sitemap, the route manifest, the worker and the usage beacon. The app
   does read and write the client URL in two places already (`?compare=`, `?v=`);

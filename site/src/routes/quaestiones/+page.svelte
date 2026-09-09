@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { hrefFor } from '$lib/address';
-	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
-	import TopicSearch from '$lib/components/TopicSearch.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { matchingSlugs } from '$lib/topic-search';
 	import type { PageData } from './$types';
@@ -25,13 +23,13 @@
 	 * is a way of getting to one page and the page is the thing worth linking
 	 * to. Nothing else on the site reads it, so nothing else needs to see it.
 	 *
-	 * IT SITS AT THE TOP OF THE ASIDE, above the table of contents, and is
-	 * rendered a SECOND time above the list for narrower screens — the aside is
-	 * `display: none` below 80rem (`styles/layout.css`), and search is the one
-	 * control a phone reader most needs on a list of a hundred questions. That
-	 * is the duplication `/documenta` pays for `DocumentFilters`; both copies
-	 * bind this one `$state`, so there is one query and never two, and exactly
-	 * one of them is in the accessibility tree at any width.
+	 * IT SITS UNDER THE TAGLINE, in the column, at every width. It was in the
+	 * aside above a table of contents, which cost a second copy below 80rem
+	 * where the aside is `display: none` (`styles/layout.css`) — one control,
+	 * two elements, one of them always hidden. With the shelves closed by
+	 * default the page IS its own table of contents, so the aside had one thing
+	 * left in it and that thing belongs where the reader's eye already is:
+	 * under the sentence saying what the page holds, above the first shelf.
 	 */
 	let query = $state('');
 
@@ -88,22 +86,6 @@
 	);
 
 	/**
-	 * THE SIDEBAR LISTS CLUSTERS AND NOT DOORWAYS, which is the whole point of
-	 * having it: four entries would be a table of contents for a page nobody
-	 * needs help with, and one entry per topic would be the page again beside
-	 * itself — the failure `IndexSidebarToc`'s own docblock names. Sixteen
-	 * rows is the size that makes a hundred-odd questions skimmable.
-	 *
-	 * The doorway is carried as a `group` label rather than a row of its own,
-	 * so the spy's "where am I" never lands on a heading the reader cannot
-	 * scroll to alone.
-	 *
-	 * IT NARROWS WITH THE LIST, because `byDoorway` is already filtered and a
-	 * cluster with no surviving topic drops out of both. A table of contents
-	 * offering sixteen shelves over a page showing three would send the reader
-	 * to an anchor that is no longer on the page.
-	 */
-	/**
 	 * WHICH CLUSTERS THE READER HAS OPENED, and every shelf starts shut.
 	 *
 	 * Sixteen headings a reader can take in at once is what the cluster layer
@@ -120,10 +102,11 @@
 	 * clearing the box puts the page back exactly as the reader had it rather
 	 * than leaving whatever the search opened standing.
 	 *
-	 * A FRAGMENT OPENS ITS OWN CLUSTER. The sidebar's rows are anchors at these
-	 * ids, and a browser opens a closed `<details>` only for a target INSIDE
-	 * it — the target here is the element itself, so nothing would open and the
-	 * row would scroll to a heading and stop.
+	 * A FRAGMENT OPENS ITS OWN CLUSTER. A browser opens a closed `<details>`
+	 * only for a target INSIDE it, and these ids are on the element itself — so
+	 * a link into a shelf would scroll to a shut heading and stop. Nothing on
+	 * this page writes such a link any more, and someone else's bookmark is
+	 * exactly the case that has to keep working.
 	 */
 	let opened = $state<Record<string, boolean>>({});
 
@@ -136,91 +119,91 @@
 	function remember(id: string, open: boolean) {
 		if (!searching) opened[id] = open;
 	}
-
-	const sidebarItems = $derived(
-		byDoorway.flatMap((group) =>
-			group.clusters.map((entry) => ({
-				href: `#${group.doorway}-${entry.cluster}`,
-				label: t(`quaestiones.cluster.${entry.cluster}`)
-			}))
-		)
-	);
 </script>
 
 <svelte:head>
 	<title>{t('quaestiones.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="reading-layout index">
-	<div class="landing-column">
-		<h1>{t('quaestiones.landing.title')}</h1>
-		<p class="page-tagline landing-measure">{t('quaestiones.landing.tagline')}</p>
+<div class="landing-column">
+	<h1>{t('quaestiones.landing.title')}</h1>
+	<p class="page-tagline landing-measure">{t('quaestiones.landing.tagline')}</p>
 
-		{#if data.index}
-			<!-- The copy a reader gets where the aside is not, below the grid
-			     breakpoint — `.search-inline` mirrors `.index-aside`'s own
-			     `display` rule, exactly as `/documenta`'s `.filters-inline`
-			     does. Not a `<details>` like that one: a single field is small
-			     enough to simply show, and folding away the control that makes
-			     a long list usable is the opposite of the point. -->
-			<div class="search-inline">
-				<TopicSearch bind:query matched={matching.size} total={rows.length} />
-			</div>
-		{/if}
+	{#if data.index}
+		<!-- `type="search"` for the clear affordance browsers give it; the
+		     accessible name is an `aria-label` because a visible label would only
+		     repeat the placeholder.
 
-		{#if !data.index}
-			<p class="empty">{t('quaestiones.landing.none')}</p>
-		{:else if searching && matching.size === 0}
-			<p class="empty">{t('quaestiones.search.none')}</p>
-		{:else}
-			{#each byDoorway as group (group.doorway)}
-				{#if group.clusters.length > 0}
-					<section class="doorway">
-						<h2>{t(`quaestiones.doorway.${group.doorway}`)}</h2>
-						<p class="blurb">{t(`quaestiones.doorway.${group.doorway}.blurb`)}</p>
-
-						{#each group.clusters as entry (entry.cluster)}
-							{@const id = `${group.doorway}-${entry.cluster}`}
-							<!-- The chip is what a closed shelf owes the reader: sixteen
-							     headings with no sizes are sixteen doors into an unknown
-							     room, and while a query is live it is the count that
-							     survived it. -->
-							<details
-								class="cluster"
-								{id}
-								open={searching || opened[id] === true}
-								ontoggle={(event) => remember(id, event.currentTarget.open)}
-							>
-								<summary>
-									<h3>{t(`quaestiones.cluster.${entry.cluster}`)}</h3>
-									<span class="chip">{entry.topics.length}</span>
-								</summary>
-								<!-- `"hover"`: a row here is a destination the reader picked in
-								     order to GO to it, the same call `/preces` makes for the
-								     same shape of list. -->
-								<ul class="index-list" data-link-preview="hover">
-									{#each entry.topics as slug (slug)}
-										<li class="topic-row">
-											<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
-												{t(`quaestiones.${slug}.title`)}
-											</a>
-											<p class="question">{t(`quaestiones.${slug}.question`)}</p>
-										</li>
-									{/each}
-								</ul>
-							</details>
-						{/each}
-					</section>
+		     THE COUNT IS PART OF THE FIELD and not of the list: it is the field's
+		     answer, and putting it over the shelves would leave the box the reader
+		     typed into saying nothing. Announced only while a query is live — with
+		     none it would read "116 / 116" beside a page showing all of them — and
+		     `aria-live` because the list shrinking is otherwise a silent change to
+		     content far below. The paragraph holds its space either way, or the
+		     first keystroke would move every shelf under it. -->
+		<div class="search">
+			<input
+				type="search"
+				class="topic-search"
+				bind:value={query}
+				placeholder={t('quaestiones.search.label')}
+				aria-label={t('quaestiones.search.label')}
+			/>
+			<p class="search-count" aria-live="polite">
+				{#if searching}
+					<span class="visually-hidden">{t('quaestiones.search.label')}: </span>{matching.size} /
+					{rows.length}
 				{/if}
-			{/each}
-		{/if}
-	</div>
-	<aside class="index-aside">
-		{#if data.index}
-			<TopicSearch bind:query matched={matching.size} total={rows.length} />
-		{/if}
-		<IndexSidebarToc heading={t('quaestiones.landing.title')} items={sidebarItems} />
-	</aside>
+			</p>
+		</div>
+	{/if}
+
+	{#if !data.index}
+		<p class="empty">{t('quaestiones.landing.none')}</p>
+	{:else if searching && matching.size === 0}
+		<p class="empty">{t('quaestiones.search.none')}</p>
+	{:else}
+		{#each byDoorway as group (group.doorway)}
+			{#if group.clusters.length > 0}
+				<section class="doorway">
+					<h2>{t(`quaestiones.doorway.${group.doorway}`)}</h2>
+					<p class="blurb">{t(`quaestiones.doorway.${group.doorway}.blurb`)}</p>
+
+					{#each group.clusters as entry (entry.cluster)}
+						{@const id = `${group.doorway}-${entry.cluster}`}
+						<!-- The chip is what a closed shelf owes the reader: sixteen
+						     headings with no sizes are sixteen doors into an unknown
+						     room, and while a query is live it is the count that
+						     survived it. -->
+						<details
+							class="cluster"
+							{id}
+							open={searching || opened[id] === true}
+							ontoggle={(event) => remember(id, event.currentTarget.open)}
+						>
+							<summary>
+								<h3>{t(`quaestiones.cluster.${entry.cluster}`)}</h3>
+								<span class="chip">{entry.topics.length}</span>
+							</summary>
+							<!-- `"hover"`: a row here is a destination the reader picked in
+							     order to GO to it, the same call `/preces` makes for the
+							     same shape of list. -->
+							<ul class="index-list" data-link-preview="hover">
+								{#each entry.topics as slug (slug)}
+									<li class="topic-row">
+										<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
+											{t(`quaestiones.${slug}.title`)}
+										</a>
+										<p class="question">{t(`quaestiones.${slug}.question`)}</p>
+									</li>
+								{/each}
+							</ul>
+						</details>
+					{/each}
+				</section>
+			{/if}
+		{/each}
+	{/if}
 </div>
 
 <style>
@@ -230,46 +213,63 @@
 	}
 
 	/*
-	 * THE INLINE COPY IS THE MIRROR OF `.index-aside` in styles/layout.css:
-	 * exactly where that rule takes the aside away, this appears, and where
-	 * the aside is back this goes. `/documenta`'s `.filters-inline` is the
-	 * same pair. Getting it wrong in either direction shows two search boxes
-	 * or none.
+	 * THE FIELD KEEPS THE TAGLINE'S MEASURE and does not run the column's
+	 * width. It sits directly under a 40rem sentence, and a search box three
+	 * times the length of the line above it reads as a different page's
+	 * furniture; nothing about a query needs 72rem to be typed into either.
+	 *
+	 * `flex-wrap` so the count drops under the field where the two together
+	 * would squeeze it — the field has a floor and the count is short, so on
+	 * anything but the narrowest phone they share one line.
 	 */
-	@media (min-width: 80rem) {
-		.search-inline {
-			display: none;
-		}
+	.search {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.75rem;
+		max-width: 40rem;
+		margin-bottom: 2rem;
 	}
 
-	.search-inline {
-		max-width: 40rem;
+	/* The four declarations every bordered text field on this site agrees on
+	   — `JumpBox`, `.menu-filter` and `.doc-search` are the same. */
+	.topic-search {
+		flex: 1 1 12rem;
+		min-width: 0;
+		box-sizing: border-box;
+		font-family: var(--font-sans);
+		padding: 0.45rem 0.6rem;
+		font-size: 0.9rem;
+		/* A ratio and not the length an inherited `font` shorthand leaves —
+		   styles/base.css says why. */
+		line-height: 1.5;
+		color: var(--color-text);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
 	}
 
 	/*
-	 * THE SEARCH FIELD HOLDS THE TOP OF THE ASIDE'S SCROLLPORT.
-	 *
-	 * `.index-aside` is its own scroll container (styles/layout.css) and the
-	 * table of contents under this is sixteen rows, so a reader who scrolled
-	 * to the last shelf would have scrolled the one control they might want to
-	 * type into off the top of it.
-	 *
-	 * ON THE ASIDE'S COPY AND NOT ON THE COMPONENT, because the same component
-	 * is rendered inline above the list at narrower widths, where there is no
-	 * scroll container of its own: sticky there resolves against the PAGE's
-	 * scrollport and the field would ride down the document over a hundred
-	 * rows. `:global()` reaches into the component's scope; `.index-aside` is
-	 * this route's own element, so the pair stays scoped to this page.
-	 *
-	 * The ground is opaque because a sticky element does not clip what passes
-	 * under it, and the band is what carries it — see the component, where the
-	 * gap below the field is padding for exactly this reason.
+	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
+	 * field on this site does; `DocumentSearch` records the arithmetic. An
+	 * offset ring drawn around an already-bordered rounded field stacks into a
+	 * double frame. The transparent outline is not decoration: `forced-colors`
+	 * repaints an `outline` in the system focus colour, where the halo is
+	 * dropped.
 	 */
-	.index-aside :global(.topic-search-band) {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-		background: var(--color-bg);
+	.topic-search:focus-visible {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		border-color: var(--color-apparatus);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+	}
+
+	.search-count {
+		flex: 0 0 auto;
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.doorway {
@@ -297,7 +297,7 @@
 
 	.cluster {
 		margin-bottom: 1.75rem;
-		/* Clears the sticky chrome when a sidebar row jumps to this heading —
+		/* Clears the sticky chrome when a fragment lands on this heading —
 		   without it the heading lands behind the bar and the reader sees the
 		   cluster's second topic first. `scroll-padding-top` on the scroll
 		   container is the site's usual instrument; this is the same value
@@ -377,11 +377,11 @@
 	}
 
 	/*
-	 * TWO TOPICS PER ROW ONCE THERE IS ROOM, because a topic is a short title
-	 * over a one-line question and the column it sits in is 62rem: in one
-	 * column each row uses a third of its width and the page becomes twice as
-	 * tall as it needs to be, which on a hundred-odd topics is the difference
-	 * between a list a reader scans and one they scroll.
+	 * AS MANY TOPICS PER ROW AS THE VIEWPORT WILL HOLD — one, two, then three.
+	 * A topic is a short title over a one-line question, so in a single column
+	 * each row uses a third of its width and the page is three times as tall as
+	 * it needs to be, which on a hundred-odd topics is the difference between a
+	 * list a reader scans and one they scroll.
 	 *
 	 * ROW FLOW AND NOT COLUMN FLOW — `grid` rather than CSS multi-column, and
 	 * the choice matters. Multi-column would fill the left column top to
@@ -397,12 +397,18 @@
 	 * unbreakable word — a long title would push the second column off the
 	 * page rather than wrap.
 	 *
-	 * 46rem, WHICH IS NOT ONE OF THE SITE'S LAYOUT BREAKPOINTS and should not
-	 * be made into one. This is the width at which two 23rem cells stop
-	 * crowding, measured against this page's own content; the 80rem in
-	 * layout.css is where the aside appears, which is a different question
-	 * about a different element. Below it the list is one column and the rule
-	 * never applies.
+	 * 46rem AND 75rem ARE NOT THE SITE'S LAYOUT BREAKPOINTS and should not be
+	 * made into them. They are this page's own content: two 23rem cells stop
+	 * crowding at the first, and the second is where the viewport can give the
+	 * column its whole `--landing-width` (72rem plus its padding), which is
+	 * what a third 22rem cell needs. The 80rem in layout.css is where an aside
+	 * appears, a different question about a different element — and this page
+	 * no longer has one.
+	 *
+	 * `auto-fit` WOULD BE THE SHORTER SPELLING AND IS THE WRONG ONE: the track
+	 * minimum would have to be a length, and a cell here is sized by a question
+	 * that wraps rather than by anything that refuses to. Stating the counts
+	 * keeps the two thresholds where the reasoning for them is.
 	 */
 	.index-list {
 		display: grid;
@@ -414,6 +420,15 @@
 	@media (min-width: 46rem) {
 		.index-list {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 75rem) {
+		.index-list {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			/* Three cells in 72rem have less to spare than two had, so the
+			   gutter narrows with them rather than eating a cell's width. */
+			column-gap: 2rem;
 		}
 	}
 

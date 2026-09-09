@@ -16,8 +16,8 @@
 	 * rendered inside a `<details>` above the list, closed by default so a
 	 * phone reader meets the documents first — which folded the search box away
 	 * with it. Being outside that disclosure is the whole point: the coarse
-	 * instrument is the one control that must never need opening. `/quaestiones`
-	 * makes the same split with `TopicSearch`.
+	 * instrument is the one control that must never need opening.
+	 * `/quaestiones` keeps its own box in the column for the same reason.
 	 *
 	 * RENDERED TWICE, once in the aside and once above the list, and both bind
 	 * the route's one `$state` — so there is one query and never two, and
