@@ -24,11 +24,17 @@
 	but one, and every group in a corpus written before this field existed.
 
 	IT IS A COMPONENT AND NOT A SNIPPET because it has two callers in two
-	files: the route draws it under the directions' heading and
-	`PrayerMysteries` under each set's. It was a snippet on the route while
-	both callers were there, and the mysteries moving out is what made the
-	second copy the alternative — a copied assembly, which a shared class does
-	not fix.
+	files: the route draws it beside the opening prayer's section name and
+	`PrayerMysteries` beside each set's rubric. It was a snippet on the route
+	while both callers were there, and the mysteries moving out is what made
+	the second copy the alternative — a copied assembly, which a shared class
+	does not fix.
+
+	THE ROUTE'S CALLER MOVED WITH THE TEXT IT ATTRIBUTES. It sat under the
+	directions' heading until those directions came off the page (the Rosary's
+	how-to is written here now, and the source's four sentences said nothing
+	the walkthrough had not); what is left of `instructions` is the opening
+	prayer, which is the source's words and takes the source's line.
 -->
 <script lang="ts">
 	import { hostOf } from '$lib/copyright';

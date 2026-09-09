@@ -819,7 +819,13 @@ export const en: Dictionary = {
 	'prayers.rosary.previousDay': 'The day before',
 	'prayers.rosary.nextDay': 'The day after',
 	'prayers.rosary.todayHeading': 'Today’s mysteries',
+	// The two section labels this page writes for itself. The third — over the
+	// concluding prayer — is NOT here: every edition heads its own conclusion
+	// ("Prayer concluding the Rosary", "Schlussgebet", "Oración tras el
+	// rosario"), so the page takes that line as the heading it already is
+	// rather than printing our own words above it.
 	'prayers.rosary.openingPrayer': 'Opening prayer',
+	'prayers.rosary.mysteries': 'The mysteries',
 	'prayers.rosary.decadePrayers': 'The prayers of a decade',
 	// THE ONLY PROSE ON THIS SITE THAT EXPLAINS A PRAYER RATHER THAN PRINTING
 	// ONE. Everything else under /preces is the source's text reproduced; these
@@ -834,6 +840,10 @@ export const en: Dictionary = {
 	// No sentence tells the reader what to feel, and none says the prayer is
 	// easy — a first Rosary is twenty minutes of unfamiliar repetition, and a
 	// page that pretends otherwise is the reason somebody stops halfway.
+	// The fold's own name. "How-to" and not the source's "How to pray the
+	// Rosary?", which repeated the page's `<h1>` two lines under it and asked a
+	// question the row already answers by being pressable.
+	'prayers.rosary.howTo': 'How-to',
 	'prayers.rosary.howTo.lead':
 		'The Rosary is a short round of prayers said five times over, while you hold one scene from the life of Jesus and Mary in mind. The beads only count for you, so that your attention can stay on the scene. Fingers do as well.',
 	'prayers.rosary.howTo.begin': 'Begin',
@@ -842,25 +852,19 @@ export const en: Dictionary = {
 	'prayers.rosary.howTo.decades': 'Say five decades',
 	'prayers.rosary.howTo.decadesBody':
 		'A decade is one mystery and the prayers that follow it. Read the first mystery, stop long enough to picture it, then say:',
+	// The last sentence carries the source's third direction, which said only
+	// "An invocation may be added after each decade" — true, unexplained, and
+	// the one thing in those four sentences this walkthrough had not already
+	// said better.
 	'prayers.rosary.howTo.decadesAfter':
-		'Then move to the next mystery and do the same, until all five are done. Each of the ten Hail Marys is one bead.',
+		'Then move to the next mystery and do the same, until all five are done. Each of the ten Hail Marys is one bead. You may add one more short prayer at the end of each decade.',
 	'prayers.rosary.howTo.finish': 'Finish',
+	// `{0}` and `{1}` are the two prayers this sentence names, rendered as
+	// links to them — `slotted` in `rosary.ts` carries why they are holes in a
+	// whole sentence rather than three keys. Move them where the target
+	// language wants them; do not translate the digits.
 	'prayers.rosary.howTo.finishBody':
-		'Say the prayers at the foot of this page. Many people add the Litany of Loreto or another prayer to Our Lady after them.',
-	'prayers.rosary.howTo.duration': 'The whole of it takes about twenty minutes.',
-	// Over the source's own four directions, inside the same fold. It says "the
-	// source" and not "the Vatican" because the label is read under every
-	// edition, and what is being marked off is provenance rather than an
-	// institution: the sentences under it are somebody else's and the
-	// explanation above it is ours.
-	'prayers.rosary.howTo.asPrinted': 'The directions as the source prints them',
-	// Over the links under the concluding prayer. The source ends the Rosary
-	// with "the Loreto Litany or some other Marian prayer" and opens its
-	// conclusion "Hail, Holy Queen, etc. as above" — an "above" that exists in
-	// the Compendium's appendix and not on a page serving one prayer. This
-	// label says what the two links are: prayers the text names and does not
-	// print, which is a different claim from "see also".
-	'prayers.rosary.namedPrayers': 'The prayers it names',
+		'Say the {0} and the prayer after it, printed at the foot of this page. Many people add the {1} or another prayer to Our Lady afterwards.',
 
 	// Reference tooltips/popovers — RefText.svelte is the consumer.
 	'ref.tooltip.loading': 'Loading…',

@@ -73,7 +73,13 @@
 	 */
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { pairPrayerLines, prayerLines, prayerTexts, type PrayerRow } from '$lib/prayer-lines';
+	import {
+		pairPrayerLines,
+		plainLine,
+		prayerLines,
+		prayerTexts,
+		type PrayerRow
+	} from '$lib/prayer-lines';
 	import { compare } from '$lib/compare-pref.svelte';
 	import {
 		adoptCompareFromUrl,
@@ -97,6 +103,7 @@
 	import { placePrayerCommentary, type CommentaryEntry } from '$lib/commentary-placement';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
+	import { slotted } from '$lib/rosary';
 	import CompareField from '$lib/components/CompareField.svelte';
 	import CompareGrid from '$lib/components/CompareGrid.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
@@ -344,20 +351,28 @@
 	const DECADE_SLUGS = DECADE.map((d) => d.slug);
 
 	/**
-	 * THE TWO PRAYERS THE ROSARY SENDS A READER TO AND DOES NOT PRINT.
+	 * THE TWO PRAYERS THE FINISH STEP NAMES, in the order its `{0}`/`{1}` holes
+	 * expect them.
 	 *
-	 * Its last direction ends the Rosary with "the Loreto Litany or some other
-	 * Marian prayer", and its concluding section opens "Hail, Holy Queen, etc.
-	 * as above" — a cross-reference to the Compendium's appendix, where the
-	 * Salve Regina is printed a few pages up. There is no "above" here: this
-	 * route serves one prayer per address, so the line was a dead end telling
-	 * the reader to say something the page neither prints nor points at.
-	 *
-	 * Both are prayers this corpus holds. Linked rather than inlined, and by
-	 * slug for `DECADE_SLUGS`' reason — the text stays exactly as the source
-	 * set it, and the reader gets somewhere to go.
+	 * The source's last direction ends the Rosary with "the Loreto Litany or
+	 * some other Marian prayer", and its concluding section opens "Hail, Holy
+	 * Queen, etc. as above" — a cross-reference to the Compendium's appendix,
+	 * where the Salve Regina is printed a few pages up. There is no "above"
+	 * here: this route serves one prayer per address, so a reader following
+	 * that line was being sent to something the page neither prints nor points
+	 * at. The walkthrough names both, and each name is the link to it.
 	 */
-	const CLOSING_SLUGS = ['hail-holy-queen', 'litany-of-loreto'];
+	const FINISH_SLOTS = ['hail-holy-queen', 'litany-of-loreto'];
+
+	/** A prayer's own title in this edition, falling back to English. The
+	 *  walkthrough is written here and falls back to English key by key, so a
+	 *  name inside one of its sentences degrades the same way rather than
+	 *  leaving a hole in a sentence. The href is the slug either way — the
+	 *  address is edition-free, and `/preces/{slug}` resolves whichever edition
+	 *  holds it. */
+	function prayerTitle(slug: string): string | undefined {
+		return (getPrayerMeta(lang, slug) ?? getPrayerMeta('en', slug))?.title;
+	}
 
 	function namedPrayerLinks(slugs: string[]): { slug: string; meta: PrayerMeta }[] {
 		return slugs
@@ -371,7 +386,6 @@
 			times: DECADE.find((d) => d.slug === p.slug)?.times ?? 1
 		}))
 	);
-	const closingPrayers = $derived(namedPrayerLinks(CLOSING_SLUGS));
 
 	onMount(() => {
 		if (current) setPosition('prayer.common.' + lang, current.prayer.title, page.url.pathname);
@@ -382,10 +396,21 @@
 	<title>{current?.prayer.title ?? data.slug} — {t('home.title')}</title>
 </svelte:head>
 
-{#snippet namedPrayers(entries: { slug: string; meta: PrayerMeta }[])}
-	{#each entries as entry, i (entry.slug)}
-		{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
-		<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta.title}</a>
+<!-- A prayer named inside a written sentence, as the link to it. There is no
+     separate list of these anywhere on the page: a name a reader meets in a
+     sentence is where they want to follow it from, and a row of the same names
+     underneath is the page saying them twice. -->
+{#snippet prayerLink(slug: string)}
+	{@const title = prayerTitle(slug)}
+	{#if title}<a href={hrefFor({ kind: 'prayer', slug })}>{title}</a>{/if}
+{/snippet}
+
+<!-- A sentence written here whose prayer names are holes — see `slotted`. -->
+{#snippet withPrayerLinks(text: string, slugs: string[])}
+	{#each slotted(text) as piece, i (i)}
+		{#if 'text' in piece}{piece.text}{:else if slugs[piece.slot]}{@render prayerLink(
+				slugs[piece.slot]
+			)}{/if}
 	{/each}
 {/snippet}
 
@@ -431,30 +456,37 @@
 	     `/documenta`'s and `CitedBy`'s disclosures met. -->
 	{#if p.instructions}
 		{@const opening = p.instructions.blocks.length > 1 ? p.instructions.blocks[0] : undefined}
-		{@const printed = opening ? p.instructions.blocks.slice(1) : p.instructions.blocks}
 		<details class="prayer-instructions" id="prayer-instructions">
 			<summary>
-				<h2>{p.instructions.title}</h2>
+				<h2>{t('prayers.rosary.howTo')}</h2>
 			</summary>
 
 			<div class="prayer-instructions-body">
 				<!--
-					OUR OWN WALKTHROUGH, ABOVE THE SOURCE'S DIRECTIONS AND MARKED
-					OFF FROM THEM. Everywhere else under /preces this site prints
-					what its source printed and adds nothing; here it explains,
-					because the source's four sentences are addressed to somebody
-					who already prays the Rosary. They name a "decade" without
-					saying what one is, tell the reader to "announce the mystery"
-					without saying to whom, and state the counts of a decade
-					inside a sentence rather than as the list a person follows
-					while counting. Somebody meeting the prayer for the first
-					time cannot begin from them, and this page is the one a
-					search for "how to pray the Rosary" lands on.
+					OUR OWN WALKTHROUGH, AND IT IS THE ONLY ONE ON THE PAGE.
+					Everywhere else under /preces this site prints what its source
+					printed and adds nothing; here it explains, because the
+					source's four directions are addressed to somebody who already
+					prays the Rosary. They name a "decade" without saying what one
+					is, tell the reader to "announce the mystery" without saying to
+					whom, and state the counts of a decade inside a sentence rather
+					than as the list a person follows while counting. Somebody
+					meeting the prayer for the first time cannot begin from them,
+					and this page is the one a search for "how to pray the Rosary"
+					lands on.
 
-					The source's own sentences are still here, under their own
-					label and in their own language, three paragraphs down. The
-					explanation stands beside them; it does not replace them, and
-					nothing of theirs is rewritten, cut or renumbered.
+					THOSE FOUR SENTENCES ARE NOT PRINTED UNDER THIS, and were for
+					one revision. Every claim in them is in the three steps above
+					— announce the mystery, the three prayers and their counts, the
+					optional invocation after each decade, the Litany of Loreto at
+					the end — so keeping them was a second, terser copy of the same
+					instructions under a label explaining that it was the same
+					instructions, in a fold that is meant to be read once. What the
+					source has that this does not is its TEXT, and the text of the
+					Rosary is the rest of this page.
+
+					The opening prayer is the one thing in `instructions` that is
+					not a direction, and it is printed whole, below.
 				-->
 				<p class="rosary-lead">{t('prayers.rosary.howTo.lead')}</p>
 
@@ -491,28 +523,11 @@
 					</li>
 					<li>
 						<p class="rosary-step-name">{t('prayers.rosary.howTo.finish')}</p>
-						<p>{t('prayers.rosary.howTo.finishBody')}</p>
+						<p>
+							{@render withPrayerLinks(t('prayers.rosary.howTo.finishBody'), FINISH_SLOTS)}
+						</p>
 					</li>
 				</ol>
-
-				<p class="rosary-duration">{t('prayers.rosary.howTo.duration')}</p>
-
-				<!-- The source's directions, whole and in its own language. The
-				     `lang` is on the wrapper because everything above it is the
-				     reader's interface language and everything inside it is not. -->
-				{#if printed.length > 0}
-					<div class="rosary-as-printed" lang={bodyLang}>
-						<p class="prayer-step-label label-micro" lang={i18n.lang}>
-							{t('prayers.rosary.howTo.asPrinted')}
-						</p>
-						<ol class="prayer-steps">
-							{#each printed as block, i (i)}
-								<li><PrayerBlocks lines={prayerLines([block])} /></li>
-							{/each}
-						</ol>
-						<SectionSource url={p.instructions.source} />
-					</div>
-				{/if}
 			</div>
 		</details>
 
@@ -527,11 +542,17 @@
 			open them again to find the first line.
 		-->
 		{#if opening}
-			<section class="prayer-opening" lang={bodyLang}>
-				<p class="prayer-step-label label-micro" lang={i18n.lang}>
+			<section class="prayer-section">
+				<h2 class="prayer-section-name label-micro">
 					{t('prayers.rosary.openingPrayer')}
-				</p>
-				<PrayerBlocks lines={prayerLines([opening])} />
+					<!-- The provenance of the words under it, and the last thing
+					     left pointing at the page the directions came from now
+					     that the directions themselves are gone. -->
+					<SectionSource url={p.instructions.source} />
+				</h2>
+				<div class="prayer-opening" lang={bodyLang}>
+					<PrayerBlocks lines={prayerLines([opening])} />
+				</div>
 			</section>
 		{/if}
 	{/if}
@@ -544,7 +565,10 @@
 	     the Rosary"), which only makes sense read after the groups
 	     themselves. -->
 	{#if p.groups && p.groups.length > 0}
-		<PrayerMysteries groups={p.groups} lang={bodyLang} />
+		<section class="prayer-section">
+			<h2 class="prayer-section-name label-micro">{t('prayers.rosary.mysteries')}</h2>
+			<PrayerMysteries groups={p.groups} lang={bodyLang} />
+		</section>
 	{/if}
 {/snippet}
 
@@ -563,28 +587,36 @@
 	<!-- `primaryLines` and not `p`'s own: this snippet renders the reader's
 	     edition and nothing else (compare mode goes through the cells below), so
 	     the lines here are the ones its placement was taken over. -->
-	<!-- A GROUP PRAYER'S BLOCKS ARE ITS ENDING, and nothing said so on the page.
-	     The five mysteries stopped and "Prayer concluding the Rosary" began in
-	     the same measure, the same face and the same colour as the meditation
-	     above it, so the last thing on the page read as a sixth mystery. A
-	     thematic break is the whole fix — the source's own first block is the
-	     heading it says it is, and printing our own words over it would be the
-	     page saying twice what the text says once. -->
-	{#if p.kind === 'group'}
-		<hr class="prayer-conclusion-rule" />
-	{/if}
-	<PrayerBlocks lines={primaryLines} dropCap={p.kind !== 'group'} placement={primaryPlacement} />
-	<!-- The prayers the conclusion tells the reader to say and does not print —
-	     see `CLOSING_SLUGS`. Under the blocks, because that is where the reader
-	     meets the dead end, and on the single column alone: a compare reader is
-	     reading two texts against each other rather than praying one of them,
-	     and a row of links inside a paired cell would have to be paired too.
-	     `kind === 'group'` is the Rosary and nothing else in v1. -->
-	{#if p.kind === 'group' && closingPrayers.length > 0}
-		<p class="prayer-named-links prayer-closing-links">
-			<span class="prayer-step-label label-micro">{t('prayers.rosary.namedPrayers')}</span>
-			{@render namedPrayers(closingPrayers)}
-		</p>
+	<!--
+	     A GROUP PRAYER'S BLOCKS ARE ITS ENDING, and the source says so in their
+	     first line. Every edition that has a conclusion heads it — "Prayer
+	     concluding the Rosary", "Schlussgebet", "Oración tras el rosario",
+	     "Preghiera alla fine del S. Rosario" — and the page printed that line
+	     in the same measure, face and colour as the meditations above it, so
+	     the last thing on the page read as a sixth mystery.
+
+	     SO THE SECTION'S NAME IS THE SOURCE'S OWN LINE, not a string of ours.
+	     Writing "Concluding prayer" above it would set our words over an
+	     identical heading in every edition that has one; taking theirs costs no
+	     translation, cannot disagree with the text under it, and is what the
+	     line already was.
+
+	     THE CUT IS AT THE LINE AND NOT AT THE BLOCK, because Italian stores its
+	     whole conclusion as one block whose first line is that heading while
+	     the other seven give it a block of its own. `prayerLines` has already
+	     flattened both to the same shape, and every line keeps its own `n`, so
+	     the commentary placement handed to the rest is unaffected by the slice.
+
+	     Single column only: `compareRows` zips the whole of `primaryLines`
+	     against the other edition's, and a heading lifted out of one side would
+	     put the two columns a row apart from there down. -->
+	{#if p.kind === 'group' && primaryLines.length > 0}
+		<section class="prayer-section" lang={bodyLang}>
+			<h2 class="prayer-section-name label-micro">{plainLine(primaryLines[0])}</h2>
+			<PrayerBlocks lines={primaryLines.slice(1)} placement={primaryPlacement} />
+		</section>
+	{:else}
+		<PrayerBlocks lines={primaryLines} dropCap={p.kind !== 'group'} placement={primaryPlacement} />
 	{/if}
 	<!-- Under the whole text and not under a block: these name the prayer, the
 	     way the notes name its clauses. `bodyLang` rather than the reader's
@@ -904,32 +936,11 @@
 		margin-top: 0.75rem;
 	}
 
-	/*
-	 * The directions, as a how-to. See the markup's own comment for why the
-	 * first block is separated from the rest.
-	 */
-	.prayer-step-label {
-		display: block;
-		margin: 0 0 0.3rem;
-	}
-
-	/* The words that open the Rosary, ruled off from the mysteries under them
-	   the way a marginal rule sets a said text apart from a read one. Outside
-	   the fold now, so the margin below it is what separates it from the
-	   stepper rather than from the rest of a panel. */
+	/* The words that open the Rosary, held in from the section's own margin the
+	   way a said text is set apart from a read one. */
 	.prayer-opening {
-		margin: 0 0 1.5rem;
 		padding-inline-start: 0.9rem;
 		border-inline-start: 2px solid var(--color-border);
-	}
-
-	.prayer-steps {
-		margin: 0 0 1.25rem;
-		padding-inline-start: 1.5rem;
-	}
-
-	.prayer-steps li {
-		margin: 0 0 0.6rem;
 	}
 
 	/*
@@ -942,8 +953,7 @@
 	 * did not ask for a larger set of instructions.
 	 */
 	.rosary-lead,
-	.rosary-walkthrough,
-	.rosary-duration {
+	.rosary-walkthrough {
 		font-family: var(--font-sans);
 		font-size: 0.92rem;
 	}
@@ -995,50 +1005,30 @@
 		text-align: end;
 	}
 
-	.rosary-duration {
-		margin: 0 0 1.5rem;
-		color: var(--color-text-muted);
+	/*
+	 * THE THREE PARTS OF THE ROSARY, EACH UNDER ITS OWN NAME: the opening
+	 * prayer, the mysteries, the conclusion. Together they are the reason the
+	 * page can be followed at all — the reader was previously handed the words
+	 * to begin with, twenty meditations and a collect in one unbroken column,
+	 * with only a change of type size saying where one ended and the next
+	 * began.
+	 *
+	 * The names are `.label-micro`, the site's small letterspaced interface
+	 * label, and not headings at the prayer's own size. What they mark is
+	 * STRUCTURE, and a structure marker set at reading size is a fourth voice
+	 * arguing with the set names, the mystery names and the text. It is also
+	 * what lets three of them cost less vertical space than the one rule they
+	 * replace.
+	 */
+	.prayer-section {
+		margin: 0 0 1.75rem;
 	}
 
-	/* The source's own directions, under our explanation of them. Ruled off
-	   at the top because the boundary it marks is authorship — above it this
-	   site is speaking, below it the source is. */
-	.rosary-as-printed {
-		padding-top: 0.9rem;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.rosary-as-printed .prayer-steps {
-		margin-bottom: 0.75rem;
-	}
-
-	/* Wider than the space between two paragraphs and narrower than a section
-	   break, because that is exactly what it divides: the end of the prayer
-	   from the last of the mysteries. */
-	.prayer-conclusion-rule {
-		margin: 2rem 0 1.5rem;
-		border: 0;
-		border-top: 1px solid var(--color-border);
-	}
-
-	/* Both rows of prayers named beside a text that does not print them — the
-	   three of a decade inside the directions, the two the conclusion sends the
-	   reader to under it. One class, because they are one thing said twice. */
-	.prayer-named-links {
-		margin: 0;
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	.prayer-named-links .sep {
-		opacity: 0.6;
-		margin-inline: 0.35rem;
-	}
-
-	/* Under the concluding prayer it stands clear of the collect above it; the
-	   decade row inside the fold already has the steps' bottom margin. */
-	.prayer-closing-links {
-		margin-top: 1.5rem;
+	.prayer-section-name {
+		display: block;
+		margin: 0 0 0.5rem;
+		padding-bottom: 0.35rem;
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	/* A compared prayer needs two full reading measures. This was the

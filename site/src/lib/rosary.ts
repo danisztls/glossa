@@ -73,3 +73,32 @@ export function mysteryName(title: string): string {
 	const name = title.slice(colon + 1).trim();
 	return name === '' ? title : name;
 }
+
+/** One piece of a sentence with prayer names taken out of it. */
+export type Slotted = { text: string } | { slot: number };
+
+/**
+ * A WRITTEN SENTENCE, CUT AT THE PRAYERS IT NAMES.
+ *
+ * The Rosary's walkthrough is the one prose on this site that names other
+ * prayers in running text, and every one of those names should be the link to
+ * it. Splitting the sentence into a key per fragment would put the English
+ * word order into the dictionary — "Say the", "and the prayer after it" — so
+ * the string keeps its whole sentence and marks the holes with `{0}`, `{1}`,
+ * which a translator may move anywhere the target language wants them.
+ *
+ * A slot that names nothing renders as nothing rather than as its own digits:
+ * the caller decides what each index is, and a caller that runs out is a bug
+ * in the caller, not a `{2}` printed at the reader.
+ */
+export function slotted(text: string): Slotted[] {
+	const out: Slotted[] = [];
+	let at = 0;
+	for (const m of text.matchAll(/\{(\d+)\}/g)) {
+		if (m.index > at) out.push({ text: text.slice(at, m.index) });
+		out.push({ slot: Number(m[1]) });
+		at = m.index + m[0].length;
+	}
+	if (at < text.length) out.push({ text: text.slice(at) });
+	return out;
+}

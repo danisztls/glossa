@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mysteryName, weekdayName, weekdayOn } from './rosary';
+import { mysteryName, slotted, weekdayName, weekdayOn } from './rosary';
 
 /** The rotation the Holy Rosary micro-site prints, as `PrayerGroupEntry.days`
  *  stores it: joyful, luminous, sorrowful, glorious. */
@@ -115,5 +115,41 @@ describe('mysteryName', () => {
 
 	it('cuts at the FIRST colon, so a name carrying one keeps it', () => {
 		expect(mysteryName('First Joyful Mystery: He said: come')).toBe('He said: come');
+	});
+});
+
+describe('slotted', () => {
+	it('cuts a sentence at its placeholders and keeps the rest whole', () => {
+		expect(slotted('Say the {0} and the prayer after it.')).toEqual([
+			{ text: 'Say the ' },
+			{ slot: 0 },
+			{ text: ' and the prayer after it.' }
+		]);
+	});
+
+	it('reads the index rather than the order, so a translation may reorder', () => {
+		expect(slotted('{1} kommt vor {0}.')).toEqual([
+			{ slot: 1 },
+			{ text: ' kommt vor ' },
+			{ slot: 0 },
+			{ text: '.' }
+		]);
+	});
+
+	it('is the whole string where a language needed no name in it', () => {
+		expect(slotted('Say the prayers at the foot of this page.')).toEqual([
+			{ text: 'Say the prayers at the foot of this page.' }
+		]);
+		expect(slotted('')).toEqual([]);
+	});
+
+	it('emits no empty run for a placeholder at either end', () => {
+		expect(slotted('{0} first')).toEqual([{ slot: 0 }, { text: ' first' }]);
+		expect(slotted('last {0}')).toEqual([{ text: 'last ' }, { slot: 0 }]);
+		expect(slotted('{0}')).toEqual([{ slot: 0 }]);
+	});
+
+	it('leaves a brace that is not a placeholder alone', () => {
+		expect(slotted('a {x} b')).toEqual([{ text: 'a {x} b' }]);
 	});
 });
