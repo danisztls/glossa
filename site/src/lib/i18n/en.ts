@@ -821,6 +821,13 @@ export const en: Dictionary = {
 	'prayers.rosary.todayHeading': 'Today’s mysteries',
 	'prayers.rosary.openingPrayer': 'Opening prayer',
 	'prayers.rosary.decadePrayers': 'The prayers of a decade',
+	// Over the links under the concluding prayer. The source ends the Rosary
+	// with "the Loreto Litany or some other Marian prayer" and opens its
+	// conclusion "Hail, Holy Queen, etc. as above" — an "above" that exists in
+	// the Compendium's appendix and not on a page serving one prayer. This
+	// label says what the two links are: prayers the text names and does not
+	// print, which is a different claim from "see also".
+	'prayers.rosary.namedPrayers': 'The prayers it names',
 
 	// Reference tooltips/popovers — RefText.svelte is the consumer.
 	'ref.tooltip.loading': 'Loading…',

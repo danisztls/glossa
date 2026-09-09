@@ -83,6 +83,7 @@
 	import {
 		compareColumnLabel,
 		getPrayerMeta,
+		type PrayerMeta,
 		prayerCommentariesAt,
 		resolveEditionTag
 	} from '$lib/corpus';
@@ -331,11 +332,31 @@
 	 * dead — `prayer.common.la` has all three, but nothing here assumes that.
 	 */
 	const DECADE_SLUGS = ['our-father', 'hail-mary', 'glory-be'];
-	const decadePrayers = $derived(
-		DECADE_SLUGS.map((slug) => ({ slug, meta: getPrayerMeta(lang, slug) })).filter(
-			(p) => p.meta !== undefined
-		)
-	);
+
+	/**
+	 * THE TWO PRAYERS THE ROSARY SENDS A READER TO AND DOES NOT PRINT.
+	 *
+	 * Its last direction ends the Rosary with "the Loreto Litany or some other
+	 * Marian prayer", and its concluding section opens "Hail, Holy Queen, etc.
+	 * as above" — a cross-reference to the Compendium's appendix, where the
+	 * Salve Regina is printed a few pages up. There is no "above" here: this
+	 * route serves one prayer per address, so the line was a dead end telling
+	 * the reader to say something the page neither prints nor points at.
+	 *
+	 * Both are prayers this corpus holds. Linked rather than inlined, and by
+	 * slug for `DECADE_SLUGS`' reason — the text stays exactly as the source
+	 * set it, and the reader gets somewhere to go.
+	 */
+	const CLOSING_SLUGS = ['hail-holy-queen', 'litany-of-loreto'];
+
+	function namedPrayerLinks(slugs: string[]): { slug: string; meta: PrayerMeta }[] {
+		return slugs
+			.map((slug) => ({ slug, meta: getPrayerMeta(lang, slug) }))
+			.filter((p): p is { slug: string; meta: PrayerMeta } => p.meta !== undefined);
+	}
+
+	const decadePrayers = $derived(namedPrayerLinks(DECADE_SLUGS));
+	const closingPrayers = $derived(namedPrayerLinks(CLOSING_SLUGS));
 
 	onMount(() => {
 		if (current) setPosition('prayer.common.' + lang, current.prayer.title, page.url.pathname);
@@ -346,20 +367,16 @@
 	<title>{current?.prayer.title ?? data.slug} — {t('home.title')}</title>
 </svelte:head>
 
+{#snippet namedPrayers(entries: { slug: string; meta: PrayerMeta }[])}
+	{#each entries as entry, i (entry.slug)}
+		{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
+		<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta.title}</a>
+	{/each}
+{/snippet}
+
 {#snippet prayerPreamble(p: Prayer, bodyLang: string)}
 	{#if p.rubric}
 		<p class="prayer-rubric">{p.rubric}</p>
-	{/if}
-
-	<!-- Groups (the Rosary alone, v1) render as their own named list, never
-	     flattened into prose -- see PrayerBlocks.svelte's docblock and
-	     docs/corpus-schema.md "Prayers" on why. Rendered BEFORE `blocks`:
-	     the source's own `blocks` for a group-kind prayer document how to
-	     CONCLUDE it (the Rosary's closing prayer starts "Prayer concluding
-	     the Rosary"), which only makes sense read after the groups
-	     themselves. -->
-	{#if p.groups && p.groups.length > 0}
-		<PrayerMysteries groups={p.groups} lang={bodyLang} />
 	{/if}
 
 	<!--
@@ -377,40 +394,70 @@
 	     through the same `PrayerBlocks` renderer. What changed is the frame
 	     around them: a label over the first, an ordered list around the rest,
 	     and links beside them to the three prayers a decade is made of, which
-	     the directions name but a reader had no way to reach from here. -->
+	     the directions name but a reader had no way to reach from here.
+
+	     IT IS FIRST ON THE PAGE, AND IT WAS UNDER THE MYSTERIES UNTIL
+	     2026-09-08. That order was the corpus's file order and nothing else,
+	     and it put the words a reader says FIRST — the sign of the cross, "O
+	     God come to my aid" — below the twenty-odd lines they are said before.
+	     Somebody who does not already know how to pray the Rosary met five
+	     meditations, then the instructions for beginning, then the prayer for
+	     ending. The page now runs in the order of the prayer: begin, meditate,
+	     conclude.
+
+	     IT IS A DISCLOSURE, AND CLOSED, because the two readers want opposite
+	     things from it and only one of them wants it every time. Read once, it
+	     is a page and a half of directions standing between the reader and the
+	     text they came back for; never read, it is the one thing on the page
+	     they need before anything else. A closed row at the top is the whole
+	     of that: it is the first thing the eye lands on and it costs one line.
+	     `<summary>` takes ONE heading and not a heading with a sibling beside
+	     it, so the section's source line moves inside — the same rule
+	     `/documenta`'s and `CitedBy`'s disclosures met. -->
 	{#if p.instructions}
-		<section class="prayer-instructions" id="prayer-instructions">
-			<h2>
-				{p.instructions.title}
+		<details class="prayer-instructions" id="prayer-instructions">
+			<summary>
+				<h2>{p.instructions.title}</h2>
+			</summary>
+
+			<div class="prayer-instructions-body">
 				<SectionSource url={p.instructions.source} />
-			</h2>
 
-			{#if p.instructions.blocks.length > 1}
-				<div class="prayer-opening">
-					<p class="prayer-step-label label-micro">{t('prayers.rosary.openingPrayer')}</p>
-					<PrayerBlocks lines={prayerLines(p.instructions.blocks.slice(0, 1))} />
-				</div>
-				<ol class="prayer-steps">
-					{#each p.instructions.blocks.slice(1) as block, i (i)}
-						<li><PrayerBlocks lines={prayerLines([block])} /></li>
-					{/each}
-				</ol>
-			{:else}
-				<!-- A single-block instructions field has no opening prayer to
-				     separate from its steps, so it renders the way it always did. -->
-				<PrayerBlocks lines={prayerLines(p.instructions.blocks)} />
-			{/if}
+				{#if p.instructions.blocks.length > 1}
+					<div class="prayer-opening">
+						<p class="prayer-step-label label-micro">{t('prayers.rosary.openingPrayer')}</p>
+						<PrayerBlocks lines={prayerLines(p.instructions.blocks.slice(0, 1))} />
+					</div>
+					<ol class="prayer-steps">
+						{#each p.instructions.blocks.slice(1) as block, i (i)}
+							<li><PrayerBlocks lines={prayerLines([block])} /></li>
+						{/each}
+					</ol>
+				{:else}
+					<!-- A single-block instructions field has no opening prayer to
+					     separate from its steps, so it renders the way it always did. -->
+					<PrayerBlocks lines={prayerLines(p.instructions.blocks)} />
+				{/if}
 
-			{#if decadePrayers.length > 0}
-				<p class="prayer-decade-links">
-					<span class="prayer-step-label label-micro">{t('prayers.rosary.decadePrayers')}</span>
-					{#each decadePrayers as entry, i (entry.slug)}
-						{#if i > 0}<span class="sep" aria-hidden="true">·</span>{/if}
-						<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta?.title}</a>
-					{/each}
-				</p>
-			{/if}
-		</section>
+				{#if decadePrayers.length > 0}
+					<p class="prayer-named-links">
+						<span class="prayer-step-label label-micro">{t('prayers.rosary.decadePrayers')}</span>
+						{@render namedPrayers(decadePrayers)}
+					</p>
+				{/if}
+			</div>
+		</details>
+	{/if}
+
+	<!-- Groups (the Rosary alone, v1) render as their own named list, never
+	     flattened into prose -- see PrayerBlocks.svelte's docblock and
+	     docs/corpus-schema.md "Prayers" on why. Rendered BEFORE `blocks`:
+	     the source's own `blocks` for a group-kind prayer document how to
+	     CONCLUDE it (the Rosary's closing prayer starts "Prayer concluding
+	     the Rosary"), which only makes sense read after the groups
+	     themselves. -->
+	{#if p.groups && p.groups.length > 0}
+		<PrayerMysteries groups={p.groups} lang={bodyLang} />
 	{/if}
 {/snippet}
 
@@ -430,6 +477,18 @@
 	     edition and nothing else (compare mode goes through the cells below), so
 	     the lines here are the ones its placement was taken over. -->
 	<PrayerBlocks lines={primaryLines} dropCap={p.kind !== 'group'} placement={primaryPlacement} />
+	<!-- The prayers the conclusion tells the reader to say and does not print —
+	     see `CLOSING_SLUGS`. Under the blocks, because that is where the reader
+	     meets the dead end, and on the single column alone: a compare reader is
+	     reading two texts against each other rather than praying one of them,
+	     and a row of links inside a paired cell would have to be paired too.
+	     `kind === 'group'` is the Rosary and nothing else in v1. -->
+	{#if p.kind === 'group' && closingPrayers.length > 0}
+		<p class="prayer-named-links prayer-closing-links">
+			<span class="prayer-step-label label-micro">{t('prayers.rosary.namedPrayers')}</span>
+			{@render namedPrayers(closingPrayers)}
+		</p>
+	{/if}
 	<!-- Under the whole text and not under a block: these name the prayer, the
 	     way the notes name its clauses. `bodyLang` rather than the reader's
 	     interface language, because a siglum is the SOURCE work's own short
@@ -679,15 +738,73 @@
 		margin: 0 0 1rem;
 	}
 
+	/* The rule is UNDER it now that it opens the page: closed, it is one row
+	   between the copyright notice and the mysteries, and the line says which
+	   side of it the directions are on. A rule above would have ruled off the
+	   notice instead. */
 	.prayer-instructions {
-		margin: 1.75rem 0;
-		padding-top: 1rem;
-		border-top: 1px solid var(--color-border);
+		margin: 0 0 1.5rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	/* `list-style: none` removes the native triangle in Chrome and Firefox (a
+	   `summary` is a list item), the `::-webkit-` rule the same for older
+	   Safari — `CitedBy` states the whole of this and draws the same mark. */
+	.prayer-instructions > summary {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.prayer-instructions > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	/* Points down closed and up open. Two borders on a rotated square rather
+	   than an icon import for one 8px mark, which also inherits
+	   `currentColor`. */
+	.prayer-instructions > summary::after {
+		content: '';
+		flex: none;
+		margin-inline-start: auto;
+		width: 0.4rem;
+		height: 0.4rem;
+		border-inline-end: 1.5px solid var(--color-text-muted);
+		border-bottom: 1.5px solid var(--color-text-muted);
+		transform: translateY(-0.1em) rotate(45deg);
+		transition: transform 0.15s ease;
+	}
+
+	.prayer-instructions[open] > summary::after {
+		transform: translateY(0.1em) rotate(-135deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.prayer-instructions > summary::after {
+			transition: none;
+		}
+	}
+
+	/* A 44px target where the pointer is coarse and a short row where it is
+	   not — `/documenta`'s disclosure makes the same trade. */
+	@media (pointer: coarse) {
+		.prayer-instructions > summary {
+			padding-block: 0.4rem;
+		}
 	}
 
 	.prayer-instructions h2 {
 		font-size: 1.05rem;
-		margin: 0 0 0.75rem;
+		margin: 0;
+	}
+
+	/* The gap belongs to the OPEN state: closed, it would be a panel's worth of
+	   space under a single row. */
+	.prayer-instructions-body {
+		margin-top: 0.75rem;
 	}
 
 	/*
@@ -714,15 +831,24 @@
 		margin: 0 0 0.6rem;
 	}
 
-	.prayer-decade-links {
+	/* Both rows of prayers named beside a text that does not print them — the
+	   three of a decade inside the directions, the two the conclusion sends the
+	   reader to under it. One class, because they are one thing said twice. */
+	.prayer-named-links {
 		margin: 0;
 		font-family: var(--font-sans);
 		font-size: 0.9rem;
 	}
 
-	.prayer-decade-links .sep {
+	.prayer-named-links .sep {
 		opacity: 0.6;
 		margin-inline: 0.35rem;
+	}
+
+	/* Under the concluding prayer it stands clear of the collect above it; the
+	   decade row inside the fold already has the steps' bottom margin. */
+	.prayer-closing-links {
+		margin-top: 1.5rem;
 	}
 
 	/* A compared prayer needs two full reading measures. This was the
