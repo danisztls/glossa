@@ -67,6 +67,7 @@
 	import { listDocuments, loadDocumentTags, loadTranslatedDescriptions } from '$lib/corpus';
 	import { highlight, matchesQuery } from '$lib/highlight';
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
+	import DocumentSearch from '$lib/components/DocumentSearch.svelte';
 	import { content } from '$lib/content.svelte';
 	import { hrefFor } from '$lib/address';
 	import { documentAuthorKey, documentKindKey, documentKindLabel } from '$lib/document-labels';
@@ -408,18 +409,26 @@
 		<p class="page-tagline landing-measure">{t('document.library.tagline')}</p>
 
 		<!--
-			The panel a reader gets where the aside is not — below the grid
+			The controls a reader gets where the aside is not — below the grid
 			breakpoint, where `.index-aside` is `display: none` (styles/layout.css).
 			`/documenta/{slug}` hands its table of contents over the same way and
 			at the same width; see `.filters-inline` below.
 
-			`<details>` rather than component state, for the reasons that file
-			also gives: the browser owns this widget's keyboard handling and ARIA
-			already, and find-in-page can open a closed one. Closed by default
-			here — unlike the old pontificate sections, which were open because
-			they held the index itself. This holds controls OVER the index, and a
-			phone reader should meet the documents first.
+			THE SEARCH BOX IS OUTSIDE THE DISCLOSURE AND THE FACETS ARE INSIDE IT,
+			which is the whole shape of this. The panel is `<details>` for the
+			reasons that file also gives — the browser owns the keyboard handling
+			and the ARIA, and find-in-page can open a closed one — and it is closed
+			by default, because it holds controls OVER the index and a phone reader
+			should meet the documents first. The search box cannot live under that
+			rule: it is the instrument a reader who knows a word reaches for
+			FIRST, and a control that has to be opened before it can be used is
+			one most readers never find. So it sits above the panel, always shown,
+			exactly as `/quaestiones` shows `TopicSearch` above its list.
 		-->
+		<div class="search-inline">
+			<DocumentSearch bind:query />
+		</div>
+
 		<details class="filters-inline">
 			<summary>
 				<h2>{t('document.filter.heading')}</h2>
@@ -431,7 +440,6 @@
 				tags={tagFacets}
 				{selected}
 				{query}
-				onQuery={(value) => (query = value)}
 				onToggle={toggle}
 				onClear={clearAll}
 			/>
@@ -557,13 +565,13 @@
 		{/if}
 	</div>
 	<aside class="index-aside">
+		<DocumentSearch bind:query />
 		<DocumentFilters
 			authors={authorFacets}
 			kinds={kindFacets}
 			tags={tagFacets}
 			{selected}
 			{query}
-			onQuery={(value) => (query = value)}
 			onToggle={toggle}
 			onClear={clearAll}
 		/>
@@ -571,10 +579,22 @@
 </div>
 
 <style>
-	/* The mirror of `.index-aside` in styles/layout.css: exactly where that
-	   rule takes the aside away, this appears. One width, not the pair
-	   `/documenta/{slug}` needs, because an index page never enters compare
-	   mode and so never has the aside pulled out from under it a second time. */
+	/* Both of these mirror `.index-aside` in styles/layout.css: exactly where
+	   that rule takes the aside away, they appear, and where the aside is back
+	   they go. One width, not the pair `/documenta/{slug}` needs, because an
+	   index page never enters compare mode and so never has the aside pulled
+	   out from under it a second time. Getting the pairing wrong in either
+	   direction shows two search boxes or none. */
+	@media (min-width: 80rem) {
+		.search-inline {
+			display: none;
+		}
+	}
+
+	.search-inline {
+		max-width: 40rem;
+	}
+
 	.filters-inline {
 		margin: 0 0 1.25rem;
 		border: 1px solid var(--color-border);
@@ -640,13 +660,12 @@
 	 * subjects — so a reader who scrolled down to the subjects had scrolled
 	 * the one control they might want to type into off the top of it.
 	 *
-	 * ON THE ASIDE'S COPY AND NOT ON THE COMPONENT, because the same panel is
-	 * rendered inside `.filters-inline` above the list at narrower widths,
-	 * where there is no scroll container of its own: sticky there resolves
-	 * against the PAGE's scrollport, and the field would ride down the
-	 * document over 298 rows. `:global()` reaches into the component's scope;
-	 * `.index-aside` is this route's own element, so the pair is still scoped
-	 * to this page.
+	 * ON THE ASIDE'S COPY AND NOT ON THE COMPONENT, because the same field is
+	 * rendered in `.search-inline` above the list at narrower widths, where
+	 * there is no scroll container of its own: sticky there resolves against
+	 * the PAGE's scrollport, and the field would ride down the document over
+	 * 298 rows. `:global()` reaches into the component's scope; `.index-aside`
+	 * is this route's own element, so the pair is still scoped to this page.
 	 *
 	 * The ground is opaque because a sticky element does not clip what passes
 	 * under it, and the band is what carries it — see the component, where the

@@ -58,19 +58,13 @@
 	 * survives the click, and a term sharing no document with the current
 	 * selection reads 0 — which `liveTags` then drops rather than greys.
 	 *
-	 * ## The search box is the panel's first control, and it is not a facet
+	 * ## The search box is NOT in here, and that is the phone's doing
 	 *
-	 * It reads the whole of a document's metadata — title, author, kind,
-	 * description, tags — and the route AND-s it with the three facets below.
-	 * It sits at the top because it is the coarse instrument: a reader who
-	 * knows a word reaches for it first, and the facets are what they narrow
-	 * WITH afterwards, not instead.
-	 *
-	 * It also carries the weight the subject facet used to. That vocabulary
-	 * was open and 232 terms wide for a day; it is a curated 58 now
-	 * (`site/document-tags.json`), and the terms cut from it — every region
-	 * name, every occasion word — are still reachable here, because all of
-	 * them are in the descriptions this box reads.
+	 * It was this panel's first control until the narrow layout was looked at:
+	 * there the panel is inside a `<details>` closed by default, which folded
+	 * the one instrument a reader reaches for first away with it. It is
+	 * `DocumentSearch` now, rendered outside that disclosure, and the query
+	 * still arrives here as a prop — "Clear" has to be able to reach it.
 	 *
 	 * ## The subject facet is a cloud, and that is what retired the truncation
 	 *
@@ -98,17 +92,16 @@
 		kinds: Facet[];
 		tags: Facet[];
 		selected: { authors: string[]; kinds: string[]; tags: string[] };
-		/** The route's search text. A PROP and not local state, because this
-		 *  component is on the page twice and the two boxes are one control:
-		 *  typing in the phone panel must leave the desktop one saying the same
-		 *  thing when the viewport widens. */
+		/** The route's search text, READ AND NEVER WRITTEN here — the field
+		 *  itself is `DocumentSearch`, outside this panel. It is a prop because
+		 *  "Clear" clears the query too, so this component has to know whether
+		 *  there is one. */
 		query: string;
-		onQuery: (query: string) => void;
 		onToggle: (facet: 'authors' | 'kinds' | 'tags', value: string) => void;
 		onClear: () => void;
 	}
 
-	let { authors, kinds, tags, selected, query, onQuery, onToggle, onClear }: Props = $props();
+	let { authors, kinds, tags, selected, query, onToggle, onClear }: Props = $props();
 
 	/* The query counts: "Clear" has to reach it, or a reader who typed
 	   something and then pressed Clear is left looking at a list still narrowed
@@ -147,27 +140,6 @@
 </script>
 
 <div class="doc-filters">
-	<!-- `type="search"` for the clear affordance browsers give it; the
-	     accessible name is an `aria-label` because a visible label would only
-	     repeat the placeholder. `value` + `oninput` rather than `bind:`, since
-	     the text belongs to the route — see `query` in Props. -->
-	<!-- The band is what the aside makes sticky (`.index-aside
-	     :global(.doc-search-band)` on the route), so the field stays reachable
-	     while sixteen authors and twelve kinds scroll under it. The gap below
-	     the field is the band's padding rather than the field's margin for
-	     that reason alone: a sticky element's margin is transparent, so a
-	     facet row would have scrolled through it. -->
-	<div class="doc-search-band">
-		<input
-			type="search"
-			class="doc-search"
-			value={query}
-			oninput={(event) => onQuery(event.currentTarget.value)}
-			placeholder={t('document.filter.search')}
-			aria-label={t('document.filter.search')}
-		/>
-	</div>
-
 	<div class="filters-head">
 		<h2>{t('document.filter.heading')}</h2>
 		{#if anySelected}
@@ -490,55 +462,6 @@
 	.facet-option.on .facet-count,
 	.facet-option.on .facet-note {
 		color: inherit;
-	}
-
-	/* The panel's first control, so it is set a size up from the facet rows
-	   under it — this is the one thing here a reader types into, and it has to
-	   read as an entry field rather than as another row of the list. */
-	.doc-search-band {
-		padding-block-end: 1rem;
-	}
-
-	.doc-search {
-		width: 100%;
-		box-sizing: border-box;
-		display: block;
-		/* 0.45rem rather than 0.35 holds the field at the height it had while
-		   it was being sized by the body's line box — 2.175rem against 2.2. */
-		padding: 0.45rem 0.5rem;
-		font: inherit;
-		font-size: 0.85rem;
-		/* Restated because `font: inherit` above leaves a length, not a ratio
-		   — styles/base.css says why. */
-		line-height: 1.5;
-		color: var(--color-text);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-
-	/*
-	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
-	 * field on this site now does — `JumpBox`'s and `.menu-filter`'s
-	 * (styles/menus.css) are the same four declarations, and that one records
-	 * the arithmetic. An offset rectangle drawn around an already-bordered
-	 * rounded field stacks into a double frame; this rule reddening the border
-	 * underneath the global ring made it two frames in two hues, 2px apart.
-	 *
-	 * WHAT DOES NOT CARRY OVER IS THE AUTOFOCUS ARGUMENT. The other two are
-	 * focused the moment their panel opens, so for them the ring is a resting
-	 * state; this box is focused by a click, and the ring really would be a
-	 * response. The doubling is the half that reaches it, since that is about
-	 * the field's own border and not about how focus arrived.
-	 *
-	 * The transparent outline is not decoration: `forced-colors` repaints an
-	 * `outline` in the system focus colour, where the halo below is dropped.
-	 */
-	.doc-search:focus-visible {
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-		border-color: var(--color-apparatus);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
 	}
 
 	/* The subject cloud, and it is UNBORDERED on purpose. 58 outlined pills is

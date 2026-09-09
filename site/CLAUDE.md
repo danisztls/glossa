@@ -898,6 +898,11 @@ reverse-chronological list.
   `<details>` below), which is why its options are `aria-pressed` buttons and
   not checkboxes (two elements claiming one `id`) and the search text is a PROP,
   not local state.
+- **The search box is `DocumentSearch.svelte`, OUTSIDE that disclosure.** Inside
+  the panel it was folded away with it below 80rem — the coarse instrument, shut
+  by default, on the layout where a reader most needs it. It is rendered twice
+  for the same reason the panel is, and `/quaestiones` splits `TopicSearch` off
+  the same way.
 - **The filters are deliberately not in the URL** — `?auctor=` would be a change
   to the sitemap, the route manifest, the worker and the usage beacon. The app
   does read and write the client URL in two places already (`?compare=`, `?v=`);
