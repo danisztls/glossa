@@ -304,12 +304,21 @@
 	 * marks where today falls in the week, this says the set under it is the one
 	 * appointed to it. One treatment for both would collapse them on the only
 	 * day they can be told apart.
+	 *
+	 * HALF THE HEADING, floored at `--font-size-min`. The set's name is what
+	 * the reader came for and the chip only says which of the four days they
+	 * are standing on — sized near the name it reads as the second half of a
+	 * title. Half of `.prayer-mystery-name` lands at the floor exactly, so at
+	 * rest it is the size of every other small label on the site and it grows
+	 * from there with the reader's own setting. `vertical-align` is an em of
+	 * the CHIP, so it is restated against the smaller one to leave the chip
+	 * standing where it stood against the heading's letters.
 	 */
 	.prayer-today-badge {
 		display: inline-block;
 		margin-inline-start: 0.5em;
 		font-family: var(--font-sans);
-		font-size: max(var(--font-size-min), 0.62em);
+		font-size: max(var(--font-size-min), 0.5em);
 		font-weight: 600;
 		font-style: normal;
 		text-transform: uppercase;
@@ -318,7 +327,7 @@
 		border: 1px solid var(--color-apparatus);
 		border-radius: var(--radius-sm);
 		padding: 0.05em 0.4em;
-		vertical-align: 0.12em;
+		vertical-align: 0.15em;
 		/* `nowrap` because in several interface languages this is two words
 		   ("I dag", "Aujourd'hui") and a chip that wraps stops reading as one. */
 		white-space: nowrap;
