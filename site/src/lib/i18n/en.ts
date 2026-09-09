@@ -329,9 +329,11 @@ export const en: Dictionary = {
 		'It is not one book but seventy-three, written over more than a thousand years and bound in the order the Church settled on — not the order events happened in, and not the order that is easiest to read. Most people start at the first page and stop a few weeks later, in a long chapter of ancient law, because nothing has yet told them what it is for.',
 	'schola.bible.step.gospel': 'Start with a Gospel',
 	'schola.bible.start':
-		'One of four short books about the life of Jesus, a long way in rather than at the front. That is not our idea: a Council of the Church asked that people be taught the right use of Scripture “especially the New Testament and above all the Gospels”. It named no single one, and neither will we.',
+		'Four short books tell the life of Jesus. They sit past the middle of the Bible rather than at the front, which is why most people who start at page one never reach them. Begin there instead. A Council of the Church asked the same: that people be taught the right use of Scripture, “especially the New Testament and above all the Gospels”.',
 	'schola.bible.whichGospel':
-		'Three are commonly suggested, for three different reasons. Any of them is a good place to be.',
+		'Each is argued for as the one to open first. Pick whichever reason sounds like yours.',
+	'schola.bible.gospel.matt':
+		"Has the Sermon on the Mount at its centre — the Beatitudes, the Lord's Prayer, most of what people quote without knowing where it comes from. It was the Church's first choice for centuries.",
 	'schola.bible.gospel.mark':
 		'The shortest. You can read the whole thing in an afternoon, and having finished one is worth more at the start than having chosen the best one.',
 	'schola.bible.gospel.luke':
@@ -342,7 +344,7 @@ export const en: Dictionary = {
 	'schola.bible.thenActs':
 		'When you have finished one, read what the people who knew him did after he was gone.',
 	// A card with only a name on it for a day, on the reasoning that the stage
-	// above has three books to tell apart and this one has a single book to
+	// above has four books to tell apart and this one has a single book to
 	// name. That is an argument about DISAMBIGUATION, and a card's second line
 	// is not for telling one book from another — it is for telling a reader who
 	// has never opened a Bible what they would be opening.

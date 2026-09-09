@@ -335,7 +335,7 @@
 	 * that were purely ours — how to pace the reading, and what a year-long
 	 * plan is. What is left leans on its two citations rather than on our
 	 * say-so: the priority is Dei Verbum's, the hermeneutic is Verbum Domini's,
-	 * and the three Gospels are offered with their arguments rather than
+	 * and the Gospels are offered with their arguments rather than
 	 * ranked. **Both sections are headed by the reader's own question**, which
 	 * is what now tells advice from inventory — worth knowing before a third
 	 * is added.
@@ -352,9 +352,14 @@
 	 * it says so.
 	 *
 	 * WHICH GOSPEL IS A REAL DISAGREEMENT and the page leaves it open, offering
-	 * the three that are actually argued for with the argument attached rather
+	 * all four in the canon's order with the argument for each attached rather
 	 * than picking one and presenting the pick as settled. That is the same
 	 * instinct as the jump box offering both readings of a divergent psalm.
+	 *
+	 * IT OFFERED THREE UNTIL 2026-09-09, and leaving one out is a pick like any
+	 * other — an unmarked one, next to a blurb that says there are four. A
+	 * shortlist of beginner advice is not the absence of a case. The copy names
+	 * no number now, so it cannot come apart from the list again.
 	 *
 	 * EVERY ROW IS THE READER'S OWN BIBLE. `passage` names a book as their
 	 * edition names it and checks the chapter exists before it links; a book an
@@ -392,7 +397,7 @@
 	};
 
 	const gospels = $derived(
-		(['mark', 'luke', 'john'] as const)
+		(['matt', 'mark', 'luke', 'john'] as const)
 			.map((osis) => ({ key: osis, at: passage(osis, 1) }))
 			.filter((row) => row.at !== undefined)
 	);
@@ -608,11 +613,11 @@
 							>{/if}
 					</p>
 					<p class="stage-why">{t('schola.bible.whichGospel')}</p>
-					<!-- Three answers, each with its reason, and no fourth row
-						     saying which is right. The disagreement is real, no
-						     document settles it, and a page that picked one would be
-						     reporting its own preference as the answer to a question
-						     the reader could have weighed themselves. -->
+					<!-- Every Gospel the reader's edition carries, each with its
+						     reason, and no row saying which is right. The disagreement
+						     is real, no document settles it, and a page that picked one
+						     would be reporting its own preference as the answer to a
+						     question the reader could have weighed themselves. -->
 					<ul class="picks" data-link-preview="hover">
 						{#each gospels as gospel (gospel.key)}
 							<li>
@@ -632,7 +637,7 @@
 						</h3>
 						<p class="stage-why">{t('schola.bible.thenActs')}</p>
 						<!-- ONE CARD IS STILL A CARD WITH A REASON ON IT. This one had
-						     only a name for a day, because the stage above it has three
+						     only a name for a day, because the stage above it has four
 						     books to tell apart and this stage has one — which is an
 						     argument about DISAMBIGUATION and not about what a card is
 						     for. A reader who does not know what Acts is learns nothing
@@ -802,7 +807,7 @@
 	 * HERE THE CARDS ARE CARDS, and the books section three sections up argues
 	 * the opposite for its own rows. Both are right, and the difference is what
 	 * the reader is being asked to do. A catalogue entry is read; these are
-	 * CHOSEN BETWEEN — which of three Gospels, which of four places in the older
+	 * CHOSEN BETWEEN — which of four Gospels, which of four places in the older
 	 * half — and a grid of doors is what "pick one" looks like everywhere else
 	 * on this site. The whole tile is the link, so the target is a card and not
 	 * a two-word name.
@@ -835,9 +840,9 @@
 	 * takes minium throughout — its stage figures still do — but eight cards
 	 * in one colour is eight identical objects the reader has to read to tell
 	 * apart, which is the thing a card grid is supposed to save them. So the
-	 * cards walk the ramp: it distinguishes Mark from Luke from John and
-	 * claims nothing about any of them, which is right, because nothing about
-	 * a Gospel is red.
+	 * cards walk the ramp: it tells one Gospel from the next and claims
+	 * nothing about any of them, which is right, because nothing about a
+	 * Gospel is red.
 	 *
 	 * THE COLOUR IS IN THE EDGE AND NOWHERE ELSE (2026-09-06, by direction). It
 	 * washed the ground at 7% as well, on the argument that a 2px rule alone is

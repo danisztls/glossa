@@ -71,9 +71,11 @@ export const pt: Dictionary = {
 		'Não é um livro, mas setenta e três, escritos ao longo de mais de mil anos e reunidos na ordem que a Igreja fixou — não a ordem em que os acontecimentos se deram, nem a ordem mais fácil de ler. A maioria das pessoas começa na primeira página e desiste algumas semanas depois, num longo capítulo de lei antiga, porque nada lhes disse ainda para que ele serve.',
 	'schola.bible.step.gospel': 'Comece por um Evangelho',
 	'schola.bible.start':
-		'Um de quatro livros curtos sobre a vida de Jesus, bem lá dentro e não à frente. A ideia não é nossa: um Concílio da Igreja pediu que se ensinasse o reto uso da Escritura, “sobretudo do Novo Testamento e antes de tudo dos Evangelhos”. Não indicou nenhum em particular, e nós também não.',
+		'Quatro livros curtos contam a vida de Jesus. Ficam depois do meio da Bíblia, não à frente, e por isso a maior parte de quem começa na primeira página nunca chega até eles. Comece por eles. Um Concílio da Igreja pediu o mesmo: que se ensinasse o reto uso da Escritura, “sobretudo do Novo Testamento e antes de tudo dos Evangelhos”.',
 	'schola.bible.whichGospel':
-		'Três são habitualmente sugeridos, por três razões diferentes. Qualquer deles é um bom lugar para estar.',
+		'Cada um deles é defendido como o primeiro a abrir. Escolha aquele cuja razão se parecer com a sua.',
+	'schola.bible.gospel.matt':
+		'Traz no centro o Sermão da Montanha — as Bem-aventuranças, o Pai-Nosso, boa parte do que se cita sem saber de onde vem. Foi a primeira escolha da Igreja durante séculos.',
 	'schola.bible.gospel.mark':
 		'O mais curto. Pode lê-lo inteiro numa tarde, e ter terminado um vale mais, no princípio, do que ter escolhido o melhor.',
 	'schola.bible.gospel.luke':
