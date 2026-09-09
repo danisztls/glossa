@@ -267,6 +267,20 @@ describe('navigation', () => {
 		expect(await response.text()).toBe(SHELL);
 	});
 
+	/**
+	 * The asset platform types an uploaded file from its extension and sends a
+	 * bare `text/html`, which is a response that states no encoding — invisible
+	 * to a browser, because `<meta charset>` is the first tag in the document,
+	 * and the whole answer to a consumer that decides before it parses.
+	 * `ASSETS` above answers `/` with exactly that bare header on purpose.
+	 */
+	it('declares the encoding in the header of every shell it serves', async () => {
+		for (const path of ['/', '/catechismus/330', '/pt/preces', '/catechismus/9999']) {
+			const response = await navigate(path);
+			expect(response.headers.get('content-type'), path).toBe('text/html; charset=utf-8');
+		}
+	});
+
 	/** The degradation the two-file split exists to guarantee. `ASSETS` above
 	 *  serves no `/route-titles.json`, so every assertion in this file has
 	 *  already been made without one. */

@@ -276,6 +276,41 @@ async function notFoundShell(request: Request, assets: AssetFetcher): Promise<Re
 }
 
 /**
+ * Say the encoding in the header too, not only in the document.
+ *
+ * `<meta charset="utf-8">` is the first tag in `app.html` and is what a browser
+ * acts on, so no page has ever rendered wrongly for want of this. What the meta
+ * cannot reach is a consumer that decides before it parses. Cloudflare types an
+ * uploaded asset from its extension alone (workers/static-assets/headers), so
+ * the shell leaves the asset binding as a bare `text/html` — a response whose
+ * encoding is, as far as HTTP is concerned, unstated. Lighthouse's `charset`
+ * audit reads the header FIRST and fails the page on it, and an intermediary
+ * that rewrites or sniffs the body is entitled to guess, which is the same
+ * failure `_headers` already fixes for `.txt` (see `static/_headers`, where
+ * this file's absence from the list was the standing argument that `.html`
+ * needed nothing).
+ *
+ * In the worker rather than in `_headers` because the worker is what answers
+ * every canonical address: the shell arrives through
+ * `env.ASSETS.fetch(shellRequest(request))`, whose path is always `/` whatever
+ * the reader asked for, so a rule written against the address would never match
+ * it. Guarded on `text/html` and on a charset not already being there, so it is
+ * a no-op over an asset that fell through and over a platform that starts
+ * sending one.
+ */
+function withCharset(response: Response): Response {
+	const type = response.headers.get('content-type');
+	if (!type || !type.startsWith('text/html') || type.includes('charset=')) return response;
+	const headers = new Headers(response.headers);
+	headers.set('content-type', `${type}; charset=utf-8`);
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers
+	});
+}
+
+/**
  * Rewrite the shell's `<head>` to describe the address it is being served for.
  *
  * THE ONE PLACE THIS WORKER TOUCHES A RESPONSE BODY, and the line it walks is
@@ -385,7 +420,7 @@ export default {
 		if (url.href !== request.url) return Response.redirect(url, 308);
 
 		const manifest = await getManifest(request, env.ASSETS);
-		if (!manifest) return env.ASSETS.fetch(request);
+		if (!manifest) return withCharset(await env.ASSETS.fetch(request));
 
 		// The OSIS book spelling, which stopped being an address on 2026-09-02.
 		//
@@ -432,7 +467,7 @@ export default {
 		// and acts on — and `/404` is where `STATIC_HEADS` keeps that name.
 		const cf = cfOf(request);
 		return withHead(
-			shell,
+			withCharset(shell),
 			canonical ? url.pathname : '/404',
 			manifest,
 			titles,

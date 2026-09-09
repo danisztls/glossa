@@ -29,9 +29,12 @@
 # UTF-8 bytes. Nothing is wrong with the file: the header was silent and the
 # guess was wrong.
 #
-# The site's other text formats declare it themselves and are not listed here:
-# `.html` carries `<meta charset>`, JSON is UTF-8 by RFC 8259, and `.xml`
-# carries its own declaration. These three are the ones that cannot.
+# The site's other text formats are not listed here: JSON is UTF-8 by RFC 8259,
+# `.xml` carries its own declaration, and `.html` is answered by `src/worker.ts`
+# — which appends the charset itself (`withCharset`), because every address
+# reaches the shell through the asset binding at the path `/` and a rule written
+# here against the reader's address would never match it. These three are the
+# ones that cannot.
 # `security.txt` is ASCII today and is listed anyway — it is generated, and a
 # file whose correctness depends on nobody adding a typographic mark to it is
 # the one that will get one.
