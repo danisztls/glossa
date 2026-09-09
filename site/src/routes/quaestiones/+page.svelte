@@ -161,6 +161,47 @@
 	}
 
 	/*
+	 * TWO TOPICS PER ROW ONCE THERE IS ROOM, because a topic is a short title
+	 * over a one-line question and the column it sits in is 62rem: in one
+	 * column each row uses a third of its width and the page becomes twice as
+	 * tall as it needs to be, which on a hundred-odd topics is the difference
+	 * between a list a reader scans and one they scroll.
+	 *
+	 * ROW FLOW AND NOT COLUMN FLOW — `grid` rather than CSS multi-column, and
+	 * the choice matters. Multi-column would fill the left column top to
+	 * bottom before starting the right, which reads well for a directory but
+	 * would bury this file's ordering: within `the-rules` contraception is
+	 * written first because it is the teaching most readers doubt, and it
+	 * belongs at the top-left rather than halfway down. Grid keeps DOM order
+	 * across the row, so first written is first read.
+	 *
+	 * `align-items: start` so a cell whose question wraps to two lines does
+	 * not stretch its neighbour, and `minmax(0, 1fr)` because a grid track's
+	 * default `min-width: auto` refuses to shrink below its longest
+	 * unbreakable word — a long title would push the second column off the
+	 * page rather than wrap.
+	 *
+	 * 46rem, WHICH IS NOT ONE OF THE SITE'S LAYOUT BREAKPOINTS and should not
+	 * be made into one. This is the width at which two 23rem cells stop
+	 * crowding, measured against this page's own content; the 80rem in
+	 * layout.css is where the aside appears, which is a different question
+	 * about a different element. Below it the list is one column and the rule
+	 * never applies.
+	 */
+	.index-list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-items: start;
+		gap: 0.7rem 2.5rem;
+	}
+
+	@media (min-width: 46rem) {
+		.index-list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	/*
 	 * NOT THE `.index-list` FAMILY, and both halves of the omission are
 	 * deliberate.
 	 *
@@ -177,9 +218,14 @@
 	 * page is the answer to "where do I go", and every row wanting to be
 	 * followed is the point rather than the hazard. So the link keeps
 	 * `--color-link` from base.css and only the underline is dropped.
+	 *
+	 * The row spacing is the grid's `gap` above and not a margin here, so the
+	 * two columns keep the same rhythm without one of them ending on a margin
+	 * the other does not have.
 	 */
 	.topic-row {
-		margin-bottom: 0.7rem;
+		/* A grid item's default `min-width: auto` again, one level in. */
+		min-width: 0;
 	}
 
 	/*
