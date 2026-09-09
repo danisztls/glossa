@@ -97,3 +97,62 @@ offered for bookmarking yet, though the address supports it — `addressResolves
 answers `true` for a topic because the index tier deliberately does not carry
 the topic list, and answering `false` would discard a reader's mark on every
 topic at once.
+
+## Adding a topic
+
+The machinery is finished; what a second pass adds is judgment, three files at
+a time. `docs/research/topics.md` holds the candidates and the blocklist.
+
+**1. Find the anchor in the Catechism, and never write a paragraph number from
+recollection.** The corpus is the oracle and answering takes one command:
+
+```sh
+# The Catechism's own headings, with the paragraph span of each — the best
+# anchors there are, because a topic that IS a heading is barely editorial.
+jq -r '[..|objects|select(.title?)|"\(.title)\t\(.paragraphs//"")"]|.[]' \
+  "$CORPUS_DIR"/build/ccc.en/structure.json | grep -i <term>
+
+# What a paragraph actually says, before claiming it answers anything.
+jq -r '.[]|select(.n==2283)|.text' "$CORPUS_DIR"/build/ccc.en/paragraphs.json
+```
+
+A grep for the word is a candidate; reading the sentence is what decides it.
+CCC 2283 carries the paragraph a bereaved reader needs and does not contain the
+word "suicide" — it says "taken their own lives" — so a term search alone would
+have missed the one anchor that topic exists for.
+
+**2. Write the entry, and let the sync check it.** A wrong span, an unknown
+canon, a renamed document slug or a drifted `lead` all fail the build with the
+slug and the number, so there is no separate verification step:
+
+```sh
+CORPUS_DIR=… npm run build   # prints `Topics: N over 4 doorway(s)`
+```
+
+**3. Write the two strings.** `quaestiones.{slug}.title` and `.question` in
+`src/lib/i18n/en.ts`, in that section's own register — the title is this site's
+plain naming, the question is the reader's own sentence, and neither evaluates
+or advises (`docs/writing-voice.md`). `quaestiones.test.ts` fails on a topic
+missing either.
+
+**4. Run the loop**: `npm run check`, `npm test`, `npm run preflight`. A topic
+adds no route code, so a pass here is the whole of it — except the look, which
+needs a browser and a person.
+
+### Which doorway a candidate belongs to
+
+`docs/research/topics.md` groups its candidates in lettered bands, which are
+finer than the four doorways and do not map one-to-one. The mapping:
+
+| Bands                                               | Doorway         |
+| --------------------------------------------------- | --------------- |
+| A, B, C, D, E, F, G (the arguing bands)             | `argument`      |
+| the life-event table                                | `life-event`    |
+| the private-shame table                             | `private-shame` |
+| H, I, J, K (supernatural, practice, money, justice) | `ordinary`      |
+
+**The doorway vocabulary stays closed at four.** A band is not a doorway: bands
+name what a topic is about, doorways name what the reader was holding, and the
+whole finding of the research pass is that only the second sorts a topic list
+usefully. If a candidate fits no doorway, the question to ask is whether a
+reader would really arrive at it — not whether to add a fifth.
