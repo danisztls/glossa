@@ -78,6 +78,49 @@ arrival lifts anything off the blocklist in `docs/research/topics.md`, and
 whether it belongs in the `documents` of a topic already shipped. The passages
 need no attention.
 
+## A doorway is not a heading a reader can scan
+
+Four doorways sorted the topics correctly and organised the page badly, and the
+difference showed the moment the set went from twelve to a hundred-odd.
+`argument` alone holds sixty: under one heading that is a wall, and the reader
+who came asking whether any of it is true has to read past contraception, the
+death penalty and the just wage to find out.
+
+So a topic also names a **cluster** — a shelf inside its doorway — and the page
+draws doorway, then cluster, then topic. The doorway still says what the reader
+was holding; the cluster says which shelf the answer is on.
+
+**Order is declared, not derived.** `quaestiones.json` lists each doorway's
+clusters in the order the page draws them, rather than the page collecting the
+clusters its topics happen to mention. Deriving it would mean that reordering
+the topic list silently reorders the page's headings, which is the kind of
+coupling nobody looks for when they move an entry.
+
+**Clusters are English and slugs are Latin**, which is not an inconsistency: a
+slug is an address and has to name the same thing in every language, while a
+cluster appears in no URL and is a dictionary key exactly as `doorway` is.
+
+The sidebar lists **clusters and nothing else**. Four rows would be a table of
+contents for a page nobody needs help with; one row per topic would be the page
+printed twice, which is the failure `IndexSidebarToc`'s own docblock names.
+
+## A title is a poor oracle for what a document is about
+
+`documents` entries are checked against `site/descriptions.json`, which is the
+only place here that records what a document _says_ rather than what it is
+called. Reading the 85 descriptions the topic set names caught two documents
+that were simply wrong, and neither was findable by title:
+
+- **`veritatis-splendor` under `iustificatio`.** It sounds like the document for
+  faith and works. It is about the moral act, freedom and conscience.
+- **`signum-magnum` under `apparitiones`.** It sounds like the document for
+  private revelation. It is an exhortation on Marian devotion.
+
+It also found nine documents that belonged and were missing — `sacramentum-caritatis`
+on Sunday obligation, `collaboration-of-men-and-women` on gender, `mysterium-ecclesiae`
+on whether a dogmatic formula can be historically conditioned. Read the
+description before naming a document, and again before removing one.
+
 ## `lead` is the judgment, and it is one field wide
 
 The Catechism's order is systematic; a reader in trouble is not. CCC 2280–2283
@@ -157,14 +200,22 @@ word "suicide" — it says "taken their own lives" — so a term search alone wo
 have missed the one anchor that topic exists for.
 
 **2. Write the entry, and let the sync check it.** A wrong span, an unknown
-canon, a renamed document slug or a drifted `lead` all fail the build with the
-slug and the number, so there is no separate verification step:
+canon, a renamed document slug, a cluster the topic's doorway does not declare
+or a drifted `lead` all fail the build with the slug and the number, so there is
+no separate verification step:
 
 ```sh
 CORPUS_DIR=… npm run build   # prints `Topics: N over 4 doorway(s)`
 ```
 
-**3. Write the two strings.** `quaestiones.{slug}.title` and `.question` in
+**3. Read the document's description before naming it.**
+`site/descriptions.json` says what each document is about; the title does not.
+
+```sh
+jq -r '.descriptions["encyclical.veritatis-splendor.en"].en.text' site/descriptions.json
+```
+
+**4. Write the two strings.** `quaestiones.{slug}.title` and `.question` in
 `src/lib/i18n/en.ts`, in that section's own register — the title is this site's
 plain naming, the question is the reader's own sentence, and neither evaluates
 or advises (`docs/writing-voice.md`). `quaestiones.test.ts` fails on a topic
@@ -172,7 +223,7 @@ missing either. Any dictionary that already carries the section — `pt` does �
 wants the pair too, or that reader gets an English question inside a
 Portuguese page.
 
-**4. Run the loop**: `npm run check`, `npm test`, `npm run preflight`. A topic
+**5. Run the loop**: `npm run check`, `npm test`, `npm run preflight`. A topic
 adds no route code, so a pass here is the whole of it — except the look, which
 needs a browser and a person.
 

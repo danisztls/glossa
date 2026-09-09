@@ -17,6 +17,19 @@
 		"(tribal, public, googled mid-fight), the life event (something happened on Tuesday), the",
 		"private shame (2 a.m., and they would never ask a person) and the ordinary question.",
 		"",
+		"A CLUSTER IS A SHELF INSIDE A DOORWAY and exists because a doorway is not a heading a",
+		"reader can scan. `argument` holds sixty topics; under one heading that is a wall, and the",
+		"reader who came asking whether any of it is true has to read past contraception and the",
+		"death penalty to find out. So `clusters` declares an ORDERED list per doorway, each topic",
+		"names one, and the landing page draws doorway -> cluster -> topic with the clusters as its",
+		"table of contents. The order inside a cluster is this file's, which is a judgement like",
+		"`lead` is: within `the-rules` contraception comes first because it is the teaching the",
+		"most readers doubt.",
+		"",
+		"CLUSTERS ARE NOT LATIN and slugs are, which is not an inconsistency. A slug is an ADDRESS",
+		"-- it appears in the URL and has to name the same thing in every language. A cluster is a",
+		"heading, appears in no address, and is a key into the dictionaries exactly as `doorway` is.",
+		"",
 		"THE SAME SUBJECT IS OFTEN TWO TOPICS, and the pairs below are deliberate rather than",
 		"duplicated. `abortus` is the argument and `post-abortum` is the woman who has had one;",
 		"`fecundatio-artificialis` is the case against IVF and `sterilitas` is the couple who cannot",
@@ -36,6 +49,14 @@
 		"`documents` and `canons` carry what the Catechism's footnotes do not reach -- a document",
 		"written after the CCC, or a procedure the Code holds and the Catechism only names. They are",
 		"additions to the derived set, never a replacement for it.",
+		"",
+		"EVERY `documents` ENTRY IS CHECKED AGAINST site/descriptions.json, which is the one place",
+		"here that says what a document is ABOUT rather than what it is called. A title is a poor",
+		"oracle and a Latin incipit is a worse one: `veritatis-splendor` sounds like the document",
+		"for faith and works and is about the moral act, so it was named under `iustificatio` until",
+		"its description was read; `signum-magnum` sounds like the document for apparitions and is",
+		"an exhortation on Marian devotion. Both were wrong and neither was findable by title.",
+		"Read the description before naming a document, and again before removing one.",
 		"",
 		"`lead` IS THE ONE REAL JUDGEMENT IN THIS FILE, and it is one field wide so it can be argued",
 		"with. A span renders in paragraph order unless `lead` names a paragraph to put first. It is",
@@ -67,7 +88,8 @@
 		"are a unit of a text somebody else wrote; these are a reader's questions, which are ours. The",
 		"copy on both pages names its own sense rather than relying on the word.",
 		"",
-		"THE VOCABULARY OF DOORWAYS IS CLOSED, and sync-corpus.mjs exits 1 on a topic outside it, on a",
+		"THE VOCABULARY OF DOORWAYS AND CLUSTERS IS CLOSED, and sync-corpus.mjs exits 1 on a topic",
+		"outside it, on a cluster this topic's own doorway does not declare, on a",
 		"CCC span naming a paragraph this build has not got, on a document slug naming no document, on",
 		"a canon this build has not got, and on a `lead` outside its own topic's spans. The last is the",
 		"one worth stating: a `lead` that has drifted out of its span is invisible on the page, because",
@@ -86,39 +108,59 @@
 		"thirty-seven carry them this route stays out of CHROME_PATHS on route-manifest.ts's own terms."
 	],
 	"doorways": ["argument", "life-event", "private-shame", "ordinary"],
+	"clusters": {
+		"argument": [
+			"credibility",
+			"other-christians",
+			"catholics-arguing",
+			"the-rules",
+			"public-square",
+			"other-faiths"
+		],
+		"life-event": ["death-and-dying", "marriage", "the-household"],
+		"private-shame": ["the-body", "forgiveness", "despair"],
+		"ordinary": ["the-unseen", "practice", "money-and-work", "justice"]
+	},
 	"topics": {
 		"dei-existentia": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[27, 43]],
 			"documents": ["fides-et-ratio"]
 		},
 		"malum": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[309, 314]],
 			"documents": ["spe-salvi"]
 		},
 		"lex-naturalis": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[1954, 1960]],
 			"documents": ["veritatis-splendor"]
 		},
 		"scriptura-inspirata": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[105, 108]],
 			"documents": ["dei-verbum", "providentissimus-deus", "divino-afflante-spiritu"]
 		},
 		"canon-scripturae": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[120, 130]],
 			"documents": ["dei-verbum"]
 		},
 		"creatio-et-scientia": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[282, 289]],
 			"documents": ["humani-generis", "fides-et-ratio"]
 		},
 		"iesus-christus": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [
 				[422, 429],
 				[456, 460]
@@ -127,16 +169,19 @@
 		},
 		"novissima": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[1020, 1041]],
 			"documents": ["spe-salvi"]
 		},
 		"atheismus": {
 			"doorway": "argument",
+			"cluster": "credibility",
 			"ccc": [[2123, 2128]],
 			"documents": ["gaudium-et-spes"]
 		},
 		"beata-virgo": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [
 				[963, 972],
 				[2673, 2679]
@@ -145,6 +190,7 @@
 		},
 		"sancti-et-imagines": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [
 				[946, 959],
 				[1159, 1162],
@@ -154,6 +200,7 @@
 		},
 		"purgatorium": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [
 				[1030, 1032],
 				[1471, 1479]
@@ -162,57 +209,67 @@
 		},
 		"primatus-romani-pontificis": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [[880, 887]],
-			"documents": ["pastor-aeternus", "lumen-gentium"]
-		},
-		"papa-reprehensus": {
-			"doorway": "argument",
-			"ccc": [[888, 892]],
-			"documents": ["donum-veritatis", "mysterium-ecclesiae"]
-		},
-		"dissensus": {
-			"doorway": "argument",
-			"ccc": [[1783, 1794]],
-			"documents": ["donum-veritatis"]
+			"documents": ["pastor-aeternus", "lumen-gentium", "ut-unum-sint"]
 		},
 		"traditio-et-scriptura": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [[74, 83]],
 			"documents": ["dei-verbum"]
 		},
 		"iustificatio": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [
 				[1987, 1995],
 				[2006, 2011]
 			],
-			"documents": ["veritatis-splendor"]
+			"documents": []
 		},
 		"confessio-sacerdoti": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [[1441, 1449]],
 			"documents": ["reconciliatio-et-paenitentia"]
 		},
 		"eucharistia": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [[1373, 1381]],
 			"documents": ["eccl-de-euch", "sacramentum-caritatis"]
 		},
 		"unitas-christianorum": {
 			"doorway": "argument",
+			"cluster": "other-christians",
 			"ccc": [[817, 822]],
 			"documents": ["unitatis-redintegratio", "ut-unum-sint"]
 		},
 		"doctrinae-progressus": {
 			"doorway": "argument",
+			"cluster": "catholics-arguing",
 			"ccc": [
 				[66, 67],
 				[94, 94]
 			],
-			"documents": ["dei-filius", "donum-veritatis"]
+			"documents": ["dei-filius", "donum-veritatis", "mysterium-ecclesiae"]
+		},
+		"papa-reprehensus": {
+			"doorway": "argument",
+			"cluster": "catholics-arguing",
+			"ccc": [[888, 892]],
+			"documents": ["donum-veritatis", "mysterium-ecclesiae"]
+		},
+		"dissensus": {
+			"doorway": "argument",
+			"cluster": "catholics-arguing",
+			"ccc": [[1783, 1794]],
+			"documents": ["donum-veritatis"]
 		},
 		"concilium-vaticanum-secundum": {
 			"doorway": "argument",
+			"cluster": "catholics-arguing",
 			"ccc": [[84, 87]],
 			"documents": [
 				"sacrosanctum-concilium",
@@ -224,6 +281,7 @@
 		},
 		"synodalitas": {
 			"doorway": "argument",
+			"cluster": "catholics-arguing",
 			"ccc": [
 				[874, 879],
 				[894, 896]
@@ -232,11 +290,13 @@
 		},
 		"mulieres-in-ecclesia": {
 			"doorway": "argument",
+			"cluster": "catholics-arguing",
 			"ccc": [[369, 373]],
 			"documents": ["collaboration-of-men-and-women", "inter-insigniores"]
 		},
 		"charismata": {
 			"doorway": "argument",
+			"cluster": "catholics-arguing",
 			"ccc": [
 				[799, 801],
 				[2003, 2003]
@@ -245,16 +305,19 @@
 		},
 		"contraceptio": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2366, 2372]],
 			"documents": ["casti-connubii", "humanae-vitae"]
 		},
 		"fecundatio-artificialis": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2373, 2377]],
 			"documents": ["donum-vitae", "dignitas-personae", "dignitas-infinita"]
 		},
 		"concubinatus": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [
 				[2350, 2350],
 				[2390, 2391]
@@ -263,11 +326,13 @@
 		},
 		"divortium": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2382, 2386]],
-			"documents": ["familiaris-consortio"]
+			"documents": ["familiaris-consortio", "casti-connubii"]
 		},
 		"homosexualitas": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2357, 2359]],
 			"lead": 2358,
 			"documents": [
@@ -278,16 +343,19 @@
 		},
 		"identitas-sexualis": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2331, 2336]],
-			"documents": ["dignitas-infinita"]
+			"documents": ["dignitas-infinita", "collaboration-of-men-and-women"]
 		},
 		"ordinatio-mulierum": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[1577, 1578]],
 			"documents": ["inter-insigniores", "responsum-ordinatio-sacerdotalis"]
 		},
 		"caelibatus": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [
 				[1579, 1580],
 				[1618, 1620]
@@ -296,36 +364,43 @@
 		},
 		"abortus": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2270, 2275]],
 			"documents": ["quaestio-de-abortu", "evangelium-vitae", "dignitas-infinita"]
 		},
 		"euthanasia": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2276, 2279]],
 			"documents": ["iura-et-bona", "samaritanus-bonus"]
 		},
 		"poena-capitalis": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2266, 2267]],
 			"documents": ["fratelli-tutti"]
 		},
 		"castitas": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2337, 2350]],
 			"documents": ["persona-humana"]
 		},
 		"mendacium": {
 			"doorway": "argument",
+			"cluster": "the-rules",
 			"ccc": [[2475, 2487]],
 			"documents": []
 		},
 		"capitalismus": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2402, 2407]],
 			"documents": ["rerum-novarum", "quadragesimo-anno", "centesimus-annus"]
 		},
 		"socialismus": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2424, 2425]],
 			"documents": [
 				"quod-apostolici-muneris",
@@ -337,91 +412,109 @@
 		},
 		"labor": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2426, 2433]],
 			"documents": ["rerum-novarum", "laborem-exercens"]
 		},
 		"migratio": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2241, 2241]],
 			"documents": ["fratelli-tutti", "dignitas-infinita"]
 		},
 		"bellum": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2302, 2317]],
 			"documents": ["pacem", "gaudium-et-spes", "fratelli-tutti"]
 		},
 		"civitas-et-oboedientia": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2234, 2237]],
 			"documents": ["diuturnum", "immortale-dei"]
 		},
 		"suffragium": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2238, 2240]],
 			"documents": ["catholics-in-political-life"]
 		},
 		"sub-imperio-atheo": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2242, 2243]],
 			"documents": ["divini-redemptoris", "mit-brennender-sorge", "ecclesia-in-asia"]
 		},
 		"civitas-catholica": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2244, 2246]],
 			"documents": ["immortale-dei", "libertas", "quas-primas", "dignitatis-humanae"]
 		},
 		"libertas-religiosa": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2104, 2109]],
 			"documents": ["dignitatis-humanae", "mit-brennender-sorge"]
 		},
 		"oecologia": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2415, 2418]],
 			"documents": ["laudato-si", "laudate-deum"]
 		},
 		"paupertas": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2443, 2449]],
 			"documents": ["populorum", "sollicitudo-rei-socialis", "dilexi-te"]
 		},
 		"technologia": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2293, 2294]],
 			"documents": ["laudato-si", "antiqua-et-nova"]
 		},
 		"communicatio-socialis": {
 			"doorway": "argument",
+			"cluster": "public-square",
 			"ccc": [[2493, 2499]],
-			"documents": ["inter-mirifica"]
+			"documents": ["inter-mirifica", "antiqua-et-nova"]
 		},
 		"iudaismus": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[839, 840]],
 			"documents": ["nostra-aetate"]
 		},
 		"islam": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[841, 841]],
 			"documents": ["nostra-aetate", "lumen-gentium", "ecclesia-in-medio-oriente"]
 		},
 		"salus-extra-ecclesiam": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[842, 848]],
 			"documents": ["redemptoris-missio", "dominus-iesus"]
 		},
 		"proselytismus": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[849, 856]],
 			"documents": ["evangelii-nuntiandi", "redemptoris-missio", "aspects-of-evangelization"]
 		},
 		"inculturatio": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[1200, 1206]],
 			"documents": ["slavorum-apostoli", "redemptoris-missio", "querida-amazonia"]
 		},
 		"polygamia": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [
 				[1645, 1645],
 				[2387, 2387]
@@ -430,65 +523,75 @@
 		},
 		"superstitio": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[2110, 2114]],
 			"documents": ["ecclesia-in-america", "africae-munus"]
 		},
 		"evangelium-prosperitatis": {
 			"doorway": "argument",
+			"cluster": "other-faiths",
 			"ccc": [[2544, 2547]],
 			"documents": ["ecclesia-in-america", "evangelii-gaudium"]
 		},
-
+		"aegritudo": {
+			"doorway": "life-event",
+			"cluster": "death-and-dying",
+			"ccc": [[1500, 1513]],
+			"documents": ["spe-salvi"]
+		},
+		"finis-vitae": {
+			"doorway": "life-event",
+			"cluster": "death-and-dying",
+			"ccc": [[2278, 2279]],
+			"documents": ["iura-et-bona", "samaritanus-bonus"]
+		},
 		"post-mortem": {
 			"doorway": "life-event",
+			"cluster": "death-and-dying",
 			"ccc": [[1023, 1032]],
 			"lead": 1032,
 			"documents": ["spe-salvi"]
 		},
 		"infans-non-baptizatus": {
 			"doorway": "life-event",
+			"cluster": "death-and-dying",
 			"ccc": [[1257, 1261]],
 			"lead": 1261,
 			"documents": ["pastoralis-actio"]
 		},
 		"mors-voluntaria": {
 			"doorway": "life-event",
+			"cluster": "death-and-dying",
 			"ccc": [[2280, 2283]],
 			"lead": 2283,
 			"documents": ["samaritanus-bonus"]
 		},
-		"aegritudo": {
-			"doorway": "life-event",
-			"ccc": [[1500, 1513]],
-			"documents": ["spe-salvi"]
-		},
-		"finis-vitae": {
-			"doorway": "life-event",
-			"ccc": [[2278, 2279]],
-			"documents": ["iura-et-bona", "samaritanus-bonus"]
-		},
 		"crematio": {
 			"doorway": "life-event",
+			"cluster": "death-and-dying",
 			"ccc": [[2300, 2301]],
 			"documents": ["ad-resurgendum-cum-christo"]
 		},
 		"matrimonium": {
 			"doorway": "life-event",
+			"cluster": "marriage",
 			"ccc": [
 				[1625, 1632],
 				[1643, 1645]
 			],
-			"documents": [],
+			"documents": ["casti-connubii", "familiaris-consortio"],
 			"canons": [[1055, 1057]]
 		},
 		"matrimonium-mixtum": {
 			"doorway": "life-event",
+			"cluster": "marriage",
 			"ccc": [[1633, 1637]],
-			"documents": [],
+			"documents": ["familiaris-consortio"],
 			"canons": [[1124, 1129]]
 		},
 		"nullitas-matrimonii": {
 			"doorway": "life-event",
+			"cluster": "marriage",
 			"ccc": [
 				[1629, 1629],
 				[1650, 1651]
@@ -498,27 +601,32 @@
 		},
 		"communio-post-divortium": {
 			"doorway": "life-event",
+			"cluster": "marriage",
 			"ccc": [[1650, 1651]],
 			"documents": ["familiaris-consortio", "amoris-laetitia"]
 		},
 		"graviditas": {
 			"doorway": "life-event",
+			"cluster": "the-household",
 			"ccc": [[2270, 2271]],
 			"documents": ["quaestio-de-abortu", "donum-vitae"]
 		},
 		"sterilitas": {
 			"doorway": "life-event",
+			"cluster": "the-household",
 			"ccc": [[2373, 2379]],
 			"lead": 2379,
 			"documents": ["donum-vitae", "dignitas-personae"]
 		},
 		"filius-a-fide-lapsus": {
 			"doorway": "life-event",
+			"cluster": "the-household",
 			"ccc": [[2221, 2231]],
 			"documents": ["familiaris-consortio"]
 		},
 		"amissio-operis": {
 			"doorway": "life-event",
+			"cluster": "the-household",
 			"ccc": [
 				[2427, 2428],
 				[2436, 2436]
@@ -526,17 +634,9 @@
 			"lead": 2436,
 			"documents": ["laborem-exercens"]
 		},
-
-		"remissio-peccatorum": {
-			"doorway": "private-shame",
-			"ccc": [
-				[982, 982],
-				[1846, 1848]
-			],
-			"documents": ["dives-in-misericordia", "reconciliatio-et-paenitentia"]
-		},
 		"pornographia": {
 			"doorway": "private-shame",
+			"cluster": "the-body",
 			"ccc": [
 				[2354, 2354],
 				[2351, 2352]
@@ -545,6 +645,7 @@
 		},
 		"masturbatio": {
 			"doorway": "private-shame",
+			"cluster": "the-body",
 			"ccc": [
 				[1735, 1735],
 				[2352, 2352]
@@ -552,29 +653,15 @@
 			"lead": 2352,
 			"documents": ["persona-humana"]
 		},
-		"reditus": {
+		"homosexualitas-vivenda": {
 			"doorway": "private-shame",
-			"ccc": [[1455, 1458]],
-			"documents": ["reconciliatio-et-paenitentia"]
-		},
-		"scrupulositas": {
-			"doorway": "private-shame",
-			"ccc": [
-				[1454, 1460],
-				[1735, 1735]
-			],
-			"documents": []
-		},
-		"post-abortum": {
-			"doorway": "private-shame",
-			"ccc": [
-				[1468, 1470],
-				[2272, 2272]
-			],
-			"documents": ["evangelium-vitae"]
+			"cluster": "the-body",
+			"ccc": [[2358, 2359]],
+			"documents": ["persona-humana", "homosexualitatis-problema"]
 		},
 		"post-contraceptionem": {
 			"doorway": "private-shame",
+			"cluster": "the-body",
 			"ccc": [
 				[1735, 1735],
 				[2370, 2370]
@@ -583,44 +670,77 @@
 		},
 		"adulterium": {
 			"doorway": "private-shame",
+			"cluster": "the-body",
 			"ccc": [
 				[2380, 2381],
 				[2487, 2487]
 			],
 			"documents": []
 		},
-		"homosexualitas-vivenda": {
+		"remissio-peccatorum": {
 			"doorway": "private-shame",
-			"ccc": [[2358, 2359]],
-			"documents": ["persona-humana"]
+			"cluster": "forgiveness",
+			"ccc": [
+				[982, 982],
+				[1846, 1848]
+			],
+			"documents": ["dives-in-misericordia", "reconciliatio-et-paenitentia"]
+		},
+		"reditus": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [[1455, 1458]],
+			"documents": ["reconciliatio-et-paenitentia"]
+		},
+		"scrupulositas": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [
+				[1454, 1460],
+				[1735, 1735]
+			],
+			"documents": []
+		},
+		"post-abortum": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [
+				[1468, 1470],
+				[2272, 2272]
+			],
+			"documents": ["evangelium-vitae"]
+		},
+		"venia-danda": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [[2842, 2845]],
+			"documents": ["dives-in-misericordia"]
 		},
 		"mortis-desiderium": {
 			"doorway": "private-shame",
+			"cluster": "despair",
 			"ccc": [[2280, 2283]],
 			"lead": 2283,
 			"documents": ["samaritanus-bonus"]
 		},
-		"venia-danda": {
-			"doorway": "private-shame",
-			"ccc": [[2842, 2845]],
-			"documents": ["dives-in-misericordia"]
-		},
 		"dubium-fidei": {
 			"doorway": "private-shame",
+			"cluster": "despair",
 			"ccc": [
 				[162, 162],
 				[2088, 2089]
 			],
 			"documents": ["spe-salvi"]
 		},
-
 		"divinatio": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [[2115, 2117]],
 			"documents": []
 		},
 		"mortui": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [
 				[1030, 1032],
 				[2116, 2116]
@@ -629,6 +749,7 @@
 		},
 		"daemones": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [
 				[391, 395],
 				[550, 550],
@@ -638,16 +759,19 @@
 		},
 		"angeli": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [[328, 336]],
 			"documents": []
 		},
 		"apparitiones": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [[66, 67]],
-			"documents": ["signum-magnum"]
+			"documents": []
 		},
 		"miracula-et-reliquiae": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [
 				[156, 156],
 				[1674, 1676]
@@ -656,16 +780,19 @@
 		},
 		"experientia-mortis-proximae": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [[1021, 1022]],
 			"documents": []
 		},
 		"finis-mundi": {
 			"doorway": "ordinary",
+			"cluster": "the-unseen",
 			"ccc": [[668, 682]],
 			"documents": []
 		},
 		"ieiunium": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [
 				[1434, 1434],
 				[1438, 1438],
@@ -676,23 +803,27 @@
 		},
 		"dominica": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [[2177, 2183]],
-			"documents": ["sacrosanctum-concilium"],
+			"documents": ["sacrosanctum-concilium", "sacramentum-caritatis"],
 			"canons": [[1247, 1248]]
 		},
 		"otium": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [[2184, 2188]],
 			"documents": ["gaudete-in-domino", "laborem-exercens"]
 		},
 		"baptismus-infantium": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [[1250, 1255]],
 			"documents": ["pastoralis-actio"],
 			"canons": [[872, 874]]
 		},
 		"organorum-donatio": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [
 				[2296, 2296],
 				[2301, 2301]
@@ -701,11 +832,13 @@
 		},
 		"corpus-ornandum": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [[2288, 2289]],
 			"documents": []
 		},
 		"decimae": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [
 				[2043, 2043],
 				[2447, 2447]
@@ -715,6 +848,7 @@
 		},
 		"vota-et-iuramenta": {
 			"doorway": "ordinary",
+			"cluster": "practice",
 			"ccc": [
 				[2101, 2103],
 				[2150, 2155]
@@ -723,21 +857,25 @@
 		},
 		"vocatio": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [[1877, 1889]],
 			"documents": ["christus-vivit"]
 		},
 		"merces-iusta": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [[2434, 2435]],
 			"documents": ["rerum-novarum", "laborem-exercens"]
 		},
 		"pecunia-collocanda": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [[2431, 2432]],
 			"documents": ["caritas-in-veritate", "oeconomicae-et-pecuniariae-quaestiones"]
 		},
 		"tributum": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [
 				[2240, 2240],
 				[2409, 2409]
@@ -746,11 +884,13 @@
 		},
 		"invidia": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [[2538, 2540]],
 			"documents": []
 		},
 		"acedia": {
 			"doorway": "ordinary",
+			"cluster": "money-and-work",
 			"ccc": [
 				[1866, 1866],
 				[2094, 2094],
@@ -760,11 +900,13 @@
 		},
 		"discrimen-gentium": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[1934, 1938]],
 			"documents": ["nostra-aetate", "fratelli-tutti"]
 		},
 		"mercatura-hominum": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [
 				[2355, 2355],
 				[2414, 2414]
@@ -773,26 +915,31 @@
 		},
 		"violentia-domestica": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[2356, 2356]],
 			"documents": ["dignitas-infinita"]
 		},
 		"violentia-digitalis": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[2488, 2492]],
 			"documents": ["dignitas-infinita", "antiqua-et-nova"]
 		},
 		"debilitas": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[2276, 2276]],
 			"documents": ["dignitas-infinita"]
 		},
 		"carceres": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[2297, 2298]],
 			"documents": ["fratelli-tutti"]
 		},
 		"defensio-sui": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [
 				[2263, 2265],
 				[2316, 2317]
@@ -801,6 +948,7 @@
 		},
 		"proles-suscipienda": {
 			"doorway": "ordinary",
+			"cluster": "justice",
 			"ccc": [[2368, 2371]],
 			"documents": ["humanae-vitae", "laudato-si"]
 		}

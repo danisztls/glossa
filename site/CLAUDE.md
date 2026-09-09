@@ -814,6 +814,14 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   written down instead — the held set is in `docs/research/topics.md`, and
   `fiducia-supplicans` is the case that matters, since the three earlier
   documents ARE here and a stale answer reads as a current one.
+- **A doorway sorts; a cluster organises.** Sixty topics under one heading is a
+  wall, so each topic also names a shelf, and `quaestiones.json` declares each
+  doorway's clusters in the order the page draws them — deriving that order from
+  the topics would let a reordered list silently reorder the headings.
+- **Read `descriptions.json` before naming a document.** A title is a poor
+  oracle: `veritatis-splendor` sounds like the document for faith and works and
+  is about the moral act, and it sat under `iustificatio` until the description
+  was read.
 - **Two doors are two topics only where they change the answer.** `abortus` and
   `post-abortum` differ in anchor and in order; six candidates were dropped for
   resolving to a shipped topic's paragraphs in a shipped topic's order.

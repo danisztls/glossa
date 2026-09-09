@@ -1035,6 +1035,10 @@ export interface CccBlock {
  */
 export interface Topic {
 	doorway: string;
+	/** The shelf inside the doorway. Scoped to `doorway`: the same key under a
+	 *  different doorway is a different heading, and `TopicIndex.clusters`
+	 *  holds each doorway's own ordered list. */
+	cluster: string;
 	ccc: [number, number][];
 	lead?: number;
 	documents?: string[];
@@ -1044,6 +1048,11 @@ export interface Topic {
 export interface TopicIndex {
 	/** The closed doorway vocabulary, in the order the index page lists it. */
 	doorways: string[];
+	/** Doorway to its clusters, each list in the order the page draws it.
+	 *  Ordering lives here rather than being derived from `topics`, so a
+	 *  cluster's place on the page does not depend on which topic happens to
+	 *  be written first. */
+	clusters: Record<string, string[]>;
 	topics: Record<string, Topic>;
 }
 

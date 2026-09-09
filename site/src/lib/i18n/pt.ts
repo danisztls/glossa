@@ -693,6 +693,25 @@ export const pt: Dictionary = {
 	'quaestiones.documents.blurb':
 		'Onde a Igreja tratou da questão por extenso, ou escreveu depois do Catecismo.',
 	'quaestiones.canons.heading': 'No Código',
+	// Os agrupamentos, na ordem de `site/quaestiones.json`, porta por porta.
+	// O título de um agrupamento nomeia uma PRATELEIRA e não um assunto: diz
+	// que tipo de pergunta está ali, nas palavras que o leitor usaria.
+	'quaestiones.cluster.credibility': 'Se alguma coisa disso é verdade',
+	'quaestiones.cluster.other-christians': 'O que pergunta outro cristão',
+	'quaestiones.cluster.catholics-arguing': 'O que os católicos discutem entre si',
+	'quaestiones.cluster.the-rules': 'Por que não posso',
+	'quaestiones.cluster.public-square': 'A praça pública',
+	'quaestiones.cluster.other-faiths': 'Outra fé, outra cultura',
+	'quaestiones.cluster.death-and-dying': 'Doença, morte e luto',
+	'quaestiones.cluster.marriage': 'Casar, e o que vem depois',
+	'quaestiones.cluster.the-household': 'Os filhos e a casa',
+	'quaestiones.cluster.the-body': 'O corpo',
+	'quaestiones.cluster.forgiveness': 'O perdão',
+	'quaestiones.cluster.despair': 'Quando já não há',
+	'quaestiones.cluster.the-unseen': 'O invisível',
+	'quaestiones.cluster.practice': 'A prática comum',
+	'quaestiones.cluster.money-and-work': 'Dinheiro, trabalho e tempo',
+	'quaestiones.cluster.justice': 'A justiça e a pessoa',
 	// --- o que se discute ---
 	'quaestiones.dei-existentia.title': 'Se Deus existe',
 	'quaestiones.dei-existentia.question': 'Tem alguém aí?',

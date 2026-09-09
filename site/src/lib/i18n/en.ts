@@ -1553,6 +1553,26 @@ export const en: Dictionary = {
 	'quaestiones.documents.blurb':
 		'Where the Church has treated the question at length, or has written since the Catechism.',
 	'quaestiones.canons.heading': 'In the Code',
+	// The clusters, in `site/quaestiones.json`'s order, doorway by doorway. A
+	// cluster heading names a SHELF and not a subject: it says what kind of
+	// question is on it, in the words the reader would use, so that scanning
+	// sixteen of these is faster than reading a hundred titles.
+	'quaestiones.cluster.credibility': 'Whether any of it is true',
+	'quaestiones.cluster.other-christians': 'What another Christian asks',
+	'quaestiones.cluster.catholics-arguing': 'What Catholics argue about',
+	'quaestiones.cluster.the-rules': 'Why am I not allowed to',
+	'quaestiones.cluster.public-square': 'The public square',
+	'quaestiones.cluster.other-faiths': 'Another faith, another culture',
+	'quaestiones.cluster.death-and-dying': 'Illness, dying and death',
+	'quaestiones.cluster.marriage': 'Marrying, and what follows',
+	'quaestiones.cluster.the-household': 'Children, and the household',
+	'quaestiones.cluster.the-body': 'The body',
+	'quaestiones.cluster.forgiveness': 'Forgiveness',
+	'quaestiones.cluster.despair': 'When it has gone',
+	'quaestiones.cluster.the-unseen': 'The unseen',
+	'quaestiones.cluster.practice': 'Ordinary practice',
+	'quaestiones.cluster.money-and-work': 'Money, work and time',
+	'quaestiones.cluster.justice': 'Justice and the person',
 	// The topics themselves, in `site/quaestiones.json`'s own order — by
 	// doorway, and within a doorway roughly by the band it came from. Two
 	// entries that look like one subject twice are the pair that file

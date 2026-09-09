@@ -180,4 +180,29 @@
 	li {
 		margin-bottom: 0.35rem;
 	}
+
+	/*
+	 * THE TWO LISTS AT THE FOOT OF THE PAGE DROP THE UNDERLINE AT REST, on the
+	 * exemption `base.css` names and `/schola`'s catalogue took: the mark earns
+	 * its place under a link sitting inside a sentence, and every line of these
+	 * two lists is a link, so an underline on each is a stack of rules under a
+	 * short list of names. Hover and focus restore it — the arrival IS the
+	 * interaction, per the same rule.
+	 *
+	 * SCOPED TO THESE LISTS AND NOT THE PAGE. The citations inside the
+	 * Catechism text above are links in running prose, which is the case the
+	 * underline exists for, and `ProseBlocks` owns their apparatus styling
+	 * besides.
+	 */
+	.documents a,
+	.canons a {
+		text-decoration: none;
+	}
+
+	.documents a:hover,
+	.documents a:focus-visible,
+	.canons a:hover,
+	.canons a:focus-visible {
+		text-decoration: underline;
+	}
 </style>

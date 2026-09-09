@@ -2902,6 +2902,7 @@ const quaestionesPath = path.join(siteRoot, 'quaestiones.json');
 const quaestionesFile = existsSync(quaestionesPath) ? readJson(quaestionesPath) : {};
 const quaestiones = quaestionesFile.topics ?? {};
 const doorways = quaestionesFile.doorways ?? [];
+const topicClusters = quaestionesFile.clusters ?? {};
 {
 	const knownDocuments = new Set(
 		Object.values(manifests)
@@ -2916,6 +2917,17 @@ const doorways = quaestionesFile.doorways ?? [];
 	for (const [slug, topic] of Object.entries(quaestiones)) {
 		if (!allowedDoorways.has(topic.doorway)) {
 			problems.push(`${slug}: doorway ${JSON.stringify(topic.doorway)} is not in doorways`);
+		}
+		// A cluster is scoped to its doorway, so the check is against that
+		// doorway's own list and not a flat set: `marriage` under `argument`
+		// would render into a heading nobody put it behind, and a flat set
+		// would let it. An unknown doorway has no list, and reporting only
+		// the doorway is the useful message — the cluster is not the defect.
+		const declared = topicClusters[topic.doorway];
+		if (declared && !declared.includes(topic.cluster)) {
+			problems.push(
+				`${slug}: cluster ${JSON.stringify(topic.cluster)} is not declared under ${topic.doorway}`
+			);
 		}
 		const spans = topic.ccc ?? [];
 		const covered = new Set();
@@ -2963,13 +2975,39 @@ const doorways = quaestionesFile.doorways ?? [];
 		);
 	}
 
+	// A declared cluster nobody is in renders as nothing at all — not an empty
+	// heading, since the page skips it — so this warns rather than fails, on
+	// the unused doorway's reasoning. It is still worth saying: a cluster is a
+	// promise about the shelf, and an empty one usually means a topic was
+	// renamed out from under it.
+	const unusedClusters = Object.entries(topicClusters).flatMap(([doorway, clusters]) =>
+		clusters
+			.filter(
+				(cluster) =>
+					!Object.values(quaestiones).some(
+						(topic) => topic.doorway === doorway && topic.cluster === cluster
+					)
+			)
+			.map((cluster) => `${doorway}/${cluster}`)
+	);
+	if (unusedClusters.length > 0) {
+		console.warn(
+			`[sync-corpus] quaestiones.json: ${unusedClusters.length} cluster(s) with no topic: ` +
+				unusedClusters.join(', ')
+		);
+	}
+
 	if (problems.length > 0) {
 		console.error(`[sync-corpus] quaestiones.json is inconsistent with this build:`);
 		for (const problem of problems) console.error(`  - ${problem}`);
 		process.exit(1);
 	}
 	if (Object.keys(quaestiones).length > 0) {
-		writeJson(path.join(indexDir, 'quaestiones.json'), { doorways, topics: quaestiones });
+		writeJson(path.join(indexDir, 'quaestiones.json'), {
+			doorways,
+			clusters: topicClusters,
+			topics: quaestiones
+		});
 	}
 }
 const topicCount = Object.keys(quaestiones).length;
@@ -3842,7 +3880,8 @@ console.log(
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
 		`${Object.keys(translatedDescriptions).length} language file(s). ` +
 		`Tags: ${taggedDocuments} document(s), ${distinctTags} distinct term(s). ` +
-		`Topics: ${topicCount} over ${doorways.length} doorway(s). ` +
+		`Topics: ${topicCount} over ${doorways.length} doorway(s), ` +
+		`${Object.values(topicClusters).flat().length} cluster(s). ` +
 		`Works: ${registeredWorkIds.join(', ')}`
 );
 

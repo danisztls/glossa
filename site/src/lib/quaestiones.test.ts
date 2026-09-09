@@ -17,8 +17,14 @@ import type { Dictionary } from './i18n.svelte';
  */
 const source = JSON.parse(readFileSync('quaestiones.json', 'utf8')) as {
 	doorways: string[];
-	topics: Record<string, { doorway: string; ccc: [number, number][]; lead?: number }>;
+	clusters: Record<string, string[]>;
+	topics: Record<
+		string,
+		{ doorway: string; cluster: string; ccc: [number, number][]; lead?: number }
+	>;
 };
+
+const allClusters = Object.values(source.clusters).flat();
 
 const slugs = Object.keys(source.topics);
 
@@ -30,6 +36,39 @@ describe('quaestiones.json', () => {
 	it('files every topic under a doorway in the closed vocabulary', () => {
 		for (const [slug, topic] of Object.entries(source.topics)) {
 			expect(source.doorways, slug).toContain(topic.doorway);
+		}
+	});
+
+	/** A cluster is scoped to its doorway, so `marriage` declared under
+	 *  `life-event` does not admit a topic whose doorway is `argument`. A flat
+	 *  membership check would pass that and the page would drop the topic
+	 *  silently — it draws each doorway's own declared list. */
+	it('files every topic under a cluster its own doorway declares', () => {
+		for (const [slug, topic] of Object.entries(source.topics)) {
+			expect(source.clusters[topic.doorway] ?? [], slug).toContain(topic.cluster);
+		}
+	});
+
+	/** Every declared cluster is drawn, so an empty one is a heading that
+	 *  renders as nothing — usually the residue of a topic renamed out from
+	 *  under it. The sync warns; this fails, because the suite is where the
+	 *  file's own consistency is checked. */
+	it('leaves no declared cluster empty', () => {
+		for (const [doorway, clusters] of Object.entries(source.clusters)) {
+			for (const cluster of clusters) {
+				const held = Object.values(source.topics).filter(
+					(topic) => topic.doorway === doorway && topic.cluster === cluster
+				);
+				expect(held.length, `${doorway}/${cluster}`).toBeGreaterThan(0);
+			}
+		}
+	});
+
+	/** Declared for a doorway that does not exist is the same defect as a
+	 *  topic outside the vocabulary, one level up. */
+	it('declares clusters only for doorways in the closed vocabulary', () => {
+		for (const doorway of Object.keys(source.clusters)) {
+			expect(source.doorways).toContain(doorway);
 		}
 	});
 
@@ -108,6 +147,16 @@ describe('every topic is reachable and named', () => {
 		}
 	});
 
+	/** A cluster heading and nothing else — no blurb, because the doorway
+	 *  above it already carries one and a second sentence per shelf would be
+	 *  more prose than index on a page of sixteen of them. */
+	it('carries a heading for every cluster', () => {
+		const dictionary = en as unknown as Record<string, string>;
+		for (const cluster of allClusters) {
+			expect(dictionary[`quaestiones.cluster.${cluster}`], cluster).toBeTruthy();
+		}
+	});
+
 	/** A DICTIONARY THAT HAS STARTED THIS SECTION HAS TO FINISH IT, which is a
 	 *  stronger rule than the site's ordinary partial-translation licence and
 	 *  is here because of what falls back. `t()` reaches for English, so a
@@ -127,6 +176,7 @@ describe('every topic is reachable and named', () => {
 				`quaestiones.doorway.${doorway}`,
 				`quaestiones.doorway.${doorway}.blurb`
 			]),
+			...allClusters.map((cluster) => `quaestiones.cluster.${cluster}`),
 			'quaestiones.landing.tagline',
 			'quaestiones.landing.none',
 			'quaestiones.passages.heading',
