@@ -118,6 +118,27 @@ The sidebar lists **clusters and nothing else**. Four rows would be a table of
 contents for a page nobody needs help with; one row per topic would be the page
 printed twice, which is the failure `IndexSidebarToc`'s own docblock names.
 
+**A shelf is closed until it is opened.** The cluster layer removed the wall
+three shelves at a time and left a page a hundred and sixteen rows tall, which
+is the same complaint one level up. Every cluster is a `<details>`, shut by
+default, with the number of questions on its heading — so the page opens as its
+own table of contents, four doorways over sixteen named shelves, and the reader
+opens the one they came for. Two things follow. A live query forces every
+surviving shelf open, or a search matching three questions would show three
+closed headings and read as no results; and the search does not record what it
+opened, so clearing the box puts the page back as the reader had it. A sidebar
+row is an anchor at the cluster's own id, and a browser opens a closed
+`<details>` only for a target _inside_ one — so the page opens the cluster a
+fragment names, or every row of the table of contents would land on a heading
+and stop.
+
+**On a phone the question is dropped and the title carries the row.** At 360px
+a one-line question wraps to three, so eight topics are thirty-two lines of grey
+with eight links buried in them. The question keeps working — it is half of what
+`topic-search.ts` matches — which is the cost as well: a phone reader can get a
+row back on a word that is not on screen. That is the better failure, since the
+question is where the reader's own words are.
+
 ## A title is a poor oracle for what a document is about
 
 `documents` entries are checked against `site/descriptions.json`, which is the

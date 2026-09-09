@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { hrefFor } from '$lib/address';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import TopicSearch from '$lib/components/TopicSearch.svelte';
@@ -102,6 +103,40 @@
 	 * offering sixteen shelves over a page showing three would send the reader
 	 * to an anchor that is no longer on the page.
 	 */
+	/**
+	 * WHICH CLUSTERS THE READER HAS OPENED, and every shelf starts shut.
+	 *
+	 * Sixteen headings a reader can take in at once is what the cluster layer
+	 * was for; a hundred and sixteen questions drawn under them is the wall it
+	 * was meant to remove, three shelves at a time instead of sixty. Closed by
+	 * default, the page opens as its own table of contents — the four doorways
+	 * with their sixteen shelves under them, each saying how many questions it
+	 * holds — and a reader opens the one they came for.
+	 *
+	 * SEARCH OVERRIDES IT AND DOES NOT RECORD ITSELF. `searching` forces every
+	 * surviving cluster open, because a query that matched three questions and
+	 * showed three closed headings would read as a page with no results. The
+	 * `ontoggle` handler ignores what happens while a query is live, so
+	 * clearing the box puts the page back exactly as the reader had it rather
+	 * than leaving whatever the search opened standing.
+	 *
+	 * A FRAGMENT OPENS ITS OWN CLUSTER. The sidebar's rows are anchors at these
+	 * ids, and a browser opens a closed `<details>` only for a target INSIDE
+	 * it — the target here is the element itself, so nothing would open and the
+	 * row would scroll to a heading and stop.
+	 */
+	let opened = $state<Record<string, boolean>>({});
+
+	$effect(() => {
+		const id = page.url.hash.slice(1);
+		if (id) opened[id] = true;
+	});
+
+	/** The reader's own toggles, and only those — see `opened`. */
+	function remember(id: string, open: boolean) {
+		if (!searching) opened[id] = open;
+	}
+
 	const sidebarItems = $derived(
 		byDoorway.flatMap((group) =>
 			group.clusters.map((entry) => ({
@@ -146,8 +181,20 @@
 
 						{#each group.clusters as entry (entry.cluster)}
 							{@const id = `${group.doorway}-${entry.cluster}`}
-							<section class="cluster" {id} aria-labelledby={`${id}-heading`}>
-								<h3 id={`${id}-heading`}>{t(`quaestiones.cluster.${entry.cluster}`)}</h3>
+							<!-- The chip is what a closed shelf owes the reader: sixteen
+							     headings with no sizes are sixteen doors into an unknown
+							     room, and while a query is live it is the count that
+							     survived it. -->
+							<details
+								class="cluster"
+								{id}
+								open={searching || opened[id] === true}
+								ontoggle={(event) => remember(id, event.currentTarget.open)}
+							>
+								<summary>
+									<h3>{t(`quaestiones.cluster.${entry.cluster}`)}</h3>
+									<span class="chip">{entry.topics.length}</span>
+								</summary>
 								<!-- `"hover"`: a row here is a destination the reader picked in
 								     order to GO to it, the same call `/preces` makes for the
 								     same shape of list. -->
@@ -161,7 +208,7 @@
 										</li>
 									{/each}
 								</ul>
-							</section>
+							</details>
 						{/each}
 					</section>
 				{/if}
@@ -258,13 +305,75 @@
 		scroll-margin-top: calc(var(--sticky-chrome-height) + 1.5rem);
 	}
 
+	/* Sixteen closed shelves want to read as a list rather than as sixteen
+	   sections, so a shut one keeps only the space that separates two rows. */
+	.cluster:not([open]) {
+		margin-bottom: 0.35rem;
+	}
+
+	/*
+	 * THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for and
+	 * why the count rides its end rather than sitting beside the h3 as a second
+	 * thing to aim at. `list-style: none` plus the WebKit pseudo drops the
+	 * browser's own marker, and the glyph below is the one every other
+	 * disclosure on this site draws — the default triangle cannot be styled
+	 * consistently across browsers.
+	 */
+	summary {
+		display: flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		padding: 0.15rem 0.35rem 0.15rem 0;
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	summary::before {
+		content: '▸';
+		color: var(--color-text-muted);
+		font-size: max(var(--font-size-min), 0.8em);
+		display: inline-block;
+	}
+
+	.cluster[open] > summary::before {
+		transform: rotate(90deg);
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		summary::before {
+			transition: transform 120ms ease;
+		}
+	}
+
+	/* The heading is the only word in the row, so the hover answers on it —
+	   the same "this is a control" job `.facet-option`'s ground does in the
+	   `/documenta` panel, at a size that does not want a filled band. */
+	summary:hover h3,
+	summary:focus-visible h3 {
+		color: var(--color-text);
+	}
+
 	h3 {
 		font-size: 0.8rem;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
 		color: var(--color-text-muted);
 		font-weight: 600;
-		margin: 0 0 0.6rem;
+		margin: 0;
+	}
+
+	.cluster[open] > summary {
+		margin-bottom: 0.6rem;
+	}
+
+	.chip {
+		margin-inline-start: auto;
+		font-variant-numeric: tabular-nums;
 	}
 
 	/*
@@ -360,6 +469,26 @@
 		margin: 0.1rem 0 0;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
+	}
+
+	/*
+	 * THE QUESTION IS DROPPED ON A PHONE and the title carries the row alone.
+	 * At 360px a one-line question is three lines, so a shelf of eight topics
+	 * is thirty-two lines of grey text with eight links buried in it — the
+	 * titles stop being scannable, which is the one thing a list of a hundred
+	 * questions has to be. The title is already a whole subject; the question
+	 * is the sentence a reader would have typed, and its work here is being
+	 * SEARCHED rather than being read.
+	 *
+	 * Which is the one cost: `topic-search.ts` matches title and question
+	 * together, so a phone reader can get a row back on a word that is not on
+	 * screen. Deliberate — the question is where the reader's own words are, and
+	 * losing the match would be worse than the unexplained hit.
+	 */
+	@media (max-width: 40rem) {
+		.question {
+			display: none;
+		}
 	}
 
 	.empty {

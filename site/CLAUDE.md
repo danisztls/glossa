@@ -818,6 +818,11 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   wall, so each topic also names a shelf, and `quaestiones.json` declares each
   doorway's clusters in the order the page draws them — deriving that order from
   the topics would let a reordered list silently reorder the headings.
+- **A cluster is a `<details>` shut by default, and two rules keep it usable**: a
+  live query forces every surviving shelf open (three closed headings read as no
+  results), and the page opens the cluster a fragment names, since a browser
+  opens a closed `<details>` only for a target INSIDE it and every sidebar row
+  is an anchor at the cluster itself.
 - **Read `descriptions.json` before naming a document.** A title is a poor
   oracle: `veritatis-splendor` sounds like the document for faith and works and
   is about the moral act, and it sat under `iustificatio` until the description
