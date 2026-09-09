@@ -108,7 +108,7 @@
 	import SectionSource from '$lib/components/SectionSource.svelte';
 	import PrayerReferences from '$lib/components/PrayerReferences.svelte';
 	import { setPosition } from '$lib/reading-position';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Prayer, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -331,7 +331,17 @@
 	 * to go. A slug the current edition lacks is dropped rather than rendered
 	 * dead — `prayer.common.la` has all three, but nothing here assumes that.
 	 */
-	const DECADE_SLUGS = ['our-father', 'hail-mary', 'glory-be'];
+	/** The three prayers of a decade WITH HOW MANY TIMES EACH IS SAID. The
+	 *  source states the counts in a sentence ("the 'Our Father', ten 'Hail
+	 *  Marys' and the 'Glory be'"); a reader following along needs them as a
+	 *  column they can look down while praying, and ten is the only one of the
+	 *  three anybody gets wrong. */
+	const DECADE: { slug: string; times: number }[] = [
+		{ slug: 'our-father', times: 1 },
+		{ slug: 'hail-mary', times: 10 },
+		{ slug: 'glory-be', times: 1 }
+	];
+	const DECADE_SLUGS = DECADE.map((d) => d.slug);
 
 	/**
 	 * THE TWO PRAYERS THE ROSARY SENDS A READER TO AND DOES NOT PRINT.
@@ -355,7 +365,12 @@
 			.filter((p): p is { slug: string; meta: PrayerMeta } => p.meta !== undefined);
 	}
 
-	const decadePrayers = $derived(namedPrayerLinks(DECADE_SLUGS));
+	const decadePrayers = $derived(
+		namedPrayerLinks(DECADE_SLUGS).map((p) => ({
+			...p,
+			times: DECADE.find((d) => d.slug === p.slug)?.times ?? 1
+		}))
+	);
 	const closingPrayers = $derived(namedPrayerLinks(CLOSING_SLUGS));
 
 	onMount(() => {
@@ -415,38 +430,110 @@
 	     it, so the section's source line moves inside — the same rule
 	     `/documenta`'s and `CitedBy`'s disclosures met. -->
 	{#if p.instructions}
+		{@const opening = p.instructions.blocks.length > 1 ? p.instructions.blocks[0] : undefined}
+		{@const printed = opening ? p.instructions.blocks.slice(1) : p.instructions.blocks}
 		<details class="prayer-instructions" id="prayer-instructions">
 			<summary>
 				<h2>{p.instructions.title}</h2>
 			</summary>
 
 			<div class="prayer-instructions-body">
-				<SectionSource url={p.instructions.source} />
+				<!--
+					OUR OWN WALKTHROUGH, ABOVE THE SOURCE'S DIRECTIONS AND MARKED
+					OFF FROM THEM. Everywhere else under /preces this site prints
+					what its source printed and adds nothing; here it explains,
+					because the source's four sentences are addressed to somebody
+					who already prays the Rosary. They name a "decade" without
+					saying what one is, tell the reader to "announce the mystery"
+					without saying to whom, and state the counts of a decade
+					inside a sentence rather than as the list a person follows
+					while counting. Somebody meeting the prayer for the first
+					time cannot begin from them, and this page is the one a
+					search for "how to pray the Rosary" lands on.
 
-				{#if p.instructions.blocks.length > 1}
-					<div class="prayer-opening">
-						<p class="prayer-step-label label-micro">{t('prayers.rosary.openingPrayer')}</p>
-						<PrayerBlocks lines={prayerLines(p.instructions.blocks.slice(0, 1))} />
+					The source's own sentences are still here, under their own
+					label and in their own language, three paragraphs down. The
+					explanation stands beside them; it does not replace them, and
+					nothing of theirs is rewritten, cut or renumbered.
+				-->
+				<p class="rosary-lead">{t('prayers.rosary.howTo.lead')}</p>
+
+				<ol class="rosary-walkthrough">
+					<li>
+						<p class="rosary-step-name">{t('prayers.rosary.howTo.begin')}</p>
+						<p>{t('prayers.rosary.howTo.beginBody')}</p>
+					</li>
+					<li>
+						<p class="rosary-step-name">{t('prayers.rosary.howTo.decades')}</p>
+						<p>{t('prayers.rosary.howTo.decadesBody')}</p>
+						<!-- THE DECADE AS A COLUMN, not as the sentence the source
+						     writes it in. It is the one part of the Rosary a reader
+						     has to keep count of, and the count is what a sentence
+						     is worst at carrying — the links are the same three the
+						     directions name, so the reader reaches the words as
+						     well as the number. -->
+						{#if decadePrayers.length > 0}
+							<!-- Named for assistive technology and not on the page:
+							     the sentence above it already introduces the list,
+							     and a heading between "then say:" and the three
+							     prayers would interrupt the one instruction the
+							     reader is mid-way through reading. -->
+							<ul class="rosary-decade" aria-label={t('prayers.rosary.decadePrayers')}>
+								{#each decadePrayers as entry (entry.slug)}
+									<li>
+										<a href={hrefFor({ kind: 'prayer', slug: entry.slug })}>{entry.meta.title}</a>
+										<span class="rosary-times">×{entry.times}</span>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+						<p>{t('prayers.rosary.howTo.decadesAfter')}</p>
+					</li>
+					<li>
+						<p class="rosary-step-name">{t('prayers.rosary.howTo.finish')}</p>
+						<p>{t('prayers.rosary.howTo.finishBody')}</p>
+					</li>
+				</ol>
+
+				<p class="rosary-duration">{t('prayers.rosary.howTo.duration')}</p>
+
+				<!-- The source's directions, whole and in its own language. The
+				     `lang` is on the wrapper because everything above it is the
+				     reader's interface language and everything inside it is not. -->
+				{#if printed.length > 0}
+					<div class="rosary-as-printed" lang={bodyLang}>
+						<p class="prayer-step-label label-micro" lang={i18n.lang}>
+							{t('prayers.rosary.howTo.asPrinted')}
+						</p>
+						<ol class="prayer-steps">
+							{#each printed as block, i (i)}
+								<li><PrayerBlocks lines={prayerLines([block])} /></li>
+							{/each}
+						</ol>
+						<SectionSource url={p.instructions.source} />
 					</div>
-					<ol class="prayer-steps">
-						{#each p.instructions.blocks.slice(1) as block, i (i)}
-							<li><PrayerBlocks lines={prayerLines([block])} /></li>
-						{/each}
-					</ol>
-				{:else}
-					<!-- A single-block instructions field has no opening prayer to
-					     separate from its steps, so it renders the way it always did. -->
-					<PrayerBlocks lines={prayerLines(p.instructions.blocks)} />
-				{/if}
-
-				{#if decadePrayers.length > 0}
-					<p class="prayer-named-links">
-						<span class="prayer-step-label label-micro">{t('prayers.rosary.decadePrayers')}</span>
-						{@render namedPrayers(decadePrayers)}
-					</p>
 				{/if}
 			</div>
 		</details>
+
+		<!--
+			THE OPENING PRAYER IS OUT OF THE FOLD, because it is not a direction.
+			It is the words a reader says out loud to begin — the sign of the
+			cross, "O God come to my aid", the Glory be — and the source files it
+			with its directions only because its page had nowhere else to put it.
+			Folded away with the how-to, the first thing to be SAID was behind the
+			same disclosure as the explanation of what saying it means, so a
+			reader who had read the directions once and come back to pray had to
+			open them again to find the first line.
+		-->
+		{#if opening}
+			<section class="prayer-opening" lang={bodyLang}>
+				<p class="prayer-step-label label-micro" lang={i18n.lang}>
+					{t('prayers.rosary.openingPrayer')}
+				</p>
+				<PrayerBlocks lines={prayerLines([opening])} />
+			</section>
+		{/if}
 	{/if}
 
 	<!-- Groups (the Rosary alone, v1) render as their own named list, never
@@ -476,6 +563,16 @@
 	<!-- `primaryLines` and not `p`'s own: this snippet renders the reader's
 	     edition and nothing else (compare mode goes through the cells below), so
 	     the lines here are the ones its placement was taken over. -->
+	<!-- A GROUP PRAYER'S BLOCKS ARE ITS ENDING, and nothing said so on the page.
+	     The five mysteries stopped and "Prayer concluding the Rosary" began in
+	     the same measure, the same face and the same colour as the meditation
+	     above it, so the last thing on the page read as a sixth mystery. A
+	     thematic break is the whole fix — the source's own first block is the
+	     heading it says it is, and printing our own words over it would be the
+	     page saying twice what the text says once. -->
+	{#if p.kind === 'group'}
+		<hr class="prayer-conclusion-rule" />
+	{/if}
 	<PrayerBlocks lines={primaryLines} dropCap={p.kind !== 'group'} placement={primaryPlacement} />
 	<!-- The prayers the conclusion tells the reader to say and does not print —
 	     see `CLOSING_SLUGS`. Under the blocks, because that is where the reader
@@ -816,8 +913,12 @@
 		margin: 0 0 0.3rem;
 	}
 
+	/* The words that open the Rosary, ruled off from the mysteries under them
+	   the way a marginal rule sets a said text apart from a read one. Outside
+	   the fold now, so the margin below it is what separates it from the
+	   stepper rather than from the rest of a panel. */
 	.prayer-opening {
-		margin: 0 0 1.25rem;
+		margin: 0 0 1.5rem;
 		padding-inline-start: 0.9rem;
 		border-inline-start: 2px solid var(--color-border);
 	}
@@ -829,6 +930,95 @@
 
 	.prayer-steps li {
 		margin: 0 0 0.6rem;
+	}
+
+	/*
+	 * THE WALKTHROUGH IS SANS AND THE PRAYER IS NOT. Everything in this fold
+	 * that is ours is set in the interface face at the interface size, and
+	 * everything of the source's keeps the reading face — which is the same
+	 * distinction the whole site draws between chrome and text, made here
+	 * between an explanation and the thing explained. It is also why nothing
+	 * in this block reads `--reading-base`: a reader who enlarged the prayer
+	 * did not ask for a larger set of instructions.
+	 */
+	.rosary-lead,
+	.rosary-walkthrough,
+	.rosary-duration {
+		font-family: var(--font-sans);
+		font-size: 0.92rem;
+	}
+
+	.rosary-lead {
+		margin: 0 0 1rem;
+	}
+
+	.rosary-walkthrough {
+		margin: 0 0 0.75rem;
+		padding-inline-start: 1.4rem;
+	}
+
+	.rosary-walkthrough > li {
+		margin: 0 0 1rem;
+	}
+
+	.rosary-walkthrough p {
+		margin: 0 0 0.35rem;
+	}
+
+	.rosary-step-name {
+		font-weight: 600;
+	}
+
+	/* The one part of the page a reader looks at WHILE praying rather than
+	   before it, so the three rows are a column with the counts aligned down
+	   the far edge — a count that has to be found inside a line is a count
+	   that gets lost. `max-content` on the first track keeps the two columns
+	   together whatever the prayer names are called in this language, instead
+	   of stretching the row to the fold's whole width. */
+	.rosary-decade {
+		display: grid;
+		grid-template-columns: max-content max-content;
+		gap: 0.15rem 1.25rem;
+		margin: 0.5rem 0 0.75rem;
+		padding: 0.6rem 0.9rem;
+		list-style: none;
+		border-inline-start: 2px solid var(--color-border);
+	}
+
+	.rosary-decade li {
+		display: contents;
+	}
+
+	.rosary-times {
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+		text-align: end;
+	}
+
+	.rosary-duration {
+		margin: 0 0 1.5rem;
+		color: var(--color-text-muted);
+	}
+
+	/* The source's own directions, under our explanation of them. Ruled off
+	   at the top because the boundary it marks is authorship — above it this
+	   site is speaking, below it the source is. */
+	.rosary-as-printed {
+		padding-top: 0.9rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.rosary-as-printed .prayer-steps {
+		margin-bottom: 0.75rem;
+	}
+
+	/* Wider than the space between two paragraphs and narrower than a section
+	   break, because that is exactly what it divides: the end of the prayer
+	   from the last of the mysteries. */
+	.prayer-conclusion-rule {
+		margin: 2rem 0 1.5rem;
+		border: 0;
+		border-top: 1px solid var(--color-border);
 	}
 
 	/* Both rows of prayers named beside a text that does not print them — the

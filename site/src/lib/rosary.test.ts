@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { weekdayName, weekdayOn } from './rosary-days';
+import { mysteryName, weekdayName, weekdayOn } from './rosary';
 
 /** The rotation the Holy Rosary micro-site prints, as `PrayerGroupEntry.days`
  *  stores it: joyful, luminous, sorrowful, glorious. */
@@ -87,5 +87,33 @@ describe('weekdayName', () => {
 	 *  than throwing or emitting a tag. */
 	it('falls back rather than failing for a language Intl cannot answer for', () => {
 		expect(weekdayName(1, 'la')).toBeTruthy();
+	});
+});
+
+describe('mysteryName', () => {
+	it('drops the ordinal and the set the heading already names', () => {
+		expect(mysteryName('First Joyful Mystery: The Annunciation')).toBe('The Annunciation');
+		expect(
+			mysteryName('Quinto Misterio Gozoso: El Niño Jesús perdido y hallado en el Templo')
+		).toBe('El Niño Jesús perdido y hallado en el Templo');
+		expect(mysteryName('Das erste freudenreiche Geheimnis: Die Verkündigung.')).toBe(
+			'Die Verkündigung.'
+		);
+	});
+
+	it('leaves a title alone where the edition printed no prefix', () => {
+		// Romanian and Swedish come from the Compendium's appendix, which names
+		// the mysteries and never their position.
+		expect(mysteryName('Vestea îngerului adusă Mariei.')).toBe('Vestea îngerului adusă Mariei.');
+		expect(mysteryName('Jesus bebådas av ängeln')).toBe('Jesus bebådas av ängeln');
+	});
+
+	it('keeps the whole title rather than returning nothing', () => {
+		expect(mysteryName('First Joyful Mystery:')).toBe('First Joyful Mystery:');
+		expect(mysteryName('First Joyful Mystery:   ')).toBe('First Joyful Mystery:   ');
+	});
+
+	it('cuts at the FIRST colon, so a name carrying one keeps it', () => {
+		expect(mysteryName('First Joyful Mystery: He said: come')).toBe('He said: come');
 	});
 });

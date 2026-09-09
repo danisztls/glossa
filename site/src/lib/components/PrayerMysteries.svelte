@@ -37,7 +37,7 @@
 	control replaced rather than an empty column.
 -->
 <script lang="ts">
-	import { weekdayName, weekdayOn } from '$lib/rosary-days';
+	import { weekdayName, weekdayOn } from '$lib/rosary';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
@@ -84,11 +84,17 @@
 </script>
 
 {#snippet setHeading(group: PrayerGroupEntry)}
-	<h2 class="prayer-mystery-name" {lang}>
-		{group.name}
-		{#if group.rubric}<span class="prayer-mystery-rubric">{group.rubric}</span>{/if}
+	<h2 class="prayer-mystery-name" {lang}>{group.name}</h2>
+	<!-- THE RUBRIC AND THE SOURCE SHARE A LINE, where they were two under the
+	     name. Both are the same size, the same weight and the same grey; the
+	     rubric is five words and the source two, and stacked they made a
+	     four-line masthead over a list the reader came for. Neither belongs to
+	     the other, which is what the separator is for. -->
+	<p class="prayer-mystery-meta">
+		{#if group.rubric}<span class="prayer-mystery-rubric" {lang}>{group.rubric}</span>{/if}
+		{#if group.rubric && group.source}<span class="sep" aria-hidden="true">·</span>{/if}
 		<SectionSource url={group.source} />
-	</h2>
+	</p>
 {/snippet}
 
 {#snippet setItems(group: PrayerGroupEntry)}
@@ -272,17 +278,35 @@
 	/* Inside the stepper the head's own margin closes the gap, and the arrows
 	   are centred against this block — a trailing margin here would sit them
 	   above the middle of what they point at. */
-	.mysteries-title .prayer-mystery-name {
+	.mysteries-title .prayer-mystery-name,
+	.mysteries-title .prayer-mystery-meta {
 		margin-bottom: 0;
 	}
 
-	.prayer-mystery-rubric {
-		display: block;
+	/* One row of provenance under the set's name. `SectionSource` is a block
+	   for its other caller, which stands alone in the directions' fold; here
+	   it is the second half of a line, so this is the one place that overrides
+	   it. */
+	.prayer-mystery-meta {
+		margin: 0.1rem 0 0.5rem;
 		font-family: var(--font-sans);
 		font-size: 0.75rem;
-		font-weight: 400;
-		font-style: italic;
 		color: var(--color-text-muted);
+	}
+
+	.prayer-mystery-meta :global(.prayer-section-source) {
+		display: inline;
+		font-size: inherit;
+		margin-block-start: 0;
+	}
+
+	.prayer-mystery-meta .sep {
+		opacity: 0.6;
+		margin-inline: 0.35em;
+	}
+
+	.prayer-mystery-rubric {
+		font-style: italic;
 	}
 
 	.prayer-mystery-items {

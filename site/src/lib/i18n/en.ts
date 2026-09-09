@@ -821,6 +821,39 @@ export const en: Dictionary = {
 	'prayers.rosary.todayHeading': 'Today’s mysteries',
 	'prayers.rosary.openingPrayer': 'Opening prayer',
 	'prayers.rosary.decadePrayers': 'The prayers of a decade',
+	// THE ONLY PROSE ON THIS SITE THAT EXPLAINS A PRAYER RATHER THAN PRINTING
+	// ONE. Everything else under /preces is the source's text reproduced; these
+	// eight strings are written here, and they exist because the source's four
+	// directions assume the reader already knows what a decade is, what the
+	// beads are for, and what "announce the mystery" means. Somebody who has
+	// never prayed the Rosary cannot start from them. The source's own
+	// directions are still printed underneath, in its own words and marked as
+	// its own — this stands beside them, not over them.
+	//
+	// Written short and flat on purpose: every sentence names one thing to do.
+	// No sentence tells the reader what to feel, and none says the prayer is
+	// easy — a first Rosary is twenty minutes of unfamiliar repetition, and a
+	// page that pretends otherwise is the reason somebody stops halfway.
+	'prayers.rosary.howTo.lead':
+		'The Rosary is a short round of prayers said five times over, while you hold one scene from the life of Jesus and Mary in mind. The beads only count for you, so that your attention can stay on the scene. Fingers do as well.',
+	'prayers.rosary.howTo.begin': 'Begin',
+	'prayers.rosary.howTo.beginBody':
+		'Make the sign of the cross, and say the opening prayer printed below.',
+	'prayers.rosary.howTo.decades': 'Say five decades',
+	'prayers.rosary.howTo.decadesBody':
+		'A decade is one mystery and the prayers that follow it. Read the first mystery, stop long enough to picture it, then say:',
+	'prayers.rosary.howTo.decadesAfter':
+		'Then move to the next mystery and do the same, until all five are done. Each of the ten Hail Marys is one bead.',
+	'prayers.rosary.howTo.finish': 'Finish',
+	'prayers.rosary.howTo.finishBody':
+		'Say the prayers at the foot of this page. Many people add the Litany of Loreto or another prayer to Our Lady after them.',
+	'prayers.rosary.howTo.duration': 'The whole of it takes about twenty minutes.',
+	// Over the source's own four directions, inside the same fold. It says "the
+	// source" and not "the Vatican" because the label is read under every
+	// edition, and what is being marked off is provenance rather than an
+	// institution: the sentences under it are somebody else's and the
+	// explanation above it is ours.
+	'prayers.rosary.howTo.asPrinted': 'The directions as the source prints them',
 	// Over the links under the concluding prayer. The source ends the Rosary
 	// with "the Loreto Litany or some other Marian prayer" and opens its
 	// conclusion "Hail, Holy Queen, etc. as above" — an "above" that exists in
