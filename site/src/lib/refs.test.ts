@@ -37,10 +37,16 @@ const CANON_NT = `matt mark luke john acts rom 1cor 2cor gal eph phil col 1thess
  * versification.ts's docblock for where these numbers come from).
  */
 const { mockBibleBooks } = vi.hoisted(() => {
+	// `verses` is the index tier's `CompactRun` — a gapless chapter IS its
+	// verse count (see `BibleChapterMeta` in `corpus-index.ts`), which is what
+	// every chapter named here is. It was an expanded `{ n, text }[]` until
+	// the registry stopped materialising one, and the mock is what noticed:
+	// `runHas` over an array of objects answers false for every verse, so each
+	// citation lost its anchor while the production path was correct.
 	function makeChapters(counts: Record<number, number>) {
 		return Object.entries(counts).map(([n, verseCount]) => ({
 			n: Number(n),
-			verses: Array.from({ length: verseCount }, (_, i) => ({ n: i + 1, text: `v${i + 1}` }))
+			verses: verseCount
 		}));
 	}
 	const books: Record<string, Record<string, unknown>> = {

@@ -149,21 +149,27 @@ import { buildCondensationMap, type CondensationMap } from './condensation';
 
 // --- Bible book metadata (index tier: chapter NUMBERS, never verse text) --
 
-/** Verse EXISTENCE only — `{ n }`, never `text` — kept as `{ n }[]` rather
- *  than a bare `number[]` specifically so `refs.ts`'s `refHref`
- *  (`chapter.verses.some(v => v.n === verseN)`, checking a cited verse
- *  exists before linking to it — a file this restructuring must not
- *  require editing) keeps compiling and working unmodified. */
-export interface BibleVerseMeta {
-	n: number;
-}
-
-/** Chapter EXISTENCE + verse EXISTENCE — see `BibleVerseMeta`. Same
- *  reasoning applies to keeping `{ n }[]` rather than `number[]`:
- *  `refs.ts`'s `book.chapters.find(c => c.n === seg.chapter)`. */
+/**
+ * Chapter EXISTENCE + verse EXISTENCE, holding the verses in the SHAPE THE
+ * FILE STORES — a `CompactRun`, not an expanded array and not `{ n }[]`.
+ *
+ * Both earlier shapes were paid for on the boot route. `{ n }[]` was chosen so
+ * that `refs.ts` "keeps compiling and working unmodified", and that convenience
+ * cost 20 ms of main thread and 321,936 object allocations every cold load,
+ * against five call sites that read a verse number as a number. Expanding to
+ * `number[]` instead is 11 ms, and still allocates an array per chapter for a
+ * question that is arithmetic: 11,921 of the corpus's 12,006 chapters store the
+ * bare count, so "does verse k exist" is `k <= n`. Keeping the run costs
+ * nothing measurable, which is why the accessors below exist.
+ *
+ * `verseExists`/`verseCount`/`lastVerse`/`verseAt`/`hasVerseInRange` are the
+ * whole reading surface. **Do not reach past them to `expandRun`** on a path
+ * that renders: the 85 chapters with a real gap are why the accessors branch,
+ * and materialising is what this shape is here to avoid.
+ */
 export interface BibleChapterMeta {
 	n: number;
-	verses: BibleVerseMeta[];
+	verses: CompactRun;
 }
 
 export interface BibleBookMeta {
@@ -174,13 +180,18 @@ export interface BibleBookMeta {
 	chapters: BibleChapterMeta[];
 }
 
+/** The fixtures come from whole chapters, so their runs are written out in
+ *  full rather than compacted — an explicit ascending array is a valid
+ *  `CompactRun` and the encoder that would shorten it lives in the sync
+ *  script, under Node. `verse-runs.test.ts` covers both branches directly, so
+ *  nothing depends on which one a fixture happens to exercise. */
 function metaFromFullBook(book: BibleBook): BibleBookMeta {
 	return {
 		osis: book.osis,
 		name: book.name,
 		abbrevs: book.abbrevs,
 		order: book.order,
-		chapters: book.chapters.map((c) => ({ n: c.n, verses: c.verses.map((v) => ({ n: v.n })) }))
+		chapters: book.chapters.map((c) => ({ n: c.n, verses: c.verses.map((v) => v.n) }))
 	};
 }
 
@@ -209,28 +220,86 @@ export function expandRun(run: CompactRun): number[] {
 	return Array.from({ length: run }, (_, i) => i + 1);
 }
 
-/** On-disk/wire shape of `bible-index.json`'s per-book entry: `verses` is a
- *  PLAIN number run, not `{ n }[]` — see `scripts/sync-corpus.mjs`'s
- *  comment on why (object-wrapping ~72,000 verse numbers was most of the
- *  client chunk's weight for zero benefit, since the wrapping only needs
- *  to exist in memory). Expanded to `BibleBookMeta` (which DOES use `{ n
- *  }[]`, for `refs.ts`'s sake) once, below, when the registry is built. */
-interface BibleBookMetaCompact {
-	osis: string;
-	name: string;
-	abbrevs: string[];
-	order: number;
-	chapters: { n: number; verses: CompactRun }[];
+// --- Reading a run without expanding it ----------------------------------
+//
+// Every one of these is O(1) on the bare count, which is 99.3% of the corpus's
+// chapters, and the array branch is what keeps a real verse gap honest. They
+// lean on `compactRun`'s stated contract that a run is ASCENDING, so the last
+// element is the largest and none of them sorts or scans to find it.
+//
+// They replaced five expressions spread over four modules plus three `derived`
+// maps of `Set`s in `corpus.ts` — which is why they are one named surface with
+// one test rather than an `expandRun` at each call site: the shortcut past an
+// expansion is exactly the kind of arithmetic that is wrong in one place and
+// right in the other four. `verse-runs.test.ts` checks each against the
+// expansion it stands in for.
+
+/** How many numbers the run holds. `0` is a real empty run, not a gap. */
+export function runLength(run: CompactRun): number {
+	return Array.isArray(run) ? run.length : run;
 }
 
-function expandBookMeta(compact: BibleBookMetaCompact): BibleBookMeta {
-	return {
-		...compact,
-		chapters: compact.chapters.map((c) => ({
-			n: c.n,
-			verses: expandRun(c.verses).map((n) => ({ n }))
-		}))
-	};
+/** The run's `index`th number, or `undefined` past its end. */
+export function runAt(run: CompactRun, index: number): number | undefined {
+	if (Array.isArray(run)) return run[index];
+	return index >= 0 && index < run ? index + 1 : undefined;
+}
+
+/** The largest number in the run, or `undefined` when it is empty. */
+export function runLast(run: CompactRun): number | undefined {
+	if (Array.isArray(run)) return run[run.length - 1];
+	return run > 0 ? run : undefined;
+}
+
+/** Whether the run holds `n` — the check a citation passes before it is
+ *  allowed to become a link, so it must never answer true for a number the
+ *  edition does not print. */
+export function runHas(run: CompactRun, n: number): boolean {
+	return Array.isArray(run) ? run.includes(n) : n >= 1 && n <= run;
+}
+
+/** Whether the run holds any number in `[from, to]` — an inclusive range, and
+ *  the question a cited SPAN asks: an edition whose versification puts the
+ *  span elsewhere carries none of it. */
+/**
+ * The nearest number in the run either side of `n`, or `undefined` at the end
+ * — prev/next through a Catechism paragraph, a Compendium question, a document
+ * section.
+ *
+ * `n` need not be in the run: a reader arriving at a number the edition skips
+ * still gets the neighbours around the hole, which is what the array version
+ * did and is the only behaviour a reading page can use.
+ */
+export function runAdjacent(
+	run: CompactRun,
+	n: number,
+	direction: 'prev' | 'next'
+): number | undefined {
+	if (Array.isArray(run)) {
+		if (direction === 'next') return run.find((x) => x > n);
+		// Walked backwards rather than `[...run].reverse().find(…)`, which
+		// copied the whole run on every step through a work.
+		for (let i = run.length - 1; i >= 0; i--) if (run[i] < n) return run[i];
+		return undefined;
+	}
+	// The run is `1..run`, so the neighbour is arithmetic — clamped rather
+	// than assumed in range, since `n` may sit outside it either way.
+	if (direction === 'next') {
+		const next = Math.max(n + 1, 1);
+		return next <= run ? next : undefined;
+	}
+	const prev = Math.min(n - 1, run);
+	return prev >= 1 ? prev : undefined;
+}
+
+export function runHasInRange(run: CompactRun, from: number, to: number): boolean {
+	if (from > to) return false;
+	if (Array.isArray(run)) return run.some((n) => n >= from && n <= to);
+	// `[1, run]` against `[from, to]`, which is what makes the EMPTY run
+	// (`run === 0`) answer false. Written as `from <= run && to >= 1` it
+	// reports an overlap for every range straddling 1 over a chapter with no
+	// verses in it — `verse-runs.test.ts` is what said so.
+	return Math.max(from, 1) <= Math.min(to, run);
 }
 
 // --- Real corpus, if `npm run sync-corpus` has populated corpus-data/ -----
@@ -240,8 +309,11 @@ function expandBookMeta(compact: BibleBookMetaCompact): BibleBookMeta {
 // — that's why sync-corpus.mjs materializes real data at this fixed path
 // instead of reading `../../corpus` directly.
 
+/** The file's per-book entry IS `BibleBookMeta` — the registry holds the
+ *  stored run rather than an expansion of it, so there is no second shape and
+ *  no decode step between the two. */
 interface BibleIndexFile {
-	[workId: string]: { books: BibleBookMetaCompact[] };
+	[workId: string]: { books: BibleBookMeta[] };
 }
 /** `lang -> { books }` — which books have an introduction, and nothing else.
  *  The prose is content tier (see `sync-corpus.mjs`'s `bibleIntroIndex`). */
@@ -704,7 +776,7 @@ export const cccAbbreviations: Record<string, CccAbbreviation[]> = USE_REAL_CORP
  *  synchronous. Never assume a contiguous 1..2865 range: the real corpus is
  *  contiguous, but the fixtures deliberately aren't (see this file's own
  *  docblock and corpus.ts's VITEST guard). */
-export const cccParagraphNumbers: Record<string, number[]> = USE_REAL_CORPUS
+export const cccParagraphNumbers: Record<string, CompactRun> = USE_REAL_CORPUS
 	? {}
 	: {
 			en: (fixtureCccEnParagraphs as CccParagraph[]).map((p) => p.n).sort((a, b) => a - b),
@@ -790,7 +862,7 @@ export const compendiumStructures: Record<string, StructureNode[]> = USE_REAL_CO
  *  numbers move to the index, where the CCC has always kept them — strictly
  *  fewer requests than before, not more, since these checks now cost no
  *  fetch at all. */
-export const compendiumQuestionNumbers: Record<string, number[]> = USE_REAL_CORPUS
+export const compendiumQuestionNumbers: Record<string, CompactRun> = USE_REAL_CORPUS
 	? {}
 	: {
 			// The raw fixture imports, not `fixtureCompendiumQuestionsByLang`
@@ -810,7 +882,7 @@ const documentAppendixUnitCounts: Record<string, number> = {};
 
 /** Section numbers actually present per document work id — same role as
  *  `cccParagraphNumbers` above, keyed by work id instead of language. */
-export const documentSectionNumbers: Record<string, number[]> = USE_REAL_CORPUS ? {} : {};
+export const documentSectionNumbers: Record<string, CompactRun> = USE_REAL_CORPUS ? {} : {};
 
 /** Section numbers present per `csdc.{lang}` work id -- the same role
  *  `documentSectionNumbers` plays, and keyed the same way, because an edition
@@ -1363,7 +1435,7 @@ export function ensureBibleIndex(): Promise<void> {
 	return primeOnce('bible', async () => {
 		const file = await fetchIndexFile<BibleIndexFile>(single(realIndexBibleUrl), 'bible-index');
 		for (const [workId, v] of Object.entries(file ?? {})) {
-			bibleIndex[workId] = v.books.map(expandBookMeta);
+			bibleIndex[workId] = v.books;
 		}
 		indexPrimed.add('bible');
 	});
@@ -1375,7 +1447,7 @@ export function ensureCccIndex(): Promise<void> {
 		for (const [lang, v] of Object.entries(file ?? {})) {
 			cccStructures[lang] = v.structure;
 			cccAbbreviations[lang] = v.abbreviations;
-			cccParagraphNumbers[lang] = expandRun(v.paragraphNumbers);
+			cccParagraphNumbers[lang] = v.paragraphNumbers;
 		}
 		indexPrimed.add('ccc');
 	});
@@ -1389,7 +1461,7 @@ export function ensureCompendiumIndex(): Promise<void> {
 		);
 		for (const [lang, v] of Object.entries(file ?? {})) {
 			compendiumStructures[lang] = v.structure;
-			compendiumQuestionNumbers[lang] = expandRun(v.questionNumbers ?? 0);
+			compendiumQuestionNumbers[lang] = v.questionNumbers ?? 0;
 		}
 		indexPrimed.add('compendium');
 	});
@@ -1416,7 +1488,7 @@ export function ensureDocumentIndex(): Promise<void> {
 			'document-index'
 		);
 		for (const [workId, v] of Object.entries(file ?? {})) {
-			documentSectionNumbers[workId] = expandRun(v.sectionNumbers);
+			documentSectionNumbers[workId] = v.sectionNumbers;
 			if (v.appendixUnits) documentAppendixUnitCounts[workId] = v.appendixUnits;
 		}
 		indexPrimed.add('document');

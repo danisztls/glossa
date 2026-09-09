@@ -87,6 +87,36 @@ completely their callers can be enumerated — the content index throws always,
 the per-work-type indexes throw in dev and warn in production. Under fixtures
 neither can fire, so `npm test` is not what catches a mistake here.
 
+**A compact wire format is also a runtime format, and expanding it on arrival
+spends the saving twice.** `compactRun` was written to keep `[1,2,…,31]` out of
+the boot chunk and every primer then rebuilt the array it had just avoided
+sending — so the transfer got smaller and the main thread did not. The registries
+hold the stored `CompactRun` now and `corpus-index.ts`'s `runHas`/`runLast`/
+`runAt`/`runLength`/`runAdjacent`/`runHasInRange` answer against it: 33.5 ms of
+index work in front of the home page's first render became 9.3 ms.
+
+**An existence check over a gapless run is arithmetic, so a `Set` built to
+answer it is pure loss** — and the loss lands in the render window, because a
+`derived` map is built on its first read. Three registries expanded their runs
+and then inserted every number into a `Set`, 79,802 of them for the documents
+alone, to answer a question `n <= last` answers. What earns the array branch is
+the 85 chapters with a real GAP; nothing earns it for the other 11,921.
+
+**Keeping a call site unedited is a decision to pay for it on every load.** The
+Bible index's verse numbers were wrapped as `{ n }[]` so that `refs.ts` "keeps
+compiling and working unmodified", against five call sites that read a verse
+number as a number — 321,936 object allocations per cold load, 18× the parse
+cost of the file they came from. The scoping convenience was worth about two
+lines of diff and was never re-measured after the restructuring it was scoped
+for had landed.
+
+**A shaped mock is a second copy of the shape, and it fails in the direction
+that looks like a code bug.** `refs.test.ts` builds its own Bible registry from
+verse COUNTS, and it had expanded them to `{ n, text }[]`; `runHas` over an
+array of objects answers false for every verse, so 31 tests reported citations
+losing their anchors while the production path was correct. A mock that takes a
+count should store the count.
+
 ## Chunking
 
 **Every content split is a fixed stride, and a size ceiling fails the build.**

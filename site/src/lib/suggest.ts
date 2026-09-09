@@ -81,6 +81,7 @@ import {
 	baseLang,
 	contentLangChain
 } from './corpus';
+import { expandRun } from './corpus-index';
 import { i18n, isUiLang, loadedDictionary, UI_LANGS } from './i18n.svelte';
 import sectionNamesTable from './section-names.json';
 import { normalizeBookToken, parseReference } from './refparse';
@@ -599,12 +600,20 @@ function chapterExists(osis: string, chapter: number): boolean {
 }
 
 /** Verse numbers this chapter has in ANY edition, ascending. The destination is
- *  edition-free, so a verse one edition carries is an address. */
+ *  edition-free, so a verse one edition carries is an address.
+ *
+ *  The one caller that legitimately EXPANDS a stored run rather than asking
+ *  the accessors a question about it: the jump box offers every verse of the
+ *  chapter as a completion, so the numbers themselves are the answer. It is
+ *  also the one such caller off the boot path — `JumpBox` lazy-imports this
+ *  module, and nothing expands until a reader has opened the box and typed. */
 function versesOf(osis: string, chapter: number): number[] {
 	const out = new Set<number>();
 	for (const work of listBibleWorks()) {
 		const chapters = getBook(work.id, osis)?.chapters ?? [];
-		for (const verse of chapters.find((c) => c.n === chapter)?.verses ?? []) out.add(verse.n);
+		const verses = chapters.find((c) => c.n === chapter)?.verses;
+		if (verses === undefined) continue;
+		for (const verse of expandRun(verses)) out.add(verse);
 	}
 	return [...out].sort((a, b) => a - b);
 }

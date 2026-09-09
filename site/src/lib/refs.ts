@@ -29,6 +29,7 @@ import {
 	workIdToEdition,
 	type BibleBookMeta
 } from './corpus';
+import { runHas, runLast } from './corpus-index';
 import { hrefFor, summaPartSlug, type Address } from './address';
 import {
 	bookAbbrev,
@@ -197,7 +198,7 @@ export function refAddress(
 	const exists = (osis: string, chapterN: number, verseN?: number): boolean => {
 		const chapter = book.chapters.find((c) => c.n === chapterN);
 		if (!chapter) return false;
-		return verseN === undefined || chapter.verses.some((v) => v.n === verseN);
+		return verseN === undefined || runHas(chapter.verses, verseN);
 	};
 
 	// The CCC cites some passages in HEBREW/Masoretic versification while
@@ -497,8 +498,8 @@ export function passageSpans(
 	};
 	const lastVerseOf = (osis: string, n: number): number | undefined => {
 		const chapter = bookOf(osis)?.chapters.find((c) => c.n === n);
-		if (!chapter || chapter.verses.length === 0) return undefined;
-		return Math.max(...chapter.verses.map((v) => v.n));
+		if (!chapter) return undefined;
+		return runLast(chapter.verses);
 	};
 
 	/**

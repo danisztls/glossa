@@ -214,6 +214,11 @@ import {
 	prayerContentLocation,
 	prayerMetasByLang,
 	prayerStructures,
+	runAdjacent,
+	runAt,
+	runHas,
+	runLast,
+	runLength,
 	type BibleBookMeta,
 	type ContentLocation,
 	type PrayerMeta
@@ -707,7 +712,7 @@ export function randomVerse(
 ): { osis: string; chapter: number; verse: number } | undefined {
 	const books = listBooks(workId);
 	let total = 0;
-	for (const book of books) for (const chapter of book.chapters) total += chapter.verses.length;
+	for (const book of books) for (const chapter of book.chapters) total += runLength(chapter.verses);
 	if (total === 0) return undefined;
 
 	// `Math.random()` is [0, 1), so this is already in [0, total) — clamped
@@ -717,9 +722,9 @@ export function randomVerse(
 	let index = Math.min(Math.floor(random() * total), total - 1);
 	for (const book of books) {
 		for (const chapter of book.chapters) {
-			const verse = chapter.verses[index];
-			if (verse) return { osis: book.osis, chapter: chapter.n, verse: verse.n };
-			index -= chapter.verses.length;
+			const verse = runAt(chapter.verses, index);
+			if (verse !== undefined) return { osis: book.osis, chapter: chapter.n, verse };
+			index -= runLength(chapter.verses);
 		}
 	}
 	return undefined;
@@ -1383,24 +1388,6 @@ function chapterTrailIn(
 	return [];
 }
 
-/**
- * The value in a sorted, ascending, gap-tolerant number list immediately
- * before/after `n` — shared by the CCC's and Compendium's "adjacent
- * paragraph/question that actually exists" accessors, which both need this
- * over a possibly-gappy list (fixtures deliberately are, see
- * `cccParagraphExists`'s docblock) rather than simple `n - 1`/`n + 1`
- * arithmetic. Doesn't assume `ns` excludes `n` itself — `find`/`reverse+find`
- * only ever look strictly past it in the requested direction.
- */
-function adjacentInSorted(
-	ns: readonly number[],
-	n: number,
-	direction: 'prev' | 'next'
-): number | undefined {
-	if (direction === 'next') return ns.find((x) => x > n);
-	return [...ns].reverse().find((x) => x < n);
-}
-
 // --- Catechism: index-backed (structure, abbreviations, existence, sync) --
 
 /** Languages the CCC is available in. */
@@ -1414,18 +1401,20 @@ export function getCccStructure(lang: string): CccNode[] {
 	return cccStructures[lang] ?? [];
 }
 
-const cccParagraphNumberSets = derived<Record<string, Set<number>>>(() =>
-	Object.fromEntries(Object.entries(cccParagraphNumbers).map(([lang, ns]) => [lang, new Set(ns)]))
-);
-
 /** Whether paragraph `n` exists in this corpus for `lang` — index-backed
  *  (no fetch), so the jump box and "related paragraphs" links can check
  *  existence without pulling in that paragraph's content. Never assume a
  *  contiguous range: the fixtures are deliberately gappy (see
- *  `corpus-index.ts`'s docblock). */
+ *  `corpus-index.ts`'s docblock), and `runHas` is what keeps that honest
+ *  while answering the gapless case without materialising anything.
+ *
+ *  It was a `derived` map of `Set`s until the registry stopped expanding its
+ *  runs. That Set cost 2,865 insertions per language to answer a question
+ *  `n <= 2865` answers, and it was built during first render. */
 export function cccParagraphExists(lang: string, n: number): boolean {
 	requireIndex('ccc', 'cccParagraphExists');
-	return cccParagraphNumberSets()[lang]?.has(n) ?? false;
+	const run = cccParagraphNumbers[lang];
+	return run !== undefined && runHas(run, n);
 }
 
 /** The paragraph number immediately before/after `n` that actually exists,
@@ -1436,7 +1425,7 @@ export function getAdjacentCccParagraphNumber(
 	direction: 'prev' | 'next'
 ): number | undefined {
 	requireIndex('ccc', 'getAdjacentCccParagraphNumber');
-	return adjacentInSorted(cccParagraphNumbers[lang] ?? [], n, direction);
+	return runAdjacent(cccParagraphNumbers[lang] ?? [], n, direction);
 }
 
 /**
@@ -1727,18 +1716,12 @@ export async function getCompendiumQuestionRangeAsync(
 		.sort((a, b) => a.n - b.n);
 }
 
-/** Question numbers this edition carries, as a set per language — the
- *  Compendium's `cccParagraphNumberSets`. */
-const compendiumQuestionNumberSets = derived<Record<string, Set<number>>>(() =>
-	Object.fromEntries(
-		Object.entries(compendiumQuestionNumbers).map(([lang, ns]) => [lang, new Set(ns)])
-	)
-);
-
 /** Whether this edition carries question `n`. Index-backed (no fetch), same
- *  role as `cccParagraphExists`. */
+ *  role as `cccParagraphExists`, and read off the stored run for the same
+ *  reason. */
 export function compendiumQuestionExists(lang: string, n: number): boolean {
-	return compendiumQuestionNumberSets()[lang]?.has(n) ?? false;
+	const run = compendiumQuestionNumbers[lang];
+	return run !== undefined && runHas(run, n);
 }
 
 /** The question number immediately before/after `n` that actually exists, or
@@ -1751,7 +1734,7 @@ export function getAdjacentCompendiumQuestionNumber(
 	direction: 'prev' | 'next'
 ): number | undefined {
 	requireIndex('compendium', 'getAdjacentCompendiumQuestionNumber');
-	return adjacentInSorted(compendiumQuestionNumbers[lang] ?? [], n, direction);
+	return runAdjacent(compendiumQuestionNumbers[lang] ?? [], n, direction);
 }
 
 // --- Cross-references -------------------------------------------------
@@ -1944,11 +1927,10 @@ export function documentHeadingAnchor(i: number): string {
  */
 export function documentOutline(workId: string): StructureNode[] {
 	requireIndex('document', 'documentOutline');
-	const sectionNs = documentSectionNumbers[workId] ?? [];
-	return buildDocumentOutline(
-		getDocumentStructure(workId),
-		sectionNs.length > 0 ? sectionNs[sectionNs.length - 1] : null
-	);
+	// The outline needs the work's LAST section number and nothing else, which
+	// is the run's own last element.
+	const run = documentSectionNumbers[workId] ?? [];
+	return buildDocumentOutline(getDocumentStructure(workId), runLast(run) ?? null);
 }
 
 /** `documentOutline`'s derivation, split out so it is testable without a
@@ -2037,16 +2019,15 @@ export function buildDocumentOutline(rows: DocumentNode[], lastN: number | null)
 	return roots;
 }
 
-const documentSectionNumberSets = derived<Record<string, Set<number>>>(() =>
-	Object.fromEntries(
-		Object.entries(documentSectionNumbers).map(([workId, ns]) => [workId, new Set(ns)])
-	)
-);
-
 /** Whether section `n` exists in this corpus for `workId` — index-backed
- *  (no fetch), same role as `cccParagraphExists`. */
+ *  (no fetch), same role as `cccParagraphExists`.
+ *
+ *  This is the one that paid most for the Sets: ~450 document works, 79,802
+ *  section numbers expanded out of their runs and then inserted into a Set
+ *  each, all of it in front of the home page's first render. */
 export function documentSectionExists(workId: string, n: number): boolean {
-	return documentSectionNumberSets()[workId]?.has(n) ?? false;
+	const run = documentSectionNumbers[workId];
+	return run !== undefined && runHas(run, n);
 }
 
 /**
@@ -2059,7 +2040,8 @@ export function documentSectionExists(workId: string, n: number): boolean {
  * language's sections to embed without fetching every language's file first.
  */
 export function documentHasSections(workId: string): boolean {
-	return (documentSectionNumberSets()[workId]?.size ?? 0) > 0;
+	const run = documentSectionNumbers[workId];
+	return run !== undefined && runLength(run) > 0;
 }
 
 /** Whether `workId` has any READABLE text — numbered or not.

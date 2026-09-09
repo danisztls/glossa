@@ -41,6 +41,14 @@ awaits the ones `index-priming.ts` maps to the path. Adding a reading route
 means adding it to `BY_SEGMENT` there; an unknown path primes everything, which
 costs a fetch and is the only direction that mapping may be wrong in.
 
+**Lazy data is not free data, and the boot ceiling cannot see what it costs.**
+`preflight` weighs the bytes `index.html` asks for; the index tier is fetched
+past it, so its parse and post-processing are main-thread work no gate reports.
+Keep a registry in the shape the file stores and read it through
+`corpus-index.ts`'s `run*` accessors — expanding a `CompactRun` on arrival, or
+building a `Set` to ask whether a gapless run holds a number, is work in the
+render window (33.5 ms → 9.3 ms; `site/docs/shell.md`).
+
 **A `+page.ts` `load` opens with `await parent()`, always.** SvelteKit starts a
 route's whole branch of `load`s at once, so the layout's priming does not
 resolve first. `index-priming.test.ts` scans for the wait.

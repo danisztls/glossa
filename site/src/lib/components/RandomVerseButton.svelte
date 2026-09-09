@@ -26,6 +26,7 @@
 	import { hrefFor } from '$lib/address';
 	import { content } from '$lib/content.svelte';
 	import { listBooks, randomVerse } from '$lib/corpus';
+	import { runLength } from '$lib/corpus-index';
 	import { t } from '$lib/i18n.svelte';
 	import Icon from './Icon.svelte';
 
@@ -35,7 +36,7 @@
 	// the page, and answering it with a discarded verse would be a different
 	// verse from the one the click produces anyway.
 	const hasVerses = $derived(
-		!!workId && listBooks(workId).some((book) => book.chapters.some((c) => c.verses.length > 0))
+		!!workId && listBooks(workId).some((book) => book.chapters.some((c) => runLength(c.verses) > 0))
 	);
 
 	const label = $derived(t('bible.landing.random'));

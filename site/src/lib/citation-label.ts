@@ -53,6 +53,7 @@ import {
 	summaQuestionExists,
 	summaWorkIdFor
 } from './corpus';
+import { runHasInRange } from './corpus-index';
 import { summaPartFromSlug, type Address } from './address';
 import { bookAbbrev } from './refs-grammar';
 import { chapterVerseSep } from './citation-style';
@@ -176,7 +177,7 @@ export function addressResolves(target: Address): boolean {
 			// puts the span elsewhere carries none of it, which is what
 			// `resolveBible` refuses to invent an excerpt for.
 			const to = target.to ?? target.from;
-			return chapter.verses.some((v) => v.n >= target.from! && v.n <= to);
+			return runHasInRange(chapter.verses, target.from, to);
 		}
 		case 'ccc': {
 			const lang = content.langFor('catechism');
