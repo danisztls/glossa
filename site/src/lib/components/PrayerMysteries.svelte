@@ -40,7 +40,7 @@
 	import { WEEK_FROM_SUNDAY, weekdayInitial, weekdayName } from '$lib/rosary';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
-	import RubricNote from '$lib/components/RubricNote.svelte';
+	import MysteryRubrics from '$lib/components/MysteryRubrics.svelte';
 	import type { PrayerGroupEntry } from '$lib/types';
 
 	interface Props {
@@ -111,14 +111,17 @@
 {#if !rotates}
 	<!-- An edition that names the sets and not their days: all four, in the
 	     order it prints them. -->
+	<!-- The rotation, once, above the four sets it describes — the same note
+	     the strip carries on the editions that have one, and the same reason
+	     for it: the days each set is prayed on are a fact about all four
+	     together, and four notes saying a quarter of it each is the shape this
+	     replaced. -->
+	<div class="mysteries-controls">
+		<MysteryRubrics {groups} {lang} />
+	</div>
 	{#each groups as group (group.name)}
 		<section class="prayer-mystery-group">
-			<!-- No day strip to hang the rubric's `i` beside, so it sits with the
-			     name — which is the thing it qualifies either way. -->
-			<div class="mystery-set-head">
-				{@render setName(group, false)}
-				{#if group.rubric}<RubricNote rubric={group.rubric} {lang} />{/if}
-			</div>
+			{@render setName(group, false)}
 			{@render setItems(group)}
 		</section>
 	{/each}
@@ -166,9 +169,8 @@
 				{/each}
 			</div>
 			<!-- Outside the `role="group"` on purpose: the group is the seven days
-			     a reader chooses between, and this reveals a note about whichever
-			     of them they landed on. -->
-			{#if shown?.rubric}<RubricNote rubric={shown.rubric} {lang} />{/if}
+			     a reader chooses between, and this is a note about all of them. -->
+			<MysteryRubrics {groups} current={shown} {lang} />
 		</div>
 
 		<!-- THE SET IS THE LIVE REGION. Pressing a day replaces the name and the
@@ -200,15 +202,6 @@
 		flex-wrap: wrap;
 		gap: 0.25rem;
 		margin: 0 0 0.75rem;
-	}
-
-	/* The same row, on the editions that print all four sets and have no strip:
-	   there the `i` sits beside the name instead. */
-	.mystery-set-head {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.35rem;
 	}
 
 	.mysteries-week {
