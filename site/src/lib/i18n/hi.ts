@@ -488,7 +488,6 @@ export const hi: Dictionary = {
 	'shortcuts.withinDocument': 'दस्तावेज़ के भीतर',
 	'shortcuts.show': 'यह सूची दिखाएँ',
 	'help.title': 'सहायता',
-	'help.top.heading': 'हर पृष्ठ के शीर्ष की पट्टी',
 	'help.reading.heading': 'पाठ के ऊपर की पट्टी',
 	'help.feature.search':
 		'ऊपर के खाने में कोई सन्दर्भ लिखिए — अध्याय और पद, अनुच्छेद संख्या, किसी दस्तावेज़ का नाम — और वह लिखते-लिखते पूरा हो जाता है।',

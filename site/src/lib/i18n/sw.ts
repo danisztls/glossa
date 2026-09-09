@@ -485,7 +485,6 @@ export const sw: Dictionary = {
 	'shortcuts.withinDocument': 'Ndani ya hati',
 	'shortcuts.show': 'Onyesha orodha hii',
 	'help.title': 'Msaada',
-	'help.top.heading': 'Utepe ulio juu ya kila ukurasa',
 	'help.reading.heading': 'Utepe ulio juu ya maandishi',
 	'help.feature.search':
 		'Andika rejeo katika kisanduku cha juu — sura na mstari, nambari ya kifungu, jina la hati — nalo hujikamilisha unapoandika.',

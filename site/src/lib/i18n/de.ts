@@ -458,7 +458,6 @@ export const de: Dictionary = {
 	'shortcuts.withinDocument': 'Innerhalb des Dokuments',
 	'shortcuts.show': 'Diese Liste anzeigen',
 	'help.title': 'Hilfe',
-	'help.top.heading': 'Die Leiste oben auf jeder Seite',
 	'help.reading.heading': 'Die Leiste über einem Text',
 	'help.feature.search':
 		'Geben Sie oben eine Stelle in das Feld ein — Kapitel und Vers, eine Nummer, den Namen eines Dokumentes — und es ergänzt sie beim Tippen.',

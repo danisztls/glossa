@@ -505,7 +505,6 @@ export const mg: Dictionary = {
 	'shortcuts.withinDocument': 'Ao anatin’ny antontan-taratasy',
 	'shortcuts.show': 'Asehoy ity lisitra ity',
 	'help.title': 'Fanampiana',
-	'help.top.heading': 'Ny tsipika eo an-tampon’ny pejy tsirairay',
 	'help.reading.heading': 'Ny tsipika eo ambonin’ny lahatsoratra',
 	'help.feature.search':
 		'Soraty ao amin’ny boaty ambony ny fanondroana — toko sy andininy, laharan’andalana, anaran’antontan-taratasy — dia tanterahiny izany rehefa manoratra ianao.',

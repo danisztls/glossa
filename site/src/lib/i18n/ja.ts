@@ -448,7 +448,6 @@ export const ja: Dictionary = {
 	'shortcuts.withinDocument': '文書内',
 	'shortcuts.show': 'この一覧を表示',
 	'help.title': 'ヘルプ',
-	'help.top.heading': 'どのページにもある上のバー',
 	'help.reading.heading': '本文の上のバー',
 	'help.feature.search':
 		'上の欄に参照を入力してください — 章と節、項の番号、文書の名前 — 入力しながら補完されます。',

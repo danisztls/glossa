@@ -452,7 +452,6 @@ export const pl: Dictionary = {
 	'shortcuts.withinDocument': 'W dokumencie',
 	'shortcuts.show': 'Pokaż tę listę',
 	'help.title': 'Pomoc',
-	'help.top.heading': 'Pasek na górze każdej strony',
 	'help.reading.heading': 'Pasek nad tekstem',
 	'help.feature.search':
 		'Wpisz odsyłacz w pole u góry — rozdział i werset, numer punktu, nazwę dokumentu — a uzupełni go w trakcie pisania.',

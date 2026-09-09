@@ -474,7 +474,6 @@ export const ko: Dictionary = {
 	'shortcuts.withinDocument': '문헌 안에서',
 	'shortcuts.show': '이 목록 보이기',
 	'help.title': '도움말',
-	'help.top.heading': '모든 쪽 맨 위의 막대',
 	'help.reading.heading': '본문 위의 막대',
 	'help.feature.search':
 		'맨 위 칸에 인용을 입력하십시오 — 장과 절, 항 번호, 문헌 이름 — 입력하는 대로 완성됩니다.',

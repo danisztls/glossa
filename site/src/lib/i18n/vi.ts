@@ -484,7 +484,6 @@ export const vi: Dictionary = {
 	'shortcuts.withinDocument': 'Trong một bản văn',
 	'shortcuts.show': 'Hiện danh sách này',
 	'help.title': 'Trợ giúp',
-	'help.top.heading': 'Thanh ở đầu mỗi trang',
 	'help.reading.heading': 'Thanh phía trên một bản văn',
 	'help.feature.search':
 		'Gõ một trưng dẫn vào ô trên cùng — chương và câu, một số mục, tên một văn kiện — và nó tự hoàn tất khi bạn gõ.',

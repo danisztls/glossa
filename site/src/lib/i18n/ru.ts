@@ -454,7 +454,6 @@ export const ru: Dictionary = {
 	'shortcuts.withinDocument': 'Внутри документа',
 	'shortcuts.show': 'Показать этот список',
 	'help.title': 'Справка',
-	'help.top.heading': 'Полоса вверху каждой страницы',
 	'help.reading.heading': 'Полоса над текстом',
 	'help.feature.search':
 		'Введите ссылку в поле вверху — главу и стих, номер параграфа, название документа — и она дополнится по ходу набора.',

@@ -441,7 +441,6 @@ export const ar: Dictionary = {
 	'shortcuts.withinDocument': 'داخل الوثيقة',
 	'shortcuts.show': 'عرض هذه القائمة',
 	'help.title': 'مساعدة',
-	'help.top.heading': 'الشريط في أعلى كلّ صفحة',
 	'help.reading.heading': 'الشريط فوق النصّ',
 	'help.feature.search':
 		'اكتب موضعًا في الخانة أعلاه — إصحاحًا وآية، رقم فقرة، اسم وثيقة — فيكملها لك أثناء الكتابة.',

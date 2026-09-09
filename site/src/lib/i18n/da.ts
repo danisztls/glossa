@@ -476,7 +476,6 @@ export const da: Dictionary = {
 	'shortcuts.withinDocument': 'Inden i dokumentet',
 	'shortcuts.show': 'Vis denne liste',
 	'help.title': 'Hjælp',
-	'help.top.heading': 'Linjen øverst på hver side',
 	'help.reading.heading': 'Linjen over en tekst',
 	'help.feature.search':
 		'Skriv en henvisning i feltet øverst — kapitel og vers, et afsnitsnummer, navnet på et dokument — og den fuldføres, mens du skriver.',

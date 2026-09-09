@@ -270,7 +270,15 @@ nothing, and those are the two the header keeps. The reading bar's four all
 qualify — nothing on the page says a second edition can be set beside the first,
 or that an edition's own footnotes are available at all.
 
-**The jump box then has a section rather than a row, because its lesson is a
+**And a heading that names a bar, standing over one row, is what the header
+group became.** Once the jump box had a section of its own, "The bar at the top
+of every page" led a single install row: a heading tells a reader there is a
+list under it and which bar to find it on, and there was no list. So the install
+button took a section too, headed by its own label, and the group heading and
+its key went. **A group exists to tell two lists apart; the reading bar's
+heading survives because that bar is the one a reader does not always have.**
+
+**The jump box has a section rather than a row, because its lesson is a
 notation and a notation has to be shown.** Three pairs, and the arrow between
 them is the whole grammar: `catechism 101 → ccc 101`, the name a reader already
 has beside the short form the work is cited by, both landing on the same

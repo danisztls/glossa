@@ -1258,13 +1258,13 @@ export const en: Dictionary = {
 	//
 	// Each says what the thing DOES, and none of them recommends.
 	//
-	// WHERE A CONTROL LIVES IS THE GROUP HEADING, and the two headings are the
-	// whole reason this is two lists. The sheet draws only the rows whose
-	// control is on the page in front of the reader, so a heading is what says
-	// which bar the ones under it are on. Translate the pair as a matched pair
-	// — they are read against each other.
+	// WHERE A CONTROL LIVES IS THE GROUP HEADING. The sheet draws only the rows
+	// whose control is on the page in front of the reader, so the heading is
+	// what says which bar the ones under it are on — the reading bar being the
+	// one a reader does not always have. The jump box and the install button are
+	// headed by their own labels instead (`$lib/help.ts`), so the sentences
+	// under them are the only new writing they cost.
 	'help.title': 'Help',
-	'help.top.heading': 'The bar at the top of every page',
 	'help.reading.heading': 'The bar above a text',
 	'help.feature.search':
 		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type.',

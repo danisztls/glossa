@@ -144,12 +144,14 @@
 	/** The guide for the page the sheet was opened on, read off the markup —
 	 *  empty until then, and read again on every open because which controls
 	 *  a page shows changes with the route, the width and focus mode. */
-	let guide: HelpSheet = $state({ search: false, groups: [] });
+	let guide: HelpSheet = $state({ sections: [], groups: [] });
 
 	/** Derived rather than read with the rest: the pairs are drawn from this
 	 *  reader's interface and edition, which the language menu can change under
 	 *  an open sheet. */
-	const examples = $derived(guide.search ? searchExamples() : []);
+	const examples = $derived(
+		guide.sections.some((section) => section.key === SEARCH.key) ? searchExamples() : []
+	);
 
 	/** Per-code keycap characters for this reader's layout, empty until the
 	 *  sheet is opened and empty forever in browsers without the API. */
@@ -401,54 +403,56 @@
 			</div>
 			<div class="sheet-body help-body">
 				<!--
-					THE JUMP BOX IS A SECTION, not a row in the list below: the one
-					thing about it a reader cannot guess is a NOTATION, and a
-					notation has to be shown. Each line is a pair — what to type,
-					and the citation it turns out to be — built in `$lib/help.ts`
-					out of the words this reader's own interface and edition
-					already use. The heading is the control's own label, as every
-					row's is.
+					A SECTION PER CONTROL THAT IS NOT A ROW, headed by the control's
+					own label rather than by the bar it stands on — `$lib/help.ts`
+					says which controls those are and why. The jump box carries the
+					syntax examples under its sentence, each a pair built there out
+					of the words this reader's own interface and edition already
+					use; nothing else has anything to add.
 				-->
-				{#if guide.search}
+				{#each guide.sections as section (section.key)}
 					<section class="section">
-						<h3 class="group">{t(SEARCH.nameKey)}</h3>
-						<div class="feature search">
-							<span class="feature-icon"><Icon name={SEARCH.icon} /></span>
+						<h3 class="group">{t(section.nameKey)}</h3>
+						<div class="feature">
+							<span class="feature-icon"><Icon name={section.icon} /></span>
 							<div class="feature-text">
-								<p>{t(`help.feature.${SEARCH.key}`)}</p>
-								<!--
-									`aria-hidden` on the arrow and nothing else: the pair
-									reads "Catechism 101, CCC 101" without it, which is two
-									citations and no relation between them. The glyph is the
-									relation, and it is an ICON rather than a character so
-									that it can point the way the interface runs — the same
-									reading `UnitNav` makes of prev/next.
-								-->
-								<dl class="examples">
-									{#each examples as example (example.typed)}
-										<div class="example">
-											<dt>{example.typed}</dt>
-											<dd>
-												<Icon
-													name={i18n.rtl ? 'arrow-left' : 'arrow-right'}
-													class="example-arrow"
-												/>
-												<span class="cites">{example.cites}</span>
-											</dd>
-										</div>
-									{/each}
-								</dl>
+								<p>{t(`help.feature.${section.key}`)}</p>
+								{#if section.key === SEARCH.key}
+									<!--
+										`aria-hidden` on the arrow and nothing else: the pair
+										reads "Catechism 101, CCC 101" without it, which is
+										two citations and no relation between them. The glyph
+										is the relation, and it is an ICON rather than a
+										character so that it can point the way the interface
+										runs — the same reading `UnitNav` makes of prev/next.
+									-->
+									<dl class="examples">
+										{#each examples as example (example.typed)}
+											<div class="example">
+												<dt>{example.typed}</dt>
+												<dd>
+													<Icon
+														name={i18n.rtl ? 'arrow-left' : 'arrow-right'}
+														class="example-arrow"
+													/>
+													<span class="cites">{example.cites}</span>
+												</dd>
+											</div>
+										{/each}
+									</dl>
+								{/if}
 							</div>
 						</div>
 					</section>
-				{/if}
+				{/each}
 
 				<!--
 					ONE SECTION PER BAR, and a bar with nothing on this page is not
 					drawn at all — `helpFor` has already dropped it, heading and
-					all. The heading is what says WHERE the controls under it are,
-					which is the half of the sentence a guide that only names a
-					control has not finished.
+					all, which on a landing page is the whole of this list. The
+					heading is what says WHERE the controls under it are, which is
+					the half of the sentence a guide that only names a control has
+					not finished.
 
 					`h3` under the sheet's own `h2`, and `h4` for a control: a
 					heading tree that skips a level is one a screen reader reads as
@@ -725,10 +729,12 @@
 		font-size: 0.85rem;
 	}
 
-	/* The section's own row, so it carries no rule above it: the heading is
-	   already the line that separates it from what came before, and a hairline
-	   under a heading with one row beneath reads as an empty table. */
-	.search {
+	/* A SECTION'S OWN ROW carries no rule above it, where a group's rows are
+	   ruled apart: the heading is already the line separating it from what came
+	   before, and a hairline under a heading with one row beneath reads as an
+	   empty table. Selected as the section's child, which a row in a group never
+	   is — it is an `<li>` inside `.feature-grid`. */
+	.section > .feature {
 		padding-block-start: 0;
 		border-block-start: 0;
 	}

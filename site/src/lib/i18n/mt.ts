@@ -460,7 +460,6 @@ export const mt: Dictionary = {
 	'shortcuts.withinDocument': 'Ġewwa d-dokument',
 	'shortcuts.show': 'Uri din il-lista',
 	'help.title': 'Għajnuna',
-	'help.top.heading': 'Il-bar fuq nett ta’ kull paġna',
 	'help.reading.heading': 'Il-bar fuq test',
 	'help.feature.search':
 		'Ittajpja referenza fil-kaxxa ta’ fuq — kapitlu u vers, numru ta’ paragrafu, isem ta’ dokument — u titlesta waħedha waqt li tikteb.',

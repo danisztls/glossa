@@ -475,7 +475,6 @@ export const hr: Dictionary = {
 	'shortcuts.withinDocument': 'Unutar dokumenta',
 	'shortcuts.show': 'Prikaži ovaj popis',
 	'help.title': 'Pomoć',
-	'help.top.heading': 'Traka na vrhu svake stranice',
 	'help.reading.heading': 'Traka iznad teksta',
 	'help.feature.search':
 		'Upišite navod u okvir na vrhu — poglavlje i redak, broj odlomka, ime dokumenta — i dovršava ga dok tipkate.',

@@ -463,7 +463,6 @@ export const zh: Dictionary = {
 	'shortcuts.withinDocument': '在文献内部',
 	'shortcuts.show': '显示此列表',
 	'help.title': '帮助',
-	'help.top.heading': '每页顶端的栏',
 	'help.reading.heading': '正文上方的栏',
 	'help.feature.search':
 		'在顶端的框中键入一处引文——章与节、条目编号、某份文献的名称——它会随打随补全。',

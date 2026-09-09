@@ -455,7 +455,6 @@ export const it: Dictionary = {
 	'shortcuts.withinDocument': 'Nel documento',
 	'shortcuts.show': 'Mostra questo elenco',
 	'help.title': 'Aiuto',
-	'help.top.heading': 'La barra in cima a ogni pagina',
 	'help.reading.heading': 'La barra sopra un testo',
 	'help.feature.search':
 		'Scrivi un riferimento nella casella in alto — capitolo e versetto, numero di paragrafo, il nome di un documento — e lo completa mentre scrivi.',

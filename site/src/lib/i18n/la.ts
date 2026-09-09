@@ -486,7 +486,6 @@ export const la: Dictionary = {
 	'shortcuts.withinDocument': 'Intra documentum',
 	'shortcuts.show': 'Hunc indicem ostendere',
 	'help.title': 'Auxilium',
-	'help.top.heading': 'Tabula in summa pagina omni',
 	'help.reading.heading': 'Tabula supra textum',
 	'help.feature.search':
 		'Locum in capsam superiorem inscribe — caput et versum, numerum paragraphi, nomen documenti — et scribenti complet.',

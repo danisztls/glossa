@@ -455,7 +455,6 @@ export const sl: Dictionary = {
 	'shortcuts.withinDocument': 'Znotraj dokumenta',
 	'shortcuts.show': 'Pokaži ta seznam',
 	'help.title': 'Pomoč',
-	'help.top.heading': 'Vrstica na vrhu vsake strani',
 	'help.reading.heading': 'Vrstica nad besedilom',
 	'help.feature.search':
 		'Vtipkajte navedbo v polje na vrhu — poglavje in vrstico, številko člena, ime dokumenta — in dopolni jo med tipkanjem.',

@@ -489,7 +489,6 @@ export const id: Dictionary = {
 	'shortcuts.withinDocument': 'Di dalam dokumen',
 	'shortcuts.show': 'Tampilkan daftar ini',
 	'help.title': 'Bantuan',
-	'help.top.heading': 'Bilah di puncak setiap halaman',
 	'help.reading.heading': 'Bilah di atas sebuah teks',
 	'help.feature.search':
 		'Ketik sebuah rujukan di kotak paling atas — bab dan ayat, nomor alinea, nama sebuah dokumen — dan ia melengkapinya sambil Anda mengetik.',

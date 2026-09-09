@@ -458,7 +458,6 @@ export const zht: Dictionary = {
 	'shortcuts.withinDocument': '在文獻之內',
 	'shortcuts.show': '顯示此清單',
 	'help.title': '說明',
-	'help.top.heading': '每頁頂端的列',
 	'help.reading.heading': '正文上方的列',
 	'help.feature.search':
 		'在頂端的框中鍵入一處引文——章與節、條目編號、某份文獻的名稱——它會隨打隨補全。',

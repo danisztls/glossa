@@ -477,7 +477,6 @@ export const lt: Dictionary = {
 	'shortcuts.withinDocument': 'Dokumento viduje',
 	'shortcuts.show': 'Rodyti šį sąrašą',
 	'help.title': 'Pagalba',
-	'help.top.heading': 'Juosta kiekvieno puslapio viršuje',
 	'help.reading.heading': 'Juosta virš teksto',
 	'help.feature.search':
 		'Įrašykite nuorodą į viršuje esantį langelį — skyrių ir eilutę, pastraipos numerį, dokumento pavadinimą — ir ji papildoma jums berašant.',

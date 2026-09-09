@@ -489,7 +489,6 @@ export const tl: Dictionary = {
 	'shortcuts.withinDocument': 'Sa loob ng dokumento',
 	'shortcuts.show': 'Ipakita ang talaang ito',
 	'help.title': 'Tulong',
-	'help.top.heading': 'Ang bareta sa itaas ng bawat pahina',
 	'help.reading.heading': 'Ang bareta sa ibabaw ng isang teksto',
 	'help.feature.search':
 		'Mag-type ng sanggunian sa kahon sa itaas — kabanata at talata, bilang ng bahagi, pangalan ng isang dokumento — at kinukumpleto ito habang nagta-type kayo.',

@@ -458,7 +458,6 @@ export const hu: Dictionary = {
 	'shortcuts.withinDocument': 'A dokumentumon belül',
 	'shortcuts.show': 'Lista megjelenítése',
 	'help.title': 'Súgó',
-	'help.top.heading': 'A sáv minden oldal tetején',
 	'help.reading.heading': 'A szöveg fölötti sáv',
 	'help.feature.search':
 		'Írjon be egy hivatkozást a felső mezőbe — fejezetet és verset, egy pont számát, egy dokumentum nevét —, és gépelés közben kiegészíti.',

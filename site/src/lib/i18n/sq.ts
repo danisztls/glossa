@@ -479,7 +479,6 @@ export const sq: Dictionary = {
 	'shortcuts.withinDocument': 'Brenda dokumentit',
 	'shortcuts.show': 'Shfaq këtë listë',
 	'help.title': 'Ndihmë',
-	'help.top.heading': 'Shiriti në krye të çdo faqeje',
 	'help.reading.heading': 'Shiriti mbi një tekst',
 	'help.feature.search':
 		'Shkruani një referencë në kutinë lart — kapitull dhe varg, një numër paragrafi, emrin e një dokumenti — dhe e plotëson ndërsa shkruani.',

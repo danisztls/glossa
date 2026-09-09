@@ -482,7 +482,6 @@ export const uk: Dictionary = {
 	'shortcuts.withinDocument': 'Усередині документа',
 	'shortcuts.show': 'Показати цей список',
 	'help.title': 'Довідка',
-	'help.top.heading': 'Смуга вгорі кожної сторінки',
 	'help.reading.heading': 'Смуга над текстом',
 	'help.feature.search':
 		'Введіть посилання в поле вгорі — розділ і вірш, номер параграфа, назву документа — і воно доповниться під час набору.',

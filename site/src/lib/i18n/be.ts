@@ -481,7 +481,6 @@ export const be: Dictionary = {
 	'shortcuts.withinDocument': 'Унутры дакумента',
 	'shortcuts.show': 'Паказаць гэты спіс',
 	'help.title': 'Дапамога',
-	'help.top.heading': 'Паласа ўверсе кожнай старонкі',
 	'help.reading.heading': 'Паласа над тэкстам',
 	'help.feature.search':
 		'Увядзіце спасылку ў поле ўверсе — раздзел і верш, нумар параграфа, назву дакумента — і яна дапоўніцца падчас набору.',

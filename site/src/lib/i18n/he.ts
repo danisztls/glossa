@@ -469,7 +469,6 @@ export const he: Dictionary = {
 	'shortcuts.withinDocument': 'בתוך המסמך',
 	'shortcuts.show': 'הצגת הרשימה הזאת',
 	'help.title': 'עזרה',
-	'help.top.heading': 'הסרגל בראש כל עמוד',
 	'help.reading.heading': 'הסרגל מעל טקסט',
 	'help.feature.search':
 		'הקלידו הפניה בתיבה שלמעלה — פרק ופסוק, מספר סעיף, שם של מסמך — והיא מושלמת תוך כדי הקלדה.',

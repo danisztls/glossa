@@ -456,7 +456,6 @@ export const sv: Dictionary = {
 	'shortcuts.withinDocument': 'I dokumentet',
 	'shortcuts.show': 'Visa den här listan',
 	'help.title': 'Hjälp',
-	'help.top.heading': 'Raden överst på varje sida',
 	'help.reading.heading': 'Raden ovanför en text',
 	'help.feature.search':
 		'Skriv en hänvisning i rutan överst — kapitel och vers, ett styckenummer, namnet på ett dokument — och den fylls i medan du skriver.',

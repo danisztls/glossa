@@ -9,8 +9,8 @@
  * landing page about the compare button, which correctly is not there. The
  * same rows in the sheet the `?` button opens are read WITH the page in
  * front of them, and the sheet draws only the rows whose control is on that
- * page. The headings stay while there are two lists to tell apart; what is
- * gone is the row for a control that is not there.
+ * page. A heading stays where it is the thing to say — which bar a list of
+ * controls is on; what is gone is the row for a control that is not there.
  *
  * ## A ROW HAS TO TEACH SOMETHING THE CONTROL DOES NOT
  *
@@ -70,30 +70,36 @@ export interface HelpFeature {
 }
 
 export interface HelpGroup {
-	/** Where the controls under it are, which is why this is two lists. */
+	/** Where the controls under it are, which is the whole reason a group is a
+	 *  list rather than a section headed by each control's own name. */
 	headingKey: string;
 	features: readonly HelpFeature[];
 }
 
 /**
- * THE JUMP BOX HAS A SECTION AND NOT A ROW (2026-09-07, by direction), which
- * is what the header group had left once the settings and language rows went.
- * It is also the one control here whose lesson is a NOTATION rather than a
- * sentence — the reader has to see what to type — so it carries the examples
- * below, and a row in a list has nowhere to put them.
+ * A SECTION IS A CONTROL WHOSE LESSON IS NOT WHICH BAR IT IS ON. A group's
+ * heading says WHERE the rows under it are; these two are headed by their own
+ * name, because where they are is not what a reader has to be told.
+ *
+ * The jump box has had one since 2026-09-07 (by direction): its lesson is a
+ * NOTATION rather than a sentence — the reader has to see what to type — and a
+ * row in a list has nowhere to put the examples below. The install button
+ * followed once it was the header group's only row, since a heading naming the
+ * bar every page carries, standing over one row, sends the reader looking for
+ * a list that is not there.
  */
 export const SEARCH: HelpFeature = { key: 'search', icon: 'search', nameKey: 'jumpbox.short' };
+export const OFFLINE: HelpFeature = { key: 'offline', icon: 'download', nameKey: 'install.label' };
+
+/** The sections, in the order they are drawn, before the groups. */
+export const HELP_SECTIONS: readonly HelpFeature[] = [SEARCH, OFFLINE];
 
 /**
- * The two bars, in the order a reader meets them: the header is on every page
- * including the one they are reading this on, and the reading bar appears
- * only once there is a text on the screen.
+ * The bar a reader does not always have, which is why its rows keep a heading:
+ * it appears only once there is a text on the screen, and the heading is what
+ * says that is where the controls under it are.
  */
 export const HELP_GROUPS: readonly HelpGroup[] = [
-	{
-		headingKey: 'help.top.heading',
-		features: [{ key: 'offline', icon: 'download', nameKey: 'install.label' }]
-	},
 	{
 		headingKey: 'help.reading.heading',
 		features: [
@@ -105,17 +111,17 @@ export const HELP_GROUPS: readonly HelpGroup[] = [
 	}
 ];
 
-/** What one page's sheet holds: whether the jump box is on it, and the groups
- *  of rows whose controls are. */
+/** What one page's sheet holds: the sections whose control is on it, and the
+ *  groups of rows whose controls are. */
 export interface HelpSheet {
-	search: boolean;
+	sections: HelpFeature[];
 	groups: HelpGroup[];
 }
 
 /**
- * The guide for one page: the search section if the box is there, then the
- * groups that still have a row, each holding the rows whose control the page
- * actually shows.
+ * The guide for one page: the sections whose control the page carries, then
+ * the groups that still have a row, each holding the rows whose control the
+ * page actually shows.
  *
  * A GROUP WITH NOTHING IN IT IS DROPPED WITH ITS HEADING, which is the whole
  * behaviour on a landing page — "The bar above a text" over an empty list
@@ -126,7 +132,7 @@ export interface HelpSheet {
  */
 export function helpFor(present: ReadonlySet<string>): HelpSheet {
 	return {
-		search: present.has(SEARCH.key),
+		sections: HELP_SECTIONS.filter((feature) => present.has(feature.key)),
 		groups: HELP_GROUPS.map((group) => ({
 			headingKey: group.headingKey,
 			features: group.features.filter((feature) => present.has(feature.key))

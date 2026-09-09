@@ -458,7 +458,6 @@ export const ro: Dictionary = {
 	'shortcuts.withinDocument': 'În document',
 	'shortcuts.show': 'Afișează această listă',
 	'help.title': 'Ajutor',
-	'help.top.heading': 'Bara din capul fiecărei pagini',
 	'help.reading.heading': 'Bara de deasupra unui text',
 	'help.feature.search':
 		'Scrieți o trimitere în caseta de sus — capitol și verset, un număr de paragraf, numele unui document — și o completează pe măsură ce scrieți.',

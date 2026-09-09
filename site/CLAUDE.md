@@ -504,11 +504,15 @@ Rationale in `site/docs/finding.md`.
   describes cannot be called two different things in a translated interface, and
   **the icon is the glyph that control draws**. Only the sentence under each
   (`help.feature.*`) is new writing, and a new one costs thirty-six dictionaries.
-- **A row has to teach something the control does not.** Group headings say
-  WHERE, which is why there are two of them.
-- **The jump box has a SECTION, not a row**, because its lesson is a notation:
-  three pairs, `catechism 101 → ccc 101`, drawn by `searchExamples()` out of the
-  keys `suggest.ts` matches and `/schola` teaches — never written down, or the
+- **A row has to teach something the control does not.** A group heading says
+  WHERE, so the one group left is the reading bar's — the bar a reader does not
+  always have.
+- **A control headed by its own name is a SECTION** (`HELP_SECTIONS`), and the
+  header's two are both of them: a heading naming the bar every page carries,
+  standing over one row, sends a reader looking for a list that is not there.
+  The jump box has one because its lesson is a notation — three pairs,
+  `catechism 101 → ccc 101`, drawn by `searchExamples()` out of the keys
+  `suggest.ts` matches and `/schola` teaches, never written down, or the
   examples would be English and unchecked. Both halves are lower case with no
   stops, since `fold` and `sectionForm` ignore both, and the lowercasing is
   locale-aware.

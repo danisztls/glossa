@@ -475,7 +475,6 @@ export const sk: Dictionary = {
 	'shortcuts.withinDocument': 'V rámci dokumentu',
 	'shortcuts.show': 'Zobraziť tento zoznam',
 	'help.title': 'Pomocník',
-	'help.top.heading': 'Lišta v hlavičke každej stránky',
 	'help.reading.heading': 'Lišta nad textom',
 	'help.feature.search':
 		'Napíšte odkaz do poľa hore — kapitolu a verš, číslo odseku, názov dokumentu — a doplní sa vám počas písania.',

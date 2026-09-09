@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { HELP_GROUPS, SEARCH, helpFor } from './help';
+import { HELP_GROUPS, HELP_SECTIONS, helpFor } from './help';
 import { dictionaryFor } from './i18n.svelte';
 
-const KEYS = [SEARCH.key, ...HELP_GROUPS.flatMap((group) => group.features.map((f) => f.key))];
+const KEYS = [
+	...HELP_SECTIONS.map((feature) => feature.key),
+	...HELP_GROUPS.flatMap((group) => group.features.map((f) => f.key))
+];
 
 describe('helpFor', () => {
 	it('keeps only the rows whose control is on the page', () => {
 		const sheet = helpFor(new Set(['search', 'focus']));
-		expect(sheet.search).toBe(true);
+		expect(sheet.sections.map((s) => s.key)).toEqual(['search']);
 		expect(sheet.groups.map((g) => g.headingKey)).toEqual(['help.reading.heading']);
 		expect(sheet.groups.flatMap((g) => g.features.map((f) => f.key))).toEqual(['focus']);
 	});
@@ -22,11 +25,13 @@ describe('helpFor', () => {
 		expect(helpFor(new Set()).groups).toEqual([]);
 	});
 
-	// The jump box is a section and not a row (it carries the syntax examples),
-	// so it is answered for separately — but it is still the page that decides.
-	it('answers for the jump box only when the page carries one', () => {
-		expect(helpFor(new Set(['search'])).search).toBe(true);
-		expect(helpFor(new Set(['focus'])).search).toBe(false);
+	// A section is a control headed by its own name rather than by the bar it
+	// stands on, so it is answered for apart from the groups — but it is still
+	// the page that decides whether it is drawn.
+	it('answers for a section only when the page carries its control', () => {
+		expect(helpFor(new Set(['search'])).sections.map((s) => s.key)).toEqual(['search']);
+		expect(helpFor(new Set(['offline'])).sections.map((s) => s.key)).toEqual(['offline']);
+		expect(helpFor(new Set(['focus'])).sections).toEqual([]);
 	});
 
 	// The sheet reads an unordered set of attributes off the page. A reader who
@@ -35,13 +40,13 @@ describe('helpFor', () => {
 		const shuffled = new Set([...KEYS].reverse());
 		const sheet = helpFor(shuffled);
 		expect([
-			...(sheet.search ? [SEARCH.key] : []),
+			...sheet.sections.map((s) => s.key),
 			...sheet.groups.flatMap((g) => g.features.map((f) => f.key))
 		]).toEqual(KEYS);
 	});
 
-	it('knows nothing about a key no group holds', () => {
-		expect(helpFor(new Set(['bookmark', 'print']))).toEqual({ search: false, groups: [] });
+	it('knows nothing about a key no section or group holds', () => {
+		expect(helpFor(new Set(['bookmark', 'print']))).toEqual({ sections: [], groups: [] });
 	});
 });
 
@@ -97,8 +102,10 @@ describe('the words each row is written from', () => {
 				expect(en[`help.feature.${feature.key}`], feature.key).toBeTruthy();
 			}
 		}
-		expect(en[SEARCH.nameKey], SEARCH.nameKey).toBeTruthy();
-		expect(en[`help.feature.${SEARCH.key}`], SEARCH.key).toBeTruthy();
+		for (const feature of HELP_SECTIONS) {
+			expect(en[feature.nameKey], feature.nameKey).toBeTruthy();
+			expect(en[`help.feature.${feature.key}`], feature.key).toBeTruthy();
+		}
 		expect(en['help.title']).toBeTruthy();
 	});
 

@@ -483,7 +483,6 @@ export const fi: Dictionary = {
 	'shortcuts.withinDocument': 'Asiakirjan sisällä',
 	'shortcuts.show': 'Näytä tämä lista',
 	'help.title': 'Ohje',
-	'help.top.heading': 'Palkki jokaisen sivun yläreunassa',
 	'help.reading.heading': 'Palkki tekstin yläpuolella',
 	'help.feature.search':
 		'Kirjoita viite yläreunan kenttään — luku ja jae, kappaleen numero, asiakirjan nimi — ja se täydentyy kirjoittaessasi.',

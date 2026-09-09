@@ -479,7 +479,6 @@ export const lv: Dictionary = {
 	'shortcuts.withinDocument': 'Dokumenta iekšienē',
 	'shortcuts.show': 'Rādīt šo sarakstu',
 	'help.title': 'Palīdzība',
-	'help.top.heading': 'Josla katras lappuses augšā',
 	'help.reading.heading': 'Josla virs teksta',
 	'help.feature.search':
 		'Ierakstiet atsauci laukā augšā — nodaļu un pantu, rindkopas numuru, dokumenta nosaukumu — un tā tiek papildināta, jums rakstot.',

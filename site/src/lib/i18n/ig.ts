@@ -485,7 +485,6 @@ export const ig: Dictionary = {
 	'shortcuts.withinDocument': 'N’ime akwụkwọ ozi ahụ',
 	'shortcuts.show': 'Gosi ndepụta a',
 	'help.title': 'Enyemaka',
-	'help.top.heading': "Ogwe dị n'elu peeji ọ bụla",
 	'help.reading.heading': "Ogwe dị n'elu ederede",
 	'help.feature.search':
 		"Pịnye nrụtụaka n'igbe dị n'elu — isi na amaokwu, nọmba paragraf, aha akwụkwọ — ọ na-emecha ya ka ị na-apị.",

@@ -482,7 +482,6 @@ export const nl: Dictionary = {
 	'shortcuts.withinDocument': 'Binnen het document',
 	'shortcuts.show': 'Toon deze lijst',
 	'help.title': 'Help',
-	'help.top.heading': 'De balk boven aan elke bladzijde',
 	'help.reading.heading': 'De balk boven een tekst',
 	'help.feature.search':
 		'Typ een verwijzing in het vak bovenaan — hoofdstuk en vers, een nummer, de naam van een document — en het vult haar aan terwijl u typt.',
