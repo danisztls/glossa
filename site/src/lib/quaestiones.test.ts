@@ -179,6 +179,8 @@ describe('every topic is reachable and named', () => {
 			...allClusters.map((cluster) => `quaestiones.cluster.${cluster}`),
 			'quaestiones.landing.tagline',
 			'quaestiones.landing.none',
+			'quaestiones.search.label',
+			'quaestiones.search.none',
 			'quaestiones.passages.heading',
 			'quaestiones.passages.reordered',
 			'quaestiones.documents.heading',

@@ -2,9 +2,47 @@
 	import { hrefFor } from '$lib/address';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { t } from '$lib/i18n.svelte';
+	import { matchingSlugs } from '$lib/topic-search';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	/**
+	 * SEARCH IS THE ONE CONTROL THIS PAGE NEEDS AND FACETS ARE NOT.
+	 *
+	 * `/documenta` earns a facet panel because 298 rows carry axes that are
+	 * invisible in the list — an author, a kind, a date. This page is already
+	 * sixteen named shelves, so a doorway or cluster filter would only collapse
+	 * the structure that IS the page. What no amount of grouping gives is the
+	 * reader who arrives holding words rather than a place, which is the half
+	 * of the audience `docs/research/audiences.md` found hits the jump box and
+	 * bounces off it: the box completes citations, and they do not have one.
+	 *
+	 * LOCAL STATE, NOT THE URL. `/documenta` keeps its query in the route
+	 * because its filters are worth linking to and returning to; a search here
+	 * is a way of getting to one page and the page is the thing worth linking
+	 * to. Nothing else on the site reads it, so nothing else needs to see it.
+	 *
+	 * ONE INPUT, ABOVE THE LIST, AND NOT IN THE ASIDE. The aside is gone below
+	 * 80rem (`styles/layout.css`), so a control living there has to be rendered
+	 * a second time for narrower screens — the duplication `/documenta` pays
+	 * because its whole panel has to be reachable. A single field does not have
+	 * to be paid for twice, and above the rows it filters is where it reads.
+	 */
+	let query = $state('');
+
+	const rows = $derived(
+		Object.keys(data.index?.topics ?? {}).map((slug) => ({
+			slug,
+			title: t(`quaestiones.${slug}.title`),
+			question: t(`quaestiones.${slug}.question`)
+		}))
+	);
+
+	/** Recomputed against the dictionary, so switching interface language
+	 *  re-runs the match: the reader searches the words in front of them. */
+	const matching = $derived(matchingSlugs(rows, query));
+	const searching = $derived(query.trim() !== '');
 
 	/**
 	 * DOORWAY, THEN CLUSTER, THEN TOPIC — three levels, and the middle one is
@@ -39,6 +77,7 @@
 					topics: Object.entries(data.index?.topics ?? {})
 						.filter(([, topic]) => topic.doorway === doorway && topic.cluster === cluster)
 						.map(([slug]) => slug)
+						.filter((slug) => matching.has(slug))
 				}))
 				.filter((group) => group.topics.length > 0)
 		}))
@@ -54,6 +93,11 @@
 	 * The doorway is carried as a `group` label rather than a row of its own,
 	 * so the spy's "where am I" never lands on a heading the reader cannot
 	 * scroll to alone.
+	 *
+	 * IT NARROWS WITH THE LIST, because `byDoorway` is already filtered and a
+	 * cluster with no surviving topic drops out of both. A table of contents
+	 * offering sixteen shelves over a page showing three would send the reader
+	 * to an anchor that is no longer on the page.
 	 */
 	const sidebarItems = $derived(
 		byDoorway.flatMap((group) =>
@@ -74,8 +118,37 @@
 		<h1>{t('quaestiones.landing.title')}</h1>
 		<p class="page-tagline landing-measure">{t('quaestiones.landing.tagline')}</p>
 
+		{#if data.index}
+			<!-- `type="search"` for the clear affordance browsers give it; the
+			     accessible name is an `aria-label` because a visible label would
+			     only repeat the placeholder. `bind:` rather than `/documenta`'s
+			     `value` + `oninput`, since here the text IS local state and
+			     belongs to no route. -->
+			<div class="search-band">
+				<input
+					type="search"
+					class="search"
+					bind:value={query}
+					placeholder={t('quaestiones.search.label')}
+					aria-label={t('quaestiones.search.label')}
+				/>
+				<!-- Announced only while it means something: with no query the
+				     count would read "116 / 116" beside a page showing all of
+				     them. `aria-live` so a screen reader hears the list shrink,
+				     which is otherwise a silent change to content far below. -->
+				<p class="count" aria-live="polite">
+					{#if searching}
+						<span class="visually-hidden">{t('quaestiones.search.label')}: </span>{matching.size} /
+						{rows.length}
+					{/if}
+				</p>
+			</div>
+		{/if}
+
 		{#if !data.index}
 			<p class="empty">{t('quaestiones.landing.none')}</p>
+		{:else if searching && matching.size === 0}
+			<p class="empty">{t('quaestiones.search.none')}</p>
 		{:else}
 			{#each byDoorway as group (group.doorway)}
 				{#if group.clusters.length > 0}
@@ -116,6 +189,66 @@
 	h1 {
 		font-size: 1.6rem;
 		margin: 0 0 0.35rem;
+	}
+
+	/*
+	 * THE FIELD AND ITS COUNT SIT ON ONE LINE, the count to the right, so the
+	 * number appears where the eye already is rather than pushing the list
+	 * down by a line the moment somebody types. It holds its space when empty
+	 * for the same reason: a count that appears and disappears would move a
+	 * hundred rows every keystroke.
+	 */
+	.search-band {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 2rem;
+		max-width: 40rem;
+	}
+
+	/* The same field `/documenta`'s `.doc-search` is, and deliberately not a
+	   shared class: that one is a component's own control and carries the
+	   sticky band around it. What is worth copying is the four declarations
+	   below and the focus rule, which every bordered text field on this site
+	   now agrees on. */
+	.search {
+		flex: 1 1 auto;
+		min-width: 0;
+		box-sizing: border-box;
+		padding: 0.45rem 0.6rem;
+		font: inherit;
+		font-size: 0.9rem;
+		/* Restated because `font: inherit` above leaves a length, not a ratio
+		   — styles/base.css says why. */
+		line-height: 1.5;
+		color: var(--color-text);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+	}
+
+	/*
+	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
+	 * field on this site does — `JumpBox`, `.menu-filter` and `.doc-search`
+	 * are the same declarations, and `DocumentFilters` records the arithmetic.
+	 * An offset ring drawn around an already-bordered rounded field stacks
+	 * into a double frame. The transparent outline is not decoration:
+	 * `forced-colors` repaints an `outline` in the system focus colour, where
+	 * the halo is dropped.
+	 */
+	.search:focus-visible {
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+		border-color: var(--color-apparatus);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+	}
+
+	.count {
+		flex: 0 0 auto;
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.doorway {

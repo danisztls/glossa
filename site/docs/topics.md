@@ -100,6 +100,17 @@ coupling nobody looks for when they move an entry.
 slug is an address and has to name the same thing in every language, while a
 cluster appears in no URL and is a dictionary key exactly as `doorway` is.
 
+A search box sits over the list, and it is the only control there. `/documenta`
+earns a facet panel because 298 rows carry axes invisible in the list — author,
+kind, date; this page is already sixteen named shelves, so a doorway or cluster
+filter would collapse the structure that _is_ the page. What no grouping gives
+is the reader who arrives holding words rather than a place, which is the half
+of the audience `docs/research/audiences.md` found bouncing off a jump box that
+completes citations they do not have. It matches title and question, folded for
+case and diacritics (`topic-search.ts` — `cremacao` has to find _cremação_), and
+the table of contents narrows with the list so it never offers an anchor that
+has left the page.
+
 The sidebar lists **clusters and nothing else**. Four rows would be a table of
 contents for a page nobody needs help with; one row per topic would be the page
 printed twice, which is the failure `IndexSidebarToc`'s own docblock names.

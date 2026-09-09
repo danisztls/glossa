@@ -672,6 +672,8 @@ export const pt: Dictionary = {
 	'quaestiones.landing.tagline':
 		'Passagens do Catecismo, reunidas pela pergunta com que alguém chega. O trabalho feito aqui é a reunião; cada palavra do texto é do Catecismo, e cada passagem leva ao lugar onde ela está.',
 	'quaestiones.landing.none': 'Nenhuma pergunta foi escrita para esta versão.',
+	'quaestiones.search.label': 'Buscar nestas perguntas',
+	'quaestiones.search.none': 'Nenhuma pergunta daqui corresponde a essas palavras.',
 	'quaestiones.doorway.argument': 'O que se discute',
 	'quaestiones.doorway.argument.blurb': 'Perguntas com dois lados e, quase sempre, um adversário.',
 	'quaestiones.doorway.life-event': 'Quando algo aconteceu',

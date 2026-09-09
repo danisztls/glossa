@@ -1526,6 +1526,11 @@ export const en: Dictionary = {
 	'quaestiones.landing.tagline':
 		'Passages of the Catechism, gathered by the question someone arrives holding. The gathering is the work done here; every word of the text is the Catechism’s, and each passage links to where it stands.',
 	'quaestiones.landing.none': 'No questions have been written for this build.',
+	// The search box over the list. A placeholder and an accessible name at
+	// once, so it says what it searches rather than just "Search": this page
+	// is one list among many and the reader may have arrived from another.
+	'quaestiones.search.label': 'Search these questions',
+	'quaestiones.search.none': 'No question here matches those words.',
 	// The four doorways of `site/quaestiones.json`, in its order. Each heading
 	// names the reader's situation and not a category of subject, which is
 	// what keeps the list from collapsing back into a subject index.
