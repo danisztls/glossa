@@ -36,6 +36,162 @@
 		"A work with no entry simply has no description; nothing renders a placeholder."
 	],
 	"descriptions": {
+		"cdf.ad-resurgendum-cum-christo.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 2016 Instruction on Christian burial and cremation, approved by Francis. It reaffirms the Church’s preference for burying the faithful departed in cemeteries or sacred places as an expression of hope in the resurrection, permits cremation where doctrinally sound, and sets norms requiring the ashes to remain intact in a sacred place — forbidding their conservation at home, scattering, or division among mementos.",
+				"origin": "read"
+			}
+		},
+		"cdf.antiqua-et-nova.en": {
+			"en": {
+				"text": "On the relationship between artificial intelligence and human intelligence, weighing the Christian understanding of intelligence — reason, embodiment, relationship, truth, stewardship of creation — against what AI can only imitate. It surveys AI’s ethical stakes for society, work, healthcare, education, misinformation, privacy, and warfare, warns against treating AI as a substitute for God, and closes with an appeal to a “wisdom of the heart” no machine can supply.",
+				"origin": "read"
+			}
+		},
+		"cdf.aspects-of-evangelization.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 2007 note defends the Church’s mandate to proclaim Christ explicitly and invite conversion, against theories holding that such proclamation limits others’ freedom or that salvation without explicit faith makes it unnecessary. It grounds evangelization in the human search for truth, describes it as incorporation into the community of the baptized, and holds that Christian disunity undermines the credibility of that mission.",
+				"origin": "read"
+			}
+		},
+		"cdf.catholics-in-political-life.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 2002 doctrinal note to bishops and Catholic politicians on political engagement amid growing ethical relativism. It affirms Catholics’ legitimate freedom to choose among parties and policies suited to the concrete common good, but holds that this pluralism cannot excuse support for laws attacking human life or the family — requirements of the natural moral law binding on Catholic officials regardless of party.",
+				"origin": "read"
+			}
+		},
+		"cdf.collaboration-of-men-and-women.en": {
+			"en": {
+				"text": "On the active collaboration of men and women, responding to two contemporary tendencies — treating the sexes as adversaries, and treating sexual difference itself as a construct to overcome — with a biblical account of created complementarity from Genesis through Paul’s letter to the Galatians, then feminine values such as receptivity to the other in both society and the Church.",
+				"origin": "read"
+			}
+		},
+		"cdf.communionis-notio.en": {
+			"en": {
+				"text": "A 1992 letter from the Congregation for the Doctrine of the Faith on the Church understood as communion. It holds that the universal Church is not a federation or a product of the particular Churches but is ontologically and temporally prior to them, born whole at Pentecost and giving rise to the local Churches as her daughters, their unity rooted in the Eucharist and the episcopate.",
+				"origin": "read"
+			}
+		},
+		"cdf.dignitas-infinita.en": {
+			"en": {
+				"text": "On human dignity, distinguishing ontological, moral, social, and existential senses of the term and grounding an inviolable, infinite dignity in every person’s creation in God’s image and redemption in Christ. Tracing this conviction from Scripture through Christian thought, the declaration then names concrete violations: poverty, war, the plight of migrants, human trafficking, sexual abuse, violence against women, abortion, surrogacy, euthanasia, disability, gender theory, sex change, and digital violence.",
+				"origin": "read"
+			}
+		},
+		"cdf.dignitas-personae.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s instruction extends Donum vitae to techniques developed in the twenty years since, addressing in vitro fertilization, embryo freezing, preimplantation diagnosis, gene therapy, human cloning, stem-cell research, and the use of biological material of illicit origin, judging each by whether it respects the dignity, unity, and identity of the human person from conception.",
+				"origin": "read"
+			}
+		},
+		"cdf.dominus-iesus.en": {
+			"en": {
+				"text": "A 2000 declaration by the Congregation for the Doctrine of the Faith reasserting, against a spreading theological relativism, the definitive and unsurpassable character of Christ’s revelation, the unicity and universality of his saving mystery, and the necessity of the one Church he founded for salvation — while distinguishing this claim from disrespect for other religions or denial of the grace at work in them.",
+				"origin": "read"
+			}
+		},
+		"cdf.donum-veritatis.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 1990 instruction on the theologian’s ecclesial vocation, on theology as service to revealed truth exercised in communion with the Magisterium. It sets out the collaborative relationship between bishops and theologians, then treats dissent at length — public opposition to non-infallible teaching, its causes and its limits — before closing on Mary’s assent of faith as the model for receiving the Word.",
+				"origin": "read"
+			}
+		},
+		"cdf.donum-vitae.en": {
+			"en": {
+				"text": "Addresses biomedical techniques for human procreation, weighing what respect the human embryo is owed — through prenatal diagnosis, embryo research, and genetic manipulation — before turning to heterologous and homologous artificial fertilization, in vitro fertilization, artificial insemination, and surrogate motherhood, and closing with what civil law must respect and sanction to protect life from its origin.",
+				"origin": "read"
+			}
+		},
+		"cdf.homosexualitatis-problema.en": {
+			"en": {
+				"text": "On the pastoral care of homosexual persons, addressed to the Bishops of the Catholic Church, it restates the 1975 declaration’s distinction between the homosexual condition and homosexual acts, traces the biblical witness from Genesis through Paul, calls the inclination itself an objective disorder while condemning violence and malice against homosexual persons, and urges bishops to found pastoral programmes on chastity while withdrawing support from organizations that dissent from the teaching.",
+				"origin": "read"
+			}
+		},
+		"cdf.inter-insigniores.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 1976 declaration excluding women from the ministerial priesthood. It argues Christ’s choice of only men among the Twelve was deliberate rather than a concession to custom, traces the same practice through the apostles and the Church’s constant tradition, and grounds the norm in the priest’s sacramental, nuptial resemblance to Christ the Bridegroom rather than in any question of rights.",
+				"origin": "read"
+			}
+		},
+		"cdf.iura-et-bona.en": {
+			"en": {
+				"text": "Affirms human life as a gift from God no one may dispose of at will, then defines euthanasia precisely as an act or omission intended to end suffering by causing death — a violation of divine law rejected regardless of motive. Distinguishes ordinary from disproportionate remedies, permitting a dying person to forgo burdensome treatment, and tolerable use of painkillers that may shorten life without that being intended, without it counting as suicide.",
+				"origin": "read"
+			}
+		},
+		"cdf.legal-recognition-homosexual-unions.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 2003 considerations against legal recognition of unions between persons of the same sex. It restates marriage’s nature as exclusively between a man and a woman, surveys how civil authorities move from tolerance toward recognition, argues against such recognition from right reason, biology, the social order and the law, and instructs Catholic politicians to oppose such legislation and limit its harm where enacted.",
+				"origin": "read"
+			}
+		},
+		"cdf.libertatis-conscientia.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s companion to Libertatis Nuntius, presenting the Christian doctrine of freedom it promised. It traces freedom from the modern quest for liberation, through sin’s distortion of it, to the freedom Christ’s Paschal mystery restores, then sets out the Church’s social doctrine — persons before structures, the dignity of work, solidarity — as liberation’s Christian practice, closing with Mary’s Magnificat.",
+				"origin": "read"
+			}
+		},
+		"cdf.libertatis-nuntius.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 1984 warning against currents in liberation theology that uncritically adopt Marxist class-struggle analysis as a supposedly scientific tool, subverting Christian truth, the sacraments, and Christ’s redemption into a purely political struggle. It distinguishes this deviation from authentic liberation — freedom from sin, fulfilled in grace — and calls pastors to safeguard sound doctrine while still serving the poor.",
+				"origin": "read"
+			}
+		},
+		"cdf.mysterium-ecclesiae.en": {
+			"en": {
+				"text": "A 1973 declaration of the Congregation for the Doctrine of the Faith defending Catholic teaching on the Church against errors gaining currency among theologians. It affirms the infallibility of the whole People of God and of the Magisterium, addresses how historical conditioning limits without falsifying dogmatic formulas, and closes by distinguishing the common priesthood of the faithful from the ministerial priesthood within Christ’s one priesthood.",
+				"origin": "read"
+			}
+		},
+		"cdf.oeconomicae-et-pecuniariae-quaestiones.en": {
+			"en": {
+				"text": "Considerations issued jointly by the Congregation for the Doctrine of the Faith and the Dicastery for Promoting Integral Human Development on the ethics of the global financial system, moving from principles of market freedom and regulation to concrete instruments — derivatives, LIBOR-set interbank rates, shadow banking, and offshore tax havens — before closing with an appeal to personal and associative responsibility over cynicism.",
+				"origin": "read"
+			}
+		},
+		"cdf.pastoralis-actio.en": {
+			"en": {
+				"text": "A 1980 instruction defending the Church’s practice of baptizing infants against proposals to delay the sacrament until a child can make a personal profession of faith. It restates the doctrine and the Magisterium’s teaching on infant baptism, answers objections concerning the child’s freedom and today’s sociological situation, and directs pastors on dialogue with believing families and with families of little or no faith.",
+				"origin": "read"
+			}
+		},
+		"cdf.persona-humana.en": {
+			"en": {
+				"text": "The Congregation for the Doctrine of the Faith’s 1975 declaration on sexual ethics, issued against growing dissent from Church teaching amid the era’s permissiveness. It grounds sexual morality in immutable natural and divine law rather than shifting culture, then applies that norm to premarital intercourse, homosexual acts and masturbation, weighs the gravity of sin in these matters, and closes by presenting chastity as a positive virtue of the whole person.",
+				"origin": "read"
+			}
+		},
+		"cdf.placuit-deo.en": {
+			"en": {
+				"text": "A 2018 letter to the bishops from the Congregation for the Doctrine of the Faith, warning against two contemporary distortions of Christian salvation: a neo-Pelagian individualism that trusts self-realization by one’s own strength, and a neo-Gnostic disregard for the body that reduces salvation to a merely interior experience. Against both, it presents Christ as Savior and the Church, through her sacraments, as the visible communion in which salvation is received.",
+				"origin": "read"
+			}
+		},
+		"cdf.quaestio-de-abortu.en": {
+			"en": {
+				"text": "On procured abortion, restating that human life must be protected from conception, independent of unsettled debates over the moment of animation. Tracing the prohibition from the Didache and Tertullian through Vatican II, the declaration argues from natural reason as much as faith, addresses legislators on the limits of pluralism, and instructs Catholics that they may neither vote for nor cooperate with an abortion law.",
+				"origin": "read"
+			}
+		},
+		"cdf.responsum-ordinatio-sacerdotalis.en": {
+			"en": {
+				"text": "A dubium asking whether the teaching that the Church has no authority whatsoever to confer priestly ordination on women, presented as to be held definitively in Ordinatio Sacerdotalis, belongs to the deposit of faith. The reply is affirmative, adding that the teaching is founded on the written Word of God, constantly preserved in Tradition, and set forth infallibly by the ordinary and universal Magisterium.",
+				"origin": "read"
+			}
+		},
+		"cdf.sacerdotium-ministeriale.en": {
+			"en": {
+				"text": "A 1983 letter from the Congregation for the Doctrine of the Faith to the world’s bishops, responding to opinions that any Christian community can designate its own president to consecrate the Eucharist without sacramental ordination. Restating the Church’s doctrine that only bishops and priests, through Holy Orders, confect the Eucharistic Sacrifice in the person of Christ, it calls bishops to vigilance against these views in catechesis and theology.",
+				"origin": "read"
+			}
+		},
+		"cdf.samaritanus-bonus.en": {
+			"en": {
+				"text": "On the pastoral and medical care of persons in the critical and terminal stages of life, read through the Good Samaritan’s care for the wounded man. It excludes euthanasia and assisted suicide as morally impermissible, requires basic nutrition and hydration and access to palliative care, and addresses pastoral and sacramental accompaniment, healthcare workers’ conscientious objection, and the reform of medical formation.",
+				"origin": "read"
+			}
+		},
 		"encyclical.acerba-animi.en": {
 			"en": {
 				"text": "Pius XI’s 1932 encyclical to the bishops of Mexico on the continuing persecution of the Church there, reviewing the government’s anti-Catholic constitutional laws and broken pledges, addressing whether seeking state permission for worship compromises Catholic principle, urging the faithful toward Catholic Action, and praising clergy and laity who suffered for the faith.",
@@ -2008,6 +2164,12 @@
 				"origin": "read"
 			}
 		},
+		"exhortation.amoris-laetitia.it": {
+			"it": {
+				"text": "Esortazione apostolica postsinodale di Francesco sull’amore nella famiglia, frutto dei due Sinodi sulla famiglia. Apre con una meditazione sul Salmo 128, esamina le sfide della famiglia contemporanea e la sua vocazione alla luce del Vangelo, dedica due capitoli centrali all’amore coniugale e alla sua fecondità, indica vie pastorali per l’educazione dei figli e per il discernimento delle situazioni familiari «irregolari», e si chiude tracciando una spiritualità coniugale e familiare.",
+				"origin": "read"
+			}
+		},
 		"exhortation.catechesi-tradendae.en": {
 			"en": {
 				"text": "John Paul II’s 1979 post-synodal exhortation on catechesis, drawing on the Synod of Bishops’ 1977 assembly. It presents Christ as catechesis’s one Teacher, traces the practice from the apostles and Fathers to the present, grounds its content in the Creed, and addresses the forming of children, youth and adults through homilies, catechisms and media, closing by charging bishops, priests, religious, parents and lay catechists with the task.",
@@ -2191,6 +2353,24 @@
 		"exhortation.vita-consecrata.en": {
 			"en": {
 				"text": "John Paul II’s post-synodal exhortation on the consecrated life, gathering the 1994 Synod’s work. Three chapters trace it as confessio Trinitatis, rooted in the Transfiguration, as signum fraternitatis, a sign of communion within the Church, and as servitium caritatis, a mission of service through evangelization, work with the poor, education and dialogue, closing with an appeal on its unbounded generosity.",
+				"origin": "read"
+			}
+		},
+		"letter.octogesima-adveniens.en": {
+			"en": {
+				"text": "Paul VI’s apostolic letter to Cardinal Roy, marking the eightieth anniversary of Rerum Novarum, surveys the new social problems industrial society has produced since Leo XIII’s time — urbanization, migration, the environment, discrimination, mass media — and weighs the promise and limits of liberal and Marxist ideologies. Rather than proposing one universal model, it calls Christians to political action within a legitimate pluralism of options.",
+				"origin": "read"
+			}
+		},
+		"vati.dei-filius.it": {
+			"it": {
+				"text": "Costituzione dogmatica del Concilio Vaticano I sulla fede cattolica, promulgata da Pio IX il 24 aprile 1870, contro il razionalismo, il naturalismo e il panteismo del tempo. In quattro capitoli tratta di Dio creatore di tutte le cose, della Rivelazione, della Fede e del rapporto fra Fede e Ragione, e chiude con diciotto canoni che condannano, capitolo per capitolo, gli errori opposti a ciascuna dottrina.",
+				"origin": "read"
+			}
+		},
+		"vati.pastor-aeternus.it": {
+			"it": {
+				"text": "Costituzione dogmatica del Concilio Vaticano I sul primato del Romano Pontefice, promulgata da Pio IX il 18 luglio 1870. In quattro capitoli stabilisce l’istituzione del primato di giurisdizione in san Pietro, la sua perpetuità nei Romani Pontefici, la natura di tale potere — ordinario e immediato su tutta la Chiesa — e definisce come dogma l’infallibilità del Romano Pontefice quando, parlando ex cathedra su fede e costumi, la esercita.",
 				"origin": "read"
 			}
 		},
