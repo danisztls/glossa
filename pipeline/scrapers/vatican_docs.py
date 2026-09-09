@@ -289,6 +289,7 @@ from common import (
     require_corpus,
     roman_to_int,
     source_code,
+    strip_bom,
     write_stamped_json,
 )
 
@@ -387,12 +388,18 @@ def decode_page(data: bytes) -> str:
     ccc.py's own validator already watches for (â€-family sequences), just from
     the opposite direction (UTF-8 bytes misread as single-byte). Sniffed
     per-page from the declared <meta charset> rather than assumed from the
-    page shell, since that's what's actually authoritative."""
+    page shell, since that's what's actually authoritative.
+
+    THE BYTE ORDER MARK IS STRIPPED HERE BECAUSE NO CHARSET DECIDES IT. Five
+    old-shell pages open their `<body>` with `&iuml;&raquo;&iquest;` -- a
+    UTF-8 BOM the CMS escaped as its three cp1252 characters, so it is already
+    past the sniff and every later pass reads it as the first word of the
+    title (`cdf.homosexualitatis-problema.en` and four siblings)."""
     m = _CHARSET_SNIFF_RE.search(data[:2000])
     charset = m.group(1).decode("ascii", errors="replace").lower() if m else "cp1252"
     if charset in ("utf-8", "utf8"):
-        return data.decode("utf-8", errors="replace")
-    return data.decode("cp1252", errors="replace")
+        return strip_bom(data.decode("utf-8", errors="replace"))
+    return strip_bom(data.decode("cp1252", errors="replace"))
 
 
 def make_fetcher(recheck_absent: bool = False, offline: bool = False) -> Fetcher:
@@ -7437,6 +7444,28 @@ def strip_transparent_spans(html: str) -> str:
     return _TRANSPARENT_SPAN_RE.sub("", html)
 
 
+#: `<style>` and `<script>` hold a language that is not the document's, and
+#: the tag rules cannot tell: `strip_tags` drops the tag and keeps what it
+#: wrapped, `narrow_html` does the same, so a stylesheet reaches the reader as
+#: prose. Matched unclosed to the end of the page for the same reason
+#: `_COMMENT_RE` is.
+_NON_TEXT_ELEMENT_RE = re.compile(
+    r"<\s*(script|style)\b[^>]*>.*?(?:<\s*/\s*\1\s*>|$)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def strip_non_text_elements(html: str) -> str:
+    """`html` without the elements whose CONTENT is not text.
+
+    The old shell puts the whole page inside `<body>`, `<head>` included, so
+    a page carrying an inline stylesheet has its rules read as the document's
+    first words: `cdf.communionis-notio.la` opened on
+    `.style1 { color: #663300; }` and four other works on the same furniture.
+    Dropped before anything reads the page, beside the transparent spans."""
+    return _NON_TEXT_ELEMENT_RE.sub(" ", html)
+
+
 class StubPageError(Exception):
     """Raised when the fetched page's content region carries essentially no
     text. Found live, systematically, on Leo XIII-era Portuguese encyclical
@@ -7821,7 +7850,7 @@ def parse_document(
     them from the document above -- and `csdc.py` supplies it by finding the
     run of a thousand definitions that follows the work's last numbered
     paragraph. Nothing else passes it, and the default is unchanged."""
-    html = strip_transparent_spans(html)
+    html = strip_non_text_elements(strip_transparent_spans(html))
     vati_m = _VATI_CONTENT_RE.search(html) if family == "vati" else None
     if vati_m:
         # THE TWO CONSTITUTIONS DO NOT SHARE A SHELL WITH EACH OTHER.
@@ -8949,7 +8978,10 @@ def parse_document(
 # Validation
 # --------------------------------------------------------------------------
 
-_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³"]
+# `ï»¿` is the cp1252 reading of a UTF-8 BOM, which `decode_page` already
+# removes in both spellings it has arrived in; listed here so a page carrying
+# one past that fails rather than publishing it as a word.
+_MOJIBAKE_PATTERNS = ["Ã©", "Ã§", "â€™", "â€", "Ã³", "ï»¿", "\ufeff"]
 
 EXPECTED_RANGES = {
     # survey table sec.3 -- spot-checked, not exhaustive; any document not

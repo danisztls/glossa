@@ -39,6 +39,20 @@ encoding the mark twice. Removed in `strip_tags`, one level up from
 `decode_cp1252`. The follow-set is checked rather than assumed — French prints
 a real Â in "GRÂCE".
 
+**Page furniture is text until something removes it, and the pre-CMS shell is
+full of it.** Those pages put `<head>` inside `<body>`, so a `<style>`
+element's rules (`cdf.communionis-notio.la` opened on
+`.style1 { color: #663300; }`, five works) and a UTF-8 byte order mark the CMS
+escaped as `&iuml;&raquo;&iquest;` (`cdf.homosexualitatis-problema.en`
+published it as the first word of its title, five works) were both stored as
+the document's first words. Neither is reachable by a tag rule — `strip_tags`
+and `narrow_html` both drop the tag and keep what it wrapped — and no charset
+sniff can see a mark already spelled as three cp1252 characters, so
+`common.strip_bom` runs at the decode and `strip_non_text_elements` beside the
+transparent spans. The same mark reaches `bible.crampon.fr` as itself,
+fr.wikisource setting one as the whole payload of a fixed-width `<span>` used
+as an indent.
+
 **Inline emphasis is not a word boundary.** A tag becomes a space only where it
 is block-level. The substituted space was hiding real source defects behind a
 code rule, and stripping whitespace afterwards cannot work because this corpus

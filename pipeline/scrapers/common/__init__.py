@@ -150,6 +150,7 @@ from .text import (
     fold_index,
     looks_like_number_typo,
     roman_to_int,
+    strip_bom,
 )
 from .translations import load_translations_checked
 from .versification import (
@@ -226,6 +227,7 @@ __all__ = [
     "sample_run_writes_nothing",
     "source_captured_at",
     "source_code",
+    "strip_bom",
     "to_vulgate",
     "urllib_transport",
     "write_if_changed",

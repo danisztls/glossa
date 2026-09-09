@@ -51,6 +51,26 @@ import unicodedata
 # --------------------------------------------------------------------------
 
 
+#: A byte order mark, in the three spellings one has actually arrived in: the
+#: character itself, the HTML escape a source's own editor left behind, and
+#: what those three UTF-8 bytes look like decoded as cp1252.
+_BOM_FORMS = ("\ufeff", "ï»¿", "&iuml;&raquo;&iquest;")
+
+
+def strip_bom(s: str) -> str:
+    """`s` with every byte order mark removed, however it is spelled.
+
+    A BOM is an encoding artifact and never content, but it does not always
+    reach a decoder as one. vatican.va's old-shell pages carry it HTML-escaped
+    inside `<body>`, past every charset sniff, where the next pass reads it as
+    the first word of the title; fr.wikisource sets one as the payload of a
+    fixed-width `<span>` used as an indent. Strip where a page is decoded or
+    read, before anything splits it into blocks."""
+    for form in _BOM_FORMS:
+        s = s.replace(form, "")
+    return s
+
+
 def fold(s: str) -> str:
     """Uppercase + strip accents, for robust (typo/accent-insensitive) label
     matching.

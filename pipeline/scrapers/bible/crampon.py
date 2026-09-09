@@ -116,6 +116,7 @@ from common import (
     load_corrections,
     raw_root,
     require_corpus,
+    strip_bom,
     write_stamped_json,
 )
 
@@ -131,6 +132,15 @@ def raw_dir() -> Path:
 
 def work_dir() -> Path:
     return build_root() / WORK_ID
+
+
+def read_page(filename: str) -> str:
+    """One raw page, without the byte order marks it uses as furniture.
+
+    fr.wikisource indents a note's continuation with a fixed-width `<span>`
+    whose whole payload is U+FEFF, so the mark survives tag-stripping and is
+    stored inside the text (twice in Genesis)."""
+    return strip_bom((raw_dir() / f"{filename}.html").read_text(encoding="utf-8"))
 
 
 # (osis, filename stem in raw/crampon/, no extension) in the schema's
@@ -793,7 +803,7 @@ def parse_book(
     applied_log: list[dict],
     seen_ids: set[str],
 ) -> tuple[list[dict], list[str]]:
-    html = (raw_dir() / f"{filename}.html").read_text(encoding="utf-8")
+    html = read_page(filename)
     html = apply_raw_text_corrections(html, osis, corrections, applied_log, seen_ids)
     chapters, anomalies = parse_page(html)
     return chapters_to_list(chapters), [f"[{osis}] {a}" for a in anomalies]
@@ -805,7 +815,7 @@ def parse_psalter(
     combined: dict[int, dict[int, dict]] = {}
     anomalies: list[str] = []
     for filename in PSALM_FILES:
-        html = (raw_dir() / f"{filename}.html").read_text(encoding="utf-8")
+        html = read_page(filename)
         html = apply_raw_text_corrections(
             html, "ps", corrections, applied_log, seen_ids
         )
@@ -819,7 +829,7 @@ def parse_psalter(
 
 
 def run_scrape() -> tuple[list[dict], list[str], list[dict], list[dict]]:
-    names = parse_book_names((raw_dir() / "Livres.html").read_text(encoding="utf-8"))
+    names = parse_book_names(read_page("Livres"))
     corrections = load_corrections(WORK_ID)
     applied_log: list[dict] = []
     seen_ids: set[str] = set()

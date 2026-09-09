@@ -177,6 +177,13 @@ pipeline/scrapers/
 - Expect ~1-in-6-to-8 transient failures (Azure edge flakiness; no 403s, no
   CAPTCHA). Retry with backoff; a genuine failure belongs in the run summary,
   never silently absent from the corpus.
+- **The old shell puts `<head>` inside `<body>`, so page furniture is text
+  until something removes it.** An inline stylesheet opened five documents on
+  `.style1 { color: #663300; }` and a UTF-8 BOM escaped as
+  `&iuml;&raquo;&iquest;` opened five more on itself. No tag rule reaches
+  either — `strip_tags` and `narrow_html` both keep what a tag wrapped — so
+  `strip_bom` runs at the decode and `strip_non_text_elements` beside the
+  transparent spans (`docs/parsing.md`).
 - **The Pius XI index lists one encyclical twice.** `…firmissimam-constantiam`
   and `…nos-es-muy-conocida` are one document at two addresses.
   `INDEX_DUPLICATE_SLUGS` drops the Spanish-titled slug at **discovery**, so
