@@ -5,6 +5,7 @@ import { isCanonicalPath, type RouteManifest } from './route-manifest';
 import { sectionFor } from './usage-device';
 import { SETS } from './usage-schema';
 import { en } from './i18n/en';
+import type { Dictionary } from './i18n.svelte';
 
 /**
  * The tracked editorial source, not the synced index. These tests are about
@@ -105,5 +106,46 @@ describe('every topic is reachable and named', () => {
 			expect(dictionary[`quaestiones.doorway.${doorway}`], doorway).toBeTruthy();
 			expect(dictionary[`quaestiones.doorway.${doorway}.blurb`], doorway).toBeTruthy();
 		}
+	});
+
+	/** A DICTIONARY THAT HAS STARTED THIS SECTION HAS TO FINISH IT, which is a
+	 *  stronger rule than the site's ordinary partial-translation licence and
+	 *  is here because of what falls back. `t()` reaches for English, so a
+	 *  half-translated section does not break — it prints an English question
+	 *  inside an otherwise Portuguese page, under a translated heading, and
+	 *  looks deliberate. Anywhere else on the site that is a missing label; on
+	 *  a page whose whole subject is somebody's own sentence it reads as the
+	 *  site declining to ask theirs.
+	 *
+	 *  The gate is `quaestiones.landing.title`: a dictionary without it has
+	 *  simply not reached this route and is not held to anything. */
+	it('finishes the section in every dictionary that has begun it', async () => {
+		const loaders = import.meta.glob<Record<string, Dictionary>>(['./i18n/*.ts', '!./i18n/en.ts']);
+		const keys = [
+			...slugs.flatMap((slug) => [`quaestiones.${slug}.title`, `quaestiones.${slug}.question`]),
+			...source.doorways.flatMap((doorway) => [
+				`quaestiones.doorway.${doorway}`,
+				`quaestiones.doorway.${doorway}.blurb`
+			]),
+			'quaestiones.landing.tagline',
+			'quaestiones.landing.none',
+			'quaestiones.passages.heading',
+			'quaestiones.passages.reordered',
+			'quaestiones.documents.heading',
+			'quaestiones.documents.blurb',
+			'quaestiones.canons.heading'
+		];
+
+		let begun = 0;
+		for (const [path, load] of Object.entries(loaders)) {
+			const module = await load();
+			const dictionary = Object.values(module)[0] as unknown as Record<string, string>;
+			if (!dictionary?.['quaestiones.landing.title']) continue;
+			begun += 1;
+			for (const key of keys) expect(dictionary[key], `${path}: ${key}`).toBeTruthy();
+		}
+		// Portuguese is the one that has, and this asserts the loop ran over
+		// something — a glob that matched nothing would pass silently.
+		expect(begun).toBeGreaterThanOrEqual(1);
 	});
 });

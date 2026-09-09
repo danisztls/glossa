@@ -17,6 +17,14 @@
 		"(tribal, public, googled mid-fight), the life event (something happened on Tuesday), the",
 		"private shame (2 a.m., and they would never ask a person) and the ordinary question.",
 		"",
+		"THE SAME SUBJECT IS OFTEN TWO TOPICS, and the pairs below are deliberate rather than",
+		"duplicated. `abortus` is the argument and `post-abortum` is the woman who has had one;",
+		"`fecundatio-artificialis` is the case against IVF and `sterilitas` is the couple who cannot",
+		"conceive, leading on CCC 2379 rather than on the prohibition; `homosexualitas` is the",
+		"teaching and `homosexualitas-vivenda` is the person living under it; `mors-voluntaria` is a",
+		"bereavement and `mortis-desiderium` is the reader themselves. Where the two doors produce the",
+		"SAME anchor set and the same order, there is one topic and not two.",
+		"",
 		"THE ANCHOR IS A CATECHISM SPAN, AND THE PASSAGES ARE NOT CHOSEN HERE. That is the whole",
 		"posture of the file. CCC 2357 already carries `Gen 19:1-29; Rom 1:24-27; 1 Cor 6:10;",
 		"1 Tim 1:10` and `CDF, Persona humana 8` in its own footnotes, and ProseBlocks linkifies them",
@@ -42,6 +50,11 @@
 		"printed order is itself an ordering, chosen by someone else for a reader who is not this one.",
 		"NOTHING IS OMITTED BY IT -- `lead` reorders a span and never trims one, so the paragraph a",
 		"reader is spared first is still on the page.",
+		"",
+		"A SPAN LIST IS IN READING ORDER AND IS NOT SORTED, which is the cheaper half of the same",
+		"judgement and needs no field. `post-contraceptionem` opens on CCC 1735, on imputability, and",
+		"reaches 2370 after it; `scrupulositas` opens on the acts of the penitent and closes on 1735.",
+		"Nothing downstream re-sorts, so a span moved here moves on the page.",
 		"",
 		"SLUGS ARE LATIN, like every other address here, and where the Catechism has its own word for",
 		"the thing the slug takes it -- `divinatio` is CCC 2116's, checkable against ccc.la. An address",
@@ -74,6 +87,122 @@
 	],
 	"doorways": ["argument", "life-event", "private-shame", "ordinary"],
 	"topics": {
+		"dei-existentia": {
+			"doorway": "argument",
+			"ccc": [[27, 43]],
+			"documents": ["fides-et-ratio"]
+		},
+		"malum": {
+			"doorway": "argument",
+			"ccc": [[309, 314]],
+			"documents": ["spe-salvi"]
+		},
+		"lex-naturalis": {
+			"doorway": "argument",
+			"ccc": [[1954, 1960]],
+			"documents": ["veritatis-splendor"]
+		},
+		"scriptura-inspirata": {
+			"doorway": "argument",
+			"ccc": [[105, 108]],
+			"documents": ["dei-verbum", "providentissimus-deus", "divino-afflante-spiritu"]
+		},
+		"canon-scripturae": {
+			"doorway": "argument",
+			"ccc": [[120, 130]],
+			"documents": ["dei-verbum"]
+		},
+		"creatio-et-scientia": {
+			"doorway": "argument",
+			"ccc": [[282, 289]],
+			"documents": ["humani-generis", "fides-et-ratio"]
+		},
+		"iesus-christus": {
+			"doorway": "argument",
+			"ccc": [
+				[422, 429],
+				[456, 460]
+			],
+			"documents": ["redemptor-hominis"]
+		},
+		"novissima": {
+			"doorway": "argument",
+			"ccc": [[1020, 1041]],
+			"documents": ["spe-salvi"]
+		},
+		"atheismus": {
+			"doorway": "argument",
+			"ccc": [[2123, 2128]],
+			"documents": ["gaudium-et-spes"]
+		},
+		"beata-virgo": {
+			"doorway": "argument",
+			"ccc": [
+				[963, 972],
+				[2673, 2679]
+			],
+			"documents": ["lumen-gentium", "redemptoris-mater", "marialis-cultus"]
+		},
+		"sancti-et-imagines": {
+			"doorway": "argument",
+			"ccc": [
+				[946, 959],
+				[1159, 1162],
+				[2129, 2132]
+			],
+			"documents": []
+		},
+		"purgatorium": {
+			"doorway": "argument",
+			"ccc": [
+				[1030, 1032],
+				[1471, 1479]
+			],
+			"documents": []
+		},
+		"primatus-romani-pontificis": {
+			"doorway": "argument",
+			"ccc": [[880, 887]],
+			"documents": ["pastor-aeternus", "lumen-gentium"]
+		},
+		"papa-reprehensus": {
+			"doorway": "argument",
+			"ccc": [[888, 892]],
+			"documents": ["donum-veritatis", "mysterium-ecclesiae"]
+		},
+		"dissensus": {
+			"doorway": "argument",
+			"ccc": [[1783, 1794]],
+			"documents": ["donum-veritatis"]
+		},
+		"traditio-et-scriptura": {
+			"doorway": "argument",
+			"ccc": [[74, 83]],
+			"documents": ["dei-verbum"]
+		},
+		"iustificatio": {
+			"doorway": "argument",
+			"ccc": [
+				[1987, 1995],
+				[2006, 2011]
+			],
+			"documents": ["veritatis-splendor"]
+		},
+		"confessio-sacerdoti": {
+			"doorway": "argument",
+			"ccc": [[1441, 1449]],
+			"documents": ["reconciliatio-et-paenitentia"]
+		},
+		"eucharistia": {
+			"doorway": "argument",
+			"ccc": [[1373, 1381]],
+			"documents": ["eccl-de-euch", "sacramentum-caritatis"]
+		},
+		"unitas-christianorum": {
+			"doorway": "argument",
+			"ccc": [[817, 822]],
+			"documents": ["unitatis-redintegratio", "ut-unum-sint"]
+		},
 		"doctrinae-progressus": {
 			"doorway": "argument",
 			"ccc": [
@@ -82,10 +211,60 @@
 			],
 			"documents": ["dei-filius", "donum-veritatis"]
 		},
+		"concilium-vaticanum-secundum": {
+			"doorway": "argument",
+			"ccc": [[84, 87]],
+			"documents": [
+				"sacrosanctum-concilium",
+				"lumen-gentium",
+				"dei-verbum",
+				"gaudium-et-spes",
+				"dignitatis-humanae"
+			]
+		},
+		"synodalitas": {
+			"doorway": "argument",
+			"ccc": [
+				[874, 879],
+				[894, 896]
+			],
+			"documents": ["lumen-gentium", "christifideles-laici", "pastores-gregis"]
+		},
+		"mulieres-in-ecclesia": {
+			"doorway": "argument",
+			"ccc": [[369, 373]],
+			"documents": ["collaboration-of-men-and-women", "inter-insigniores"]
+		},
+		"charismata": {
+			"doorway": "argument",
+			"ccc": [
+				[799, 801],
+				[2003, 2003]
+			],
+			"documents": []
+		},
 		"contraceptio": {
 			"doorway": "argument",
 			"ccc": [[2366, 2372]],
 			"documents": ["casti-connubii", "humanae-vitae"]
+		},
+		"fecundatio-artificialis": {
+			"doorway": "argument",
+			"ccc": [[2373, 2377]],
+			"documents": ["donum-vitae", "dignitas-personae", "dignitas-infinita"]
+		},
+		"concubinatus": {
+			"doorway": "argument",
+			"ccc": [
+				[2350, 2350],
+				[2390, 2391]
+			],
+			"documents": ["persona-humana"]
+		},
+		"divortium": {
+			"doorway": "argument",
+			"ccc": [[2382, 2386]],
+			"documents": ["familiaris-consortio"]
 		},
 		"homosexualitas": {
 			"doorway": "argument",
@@ -97,16 +276,216 @@
 				"legal-recognition-homosexual-unions"
 			]
 		},
-		"crematio": {
+		"identitas-sexualis": {
+			"doorway": "argument",
+			"ccc": [[2331, 2336]],
+			"documents": ["dignitas-infinita"]
+		},
+		"ordinatio-mulierum": {
+			"doorway": "argument",
+			"ccc": [[1577, 1578]],
+			"documents": ["inter-insigniores", "responsum-ordinatio-sacerdotalis"]
+		},
+		"caelibatus": {
+			"doorway": "argument",
+			"ccc": [
+				[1579, 1580],
+				[1618, 1620]
+			],
+			"documents": ["sacerdotalis", "presbyterorum-ordinis"]
+		},
+		"abortus": {
+			"doorway": "argument",
+			"ccc": [[2270, 2275]],
+			"documents": ["quaestio-de-abortu", "evangelium-vitae", "dignitas-infinita"]
+		},
+		"euthanasia": {
+			"doorway": "argument",
+			"ccc": [[2276, 2279]],
+			"documents": ["iura-et-bona", "samaritanus-bonus"]
+		},
+		"poena-capitalis": {
+			"doorway": "argument",
+			"ccc": [[2266, 2267]],
+			"documents": ["fratelli-tutti"]
+		},
+		"castitas": {
+			"doorway": "argument",
+			"ccc": [[2337, 2350]],
+			"documents": ["persona-humana"]
+		},
+		"mendacium": {
+			"doorway": "argument",
+			"ccc": [[2475, 2487]],
+			"documents": []
+		},
+		"capitalismus": {
+			"doorway": "argument",
+			"ccc": [[2402, 2407]],
+			"documents": ["rerum-novarum", "quadragesimo-anno", "centesimus-annus"]
+		},
+		"socialismus": {
+			"doorway": "argument",
+			"ccc": [[2424, 2425]],
+			"documents": [
+				"quod-apostolici-muneris",
+				"divini-redemptoris",
+				"libertatis-nuntius",
+				"libertatis-conscientia",
+				"centesimus-annus"
+			]
+		},
+		"labor": {
+			"doorway": "argument",
+			"ccc": [[2426, 2433]],
+			"documents": ["rerum-novarum", "laborem-exercens"]
+		},
+		"migratio": {
+			"doorway": "argument",
+			"ccc": [[2241, 2241]],
+			"documents": ["fratelli-tutti", "dignitas-infinita"]
+		},
+		"bellum": {
+			"doorway": "argument",
+			"ccc": [[2302, 2317]],
+			"documents": ["pacem", "gaudium-et-spes", "fratelli-tutti"]
+		},
+		"civitas-et-oboedientia": {
+			"doorway": "argument",
+			"ccc": [[2234, 2237]],
+			"documents": ["diuturnum", "immortale-dei"]
+		},
+		"suffragium": {
+			"doorway": "argument",
+			"ccc": [[2238, 2240]],
+			"documents": ["catholics-in-political-life"]
+		},
+		"sub-imperio-atheo": {
+			"doorway": "argument",
+			"ccc": [[2242, 2243]],
+			"documents": ["divini-redemptoris", "mit-brennender-sorge", "ecclesia-in-asia"]
+		},
+		"civitas-catholica": {
+			"doorway": "argument",
+			"ccc": [[2244, 2246]],
+			"documents": ["immortale-dei", "libertas", "quas-primas", "dignitatis-humanae"]
+		},
+		"libertas-religiosa": {
+			"doorway": "argument",
+			"ccc": [[2104, 2109]],
+			"documents": ["dignitatis-humanae", "mit-brennender-sorge"]
+		},
+		"oecologia": {
+			"doorway": "argument",
+			"ccc": [[2415, 2418]],
+			"documents": ["laudato-si", "laudate-deum"]
+		},
+		"paupertas": {
+			"doorway": "argument",
+			"ccc": [[2443, 2449]],
+			"documents": ["populorum", "sollicitudo-rei-socialis", "dilexi-te"]
+		},
+		"technologia": {
+			"doorway": "argument",
+			"ccc": [[2293, 2294]],
+			"documents": ["laudato-si", "antiqua-et-nova"]
+		},
+		"communicatio-socialis": {
+			"doorway": "argument",
+			"ccc": [[2493, 2499]],
+			"documents": ["inter-mirifica"]
+		},
+		"iudaismus": {
+			"doorway": "argument",
+			"ccc": [[839, 840]],
+			"documents": ["nostra-aetate"]
+		},
+		"islam": {
+			"doorway": "argument",
+			"ccc": [[841, 841]],
+			"documents": ["nostra-aetate", "lumen-gentium", "ecclesia-in-medio-oriente"]
+		},
+		"salus-extra-ecclesiam": {
+			"doorway": "argument",
+			"ccc": [[842, 848]],
+			"documents": ["redemptoris-missio", "dominus-iesus"]
+		},
+		"proselytismus": {
+			"doorway": "argument",
+			"ccc": [[849, 856]],
+			"documents": ["evangelii-nuntiandi", "redemptoris-missio", "aspects-of-evangelization"]
+		},
+		"inculturatio": {
+			"doorway": "argument",
+			"ccc": [[1200, 1206]],
+			"documents": ["slavorum-apostoli", "redemptoris-missio", "querida-amazonia"]
+		},
+		"polygamia": {
+			"doorway": "argument",
+			"ccc": [
+				[1645, 1645],
+				[2387, 2387]
+			],
+			"documents": ["familiaris-consortio", "ecclesia-in-africa", "africae-munus"]
+		},
+		"superstitio": {
+			"doorway": "argument",
+			"ccc": [[2110, 2114]],
+			"documents": ["ecclesia-in-america", "africae-munus"]
+		},
+		"evangelium-prosperitatis": {
+			"doorway": "argument",
+			"ccc": [[2544, 2547]],
+			"documents": ["ecclesia-in-america", "evangelii-gaudium"]
+		},
+
+		"post-mortem": {
 			"doorway": "life-event",
-			"ccc": [[2300, 2301]],
-			"documents": ["ad-resurgendum-cum-christo"]
+			"ccc": [[1023, 1032]],
+			"lead": 1032,
+			"documents": ["spe-salvi"]
+		},
+		"infans-non-baptizatus": {
+			"doorway": "life-event",
+			"ccc": [[1257, 1261]],
+			"lead": 1261,
+			"documents": ["pastoralis-actio"]
 		},
 		"mors-voluntaria": {
 			"doorway": "life-event",
 			"ccc": [[2280, 2283]],
 			"lead": 2283,
 			"documents": ["samaritanus-bonus"]
+		},
+		"aegritudo": {
+			"doorway": "life-event",
+			"ccc": [[1500, 1513]],
+			"documents": ["spe-salvi"]
+		},
+		"finis-vitae": {
+			"doorway": "life-event",
+			"ccc": [[2278, 2279]],
+			"documents": ["iura-et-bona", "samaritanus-bonus"]
+		},
+		"crematio": {
+			"doorway": "life-event",
+			"ccc": [[2300, 2301]],
+			"documents": ["ad-resurgendum-cum-christo"]
+		},
+		"matrimonium": {
+			"doorway": "life-event",
+			"ccc": [
+				[1625, 1632],
+				[1643, 1645]
+			],
+			"documents": [],
+			"canons": [[1055, 1057]]
+		},
+		"matrimonium-mixtum": {
+			"doorway": "life-event",
+			"ccc": [[1633, 1637]],
+			"documents": [],
+			"canons": [[1124, 1129]]
 		},
 		"nullitas-matrimonii": {
 			"doorway": "life-event",
@@ -117,6 +496,37 @@
 			"documents": ["familiaris-consortio"],
 			"canons": [[1671, 1673]]
 		},
+		"communio-post-divortium": {
+			"doorway": "life-event",
+			"ccc": [[1650, 1651]],
+			"documents": ["familiaris-consortio", "amoris-laetitia"]
+		},
+		"graviditas": {
+			"doorway": "life-event",
+			"ccc": [[2270, 2271]],
+			"documents": ["quaestio-de-abortu", "donum-vitae"]
+		},
+		"sterilitas": {
+			"doorway": "life-event",
+			"ccc": [[2373, 2379]],
+			"lead": 2379,
+			"documents": ["donum-vitae", "dignitas-personae"]
+		},
+		"filius-a-fide-lapsus": {
+			"doorway": "life-event",
+			"ccc": [[2221, 2231]],
+			"documents": ["familiaris-consortio"]
+		},
+		"amissio-operis": {
+			"doorway": "life-event",
+			"ccc": [
+				[2427, 2428],
+				[2436, 2436]
+			],
+			"lead": 2436,
+			"documents": ["laborem-exercens"]
+		},
+
 		"remissio-peccatorum": {
 			"doorway": "private-shame",
 			"ccc": [
@@ -133,14 +543,125 @@
 			],
 			"documents": ["persona-humana"]
 		},
+		"masturbatio": {
+			"doorway": "private-shame",
+			"ccc": [
+				[1735, 1735],
+				[2352, 2352]
+			],
+			"lead": 2352,
+			"documents": ["persona-humana"]
+		},
 		"reditus": {
 			"doorway": "private-shame",
 			"ccc": [[1455, 1458]],
 			"documents": ["reconciliatio-et-paenitentia"]
 		},
+		"scrupulositas": {
+			"doorway": "private-shame",
+			"ccc": [
+				[1454, 1460],
+				[1735, 1735]
+			],
+			"documents": []
+		},
+		"post-abortum": {
+			"doorway": "private-shame",
+			"ccc": [
+				[1468, 1470],
+				[2272, 2272]
+			],
+			"documents": ["evangelium-vitae"]
+		},
+		"post-contraceptionem": {
+			"doorway": "private-shame",
+			"ccc": [
+				[1735, 1735],
+				[2370, 2370]
+			],
+			"documents": ["humanae-vitae", "familiaris-consortio"]
+		},
+		"adulterium": {
+			"doorway": "private-shame",
+			"ccc": [
+				[2380, 2381],
+				[2487, 2487]
+			],
+			"documents": []
+		},
+		"homosexualitas-vivenda": {
+			"doorway": "private-shame",
+			"ccc": [[2358, 2359]],
+			"documents": ["persona-humana"]
+		},
+		"mortis-desiderium": {
+			"doorway": "private-shame",
+			"ccc": [[2280, 2283]],
+			"lead": 2283,
+			"documents": ["samaritanus-bonus"]
+		},
+		"venia-danda": {
+			"doorway": "private-shame",
+			"ccc": [[2842, 2845]],
+			"documents": ["dives-in-misericordia"]
+		},
+		"dubium-fidei": {
+			"doorway": "private-shame",
+			"ccc": [
+				[162, 162],
+				[2088, 2089]
+			],
+			"documents": ["spe-salvi"]
+		},
+
 		"divinatio": {
 			"doorway": "ordinary",
 			"ccc": [[2115, 2117]],
+			"documents": []
+		},
+		"mortui": {
+			"doorway": "ordinary",
+			"ccc": [
+				[1030, 1032],
+				[2116, 2116]
+			],
+			"documents": []
+		},
+		"daemones": {
+			"doorway": "ordinary",
+			"ccc": [
+				[391, 395],
+				[550, 550],
+				[1673, 1673]
+			],
+			"documents": []
+		},
+		"angeli": {
+			"doorway": "ordinary",
+			"ccc": [[328, 336]],
+			"documents": []
+		},
+		"apparitiones": {
+			"doorway": "ordinary",
+			"ccc": [[66, 67]],
+			"documents": ["signum-magnum"]
+		},
+		"miracula-et-reliquiae": {
+			"doorway": "ordinary",
+			"ccc": [
+				[156, 156],
+				[1674, 1676]
+			],
+			"documents": []
+		},
+		"experientia-mortis-proximae": {
+			"doorway": "ordinary",
+			"ccc": [[1021, 1022]],
+			"documents": []
+		},
+		"finis-mundi": {
+			"doorway": "ordinary",
+			"ccc": [[668, 682]],
 			"documents": []
 		},
 		"ieiunium": {
@@ -153,6 +674,23 @@
 			"documents": [],
 			"canons": [[1249, 1253]]
 		},
+		"dominica": {
+			"doorway": "ordinary",
+			"ccc": [[2177, 2183]],
+			"documents": ["sacrosanctum-concilium"],
+			"canons": [[1247, 1248]]
+		},
+		"otium": {
+			"doorway": "ordinary",
+			"ccc": [[2184, 2188]],
+			"documents": ["gaudete-in-domino", "laborem-exercens"]
+		},
+		"baptismus-infantium": {
+			"doorway": "ordinary",
+			"ccc": [[1250, 1255]],
+			"documents": ["pastoralis-actio"],
+			"canons": [[872, 874]]
+		},
 		"organorum-donatio": {
 			"doorway": "ordinary",
 			"ccc": [
@@ -160,6 +698,111 @@
 				[2301, 2301]
 			],
 			"documents": ["evangelium-vitae"]
+		},
+		"corpus-ornandum": {
+			"doorway": "ordinary",
+			"ccc": [[2288, 2289]],
+			"documents": []
+		},
+		"decimae": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2043, 2043],
+				[2447, 2447]
+			],
+			"documents": [],
+			"canons": [[222, 222]]
+		},
+		"vota-et-iuramenta": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2101, 2103],
+				[2150, 2155]
+			],
+			"documents": []
+		},
+		"vocatio": {
+			"doorway": "ordinary",
+			"ccc": [[1877, 1889]],
+			"documents": ["christus-vivit"]
+		},
+		"merces-iusta": {
+			"doorway": "ordinary",
+			"ccc": [[2434, 2435]],
+			"documents": ["rerum-novarum", "laborem-exercens"]
+		},
+		"pecunia-collocanda": {
+			"doorway": "ordinary",
+			"ccc": [[2431, 2432]],
+			"documents": ["caritas-in-veritate", "oeconomicae-et-pecuniariae-quaestiones"]
+		},
+		"tributum": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2240, 2240],
+				[2409, 2409]
+			],
+			"documents": []
+		},
+		"invidia": {
+			"doorway": "ordinary",
+			"ccc": [[2538, 2540]],
+			"documents": []
+		},
+		"acedia": {
+			"doorway": "ordinary",
+			"ccc": [
+				[1866, 1866],
+				[2094, 2094],
+				[2733, 2733]
+			],
+			"documents": []
+		},
+		"discrimen-gentium": {
+			"doorway": "ordinary",
+			"ccc": [[1934, 1938]],
+			"documents": ["nostra-aetate", "fratelli-tutti"]
+		},
+		"mercatura-hominum": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2355, 2355],
+				[2414, 2414]
+			],
+			"documents": ["dignitas-infinita"]
+		},
+		"violentia-domestica": {
+			"doorway": "ordinary",
+			"ccc": [[2356, 2356]],
+			"documents": ["dignitas-infinita"]
+		},
+		"violentia-digitalis": {
+			"doorway": "ordinary",
+			"ccc": [[2488, 2492]],
+			"documents": ["dignitas-infinita", "antiqua-et-nova"]
+		},
+		"debilitas": {
+			"doorway": "ordinary",
+			"ccc": [[2276, 2276]],
+			"documents": ["dignitas-infinita"]
+		},
+		"carceres": {
+			"doorway": "ordinary",
+			"ccc": [[2297, 2298]],
+			"documents": ["fratelli-tutti"]
+		},
+		"defensio-sui": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2263, 2265],
+				[2316, 2317]
+			],
+			"documents": []
+		},
+		"proles-suscipienda": {
+			"doorway": "ordinary",
+			"ccc": [[2368, 2371]],
+			"documents": ["humanae-vitae", "laudato-si"]
 		}
 	}
 }

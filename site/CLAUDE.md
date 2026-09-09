@@ -814,6 +814,13 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   written down instead — the held set is in `docs/research/topics.md`, and
   `fiducia-supplicans` is the case that matters, since the three earlier
   documents ARE here and a stale answer reads as a current one.
+- **Two doors are two topics only where they change the answer.** `abortus` and
+  `post-abortum` differ in anchor and in order; six candidates were dropped for
+  resolving to a shipped topic's paragraphs in a shipped topic's order.
+- **A new document reaches the footnotes by itself and the `documents` array
+  never.** The citation text resolves at render time, so an ingest relinks every
+  topic that cites the arrival; the named list is hand-written, and so is
+  lifting a topic off the blocklist.
 
 ## `/documenta` filters, and the one editorial file behind them
 

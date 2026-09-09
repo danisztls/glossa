@@ -52,6 +52,32 @@ improves every topic without anyone touching the topic file.
 written after the Catechism, a procedure the Code holds and the Catechism only
 names. They are additions to the derived set, never a replacement for it.
 
+### What a newly ingested document does to the topics, on its own
+
+Half of a topic keeps itself current and half does not, and the line runs
+exactly where the derivation does.
+
+**The footnotes catch up by themselves.** A citation in a Catechism paragraph
+is plain text in the corpus — CCC 2357 carries the string `CDF, Persona humana
+8` — and `refs.ts` resolves it to a link at render time, against the documents
+the build actually shipped. So a document ingested today makes every citation
+of it, on every topic page that anchors a paragraph citing it, become a live
+link at the next sync. Nothing in `quaestiones.json` is touched, and no topic
+is regenerated. Two conditions: `refs-grammar.ts` must map the siglum to the
+slug, and `documentSectionExists` must find the section. An unmapped siglum
+stays plain text however much of the corpus arrives.
+
+**The `documents` array does not.** It is hand-written, so a new document joins
+a topic only when somebody adds it — and the topics a new document _unblocks_
+are added by hand too. That is the cost of the field, and it is the right cost:
+naming a document is a claim that the reader should open it, which the corpus
+cannot make on its own.
+
+So the periodic act after an ingest is small and worth doing: check whether the
+arrival lifts anything off the blocklist in `docs/research/topics.md`, and
+whether it belongs in the `documents` of a topic already shipped. The passages
+need no attention.
+
 ## `lead` is the judgment, and it is one field wide
 
 The Catechism's order is systematic; a reader in trouble is not. CCC 2280–2283
@@ -91,17 +117,26 @@ both are the failure `route-manifest.ts` already documents:
   is the one section whose series answers whether the question-holding half of
   the audience is reached at all, so it is bucketed from the day it lands.
 
-What it owes: the `quaestiones.*` keys exist in English alone, so the route
-stays out of `CHROME_PATHS` until the dictionaries carry them. A topic is not
-offered for bookmarking yet, though the address supports it — `addressResolves`
-answers `true` for a topic because the index tier deliberately does not carry
-the topic list, and answering `false` would discard a reader's mark on every
-topic at once.
+What it owes: the `quaestiones.*` keys exist in `en` and `pt` alone, so the
+route stays out of `CHROME_PATHS` until the rest of the dictionaries carry
+them — and this is now the largest block of untranslated chrome on the site,
+two strings per topic plus the doorway headings. A topic is not offered for
+bookmarking yet, though the address supports it — `addressResolves` answers
+`true` for a topic because the index tier deliberately does not carry the topic
+list, and answering `false` would discard a reader's mark on every topic at
+once.
+
+**The title and the question are the only strings here written as somebody
+else's words**, and a translator needs to be told so. The title is this site's
+plain naming; the question is the reader's own sentence, and it has to stay a
+sentence they would actually type in the plainest register their language has —
+never a formal rendering of the English, and never lighter than the thing it
+asks about. `pt` was written under that rule and its section comment repeats it.
 
 ## Adding a topic
 
-The machinery is finished; what a second pass adds is judgment, three files at
-a time. `docs/research/topics.md` holds the candidates and the blocklist.
+The machinery is finished; what each pass adds is judgment, three files at a
+time. `docs/research/topics.md` holds the candidates and the blocklist.
 
 **1. Find the anchor in the Catechism, and never write a paragraph number from
 recollection.** The corpus is the oracle and answering takes one command:
@@ -133,7 +168,9 @@ CORPUS_DIR=… npm run build   # prints `Topics: N over 4 doorway(s)`
 `src/lib/i18n/en.ts`, in that section's own register — the title is this site's
 plain naming, the question is the reader's own sentence, and neither evaluates
 or advises (`docs/writing-voice.md`). `quaestiones.test.ts` fails on a topic
-missing either.
+missing either. Any dictionary that already carries the section — `pt` does —
+wants the pair too, or that reader gets an English question inside a
+Portuguese page.
 
 **4. Run the loop**: `npm run check`, `npm test`, `npm run preflight`. A topic
 adds no route code, so a pass here is the whole of it — except the look, which

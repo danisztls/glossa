@@ -504,8 +504,34 @@ Scripture and magisterial citations come from those paragraphs' own footnotes.
 Nothing in the shipped set required a passage to be chosen by hand.
 `site/docs/topics.md` records what the route cost to add.
 
-Everything else on this page is still a candidate. The list below is what a
-second pass takes next, and the blocklist above still holds.
+### The second pass, the same day
+
+The rest of the candidate set followed immediately, and the count is in the
+sync's own summary line rather than here. Nine topics carry a `lead`, and the
+pairs the doorways predicted are all present: `abortus` beside `post-abortum`,
+`fecundatio-artificialis` beside `sterilitas` (which leads on CCC 2379, not on
+the prohibition), `homosexualitas` beside `homosexualitas-vivenda`,
+`mors-voluntaria` beside `mortis-desiderium`. Portuguese was written at the same
+time, which makes `pt` the first dictionary after `en` to carry the route.
+
+**Six candidates were dropped rather than blocked**, and the distinction
+matters: a blocked topic is waiting for a document, a dropped one has nothing
+of its own to resolve to.
+
+| Dropped                     | Why                                                                |
+| --------------------------- | ------------------------------------------------------------------ |
+| Emigrating                  | CCC 2241 entire, and that paragraph is already `migratio`          |
+| Growing old                 | CCC 2218 answers the grown child, not the reader who asked         |
+| Freemasonry                 | no Catechism paragraph at all; `humanum-genus` cannot carry a page |
+| Manifesting, "the universe" | resolves to `divinatio`'s and `superstitio`'s paragraphs exactly   |
+| Caste and social exclusion  | CCC 1934–1938, which is `discrimen-gentium`                        |
+| Animals and how we eat      | CCC 2416–2418, which is inside `oecologia`                         |
+
+The rule they teach is the one the file now states: **where two doors produce
+the same anchor set in the same order, there is one topic and not two.** The
+door has to change what the reader is given, not merely what they were asked.
+
+The blocklist above is unchanged and still holds.
 
 ## Decided
 
@@ -517,18 +543,29 @@ second pass takes next, and the blocklist above still holds.
 - **Derive the passages from the Catechism's own apparatus** rather than
   assembling them by hand, per the mechanism above.
 
+## Settled by shipping
+
+1. **How many ship.** All of them, save the blocklist and the six dropped
+   above. The `document-tags.json` discipline turned out to be the wrong
+   analogy: a tag that names one document is a useless facet, but a topic that
+   resolves to two Catechism paragraphs and a document written about exactly
+   that is a page worth reading. What makes a topic thin is the corpus having
+   nothing, not the anchor being short.
+2. **One entry per topic, or one per doorway?** Per doorway, but only where the
+   doorway changes the answer. Four pairs earned it and six candidates were
+   dropped for failing the test.
+3. **What the route is called.** `quaestiones`.
+4. **Whether doorway 3 can be built at all in this register.** It can, and
+   `lead` is the whole mechanism: nine topics use it, the page discloses it in
+   the reader's own language, and the sync refuses one that has drifted. The
+   ordering is still a judgment about a reader's state and is meant to be
+   argued with — one field, one number, in tracked source.
+
 ## Still open
 
-1. **How many ship.** Roughly 150 candidates here across four doorways; a first
-   page is probably 20–30. The vocabulary discipline in `document-tags.json`
-   applies — a term resolving to one document is worse than no term.
-2. **One entry per topic, or one per doorway?** The abortion case says they are
-   genuinely two topics with two anchor sets, which doubles the editorial work
-   and is the difference between a page that argues and a page that helps.
-3. **What the route is called.** Every route here is Latin: `quaestiones` reads
-   as the reader's question, `loci` as the theologian's index.
-4. **Whether doorway 3 can be built at all in this register.** Its entries need
-   the pastoral paragraph first and the condemning one second, and that ordering
-   is a judgment about a reader's state — closer to editorialising than anything
-   else on this site does. A topic listing CCC 2357 before 2358 is a different
-   page from one that does the reverse, and neither ordering is neutral.
+- **The other thirty-five dictionaries.** `en` and `pt` carry the keys; until
+  all of them do, `/quaestiones` stays out of `CHROME_PATHS` and the sitemap on
+  `route-manifest.ts`'s own terms. This is now the largest single block of
+  untranslated chrome on the site.
+- **Whether a topic should be bookmarkable.** The address supports it and
+  `bookmarkContent.ts` already groups topics; nothing offers the mark yet.
