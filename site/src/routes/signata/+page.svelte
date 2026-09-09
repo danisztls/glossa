@@ -168,7 +168,7 @@
 		<button
 			bind:this={card.trigger}
 			type="button"
-			class="menu-trigger about"
+			class="hint-trigger"
 			popovertarget={card.id}
 			aria-expanded={card.open}
 			aria-label={t('bookmark.about')}
@@ -259,13 +259,6 @@
 
 	/* `.menu-trigger` is the site's button and this adds only its size: a note
 	   beside a heading is not a chrome control and should not weigh like one. */
-	.about {
-		flex: none;
-		inline-size: 1.6rem;
-		block-size: 1.6rem;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-	}
 
 	.caveat {
 		max-inline-size: min(24rem, calc(100vw - 1rem));
@@ -375,10 +368,6 @@
 	}
 
 	@media print {
-		/* The control becomes the line it opens. */
-		.about {
-			display: none;
-		}
 		.caveat-print {
 			display: block;
 			margin: 2rem 0 0;

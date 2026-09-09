@@ -52,6 +52,57 @@
 }
 
 /*
+ * THE `i` THAT OPENS A NOTE, AND IT IS NOT A `.menu-trigger`.
+ *
+ * Five surfaces draw one — the day's readings and the Mass's liturgy on
+ * `/calendarium`, the marks page's caveat, the census's per-shelf notes, and
+ * the Rosary's rotation — and four of them wrote it as `.menu-trigger.about`
+ * with a local rule shrinking the square and greying the glyph. The four
+ * copies had agreed BY HAND for long enough to have stopped agreeing: 1.4rem,
+ * 1.5rem, 1.5rem and 1.6rem, at 0.8rem and 0.85rem, which is what a copied
+ * assembly looks like just before somebody notices.
+ *
+ * WHAT IT IS NOT is the thing they were all subtracting from. `.menu-trigger`
+ * is a bordered square on an elevated ground: right for a control a reader
+ * goes LOOKING for — the settings, the language, the edition — and wrong for
+ * one that offers a footnote about the thing beside it. Every one of those
+ * four sits next to a heading or a row of other controls, where a bordered
+ * square claims to be one of them. So this is the mark and nothing else: no
+ * border, no ground, muted until hovered, with the hit area in the padding.
+ *
+ * The `<svg>` is sized here rather than by the caller's `font-size`, so a
+ * caller that passes no class to `Icon` gets the same glyph as one that does.
+ *
+ * NOT FOR AN `i` OVER A PICTURE. `ArtFigure` and `Plate` keep the bordered
+ * `.caption-trigger`, because a bare glyph in the corner of a photograph is
+ * legible against whatever that photograph happens to be there — which is to
+ * say, sometimes not at all.
+ */
+.hint-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 1.6rem;
+	height: 1.6rem;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--color-text-muted);
+	line-height: 1;
+	cursor: pointer;
+}
+
+.hint-trigger:hover {
+	color: var(--color-accent);
+}
+
+.hint-trigger svg {
+	width: 0.95rem;
+	height: 0.95rem;
+}
+
+/*
  * A PANEL PLACED BY MEASUREMENT — the chrome the three of them share.
  *
  * `LinkPreview`'s card, the popover a unit number opens (`AnchorMenu`) and the

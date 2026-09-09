@@ -170,7 +170,7 @@
 			</div>
 			<!-- Outside the `role="group"` on purpose: the group is the seven days
 			     a reader chooses between, and this is a note about all of them. -->
-			<MysteryRubrics {groups} current={shown} {lang} />
+			<MysteryRubrics {groups} {lang} />
 		</div>
 
 		<!-- THE SET IS THE LIVE REGION. Pressing a day replaces the name and the

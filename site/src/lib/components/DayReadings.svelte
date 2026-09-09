@@ -106,7 +106,7 @@
 		<button
 			bind:this={card.trigger}
 			type="button"
-			class="menu-trigger about"
+			class="hint-trigger"
 			popovertarget={card.id}
 			aria-expanded={card.open}
 			aria-label={t('lectionary.about')}
@@ -207,12 +207,6 @@
 	/* `.menu-trigger` is the site's button and this adds only its size: the
 	   header's 2.25rem square is a control in a bar, and this one stands
 	   beside 0.8rem type. */
-	.about {
-		inline-size: 1.4rem;
-		block-size: 1.4rem;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-	}
 	h4 {
 		margin: 0.75rem 0 0.3rem;
 		font-size: 0.85rem;
@@ -317,10 +311,6 @@
 	}
 
 	@media print {
-		/* The control becomes the line it opens. */
-		.about {
-			display: none;
-		}
 		/* A link is nothing on paper, and the page it leads to is this list with
 		   its passages set out — which is the page to print if that is what was
 		   wanted. */

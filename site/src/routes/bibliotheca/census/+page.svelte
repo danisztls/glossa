@@ -268,7 +268,7 @@
 	<button
 		bind:this={panel.trigger}
 		type="button"
-		class="menu-trigger about"
+		class="hint-trigger"
 		popovertarget={panel.id}
 		aria-expanded={panel.open}
 		aria-label={label}
@@ -566,14 +566,6 @@
 	/* `.menu-trigger` is the site's button and this adds only its size and
 	   colour — `DayReadings` sizes its own the same way, against the type it
 	   stands beside. `align-self` keeps it off the heading's rule. */
-	.about {
-		flex: none;
-		align-self: center;
-		inline-size: 1.5rem;
-		block-size: 1.5rem;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
 
 	/* `SiglumGloss`'s card at this one's measure: where it goes is
 	   `.floating-panel` in app.css, and what is left here is that a sentence
@@ -592,11 +584,6 @@
 	}
 
 	@media print {
-		/* Each control becomes the line it opens. */
-		.about {
-			display: none;
-		}
-
 		.caveat-print {
 			display: block;
 			margin: 0.7rem 0 0;

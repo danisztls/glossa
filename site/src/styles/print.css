@@ -64,7 +64,15 @@
 	   this list: unlike the rest, it's where a printed single-paragraph page
 	   states what it actually is (which chapter, which work), and that
 	   context is worth the two lines of paper it costs. */
-	.read-chapter {
+	.read-chapter,
+	/* The `i` that opens a note (`.hint-trigger`, styles/menus.css): on paper
+	   the control becomes the line it opens, and every surface that draws one
+	   prints that line separately — `.caveat-print` and its siblings — because
+	   a popover never prints. Four of them carried this rule apiece while the
+	   trigger was four local copies of one class. `.caption-trigger` is not
+	   here: `ArtFigure` and `Plate` hide theirs in their own blocks, beside
+	   the printed credit each one substitutes. */
+	.hint-trigger {
 		display: none !important;
 	}
 

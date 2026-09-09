@@ -121,7 +121,7 @@
 		<button
 			bind:this={card.trigger}
 			type="button"
-			class="menu-trigger about"
+			class="hint-trigger"
 			popovertarget={card.id}
 			aria-expanded={card.open}
 			aria-label={t('lectionary.about')}
@@ -236,12 +236,6 @@
 	/* `.menu-trigger` is the site's button and this adds only its size: the
 	   header's 2.25rem square is a control in a bar, and this one stands beside
 	   the heading it qualifies. */
-	.about {
-		inline-size: 1.5rem;
-		block-size: 1.5rem;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-	}
 	/* `SiglumGloss`'s card at this one's measure: where it goes is
 	   `.floating-panel` in app.css, and what is left here is that a sentence and
 	   a half wants a narrower column than a paragraph of commentary. */
@@ -334,10 +328,6 @@
 	}
 
 	@media print {
-		/* The control becomes the line it opens. */
-		.about {
-			display: none;
-		}
 		.caveat-print {
 			display: block;
 			margin: 1.5rem 0 0;
