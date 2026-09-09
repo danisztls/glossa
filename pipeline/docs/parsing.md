@@ -210,6 +210,40 @@ fail, it files sixty-six Latin editions as Lithuanian and says nothing.
 CMS calls Hebrew `iw`, the retired ISO 639-1 code, while its Vatican II mirror
 calls it `he`.
 
+**A heading's emphasis is a claim about the heading; its number is not part of
+that claim.** `is_full_italic` takes no tolerance by design — its docstring
+records both tolerances measured and reverted — so `<p>I. <i>Title</i></p>`,
+the numeral outside the run, reaches neither `structure.json` nor
+`sections.json`. An upper bound of 548 headings over 173 editions, counted in
+the body region only, since the footnote apparatus prints the same shape and
+means a citation by it. What makes the core of that unarguable is the
+translations: `libertatis-conscientia` loses 14 to 18 in each of four
+languages, `veritatis-splendor` the same heading in all seven.
+
+**Every heading detector needs markup, and the modern Dicastery template
+prints none.** `dignitas-infinita.en` prints 32 headings as bare `<p>` and six
+reach the tree — the six the page happens to italicise, which is an
+inconsistency in hand-typed HTML and not a tier, so they land flat where the
+document has three levels.
+
+**Where a document's only numbering sits on its headings, the numeral is
+consumed as a paragraph number and lost from the title.**
+`inter-insigniores.en` stores `The Church's Constant Tradition` for a page
+printing `1. The Church's Constant Tradition`. The same shape survives intact
+in `santateresa-delbambinogesu.en`, which numbers its paragraphs separately —
+so the numeral disappears exactly when it is the section number, which is when
+it matters.
+
+**`looks_like_number_typo` is vacuous at one digit**: any two distinct single
+digits differ in exactly one place at the same length, so a part restarting at
+1 reads as a misprint of the running count. `sacerdotium-ministeriale.en`
+renumbers two restarts and then absorbs the rest of the third into §9, which
+runs 5,564 characters against neighbours of 230 to 1,230; `donum-vitae.en` §9
+is 8,149 against 1,276. The heuristic-versus-restart shape this repository
+already records for _Dei Filius_ — but **tightening the typo test is not the
+fix**, because refusing the correction orphans those paragraphs instead of
+joining them. What it needs is restart detection.
+
 **A fifth paragraph-numbering convention exists** — `<b>1 </b>`, no period,
 `BOLD_BARE_NUM_RE` — which is how all sixteen Czech Vatican II editions print
 their numbers. `sacrosanctum-concilium.cs` went from 9 sections to 130.

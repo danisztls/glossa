@@ -121,12 +121,52 @@ divisions, and its oracle is `[]`. This was the one thing batch 3's agents
 disagreed about, and left unstated it produces oracles that disagree with each
 other rather than with the parser.
 
+**A trailing approval formula is stored the same way**, and belongs out for the
+same reason: `Ex audientia die … Franciscus`, `before: null`. The rule is about
+where a node stands, not about the title — matter the numbered flow never
+reaches is not a division either.
+
+**The audit will report both back at you as EXTRA, and that is not your oracle
+being wrong.** Its masthead filter matches `manifest.title`, which is the Latin
+incipit, while the page prints its own prose — `Antiqua et Nova` against "Note
+on the Relationship Between Artificial Intelligence and Human Intelligence".
+Consulting `manifest.header` does not fix it: the parser either lifts the title
+block into `header` or lets it become nodes, never both, so `header` is empty
+in exactly the works whose masthead leaked. Note the row and move on.
+
+Four shapes are known to cost a whole tier, so look for them by name before
+concluding a document is flat (`../pipeline/docs/parsing.md`):
+
+- a **bare `<p>` heading**, no markup at all. Every detector needs some, and
+  the modern Dicastery template prints none — `dignitas-infinita.en` shows 6
+  of its 32 headings in the tree.
+- **`part-italic`**, the numeral outside the italic run: `<p>I. <i>Title</i>`.
+  The census names the shape in its markup column, on the DROPPED **and** the
+  `kept` rows.
+- a **heading whose numeral is the section number**, `1. Title`, which is
+  consumed as a paragraph number and dropped from the title.
+- a **part that restarts its numbering** within single digits, which is read
+  as a misprint and silently renumbered until it stops working.
+
+**An affected work's oracle legitimately disagrees with the parse, and that is
+the oracle working.** Record what the page prints and report the difference;
+editing an oracle to match the parser is how it stops being evidence.
+
 Two verdicts are deliberately not confident. `heading*` means the block is one
 line of a heading the parser stored as a single multi-line node — normal, not
 a finding. `kept?` means the block's text matches only the _start_ of a stored
 block, so a heading absorbed into the following paragraph cannot be told from
 one that survived; check that case against `sections.json` yourself before
 calling it either way.
+
+**The two confident verdicts can also be wrong, and they fail in opposite
+directions.** `kept` is a text match, so a two-word heading whose words recur
+in nearby prose reads as kept when it was dropped outright — `Sexual Abuse`
+and `War` both did. `heading` is the same match from the other side: a line of
+body text equal to a real heading elsewhere scores `heading`, which a Psalm
+verse quoted above the heading it names did. So check a short heading against
+`sections.json`, and account for any gap between the census's heading count
+and `structure.json` before reporting it as loss.
 
 ### 3. Write the table of contents
 
