@@ -93,8 +93,8 @@
 								<ul class="index-list" data-link-preview="hover">
 									{#each entry.topics as slug (slug)}
 										<li class="topic-row">
-											<a class="index-link" href={hrefFor({ kind: 'topic', slug })}>
-												<span class="index-title">{t(`quaestiones.${slug}.title`)}</span>
+											<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
+												{t(`quaestiones.${slug}.title`)}
 											</a>
 											<p class="question">{t(`quaestiones.${slug}.question`)}</p>
 										</li>
@@ -161,22 +161,46 @@
 	}
 
 	/*
-	 * NOT `.index-row`, and the omission is deliberate: that class rules every
-	 * row with a bottom border, which is right for a flat catalogue of three
-	 * hundred documents and wrong for a hundred-odd rows already divided into
-	 * sixteen groups. The grouping does the separating here, so the rows only
-	 * need air. `.index-link` and `.index-title` are still the shared family —
-	 * that is where the underline-at-rest decision lives, and this page should
-	 * not be a fourth copy of it.
+	 * NOT THE `.index-list` FAMILY, and both halves of the omission are
+	 * deliberate.
+	 *
+	 * `.index-row` rules every row with a bottom border, which is right for a
+	 * flat catalogue of three hundred documents and wrong for a hundred-odd
+	 * rows already divided into sixteen groups. The grouping does the
+	 * separating here, so the rows only need air.
+	 *
+	 * `.index-title` sets the title in `--color-text`, and components.css says
+	 * why: "in a list where every row is a link, colouring every title would
+	 * make the page a wall of red". That reasoning is about a catalogue, where
+	 * the row's title is the NAME OF A THING and its being a link is
+	 * incidental. Here the title is a question somebody came to ask, the whole
+	 * page is the answer to "where do I go", and every row wanting to be
+	 * followed is the point rather than the hazard. So the link keeps
+	 * `--color-link` from base.css and only the underline is dropped.
 	 */
 	.topic-row {
 		margin-bottom: 0.7rem;
 	}
 
-	/* The row is a title and a question, one above the other, so the link is
-	   not the site's usual title-and-chip flex line. */
-	.index-link {
-		display: inline;
+	/*
+	 * A LIST-SHAPED SURFACE OPTS OUT OF THE UNDERLINE AT REST, which is the
+	 * exemption base.css names for the breadcrumb, the nav and the index
+	 * cards, and which `/schola`'s catalogue takes for the same reason: the
+	 * mark earns its place under a link inside a sentence, and every line here
+	 * is a link, so an underline on each is a column of rules down the page.
+	 * Hover and focus restore it — the arrival IS the interaction.
+	 *
+	 * IT ARRIVES IN THE LINK'S OWN COLOUR, so nothing here names one:
+	 * `a:hover` in base.css already sets `text-decoration-color:
+	 * currentColor`, and a grey rule under a red word reads as a mistake.
+	 */
+	.topic-link {
+		text-decoration: none;
+	}
+
+	.topic-link:hover,
+	.topic-link:focus-visible {
+		text-decoration: underline;
 	}
 
 	.question {
