@@ -1147,6 +1147,29 @@
 		margin: 0 0 0.2rem;
 	}
 
+	/*
+	 * A LIST-SHAPED SURFACE OPTS OUT OF THE UNDERLINE AT REST, which is the
+	 * exemption `base.css` names for the breadcrumb, the nav and the index
+	 * cards: the mark earns its place under a link sitting inside a sentence,
+	 * and every title down this grid is a link, so an underline on each is a
+	 * column of rules through a reference list. Hover and focus restore it —
+	 * the arrival IS the interaction, per the same rule.
+	 *
+	 * IT ARRIVES IN THE LINK'S OWN COLOUR and not in the apparatus grey, which
+	 * `base.css` rejects in as many words: this link carries the rubric red,
+	 * and a grey rule under a red word reads as a mistake. `a:hover` there
+	 * already sets `text-decoration-color: currentColor`, so nothing here has
+	 * to name a colour at all.
+	 */
+	.book h4 a {
+		text-decoration: none;
+	}
+
+	.book h4 a:hover,
+	.book h4 a:focus-visible {
+		text-decoration: underline;
+	}
+
 	.book-what {
 		margin: 0;
 		font-size: 0.9rem;
