@@ -61,17 +61,11 @@ export function sourceUrl(manifest: WorkManifest): string | undefined {
  * they're attached to; the host is what tells a reader whether this text came
  * from the Holy See's own servers, which is the question the link exists to
  * answer. `www.` is stripped as noise.
- */
-export function sourceHost(manifest: WorkManifest): string | undefined {
-	return hostOf(sourceUrl(manifest));
-}
-
-/**
- * The same bare hostname for a URL that did not come off a manifest — a
- * `Prayer.sources` entry, or a siglum's external address. Split out of
- * `sourceHost` when provenance stopped being a work-level fact for prayers
- * (see `Prayer.sources`); that function is now the manifest-shaped caller of
- * this one.
+ *
+ * A manifest-shaped wrapper stood here (`sourceHost`) while the notice drew
+ * exactly one link off exactly one manifest. It has neither any more — see
+ * `sourceLabels`, which is what the notice calls and which has to weigh a
+ * source against the others cited beside it.
  */
 export function hostOf(url: string | undefined): string | undefined {
 	if (!url) return undefined;
@@ -81,6 +75,55 @@ export function hostOf(url: string | undefined): string | undefined {
 		// A malformed URL in a manifest shouldn't take a reading page down.
 		return undefined;
 	}
+}
+
+/**
+ * Link text for a set of sources cited together — the host, and enough of the
+ * path to tell them apart when the host does not.
+ *
+ * ONE SOURCE IS ALWAYS ITS BARE HOST, which is every notice on the site but
+ * one and the whole of what `hostOf` promises: the question the link answers
+ * is whose server the text came from. TWO SOURCES ON ONE SERVER cannot answer
+ * it that way — the Rosary's six editions cite the Holy Rosary micro-site for
+ * their twenty mysteries and the Compendium's appendix for their concluding
+ * prayer, and both are vatican.va, so the label alone would print one word
+ * twice and leave the reader to hover for the difference.
+ *
+ * SO THE PATH IS ADDED, AND NEVER THE FILENAME. A trailing segment carrying
+ * an extension is a file — `index_rosary_ge.htm` — and printing one is what
+ * made the old per-section line read as a leaked path. What is left is the
+ * publisher's own division of its site (`/special/rosary`,
+ * `/archive/compendium_ccc`), which is an address a person can read.
+ *
+ * Two directories, extended only if two entries still collide, so the rule
+ * cannot be defeated by a deeper tree. An entry whose URL will not parse
+ * keeps `undefined` and is dropped by the caller, exactly as `hostOf` leaves
+ * it.
+ */
+export function sourceLabels(urls: (string | undefined)[]): (string | undefined)[] {
+	const parts = urls.map((url) => {
+		const host = hostOf(url);
+		if (!host || !url) return undefined;
+		let segments: string[] = [];
+		try {
+			segments = new URL(url).pathname.split('/').filter(Boolean);
+		} catch {
+			segments = [];
+		}
+		const last = segments.at(-1);
+		return { host, dirs: last?.includes('.') ? segments.slice(0, -1) : segments };
+	});
+	const label = (part: (typeof parts)[number], depth: number) =>
+		part && [part.host, ...part.dirs.slice(0, depth)].join('/');
+	const distinct = (depth: number) => {
+		const drawn = parts.filter(Boolean).map((part) => label(part, depth));
+		return new Set(drawn).size === drawn.length;
+	};
+	if (distinct(0)) return parts.map((part) => label(part, 0));
+	const deepest = Math.max(0, ...parts.map((part) => part?.dirs.length ?? 0));
+	let depth = Math.min(2, deepest);
+	while (depth < deepest && !distinct(depth)) depth += 1;
+	return parts.map((part) => label(part, depth));
 }
 
 /**

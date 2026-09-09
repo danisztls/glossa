@@ -242,8 +242,18 @@ def prayer_dict(n: int, slug: str, cur: dict, lang: str) -> dict:
     for extra in ("groups", "instructions"):
         if rec.get(extra):
             d[extra] = rec[extra]
-    if rec.get("url"):
-        d["sources"] = [{"url": rec["url"]}]
+    # TWO ADDRESSES WHERE THE CURATION RECORDS TWO, AND `cite` LEADS. Every
+    # prayer but one is a page: `url` is where it was read and where it can be
+    # checked. The Rosary is two -- the Compendium's appendix for its
+    # concluding prayer, the Holy Rosary micro-site for its twenty mysteries
+    # and its directions -- and neither address answers for the other's text,
+    # so both are named. `cite` is first because `sources[0]` is what a
+    # consumer reading one takes, and the micro-site is most of the page.
+    urls = [rec["cite"]] if rec.get("cite") else []
+    if rec.get("url") and rec["url"] not in urls:
+        urls.append(rec["url"])
+    if urls:
+        d["sources"] = [{"url": u} for u in urls]
     return d
 
 

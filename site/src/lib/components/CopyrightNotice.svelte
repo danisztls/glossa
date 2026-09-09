@@ -1,6 +1,7 @@
 <!--
 	A work's copyright notice, followed by a link to the page its text was
-	actually scraped from.
+	actually scraped from — or, where the address in view was assembled from
+	more than one page, a link to each of them.
 
 	Renders a `<span>`, not a block: every call site already has its own
 	`<p class="copyright-notice">` (or equivalent) with route-specific
@@ -28,13 +29,7 @@
 	in the same tab costs them their place. `rel="noopener"` accordingly.
 -->
 <script lang="ts">
-	import {
-		copyrightLabel,
-		copyrightNoticeExact,
-		hostOf,
-		sourceHost,
-		sourceUrl
-	} from '$lib/copyright';
+	import { copyrightLabel, copyrightNoticeExact, sourceLabels, sourceUrl } from '$lib/copyright';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { SourceRef, WorkManifest } from '$lib/types';
@@ -53,6 +48,14 @@
 		 * records which; passing it here is what makes the notice name the page
 		 * a reader can actually check the text against.
 		 *
+		 * ALL OF THEM ARE DRAWN, WHERE THE MANIFEST'S FALLBACK DRAWS ONE. That
+		 * asymmetry is the difference between the two lists: a manifest's is
+		 * every page the collection was assembled from — twelve, for English —
+		 * and says nothing about the address in view, where this one is a claim
+		 * about this text. The Rosary is the only prayer with two, and it needs
+		 * both: the appendix has its concluding prayer and not its mysteries,
+		 * the micro-site its mysteries and not its concluding prayer.
+		 *
 		 * Omitted everywhere else, and the fallback is the manifest — so a
 		 * corpus with no per-address provenance behaves exactly as before.
 		 */
@@ -61,26 +64,42 @@
 
 	let { manifest, sources }: Props = $props();
 
-	const source = $derived(sources?.[0]);
-	const url = $derived(source?.url ?? sourceUrl(manifest));
-	const host = $derived(source ? hostOf(source.url) : sourceHost(manifest));
+	const urls = $derived(
+		sources?.length ? sources.map((source) => source.url) : [sourceUrl(manifest)]
+	);
+	/* Paired by INDEX with `urls`, so a label that came back undefined drops
+	   its own link and nothing else's. */
+	const labels = $derived(sourceLabels(urls));
+	const shown = $derived(
+		urls.map((url, i) => ({ url, label: labels[i] })).filter((row) => row.url && row.label)
+	);
 	const exact = $derived(copyrightNoticeExact(manifest));
 </script>
 
 <span class="notice">
 	<span title={exact}>{copyrightLabel(manifest)}</span>
-	{#if url && host}
+	{#if shown.length > 0}
 		<span class="sep" aria-hidden="true">·</span>
+		<!-- ONE LABEL OVER A LIST, and the list is separated by commas rather
+		     than by the `·` above: that dot divides the notice from its
+		     sources, and spending it again inside would make three items of
+		     two. The word stays singular in all thirty-nine dictionaries — a
+		     field label reads over a list without being pluralised, and a
+		     second key would be one English word on this line for every reader
+		     whose language nobody has translated it into yet. -->
 		<span class="source-label">{t('copyright.sourceLabel')}:</span>
-		<a
-			class="source-link"
-			href={url}
-			target="_blank"
-			rel="external noopener"
-			title={t('copyright.sourceTitle')}
-		>
-			{host}<Icon name="external-link" class="ext" />
-		</a>
+		{#each shown as row, i (row.url)}
+			{#if i > 0}<span class="list-sep">,</span>{/if}
+			<a
+				class="source-link"
+				href={row.url}
+				target="_blank"
+				rel="external noopener"
+				title={t('copyright.sourceTitle')}
+			>
+				{row.label}<Icon name="external-link" class="ext" />
+			</a>
+		{/each}
 	{/if}
 </span>
 
@@ -111,6 +130,14 @@
 		/* A label, not part of the destination's name, so it stays outside the
 		   anchor: the link text should be the thing being linked to. */
 		margin-inline-end: 0.2em;
+	}
+
+	/* The comma belongs to the list and not to the address before it, so it is
+	   its own element: inside the anchor it would be underlined as part of a
+	   destination, and the markup's own whitespace would set it a space away
+	   from the address it follows. */
+	.list-sep {
+		margin-inline-start: -0.25em;
 	}
 
 	/* The glyph, at 1em and on the baseline, rose past the cap height of the

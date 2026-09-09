@@ -1511,15 +1511,19 @@ export interface Prayer {
 	 * the Litany of Loreto from the Holy Rosary micro-site. Read this instead
 	 * of the manifest's list wherever one prayer is in view.
 	 *
-	 * ONE ADDRESS PER EDITION, and for the Rosary it is not the page every
-	 * word was read from. Its mysteries and its directions come from the Holy
-	 * Rosary micro-site and its concluding prayer from the Compendium's
-	 * appendix, and the six editions that print the mysteries cite the
-	 * micro-site's index in their own language — four pages of one site being
-	 * one thing to cite, and that site being the bulk of what a reader sees.
-	 * The editions with no mysteries cite the appendix, having no other page.
+	 * ONE ENTRY PER PAGE, AND THE ROSARY HAS TWO. Its mysteries and its
+	 * directions come from the Holy Rosary micro-site, its concluding prayer
+	 * from the Compendium's appendix, and neither address answers for the
+	 * other's text — so the six editions that print the mysteries name both,
+	 * the micro-site's index in their own language first, that being the bulk
+	 * of what a reader sees. The editions with no mysteries name the appendix
+	 * alone. `CopyrightNotice` draws every entry here, where the manifest
+	 * fallback draws one: this list is a claim about the text in view and the
+	 * manifest's is an inventory of the collection's pages.
+	 *
 	 * The groups and the directions carried a `source` apiece until
-	 * 2026-09-09; the curation is what reduces them (`authored/prayers/`).
+	 * 2026-09-09, naming the four sub-pages of the site the index now names;
+	 * the curation is what reduces them (`authored/prayers/`).
 	 *
 	 * Optional so a corpus written before 2026-08-25 still loads — a consumer
 	 * with nothing here falls back to the manifest, which is what it did
