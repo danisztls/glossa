@@ -60,8 +60,13 @@ class SidenoteRoom {
 
 	/**
 	 * How many surfaces currently on the page have taken the margin for
-	 * something else — in practice zero or one, since the only claimant is
-	 * `CompareGrid` and a page compares or it does not.
+	 * something else — in practice zero or one. There are two claimants and
+	 * they cannot overlap: `CompareGrid`, on a page that compares, and
+	 * `/quaestiones/{slug}`, which is not a reading layout at all. They claim
+	 * for opposite reasons and the pair is what the count is really for: one
+	 * SPENDS the slack on a second column, the other never had a gutter to
+	 * spend, and a note floated into either lands in the sentence that raised
+	 * it.
 	 *
 	 * COMPARE MODE SPENDS THE ROOM THE NOTES LIVE IN. The margin is a lane
 	 * sized from what the reading columns leave over (`--margin-lane` in
@@ -147,7 +152,7 @@ class SidenoteRoom {
 	 * Mounted, that re-entered until Svelte gave up with
 	 * `effect_update_depth_exceeded`, which is thrown during hydration and
 	 * leaves the route blank. It took down every compare view and nothing
-	 * else, because `CompareGrid` is the only claimant.
+	 * else, `CompareGrid` having been the only claimant at the time.
 	 *
 	 * THE FIX BELONGS HERE AND NOT AT THE CALL SITE. A method whose whole
 	 * documented shape is "hand this to `$effect`" has to be safe to hand to

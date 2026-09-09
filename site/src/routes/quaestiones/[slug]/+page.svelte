@@ -1,10 +1,34 @@
 <script lang="ts">
 	import { hrefFor } from '$lib/address';
 	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
+	import { sidenoteRoom } from '$lib/sidenotes.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	/**
+	 * THIS PAGE HAS NO GUTTER, so the citations go back to being a disclosure
+	 * inside the text (`sidenotes.svelte.ts`, `#claims`) — the same claim
+	 * `CompareGrid` makes and for the same underlying reason, arrived at from
+	 * the opposite direction. There the slack is spent by a second column;
+	 * here it was never reserved at all. The margin is not a gutter some
+	 * layout owns: it is whatever `.reading-layout` leaves over, and this page
+	 * is not that layout, so every `.margin-note` rendered into it landed in
+	 * the paragraph it belonged beside — the citation's text set in the middle
+	 * of the sentence that raised it.
+	 *
+	 * DECLARED HERE RATHER THAN PASSED DOWN, on `CompareGrid`'s reasoning: the
+	 * alternative is a prop threaded through `ProseBlocks` and every component
+	 * under it to tell each one a fact about the layout it is in.
+	 *
+	 * WHAT THE READER GETS is the apparatus as it already is below the margin
+	 * breakpoint — the marker opens a card on click, and on hover where there
+	 * is a pointer. Nothing about a citation is lost; it stops being open
+	 * beside the line and goes back behind the number, which is what this page
+	 * has room for.
+	 */
+	$effect(() => sidenoteRoom.claim());
 
 	/**
 	 * THIS PAGE RENDERS THE CATECHISM AND SAYS SO.
