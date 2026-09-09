@@ -183,6 +183,12 @@ the reader skims — which is the failure these files exist to prevent.
 
 ## Sandbox quirks that waste time
 
+- **`uv` cannot write its own cache under the sandbox**, so every PEP 723
+  `uv run --script` dies with `Could not acquire lock … Read-only file system`
+  — including `rebuild.py`, which shells out to `uv run` for each stage and
+  reports the whole stage as exit 2. The scrapers have no third-party
+  dependencies: run them with `python3` directly, and run the recipe's stages
+  by hand.
 - **`rm` is aliased to `trash`**, which cannot write `~/.local/share/Trash`
   under the sandbox. It does not fail — it hangs at ~80% CPU and leaks the
   process. Delete with `/usr/bin/rm`.
