@@ -83,35 +83,45 @@
 	const shown = $derived(groups.find((group) => group.days?.includes(viewedIso)));
 </script>
 
-{#snippet mysterySet(group: PrayerGroupEntry)}
-	<section class="prayer-mystery-group">
-		<h2 class="prayer-mystery-name" {lang}>
-			{group.name}
-			{#if group.rubric}<span class="prayer-mystery-rubric">{group.rubric}</span>{/if}
-			<SectionSource url={group.source} />
-		</h2>
-		<ol class="prayer-mystery-items">
-			{#each group.items as item, i (i)}
-				<li><PrayerMystery {item} {lang} /></li>
-			{/each}
-		</ol>
-	</section>
+{#snippet setHeading(group: PrayerGroupEntry)}
+	<h2 class="prayer-mystery-name" {lang}>
+		{group.name}
+		{#if group.rubric}<span class="prayer-mystery-rubric">{group.rubric}</span>{/if}
+		<SectionSource url={group.source} />
+	</h2>
+{/snippet}
+
+{#snippet setItems(group: PrayerGroupEntry)}
+	<ol class="prayer-mystery-items">
+		{#each group.items as item, i (i)}
+			<li><PrayerMystery {item} {lang} /></li>
+		{/each}
+	</ol>
 {/snippet}
 
 {#if !rotates}
 	<!-- An edition that names the sets and not their days: all four, in the
 	     order it prints them. -->
 	{#each groups as group (group.name)}
-		{@render mysterySet(group)}
+		<section class="prayer-mystery-group">
+			{@render setHeading(group)}
+			{@render setItems(group)}
+		</section>
 	{/each}
 {:else}
-	<div class="mysteries">
-		<!-- THE ROW IS THE HEADING OF WHAT IS UNDER IT, so it is `aria-live`:
-		     pressing a button here replaces the whole set below without moving
-		     focus or the scroll position, which is a change a reader who
-		     cannot see it would otherwise have to go looking for. `polite`
-		     because it is never urgent — the reader asked for it. -->
-		<div class="mysteries-nav">
+	<section class="prayer-mystery-group">
+		<!--
+			THE ARROWS FLANK THE SET'S OWN HEADING, and did not until 2026-09-08.
+			They were a bordered row of their own above it, with the weekday
+			centred and set larger than the `<h2>` underneath — so the page
+			opened with a widget that looked like the previous/next bar at its
+			foot, and the thing the buttons actually change was a smaller line
+			below it. A control belongs on the thing it moves: the heading is
+			inside the row now, the weekday is the small label over it, and the
+			rule that used to close the row is gone because a rule there cut a
+			heading off from its own list.
+		-->
+		<div class="mysteries-head">
 			<button
 				type="button"
 				class="mysteries-step"
@@ -120,15 +130,41 @@
 			>
 				<Icon name="arrow-left" class="mysteries-arrow" />
 			</button>
-			<p class="mysteries-day" aria-live="polite">
-				<span class="mysteries-weekday">{weekdayName(viewedIso, i18n.lang)}</span>
-				<!-- The badge names the DAY, never the weekday: "Today" is true in
-				     every interface language without a weekday vocabulary, and the
-				     weekday is already printed beside it. -->
-				{#if viewedIso === todayIso}<span class="prayer-today-badge"
-						>{t('prayers.rosary.today')}</span
-					>{/if}
-			</p>
+			<!-- THE WHOLE HEADING IS THE LIVE REGION, not just the weekday:
+			     pressing a button here replaces the set name, its rubric, its
+			     source and the five mysteries under it without moving focus or
+			     the scroll position, and the set name is the part worth hearing.
+			     `polite` because it is never urgent — the reader asked for it. -->
+			<div class="mysteries-title" aria-live="polite">
+				<p class="mysteries-day">
+					<span class="mysteries-weekday">{weekdayName(viewedIso, i18n.lang)}</span>
+					<!--
+						THE BADGE IS ALSO THE WAY BACK. It used to appear only on
+						today and vanish the moment the reader stepped off it,
+						which left seven presses as the only route home from a
+						week away and moved the heading up a line on the way out.
+						The slot is now always filled: a mark where the reader
+						started, a button everywhere else, and the label reads
+						the same either way.
+
+						It names the DAY, never the weekday — "Today" is true in
+						every interface language without a weekday vocabulary,
+						and the weekday is already printed beside it.
+					-->
+					{#if viewedIso === todayIso}
+						<span class="prayer-today-badge">{t('prayers.rosary.today')}</span>
+					{:else}
+						<button
+							type="button"
+							class="prayer-today-badge prayer-today-reset"
+							title={t('prayers.rosary.todayHeading')}
+							aria-label={t('prayers.rosary.todayHeading')}
+							onclick={() => (offset = 0)}>{t('prayers.rosary.today')}</button
+						>
+					{/if}
+				</p>
+				{#if shown}{@render setHeading(shown)}{/if}
+			</div>
 			<button
 				type="button"
 				class="mysteries-step"
@@ -139,28 +175,25 @@
 			</button>
 		</div>
 
-		{#if shown}
-			{@render mysterySet(shown)}
-		{/if}
-	</div>
+		{#if shown}{@render setItems(shown)}{/if}
+	</section>
 {/if}
 
 <style>
-	/*
-	 * THE CONTROL IS CHROME AND THE SET UNDER IT IS TEXT, which is the whole
-	 * of why this row is sans, small and muted while the heading below it is
-	 * not. A day-stepper set at the prayer's own size would be a second
-	 * heading arguing with the real one.
-	 */
-	.mysteries-nav {
+	/* The two buttons are pinned to the column's edges and the heading takes
+	   what is left, so the set name stays centred however long it runs and the
+	   arrows never move as the week is stepped through. */
+	.mysteries-head {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-		margin: 0 0 1rem;
-		padding-bottom: 0.5rem;
-		border-bottom: 1px solid var(--color-border);
-		font-family: var(--font-sans);
+		gap: 0.75rem;
+		margin: 0 0 0.75rem;
+	}
+
+	.mysteries-title {
+		flex: 1;
+		min-width: 0;
+		text-align: center;
 	}
 
 	.mysteries-day {
@@ -169,12 +202,21 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 0.4rem;
-		margin: 0;
-		font-size: 0.95rem;
+		margin: 0 0 0.15rem;
+		font-family: var(--font-sans);
 	}
 
+	/*
+	 * THE WEEKDAY IS THE LABEL AND THE SET NAME IS THE HEADING, which is why
+	 * this is smaller and lighter than the `<h2>` beneath it. It was the other
+	 * way round while the control was a row of its own: the day was the
+	 * largest thing in the block and "The Glorious Mysteries" read as its
+	 * caption, which inverts what the reader came for.
+	 */
 	.mysteries-weekday {
-		font-weight: 600;
+		font-size: max(var(--font-size-min), 0.85rem);
+		font-weight: 500;
+		color: var(--color-text-muted);
 		/* The weekday is a proper name in most of these languages and is
 		   already capitalised by `Intl`; the ones that lowercase it do so as
 		   a rule of their own orthography, and overriding that here would
@@ -227,6 +269,13 @@
 		margin: 0 0 0.5rem;
 	}
 
+	/* Inside the stepper the head's own margin closes the gap, and the arrows
+	   are centred against this block — a trailing margin here would sit them
+	   above the middle of what they point at. */
+	.mysteries-title .prayer-mystery-name {
+		margin-bottom: 0;
+	}
+
 	.prayer-mystery-rubric {
 		display: block;
 		font-family: var(--font-sans);
@@ -268,5 +317,26 @@
 		   two words ("I dag", "A mai titkok" shortens to "Ma" but "Aujourd’hui"
 		   does not) and a badge that wraps stops reading as a badge. */
 		white-space: nowrap;
+	}
+
+	/*
+	 * THE SAME SHAPE, MUTED, BECAUSE IT IS AN OFFER AND NOT A STATEMENT. The
+	 * badge above says "you are here"; this says "you may go back", and two
+	 * marks that look identical in a slot where only one of them is clickable
+	 * is the worse of the two mistakes. Everything else about it is the
+	 * badge's, so the heading beneath does not shift by a pixel as the reader
+	 * steps off today and back onto it.
+	 */
+	.prayer-today-reset {
+		color: var(--color-text-muted);
+		border-color: var(--color-border);
+		background: none;
+		line-height: inherit;
+		cursor: pointer;
+	}
+
+	.prayer-today-reset:hover {
+		color: var(--color-apparatus);
+		border-color: var(--color-apparatus);
 	}
 </style>

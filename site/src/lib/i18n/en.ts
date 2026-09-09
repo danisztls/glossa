@@ -807,8 +807,14 @@ export const en: Dictionary = {
 	// source's directions as a how-to, and `PrayerMysteries` shows the one set
 	// appointed to a day (`PrayerGroupEntry.days`) with a control to step
 	// through the week. The weekday is NOT a string here: `Intl` names it in
-	// the reader's own language, so these two are the buttons that move it and
-	// the badge marking where the reader started.
+	// the reader's own language, so these are the buttons that move it and the
+	// badge marking where the reader started.
+	//
+	// `today` is printed and `todayHeading` is not: the same control is a mark
+	// on the day the reader arrived on and a button back to it everywhere
+	// else, and one word is all a badge has room for. The longer phrase is
+	// that button's `aria-label` and its tooltip, where "Today" alone would
+	// name a state rather than a destination.
 	'prayers.rosary.today': 'Today',
 	'prayers.rosary.previousDay': 'The day before',
 	'prayers.rosary.nextDay': 'The day after',
