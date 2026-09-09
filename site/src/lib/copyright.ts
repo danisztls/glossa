@@ -68,10 +68,10 @@ export function sourceHost(manifest: WorkManifest): string | undefined {
 
 /**
  * The same bare hostname for a URL that did not come off a manifest — a
- * `Prayer.sources` entry, or the `source` on one of the Rosary's mystery
- * groups. Split out of `sourceHost` when provenance stopped being a
- * work-level fact for prayers (see `Prayer.sources`); that function is now
- * the manifest-shaped caller of this one.
+ * `Prayer.sources` entry, or a siglum's external address. Split out of
+ * `sourceHost` when provenance stopped being a work-level fact for prayers
+ * (see `Prayer.sources`); that function is now the manifest-shaped caller of
+ * this one.
  */
 export function hostOf(url: string | undefined): string | undefined {
 	if (!url) return undefined;

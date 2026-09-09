@@ -112,7 +112,6 @@
 	import CompareCopyrightHeader from '$lib/components/CompareCopyrightHeader.svelte';
 	import PrayerBlocks from '$lib/components/PrayerBlocks.svelte';
 	import PrayerMysteries from '$lib/components/PrayerMysteries.svelte';
-	import SectionSource from '$lib/components/SectionSource.svelte';
 	import PrayerReferences from '$lib/components/PrayerReferences.svelte';
 	import { setPosition } from '$lib/reading-position';
 	import { i18n, t } from '$lib/i18n.svelte';
@@ -548,13 +547,19 @@
 			open them again to find the first line.
 		-->
 		{#if opening}
+			<!-- NO SECOND SOURCE LINE HERE. A section carried one while the
+			     page's own notice named the Compendium appendix and the
+			     sections under it came from the Holy Rosary micro-site — two
+			     provenances on one page, and the smaller one was true of most
+			     of what was on screen. The six editions that have the
+			     mysteries now cite the micro-site's own index, in their own
+			     language, as the prayer's source (`Prayer.sources`), so the
+			     line at the top of the page is the answer for every part of
+			     it and a second copy beside one heading could only disagree
+			     with it. -->
 			<section class="prayer-section">
 				<h2 class="prayer-section-name label-micro">
 					{t('prayers.rosary.openingPrayer')}
-					<!-- The provenance of the words under it, and the last thing
-					     left pointing at the page the directions came from now
-					     that the directions themselves are gone. -->
-					<SectionSource url={p.instructions.source} />
 				</h2>
 				<!-- No rule and no indent beside it. It carried a marginal rule
 				     to mark it as words to SAY rather than to read — which was
@@ -1041,31 +1046,13 @@
 		margin: 0 0 1.75rem;
 	}
 
-	/* LABEL AT THE START, PROVENANCE AT THE END, ONE RULE UNDER BOTH. The
-	   source line was a block inside the heading, so the one section that has
-	   one opened two lines deep where the others opened in one — the same
-	   thing the three names exist to stop. */
+	/* A NAME AND A RULE UNDER IT, and nothing else on the row. It was a
+	   two-ended flex row while a provenance line sat at the far end of one of
+	   the three, which is a layout for a row that no longer has two ends. */
 	.prayer-section-name {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 0.15rem 1rem;
 		margin: 0 0 0.6rem;
 		padding-bottom: 0.35rem;
 		border-bottom: 1px solid var(--color-border);
-	}
-
-	/* `.label-micro` uppercases and letterspaces what is inside it, and
-	   `text-transform` inherits — so without this the provenance line reads
-	   "SOURCE: VATICAN.VA", which is a URL shouted. It is not part of the
-	   label; it is the other end of the row. */
-	.prayer-section-name :global(.prayer-section-source) {
-		display: inline;
-		margin-block-start: 0;
-		text-transform: none;
-		letter-spacing: normal;
-		font-weight: 400;
 	}
 
 	/* A compared prayer needs two full reading measures. This was the

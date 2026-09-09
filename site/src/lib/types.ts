@@ -1464,21 +1464,6 @@ export interface PrayerGroupEntry {
 	 * any future grouped prayer whose groups are not weekday-assigned.
 	 */
 	days?: number[];
-	/**
-	 * The page THIS GROUP's five mysteries were parsed from.
-	 *
-	 * The Rosary is assembled from five pages, not one: the Compendium's
-	 * Appendix A prints the entry (its title, rubric and concluding prayer),
-	 * and the four Holy Rosary micro-site pages print the twenty mysteries
-	 * and the directions — which is the overwhelming bulk of the page a
-	 * reader sees. Attributing that to the Compendium, as the work-level
-	 * notice necessarily did, pointed a reader at a page not containing the
-	 * text they had just read. So each group names its own.
-	 *
-	 * Optional: nothing outside the Rosary has ever had more than one source,
-	 * and a group without this falls back to the prayer's own `sources`.
-	 */
-	source?: string;
 }
 
 /** Source-provided directions attached to a prayer. Present for the Rosary,
@@ -1487,9 +1472,6 @@ export interface PrayerGroupEntry {
 export interface PrayerInstructions {
 	title: string;
 	blocks: PrayerBlock[];
-	/** The page these directions were parsed from -- see
-	 *  `PrayerGroupEntry.source`. */
-	source?: string;
 }
 
 export interface Prayer {
@@ -1529,9 +1511,16 @@ export interface Prayer {
 	 * the Litany of Loreto from the Holy Rosary micro-site. Read this instead
 	 * of the manifest's list wherever one prayer is in view.
 	 *
-	 * It is the prayer's OWN text only: the Rosary's mysteries and directions
-	 * come from four further pages and carry their own `source`, because they
-	 * are the case that motivated all of this (see `PrayerGroupEntry.source`).
+	 * ONE ADDRESS PER EDITION, and for the Rosary it is not the page every
+	 * word was read from. Its mysteries and its directions come from the Holy
+	 * Rosary micro-site and its concluding prayer from the Compendium's
+	 * appendix, and the six editions that print the mysteries cite the
+	 * micro-site's index in their own language — four pages of one site being
+	 * one thing to cite, and that site being the bulk of what a reader sees.
+	 * The editions with no mysteries cite the appendix, having no other page.
+	 * The groups and the directions carried a `source` apiece until
+	 * 2026-09-09; the curation is what reduces them (`authored/prayers/`).
+	 *
 	 * Optional so a corpus written before 2026-08-25 still loads — a consumer
 	 * with nothing here falls back to the manifest, which is what it did
 	 * before.
