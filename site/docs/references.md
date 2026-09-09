@@ -31,6 +31,19 @@ whose verses do not resolve is drawn as text rather than degraded to the
 chapter: the words under it read `98-99` and a chapter link is one the reader
 cannot tell from a working one.
 
+**An optional part of a locus is a RUN, and reading one of it does not merely
+lose the rest — it ends the list.** The verse grammar allowed a single
+subdivision letter, so `Lk 6:23ab, 24` matched `23a`, met a `b` where it wanted
+a separator, and stopped: verse 24 went out with the letter, and `loadPassage`
+withholds a pericope whose citation it cannot read whole, so the day's page
+printed the citation and a line saying it would not give the passage. 86 of the
+Ordo's citations were in that state. The fix is `*` where `?` stood
+(`LEAD_NUM_RE`, and `CROSSING_TAIL_RE` for the same reason one layer up); the
+letters are still discarded, since this site serves whole verses. Over the
+whole corpus the widening moved 56 citations' stray letters inside their link
+and changed no address at all — which is the measurement a grammar widening
+owes, because the danger is never the citations it newly reads.
+
 **A citation this site WRITES is written the way the reader's own Bible
 edition's language writes one.** Four surfaces compose one rather than
 reproduce one — the day's readings, the prayers' "cited in" panel, and the

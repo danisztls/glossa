@@ -3070,8 +3070,24 @@ function findDocumentTitleAt(
 // --------------------------------------------------------------------------
 
 /**
- * A leading run of digits, with an optional single trailing subdivision
- * letter ("3a" -> 3, letter dropped).
+ * A leading run of digits with its subdivision letters -- "23", "23a",
+ * "23ab", "2cdef" -- the letters dropped by `leadNum`.
+ *
+ * THE RUN IS WHY THIS ENDS IN `*` AND NOT `?`. A citation names as many
+ * stichs of a verse as it means, and the Ordo names up to five ("Judith
+ * 13:18bcde"); a one-letter allowance matched "23a", left the "b" standing as
+ * text, and ENDED THE LIST THERE -- so "Lk 6:23ab, 24" lost verse 24 as well,
+ * and `loadPassage` prints no text at all for a pericope whose citation does
+ * not parse whole. Dropping the letters loses nothing: this site serves whole
+ * verses, so a cited stich is served as the verse it belongs to, the way
+ * "Acts 16:14b" always was.
+ *
+ * Greedy is safe because a verse number is only read HERE, after a book and
+ * its chapter separator, and the runs the corpus glues to one are "ff", "ss",
+ * "sq", "nn" -- "and following", which name no further verse and used to
+ * leave their own tail behind as stray text. Over the whole corpus the
+ * widening moves 56 citations' stray letters inside their link and changes no
+ * address at all.
  *
  * A lowercase "l" standing in for the digit "1" is accepted when a digit
  * follows it ("l2" -> 12, "l0" -> 10). This is the same 1/l confusion
@@ -3081,7 +3097,7 @@ function findDocumentTitleAt(
  * has Heb 5:10. The digit lookahead is what keeps it safe -- a bare "l" is
  * still a letter, so no ordinary word can be read as a number.
  */
-const LEAD_NUM_RE = /^(?:l(?=\d)|\d)\d*[a-zA-Z]?/;
+const LEAD_NUM_RE = /^(?:l(?=\d)|\d)\d*[a-zA-Z]*/;
 
 /** `LEAD_NUM_RE`'s match as a number, with a leading "l" read as the "1" it stands for. */
 function leadNum(match: string): number {
@@ -3092,7 +3108,7 @@ function leadNum(match: string): number {
  * Parse a verse list from the start of `s` (no leading separator expected —
  * any leading spaces are consumed as part of the parse). Handles ranges
  * ("12-13", "12–13"), comma/dot-chained additional verses ("15, 33",
- * "16.21"), and verse-subdivision letters ("3a" -> 3). Returns
+ * "16.21"), and verse-subdivision letters ("23ab" -> 23). Returns
  * (sorted deduplicated verses, chars consumed).
  *
  * A leading space is skipped, which the long-gone Python parser did not do.

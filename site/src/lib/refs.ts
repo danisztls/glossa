@@ -418,10 +418,13 @@ export interface PassageSpan {
  * link would have to be minted for the remainder; it is wrong for a caller
  * that wants the passage rather than the anchor, which is what this reads.
  *
- * The verse may carry the lectionary's part letter (`4:2a`), which is ignored:
- * a verse is the finest thing this corpus is addressed by.
+ * The verse may carry the lectionary's part letters (`4:2a`, `2:2bc`), which
+ * are ignored: a verse is the finest thing this corpus is addressed by. A run
+ * rather than one letter, for the reason `LEAD_NUM_RE` takes one — a citation
+ * names as many stichs as it means, and a tail this refuses is a pericope
+ * printed with no text.
  */
-const CROSSING_TAIL_RE = /^\s*[-–—]\s*(\d{1,3})\s*[:,.]\s*(\d{1,3})[a-z]?\s*$/;
+const CROSSING_TAIL_RE = /^\s*[-–—]\s*(\d{1,3})\s*[:,.]\s*(\d{1,3})[a-z]*\s*$/;
 
 /**
  * The semicolon a lectionary citation joins two clauses of one pericope with:

@@ -283,6 +283,24 @@ describe('parseRefs — citation-clause grammar (EN)', () => {
 		});
 	});
 
+	it('strips a RUN of verse-subdivision letters, and keeps reading the list past it', () => {
+		// One letter was all the grammar allowed until 2026-09-09, and the
+		// leftover ended the list rather than trailing it: `Lk 6:23ab, 24`
+		// linked verse 23 alone and lost 24 to a `b, 24` text segment. The Ordo
+		// prints these by the hundred, and `loadPassage` withholds a pericope
+		// whose citation it cannot read whole.
+		expect(parseRefs('Lk 6:23ab, 24')).toEqual([
+			{ kind: 'scripture', osis: 'luke', chapter: 6, verses: [23, 24], raw: 'Lk 6:23ab, 24' }
+		]);
+		expect(parseRefs('Judith 13:18bcde, 19')).toContainEqual({
+			kind: 'scripture',
+			osis: 'jdt',
+			chapter: 13,
+			verses: [18, 19],
+			raw: 'Judith 13:18bcde, 19'
+		});
+	});
+
 	it('chains dot-separated additional verses', () => {
 		const segs = parseRefs('Jn 3:16.21.');
 		expect(segs).toContainEqual({
@@ -2679,6 +2697,20 @@ describe('passageSpans', () => {
 		// for the same reason: one span over the lot would claim verses 3 to 5,
 		// which this citation does not appoint.
 		expect(passageSpans('John 1:1-2, 6-7', CTX)).toEqual([
+			{ osis: 'john', chapter: 1, from: 1, to: 2 },
+			{ osis: 'john', chapter: 1, from: 6, to: 7 }
+		]);
+	});
+
+	it('reads a pericope whose verses carry subdivision letters', () => {
+		// `Lk 6:23ab` is the shape the report came in as: the leftover `b` was a
+		// text segment this refused on, so the page printed the citation and
+		// then said it would not give the passage. The stich is served as the
+		// whole verse it belongs to, which is what the site prints.
+		expect(passageSpans('John 1:14ab', CTX)).toEqual([
+			{ osis: 'john', chapter: 1, from: 14, to: 14 }
+		]);
+		expect(passageSpans('John 1:1-2ab, 6bcd-7', CTX)).toEqual([
 			{ osis: 'john', chapter: 1, from: 1, to: 2 },
 			{ osis: 'john', chapter: 1, from: 6, to: 7 }
 		]);
