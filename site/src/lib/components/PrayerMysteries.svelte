@@ -280,12 +280,15 @@
 		margin: 0 0 1.5rem;
 	}
 
-	/* Deliberately NOT relative to `--reading-base`: this is a label over a
-	   list ("The Joyful Mysteries"), sized as chrome and already smaller than
-	   the body it heads; scaling it with the enlarged prayer type would make
-	   it compete with the text. */
+	/* THE ONE HEADING INSIDE THE MYSTERIES, AND MEASURED AGAINST THE TEXT IT
+	   HEADS. It was a fixed 1.05rem set as chrome, which put it BELOW the
+	   mystery names under it — those are the reading face at reading size,
+	   bold — so the deepest thing in the section was also its largest and the
+	   set name read as a caption over five headings. An `em` is the reading
+	   size here (`.reading-text`), so one step above it holds at every one of
+	   the reader's eleven sizes. */
 	.prayer-mystery-name {
-		font-size: 1.05rem;
+		font-size: 1.15em;
 		margin: 0 0 0.5rem;
 	}
 

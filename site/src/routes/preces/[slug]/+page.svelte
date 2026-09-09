@@ -458,7 +458,13 @@
 		{@const opening = p.instructions.blocks.length > 1 ? p.instructions.blocks[0] : undefined}
 		<details class="prayer-instructions" id="prayer-instructions">
 			<summary>
-				<h2>{t('prayers.rosary.howTo')}</h2>
+				<!-- The same mark the three sections below wear, because this is
+				     a fourth one of them: the row a reader meets first, at the
+				     top level of a page whose top level is the order of the
+				     prayer. It was the one serif heading among them, which made
+				     the directions look like the largest thing on a page they
+				     are the optional part of. -->
+				<h2 class="label-micro">{t('prayers.rosary.howTo')}</h2>
 			</summary>
 
 			<div class="prayer-instructions-body">
@@ -679,7 +685,11 @@
 		)}{/if}{/snippet}
 
 {#if current}
-	<div class="prayer-reading-layout" class:compare={compareActive}>
+	<div
+		class="prayer-reading-layout"
+		class:compare={compareActive}
+		class:group={current.prayer.kind === 'group'}
+	>
 		<div class="content-column" class:compare={compareActive}>
 			<div class="breadcrumb-row">
 				<nav class="breadcrumb" aria-label="Breadcrumb" data-link-preview="off">
@@ -830,9 +840,16 @@
 	 * A prayer is not that. It is short, it is often set in versicle/response
 	 * or stanza lines that break well before the measure, and it is a text
 	 * people read ALOUD and from memory — the two things that make a larger
-	 * face useful rather than merely bigger. The longest thing here is the
-	 * Rosary, and even that is twenty short meditations rather than one column
-	 * of prose.
+	 * face useful rather than merely bigger.
+	 *
+	 * A GROUP PRAYER IS THE EXCEPTION AND TAKES THE ORDINARY BASE. The Rosary
+	 * is not a prayer of that shape: it is a page of directions, twenty
+	 * meditations each with its own Scripture, and a collect — read down like
+	 * a chapter and not said off one screen. The enlargement was written for
+	 * what a short prayer needs and applied to the one text on the route that
+	 * is long, where it bought nothing and cost a third of the page's height.
+	 * `kind === 'group'` is the test because that is what makes a prayer long
+	 * here (types.ts), not a character count that would have to be tuned.
 	 *
 	 * 1.1x (`--reading-base-prayer`, app.css), and the number is bounded rather
 	 * than chosen by eye. `--content-width` is declared on `:root` and
@@ -852,13 +869,8 @@
 	 * columns and the gutter's unit number are `.reading-text`, and a rule
 	 * scoped to the single-column class would silently stop applying the
 	 * moment a reader opened the Latin alongside.
-	 *
-	 * The `1.05rem` heading below is deliberately NOT relative to this. It is
-	 * a label over a list ("How to pray the Rosary?"), sized as chrome and
-	 * already smaller than the body it heads; scaling it with the text would
-	 * make it compete with it. `PrayerMysteries` says the same of its own.
 	 */
-	.prayer-reading-layout {
+	.prayer-reading-layout:not(.group) {
 		--reading-base: var(--reading-base-prayer);
 	}
 
@@ -880,6 +892,13 @@
 		margin: 0 0 1.5rem;
 		padding-bottom: 0.75rem;
 		border-bottom: 1px solid var(--color-border);
+	}
+
+	/* Closed, this row IS one of the section names, so its rule sits where
+	   theirs do (`.prayer-section-name`); open, the same rule is closing a
+	   panel and takes the wider gap. */
+	.prayer-instructions:not([open]) {
+		padding-bottom: 0.35rem;
 	}
 
 	/* `list-style: none` removes the native triangle in Chrome and Firefox (a
@@ -931,7 +950,6 @@
 	}
 
 	.prayer-instructions h2 {
-		font-size: 1.05rem;
 		margin: 0;
 	}
 
@@ -1015,8 +1033,9 @@
 	 * label, and not headings at the prayer's own size. What they mark is
 	 * STRUCTURE, and a structure marker set at reading size is a fourth voice
 	 * arguing with the set names, the mystery names and the text. It is also
-	 * what lets three of them cost less vertical space than the one rule they
-	 * replace.
+	 * what lets them cost less vertical space than the one rule they replace.
+	 * The how-to disclosure above wears the same mark: it opens the page at
+	 * the same level they do.
 	 */
 	.prayer-section {
 		margin: 0 0 1.75rem;
