@@ -58,28 +58,27 @@
 	// only symptom is a calendar opening in the wrong country.
 	"cache": { "enabled": false },
 
-	// Workers Logs, ON, and absent until 2026-09-02. What that absence cost was
-	// measured rather than imagined: a Lighthouse run on 2026-09-01 caught this
-	// site answering a navigation with a 500 whose markup is SvelteKit's own
-	// default error template, and there was nothing to look at afterwards.
-	// `wrangler tail` only streams live, so it cannot reach a failure that has
-	// already happened, and with no block here no per-invocation log is
-	// retained at all. The dashboard's aggregate metrics can say that errors
-	// occurred and not one word about which request or why.
+	// Workers Logs, OFF, which is a departure from the platform default -- every
+	// newly created Worker has observability enabled -- so it is stated here
+	// rather than left to a dashboard toggle nobody else can see.
 	//
-	// `invocation_logs` is the half that makes a request which THREW
-	// distinguishable from one that was never received -- the question the 500
-	// above still has no answer to.
+	// What the absence costs is known rather than guessed: a Lighthouse run on
+	// 2026-09-01 caught this site answering a navigation with a 500 whose markup
+	// is SvelteKit's own default error template, and there was nothing to look at
+	// afterwards. `wrangler tail` only streams live, so it cannot reach a failure
+	// that has already happened, and with logs off no per-invocation record is
+	// retained -- the dashboard's aggregate metrics can say that errors occurred
+	// and not one word about which request or why.
 	//
-	// No `head_sampling_rate`: it defaults to 1, and this Worker runs once per
-	// navigation rather than once per asset (that is what the `!` negations
-	// below are for), so there is no volume here worth sampling away. Sampling
-	// a rare failure is how it stays invisible.
+	// Turning it back on is `"logs": { "enabled": true, "invocation_logs": true }`
+	// in place of the line below. `invocation_logs` is the half that makes a
+	// request which THREW distinguishable from one that was never received, and
+	// no `head_sampling_rate` if it returns: it defaults to 1, this Worker runs
+	// once per navigation rather than once per asset (that is what the `!`
+	// negations below are for), and sampling a rare failure is how it stays
+	// invisible.
 	"observability": {
-		"logs": {
-			"enabled": true,
-			"invocation_logs": true
-		}
+		"enabled": false
 	},
 
 	// The site answers on one hostname, and it is this one. `workers_dev`
