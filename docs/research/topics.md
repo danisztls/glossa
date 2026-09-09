@@ -1,0 +1,534 @@
+# Topics: what a reader arrives doubting, and whether this corpus can answer
+
+Written 2026-09-09. **Nothing here is implemented.** This is a topic-selection
+pass for `PLAN.md` gap 17 — the site's first entry by _subject_ rather than by
+address. It names the topics worth carrying, says which reader each one is for,
+and reports whether the corpus already holds an anchor for it. Where a claim is
+measured against the corpus or a dated survey it says so; the rest is judgment.
+
+Companion to `docs/research/audiences.md`, which found that the site's readers
+split in half on one question — do they arrive with an ADDRESS or with a
+QUESTION — and that everyone in the second half hits the same wall. This
+document is about what the second half is holding when they hit it.
+
+## A topic is not a subject; it is a doorway
+
+`site/document-tags.json` already carries a closed 53-term subject vocabulary,
+and it is the wrong shape for this. Those terms are **browse axes over
+documents** — `labour`, `ecclesiology`, `missions` — chosen so a facet row
+partitions the document set usefully. A reader who wants to know whether the
+Church permits IVF does not think the words `human life`, and the document that
+answers them is not what they want either: they want a paragraph.
+
+The deeper error is subtler, and the first draft of this document made it.
+**Nobody arrives at "marriage."** They arrive at _my husband will not come to
+Mass_, or _we cannot have children_, or _is my first marriage still binding_ —
+three different topics with three different anchor sets, all of them filed under
+one subject word that answers none of them. Sorting by subject produces a
+library catalogue. Sorting by **what happened to the reader in the hour before
+they typed** produces the list.
+
+The clearest case is abortion. As an argument it is CCC 2270–2275 and
+`evangelium-vitae`'s legal and philosophical chapters. But `evangelium-vitae` 99
+addresses, in the second person, a woman who has had one — and she is not
+looking for the argument, has probably already lost it, and will never click a
+topic called "Abortion." **Same corpus, same document, different door.** Any
+topic touching sin, failure or grief splits this way, and the split is invisible
+to a subject list.
+
+### The four doorways
+
+| Doorway               | What the reader is holding                 | How they phrase it               | Where they came from       |
+| --------------------- | ------------------------------------------ | -------------------------------- | -------------------------- |
+| **The argument**      | a position, and an opponent                | "the Church's view on X"         | an argument, online or not |
+| **The life event**    | something that just happened               | "my father died", "I'm pregnant" | their own life             |
+| **The private shame** | something they did, or cannot stop doing   | "is it a mortal sin to…"         | 2 a.m., incognito window   |
+| **The obstacle**      | one thing blocking a decision already made | "I could convert, but Mary"      | halfway in                 |
+
+The argument doorway is the one every survey measures and the only one the first
+draft of this document covered. It is probably the smallest of the four by
+volume and certainly the least changeable by a page of citations — nobody loses
+an argument to the Catechism. **The other three are where a corpus of verbatim
+sources is worth more than any commentary**, because the reader is not looking
+to be persuaded; they are looking for what the Church actually said, in its own
+words, about the exact thing that happened to them.
+
+## What kind of doubt is it
+
+Three kinds, and the corpus answers them unequally well.
+
+| Doubt        | The reader's sentence                  | What answers it                              |
+| ------------ | -------------------------------------- | -------------------------------------------- |
+| a **claim**  | "Is any of this true?"                 | the CCC, Scripture, the councils             |
+| a **rule**   | "Why am I not allowed to?"             | the CCC's Part Three, the moral corpus       |
+| a **record** | "How could the Church have done that?" | mostly nothing here — see the coverage check |
+
+## The tribes, and the question each one will not type
+
+Not politics and not rank — the reader's relation to the Church. The same topic
+word means a different question to each, and the last column is the point: every
+tribe has a question underneath the one it asks, which it will not type because
+typing it would concede something.
+
+| Tribe                               | Asks about                             | Will not type                                |
+| ----------------------------------- | -------------------------------------- | -------------------------------------------- |
+| Cradle Catholic, non-practising     | rules, weddings, godparents            | "am I still allowed back"                    |
+| The returner, after years           | confession, missing Mass               | "how much do I have to confess"              |
+| Convert from evangelicalism         | Mary, papacy, purgatory                | "did I waste twenty years"                   |
+| Deconstructing / exvangelical       | purity culture, hell, authority        | "was I harmed, or just disobedient"          |
+| Spiritual-but-not-religious Gen Z   | astrology, meditation, energy          | "is any of this actually real"               |
+| The civilizational convert          | tradition, beauty, order, natalism     | "do I have to believe it, or only prefer it" |
+| Trad / Latin Mass                   | liturgy, Vatican II, the Pope          | "is my parish's Mass valid"                  |
+| Charismatic                         | healing, tongues, deliverance          | "is what I felt from God"                    |
+| Progressive / synodal               | women, LGBT, governance                | "can teaching change, or only practice"      |
+| Folk-Catholic (LatAm, Africa, Asia) | saints, promises, the ancestors, luck  | "is what my grandmother did superstition"    |
+| Persecuted church (NG, CN, ME, UA)  | martyrdom, obedience, war              | "may I hide that I am Catholic"              |
+| Political Catholic, either wing     | immigration, capitalism, abortion, war | "does the Church agree with my party"        |
+
+Two observations worth keeping. **The civilizational convert is new** and this
+corpus answers them unusually well and unusually bluntly: `placuit-deo` exists
+to say that salvation is neither self-improvement nor belonging to a culture,
+which is precisely their unasked question. And **the folk-Catholic reader is the
+largest tribe on this list globally** and the one no English-language topic page
+is ever built for, though `africae-munus`, `ecclesia-in-america` and CCC
+2110–2117 are all pointed straight at them.
+
+## What was consulted
+
+Dated, because every one of these will move.
+
+- **Pew, 30 Apr 2025**, US Catholics on Church teaching. Majorities want change
+  on birth control (84%), IVF (83%), communion for cohabiting couples (76%),
+  women deacons (68%), married priests (63%), blessing same-sex couples (60%),
+  women priests (59%), same-sex marriage (50%). Weekly Mass attenders run 17–20
+  points lower on each, but are still a majority on cohabitation (59%). That
+  question list is the best available inventory of _which teachings a Catholic is
+  likely to be looking up because they doubt it_.
+- **Pew, 26 Sep 2024**, the same battery across six Latin American countries and
+  the US: majorities favour women priests in every country surveyed except
+  Mexico. The dissent is not a North American artifact, which matters for a site
+  whose largest content languages are Portuguese and Spanish.
+- **Pew, 15 Dec 2025**, why people leave. Former Catholics: no longer believe the
+  teachings (46%), clergy scandals (39%), unhappy with the teaching on social and
+  political issues (37%). Those who became "nones" add that one can be moral
+  without religion (81%) and that they distrust religious leaders (52%). Those
+  who became Protestant say instead that their spiritual needs were unmet (52%).
+- **PRRI**, former Catholics: loss of belief (69%), scandals (39%), the teaching
+  about LGBTQ people (36%).
+- **Catholic Answers' own topic index**, as an inventory of what an apologetics
+  desk is actually asked: Trinity, Incarnation, Real Presence, confession, papal
+  and episcopal authority, Mary and the saints, Scripture and Tradition, faith
+  and works, the last things.
+- **Dignitas Infinita (2024) §§33–62**, the Magisterium's own recent list of what
+  it takes the live questions to be — and it is in the corpus.
+- **SECAM's report on polygamy (Mar 2026)**, from the Synod's study groups:
+  evidence that the Church's own list of live pastoral questions is not the
+  American one.
+
+Two of these sets barely overlap. The apologetics desk gets asked about
+transubstantiation; the surveys find people leaving over contraception and abuse.
+**A topic list built from either alone is half a list.**
+
+## The candidate set
+
+Grouped by doorway, then by band. Each topic gives the reader's own sentence and
+a corpus anchor. CCC ranges are the Catechism's **own captured headings** with
+their paragraph spans, read out of `build/ccc.en/structure.json`; document slugs
+were checked to exist in `build/`. Anchors marked _(none)_ are the finding, not
+an omission.
+
+The set is deliberately over-wide — it is a brainstorm, not a shipping list.
+Cutting it is a separate act, and cutting is easier from too many.
+
+---
+
+## Doorway 1: the argument
+
+The tribal, public, googled-mid-fight door. Seven bands, and the only doorway
+any survey measures.
+
+### A. Is any of it true? — the seeker, the unbeliever, the 46%
+
+| Topic                        | The sentence                        | Anchor                                                                        |
+| ---------------------------- | ----------------------------------- | ----------------------------------------------------------------------------- |
+| God's existence              | "Is there anyone there?"            | CCC 27–43; `fides-et-ratio`; `summa` I q.2                                    |
+| Suffering and evil           | "Then why did he let it happen?"    | CCC 309–314 ("Providence and the scandal of evil"); `spe-salvi`               |
+| Morality without God         | "I can be good without this."       | CCC 1954–1960; `veritatis-splendor`                                           |
+| Is the Bible reliable        | "Who wrote it, and why believe it?" | CCC 105–108; `dei-verbum`; `providentissimus-deus`, `divino-afflante-spiritu` |
+| Science, evolution, creation | "Hasn't science settled this?"      | CCC 282–289; `humani-generis`; `fides-et-ratio`                               |
+| Who Jesus was                | "Did any of it happen?"             | CCC 422–682; `redemptor-hominis`                                              |
+| Death and what follows       | "Is that all there is?"             | CCC 1020–1050 — heaven 1023–29, purgatory 1030–32, hell 1033–37               |
+| Atheism and secularism       | "Religion is what's wrong with us." | `gaudium-et-spes` 19–21; CCC 2123–2128                                        |
+
+### B. How could the Church have done that? — the one who left, the 39%
+
+The band with the highest measured demand and the **thinnest corpus**.
+
+| Topic                          | The sentence                    | Anchor                                                              |
+| ------------------------------ | ------------------------------- | ------------------------------------------------------------------- |
+| The abuse crisis               | "You protected them."           | `dignitas-infinita` §43 — and little else                           |
+| Inquisition, Crusades, Galileo | "Look at your history."         | _(none)_                                                            |
+| The Church's wealth            | "Sell the Vatican."             | `dilexi-te`; `evangelii-gaudium` 53–60, 197–201                     |
+| Clericalism and power          | "It is run by men, for men."    | `evangelii-gaudium`; `christifideles-laici`                         |
+| The Church and the Jews        | "Where were you?"               | `nostra-aetate` 4; CCC 597, 839–840                                 |
+| Colonialism and native peoples | "You came with the conquerors." | `querida-amazonia`; `ecclesia-in-america`; tag `indigenous peoples` |
+
+### C. The other Christian's objection — the 52% who left for a Protestant church
+
+| Topic                       | The sentence                  | Anchor                                                                                |
+| --------------------------- | ----------------------------- | ------------------------------------------------------------------------------------- |
+| Mary                        | "You worship her."            | CCC 963–975, 2673–2679; `lumen-gentium` 52–69; `redemptoris-mater`, `marialis-cultus` |
+| The saints, statues, images | "That is idolatry."           | CCC 946–962, 2132                                                                     |
+| Purgatory and indulgences   | "Where is that in the Bible?" | CCC 1030–1032, 1471–1479                                                              |
+| The Pope, infallibility     | "One man cannot be that."     | `vati.pastor-aeternus`; CCC 880–892; `lumen-gentium` 22–25                            |
+| Scripture and Tradition     | "The Bible alone is enough."  | `dei-verbum` 7–10; CCC 74–100                                                         |
+| Faith and works             | "Are Catholics even saved?"   | CCC 1987–2029; `veritatis-splendor`                                                   |
+| Confession to a priest      | "Why not go straight to God?" | CCC 1422–1498; `reconciliatio-et-paenitentia`                                         |
+| The Eucharist               | "It is a symbol."             | CCC 1373–1381; `encyclical.mysterium`, `eccl-de-euch`, `sacramentum-caritatis`        |
+| Why 73 books                | "You added books."            | CCC 120; `dei-verbum` 11                                                              |
+| Christian division          | "Why not just be Christians?" | `ut-unum-sint`; `unitatis-redintegratio`; tag `Christian unity`                       |
+
+### D. Why am I not allowed to? — the Catholic inside, and the whole Pew battery
+
+The band where the reader is likeliest to arrive from a search engine, and where
+a half-quoted answer does the most damage. Almost every row is a teaching a
+measured majority of US and Latin American Catholics wants changed.
+
+| Topic                           | Demand (Pew 2025)            | Anchor                                                                                                |
+| ------------------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Contraception                   | 84% want it permitted        | CCC 2366–2372; `casti-connubii`, `humanae-vitae`                                                      |
+| IVF, surrogacy, embryos         | 83%                          | CCC 2373–2379; `donum-vitae`, `dignitas-personae`, `dignitas-infinita`                                |
+| Sex before marriage, cohabiting | 76% (communion)              | CCC 2350, 2390–2391; `persona-humana` 7                                                               |
+| Divorce and remarriage          | —                            | CCC 1650–1651, 2382–2386; `familiaris-consortio` 84; `amoris-laetitia` 296–312                        |
+| Homosexuality, same-sex unions  | 60% blessings / 50% marriage | CCC 2357–2359; `persona-humana` 8, `homosexualitatis-problema`, `legal-recognition-homosexual-unions` |
+| Gender, transition              | —                            | `dignitas-infinita` (Gender Theory, Sex Change)                                                       |
+| Women priests and deacons       | 59% / 68%                    | `inter-insigniores`, `responsum-ordinatio-sacerdotalis`                                               |
+| Married priests                 | 63%                          | `encyclical.sacerdotalis`; `presbyterorum-ordinis` 16                                                 |
+| Abortion                        | —                            | CCC 2270–2275; `evangelium-vitae`; `dignitas-infinita`                                                |
+| Euthanasia, assisted suicide    | —                            | CCC 2276–2283; `iura-et-bona`, `samaritanus-bonus`                                                    |
+| The death penalty               | —                            | CCC 2267; `fratelli-tutti`                                                                            |
+| Pornography, masturbation, lust | —                            | CCC 2351–2356; `persona-humana` 9                                                                     |
+| Sunday obligation               | —                            | CCC 2168–2195; `sacrosanctum-concilium`                                                               |
+| Addiction                       | —                            | CCC 2290–2291 — three sentences, and nothing else                                                     |
+| Lying, gossip, reputation       | —                            | CCC 2464–2513                                                                                         |
+| Money, work, debt               | —                            | CCC 2401–2463; `laborem-exercens`                                                                     |
+
+### E. The public square — where politics is the doorway to the faith
+
+37% of former Catholics name the Church's social and political teaching as a
+reason for leaving, and they do not all mean the same teaching. This band is
+where the corpus is at its strongest, and where a reader is likeliest to find
+that the Church does not sit where their tribe assumed.
+
+| Topic                          | Anchor                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Capitalism, wealth, property   | `rerum-novarum`, `quadragesimo-anno`, `centesimus-annus`; `csdc`                                                    |
+| Socialism, communism, Marxism  | `quod-apostolici-muneris`, `divini-redemptoris`, `libertatis-nuntius`, `libertatis-conscientia`, `centesimus-annus` |
+| Labour, wages, unions          | `rerum-novarum`, `laborem-exercens`                                                                                 |
+| Migration and refugees         | `fratelli-tutti`; `dignitas-infinita`; tag `migrants`                                                               |
+| War, peace, arms               | CCC 2307–2317; `pacem` (Pacem in Terris), `gaudium-et-spes` 79–82, `fratelli-tutti`                                 |
+| Nation, State, obedience       | CCC 2234–2246; `immortale-dei`, `diuturnum`; tag `Church and State`                                                 |
+| Religious liberty, persecution | `dignitatis-humanae`; `mit-brennender-sorge`; tag `persecution`                                                     |
+| Ecology and climate            | CCC 2415–2418; `laudato-si`, `laudate-deum`                                                                         |
+| Poverty                        | `dilexi-te`, `populorum`, `sollicitudo-rei-socialis`, `csdc`                                                        |
+| Technology and AI              | `antiqua-et-nova`; `laudato-si` 102–114; CCC 2293–2294                                                              |
+| Media, speech, misinformation  | CCC 2493–2499; `inter-mirifica`                                                                                     |
+
+### F. The neighbour of another faith — the languages this site is actually in
+
+The site serves Arabic, Hebrew, Vietnamese, Ukrainian, Polish, Chinese and
+Malagasy readers. A topic list drawn only from US survey data serves none of
+them, and the continental exhortations exist precisely to be their band.
+
+| Topic                              | Anchor                                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| Islam                              | `nostra-aetate` 3; CCC 841; `lumen-gentium` 16; `ecclesia-in-medio-oriente`          |
+| Judaism                            | `nostra-aetate` 4; CCC 839–840                                                       |
+| Salvation outside the Church       | CCC 839–848 ("The Church and non-Christians"); `dominus-iesus`, `redemptoris-missio` |
+| Polygamy                           | `familiaris-consortio` 19; `ecclesia-in-africa`, `africae-munus`                     |
+| Superstition, magic, the ancestors | CCC 2110–2117; `africae-munus`                                                       |
+| Prosperity preaching, new sects    | `evangelii-gaudium` 89–94; `ecclesia-in-america`                                     |
+| Inculturation                      | `redemptoris-missio` 52–54; `slavorum-apostoli`; `querida-amazonia`                  |
+| Living under an atheist State      | `divini-redemptoris`, `mit-brennender-sorge`, `ecclesia-in-asia`                     |
+
+### G. Catholics arguing with Catholics — the band that is all comment section
+
+Invisible to every survey, because a survey asks whether you are Catholic, not
+which kind. It is a large share of religious argument online, it is where the
+convert lands about eighteen months in, and the corpus answers it better than it
+answers band B.
+
+| Topic                          | The sentence                            | Anchor                                                                   |
+| ------------------------------ | --------------------------------------- | ------------------------------------------------------------------------ |
+| Does teaching ever change      | "You changed it before."                | CCC 66–67; `vati.dei-filius`; `donum-veritatis`                          |
+| May I disagree with the Church | "Not on THIS one."                      | `donum-veritatis`; CCC 1776–1802 (conscience), 892                       |
+| Criticising the Pope           | "He is wrong and I can say so."         | `vati.pastor-aeternus`; CCC 880–892; `mysterium-ecclesiae`               |
+| Did Vatican II break it        | "Everything went wrong in 1965."        | the 16 `vatii.*`; `lumen-gentium` 8                                      |
+| The Latin Mass                 | "They took it away."                    | `sacrosanctum-concilium`; _Traditionis Custodes_ absent                  |
+| Should the State be Catholic   | "Liberalism was the mistake."           | `immortale-dei`, `libertas`, `quas-primas` vs `dignitatis-humanae`       |
+| Synodality and governance      | "Who decides anything?"                 | `lumen-gentium` 22–27; `christifideles-laici`; `pastores-gregis`         |
+| Women in the Church            | "It is run by men."                     | `collaboration-of-men-and-women`; `inter-insigniores`                    |
+| Charismatic gifts, healing     | "Is what I felt from God?"              | CCC 799–801, 2003                                                        |
+| How a Catholic may vote        | "Not for that party, surely."           | `catholics-in-political-life`; CCC 2240–2246                             |
+| Proselytising                  | "Should we even try to convert people?" | `aspects-of-evangelization`; `redemptoris-missio`; `evangelii-nuntiandi` |
+
+**"Does teaching ever change" is the keystone of the whole list.** It sits under
+contraception, the death penalty, usury, slavery, religious liberty and Vatican
+II at once, and how a reader answers it decides whether any other page here is
+worth trusting. If one topic ships first, it is probably this one.
+
+---
+
+## Doorway 2: the life event
+
+Nothing on this list is a controversy, no survey counts it, and it is plausibly
+the largest doorway by volume. The reader is not looking for a position. They
+are looking for what the Church says about the thing that happened on Tuesday.
+
+| The event                      | What they type                            | Anchor                                             |
+| ------------------------------ | ----------------------------------------- | -------------------------------------------------- |
+| Someone died                   | "where is he now"                         | CCC 1020–1050; `spe-salvi`                         |
+| A child died                   | "unbaptised babies"                       | CCC 1261, 1257–1261; `pastoralis-actio`            |
+| A suicide                      | "is she in hell"                          | CCC 2280–2283 — 2283 is the paragraph they need    |
+| A diagnosis                    | "why me"                                  | CCC 1499–1532; CCC 309–314                         |
+| A dying parent                 | "must we keep the feeding tube"           | `iura-et-bona`, `samaritanus-bonus`; CCC 2278–2279 |
+| Choosing cremation             | "may the ashes be scattered"              | `ad-resurgendum-cum-christo` — the whole document  |
+| Getting married                | "what makes it a marriage"                | CCC 1601–1666; `cic` cc. 1055–1165                 |
+| Marrying a non-Catholic        | "will the children have to be Catholic"   | CCC 1633–1637; `cic` cc. 1124–1129                 |
+| A previous marriage            | "what an annulment actually is"           | `cic` cc. 1671–1707; `familiaris-consortio` 84     |
+| Divorce, and Communion         | "may I receive"                           | CCC 1650–1651; `amoris-laetitia` 296–312           |
+| Pregnancy, miscarriage         | "was it a person"                         | `quaestio-de-abortu`; `donum-vitae`; CCC 2270      |
+| Infertility                    | "may we do IVF"                           | CCC 2373–2379; `donum-vitae`, `dignitas-personae`  |
+| A child who left the faith     | "where did I go wrong"                    | CCC 2221–2231; `familiaris-consortio` 36–41        |
+| Losing work, debt              | "does the Church say anything about this" | `laborem-exercens`; CCC 2427–2436                  |
+| Emigrating                     | "leaving my country"                      | `fratelli-tutti` 129–141; `ecclesia-in-america`    |
+| Growing old, being useless     | "what am I for now"                       | `familiaris-consortio` 27; CCC 2218                |
+| Coming back after twenty years | "how do I even start"                     | CCC 1422–1498; `reconciliatio-et-paenitentia`      |
+
+---
+
+## Doorway 3: the private shame
+
+Typed at 2 a.m., in a private window, by someone who would never ask a person.
+The volume is high, the intent is not argument, and **the entry must resolve to
+the pastoral paragraph rather than the condemning one** — otherwise the page
+does harm. `evangelium-vitae` 99 versus CCC 2270–2275 is the whole design of
+this band in one example.
+
+| What happened                     | What they type               | Anchor                                               |
+| --------------------------------- | ---------------------------- | ---------------------------------------------------- |
+| Pornography                       | "I cannot stop"              | CCC 2354, 2351–2356; 1264 (concupiscence remains)    |
+| Masturbation                      | "is it always mortal"        | CCC 2352 — the second half of the paragraph          |
+| An abortion, years ago            | "can I be forgiven"          | `evangelium-vitae` 99                                |
+| Contraception, or a sterilisation | "we already did"             | `familiaris-consortio` 33–34 (gradualness); CCC 1735 |
+| An affair                         | "should I tell"              | CCC 2380–2381; 2487 (reparation)                     |
+| Being gay and Catholic            | "what am I supposed to do"   | CCC 2358–2359 — not 2357                             |
+| Drinking, drugs, gambling         | "am I an addict or a sinner" | CCC 2290–2291, 2413 — thin, see the gaps             |
+| Self-harm, an eating disorder     | "is this a sin"              | CCC 2288–2289 — thin                                 |
+| Wanting to die                    | "would God forgive it"       | CCC 2280–2283; `samaritanus-bonus`                   |
+| Someone I cannot forgive          | "do I have to"               | CCC 2842–2845; `dives-in-misericordia`               |
+| I do not believe any more         | "and I still go to Mass"     | CCC 162, 2088–2089; `spe-salvi` 1–9                  |
+| Fear that God cannot forgive      | "the unforgivable sin"       | CCC 1846–1848, 982, 1864                             |
+| Scrupulosity                      | "did I confess it properly"  | CCC 1454–1460; 1735 (imputability)                   |
+| Not having confessed in years     | "what do I even say"         | CCC 1450–1460; `reconciliatio-et-paenitentia` 31     |
+
+---
+
+## Doorway 4: the ordinary question
+
+Neither a fight nor a crisis. Somebody simply wants to know, and the volume is
+enormous — `docs/research/audiences.md` §1 picked one of these ("_a Igreja
+permite cremação?_") as its example query without noticing it was a genre.
+
+### H. The supernatural, and what the Church says is real
+
+The highest-volume band on this page and the one absent from every serious
+topic list, because it embarrasses the people who write them.
+
+| Topic                              | Anchor                                         |
+| ---------------------------------- | ---------------------------------------------- |
+| Astrology, tarot, crystals, luck   | CCC 2115–2117 — names each practice explicitly |
+| Manifesting, "the universe"        | CCC 2110–2117; `placuit-deo`                   |
+| Ghosts and the dead                | CCC 2116; 1030–1032                            |
+| Demons, possession, exorcism       | CCC 391–395, 550, 1673                         |
+| Angels, guardian angels            | CCC 328–336                                    |
+| Yoga, mindfulness, meditation      | CCC 2705–2719 — _Orationis Formas_ absent      |
+| Apparitions and private revelation | CCC 66–67; `signum-magnum`                     |
+| Miracles, relics, the incorrupt    | CCC 156, 1674–1676                             |
+| Near-death experiences             | CCC 1021–1022                                  |
+| The end of the world, Antichrist   | CCC 668–682                                    |
+| Freemasonry                        | tag `Freemasonry`; `humanum-genus`             |
+
+### I. The body, the calendar and ordinary practice
+
+| Topic                               | Anchor                                      |
+| ----------------------------------- | ------------------------------------------- |
+| Cremation, ashes, burial            | `ad-resurgendum-cum-christo`; CCC 2300–2301 |
+| Fasting, Lent, meat on Friday       | CCC 1434–1439, 2043; `cic` cc. 1249–1253    |
+| Organ donation, transplants         | CCC 2296; `evangelium-vitae` 86             |
+| Tattoos, cosmetic surgery, the body | CCC 2288–2289                               |
+| Alcohol and drugs                   | CCC 2290–2291                               |
+| Sunday work and rest                | CCC 2184–2188; `laborem-exercens` 25        |
+| Missing Mass                        | CCC 2180–2183; `cic` c. 1247                |
+| Godparents, baptising a baby        | `pastoralis-actio`; `cic` cc. 872–874       |
+| Tithing and giving                  | CCC 2043; `cic` c. 222                      |
+| Vows, promises, swearing            | CCC 2101–2109, 2150–2155                    |
+
+### J. Work, money and time
+
+| Topic                          | Anchor                                                                |
+| ------------------------------ | --------------------------------------------------------------------- |
+| What to do with my life        | `christus-vivit` 248–298; CCC 1877–1889                               |
+| Ambition, burnout, hustle      | CCC 2427–2428; `laborem-exercens` 9                                   |
+| Debt, interest, credit         | `oeconomicae-et-pecuniariae-quaestiones` — _Vix Pervenit_ absent      |
+| Investing, speculation, crypto | `oeconomicae-et-pecuniariae-quaestiones`; `caritas-in-veritate` 40–45 |
+| A just wage, striking          | `rerum-novarum`; `laborem-exercens` 19–20; CCC 2434–2435              |
+| Tax, and cheating on it        | CCC 2240, 2409                                                        |
+| Rest and leisure               | CCC 2184–2188; `gaudete-in-domino`                                    |
+| Envy and comparison            | CCC 2538–2540                                                         |
+| Sloth, acedia, boredom         | CCC 1866, 2094, 2733 — 2733 is about prayer specifically              |
+
+### K. Justice and the person
+
+Band E is the systems half of social doctrine; this is the half about a person
+in front of you, and it maps almost one-to-one onto `dignitas-infinita`'s own
+enumeration of grave violations.
+
+| Topic                              | Anchor                                                            |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| Racism and antisemitism            | CCC 1934–1935, 2488; `nostra-aetate` 4; `fratelli-tutti`          |
+| Caste and social exclusion         | CCC 1934–1935; `ecclesia-in-asia`                                 |
+| Human trafficking, prostitution    | `dignitas-infinita`; CCC 2355, 2414                               |
+| Domestic violence                  | `dignitas-infinita` (Violence Against Women); CCC 2356            |
+| Disability                         | `dignitas-infinita` (Marginalization of People with Disabilities) |
+| Prisons, torture, criminal justice | CCC 2266–2267, 2297–2298                                          |
+| Self-defence and weapons           | CCC 2263–2265, 2316                                               |
+| Bullying and digital violence      | `dignitas-infinita` (Digital Violence); `antiqua-et-nova`         |
+| Animals and how we eat             | CCC 2415–2418                                                     |
+| Whether to have children at all    | `laudato-si` 50; `humanae-vitae` 10; CCC 2368                     |
+
+## What the coverage check found
+
+**The corpus answers the rule and the claim; it barely answers the record.**
+Every topic in bands A, D, E and F has at least one magisterial anchor and most
+have several. Band B has almost none — and band B is where 39% of the people who
+left say they left. The reason is structural and already stated in
+`docs/decisions.md`: the corpus takes encyclicals, exhortations, conciliar
+constitutions, doctrinal-office documents, the CCC, the Compendium, the Code and
+the Social Doctrine Compendium. **An apostolic letter is not a kind this corpus
+takes**, and that is where the historical reckoning lives — _Tertio Millennio
+Adveniente_, _Salvifici Doloris_, _Dies Domini_, _Mulieris Dignitatem_,
+_Indulgentiarum Doctrina_, _Ordinatio Sacerdotalis_ itself. So is _Fiducia
+Supplicans_, checked and absent while the three earlier documents on the same
+subject are present: a topic page on homosexuality built today would be silently
+two years out of date.
+
+**A topic that cannot be answered properly does not ship, and the gap is
+recorded here rather than left implicit** (decided 2026-09-09). The reader who
+lands on a topic resolving to three sentences concludes the Church has nothing to
+say, which is worse than never offering the topic. So the list below is the
+shipping blocklist, and every line is a claim that the corpus — not the Church —
+is what falls short.
+
+| Held back                     | Why                                                                                                                        |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| The whole of band B           | apostolic letters are not a document kind here; the reckoning is in them                                                   |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                  |
+| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                     |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                  |
+| Debt and interest             | _Vix Pervenit_ absent                                                                                                      |
+| The Latin Mass                | _Traditionis Custodes_ and its predecessors absent                                                                         |
+| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one |
+
+The absent documents are to be acquired later, at which point the held topics
+become shippable without the list changing shape. What must not happen is a
+topic shipping over a corpus that answers an older question than the one asked.
+
+One further hole belongs to no document: **anything after the corpus's last
+fetch.** A topic page dates faster than a document page, because a topic is a
+promise to be current and a document is not.
+
+## The mechanism this suggests
+
+Accepted 2026-09-09 as the direction, not yet as a design.
+
+`build/ccc.en/paragraphs.json` carries a `citations` array on **1,877 of the
+2,865 paragraphs** (measured 2026-09-09), and those citations are both scriptural
+and magisterial. CCC 2357 carries `Gen 19:1-29; Rom 1:24-27; 1 Cor 6:10;
+1 Tim 1:10` and `CDF, Persona humana 8` — which is to say the Bible passages and
+the magisterial document this topic needs **are already in the corpus, chosen by
+the Catechism rather than by us**. And `structure.json` carries the Catechism's
+own heading "Chastity and homosexuality" with the span `[2357, 2359]`.
+
+So the editorial act need not be "choose the passages for homosexuality". It can
+be **"this topic is that heading"** — one mapping, topic to CCC span — and the
+Scripture and the documents fall out of the Catechism's own footnotes. Same
+posture as everywhere else here: derive it, and let a third party verify rather
+than serve. The judgment stays small, sits in tracked source beside
+`document-tags.json` and `descriptions.json`, and is checkable against a printed
+book.
+
+It does not cover everything. Bands B and E are thin in the CCC and rich in the
+documents, where the existing tag vocabulary is the better index; and a topic
+with no CCC heading (addiction, AI) needs its span chosen rather than read. But
+it means the page starts from something the Church wrote.
+
+## What this set deliberately leaves out
+
+- **Devotional and liturgical how-to** — how to pray the Rosary, what happens at
+  Mass, what to say in confession. Real demand, but `/preces` and `/schola`
+  already own it.
+- **News.** Whatever a pontificate is being argued about this month. It dates in
+  weeks and this corpus is not built to keep up.
+- **A verdict.** The set is chosen so that every topic resolves to _passages_.
+  The moment an entry needs a sentence of our own explaining what the passages
+  mean, it has left the arrangement this project's name promises.
+
+## What shipped
+
+`/quaestiones` landed 2026-09-09 with **twelve topics, three from each
+doorway** — the slice chosen so the hardest cases were attempted first rather
+than deferred. Three of the twelve carry the pastoral ordering this document
+argued for, and two of those are the reason it exists: `mors-voluntaria` leads
+on CCC 2283 and `homosexualitas` on 2358.
+
+| Doorway       | Shipped                                                            |
+| ------------- | ------------------------------------------------------------------ |
+| argument      | whether teaching changes, contraception, homosexuality             |
+| life event    | cremation, after a suicide, annulment                              |
+| private shame | whether a sin can be forgiven, pornography, confession after years |
+| ordinary      | astrology and divination, fasting, organ donation                  |
+
+The mechanism held: every topic anchors spans of the Catechism, and the
+Scripture and magisterial citations come from those paragraphs' own footnotes.
+Nothing in the shipped set required a passage to be chosen by hand.
+`site/docs/topics.md` records what the route cost to add.
+
+Everything else on this page is still a candidate. The list below is what a
+second pass takes next, and the blocklist above still holds.
+
+## Decided
+
+- **A topic the corpus cannot answer properly does not ship**, and the gap is
+  documented rather than filled with a thin page. The blocklist is above.
+- **The absent documents are acquired later.** Held topics ship when their
+  document arrives; the shape of the list does not change to accommodate the
+  absence.
+- **Derive the passages from the Catechism's own apparatus** rather than
+  assembling them by hand, per the mechanism above.
+
+## Still open
+
+1. **How many ship.** Roughly 150 candidates here across four doorways; a first
+   page is probably 20–30. The vocabulary discipline in `document-tags.json`
+   applies — a term resolving to one document is worse than no term.
+2. **One entry per topic, or one per doorway?** The abortion case says they are
+   genuinely two topics with two anchor sets, which doubles the editorial work
+   and is the difference between a page that argues and a page that helps.
+3. **What the route is called.** Every route here is Latin: `quaestiones` reads
+   as the reader's question, `loci` as the theologian's index.
+4. **Whether doorway 3 can be built at all in this register.** Its entries need
+   the pastoral paragraph first and the condemning one second, and that ordering
+   is a judgment about a reader's state — closer to editorialising than anything
+   else on this site does. A topic listing CCC 2357 before 2358 is a different
+   page from one that does the reverse, and neither ordering is neutral.
