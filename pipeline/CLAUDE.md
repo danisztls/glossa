@@ -321,9 +321,31 @@ sl sw vi`) as vocabulary entries. What bites:
   publishing decision.** Most pages were already under `raw/` from an earlier
   `--fetch-only` run and the recorded 404s covered most of the rest, so the
   ten-language expansion cost 369 new requests.
-- **If a family has a discovery function and a flag, check the rebuild recipe
-  passes the flag.** `--exhortations` is opt-in and no recipe passed it, so 33
-  documents sat in `raw/` with nothing saying they were missing.
+- **A per-family flag is a way to forget a family.** `--exhortations` was
+  opt-in and no recipe passed it, so 33 documents sat in `raw/` with nothing
+  saying they were missing. `--families` names them off `MODERN_FAMILIES` and
+  the recipe passes `all`.
+- **Which indexes a family is read in is a property of the family.**
+  Encyclicals need `en,it`; every apostolic letter and constitution before
+  Paul VI exists in Latin and in nothing else, so English alone reports those
+  families as nearly empty. `ModernFamily.index_langs`, measured over every
+  index page the modern shell publishes.
+- **Three copies of a discovery function held three different answers to
+  "which index do we read", and nothing named the difference.** Two apostolic
+  exhortations were invisible for it, both cited by works this corpus already
+  serves: _Menti Nostrae_ and _Haerent Animo_.
+- **A long family's index is a list of years, not of documents.** The top page
+  then links nothing, which reads as a family the pontificate does not have —
+  John Paul II's 28 years of apostolic letters are behind `{year}.index.html`.
+- **An anchored filename pattern can only be extended by noticing the next
+  document that went missing.** Four conventions are in use; `parse_date_slug`
+  now takes the last delimited eight-digit run and everything after it, and
+  reports what it cannot read (`docs/research/vatican-documents.md`).
+- **"What is there" was a question no ledger answered.** `absent-sources.json`
+  and `translations-checked.json` both answer "did we ask" about a page
+  somebody already knew to ask for; `build/magisterium-map/` is the census of
+  the source, and `pipeline/magisterium-offsite.json` the tier of it that no
+  page can regenerate.
 - **`lt` is LATIN on the Vatican II mirror; `sw` is SWAHILI.** The archive
   mirror uses its own codes (`po` Portuguese, `sp` Spanish, `ge` German, `lt`
   Latin, `lv` Latvian, `be` Byelorussian); `VATII_LANG_FROM_URL` reads them off

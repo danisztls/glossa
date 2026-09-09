@@ -60,6 +60,10 @@
 		"  }"
 	],
 	"works": {
+		"bull.misericordiae-vultus.ar": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 25 in all eleven other editions: the whole 37 KB is unnumbered matter."
+		},
 		"cdf.collaboration-of-men-and-women.hu": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 4 sections against 17 in the median edition of this document and one of them holds 51% of its 38 KB, i.e. this page's numbering was not recognised and most of its text was swept into one section. Its other editions are unaffected."
@@ -87,6 +91,58 @@
 		"cdf.persona-humana.de": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 5 sections against 13 in the median edition of this document and one of them holds 56% of its 37 KB, i.e. this page's numbering was only partly recognised. Its other editions are unaffected."
+		},
+		"constitution.indulgentiarum-doctrina.hu": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 18 sections against 12 in the other six editions, and no unnumbered matter where they each carry a note block."
+		},
+		"constitution.pastor-bonus.de": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 1 section against 14 in EN, IT and LA, holding 4% of its 81 KB -- the rest swept into unnumbered matter."
+		},
+		"constitution.pastor-bonus.es": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 14 in EN, IT and LA: the whole 106 KB is unnumbered matter."
+		},
+		"constitution.pastor-bonus.pt": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 35 KB against 103-144 KB in its four siblings -- two thirds of the constitution is missing from the parse."
+		},
+		"constitution.sapientia-christiana.de": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 9 sections against 27 in FR and 0 in ES/IT/LA, with 68% of its 88 KB in one of them."
+		},
+		"constitution.sapientia-christiana.en": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 9 sections and 92% of its 81 KB in one of them."
+		},
+		"constitution.sapientia-christiana.es": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 27 in FR: the whole 53 KB is unnumbered matter."
+		},
+		"constitution.sapientia-christiana.fr": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 27 sections and 91% of its 51 KB in one of them."
+		},
+		"constitution.sapientia-christiana.it": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 27 in FR: the whole 81 KB is unnumbered matter."
+		},
+		"constitution.sapientia-christiana.la": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 27 in FR: the whole 45 KB is unnumbered matter."
+		},
+		"constitution.sapientia-christiana.pt": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 2 sections and 97% of its 90 KB in one of them."
+		},
+		"constitution.veritatis-gaudium.lv": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 99 sections against 9 in six of the nine editions."
+		},
+		"constitution.veritatis-gaudium.pt": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 25 sections against 9 in six of the nine editions."
 		},
 		"encyclical.acerbo-nimis.it": {
 			"date": "2026-08-29",
@@ -139,6 +195,38 @@
 		"exhortation.signum-magnum.en": {
 			"date": "2026-08-29",
 			"reason": "Parse defeat found by the ten-language ingestion: the edition captured 8 sections and §1 holds 60% of the 29 KB, i.e. the document's numbering was not recognised on this page and nearly all of its text was swept into one section. Its other editions are unaffected."
+		},
+		"letter.maximum-illud.de": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 14 sections against 42 in EN, with 41% of its 38 KB in one of them."
+		},
+		"letter.maximum-illud.es": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 114 sections against 42 in EN over the same 37 KB -- a numbered list read as the document's own numbering."
+		},
+		"letter.rosarium-virginis-mariae.hu": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 1 section against 43 in all eight other editions, holding 16% of its 69 KB."
+		},
+		"motu-proprio.cleri-sanctitati.la": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 5 sections and 308 unnumbered units over 373 KB: this is a code of canons (Can. 1-2666), a shape `cic.py` reads and `parse_document` does not. Its only edition, so the document is not published at all; `raw/` keeps the page.."
+		},
+		"motu-proprio.crebrae-allatae.la": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 2 sections over 52 KB with 74% in one of them: the same canon-numbered shape as `cleri-sanctitati`. Its only edition.."
+		},
+		"motu-proprio.ecclesiae-sanctae.la": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 67 sections against 84 in EN and IT, missing 17 of them."
+		},
+		"motu-proprio.sacrum-diaconatus.it": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 9 sections against 35 in EN over the same 16 KB."
+		},
+		"motu-proprio.sacrum-diaconatus.la": {
+			"date": "2026-09-09",
+			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 13 sections against 35 in EN over the same 14 KB."
 		},
 		"vatii.christus-dominus.fr": {
 			"date": "2026-08-29",

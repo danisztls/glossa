@@ -281,3 +281,38 @@ summi-maeroris                EN [1,2,3]..[13,14,15]     PT [1,2,4]..[4,6,8]    
 
 Full list of all 54 (work id, validate_document's own `problems` list) is preserved in this session's tool transcripts; regenerate on demand with `check-symmetry`-adjacent tooling (`validate_document` over every written work) rather than trusting this file to stay current as the corpus changes.
 </content>
+
+## 8. The modern shell's six families, and the map (2026-09-09)
+
+Read on 2026-09-09 by probing every `content/{pontiff}/{lang}/{segment}.index.html` the modern shell publishes — thirteen candidate pontificates × fourteen candidate languages × six families, 1,092 requests at the 2s crawl-delay — and then re-crawled through the scraper itself so the pages live in `raw/` (447 further fetches, 97 skipped as known-absent). The question was the one §5 never asked: not "can we parse it" but "what is there".
+
+### 8.1 What the shell publishes
+
+| Family                | Documents | With no English edition | Published |
+| --------------------- | --------: | ----------------------: | --------: |
+| `encyclicals`         |       222 |                       7 |       222 |
+| `apost_exhortations`  |        56 |                      23 |        56 |
+| `apost_letters`       |     1,963 |                   1,892 |        16 |
+| `apost_constitutions` |     1,297 |                   1,277 |        16 |
+| `motu_proprio`        |       270 |                     179 |        23 |
+| `bulls`               |        12 |                       9 |         3 |
+
+3,820 documents; 3,388 of them have no English edition. The two families published whole are the two whose index is the Holy See's list of what a pontiff _taught_; the other four are its complete list of what he _signed_, and are selected from.
+
+### 8.2 Three defects, each of which reported a document as non-existent
+
+- **One index language.** `discover_encyclicals` read English then Italian; `discover_exhortations` and `discover_letters` read English alone, and nothing in the code said the three disagreed. The English exhortation index lists 33 of the family's 56. Four of the missing 23 are cited by works this corpus already serves: _Menti Nostrae_ (Pius XII, 1950, 8 citations), _Quinque Iam Anni_ (Paul VI, 1970, 4), _Haerent Animo_ (Pius X, 1908, 3), _Paterna Cum Benevolentia_ (Paul VI, 1974, 3). The chain is a property of the family: every apostolic letter and constitution before Paul VI exists in Latin and in nothing else.
+- **Anchored filename patterns.** The two conventions `parse_date_slug` knew matched 2,530 of the 2,553 filenames the indexes link. The 23 they missed are the ones filed `papa-francesco-motu-proprio-20190507_vos-estis-lux-mundi` (a hyphen, not an underscore, before the date) and `20240509_spes-non-confundit_bolla-giubileo2025` (a qualifier after the slug) — which is how _Vos Estis Lux Mundi_, _Aperuit Illis_ and the 2025 jubilee bull were invisible. Twenty more matched but kept a filler word (`motu-proprio-traditionis-custodes`). The rule now is the last delimited eight-digit run and everything after it, cut at the next underscore; it reads 2,548 and **reports** the five it cannot — four whose date is not eight digits (`hf_p-xii_apl_1941123_…`) and one 1896 letter named in spelled-out Latin.
+- **Year sub-indexes.** A long family's top index links no documents at all, only `{year}.index.html`, and the documents themselves then sit at `/{segment}/{year}/documents/…`. John Paul II's 28 years of apostolic letters and John XXIII's letters and constitutions are behind that split. Requiring the short path found the year pages, fetched all 273 of them, and matched nothing on any of them.
+
+### 8.3 The selection, and what it cannot see
+
+A document is selected where the corpus's own apparatus names it **as that kind of document** three or more times. Both halves of that are load-bearing. A bare substring count cannot decide it — `concilium`, `pacem` and `populorum` score in the thousands on ordinary prose — and counting any kind word crosses documents that share an incipit: `divinum-illud` is a 1971 letter of Paul VI and also Leo XIII's 1897 encyclical, which is what the apparatus is citing. A slug the family uses more than once carries no count at all: `Litt. ap. Spiritus Domini` names any of four.
+
+**The floor, not the ceiling.** Where a filename names the document's SUBJECT rather than its incipit — the inversion `CDF_DOCUMENTS` documents for the doctrinal office — no title match can reach it. _Spes Aedificandi_ is filed `co-patronesses-europe`, _Intima Ecclesiae Natura_ as `caritas`, and _Divinae Consortium Naturae_ as `divina-consortium`, which was found by reading the map rather than the citations. Growing the selection is now a table over `build/magisterium-map/map.json` and costs no crawl.
+
+### 8.4 What is not on vatican.va at all
+
+`pipeline/magisterium-offsite.json`, nine documents, admitted the same way: a title the apparatus names by kind that matches nothing the map lists and nothing `build/` holds. They fall into three classes and no other — **Pius IX** (_Ineffabilis Deus_ 18 citations, _Quanta Cura_ 13, _Qui Pluribus_ 10: his `content/pius-ix/` shell exists and every family's index under it answers 404, in all fourteen languages), **pontificates before Leo XIII** (four of Benedict XIV's encyclicals), and **bulls older than the shell** (_Unam Sanctam_, and Lateran V's _Apostolici Regiminis_). §2's guess that Vatican I might not be on the site was wrong in the same shape and was corrected in September 2026; this is the general form of it.
+
+**What does not belong in that file**: a document vatican.va publishes in a family the map does not read. _Dominicae Cenae_ is cited 21 times and sits under `letters/` — a different question, and the honest answer is that the map covers six families and there are more.

@@ -138,3 +138,44 @@ the first leading run has no heading to carry it (Vatican I's constitutions
 open with an address to the Church above the first `CAPUT`), and pairing by
 title cannot place a run with no title. `before: null` keeps meaning what it
 always meant.
+
+## The map
+
+**Every ledger here answers "did we ask" about a page somebody already knew to
+ask for.** `absent-sources.json` records a definitive 404,
+`translations-checked.json` records why a sibling edition is missing. Neither
+answers "what is there", so a document nobody had thought of was
+indistinguishable from a document nobody had published, and both read as empty
+space. Seven Italian encyclicals were found that way by accident in August; two
+apostolic exhortations in September, the same way.
+
+**`build/magisterium-map/` is the census of the source, and it costs no
+document fetch.** Each index entry prints the document's slug, its date and its
+own title, and membership of a language's index IS that language's edition — a
+better answer than the page's own switcher, which under-reports (Rerum
+Ecclesiae's English index entry names English alone and four other indexes list
+it). So the map is derived from the indexes in `raw/`, rebuilt with no network,
+and deletable like everything else in `build/`.
+
+**`pipeline/magisterium-offsite.json` is the tier that has no page to sit
+beside**, and it is tracked here for the reason the root CLAUDE.md gives for
+`absent-sources.json`: output regenerable only from a previous copy of itself is
+not regenerable. What puts a document in it is the corpus's own apparatus —
+a title named by kind (`Bull Ineffabilis Deus`) that matches nothing the map
+lists and nothing `build/` holds. Each entry carries the count it was admitted
+on and the day it was counted, because that is evidence for the claim beside it
+and not an inventory number.
+
+**A document in a family the map does not cover is not missing from
+vatican.va.** _Dominicae Cenae_ is cited 21 times and sits under `letters/`,
+which the map does not read; recording it as absent would be a false claim
+about someone else's server. The six families the map covers are the ones
+`MODERN_FAMILIES` names.
+
+**A filename that names the SUBJECT defeats a count that matches titles.**
+`spes-aedificandi` is filed as `co-patronesses-europe` and _Intima Ecclesiae
+Natura_ as `caritas`, so neither can be reached by matching what the apparatus
+prints — the same inversion `CDF_DOCUMENTS` documents for the doctrinal
+office, arriving in the motu proprio family. The selection is a floor there,
+not a ceiling, and the map is what makes the rest visible without crawling
+again.

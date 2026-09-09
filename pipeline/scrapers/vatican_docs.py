@@ -153,17 +153,21 @@ Empirically confirmed templates (see survey doc + live fetches performed
 Sources / URL patterns (see docstring on each discover_* function for the
 exact shape):
   Vatican II index: https://www.vatican.va/archive/hist_councils/ii_vatican_council/index.htm
-  Encyclical index (per pontiff): https://www.vatican.va/content/{pontiff}/en/encyclicals.index.html
-  Apostolic exhortation index (per pontiff): .../content/{pontiff}/en/apost_exhortations.index.html
-  Apostolic letter index (per pontiff): .../content/{pontiff}/en/apost_letters.index.html
-    -- read, but not published whole: `APOSTOLIC_LETTERS` selects from it.
+  The modern shell's six families, per pontiff and per index language:
+    .../content/{pontiff}/{lang}/{segment}.index.html, where `segment` is
+    `encyclicals`, `apost_exhortations`, `apost_letters`,
+    `apost_constitutions`, `motu_proprio` or `bulls` -- `MODERN_FAMILIES`
+    holds which languages each is read in and which of them are published
+    whole rather than selected from.
 
 Usage:
   uv run pipeline/scrapers/vatican_docs.py phase1 [--lang all|both|LANGS] [--sample]
   uv run pipeline/scrapers/vatican_docs.py phase2 [--pontiffs leo-xiii,pius-x,...]
                                                    [--time-budget SECONDS]
                                                    [--limit N]
-  uv run pipeline/scrapers/vatican_docs.py discover-encyclicals   # index-only, no document fetches
+  uv run pipeline/scrapers/vatican_docs.py phase2 --families all
+  uv run pipeline/scrapers/vatican_docs.py discover-modern        # index-only census
+  uv run pipeline/scrapers/vatican_docs.py document-map --write   # the map, offline
 
 `--jobs N` (phase1/phase2) sets how many worker processes PARSE. It does not
 and cannot affect how fast this crawls: fetching stays serial in the parent
@@ -5845,9 +5849,9 @@ class DocRef:
     #: The language of the index this document was discovered from, and so the
     #: language its other URLs are derived from. English for all but the seven
     #: encyclicals vatican.va lists only in Italian -- see
-    #: `FALLBACK_INDEX_LANGS`. Not cosmetic: every other language's URL is one
-    #: path substitution away from THIS one, and a document with no English
-    #: edition has no English URL to substitute from.
+    #: `ModernFamily.index_langs`. Not cosmetic: every other language's URL is
+    #: one path substitution away from THIS one, and a document with no
+    #: English edition has no English URL to substitute from.
     base_lang: str = "en"
 
 
@@ -6026,53 +6030,62 @@ def discover_vati(fetcher: Fetcher) -> tuple[list[DocRef], list[str]]:
     ]
 
 
-_ENCYC_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/encyclicals/documents/([a-z0-9_.-]+)\.html"'
-_EXH_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/apost_exhortations/documents/([a-z0-9_.-]+)\.html"'
-_APL_LINK_RE_TMPL = r'href="(?:https?://www\.vatican\.va)?/content/{slug}/{lang}/apost_letters/documents/([a-z0-9_.-]+)\.html"'
+#: The date in a document's filename, delimited. Not anchored at either end,
+#: because the origin has used at least four conventions and anchoring is
+#: what made three of them invisible:
+#:
+#:   hf_l-xiii_enc_15051891_rerum-novarum          date mid-name, DDMMYYYY
+#:   papa-francesco_20201003_enciclica-fratelli-tutti   date mid-name, YYYYMMDD
+#:   20241004-laudate-deum                          date first, hyphenated
+#:   papa-francesco-motu-proprio-20190507_vos-estis-lux-mundi   HYPHEN then date
+#:   20240509_spes-non-confundit_bolla-giubileo2025  date first, then a
+#:                                                   qualifier after the slug
+#:
+#: Measured 2026-09-09 over all 2,553 filenames the six families' indexes
+#: link: the anchored pair matched 2,530 and this matches 2,548, changing no
+#: answer it already gave. The five it still refuses are the honest ones --
+#: four filenames whose date is not eight digits (`1941123`, `2015412`,
+#: `2015915`, `1999006034`) and one 1896 letter named in spelled-out Latin.
+#: They are REPORTED, which is the whole difference between a convention this
+#: does not know and a document that does not exist.
+_DATE_IN_NAME_RE = re.compile(r"(?:^|[_-])(\d{8})(?=[_-])")
 
-_DATE_SLUG_RE = re.compile(r"_(\d{8})_([a-z0-9-]+)$")
-_DATE_SLUG_RE_MODERN = re.compile(r"^(\d{8})-([a-z0-9-]+)$")
-_ENCICLICA_FILLER_RE = re.compile(r"^(?:enciclica|encyclical)-")
+#: A word the origin puts between the date and the incipit, naming the kind
+#: of act rather than the document. Stripped from whichever convention
+#: matched -- not baked into one regex -- so a fifth convention cannot
+#: reintroduce the leak. Kept conservative (a trailing "-", i.e. real slug
+#: content after the filler) so a document actually titled `Bolla` would be
+#: left alone rather than reduced to nothing.
+_FILLER_RE = re.compile(
+    r"^(?:enciclica|encyclical|motu-proprio|costituzione-ap|lettera-ap"
+    r"|esortazione-ap|bolla)-"
+)
 
 
 def parse_date_slug(fname: str) -> tuple[str, str] | None:
-    """Two filename conventions confirmed live: the long-standing
-    `hf_{pontiff}_enc_{DDMMYYYY}_{slug}.html` (matched by _DATE_SLUG_RE,
-    date embedded mid-name) and a newer one used by the two most recent
-    encyclicals found (Francis' Dilexit Nos, 2024; Leo XIV's Magnifica
-    Humanitas, 2026): `{YYYYMMDD}-{slug}.html`, date-first, hyphen- not
-    underscore-separated, sometimes with a filler "enciclica-"/
-    "encyclical-" word before the real slug. Without both, the most
-    recent documents from the two most recent pontificates -- arguably
-    the most relevant to a live reading site -- would silently vanish
-    from discovery.
+    """`(eight date digits, slug)` off a document filename, or None.
 
-    The filler word is NOT unique to the date-first convention, though --
-    confirmed live (fixed after the full phase-2 sweep, when the census
-    turned up three wrong slugs: `enciclica-fratelli-tutti`,
-    `enciclica-laudato-si`, `enciclica-lumen-fidei`, all Francis) that
-    vatican.va's OWN filenames for these three use `papa-francesco_
-    {DDMMYYYY}_enciclica-{slug}.html` -- the long-standing DATE_SLUG_RE
-    shape (date embedded mid-name, underscore-separated), which _DATE_SLUG_RE
-    matches and returns FIRST, before the modern-pattern branch (the only
-    one that used to strip the filler) is ever reached. Stripping is
-    therefore applied once, uniformly, to whichever branch matched --
-    not baked into either regex individually -- so a future third
-    filename convention can't reintroduce the same class of leak. Kept
-    conservative (`_ENCICLICA_FILLER_RE` requires a trailing "-", i.e.
-    more slug content after the filler word) so a document that somehow
-    really were titled bare "Enciclica"/"Encyclical" alone -- not
-    observed anywhere in this corpus -- would be left untouched rather
-    than stripped to an empty slug."""
-    m = _DATE_SLUG_RE.search(fname)
-    if m:
-        date8, slug = m.group(1), m.group(2)
-    else:
-        m = _DATE_SLUG_RE_MODERN.match(fname)
-        if not m:
-            return None
-        date8, slug = m.group(1), m.group(2)
-    return date8, _ENCICLICA_FILLER_RE.sub("", slug)
+    THE LAST DELIMITED EIGHT-DIGIT RUN IS THE DATE and everything after it is
+    the slug, cut at the next underscore. That rule replaced four anchored
+    patterns and the reason is `_DATE_IN_NAME_RE`'s: each convention was
+    added when a document written under it went missing, and an anchored
+    pattern can only be extended by noticing the next one the same way. The
+    digits stay unordered here -- DDMMYYYY and YYYYMMDD are both in use and
+    `parse_promulgation_date` is what decides which.
+
+    The slug is cut at an underscore because the origin appends a qualifier
+    to one: `20240509_spes-non-confundit_bolla-giubileo2025` is the 2025
+    jubilee bull, and its slug is the incipit."""
+    found = _DATE_IN_NAME_RE.findall(fname)
+    if not found:
+        return None
+    # The LAST run, because a filename can carry more than one: the origin
+    # writes a jubilee year into the qualifier that follows the slug.
+    end = fname.rfind(found[-1]) + 8
+    slug = fname[end:].lstrip("_-").split("_", 1)[0]
+    if not slug:
+        return None
+    return found[-1], _FILLER_RE.sub("", slug)
 
 
 def _index_links(
@@ -6082,20 +6095,6 @@ def _index_links(
     if text is None:
         return []
     return sorted({m.group(1) for m in link_re.finditer(text)})
-
-
-#: Indexes consulted after English, for documents English does not list.
-#: Measured 2026-08-25 across all thirteen pontificates: Italian lists seven
-#: encyclicals English does not -- six of Pius XI's and one of Pius XII's --
-#: and no other language was needed to reach a document at all. Ordered, and
-#: the first index that has a document wins, so a document reachable in two
-#: fallbacks is taken from the earlier one.
-#:
-#: This is not a general "crawl more languages" switch. It exists so that
-#: every encyclical the Holy See publishes is on the site in SOME language
-#: (`docs/decisions.md` §Scope); the language a document arrives in is
-#: whichever one it exists in, not a preference.
-FALLBACK_INDEX_LANGS = ("it",)
 
 
 #: Encyclicals vatican.va's own index lists TWICE, under two slugs: the
@@ -6172,9 +6171,12 @@ SLUG_TITLES = {
     "santateresa-delbambinogesu": "C’est la confiance",
     # The slug is a truncation of the incipit.
     "ad-petri": "Ad Petri Cathedram",
+    "crebrae-allatae": "Crebrae Allatae Sunt",
     "aeterna-dei": "Aeterna Dei Sapientia",
     "arcanum": "Arcanum Divinae",
+    "divina-consortium": "Divinae Consortium Naturae",
     "eccl-de-euch": "Ecclesia de Eucharistia",
+    "laetamur": "Laetamur Magnopere",
     "ecclesiam": "Ecclesiam Suam",
     "mater": "Mater et Magistra",
     "mysterium": "Mysterium Fidei",
@@ -6185,13 +6187,19 @@ SLUG_TITLES = {
     "populorum": "Populorum Progressio",
     "princeps": "Princeps Pastorum",
     "sacerdotalis": "Sacerdotalis Caelibatus",
+    "petrum-et-paulum": "Petrum et Paulum Apostolos",
     "sacerdotii": "Sacerdotii Nostri Primordia",
+    "sacram-unctionem": "Sacram Unctionem Infirmorum",
     # The slug cannot carry the title's own characters.
     "apostolico-seggio": "Dall’alto dell’Apostolico Seggio",
+    "des-le-debut": "Dès le début",
+    "felici-sviluppi": "I felici sviluppi",
     "fummo-chiamati": "Allorché fummo chiamati",
     "laudato-si": "Laudato si’",
     "le-pelerinage-de-lourdes": "Le Pèlerinage de Lourdes",
     "pacem-dei-munus-pulcherrimum": "Pacem, Dei Munus Pulcherrimum",
+    "rapidi-progressi": "I Rapidi Progressi",
+    "spoglie-piox": "A quarantacinque anni",
     "vi-e-ben-noto": "Vi è ben noto",
 }
 
@@ -6216,27 +6224,165 @@ def document_title(slug: str) -> str:
     )
 
 
-def _encyclical_refs_from_index(
-    fetcher: Fetcher, pontiff_slug: str, display_name: str, lang: str
-) -> tuple[dict[str, DocRef], list[str]]:
-    """`slug -> DocRef` for one pontificate's encyclical index in `lang`."""
-    notes: list[str] = []
-    link_re = re.compile(_ENCYC_LINK_RE_TMPL.format(slug=pontiff_slug, lang=lang))
-    cache = f"index__encyclicals__{pontiff_slug}.html"
-    if lang != "en":
-        cache = f"index__encyclicals__{pontiff_slug}__{lang}.html"
-    fnames = _index_links(
-        fetcher,
-        f"https://www.vatican.va/content/{pontiff_slug}/{lang}/encyclicals.index.html",
-        cache,
-        link_re,
+# --------------------------------------------------------------------------
+# The six families on the modern shell
+#
+# `content/{pontiff}/{lang}/{segment}/documents/...` carries six document
+# families, and they differ in four things: which path segment holds the
+# index, what the work is called, WHICH LANGUAGES' INDEXES have to be read to
+# see every document, and whether publishing the family means publishing all
+# of it. Those are the columns of `MODERN_FAMILIES`. How a page is read, how
+# a translation's URL is derived, how a language is spelled -- all of that
+# was already shared.
+#
+# WHAT WAS NOT SHARED WAS DISCOVERY, and that is what the table is for.
+# Three functions stood here differing in a regex and a string, and each
+# carried its own answer to "which index do we read": encyclicals read
+# English and then Italian, exhortations and apostolic letters read English
+# alone. Nothing said so, and the difference is not cosmetic -- an index
+# language not read is a document not discovered, not fetched, and not
+# recorded absent, which reads exactly like a document that does not exist.
+# Two apostolic exhortations were in that state.
+# --------------------------------------------------------------------------
+
+#: THE YEAR IS IN THE DOCUMENT'S PATH TOO, in the families whose index is
+#: split by year: `/apost_letters/2001/documents/…` rather than
+#: `/apost_letters/documents/…`. Requiring the shorter shape found the year
+#: pages, fetched all 273 of them, and matched nothing on any of them --
+#: which reported John Paul II as having written no apostolic letters, the
+#: same silence as a family nobody had asked about. What is captured is
+#: therefore the path from the segment down, and `_refs_from_index` keeps it
+#: whole rather than rebuilding it from parts it would have to guess.
+_FAMILY_LINK_RE_TMPL = (
+    r'href="(?:https?://www\.vatican\.va)?/content/{pontiff}/{lang}'
+    r'/{segment}/((?:\d{{4}}/)?documents/[a-z0-9_.-]+)\.html"'
+)
+
+
+@dataclass(frozen=True)
+class ModernFamily:
+    """One modern-shell family, as data. The counterpart of `IndexFamily`,
+    and deliberately not merged with it: those families' indexes name every
+    edition's URL, and these derive every edition from one by substituting
+    the language into a path."""
+
+    #: The index's own path segment, which is also what `--families` calls
+    #: the family.
+    segment: str
+    #: What `raw/` calls this family's cached index pages. Not derived from
+    #: the segment: three of these were captured under a shorter name before
+    #: this table existed, and `raw/` is write-once, so deriving the name
+    #: would re-fetch pages the corpus already holds and leave the old
+    #: capture meaning nothing.
+    cache_stem: str
+    #: First segment of the work id, `{tag}.{slug}.{lang}`.
+    tag: str
+    #: `manifest.document_kind` (`docs/corpus-schema.md` §Documents).
+    document_kind: str
+    #: For the progress and discovery lines: "16 encyclicals discovered".
+    label: str
+    #: The indexes to read, in order; the first that lists a document is
+    #: where that document is taken from, and the language it was found in
+    #: becomes its `base_lang`. Measured 2026-09-09 over every index page
+    #: this shell publishes -- see `INDEX_LANGS_MEASURED`.
+    index_langs: tuple[str, ...]
+    #: `(pontiff, promulgated, slug)` for the documents this family
+    #: publishes, or None to publish every document its indexes name. A
+    #: selection is what a family gets when its index is the origin's
+    #: complete list rather than its list of teaching documents -- the
+    #: argument `CDF_DOCUMENTS` makes at length. The measurement behind each
+    #: table is in that table's own comment.
+    selection: frozenset[tuple[str, str, str]] | None
+    #: Whether each document gets its own progress line. Off for a family
+    #: whose runs are dozens of documents long, on for a selection, where
+    #: the per-document line is the whole report.
+    quiet: bool
+
+
+_YEAR_INDEX_RE_TMPL = (
+    r'href="(?:https?://www\.vatican\.va)?/content/{pontiff}/{lang}'
+    r'/{segment}/(\d{{4}})\.index\.html"'
+)
+
+
+def _index_years(
+    fetcher: Fetcher, family: ModernFamily, pontiff_slug: str, lang: str
+) -> list[str]:
+    """The years this family's index is split into, off the index itself.
+
+    Read from the page rather than derived from the pontificate's dates: the
+    split is the CMS's and not the pontificate's, three of thirteen
+    pontificates have one, and a derived range would ask for years that are
+    not there. The page is already cached by the caller's own fetch, so this
+    costs no request."""
+    text, _err = fetcher.fetch_text(
+        f"https://www.vatican.va/content/{pontiff_slug}/{lang}"
+        f"/{family.segment}.index.html",
+        f"index__{family.cache_stem}__{pontiff_slug}"
+        + ("" if lang == "en" else f"__{lang}")
+        + ".html",
     )
-    refs: dict[str, DocRef] = {}
-    for fname in fnames:
+    if text is None:
+        return []
+    pattern = re.compile(
+        _YEAR_INDEX_RE_TMPL.format(
+            pontiff=pontiff_slug, lang=lang, segment=family.segment
+        )
+    )
+    return sorted({m.group(1) for m in pattern.finditer(text)})
+
+
+def _refs_from_index(
+    fetcher: Fetcher,
+    family: ModernFamily,
+    pontiff_slug: str,
+    display_name: str,
+    lang: str,
+) -> tuple[dict[tuple[str, str], DocRef], list[str]]:
+    """`(promulgated, slug) -> DocRef` for one pontificate's index in `lang`.
+
+    KEYED BY THE DATE AS WELL AS THE SLUG, which the encyclicals never needed
+    and these families cannot do without: Paul VI signed five separate
+    apostolic letters called `quantum-utilitatis`, each elevating a different
+    basilica. Keyed by slug alone, four of the five vanish here -- and the
+    loss reads exactly like an index that lists one.
+
+    The date is `parse_promulgation_date`'s normalised form rather than the
+    filename's digits, because the two indexes that have to agree do not
+    always write it the same way round: `hf_p-xi_enc_19370328_...` and
+    `hf_p-xi_enc_28031937_...` are one date in the two orders the filenames
+    use, and a key holding the raw digits reads one document found in two
+    languages as two documents."""
+    notes: list[str] = []
+    link_re = re.compile(
+        _FAMILY_LINK_RE_TMPL.format(
+            pontiff=pontiff_slug, lang=lang, segment=family.segment
+        )
+    )
+    base = f"https://www.vatican.va/content/{pontiff_slug}/{lang}/{family.segment}"
+    stem = f"index__{family.cache_stem}__{pontiff_slug}"
+    suffix = "" if lang == "en" else f"__{lang}"
+    paths = _index_links(fetcher, f"{base}.index.html", f"{stem}{suffix}.html", link_re)
+    # A LONG FAMILY'S INDEX IS A LIST OF YEARS AND NOT OF DOCUMENTS, and the
+    # top page then links no document at all -- so reading it alone reports
+    # the family as empty rather than as paginated. John Paul II's 28 years
+    # of apostolic letters and John XXIII's constitutions and letters are
+    # what this is: 0 documents on the top page in every language.
+    for year in _index_years(fetcher, family, pontiff_slug, lang):
+        paths += _index_links(
+            fetcher,
+            f"{base}/{year}.index.html",
+            f"{stem}__{year}{suffix}.html",
+            link_re,
+        )
+    refs: dict[tuple[str, str], DocRef] = {}
+    for path in paths:
+        fname = path.rsplit("/", 1)[-1]
         parsed = parse_date_slug(fname)
         if parsed is None:
             notes.append(
-                f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped"
+                f"{pontiff_slug}: filename {fname!r} matches neither known "
+                "convention -- skipped"
             )
             continue
         date8, slug = parsed
@@ -6246,13 +6392,10 @@ def _encyclical_refs_from_index(
                 f"{INDEX_DUPLICATE_SLUGS[slug]!r} -- skipped (INDEX_DUPLICATE_SLUGS)"
             )
             continue
-        url = (
-            f"https://www.vatican.va/content/{pontiff_slug}/{lang}"
-            f"/encyclicals/documents/{fname}.html"
-        )
-        refs[slug] = DocRef(
-            "encyclical",
-            "encyclical",
+        url = f"{base}/{path}.html"
+        refs[(parse_promulgation_date(date8) or date8, slug)] = DocRef(
+            family.tag,
+            family.document_kind,
             slug,
             display_name,
             date8,
@@ -6262,165 +6405,517 @@ def _encyclical_refs_from_index(
     return refs, notes
 
 
-def discover_encyclicals(
-    fetcher: Fetcher, pontiff_slug: str, display_name: str
-) -> tuple[list[DocRef], list[str]]:
-    """Enumerates from the pontiff's own encyclicals index -- not a hardcoded
-    document list, per this task's brief. Other languages are then checked
-    per-document (a 404 is expected, not an error -- see module docstring /
-    final report).
+def _chain_refs(
+    fetcher: Fetcher, family: ModernFamily, pontiff_slug: str, display_name: str
+) -> tuple[dict[tuple[str, str], DocRef], list[str]]:
+    """Every document one pontificate's indexes name in this family, before
+    any selection is applied.
 
-    English first, then `FALLBACK_INDEX_LANGS` for anything English does not
-    list. Reading one index only was a silent gap rather than a small one: a
-    document the Holy See never translated into English was not discovered,
-    not fetched, and not recorded absent, so nothing anywhere said it existed.
-    Seven encyclicals were in that state until 2026-08-25."""
-    refs, notes = _encyclical_refs_from_index(fetcher, pontiff_slug, display_name, "en")
-    for lang in FALLBACK_INDEX_LANGS:
-        extra, extra_notes = _encyclical_refs_from_index(
-            fetcher, pontiff_slug, display_name, lang
+    Every language in `family.index_langs` is read, in order, and the first
+    index carrying a document is where that document is taken from. That
+    ordering is the whole of what `base_lang` means: every other edition's
+    URL is one substitution away from this one, and a document with no
+    English edition has no English URL to substitute from.
+
+    Separate from `discover_modern` because the census needs the unfiltered
+    list and the crawl needs the filtered one -- and a census that could only
+    see what the selection already chose could not report what it leaves
+    out, which is the one question it exists to answer.
+
+    A LATER INDEX THAT LISTS A DOCUMENT ALREADY SEEN CONTRIBUTES ITS URL.
+    Membership of a language's index is that language's edition, stated by
+    the source -- which is a better answer than the page's own switcher
+    (measured 2026-09-09: Rerum Ecclesiae's English index entry names English
+    alone, and four other indexes list it). So the editions a document has
+    are read here, and the map prints them without asking anybody."""
+    notes: list[str] = []
+    refs: dict[tuple[str, str], DocRef] = {}
+    for lang in family.index_langs:
+        found, found_notes = _refs_from_index(
+            fetcher, family, pontiff_slug, display_name, lang
         )
-        notes.extend(extra_notes)
-        new = {s: r for s, r in extra.items() if s not in refs}
-        if new:
+        notes.extend(found_notes)
+        new = {}
+        for key, ref in found.items():
+            if key in refs:
+                refs[key].lang_urls.update(ref.lang_urls)
+            else:
+                new[key] = ref
+        if new and lang != family.index_langs[0]:
             notes.append(
-                f"{pontiff_slug}: {len(new)} encyclical(s) listed in {lang} and not "
-                f"in en: {', '.join(sorted(new))}"
+                f"{pontiff_slug}: {len(new)} {family.label} listed in {lang} and "
+                f"not in {family.index_langs[0]}: "
+                + ", ".join(sorted(slug for _date, slug in new))
             )
         refs.update(new)
+    return refs, notes
+
+
+def discover_modern(
+    fetcher: Fetcher, family: ModernFamily, pontiff_slug: str, display_name: str
+) -> tuple[list[DocRef], list[str]]:
+    """One pontificate's documents in one family, off the origin's own
+    indexes -- never a hardcoded document list, which is what `selection` is
+    for when the index is not the origin's list of teaching documents."""
+    wanted: set[tuple[str, str, str]] | None = None
+    if family.selection is not None:
+        wanted = {k for k in family.selection if k[0] == pontiff_slug}
+        # No entry names this pontificate, so no index of it can hold
+        # anything this run wants. Returning before the fetch is the
+        # difference between a selection costing one request per pontificate
+        # and one costing `len(index_langs)`.
+        if not wanted:
+            return [], []
+    refs, notes = _chain_refs(fetcher, family, pontiff_slug, display_name)
+    if wanted is not None:
+        seen = {(pontiff_slug, date, slug) for date, slug in refs}
+        refs = {k: v for k, v in refs.items() if (pontiff_slug, *k) in wanted}
+        for key in sorted(wanted - seen):
+            notes.append(
+                f"{key[2]}: the selection names {key}, which no index of this "
+                "family lists -- a stale key, or the origin renamed the file"
+            )
+    # A work id is `{tag}.{slug}.{lang}` and carries no date, so two
+    # documents sharing a slug inside one family would be one work directory
+    # written twice. The selections are keyed by date and cannot produce
+    # that; a family publishing its whole index can. This says so rather than
+    # letting the second parse overwrite the first.
+    by_slug: dict[str, list[str]] = {}
+    for promulgated, slug in refs:
+        by_slug.setdefault(slug, []).append(promulgated)
+    for slug, dates in sorted(by_slug.items()):
+        if len(dates) > 1:
+            notes.append(
+                f"{pontiff_slug}: {len(dates)} {family.label} share the slug "
+                f"{slug!r} ({', '.join(sorted(dates))}) -- they would share one "
+                "work id; select by date or leave them unpublished"
+            )
     return list(refs.values()), notes
 
 
-def discover_exhortations(
-    fetcher: Fetcher, pontiff_slug: str, display_name: str
-) -> tuple[list[DocRef], list[str]]:
-    notes: list[str] = []
-    en_re = re.compile(_EXH_LINK_RE_TMPL.format(slug=pontiff_slug, lang="en"))
-    fnames = _index_links(
-        fetcher,
-        f"https://www.vatican.va/content/{pontiff_slug}/en/apost_exhortations.index.html",
-        f"index__exhortations__{pontiff_slug}.html",
-        en_re,
-    )
-    refs = []
-    for fname in fnames:
-        parsed = parse_date_slug(fname)
-        if parsed is None:
-            notes.append(
-                f"{pontiff_slug}: filename {fname!r} matches neither known convention -- skipped"
-            )
-            continue
-        date8, slug = parsed
-        en_url = f"https://www.vatican.va/content/{pontiff_slug}/en/apost_exhortations/documents/{fname}.html"
-        refs.append(
-            DocRef(
-                "exhortation",
-                "apostolic-exhortation",
-                slug,
-                display_name,
-                date8,
-                {"en": en_url},
-            )
-        )
-    return refs, notes
-
-
-# --------------------------------------------------------------------------
-# Apostolic letters
-#
-# The second family whose SELECTION is an argument rather than an
-# enumeration, and it runs on the phase-2 path rather than `run_family`
-# because it is on the modern shell: one substitution reaches every edition,
-# the page's own switcher says which of them exist, and `--offered-only`
-# already spends nothing asking about the rest. `run_family` is for the
-# archive mirrors, whose filenames are not one substitution apart.
-#
-# A 200 IS NOT AN EDITION here, which is the trap this family shares with the
-# encyclicals: `/de/.../octogesima-adveniens.html` answers 200 with an empty
-# shell, on no index and in no switcher, and only `StubPageError` tells it
-# from a German translation.
-# --------------------------------------------------------------------------
-
-#: What this family publishes: `(pontiff, promulgated, source slug)`, and the
-#: corpus slug is the source's own -- unlike the CDF, whose filenames name
-#: a document's SUBJECT, this index names each letter after its incipit and
-#: `document_title` manufactures the title from it.
+#: THE INDEX LANGUAGES, MEASURED. Read on 2026-09-09 off every index page
+#: the modern shell publishes for these six families -- thirteen candidate
+#: pontificates by fourteen candidate languages, 1,092 requests -- and the
+#: chains below are the greedy cover of that measurement: English first
+#: because it is the site's own default, then whichever index reaches the
+#: most documents no earlier one lists.
 #:
-#: WHY A TABLE AND NOT THE INDEX. 568 letters across twelve pontificates, and
-#: the overwhelming majority confer a title on one church or name a patron
-#: for one diocese: Paul VI alone signed five separate letters called
-#: `quantum-utilitatis`, each elevating a different basilica. Publishing all
-#: of them is not the decision publishing every encyclical is, so the same
-#: question `CDF_DOCUMENTS` asks was asked here -- which of them can this
-#: corpus LINK -- by scanning all 100,602 citation strings in `build/` for
-#: each of the 568 slugs. Octogesima Adveniens is the answer and it is not
-#: close: 422 citations, 414 of them carrying a paragraph number, across 14
-#: works in every language the corpus holds. The runner-up, Maximum Illud, has
-#: 136; nothing else clears 70 without the count being an artefact of a slug
-#: short enough to match ordinary prose (`in-hoc`, `quamquam`, `de-institutione`).
+#: THE CHAIN IS A PROPERTY OF THE FAMILY, not of the site. Encyclicals need
+#: `en,it` and no more, which is what the old `FALLBACK_INDEX_LANGS` recorded
+#: and why one tuple looked like enough for everything. It is not: every
+#: apostolic letter and apostolic constitution before Paul VI exists in Latin
+#: and in nothing else, so an English-only reading of those families sees a
+#: handful of documents and reports the rest as absent. `la` is not a
+#: fallback there; it is where the family lives.
+#:
+#: A LANGUAGE EARNS ITS PLACE ONLY BY REACHING A DOCUMENT NO EARLIER ONE
+#: DOES, which is what keeps the crawl honest about its own cost: each entry
+#: is one request per pontificate, and the chain is the shortest list that
+#: reaches everything the site publishes.
+
+
+#: What the apostolic-letter family publishes: `(pontiff, promulgated, slug)`.
+#:
+#: WHY A TABLE AND NOT THE INDEX. 1,963 letters across twelve pontificates,
+#: and the overwhelming majority confer a title on one church or name a
+#: patron for one diocese: Paul VI alone signed five separate letters called
+#: `quantum-utilitatis`, each elevating a different basilica. So the question
+#: `CDF_DOCUMENTS` asks was asked here -- which of them can this corpus LINK
+#: -- by counting, over all 132,979 citation strings in `build/`, the ones
+#: that name a document AND name it as this kind of document (`Litt. ap.
+#: Maximum illud`). Each entry's count is beside it.
+#:
+#: THE KIND WORD IS PART OF THE MEASUREMENT, not decoration. A bare substring
+#: count cannot decide this at all -- half these slugs are one Latin word,
+#: and `concilium`, `pacem` and `populorum` score in the thousands on
+#: ordinary prose -- and counting any kind word crosses documents that share
+#: an incipit: `divinum-illud` is a 1971 letter of Paul VI and also Leo
+#: XIII's 1897 encyclical `Divinum illud munus`, which is what the apparatus
+#: is citing.
+#:
+#: A SLUG THE FAMILY USES TWICE CANNOT CARRY A COUNT. `Litt. ap. Spiritus
+#: Domini` names any of four documents and `Euntes in mundum` any of four;
+#: both cleared the threshold on citations that cannot be attributed to one
+#: of them, and both are left out until something disambiguates them.
 #:
 #: THE KEY IS THE PONTIFF AND THE DATE AS WELL AS THE SLUG, for the reason
-#: `CDF_DOCUMENTS` is keyed by date: a slug is not unique here even within one
-#: pontificate, and a table keyed by slug alone would publish whichever of the
-#: five `quantum-utilitatis` letters the index happened to list first.
+#: `CDF_DOCUMENTS` is keyed by date: a slug is not unique here even within
+#: one pontificate, and a table keyed by slug alone would publish whichever
+#: of the five `quantum-utilitatis` letters the index listed first.
 APOSTOLIC_LETTERS = {
-    ("paul-vi", "1971-05-14", "octogesima-adveniens"),
-}
+    ("benedict-xv", "1919-11-30", "maximum-illud"),  # 6
+    ("paul-vi", "1963-11-04", "summi-dei-verbum"),  # 4
+    ("paul-vi", "1969-07-03", "sollicitudo-omnium"),  # 5, Latin only
+    ("paul-vi", "1971-05-14", "octogesima-adveniens"),  # 187
+    ("paul-vi", "1974-12-05", "lumen-ecclesiae"),  # 6, no English
+    ("john-paul-ii", "1984-02-11", "salvifici-doloris"),  # 27
+    ("john-paul-ii", "1988-08-15", "mulieris-dignitatem"),  # 117
+    ("john-paul-ii", "1988-12-04", "vicesimus-quintus-annus"),  # 8
+    ("john-paul-ii", "1994-05-22", "ordinatio-sacerdotalis"),  # 5
+    ("john-paul-ii", "1994-11-10", "tertio-millennio-adveniente"),  # 78
+    ("john-paul-ii", "1995-05-02", "orientale-lumen"),  # 24
+    # Laetamur Magnopere, which promulgated the Catechism's Latin typical
+    # edition -- the edition `ccc.la` is. The slug is the source's own
+    # truncation of the incipit; `SLUG_TITLES` carries the rest.
+    ("john-paul-ii", "1997-08-15", "laetamur"),  # 4
+    ("john-paul-ii", "1998-07-05", "dies-domini"),  # 21
+    ("john-paul-ii", "2001-01-06", "novo-millennio-ineunte"),  # 150
+    ("john-paul-ii", "2002-10-16", "rosarium-virginis-mariae"),  # 16
+}  # fmt: skip
+
+#: What the apostolic-constitution family publishes. Same key and the same
+#: measurement as `APOSTOLIC_LETTERS`, over an index that is larger and
+#: further still from a list of teaching documents: most of its 1,297
+#: entries erect a diocese or a province.
+#:
+#: FOUR ARE HERE ON A RULE AND NOT ON A COUNT, and the rule is that the act
+#: PROMULGATES OR AMENDS SOMETHING THIS CORPUS SERVES. They are cited rarely
+#: or not at all because what gets cited is the thing they promulgated, which
+#: this corpus already holds: `sacrae-disciplinae-leges` promulgates the Code
+#: (`cic.*`), `fidei-depositum` the Catechism (`ccc.*`), `missale-romanum`
+#: the Missal the lectionary tables rest on, and `praedicate-evangelium` is
+#: the constitution `CDF_RENAME_DATE` in this file already encodes.
+APOSTOLIC_CONSTITUTIONS = {
+    ("pius-xii", "1947-11-30", "sacramentum-ordinis"),  # 5, Latin only
+    ("pius-xii", "1950-11-01", "munificentissimus-deus"),  # 3
+    ("paul-vi", "1967-01-01", "indulgentiarum-doctrina"),  # 30
+    ("paul-vi", "1967-08-15", "regimini-ecclesiae-universae"),  # 3, Latin only
+    ("paul-vi", "1969-04-03", "missale-romanum"),  # 0; promulgates the Missal
+    ("paul-vi", "1970-11-01", "laudis-canticum"),  # 4, Latin only
+    ("paul-vi", "1972-11-30", "sacram-unctionem"),  # 4
+    # Cited twelve times as `Divinae consortium naturae` and filed under a
+    # slug that truncates the incipit and declines its first word
+    # differently, so the title count could not reach it. Found by reading
+    # the map rather than the citations -- which is what the map is for.
+    ("paul-vi", "1971-08-15", "divina-consortium"),  # 12, Latin only
+    ("john-paul-ii", "1979-04-15", "sapientia-christiana"),  # 8
+    ("john-paul-ii", "1983-01-25", "sacrae-disciplinae-leges"),  # 0; promulgates the Code
+    ("john-paul-ii", "1988-06-28", "pastor-bonus"),  # 26
+    ("john-paul-ii", "1990-08-15", "ex-corde-ecclesiae"),  # 6
+    ("john-paul-ii", "1990-10-18", "sacri-canones"),  # 4, Latin only
+    ("john-paul-ii", "1992-10-11", "fidei-depositum"),  # 0; promulgates the Catechism
+    ("francesco", "2017-12-08", "veritatis-gaudium"),  # 8
+    ("francesco", "2022-03-19", "praedicate-evangelium"),  # 0; CDF_RENAME_DATE
+}  # fmt: skip
+
+#: What the motu proprio family publishes. Same key and the same measurement.
+#: The index carries decrees, rescripts, statutes and regulations alongside
+#: the motu proprios proper, which is why this family is a selection too.
+MOTU_PROPRIOS = {
+    ("benedict-xv", "1917-10-15", "orientis-catholici"),  # 7, no English
+    ("benedict-xv", "1920-07-25", "bonum-sane"),  # 8, no English
+    ("pius-xi", "1923-06-29", "orbem-catholicum"),  # 6, Latin only
+    ("pius-xii", "1941-11-04", "cum-nobis"),  # 7, Latin only
+    ("pius-xii", "1949-02-22", "crebrae-allatae"),  # 7, Latin only
+    ("pius-xii", "1957-06-02", "cleri-sanctitati"),  # 49, Latin only
+    ("john-xxiii", "1962-08-06", "appropinquante-concilio"),  # 3, no English
+    ("paul-vi", "1964-01-25", "sacram-liturgiam"),  # 6
+    ("paul-vi", "1966-08-06", "ecclesiae-sanctae"),  # 12
+    ("paul-vi", "1967-01-06", "catholicam-christi-ecclesiam"),  # 3, no English
+    ("paul-vi", "1967-06-18", "sacrum-diaconatus"),  # 5
+    ("paul-vi", "1969-02-14", "mysterii-paschalis"),  # 0; promulgates the calendar
+    ("paul-vi", "1971-06-27", "sedula-cura"),  # 4, no English
+    ("john-paul-ii", "1994-01-01", "socialium-scientiarum"),  # 20, no English
+    ("john-paul-ii", "1994-02-11", "vitae-mysterium"),  # 5, no English
+    ("john-paul-ii", "1998-07-22", "apostolos-suos"),  # 62
+    ("john-paul-ii", "2002-05-02", "misericordia-dei"),  # 23
+    ("benedict-xvi", "2007-07-07", "summorum-pontificum"),  # 0; governs the older Missal
+    ("francesco", "2015-08-15", "mitis-et-misericors-iesus"),  # 11
+    ("francesco", "2015-08-15", "mitis-iudex-dominus-iesus"),  # 20
+    ("francesco", "2017-07-11", "maiorem-hac-dilectionem"),  # 7
+    # The Latin edition of this one is filed under `apost_letters` and the
+    # vernacular under `motu_proprio` -- one act at two addresses, taken here
+    # because a motu proprio is what it is.
+    ("francesco", "2017-09-03", "magnum-principium"),  # 0; amends CIC c. 838
+    ("francesco", "2021-07-16", "traditionis-custodes"),  # 0; governs the older Missal
+}  # fmt: skip
+
+#: What the bull family publishes. Twelve documents on the index and these
+#: three are what the corpus refers to; the rest confer a title on one church
+#: or open a holy year nothing here cites.
+BULLS = {
+    ("john-paul-ii", "1998-11-29", "incarnationis-mysterium"),  # 18
+    ("francesco", "2015-04-11", "misericordiae-vultus"),  # 33
+    ("francesco", "2024-05-09", "spes-non-confundit"),  # 0; the current holy year
+}  # fmt: skip
 
 
-def discover_letters(
-    fetcher: Fetcher, pontiff_slug: str, display_name: str
-) -> tuple[list[DocRef], list[str]]:
-    """One pontificate's apostolic letters, filtered to `APOSTOLIC_LETTERS`.
+MODERN_FAMILIES: tuple[ModernFamily, ...] = (
+    ModernFamily(
+        segment="encyclicals",
+        cache_stem="encyclicals",
+        tag="encyclical",
+        document_kind="encyclical",
+        label="encyclicals",
+        index_langs=("en", "it"),
+        # Every encyclical the Holy See publishes is on the site in some
+        # language (`docs/decisions.md` §Scope). That is a commitment about
+        # this family and not a general posture, and it is why this row has
+        # no selection to maintain.
+        selection=None,
+        quiet=False,
+    ),
+    ModernFamily(
+        segment="apost_exhortations",
+        cache_stem="exhortations",
+        tag="exhortation",
+        document_kind="apostolic-exhortation",
+        label="apostolic exhortations",
+        # The three beyond English are not a fallback for one document: the
+        # English index lists 33 of the 56 this family has, and four of the
+        # missing 23 are cited by works this corpus already serves.
+        index_langs=("en", "it", "es", "la"),
+        selection=None,
+        quiet=True,
+    ),
+    ModernFamily(
+        segment="apost_letters",
+        cache_stem="letters",
+        tag="letter",
+        document_kind="apostolic-letter",
+        label="apostolic letters",
+        index_langs=("en", "la", "it", "es", "fr", "pt"),
+        selection=frozenset(APOSTOLIC_LETTERS),
+        quiet=False,
+    ),
+    ModernFamily(
+        segment="apost_constitutions",
+        cache_stem="constitutions",
+        tag="constitution",
+        document_kind="apostolic-constitution",
+        label="apostolic constitutions",
+        index_langs=("en", "la", "it"),
+        selection=frozenset(APOSTOLIC_CONSTITUTIONS),
+        quiet=False,
+    ),
+    ModernFamily(
+        segment="motu_proprio",
+        cache_stem="motu-proprio",
+        tag="motu-proprio",
+        document_kind="motu-proprio",
+        label="motu proprios",
+        index_langs=("en", "la", "it", "es", "fr"),
+        selection=frozenset(MOTU_PROPRIOS),
+        quiet=False,
+    ),
+    ModernFamily(
+        segment="bulls",
+        cache_stem="bulls",
+        tag="bull",
+        document_kind="bull",
+        label="bulls",
+        index_langs=("en", "it", "la"),
+        selection=frozenset(BULLS),
+        quiet=False,
+    ),
+)
 
-    Same shape as `discover_exhortations` -- the English index, one DocRef per
-    document, every other language derived by `translation_url_for` -- with
-    the table applied at discovery rather than afterwards. A table entry the
-    index does not list is reported rather than passed over: it means the key
-    is stale or the source renamed the file, which is the same failure
-    `discover_cdf` reports and for the same reason."""
-    notes: list[str] = []
-    wanted = {(p, d, s) for p, d, s in APOSTOLIC_LETTERS if p == pontiff_slug}
-    if not wanted:
-        return [], notes
-    en_re = re.compile(_APL_LINK_RE_TMPL.format(slug=pontiff_slug, lang="en"))
-    fnames = _index_links(
-        fetcher,
-        f"https://www.vatican.va/content/{pontiff_slug}/en/apost_letters.index.html",
-        f"index__letters__{pontiff_slug}.html",
-        en_re,
+
+def modern_families(spec: str) -> tuple[tuple[ModernFamily, ...], list[str]]:
+    """`--families` as written -> the rows it names, and the names that name
+    no row. Reported rather than raised, and the caller decides: a typo in a
+    family name would otherwise crawl less than was asked for and exit 0,
+    which is the same silent-narrowing failure `--slugs` had."""
+    by_segment = {f.segment: f for f in MODERN_FAMILIES}
+    if spec.strip() == "all":
+        return MODERN_FAMILIES, []
+    wanted = [x.strip() for x in spec.split(",") if x.strip()]
+    return (
+        tuple(by_segment[x] for x in wanted if x in by_segment),
+        [x for x in wanted if x not in by_segment],
     )
-    refs: list[DocRef] = []
-    seen: set[tuple[str, str, str]] = set()
-    for fname in fnames:
-        parsed = parse_date_slug(fname)
-        if parsed is None:
-            continue
-        date8, slug = parsed
-        promulgated = parse_promulgation_date(date8)
-        key = (pontiff_slug, promulgated or "", slug)
-        if key not in wanted or key in seen:
-            continue
-        seen.add(key)
-        refs.append(
-            DocRef(
-                "letter",
-                "apostolic-letter",
-                slug,
-                display_name,
-                date8,
-                {
-                    "en": f"https://www.vatican.va/content/{pontiff_slug}/en"
-                    f"/apost_letters/documents/{fname}.html"
-                },
-            )
+
+
+def report_modern_census(
+    fetcher: Fetcher, families: tuple[ModernFamily, ...], unselected: bool
+) -> int:
+    """What the modern shell's indexes list, per family, without fetching a
+    single document page.
+
+    THE INDEX ANSWERS MORE THAN THE LINK. Each entry prints the document's
+    own title, its date, and a `translation-field` naming editions -- so a
+    census of what the Holy See publishes costs one request per (family,
+    pontificate, index language) and none per document. That is what makes
+    this an answer to "what are we missing" rather than a crawl.
+
+    `--unselected` names what the selection leaves out, and is the same
+    instrument `discover-cdf --unselected` is: the list is not a backlog.
+    Re-run the measurement in the family's own table before adding to it."""
+    total = no_english = 0
+    for family in families:
+        listed: list[tuple[str, str, str, set[str]]] = []
+        for slug, display, _year in PONTIFF_CANDIDATES:
+            refs, notes = _chain_refs(fetcher, family, slug, display)
+            for note in notes:
+                print(f"  [note] {note}")
+            for (promulgated, doc_slug), ref in sorted(refs.items()):
+                listed.append((promulgated, slug, doc_slug, set(ref.lang_urls)))
+        chosen = (
+            {(p, d, s) for p, d, s in family.selection}
+            if family.selection is not None
+            else None
         )
-    for key in sorted(wanted - seen):
-        notes.append(
-            f"{key[2]}: APOSTOLIC_LETTERS names {key}, which the English index "
-            "does not list -- a stale key, or the index renamed the file"
+        without = [row for row in listed if "en" not in row[3]]
+        total += len(listed)
+        no_english += len(without)
+        picked = (
+            len(listed)
+            if chosen is None
+            else sum(1 for d, p, s, _ in listed if (p, d, s) in chosen)
         )
-    return refs, notes
+        print(
+            f"{family.segment:20s} {len(listed):5d} listed  {len(without):5d} "
+            f"with no English edition  {picked:5d} published"
+        )
+        if unselected and chosen is not None:
+            for date, pont, doc_slug, langs in sorted(listed):
+                if (pont, date, doc_slug) in chosen:
+                    continue
+                print(
+                    f"    {date}  {pont:14s} {doc_slug:44s} {','.join(sorted(langs))}"
+                )
+    print(
+        f"\n{total} documents listed across {len(families)} families and "
+        f"{len(PONTIFF_CANDIDATES)} candidate pontificates; {no_english} have "
+        "no English edition on vatican.va"
+    )
+    report_fetching(fetcher)
+    return 0
+
+
+# --------------------------------------------------------------------------
+# The map: every document this project knows the Magisterium to contain
+#
+# WHY A MAP AND NOT A LIST OF WHAT WE HAVE. Every ledger in this repository
+# answers "did we ask" for one page. None of them answered "what is there" --
+# so a document nobody had thought of was indistinguishable from a document
+# nobody had published, and both read as an empty space. The seven Italian
+# encyclicals of 2026-08-25 and the two apostolic exhortations of 2026-09-09
+# were each found by accident, twice, in the same way.
+#
+# THE MAP HAS TWO TIERS AND ONLY ONE OF THEM IS DERIVABLE.
+#
+#   * What vatican.va publishes comes off the indexes already in `raw/`,
+#     with no network and no document fetches: each index entry prints the
+#     document's slug, its date and its own title, and membership of a
+#     language's index IS that language's edition. So this tier is rebuilt
+#     like everything else, and may be deleted like everything else.
+#   * What vatican.va does NOT publish has no page to sit beside. It is
+#     `pipeline/magisterium-offsite.json`, tracked here, and the rule that
+#     governs it is the root CLAUDE.md's: output regenerable only from a
+#     previous copy of itself is not regenerable.
+#
+# WHAT PUTS A DOCUMENT IN THE SECOND TIER is the corpus's own apparatus.
+# 132,979 citation strings name documents by kind and title -- `Litt. ap.
+# Maximum illud`, `Const. ap. Munificentissimus Deus` -- and a title that
+# matches no index entry and no work is a document this corpus refers to and
+# cannot reach. That is a measurement, so each entry carries the count it was
+# admitted on and the day it was counted; it is evidence for the claim beside
+# it and not an inventory number (root CLAUDE.md, Documentation conventions).
+# --------------------------------------------------------------------------
+
+MAP_DIR_NAME = "magisterium-map"
+
+OFFSITE_PATH = Path(__file__).resolve().parent.parent / "magisterium-offsite.json"
+
+
+def load_offsite() -> list[dict]:
+    """The tracked tier. Missing file is an empty tier, not an error: this
+    ledger is knowledge somebody added, and a clone that has none is in a
+    state the map can report rather than fail on."""
+    if not OFFSITE_PATH.is_file():
+        return []
+    return json.loads(OFFSITE_PATH.read_text(encoding="utf-8"))["documents"]
+
+
+def build_magisterium_map(
+    fetcher: Fetcher, families: tuple[ModernFamily, ...]
+) -> tuple[list[dict], list[str]]:
+    """One row per document, over the modern shell's families and the two
+    council mirrors, joined against what `build/` actually holds."""
+    notes: list[str] = []
+    build_dir = build_root()
+    held: dict[str, list[str]] = {}
+    if build_dir.is_dir():
+        for entry in sorted(p.name for p in build_dir.iterdir() if p.is_dir()):
+            parts = entry.split(".")
+            if len(parts) >= 3:
+                held.setdefault(".".join(parts[:-1]), []).append(parts[-1])
+
+    rows: list[dict] = []
+    for family in families:
+        chosen = family.selection
+        for pontiff, display, _year in PONTIFF_CANDIDATES:
+            refs, chain_notes = _chain_refs(fetcher, family, pontiff, display)
+            notes.extend(chain_notes)
+            for (promulgated, slug), ref in sorted(refs.items()):
+                work = f"{family.tag}.{slug}"
+                published = sorted(held.get(work, []))
+                rows.append(
+                    {
+                        "id": f"{family.tag}.{slug}",
+                        "family": family.segment,
+                        "document_kind": family.document_kind,
+                        "pontiff_or_council": display,
+                        "promulgated": promulgated,
+                        "slug": slug,
+                        "title": document_title(slug),
+                        "source": "vatican.va",
+                        # Membership of a language's index, which is what the
+                        # source SAYS rather than what a page's own switcher
+                        # claims -- measured 2026-09-09, the switcher on an
+                        # index entry under-reports (Rerum Ecclesiae's English
+                        # entry names English alone and four other indexes
+                        # list it).
+                        "editions": sorted(ref.lang_urls),
+                        "published": published,
+                        "selected": chosen is None
+                        or (pontiff, promulgated, slug) in chosen,
+                    }
+                )
+    for row in load_offsite():
+        rows.append({**row, "source": None, "editions": [], "published": []})
+    rows.sort(key=lambda r: (r["promulgated"], r.get("id", r.get("title", ""))))
+    return rows, notes
+
+
+def report_magisterium_map(
+    fetcher: Fetcher, families: tuple[ModernFamily, ...], write: bool
+) -> int:
+    rows, notes = build_magisterium_map(fetcher, families)
+    for note in notes:
+        print(f"  [note] {note}")
+    on_site = [r for r in rows if r["source"]]
+    print(
+        f"{len(rows)} documents mapped: {len(on_site)} vatican.va publishes, "
+        f"{len(rows) - len(on_site)} it does not"
+    )
+    for family in families:
+        fam_rows = [r for r in on_site if r["family"] == family.segment]
+        if not fam_rows:
+            continue
+        print(
+            f"  {family.segment:20s} {len(fam_rows):5d} listed  "
+            f"{sum(1 for r in fam_rows if 'en' not in r['editions']):5d} with no "
+            f"English  {sum(1 for r in fam_rows if r['published']):5d} published"
+        )
+    if not write:
+        return 0
+    out_dir = build_root() / MAP_DIR_NAME
+    stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    wrote = write_stamped_json(
+        out_dir,
+        {
+            "map.json": {
+                "generated_at": stamp,
+                "source": "https://www.vatican.va/",
+                "documents": rows,
+            }
+        },
+        stamp,
+    )
+    print(f"{'wrote' if wrote else 'unchanged'} {out_dir}/map.json")
+    return 0
 
 
 # --------------------------------------------------------------------------
@@ -6851,10 +7346,13 @@ def translation_url_for(ref: DocRef, lang: str) -> str | None:
 #: `apost_letters` is here because that family is on the same shell and the
 #: filter is worth exactly as much: Octogesima Adveniens names six editions
 #: and the seventh URL that answers 200 -- German -- is the empty shell the
-#: `signum-magnum` measurement above describes.
+#: `signum-magnum` measurement above describes. The three families added on
+#: 2026-09-09 are here for the same reason and by construction: the segment
+#: is `MODERN_FAMILIES`' own, so a family added to that table cannot be
+#: forgotten here.
 _SWITCHER_RE = re.compile(
     r'href="/content/[a-z0-9-]+/([a-z_]{2,5})/'
-    r'(?:encyclicals|apost_exhortations|apost_letters)/documents/[^"]+"'
+    r"(?:" + "|".join(f.segment for f in MODERN_FAMILIES) + r')/documents/[^"]+"'
 )
 
 
@@ -9853,8 +10351,7 @@ def run_phase2(
     pontiff_slugs: list[str] | None,
     time_budget: float | None,
     limit: int | None,
-    include_exhortations: bool,
-    include_letters: bool = False,
+    families: tuple[ModernFamily, ...],
     skip_written: bool = False,
     doc_slugs: list[str] | None = None,
     jobs: int = 1,
@@ -9999,68 +10496,45 @@ def run_phase2(
             # a 14ms parse -- and is what keeps the output grouped the way a
             # serial run groups it.
             drain(0)
-            refs, notes = discover_encyclicals(fetcher, slug, display)
-            for note in notes:
-                print(f"  [discover] {note}")
-            # A pontificate with no encyclicals to run is not a pontificate to
-            # skip: the exhortations below are discovered separately and are
-            # most of what `--slugs` is used to reach. Both of these were a
-            # `continue` over the whole iteration until 2026-09-01, so
-            # `--slugs querida-amazonia` filtered Francis's encyclicals to
-            # nothing, never reached his exhortations, parsed no document at
-            # all and exited 0 -- which is the silent stale answer this
-            # project's checks exist to refuse.
-            if not refs:
-                print(f"{slug}: 0 encyclicals discovered (index missing or empty)")
-            if doc_slugs is not None:
-                refs = [r for r in refs if r.slug in doc_slugs]
-            if refs:
-                print(f"{slug}: {len(refs)} encyclicals discovered")
-            for ref in refs:
-                if time_budget is not None and time.monotonic() - start > time_budget:
-                    print(f"time budget reached mid-pontificate ({slug}); stopping")
-                    return results
-                if limit is not None and n_done >= limit:
-                    print(f"--limit {limit} reached; stopping")
-                    return results
-                submit_doc(ref, quiet=False)
-                n_done += 1
-                touch_crawl_lock(lock_path)
-                drain()
-            if include_exhortations:
-                drain(0)  # same grouping guarantee as above
-                exh_refs, exh_notes = discover_exhortations(fetcher, slug, display)
-                for note in exh_notes:
-                    print(f"  [discover-exh] {note}")
+            for family in families:
+                # Finish reporting the previous family before announcing this
+                # one. Fetching is instant during a re-parse, so without this
+                # the parent runs ahead and prints "pius-x: 16 encyclicals
+                # discovered" in the middle of Leo XIII's per-document lines.
+                # The barrier costs one pool drain per family per pontificate,
+                # against a 14ms parse, and is what keeps the output grouped
+                # the way a serial run groups it.
+                drain(0)
+                refs, notes = discover_modern(fetcher, family, slug, display)
+                for note in notes:
+                    print(f"  [discover-{family.tag}] {note}")
+                # A pontificate with none of THIS family is not a pontificate
+                # to skip: every other family is discovered separately, and
+                # for eleven of the thirteen the apostolic letters are the
+                # only thing a `--slugs` run is after. Skipping the iteration
+                # was how `--slugs querida-amazonia` parsed no document and
+                # exited 0 until 2026-09-01 -- the silent stale answer this
+                # project's checks exist to refuse.
+                if not refs and family.selection is None:
+                    print(
+                        f"{slug}: 0 {family.label} discovered (index missing or empty)"
+                    )
                 if doc_slugs is not None:
-                    exh_refs = [r for r in exh_refs if r.slug in doc_slugs]
-                for ref in exh_refs:
+                    refs = [r for r in refs if r.slug in doc_slugs]
+                if refs:
+                    print(f"{slug}: {len(refs)} {family.label} discovered")
+                for ref in refs:
                     if (
                         time_budget is not None
                         and time.monotonic() - start > time_budget
                     ):
+                        print(f"time budget reached mid-pontificate ({slug}); stopping")
                         return results
-                    submit_doc(ref, quiet=True)
-                    touch_crawl_lock(lock_path)
-                    drain()
-            if include_letters:
-                drain(0)  # same grouping guarantee as above
-                apl_refs, apl_notes = discover_letters(fetcher, slug, display)
-                for note in apl_notes:
-                    print(f"  [discover-apl] {note}")
-                if doc_slugs is not None:
-                    apl_refs = [r for r in apl_refs if r.slug in doc_slugs]
-                for ref in apl_refs:
-                    if (
-                        time_budget is not None
-                        and time.monotonic() - start > time_budget
-                    ):
+                    if limit is not None and n_done >= limit:
+                        print(f"--limit {limit} reached; stopping")
                         return results
-                    # Not quiet, unlike the exhortations: this family is a
-                    # handful of documents chosen one at a time, so its
-                    # per-document line is the whole report rather than noise
-                    # inside a pontificate's worth of them.
-                    submit_doc(ref, quiet=False)
+                    submit_doc(ref, quiet=family.quiet)
+                    n_done += 1
                     touch_crawl_lock(lock_path)
                     drain()
         # A `SLUG_TITLES` entry for a slug the origin no longer publishes is
@@ -10077,7 +10551,7 @@ def run_phase2(
             not pontiff_slugs
             and doc_slugs is None
             and limit is None
-            and include_exhortations
+            and set(families) >= {f for f in MODERN_FAMILIES if f.selection is None}
         ):
             stale = sorted(set(SLUG_TITLES) - seen_slugs)
             if stale:
@@ -10976,15 +11450,15 @@ def main() -> int:
         help="max new documents (en+pt counted together) this run",
     )
     p2.add_argument(
-        "--exhortations",
-        action="store_true",
-        help="also crawl apostolic exhortations per pontificate",
-    )
-    p2.add_argument(
-        "--letters",
-        action="store_true",
-        help="also crawl the apostolic letters in APOSTOLIC_LETTERS, which is "
-        "a selection and not the index -- see that table for what it measures",
+        "--families",
+        default="encyclicals",
+        help="comma-separated families to crawl, or `all`. "
+        + "; ".join(
+            f"{f.segment} ({'all of them' if f.selection is None else f'{len(f.selection)} selected'})"
+            for f in MODERN_FAMILIES
+        )
+        + ". A family with a selection crawls the documents that table names "
+        "and nothing else -- see the table for what it measures",
     )
     p2.add_argument(
         "--slugs",
@@ -11016,10 +11490,49 @@ def main() -> int:
         "cached, so it can only save requests, never lose an edition",
     )
 
-    sub.add_parser(
-        "discover-encyclicals",
+    pdm = sub.add_parser(
+        "discover-modern",
         parents=[net],
-        help="index-only census, no document fetches",
+        help="index-only census of the modern shell: what each family's "
+        "indexes list, per pontificate, with no document fetches",
+    )
+    pdm.add_argument(
+        "--families",
+        default="all",
+        help="comma-separated families, or `all` (the default here, unlike "
+        "phase2's: a census asked for less than everything is a census of "
+        "the question rather than of the source)",
+    )
+    pdm.add_argument(
+        "--unselected",
+        action="store_true",
+        help="also name every document the indexes list that the selection "
+        "leaves out, with the editions each offers",
+    )
+    pmap = sub.add_parser(
+        "document-map",
+        parents=[net],
+        help="the map: every document vatican.va's own indexes name, whether "
+        "or not this corpus holds it, plus the tracked tier it does not "
+        "publish at all. Reads the cached indexes; add --offline for a "
+        "rebuild, which makes no request",
+    )
+    pmap.add_argument(
+        "--families",
+        default="all",
+        help="comma-separated families, or `all` (the default: a map asked "
+        "for less than everything is a map of the question)",
+    )
+    pmap.add_argument(
+        "--write",
+        action="store_true",
+        help="write build/magisterium-map/map.json; without it the census is "
+        "printed and nothing is written",
+    )
+    pmap.add_argument(
+        "--offline",
+        action="store_true",
+        help="read only what is cached and make no request at all",
     )
     p3d = sub.add_parser(
         "discover-cdf",
@@ -11136,13 +11649,19 @@ def main() -> int:
                     f"known: {', '.join(sorted(DIVISIONS))}"
                 )
                 return 1
+            families, bad = modern_families(args.families)
+            if bad:
+                print(
+                    f"ERROR: no such family: {', '.join(bad)}; known: "
+                    + ", ".join(f.segment for f in MODERN_FAMILIES)
+                )
+                return 1
             results = run_phase2(
                 fetcher,
                 pontiffs,
                 args.time_budget,
                 args.limit,
-                args.exhortations,
-                include_letters=args.letters,
+                families,
                 skip_written=args.skip_written,
                 doc_slugs=doc_slugs,
                 jobs=args.jobs,
@@ -11181,19 +11700,25 @@ def main() -> int:
         report_symmetry(check_language_symmetry())
         return 0
 
-    if args.cmd == "discover-encyclicals":
-        total = 0
-        for slug, display, _year in PONTIFF_CANDIDATES:
-            refs, notes = discover_encyclicals(fetcher, slug, display)
-            for note in notes:
-                print(f"  [note] {note}")
-            print(f"{slug} ({display}): {len(refs)} encyclicals")
-            total += len(refs)
-        print(
-            f"\ntotal encyclicals discovered across {len(PONTIFF_CANDIDATES)} candidate pontificates: {total}"
-        )
-        report_fetching(fetcher)
-        return 0
+    if args.cmd == "document-map":
+        families, bad = modern_families(args.families)
+        if bad:
+            print(
+                f"ERROR: no such family: {', '.join(bad)}; known: "
+                + ", ".join(f.segment for f in MODERN_FAMILIES)
+            )
+            return 1
+        return report_magisterium_map(fetcher, families, args.write)
+
+    if args.cmd == "discover-modern":
+        families, bad = modern_families(args.families)
+        if bad:
+            print(
+                f"ERROR: no such family: {', '.join(bad)}; known: "
+                + ", ".join(f.segment for f in MODERN_FAMILIES)
+            )
+            return 1
+        return report_modern_census(fetcher, families, args.unselected)
 
     return 1
 

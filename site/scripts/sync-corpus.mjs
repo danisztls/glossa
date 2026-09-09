@@ -827,7 +827,14 @@ if (!existsSync(buildSrc)) {
  *    against. The United States' adaptation cannot be asked whether it differs
  *    from the book it adapts, so something that is not it has to be.
  *
- * All four live under `build/` for the same reason: they are parsed output
+ *  - `magisterium-map/` is a CENSUS OF THE SOURCE — every document
+ *    vatican.va's own indexes name, whether or not this corpus holds it,
+ *    plus the tracked tier of documents it does not publish at all
+ *    (`pipeline/magisterium-offsite.json`). It is read by nobody at runtime;
+ *    it exists so that "we have never heard of this document" and "we chose
+ *    not to publish it" stop looking alike.
+ *
+ * All five live under `build/` for the same reason: they are parsed output
  * regenerable from `raw/` with no network, which is what `build/` means —
  * being a work is not.
  */
@@ -835,7 +842,8 @@ const NON_WORK_DIRS = new Set([
 	'gcatholic-calendar',
 	'prayer-references',
 	'usccb-readings',
-	'olm1981'
+	'olm1981',
+	'magisterium-map'
 ]);
 
 const workDirs = readdirSync(buildSrc, { withFileTypes: true })

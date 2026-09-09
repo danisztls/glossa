@@ -978,6 +978,8 @@ export const en: Dictionary = {
 	'document.kind.apostolicExhortation': 'Apostolic Exhortation',
 	'document.kind.apostolicConstitution': 'Apostolic Constitution',
 	'document.kind.apostolicLetter': 'Apostolic Letter',
+	'document.kind.motuProprio': 'Motu Proprio',
+	'document.kind.bull': 'Bull',
 	'document.kind.cdfDeclaration': 'CDF Declaration',
 	'document.kind.cdfInstruction': 'CDF Instruction',
 	'document.kind.cdfLetter': 'CDF Letter',

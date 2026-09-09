@@ -80,17 +80,41 @@ Challoner's notes, Matos Soares' notes, and anything annotative added later.
 
 ## Scope
 
-**In**: the Bible, the CCC, the Compendium, all encyclicals across all
-pontificates, the 16 Vatican II documents, the 2 First Vatican Council
-constitutions, apostolic exhortations, the prayers, the Summa (EN + LA), the
-Compendium of the Social Doctrine, the Code of Canon Law, and the doctrinal
-office's cited documents.
+**In**: the Bible, the CCC, the Compendium, all encyclicals and all apostolic
+exhortations across all pontificates, the 16 Vatican II documents, the 2 First
+Vatican Council constitutions, a measured selection of apostolic letters,
+apostolic constitutions, motu proprios and bulls, the prayers, the Summa (EN +
+LA), the Compendium of the Social Doctrine, the Code of Canon Law, and the
+doctrinal office's cited documents.
 
-**Every encyclical the Holy See publishes is on the site in some language** —
-English where it exists, otherwise the language it does exist in. Discovery
-consults the Italian index per pontificate for anything English does not list;
-measured, Italian is the only language reaching a document English does not.
-This is not a "crawl more languages" switch.
+**Every encyclical and every apostolic exhortation the Holy See publishes is
+on the site in some language** — English where it exists, otherwise the
+language it does exist in.
+
+**Two families are published whole and four are selected from, and what
+decides is whether the origin's index is a list of teaching documents.** The
+encyclical and exhortation indexes are; the other four are the origin's
+complete list — 1,963 apostolic letters and 1,297 apostolic constitutions,
+most of them conferring a title on one church or erecting one diocese. Those
+four are selected by the criterion `CDF_DOCUMENTS` already sets: a document is
+published where this corpus's own apparatus names it, as that kind of
+document, three or more times. Four constitutions are there on a rule instead
+— the act that promulgates or amends something the corpus itself serves, which
+is why _Sacrae Disciplinae Leges_ and _Fidei Depositum_ are published and
+almost never cited.
+
+**Which index languages a family is read in is a property of the family.**
+Encyclicals need English and Italian; every apostolic letter and constitution
+before Paul VI exists in Latin and nothing else. This is not a "crawl more
+languages" switch: a language is in a family's chain only where it reaches a
+document no earlier one lists.
+
+**What vatican.va does not publish is written down too.** `build/magisterium-
+map/` is the census of the source — every document its indexes name, held or
+not — and `pipeline/magisterium-offsite.json` the documents this corpus cites
+that vatican.va has no page for at all, which is most of the Magisterium
+before Leo XIII. Naming them is the whole commitment; going and getting them
+elsewhere is a separate decision this scope does not take.
 
 **Translations beyond that are fetched, not published, by default.** Acquiring
 sources and deciding what to publish are separate decisions on separate

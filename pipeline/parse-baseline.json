@@ -8,6 +8,14 @@
     "Written only by `--accept-baseline`, which is a deliberate act."
   ],
   "works": {
+    "bull.misericordiae-vultus.be": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "bull.spes-non-confundit.hr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
     "cdf.collaboration-of-men-and-women.de": {
       "status": "validation-failed",
       "problems": 1
@@ -177,6 +185,174 @@
       "problems": 1
     },
     "cdf.responsum-ordinatio-sacerdotalis.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.fidei-depositum.it": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "constitution.indulgentiarum-doctrina.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.indulgentiarum-doctrina.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.pastor-bonus.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.pastor-bonus.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.pastor-bonus.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.pastor-bonus.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.ar": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.cs": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.de": {
+      "status": "validation-failed",
+      "problems": 15
+    },
+    "constitution.praedicate-evangelium.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.praedicate-evangelium.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.regimini-ecclesiae-universae.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacramentum-ordinis.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sacri-canones.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "constitution.sapientia-christiana.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.sapientia-christiana.en": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "constitution.sapientia-christiana.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.sapientia-christiana.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "constitution.veritatis-gaudium.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "constitution.veritatis-gaudium.pt": {
       "status": "validation-failed",
       "problems": 1
     },
@@ -896,6 +1072,18 @@
       "status": "validation-failed",
       "problems": 1
     },
+    "exhortation.menti-nostrae.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.nobis-in-animo.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.nobis-in-animo.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
     "exhortation.pastores-dabo-vobis.es": {
       "status": "validation-failed",
       "problems": 2
@@ -916,8 +1104,68 @@
       "status": "validation-failed",
       "problems": 2
     },
+    "exhortation.postrema-sessio.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.postrema-sessio.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.postrema-sessio.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.postrema-sessio.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.postrema-sessio.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.postrema-sessio.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.quarta-sessio.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
     "exhortation.querida-amazonia.ar": {
       "status": "validation-failed",
+      "problems": 1
+    },
+    "exhortation.rapidi-progressi.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.rapidi-progressi.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.rapidi-progressi.pt": {
+      "status": "no-translation-stub",
       "problems": 1
     },
     "exhortation.reconciliatio-et-paenitentia.fr": {
@@ -948,6 +1196,46 @@
       "status": "validation-failed",
       "problems": 2
     },
+    "exhortation.spoglie-piox.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.spoglie-piox.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.spoglie-piox.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.spoglie-piox.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.spoglie-piox.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.ubi-primum.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.ubi-primum.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.ubi-primum.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.ubi-primum.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "exhortation.ubi-primum.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
     "exhortation.verbum-domini.pt": {
       "status": "validation-failed",
       "problems": 1
@@ -969,6 +1257,254 @@
       "problems": 103
     },
     "exhortation.vita-consecrata.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.laetamur.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.lumen-ecclesiae.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.maximum-illud.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.mulieris-dignitatem.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.novo-millennio-ineunte.de": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.novo-millennio-ineunte.hu": {
+      "status": "validation-failed",
+      "problems": 5
+    },
+    "letter.novo-millennio-ineunte.vi": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.ordinatio-sacerdotalis.pl": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.orientale-lumen.de": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.orientale-lumen.en": {
+      "status": "validation-failed",
+      "problems": 24
+    },
+    "letter.orientale-lumen.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.orientale-lumen.hr": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.rosarium-virginis-mariae.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.rosarium-virginis-mariae.pl": {
+      "status": "validation-failed",
+      "problems": 22
+    },
+    "letter.salvifici-doloris.de": {
+      "status": "validation-failed",
+      "problems": 24
+    },
+    "letter.salvifici-doloris.fr": {
+      "status": "validation-failed",
+      "problems": 24
+    },
+    "letter.sollicitudo-omnium.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.sollicitudo-omnium.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.sollicitudo-omnium.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.sollicitudo-omnium.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.sollicitudo-omnium.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "letter.tertio-millennio-adveniente.de": {
+      "status": "validation-failed",
+      "problems": 26
+    },
+    "letter.tertio-millennio-adveniente.en": {
+      "status": "validation-failed",
+      "problems": 26
+    },
+    "letter.tertio-millennio-adveniente.he": {
+      "status": "fetch-failed",
+      "problems": 1
+    },
+    "letter.tertio-millennio-adveniente.it": {
+      "status": "validation-failed",
+      "problems": 26
+    },
+    "letter.tertio-millennio-adveniente.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "letter.tertio-millennio-adveniente.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "letter.vicesimus-quintus-annus.fr": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "letter.vicesimus-quintus-annus.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.apostolos-suos.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cleri-sanctitati.la": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "motu-proprio.cleri-sanctitati.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.crebrae-allatae.la": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "motu-proprio.crebrae-allatae.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.es": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.cum-nobis.pt": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.ecclesiae-sanctae.en": {
+      "status": "validation-failed",
+      "problems": 4
+    },
+    "motu-proprio.ecclesiae-sanctae.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.magnum-principium.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.mitis-iudex-dominus-iesus.hr": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "motu-proprio.orbem-catholicum.de": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.orbem-catholicum.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.orbem-catholicum.fr": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.orbem-catholicum.it": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "motu-proprio.sacrum-diaconatus.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.sacrum-diaconatus.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.sacrum-diaconatus.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "motu-proprio.vitae-mysterium.it": {
       "status": "validation-failed",
       "problems": 1
     },

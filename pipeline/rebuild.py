@@ -376,23 +376,27 @@ STAGES: tuple[Stage, ...] = (
     ),
     # Everything on the modern `content/{pontiff}/...` shell, in one stage
     # because it is one crawl: `phase2` walks a pontificate once and asks each
-    # of its three indexes in turn. `--letters` is a selection rather than an
-    # index -- `V.APOSTOLIC_LETTERS` names the documents and holds the
-    # measurement behind them, the same posture `V.CDF_DOCUMENTS` takes.
+    # family's indexes in turn. Four of the six are a SELECTION rather than an
+    # index -- `V.MODERN_FAMILIES` names them and each selection table holds
+    # the measurement behind it, the same posture `V.CDF_DOCUMENTS` takes.
+    #
+    # The outputs are derived from the table rather than typed, for the reason
+    # `PHASE2_LANGS` is: these globs partition `build/`, so a family added to
+    # the table and forgotten here is a work every stage disclaims.
     Stage(
         "encyclicals",
         "documents",
         "vatican_docs.py",
         (
             "phase2",
-            "--exhortations",
-            "--letters",
+            "--families",
+            "all",
             "--offered-only",
             "--offline",
             "--langs",
             PHASE2_LANGS,
         ),
-        ("encyclical.*", "exhortation.*", "letter.*"),
+        tuple(f"{f.tag}.*" for f in V.MODERN_FAMILIES),
     ),
     # The Dicastery for the Doctrine of the Faith. `--lang` is the readable
     # subset derived by the scraper, not a list typed here, for the reason
@@ -407,6 +411,21 @@ STAGES: tuple[Stage, ...] = (
         "vatican_docs.py",
         ("phase3", "--lang", PHASE3_LANGS, "--offline"),
         ("cdf.*",),
+    ),
+    # THE MAP, and it is the one stage whose output is about what the corpus
+    # does NOT have. It reads the cached indexes (no network) and `build/`
+    # (hence `needs`), and writes one row per document vatican.va's own
+    # indexes name -- published or not -- beside the tracked tier of
+    # documents vatican.va does not publish at all. See the comment above
+    # `MAP_DIR_NAME` in `vatican_docs.py` for why only one of its two tiers
+    # is derivable.
+    Stage(
+        "magisterium-map",
+        "documents",
+        "vatican_docs.py",
+        ("document-map", "--write", "--offline"),
+        ("magisterium-map",),
+        needs=("vatii", "vati", "encyclicals", "cdf"),
     ),
     # The Compendium of the Social Doctrine. `--langs all` is spelled out
     # rather than left to the script's default, which is English alone: the

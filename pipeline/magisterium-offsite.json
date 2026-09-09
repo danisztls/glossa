@@ -1,0 +1,122 @@
+{
+  "$comment": [
+    "Documents of the Magisterium that vatican.va does not publish, and that",
+    "this corpus's own apparatus names. The tracked tier of the map —",
+    "`build/magisterium-map/` derives everything else from the indexes in",
+    "raw/, and this is the part no page can regenerate, because there is no",
+    "page (root CLAUDE.md, 'Output regenerable only from a previous copy of",
+    "itself is not regenerable').",
+    "",
+    "WHAT PUTS AN ENTRY HERE. `cited` is how many of the corpus's 132,979",
+    "citation strings name the document by kind and title — `Bull",
+    "Ineffabilis Deus`, `Enc. Quanta cura` — and match nothing the map lists",
+    "and nothing build/ holds. It is a measurement, so it carries the day it",
+    "was taken; it is evidence for the claim beside it, not an inventory",
+    "number, and it will move as the corpus grows.",
+    "",
+    "WHAT DOES NOT BELONG HERE. A document vatican.va publishes in a family",
+    "this map does not cover is NOT missing from vatican.va — `Dominicae",
+    "Cenae` is cited 21 times and sits under `letters/`, which is a",
+    "different question and a different answer. Nor does a spelling the",
+    "apparatus varies (`Ad coeli reginam` for `ad-caeli-reginam`,",
+    "`Sollecitudo` for `Sollicitudo`); those are ours to normalise.",
+    "",
+    "FIELDS: title, document_kind, pontiff_or_council, promulgated (ISO, or",
+    "the year alone where the day is not established), cited, measured, and",
+    "note — why vatican.va has no page. No source is named: finding the text",
+    "elsewhere is a separate decision under `docs/decisions.md` §Scope, and",
+    "this file's job is to say what is missing, not to go and get it."
+  ],
+  "documents": [
+    {
+      "id": "offsite.unam-sanctam",
+      "title": "Unam Sanctam",
+      "document_kind": "bull",
+      "pontiff_or_council": "Boniface VIII",
+      "promulgated": "1302-11-18",
+      "cited": 6,
+      "measured": "2026-09-09",
+      "note": "vatican.va's papal shell begins at Leo XIII; it publishes nothing of Boniface VIII."
+    },
+    {
+      "id": "offsite.apostolici-regiminis",
+      "title": "Apostolici Regiminis",
+      "document_kind": "bull",
+      "pontiff_or_council": "Fifth Lateran Council",
+      "promulgated": "1513-12-19",
+      "cited": 15,
+      "measured": "2026-09-09",
+      "note": "The councils mirror carries the First and Second Vatican Councils and no earlier one."
+    },
+    {
+      "id": "offsite.certiores-effecti",
+      "title": "Certiores Effecti",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Benedict XIV",
+      "promulgated": "1742-11-13",
+      "cited": 4,
+      "measured": "2026-09-09",
+      "note": "No index exists for any pontificate before Leo XIII, in any language."
+    },
+    {
+      "id": "offsite.allatae-sunt",
+      "title": "Allatae Sunt",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Benedict XIV",
+      "promulgated": "1755-07-26",
+      "cited": 6,
+      "measured": "2026-09-09",
+      "note": "No index exists for any pontificate before Leo XIII, in any language."
+    },
+    {
+      "id": "offsite.demandatam",
+      "title": "Demandatam",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Benedict XIV",
+      "promulgated": "1743-12-24",
+      "cited": 6,
+      "measured": "2026-09-09",
+      "note": "No index exists for any pontificate before Leo XIII, in any language."
+    },
+    {
+      "id": "offsite.catholicae-communionis",
+      "title": "Catholicae Communionis",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Benedict XIV",
+      "promulgated": "1748",
+      "cited": 5,
+      "measured": "2026-09-09",
+      "note": "No index exists for any pontificate before Leo XIII, in any language."
+    },
+    {
+      "id": "offsite.qui-pluribus",
+      "title": "Qui Pluribus",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Pius IX",
+      "promulgated": "1846-11-09",
+      "cited": 10,
+      "measured": "2026-09-09",
+      "note": "Pius IX has a `content/pius-ix/` shell and no document index under it in any of the fourteen languages probed on 2026-09-09; every family's index answers 404."
+    },
+    {
+      "id": "offsite.ineffabilis-deus",
+      "title": "Ineffabilis Deus",
+      "document_kind": "bull",
+      "pontiff_or_council": "Pius IX",
+      "promulgated": "1854-12-08",
+      "cited": 18,
+      "measured": "2026-09-09",
+      "note": "Pius IX has no document index on vatican.va. The most-cited document in this file, and the definition of the Immaculate Conception."
+    },
+    {
+      "id": "offsite.quanta-cura",
+      "title": "Quanta Cura",
+      "document_kind": "encyclical",
+      "pontiff_or_council": "Pius IX",
+      "promulgated": "1864-12-08",
+      "cited": 13,
+      "measured": "2026-09-09",
+      "note": "Pius IX has no document index on vatican.va. The Syllabus of Errors was issued with it and is cited in the corpus as `DS` rather than by title."
+    }
+  ]
+}
