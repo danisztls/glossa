@@ -4793,33 +4793,70 @@ def validate(results: dict[str, list[Prayer]]) -> tuple[bool, list[str]]:
 # appendix has no numbered units to span).
 # --------------------------------------------------------------------------
 
+#: The three prayers of the Eastern Churches, named so the projection can put
+#: the devotions in FRONT of them rather than appending itself after them --
+#: `prayers_project.reading_groups()` tests for this object by identity.
+EASTERN_GROUP = (
+    {
+        "en": "Prayers of the Eastern Churches",
+        "pt": "Ora\u00e7\u00f5es das Igrejas orientais",
+        "la": "Orationes Ecclesiarum Orientalium",
+    },
+    [
+        "coptic-incense-prayer",
+        "syro-maronite-farewell-to-the-altar",
+        "byzantine-prayer-for-the-deceased",
+    ],
+)
+
 # The grouping itself is EDITORIAL, not from the source. The Compendium's
 # appendix has exactly two parts ("A. Common Prayers", "B. Formulas of
-# Catholic Doctrine") and prints no thematic headings within Part A; these
-# seven are ours, chosen so 28 prayers read as a browsable list instead of a
-# flat run. Kept here, in the generator, so a re-parse reproduces them and
-# nothing hand-written has to survive one.
+# Catholic Doctrine") and prints no thematic headings within Part A; these six
+# are ours, chosen so 28 prayers read as a browsable list instead of a flat
+# run. Kept here, in the generator, so a re-parse reproduces them and nothing
+# hand-written has to survive one.
 #
-# Titles are therefore OURS TO TRANSLATE — there is no source wording to be
+# Titles are therefore OURS TO TRANSLATE -- there is no source wording to be
 # faithful to. Each group carries one title per language; a language missing
 # from the mapping falls back to the English so a new language never renders
 # an empty heading.
+#
+# THE ORDER HERE IS THE ORDER A READER MEETS THEM IN, and it is also the order
+# prev/next walks: `prayers_project.order()` derives each prayer's `n` from
+# this table, so a group moved here moves both. It runs from what a newcomer
+# needs first, through the devotion this collection is most often opened for,
+# to the three Eastern-rite prayers a reader of the Latin Church is least
+# likely to have come looking for -- and a list is read from the top.
+#
+# THE CREEDS WERE A GROUP OF THEIR OWN, WITH THE OUR FATHER, until 2026-09-09.
+# That pairing is the Catechism's own architecture -- the Symbol and the
+# Lord's Prayer are two of its four parts -- and it is the wrong shape for a
+# LIST OF PRAYERS: it put the Our Father in one section and the Hail Mary and
+# the Glory be in another, when those three are the prayers of a decade and
+# the three the Rosary's own page sends a reader to together. What replaces it
+# is one block somebody with no prayers at all can start from, in the order
+# they are learnt.
 STRUCTURE_GROUPS = [
-    (
-        {
-            "en": "Creeds and the Lord's Prayer",
-            "pt": "Credos e o Pai-Nosso",
-            "la": "Symbola et Oratio Dominica",
-        },
-        ["apostles-creed", "nicene-creed", "our-father"],
-    ),
     (
         {
             "en": "Basic Prayers",
             "pt": "Ora\u00e7\u00f5es fundamentais",
             "la": "Orationes fundamentales",
         },
-        ["sign-of-the-cross", "glory-be", "hail-mary", "angel-of-god", "eternal-rest"],
+        [
+            "sign-of-the-cross",
+            "our-father",
+            "hail-mary",
+            "glory-be",
+            "apostles-creed",
+            "nicene-creed",
+            "angel-of-god",
+            "eternal-rest",
+        ],
+    ),
+    (
+        {"en": "The Rosary", "pt": "O Ros\u00e1rio", "la": "Rosarium"},
+        ["rosary"],
     ),
     (
         {
@@ -4842,22 +4879,6 @@ STRUCTURE_GROUPS = [
         ],
     ),
     (
-        {"en": "The Rosary", "pt": "O Ros\u00e1rio", "la": "Rosarium"},
-        ["rosary"],
-    ),
-    (
-        {
-            "en": "Prayers of the Eastern Churches",
-            "pt": "Ora\u00e7\u00f5es das Igrejas orientais",
-            "la": "Orationes Ecclesiarum Orientalium",
-        },
-        [
-            "coptic-incense-prayer",
-            "syro-maronite-farewell-to-the-altar",
-            "byzantine-prayer-for-the-deceased",
-        ],
-    ),
-    (
         {
             "en": "Acts of Faith, Hope, Love and Contrition",
             "pt": "Atos de f\u00e9, esperan\u00e7a, caridade e contri\u00e7\u00e3o",
@@ -4869,6 +4890,7 @@ STRUCTURE_GROUPS = [
         {"en": "Litanies", "pt": "Ladainhas", "la": "Litaniae"},
         [LITANY_SLUG],
     ),
+    EASTERN_GROUP,
 ]
 
 

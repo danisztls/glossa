@@ -115,10 +115,36 @@ def load() -> dict[str, dict]:
     return {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in files}
 
 
+def reading_groups() -> list[tuple[dict, list[str]]]:
+    """The seven groups in the order `/preces` lists them.
+
+    THE DEVOTIONS ARE INSERTED, NOT APPENDED, and that is the whole of what
+    this adds. `STRUCTURE_GROUPS` is the appendix's six and `EXTRA_GROUP` the
+    seven prayers Vatican News publishes beside it; appending put those seven
+    at the foot of the page, below the Eastern-rite group, which is the one
+    group that has a reason to be last (see `STRUCTURE_GROUPS`). A group's
+    position is an editorial decision like the grouping itself, and the two
+    tables live in two files, so somebody had to hold the order.
+
+    Matched on `P.EASTERN_GROUP` by IDENTITY rather than by title or by index:
+    a title is translated and an index moves with any edit to the table above
+    it, and both would fail by silently putting the devotions somewhere else.
+    A table that no longer contains it still gets them, at the end.
+    """
+    out: list[tuple[dict, list[str]]] = []
+    for group in P.STRUCTURE_GROUPS:
+        if group is P.EASTERN_GROUP:
+            out.append(EXTRA_GROUP)
+        out.append(group)
+    if EXTRA_GROUP not in out:
+        out.append(EXTRA_GROUP)
+    return out
+
+
 def order() -> list[str]:
-    """Collection order: the appendix's groups, then the devotions."""
+    """Collection order, and so each prayer's `n` and the prev/next chain."""
     out: list[str] = []
-    for _, slugs in [*P.STRUCTURE_GROUPS, EXTRA_GROUP]:
+    for _, slugs in reading_groups():
         out += [s for s in slugs if s not in out]
     return out
 
@@ -278,10 +304,13 @@ class _Node:
 
 
 def structure_for(rows: list[dict], lang: str) -> list[dict]:
+    """The listing's headings, over the same order `order()` numbers by --
+    `reading_groups()` is read by both, or the page would group its prayers
+    one way and walk them another."""
     nodes = [_Node(r["slug"], r["title"]) for r in rows]
     saved = P.STRUCTURE_GROUPS
     try:
-        P.STRUCTURE_GROUPS = [*saved, EXTRA_GROUP]
+        P.STRUCTURE_GROUPS = reading_groups()
         return P.build_structure(nodes, lang)
     finally:
         P.STRUCTURE_GROUPS = saved
