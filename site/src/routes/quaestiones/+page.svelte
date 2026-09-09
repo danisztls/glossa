@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { hrefFor } from '$lib/address';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
+	import TopicSearch from '$lib/components/TopicSearch.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { matchingSlugs } from '$lib/topic-search';
 	import type { PageData } from './$types';
@@ -23,11 +24,13 @@
 	 * is a way of getting to one page and the page is the thing worth linking
 	 * to. Nothing else on the site reads it, so nothing else needs to see it.
 	 *
-	 * ONE INPUT, ABOVE THE LIST, AND NOT IN THE ASIDE. The aside is gone below
-	 * 80rem (`styles/layout.css`), so a control living there has to be rendered
-	 * a second time for narrower screens — the duplication `/documenta` pays
-	 * because its whole panel has to be reachable. A single field does not have
-	 * to be paid for twice, and above the rows it filters is where it reads.
+	 * IT SITS AT THE TOP OF THE ASIDE, above the table of contents, and is
+	 * rendered a SECOND time above the list for narrower screens — the aside is
+	 * `display: none` below 80rem (`styles/layout.css`), and search is the one
+	 * control a phone reader most needs on a list of a hundred questions. That
+	 * is the duplication `/documenta` pays for `DocumentFilters`; both copies
+	 * bind this one `$state`, so there is one query and never two, and exactly
+	 * one of them is in the accessibility tree at any width.
 	 */
 	let query = $state('');
 
@@ -119,29 +122,14 @@
 		<p class="page-tagline landing-measure">{t('quaestiones.landing.tagline')}</p>
 
 		{#if data.index}
-			<!-- `type="search"` for the clear affordance browsers give it; the
-			     accessible name is an `aria-label` because a visible label would
-			     only repeat the placeholder. `bind:` rather than `/documenta`'s
-			     `value` + `oninput`, since here the text IS local state and
-			     belongs to no route. -->
-			<div class="search-band">
-				<input
-					type="search"
-					class="search"
-					bind:value={query}
-					placeholder={t('quaestiones.search.label')}
-					aria-label={t('quaestiones.search.label')}
-				/>
-				<!-- Announced only while it means something: with no query the
-				     count would read "116 / 116" beside a page showing all of
-				     them. `aria-live` so a screen reader hears the list shrink,
-				     which is otherwise a silent change to content far below. -->
-				<p class="count" aria-live="polite">
-					{#if searching}
-						<span class="visually-hidden">{t('quaestiones.search.label')}: </span>{matching.size} /
-						{rows.length}
-					{/if}
-				</p>
+			<!-- The copy a reader gets where the aside is not, below the grid
+			     breakpoint — `.search-inline` mirrors `.index-aside`'s own
+			     `display` rule, exactly as `/documenta`'s `.filters-inline`
+			     does. Not a `<details>` like that one: a single field is small
+			     enough to simply show, and folding away the control that makes
+			     a long list usable is the opposite of the point. -->
+			<div class="search-inline">
+				<TopicSearch bind:query matched={matching.size} total={rows.length} />
 			</div>
 		{/if}
 
@@ -181,6 +169,9 @@
 		{/if}
 	</div>
 	<aside class="index-aside">
+		{#if data.index}
+			<TopicSearch bind:query matched={matching.size} total={rows.length} />
+		{/if}
 		<IndexSidebarToc heading={t('quaestiones.landing.title')} items={sidebarItems} />
 	</aside>
 </div>
@@ -192,63 +183,46 @@
 	}
 
 	/*
-	 * THE FIELD AND ITS COUNT SIT ON ONE LINE, the count to the right, so the
-	 * number appears where the eye already is rather than pushing the list
-	 * down by a line the moment somebody types. It holds its space when empty
-	 * for the same reason: a count that appears and disappears would move a
-	 * hundred rows every keystroke.
+	 * THE INLINE COPY IS THE MIRROR OF `.index-aside` in styles/layout.css:
+	 * exactly where that rule takes the aside away, this appears, and where
+	 * the aside is back this goes. `/documenta`'s `.filters-inline` is the
+	 * same pair. Getting it wrong in either direction shows two search boxes
+	 * or none.
 	 */
-	.search-band {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		margin-bottom: 2rem;
+	@media (min-width: 80rem) {
+		.search-inline {
+			display: none;
+		}
+	}
+
+	.search-inline {
 		max-width: 40rem;
 	}
 
-	/* The same field `/documenta`'s `.doc-search` is, and deliberately not a
-	   shared class: that one is a component's own control and carries the
-	   sticky band around it. What is worth copying is the four declarations
-	   below and the focus rule, which every bordered text field on this site
-	   now agrees on. */
-	.search {
-		flex: 1 1 auto;
-		min-width: 0;
-		box-sizing: border-box;
-		padding: 0.45rem 0.6rem;
-		font: inherit;
-		font-size: 0.9rem;
-		/* Restated because `font: inherit` above leaves a length, not a ratio
-		   — styles/base.css says why. */
-		line-height: 1.5;
-		color: var(--color-text);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-
 	/*
-	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
-	 * field on this site does — `JumpBox`, `.menu-filter` and `.doc-search`
-	 * are the same declarations, and `DocumentFilters` records the arithmetic.
-	 * An offset ring drawn around an already-bordered rounded field stacks
-	 * into a double frame. The transparent outline is not decoration:
-	 * `forced-colors` repaints an `outline` in the system focus colour, where
-	 * the halo is dropped.
+	 * THE SEARCH FIELD HOLDS THE TOP OF THE ASIDE'S SCROLLPORT.
+	 *
+	 * `.index-aside` is its own scroll container (styles/layout.css) and the
+	 * table of contents under this is sixteen rows, so a reader who scrolled
+	 * to the last shelf would have scrolled the one control they might want to
+	 * type into off the top of it.
+	 *
+	 * ON THE ASIDE'S COPY AND NOT ON THE COMPONENT, because the same component
+	 * is rendered inline above the list at narrower widths, where there is no
+	 * scroll container of its own: sticky there resolves against the PAGE's
+	 * scrollport and the field would ride down the document over a hundred
+	 * rows. `:global()` reaches into the component's scope; `.index-aside` is
+	 * this route's own element, so the pair stays scoped to this page.
+	 *
+	 * The ground is opaque because a sticky element does not clip what passes
+	 * under it, and the band is what carries it — see the component, where the
+	 * gap below the field is padding for exactly this reason.
 	 */
-	.search:focus-visible {
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-		border-color: var(--color-apparatus);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
-	}
-
-	.count {
-		flex: 0 0 auto;
-		margin: 0;
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		font-variant-numeric: tabular-nums;
+	.index-aside :global(.topic-search-band) {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background: var(--color-bg);
 	}
 
 	.doorway {
