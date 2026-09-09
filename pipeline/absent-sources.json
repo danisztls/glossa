@@ -1442,6 +1442,13 @@
     "note": ""
   },
   {
+    "url": "https://www.vatican.va/content/john-paul-ii/hr/apost_letters/1995/documents/hf_jp-ii_apl_19950502_orientale-lumen.html",
+    "status": 404,
+    "observed": "2026-09-09",
+    "context": "letter__orientale-lumen__hr.html",
+    "note": ""
+  },
+  {
     "url": "https://www.vatican.va/content/john-paul-ii/hr/apost_letters/1997/documents/hf_jp-ii_apl_15081997_laetamur.html",
     "status": 404,
     "observed": "2026-09-09",
@@ -1530,6 +1537,13 @@
     "status": 404,
     "observed": "2026-09-09",
     "context": "letter__ordinatio-sacerdotalis__he.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/iw/apost_letters/1994/documents/hf_jp-ii_apl_19941110_tertio-millennio-adveniente.html",
+    "status": 404,
+    "observed": "2026-09-09",
+    "context": "letter__tertio-millennio-adveniente__he.html",
     "note": ""
   },
   {
@@ -1880,6 +1894,13 @@
     "status": 404,
     "observed": "2026-09-09",
     "context": "letter__vicesimus-quintus-annus__pl.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/pl/apost_letters/1994/documents/hf_jp-ii_apl_19940522_ordinatio-sacerdotalis.html",
+    "status": 404,
+    "observed": "2026-09-09",
+    "context": "letter__ordinatio-sacerdotalis__pl.html",
     "note": ""
   },
   {
@@ -2643,6 +2664,13 @@
     "status": 404,
     "observed": "2026-09-09",
     "context": "letter__laetamur__vi.html",
+    "note": ""
+  },
+  {
+    "url": "https://www.vatican.va/content/john-paul-ii/vi/apost_letters/2001/documents/hf_jp-ii_apl_20010106_novo-millennio-ineunte.html",
+    "status": 404,
+    "observed": "2026-09-09",
+    "context": "letter__novo-millennio-ineunte__vi.html",
     "note": ""
   },
   {

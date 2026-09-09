@@ -10451,15 +10451,27 @@ def run_phase2(
             # what the SOURCE calls the language, and for Hebrew those differ
             # (`iw` there, `he` here) -- comparing the two directly skipped
             # the one document that offers Hebrew at all.
-            if offered is not None and url_lang_key(ref, lang) not in offered:
+            key = url_lang_key(ref, lang)
+            # AN INDEX-GIVEN URL IS A FACT AND A DERIVED ONE IS A GUESS, so
+            # the fact wins and the switcher does not get to veto it. Ten of
+            # Pius XI's encyclicals are what separates the two: the English
+            # index writes the date digits the other way round from every
+            # other language's, so substituting `en` -> `it` asks for a page
+            # that does not exist and the absent ledger remembers the wrong
+            # answer for sixteen languages apiece (PLAN.md, Gap 18). The
+            # switcher under-reports for its own reasons -- Rerum Ecclesiae's
+            # English index entry names English alone and four other indexes
+            # list it.
+            known = ref.lang_urls.get(key)
+            if known is None and offered is not None and key not in offered:
                 continue
-            url = translation_url_for(ref, lang)
+            url = known or translation_url_for(ref, lang)
             if url:
                 # Keyed by the SOURCE's code, which is what `lang_urls` means
                 # and what every reader of it (`cache_page`, `fetch_for_parse`)
                 # looks up through `url_lang_key`. Storing the work tag here
                 # was invisible while the two always matched.
-                ref.lang_urls[url_lang_key(ref, lang)] = url
+                ref.lang_urls[key] = url
                 langs.append(lang)
         awaiting[idx] = {
             "slug": ref.slug,

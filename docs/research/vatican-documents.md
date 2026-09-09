@@ -316,3 +316,117 @@ A document is selected where the corpus's own apparatus names it **as that kind 
 `pipeline/magisterium-offsite.json`, nine documents, admitted the same way: a title the apparatus names by kind that matches nothing the map lists and nothing `build/` holds. They fall into three classes and no other — **Pius IX** (_Ineffabilis Deus_ 18 citations, _Quanta Cura_ 13, _Qui Pluribus_ 10: his `content/pius-ix/` shell exists and every family's index under it answers 404, in all fourteen languages), **pontificates before Leo XIII** (four of Benedict XIV's encyclicals), and **bulls older than the shell** (_Unam Sanctam_, and Lateran V's _Apostolici Regiminis_). §2's guess that Vatican I might not be on the site was wrong in the same shape and was corrected in September 2026; this is the general form of it.
 
 **What does not belong in that file**: a document vatican.va publishes in a family the map does not read. _Dominicae Cenae_ is cited 21 times and sits under `letters/` — a different question, and the honest answer is that the map covers six families and there are more.
+
+## 9. THE GAPS
+
+Everything below is something this map cannot currently say. Measured
+**2026-09-09**; re-derive rather than quoting — `document-map --offline` is the
+census, `discover-modern --unselected` the per-family list, and the counts here
+move as the corpus grows.
+
+### 9.1 The map covers six families of about fifteen
+
+The papal shell publishes `encyclicals`, `apost_exhortations`, `apost_letters`,
+`apost_constitutions`, `motu_proprio` and `bulls` — which the map reads — beside
+`letters`, `messages`, `homilies`, `speeches`, `audiences`, `angelus`,
+`cotidie`, `prayers` and `travels`, which it does not. **A document in an
+unread family is not missing from vatican.va and must not be recorded as
+absent**: _Dominicae Cenae_ is cited 21 times by works this corpus serves and
+sits under `letters/`. The three families of teaching documents beyond the six
+are `letters` and `messages` (both of which carry doctrinal texts among
+occasional ones) and `homilies`; the rest are out for `docs/decisions.md`
+§Scope's reason for general audiences.
+
+### 9.2 Everything outside `content/{pontiff}/` is unmapped
+
+The doctrinal office is the one curial body read at all, and `CDF_DOCUMENTS`
+selects 26 of the 239 its own index lists. Nothing reads the Dicasteries for
+Divine Worship, for the Clergy, for Culture and Education, for Bishops or for
+Evangelization; nothing reads the pontifical councils; nothing reads the
+International Theological Commission or the Pontifical Biblical Commission,
+whose document sets sit under `cfaith/` beside the one that is read. The synod's
+own documents, the `/archive/` gazette PDFs, and every council before Vatican I
+are likewise outside it.
+
+### 9.3 The shell begins at Leo XIII, and Pius IX is the shape of what that costs
+
+`content/pius-ix/` exists and every family's index under it answers 404, in all
+fourteen languages probed. He wrote about forty encyclicals; three are in
+`magisterium-offsite.json`, because three are what this corpus's apparatus
+happens to name. **Everything before Leo XIII is in the same position and only
+what is cited can be seen** — the method finds a document by being told about
+it, so a document nothing here cites is invisible to it, and the nine rows in
+that file are a floor with no estimate attached.
+
+### 9.4 Five filenames match no convention, and are reported rather than skipped
+
+Four whose date is not eight digits — `hf_jp-ii_apc_1999006034_cum-ad-aeternam-provehendam`,
+`hf_p-xii_apl_1941123_episcopato-bolivia`,
+`papa-francesco_lettera-ap_2015412_gregorius-narecensis-doctor-ecclesiae`,
+`papa-francesco_lettera-ap_2015915_beato-benedict-daswa` — and one 1896 letter
+named in spelled-out Latin (`litterae-apostolicae-apostolicae-curae-13-septembris-1896`).
+The first four look like source typos and the fifth like an older naming; none
+is worth a fifth pattern, and all five print a note on every run.
+
+### 9.5 The index-language chains are a greedy cover taken on one day
+
+A family's chain is the shortest list of indexes that reached every document it
+publishes on 2026-09-09. **A document published only in a language outside its
+family's chain is invisible, and nothing would say so** — the same shape as the
+defect the chains were introduced to fix, one level up. Re-derive the cover
+after any ingestion that adds a language, and prefer widening a chain to
+trusting one.
+
+### 9.6 The map counts an index listing as an edition
+
+An index links an HTML page and a PDF the same way, so `editions` over-counts by
+whatever the family publishes only as PDF. Two are known and both are correct in
+the ledger and wrong in the map: `verbum-domini.la` and `amoris-laetitia.en` are
+`pdf-only` in `translations-checked.json` and listed as editions here. Joining
+the two files is the fix; nothing does it yet.
+
+### 9.7 The selection is a floor, and its blind spot is a naming habit
+
+A document is selected where the corpus's apparatus names it as that kind of
+document three or more times, so **a filename that names the document's SUBJECT
+rather than its incipit cannot be reached at all** — the inversion
+`CDF_DOCUMENTS` documents for the doctrinal office, arriving in the papal
+families. `spes-aedificandi` is filed `co-patronesses-europe`, _Intima Ecclesiae
+Natura_ as `caritas`, and _Divinae Consortium Naturae_ as `divina-consortium`,
+which was found by reading the map rather than the citations. 1,963 apostolic
+letters and 271 motu proprios have never been read that way; growing the
+selection is now a pass over `map.json` and costs no crawl.
+
+Two further limits of the same criterion:
+
+- **A slug the family uses more than once carries no count.** `Litt. ap.
+Spiritus Domini` names any of four documents and `Euntes in mundum` any of
+  four; both cleared the threshold on citations that cannot be attributed to one
+  of them, and both are left out until something disambiguates them.
+- **The corpus is its own oracle**, so a document cited only by works this
+  corpus does not hold scores zero. The criterion measures what we can LINK,
+  which is what it is for, and is not a measure of what the Church weighs.
+
+### 9.8 Twenty-two editions are acquired and not published
+
+Their parses are switched off in `site/unpublished.json`, each with the
+measurement. Three are whole documents rather than editions: _Sapientia
+Christiana_, whose seven editions are seven different shapes; and _Cleri
+Sanctitati_ and _Crebrae Allatae_, which are codes of canons — a shape `cic.py`
+reads and `parse_document` does not — and have one edition each, so switching it
+off withdraws the document. `Cleri Sanctitati` is cited 49 times, the most-cited
+thing this ingestion acquired and did not publish. Their pages are in `raw/`;
+the fix is a parser, not a crawl.
+
+### 9.9 The new families have no editorial layer and no translation ledger
+
+- **56 of the 57 new documents carry no description and none carries a subject
+  tag**, so they are listed at `/documenta` and reachable by name while being
+  absent from its subject facets. `site/descriptions.json` and
+  `site/document-tags.json` are both editorial files written by reading.
+- **`translations-checked.json` holds no row for `letter`, `constitution`,
+  `motu-proprio` or `bull`, and 19 for `exhortation` against that family's 56
+  documents.** `record_translations.py` has never been run over them, so every
+  edition those families lack is an UNCHECKED absence — which is precisely the
+  distinction that ledger exists to draw. `capture-pdfs` has not been run over
+  them either, so `pdf-only` is unrecorded there too.

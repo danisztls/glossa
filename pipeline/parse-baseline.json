@@ -1276,25 +1276,9 @@
       "status": "validation-failed",
       "problems": 1
     },
-    "letter.novo-millennio-ineunte.de": {
-      "status": "fetch-failed",
-      "problems": 1
-    },
     "letter.novo-millennio-ineunte.hu": {
       "status": "validation-failed",
       "problems": 5
-    },
-    "letter.novo-millennio-ineunte.vi": {
-      "status": "fetch-failed",
-      "problems": 1
-    },
-    "letter.ordinatio-sacerdotalis.pl": {
-      "status": "fetch-failed",
-      "problems": 1
-    },
-    "letter.orientale-lumen.de": {
-      "status": "fetch-failed",
-      "problems": 1
     },
     "letter.orientale-lumen.en": {
       "status": "validation-failed",
@@ -1302,10 +1286,6 @@
     },
     "letter.orientale-lumen.fr": {
       "status": "validation-failed",
-      "problems": 1
-    },
-    "letter.orientale-lumen.hr": {
-      "status": "fetch-failed",
       "problems": 1
     },
     "letter.rosarium-virginis-mariae.hu": {
@@ -1351,10 +1331,6 @@
     "letter.tertio-millennio-adveniente.en": {
       "status": "validation-failed",
       "problems": 26
-    },
-    "letter.tertio-millennio-adveniente.he": {
-      "status": "fetch-failed",
-      "problems": 1
     },
     "letter.tertio-millennio-adveniente.it": {
       "status": "validation-failed",

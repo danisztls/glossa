@@ -250,72 +250,38 @@ wrong labels passes all four.
   `6,19`–`6,23` are verbatim about 2 Cor 7:1–4. The scraper logs them as
   anomalies rather than guessing.
 
-## Gap 18 — the map is drawn from the English index
+## Gap 18 — closed 2026-09-09, and what it left behind
 
-`vatican_docs.py` discovers a document from a pontiff's ENGLISH index and
-derives every other language's URL from the English one by substituting the
-language segment (`VaticanDocument.base_lang`, `FALLBACK_INDEX_LANGS`). So the
-corpus's answer to "what exists" is one language's answer, and its answer to
-"in which languages" is a guess checked only against a URL that guess built.
+**The gap was that the map was drawn from one index.** `vatican_docs.py`
+discovered a document from a pontiff's ENGLISH index and derived every other
+language's URL by substituting the language segment, so the corpus's answer to
+"what exists" was one language's answer and its answer to "in which languages"
+was a guess checked only against a URL that guess had built. Ten of Pius XI's
+encyclicals were read wrong by it: vatican.va writes the date digits into the
+path, and for those ten the English index writes them the other way round from
+every other language's, so `/it/…29061931…` went into `absent-sources.json` as
+a definitive 404 — sixteen languages apiece, for pages that exist. _Non Abbiamo
+Bisogno_, an encyclical Pius XI wrote in Italian, was held in English alone.
 
-**Ten encyclicals are read wrong, and the source says so in its own indexes.**
-vatican.va writes the date digits into the path, and for these ten the English
-index writes them the other way round from every other language's:
+**What closed it**: `MODERN_FAMILIES` reads a measured chain of indexes per
+family rather than one, `_chain_refs` merges the URL every index gives, and
+`submit_doc` now prefers an index-given URL to a derived one — an index-given
+URL is a fact and a derived one is a guess. Eighteen editions came back for
+eighteen requests, the ten Italian ones among them. The stale 404 rows stay:
+they are true about the URL they name, which is a URL nothing asks for now.
 
-```
-EN  /content/pius-xi/en/encyclicals/documents/hf_p-xi_enc_29061931_non-abbiamo-bisogno.html
-IT  /content/pius-xi/it/encyclicals/documents/hf_p-xi_enc_19310629_non-abbiamo-bisogno.html
-```
+**What it left behind is the denominator, and the map is where it is now
+answered.** `build/magisterium-map/` lists every document the six families'
+indexes name, in every language any of them lists it in, so
+`/bibliotheca/census` can be checked against what the source publishes rather
+than against what we crawled. Two editions the map counts are not built and
+should not be — `verbum-domini.la` and `amoris-laetitia.en` are `pdf-only` and
+the translations ledger says so. **The map cannot tell an HTML edition from a
+PDF-only one**, because an index links both the same way; the ledger can, and
+nothing joins the two yet.
 
-Substituting `en` → `it` asks for a page that does not exist, so
-`absent-sources.json` holds `/it/…29061931…` as a definitive 404 — and the same
-for `es`, `fr`, `de`, `la` and the rest, sixteen languages per document. The
-ten are `non-abbiamo-bisogno`, `nova-impendet`, `rite-expiatis`,
-`iniquis-afflictisque`, `acerba-animi`, `caritate-christi-compulsi`,
-`dilectissima-nobis`, `ingravescentibus-malis`, `rerum-ecclesiae` and
-`maximam-gravissimamque`.
-
-**The name is what makes it undeniable.** _Non Abbiamo Bisogno_ is an
-encyclical Pius XI wrote in Italian, and this corpus holds it in English alone.
-A recorded absence that contradicts the document's own title is not a fact about
-the publisher.
-
-**A wrong 404 is stickier than a wrong parse.** `absent-sources.json` is one of
-the four files the root `CLAUDE.md` names as regenerable only from a previous
-copy of itself: a re-parse preserves it and a rebuild into an empty `build/`
-loses it. Nothing in the pipeline re-asks a question already answered no, so
-these absences persist until something deletes the rows.
-
-**Nineteen editions are recoverable from pages already in `raw/`**, read off the
-Italian indexes: ten Italian, six Latin, three Spanish. That is a floor and not
-an estimate — the probe never reached a real page, so no document's own language
-bar has been read.
-
-**What is measured and what is not.** For encyclicals the two indexes list the
-same documents (218 English, 217 Italian; the one extra is
-`nos-es-muy-conocida`, the duplicate the scraper already folds), so the
-DENOMINATOR is sound there and what is lost is editions. The other 76 documents
-— 33 exhortations, 25 CDF, 16 Vatican II, 2 Vatican I — have their index cached
-in **one language only** and have never been compared, so for those it is
-unknown whether the English index lists everything.
-
-**The fix is a union, not a second crawl of the same thing.** Discover from the
-Italian index beside the English one and match on `(pontiff, kind, slug tail)`
-rather than on the full document id, the date digits being exactly what differs;
-where the two disagree about a path, both are real and the document has two
-addresses. Then drop the affected rows from `absent-sources.json` and re-probe.
-Italian is the first language to add because it is the one the Holy See
-publishes most completely, and because it is already the fallback the discovery
-code knows about.
-
-**It is a re-crawl and not a re-parse, which is the one thing here that costs
-something.** `docs/link-surface.md`'s insurance policy — any capture regret is
-fixed by re-parsing — does not cover a page nobody ever fetched.
-
-**What it buys is the census.** `/bibliotheca/census` reports the magisterium at
-287 of 298 documents in English against 263 in Italian, which reads as a claim
-about vatican.va and is partly a claim about our crawl. A coverage matrix is
-only as honest as its denominator.
+**The families the map does not cover are the live half of this gap** —
+`docs/research/vatican-documents.md` §9 is the inventory.
 
 ## The document structure trees
 

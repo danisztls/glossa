@@ -341,6 +341,15 @@ sl sw vi`) as vocabulary entries. What bites:
   document that went missing.** Four conventions are in use; `parse_date_slug`
   now takes the last delimited eight-digit run and everything after it, and
   reports what it cannot read (`docs/research/vatican-documents.md`).
+- **An index-given URL is a fact and a derived one is a guess.** Ten of Pius
+  XI's encyclicals are what separates them: the English index writes the date
+  digits the other way round, so substituting `en` → `it` asked for a page that
+  does not exist and the absent ledger remembered it — _Non Abbiamo Bisogno_,
+  written in Italian, was held in English alone.
+- **The map counts an index listing as an edition and cannot see a PDF.** An
+  index links both the same way; `translations-checked.json` is what knows the
+  difference, and nothing joins the two
+  (`docs/research/vatican-documents.md` §9.6).
 - **"What is there" was a question no ledger answered.** `absent-sources.json`
   and `translations-checked.json` both answer "did we ask" about a page
   somebody already knew to ask for; `build/magisterium-map/` is the census of
