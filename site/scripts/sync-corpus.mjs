@@ -651,6 +651,7 @@ function syncFingerprint() {
 				path.join(siteRoot, 'unpublished.json'),
 				path.join(siteRoot, 'descriptions.json'),
 				path.join(siteRoot, 'document-tags.json'),
+				path.join(siteRoot, 'quaestiones.json'),
 				BASELINE_PATH
 			],
 			siteRoot
@@ -2868,6 +2869,112 @@ const taggedDocuments = Object.keys(documentTags).length;
 const distinctTags = tagVocabulary.length;
 
 /**
+ * Topics — see `site/quaestiones.json` for the format, for what a topic is and
+ * is not, and for why `lead` is the only real judgement in the file.
+ *
+ * FETCHED BY `/quaestiones` AND BY NOTHING ELSE, on `document-tags.json`'s
+ * reasoning exactly: the boot index answers "does this address exist", and a
+ * topic's anchor set answers neither existence nor address. It is small, and
+ * that is still not a reason to put it in front of every reader's first paint.
+ *
+ * WHAT IS CHECKED, and every one of these fails the build rather than warning,
+ * because each is invisible on the rendered page:
+ *
+ *   - A doorway outside `doorways`. The list is closed for the reason the tag
+ *     vocabulary is: a fifth doorway with one topic in it is not a way in.
+ *   - A CCC span naming a paragraph no edition in this build has. The page
+ *     would render the span's other paragraphs and nothing would say one was
+ *     missing — a topic quietly one paragraph short of its own answer.
+ *   - A document slug naming no document, which is the residue of a rename,
+ *     lost silently the moment it happens.
+ *   - A canon this build has not got, same argument.
+ *   - A `lead` outside its own topic's spans. THIS IS THE ONE WORTH THE CHECK:
+ *     a drifted `lead` renders in printed order, and a page in printed order
+ *     looks exactly like a page nobody wrote a `lead` for. The judgement would
+ *     be gone and the file would still claim it.
+ *   - A span written backwards (`to` < `from`), which silently renders empty.
+ *
+ * A missing FILE is not an error, on the descriptions' terms: a corpus nobody
+ * has written topics for is a perfectly good corpus, and `/quaestiones` simply
+ * has nothing to list.
+ */
+const quaestionesPath = path.join(siteRoot, 'quaestiones.json');
+const quaestionesFile = existsSync(quaestionesPath) ? readJson(quaestionesPath) : {};
+const quaestiones = quaestionesFile.topics ?? {};
+const doorways = quaestionesFile.doorways ?? [];
+{
+	const knownDocuments = new Set(
+		Object.values(manifests)
+			.filter((manifest) => manifest.type === 'document')
+			.map((manifest) => manifest.id.split('.')[1])
+	);
+	const knownCcc = new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers));
+	const knownCanons = new Set(canonLawNumbers);
+	const allowedDoorways = new Set(doorways);
+	const problems = [];
+
+	for (const [slug, topic] of Object.entries(quaestiones)) {
+		if (!allowedDoorways.has(topic.doorway)) {
+			problems.push(`${slug}: doorway ${JSON.stringify(topic.doorway)} is not in doorways`);
+		}
+		const spans = topic.ccc ?? [];
+		const covered = new Set();
+		for (const span of spans) {
+			const [from, to] = span;
+			if (!Number.isInteger(from) || !Number.isInteger(to) || to < from) {
+				problems.push(`${slug}: malformed CCC span ${JSON.stringify(span)}`);
+				continue;
+			}
+			for (let n = from; n <= to; n++) {
+				covered.add(n);
+				if (!knownCcc.has(n)) problems.push(`${slug}: CCC ${n} is in no edition of this build`);
+			}
+		}
+		if (spans.length === 0 && (topic.canons ?? []).length === 0) {
+			problems.push(`${slug}: anchors nothing — no CCC span and no canon`);
+		}
+		if (topic.lead !== undefined && !covered.has(topic.lead)) {
+			problems.push(`${slug}: lead ${topic.lead} is outside this topic's own spans`);
+		}
+		for (const canonSpan of topic.canons ?? []) {
+			const [from, to] = canonSpan;
+			if (!Number.isInteger(from) || !Number.isInteger(to) || to < from) {
+				problems.push(`${slug}: malformed canon span ${JSON.stringify(canonSpan)}`);
+				continue;
+			}
+			for (let n = from; n <= to; n++) {
+				if (!knownCanons.has(n)) problems.push(`${slug}: canon ${n} is not in this build`);
+			}
+		}
+		for (const document of topic.documents ?? []) {
+			if (!knownDocuments.has(document)) {
+				problems.push(`${slug}: document ${JSON.stringify(document)} names no document`);
+			}
+		}
+	}
+
+	const unusedDoorways = doorways.filter(
+		(doorway) => !Object.values(quaestiones).some((topic) => topic.doorway === doorway)
+	);
+	if (unusedDoorways.length > 0) {
+		console.warn(
+			`[sync-corpus] quaestiones.json: ${unusedDoorways.length} doorway(s) with no topic: ` +
+				unusedDoorways.join(', ')
+		);
+	}
+
+	if (problems.length > 0) {
+		console.error(`[sync-corpus] quaestiones.json is inconsistent with this build:`);
+		for (const problem of problems) console.error(`  - ${problem}`);
+		process.exit(1);
+	}
+	if (Object.keys(quaestiones).length > 0) {
+		writeJson(path.join(indexDir, 'quaestiones.json'), { doorways, topics: quaestiones });
+	}
+}
+const topicCount = Object.keys(quaestiones).length;
+
+/**
  * NUMBERING IS COMPACTED HERE, ON THE WAY OUT, and not where each index is
  * built. `compactRun`'s docblock covers what the encoding is and why it is
  * allowed; this is why it happens at the write.
@@ -3428,6 +3535,12 @@ const routeManifest = {
 			Object.values(prayerIndex).flatMap((value) => value.prayers.map((prayer) => prayer.slug))
 		)
 	].sort(),
+	// The one list here the corpus does not decide. Every other field answers
+	// "did somebody's server send us this?"; this one answers "did somebody
+	// here write this down?" — so a topic's address exists on the strength of
+	// `quaestiones.json` alone, and the checks that it anchors something real
+	// are made above, where the file is read.
+	topics: Object.keys(quaestiones).sort(),
 	// Unioned across editions, like `bible` above and for the same reason:
 	// the edge answers "is this an address?", and which edition has text for
 	// it is the reader's own language fallback to decide. The Supplement
@@ -3729,6 +3842,7 @@ console.log(
 		`Descriptions: ${describedWorks} read, ${translatedCount} translated across ` +
 		`${Object.keys(translatedDescriptions).length} language file(s). ` +
 		`Tags: ${taggedDocuments} document(s), ${distinctTags} distinct term(s). ` +
+		`Topics: ${topicCount} over ${doorways.length} doorway(s). ` +
 		`Works: ${registeredWorkIds.join(', ')}`
 );
 

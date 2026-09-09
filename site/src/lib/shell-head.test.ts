@@ -40,6 +40,7 @@ const manifest: RouteManifest = {
 	canonLawTitles: [1, 7],
 	documents: ['rerum-novarum'],
 	prayers: ['ave-maria'],
+	topics: ['crematio'],
 	summa: { i: [1, 2], suppl: [77] }
 };
 

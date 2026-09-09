@@ -253,6 +253,7 @@ export function sectionFor(pathname: string): string {
 		'preces',
 		'schola',
 		'summa',
+		'quaestiones',
 		'colophon'
 	];
 	return KNOWN.includes(root) ? root : 'other';

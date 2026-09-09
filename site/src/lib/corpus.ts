@@ -143,6 +143,7 @@ import type {
 	SummaDivision,
 	SummaNode,
 	SummaQuestion,
+	TopicIndex,
 	WorkManifest,
 	WorkType
 } from './types';
@@ -210,6 +211,7 @@ import {
 	manifests,
 	translatedDescriptionsLocation,
 	documentTagsLocation,
+	quaestionesLocation,
 	censusLocation,
 	prayerContentLocation,
 	prayerMetasByLang,
@@ -1094,6 +1096,30 @@ export async function loadDocumentTags(): Promise<Record<string, string[]>> {
 	const location = documentTagsLocation();
 	if (!location) return {};
 	return readContent<Record<string, string[]>>(location);
+}
+
+/**
+ * The topics — `site/quaestiones.json`, checked against this build at sync
+ * time and merged on the way out. See that file for what a topic is, why the
+ * anchor is a Catechism span rather than a list of passages, and what `lead`
+ * is for.
+ *
+ * One request, for every topic at once, issued only by `/quaestiones` and
+ * `/quaestiones/{slug}` — the index page needs all of them to draw the list,
+ * and a topic page needs exactly one, which is not worth a second file: the
+ * whole thing is a few kilobytes of spans and slugs.
+ *
+ * `undefined` for a build with no topics, not `{}`, on `loadCensus`'s
+ * reasoning: an empty topic list and an absent one look identical to a
+ * renderer and only one of them is worth a sentence to the reader. Under the
+ * fixtures it is always `undefined`.
+ */
+export async function loadQuaestiones(): Promise<TopicIndex | undefined> {
+	await ensureContentIndex();
+	if (!USE_REAL_CORPUS) return undefined;
+	const location = quaestionesLocation();
+	if (!location) return undefined;
+	return readContent<TopicIndex>(location);
 }
 
 /**

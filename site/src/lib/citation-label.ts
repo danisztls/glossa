@@ -151,6 +151,13 @@ export function citationFor(target: Address): string {
 		// edition the reader's language does not carry, as a document's does.
 		case 'prayer':
 			return getPrayerMeta(content.langFor('prayer'), target.slug)?.title ?? target.slug;
+		// A topic has no citation, because it is not a unit of anybody's text —
+		// it is a page of this site, and what names it is its own title. The
+		// key is the fallback too: `t()` returns the key for a dictionary that
+		// has not got it, which prints something recognisable rather than
+		// blank, and every other branch here degrades the same way.
+		case 'topic':
+			return t(`quaestiones.${target.slug}.title`);
 	}
 }
 
@@ -246,5 +253,18 @@ export function addressResolves(target: Address): boolean {
 			const lang = content.langFor('prayer');
 			return !isUnpublished(prayerWorkId(lang)) && prayerExists(lang, target.slug);
 		}
+		// THE ONE KIND THIS CANNOT ANSWER, and it says so rather than guessing
+		// wrong in the expensive direction. Every branch above asks the index
+		// tier, which carries each work's existence sets; the topic list is
+		// deliberately NOT in that tier (`corpus-index.ts`, and the reasoning
+		// is that a topic's anchors answer neither "does this address exist"
+		// nor "where does its text live"). So a withdrawn topic is caught by
+		// the edge, which reads the route manifest, and by the 404 in the
+		// route's own `load` — while answering `false` here would quietly
+		// discard a reader's mark on every topic, since none of them can be
+		// found. A topic is also never `unpublished`: that switch withholds a
+		// WORK, and this is not one.
+		case 'topic':
+			return true;
 	}
 }

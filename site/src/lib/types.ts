@@ -1016,6 +1016,37 @@ export interface CccBlock {
 	attribution?: string;
 }
 
+/**
+ * One topic — a reader's question, anchored to spans of the Catechism.
+ *
+ * `site/quaestiones.json` is the tracked source and holds the reasoning; this
+ * is only its wire shape. Two fields need saying here because a renderer can
+ * get them wrong silently:
+ *
+ * `ccc` spans are INCLUSIVE at both ends and are written in the order the
+ * topic wants them read, which is not always ascending — `pornographia`
+ * anchors [2354, 2354] before [2351, 2352] because the paragraph that names
+ * the thing comes before the two that place it.
+ *
+ * `lead`, when present, is one paragraph number drawn from those spans and
+ * rendered first. It exists because the Catechism's order is systematic and a
+ * reader in trouble is not, and it REORDERS a span rather than trimming one:
+ * every paragraph the spans name is still on the page.
+ */
+export interface Topic {
+	doorway: string;
+	ccc: [number, number][];
+	lead?: number;
+	documents?: string[];
+	canons?: [number, number][];
+}
+
+export interface TopicIndex {
+	/** The closed doorway vocabulary, in the order the index page lists it. */
+	doorways: string[];
+	topics: Record<string, Topic>;
+}
+
 export interface CccParagraph {
 	n: number;
 	blocks: CccBlock[];

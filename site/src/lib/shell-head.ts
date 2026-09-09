@@ -474,7 +474,11 @@ const WORK_OF: Record<Address['kind'], { key: string; href: string }> = {
 	canonLaw: { key: 'canonLaw', href: '/ius-canonicum' },
 	canonLawTitle: { key: 'canonLaw', href: '/ius-canonicum' },
 	prayer: { key: 'prayer', href: '/preces' },
-	summa: { key: 'summa', href: '/doctores/summa' }
+	summa: { key: 'summa', href: '/doctores/summa' },
+	// The only row here whose work is this site. Every other kind names a text
+	// with a publisher and an imprint; a topic names a page of arrangement, so
+	// it points at its own index and carries no source.
+	topic: { key: 'topic', href: '/quaestiones' }
 };
 
 /** The unit a page renders, named as the work itself numbers it. */

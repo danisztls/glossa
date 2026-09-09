@@ -144,6 +144,15 @@ export const SETS = {
 		'doctores',
 		'preces',
 		'summa',
+		// The topics (2026-09-09). Like `schola` it measures a reader who has
+		// chosen no work, and it is the only bucket whose series answers
+		// whether the second half of the audience — the one that arrives with a
+		// question and not an address (`docs/research/audiences.md`) — is
+		// reached at all. That is the question the whole feature was built to
+		// answer, so it is bucketed from the day it lands rather than found in
+		// `other` later, which is how `/doctrina-socialis` and `/ius-canonicum`
+		// each lost their first months.
+		'quaestiones',
 		'colophon',
 		'other'
 	],

@@ -797,6 +797,24 @@ sections, not one list, and the trace goes first.
   rather than filled — four sections divided by four hairlines in the same grey
   as every card border is a page with no landmarks in it.
 
+## `/quaestiones`: a topic is a doorway, and one paragraph may come first
+
+Reader questions anchored to spans of the Catechism (`site/quaestiones.json`,
+rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
+
+- **Anchor a CCC span; never list passages.** The Scripture and the magisterial
+  citations come from those paragraphs' own footnotes, which `ProseBlocks`
+  already linkifies — CCC 2357 carries `Gen 19:1-29` and `Persona humana 8`
+  without anyone here choosing them.
+- **`lead` reorders a span and never trims one**, and the page says so whenever
+  it has: CCC 2283 before the three paragraphs on the gravity of suicide is an
+  arrangement, and an undisclosed one would be the gloss `docs/decisions.md`
+  §Posture forbids.
+- **A topic the corpus cannot answer properly does not ship**, and the gap is
+  written down instead — the held set is in `docs/research/topics.md`, and
+  `fiducia-supplicans` is the case that matters, since the three earlier
+  documents ARE here and a stale answer reads as a current one.
+
 ## `/documenta` filters, and the one editorial file behind them
 
 A search box over a facet panel (author, kind, subject) above a flat
@@ -2275,7 +2293,7 @@ the universal calendar cannot express:
 
 - **A fourth Sunday transfer**: the Congo keeps the Sacred Heart on the Sunday
   (`sacredHeartOnSunday`), and the Immaculate Heart does NOT follow it.
-- **`movable` propers**, placed by an offset from Easter or by an _n_th weekday
+- **`movable` propers**, placed by an offset from Easter or by an \_n_th weekday
   of a month — seven conferences keep the Eternal High Priest on the Thursday
   after Pentecost, the Philippines the Santo Niño on the third Sunday of January.
 - **`'F'` in `common.ts` is a proper feast OF THE LORD**, line 5. This file

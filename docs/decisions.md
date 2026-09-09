@@ -22,6 +22,7 @@ beside the code it governs:
 | `site/docs/edge.md`            | the worker, its cost, rate limiting, the head, the sitemap   |
 | `site/docs/reading.md`         | lanes, apparatus, cards, the Bible's chrome, plates          |
 | `site/docs/finding.md`         | the jump box and `/documenta`'s facets                       |
+| `site/docs/topics.md`          | `/quaestiones`, doorways, and the one editorial ordering     |
 | `site/docs/calendar.md`        | the liturgical calendar                                      |
 | `site/docs/lectionary.md`      | the day's readings, the rules that derive them, and the gaps |
 | `site/docs/usage.md`           | the usage beacon and its legal assessment                    |
@@ -77,6 +78,13 @@ list is not the shape of that decision.
 commentary around the sacred page, attributed and never mixed into it. So **a
 gloss must never be confusable with its source, visually or structurally** —
 Challoner's notes, Matos Soares' notes, and anything annotative added later.
+
+**Arrangement is a promise the site may keep and must disclose.** `/quaestiones`
+puts one paragraph of the Catechism before its neighbours where a reader in
+trouble needs it first, and says on the page that it has. The alternative was
+not neutrality — printed order is an ordering too, made for a different reader —
+but an undisclosed reordering would be exactly the gloss the rule above forbids.
+It reorders and never omits (`site/docs/topics.md`).
 
 ## Scope
 

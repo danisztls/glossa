@@ -86,7 +86,14 @@ export type Address =
 	 *  `part` is the URL slug (`i`, `i-ii`, ...), not the work's own spelling
 	 *  of it -- see `summaPartSlug`. */
 	| { kind: 'summa'; part: string; question: number; article: number | null }
-	| { kind: 'prayer'; slug: string };
+	| { kind: 'prayer'; slug: string }
+	/** A reader's question, not the Summa's. `quaestio` names two different
+	 *  things on this site and this is the one that is ours: a topic somebody
+	 *  here decided a reader arrives holding, anchored to spans of the
+	 *  Catechism (`site/quaestiones.json`). The Summa's questions are
+	 *  `kind: 'summa'`, are a unit of a text somebody else wrote, and are
+	 *  addressed under `/doctores/`. */
+	| { kind: 'topic'; slug: string };
 
 /**
  * The Summa's parts, as they appear in a URL.
@@ -349,6 +356,8 @@ export function hrefFor(a: Address): string {
 		}
 		case 'prayer':
 			return `/preces/${a.slug}`;
+		case 'topic':
+			return `/quaestiones/${a.slug}`;
 	}
 }
 
@@ -378,6 +387,7 @@ const CANON_LAW_TITLE_RE = /^\/ius-canonicum\/titulus\/(\d+)$/;
 const CANON_LAW_RE = /^\/ius-canonicum\/(\d+)$/;
 const DOCUMENT_RE = /^\/documenta\/([a-z0-9-]+)$/;
 const PRAYER_RE = /^\/preces\/([a-z0-9-]+)$/;
+const TOPIC_RE = /^\/quaestiones\/([a-z0-9-]+)$/;
 const SUMMA_RE = /^\/doctores\/summa\/([a-z-]+)\/(\d+)$/;
 const ARTICLE_ANCHOR_RE = /^#a(\d+)$/;
 const SECTION_ANCHOR_RE = /^#s(\d+)$/;
@@ -496,6 +506,9 @@ export function parseHref(href: string | null | undefined): Address | undefined 
 
 	const prayer = PRAYER_RE.exec(path);
 	if (prayer) return { kind: 'prayer', slug: prayer[1] };
+
+	const topic = TOPIC_RE.exec(path);
+	if (topic) return { kind: 'topic', slug: topic[1] };
 
 	const summa = SUMMA_RE.exec(path);
 	if (summa) {

@@ -30,6 +30,7 @@ const manifest = {
 	canonLaw: [1, 1752],
 	canonLawTitles: [1],
 	prayers: ['our-father'],
+	topics: ['crematio'],
 	summa: { i: [1], 'i-ii': [1], 'ii-ii': [1], iii: [1], suppl: [1] },
 	documents: ['rerum-novarum', 'vita-consecrata']
 };

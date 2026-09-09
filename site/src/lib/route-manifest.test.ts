@@ -24,6 +24,7 @@ const manifest: RouteManifest = {
 	canonLawTitles: [1, 7],
 	documents: ['lumen-gentium'],
 	prayers: ['our-father'],
+	topics: ['crematio'],
 	summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }
 };
 

@@ -177,6 +177,7 @@ describe('addresses', () => {
 			canonLawTitles: [],
 			documents: [],
 			prayers: [],
+			topics: [],
 			summa: { i: [1, 71], 'ii-ii': [184], suppl: [77] }
 		};
 		expect(isCanonicalPath('/doctores/summa/ii-ii/184', manifest)).toBe(true);

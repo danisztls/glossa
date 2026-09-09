@@ -38,6 +38,10 @@ export interface RouteManifest {
 	canonLawTitles: number[];
 	documents: string[];
 	prayers: string[];
+	/** Topic slugs `/quaestiones/{slug}` addresses — `site/quaestiones.json`'s
+	 *  keys. Editorial, so unlike every other list here it is not derived from
+	 *  the corpus at all: a topic exists because somebody wrote it down. */
+	topics: string[];
 	/** Part slug -> question numbers, unioned across editions. */
 	summa: Record<string, number[]>;
 }
@@ -245,6 +249,14 @@ const STATIC_PATHS = new Set([
 	// (`docs/research/audiences.md` §5). It holds no corpus text: every step
 	// of every route on it is a link, titled by the work it names.
 	'/schola',
+	// The topic index. HERE AND NOT IN `CHROME_PATHS` on the ordinary gate
+	// rather than a distinction of its own: its `quaestiones.*` keys are in
+	// English alone, and a cluster claiming the page in 37 languages would
+	// declare a Portuguese page and serve English prose — the failure
+	// `/schola` and `/calendarium` each cost their whole key set to avoid. The
+	// individual topics under it are addresses and are checked against
+	// `manifest.topics`, not listed here.
+	'/quaestiones',
 	// The library's own numbers. HERE AND NOT IN `CHROME_PATHS`, which is the
 	// distinction the two tables draw and the one `/calendarium/liturgia`
 	// already stands on: it must answer 200 to a cold load and a shared link,
@@ -302,6 +314,8 @@ export function isCanonicalPath(pathname: string, manifest: RouteManifest): bool
 			return manifest.documents.includes(address.slug);
 		case 'prayer':
 			return manifest.prayers.includes(address.slug);
+		case 'topic':
+			return manifest.topics.includes(address.slug);
 		// `/doctores/summa/{part}/{question}` — an article is a FRAGMENT on the
 		// question's page (`#a3`), so a part slug naming no part simply finds no
 		// question list here.

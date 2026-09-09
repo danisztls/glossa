@@ -1,0 +1,165 @@
+{
+	"$comment": [
+		"Topics, `topic slug -> { doorway, ccc, documents, canons, lead }`, merged into the shipped",
+		"index by scripts/sync-corpus.mjs and read by /quaestiones and /quaestiones/{slug}.",
+		"",
+		"WHY THIS FILE EXISTS RATHER THAN A FIELD IN the corpus's build/*/manifest.json: the reason",
+		"descriptions.json and document-tags.json each give. Those manifests are GENERATED, a re-parse",
+		"rewrites them, and this project fixes parsers by re-parsing. A topic is editorial -- it is",
+		"somebody's judgement that a reader's question is answered HERE -- so it lives in tracked",
+		"source and is merged in on the way to the site.",
+		"",
+		"WHAT A TOPIC IS NOT: it is not a subject. `site/document-tags.json` holds the subjects, and",
+		"they are browse axes over documents -- `labour`, `ecclesiology` -- chosen so a facet row",
+		"partitions the document set. Nobody arrives at a facet. They arrive at `my father died`, or",
+		"`I cannot stop`, or `is my first marriage still binding`, and docs/research/topics.md is the",
+		"pass that worked out the difference. The four DOORWAYS below are that finding: the argument",
+		"(tribal, public, googled mid-fight), the life event (something happened on Tuesday), the",
+		"private shame (2 a.m., and they would never ask a person) and the ordinary question.",
+		"",
+		"THE ANCHOR IS A CATECHISM SPAN, AND THE PASSAGES ARE NOT CHOSEN HERE. That is the whole",
+		"posture of the file. CCC 2357 already carries `Gen 19:1-29; Rom 1:24-27; 1 Cor 6:10;",
+		"1 Tim 1:10` and `CDF, Persona humana 8` in its own footnotes, and ProseBlocks linkifies them",
+		"wherever that paragraph is rendered -- so naming the span gets the Scripture and the",
+		"magisterial citation for free, chosen by the Catechism rather than by us. Where the span is",
+		"one of the Catechism's OWN headings (`Chastity and homosexuality` is `[2357, 2359]` in",
+		"build/ccc.en/structure.json) the editorial act is smaller still: the topic IS the heading.",
+		"",
+		"`documents` and `canons` carry what the Catechism's footnotes do not reach -- a document",
+		"written after the CCC, or a procedure the Code holds and the Catechism only names. They are",
+		"additions to the derived set, never a replacement for it.",
+		"",
+		"`lead` IS THE ONE REAL JUDGEMENT IN THIS FILE, and it is one field wide so it can be argued",
+		"with. A span renders in paragraph order unless `lead` names a paragraph to put first. It is",
+		"needed because the Catechism's order is systematic and a reader in trouble is not: CCC",
+		"2280-2283 opens on the gravity of suicide and closes on `We should not despair of the eternal",
+		"salvation of persons who have taken their own lives`, and a bereaved mother served those four",
+		"paragraphs in printed order meets three she cannot bear before the one she came for. Same for",
+		"2357 before 2358, and for the reader who has already had the abortion.",
+		"",
+		"This is closer to editorialising than anything else on the site does, and it was taken",
+		"deliberately (2026-09-09, by direction) on the ground that the alternative is not neutrality:",
+		"printed order is itself an ordering, chosen by someone else for a reader who is not this one.",
+		"NOTHING IS OMITTED BY IT -- `lead` reorders a span and never trims one, so the paragraph a",
+		"reader is spared first is still on the page.",
+		"",
+		"SLUGS ARE LATIN, like every other address here, and where the Catechism has its own word for",
+		"the thing the slug takes it -- `divinatio` is CCC 2116's, checkable against ccc.la. An address",
+		"names the same topic in every language and takes no interface prefix, which is the",
+		"distinction site/docs/addresses.md rests on; an English slug would quietly make English the",
+		"language the site is addressed in.",
+		"",
+		"THE WORD `quaestio` NOW MEANS TWO THINGS ON THIS SITE and that is known, not overlooked",
+		"(2026-09-09, by direction). `/doctores/summa/{part}` addresses the Summa's quaestiones, which",
+		"are a unit of a text somebody else wrote; these are a reader's questions, which are ours. The",
+		"copy on both pages names its own sense rather than relying on the word.",
+		"",
+		"THE VOCABULARY OF DOORWAYS IS CLOSED, and sync-corpus.mjs exits 1 on a topic outside it, on a",
+		"CCC span naming a paragraph this build has not got, on a document slug naming no document, on",
+		"a canon this build has not got, and on a `lead` outside its own topic's spans. The last is the",
+		"one worth stating: a `lead` that has drifted out of its span is invisible on the page, because",
+		"a page that silently renders in printed order looks exactly like a page nobody wrote a `lead`",
+		"for.",
+		"",
+		"WHAT IS DELIBERATELY ABSENT is recorded in docs/research/topics.md: a topic the corpus cannot",
+		"answer properly does not ship. Addiction has CCC 2290-2291 and nothing else; yoga waits on",
+		"`Orationis Formas`; the Latin Mass on `Traditionis Custodes`; same-sex blessings on `Fiducia",
+		"Supplicans`, which is the worst of them, since the three earlier documents ARE here and a",
+		"stale answer reads exactly like a current one. Adding a topic is a deliberate act -- it is a",
+		"claim that a reader asking this will be better served than not asking.",
+		"",
+		"THE TITLES AND THE QUESTIONS ARE NOT HERE. They are prose a reader reads, so they are",
+		"`quaestiones.{slug}.*` in the i18n dictionaries like every other word of chrome, and until all",
+		"thirty-seven carry them this route stays out of CHROME_PATHS on route-manifest.ts's own terms."
+	],
+	"doorways": ["argument", "life-event", "private-shame", "ordinary"],
+	"topics": {
+		"doctrinae-progressus": {
+			"doorway": "argument",
+			"ccc": [
+				[66, 67],
+				[94, 94]
+			],
+			"documents": ["dei-filius", "donum-veritatis"]
+		},
+		"contraceptio": {
+			"doorway": "argument",
+			"ccc": [[2366, 2372]],
+			"documents": ["casti-connubii", "humanae-vitae"]
+		},
+		"homosexualitas": {
+			"doorway": "argument",
+			"ccc": [[2357, 2359]],
+			"lead": 2358,
+			"documents": [
+				"persona-humana",
+				"homosexualitatis-problema",
+				"legal-recognition-homosexual-unions"
+			]
+		},
+		"crematio": {
+			"doorway": "life-event",
+			"ccc": [[2300, 2301]],
+			"documents": ["ad-resurgendum-cum-christo"]
+		},
+		"mors-voluntaria": {
+			"doorway": "life-event",
+			"ccc": [[2280, 2283]],
+			"lead": 2283,
+			"documents": ["samaritanus-bonus"]
+		},
+		"nullitas-matrimonii": {
+			"doorway": "life-event",
+			"ccc": [
+				[1629, 1629],
+				[1650, 1651]
+			],
+			"documents": ["familiaris-consortio"],
+			"canons": [[1671, 1673]]
+		},
+		"remissio-peccatorum": {
+			"doorway": "private-shame",
+			"ccc": [
+				[982, 982],
+				[1846, 1848]
+			],
+			"documents": ["dives-in-misericordia", "reconciliatio-et-paenitentia"]
+		},
+		"pornographia": {
+			"doorway": "private-shame",
+			"ccc": [
+				[2354, 2354],
+				[2351, 2352]
+			],
+			"documents": ["persona-humana"]
+		},
+		"reditus": {
+			"doorway": "private-shame",
+			"ccc": [[1455, 1458]],
+			"documents": ["reconciliatio-et-paenitentia"]
+		},
+		"divinatio": {
+			"doorway": "ordinary",
+			"ccc": [[2115, 2117]],
+			"documents": []
+		},
+		"ieiunium": {
+			"doorway": "ordinary",
+			"ccc": [
+				[1434, 1434],
+				[1438, 1438],
+				[2043, 2043]
+			],
+			"documents": [],
+			"canons": [[1249, 1253]]
+		},
+		"organorum-donatio": {
+			"doorway": "ordinary",
+			"ccc": [
+				[2296, 2296],
+				[2301, 2301]
+			],
+			"documents": ["evangelium-vitae"]
+		}
+	}
+}

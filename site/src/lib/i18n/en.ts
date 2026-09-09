@@ -1501,5 +1501,84 @@ export const en: Dictionary = {
 	'calendar.primer.colours': 'The colours',
 	'calendar.primer.cycles': 'The cycles',
 	'calendar.primer.cyclesLead':
-		'Three counters, which together say which readings and psalms are appointed for today.'
+		'Three counters, which together say which readings and psalms are appointed for today.',
+
+	// --- `/quaestiones`, the topics (`routes/quaestiones/`) -----------------
+	//
+	// A TOPIC'S TITLE AND ITS QUESTION ARE TWO DIFFERENT REGISTERS and the
+	// pairing is the whole point of the page. The title is the site's own
+	// plain naming of the subject; the QUESTION is written in the reader's
+	// voice, because `docs/research/topics.md` found that nobody arrives at a
+	// subject — they arrive at a sentence, and a page that lists only subjects
+	// makes them translate their sentence into our vocabulary first.
+	//
+	// That makes these the only strings on the site written as somebody else's
+	// words. Two rules follow, and a translator needs both: the question must
+	// stay a question the reader would actually type, in whatever their
+	// language's plainest register is — NOT a formal rendering of the English
+	// — and it must never be made lighter than the thing it asks about. Three
+	// of these are asked by people in trouble.
+	//
+	// NOTHING HERE EVALUATES OR ADVISES, on `docs/writing-voice.md`'s standing
+	// rule. A question names what a reader wants to know; the answer is the
+	// Catechism's paragraphs and is not restated in any of these keys.
+	'quaestiones.landing.title': 'Questions',
+	'quaestiones.landing.tagline':
+		'Passages of the Catechism, gathered by the question someone arrives holding. The gathering is the work done here; every word of the text is the Catechism’s, and each passage links to where it stands.',
+	'quaestiones.landing.none': 'No questions have been written for this build.',
+	// The four doorways of `site/quaestiones.json`, in its order. Each heading
+	// names the reader's situation and not a category of subject, which is
+	// what keeps the list from collapsing back into a subject index.
+	'quaestiones.doorway.argument': 'What people argue about',
+	'quaestiones.doorway.argument.blurb': 'Questions with two sides, and usually an opponent.',
+	'quaestiones.doorway.life-event': 'When something has happened',
+	'quaestiones.doorway.life-event.blurb':
+		'A death, a diagnosis, a marriage, a decision that will not wait.',
+	'quaestiones.doorway.private-shame': 'What is hard to ask',
+	'quaestiones.doorway.private-shame.blurb':
+		'Questions people look up alone. The paragraph that speaks to the reader is placed first.',
+	'quaestiones.doorway.ordinary': 'Ordinary questions',
+	'quaestiones.doorway.ordinary.blurb':
+		'Things the Church answers plainly, and which are seldom written down anywhere a reader looks.',
+	'quaestiones.passages.heading': 'From the Catechism',
+	// SAID ONLY WHERE IT IS TRUE — the page renders it when the topic carries
+	// a `lead`, and nowhere else. It is the site admitting an arrangement of
+	// its own over somebody else's text, which docs/decisions.md §Posture
+	// requires be visible rather than silent. "None has been left out" is the
+	// operative half and must survive translation intact: `lead` reorders a
+	// span and never trims one.
+	'quaestiones.passages.reordered':
+		'These paragraphs are not in the Catechism’s own order. The one that answers the question directly is placed first; none has been left out.',
+	'quaestiones.documents.heading': 'Documents',
+	'quaestiones.documents.blurb':
+		'Where the Church has treated the question at length, or has written since the Catechism.',
+	'quaestiones.canons.heading': 'In the Code',
+	'quaestiones.doctrinae-progressus.title': 'Whether teaching changes',
+	'quaestiones.doctrinae-progressus.question':
+		'The Church has said different things at different times. Which is it?',
+	'quaestiones.contraceptio.title': 'Contraception',
+	'quaestiones.contraceptio.question': 'Why is it forbidden, when almost everyone does it?',
+	'quaestiones.homosexualitas.title': 'Homosexuality',
+	'quaestiones.homosexualitas.question': 'What does the Church ask of someone who is gay?',
+	'quaestiones.crematio.title': 'Cremation',
+	'quaestiones.crematio.question': 'May a Catholic be cremated, and may the ashes be scattered?',
+	'quaestiones.mors-voluntaria.title': 'After a suicide',
+	'quaestiones.mors-voluntaria.question':
+		'Someone has taken their own life. Is there hope for them?',
+	'quaestiones.nullitas-matrimonii.title': 'Annulment',
+	'quaestiones.nullitas-matrimonii.question':
+		'Is a first marriage still binding, and what does the Church examine?',
+	'quaestiones.remissio-peccatorum.title': 'Whether a sin can be forgiven',
+	'quaestiones.remissio-peccatorum.question': 'Is there anything too grave to be forgiven?',
+	'quaestiones.pornographia.title': 'Pornography',
+	'quaestiones.pornographia.question':
+		'What does the Church say about it, and about not being able to stop?',
+	'quaestiones.reditus.title': 'Confession after a long time',
+	'quaestiones.reditus.question': 'What happens if the last confession was years ago?',
+	'quaestiones.divinatio.title': 'Astrology and divination',
+	'quaestiones.divinatio.question': 'Horoscopes, tarot, the dead — what is actually forbidden?',
+	'quaestiones.ieiunium.title': 'Fasting and abstinence',
+	'quaestiones.ieiunium.question': 'What is required, and on which days?',
+	'quaestiones.organorum-donatio.title': 'Organ donation',
+	'quaestiones.organorum-donatio.question': 'May organs be given, in life or after death?'
 };

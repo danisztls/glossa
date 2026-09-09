@@ -614,6 +614,18 @@ const realDocumentTagUrls = import.meta.glob('./corpus-data/index/document-tags.
 	import: 'default'
 }) as Record<string, string>;
 
+// Topics: `index/quaestiones.json`, `{ doorways, topics }`, written by
+// `sync-corpus.mjs` from the tracked `site/quaestiones.json`. A URL and not an
+// eager inline on the same rule as the tags above — `/quaestiones` is the only
+// thing that wants it, and what a topic anchors is neither an address nor
+// where a text lives. It is the editorial file whose ABSENCE is loudest, since
+// no corpus data implies it: a build with no topics has no topics.
+const realQuaestionesUrls = import.meta.glob('./corpus-data/index/quaestiones.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 // The census: `index/census.json`, every number this build can state about
 // itself (`scripts/census.mjs`). A URL and not an eager inline for the reason
 // at the head of this file, and it is the clearest case of it — exactly one
@@ -1169,6 +1181,14 @@ export function translatedDescriptionsLocation(lang: string): ContentLocation | 
 export function documentTagsLocation(): ContentLocation | undefined {
 	const relPath = 'index/document-tags.json';
 	const url = realDocumentTagUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
+}
+
+/** Where the topic index lives, or undefined when this build has none — the
+ *  ordinary state under the fixtures and before anybody has written one. */
+export function quaestionesLocation(): ContentLocation | undefined {
+	const relPath = 'index/quaestiones.json';
+	const url = realQuaestionesUrls[`./corpus-data/${relPath}`];
 	return url ? { relPath, url } : undefined;
 }
 

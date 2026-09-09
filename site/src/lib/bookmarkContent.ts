@@ -71,6 +71,14 @@ function sortKey(target: Address): [number, number, number] {
 			const i = SUMMA_PART_ORDER.indexOf(summaPartFromSlug(target.part) ?? '');
 			return [i < 0 ? SUMMA_PART_ORDER.length : i, target.question, target.article ?? 0];
 		}
+		// Every topic ties, and that is the answer rather than a gap. The other
+		// branches sort by the order the WORK prints its units in, and a topic
+		// set has no printed order — the doorway grouping `/quaestiones` shows
+		// is editorial and lives in a file this module deliberately does not
+		// fetch. Tying sends the whole section to `addedAt`, which for a page
+		// somebody chose to mark is the order they will look for it in.
+		case 'topic':
+			return [0, 0, 0];
 	}
 }
 
@@ -132,5 +140,12 @@ export function bookmarkGroup(target: Address): { key: string; order: number } {
 		// A section and the whole document file together, under the document.
 		case 'document':
 			return { key: `document:${target.slug}`, order: 7 };
+		// Last, and the only section here that is not a work. Everything above
+		// is a text somebody else wrote and this site reproduces; a topic is a
+		// page of this site's own arrangement, so it files after the whole
+		// library rather than among it — including after the document sections,
+		// which are the ones that grow without bound.
+		case 'topic':
+			return { key: 'topics', order: 8 };
 	}
 }
