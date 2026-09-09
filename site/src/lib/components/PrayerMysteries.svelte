@@ -37,10 +37,10 @@
 	control replaced rather than an empty column.
 -->
 <script lang="ts">
-	import { weekdayName, weekdayOn } from '$lib/rosary';
+	import { WEEK_FROM_SUNDAY, weekdayInitial, weekdayName } from '$lib/rosary';
 	import { i18n, t } from '$lib/i18n.svelte';
-	import Icon from '$lib/components/Icon.svelte';
 	import PrayerMystery from '$lib/components/PrayerMystery.svelte';
+	import RubricNote from '$lib/components/RubricNote.svelte';
 	import type { PrayerGroupEntry } from '$lib/types';
 
 	interface Props {
@@ -69,12 +69,11 @@
 	 */
 	const todayIso = new Date().getDay() || 7;
 
-	/** Days from today, and the only state here. */
-	let offset = $state(0);
-
-	/** The weekday on show. `rosary.ts` holds the wrap and the naming,
-	 *  where they can be tested — there is no component test harness here. */
-	const viewedIso = $derived(weekdayOn(todayIso, offset));
+	/** The weekday on show, and the only state here. It was an OFFSET from
+	 *  today while the control was a pair of arrows; a strip of seven days is
+	 *  chosen from rather than stepped through, so the day itself is the
+	 *  state and there is no wrap left to get wrong. */
+	let viewedIso = $state(todayIso);
 
 	/** Whether this edition dated its sets at all. */
 	const rotates = $derived(groups.some((group) => group.days?.length));
@@ -89,9 +88,16 @@
      link four times on the four-set editions and a second copy of the opening
      prayer's on the rest. It is stated once, on the first section that draws
      from it. -->
-{#snippet setHeading(group: PrayerGroupEntry)}
-	<h2 class="prayer-mystery-name" {lang}>{group.name}</h2>
-	{#if group.rubric}<p class="prayer-mystery-rubric" {lang}>{group.rubric}</p>{/if}
+{#snippet setName(group: PrayerGroupEntry, isToday: boolean)}
+	<h2 class="prayer-mystery-name" {lang}>
+		{group.name}
+		<!-- THE CHIP IS INSIDE THE HEADING, so a screen reader hears "The
+		     Glorious Mysteries, Today" as one name rather than meeting a stray
+		     word after it. It says the DAY and never the weekday: "Today" is
+		     true in every interface language without a weekday vocabulary, and
+		     the strip above has just named the day in the reader's own. -->
+		{#if isToday}<span class="prayer-today-badge">{t('prayers.rosary.today')}</span>{/if}
+	</h2>
 {/snippet}
 
 {#snippet setItems(group: PrayerGroupEntry)}
@@ -107,179 +113,174 @@
 	     order it prints them. -->
 	{#each groups as group (group.name)}
 		<section class="prayer-mystery-group">
-			{@render setHeading(group)}
+			<!-- No day strip to hang the rubric's `i` beside, so it sits with the
+			     name — which is the thing it qualifies either way. -->
+			<div class="mystery-set-head">
+				{@render setName(group, false)}
+				{#if group.rubric}<RubricNote rubric={group.rubric} {lang} />{/if}
+			</div>
 			{@render setItems(group)}
 		</section>
 	{/each}
 {:else}
 	<section class="prayer-mystery-group">
 		<!--
-			THE CONTROL SITS ON THE SET'S OWN HEADING LINE, and has been through
-			two wrong places to get there. It was a bordered row of its own
-			above the heading, which read as the previous/next bar at the foot
-			of the page and put the day above the thing the buttons change; then
-			it flanked a centred heading, which fixed that and made this the one
-			section of the page not laid out like the two around it. Name on the
-			reading margin, control at the far end of the same line: the section
-			opens the way the opening prayer and the conclusion open, and the
-			buttons are still on what they move.
-		-->
-		<div class="mysteries-head">
-			<!-- THE SET IS THE LIVE REGION. Pressing a button here replaces the
-			     name, the rubric and the five mysteries under them without
-			     moving focus or the scroll position, and the name is the part
-			     worth hearing. `polite` because it is never urgent — the reader
-			     asked for it. -->
-			<div class="mysteries-title" aria-live="polite">
-				{#if shown}{@render setHeading(shown)}{/if}
-			</div>
-			<div class="mysteries-control">
-				<button
-					type="button"
-					class="mysteries-step"
-					aria-label={t('prayers.rosary.previousDay')}
-					onclick={() => (offset -= 1)}
-				>
-					<Icon name="arrow-left" class="mysteries-arrow" />
-				</button>
-				<!--
-					ONE WORD FOR THE DAY, NEVER TWO. It printed the weekday and,
-					on today, a badge beside it — "Tuesday TODAY" — which is the
-					same fact twice in two treatments, and the badge was also a
-					button back to today, so a control with one job carried two.
-					A reader stepping through a week wants to know which day they
-					are looking at; on the day they started, "Today" is the more
-					useful of the two names and the only one they do not have to
-					work out. Every other day is named.
+			THE WHOLE WEEK, ABOVE THE SET IT CHOOSES. The control has been a
+			bordered row of arrows above the heading (which read as the
+			previous/next bar at the foot of the page), arrows flanking a
+			centred heading (which made this the one section not laid out like
+			its neighbours), and arrows at the far end of the heading's own
+			line. All three shared the defect: a pair of arrows is a way to
+			WALK a sequence, and this is a set of seven a reader picks out of.
+			Stepping four times to reach Friday is four renders of three sets
+			nobody asked for, and neither arrow could ever say what it was
+			about to show.
 
-					"Today" is true in every interface language and needs no
-					weekday vocabulary; the rest come from `Intl`.
-				-->
-				<p class="mysteries-day" aria-live="polite">
-					{#if viewedIso === todayIso}
-						<span class="mysteries-today">{t('prayers.rosary.today')}</span>
-					{:else}
-						{weekdayName(viewedIso, i18n.lang)}
-					{/if}
-				</p>
-				<button
-					type="button"
-					class="mysteries-step"
-					aria-label={t('prayers.rosary.nextDay')}
-					onclick={() => (offset += 1)}
-				>
-					<Icon name="arrow-right" class="mysteries-arrow" />
-				</button>
+			Seven buttons say it all at once. The reader sees the shape of the
+			week, presses the day they mean, and the set under it is one press
+			away from any other — including the way back to today, which the
+			arrows only had by counting.
+
+			THE LETTERS ARE AMBIGUOUS AND THAT IS FINE. English repeats T and
+			S, Portuguese repeats Q and S; the strip is read by POSITION, which
+			is what a week is, and every button carries the day's full name as
+			its accessible name and its tooltip. `weekdayInitial`'s docblock
+			has the whole of it.
+		-->
+		<div class="mysteries-controls">
+			<div class="mysteries-week" role="group" aria-label={t('prayers.rosary.chooseDay')}>
+				{#each WEEK_FROM_SUNDAY as iso (iso)}
+					{@const name = weekdayName(iso, i18n.lang)}
+					<button
+						type="button"
+						class="mysteries-weekday"
+						class:selected={iso === viewedIso}
+						class:is-today={iso === todayIso}
+						aria-pressed={iso === viewedIso}
+						aria-label={iso === todayIso ? `${name} — ${t('prayers.rosary.today')}` : name}
+						title={iso === todayIso ? `${name} — ${t('prayers.rosary.today')}` : name}
+						onclick={() => (viewedIso = iso)}
+					>
+						{weekdayInitial(iso, i18n.lang)}
+					</button>
+				{/each}
 			</div>
+			<!-- Outside the `role="group"` on purpose: the group is the seven days
+			     a reader chooses between, and this reveals a note about whichever
+			     of them they landed on. -->
+			{#if shown?.rubric}<RubricNote rubric={shown.rubric} {lang} />{/if}
 		</div>
 
-		{#if shown}{@render setItems(shown)}{/if}
+		<!-- THE SET IS THE LIVE REGION. Pressing a day replaces the name and the
+		     five mysteries under it without moving focus or the scroll position,
+		     and the name is the part worth hearing. `polite` because it is never
+		     urgent — the reader asked for it. -->
+		<div aria-live="polite">
+			{#if shown}{@render setName(shown, viewedIso === todayIso)}{/if}
+			{#if shown}{@render setItems(shown)}{/if}
+		</div>
 	</section>
 {/if}
 
 <style>
 	/*
-	 * SET NAME AT THE START, DAY CONTROL AT THE END, AND BOTH ON THE READING
-	 * MARGIN. It was a centred masthead with the arrows on the column's two
-	 * edges, which made this the one section of the page laid out differently
-	 * from the two around it — the opening prayer and the conclusion each open
-	 * with a label on the left and run their text under it, and a centred
-	 * three-line block between them read as a device rather than as a heading.
-	 * Everything here is left-aligned now, and the section reads like its
-	 * neighbours.
-	 *
-	 * It wraps rather than squeezing: on a narrow column the control drops
-	 * under the name, where two flex items shrinking would break the set name
-	 * mid-word to keep a 2rem button on the same line.
+	 * THE WEEK AS A ROW OF SEVEN, ON THE READING MARGIN. Not centred and not
+	 * stretched across the column: a week is a short fixed thing, and a strip
+	 * spread to the full measure reads as a table with six empty cells in it.
+	 * It sits above the set's name for the reason the markup gives — the reader
+	 * chooses a day and then reads what is appointed to it, in that order.
 	 */
-	.mysteries-head {
+	/* The strip and the rubric's `i` on one line, the note immediately to the
+	   right of the seven days rather than at the column's far edge: it is about
+	   the day just chosen, and a mark pushed away from what it qualifies stops
+	   reading as belonging to it. */
+	.mysteries-controls {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: 0.4rem 1rem;
+		gap: 0.25rem;
 		margin: 0 0 0.75rem;
 	}
 
-	.mysteries-title {
-		min-width: 0;
+	/* The same row, on the editions that print all four sets and have no strip:
+	   there the `i` sits beside the name instead. */
+	.mystery-set-head {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.35rem;
 	}
 
-	.mysteries-control {
+	.mysteries-week {
 		display: flex;
-		align-items: center;
-		flex: none;
-		gap: 0.5rem;
-		font-family: var(--font-sans);
+		flex-wrap: wrap;
+		gap: 0.25rem;
 	}
 
 	/*
-	 * The day is the control's own label and the set name is the heading, so
-	 * this is smaller and lighter than the `<h2>` beside it. It was the other
-	 * way round while the control was a row of its own: the day was the
-	 * largest thing in the block and "The Glorious Mysteries" read as its
-	 * caption, which inverts what the reader came for.
-	 *
-	 * `min-inline-size` because the two names it prints are different lengths
-	 * — "Today" against "Wednesday", and far wider apart in some languages —
-	 * and without a floor the two buttons would move as the reader steps onto
-	 * today and off it. The weekday is a proper name in most of these
-	 * languages and is already capitalised by `Intl`; the ones that lowercase
-	 * it do so as a rule of their own orthography, and overriding that here
-	 * would misspell it in every one of them.
+	 * A SQUARE PER DAY, 2rem, which is the arrows' own size and clears the
+	 * 24px minimum on a coarse pointer without a media query. `tabular-nums`
+	 * for the locales whose narrow weekday is a DIGIT — Chinese answers 日一二
+	 * … and Japanese a numeral — so the seven cells stay the same width
+	 * whatever the platform hands back.
 	 */
-	.mysteries-day {
-		margin: 0;
-		min-inline-size: 6em;
-		text-align: center;
-		font-size: max(var(--font-size-min), 0.85rem);
-		font-weight: 500;
-		color: var(--color-text-muted);
-	}
-
-	/* `--color-apparatus` (ground lapis), not `--color-accent`: app.css
-	   reserves the blue for the marks that tell a reader WHERE they are rather
-	   than carrying text, and "this is today" is exactly that job. It is a
-	   colour and a weight and no longer a bordered badge — the badge was
-	   printed BESIDE the weekday and had to be told apart from it; this
-	   REPLACES the weekday, so nothing sits next to it to be distinguished
-	   from. */
-	.mysteries-today {
-		font-weight: 600;
-		color: var(--color-apparatus);
-	}
-
-	.mysteries-step {
+	.mysteries-weekday {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		flex-shrink: 0;
+		position: relative;
+		flex: none;
 		width: 2rem;
 		height: 2rem;
 		padding: 0;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: none;
+		font-family: var(--font-sans);
+		font-size: max(var(--font-size-min), 0.8rem);
+		font-variant-numeric: tabular-nums;
 		color: var(--color-text-muted);
 		cursor: pointer;
 	}
 
-	.mysteries-step:hover {
+	.mysteries-weekday:hover {
 		color: var(--color-accent);
 		border-color: var(--color-accent);
 	}
 
-	/* The row is a flex row and so already mirrors under `dir="rtl"`, which
-	   puts the back button where an RTL reader looks for it; an `<svg>` is a
-	   box and not a mirrored character, so its arrow needs turning by hand.
-	   `UnitNav` states the same rule at length and draws the same two marks. */
-	.mysteries-step :global(.mysteries-arrow) {
-		width: 1em;
-		height: 1em;
+	/*
+	 * THE CHOSEN DAY IS FILLED AND TODAY IS DOTTED, and they have to be two
+	 * different marks because they are true at the same time on the day the
+	 * page opens. One treatment for both would make "you are looking at
+	 * Wednesday" and "today is Wednesday" indistinguishable on the one day the
+	 * reader most needs to tell them apart — and then, after a single press,
+	 * the mark would move and no longer say where today is at all.
+	 *
+	 * `--color-apparatus` (ground lapis) rather than `--color-accent`: app.css
+	 * reserves the blue for the marks that tell a reader WHERE they are rather
+	 * than carrying text, which is exactly what both of these do. The reds are
+	 * spoken for by links.
+	 */
+	.mysteries-weekday.selected {
+		color: var(--color-bg);
+		background: var(--color-apparatus);
+		border-color: var(--color-apparatus);
+		font-weight: 600;
 	}
 
-	.mysteries-step:dir(rtl) :global(.mysteries-arrow) {
-		transform: scaleX(-1);
+	.mysteries-weekday.is-today::after {
+		content: '';
+		position: absolute;
+		bottom: 0.22rem;
+		width: 0.22rem;
+		height: 0.22rem;
+		border-radius: 50%;
+		background: var(--color-apparatus);
+	}
+
+	/* The dot has to survive the fill it sits on. */
+	.mysteries-weekday.is-today.selected::after {
+		background: var(--color-bg);
 	}
 
 	.prayer-mystery-group {
@@ -295,20 +296,36 @@
 		margin: 0 0 0.5rem;
 	}
 
-	/* Inside the stepper the head's own margin closes the gap, and the control
-	   is centred against this block — a trailing margin here would sit it
-	   below the middle of what it moves. */
-	.mysteries-title .prayer-mystery-name,
-	.mysteries-title .prayer-mystery-rubric {
-		margin-bottom: 0;
-	}
-
-	.prayer-mystery-rubric {
-		margin: 0.1rem 0 0.5rem;
+	/*
+	 * `--color-apparatus` (ground lapis), not `--color-accent`: app.css reserves
+	 * the blue for the marks that tell a reader WHERE they are rather than
+	 * carrying text, and "these are today's" is exactly that job. The reds are
+	 * already spoken for by links and initials, and a red chip beside a red link
+	 * would read as a second kind of link.
+	 *
+	 * It is a BORDERED chip here and a bare dot on the day strip above, because
+	 * the two say different things and are true at the same moment: the dot
+	 * marks where today falls in the week, this says the set under it is the one
+	 * appointed to it. One treatment for both would collapse them on the only
+	 * day they can be told apart.
+	 */
+	.prayer-today-badge {
+		display: inline-block;
+		margin-inline-start: 0.5em;
 		font-family: var(--font-sans);
-		font-size: 0.75rem;
-		font-style: italic;
-		color: var(--color-text-muted);
+		font-size: max(var(--font-size-min), 0.62em);
+		font-weight: 600;
+		font-style: normal;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--color-apparatus);
+		border: 1px solid var(--color-apparatus);
+		border-radius: var(--radius-sm);
+		padding: 0.05em 0.4em;
+		vertical-align: 0.12em;
+		/* `nowrap` because in several interface languages this is two words
+		   ("I dag", "Aujourd'hui") and a chip that wraps stops reading as one. */
+		white-space: nowrap;
 	}
 
 	.prayer-mystery-items {

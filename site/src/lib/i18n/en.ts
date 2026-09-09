@@ -821,6 +821,16 @@ export const en: Dictionary = {
 	// so removing it means removing forty translated strings on a guess that
 	// no surface wants the phrase again.
 	'prayers.rosary.today': 'Today',
+	// The day strip's own name, and the trigger over each set's rubric. The
+	// seven buttons are named by `Intl` — their visible letters repeat (English
+	// has two T's and two S's), so the day's full name is each one's
+	// `aria-label`, and these two are the chrome around them.
+	'prayers.rosary.chooseDay': 'The day whose mysteries are shown',
+	'prayers.rosary.whenPrayed': 'When this set is prayed',
+	// `previousDay`/`nextDay` labelled a pair of arrows that stepped one day at
+	// a time. The strip replaced them: seven days visible at once, any of them
+	// one press away. Kept for `todayHeading`'s reason — translated everywhere,
+	// and nothing here tests for an unused key.
 	'prayers.rosary.previousDay': 'The day before',
 	'prayers.rosary.nextDay': 'The day after',
 	'prayers.rosary.todayHeading': 'Today’s mysteries',

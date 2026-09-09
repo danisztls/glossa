@@ -17,16 +17,35 @@ import { dateLocale } from '$lib/dates';
 const REFERENCE_YEAR = 2024;
 
 /**
- * The ISO weekday `offset` days from `todayIso`, wrapped into the week.
+ * THE WEEK AS THE STRIP PRINTS IT, IN ISO NUMBERS: Sunday first.
  *
- * Wrapped rather than added to a date because only the weekday is ever
- * printed: the two agree for one step and part on the seventh, where a real
- * date is a week away and names the weekday the reader started on. Negative
- * offsets wrap the same way — JavaScript's `%` keeps the sign of its left
- * operand, so the `+ 7` before the second `%` is load-bearing.
+ * The corpus stores ISO weekdays, where Monday is 1 and Sunday 7, because that
+ * is what `PrayerGroupEntry.days` needs to be to compare against a date. What
+ * a reader is shown is a different question, and the answer is not the ISO
+ * order: the week this rotation belongs to is the LITURGICAL week, which
+ * begins on Sunday — the day the Glorious mysteries are prayed, and the day
+ * every calendar in `/calendarium` starts its own week on.
+ *
+ * Fixed rather than read from the locale (`Intl.Locale`'s `getWeekInfo` would
+ * answer Monday for most of Europe). That is right for a diary and wrong here:
+ * which day opens the week is a fact about the Church's week, not about the
+ * reader's country, and a strip that started on different days for two readers
+ * would put the same set of mysteries in two places.
  */
-export function weekdayOn(todayIso: number, offset: number): number {
-	return ((((todayIso - 1 + offset) % 7) + 7) % 7) + 1;
+export const WEEK_FROM_SUNDAY: readonly number[] = [7, 1, 2, 3, 4, 5, 6];
+
+/** The day of the reference week carrying this ISO weekday number.
+ *
+ *  1 January 2024 was a Monday, so day `iso` of that January is the weekday
+ *  `iso` names. Pinned by a test, which is the only thing standing between
+ *  this and an off-by-one nobody would see except on one day of the week.
+ *
+ *  `timeZone: 'UTC'` on every formatter reading it, for `dates.ts`'s reason: a
+ *  bare ISO date parses as UTC midnight, which is the previous evening for
+ *  every reader west of Greenwich, so an unpinned formatter names the day
+ *  before. */
+function weekdayDate(iso: number): Date {
+	return new Date(Date.UTC(REFERENCE_YEAR, 0, iso));
 }
 
 /**
@@ -36,16 +55,30 @@ export function weekdayOn(todayIso: number, offset: number): number {
  * site never parses a rubric written in the content language, and naming a
  * number back is what a locale is for — a weekday vocabulary in forty
  * dictionaries would be forty translations of what the platform knows.
- *
- * `timeZone: 'UTC'` for `dates.ts`'s reason: a bare ISO date parses as UTC
- * midnight, which is the previous evening for every reader west of Greenwich,
- * so an unpinned formatter names the day before.
  */
 export function weekdayName(iso: number, lang: string): string {
 	return new Intl.DateTimeFormat(dateLocale(lang), {
 		weekday: 'long',
 		timeZone: 'UTC'
-	}).format(new Date(Date.UTC(REFERENCE_YEAR, 0, iso)));
+	}).format(weekdayDate(iso));
+}
+
+/**
+ * The one or two characters that stand for that weekday on the strip.
+ *
+ * `narrow`, which is what gives English "S M T W T F S" and Portuguese
+ * "D S T Q Q S S". **It is not unique** — English repeats T and S, Portuguese
+ * repeats Q and S, and Chinese answers a single digit — so a strip drawn from
+ * this is legible by POSITION and never by letter, and every button must carry
+ * `weekdayName` as its accessible name. A reader is choosing a day out of a
+ * row of seven they can see, which is exactly the case where an ambiguous
+ * label costs nothing and a translated one costs forty dictionaries.
+ */
+export function weekdayInitial(iso: number, lang: string): string {
+	return new Intl.DateTimeFormat(dateLocale(lang), {
+		weekday: 'narrow',
+		timeZone: 'UTC'
+	}).format(weekdayDate(iso));
 }
 
 /**

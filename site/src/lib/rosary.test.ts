@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mysteryName, slotted, weekdayName, weekdayOn } from './rosary';
+import { mysteryName, slotted, WEEK_FROM_SUNDAY, weekdayInitial, weekdayName } from './rosary';
 
 /** The rotation the Holy Rosary micro-site prints, as `PrayerGroupEntry.days`
  *  stores it: joyful, luminous, sorrowful, glorious. */
@@ -10,54 +10,58 @@ const ROTATION: Record<number, number[]> = {
 	4: [3, 7]
 };
 
-const setFor = (iso: number) =>
-	Number(Object.keys(ROTATION).find((k) => ROTATION[+k].includes(iso)));
-
-describe('weekdayOn', () => {
-	it('answers the day itself at no offset', () => {
-		for (let iso = 1; iso <= 7; iso++) expect(weekdayOn(iso, 0)).toBe(iso);
+describe('WEEK_FROM_SUNDAY', () => {
+	it('is the seven ISO weekdays, each once', () => {
+		expect([...WEEK_FROM_SUNDAY].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7]);
 	});
 
-	it('wraps forward off the end of the week', () => {
-		expect(weekdayOn(7, 1)).toBe(1);
-		expect(weekdayOn(6, 2)).toBe(1);
+	/** Sunday is 7 in ISO and first here — the one thing about this constant
+	 *  that a reader of the numbers alone would get backwards. */
+	it('opens on Sunday and closes on Saturday', () => {
+		expect(WEEK_FROM_SUNDAY[0]).toBe(7);
+		expect(WEEK_FROM_SUNDAY[6]).toBe(6);
+		expect(WEEK_FROM_SUNDAY.map((iso) => weekdayName(iso, 'en'))).toEqual([
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday',
+			'Friday',
+			'Saturday'
+		]);
 	});
 
-	/** JavaScript's `%` keeps the sign of its left operand, so this is the
-	 *  half a naive modulo gets wrong — and it gets it wrong by answering 0
-	 *  or a negative, which `days.includes` matches on no set at all. */
-	it('wraps backward off the start of the week', () => {
-		expect(weekdayOn(1, -1)).toBe(7);
-		// A week and a day back from Monday is the Sunday before it.
-		expect(weekdayOn(1, -8)).toBe(7);
-		expect(weekdayOn(1, -9)).toBe(6);
-		for (let iso = 1; iso <= 7; iso++) {
-			for (let offset = -21; offset <= 21; offset++) {
-				const day = weekdayOn(iso, offset);
-				expect(day).toBeGreaterThanOrEqual(1);
-				expect(day).toBeLessThanOrEqual(7);
-			}
+	/** Every day of the week has mysteries appointed to it, so no button on the
+	 *  strip can select a day with nothing under it. */
+	it('covers every day the rotation appoints a set to', () => {
+		for (const iso of WEEK_FROM_SUNDAY) {
+			expect(Object.values(ROTATION).some((days) => days.includes(iso))).toBe(true);
 		}
 	});
+});
 
-	it('is a week-long cycle', () => {
-		for (let iso = 1; iso <= 7; iso++) {
-			expect(weekdayOn(iso, 7)).toBe(iso);
-			expect(weekdayOn(iso, -7)).toBe(iso);
-		}
+describe('weekdayInitial', () => {
+	it('is the narrow form, in the reader’s own language', () => {
+		expect(WEEK_FROM_SUNDAY.map((iso) => weekdayInitial(iso, 'en'))).toEqual([
+			'S',
+			'M',
+			'T',
+			'W',
+			'T',
+			'F',
+			'S'
+		]);
 	});
 
-	/**
-	 * The control's own promise: every step lands on a different set of
-	 * mysteries, so pressing a button never looks like it did nothing. It
-	 * holds for all seven days in both directions, which is why the component
-	 * steps by DAY rather than by set.
-	 */
-	it('changes the set of mysteries on every single step', () => {
-		for (let iso = 1; iso <= 7; iso++) {
-			expect(setFor(weekdayOn(iso, 1))).not.toBe(setFor(iso));
-			expect(setFor(weekdayOn(iso, -1))).not.toBe(setFor(iso));
-		}
+	/** The reason every button carries `weekdayName` as its accessible name:
+	 *  the visible letters are ambiguous by design, in English and elsewhere. */
+	it('repeats itself, which is why it is never the accessible name', () => {
+		const en = WEEK_FROM_SUNDAY.map((iso) => weekdayInitial(iso, 'en'));
+		expect(new Set(en).size).toBeLessThan(en.length);
+	});
+
+	it('falls back rather than failing for a language Intl cannot answer for', () => {
+		expect(weekdayInitial(1, 'la')).toBeTruthy();
 	});
 });
 
