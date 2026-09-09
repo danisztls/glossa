@@ -810,11 +810,16 @@ export const en: Dictionary = {
 	// the reader's own language, so these are the buttons that move it and the
 	// badge marking where the reader started.
 	//
-	// `today` is printed and `todayHeading` is not: the same control is a mark
-	// on the day the reader arrived on and a button back to it everywhere
-	// else, and one word is all a badge has room for. The longer phrase is
-	// that button's `aria-label` and its tooltip, where "Today" alone would
-	// name a state rather than a destination.
+	// `today` REPLACES the weekday on the day the reader arrived on rather than
+	// standing beside it — the control prints one name for the day it is
+	// showing, and on that one day "Today" is the more useful of the two.
+	//
+	// `todayHeading` has no consumer. It titled a banner over all four sets
+	// while the page listed them, then labelled a button back to today while
+	// the badge was one; both are gone. Kept rather than deleted because it is
+	// translated in every dictionary and nothing here tests for an unused key,
+	// so removing it means removing forty translated strings on a guess that
+	// no surface wants the phrase again.
 	'prayers.rosary.today': 'Today',
 	'prayers.rosary.previousDay': 'The day before',
 	'prayers.rosary.nextDay': 'The day after',

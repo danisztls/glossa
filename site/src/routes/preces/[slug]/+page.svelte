@@ -550,7 +550,12 @@
 					     that the directions themselves are gone. -->
 					<SectionSource url={p.instructions.source} />
 				</h2>
-				<div class="prayer-opening" lang={bodyLang}>
+				<!-- No rule and no indent beside it. It carried a marginal rule
+				     to mark it as words to SAY rather than to read — which was
+				     one section wearing a device the other two do not, in a page
+				     whose whole shape is now three sections that open alike. The
+				     label above it already says what it is. -->
+				<div lang={bodyLang}>
 					<PrayerBlocks lines={prayerLines([opening])} />
 				</div>
 			</section>
@@ -936,13 +941,6 @@
 		margin-top: 0.75rem;
 	}
 
-	/* The words that open the Rosary, held in from the section's own margin the
-	   way a said text is set apart from a read one. */
-	.prayer-opening {
-		padding-inline-start: 0.9rem;
-		border-inline-start: 2px solid var(--color-border);
-	}
-
 	/*
 	 * THE WALKTHROUGH IS SANS AND THE PRAYER IS NOT. Everything in this fold
 	 * that is ours is set in the interface face at the interface size, and
@@ -1024,11 +1022,31 @@
 		margin: 0 0 1.75rem;
 	}
 
+	/* LABEL AT THE START, PROVENANCE AT THE END, ONE RULE UNDER BOTH. The
+	   source line was a block inside the heading, so the one section that has
+	   one opened two lines deep where the others opened in one — the same
+	   thing the three names exist to stop. */
 	.prayer-section-name {
-		display: block;
-		margin: 0 0 0.5rem;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.15rem 1rem;
+		margin: 0 0 0.6rem;
 		padding-bottom: 0.35rem;
 		border-bottom: 1px solid var(--color-border);
+	}
+
+	/* `.label-micro` uppercases and letterspaces what is inside it, and
+	   `text-transform` inherits — so without this the provenance line reads
+	   "SOURCE: VATICAN.VA", which is a URL shouted. It is not part of the
+	   label; it is the other end of the row. */
+	.prayer-section-name :global(.prayer-section-source) {
+		display: inline;
+		margin-block-start: 0;
+		text-transform: none;
+		letter-spacing: normal;
+		font-weight: 400;
 	}
 
 	/* A compared prayer needs two full reading measures. This was the
