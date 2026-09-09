@@ -804,10 +804,14 @@ export const en: Dictionary = {
 	'prayers.prevPrayer': 'Previous prayer',
 	'prayers.nextPrayer': 'Next prayer',
 	// The Rosary reader's own chrome — routes/preces/[slug] renders the
-	// source's directions as a how-to and marks the set whose weekday it is
-	// (`PrayerGroupEntry.days`). The weekday itself is never named: the
-	// heading says "today" and the set's own printed name says which.
+	// source's directions as a how-to, and `PrayerMysteries` shows the one set
+	// appointed to a day (`PrayerGroupEntry.days`) with a control to step
+	// through the week. The weekday is NOT a string here: `Intl` names it in
+	// the reader's own language, so these two are the buttons that move it and
+	// the badge marking where the reader started.
 	'prayers.rosary.today': 'Today',
+	'prayers.rosary.previousDay': 'The day before',
+	'prayers.rosary.nextDay': 'The day after',
 	'prayers.rosary.todayHeading': 'Today’s mysteries',
 	'prayers.rosary.openingPrayer': 'Opening prayer',
 	'prayers.rosary.decadePrayers': 'The prayers of a decade',
