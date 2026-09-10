@@ -475,7 +475,7 @@ export const it: Dictionary = {
 	'calendar.tagline':
 		'Il Calendario Romano Generale, calcolato per qualunque giorno: il suo tempo, il suo grado, il suo colore.',
 	'calendar.national.tagline':
-		'{name}, calcolato per qualunque giorno: il suo tempo, il suo grado, il suo colore.',
+		'{name}, con le celebrazioni che gli sono proprie, calcolato per qualunque giorno.',
 	'calendar.calendar': 'Calendario',
 	'calendar.which.general': 'Calendario Romano Generale',
 	'calendar.filter': 'Cerca paesi',

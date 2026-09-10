@@ -479,7 +479,7 @@ export const zh: Dictionary = {
 	'nav.calendar': '日历',
 	'calendar.title': '礼仪日历',
 	'calendar.tagline': '罗马通用日历，可推算任何一天——那一天的时期、等级与颜色。',
-	'calendar.national.tagline': '{name}，可推算任何一天——那一天的时期、等级与颜色。',
+	'calendar.national.tagline': '{name}及其专有庆日，可推算任何一天。',
 	'calendar.calendar': '日历',
 	'calendar.which.general': '罗马通用日历',
 	'calendar.filter': '搜索国家或地区',

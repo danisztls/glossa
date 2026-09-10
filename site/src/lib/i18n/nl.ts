@@ -501,7 +501,7 @@ export const nl: Dictionary = {
 	'calendar.title': 'Liturgische kalender',
 	'calendar.tagline':
 		'De Algemene Romeinse Kalender, berekend voor elke dag — zijn tijd, zijn rang, zijn kleur.',
-	'calendar.national.tagline': '{name}, berekend voor elke dag — zijn tijd, zijn rang, zijn kleur.',
+	'calendar.national.tagline': '{name}, met de eigen vieringen, berekend voor elke dag.',
 	'calendar.calendar': 'Kalender',
 	'calendar.which.general': 'Algemene Romeinse Kalender',
 	'calendar.filter': 'Landen zoeken',

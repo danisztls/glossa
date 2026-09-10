@@ -492,7 +492,7 @@ export const ko: Dictionary = {
 	'nav.calendar': '전례력',
 	'calendar.title': '전례력',
 	'calendar.tagline': '로마 일반 전례력을 어느 날짜로든 계산합니다 — 그날의 시기, 등급, 색깔.',
-	'calendar.national.tagline': '{name}을 어느 날짜로든 계산합니다 — 그날의 시기, 등급, 색깔.',
+	'calendar.national.tagline': '고유 축일을 포함한 {name}을 어느 날짜로든 계산합니다.',
 	'calendar.calendar': '달력',
 	'calendar.which.general': '로마 일반 전례력',
 	'calendar.filter': '나라 검색',

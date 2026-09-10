@@ -1391,9 +1391,15 @@ export const en: Dictionary = {
 	// `{name}` IS THE CALENDAR'S OWN NAME AND IT OPENS THE LINE:
 	// `Calendário Litúrgico Brasileiro`, written out per calendar rather than
 	// composed, because the adjective follows the noun in Portuguese and
-	// precedes and declines it in German. So the rest of this line is only what
-	// each dictionary's `calendar.tagline` already says after its own noun
-	// phrase, and it agrees with that noun in gender and number for free.
+	// precedes and declines it in German. Everything after it is built from
+	// `calendar.tagline`'s own clauses in that same dictionary, so the
+	// participle agrees with that language's word for calendar for free.
+	//
+	// IT SAYS WHAT A NATIONAL CALENDAR IS AND STOPS. The season, the rank and
+	// the colour are the general page's tagline, and they are as true of the
+	// Roman calendar as of Brazil's — what a reader arriving here has to be
+	// told is the one thing that differs, which is the propers. A description
+	// is 160 characters and these names are long.
 	//
 	// WHAT IT MUST NOT DO is put an article or a preposition in front of the
 	// placeholder. A name is a title in apposition here; the same line built
@@ -1401,7 +1407,7 @@ export const en: Dictionary = {
 	// keeps it", "wie Schweiz ihn feiert", "tel que le célèbre France", and no
 	// rule can supply the article, since which countries take one is a fact
 	// about each language's own list.
-	'calendar.national.tagline': '{name}, computed for any day — its season, its rank, its colour.',
+	'calendar.national.tagline': '{name}, with the celebrations proper to it, computed for any day.',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
 	'calendar.filter': 'Search countries',

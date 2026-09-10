@@ -474,8 +474,7 @@ export const sl: Dictionary = {
 	'calendar.title': 'Bogoslužni koledar',
 	'calendar.tagline':
 		'Splošni rimski koledar, izračunan za katerikoli dan — njegov čas, njegov red, njegova barva.',
-	'calendar.national.tagline':
-		'{name}, izračunan za katerikoli dan — njegov čas, njegov red, njegova barva.',
+	'calendar.national.tagline': '{name} z lastnimi praznovanji, izračunan za katerikoli dan.',
 	'calendar.calendar': 'Koledar',
 	'calendar.which.general': 'Splošni rimski koledar',
 	'calendar.filter': 'Iskanje držav',

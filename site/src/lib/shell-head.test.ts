@@ -118,7 +118,10 @@ function calendarFixture(): Record<string, [string, string, string]> {
 		CALENDAR_IDS.map((id) => {
 			const { lang, name } = CALENDAR_PAGES[id];
 			const territory = territoryName(id, lang);
-			return [id, [`${name} — Glossa Catholica`, `${name}, computed for any day.`, territory]];
+			return [
+				id,
+				[`${name} — Glossa Catholica`, `${name}, with the celebrations proper to it.`, territory]
+			];
 		})
 	);
 }
@@ -789,7 +792,7 @@ describe('the chrome table the build actually ships', () => {
 		// tagline under a label: twenty Spanish-speaking countries would
 		// otherwise be described identically but for a prefix.
 		expect(calendars.br[1]).toBe(
-			'Calendário Litúrgico Brasileiro, calculado para qualquer dia — o tempo, o grau e a cor.'
+			'Calendário Litúrgico Brasileiro, com as celebrações que lhe são próprias, calculado para qualquer dia.'
 		);
 		expect(calendars.br[1]).not.toContain('{name}');
 		expect(calendars.ca[1]).not.toBe(calendars.us[1]);

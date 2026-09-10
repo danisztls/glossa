@@ -477,7 +477,7 @@ export const hu: Dictionary = {
 	'calendar.title': 'Liturgikus naptár',
 	'calendar.tagline':
 		'Az Általános Római Naptár, bármely napra kiszámítva — az ideje, a rangja, a színe.',
-	'calendar.national.tagline': '{name}, bármely napra kiszámítva — az ideje, a rangja, a színe.',
+	'calendar.national.tagline': '{name} a saját ünnepeivel, bármely napra kiszámítva.',
 	'calendar.calendar': 'Naptár',
 	'calendar.which.general': 'Általános Római Naptár',
 	'calendar.filter': 'Országok keresése',

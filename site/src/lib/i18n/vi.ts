@@ -503,8 +503,7 @@ export const vi: Dictionary = {
 	'calendar.title': 'Lịch phụng vụ',
 	'calendar.tagline':
 		'Lịch Rôma chung, tính cho bất kỳ ngày nào — mùa của ngày, bậc của ngày, màu của ngày.',
-	'calendar.national.tagline':
-		'{name}, tính cho bất kỳ ngày nào — mùa của ngày, bậc của ngày, màu của ngày.',
+	'calendar.national.tagline': '{name} cùng các lễ riêng, tính cho bất kỳ ngày nào.',
 	'calendar.calendar': 'Lịch',
 	'calendar.which.general': 'Lịch Rôma chung',
 	'calendar.filter': 'Tìm quốc gia',

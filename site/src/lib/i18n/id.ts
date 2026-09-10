@@ -508,8 +508,7 @@ export const id: Dictionary = {
 	'calendar.title': 'Kalender liturgi',
 	'calendar.tagline':
 		'Kalender Romawi Umum, dihitung untuk hari mana pun — masanya, tingkatnya, warnanya.',
-	'calendar.national.tagline':
-		'{name}, dihitung untuk hari mana pun — masanya, tingkatnya, warnanya.',
+	'calendar.national.tagline': '{name}, dengan perayaan khasnya, dihitung untuk hari mana pun.',
 	'calendar.calendar': 'Kalender',
 	'calendar.which.general': 'Kalender Romawi Umum',
 	'calendar.filter': 'Cari negara',

@@ -500,7 +500,7 @@ export const be: Dictionary = {
 	'calendar.title': 'Літургічны каляндар',
 	'calendar.tagline':
 		'Агульны Рымскі каляндар, вылічаны на любы дзень — яго час, яго ранг, яго колер.',
-	'calendar.national.tagline': '{name}, вылічаны на любы дзень — яго час, яго ранг, яго колер.',
+	'calendar.national.tagline': '{name}, з уласнымі святкаваннямі, вылічаны на любы дзень.',
 	'calendar.calendar': 'Каляндар',
 	'calendar.which.general': 'Агульны Рымскі каляндар',
 	'calendar.filter': 'Пошук краін',

@@ -473,8 +473,7 @@ export const ru: Dictionary = {
 	'calendar.title': 'Литургический календарь',
 	'calendar.tagline':
 		'Общий Римский календарь, рассчитанный на любой день — его время, его ранг, его цвет.',
-	'calendar.national.tagline':
-		'{name}, рассчитанный на любой день — его время, его ранг, его цвет.',
+	'calendar.national.tagline': '{name} с собственными празднованиями, рассчитанный на любой день.',
 	'calendar.calendar': 'Календарь',
 	'calendar.which.general': 'Общий Римский календарь',
 	'calendar.filter': 'Поиск стран',

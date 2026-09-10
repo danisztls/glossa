@@ -479,7 +479,7 @@ export const fr: Dictionary = {
 	'calendar.tagline':
 		'Le calendrier romain général, calculé pour n’importe quel jour : son temps, son degré, sa couleur.',
 	'calendar.national.tagline':
-		'{name}, calculé pour n’importe quel jour : son temps, son degré, sa couleur.',
+		'{name}, avec les célébrations qui lui sont propres, calculé pour n’importe quel jour.',
 	'calendar.calendar': 'Calendrier',
 	'calendar.which.general': 'Calendrier romain général',
 	'calendar.filter': 'Chercher un pays',
