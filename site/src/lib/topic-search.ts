@@ -1,18 +1,28 @@
 /**
  * Matching a reader's words against the topic list on `/quaestiones`.
  *
- * A MODULE AND NOT FOUR LINES IN THE PAGE, because the two rules below are
- * the whole of what makes this useful and neither is visible in a rendered
+ * A MODULE AND NOT FOUR LINES IN THE PAGE, because the rules below are the
+ * whole of what makes this useful and not one of them is visible in a rendered
  * list: a page that quietly fails to match `cremação` typed as `cremacao`
  * looks exactly like a page with no such topic.
  *
- * WHAT IS SEARCHED IS THE TITLE AND THE QUESTION, and nothing else. Not the
- * slug — `mors-voluntaria` is an address, and a reader who knew to type it
- * would have used the jump box — and not the Catechism's text, which is not
- * loaded on this page and would make the index the size of the corpus. The
- * question is the half that matters: `docs/research/topics.md` found that
- * readers arrive with a sentence rather than a subject, and the sentence is
- * exactly what that field holds.
+ * WHAT IS SEARCHED IS THE TITLE, THE QUESTION AND A LINE OF KEYWORDS NOBODY
+ * SEES. Not the slug — `mors-voluntaria` is an address, and a reader who knew
+ * to type it would have used the jump box — and not the Catechism's text,
+ * which is not loaded on this page and would make the index the size of the
+ * corpus. The question is the half of the visible pair that matters:
+ * `docs/research/topics.md` found that readers arrive with a sentence rather
+ * than a subject, and the sentence is exactly what that field holds.
+ *
+ * THE KEYWORDS ARE THERE BECAUSE THE TWO VISIBLE STRINGS ARE WRITTEN TO BE
+ * READ AND NOT TO BE MATCHED. `mors-voluntaria` is titled `After a suicide`
+ * and asks `Someone has taken their own life` — a reader typing `killed
+ * himself` finds nothing; `crematio` never says `urn`, `divinatio` never says
+ * `ouija`, `contraceptio` never says `the pill`. The alternative was to write
+ * the terms into the questions, which would cost the register that whole page
+ * is built on. So they sit in the dictionaries beside the title and the
+ * question, are rendered nowhere, and are translated rather than transliterated
+ * — the Portuguese reader's word is `camisinha`, not `condom`.
  *
  * THIS IS THE FIRST SURFACE ON THE SITE THAT SEARCHES WORDS RATHER THAN
  * ADDRESSES. `JumpBox` completes citations; `PLAN.md` gap 2 is full-text
@@ -68,11 +78,32 @@ export function matchesQuery(haystack: string, query: string): boolean {
 	return terms.every((term) => folded.includes(term));
 }
 
-/** One row as the page knows it: an address and the two strings a reader reads. */
+/**
+ * One row as the page knows it: an address, the two strings a reader reads and
+ * the one they do not.
+ */
 export interface TopicSearchRow {
 	slug: string;
 	title: string;
 	question: string;
+	/** Comma-separated, in the reader's own language, additive to the pair
+	 *  above — a term already in the title or the question is already matched
+	 *  and buys nothing here. Empty is legitimate and means the dictionary has
+	 *  none for this topic yet. */
+	keywords: string;
+}
+
+/**
+ * A dictionary's keywords for one topic, or nothing where it has none.
+ *
+ * `t()` FALLS BACK TO THE KEY, which for a string on the page is a legible
+ * defect and for this one is a silent bug: `quaestiones.crematio.keywords` in
+ * the haystack makes the slug searchable — the thing the first rule above says
+ * it is not — and makes the bare word `quaestiones` match every row on the
+ * page. So the page asks here rather than trusting the lookup.
+ */
+export function keywordsFrom(key: string, value: string): string {
+	return value === key ? '' : value;
 }
 
 /**
@@ -85,6 +116,8 @@ export interface TopicSearchRow {
  */
 export function matchingSlugs(rows: TopicSearchRow[], query: string): Set<string> {
 	return new Set(
-		rows.filter((row) => matchesQuery(`${row.title} ${row.question}`, query)).map((row) => row.slug)
+		rows
+			.filter((row) => matchesQuery(`${row.title} ${row.question} ${row.keywords}`, query))
+			.map((row) => row.slug)
 	);
 }

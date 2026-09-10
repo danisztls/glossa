@@ -5,6 +5,7 @@ import { isCanonicalPath, type RouteManifest } from './route-manifest';
 import { sectionFor } from './usage-device';
 import { SETS } from './usage-schema';
 import { en } from './i18n/en';
+import { foldForSearch } from './topic-search';
 import type { Dictionary } from './i18n.svelte';
 
 /**
@@ -167,6 +168,32 @@ describe('every topic is reachable and named', () => {
 		}
 	});
 
+	/** THE THIRD STRING IS THE ONE NOBODY CAN SEE IS MISSING. A title or a
+	 *  question that fell out renders as its own key on the page; keywords
+	 *  render nowhere, so a topic without them looks exactly like a topic with
+	 *  them and is simply harder to find. */
+	it('carries keywords in English for every topic', () => {
+		const dictionary = en as unknown as Record<string, string>;
+		for (const slug of slugs) {
+			expect(dictionary[`quaestiones.${slug}.keywords`], slug).toBeTruthy();
+		}
+	});
+
+	/** Keywords are additive to the pair above them: the haystack is all three,
+	 *  so a term the title or the question already carries is already matched
+	 *  and only makes the line look like it is doing work. */
+	it('writes no keyword the topic’s own title or question already carries', () => {
+		const dictionary = en as unknown as Record<string, string>;
+		for (const slug of slugs) {
+			const visible = foldForSearch(
+				`${dictionary[`quaestiones.${slug}.title`]} ${dictionary[`quaestiones.${slug}.question`]}`
+			);
+			for (const term of dictionary[`quaestiones.${slug}.keywords`].split(', ')) {
+				expect(visible.includes(foldForSearch(term)), `${slug}: ${term}`).toBe(false);
+			}
+		}
+	});
+
 	/** THE DOORWAYS ARE NOT NAMED IN ANY DICTIONARY, deliberately: they sort
 	 *  the file and order the shelves, and the page draws the shelves alone.
 	 *  Asserted from the other side, or the eight keys they used to need would
@@ -202,7 +229,15 @@ describe('every topic is reachable and named', () => {
 	it('finishes the section in every dictionary that has begun it', async () => {
 		const loaders = import.meta.glob<Record<string, Dictionary>>(['./i18n/*.ts', '!./i18n/en.ts']);
 		const keys = [
-			...slugs.flatMap((slug) => [`quaestiones.${slug}.title`, `quaestiones.${slug}.question`]),
+			...slugs.flatMap((slug) => [
+				`quaestiones.${slug}.title`,
+				`quaestiones.${slug}.question`,
+				// Held to the same rule as the two visible strings, and for a
+				// sharper reason: English keywords under a Portuguese question
+				// are not a fallback, they are the reader's own words in a
+				// language they did not ask for, and `camisinha` finds nothing.
+				`quaestiones.${slug}.keywords`
+			]),
 			...allClusters.map((cluster) => `quaestiones.cluster.${cluster}`),
 			'quaestiones.landing.tagline',
 			'quaestiones.landing.none',

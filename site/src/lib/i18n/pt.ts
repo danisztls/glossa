@@ -668,6 +668,19 @@ export const pt: Dictionary = {
 	//
 	// NADA AQUI AVALIA NEM ACONSELHA: a pergunta nomeia o que o leitor quer
 	// saber, e a resposta são os parágrafos do Catecismo.
+	//
+	// UMA TERCEIRA CHAVE POR TEMA NÃO APARECE EM LUGAR NENHUM. `keywords` são
+	// as palavras que o leitor digitaria e que as duas frases acima não usam,
+	// porque essas duas foram escritas para ser lidas: `mors-voluntaria` diz
+	// “tirou a própria vida” e nunca “se matou”. Elas ficam fora da vista e
+	// quem as procura é `topic-search.ts`.
+	//
+	// SÃO TRADUZIDAS, NÃO TRANSPOSTAS — e é a única chave desta seção em que
+	// traduzir ao pé da letra erra duas vezes: a palavra de quem procura é
+	// “camisinha”, não “condom”; é “macumba”, não “witchcraft”. Vale a pena
+	// guardar as duas quando o leitor pode digitar qualquer uma das duas
+	// (“pílula” e “anticoncepcional”). O que já está no título ou na pergunta
+	// já é encontrado e não entra aqui.
 	'quaestiones.landing.title': 'Perguntas',
 	'quaestiones.landing.tagline':
 		'Passagens do Catecismo, da Doutrina Social e do direito canônico, reunidas pela pergunta com que alguém chega. O trabalho feito aqui é a reunião; cada palavra do texto é da própria Igreja, e cada passagem leva ao lugar onde ela está.',
@@ -718,250 +731,482 @@ export const pt: Dictionary = {
 	// --- o que se discute ---
 	'quaestiones.dei-existentia.title': 'Se Deus existe',
 	'quaestiones.dei-existentia.question': 'Tem alguém aí?',
+	'quaestiones.dei-existentia.keywords':
+		'prova de Deus, evidência, argumentos, cinco vias, Tomás de Aquino, agnóstico, fé e razão',
 	'quaestiones.malum.title': 'O sofrimento e o mal',
 	'quaestiones.malum.question': 'Se Deus é bom, por que deixou acontecer?',
+	'quaestiones.malum.keywords':
+		'problema do mal, teodiceia, por que comigo, dor, tragédia, injustiça, câncer, crianças inocentes',
 	'quaestiones.lex-naturalis.title': 'Moral sem Deus',
 	'quaestiones.lex-naturalis.question': 'Por que alguém precisaria de religião para ser bom?',
+	'quaestiones.lex-naturalis.keywords':
+		'lei natural, ética, certo e errado, relativismo, moral laica, ser bom sem Deus',
 	'quaestiones.scriptura-inspirata.title': 'Se dá para confiar na Bíblia',
 	'quaestiones.scriptura-inspirata.question':
 		'Quem escreveu, e por que acreditar no que está escrito?',
+	'quaestiones.scriptura-inspirata.keywords':
+		'inspiração, inerrância, contradições, literal, mito, exatidão histórica, erros',
 	'quaestiones.canon-scripturae.title': 'Por que a Bíblia católica tem mais livros',
 	'quaestiones.canon-scripturae.question': 'Foram acrescentados livros, ou foram tirados?',
+	'quaestiones.canon-scripturae.keywords':
+		'deuterocanônicos, apócrifos, sete livros, Macabeus, Tobias, Judite, Eclesiástico, Sabedoria, bíblia protestante, Trento',
 	'quaestiones.creatio-et-scientia.title': 'Criação e ciência',
 	'quaestiones.creatio-et-scientia.question': 'A ciência já não resolveu como o mundo começou?',
+	'quaestiones.creatio-et-scientia.keywords':
+		'evolução, big bang, Gênesis, seis dias, Darwin, Adão e Eva, criacionismo, idade da Terra, dinossauros',
 	'quaestiones.iesus-christus.title': 'Quem foi Jesus',
 	'quaestiones.iesus-christus.question': 'Alguma coisa disso aconteceu mesmo?',
+	'quaestiones.iesus-christus.keywords':
+		'Jesus histórico, ressurreição, divindade, Filho de Deus, evangelhos, testemunhas, mito, Nazaré',
 	'quaestiones.novissima.title': 'O que acontece depois da morte',
 	'quaestiones.novissima.question': 'É só isso?',
+	'quaestiones.novissima.keywords':
+		'céu, inferno, juízo, além, vida eterna, alma, ressurreição da carne, novíssimos',
 	'quaestiones.atheismus.title': 'Ateísmo e descrença',
 	'quaestiones.atheismus.question': 'O que a Igreja diz de quem não crê?',
+	'quaestiones.atheismus.keywords':
+		'ateu, agnóstico, descrente, laico, sem religião, ignorância invencível, ateus bons',
 	'quaestiones.beata-virgo.title': 'Maria',
 	'quaestiones.beata-virgo.question': 'Por que os católicos dão tanto a ela?',
+	'quaestiones.beata-virgo.keywords':
+		'Virgem Maria, Imaculada Conceição, Assunção, Mãe de Deus, devoção mariana, adoração, sempre virgem, irmãos de Jesus, Nossa Senhora',
 	'quaestiones.sancti-et-imagines.title': 'Os santos, as imagens e as estátuas',
 	'quaestiones.sancti-et-imagines.question': 'Rezar a um santo é idolatria?',
+	'quaestiones.sancti-et-imagines.keywords':
+		'ícones, esculturas, intercessão, rezar aos santos, veneração, segundo mandamento, canonização',
 	'quaestiones.purgatorium.title': 'O purgatório e as indulgências',
 	'quaestiones.purgatorium.question': 'Onde é que isso está na Bíblia?',
+	'quaestiones.purgatorium.keywords':
+		'pena temporal, orações pelos mortos, indulgência plenária, almas, Tetzel, purificação, missa de sétimo dia',
 	'quaestiones.primatus-romani-pontificis.title': 'O Papa',
 	'quaestiones.primatus-romani-pontificis.question':
 		'Por que um homem sozinho teria essa autoridade?',
+	'quaestiones.primatus-romani-pontificis.keywords':
+		'papado, infalibilidade, Pedro, a pedra, Vaticano, primado, autoridade papal, Santo Padre, chaves',
 	'quaestiones.papa-reprehensus.title': 'Quando o Papa erra',
 	'quaestiones.papa-reprehensus.question': 'Um católico pode dizer isso, e sobre o quê?',
+	'quaestiones.papa-reprehensus.keywords':
+		'criticar o Papa, papas maus, heresia, correção, obediência, Francisco, resistir, correção filial',
 	'quaestiones.dissensus.title': 'Discordar da Igreja',
 	'quaestiones.dissensus.question': 'E se a minha consciência disser o contrário?',
+	'quaestiones.dissensus.keywords':
+		'dissidência, desobedecer, católico de conveniência, não aceito, obedecer à Igreja, juízo particular',
 	'quaestiones.traditio-et-scriptura.title': 'Escritura e Tradição',
 	'quaestiones.traditio-et-scriptura.question': 'A Bíblia sozinha não basta?',
+	'quaestiones.traditio-et-scriptura.keywords':
+		'sola scriptura, só a Bíblia, depósito da fé, tradição apostólica, magistério, ensino oral',
 	'quaestiones.iustificatio.title': 'Fé e obras',
 	'quaestiones.iustificatio.question': 'Os católicos acham que merecem o céu?',
+	'quaestiones.iustificatio.keywords':
+		'sola fide, só a fé, graça, justificação, salvo, Lutero, mérito, obras da lei, salvo para sempre',
 	'quaestiones.confessio-sacerdoti.title': 'Confessar-se a um padre',
 	'quaestiones.confessio-sacerdoti.question': 'Por que não falar direto com Deus?',
+	'quaestiones.confessio-sacerdoti.keywords':
+		'reconciliação, absolvição, penitência, sigilo da confissão, segredo, exame de consciência, contar meus pecados a um homem',
 	'quaestiones.eucharistia.title': 'A Eucaristia',
 	'quaestiones.eucharistia.question': 'É pão, ou não é?',
+	'quaestiones.eucharistia.keywords':
+		'presença real, transubstanciação, comunhão, hóstia, símbolo, corpo e sangue, última ceia, adoração, santíssimo',
 	'quaestiones.unitas-christianorum.title': 'A divisão dos cristãos',
 	'quaestiones.unitas-christianorum.question': 'Por que existem tantas igrejas?',
+	'quaestiones.unitas-christianorum.keywords':
+		'protestantes, evangélicos, ortodoxos, denominações, ecumenismo, cisma, reforma, única Igreja verdadeira',
 	'quaestiones.doctrinae-progressus.title': 'Se a doutrina muda',
 	'quaestiones.doctrinae-progressus.question': 'A Igreja mudou de ideia?',
+	'quaestiones.doctrinae-progressus.keywords':
+		'desenvolvimento da doutrina, contradição, reviravolta, Newman, usura, escravidão, limbo, ensino antigo, voltar atrás',
 	'quaestiones.concilium-vaticanum-secundum.title': 'O Concílio Vaticano II',
 	'quaestiones.concilium-vaticanum-secundum.question': 'A Igreja virou outra coisa em 1965?',
+	'quaestiones.concilium-vaticanum-secundum.keywords':
+		'novus ordo, tridentina, missa em latim, tradicionalista, FSSPX, Lefebvre, ruptura, continuidade',
 	'quaestiones.synodalitas.title': 'Quem governa a Igreja',
 	'quaestiones.synodalitas.question': 'Quem é que decide alguma coisa?',
+	'quaestiones.synodalitas.keywords':
+		'sínodo, sinodalidade, bispos, colegialidade, leigos, cúria, hierarquia, governo, consulta',
 	'quaestiones.mulieres-in-ecclesia.title': 'As mulheres na Igreja',
 	'quaestiones.mulieres-in-ecclesia.question': 'É coisa de homem, para homem?',
+	'quaestiones.mulieres-in-ecclesia.keywords':
+		'feminismo, patriarcado, liderança, papéis, coroinhas, ministério leigo, igualdade',
 	'quaestiones.charismata.title': 'Os dons carismáticos e a cura',
 	'quaestiones.charismata.question': 'O que eu senti veio de Deus?',
+	'quaestiones.charismata.keywords':
+		'renovação carismática, falar em línguas, profecia, pentecostal, dons do Espírito, cura interior, repouso no Espírito',
 	'quaestiones.contraceptio.title': 'Contracepção',
 	'quaestiones.contraceptio.question': 'Por que é proibida, se quase todo mundo usa?',
+	'quaestiones.contraceptio.keywords':
+		'anticoncepcional, pílula, camisinha, preservativo, DIU, vasectomia, laqueadura, planejamento familiar natural, Billings, Humanae vitae, tabelinha',
 	'quaestiones.fecundatio-artificialis.title': 'Fertilização in vitro e embriões',
 	'quaestiones.fecundatio-artificialis.question':
 		'Por que proibir o tratamento que nos daria um filho?',
+	'quaestiones.fecundatio-artificialis.keywords':
+		'FIV, reprodução assistida, embriões congelados, barriga de aluguel, inseminação artificial, doação de óvulos, Donum vitae',
 	'quaestiones.concubinatus.title': 'Sexo antes do casamento',
 	'quaestiones.concubinatus.question': 'Por que morar junto antes pesa contra nós?',
+	'quaestiones.concubinatus.keywords':
+		'união estável, fornicação, transar, namoro, noivado, virgindade, ficar',
 	'quaestiones.divortium.title': 'Divórcio e novo casamento',
 	'quaestiones.divortium.question': 'Por que um casamento não pode simplesmente acabar?',
+	'quaestiones.divortium.keywords':
+		'recasar, separação, indissolubilidade, segundo casamento, divórcio civil, casamento acabado',
 	'quaestiones.homosexualitas.title': 'Homossexualidade',
 	'quaestiones.homosexualitas.question': 'O que a Igreja pede de quem é homossexual?',
+	'quaestiones.homosexualitas.keywords':
+		'gay, lésbica, homoafetivo, LGBT, orientação, intrinsecamente desordenado, sodomia, atos sexuais',
 	'quaestiones.identitas-sexualis.title': 'Gênero e transição',
 	'quaestiones.identitas-sexualis.question': 'O que a Igreja diz sobre ser trans?',
+	'quaestiones.identitas-sexualis.keywords':
+		'transgênero, transexual, pronomes, mudança de sexo, ideologia de gênero, não binário, disforia, hormônios, cirurgia',
 	'quaestiones.ordinatio-mulierum.title': 'Mulheres sacerdotes e diáconas',
 	'quaestiones.ordinatio-mulierum.question': 'Por que uma mulher não pode ser ordenada?',
+	'quaestiones.ordinatio-mulierum.keywords':
+		'padre mulher, sacerdócio feminino, diaconisa, ordenação, Ordinatio sacerdotalis, ordem sacra, altar',
 	'quaestiones.caelibatus.title': 'Padres casados',
 	'quaestiones.caelibatus.question': 'Por que um padre tem de ser celibatário?',
+	'quaestiones.caelibatus.keywords':
+		'celibato, padre se casar, rito oriental, disciplina, falta de padres, clero casado, voto',
 	'quaestiones.abortus.title': 'Aborto',
 	'quaestiones.abortus.question': 'Por que a Igreja o trata como o mais grave de todos?',
+	'quaestiones.abortus.keywords':
+		'nascituro, feto, interrupção da gravidez, pró-vida, excomunhão, estupro, gravidez ectópica, pílula do dia seguinte',
 	'quaestiones.euthanasia.title': 'Eutanásia e morte assistida',
 	'quaestiones.euthanasia.question': 'Por que negar a alguém uma morte sem dor?',
+	'quaestiones.euthanasia.keywords':
+		'suicídio assistido, morte piedosa, direito de morrer, injeção letal, cuidados paliativos, doente terminal, ortotanásia, distanásia',
 	'quaestiones.poena-capitalis.title': 'A pena de morte',
 	'quaestiones.poena-capitalis.question': 'A Igreja já a admitiu. O que mudou?',
+	'quaestiones.poena-capitalis.keywords':
+		'pena capital, execução, executado, inadmissível, prisão perpétua, assassinos, forca, injeção letal',
 	'quaestiones.castitas.title': 'A castidade',
 	'quaestiones.castitas.question': 'O que se pede, e de quem?',
+	'quaestiones.castitas.keywords':
+		'pureza, luxúria, autocontrole, namoro, solteiro, modéstia, tentação, impureza, virtude',
 	'quaestiones.mendacium.title': 'A mentira e a reputação',
 	'quaestiones.mendacium.question': 'Uma mentira pequena é pecado mesmo?',
+	'quaestiones.mendacium.keywords':
+		'mentirinha, fofoca, calúnia, difamação, maledicência, honestidade, segredos, restrição mental',
 	'quaestiones.capitalismus.title': 'A propriedade e a riqueza',
 	'quaestiones.capitalismus.question': 'A Igreja é a favor ou contra o capitalismo?',
+	'quaestiones.capitalismus.keywords':
+		'propriedade privada, livre mercado, os ricos, destino universal dos bens, posse, ganância',
 	'quaestiones.socialismus.title': 'Socialismo e marxismo',
 	'quaestiones.socialismus.question': 'Por que a Igreja condenou tantas vezes?',
+	'quaestiones.socialismus.keywords':
+		'comunismo, teologia da libertação, redistribuição, luta de classes, esquerda, coletivismo, soviético',
 	'quaestiones.labor.title': 'O trabalho e a economia',
 	'quaestiones.labor.question': 'O que a Igreja pede de quem emprega?',
+	'quaestiones.labor.keywords':
+		'trabalhadores, empregados, sindicatos, empresa, Rerum novarum, Laborem exercens, condições de trabalho, dignidade do trabalho, patrão',
 	'quaestiones.migratio.title': 'Migração e refugiados',
 	'quaestiones.migratio.question': 'Quantos um país é obrigado a receber?',
+	'quaestiones.migratio.keywords':
+		'imigração, imigrantes, fronteiras, asilo, deportação, ilegal, estrangeiros, acolher',
 	'quaestiones.bellum.title': 'Guerra e paz',
 	'quaestiones.bellum.question': 'Quando, se é que alguma vez, um país pode lutar?',
+	'quaestiones.bellum.keywords':
+		'guerra justa, militar, exército, pacifismo, armas nucleares, objeção de consciência, invasão, soldados, comércio de armas',
 	'quaestiones.civitas-et-oboedientia.title': 'O Estado e a obediência',
 	'quaestiones.civitas-et-oboedientia.question': 'Até onde o cidadão tem de obedecer?',
+	'quaestiones.civitas-et-oboedientia.keywords':
+		'governo, lei injusta, desobediência civil, autoridade, resistência, leis, política, impostos',
 	'quaestiones.suffragium.title': 'Em quem um católico pode votar',
 	'quaestiones.suffragium.question': 'Algum partido está descartado?',
+	'quaestiones.suffragium.keywords':
+		'eleições, candidato, voto único, inegociável, urna, políticos, mal menor',
 	'quaestiones.sub-imperio-atheo.title': 'Viver sob um Estado hostil',
 	'quaestiones.sub-imperio-atheo.question':
 		'Um católico pode esconder que é católico, ou tem de recusar?',
+	'quaestiones.sub-imperio-atheo.keywords':
+		'perseguição, regime comunista, igreja clandestina, martírio, ditadura, polícia secreta, delação',
 	'quaestiones.civitas-catholica.title': 'Se o Estado deveria ser católico',
 	'quaestiones.civitas-catholica.question': 'A liberdade religiosa foi o erro?',
+	'quaestiones.civitas-catholica.keywords':
+		'estado confessional, integralismo, Igreja e Estado, separação, país católico, trono e altar, laicidade',
 	'quaestiones.libertas-religiosa.title': 'A liberdade religiosa',
 	'quaestiones.libertas-religiosa.question':
 		'Alguém pode ser obrigado a crer, ou impedido de crer?',
+	'quaestiones.libertas-religiosa.keywords':
+		'Dignitatis humanae, tolerância, conversão forçada, o erro não tem direitos, consciência, Estado laico, converter à força',
 	'quaestiones.oecologia.title': 'Ecologia e clima',
 	'quaestiones.oecologia.question': 'Por que isso é assunto da Igreja?',
+	'quaestiones.oecologia.keywords':
+		'mudança climática, meio ambiente, Laudato si, aquecimento global, poluição, animais, reciclagem, criação, ecologia integral',
 	'quaestiones.paupertas.title': 'A pobreza',
 	'quaestiones.paupertas.question': 'O que se exige de quem tem o suficiente?',
+	'quaestiones.paupertas.keywords':
+		'os pobres, caridade, esmola, moradores de rua, mendigos, opção preferencial, fome, desigualdade',
 	'quaestiones.technologia.title': 'Tecnologia e inteligência artificial',
 	'quaestiones.technologia.question': 'O que a Igreja diz de máquinas que pensam?',
+	'quaestiones.technologia.keywords':
+		'robôs, algoritmos, automação, transumanismo, chatgpt, computadores, Antiqua et nova',
 	'quaestiones.communicatio-socialis.title': 'A imprensa e a palavra pública',
 	'quaestiones.communicatio-socialis.question': 'O que se deve à verdade em público?',
+	'quaestiones.communicatio-socialis.keywords':
+		'jornalismo, notícias, propaganda, liberdade de expressão, censura, fake news, televisão, internet',
 	'quaestiones.iudaismus.title': 'O judaísmo',
 	'quaestiones.iudaismus.question': 'O que a Igreja diz do povo judeu?',
+	'quaestiones.iudaismus.keywords':
+		'judeus, judaico, antissemitismo, Israel, antiga aliança, deicídio, Nostra aetate, holocausto, povo eleito',
 	'quaestiones.islam.title': 'O islã',
 	'quaestiones.islam.question': 'O que a Igreja diz dos muçulmanos?',
+	'quaestiones.islam.keywords':
+		'Alcorão, Alá, mesmo Deus, Maomé, diálogo inter-religioso, mesquita, sharia',
 	'quaestiones.salus-extra-ecclesiam.title': 'A salvação fora da Igreja',
 	'quaestiones.salus-extra-ecclesiam.question': 'E todos os que não são católicos?',
+	'quaestiones.salus-extra-ecclesiam.keywords':
+		'fora da Igreja não há salvação, extra ecclesiam, outras religiões, ignorância invencível, batismo de desejo, não batizados, pagãos',
 	'quaestiones.proselytismus.title': 'Se é para converter alguém',
 	'quaestiones.proselytismus.question': 'A Igreja ainda deve tentar?',
+	'quaestiones.proselytismus.keywords':
+		'evangelização, missão, proselitismo, pregar, testemunho, missionários, de porta em porta',
 	'quaestiones.inculturatio.title': 'A fé e a cultura',
 	'quaestiones.inculturatio.question': 'Quem se converte tem de largar os costumes em que cresceu?',
+	'quaestiones.inculturatio.keywords':
+		'tradições, sincretismo, ancestrais, ritos locais, práticas pagãs, adaptação',
 	'quaestiones.polygamia.title': 'A poligamia',
 	'quaestiones.polygamia.question':
 		'O que acontece com as outras esposas quando um homem é batizado?',
+	'quaestiones.polygamia.keywords':
+		'várias esposas, casamento plural, convertidos, privilégio paulino, África, concubinas',
 	'quaestiones.superstitio.title': 'Superstição e costume herdado',
 	'quaestiones.superstitio.question': 'O que a minha avó fazia era superstição?',
+	'quaestiones.superstitio.keywords':
+		'simpatia, amuleto, mau-olhado, sorte, praga, bruxaria, feitiço, macumba, benzedeira, religiosidade popular',
 	'quaestiones.evangelium-prosperitatis.title': 'A teologia da prosperidade',
 	'quaestiones.evangelium-prosperitatis.question': 'Deus recompensa a fé com dinheiro?',
+	'quaestiones.evangelium-prosperitatis.keywords':
+		'saúde e riqueza, televangelista, oferta de semente, determinar e receber, igreja neopentecostal, dar para ser abençoado',
 	// --- quando algo aconteceu ---
 	'quaestiones.post-mortem.title': 'Quando alguém morre',
 	'quaestiones.post-mortem.question': 'Onde ele está agora, e há algo que eu possa fazer por ele?',
+	'quaestiones.post-mortem.keywords':
+		'luto, falecimento, funeral, velório, sepultamento, missa de sétimo dia, rezar pelos mortos, saudade, perda',
 	'quaestiones.infans-non-baptizatus.title': 'Uma criança que morreu sem batismo',
 	'quaestiones.infans-non-baptizatus.question': 'O que a Igreja diz que foi feito dela?',
+	'quaestiones.infans-non-baptizatus.keywords':
+		'limbo, bebê sem batismo, natimorto, aborto espontâneo, morte de bebê, morreu antes do batismo, esperança',
 	'quaestiones.mors-voluntaria.title': 'Depois de um suicídio',
 	'quaestiones.mors-voluntaria.question':
 		'Alguém tirou a própria vida. Há esperança para essa pessoa?',
+	'quaestiones.mors-voluntaria.keywords':
+		'se matou, funeral de suicida, condenado, doença mental, depressão, pecado mortal, enterro na igreja',
 	'quaestiones.aegritudo.title': 'Depois de um diagnóstico',
 	'quaestiones.aegritudo.question': 'O que a Igreja diz a quem está doente?',
+	'quaestiones.aegritudo.keywords':
+		'doença, câncer, hospital, unção dos enfermos, dor crônica, terminal, cura, sofrimento',
 	'quaestiones.finis-vitae.title': 'Um pai ou uma mãe morrendo',
 	'quaestiones.finis-vitae.question': 'É preciso manter todo tratamento até o fim?',
+	'quaestiones.finis-vitae.keywords':
+		'fim da vida, aparelhos, sonda, respirador, meios extraordinários, cuidados paliativos, não reanimar, suspender tratamento, coma',
 	'quaestiones.crematio.title': 'A cremação',
 	'quaestiones.crematio.question':
 		'Um católico pode ser cremado, e as cinzas podem ser espalhadas?',
+	'quaestiones.crematio.keywords':
+		'urna, columbário, sepultamento, funerária, guardar as cinzas em casa, Ad resurgendum cum Christo, incineração, túmulo',
 	'quaestiones.matrimonium.title': 'Casar-se',
 	'quaestiones.matrimonium.question': 'O que é que faz de um casamento um casamento?',
+	'quaestiones.matrimonium.keywords':
+		'casamento na igreja, sacramento do matrimônio, votos, consentimento, validade, curso de noivos, convalidação, casamento civil, proclamas',
 	'quaestiones.matrimonium-mixtum.title': 'Casar com quem não é católico',
 	'quaestiones.matrimonium-mixtum.question': 'O que se exige, e de qual dos dois?',
+	'quaestiones.matrimonium-mixtum.keywords':
+		'casamento misto, cônjuge não católico, marido evangélico, dispensa, disparidade de culto, criar os filhos católicos, noivo não batizado',
 	'quaestiones.nullitas-matrimonii.title': 'A nulidade matrimonial',
 	'quaestiones.nullitas-matrimonii.question': 'O primeiro casamento ainda vale?',
+	'quaestiones.nullitas-matrimonii.keywords':
+		'anulação, tribunal, declaração de nulidade, casamento inválido, vício de consentimento, processo, casar de novo na igreja',
 	'quaestiones.communio-post-divortium.title': 'A comunhão depois do divórcio',
 	'quaestiones.communio-post-divortium.question': 'Eu posso comungar?',
+	'quaestiones.communio-post-divortium.keywords':
+		'divorciados recasados, Amoris laetitia, capítulo oito, estado de graça, viver como irmãos, comunhão espiritual, excomungado',
 	'quaestiones.graviditas.title': 'Gravidez e perda gestacional',
 	'quaestiones.graviditas.question': 'Já era uma pessoa?',
+	'quaestiones.graviditas.keywords':
+		'aborto espontâneo, natimorto, filho no ventre, animação, quando começa a vida, pré-natal, perder o bebê, dar nome',
 	'quaestiones.sterilitas.title': 'A infertilidade',
 	'quaestiones.sterilitas.question': 'Não podemos ter filhos. O que nos resta?',
+	'quaestiones.sterilitas.keywords':
+		'não conseguimos engravidar, sem filhos, tentantes, adoção, tratamento de fertilidade, FIV, naprotecnologia',
 	'quaestiones.filius-a-fide-lapsus.title': 'Um filho que deixou a fé',
 	'quaestiones.filius-a-fide-lapsus.question': 'Onde foi que erramos?',
+	'quaestiones.filius-a-fide-lapsus.keywords':
+		'afastado, deixou de praticar, parou de ir à missa, meu filho saiu da igreja, minha filha é atéia, não pratica mais, culpa',
 	'quaestiones.amissio-operis.title': 'Perder o emprego',
 	'quaestiones.amissio-operis.question': 'A Igreja diz alguma coisa sobre estar sem trabalho?',
+	'quaestiones.amissio-operis.keywords':
+		'desemprego, perdi o emprego, demissão, demitido, não consigo sustentar, mandado embora, procurando emprego',
 	// --- o que é difícil perguntar ---
 	'quaestiones.remissio-peccatorum.title': 'Se um pecado pode ser perdoado',
 	'quaestiones.remissio-peccatorum.question': 'Existe algo grave demais para ser perdoado?',
+	'quaestiones.remissio-peccatorum.keywords':
+		'imperdoável, pecado contra o Espírito Santo, pecado mortal, sem perdão, longe demais, desespero, misericórdia',
 	'quaestiones.pornographia.title': 'A pornografia',
 	'quaestiones.pornographia.question':
 		'O que a Igreja diz sobre isso, e sobre não conseguir parar?',
+	'quaestiones.pornographia.keywords':
+		'vício, hábito, recaída, internet, filtros, castidade, luxúria, pureza',
 	'quaestiones.masturbatio.title': 'A masturbação',
 	'quaestiones.masturbatio.question': 'É sempre pecado mortal?',
+	'quaestiones.masturbatio.keywords':
+		'hábito, impureza, se tocar, adolescente, recaída, vício, confissão, imputabilidade',
 	'quaestiones.reditus.title': 'Confessar-se depois de muito tempo',
 	'quaestiones.reditus.question': 'E se a última confissão foi há anos?',
+	'quaestiones.reditus.keywords':
+		'afastado, voltar para a igreja, como se confessar, esqueci como, confissão geral, não praticante, primeira confissão em anos',
 	'quaestiones.scrupulositas.title': 'Quando a confissão nunca parece completa',
 	'quaestiones.scrupulositas.question': 'Será que eu confessei direito?',
+	'quaestiones.scrupulositas.keywords':
+		'escrúpulos, escrupulosidade, TOC, ansiedade, repetir a confissão, dúvida, obsessivo, nunca basta, segurança',
 	'quaestiones.post-abortum.title': 'Depois de um aborto',
 	'quaestiones.post-abortum.question': 'Isso pode ser perdoado?',
+	'quaestiones.post-abortum.keywords':
+		'culpa, excomunhão, cura interior, arrependimento, absolvição, o filho, vergonha, anos depois',
 	'quaestiones.post-contraceptionem.title': 'Depois da contracepção ou de uma esterilização',
 	'quaestiones.post-contraceptionem.question': 'A gente já fez. E agora?',
+	'quaestiones.post-contraceptionem.keywords':
+		'vasectomia, laqueadura, esterilizado, já tomo pílula, reverter, confissão, desfazer',
 	'quaestiones.adulterium.title': 'Depois de uma traição',
 	'quaestiones.adulterium.question': 'Eu tenho de contar?',
+	'quaestiones.adulterium.keywords':
+		'infidelidade, trair, amante, contar para minha esposa, adultério, traído, perdão',
 	'quaestiones.homosexualitas-vivenda.title': 'Ser homossexual e católico',
 	'quaestiones.homosexualitas-vivenda.question': 'O que eu devo fazer da minha vida?',
+	'quaestiones.homosexualitas-vivenda.keywords':
+		'gay e católico, atração pelo mesmo sexo, celibato, solidão, amizade, se assumir, companheiro, coragem',
 	'quaestiones.mortis-desiderium.title': 'Querer morrer',
 	'quaestiones.mortis-desiderium.question': 'Se eu fizesse isso, Deus perdoaria?',
+	'quaestiones.mortis-desiderium.keywords':
+		'ideação suicida, quero morrer, automutilação, sem esperança, acabar com tudo, pensamentos, ajuda, desespero, sozinho',
 	'quaestiones.venia-danda.title': 'Alguém que eu não consigo perdoar',
 	'quaestiones.venia-danda.question': 'Eu sou obrigado?',
+	'quaestiones.venia-danda.keywords':
+		'ressentimento, amargura, abuso, raiva, reconciliar, superar, inimigos',
 	'quaestiones.dubium-fidei.title': 'Perder a fé',
 	'quaestiones.dubium-fidei.question': 'Continuo indo à Missa e já não acredito em nada disso.',
+	'quaestiones.dubium-fidei.keywords':
+		'dúvida, perdi a fé, não acredito mais, só por hábito, noite escura, aridez, descrença, fingir',
 	// --- perguntas comuns ---
 	'quaestiones.divinatio.title': 'Astrologia e adivinhação',
 	'quaestiones.divinatio.question': 'Horóscopo, tarô, os mortos — o que é proibido de fato?',
+	'quaestiones.divinatio.keywords':
+		'ouija, médiuns, cartomante, vidente, leitura de mãos, cristais, nova era, sessão espírita, signo, espiritismo, búzios',
 	'quaestiones.mortui.title': 'Fantasmas e os mortos',
 	'quaestiones.mortui.question': 'Os mortos podem voltar?',
+	'quaestiones.mortui.keywords':
+		'espíritos, assombração, sonhar com quem morreu, visitas, sessão espírita, necromancia, presença, ver um parente',
 	'quaestiones.daemones.title': 'Demônios e exorcismo',
 	'quaestiones.daemones.question': 'A Igreja ainda faz isso?',
+	'quaestiones.daemones.keywords':
+		'possessão, diabo, Satanás, espíritos malignos, libertação, exorcista, opressão, batalha espiritual',
 	'quaestiones.angeli.title': 'Os anjos',
 	'quaestiones.angeli.question': 'Anjo da guarda existe mesmo?',
+	'quaestiones.angeli.keywords':
+		'arcanjo, São Miguel, querubins, serafins, espíritos, oração a São Miguel',
 	'quaestiones.apparitiones.title': 'Aparições e revelações particulares',
 	'quaestiones.apparitiones.question': 'Um católico é obrigado a crer nelas?',
+	'quaestiones.apparitiones.keywords':
+		'Fátima, Lourdes, Guadalupe, Medjugorje, revelação privada, visionários, aprovadas, mensagens, videntes, segredos',
 	'quaestiones.miracula-et-reliquiae.title': 'Milagres e relíquias',
 	'quaestiones.miracula-et-reliquiae.question': 'Ossos e corpos incorruptos são mesmo venerados?',
+	'quaestiones.miracula-et-reliquiae.keywords':
+		'Santo Sudário, curas, canonização, relíquia de primeira classe, milagre eucarístico, corpos de santos',
 	'quaestiones.experientia-mortis-proximae.title': 'Experiências de quase-morte',
 	'quaestiones.experientia-mortis-proximae.question': 'Quem voltou viu o que diz ter visto?',
+	'quaestiones.experientia-mortis-proximae.keywords':
+		'experiência de quase morte, EQM, túnel de luz, fora do corpo, morte clínica, visões do céu, reanimado',
 	'quaestiones.finis-mundi.title': 'O fim do mundo',
 	'quaestiones.finis-mundi.question':
 		'Alguma coisa do que se fala sobre o fim dos tempos é da Igreja?',
+	'quaestiones.finis-mundi.keywords':
+		'apocalipse, arrebatamento, anticristo, juízo final, segunda vinda, tribulação, profecias, três dias de escuridão, armagedom',
 	'quaestiones.ieiunium.title': 'Jejum e abstinência',
 	'quaestiones.ieiunium.question': 'O que é obrigatório, e em quais dias?',
+	'quaestiones.ieiunium.keywords':
+		'quaresma, quarta-feira de cinzas, sexta-feira santa, carne na sexta, jejum eucarístico, sacrifício, penitência, uma hora antes da comunhão',
 	'quaestiones.dominica.title': 'A Missa de domingo',
 	'quaestiones.dominica.question': 'O que acontece se eu faltar?',
+	'quaestiones.dominica.keywords':
+		'obrigação dominical, faltar à missa, dias santos de guarda, trabalhar no domingo, pecado mortal, viagem, missa na tv, preceito',
 	'quaestiones.otium.title': 'O descanso e o lazer',
 	'quaestiones.otium.question': 'Tem algo de errado em não fazer nada?',
+	'quaestiones.otium.keywords':
+		'sábado, férias, ociosidade, hobbies, esgotamento, excesso de trabalho, tempo livre',
 	'quaestiones.baptismus-infantium.title': 'Batizar um bebê',
 	'quaestiones.baptismus-infantium.question': 'Quem pode ser padrinho, e o que se pede dele?',
+	'quaestiones.baptismus-infantium.keywords':
+		'madrinha, batizado, adiar o batismo, exigências, padrinho não praticante, certidão de batismo',
 	'quaestiones.organorum-donatio.title': 'A doação de órgãos',
 	'quaestiones.organorum-donatio.question': 'Pode-se doar órgãos, em vida ou depois da morte?',
+	'quaestiones.organorum-donatio.keywords':
+		'doador, transplante, morte encefálica, doação de sangue, corpo para a ciência, rim, córneas',
 	'quaestiones.corpus-ornandum.title': 'Tatuagens e o corpo',
 	'quaestiones.corpus-ornandum.question': 'Há algo de proibido no que se faz com ele?',
+	'quaestiones.corpus-ornandum.keywords':
+		'tatuagem, piercing, cirurgia estética, modificação corporal, academia, dieta, aparência, plástica, vaidade',
 	'quaestiones.decimae.title': 'O dízimo e a doação',
 	'quaestiones.decimae.question': 'Quanto um católico deve dar?',
+	'quaestiones.decimae.keywords':
+		'dez por cento, coleta, doações, sustentar a paróquia, oferta, dinheiro da igreja',
 	'quaestiones.vota-et-iuramenta.title': 'Votos e juramentos',
 	'quaestiones.vota-et-iuramenta.question': 'O que é uma promessa feita a Deus?',
+	'quaestiones.vota-et-iuramenta.keywords':
+		'promessa a Deus, jurar, promessa de novena, consagração, quebrar um voto, dispensa, jurar em juízo',
 	'quaestiones.vocatio.title': 'O que fazer da vida',
 	'quaestiones.vocatio.question': 'Como é que alguém descobre?',
+	'quaestiones.vocatio.keywords':
+		'vocação, discernimento, chamado, sacerdócio, vida religiosa, seminário, carreira, casamento ou sacerdócio, o que Deus quer',
 	'quaestiones.merces-iusta.title': 'O salário justo e a greve',
 	'quaestiones.merces-iusta.question': 'O que um salário tem de cobrir?',
+	'quaestiones.merces-iusta.keywords':
+		'salário mínimo, salário digno, sindicato, remuneração, patrão, hora extra, atraso de pagamento, exploração',
 	'quaestiones.pecunia-collocanda.title': 'Investimento e especulação',
 	'quaestiones.pecunia-collocanda.question':
 		'Existe um jeito errado de ganhar dinheiro com dinheiro?',
+	'quaestiones.pecunia-collocanda.keywords':
+		'investir, ações, usura, juros, cripto, jogo, apostas, fundos éticos, loteria',
 	'quaestiones.tributum.title': 'Os impostos',
 	'quaestiones.tributum.question': 'Sonegar é pecado?',
+	'quaestiones.tributum.keywords':
+		'sonegação, dinheiro por fora, declarar renda, alfândega, contrabando, declaração',
 	'quaestiones.invidia.title': 'A inveja',
 	'quaestiones.invidia.question': 'Por que a vida dos outros parece melhor que a minha?',
+	'quaestiones.invidia.keywords':
+		'ciúme, comparação, redes sociais, ressentimento, cobiça, mal-estar, o sucesso dos outros',
 	'quaestiones.acedia.title': 'A preguiça e a acídia',
 	'quaestiones.acedia.question': 'Deixar de se importar é pecado?',
+	'quaestiones.acedia.keywords':
+		'apatia, indolência, esgotamento, aridez espiritual, indiferença, procrastinação, demônio do meio-dia, desânimo',
 	'quaestiones.discrimen-gentium.title': 'O racismo',
 	'quaestiones.discrimen-gentium.question': 'O que a Igreja disse de fato sobre isso?',
+	'quaestiones.discrimen-gentium.keywords':
+		'raça, discriminação, preconceito, xenofobia, igualdade, escravidão, indígenas, cor da pele',
 	'quaestiones.mercatura-hominum.title': 'Tráfico de pessoas e prostituição',
 	'quaestiones.mercatura-hominum.question': 'O que a Igreja diz sobre comprar uma pessoa?',
+	'quaestiones.mercatura-hominum.keywords':
+		'escravidão, exploração, trabalho sexual, cafetão, trabalho escravo, bordel',
 	'quaestiones.violentia-domestica.title': 'A violência dentro de casa',
 	'quaestiones.violentia-domestica.question':
 		'O que a Igreja diz a quem está sofrendo violência em casa?',
+	'quaestiones.violentia-domestica.keywords':
+		'violência doméstica, agressão, apanhar, meu marido me bate, sair de casa, segurança, filhos, separação, medida protetiva',
 	'quaestiones.violentia-digitalis.title': 'A reputação, a privacidade e o que se diz na internet',
 	'quaestiones.violentia-digitalis.question': 'O que se deve ao nome de uma pessoa?',
+	'quaestiones.violentia-digitalis.keywords':
+		'cyberbullying, exposição de dados, cancelamento, difamação, redes sociais, fofoca, prints, expor',
 	'quaestiones.debilitas.title': 'A deficiência',
 	'quaestiones.debilitas.question':
 		'O que a Igreja diz de uma vida que os outros chamam de diminuída?',
+	'quaestiones.debilitas.keywords':
+		'síndrome de Down, necessidades especiais, cadeira de rodas, exame pré-natal, cuidadores, autismo, instituição',
 	'quaestiones.carceres.title': 'A prisão e a tortura',
 	'quaestiones.carceres.question': 'O que se pode fazer com quem fez o mal?',
+	'quaestiones.carceres.keywords':
+		'presos, punição, ressocialização, prisão perpétua, criminosos, visitar, solitária',
 	'quaestiones.defensio-sui.title': 'A legítima defesa',
 	'quaestiones.defensio-sui.question': 'Uma pessoa pode se defender, e até onde?',
+	'quaestiones.defensio-sui.keywords':
+		'armas, arma de fogo, invasor, proteger minha família, força, matar um agressor, violência',
 	'quaestiones.proles-suscipienda.title': 'Se vale a pena ter filhos',
-	'quaestiones.proles-suscipienda.question': 'É errado decidir não ter?'
+	'quaestiones.proles-suscipienda.question': 'É errado decidir não ter?',
+	'quaestiones.proles-suscipienda.keywords':
+		'sem filhos, tamanho da família, paternidade responsável, quantos filhos, adiar, carreira, superpopulação'
 };

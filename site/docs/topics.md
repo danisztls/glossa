@@ -206,11 +206,26 @@ list — author, kind, date; this page is already sixteen named shelves, so a
 doorway or cluster filter would collapse the structure that _is_ the page. What
 no grouping gives is the reader who arrives holding words rather than a place,
 which is the half of the audience `docs/research/audiences.md` found bouncing
-off a jump box that completes citations they do not have. The box matches title
-and question, folded for case and diacritics (`topic-search.ts` — `cremacao` has
-to find _cremação_), and it keeps the tagline's measure rather than the column's:
-a field three times the length of the line above it reads as another page's
-furniture.
+off a jump box that completes citations they do not have. The box matches title,
+question and a third string nobody sees, folded for case and diacritics
+(`topic-search.ts` — `cremacao` has to find _cremação_), and it keeps the
+tagline's measure rather than the column's: a field three times the length of the
+line above it reads as another page's furniture.
+
+**The keywords exist because the two visible strings are written to be read.**
+`mors-voluntaria` is titled _After a suicide_ and asks _Someone has taken their
+own life_, so a reader typing `killed himself` matched nothing; `crematio` never
+says _urn_, `divinatio` never says _ouija_, `contraceptio` never says _the pill_.
+The alternative was to write the search terms into the questions, which spends
+the register the whole page is built on. So `quaestiones.{slug}.keywords` sits in
+the dictionaries beside the pair, renders nowhere, and is **translated rather
+than transposed** — the reader's word is `camisinha`, not `condom`; `macumba`,
+not `witchcraft`. A term the title or the question already carries is already
+matched, and `quaestiones.test.ts` fails on one written twice. The key is also
+the one whose absence is invisible: a missing title renders as its own key on the
+page, missing keywords render as a topic that is merely harder to find, which is
+why `topic-search.ts` refuses the key `t()` hands back rather than putting the
+slug into the haystack.
 
 **The list is one, two or three columns**, by viewport rather than by a fixed
 pair — a topic is a short title over a one-line question, so a single column
@@ -293,7 +308,9 @@ list, and answering `false` would discard a reader's mark on every topic at
 once.
 
 **The title and the question are the only strings here written as somebody
-else's words**, and a translator needs to be told so. The title is this site's
+else's words** — the keywords are written in the reader's, which is a different
+job with the same rule against transposing the English — and a translator needs
+to be told so. The title is this site's
 plain naming; the question is the reader's own sentence, and it has to stay a
 sentence they would actually type in the plainest register their language has —
 never a formal rendering of the English, and never lighter than the thing it
@@ -338,13 +355,15 @@ CORPUS_DIR=… npm run build   # prints `Topics: N over 4 doorway(s)`
 jq -r '.descriptions["encyclical.veritatis-splendor.en"].en.text' site/descriptions.json
 ```
 
-**4. Write the two strings.** `quaestiones.{slug}.title` and `.question` in
+**4. Write the three strings.** `quaestiones.{slug}.title` and `.question` in
 `src/lib/i18n/en.ts`, in that section's own register — the title is this site's
 plain naming, the question is the reader's own sentence, and neither evaluates
-or advises (`docs/writing-voice.md`). `quaestiones.test.ts` fails on a topic
-missing either. Any dictionary that already carries the section — `pt` does —
-wants the pair too, or that reader gets an English question inside a
-Portuguese page.
+or advises (`docs/writing-voice.md`) — and then `.keywords`, which is read by
+`topic-search.ts` and by nobody else: the words somebody would type for this
+topic that the first two do not happen to use. `quaestiones.test.ts` fails on a
+topic missing any of the three. Any dictionary that already carries the section —
+`pt` does — wants all three, or that reader gets an English question inside a
+Portuguese page and a search that misses their own vocabulary.
 
 **5. Run the loop**: `npm run check`, `npm test`, `npm run preflight`. A topic
 adds no route code, so a pass here is the whole of it — except the look, which

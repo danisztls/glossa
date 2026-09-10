@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
-	import { matchingSlugs } from '$lib/topic-search';
+	import { keywordsFrom, matchingSlugs } from '$lib/topic-search';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -34,11 +34,19 @@
 	let query = $state('');
 
 	const rows = $derived(
-		Object.keys(data.index?.topics ?? {}).map((slug) => ({
-			slug,
-			title: t(`quaestiones.${slug}.title`),
-			question: t(`quaestiones.${slug}.question`)
-		}))
+		Object.keys(data.index?.topics ?? {}).map((slug) => {
+			// The third string is the one the reader never sees: the words they
+			// would type for this topic that the title and the question do not
+			// happen to use. `keywordsFrom` is what keeps a dictionary that has
+			// none from putting the key — and so the slug — into the haystack.
+			const keywords = `quaestiones.${slug}.keywords`;
+			return {
+				slug,
+				title: t(`quaestiones.${slug}.title`),
+				question: t(`quaestiones.${slug}.question`),
+				keywords: keywordsFrom(keywords, t(keywords))
+			};
+		})
 	);
 
 	/** Recomputed against the dictionary, so switching interface language

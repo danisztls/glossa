@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { foldForSearch, matchesQuery, matchingSlugs } from './topic-search';
+import { foldForSearch, keywordsFrom, matchesQuery, matchingSlugs } from './topic-search';
 
 describe('foldForSearch', () => {
 	it('drops case and diacritics', () => {
@@ -43,9 +43,19 @@ describe('matchesQuery', () => {
 
 describe('matchingSlugs', () => {
 	const rows = [
-		{ slug: 'crematio', title: 'Cremation', question: 'May the ashes be scattered?' },
-		{ slug: 'reditus', title: 'Confession after a long time', question: 'Years ago?' },
-		{ slug: 'ieiunium', title: 'Fasting and abstinence', question: 'On which days?' }
+		{
+			slug: 'crematio',
+			title: 'Cremation',
+			question: 'May the ashes be scattered?',
+			keywords: 'urn, columbarium, grave'
+		},
+		{
+			slug: 'reditus',
+			title: 'Confession after a long time',
+			question: 'Years ago?',
+			keywords: 'been away, coming back'
+		},
+		{ slug: 'ieiunium', title: 'Fasting and abstinence', question: 'On which days?', keywords: '' }
 	];
 
 	it('keeps the rows whose title or question matches', () => {
@@ -65,5 +75,35 @@ describe('matchingSlugs', () => {
 
 	it('returns an empty set when nothing matches', () => {
 		expect(matchingSlugs(rows, 'purgatory').size).toBe(0);
+	});
+
+	/** The point of the third field: `urn` is a word the row does not show
+	 *  anywhere, and a reader holding it is the reader this page is for. */
+	it('keeps a row on a keyword neither the title nor the question uses', () => {
+		expect(matchingSlugs(rows, 'urn')).toEqual(new Set(['crematio']));
+		expect(matchingSlugs(rows, 'coming back')).toEqual(new Set(['reditus']));
+	});
+
+	it('matches a keyword together with a term from the visible pair', () => {
+		expect(matchingSlugs(rows, 'cremation grave')).toEqual(new Set(['crematio']));
+	});
+
+	/** A row whose dictionary has no keywords is still matched on what it
+	 *  shows, and the empty string adds nothing to anybody else's haystack. */
+	it('leaves a row without keywords matching on its title and question', () => {
+		expect(matchingSlugs(rows, 'fasting')).toEqual(new Set(['ieiunium']));
+	});
+});
+
+describe('keywordsFrom', () => {
+	it('passes a real value through', () => {
+		expect(keywordsFrom('quaestiones.crematio.keywords', 'urn, grave')).toBe('urn, grave');
+	});
+
+	/** `t()` answers with the key when no dictionary carries it, and that key
+	 *  contains the slug — which the search deliberately does not match — and
+	 *  the word `quaestiones`, which would otherwise match every row. */
+	it('drops the key `t()` hands back when no dictionary has the string', () => {
+		expect(keywordsFrom('quaestiones.crematio.keywords', 'quaestiones.crematio.keywords')).toBe('');
 	});
 });
