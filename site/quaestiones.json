@@ -647,6 +647,10 @@
 			"cluster": "death-and-dying",
 			"ccc": [[2280, 2283]],
 			"lead": 2283,
+			"canons": [
+				[1176, 1176],
+				[1184, 1184]
+			],
 			"documents": ["samaritanus-bonus"]
 		},
 		"crematio": {
@@ -664,7 +668,10 @@
 				[1643, 1645]
 			],
 			"csdc": [[215, 220]],
-			"canons": [[1055, 1057]],
+			"canons": [
+				[1055, 1057],
+				[1156, 1160]
+			],
 			"documents": ["casti-connubii", "familiaris-consortio"]
 		},
 		"matrimonium-mixtum": {
@@ -689,13 +696,21 @@
 				[1629, 1629],
 				[1650, 1651]
 			],
-			"canons": [[1671, 1673]],
+			"canons": [
+				[1095, 1095],
+				[1103, 1103],
+				[1671, 1673]
+			],
 			"documents": ["familiaris-consortio"]
 		},
 		"communio-post-divortium": {
 			"doorway": "life-event",
 			"cluster": "marriage",
-			"ccc": [[1650, 1651]],
+			"ccc": [
+				[1650, 1651],
+				[1385, 1385]
+			],
+			"canons": [[915, 916]],
 			"documents": ["familiaris-consortio", "amoris-laetitia"]
 		},
 		"graviditas": {
@@ -817,14 +832,19 @@
 			"cluster": "forgiveness",
 			"ccc": [
 				[982, 982],
-				[1846, 1848]
+				[1846, 1848],
+				[1864, 1864]
 			],
 			"documents": ["dives-in-misericordia", "reconciliatio-et-paenitentia"]
 		},
 		"reditus": {
 			"doorway": "private-shame",
 			"cluster": "forgiveness",
-			"ccc": [[1455, 1458]],
+			"ccc": [
+				[1439, 1439],
+				[1455, 1458],
+				[1465, 1465]
+			],
 			"documents": ["reconciliatio-et-paenitentia"]
 		},
 		"scrupulositas": {
@@ -834,6 +854,7 @@
 				[1454, 1460],
 				[1735, 1735]
 			],
+			"lead": 1456,
 			"documents": []
 		},
 		"post-abortum": {
@@ -841,8 +862,10 @@
 			"cluster": "forgiveness",
 			"ccc": [
 				[1468, 1470],
-				[2272, 2272]
+				[2272, 2272],
+				[1463, 1463]
 			],
+			"canons": [[1357, 1357]],
 			"documents": ["evangelium-vitae"]
 		},
 		"venia-danda": {
