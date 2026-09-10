@@ -759,8 +759,7 @@ export const pt: Dictionary = {
 	'quaestiones.unitas-christianorum.title': 'A divisão dos cristãos',
 	'quaestiones.unitas-christianorum.question': 'Por que existem tantas igrejas?',
 	'quaestiones.doctrinae-progressus.title': 'Se a doutrina muda',
-	'quaestiones.doctrinae-progressus.question':
-		'A Igreja já disse coisas diferentes em épocas diferentes. Afinal, qual é?',
+	'quaestiones.doctrinae-progressus.question': 'A Igreja mudou de ideia?',
 	'quaestiones.concilium-vaticanum-secundum.title': 'O Concílio Vaticano II',
 	'quaestiones.concilium-vaticanum-secundum.question': 'A Igreja virou outra coisa em 1965?',
 	'quaestiones.synodalitas.title': 'Quem governa a Igreja',
@@ -863,8 +862,7 @@ export const pt: Dictionary = {
 	'quaestiones.matrimonium-mixtum.title': 'Casar com quem não é católico',
 	'quaestiones.matrimonium-mixtum.question': 'O que se exige, e de qual dos dois?',
 	'quaestiones.nullitas-matrimonii.title': 'A nulidade matrimonial',
-	'quaestiones.nullitas-matrimonii.question':
-		'O primeiro casamento ainda vale, e o que a Igreja examina?',
+	'quaestiones.nullitas-matrimonii.question': 'O primeiro casamento ainda vale?',
 	'quaestiones.communio-post-divortium.title': 'A comunhão depois do divórcio',
 	'quaestiones.communio-post-divortium.question': 'Eu posso comungar?',
 	'quaestiones.graviditas.title': 'Gravidez e perda gestacional',

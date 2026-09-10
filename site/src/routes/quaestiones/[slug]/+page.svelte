@@ -218,7 +218,10 @@
 		<section class="documents">
 			<h2 class="label">{t('quaestiones.documents.heading')}</h2>
 			<p class="note">{t('quaestiones.documents.blurb')}</p>
-			<ul>
+			<!-- `role="list"` because `list-style: none` drops the list role in
+			     Safari, and a list of documents that VoiceOver does not count is
+			     the one thing this block was for. -->
+			<ul role="list">
 				{#each data.documents as group (group.slug)}
 					<li>
 						<a href={hrefFor({ kind: 'document', slug: group.slug })}>
@@ -287,13 +290,34 @@
 		min-width: 0;
 	}
 
+	/*
+	 * THE MARK IS DRAWN AND NOT INHERITED, which is what the rest of the site
+	 * does with a bullet — `/colophon`'s list is the same three rules. A native
+	 * disc is the browser's: sized to nothing else on the page, at full ink
+	 * beside titles that are the only thing here worth reading, and it moves
+	 * the text off the measure by whatever the user agent thinks an indent is.
+	 * A small square in the muted colour marks the line without competing with
+	 * it. Positioned rather than handed to `::marker`, which takes only a few
+	 * properties and lands differently across engines; `inset-inline-start`
+	 * puts it on the correct side in RTL, where a `padding-left` would not.
+	 */
 	ul {
 		margin: 0;
-		padding-left: 1.1rem;
+		padding: 0;
+		list-style: none;
 	}
 
 	li {
+		position: relative;
 		margin-bottom: 0.35rem;
+		padding-inline-start: 1.1rem;
+	}
+
+	li::before {
+		content: '⬝';
+		position: absolute;
+		inset-inline-start: 0;
+		color: var(--color-text-muted);
 	}
 
 	/*
