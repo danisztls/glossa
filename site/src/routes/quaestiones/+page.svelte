@@ -408,6 +408,29 @@
 	.topic-row {
 		/* A grid item's default `min-width: auto` again, one level in. */
 		min-width: 0;
+		position: relative;
+		padding-inline-start: 1.1rem;
+	}
+
+	/*
+	 * THE MARK IS WHAT TELLS TWO CELLS APART where the grid does not. A row is
+	 * a title and a question under it, and at two or three columns the reader
+	 * is scanning across a field of them with only `gap` between one cell and
+	 * the next — so a second line of a wrapped question and the title of the
+	 * row below it start at the same edge and read as one another's
+	 * continuation. Hanging the mark outside the text gives every row one
+	 * point that only a beginning has.
+	 *
+	 * Drawn rather than a `list-style`, on the same grounds as the topic
+	 * page's list: `::marker` takes few properties, and this one has to hold
+	 * its place against a title that may wrap, in the muted colour so that the
+	 * question below it is still the quietest thing in the cell.
+	 */
+	.topic-row::before {
+		content: '⬝';
+		position: absolute;
+		inset-inline-start: 0;
+		color: var(--color-text-muted);
 	}
 
 	/*
