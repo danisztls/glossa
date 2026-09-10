@@ -302,21 +302,23 @@ export const en: Dictionary = {
 	// same shape of question: what is cited, and not held. Its rows carry a
 	// name and no link, the address being exactly what is missing.
 	'census.absent': 'What is cited and not held',
-	// TWO LISTS UNDER ONE HEADING, split by how the row is NAMED rather than
-	// by what it happens to be. The section headed itself with "Patrologia
-	// latina" for one revision, which is two hundred volumes of somebody
-	// else's shelf naming the EDITION a text is printed in, where the reader
-	// had asked whose text this library lacks. The relation ran backwards too:
-	// this library's OWN apparatus cites these names, nobody cites this
-	// library for them. Both are knowable — the apparatus writes the author
-	// and the locator's siglum in the same clause — so the first list is the
-	// author a citation credits (occasionally an anonymous work, where a
-	// heading claiming every row is a person would be false) and the second is
-	// what a citation abbreviates instead of naming: a series, a gazette, a
-	// sourcebook, a code, a liturgical book — not editions of the first list,
-	// which is what the page said before this pass.
-	'census.absentAuthors': 'What a citation names',
-	'census.absentEditions': 'What a citation abbreviates',
+	// TWO LISTS UNDER ONE HEADING, and the plainest true names for them: one
+	// holds people, the other holds books. Both earlier attempts overreached.
+	// "Whose works this library is cited for" ran the relation BACKWARDS —
+	// this library's own apparatus does the citing, and nobody cites the
+	// library for Augustine. "The editions those texts are printed in" was
+	// false of most of the second list, which holds a gazette, a code, a
+	// liturgical book and a catechetical directory beside the critical-edition
+	// series. "What a citation names"/"what it abbreviates" was true and
+	// described the GRAMMAR of the row rather than the thing, which is a
+	// distinction the reader has no reason to hold.
+	//
+	// A handful of rows in the first list are anonymous works rather than
+	// people — the Didache, the Shepherd of Hermas — because the apparatus
+	// puts them where it puts an author. The method note concedes it; a
+	// heading cannot.
+	'census.absentAuthors': 'Authors',
+	'census.absentEditions': 'Works',
 	// A FOURTH `i` BUTTON, one section past the three the comment above
 	// `census.about.derived` counts, and it has to read apart from
 	// `census.about.cited` — both sit on this page, and a screen reader
@@ -333,7 +335,7 @@ export const en: Dictionary = {
 	// above it — distinct citing places, not how many times a citation
 	// repeats.
 	'census.absentMethod':
-		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested. The first list is what a citation names — almost always the author it credits, occasionally an anonymous work instead — read from the citation itself and gathered across the languages that spell a name differently; the second is what a citation abbreviates rather than names: a critical-edition series, one of the Holy See’s gazettes, a doctrinal sourcebook, a code, a liturgical book, a profession of faith, a catechetical directory.',
+		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested. The first list holds the authors, read from the citations themselves and gathered across the languages that spell a name differently — with a few anonymous works among them, the Didache and the Shepherd of Hermas, which the apparatus credits where it would credit an author. The second holds books: critical-edition series, the Holy See’s gazettes, a doctrinal sourcebook, a code, liturgical books, a catechetical directory.',
 	// CLOSES THE SAME ARITHMETIC `census.citersLede` closes one section up,
 	// and for the same reason: a list of a few dozen names reads as the whole
 	// of what this library lacks, and it is a small part of it. Most of what

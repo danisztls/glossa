@@ -15,8 +15,8 @@ const sighting = (
 	lang = 'la',
 	citer = 'ccc 1',
 	counts = true,
-	slot = ''
-) => ({ name, lang, locators, slot, citer, counts });
+	slots: string[] = []
+) => ({ name, lang, locators, slots, citer, counts });
 
 /** The other channel: the same footnote of the same paragraph, read out of two
  *  editions. `citerKey` is an address and an address does not vary by language,
@@ -25,7 +25,7 @@ const inNote = (name: string, lang: string, slot: string, citer = 'ccc 1', count
 	name,
 	lang,
 	locators: [],
-	slot,
+	slots: slot ? [slot] : [],
 	citer,
 	counts
 });

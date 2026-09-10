@@ -1821,7 +1821,11 @@ deploy on it. `site/docs/census.md` holds the rationale.
   per CLAUSE and an edge needs THREE shared locators — at one, 4,450 of 6,878
   heads came out as a single Augustine. The parallel FOOTNOTE is the second and
   stronger channel, `citerKey` being an address that does not vary by language:
-  two shared notes are enough, and it halved the table.
+  two shared notes are enough, and it halved the table. Keyed by POSITION in
+  the note, never by the note: two names in one note are two spellings at one
+  key, and Augustine came out at 535 having swallowed Irenaeus and Chrysostom.
+  Missing a link is a row too many; making a wrong one is a row that swallows
+  another.
 - **That ranking carries an evidence floor the others do not.** Every other row
   on the page names an address, which exists or does not; a row here is a
   cluster, and a name seen twice has had no chance to meet another spelling of

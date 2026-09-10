@@ -678,7 +678,7 @@ export function invertScriptureRefs(citations) {
  * @typedef {{ part: string, question: number, article: number | null, cited_by: Citer[] }} SummaCitationXref
  * @typedef {{ work: string, cited_by: Citer[] }} AbsentCitationXref
  * @typedef {{ ibidem: Record<string, number>, other: Record<string, number> }} UnreadCitations
- * @typedef {{ name: string, lang: string, locators: string[], slot: string, citer: string, counts: boolean }} AuthorSighting
+ * @typedef {{ name: string, lang: string, locators: string[], slots: string[], citer: string, counts: boolean }} AuthorSighting
  *
  * @param {CitingUnit[]} units
  *   every citing unit, each already carrying the address that names it
@@ -814,22 +814,45 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 		// emitting only the citations that rank throws away the co-occurrences
 		// the clustering runs on: narrowed that way, Cyprian came out as two
 		// rows, one Latin and one Italian, and Chrysostom as three.
-		const clauses = citationClauses(text, lang, work);
-		for (const [at, clause] of clauses.entries()) {
+		/** @type {{ name: string, locators: string[], at: number }[]} */
+		const namedHere = [];
+		for (const [at, clause] of citationClauses(text, lang, work).entries()) {
 			const locators = locatorsIn(clause);
 			if (!locators.length) continue;
 			const name = authorInClause(clause);
-			if (!name) continue;
+			if (name) namedHere.push({ name, locators, at });
+		}
+		const note = marker === null || marker === undefined ? '' : `${citerKey(citer)} #${marker}`;
+		/**
+		 * THE SAME FOOTNOTE OF THE SAME PARAGRAPH, which is a stronger oracle
+		 * than the locator and the only one that reaches two editions citing a
+		 * Father at different passages: `citerKey` is an address and an address
+		 * does not vary by language, so this is one string across every edition
+		 * of the work.
+		 *
+		 * KEYED BY POSITION WITHIN THE NOTE (`#3.1`) AND NOT BY THE NOTE, which
+		 * is the difference between a table and a heap.
+		 *
+		 * A note is one key, so two names in it are two spellings at that key
+		 * and the union joins them; with the notes chaining transitively,
+		 * Augustine came out at 535 having swallowed Irenaeus, Chrysostom,
+		 * Ambrose and a dozen more. Emitting the bare note only where THIS
+		 * edition read exactly one name out of it does not save the rule — the
+		 * claim has to hold in both editions and neither can see the other, so
+		 * a note read as Augustine here and as Jerome there still joins them,
+		 * which cost Irenaeus and Jerome their rows.
+		 *
+		 * The index is exact where the editions cut the note the same way and
+		 * abstains where they do not — the split following whatever punctuation
+		 * each translator printed. Missing a link is a row too many; making a
+		 * wrong one is a row that swallows another.
+		 */
+		for (const { name, locators, at } of namedHere) {
 			authors.push({
 				name,
 				lang: lang ?? '',
 				locators,
-				// THE SAME FOOTNOTE OF THE SAME PARAGRAPH, which is a stronger
-				// oracle than the locator and the only one that reaches two
-				// editions citing a Father at different passages. `citerKey` is
-				// an address and an address does not vary by language, so this
-				// is one string across every edition of the work.
-				slot: marker === null ? '' : `${citerKey(citer)} #${marker}.${at}`,
+				slots: note ? [`${note}.${at}`] : [],
 				citer: citerKey(citer),
 				counts: named > 0 && !landed
 			});

@@ -272,7 +272,7 @@ export function censusFact(census, shelf, fact) {
  * @param {{slug: string, lang: string}[]} input.documentEditions
  * @param {Record<string, {questions: unknown[]}>} input.summaIndex lang -> questions
  * @param {Record<string, Record<string, Record<string, import('../src/lib/types.ts').Citer[]>>>} input.scriptureByBook
- * @param {{documents: any[], ccc: any[], summa: any[], absent: {work: string, cited_by: import('../src/lib/types.ts').Citer[]}[], unread: {ibidem: Record<string, number>, other: Record<string, number>}, authors?: {name: string, lang: string, locators: string[], slot: string, citer: string, counts: boolean}[]}} input.citationXrefs
+ * @param {{documents: any[], ccc: any[], summa: any[], absent: {work: string, cited_by: import('../src/lib/types.ts').Citer[]}[], unread: {ibidem: Record<string, number>, other: Record<string, number>}, authors?: {name: string, lang: string, locators: string[], slots: string[], citer: string, counts: boolean}[]}} input.citationXrefs
  * @param {Map<string, Map<number, Set<number>>>} input.summaArticles part -> question -> articles
  */
 export function buildCensus(input) {

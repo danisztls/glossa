@@ -250,7 +250,7 @@ export const MIN_CITING_PLACES = 3;
  * Latin and one Italian, and Chrysostom as three. `counts` says which
  * sightings a row's number is made of; the rest still get a vote.
  *
- * @param {{ name: string, lang: string, locators: string[], slot: string, citer: string, counts: boolean }[]} seen
+ * @param {{ name: string, lang: string, locators: string[], slots: string[], citer: string, counts: boolean }[]} seen
  *   one entry per (clause, citing place) that named somebody
  * @param {number} [minShared]
  * @returns {{ name: string, spellings: string[], citers: Set<string> }[]}
@@ -266,7 +266,7 @@ export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS, minSlots =
 	/** @type {Map<string, Set<string>>} parallel footnote -> folded names in it */
 	const atSlot = new Map();
 
-	for (const { name, lang, locators, slot, citer, counts } of seen) {
+	for (const { name, lang, locators, slots, citer, counts } of seen) {
 		const key = foldName(name);
 		if (key.length < 4) continue;
 		let byName = spellings.get(key);
@@ -285,7 +285,7 @@ export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS, minSlots =
 			if (!names) atLocator.set(loc, (names = new Set()));
 			names.add(key);
 		}
-		if (slot) {
+		for (const slot of slots ?? []) {
 			let names = atSlot.get(slot);
 			if (!names) atSlot.set(slot, (names = new Set()));
 			names.add(key);

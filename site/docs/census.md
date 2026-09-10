@@ -337,9 +337,19 @@ locator only links two editions that happen to cite the SAME passage, so
 Gregory of Nyssa stood as `St. Gregory of Nyssa` and `S. Gregorio di Nissa` and
 Augustine in four rows across English, Italian, Polish and Slovene. `citerKey`
 is an address and an address does not vary by language, so `ccc 27` note 1 is
-one note in all nine Catechisms and the men named in it are one man. Two shared
-notes are enough where a locator needs three, the evidence being that much
-better. It halved the table.
+one note in all nine Catechisms. Two shared notes are enough where a locator
+needs three, the evidence being that much better. It halved the table.
+
+**The key is the POSITION within the note and not the note**, which is the
+difference between a table and a heap. A note is one key, so two names in it
+are two spellings at that key and the union joins them — Augustine came out at
+535 having swallowed Irenaeus, Chrysostom, Ambrose and a dozen more. Emitting
+the bare note only where THIS edition read one name out of it does not save the
+rule either: the claim has to hold in both editions and neither can see the
+other, so a note read as Augustine here and as Jerome there still joins them,
+which cost Irenaeus and Jerome their rows. The index is exact where the editions
+cut a note the same way and abstains where they do not. **Missing a link is a
+row too many; making a wrong one is a row that swallows another.**
 
 **An edge needs three distinct locators.** One shared locator is a coincidence a
 misprint can manufacture, and the relation is closed transitively, so a single
