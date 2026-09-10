@@ -1,8 +1,9 @@
 /**
  * The reader's saved addresses.
  *
- * WHAT IS STORED IS AN ADDRESS AND A TIMESTAMP, nothing else. Not the text,
- * not the citation, not the edition it was read in. `refHref`'s output is
+ * WHAT IS STORED IS AN ADDRESS AND A TIMESTAMP -- and, for a mark made by
+ * highlighting, the words that were highlighted. The address half is the
+ * original rule and is unchanged: `refHref`'s output is
  * edition-free by design, so `/scriptura/exod/3#v12` names the same verse to
  * the same reader in English, Portuguese or Latin -- resolving a bookmark
  * late (through `bookmarkContent.ts`, which reads the reader's CURRENT
@@ -10,6 +11,27 @@
  * instead of freezing the wording they happened to have open. It also keeps
  * the stored blob to a few dozen bytes a row, which matters when the whole
  * store is one localStorage key.
+ *
+ * THE QUOTE IS THE DELIBERATE EXCEPTION, and it is worth naming what it
+ * costs. "An address and nothing else" bought two things: a row of a few
+ * dozen bytes, and a bookmark that means the same in every edition. A quote
+ * spends both -- it is as long as the reader's highlight, and it is frozen in
+ * the edition it was taken from, so a passage marked in the Clementina still
+ * reads as Latin after the reader switches to Portuguese.
+ *
+ * It is stored anyway because a highlight is a different act from pressing a
+ * number. A reader who marks CCC 27 is marking the paragraph; a reader who
+ * draws a line under one sentence of it has said something the address cannot
+ * hold, and re-deriving the paragraph throws away the only part they chose.
+ * `quotedFrom` records the edition, so the library can say which text those
+ * words are and never presents them as the reader's current one -- an
+ * unattributed frozen quote under a citation that re-derives is the lie this
+ * field exists to prevent.
+ *
+ * Both are OPTIONAL and every reader of a bookmark still works without them.
+ * A mark made from a unit number carries neither, rows written before this
+ * existed carry neither, and the citation, the title and the ordering are
+ * still derived from the address alone.
  *
  * KEYED BY HREF, so saving twice is idempotent and `has()` is a lookup rather
  * than a scan -- the reader page asks it once per rendered unit, which on a
@@ -33,6 +55,36 @@ export interface Bookmark {
 	href: string;
 	/** ISO 8601, tie-breaker only -- the library orders canonically. */
 	addedAt: string;
+	/** The words the reader highlighted, when the mark was made by
+	 *  highlighting them. Absent for a mark made from a unit number, which
+	 *  chose no words. */
+	quote?: string;
+	/** The edition `quote` was taken from, so the library never shows one
+	 *  text's words as another's. Meaningless without `quote`. */
+	quotedFrom?: string;
+}
+
+/**
+ * How much of a highlight is kept.
+ *
+ * A quote here is a REMINDER of what was marked, not a reproduction of it --
+ * the address is what reproduces the passage, in whatever edition the reader
+ * comes back in. The cap is what keeps the whole store inside one
+ * localStorage key when a reader marks a hundred paragraphs: a highlight can
+ * be a page, and a page per row is a quota error the reader meets as a
+ * bookmark that silently did not save.
+ */
+export const QUOTE_MAX = 600;
+
+/** A quotation cut to `QUOTE_MAX`, at a word boundary, marked where it was
+ *  cut. Never silently truncated: the ellipsis is what says the reader is
+ *  looking at part of what they highlighted. */
+export function clampQuote(quote: string): string {
+	const text = quote.trim();
+	if (text.length <= QUOTE_MAX) return text;
+	const cut = text.slice(0, QUOTE_MAX);
+	const lastSpace = cut.lastIndexOf(' ');
+	return `${(lastSpace > QUOTE_MAX / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
 }
 
 export interface ResolvedBookmark extends Bookmark {
@@ -59,7 +111,17 @@ function readStored(): BookmarkMap {
 		if (typeof addedAt !== 'string') continue;
 		const migrated = migrateBibleHref(href);
 		if (!parseHref(migrated)) continue;
-		out[migrated] = { href: migrated, addedAt };
+		// The two optional fields are validated the way `addedAt` is and
+		// dropped rather than trusted: a hand-edited value, or a row from a
+		// version of this store that spelled them differently, costs the
+		// quote and never the bookmark.
+		const { quote, quotedFrom } = row as Bookmark;
+		out[migrated] = {
+			href: migrated,
+			addedAt,
+			...(typeof quote === 'string' && quote ? { quote: clampQuote(quote) } : {}),
+			...(typeof quotedFrom === 'string' && quotedFrom ? { quotedFrom } : {})
+		};
 	}
 	return out;
 }
@@ -98,9 +160,20 @@ class BookmarkStore {
 		return this.#items[href] !== undefined;
 	}
 
-	add(href: string): void {
+	/** `quoted` is the highlight that made this mark, and the edition it was
+	 *  read in — both absent for a mark made from a unit number. */
+	add(href: string, quoted?: { quote: string; edition?: string }): void {
 		if (this.has(href) || !parseHref(href)) return;
-		this.#write({ ...this.#items, [href]: { href, addedAt: new Date().toISOString() } });
+		const quote = quoted && clampQuote(quoted.quote);
+		this.#write({
+			...this.#items,
+			[href]: {
+				href,
+				addedAt: new Date().toISOString(),
+				...(quote ? { quote } : {}),
+				...(quote && quoted?.edition ? { quotedFrom: quoted.edition } : {})
+			}
+		});
 	}
 
 	remove(href: string): void {
@@ -110,9 +183,9 @@ class BookmarkStore {
 		this.#write(next);
 	}
 
-	toggle(href: string): void {
+	toggle(href: string, quoted?: { quote: string; edition?: string }): void {
 		if (this.has(href)) this.remove(href);
-		else this.add(href);
+		else this.add(href, quoted);
 	}
 
 	/** Every bookmark whose address still parses, each with its target. Newest

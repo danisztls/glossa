@@ -750,6 +750,37 @@ nothing else in the system had to learn about highlights — the library, the
 ordering, the edition-following and the idempotent save all work on a row that
 looks like every other row.
 
+**THE BOOKMARK KEEPS THE WORDS TOO, and that is a deliberate break with "an
+address and nothing else."** Worth stating plainly, because the rule it breaks
+is a good one and was argued for: an address-only row is a few dozen bytes and
+means the same in every edition, and a quote spends both — it is as long as the
+highlight, and it is frozen in the edition it was taken from, so a passage
+marked in the Clementina still reads as Latin after the reader switches to
+Portuguese. What earns it is that a highlight is a different ACT from pressing
+a number. A reader who marks CCC 27 is marking the paragraph; a reader who
+draws a line under one sentence of it has said something the address cannot
+hold, and re-deriving the paragraph throws away the only part they chose.
+
+**The address still decides everything derived, and the quote decides
+nothing.** The citation, the title, the ordering, the section a row files
+under, and whether the row resolves at all are read off the address exactly as
+before; both new fields are optional and every reader of a bookmark works
+without them. A mark made from a unit number carries neither, and so does every
+row written before this existed.
+
+**`quotedFrom` is not bookkeeping.** An unattributed frozen quote sitting under
+a citation that re-derives is a claim about the reader's CURRENT text — the row
+would show one edition's words under another edition's citation and say
+nothing. The library names the edition beside the quote and declares its `lang`
+on the blockquote, so the face, the hyphenation and the direction follow the
+text rather than the interface.
+
+**A quote is clamped, and the ellipsis is the point.** `QUOTE_MAX` keeps the
+whole store inside one localStorage key when a reader has marked a hundred
+passages — a highlight can be a page, and a page a row is a quota error the
+reader meets as a bookmark that silently did not save. Cut at a word boundary
+and marked, because a quotation truncated in silence is a misquotation.
+
 **The precision goes into the COPY instead, which is where it costs nothing.**
 The clipboard takes exactly the words on screen, in the edition on screen, with
 the unit's citation under them; that happens now rather than being stored, so
@@ -765,6 +796,19 @@ address shape into the sitemap, the edge worker and the route manifest — so
 every other work saves the unit the highlight STARTED in, which is also the
 right answer wherever an extent is meaningless: a highlight dragged across
 compare mode's two columns, or from the end of one work's page into another's.
+
+**THE ENDS OF A RANGE DO NOT NAME THE UNITS AT ITS ENDS**, which is what made
+a highlight drawn across three verses bookmark the first one. A selection that
+finishes on an element boundary reports its `endContainer` as the PARENT with
+an offset, so walking up from it found `.reading-text` — whose `data-unit-href`
+is the page's own address — and a bare chapter has no verse for `spanAddress`
+to close a passage at. It degraded to the start, silently and plausibly, and
+every unit test passed because the addresses being compared were right. The
+units are read out of the range's own CONTENTS instead: a clone carries every
+partially covered ancestor, so a highlight starting mid-verse still brings that
+verse with it, and the common ancestor — the surface, the element that was
+being mistaken for a unit — is not in it at all. **Ask a range what it
+contains, never what its boundaries touch.**
 
 **A route opts in by saying what its units are, not by rendering anything.**
 `data-unit-href` on the element that already computes that address for the

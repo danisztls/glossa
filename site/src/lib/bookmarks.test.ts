@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { bookmarks, migrateBibleHref } from './bookmarks.svelte';
+import { bookmarks, clampQuote, migrateBibleHref, QUOTE_MAX } from './bookmarks.svelte';
 
 const VERSE = '/scriptura/exodus/3#v12';
 const PARAGRAPH = '/catechismus/1213';
@@ -97,5 +97,74 @@ describe('migrateBibleHref', () => {
 		expect(bookmarks.list).toEqual([]);
 		bookmarks.add(migrateBibleHref('/scriptura/2macc/7#v9'));
 		expect(bookmarks.list.map((b) => b.href)).toEqual(['/scriptura/ii-machabaeus/7#v9']);
+	});
+});
+
+// A mark made by highlighting keeps the words, which is the one thing about a
+// bookmark that is NOT re-derived from the address. See the store's docblock
+// for what that costs and why a highlight earns it.
+describe('a quoted bookmark', () => {
+	const WORDS = 'In the beginning God created heaven, and earth.';
+
+	it('keeps the words and the edition they were read in', () => {
+		bookmarks.add(VERSE, { quote: WORDS, edition: 'bible.douay-rheims.en' });
+		const [saved] = bookmarks.list;
+		expect(saved.quote).toBe(WORDS);
+		expect(saved.quotedFrom).toBe('bible.douay-rheims.en');
+	});
+
+	it('carries neither when the mark came from a unit number', () => {
+		bookmarks.add(PARAGRAPH);
+		const [saved] = bookmarks.list;
+		expect(saved.quote).toBeUndefined();
+		expect(saved.quotedFrom).toBeUndefined();
+	});
+
+	// The edition is meaningless on its own: it says which text some words
+	// are, and there are no words.
+	it('does not record an edition with no words to attribute', () => {
+		bookmarks.add(VERSE, { quote: '   ', edition: 'bible.douay-rheims.en' });
+		const [saved] = bookmarks.list;
+		expect(saved.quote).toBeUndefined();
+		expect(saved.quotedFrom).toBeUndefined();
+	});
+
+	it('is still keyed by address alone, so quoting twice is one bookmark', () => {
+		bookmarks.add(VERSE, { quote: WORDS });
+		bookmarks.add(VERSE, { quote: 'something else entirely' });
+		expect(bookmarks.count).toBe(1);
+		expect(bookmarks.list[0].quote).toBe(WORDS);
+	});
+
+	it('toggles the words on with the mark and off with it', () => {
+		bookmarks.toggle(VERSE, { quote: WORDS });
+		expect(bookmarks.list[0].quote).toBe(WORDS);
+		bookmarks.toggle(VERSE);
+		expect(bookmarks.count).toBe(0);
+	});
+});
+
+describe('clampQuote', () => {
+	it('leaves a quotation that fits exactly as it was', () => {
+		expect(clampQuote('Fiat lux')).toBe('Fiat lux');
+	});
+
+	it('trims, so a highlight that overshot does not store the overshoot', () => {
+		expect(clampQuote('  Fiat lux  ')).toBe('Fiat lux');
+	});
+
+	// Cut at a word, and marked: the ellipsis is what says the reader is
+	// looking at part of what they highlighted rather than all of it.
+	it('cuts a long quotation at a word boundary and marks the cut', () => {
+		const long = `${'word '.repeat(200)}end`;
+		const cut = clampQuote(long);
+		expect(cut.length).toBeLessThanOrEqual(QUOTE_MAX + 1);
+		expect(cut.endsWith('…')).toBe(true);
+		expect(cut).not.toContain(' …');
+	});
+
+	it('still cuts where there is no word boundary to cut at', () => {
+		const unbroken = 'x'.repeat(QUOTE_MAX * 2);
+		expect(clampQuote(unbroken)).toBe(`${'x'.repeat(QUOTE_MAX)}…`);
 	});
 });

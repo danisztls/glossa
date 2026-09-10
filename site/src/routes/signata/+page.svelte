@@ -77,6 +77,14 @@
 		items: ResolvedBookmark[];
 	}
 
+	/** The edition a row's quote was taken from, when the row has one and the
+	 *  corpus still holds it. `undefined` for a mark made from a unit number,
+	 *  and for an edition withdrawn since — the quote still stands, it simply
+	 *  goes unattributed rather than being attributed to a guess. */
+	function quotedWork(item: ResolvedBookmark) {
+		return item.quotedFrom ? getWork(item.quotedFrom) : undefined;
+	}
+
 	const sections = $derived.by((): Section[] => {
 		// The headings deliberately reuse the label each destination already
 		// carries rather than declaring their own strings: they name the same
@@ -228,6 +236,22 @@
 							>
 								<Icon name="trash-2" />
 							</button>
+							<!-- The words the reader highlighted, where the mark was made by
+							     highlighting them. `lang` is the QUOTED edition's and not the
+							     page's: this is the one thing on the page that is not
+							     re-derived, so it may be Latin under a Portuguese interface,
+							     and the face, the hyphenation and the direction all follow
+							     that declaration. The edition names itself beside it for the
+							     same reason — an unattributed frozen quote under a citation
+							     that re-derives is a claim about the reader's CURRENT text
+							     (`bookmarks.svelte.ts`). -->
+							{#if item.quote}
+								{@const from = quotedWork(item)}
+								<blockquote class="quote" lang={from?.language}>
+									{item.quote}
+									{#if from}<cite>{from.short_title ?? from.title}</cite>{/if}
+								</blockquote>
+							{/if}
 						</li>
 					{/each}
 				</ul>
@@ -310,6 +334,37 @@
 		display: flex;
 		align-items: baseline;
 		gap: 0.5rem;
+		/* So a quote can take a line of its own under the citation without the
+		   citation, the badge and the control changing their arrangement. */
+		flex-wrap: wrap;
+	}
+
+	/*
+	 * A QUOTE IS THE READER'S OWN MARK, so it is set as the text it came from
+	 * — the reading face, not the sans this page writes its citations and
+	 * labels in — and indented off a rule the way a quotation is, rather than
+	 * boxed. Muted and a shade smaller than a reading column: on this page it
+	 * is not the text being read, it is what a row is ABOUT.
+	 */
+	.quote {
+		flex-basis: 100%;
+		margin: 0.15rem 0 0;
+		padding-inline-start: 0.7rem;
+		border-inline-start: 2px solid var(--color-border);
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+	}
+
+	.quote cite {
+		/* Back to the chrome face: the edition's name is ours to say, and is
+		   not part of the quotation. */
+		display: block;
+		margin-block-start: 0.15rem;
+		font-family: var(--font-sans);
+		font-size: 0.78rem;
+		font-style: normal;
 	}
 
 	/* NOT `--color-bookmark`, WHICH IS THE COLOUR OF BEING MARKED. Everywhere

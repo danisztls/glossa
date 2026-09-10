@@ -2331,6 +2331,19 @@ the half that is testable, rationale in `site/docs/reading.md`).
   `.reading-text` carries the PAGE's address as well, so `closest` takes the
   nearest and the matter between the units — an introduction, a heading, an
   unnumbered appendix — still resolves.
+- **A bookmark made by highlighting keeps the WORDS as well as the address**
+  (`quote`, `quotedFrom`), which breaks "an address and nothing else" on
+  purpose: a highlight is a different act from pressing a number, and
+  re-deriving the unit throws away the only part the reader chose. Both fields
+  are optional, nothing derived reads them, and the edition is recorded because
+  a frozen quote under a re-derived citation otherwise claims to be the
+  reader's current text. Clamped at `QUOTE_MAX` — one localStorage key holds
+  the whole store.
+- **Ask a range what it CONTAINS, never what its boundaries touch.** A
+  selection ending on an element boundary reports its `endContainer` as the
+  parent, so walking up from it lands on the surface rather than the last unit
+  — which made a highlight across three verses bookmark the first, with every
+  address in the comparison correct and every test passing.
 - **A Bible highlight across verses saves the passage; no other work's does.**
   `hrefFor` already writes `?v=3-5#v3`, and nothing else can spell a range
   without a new address shape in the sitemap, the worker and the route

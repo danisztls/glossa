@@ -30,6 +30,12 @@
 	edition on screen, with the unit's citation under them. That is the one
 	thing this panel does that the unit number's cannot.
 
+	AND THE BOOKMARK KEEPS THE WORDS TOO, which is a deliberate break with
+	"a bookmark is an address and nothing else" — `bookmarks.svelte.ts` records
+	what that costs and why a highlight earns it. The address still decides
+	everything the library derives; the quote is the part of the reader's act
+	that no address can hold.
+
 	POINTERUP, NOT `selectionchange`. Opening on every selection change would
 	drag the panel along under the pointer for the length of a sentence.
 	`selectionchange` is used for the opposite: a highlight the reader has
@@ -122,6 +128,34 @@
 		return href ? { unit: href, surface, edition: surface.dataset.edition } : undefined;
 	}
 
+	/**
+	 * Every unit the highlight actually covers, in document order.
+	 *
+	 * THE ENDS OF A RANGE DO NOT NAME THE UNITS AT ITS ENDS, which is what
+	 * made a highlight drawn across three verses bookmark the first one. A
+	 * selection that finishes on an element boundary reports its
+	 * `endContainer` as the PARENT with an offset — so walking up from it
+	 * found `.reading-text`, whose `data-unit-href` is the page's own address,
+	 * and a bare chapter has no verse for `spanAddress` to close a passage at.
+	 * It degraded to the start, silently and plausibly.
+	 *
+	 * Reading the units out of the range's own CONTENTS asks the question the
+	 * right way round. A clone carries every partially covered ancestor, so a
+	 * highlight starting mid-verse still brings that verse with it, and the
+	 * common ancestor — the surface — is not in it at all, which is exactly
+	 * the element that was being mistaken for a unit.
+	 *
+	 * Empty is the ordinary case and not a failure: a highlight inside one
+	 * unit contains no unit element, and on a single-unit page the surface IS
+	 * the unit. Both fall back to the boundary contexts below.
+	 */
+	function unitsCovered(range: Range): string[] {
+		const fragment = range.cloneContents();
+		return [...fragment.querySelectorAll<HTMLElement>('[data-unit-href]')]
+			.filter((el) => tidyQuote(el.textContent ?? '') !== '')
+			.flatMap((el) => (el.dataset.unitHref ? [el.dataset.unitHref] : []));
+	}
+
 	function dismiss() {
 		card.hide();
 		range = undefined;
@@ -156,7 +190,8 @@
 		// a highlight drawn across the divider belongs to neither.
 		if (!from || !to || from.surface !== to.surface) return dismiss();
 
-		href = spanAddress(from.unit, to.unit);
+		const covered = unitsCovered(live);
+		href = spanAddress(covered[0] ?? from.unit, covered[covered.length - 1] ?? to.unit);
 		edition = from.edition;
 		range = live.cloneRange();
 		// Already open over an extended selection: re-measure rather than
@@ -354,7 +389,7 @@
 				class:bookmarked
 				aria-label={bookmarkLabel}
 				title={bookmarkLabel}
-				onclick={() => href && bookmarks.toggle(href)}
+				onclick={() => href && bookmarks.toggle(href, { quote: quote(), edition })}
 			>
 				<Icon name="bookmark" filled={bookmarked} />
 			</button>
