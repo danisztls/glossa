@@ -82,6 +82,83 @@ ingested the note says where to put it.
 | `nullitas-matrimonii`     | A     | Was C: "Am I still married?" was answered with venue rules — which tribunal is competent — and never with the grounds, though _defect of consent_ is a keyword. Fixed 2026-09-10 with can. 1095 and 1103.                                         |
 | `communio-post-divortium` | A     | Was C and a strict subset of `nullitas-matrimonii`: two shared paragraphs and nothing of its own. Fixed 2026-09-10 with CCC 1385, the general rule 1650 applies, and can. 915–916, where the reader can see they are not the excommunicated case. |
 
+### `life-event / death-and-dying` — 2026-09-10
+
+| Topic                   | Grade | Note                                                                                                                                                                                             |
+| ----------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aegritudo`             | A     | CCC 1500–1513 is the Anointing article's own four headings whole, and 1505 and 1508 say the thing the reader needs — _he did not heal all the sick_, and _my grace is sufficient for you_.       |
+| `finis-vitae`           | A     | 2278 answers "must every treatment be continued" in its first clause and names who decides. Inside `euthanasia`, correctly: this reader is a family at a bedside, not an argument.               |
+| `mors-voluntaria`       | A     | See the duplicate note below. can. 1176 and 1184 added 2026-09-10: funerals are owed to the faithful, and the list of those deprived of them does not include suicide.                           |
+| `infans-non-baptizatus` | A     | `lead` 1261 is the whole topic — _allow us to hope that there is a way of salvation_. can. 1183 added 2026-09-10 for the _stillborn_ and _miscarried_ keywords: a funeral can be permitted.      |
+| `post-mortem`           | A     | `lead` 1032 answers the second half of the question, prayer for the dead. can. 1176 added 2026-09-10 for _funeral, wake, burial_; its §2 is written about the living. Keywords reach into grief. |
+| `crematio`              | B     | "May a Catholic be cremated" is 2301; "and may the ashes be scattered" is in _Ad resurgendum cum Christo_, which the page names and does not quote. No quotable work in the corpus answers it.   |
+
+### `life-event / the-household` — 2026-09-10
+
+| Topic                  | Grade | Note                                                                                                                                                                                                        |
+| ---------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sterilitas`           | A     | `lead` 2379 is "what is left to us" in the Catechism's own words, down to adoption. `fecundatio-artificialis` sits inside it, which is the documented pair.                                                 |
+| `adoptio`              | A     | can. 110 answers "is the child ours in the Church's eyes" verbatim, and can. 1094 covers the keyword nobody expects to need.                                                                                |
+| `amissio-operis`       | A     | `lead` 2436 is the Catechism saying unemployment wounds its victim's dignity; CSDC 287 calls it a real social disaster.                                                                                     |
+| `graviditas`           | A     | Was C, and the worst door mismatch found: a page titled _Pregnancy and miscarriage_ whose second paragraph called abortion an abominable crime. 2271 dropped and 1261 added 2026-09-10.                     |
+| `educatio-filiorum`    | A     | Was C: every anchor was the parents' duty to teach, and the question is what to do when the child refuses. 2217 and 2230 added 2026-09-10 — the child at home, and the adult who chooses.                   |
+| `filius-a-fide-lapsus` | A     | Was C: "Where did we go wrong?" was answered with eleven paragraphs on what parents owe, which reads as the indictment. CCC 1730–1732 added 2026-09-10 — _man is the father of his acts_.                   |
+| `parentes`             | B     | Was C: nothing met _abusive mother_ or _cut them off_. 2232 added 2026-09-10 — _family ties are important but not absolute_ — though its own context is vocation. No paragraph addresses an abusive parent. |
+| `cura-parentum`        | B     | "I cannot do it all" is answered by three words inside 2218, _as much as they can_. Nothing in the corpus is about the carer; CSDC 222 is about valuing the elderly. Adjacent to the blocklist.             |
+
+### `ordinary / the-unseen` — 2026-09-10
+
+| Topic                         | Grade | Note                                                                                                                                                                         |
+| ----------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `divinatio`                   | A     | 2116 lists horoscopes, palm reading, clairvoyance and mediums by name, which is "what is actually forbidden" answered in the Catechism's own inventory.                      |
+| `signa`                       | A     | It gives the posture — trust providence, do not demand proof — and never adjudicates a particular event, which is the honest answer. _Opened the bible at random_ is 2116's. |
+| `apparitiones`                | A     | Two paragraphs, and 67 answers "does a Catholic have to believe" outright. Nothing on how an apparition is approved; the corpus has no text.                                 |
+| `finis-mundi`                 | A     | 675–676 is the Antichrist and the rejection of millenarianism, which is exactly what _rapture_ and _three days of darkness_ are owed.                                        |
+| `daemones`                    | A     | Was C by ordering: "Does the Church still do that?" was answered in the seventh paragraph. `lead` 1673 set 2026-09-10.                                                       |
+| `angeli`                      | A     | Was C by ordering: the guardian angel is 336, last of nine. `lead` 336 set 2026-09-10.                                                                                       |
+| `mortui`                      | B     | Nothing says the dead do not return; 1022 added 2026-09-10 so the reader can at least see they are already judged, and 2116 forbids summoning them. The inference is theirs. |
+| `miracula-et-reliquiae`       | B     | CCC 1674 is the only paragraph in the Catechism that says "relics", and it says it in a list. 828 added 2026-09-10 for _canonisation_. Nothing on incorrupt bodies.          |
+| `experientia-mortis-proximae` | B     | 1021–1022 gives the framework — judgment at the moment of death — and the corpus says nothing about near-death experiences. The reader carries it across or nothing does.    |
+
+### `ordinary / practice` — 2026-09-10
+
+| Topic                 | Grade | Note                                                                                                                                                                   |
+| --------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ieiunium`            | A     | can. 1251 and 1252 are the days and the ages, which is the question exactly. can. 919 added 2026-09-10 for the eucharistic fast, a keyword with no text behind it.     |
+| `dominica`            | A     | 2181 names the grave sin and the excusing reasons in one paragraph, and 2183 covers the case where Mass is impossible.                                                 |
+| `otium`               | A     | 2185's _the charity of truth seeks holy leisure_ and CSDC 284's _rest from work is a right_ answer a reader who suspects doing nothing is a fault.                     |
+| `initiatio-adultorum` | A     | 1232 names the RCIA and can. 851 and 865 say what the catechumenate asks. _Baptised as a baby, never confirmed_ is a different path and only 1231 glances at it.       |
+| `baptismus-infantium` | A     | can. 874 is the godparent question answered as a checklist, and 1255 says what is asked of them. See the Latin clause noted below.                                     |
+| `organorum-donatio`   | A     | 2296 answers both halves of the question in one paragraph, in life and after death, including consent.                                                                 |
+| `decimae`             | A     | The answer is that there is no number — _each according to his abilities_ — which is what a reader holding the word _tithe_ most needs to be told.                     |
+| `vota-et-iuramenta`   | A     | 2102 defines a vow verbatim and 2103 closes on dispensation, which is the keyword a reader who has broken one arrives with.                                            |
+| `oratio`              | A     | Was C: the Catechism gives three expressions of prayer and the topic carried two, while _contemplation_ and _mental prayer_ were keywords. 2709–2712 added 2026-09-10. |
+| `corpus-ornandum`     | B     | The Catechism does not contain the word "tattoo" or "piercing"; 2289 gives the principle against the cult of the body. 2290 added 2026-09-10 for _gym_ and _dieting_.  |
+
+### `ordinary / money-and-work` — 2026-09-10
+
+| Topic                | Grade | Note                                                                                                                                                                                                       |
+| -------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `merces-iusta`       | A     | 2434 says what a wage is supposed to cover, at the length of the question, and CSDC 304 covers the strike the title also promises.                                                                         |
+| `tributum`           | A     | 2240 makes paying taxes morally obligatory in its first line, which answers "is cheating on it a sin" without needing a second paragraph.                                                                  |
+| `invidia`            | A     | 2539 names the sadness at another's goods and 2540 gives the remedy: _rejoice in your brother's progress_.                                                                                                 |
+| `acedia`             | A     | 2094 and 2733 both name acedia, and 2733's _a form of depression due to lax ascetical practice_ is the sentence. _Spiritual dryness_ is 2731 and belongs to prayer, which is the distinction worth making. |
+| `pecunia-collocanda` | A     | Was C: the topic is titled _Investing and speculation_ and the paragraph naming speculation, 2409, was on the tax page. 2409 and 2413 (games of chance) added 2026-09-10.                                  |
+| `vocatio`            | A     | Was C and the clearest case of a title read as an oracle: CCC 1877–1889 says "vocation" and means subsidiarity and socialisation. Replaced 2026-09-10 with 2013–2016, 1533–1535, 898–900 and 2233.         |
+
+### `ordinary / justice` — 2026-09-10
+
+| Topic                 | Grade | Note                                                                                                                                                                                          |
+| --------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mercatura-hominum`   | A     | 2414 forbids human beings "being bought, sold and exchanged like merchandise", which is the question in the Catechism's own words.                                                            |
+| `defensio-sui`        | A     | 2264 answers "how far" with the moderation test. Was diluted: 2317 and CSDC 500–501 are states at war, which is `bellum`, and were dropped 2026-09-10.                                        |
+| `proles-suscipienda`  | A     | CSDC 232 carries the phrase the reader needs — _to avoid for a time or even indeterminately a new birth_ — beside 2368's warning against selfishness.                                         |
+| `debilitas`           | A     | 2276 uses the title's own word and CSDC 148 develops it. 2274 added 2026-09-10 for _prenatal screening_, which is how most readers arrive at this page.                                       |
+| `discrimen-gentium`   | A     | 1935 names race. Was diluted: CSDC 146–147 is male and female complementarity and 148 is disability, neither of which is racism; narrowed to 144–145 on 2026-09-10.                           |
+| `carceres`            | A     | Was C for currency, not coverage: CSDC 405 states the pre-2018 death-penalty teaching while CCC 2267 on `poena-capitalis` states the current one. 405 dropped 2026-09-10.                     |
+| `violentia-digitalis` | A     | Was C: privacy was anchored at 2488–2492 and reputation, which the title promises, was not. 2477–2479 added 2026-09-10 — detraction and calumny, which is what _gossip_ and _cancelling_ are. |
+| `violentia-domestica` | A     | Was C and the most consequential: one paragraph, about rape, and nothing telling a reader being beaten that they may leave. CCC 1649 and can. 1153–1154 added 2026-09-10.                     |
+
 ## What the pass keeps finding
 
 **A keyword must not promise what the blocklist refuses.**
@@ -97,6 +174,39 @@ act.** CCC 2399 is one of two paragraphs in the whole Catechism that say
 is the wrong room to send this reader into. Anchoring a summary paragraph is
 otherwise a smell — `finis-mundi` was the only topic that did it before this —
 because in-brief text restates what the article already said at length.
+
+**A title is a poor oracle for a Catechism span, exactly as it is for a
+document.** `quaestiones.json` already says to read a document's description
+before naming it; the same trap is set in the Catechism's own headings.
+`vocatio` — "What to do with a life" — was anchored on CCC 1877–1889, which is
+headed _the communal character of the human vocation_ and is about subsidiarity,
+socialisation and the state. A reader asking how anyone is supposed to know what
+to do with their life got thirteen paragraphs of social philosophy. **Read the
+paragraphs under a heading before trusting the heading**, and search for the
+reader's situation rather than for the topic's own word.
+
+**A span can be too wide as easily as too short, and the subset scan cannot see
+it.** `discrimen-gentium` reached CSDC 144–148 for the equal dignity of all
+people and carried two sections on male and female complementarity into a page
+about racism; `defensio-sui` carried CSDC 500–501 on wars of aggression into a
+page about an intruder in a house. Nothing fails, nothing duplicates, and the
+reader is handed material addressed to somebody else. Ask of every unit at the
+end of a span whether this reader would have read that far.
+
+**Check whether the Compendium section is older than the Catechism paragraph.**
+CSDC 405 states the pre-2018 death-penalty teaching — _the traditional teaching
+of the Church does not exclude the death penalty_ — while CCC 2267, revised in
+2018, is on `poena-capitalis` and states the current one. Two topics, two
+positions, and the page carrying the older one said nothing about the date. This
+is the blocklist's "a stale answer reads as a current one" arriving from inside
+the corpus rather than from a document it lacks.
+
+**The wrong door hurts more than a thin page.** `graviditas` is titled
+_Pregnancy and miscarriage_, its keywords are _stillbirth_ and _losing the
+baby_, and its second paragraph called abortion an abominable crime. That is not
+a coverage defect — 2270 answers the question — but a paragraph aimed at a
+reader who is not this one, and it is the failure `topics.md` built the doorways
+to prevent.
 
 **A subset is a signal, not a rule.** `quaestiones.json` forbids two topics with
 the same anchor set and says nothing about a topic every one of whose units also
@@ -155,6 +265,17 @@ anchored.
 `masturbatio`'s ground for another, and stays a distinct page because the set and
 its order differ. The rule the file states is about the whole set.
 
+## Noticed while reading, and not a topic's fault
+
+**can. 868 §1 2° renders in Latin in the English Code.** The English edition
+carries _"spes habeatur fundata eum in religione catholica educatum iri, firma
+§3; quae si prorsus deficiat, baptismus secundum praescripta iuris particularis
+differatur, monitis de ratione parentibus"_ where the other clauses are English.
+This is on `baptismus-infantium` and would be on any topic naming that canon.
+Check whether the source page is like this before treating it as a parse defect —
+the clause was amended in 2016 and an untranslated amendment is a plausible state
+for the Holy See's own English text.
+
 ## How to run a batch
 
 Read the paragraphs, in the topic's declared order, with the lead first:
@@ -186,4 +307,5 @@ jq -r '.topics | to_entries
 ```
 
 A batch is one cluster. Sixteen clusters, and the ones not listed above have not
-been read.
+been read — as of 2026-09-10 that is the whole `argument` doorway, which is the
+largest of the four and the one every survey in `topics.md` measures.

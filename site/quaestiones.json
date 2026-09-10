@@ -633,6 +633,7 @@
 			"cluster": "death-and-dying",
 			"ccc": [[1023, 1032]],
 			"lead": 1032,
+			"canons": [[1176, 1176]],
 			"documents": ["spe-salvi"]
 		},
 		"infans-non-baptizatus": {
@@ -640,6 +641,7 @@
 			"cluster": "death-and-dying",
 			"ccc": [[1257, 1261]],
 			"lead": 1261,
+			"canons": [[1183, 1183]],
 			"documents": ["pastoralis-actio"]
 		},
 		"mors-voluntaria": {
@@ -716,7 +718,10 @@
 		"graviditas": {
 			"doorway": "life-event",
 			"cluster": "the-household",
-			"ccc": [[2270, 2271]],
+			"ccc": [
+				[2270, 2270],
+				[1261, 1261]
+			],
 			"documents": ["quaestio-de-abortu", "donum-vitae"]
 		},
 		"sterilitas": {
@@ -740,6 +745,8 @@
 			"doorway": "life-event",
 			"cluster": "the-household",
 			"ccc": [
+				[2217, 2217],
+				[2230, 2230],
 				[2225, 2226],
 				[2229, 2229]
 			],
@@ -753,13 +760,19 @@
 		"filius-a-fide-lapsus": {
 			"doorway": "life-event",
 			"cluster": "the-household",
-			"ccc": [[2221, 2231]],
+			"ccc": [
+				[2221, 2231],
+				[1730, 1732]
+			],
 			"documents": ["familiaris-consortio"]
 		},
 		"parentes": {
 			"doorway": "life-event",
 			"cluster": "the-household",
-			"ccc": [[2214, 2220]],
+			"ccc": [
+				[2214, 2220],
+				[2232, 2232]
+			],
 			"documents": ["familiaris-consortio"]
 		},
 		"cura-parentum": {
@@ -928,6 +941,7 @@
 			"cluster": "the-unseen",
 			"ccc": [
 				[1030, 1032],
+				[1022, 1022],
 				[2116, 2116]
 			],
 			"documents": []
@@ -940,12 +954,14 @@
 				[550, 550],
 				[1673, 1673]
 			],
+			"lead": 1673,
 			"documents": []
 		},
 		"angeli": {
 			"doorway": "ordinary",
 			"cluster": "the-unseen",
 			"ccc": [[328, 336]],
+			"lead": 336,
 			"documents": []
 		},
 		"apparitiones": {
@@ -958,8 +974,9 @@
 			"doorway": "ordinary",
 			"cluster": "the-unseen",
 			"ccc": [
-				[156, 156],
-				[1674, 1676]
+				[1674, 1676],
+				[828, 828],
+				[156, 156]
 			],
 			"documents": []
 		},
@@ -981,6 +998,7 @@
 			"ccc": [
 				[2559, 2565],
 				[2700, 2708],
+				[2709, 2712],
 				[2729, 2731]
 			],
 			"documents": ["spe-salvi", "mens-nostra"]
@@ -993,7 +1011,10 @@
 				[1438, 1438],
 				[2043, 2043]
 			],
-			"canons": [[1249, 1253]],
+			"canons": [
+				[1249, 1253],
+				[919, 919]
+			],
 			"documents": []
 		},
 		"dominica": {
@@ -1045,7 +1066,7 @@
 		"corpus-ornandum": {
 			"doorway": "ordinary",
 			"cluster": "practice",
-			"ccc": [[2288, 2289]],
+			"ccc": [[2288, 2290]],
 			"documents": []
 		},
 		"decimae": {
@@ -1074,7 +1095,12 @@
 		"vocatio": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
-			"ccc": [[1877, 1889]],
+			"ccc": [
+				[2013, 2016],
+				[1533, 1535],
+				[898, 900],
+				[2233, 2233]
+			],
 			"csdc": [[541, 543]],
 			"documents": ["christus-vivit"]
 		},
@@ -1091,7 +1117,11 @@
 		"pecunia-collocanda": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
-			"ccc": [[2431, 2432]],
+			"ccc": [
+				[2413, 2413],
+				[2409, 2409],
+				[2431, 2432]
+			],
 			"csdc": [
 				[358, 360],
 				[368, 369]
@@ -1129,7 +1159,7 @@
 			"cluster": "justice",
 			"ccc": [[1934, 1938]],
 			"csdc": [
-				[144, 148],
+				[144, 145],
 				[433, 433]
 			],
 			"documents": ["nostra-aetate", "fratelli-tutti"]
@@ -1147,19 +1177,29 @@
 		"violentia-domestica": {
 			"doorway": "ordinary",
 			"cluster": "justice",
-			"ccc": [[2356, 2356]],
+			"ccc": [
+				[2356, 2356],
+				[1649, 1649]
+			],
+			"canons": [[1153, 1154]],
 			"documents": ["dignitas-infinita"]
 		},
 		"violentia-digitalis": {
 			"doorway": "ordinary",
 			"cluster": "justice",
-			"ccc": [[2488, 2492]],
+			"ccc": [
+				[2477, 2479],
+				[2488, 2492]
+			],
 			"documents": ["dignitas-infinita", "antiqua-et-nova"]
 		},
 		"debilitas": {
 			"doorway": "ordinary",
 			"cluster": "justice",
-			"ccc": [[2276, 2276]],
+			"ccc": [
+				[2276, 2276],
+				[2274, 2274]
+			],
 			"csdc": [[148, 148]],
 			"documents": ["dignitas-infinita"]
 		},
@@ -1167,7 +1207,7 @@
 			"doorway": "ordinary",
 			"cluster": "justice",
 			"ccc": [[2297, 2298]],
-			"csdc": [[402, 405]],
+			"csdc": [[402, 404]],
 			"documents": ["fratelli-tutti"]
 		},
 		"defensio-sui": {
@@ -1175,9 +1215,8 @@
 			"cluster": "justice",
 			"ccc": [
 				[2263, 2265],
-				[2316, 2317]
+				[2316, 2316]
 			],
-			"csdc": [[500, 501]],
 			"documents": []
 		},
 		"proles-suscipienda": {
