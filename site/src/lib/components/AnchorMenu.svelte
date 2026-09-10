@@ -22,6 +22,15 @@
 	control on this site surfaces its name, and the panel is exactly the size
 	of the row.
 
+	THE ROW ITSELF IS `.actions-panel` / `.panel-actions` / `.panel-action` IN
+	`styles/menus.css`, and this component has no `<style>` of its own left.
+	The popover a highlight raises (`SelectionMenu`) is this panel with View
+	dropped, and two components rendering one class means the rule is global or
+	it is silently unstyled in one of them. Where the panel SITS was never here
+	either — that is `.floating-panel`, measured by `floating.ts`, because a
+	trigger can be a verse number mid-line or a paragraph number out in the
+	margin at `-3.25rem`.
+
 	THE COPY CONFIRMATION IS THE ICON, not a line of text. Swapping the pressed
 	button's glyph for a tick (or a cross when the clipboard refuses) says the
 	same thing in the place the reader is already looking, and — unlike a
@@ -174,11 +183,11 @@
 	bind:this={card.panel}
 	popover="auto"
 	ontoggle={onToggle}
-	class="panel-surface floating-panel anchor-menu-panel"
+	class="panel-surface floating-panel actions-panel"
 	data-link-preview="off"
 >
 	<ul
-		class="anchor-menu-row"
+		class="panel-actions"
 		role="menu"
 		aria-orientation="horizontal"
 		aria-label={t('anchor.actions')}
@@ -186,7 +195,7 @@
 		<li role="none">
 			<a
 				role="menuitem"
-				class="anchor-menu-item"
+				class="panel-action"
 				href={navHref}
 				aria-label={t('anchor.view')}
 				title={t('anchor.view')}
@@ -199,7 +208,7 @@
 			<button
 				type="button"
 				role="menuitem"
-				class="anchor-menu-item"
+				class="panel-action"
 				aria-label={t('anchor.copy')}
 				title={t('anchor.copy')}
 				onclick={copyText}
@@ -211,7 +220,7 @@
 			<button
 				type="button"
 				role="menuitem"
-				class="anchor-menu-item"
+				class="panel-action"
 				aria-label={t('anchor.copyLink')}
 				title={t('anchor.copyLink')}
 				onclick={copyLink}
@@ -224,7 +233,7 @@
 				type="button"
 				role="menuitemcheckbox"
 				aria-checked={bookmarked}
-				class="anchor-menu-item"
+				class="panel-action"
 				class:bookmarked
 				aria-label={bookmarkLabel}
 				title={bookmarkLabel}
@@ -236,61 +245,3 @@
 	</ul>
 	<p class="visually-hidden" aria-live="polite">{announcement}</p>
 </div>
-
-<style>
-	/*
-	 * Everything about WHERE this panel sits — fixed, hidden until it has been
-	 * measured, the UA `[popover]` centring reset, no `z-index` because the
-	 * top layer decides — is `.floating-panel` in app.css, shared with
-	 * `LinkPreview` and with the card a footnote marker opens. The trigger can
-	 * be a verse number mid-line or a paragraph number out in the margin at
-	 * `-3.25rem`, so only measured coordinates (`floating.ts`) can know
-	 * whether the panel fits; all that is left here is the room a row of icon
-	 * buttons wants.
-	 */
-	.anchor-menu-panel {
-		padding: 0.3rem 0.35rem;
-	}
-
-	.anchor-menu-row {
-		display: flex;
-		align-items: center;
-		gap: 0.15rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.anchor-menu-item {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 2.4rem;
-		height: 2.4rem;
-		padding: 0;
-		border: none;
-		border-radius: var(--radius-md);
-		background: transparent;
-		color: var(--color-text);
-		/* Larger than the header's icon buttons on purpose: this panel is a
-		   touch target opened from a number set at 0.75em, often on a phone. */
-		font-size: 1.15rem;
-		line-height: 1;
-		cursor: pointer;
-	}
-
-	.anchor-menu-item:hover {
-		background: var(--color-bg-elevated);
-		color: var(--color-accent);
-	}
-
-	.anchor-menu-item:focus-visible {
-		outline: 2px solid var(--color-focus-ring);
-		outline-offset: -2px;
-	}
-
-	.anchor-menu-item.bookmarked,
-	.anchor-menu-item.bookmarked:hover {
-		color: var(--color-bookmark);
-	}
-</style>

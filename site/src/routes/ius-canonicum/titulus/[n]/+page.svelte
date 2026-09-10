@@ -269,7 +269,11 @@
 					})}
 				/>
 			{:else}
-				<div class="reading-text chapter-body" lang={editions.current.work.language}>
+				<div
+					class="reading-text chapter-body"
+					lang={editions.current.work.language}
+					data-unit-href={unitHref}
+				>
 					{#each editions.current.canons as canon, i (canon.n)}
 						{#each innerHeadings.get(canon.n) ?? [] as row, h (row.node.anchor ?? row.node.title)}
 							{@const dt = canonLawHeadingParts(row.node.title, editions.lang)}
@@ -299,6 +303,7 @@
 						<section
 							class="para"
 							id={`p${canon.n}`}
+							data-unit-href={hrefFor({ kind: 'canonLaw', n: canon.n })}
 							class:unit-bookmarked={bookmarks.has(hrefFor({ kind: 'canonLaw', n: canon.n }))}
 						>
 							<!-- The number links back to the canon's own page: this view

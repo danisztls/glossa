@@ -803,7 +803,11 @@
 					{#if compareActive}
 						<p class="compare-note">{t('compare.loading')}</p>
 					{/if}
-					<div class="reading-text document-body" lang={current.work.language}>
+					<div
+						class="reading-text document-body"
+						lang={current.work.language}
+						data-unit-href={hrefFor({ kind: 'document', slug: data.slug })}
+					>
 						<!-- Matter the source prints with no number on it BEFORE its
 						     numbered flow — the First Vatican Council and nothing else.
 						     Same shape and same treatment as the tail below, in the
@@ -833,6 +837,7 @@
 							<section
 								class="section"
 								id={`s${section.n}`}
+								data-unit-href={sectionHref}
 								class:unit-bookmarked={bookmarks.has(sectionHref)}
 							>
 								<!-- The number links to its own anchor: this is what a reader

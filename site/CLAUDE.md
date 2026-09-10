@@ -2300,6 +2300,35 @@ catches the wheel, the scrollbar and the keys alike.
   reservation (base.css) had never reached: expanding a branch changed the
   list's height, brought a scrollbar in, and re-wrapped every row.
 
+## A highlight resolves to a unit, and the popover acts on that
+
+A selection in the reading text raises bookmark, copy and copy link
+(`SelectionMenu.svelte`, mounted once in `+layout.svelte`; `selection.ts` for
+the half that is testable, rationale in `site/docs/reading.md`).
+
+- **A bookmark is an address, so a highlight is resolved to the unit it lies
+  in.** Storing the offsets would name a different phrase in the next edition,
+  and following the reader across editions is what that store exists for
+  (`bookmarks.svelte.ts`). The exact words go to the CLIPBOARD, where they cost
+  nothing later.
+- **A route opts in with `data-unit-href` and renders nothing.** It goes on the
+  element that already computes that address for the bookmark wash; every
+  `.reading-text` carries the PAGE's address as well, so `closest` takes the
+  nearest and the matter between the units — an introduction, a heading, an
+  unnumbered appendix — still resolves.
+- **A Bible highlight across verses saves the passage; no other work's does.**
+  `hrefFor` already writes `?v=3-5#v3`, and nothing else can spell a range
+  without a new address shape in the sitemap, the worker and the route
+  manifest.
+- **Both ends must be on ONE `.reading-text`**, which is what makes compare
+  mode's divider a boundary rather than a passage claimed out of two texts.
+- **The quotation is cut from a clone with `APPARATUS_SELECTOR` removed** — a
+  verse's span contains its own reference number, so the raw text of a whole
+  verse begins `3In the beginning`.
+- **It cost no new interface strings**, saying what the unit number's panel
+  says in keys every dictionary carries. A surface that does what an existing
+  surface does is worth checking for this before it is written.
+
 ## Focus mode: print's hidden list, with three exceptions and one gate
 
 `data-zen` on `<html>` (`$lib/zen.svelte.ts`, a fifth axis written exactly as

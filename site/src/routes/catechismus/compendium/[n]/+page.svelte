@@ -221,7 +221,11 @@
 					apparatus={{ has: (n) => sharedRefs.has(n), render: sharedCccRefs }}
 				/>
 			{:else}
-				<div class="reading-text compendium-body" lang={editions.current.work.language}>
+				<div
+					class="reading-text compendium-body"
+					lang={editions.current.work.language}
+					data-unit-href={hrefFor({ kind: 'compendium', n: data.n })}
+				>
 					<CompendiumQa question={editions.current.question} lang={editions.lang} />
 				</div>
 			{/if}

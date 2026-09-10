@@ -504,7 +504,16 @@
 					}}
 				/>
 			{:else}
-				<div class="reading-text summa-body" lang={editions.current.work.language}>
+				<div
+					class="reading-text summa-body"
+					lang={editions.current.work.language}
+					data-unit-href={hrefFor({
+						kind: 'summa',
+						part: partSlug,
+						question: data.n,
+						article: null
+					})}
+				>
 					{@render prologue(question.prologue, editions.lang, workId)}
 
 					<!-- The article-less questions (I q. 71, q. 72) hang their
@@ -535,6 +544,7 @@
 						<section
 							class="article"
 							id={`a${article.n}`}
+							data-unit-href={articleHref}
 							class:unit-bookmarked={bookmarks.has(articleHref)}
 						>
 							<ReferenceNumber

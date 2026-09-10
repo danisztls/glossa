@@ -208,7 +208,17 @@
 			     the one selector `--reading-scale` is wired to (app.css), and
 			     compare-mode text is still reading text the font-size preference
 			     should govern, same as the single-column view it stands in for. -->
-			<div class="compare-cell compare-cell-left reading-text" lang={leftLang}>
+			<!-- `data-unit-href` on each CELL and not on the row around them: a
+			     cell is its own `.reading-text`, which is what makes a highlight
+			     dragged across the divider belong to neither column
+			     (`SelectionMenu`), and a unit above the surface it is on cannot
+			     be found from inside it. Both cells name the same address —
+			     the row has ONE number, for the same reason. -->
+			<div
+				class="compare-cell compare-cell-left reading-text"
+				lang={leftLang}
+				data-unit-href={u?.canonicalHref}
+			>
 				<span class="compare-cell-tag">{leftLabel}</span>
 				{#if row.left}
 					{@render left(row.left)}
@@ -216,7 +226,11 @@
 					<p class="compare-missing">{t('compare.missing')}</p>
 				{/if}
 			</div>
-			<div class="compare-cell compare-cell-right reading-text" lang={rightLang}>
+			<div
+				class="compare-cell compare-cell-right reading-text"
+				lang={rightLang}
+				data-unit-href={u?.canonicalHref}
+			>
 				<span class="compare-cell-tag">{rightLabel}</span>
 				{#if row.right}
 					{@render right(row.right)}

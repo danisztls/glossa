@@ -214,7 +214,11 @@
 					})}
 				/>
 			{:else}
-				<div class="reading-text" lang={editions.current.work.language}>
+				<div
+					class="reading-text"
+					lang={editions.current.work.language}
+					data-unit-href={hrefFor({ kind: 'socialDoctrine', n: data.n })}
+				>
 					<ProseBlocks unit={editions.current.paragraph} lang={editions.lang} work={workId} />
 				</div>
 			{/if}

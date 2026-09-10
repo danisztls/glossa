@@ -86,6 +86,7 @@
 	<section
 		class="question"
 		id={`q${question.n}`}
+		data-unit-href={canonicalHref}
 		class:unit-bookmarked={bookmarks.has(canonicalHref)}
 	>
 		<ReferenceNumber

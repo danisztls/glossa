@@ -179,16 +179,26 @@
 									{@const opensChapter =
 										previous !== undefined &&
 										(previous.chapter !== run.chapter || previous.osis !== run.osis)}
+									<!-- The span around each verse carries nothing but its
+									     address, for the popover a highlight raises
+									     (`SelectionMenu`): the passage is one `.reading-text`
+									     and the verses inside it are bare text, so without it a
+									     highlight here would resolve to the whole day's
+									     readings or to nothing. It is what the chapter reader
+									     already wraps every verse in. -->
 									<p class="run" class:broken={runIsBroken(passage.runs, r)}>
 										{#if opensChapter}<span class="chapter-mark" aria-hidden="true"
 												>{run.chapter}</span
-											>{/if}{#each run.verses as verse (verse.n)}<ReferenceNumber
-												n={verse.n}
-												href={verseHref(run, verse.n)}
-												canonicalHref={verseHref(run, verse.n)}
-												label={`${run.book} ${run.chapter}${chapterVerseSep()}${verse.n}`}
-												placement="inline"
-											/>{verse.text}{' '}{/each}
+											>{/if}{#each run.verses as verse (verse.n)}<span
+												data-unit-href={verseHref(run, verse.n)}
+												><ReferenceNumber
+													n={verse.n}
+													href={verseHref(run, verse.n)}
+													canonicalHref={verseHref(run, verse.n)}
+													label={`${run.book} ${run.chapter}${chapterVerseSep()}${verse.n}`}
+													placement="inline"
+												/>{verse.text}</span
+											>{' '}{/each}
 									</p>
 								{/each}
 							</div>

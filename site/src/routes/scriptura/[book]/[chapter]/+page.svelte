@@ -685,7 +685,7 @@
 			<p class="intro-kicker">{t('bible.introduction')}</p>
 
 			{#if intro}
-				<div class="reading-text" lang={introLang}>
+				<div class="reading-text" lang={introLang} data-unit-href={chapterHref}>
 					{#each intro.blocks as block, i (i)}
 						<p class="intro-block">{block.text}</p>
 					{/each}
@@ -850,7 +850,7 @@
 					note={compareVersesDiffer && !divergence ? t('compare.versificationNote') : undefined}
 				/>
 			{:else}
-				<div class="reading-text" lang={current.work.language}>
+				<div class="reading-text" lang={current.work.language} data-unit-href={chapterHref}>
 					<!-- A plate that resolved to no verse belongs to the chapter, and
 					     is drawn before the first verse. `placePlates` keys those 0;
 					     none of the 241 land there today. -->
@@ -891,6 +891,7 @@
 						<span
 							id={`v${verse.n}`}
 							class="verse"
+							data-unit-href={verseHref(verse.n)}
 							class:bookmarked={bookmarks.has(verseHref(verse.n))}
 							class:highlighted={isHighlighted(verse.n)}
 						>

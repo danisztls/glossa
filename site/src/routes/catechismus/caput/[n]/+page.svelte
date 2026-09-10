@@ -383,7 +383,11 @@
 					})}
 				/>
 			{:else}
-				<div class="reading-text ccc-body chapter-body" lang={editions.current.work.language}>
+				<div
+					class="reading-text ccc-body chapter-body"
+					lang={editions.current.work.language}
+					data-unit-href={chapterHref}
+				>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
 						{#each innerHeadings.get(paragraph.n) ?? [] as heading, h (heading.kind + heading.title)}
 							{@const dt = displayTitle(heading, editions.lang)}
@@ -413,6 +417,7 @@
 						<section
 							class="para"
 							id={`p${paragraph.n}`}
+							data-unit-href={hrefFor({ kind: 'ccc', n: paragraph.n })}
 							class:in-brief={paragraph.in_brief}
 							class:unit-bookmarked={bookmarks.has(hrefFor({ kind: 'ccc', n: paragraph.n }))}
 						>

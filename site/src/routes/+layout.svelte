@@ -18,6 +18,10 @@
 	// a single delegated listener rather than something every link-generating
 	// component (RefText, linkifyProse, route TOCs, ...) has to opt into.
 	import LinkPreview from '$lib/components/LinkPreview.svelte';
+	// Mounted once for the same reason, and it reads the same markup: what a
+	// highlight resolves to is the nearest `data-unit-href` above it, so no
+	// reading route imports this or knows it exists.
+	import SelectionMenu from '$lib/components/SelectionMenu.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { carriesUpdate, serviceWorker } from '$lib/sw.svelte';
@@ -553,6 +557,7 @@
 </div>
 
 <LinkPreview />
+<SelectionMenu />
 <InstallHint />
 <UpdateBanner />
 <AdvancedSheet />

@@ -38,6 +38,19 @@ import { computePanelPosition, trackAnchor } from './floating';
  * light-dismissing it, and it fades rather than appearing. Nothing here would
  * fit it without a flag per difference.
  */
+/**
+ * Anything a panel can hang off.
+ *
+ * An element, in the three cases this class was written for — a footnote
+ * marker, a unit number, a plate's caption. `SelectionMenu`'s anchor is a
+ * `Range`, which is not an element and never will be: what a highlight is
+ * anchored to is the highlight, which spans elements and starts and ends
+ * mid-text-node. `place()` only ever asked its anchor for a rectangle, and a
+ * `Range` answers that question exactly as an element does, so this is the
+ * whole of what the fourth consumer needed.
+ */
+export type Measurable = Pick<HTMLElement, 'getBoundingClientRect'>;
+
 export class AnchoredPanel {
 	/** The panel's element id, so a `<button popovertarget>` can name it.
 	 *  Expected to come from `$props.id()`, which is per INSTANCE — a chapter
@@ -57,14 +70,14 @@ export class AnchoredPanel {
 	 *  and to decide whether tracking the anchor is worth a listener. */
 	open: boolean = $state(false);
 
-	readonly #anchor: () => HTMLElement | undefined;
+	readonly #anchor: () => Measurable | undefined;
 
 	/**
 	 * CONSTRUCTED DURING COMPONENT INITIALISATION, which is not decoration:
 	 * the constructor declares the `$effect` that owns this panel's tracking,
 	 * and a rune outside init has no component to attach to.
 	 */
-	constructor(id: string, anchor?: () => HTMLElement | undefined) {
+	constructor(id: string, anchor?: () => Measurable | undefined) {
 		this.id = id;
 		this.#anchor = anchor ?? (() => this.trigger);
 		// Only while open. One of these per note, per unit number and per

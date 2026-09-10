@@ -163,6 +163,70 @@
 }
 
 /*
+ * A ROW OF ICON ACTIONS inside a floating panel, and the reason it is here
+ * rather than inside one of them.
+ *
+ * Two panels draw it: the popover a unit number opens (`AnchorMenu`) and the
+ * one a highlight raises (`SelectionMenu`). They act on the same address and
+ * offer the same things to do with it — the second is the first with View
+ * dropped, the reader being already where View would take them — so a reader
+ * meeting both must not meet two sizes of button, two gaps or two hovers.
+ * Svelte's scoped classes stop at the component boundary, so a class two
+ * components render is either global or silently unstyled in one of them
+ * (site/CLAUDE.md); this is the global.
+ *
+ * `.menu-item` is NOT this. That is a row of a dropdown list — full width, a
+ * label, a tick — where these are fixed squares in a line, sized as touch
+ * targets rather than as text.
+ */
+.actions-panel {
+	padding: 0.3rem 0.35rem;
+}
+
+.panel-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.15rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.panel-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.4rem;
+	height: 2.4rem;
+	padding: 0;
+	border: none;
+	border-radius: var(--radius-md);
+	background: transparent;
+	color: var(--color-text);
+	/* Larger than the header's icon buttons on purpose: these panels are touch
+	   targets opened from a number set at 0.75em or from a phone's own
+	   selection handles, often on a phone. */
+	font-size: 1.15rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.panel-action:hover {
+	background: var(--color-bg-elevated);
+	color: var(--color-accent);
+}
+
+.panel-action:focus-visible {
+	outline: 2px solid var(--color-focus-ring);
+	outline-offset: -2px;
+}
+
+.panel-action.bookmarked,
+.panel-action.bookmarked:hover {
+	color: var(--color-bookmark);
+}
+
+/*
  * A dropdown panel is placed here and CORRECTED in JS.
  *
  * `.menu-panel` anchors its RIGHT edge to its trigger and grows leftward by at

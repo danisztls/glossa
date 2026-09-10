@@ -731,3 +731,98 @@ not the register its chrome is written in. The strings are in the fourteen
 dictionaries holding the full chrome — the rest are partial by design and
 already fall back to English for `ui.close`, so translating this one would draw
 a second completeness boundary.
+
+## What a highlight can do
+
+A selection anywhere in the reading text raises a small popover — bookmark,
+copy, copy link — over the words. `SelectionMenu.svelte`, mounted once in
+`+layout.svelte`, and `selection.ts` for the half worth testing.
+
+**A selection is not an address, and a bookmark is an address and nothing
+else.** So the highlight has to be resolved to one before it can be marked, and
+the resolution is the unit it lies in — the same unit its number would have
+bookmarked had the reader clicked the number instead. What that loses is the
+exact words, deliberately: an offset into the Clementina names a different
+phrase in the Douay-Rheims and no phrase at all in the Portuguese, and a
+bookmark that stops following the reader across editions is the one property
+the store was built to have (`bookmarks.svelte.ts`). What it gains is that
+nothing else in the system had to learn about highlights — the library, the
+ordering, the edition-following and the idempotent save all work on a row that
+looks like every other row.
+
+**The precision goes into the COPY instead, which is where it costs nothing.**
+The clipboard takes exactly the words on screen, in the edition on screen, with
+the unit's citation under them; that happens now rather than being stored, so
+there is no later reader for it to be wrong for. It is the one thing this
+panel does that the unit number's cannot, and it is the reason the panel is
+worth having beyond a second way to bookmark.
+
+**A Bible highlight drawn across verses saves the passage, and no other work's
+does.** `hrefFor` already writes `?v=3-5#v3` for a cited extent, so the range
+costs nothing and says what the reader meant. Nothing else has a way to spell
+"sections 4 through 6", and minting one for this gesture would put a new
+address shape into the sitemap, the edge worker and the route manifest — so
+every other work saves the unit the highlight STARTED in, which is also the
+right answer wherever an extent is meaningless: a highlight dragged across
+compare mode's two columns, or from the end of one work's page into another's.
+
+**A route opts in by saying what its units are, not by rendering anything.**
+`data-unit-href` on the element that already computes that address for the
+bookmark wash, and the panel walks up from the selection to the nearest one.
+Every reading route sets text; a component each of them had to mount is one
+edit per route to add the feature and one more route that quietly does without
+it. The same reasoning `LinkPreview` records for being one delegated
+listener rather than a wrapper per link.
+
+**Every `.reading-text` carries the page's own address as well**, so nearest
+wins and the matter BETWEEN the units still resolves — a chapter's
+introduction, a heading between two verses, the appendix a document prints with
+no number on it. Those have no address of their own, and the fallback is
+exactly what the page's own bookmark control already saves. The two surfaces
+deliberately left unmarked are apparatus about the text rather than the text:
+the wording a canon replaced, behind its disclosure, and compare mode's shared
+row under a pair of cells.
+
+**A cell in compare mode is its own `.reading-text`, which is what makes the
+divider a boundary.** The panel requires both ends of a selection to be on one
+surface, so a highlight dragged across the columns raises nothing rather than
+claiming a passage from a text the reader was only half reading.
+
+**The quotation is the text with the apparatus cut out of it.** A verse's span
+contains its own reference number, so the raw text of a whole-verse selection
+is `3In the beginning…` — a stray digit welded to the first word of every
+quotation the site would ever produce. Footnote and commentary markers are the
+same problem one superscript at a time, and a margin note is a whole sentence
+of somebody else's apparatus landing mid-paragraph. `APPARATUS_SELECTOR` names
+the five classes; the removal is done on a clone of the range, so nothing
+leaves the page.
+
+**It opens on `pointerup` and closes on `selectionchange`, which is not a
+symmetry worth tidying.** Opening on every selection change would drag the
+panel along under the pointer for the length of a sentence being drawn;
+`selectionchange` is used for the one thing pointerup cannot see, a highlight
+the reader has cleared. Pressing a button in the panel would collapse the
+selection out from under it, so the panel prevents `mousedown` — which is also
+what a native selection callout does.
+
+**Desktop only, and the reason is that the platform is already there.** A touch
+screen raises its own selection callout over the words, with its own copy
+button and its own handles, drawn in a layer this page cannot reach; a second
+panel would be fighting it for the same strip of screen and losing. `canHover()`
+is the gate, shared with the hover card, so the two cannot come to disagree
+about what a pointer is.
+
+**The row of icons is `styles/menus.css` and not either component's.** This
+panel is `AnchorMenu` with View dropped — a reader who highlighted a sentence is
+looking at it, so an eye offering to take them to the address they are standing
+on is a control that does nothing — and the three that remain must not arrive
+at two sizes, two gaps and two hovers. Svelte's scoped classes stop at the
+component boundary, so a class two components render is either global or
+silently unstyled in one of them.
+
+**It cost no new interface strings.** The panel says what the unit number's
+panel says, in the `anchor.*` and `bookmark.*` keys every dictionary already
+carries. A surface that does what an existing surface does
+should be checked for this before it is written: the alternative here was
+inventing "Selection actions" forty times to name a panel whose actions are the
+same actions.

@@ -190,7 +190,11 @@
 					})}
 				/>
 			{:else}
-				<div class="reading-text" lang={editions.current.work.language}>
+				<div
+					class="reading-text"
+					lang={editions.current.work.language}
+					data-unit-href={hrefFor({ kind: 'canonLaw', n: data.n })}
+				>
 					<ProseBlocks unit={editions.current.canon} lang={editions.lang} work={workId} />
 				</div>
 			{/if}

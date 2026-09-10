@@ -812,7 +812,11 @@
 					}}
 				/>
 			{:else}
-				<div class="reading-text prayer-body" lang={current.work.language}>
+				<div
+					class="reading-text prayer-body"
+					lang={current.work.language}
+					data-unit-href={hrefFor({ kind: 'prayer', slug: data.slug })}
+				>
 					{@render prayerBody(current.prayer, current.work.language)}
 				</div>
 			{/if}

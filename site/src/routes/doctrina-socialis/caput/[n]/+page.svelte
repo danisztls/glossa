@@ -315,7 +315,11 @@
 					})}
 				/>
 			{:else}
-				<div class="reading-text chapter-body" lang={editions.current.work.language}>
+				<div
+					class="reading-text chapter-body"
+					lang={editions.current.work.language}
+					data-unit-href={chapterHref}
+				>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
 						{#each innerHeadings.get(paragraph.n) ?? [] as row, h (row.node.anchor ?? row.node.title)}
 							{@const dt = documentHeadingParts(row.node.title, editions.lang)}
@@ -349,6 +353,7 @@
 						<section
 							class="para"
 							id={`p${paragraph.n}`}
+							data-unit-href={hrefFor({ kind: 'socialDoctrine', n: paragraph.n })}
 							class:unit-bookmarked={bookmarks.has(
 								hrefFor({ kind: 'socialDoctrine', n: paragraph.n })
 							)}
