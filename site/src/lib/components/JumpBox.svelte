@@ -29,7 +29,15 @@
 	import { parseReference, type ParsedBibleReference } from '$lib/refparse';
 	import { resolveBookToken } from '$lib/book-token';
 	import { usage } from '$lib/usage';
-	import { cccParagraphExists, getCanonicalBook, prayerIndexLang } from '$lib/corpus';
+	import {
+		cccParagraphExists,
+		getCanonicalBook,
+		loadQuaestiones,
+		loadSectionHeadings,
+		prayerIndexLang
+	} from '$lib/corpus';
+	import type { SectionHeadings } from '$lib/section-headings';
+	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
 	import type { suggest as suggestFn } from '$lib/suggest';
@@ -87,8 +95,28 @@
 	 */
 	let fuzzyReady = $state(false);
 	let suggester: typeof suggestFn | undefined = $state();
+	/**
+	 * The two tables `suggest()` cannot read for itself, fetched with the
+	 * suggester and handed to it as arguments.
+	 *
+	 * `headings` is the reader's own shard — every heading printed inside a
+	 * document, the Code and the Compendium of the Social Doctrine, in the
+	 * edition each will open in (`$lib/section-headings.ts`). `topics` is
+	 * which questions this build published; what is MATCHED for them is in
+	 * the dictionaries, which are resident already.
+	 *
+	 * Both land through `$state`, so the list re-derives when they arrive and
+	 * neither needs a `fuzzyReady`-style signal. Both are reloaded whenever
+	 * the box opens under a language they were not fetched for — the shard is
+	 * per language, and a reader who switches would otherwise keep completing
+	 * headings in the one they left.
+	 */
+	let headings: SectionHeadings | undefined = $state();
+	let topics: TopicIndex | undefined = $state();
+	let loadedFor: string | undefined;
 
 	async function loadSuggester() {
+		void loadTables();
 		if (suggester && fuzzyReady) return;
 		// Both in flight at once: neither needs the other to be fetched, and the
 		// ranker is injected into the module rather than passed to it.
@@ -126,6 +154,20 @@
 		suggester = suggest;
 	}
 
+	/** The per-language half of the load, kept apart because it has to be able
+	 *  to run again: the suggester and the ranker are the same in every
+	 *  language and are fetched once. */
+	async function loadTables() {
+		const lang = i18n.lang;
+		if (loadedFor === lang) return;
+		loadedFor = lang;
+		const [shard, published] = await Promise.all([loadSectionHeadings(lang), loadQuaestiones()]);
+		// Guard against a slower earlier language landing last.
+		if (loadedFor !== lang) return;
+		headings = shard;
+		topics = published;
+	}
+
 	/**
 	 * Recomputed on every keystroke, from indexes already in memory — no fetch,
 	 * no debounce. `content.workIdFor`/`langFor` are read here rather than
@@ -148,7 +190,11 @@
 					// twenty-eight they can actually reach (`corpus.ts`'s
 					// `prayerIndexLang`).
 					prayerLang: prayerIndexLang(content.langFor('prayer')),
-					summaLang: content.langFor('summa')
+					socialDoctrineLang: content.langFor('social-doctrine'),
+					canonLawLang: content.langFor('canon-law'),
+					summaLang: content.langFor('summa'),
+					headings,
+					topics
 				})
 			: [];
 	});

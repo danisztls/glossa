@@ -481,6 +481,23 @@ Rationale in `site/docs/finding.md`.
 - **`/bibliotheca` must stay a superset.** It lists every work including the
   ones with their own door. A Library holding only what the bar left out is a
   leftovers bin.
+- **The box completes the headings inside a work, out of one shard per
+  interface language.** `index/section-headings.<lang>.json`, resolved at
+  build time to the edition each work will open in — so the reader fetches
+  ONE (65–100 KB gzipped) on first opening the box, and gets their
+  neighbour's headings for the works their own language has no edition of.
+  `suggest()` takes it as an ARGUMENT, never from a registry; the pruning
+  rule is `src/lib/section-headings.ts` and the design is
+  `site/docs/finding.md`.
+- **A table a build script and the browser must not disagree about lives in a
+  leaf module.** `content-fallback.ts` holds `CONTENT_LANG_FALLBACK` because
+  the shards resolve the same chain `editionInLang` does and Node cannot
+  import `corpus.ts` — `lang-names.ts`'s precedent, and it imports
+  `./lang-names.ts` WITH the extension or the sync cannot resolve it.
+- **A heading and a topic rank below every NAME.** One work's title names the
+  work; a heading is one line inside one edition, and there are five thousand
+  per shard against fifteen hundred names (`SCORE.heading`, `SCORE.topic`,
+  four rows and three).
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

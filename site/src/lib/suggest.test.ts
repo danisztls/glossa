@@ -20,6 +20,7 @@ import fuzzysort from 'fuzzysort';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { dictionaryFor, i18n, loadedDictionary } from './i18n.svelte';
 import { resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
+import type { TopicIndex } from './types';
 
 /**
  * `suggest` labels a row through `tr`, which reads only the dictionaries that
@@ -509,5 +510,124 @@ describe('suggest', () => {
 		// matcher; they agree, and one row is the answer.
 		const found = hrefs('john 3:16');
 		expect(new Set(found).size).toBe(found.length);
+	});
+
+	/**
+	 * The headings printed INSIDE a work, handed in rather than read.
+	 *
+	 * The table is an argument (`SuggestOpts.headings`), which is what makes
+	 * this testable at all: the fixtures carry no documents, no Code and no
+	 * Compendium of the Social Doctrine, so a registry read would have left
+	 * the whole producer exercised by nothing. What the fixtures still cannot
+	 * reach is the DOCUMENT half — a heading is offered only where the
+	 * document itself is in the build — so these rows are the two numbered
+	 * works, which need no manifest.
+	 */
+	describe('section headings', () => {
+		const headings = {
+			documents: {},
+			socialDoctrine: [[20, 'The Church and the human person'] as [number, string]],
+			canonLaw: [[7, 'ECCLESIASTICAL LAWS (Cann. 7 - 22)'] as [number, string]]
+		};
+
+		it('offers a heading of the Compendium of the Social Doctrine', () => {
+			const rows = suggest('human person', { lang: 'en', headings });
+			expect(rows[0].label).toBe('The Church and the human person');
+			expect(rows[0].href).toContain('20');
+			expect(rows[0].badge).toBe('Social Doctrine');
+		});
+
+		it('drops the canon range the edition prints inside the heading', () => {
+			// Five of the seven editions print `(Cann. 7 - 22)` in the title
+			// itself. It is neither part of the name nor anything a reader
+			// types, and `canonLawHeadingParts` is what the reading pages use.
+			const rows = suggest('ecclesiastical laws', { lang: 'en', headings });
+			expect(rows[0].label).toBe('Ecclesiastical Laws');
+			expect(rows[0].detail).toBe('Can. 7');
+		});
+
+		it('offers nothing when the caller passes no table', () => {
+			// The state before the shard lands, and the state under a build
+			// that has none — the box completes names alone, as it always did.
+			expect(suggest('human person', { lang: 'en' })).toEqual([]);
+		});
+
+		it('re-offers the same address when its label is fed back', () => {
+			// The property Tab rests on, asserted for the one kind of row the
+			// sweep above cannot reach.
+			const row = suggest('human person', { lang: 'en', headings })[0];
+			expect(suggest(row.completion, { lang: 'en', headings })[0].href).toBe(row.href);
+		});
+
+		it('ranks a heading below a work that answers to the same words', () => {
+			// `genesis` is a book, and a heading called the same thing is one
+			// line inside one edition. The name of the work wins.
+			const shadowed = {
+				...headings,
+				socialDoctrine: [[20, 'Genesis'] as [number, string]]
+			};
+			const rows = suggest('genesis', { lang: 'en', headings: shadowed });
+			expect(rows[0].kind).toBe('bible');
+			expect(rows.some((row) => row.kind === 'heading')).toBe(true);
+		});
+
+		it('caps the headings so they cannot fill the list', () => {
+			const many = {
+				documents: {},
+				socialDoctrine: Array.from(
+					{ length: 12 },
+					(_, i) => [i + 1, `On charity ${i + 1}`] as [number, string]
+				),
+				canonLaw: []
+			};
+			const rows = suggest('charity', { lang: 'en', headings: many });
+			expect(rows.filter((row) => row.kind === 'heading')).toHaveLength(4);
+		});
+
+		it('takes three characters before it offers a heading at all', () => {
+			// Two characters reach half the corpus; the title tiers still
+			// answer, and no heading does.
+			const rows = suggest('th', { lang: 'en', headings });
+			expect(rows.some((row) => row.kind === 'heading')).toBe(false);
+		});
+	});
+
+	/**
+	 * The topics, whose matchable words are in the DICTIONARIES — the title,
+	 * the question, and a line of keywords nobody sees (`topic-search.ts`).
+	 * The argument carries only which of them this build published.
+	 */
+	describe('topics', () => {
+		const topic = {
+			doorway: 'argument',
+			cluster: 'credibility',
+			ccc: [[27, 43]] as [number, number][]
+		};
+		const topics: TopicIndex = {
+			doorways: ['argument'],
+			clusters: { argument: ['credibility'] },
+			topics: { 'dei-existentia': topic }
+		};
+
+		it('offers a topic by its title', () => {
+			const rows = suggest('whether god exists', { lang: 'en', topics });
+			expect(rows[0].href).toBe('/quaestiones/dei-existentia');
+			expect(rows[0].kind).toBe('topic');
+		});
+
+		it('offers it by the question a reader actually arrives with', () => {
+			expect(hrefs('anyone there', { topics })).toContain('/quaestiones/dei-existentia');
+		});
+
+		it('offers nothing for a build that published none', () => {
+			expect(suggest('whether god exists', { lang: 'en' })).toEqual([]);
+		});
+
+		it('skips a topic this build published and nobody has written', () => {
+			// The strings live in the dictionaries, so a slug with none would
+			// otherwise be offered as a row reading `quaestiones.x.title`.
+			const unwritten: TopicIndex = { ...topics, topics: { 'nondum-scripta': topic } };
+			expect(labels('nondum', { topics: unwritten })).toEqual([]);
+		});
 	});
 });

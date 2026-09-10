@@ -602,6 +602,17 @@ const realDescriptionUrls = import.meta.glob('./corpus-data/index/descriptions.*
 	import: 'default'
 }) as Record<string, string>;
 
+// The jump box's section headings: `index/section-headings.<lang>.json`, one
+// shard per interface language, written by `sync-corpus.mjs`. Globbed as URLs
+// for the descriptions' reason at a larger scale — a reader downloads exactly
+// ONE of these (around 100 KB gzipped, ~5,000 headings), and only on the
+// first opening of the box. `src/lib/section-headings.ts` is the design.
+const realSectionHeadingUrls = import.meta.glob('./corpus-data/index/section-headings.*.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 // Subject tags for the magisterial documents: `index/document-tags.json`,
 // `slug -> [tag, …]`, written by `sync-corpus.mjs` from the tracked
 // `site/document-tags.json`. A URL and not an eager inline for the reason
@@ -1170,6 +1181,17 @@ export interface ContentLocation {
 export function translatedDescriptionsLocation(lang: string): ContentLocation | undefined {
 	const relPath = `index/descriptions.${lang}.json`;
 	const url = realDescriptionUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
+}
+
+/**
+ * Where `lang`'s section headings live, or undefined for a build that has
+ * none — the fixtures and a partial sync, where the box then completes the
+ * works' names alone, exactly as it did before the shards existed.
+ */
+export function sectionHeadingsLocation(lang: string): ContentLocation | undefined {
+	const relPath = `index/section-headings.${lang}.json`;
+	const url = realSectionHeadingUrls[`./corpus-data/${relPath}`];
 	return url ? { relPath, url } : undefined;
 }
 

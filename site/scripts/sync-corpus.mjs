@@ -83,6 +83,8 @@ import {
 
 import { summaPartSlug } from '../src/lib/route-manifest.ts';
 import { baseLang, languageDisplayName } from '../src/lib/lang-names.ts';
+import { fallbackFor } from '../src/lib/content-fallback.ts';
+import { headingRows } from '../src/lib/section-headings.ts';
 import { isUiLang, UI_LANGS } from '../src/lib/ui-langs.ts';
 import { setDocumentTitleSource } from '../src/lib/refs-grammar.ts';
 import { hrefFor } from '../src/lib/address.ts';
@@ -996,6 +998,29 @@ const canonLawIndex = {}; // workId -> { sectionNumbers } -- keyed by WORK ID
 // its own outline in the content tier.
 const canonLawNumbers = []; // canonical URL existence, unioned across editions
 const canonLawEditions = []; // [{ lang, work, sections, structure }] -- the reading-unit pass
+/**
+ * Every edition's own printed headings, for the jump box's shards.
+ *
+ * `slug -> lang -> rows` and not `workId -> rows`, because the shard is
+ * resolved per READER: one edition of each work, the one a reader of that
+ * language would open. `src/lib/section-headings.ts` carries the argument and
+ * `headingRows` the pruning; this is only the collection, filled in the three
+ * branches below and read once, next to the other index writes.
+ *
+ * The Compendium of the Social Doctrine and the Code are one "slug" each
+ * because they are one work each — `hrefFor` addresses them by number, not by
+ * name, so the key is only what keeps the three kinds apart in one table.
+ */
+const headingSources = { documents: new Map(), socialDoctrine: new Map(), canonLaw: new Map() };
+/** What the run prints about the shards — assigned where they are written. */
+let headingShardSummary = 'no section headings';
+const collectHeadings = (into, key, lang, structure, manifest) => {
+	const rows = headingRows(structure, manifest);
+	if (rows.length === 0) return;
+	const byLang = into.get(key) ?? new Map();
+	byLang.set(baseLang(lang), rows);
+	into.set(key, byLang);
+};
 /**
  * EVERY PLACE IN THE CORPUS THAT CITES ANYTHING, in one list, each carrying
  * the address a reader can be sent to — the input to both reverse indexes
@@ -2261,6 +2286,7 @@ for (const workId of workIds) {
 		canonLawIndex[workId] = { sectionNumbers };
 		canonLawNumbers.push(...sectionNumbers);
 		canonLawEditions.push({ lang, work: workId, sections, structure });
+		collectHeadings(headingSources.canonLaw, 'cic', manifest.language, structure, manifest);
 
 		for (const section of sections) {
 			mark({ kind: 'canonLaw', n: section.n }, section, workId, manifest.language);
@@ -2324,6 +2350,7 @@ for (const workId of workIds) {
 		socialDoctrineIndex[workId] = { sectionNumbers };
 		socialDoctrineNumbers.push(...sectionNumbers);
 		socialDoctrineEditions.push({ lang, work: workId, sections, structure });
+		collectHeadings(headingSources.socialDoctrine, 'csdc', manifest.language, structure, manifest);
 
 		for (const section of sections) {
 			mark({ kind: 'socialDoctrine', n: section.n }, section, workId, manifest.language);
@@ -2445,6 +2472,11 @@ for (const workId of workIds) {
 		{
 			const slug = /^([a-z0-9-]+)\.([a-z0-9-]+)\.([a-z]{2,3})$/.exec(workId)?.[2];
 			if (slug) mark({ kind: 'document', slug }, [sections, appendix], workId, manifest.language);
+			// The same slug the address names, which is why the shard is keyed
+			// on it rather than on the work id (`section-headings.ts`).
+			if (slug) {
+				collectHeadings(headingSources.documents, slug, manifest.language, structure, manifest);
+			}
 		}
 		{
 			// Averages 1.2 KB. Written even when empty, so an absent file
@@ -3191,6 +3223,66 @@ writeJson(
 );
 writeJson(path.join(indexDir, 'social-doctrine-chapters.json'), socialDoctrineChapterStarts);
 writeJson(path.join(indexDir, 'social-doctrine-abbreviations.json'), socialDoctrineAbbreviations);
+
+/**
+ * The jump box's section headings, one shard per INTERFACE language.
+ *
+ * `suggest.ts` completes the works' own names and never what they print
+ * inside themselves, so a document's sections, the Code's titles and the
+ * Compendium of the Social Doctrine's divisions were reachable only by
+ * opening the work. `src/lib/section-headings.ts` carries the design; what
+ * happens here is the resolution.
+ *
+ * ONE EDITION PER WORK, PICKED THE WAY THE READER'S PAGE WILL PICK IT.
+ * `editionInLang` walks `[baseLang(lang), ...fallbackFor(baseLang(lang))]`,
+ * and this walks the same list, so the heading offered and the page it opens
+ * come from the same edition. The neighbour is what makes a shard COMPLETE
+ * rather than merely native: a Portuguese reader gets Spanish headings for
+ * the documents with no Portuguese edition, because Spanish is what they will
+ * be shown.
+ *
+ * KEYED ON THE INTERFACE LANGUAGE and not on the content language, because
+ * `suggest()` is handed `i18n.lang` and resolves document editions from it
+ * already (`titleIndex`'s `defaultDocumentWorkId`). The reach-tier languages
+ * — the ones the corpus has no edition in at all — resolve through the same
+ * walk to `en` then `la`, so their shards are byte-identical to English's and
+ * Wrangler uploads one copy.
+ *
+ * A shard is written even when it is empty, on `structure.json`'s rule: an
+ * absent file then means "this build has no headings", which is what the
+ * fixtures and a partial sync look like, rather than "this language has
+ * none".
+ */
+{
+	const pickFor = (chain, byLang) => {
+		for (const candidate of chain) {
+			const rows = byLang.get(candidate);
+			if (rows) return rows;
+		}
+		return undefined;
+	};
+	let shardRows = 0;
+	let shardBytes = 0;
+	for (const uiLang of UI_LANGS) {
+		const chain = [baseLang(uiLang), ...fallbackFor(baseLang(uiLang))];
+		const documents = {};
+		for (const [slug, byLang] of headingSources.documents) {
+			const rows = pickFor(chain, byLang);
+			if (rows) documents[slug] = rows;
+		}
+		const shard = {
+			documents,
+			socialDoctrine: pickFor(chain, headingSources.socialDoctrine.get('csdc') ?? new Map()) ?? [],
+			canonLaw: pickFor(chain, headingSources.canonLaw.get('cic') ?? new Map()) ?? []
+		};
+		const file = path.join(indexDir, `section-headings.${uiLang}.json`);
+		writeJson(file, shard);
+		shardRows += Object.values(documents).reduce((n, rows) => n + rows.length, 0);
+		shardRows += shard.socialDoctrine.length + shard.canonLaw.length;
+		shardBytes += readFileSync(file).length;
+	}
+	headingShardSummary = `${shardRows.toLocaleString('en-US')} heading(s) over ${UI_LANGS.length} language shard(s), ${(shardBytes / 1000).toFixed(0)} KB raw`;
+}
 writeJson(path.join(indexDir, 'prayer-index.json'), prayerIndex);
 
 /**
@@ -3906,6 +3998,7 @@ console.log(
 		`Tags: ${taggedDocuments} document(s), ${distinctTags} distinct term(s). ` +
 		`Topics: ${topicCount} over ${doorways.length} doorway(s), ` +
 		`${Object.values(topicClusters).flat().length} cluster(s). ` +
+		`Headings: ${headingShardSummary}. ` +
 		`Works: ${registeredWorkIds.join(', ')}`
 );
 

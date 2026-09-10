@@ -88,7 +88,11 @@ import sectionNamesTable from './section-names.json';
 import { normalizeBookToken, parseReference } from './refparse';
 import { grammarSurface } from './refs-grammar';
 import { summaQuestionLabel } from './summa-titles';
-import { displayTitle } from './titles';
+import { documentHeadingParts, displayTitle } from './titles';
+import { canonLawHeadingHref, canonLawHeadingParts } from './canonLawNav';
+import { socialDoctrineHeadingHref } from './socialDoctrineNav';
+import { EMPTY_SECTION_HEADINGS, type HeadingRow, type SectionHeadings } from './section-headings';
+import type { TopicIndex } from './types';
 import { isDivergentBook, resolveVulgate, toVulgateCandidates } from './versification';
 import type { StructureNode } from './types';
 
@@ -103,7 +107,13 @@ export type SuggestionKind =
 	| 'prayer'
 	| 'socialDoctrine'
 	| 'summa'
-	| 'section';
+	| 'section'
+	/** A heading printed inside a work — a document's section, one of the
+	 *  Code's titles, a division of the Compendium of the Social Doctrine. */
+	| 'heading'
+	/** A question on `/quaestiones`, which is a door onto the works rather
+	 *  than a unit of any of them. */
+	| 'topic';
 
 export interface Suggestion {
 	/** The canonical URL, written by `hrefFor` and by nothing else. */
@@ -152,6 +162,24 @@ export interface SuggestOpts {
 	socialDoctrineLang?: string;
 	canonLawLang?: string;
 	summaLang?: string;
+	/**
+	 * The headings printed inside the works, as `corpus.ts`'s
+	 * `loadSectionHeadings` hands them over — the reader's own shard, already
+	 * resolved to one edition per work.
+	 *
+	 * AN ARGUMENT AND NOT A REGISTRY READ, which is this module's own rule
+	 * about its language stated for a table: a function that half-reads its
+	 * inputs from a global is one nobody can test, and the shard is fetched
+	 * rather than resident, so a registry would also make every caller wonder
+	 * whether it had arrived. Absent, the box completes names alone, exactly
+	 * as it did before the shards existed.
+	 */
+	headings?: SectionHeadings;
+	/** The topic list (`corpus.ts`'s `loadQuaestiones`), for the same reason
+	 *  and on the same terms. What is matched is in the DICTIONARIES — a
+	 *  topic's title, its question and a line of keywords nobody sees — so
+	 *  this carries only which topics this build published. */
+	topics?: TopicIndex;
 	/** How many rows the caller will draw. */
 	limit?: number;
 }
@@ -189,8 +217,43 @@ const SCORE = {
 	/** The same, matched loosely. Below the prefix band, unlike titles: there
 	 *  are six sections and their names are short, so a loose reading of one is
 	 *  the weakest thing this module offers. */
-	landingFuzzy: 290
+	landingFuzzy: 290,
+	/**
+	 * A question on `/quaestiones`, and every heading printed inside a work,
+	 * sit in bands of their own BELOW everything above.
+	 *
+	 * The order is how directly the row answers a typed name. A work's own
+	 * title names the work; a section landing page names a shelf of them; a
+	 * topic is a door onto passages of several works, written here rather
+	 * than published by anyone; a heading is one line inside one edition, and
+	 * there are five thousand of them against fifteen hundred names. So a
+	 * reader typing `mercy` is offered the works called that before the
+	 * chapters that mention it, which is the order they would read a
+	 * catalogue in.
+	 *
+	 * Within a band the tier still decides — `banded` folds `titleScore`'s
+	 * own answer into the low digits — so an exact heading beats a substring
+	 * one and no heading can climb out of the band.
+	 */
+	topic: 270,
+	heading: 240
 } as const;
+
+/**
+ * A candidate's score, moved into its band.
+ *
+ * `titleScore` answers in hundreds (800 exact … 380 substring) and the bands
+ * are ten apart, so the tier is divided down to a single digit and added.
+ * A loose reading lands one point BELOW the band's floor, which is the same
+ * relation `titleFuzzy` has to the literal tiers.
+ */
+function banded(band: number | undefined, score: number): number {
+	return band === undefined ? score : band + Math.round(score / 100);
+}
+
+function bandedFuzzy(band: number | undefined, score: number): number {
+	return band === undefined ? SCORE.titleFuzzy + score : band - 1 + score;
+}
 
 /** How many rows one producer may contribute before it starts crowding the others. */
 const PER_PRODUCER_CAP = 6;
@@ -323,6 +386,8 @@ interface Context {
 	socialDoctrineLang: string;
 	canonLawLang: string;
 	summaLang: string;
+	headings: SectionHeadings;
+	topics: TopicIndex | undefined;
 	limit: number;
 	sep: string;
 }
@@ -384,6 +449,8 @@ function resolveContext(opts: SuggestOpts): Context {
 		socialDoctrineLang: opts.socialDoctrineLang ?? pickLang(socialDoctrineLangs(), chain),
 		canonLawLang: opts.canonLawLang ?? pickLang(canonLawLangs(), chain),
 		summaLang: opts.summaLang ?? pickLang(summaLangs(), chain),
+		headings: opts.headings ?? EMPTY_SECTION_HEADINGS,
+		topics: opts.topics,
 		limit: opts.limit ?? DEFAULT_LIMIT,
 		sep: grammarSurface(lang).chapterVerseSep
 	};
@@ -1750,6 +1817,243 @@ function titleSuggestions(query: string, ctx: Context): Scored[] {
 }
 
 // --------------------------------------------------------------------------
+// The headings inside a work, and the questions written about several.
+// --------------------------------------------------------------------------
+
+/**
+ * Score one banded index, literally and then loosely, capped.
+ *
+ * The same two passes `titleSuggestions` makes and deliberately not folded
+ * into it: that function carries the numbered-locus branch (`LG 12`), the
+ * sigla and the per-KIND cap over a single index, and neither of the two
+ * producers below wants any of it. What they share is this — fold, score,
+ * demote into a band, take the best few.
+ */
+function bandedHits(needle: string, index: TitleIndex, band: number, cap: number): Scored[] {
+	const hits: Scored[] = [];
+	const literal = new Set<number>();
+	for (const [position, candidate] of index.candidates.entries()) {
+		const score = titleScore(candidate.forms, needle);
+		if (score <= 0) continue;
+		literal.add(position);
+		hits.push({ ...toScored(candidate), score: banded(band, score) });
+	}
+	for (const [position, score] of fuzzyHits(needle, index.haystack)) {
+		if (literal.has(position)) continue;
+		hits.push({
+			...toScored(index.candidates[position]),
+			score: bandedFuzzy(band, score)
+		});
+	}
+	return hits.sort((a, b) => b.score - a.score || a.order - b.order).slice(0, cap);
+}
+
+/** A candidate as a row. The completion is the label for the reason a title's
+ *  is: a heading is its own query, so Tab is a fixed point. */
+function toScored(candidate: TitleCandidate): Scored {
+	return {
+		href: candidate.href,
+		kind: candidate.kind,
+		label: candidate.label,
+		completion: candidate.label,
+		detail: candidate.detail,
+		badge: candidate.badge,
+		score: 0,
+		order: candidate.order
+	};
+}
+
+/**
+ * Memoized on the TABLE ITSELF, not on a language key.
+ *
+ * The shard is fetched, so it arrives after the first index would have been
+ * built and a language key would hand back the empty one for ever. A
+ * `WeakMap` on the object `loadSectionHeadings` resolved is exactly the
+ * lifetime wanted: the same table means the same index, a new table means a
+ * new one, and neither outlives the component holding it.
+ */
+let headingIndexCache = new WeakMap<object, Map<string, TitleIndex>>();
+
+function indexFor<T extends object>(
+	cache: WeakMap<object, Map<string, TitleIndex>>,
+	table: T,
+	key: string,
+	build: () => TitleCandidate[]
+): TitleIndex {
+	let byKey = cache.get(table);
+	if (!byKey) {
+		byKey = new Map();
+		cache.set(table, byKey);
+	}
+	const cached = byKey.get(key);
+	if (cached) return cached;
+	const candidates = build();
+	const haystack: FuzzyTarget[] = [];
+	for (const [index, candidate] of candidates.entries()) {
+		for (const form of candidate.forms) haystack.push({ text: form.folded, index });
+	}
+	const built = { candidates, haystack };
+	byKey.set(key, built);
+	return built;
+}
+
+/** A heading's matchable form is the words it prints, cased as the page will
+ *  case them — the ordinal (`CHAPTER I`) is dropped, being a marker rather
+ *  than a name and one every chapter of every work would answer to. */
+function headingCandidate(
+	raw: string,
+	shown: string,
+	href: string,
+	detail: string | undefined,
+	badge: string,
+	order: number
+): TitleCandidate | undefined {
+	const label = shown.trim() || raw.trim();
+	if (!label) return undefined;
+	return {
+		forms: [{ folded: fold(label), length: label.length }],
+		href,
+		kind: 'heading',
+		label,
+		detail,
+		badge,
+		order
+	};
+}
+
+function headingIndex(ctx: Context): TitleIndex {
+	return indexFor(
+		headingIndexCache,
+		ctx.headings,
+		[ctx.lang, ctx.socialDoctrineLang, ctx.canonLawLang].join('|'),
+		() => {
+			const out: TitleCandidate[] = [];
+			let order = 0;
+			const documentBadge = tr('nav.magisterium', ctx.lang);
+			for (const [slug, rows] of Object.entries(ctx.headings.documents)) {
+				// The document has to be in THIS build: a shard is written per
+				// language over the whole corpus, and a partial sync is a real
+				// state (`sync-corpus.mjs` warns and carries on).
+				const workId = defaultDocumentWorkId(slug, ctx.lang);
+				const manifest = workId ? getDocumentManifest(workId) : undefined;
+				if (!manifest) continue;
+				for (const [n, raw] of rows) {
+					const candidate = headingCandidate(
+						raw,
+						documentHeadingParts(raw, ctx.lang).title,
+						hrefFor({ kind: 'document', slug, n }),
+						manifest.title,
+						documentBadge,
+						order++
+					);
+					if (candidate) out.push(candidate);
+				}
+			}
+			const csdcBadge = tr('nav.socialDoctrine', ctx.lang);
+			const csdcAbbrev = tr('socialDoctrine.abbrev', ctx.lang);
+			for (const [n, raw] of ctx.headings.socialDoctrine) {
+				const candidate = headingCandidate(
+					raw,
+					documentHeadingParts(raw, ctx.socialDoctrineLang).title,
+					socialDoctrineHeadingHref(ctx.socialDoctrineLang, n),
+					`${csdcAbbrev} ${n}`,
+					csdcBadge,
+					order++
+				);
+				if (candidate) out.push(candidate);
+			}
+			const canonBadge = tr('nav.canonLaw', ctx.lang);
+			const canonWord = tr('canonLaw.canon', ctx.lang);
+			for (const [n, raw] of ctx.headings.canonLaw) {
+				// `canonLawHeadingParts` and not the document one: five of the
+				// seven editions print the canon range inside the heading
+				// (`(Cann. 35 – 93)`), which is neither part of the name nor
+				// something a reader types.
+				const candidate = headingCandidate(
+					raw,
+					canonLawHeadingParts(raw, ctx.canonLawLang).title,
+					canonLawHeadingHref(ctx.canonLawLang, n),
+					`${canonWord} ${n}`,
+					canonBadge,
+					order++
+				);
+				if (candidate) out.push(candidate);
+			}
+			return out;
+		}
+	);
+}
+
+/** Headings, capped at four: they are the most numerous thing here by a
+ *  factor of three and the least specific, so a query they all answer must
+ *  not become a list of nothing else. */
+function headingSuggestions(query: string, ctx: Context): Scored[] {
+	const needle = fold(query).trim();
+	if (needle.length < 3) return [];
+	const index = headingIndex(ctx);
+	if (index.candidates.length === 0) return [];
+	return bandedHits(needle, index, SCORE.heading, 4);
+}
+
+let topicIndexCache = new WeakMap<object, Map<string, TitleIndex>>();
+
+/**
+ * The topics, matched on what `/quaestiones`'s own search matches.
+ *
+ * TITLE, QUESTION AND THE KEYWORDS NOBODY SEES — `topic-search.ts` argues all
+ * three, and the third is the load-bearing one: the two visible strings are
+ * written to be READ, so `mors-voluntaria` is titled "After a suicide" and a
+ * reader typing "killed himself" finds nothing without them. They are matched
+ * here and shown nowhere, exactly as on that page.
+ *
+ * The strings are in the DICTIONARIES rather than in the topic file, so a
+ * language without them falls back to English key by key, as `t()` does
+ * everywhere. A key that resolves to itself is a topic this build published
+ * and nobody has written yet: skipped, rather than offered as a row reading
+ * `quaestiones.dei-existentia.title`.
+ */
+function topicIndex(ctx: Context): TitleIndex {
+	const topics = ctx.topics;
+	if (!topics) return { candidates: [], haystack: [] };
+	return indexFor(topicIndexCache, topics, ctx.lang, () => {
+		const out: TitleCandidate[] = [];
+		const badge = tr('quaestiones.landing.title', ctx.lang);
+		let order = 0;
+		for (const slug of Object.keys(topics.topics)) {
+			const named = (part: string) => {
+				const key = `quaestiones.${slug}.${part}`;
+				const value = tr(key, ctx.lang);
+				return value === key ? undefined : value;
+			};
+			const title = named('title');
+			if (!title) continue;
+			const question = named('question');
+			const keywords = named('keywords');
+			out.push({
+				forms: [title, question, keywords]
+					.filter((form): form is string => Boolean(form))
+					.map((form) => ({ folded: fold(form), length: form.length })),
+				href: hrefFor({ kind: 'topic', slug }),
+				kind: 'topic',
+				label: title,
+				detail: question,
+				badge,
+				order: order++
+			});
+		}
+		return out;
+	});
+}
+
+function topicSuggestions(query: string, ctx: Context): Scored[] {
+	const needle = fold(query).trim();
+	if (needle.length < 3) return [];
+	const index = topicIndex(ctx);
+	if (index.candidates.length === 0) return [];
+	return bandedHits(needle, index, SCORE.topic, 3);
+}
+
+// --------------------------------------------------------------------------
 
 /**
  * Every canonical address this fragment could be the beginning of, best first.
@@ -1773,7 +2077,9 @@ export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
 		...bibleSuggestions(query, ctx),
 		...numberedWorkSuggestions(query, ctx),
 		...summaSuggestions(query, ctx),
-		...titleSuggestions(query, ctx)
+		...titleSuggestions(query, ctx),
+		...topicSuggestions(query, ctx),
+		...headingSuggestions(query, ctx)
 	];
 
 	const best = new Map<string, Scored>();
@@ -1793,4 +2099,8 @@ export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
 export function resetSuggestCaches(): void {
 	bookFormsByLang.clear();
 	titleIndexByKey.clear();
+	// Reassigned rather than cleared: a `WeakMap` has no `clear`, which is the
+	// price of keying on the table object instead of on a string.
+	headingIndexCache = new WeakMap();
+	topicIndexCache = new WeakMap();
 }

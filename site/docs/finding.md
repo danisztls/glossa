@@ -1051,6 +1051,70 @@ only where the sentence is true on both**, and the cost of getting that
 backwards is paid in the translated half, silently, in languages nobody here
 reads.
 
+**The box completes what a work is CALLED and, since 2026-09-10, what it
+prints inside itself.** A document's sections, the Code's titles and chapters,
+the Compendium of the Social Doctrine's divisions — 203,073 headings across
+the corpus, reachable before this only by opening the work and reading its
+table of contents, which is the one thing a reader who knows the words cannot
+do quickly. The Bible, the Catechism, its Compendium and the Summa are
+deliberately not in it: their divisions are already offered by name.
+
+**A heading is TEXT, so the shard is resolved per reader and not filtered per
+reader.** Every edition's headings is 1.8 MB before framing, and a reader
+wants one edition of each work — the one they would open. So `sync-corpus.mjs`
+walks `editionInLang`'s own chain per interface language and writes
+`index/section-headings.<lang>.json`: 40 shards, 8.2 MB raw over the build,
+and **the reader fetches ONE, 65–100 KB gzipped, on the first opening of the
+box**. Shipping a shard per language and loading the reader's whole chain
+instead was measured at 256 KB gzipped for the same answer.
+
+**The neighbour is what makes a shard complete rather than merely native.** A
+Portuguese reader's shard carries the Spanish headings of the documents with
+no Portuguese edition, because Spanish is the edition `/documenta/{slug}` will
+show them. A reader who has overridden one work's edition by hand is offered
+that work's headings in the shard's language and lands on the page in theirs —
+the anchor is a unit number, which no edition disagrees about, so the cost is
+a label in the wrong language rather than a row that goes anywhere wrong.
+
+**`CONTENT_LANG_FALLBACK` moved to a leaf module for this.** The build now has
+to resolve the same edition the browser will, and Node cannot import
+`corpus.ts`. `content-fallback.ts` is `lang-names.ts`'s precedent a second
+time, and the general rule both instances teach: **a table a build script and
+the browser must not disagree about cannot live where only the browser can
+read it.**
+
+**A heading and a topic are handed to `suggest()` as ARGUMENTS.** That module's
+own rule about its language — a function whose output half-follows its
+argument and half-follows a global is one nobody can test — applied to a
+table, and it is what makes the producers testable at all: the fixtures carry
+no documents, no Code and no Compendium of the Social Doctrine, so a registry
+read would have left the whole feature exercised by nothing.
+
+**Both new kinds sit in bands below every name.** A work's title names the
+work, a section landing page names a shelf of them, a topic is a door onto
+passages of several, and a heading is one line inside one edition — of which
+there are five thousand per shard against fifteen hundred names. So `mercy`
+offers the works called that before the chapters that mention it, and the
+tier still decides within a band, so an exact heading beats a substring one
+and no heading climbs out. Capped at four rows, the same cap a kind of title
+gets.
+
+**The questions are wired to the box on the same terms, and cost no fetch at
+all beyond the topic list.** What is matched is what `/quaestiones`'s own
+search matches — the title, the question, and the line of keywords nobody sees
+— because those three are in the DICTIONARIES and already resident. The
+keywords are the load-bearing third: `mors-voluntaria` is titled "After a
+suicide" and a reader typing "killed himself" finds nothing without them.
+
+**An index-tier file rides no download wave, and this one accepts that.**
+`partitionAssets` puts every unlisted `.json` under `/immutable/` in the
+content cache — stored on first read, outliving deploys — so a reader who has
+opened the box once has its headings offline for good, and a reader who never
+did has none. That is the translated descriptions' bargain and the wrong one
+for a document's OUTLINE, which is content-tier precisely so it rides the wave
+beside the text it describes; the difference is that an outline is wanted by
+the page already open and a shard is wanted by a control that is not.
+
 **A panel that caps its list rather than itself cannot know where the fold
 is.** The suggestions carried `max-height: min(24rem, 55vh)` and the dialog
 carried nothing, so on a 900px window the list scrolled inside a panel with a
