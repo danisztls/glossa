@@ -188,7 +188,14 @@
 			{#if editions.compareActive && editions.secondary}
 				<!-- The heading is the address and so is the same on both sides;
 				     what genuinely differs is the imprint, which is why only the
-				     copyright field is a two-column row here. -->
+				     copyright field is a two-column row here.
+
+				     AND `CSDC` STAYS A LITERAL HERE though `citationFor` now
+				     reads `socialDoctrine.abbrev`: this is the address, which
+				     is one string for every language by construction, not a
+				     citation composed in the language of whoever typed it.
+				     `/catechismus/{n}` heads itself `CCC` in Portuguese for
+				     the same reason and cites `CIC 1234` in the same breath. -->
 				<h1>CSDC {data.n}</h1>
 				<div class="compare-unit-header">
 					<CompareCopyrightField left={editions.current.work} right={editions.secondary.work} />

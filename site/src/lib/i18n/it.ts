@@ -27,6 +27,7 @@ export const it: Dictionary = {
 	'nav.socialDoctrine': 'Dottrina sociale',
 	'socialDoctrine.landing.title': 'Compendio della Dottrina Sociale della Chiesa',
 	'socialDoctrine.landing.tagline': 'Ciò che la Chiesa insegna sulla vita sociale, in 583 numeri.',
+	'socialDoctrine.abbrev': 'CDSC',
 	'nav.canonLaw': 'Diritto canonico',
 	'canonLaw.landing.title': 'Codice di Diritto Canonico',
 	'canonLaw.landing.tagline':

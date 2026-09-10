@@ -1101,9 +1101,13 @@ const SECTIONS: SectionWords[] = [
 		kind: 'socialDoctrine',
 		path: '/doctrina-socialis',
 		titleKey: 'nav.socialDoctrine',
-		// `CSDC` is what the work's own paragraphs are cited by; the Latin URL
-		// segment is here for the same reason every other one is.
-		extra: ['doctrina-socialis', 'csdc']
+		abbrevKey: 'socialDoctrine.abbrev',
+		// Every siglum any language cites this work by, offered to every
+		// reader whatever the chrome is set to — `EVERY LANGUAGE'S WORD IS
+		// ACCEPTED`, above. `abbrevKey` alone would give a reader only the
+		// one their own dictionary answers, and these are four rearrangements
+		// of the same four words, so none of them can mean anything else.
+		extra: ['doctrina-socialis', 'csdc', 'cdsi', 'cdsc', 'cdse']
 	},
 	{
 		kind: 'canonLaw',

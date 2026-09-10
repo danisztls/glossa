@@ -50,6 +50,7 @@ export const SECTION_KEYS = [
 	'compendium.abbrev',
 	'nav.magisterium',
 	'nav.socialDoctrine',
+	'socialDoctrine.abbrev',
 	'nav.canonLaw',
 	// The Code is cited by its abbreviation and not by its name — `Can. 748`,
 	// never "Code of Canon Law 748" — so this is the form a reader types.

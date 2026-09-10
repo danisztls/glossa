@@ -1675,6 +1675,13 @@ question ("does following this show the reader something"), which is why a
 division address is checked for a division CONTAINING the number and not one
 opening at it.
 
+**A work's siglum is a dictionary key unless the work itself prints one.**
+`CSDC` was a literal in `citationFor` on the ground that every language prints
+it, and the Compendium's own abbreviations table names `AAS`, `DS` and the parts
+of the Summa and never the Compendium — so `socialDoctrine.abbrev` carries the
+form each language built out of its own title, and `CSDC` where none did
+(`docs/finding.md`).
+
 The six tags with **no** config (`hu ro sl sv zh en-gb`) fall to English, and
 that is measured rather than assumed: the Compendium-only languages cite by bare
 number and their prose prints no Scripture locator, so the English table matched

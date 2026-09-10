@@ -226,9 +226,13 @@ over-priming outlives the code that caused it unless it is pruned by hand.
 abbreviation comes from this language's own citation table (`bookAbbrev`),
 falling back to the reader's edition's name for the book, and the separator from
 the same grammar the parser reads — so a Portuguese reader is shown `Jo 3,16`
-and an English one `Jn 3:16`. `CSDC` and `STh` are the works' own sigla and are
-written down; `CCC`, `Comp.` and `Can.` come from the dictionary keys the
-editions print. **The OSIS id is lower-case here** (`john`), and both readers
+and an English one `Jn 3:16`. `STh` is the work's own siglum and is written
+down; `CCC`, `Comp.`, `CSDC` and `Can.` come from the dictionary keys the
+editions print. **The Compendium of the Social Doctrine joined them on
+2026-09-10**: it had been a literal on the ground that every language prints
+`CSDC`, and no edition prints any siglum for it at all — the languages that
+cite it by one built it out of their own title (`CDSI` in pt and es, `CDSC` in
+it, `CDSE` in fr), and `socialDoctrine.abbrev` answers `CSDC` for the rest. **The OSIS id is lower-case here** (`john`), and both readers
 answer `undefined` for the other spelling, so the wrong case draws no example
 rather than erring.
 

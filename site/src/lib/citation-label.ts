@@ -132,13 +132,15 @@ export function citationFor(target: Address): string {
 		case 'compendium':
 		case 'compendiumChapter':
 			return `${t('compendium.abbrev')} ${target.n}`;
-		// A literal, as `/schola`'s specimen has it: this work has no
-		// abbreviation key in any dictionary, and minting one to spell a
-		// siglum every language already prints as `CSDC` would be a decision
-		// about the interface rather than about the citation.
+		// `CSDC` WAS A LITERAL HERE ON THE GROUND THAT EVERY LANGUAGE PRINTS
+		// IT, which no edition bears out: the Compendium's own abbreviations
+		// table never names the Compendium, so there is no witness inside the
+		// text for any form. The languages that cite it by a siglum built one
+		// out of their own title — `CDSI` in pt and es, `CDSC` in it, `CDSE`
+		// in fr — and the dictionaries without a key fall back to `CSDC`.
 		case 'socialDoctrine':
 		case 'socialDoctrineChapter':
-			return `CSDC ${target.n}`;
+			return `${t('socialDoctrine.abbrev')} ${target.n}`;
 		case 'canonLaw':
 		case 'canonLawTitle':
 			return `${t('canonLaw.canon')} ${target.n}`;

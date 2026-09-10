@@ -33,6 +33,8 @@ export const pt: Dictionary = {
 	'socialDoctrine.landing.title': 'Compêndio da Doutrina Social da Igreja',
 	'socialDoctrine.landing.tagline':
 		'O que a Igreja ensina sobre a vida em sociedade, em 583 números.',
+	// `CDSI`, o Compêndio — não `DSI`, que é a doutrina.
+	'socialDoctrine.abbrev': 'CDSI',
 	'nav.canonLaw': 'Direito Canônico',
 	'canonLaw.landing.title': 'Código de Direito Canônico',
 	'canonLaw.landing.tagline':

@@ -28,6 +28,7 @@ export const fr: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium de la doctrine sociale de l’Église',
 	'socialDoctrine.landing.tagline':
 		'Ce que l’Église enseigne sur la vie en société, en 583 numéros.',
+	'socialDoctrine.abbrev': 'CDSE',
 	'nav.canonLaw': 'Droit canonique',
 	'canonLaw.landing.title': 'Code de droit canonique',
 	'canonLaw.landing.tagline':

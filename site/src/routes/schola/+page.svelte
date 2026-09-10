@@ -292,9 +292,9 @@
 	 * into that box, which is the one place a notation is worth having.
 	 *
 	 * The sigla are the works' own and are the forms `suggest.ts`'s `SECTIONS`
-	 * table reads back; the three that have a dictionary key (`ccc.abbrev`,
-	 * `compendium.abbrev`, `canonLaw.canon`) take it, so a reader is shown the
-	 * siglum their own edition prints.
+	 * table reads back; the four that have a dictionary key (`ccc.abbrev`,
+	 * `compendium.abbrev`, `socialDoctrine.abbrev`, `canonLaw.canon`) take it,
+	 * so a reader is shown the siglum their own edition prints.
 	 *
 	 * PRAYERS GET NONE, because they have no notation: they are cited by name,
 	 * which is exactly what the sentence under that row says. An invented
@@ -316,7 +316,7 @@
 		// incipit has to be a real one for the form to be legible, and it is
 		// the document the reading suggestion below already leans on.
 		magisterium: 'Dei Verbum 12',
-		social: 'CSDC 123',
+		social: `${t('socialDoctrine.abbrev')} 123`,
 		law: `${t('canonLaw.canon')} 123`,
 		doctors: 'STh I, 12'
 	}));

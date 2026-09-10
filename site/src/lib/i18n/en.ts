@@ -23,6 +23,14 @@ export const en: Dictionary = {
 	'socialDoctrine.landing.title': 'Compendium of the Social Doctrine of the Church',
 	'socialDoctrine.landing.tagline':
 		'What the Church teaches about life in society, in 583 numbered paragraphs.',
+	// The siglum this work is cited by, which no edition of it prints: the
+	// Compendium's own abbreviations table names AAS, DS and the parts of the
+	// Summa and never itself, so each form here is the one that language's
+	// citations settled on rather than one the text hands us. `CSDC` is the
+	// international form and the answer every dictionary without a key of its
+	// own falls back to. NOT `SDC`, and not `DSI` in Portuguese: both name the
+	// social doctrine, not the 2004 volume that numbers it.
+	'socialDoctrine.abbrev': 'CSDC',
 	'nav.canonLaw': 'Canon Law',
 	'canonLaw.landing.title': 'Code of Canon Law',
 	'canonLaw.landing.tagline': 'The law of the Latin Church, in 1,752 canons across seven books.',
