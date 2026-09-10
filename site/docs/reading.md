@@ -235,6 +235,34 @@ arrives for the one row the reader peeks at. **The excerpt was also what made
 `"hover"` right there**, since a row already said what it was; removing it is
 what moved those rows back into the citation default.
 
+**A section of that library is a work TYPE, and the Magisterium had been an
+exception.** Every document got a heading of its own, borrowed from the "Cited
+in" panel's rule that a work is named once and its references listed under it.
+The two panels are answering different questions: that one shows what cites one
+passage, where the library shows a reader's whole history, so a reader who marks
+widely rather than deeply met a page of headings with a single row under each —
+a shelf per book, and the shelves outnumbering the books on them. **A grouping
+that reads well over one work's references does not survive being applied to
+everything a person has ever marked.** What the per-document headings were
+really carrying is that one document's marks belong together, which is an
+ORDERING and now lives in `compareDocuments`: the documents in the order
+`/documenta` lists them, newest first, and inside each the whole document ahead
+of its sections. The tie-break on the date is load-bearing — three Vatican II
+constitutions were promulgated on 1964-11-21, and a date alone interleaves their
+sections into one run of numbers.
+
+**A heading resolved by a prefix test lets the next section reach the reader
+nameless, and it did so twice.** `/signata` titled its sections with a chain of
+`if`s ending in `documentGroupTitle(key.slice('document:'.length))`, so a key
+matching nothing above was sliced to the empty string and drew an empty `h2`
+over the reader's own marks: `canonLaw` from the day the Code was ingested, and
+`topics` from the day `/quaestiones` shipped, each added by someone reading a
+chain that looked exhaustive. The group key is a closed union now and the titles
+are a `Record` over it, which is the same move `menu-filter.ts`'s
+`UI_LANG_NAMES` made for the language list: **a fallback that can name anything
+cannot report that it named nothing**, so the second occurrence is as silent as
+the first.
+
 **A panel placed by measurement is a family.** `.floating-panel` holds the
 declarations three components had each written out and `floating.ts` holds where
 they go. What deliberately did not move is everything that differs — top layer

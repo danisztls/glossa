@@ -104,8 +104,8 @@ function bibleCitation(target: Extract<Address, { kind: 'bible' }>): string {
 
 /** A document is cited by its own incipit — `Dei Verbum 12` — which is how
  *  the Catechism cites one throughout. The slug stands where the reader's
- *  language carries no edition, the way `documentGroupTitle` already does:
- *  a citation nobody can read is still better than a blank row. */
+ *  language carries no edition: a citation nobody can read is still better
+ *  than a blank row. */
 function documentCitation(target: Extract<Address, { kind: 'document' }>): string {
 	const workId = content.documentWorkIdFor(target.slug);
 	const manifest = workId ? getDocumentManifest(workId) : undefined;

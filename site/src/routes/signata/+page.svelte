@@ -62,8 +62,7 @@
 	import { onMount } from 'svelte';
 	import { parseHref } from '$lib/address';
 	import { bookmarks, migrateBibleHref, type ResolvedBookmark } from '$lib/bookmarks.svelte';
-	import { bookmarkGroup } from '$lib/bookmarkContent';
-	import { compareBookmarks, documentGroupTitle } from '$lib/bookmarkContent';
+	import { bookmarkGroup, compareBookmarks, type BookmarkGroupKey } from '$lib/bookmarkContent';
 	import { addressResolves, citationFor } from '$lib/citation-label';
 	import { getWork } from '$lib/corpus';
 	import { AnchoredPanel } from '$lib/floating.svelte';
@@ -72,19 +71,37 @@
 	import { t } from '$lib/i18n.svelte';
 
 	interface Section {
-		key: string;
+		key: BookmarkGroupKey;
 		order: number;
 		title: string;
 		items: ResolvedBookmark[];
 	}
 
 	const sections = $derived.by((): Section[] => {
-		const byKey = new Map<string, Section>();
+		// The headings deliberately reuse the label each destination already
+		// carries rather than declaring their own strings: they name the same
+		// things. A RECORD over the key union and not a chain of `if`s — the
+		// chain ended in a `document:` prefix strip, so canon law and then
+		// topics each reached the reader under an empty `h2`, one from the day
+		// the Code was ingested and one from the day `/quaestiones` shipped.
+		const titles: Record<BookmarkGroupKey, string> = {
+			scripture: t('nav.bible'),
+			catechism: t('nav.ccc'),
+			compendium: t('nav.compendium'),
+			summa: t('nav.summa'),
+			socialDoctrine: t('nav.socialDoctrine'),
+			canonLaw: t('nav.canonLaw'),
+			prayers: t('nav.prayers'),
+			magisterium: t('nav.magisterium'),
+			// The bar has no topics door, so the page's own title stands in.
+			topics: t('quaestiones.landing.title')
+		};
+		const byKey = new Map<BookmarkGroupKey, Section>();
 		for (const item of bookmarks.list) {
 			const group = bookmarkGroup(item.target);
 			let section = byKey.get(group.key);
 			if (!section) {
-				section = { ...group, title: sectionTitle(group.key), items: [] };
+				section = { ...group, title: titles[group.key], items: [] };
 				byKey.set(group.key, section);
 			}
 			section.items.push(item);
@@ -94,7 +111,8 @@
 				(a, b) => compareBookmarks(a.target, b.target) || a.addedAt.localeCompare(b.addedAt)
 			);
 		}
-		return [...byKey.values()].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+		// One key per order, so nothing breaks a tie.
+		return [...byKey.values()].sort((a, b) => a.order - b.order);
 	});
 
 	// `localStorage`, so it is empty until mount and the section renders no
@@ -135,18 +153,6 @@
 			};
 		})
 	);
-
-	// The work-type headings deliberately reuse the nav labels rather than
-	// declaring their own strings: they name the same works.
-	function sectionTitle(key: string): string {
-		if (key === 'scripture') return t('nav.bible');
-		if (key === 'catechism') return t('nav.ccc');
-		if (key === 'compendium') return t('nav.compendium');
-		if (key === 'summa') return t('nav.summa');
-		if (key === 'socialDoctrine') return t('nav.socialDoctrine');
-		if (key === 'prayers') return t('nav.prayers');
-		return documentGroupTitle(key.slice('document:'.length));
-	}
 
 	// The storage note, behind the `i` this site already uses for a line that
 	// qualifies a page rather than saying it (`DayReadings`, `ArtFigure`).

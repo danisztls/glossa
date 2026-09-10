@@ -28,7 +28,7 @@
  *   marked passage now awaits none.
  */
 
-import { getPrayerMeta, listCanonicalBooks } from './corpus';
+import { getDocumentGroup, getPrayerMeta, listCanonicalBooks } from './corpus';
 import { citationFor } from './citation-label';
 import { summaPartFromSlug, type Address } from './address';
 import { content } from './content.svelte';
@@ -40,8 +40,13 @@ const SUMMA_PART_ORDER = ['I', 'I-II', 'II-II', 'III', 'Suppl'];
 
 /** Position within a library section: canonical order, not save order. A
  *  reader scanning their marked verses wants them in the order the Bible
- *  prints them; `addedAt` decides nothing here except ties. */
-function sortKey(target: Address): [number, number, number] {
+ *  prints them; `addedAt` decides nothing here except ties.
+ *
+ *  DOCUMENTS ARE NOT HERE. Every other section is one work, so a number
+ *  places a mark inside it; the Magisterium section is every document in the
+ *  corpus, and which document a mark belongs to has to be decided before its
+ *  section number means anything (`compareDocuments`). */
+function sortKey(target: Exclude<Address, { kind: 'document' }>): [number, number, number] {
 	switch (target.kind) {
 		case 'prayer': {
 			const meta = getPrayerMeta(content.langFor('prayer'), target.slug);
@@ -61,10 +66,6 @@ function sortKey(target: Address): [number, number, number] {
 		case 'canonLaw':
 		case 'canonLawTitle':
 			return [target.n, 0, 0];
-		// The whole document sorts to the top of its own section, ahead of every
-		// section of it.
-		case 'document':
-			return [target.n ?? 0, 0, 0];
 		case 'summa': {
 			// Part first: question numbers restart at 1 in each part, so `n`
 			// alone would interleave five parts into one run of ones and twos.
@@ -82,24 +83,77 @@ function sortKey(target: Address): [number, number, number] {
 	}
 }
 
+/** The promulgation date of `slug`, which is a fact about the document and
+ *  not about the edition the reader is in — so the Magisterium section keeps
+ *  its order across a language switch. Empty for a slug the corpus no longer
+ *  carries, which sorts it last rather than first. */
+function promulgatedOf(slug: string): string {
+	const editions = Object.values(getDocumentGroup(slug)?.manifests ?? {});
+	return editions.find((m) => m !== undefined)?.promulgated ?? '';
+}
+
+/**
+ * Two marks in the Magisterium section: the documents in the order
+ * `/documenta` lists them — newest first, ties broken by the title on the row
+ * — and the marks inside one document in the order it prints them, the whole
+ * document ahead of every section of it.
+ *
+ * THE TIE-BREAK IS NOT DECORATION. Lumen Gentium and Orientalium Ecclesiarum
+ * were both promulgated on 1964-11-21, and a date alone would interleave
+ * their sections into one run of numbers — the failure `sortKey` already
+ * records for the Summa's parts.
+ */
+function compareDocuments(
+	a: Extract<Address, { kind: 'document' }>,
+	b: Extract<Address, { kind: 'document' }>
+): number {
+	if (a.slug === b.slug) return (a.n ?? 0) - (b.n ?? 0);
+	return (
+		promulgatedOf(b.slug).localeCompare(promulgatedOf(a.slug)) ||
+		citationFor({ kind: 'document', slug: a.slug }).localeCompare(
+			citationFor({ kind: 'document', slug: b.slug })
+		)
+	);
+}
+
 export function compareBookmarks(a: Address, b: Address): number {
+	// A section holds one `bookmarkGroup` key and documents have their own, so
+	// a mixed pair cannot occur; it orders as a tie rather than inventing a
+	// rank for two things that never meet.
+	if (a.kind === 'document' || b.kind === 'document') {
+		return a.kind === 'document' && b.kind === 'document' ? compareDocuments(a, b) : 0;
+	}
 	const ka = sortKey(a);
 	const kb = sortKey(b);
 	return ka[0] - kb[0] || ka[1] - kb[1] || ka[2] - kb[2];
 }
 
-/** The heading a `document:{slug}` library section prints, which is the
- *  document's own citation with no section number on it — including the
- *  fallback to the slug, so a section never renders headless for a document
- *  the reader's language doesn't carry. */
-export function documentGroupTitle(slug: string): string {
-	return citationFor({ kind: 'document', slug });
-}
+/** A library section. Closed, and the page titles it from this union rather
+ *  than from a prefix test, so a section added here cannot reach the reader
+ *  headless — which canon law did for as long as it existed, and topics did
+ *  on the day they were added. */
+export type BookmarkGroupKey =
+	| 'scripture'
+	| 'catechism'
+	| 'compendium'
+	| 'summa'
+	| 'socialDoctrine'
+	| 'canonLaw'
+	| 'prayers'
+	| 'magisterium'
+	| 'topics';
 
 /** Which section of the library a bookmark files under, and where that
- *  section sits. Every document gets its own section (`document:{slug}`),
- *  the way the "Cited in" panel names a work once and lists its references
- *  under it.
+ *  section sits.
+ *
+ *  ONE MAGISTERIUM SECTION, NOT ONE PER DOCUMENT. Each document had its own
+ *  heading through 2026-09-08, on the "Cited in" panel's reasoning that a
+ *  work is named once and its references listed under it. That panel is
+ *  showing one passage's citations; the library is showing a reader's whole
+ *  history, and a reader who marks widely rather than deeply got a page of
+ *  headings with a single row under each — a shelf per book. The section is
+ *  the work TYPE here, as it is for every other row on the page, and
+ *  `compareDocuments` keeps a document's own marks together inside it.
  *
  *  THE SUMMA TOOK ORDER 3, PUSHING PRAYERS AND DOCUMENTS DOWN ONE. The
  *  sequence is a shelf order, not an append log: Scripture, then the two
@@ -108,7 +162,7 @@ export function documentGroupTitle(slug: string): string {
  *  because it is the section that grows without bound. Adding the Summa at
  *  the end instead would have filed it after every encyclical a reader had
  *  ever marked. */
-export function bookmarkGroup(target: Address): { key: string; order: number } {
+export function bookmarkGroup(target: Address): { key: BookmarkGroupKey; order: number } {
 	switch (target.kind) {
 		case 'bible':
 			return { key: 'scripture', order: 0 };
@@ -137,14 +191,13 @@ export function bookmarkGroup(target: Address): { key: string; order: number } {
 			return { key: 'canonLaw', order: 5 };
 		case 'prayer':
 			return { key: 'prayers', order: 6 };
-		// A section and the whole document file together, under the document.
 		case 'document':
-			return { key: `document:${target.slug}`, order: 7 };
+			return { key: 'magisterium', order: 7 };
 		// Last, and the only section here that is not a work. Everything above
 		// is a text somebody else wrote and this site reproduces; a topic is a
 		// page of this site's own arrangement, so it files after the whole
-		// library rather than among it — including after the document sections,
-		// which are the ones that grow without bound.
+		// library rather than among it — including after the Magisterium, which
+		// is the section that grows without bound.
 		case 'topic':
 			return { key: 'topics', order: 8 };
 	}

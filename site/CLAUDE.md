@@ -720,13 +720,13 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   cluster the whole site's ranking leans on. `route-manifest.ts` carries why
   this is not a precedent.
 
-### "Continue reading" lives on `/signata`
+### `/signata`: the marks, and the position beside them
 
-Uncapped, above the marks. A position and a mark answer one question (take me
-back to where I was) and are opposite in how they got there: a mark is a
-decision, a position is a trace kept without being asked. Split across two
-pages, a returning reader had to know which one had kept their place. Two
-sections, not one list, and the trace goes first.
+"Continue reading" lives here too, uncapped, above the marks. A position and a
+mark answer one question (take me back to where I was) and are opposite in how
+they got there: a mark is a decision, a position is a trace kept without being
+asked. Split across two pages, a returning reader had to know which one had kept
+their place. Two sections, not one list, and the trace goes first.
 
 - **The key is `reading.continue`, named for `reading-position.ts` and not for a
   page.** It was `home.continueReading`, then `library.continueReading`, and
@@ -737,6 +737,16 @@ sections, not one list, and the trace goes first.
 - **`/signata`'s title and tagline still name the marks alone** — the accepted
   cost: renaming a route and two strings in thirty-seven dictionaries to cover a
   section one heading already names is a larger claim than the page is making.
+- **A section of the library is a work TYPE, the Magisterium included** — every
+  one but topics, which is not a work at all and files after the lot. Each
+  document had a heading of its own until 2026-09-09, on the "Cited in" panel's
+  rule — right for one passage's references, and a shelf per book for a reader's
+  whole history. `compareDocuments` is what those headings were really carrying:
+  a document's marks stay together, `/documenta`'s order, newest first.
+- **A section heading is a `Record` over `BookmarkGroupKey`, never a prefix
+  test.** The chain of `if`s it replaced ended in a `document:` slice, so the
+  canon law and topics sections each drew an empty `h2` from the day they were
+  added — a chain that looks exhaustive twice over.
 
 ### Colour: two token families, and what each may claim
 
