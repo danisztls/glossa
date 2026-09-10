@@ -739,6 +739,10 @@ export const pt: Dictionary = {
 	'quaestiones.malum.question': 'Se Deus é bom, por que deixou acontecer?',
 	'quaestiones.malum.keywords':
 		'problema do mal, teodiceia, por que comigo, dor, tragédia, injustiça, câncer, crianças inocentes',
+	'quaestiones.scandalum-cleri.title': 'Os abusos na Igreja',
+	'quaestiones.scandalum-cleri.question': 'Por que confiar nela depois disso?',
+	'quaestiones.scandalum-cleri.keywords':
+		'pedofilia, abuso sexual, padres, encobrimento, vítimas, bispos, escândalo, proteção de menores, menores, seminário, sair da Igreja, denunciar',
 	'quaestiones.lex-naturalis.title': 'Moral sem Deus',
 	'quaestiones.lex-naturalis.question': 'Por que alguém precisaria de religião para ser bom?',
 	'quaestiones.lex-naturalis.keywords':
@@ -833,6 +837,10 @@ export const pt: Dictionary = {
 	'quaestiones.charismata.question': 'O que eu senti veio de Deus?',
 	'quaestiones.charismata.keywords':
 		'renovação carismática, falar em línguas, profecia, pentecostal, dons do Espírito, cura interior, repouso no Espírito',
+	'quaestiones.caritas.title': 'O que a Igreja chama de amor',
+	'quaestiones.caritas.question': 'A gente se ama. Por que isso não basta?',
+	'quaestiones.caritas.keywords':
+		'caridade, ágape, eros, paixão, sentimento, estar apaixonado, amor verdadeiro, Deus caritas est, inimigos, Bento XVI, incondicional',
 	'quaestiones.contraceptio.title': 'Contracepção',
 	'quaestiones.contraceptio.question': 'Por que é proibida, se quase todo mundo usa?',
 	'quaestiones.contraceptio.keywords':
@@ -1012,6 +1020,10 @@ export const pt: Dictionary = {
 	'quaestiones.matrimonium-mixtum.question': 'O que se exige, e de qual dos dois?',
 	'quaestiones.matrimonium-mixtum.keywords':
 		'casamento misto, cônjuge não católico, marido evangélico, dispensa, disparidade de culto, criar os filhos católicos, noivo não batizado',
+	'quaestiones.infidelitas-coniugis.title': 'Quando o outro traiu',
+	'quaestiones.infidelitas-coniugis.question': 'Posso ir embora?',
+	'quaestiones.infidelitas-coniugis.keywords':
+		'traição, infidelidade, amante, separação, divórcio, perdoar, sair de casa, nulidade, voltar atrás, adultério, outra mulher, outro homem',
 	'quaestiones.nullitas-matrimonii.title': 'A nulidade matrimonial',
 	'quaestiones.nullitas-matrimonii.question': 'O primeiro casamento ainda vale?',
 	'quaestiones.nullitas-matrimonii.keywords':
@@ -1028,10 +1040,27 @@ export const pt: Dictionary = {
 	'quaestiones.sterilitas.question': 'Não podemos ter filhos. O que nos resta?',
 	'quaestiones.sterilitas.keywords':
 		'não conseguimos engravidar, sem filhos, tentantes, adoção, tratamento de fertilidade, FIV, naprotecnologia',
+	'quaestiones.adoptio.title': 'A adoção',
+	'quaestiones.adoptio.question': 'A criança é nossa aos olhos da Igreja?',
+	'quaestiones.adoptio.keywords':
+		'adotar, filho adotivo, adotado, acolhimento familiar, pais biológicos, batizar criança adotada, parentesco legal, casar com irmão adotivo, guarda',
+	'quaestiones.educatio-filiorum.title': 'Criar os filhos na fé',
+	'quaestiones.educatio-filiorum.question': 'E se eles não quiserem mais ir à missa?',
+	'quaestiones.educatio-filiorum.keywords':
+		'adolescente, primeira comunhão, crisma, catecismo, escola católica, ensino religioso, obrigar, domingo de manhã, catequese, educação dos filhos, batizei e depois',
 	'quaestiones.filius-a-fide-lapsus.title': 'Um filho que deixou a fé',
 	'quaestiones.filius-a-fide-lapsus.question': 'Onde foi que erramos?',
 	'quaestiones.filius-a-fide-lapsus.keywords':
 		'afastado, deixou de praticar, parou de ir à missa, meu filho saiu da igreja, minha filha é atéia, não pratica mais, culpa',
+	'quaestiones.parentes.title': 'Honrar pai e mãe',
+	'quaestiones.parentes.question': 'E se eles não merecerem?',
+	'quaestiones.parentes.keywords':
+		'quarto mandamento, pai ausente, mãe difícil, cortar relações, não falo com ele, mágoa, perdoar os pais, obedecer aos pais, filho já adulto, sogra',
+	'quaestiones.cura-parentum.title': 'Um pai ou uma mãe envelhecendo',
+	'quaestiones.cura-parentum.question':
+		'Não dá mais para deixar sozinho, e eu não dou conta de tudo.',
+	'quaestiones.cura-parentum.keywords':
+		'asilo, casa de repouso, cuidador, demência, Alzheimer, idoso, irmãos que não ajudam, culpa, esgotamento, cuidar da mãe, velhice',
 	'quaestiones.amissio-operis.title': 'Perder o emprego',
 	'quaestiones.amissio-operis.question': 'A Igreja diz alguma coisa sobre estar sem trabalho?',
 	'quaestiones.amissio-operis.keywords':
@@ -1086,11 +1115,23 @@ export const pt: Dictionary = {
 	'quaestiones.dubium-fidei.question': 'Continuo indo à Missa e já não acredito em nada disso.',
 	'quaestiones.dubium-fidei.keywords':
 		'dúvida, perdi a fé, não acredito mais, só por hábito, noite escura, aridez, descrença, fingir',
+	'quaestiones.amor-dei.title': 'Se Deus me ama',
+	'quaestiones.amor-dei.question': 'Acredito nisso para todo mundo, menos para mim.',
+	'quaestiones.amor-dei.keywords':
+		'indigno, sem valor, me odeio, nojo de mim, esquecido por Deus, vergonha, não sinto nada, longe demais, Deus se importa comigo',
+	'quaestiones.oratio-inaudita.title': 'Quando a oração não é atendida',
+	'quaestiones.oratio-inaudita.question': 'Eu pedi, e não aconteceu nada.',
+	'quaestiones.oratio-inaudita.keywords':
+		'Deus não responde, silêncio de Deus, supliquei, novena, promessa, parei de rezar, não fui ouvido, milagre que não veio, cansei de pedir',
 	// --- perguntas comuns ---
 	'quaestiones.divinatio.title': 'Astrologia e adivinhação',
 	'quaestiones.divinatio.question': 'Horóscopo, tarô, os mortos — o que é proibido de fato?',
 	'quaestiones.divinatio.keywords':
 		'ouija, médiuns, cartomante, vidente, leitura de mãos, cristais, nova era, sessão espírita, signo, espiritismo, búzios',
+	'quaestiones.signa.title': 'Sinais',
+	'quaestiones.signa.question': 'Aquilo foi um sinal ou foi coincidência?',
+	'quaestiones.signa.keywords':
+		'Deus falou comigo, providência, discernimento, sonho, abri a Bíblia ao acaso, pedi uma prova, era pra ser, destino, sorte, números repetidos, vontade de Deus',
 	'quaestiones.mortui.title': 'Fantasmas e os mortos',
 	'quaestiones.mortui.question': 'Os mortos podem voltar?',
 	'quaestiones.mortui.keywords':
@@ -1120,6 +1161,10 @@ export const pt: Dictionary = {
 		'Alguma coisa do que se fala sobre o fim dos tempos é da Igreja?',
 	'quaestiones.finis-mundi.keywords':
 		'apocalipse, arrebatamento, anticristo, juízo final, segunda vinda, tribulação, profecias, três dias de escuridão, armagedom',
+	'quaestiones.oratio.title': 'Rezar',
+	'quaestiones.oratio.question': 'Não sei como se faz.',
+	'quaestiones.oratio.keywords':
+		'oração, como rezar, terço, rosário, meditação, contemplação, distração, silêncio, lectio divina, retiro, exercícios espirituais, oração mental',
 	'quaestiones.ieiunium.title': 'Jejum e abstinência',
 	'quaestiones.ieiunium.question': 'O que é obrigatório, e em quais dias?',
 	'quaestiones.ieiunium.keywords':
@@ -1132,6 +1177,10 @@ export const pt: Dictionary = {
 	'quaestiones.otium.question': 'Tem algo de errado em não fazer nada?',
 	'quaestiones.otium.keywords':
 		'sábado, férias, ociosidade, hobbies, esgotamento, excesso de trabalho, tempo livre',
+	'quaestiones.initiatio-adultorum.title': 'Tornar-se católico já adulto',
+	'quaestiones.initiatio-adultorum.question': 'Por onde é que se começa?',
+	'quaestiones.initiatio-adultorum.keywords':
+		'RCIA, catecumenato, catecúmeno, converter, nunca fui crismado, batizado mas nunca pratiquei, entrar na Igreja, quanto tempo leva, vigília pascal, padrinho, catequese de adultos',
 	'quaestiones.baptismus-infantium.title': 'Batizar um bebê',
 	'quaestiones.baptismus-infantium.question': 'Quem pode ser padrinho, e o que se pede dele?',
 	'quaestiones.baptismus-infantium.keywords':

@@ -23,7 +23,8 @@
 		"death penalty to find out. So `clusters` declares an ORDERED list per doorway, each topic",
 		"names one, and the landing page draws the SIXTEEN SHELVES and nothing above them. The",
 		"order inside a cluster is this file's, which is a judgement like `lead` is: within",
-		"`the-rules` contraception comes first because it is the teaching the most readers doubt.",
+		"`the-rules` love comes first, being the sentence the other thirteen are met with, and",
+		"contraception second, being the teaching the most readers doubt.",
 		"",
 		"THE DOORWAY NO LONGER APPEARS ON THE PAGE, and it is still the axis of this file. It says",
 		"WHY a topic is where it is and it sets the order the shelves are drawn in; what it cannot",
@@ -47,7 +48,8 @@
 		"`fecundatio-artificialis` is the case against IVF and `sterilitas` is the couple who cannot",
 		"conceive, leading on CCC 2379 rather than on the prohibition; `homosexualitas` is the",
 		"teaching and `homosexualitas-vivenda` is the person living under it; `mors-voluntaria` is a",
-		"bereavement and `mortis-desiderium` is the reader themselves. Where the two doors produce the",
+		"bereavement and `mortis-desiderium` is the reader themselves; `adulterium` is the person who",
+		"did it and `infidelitas-coniugis` is the one it was done to. Where the two doors produce the",
 		"SAME anchor set and the same order, there is one topic and not two.",
 		"",
 		"THE ANCHOR IS A CATECHISM SPAN, AND THE PASSAGES ARE NOT CHOSEN HERE. That is the whole",
@@ -69,7 +71,7 @@
 		"catechism and those are its summaries. The Compendium of the Social Doctrine is the developed",
 		"teaching those summaries stand on, addressed the same way, at `/doctrina-socialis/{n}`. So a",
 		"topic in the public square carries both: the Catechism says the thing, the Compendium works",
-		"it out. It is named where the Compendium ADDS, and 90 of the 116 topics have no `csdc`",
+		"it out. It is named where the Compendium ADDS, and 99 of the 128 topics have no `csdc`",
 		"because it does not: there is nothing there about purgatory or scruples.",
 		"",
 		"`canons` USED TO BE A LIST OF NUMBERS and now prints the canon. That is why can. 1176 is on",
@@ -134,11 +136,13 @@
 		"for.",
 		"",
 		"WHAT IS DELIBERATELY ABSENT is recorded in docs/research/topics.md: a topic the corpus cannot",
-		"answer properly does not ship. Addiction has CCC 2290-2291 and nothing else; yoga waits on",
-		"`Orationis Formas`; the Latin Mass on `Traditionis Custodes`; same-sex blessings on `Fiducia",
-		"Supplicans`, which is the worst of them, since the three earlier documents ARE here and a",
-		"stale answer reads exactly like a current one. Adding a topic is a deliberate act -- it is a",
-		"claim that a reader asking this will be better served than not asking.",
+		"answer properly does not ship. Addiction has CCC 2290-2291 and nothing else; grief that does",
+		"not lift has the Catechism on the meaning of death and nothing addressed to the one left",
+		"behind; yoga waits on `Orationis Formas`; the Latin Mass on `Traditionis Custodes`;",
+		"same-sex blessings on `Fiducia Supplicans`, which is the worst of them, since the three",
+		"earlier documents ARE here and a stale answer reads exactly like a current one. Adding a",
+		"topic is a deliberate act -- it is a claim that a reader asking this will be better served",
+		"than not asking.",
 		"",
 		"THE TITLES AND THE QUESTIONS ARE NOT HERE. They are prose a reader reads, so they are",
 		"`quaestiones.{slug}.*` in the i18n dictionaries like every other word of chrome, and until all",
@@ -170,6 +174,21 @@
 			"cluster": "credibility",
 			"ccc": [[309, 314]],
 			"documents": ["spe-salvi"]
+		},
+		"scandalum-cleri": {
+			"doorway": "argument",
+			"cluster": "credibility",
+			"ccc": [
+				[2284, 2287],
+				[827, 827],
+				[1550, 1550]
+			],
+			"lead": 2285,
+			"canons": [
+				[1395, 1395],
+				[1398, 1398]
+			],
+			"documents": []
 		},
 		"lex-naturalis": {
 			"doorway": "argument",
@@ -340,6 +359,13 @@
 				[2003, 2003]
 			],
 			"documents": []
+		},
+		"caritas": {
+			"doorway": "argument",
+			"cluster": "the-rules",
+			"ccc": [[1822, 1829]],
+			"csdc": [[204, 208]],
+			"documents": ["deus-caritas-est"]
 		},
 		"contraceptio": {
 			"doorway": "argument",
@@ -648,6 +674,14 @@
 			"canons": [[1124, 1129]],
 			"documents": ["familiaris-consortio"]
 		},
+		"infidelitas-coniugis": {
+			"doorway": "life-event",
+			"cluster": "marriage",
+			"ccc": [[1646, 1649]],
+			"lead": 1649,
+			"canons": [[1152, 1155]],
+			"documents": ["familiaris-consortio"]
+		},
 		"nullitas-matrimonii": {
 			"doorway": "life-event",
 			"cluster": "marriage",
@@ -677,10 +711,47 @@
 			"lead": 2379,
 			"documents": ["donum-vitae", "dignitas-personae"]
 		},
+		"adoptio": {
+			"doorway": "life-event",
+			"cluster": "the-household",
+			"ccc": [[2379, 2379]],
+			"canons": [
+				[110, 110],
+				[1094, 1094]
+			],
+			"documents": ["familiaris-consortio"]
+		},
+		"educatio-filiorum": {
+			"doorway": "life-event",
+			"cluster": "the-household",
+			"ccc": [
+				[2225, 2226],
+				[2229, 2229]
+			],
+			"csdc": [[238, 243]],
+			"canons": [
+				[226, 226],
+				[793, 793]
+			],
+			"documents": ["gravissimum-educationis", "divini-illius-magistri", "catechesi-tradendae"]
+		},
 		"filius-a-fide-lapsus": {
 			"doorway": "life-event",
 			"cluster": "the-household",
 			"ccc": [[2221, 2231]],
+			"documents": ["familiaris-consortio"]
+		},
+		"parentes": {
+			"doorway": "life-event",
+			"cluster": "the-household",
+			"ccc": [[2214, 2220]],
+			"documents": ["familiaris-consortio"]
+		},
+		"cura-parentum": {
+			"doorway": "life-event",
+			"cluster": "the-household",
+			"ccc": [[2218, 2218]],
+			"csdc": [[221, 222]],
 			"documents": ["familiaris-consortio"]
 		},
 		"amissio-operis": {
@@ -792,11 +863,35 @@
 			],
 			"documents": ["spe-salvi"]
 		},
+		"amor-dei": {
+			"doorway": "private-shame",
+			"cluster": "despair",
+			"ccc": [[218, 221]],
+			"lead": 219,
+			"documents": ["dilexit-nos", "dives-in-misericordia"]
+		},
+		"oratio-inaudita": {
+			"doorway": "private-shame",
+			"cluster": "despair",
+			"ccc": [[2734, 2741]],
+			"documents": ["spe-salvi"]
+		},
 		"divinatio": {
 			"doorway": "ordinary",
 			"cluster": "the-unseen",
 			"ccc": [[2115, 2117]],
 			"documents": []
+		},
+		"signa": {
+			"doorway": "ordinary",
+			"cluster": "the-unseen",
+			"ccc": [
+				[302, 305],
+				[2115, 2115],
+				[2119, 2119]
+			],
+			"lead": 2115,
+			"documents": ["gaudete-et-exsultate"]
 		},
 		"mortui": {
 			"doorway": "ordinary",
@@ -850,6 +945,16 @@
 			"ccc": [[668, 682]],
 			"documents": []
 		},
+		"oratio": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [
+				[2559, 2565],
+				[2700, 2708],
+				[2729, 2731]
+			],
+			"documents": ["spe-salvi", "mens-nostra"]
+		},
 		"ieiunium": {
 			"doorway": "ordinary",
 			"cluster": "practice",
@@ -874,6 +979,19 @@
 			"ccc": [[2184, 2188]],
 			"csdc": [[284, 286]],
 			"documents": ["gaudete-in-domino", "laborem-exercens"]
+		},
+		"initiatio-adultorum": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [
+				[1247, 1249],
+				[1229, 1233]
+			],
+			"canons": [
+				[851, 851],
+				[865, 866]
+			],
+			"documents": ["catechesi-tradendae"]
 		},
 		"baptismus-infantium": {
 			"doorway": "ordinary",

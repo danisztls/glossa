@@ -430,15 +430,16 @@ say, which is worse than never offering the topic. So the list below is the
 shipping blocklist, and every line is a claim that the corpus — not the Church —
 is what falls short.
 
-| Held back                     | Why                                                                                                                        |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| The whole of band B           | apostolic letters are not a document kind here; the reckoning is in them                                                   |
-| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                  |
-| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                     |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                  |
-| Debt and interest             | _Vix Pervenit_ absent                                                                                                      |
-| The Latin Mass                | _Traditionis Custodes_ and its predecessors absent                                                                         |
-| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one |
+| Held back                     | Why                                                                                                                                |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| The whole of band B           | apostolic letters are not a document kind here; the reckoning is in them                                                           |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                          |
+| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                             |
+| Grief that does not lift      | CCC 1680–1683 is the Christian meaning of death, not the one left behind; _Salvifici Doloris_ is an apostolic letter and so absent |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                          |
+| Debt and interest             | _Vix Pervenit_ absent                                                                                                              |
+| The Latin Mass                | _Traditionis Custodes_ and its predecessors absent                                                                                 |
+| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one         |
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a

@@ -1712,6 +1712,10 @@ export const en: Dictionary = {
 	'quaestiones.malum.question': 'If God is good, why did he let it happen?',
 	'quaestiones.malum.keywords':
 		'problem of evil, theodicy, why me, pain, tragedy, injustice, cancer, innocent children',
+	'quaestiones.scandalum-cleri.title': 'Abuse in the Church',
+	'quaestiones.scandalum-cleri.question': 'Why should anyone trust it after that?',
+	'quaestiones.scandalum-cleri.keywords':
+		'sex abuse, priests, cover up, scandal, bishops, victims, safeguarding, minors, seminary, left the church, laicised, zero tolerance',
 	'quaestiones.lex-naturalis.title': 'Morality without God',
 	'quaestiones.lex-naturalis.question': 'Why would anyone need religion to be good?',
 	'quaestiones.lex-naturalis.keywords':
@@ -1805,6 +1809,10 @@ export const en: Dictionary = {
 	'quaestiones.charismata.question': 'Was what I felt from God?',
 	'quaestiones.charismata.keywords':
 		'charismatic renewal, speaking in tongues, prophecy, pentecostal, gifts of the spirit, faith healing, resting in the spirit',
+	'quaestiones.caritas.title': 'What the Church means by love',
+	'quaestiones.caritas.question': 'We love each other. Why is that not the answer?',
+	'quaestiones.caritas.keywords':
+		'charity, agape, eros, romantic, feelings, unconditional, true love, deus caritas est, enemies, benedict xvi',
 	'quaestiones.contraceptio.title': 'Contraception',
 	'quaestiones.contraceptio.question': 'Why is it forbidden, when almost everyone does it?',
 	'quaestiones.contraceptio.keywords':
@@ -1981,6 +1989,10 @@ export const en: Dictionary = {
 	'quaestiones.matrimonium-mixtum.question': 'What is required, and of which of us?',
 	'quaestiones.matrimonium-mixtum.keywords':
 		'mixed marriage, non-catholic spouse, protestant husband, dispensation, disparity of cult, raising the children catholic, unbaptised partner',
+	'quaestiones.infidelitas-coniugis.title': 'When a spouse has been unfaithful',
+	'quaestiones.infidelitas-coniugis.question': 'Am I allowed to leave?',
+	'quaestiones.infidelitas-coniugis.keywords':
+		'cheated on me, affair, betrayed, separation, divorce, forgive him, move out, annulment, take him back, adultery, another woman, another man',
 	'quaestiones.nullitas-matrimonii.title': 'Annulment',
 	'quaestiones.nullitas-matrimonii.question': 'Am I still married?',
 	'quaestiones.nullitas-matrimonii.keywords':
@@ -1997,10 +2009,27 @@ export const en: Dictionary = {
 	'quaestiones.sterilitas.question': 'We cannot have children. What is left to us?',
 	'quaestiones.sterilitas.keywords':
 		'cannot conceive, childless, trying for a baby, adoption, fertility treatment, ivf, naprotechnology',
+	'quaestiones.adoptio.title': 'Adoption',
+	'quaestiones.adoptio.question': 'Is the child ours in the Church’s eyes?',
+	'quaestiones.adoptio.keywords':
+		'adopted, fostering, orphan, birth parents, legal relationship, baptising an adopted child, marrying an adopted sibling, can we adopt, foster care',
+	'quaestiones.educatio-filiorum.title': 'Raising a child in the faith',
+	'quaestiones.educatio-filiorum.question': 'What if they will not come to Mass?',
+	'quaestiones.educatio-filiorum.keywords':
+		'teenager, first communion, confirmation, refuses, catholic school, homeschooling, catechism, sunday morning, make them go, godless school, sacraments for children, dragging them',
 	'quaestiones.filius-a-fide-lapsus.title': 'A child who has left the faith',
 	'quaestiones.filius-a-fide-lapsus.question': 'Where did we go wrong?',
 	'quaestiones.filius-a-fide-lapsus.keywords':
 		'lapsed, fallen away, stopped going to mass, my son left the church, my daughter is an atheist, no longer practises, blame',
+	'quaestiones.parentes.title': 'Honouring a parent',
+	'quaestiones.parentes.question': 'What if they do not deserve it?',
+	'quaestiones.parentes.keywords':
+		'fourth commandment, honour thy father and mother, estranged, no contact, abusive mother, cut them off, filial piety, obey my parents, in laws, grown children',
+	'quaestiones.cura-parentum.title': 'A parent growing old',
+	'quaestiones.cura-parentum.question':
+		'They cannot manage alone any more, and I cannot do it all.',
+	'quaestiones.cura-parentum.keywords':
+		'care home, nursing home, dementia, alzheimer, elderly, carer, siblings who do nothing, guilt, burnout, looking after mum, old age, respite',
 	'quaestiones.amissio-operis.title': 'Losing work',
 	'quaestiones.amissio-operis.question': 'Does the Church say anything about being out of work?',
 	'quaestiones.amissio-operis.keywords':
@@ -2055,11 +2084,23 @@ export const en: Dictionary = {
 	'quaestiones.dubium-fidei.question': 'I still go to Mass and I no longer believe any of it.',
 	'quaestiones.dubium-fidei.keywords':
 		'doubt, lost my faith, going through the motions, dark night, dryness, unbelief, pretending',
+	'quaestiones.amor-dei.title': 'Whether God loves me',
+	'quaestiones.amor-dei.question': 'I believe it about everyone else.',
+	'quaestiones.amor-dei.keywords':
+		'unlovable, worthless, does god care, hate myself, unworthy, disgusting, feel nothing, ashamed, forgotten by god, too far gone',
+	'quaestiones.oratio-inaudita.title': 'When prayer is not answered',
+	'quaestiones.oratio-inaudita.question': 'I asked, and nothing happened.',
+	'quaestiones.oratio-inaudita.keywords':
+		'god is silent, no reply, begged, novena, petition, gave up praying, not listening, nothing changed, miracle that never came, why me',
 	// --- ordinary questions ---
 	'quaestiones.divinatio.title': 'Astrology and divination',
 	'quaestiones.divinatio.question': 'Horoscopes, tarot, the dead — what is actually forbidden?',
 	'quaestiones.divinatio.keywords':
 		'ouija, mediums, fortune telling, psychic, palm reading, crystals, new age, seance, zodiac, spiritism',
+	'quaestiones.signa.title': 'Signs',
+	'quaestiones.signa.question': 'Was that a sign, or was it a coincidence?',
+	'quaestiones.signa.keywords':
+		'god told me, providence, discernment, a dream, kept happening, opened the bible at random, asked for proof, meant to be, fate, luck, repeating numbers, guidance',
 	'quaestiones.mortui.title': 'Ghosts and the dead',
 	'quaestiones.mortui.question': 'Can the dead come back?',
 	'quaestiones.mortui.keywords':
@@ -2089,6 +2130,10 @@ export const en: Dictionary = {
 	'quaestiones.finis-mundi.question': 'Is any of the end-times talk the Church’s?',
 	'quaestiones.finis-mundi.keywords':
 		'apocalypse, rapture, antichrist, revelation, second coming, tribulation, prophecies, three days of darkness, doomsday, armageddon',
+	'quaestiones.oratio.title': 'Praying',
+	'quaestiones.oratio.question': 'I do not know how it is done.',
+	'quaestiones.oratio.keywords':
+		'prayer, how to pray, rosary, meditation, contemplation, distracted, silence, lectio divina, retreat, spiritual exercises, mental prayer, words to use',
 	'quaestiones.ieiunium.title': 'Fasting and abstinence',
 	'quaestiones.ieiunium.question': 'What is required, and on which days?',
 	'quaestiones.ieiunium.keywords':
@@ -2101,6 +2146,10 @@ export const en: Dictionary = {
 	'quaestiones.otium.question': 'Is there anything wrong with doing nothing?',
 	'quaestiones.otium.keywords':
 		'sabbath, holidays, idleness, hobbies, burnout, overwork, free time',
+	'quaestiones.initiatio-adultorum.title': 'Becoming Catholic as an adult',
+	'quaestiones.initiatio-adultorum.question': 'Where does anyone even start?',
+	'quaestiones.initiatio-adultorum.keywords':
+		'rcia, ocia, convert, catechumen, join the church, never confirmed, baptised as a baby, instruction, how long does it take, easter vigil, sponsor, converting',
 	'quaestiones.baptismus-infantium.title': 'Baptising a baby',
 	'quaestiones.baptismus-infantium.question': 'Who may be a godparent, and what is asked of them?',
 	'quaestiones.baptismus-infantium.keywords':

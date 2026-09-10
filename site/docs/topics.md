@@ -172,7 +172,7 @@ slug is an address and has to name the same thing in every language, while a
 cluster appears in no URL and is a dictionary key.
 
 **A shelf is closed until it is opened.** The cluster layer removed the wall
-three shelves at a time and left a page a hundred and sixteen rows tall, which
+three shelves at a time and left a page taller than the wall it removed, which
 is the same complaint one level up. Every cluster is a `<details>`, shut by
 default, with the number of questions on its heading — so the page opens as its
 own table of contents, sixteen named shelves, and the reader opens the one they
@@ -301,7 +301,7 @@ both are the failure `route-manifest.ts` already documents:
 What it owes: the `quaestiones.*` keys exist in `en` and `pt` alone, so the
 route stays out of `CHROME_PATHS` until the rest of the dictionaries carry
 them — and this is now the largest block of untranslated chrome on the site,
-two strings per topic plus the sixteen shelf headings. A topic is not offered for
+three strings per topic plus the sixteen shelf headings. A topic is not offered for
 bookmarking yet, though the address supports it — `addressResolves` answers
 `true` for a topic because the index tier deliberately does not carry the topic
 list, and answering `false` would discard a reader's mark on every topic at

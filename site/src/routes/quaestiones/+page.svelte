@@ -97,8 +97,8 @@
 	 * WHICH CLUSTERS THE READER HAS OPENED, and every shelf starts shut.
 	 *
 	 * Sixteen headings a reader can take in at once is what the shelves were
-	 * for; a hundred and sixteen questions drawn under them is the wall they
-	 * were meant to remove, three shelves at a time instead of sixty. Closed by
+	 * for; every question the file holds drawn under them is the wall they were
+	 * meant to remove, three shelves at a time instead of sixty. Closed by
 	 * default, the page IS its own table of contents — sixteen named shelves,
 	 * each saying how many questions it holds — and a reader opens the one they
 	 * came for.
