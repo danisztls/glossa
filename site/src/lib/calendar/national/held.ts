@@ -8,7 +8,7 @@
  * being right — so a country whose layer the oracle still disagrees with is
  * kept out of the picker until it does not.
  *
- * WHY THESE THIRTY-TWO AND NOT OTHERS: they are exactly the calendars
+ * WHY THESE AND NOT OTHERS: they are exactly the calendars
  * `oracle.test.ts` still finds a difference in, and that test asserts the
  * list is exactly that set. So a layer that starts failing cannot be
  * published by accident, and one that is fixed cannot stay held by neglect —
@@ -118,10 +118,8 @@
 
 export const HELD_CALENDARS: Record<string, { days: number; names: number; feed: string }> = {
 	ad: { days: 6, names: 0, feed: 'ES-urge0' },
-	ae: { days: 3, names: 0, feed: 'AE-arab0' },
 	ao: { days: 1, names: 0, feed: 'AO' },
 	au: { days: 4, names: 0, feed: 'AU' },
-	ba: { days: 3, names: 0, feed: 'BA' },
 	cv: { days: 8, names: 0, feed: 'CV' },
 	dk: { days: 3, names: 0, feed: 'DK-kobe0' },
 	ec: { days: 5, names: 0, feed: 'EC' },
@@ -130,18 +128,14 @@ export const HELD_CALENDARS: Record<string, { days: number; names: number; feed:
 	'gb-sct': { days: 1, names: 0, feed: 'QS' },
 	'gb-wls': { days: 6, names: 1, feed: 'QW' },
 	ht: { days: 3, names: 0, feed: 'HT' },
-	id: { days: 1, names: 0, feed: 'ID' },
 	ie: { days: 2, names: 2, feed: 'IE' },
 	mo: { days: 3, names: 0, feed: 'MO' },
 	mp: { days: 3, names: 0, feed: 'MP' },
 	mt: { days: 3, names: 0, feed: 'MT' },
-	nz: { days: 1, names: 0, feed: 'NZ' },
-	pr: { days: 1, names: 1, feed: 'PR' },
 	pt: { days: 3, names: 0, feed: 'PT' },
 	rw: { days: 4, names: 0, feed: 'RW' },
 	sg: { days: 3, names: 0, feed: 'SG' },
 	si: { days: 3, names: 0, feed: 'SI' },
-	sk: { days: 2, names: 0, feed: 'SK' },
 	sm: { days: 1, names: 3, feed: 'IT-zmar5' },
 	th: { days: 1, names: 0, feed: 'TH' },
 	tn: { days: 3, names: 0, feed: 'TN' },

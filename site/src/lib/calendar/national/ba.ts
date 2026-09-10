@@ -180,7 +180,7 @@ export const BOSNIA_HERZEGOVINA: NationalCalendar = {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
 				colour: 'violet',
-				replacesDay: true
+				replaces: 'memorial'
 			}
 		},
 		{
@@ -205,7 +205,7 @@ export const BOSNIA_HERZEGOVINA: NationalCalendar = {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
 				colour: 'violet',
-				replacesDay: true
+				replaces: 'memorial'
 			}
 		},
 		{
@@ -230,11 +230,11 @@ export const BOSNIA_HERZEGOVINA: NationalCalendar = {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
 				colour: 'violet',
-				replacesDay: true
+				replaces: 'memorial'
 			}
 		},
 		{
-			at: { years: { 2025: '12-10', 2026: '12-09', 2027: '12-10' } },
+			at: { month: 12, weekday: 3, nth: 2 },
 			observance: {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
@@ -242,7 +242,7 @@ export const BOSNIA_HERZEGOVINA: NationalCalendar = {
 			}
 		},
 		{
-			at: { years: { 2025: '12-12', 2026: '12-11', 2027: '12-11' } },
+			at: { month: 12, weekday: 5, nth: 2 },
 			observance: {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
@@ -255,7 +255,7 @@ export const BOSNIA_HERZEGOVINA: NationalCalendar = {
 				id: 'ember-day',
 				names: { hr: 'Kvatreni dan', en: 'Ember Day' },
 				colour: 'violet',
-				replacesDay: true
+				replaces: 'memorial'
 			}
 		}
 	],

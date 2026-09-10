@@ -136,7 +136,7 @@ export const AUSTRIA: NationalCalendar = {
 				id: 'holy-spirit',
 				names: { de: 'Heiligen Geist', en: 'The Holy Spirit' },
 				colour: 'red',
-				replacesDay: true
+				replaces: 'day'
 			}
 		}
 	],

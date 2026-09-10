@@ -31,12 +31,6 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Dedication of the Churches of the Vicariate: kept on 2025 2025-10-26, 2026 2026-10-25, 2027 2027-10-31 -- no fixed date and no fixed offset from Easter
- */
-
 export const SOUTHERN_ARABIA: NationalCalendar = {
 	id: 'ae',
 	alsoCovers: ['om', 'ye'],
@@ -54,6 +48,22 @@ export const SOUTHERN_ARABIA: NationalCalendar = {
 		{
 			at: { month: 1, weekday: 6, nth: 3 },
 			celebration: proper('arabia', { en: 'Our Lady of Arabia' }, 's')
+		},
+		/*
+		 * THE LAST SUNDAY OF OCTOBER — 26 October 2025, 25 October 2026,
+		 * 31 October 2027. The derivation left this out as having "no fixed
+		 * date and no fixed offset from Easter", which was true of the
+		 * vocabulary it had: counting Sundays forward reaches the fourth in
+		 * two of those years and the fifth in the third. `nth: -1` counts
+		 * back, and one rule answers all three.
+		 */
+		{
+			at: { month: 10, weekday: 0, nth: -1 },
+			celebration: proper(
+				'dedication-of-the-churches-of-the-vicariate',
+				{ en: 'Dedication of the Churches of the Vicariate' },
+				's'
+			)
 		}
 	],
 	observances: [

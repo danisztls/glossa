@@ -100,7 +100,7 @@ export const CANADA: NationalCalendar = {
 		},
 		{
 			at: '11-11',
-			observance: { id: 'remembrance-day', names: { en: 'Remembrance Day' }, replacesDay: true }
+			observance: { id: 'remembrance-day', names: { en: 'Remembrance Day' }, replaces: 'day' }
 		}
 	],
 	overrides: {

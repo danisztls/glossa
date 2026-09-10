@@ -250,7 +250,7 @@ export const SPAIN: NationalCalendar = {
 					es: 'Témporas de Acción de Gracias y de Petición',
 					en: 'Ember Days of Thanksgiving and Petition'
 				},
-				replacesDay: true
+				replaces: 'day'
 			}
 		}
 	],

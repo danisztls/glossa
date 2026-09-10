@@ -61,7 +61,7 @@ export const INDONESIA: NationalCalendar = {
 					id: 'Kemerdekaan Republik Indonesia',
 					en: 'Independence Day of the Republic of Indonesia'
 				},
-				replacesDay: true
+				replaces: 'day'
 			}
 		}
 	],

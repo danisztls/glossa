@@ -41,6 +41,7 @@ import {
 	formatIsoDate,
 	fromDayNumber,
 	onOrAfter,
+	onOrBefore,
 	toDayNumber,
 	weekday
 } from './computus';
@@ -63,10 +64,20 @@ import {
  * the month falls in — a liturgical year spans two, so the month decides
  * which: January to November belong to the year Easter falls in, December to
  * the one before it, exactly as the fixed sanctorale is keyed.
+ *
+ * A NEGATIVE `nth` COUNTS BACK FROM THE LAST DAY OF THE MONTH, which is a
+ * different rule and not a spelling of a large one: `nth: 5` names a day that
+ * most months do not have, and `nth: -1` names one every month does. The
+ * month's last day is the day before the first of the next, and `Date.UTC`
+ * rolls a thirteenth month into January, so December needs no case of its own.
  */
 function movableDay(rule: MovableRule, a: Anchors): DayNumber {
 	if ('fromEaster' in rule) return a.easter + rule.fromEaster;
 	const civilYear = rule.month === 12 ? a.year - 1 : a.year;
+	if (rule.nth < 0) {
+		const last = onOrBefore(toDayNumber(civilYear, rule.month + 1, 1) - 1, rule.weekday);
+		return last + 7 * (rule.nth + 1);
+	}
 	const first = onOrAfter(toDayNumber(civilYear, rule.month, 1), rule.weekday);
 	return first + 7 * (rule.nth - 1);
 }
@@ -447,40 +458,71 @@ export function buildYear(
 
 		const notObligatory = merged.nationalCalendar?.notObligatory ?? [];
 
-		// Observances (`Observance` in `../types.ts`): named by three of these
-		// calendars, ranked by none. Attached on any day that is not a Sunday
-		// — including one an obligatory memorial has taken, which Germany's
-		// Whit Monday requires. The two Sundays in the oracle's three years
-		// carry no observance, and that is the whole of the evidence for the
-		// rule; it is said here rather than assumed away.
+		// Observances (`Observance` in `../types.ts`): named by these calendars,
+		// ranked by none — so what decides whether one is shown is the rank of
+		// the day it lands on, and there are three answers rather than one.
+		//
+		// A SOLEMNITY LEAVES NO ROOM FOR ONE AT ALL. Not a rule anybody wrote
+		// down and one four calendars agree on: Australia and New Zealand
+		// print no ANZAC Day on 25 April 2025, a Friday in the Octave of
+		// Easter; Slovakia no Ember Day on 15 September 2027, Our Lady of
+		// Sorrows being its patronal solemnity; and Slovakia and Bosnia none
+		// on 8 December 2027, the Immaculate Conception. A FEAST DOES NOT
+		// SUPPRESS ONE — Slovakia keeps its Ember Day beside Saint Matthias on
+		// 14 May 2027 — which is what makes this a threshold and not a general
+		// deference to whatever outranks it.
+		//
+		// Below that, `replacesDay` renames the day and a plain observance
+		// sits beside it. The two are separated because only the first is
+		// allowed onto a Sunday: Indonesia's Independence Day IS 17 August
+		// whatever the day of the week, and 17 August 2025 was the Twentieth
+		// Sunday in Ordinary Time.
 		const observances: Observance[] = [];
 		let kept_ = winner;
 		let offered = optional;
-		if (winner.rank !== 'sunday') {
-			const { year: civil } = fromDayNumber(n);
-			for (const { at, observance } of merged.nationalCalendar?.observances ?? []) {
-				const on =
-					typeof at === 'string'
-						? at === monthDay(n)
-						: 'years' in at
-							? at.years[civil] === monthDay(n)
-							: movableDay(at, a) === n;
-				if (!on) continue;
-				// `replacesDay` — Spain's Ember Days. The weekday keeps its
-				// class and takes the observance's name and colour, and the
-				// optional memorial it would have offered is not offered.
-				if (observance.replacesDay && winner.rank === 'weekday') {
-					kept_ = {
-						...winner,
-						id: observance.id,
-						names: observance.names,
-						colour: observance.colour ?? 'white'
-					};
-					offered = [];
-					continue;
-				}
-				observances.push(observance);
+		const { year: civil } = fromDayNumber(n);
+		for (const { at, observance } of merged.nationalCalendar?.observances ?? []) {
+			const on =
+				typeof at === 'string'
+					? at === monthDay(n)
+					: 'years' in at
+						? at.years[civil] === monthDay(n)
+						: movableDay(at, a) === n;
+			if (!on) continue;
+			if (winner.precedence <= PRECEDENCE.PROPER_SOLEMNITY) continue;
+			// `replaces` — Spain's Ember Days, Indonesia's Independence Day,
+			// Bosnia's Ember Saturdays. The day keeps its class and takes the
+			// observance's name and colour, and the optional memorials it
+			// would have offered are not offered.
+			//
+			// HOW FAR IT REACHES IS THE CONFERENCE'S CLAIM AND NOT A RULE HERE
+			// — see `replaces` in `../types.ts`, where the four calendars that
+			// keep the memorial and the one that does not are set beside each
+			// other.
+			const uninscribed = winner.rank === 'weekday' || winner.rank === 'sunday';
+			const takesTheDay =
+				observance.replaces === 'memorial'
+					? uninscribed || winner.rank === 'memorial'
+					: observance.replaces === 'day' && uninscribed;
+			if (takesTheDay) {
+				// REBUILT FROM THE TEMPORAL DAY AND NOT FROM THE WINNER, which
+				// is the same celebration except in the case this exists for:
+				// where a memorial had claimed the day, keeping the winner
+				// left the Ember Day ranked as a memorial, and Bosnia's
+				// 27 September 2025 came out `memorial|violet` against the
+				// feed's `day|violet`. An observance renames the DAY, and the
+				// day is the one the temporal cycle put there.
+				kept_ = {
+					...t.celebration,
+					id: observance.id,
+					names: observance.names,
+					colour: observance.colour ?? 'white'
+				};
+				offered = [];
+				continue;
 			}
+			if (winner.rank === 'sunday') continue;
+			observances.push(observance);
 		}
 
 		days.set(n, {

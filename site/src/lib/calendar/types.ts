@@ -360,17 +360,35 @@ export interface Observance {
 	 *  the Holy Spirit rather than a civil day. */
 	colour?: Colour;
 	/**
-	 * This one IS the day rather than a note beside it.
+	 * This one IS the day rather than a note beside it — and how far down it
+	 * reaches, which is a distinction two calendars insist on.
 	 *
-	 * Spain's Ember Days of Thanksgiving and Petition are the case, and they
-	 * are the reason the flag exists rather than a second concept: the feeds
-	 * emit them INSTEAD of the ferial row, in white, and the optional memorial
-	 * that would otherwise be offered — Saint Bruno on 6 October 2025 — is not
-	 * offered. That is what Universal Norms nn. 45–47 describe: on Rogation
-	 * and Ember Days the Mass IS the day's, in the manner the conference lays
-	 * down, so the weekday keeps its class and changes its name and colour.
+	 * `'day'` takes the day the calendar had not inscribed anything on.
+	 * Spain's Ember Days of Thanksgiving and Petition are the case it was
+	 * written for: the feeds emit them INSTEAD of the ferial row, in white,
+	 * and the optional memorial that would otherwise be offered — Saint Bruno
+	 * on 6 October 2025 — is not offered. That is what Universal Norms
+	 * nn. 45–47 describe: on Rogation and Ember Days the Mass IS the day's, in
+	 * the manner the conference lays down, so the day keeps its class and
+	 * changes its name and colour. A SUNDAY IS SUCH A DAY, which Indonesia is
+	 * the one witness for — Independence Day is 17 August whatever the day of
+	 * the week, and 17 August 2025 was the Twentieth Sunday in Ordinary Time.
+	 *
+	 * `'memorial'` takes it from an obligatory memorial as well, and ONLY
+	 * BOSNIA DOES THIS. Its Ember Saturdays print alone: 27 September 2025 is
+	 * the Ember Day and not Vincent de Paul, 13 December 2025 the Ember Day
+	 * and not Lucy, and neither saint is kept anywhere else that year — where
+	 * Croatia, which appoints no Ember Saturday, keeps both on their days.
+	 *
+	 * THE DIFFERENCE IS THE CONFERENCE'S AND NOT THE ENGINE'S, which is what
+	 * makes this a field rather than a rule: Austria's and Liechtenstein's
+	 * Monday of the Holy Spirit and Malaysia's Malaysia Day land on an
+	 * obligatory memorial too — Mary Mother of the Church, Our Lady of
+	 * Sorrows — and their feeds print the observance AND the memorial. One
+	 * rule reaching every `'day'` row would silently delete a saint from four
+	 * calendars to add an Ember Day to one.
 	 */
-	replacesDay?: boolean;
+	replaces?: 'day' | 'memorial';
 }
 
 /**
@@ -390,6 +408,14 @@ export interface Observance {
  *    Philippines' Santo Niño is the third Sunday of January; the United
  *    States' Labor Day and Thanksgiving are the first Monday of September
  *    and the fourth Thursday of November.
+ *
+ * A NEGATIVE `nth` COUNTS BACK FROM THE END: −1 is the last such weekday of
+ * the month, −2 the second to last. It is not a convenience for writing
+ * `nth: 5` — the two differ in exactly the months where a fifth Sunday does
+ * not exist, which is most of them, and that is the case Southern Arabia
+ * keeps the Dedication of the Churches of the Vicariate on. Counting forward
+ * cannot spell "the last", so a rule that means it had to be written as a
+ * table of years, and a table of years is a fact about three of them.
  */
 export type MovableRule =
 	{ fromEaster: number } | { month: number; weekday: 0 | 1 | 2 | 3 | 4 | 5 | 6; nth: number };

@@ -158,19 +158,19 @@ export const SLOVAKIA: NationalCalendar = {
 			observance: { id: 'ember-day', names: { sk: 'Suché dny', en: 'Ember Day' }, colour: 'violet' }
 		},
 		{
-			at: { years: { 2025: '09-17', 2026: '09-16', 2027: '09-17' } },
+			at: { month: 9, weekday: 3, nth: 3 },
 			observance: { id: 'ember-day', names: { sk: 'Suché dny', en: 'Ember Day' }, colour: 'violet' }
 		},
 		{
-			at: { years: { 2025: '09-19', 2026: '09-18', 2027: '09-18' } },
+			at: { month: 9, weekday: 5, nth: 3 },
 			observance: { id: 'ember-day', names: { sk: 'Suché dny', en: 'Ember Day' }, colour: 'violet' }
 		},
 		{
-			at: { years: { 2025: '09-20', 2026: '09-19', 2027: '12-10' } },
+			at: { month: 9, weekday: 6, nth: 3 },
 			observance: { id: 'ember-day', names: { sk: 'Suché dny', en: 'Ember Day' }, colour: 'violet' }
 		},
 		{
-			at: { years: { 2025: '12-10', 2026: '12-09', 2027: '12-11' } },
+			at: { month: 12, weekday: 3, nth: 2 },
 			observance: { id: 'ember-day', names: { sk: 'Suché dny', en: 'Ember Day' }, colour: 'violet' }
 		},
 		{

@@ -124,7 +124,14 @@ export interface CalendarPage {
  *  else here belongs to the page. */
 export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	ar: { slug: 'argentina', lang: 'es', name: 'Calendario litúrgico argentino' },
+	// The vicariate, not a country: it covers the Emirates, Oman and Yemen.
+	ae: { slug: 'southern-arabia', lang: 'en', name: 'Liturgical Calendar (Southern Arabia)' },
 	at: { slug: 'austria', lang: 'de', name: 'Österreichischer Liturgischer Kalender' },
+	ba: {
+		slug: 'bosnia-and-herzegovina',
+		lang: 'hr',
+		name: 'Bosanskohercegovački liturgijski kalendar'
+	},
 	be: { slug: 'belgium', lang: 'nl', name: 'Belgische liturgische kalender' },
 	bn: { slug: 'brunei', lang: 'en', name: 'Liturgical Calendar (Brunei)' },
 	bo: { slug: 'bolivia', lang: 'es', name: 'Calendario litúrgico boliviano' },
@@ -150,6 +157,7 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	hk: { slug: 'hong-kong', lang: 'zht', name: '香港禮儀日曆' },
 	hr: { slug: 'croatia', lang: 'hr', name: 'Hrvatski liturgijski kalendar' },
 	hu: { slug: 'hungary', lang: 'hu', name: 'Magyar liturgikus naptár' },
+	id: { slug: 'indonesia', lang: 'id', name: 'Kalender Liturgi Indonesia' },
 	in: { slug: 'india', lang: 'en', name: 'Indian Liturgical Calendar' },
 	it: { slug: 'italy', lang: 'it', name: 'Calendario liturgico italiano' },
 	jp: { slug: 'japan', lang: 'ja', name: '日本の典礼暦' },
@@ -167,15 +175,18 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	ng: { slug: 'nigeria', lang: 'en', name: 'Nigerian Liturgical Calendar' },
 	nl: { slug: 'netherlands', lang: 'nl', name: 'Nederlandse liturgische kalender' },
 	no: { slug: 'norway', lang: 'no', name: 'Norsk liturgisk kalender' },
+	nz: { slug: 'new-zealand', lang: 'en', name: 'New Zealand Liturgical Calendar' },
 	pa: { slug: 'panama', lang: 'es', name: 'Calendario litúrgico panameño' },
 	pe: { slug: 'peru', lang: 'es', name: 'Calendario litúrgico peruano' },
 	ph: { slug: 'philippines', lang: 'en', name: 'Philippine Liturgical Calendar' },
 	pl: { slug: 'poland', lang: 'pl', name: 'Polski kalendarz liturgiczny' },
 	// The Latin Patriarchate, which covers Cyprus, Israel, Jordan and Palestine.
+	pr: { slug: 'puerto-rico', lang: 'es', name: 'Calendario litúrgico puertorriqueño' },
 	ps: { slug: 'jerusalem', lang: 'en', name: 'Liturgical Calendar (Jerusalem)' },
 	ru: { slug: 'russia', lang: 'en', name: 'Russian Liturgical Calendar' },
 	sd: { slug: 'sudan', lang: 'en', name: 'Sudanese Liturgical Calendar' },
 	se: { slug: 'sweden', lang: 'sv', name: 'Svensk liturgisk kalender' },
+	sk: { slug: 'slovakia', lang: 'sk', name: 'Slovenský liturgický kalendár' },
 	st: {
 		slug: 'sao-tome-and-principe',
 		lang: 'pt',
