@@ -460,11 +460,18 @@
 	 * face, the recipe and the argument; what belongs here is that the mark is
 	 * a GLYPH and what that buys on this page. It sits on the baseline beside
 	 * the title at the title's own size, so the gutter is the one the square
-	 * always wanted and nothing is eyeballed onto the x-height; it takes
-	 * `--color-link` as a colour rather than as a mask; and the resting page
-	 * is exactly what it was before the mark existed. A drawing had to be
-	 * sized in `rem` against a widened lane and still read as a mitten at
-	 * seventeen pixels.
+	 * always wanted and nothing is eyeballed onto the x-height; and the
+	 * resting page is exactly what it was before the mark existed. A drawing
+	 * had to be sized in `rem` against a widened lane and still read as a
+	 * mitten at seventeen pixels.
+	 *
+	 * IT KEEPS THE SQUARE'S COLOUR and names none of its own. The mark is one
+	 * mark in two forms, so it has no more business changing colour than a
+	 * letter has changing colour when the word it is in is hovered — and the
+	 * accent is already spoken for on this row by the title, which is a link
+	 * and carries `--color-link` at rest. A gutter mark that lit up as well
+	 * would be the row saying the same thing twice, in the louder of the two
+	 * places.
 	 *
 	 * `\fe0e` is the text-presentation selector, and it matters only if the
 	 * subset never arrives: our face is first in the stack and has the
@@ -492,7 +499,6 @@
 		font-family: 'EB Garamond Manicule', var(--font-serif);
 		/* 1.088em of advance at 1em, which would fill the gutter exactly. */
 		font-size: 0.9em;
-		color: var(--color-link);
 	}
 
 	:dir(rtl) .topic-row:has(.topic-link:hover)::before,

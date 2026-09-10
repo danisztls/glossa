@@ -307,6 +307,19 @@ bookmarking yet, though the address supports it — `addressResolves` answers
 list, and answering `false` would discard a reader's mark on every topic at
 once.
 
+**Three ways in, and none of them is the bar.** A card in the catalogue, drawn
+by `ShelfGrid.svelte` on the home page and on `/bibliotheca`, and a row in the
+footer's works column. The bar stops at five doors because a bar is one line
+(`docs/finding.md`), and this is not one of the five; what it is instead is a
+way into the three works it quotes, by the index a reader holding a sentence
+and no reference can use — which is why the card sits in the bed with the works
+rather than above them, and why the footer row is in Works and not in Pages.
+Both are gated on `hasTopics()`, the door's version of `visibleShelves()`: over
+a build with no topic list they would open onto `quaestiones.landing.none`. The
+card's sentence is `quaestiones.landing.cardTagline` and not the tagline above,
+which is a masthead's two sentences and was five lines in a 16rem card — the
+same problem `ccc.landing.pairTagline` was written for.
+
 **The title and the question are the only strings here written as somebody
 else's words** — the keywords are written in the reader's, which is a different
 job with the same rule against transposing the English — and a translator needs

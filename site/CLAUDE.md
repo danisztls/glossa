@@ -459,12 +459,20 @@ Rationale in `site/docs/finding.md`.
   Learn. A newly ingested work goes on a shelf in `/bibliotheca` and, where it
   belongs there, on a route in `/schola`; it does not get a bar entry.
 - **The footer is the full index, which is what lets the bar stop**: works from
-  `visibleShelves()`, pages from `FOOTER_PAGES` beside `NAV_ITEMS`, `/colophon`
-  last. A bar has one line and a footer has none, so the two answer different
-  questions — do not compose either from the other, and **do not move the
-  colophon link out of the footer without lengthening `footer.notEndorsed`**,
-  which is short on the strength of being able to reach it. The `<nav>`'s own
-  name must differ from `nav.menu`, or two landmarks announce as "Menu".
+  `visibleShelves()`, pages from `FOOTER_PAGES` beside `NAV_ITEMS`. A bar has
+  one line and a footer has none, so the two answer different questions — do
+  not compose either from the other, and **do not move the colophon link out of
+  the footer without lengthening `footer.notEndorsed`**, which is short on the
+  strength of being able to reach it. The `<nav>`'s own name must differ from
+  `nav.menu`, or two landmarks announce as "Menu".
+- **Both footer columns are alphabetical in the READER's alphabet**, sorted at
+  render through one `Intl.Collator(bcp47(...))` — an index at the foot of
+  every page is looked up where a catalogue is read, and a column ordered by
+  the English labels is alphabetical for one reader in thirty-seven.
+  `$lib/shelves.ts` still owns what is in the works column and the gate on it;
+  only the order is the footer's. `/quaestiones` sits in that column and not in
+  Pages, being a way into the works listed beside it rather than site
+  furniture.
 - **`Learn` names `/schola`, a guide, and not the Catechism.** It pointed at
   `/catechismus` for one day: a table of divisions is unusable by the reader the
   word was chosen for, who cannot yet name a part (`audiences.md` §5). The

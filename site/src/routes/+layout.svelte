@@ -37,6 +37,9 @@
 	// The catalogue's own list, borrowed by the footer's index — see
 	// `FOOTER_PAGES` below for why the works are not written out again here.
 	import { visibleShelves } from '$lib/shelves';
+	// The gate on the one row in the works column that is not a work — see
+	// `footerWorks`, and `ShelfGrid.svelte` for the card that shares it.
+	import { hasTopics } from '$lib/corpus';
 	// Renders its own trigger AND its sheet AND the one window-level keydown
 	// listener behind both, exactly as `JumpBox` does — which is why it sits in
 	// the control row rather than with the overlays below: a modal dialog is in
@@ -168,7 +171,9 @@
 	 *
 	 * Written out rather than derived from `NAV_ITEMS`: Bookmarks is here and
 	 * not on the bar, and the Bible and the Prayers are on the bar but belong
-	 * in the works column. No Home — the brand link is already one.
+	 * in the works column. No Home — the brand link is already one. `/quaestiones`
+	 * is not here either, for the same reason the Bible is not: see
+	 * `footerWorks`.
 	 *
 	 * `/colophon` IS IN THE FOOTER AND THAT IS THE PART THAT MATTERS.
 	 * `footer.notEndorsed` in the imprint is the one-sentence form of
@@ -185,12 +190,6 @@
 		{ href: '/bibliotheca', key: 'nav.library' },
 		{ href: '/calendarium', key: 'nav.calendar' },
 		{ href: '/schola', key: 'nav.learn' },
-		// Titled by its own page, as `/colophon` below is: `nav.*` holds a
-		// short name for each of the five doors on the bar, and this is not
-		// one of them. The bar stays at five — it is one line — and the other
-		// two ways in are the card `ShelfGrid.svelte` draws on the home page
-		// and on `/bibliotheca`.
-		{ href: '/quaestiones', key: 'quaestiones.landing.title' },
 		// The header reaches `/signata` by a glyph, so this is the only place
 		// on the site that says the word.
 		{ href: '/signata', key: 'nav.bookmarks' },
@@ -198,31 +197,62 @@
 	] as const;
 
 	/**
-	 * The same six, alphabetical — AND IN THE READER'S OWN ALPHABET, which is
-	 * why this is a sort at render and not the order the list above is typed
-	 * in. A column ordered by the English labels is alphabetical for one
-	 * reader in thirty-seven and arbitrary for the rest: `Perguntas` does not
-	 * fall where `Questions` does, and a Ukrainian column sorted by the Latin
-	 * spellings of its own words is in no order at all.
+	 * BOTH COLUMNS ARE ALPHABETICAL, AND IN THE READER'S OWN ALPHABET — which
+	 * is why they are sorted at render rather than typed in order. A column
+	 * ordered by the English labels is alphabetical for one reader in
+	 * thirty-seven and arbitrary for the rest: `Perguntas` does not fall where
+	 * `Questions` does, and a Ukrainian column sorted by the Latin spellings of
+	 * its own words is in no order at all.
 	 *
 	 * `Intl.Collator` and not `localeCompare`, for the reason `bcp47` exists:
 	 * it is constructed once per language rather than once per comparison, and
-	 * the tag it is handed has to be one `Intl` can resolve — `zht` is not,
-	 * and silently falls back to the browser's locale rather than throwing.
+	 * the tag it is handed has to be one `Intl` can resolve — `zht` is not, and
+	 * silently falls back to the browser's locale rather than throwing.
 	 *
-	 * THE WORKS COLUMN IS NOT SORTED and must not be. Its order is the
-	 * catalogue's own (`$lib/shelves.ts`) — the order a reader meets the
-	 * Church's texts — and it is the same list `/bibliotheca` and the home
-	 * page draw. Alphabetising it here would be this page disagreeing with
-	 * both about what the catalogue is. These six have no such order: they are
-	 * pages, related by nothing but being pages, and a list of unrelated
-	 * things is where alphabetical is the honest arrangement rather than a
-	 * concealed judgement.
+	 * THE WORKS COLUMN IS SORTED HERE AND NOWHERE ELSE, and that is not this
+	 * page disagreeing with the catalogue. `$lib/shelves.ts` still owns WHAT is
+	 * in the column and the gate that keeps a work this build did not sync out
+	 * of it; what the footer changes is the ORDER, because an index at the foot
+	 * of every page is LOOKED UP and a catalogue is READ. `/bibliotheca` and
+	 * the home page draw the sequence — the order a reader meets the Church's
+	 * texts — where a reader down here already knows the name they came for and
+	 * is running an eye down a column for it. Two columns side by side is also
+	 * an argument in itself: one alphabetical and one not reads as a mistake in
+	 * whichever of them the reader tests first.
 	 */
-	const footerPages = $derived.by(() => {
-		const collator = new Intl.Collator(bcp47(i18n.lang));
-		return [...FOOTER_PAGES].sort((a, b) => collator.compare(t(a.key), t(b.key)));
-	});
+	const collator = $derived(new Intl.Collator(bcp47(i18n.lang)));
+
+	const footerPages = $derived(
+		FOOTER_PAGES.map((item) => ({ href: item.href, label: t(item.key) })).sort((a, b) =>
+			collator.compare(a.label, b.label)
+		)
+	);
+
+	/**
+	 * The catalogue's works, plus the one way in that is not a work.
+	 *
+	 * QUESTIONS IS IN THIS COLUMN AND NOT IN PAGES, which is the same call
+	 * `ShelfGrid.svelte` makes by putting its card in the bed with the works
+	 * rather than above it. The other column is the site's own furniture —
+	 * where the catalogue is, what the day is, how to read a citation, what
+	 * you have marked, who is publishing this. `/quaestiones` is none of
+	 * those: every topic on it resolves to passages of the Catechism, the
+	 * Compendium of the Social Doctrine and the Code, so it is a way into the
+	 * three works listed beside it, by the index a reader holding a sentence
+	 * and no reference can use. It has no `Shelf` row for the reason the card
+	 * has none — a `Shelf` is a work type plus that work's own strings — and
+	 * it is gated for the reason the card is gated: over a build with no topic
+	 * list it is a link to `quaestiones.landing.none`.
+	 */
+	const footerWorks = $derived(
+		[
+			...visibleShelves().map((shelf) => ({
+				href: shelf.href,
+				label: t(shelf.navKey ?? shelf.titleKey)
+			})),
+			...(hasTopics() ? [{ href: '/quaestiones', label: t('quaestiones.landing.title') }] : [])
+		].sort((a, b) => collator.compare(a.label, b.label))
+	);
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
 	// Bible). No `'/'` special case is needed now that Home isn't a nav item —
@@ -570,7 +600,7 @@
 						{#each footerPages as item (item.href)}
 							<li>
 								<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
-									{t(item.key)}
+									{item.label}
 								</a>
 							</li>
 						{/each}
@@ -578,14 +608,16 @@
 				</div>
 				<div class="footer-group footer-works">
 					<h2>{t('nav.works')}</h2>
-					<!-- The catalogue's own list and order (`$lib/shelves.ts`), so
-					     the footer cannot disagree with `/bibliotheca` and inherits
-					     its gate: no link to a work this build did not sync. -->
+					<!-- The catalogue's own list (`$lib/shelves.ts`) in this
+					     column's own order — see `footerWorks` for both halves of
+					     that. The list is what the footer cannot disagree with
+					     `/bibliotheca` about, and it inherits that page's gate: no
+					     link to a work this build did not sync. -->
 					<ul>
-						{#each visibleShelves() as shelf (shelf.key)}
+						{#each footerWorks as item (item.href)}
 							<li>
-								<a href={shelf.href} aria-current={isActive(shelf.href) ? 'page' : undefined}>
-									{t(shelf.navKey ?? shelf.titleKey)}
+								<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+									{item.label}
 								</a>
 							</li>
 						{/each}
