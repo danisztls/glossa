@@ -814,9 +814,19 @@ row written before this existed.
 **`quotedFrom` is not bookkeeping.** An unattributed frozen quote sitting under
 a citation that re-derives is a claim about the reader's CURRENT text — the row
 would show one edition's words under another edition's citation and say
-nothing. The library names the edition beside the quote and declares its `lang`
-on the blockquote, so the face, the hyphenation and the direction follow the
-text rather than the interface.
+nothing. It answers that in two ways, and only one of them is visible: the
+`lang` declared on the blockquote, so the face, the hyphenation and the
+direction follow the text rather than the interface; and the edition's name
+beside the quote, **where naming it tells the reader anything**.
+
+**Which is the Bible alone.** Everywhere else one language is one edition —
+`EditionMenu` has always said so, and shows a language where it shows the Bible
+a title — so the name printed under the quote is the WORK's, and the work is
+what the section heading over the row and the citation on it have both already
+said: "Compendium of the Social Doctrine of the Church" under a heading reading
+Social Doctrine, "Dilexit Nos" under a row reading `Dilexit Nos 2`. The field is
+still stored for every quote, being what the wash compares and what carries the
+language.
 
 **A quote is clamped, and the ellipsis is the point.** `QUOTE_MAX` keeps the
 whole store inside one localStorage key when a reader has marked a hundred

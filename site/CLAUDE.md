@@ -2346,10 +2346,15 @@ the half that is testable, rationale in `site/docs/reading.md`).
   (`quote`, `quotedFrom`), which breaks "an address and nothing else" on
   purpose: a highlight is a different act from pressing a number, and
   re-deriving the unit throws away the only part the reader chose. Both fields
-  are optional, nothing derived reads them, and the edition is recorded because
+  are optional and nothing derived reads them; the edition is recorded because
   a frozen quote under a re-derived citation otherwise claims to be the
-  reader's current text. Clamped at `QUOTE_MAX` — one localStorage key holds
-  the whole store.
+  reader's current text, and it is what the wash below compares. Clamped at
+  `QUOTE_MAX` — one localStorage key holds the whole store.
+- **An edition is NAMED only where one language could hold more than one, which
+  is the Bible** (`EditionMenu`'s `editionStyle`, `/signata`'s quote).
+  Everywhere else the edition is the language, so its title only repeats the
+  work the section heading and the citation have already said — the library
+  printed "Dilexit Nos" under a row reading `Dilexit Nos 2`.
 - **The wash over a quoted bookmark is the sentence where it can be and the
   unit otherwise** (`QuoteMarks`, `quote-mark.ts`). A ladder: same edition and
   words found → the words; different edition, words absent, or no Custom

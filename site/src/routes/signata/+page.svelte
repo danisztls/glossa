@@ -85,6 +85,17 @@
 		return item.quotedFrom ? getWork(item.quotedFrom) : undefined;
 	}
 
+	/** Whether naming that edition tells the reader anything. Only the Bible is
+	 *  expected to ever carry more than one edition per language
+	 *  (`EditionMenu`'s `editionStyle`), so everywhere else the edition IS the
+	 *  language and the heading over the row has already said which work this
+	 *  is — "Compendium of the Social Doctrine of the Church" under a heading
+	 *  reading Social Doctrine is the same words twice, and "Dilexit Nos"
+	 *  under a citation reading `Dilexit Nos 2` is worse. */
+	function namesItsEdition<T extends { type: string }>(work: T | undefined): work is T {
+		return work?.type === 'bible';
+	}
+
 	const sections = $derived.by((): Section[] => {
 		// The headings deliberately reuse the label each destination already
 		// carries rather than declaring their own strings: they name the same
@@ -241,15 +252,16 @@
 							     page's: this is the one thing on the page that is not
 							     re-derived, so it may be Latin under a Portuguese interface,
 							     and the face, the hyphenation and the direction all follow
-							     that declaration. The edition names itself beside it for the
-							     same reason — an unattributed frozen quote under a citation
-							     that re-derives is a claim about the reader's CURRENT text
-							     (`bookmarks.svelte.ts`). -->
+							     that declaration. It names its edition only where knowing it
+							     changes the reading — an unattributed frozen quote under a
+							     re-deriving citation claims to be the reader's current text
+							     (`bookmarks.svelte.ts`), and the Bible is where that claim
+							     can be wrong twice over. -->
 							{#if item.quote}
 								{@const from = quotedWork(item)}
 								<blockquote class="quote" lang={from?.language}>
 									{item.quote}
-									{#if from}<cite>{from.short_title ?? from.title}</cite>{/if}
+									{#if namesItsEdition(from)}<cite>{from.short_title ?? from.title}</cite>{/if}
 								</blockquote>
 							{/if}
 						</li>
