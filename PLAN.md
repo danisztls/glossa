@@ -66,13 +66,17 @@ the rest are held in `national/held.ts` with the count of days each differs on.
   provenance question (the Martyrology is a book with a publisher, where a table
   of dates and ranks is fact), and it belongs in the corpus rather than the site
   bundle. Depends on nothing; wants deciding on its own terms.
-- **The held calendars, one at a time.** What remains is not adding countries
-  but finishing the ones already derived. `national/held.ts` groups them by
-  cause; three causes are engine work rather than transcription and are worth
-  taking as a batch — All Souls transferred off a Sunday, an observance
-  suppressed by the day it falls on, and a conference that changed a transfer
-  inside the oracle's window. The fourth wants a `MovableRule` that can say "the
-  last Sunday of October".
+- **The Chinese calendar, or Macau and Vietnam stay held.** The four causes
+  this entry used to name are done (2026-09-10) and the held list is three
+  calendars: two keep a celebration on the LUNAR new year, and a lunisolar date
+  is not a function of the Gregorian one. A table of years would publish a
+  calendar that is silently wrong outside it, which is what `held.ts` exists to
+  refuse; computing it is a new-moon and solar-term ephemeris, and would be the
+  only part of the engine no oracle inside the three-year window could check.
+  Worth having only if somebody wants those two countries specifically. San
+  Marino is the third and is held by a rubric rather than a defect — two proper
+  obligatory memorials on one day, which its feed prints and n. 60 does not
+  provide for.
 - **A second witness for a derived layer.** The oracle's name check is circular
   for a derived country — it compares a name to the feed the name came from. The
   fix is what `docs/decisions.md` already requires of prayers and the gazette
@@ -89,14 +93,18 @@ the rest are held in `national/held.ts` with the count of days each differs on.
 
 ### Known limits, stated rather than fixed
 
-- **The per-year tables run out after 2027.** `movedInYear` (Brazil's and the
-  Congo's transfers, the Congo's Visitation) and Spain's Ember Days are tables
-  of years, not rules, because the evidence rules every rule out: Peter and Paul
-  went backward from a Monday in 2026 and forward from a Tuesday in 2027;
-  Spain's Ember Days are Monday, Monday, Tuesday. Outside the listed years the
-  celebration keeps its own date and the observance is absent. Fixing it
-  properly means reading each conference's Ordo every year — an annual chore,
-  not code; the alternative puts a solemnity on a date nobody chose.
+- **The per-year tables run out after 2027, and there are more of them than
+  there were.** `movedInYear`, `optionsInYear` and an observance's `{ years }`
+  are tables of years and not rules, because the evidence rules every rule out:
+  Peter and Paul went backward from a Monday in 2026 and forward from a Tuesday
+  in 2027; Spain's Ember Days are Monday, Monday, Tuesday; England and Wales
+  restored the Epiphany to 6 January at Advent 2025; seven conferences keep All
+  Souls off 2 November and no two of them by the same rule. **What makes a table
+  of years safe is having a defensible answer for a year it does not name** —
+  All Souls falls back to 2 November and the Epiphany to the layer's standing
+  transfer, so a reader in 2028 is shown something the Church would recognise.
+  Fixing it properly means reading each conference's Ordo every year — an annual
+  chore, not code; the alternative puts a solemnity on a date nobody chose.
 - **The oracle covers 2025–2027 and nothing else** (GCatholic's iCal window;
   its HTML tables reach 2024–2028). Rare cases outside it are covered by
   hand-written tests in `year.test.ts`. **Saint Joseph's direction is the rule
@@ -105,20 +113,21 @@ the rest are held in `national/held.ts` with the count of days each differs on.
   anticipates him out of Holy Week (15 March 2008) and defers him off a Sunday
   of Lent (20 March 2017 and 2028). Both rest on published practice; the 2028
   half is a second witness (USCCB's own readings for that Monday).
-- **A national proper's name is transcribed, not derived.** No Latin original
-  and no second published source, so the oracle's name check for those rows is a
-  transcription check. Everything the engine does with the row — date, rank,
-  colour, precedence, moves, transfers, suppressions — is checked independently,
-  and that is the half that can be wrong invisibly.
 - **The lectionary is a consumer of this engine, not part of it.** What it still
   cannot say is in `site/docs/lectionary.md` §THE GAPS. It is also the engine's
   second witness: two defects were found by diffing it against USCCB's crawled
   days, not by the oracle.
-- **The general calendar is Latin, English and Portuguese.** A national layer
-  carries the language its conference approved its propers in (es, it, fr, pl,
-  de, en) and an English rendering beside it; every other interface language
-  falls through `CONTENT_LANG_FALLBACK`. A translator adding a language adds
-  name columns to `grc.ts`, not a mechanism.
+- **The general calendar's names are read from the feeds and cannot be
+  checked.** `grc.ts` carries Latin, English and Portuguese — the three with a
+  second witness — and `calendar/names/{lang}.ts` carries the rest,
+  transcribed from the national feeds, so `oracle.test.ts` would be comparing
+  GCatholic to GCatholic. Against `grc.ts` the source differs on 19 of the 218
+  Latin names, 36 of the English and 48 of the Portuguese; in the transcribed
+  languages there is nothing to make that correction from. A national proper is
+  in the same position for a different reason — no Latin original and no second
+  publication — and what IS checked independently in both cases is everything
+  the engine does with the row: date, rank, colour, precedence, moves,
+  transfers, suppressions. That is the half that can be wrong invisibly.
 
 ## Loose ends from the Bible capture (gap 15)
 
