@@ -263,7 +263,20 @@ export const en: Dictionary = {
 	// sentence rather than a numbered strip of pages — nothing about rank 87
 	// is worth landing on directly, and a reader who has scrolled past the
 	// top of the list still needs to know where they are.
+	//
+	// TWO NAMES BECAUSE THE PAGE HAS TWO RANKINGS and a `<nav>` is a landmark:
+	// both pagers would otherwise announce as "Ranking pages", which is the
+	// collision the footer's own `<nav>` is named against. The buttons and the
+	// position are shared, those being read out inside a landmark that has
+	// already said which list it pages.
 	'census.rankPages': 'Ranking pages',
+	'census.absentPages': 'Pages of what is not held',
+	// THE ARROWS' ACCESSIBLE NAMES AND NOT THEIR LABELS. Each button draws
+	// `arrow-left`/`arrow-right` and prints nothing, so `aria-label` is the
+	// whole of what a screen reader has to go on — and a picture announces
+	// nothing at all. They stay one word: the landmark above has named the
+	// list, so "Previous page of the ranking of works this library does not
+	// hold" would be a sentence rebuilding a name the reader has just heard.
 	'census.rankPrev': 'Previous',
 	'census.rankNext': 'Next',
 	'census.rankPageOf': 'Page {page} of {pages}',

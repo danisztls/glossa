@@ -260,6 +260,20 @@
 	const absent = $derived(census ? absentRanking(census) : []);
 	const unread = $derived(census ? unreadTotals(census) : undefined);
 
+	/**
+	 * IT PAGES AT THE SAME LENGTH AS THE RANKING ABOVE IT, and the reason is
+	 * that both are rankings and a reader meets them one after the other. Two
+	 * lists of the same shape on one page, one of them stopping at twenty and
+	 * the other running to whatever the corpus happens to name, is a difference
+	 * the reader has to account for and nothing on the page explains.
+	 *
+	 * Nothing resets it: this list has no chip, so nothing but a rebuild can
+	 * change what is in it.
+	 */
+	let absentPage = $state(0);
+	const absentPages = $derived(Math.max(1, Math.ceil(absent.length / RANK_PAGE)));
+	const absentShown = $derived(absent.slice(absentPage * RANK_PAGE, (absentPage + 1) * RANK_PAGE));
+
 	/** A cell's accessible value — `1,334 of 1,334`, or the plain statement
 	 *  that there is none, which reads better than `0 of 1,334`. */
 	const cellLabel = (value: number, of: number) =>
@@ -311,6 +325,64 @@
 	describes its anchor and is summoned rather than asked for. The trigger has
 	no text of its own, so the label is mandatory and not a courtesy.
 -->
+<!--
+	BACK, WHERE YOU ARE, ONWARD — three controls and not a row of numbered
+	pages. Neither ranking runs past `RANK_LIMIT`, so this is five pages at
+	most, and a reader turning them is reading DOWN a ranking: page four is not
+	a destination the way a chapter is, and a reader who wants one particular
+	work has the jump box.
+
+	THE ARROWS ARE `UnitNav`'s, and the vocabulary is the point:
+	`arrow-left`/`arrow-right` is what every movement through text on this site
+	draws, so a reader who has learned the mark under a chapter has learned it
+	here. Drawn and not typed for that component's reason — EB Garamond carries
+	no U+2190, so `&larr;` sets in whatever family the browser falls back to,
+	beside words that are in this one.
+
+	An `<svg>` is a box and not a character, so nothing mirrors it: the
+	`:dir(rtl)` rule in the stylesheet is what keeps "back" pointing at the edge
+	an Arabic reader looks for, the row itself having already mirrored as a flex
+	row.
+
+	The words survive as the accessible name, `aria-label` REPLACING the
+	button's own text — which is now a picture and announces nothing. The
+	position between them stays in words, so a reader who has scrolled past the
+	top of the list still knows where they are; `aria-live` is deliberately
+	absent, the button that moved keeping focus and the ranks being announced by
+	the list itself.
+
+	A SNIPPET BECAUSE THE PAGE HAS TWO RANKINGS, and they had better page the
+	same way. `label` is per caller and not one string reused, a `<nav>` being a
+	landmark: two of them announcing "Ranking pages" is the collision the
+	footer's own `<nav>` is named against.
+-->
+{#snippet pager(label: string, at: number, of: number, go: (to: number) => void)}
+	<nav class="pager" aria-label={label}>
+		<button
+			type="button"
+			class="page-step"
+			disabled={at === 0}
+			aria-label={t('census.rankPrev')}
+			title={t('census.rankPrev')}
+			onclick={() => go(Math.max(0, at - 1))}><Icon name="arrow-left" class="page-arrow" /></button
+		>
+		<span class="page-of"
+			>{t('census.rankPageOf')
+				.replace('{page}', n(at + 1))
+				.replace('{pages}', n(of))}</span
+		>
+		<button
+			type="button"
+			class="page-step"
+			disabled={at >= of - 1}
+			aria-label={t('census.rankNext')}
+			title={t('census.rankNext')}
+			onclick={() => go(Math.min(of - 1, at + 1))}
+			><Icon name="arrow-right" class="page-arrow" /></button
+		>
+	</nav>
+{/snippet}
+
 {#snippet hint(panel: AnchoredPanel, label: string, text: string)}
 	<button
 		bind:this={panel.trigger}
@@ -551,37 +623,7 @@
 			</ol>
 
 			{#if pages > 1}
-				<!-- PREVIOUS, WHERE YOU ARE, NEXT — three controls and not a row
-				     of numbered pages. The merged table is cut at `RANK_LIMIT`
-				     however many chips are on, so this is five pages at most and
-				     a reader turning them is reading DOWN a ranking: page four
-				     is not a destination the way a chapter is, and a reader who
-				     wants one particular work has the jump box.
-
-				     The position is stated in words rather than left to the
-				     numbering, so a reader who has scrolled past the top of the
-				     list still knows where they are. `aria-live` is deliberately
-				     absent: the button that moved keeps focus and the ranks are
-				     announced by the list itself. -->
-				<nav class="pager" aria-label={t('census.rankPages')}>
-					<button
-						type="button"
-						class="page-step"
-						disabled={page === 0}
-						onclick={() => (page = Math.max(0, page - 1))}>{t('census.rankPrev')}</button
-					>
-					<span class="page-of"
-						>{t('census.rankPageOf')
-							.replace('{page}', n(page + 1))
-							.replace('{pages}', n(pages))}</span
-					>
-					<button
-						type="button"
-						class="page-step"
-						disabled={page >= pages - 1}
-						onclick={() => (page = Math.min(pages - 1, page + 1))}>{t('census.rankNext')}</button
-					>
-				</nav>
+				{@render pager(t('census.rankPages'), page, pages, (to) => (page = to))}
 			{/if}
 			<p class="caveat-print" aria-hidden="true">{t('census.method')}</p>
 		</section>
@@ -643,14 +685,26 @@
 				     no anchor, because there is nowhere to go. A row set like
 				     the rows above it with the link quietly missing would read
 				     as a list of broken ones. -->
-				<ol class="ranking absent">
-					{#each absent as row (row.work)}
+				<ol
+					class="ranking absent"
+					start={absentPage * RANK_PAGE + 1}
+					style="--rank-from: {absentPage * RANK_PAGE}"
+				>
+					{#each absentShown as row (row.work)}
 						<li>
 							<span class="work">{row.work}</span>
 							<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
 						</li>
 					{/each}
 				</ol>
+				{#if absentPages > 1}
+					{@render pager(
+						t('census.absentPages'),
+						absentPage,
+						absentPages,
+						(to) => (absentPage = to)
+					)}
+				{/if}
 				<p class="caveat-print" aria-hidden="true">{t('census.absentMethod')}</p>
 			</section>
 		{/if}
@@ -1069,25 +1123,51 @@
 	/* Under the list and at its width, so the two controls sit at the ends of
 	   the rows they page. `justify-content: space-between` rather than a
 	   centred row: the position between two buttons is what a reader looks at,
-	   and it stays in one place while the buttons keep theirs. */
+	   and it stays in one place while the buttons keep theirs.
+
+	   `center` AND NOT `baseline`, which is what the arrows cost. A button
+	   whose only content is an `<svg>` has no text baseline to offer, so a
+	   baseline row aligns its bottom margin edge against the x-height of the
+	   words between them and both arrows sit low. */
 	.pager {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: 0.6rem;
 		max-inline-size: 40rem;
 		margin: 0.75rem 0 0;
 	}
 
+	/* A square rather than the chips' word-shaped pill, and still their scale:
+	   these sit a line under `.filter` and are the same kind of small bordered
+	   control, where `.menu-trigger`'s 2.25rem is for a control a reader goes
+	   looking for in the chrome. */
 	.page-step {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
-		padding: 0.1rem 0.6rem;
+		padding: 0.25rem 0.5rem;
 		background: none;
 		font: inherit;
 		font-size: 0.8rem;
 		color: var(--color-text);
 		cursor: pointer;
+	}
+
+	/* Sized in `em` off the button, so the mark follows the chips' scale. No
+	   `vertical-align` correction, which `UnitNav` needs and this does not: an
+	   inline arrow sits its box on a line of text, and here the flex box
+	   centres it with nothing to be off against. */
+	.page-step :global(.page-arrow) {
+		width: 1.05em;
+		height: 1.05em;
+	}
+
+	/* See the comment on the nav: the row mirrors and the drawing does not. */
+	.page-step :global(.page-arrow):dir(rtl) {
+		transform: scaleX(-1);
 	}
 
 	.page-step:hover:not(:disabled) {
