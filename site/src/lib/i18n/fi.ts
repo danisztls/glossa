@@ -503,7 +503,7 @@ export const fi: Dictionary = {
 	'calendar.tagline':
 		'Yleinen roomalainen kalenteri, laskettuna mille tahansa päivälle — sen aika, sen arvo, sen väri.',
 	'calendar.national.tagline':
-		'{territory}: yleinen roomalainen kalenteri omine juhlineen, laskettuna mille tahansa päivälle — sen aika, sen arvo, sen väri.',
+		'{name}, laskettuna mille tahansa päivälle — sen aika, sen arvo, sen väri.',
 	'calendar.calendar': 'Kalenteri',
 	'calendar.which.general': 'Yleinen roomalainen kalenteri',
 	'calendar.filter': 'Hae maita',

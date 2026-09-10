@@ -1,9 +1,13 @@
 import { error } from '@sveltejs/kit';
-import { CALENDAR_LANGS } from '$lib/calendar/national/languages';
+import { CALENDAR_BY_SLUG } from '$lib/calendar/national/languages';
 import type { PageLoad } from './$types';
 
 /**
  * One country's calendar, named by the path instead of by `?c=`.
+ *
+ * THE SEGMENT IS A SLUG AND THE ANSWER IS A LAYER ID — `brazil` -> `br`. The
+ * two vocabularies are `languages.ts`'s subject: fifteen layer ids are also
+ * interface language tags, and four of those mean something else there.
  *
  * THIS LOAD FETCHES NOTHING, and there is nothing for it to fetch: the whole
  * calendar is arithmetic over the date of Easter and a table of fixed
@@ -29,7 +33,8 @@ export const load: PageLoad = async ({ params, parent }) => {
 	// it waits — `src/routes/+layout.ts` has the whole of why.
 	await parent();
 
-	if (!(params.calendar in CALENDAR_LANGS)) error(404, 'Not found');
+	const calendar = CALENDAR_BY_SLUG[params.calendar];
+	if (!calendar) error(404, 'Not found');
 
-	return { calendar: params.calendar };
+	return { calendar };
 };

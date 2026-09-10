@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { CALENDAR_LANGS } from './calendar/national/languages';
+import { CALENDAR_PAGES } from './calendar/national/languages';
 import {
 	bcp47,
 	browserLangs,
@@ -250,7 +250,7 @@ describe('UI_LANGS and the dictionaries', () => {
 			// the only one a build REFUSES to ship without: a country calendar's
 			// description is written in one language with no fallback, so a
 			// translation that drops it publishes a page describing no country.
-			'calendar.national.tagline': ['{territory}'],
+			'calendar.national.tagline': ['{name}'],
 			'plates.enlarge': ['{title}'],
 			'refs.externalVolume': ['{volume}', '{host}']
 		};
@@ -390,12 +390,17 @@ describe('UI_LANGS and the dictionaries', () => {
 	 * left `NATIONAL_CALENDAR_LIST` seeds a language on an address that 404s.
 	 * Neither shows as an error anywhere.
 	 */
-	it('keeps the calendar table in app.html equal to CALENDAR_LANGS', () => {
+	it('keeps the calendar table in app.html equal to CALENDAR_PAGES', () => {
 		const html = readFileSync(path.join(process.cwd(), 'src/app.html'), 'utf8');
 		const declared = /var CAL = \{([^}]*)\}/.exec(html)?.[1];
 		expect(declared, 'no `var CAL = {...}` found in src/app.html').toBeDefined();
+		// Prettier quotes only the keys that need it (`'costa-rica'`), so the
+		// quotes are optional here.
 		const pairs = [...(declared ?? '').matchAll(/'?([a-z-]+)'?:\s*'([a-z]+)'/g)];
-		expect(Object.fromEntries(pairs.map((m) => [m[1], m[2]]))).toEqual(CALENDAR_LANGS);
+		const expected = Object.fromEntries(
+			Object.values(CALENDAR_PAGES).map((page) => [page.slug, page.lang])
+		);
+		expect(Object.fromEntries(pairs.map((m) => [m[1], m[2]]))).toEqual(expected);
 	});
 
 	/**
@@ -446,9 +451,9 @@ describe('calendarPathLang', () => {
 	}
 
 	it('reads the language a country calendar is published in', () => {
-		expect(at('/calendarium/br')).toBe('pt');
-		expect(at('/calendarium/jp')).toBe('ja');
-		expect(at('/calendarium/hk')).toBe('zht');
+		expect(at('/calendarium/brazil')).toBe('pt');
+		expect(at('/calendarium/japan')).toBe('ja');
+		expect(at('/calendarium/hong-kong')).toBe('zht');
 	});
 
 	/** The general page negotiates, which is what makes it the `x-default` of
@@ -463,8 +468,9 @@ describe('calendarPathLang', () => {
 	/** Held and alias ids are not addresses, so they name no language either
 	 *  — `parseCalendarPath` is the one table both ends read. */
 	it('says nothing about an address that does not exist', () => {
-		expect(at('/calendarium/ie')).toBeUndefined();
-		expect(at('/calendarium/il')).toBeUndefined();
-		expect(at('/calendarium/zz')).toBeUndefined();
+		expect(at('/calendarium/ireland')).toBeUndefined();
+		expect(at('/calendarium/israel')).toBeUndefined();
+		// The layer id, which is `?c=`'s vocabulary and not an address.
+		expect(at('/calendarium/br')).toBeUndefined();
 	});
 });

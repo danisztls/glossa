@@ -478,7 +478,7 @@ export const de: Dictionary = {
 	'calendar.tagline':
 		'Der Allgemeine Römische Kalender, für jeden Tag berechnet — seine Zeit, seinen Rang, seine Farbe.',
 	'calendar.national.tagline':
-		'{territory}: der Allgemeine Römische Kalender mit den eigenen Feiern, für jeden Tag berechnet — seine Zeit, seinen Rang, seine Farbe.',
+		'{name}, für jeden Tag berechnet — seine Zeit, seinen Rang, seine Farbe.',
 	'calendar.calendar': 'Kalender',
 	'calendar.which.general': 'Allgemeiner Römischer Kalender',
 	'calendar.filter': 'Länder suchen',

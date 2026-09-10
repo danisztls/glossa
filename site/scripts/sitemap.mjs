@@ -80,8 +80,8 @@ const MAX_URLS = 50_000;
  * path nor absent. The two rules that decide the block above are that a chrome
  * page takes every language prefix because its every word is the interface, and
  * that a page whose strings are not written everywhere stays out of the sitemap
- * altogether. Neither settles this one: `/calendarium/br` differs from
- * `/calendarium/ie` in its CONTENT — the transfers, the propers, the days — so
+ * altogether. Neither settles this one: `/calendarium/brazil` differs from
+ * `/calendarium/ireland` in its CONTENT — the transfers, the propers, the days — so
  * the cross product would be forty claims that forty addresses are one page in
  * forty languages, and forty-one times fifty-three is 2,173 URLs for
  * fifty-three pages. Each is published once, in the language its calendar is

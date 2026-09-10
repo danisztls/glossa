@@ -13,7 +13,7 @@
  * re-picks an edition after switching.
  */
 
-import { CALENDAR_LANGS } from './calendar/national/languages.ts';
+import { CALENDAR_PAGES } from './calendar/national/languages.ts';
 import { parseCalendarPath } from './route-manifest.ts';
 import { readStoredString, writeStoredString } from './storage';
 
@@ -210,7 +210,7 @@ function browserLanguage(): UiLang {
 /**
  * The language a country calendar's ADDRESS names, where the address is one.
  *
- * `/calendarium/br` is published in Portuguese and the edge serves its head in
+ * `/calendarium/brazil` is published in Portuguese and the edge serves its head in
  * Portuguese (`languages.ts`), so a document that then paints English chrome
  * is a page declaring one language and rendering another — the mismatch
  * `app.html`'s pre-paint block exists to prevent, and the one thing that could
@@ -222,7 +222,7 @@ function browserLanguage(): UiLang {
 export function calendarPathLang(): UiLang | undefined {
 	if (typeof location === 'undefined') return undefined;
 	const id = parseCalendarPath(location.pathname);
-	const lang = id ? CALENDAR_LANGS[id] : undefined;
+	const lang = id ? CALENDAR_PAGES[id].lang : undefined;
 	return lang && isUiLang(lang) ? lang : undefined;
 }
 

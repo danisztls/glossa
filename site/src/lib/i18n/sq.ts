@@ -499,7 +499,7 @@ export const sq: Dictionary = {
 	'calendar.tagline':
 		'Kalendari i Përgjithshëm Roman, i llogaritur për çdo ditë — koha e saj, grada e saj, ngjyra e saj.',
 	'calendar.national.tagline':
-		'{territory}: Kalendari i Përgjithshëm Roman me kremtimet e veta, i llogaritur për çdo ditë — koha e saj, grada e saj, ngjyra e saj.',
+		'{name}, i llogaritur për çdo ditë — koha e saj, grada e saj, ngjyra e saj.',
 	'calendar.calendar': 'Kalendari',
 	'calendar.which.general': 'Kalendari i Përgjithshëm Roman',
 	'calendar.filter': 'Kërko vende',

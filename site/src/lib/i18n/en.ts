@@ -1383,24 +1383,25 @@ export const en: Dictionary = {
 	'calendar.title': 'Liturgical Calendar',
 	'calendar.tagline':
 		'The General Roman Calendar, computed for any day — its season, its rank, its colour.',
-	// A country calendar's page (`calendar/national/languages.ts`), named for
-	// the reader on the page and for a search engine in `route-titles.mjs`
-	// from this one string.
+	// A country calendar's page (`calendar/national/languages.ts`), set under
+	// its heading and, with the markup stripped, used as the page's description
+	// by `route-titles.mjs` — so the sentence a reader meets and the one a
+	// search result prints are the same sentence.
 	//
-	// `{territory}` OPENS THE LINE AS A LABEL AND IS NEVER PART OF THE
-	// SENTENCE, which is a rule about the SOURCE of the name and not a matter
-	// of taste. It is filled from `Intl.DisplayNames`, which gives a bare
-	// nominative and no article — so "as {territory} keeps it" reads correctly
-	// for Kenya and Brazil and then prints "as United States keeps it", "wie
-	// Schweiz ihn feiert", "tel que le célèbre France". An article cannot be
-	// added mechanically, because which countries take one is a fact about
-	// each language's own list. A label needs none in any of them.
+	// `{name}` IS THE CALENDAR'S OWN NAME AND IT OPENS THE LINE:
+	// `Calendário Litúrgico Brasileiro`, written out per calendar rather than
+	// composed, because the adjective follows the noun in Portuguese and
+	// precedes and declines it in German. So the rest of this line is only what
+	// each dictionary's `calendar.tagline` already says after its own noun
+	// phrase, and it agrees with that noun in gender and number for free.
 	//
-	// The same reason forbids a preposition in front of it: "in {territory}"
-	// is right in English and wrong in Portuguese the moment the country is
-	// Brazil.
-	'calendar.national.tagline':
-		'{territory}: the General Roman Calendar with the celebrations proper to it, computed for any day — its season, its rank, its colour.',
+	// WHAT IT MUST NOT DO is put an article or a preposition in front of the
+	// placeholder. A name is a title in apposition here; the same line built
+	// around a territory from `Intl.DisplayNames` printed "as United States
+	// keeps it", "wie Schweiz ihn feiert", "tel que le célèbre France", and no
+	// rule can supply the article, since which countries take one is a fact
+	// about each language's own list.
+	'calendar.national.tagline': '{name}, computed for any day — its season, its rank, its colour.',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
 	'calendar.filter': 'Search countries',

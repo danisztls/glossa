@@ -3,7 +3,12 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { assertNamed, buildRouteTitles, readDictionaries } from '../../scripts/route-titles.mjs';
 import { sitemapPaths } from '../../scripts/sitemap.mjs';
-import { CALENDAR_IDS, CALENDAR_LANGS, territoryName } from './calendar/national/languages';
+import {
+	CALENDAR_IDS,
+	CALENDAR_PAGES,
+	calendarPath,
+	territoryName
+} from './calendar/national/languages';
 import { CHROME_PATHS } from './route-manifest';
 import { UI_LANGS } from './ui-langs';
 import {
@@ -111,15 +116,9 @@ function chromeFixture(): RouteTitles['chrome'] {
 function calendarFixture(): Record<string, [string, string, string]> {
 	return Object.fromEntries(
 		CALENDAR_IDS.map((id) => {
-			const territory = territoryName(id, CALENDAR_LANGS[id]);
-			return [
-				id,
-				[
-					`Liturgical Calendar — ${territory} — Glossa Catholica`,
-					`The General Roman Calendar as ${territory} keeps it.`,
-					territory
-				]
-			];
+			const { lang, name } = CALENDAR_PAGES[id];
+			const territory = territoryName(id, lang);
+			return [id, [`${name} — Glossa Catholica`, `${name}, computed for any day.`, territory]];
 		})
 	);
 }
@@ -235,9 +234,9 @@ describe('headFor, static pages', () => {
  */
 describe('headFor, a country calendar', () => {
 	it('names the territory and self-canonicalizes', () => {
-		const h = head('/calendarium/br');
-		expect(h?.title).toContain('Brasil');
-		expect(h?.canonical).toBe('/calendarium/br');
+		const h = head(calendarPath('br'));
+		expect(h?.title).toBe('Calendário Litúrgico Brasileiro — Glossa Catholica');
+		expect(h?.canonical).toBe('/calendarium/brazil');
 		expect(h?.noindex).toBe(false);
 	});
 
@@ -248,7 +247,7 @@ describe('headFor, a country calendar', () => {
 	 * the days themselves.
 	 */
 	it('declares no alternates', () => {
-		for (const id of CALENDAR_IDS) expect(head(`/calendarium/${id}`)?.alternates, id).toEqual([]);
+		for (const id of CALENDAR_IDS) expect(head(calendarPath(id))?.alternates, id).toEqual([]);
 	});
 
 	/**
@@ -258,19 +257,19 @@ describe('headFor, a country calendar', () => {
 	 * block overwrites it from the reader's own preference before first paint.
 	 */
 	it('declares the language its calendar is published in', () => {
-		expect(head('/calendarium/br')?.lang).toBe('pt');
-		expect(head('/calendarium/us')?.lang).toBe('en');
+		expect(head(calendarPath('br'))?.lang).toBe('pt');
+		expect(head(calendarPath('us'))?.lang).toBe('en');
 	});
 
 	/** Ireland's layer is held (`held.ts`), so it is not an address at all — no
 	 *  head, and the worker 404s it. */
 	it('builds nothing for a held calendar', () => {
-		expect(head('/calendarium/ie')).toBeUndefined();
+		expect(head('/calendarium/ireland')).toBeUndefined();
 	});
 
 	it('gives every published calendar a head of its own', () => {
 		for (const id of CALENDAR_IDS) {
-			const h = head(`/calendarium/${id}`);
+			const h = head(calendarPath(id));
 			expect(h, id).toBeDefined();
 			expect(h?.title, id).not.toBe(SITE_NAME);
 		}
@@ -278,10 +277,10 @@ describe('headFor, a country calendar', () => {
 
 	/** The trail a reader actually walked: the picker is on the general page. */
 	it('leads the trail through the general calendar', () => {
-		expect(head('/calendarium/br')?.crumbs.map((c) => c.href)).toEqual([
+		expect(head(calendarPath('br'))?.crumbs.map((c) => c.href)).toEqual([
 			'/',
 			'/calendarium',
-			'/calendarium/br'
+			'/calendarium/brazil'
 		]);
 	});
 
@@ -292,8 +291,8 @@ describe('headFor, a country calendar', () => {
 	 * the page it names is already published in the language it is written in.
 	 */
 	it('treats a language prefix as an entry point', () => {
-		const h = head('/pt/calendarium/br');
-		expect(h?.canonical).toBe('/calendarium/br');
+		const h = head('/pt/calendarium/brazil');
+		expect(h?.canonical).toBe('/calendarium/brazil');
 		expect(h?.alternates).toEqual([]);
 		expect(h?.noindex).toBe(false);
 	});
@@ -785,12 +784,14 @@ describe('the chrome table the build actually ships', () => {
 		expect(new Set(Object.values(calendars).map(([title]) => title)).size).toBe(
 			CALENDAR_IDS.length
 		);
-		expect(calendars.br[0]).toBe('Calendário Litúrgico — Brasil — Glossa Catholica');
+		expect(calendars.br[0]).toBe('Calendário Litúrgico Brasileiro — Glossa Catholica');
 		// The description is a SENTENCE naming the country, not the general
 		// tagline under a label: twenty Spanish-speaking countries would
 		// otherwise be described identically but for a prefix.
-		expect(calendars.br[1]).toContain('Brasil');
-		expect(calendars.br[1]).not.toContain('{territory}');
+		expect(calendars.br[1]).toBe(
+			'Calendário Litúrgico Brasileiro, calculado para qualquer dia — o tempo, o grau e a cor.'
+		);
+		expect(calendars.br[1]).not.toContain('{name}');
 		expect(calendars.ca[1]).not.toBe(calendars.us[1]);
 		expect(calendars.jp[2]).toBe('日本');
 	});

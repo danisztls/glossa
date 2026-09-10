@@ -480,7 +480,7 @@ export const mt: Dictionary = {
 	'calendar.tagline':
 		'Il-Kalendarju Ruman Ġenerali, ikkalkulat għal kull jum — l-istaġun tiegħu, il-grad tiegħu, il-kulur tiegħu.',
 	'calendar.national.tagline':
-		'{territory}: il-Kalendarju Ruman Ġenerali biċ-ċelebrazzjonijiet tiegħu, ikkalkulat għal kull jum — l-istaġun tiegħu, il-grad tiegħu, il-kulur tiegħu.',
+		'{name}, ikkalkulat għal kull jum — l-istaġun tiegħu, il-grad tiegħu, il-kulur tiegħu.',
 	'calendar.calendar': 'Kalendarju',
 	'calendar.which.general': 'Kalendarju Ruman Ġenerali',
 	'calendar.filter': 'Fittex pajjiżi',

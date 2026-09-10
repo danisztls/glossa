@@ -12,7 +12,7 @@
  */
 
 import { parseHref, summaPartFromSlug, summaPartSlug } from './address.ts';
-import { CALENDAR_LANGS } from './calendar/national/languages.ts';
+import { CALENDAR_BY_SLUG } from './calendar/national/languages.ts';
 import { isUiLang } from './ui-langs.ts';
 
 // Re-exported because `scripts/sync-corpus.mjs` imports `summaPartSlug` from
@@ -155,7 +155,7 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
 }
 
 /**
- * `/calendarium/br` -> `br`, else undefined.
+ * `/calendarium/brazil` -> `br`, else undefined.
  *
  * ONE ADDRESS PER PUBLISHED CALENDAR, and the segment is the LAYER's id and
  * not a territory's. `?c=` on the page above names a territory, deliberately —
@@ -168,15 +168,15 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
  * honoured and still shows the Latin Patriarchate's calendar; the address it
  * mirrors to is `/calendarium/ps`.
  *
- * A HELD CALENDAR HAS NO ADDRESS, because `CALENDAR_LANGS` is keyed by the
+ * A HELD CALENDAR HAS NO ADDRESS, because `CALENDAR_PAGES` is keyed by the
  * published list. That is the same test `?c=` applies and for the same reason
  * (`held.ts`): a calendar the oracle still disagrees with is not served, and a
  * reader cannot tell a calendar that is wrong on four days from one that is
  * right.
  */
 export function parseCalendarPath(pathname: string): string | undefined {
-	const id = pathname.startsWith('/calendarium/') ? pathname.slice('/calendarium/'.length) : '';
-	return id && id in CALENDAR_LANGS ? id : undefined;
+	const slug = pathname.startsWith('/calendarium/') ? pathname.slice('/calendarium/'.length) : '';
+	return slug ? CALENDAR_BY_SLUG[slug] : undefined;
 }
 
 /**

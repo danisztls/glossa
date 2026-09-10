@@ -478,7 +478,7 @@ export const ro: Dictionary = {
 	'calendar.tagline':
 		'Calendarul Roman General, calculat pentru orice zi — timpul ei, gradul ei, culoarea ei.',
 	'calendar.national.tagline':
-		'{territory}: Calendarul Roman General cu sărbătorile proprii, calculat pentru orice zi — timpul ei, gradul ei, culoarea ei.',
+		'{name}, calculat pentru orice zi — timpul ei, gradul ei, culoarea ei.',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'Calendarul Roman General',
 	'calendar.filter': 'Caută țări',

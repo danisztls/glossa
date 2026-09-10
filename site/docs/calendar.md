@@ -451,15 +451,33 @@ persisted, unlike a `/pt/…` prefix: the reader asked for a calendar, not for a
 Portuguese site, so it holds for the session and the next visit negotiates
 afresh.
 
-**A country name from the platform is a label, never part of a sentence.**
-`calendar.national.tagline` opens with `{territory}` in all forty languages
-because `Intl.DisplayNames` returns a bare nominative with no article. Written
-as "as {territory} keeps it" it read correctly for Kenya and Brazil and then
-printed "as United States keeps it", "wie Schweiz ihn feiert", "tel que le
-célèbre France" — and no rule can add the article, since which countries take
-one is a fact about each language's own list. The same reason forbids a
-preposition in front of it: "in {territory}" is right in English and wrong in
-Portuguese the moment the country is Brazil.
+**The address is a slug and the calendar's id is not one.** Fifteen of the
+fifty-three ids are also interface language tags, and four of those name
+something else there: `tl` is Timor-Leste on this table and Tagalog in
+`/tl/preces`, `vi` the United States Virgin Islands and Vietnamese, `ar`
+Argentina and Arabic, `be` Belgium and Belarusian. So the segment is `brazil`
+where `?c=` keeps `br` — the decision `BIBLE_BOOK_SLUGS` already made when
+`/scriptura/josh/1` became `/scriptura/iosue/1`, so that the URL says what the
+page says. **They are written down and never derived**, because
+`Intl.DisplayNames` moves with the platform's CLDR and an address that changed
+when a browser updated would break every link ever made to it.
+
+**A calendar's name is written out per calendar and not composed.**
+`Calendário Litúrgico Brasileiro`, `Österreichischer Liturgischer Kalender`,
+`香港禮儀日曆`: the adjective follows the noun in Portuguese, precedes and
+declines it in German, and is not a word at all in Chinese, where the territory
+modifies the noun directly. A rule that built these would need a grammar per
+language; a finished phrase needs a speaker once. Where no demonym reads
+naturally the name is parenthetical, which is the source's own shape — `São
+Tomé e Príncipe` has no usable adjective, and `congolais` names the calendar of
+either Congo.
+
+**A name from `Intl.DisplayNames` is a label and can be nothing else**, which
+is what that table is still used for — the breadcrumb, and the picker's cells.
+The tagline was built around one for an afternoon and printed "as United States
+keeps it", "wie Schweiz ihn feiert", "tel que le célèbre France": the platform
+returns a bare nominative with no article, and no rule can add one, because
+which countries take an article is a fact about each language's own list.
 
 ## The page
 

@@ -94,7 +94,7 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
-	import { calendarPath, territoryName } from '$lib/calendar/national/languages';
+	import { calendarPath, CALENDAR_PAGES } from '$lib/calendar/national/languages';
 	import {
 		detectedTerritory,
 		openingTerritory,
@@ -169,7 +169,7 @@
 	/**
 	 * The calendar this page's own ADDRESS names, where it names one.
 	 *
-	 * `/calendarium/br` is a published page and `?c=br` is a parameter on
+	 * `/calendarium/brazil` is a published page and `?c=br` is a parameter on
 	 * another one — `languages.ts` argues why a country's calendar is worth an
 	 * address, and `routes/calendarium/[calendar]/` is the route that passes
 	 * this in. Everything below treats it as `?c=` was treated: it settles what
@@ -187,7 +187,7 @@
 	 * chose Israel and on the Latin Patriarchate's own territory for everyone
 	 * else: both show one calendar, and only the picker's trigger can tell them
 	 * apart. Contradicting the path is not a refinement — a stored `us` on
-	 * `/calendarium/br` is a reader who has been to this page before, not a
+	 * `/calendarium/brazil` is a reader who has been to this page before, not a
 	 * reader asking for Brazil's calendar to show them Denver.
 	 */
 	function seedTerritory(): string {
@@ -378,41 +378,40 @@
 	);
 
 	/**
-	 * The title, in the shape the edge writes and the reader's own words.
+	 * The title and the sentence under the heading, both naming the calendar
+	 * that is actually on screen.
 	 *
-	 * `shell-head.ts` names a country page `<calendar> — <territory> — <site>`
-	 * and the general one `<calendar> — <site>`, so this follows the CALENDAR
-	 * the address names rather than the territory the picker holds — the two
-	 * differ for a reader who chose Israel, and the title has to agree with the
-	 * address, not with the trigger. Assigning a different shape here is a
-	 * visible rearrangement on every load, which is the whole reason this is
-	 * written twice at all.
+	 * THE NAME IS THE CALENDAR'S OWN AND IS NOT TRANSLATED — `Calendário
+	 * Litúrgico Brasileiro` reads the same to a reader whose interface is
+	 * Albanian, because it is what that calendar is called (`languages.ts`).
+	 * The sentence around it is theirs. `shell-head.ts` composes the same two
+	 * strings for the edge, so the title assigned here at hydration is the
+	 * title the crawler was already served; a different shape would be a
+	 * visible rearrangement on every load.
+	 *
+	 * It follows the CALENDAR and not the picker's value, exactly as the
+	 * address does: a reader who chose Israel is reading the Latin
+	 * Patriarchate's calendar, and that is what these name.
 	 */
 	let namedLayer = $derived(territory === 'general' ? undefined : TERRITORY_CALENDARS[territory]);
-	let namedTerritory = $derived(namedLayer ? territoryName(namedLayer, lang) : undefined);
+	let calendarName = $derived(namedLayer ? CALENDAR_PAGES[namedLayer].name : undefined);
 	let pageTitle = $derived(
-		namedTerritory
-			? `${t('calendar.title')} — ${namedTerritory} — ${t('home.title')}`
+		calendarName
+			? `${calendarName} — ${t('home.title')}`
 			: `${t('calendar.title')} — ${t('home.title')}`
 	);
 
 	/**
-	 * The sentence under the heading, which says which calendar is on screen.
+	 * The name is set in `<strong>`, which is why this is `{@html}`.
 	 *
-	 * It said "The General Roman Calendar" over Brazil's propers until the
-	 * country pages landed, which was a page contradicting itself in its own
-	 * first line. `{territory}` is substituted the way every placeholder on
-	 * this site is (`summa.titleFromEdition`), and it is the same sentence
-	 * `route-titles.mjs` writes into the description — one string, so the page
-	 * and the head cannot come to say different things.
-	 *
-	 * It follows the CALENDAR and not the picker, exactly as the title does:
-	 * a reader who chose Israel is reading the Patriarchate's calendar, and
-	 * that is what the line names.
+	 * `ccc.landing.tagline` is the precedent and the reason it is safe: a
+	 * tagline may carry markup, both strings come from this repository rather
+	 * than from a reader, and `plain()` in `route-titles.mjs` strips it back
+	 * out for the `<meta>` description, whose content attribute is text.
 	 */
 	let tagline = $derived(
-		namedTerritory
-			? t('calendar.national.tagline').replace('{territory}', namedTerritory)
+		calendarName
+			? t('calendar.national.tagline').replace('{name}', `<strong>${calendarName}</strong>`)
 			: t('calendar.tagline')
 	);
 </script>
@@ -423,7 +422,7 @@
 
 <div class="landing-column">
 	<h1>{t('calendar.title')}</h1>
-	<p class="page-tagline landing-measure">{tagline}</p>
+	<p class="page-tagline landing-measure">{@html tagline}</p>
 
 	{#snippet controls()}
 		<!-- ONE CONTROL, WHICH IS WHY THERE IS NO ROW LEFT. The date field and

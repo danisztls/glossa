@@ -2602,8 +2602,8 @@ parses an id.
   **`/calendarium/liturgia` takes `?d=` and `?c=`**, so walking between the two
   pages keeps both the day and the country.
 - **A COUNTRY'S CALENDAR IS A PATH AND A DAY IS NOT, and the test is whether a
-  head can differ.** `/calendarium/br` is one of fifty-three published pages
-  (`calendar/national/languages.ts`); `?c=br` is the same parameter it always
+  head can differ.** `/calendarium/brazil` is one of fifty-three published
+  pages (`calendar/national/languages.ts`); `?c=br` is the same parameter it always
   was, still read, still what names a territory keeping another's calendar, and
   now mirrored to the path on arrival. The distinction is not tidiness: a head
   is built from `pathname` alone, so every `?c=` shared one title, one
@@ -2620,12 +2620,25 @@ parses an id.
   the document declares Portuguese in its head and paints English chrome under
   it. The seeded language is NOT persisted, where a `/pt/…` prefix is: the
   reader asked for a calendar, not for a Portuguese site.
-- **A country name from `Intl.DisplayNames` is a LABEL and never part of a
-  sentence.** It arrives as a bare nominative with no article, so
-  `calendar.national.tagline` opens with `{territory}` in all forty languages —
-  the draft that read "as {territory} keeps it" printed "as United States keeps
-  it", "wie Schweiz ihn feiert", "tel que le célèbre France", and which
-  countries take an article is a fact about each language's own list.
+- **The address is a SLUG, not the layer's id.** Fifteen of the fifty-three
+  ids are also interface language tags and four name something else there —
+  `tl` is Timor-Leste here and Tagalog in `/tl/preces` — so the segment is
+  `brazil` where `?c=` keeps `br`. The slugs are written down and never
+  derived: `Intl.DisplayNames` moves with the platform's CLDR, and an address
+  that changed when a browser updated would break every link made to it. It is
+  `BIBLE_BOOK_SLUGS`' decision a second time.
+- **A calendar's NAME is written out per calendar, in its own language.**
+  `Calendário Litúrgico Brasileiro`, not a territory dropped into a sentence:
+  the adjective follows the noun in Portuguese, precedes and declines it in
+  German, and is not a word at all in Chinese, so composing one needs a grammar
+  per language where a finished phrase needs a speaker once. It is what both
+  the `<title>` and `calendar.national.tagline`'s `{name}` take.
+- **A name from `Intl.DisplayNames` can be a label and nothing else.** It is a
+  bare nominative with no article, which is why the tagline built around one
+  printed "as United States keeps it", "wie Schweiz ihn feiert", "tel que le
+  célèbre France" — no rule can supply the article, since which countries take
+  one is a fact about each language's own list. It still names the breadcrumb,
+  where a label is exactly right.
 - **The card leaves in two directions and they are drawn differently.** The
   corner's glyph (`more`) is a SIDEWAYS move — the same day on another surface,
   which is `/calendarium` from the home and liturgy pages and nothing from

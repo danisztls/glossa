@@ -24,7 +24,7 @@
 
 import { bookSlug, parseHref, summaPartFromSlug, type Address } from './address.ts';
 import { relatedLinks, type Apparatus, type WorkImprint } from './apparatus.ts';
-import { CALENDAR_LANGS } from './calendar/national/languages.ts';
+import { CALENDAR_PAGES, calendarPath } from './calendar/national/languages.ts';
 import {
 	CHROME_PATHS,
 	parseCalendarPath,
@@ -85,7 +85,7 @@ export interface RouteTitles {
 	/** Calendar id -> `[title, description, territory name]`, each in the ONE
 	 *  language that calendar is published in — `chrome` above is a page in
 	 *  forty languages, and this is forty-odd pages in one language each. See
-	 *  `CALENDAR_LANGS` in `$lib/calendar/national/languages.ts`. */
+	 *  `CALENDAR_PAGES` in `$lib/calendar/national/languages.ts`. */
 	calendars: Record<string, [string, string, string]>;
 	books: Record<string, string>;
 	cccSpans: TitledSpan[];
@@ -568,7 +568,7 @@ function chromeHead(
  * `chromeHead` above. A chrome page is one page in forty languages and says
  * so; this is Brazil's calendar, and forty translations of it would be forty
  * addresses claiming to be the same page in different languages when what
- * differs between `/calendarium/br` and `/calendarium/ie` is the CONTENT — the
+ * differs between `/calendarium/brazil` and `/calendarium/ireland` is the CONTENT — the
  * transfers, the propers, the days themselves. So there are no alternates and
  * no `x-default`: forty-odd addresses, each canonical, each its own page.
  *
@@ -588,8 +588,8 @@ function calendarHead(id: string, titles: RouteTitles): ShellHead | undefined {
 	const entry = titles.calendars?.[id];
 	if (!entry) return undefined;
 	const [title, description, territory] = entry;
-	const lang = CALENDAR_LANGS[id] as UiLang;
-	const path = `/calendarium/${id}`;
+	const lang = CALENDAR_PAGES[id].lang as UiLang;
+	const path = calendarPath(id);
 	const general = titles.chrome[lang]?.['/calendarium']?.[0];
 	return {
 		title,

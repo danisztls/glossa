@@ -185,7 +185,7 @@ are in all 37 now.
 `compendium.*` keys written into the twenty-three dictionaries that lacked
 them.
 
-**A THIRD ANSWER EXISTS, AND THE COUNTRY CALENDARS ARE IT.** `/calendarium/br`
+**A THIRD ANSWER EXISTS, AND THE COUNTRY CALENDARS ARE IT.** `/calendarium/brazil`
 is in the sitemap and not in `CHROME_PATHS`, which no page was before: it is
 published, and it is published ONCE, in the language its calendar is published
 in. The two rules above cannot place it — every word on it is the interface, so
