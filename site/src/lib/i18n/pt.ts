@@ -670,7 +670,7 @@ export const pt: Dictionary = {
 	// saber, e a resposta são os parágrafos do Catecismo.
 	'quaestiones.landing.title': 'Perguntas',
 	'quaestiones.landing.tagline':
-		'Passagens do Catecismo, reunidas pela pergunta com que alguém chega. O trabalho feito aqui é a reunião; cada palavra do texto é do Catecismo, e cada passagem leva ao lugar onde ela está.',
+		'Passagens do Catecismo, da Doutrina Social e do direito canônico, reunidas pela pergunta com que alguém chega. O trabalho feito aqui é a reunião; cada palavra do texto é da própria Igreja, e cada passagem leva ao lugar onde ela está.',
 	'quaestiones.landing.none': 'Nenhuma pergunta foi escrita para esta versão.',
 	'quaestiones.search.label': 'Buscar nestas perguntas',
 	'quaestiones.search.none': 'Nenhuma pergunta daqui corresponde a essas palavras.',
@@ -683,10 +683,17 @@ export const pt: Dictionary = {
 	// metade que precisa sobreviver à tradução: `lead` reordena e não corta.
 	'quaestiones.passages.reordered':
 		'Estes parágrafos não estão na ordem do próprio Catecismo. O que responde diretamente à pergunta vem primeiro; nenhum foi deixado de fora.',
+	// As outras duas obras que a página cita, cada uma sob o próprio nome: o
+	// Catecismo resume, o Compêndio desenvolve, o Código obriga. Ver o
+	// comentário correspondente em `en.ts`.
+	'quaestiones.socialDoctrine.heading': 'Da Doutrina Social',
+	'quaestiones.socialDoctrine.blurb':
+		'O Compêndio da Doutrina Social da Igreja, onde leva adiante o que o Catecismo resume.',
 	'quaestiones.documents.heading': 'Documentos',
 	'quaestiones.documents.blurb':
 		'Onde a Igreja tratou da questão por extenso, ou escreveu depois do Catecismo.',
 	'quaestiones.canons.heading': 'No Código',
+	'quaestiones.canons.blurb': 'A lei da Igreja latina, onde ela resolve a questão.',
 	// As dezesseis prateleiras, na ordem de `site/quaestiones.json`. Sem os
 	// títulos das portas, são toda a navegação da página, e por isso nomeiam o
 	// que guardam em vez da situação de quem chega — a situação continua na

@@ -1,13 +1,19 @@
 import { error } from '@sveltejs/kit';
 import {
+	canonLawLangs,
+	canonLawWorkId,
 	cccLangs,
+	getCanonLawRangeAsync,
 	getCccParagraphRangeAsync,
 	getDocumentGroup,
+	getSocialDoctrineRangeAsync,
 	getWork,
 	loadQuaestiones,
+	socialDoctrineLangs,
+	socialDoctrineWorkId,
 	type DocumentGroup
 } from '$lib/corpus';
-import type { CccParagraph, Topic, WorkManifest } from '$lib/types';
+import type { CccParagraph, DocumentSection, Topic, WorkManifest } from '$lib/types';
 import type { PageLoad } from './$types';
 
 /**
@@ -38,15 +44,53 @@ interface TopicLangData {
 }
 
 /**
- * ONE TOPIC, RESOLVED TO PARAGRAPHS AND NOTHING MORE.
+ * The Compendium's sections, or the Code's canons, in one language.
+ *
+ * ONE SHAPE FOR BOTH, because the two works are the same shape: numbered
+ * units of a `DocumentSection` addressed one at a time, differing only in
+ * which id resolves them (`corpus.ts`, "THE SAME ARRANGEMENT AS THE BLOCK
+ * ABOVE"). No `lead` — `Topic.lead` reorders the Catechism alone, and
+ * `site/quaestiones.json` says why.
+ *
+ * THE LANGUAGE SETS ARE NOT THE SAME as the Catechism's and not the same as
+ * each other: nine editions of the CCC, ten of the Compendium, seven of the
+ * Code. So each block carries its own `byLang` and the page resolves each
+ * against its own reader preference, rather than one language being picked
+ * for a page that would then have to hide two thirds of itself.
+ */
+interface TopicSectionsData {
+	sections: DocumentSection[];
+	work: WorkManifest;
+}
+
+/** Spans in the file's own order, kept that way. `get…RangeAsync` sorts
+ *  within a span, which is the reading order of a run of numbered units;
+ *  nothing sorts ACROSS spans, for the reason `Topic.ccc` gives. */
+async function resolveSpans(
+	spans: [number, number][],
+	range: (from: number, to: number) => Promise<DocumentSection[]>
+): Promise<DocumentSection[]> {
+	const runs = await Promise.all(spans.map(([from, to]) => range(from, to)));
+	return runs.flat();
+}
+
+/**
+ * ONE TOPIC, RESOLVED TO THE NUMBERED UNITS IT NAMES.
+ *
+ * Three works, each fetched by span and each in every language the corpus has
+ * it in: the Catechism, the Compendium of the Social Doctrine where the topic
+ * names sections of it, the Code where it names canons. Documents are not
+ * fetched — a whole encyclical is not quotable at a topic's length, so they
+ * resolve to their groups and the page lists them.
  *
  * There is no passage list to load, and that is the design rather than an
  * omission (`site/quaestiones.json` argues it): the Scripture a topic wants is
- * already in the footnotes of the Catechism paragraphs it anchors, and
- * `ProseBlocks` linkifies those wherever a unit is rendered. So this load
- * fetches spans of the CCC and lets the apparatus do the rest — the same
- * apparatus `/catechismus/{n}` uses, on the same data, which is why a topic
- * page cannot drift out of agreement with the paragraph pages it points at.
+ * already in the footnotes of the units it anchors, and `ProseBlocks`
+ * linkifies those wherever a unit is rendered. So this load fetches spans and
+ * lets the apparatus do the rest — the same apparatus `/catechismus/{n}`,
+ * `/doctrina-socialis/{n}` and `/ius-canonicum/{n}` use, on the same data,
+ * which is why a topic page cannot drift out of agreement with the pages it
+ * points at.
  */
 export const load: PageLoad = async ({ params, parent }) => {
 	// Runs CONCURRENTLY with the layout that primes this route's indexes
@@ -110,5 +154,33 @@ export const load: PageLoad = async ({ params, parent }) => {
 		.map((slug) => getDocumentGroup(slug))
 		.filter((group): group is DocumentGroup => group !== undefined);
 
-	return { slug: params.slug, topic, byLang, documents };
+	// A language whose edition is short every one of this topic's sections is
+	// skipped, as above; a language short SOME of them keeps the rest, which
+	// is the opposite call and the right one here. The Catechism block is the
+	// page's answer and has to be whole or absent; these two are the developed
+	// teaching and the law under it, where a reader with nine sections of ten
+	// is better served than one sent to another language.
+	const socialDoctrineByLang: Partial<Record<string, TopicSectionsData>> = {};
+	for (const lang of topic.csdc?.length ? socialDoctrineLangs() : []) {
+		const work = getWork(socialDoctrineWorkId(lang));
+		if (!work) continue;
+		const sections = await resolveSpans(topic.csdc ?? [], (from, to) =>
+			getSocialDoctrineRangeAsync(lang, from, to)
+		);
+		if (sections.length === 0) continue;
+		socialDoctrineByLang[lang] = { sections, work };
+	}
+
+	const canonsByLang: Partial<Record<string, TopicSectionsData>> = {};
+	for (const lang of topic.canons?.length ? canonLawLangs() : []) {
+		const work = getWork(canonLawWorkId(lang));
+		if (!work) continue;
+		const sections = await resolveSpans(topic.canons ?? [], (from, to) =>
+			getCanonLawRangeAsync(lang, from, to)
+		);
+		if (sections.length === 0) continue;
+		canonsByLang[lang] = { sections, work };
+	}
+
+	return { slug: params.slug, topic, byLang, socialDoctrineByLang, canonsByLang, documents };
 };

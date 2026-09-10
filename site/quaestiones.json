@@ -1,7 +1,7 @@
 {
 	"$comment": [
-		"Topics, `topic slug -> { doorway, ccc, documents, canons, lead }`, merged into the shipped",
-		"index by scripts/sync-corpus.mjs and read by /quaestiones and /quaestiones/{slug}.",
+		"Topics, `topic slug -> { doorway, cluster, ccc, lead, csdc, canons, documents }`, merged into",
+		"the shipped index by scripts/sync-corpus.mjs and read by /quaestiones and /quaestiones/{slug}.",
 		"",
 		"WHY THIS FILE EXISTS RATHER THAN A FIELD IN the corpus's build/*/manifest.json: the reason",
 		"descriptions.json and document-tags.json each give. Those manifests are GENERATED, a re-parse",
@@ -58,9 +58,30 @@
 		"one of the Catechism's OWN headings (`Chastity and homosexuality` is `[2357, 2359]` in",
 		"build/ccc.en/structure.json) the editorial act is smaller still: the topic IS the heading.",
 		"",
-		"`documents` and `canons` carry what the Catechism's footnotes do not reach -- a document",
-		"written after the CCC, or a procedure the Code holds and the Catechism only names. They are",
-		"additions to the derived set, never a replacement for it.",
+		"THREE WORKS ARE QUOTED AND ONE IS LISTED, which is the distinction the fields draw. `ccc`,",
+		"`csdc` and `canons` name spans of works this site renders a numbered unit at a time, and the",
+		"topic page prints their text in that order; `documents` names whole works, which cannot be",
+		"quoted at a topic's length, so it prints their titles and leads to them.",
+		"",
+		"`csdc` IS FOR THE QUESTION THE CATECHISM ANSWERS IN A PARAGRAPH AND THE COMPENDIUM IN A",
+		"CHAPTER. The Catechism's treatment of the social questions is real and short -- work is CCC",
+		"2426-2433, private property 2402-2407, the political community 2234-2246 -- because it is a",
+		"catechism and those are its summaries. The Compendium of the Social Doctrine is the developed",
+		"teaching those summaries stand on, addressed the same way, at `/doctrina-socialis/{n}`. So a",
+		"topic in the public square carries both: the Catechism says the thing, the Compendium works",
+		"it out. It is named where the Compendium ADDS, and 90 of the 116 topics have no `csdc`",
+		"because it does not: there is nothing there about purgatory or scruples.",
+		"",
+		"`canons` USED TO BE A LIST OF NUMBERS and now prints the canon. That is why can. 1176 is on",
+		"`crematio` and can. 983 on `confessio-sacerdoti`: a reader asking whether the Church allows",
+		"cremation, or whether a priest may repeat what he heard, is answered by the law's own",
+		"sentence and was not answered by a link reading `1176`. A canon is named where the Code",
+		"holds the answer and the Catechism only names it -- a procedure, a permission, a condition.",
+		"",
+		"THE SPAN IS STILL SHORT IN ALL THREE. A topic is read at one sitting by somebody who came",
+		"with a question, and the Compendium's chapters run to a hundred sections: `labor` names six",
+		"of them and not the chapter. The rest of it is one link away, at the paragraph the span",
+		"opens on.",
 		"",
 		"EVERY `documents` ENTRY IS CHECKED AGAINST site/descriptions.json, which is the one place",
 		"here that says what a document is ABOUT rather than what it is called. A title is a poor",
@@ -71,7 +92,10 @@
 		"Read the description before naming a document, and again before removing one.",
 		"",
 		"`lead` IS THE ONE REAL JUDGEMENT IN THIS FILE, and it is one field wide so it can be argued",
-		"with. A span renders in paragraph order unless `lead` names a paragraph to put first. It is",
+		"with. A span renders in paragraph order unless `lead` names a paragraph to put first. It",
+		"reorders the CATECHISM and only the Catechism, because that block opens the page and is the",
+		"one a reader meets before deciding whether to go on; the Compendium and the Code are read",
+		"further down, by somebody who has already decided to. It is",
 		"needed because the Catechism's order is systematic and a reader in trouble is not: CCC",
 		"2280-2283 opens on the gravity of suicide and closes on `We should not despair of the eternal",
 		"salvation of persons who have taken their own lives`, and a bereaved mother served those four",
@@ -103,7 +127,8 @@
 		"THE VOCABULARY OF DOORWAYS AND CLUSTERS IS CLOSED, and sync-corpus.mjs exits 1 on a topic",
 		"outside it, on a cluster this topic's own doorway does not declare, on a",
 		"CCC span naming a paragraph this build has not got, on a document slug naming no document, on",
-		"a canon this build has not got, and on a `lead` outside its own topic's spans. The last is the",
+		"a canon or a Compendium section this build has not got, and on a `lead` outside its own",
+		"topic's CCC spans. The last is the",
 		"one worth stating: a `lead` that has drifted out of its span is invisible on the page, because",
 		"a page that silently renders in printed order looks exactly like a page nobody wrote a `lead`",
 		"for.",
@@ -244,6 +269,7 @@
 			"doorway": "argument",
 			"cluster": "other-christians",
 			"ccc": [[1441, 1449]],
+			"canons": [[983, 984]],
 			"documents": ["reconciliatio-et-paenitentia"]
 		},
 		"eucharistia": {
@@ -408,12 +434,14 @@
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2402, 2407]],
+			"csdc": [[176, 181]],
 			"documents": ["rerum-novarum", "quadragesimo-anno", "centesimus-annus"]
 		},
 		"socialismus": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2424, 2425]],
+			"csdc": [[335, 337]],
 			"documents": [
 				"quod-apostolici-muneris",
 				"divini-redemptoris",
@@ -426,30 +454,38 @@
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2426, 2433]],
+			"csdc": [[270, 275]],
 			"documents": ["rerum-novarum", "laborem-exercens"]
 		},
 		"migratio": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2241, 2241]],
+			"csdc": [[297, 298]],
 			"documents": ["fratelli-tutti", "dignitas-infinita"]
 		},
 		"bellum": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2302, 2317]],
+			"csdc": [[497, 501]],
 			"documents": ["pacem", "gaudium-et-spes", "fratelli-tutti"]
 		},
 		"civitas-et-oboedientia": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2234, 2237]],
+			"csdc": [[396, 401]],
 			"documents": ["diuturnum", "immortale-dei"]
 		},
 		"suffragium": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2238, 2240]],
+			"csdc": [
+				[568, 570],
+				[573, 574]
+			],
 			"documents": ["catholics-in-political-life"]
 		},
 		"sub-imperio-atheo": {
@@ -462,36 +498,45 @@
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2244, 2246]],
+			"csdc": [[424, 427]],
 			"documents": ["immortale-dei", "libertas", "quas-primas", "dignitatis-humanae"]
 		},
 		"libertas-religiosa": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2104, 2109]],
+			"csdc": [[421, 423]],
 			"documents": ["dignitatis-humanae", "mit-brennender-sorge"]
 		},
 		"oecologia": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2415, 2418]],
+			"csdc": [[466, 471]],
 			"documents": ["laudato-si", "laudate-deum"]
 		},
 		"paupertas": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2443, 2449]],
+			"csdc": [
+				[182, 184],
+				[449, 449]
+			],
 			"documents": ["populorum", "sollicitudo-rei-socialis", "dilexi-te"]
 		},
 		"technologia": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2293, 2294]],
+			"csdc": [[456, 460]],
 			"documents": ["laudato-si", "antiqua-et-nova"]
 		},
 		"communicatio-socialis": {
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2493, 2499]],
+			"csdc": [[414, 416]],
 			"documents": ["inter-mirifica", "antiqua-et-nova"]
 		},
 		"iudaismus": {
@@ -582,6 +627,7 @@
 			"doorway": "life-event",
 			"cluster": "death-and-dying",
 			"ccc": [[2300, 2301]],
+			"canons": [[1176, 1176]],
 			"documents": ["ad-resurgendum-cum-christo"]
 		},
 		"matrimonium": {
@@ -591,15 +637,16 @@
 				[1625, 1632],
 				[1643, 1645]
 			],
-			"documents": ["casti-connubii", "familiaris-consortio"],
-			"canons": [[1055, 1057]]
+			"csdc": [[215, 220]],
+			"canons": [[1055, 1057]],
+			"documents": ["casti-connubii", "familiaris-consortio"]
 		},
 		"matrimonium-mixtum": {
 			"doorway": "life-event",
 			"cluster": "marriage",
 			"ccc": [[1633, 1637]],
-			"documents": ["familiaris-consortio"],
-			"canons": [[1124, 1129]]
+			"canons": [[1124, 1129]],
+			"documents": ["familiaris-consortio"]
 		},
 		"nullitas-matrimonii": {
 			"doorway": "life-event",
@@ -608,8 +655,8 @@
 				[1629, 1629],
 				[1650, 1651]
 			],
-			"documents": ["familiaris-consortio"],
-			"canons": [[1671, 1673]]
+			"canons": [[1671, 1673]],
+			"documents": ["familiaris-consortio"]
 		},
 		"communio-post-divortium": {
 			"doorway": "life-event",
@@ -644,6 +691,7 @@
 				[2436, 2436]
 			],
 			"lead": 2436,
+			"csdc": [[287, 290]],
 			"documents": ["laborem-exercens"]
 		},
 		"pornographia": {
@@ -810,28 +858,32 @@
 				[1438, 1438],
 				[2043, 2043]
 			],
-			"documents": [],
-			"canons": [[1249, 1253]]
+			"canons": [[1249, 1253]],
+			"documents": []
 		},
 		"dominica": {
 			"doorway": "ordinary",
 			"cluster": "practice",
 			"ccc": [[2177, 2183]],
-			"documents": ["sacrosanctum-concilium", "sacramentum-caritatis"],
-			"canons": [[1247, 1248]]
+			"canons": [[1247, 1248]],
+			"documents": ["sacrosanctum-concilium", "sacramentum-caritatis"]
 		},
 		"otium": {
 			"doorway": "ordinary",
 			"cluster": "practice",
 			"ccc": [[2184, 2188]],
+			"csdc": [[284, 286]],
 			"documents": ["gaudete-in-domino", "laborem-exercens"]
 		},
 		"baptismus-infantium": {
 			"doorway": "ordinary",
 			"cluster": "practice",
 			"ccc": [[1250, 1255]],
-			"documents": ["pastoralis-actio"],
-			"canons": [[872, 874]]
+			"canons": [
+				[867, 868],
+				[872, 874]
+			],
+			"documents": ["pastoralis-actio"]
 		},
 		"organorum-donatio": {
 			"doorway": "ordinary",
@@ -855,8 +907,8 @@
 				[2043, 2043],
 				[2447, 2447]
 			],
-			"documents": [],
-			"canons": [[222, 222]]
+			"canons": [[222, 222]],
+			"documents": []
 		},
 		"vota-et-iuramenta": {
 			"doorway": "ordinary",
@@ -865,24 +917,37 @@
 				[2101, 2103],
 				[2150, 2155]
 			],
+			"canons": [
+				[1191, 1191],
+				[1199, 1199]
+			],
 			"documents": []
 		},
 		"vocatio": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
 			"ccc": [[1877, 1889]],
+			"csdc": [[541, 543]],
 			"documents": ["christus-vivit"]
 		},
 		"merces-iusta": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
 			"ccc": [[2434, 2435]],
+			"csdc": [
+				[301, 304],
+				[305, 307]
+			],
 			"documents": ["rerum-novarum", "laborem-exercens"]
 		},
 		"pecunia-collocanda": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
 			"ccc": [[2431, 2432]],
+			"csdc": [
+				[358, 360],
+				[368, 369]
+			],
 			"documents": ["caritas-in-veritate", "oeconomicae-et-pecuniariae-quaestiones"]
 		},
 		"tributum": {
@@ -892,6 +957,7 @@
 				[2240, 2240],
 				[2409, 2409]
 			],
+			"csdc": [[355, 355]],
 			"documents": []
 		},
 		"invidia": {
@@ -914,6 +980,10 @@
 			"doorway": "ordinary",
 			"cluster": "justice",
 			"ccc": [[1934, 1938]],
+			"csdc": [
+				[144, 148],
+				[433, 433]
+			],
 			"documents": ["nostra-aetate", "fratelli-tutti"]
 		},
 		"mercatura-hominum": {
@@ -923,6 +993,7 @@
 				[2355, 2355],
 				[2414, 2414]
 			],
+			"csdc": [[158, 158]],
 			"documents": ["dignitas-infinita"]
 		},
 		"violentia-domestica": {
@@ -941,12 +1012,14 @@
 			"doorway": "ordinary",
 			"cluster": "justice",
 			"ccc": [[2276, 2276]],
+			"csdc": [[148, 148]],
 			"documents": ["dignitas-infinita"]
 		},
 		"carceres": {
 			"doorway": "ordinary",
 			"cluster": "justice",
 			"ccc": [[2297, 2298]],
+			"csdc": [[402, 405]],
 			"documents": ["fratelli-tutti"]
 		},
 		"defensio-sui": {
@@ -956,12 +1029,14 @@
 				[2263, 2265],
 				[2316, 2317]
 			],
+			"csdc": [[500, 501]],
 			"documents": []
 		},
 		"proles-suscipienda": {
 			"doorway": "ordinary",
 			"cluster": "justice",
 			"ccc": [[2368, 2371]],
+			"csdc": [[230, 232]],
 			"documents": ["humanae-vitae", "laudato-si"]
 		}
 	}

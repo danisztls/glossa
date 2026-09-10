@@ -2887,8 +2887,10 @@ const distinctTags = tagVocabulary.length;
  *     missing — a topic quietly one paragraph short of its own answer.
  *   - A document slug naming no document, which is the residue of a rename,
  *     lost silently the moment it happens.
- *   - A canon this build has not got, same argument.
- *   - A `lead` outside its own topic's spans. THIS IS THE ONE WORTH THE CHECK:
+ *   - A canon or a Compendium of the Social Doctrine section this build has
+ *     not got, same argument: both are quoted on the page now, so both fail
+ *     the same silent way.
+ *   - A `lead` outside its own topic's CCC spans. THIS IS THE ONE WORTH THE CHECK:
  *     a drifted `lead` renders in printed order, and a page in printed order
  *     looks exactly like a page nobody wrote a `lead` for. The judgement would
  *     be gone and the file would still claim it.
@@ -2911,6 +2913,7 @@ const topicClusters = quaestionesFile.clusters ?? {};
 	);
 	const knownCcc = new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers));
 	const knownCanons = new Set(canonLawNumbers);
+	const knownSocialDoctrine = new Set(socialDoctrineNumbers);
 	const allowedDoorways = new Set(doorways);
 	const problems = [];
 
@@ -2942,20 +2945,36 @@ const topicClusters = quaestionesFile.clusters ?? {};
 				if (!knownCcc.has(n)) problems.push(`${slug}: CCC ${n} is in no edition of this build`);
 			}
 		}
-		if (spans.length === 0 && (topic.canons ?? []).length === 0) {
-			problems.push(`${slug}: anchors nothing — no CCC span and no canon`);
+		if (
+			spans.length === 0 &&
+			(topic.csdc ?? []).length === 0 &&
+			(topic.canons ?? []).length === 0
+		) {
+			problems.push(`${slug}: anchors nothing — no CCC span, no Compendium span and no canon`);
 		}
 		if (topic.lead !== undefined && !covered.has(topic.lead)) {
-			problems.push(`${slug}: lead ${topic.lead} is outside this topic's own spans`);
+			problems.push(`${slug}: lead ${topic.lead} is outside this topic's own CCC spans`);
 		}
-		for (const canonSpan of topic.canons ?? []) {
-			const [from, to] = canonSpan;
-			if (!Number.isInteger(from) || !Number.isInteger(to) || to < from) {
-				problems.push(`${slug}: malformed canon span ${JSON.stringify(canonSpan)}`);
-				continue;
-			}
-			for (let n = from; n <= to; n++) {
-				if (!knownCanons.has(n)) problems.push(`${slug}: canon ${n} is not in this build`);
+		// The Compendium of the Social Doctrine and the Code are checked
+		// exactly as the Catechism is and for its reason: a span naming a
+		// number no edition carries renders its other units and says nothing
+		// about the one that is missing. The union across editions is the set,
+		// not any one edition — three editions of the Compendium and two of the
+		// Code are short a number their siblings print, and the page skips a
+		// language that cannot answer rather than failing the build.
+		for (const [what, spanList, known] of [
+			['CSDC', topic.csdc, knownSocialDoctrine],
+			['canon', topic.canons, knownCanons]
+		]) {
+			for (const span of spanList ?? []) {
+				const [from, to] = span;
+				if (!Number.isInteger(from) || !Number.isInteger(to) || to < from) {
+					problems.push(`${slug}: malformed ${what} span ${JSON.stringify(span)}`);
+					continue;
+				}
+				for (let n = from; n <= to; n++) {
+					if (!known.has(n)) problems.push(`${slug}: ${what} ${n} is not in this build`);
+				}
 			}
 		}
 		for (const document of topic.documents ?? []) {

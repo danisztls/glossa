@@ -20,9 +20,24 @@ const source = JSON.parse(readFileSync('quaestiones.json', 'utf8')) as {
 	clusters: Record<string, string[]>;
 	topics: Record<
 		string,
-		{ doorway: string; cluster: string; ccc: [number, number][]; lead?: number }
+		{
+			doorway: string;
+			cluster: string;
+			ccc: [number, number][];
+			lead?: number;
+			csdc?: [number, number][];
+			canons?: [number, number][];
+		}
 	>;
 };
+
+/** The three quoted works, in the order the page prints them. `documents` is
+ *  not among them: it names whole works and is a list of links. */
+const spansOf = (topic: (typeof source.topics)[string]): [string, [number, number][]][] => [
+	['ccc', topic.ccc],
+	['csdc', topic.csdc ?? []],
+	['canons', topic.canons ?? []]
+];
 
 const allClusters = Object.values(source.clusters).flat();
 
@@ -86,9 +101,22 @@ describe('quaestiones.json', () => {
 
 	it('writes every span with its ends in order', () => {
 		for (const [slug, topic] of Object.entries(source.topics)) {
-			for (const [from, to] of topic.ccc) {
-				expect(to, `${slug}: [${from}, ${to}]`).toBeGreaterThanOrEqual(from);
+			for (const [field, spans] of spansOf(topic)) {
+				for (const [from, to] of spans) {
+					expect(to, `${slug}: ${field} [${from}, ${to}]`).toBeGreaterThanOrEqual(from);
+				}
 			}
+		}
+	});
+
+	/** A topic with no span of any quoted work renders a heading, a question
+	 *  and a list of document titles — a page that asks something and answers
+	 *  it with a bibliography. The sync refuses it too; this is the check that
+	 *  runs without a corpus. */
+	it('gives every topic at least one span of a work it can quote', () => {
+		for (const [slug, topic] of Object.entries(source.topics)) {
+			const total = spansOf(topic).reduce((n, [, spans]) => n + spans.length, 0);
+			expect(total, slug).toBeGreaterThan(0);
 		}
 	});
 
@@ -182,9 +210,12 @@ describe('every topic is reachable and named', () => {
 			'quaestiones.search.none',
 			'quaestiones.passages.heading',
 			'quaestiones.passages.reordered',
+			'quaestiones.socialDoctrine.heading',
+			'quaestiones.socialDoctrine.blurb',
 			'quaestiones.documents.heading',
 			'quaestiones.documents.blurb',
-			'quaestiones.canons.heading'
+			'quaestiones.canons.heading',
+			'quaestiones.canons.blurb'
 		];
 
 		let begun = 0;

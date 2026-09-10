@@ -1523,8 +1523,12 @@ export const en: Dictionary = {
 	// rule. A question names what a reader wants to know; the answer is the
 	// Catechism's paragraphs and is not restated in any of these keys.
 	'quaestiones.landing.title': 'Questions',
+	// NAMES THE THREE WORKS IT QUOTES, and it named one until the Compendium
+	// of the Social Doctrine and the Code joined it. The second clause is the
+	// promise and has to keep saying the same thing in every language: the
+	// arrangement is ours and not one word of the text is.
 	'quaestiones.landing.tagline':
-		'Passages of the Catechism, gathered by the question someone arrives holding. The gathering is the work done here; every word of the text is the Catechism’s, and each passage links to where it stands.',
+		'Passages of the Catechism, the Social Doctrine and canon law, gathered by the question someone arrives holding. The gathering is the work done here; every word of the text is the Church’s own, and each passage links to where it stands.',
 	'quaestiones.landing.none': 'No questions have been written for this build.',
 	// The search box over the list. A placeholder and an accessible name at
 	// once, so it says what it searches rather than just "Search": this page
@@ -1547,10 +1551,24 @@ export const en: Dictionary = {
 	// span and never trims one.
 	'quaestiones.passages.reordered':
 		'These paragraphs are not in the Catechism’s own order. The one that answers the question directly is placed first; none has been left out.',
+	// THE SECOND AND THIRD WORKS THE PAGE QUOTES, each headed by its own name
+	// because they do not teach at the same level: the Catechism summarises,
+	// the Compendium develops, the Code binds. A reader who cannot see which
+	// of the three they are reading has been handed a composite nobody wrote.
+	//
+	// Each blurb says WHAT KIND OF ANSWER FOLLOWS and nothing about its
+	// content — the heading names the work, the blurb names the register, and
+	// the text speaks for itself. "The law of the Latin Church" is a plain
+	// statement of scope and is doing real work: a reader who has come this
+	// far in trouble should know a canon is not a counsel.
+	'quaestiones.socialDoctrine.heading': 'From the Social Doctrine',
+	'quaestiones.socialDoctrine.blurb':
+		'The Compendium of the Social Doctrine of the Church, where it takes the Catechism’s summary further.',
 	'quaestiones.documents.heading': 'Documents',
 	'quaestiones.documents.blurb':
 		'Where the Church has treated the question at length, or has written since the Catechism.',
 	'quaestiones.canons.heading': 'In the Code',
+	'quaestiones.canons.blurb': 'The law of the Latin Church, where it settles the question.',
 	// The sixteen shelves, in `site/quaestiones.json`'s order, and with the
 	// doorway headings gone these are the whole navigation of the page.
 	//

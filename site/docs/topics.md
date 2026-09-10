@@ -34,8 +34,8 @@ see the split.
 
 ## The passages are derived, not chosen
 
-A topic anchors **spans of the Catechism**, and nothing else about it is a list
-of passages. The Scripture comes out of those paragraphs' own footnotes, which
+A topic anchors **spans of numbered works** — the Catechism first and always —
+and nothing about it is a list of passages. The Scripture comes out of those paragraphs' own footnotes, which
 `ProseBlocks` linkifies wherever a unit is rendered — CCC 2357 carries
 `Gen 19:1-29; Rom 1:24-27; 1 Cor 6:10; 1 Tim 1:10` and `CDF, Persona humana 8`
 without anybody here deciding it should. Where the span is one of the
@@ -48,9 +48,55 @@ the same component as `/catechismus/{n}`, so it **cannot drift out of agreement
 with the page it points at**. And a better parse of the Catechism's apparatus
 improves every topic without anyone touching the topic file.
 
-`documents` and `canons` carry what the footnotes cannot reach — a document
-written after the Catechism, a procedure the Code holds and the Catechism only
-names. They are additions to the derived set, never a replacement for it.
+`csdc`, `canons` and `documents` carry what the footnotes cannot reach. The
+first two are additions to the derived set, never a replacement for it; the
+third is not a passage at all.
+
+## Three works are quoted and one is listed
+
+A topic page prints the Catechism, then the Compendium of the Social Doctrine
+where the topic names sections of it, then the Code where it names canons, and
+then the titles of any documents. The first three are quoted because this site
+addresses each of them a numbered unit at a time — `/catechismus/{n}`,
+`/doctrina-socialis/{n}`, `/ius-canonicum/{n}` — so a span of one resolves to
+text with an address behind every number. A document is a whole work and cannot
+be quoted at a topic's length, which is why it stays a title and a link.
+
+**Each block is headed by the work it quotes**, and that is what earns the
+second and third of them. The three teach at different levels — a summary, its
+development, the law — and a reader who cannot see which one they are reading
+has been handed a composite nobody wrote.
+
+**`csdc` is for the question the Catechism answers in a paragraph and the
+Compendium answers in a chapter.** The Catechism's social teaching is real and
+short: work is CCC 2426–2433, private property 2402–2407, the political
+community 2234–2246, because it is a catechism and those are its summaries. The
+Compendium is the developed teaching underneath them. So a topic in the public
+square carries both, and ninety of the topics carry no `csdc` at all — there is
+nothing in the Compendium about purgatory or scruples, and a field named where
+it adds nothing is a heading over a repetition.
+
+**`canons` used to be a list of numbers.** A reader asking whether the Church
+allows cremation was shown a link reading `1176`; they are now shown can. 1176,
+which says the Church earnestly recommends burial and does not forbid cremation
+unless it is chosen against the faith. That is the whole argument for the
+change, and it is also the rule for naming a canon: name it where the law
+_settles_ the question and the Catechism only mentions it — a procedure, a
+permission, a condition.
+
+**The span stays short in all three.** A topic is read at one sitting by
+somebody who arrived with a question, and the Compendium's chapters run past a
+hundred sections; `labor` names six of them. The rest is one link away, at the
+paragraph the span opens on.
+
+Each work resolves the reader's language **separately**, because the editions do
+not line up: nine of the Catechism, ten of the Compendium, seven of the Code.
+`content.langFor` already keeps those preferences apart everywhere else on the
+site, and one language chosen for the page would have to be wrong for two of its
+blocks or hide them. The Catechism block is whole or absent — a language short
+this topic's paragraphs is skipped — while the other two keep whatever the
+edition has, since a reader with nine sections of ten is better served than one
+sent to another language.
 
 ### What a newly ingested document does to the topics, on its own
 
@@ -135,9 +181,16 @@ surviving shelf open, or a search matching three questions would show three
 closed headings and read as no results; and the search does not record what it
 opened, so clearing the box puts the page back as the reader had it. A browser
 opens a closed `<details>` only for a target _inside_ one, and these ids are on
-the element itself, so the page opens the cluster a fragment names — nothing
-here writes such a link any more, and somebody else's bookmark is exactly the
-case that has to keep working.
+the element itself, so the page reads the fragment itself and opens the cluster
+it names.
+
+**The shelf is a crumb on the topic page**, `Questions › Money, work & vocation
+› Tax`, pointing at that fragment. It is the only way back to a question's
+neighbours, and most readers arrive at a topic from a search engine rather than
+through the list: before it, the first crumb landed them in sixteen shut shelves
+with nothing to say which one they had come out of. The link works because the
+landing page opens what the fragment names — the same mechanism somebody else's
+bookmark uses, now with a caller inside the site.
 
 **Which is what retired the aside.** It held a table of contents listing the
 sixteen clusters and, above that, the search box; with the shelves shut the page

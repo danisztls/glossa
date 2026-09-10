@@ -808,13 +808,25 @@ sections, not one list, and the trace goes first.
 
 ## `/quaestiones`: a topic is a doorway, and one paragraph may come first
 
-Reader questions anchored to spans of the Catechism (`site/quaestiones.json`,
+Reader questions anchored to spans of the numbered works (`site/quaestiones.json`,
 rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
 
 - **Anchor a CCC span; never list passages.** The Scripture and the magisterial
   citations come from those paragraphs' own footnotes, which `ProseBlocks`
   already linkifies — CCC 2357 carries `Gen 19:1-29` and `Persona humana 8`
   without anyone here choosing them.
+- **Three works are quoted and one is listed.** `ccc`, `csdc` and `canons` name
+  spans of works this site addresses a unit at a time, so the page prints their
+  text under a heading each; `documents` names whole works, which no topic can
+  quote, so it prints titles. Each block resolves the reader's language on its
+  own — nine editions of the Catechism, ten of the Compendium, seven of the
+  Code.
+- **Name `csdc` where the Compendium develops what the Catechism summarises**,
+  and nowhere else: work is CCC 2426-2433 against a hundred-section chapter, and
+  ninety topics carry no `csdc` because the Compendium says nothing about
+  purgatory or scruples. **Name a canon where the law settles the question** —
+  can. 1176 answers a reader asking about cremation and a link reading `1176`
+  did not.
 - **`lead` reorders a span and never trims one**, and the page says so whenever
   it has: CCC 2283 before the three paragraphs on the gravity of suicide is an
   arrangement, and an undisclosed one would be the gloss `docs/decisions.md`
@@ -839,8 +851,10 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
 - **A cluster is a `<details>` shut by default, and two rules keep it usable**: a
   live query forces every surviving shelf open (three closed headings read as no
   results), and the page opens the cluster a fragment names, since a browser
-  opens a closed `<details>` only for a target INSIDE it and every sidebar row
-  is an anchor at the cluster itself.
+  opens a closed `<details>` only for a target INSIDE it and the id is on the
+  cluster itself. **A topic page's middle crumb is that fragment** — most
+  readers reach a topic from a search engine, and without it the way back was
+  sixteen shut shelves saying nothing about which one they had left.
 - **Read `descriptions.json` before naming a document.** A title is a poor
   oracle: `veritatis-splendor` sounds like the document for faith and works and
   is about the moral act, and it sat under `iustificatio` until the description

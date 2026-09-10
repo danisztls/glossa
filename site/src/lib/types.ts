@@ -1041,8 +1041,16 @@ export interface Topic {
 	cluster: string;
 	ccc: [number, number][];
 	lead?: number;
-	documents?: string[];
+	/** Spans of the Compendium of the Social Doctrine, quoted under the
+	 *  Catechism's. Named where the Compendium develops what the Catechism
+	 *  summarises — the public square, work, the economy — and absent on the
+	 *  90 topics where it says nothing (`site/quaestiones.json`). */
+	csdc?: [number, number][];
+	/** Spans of the Code, quoted under those. Named where the law holds the
+	 *  answer and the Catechism only mentions it. */
 	canons?: [number, number][];
+	/** Whole works, which a topic cannot quote — listed by title and linked. */
+	documents?: string[];
 }
 
 export interface TopicIndex {
