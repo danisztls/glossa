@@ -264,10 +264,13 @@ describe('headFor, a country calendar', () => {
 		expect(head(calendarPath('us'))?.lang).toBe('en');
 	});
 
-	/** Ireland's layer is held (`held.ts`), so it is not an address at all — no
-	 *  head, and the worker 404s it. */
+	/** Macau's layer is held (`held.ts`), so it is not an address at all — no
+	 *  head, and the worker 404s it. It is Macau because Our Lady of China
+	 *  falls on the LUNAR new year there, which no rule in a layer file can
+	 *  spell: an example that a fix to the engine cannot overtake, as Ireland
+	 *  was overtaken. */
 	it('builds nothing for a held calendar', () => {
-		expect(head('/calendarium/ireland')).toBeUndefined();
+		expect(head('/calendarium/macau')).toBeUndefined();
 	});
 
 	it('gives every published calendar a head of its own', () => {

@@ -173,6 +173,7 @@ export const DENMARK: NationalCalendar = {
 		'raymond-of-penyafort': { to: '01-08' }
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03', 2027: '11-08' },
 		'all-saints': { 2025: '11-02', 2027: '11-07' },
 		ansgar: { 2025: '01-26', 2026: '01-25', 2027: '01-31' },
 		assumption: { 2025: '08-17', 2026: '08-16' },

@@ -262,9 +262,26 @@ function sanctoralFor(
 			}
 		}
 	}
-	if (key === '11-02') out.push(ALL_SOULS);
+	// ALL SOULS IS NOT IN `GRC` AND STILL HAS TO REACH `movedTo`. It is a
+	// commemoration rather than a celebration of the sanctorale, so it is
+	// pushed here by date; the consequence, until 2026-09-10, was that the
+	// one general celebration seven of these conferences move was the one no
+	// layer could move. Five keep it on 2 November unless that is a Sunday
+	// (England, Scotland, Wales, Rwanda, Thailand), and Denmark and Finland
+	// tie it to the Sunday they keep All Saints on — three different rules,
+	// which is why each is a `movedInYear` table and not a rule here.
+	if (key === (movedTo(ALL_SOULS.id, '11-02') ?? '11-02')) out.push(ALL_SOULS);
 	for (const celebration of national?.propers?.[key] ?? []) {
 		if (!inCalendar(celebration)) continue;
+		// A PROPER THE GENERAL CALENDAR HAS SINCE TAKEN UP IS NOT A SECOND
+		// CELEBRATION. Ireland, Portugal and Cabo Verde kept John Henry Newman
+		// on 9 October before he was inscribed in the General Calendar, and
+		// `grc.ts` gives that row `since: 2026` — so from 2026 the day carried
+		// him twice, once out of each table, in all three calendars. What a
+		// country wants to say about a general celebration it also keeps is
+		// said in `overrides`, which is why deferring to the general row here
+		// loses nothing.
+		if (out.some((c) => c.id === celebration.id)) continue;
 		out.push({ ...celebration, proper: true, source: 'proper' });
 	}
 	// The propers that fall on no date. Scanned rather than looked up, because
@@ -346,14 +363,17 @@ export function buildYear(
 		const t = temporal.get(n)!;
 		const kept: Celebration[] = [];
 		for (const c of [t.celebration, ...sanctoralFor(n, a, merged, temporal)]) {
-			// A solemnity impeded by a day of higher class is not dropped but
+			// A celebration impeded by a day of higher class is not dropped but
 			// moved (n. 60). Taken out here, before a winner is chosen, so that
 			// it cannot also appear as an omitted loser on its own date.
-			if (
-				c.transferable &&
-				c.precedence >= PRECEDENCE.SOLEMNITY &&
-				t.celebration.precedence < PRECEDENCE.SOLEMNITY
-			) {
+			//
+			// THE COMPARISON IS AGAINST ITS OWN PRECEDENCE AND NOT AGAINST THE
+			// CONSTANT, which is a difference only a PROPER solemnity can see:
+			// line 4 is impeded by line 3, and reading `< SOLEMNITY` said it
+			// was not. Haiti keeps Our Lady of Perpetual Help on 27 June and
+			// the Sacred Heart fell there in 2025, so the country's own
+			// solemnity was dropped rather than moved to the 28th.
+			if (c.transferable && t.celebration.precedence < c.precedence) {
 				impeded.push({ from: n, celebration: c });
 			} else {
 				kept.push(c);

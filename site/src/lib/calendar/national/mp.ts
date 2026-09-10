@@ -31,18 +31,20 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Anniversary of the Dedication of the Cathedral: kept on 2025 2025-12-15, 2026 2026-12-14, 2027 2027-12-14 -- no fixed date and no fixed offset from Easter
- */
-
 export const NORTHERN_MARIANAS: NationalCalendar = {
 	id: 'mp',
 	options: { epiphanyOnSunday: true, ascensionOnSunday: true, corpusChristiOnSunday: true },
 	propers: {
 		'05-15': [proper('isidore-the-farmer', { en: 'Saint Isidore the Farmer' }, 'm')],
-		'10-03': [proper('francis-borgia', { en: 'Saint Francis Borgia, priest' }, 'm')]
+		'10-03': [proper('francis-borgia', { en: 'Saint Francis Borgia, priest' }, 'm')],
+		'12-14': [
+			proper(
+				'anniversary-of-the-dedication-of-the-cathedral',
+				{ en: 'Anniversary of the Dedication of the Cathedral' },
+				'f',
+				{ transferable: true }
+			)
+		]
 	},
 	overrides: {
 		'joseph-the-worker': keptAs('m'),

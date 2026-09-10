@@ -486,9 +486,15 @@ describe('calendarPathLang', () => {
 	});
 
 	/** Held and alias ids are not addresses, so they name no language either
-	 *  — `parseCalendarPath` is the one table both ends read. */
+	 *  — `parseCalendarPath` is the one table both ends read.
+	 *
+	 *  MACAU RATHER THAN A COUNTRY WHOSE LAYER IS NEARLY RIGHT: it was Ireland
+	 *  until Ireland was published, which is this file's own lesson about a
+	 *  counterexample being overtaken. Macau keeps Our Lady of China on the
+	 *  LUNAR new year, and a lunisolar date is not a function of the Gregorian
+	 *  one — so it is held for a reason a fix to the engine cannot retire. */
 	it('says nothing about an address that does not exist', () => {
-		expect(at('/calendarium/ireland')).toBeUndefined();
+		expect(at('/calendarium/macau')).toBeUndefined();
 		expect(at('/calendarium/israel')).toBeUndefined();
 		// The layer id, which is `?c=`'s vocabulary and not an address.
 		expect(at('/calendarium/br')).toBeUndefined();

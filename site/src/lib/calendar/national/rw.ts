@@ -34,7 +34,6 @@ import type { NationalCalendar } from '../types';
 /*
  * NOT DERIVED, and left here rather than guessed:
  *
- *   - Our Lady of Kibeho: kept on 2025 2025-11-28, 2026 2026-11-28, 2027 2027-11-29 -- no fixed date and no fixed offset from Easter
  *   - Saint Martin de Porres, religious: absent in 2025 only -- not written; three years cannot say which it is
  */
 
@@ -69,6 +68,11 @@ export const RWANDA: NationalCalendar = {
 				{ colour: 'red' }
 			)
 		],
+		'11-28': [
+			proper('our-lady-of-kibeho', { fr: 'Notre-Dame de Kibeho', en: 'Our Lady of Kibeho' }, 's', {
+				marian: true
+			})
+		],
 		'12-01': [
 			proper(
 				'charles-de-foucauld',
@@ -84,6 +88,7 @@ export const RWANDA: NationalCalendar = {
 		'philip-neri': { to: '05-27' }
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03' },
 		'all-saints': { 2025: '11-02', 2027: '11-07' },
 		'charles-lwanga': { 2025: '06-29', 2026: '06-14', 2027: '06-06' },
 		'peter-and-paul': { 2025: '06-30' }

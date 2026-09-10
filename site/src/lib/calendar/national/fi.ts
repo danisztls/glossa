@@ -91,6 +91,7 @@ export const FINLAND: NationalCalendar = {
 		'our-lady-of-the-rosary': { to: '10-08' }
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-01', 2026: '10-31', 2027: '11-06' },
 		'all-saints': { 2025: '11-02', 2027: '11-07' }
 	}
 };

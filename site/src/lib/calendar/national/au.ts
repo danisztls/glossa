@@ -31,17 +31,16 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Our Lady Help of Christians: kept on 2025 2025-05-24, 2026 2026-05-25, 2027 2027-05-24 -- no fixed date and no fixed offset from Easter
- */
-
 export const AUSTRALIA: NationalCalendar = {
 	id: 'au',
 	options: { epiphanyOnSunday: true, ascensionOnSunday: true, corpusChristiOnSunday: true },
 	propers: {
 		'04-16': [proper('bernadette-soubirous', { en: 'Saint Bernadette Soubirous, virgin' }, 'o')],
+		'05-24': [
+			proper('our-lady-help-of-christians', { en: 'Our Lady Help of Christians' }, 's', {
+				marian: true
+			})
+		],
 		'07-07': [
 			proper('peter-to-rot', { en: 'Blessed Peter To Rot, martyr' }, 'o', { colour: 'red' })
 		],

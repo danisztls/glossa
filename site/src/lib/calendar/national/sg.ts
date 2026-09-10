@@ -31,16 +31,18 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Anniversary of the Dedication of the Cathedral: kept on 2025 2025-02-14, 2026 2026-02-14, 2027 2027-02-15 -- no fixed date and no fixed offset from Easter
- */
-
 export const SINGAPORE: NationalCalendar = {
 	id: 'sg',
 	options: { epiphanyOnSunday: true, corpusChristiOnSunday: true },
 	propers: {
+		'02-14': [
+			proper(
+				'anniversary-of-the-dedication-of-the-cathedral',
+				{ en: 'Anniversary of the Dedication of the Cathedral' },
+				'f',
+				{ transferable: true }
+			)
+		],
 		'06-19': [
 			proper('philip-minh', { en: 'Saint Philip Minh, priest, and companions, martyrs' }, 'm', {
 				colour: 'red'

@@ -35,7 +35,6 @@ import type { NationalCalendar } from '../types';
  * NOT DERIVED, and left here rather than guessed:
  *
  *   - epiphanyOnSunday: 2025 True, 2026 False, 2027 False -- the conference changed it; the latest is kept
- *   - Saint David of Mynyw, bishop: kept on 2025 2025-03-01, 2026 2026-03-02, 2027 2027-03-01 -- no fixed date and no fixed offset from Easter
  *   - Saint Martin de Porres, religious: absent in 2025 only -- not written; three years cannot say which it is
  *   - Saint Adalbert, bishop and martyr: absent in 2026, 2027 only -- not written; three years cannot say which it is
  *   - Saint Paulinus of Nola, bishop: absent in 2026, 2027 only -- not written; three years cannot say which it is
@@ -46,6 +45,7 @@ export const WALES: NationalCalendar = {
 	options: { corpusChristiOnSunday: true },
 	propers: {
 		'02-09': [proper('teilo-of-llandaff', { en: 'Saint Teilo of Llandaff, bishop' }, 'o')],
+		'03-01': [proper('david-of-mynyw', { en: 'Saint David of Mynyw, bishop' }, 's')],
 		'04-20': [proper('beuno', { en: 'Saint Beuno, abbot' }, 'o')],
 		'05-05': [proper('asaph', { en: 'Saint Asaph, bishop' }, 'o')],
 		'06-20': [
@@ -109,6 +109,7 @@ export const WALES: NationalCalendar = {
 		'john-leonardi': { to: '10-10' }
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03' },
 		'all-saints': { 2025: '11-02', 2027: '10-31' },
 		assumption: { 2026: '08-16' },
 		epiphany: { 2025: '01-05' },

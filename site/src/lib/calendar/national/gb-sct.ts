@@ -64,6 +64,7 @@ export const SCOTLAND: NationalCalendar = {
 		'teresa-benedicta': keptAs('f')
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03' },
 		'all-saints': { 2025: '11-02' },
 		andrew: { 2025: '12-01' },
 		assumption: { 2026: '08-16' },

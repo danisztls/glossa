@@ -32,12 +32,6 @@ import { keptAs, proper, withGroup } from './common';
 import { NORTH_AFRICA } from './groups';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Anniversary of the Dedication of the Cathedral: kept on 2025 2025-05-23, 2026 2026-05-23, 2027 2027-05-24 -- no fixed date and no fixed offset from Easter
- */
-
 export const TUNISIA: NationalCalendar = {
 	id: 'tn',
 	options: { epiphanyOnSunday: true, ascensionOnSunday: true, corpusChristiOnSunday: true },
@@ -51,6 +45,17 @@ export const TUNISIA: NationalCalendar = {
 				},
 				'o',
 				{ colour: 'red' }
+			)
+		],
+		'05-23': [
+			proper(
+				'anniversary-of-the-dedication-of-the-cathedral',
+				{
+					fr: 'Anniversaire de la Dédicace de la Cathédrale',
+					en: 'Anniversary of the Dedication of the Cathedral'
+				},
+				'f',
+				{ transferable: true }
 			)
 		],
 		'06-18': [proper('roch', { en: 'Saint Roch' }, 'f')]

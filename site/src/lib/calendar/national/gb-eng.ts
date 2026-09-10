@@ -127,6 +127,7 @@ export const ENGLAND: NationalCalendar = {
 		'john-leonardi': { to: '10-10' }
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03' },
 		'all-saints': { 2025: '11-02', 2027: '10-31' },
 		assumption: { 2026: '08-16' },
 		epiphany: { 2025: '01-05' },

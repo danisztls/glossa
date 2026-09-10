@@ -57,6 +57,7 @@ export const THAILAND: NationalCalendar = {
 		'francis-xavier': keptAs('f')
 	},
 	movedInYear: {
+		'all-souls': { 2025: '11-03' },
 		'all-saints': { 2025: '11-02', 2027: '11-07' },
 		assumption: { 2025: '08-17', 2026: '08-16' },
 		'peter-and-paul': { 2026: '07-05', 2027: '07-04' }

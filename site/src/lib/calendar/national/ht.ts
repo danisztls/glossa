@@ -31,18 +31,20 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Our Lady of Perpetual Help: kept on 2025 2025-06-28, 2026 2026-06-27, 2027 2027-06-27 -- no fixed date and no fixed offset from Easter
- */
-
 export const HAITI: NationalCalendar = {
 	id: 'ht',
 	options: { epiphanyOnSunday: true },
 	propers: {
 		'01-21': [
 			proper('high-grace', { fr: 'Notre-Dame d’Altagrâce', en: 'Our Lady of High Grace' }, 'm')
+		],
+		'06-27': [
+			proper(
+				'our-lady-of-perpetual-help',
+				{ fr: 'Notre-Dame du Perpétuel Secours', en: 'Our Lady of Perpetual Help' },
+				's',
+				{ marian: true }
+			)
 		],
 		'07-04': [
 			proper(

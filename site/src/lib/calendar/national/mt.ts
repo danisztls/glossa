@@ -31,12 +31,6 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Saint Paul, apostle: kept on 2025 2025-02-10, 2026 2026-02-10, 2027 2027-02-11 -- no fixed date and no fixed offset from Easter
- */
-
 export const MALTA: NationalCalendar = {
 	id: 'mt',
 	options: { epiphanyOnSunday: true, ascensionOnSunday: true, corpusChristiOnSunday: true },
@@ -46,6 +40,14 @@ export const MALTA: NationalCalendar = {
 				'publius',
 				{ mt: 'San Publiju, isqof u prinċep ta’ Malta', en: 'Saint Publius, bishop' },
 				'm'
+			)
+		],
+		'02-10': [
+			proper(
+				'shipwreck-of-saint-paul',
+				{ mt: 'L-Appostlu Missierna San Pawl', en: 'Saint Paul the Apostle, our Father' },
+				's',
+				{ colour: 'red' }
 			)
 		],
 		'02-25': [

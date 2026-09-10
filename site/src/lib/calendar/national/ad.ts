@@ -31,12 +31,6 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Our Lady of Montserrat: kept on 2025 2025-04-29, 2026 2026-04-27, 2027 2027-04-27 -- no fixed date and no fixed offset from Easter
- */
-
 export const ANDORRA: NationalCalendar = {
 	id: 'ad',
 	options: { ascensionOnSunday: true, corpusChristiOnSunday: true },
@@ -94,6 +88,14 @@ export const ANDORRA: NationalCalendar = {
 				{ es: 'San Hermenegildo, mártir', en: 'Saint Hermenegild, martyr' },
 				'o',
 				{ colour: 'red' }
+			)
+		],
+		'04-27': [
+			proper(
+				'our-lady-of-montserrat',
+				{ es: 'Nuestra Señora de Montserrat', en: 'Our Lady of Montserrat' },
+				's',
+				{ marian: true }
 			)
 		],
 		'05-15': [

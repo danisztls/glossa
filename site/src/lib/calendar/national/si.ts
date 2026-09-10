@@ -31,12 +31,6 @@
 import { keptAs, proper } from './common';
 import type { NationalCalendar } from '../types';
 
-/*
- * NOT DERIVED, and left here rather than guessed:
- *
- *   - Our Lady Help of Christians: kept on 2025 2025-05-24, 2026 2026-05-25, 2027 2027-05-24 -- no fixed date and no fixed offset from Easter
- */
-
 export const SLOVENIA: NationalCalendar = {
 	id: 'si',
 	options: {},
@@ -54,6 +48,11 @@ export const SLOVENIA: NationalCalendar = {
 			})
 		],
 		'05-17': [proper('judoc', { en: 'Saint Judoc, priest and hermit' }, 'o')],
+		'05-24': [
+			proper('our-lady-help-of-christians', { en: 'Our Lady Help of Christians' }, 's', {
+				marian: true
+			})
+		],
 		'05-27': [
 			proper('aloysius-grozde', { en: 'Blessed Aloysius Grozde, martyr' }, 'o', { colour: 'red' })
 		],

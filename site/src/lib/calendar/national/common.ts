@@ -79,6 +79,19 @@ interface ProperOptions {
 	marian?: boolean;
 	/** The first civil year the conference kept it. */
 	since?: number;
+	/**
+	 * Moved rather than dropped when the day outranks it, though it is not a
+	 * solemnity.
+	 *
+	 * ONLY THE ANNIVERSARY OF THE DEDICATION OF A CATHEDRAL, and all three
+	 * calendars that keep one agree: Singapore moves it off the First Sunday
+	 * of Lent in 2027, Tunisia off Trinity Sunday in 2027, the Northern
+	 * Marianas off Gaudete in 2025 — each to the Monday. A diocese does not
+	 * lose the feast of its own mother church to the day it fell on, which is
+	 * the reason n. 60 gives for moving a solemnity, and it is stated per row
+	 * rather than derived from a rank because the rank is `f`.
+	 */
+	transferable?: boolean;
 }
 
 /**
@@ -105,7 +118,7 @@ export function proper(
 		colour: options.colour ?? 'white',
 		proper: true,
 		source: 'proper',
-		...(rank === 's' ? { transferable: true } : {}),
+		...(rank === 's' || options.transferable ? { transferable: true } : {}),
 		...(options.marian ? { marian: true } : {}),
 		...(options.since !== undefined ? { since: options.since } : {})
 	};
