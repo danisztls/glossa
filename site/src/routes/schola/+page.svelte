@@ -1163,36 +1163,44 @@
 	 *
 	 * AND THE TITLE TAKES A HIGHLIGHTER WITH IT (trial, 2026-09-10). A row here
 	 * is an entry in a reference list, and the one door out of it is the title;
-	 * a wash over those words is a finger held on the entry being read, which an
-	 * underline arriving under one of sixteen serif titles says more quietly
-	 * than this grid wants.
+	 * a pen drawn over those words is a finger held on the entry being read,
+	 * which an underline arriving under one of sixteen serif titles says more
+	 * quietly than this grid wants.
 	 *
-	 * The mechanics are `.verse.highlighted`'s, for its reasons: block padding
-	 * on an inline box paints taller without taking part in the line, so a title
-	 * that wraps to two lines is washed to its full height and the row does not
-	 * move under the pointer; `box-decoration-break` gives the second fragment
-	 * its own rounded ends rather than leaving it squared off at the margin. No
-	 * inline padding and no outline — an `outline` here would outrank the focus
-	 * ring `base.css` sets at lower specificity and quietly replace it.
+	 * OPAQUE PIGMENT AND NOT A TINT, which is the whole difference between this
+	 * and every wash on the site. `.note-lemma.highlighted` and the rest are
+	 * `color-mix()`ed at 12-18% so the page shows through and the mark stays
+	 * subordinate to the text — right for a passage a citation named, and wrong
+	 * for a pen, which is a thing somebody DID to a page. `--color-marker`
+	 * carries the ink and `--color-marker-ink` the word on it, per palette,
+	 * because the band clears the rubric red on paper and not at night
+	 * (`tokens.css`).
 	 *
-	 * 12% of the link's own colour is `.margin-note.highlighted`'s strength, and
-	 * mixing from `--color-link` rather than naming a tint follows the palette
-	 * into sepia, dark, OLED and `data-mono` — where it is a faint grey and the
-	 * underline above is still what says `link`.
+	 * BLOCK PADDING PAINTS, INLINE PADDING MOVES, so the horizontal bleed a pen
+	 * leaves past the last letter is cancelled by a negative margin of the same
+	 * 0.2em: the band overshoots the word and the grid does not know it happened.
+	 * `box-decoration-break: clone` is what puts the same overshoot on the second
+	 * line of a title that wrapped, rather than one stroke split at the margin.
+	 * No outline — an `outline` here would outrank the focus ring `base.css`
+	 * sets at lower specificity and quietly replace it.
 	 */
 	.book h4 a {
 		text-decoration: none;
-		border-radius: 0.15em;
-		padding-block: 0.05em;
+		border-radius: 0.1em;
+		padding: 0.05em 0.2em;
+		margin: 0 -0.2em;
 		box-decoration-break: clone;
 		-webkit-box-decoration-break: clone;
-		transition: background-color 120ms ease;
+		transition:
+			background-color 120ms ease,
+			color 120ms ease;
 	}
 
 	.book h4 a:hover,
 	.book h4 a:focus-visible {
 		text-decoration: underline;
-		background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
+		background-color: var(--color-marker);
+		color: var(--color-marker-ink);
 	}
 
 	.book-what {
