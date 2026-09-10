@@ -136,7 +136,7 @@
 </script>
 
 <section class="cited-in" aria-labelledby={headingId}>
-	<details class="cited-in-fold" {open} ontoggle={(event) => fold(event.currentTarget.open)}>
+	<details class="cited-in-fold fold" {open} ontoggle={(event) => fold(event.currentTarget.open)}>
 		<!-- The count lives INSIDE the heading, `<summary>` taking phrasing
 		     content or one heading and not a heading with a sibling beside it —
 		     `/documenta`'s disclosure met the same rule. Folded, that number is
@@ -210,60 +210,13 @@
 	}
 
 	/* THE ROW IS THE WHOLE CLOSED STATE, so it carries what the heading used to:
-	   the label, the count, and now the chevron. `list-style: none` is what
-	   removes the native triangle in Chrome and Firefox (a `summary` is a list
-	   item), the `::-webkit-` rule the same removal for older Safari. Drawn
-	   rather than native because the marker sizes with the font and takes no
-	   transition. */
-	.cited-in-fold > summary {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		cursor: pointer;
-		list-style: none;
-	}
-
-	.cited-in-fold > summary::-webkit-details-marker {
-		display: none;
-	}
-
-	/* A 44px target where the pointer is coarse and a 1.2rem row where it is
-	   not — the same trade `/documenta`'s disclosure makes. */
-	@media (pointer: coarse) {
-		.cited-in-fold > summary {
-			padding-block: 0.4rem;
-		}
-	}
+	   the label and the count. The mark, the reset and the coarse-pointer
+	   target are `.fold` in components.css. */
 
 	/* The gap under the heading belongs to the OPEN state: closed, it would be
 	   a panel's worth of space under a single row. */
 	.cited-in-fold[open] > summary {
 		margin-bottom: 0.6rem;
-	}
-
-	/* Points down closed and up open — "the list comes down from here". Two
-	   borders on a rotated square rather than an icon import for one 8px mark,
-	   and it inherits `currentColor` that way. */
-	.cited-in-fold > summary::after {
-		content: '';
-		flex: none;
-		margin-inline-start: auto;
-		width: 0.4rem;
-		height: 0.4rem;
-		border-inline-end: 1.5px solid var(--color-text-muted);
-		border-bottom: 1.5px solid var(--color-text-muted);
-		transform: translateY(-0.1em) rotate(45deg);
-		transition: transform 0.15s ease;
-	}
-
-	.cited-in-fold[open] > summary::after {
-		transform: translateY(0.1em) rotate(-135deg);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.cited-in-fold > summary::after {
-			transition: none;
-		}
 	}
 
 	/* Our label for the panel, not a heading the work wrote — interface face,

@@ -429,7 +429,7 @@
 			<DocumentSearch bind:query />
 		</div>
 
-		<details class="filters-inline">
+		<details class="filters-inline fold">
 			<summary>
 				<h2>{t('document.filter.heading')}</h2>
 				<span class="chip">{visible.length}</span>
@@ -606,32 +606,6 @@
 		.filters-inline {
 			display: none;
 		}
-	}
-
-	.filters-inline summary {
-		display: flex;
-		align-items: baseline;
-		gap: 0.6rem;
-		cursor: pointer;
-		list-style: none;
-	}
-
-	.filters-inline summary::-webkit-details-marker {
-		display: none;
-	}
-
-	/* The same disclosure glyph the rest of the site draws by hand — the
-	   default triangle can't be styled consistently across browsers. */
-	.filters-inline summary::before {
-		content: '▸';
-		color: var(--color-text-muted);
-		font-size: max(var(--font-size-min), 0.8em);
-		transition: transform 120ms ease;
-		display: inline-block;
-	}
-
-	.filters-inline[open] summary::before {
-		transform: rotate(90deg);
 	}
 
 	.filters-inline summary h2 {

@@ -455,7 +455,7 @@
 	     `/documenta`'s and `CitedBy`'s disclosures met. -->
 	{#if p.instructions}
 		{@const opening = p.instructions.blocks.length > 1 ? p.instructions.blocks[0] : undefined}
-		<details class="prayer-instructions" id="prayer-instructions">
+		<details class="prayer-instructions fold" id="prayer-instructions">
 			<summary>
 				<!-- The same mark the three sections below wear, because this is
 				     a fourth one of them: the row a reader meets first, at the
@@ -904,54 +904,6 @@
 	   panel and takes the wider gap. */
 	.prayer-instructions:not([open]) {
 		padding-bottom: 0.35rem;
-	}
-
-	/* `list-style: none` removes the native triangle in Chrome and Firefox (a
-	   `summary` is a list item), the `::-webkit-` rule the same for older
-	   Safari — `CitedBy` states the whole of this and draws the same mark. */
-	.prayer-instructions > summary {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		cursor: pointer;
-		list-style: none;
-	}
-
-	.prayer-instructions > summary::-webkit-details-marker {
-		display: none;
-	}
-
-	/* Points down closed and up open. Two borders on a rotated square rather
-	   than an icon import for one 8px mark, which also inherits
-	   `currentColor`. */
-	.prayer-instructions > summary::after {
-		content: '';
-		flex: none;
-		margin-inline-start: auto;
-		width: 0.4rem;
-		height: 0.4rem;
-		border-inline-end: 1.5px solid var(--color-text-muted);
-		border-bottom: 1.5px solid var(--color-text-muted);
-		transform: translateY(-0.1em) rotate(45deg);
-		transition: transform 0.15s ease;
-	}
-
-	.prayer-instructions[open] > summary::after {
-		transform: translateY(0.1em) rotate(-135deg);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.prayer-instructions > summary::after {
-			transition: none;
-		}
-	}
-
-	/* A 44px target where the pointer is coarse and a short row where it is
-	   not — `/documenta`'s disclosure makes the same trade. */
-	@media (pointer: coarse) {
-		.prayer-instructions > summary {
-			padding-block: 0.4rem;
-		}
 	}
 
 	.prayer-instructions h2 {

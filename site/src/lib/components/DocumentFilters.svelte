@@ -185,7 +185,7 @@
 		chosen: string[],
 		startOpen: boolean
 	)}
-		<details class="facet" open={startOpen}>
+		<details class="facet fold" open={startOpen}>
 			{@render facetHead(heading, chosen.length)}
 			<ul>
 				{#each items as item (item.value)}
@@ -222,7 +222,7 @@
 		<!-- Closed unless something in it was already chosen when the panel
 		     appeared — a reader who arrives with a subject set must be able to
 		     see the one they set. `subjectStartOpen` says why it is read once. -->
-		<details class="facet" open={subjectStartOpen}>
+		<details class="facet fold" open={subjectStartOpen}>
 			{@render facetHead(t('document.filter.subject'), selected.tags.length)}
 			<!-- The count is the one thing size cannot carry to a reader who is
 			     not looking, so it goes in a visually-hidden span INSIDE the
@@ -307,43 +307,17 @@
 	}
 
 	/* The whole heading row is the toggle, so it takes the row's full width and
-	   the badge rides its end. `list-style: none` plus the WebKit pseudo drops
-	   the browser's own marker; the glyph below is the one the rest of the site
-	   draws, since the default triangle cannot be styled consistently. */
+	   the badge rides its end. The mark and the reset are `.fold` in
+	   components.css; what is the panel's own is the ground it takes on hover
+	   and the space under it. */
 	.facet > summary {
-		display: flex;
-		align-items: baseline;
-		gap: 0.4rem;
 		margin-bottom: 0.35rem;
 		padding: 0.1rem 0.35rem;
 		border-radius: var(--radius-md);
-		cursor: pointer;
-		list-style: none;
-	}
-
-	.facet > summary::-webkit-details-marker {
-		display: none;
 	}
 
 	.facet > summary:hover {
 		background: var(--color-bg-elevated);
-	}
-
-	.facet > summary::before {
-		content: '▸';
-		color: var(--color-text-muted);
-		font-size: max(var(--font-size-min), 0.8em);
-		display: inline-block;
-	}
-
-	.facet[open] > summary::before {
-		transform: rotate(90deg);
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.facet > summary::before {
-			transition: transform 120ms ease;
-		}
 	}
 
 	.facet h3 {

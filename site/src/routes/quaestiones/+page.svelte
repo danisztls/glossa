@@ -168,7 +168,7 @@
 			     with no sizes are sixteen doors into an unknown room, and while a
 			     query is live it is the count that survived it. -->
 			<details
-				class="cluster"
+				class="cluster fold"
 				id={shelf.id}
 				open={searching || opened[shelf.id] === true}
 				ontoggle={(event) => remember(shelf.id, event.currentTarget.open)}
@@ -277,43 +277,12 @@
 		margin-bottom: 0.5rem;
 	}
 
-	/*
-	 * THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for and
-	 * why the count rides its end rather than sitting beside the h3 as a second
-	 * thing to aim at. `list-style: none` plus the WebKit pseudo drops the
-	 * browser's own marker, and the glyph below is the one every other
-	 * disclosure on this site draws — the default triangle cannot be styled
-	 * consistently across browsers.
-	 */
+	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.
+	   The mark, the reset and the tap target are `.fold` in components.css —
+	   every disclosure on the site draws the same one. What is this page's is
+	   the row's own height. */
 	summary {
-		display: flex;
-		align-items: baseline;
-		gap: 0.45rem;
-		padding: 0.15rem 0.35rem 0.15rem 0;
-		border-radius: var(--radius-md);
-		cursor: pointer;
-		list-style: none;
-	}
-
-	summary::-webkit-details-marker {
-		display: none;
-	}
-
-	summary::before {
-		content: '▸';
-		color: var(--color-text-muted);
-		font-size: max(var(--font-size-min), 0.8em);
-		display: inline-block;
-	}
-
-	.cluster[open] > summary::before {
-		transform: rotate(90deg);
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		summary::before {
-			transition: transform 120ms ease;
-		}
+		padding-block: 0.15rem;
 	}
 
 	/* The heading is the only word in the row, so the hover answers on it —
@@ -346,8 +315,11 @@
 		margin-bottom: 0.6rem;
 	}
 
+	/* BESIDE THE HEADING AND NOT AT THE ROW'S END. The row is as wide as the
+	   column, which is three topics across at full width, so an auto margin
+	   put the count a thousand pixels from the words it counts — a number
+	   floating in the margin of a page it had stopped belonging to. */
 	.chip {
-		margin-inline-start: auto;
 		font-variant-numeric: tabular-nums;
 	}
 

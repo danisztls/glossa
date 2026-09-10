@@ -629,6 +629,15 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   subjects — and **the description carries no max-width**. Two attempts to fill
   the empty half a 60ch measure left in a 62rem track failed the same way, by
   moving things into it rather than letting the text have it.
+- **Every `<details>` takes `.fold`** (styles/components.css), and
+  `disclosure.test.ts` scans the source for the ones that do not. Nine surfaces
+  open one and they had reached three different marks — a chevron at the row's
+  end, a `▸` at its start, the browser's triangle on the rest — which is one
+  mark too many for a reader who learns it once. The class carries the mark, the
+  native-marker reset and the coarse-pointer target; a summary's own layout
+  stays with the surface. **A glyph is the wrong instrument for a mark**: `▸`
+  sizes with the text, so at an index heading's 0.85rem it lands at seven pixels
+  and reads as a speck.
 - **The catalogue is one component**: `ShelfGrid.svelte` over `$lib/shelves.ts`
   (the entries and `visibleShelves()`) and `ShelfCard.svelte`, because
   `/bibliotheca` and the home page both draw it. The list, the card and the grid

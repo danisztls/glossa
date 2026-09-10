@@ -248,3 +248,90 @@
 .swatch[data-colour='blue'] {
 	background: #3a5ea8;
 }
+
+/*
+ * THE ACCORDION, and there is one of them.
+ *
+ * Nine surfaces open a `<details>` — the topic shelves, the document filters
+ * and their phone panel, a document's table of contents, "cited in", a
+ * prayer's rubric, the calendar primer, a canon's superseded wording, the book
+ * picker — and they had arrived at three different disclosures: a chevron
+ * drawn from two borders at the row's END, a `▸` glyph at its START, and the
+ * browser's own triangle on the three nobody had got to. A reader who learns
+ * what a mark means on one page should not have to learn it again on the next,
+ * and the two hand-drawn ones had already been copied twice each with the
+ * numbers drifting a little every time.
+ *
+ * WHAT IS SHARED IS THE MARK AND THE RESET, nothing else. A summary's own
+ * layout stays with the surface — a rule under it, a count at its end, the
+ * face and weight of its heading — because those are what the surfaces
+ * genuinely differ in. `list-style: none` removes the native triangle in
+ * Chrome and Firefox, a `summary` being a list item; the `::-webkit-` rule
+ * does the same for older Safari.
+ *
+ * IT LEADS THE ROW, which is where two of the three conventions had it and is
+ * what the third's own layouts wanted: a count, a chip or a badge takes the
+ * end of a summary on four of these, and a mark at both ends is two things to
+ * read. It points along the inline axis shut and down open — "the list comes
+ * down from here" — and `border-inline-end` is what makes that true in Arabic
+ * and Hebrew, where the shape mirrors with the text.
+ *
+ * DRAWN FROM TWO BORDERS, not a glyph and not an icon import. `▸` is a font's
+ * idea of a triangle: it sizes with the text, so at the 0.85rem an index
+ * heading is set in it lands at about seven pixels and reads as a speck, which
+ * is the complaint that produced this rule. A box is sized in the page's own
+ * units and takes a transition, and it inherits nothing it should not.
+ */
+.fold > summary {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	cursor: pointer;
+	list-style: none;
+}
+
+.fold > summary::-webkit-details-marker {
+	display: none;
+}
+
+.fold > summary::before {
+	content: '';
+	flex: none;
+	/* The one number worth turning if this ever reads heavy. 0.5rem square
+	   with a 2px stroke is a mark at a heading's own weight; the 0.4rem and
+	   1.5px it replaces were sized against a 0.75rem count. */
+	inline-size: 0.5rem;
+	block-size: 0.5rem;
+	border-inline-end: 2px solid currentColor;
+	border-block-end: 2px solid currentColor;
+	color: var(--color-text-muted);
+	transform: rotate(-45deg);
+}
+
+.fold[open] > summary::before {
+	transform: rotate(45deg);
+}
+
+/* The mark answers with its row. `inherit` would have been the tidier
+   spelling and is wrong on half of these: a summary whose heading carries an
+   explicit colour does not pass a hover down to a pseudo-element of the
+   summary, so the mark would sit grey beside a heading that had lit. */
+.fold > summary:hover::before,
+.fold > summary:focus-visible::before {
+	color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.fold > summary::before {
+		transition: transform 150ms ease;
+	}
+}
+
+/* A 44px target where the pointer is coarse and an ordinary row where it is
+   not — the trade `/documenta`'s disclosure and `CitedBy` each made
+   separately. */
+@media (pointer: coarse) {
+	.fold > summary {
+		padding-block: 0.4rem;
+	}
+}

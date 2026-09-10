@@ -728,7 +728,7 @@
 		{@render groups()}
 	</div>
 {:else if collapsible}
-	<details class="picker">
+	<details class="picker fold">
 		<summary>{t('bible.pickBook')}</summary>
 		<div class="picker-body" data-link-preview="off">
 			{@render groups()}

@@ -713,7 +713,7 @@
 						data-help="contents"
 						data-link-preview="off"
 					>
-						<details class="toc-disclosure">
+						<details class="toc-disclosure fold">
 							<!-- The count lives INSIDE the heading because `<summary>`'s
 							     content model allows phrasing content OR one heading, not a
 							     heading plus a sibling span. It is a bare numeral rather than
@@ -980,32 +980,11 @@
 	}
 
 	/* The whole closed state is this one row, so it carries the rule that used
-	   to sit under the heading — and it is the only rule left in the list.
-	   `list-style: none` is what removes the default disclosure triangle in
-	   Chrome/Firefox (a `summary` is a list item); the `::-webkit-` line is the
-	   same removal for older Safari, which ignores it. The chevron below
-	   replaces both, because the native marker sizes with the font and cannot
-	   be given the transition that makes open/closed legible at a glance. */
+	   to sit under the heading — and it is the only rule left in the list. The
+	   mark and the reset are `.fold` in components.css. */
 	.toc-disclosure > summary {
-		display: flex;
-		align-items: baseline;
-		gap: 0.5rem;
-		cursor: pointer;
-		list-style: none;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.5rem;
-	}
-
-	.toc-disclosure > summary::-webkit-details-marker {
-		display: none;
-	}
-
-	/* A 44px-tall tap target on a phone without a 44px-tall row on a laptop:
-	   the padding grows only where the pointer is coarse. */
-	@media (pointer: coarse) {
-		.toc-disclosure > summary {
-			padding-block: 0.5rem;
-		}
 	}
 
 	/* The list's own label — "Table of Contents", ours — so it takes the
@@ -1025,31 +1004,6 @@
 		font-weight: 400;
 		font-variant-numeric: tabular-nums;
 		color: var(--color-text-muted);
-	}
-
-	/* Points down when closed, up when open — the standard direction, i.e. "the
-	   list will come down from here". Drawn from two borders on a rotated
-	   square rather than a glyph so it inherits `currentColor` and needs no
-	   icon import for one 8px mark. */
-	.toc-disclosure > summary::after {
-		content: '';
-		flex: none;
-		width: 0.45rem;
-		height: 0.45rem;
-		border-inline-end: 1.5px solid var(--color-text-muted);
-		border-bottom: 1.5px solid var(--color-text-muted);
-		transform: translateY(-0.15em) rotate(45deg);
-		transition: transform 0.15s ease;
-	}
-
-	.toc-disclosure[open] > summary::after {
-		transform: translateY(0.1em) rotate(-135deg);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.toc-disclosure > summary::after {
-			transition: none;
-		}
 	}
 
 	.toc-inline ol {

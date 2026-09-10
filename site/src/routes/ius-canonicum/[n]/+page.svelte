@@ -207,7 +207,7 @@
 			-->
 			{#if editions.current.canon.superseded?.length}
 				{#each editions.current.canon.superseded as replaced, i (i)}
-					<details class="superseded">
+					<details class="superseded fold">
 						<summary>
 							<span class="superseded-label">{t('canonLaw.superseded')}</span>
 							<span class="superseded-act">{replaced.title}</span>

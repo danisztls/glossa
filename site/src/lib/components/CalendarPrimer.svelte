@@ -80,7 +80,7 @@
 	<h2>{t('calendar.primer.title')}</h2>
 	<p class="lead">{t('calendar.primer.lead')}</p>
 
-	<details>
+	<details class="fold">
 		<summary>{t('calendar.primer.seasons')}</summary>
 		<dl>
 			{#each seasons as season (season)}
@@ -92,7 +92,7 @@
 		</dl>
 	</details>
 
-	<details>
+	<details class="fold">
 		<summary>{t('calendar.primer.ranks')}</summary>
 		<dl>
 			{#each ranks as rank (rank)}
@@ -104,7 +104,7 @@
 		</dl>
 	</details>
 
-	<details>
+	<details class="fold">
 		<summary>{t('calendar.primer.colours')}</summary>
 		<dl>
 			{#each colours as colour (colour)}
@@ -121,7 +121,7 @@
 		</dl>
 	</details>
 
-	<details>
+	<details class="fold">
 		<summary>{t('calendar.primer.cycles')}</summary>
 		<p class="group-lead">{t('calendar.primer.cyclesLead')}</p>
 		<dl>
