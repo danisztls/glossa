@@ -191,6 +191,10 @@ const DEFERRED_MEDIA = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
  * deferred bucket because at that size the round trip costs more than the
  * bytes, and because a reader who filled the offline library and then switched
  * a commentary on would otherwise meet a tofu box (`fonts.css`).
+ * `eb-garamond-manicule` is the same argument at 4.2 KB: it is the two hands
+ * `/quaestiones` marks a row with, and it is fetched on a GESTURE rather than
+ * on load — a face that starts downloading when the cursor arrives is a face
+ * that arrives after the cursor has left.
  *
  * EXPORTED FOR THE TEST, which used to restate this list as a regex of its
  * own. Two copies of a partition is how a face comes to be classified in one
@@ -201,7 +205,8 @@ export const CORE_FONTS = [
 	'-latin-wght-',
 	'pirata-one-dropcap',
 	'ponomar-dropcap-latin',
-	'source-sans-3-marks'
+	'source-sans-3-marks',
+	'eb-garamond-manicule'
 ];
 
 /**

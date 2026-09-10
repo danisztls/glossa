@@ -417,17 +417,12 @@
 		/* A grid item's default `min-width: auto` again, one level in. */
 		min-width: 0;
 		position: relative;
-		/*
-		 * THE GUTTER IS SIZED FOR THE HAND AND NOT FOR THE SQUARE, which is
-		 * the one cost the manicle below puts on the resting page. At 1.1rem
-		 * — the width the `⬝` alone wanted — a hand is seventeen pixels wide,
-		 * and at seventeen pixels the folded fingers close up and it draws a
-		 * mitten holding a stick. Both marks hang in the same lane, so the
-		 * lane is as wide as the wider of them and the square is centred in
-		 * what is left.
-		 */
-		--topic-mark-lane: 1.5rem;
-		padding-inline-start: var(--topic-mark-lane);
+		/* Wide enough for either mark: the manicule below is 1.088em of
+		   advance in EB Garamond, set at 0.9em, so it lands inside this with
+		   a little air. It was 1.5rem while the hand was a drawing sized in
+		   `rem` — a glyph is sized in the text's own em and needs no lane of
+		   its own. */
+		padding-inline-start: 1.1rem;
 	}
 
 	/*
@@ -447,74 +442,62 @@
 	.topic-row::before {
 		content: '⬝';
 		position: absolute;
-		inset-inline-start: 0.3rem;
+		inset-inline-start: 0;
 		color: var(--color-text-muted);
 	}
 
 	/*
-	 * THE MARGINAL HAND, ON THE ROW THE READER IS ABOUT TO FOLLOW. A manicle
-	 * is the mark a reader of a printed book drew in the margin beside the
-	 * line they meant to come back to, and it means one thing only: THIS one.
-	 * That is exactly what a row under the cursor is saying, and this page is
-	 * the one surface on the site where every line is a way out — so the mark
-	 * that already tells one cell from another becomes the mark that points
-	 * at the cell being chosen. The square is not replaced by a second idea;
-	 * it grows a hand for as long as the row is live.
+	 * THE MARGINAL HAND, ON THE ROW THE READER IS ABOUT TO FOLLOW. A manicule
+	 * is the mark a reader of a printed book drew beside the line they meant
+	 * to come back to, and it means one thing only: THIS one. That is exactly
+	 * what a row under the cursor is saying, and this page is the one surface
+	 * on the site where every line is a way out — so the mark that already
+	 * tells one cell from another becomes the mark that points at the cell
+	 * being chosen. The square is not replaced by a second idea; it grows a
+	 * hand for as long as the row is live.
 	 *
-	 * DRAWN, NOT TYPED, and this is the argument against `☞` (U+261E). The
-	 * site sets exactly one textual glyph as a mark — the `⬝` above — and
-	 * everything else it draws, because a drawn mark has our weight, our size
-	 * and our colour at every theme. U+261E has none of that: it carries
-	 * emoji presentation on most platforms, so it arrives as a colour
-	 * cartoon on a page whose whole palette is one link colour and one grey,
-	 * and the platforms that do give it a text glyph give eight different
-	 * ones at eight different weights. `†` and `‡` earn a font subset because
-	 * they are typography; a hand is a picture.
+	 * IT IS EB GARAMOND'S OWN, SHIPPED AS A SUBSET. `fonts.css` carries the
+	 * face, the recipe and the argument; what belongs here is that the mark is
+	 * a GLYPH and what that buys on this page. It sits on the baseline beside
+	 * the title at the title's own size, so the gutter is the one the square
+	 * always wanted and nothing is eyeballed onto the x-height; it takes
+	 * `--color-link` as a colour rather than as a mask; and the resting page
+	 * is exactly what it was before the mark existed. A drawing had to be
+	 * sized in `rem` against a widened lane and still read as a mitten at
+	 * seventeen pixels.
 	 *
-	 * `background-color` under a `mask`, so the hand is `--color-link` and
-	 * follows every one of the four theme axes for nothing — the reason
-	 * `JerusalemCross.svelte` is inline SVG rather than an `<img>`. A browser
-	 * without masks keeps the square, which is why the whole block is behind
-	 * `@supports` rather than merely tolerant of one: with the mask dropped
-	 * and the background kept, the hand would be a filled rectangle.
+	 * `\fe0e` is the text-presentation selector, and it matters only if the
+	 * subset never arrives: our face is first in the stack and has the
+	 * codepoint, so it draws; a fallback that got as far as an emoji font
+	 * would otherwise put a colour cartoon in the gutter. It costs nothing —
+	 * a variation selector is default-ignorable in a face that has no entry
+	 * for it.
+	 *
+	 * U+261C AND NOT A FLIP. The site serves Arabic and Hebrew, where the
+	 * gutter is on the right and the text runs away to the left, so a
+	 * right-pointing hand points out of the page. This is the same
+	 * punchcutter's left-pointing manicule rather than this one mirrored — a
+	 * `scale: -1 1` reverses the cuff and the fingers' overlap along with the
+	 * direction.
 	 *
 	 * ON `:has()` AND NOT ON `.topic-row:hover`: the underline and the hand
 	 * are one event. The question under the title is not a link, and a hand
 	 * pointing at a row because the cursor crossed its second line promises a
-	 * click that does nothing there. A browser without `:has()` drops the
-	 * rule and keeps the square, as `zen.css` degrades.
+	 * click that does nothing there. A browser without `:has()` drops the rule
+	 * and keeps the square, as `zen.css` degrades.
 	 */
-	@supports (mask-size: contain) {
-		.topic-row:has(.topic-link:hover)::before,
-		.topic-row:has(.topic-link:focus-visible)::before {
-			content: '';
-			inset-inline-start: 0;
-			/* Eyeballed onto the title's x-height: the box has no text in it,
-			   so its static block position is the top of the line box and a
-			   mark set there stands above the capitals beside it. */
-			inset-block-start: 0.28em;
-			inline-size: 1.35rem;
-			/* The drawing is 30 by 20, so `contain` resolves to exactly this
-			   and the box never letterboxes. */
-			block-size: 0.9rem;
-			background-color: var(--color-link);
-			mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Cpath d='M0 3.2h3.7v13.6H0z'/%3E%3Cpath d='M5.2 5.2C5.2 2.3 8 1 11.1 1c3 0 5.2 1.3 5.3 3.5l9.9-.1a2.3 2.3 0 0 1 0 4.6l-9.9-.1c3.4.5 3.6 3.4.2 3.6 3 .6 2.9 3.2-.5 3.5 2.4.7 1.9 3-1.7 3.5-3.6.5-6.4 0-7.7-1.8-.9-1.3-1.5-2.8-1.5-4.5z'/%3E%3C/svg%3E");
-			mask-size: contain;
-			mask-repeat: no-repeat;
-			mask-position: center;
-		}
+	.topic-row:has(.topic-link:hover)::before,
+	.topic-row:has(.topic-link:focus-visible)::before {
+		content: '☞\fe0e';
+		font-family: 'EB Garamond Manicule', var(--font-serif);
+		/* 1.088em of advance at 1em, which would fill the gutter exactly. */
+		font-size: 0.9em;
+		color: var(--color-link);
+	}
 
-		/*
-		 * A HAND POINTING OUT OF THE PAGE IS THE ONE THING THIS MARK CANNOT
-		 * DO. The site serves Arabic and Hebrew, where the gutter is on the
-		 * right and the text runs away to the left, so the drawing is flipped
-		 * rather than redrawn — `☜` would have been a second glyph to keep
-		 * true, and this is one path read backwards.
-		 */
-		:dir(rtl) .topic-row:has(.topic-link:hover)::before,
-		:dir(rtl) .topic-row:has(.topic-link:focus-visible)::before {
-			scale: -1 1;
-		}
+	:dir(rtl) .topic-row:has(.topic-link:hover)::before,
+	:dir(rtl) .topic-row:has(.topic-link:focus-visible)::before {
+		content: '☜\fe0e';
 	}
 
 	/*

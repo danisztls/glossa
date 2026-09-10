@@ -161,6 +161,31 @@ describe('every topic is reachable and named', () => {
 		expect(hasTopics()).toBe(false);
 	});
 
+	/**
+	 * THE MANICULE AND THE FACE THAT CARRIES IT HAVE TO AGREE, which is the
+	 * dagger rule (`sidenotes.test.ts`) on a second pair of marks. Google's
+	 * EB Garamond subsets carry neither U+261C nor U+261E in any of their
+	 * fourteen files, so `fonts.css` declares a 4.2 KB face over exactly those
+	 * two — and if the mark, the range and the family name ever come apart the
+	 * hand renders in whatever the reader's system offers for a pointing hand,
+	 * which on most of them is a colour emoji. Nothing else can see that: the
+	 * page still works, the build still passes, and the gutter has a cartoon
+	 * in it.
+	 */
+	it('marks a row with a hand the shipped subset carries, in both directions', () => {
+		const page = readFileSync(
+			new URL('../routes/quaestiones/+page.svelte', import.meta.url),
+			'utf8'
+		);
+		const marks = Array.from(page.matchAll(/content: '(.)\\fe0e'/g), (m) => m[1]);
+		expect(marks.map((mark) => mark.codePointAt(0))).toEqual([0x261e, 0x261c]);
+		expect(page).toContain("font-family: 'EB Garamond Manicule'");
+
+		const fonts = readFileSync(new URL('../styles/fonts.css', import.meta.url), 'utf8');
+		const face = fonts.slice(fonts.indexOf("font-family: 'EB Garamond Manicule'"));
+		expect(face.slice(0, face.indexOf('}'))).toContain('unicode-range: U+261C, U+261E;');
+	});
+
 	it('buckets the section under a name the beacon schema accepts', () => {
 		expect(sectionFor('/quaestiones')).toBe('quaestiones');
 		expect(sectionFor('/quaestiones/crematio')).toBe('quaestiones');

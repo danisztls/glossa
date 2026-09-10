@@ -698,3 +698,62 @@
 	src: url('/fonts/source-sans-3-marks.woff2') format('woff2-variations');
 	unicode-range: U+2020-2021;
 }
+
+/*
+ * THE MANICULE, WHICH IS EB GARAMOND'S OWN.
+ *
+ * `/quaestiones` marks the row under the cursor with `☞` — the hand a reader
+ * of a printed book drew in the margin beside the line they meant to come back
+ * to, and the one mark that means exactly "this one". It was an SVG path
+ * masked over a background colour for a day, on the reasoning that U+261E
+ * carries emoji presentation on most platforms and that the platforms giving
+ * it a text glyph give eight different ones. Both halves of that are true
+ * about the READER'S fonts and neither is true about a font we ship: a face
+ * first in the stack that has the codepoint is the face that draws it, which
+ * is the whole point of the two subsets above.
+ *
+ * And the drawn one was the worse mark. This is a text face's engraved
+ * manicule with a cuff, a fist and four drawn fingers, cut to sit on the
+ * baseline beside the words at the size of the words — a bezier written here
+ * had to be eyeballed onto the x-height, sized in `rem` against a lane widened
+ * to hold it, and still read as a mitten at seventeen pixels. **Ask whether a
+ * face already has the mark before drawing one.**
+ *
+ * BOTH HANDS, AND THAT IS WHAT THE SECOND 1.5 KB BUYS. The site serves Arabic
+ * and Hebrew, where the gutter is on the right and the text runs away to the
+ * left, so a right-pointing hand points out of the page. U+261C is the same
+ * punchcutter's left-pointing manicule rather than this one mirrored — a
+ * `scale: -1 1` reverses the cuff's shading and the fingers' overlap along
+ * with everything else.
+ *
+ * It is the same story as `‡` one file down: Google's subsets carry neither
+ * U+261C nor U+261E in ANY of the fourteen EB Garamond files, and the release
+ * this site's own text face is built from has both. `source-sans-3-marks` is
+ * why that is a recipe rather than a discovery.
+ *
+ * Regenerate with (the Google Fonts release of EB Garamond, which is what
+ * `@fontsource-variable/eb-garamond` is built from):
+ *   pyftsubset ofl/ebgaramond/EBGaramond[wght].ttf \
+ *     --output-file=static/fonts/eb-garamond-manicule.woff2 --flavor=woff2 \
+ *     --layout-features='' --no-hinting --desubroutinize \
+ *     --unicodes='U+261C,U+261E'
+ *
+ * `font-display: block` for the reason the two faces above have it: the mark
+ * appears on hover in the gutter of a row, and swapping it in late would draw
+ * a hand into a lane the reader has already looked away from. Blocking on
+ * 4.2 KB that is in the precache is not a wait anyone can see, and the mark is
+ * simply absent if the file never arrives — which is the right failure for
+ * ornament, and is why `.topic-row`'s own square is what the gutter is sized
+ * for.
+ */
+@font-face {
+	font-family: 'EB Garamond Manicule';
+	font-style: normal;
+	/* The subset keeps EB Garamond's axis, which runs 400 to 800 rather than
+	   Source Sans's 200 to 900. Nothing turns it today; declaring the real
+	   range is what keeps a future `font-weight` from being synthesised. */
+	font-weight: 400 800;
+	font-display: block;
+	src: url('/fonts/eb-garamond-manicule.woff2') format('woff2-variations');
+	unicode-range: U+261C, U+261E;
+}
