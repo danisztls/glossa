@@ -48,6 +48,7 @@ import {
 	getSummaQuestionAsync,
 	isUnpublished,
 	listCccChapters,
+	loadTranslatedDescriptions,
 	socialDoctrineChapterFor,
 	socialDoctrineWorkId,
 	summaDivisionsText,
@@ -61,6 +62,8 @@ import { chapterVerseSep } from './citation-style';
 import { i18n } from './i18n.svelte';
 import { ensureAllIndexes } from './corpus-index';
 import { displayTitle } from './titles';
+import { chapterArgument } from './chapter-argument';
+import { preferredDescription } from './document-description';
 
 export interface ResolvedUnit {
 	/** Short heading line: "Genesis 1:1-3", "CCC 1", a CCC chapter's own
@@ -136,10 +139,14 @@ function cacheKey(target: PreviewTarget): string | undefined {
 		case 'document': {
 			const workId = content.documentWorkIdFor(target.slug);
 			if (!workId) return undefined;
+			if (target.n !== undefined) return `document:${workId}:${target.n}`;
 			// `whole` rather than an empty segment: a document has no section
 			// zero, but a key ending in `:` is one typo away from colliding
-			// with one that does.
-			return `document:${workId}:${target.n ?? 'whole'}`;
+			// with one that does. The interface language belongs in the key
+			// only here: a whole document previews its description, which is
+			// the one excerpt in this module that can be a translation of
+			// prose written about another edition.
+			return `document:${workId}:whole:${i18n.lang}`;
 		}
 		case 'canonLaw':
 			return `canonLaw:${content.langFor('canon-law')}:${target.n}`;
@@ -194,13 +201,20 @@ async function resolveBible(
 		return { title, text: selected.map((v) => `${v.n} ${v.text}`).join(' ') };
 	}
 
-	// No verse named: the chapter's own opening, not its full text -- a
-	// preview, not a second reading pane.
+	// No verse named, so what the address means is the chapter and not a
+	// passage in it -- and where the edition prints an argument, that IS the
+	// edition's own answer to "what is in this chapter", which is the question
+	// a reader hovering a whole-chapter link is asking. Verses 1-3 answer a
+	// different one: they are where the chapter starts, which a reader learns
+	// by following the link. `chapterArgument` rather than `chapter.summary`
+	// so the one edition whose argument is its own rubrics read out in
+	// advance previews its opening instead of a list of headings.
+	const argument = chapterArgument(result.chapter);
+	const title = `${book.name} ${target.chapter}`;
+	if (argument) return { title, text: argument };
+
 	const opening = verses.slice(0, 3);
-	return {
-		title: `${book.name} ${target.chapter}`,
-		text: opening.map((v) => `${v.n} ${v.text}`).join(' ')
-	};
+	return { title, text: opening.map((v) => `${v.n} ${v.text}`).join(' ') };
 }
 
 async function resolveCcc(n: number): Promise<ResolvedUnit | undefined> {
@@ -369,19 +383,30 @@ async function resolveSummaUnit(
 }
 
 /**
- * A whole document — its title and its OPENING section.
+ * A whole document — its title and its DESCRIPTION, falling back to its
+ * opening section.
  *
- * Not the encyclical entire: one chunk, the same read `resolveDocument` makes
- * for a numbered section, which is what made widening `PreviewTarget` to an
- * unanchored document link affordable at all. A document whose source prints
- * no numbered sections resolves to its title alone rather than to nothing —
- * the address is still real.
+ * The description is a sentence saying what the document is, written here by
+ * reading it (`site/descriptions.json`); §1 is a salutation, a date and a
+ * subordinate clause about the occasion. Both are honest about a
+ * whole-document address and only one of them tells a reader whether to
+ * follow the link, which is what a preview is for.
+ *
+ * Where it falls back it is not the encyclical entire: one chunk, the same
+ * read `resolveDocument` makes for a numbered section, which is what made
+ * widening `PreviewTarget` to an unanchored document link affordable at all.
+ * A document with neither a description nor numbered sections resolves to its
+ * title alone rather than to nothing — the address is still real.
  */
 async function resolveDocumentWhole(slug: string): Promise<ResolvedUnit | undefined> {
 	const workId = content.documentWorkIdFor(slug);
 	if (!workId || isUnpublished(workId)) return undefined;
 	const manifest = getDocumentManifest(workId);
 	if (!manifest) return undefined;
+
+	const description = await describeDocument(slug, manifest);
+	if (description) return { title: manifest.short_title, text: description };
+
 	const opening = documentSectionExists(workId, 1)
 		? await getDocumentSectionAsync(workId, 1)
 		: undefined;
@@ -389,6 +414,23 @@ async function resolveDocumentWhole(slug: string): Promise<ResolvedUnit | undefi
 		title: manifest.short_title,
 		text: opening ? documentSectionText(opening) : ''
 	};
+}
+
+/**
+ * The description to preview, in the reader's language where there is one --
+ * `preferredDescription` is the rule and `/documenta` applies the same one.
+ *
+ * The extra read is one small file for every document at once, and only for a
+ * language something has actually been translated into: `/documenta` fetches
+ * the same file, and a reader of the language a description was written in
+ * never issues the request at all.
+ */
+async function describeDocument(
+	slug: string,
+	manifest: { description?: string; language: string }
+): Promise<string | undefined> {
+	const translated = await loadTranslatedDescriptions(i18n.lang);
+	return preferredDescription(manifest, i18n.lang, translated, slug);
 }
 
 /**

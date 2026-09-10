@@ -65,6 +65,7 @@
 	 * facets immediately and grows the subject facet when the tags land.
 	 */
 	import { listDocuments, loadDocumentTags, loadTranslatedDescriptions } from '$lib/corpus';
+	import { preferredDescription } from '$lib/document-description';
 	import { highlight, matchesQuery } from '$lib/highlight';
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
 	import DocumentSearch from '$lib/components/DocumentSearch.svelte';
@@ -146,24 +147,12 @@
 
 	/**
 	 * The description to show for a row, in the reader's language where we
-	 * have one and the work's own language otherwise.
-	 *
-	 * A reading in the reader's own language beats a translation into it. Both
-	 * are in the language he wants; only one of them was written by someone
-	 * looking at the text this row leads to. That case is real and not rare —
-	 * 22 Portuguese editions have been read on their own terms — and it is the
-	 * only ordering under which correcting a reading cannot be silently
-	 * overruled by a translation of a different edition's reading.
-	 *
-	 * Never a placeholder and never a machine translation of a missing
-	 * reading: `manifest.description` is absent for a work nobody has read
-	 * yet, and `translated` only ever holds renderings of a reading that
-	 * exists (`site/descriptions.json`, `origin`).
+	 * have one and the work's own language otherwise. `preferredDescription`
+	 * carries the rule and why it is ordered that way; a whole-document link
+	 * preview shows the same sentence through the same function.
 	 */
 	function describe(row: Row): string | null {
-		const own = row.manifest.description ?? null;
-		if (own && row.manifest.language === i18n.lang) return own;
-		return translated[row.slug] ?? own;
+		return preferredDescription(row.manifest, i18n.lang, translated, row.slug) ?? null;
 	}
 
 	// One row per document SLUG, in the reader's effective language for that
