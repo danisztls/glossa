@@ -290,6 +290,149 @@
 			"anchors": "ccc 2475-2489",
 			"note": "2484 answers the question in one sentence — a lie is venial in itself and becomes mortal when it does grave injury to justice and charity — and 2477 supplies the words the keywords promise: rash judgment, detraction, calumny. Was C on _secrets_ and _mental reservation_, which the span stopped one paragraph short of. Widened 2026-09-10 to 2489: “no one is bound to reveal the truth to someone who does not have the right to know it”, which is also the counterweight the page needed to 2485. 2488–2489 are shared with `violentia-digitalis`. No document: nothing in the corpus is addressed to truthful speech as such."
 		},
+		"capitalismus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2402-2407 | csdc 176-178,181,347-349 | documents rerum-novarum,quadragesimo-anno,centesimus-annus",
+			"note": "The question is answered by being refused in both directions, and the reader can see it: CSDC 176 defends private property as “an extension of human freedom” and 177 says the tradition “has never recognized the right to private property as absolute and untouchable”. Was C on _free market_, a keyword with no anchored section — the whole anchor was property and not markets. Fixed 2026-09-10 with CSDC 347–349, which appreciate the market as “the most efficient instrument for utilizing resources” and then name “the risk of an ‘idolatry’ of the market”. 179–180 were dropped as the extension to new goods and to indigenous community property; 181 stays for _greed_."
+		},
+		"socialismus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2424-2425 | csdc 335-337 | documents quod-apostolici-muneris,divini-redemptoris,libertatis-nuntius,libertatis-conscientia,centesimus-annus",
+			"note": "2425 answers the question in one sentence and then refuses to let it be a partisan answer: the Church “has rejected the totalitarian and atheistic ideologies associated in modern times with communism or socialism” and “has likewise refused to accept, in the practice of capitalism, individualism and the absolute primacy of the law of the marketplace”. _Liberation theology_ is a keyword with no anchored text, and the two CDF instructions that carry it are named — which is the shape this doorway is built for."
+		},
+		"labor": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2426-2433 | csdc 270-275 | documents rerum-novarum,laborem-exercens",
+			"note": "Asked what the Church asks of an employer, 2432 answers by name — those responsible for business enterprises “have an obligation to consider the good of persons and not only the increase of profits”, with “profits are necessary, however” in the next sentence — and 2433 covers hiring without unjust discrimination. 2430 carries _unions_. The wage itself is `merces-iusta`."
+		},
+		"migratio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2241 | csdc 297-298 | documents fratelli-tutti,dignitas-infinita",
+			"note": "One Catechism paragraph, and it is the whole of what the Catechism says: 2241 answers “how many” with “to the extent they are able”, then grants that authorities may make immigration subject to juridical conditions, then states the immigrant’s own duties. A reader who came for one side gets three sentences of the other. _Deportation_ and _illegal_ are keywords no anchored sentence touches; _fratelli-tutti_ is where that is."
+		},
+		"bellum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2302-2317 | csdc 497-501 | documents pacem,gaudium-et-spes,fratelli-tutti",
+			"note": "Sixteen paragraphs is right here because it is two of the Catechism’s own headings and the question is the broadest in this cluster: 2309 is the criteria, 2311 conscientious objection, 2314 the indiscriminate destruction of cities, 2316 the arms trade, 2317 the injustices that cause wars. CSDC 500–501 sits here rather than on `defensio-sui`, where it was dilution about a reader defending a house."
+		},
+		"civitas-et-oboedientia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2234-2240,2242-2243 | csdc 396-401 | documents diuturnum,immortale-dei",
+			"note": "The Catechism block was answering the other half of its own heading: 2234–2237 is what those in authority owe, and the question is what a citizen owes. The Compendium block was already right — CSDC 399 and 400 are the refusal and the resistance — so the page answered, but not where a reader meets it first. Widened 2026-09-10 to 2238–2240 (taxes, the vote, defence) and 2242–2243 (the limit and the five conditions for armed resistance). 2241 is skipped in the middle: it is migration, and it is `migratio`."
+		},
+		"suffragium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2238-2240 | csdc 568-570,573-574 | documents catholics-in-political-life",
+			"note": "CSDC 570 is the answer as asked — “a well-formed Christian conscience does not permit one to vote for a political programme or an individual law which contradicts the fundamental contents of faith and morals” — and 574 supplies the other half, that party membership is a personal decision legitimate within the limits of what is not incompatible with the faith. So _non-negotiable_ and _lesser evil_ both have text, which is unusual for a keyword pair this specific."
+		},
+		"sub-imperio-atheo": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2471-2473,2242-2243 | documents divini-redemptoris,mit-brennender-sorge,ecclesia-in-asia",
+			"note": "Was C on the first half of its own question. “May a Catholic hide it” had no anchored sentence: 2242 and 2243 answer only “must they refuse”, and the paragraph that answers the other is 2471 — “in situations that require witness to the faith, the Christian must profess it without equivocation”. Added 2026-09-10 with 2472 and 2473, the latter being _martyrdom_, a keyword that had nothing behind it either. 2471–2473 now open the page and 2242–2243 follow, which is the order the question asks them in."
+		},
+		"civitas-catholica": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2244-2246,2105-2107 | csdc 424-427 | documents immortale-dei,libertas,quas-primas,dignitatis-humanae",
+			"note": "Was C, and the missing paragraphs were the ones this reader arrives quoting: 2105 states “the traditional Catholic teaching on the moral duty of individuals and societies toward the true religion and the one Church of Christ”, and 2107 states what follows if a state does give one religious community special civil recognition — the religious freedom of all must still be recognized. Both were on `libertas-religiosa` and neither was here. Added 2026-09-10. 2245 was already carrying the other side: the Church “is not to be confused in any way with the political community”."
+		},
+		"libertas-religiosa": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2104-2109 | csdc 421-423 | documents dignitatis-humanae,mit-brennender-sorge",
+			"note": "2106 answers both halves of the question in one sentence, and 2108 meets _error has no rights_ head-on: religious liberty is “neither a moral license to adhere to error, nor a supposed right to error, but rather a natural right of the human person to civil liberty”. 2109 then says the right is not unlimited, which keeps the page from reading as a concession. 2105–2107 are shared with `civitas-catholica`, which asks the opposite question of the same paragraphs."
+		},
+		"oecologia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 339,344,2415-2418 | csdc 466-471 | documents laudato-si,laudate-deum",
+			"note": "Was C on _creation_: three of the four anchored paragraphs were about animals — kindness to them, experimentation on them, not spending on them what the poor need — and a reader asking why any of this is the Church’s business got St Philip Neri. The reason is at 339, which was on no topic: each creature “reflects in its own way a ray of God’s infinite wisdom”, and disordered use of things “would bring disastrous consequences for human beings and their environment”, written in 1992. Added 2026-09-10 with 344, the Canticle of the Creatures. _Climate change_ and _global warming_ have no Catechism text and are not going to; the Compendium block and _laudato-si_ carry them."
+		},
+		"paupertas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2443-2449 | csdc 182-184,449 | documents populorum,sollicitudo-rei-socialis,dilexi-te",
+			"note": "Asked what is required of those who have enough, 2446 answers with Chrysostom and not with a principle — “not to enable the poor to share in our goods is to steal from them and deprive them of life” — and adds that what is due in justice “is not to be offered as a gift of charity”, which is the sentence a reader who thinks of this as charity needs. 2447 lists the works of mercy, so _almsgiving_, _homeless_ and _hunger_ all have text."
+		},
+		"technologia": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2293-2294 | csdc 456-457,460 | documents laudato-si,antiqua-et-nova",
+			"note": "2294 is the sentence that transfers — “it is an illusion to claim moral neutrality in scientific research and its applications” — and CSDC 460 is the one for _transhumanism_: man “sets himself up in place of God”. B because neither work is addressed to machines that think and neither could be, the Catechism being 1992 and the Compendium 2004; _antiqua-et-nova_ (2025) is the only text in the corpus that is, and a document can only be named. Was diluted: CSDC 458–459 is agriculture, molecular biology and genetic manipulation of plants, which is a different technology question and mostly `oecologia`’s. Narrowed 2026-09-10."
+		},
+		"communicatio-socialis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2493-2499 | csdc 414-416 | documents inter-mirifica,antiqua-et-nova",
+			"note": "2494 states the right — society’s right to information “based on truth, freedom, justice and solidarity” — 2497 puts the duty on journalists by name, 2498 on civil authorities, and 2499 on states that falsify systematically, so _propaganda_, _censorship_ and _fake news_ each have a paragraph. 2496 is the one addressed to the reader rather than to the press, and it is why the page is not only about other people."
+		},
+		"iudaismus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 839-840,597-598 | documents nostra-aetate",
+			"note": "839 is the answer and it is unambiguous — “the gifts and the call of God are irrevocable”, and the Jewish faith “unlike other non-Christian religions, is already a response to God’s revelation”. Was C on _deicide_ and _antisemitism_, keywords with no anchored sentence anywhere in the file. Fixed 2026-09-10 with 597, which says neither the Jews of Jerusalem as a whole nor Jews of other times can be charged, quoting the Council directly, and 598, which turns it round: the Church “does not hesitate to impute to Christians the gravest responsibility for the torments inflicted upon Jesus, a responsibility with which they have all too often burdened the Jews alone”. A page on this question that omits 597 is a page that leaves the accusation standing."
+		},
+		"islam": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 841,843 | documents nostra-aetate,lumen-gentium,ecclesia-in-medio-oriente",
+			"note": "841 is the whole of what the Catechism says about Muslims, and it answers _same god_ in its own words: “together with us they adore the one, merciful God”. 843 was added beside it — the Church recognizes in other religions “that search, among shadows and images, for the God who is unknown yet near” — because one paragraph was the entire page, and 843 is the stance the reader is asking about even though it is general. _Quran_, _mohammed_ and _sharia_ have no text in any work this site quotes; _nostra-aetate_ is where they are."
+		},
+		"salus-extra-ecclesiam": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 842-848,1258-1260 | documents redemptoris-missio,dominus-iesus",
+			"note": "846 states the hard sentence and 847 immediately says whom it is not aimed at, which is the pair a reader asking about everyone who is not Catholic needs to meet in that order. Was C on _baptism of desire_, a keyword with no anchored sentence; 1258–1260 added 2026-09-10 — baptism of blood, the catechumen who dies before baptism, and every man ignorant of the Gospel who seeks the truth and does God’s will as he understands it. Shared with `infans-non-baptizatus`, which needs them for one particular grief."
+		},
+		"proselytismus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 849-856 | documents evangelii-nuntiandi,redemptoris-missio,aspects-of-evangelization",
+			"note": "849 gives the mandate, 851 the motive, and 856 the manner — “a respectful dialogue with those who do not yet accept the Gospel”, in which believers “can profit … by learning to appreciate better those elements of truth and grace which are found among peoples”. 853 is why the run is taken whole: it is the Church admitting the “discrepancy existing between the message she proclaims and the human weakness of those to whom the Gospel has been entrusted”, which is the reader’s objection stated before they make it."
+		},
+		"inculturatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 843,854,1204-1206 | documents slavorum-apostoli,redemptoris-missio,querida-amazonia",
+			"note": [
+				"Was C: the question is whether a convert must give up the customs they were raised in, and the anchor was 1200–1206 on the liturgical rites of the Church — Ambrosian, Byzantine, Coptic, Maronite — which is a catalogue and not an answer. Re-anchored 2026-09-10 on 843, goodness and truth in other religions as “a preparation for the Gospel”; 854, the only paragraph that uses the word — mission “must involve a process of inculturation if the Gospel is to take flesh in each people’s culture”; and 1204–1206, where cultures are “not abolished by it, but redeemed and fulfilled”, some parts may be adapted and some may not, and adaptation “requires a conversion of heart”. That last clause is why _syncretism_ needs no separate paragraph."
+			]
+		},
+		"polygamia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1645,2387 | canons 1148 | documents familiaris-consortio,ecclesia-in-africa,africae-munus",
+			"note": "2387 opens on the reader’s own predicament — a man “obliged to repudiate one or more wives with whom he has shared years of conjugal life” — and ends on the grave duty in justice toward them. Was C on _pauline privilege_, and on the question’s own words: what BECOMES of the other wives is a procedure, and procedures are the Code’s. Added 2026-09-10: can. 1148, which lets a man who receives baptism retain one wife “if it is hard for him to remain with the first one” and tells the local ordinary to keep the moral, social and economic conditions of the place in view."
+		},
+		"superstitio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2110-2114,2117 | documents ecclesia-in-america,africae-munus",
+			"note": "2111 answers the question by drawing the line inside religion rather than outside it: superstition “can affect the worship we offer the true God”, when one attributes efficacy to prayers or sacramental signs “in their mere external performance”. Was C on _charms_, _spells_, _witchcraft_ and _blessing away an illness_, none of which had a sentence. Added 2026-09-10: 2117, which names charms, sorcery “even if this were for the sake of restoring their health”, and “so-called traditional cures”. Only 2117 and not 2115–2117: horoscopes and mediums are `divinatio`, and taking the run whole made that topic a strict subset of this one, which is the state the file’s own rule exists to prevent."
+		},
+		"evangelium-prosperitatis": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2544-2547 | documents ecclesia-in-america,evangelii-gaudium",
+			"note": "The anchors contradict the premise rather than answering the question: 2544 says the precept of detachment from riches “is obligatory for entrance into the Kingdom of heaven” and 2547 that the Lord “grieves over the rich, because they find their consolation in the abundance of goods”. A reader asking whether God rewards faith with money has to draw the conclusion themselves, which is what B means. Nothing in the corpus’s quotable works names prosperity preaching; _evangelii-gaudium_ on the idolatry of money is the nearest and is already listed."
+		},
 		"aegritudo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",

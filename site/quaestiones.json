@@ -518,7 +518,11 @@
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2402, 2407]],
-			"csdc": [[176, 181]],
+			"csdc": [
+				[176, 178],
+				[181, 181],
+				[347, 349]
+			],
 			"documents": ["rerum-novarum", "quadragesimo-anno", "centesimus-annus"]
 		},
 		"socialismus": {
@@ -558,7 +562,10 @@
 		"civitas-et-oboedientia": {
 			"doorway": "argument",
 			"cluster": "public-square",
-			"ccc": [[2234, 2237]],
+			"ccc": [
+				[2234, 2240],
+				[2242, 2243]
+			],
 			"csdc": [[396, 401]],
 			"documents": ["diuturnum", "immortale-dei"]
 		},
@@ -575,13 +582,19 @@
 		"sub-imperio-atheo": {
 			"doorway": "argument",
 			"cluster": "public-square",
-			"ccc": [[2242, 2243]],
+			"ccc": [
+				[2471, 2473],
+				[2242, 2243]
+			],
 			"documents": ["divini-redemptoris", "mit-brennender-sorge", "ecclesia-in-asia"]
 		},
 		"civitas-catholica": {
 			"doorway": "argument",
 			"cluster": "public-square",
-			"ccc": [[2244, 2246]],
+			"ccc": [
+				[2244, 2246],
+				[2105, 2107]
+			],
 			"csdc": [[424, 427]],
 			"documents": ["immortale-dei", "libertas", "quas-primas", "dignitatis-humanae"]
 		},
@@ -595,7 +608,11 @@
 		"oecologia": {
 			"doorway": "argument",
 			"cluster": "public-square",
-			"ccc": [[2415, 2418]],
+			"ccc": [
+				[339, 339],
+				[344, 344],
+				[2415, 2418]
+			],
 			"csdc": [[466, 471]],
 			"documents": ["laudato-si", "laudate-deum"]
 		},
@@ -613,7 +630,10 @@
 			"doorway": "argument",
 			"cluster": "public-square",
 			"ccc": [[2293, 2294]],
-			"csdc": [[456, 460]],
+			"csdc": [
+				[456, 457],
+				[460, 460]
+			],
 			"documents": ["laudato-si", "antiqua-et-nova"]
 		},
 		"communicatio-socialis": {
@@ -626,19 +646,28 @@
 		"iudaismus": {
 			"doorway": "argument",
 			"cluster": "other-faiths",
-			"ccc": [[839, 840]],
+			"ccc": [
+				[839, 840],
+				[597, 598]
+			],
 			"documents": ["nostra-aetate"]
 		},
 		"islam": {
 			"doorway": "argument",
 			"cluster": "other-faiths",
-			"ccc": [[841, 841]],
+			"ccc": [
+				[841, 841],
+				[843, 843]
+			],
 			"documents": ["nostra-aetate", "lumen-gentium", "ecclesia-in-medio-oriente"]
 		},
 		"salus-extra-ecclesiam": {
 			"doorway": "argument",
 			"cluster": "other-faiths",
-			"ccc": [[842, 848]],
+			"ccc": [
+				[842, 848],
+				[1258, 1260]
+			],
 			"documents": ["redemptoris-missio", "dominus-iesus"]
 		},
 		"proselytismus": {
@@ -650,7 +679,11 @@
 		"inculturatio": {
 			"doorway": "argument",
 			"cluster": "other-faiths",
-			"ccc": [[1200, 1206]],
+			"ccc": [
+				[843, 843],
+				[854, 854],
+				[1204, 1206]
+			],
 			"documents": ["slavorum-apostoli", "redemptoris-missio", "querida-amazonia"]
 		},
 		"polygamia": {
@@ -660,12 +693,16 @@
 				[1645, 1645],
 				[2387, 2387]
 			],
+			"canons": [[1148, 1148]],
 			"documents": ["familiaris-consortio", "ecclesia-in-africa", "africae-munus"]
 		},
 		"superstitio": {
 			"doorway": "argument",
 			"cluster": "other-faiths",
-			"ccc": [[2110, 2114]],
+			"ccc": [
+				[2110, 2114],
+				[2117, 2117]
+			],
 			"documents": ["ecclesia-in-america", "africae-munus"]
 		},
 		"evangelium-prosperitatis": {

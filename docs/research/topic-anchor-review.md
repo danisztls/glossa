@@ -66,7 +66,7 @@ markdown table could never report. Read them with:
 jq -r '.reviewed | to_entries[] | "\(.value.grade)  \(.key)"' site/quaestiones-review.json | sort
 ```
 
-The clusters read so far, each a single sitting:
+Every cluster has been read, each in a single sitting:
 
 | Cluster                        | Read       |
 | ------------------------------ | ---------- |
@@ -84,9 +84,11 @@ The clusters read so far, each a single sitting:
 | `argument / other-christians`  | 2026-09-10 |
 | `argument / catholics-arguing` | 2026-09-10 |
 | `argument / the-rules`         | 2026-09-10 |
+| `argument / public-square`     | 2026-09-10 |
+| `argument / other-faiths`      | 2026-09-10 |
 
-That is the whole of `private-shame`, `life-event` and `ordinary`, and four
-of the six clusters of `argument`. What follows is what the reading taught, which is
+That is all sixteen, and every topic in the file now has a row. Whether the
+rows and the topics still agree is the test's question, not this table's. What follows is what the reading taught, which is
 the part a table cannot hold.
 
 ## What the pass keeps finding
@@ -285,6 +287,16 @@ purity of heart and modesty, four paragraphs of which are about clothing,
 advertisements and what children are taught — was on no topic in the file.
 Nothing was wrong that any check could see. The keyword was the only witness.
 
+**A one-paragraph topic is not a thin one.** This pass spent most of its effort
+widening spans, and the opposite error was waiting at the end of it. `islam` is
+CCC 841 and `migratio` is CCC 2241, and in both cases that single paragraph is
+the entire treatment the Catechism gives the subject — 841 says Muslims "adore
+the one, merciful God" and there is no 842 on the matter; 2241 states the
+obligation, the state's right to condition it, and the immigrant's own duties,
+all three. Padding either would mean reaching for something general and calling
+it an answer. The measure is whether the question is answered, never how much of
+the page is filled.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as
@@ -367,7 +379,8 @@ grade was formed on and the fixes are part of the pass. Its shape is
 each work omitted when the topic has none, and `quaestiones.test.ts` recomputes
 it — so a typo fails rather than sitting there.
 
-A batch is one cluster. Sixteen clusters, and the ones the table above does not
-list have not been read — as of 2026-09-10 that is the rest of `argument`,
-which is the largest doorway of the four and the one every survey in
-`topics.md` measures: `public-square` and `other-faiths`.
+A batch is one cluster. The first pass over all sixteen finished 2026-09-10, so
+a batch now is a re-read: a topic whose anchors moved and whose row the test
+refuses, a topic added to the file, or a cluster reopened because the corpus
+gained a text a row names as missing. Read the B rows first — each one says
+what would replace it.
