@@ -82,9 +82,10 @@ The clusters read so far, each a single sitting:
 | `ordinary / justice`           | 2026-09-10 |
 | `argument / credibility`       | 2026-09-10 |
 | `argument / other-christians`  | 2026-09-10 |
+| `argument / catholics-arguing` | 2026-09-10 |
 
 That is the whole of `private-shame`, `life-event` and `ordinary`, and the
-first two clusters of `argument`. What follows is what the reading taught, which is
+first three clusters of `argument`. What follows is what the reading taught, which is
 the part a table cannot hold.
 
 ## What the pass keeps finding
@@ -241,6 +242,27 @@ by the objector's vocabulary and not by the doctrine's name: take each keyword,
 search the Catechism for that word, and read what comes back before trusting the
 article the topic is obviously about.
 
+**A `documents` list can reopen a blocklist decision from the side, and that is
+not this pass's to do.** `concilium-vaticanum-secundum` carries the keywords
+_latin mass_, _tridentine_, _sspx_ and _lefebvre_, and `docs/research/topics.md`
+holds the Latin Mass back as a topic. The anchor fix is the one the keyword rule
+above already prescribes — the nearest true thing, here CCC 1124–1125 and
+1205–1206 on what may and may not be changed in the liturgy. But the corpus also
+holds _Summorum Pontificum_ and _Traditionis Custodes_, and naming both under
+`documents` would put the blocked subject on a shipping page without anybody
+deciding to. Anchors are this pass's to change; a blocklist is not, and the row
+says so rather than doing it quietly.
+
+**A `lead` is also the right answer when the section has to stay whole.** The
+rule above — a better span retires a lead — has a converse this cluster needed.
+`dissensus` asks "What if my conscience says otherwise?", and the sentence that
+answers it is CCC 1790, "a human being must always obey the certain judgment of
+his conscience", which sits ninth in an article whose earlier paragraphs are the
+formation of conscience and whose later ones are the qualification. Cutting to
+1790 would drop the qualification; reordering by declaring reversed spans would
+do the same reordering with no disclosure. `lead` moves the one paragraph,
+leaves none out, and says on the page that it did.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as
@@ -326,5 +348,4 @@ it — so a typo fails rather than sitting there.
 A batch is one cluster. Sixteen clusters, and the ones the table above does not
 list have not been read — as of 2026-09-10 that is the rest of `argument`,
 which is the largest doorway of the four and the one every survey in
-`topics.md` measures: `catholics-arguing`, `the-rules`, `public-square` and
-`other-faiths`.
+`topics.md` measures: `the-rules`, `public-square` and `other-faiths`.

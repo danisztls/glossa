@@ -154,6 +154,53 @@
 			"anchors": "ccc 816-822,838 | documents unitatis-redintegratio,ut-unum-sint",
 			"note": "817 says the rifts arose with “men of both sides to blame” and 818 says those born into those communities cannot be charged with the separation and have a right to be called Christians, which is the answer and the tone. Was C: _one true church_ and _orthodox_ were keywords with no anchored sentence. Widened 2026-09-10 to 816, the _subsistit in_ paragraph directly above the old anchor, and 838, which says of the Orthodox Churches that the communion “lacks little to attain the fullness that would permit a common celebration of the Lord’s Eucharist”."
 		},
+		"doctrinae-progressus": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 66,94 | documents dei-filius,donum-veritatis,mysterium-ecclesiae",
+			"note": "66 is the answer in principle — Revelation is complete and “has not been made completely explicit; it remains for Christian faith gradually to grasp its full significance over the course of the centuries” — and 94 says how that grasp grows. B because the reader asks the sharp form, and no anchored sentence says a past teaching can be corrected rather than deepened; _usury_, _slavery_ and _limbo_ are keywords the Catechism never takes up, and the three documents carry that weight alone. Was diluted: 67 is private revelations, which is `apparitiones`, and dropping it 2026-09-10 also ended the only subset pair in this doorway."
+		},
+		"papa-reprehensus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 888-892,907 | canons 212 | documents donum-veritatis,mysterium-ecclesiae",
+			"note": "Was C, and the miss was the question’s own verb: 888–892 says what is protected and what gets religious assent, and nothing anchored said a Catholic may say anything at all. Fixed 2026-09-10 with can. 212, which carries both halves in one canon — §1 the obedience owed to pastors who represent Christ, §3 the right “and even at times the duty” to manifest an opinion on matters pertaining to the good of the Church, and to make it known to the rest of the faithful — and CCC 907, the same sentence in the Catechism. The canon is the better half because the reader’s word here is a legal one."
+		},
+		"dissensus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1783-1794,2038-2039 | lead 1790 | documents donum-veritatis",
+			"note": "1790 is the sentence this reader came for — “a human being must always obey the certain judgment of his conscience” — and 1791–1793 are the qualification, in the Catechism’s order and not ours. It sat ninth on the page; `lead` moves it first as of 2026-09-10. Was C on _obey the church_ and _private judgment_, which had no anchored text: 2039 now says conscience “should not be set in opposition to the moral law or the Magisterium”, and 2038 is the half that keeps it from being one-sided — the Holy Spirit “can use the humblest to enlighten the learned and those in the highest positions”."
+		},
+		"concilium-vaticanum-secundum": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 66,84-87,1124-1125,1205-1206 | documents sacrosanctum-concilium,lumen-gentium,dei-verbum,gaudium-et-spes,dignitatis-humanae",
+			"note": "Was answering a different question: 84–87 is the deposit and the Magisterium, and a reader asking whether the Church became something else in 1965 got four paragraphs on who interprets the Word of God. Widened 2026-09-10 with 66 (no new public revelation), 1124–1125 (“even the supreme authority in the Church may not change the liturgy arbitrarily”) and 1205–1206 (an immutable part, parts that can be changed, and diversity that “can also provoke tensions”). B because no anchored sentence names a council or a year, and the keywords _latin mass_, _tridentine_, _sspx_ and _lefebvre_ have none at all. The corpus holds both _Summorum Pontificum_ and _Traditionis Custodes_ and this pass did not name them: `docs/research/topics.md` blocks the Latin Mass as a topic, and reopening that through a document list is a decision for the person directing the work, not this pass."
+		},
+		"synodalitas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 874-879,887,894-896,907,910 | documents lumen-gentium,christifideles-laici,pastores-gregis",
+			"note": "877–879 answers who decides — the ministry is collegial and personal at once — and 894–895 says the bishops’ power is “proper, ordinary, and immediate” and that they “should not be thought of as vicars of the Pope”. Was C: _synod_, _laity_ and _consultation_ were keywords with no anchored sentence. Fixed 2026-09-10 with 887, the only paragraph in the Catechism that says synods and episcopal conferences, and 907 and 910 for the laity — the right to be heard, and the call to cooperate through ministries. 887 was dropped from `primatus-romani-pontificis` in the same pass, where it was dilution and here is the answer."
+		},
+		"mulieres-in-ecclesia": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 369-370,903,906-907,910 | documents collaboration-of-men-and-women,inter-insigniores",
+			"note": "Was C and a door mismatch: the question is whether the Church is run by men for men, and the anchor was 369–373 on man and woman in creation — 372 is about marriage and transmitting life, addressed to a different reader entirely. Re-anchored 2026-09-10 on 369 and 370 (equal dignity, and “in no way is God in man’s image. He is neither man nor woman”, which is the answer to _patriarchy_) and on what lay people may actually do: 903 for lector and acolyte, 906 for teaching the sacred sciences, 907 for the right to be heard, 910 for ministries. B because none of those says _woman_: the Catechism has no passage on women in the Church’s governance, and the CDF letter carries it. Ordination is `ordinatio-mulierum`."
+		},
+		"charismata": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 799-801,2003,1508",
+			"note": "“Was what I felt from God” is answered by 800 and 801 in their own words — accepted with gratitude “provided they really are genuine gifts”, and “no charism is exempt from being referred and submitted to the Church’s shepherds” — with charity named as the measure. 2003 already carried _tongues_. Was C on _faith healing_; 1508 was added 2026-09-10, and it is the honest one: a special charism of healing exists, and “even the most intense prayers do not always obtain the healing of all illnesses”. Shared with `aegritudo`. No document: nothing in the corpus is addressed to the charismatic renewal."
+		},
 		"aegritudo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",

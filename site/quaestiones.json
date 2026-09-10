@@ -332,7 +332,7 @@
 			"doorway": "argument",
 			"cluster": "catholics-arguing",
 			"ccc": [
-				[66, 67],
+				[66, 66],
 				[94, 94]
 			],
 			"documents": ["dei-filius", "donum-veritatis", "mysterium-ecclesiae"]
@@ -340,19 +340,32 @@
 		"papa-reprehensus": {
 			"doorway": "argument",
 			"cluster": "catholics-arguing",
-			"ccc": [[888, 892]],
+			"ccc": [
+				[888, 892],
+				[907, 907]
+			],
+			"canons": [[212, 212]],
 			"documents": ["donum-veritatis", "mysterium-ecclesiae"]
 		},
 		"dissensus": {
 			"doorway": "argument",
 			"cluster": "catholics-arguing",
-			"ccc": [[1783, 1794]],
+			"ccc": [
+				[1783, 1794],
+				[2038, 2039]
+			],
+			"lead": 1790,
 			"documents": ["donum-veritatis"]
 		},
 		"concilium-vaticanum-secundum": {
 			"doorway": "argument",
 			"cluster": "catholics-arguing",
-			"ccc": [[84, 87]],
+			"ccc": [
+				[66, 66],
+				[84, 87],
+				[1124, 1125],
+				[1205, 1206]
+			],
 			"documents": [
 				"sacrosanctum-concilium",
 				"lumen-gentium",
@@ -366,14 +379,22 @@
 			"cluster": "catholics-arguing",
 			"ccc": [
 				[874, 879],
-				[894, 896]
+				[887, 887],
+				[894, 896],
+				[907, 907],
+				[910, 910]
 			],
 			"documents": ["lumen-gentium", "christifideles-laici", "pastores-gregis"]
 		},
 		"mulieres-in-ecclesia": {
 			"doorway": "argument",
 			"cluster": "catholics-arguing",
-			"ccc": [[369, 373]],
+			"ccc": [
+				[369, 370],
+				[903, 903],
+				[906, 907],
+				[910, 910]
+			],
 			"documents": ["collaboration-of-men-and-women", "inter-insigniores"]
 		},
 		"charismata": {
@@ -381,7 +402,8 @@
 			"cluster": "catholics-arguing",
 			"ccc": [
 				[799, 801],
-				[2003, 2003]
+				[2003, 2003],
+				[1508, 1508]
 			],
 			"documents": []
 		},
