@@ -2335,6 +2335,44 @@ the half that is testable, rationale in `site/docs/reading.md`).
 - **It cost no new interface strings**, saying what the unit number's panel
   says in keys every dictionary carries. A surface that does what an existing
   surface does is worth checking for this before it is written.
+- **Following an address that names a unit MARKS that unit** (`isArriving`,
+  `.unit-highlighted`). Only the Bible reader did until 2026-09-10; everywhere
+  else `#s3` scrolled and marked nothing, leaving a reader dropped into a long
+  document to find what they were sent to. Never `:target` — these readers are
+  reused across units, so a reused element keeps it after a hashless address
+  replaces it, which is the trap `directVerse` already records.
+- **Apparatus that sits outside the column is still inside the flow.**
+  `.margin-note` is a float, so a drag down the text swept every citation
+  beside it into the selection; it refuses selection, as `.reference-number`
+  already did. Nothing is lost — the card the marker opens holds the same note
+  and stays selectable.
+
+## A shared link may pin an edition, and a canonical URL still may not
+
+`?ed=` (`edition-pin.ts`), written by the highlight popover's copy link
+alongside a native text directive. Rationale in `site/docs/addresses.md` and
+`site/docs/reading.md`.
+
+- **A query parameter on a canonical path is not a second address.** `parseHref`,
+  the sitemap, the route manifest and the edge see the same path they always
+  did — the rule that a canonical URL is edition-free is intact, which is the
+  only reason this is allowed at all.
+- **A link and a bookmark are different artifacts.** A bookmark stays
+  edition-free so it follows the reader across editions; a link should show the
+  recipient what the sender saw, and the highlight it carries is findable only
+  in the edition whose words were highlighted.
+- **It is shown, never adopted** — `?c=`'s rule rather than `?compare=`'s,
+  because an edition is a fact about a person the way a territory is. And an
+  explicit pick from `EditionMenu` drops it, or that menu appears to do nothing
+  for the one reader who arrived on somebody's link.
+- **Release it with `goto`, never `replaceState` from `$app/navigation`**,
+  which does not update `page.url` — and `page.url` is where all four edition
+  resolvers read the pin.
+- **The words travel as a text directive, so the browser does the finding.** No
+  offsets stored, no scheme to version, nothing for this site to paint; the
+  costs are that the quotation is in the URL and that a browser without support
+  marks nothing, which is affordable only because arriving at a unit now marks
+  the unit.
 
 ## Focus mode: print's hidden list, with three exceptions and one gate
 

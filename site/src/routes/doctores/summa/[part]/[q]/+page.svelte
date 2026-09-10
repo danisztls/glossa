@@ -69,6 +69,7 @@
 	import { citedSources, type CitedByRow } from '$lib/cited-by';
 	import type { SummaArticle } from '$lib/types';
 	import type { PageData } from './$types';
+	import { isArriving } from '$lib/arriving';
 
 	let { data }: { data: PageData } = $props();
 
@@ -513,6 +514,7 @@
 						question: data.n,
 						article: null
 					})}
+					data-edition={editions.current.work.id}
 				>
 					{@render prologue(question.prologue, editions.lang, workId)}
 
@@ -546,6 +548,7 @@
 							id={`a${article.n}`}
 							data-unit-href={articleHref}
 							class:unit-bookmarked={bookmarks.has(articleHref)}
+							class:unit-highlighted={isArriving(`a${article.n}`)}
 						>
 							<ReferenceNumber
 								n={article.n}

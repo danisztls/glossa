@@ -71,6 +71,8 @@
 		DocumentManifest
 	} from '$lib/types';
 	import type { PageData } from './$types';
+	import { isArriving } from '$lib/arriving';
+	import { pinnedEdition } from '$lib/edition-pin';
 
 	let { data }: { data: PageData } = $props();
 
@@ -99,8 +101,20 @@
 	 * document for a language that doesn't exist.
 	 */
 	const preferred = $derived(content.documentLangFor(data.slug));
+	/** The language a shared link pinned an edition of, ahead of the reader's
+	 *  own — see `edition-pin.ts`. The pin names a WORK and this page is keyed
+	 *  by language, so it is resolved through the manifest carrying it. */
+	const pinnedLang = $derived.by(() => {
+		const langs = Object.keys(data.manifestsByLang);
+		const ids = langs.flatMap((l) => {
+			const id = data.manifestsByLang[l]?.id;
+			return id ? [id] : [];
+		});
+		const pinned = pinnedEdition(page.url, ids);
+		return pinned ? langs.find((l) => data.manifestsByLang[l]?.id === pinned) : undefined;
+	});
 	const targetLang = $derived(
-		data.manifestsByLang[preferred] ? preferred : (data.embeddedLang ?? preferred)
+		pinnedLang ?? (data.manifestsByLang[preferred] ? preferred : (data.embeddedLang ?? preferred))
 	);
 
 	/** Sections fetched for a language other than the embedded one. Keyed by
@@ -807,6 +821,7 @@
 						class="reading-text document-body"
 						lang={current.work.language}
 						data-unit-href={hrefFor({ kind: 'document', slug: data.slug })}
+						data-edition={current.work.id}
 					>
 						<!-- Matter the source prints with no number on it BEFORE its
 						     numbered flow — the First Vatican Council and nothing else.
@@ -839,6 +854,7 @@
 								id={`s${section.n}`}
 								data-unit-href={sectionHref}
 								class:unit-bookmarked={bookmarks.has(sectionHref)}
+								class:unit-highlighted={isArriving(`s${section.n}`)}
 							>
 								<!-- The number links to its own anchor: this is what a reader
 								     copies to cite the section, and it is now the section's

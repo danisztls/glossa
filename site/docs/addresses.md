@@ -226,6 +226,39 @@ are dated and rot.
 
 ## Which edition a reader gets
 
+**A SHARED LINK MAY PIN ONE, and that is not a hole in the rule above.** `?ed=`
+names an edition for one visit — a query parameter on a canonical path, the
+shape `?compare=` and `?c=` already have, and not a second address for the same
+text. The path a crawler, a sitemap, a citation and `parseHref` see is
+unchanged, which is what keeps "a canonical URL selects a reference" true.
+
+**What earns the exception is that a LINK and a BOOKMARK are different
+artifacts.** A bookmark must stay edition-free: that is what lets a verse
+marked in the Clementina still be the right bookmark in Portuguese. A link
+handed to somebody else wants the opposite, and the highlight it carries
+(`site/docs/reading.md`) is findable only in the edition whose words were
+highlighted — pin nothing and the recipient gets their own edition, where those
+words may not appear at all.
+
+**It is NOT adopted as a preference**, which is where it follows `?c=` rather
+than `?compare=`, and the calendar's rule says why: a territory is a fact about
+a person in a way a column layout is not. So is an edition. Arriving on a
+pinned link shows that edition and leaves the reader's own choice alone; the
+pin dies at the next address.
+
+**And picking an edition drops it**, or the menu looks broken in exactly one
+situation: a reader who arrived on somebody's link chooses their own language,
+the parameter goes on winning, and nothing moves. `EditionMenu` releases it
+with `goto` — never `replaceState` from `$app/navigation`, which does not
+update `page.url`, and `page.url` is where every resolver reads the pin.
+
+**Four places pick a primary edition and all four honour it**
+(`edition-pin.ts`): `useEditionCompare` for the nine routes that share it, plus
+the Bible chapter, the prayers and the documents, each of which resolves its
+own. An id naming no edition of the address in hand falls through to the
+reader's preference rather than rendering nothing — a pin travels with a URL,
+and a URL gets edited and forwarded.
+
 **Written down, never derived from sort order.** `PREFERRED_EDITION` names it
 per type and language, `DEFAULT_REGION` names the unmarked region, and a test
 refuses two editions sharing a tag with no entry. An English reader got the

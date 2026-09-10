@@ -48,7 +48,13 @@
 	import { parseHref } from '$lib/address';
 	import { canHover } from '$lib/floating';
 	import { AnchoredPanel } from '$lib/floating.svelte';
-	import { APPARATUS_SELECTOR, quoteWithCitation, spanAddress, tidyQuote } from '$lib/selection';
+	import {
+		APPARATUS_SELECTOR,
+		quoteWithCitation,
+		shareHref,
+		spanAddress,
+		tidyQuote
+	} from '$lib/selection';
 	import Icon from './Icon.svelte';
 
 	/** The highlight this panel is about, cloned from the reader's selection so
@@ -59,6 +65,17 @@
 	/** The address the highlight resolved to — what gets bookmarked, linked and
 	 *  cited. */
 	let href: string | undefined = $state();
+	/** The edition those words were read in, for the LINK alone. A bookmark
+	 *  stays edition-free on purpose (`bookmarks.svelte.ts`); a link handed to
+	 *  somebody else is the opposite artifact and wants to show them exactly
+	 *  what the sender saw. */
+	let edition: string | undefined = $state();
+
+	interface Context {
+		unit: string;
+		surface: HTMLElement;
+		edition: string | undefined;
+	}
 
 	const card = new AnchoredPanel('', () => range);
 
@@ -90,20 +107,26 @@
 	 * panel's own live region are all inside the reading surface in the
 	 * markup, and all of them are apparatus over it rather than part of it.
 	 */
-	function context(node: Node): { unit: string; surface: Element } | undefined {
+	function context(node: Node): Context | undefined {
 		const el = node instanceof Element ? node : node.parentElement;
 		if (!el || el.closest('[popover]')) return undefined;
-		const surface = el.closest('.reading-text');
+		const surface = el.closest<HTMLElement>('.reading-text');
 		const unit = el.closest<HTMLElement>('[data-unit-href]');
 		if (!surface || !unit || !surface.contains(unit)) return undefined;
 		const href = unit.dataset.unitHref;
-		return href ? { unit: href, surface } : undefined;
+		// `data-edition` is the SURFACE's, never a unit's: every unit on a page
+		// is the same edition, and in compare mode each column is its own
+		// surface and its own edition. A surface that declares none — the
+		// Bible's book introduction — copies a link with no pin, which is an
+		// ordinary link and still a good one.
+		return href ? { unit: href, surface, edition: surface.dataset.edition } : undefined;
 	}
 
 	function dismiss() {
 		card.hide();
 		range = undefined;
 		href = undefined;
+		edition = undefined;
 	}
 
 	/**
@@ -134,6 +157,7 @@
 		if (!from || !to || from.surface !== to.surface) return dismiss();
 
 		href = spanAddress(from.unit, to.unit);
+		edition = from.edition;
 		range = live.cloneRange();
 		// Already open over an extended selection: re-measure rather than
 		// re-show, which would throw on a popover that is showing.
@@ -198,9 +222,26 @@
 		await write('copy', quoteWithCitation(text, citationFor(target)));
 	}
 
+	/**
+	 * The link, which is the one thing here that has to survive being sent to
+	 * somebody else.
+	 *
+	 * THREE PARTS, and the address is only the first. The unit's canonical URL
+	 * says which paragraph; `?ed=` says which edition it was read in
+	 * (`edition-pin.ts`); the text directive says which words, and the
+	 * recipient's browser finds them. The last two are what make it
+	 * deterministic rather than approximate — a link to `#s3` alone opens
+	 * whatever edition the recipient prefers, at a section that may be a page
+	 * long, and says nothing about the sentence that was worth sending.
+	 *
+	 * Built from the range at COPY time, like the quotation and for the same
+	 * reason: the reader may have extended the highlight since the panel
+	 * opened, and the link has to name what is on the screen.
+	 */
 	async function copyLink() {
 		if (!href) return flash('copyLink', false);
-		await write('copyLink', new URL(href, location.href).href);
+		const link = shareHref(href, edition, quote());
+		await write('copyLink', new URL(link, location.href).href);
 	}
 
 	/**
@@ -213,6 +254,7 @@
 		if (!card.open) {
 			range = undefined;
 			href = undefined;
+			edition = undefined;
 			status = undefined;
 		}
 	}

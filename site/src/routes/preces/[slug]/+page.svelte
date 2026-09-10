@@ -117,12 +117,28 @@
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Prayer, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
+	import { pinnedEdition } from '$lib/edition-pin';
 
 	let { data }: { data: PageData } = $props();
 
 	/** `tagFor`, not `langFor`: `byLang` is keyed on full tags now that English
 	 *  has two editions, and the bare form cannot tell them apart. */
-	let lang = $derived(resolveEditionTag(Object.keys(data.byLang), content.tagFor('prayer')) ?? '');
+	/** A shared link's pin first, then the reader's own tag — see
+	 *  `edition-pin.ts`. The pin names a WORK and this is keyed by language
+	 *  tag, so it is resolved through the entry that carries it. */
+	let lang = $derived(
+		pinnedLang() ?? resolveEditionTag(Object.keys(data.byLang), content.tagFor('prayer')) ?? ''
+	);
+
+	function pinnedLang(): string | undefined {
+		const tags = Object.keys(data.byLang);
+		const ids = tags.flatMap((tag) => {
+			const id = data.byLang[tag]?.work.id;
+			return id ? [id] : [];
+		});
+		const pinned = pinnedEdition(page.url, ids);
+		return pinned ? tags.find((tag) => data.byLang[tag]?.work.id === pinned) : undefined;
+	}
 	let current = $derived(data.byLang[lang]);
 
 	/**
@@ -816,6 +832,7 @@
 					class="reading-text prayer-body"
 					lang={current.work.language}
 					data-unit-href={hrefFor({ kind: 'prayer', slug: data.slug })}
+					data-edition={current.work.id}
 				>
 					{@render prayerBody(current.prayer, current.work.language)}
 				</div>

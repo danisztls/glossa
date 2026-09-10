@@ -49,6 +49,7 @@
 	import { apparatusPrefs } from '$lib/apparatus-prefs.svelte';
 	import type { CommentaryNote, Verse, WorkManifest } from '$lib/types';
 	import type { PageData } from './$types';
+	import { pinnedEdition } from '$lib/edition-pin';
 
 	let { data }: { data: PageData } = $props();
 
@@ -96,6 +97,11 @@
 
 	const workId = $derived(
 		(() => {
+			// A shared link's pin wins, where this address has that edition:
+			// the words a highlight names are only findable in the edition
+			// they were highlighted in (`edition-pin.ts`).
+			const pinned = pinnedEdition(page.url, availableWorkIds);
+			if (pinned) return pinned;
 			const preferred = content.workIdFor('bible');
 			// In intro mode there are no editions in route data to fall back
 			// through: the reader's own edition is what names the book and drives
@@ -850,7 +856,12 @@
 					note={compareVersesDiffer && !divergence ? t('compare.versificationNote') : undefined}
 				/>
 			{:else}
-				<div class="reading-text" lang={current.work.language} data-unit-href={chapterHref}>
+				<div
+					class="reading-text"
+					lang={current.work.language}
+					data-unit-href={chapterHref}
+					data-edition={workId}
+				>
 					<!-- A plate that resolved to no verse belongs to the chapter, and
 					     is drawn before the first verse. `placePlates` keys those 0;
 					     none of the 241 land there today. -->

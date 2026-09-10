@@ -33,6 +33,7 @@
  */
 
 import { hrefFor, parseHref } from './address';
+import { EDITION_PARAM } from './edition-pin';
 
 /**
  * Everything inside the reading text that is APPARATUS rather than the text.
@@ -105,4 +106,86 @@ export function tidyQuote(raw: string): string {
  */
 export function quoteWithCitation(text: string, citation: string): string {
 	return citation ? `${text}\n— ${citation}` : text;
+}
+
+/**
+ * How long a quotation may be spelled out whole in a text directive before it
+ * is written as its two ends instead.
+ *
+ * A directive is a URL somebody pastes into a message, so its length is part
+ * of what it is. Two hundred characters is roughly two sentences — past that
+ * the link stops looking like a link, and `textStart,textEnd` names the same
+ * span in a fraction of the room.
+ */
+const WHOLE_QUOTE_MAX = 200;
+
+/** Words taken from each end when a quotation is too long to spell out. Enough
+ *  that the pair is unique in a paragraph; few enough to stay short. */
+const EDGE_WORDS = 8;
+
+/**
+ * The reader's own words as a text directive — `text=…`, the fragment
+ * syntax browsers implement natively.
+ *
+ * THE BROWSER DOES THE FINDING, which is the whole reason this is worth
+ * having: no offsets to store, no scheme to version, no mark for this site to
+ * paint, and a highlight that survives the text being re-chunked or the
+ * markup around it changing. What it costs is that the quotation travels IN
+ * the URL — a shared link now carries the sentence it points at, which is
+ * longer and less opaque than an address — and that a browser without support
+ * (Firefox before 131) simply lands on the unit and highlights nothing, which
+ * is the failure this can afford.
+ *
+ * IT IS FIND-THE-TEXT, NOT AN OFFSET, so it is only as deterministic as the
+ * words are distinctive. That is what `EDITION_PARAM` is for: the same words
+ * in the same edition. Where a short phrase repeats within the unit the
+ * browser lands on the first, which is why a long quotation is written as its
+ * two ends rather than truncated to its first — a pair pins the span where a
+ * prefix only pins its opening.
+ *
+ * `-`, `,` and `&` delimit the directive itself, so they are percent-encoded.
+ * `encodeURIComponent` covers the last two and leaves the hyphen, which is
+ * unreserved in a URL and reserved in here.
+ */
+export function textDirective(quote: string): string {
+	const text = tidyQuote(quote);
+	if (!text) return '';
+	const words = text.split(' ');
+	if (text.length <= WHOLE_QUOTE_MAX || words.length <= EDGE_WORDS * 2) {
+		return `text=${encodeDirectivePart(text)}`;
+	}
+	const start = words.slice(0, EDGE_WORDS).join(' ');
+	const end = words.slice(-EDGE_WORDS).join(' ');
+	return `text=${encodeDirectivePart(start)},${encodeDirectivePart(end)}`;
+}
+
+function encodeDirectivePart(part: string): string {
+	return encodeURIComponent(part).replace(/-/g, '%2D');
+}
+
+/**
+ * The address a highlight copies: the unit's canonical URL, the edition it was
+ * read in, and the words themselves.
+ *
+ * All three parts are needed and none of them changes what the address IS. The
+ * path is exactly what the unit number's popover copies; `?ed=` decorates the
+ * visit (`edition-pin.ts`); the directive rides after `:~:`, which browsers
+ * strip from the fragment before any `#s3` in front of it is resolved — so a
+ * recipient whose browser has never heard of text directives still lands on
+ * the right section and sees it marked.
+ *
+ * The edition is optional because the surface may not declare one, and a link
+ * that pins nothing is still a good link — it opens the unit in the reader's
+ * own edition, which is what every other link on this site does.
+ */
+export function shareHref(href: string, edition: string | undefined, quote: string): string {
+	const hashAt = href.indexOf('#');
+	const path = hashAt === -1 ? href : href.slice(0, hashAt);
+	const fragment = hashAt === -1 ? '' : href.slice(hashAt + 1);
+	const pinned = edition
+		? `${path}${path.includes('?') ? '&' : '?'}${EDITION_PARAM}=${encodeURIComponent(edition)}`
+		: path;
+	const directive = textDirective(quote);
+	if (!fragment && !directive) return pinned;
+	return `${pinned}#${fragment}${directive ? `:~:${directive}` : ''}`;
 }

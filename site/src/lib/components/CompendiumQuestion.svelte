@@ -15,6 +15,7 @@
 	import { linkifyProse, refHref, type RefSegment } from '$lib/refs';
 	import { content } from '$lib/content.svelte';
 	import InlineNodes from './InlineNodes.svelte';
+	import { isArriving } from '$lib/arriving';
 
 	interface Props {
 		question: CompendiumQuestion;
@@ -88,6 +89,7 @@
 		id={`q${question.n}`}
 		data-unit-href={canonicalHref}
 		class:unit-bookmarked={bookmarks.has(canonicalHref)}
+		class:unit-highlighted={isArriving(`q${question.n}`)}
 	>
 		<ReferenceNumber
 			n={question.n}

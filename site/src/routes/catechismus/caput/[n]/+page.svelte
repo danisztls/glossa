@@ -46,6 +46,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import type { CccNode, CccParagraph, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
+	import { isArriving } from '$lib/arriving';
 
 	let { data }: { data: PageData } = $props();
 
@@ -387,6 +388,7 @@
 					class="reading-text ccc-body chapter-body"
 					lang={editions.current.work.language}
 					data-unit-href={chapterHref}
+					data-edition={editions.current.work.id}
 				>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
 						{#each innerHeadings.get(paragraph.n) ?? [] as heading, h (heading.kind + heading.title)}
@@ -420,6 +422,7 @@
 							data-unit-href={hrefFor({ kind: 'ccc', n: paragraph.n })}
 							class:in-brief={paragraph.in_brief}
 							class:unit-bookmarked={bookmarks.has(hrefFor({ kind: 'ccc', n: paragraph.n }))}
+							class:unit-highlighted={isArriving(`p${paragraph.n}`)}
 						>
 							<!-- The number is a link back to the paragraph's own page: this
 						     view is for reading, that one for citing and cross-linking,

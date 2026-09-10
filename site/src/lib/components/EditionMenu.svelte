@@ -46,6 +46,8 @@
 -->
 <script lang="ts">
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+	import { withoutEditionPin } from '$lib/edition-pin';
 	import { content, type WorkTypeKey } from '$lib/content.svelte';
 	import {
 		currentPrayerEditionId,
@@ -322,7 +324,29 @@
 		if (ctx.kind === 'document') content.setDocument(ctx.slug, workId);
 		else if (ctx.kind === 'pair') choosePairLang(workId);
 		else content.set(ctx.type, workId);
+		releasePin();
 		menu.closeAndRefocus();
+	}
+
+	/**
+	 * A pick from this menu ends a shared link's edition pin.
+	 *
+	 * Without this the menu looks broken in exactly one situation and looks
+	 * perfect everywhere else: a reader who arrived on somebody's `?ed=` link
+	 * picks their own language, the parameter goes on winning, and nothing on
+	 * the page moves. The pin is a decoration on a visit and this is the
+	 * gesture that ends the visit (`edition-pin.ts`).
+	 *
+	 * `goto` and not `replaceState` from `$app/navigation`, which does not
+	 * update `page.url` — the trap site/CLAUDE.md records — and `page.url` is
+	 * precisely what every resolver reads the pin out of. The navigation is
+	 * affordable here because a pick already re-renders the whole text, and
+	 * it is skipped entirely where there was no pin, which is every pick but
+	 * this one.
+	 */
+	function releasePin() {
+		const released = withoutEditionPin(page.url);
+		if (released) goto(released, { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	/**

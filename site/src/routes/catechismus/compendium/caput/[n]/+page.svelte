@@ -276,6 +276,7 @@
 					class="reading-text compendium-body chapter-body"
 					lang={editions.current.work.language}
 					data-unit-href={chapterHref}
+					data-edition={editions.current.work.id}
 				>
 					{#each editions.current.questions as item (item.n)}
 						<CompendiumQa

@@ -194,6 +194,7 @@
 					class="reading-text"
 					lang={editions.current.work.language}
 					data-unit-href={hrefFor({ kind: 'canonLaw', n: data.n })}
+					data-edition={editions.current.work.id}
 				>
 					<ProseBlocks unit={editions.current.canon} lang={editions.lang} work={workId} />
 				</div>

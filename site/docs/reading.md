@@ -821,6 +821,43 @@ way — Firefox settles `selectionchange` after pointerup, so a selection read
 inside the gesture can still be the previous one. **Reach for the deferral
 whenever a popover is opened from a pointer event that is not `click`.**
 
+**The link carries three things, and the address is only the first.** Copy
+link writes the unit's canonical URL, then `?ed=` for the edition the words
+were read in (`site/docs/addresses.md` on why that is a decoration and not an
+address), then a native text directive — `#s3:~:text=…` — naming the words
+themselves. A link to `#s3` alone opens whichever edition the recipient
+prefers, at a section that may be a page long, and says nothing about the
+sentence that was worth sending.
+
+**The browser does the finding, which is the whole reason the directive is
+worth having**: nothing stored, no offset scheme to version, no mark for this
+site to paint, and a highlight that survives the text being re-chunked or the
+markup around it changing. What it costs is that the quotation travels IN the
+URL — a shared link now carries the sentence it points at — and that a browser
+without support lands on the unit and marks nothing, which is a failure this
+can afford now that arriving at a unit marks the unit. Being find-the-text
+rather than an offset is also why the edition is pinned beside it: the same
+words, in the same edition.
+
+**A long quotation is written as its two ends, never truncated to its first.**
+`textStart,textEnd` pins the span where a prefix pins only its opening, and it
+keeps the link to something a person can paste into a message. `-`, `,` and
+`&` delimit the directive, so they are percent-encoded; `encodeURIComponent`
+covers the last two and leaves the hyphen, which is unreserved in a URL and
+reserved in here.
+
+**`::target-text` is restyled, and it is not decoration.** The UA pairs a
+yellow wash with near-black text — a highlighter pen dropped on a printed book
+against the sepia ground, and on the dark one the passage going invisible at
+the moment it is pointed at. It takes the site's own arriving accent instead,
+one shade stronger than `.unit-highlighted` because it sits under a run of text
+rather than behind a block.
+
+**Compare mode pins no edition**, deliberately and for now: `CompareGrid` is
+handed languages and labels rather than work ids, so a highlight in a column
+copies a link with the words and no `?ed=`. That degrades to an ordinary good
+link, which is why it was not worth two props and every caller.
+
 **Desktop only, and the reason is that the platform is already there.** A touch
 screen raises its own selection callout over the words, with its own copy
 button and its own handles, drawn in a layer this page cannot reach; a second

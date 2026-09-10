@@ -47,6 +47,8 @@
  */
 
 import type { WorkManifest } from './types';
+import { page } from '$app/state';
+import { pinnedEdition } from './edition-pin';
 import { compare } from './compare-pref.svelte';
 
 /** One embedded language other than the primary, paired with the
@@ -98,7 +100,24 @@ export function useEditionCompare<T extends { work: WorkManifest }>(
 	preferredLang: () => string
 ): EditionCompare<T> {
 	const availableLangs = $derived(Object.keys(byLang()));
-	const lang = $derived(byLang()[preferredLang()] ? preferredLang() : availableLangs[0]);
+	/**
+	 * An edition a shared link pinned takes the primary column, ahead of the
+	 * reader's own preference and behind nothing — see `edition-pin.ts` on why
+	 * that is a decoration on one visit rather than a second address, and why
+	 * it is never adopted as a preference. Unpinned, and for an id this address
+	 * has no edition of, this is exactly the chain it always was.
+	 */
+	const pinnedLang = $derived.by(() => {
+		const ids = availableLangs.flatMap((l) => {
+			const id = byLang()[l]?.work.id;
+			return id ? [id] : [];
+		});
+		const pinned = pinnedEdition(page.url, ids);
+		return pinned ? availableLangs.find((l) => byLang()[l]?.work.id === pinned) : undefined;
+	});
+	const lang = $derived(
+		pinnedLang ?? (byLang()[preferredLang()] ? preferredLang() : availableLangs[0])
+	);
 	const current = $derived(byLang()[lang]);
 
 	const others = $derived(

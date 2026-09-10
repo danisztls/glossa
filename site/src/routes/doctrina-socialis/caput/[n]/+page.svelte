@@ -45,6 +45,7 @@
 	import { t } from '$lib/i18n.svelte';
 	import type { DocumentSection, StructureNode } from '$lib/types';
 	import type { PageData } from './$types';
+	import { isArriving } from '$lib/arriving';
 
 	let { data }: { data: PageData } = $props();
 
@@ -319,6 +320,7 @@
 					class="reading-text chapter-body"
 					lang={editions.current.work.language}
 					data-unit-href={chapterHref}
+					data-edition={editions.current.work.id}
 				>
 					{#each editions.current.paragraphs as paragraph, i (paragraph.n)}
 						{#each innerHeadings.get(paragraph.n) ?? [] as row, h (row.node.anchor ?? row.node.title)}
@@ -357,6 +359,7 @@
 							class:unit-bookmarked={bookmarks.has(
 								hrefFor({ kind: 'socialDoctrine', n: paragraph.n })
 							)}
+							class:unit-highlighted={isArriving(`p${paragraph.n}`)}
 						>
 							<!-- The number links back to the paragraph's own page: this
 							     view is for reading, that one for citing, and that page is

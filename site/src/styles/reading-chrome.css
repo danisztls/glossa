@@ -281,6 +281,26 @@
  * column's edge within it (`.reference-number.margin`).
  */
 .margin-note {
+	/*
+	 * A FLOAT IS IN THE FLOW WHEREVER IT IS PAINTED, so a reader dragging down
+	 * the column sweeps up every citation standing in the margin beside it —
+	 * they are inside the paragraph in the markup, and the negative margin
+	 * that puts them out there says nothing to a selection. What that looked
+	 * like was one selection covering two columns, and what it produced was a
+	 * quotation with somebody else's footnotes wound through it.
+	 *
+	 * The copy strips them regardless (`APPARATUS_SELECTOR`), but a reader
+	 * cannot see the strip and can see the highlight, so the two have to agree
+	 * before the words are on the clipboard.
+	 *
+	 * NOTHING IS LOST BY IT, which is the whole argument for refusing rather
+	 * than reordering the markup: this margin copy is a SECOND rendering of a
+	 * note that is also, always, in the card the marker opens
+	 * (`CitationDisclosure` — "the popover is still the whole apparatus"), and
+	 * that copy stays selectable. A reader who wants the citation opens it.
+	 * `ReferenceNumber` already refuses the same way and for the same reason.
+	 */
+	user-select: none;
 	float: inline-start;
 	clear: inline-start;
 	/* The containing block for the marker, which hangs off the start edge. */

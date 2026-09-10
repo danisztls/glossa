@@ -257,6 +257,53 @@
 }
 
 /*
+ * THE UNIT AN ARRIVING ADDRESS NAMED, the block-level twin of the Bible
+ * reader's `.verse.highlighted` and the single-column form of
+ * `.compare-row.highlighted`.
+ *
+ * `#s3` is a section's whole address — what `hrefFor` writes and what every
+ * citation on the site resolves to — so following one lands a reader in the
+ * middle of a long document with nothing saying where the thing they were sent
+ * to begins. The browser's scroll answers "roughly here"; only the wash
+ * answers "this one". The mark comes from `isArriving`, never `:target`, for
+ * the reason the Bible reader's `directVerse` records: these components are
+ * reused across units, and a reused element can keep `:target` after a
+ * hashless address has been installed over it.
+ *
+ * WRITTEN AFTER `.unit-bookmarked` so an arriving citation wins the background
+ * when a unit is both — the order `.compare-row.highlighted` already settled,
+ * for the reason given there. Same 12% accent as every other arriving mark on
+ * the site; this is a fourth presentation of one idea, not a new one.
+ */
+.unit-highlighted {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+	border-radius: var(--radius-sm);
+	print-color-adjust: exact;
+	-webkit-print-color-adjust: exact;
+}
+
+/*
+ * THE WORDS A SHARED LINK NAMED, drawn by the browser rather than by us.
+ *
+ * A link copied from a highlight carries a text directive (`selection.ts`),
+ * so the recipient's browser finds those words and marks them itself. Its
+ * default is a yellow wash chosen to be conspicuous against a white page,
+ * which on the sepia and OLED grounds is a highlighter pen dropped on a
+ * printed book. This is the site's own arriving mark instead — the same 12%
+ * accent as `.unit-highlighted` above it and every other "you were sent here"
+ * on the site, one shade stronger because it sits UNDER a run of text rather
+ * than behind a whole block.
+ *
+ * `color: inherit` is not decoration either: the UA pairs its wash with a
+ * near-black text colour, which on a dark ground is the passage going
+ * invisible at the moment it is pointed at.
+ */
+::target-text {
+	background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+	color: inherit;
+}
+
+/*
  * A row the reader has saved, and a row an arriving citation named. Washes on
  * the two TEXT cells only, never on the row: the gutter has to stay page
  * background for the number's own background to punch cleanly through the
