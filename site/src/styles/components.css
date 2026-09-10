@@ -294,22 +294,54 @@
 	display: none;
 }
 
+/*
+ * THE BOX IS CENTRED AND THE INK IS NOT, which is what the nudge below pays
+ * for. The mark is an L of two borders in the corner of a square, so its ink
+ * sits toward that corner — 0.227 of the box along the diagonal — and rotating
+ * the square carries that offset round with it: shut, the ink lands 0.227 to
+ * the inline-end of where the box is centred; open, the same distance BELOW
+ * it, which is a mark visibly low beside its own heading. Each state is
+ * translated back by that fraction, along the axis it drifted, in the box's
+ * own units so the correction survives a resized mark.
+ *
+ * Both states spell the same transform functions in the same order, so the
+ * transition interpolates them directly instead of decomposing a matrix.
+ */
 .fold > summary::before {
 	content: '';
 	flex: none;
 	/* The one number worth turning if this ever reads heavy. 0.5rem square
 	   with a 2px stroke is a mark at a heading's own weight; the 0.4rem and
 	   1.5px it replaces were sized against a 0.75rem count. */
-	inline-size: 0.5rem;
-	block-size: 0.5rem;
-	border-inline-end: 2px solid currentColor;
-	border-block-end: 2px solid currentColor;
+	--fold-mark: 0.5rem;
+	--fold-nudge: calc(var(--fold-mark) * -0.227);
+	inline-size: var(--fold-mark);
+	block-size: var(--fold-mark);
+	/*
+	 * PHYSICAL BORDERS AND NOT LOGICAL ONES, which is the opposite of this
+	 * codebase's rule everywhere else and is what makes the mark true in
+	 * Arabic and Hebrew. `border-inline-end` mirrors the L; the ROTATION that
+	 * turns an L into an arrow is physical and does not mirror with it, so the
+	 * pair came apart — borders on the left with a rotation written for the
+	 * right points the shut mark DOWN in an RTL page, which is the open state.
+	 * Two of these had shipped that way. So the shape is stated physically and
+	 * `:dir(rtl)` turns the shut one the other way instead.
+	 */
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
 	color: var(--color-text-muted);
-	transform: rotate(-45deg);
+	transform: translate(var(--fold-nudge), 0) rotate(-45deg);
 }
 
-.fold[open] > summary::before {
-	transform: rotate(45deg);
+:dir(rtl) .fold > summary::before {
+	transform: translate(calc(var(--fold-nudge) * -1), 0) rotate(135deg);
+}
+
+/* Open is down in both directions — a list comes down from its heading
+   wherever the heading's own words run. */
+.fold[open] > summary::before,
+:dir(rtl) .fold[open] > summary::before {
+	transform: translate(0, var(--fold-nudge)) rotate(45deg);
 }
 
 /* The mark answers with its row. `inherit` would have been the tidier

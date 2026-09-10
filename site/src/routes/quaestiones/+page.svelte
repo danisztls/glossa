@@ -305,6 +305,10 @@
 	 * already say that a row is a row.
 	 */
 	h2 {
+		/* The interface face, like `/documenta`'s table-of-contents heading and
+		   the sidebars': this is our own label for a shelf, not a line of any
+		   book, and the text face belongs to the questions under it. */
+		font-family: var(--font-sans);
 		font-size: 1.05rem;
 		font-weight: 600;
 		color: var(--color-text);
@@ -431,26 +435,6 @@
 		margin: 0.1rem 0 0;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
-	}
-
-	/*
-	 * THE QUESTION IS DROPPED ON A PHONE and the title carries the row alone.
-	 * At 360px a one-line question is three lines, so a shelf of eight topics
-	 * is thirty-two lines of grey text with eight links buried in it — the
-	 * titles stop being scannable, which is the one thing a list of a hundred
-	 * questions has to be. The title is already a whole subject; the question
-	 * is the sentence a reader would have typed, and its work here is being
-	 * SEARCHED rather than being read.
-	 *
-	 * Which is the one cost: `topic-search.ts` matches title and question
-	 * together, so a phone reader can get a row back on a word that is not on
-	 * screen. Deliberate — the question is where the reader's own words are, and
-	 * losing the match would be worse than the unexplained hit.
-	 */
-	@media (max-width: 40rem) {
-		.question {
-			display: none;
-		}
 	}
 
 	.empty {

@@ -166,12 +166,13 @@ be. The thresholds (46rem, 75rem) are this page's own content and not the site's
 layout breakpoints; the second is where the viewport can give the column its
 whole width, which is what a third cell needs.
 
-**On a phone the question is dropped and the title carries the row.** At 360px
-a one-line question wraps to three, so eight topics are thirty-two lines of grey
-with eight links buried in them. The question keeps working — it is half of what
-`topic-search.ts` matches — which is the cost as well: a phone reader can get a
-row back on a word that is not on screen. That is the better failure, since the
-question is where the reader's own words are.
+**The question is drawn at every width**, one column deep on a phone. Hiding it
+there was tried and reversed: it buys back a third of the page's height, and
+what it spends is the half of a row that says what the topic is _for_ — the
+title names a subject, the question is the sentence somebody would have typed.
+It is also half of what `topic-search.ts` matches, so hiding it leaves a phone
+reader with rows that match a word not on screen. The shelves being shut is what
+makes the length affordable instead.
 
 ## A title is a poor oracle for what a document is about
 
