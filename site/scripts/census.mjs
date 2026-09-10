@@ -39,6 +39,7 @@
  */
 
 import { citerKey, citerWorkKey } from './build-xrefs.mjs';
+import { clusterAuthors } from './patristic.mjs';
 
 /**
  * Bumped when the shape changes; `src/lib/census.ts` declares the reader's
@@ -46,9 +47,12 @@ import { citerKey, citerWorkKey } from './build-xrefs.mjs';
  * ranking counts, which is a change of MEANING rather than of field — the
  * kind a version number exists for, since nothing about the old shape reads
  * as wrong. 4 deepened every ranking from twenty rows to a hundred and added
- * `absent`, which the page pages through and prints beside them.
+ * `absent`, which the page pages through and prints beside them. 5 split that
+ * list in two: `absentAuthors` is the works the library is cited FOR and
+ * `absent` the editions they are printed IN, which is the difference between a
+ * list somebody can act on and a list of other people's shelves.
  */
-export const CENSUS_VERSION = 4;
+export const CENSUS_VERSION = 5;
 
 /**
  * How many entries a ranking publishes — a ceiling, never a quota.
@@ -268,7 +272,7 @@ export function censusFact(census, shelf, fact) {
  * @param {{slug: string, lang: string}[]} input.documentEditions
  * @param {Record<string, {questions: unknown[]}>} input.summaIndex lang -> questions
  * @param {Record<string, Record<string, Record<string, import('../src/lib/types.ts').Citer[]>>>} input.scriptureByBook
- * @param {{documents: any[], ccc: any[], summa: any[], absent: {work: string, cited_by: import('../src/lib/types.ts').Citer[]}[], unread: {ibidem: Record<string, number>, other: Record<string, number>}}} input.citationXrefs
+ * @param {{documents: any[], ccc: any[], summa: any[], absent: {work: string, cited_by: import('../src/lib/types.ts').Citer[]}[], unread: {ibidem: Record<string, number>, other: Record<string, number>}, authors?: {name: string, lang: string, locators: string[], citer: string, counts: boolean}[]}} input.citationXrefs
  * @param {Map<string, Map<number, Set<number>>>} input.summaArticles part -> question -> articles
  */
 export function buildCensus(input) {
@@ -526,6 +530,32 @@ export function buildCensus(input) {
 		other: unreadOf(citationXrefs.unread.other)
 	};
 
+	/**
+	 * The Fathers the apparatus cites and this library does not hold.
+	 *
+	 * THE ANSWER `absent` LOOKS LIKE GIVING AND DOES NOT. That list ranks
+	 * `Patrologia latina`, which is a shelf in somebody else's library and not
+	 * a work anybody ingests; the text the reader is being sent to is named in
+	 * the same clause, and this is that name. `scripts/patristic.mjs` carries
+	 * the reading and the three rules it costs.
+	 *
+	 * CLUSTERED HERE AND NOT IN THE BUILDER, because a spelling only resolves
+	 * against the other spellings of the same man and that is a fact about the
+	 * whole corpus rather than about the citation the builder was looking at.
+	 * `countsTowardsRank` filters the SIGHTINGS rather than the clusters, so a
+	 * name known only from an edition's own footnotes leaves no row behind.
+	 */
+	const absentAuthors = clusterAuthors(
+		(citationXrefs.authors ?? []).map((sighting) => ({
+			...sighting,
+			// An edition's own footnotes name the Fathers constantly, so a
+			// sighting out of one is a VOTE on how a name is spelled and never
+			// a row's number — the annotation rule the rankings already keep,
+			// applied to the half of a sighting that is counted.
+			counts: sighting.counts && kindCountsTowardsRank(sighting.citer.split(' ')[0] ?? '')
+		}))
+	);
+
 	let summaArticleCount = 0;
 	for (const byQuestion of summaArticles.values()) {
 		for (const articles of byQuestion.values()) summaArticleCount += articles.size;
@@ -686,6 +716,18 @@ export function buildCensus(input) {
 			work: id,
 			value
 		})),
+		/**
+		 * The same question asked of the WORKS rather than of the editions:
+		 * whom this library is cited for and has not got, most asked-for first.
+		 *
+		 * Cut by `topOf` like every other ranking, over a tally of citing
+		 * places — so a Father cited once by one footnote is below the band and
+		 * the table ends where the evidence thins rather than at a round
+		 * number.
+		 */
+		absentAuthors: topOf(new Map(absentAuthors.map((a) => [a.name, a.citers])), (a, b) =>
+			a.localeCompare(b)
+		).map(({ id, value }) => ({ author: id, value })),
 		/** What that ranking does NOT account for, so the page can say so —
 		 *  the same arithmetic `countedReferences` closes one section up. */
 		unread

@@ -568,6 +568,26 @@ export function absentRanking(census: Census): CensusAbsentRow[] {
 	return census.absent ?? [];
 }
 
+/** One line of the author ranking: whom the library is cited for, and how many
+ *  places ask for him. */
+export interface CensusAuthorRow {
+	author: string;
+	value: number;
+}
+
+/**
+ * Whom the apparatus cites that this library has not got.
+ *
+ * THE ROW `absentRanking` LOOKS LIKE GIVING AND DOES NOT. That one names the
+ * critical EDITION a text is printed in — Migne, Corpus Christianorum — which
+ * is a fact about somebody else's shelf and not a work to acquire; this names
+ * the man. Nothing is mapped here either, and for that function's reason:
+ * there is no edition to open.
+ */
+export function absentAuthors(census: Census): CensusAuthorRow[] {
+	return census.absentAuthors ?? [];
+}
+
 /**
  * What the absence ranking leaves out: the citations that named nothing.
  *

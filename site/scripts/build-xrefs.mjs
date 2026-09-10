@@ -36,11 +36,13 @@ import {
 	citesVulgateNumbering,
 	expandIbidem,
 	linkifyProse,
+	citationClauses,
 	normalizeCitationSpacing,
 	parseRefs,
 	parseStoredRef,
 	siglumStanding
 } from '../src/lib/refs-grammar.ts';
+import { authorInClause, locatorsIn } from './patristic.mjs';
 import { toVulgateCandidates } from '../src/lib/versification.ts';
 
 /**
@@ -648,6 +650,20 @@ export function invertScriptureRefs(citations) {
  * a segment's own `slug` cannot: Portuguese maps no siglum to a slug at all,
  * so read off the parse the corpus appears to lack Familiaris consortio.
  *
+ * AND THE SERIES IS NOT THE ANSWER TO THE QUESTION IT LOOKS LIKE ANSWERING.
+ * `Patrologia latina` heads that fourth list, and nobody ingests Migne: it is
+ * a critical EDITION, and what the reader wants is the Father printed in it,
+ * whose name the same clause carries. `authors` is that reading — one sighting
+ * per clause that named somebody, left unclustered here because the spellings
+ * only resolve against each other and that is a whole-corpus operation
+ * (`scripts/patristic.mjs`, and `census.mjs` where the clustering runs).
+ *
+ * IT IS READ ONLY WHERE THE CLAUSE REACHED NOTHING HERE. A clause naming a
+ * document this library holds is already a cross-reference, and its head is
+ * that document's author — a pope, a council — which the document ranking
+ * answers for. Reading it here would rank Vatican II beside Augustine as
+ * something to acquire.
+ *
  * WHAT NAMES NOTHING IS COUNTED AND NEVER RANKED. 31,525 distinct citation
  * strings resolve to no address and 94% of them occur once — an unexpanded
  * `Ibid.` in a dozen languages, a synod `Propositio`, a line of a footnote
@@ -662,13 +678,14 @@ export function invertScriptureRefs(citations) {
  * @typedef {{ part: string, question: number, article: number | null, cited_by: Citer[] }} SummaCitationXref
  * @typedef {{ work: string, cited_by: Citer[] }} AbsentCitationXref
  * @typedef {{ ibidem: Record<string, number>, other: Record<string, number> }} UnreadCitations
+ * @typedef {{ name: string, lang: string, locators: string[], citer: string, counts: boolean }} AuthorSighting
  *
  * @param {CitingUnit[]} units
  *   every citing unit, each already carrying the address that names it
  * @param {(slug: string, n: number) => boolean} sectionExists
  * @param {(n: number) => boolean} paragraphExists
  * @param {(part: string, question: number, article: number | null) => boolean} summaExists
- * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[], summa: SummaCitationXref[], absent: AbsentCitationXref[], unread: UnreadCitations }}
+ * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[], summa: SummaCitationXref[], absent: AbsentCitationXref[], unread: UnreadCitations, authors: AuthorSighting[] }}
  */
 export function buildCitationXrefs(units, sectionExists, paragraphExists, summaExists) {
 	/** `slug` -> section number (or `''` for the document at large) -> citers */
@@ -684,6 +701,8 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 	const absent = new Map();
 	/** @type {{ ibidem: Record<string, number>, other: Record<string, number> }} */
 	const unread = { ibidem: {}, other: {} };
+	/** @type {AuthorSighting[]} */
+	const authors = [];
 
 	/**
 	 * One `Ibid.` chain per EDITION — a work in one language — because that
@@ -784,7 +803,29 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 			if (!list) absent.set(standing.work, (list = []));
 			addOnce(list, citer);
 		}
-		if (named || segments.some((seg) => resolvesHere(seg, lang, work))) return;
+		const landed = segments.some((seg) => resolvesHere(seg, lang, work));
+		// THE NAME BESIDE THE LOCATOR, per clause — see the docblock for why
+		// the cut is the grammar's and not a semicolon written here.
+		//
+		// EVERY SIGHTING IS EMITTED AND `counts` SAYS WHICH ONE IS AN ABSENCE.
+		// A spelling is linked to another by the locators they share, so
+		// emitting only the citations that rank throws away the co-occurrences
+		// the clustering runs on: narrowed that way, Cyprian came out as two
+		// rows, one Latin and one Italian, and Chrysostom as three.
+		for (const clause of citationClauses(text, lang, work)) {
+			const locators = locatorsIn(clause);
+			if (!locators.length) continue;
+			const name = authorInClause(clause);
+			if (!name) continue;
+			authors.push({
+				name,
+				lang: lang ?? '',
+				locators,
+				citer: citerKey(citer),
+				counts: named > 0 && !landed
+			});
+		}
+		if (named || landed) return;
 		// `expandIbidem` returns null unless the string opens with an ibidem
 		// word, so it is the same test the expansion above ran, asked of a
 		// citation that came out of it with nothing to show.
@@ -875,7 +916,8 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 		absent: [...absent.keys()]
 			.sort()
 			.map((work) => ({ work, cited_by: ordered(absent.get(work) ?? []) })),
-		unread
+		unread,
+		authors
 	};
 }
 

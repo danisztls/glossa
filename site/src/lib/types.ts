@@ -1302,6 +1302,16 @@ export interface Census {
 	 * field may have written.
 	 */
 	absent?: { work: string; value: number }[];
+	/**
+	 * The same question asked of the WORKS rather than of the editions: whom
+	 * the apparatus cites that this library has not got, most asked-for first.
+	 *
+	 * `absent` ranks `Patrologia latina`, which is a shelf in somebody else's
+	 * library and not a work anybody ingests. The text is named beside the
+	 * locator in the same clause, and this is that name, clustered across the
+	 * languages that spell it differently (`scripts/patristic.mjs`).
+	 */
+	absentAuthors?: { author: string; value: number }[];
 	/** The citations that named nothing at all — not a work this library
 	 *  lacks, but a string no address came out of. `ibidem` is the half whose
 	 *  antecedent could not be carried across a footnote run, which is a limit

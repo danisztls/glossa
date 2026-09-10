@@ -1793,6 +1793,18 @@ deploy on it. `site/docs/census.md` holds the rationale.
   rows carry a name and no address.** Every other ranking links; this one
   cannot, the link being the thing that is missing — so it is not a sixth chip
   on the table above, whose rows are comparable because they are all addresses.
+- **A series siglum is a LOCATOR, not a work.** That ranking headed itself with
+  `Patrologia latina` — two hundred volumes of somebody else's shelf — where
+  the reader had asked which texts. The text is named beside the locator in the
+  same clause, so the section prints two lists: whom the library is cited for,
+  and the editions those texts are printed in.
+- **The locator is the oracle for a name that fragments.** Augustine has nine
+  spellings across the editions and no letters in common between `St. Augustine`
+  and `Sanctus Augustinus`; `PL 38, 1134` is a volume and column in a book
+  nobody here published, so it reads the same in every language and every
+  edition citing it names the same man (`scripts/patristic.mjs`). A head is read
+  per CLAUSE and an edge needs THREE shared locators — at one, 4,450 of 6,878
+  heads came out as a single Augustine.
 - **A siglum's identity is a NAME from `ABSENT_WORKS`, never its expansion.**
   The tables gloss one work differently for each language's reader, so keyed on
   the expansion the Holy See's gazette was two rows of 1,513 and 1,213.

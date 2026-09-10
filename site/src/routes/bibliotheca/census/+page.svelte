@@ -91,6 +91,7 @@
 		RANK_HIDDEN_BY_DEFAULT,
 		RANK_KINDS,
 		RANK_PAGE,
+		absentAuthors,
 		absentRanking,
 		censusProse,
 		censusShelves,
@@ -259,6 +260,22 @@
 	 */
 	const absent = $derived(census ? absentRanking(census) : []);
 	const unread = $derived(census ? unreadTotals(census) : undefined);
+
+	/**
+	 * WHOM the library is cited for, where `absent` is WHERE those texts are
+	 * printed — and the first list is the one a reader came for.
+	 *
+	 * `Patrologia latina` headed this section for one revision and could not be
+	 * acted on: it is two hundred volumes of somebody else's shelf, and nobody
+	 * ingests Migne. The name of the text is in the same clause as the locator
+	 * and always was (`scripts/patristic.mjs`).
+	 */
+	const authors = $derived(census ? absentAuthors(census) : []);
+	let authorPage = $state(0);
+	const authorPages = $derived(Math.max(1, Math.ceil(authors.length / RANK_PAGE)));
+	const authorsShown = $derived(
+		authors.slice(authorPage * RANK_PAGE, (authorPage + 1) * RANK_PAGE)
+	);
 
 	/**
 	 * IT PAGES AT THE SAME LENGTH AS THE RANKING ABOVE IT, and the reason is
@@ -654,7 +671,7 @@
 			</section>
 		{/if}
 
-		{#if absent.length}
+		{#if authors.length || absent.length}
 			<section aria-labelledby="absent-heading">
 				<div class="head">
 					<h2 id="absent-heading">{t('census.absent')}</h2>
@@ -674,36 +691,73 @@
 				{#if unread}
 					<p class="lede landing-measure">
 						{t('census.absentLede')
-							.replace('{works}', n(absent.length))
+							.replace('{works}', n(authors.length))
 							.replace('{unread}', n(unread.total))
 							.replace('{ibidem}', n(unread.ibidem))}
 					</p>
 				{/if}
 
-				<!-- THE ONE RANKING WHOSE ROWS DO NOT LINK, and the shape says
+				<!-- TWO LISTS, AND THE FIRST IS THE ONE A READER CAME FOR. This
+				     section headed itself with `Patrologia latina` for one
+				     revision, which is two hundred volumes of somebody else's
+				     shelf: an EDITION, where the reader had asked which texts.
+				     The name of the text sits in the same clause as the
+				     locator, so both are knowable and they are different
+				     questions — whom the library is cited for, and where those
+				     texts are printed. Set as one list they read as one kind of
+				     thing, and the second was drowning the first.
+
+				     THE ONE RANKING WHOSE ROWS DO NOT LINK, and the shape says
 				     so: no mark, because there is no work here to carry one, and
 				     no anchor, because there is nowhere to go. A row set like
 				     the rows above it with the link quietly missing would read
 				     as a list of broken ones. -->
-				<ol
-					class="ranking absent"
-					start={absentPage * RANK_PAGE + 1}
-					style="--rank-from: {absentPage * RANK_PAGE}"
-				>
-					{#each absentShown as row (row.work)}
-						<li>
-							<span class="work">{row.work}</span>
-							<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
-						</li>
-					{/each}
-				</ol>
-				{#if absentPages > 1}
-					{@render pager(
-						t('census.absentPages'),
-						absentPage,
-						absentPages,
-						(to) => (absentPage = to)
-					)}
+				{#if authors.length}
+					<h3>{t('census.absentAuthors')}</h3>
+					<ol
+						class="ranking absent"
+						start={authorPage * RANK_PAGE + 1}
+						style="--rank-from: {authorPage * RANK_PAGE}"
+					>
+						{#each authorsShown as row (row.author)}
+							<li>
+								<span class="work">{row.author}</span>
+								<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
+							</li>
+						{/each}
+					</ol>
+					{#if authorPages > 1}
+						{@render pager(
+							t('census.absentAuthorPages'),
+							authorPage,
+							authorPages,
+							(to) => (authorPage = to)
+						)}
+					{/if}
+				{/if}
+
+				{#if absent.length}
+					<h3>{t('census.absentEditions')}</h3>
+					<ol
+						class="ranking absent"
+						start={absentPage * RANK_PAGE + 1}
+						style="--rank-from: {absentPage * RANK_PAGE}"
+					>
+						{#each absentShown as row (row.work)}
+							<li>
+								<span class="work">{row.work}</span>
+								<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
+							</li>
+						{/each}
+					</ol>
+					{#if absentPages > 1}
+						{@render pager(
+							t('census.absentPages'),
+							absentPage,
+							absentPages,
+							(to) => (absentPage = to)
+						)}
+					{/if}
 				{/if}
 				<p class="caveat-print" aria-hidden="true">{t('census.absentMethod')}</p>
 			</section>
@@ -1102,6 +1156,20 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	/* The two lists inside the absence section. A `h3` rather than a second
+	   `h2`: they are one question asked two ways, not two sections, and the
+	   `i` on the heading above covers both. */
+	section h3 {
+		margin: 1.5rem 0 0.4rem;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: var(--color-text-muted);
+	}
+
+	section h3:first-of-type {
+		margin-top: 1rem;
 	}
 
 	/* The absence ranking's rows carry no link, so its name takes the growth

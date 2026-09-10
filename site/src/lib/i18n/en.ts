@@ -270,7 +270,8 @@ export const en: Dictionary = {
 	// position are shared, those being read out inside a landmark that has
 	// already said which list it pages.
 	'census.rankPages': 'Ranking pages',
-	'census.absentPages': 'Pages of what is not held',
+	'census.absentPages': 'Pages of editions not held',
+	'census.absentAuthorPages': 'Pages of works not held',
 	// THE ARROWS' ACCESSIBLE NAMES AND NOT THEIR LABELS. Each button draws
 	// `arrow-left`/`arrow-right` and prints nothing, so `aria-label` is the
 	// whole of what a screen reader has to go on — and a picture announces
@@ -293,6 +294,16 @@ export const en: Dictionary = {
 	// same shape of question: what is cited, and not held. Its rows carry a
 	// name and no link, the address being exactly what is missing.
 	'census.absent': 'What is cited and not held',
+	// TWO LISTS UNDER ONE HEADING, and the pair of names is the whole point of
+	// the split. The section headed itself with "Patrologia latina" for one
+	// revision, which is two hundred volumes of somebody else's shelf: a row
+	// naming the EDITION a text is printed in, where the reader had asked which
+	// texts. Both are knowable — the apparatus writes the author and the work
+	// beside the locator — and they answer different questions, so each list is
+	// named for the question it answers rather than "authors" and "series",
+	// which are the words for what the rows happen to be.
+	'census.absentAuthors': 'Whose works this library is cited for',
+	'census.absentEditions': 'The editions those texts are printed in',
 	// A FOURTH `i` BUTTON, one section past the three the comment above
 	// `census.about.derived` counts, and it has to read apart from
 	// `census.about.cited` — both sit on this page, and a screen reader
@@ -309,7 +320,7 @@ export const en: Dictionary = {
 	// above it — distinct citing places, not how many times a citation
 	// repeats.
 	'census.absentMethod':
-		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested.',
+		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested. The first list names whose text is being cited, read from the citation itself and gathered across the languages that spell a name differently; the second names the critical editions those texts are printed in, which are somebody else’s books and not works this library would hold.',
 	// CLOSES THE SAME ARITHMETIC `census.citersLede` closes one section up,
 	// and for the same reason: a list of a few dozen names reads as the whole
 	// of what this library lacks, and it is a small part of it. Most of what

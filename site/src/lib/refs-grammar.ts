@@ -3047,6 +3047,31 @@ const NAMES_NO_WORK: SiglumStanding = { held: false, work: null };
  * the work arrives — which is the property that keeps the table honest
  * without anybody maintaining it.
  */
+/**
+ * A citation cut into the clauses it chains, the separator kept with neither
+ * side — the same cut `parseCitationClauses` makes before it parses each part.
+ *
+ * ONE SPLITTER AND NOT TWO, which is this file's standing rule met by a caller
+ * outside it. `build-xrefs.mjs` reads the name at the head of a clause to learn
+ * which Father the library is being cited for, and it has to cut the string
+ * exactly where the parser cuts it: read whole, a citation chaining a council
+ * and a Father under one `;` attaches the council's name to the Father's
+ * locator, which is how Vatican II merged with Clement of Rome and Justin with
+ * Jerome the first time that reading was tried.
+ *
+ * The separator is a property of the LANGUAGE (`clauseSeparators`), so this
+ * takes the same `lang`/`work` pair every other entry point takes rather than
+ * assuming a semicolon.
+ */
+export function citationClauses(text: string, lang?: string, work?: string): string[] {
+	const cfg = configFor(lang, work);
+	return text
+		.split(cfg.clauseSepRe)
+		.filter((part) => !(part.length === 1 && cfg.clauseSepRe.test(part)))
+		.map((part) => part.trim())
+		.filter(Boolean);
+}
+
 export function siglumStanding(siglum: string, lang?: string, work?: string): SiglumStanding {
 	const entry = configFor(lang, work).documentSigla.get(siglum);
 	if (!entry) return NAMES_NO_WORK;

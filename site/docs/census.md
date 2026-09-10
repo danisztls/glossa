@@ -306,6 +306,54 @@ given. `buildCitationXrefs` already parses every citation against a grammar that
 recognizes far more works than the corpus holds, so this was a measurement lying
 on the floor of that function.
 
+**A series siglum is a LOCATOR and not a work, which is what this section got
+wrong first.** It headed itself with `Patrologia latina`, `Patrologia graeca`,
+`Denzinger` — every one of them a critical EDITION, two hundred volumes of
+somebody else's shelf — so it was answering "which books are these texts
+printed in" where the reader had asked which texts. Nobody ingests Migne. The
+text is named beside the locator in the same clause and always was, so both are
+knowable and the section prints two lists: whom the library is cited for, and
+where those texts are printed.
+
+**The name fragments across languages, and the locator is the oracle.**
+Augustine arrives as `St. Augustine`, `Santo Agostinho`, `Sant'Agostino`,
+`Sanctus Augustinus`, `S. Agostinho`, `S. Agustín` — 1,811 spellings over some
+600 people, so ranked raw the most-cited Father is whichever one has the fewest
+translations. `PL 38, 1134` is a volume and a column in a book nobody here
+published, so it is the same string in every language and every edition citing
+it names the same man. That is `book-forms-oracle.mjs`'s method with the locus
+supplied by the citation instead of by the paragraph number.
+`scripts/patristic.mjs` carries the reading and the four rules it cost.
+
+**A head is read per CLAUSE.** A citation chains works with `;`, and read whole
+its first name attaches to every locator in it — `Concilium Vaticanum II … ; cf
+Sanctus Hieronymus …: PL 24, 17` taught the clusterer that the council and
+Jerome were one man, and through that hub Justin merged with Jerome and Clement
+of Rome with Vatican II. `citationClauses` makes the cut and is the grammar's
+own, so the two cannot drift.
+
+**An edge needs three distinct locators.** One shared locator is a coincidence a
+misprint can manufacture, and the relation is closed transitively, so a single
+bad edge chains everything: at one, 4,450 of 6,878 heads came out as a single
+Augustine. At three, Tertullian and Origen part and Jerome stands on his own.
+
+**Every sighting is evidence and only some are counted.** A spelling is linked
+to another by the locators they share, so narrowing the input to the citations
+that RANK throws away the co-occurrences the clustering runs on — it left
+Cyprian as two rows, one Latin and one Italian, and Chrysostom as three. The
+builder emits every sighting and flags which are an absence.
+
+**The display name is the English edition's where there is one**, then the
+un-shouted, then the most frequent. Ranked on frequency alone the page printed
+`S. CYPRIANUS` and `Sant'Ireneo di Lione` at the head of a page whose every
+other word is English — the Latin and Italian apparatus being the
+sigla-heaviest in the corpus.
+
+**It is not a ranking of works.** `Sermo` is three hundred different sermons and
+`Adversus haereses` is written `Adv. haeres.` as often as not, so a work-level
+table would be near-duplicate rows and a judgement per row. The author is the
+grain somebody acquires a corpus at, and the grain the locator can check.
+
 **A row carries a name and no address, and that is the whole content of the
 section.** Every other ranking on the page links; this one cannot, because the
 link is the thing that is missing. So its rows carry no shelf mark either —
