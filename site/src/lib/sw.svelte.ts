@@ -56,6 +56,7 @@
 
 import { contentLangChain, lastContentRead } from './corpus';
 import { content, type WorkTypeKey } from './content.svelte';
+import { i18n } from './i18n.svelte';
 import { offline, setOfflineObserver } from './offline.svelte';
 import { usage } from './usage';
 import type { WaveId, WavePlanInput, WaveRequest } from './sw-policy';
@@ -526,9 +527,9 @@ class ServiceWorkerStore {
  * keys, one work each — and the wave they belong to is not automatic, so
  * naming them here would order a download nobody has asked for.
  *
- * This is why the module now imports `content.svelte.ts` (and through it
- * `i18n.svelte.ts`, which `readerLang` below still declines to depend on for
- * its own reason). The store reads localStorage through the same staleness
+ * This is why the module now imports `content.svelte.ts` (and, since
+ * `readerLang` below started reading it, `i18n.svelte.ts` by name as well).
+ * The store reads localStorage through the same staleness
  * rule the edition menu does, and duplicating that rule here to keep the
  * import out would be a second copy of a policy that has already been
  * rewritten once.
@@ -544,12 +545,20 @@ function chosenEditions(): string[] {
 	}
 }
 
+/**
+ * THE STORE, AND NO LONGER THE KEY IT WRITES. This read a saved
+ * `glossa:ui-lang` and fell back to `document.documentElement.lang`, which
+ * worked only because the language was saved for every reader who had loaded
+ * one page. `i18n.svelte.ts` stopped saving a merely negotiated answer, so the
+ * key is now absent for anyone who never chose — and the fallback is BCP-47
+ * rather than a UI tag, which spells Traditional Chinese `zh-Hant` and names
+ * no content language here.
+ *
+ * Reading `i18n.lang` cannot go stale or disagree, and costs nothing: this
+ * module already imports the store's module through `content.svelte.ts`.
+ */
 function readerLang(): string {
-	try {
-		return localStorage.getItem('glossa:ui-lang') || document.documentElement.lang || 'en';
-	} catch {
-		return document.documentElement.lang || 'en';
-	}
+	return i18n.lang;
 }
 
 export const serviceWorker = new ServiceWorkerStore();

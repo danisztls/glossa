@@ -409,6 +409,14 @@
 				};
 				var seg = location.pathname.split('/')[1];
 				var l = UI.indexOf(seg) !== -1 ? seg : localStorage.getItem('glossa:ui-lang');
+				// Between the reader's choice and the address: the language the
+				// calendar page was being read in when it last wrote its own URL.
+				// `initialLang` in i18n.svelte.ts holds the same four rungs in the
+				// same order, and this block has to agree with it rung for rung or
+				// the paint and the hydration disagree.
+				if (UI.indexOf(l) === -1) {
+					l = sessionStorage.getItem('glossa:ui-lang-session') || l;
+				}
 				if (UI.indexOf(l) === -1 && seg === 'calendarium') {
 					l = CAL[location.pathname.split('/')[2]] || l;
 				}

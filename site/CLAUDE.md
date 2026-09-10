@@ -2646,11 +2646,21 @@ parses an id.
   to be one page. `route-titles.mjs` writes the head; `held.ts` decides which
   calendars have an address at all.
 - **A page whose language comes from its path must be painted in it.** The edge
-  sets `lang` from `CALENDAR_LANGS` and `app.html`'s pre-paint block carries a
+  sets `lang` from `CALENDAR_PAGES` and `app.html`'s pre-paint block carries a
   copy of that table (`i18n.test.ts` pins it, as it does `UI`/`BCP`/`VAR`), or
   the document declares Portuguese in its head and paints English chrome under
-  it. The seeded language is NOT persisted, where a `/pt/…` prefix is: the
-  reader asked for a calendar, not for a Portuguese site.
+  it.
+- **Only the reader outranks the address, and the browser is not the reader.**
+  `initialLang` walks four rungs — chosen, held, address, negotiated — and
+  saves the first alone; a `/pt/…` prefix is a choice and saves, the address is
+  not and does not. **A negotiated answer that saves itself disables every rung
+  below it**: it used to, so every reader had a saved language from their first
+  page view and no country calendar's address ever reached anybody.
+- **An address this page wrote is not an address that speaks.** `mirror` holds
+  the interface's current language for the session at every write, so pressing
+  Brazil in the picker moves the calendar and leaves the language alone — the
+  picker, the day, an arriving `?c=` and the remembered territory all go
+  through it.
 - **The address is a SLUG, not the layer's id.** Fifteen of the fifty-three
   ids are also interface language tags and four name something else there —
   `tl` is Timor-Leste here and Tagalog in `/tl/preces` — so the segment is

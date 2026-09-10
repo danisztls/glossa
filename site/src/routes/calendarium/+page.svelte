@@ -101,7 +101,7 @@
 		rememberTerritory,
 		storedTerritory
 	} from '$lib/calendar-pref';
-	import { i18n, t } from '$lib/i18n.svelte';
+	import { holdLang, i18n, t } from '$lib/i18n.svelte';
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
 	 *  the one place in this codebase where local time is the correct basis.
@@ -288,6 +288,12 @@
 	function mirror() {
 		const url = addressFor();
 		history.replaceState({ ...history.state, [PAGE_URL_KEY]: url.href }, '', url);
+		// AND THE LANGUAGE IS HELD, because this write can put a country
+		// calendar's address in the bar and that address names a language. It is
+		// this page's answer and not the reader's — picking Brazil in the picker
+		// is picking a calendar — so `initialLang` must not read it back as one
+		// on the next load. `i18n.svelte.ts` carries the ordering.
+		holdLang();
 	}
 
 	function go(iso: string) {

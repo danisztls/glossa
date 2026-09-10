@@ -82,15 +82,19 @@ export function rememberPlainDays(shown: boolean): void {
  * the general calendar because opening a reader in Lisbon on Rome's calendar
  * is also a guess — just the one that is wrong more often.
  *
- * IT IS NOT REMEMBERED, unlike the language negotiation in `i18n.svelte.ts`,
- * which writes its detected answer back so later visits stay stable. The two
- * differ in what a stale guess costs. A browser's language list is a setting
- * the reader made once and rarely revisits, so pinning it is the stable
- * answer; an address is a fact about where the reader is now, and a reader
- * who moves country, or who read one page through a VPN, would otherwise be
- * held in a territory they never picked by a key that claims they did. Not
- * writing keeps `storedTerritory` meaning exactly one thing — the reader
- * pressed something — and leaves this free to be right again tomorrow.
+ * IT IS NOT REMEMBERED. An address is a fact about where the reader is now,
+ * and a reader who moves country, or who read one page through a VPN, would
+ * otherwise be held in a territory they never picked by a key that claims
+ * they did. Not writing keeps `storedTerritory` meaning exactly one thing —
+ * the reader pressed something — and leaves this free to be right again
+ * tomorrow.
+ *
+ * THE LANGUAGE NEGOTIATION IN `i18n.svelte.ts` USED TO BE THE COUNTER-EXAMPLE
+ * HERE, saving its detected answer so later visits stayed stable. It stopped:
+ * a saved answer is indistinguishable from a chosen one, and it silently
+ * outranked the language a country calendar's own address names (that file's
+ * `initialLang`). Both guesses are now recomputed per load, and this rule is
+ * the site's rule rather than this file's.
  *
  * Undefined everywhere the attribute is absent, which is every environment
  * but production: `npm run dev` and `npm run preview` serve the shell without

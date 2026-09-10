@@ -446,10 +446,33 @@ measured witness is followed; the diocese's own ordo would settle it.
 sets `lang` from the same table, and `app.html`'s pre-paint block carries a
 copy — without it the document declares Portuguese in its head and negotiates
 English chrome under it before hydration, which is the mismatch that would make
-these addresses worth less than the parameter they replaced. It is not
-persisted, unlike a `/pt/…` prefix: the reader asked for a calendar, not for a
-Portuguese site, so it holds for the session and the next visit negotiates
-afresh.
+these addresses worth less than the parameter they replaced.
+
+**Only the reader outranks the address, and the browser is not the reader.**
+`initialLang` walks four rungs — what the reader chose, what the page held,
+what the address says, what the browser says — and saves the first alone. A
+`/pt/…` prefix is a choice and persists; this is not one, and persisting it
+would turn a link off a search results page into a Portuguese site for ever.
+
+**A negotiated answer that saves itself disables every rung below it.** That is
+how this shipped and it made the rung above dead code: the site wrote the
+negotiated language back on a reader's first page view of anything, so by the
+time anyone met `/calendarium/brazil` they had a saved value, the first rung
+matched, and the address was never once read. Negotiation is deterministic and
+costs nothing, so it is recomputed per load instead — the argument
+`calendar-pref.ts` already made about the edge's territory guess, which an
+unasked-for answer should be free to be right again tomorrow.
+
+**An address this page wrote is not an address that speaks.** `/calendarium/brazil`
+gets into the address bar two ways and only one of them is somebody saying
+something: a reader arriving from a search result was handed a Portuguese head
+by the edge, while a reader who pressed Brazil in the picker was reading in
+Albanian and the page rewrote its own URL under them. So `mirror` holds the
+interface's current language in `glossa:ui-lang-session` at every write —
+the picker, the day, an arriving `?c=`, and the remembered territory
+`/calendarium` opens in — and the reload that follows reads the hold rather
+than the address. Session-scoped, because what the hold records is true of the
+tab and of nothing else.
 
 **The address is a slug and the calendar's id is not one.** Fifteen of the
 fifty-three ids are also interface language tags, and four of those name
@@ -623,10 +646,12 @@ is what a phone says in Lagos, Manila and Dublin alike, and an interface
 language is a fact about what someone READS rather than about which
 conference's calendar they keep — which is exactly why `ui-langs.ts` negotiates
 the language from `navigator.languages` and this does not. **The guess is not
-remembered**, unlike that negotiation, which writes its answer back: a language
-list is a setting made once, an address is where the reader is now, and a
-pinned country would hold someone who moved, or who read one page through a
-VPN, in a territory they never picked under a key that claims they did.
+remembered**: an address is where the reader is now, and a pinned country would
+hold someone who moved, or who read one page through a VPN, in a territory they
+never picked under a key that claims they did. The language negotiation used to
+be the counter-example here and wrote its answer back; that turned out to cost
+the country calendars their own language (above), and now neither guess is
+saved — a key means the reader pressed something, in both files.
 
 **The United Kingdom is the one place a country code is not the answer**, and
 Northern Ireland is deliberately unanswered. England, Scotland and Wales keep

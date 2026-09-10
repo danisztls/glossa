@@ -1,7 +1,8 @@
 /**
- * Thin localStorage wrappers shared by every reader-preference module —
+ * Thin web-storage wrappers shared by every reader-preference module —
  * theme, font scale, UI language, content-edition override, compare mode,
- * install-hint state, and reading position.
+ * install-hint state, and reading position. All of them localStorage but the
+ * pair at the foot, which has its own note.
  *
  * THE GUARD IS NOT DEFENSIVE NOISE. Several of these stores read their
  * initial value into `$state(...)` at MODULE INIT time, so merely importing
@@ -69,4 +70,30 @@ export function readStoredJson<T>(key: string, fallback: T): T {
 export function writeStoredJson<T>(key: string, value: T): void {
 	if (typeof localStorage === 'undefined') return;
 	localStorage.setItem(key, JSON.stringify(value));
+}
+
+/**
+ * The same string pair over `sessionStorage`, for the one preference that must
+ * not outlive the tab.
+ *
+ * A SESSION IS THE RIGHT SCOPE FOR AN ANSWER A PAGE GAVE ITSELF. Everything
+ * above records something the reader said, and a reader still means it next
+ * month; `glossa:ui-lang-session` records only that the reader reached a
+ * country calendar's address by operating this site rather than by arriving at
+ * it (`i18n.svelte.ts`), which is true of the tab they are in and of nothing
+ * else. Persisting it would let one afternoon's clicking decide what language
+ * a link off a search results page opens in a year from now.
+ */
+export function readSessionString(key: string): string | undefined {
+	if (typeof sessionStorage === 'undefined') return undefined;
+	return sessionStorage.getItem(key) || undefined;
+}
+
+export function writeSessionString(key: string, value: string | undefined): void {
+	if (typeof sessionStorage === 'undefined') return;
+	if (value === undefined) {
+		sessionStorage.removeItem(key);
+	} else {
+		sessionStorage.setItem(key, value);
+	}
 }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { CALENDAR_PAGES } from './calendar/national/languages';
@@ -404,6 +404,26 @@ describe('UI_LANGS and the dictionaries', () => {
 	});
 
 	/**
+	 * And the order the two tables above are consulted in, which `app.html`
+	 * also carries a copy of.
+	 *
+	 * `initialLang` has four rungs and the pre-paint block has to walk the
+	 * same four: a block that reached the calendar table one rung too early
+	 * would paint Portuguese over a reader who had just pressed Brazil in the
+	 * picker, and correct itself at hydration. The keys are the whole of what
+	 * can drift — the shape of the block is one `if` per rung either way.
+	 */
+	it('consults the same three keys in app.html, in the same order', () => {
+		const html = readFileSync(path.join(process.cwd(), 'src/app.html'), 'utf8');
+		// `CAL[`, its use, and not `var CAL =`, its declaration — which sits
+		// with the other four tables well above the block that walks them.
+		const rungs = [...html.matchAll(/'(glossa:ui-lang(?:-session)?)'|(CAL\[)/g)].map(
+			(m) => m[1] ?? 'the calendar table'
+		);
+		expect(rungs).toEqual(['glossa:ui-lang', 'glossa:ui-lang-session', 'the calendar table']);
+	});
+
+	/**
 	 * The same drift, in the two tables that arrived with `zht` — and this
 	 * pair fails LOUDER than the list above, which is why it is worth its own
 	 * assertion. A stale `UI` costs a flash of the wrong language; a stale
@@ -472,5 +492,93 @@ describe('calendarPathLang', () => {
 		expect(at('/calendarium/israel')).toBeUndefined();
 		// The layer id, which is `?c=`'s vocabulary and not an address.
 		expect(at('/calendarium/br')).toBeUndefined();
+	});
+});
+
+/**
+ * The four rungs of `initialLang`, which is not exported and cannot be: it
+ * runs at module scope, so the only way to ask what it answered is to build
+ * the store again over a different world. `vi.resetModules` is what makes
+ * that possible and is the reason this block boots the module by hand
+ * instead of reading the one every other test here imports.
+ */
+describe('the language a load opens in', () => {
+	function fakeStorage(seed: Record<string, string>) {
+		const entries = new Map(Object.entries(seed));
+		return {
+			getItem: (key: string) => entries.get(key) ?? null,
+			setItem: (key: string, value: string) => void entries.set(key, value),
+			removeItem: (key: string) => void entries.delete(key),
+			get size() {
+				return entries.size;
+			}
+		};
+	}
+
+	async function boot(world: {
+		chose?: string;
+		held?: string;
+		at?: string;
+		browser?: string[];
+	}): Promise<{ lang: string; saved: number }> {
+		const local = fakeStorage(world.chose ? { 'glossa:ui-lang': world.chose } : {});
+		vi.stubGlobal('localStorage', local);
+		vi.stubGlobal(
+			'sessionStorage',
+			fakeStorage(world.held ? { 'glossa:ui-lang-session': world.held } : {})
+		);
+		vi.stubGlobal('location', { pathname: world.at ?? '/' });
+		vi.stubGlobal('navigator', { languages: world.browser ?? ['en-US'] });
+		vi.resetModules();
+		const { i18n } = await import('./i18n.svelte');
+		return { lang: i18n.lang, saved: local.size };
+	}
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
+		vi.resetModules();
+	});
+
+	it('gives the reader what they chose, over everything else', async () => {
+		const { lang } = await boot({
+			chose: 'sq',
+			held: 'de',
+			at: '/calendarium/brazil',
+			browser: ['pt-BR']
+		});
+		expect(lang).toBe('sq');
+	});
+
+	/** THE ONE THE PICKER DEPENDS ON. Choosing Brazil in the calendar's picker
+	 *  rewrites the address and holds the language it was read in, so the
+	 *  reload that follows must not read that address as a request for
+	 *  Portuguese. */
+	it('keeps a language this page held, over the address it wrote', async () => {
+		const { lang } = await boot({ held: 'sq', at: '/calendarium/brazil', browser: ['de-AT'] });
+		expect(lang).toBe('sq');
+	});
+
+	it('gives an arriving reader the language the address is published in', async () => {
+		expect((await boot({ at: '/calendarium/brazil', browser: ['en-US'] })).lang).toBe('pt');
+		expect((await boot({ at: '/calendarium/japan', browser: ['en-US'] })).lang).toBe('ja');
+	});
+
+	it('negotiates everywhere else', async () => {
+		expect((await boot({ at: '/preces', browser: ['de-AT', 'en-US'] })).lang).toBe('de');
+		expect((await boot({ at: '/calendarium', browser: ['pt-PT'] })).lang).toBe('pt');
+		expect((await boot({ browser: ['is-IS'] })).lang).toBe('en');
+	});
+
+	/**
+	 * AND SAVES NONE OF IT, which is the fix and not a detail. While the
+	 * negotiated answer was written back, every reader had a saved language
+	 * from their first page view onwards — so the rung above could never fire
+	 * for anybody who had ever loaded anything, and a country calendar's
+	 * address named a language nobody was ever served.
+	 */
+	it('saves nothing a reader did not choose', async () => {
+		expect((await boot({ browser: ['pt-BR'] })).saved).toBe(0);
+		expect((await boot({ at: '/calendarium/brazil', browser: ['en-US'] })).saved).toBe(0);
+		expect((await boot({ held: 'sq', at: '/calendarium/brazil' })).saved).toBe(0);
 	});
 });

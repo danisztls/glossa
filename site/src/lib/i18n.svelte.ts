@@ -15,7 +15,12 @@
 
 import { CALENDAR_PAGES } from './calendar/national/languages.ts';
 import { parseCalendarPath } from './route-manifest.ts';
-import { readStoredString, writeStoredString } from './storage';
+import {
+	readSessionString,
+	readStoredString,
+	writeSessionString,
+	writeStoredString
+} from './storage';
 
 /**
  * The interface languages. See `./ui-langs.ts` for the list itself and for why
@@ -71,6 +76,9 @@ function applyDocumentLang(lang: UiLang): void {
 }
 
 const STORAGE_KEY = 'glossa:ui-lang';
+/** Session-scoped, and `storage.ts` says why. Read by `app.html`'s pre-paint
+ *  block and by `sw.svelte.ts` too — both by name, so it moves with them. */
+const HELD_KEY = 'glossa:ui-lang-session';
 const DEFAULT_LANG: UiLang = 'en';
 
 export type Dictionary = Record<string, string>;
@@ -177,6 +185,11 @@ export function loadedDictionary(lang: UiLang): Dictionary | undefined {
 	return loaded[lang];
 }
 
+function readHeld(): UiLang | undefined {
+	const value = readSessionString(HELD_KEY);
+	return value !== undefined && isUiLang(value) ? value : undefined;
+}
+
 function readStored(): UiLang | null {
 	const value = readStoredString(STORAGE_KEY);
 	return value != null && isUiLang(value) ? value : null;
@@ -227,29 +240,63 @@ export function calendarPathLang(): UiLang | undefined {
 }
 
 /**
- * A saved choice is always authoritative. Only a reader with no valid saved
- * choice is language-negotiated, and that initial result is saved so later
- * visits remain stable even if the browser's language list changes.
+ * Keep the reader in the language they are reading in, for this tab.
  *
- * THE PATH SITS BETWEEN THE TWO, AND IS THE ONE ANSWER HERE THAT IS NOT
- * SAVED. A country calendar's address names a fact about the CALENDAR, so it
- * outranks a browser that has said English while the reader is looking at a
- * page written in Portuguese — but it is not the reader saying anything, and
- * persisting it would turn one link off a search results page into a
- * Portuguese site for ever. It holds for the session and the next visit
- * negotiates afresh. A `/pt/…` prefix is the opposite case and still persists:
- * there the reader named the language (`routes/[uilang=uilang]/+layout.ts`).
+ * CALLED WHEREVER A PAGE WRITES ITS OWN ADDRESS, which today is `mirror` in
+ * `routes/calendarium/+page.svelte` and nothing else: the picker, the day, an
+ * arriving `?c=` being rewritten as the path that now names it, and the
+ * remembered territory `/calendarium` opens in. All four put a country
+ * calendar's address in the bar without the reader having asked for a
+ * language, and the next load must not read it as though they had — see
+ * `initialLang`, which is the only reader of what this writes.
+ *
+ * It takes no argument on purpose. What is held is whatever the interface is
+ * showing at the moment of the write, which is the store's own `lang` and not
+ * something a call site should be able to differ about.
+ */
+export function holdLang(): void {
+	writeSessionString(HELD_KEY, i18n.lang);
+}
+
+/**
+ * Four answers, and the order between them is the whole of the policy:
+ *
+ * 1. what the reader CHOSE — the language menu, or a `/pt/…` prefix, both
+ *    through `set` and both saved for ever;
+ * 2. what this page HELD — `hold`, below, for the session only;
+ * 3. what the ADDRESS says — a country calendar's own language, for this load
+ *    only and written nowhere;
+ * 4. what the BROWSER says.
+ *
+ * ONLY THE READER OUTRANKS THE ADDRESS, AND THE BROWSER IS NOT THE READER,
+ * which is the sentence the first three lines exist to make true. The site
+ * used to save the negotiated answer at (4) the first time anyone loaded any
+ * page — so by the time a reader ever met `/calendarium/brazil` they had a
+ * saved value, (1) matched, and (3) could not fire for them or for anyone
+ * else, ever. A rule that only applies to a reader's first page view is not a
+ * rule. Negotiation is deterministic and costs nothing, so it is recomputed
+ * per load instead, exactly as `calendar-pref.ts` recomputes the edge's
+ * territory guess and for its reason: an unasked-for answer should be free to
+ * be right again tomorrow.
+ *
+ * WHAT (2) IS FOR is that `/calendarium/brazil` gets into the address bar two
+ * ways, and only one of them is somebody saying something. A reader arriving
+ * from a search result was handed a Portuguese head by the edge and should be
+ * handed a Portuguese page. A reader who pressed Brazil in the picker was
+ * already reading in Albanian, and the page rewrote its own URL under them
+ * (`routes/calendarium/+page.svelte`, `mirror`) — turning the interface
+ * Portuguese on their next reload would be the site answering a question it
+ * asked itself. So every write of that address holds the language it was
+ * written in, and an address this page wrote never speaks.
  */
 function initialLang(): UiLang {
 	const stored = readStored();
 	if (stored) return stored;
 
-	const seeded = calendarPathLang();
-	if (seeded) return seeded;
+	const held = readHeld();
+	if (held) return held;
 
-	const detected = browserLanguage();
-	writeStoredString(STORAGE_KEY, detected);
-	return detected;
+	return calendarPathLang() ?? browserLanguage();
 }
 
 class I18nStore {
