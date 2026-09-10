@@ -678,7 +678,7 @@ export function invertScriptureRefs(citations) {
  * @typedef {{ part: string, question: number, article: number | null, cited_by: Citer[] }} SummaCitationXref
  * @typedef {{ work: string, cited_by: Citer[] }} AbsentCitationXref
  * @typedef {{ ibidem: Record<string, number>, other: Record<string, number> }} UnreadCitations
- * @typedef {{ name: string, lang: string, locators: string[], citer: string, counts: boolean }} AuthorSighting
+ * @typedef {{ name: string, lang: string, locators: string[], slot: string, citer: string, counts: boolean }} AuthorSighting
  *
  * @param {CitingUnit[]} units
  *   every citing unit, each already carrying the address that names it
@@ -791,8 +791,10 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 	 * @param {Citer} citer
 	 * @param {import('../src/lib/refs-grammar.ts').RefSegment[]} segments
 	 * @param {string} text @param {string} [lang] @param {string} [work]
+	 * @param {number | null} [marker] the footnote's own number, which with the
+	 *   citer's address names the same note across every edition of the work
 	 */
-	const weigh = (citer, segments, text, lang, work) => {
+	const weigh = (citer, segments, text, lang, work, marker) => {
 		let named = 0;
 		for (const seg of segments) {
 			if (seg.kind !== 'document' || seg.slug) continue;
@@ -812,7 +814,8 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 		// emitting only the citations that rank throws away the co-occurrences
 		// the clustering runs on: narrowed that way, Cyprian came out as two
 		// rows, one Latin and one Italian, and Chrysostom as three.
-		for (const clause of citationClauses(text, lang, work)) {
+		const clauses = citationClauses(text, lang, work);
+		for (const [at, clause] of clauses.entries()) {
 			const locators = locatorsIn(clause);
 			if (!locators.length) continue;
 			const name = authorInClause(clause);
@@ -821,6 +824,12 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 				name,
 				lang: lang ?? '',
 				locators,
+				// THE SAME FOOTNOTE OF THE SAME PARAGRAPH, which is a stronger
+				// oracle than the locator and the only one that reaches two
+				// editions citing a Father at different passages. `citerKey` is
+				// an address and an address does not vary by language, so this
+				// is one string across every edition of the work.
+				slot: marker === null ? '' : `${citerKey(citer)} #${marker}.${at}`,
 				citer: citerKey(citer),
 				counts: named > 0 && !landed
 			});
@@ -858,7 +867,7 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 				chain.named = lastNamedWork(segments);
 			}
 			for (const seg of segments) record(citer, seg);
-			weigh(citer, segments, text, lang, work);
+			weigh(citer, segments, text, lang, work, marker);
 		}
 
 		for (const block of unit.blocks ?? []) {

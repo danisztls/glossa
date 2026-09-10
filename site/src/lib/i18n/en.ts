@@ -302,16 +302,21 @@ export const en: Dictionary = {
 	// same shape of question: what is cited, and not held. Its rows carry a
 	// name and no link, the address being exactly what is missing.
 	'census.absent': 'What is cited and not held',
-	// TWO LISTS UNDER ONE HEADING, and the pair of names is the whole point of
-	// the split. The section headed itself with "Patrologia latina" for one
-	// revision, which is two hundred volumes of somebody else's shelf: a row
-	// naming the EDITION a text is printed in, where the reader had asked which
-	// texts. Both are knowable — the apparatus writes the author and the work
-	// beside the locator — and they answer different questions, so each list is
-	// named for the question it answers rather than "authors" and "series",
-	// which are the words for what the rows happen to be.
-	'census.absentAuthors': 'Whose works this library is cited for',
-	'census.absentEditions': 'The editions those texts are printed in',
+	// TWO LISTS UNDER ONE HEADING, split by how the row is NAMED rather than
+	// by what it happens to be. The section headed itself with "Patrologia
+	// latina" for one revision, which is two hundred volumes of somebody
+	// else's shelf naming the EDITION a text is printed in, where the reader
+	// had asked whose text this library lacks. The relation ran backwards too:
+	// this library's OWN apparatus cites these names, nobody cites this
+	// library for them. Both are knowable — the apparatus writes the author
+	// and the locator's siglum in the same clause — so the first list is the
+	// author a citation credits (occasionally an anonymous work, where a
+	// heading claiming every row is a person would be false) and the second is
+	// what a citation abbreviates instead of naming: a series, a gazette, a
+	// sourcebook, a code, a liturgical book — not editions of the first list,
+	// which is what the page said before this pass.
+	'census.absentAuthors': 'What a citation names',
+	'census.absentEditions': 'What a citation abbreviates',
 	// A FOURTH `i` BUTTON, one section past the three the comment above
 	// `census.about.derived` counts, and it has to read apart from
 	// `census.about.cited` — both sit on this page, and a screen reader
@@ -328,7 +333,7 @@ export const en: Dictionary = {
 	// above it — distinct citing places, not how many times a citation
 	// repeats.
 	'census.absentMethod':
-		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested. The first list names whose text is being cited, read from the citation itself and gathered across the languages that spell a name differently; the second names the critical editions those texts are printed in, which are somebody else’s books and not works this library would hold.',
+		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested. The first list is what a citation names — almost always the author it credits, occasionally an anonymous work instead — read from the citation itself and gathered across the languages that spell a name differently; the second is what a citation abbreviates rather than names: a critical-edition series, one of the Holy See’s gazettes, a doctrinal sourcebook, a code, a liturgical book, a profession of faith, a catechetical directory.',
 	// CLOSES THE SAME ARITHMETIC `census.citersLede` closes one section up,
 	// and for the same reason: a list of a few dozen names reads as the whole
 	// of what this library lacks, and it is a small part of it. Most of what

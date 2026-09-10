@@ -1819,7 +1819,14 @@ deploy on it. `site/docs/census.md` holds the rationale.
   nobody here published, so it reads the same in every language and every
   edition citing it names the same man (`scripts/patristic.mjs`). A head is read
   per CLAUSE and an edge needs THREE shared locators — at one, 4,450 of 6,878
-  heads came out as a single Augustine.
+  heads came out as a single Augustine. The parallel FOOTNOTE is the second and
+  stronger channel, `citerKey` being an address that does not vary by language:
+  two shared notes are enough, and it halved the table.
+- **That ranking carries an evidence floor the others do not.** Every other row
+  on the page names an address, which exists or does not; a row here is a
+  cluster, and a name seen twice has had no chance to meet another spelling of
+  itself — so it is as likely to be a duplicate of a row above as a work in its
+  own right (`MIN_CITING_PLACES`).
 - **A siglum's identity is a NAME from `ABSENT_WORKS`, never its expansion.**
   The tables gloss one work differently for each language's reader, so keyed on
   the expansion the Holy See's gazette was two rows of 1,513 and 1,213.

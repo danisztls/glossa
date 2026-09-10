@@ -14,8 +14,21 @@ const sighting = (
 	locators: string[],
 	lang = 'la',
 	citer = 'ccc 1',
-	counts = true
-) => ({ name, lang, locators, citer, counts });
+	counts = true,
+	slot = ''
+) => ({ name, lang, locators, slot, citer, counts });
+
+/** The other channel: the same footnote of the same paragraph, read out of two
+ *  editions. `citerKey` is an address and an address does not vary by language,
+ *  so this string is one string across every edition of the work. */
+const inNote = (name: string, lang: string, slot: string, citer = 'ccc 1', counts = true) => ({
+	name,
+	lang,
+	locators: [],
+	slot,
+	citer,
+	counts
+});
 
 describe('authorInClause', () => {
 	it('reads the name before the locator the colon introduces', () => {
@@ -136,6 +149,46 @@ describe('clusterAuthors', () => {
 			sighting('St. Jerome', ['PL 38 1134'], 'en'),
 			sighting('Sanctus Augustinus', ['PL 32 659'], 'la'),
 			sighting('St. Jerome', ['PL 32 659'], 'en')
+		]);
+		expect(rows).toHaveLength(2);
+	});
+
+	/**
+	 * THE SECOND CHANNEL, and the one the locator cannot supply: two editions
+	 * citing a Father at DIFFERENT passages never meet at a locator. `ccc 27`
+	 * note 1 is one note in every edition of the Catechism, an address not
+	 * varying by language, so the men named in it are one man — which is what
+	 * `St. Gregory of Nyssa` and `S. Gregorio di Nissa` needed, and Augustine,
+	 * who stood in four rows across English, Italian, Polish and Slovene.
+	 */
+	it('joins two editions that meet at two parallel footnotes', () => {
+		const rows = clusterAuthors([
+			inNote('St. Gregory of Nyssa', 'en', 'ccc 27 #1.0'),
+			inNote('S. Gregorio di Nissa', 'it', 'ccc 27 #1.0'),
+			inNote('St. Gregory of Nyssa', 'en', 'ccc 294 #2.0'),
+			inNote('S. Gregorio di Nissa', 'it', 'ccc 294 #2.0')
+		]);
+		expect(rows).toHaveLength(1);
+		expect(rows[0].name).toBe('St. Gregory of Nyssa');
+	});
+
+	it('refuses to join on a single parallel footnote', () => {
+		const rows = clusterAuthors([
+			inNote('St. Gregory of Nyssa', 'en', 'ccc 27 #1.0'),
+			inNote('S. Gregorio di Nissa', 'it', 'ccc 27 #1.0')
+		]);
+		expect(rows).toHaveLength(2);
+	});
+
+	/** A citation with no footnote number of its own — an inline locator —
+	 *  carries no slot, and an empty one must not join every such sighting into
+	 *  one person. */
+	it('joins nothing on an absent slot', () => {
+		const rows = clusterAuthors([
+			inNote('Tertullianus', 'la', ''),
+			inNote('Origenes', 'la', ''),
+			inNote('Tertullianus', 'la', '', 'ccc 2'),
+			inNote('Origenes', 'la', '', 'ccc 2')
 		]);
 		expect(rows).toHaveLength(2);
 	});

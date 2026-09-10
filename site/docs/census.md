@@ -332,6 +332,15 @@ Jerome were one man, and through that hub Justin merged with Jerome and Clement
 of Rome with Vatican II. `citationClauses` makes the cut and is the grammar's
 own, so the two cannot drift.
 
+**The parallel footnote is the second channel, and the stronger one.** A
+locator only links two editions that happen to cite the SAME passage, so
+Gregory of Nyssa stood as `St. Gregory of Nyssa` and `S. Gregorio di Nissa` and
+Augustine in four rows across English, Italian, Polish and Slovene. `citerKey`
+is an address and an address does not vary by language, so `ccc 27` note 1 is
+one note in all nine Catechisms and the men named in it are one man. Two shared
+notes are enough where a locator needs three, the evidence being that much
+better. It halved the table.
+
 **An edge needs three distinct locators.** One shared locator is a coincidence a
 misprint can manufacture, and the relation is closed transitively, so a single
 bad edge chains everything: at one, 4,450 of 6,878 heads came out as a single
@@ -348,6 +357,16 @@ un-shouted, then the most frequent. Ranked on frequency alone the page printed
 `S. CYPRIANUS` and `Sant'Ireneo di Lione` at the head of a page whose every
 other word is English — the Latin and Italian apparatus being the
 sigla-heaviest in the corpus.
+
+**This ranking carries a floor the others do not.** Every other ranking on the
+page names an ADDRESS, which either exists or does not; a row here is a
+cluster, and a cluster is only as good as the co-occurrences that built it. A
+name seen twice has had almost no chance to meet another spelling of itself, so
+down there a row is as likely to be a second spelling of a row already in the
+list — `Severiano de Gabala` beside `Severiano di Gabala` — as a work in its
+own right, and what the reading cannot filter collects at the same depth. The
+band cut alone published ninety-nine rows, of which the last fifty rested on
+one or two citations apiece.
 
 **It is not a ranking of works.** `Sermo` is three hundred different sermons and
 `Adversus haereses` is written `Adv. haeres.` as often as not, so a work-level

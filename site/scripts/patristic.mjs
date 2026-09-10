@@ -84,7 +84,8 @@ const FIRST_SERIES = new RegExp('\\b' + SERIES + '\\s*\\d');
  * left the digit on the front of the name, where it folds to a key of its own
  * and splits the author into two rows.
  */
-const LEAD = /^\s*(?:\d+\s+)?(?:(?:Cf|Cfr|cf|Vgl|Por|Ср)\.?\s+)?/i;
+const LEAD =
+	/^\s*(?:\d+\s+)?(?:(?:Cf|Cfr|Vgl|Por|Prim|Sal|Taz|Zob|Vd|Veja|Ср|Срав|Пар|Пор)\.?\s+)?/i;
 
 /**
  * A head opening with one of these is a WORK and the author is in the note
@@ -104,9 +105,20 @@ const GENRE_HEAD = new RegExp(
 /** An ibidem word standing where a name would: the antecedent is the previous
  *  note's, which this pass has no chain to follow. */
 const IBID_HEAD =
-	/^(?:ibidem|ibid|ib|id|ebenda|ebd|derselbe|ders|dies|tam[zż]e|там|idem|eadem|ivi|iv)\b/i;
+	/^(?:ibidem|ibid|ib|id|ebenda|ebd|derselbe|ders|dies|tam[zż]e|ten[zż]e|sammesteds|tas pats|turpat|там|idem|eadem|ivi|iv)\b/i;
 /** `1 Co 7`, `Mt 5` — a scripture locator, which is not an author. */
 const SCRIPTURE_HEAD = /^[1-3IVX]*\s*[A-Za-zÀ-ž]{1,12}\.?\s*\d/;
+/** `Cod. Vat. lat. 3548` — a shelfmark names a manuscript, not a man. */
+const SHELFMARK_HEAD = /^(?:cod|codex|ms|mss|vat)\b/i;
+/** `Conf. X`, `Apologie I` — a work and its own book number, which is the
+ *  same case `GENRE_HEAD` catches spelled out. */
+const WORK_LOCUS_HEAD = /^[A-Za-zÀ-ž.]{1,14}\s+[IVXLC]+$/;
+/** A clause citing one edition out of another opens with a siglum, not a
+ *  name — that work is a row in the list beside this one. */
+const SERIES_HEAD = new RegExp('^' + SERIES + '\\b');
+/** A clause opening on a quotation mark is the sentence that raised the
+ *  citation, not its head. */
+const QUOTED_HEAD = /^[“”"«»„]/;
 
 /** Longest a name runs before it is prose that happens to precede a locator. */
 const MAX_NAME_WORDS = 5;
@@ -141,6 +153,11 @@ export function authorInClause(clause) {
 	const before = clause.slice(0, m.index);
 	const colon = before.lastIndexOf(':');
 	const head = (colon === -1 ? before : before.slice(0, colon)).replace(LEAD, '').trim();
+	// TESTED BEFORE THE PUNCTUATION IS STRIPPED, which is the whole of what
+	// this catches: a clause opening on a quotation mark is the sentence that
+	// raised the citation, and stripping the mark first makes it look like a
+	// name (`Salvator… ascensionis suae eam` reached the ranking that way).
+	if (QUOTED_HEAD.test(head)) return null;
 	let name = head
 		.split(',')[0]
 		.replace(/\s*\(.*$/, '')
@@ -148,6 +165,11 @@ export function authorInClause(clause) {
 	name = name.replace(/^[\s([;,.\]»«]+/, '').replace(/[\s([;,.\]»«]+$/, '');
 	if (!name || name.split(/\s+/).length > MAX_NAME_WORDS || name.length > 46) return null;
 	if (IBID_HEAD.test(name) || GENRE_HEAD.test(name) || SCRIPTURE_HEAD.test(name)) return null;
+	if (SHELFMARK_HEAD.test(name) || WORK_LOCUS_HEAD.test(name)) return null;
+	// A SERIES STANDING WHERE A NAME WOULD is a clause citing one edition out
+	// of another — `CSEL 3, 733 (PL 4, 519)` — and the head of it is the first
+	// series, not a man. It is already a row in the list next to this one.
+	if (SERIES_HEAD.test(name)) return null;
 	if (!/[A-Za-zÀ-ž]{3}/.test(name)) return null;
 	return name;
 }
@@ -183,6 +205,41 @@ export function foldName(name) {
 export const MIN_SHARED_LOCATORS = 3;
 
 /**
+ * How many parallel footnotes two spellings must share.
+ *
+ * TWO, WHERE A LOCATOR NEEDS THREE, because this is the stronger evidence by
+ * far. A locator says the two clauses point into the same column of the same
+ * volume, which a misprint can fake; a slot says they are THE SAME FOOTNOTE OF
+ * THE SAME PARAGRAPH, read out of two editions of one work — `citerKey` is the
+ * address and an address does not vary by language, so `ccc 27` note 1 is one
+ * note in all nine Catechisms and the men named in it are one man.
+ *
+ * It is the channel the locator cannot supply: two editions citing a Father at
+ * DIFFERENT passages never meet at a locator, which is why Gregory of Nyssa
+ * stood as `St. Gregory of Nyssa` and `S. Gregorio di Nissa`, and Augustine in
+ * four rows across English, Italian, Polish and Slovene.
+ */
+export const MIN_SHARED_SLOTS = 2;
+
+/**
+ * How many citing places a cluster needs before it is published.
+ *
+ * THIS RANKING NEEDS A FLOOR THE OTHERS DO NOT, and the reason is what its
+ * rows are made of. Every other ranking on the page names an ADDRESS, which
+ * either exists or does not; a row here is a cluster, and a cluster is only as
+ * good as the co-occurrences that built it. A name seen twice has had almost
+ * no chance to meet another spelling of itself at three locators or two
+ * parallel footnotes — so down there a row is as likely to be a second
+ * spelling of a row already in the list as a work in its own right, and the
+ * junk the reading cannot filter (an editor's surname, a stray genitive)
+ * collects at exactly the same depth.
+ *
+ * Three is where the corpus puts it: the band cut alone published ninety-nine
+ * rows, of which the last fifty rested on one or two citations apiece.
+ */
+export const MIN_CITING_PLACES = 3;
+
+/**
  * Cluster the observed spellings into authors.
  *
  * EVERY SIGHTING IS EVIDENCE AND ONLY SOME ARE COUNTED, which is the split
@@ -193,21 +250,23 @@ export const MIN_SHARED_LOCATORS = 3;
  * Latin and one Italian, and Chrysostom as three. `counts` says which
  * sightings a row's number is made of; the rest still get a vote.
  *
- * @param {{ name: string, lang: string, locators: string[], citer: string, counts: boolean }[]} seen
+ * @param {{ name: string, lang: string, locators: string[], slot: string, citer: string, counts: boolean }[]} seen
  *   one entry per (clause, citing place) that named somebody
  * @param {number} [minShared]
  * @returns {{ name: string, spellings: string[], citers: Set<string> }[]}
  *   most-cited first; `name` is the spelling to print
  */
-export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS) {
+export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS, minSlots = MIN_SHARED_SLOTS) {
 	/** @type {Map<string, Map<string, { count: number, english: boolean }>>} folded -> spelling */
 	const spellings = new Map();
 	/** @type {Map<string, Set<string>>} folded -> the citing places that COUNT */
 	const citers = new Map();
 	/** @type {Map<string, Set<string>>} locator -> folded names at it */
 	const atLocator = new Map();
+	/** @type {Map<string, Set<string>>} parallel footnote -> folded names in it */
+	const atSlot = new Map();
 
-	for (const { name, lang, locators, citer, counts } of seen) {
+	for (const { name, lang, locators, slot, citer, counts } of seen) {
 		const key = foldName(name);
 		if (key.length < 4) continue;
 		let byName = spellings.get(key);
@@ -226,20 +285,38 @@ export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS) {
 			if (!names) atLocator.set(loc, (names = new Set()));
 			names.add(key);
 		}
-	}
-
-	// How many DISTINCT locators each pair of spellings shares.
-	/** @type {Map<string, number>} */
-	const weight = new Map();
-	for (const names of atLocator.values()) {
-		const list = [...names].sort();
-		for (let i = 0; i < list.length; i++) {
-			for (let j = i + 1; j < list.length; j++) {
-				const edge = `${list[i]} ${list[j]}`;
-				weight.set(edge, (weight.get(edge) ?? 0) + 1);
-			}
+		if (slot) {
+			let names = atSlot.get(slot);
+			if (!names) atSlot.set(slot, (names = new Set()));
+			names.add(key);
 		}
 	}
+
+	// How many DISTINCT locators, and how many parallel footnotes, each pair of
+	// spellings shares. Two channels because they see different things: a
+	// locator links two editions that cite one passage, a slot links two
+	// editions of one work at one footnote however far apart the passages are.
+	//
+	// `|` JOINS THE PAIR because a folded name is stripped to `[a-z0-9 ]` and
+	// so contains spaces: keyed on a space, `gregory of nyssa` would split into
+	// three and the union would run over words rather than names.
+	/** @param {Map<string, Set<string>>} index @returns {Map<string, number>} */
+	const pairWeights = (index) => {
+		/** @type {Map<string, number>} */
+		const weights = new Map();
+		for (const names of index.values()) {
+			const list = [...names].sort();
+			for (let i = 0; i < list.length; i++) {
+				for (let j = i + 1; j < list.length; j++) {
+					const edge = `${list[i]}|${list[j]}`;
+					weights.set(edge, (weights.get(edge) ?? 0) + 1);
+				}
+			}
+		}
+		return weights;
+	};
+	const weight = pairWeights(atLocator);
+	const slotWeight = pairWeights(atSlot);
 
 	/** @type {Map<string, string>} */
 	const parent = new Map();
@@ -263,11 +340,16 @@ export function clusterAuthors(seen, minShared = MIN_SHARED_LOCATORS) {
 		if (ra !== rb) parent.set(ra, rb);
 	};
 	for (const key of spellings.keys()) find(key);
-	for (const [edge, w] of weight) {
-		if (w < minShared) continue;
-		const [a, b] = edge.split(' ');
-		union(a, b);
-	}
+	/** @param {Map<string, number>} weights @param {number} floor */
+	const joinOn = (weights, floor) => {
+		for (const [edge, w] of weights) {
+			if (w < floor) continue;
+			const [a, b] = edge.split('|');
+			union(a, b);
+		}
+	};
+	joinOn(weight, minShared);
+	joinOn(slotWeight, minSlots);
 
 	/** @type {Map<string, { spellings: Map<string, { count: number, english: boolean }>, citers: Set<string> }>} */
 	const groups = new Map();
