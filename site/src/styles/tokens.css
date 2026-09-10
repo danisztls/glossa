@@ -460,28 +460,6 @@
 	--color-bookmark: #8a6410;
 
 	/*
-	 * A HIGHLIGHTER'S INK, which is a different claim from every wash above it:
-	 * those are colour-mixed tints that let the page through, and this is opaque
-	 * pigment laid over the words the way a pen lays it. `/schola`'s catalogue
-	 * titles are the only consumer today.
-	 *
-	 * THE INK IS A TOKEN AND NOT `currentColor`, because the band does not clear
-	 * the same text in every palette: light's rubric #8f2119 sits on this gold at
-	 * 5.11:1 and keeps its colour, which is what a pen does to a printed word,
-	 * while dark's #ff2f27 manages 1.83:1 on the same band and has to give way to
-	 * near-black (9.17:1). A highlighter that keeps the link red at night is a
-	 * highlighter that erases the link.
-	 *
-	 * IT IS ONE STEP OFF `--color-bookmark`, KNOWINGLY. Gold is the hue this
-	 * palette reserves for the reader's own mark, and a pen is close enough to
-	 * that meaning to be worth the overlap — but the two must never wash the same
-	 * surface, or a hovered row and a saved one would say different things in
-	 * nearly one colour. Nothing on `/schola` can be bookmarked.
-	 */
-	--color-marker: #e9c243;
-	--color-marker-ink: var(--color-link);
-
-	/*
 	 * How an engraving sits on the page. Doré's plates are ink on paper, and
 	 * the scan carries the paper with it — `plates.py` normalizes it to a
 	 * near-white 252 rather than clipping it, so the tone is real and
@@ -913,8 +891,6 @@
 		--color-apparatus: #8fa8e8;
 		--color-focus-ring: #8fa8e8;
 		--color-bookmark: #d9a94a;
-		--color-marker: #d9b24c;
-		--color-marker-ink: #161313;
 		--shelf-catechism: #ff6b60;
 		--shelf-bible: #f08a3c;
 		--shelf-doctors: #d9b24c;
@@ -944,8 +920,6 @@
 	--color-apparatus: #8fa8e8;
 	--color-focus-ring: #8fa8e8;
 	--color-bookmark: #d9a94a;
-	--color-marker: #d9b24c;
-	--color-marker-ink: #161313;
 	--shelf-catechism: #ff6b60;
 	--shelf-bible: #f08a3c;
 	--shelf-doctors: #d9b24c;
@@ -1129,12 +1103,6 @@
  */
 :root[data-mono] {
 	--pigment-strength: 0%;
-	/* And the pen, whose whole point was a hue. A light band on either ground —
-	   8.2:1 against paper's ink, 8.8:1 against the dark ground — carrying the
-	   near-black the rest of this mode never asks for, because the band is the
-	   one surface here that is lighter than both grounds. */
-	--color-marker: #b8b2a8;
-	--color-marker-ink: #1c1a17;
 	/* And the shelf colours themselves, which the dial above cannot reach: they
 	   are literals rather than mixes, so nothing about `--pigment-strength`
 	   touches them. One grey for every shelf is what this mode means. */
