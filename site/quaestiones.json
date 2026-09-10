@@ -410,8 +410,12 @@
 		"caritas": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[1822, 1829]],
-			"csdc": [[204, 208]],
+			"ccc": [
+				[1766, 1766],
+				[1604, 1604],
+				[1822, 1829]
+			],
+			"csdc": [[204, 206]],
 			"documents": ["deus-caritas-est"]
 		},
 		"contraceptio": {
@@ -423,7 +427,10 @@
 		"fecundatio-artificialis": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[2373, 2377]],
+			"ccc": [
+				[2373, 2377],
+				[2275, 2275]
+			],
 			"documents": ["donum-vitae", "dignitas-personae", "dignitas-infinita"]
 		},
 		"concubinatus": {
@@ -431,6 +438,7 @@
 			"cluster": "the-rules",
 			"ccc": [
 				[2350, 2350],
+				[2353, 2353],
 				[2390, 2391]
 			],
 			"documents": ["persona-humana"]
@@ -455,7 +463,7 @@
 		"identitas-sexualis": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[2331, 2336]],
+			"ccc": [[2331, 2334]],
 			"documents": ["dignitas-infinita", "collaboration-of-men-and-women"]
 		},
 		"ordinatio-mulierum": {
@@ -476,7 +484,7 @@
 		"abortus": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[2270, 2275]],
+			"ccc": [[2270, 2274]],
 			"documents": ["quaestio-de-abortu", "evangelium-vitae", "dignitas-infinita"]
 		},
 		"euthanasia": {
@@ -494,13 +502,16 @@
 		"castitas": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[2337, 2350]],
+			"ccc": [
+				[2337, 2351],
+				[2520, 2522]
+			],
 			"documents": ["persona-humana"]
 		},
 		"mendacium": {
 			"doorway": "argument",
 			"cluster": "the-rules",
-			"ccc": [[2475, 2487]],
+			"ccc": [[2475, 2489]],
 			"documents": []
 		},
 		"capitalismus": {

@@ -83,9 +83,10 @@ The clusters read so far, each a single sitting:
 | `argument / credibility`       | 2026-09-10 |
 | `argument / other-christians`  | 2026-09-10 |
 | `argument / catholics-arguing` | 2026-09-10 |
+| `argument / the-rules`         | 2026-09-10 |
 
-That is the whole of `private-shame`, `life-event` and `ordinary`, and the
-first three clusters of `argument`. What follows is what the reading taught, which is
+That is the whole of `private-shame`, `life-event` and `ordinary`, and four
+of the six clusters of `argument`. What follows is what the reading taught, which is
 the part a table cannot hold.
 
 ## What the pass keeps finding
@@ -263,6 +264,27 @@ formation of conscience and whose later ones are the qualification. Cutting to
 do the same reordering with no disclosure. `lead` moves the one paragraph,
 leaves none out, and says on the page that it did.
 
+**A paragraph in the wrong topic is a paragraph missing from the right one, and
+the two fixes are one edit.** Three times now the thing being cut for dilution
+turned out to be exactly what a neighbour lacked: CCC 126, the historicity of
+the Gospels, was padding on `canon-scripturae` and is the answer on
+`iesus-christus`; CCC 887, synods and episcopal conferences, was padding on
+`primatus-romani-pontificis` and is the only paragraph in the Catechism that
+says _synod_, which `synodalitas` needed; CCC 2275, embryos as disposable
+biological material, was padding on `abortus` and is _frozen embryos_ on
+`fecundatio-artificialis`. So when a span is too wide, do not just narrow it —
+ask which topic wants the part you are removing. Two of the three moves also
+ended a subset pair, which the scan had been reporting for months as a thing to
+think about rather than a thing to do.
+
+**A keyword is the only index into what the topic layer has never touched.** The
+subset scan finds two topics that overlap; nothing finds a headed article of a
+work that no topic reaches at all. `castitas` promised _purity_, _modesty_ and
+_impurity_, and the Catechism's whole ninth-commandment article — 2517–2533,
+purity of heart and modesty, four paragraphs of which are about clothing,
+advertisements and what children are taught — was on no topic in the file.
+Nothing was wrong that any check could see. The keyword was the only witness.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as
@@ -348,4 +370,4 @@ it — so a typo fails rather than sitting there.
 A batch is one cluster. Sixteen clusters, and the ones the table above does not
 list have not been read — as of 2026-09-10 that is the rest of `argument`,
 which is the largest doorway of the four and the one every survey in
-`topics.md` measures: `the-rules`, `public-square` and `other-faiths`.
+`topics.md` measures: `public-square` and `other-faiths`.

@@ -201,6 +201,95 @@
 			"anchors": "ccc 799-801,2003,1508",
 			"note": "“Was what I felt from God” is answered by 800 and 801 in their own words — accepted with gratitude “provided they really are genuine gifts”, and “no charism is exempt from being referred and submitted to the Church’s shepherds” — with charity named as the measure. 2003 already carried _tongues_. Was C on _faith healing_; 1508 was added 2026-09-10, and it is the honest one: a special charism of healing exists, and “even the most intense prayers do not always obtain the healing of all illnesses”. Shared with `aegritudo`. No document: nothing in the corpus is addressed to the charismatic renewal."
 		},
+		"caritas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1766,1604,1822-1829 | csdc 204-206 | documents deus-caritas-est",
+			"note": "Was C: the question is a couple saying they love each other, and the keywords named _eros_, _romantic_ and _feelings_, while every anchored paragraph treated charity as a theological virtue already possessed. Fixed 2026-09-10 with 1766, “to love is to will the good of another”, which is the sentence that separates love from a feeling, and 1604, love as “the fundamental and innate vocation of every human being”. 1824 was already carrying the rest — charity “keeps the commandments of God and his Christ”. Was also diluted: CSDC 207–208 is social and political charity, legislation and structures and worldwide poverty, and was dropped; 204 stays because its first sentence is this reader’s premise stated as an error — love “often restricted to relationships of physical closeness or limited to merely subjective aspects”."
+		},
+		"contraceptio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2366-2372 | documents casti-connubii,humanae-vitae",
+			"note": "2366 gives the reason and 2370 the judgement, side by side with periodic continence, so a reader asking why it is forbidden gets the argument and the alternative in one paragraph. _Vasectomy_ and _sterilisation_ are covered by 2370’s “whether in anticipation of the conjugal act” rather than by name; the paragraph that says the word is 2399, which is on `post-contraceptionem` where the reader has already done it."
+		},
+		"fecundatio-artificialis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2373-2377,2275 | documents donum-vitae,dignitas-personae,dignitas-infinita",
+			"note": "2374 opens where this reader is — “couples who discover that they are sterile suffer greatly” — and 2376 and 2377 give the two judgements and the reason for each, including that homologous technique is “perhaps less reprehensible, yet remain[s] morally unacceptable”. Was C on _frozen embryos_: 2275 says embryos may not be produced “intended for exploitation as disposable biological material” and was sitting on `abortus`, where it was dilution; moved 2026-09-10. That also ended the subset relation with `sterilitas`."
+		},
+		"concubinatus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2350,2353,2390-2391 | documents persona-humana",
+			"note": "2391 answers the question as asked — the “right to a trial marriage”, and why the Catechism says human love does not tolerate one — and 2390 states what a free union is and is not. Was C on _fornication_, which is a keyword and appears in exactly one paragraph: 2353, added 2026-09-10."
+		},
+		"divortium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2382-2386 | documents familiaris-consortio,casti-connubii",
+			"note": "The whole of the Catechism’s _Divorce_ heading, and it earns being taken whole: 2382 is the indissolubility, 2383 concedes that civil divorce “can be tolerated” for legal rights and the care of children, and 2386 distinguishes the spouse unjustly abandoned from the one who destroyed the marriage. A reader who stops at 2384 has read the hardest sentence; the two after it are why the page must not stop there."
+		},
+		"homosexualitas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2357-2359 | lead 2358 | documents persona-humana,homosexualitatis-problema,legal-recognition-homosexual-unions",
+			"note": "The Catechism’s own heading, all three paragraphs, with 2359 answering what is asked and 2358 first. The `lead` was examined and kept: 2358’s closing sentence is itself an ask addressed to this reader — to unite to the Cross “the difficulties they may encounter from their condition” — so the disclosure that the paragraph answering directly is placed first remains true. The three documents are 1975, 1986 and 2003, and nothing on the page says so; that is PLAN.md gap 19 and not this topic’s defect."
+		},
+		"identitas-sexualis": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2331-2334 | documents dignitas-infinita,collaboration-of-men-and-women",
+			"note": "CCC 2333 — “everyone, man and woman, should acknowledge and accept his sexual identity” — is the only sentence in the Catechism that bears on the question, and 2332 is the one that says sexuality concerns the person “in the unity of his body and soul”. B because that is all there is: the article was written in 1992 and the question was not being asked of it, and _dignitas-infinita_ (2024) is the only text in the corpus that takes up gender theory and transition in its own terms — a document, so it is named and not quoted. Was diluted: 2335 is marriage and one flesh and 2336 is adultery and lust, and a reader who arrived asking what the Church says about being trans was reading neither of their questions. Narrowed 2026-09-10."
+		},
+		"ordinatio-mulierum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1577-1578 | documents inter-insigniores,responsum-ordinatio-sacerdotalis",
+			"note": "Two paragraphs and no more is right here: 1577 answers the question in its last sentence, and 1578 supplies the thing the question assumes and the Church denies — that anyone has a right to orders at all. _Deaconess_ is a keyword with no anchored sentence and the corpus has none: 1577 covers the diaconate only as a degree of orders, and the commissions of 2016 and 2020 published nothing the corpus holds."
+		},
+		"caelibatus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1579-1580,1618-1620 | documents sacerdotalis,presbyterorum-ordinis",
+			"note": "1579 gives the reason and 1580 gives the reader the fact that usually surprises them, in the Catechism’s own words: in the Eastern Churches married men are ordained deacons and priests, and the practice “has long been considered legitimate”. So the page answers _why_ without pretending the discipline is universal. _Shortage of priests_ is a keyword nothing anchored takes up, and nothing in the corpus argues it either way."
+		},
+		"abortus": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2270-2274 | documents quaestio-de-abortu,evangelium-vitae,dignitas-infinita",
+			"note": "2270 and 2271 answer why it is treated as the gravest, and 2272 gives the excommunication with the sentence that has to go beside it — “the Church does not thereby intend to restrict the scope of mercy”; the remission is on `post-abortum`, at can. 1357. B because three keywords — _rape_, _ectopic pregnancy_, _morning after pill_ — are the hardest cases a reader arrives with and the Catechism takes up none of them; _evangelium-vitae_ is the nearest text and is already named. Was diluted: 2275 is embryo research and moved to `fecundatio-artificialis` 2026-09-10."
+		},
+		"euthanasia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2276-2279 | documents iura-et-bona,samaritanus-bonus",
+			"note": "Four paragraphs that answer the question as asked and refuse the caricature: 2277 forbids it, 2278 permits discontinuing burdensome treatment, and 2279 permits painkillers “even at the risk of shortening their days” and calls palliative care “a special form of disinterested charity”. A reader asking why anyone is refused a death without pain is told that most of what they mean by that is already licit."
+		},
+		"poena-capitalis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2266-2267 | documents fratelli-tutti",
+			"note": "The one topic in the corpus whose question is about a change, and the text answers it itself: 2267 as revised in 2018 opens “was long considered an appropriate response” and closes on inadmissibility, so the reader is shown the change inside the paragraph rather than told about it. Note that CSDC 405, on `carceres`, still states the pre-2018 position and is kept there deliberately — see the open question in docs/research/topic-anchor-review.md."
+		},
+		"castitas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2337-2351,2520-2522 | documents persona-humana",
+			"note": "2348 and 2349 answer “of whom” exactly — all the baptized, in the way suited to their state of life, in three forms none of which is praised to the exclusion of the others — and 2337–2347 answer “what”. Was C on _purity_, _modesty_ and _impurity_: the whole of the Catechism’s ninth-commandment article was on no topic at all. Added 2026-09-10: 2520 on how purity is won and 2521–2522 on modesty, which “is decency” and “inspires one’s choice of clothing”. 2351 was picked up for _lust_, the only paragraph that defines it."
+		},
+		"mendacium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2475-2489",
+			"note": "2484 answers the question in one sentence — a lie is venial in itself and becomes mortal when it does grave injury to justice and charity — and 2477 supplies the words the keywords promise: rash judgment, detraction, calumny. Was C on _secrets_ and _mental reservation_, which the span stopped one paragraph short of. Widened 2026-09-10 to 2489: “no one is bound to reveal the truth to someone who does not have the right to know it”, which is also the counterweight the page needed to 2485. 2488–2489 are shared with `violentia-digitalis`. No document: nothing in the corpus is addressed to truthful speech as such."
+		},
 		"aegritudo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
