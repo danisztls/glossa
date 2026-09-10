@@ -492,6 +492,21 @@ export interface NationalCalendar {
 	alsoCovers?: readonly string[];
 	/** The transfers this conference has made. */
 	options: Omit<CalendarOptions, 'nationalCalendar'>;
+	/**
+	 * The transfers it made in one liturgical year and not since — keyed by
+	 * the year Easter falls in, exactly as `buildYear` is.
+	 *
+	 * A CONFERENCE CAN CHANGE ITS MIND, and England and Wales are the case:
+	 * the Epiphany was kept on the Sunday until Advent 2025 and has been kept
+	 * on 6 January since. `options` alone can hold one answer, so the standing
+	 * one is what it holds and the year that differed is written here — which
+	 * is `movedInYear`'s bargain for a celebration, made for a transfer.
+	 *
+	 * It is the LITURGICAL year and not the civil one because a transfer is a
+	 * property of the cycle: the change took effect at Advent, which is where
+	 * a liturgical year begins.
+	 */
+	optionsInYear?: Record<number, Omit<CalendarOptions, 'nationalCalendar'>>;
 	/** Celebrations this country adds, keyed `MM-DD`. */
 	propers: Record<string, Celebration[]>;
 	/** Celebrations this country adds that fall on no fixed date — see

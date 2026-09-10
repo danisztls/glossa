@@ -53,7 +53,8 @@ import {
 	type Celebration,
 	type LiturgicalDay,
 	type MovableRule,
-	type Observance
+	type Observance,
+	type Precedence
 } from './types';
 
 /**
@@ -244,8 +245,15 @@ function sanctoralFor(
 	// they did not until Germany showed why: it suppresses the Immaculate
 	// Heart outright, and an `overrides` row that the calendar never consults
 	// is a claim that silently does nothing.
+	//
+	// THEY GO THROUGH `movedTo` LIKE ANY OTHER GENERAL CELEBRATION TOO, which
+	// they did not until Cabo Verde showed why: it keeps the Immaculate Heart
+	// as a solemnity on a Saturday in October, and a layer had no way to say
+	// so about a celebration the Easter anchors place.
 	for (const { at, celebration } of MOVABLE_SANCTORAL) {
-		if (a[at] === n) fromGeneral(celebration);
+		const own = monthDay(a[at]);
+		const moved = movedTo(celebration.id, own);
+		if (moved === undefined ? a[at] === n : moved === key) fromGeneral(celebration);
 	}
 	for (const celebration of GRC.get(key) ?? []) {
 		if (movedTo(celebration.id, key) !== undefined) continue; // kept elsewhere here
@@ -340,7 +348,11 @@ export function buildYear(
 	year: number,
 	options: CalendarOptions = {}
 ): Map<DayNumber, LiturgicalDay> {
-	const merged: CalendarOptions = { ...options.nationalCalendar?.options, ...options };
+	const merged: CalendarOptions = {
+		...options.nationalCalendar?.options,
+		...options.nationalCalendar?.optionsInYear?.[year],
+		...options
+	};
 	const a = anchors(year, merged);
 	const temporal = temporalYear(a);
 	const firstSundayOfChristmas = after(a.christmas, SUNDAY);
@@ -409,18 +421,27 @@ export function buildYear(
 	// 2035 is the year that needs both at once: Easter falls on 25 March, so
 	// Joseph is inside Holy Week and the Annunciation is on Easter Sunday
 	// itself, inside the Octave the rubric also covers.
+	// FREE IS RELATIVE TO WHAT IS BEING PLACED, not to a line of the Table.
+	// n. 60 says "the closest day not listed under nn. 1-8", which reads as a
+	// constant and is one where every transfer is of a line-3 solemnity; a
+	// PROPER solemnity is line 4, and Urgell settles what that means. Our Lady
+	// of Montserrat was impeded by the Second Sunday of Easter in 2025 and
+	// Saint George, impeded by the Octave, had already taken the Monday — so
+	// she was kept on Tuesday the 29th, over Catherine of Siena, whom the same
+	// calendar prints on the 29th in both other years. A day whose occupant
+	// the celebration outranks is a day it can be kept on.
 	const taken = new Set<DayNumber>();
-	const free = (n: DayNumber): boolean =>
+	const free = (n: DayNumber, precedence: Precedence): boolean =>
 		n >= a.adventStart &&
 		n < a.nextAdvent &&
 		!taken.has(n) &&
-		(base.get(n) ?? []).every((c) => c.precedence > PRECEDENCE.PROPER_FEAST);
+		(base.get(n) ?? []).every((c) => c.precedence > precedence);
 
 	// The first free day at distance d from `from`, forward before backward.
-	const nearestFree = (from: DayNumber): DayNumber | undefined => {
+	const nearestFree = (from: DayNumber, precedence: Precedence): DayNumber | undefined => {
 		for (let d = 1; d < 366; d++) {
-			if (free(from + d)) return from + d;
-			if (free(from - d)) return from - d;
+			if (free(from + d, precedence)) return from + d;
+			if (free(from - d, precedence)) return from - d;
 		}
 		return undefined;
 	};
@@ -429,12 +450,13 @@ export function buildYear(
 		// The Monday after the Second Sunday of Easter, which closes the
 		// Octave. Still searched from there rather than placed blind: the
 		// rubric names the day, and a day already taken is not a day.
+		const p = celebration.precedence;
 		const n =
 			celebration.transferTo === 'after-easter-octave'
-				? free(a.easter + 8)
+				? free(a.easter + 8, p)
 					? a.easter + 8
-					: nearestFree(a.easter + 8)
-				: nearestFree(from);
+					: nearestFree(a.easter + 8, p)
+				: nearestFree(from, p);
 		// Nowhere in this year to put it. Dropping is the honest answer: the
 		// alternative is inventing a date the Church did not choose.
 		if (n === undefined) continue;

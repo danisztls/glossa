@@ -82,7 +82,7 @@ export const UKRAINE: NationalCalendar = {
 		bridget: keptAs('f'),
 		'catherine-of-siena': keptAs('f'),
 		'cyril-methodius': keptAs('f'),
-		ephrem: keptAs('f'),
+		'mary-mother-of-the-church': keptAs('f'),
 		stanislaus: keptAs('m', 'red'),
 		'teresa-benedicta': keptAs('f')
 	},

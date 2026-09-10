@@ -102,7 +102,7 @@ export const ECUADOR: NationalCalendar = {
 		}
 	],
 	overrides: {
-		irenaeus: keptAs('s'),
+		'immaculate-heart': keptAs('s'),
 		'our-lady-of-guadalupe': keptAs('f'),
 		'rose-of-lima': keptAs('f')
 	},

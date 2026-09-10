@@ -2562,9 +2562,9 @@ because that is what Universal Norms nn. 48–55 describe. `national/common.ts` 
 what a row is spelled with. Sixteen layers are written by hand and the rest
 derived by `pipeline/derive_national_calendars.py`.
 
-**The claim "no code" is true and cost seven extensions to keep true.** Each was
-found by a country failing the oracle, and each is a thing the eight variants of
-the universal calendar cannot express:
+**The claim "no code" is true and every extension here was bought by a country
+failing the oracle.** Each is a thing the eight variants of the universal
+calendar cannot express:
 
 - **A fourth Sunday transfer**: the Congo keeps the Sacred Heart on the Sunday
   (`sacredHeartOnSunday`), and the Immaculate Heart does NOT follow it.
@@ -2584,6 +2584,32 @@ the universal calendar cannot express:
   Germany's Whit Monday, Spain's Ember Days: the feeds rank them as nothing,
   because they are not lines of n. 59. Giving them a rank would lose the only
   true thing about them.
+- **An observance says how far down it reaches** (`replaces`), and a SOLEMNITY
+  leaves no room for one at all. Four calendars agree about the second — no
+  ANZAC Day inside the Octave of Easter, no Ember Day on the Immaculate
+  Conception — and a feast does not suppress one, so it is a threshold and not
+  a general deference. How far `replaces` reaches is the conference's claim:
+  Bosnia's Ember Saturday displaces an obligatory memorial and Austria's Whit
+  Monday does not, and one rule for both would delete a saint from four
+  calendars to add an Ember Day to one.
+- **`nth: -1` counts back from the end of the month.** Southern Arabia keeps
+  the Dedication of the Churches of the Vicariate on the LAST Sunday of
+  October, which is the fourth in two of three years and the fifth in the
+  other; counting forward cannot spell it, so it had been written as a table of
+  years, which is a fact about three of them.
+- **`transferable` on a proper FEAST**, and the impeded test compares against
+  the celebration's own precedence rather than against the constant `SOLEMNITY`.
+  Three dioceses move their cathedral's dedication off the Sunday it fell on
+  rather than losing it; and reading n. 60's "nn. 1-8" as a constant is right
+  only while every transfer is of a line-3 solemnity — a PROPER solemnity is
+  line 4, so Haiti's patronal was dropped rather than moved when the Sacred
+  Heart fell on its date.
+- **`optionsInYear`** — `movedInYear`'s bargain, made for a transfer. England
+  and Wales kept the Epiphany on the Sunday until Advent 2025 and on 6 January
+  since, and `options` can hold one answer.
+- **A proper the General Calendar has since taken up is not a second
+  celebration.** Three conferences kept John Henry Newman before he was
+  inscribed on 9 October, and from 2026 the day carried him twice.
 
 **Eighty-five layers, ninety-six territories, and only what passes is
 published** — three separate facts:
@@ -2685,8 +2711,8 @@ parses an id.
   **`/calendarium/liturgia` takes `?d=` and `?c=`**, so walking between the two
   pages keeps both the day and the country.
 - **A COUNTRY'S CALENDAR IS A PATH AND A DAY IS NOT, and the test is whether a
-  head can differ.** `/calendarium/brazil` is one of fifty-three published
-  pages (`calendar/national/languages.ts`); `?c=br` is the same parameter it always
+  head can differ.** `/calendarium/brazil` is one of the published pages
+  (`calendar/national/languages.ts` is the list); `?c=br` is the same parameter it always
   was, still read, still what names a territory keeping another's calendar, and
   now mirrored to the path on arrival. The distinction is not tidiness: a head
   is built from `pathname` alone, so every `?c=` shared one title, one
@@ -2713,8 +2739,8 @@ parses an id.
   Brazil in the picker moves the calendar and leaves the language alone — the
   picker, the day, an arriving `?c=` and the remembered territory all go
   through it.
-- **The address is a SLUG, not the layer's id.** Fifteen of the fifty-three
-  ids are also interface language tags and four name something else there —
+- **The address is a SLUG, not the layer's id.** Fifteen of the ids are also
+  interface language tags and four name something else there —
   `tl` is Timor-Leste here and Tagalog in `/tl/preces` — so the segment is
   `brazil` where `?c=` keeps `br`. The slugs are written down and never
   derived: `Intl.DisplayNames` moves with the platform's CLDR, and an address

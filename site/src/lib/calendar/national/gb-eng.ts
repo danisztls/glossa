@@ -34,7 +34,6 @@ import type { NationalCalendar } from '../types';
 /*
  * NOT DERIVED, and left here rather than guessed:
  *
- *   - epiphanyOnSunday: 2025 True, 2026 False, 2027 False -- the conference changed it; the latest is kept
  *   - Saint Martin de Porres, religious: absent in 2025 only -- not written; three years cannot say which it is
  *   - Saint Paulinus of Nola, bishop: absent in 2026, 2027 only -- not written; three years cannot say which it is
  *   - Saint Gregory VII, pope: absent in 2027 only -- not written; three years cannot say which it is
@@ -44,6 +43,10 @@ import type { NationalCalendar } from '../types';
 export const ENGLAND: NationalCalendar = {
 	id: 'gb-eng',
 	options: { corpusChristiOnSunday: true },
+	// The Epiphany was kept on the Sunday until Advent 2025 and has been
+	// kept on 6 January since — 5 January 2025 was the last, and it is a
+	// fact about one liturgical year rather than a rule this layer holds.
+	optionsInYear: { 2025: { epiphanyOnSunday: true } },
 	propers: {
 		'01-12': [proper('aelred-of-rievaulx', { en: 'Saint Aelred of Rievaulx, abbot' }, 'o')],
 		'01-19': [proper('wulstan-of-worcester', { en: 'Saint Wulstan of Worcester, bishop' }, 'o')],

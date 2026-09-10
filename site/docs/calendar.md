@@ -213,39 +213,50 @@ layers that still differ, with the measured count of diverging days out of
 1,095 per calendar, and they are excluded from the picker — `unpublished.json`'s
 argument for a different kind of output. The last test asserts the held list is
 EXACTLY the diverging set, in both directions; without it a regressed layer
-would be silently absorbed and a fixed one would sit unpublished for ever. The
-recurring causes are things a layer cannot state: All Souls transferred off a
-Sunday (a rule of `year.ts`), an observance suppressed by the day it falls on,
-a conference that changed a transfer inside the oracle's window, and a patronal
-solemnity on the LAST weekday of a month, which `MovableRule` cannot spell.
+would be silently absorbed and a fixed one would sit unpublished for ever.
 
-### Two fifths of the held divergences were the generator's, not the engine's
+**What is left is what no layer file can spell**, which is a different kind of
+thing from what was left before: two calendars keep a celebration on the LUNAR
+new year, and a lunisolar date is not a function of the Gregorian one. Read
+`held.ts` rather than this paragraph — it is beside the rows it describes, and
+it argues there why a table of years would be worse than holding.
 
-Measured 2026-09-06 by dumping all 155 divergent days rather than reading the
-list of causes, which was inferred and wrong about the largest group.
-`derive_national_calendars.py` had two defects and `year.ts` had none of them:
-it wrote a standing `moves` row from a SINGLE year's sighting — so England kept
-Saint George on 28 April for ever because 23 April 2025 fell inside the Octave
-of Easter — and it computed `replacesDay` and never printed it, so every
-derived layer's Ember Days doubled the ferial day and Spain looked like the
-only country that does it, Spain being hand-written. 155 days became 96,
-Scotland went from seventeen to one, Bosnia from twelve to three, and Russia to
-none.
+### The derivation's defects read as the engine's, four times over
 
-**A generator that turns one observation into a standing rule, or computes an
-answer it does not print, writes data that reads as an engine defect — and the
-engine is where everybody then looks.** The mechanism for a one-year fact
-already existed (`movedInYear`) and its own docblock already argued for it.
+Measured twice by dumping every divergent day rather than reading a list of
+causes, because the list was inferred both times and wrong both times about the
+largest group. **`derive_national_calendars.py` wrote all four and `year.ts`
+had none of them:**
 
-**What remains is catalogued in `national/held.ts`**, classified against the
-days themselves: a proper the country places by a rule and the layer by a date
-(the biggest group, and two of them are LUNAR — Macau's Our Lady of China and
-Vietnam's commemoration of ancestors fall on the lunar new year); All Souls,
-where Denmark, Finland and England each keep a different rule; the Immaculate
-Heart as a national solemnity; a duplicated Newman; Epiphany, where the layer
-is right and `movedInYear` does not reach the temporal cycle; and an observance
-suppressed by the rank of the day it falls on. Read that file rather than this
-paragraph — it is beside the rows it describes.
+- **A standing `moves` row from a SINGLE year's sighting.** England kept Saint
+  George on 28 April for ever because 23 April 2025 fell inside the Octave of
+  Easter. The mechanism for a one-year fact already existed (`movedInYear`).
+- **`replacesDay` computed and then dropped on the way to the file**, which is
+  worse than never computing it: every derived layer's Ember Days doubled the
+  ferial day, and Spain looked like the only country that does it, Spain being
+  hand-written.
+- **A fixed date read as no date at all.** Ten propers were left out with the
+  note "no fixed date and no fixed offset from Easter" — and nine of them are a
+  fixed date the ENGINE moved in one of the three years, because the day it
+  falls on outranked it. The derivation compared the dates it observed without
+  asking what would have happened to a celebration on that date.
+- **A celebration named by its date.** 28 June is Irenaeus in the General
+  Calendar and, in all three oracle years, the Saturday the Immaculate Heart
+  falls on — so two conferences raising the Immaculate Heart were recorded as
+  raising Irenaeus, and San Marino's two propers on 8 November were crossed.
+
+**A generator that turns one observation into a standing rule, computes an
+answer it does not print, or identifies a celebration by the day it landed on
+writes data that reads as an engine defect — and the engine is where everybody
+then looks.** The last two are the same mistake the scraper's own docblock
+warns about for feeds: never join on POSITION, join on the thing itself.
+
+**And a wrong saint at the right rank is invisible to a rank-and-colour
+check.** Ukraine's layer raised Ephrem where the conference raises Mary Mother
+of the Church; in 2025 the two fell on one day, the raised feast took the
+other's name, and the shape matched exactly. It surfaced only in the years they
+did not coincide. A comparison that comes out equal has not said the two sides
+agree about what is being celebrated.
 
 **A `days: 0` row is held by a disagreement about WORDS, and Japan was the
 one** (2026-09-06). The engine agreed about the rank, colour and precedence of
@@ -399,8 +410,7 @@ that id carries a day of the month where the name needs a weekday.
 
 **The test is whether a head can differ, and a parameter's cannot.** `headFor`
 is built from `pathname` alone, so for as long as the country lived in `?c=`
-all fifty-three calendars shared one `<title>`, one description and one sitemap
-row: a reader searching for `calendário litúrgico Brasil` was offered a page
+every calendar shared one `<title>`, one description and one sitemap row: a reader searching for `calendário litúrgico Brasil` was offered a page
 describing the General Roman Calendar in English, if they were offered anything.
 A date fails the same test in the other direction — it names no citation, and
 as a path it would put an unbounded set of URLs into the sitemap for pages that
@@ -416,10 +426,10 @@ consolidate, because they are not translations of each other.
 
 **Each page is published ONCE, in the language its calendar is published in.**
 The cross product was the obvious design and is the wrong one: forty interface
-languages times fifty-three calendars is 2,120 addresses, most of them cells
-nobody asks for, all of them claiming to be one page in forty languages when
-what actually separates two of them is the days. So there is no cluster and no
-`x-default` here — fifty-three singletons, each canonical.
+languages times every published calendar is thousands of addresses, most of
+them cells nobody asks for, all of them claiming to be one page in forty
+languages when what actually separates two of them is the days. So there is no
+cluster and no `x-default` here — one singleton per calendar, each canonical.
 
 **The language is read off the source, not chosen.** `CALENDARS` in
 `pipeline/scrapers/liturgical_calendar.py` already recorded the editions
@@ -474,8 +484,8 @@ the picker, the day, an arriving `?c=`, and the remembered territory
 than the address. Session-scoped, because what the hold records is true of the
 tab and of nothing else.
 
-**The address is a slug and the calendar's id is not one.** Fifteen of the
-fifty-three ids are also interface language tags, and four of those name
+**The address is a slug and the calendar's id is not one.** Fifteen of these
+ids are also interface language tags, and four of those name
 something else there: `tl` is Timor-Leste on this table and Tagalog in
 `/tl/preces`, `vi` the United States Virgin Islands and Vietnamese, `ar`
 Argentina and Arabic, `be` Belgium and Belarusian. So the segment is `brazil`

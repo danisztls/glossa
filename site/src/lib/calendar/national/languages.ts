@@ -13,8 +13,8 @@
  * ## The segment is a SLUG and not the layer's id
  *
  * `?c=br` is the corpus's vocabulary and stays; the address is `brazil`,
- * because fifteen of the fifty-three ids are also interface language tags and
- * four of them mean something else there. `/calendarium/tl` is Timor-Leste
+ * because fifteen of these ids are also interface language tags and four of
+ * them mean something else there. `/calendarium/tl` is Timor-Leste
  * here and Tagalog in `/tl/preces`; `vi` is the United States Virgin Islands
  * and Vietnamese; `ar` is Argentina and Arabic; `be` is Belgium and
  * Belarusian. The site already made this decision once, for the same reason:
@@ -30,8 +30,8 @@
  * IN PORTUGUESE. A SLUG IS AN IDENTIFIER AND NOT A NAME: the name is already
  * in the reader's own language in the title, the heading and the description,
  * which is what a search for `calendário litúrgico brasileiro` matches on,
- * and what the segment has to do is let fifty-three addresses be told apart
- * by a footer, a sitemap, a test, or a link read out of context. Neither
+ * and what the segment has to do is let one calendar's address be told apart
+ * from another's by a footer, a sitemap, a test, or a link read out of context. Neither
  * alternative does that job better. The calendar's own language would put
  * thirteen of these addresses in a non-Latin script — `/calendarium/日本`
  * percent-encodes into something nobody can share or read — and a rule of
@@ -123,6 +123,9 @@ export interface CalendarPage {
 /** Calendar id -> its page. The id is the layer's and `?c=`'s; everything
  *  else here belongs to the page. */
 export const CALENDAR_PAGES: Record<string, CalendarPage> = {
+	// Urgell's calendar, which is Andorra's.
+	ad: { slug: 'andorra', lang: 'es', name: 'Calendario litúrgico andorrano' },
+	ao: { slug: 'angola', lang: 'pt', name: 'Calendário Litúrgico Angolano' },
 	ar: { slug: 'argentina', lang: 'es', name: 'Calendario litúrgico argentino' },
 	// The vicariate, not a country: it covers the Emirates, Oman and Yemen.
 	ae: { slug: 'southern-arabia', lang: 'en', name: 'Liturgical Calendar (Southern Arabia)' },
@@ -148,16 +151,22 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	cl: { slug: 'chile', lang: 'es', name: 'Calendario litúrgico chileno' },
 	co: { slug: 'colombia', lang: 'es', name: 'Calendario litúrgico colombiano' },
 	cr: { slug: 'costa-rica', lang: 'es', name: 'Calendario litúrgico costarricense' },
+	cv: { slug: 'cabo-verde', lang: 'pt', name: 'Calendário Litúrgico Cabo-Verdiano' },
 	cz: { slug: 'czechia', lang: 'cs', name: 'Český liturgický kalendář' },
 	de: { slug: 'germany', lang: 'de', name: 'Deutscher Liturgischer Kalender' },
 	// Copenhagen's calendar, which the Faroes and Greenland keep too.
 	dk: { slug: 'denmark', lang: 'da', name: 'Dansk liturgisk kalender' },
 	dz: { slug: 'algeria', lang: 'fr', name: 'Calendrier liturgique algérien' },
+	ec: { slug: 'ecuador', lang: 'es', name: 'Calendario litúrgico ecuatoriano' },
 	es: { slug: 'spain', lang: 'es', name: 'Calendario litúrgico español' },
 	// Helsinki's, which Åland keeps too.
 	fi: { slug: 'finland', lang: 'en', name: 'Finnish Liturgical Calendar' },
 	fr: { slug: 'france', lang: 'fr', name: 'Calendrier liturgique français' },
+	// Parenthetical, not `English Liturgical Calendar`: that names a
+	// language everywhere else on this site, and this is a territory.
+	'gb-eng': { slug: 'england', lang: 'en', name: 'Liturgical Calendar (England)' },
 	'gb-sct': { slug: 'scotland', lang: 'en', name: 'Scottish Liturgical Calendar' },
+	'gb-wls': { slug: 'wales', lang: 'en', name: 'Welsh Liturgical Calendar' },
 	gt: { slug: 'guatemala', lang: 'es', name: 'Calendario litúrgico guatemalteco' },
 	gu: { slug: 'guam', lang: 'en', name: 'Liturgical Calendar (Guam)' },
 	hk: { slug: 'hong-kong', lang: 'zht', name: '香港禮儀日曆' },
@@ -197,6 +206,7 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	// The Latin Patriarchate, which covers Cyprus, Israel, Jordan and Palestine.
 	pr: { slug: 'puerto-rico', lang: 'es', name: 'Calendario litúrgico puertorriqueño' },
 	ps: { slug: 'jerusalem', lang: 'en', name: 'Liturgical Calendar (Jerusalem)' },
+	pt: { slug: 'portugal', lang: 'pt', name: 'Calendário Litúrgico Português' },
 	ru: { slug: 'russia', lang: 'en', name: 'Russian Liturgical Calendar' },
 	rw: { slug: 'rwanda', lang: 'fr', name: 'Calendrier liturgique rwandais' },
 	sd: { slug: 'sudan', lang: 'en', name: 'Sudanese Liturgical Calendar' },
@@ -212,6 +222,13 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 	th: { slug: 'thailand', lang: 'en', name: 'Thai Liturgical Calendar' },
 	tl: { slug: 'timor-leste', lang: 'pt', name: 'Calendário Litúrgico Timorense' },
 	tn: { slug: 'tunisia', lang: 'fr', name: 'Calendrier liturgique tunisien' },
+	tt: {
+		slug: 'trinidad-and-tobago',
+		lang: 'en',
+		name: 'Liturgical Calendar (Trinidad and Tobago)'
+	},
+	tw: { slug: 'taiwan', lang: 'zht', name: '臺灣禮儀日曆' },
+	ua: { slug: 'ukraine', lang: 'en', name: 'Ukrainian Liturgical Calendar' },
 	ug: { slug: 'uganda', lang: 'en', name: 'Ugandan Liturgical Calendar' },
 	us: { slug: 'united-states', lang: 'en', name: 'United States Liturgical Calendar' },
 	va: { slug: 'vatican-city', lang: 'it', name: 'Calendario liturgico vaticano' },

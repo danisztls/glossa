@@ -93,7 +93,7 @@ export const CABO_VERDE: NationalCalendar = {
 		augustine: keptAs('f'),
 		'charles-lwanga': keptAs('f'),
 		'francis-xavier': keptAs('f'),
-		irenaeus: keptAs('s'),
+		'immaculate-heart': keptAs('s'),
 		'our-lady-of-fatima': keptAs('m'),
 		'peter-claver': keptAs('m'),
 		'therese-of-lisieux': keptAs('f')
@@ -101,6 +101,6 @@ export const CABO_VERDE: NationalCalendar = {
 	movedInYear: {
 		'anthony-of-padua': { 2026: '06-13' },
 		boniface: { 2027: '06-05' },
-		irenaeus: { 2025: '10-25', 2026: '10-24', 2027: '10-30' }
+		'immaculate-heart': { 2025: '10-25', 2026: '10-24', 2027: '10-30' }
 	}
 };

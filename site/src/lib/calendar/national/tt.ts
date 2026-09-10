@@ -42,6 +42,7 @@ export const TRINIDAD_TOBAGO: NationalCalendar = {
 		'joachim-anne': keptAs('f'),
 		'john-vianney': keptAs('f'),
 		'joseph-the-worker': keptAs('f'),
+		'immaculate-heart': keptAs('f'),
 		'our-lady-of-guadalupe': keptAs('f'),
 		'therese-of-lisieux': keptAs('f')
 	}

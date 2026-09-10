@@ -65,7 +65,7 @@ export const SAN_MARINO: NationalCalendar = {
 		'11-08': [
 			proper(
 				'all-saints-and-blesseds-of-the-diocese',
-				{ it: 'Beata Vergine della Misericordia', en: 'All Saints and Blesseds of the Diocese' },
+				{ it: 'Tutti i Santi e Beati della Diocesi', en: 'All Saints and Blesseds of the Diocese' },
 				'm'
 			)
 		]
@@ -75,7 +75,7 @@ export const SAN_MARINO: NationalCalendar = {
 			at: { month: 11, weekday: 6, nth: 2 },
 			celebration: proper(
 				'mercy',
-				{ it: 'Tutti i Santi e Beati della Diocesi', en: 'Our Lady of Mercy' },
+				{ it: 'Beata Vergine della Misericordia', en: 'Our Lady of Mercy' },
 				'm'
 			)
 		},

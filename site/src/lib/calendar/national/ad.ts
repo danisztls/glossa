@@ -381,6 +381,25 @@ export const ANDORRA: NationalCalendar = {
 		'teresa-of-avila': keptAs('f'),
 		'vincent-deacon': keptAs('m')
 	},
+	/**
+	 * Spain's Ember Days of Thanksgiving and Petition, which Urgell keeps
+	 * because Urgell is a Spanish diocese. A TABLE OF YEARS AND NOT A RULE,
+	 * for the reason `es.ts` gives at the same rows: Monday 6 October 2025,
+	 * Monday 5 October 2026, Tuesday 5 October 2027.
+	 */
+	observances: [
+		{
+			at: { years: { 2025: '10-06', 2026: '10-05', 2027: '10-05' } },
+			observance: {
+				id: 'ember-days-of-thanksgiving',
+				names: {
+					es: 'Témporas de Acción de Gracias y de Petición',
+					en: 'Ember Days of Thanksgiving and Petition'
+				},
+				replaces: 'day'
+			}
+		}
+	],
 	moves: {
 		adalbert: { to: '04-22' },
 		agnes: { to: '01-19' },

@@ -69,7 +69,12 @@ export const TAIWAN: NationalCalendar = {
 		],
 		'01-27': [
 			proper(
-				'augustine-zhao-rong',
+				// NOT the General Calendar's 9 July celebration, which is this
+				// martyr WITH his companions and which Taiwan keeps as a
+				// solemnity below. This one is the priest alone, and sharing
+				// an id made the layer say the country kept one celebration
+				// twice at two ranks.
+				'augustine-zhao-rong-priest',
 				{ zht: '聖趙榮（思定）司鐸殉道', en: 'Saint Augustine Zhao Rong, priest and martyr' },
 				'o',
 				{ colour: 'red' }
@@ -338,7 +343,11 @@ export const TAIWAN: NationalCalendar = {
 			}
 		},
 		{
-			at: '02-12',
+			// ONE YEAR AND ONE WITNESS: 12 February 2025 and neither 2026 nor
+			// 2027, where the feeds print an ordinary Thursday and an ordinary
+			// Friday after Ash Wednesday. A date read off a single sighting is
+			// a fact about that year, which is what a table of years says.
+			at: { years: { 2025: '02-12' } },
 			observance: { id: 'day-of-petition', names: { zht: '祈福日', en: 'Day of Petition' } }
 		},
 		{
@@ -347,11 +356,12 @@ export const TAIWAN: NationalCalendar = {
 		}
 	],
 	overrides: {
-		'augustine-zhao-rong': null,
+		'augustine-zhao-rong': keptAs('s', 'red'),
 		'francis-xavier': keptAs('f'),
 		'therese-of-lisieux': keptAs('f')
 	},
 	movedInYear: {
-		assumption: { 2025: '08-17' }
+		assumption: { 2025: '08-17' },
+		'augustine-zhao-rong': { 2025: '07-06' }
 	}
 };

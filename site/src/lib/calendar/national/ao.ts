@@ -50,7 +50,9 @@ export const ANGOLA: NationalCalendar = {
 			proper(
 				'five-wounds-of-the-lord',
 				{ pt: 'Cinco Chagas do Senhor', en: 'The Five Wounds of the Lord' },
-				'f',
+				// OF THE LORD, so line 5 and not line 8 — 7 February 2027 is the
+				// Fifth Sunday in Ordinary Time, and only line 5 takes it.
+				'F',
 				{ colour: 'red' }
 			)
 		],
