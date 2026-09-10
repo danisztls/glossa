@@ -27,6 +27,71 @@
 		"cluster at a time and the markdown says which are outstanding."
 	],
 	"reviewed": {
+		"dei-existentia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 27-38 | documents fides-et-ratio",
+			"note": "31–34 is the Catechism's own version of the converging arguments, and 36–37 says God can be known with certainty by reason and then says at length why that is hard, which is the half a sceptic is owed. Was diluted: 39–43 is _How can we speak about God?_ — analogy and the limits of religious language — and a reader asking whether anyone is there has not asked it. Narrowed 2026-09-10."
+		},
+		"malum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 309-314 | documents spe-salvi",
+			"note": "309 opens by asking the reader's own question in the Catechism's words and refuses a quick answer; 310–312 give the one there is, and end on “evil never becomes a good”. 313 is addressed to “those who are scandalized and rebel against what happens to them”, which is who arrives here."
+		},
+		"scandalum-cleri": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2284-2287,827,1550 | canons 1395,1398,1378 | lead 2285",
+			"note": "827 and 1550 answer why anyone should trust it after that: the Church holds sinners and is always in need of purification, and a minister's sin cannot impede the grace of the sacraments. Was C: the keywords led with _cover up_ and _bishops_ and every anchored canon was about the abuser. Fixed 2026-09-10 with can. 1378 §2 — culpable negligence in performing or omitting an act of office, with harm to another or scandal — which is the sentence for the man who did nothing. No document: the corpus has neither _Vos estis lux mundi_ nor _Sacramentorum sanctitatis tutela_."
+		},
+		"lex-naturalis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1954-1960 | documents veritatis-splendor",
+			"note": "The question is why anyone would need religion to be good and 1954–1959 answers that they do not: the natural law is human reason, written in every heart, binding on all men and surviving its own rejection. 1960 states the qualification in the Church's terms rather than ours, which is what keeps the page from arguing."
+		},
+		"scriptura-inspirata": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 105-114 | documents dei-verbum,providentissimus-deus,divino-afflante-spiritu",
+			"note": "Was C: 105–108 answers _who wrote it_ and stops, while the keywords promised _contradictions_, _literal_, _myth_ and _historical accuracy_. The paragraphs that answer those were the next six, directly under the anchor the topic already had — 110 on literary genres and truth being “differently presented and expressed in the various types of historical writing”, 111–114 on the three criteria. Widened 2026-09-10. Stops at 114: the four senses at 115–119 are how the Church reads Scripture, not why a doubter should believe it."
+		},
+		"canon-scripturae": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 120-123 | documents dei-verbum",
+			"note": "120 prints all 46 books and says the Church discerned them by apostolic Tradition, which answers “added or taken away” without ever putting it that way; 123 is the nearest the Catechism comes to the dispute, on refusing to reject the Old Testament. Was diluted: 124–130 is the Gospels and typology, and 126 went to `iesus-christus`, where its historicity clause is the point; narrowed 2026-09-10. B because the keywords name _trent_, _apocrypha_ and _protestant bible_ and no anchored sentence names the disagreement — the Catechism does not, and the corpus has no Tridentine decree."
+		},
+		"creatio-et-scientia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 282-289,366,390 | documents humani-generis,fides-et-ratio",
+			"note": "283 grants the sciences their own results and 284 says the question of meaning is “of another order”, which is the answer to whether science has settled it; 289 reads Genesis 1–3 by its literary standpoint. Was C: the keywords promised _adam and eve_ and _evolution_ and neither had an anchored sentence. Fixed 2026-09-10 with 366, the spiritual soul created immediately by God and not produced by the parents, and 390, the fall told in figurative language and affirmed as a primeval event."
+		},
+		"iesus-christus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 423,126,639-644,647 | documents redemptor-hominis",
+			"note": "Was C, and the widest miss in this cluster: a reader asking whether any of it happened was given 422–429 on how to catechise and 456–460 on why the Word became flesh, with the Resurrection nowhere on the page. Re-anchored 2026-09-10 on 423, the claim dated by Herod, Augustus, Pilate and Tiberius; 126, the three stages of the Gospels' formation; 639–644, which dates 1 Cor 15 to about A.D. 56, says the empty tomb “in itself is not a direct proof”, and says the hypothesis that the apostles' faith produced the Resurrection will not hold up; and 647, where no one was an eyewitness to the Resurrection itself and no evangelist describes it. The last is what makes the page honest rather than only persuasive."
+		},
+		"novissima": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1020-1041 | documents spe-salvi",
+			"note": "The whole of _I believe in life everlasting_, and the one place in this cluster a twenty-two paragraph span is right: “is that all there is” is answered by the particular judgment, heaven, purgatory, hell and the last judgment in that order, and a reader who stops early has stopped on an answer. 1038 carries the resurrection of the dead, which is the only keyword the article names in passing."
+		},
+		"atheismus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2123-2128,1260 | documents gaudium-et-spes",
+			"note": "Was C: the keywords ended on _invincible ignorance_ and _good atheists_, and the page ran from “atheism is a sin against the virtue of religion” to “agnosticism is all too often equivalent to practical atheism” with nothing after it. Fixed 2026-09-10 with 1260 — a man ignorant of the Gospel who seeks the truth and does the will of God as he understands it can be saved. 1260 and not 847, whose first clause (“this affirmation is not aimed at”) points back at a sentence that is not on this page. 2125 already carried the other half: believers can have more than a little to do with the rise of atheism."
+		},
 		"aegritudo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",

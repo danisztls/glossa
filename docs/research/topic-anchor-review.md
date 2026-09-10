@@ -80,9 +80,11 @@ The clusters read so far, each a single sitting:
 | `ordinary / practice`          | 2026-09-10 |
 | `ordinary / money-and-work`    | 2026-09-10 |
 | `ordinary / justice`           | 2026-09-10 |
+| `argument / credibility`       | 2026-09-10 |
 
-That is the whole of `private-shame`, `life-event` and `ordinary`. What follows
-is what the reading taught, which is the part a table cannot hold.
+That is the whole of `private-shame`, `life-event` and `ordinary`, and the
+first cluster of `argument`. What follows is what the reading taught, which is
+the part a table cannot hold.
 
 ## What the pass keeps finding
 
@@ -197,6 +199,32 @@ anchored.
 `masturbatio`'s ground for another, and stays a distinct page because the set and
 its order differ. The rule the file states is about the whole set.
 
+**A paragraph is addressed to somebody, and it is not always the reader.**
+`iesus-christus` asks "Did any of it actually happen?" and was anchored on CCC
+422–429, half of which is the Catechism's own section _At the heart of
+catechesis: Christ_ — written to whoever is doing the teaching, down to "every
+catechist should be able to apply to himself the mysterious words of Jesus".
+The heading test above catches a paragraph about the wrong subject; this one
+catches a paragraph addressed to the wrong person, and Part One is full of the
+seam. Ask who a paragraph is talking to before asking what it is about.
+
+**Where a work qualifies its own claim, anchor the qualification.** CCC 639–644
+makes the historical case for the Resurrection — 1 Cor 15 dated to about A.D.
+56, witnesses still living, disciples who did not believe the women — and 647
+says that no one was an eyewitness to the Resurrection itself and no evangelist
+describes it. A page carrying only the first is an argument; a page carrying
+both is the Church saying what she does and does not claim, which is the only
+thing a quotation is for here. It is the same reflex that keeps CSDC 405 beside
+CCC 2267, arrived at from the other direction.
+
+**A paragraph opening on "this" needs its antecedent on the same page.** CCC 847
+is the sentence a reader asking about good atheists needs, and it begins "This
+affirmation is not aimed at those who…" — where the affirmation is _extra
+ecclesiam nulla salus_ at 846, on `salus-extra-ecclesiam` and not here. CCC 1260
+says the same thing and stands alone, so `atheismus` took 1260. Read an anchor's
+first clause as a stranger would: a pronoun with nothing on the page to point at
+is a passage the reader cannot use, however well it answers.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as
@@ -278,6 +306,7 @@ each work omitted when the topic has none, and `quaestiones.test.ts` recomputes
 it — so a typo fails rather than sitting there.
 
 A batch is one cluster. Sixteen clusters, and the ones the table above does not
-list have not been read — as of 2026-09-10 that is the whole `argument` doorway,
-which is the largest of the four and the one every survey in `topics.md`
-measures.
+list have not been read — as of 2026-09-10 that is the rest of `argument`,
+which is the largest doorway of the four and the one every survey in
+`topics.md` measures: `other-christians`, `catholics-arguing`, `the-rules`,
+`public-square` and `other-faiths`.

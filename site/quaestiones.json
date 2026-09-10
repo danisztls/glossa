@@ -166,7 +166,7 @@
 		"dei-existentia": {
 			"doorway": "argument",
 			"cluster": "credibility",
-			"ccc": [[27, 43]],
+			"ccc": [[27, 38]],
 			"documents": ["fides-et-ratio"]
 		},
 		"malum": {
@@ -186,7 +186,8 @@
 			"lead": 2285,
 			"canons": [
 				[1395, 1395],
-				[1398, 1398]
+				[1398, 1398],
+				[1378, 1378]
 			],
 			"documents": []
 		},
@@ -199,27 +200,33 @@
 		"scriptura-inspirata": {
 			"doorway": "argument",
 			"cluster": "credibility",
-			"ccc": [[105, 108]],
+			"ccc": [[105, 114]],
 			"documents": ["dei-verbum", "providentissimus-deus", "divino-afflante-spiritu"]
 		},
 		"canon-scripturae": {
 			"doorway": "argument",
 			"cluster": "credibility",
-			"ccc": [[120, 130]],
+			"ccc": [[120, 123]],
 			"documents": ["dei-verbum"]
 		},
 		"creatio-et-scientia": {
 			"doorway": "argument",
 			"cluster": "credibility",
-			"ccc": [[282, 289]],
+			"ccc": [
+				[282, 289],
+				[366, 366],
+				[390, 390]
+			],
 			"documents": ["humani-generis", "fides-et-ratio"]
 		},
 		"iesus-christus": {
 			"doorway": "argument",
 			"cluster": "credibility",
 			"ccc": [
-				[422, 429],
-				[456, 460]
+				[423, 423],
+				[126, 126],
+				[639, 644],
+				[647, 647]
 			],
 			"documents": ["redemptor-hominis"]
 		},
@@ -232,7 +239,10 @@
 		"atheismus": {
 			"doorway": "argument",
 			"cluster": "credibility",
-			"ccc": [[2123, 2128]],
+			"ccc": [
+				[2123, 2128],
+				[1260, 1260]
+			],
 			"documents": ["gaudium-et-spes"]
 		},
 		"beata-virgo": {
