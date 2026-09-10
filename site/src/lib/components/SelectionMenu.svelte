@@ -56,6 +56,7 @@
 	import { AnchoredPanel } from '$lib/floating.svelte';
 	import {
 		APPARATUS_SELECTOR,
+		elideQuote,
 		quoteWithCitation,
 		shareHref,
 		spanAddress,
@@ -79,6 +80,9 @@
 
 	interface Context {
 		unit: string;
+		/** The element the address came off, for measuring what the highlight
+		 *  left behind inside it — see `cutInto`. */
+		element: HTMLElement;
 		surface: HTMLElement;
 		edition: string | undefined;
 	}
@@ -125,7 +129,9 @@
 		// surface and its own edition. A surface that declares none — the
 		// Bible's book introduction — copies a link with no pin, which is an
 		// ordinary link and still a good one.
-		return href ? { unit: href, surface, edition: surface.dataset.edition } : undefined;
+		return href
+			? { unit: href, element: unit, surface, edition: surface.dataset.edition }
+			: undefined;
 	}
 
 	/**
@@ -205,12 +211,53 @@
 	 *
 	 * Read at COPY time and not at open time: a reader may extend the
 	 * highlight with the panel open, and the words on the clipboard have to be
-	 * the words on the screen. The fragment is a copy, so removing from it
-	 * takes nothing out of the page.
+	 * the words on the screen.
 	 */
 	function quote(): string {
 		if (!range) return '';
-		const fragment = range.cloneContents();
+		return textOf(range.cloneContents());
+	}
+
+	/**
+	 * The same words as the LIBRARY will show them, which is not quite the same
+	 * artifact.
+	 *
+	 * A row in `/signata` is read cold, months later, with nothing around it;
+	 * the clipboard is pasted into a sentence the reader is writing, where the
+	 * elision marks would be theirs to place. So the stored quotation says
+	 * where it was cut from and the copied one does not — see `elideQuote`.
+	 */
+	function excerpt(): string {
+		if (!range) return '';
+		return elideQuote(quote(), {
+			head: cutInto(range, 'head'),
+			tail: cutInto(range, 'tail')
+		});
+	}
+
+	/**
+	 * Whether words the reader did not take stand before the highlight, or
+	 * after it, inside the unit at that end.
+	 *
+	 * The UNIT is the frame and not the surface, because the unit is what the
+	 * bookmark names: a highlight covering the whole of verse 3 is a whole
+	 * quotation of what the row cites, however much of the chapter runs on
+	 * either side of it. Apparatus is taken out first, or a verse whose number
+	 * precedes its first word would be cut into at the head every time.
+	 */
+	function cutInto(live: Range, side: 'head' | 'tail'): boolean {
+		const unit = context(side === 'head' ? live.startContainer : live.endContainer)?.element;
+		if (!unit) return false;
+		const rest = document.createRange();
+		rest.selectNodeContents(unit);
+		if (side === 'head') rest.setEnd(live.startContainer, live.startOffset);
+		else rest.setStart(live.endContainer, live.endOffset);
+		return textOf(rest.cloneContents()) !== '';
+	}
+
+	/** A cloned fragment as the words in it, with the apparatus taken out. The
+	 *  fragment is a copy, so removing from it takes nothing off the page. */
+	function textOf(fragment: DocumentFragment): string {
 		for (const el of fragment.querySelectorAll(APPARATUS_SELECTOR)) el.remove();
 		return tidyQuote(fragment.textContent ?? '');
 	}
@@ -389,7 +436,7 @@
 				class:bookmarked
 				aria-label={bookmarkLabel}
 				title={bookmarkLabel}
-				onclick={() => href && bookmarks.toggle(href, { quote: quote(), edition })}
+				onclick={() => href && bookmarks.toggle(href, { quote: excerpt(), edition })}
 			>
 				<Icon name="bookmark" filled={bookmarked} />
 			</button>

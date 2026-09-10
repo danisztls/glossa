@@ -29,6 +29,14 @@ describe('locateQuote', () => {
 		expect(rendered.slice(at!.from, at!.to)).toBe('beginning\n\t\t\tGod created');
 	});
 
+	// A stored quotation says where it was cut from (`elideQuote`), and those
+	// marks are not words: the fold drops them, so the wash still finds the
+	// sentence a marked excerpt names rather than falling back to the unit.
+	it('finds the words under the marks an excerpt carries', () => {
+		const at = locateQuote(VERSE, '…God created heaven…');
+		expect(VERSE.slice(at!.from, at!.to)).toBe('God created heaven');
+	});
+
 	// `fold` drops punctuation rather than normalising it, so the mark covers
 	// the text as the text is written — including punctuation the quote lost.
 	it('covers punctuation the quotation did not carry', () => {

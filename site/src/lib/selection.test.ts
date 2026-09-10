@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { quoteWithCitation, shareHref, spanAddress, textDirective, tidyQuote } from './selection';
+import {
+	elideQuote,
+	quoteWithCitation,
+	shareHref,
+	spanAddress,
+	textDirective,
+	tidyQuote
+} from './selection';
 
 describe('spanAddress', () => {
 	it('is the unit itself for a highlight that never left one', () => {
@@ -72,6 +79,39 @@ describe('tidyQuote', () => {
 
 	it('is empty for a selection of nothing but whitespace, which is what suppresses the panel', () => {
 		expect(tidyQuote(' \n\t ')).toBe('');
+	});
+});
+
+describe('elideQuote', () => {
+	const WHOLE = { head: false, tail: false };
+
+	it('marks each end the highlight cut into and neither it did not', () => {
+		expect(elideQuote('God created', { head: true, tail: true })).toBe('…God created…');
+		expect(elideQuote('In the beginning', { head: false, tail: true })).toBe('In the beginning…');
+		expect(elideQuote('and earth.', { head: true, tail: false })).toBe('…and earth.');
+	});
+
+	// A whole verse quoted whole says so, though the chapter runs on either
+	// side of it: the unit is what the row cites.
+	it('leaves a quotation of the whole unit unmarked', () => {
+		expect(elideQuote('In the beginning God created heaven, and earth.', WHOLE)).toBe(
+			'In the beginning God created heaven, and earth.'
+		);
+	});
+
+	it('tidies as it goes, the marks belonging against the words and not the whitespace', () => {
+		expect(elideQuote('  God\n\t\tcreated  ', { head: true, tail: true })).toBe('…God created…');
+	});
+
+	// `clampQuote` marks its own cut with the same character, and a quotation
+	// clamped and then elided must not end in two of them.
+	it('adds no second ellipsis to an end that already carries one', () => {
+		expect(elideQuote('God created…', { head: false, tail: true })).toBe('God created…');
+		expect(elideQuote('…God created', { head: true, tail: false })).toBe('…God created');
+	});
+
+	it('is empty for a selection of nothing, rather than a pair of marks over no words', () => {
+		expect(elideQuote('   ', { head: true, tail: true })).toBe('');
 	});
 });
 

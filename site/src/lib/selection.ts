@@ -95,6 +95,38 @@ export function tidyQuote(raw: string): string {
 }
 
 /**
+ * A quotation marked where the reader cut into the text.
+ *
+ * A LIBRARY ROW IS READ WITH NOTHING AROUND IT. `/signata` prints the words
+ * months later under a citation and no text, so a phrase taken out of the
+ * middle of a verse looks like the whole of what the row names — which is the
+ * one thing a stored quotation can be wrong about. The ellipsis is the
+ * printer's own answer and needs no interface string: it says the sentence
+ * continues in both the languages this site is read in and the thirty-five it
+ * is not.
+ *
+ * IT REPORTS THE UNIT'S EDGE AND NOT THE SENTENCE'S, which is what makes it
+ * checkable: the caller measures whether words stand between the highlight and
+ * the end of the unit the bookmark names, and that is a fact about the
+ * selection rather than a judgement about prose. A quotation of a whole verse
+ * gets no marks even where the chapter runs on either side of it, because the
+ * verse is what the row cites.
+ *
+ * A quotation that already ends in one keeps it — `clampQuote` marks its own
+ * cut the same way, and two ellipses in a row are a typographical error rather
+ * than a stronger claim.
+ */
+export function elideQuote(text: string, cut: { head: boolean; tail: boolean }): string {
+	const quote = tidyQuote(text);
+	if (!quote) return '';
+	const head = cut.head && !quote.startsWith(ELLIPSIS) ? ELLIPSIS : '';
+	const tail = cut.tail && !quote.endsWith(ELLIPSIS) ? ELLIPSIS : '';
+	return `${head}${quote}${tail}`;
+}
+
+const ELLIPSIS = '…';
+
+/**
  * Text and citation, in the order a reader pastes them.
  *
  * The quotation first and the address under it, which is `AnchorMenu`'s

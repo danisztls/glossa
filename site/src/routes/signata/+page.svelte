@@ -256,12 +256,17 @@
 							     changes the reading — an unattributed frozen quote under a
 							     re-deriving citation claims to be the reader's current text
 							     (`bookmarks.svelte.ts`), and the Bible is where that claim
-							     can be wrong twice over. -->
+							     can be wrong twice over.
+
+							     The ellipses arrive with the words and are not added here:
+							     whether a highlight cut into the unit is a fact about the
+							     selection, and this page holds no text to measure it against
+							     (`elideQuote`). -->
 							{#if item.quote}
 								{@const from = quotedWork(item)}
 								<blockquote class="quote" lang={from?.language}>
 									{item.quote}
-									{#if namesItsEdition(from)}<cite>{from.short_title ?? from.title}</cite>{/if}
+									{#if namesItsEdition(from)}<cite>— {from.short_title ?? from.title}</cite>{/if}
 								</blockquote>
 							{/if}
 						</li>
@@ -369,14 +374,18 @@
 		color: var(--color-text-muted);
 	}
 
+	/* Back to the chrome face: the edition's name is ours to say, and is not
+	   part of the quotation. INLINE, after the words: a block attribution
+	   spent a second line on two of them and made every quoted mark a
+	   three-line row, on a page whose rows are one line each. The dash is in
+	   the markup rather than a `::before`, so it belongs to the text a reader
+	   copies, and `nowrap` keeps it with the name it introduces — the Bible's
+	   short titles are the only ones printed here and none of them is long. */
 	.quote cite {
-		/* Back to the chrome face: the edition's name is ours to say, and is
-		   not part of the quotation. */
-		display: block;
-		margin-block-start: 0.15rem;
 		font-family: var(--font-sans);
 		font-size: 0.78rem;
 		font-style: normal;
+		white-space: nowrap;
 	}
 
 	/* NOT `--color-bookmark`, WHICH IS THE COLOUR OF BEING MARKED. Everywhere

@@ -842,13 +842,37 @@ what the section heading over the row and the citation on it have both already
 said: "Compendium of the Social Doctrine of the Church" under a heading reading
 Social Doctrine, "Dilexit Nos" under a row reading `Dilexit Nos 2`. The field is
 still stored for every quote, being what the wash compares and what carries the
-language.
+language. Where it is printed it runs on after the words — `— Douay-Rheims`,
+the shape `quoteWithCitation` writes to the clipboard — rather than under them:
+a block attribution spent a second line on two words, on a page whose other
+rows are one line each.
 
 **A quote is clamped, and the ellipsis is the point.** `QUOTE_MAX` keeps the
 whole store inside one localStorage key when a reader has marked a hundred
 passages — a highlight can be a page, and a page a row is a quota error the
 reader meets as a bookmark that silently did not save. Cut at a word boundary
 and marked, because a quotation truncated in silence is a misquotation.
+
+**And the same mark says where the READER cut, which is the other way a stored
+quotation misquotes.** A row is read cold, months later, under a citation and
+no text: a phrase taken out of the middle of verse 3 looks like the whole of
+verse 3, and the reader has no way to tell. `elideQuote` puts an ellipsis on
+each end the highlight cut into — measured against the UNIT the bookmark names,
+which makes it a fact about the selection rather than a judgement about prose,
+and means a whole verse quoted whole carries no marks though the chapter runs
+on either side of it. Apparatus comes out before the measurement, or a verse
+whose number precedes its first word would be cut into at the head every time.
+
+**The library's copy is marked and the clipboard's is not.** A row is read
+where it stands and has to say what it is; a copied quotation is pasted into a
+sentence the reader is writing, where the elisions are theirs to place. The
+same two artifacts the `?ed=` pin distinguishes, one grain down.
+
+**The ellipsis costs the wash nothing, and that is not luck**: `locateQuote`
+folds both sides through `lemma.ts`'s `fold`, which keeps letters and digits
+and drops everything else, so a mark that is not a word cannot be searched for.
+A test pins it, the alternative being a wash that silently fell back to the
+unit for every excerpt.
 
 **The precision goes into the COPY instead, which is where it costs nothing.**
 The clipboard takes exactly the words on screen, in the edition on screen, with

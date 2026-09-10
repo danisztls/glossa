@@ -2357,6 +2357,12 @@ the half that is testable, rationale in `site/docs/reading.md`).
   a frozen quote under a re-derived citation otherwise claims to be the
   reader's current text, and it is what the wash below compares. Clamped at
   `QUOTE_MAX` — one localStorage key holds the whole store.
+- **A stored quotation says where it was cut and a copied one does not**
+  (`elideQuote`). A library row is read months later under a citation and no
+  text, so a phrase out of the middle of a verse would look like the verse; a
+  clipboard quotation is pasted into a sentence the reader is writing, where
+  the elisions are theirs to place. Measured against the UNIT the bookmark
+  names, apparatus removed first, so it is a fact about the selection.
 - **An edition is NAMED only where one language could hold more than one, which
   is the Bible** (`EditionMenu`'s `editionStyle`, `/signata`'s quote).
   Everywhere else the edition is the language, so its title only repeats the
