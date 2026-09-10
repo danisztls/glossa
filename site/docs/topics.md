@@ -387,9 +387,16 @@ needs a browser and a person.
 Adding a topic and reviewing one are different jobs, and the sync only does the
 first. It checks that every span, canon and document slug **exists**; nothing
 checks that the passages **answer the question**, because no build can. That is
-a read, and `docs/research/topic-anchor-review.md` is the ledger it fills — a
-grade per topic, a note where the anchor is oblique, and the fix named where a
-question has no passage behind it.
+a read. `site/quaestiones-review.json` holds its verdicts — a grade per topic, a
+note where the anchor is oblique, the fix named where a question had no passage
+behind it — and `docs/research/topic-anchor-review.md` holds the method and what
+the reading has taught so far.
+
+**A grade is a claim about a particular anchor set**, so each row states the set
+it was formed on and `quaestiones.test.ts` recomputes it. Change a reviewed
+topic's spans and that test fails by name: re-read the topic against its new
+passages rather than pasting the new signature in. Nothing else can catch a
+verdict left standing beside a page it is no longer about.
 
 **Read the question clause by clause against the passages, not the title.** The
 first defects the pass found were topics anchored correctly for their title and

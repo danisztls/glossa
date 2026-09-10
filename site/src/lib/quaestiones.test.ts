@@ -308,3 +308,72 @@ describe('every topic is reachable and named', () => {
 		expect(begun).toBeGreaterThanOrEqual(1);
 	});
 });
+
+/**
+ * The grades in `quaestiones-review.json`, which are claims about whether a
+ * reader arriving with a topic's own `question` leaves with it answered.
+ * `docs/research/topic-anchor-review.md` holds the method and the findings;
+ * the rows are here so a grade has one copy and can be checked.
+ *
+ * WHAT ONLY A TEST CAN CATCH: a grade is a claim about a PARTICULAR anchor
+ * set, and anchor sets change. Nothing about a re-anchored topic looks wrong —
+ * the file parses, the sync passes, the page renders — and the verdict beside
+ * it is now about a page that no longer exists. So each row states the set it
+ * was formed on and this recomputes it. The fix when it fails is to re-read
+ * the topic, not to paste the new signature in: the point of the failure is
+ * that somebody has to look.
+ */
+const review = JSON.parse(readFileSync('quaestiones-review.json', 'utf8')) as {
+	reviewed: Record<
+		string,
+		{ grade: string; reviewed: string; was?: string; anchors: string; note: string }
+	>;
+};
+
+describe('quaestiones-review.json', () => {
+	/** The same statement the ledger's `anchors` field holds, from the source. */
+	const signature = (topic: (typeof source.topics)[string]): string => {
+		const parts: string[] = [];
+		for (const [work, spans] of spansOf(topic)) {
+			if (spans.length === 0) continue;
+			parts.push(`${work} ${spans.map(([a, b]) => (a === b ? `${a}` : `${a}-${b}`)).join(',')}`);
+		}
+		if (topic.lead !== undefined) parts.push(`lead ${topic.lead}`);
+		const documents = (topic as { documents?: string[] }).documents ?? [];
+		if (documents.length > 0) parts.push(`documents ${documents.join(',')}`);
+		return parts.join(' | ');
+	};
+
+	it('grades only topics that exist', () => {
+		for (const slug of Object.keys(review.reviewed)) {
+			expect(source.topics[slug], slug).toBeDefined();
+		}
+	});
+
+	it('records a grade the scale defines, and never a C or a D', () => {
+		for (const [slug, row] of Object.entries(review.reviewed)) {
+			// C is "the corpus has a text and the topic does not name it", which
+			// is fixed in the pass that finds it; D is "the corpus has nothing",
+			// which is the blocklist in docs/research/topics.md and not a grade
+			// this file gets to keep. A row left at C would be a to-do wearing a
+			// verdict's clothes.
+			expect(['A', 'B'], `${slug}: grade`).toContain(row.grade);
+			if (row.was !== undefined) expect(['B', 'C', 'D'], `${slug}: was`).toContain(row.was);
+			expect(row.note, `${slug}: note`).toBeTruthy();
+			expect(row.reviewed, `${slug}: reviewed`).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+		}
+	});
+
+	it('was formed on the anchor set the topic still has', () => {
+		const drifted = Object.entries(review.reviewed)
+			.filter(([slug, row]) => row.anchors !== signature(source.topics[slug]))
+			.map(
+				([slug, row]) =>
+					`${slug}\n  graded: ${row.anchors}\n  now:    ${signature(source.topics[slug])}`
+			);
+		expect(
+			drifted,
+			`re-read these topics against their new passages, then update quaestiones-review.json:\n${drifted.join('\n')}`
+		).toEqual([]);
+	});
+});

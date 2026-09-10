@@ -573,9 +573,11 @@ The blocklist above is unchanged and still holds.
   blocklist above is about topics that could not ship; nothing yet checked the
   ones that did. `docs/research/topic-anchor-review.md` is that pass, a cluster
   at a time, grading each topic on whether a reader holding its `question`
-  leaves with it answered. Two of the first five needed a fix, and both had the
-  same shape: the title was anchored perfectly and the question was not anchored
-  at all.
+  leaves with it answered; the grades themselves are rows in
+  `site/quaestiones-review.json`, checked by `quaestiones.test.ts` against the
+  anchor set each was formed on. Two of the first five needed a fix, and both
+  had the same shape: the title was anchored perfectly and the question was not
+  anchored at all.
 - **The other thirty-five dictionaries.** `en` and `pt` carry the keys; until
   all of them do, `/quaestiones` stays out of `CHROME_PATHS` and the sitemap on
   `route-manifest.ts`'s own terms. This is now the largest single block of

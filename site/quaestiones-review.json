@@ -1,0 +1,448 @@
+{
+	"$comment": [
+		"Per-topic grades for site/quaestiones.json: whether a reader arriving with the topic's own",
+		"`question` leaves with it answered by the anchored passages. The METHOD, the scale and every",
+		"general finding are in docs/research/topic-anchor-review.md; only the rows live here, so a",
+		"grade has one copy.",
+		"",
+		"WHY JSON RATHER THAN THE TABLE IT REPLACED: a grade is a claim about a particular anchor set,",
+		"and anchor sets change. `anchors` states the set that was graded, quaestiones.test.ts",
+		"recomputes it from the source, and a mismatch is the one defect a markdown table could never",
+		"report -- a topic re-anchored after somebody read it, still showing the old verdict. The test",
+		"FAILS on drift and names the topic, its graded set and its current one; the fix is to re-read",
+		"the topic, not to paste the new signature in. Being made to look is the whole mechanism.",
+		"",
+		"GRADES. A: the passages answer the question as asked, in their own words. B: the answer is",
+		"there but the reader has to carry it across from a passage written about an adjacent thing --",
+		"a real grade, not a soft A, and the note says what would replace it. C: something the title,",
+		"question or keywords promise has no anchored text and the corpus HAS a text -- fix it, do not",
+		"file it. D: the missing half needs a document the corpus does not have; see the blocklist in",
+		"docs/research/topics.md.",
+		"",
+		"NO C OR D IS RECORDED HERE and that is by design: a C found is a C fixed in the same pass, so",
+		"`was` is where they appear. A topic that cannot be fixed is a D and belongs to the blocklist",
+		"rather than to this file.",
+		"",
+		"ABSENCE IS NOT A PASS. A topic missing from `reviewed` has not been read. The pass runs a",
+		"cluster at a time and the markdown says which are outstanding."
+	],
+	"reviewed": {
+		"aegritudo": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1500-1513 | documents spe-salvi",
+			"note": "CCC 1500–1513 is the Anointing article's own four headings whole, and 1505 and 1508 say the thing the reader needs — _he did not heal all the sick_, and _my grace is sufficient for you_."
+		},
+		"finis-vitae": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2278-2279 | documents iura-et-bona,samaritanus-bonus",
+			"note": "2278 answers \"must every treatment be continued\" in its first clause and names who decides. Inside `euthanasia`, correctly: this reader is a family at a bedside, not an argument."
+		},
+		"post-mortem": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1023-1032 | canons 1176 | lead 1032 | documents spe-salvi",
+			"note": "`lead` 1032 answers the second half of the question, prayer for the dead. can. 1176 added 2026-09-10 for _funeral, wake, burial_; its §2 is written about the living. Keywords reach into grief."
+		},
+		"infans-non-baptizatus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1257-1261 | canons 1183 | lead 1261 | documents pastoralis-actio",
+			"note": "`lead` 1261 is the whole topic — _allow us to hope that there is a way of salvation_. can. 1183 added 2026-09-10 for the _stillborn_ and _miscarried_ keywords: a funeral can be permitted."
+		},
+		"mors-voluntaria": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2280-2283 | canons 1176,1184 | lead 2283 | documents samaritanus-bonus",
+			"note": "See the duplicate note below. can. 1176 and 1184 added 2026-09-10: funerals are owed to the faithful, and the list of those deprived of them does not include suicide."
+		},
+		"crematio": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2300-2301 | canons 1176 | documents ad-resurgendum-cum-christo",
+			"note": "\"May a Catholic be cremated\" is 2301; \"and may the ashes be scattered\" is in _Ad resurgendum cum Christo_, which the page names and does not quote. No quotable work in the corpus answers it."
+		},
+		"matrimonium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1625-1632,1643-1645 | csdc 215-220 | canons 1055-1057,1156-1160 | documents casti-connubii,familiaris-consortio",
+			"note": "CCC 1626 and can. 1057 both say consent makes the marriage, which is the question's own words. Was short one keyword: _convalidation_ had no text, fixed 2026-09-10 with can. 1156–1160 taken as the chapter. _banns_ still promises nothing."
+		},
+		"matrimonium-mixtum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1633-1637 | canons 1124-1129 | documents familiaris-consortio",
+			"note": "CCC 1633–1637 is the Catechism's own heading whole, and can. 1125 answers the second half of the question — _and of which of us_ — by listing promises the Catholic party makes and the other party is only told about."
+		},
+		"infidelitas-coniugis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1646-1649 | canons 1152-1155 | lead 1649 | documents familiaris-consortio",
+			"note": "`lead` 1649 opens on the Church permitting physical separation, and can. 1152 states the right in law. The keywords reach into `divortium` and `nullitas-matrimonii`; both exist, so the search returns all three rather than the wrong one."
+		},
+		"nullitas-matrimonii": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1629,1650-1651 | canons 1095,1103,1671-1673 | documents familiaris-consortio",
+			"note": "Was C: \"Am I still married?\" was answered with venue rules — which tribunal is competent — and never with the grounds, though _defect of consent_ is a keyword. Fixed 2026-09-10 with can. 1095 and 1103."
+		},
+		"communio-post-divortium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1650-1651,1385 | canons 915-916 | documents familiaris-consortio,amoris-laetitia",
+			"note": "Was C and a strict subset of `nullitas-matrimonii`: two shared paragraphs and nothing of its own. Fixed 2026-09-10 with CCC 1385, the general rule 1650 applies, and can. 915–916, where the reader can see they are not the excommunicated case."
+		},
+		"graviditas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2270,1261 | documents quaestio-de-abortu,donum-vitae",
+			"note": "Was C, and the worst door mismatch found: a page titled _Pregnancy and miscarriage_ whose second paragraph called abortion an abominable crime. 2271 dropped and 1261 added 2026-09-10."
+		},
+		"sterilitas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2373-2379 | lead 2379 | documents donum-vitae,dignitas-personae",
+			"note": "`lead` 2379 is \"what is left to us\" in the Catechism's own words, down to adoption. `fecundatio-artificialis` sits inside it, which is the documented pair."
+		},
+		"adoptio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2379 | canons 110,1094 | documents familiaris-consortio",
+			"note": "can. 110 answers \"is the child ours in the Church's eyes\" verbatim, and can. 1094 covers the keyword nobody expects to need."
+		},
+		"educatio-filiorum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2217,2230,2225-2226,2229 | csdc 238-243 | canons 226,793 | documents gravissimum-educationis,divini-illius-magistri,catechesi-tradendae",
+			"note": "Was C: every anchor was the parents' duty to teach, and the question is what to do when the child refuses. 2217 and 2230 added 2026-09-10 — the child at home, and the adult who chooses."
+		},
+		"filius-a-fide-lapsus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2221-2231,1730-1732 | documents familiaris-consortio",
+			"note": "Was C: \"Where did we go wrong?\" was answered with eleven paragraphs on what parents owe, which reads as the indictment. CCC 1730–1732 added 2026-09-10 — _man is the father of his acts_."
+		},
+		"parentes": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2214-2220,2232 | documents familiaris-consortio",
+			"note": "Was C: nothing met _abusive mother_ or _cut them off_. 2232 added 2026-09-10 — _family ties are important but not absolute_ — though its own context is vocation. No paragraph addresses an abusive parent."
+		},
+		"cura-parentum": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2218 | csdc 221-222 | documents familiaris-consortio",
+			"note": "\"I cannot do it all\" is answered by three words inside 2218, _as much as they can_. Nothing in the corpus is about the carer; CSDC 222 is about valuing the elderly. Adjacent to the blocklist."
+		},
+		"amissio-operis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2427-2428,2436 | csdc 287-290 | lead 2436 | documents laborem-exercens",
+			"note": "`lead` 2436 is the Catechism saying unemployment wounds its victim's dignity; CSDC 287 calls it a real social disaster."
+		},
+		"pornographia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2354,2351-2352,2342,1735 | documents persona-humana",
+			"note": "Was C: three paragraphs of definition and nothing on \"not being able to stop\", while the keywords opened on _addiction_. Fixed 2026-09-10 with 2342 (self-mastery is never acquired once and for all) and 1735."
+		},
+		"masturbatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1735,2352 | lead 2352 | documents persona-humana",
+			"note": "CCC 2352's closing sentence answers \"is it always a mortal sin\" in the Catechism's own words, and 1735 generalises it."
+		},
+		"homosexualitas-vivenda": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2358-2359 | documents persona-humana,homosexualitatis-problema",
+			"note": "2358–2359 is a what-do-I-do text rather than a teaching, which is the whole reason it is a separate topic from `homosexualitas`, which keeps 2357."
+		},
+		"post-contraceptionem": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1735,2370,2399,1451-1453 | documents humanae-vitae,familiaris-consortio",
+			"note": "Was C twice over: no anchored text said the word _sterilisation_, and \"what now?\" was answered only by 2370, which is `contraceptio`'s own teaching restated. Fixed 2026-09-10 with 2399 and 1451–1453."
+		},
+		"adulterium": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2380-2381,2487",
+			"note": "\"Do I have to tell?\" is answered only by 2487, which is written about offences against truth and reputation and reaches a spouse by analogy — correctly, since it says reparation is owed and may be made secretly. Checked: no better paragraph."
+		},
+		"remissio-peccatorum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 982,1846-1848,1864 | documents dives-in-misericordia,reconciliatio-et-paenitentia",
+			"note": "Was C: CCC 982 answers \"too grave to be forgiven\" in its first line, and the keyword _sin against the holy spirit_ had nothing at all. Fixed 2026-09-10 with 1864, which quotes Mt 12:31 and then says what the refusal actually is."
+		},
+		"reditus": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1439,1455-1458,1465 | documents reconciliatio-et-paenitentia",
+			"note": "Was C, and a strict subset of `scrupulositas` besides: 1455–1458 is what confession requires, including the annual obligation this reader has not kept. Fixed 2026-09-10 with 1439 (the prodigal son, the journey back, the welcome) and 1465 to close."
+		},
+		"scrupulositas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1454-1460,1735 | lead 1456",
+			"note": "Was C by ordering alone: the page opened on 1454, _prepare by an examination of conscience_, which is the one thing this reader cannot stop doing. `lead` 1456 now opens on the answer — _strive to confess all the sins that they can remember_ — 2026-09-10."
+		},
+		"post-abortum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1468-1470,2272,1463 | canons 1357 | documents evangelium-vitae",
+			"note": "Was C: 2272 named the excommunication and nothing said it could be lifted. Fixed 2026-09-10 with CCC 1463 and the topic's first canon, 1357, where a confessor may remit it in the internal forum."
+		},
+		"venia-danda": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2842-2845 | documents dives-in-misericordia",
+			"note": "\"Do I have to?\" is answered inside 2843 — _it is not in our power not to feel or to forget an offense_ — after that paragraph's own opening on the merciless servant. No ordering surfaces it without splitting a paragraph, which the file forbids."
+		},
+		"mortis-desiderium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2280-2283 | lead 2283 | documents samaritanus-bonus",
+			"note": "`lead` 2283 puts _we should not despair of the eternal salvation of persons who have taken their own lives_ first, which is the question verbatim, and 2282 closes on diminished responsibility. See the keyword note below."
+		},
+		"dubium-fidei": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 162-165,2088-2089,2731 | documents spe-salvi",
+			"note": "Was C: nothing anchored said faith is ever dark. Fixed 2026-09-10 by widening 162 to the Catechism's own 162–165 and adding 2731 on dryness."
+		},
+		"amor-dei": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 604-605,218-221 | documents dilexit-nos,dives-in-misericordia",
+			"note": "Was C: 218–221 is God's love for **Israel**, and the reader's whole objection is that it applies to everyone but them. Fixed 2026-09-10 with CCC 604–605 anchored ahead of it, which also retired the `lead`."
+		},
+		"oratio-inaudita": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2734-2741 | documents spe-salvi",
+			"note": "CCC 2734–2741 is the Catechism's own two headings on this exact question, taken whole and unreordered — the ideal case, where the topic is barely editorial. 2737 lands hard on a reader whose petition was for a dying child; excising it would be choosing by hand."
+		},
+		"divinatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2115-2117",
+			"note": "2116 lists horoscopes, palm reading, clairvoyance and mediums by name, which is \"what is actually forbidden\" answered in the Catechism's own inventory."
+		},
+		"signa": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 302-305,2115,2119 | lead 2115 | documents gaudete-et-exsultate",
+			"note": "It gives the posture — trust providence, do not demand proof — and never adjudicates a particular event, which is the honest answer. _Opened the bible at random_ is 2116's."
+		},
+		"mortui": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1030-1032,1022,2116",
+			"note": "Nothing says the dead do not return; 1022 added 2026-09-10 so the reader can at least see they are already judged, and 2116 forbids summoning them. The inference is theirs."
+		},
+		"daemones": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 391-395,550,1673 | lead 1673",
+			"note": "Was C by ordering: \"Does the Church still do that?\" was answered in the seventh paragraph. `lead` 1673 set 2026-09-10."
+		},
+		"angeli": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 328-336 | lead 336",
+			"note": "Was C by ordering: the guardian angel is 336, last of nine. `lead` 336 set 2026-09-10."
+		},
+		"apparitiones": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 66-67",
+			"note": "Two paragraphs, and 67 answers \"does a Catholic have to believe\" outright. Nothing on how an apparition is approved; the corpus has no text."
+		},
+		"miracula-et-reliquiae": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1674-1676,828,156",
+			"note": "CCC 1674 is the only paragraph in the Catechism that says \"relics\", and it says it in a list. 828 added 2026-09-10 for _canonisation_. Nothing on incorrupt bodies."
+		},
+		"experientia-mortis-proximae": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1021-1022",
+			"note": "1021–1022 gives the framework — judgment at the moment of death — and the corpus says nothing about near-death experiences. The reader carries it across or nothing does."
+		},
+		"finis-mundi": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 668-682",
+			"note": "675–676 is the Antichrist and the rejection of millenarianism, which is exactly what _rapture_ and _three days of darkness_ are owed."
+		},
+		"oratio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2559-2565,2700-2708,2709-2712,2729-2731 | documents spe-salvi,mens-nostra",
+			"note": "Was C: the Catechism gives three expressions of prayer and the topic carried two, while _contemplation_ and _mental prayer_ were keywords. 2709–2712 added 2026-09-10."
+		},
+		"ieiunium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1434,1438,2043 | canons 1249-1253,919",
+			"note": "can. 1251 and 1252 are the days and the ages, which is the question exactly. can. 919 added 2026-09-10 for the eucharistic fast, a keyword with no text behind it."
+		},
+		"dominica": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2177-2183 | canons 1247-1248 | documents sacrosanctum-concilium,sacramentum-caritatis",
+			"note": "2181 names the grave sin and the excusing reasons in one paragraph, and 2183 covers the case where Mass is impossible."
+		},
+		"otium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2184-2188 | csdc 284-286 | documents gaudete-in-domino,laborem-exercens",
+			"note": "2185's _the charity of truth seeks holy leisure_ and CSDC 284's _rest from work is a right_ answer a reader who suspects doing nothing is a fault."
+		},
+		"initiatio-adultorum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1247-1249,1229-1233 | canons 851,865-866 | documents catechesi-tradendae",
+			"note": "1232 names the RCIA and can. 851 and 865 say what the catechumenate asks. _Baptised as a baby, never confirmed_ is a different path and only 1231 glances at it."
+		},
+		"baptismus-infantium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1250-1255 | canons 867-868,872-874 | documents pastoralis-actio",
+			"note": "can. 874 is the godparent question answered as a checklist, and 1255 says what is asked of them. See the Latin clause noted below."
+		},
+		"organorum-donatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2296,2301 | documents evangelium-vitae",
+			"note": "2296 answers both halves of the question in one paragraph, in life and after death, including consent."
+		},
+		"corpus-ornandum": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2288-2290",
+			"note": "The Catechism does not contain the word \"tattoo\" or \"piercing\"; 2289 gives the principle against the cult of the body. 2290 added 2026-09-10 for _gym_ and _dieting_."
+		},
+		"decimae": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2043,2447 | canons 222",
+			"note": "The answer is that there is no number — _each according to his abilities_ — which is what a reader holding the word _tithe_ most needs to be told."
+		},
+		"vota-et-iuramenta": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2101-2103,2150-2155 | canons 1191,1199",
+			"note": "2102 defines a vow verbatim and 2103 closes on dispensation, which is the keyword a reader who has broken one arrives with."
+		},
+		"vocatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2013-2016,1533-1535,898-900,2233 | csdc 541-543 | documents christus-vivit",
+			"note": "Was C and the clearest case of a title read as an oracle: CCC 1877–1889 says \"vocation\" and means subsidiarity and socialisation. Replaced 2026-09-10 with 2013–2016, 1533–1535, 898–900 and 2233."
+		},
+		"merces-iusta": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2434-2435 | csdc 301-304,305-307 | documents rerum-novarum,laborem-exercens",
+			"note": "2434 says what a wage is supposed to cover, at the length of the question, and CSDC 304 covers the strike the title also promises."
+		},
+		"pecunia-collocanda": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2413,2409,2431-2432 | csdc 358-360,368-369 | documents caritas-in-veritate,oeconomicae-et-pecuniariae-quaestiones",
+			"note": "Was C: the topic is titled _Investing and speculation_ and the paragraph naming speculation, 2409, was on the tax page. 2409 and 2413 (games of chance) added 2026-09-10."
+		},
+		"tributum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2240,2409 | csdc 355",
+			"note": "2240 makes paying taxes morally obligatory in its first line, which answers \"is cheating on it a sin\" without needing a second paragraph."
+		},
+		"invidia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2538-2540",
+			"note": "2539 names the sadness at another's goods and 2540 gives the remedy: _rejoice in your brother's progress_."
+		},
+		"acedia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1866,2094,2733",
+			"note": "2094 and 2733 both name acedia, and 2733's _a form of depression due to lax ascetical practice_ is the sentence. _Spiritual dryness_ is 2731 and belongs to prayer, which is the distinction worth making."
+		},
+		"discrimen-gentium": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1934-1938 | csdc 144-145,433 | documents nostra-aetate,fratelli-tutti",
+			"note": "1935 names race. Was diluted: CSDC 146–147 is male and female complementarity and 148 is disability, neither of which is racism; narrowed to 144–145 on 2026-09-10."
+		},
+		"mercatura-hominum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2355,2414 | csdc 158 | documents dignitas-infinita",
+			"note": "2414 forbids human beings \"being bought, sold and exchanged like merchandise\", which is the question in the Catechism's own words."
+		},
+		"violentia-domestica": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2356,1649 | canons 1153-1154 | documents dignitas-infinita",
+			"note": "Was C and the most consequential: one paragraph, about rape, and nothing telling a reader being beaten that they may leave. CCC 1649 and can. 1153–1154 added 2026-09-10."
+		},
+		"violentia-digitalis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 2477-2479,2488-2492 | documents dignitas-infinita,antiqua-et-nova",
+			"note": "Was C: privacy was anchored at 2488–2492 and reputation, which the title promises, was not. 2477–2479 added 2026-09-10 — detraction and calumny, which is what _gossip_ and _cancelling_ are."
+		},
+		"debilitas": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2276,2274 | csdc 148 | documents dignitas-infinita",
+			"note": "2276 uses the title's own word and CSDC 148 develops it. 2274 added 2026-09-10 for _prenatal screening_, which is how most readers arrive at this page."
+		},
+		"carceres": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2297-2298 | csdc 402-405 | documents fratelli-tutti",
+			"note": "CSDC 402–404 answers what may be done to an offender, and 405 states the death-penalty teaching as it stood before CCC 2267 was revised in 2018. Both are kept: choosing between two magisterial texts is not this file’s to do. B because the reader is shown the older position with nothing on the page saying when either was written — see the open question in docs/research/topic-anchor-review.md."
+		},
+		"defensio-sui": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2263-2265,2316",
+			"note": "2264 answers \"how far\" with the moderation test. Was diluted: 2317 and CSDC 500–501 are states at war, which is `bellum`, and were dropped 2026-09-10."
+		},
+		"proles-suscipienda": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2368-2371 | csdc 230-232 | documents humanae-vitae,laudato-si",
+			"note": "CSDC 232 carries the phrase the reader needs — _to avoid for a time or even indeterminately a new birth_ — beside 2368's warning against selfishness."
+		}
+	}
+}
