@@ -36,6 +36,24 @@
 		"A work with no entry simply has no description; nothing renders a placeholder."
 	],
 	"descriptions": {
+		"bull.incarnationis-mysterium.en": {
+			"en": {
+				"text": "The Great Jubilee of the Year 2000, proclaimed to be kept simultaneously in Rome and the Holy Land, its two centres of equal dignity. It traces the jubilee’s history from Boniface VIII’s first Holy Year of 1300, explains its signs — pilgrimage, the holy door, the indulgence and its remission of sin — and closes with the Apostolic Penitentiary’s decree on the conditions for gaining it.",
+				"origin": "read"
+			}
+		},
+		"bull.misericordiae-vultus.en": {
+			"en": {
+				"text": "Francis’s 2015 bull proclaiming the Extraordinary Jubilee of Mercy, opening 8 December — the anniversary of Vatican II’s close — and closing 20 November 2016, under the motto “Merciful like the Father.” It traces mercy through Scripture and the Gospel parables, recalls the corporal and spiritual works of mercy, sends out Missionaries of Mercy to absolve reserved sins, and entrusts the Holy Year to the Mother of Mercy.",
+				"origin": "read"
+			}
+		},
+		"bull.spes-non-confundit.en": {
+			"en": {
+				"text": "Francis’s 2024 bull of indiction proclaiming the Ordinary Jubilee of 2025, opening from Paul’s “hope does not disappoint” and fixing the dates the four papal basilicas’ Holy Doors open and close. It urges concrete “signs of hope” — peace, openness to life, clemency for prisoners, care for the sick, the young, migrants and the poor — before anchoring hope in the resurrection, the Jubilee indulgence and Mary, Mother of Hope.",
+				"origin": "read"
+			}
+		},
 		"cdf.ad-resurgendum-cum-christo.en": {
 			"en": {
 				"text": "The Congregation for the Doctrine of the Faith’s 2016 Instruction on Christian burial and cremation, approved by Francis. It reaffirms the Church’s preference for burying the faithful departed in cemeteries or sacred places as an expression of hope in the resurrection, permits cremation where doctrinally sound, and sets norms requiring the ashes to remain intact in a sacred place — forbidding their conservation at home, scattering, or division among mementos.",
@@ -189,6 +207,72 @@
 		"cdf.samaritanus-bonus.en": {
 			"en": {
 				"text": "On the pastoral and medical care of persons in the critical and terminal stages of life, read through the Good Samaritan’s care for the wounded man. It excludes euthanasia and assisted suicide as morally impermissible, requires basic nutrition and hydration and access to palliative care, and addresses pastoral and sacramental accompaniment, healthcare workers’ conscientious objection, and the reform of medical formation.",
+				"origin": "read"
+			}
+		},
+		"constitution.ex-corde-ecclesiae.en": {
+			"en": {
+				"text": "John Paul II’s 1990 apostolic constitution on Catholic universities, tracing their origin “born from the heart of the Church” and naming four marks of Catholic identity: Christian inspiration, faith-informed reflection on knowledge, fidelity to the Christian message, and service to the People of God. It treats the university community, its bond to the Church, pastoral ministry, cultural dialogue and evangelization, then sets General Norms for establishing and safeguarding one.",
+				"origin": "read"
+			}
+		},
+		"constitution.fidei-depositum.en": {
+			"en": {
+				"text": "John Paul II’s apostolic constitution promulgating the Catechism of the Catholic Church, approved 25 June 1992 after six years of drafting by a commission chaired by Cardinal Ratzinger. It sets out the catechism’s four-part arrangement — the Creed, the sacred liturgy, the Ten Commandments, and Christian prayer — after the old order of the Catechism of St Pius V, and declares the text a sure norm for teaching the faith.",
+				"origin": "read"
+			}
+		},
+		"constitution.indulgentiarum-doctrina.en": {
+			"en": {
+				"text": "Revises the doctrine and discipline of indulgences by grounding them in the Communion of Saints: the treasury of Christ’s and the saints’ merits, entrusted to Peter’s successors, which the Church dispenses to remit the temporal punishment still owed for forgiven sin. Attached norms drop the old measure of indulgences in days and years, cap plenary indulgences at one a day, and abolish the personal, real and local divisions.",
+				"origin": "read"
+			}
+		},
+		"constitution.missale-romanum.en": {
+			"en": {
+				"text": "Paul VI’s 1969 apostolic constitution promulgating the revised Roman Missal, replacing St Pius V’s 1570 edition to carry out the Second Vatican Council’s call to revise the Mass. It adds three new Eucharistic Prayers beside the Roman Canon, sharing the same words of consecration; simplifies the rite, restoring the homily and the prayer of the faithful; and sets Sunday readings on a three-year cycle with an added Old Testament reading.",
+				"origin": "read"
+			}
+		},
+		"constitution.munificentissimus-deus.en": {
+			"en": {
+				"text": "Pius XII’s 1950 constitution tracing the Church’s devotion to Mary’s bodily Assumption — shrines, the ancient feast, the witness of Fathers and Doctors — and the near-unanimous judgment of the world’s bishops that the belief could be defined. It closes by pronouncing and defining that the Immaculate Mother of God, ever Virgin, was assumed body and soul into heavenly glory upon completing her earthly course.",
+				"origin": "read"
+			}
+		},
+		"constitution.pastor-bonus.en": {
+			"en": {
+				"text": "John Paul II’s 1988 apostolic constitution reorganizing the Roman Curia, carrying forward the renewal Paul VI began with Regimini Ecclesiae universae in light of the Second Vatican Council’s teaching on collegiality and the new Code of Canon Law. General norms on structure, procedure and ad limina visits precede articles on the Secretariat of State, nine Congregations, three Tribunals, and twelve Pontifical Councils.",
+				"origin": "read"
+			}
+		},
+		"constitution.praedicate-evangelium.en": {
+			"en": {
+				"text": "Francis’s 2022 constitution reorganizing the Roman Curia, replacing John Paul II’s 1988 Pastor Bonus. Grounding the reform in the Church’s “missionary conversion” — every Christian a missionary disciple — it sets twelve governing principles, among them co-responsibility and the Curia’s vicarious nature, then regulates in 250 articles the Secretariat of State and the Dicasteries, led by the Dicastery for Evangelization, placed first and presided over directly by the Pope.",
+				"origin": "read"
+			}
+		},
+		"constitution.sacrae-disciplinae-leges.en": {
+			"en": {
+				"text": "John Paul II’s 1983 apostolic constitution to the whole People of God, promulgating the revised Code of Canon Law. It traces the revision to John XXIII’s 1959 announcement alongside the Second Vatican Council, presents the Code as the collegial work of bishops and canonists, and describes it as translating the Council’s ecclesiology — the Church as communion — into canonical language, to take force from the first day of Advent 1983.",
+				"origin": "read"
+			}
+		},
+		"constitution.sacram-unctionem.en": {
+			"en": {
+				"text": "Revises the rite of the Anointing of the Sick, tracing its institution by Christ, its warrant in James 5:14–15, and its treatment by the Councils of Florence, Trent, and Vatican II. Changes the sacramental formula, permits oil from plants where olive oil is scarce, and simplifies anointing from the five senses to the forehead and hands. Approves the Order from the Sacred Congregation for Divine Worship, effective 1 January 1974.",
+				"origin": "read"
+			}
+		},
+		"constitution.sapientia-christiana.en": {
+			"en": {
+				"text": "Reorganizes the canonical law governing ecclesiastical universities and faculties, replacing Pius XI’s 1931 Deus Scientiarum Dominus. General Norms set a Faculty’s government, its teachers, students and staff, and a three-cycle curriculum to the Baccalaureate, Licentiate and Doctorate; Special Norms govern the Faculties of Sacred Theology, Canon Law and Philosophy. Attached Norms of Application, from the Sacred Congregation for Catholic Education, set the working procedures.",
+				"origin": "read"
+			}
+		},
+		"constitution.veritatis-gaudium.en": {
+			"en": {
+				"text": "Reforms the governance, curricula and degrees of Ecclesiastical Universities and Faculties worldwide, renewing the 1979 Sapientia Christiana. Its Foreword sets four criteria for the renewal of ecclesiastical studies — the kerygma, dialogue, interdisciplinarity, and networking among institutions — before general norms on government, teachers, students and degrees, then special norms for the faculties of theology, canon law and philosophy. An appendix carries Sapientia Christiana’s own foreword and the implementing Norms of Application.",
 				"origin": "read"
 			}
 		},
@@ -2356,9 +2440,153 @@
 				"origin": "read"
 			}
 		},
+		"letter.dies-domini.en": {
+			"en": {
+				"text": "Addressed to the Church’s bishops, clergy and faithful on keeping the Lord’s Day holy, examining Sunday under the five headings it gives itself: Dies Domini, the Creator’s rest; Dies Christi, the Risen Lord and the Spirit’s gift; Dies Ecclesiae, the Sunday Eucharistic assembly; Dies Hominis, joy, rest and solidarity; and Dies Dierum, the primordial feast revealing time’s meaning — closing with an appeal to rediscover Sunday before the Third Millennium’s Jubilee.",
+				"origin": "read"
+			}
+		},
+		"letter.laetamur.en": {
+			"en": {
+				"text": "Approves and promulgates the Latin typical edition of the Catechism of the Catholic Church as its definitive text, five years after Fidei Depositum accompanied its first, French-language text. Credits the Interdicasterial Commission under Cardinal Joseph Ratzinger, appointed in 1993, with weighing suggested changes gathered worldwide and incorporating them into this edition, which it calls a “sure norm for teaching the faith,” and urges the bishops to disseminate it more widely.",
+				"origin": "read"
+			}
+		},
+		"letter.maximum-illud.en": {
+			"en": {
+				"text": "Benedict XV’s 1919 letter to the bishops of the Catholic world on the missions. Addressed first to mission superiors, then to missionaries, then to all Catholics, it insists on training local clergy, warns missionaries against national ambition and profit-seeking, and closes by naming three ways the faithful can help: prayer, vocations, and support for the Society for the Propagation of the Faith and kindred organizations.",
+				"origin": "read"
+			}
+		},
+		"letter.mulieris-dignitatem.en": {
+			"en": {
+				"text": "A meditation offered for the Marian Year on the dignity and vocation of women, moving from Mary as Theotókos and woman made in the image and likeness of God, through the Eve-Mary contrast and Christ’s own encounters with women in the Gospel, to motherhood and virginity as the two dimensions of women’s vocation and the Church as the Bride of Christ, before closing on love as its measure.",
+				"origin": "read"
+			}
+		},
+		"letter.novo-millennio-ineunte.en": {
+			"en": {
+				"text": "John Paul II’s apostolic letter closing the Great Jubilee of 2000, addressed to bishops, clergy, religious and the lay faithful, taking its refrain from Christ’s call to Peter to “put out into the deep” (Lk 5:4). Four chapters trace the Jubilee’s legacy, contemplation of Christ’s face, pastoral priorities of holiness, prayer and the Sunday Eucharist, and communion expressed through ecumenism, charity and a Jubilee debt-relief endowment for the poor.",
+				"origin": "read"
+			}
+		},
 		"letter.octogesima-adveniens.en": {
 			"en": {
 				"text": "Paul VI’s apostolic letter to Cardinal Roy, marking the eightieth anniversary of Rerum Novarum, surveys the new social problems industrial society has produced since Leo XIII’s time — urbanization, migration, the environment, discrimination, mass media — and weighs the promise and limits of liberal and Marxist ideologies. Rather than proposing one universal model, it calls Christians to political action within a legitimate pluralism of options.",
+				"origin": "read"
+			}
+		},
+		"letter.ordinatio-sacerdotalis.en": {
+			"en": {
+				"text": "John Paul II’s 1994 apostolic letter to the bishops of the Catholic Church, on reserving priestly ordination to men alone. Recalling Paul VI’s Declaration Inter Insigniores and Christ’s free choice of only men as Apostles, and the Blessed Virgin’s own exclusion from apostolic ministry, it declares, in virtue of his ministry of confirming the brethren, that the Church has no authority to ordain women, a judgment to be definitively held.",
+				"origin": "read"
+			}
+		},
+		"letter.orientale-lumen.en": {
+			"en": {
+				"text": "John Paul II’s 1995 apostolic letter to the bishops, clergy and faithful, marking the centenary of Leo XIII’s Orientalium Dignitas, on the spiritual patrimony of the Christian East. It first presents that heritage as “an experience of faith” — liturgy, monasticism, spiritual fatherhood, contemplative silence — then moves “from knowledge to encounter,” reviewing the path toward unity with the Orthodox and other Eastern Churches since Vatican II.",
+				"origin": "read"
+			}
+		},
+		"letter.rosarium-virginis-mariae.en": {
+			"en": {
+				"text": "On the Rosary of the Virgin Mary, opening a Year of the Rosary from October 2002 to October 2003. It answers objections that the prayer competes with the Liturgy or is unecumenical, adds five Mysteries of Light between the Joyful and Sorrowful mysteries, and works through its own method — announcing each mystery, silence, the Our Father, the ten Hail Marys, the Gloria — closing on peace and the family.",
+				"origin": "read"
+			}
+		},
+		"letter.salvifici-doloris.en": {
+			"en": {
+				"text": "On the Christian meaning of human suffering, written for the Holy Year of the Redemption: its inescapable presence in life, the search for its meaning through Job and Isaiah’s Suffering Servant, and Christ’s Passion as the answer — suffering joined to his becomes redemptive. It traces an unfolding “Gospel of suffering” carried by those who suffer with him, and closes with the Good Samaritan as the pattern of Christian care.",
+				"origin": "read"
+			}
+		},
+		"letter.summi-dei-verbum.en": {
+			"en": {
+				"text": "Paul VI’s 1963 apostolic letter to patriarchs, primates, archbishops and bishops, marking the fourth centenary of the Council of Trent’s institution of seminaries. Holding up Christ’s hidden years at Nazareth as the seminarian’s model, it traces why Trent created seminaries, treats prayer as a vocation’s first source and right intention as its sign, weighs dangers facing young men, and urges the studies, pastoral practice and sanctity that form a priest.",
+				"origin": "read"
+			}
+		},
+		"letter.tertio-millennio-adveniente.en": {
+			"en": {
+				"text": "John Paul II’s 1994 apostolic letter to the bishops, clergy and lay faithful preparing for the Great Jubilee of the Year 2000, framed by “Jesus Christ is the same yesterday and today” (Heb 13:8). It sets a three-year programme — 1997 on Christ, 1998 on the Holy Spirit, 1999 on the Father — and calls the Church to examine her conscience over her children’s historical failures.",
+				"origin": "read"
+			}
+		},
+		"letter.vicesimus-quintus-annus.en": {
+			"en": {
+				"text": "Marks the twenty-fifth anniversary of Sacrosanctum Concilium’s promulgation, addressed to the bishops and priests. It reviews the Constitution’s guiding principles — the re-enactment of Christ’s Paschal Mystery, the proclaimed word of God, the Church made manifest at prayer — weighs the reform’s difficulties, positive results and erroneous applications, and assigns responsibility for its continuing renewal to the Holy See, the episcopal conferences and the diocesan bishop.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.apostolos-suos.en": {
+			"en": {
+				"text": "On the theological and juridical status of episcopal conferences. Distinguishes the collegial spirit (affectus collegialis) bishops exercise jointly within a territorial conference from the full collegiality proper only to the whole College of Bishops acting with the Pope, and sets the conditions under which a conference’s doctrinal declarations bind the faithful as authentic magisterium: unanimous approval by its bishops, or the Apostolic See’s recognitio for a two-thirds majority.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.ecclesiae-sanctae.en": {
+			"en": {
+				"text": "Paul VI’s 1966 motu proprio, issued on an experimental basis until the revised Code of Canon Law appears, setting norms to implement four Vatican II decrees in three parts: reorganizing diocesan clergy distribution and episcopal governance under Christus Dominus and Presbyterorum Ordinis, directing religious institutes’ general chapters to revise their constitutions under Perfectae Caritatis, and reshaping missionary formation and the Propagation of the Faith under Ad Gentes Divinitus.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.magnum-principium.en": {
+			"en": {
+				"text": "Amends canon 838 of the Code of Canon Law, governing translation and approval of liturgical books into vernacular languages. Recalling the Council’s principle that liturgical prayer be understood by the people, it assigns the Apostolic See to order the liturgy and recognise adaptations, the Episcopal Conferences to prepare and publish vernacular versions after the Apostolic See’s confirmation, and the diocesan bishop to set liturgical norms within his own church.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.maiorem-hac-dilectionem.en": {
+			"en": {
+				"text": "Francis’s 2017 motu proprio establishing the offer of life — the free, voluntary sacrifice of one’s life out of love, followed swiftly by death — as a new cause for beatification, distinct from martyrdom and heroic virtue. Article 2 sets its five criteria, including a link between the offer and premature death and a posthumous miracle; the closing articles amend the Congregation for the Causes of Saints’ procedural norms to accommodate it.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.misericordia-dei.en": {
+			"en": {
+				"text": "On certain aspects of the celebration of the Sacrament of Penance, addressed to bishops amid a tendency to abandon individual confession for general absolution. It reaffirms individual confession as the ordinary means of reconciliation, restricts general absolution under Canon 961 to imminent danger of death or a grave necessity depriving penitents of sacramental grace for a long time, and rules out crowding at a feast or pilgrimage as sufficient cause.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.mitis-et-misericors-iesus.en": {
+			"en": {
+				"text": "Francis’s 2015 motu proprio reforming the Code of Canons of the Eastern Churches’ marriage-nullity procedure, canons 1357 to 1377, issued separately given those Churches’ own disciplinary structure. It drops the second conforming sentence, makes the eparchial bishop himself first-instance judge, and adds a briefer process he alone conducts for manifest nullity, while keeping appeal to the Metropolitan and the Roman Rota. An attached ratio procedendi adds pastoral investigation before the libellus.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.mitis-iudex-dominus-iesus.en": {
+			"en": {
+				"text": "Reforms the Code of Canon Law’s marriage-nullity trial, canons 1671 to 1691: a single first-instance declaration of nullity now suffices, without the second conforming sentence required before; ordinary judgment is entrusted to a sole cleric judge appointed by the bishop; manifest cases may go to the bishop himself through a new briefer process; and appeal returns to the metropolitan see. Attached procedural rules open with pastoral outreach to separated and divorced spouses.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.mysterii-paschalis.en": {
+			"en": {
+				"text": "Promulgates the new Roman Universal Calendar prepared by Consilium, centering the liturgical year on the Paschal Mystery per Sacrosanctum Concilium. Recalls Pius X’s, John XXIII’s and Pius XII’s earlier restoration of Sunday, Lent and the Easter Vigil, then reduces the universal Calendar to saints of truly universal significance, moving others to local calendars and admitting more recently evangelized regions’ martyrs in their place. Effective 1 January 1970.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.sacram-liturgiam.en": {
+			"en": {
+				"text": "Paul VI’s 1964 motu proprio establishing a commission to carry out the Second Vatican Council’s Constitution on the Sacred Liturgy and putting select norms of it into force immediately, from the first Sunday of Lent: liturgy taught in seminaries, diocesan commissions for liturgy, music and art, the Sunday homily, Confirmation and Matrimony within Mass, an eased Divine Office, and liturgical regulation reserved to the Holy See and the bishops alone.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.sacrum-diaconatus.en": {
+			"en": {
+				"text": "General norms restoring the permanent diaconate as a particular and permanent rank of the hierarchy in the Latin Church, carrying out the Second Vatican Council’s provision for it: the celibacy law for young candidates, minimum ages of twenty-five and thirty-five, a three-year formation institute, the eleven liturgical and pastoral functions a deacon may exercise, the spiritual obligations binding him, and the diaconate’s extension to men in Religious institutes.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.summorum-pontificum.en": {
+			"en": {
+				"text": "Benedict XVI’s 2007 apostolic letter, issued motu proprio, on the use of the Roman liturgy prior to the 1970 reform. It declares the 1962 Missal of Bl. John XXIII an extraordinary expression of the same Roman rite as Paul VI’s Missal, permits any priest to celebrate it privately without permission, and sets twelve articles governing parish requests, lay attendance, the sacraments, and the Pontifical Commission Ecclesia Dei’s oversight.",
+				"origin": "read"
+			}
+		},
+		"motu-proprio.traditionis-custodes.en": {
+			"en": {
+				"text": "Francis’s 2021 motu proprio on the use of the Roman liturgy prior to the 1970 reform, declaring the liturgical books of Paul VI and John Paul II the Roman Rite’s sole lex orandi and placing the 1962 Missal under each diocesan bishop’s exclusive authority. Existing groups must accept the reform’s legitimacy, gather away from parish churches under a delegated priest, and see no new groups established.",
 				"origin": "read"
 			}
 		},
