@@ -258,19 +258,19 @@ which kind. It is a large share of religious argument online, it is where the
 convert lands about eighteen months in, and the corpus answers it better than it
 answers band B.
 
-| Topic                          | The sentence                            | Anchor                                                                   |
-| ------------------------------ | --------------------------------------- | ------------------------------------------------------------------------ |
-| Does teaching ever change      | "You changed it before."                | CCC 66–67; `vati.dei-filius`; `donum-veritatis`                          |
-| May I disagree with the Church | "Not on THIS one."                      | `donum-veritatis`; CCC 1776–1802 (conscience), 892                       |
-| Criticising the Pope           | "He is wrong and I can say so."         | `vati.pastor-aeternus`; CCC 880–892; `mysterium-ecclesiae`               |
-| Did Vatican II break it        | "Everything went wrong in 1965."        | the 16 `vatii.*`; `lumen-gentium` 8                                      |
-| The Latin Mass                 | "They took it away."                    | `sacrosanctum-concilium`; _Traditionis Custodes_ absent                  |
-| Should the State be Catholic   | "Liberalism was the mistake."           | `immortale-dei`, `libertas`, `quas-primas` vs `dignitatis-humanae`       |
-| Synodality and governance      | "Who decides anything?"                 | `lumen-gentium` 22–27; `christifideles-laici`; `pastores-gregis`         |
-| Women in the Church            | "It is run by men."                     | `collaboration-of-men-and-women`; `inter-insigniores`                    |
-| Charismatic gifts, healing     | "Is what I felt from God?"              | CCC 799–801, 2003                                                        |
-| How a Catholic may vote        | "Not for that party, surely."           | `catholics-in-political-life`; CCC 2240–2246                             |
-| Proselytising                  | "Should we even try to convert people?" | `aspects-of-evangelization`; `redemptoris-missio`; `evangelii-nuntiandi` |
+| Topic                          | The sentence                            | Anchor                                                                                     |
+| ------------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Does teaching ever change      | "You changed it before."                | CCC 66–67; `vati.dei-filius`; `donum-veritatis`                                            |
+| May I disagree with the Church | "Not on THIS one."                      | `donum-veritatis`; CCC 1776–1802 (conscience), 892                                         |
+| Criticising the Pope           | "He is wrong and I can say so."         | `vati.pastor-aeternus`; CCC 880–892; `mysterium-ecclesiae`                                 |
+| Did Vatican II break it        | "Everything went wrong in 1965."        | the 16 `vatii.*`; `lumen-gentium` 8                                                        |
+| The Latin Mass                 | "They took it away."                    | `sacrosanctum-concilium`; `summorum-pontificum` and `traditionis-custodes`, which disagree |
+| Should the State be Catholic   | "Liberalism was the mistake."           | `immortale-dei`, `libertas`, `quas-primas` vs `dignitatis-humanae`                         |
+| Synodality and governance      | "Who decides anything?"                 | `lumen-gentium` 22–27; `christifideles-laici`; `pastores-gregis`                           |
+| Women in the Church            | "It is run by men."                     | `collaboration-of-men-and-women`; `inter-insigniores`                                      |
+| Charismatic gifts, healing     | "Is what I felt from God?"              | CCC 799–801, 2003                                                                          |
+| How a Catholic may vote        | "Not for that party, surely."           | `catholics-in-political-life`; CCC 2240–2246                                               |
+| Proselytising                  | "Should we even try to convert people?" | `aspects-of-evangelization`; `redemptoris-missio`; `evangelii-nuntiandi`                   |
 
 **"Does teaching ever change" is the keystone of the whole list.** It sits under
 contraception, the death penalty, usury, slavery, religious liberty and Vatican
@@ -412,16 +412,23 @@ enumeration of grave violations.
 **The corpus answers the rule and the claim; it barely answers the record.**
 Every topic in bands A, D, E and F has at least one magisterial anchor and most
 have several. Band B has almost none — and band B is where 39% of the people who
-left say they left. The reason is structural and already stated in
-`docs/decisions.md`: the corpus takes encyclicals, exhortations, conciliar
-constitutions, doctrinal-office documents, the CCC, the Compendium, the Code and
-the Social Doctrine Compendium. **An apostolic letter is not a kind this corpus
-takes**, and that is where the historical reckoning lives — _Tertio Millennio
+left say they left.
+
+**The structural reason this section gave for that expired the day it was
+written** (rechecked 2026-09-10). It said an apostolic letter is not a kind this
+corpus takes, and cited `docs/decisions.md`, which says the opposite: letters,
+constitutions, motu proprios and bulls are selected rather than taken whole, by
+the citation rule stated there. The selection landed in `corpus/1bfaa38` on
+2026-09-09, the same day this section was written, and nothing told this file.
+Every work named here as out of reach carries `type: document` in `build/`
+today, which is all a topic's `documents` field asks of one: _Tertio Millennio
 Adveniente_, _Salvifici Doloris_, _Dies Domini_, _Mulieris Dignitatem_,
-_Indulgentiarum Doctrina_, _Ordinatio Sacerdotalis_ itself. So is _Fiducia
-Supplicans_, checked and absent while the three earlier documents on the same
-subject are present: a topic page on homosexuality built today would be silently
-two years out of date.
+_Indulgentiarum Doctrina_, _Ordinatio Sacerdotalis_. Band B is thin for the
+ordinary reason — nobody has anchored it — and not for a structural one.
+
+_Fiducia Supplicans_ is the part of the claim that survives, checked again and
+still absent while the three earlier documents on the same subject are present:
+a topic page on homosexuality built today is silently two years out of date.
 
 **A topic that cannot be answered properly does not ship, and the gap is
 recorded here rather than left implicit** (decided 2026-09-09). The reader who
@@ -430,20 +437,45 @@ say, which is worse than never offering the topic. So the list below is the
 shipping blocklist, and every line is a claim that the corpus — not the Church —
 is what falls short.
 
-| Held back                     | Why                                                                                                                                |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| The whole of band B           | apostolic letters are not a document kind here; the reckoning is in them                                                           |
-| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                          |
-| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                             |
-| Grief that does not lift      | CCC 1680–1683 is the Christian meaning of death, not the one left behind; _Salvifici Doloris_ is an apostolic letter and so absent |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                          |
-| Debt and interest             | _Vix Pervenit_ absent                                                                                                              |
-| The Latin Mass                | _Traditionis Custodes_ and its predecessors absent                                                                                 |
-| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one         |
+| Held back                     | Why                                                                                                                        |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                  |
+| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                     |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                  |
+| Debt and interest             | _Vix Pervenit_ absent                                                                                                      |
+| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one |
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a
 topic shipping over a corpus that answers an older question than the one asked.
+
+**A blocklist is a claim about the corpus on a day, and the corpus is not
+frozen.** Three rows were removed on 2026-09-10 because the documents they were
+waiting for had already arrived — one of them on the day the row was written. A
+row that reads "_X_ absent" is checkable in one command and none of them were
+rechecked. That is the same failure as a stale answer, pointing the other way:
+there, the reader is told something no longer taught; here, the reader is told
+nothing at all about something the corpus can now answer. Recheck before
+trusting a row:
+
+```sh
+for n in orationis-formas vix-pervenit fiducia-supplicans; do
+  ls -d "$CORPUS_DIR"/build/*."$n".* >/dev/null 2>&1 \
+    && echo "$n PRESENT — this row has expired" || echo "$n absent"
+done
+```
+
+### Released by the corpus, and unwritten
+
+| Was held back            | What arrived                                                                                                    | What a topic would get                                                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| The whole of band B      | apostolic letters, as a published kind — the six named above                                                    | anchors where the historical reckoning actually lives                                                                                |
+| Grief that does not lift | _Salvifici Doloris_                                                                                             | a named document only; CCC 1680–1683 is still the Christian meaning of death and not the one left behind, so probably a B on arrival |
+| The Latin Mass           | _Summorum Pontificum_ and _Traditionis Custodes_, beside _Missale Romanum_, _Magnum Principium_, _Mediator Dei_ | both sides of a live disagreement, which is the state `quaestiones.json` asks for. _Ecclesia Dei_ and _Desiderio Desideravi_ absent  |
+
+Releasing a row is not shipping a topic: each of these still needs a slug, a
+cluster, a question worth typing and strings in the dictionaries. What has
+changed is that the corpus is no longer the reason not to.
 
 One further hole belongs to no document: **anything after the corpus's last
 fetch.** A topic page dates faster than a document page, because a topic is a
@@ -578,6 +610,15 @@ The blocklist above is unchanged and still holds.
   anchor set each was formed on. What remains is what those rows record: every
   B names what would replace it, and several name a text the corpus does not
   have — which is this list's business rather than that pass's.
+- **The three topics the corpus released.** The blocklist above stopped
+  holding back band B, grief that does not lift and the Latin Mass on
+  2026-09-10, because the documents each was waiting for had arrived without
+  anything rechecking the row. None of the three has a slug, a cluster or a
+  question yet, and the Latin Mass one is the interesting case: it would carry
+  _Summorum Pontificum_ and _Traditionis Custodes_ together, which is what
+  `quaestiones.json` asks for where two magisterial texts differ, and it would
+  land on the reader PLAN.md gap 19 is about — the one shown both and told when
+  neither was written.
 - **The other thirty-five dictionaries.** `en` and `pt` carry the keys; until
   all of them do, `/quaestiones` stays out of `CHROME_PATHS` and the sitemap on
   `route-manifest.ts`'s own terms. This is now the largest single block of
