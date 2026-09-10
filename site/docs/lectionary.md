@@ -137,6 +137,13 @@ Rosary's mysteries for the weekday, which the corpus states in
 `PrayerGroupEntry.days` rather than leaving this site to read a rubric written
 in the content language.
 
+**Those two are LINKS and not extracts.** `The Rosary (The Mysteries of Light)`
+names the day's set inside the link and stops there; the five mysteries and
+their meditations are on the prayer's own page, and printing them here made a
+page about the day begin to reproduce a prayer it links to — and made the
+Rosary a block beside an antiphon that is a line, so a list of two read as one
+prayer under a heading.
+
 **The way in is a word at the foot of the READINGS, not of the card.**
 `DayReadings` draws it and `LiturgicalDayCard` only forwards the prop, because
 what it offers is more of that one section: the card's other parts are the day's
