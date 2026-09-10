@@ -1,5 +1,5 @@
 <!--
-	The popover a unit number opens: copy, copy link, view, bookmark.
+	The popover a unit number opens: view, copy, copy link, bookmark.
 
 	WHY THE NUMBER STOPPED BEING A PLAIN LINK. The unit number is the most
 	touched affordance in the reader and it did exactly one thing — navigate —
@@ -184,6 +184,18 @@
 		aria-label={t('anchor.actions')}
 	>
 		<li role="none">
+			<a
+				role="menuitem"
+				class="anchor-menu-item"
+				href={navHref}
+				aria-label={t('anchor.view')}
+				title={t('anchor.view')}
+				onclick={menu.close}
+			>
+				<Icon name="eye" />
+			</a>
+		</li>
+		<li role="none">
 			<button
 				type="button"
 				role="menuitem"
@@ -206,18 +218,6 @@
 			>
 				<Icon name={glyph('copyLink', 'link')} />
 			</button>
-		</li>
-		<li role="none">
-			<a
-				role="menuitem"
-				class="anchor-menu-item"
-				href={navHref}
-				aria-label={t('anchor.view')}
-				title={t('anchor.view')}
-				onclick={menu.close}
-			>
-				<Icon name="eye" />
-			</a>
 		</li>
 		<li role="none">
 			<button
