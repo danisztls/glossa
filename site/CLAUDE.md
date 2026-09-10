@@ -2325,6 +2325,13 @@ the half that is testable, rationale in `site/docs/reading.md`).
 - **The quotation is cut from a clone with `APPARATUS_SELECTOR` removed** — a
   verse's span contains its own reference number, so the raw text of a whole
   verse begins `3In the beginning`.
+- **An `auto` popover opened from a pointer event that is not `click` must be
+  deferred by a task, or light dismiss shuts it in the same gesture.** The
+  browser records the pointerdown target and acts at pointerup, after dispatch;
+  with nothing open at pointerdown that target is null, and the ancestor of a
+  run of prose is null too, so the two compare equal and the panel is dismissed
+  as though it had been there all along. The symptom is a popover that never
+  appears, with nothing logged.
 - **It cost no new interface strings**, saying what the unit number's panel
   says in keys every dictionary carries. A surface that does what an existing
   surface does is worth checking for this before it is written.

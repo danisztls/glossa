@@ -247,16 +247,32 @@
      highlight being made: re-evaluating there would measure a selection the
      reader has not touched and, on the release that dismissed the panel,
      bring it back. -->
+<!-- AFTER THE GESTURE, NOT INSIDE IT, and the panel does not open at all
+     without the deferral. Light dismiss is not a listener that can be
+     out-ordered: the browser records the pointerDOWN target and acts on
+     pointerUP, after the event has finished dispatching, hiding every `auto`
+     popover that is not an ancestor of what was pressed. A panel shown from
+     inside that pointerup is therefore opened and shut in one gesture, with
+     nothing to see and nothing logged. It is also why a `popovertarget`
+     button works: that one toggles on `click`, which is dispatched after
+     pointerup — after light dismiss has already run and found nothing open.
+
+     One task later is the whole fix, and it pays for a second thing on the
+     way: Firefox settles `selectionchange` after pointerup, so a selection
+     read inside the gesture can still be the PREVIOUS one. -->
 <svelte:window
 	onpointerup={(e) => {
+		// Read now, not in the callback: by then the panel may have been
+		// dismissed and `e.target` is no longer worth asking about.
 		if (e.target instanceof Node && card.panel?.contains(e.target)) return;
-		evaluate();
+		setTimeout(evaluate);
 	}}
 	onkeyup={(e) => {
 		// Where a shift-arrow selection comes to rest. Everything else — a
 		// letter typed into the jump box, a bare arrow scrolling the page —
 		// leaves the selection alone and must leave the panel alone with it.
-		if (e.key === 'Shift' || e.shiftKey) evaluate();
+		// Deferred too, so both paths reach `evaluate` the same way.
+		if (e.key === 'Shift' || e.shiftKey) setTimeout(evaluate);
 	}}
 />
 <!-- The one thing `selectionchange` is for: a highlight the reader cleared,

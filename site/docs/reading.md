@@ -805,6 +805,22 @@ the reader has cleared. Pressing a button in the panel would collapse the
 selection out from under it, so the panel prevents `mousedown` — which is also
 what a native selection callout does.
 
+**An `auto` popover shown from inside a pointerup is opened and shut in one
+gesture, and the panel did not appear at all until it was deferred by a task.**
+Light dismiss is not a listener that can be out-ordered: the browser records
+the pointerDOWN target and acts at pointerUP, after dispatch, hiding every auto
+popover that is not an ancestor of what was pressed. The comparison is the part
+that surprises — at pointerdown there was nothing open, so the recorded target
+is null, and at pointerup the clicked-popover ancestor of a run of prose is
+null too. Two nulls compare equal, so the algorithm reads a panel that did not
+exist when the gesture began as the one being dismissed. It is also why a
+`popovertarget` button has never needed this: that toggles on `click`, which is
+dispatched after pointerup, when light dismiss has already run and found
+nothing. `setTimeout` is the whole fix, and it pays for a second thing on the
+way — Firefox settles `selectionchange` after pointerup, so a selection read
+inside the gesture can still be the previous one. **Reach for the deferral
+whenever a popover is opened from a pointer event that is not `click`.**
+
 **Desktop only, and the reason is that the platform is already there.** A touch
 screen raises its own selection callout over the words, with its own copy
 button and its own handles, drawn in a layer this page cannot reach; a second
