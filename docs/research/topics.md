@@ -466,15 +466,21 @@ for n in orationis-formas vix-pervenit fiducia-supplicans; do
 done
 ```
 
-### Released by the corpus, and unwritten
+### Released by the corpus, and now written
 
-| Was held back  | What arrived                                                                                                    | What a topic would get                                                                                                              |
-| -------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Band B         | apostolic letters as a published kind, _Tertio Millennio Adveniente_ among them                                 | the three of band B's six that never shipped: the Church's record, the Church's wealth, colonialism                                 |
-| The Latin Mass | _Summorum Pontificum_ and _Traditionis Custodes_, beside _Missale Romanum_, _Magnum Principium_, _Mediator Dei_ | both sides of a live disagreement, which is the state `quaestiones.json` asks for. _Ecclesia Dei_ and _Desiderio Desideravi_ absent |
+Four topics, added 2026-09-10 on the same day the rows releasing them were
+struck. Each carries a row in `site/quaestiones-review.json` saying what it is
+still short of.
+
+| Topic               | Slug                 | What answers it                                                            |
+| ------------------- | -------------------- | -------------------------------------------------------------------------- |
+| The Church's record | `culpae-praeteritae` | CCC 2298, the only paragraph in which the Catechism accuses itself by name |
+| The Church's wealth | `divitiae-ecclesiae` | can. 1254 §2, the three purposes the Church's goods may serve              |
+| Colonialism         | `colonialismus`      | CCC 854 and CSDC 180, 471 — what is said now, not what was done            |
+| The older Mass      | `usus-antiquior`     | CCC 1125, which binds the supreme authority as much as anyone              |
 
 **Band B was half-written already and this file did not say so.** Three of its
-six shipped without anyone striking the blocklist row: the abuse crisis is
+six had shipped without anyone striking the blocklist row: the abuse crisis is
 `scandalum-cleri`, the Church and the Jews is `iudaismus`, and clericalism is
 split between `mulieres-in-ecclesia` and `synodalitas`. A row covering a whole
 band hides that, which is a second way for a row to go stale — not the corpus
@@ -489,9 +495,21 @@ body, which is the door mismatch `graviditas` was fixed for. _Salvifici
 Doloris_ can be named and not quoted, and a page whose only real answer is a
 link is the three-sentence page this list exists to prevent.
 
-Releasing a row is not shipping a topic: each of these still needs a slug, a
-cluster, a question worth typing, strings in the dictionaries, and — the binding
-constraint today — a description for every document it names. See _Still open_.
+**The reckoning and the present are two topics, not one.** `culpae-praeteritae`
+holds CCC 2298 and 827, the only paragraphs that accuse, and `colonialismus`
+holds neither: printing the same two paragraphs under two titles is the
+duplicate the topic file's own rule forbids. So the conquest is answered where
+the Church accuses herself, and what she says to indigenous peoples now is
+answered where she says it.
+
+**Three of the four name a document they cannot name yet.** _Tertio Millennio
+Adveniente_, _Summorum Pontificum_, _Traditionis Custodes_ and _Missale
+Romanum_ are all in the corpus and all among the works with no entry in
+`descriptions.json`, which `quaestiones.json` requires read before a document is
+named. So `culpae-praeteritae` ships with no document at all and
+`usus-antiquior` ships on _Sacrosanctum Concilium_ and _Mediator Dei_ alone,
+with the keywords still promising the two motu proprios. Both rows say so, and
+both are one edit from complete once the descriptions exist.
 
 One further hole belongs to no document: **anything after the corpus's last
 fetch.** A topic page dates faster than a document page, because a topic is a
@@ -637,16 +655,17 @@ The blocklist above is unchanged and still holds.
   requires the description to be read before a document is named, so a topic
   cannot honestly name any of them yet. A description is written by reading the
   document (PLAN.md gap 16), and the documents are in the corpus.
-- **The topics the corpus released.** The blocklist above stopped
-  holding back band B and the Latin Mass on 2026-09-10, because the documents
-  each was waiting for had arrived without anything rechecking the row. That is
-  four topics — the Church's record, the Church's wealth, colonialism, the older
-  Mass — and none has a slug, a cluster or a question yet. The last is the
-  interesting case: it would carry
-  _Summorum Pontificum_ and _Traditionis Custodes_ together, which is what
-  `quaestiones.json` asks for where two magisterial texts differ, and it would
-  land on the reader PLAN.md gap 19 is about — the one shown both and told when
-  neither was written.
+- **Four topics wait on four descriptions.** The topics the corpus released
+  were written on 2026-09-10 — `culpae-praeteritae`, `divitiae-ecclesiae`,
+  `colonialismus`, `usus-antiquior` — but three of the documents that answer
+  them best cannot be named until someone writes their descriptions:
+  _Tertio Millennio Adveniente_ for the record, _Summorum Pontificum_ and
+  _Traditionis Custodes_ for the older Mass, with _Missale Romanum_ behind them.
+  Until then `culpae-praeteritae` carries no document and `usus-antiquior`
+  carries two of five. The same edit closes `purgatorium`'s
+  _Indulgentiarum Doctrina_, which is named today against its manifest rather
+  than against a description — the one topic in the file in that state.
+
 - **The other thirty-five dictionaries.** `en` and `pt` carry the keys; until
   all of them do, `/quaestiones` stays out of `CHROME_PATHS` and the sitemap on
   `route-manifest.ts`'s own terms. This is now the largest single block of

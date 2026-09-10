@@ -92,6 +92,24 @@
 			"anchors": "ccc 2123-2128,1260 | documents gaudium-et-spes",
 			"note": "Was C: the keywords ended on _invincible ignorance_ and _good atheists_, and the page ran from “atheism is a sin against the virtue of religion” to “agnosticism is all too often equivalent to practical atheism” with nothing after it. Fixed 2026-09-10 with 1260 — a man ignorant of the Gospel who seeks the truth and does the will of God as he understands it can be saved. 1260 and not 847, whose first clause (“this affirmation is not aimed at”) points back at a sentence that is not on this page. 2125 already carried the other half: believers can have more than a little to do with the rise of atheism."
 		},
+		"culpae-praeteritae": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2298,853,827",
+			"note": "New 2026-09-10, released from the blocklist in `docs/research/topics.md`, which had recorded this band as having no anchor at all. It has one: 2298 is the only place the Catechism accuses itself by name — cruel practices used “often without protest from the Pastors of the Church, who themselves adopted in their own tribunals the prescriptions of Roman law concerning torture” — and it closes “we must pray for the victims and their tormentors”. 853 is the discrepancy “between the message she proclaims and the human weakness of those to whom the Gospel has been entrusted”, and 827 is holy and always in need of purification. B because no anchored sentence says Inquisition, Crusade or Galileo: the Catechism admits the practice and never the episode. No document, and that is not the corpus’s fault — _Tertio Millennio Adveniente_ is the reckoning this page is missing, it is in `build/`, and it has no entry in `descriptions.json`, which `quaestiones.json` requires read before a document is named."
+		},
+		"divitiae-ecclesiae": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1351,2446 | canons 1254,222 | documents dilexi-te,evangelii-gaudium",
+			"note": "New 2026-09-10. can. 1254 §2 answers the question as asked, by saying what the Church’s goods are for: divine worship, the decent support of ministers, and “works of the sacred apostolate and of charity, especially toward the needy” — three purposes, and a reader can measure a building against them. can. 222 §2 turns the same obligation on the reader. CCC 1351 shows the collection doing it in the second century, gathered for “orphans and widows, those whom illness or any other cause has deprived of resources, prisoners, immigrants and, in a word, all who are in need”, and 2446 is the Church quoting Chrysostom against herself — “the goods we possess are not ours, but theirs”. Paragraphs shared with `paupertas` and the canon with `decimae`; all three sets differ."
+		},
+		"colonialismus": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 854 | csdc 180,471 | documents querida-amazonia,ecclesia-in-america",
+			"note": "New 2026-09-10, and split deliberately from `culpae-praeteritae`: the reckoning is there, because 2298 and 827 are the only paragraphs that accuse and printing them twice would be one page under two titles. This one is what the Church says now. 854 is the correction of the method — mission “must involve a process of inculturation if the Gospel is to take flesh in each people’s culture”, and “there will be times of defeat”. CSDC 180 says community property “constitutes a fundamental element of their survival and well-being” for many indigenous peoples, and 471 that their rights “must be appropriately protected”. B because nothing anchored is addressed to the conquest itself. The keywords stop where the texts stop: no _residential schools_ and no _doctrine of discovery_, because the corpus has neither and this pass does not promise what it cannot show."
+		},
 		"beata-virgo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
@@ -179,6 +197,12 @@
 			"reviewed": "2026-09-10",
 			"anchors": "ccc 66,84-87,1124-1125,1205-1206 | documents sacrosanctum-concilium,lumen-gentium,dei-verbum,gaudium-et-spes,dignitatis-humanae",
 			"note": "Was answering a different question: 84–87 is the deposit and the Magisterium, and a reader asking whether the Church became something else in 1965 got four paragraphs on who interprets the Word of God. Widened 2026-09-10 with 66 (no new public revelation), 1124–1125 (“even the supreme authority in the Church may not change the liturgy arbitrarily”) and 1205–1206 (an immutable part, parts that can be changed, and diversity that “can also provoke tensions”). B because no anchored sentence names a council or a year, and the keywords _latin mass_, _tridentine_, _sspx_ and _lefebvre_ have none at all. The corpus holds both _Summorum Pontificum_ and _Traditionis Custodes_ and this pass did not name them, on the ground that `docs/research/topics.md` blocked the Latin Mass as a topic. That row was then found to have expired — it was waiting for documents the corpus had already acquired — and was removed on 2026-09-10. Naming the two is now an ordinary editorial choice and not a blocklist question, and it is still open."
+		},
+		"usus-antiquior": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1124-1125,1200-1206 | documents sacrosanctum-concilium,mediator-dei",
+			"note": "New 2026-09-10. The blocklist had held this back since 2026-09-09 for documents the corpus already had. 1125 is the paragraph this reader wants and it cuts both ways: “even the supreme authority in the Church may not change the liturgy arbitrarily, but only in the obedience of faith and with religious respect for the mystery of the liturgy.” 1205 divides what is immutable from what may be adapted, 1206 grants that diversity “can also provoke tensions, mutual misunderstandings, and even schisms”. 1200–1203, the rites actually in use, was dropped from `inculturatio` in this same pass for being a catalogue and is the right catalogue here. _Mediator Dei_ carries the argument for now, warning against “both careless innovation and an exaggerated antiquarian zeal for reviving ancient forms”. B until the documents land: the keywords name _Summorum Pontificum_ and _Traditionis Custodes_, both are in the corpus, and both are among the 38 works with no description — so the page promises two documents it cannot yet name."
 		},
 		"synodalitas": {
 			"grade": "A",

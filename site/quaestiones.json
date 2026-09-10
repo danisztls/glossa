@@ -245,6 +245,39 @@
 			],
 			"documents": ["gaudium-et-spes"]
 		},
+		"culpae-praeteritae": {
+			"doorway": "argument",
+			"cluster": "credibility",
+			"ccc": [
+				[2298, 2298],
+				[853, 853],
+				[827, 827]
+			],
+			"documents": []
+		},
+		"divitiae-ecclesiae": {
+			"doorway": "argument",
+			"cluster": "credibility",
+			"ccc": [
+				[1351, 1351],
+				[2446, 2446]
+			],
+			"canons": [
+				[1254, 1254],
+				[222, 222]
+			],
+			"documents": ["dilexi-te", "evangelii-gaudium"]
+		},
+		"colonialismus": {
+			"doorway": "argument",
+			"cluster": "credibility",
+			"ccc": [[854, 854]],
+			"csdc": [
+				[180, 180],
+				[471, 471]
+			],
+			"documents": ["querida-amazonia", "ecclesia-in-america"]
+		},
 		"beata-virgo": {
 			"doorway": "argument",
 			"cluster": "other-christians",
@@ -373,6 +406,15 @@
 				"gaudium-et-spes",
 				"dignitatis-humanae"
 			]
+		},
+		"usus-antiquior": {
+			"doorway": "argument",
+			"cluster": "catholics-arguing",
+			"ccc": [
+				[1124, 1125],
+				[1200, 1206]
+			],
+			"documents": ["sacrosanctum-concilium", "mediator-dei"]
 		},
 		"synodalitas": {
 			"doorway": "argument",

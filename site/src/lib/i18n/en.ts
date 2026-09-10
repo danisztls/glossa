@@ -1797,6 +1797,18 @@ export const en: Dictionary = {
 	'quaestiones.atheismus.question': 'What does the Church say about people who do not believe?',
 	'quaestiones.atheismus.keywords':
 		'atheist, agnostic, unbeliever, secular, nonreligious, invincible ignorance, good atheists',
+	'quaestiones.culpae-praeteritae.title': 'The Church’s record',
+	'quaestiones.culpae-praeteritae.question': 'How could the Church have done that?',
+	'quaestiones.culpae-praeteritae.keywords':
+		'inquisition, crusades, galileo, heresy trials, torture, witch trials, past sins, apology, history of the church',
+	'quaestiones.divitiae-ecclesiae.title': 'The Church’s wealth',
+	'quaestiones.divitiae-ecclesiae.question': 'Why not sell it and give the money away?',
+	'quaestiones.divitiae-ecclesiae.keywords':
+		'sell the vatican, gold, art, treasures, rich church, poor church, the collection, donations, property, vatican bank',
+	'quaestiones.colonialismus.title': 'Colonialism and indigenous peoples',
+	'quaestiones.colonialismus.question': 'The missionaries came with the conquerors. What now?',
+	'quaestiones.colonialismus.keywords':
+		'conquest, missions, native, amazon, colonisation, land rights, ancestral culture, evangelisation',
 	'quaestiones.beata-virgo.title': 'Mary',
 	'quaestiones.beata-virgo.question': 'Why do Catholics give her so much?',
 	'quaestiones.beata-virgo.keywords':
@@ -1850,6 +1862,10 @@ export const en: Dictionary = {
 		'Did the Church become something else in 1965?',
 	'quaestiones.concilium-vaticanum-secundum.keywords':
 		'vatican ii, novus ordo, tridentine, latin mass, traditionalist, sspx, lefebvre, rupture, continuity',
+	'quaestiones.usus-antiquior.title': 'The older Mass',
+	'quaestiones.usus-antiquior.question': 'Why was it taken away?',
+	'quaestiones.usus-antiquior.keywords':
+		'latin mass, tridentine, traditional mass, extraordinary form, vetus ordo, novus ordo, summorum pontificum, traditionis custodes, ad orientem',
 	'quaestiones.synodalitas.title': 'Who governs the Church',
 	'quaestiones.synodalitas.question': 'Who actually decides anything?',
 	'quaestiones.synodalitas.keywords':
