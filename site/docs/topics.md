@@ -87,8 +87,22 @@ who came asking whether any of it is true has to read past contraception, the
 death penalty and the just wage to find out.
 
 So a topic also names a **cluster** — a shelf inside its doorway — and the page
-draws doorway, then cluster, then topic. The doorway still says what the reader
-was holding; the cluster says which shelf the answer is on.
+draws the sixteen shelves.
+
+**The doorway is not drawn at all**, which is where this ended up and is the
+same finding pressed one step further. It headed the page for a while, four
+rules across the column with the shelves under them, and the trouble is that
+"what people argue about" is true of all sixteen: a heading that describes
+everything directs nobody, and the widest doorway held sixty topics across six
+shelves, so the level that actually told a reader where to go was always the one
+underneath. Four headings over sixteen is a level to read past.
+
+It stays in the file, and not as a vestige. It is the question the file is
+edited by — a topic is filed by the situation somebody arrives in, and the
+`lead` field, the two-doors rule and the whole selection pass in
+`docs/research/topics.md` are all reasoning about that — and it is what puts the
+shelves in order. Dropping the field would leave sixteen clusters in no
+particular sequence.
 
 **Order is declared, not derived.** `quaestiones.json` lists each doorway's
 clusters in the order the page draws them, rather than the page collecting the
@@ -96,16 +110,27 @@ clusters its topics happen to mention. Deriving it would mean that reordering
 the topic list silently reorders the page's headings, which is the kind of
 coupling nobody looks for when they move an entry.
 
+**A shelf's heading names its contents; a topic's question names a situation.**
+The two levels are written in opposite registers on purpose, and the shelves
+were not always: they began as situations too — "Whether any of it is true",
+"Why am I not allowed to", "When it has gone" — matching the doorways over them.
+That reads well under a heading and badly _as_ one. Sixteen shut shelves are the
+whole navigation of the page; each is met cold, with one line to say what is
+behind it, so `credibility` is "Faith & reason" and `the-rules` is "The hard
+teachings". The restraint is in what a name may claim: not "Morality" for a
+shelf holding thirteen contested teachings, and not "Purity" for the shelf a
+reader reaches at 2 a.m., which is a word they may not use of themselves.
+
 **Clusters are English and slugs are Latin**, which is not an inconsistency: a
 slug is an address and has to name the same thing in every language, while a
-cluster appears in no URL and is a dictionary key exactly as `doorway` is.
+cluster appears in no URL and is a dictionary key.
 
 **A shelf is closed until it is opened.** The cluster layer removed the wall
 three shelves at a time and left a page a hundred and sixteen rows tall, which
 is the same complaint one level up. Every cluster is a `<details>`, shut by
 default, with the number of questions on its heading — so the page opens as its
-own table of contents, four doorways over sixteen named shelves, and the reader
-opens the one they came for. Two things follow. A live query forces every
+own table of contents, sixteen named shelves, and the reader opens the one they
+came for. Two things follow. A live query forces every
 surviving shelf open, or a search matching three questions would show three
 closed headings and read as no results; and the search does not record what it
 opened, so clearing the box puts the page back as the reader had it. A browser
@@ -207,7 +232,7 @@ both are the failure `route-manifest.ts` already documents:
 What it owes: the `quaestiones.*` keys exist in `en` and `pt` alone, so the
 route stays out of `CHROME_PATHS` until the rest of the dictionaries carry
 them — and this is now the largest block of untranslated chrome on the site,
-two strings per topic plus the doorway headings. A topic is not offered for
+two strings per topic plus the sixteen shelf headings. A topic is not offered for
 bookmarking yet, though the address supports it — `addressResolves` answers
 `true` for a topic because the index tier deliberately does not carry the topic
 list, and answering `false` would discard a reader's mark on every topic at

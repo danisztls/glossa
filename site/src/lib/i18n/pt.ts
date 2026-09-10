@@ -674,17 +674,9 @@ export const pt: Dictionary = {
 	'quaestiones.landing.none': 'Nenhuma pergunta foi escrita para esta versão.',
 	'quaestiones.search.label': 'Buscar nestas perguntas',
 	'quaestiones.search.none': 'Nenhuma pergunta daqui corresponde a essas palavras.',
-	'quaestiones.doorway.argument': 'O que se discute',
-	'quaestiones.doorway.argument.blurb': 'Perguntas com dois lados e, quase sempre, um adversário.',
-	'quaestiones.doorway.life-event': 'Quando algo aconteceu',
-	'quaestiones.doorway.life-event.blurb':
-		'Uma morte, um diagnóstico, um casamento, uma decisão que não espera.',
-	'quaestiones.doorway.private-shame': 'O que é difícil perguntar',
-	'quaestiones.doorway.private-shame.blurb':
-		'Perguntas que se procuram sozinho. O parágrafo que fala ao leitor vem primeiro.',
-	'quaestiones.doorway.ordinary': 'Perguntas comuns',
-	'quaestiones.doorway.ordinary.blurb':
-		'Coisas que a Igreja responde com clareza e que raramente estão escritas onde alguém vai procurar.',
+	// As portas de `site/quaestiones.json` não são mais tituladas: continuam a
+	// ordenar o arquivo e a ordem das prateleiras, mas já não encabeçam a
+	// página. Ver o comentário correspondente em `en.ts`.
 	'quaestiones.passages.heading': 'Do Catecismo',
 	// Só aparece onde é verdade — a página mostra esta frase quando o tema
 	// tem um `lead`, e em nenhum outro caso. “Nenhum foi deixado de fora” é a
@@ -695,25 +687,27 @@ export const pt: Dictionary = {
 	'quaestiones.documents.blurb':
 		'Onde a Igreja tratou da questão por extenso, ou escreveu depois do Catecismo.',
 	'quaestiones.canons.heading': 'No Código',
-	// Os agrupamentos, na ordem de `site/quaestiones.json`, porta por porta.
-	// O título de um agrupamento nomeia uma PRATELEIRA e não um assunto: diz
-	// que tipo de pergunta está ali, nas palavras que o leitor usaria.
-	'quaestiones.cluster.credibility': 'Se alguma coisa disso é verdade',
-	'quaestiones.cluster.other-christians': 'O que pergunta outro cristão',
-	'quaestiones.cluster.catholics-arguing': 'O que os católicos discutem entre si',
-	'quaestiones.cluster.the-rules': 'Por que não posso',
-	'quaestiones.cluster.public-square': 'A praça pública',
-	'quaestiones.cluster.other-faiths': 'Outra fé, outra cultura',
+	// As dezesseis prateleiras, na ordem de `site/quaestiones.json`. Sem os
+	// títulos das portas, são toda a navegação da página, e por isso nomeiam o
+	// que guardam em vez da situação de quem chega — a situação continua na
+	// pergunta de cada tema. O “&” do inglês vira “e”: o sinal não é usado em
+	// texto corrido em português.
+	'quaestiones.cluster.credibility': 'Fé e razão',
+	'quaestiones.cluster.other-christians': 'O que divide os cristãos',
+	'quaestiones.cluster.catholics-arguing': 'Autoridade e mudança na Igreja',
+	'quaestiones.cluster.the-rules': 'Os ensinamentos difíceis',
+	'quaestiones.cluster.public-square': 'A política e o bem comum',
+	'quaestiones.cluster.other-faiths': 'Outras religiões e culturas',
 	'quaestiones.cluster.death-and-dying': 'Doença, morte e luto',
-	'quaestiones.cluster.marriage': 'Casar, e o que vem depois',
+	'quaestiones.cluster.marriage': 'Casamento e nulidade',
 	'quaestiones.cluster.the-household': 'Os filhos e a casa',
-	'quaestiones.cluster.the-body': 'O corpo',
-	'quaestiones.cluster.forgiveness': 'O perdão',
-	'quaestiones.cluster.despair': 'Quando já não há',
-	'quaestiones.cluster.the-unseen': 'O invisível',
-	'quaestiones.cluster.practice': 'A prática comum',
-	'quaestiones.cluster.money-and-work': 'Dinheiro, trabalho e tempo',
-	'quaestiones.cluster.justice': 'A justiça e a pessoa',
+	'quaestiones.cluster.the-body': 'O sexo e o corpo',
+	'quaestiones.cluster.forgiveness': 'Culpa e perdão',
+	'quaestiones.cluster.despair': 'Desespero e perda da fé',
+	'quaestiones.cluster.the-unseen': 'Anjos, demônios e o invisível',
+	'quaestiones.cluster.practice': 'A prática católica',
+	'quaestiones.cluster.money-and-work': 'Dinheiro, trabalho e vocação',
+	'quaestiones.cluster.justice': 'Justiça e dignidade humana',
 	// --- o que se discute ---
 	'quaestiones.dei-existentia.title': 'Se Deus existe',
 	'quaestiones.dei-existentia.question': 'Tem alguém aí?',

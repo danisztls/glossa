@@ -139,17 +139,20 @@ describe('every topic is reachable and named', () => {
 		}
 	});
 
-	it('carries a heading and a blurb for every doorway', () => {
+	/** THE DOORWAYS ARE NOT NAMED IN ANY DICTIONARY, deliberately: they sort
+	 *  the file and order the shelves, and the page draws the shelves alone.
+	 *  Asserted from the other side, or the eight keys they used to need would
+	 *  sit in two dictionaries for ever with nothing reading them. */
+	it('names no doorway, the page having no heading for one', () => {
 		const dictionary = en as unknown as Record<string, string>;
 		for (const doorway of source.doorways) {
-			expect(dictionary[`quaestiones.doorway.${doorway}`], doorway).toBeTruthy();
-			expect(dictionary[`quaestiones.doorway.${doorway}.blurb`], doorway).toBeTruthy();
+			expect(dictionary[`quaestiones.doorway.${doorway}`], doorway).toBeUndefined();
 		}
 	});
 
-	/** A cluster heading and nothing else — no blurb, because the doorway
-	 *  above it already carries one and a second sentence per shelf would be
-	 *  more prose than index on a page of sixteen of them. */
+	/** A cluster heading and nothing else — no blurb, because a second
+	 *  sentence per shelf would be more prose than index on a page of sixteen
+	 *  of them. */
 	it('carries a heading for every cluster', () => {
 		const dictionary = en as unknown as Record<string, string>;
 		for (const cluster of allClusters) {
@@ -172,10 +175,6 @@ describe('every topic is reachable and named', () => {
 		const loaders = import.meta.glob<Record<string, Dictionary>>(['./i18n/*.ts', '!./i18n/en.ts']);
 		const keys = [
 			...slugs.flatMap((slug) => [`quaestiones.${slug}.title`, `quaestiones.${slug}.question`]),
-			...source.doorways.flatMap((doorway) => [
-				`quaestiones.doorway.${doorway}`,
-				`quaestiones.doorway.${doorway}.blurb`
-			]),
 			...allClusters.map((cluster) => `quaestiones.cluster.${cluster}`),
 			'quaestiones.landing.tagline',
 			'quaestiones.landing.none',

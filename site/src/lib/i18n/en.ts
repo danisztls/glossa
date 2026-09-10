@@ -1531,20 +1531,13 @@ export const en: Dictionary = {
 	// is one list among many and the reader may have arrived from another.
 	'quaestiones.search.label': 'Search these questions',
 	'quaestiones.search.none': 'No question here matches those words.',
-	// The four doorways of `site/quaestiones.json`, in its order. Each heading
-	// names the reader's situation and not a category of subject, which is
-	// what keeps the list from collapsing back into a subject index.
-	'quaestiones.doorway.argument': 'What people argue about',
-	'quaestiones.doorway.argument.blurb': 'Questions with two sides, and usually an opponent.',
-	'quaestiones.doorway.life-event': 'When something has happened',
-	'quaestiones.doorway.life-event.blurb':
-		'A death, a diagnosis, a marriage, a decision that will not wait.',
-	'quaestiones.doorway.private-shame': 'What is hard to ask',
-	'quaestiones.doorway.private-shame.blurb':
-		'Questions people look up alone. The paragraph that speaks to the reader is placed first.',
-	'quaestiones.doorway.ordinary': 'Ordinary questions',
-	'quaestiones.doorway.ordinary.blurb':
-		'Things the Church answers plainly, and which are seldom written down anywhere a reader looks.',
+	// THE DOORWAYS ARE NOT NAMED HERE, and they used to be. They still sort the
+	// file (`site/quaestiones.json` argues them) and they still set the order
+	// these shelves are drawn in; what they no longer do is head the page. Four
+	// headings over sixteen was a level of grouping the reader had to read past
+	// to reach the level that actually says where a question is, and the widest
+	// of them held sixty topics across six shelves — "what people argue about"
+	// is true of every one of them and directs nobody.
 	'quaestiones.passages.heading': 'From the Catechism',
 	// SAID ONLY WHERE IT IS TRUE — the page renders it when the topic carries
 	// a `lead`, and nowhere else. It is the site admitting an arrangement of
@@ -1558,26 +1551,36 @@ export const en: Dictionary = {
 	'quaestiones.documents.blurb':
 		'Where the Church has treated the question at length, or has written since the Catechism.',
 	'quaestiones.canons.heading': 'In the Code',
-	// The clusters, in `site/quaestiones.json`'s order, doorway by doorway. A
-	// cluster heading names a SHELF and not a subject: it says what kind of
-	// question is on it, in the words the reader would use, so that scanning
-	// sixteen of these is faster than reading a hundred titles.
-	'quaestiones.cluster.credibility': 'Whether any of it is true',
-	'quaestiones.cluster.other-christians': 'What another Christian asks',
-	'quaestiones.cluster.catholics-arguing': 'What Catholics argue about',
-	'quaestiones.cluster.the-rules': 'Why am I not allowed to',
-	'quaestiones.cluster.public-square': 'The public square',
-	'quaestiones.cluster.other-faiths': 'Another faith, another culture',
-	'quaestiones.cluster.death-and-dying': 'Illness, dying and death',
-	'quaestiones.cluster.marriage': 'Marrying, and what follows',
-	'quaestiones.cluster.the-household': 'Children, and the household',
-	'quaestiones.cluster.the-body': 'The body',
-	'quaestiones.cluster.forgiveness': 'Forgiveness',
-	'quaestiones.cluster.despair': 'When it has gone',
-	'quaestiones.cluster.the-unseen': 'The unseen',
-	'quaestiones.cluster.practice': 'Ordinary practice',
-	'quaestiones.cluster.money-and-work': 'Money, work and time',
-	'quaestiones.cluster.justice': 'Justice and the person',
+	// The sixteen shelves, in `site/quaestiones.json`'s order, and with the
+	// doorway headings gone these are the whole navigation of the page.
+	//
+	// WHICH IS WHY THEY NAME THEIR CONTENTS. They were written as situations —
+	// "Whether any of it is true", "Why am I not allowed to", "When it has
+	// gone" — on the reasoning that a reader arrives holding a situation and
+	// not a subject. True of the QUESTIONS, and it is still how they are
+	// written; false of a heading standing over a shut shelf, which is read
+	// cold and has one line to say what is behind it. A reader scanning
+	// sixteen of these has to be able to stop at the right one without opening
+	// three, so each says its subject in the plainest words that cover the
+	// shelf without over-promising: `the-rules` is not "Morality", which would
+	// claim the whole of it, and `the-body` is not "Purity", which is a word
+	// the reader who needs that shelf may not use of themselves.
+	'quaestiones.cluster.credibility': 'Faith & reason',
+	'quaestiones.cluster.other-christians': 'What divides Christians',
+	'quaestiones.cluster.catholics-arguing': 'Authority & change in the Church',
+	'quaestiones.cluster.the-rules': 'The hard teachings',
+	'quaestiones.cluster.public-square': 'Politics & the common good',
+	'quaestiones.cluster.other-faiths': 'Other religions & cultures',
+	'quaestiones.cluster.death-and-dying': 'Illness, dying & death',
+	'quaestiones.cluster.marriage': 'Marriage & annulment',
+	'quaestiones.cluster.the-household': 'Children & the household',
+	'quaestiones.cluster.the-body': 'Sex & the body',
+	'quaestiones.cluster.forgiveness': 'Guilt & forgiveness',
+	'quaestiones.cluster.despair': 'Despair & losing faith',
+	'quaestiones.cluster.the-unseen': 'Angels, demons & the unseen',
+	'quaestiones.cluster.practice': 'Catholic practice',
+	'quaestiones.cluster.money-and-work': 'Money, work & vocation',
+	'quaestiones.cluster.justice': 'Justice & human dignity',
 	// The topics themselves, in `site/quaestiones.json`'s own order — by
 	// doorway, and within a doorway roughly by the band it came from. Two
 	// entries that look like one subject twice are the pair that file

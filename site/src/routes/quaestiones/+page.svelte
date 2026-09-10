@@ -47,53 +47,53 @@
 	const searching = $derived(query.trim() !== '');
 
 	/**
-	 * DOORWAY, THEN CLUSTER, THEN TOPIC — three levels, and the middle one is
-	 * why this page is readable at all.
+	 * SIXTEEN SHELVES AND NO DOORWAY HEADINGS — two levels on the page where
+	 * `site/quaestiones.json` has three.
 	 *
-	 * `doorways` is a closed list and the order it is written in is the order a
-	 * reader meets it, which is a judgement rather than an alphabet: the
-	 * argument first because it is what a reader expects a page like this to
-	 * be, and the two doorways nobody indexes — what happened on Tuesday, and
-	 * what they would never ask a person — after it, where a reader who came
-	 * for the first can find them.
+	 * THE DOORWAY IS STILL THE FILE'S AXIS and still decides the order these
+	 * are drawn in; it just no longer heads anything. It sorts by the SITUATION
+	 * a reader arrives in, which is the right question to ask of a topic and
+	 * the wrong one to answer with a heading: "what people argue about" is true
+	 * of all sixteen shelves, and the widest doorway held sixty topics across
+	 * six of them, so the level that told the reader where to go was always the
+	 * one underneath. Four headings over sixteen was a level to read past.
 	 *
-	 * THE CLUSTER LAYER IS NOT DECORATION. `argument` alone holds sixty
-	 * topics, and sixty rows under one heading is a wall: the reader asking
-	 * whether any of it is true would have to read past contraception, the
-	 * death penalty and the just wage to find out. `site/quaestiones.json`
-	 * declares each doorway's clusters IN ORDER, which is why this maps over
-	 * that list rather than collecting the clusters the topics happen to
-	 * mention — deriving the order from the topics would let a reordering of
-	 * the topic list silently reorder the page's headings.
+	 * THE ORDER IS THE FILE'S, twice over: doorway by doorway, and inside a
+	 * doorway the clusters as that doorway declares them. Neither is derived
+	 * from the topics — collecting the clusters the topics happen to mention
+	 * would let a reordering of the topic list silently reorder the page.
 	 *
-	 * An empty doorway or cluster renders nothing. The sync warns about both
-	 * rather than failing, because it is the ordinary condition while one is
-	 * being filled.
+	 * THE ID KEEPS THE DOORWAY IN IT (`argument-credibility`). A cluster key is
+	 * scoped to its doorway, so two doorways may declare the same one, and the
+	 * fragment has to stay unique either way — it is also somebody's bookmark.
+	 *
+	 * An empty cluster renders nothing. The sync warns about it rather than
+	 * failing, because that is the ordinary condition while one is being filled.
 	 */
-	const byDoorway = $derived(
-		(data.index?.doorways ?? []).map((doorway) => ({
-			doorway,
-			clusters: (data.index?.clusters?.[doorway] ?? [])
+	const shelves = $derived(
+		(data.index?.doorways ?? []).flatMap((doorway) =>
+			(data.index?.clusters?.[doorway] ?? [])
 				.map((cluster) => ({
+					id: `${doorway}-${cluster}`,
 					cluster,
 					topics: Object.entries(data.index?.topics ?? {})
 						.filter(([, topic]) => topic.doorway === doorway && topic.cluster === cluster)
 						.map(([slug]) => slug)
 						.filter((slug) => matching.has(slug))
 				}))
-				.filter((group) => group.topics.length > 0)
-		}))
+				.filter((shelf) => shelf.topics.length > 0)
+		)
 	);
 
 	/**
 	 * WHICH CLUSTERS THE READER HAS OPENED, and every shelf starts shut.
 	 *
-	 * Sixteen headings a reader can take in at once is what the cluster layer
-	 * was for; a hundred and sixteen questions drawn under them is the wall it
-	 * was meant to remove, three shelves at a time instead of sixty. Closed by
-	 * default, the page opens as its own table of contents — the four doorways
-	 * with their sixteen shelves under them, each saying how many questions it
-	 * holds — and a reader opens the one they came for.
+	 * Sixteen headings a reader can take in at once is what the shelves were
+	 * for; a hundred and sixteen questions drawn under them is the wall they
+	 * were meant to remove, three shelves at a time instead of sixty. Closed by
+	 * default, the page IS its own table of contents — sixteen named shelves,
+	 * each saying how many questions it holds — and a reader opens the one they
+	 * came for.
 	 *
 	 * SEARCH OVERRIDES IT AND DOES NOT RECORD ITSELF. `searching` forces every
 	 * surviving cluster open, because a query that matched three questions and
@@ -163,45 +163,34 @@
 	{:else if searching && matching.size === 0}
 		<p class="empty">{t('quaestiones.search.none')}</p>
 	{:else}
-		{#each byDoorway as group (group.doorway)}
-			{#if group.clusters.length > 0}
-				<section class="doorway">
-					<h2>{t(`quaestiones.doorway.${group.doorway}`)}</h2>
-					<p class="blurb">{t(`quaestiones.doorway.${group.doorway}.blurb`)}</p>
-
-					{#each group.clusters as entry (entry.cluster)}
-						{@const id = `${group.doorway}-${entry.cluster}`}
-						<!-- The chip is what a closed shelf owes the reader: sixteen
-						     headings with no sizes are sixteen doors into an unknown
-						     room, and while a query is live it is the count that
-						     survived it. -->
-						<details
-							class="cluster"
-							{id}
-							open={searching || opened[id] === true}
-							ontoggle={(event) => remember(id, event.currentTarget.open)}
-						>
-							<summary>
-								<h3>{t(`quaestiones.cluster.${entry.cluster}`)}</h3>
-								<span class="chip">{entry.topics.length}</span>
-							</summary>
-							<!-- `"hover"`: a row here is a destination the reader picked in
-							     order to GO to it, the same call `/preces` makes for the
-							     same shape of list. -->
-							<ul class="index-list" data-link-preview="hover">
-								{#each entry.topics as slug (slug)}
-									<li class="topic-row">
-										<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
-											{t(`quaestiones.${slug}.title`)}
-										</a>
-										<p class="question">{t(`quaestiones.${slug}.question`)}</p>
-									</li>
-								{/each}
-							</ul>
-						</details>
+		{#each shelves as shelf (shelf.id)}
+			<!-- The chip is what a closed shelf owes the reader: sixteen headings
+			     with no sizes are sixteen doors into an unknown room, and while a
+			     query is live it is the count that survived it. -->
+			<details
+				class="cluster"
+				id={shelf.id}
+				open={searching || opened[shelf.id] === true}
+				ontoggle={(event) => remember(shelf.id, event.currentTarget.open)}
+			>
+				<summary>
+					<h2>{t(`quaestiones.cluster.${shelf.cluster}`)}</h2>
+					<span class="chip">{shelf.topics.length}</span>
+				</summary>
+				<!-- `"hover"`: a row here is a destination the reader picked in
+				     order to GO to it, the same call `/preces` makes for the
+				     same shape of list. -->
+				<ul class="index-list" data-link-preview="hover">
+					{#each shelf.topics as slug (slug)}
+						<li class="topic-row">
+							<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
+								{t(`quaestiones.${slug}.title`)}
+							</a>
+							<p class="question">{t(`quaestiones.${slug}.question`)}</p>
+						</li>
 					{/each}
-				</section>
-			{/if}
+				</ul>
+			</details>
 		{/each}
 	{/if}
 </div>
@@ -272,31 +261,8 @@
 		font-variant-numeric: tabular-nums;
 	}
 
-	.doorway {
-		margin-bottom: 3rem;
-	}
-
-	/*
-	 * THE DOORWAY IS A RULE ACROSS THE COLUMN and the cluster is a plain
-	 * heading, because a reader has to be able to tell the two levels apart
-	 * at a glance without reading either. Four rules down a long page are
-	 * landmarks; sixteen would be a grid.
-	 */
-	h2 {
-		font-size: 1.15rem;
-		margin: 0 0 0.25rem;
-		padding-bottom: 0.4rem;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.blurb {
-		font-size: 0.85rem;
-		color: var(--color-text-muted);
-		margin: 0 0 1.5rem;
-	}
-
 	.cluster {
-		margin-bottom: 1.75rem;
+		margin-bottom: 2.25rem;
 		/* Clears the sticky chrome when a fragment lands on this heading —
 		   without it the heading lands behind the bar and the reader sees the
 		   cluster's second topic first. `scroll-padding-top` on the scroll
@@ -308,7 +274,7 @@
 	/* Sixteen closed shelves want to read as a list rather than as sixteen
 	   sections, so a shut one keeps only the space that separates two rows. */
 	.cluster:not([open]) {
-		margin-bottom: 0.35rem;
+		margin-bottom: 0.5rem;
 	}
 
 	/*
@@ -353,17 +319,26 @@
 	/* The heading is the only word in the row, so the hover answers on it —
 	   the same "this is a control" job `.facet-option`'s ground does in the
 	   `/documenta` panel, at a size that does not want a filled band. */
-	summary:hover h3,
-	summary:focus-visible h3 {
-		color: var(--color-text);
+	summary:hover h2,
+	summary:focus-visible h2 {
+		color: var(--color-accent);
 	}
 
-	h3 {
-		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--color-text-muted);
+	/*
+	 * THE SHELF HEADING IS THE PAGE'S STRUCTURE now that no doorway stands over
+	 * it, so it is set as something to choose between rather than as a label
+	 * over a list: text colour, not muted, and no small-caps tracking — that
+	 * treatment reads as a section marker, which is what it was when four
+	 * headings ruled across the column above it.
+	 *
+	 * AND STILL NO RULE UNDER IT. Sixteen ruled headings down a page are a
+	 * grid rather than sixteen landmarks; the disclosure mark and the count
+	 * already say that a row is a row.
+	 */
+	h2 {
+		font-size: 1.05rem;
 		font-weight: 600;
+		color: var(--color-text);
 		margin: 0;
 	}
 

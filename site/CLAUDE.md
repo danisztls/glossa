@@ -814,10 +814,19 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   written down instead — the held set is in `docs/research/topics.md`, and
   `fiducia-supplicans` is the case that matters, since the three earlier
   documents ARE here and a stale answer reads as a current one.
-- **A doorway sorts; a cluster organises.** Sixty topics under one heading is a
-  wall, so each topic also names a shelf, and `quaestiones.json` declares each
-  doorway's clusters in the order the page draws them — deriving that order from
-  the topics would let a reordered list silently reorder the headings.
+- **A doorway sorts and a cluster is what the page draws.** Sixty topics under
+  one heading is a wall, so each topic also names a shelf; `quaestiones.json`
+  declares each doorway's clusters in the order the page draws them, and
+  deriving that order from the topics would let a reordered list silently
+  reorder the headings. **The doorway itself heads nothing** — "what people
+  argue about" is true of all sixteen shelves — and it stays in the file
+  because it is the question a topic is filed by and the thing that orders the
+  shelves.
+- **A shelf heading names its contents, where a topic's question names a
+  situation.** The shelves are the whole navigation of that page and are read
+  shut, so each has one line to say what is behind it; a name may not claim more
+  than the shelf holds ("Morality" over thirteen contested teachings) or use a
+  word about the reader they may not use of themselves ("Purity").
 - **A cluster is a `<details>` shut by default, and two rules keep it usable**: a
   live query forces every surviving shelf open (three closed headings read as no
   results), and the page opens the cluster a fragment names, since a browser
