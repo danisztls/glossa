@@ -298,56 +298,6 @@ a:focus-visible {
 	text-decoration-color: currentColor;
 }
 
-/*
- * AND HOVER ALSO LAYS A HIGHLIGHTER OVER THE WORD — in prose only.
- *
- * The wash is the one `.margin-note.highlighted` already uses, at the same
- * 12%, in the link's own colour rather than the accent: it follows the
- * palette into all four themes with no second token, and it does not claim
- * to be the accent wash `.note-lemma.highlighted` spends at 18% on "this is
- * the one you asked about".
- *
- * `p a[href]`, NOT `a`, because a background is a statement about a BOX and
- * most of this site's links are not words. `.index-link`, the shelf and day
- * cards and `.unit-nav a` are whole rows or flex items, and a wash on hover
- * would flood the row rather than mark a word — those surfaces already
- * answer hover on their text (`.index-title` takes the accent and the
- * underline). A link inside a sentence is the case a highlighter is for, and
- * in this codebase a sentence is a `<p>`: reading prose and the quiet
- * `.inline-ref` / `.ref-link` inside it, taglines, the guide, the colophon.
- *
- * AN OUTLINE AND NOT PADDING, which is `.citation-marker.highlighted`'s
- * arithmetic and holds for the same reason: padding on an inline box is
- * inline size the line did not have, so hovering a word would re-break the
- * line and slide the rest of the sentence out from under the pointer. An
- * outline takes no space, follows the radius, and — unlike a spread
- * `box-shadow` — does not paint under the background, where two translucent
- * layers would stack into a darker band. It is transparent at rest so that
- * both halves of the mark can fade in together, and it stands down while the
- * link is focused rather than painting over the focus ring.
- *
- * `box-decoration-break` and the em radius are `.verse.highlighted`'s, for
- * its reason: a link that wraps is two fragments, and a wash that rounds only
- * the true ends leaves the second line squared off at the margin.
- */
-p a[href] {
-	outline: 0.15em solid transparent;
-	border-radius: 0.15em;
-	box-decoration-break: clone;
-	-webkit-box-decoration-break: clone;
-	transition:
-		background-color 120ms ease,
-		outline-color 120ms ease;
-}
-
-p a[href]:hover {
-	background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
-}
-
-p a[href]:hover:not(:focus-visible) {
-	outline-color: color-mix(in srgb, var(--color-link) 12%, transparent);
-}
-
 :focus-visible {
 	outline: 2px solid var(--color-focus-ring);
 	outline-offset: 2px;

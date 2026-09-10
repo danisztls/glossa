@@ -1160,14 +1160,39 @@
 	 * and a grey rule under a red word reads as a mistake. `a:hover` there
 	 * already sets `text-decoration-color: currentColor`, so nothing here has
 	 * to name a colour at all.
+	 *
+	 * AND THE TITLE TAKES A HIGHLIGHTER WITH IT (trial, 2026-09-10). A row here
+	 * is an entry in a reference list, and the one door out of it is the title;
+	 * a wash over those words is a finger held on the entry being read, which an
+	 * underline arriving under one of sixteen serif titles says more quietly
+	 * than this grid wants.
+	 *
+	 * The mechanics are `.verse.highlighted`'s, for its reasons: block padding
+	 * on an inline box paints taller without taking part in the line, so a title
+	 * that wraps to two lines is washed to its full height and the row does not
+	 * move under the pointer; `box-decoration-break` gives the second fragment
+	 * its own rounded ends rather than leaving it squared off at the margin. No
+	 * inline padding and no outline — an `outline` here would outrank the focus
+	 * ring `base.css` sets at lower specificity and quietly replace it.
+	 *
+	 * 12% of the link's own colour is `.margin-note.highlighted`'s strength, and
+	 * mixing from `--color-link` rather than naming a tint follows the palette
+	 * into sepia, dark, OLED and `data-mono` — where it is a faint grey and the
+	 * underline above is still what says `link`.
 	 */
 	.book h4 a {
 		text-decoration: none;
+		border-radius: 0.15em;
+		padding-block: 0.05em;
+		box-decoration-break: clone;
+		-webkit-box-decoration-break: clone;
+		transition: background-color 120ms ease;
 	}
 
 	.book h4 a:hover,
 	.book h4 a:focus-visible {
 		text-decoration: underline;
+		background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
 	}
 
 	.book-what {
