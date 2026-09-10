@@ -81,9 +81,10 @@ The clusters read so far, each a single sitting:
 | `ordinary / money-and-work`    | 2026-09-10 |
 | `ordinary / justice`           | 2026-09-10 |
 | `argument / credibility`       | 2026-09-10 |
+| `argument / other-christians`  | 2026-09-10 |
 
 That is the whole of `private-shame`, `life-event` and `ordinary`, and the
-first cluster of `argument`. What follows is what the reading taught, which is
+first two clusters of `argument`. What follows is what the reading taught, which is
 the part a table cannot hold.
 
 ## What the pass keeps finding
@@ -225,6 +226,21 @@ says the same thing and stands alone, so `atheismus` took 1260. Read an anchor's
 first clause as a stranger would: a pronoun with nothing on the page to point at
 is a passage the reader cannot use, however well it answers.
 
+**The Catechism answers an objection where it raises it, and that is rarely the
+article named after the doctrine.** Eight of the nine topics in `argument /
+other-christians` were anchored on the article that states the teaching and
+missed the paragraph that meets the objection. `beata-virgo` had ten paragraphs
+of Marian ecclesiology and not CCC 500, which opens "Against this doctrine the
+objection is sometimes raised that the Bible mentions brothers and sisters of
+Jesus" and answers it in four sentences. `iustificatio` had the whole treatise
+on merit and not 2005 — "we cannot rely on our feelings or our works to conclude
+that we are justified and saved" — which is the one a reader asking about _once
+saved always saved_ came for. `unitas-christianorum` had ecumenism and not 838,
+the only paragraph that says _Orthodox_. A doorway called `argument` is anchored
+by the objector's vocabulary and not by the doctrine's name: take each keyword,
+search the Catechism for that word, and read what comes back before trusting the
+article the topic is obviously about.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as
@@ -240,10 +256,12 @@ current one"); `carceres` is the same failure arriving from texts the corpus
 The answer is not to choose — that was tried and reverted above. It is to say
 when. What that needs, roughly in order of cost:
 
-- **A date per unit, or per work.** The corpus records `retrieved_at` for a
-  page, which is when it was fetched and not when it was written or last
-  revised. Promulgation and revision dates are a different fact and are not in
-  `build/` today.
+- **A date per work is already in the corpus**, and this review said otherwise
+  until 2026-09-10. Every document manifest carries `promulgated`, and so do
+  the Compendium's (2004-04-02) and the Code's (1983-01-25); the Catechism's
+  is `null` and its `edition` string names the 1993/1997 second typical
+  edition instead. So the cheap end of this is a read, not a scrape.
+  `retrieved_at` remains a different fact — when a page was fetched.
 - **A visible mark where a quoted unit has been revised since.** CCC 2267 is the
   case with a name; there will be others, and nobody has counted them.
 - **A rule for the topic file.** Probably: where a topic quotes texts from both
@@ -308,5 +326,5 @@ it — so a typo fails rather than sitting there.
 A batch is one cluster. Sixteen clusters, and the ones the table above does not
 list have not been read — as of 2026-09-10 that is the rest of `argument`,
 which is the largest doorway of the four and the one every survey in
-`topics.md` measures: `other-christians`, `catholics-arguing`, `the-rules`,
-`public-square` and `other-faiths`.
+`topics.md` measures: `catholics-arguing`, `the-rules`, `public-square` and
+`other-faiths`.

@@ -249,8 +249,10 @@
 			"doorway": "argument",
 			"cluster": "other-christians",
 			"ccc": [
+				[491, 492],
+				[499, 500],
 				[963, 972],
-				[2673, 2679]
+				[2676, 2677]
 			],
 			"documents": ["lumen-gentium", "redemptoris-mater", "marialis-cultus"]
 		},
@@ -258,7 +260,8 @@
 			"doorway": "argument",
 			"cluster": "other-christians",
 			"ccc": [
-				[946, 959],
+				[954, 959],
+				[828, 828],
 				[1159, 1162],
 				[2129, 2132]
 			],
@@ -271,18 +274,21 @@
 				[1030, 1032],
 				[1471, 1479]
 			],
-			"documents": []
+			"documents": ["indulgentiarum-doctrina"]
 		},
 		"primatus-romani-pontificis": {
 			"doorway": "argument",
 			"cluster": "other-christians",
-			"ccc": [[880, 887]],
+			"ccc": [
+				[880, 885],
+				[890, 892]
+			],
 			"documents": ["pastor-aeternus", "lumen-gentium", "ut-unum-sint"]
 		},
 		"traditio-et-scriptura": {
 			"doorway": "argument",
 			"cluster": "other-christians",
-			"ccc": [[74, 83]],
+			"ccc": [[74, 86]],
 			"documents": ["dei-verbum"]
 		},
 		"iustificatio": {
@@ -290,27 +296,36 @@
 			"cluster": "other-christians",
 			"ccc": [
 				[1987, 1995],
-				[2006, 2011]
+				[2005, 2011]
 			],
 			"documents": []
 		},
 		"confessio-sacerdoti": {
 			"doorway": "argument",
 			"cluster": "other-christians",
-			"ccc": [[1441, 1449]],
+			"ccc": [
+				[1441, 1449],
+				[1454, 1456]
+			],
 			"canons": [[983, 984]],
 			"documents": ["reconciliatio-et-paenitentia"]
 		},
 		"eucharistia": {
 			"doorway": "argument",
 			"cluster": "other-christians",
-			"ccc": [[1373, 1381]],
+			"ccc": [
+				[1338, 1339],
+				[1373, 1381]
+			],
 			"documents": ["eccl-de-euch", "sacramentum-caritatis"]
 		},
 		"unitas-christianorum": {
 			"doorway": "argument",
 			"cluster": "other-christians",
-			"ccc": [[817, 822]],
+			"ccc": [
+				[816, 822],
+				[838, 838]
+			],
 			"documents": ["unitatis-redintegratio", "ut-unum-sint"]
 		},
 		"doctrinae-progressus": {

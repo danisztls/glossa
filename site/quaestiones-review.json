@@ -92,6 +92,68 @@
 			"anchors": "ccc 2123-2128,1260 | documents gaudium-et-spes",
 			"note": "Was C: the keywords ended on _invincible ignorance_ and _good atheists_, and the page ran from “atheism is a sin against the virtue of religion” to “agnosticism is all too often equivalent to practical atheism” with nothing after it. Fixed 2026-09-10 with 1260 — a man ignorant of the Gospel who seeks the truth and does the will of God as he understands it can be saved. 1260 and not 847, whose first clause (“this affirmation is not aimed at”) points back at a sentence that is not on this page. 2125 already carried the other half: believers can have more than a little to do with the rise of atheism."
 		},
+		"beata-virgo": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 491-492,499-500,963-972,2676-2677 | documents lumen-gentium,redemptoris-mater,marialis-cultus",
+			"note": "Was C: the keywords named _immaculate conception_, _perpetual virginity_ and _brothers of jesus_, and not one of the seventeen anchored paragraphs said any of it — 966 mentions the Immaculate Virgin in passing and that was all. Fixed 2026-09-10 with 491–492 and 499–500, the last of which opens “Against this doctrine the objection is sometimes raised that the Bible mentions brothers and sisters of Jesus” and answers it. 970 and 971 were already carrying the question itself: Marian devotion “differs essentially from the adoration” given to God. The prayer block was cut to 2676–2677, the Ave Maria taken line by line, since a reader asking why she is given so much is owed the prayer rather than its history."
+		},
+		"sancti-et-imagines": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 954-959,828,1159-1162,2129-2132",
+			"note": "956 and 957 answer the question and 2132 answers it twice over — the honour paid to an image is “not the adoration due to God alone”. Was C on _canonisation_, a keyword with no anchored sentence; 828 was added 2026-09-10. Also diluted: 946–953 is communion in faith, sacraments, charisms and goods, ten paragraphs a reader asking about idolatry would read before reaching the intercession of the saints, and the span now opens at the Catechism’s own heading _The communion of the Church of heaven and earth_."
+		},
+		"purgatorium": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1030-1032,1471-1479 | documents indulgentiarum-doctrina",
+			"note": "The question is where any of it is in the Bible, and 1031 and 1032 answer for purgatory in their own words — a cleansing fire by reference to texts of Scripture, and prayer for the dead “already mentioned in Sacred Scripture”. B because nothing in 1471–1479 does the same for indulgences: the treasury and the power of binding and loosing are stated, not sourced, and the reader has to carry Matthew 16 across from 1478. Note also that 1032’s proof text is 2 Maccabees, which is precisely the book the reader asking this question does not have — see `canon-scripturae`. Paul VI’s constitution on indulgences was added 2026-09-10; the topic had no document at all, and _tetzel_ is a keyword no anchored sentence touches."
+		},
+		"primatus-romani-pontificis": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 880-885,890-892 | documents pastor-aeternus,lumen-gentium,ut-unum-sint",
+			"note": "881 and 882 are the rock, the keys and the full, supreme and universal power, and 883–885 answer “why one man” by saying he is not alone — the college has supreme authority too, and not without its head. Was C: _infallibility_ was a keyword with no paragraph. Fixed 2026-09-10 with 890–892, which is also where the limits are: 892 is the ordinary Magisterium, taught “without arriving at an infallible definition”. Diluted at the other end: 886–887 is individual bishops, patriarchates and episcopal conferences, and was dropped. 890–892 is also on `papa-reprehensus`, which needs it for the opposite question; the sets differ."
+		},
+		"traditio-et-scriptura": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 74-86 | documents dei-verbum",
+			"note": "82 is the sentence the question asks for: the Church “does not derive her certainty about all revealed truths from the holy Scriptures alone”, and 83 adds that the first generation of Christians did not yet have a written New Testament. Was C: _deposit of faith_ and _magisterium_ were keywords and the span stopped at 83. Widened 2026-09-10 to 86, which is the disarming half — “this Magisterium is not superior to the Word of God, but is its servant”. Stops at 86: 87 is addressed to the faithful receiving their pastors with docility, and this reader is not one of them. 84–86 is shared with `concilium-vaticanum-secundum`."
+		},
+		"iustificatio": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1987-1995,2005-2011",
+			"note": "The question is whether Catholics think they earn heaven and 2007 answers it flatly — “there is no strict right to any merit on the part of man” — with 2010 and Thérèse’s empty hands at 2011 behind it. Was C on _once saved always saved_, which had no anchored sentence; 2005 was added 2026-09-10 and is the exact one: grace “cannot be known except by faith”, we cannot rely on our feelings or our works to conclude that we are saved, and Joan of Arc’s answer to the trap. No document: the corpus has no decree of Trent and no joint declaration."
+		},
+		"confessio-sacerdoti": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1441-1449,1454-1456 | canons 983-984 | documents reconciliatio-et-paenitentia",
+			"note": "1441 answers the question in two sentences — only God forgives sins, and he gives this power to men to exercise in his name — and the canons answer the fear behind the keywords by making the seal inviolable. Was C: _examination of conscience_ and _telling a man my sins_ were keywords with nothing behind them. Fixed 2026-09-10 with 1454–1456, where 1455 is the human argument (disclosure “frees us”) and 1456 the reason it is said aloud: “if the sick person is too ashamed to show his wound to the doctor, the medicine cannot heal what it does not know.” Shared with `scrupulositas` and `reditus`, which need those paragraphs for a reader already inside the confessional rather than outside it."
+		},
+		"eucharistia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 1338-1339,1373-1381 | documents eccl-de-euch,sacramentum-caritatis",
+			"note": "1374–1377 answers “is it bread, or is it not” about as directly as the Catechism answers anything, transubstantiation named and defined at 1376. Was C on _last supper_: the words the whole question turns on — “This is my body which is given for you” — were on no page here. Fixed 2026-09-10 with 1338–1339, which now open it, so the reader meets the claim in Christ’s words before meeting the Church’s account of them."
+		},
+		"unitas-christianorum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"was": "C",
+			"anchors": "ccc 816-822,838 | documents unitatis-redintegratio,ut-unum-sint",
+			"note": "817 says the rifts arose with “men of both sides to blame” and 818 says those born into those communities cannot be charged with the separation and have a right to be called Christians, which is the answer and the tone. Was C: _one true church_ and _orthodox_ were keywords with no anchored sentence. Widened 2026-09-10 to 816, the _subsistit in_ paragraph directly above the old anchor, and 838, which says of the Orthodox Churches that the communion “lacks little to attain the fullness that would permit a common celebration of the Lord’s Eucharist”."
+		},
 		"aegritudo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
