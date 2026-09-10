@@ -487,6 +487,8 @@ export const he: Dictionary = {
 	'nav.calendar': 'לוח שנה',
 	'calendar.title': 'לוח השנה הליטורגי',
 	'calendar.tagline': 'לוח השנה הרומי הכללי, מחושב לכל יום — תקופתו, דרגתו, צבעו.',
+	'calendar.national.tagline':
+		'{territory}: לוח השנה הרומי הכללי עם החגיגות המיוחדות לו, מחושב לכל יום — תקופתו, דרגתו, צבעו.',
 	'calendar.calendar': 'לוח שנה',
 	'calendar.which.general': 'לוח השנה הרומי הכללי',
 	'calendar.filter': 'חיפוש מדינות',

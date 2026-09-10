@@ -494,6 +494,8 @@ export const cs: Dictionary = {
 	'calendar.title': 'Liturgický kalendář',
 	'calendar.tagline':
 		'Všeobecný římský kalendář, spočítaný pro kterýkoli den — jeho doba, jeho stupeň, jeho barva.',
+	'calendar.national.tagline':
+		'{territory}: Všeobecný římský kalendář s vlastními slavnostmi, spočítaný pro kterýkoli den — jeho doba, jeho stupeň, jeho barva.',
 	'calendar.calendar': 'Kalendář',
 	'calendar.which.general': 'Všeobecný římský kalendář',
 	'calendar.filter': 'Hledat země',

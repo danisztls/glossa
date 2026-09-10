@@ -29,6 +29,11 @@
  */
 
 import { summaPartSlug } from '../src/lib/address.ts';
+import {
+	CALENDAR_IDS,
+	CALENDAR_LANGS,
+	territoryName
+} from '../src/lib/calendar/national/languages.ts';
 import { CHROME_PATHS, parseChromePath } from '../src/lib/route-manifest.ts';
 import { UI_LANGS } from '../src/lib/ui-langs.ts';
 import { summaQuestionLabel } from '../src/lib/summa-titles.ts';
@@ -38,10 +43,14 @@ import { SITEMAP_LANGS } from './lastmod.mjs';
 
 /** Bumped when the shape changes, so a worker isolate holding an older file
  *  can decline it rather than read undefined fields. */
-export const ROUTE_TITLES_VERSION = 1;
+export const ROUTE_TITLES_VERSION = 2;
 
 /** For the cluster exemption in `assertNamed`. */
 const CHROME_PATH_STRINGS = new Set(/** @type {readonly string[]} */ (CHROME_PATHS));
+
+/** The one placeholder this file substitutes. See `calendar.national.tagline`
+ *  in `src/lib/i18n/en.ts` for what a translation of it owes. */
+const PLACEHOLDER = '{territory}';
 
 /**
  * The language a crawler's copy of these names is read from.
@@ -253,6 +262,7 @@ export function buildRouteTitles({
 	return {
 		version: ROUTE_TITLES_VERSION,
 		chrome: chromeNames(dictionaries),
+		calendars: calendarNames(dictionaries),
 		books: bookNames(manifests, bibleIndex),
 		cccSpans: structureSpans(cccIndex),
 		compendiumSpans: structureSpans(compendiumIndex),
@@ -693,6 +703,79 @@ function chromeNames(dictionaries) {
 		chrome[lang] = pages;
 	}
 	return chrome;
+}
+
+/**
+ * The fifty-three country calendars, each named in its own language.
+ *
+ * ONE LANGUAGE PER PAGE, WHICH IS THE WHOLE ECONOMY OF THIS TABLE. The chrome
+ * above is fourteen pages times forty languages because every word on those
+ * pages is the interface; a country's calendar differs from another country's
+ * in its CONTENT, so forty translations of `/calendarium/br` would be forty
+ * addresses claiming to be one page. `CALENDAR_LANGS` says which language each
+ * one is — read off the editions GCatholic publishes, not guessed — and that
+ * language is the whole of what this table needs from a dictionary the reader
+ * may never see: a crawler cannot negotiate, and English is what it would
+ * otherwise be told a Brazilian page is written in.
+ *
+ * THE TERRITORY IS NAMED BY THE PLATFORM and not by a table here, which is why
+ * fifty-three pages cost no translation at all: `Intl.DisplayNames` knows
+ * every one of these regions in every language the site offers, and
+ * `CalendarMenu.svelte` has printed the same names in the picker since the
+ * calendars landed. The three subdivisions it cannot name have `subdivisions.ts`.
+ *
+ * THE DESCRIPTION IS THE GENERAL TAGLINE UNDER THE TERRITORY'S NAME, and that
+ * is a claim about calendars rather than a shortcut. A national calendar is a
+ * LAYER — the Norms (nn. 48–55) describe a particular calendar as the General
+ * Roman Calendar with proper celebrations inserted, which is exactly what
+ * `NationalCalendar` models — so the sentence is true of Brazil's calendar in
+ * Portuguese for the same reason it is true of the general one. What it does
+ * not do is say what Brazil inserts, and the thing that would is seventeen
+ * sentences in seventeen languages: a `calendar.national.tagline` key, on the
+ * day there is somebody to write each of them.
+ *
+ * @param {Record<string, Record<string, string>>} dictionaries lang -> strings
+ */
+function calendarNames(dictionaries) {
+	/** @type {Record<string, [string, string, string]>} */
+	const calendars = {};
+	for (const id of CALENDAR_IDS) {
+		const lang = CALENDAR_LANGS[id];
+		const d = dictionaries[lang];
+		const name = d?.['calendar.title'];
+		const tagline = plain(d?.['calendar.national.tagline'] ?? '');
+		const site = d?.['home.title'];
+		if (!name || !tagline || !site) {
+			throw new Error(
+				`route-titles: /calendarium/${id} is published in ${lang}, and that dictionary is ` +
+					`missing calendar.title, calendar.national.tagline or home.title — a calendar's ` +
+					`page is written in one language and there is no fallback for it`
+			);
+		}
+		const territory = territoryName(id, lang);
+		// `territoryName` falls back to the ISO code, which is the right answer
+		// in a picker cell and the wrong one in a `<title>`: a page called
+		// `Liturgical Calendar — BR` is a build defect and reads as a template
+		// that did not fill in.
+		if (territory === id.toUpperCase()) {
+			throw new Error(`route-titles: Intl.DisplayNames cannot name ${territory} in ${lang}`);
+		}
+		// The same substitution the page makes at hydration, and the same
+		// `.replace('{x}', …)` every other placeholder on this site takes — the
+		// convention `summa.titleFromEdition` set and `i18n.test.ts` guards.
+		if (!tagline.includes(PLACEHOLDER)) {
+			throw new Error(
+				`route-titles: calendar.national.tagline in ${lang} has lost its ${PLACEHOLDER} — ` +
+					`the description would name no country`
+			);
+		}
+		calendars[id] = [
+			`${name} — ${territory} — ${site}`,
+			tagline.replace(PLACEHOLDER, territory),
+			territory
+		];
+	}
+	return calendars;
 }
 
 /**

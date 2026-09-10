@@ -475,6 +475,8 @@ export const sv: Dictionary = {
 	'calendar.title': 'Liturgisk kalender',
 	'calendar.tagline':
 		'Den allmänna romerska kalendern, uträknad för vilken dag som helst — dess tid, dess grad, dess färg.',
+	'calendar.national.tagline':
+		'{territory}: den allmänna romerska kalendern med egna firningar, uträknad för vilken dag som helst — dess tid, dess grad, dess färg.',
 	'calendar.calendar': 'Kalender',
 	'calendar.which.general': 'Allmänna romerska kalendern',
 	'calendar.filter': 'Sök länder',

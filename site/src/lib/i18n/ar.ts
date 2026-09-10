@@ -459,6 +459,8 @@ export const ar: Dictionary = {
 	'nav.calendar': 'التقويم',
 	'calendar.title': 'التقويم الطقسي',
 	'calendar.tagline': 'التقويم الروماني العام، محسوبًا لأي يوم — زمنه ورتبته ولونه.',
+	'calendar.national.tagline':
+		'{territory}: التقويم الروماني العام مع احتفالاته الخاصة، محسوبًا لأي يوم — زمنه ورتبته ولونه.',
 	'calendar.calendar': 'التقويم',
 	'calendar.which.general': 'التقويم الروماني العام',
 	'calendar.filter': 'ابحث عن البلدان',

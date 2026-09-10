@@ -12,6 +12,7 @@
  */
 
 import { parseHref, summaPartFromSlug, summaPartSlug } from './address.ts';
+import { CALENDAR_LANGS } from './calendar/national/languages.ts';
 import { isUiLang } from './ui-langs.ts';
 
 // Re-exported because `scripts/sync-corpus.mjs` imports `summaPartSlug` from
@@ -154,6 +155,31 @@ export function parseChromePath(pathname: string): { lang: string; path: string 
 }
 
 /**
+ * `/calendarium/br` -> `br`, else undefined.
+ *
+ * ONE ADDRESS PER PUBLISHED CALENDAR, and the segment is the LAYER's id and
+ * not a territory's. `?c=` on the page above names a territory, deliberately —
+ * eleven of the ninety-six places in the picker keep another's calendar, and
+ * storing the layer there would make the picker print the wrong country
+ * (`/calendarium/+page.svelte`). An ADDRESS has the opposite requirement: ten
+ * territory paths resolving to one calendar would be ten pages with identical
+ * bodies, which is the one duplicate an `hreflang` cluster cannot consolidate
+ * because they are not translations of each other. So `?c=il` is still
+ * honoured and still shows the Latin Patriarchate's calendar; the address it
+ * mirrors to is `/calendarium/ps`.
+ *
+ * A HELD CALENDAR HAS NO ADDRESS, because `CALENDAR_LANGS` is keyed by the
+ * published list. That is the same test `?c=` applies and for the same reason
+ * (`held.ts`): a calendar the oracle still disagrees with is not served, and a
+ * reader cannot tell a calendar that is wrong on four days from one that is
+ * right.
+ */
+export function parseCalendarPath(pathname: string): string | undefined {
+	const id = pathname.startsWith('/calendarium/') ? pathname.slice('/calendarium/'.length) : '';
+	return id && id in CALENDAR_LANGS ? id : undefined;
+}
+
+/**
  * `/es/scriptura/iosue/1` -> `{ lang: 'es', path: '/scriptura/iosue/1' }`.
  *
  * A LANGUAGE ENTRY POINT, WHICH IS NOT A PUBLISHED ADDRESS. The
@@ -282,6 +308,11 @@ const STATIC_PATHS = new Set([
 export function isCanonicalPath(pathname: string, manifest: RouteManifest): boolean {
 	if (STATIC_PATHS.has(pathname)) return true;
 	if (parseChromePath(pathname)) return true;
+	// Fifty-three pages the route tree holds in one directory. They are NOT in
+	// `STATIC_PATHS` because that table is written out a line at a time and
+	// these are a list; they are not in `CHROME_PATHS` because each is one page
+	// in one language rather than one page in forty (`languages.ts`).
+	if (parseCalendarPath(pathname)) return true;
 	// A language entry point exists (200) but is nobody's address: it
 	// canonicalizes to the bare path and the client strips it. Recursion is
 	// bounded at one level, because `parseLangEntry` splits exactly one segment

@@ -498,6 +498,8 @@ export const lv: Dictionary = {
 	'calendar.title': 'Liturģiskais kalendārs',
 	'calendar.tagline':
 		'Vispārējais Romas kalendārs, aprēķināts jebkurai dienai — tās laiks, tās pakāpe, tās krāsa.',
+	'calendar.national.tagline':
+		'{territory}: Vispārējais Romas kalendārs ar savām svinībām, aprēķināts jebkurai dienai — tās laiks, tās pakāpe, tās krāsa.',
 	'calendar.calendar': 'Kalendārs',
 	'calendar.which.general': 'Vispārējais Romas kalendārs',
 	'calendar.filter': 'Meklēt valstis',

@@ -1372,6 +1372,24 @@ export const en: Dictionary = {
 	'calendar.title': 'Liturgical Calendar',
 	'calendar.tagline':
 		'The General Roman Calendar, computed for any day — its season, its rank, its colour.',
+	// A country calendar's page (`calendar/national/languages.ts`), named for
+	// the reader on the page and for a search engine in `route-titles.mjs`
+	// from this one string.
+	//
+	// `{territory}` OPENS THE LINE AS A LABEL AND IS NEVER PART OF THE
+	// SENTENCE, which is a rule about the SOURCE of the name and not a matter
+	// of taste. It is filled from `Intl.DisplayNames`, which gives a bare
+	// nominative and no article — so "as {territory} keeps it" reads correctly
+	// for Kenya and Brazil and then prints "as United States keeps it", "wie
+	// Schweiz ihn feiert", "tel que le célèbre France". An article cannot be
+	// added mechanically, because which countries take one is a fact about
+	// each language's own list. A label needs none in any of them.
+	//
+	// The same reason forbids a preposition in front of it: "in {territory}"
+	// is right in English and wrong in Portuguese the moment the country is
+	// Brazil.
+	'calendar.national.tagline':
+		'{territory}: the General Roman Calendar with the celebrations proper to it, computed for any day — its season, its rank, its colour.',
 	'calendar.calendar': 'Calendar',
 	'calendar.which.general': 'General Roman Calendar',
 	'calendar.filter': 'Search countries',

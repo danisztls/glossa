@@ -524,6 +524,8 @@ export const mg: Dictionary = {
 	'calendar.title': 'Tetiandro litorzika',
 	'calendar.tagline':
 		'Ny Tetiandro Romana Ankapobeny, kajiana ho amin’ny andro rehetra — ny fotoanany, ny laharany, ny lokony.',
+	'calendar.national.tagline':
+		'{territory}: ny Tetiandro Romana Ankapobeny miaraka amin’ny fankalazana manokana azy, kajiana ho amin’ny andro rehetra — ny fotoanany, ny laharany, ny lokony.',
 	'calendar.calendar': 'Tetiandro',
 	'calendar.which.general': 'Tetiandro Romana Ankapobeny',
 	'calendar.filter': 'Hitady firenena',

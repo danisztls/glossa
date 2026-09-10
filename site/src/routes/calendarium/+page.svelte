@@ -94,6 +94,7 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
+	import { calendarPath, territoryName } from '$lib/calendar/national/languages';
 	import {
 		detectedTerritory,
 		openingTerritory,
@@ -165,7 +166,40 @@
 		return raw && TERRITORY_CALENDARS[raw] ? raw : 'general';
 	}
 
-	let territory = $state(territoryIn(page.url));
+	/**
+	 * The calendar this page's own ADDRESS names, where it names one.
+	 *
+	 * `/calendarium/br` is a published page and `?c=br` is a parameter on
+	 * another one — `languages.ts` argues why a country's calendar is worth an
+	 * address, and `routes/calendarium/[calendar]/` is the route that passes
+	 * this in. Everything below treats it as `?c=` was treated: it settles what
+	 * the page opens on, and the controls own it from there.
+	 */
+	let { opensOn }: { opensOn?: string } = $props();
+
+	/**
+	 * What the page opens on: the address's calendar, refined by a finer answer
+	 * that names the same one.
+	 *
+	 * A PATH NAMES A CALENDAR AND A TERRITORY NAMES WHO KEEPS IT, which are not
+	 * the same thing for eleven of the ninety-six places in the picker (see
+	 * `?c=` below). So `/calendarium/ps` opens on Israel for the reader who
+	 * chose Israel and on the Latin Patriarchate's own territory for everyone
+	 * else: both show one calendar, and only the picker's trigger can tell them
+	 * apart. Contradicting the path is not a refinement — a stored `us` on
+	 * `/calendarium/br` is a reader who has been to this page before, not a
+	 * reader asking for Brazil's calendar to show them Denver.
+	 */
+	function seedTerritory(): string {
+		const asked = territoryIn(page.url);
+		if (!opensOn) return asked;
+		for (const finer of [asked, storedTerritory()]) {
+			if (finer && TERRITORY_CALENDARS[finer] === opensOn) return finer;
+		}
+		return opensOn;
+	}
+
+	let territory = $state(seedTerritory());
 	let selected = $state(parseIsoDate(page.url.searchParams.get('d') ?? '') ?? localToday());
 
 	let options = $derived(
@@ -180,11 +214,18 @@
 	function addressFor(): URL {
 		const url = new URL(page.url);
 		url.searchParams.set('d', formatIsoDate(selected));
-		// The general calendar is the default, so it is absence rather than a
-		// value: `?c=general` would be a parameter that says nothing, and it
-		// would sit in every link a reader copies off the default page.
-		if (territory === 'general') url.searchParams.delete('c');
-		else url.searchParams.set('c', territory);
+		// THE CALENDAR IS THE PATH AND NO LONGER A PARAMETER. `?c=` is still
+		// read on arrival and is still what `/calendarium/liturgia` takes, so
+		// every link ever handed out still lands where it meant to; what it is
+		// not any more is what this page hands back, because the address a
+		// reader copies off Brazil's calendar should be the address a search
+		// engine has for Brazil's calendar (`languages.ts`).
+		url.searchParams.delete('c');
+		// The general calendar is the default, so it is the bare path rather
+		// than a value: `/calendarium/general` would be an address that says
+		// nothing, and it would sit in every link copied off the default page.
+		url.pathname =
+			territory === 'general' ? '/calendarium' : calendarPath(TERRITORY_CALENDARS[territory]);
 		return url;
 	}
 
@@ -302,7 +343,17 @@
 	 * chose the general calendar back.
 	 */
 	onMount(() => {
-		if (page.url.searchParams.has('c')) return;
+		// A `?c=` is honoured and then written as the path that now names it, so
+		// a link made before these addresses existed lands where it meant and
+		// hands its reader the address to pass on. The same write is what puts
+		// `/calendarium/ps` in the bar for a reader who arrived on `?c=il`.
+		if (page.url.searchParams.has('c')) {
+			mirror();
+			return;
+		}
+		// An address that names a calendar has answered this question, and it
+		// outranks both of the guesses below for the reason `?c=` did.
+		if (opensOn) return;
 		const opening = openingTerritory(storedTerritory(), detectedTerritory(), TERRITORY_CALENDARS);
 		if (!opening) return;
 		territory = opening;
@@ -325,15 +376,54 @@
 			territory === 'general' ? '' : `&c=${territory}`
 		}`
 	);
+
+	/**
+	 * The title, in the shape the edge writes and the reader's own words.
+	 *
+	 * `shell-head.ts` names a country page `<calendar> — <territory> — <site>`
+	 * and the general one `<calendar> — <site>`, so this follows the CALENDAR
+	 * the address names rather than the territory the picker holds — the two
+	 * differ for a reader who chose Israel, and the title has to agree with the
+	 * address, not with the trigger. Assigning a different shape here is a
+	 * visible rearrangement on every load, which is the whole reason this is
+	 * written twice at all.
+	 */
+	let namedLayer = $derived(territory === 'general' ? undefined : TERRITORY_CALENDARS[territory]);
+	let namedTerritory = $derived(namedLayer ? territoryName(namedLayer, lang) : undefined);
+	let pageTitle = $derived(
+		namedTerritory
+			? `${t('calendar.title')} — ${namedTerritory} — ${t('home.title')}`
+			: `${t('calendar.title')} — ${t('home.title')}`
+	);
+
+	/**
+	 * The sentence under the heading, which says which calendar is on screen.
+	 *
+	 * It said "The General Roman Calendar" over Brazil's propers until the
+	 * country pages landed, which was a page contradicting itself in its own
+	 * first line. `{territory}` is substituted the way every placeholder on
+	 * this site is (`summa.titleFromEdition`), and it is the same sentence
+	 * `route-titles.mjs` writes into the description — one string, so the page
+	 * and the head cannot come to say different things.
+	 *
+	 * It follows the CALENDAR and not the picker, exactly as the title does:
+	 * a reader who chose Israel is reading the Patriarchate's calendar, and
+	 * that is what the line names.
+	 */
+	let tagline = $derived(
+		namedTerritory
+			? t('calendar.national.tagline').replace('{territory}', namedTerritory)
+			: t('calendar.tagline')
+	);
 </script>
 
 <svelte:head>
-	<title>{t('calendar.title')} — {t('home.title')}</title>
+	<title>{pageTitle}</title>
 </svelte:head>
 
 <div class="landing-column">
 	<h1>{t('calendar.title')}</h1>
-	<p class="page-tagline landing-measure">{t('calendar.tagline')}</p>
+	<p class="page-tagline landing-measure">{tagline}</p>
 
 	{#snippet controls()}
 		<!-- ONE CONTROL, WHICH IS WHY THERE IS NO ROW LEFT. The date field and

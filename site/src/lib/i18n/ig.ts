@@ -504,6 +504,8 @@ export const ig: Dictionary = {
 	'calendar.title': 'Kalenda Litọjị',
 	'calendar.tagline':
 		'Kalenda Rome Izugbe, agbakọtara maka ụbọchị ọ bụla — oge ya, ọkwa ya, agba ya.',
+	'calendar.national.tagline':
+		'{territory}: Kalenda Rome Izugbe tinyere ememme ndị nke ya, agbakọtara maka ụbọchị ọ bụla — oge ya, ọkwa ya, agba ya.',
 	'calendar.calendar': 'Kalenda',
 	'calendar.which.general': 'Kalenda Rome Izugbe',
 	'calendar.filter': 'Chọọ mba',

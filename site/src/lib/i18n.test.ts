@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { CALENDAR_LANGS } from './calendar/national/languages';
 import {
 	bcp47,
 	browserLangs,
+	calendarPathLang,
 	browserUiLangs,
 	detectUiLang,
 	dictionaryFor,
@@ -244,6 +246,11 @@ describe('UI_LANGS and the dictionaries', () => {
 		const placeholders: Record<string, string[]> = {
 			'summa.titleFromEdition': ['{lang}'],
 			'summa.noEditionInYourLanguage': ['{lang}'],
+			// The one placeholder filled from `Intl` rather than the corpus, and
+			// the only one a build REFUSES to ship without: a country calendar's
+			// description is written in one language with no fallback, so a
+			// translation that drops it publishes a page describing no country.
+			'calendar.national.tagline': ['{territory}'],
 			'plates.enlarge': ['{title}'],
 			'refs.externalVolume': ['{volume}', '{host}']
 		};
@@ -374,6 +381,24 @@ describe('UI_LANGS and the dictionaries', () => {
 	});
 
 	/**
+	 * The fifth list, and the only one whose drift is invisible in BOTH
+	 * directions.
+	 *
+	 * A stale `CAL` costs a country calendar the language its own head is
+	 * written in — the document declares `pt` at the edge and paints English
+	 * before hydration corrects it — and a row here for a calendar that has
+	 * left `NATIONAL_CALENDAR_LIST` seeds a language on an address that 404s.
+	 * Neither shows as an error anywhere.
+	 */
+	it('keeps the calendar table in app.html equal to CALENDAR_LANGS', () => {
+		const html = readFileSync(path.join(process.cwd(), 'src/app.html'), 'utf8');
+		const declared = /var CAL = \{([^}]*)\}/.exec(html)?.[1];
+		expect(declared, 'no `var CAL = {...}` found in src/app.html').toBeDefined();
+		const pairs = [...(declared ?? '').matchAll(/'?([a-z-]+)'?:\s*'([a-z]+)'/g)];
+		expect(Object.fromEntries(pairs.map((m) => [m[1], m[2]]))).toEqual(CALENDAR_LANGS);
+	});
+
+	/**
 	 * The same drift, in the two tables that arrived with `zht` — and this
 	 * pair fails LOUDER than the list above, which is why it is worth its own
 	 * assertion. A stale `UI` costs a flash of the wrong language; a stale
@@ -400,5 +425,46 @@ describe('UI_LANGS and the dictionaries', () => {
 		const variants = [...(varBlock ?? '').matchAll(/'([a-z-]+)':\s*'([a-z-]+)'/g)];
 		expect(variants.length).toBeGreaterThan(0);
 		for (const [, tag, folded] of variants) expect(detectUiLang([tag]), tag).toBe(folded);
+	});
+});
+
+/**
+ * The rung between a stored choice and the browser's list, and the only one
+ * that comes from the ADDRESS.
+ */
+describe('calendarPathLang', () => {
+	function at(pathname: string): string | undefined {
+		const previous = globalThis.location;
+		// @ts-expect-error — a location is what this function reads, and node
+		// has none until a test gives it one.
+		globalThis.location = { pathname };
+		try {
+			return calendarPathLang();
+		} finally {
+			globalThis.location = previous;
+		}
+	}
+
+	it('reads the language a country calendar is published in', () => {
+		expect(at('/calendarium/br')).toBe('pt');
+		expect(at('/calendarium/jp')).toBe('ja');
+		expect(at('/calendarium/hk')).toBe('zht');
+	});
+
+	/** The general page negotiates, which is what makes it the `x-default` of
+	 *  its own cluster — it names no calendar and so no language. */
+	it('says nothing about the general calendar or any other page', () => {
+		expect(at('/calendarium')).toBeUndefined();
+		expect(at('/calendarium/liturgia')).toBeUndefined();
+		expect(at('/preces/ave-maria')).toBeUndefined();
+		expect(at('/')).toBeUndefined();
+	});
+
+	/** Held and alias ids are not addresses, so they name no language either
+	 *  — `parseCalendarPath` is the one table both ends read. */
+	it('says nothing about an address that does not exist', () => {
+		expect(at('/calendarium/ie')).toBeUndefined();
+		expect(at('/calendarium/il')).toBeUndefined();
+		expect(at('/calendarium/zz')).toBeUndefined();
 	});
 });

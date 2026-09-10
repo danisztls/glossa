@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { assertCanonical, sitemapPaths, sitemapXml, ORIGIN } from '../../scripts/sitemap.mjs';
+import { CALENDAR_IDS } from './calendar/national/languages';
 import { CHROME_PATHS, parseChromePath } from './route-manifest';
 import { UI_LANGS } from './ui-langs';
 import { isCanonicalPath, type RouteManifest } from './route-manifest';
@@ -55,13 +56,14 @@ describe('sitemapPaths', () => {
 		// 2026-09-04, when `/bibliotheca` was written and `/ius-canonicum`
 		// joined a list it had been missing from since the Code landed.
 		//
-		// `/calendarium` and `/catechismus/compendium` are NOT among them and
-		// neither is an oversight: both are chrome by the same test and both are
-		// held out until their strings exist in more than three and fourteen
-		// dictionaries respectively (`route-manifest.ts`). Both are in
-		// `STATIC_PATHS`, so both exist; neither is in a cluster, so neither is
-		// claimed in 37 languages.
-		expect(paths).toHaveLength(CHROME_PATHS.length * (UI_LANGS.length + 1) + 21);
+		// THE COUNTRY CALENDARS ARE THE THIRD TERM AND ARE NOT MULTIPLIED. Each
+		// is published once, in the language its calendar is published in
+		// (`languages.ts`), so a page joins this file by having a row in
+		// `CALENDAR_LANGS` and not by having its strings in forty dictionaries —
+		// which is the distinction that makes them affordable at all.
+		expect(paths).toHaveLength(
+			CHROME_PATHS.length * (UI_LANGS.length + 1) + CALENDAR_IDS.length + 21
+		);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
 

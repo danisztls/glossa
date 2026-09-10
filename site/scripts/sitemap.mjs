@@ -38,6 +38,7 @@
  */
 
 import { hrefFor } from '../src/lib/address.ts';
+import { calendarPath, CALENDAR_IDS } from '../src/lib/calendar/national/languages.ts';
 import { CHROME_PATHS, isCanonicalPath } from '../src/lib/route-manifest.ts';
 import { UI_LANGS } from '../src/lib/ui-langs.ts';
 
@@ -72,11 +73,28 @@ const MAX_URLS = 50_000;
  * takes a language prefix either — both are `noindex`, and a cluster of pages
  * nobody may find is fourteen times nothing.
  */
+/**
+ * The country calendars, unprefixed and once each.
+ *
+ * A THIRD KIND OF STATIC URL, and the first page here that is neither a chrome
+ * path nor absent. The two rules that decide the block above are that a chrome
+ * page takes every language prefix because its every word is the interface, and
+ * that a page whose strings are not written everywhere stays out of the sitemap
+ * altogether. Neither settles this one: `/calendarium/br` differs from
+ * `/calendarium/ie` in its CONTENT — the transfers, the propers, the days — so
+ * the cross product would be forty claims that forty addresses are one page in
+ * forty languages, and forty-one times fifty-three is 2,173 URLs for
+ * fifty-three pages. Each is published once, in the language its calendar is
+ * published in (`languages.ts`), and declares no alternates.
+ */
+const CALENDAR_URLS = CALENDAR_IDS.map((id) => calendarPath(id));
+
 const STATIC_URLS = [
 	...CHROME_PATHS,
 	...UI_LANGS.flatMap((lang) =>
 		CHROME_PATHS.map((path) => (path === '/' ? `/${lang}` : `/${lang}${path}`))
-	)
+	),
+	...CALENDAR_URLS
 ];
 
 /**

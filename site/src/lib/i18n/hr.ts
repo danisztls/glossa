@@ -494,6 +494,8 @@ export const hr: Dictionary = {
 	'calendar.title': 'Liturgijski kalendar',
 	'calendar.tagline':
 		'Opći rimski kalendar, izračunan za bilo koji dan — njegovo vrijeme, njegov stupanj, njegova boja.',
+	'calendar.national.tagline':
+		'{territory}: Opći rimski kalendar s vlastitim slavljima, izračunan za bilo koji dan — njegovo vrijeme, njegov stupanj, njegova boja.',
 	'calendar.calendar': 'Kalendar',
 	'calendar.which.general': 'Opći rimski kalendar',
 	'calendar.filter': 'Traži zemlje',

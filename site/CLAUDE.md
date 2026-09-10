@@ -978,6 +978,13 @@ person checks by hand shows the page working. Two pages shipped that way.
 directory neither table admits, so **adding a route is now the assertion rather
 than remembering to add it to a list.**
 
+**That walk skips every `[dynamic]` directory, so a dynamic route owes its own
+guard.** `calendarium/[calendar]/` is the case to copy: its `load` and
+`isCanonicalPath` read ONE table (`CALENDAR_LANGS`), so they cannot disagree,
+and `languages.test.ts` asserts every published id is canonical. A dynamic
+route validating against a list of its own is the same 404-on-cold-load defect
+with nothing walking the tree to catch it.
+
 **A page joins `CHROME_PATHS` only when its own title and description strings
 exist in every interface language** — a translation gate, not a routing one
 (`site/docs/addresses.md` §Two tables). **The gate is on the PAGE, not the
@@ -2498,10 +2505,33 @@ parses an id.
 - **A date is a query parameter (`?d=2026-04-05`), not a path.** It names no
   citation, so it is not a reading address; as a chrome path it would put an
   unbounded set of URLs into the sitemap for pages that are pure computation.
-  The calendar sits beside it in `?c=`, never written for the general calendar —
-  the default is an absence, not a value. **`/calendarium/liturgia` takes the
-  same two parameters**, so walking between the two pages keeps both the day and
-  the country.
+  **`/calendarium/liturgia` takes `?d=` and `?c=`**, so walking between the two
+  pages keeps both the day and the country.
+- **A COUNTRY'S CALENDAR IS A PATH AND A DAY IS NOT, and the test is whether a
+  head can differ.** `/calendarium/br` is one of fifty-three published pages
+  (`calendar/national/languages.ts`); `?c=br` is the same parameter it always
+  was, still read, still what names a territory keeping another's calendar, and
+  now mirrored to the path on arrival. The distinction is not tidiness: a head
+  is built from `pathname` alone, so every `?c=` shared one title, one
+  description and one sitemap row, and no crawler could be told that a page
+  about Brazil's calendar exists.
+- **Each is published ONCE, in the language that calendar is published in**,
+  and declares no `hreflang` alternates — what separates two of them is the
+  days, not the words, so forty translations would be forty addresses claiming
+  to be one page. `route-titles.mjs` writes the head; `held.ts` decides which
+  calendars have an address at all.
+- **A page whose language comes from its path must be painted in it.** The edge
+  sets `lang` from `CALENDAR_LANGS` and `app.html`'s pre-paint block carries a
+  copy of that table (`i18n.test.ts` pins it, as it does `UI`/`BCP`/`VAR`), or
+  the document declares Portuguese in its head and paints English chrome under
+  it. The seeded language is NOT persisted, where a `/pt/…` prefix is: the
+  reader asked for a calendar, not for a Portuguese site.
+- **A country name from `Intl.DisplayNames` is a LABEL and never part of a
+  sentence.** It arrives as a bare nominative with no article, so
+  `calendar.national.tagline` opens with `{territory}` in all forty languages —
+  the draft that read "as {territory} keeps it" printed "as United States keeps
+  it", "wie Schweiz ihn feiert", "tel que le célèbre France", and which
+  countries take an article is a fact about each language's own list.
 - **The card leaves in two directions and they are drawn differently.** The
   corner's glyph (`more`) is a SIDEWAYS move — the same day on another surface,
   which is `/calendarium` from the home and liturgy pages and nothing from

@@ -24,8 +24,10 @@
 
 import { bookSlug, parseHref, summaPartFromSlug, type Address } from './address.ts';
 import { relatedLinks, type Apparatus, type WorkImprint } from './apparatus.ts';
+import { CALENDAR_LANGS } from './calendar/national/languages.ts';
 import {
 	CHROME_PATHS,
+	parseCalendarPath,
 	parseChromePath,
 	parseLangEntry,
 	type RouteManifest
@@ -80,6 +82,11 @@ export interface RouteTitles {
 	/** lang -> chrome path -> `[title, description]`, from the interface's own
 	 *  dictionaries. See `CHROME_KEYS` in scripts/route-titles.mjs. */
 	chrome: Record<string, Record<string, [string, string]>>;
+	/** Calendar id -> `[title, description, territory name]`, each in the ONE
+	 *  language that calendar is published in — `chrome` above is a page in
+	 *  forty languages, and this is forty-odd pages in one language each. See
+	 *  `CALENDAR_LANGS` in `$lib/calendar/national/languages.ts`. */
+	calendars: Record<string, [string, string, string]>;
 	books: Record<string, string>;
 	cccSpans: TitledSpan[];
 	compendiumSpans: TitledSpan[];
@@ -367,6 +374,9 @@ export function headFor(
 		return bare && { ...bare, lang: entry.lang as UiLang, alternates: [] };
 	}
 
+	const calendar = parseCalendarPath(pathname);
+	if (calendar) return calendarHead(calendar, titles);
+
 	const fixed = STATIC_HEADS[pathname];
 	if (fixed) {
 		return {
@@ -548,6 +558,52 @@ function chromeHead(
 		],
 		crumbs: path === '/' ? [ROOT] : [ROOT, { name: title, href: canonical }],
 		links: path === '/' ? sectionLinks() : [ROOT]
+	};
+}
+
+/**
+ * One country's calendar, in the one language that calendar is published in.
+ *
+ * A SINGLETON AND NOT A CLUSTER, which is the whole difference from
+ * `chromeHead` above. A chrome page is one page in forty languages and says
+ * so; this is Brazil's calendar, and forty translations of it would be forty
+ * addresses claiming to be the same page in different languages when what
+ * differs between `/calendarium/br` and `/calendarium/ie` is the CONTENT — the
+ * transfers, the propers, the days themselves. So there are no alternates and
+ * no `x-default`: forty-odd addresses, each canonical, each its own page.
+ *
+ * `lang` IS SET AND THE PAGE STILL NEGOTIATES, which is not a contradiction.
+ * It is what the edge serves a consumer that does not run script — the crawler
+ * this address exists for, which cannot negotiate and would otherwise be told
+ * a Portuguese title belongs to an English document. `app.html`'s pre-paint
+ * block overwrites it from the reader's own preference before the first paint,
+ * exactly as it does on every other page: the path names a fact about the
+ * calendar, not about the reader (`languages.ts`).
+ *
+ * The trail is the general page and then this one, because that is the way a
+ * reader actually gets here — the picker on `/calendarium` — and the crumb
+ * names the territory alone where the title carries the whole sentence.
+ */
+function calendarHead(id: string, titles: RouteTitles): ShellHead | undefined {
+	const entry = titles.calendars?.[id];
+	if (!entry) return undefined;
+	const [title, description, territory] = entry;
+	const lang = CALENDAR_LANGS[id] as UiLang;
+	const path = `/calendarium/${id}`;
+	const general = titles.chrome[lang]?.['/calendarium']?.[0];
+	return {
+		title,
+		description,
+		canonical: path,
+		noindex: false,
+		lang,
+		alternates: [],
+		crumbs: [
+			ROOT,
+			...(general ? [{ name: general, href: '/calendarium' }] : []),
+			{ name: territory, href: path }
+		],
+		links: [ROOT]
 	};
 }
 

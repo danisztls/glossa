@@ -466,6 +466,8 @@ export const ja: Dictionary = {
 	'nav.calendar': '暦',
 	'calendar.title': '典礼暦',
 	'calendar.tagline': 'ローマ一般暦を任意の日について計算します — その季節、その等級、その色。',
+	'calendar.national.tagline':
+		'{territory}：固有の祝祭を加えたローマ一般暦を任意の日について計算します — その季節、その等級、その色。',
 	'calendar.calendar': '暦',
 	'calendar.which.general': 'ローマ一般暦',
 	'calendar.filter': '国を検索',

@@ -13,6 +13,8 @@
  * re-picks an edition after switching.
  */
 
+import { CALENDAR_LANGS } from './calendar/national/languages.ts';
+import { parseCalendarPath } from './route-manifest.ts';
 import { readStoredString, writeStoredString } from './storage';
 
 /**
@@ -206,13 +208,44 @@ function browserLanguage(): UiLang {
 }
 
 /**
+ * The language a country calendar's ADDRESS names, where the address is one.
+ *
+ * `/calendarium/br` is published in Portuguese and the edge serves its head in
+ * Portuguese (`languages.ts`), so a document that then paints English chrome
+ * is a page declaring one language and rendering another — the mismatch
+ * `app.html`'s pre-paint block exists to prevent, and the one thing that could
+ * make these addresses worth less than the parameter they replaced.
+ *
+ * Exported for its test alone: `initialLang` runs at module scope, so the one
+ * caller cannot be reached from a test without importing the store it builds.
+ */
+export function calendarPathLang(): UiLang | undefined {
+	if (typeof location === 'undefined') return undefined;
+	const id = parseCalendarPath(location.pathname);
+	const lang = id ? CALENDAR_LANGS[id] : undefined;
+	return lang && isUiLang(lang) ? lang : undefined;
+}
+
+/**
  * A saved choice is always authoritative. Only a reader with no valid saved
  * choice is language-negotiated, and that initial result is saved so later
  * visits remain stable even if the browser's language list changes.
+ *
+ * THE PATH SITS BETWEEN THE TWO, AND IS THE ONE ANSWER HERE THAT IS NOT
+ * SAVED. A country calendar's address names a fact about the CALENDAR, so it
+ * outranks a browser that has said English while the reader is looking at a
+ * page written in Portuguese — but it is not the reader saying anything, and
+ * persisting it would turn one link off a search results page into a
+ * Portuguese site for ever. It holds for the session and the next visit
+ * negotiates afresh. A `/pt/…` prefix is the opposite case and still persists:
+ * there the reader named the language (`routes/[uilang=uilang]/+layout.ts`).
  */
 function initialLang(): UiLang {
 	const stored = readStored();
 	if (stored) return stored;
+
+	const seeded = calendarPathLang();
+	if (seeded) return seeded;
 
 	const detected = browserLanguage();
 	writeStoredString(STORAGE_KEY, detected);

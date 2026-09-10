@@ -395,15 +395,78 @@ day; a vernacular table needs exactly those three and nothing else. Reading
 them back off `ordinary-11-2` would work and `christmas-jan-2` would defeat it —
 that id carries a day of the month where the name needs a weekday.
 
+## A country's calendar is a page and a day is not
+
+**The test is whether a head can differ, and a parameter's cannot.** `headFor`
+is built from `pathname` alone, so for as long as the country lived in `?c=`
+all fifty-three calendars shared one `<title>`, one description and one sitemap
+row: a reader searching for `calendário litúrgico Brasil` was offered a page
+describing the General Roman Calendar in English, if they were offered anything.
+A date fails the same test in the other direction — it names no citation, and
+as a path it would put an unbounded set of URLs into the sitemap for pages that
+are pure computation. So `?d=` stays a parameter and the calendar became a path.
+
+**`?c=` is unchanged, and two things still need it.** A link made before these
+addresses existed still lands where it meant (the page mirrors it to the path
+on arrival), and a territory that keeps another's calendar is still named by it
+— `?c=il` shows the Latin Patriarchate's calendar, whose address is
+`/calendarium/ps`. Ten territory paths resolving to one calendar would be ten
+pages with one body, which is the single duplicate an `hreflang` cluster cannot
+consolidate, because they are not translations of each other.
+
+**Each page is published ONCE, in the language its calendar is published in.**
+The cross product was the obvious design and is the wrong one: forty interface
+languages times fifty-three calendars is 2,120 addresses, most of them cells
+nobody asks for, all of them claiming to be one page in forty languages when
+what actually separates two of them is the days. So there is no cluster and no
+`x-default` here — fifty-three singletons, each canonical.
+
+**The language is read off the source, not chosen.** `CALENDARS` in
+`pipeline/scrapers/liturgical_calendar.py` already recorded the editions
+GCatholic publishes each calendar in, taken from each calendar's own language
+switcher, and its first tag is the anchor: the country's own language wherever
+there is one. Cross-checked against CLDR's likely subtags, the two disagree
+only where the source is the better witness — CLDR says Uganda speaks Swahili
+and India Hindi, and both conferences publish in English.
+
+**A language that cannot carry a calendar cannot name one, and Russia is the
+row that proves it.** Its conference works in Russian and `ru` is an interface
+language; the page is in English, because GCatholic publishes that calendar in
+English only, `ru` is not one of the twenty vernaculars under
+`calendar/names/`, and `ru.ts`'s own propers carry English names and nothing
+else. A Russian title over English feasts is the falsehood the chrome gate
+exists to refuse, met again in a place the gate does not reach.
+
+**The one disagreement worth re-examining is `vi`.** The source publishes the
+United States Virgin Islands in Spanish and its derived propers are US federal
+observances named in Spanish; CLDR says the territory is anglophone. The
+measured witness is followed; the diocese's own ordo would settle it.
+
+**A page whose language comes from its path has to be painted in it.** The edge
+sets `lang` from the same table, and `app.html`'s pre-paint block carries a
+copy — without it the document declares Portuguese in its head and negotiates
+English chrome under it before hydration, which is the mismatch that would make
+these addresses worth less than the parameter they replaced. It is not
+persisted, unlike a `/pt/…` prefix: the reader asked for a calendar, not for a
+Portuguese site, so it holds for the session and the next visit negotiates
+afresh.
+
+**A country name from the platform is a label, never part of a sentence.**
+`calendar.national.tagline` opens with `{territory}` in all forty languages
+because `Intl.DisplayNames` returns a bare nominative with no article. Written
+as "as {territory} keeps it" it read correctly for Kenya and Brazil and then
+printed "as United States keeps it", "wie Schweiz ihn feiert", "tel que le
+célèbre France" — and no rule can add the article, since which countries take
+one is a fact about each language's own list. The same reason forbids a
+preposition in front of it: "in {territory}" is right in English and wrong in
+Portuguese the moment the country is Brazil.
+
 ## The page
 
-**The date is a query parameter, not a path segment.** A reading address names
-a citation and a chrome path names a page whose every word is the interface; a
-date is neither, and as a chrome path it would put an unbounded set of URLs
-into the sitemap for pages that are pure computation. The country joined it in
-`?c=`, on the argument `?compare=` already makes: the address in front of the
-reader should reproduce what they are looking at. `?c=general` is never
-written, being an absence rather than a value.
+**The date is a query parameter, not a path segment**, for the reason above.
+The country was one too until it earned an address, on the argument `?compare=`
+already makes: the address in front of the reader should reproduce what they
+are looking at.
 
 **`replaceState` does not update `page.url`, and the controls did nothing** for
 weeks, with no console error and nothing in `npm run check` or `npm test`.

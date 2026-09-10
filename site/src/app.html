@@ -341,8 +341,77 @@
 					'zh-hant-hk': 'zht',
 					'zh-hant-mo': 'zht'
 				};
+				// The fifth list, and the one that is not about languages at all:
+				// a country calendar's page is published in the language that
+				// calendar is published in, and the edge has already written its
+				// head in that language. Without this the pre-paint pass would
+				// negotiate the reader's browser over the top and the document
+				// would say `lang="pt"` in its head and paint English chrome.
+				// Keep it equal to `CALENDAR_LANGS` in
+				// src/lib/calendar/national/languages.ts, which `i18n.test.ts`
+				// asserts; `initialLang` there applies the same rung at
+				// hydration, and neither of them SAVES it — the reader asked for
+				// Brazil's calendar, not for a Portuguese site.
+				var CAL = {
+					ar: 'es',
+					at: 'de',
+					be: 'nl',
+					bn: 'en',
+					bo: 'es',
+					br: 'pt',
+					ca: 'en',
+					cd: 'fr',
+					ch: 'de',
+					cl: 'es',
+					co: 'es',
+					cr: 'es',
+					cz: 'cs',
+					de: 'de',
+					dz: 'fr',
+					es: 'es',
+					fr: 'fr',
+					gt: 'es',
+					gu: 'en',
+					hk: 'zht',
+					hr: 'hr',
+					hu: 'hu',
+					in: 'en',
+					it: 'it',
+					jp: 'ja',
+					ke: 'en',
+					kr: 'ko',
+					kw: 'en',
+					li: 'de',
+					lt: 'lt',
+					lu: 'fr',
+					mc: 'fr',
+					mx: 'es',
+					my: 'en',
+					ng: 'en',
+					nl: 'nl',
+					no: 'no',
+					pa: 'es',
+					pe: 'es',
+					ph: 'en',
+					pl: 'pl',
+					ps: 'en',
+					ru: 'en',
+					sd: 'en',
+					se: 'sv',
+					st: 'pt',
+					tl: 'pt',
+					ug: 'en',
+					us: 'en',
+					va: 'it',
+					ve: 'es',
+					vi: 'es',
+					za: 'en'
+				};
 				var seg = location.pathname.split('/')[1];
 				var l = UI.indexOf(seg) !== -1 ? seg : localStorage.getItem('glossa:ui-lang');
+				if (UI.indexOf(l) === -1 && seg === 'calendarium') {
+					l = CAL[location.pathname.split('/')[2]] || l;
+				}
 				if (UI.indexOf(l) === -1) {
 					var ls =
 						navigator.languages && navigator.languages.length

@@ -508,6 +508,8 @@ export const ml: Dictionary = {
 	'calendar.title': 'ആരാധനക്രമ കലണ്ടർ',
 	'calendar.tagline':
 		'പൊതു റോമൻ കലണ്ടർ, ഏതു ദിവസത്തിനും കണക്കാക്കിയത് — അതിന്റെ കാലം, അതിന്റെ പദവി, അതിന്റെ നിറം.',
+	'calendar.national.tagline':
+		'{territory}: പൊതു റോമൻ കലണ്ടർ അതിന്റെ തനത് ആഘോഷങ്ങളോടെ, ഏതു ദിവസത്തിനും കണക്കാക്കിയത് — അതിന്റെ കാലം, അതിന്റെ പദവി, അതിന്റെ നിറം.',
 	'calendar.calendar': 'കലണ്ടർ',
 	'calendar.which.general': 'പൊതു റോമൻ കലണ്ടർ',
 	'calendar.filter': 'രാജ്യങ്ങൾ തിരയുക',

@@ -185,6 +185,18 @@ are in all 37 now.
 `compendium.*` keys written into the twenty-three dictionaries that lacked
 them.
 
+**A THIRD ANSWER EXISTS, AND THE COUNTRY CALENDARS ARE IT.** `/calendarium/br`
+is in the sitemap and not in `CHROME_PATHS`, which no page was before: it is
+published, and it is published ONCE, in the language its calendar is published
+in. The two rules above cannot place it — every word on it is the interface, so
+the first says chrome; its strings are written everywhere, so the second raises
+no objection — and following them would give fifty-three calendars forty
+language members each, 2,120 addresses claiming to be one page in forty
+languages. **What separates two of these is the DAYS, not the words**, which is
+the property `hreflang` asserts is absent. So the gate that decides them is a
+different one: a row in `CALENDAR_LANGS`, not a key in every dictionary
+(`site/docs/calendar.md`).
+
 **So "should this be a chrome path" is two questions, not one**: is every word
 on the page the interface, and is the interface actually written. The first was
 always the test; the second is what the two omissions taught.

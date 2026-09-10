@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { assertNamed, buildRouteTitles, readDictionaries } from '../../scripts/route-titles.mjs';
 import { sitemapPaths } from '../../scripts/sitemap.mjs';
+import { CALENDAR_IDS, CALENDAR_LANGS, territoryName } from './calendar/national/languages';
 import { CHROME_PATHS } from './route-manifest';
 import { UI_LANGS } from './ui-langs';
 import {
@@ -98,9 +99,35 @@ function chromeFixture(): RouteTitles['chrome'] {
 	);
 }
 
+/**
+ * Every country calendar named the way the real table names it.
+ *
+ * Generated for the same reason `chromeFixture` is, and the opposite way
+ * round: that one is one page in forty languages, this is fifty-three pages in
+ * one language each, so what a fixture has to preserve here is that the titles
+ * are DISTINCT — `assertNamed` buckets these with the corpus addresses, where
+ * two pages sharing a name is the defect it exists to catch.
+ */
+function calendarFixture(): Record<string, [string, string, string]> {
+	return Object.fromEntries(
+		CALENDAR_IDS.map((id) => {
+			const territory = territoryName(id, CALENDAR_LANGS[id]);
+			return [
+				id,
+				[
+					`Liturgical Calendar — ${territory} — Glossa Catholica`,
+					`The General Roman Calendar as ${territory} keeps it.`,
+					territory
+				]
+			];
+		})
+	);
+}
+
 const titles: RouteTitles = {
 	version: 1,
 	chrome: chromeFixture(),
+	calendars: calendarFixture(),
 	books: { gen: 'Genesis', ps: 'Psalms' },
 	cccSpans: [
 		[1, 25, 'Prologue'],
@@ -199,6 +226,76 @@ describe('headFor, static pages', () => {
 
 	it('offers the sections as links from the home page, for a consumer with no script', () => {
 		expect(head('/')?.links.map((l) => l.href)).toContain('/documenta');
+	});
+});
+
+/**
+ * A country's calendar is one page in ONE language, which is every difference
+ * between these and the cluster below.
+ */
+describe('headFor, a country calendar', () => {
+	it('names the territory and self-canonicalizes', () => {
+		const h = head('/calendarium/br');
+		expect(h?.title).toContain('Brasil');
+		expect(h?.canonical).toBe('/calendarium/br');
+		expect(h?.noindex).toBe(false);
+	});
+
+	/**
+	 * NO CLUSTER, and this is the assertion the whole design rests on: forty
+	 * translations of Brazil's calendar would be forty addresses claiming to be
+	 * one page, when what separates `/calendarium/br` from `/calendarium/ie` is
+	 * the days themselves.
+	 */
+	it('declares no alternates', () => {
+		for (const id of CALENDAR_IDS) expect(head(`/calendarium/${id}`)?.alternates, id).toEqual([]);
+	});
+
+	/**
+	 * `lang` is set on a page that still negotiates, for the consumer that
+	 * cannot: a crawler told a Portuguese title belongs to an English document
+	 * is the one thing this address exists to avoid. `app.html`'s pre-paint
+	 * block overwrites it from the reader's own preference before first paint.
+	 */
+	it('declares the language its calendar is published in', () => {
+		expect(head('/calendarium/br')?.lang).toBe('pt');
+		expect(head('/calendarium/us')?.lang).toBe('en');
+	});
+
+	/** Ireland's layer is held (`held.ts`), so it is not an address at all — no
+	 *  head, and the worker 404s it. */
+	it('builds nothing for a held calendar', () => {
+		expect(head('/calendarium/ie')).toBeUndefined();
+	});
+
+	it('gives every published calendar a head of its own', () => {
+		for (const id of CALENDAR_IDS) {
+			const h = head(`/calendarium/${id}`);
+			expect(h, id).toBeDefined();
+			expect(h?.title, id).not.toBe(SITE_NAME);
+		}
+	});
+
+	/** The trail a reader actually walked: the picker is on the general page. */
+	it('leads the trail through the general calendar', () => {
+		expect(head('/calendarium/br')?.crumbs.map((c) => c.href)).toEqual([
+			'/',
+			'/calendarium',
+			'/calendarium/br'
+		]);
+	});
+
+	/**
+	 * A prefixed country calendar is an ENTRY POINT, exactly as a prefixed
+	 * reading address is: served, canonicalizing to the bare path, in no
+	 * sitemap and declaring nothing. It is not a second published page, because
+	 * the page it names is already published in the language it is written in.
+	 */
+	it('treats a language prefix as an entry point', () => {
+		const h = head('/pt/calendarium/br');
+		expect(h?.canonical).toBe('/calendarium/br');
+		expect(h?.alternates).toEqual([]);
+		expect(h?.noindex).toBe(false);
 	});
 });
 
@@ -660,6 +757,42 @@ describe('the chrome table the build actually ships', () => {
 		for (const lang of UI_LANGS) {
 			expect(Object.keys(chrome[lang] ?? {}).sort(), lang).toEqual([...CHROME_PATHS].sort());
 		}
+	});
+
+	/**
+	 * The same question of the calendar table, where the answer is not a
+	 * fallback but a THROW: a country's page is written in one language, so a
+	 * dictionary short of `calendar.title` cannot be papered over with English
+	 * the way `t()` would at runtime. This is what says the fifty-three
+	 * languages the table asks for are all written.
+	 */
+	it('names every country calendar in the language it is published in', async () => {
+		const { calendars } = buildRouteTitles({
+			manifests: {},
+			bibleIndex: {},
+			cccIndex: {},
+			compendiumIndex: {},
+			summaIndex: {},
+			prayerIndex: {},
+			socialDoctrineEditions: [],
+			socialDoctrineChapterStarts: [],
+			dictionaries: await readDictionaries()
+		});
+		expect(Object.keys(calendars).sort()).toEqual([...CALENDAR_IDS]);
+		// Distinct, because `assertNamed` buckets these with the corpus
+		// addresses — twenty Spanish-speaking countries share a tagline and may
+		// not share a title.
+		expect(new Set(Object.values(calendars).map(([title]) => title)).size).toBe(
+			CALENDAR_IDS.length
+		);
+		expect(calendars.br[0]).toBe('Calendário Litúrgico — Brasil — Glossa Catholica');
+		// The description is a SENTENCE naming the country, not the general
+		// tagline under a label: twenty Spanish-speaking countries would
+		// otherwise be described identically but for a prefix.
+		expect(calendars.br[1]).toContain('Brasil');
+		expect(calendars.br[1]).not.toContain('{territory}');
+		expect(calendars.ca[1]).not.toBe(calendars.us[1]);
+		expect(calendars.jp[2]).toBe('日本');
 	});
 
 	/** The taglines are written for the page, where two of the words are set in

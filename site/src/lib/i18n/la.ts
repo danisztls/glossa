@@ -505,6 +505,8 @@ export const la: Dictionary = {
 	'calendar.title': 'Calendarium Liturgicum',
 	'calendar.tagline':
 		'Calendarium Romanum Generale, in quemlibet diem computatum — tempus, gradus, color.',
+	'calendar.national.tagline':
+		'{territory}: Calendarium Romanum Generale cum celebrationibus propriis, in quemlibet diem computatum — tempus, gradus, color.',
 	'calendar.calendar': 'Calendarium',
 	'calendar.which.general': 'Calendarium Romanum Generale',
 	'calendar.filter': 'Regiones quaerere',

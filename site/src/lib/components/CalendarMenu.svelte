@@ -106,7 +106,7 @@
 		residentRegions,
 		residentTerritories
 	} from '$lib/calendar/layers.svelte';
-	import { SUBDIVISION_NAMES } from '$lib/calendar/national/subdivisions';
+	import { territoryName } from '$lib/calendar/national/languages';
 	import { Menu } from './menu.svelte';
 
 	interface Props {
@@ -164,31 +164,6 @@
 		return String.fromCodePoint(
 			...[...code.toUpperCase()].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)
 		);
-	}
-
-	/**
-	 * A territory's name, in the reader's own language, from the platform.
-	 *
-	 * `Intl.DisplayNames` is what the language menu already uses for language
-	 * names (`menu-filter.ts`), and it earns its place here for the same
-	 * reason: fifty territory names in thirty-odd interface languages is a
-	 * table nobody would maintain, and every browser already knows them. A tag
-	 * it cannot name falls back to `SUBDIVISION_NAMES` and then to the code,
-	 * which is at least the ISO name of the place.
-	 *
-	 * `bcp47`, for the reason `menu-filter.ts`'s own `Intl` call gives: `zht`
-	 * is structurally valid and unresolvable, so it does not throw into the
-	 * `catch` below — it answers in the browser's locale, which reads as a bug
-	 * in the country list rather than in the tag.
-	 */
-	function territoryName(code: string, uiLang: string): string {
-		if (SUBDIVISION_NAMES[code]) return SUBDIVISION_NAMES[code];
-		const upper = code.toUpperCase();
-		try {
-			return new Intl.DisplayNames([bcp47(uiLang)], { type: 'region' }).of(upper) ?? upper;
-		} catch {
-			return upper;
-		}
 	}
 
 	/** The mark on the general calendar's row. NOT a flag — see the docblock:
