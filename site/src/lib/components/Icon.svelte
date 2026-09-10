@@ -154,6 +154,14 @@
 	// and drawing it as anything else would invent a second mark for it.
 	import Library from '@lucide/svelte/icons/library';
 	import ChartColumn from '@lucide/svelte/icons/chart-column';
+	// THE TOPICS' MARK, and the only glyph here that draws a punctuation mark
+	// rather than a thing. That is what `/quaestiones` is: not a work with a
+	// shape to picture but the question somebody arrives holding, and every
+	// object in this set would picture the answer instead. `messages-square`
+	// is taken and rightly — it is the Compendium's, whose form actually is
+	// question and answer — and the help sheet's `?` is a character in a
+	// control row rather than an icon, so nothing in the set collides.
+	import CircleHelp from '@lucide/svelte/icons/circle-help';
 
 	const ICONS = {
 		search: Search,
@@ -200,7 +208,8 @@
 		languages: Languages,
 		'a-large-small': ALargeSmall,
 		library: Library,
-		'chart-column': ChartColumn
+		'chart-column': ChartColumn,
+		'circle-help': CircleHelp
 	};
 
 	export type IconName = keyof typeof ICONS;

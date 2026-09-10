@@ -178,6 +178,12 @@
 		{ href: '/bibliotheca', key: 'nav.library' },
 		{ href: '/calendarium', key: 'nav.calendar' },
 		{ href: '/schola', key: 'nav.learn' },
+		// Titled by its own page, as `/colophon` below is: `nav.*` holds a
+		// short name for each of the five doors on the bar, and this is not
+		// one of them. The bar stays at five — it is one line — and the other
+		// two ways in are the card `ShelfGrid.svelte` draws on the home page
+		// and on `/bibliotheca`.
+		{ href: '/quaestiones', key: 'quaestiones.landing.title' },
 		// The header reaches `/signata` by a glyph, so this is the only place
 		// on the site that says the word.
 		{ href: '/signata', key: 'nav.bookmarks' },

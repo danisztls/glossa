@@ -25,9 +25,10 @@
 	 * that page's subject, the home page in a `<nav>` because they are its way
 	 * in, and both give it a hidden `h2` to hang the cards' `<h3>`s from.
 	 *
-	 * ## The last card is not a work
+	 * ## The last cards are not works
 	 *
-	 * Bookmarks, over `/signata`. It sits IN the grid rather than above it
+	 * Questions and Bookmarks, and each says beside itself why it has no row
+	 * in `$lib/shelves.ts`. Bookmarks, over `/signata`. It sits IN the grid rather than above it
 	 * because it is the same object at that size — a name, a mark, a sentence
 	 * and a way in — and it is LAST because the works are what a catalogue is
 	 * for. It has no row in `$lib/shelves.ts` for the reason it needs none: a
@@ -51,6 +52,7 @@
 	 * slot where every other card has a sentence.
 	 */
 	import { visibleShelves } from '$lib/shelves';
+	import { hasTopics } from '$lib/corpus';
 	import ShelfCard from './ShelfCard.svelte';
 	import { t } from '$lib/i18n.svelte';
 
@@ -81,6 +83,38 @@
 			tagline={t(shelf.taglineKey)}
 		/>
 	{/each}
+
+	<!--
+		QUESTIONS, AFTER THE WORKS AND BEFORE WHAT THE READER BROUGHT. It is a
+		way into the same shelf rather than an eighth thing on it: every topic
+		resolves to passages of the Catechism, the Compendium of the Social
+		Doctrine and the Code, so this card opens onto three cards above it by
+		a different index — the one a reader holding a sentence and no
+		reference can actually use.
+
+		It has no row in `$lib/shelves.ts` for Bookmarks' reason: a `Shelf` is
+		a work type plus that work's own strings, and there is no work behind
+		this one. It is GATED where Bookmarks is not, because there is a build
+		behind it: `hasTopics()` is `visibleShelves()`'s test for a door, and a
+		card over a build with no topic list is a door onto
+		`quaestiones.landing.none`.
+
+		`quaestiones.landing.cardTagline` and not the landing page's own: that
+		one is a masthead's two sentences and was five lines in a 16rem card,
+		which every row in this grid then pays for. Both strings are English
+		outside `en` and `pt` — the whole section is, which is why the route is
+		still out of `CHROME_PATHS` — and here that is one surface in one
+		language rather than the mismatch `ccc.landing.pairTitle` warns about:
+		the name, the sentence and the page they open are all English together.
+	-->
+	{#if hasTopics()}
+		<ShelfCard
+			href="/quaestiones"
+			icon="circle-help"
+			title={t('quaestiones.landing.title')}
+			tagline={t('quaestiones.landing.cardTagline')}
+		/>
+	{/if}
 
 	<!--
 		The sentence is `/signata`'s own tagline, so this card obeys the rule

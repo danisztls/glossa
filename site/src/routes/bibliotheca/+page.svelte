@@ -27,10 +27,10 @@
 	 * both are one click away in the bar — leaving them out is what would turn
 	 * this page into a leftovers bin.
 	 *
-	 * ## A catalogue, and two cards that are not works
+	 * ## A catalogue, and three cards that are not works
 	 *
-	 * Bookmarks, over a link to `/signata`, and the census, over
-	 * `/bibliotheca/census`. Neither is this page's invention:
+	 * Questions, over `/quaestiones`; Bookmarks, over `/signata`; and the
+	 * census, over `/bibliotheca/census`. None is this page's invention:
 	 * `ShelfGrid.svelte` draws the whole bed, the home page renders the same
 	 * one, and that component's docblock carries the argument for each card and
 	 * for its position.

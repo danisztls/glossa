@@ -686,6 +686,8 @@ export const pt: Dictionary = {
 	'quaestiones.landing.title': 'Perguntas',
 	'quaestiones.landing.tagline':
 		'Passagens do Catecismo, da Doutrina Social e do direito canônico, reunidas pela pergunta com que alguém chega. O trabalho feito aqui é a reunião; cada palavra do texto é da própria Igreja, e cada passagem leva ao lugar onde ela está.',
+	'quaestiones.landing.cardTagline':
+		'Passagens do Catecismo, da Doutrina Social e do direito canônico, reunidas por pergunta.',
 	'quaestiones.landing.none': 'Nenhuma pergunta foi escrita para esta versão.',
 	'quaestiones.search.label': 'Buscar nestas perguntas',
 	'quaestiones.search.none': 'Nenhuma pergunta daqui corresponde a essas palavras.',

@@ -1628,6 +1628,15 @@ export const en: Dictionary = {
 	// arrangement is ours and not one word of the text is.
 	'quaestiones.landing.tagline':
 		'Passages of the Catechism, the Social Doctrine and canon law, gathered by the question someone arrives holding. The gathering is the work done here; every word of the text is the Church’s own, and each passage links to where it stands.',
+	// THE SAME PROMISE IN ONE CLAUSE, for the card in `ShelfGrid.svelte`. The
+	// tagline above has the width of a masthead; in a 16rem card beside
+	// sentences of one line it was five, and a grid whose rows are all the
+	// height of the tallest card pays for that eight times over. What it drops
+	// is the second sentence — that the gathering is the work and the text is
+	// the Church's own — which is the page's own disclosure and is read on the
+	// page, not on the way to it.
+	'quaestiones.landing.cardTagline':
+		'Passages of the Catechism, the Social Doctrine and canon law, gathered by question.',
 	'quaestiones.landing.none': 'No questions have been written for this build.',
 	// The search box over the list. A placeholder and an accessible name at
 	// once, so it says what it searches rather than just "Search": this page

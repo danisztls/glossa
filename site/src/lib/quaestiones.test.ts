@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { hrefFor, parseHref } from './address';
+import { hasTopics } from './corpus';
 import { isCanonicalPath, type RouteManifest } from './route-manifest';
 import { sectionFor } from './usage-device';
 import { SETS } from './usage-schema';
@@ -150,6 +151,16 @@ describe('every topic is reachable and named', () => {
 		expect(isCanonicalPath('/quaestiones', { topics: [] } as unknown as RouteManifest)).toBe(true);
 	});
 
+	/** The card `ShelfGrid.svelte` draws on the home page and on
+	 *  `/bibliotheca` is gated on there being a topic list behind it, which
+	 *  under the fixtures — and after a partial sync — there is not. The two
+	 *  pages a reader arrives at are the last place to offer a door onto
+	 *  `quaestiones.landing.none`, and the gate is the one thing about that
+	 *  card a test can hold: the grid itself is not rendered anywhere here. */
+	it('offers no catalogue card where the build carries no topics', () => {
+		expect(hasTopics()).toBe(false);
+	});
+
 	it('buckets the section under a name the beacon schema accepts', () => {
 		expect(sectionFor('/quaestiones')).toBe('quaestiones');
 		expect(sectionFor('/quaestiones/crematio')).toBe('quaestiones');
@@ -240,6 +251,12 @@ describe('every topic is reachable and named', () => {
 			]),
 			...allClusters.map((cluster) => `quaestiones.cluster.${cluster}`),
 			'quaestiones.landing.tagline',
+			// The card's shorter form of it, on the same footing: the card is
+			// drawn on the home page and on `/bibliotheca` in whatever
+			// language the reader is in, so a dictionary that has begun this
+			// section and skipped this one names the section in its own
+			// language and describes it in English.
+			'quaestiones.landing.cardTagline',
 			'quaestiones.landing.none',
 			'quaestiones.search.label',
 			'quaestiones.search.none',

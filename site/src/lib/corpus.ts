@@ -1123,6 +1123,21 @@ export async function loadQuaestiones(): Promise<TopicIndex | undefined> {
 }
 
 /**
+ * Whether this build has topics at all, answered without fetching them.
+ *
+ * `visibleShelves()`'s job for the one door in the catalogue that is not a
+ * work: a card is drawn for a reader to open, and `/quaestiones` over a build
+ * that carries no topic list opens onto `quaestiones.landing.none`. The
+ * question is settled by whether the file is in the build, which
+ * `quaestionesLocation()` reads off the index tier's own glob — so this is
+ * synchronous, which a card in a grid has to be, and it is exactly the test
+ * `loadQuaestiones` makes before it decides there is nothing to load.
+ */
+export function hasTopics(): boolean {
+	return USE_REAL_CORPUS && quaestionesLocation() !== undefined;
+}
+
+/**
  * The census — every number this build states about itself, and the five
  * rankings over the cross-reference index (`scripts/census.mjs`).
  *
