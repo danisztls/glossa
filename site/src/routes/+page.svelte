@@ -43,8 +43,8 @@
 	 *     wordmark and a liturgical day, and nothing that said what it was.
 	 *   - **The catalogue**, which is now literally `/bibliotheca`'s:
 	 *     `ShelfGrid.svelte` renders the list, the cards and the bed, because
-	 *     the two pages offer the same catalogue and a second copy of it would
-	 *     be a second copy to keep true.
+	 *     the two pages offer the same works and a second copy of that list
+	 *     would be a second copy to keep true.
 	 *   - **A mark beside the name**, from the vocabulary `/schola`'s own rows
 	 *     are drawn with — `scroll`, `flame`, `book-open` are that page's
 	 *     assignments for these three works, reused rather than re-chosen —
@@ -102,23 +102,28 @@
 	 * inside `LiturgicalDayCard`, fetched rather than imported so the table
 	 * stays out of this page's boot chunk.
 	 *
-	 * ## Continue reading is on `/signata`, and is not coming back here
+	 * ## Nothing the reader's own history fills is on this page
 	 *
-	 * It was on this page and on `/bibliotheca` both, capped at four here and
-	 * uncapped there, on the reasoning that an entrance may show a little of
-	 * what the record holds. What that actually produced was a section between
-	 * the day and the doors that is EMPTY for every reader who has not been
-	 * here before — so the one page a stranger arrives at was arranged around
-	 * a state only a returning reader has, and the returning reader got a
-	 * truncated copy of a list one click away.
+	 * "Continue reading" was here and on `/bibliotheca` both, capped at four
+	 * here and uncapped there, on the reasoning that an entrance may show a
+	 * little of what the record holds. What that actually produced was a
+	 * section between the day and the doors that is EMPTY for every reader who
+	 * has not been here before — so the one page a stranger arrives at was
+	 * arranged around a state only a returning reader has, and the returning
+	 * reader got a truncated copy of a list one click away.
 	 *
 	 * IT WENT TO `/bibliotheca` AND THEN STRAIGHT ON TO `/signata`, both on
 	 * 2026-09-06, and that page's docblock has the second half of the reason:
 	 * marks and positions answer one question, and splitting them over two
-	 * pages made a returning reader guess which had kept their place. The
-	 * consequence for THIS page is the durable one — everything on it is true
-	 * on a first visit, which is the test a home page's sections have to pass
-	 * and the notation section below passes too.
+	 * pages made a returning reader guess which had kept their place.
+	 *
+	 * THE BOOKMARKS CARD FOLLOWED IT ON 2026-09-10, which is the same rule
+	 * reaching the catalogue: everything on this page is true on a first
+	 * visit. A card is not empty the way a section is — `/signata` answers a
+	 * reader with no marks in its own words — but it is a door onto that
+	 * answer, and the home page's doors open onto works. It is a prop of
+	 * `ShelfGrid` now and `/bibliotheca` is the page that asks for it, beside
+	 * the census card that was never here.
 	 *
 	 * ## What this page costs in translation, and why it is in `CHROME_PATHS`
 	 *
@@ -127,8 +132,8 @@
 	 * a hidden `h2` is what a reader moving by heading gets instead of a rule.
 	 * Everything else is a name or a sentence written for another page — the
 	 * catalogue is `$lib/shelves.ts`'s keys, each of them the one its own
-	 * landing page is titled and described by, plus `/signata`'s two for the
-	 * Bookmarks card, and the line under the specimens is `jumpbox.hint`.
+	 * landing page is titled and described by, and the line under the specimens
+	 * is `jumpbox.hint`.
 	 * `en.ts` carries the argument for keeping `/` on the published list
 	 * anyway, which is that the root has no usable remedy: `route-manifest.ts` withholds a page rather than claim it
 	 * in a language it is not written in, and withholding the home page costs
@@ -171,18 +176,18 @@
 	 * the popular ones rather than by any argument this file could state.
 	 *
 	 * So the catalogue `/bibliotheca` draws is drawn here: `ShelfGrid`, which
-	 * is the list, the cards, the bed and the Bookmarks card at the end of them
-	 * as one object. This page held its own `<ul>` and `{#each}` for a few
-	 * hours after the doors went, which is how it came to be missing that last
-	 * card while the comments on three files said the two pages drew the same
-	 * catalogue.
+	 * is the list, the cards and the bed as one object. This page held its own
+	 * `<ul>` and `{#each}` for a few hours after the doors went, which is how
+	 * the two came to disagree about what the catalogue contains while the
+	 * comments on three files said they drew the same one.
 	 *
-	 * Learn and the Library are named in the nav bar, which is where a page
-	 * rather than a work belongs. THE BOOKMARKS CARD IS NOT SUCH A PAGE, and
-	 * that is the change of mind: `/signata` is the reader's own shelf, which
-	 * was read as a reason for `/bibliotheca` to keep it — but a reader who
-	 * arrives at the root holding no address and HAS marks is exactly the
-	 * reader that card is for.
+	 * WHAT IT DRAWS HERE IS THE WORKS, and the two cards that are not works
+	 * are `/bibliotheca`'s — `<ShelfGrid />` against `<ShelfGrid bookmarks
+	 * census />` there. Learn and the Library are named in the nav bar, which
+	 * is where a page rather than a work belongs — and `/signata` is a page of
+	 * that kind, carried by a glyph in the header of every page and named in
+	 * the footer's index. What is behind it is the reader's own history, which
+	 * this page is arranged not to depend on.
 	 *
 	 * THE VISIBILITY GATE COMES WITH THE COMPONENT and is `visibleShelves()`'s,
 	 * which is the change of mind the doors' own note recorded the other way

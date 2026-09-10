@@ -15,35 +15,56 @@
 	 * "same catalogue on both pages" the three files all claimed was false in
 	 * the one card a reader cannot get to any other way.
 	 *
-	 * So the whole bed is one object now. Both pages render `<ShelfGrid />`,
-	 * the visibility gate is called once, and a card added here is on both
-	 * pages by construction rather than by two edits and a comment asking for
-	 * the second.
+	 * So the whole bed is one object now. Both pages render this component, the
+	 * visibility gate is called once, and a work's card reaches both pages by
+	 * construction rather than by two edits and a comment asking for the
+	 * second. What the two pages still differ by they differ by in a PROP, at
+	 * the call site, where a reader of either page can see the declaration —
+	 * see below.
 	 *
 	 * WHAT STAYS WITH THE PAGE is the element the grid sits in and what it is
 	 * called: `/bibliotheca` wraps it in a `<section>` because the cards are
 	 * that page's subject, the home page in a `<nav>` because they are its way
 	 * in, and both give it a hidden `h2` to hang the cards' `<h3>`s from.
 	 *
-	 * ## The last cards are not works
+	 * ## The last three cards are not works, and only one is on every page
 	 *
-	 * Questions and Bookmarks, and each says beside itself why it has no row
-	 * in `$lib/shelves.ts`. Bookmarks, over `/signata`. It sits IN the grid rather than above it
+	 * Questions over `/quaestiones`, Bookmarks over `/signata`, then the census
+	 * over `/bibliotheca/census`. Each sits IN the grid rather than above it
 	 * because it is the same object at that size — a name, a mark, a sentence
-	 * and a way in — and it is LAST because the works are what a catalogue is
-	 * for. It has no row in `$lib/shelves.ts` for the reason it needs none: a
-	 * `Shelf` is a work type plus the strings its own landing page is titled
-	 * by, and this card has no work type to gate on and no work behind it. That
-	 * is also why `ShelfCard` takes four strings and not a `Shelf`.
+	 * and a way in — and all three come after the works, because the works are
+	 * what a catalogue is for. None has a row in `$lib/shelves.ts`, for the
+	 * reason none needs one: a `Shelf` is a work type plus the strings its own
+	 * landing page is titled by, and these have no work type to gate on and no
+	 * work behind them. That is also why `ShelfCard` takes four strings and not
+	 * a `Shelf`.
 	 *
-	 * IT IS UNCONDITIONAL. It was hidden while the bookmark store was empty
-	 * until 2026-09-06, and hiding it read as tidiness and was the opposite:
-	 * marking is one of the things the site does, and a door that opens only
-	 * once you have found the feature elsewhere is shut against exactly the
-	 * reader who needed it. Nothing is behind it that the empty case cannot
+	 * QUESTIONS IS ON BOTH PAGES AND THE OTHER TWO ARE PROPS, which is the line
+	 * this component draws: a topic list is a second INDEX over the works
+	 * themselves, and the reader holding a sentence and no reference is exactly
+	 * the reader the home page's catalogue is for.
+	 *
+	 * BOTH ARE OFF BY DEFAULT AND `/bibliotheca` ASKS FOR THEM. That page is
+	 * the catalogue, and what the catalogue holds and how far it reaches are
+	 * both facts about it. The home page is a way IN for a reader holding no
+	 * address, and neither card is one: the census is a count rather than a
+	 * door, and the reader's own shelf is EMPTY for everyone arriving for the
+	 * first time — which is the test the home page's docblock states for every
+	 * section it keeps, and the same test that moved Continue reading off it.
+	 * The Bookmarks card was unconditional from 2026-09-06 to 2026-09-10, on
+	 * the argument that a reader who arrives at the root and HAS marks is
+	 * exactly the reader it is for; that reader is one press of the nav bar
+	 * away, and the stranger the home page is arranged around was not.
+	 *
+	 * WHERE A CARD IS DRAWN IT IS DRAWN UNCONDITIONALLY ON THE READER, and
+	 * Bookmarks is not gated on the store holding anything: a door that opens
+	 * only once you have found the feature elsewhere is shut against exactly
+	 * the reader who needed it. Nothing is behind it that the empty case cannot
 	 * hold — `/signata` answers a reader with no marks in its own words
 	 * (`bookmark.empty`, `bookmark.emptyHint`), which is a sentence, where a
-	 * missing card is a silence. The same argument put it on the home page.
+	 * missing card is a silence. Questions' `hasTopics()` is the other kind of
+	 * gate and the comment beside it says so: a card over a build with no topic
+	 * list is a door onto an empty index, which is `visibleShelves()`'s test.
 	 *
 	 * IT CARRIED A ROW OF COUNTS UNTIL 2026-09-06, one chip per section of
 	 * `/signata`, on the argument that the shape of what you have marked says
@@ -58,18 +79,19 @@
 
 	interface Props {
 		/**
-		 * Whether to draw the census card, and it is a PROP because the two
-		 * pages genuinely differ here — the one place this component admits
-		 * that, and it admits it as a declaration rather than as a card one
-		 * page appends by hand, which is the arrangement this file exists to
-		 * end. `/bibliotheca` is the catalogue, and how far the catalogue
-		 * reaches is a fact about it; the home page offers a reader holding no
-		 * address a way IN, and a count is not one.
+		 * The reader's own shelf and the count of this one. They are PROPS
+		 * because they are the whole of what the two pages differ by, and the
+		 * difference belongs in a declaration rather than in a card one page
+		 * appends by hand, which is the arrangement this file exists to end.
+		 * Off by default so that a third caller gets the catalogue and the way
+		 * in to it and has to ask for the rest; the docblock above argues which
+		 * page asks and why.
 		 */
+		bookmarks?: boolean;
 		census?: boolean;
 	}
 
-	let { census = false }: Props = $props();
+	let { bookmarks = false, census = false }: Props = $props();
 
 	const shelves = $derived(visibleShelves());
 </script>
@@ -123,20 +145,22 @@
 		understood. One link and not a second copy of that page's list: this
 		says what is there, and that page is the reading of it.
 	-->
-	<ShelfCard
-		href="/signata"
-		icon="bookmark"
-		title={t('bookmark.library')}
-		tagline={t('bookmark.library.tagline')}
-	/>
+	{#if bookmarks}
+		<ShelfCard
+			href="/signata"
+			icon="bookmark"
+			title={t('bookmark.library')}
+			tagline={t('bookmark.library.tagline')}
+		/>
+	{/if}
 
 	<!--
-		THE CENSUS, LAST, and it is a card now where it was a line under the
-		grid. The argument for the line was that a count is a fact about the
-		shelf the cards sit on rather than a work to read — true, and the same
-		is true of Bookmarks, which has been a card in this grid since the day
-		the grid existed. What the line actually bought was a way in that a
-		reader scanning a bed of cards does not see.
+		THE CENSUS, LAST OF ALL, and it is a card now where it was a line under
+		the grid. The argument for the line was that a count is a fact about the
+		shelf the cards sit on rather than a work to read — true, and as true of
+		Bookmarks, which is a card in this bed on the page that asks for it.
+		What the line actually bought was a way in that a reader scanning a bed
+		of cards does not see.
 
 		Its title and sentence are `/bibliotheca/census`'s own, so it obeys the
 		rule every card here obeys: no entry in the catalogue writes a sentence

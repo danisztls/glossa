@@ -35,14 +35,17 @@
 	 * one, and that component's docblock carries the argument for each card and
 	 * for its position.
 	 *
-	 * **The census card is the one thing the two pages differ by, and it is a
-	 * PROP** (`<ShelfGrid census />`) rather than a card appended here — which
-	 * is the arrangement that component exists to have ended. How far the
-	 * catalogue reaches is a fact about the catalogue, and this page is the
-	 * catalogue; the home page offers a way in to the works, and a count is not
-	 * one. It was a line under the grid until then, on the argument that a card
-	 * would put it in the bed as though it were a work to read. What the line
-	 * bought was a way in that a reader scanning a bed of cards does not see.
+	 * **Bookmarks and the census are the two the pages differ by, and they are
+	 * PROPS** (`<ShelfGrid bookmarks census />`) rather than cards appended
+	 * here — which is the arrangement that component exists to have ended.
+	 * What the catalogue holds and how far it reaches are both facts about the
+	 * catalogue, and this page is the catalogue; the home page offers a way in
+	 * to the works, and neither the reader's own shelf nor a count is one.
+	 * Questions is on both pages, being a second index over the works
+	 * themselves. The census was a line under the grid until 2026-09-06, on
+	 * the argument that a card would put it in the bed as though it were a
+	 * work to read. What the line bought was a way in that a reader scanning a
+	 * bed of cards does not see.
 	 *
 	 * It is still not in the footer's index, though `/signata` and `/colophon`
 	 * both are: those are wanted from every page, this one is about the
@@ -67,15 +70,15 @@
 	 * there, beside the entries they govern.
 	 *
 	 * THE ASSEMBLY WENT THE SAME DAY, to `ShelfGrid.svelte`, and that is what
-	 * ended the last thing the two pages disagreed about. They held a `<ul>`, an
-	 * `{#each}` and a visibility gate each, and this one appended a Bookmarks
-	 * card the home page's copy did not have — on the argument, recorded here,
-	 * that this page is the catalogue of what the site HAS, marking included,
-	 * where the home page is a way in to the WORKS. The distinction is real and
-	 * it was not worth a card: a reader who arrives at the root and has marks
-	 * wants them from there, and a catalogue that is the same on both pages
-	 * EXCEPT for one card is a resemblance maintained by hand. What is still
-	 * this page's own is the painting at the foot.
+	 * ended the last thing the two pages disagreed about by accident. They held
+	 * a `<ul>`, an `{#each}` and a visibility gate each, and this one appended
+	 * a Bookmarks card the home page's copy did not have — the same difference
+	 * the two pages keep today, and the difference is not the defect: a
+	 * catalogue that is the same on both pages EXCEPT for one card is a
+	 * resemblance maintained by hand, where a prop is a resemblance maintained
+	 * by the compiler. This page is the catalogue of what the site HAS, marking
+	 * included; the home page is a way in to the WORKS. What is still this
+	 * page's own is the painting at the foot.
 	 *
 	 * `docs/research/organization.md` is the design this implements.
 	 */
@@ -109,13 +112,14 @@
 			outline, and a `<section>` per card would be a landmark announcing
 			nothing the heading does not.
 
-			All of that is `ShelfGrid.svelte` now, list and cards and bed and
-			the Bookmarks card at the end of them, and the home page renders
-			the same component. What is this page's own is the `<section>`
-			around it — the catalogue is this page's subject, where it is the
-			home page's way in — and the painting at the foot.
+			All of that is `ShelfGrid.svelte` now, list and cards and bed, and
+			the home page renders the same component. What is this page's own
+			is the `<section>` around it — the catalogue is this page's
+			subject, where it is the home page's way in — and the two cards
+			asked for below, which are the shelf itself rather than anything
+			on it.
 		-->
-		<ShelfGrid census />
+		<ShelfGrid bookmarks census />
 	</section>
 
 	<!--

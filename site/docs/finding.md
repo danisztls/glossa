@@ -132,10 +132,9 @@ click that way". A home page whose answer to _what is here_ is a link to the
 answer charges a click for a list that fits on a screen, and the two works it did
 name were there for being popular rather than for any argument the file could
 state. So the catalogue `/bibliotheca` draws is drawn here, and since
-2026-09-06 as one component: `ShelfGrid.svelte` is the list, the cards, the bed
-and the Bookmarks card at the end of them, so neither page holds a copy of any
-of it. Learn and the Library are named in the nav bar, which is where a page
-rather than a work belongs.
+2026-09-06 as one component: `ShelfGrid.svelte` is the list, the cards and the
+bed, so neither page holds a copy of any of it. Learn and the Library are named
+in the nav bar, which is where a page rather than a work belongs.
 
 **THE TWO PAGES ASSEMBLED THAT GRID SEPARATELY FOR A FEW HOURS, AND DISAGREED
 ABOUT WHAT IT CONTAINS.** The list, the card and the grid class were shared and
@@ -143,11 +142,22 @@ the `<ul>`, the `{#each}` and the `visibleShelves()` call were not — so
 `/bibliotheca` appended a Bookmarks card that the home page's copy did not have,
 while the comments on three files each said the two pages drew the same
 catalogue. A shared class fixes a copied STYLE; a copied ASSEMBLY needs a
-component. The card itself was kept off the home page on purpose at first —
-`/bibliotheca` is the catalogue of what the site HAS, marking included, where
-the home page is a way in to the WORKS — and the distinction is real and was not
-worth a card: a reader who arrives at the root and has marks wants them from
-there.
+component.
+
+**WHAT THE COMPONENT ENDED WAS THE ACCIDENT, NOT THE DIFFERENCE** (2026-09-10,
+by direction). The Bookmarks card was put on the home page in the same breath as
+the component, on the argument that a reader who arrives at the root and has
+marks wants them from there; it is `/bibliotheca`'s again, and so is the census
+card, both declared at the call site as `<ShelfGrid bookmarks census />`. The
+distinction the first arrangement recorded is the one that holds: that page is
+the catalogue of what the site HAS, marking and the count of it included, where
+this page is a way in to the WORKS. And the rule that decides it is the one two
+sections down — everything on the home page is true on a first visit. A card is
+not empty the way a section is, since `/signata` answers a reader with no marks
+in its own words, but it is a door onto that answer, and a stranger's press of
+it lands on a sentence explaining a feature they have not used. A resemblance
+maintained by hand is the defect; a difference maintained by a prop is a
+declaration two pages away from anyone reading either of them.
 
 **The `type` gate came with the list, and it is the reverse of what a door
 wanted.** A door was a page and correct in an empty build — `/bibliotheca` and

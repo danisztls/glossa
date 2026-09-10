@@ -676,15 +676,15 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   synthesis read THROUGH against dated acts cited SINGLY — is still true and
   needs no container, since one card per work makes the ORDER say it.
   `/doctores` keeps its card and its caveat.
-- **The last two cards are not works.** Bookmarks is unconditional on both
-  pages — a catalogue names what the site HAS, and a door that opens only once
-  you have found the feature elsewhere is shut against the one reader looking
-  for it. The census card is `/bibliotheca`'s alone and is a PROP
-  (`<ShelfGrid census />`), which is the only difference between the two pages
-  and is declared rather than appended: how far the catalogue reaches is a fact
-  about the catalogue, where the home page is a way in to the works. Neither
-  has a row in `$lib/shelves.ts` and neither needs one, which is why
-  `ShelfCard` takes strings.
+- **The last three cards are not works, and only Questions is on both pages.**
+  A topic list is a second index over the works, so it goes wherever the
+  catalogue does; Bookmarks and the census are `/bibliotheca`'s, declared as
+  PROPS (`<ShelfGrid bookmarks census />`) rather than appended by hand,
+  because what the catalogue holds and how far it reaches are facts about the
+  catalogue where the home page is a way in to the works. A card that is drawn
+  is drawn unconditionally on the READER — Questions' `hasTopics()` gates on
+  the build. None has a row in `$lib/shelves.ts` and none needs one, which is
+  why `ShelfCard` takes strings.
 - **No page in this group writes a sentence of its own except the home page.**
   The catalogue's cards reuse the key each destination is already titled and
   described by, the same rule `route-titles.mjs` follows for the `<head>`.
@@ -702,9 +702,9 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   2026-09-04, which is why nothing ingested after them was ever added to it — a
   WEIGHT problem that reads as a nesting problem.
 - **Everything on the page is true on a first visit**, which is the test a new
-  section has to pass. "Continue reading" went for that reason: a section EMPTY
-  for every first-time reader arranged the one page a stranger arrives at around
-  a state only a returning reader has.
+  section has to pass. "Continue reading" went for that reason, and the
+  Bookmarks card after it: the one page a stranger arrives at was arranged
+  around a state only a returning reader has.
 - **The way to the calendar is a glyph in the day card's own corner**
   (`LiturgicalDayCard`'s `more` prop, passed by nothing else): under the box it
   read as a caption on the card rather than as part of it.
