@@ -22,7 +22,8 @@
 	// highlight resolves to is the nearest `data-unit-href` above it, so no
 	// reading route imports this or knows it exists.
 	import SelectionMenu from '$lib/components/SelectionMenu.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
+	import { bcp47 } from '$lib/ui-langs';
 	import { beforeNavigate } from '$app/navigation';
 	import { carriesUpdate, serviceWorker } from '$lib/sw.svelte';
 	import { usage } from '$lib/usage';
@@ -169,10 +170,16 @@
 	 * not on the bar, and the Bible and the Prayers are on the bar but belong
 	 * in the works column. No Home — the brand link is already one.
 	 *
-	 * `/colophon` last. `footer.notEndorsed` in the imprint is the one-sentence
-	 * form of `colophon.whatThisIsStanding` and is short because that statement
-	 * is reachable from the same footer; move this link out of the footer and
-	 * the disclaimer has to grow.
+	 * `/colophon` IS IN THE FOOTER AND THAT IS THE PART THAT MATTERS.
+	 * `footer.notEndorsed` in the imprint is the one-sentence form of
+	 * `colophon.whatThisIsStanding` and is short because that statement is
+	 * reachable from the same footer; move this link out of the footer and the
+	 * disclaimer has to grow. Where in the column it lands is `footerPages`'s
+	 * business and no longer an argument here.
+	 *
+	 * THE ORDER THIS IS WRITTEN IN IS NOT THE ORDER IT IS DRAWN IN — see
+	 * `footerPages` below. This list is read by whoever edits it, so it stays
+	 * grouped by the reasoning above; the column is alphabetical.
 	 */
 	const FOOTER_PAGES = [
 		{ href: '/bibliotheca', key: 'nav.library' },
@@ -189,6 +196,33 @@
 		{ href: '/signata', key: 'nav.bookmarks' },
 		{ href: '/colophon', key: 'colophon.title' }
 	] as const;
+
+	/**
+	 * The same six, alphabetical — AND IN THE READER'S OWN ALPHABET, which is
+	 * why this is a sort at render and not the order the list above is typed
+	 * in. A column ordered by the English labels is alphabetical for one
+	 * reader in thirty-seven and arbitrary for the rest: `Perguntas` does not
+	 * fall where `Questions` does, and a Ukrainian column sorted by the Latin
+	 * spellings of its own words is in no order at all.
+	 *
+	 * `Intl.Collator` and not `localeCompare`, for the reason `bcp47` exists:
+	 * it is constructed once per language rather than once per comparison, and
+	 * the tag it is handed has to be one `Intl` can resolve — `zht` is not,
+	 * and silently falls back to the browser's locale rather than throwing.
+	 *
+	 * THE WORKS COLUMN IS NOT SORTED and must not be. Its order is the
+	 * catalogue's own (`$lib/shelves.ts`) — the order a reader meets the
+	 * Church's texts — and it is the same list `/bibliotheca` and the home
+	 * page draw. Alphabetising it here would be this page disagreeing with
+	 * both about what the catalogue is. These six have no such order: they are
+	 * pages, related by nothing but being pages, and a list of unrelated
+	 * things is where alphabetical is the honest arrangement rather than a
+	 * concealed judgement.
+	 */
+	const footerPages = $derived.by(() => {
+		const collator = new Intl.Collator(bcp47(i18n.lang));
+		return [...FOOTER_PAGES].sort((a, b) => collator.compare(t(a.key), t(b.key)));
+	});
 
 	// A section is "active" for its whole subtree (`/scriptura/...` counts as
 	// Bible). No `'/'` special case is needed now that Home isn't a nav item —
@@ -533,7 +567,7 @@
 				<div class="footer-group footer-pages">
 					<h2>{t('nav.pages')}</h2>
 					<ul>
-						{#each FOOTER_PAGES as item (item.href)}
+						{#each footerPages as item (item.href)}
 							<li>
 								<a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
 									{t(item.key)}
