@@ -280,6 +280,29 @@
  * unit number, which hangs in the nearest 3.25rem and sets flush to the
  * column's edge within it (`.reference-number.margin`).
  */
+/*
+ * THE WORDS A BOOKMARK QUOTED, painted by `QuoteMarks` through the Custom
+ * Highlight API rather than by any markup — see that component for why the
+ * ranges are registered instead of wrapped.
+ *
+ * `--color-bookmark`, because this IS the bookmark: it is the same fact
+ * `.unit-bookmarked` and `.verse.bookmarked` state about a whole unit, said
+ * about the sentence the reader actually chose, and it replaces them rather
+ * than joining them. The strength is the Bible's inline 14% and not the
+ * block's 12%: a run under a line of text has the text's own colour running
+ * through it, where a block wash has a margin of quiet around it.
+ *
+ * A highlight pseudo-element takes only a few properties — colour, background,
+ * decoration, shadow — and needs none of the others: no radius, no padding, no
+ * `box-decoration-break`, because the browser draws a run rather than a box
+ * and carries it across a line break itself. `color` is left alone
+ * deliberately: the wash is behind the reader's own text and has no business
+ * restating it.
+ */
+::highlight(bookmark-quote) {
+	background-color: color-mix(in srgb, var(--color-bookmark) 14%, transparent);
+}
+
 .margin-note {
 	/*
 	 * A FLOAT IS IN THE FLOW WHEREVER IT IS PAINTED, so a reader dragging down

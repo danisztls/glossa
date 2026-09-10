@@ -160,6 +160,12 @@ class BookmarkStore {
 		return this.#items[href] !== undefined;
 	}
 
+	/** The row itself, for the one reader that needs more than its existence:
+	 *  the wash over a quoted bookmark's own words (`QuoteMarks`). */
+	get(href: string): Bookmark | undefined {
+		return this.#items[href];
+	}
+
 	/** `quoted` is the highlight that made this mark, and the edition it was
 	 *  read in — both absent for a mark made from a unit number. */
 	add(href: string, quoted?: { quote: string; edition?: string }): void {

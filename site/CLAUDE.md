@@ -2350,6 +2350,18 @@ the half that is testable, rationale in `site/docs/reading.md`).
   a frozen quote under a re-derived citation otherwise claims to be the
   reader's current text. Clamped at `QUOTE_MAX` — one localStorage key holds
   the whole store.
+- **The wash over a quoted bookmark is the sentence where it can be and the
+  unit otherwise** (`QuoteMarks`, `quote-mark.ts`). A ladder: same edition and
+  words found → the words; different edition, words absent, or no Custom
+  Highlight API → the unit, which is what the site did before. A different
+  edition is not a failed search — a fold loose enough to cross a translation
+  would mark a sentence nobody chose, so the edition is compared before the
+  text is read.
+- **A style keyed on an attribute set at RUNTIME cannot live in a scoped
+  block.** Svelte prunes a selector nothing in the component's markup can
+  match, silently — `[data-quote-marked]` is written by a global component and
+  its rules are in `styles/`, `.verse.bookmarked`'s included, though that class
+  belongs to one route.
 - **Ask a range what it CONTAINS, never what its boundaries touch.** A
   selection ending on an element boundary reports its `endContainer` as the
   parent, so walking up from it lands on the surface rather than the last unit

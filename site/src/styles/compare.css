@@ -257,6 +257,32 @@
 }
 
 /*
+ * THE BLOCK WASH STANDS DOWN WHERE THE WORDS THEMSELVES ARE MARKED.
+ *
+ * A bookmark made by highlighting knows which sentence the reader chose
+ * (`bookmarks.svelte.ts`), and `QuoteMarks` washes exactly that sentence when
+ * the reader is in the edition it was taken from. Both marks at once would say
+ * the paragraph is marked AND the sentence is, which is one claim too many —
+ * and the paler block behind the stronger run reads as a rendering fault
+ * rather than as two facts.
+ *
+ * The attribute is set by that component and only ever where it really marked
+ * something, so every case it declines — a different edition, words the text
+ * no longer has, a browser without the API — keeps the wash it always had.
+ *
+ * `.verse.bookmarked` IS THE BIBLE'S INLINE FORM OF THE SAME MARK AND IS
+ * STOOD DOWN HERE RATHER THAN IN ITS OWN ROUTE, which is not tidiness: the
+ * attribute is written at runtime and appears in no template, so Svelte's
+ * compiler sees a selector nothing in the component can match and prunes the
+ * rule. A global sheet has no such pass and matches a scoped component's
+ * elements perfectly well.
+ */
+.unit-bookmarked[data-quote-marked],
+.verse.bookmarked[data-quote-marked] {
+	background: none;
+}
+
+/*
  * THE UNIT AN ARRIVING ADDRESS NAMED, the block-level twin of the Bible
  * reader's `.verse.highlighted` and the single-column form of
  * `.compare-row.highlighted`.

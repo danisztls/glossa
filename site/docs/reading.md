@@ -761,6 +761,49 @@ a number. A reader who marks CCC 27 is marking the paragraph; a reader who
 draws a line under one sentence of it has said something the address cannot
 hold, and re-deriving the paragraph throws away the only part they chose.
 
+**AND THE WASH IS THE SENTENCE, NOT THE PARAGRAPH, WHERE IT CAN BE.** Storing
+the words is what makes this possible, and it is the whole reason a reader
+would want them stored: a mark over the paragraph a sentence sits in is the
+best an address can do, and the reader chose the sentence. `QuoteMarks` is a
+ladder, and every rung is a real answer — same edition and the words found,
+wash the words; different edition, wash the unit; words not found, wash the
+unit; no Custom Highlight API, wash the unit. **The bottom rung is what the
+site did before any of this existed**, so every way the search can decline
+lands on a mark that was already correct, which is what makes searching safe
+here at all.
+
+**A different edition is not a failed search, and the two must not be
+confused.** The words of a Latin bookmark are not in the Portuguese text and
+must not be hunted for there — a fold loose enough to cross a translation is
+loose enough to mark a sentence nobody chose. The edition is compared first,
+and only the text the words came from is searched.
+
+**The matcher is `lemma.ts`'s fold, and `lemma.ts` refuses to be a search**,
+which is worth reconciling rather than quietly departing from. There the anchor
+is the marker, and searching would pick the wrong occurrence of a repeated
+phrase with nothing to say it had; here the reader's selection is gone and only
+its text survives, so there is nothing to match backwards from. What makes it
+tolerable is what is being looked for — a run of prose the reader chose, not an
+editor's two-word headword — and what it costs when wrong: the same words,
+marked somewhere else in the same paragraph. The first occurrence is taken.
+
+**`CSS.highlights` rather than markup, and that decides itself.** Registering
+ranges paints without touching the DOM, so it cannot fight Svelte over nodes
+Svelte owns; wrapping the words in a `<mark>` would mean editing the output of
+`ProseBlocks`, `AnnotatedText`, `PrayerBlocks` and every other renderer — from
+outside, where the next render undoes it, or from inside, which is a segment
+threaded through all of them. The costs are that a highlight pseudo-element
+does not print and that an old browser shows the unit wash, and both land on a
+rung of the ladder above.
+
+**Both marks at once would be one claim too many**, so the block wash stands
+down for a unit whose words were marked (`[data-quote-marked]`) — and that rule
+is in a GLOBAL sheet even for `.verse.bookmarked`, which belongs to one route.
+The attribute is written at runtime and appears in no template, so Svelte's
+compiler sees a selector nothing in the component can match and prunes the
+rule. **A style keyed on an attribute set at runtime cannot live in a scoped
+block.**
+
 **The address still decides everything derived, and the quote decides
 nothing.** The citation, the title, the ordering, the section a row files
 under, and whether the row resolves at all are read off the address exactly as

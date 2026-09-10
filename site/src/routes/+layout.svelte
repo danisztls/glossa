@@ -22,6 +22,10 @@
 	// highlight resolves to is the nearest `data-unit-href` above it, so no
 	// reading route imports this or knows it exists.
 	import SelectionMenu from '$lib/components/SelectionMenu.svelte';
+	// The third of the same kind: it reads `data-unit-href` and `data-edition`
+	// off the rendered page and washes the words a bookmark quoted, where the
+	// reader is in the edition they were quoted from.
+	import QuoteMarks from '$lib/components/QuoteMarks.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { bcp47 } from '$lib/ui-langs';
 	import { beforeNavigate } from '$app/navigation';
@@ -630,6 +634,7 @@
 
 <LinkPreview />
 <SelectionMenu />
+<QuoteMarks />
 <InstallHint />
 <UpdateBanner />
 <AdvancedSheet />
