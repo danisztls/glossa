@@ -167,7 +167,7 @@ The band with the highest measured demand and the **thinnest corpus**.
 | Topic                          | The sentence                    | Anchor                                                              |
 | ------------------------------ | ------------------------------- | ------------------------------------------------------------------- |
 | The abuse crisis               | "You protected them."           | `dignitas-infinita` §43 — and little else                           |
-| Inquisition, Crusades, Galileo | "Look at your history."         | _(none)_                                                            |
+| Inquisition, Crusades, Galileo | "Look at your history."         | CCC 2298, 827; `tertio-millennio-adveniente`                        |
 | The Church's wealth            | "Sell the Vatican."             | `dilexi-te`; `evangelii-gaudium` 53–60, 197–201                     |
 | Clericalism and power          | "It is run by men, for men."    | `evangelii-gaudium`; `christifideles-laici`                         |
 | The Church and the Jews        | "Where were you?"               | `nostra-aetate` 4; CCC 597, 839–840                                 |
@@ -437,13 +437,14 @@ say, which is worse than never offering the topic. So the list below is the
 shipping blocklist, and every line is a claim that the corpus — not the Church —
 is what falls short.
 
-| Held back                     | Why                                                                                                                        |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                  |
-| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                     |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                  |
-| Debt and interest             | _Vix Pervenit_ absent                                                                                                      |
-| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one |
+| Held back                     | Why                                                                                                                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                |
+| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                                   |
+| Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                |
+| Debt and interest             | _Vix Pervenit_ absent                                                                                                                    |
+| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one               |
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a
@@ -467,15 +468,30 @@ done
 
 ### Released by the corpus, and unwritten
 
-| Was held back            | What arrived                                                                                                    | What a topic would get                                                                                                               |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| The whole of band B      | apostolic letters, as a published kind — the six named above                                                    | anchors where the historical reckoning actually lives                                                                                |
-| Grief that does not lift | _Salvifici Doloris_                                                                                             | a named document only; CCC 1680–1683 is still the Christian meaning of death and not the one left behind, so probably a B on arrival |
-| The Latin Mass           | _Summorum Pontificum_ and _Traditionis Custodes_, beside _Missale Romanum_, _Magnum Principium_, _Mediator Dei_ | both sides of a live disagreement, which is the state `quaestiones.json` asks for. _Ecclesia Dei_ and _Desiderio Desideravi_ absent  |
+| Was held back  | What arrived                                                                                                    | What a topic would get                                                                                                              |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Band B         | apostolic letters as a published kind, _Tertio Millennio Adveniente_ among them                                 | the three of band B's six that never shipped: the Church's record, the Church's wealth, colonialism                                 |
+| The Latin Mass | _Summorum Pontificum_ and _Traditionis Custodes_, beside _Missale Romanum_, _Magnum Principium_, _Mediator Dei_ | both sides of a live disagreement, which is the state `quaestiones.json` asks for. _Ecclesia Dei_ and _Desiderio Desideravi_ absent |
+
+**Band B was half-written already and this file did not say so.** Three of its
+six shipped without anyone striking the blocklist row: the abuse crisis is
+`scandalum-cleri`, the Church and the Jews is `iudaismus`, and clericalism is
+split between `mulieres-in-ecclesia` and `synodalitas`. A row covering a whole
+band hides that, which is a second way for a row to go stale — not the corpus
+moving under it, but the topic file moving past it. **Hold back named topics,
+never a band.**
+
+**Grief that does not lift was released and then held again**, on a reason that
+is not about a missing document at all: a topic's Catechism block is the page's
+answer, and CCC 1680–1683 is the funeral rather than the mourner. Anchoring it
+there would put a reader who cannot stop grieving in front of the rite for the
+body, which is the door mismatch `graviditas` was fixed for. _Salvifici
+Doloris_ can be named and not quoted, and a page whose only real answer is a
+link is the three-sentence page this list exists to prevent.
 
 Releasing a row is not shipping a topic: each of these still needs a slug, a
-cluster, a question worth typing and strings in the dictionaries. What has
-changed is that the corpus is no longer the reason not to.
+cluster, a question worth typing, strings in the dictionaries, and — the binding
+constraint today — a description for every document it names. See _Still open_.
 
 One further hole belongs to no document: **anything after the corpus's last
 fetch.** A topic page dates faster than a document page, because a topic is a
@@ -610,11 +626,23 @@ The blocklist above is unchanged and still holds.
   anchor set each was formed on. What remains is what those rows record: every
   B names what would replace it, and several name a text the corpus does not
   have — which is this list's business rather than that pass's.
-- **The three topics the corpus released.** The blocklist above stopped
-  holding back band B, grief that does not lift and the Latin Mass on
-  2026-09-10, because the documents each was waiting for had arrived without
-  anything rechecking the row. None of the three has a slug, a cluster or a
-  question yet, and the Latin Mass one is the interesting case: it would carry
+- **Thirty-eight documents have no description, and that is what actually
+  blocks the released topics.** `site/descriptions.json` covers 290 of the 328
+  English document works (measured 2026-09-10); the 38 without one are entirely
+  motu proprios, apostolic letters, apostolic constitutions and bulls — the same
+  four families `decisions.md` selects from rather than takes whole, and the
+  same ones the blocklist wrongly called absent. Every document the released
+  topics would name is in that 38: _Summorum Pontificum_, _Traditionis
+  Custodes_, _Missale Romanum_, _Tertio Millennio Adveniente_. `quaestiones.json`
+  requires the description to be read before a document is named, so a topic
+  cannot honestly name any of them yet. A description is written by reading the
+  document (PLAN.md gap 16), and the documents are in the corpus.
+- **The topics the corpus released.** The blocklist above stopped
+  holding back band B and the Latin Mass on 2026-09-10, because the documents
+  each was waiting for had arrived without anything rechecking the row. That is
+  four topics — the Church's record, the Church's wealth, colonialism, the older
+  Mass — and none has a slug, a cluster or a question yet. The last is the
+  interesting case: it would carry
   _Summorum Pontificum_ and _Traditionis Custodes_ together, which is what
   `quaestiones.json` asks for where two magisterial texts differ, and it would
   land on the reader PLAN.md gap 19 is about — the one shown both and told when
