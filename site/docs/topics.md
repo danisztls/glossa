@@ -382,6 +382,21 @@ Portuguese page and a search that misses their own vocabulary.
 adds no route code, so a pass here is the whole of it — except the look, which
 needs a browser and a person.
 
+### Reviewing a topic that already ships
+
+Adding a topic and reviewing one are different jobs, and the sync only does the
+first. It checks that every span, canon and document slug **exists**; nothing
+checks that the passages **answer the question**, because no build can. That is
+a read, and `docs/research/topic-anchor-review.md` is the ledger it fills — a
+grade per topic, a note where the anchor is oblique, and the fix named where a
+question has no passage behind it.
+
+**Read the question clause by clause against the passages, not the title.** The
+first defects the pass found were topics anchored correctly for their title and
+not at all for their question: `pornographia` was CCC 2354 and nothing on the
+page said anything about being unable to stop, which is half of what its
+question asks and the first word of its keywords.
+
 ### Which doorway a candidate belongs to
 
 `docs/research/topics.md` groups its candidates in lettered bands, which are

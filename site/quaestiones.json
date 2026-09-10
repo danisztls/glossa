@@ -770,7 +770,9 @@
 			"cluster": "the-body",
 			"ccc": [
 				[2354, 2354],
-				[2351, 2352]
+				[2351, 2352],
+				[2342, 2342],
+				[1735, 1735]
 			],
 			"documents": ["persona-humana"]
 		},
@@ -795,7 +797,9 @@
 			"cluster": "the-body",
 			"ccc": [
 				[1735, 1735],
-				[2370, 2370]
+				[2370, 2370],
+				[2399, 2399],
+				[1451, 1453]
 			],
 			"documents": ["humanae-vitae", "familiaris-consortio"]
 		},
