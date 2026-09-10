@@ -521,12 +521,25 @@ export const en: Dictionary = {
 	'ccc.noCounterpart': 'No counterpart in the other work',
 	'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Search',
+	// The box's own empty-state line: the placeholder above it is all
+	// addresses, where three quarters of the corpus is reached by name.
+	// NOT a duplicate of `jumpbox.hint` below and not to be merged with it —
+	// that one is the home page's line, where the box is shut and the
+	// shortcut it names is true.
+	'jumpbox.searches': 'Or by name — no address needed.',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 	'jumpbox.noMatch': 'No match',
 	// The suggestion listbox's accessible name. The box has no visible
 	// heading, and `aria-label` on the dialog names the DIALOG; a listbox
 	// inside it is a second widget and owes its own name.
 	'jumpbox.suggestions': 'Suggestions',
+	// The key legend that replaces `jumpbox.searches` the moment the reader
+	// types: one row per key that currently does something, a `<kbd>` chip
+	// beside a word. Single words, matching `ui.close` (reused for Esc) —
+	// four of them have to sit on one line.
+	'jumpbox.key.move': 'Move',
+	'jumpbox.key.complete': 'Complete',
+	'jumpbox.key.go': 'Go',
 
 	// Appearance menu — SettingsMenu.svelte is the consumer; the dark-mode
 	// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.

@@ -577,12 +577,47 @@
 					</li>
 				{/each}
 			</ul>
-		{:else}
-			<p class="hint">{t('jumpbox.hint')}</p>
 		{/if}
 
 		{#if notFound}
 			<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
+		{/if}
+
+		<!--
+			THE FOOT NAMES THE KEYS THAT CURRENTLY DO SOMETHING, and nothing
+			else. It read "Press / or Ctrl+K to jump to a reference" until
+			2026-09-10, which is a true sentence in the one place it was never
+			printed: those two keys OPEN this box and are inert inside it, where
+			this line is the only thing on screen. The keys that were live —
+			Tab and Enter, the two the box's whole grammar rests on — were named
+			nowhere at all.
+
+			Each row is conditional on the same state its handler tests, so the
+			legend cannot promise a key that would do nothing: arrows need a
+			list, Tab needs a row chosen (`onInputKeydown` leaves it alone
+			otherwise, being the only way out of a modal), Enter needs something
+			to submit. Escape is the one that is always true.
+
+			With nothing typed there are no keys yet, and the line says what the
+			box will look through instead — the placeholder above it shows
+			ADDRESSES, and most of this corpus is reached by name.
+			`jumpbox.searches` and not `jumpbox.hint`: that one is the SHORTCUT
+			sentence, and it is still true where the home page prints it, over
+			the notation specimens, with the box shut.
+		-->
+		{#if query.trim() === ''}
+			<p class="hint">{t('jumpbox.searches')}</p>
+		{:else}
+			<p class="keys">
+				{#if suggestions.length > 0}
+					<span><kbd>↑</kbd><kbd>↓</kbd>{t('jumpbox.key.move')}</span>
+				{/if}
+				{#if active >= 0}
+					<span><kbd>Tab</kbd>{t('jumpbox.key.complete')}</span>
+				{/if}
+				<span><kbd>Enter</kbd>{t('jumpbox.key.go')}</span>
+				<span><kbd>Esc</kbd>{t('ui.close')}</span>
+			</p>
 		{/if}
 	</div>
 </dialog>
@@ -643,6 +678,23 @@
 	dialog {
 		width: min(32rem, 90vw);
 		margin: 12vh auto auto;
+		/* The panel may reach to within a hair of the fold, and on a tall
+		   viewport that is most of the screen. Before this it could not: the
+		   list carried a `max-height: min(24rem, 55vh)` and nothing else was
+		   bounded, so on a 900px window the results stopped 380px short of the
+		   bottom and scrolled INSIDE a panel with a third of the page empty
+		   under it. The cap belongs to the dialog, which is the only box that
+		   knows where the fold is. `dvh` and not `vh`: on a phone the two
+		   differ by the browser's own chrome, and `vh` is the taller one. */
+		max-block-size: calc(100dvh - 12vh - 1rem);
+	}
+
+	/* `[open]` is not decoration — a closed `<dialog>` is `display: none` from
+	   the UA stylesheet, and a bare `dialog { display: flex }` would override
+	   it and leave the box on screen for ever. `.sheet` in `menus.css` carries
+	   the same guard for the same reason. */
+	dialog[open] {
+		display: flex;
 	}
 
 	/* A `.panel-surface` (styles/components.css) with room to breathe: this one
@@ -650,6 +702,15 @@
 	   is the only panel on the site a reader types into. */
 	.panel {
 		padding: 1rem;
+		/* The flex column that turns the dialog's cap into the list's: the
+		   field and the foot take what they need, `ul` takes the rest.
+		   `min-block-size: 0` is what lets it be smaller than its content —
+		   without it a flex item refuses to shrink past that and the panel
+		   grows straight through the cap above. */
+		flex: 1 1 auto;
+		min-block-size: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
 	/* `--color-bg-elevated`, not `--color-bg`: the panel is already `--color-bg`,
@@ -700,14 +761,16 @@
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
 	}
 
-	/* The list is capped in height rather than in rows: `suggest.ts` already
-	   caps the count, and a `max-height` in `vh` is what keeps the panel from
-	   running off a short viewport when it does not. */
+	/* No height of its own: `flex: 0 1 auto` grows the list with its content
+	   and shrinks it to whatever the dialog's cap leaves, so a short list is
+	   a short panel and a long one runs to the fold. `suggest.ts` caps the
+	   count; this caps the pixels, and only where the viewport does. */
 	ul {
 		list-style: none;
 		margin: 0.6rem 0 0;
 		padding: 0;
-		max-height: min(24rem, 55vh);
+		flex: 0 1 auto;
+		min-block-size: 0;
 		overflow-y: auto;
 	}
 
@@ -790,10 +853,47 @@
 		white-space: nowrap;
 	}
 
-	.hint {
+	.hint,
+	.keys {
 		margin: 0.5rem 0 0;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
+		/* Neither line may take space from the list above it, which is the
+		   only part of this panel that scrolls. */
+		flex: none;
+	}
+
+	/* One line of pairs, wrapping as a whole pair: a keycap orphaned from its
+	   word is a puzzle. `column-gap` is the space BETWEEN pairs and the 0.3rem
+	   inside each is the `kbd`'s own margin, so the two never read as one gap. */
+	.keys {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: 0.9rem;
+		row-gap: 0.3rem;
+	}
+
+	/* Not `.key`'s keycap from `Help.svelte`: that one is a picture of a
+	   keyboard and this is a footnote under a field the reader is typing in.
+	   A hairline box at the text's own size, and the sans face because a key
+	   is a label printed on a thing, not a word in a sentence. */
+	kbd {
+		margin-inline-end: 0.3rem;
+		padding: 0.05rem 0.3rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		font-family: var(--font-sans);
+		font-size: 0.75rem;
+		line-height: 1.4;
+		color: var(--color-text-muted);
+		/* The arrows are a pair and read as one control: no gap between them
+		   beyond their own borders, so `↑↓ Move` is three things and not four. */
+		white-space: nowrap;
+	}
+
+	kbd + kbd {
+		margin-inline-start: -0.15rem;
 	}
 
 	.not-found {

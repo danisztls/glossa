@@ -924,6 +924,11 @@ reverse-chronological list.
   it. `matchesQuery` ANDs tokens where `highlight` ORs them (filtering strict,
   marking generous); a test pins the agreement. The search reads a document's
   whole metadata, AND-ed with the facets.
+- **`loose` is the jump box's alone, and it marks by density or by distance.**
+  A subsequence explains a row only where the marks fill half the span they
+  cover (`dani` found four letters across thirty of a Summa title), and a
+  transposition is no subsequence at all, so a second pass marks the whole word
+  within one edit — `deniel` → "Daniel" (`site/docs/finding.md`).
 - **`site/document-tags.json` is the subject vocabulary and it is CLOSED**, in
   its own `vocabulary` array, keyed by document SLUG (a tag is about the
   document, not an edition — the one difference from `descriptions.json`).
@@ -2924,6 +2929,12 @@ the other five `anchor.*`, `lang.more` pulls in `lang.label`, `bookmark.empty`
 pulls in `emptyHint` and `deviceOnly` — and `document.kind.cdf*` was held back
 entirely, because those five join a filter list of twelve. **The unit of
 translation is the surface, not the key.**
+
+**And a key is shared by two surfaces only where the sentence is true on
+both.** `jumpbox.hint` names the shortcuts that OPEN the jump box and was also
+printed inside it, where those keys do nothing — a rewrite would have made 38
+dictionaries wrong to fix one surface, so the box got a second key
+(`site/docs/finding.md`).
 
 **Twenty of the thirty-four dictionaries have never been read by a native
 speaker** — every language added on 2026-08-31 was translated by an LLM in one

@@ -136,9 +136,13 @@ export const pt: Dictionary = {
 	'ccc.noCounterpart': 'Sem correspondência na outra obra',
 	'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',
+	'jumpbox.searches': 'Ou pelo nome — sem precisar de endereço.',
 	'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 	'jumpbox.noMatch': 'Nenhum resultado',
 	'jumpbox.suggestions': 'Sugestões',
+	'jumpbox.key.move': 'Mover',
+	'jumpbox.key.complete': 'Completar',
+	'jumpbox.key.go': 'Ir',
 
 	'settings.label': 'Configurações',
 	'apparatus.label': 'Aparato',

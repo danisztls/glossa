@@ -123,10 +123,49 @@ describe('highlight', () => {
 			expect(marks(highlight('Lumen Gentium', 'lm', { loose: true }))).toEqual([]);
 		});
 
-		it('marks nothing when the letters are not there in order', () => {
-			// A transposition is not a subsequence — the same limit `suggest.ts`
-			// records for `fuzzysort` itself.
-			expect(marks(highlight('Of Perfection', 'perfectoin', { loose: true }))).toEqual([]);
+		it('marks the word a transposition was aimed at, whole', () => {
+			// A transposition is not a subsequence — the limit `suggest.ts`
+			// records for `fuzzysort` itself — and `boundedEdit` is why the row
+			// is on the list at all. Marking the word is what stops it from
+			// arriving with no explanation on it.
+			expect(marks(highlight('Of Perfection', 'perfectoin', { loose: true }))).toEqual([
+				'Perfection'
+			]);
+			expect(marks(highlight('Daniel 1', 'deniel', { loose: true }))).toEqual(['Daniel']);
+		});
+
+		it('marks nothing when no word is within one edit either', () => {
+			expect(marks(highlight('Of Perfection', 'porcelain', { loose: true }))).toEqual([]);
+		});
+
+		it('refuses a subsequence strung across the whole label', () => {
+			// The `dani` case: four letters exist somewhere in almost any
+			// sentence, and marking them is a row wearing highlights.
+			expect(
+				marks(highlight("Of Man's Various Duties and States in General", 'dani', { loose: true }))
+			).toEqual([]);
+		});
+
+		it('refuses a dense subsequence that is nothing but fragments', () => {
+			// Tight enough to pass the density gate (4 of 6) and still noise:
+			// `Quo`d` An`n`i`versarius`, one row under the `dani` case above.
+			expect(marks(highlight('Quod Anniversarius', 'dani', { loose: true }))).toEqual([]);
+		});
+
+		it('marks a dropped vowel, which is two pieces of a short word', () => {
+			expect(marks(highlight('Psalms 23', 'psms', { loose: true }))).toEqual(['Ps', 'ms']);
+		});
+
+		it('still marks the dense subsequence the same query finds elsewhere', () => {
+			// The other half of that pair, and the reason the gate is density
+			// rather than the query's length: one list, one keystroke, both rows.
+			expect(marks(highlight('Daniel 1', 'dani', { loose: true }))).toEqual(['Dani']);
+		});
+
+		it('prefers a dense subsequence to a near word', () => {
+			// "Rosary" is within one edit of `rosry` AND contains it as a
+			// subsequence; the subsequence marks what the reader typed.
+			expect(marks(highlight('The Holy Rosary', 'rosry', { loose: true }))).toEqual(['Ros', 'ry']);
 		});
 	});
 

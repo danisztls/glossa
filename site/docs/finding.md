@@ -1009,6 +1009,56 @@ stated rather than papered over: `lg` reaching "Lumen Gentium" carries no mark
 at all. A one-LETTER token must be a whole word and a one-DIGIT token need not,
 since a digit is an address whose typed prefix is exactly why the row is there.
 
+**A loose mark has to be dense, or it is the query's letters found by
+accident.** Four letters exist somewhere in almost any sentence: `dani` drew
+"Of Man's Various **D**uties **an**d States **i**n General" one row under
+"**Dani**el 1", on the same keystroke — a row wearing highlights rather than a
+row explaining itself. The gate is how much of the span the marks fill (half),
+plus a run of three characters or no more than two pieces, which is what
+separates a misspelling from a coincidence: `capcity` fills 7 of the 9
+characters it spans and `psms` is two pieces of a short word, where the letters
+of a coincidence are strung across thirty. **Nothing here counts runs alone** —
+`rermnvrum` over "Rerum Novarum" is legitimately five of them.
+
+**And the marker owes the same shape as the matcher that found the row.**
+`deniel` is not a subsequence of "Daniel" — the `e` it wants before the `n` is
+behind it — so the row `boundedEdit` had put at the top of the list arrived
+with nothing marked on it, which reads as a result arriving for no reason. The
+answer is a second loose pass keyed on DISTANCE rather than containment,
+marking the whole word the typo was aimed at: which letters of "Daniel" the
+reader got right is an artifact of the edit the table preferred, and the claim
+being made is "this word is what you meant". `boundedEdit` moved to
+`edit-distance.ts` for it, ~600 bytes into the boot chunk, `highlight.ts` being
+imported by a component the layout renders. **A subsequence matcher and a
+subsequence highlighter agree by construction; a distance matcher and a
+subsequence highlighter do not, and the disagreement is silent.**
+
+**The foot of the box names the keys that do something NOW.** It read "Press /
+or Ctrl+K to jump to a reference" until 2026-09-10, which is a true sentence in
+the one place it was never printed: those two keys OPEN the box and are inert
+inside it, where that line was the only thing on screen — and Tab and Enter,
+the two keys the box's whole grammar rests on, were named nowhere at all. Each
+row is conditional on the same state its handler tests (arrows need a list, Tab
+needs a row chosen, Enter needs something to submit), so the legend cannot
+promise a key that would do nothing.
+
+**That string was right on the other surface, which is why it kept its
+translations.** The home page prints it as the lead over the notation
+specimens, with the box shut and both keys live, so the fix was a second key
+(`jumpbox.searches`) and not a rewrite — a rewrite would have made 38
+dictionaries wrong to fix one surface. **A key may be shared by two surfaces
+only where the sentence is true on both**, and the cost of getting that
+backwards is paid in the translated half, silently, in languages nobody here
+reads.
+
+**A panel that caps its list rather than itself cannot know where the fold
+is.** The suggestions carried `max-height: min(24rem, 55vh)` and the dialog
+carried nothing, so on a 900px window the list scrolled inside a panel with a
+third of the page empty beneath it. The cap belongs to the dialog — the only
+box that knows where the bottom of the viewport is — and the list takes what
+the field and the foot leave it (`flex: 0 1 auto`, `min-block-size: 0`). `dvh`
+and not `vh`, the two differing by the browser's own chrome on a phone.
+
 ## `/documenta` is a filtered list, not a table of contents
 
 **SO IT IS THE ONE PAGE THAT IS BOTH A LANDING PAGE AND A READING GRID**, and

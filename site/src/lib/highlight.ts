@@ -30,6 +30,8 @@
  * matcher would mark text that is not why the row is there.
  */
 
+import { boundedEdit } from './edit-distance';
+
 /** One run of the string, marked or not. Concatenating every `text` in order
  *  reproduces the input exactly — the caller renders, it never reassembles. */
 export interface HighlightSegment {
@@ -173,6 +175,77 @@ function subsequence(folded: string, needle: string): Range[] {
 	return ranges;
 }
 
+/**
+ * A SUBSEQUENCE IS EVIDENCE ONLY WHERE IT IS DENSE, and this is the gate that
+ * decides. Four letters exist somewhere in almost any sentence: `dani` walked
+ * "Of Man's Various **D**uties **an**d States **i**n General" — four marks
+ * strung across thirty characters, a row wearing highlights rather than a row
+ * explaining itself, under the same query that marked "**Dani**el" correctly
+ * one line above it.
+ *
+ * The first measure is how much of the span the marks fill. The letters of a
+ * misspelling land in one neighbourhood — "capcity" fills 7 of the 9
+ * characters it spans, "rermnvrum" 9 of 13 — and the letters of a coincidence
+ * do not (`dani`, 4 of 22).
+ *
+ * The second is that something has to be a RUN. `Quo`d` An`n`i`versarius`
+ * passes the first at 4 of 6 and is the same noise in miniature, so a match
+ * must also hold three characters together somewhere, or be no more than two
+ * pieces — a dropped vowel splits a short word in two ("psms" for "Psalms")
+ * and that is still legible as the word. Counting runs alone would refuse the
+ * five "rermnvrum" honestly needs.
+ */
+const MIN_DENSITY = 0.5;
+const MIN_RUN = 3;
+const MAX_PIECES = 2;
+
+function explains(ranges: Range[]): boolean {
+	if (ranges.length === 0) return false;
+	const span = ranges[ranges.length - 1][1] - ranges[0][0];
+	const marked = ranges.reduce((sum, [start, end]) => sum + (end - start), 0);
+	if (marked / span < MIN_DENSITY) return false;
+	const longest = Math.max(...ranges.map(([start, end]) => end - start));
+	return longest >= MIN_RUN || ranges.length <= MAX_PIECES;
+}
+
+/**
+ * How wrong a WORD may be and still be the word the reader aimed at.
+ *
+ * Deliberately stricter than `suggest.ts`'s `maxBookEdits`, which allows two
+ * edits above six characters: that bound ranges over 258 book forms chosen to
+ * be told apart, this one over every word of every label, "and" and "the"
+ * included. One edit, and nothing below four characters, where a single edit
+ * reaches most of the short words there are.
+ */
+function nearEnough(word: string, needle: string): boolean {
+	if (needle.length <= MIN_LOOSE) return false;
+	return boundedEdit(word, needle, 1) !== null;
+}
+
+/**
+ * The word a typo was aimed at, marked whole.
+ *
+ * THE PASS A SUBSEQUENCE CANNOT BE. `deniel` is not a subsequence of "Daniel"
+ * — the `e` it wants before the `n` is behind it — so the row `suggest.ts`'s
+ * own edit-distance matcher had put at the top of the list arrived with
+ * nothing marked on it at all, which reads as a result arriving for no
+ * reason. This is the same shape as the matcher that found it: distance
+ * rather than containment.
+ *
+ * A WHOLE WORD AND NOT AN ALIGNMENT. Marking the five letters of "Daniel"
+ * that `deniel` got right would point at the typo rather than at the answer,
+ * and which letters those are is an artifact of the edit the table happened
+ * to prefer. The claim is "this word is what you meant", and the word is what
+ * states it.
+ */
+function nearWords(folded: string, needle: string): Range[] {
+	const found: Range[] = [];
+	for (const match of folded.matchAll(/[\p{L}\p{N}]+/gu)) {
+		if (nearEnough(match[0], needle)) found.push([match.index, match.index + match[0].length]);
+	}
+	return found;
+}
+
 function merge(ranges: Range[]): Range[] {
 	const sorted = [...ranges].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
 	const out: Range[] = [];
@@ -208,11 +281,18 @@ export function highlight(
 	for (const token of tokens) found = found.concat(occurrences(folded, token));
 
 	if (found.length === 0 && opts.loose) {
-		// The loose pass ignores the query's own spacing: a reader typing
+		// The loose passes ignore the query's own spacing: a reader typing
 		// "lum gen" and a reader typing "lumgen" mean the same thing, and the
-		// spans it marks are letters either way.
+		// spans they mark are letters either way.
 		const letters = tokens.join('');
-		if (letters.length >= MIN_LOOSE) found = subsequence(folded, letters);
+		if (letters.length >= MIN_LOOSE) {
+			const walked = subsequence(folded, letters);
+			// The subsequence first, because it marks the letters the reader
+			// actually typed. `nearWords` answers the two cases it cannot:
+			// there is no subsequence to walk (a transposition), or the one
+			// there is explains nothing (`explains`).
+			found = explains(walked) ? walked : nearWords(folded, letters);
+		}
 	}
 
 	if (found.length === 0) return plain;

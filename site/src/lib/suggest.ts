@@ -82,6 +82,7 @@ import {
 	contentLangChain
 } from './corpus';
 import { expandRun } from './corpus-index';
+import { boundedEdit } from './edit-distance';
 import { i18n, isUiLang, loadedDictionary, UI_LANGS } from './i18n.svelte';
 import sectionNamesTable from './section-names.json';
 import { normalizeBookToken, parseReference } from './refparse';
@@ -444,44 +445,10 @@ function bookForms(lang: string): BookForm[] {
 	return out;
 }
 
-/**
- * Restricted edit distance, abandoned as soon as it cannot come in under `max`.
- *
- * WHY A SECOND MATCHER EXISTS AT ALL. `fuzzysort` matches a SUBSEQUENCE, so a
- * transposition is not a weak match to it — it is no match: `jonh` against
- * "john" scores `null`, not 0.2, because the `h` the needle wants after the
- * `n` is behind it in the target. No threshold reaches that, and transposing
- * two letters is the commonest way there is to mistype a word one knows. The
- * adjacent-swap row below is the whole reason this is Optimal String Alignment
- * rather than plain Levenshtein.
- *
- * It is bounded, and the bound is what makes it cheap: a row whose best cell
- * already exceeds `max` can only get worse, so most forms are abandoned after
- * one row and forms of the wrong length never start.
- */
-function boundedEdit(a: string, b: string, max: number): number | null {
-	if (Math.abs(a.length - b.length) > max) return null;
-	let prev2: number[] = [];
-	let prev: number[] = Array.from({ length: b.length + 1 }, (_, j) => j);
-	for (let i = 1; i <= a.length; i++) {
-		const cur = [i];
-		let rowBest = i;
-		for (let j = 1; j <= b.length; j++) {
-			const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-			let v = Math.min(cur[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
-			// The adjacent swap. Without this row `jonh` is two edits from
-			// "john" and reads no better than half the canon.
-			if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
-				v = Math.min(v, prev2[j - 2] + 1);
-			}
-			cur.push(v);
-			if (v < rowBest) rowBest = v;
-		}
-		if (rowBest > max) return null;
-		prev2 = prev;
-		prev = cur;
-	}
-	return prev[b.length] <= max ? prev[b.length] : null;
+/** A string's characters in a fixed order — two strings share one exactly when
+ *  each is a rearrangement of the other. */
+function sortedLetters(s: string): string {
+	return [...s].sort().join('');
 }
 
 /**
@@ -495,13 +462,10 @@ function boundedEdit(a: string, b: string, max: number): number | null {
  * above: `jonh`, `jhon`, `psalsm` and `mathew` are one; `corinthans` is two
  * (an `i` and the missing ordinal), and at ten characters two edits still
  * reach nothing else.
+ *
+ * The distance itself is `edit-distance.ts`, shared with `highlight.ts`; this
+ * bound is not, and its docblock says why.
  */
-/** A string's characters in a fixed order — two strings share one exactly when
- *  each is a rearrangement of the other. */
-function sortedLetters(s: string): string {
-	return [...s].sort().join('');
-}
-
 function maxBookEdits(length: number): number {
 	if (length < 4) return 0;
 	return length <= 6 ? 1 : 2;
