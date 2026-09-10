@@ -24,10 +24,23 @@
  * THE SLUGS ARE WRITTEN DOWN AND NOT DERIVED, which is the one thing that
  * matters more than their spelling: `Intl.DisplayNames` moves with the
  * platform's CLDR, and an address that changed when a browser updated would
- * break every link ever made to it. They are English, lowercase, ASCII —
- * derivable by eye from the territory and checkable by anyone, where a Latin
- * name for Hong Kong or Northern Arabia would be this project inventing text
- * (`docs/decisions.md` §Scope).
+ * break every link ever made to it.
+ *
+ * AND THEY ARE ENGLISH, WHICH IS THE PART THAT LOOKS WRONG ON A PAGE WRITTEN
+ * IN PORTUGUESE. A SLUG IS AN IDENTIFIER AND NOT A NAME: the name is already
+ * in the reader's own language in the title, the heading and the description,
+ * which is what a search for `calendário litúrgico brasileiro` matches on,
+ * and what the segment has to do is let fifty-three addresses be told apart
+ * by a footer, a sitemap, a test, or a link read out of context. Neither
+ * alternative does that job better. The calendar's own language would put
+ * thirteen of these addresses in a non-Latin script — `/calendarium/日本`
+ * percent-encodes into something nobody can share or read — and a rule of
+ * "the endonym where it is ASCII and English otherwise" gives `brasil` beside
+ * `south-korea`, an address no reader can predict. Latin would at least match
+ * `/scriptura/iosue`, and fails on the ten rows where there is no received
+ * Latin name to use: coining one for Hong Kong, Brunei, Timor-Leste or
+ * Northern Arabia is this project inventing text (`docs/decisions.md`
+ * §Scope), and `civitatum-foederatarum` is not an address.
  *
  * ## The name is the calendar's own, in its own language
  *
