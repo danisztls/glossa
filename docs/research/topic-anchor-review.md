@@ -12,12 +12,13 @@ what the passages mean? Anything else — the topic being interesting, the
 paragraphs being about the right subject, the anchor being tidy — is not the
 test.
 
-**The question is the specification, and the title is not.** Both defects this
-pass has found so far were topics whose _title_ was anchored perfectly and whose
-_question_ was not anchored at all. `pornographia` is CCC 2354 and always was;
-"and about not being able to stop?" was in no paragraph on the page. Read the
-question clause by clause, and the keywords too — a keyword is a promise the
-search bar keeps.
+**The question is the specification, and the title is not.** Every defect this
+pass has found has the same shape: a topic whose _title_ is anchored perfectly
+and whose _question_ is not anchored at all. `pornographia` is CCC 2354 and
+always was, and "and about not being able to stop?" was in no paragraph on the
+page; `amor-dei` is CCC 218–221 and "I believe it about everyone else" was in
+none of them. Read the question clause by clause, and the keywords too — a
+keyword is a promise the search bar keeps.
 
 ## The scale
 
@@ -52,6 +53,15 @@ ingested the note says where to put it.
 | `post-contraceptionem`   | A     | Was C twice over: no anchored text said the word _sterilisation_, and "what now?" was answered only by 2370, which is `contraceptio`'s own teaching restated. Fixed 2026-09-10 with 2399 and 1451–1453.                                           |
 | `adulterium`             | B     | "Do I have to tell?" is answered only by 2487, which is written about offences against truth and reputation and reaches a spouse by analogy — correctly, since it says reparation is owed and may be made secretly. Checked: no better paragraph. |
 
+### `private-shame / despair` — 2026-09-10
+
+| Topic               | Grade | Note                                                                                                                                                                                                                                                                  |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `oratio-inaudita`   | A     | CCC 2734–2741 is the Catechism's own two headings on this exact question, taken whole and unreordered — the ideal case, where the topic is barely editorial. 2737 lands hard on a reader whose petition was for a dying child; excising it would be choosing by hand. |
+| `mortis-desiderium` | A     | `lead` 2283 puts _we should not despair of the eternal salvation of persons who have taken their own lives_ first, which is the question verbatim, and 2282 closes on diminished responsibility. See the keyword note below.                                          |
+| `amor-dei`          | A     | Was C: 218–221 is God's love for **Israel**, and the reader's whole objection is that it applies to everyone but them. Fixed 2026-09-10 with CCC 604–605 anchored ahead of it, which also retired the `lead`.                                                         |
+| `dubium-fidei`      | A     | Was C: nothing anchored said faith is ever dark. Fixed 2026-09-10 by widening 162 to the Catechism's own 162–165 and adding 2731 on dryness.                                                                                                                          |
+
 ## What the pass keeps finding
 
 **A keyword must not promise what the blocklist refuses.**
@@ -67,6 +77,28 @@ act.** CCC 2399 is one of two paragraphs in the whole Catechism that say
 is the wrong room to send this reader into. Anchoring a summary paragraph is
 otherwise a smell — `finis-mundi` was the only topic that did it before this —
 because in-brief text restates what the article already said at length.
+
+**Widen before you reach.** `dubium-fidei` held CCC 162 alone, and the
+paragraphs that answer it were 163–165 — the Catechism's own next heading,
+sitting directly underneath the anchor the topic already had. Read what is
+beside the anchor before searching the rest of the book.
+
+**A `lead` is a compensation, and a better span retires it.** `amor-dei` led on
+219 because its span opened on Israel's history and the reader needed the
+strongest sentence first. Anchoring 604–605 — _there is not, never has been, and
+never will be a single human being for whom Christ did not suffer_ — put a direct
+answer at the top of the page on its own, so the field came out. The page now
+carries no reordering disclosure because there is no reordering, which is the
+better state: `lead` is the most editorial thing this site does.
+
+**A keyword may over-reach where the alternative is silence, and that is a
+decision, not a defect.** `mortis-desiderium` carries _self-harm_ and _alone_,
+both of which `topics.md` holds back as topics because the corpus has nothing
+addressed to them. Kept deliberately: the nearest true page is this one, its
+2282 does speak to diminished responsibility, and a search that returns nothing
+serves that reader worse than one that returns this. Distinguish it from
+`pornographia`'s _addiction_, where a true paragraph existed and simply was not
+anchored.
 
 **Two topics sharing a paragraph is fine; sharing an anchor set is not.**
 `pornographia` now reaches into `castitas`'s 2337–2350 for one paragraph and into

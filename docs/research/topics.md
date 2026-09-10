@@ -557,10 +557,15 @@ The blocklist above is unchanged and still holds.
    dropped for failing the test.
 3. **What the route is called.** `quaestiones`.
 4. **Whether doorway 3 can be built at all in this register.** It can, and
-   `lead` is the whole mechanism: nine topics use it, the page discloses it in
-   the reader's own language, and the sync refuses one that has drifted. The
-   ordering is still a judgment about a reader's state and is meant to be
-   argued with — one field, one number, in tracked source.
+   `lead` is the whole mechanism: the topics that use it are the ones carrying
+   the field in `site/quaestiones.json`, the page discloses it in the reader's
+   own language, and the sync refuses one that has drifted. The ordering is
+   still a judgment about a reader's state and is meant to be argued with — one
+   field, one number, in tracked source. **A `lead` is a compensation, and a
+   better span retires it**: `amor-dei` led on CCC 219 while its only anchor was
+   God's love for Israel, and stopped needing to when CCC 604–605 — _not a
+   single human being for whom Christ did not suffer_ — was anchored ahead of
+   it.
 
 ## Still open
 

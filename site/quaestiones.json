@@ -862,16 +862,19 @@
 			"doorway": "private-shame",
 			"cluster": "despair",
 			"ccc": [
-				[162, 162],
-				[2088, 2089]
+				[162, 165],
+				[2088, 2089],
+				[2731, 2731]
 			],
 			"documents": ["spe-salvi"]
 		},
 		"amor-dei": {
 			"doorway": "private-shame",
 			"cluster": "despair",
-			"ccc": [[218, 221]],
-			"lead": 219,
+			"ccc": [
+				[604, 605],
+				[218, 221]
+			],
 			"documents": ["dilexit-nos", "dives-in-misericordia"]
 		},
 		"oratio-inaudita": {
