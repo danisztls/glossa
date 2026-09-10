@@ -45,19 +45,26 @@ import { citerKey, citerWorkKey } from './build-xrefs.mjs';
  * copy. 3 dropped `fromNotes` and narrowed `citers` to the references a
  * ranking counts, which is a change of MEANING rather than of field — the
  * kind a version number exists for, since nothing about the old shape reads
- * as wrong.
+ * as wrong. 4 deepened every ranking from twenty rows to a hundred and added
+ * `absent`, which the page pages through and prints beside them.
  */
-export const CENSUS_VERSION = 3;
+export const CENSUS_VERSION = 4;
 
 /**
  * How many entries a ranking publishes — a ceiling, never a quota.
  *
- * TWENTY IS A SCREEN. A ranking is read down, and a table longer than the
- * viewport stops being a ranking and becomes a list that happens to be
- * sorted; the tail of every one of these is a long flat run where the
- * difference between one row and the next is a single citation.
+ * TWENTY IS A SCREEN, AND A SCREEN IS NOW THE PAGE RATHER THAN THE FILE. The
+ * argument for cutting at twenty was that a ranking is read down and a table
+ * longer than the viewport stops being one; that is an argument about what
+ * meets the eye at once, and `RANK_PAGE` is where it belongs. The file's job
+ * is to hold enough that turning a page has somewhere to go.
+ *
+ * A HUNDRED IS WHERE THE TAIL GOES FLAT. Below it the difference between one
+ * row and the next is a single citation, and a ranking whose bands are one
+ * deep is a list that happens to be sorted. Measured, it takes `census.json`
+ * from 5.8 KB to 18.6 KB, in a file one page fetches on demand.
  */
-export const RANK_LIMIT = 20;
+export const RANK_LIMIT = 100;
 
 /**
  * The eight works the coverage matrix has a row for, each with the address
@@ -191,8 +198,29 @@ function tallyCiter(tally, id, citer) {
  * @returns {boolean}
  */
 export function countsTowardsRank(citer, self) {
-	if (citer.kind === 'annotation') return false;
+	if (!kindCountsTowardsRank(citer.kind)) return false;
 	return self === undefined || citerWorkKey(citer) !== self;
+}
+
+/**
+ * The first of those two rules, asked of a KIND with no citer to hand.
+ *
+ * The absence pass counts citations by kind rather than keeping a citer per
+ * one — 41,696 of them name nothing, and a list of citers for each would be a
+ * megabyte to answer a question that is two integers. So it needs the
+ * annotation rule without the self-reference rule, which cannot apply: a work
+ * outside this corpus is not one inside it citing itself.
+ *
+ * IT IS THE PREDICATE AND `countsTowardsRank` DELEGATES, rather than the two
+ * testing the same string apart. An edition's own footnotes name Migne and
+ * Denzinger constantly; a second copy of that test is how the family comes
+ * back into one of the two tables through an edit that forgets why it went.
+ *
+ * @param {string} kind
+ * @returns {boolean}
+ */
+export function kindCountsTowardsRank(kind) {
+	return kind !== 'annotation';
 }
 
 /**
@@ -240,7 +268,7 @@ export function censusFact(census, shelf, fact) {
  * @param {{slug: string, lang: string}[]} input.documentEditions
  * @param {Record<string, {questions: unknown[]}>} input.summaIndex lang -> questions
  * @param {Record<string, Record<string, Record<string, import('../src/lib/types.ts').Citer[]>>>} input.scriptureByBook
- * @param {{documents: any[], ccc: any[], summa: any[]}} input.citationXrefs
+ * @param {{documents: any[], ccc: any[], summa: any[], absent: {work: string, cited_by: import('../src/lib/types.ts').Citer[]}[], unread: {ibidem: Record<string, number>, other: Record<string, number>}}} input.citationXrefs
  * @param {Map<string, Map<number, Set<number>>>} input.summaArticles part -> question -> articles
  */
 export function buildCensus(input) {
@@ -451,6 +479,53 @@ export function buildCensus(input) {
 		`summa ${r.part} ${r.question} ${r.article}`
 	]);
 
+	/**
+	 * What the apparatus asks for and this library has not got.
+	 *
+	 * TALLIED APART FROM THE FOUR ABOVE, and the reason is `tallyXrefs`'s
+	 * three other jobs. Those rows are cross-references: each has a cited
+	 * ADDRESS, is counted into `references`, and lands in the breakdown under
+	 * the ranking. An absence has no address by definition — there is nothing
+	 * here for a reader to stand on — so counting it as a reference would put
+	 * `references` above the number of edges the corpus actually has and
+	 * `citedAddresses` above the number of places that exist. The one rule it
+	 * does share is `countsTowardsRank`: an edition's own footnotes name
+	 * Migne constantly, and a table of what to ingest next that reported
+	 * chiefly what Haydock cited is the defect the annotation rule already
+	 * answered for once.
+	 *
+	 * `self` is `undefined` because there is no work to be citing itself: a
+	 * citation to something outside the corpus cannot be internal to it.
+	 */
+	/** @type {Map<string, Set<string>>} */ const absent = new Map();
+	for (const row of citationXrefs.absent) {
+		for (const citer of row.cited_by) {
+			if (!countsTowardsRank(citer)) continue;
+			tallyCiter(absent, row.work, citer);
+		}
+	}
+
+	/**
+	 * The citations that named nothing at all, under the same rule.
+	 *
+	 * TWO NUMBERS AND NOT A TABLE — see `buildCitationXrefs`, which explains
+	 * why the strings themselves may not be ranked. Split because the two
+	 * halves are findings about different things: `ibidem` is a citation this
+	 * parser could not carry an antecedent into, which is a limit of the
+	 * READING, and `other` is a footnote naming something the grammar has no
+	 * table for, which is nearer a limit of the CORPUS. Reported as one
+	 * number they would read as one defect.
+	 */
+	const unreadOf = (/** @type {Record<string, number>} */ byKind) =>
+		Object.entries(byKind).reduce(
+			(n, [kind, count]) => n + (kindCountsTowardsRank(kind) ? count : 0),
+			0
+		);
+	const unread = {
+		ibidem: unreadOf(citationXrefs.unread.ibidem),
+		other: unreadOf(citationXrefs.unread.other)
+	};
+
 	let summaArticleCount = 0;
 	for (const byQuestion of summaArticles.values()) {
 		for (const articles of byQuestion.values()) summaArticleCount += articles.size;
@@ -598,6 +673,21 @@ export function buildCensus(input) {
 				question: numberIn(id),
 				value
 			}))
-		}
+		},
+		/**
+		 * The works cited here that are held nowhere here, and what the four
+		 * rankings above cannot say: they rank what the library HAS.
+		 *
+		 * Its rows carry a name and no address, which is the whole content of
+		 * the section — every other ranking on the page links, and this one
+		 * cannot, because the link is the thing that is missing.
+		 */
+		absent: topOf(absent, (a, b) => a.localeCompare(b)).map(({ id, value }) => ({
+			work: id,
+			value
+		})),
+		/** What that ranking does NOT account for, so the page can say so —
+		 *  the same arithmetic `countedReferences` closes one section up. */
+		unread
 	};
 }

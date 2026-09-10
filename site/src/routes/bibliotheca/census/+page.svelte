@@ -1,8 +1,8 @@
 <script lang="ts">
 	/**
 	 * The library counted: what it holds in a sentence per shelf, how far each
-	 * work reaches across the interface languages, and what the rest of the
-	 * corpus cites most.
+	 * work reaches across the interface languages, what the rest of the corpus
+	 * cites most, and what it asks for and cannot be given.
 	 *
 	 * ## Every number is a fraction, or it is one of four
 	 *
@@ -46,6 +46,17 @@
 	 * one kind that does: a book's count is every place citing any chapter of
 	 * it, so beside its own chapters it answers the table twice.
 	 *
+	 * The file publishes `RANK_LIMIT` rows and the page shows `RANK_PAGE` of
+	 * them, which is the split that let the twenty-first row be reachable at
+	 * all: twenty was a screen, and the FILE was the thing enforcing it.
+	 *
+	 * ## The one ranking that does not link
+	 *
+	 * Under it, what the apparatus names that this library has not got — the
+	 * list of what to ingest next, and its own section rather than a sixth
+	 * chip, because an absence has no address and a row for it in a table of
+	 * addresses would be the only one that went nowhere.
+	 *
 	 * ## A ranked row is the reader's own edition
 	 *
 	 * A ranked row is an id in the file and a name on the page, out of
@@ -79,6 +90,8 @@
 	import {
 		RANK_HIDDEN_BY_DEFAULT,
 		RANK_KINDS,
+		RANK_PAGE,
+		absentRanking,
 		censusProse,
 		censusShelves,
 		citedTotals,
@@ -91,6 +104,7 @@
 		rankedChapters,
 		rankedDocuments,
 		rankedSumma,
+		unreadTotals,
 		type CensusRankRow
 	} from '$lib/census';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -133,26 +147,28 @@
 	});
 
 	/**
-	 * THE THREE LINES THAT QUALIFY RATHER THAN SAY, each behind the `i` beside
+	 * THE FOUR LINES THAT QUALIFY RATHER THAN SAY, each behind the `i` beside
 	 * the heading it belongs to — `DayReadings`' arrangement, which is
 	 * `ArtFigure`'s, and the site's one answer to a sentence of small print.
 	 *
-	 * WHAT GOES BEHIND THE GLYPH IS A METHOD AND NEVER A NUMBER. These three
+	 * WHAT GOES BEHIND THE GLYPH IS A METHOD AND NEVER A NUMBER. These four
 	 * say how the page was counted; a reader who never presses them reads every
 	 * figure correctly and only lacks the argument for it. `census.citersLede`
-	 * stays on the page for exactly that reason — it carries the two totals
-	 * that stop the column under it from being read as short of the ledger's,
-	 * and a fact hidden behind a control is a fact most readers do not have.
+	 * and `census.absentLede` stay on the page for exactly that reason — each
+	 * carries the totals that stop the column under it from being read as the
+	 * whole of something, and a fact hidden behind a control is a fact most
+	 * readers do not have.
 	 *
-	 * `$props.id()` has to be a bare declaration, so the three ids are suffixed
-	 * off one: three panels can be open on this page and each needs a name a
+	 * `$props.id()` has to be a bare declaration, so the four ids are suffixed
+	 * off one: four panels can be open on this page and each needs a name a
 	 * `popovertarget` can call.
 	 */
 	const uid = $props.id();
 	const hints = {
 		derived: new AnchoredPanel(`${uid}-derived`),
 		reach: new AnchoredPanel(`${uid}-reach`),
-		cited: new AnchoredPanel(`${uid}-cited`)
+		cited: new AnchoredPanel(`${uid}-cited`),
+		absent: new AnchoredPanel(`${uid}-absent`)
 	};
 
 	/** Every count on the page, in the reader's own number formatting. */
@@ -195,10 +211,10 @@
 	 *
 	 * IT FILTERS WHAT IS RANKED AND NOT WHO DID THE CITING, which is the one
 	 * way this differs from that panel and it is not a shortcut. Narrowing by
-	 * KIND is exact: a row in the merged top twenty is in its own kind's top
-	 * twenty, so nothing the subset needs was left out of the file
+	 * KIND is exact: a row in the merged top hundred is in its own kind's top
+	 * hundred, so nothing the subset needs was left out of the file
 	 * (`mergedRanking`). Narrowing by CITING FAMILY is not: those counts were
-	 * summed at build time, and re-ranking a stored top twenty by one family
+	 * summed at build time, and re-ranking a stored top hundred by one family
 	 * would publish the top of that family's list only where the two happen to
 	 * agree. That would need a cut per subset, which is a different file and
 	 * not a control.
@@ -208,10 +224,41 @@
 	/** One table over whichever kinds are switched on, cut on the count. */
 	const ranked = $derived(mergedRanking(rankings.filter(({ key }) => !hidden.has(key))));
 
+	/**
+	 * WHICH PAGE OF THE RANKING IS SHOWING, and it is reset by pressing a chip
+	 * rather than watched into place by an effect.
+	 *
+	 * A chip changes what the table CONTAINS, so page four of the old table
+	 * names nothing in the new one — and left where it was, the reader presses
+	 * a chip and the section goes blank. `toggle` is the only thing that can
+	 * change `ranked`'s length, so it is the only place that has to say so;
+	 * an effect watching `ranked` would also fire on a language change, which
+	 * renames every row and moves none of them.
+	 */
+	let page = $state(0);
+	const pages = $derived(Math.max(1, Math.ceil(ranked.length / RANK_PAGE)));
+	const shown = $derived(ranked.slice(page * RANK_PAGE, (page + 1) * RANK_PAGE));
+
 	function toggle(key: string) {
 		if (hidden.has(key)) hidden.delete(key);
 		else hidden.add(key);
+		page = 0;
 	}
+
+	/**
+	 * The other direction of the same index: what the apparatus asks for that
+	 * this library has not got, and how much of what resolves to nothing that
+	 * ranking accounts for.
+	 *
+	 * NOT A SIXTH CHIP ON THE TABLE ABOVE, and the reason is the one that
+	 * merged the five. Those rank ADDRESSES a reader can open, on one scale,
+	 * which is what makes their rows comparable; an absent work has no address
+	 * by definition, and a row for it in that table would be the only one that
+	 * did not link — a different question wearing the same clothes. Its own
+	 * section, under its own heading, and no chip.
+	 */
+	const absent = $derived(census ? absentRanking(census) : []);
+	const unread = $derived(census ? unreadTotals(census) : undefined);
 
 	/** A cell's accessible value — `1,334 of 1,334`, or the plain statement
 	 *  that there is none, which reads better than `0 of 1,334`. */
@@ -476,9 +523,15 @@
 			     a screen reader announcing "3 of 20" is reading the rank, which
 			     is the one thing a bare list would drop. Each row carries the
 			     mark of the work it belongs to, so a table holding four kinds
-			     at once still says what each row is. -->
-			<ol class="ranking">
-				{#each ranked as row (row.kind + ' ' + row.key)}
+			     at once still says what each row is.
+
+			     `start` IS WHAT KEEPS THAT TRUE ACROSS A PAGE BREAK. The list
+			     numbers from 1 by default, so page two announced its first row
+			     as 1 of 20 — the rank being the content, a table that restarts
+			     it is saying something false rather than merely losing it. The
+			     CSS counter is reset off the same number for the same reason. -->
+			<ol class="ranking" start={page * RANK_PAGE + 1} style="--rank-from: {page * RANK_PAGE}">
+				{#each shown as row (row.kind + ' ' + row.key)}
 					<li>
 						<!-- The mark says what the row is, and the name behind it says
 						     so in words — for a screen reader, and for anyone who
@@ -496,6 +549,40 @@
 					</li>
 				{/each}
 			</ol>
+
+			{#if pages > 1}
+				<!-- PREVIOUS, WHERE YOU ARE, NEXT — three controls and not a row
+				     of numbered pages. The merged table is cut at `RANK_LIMIT`
+				     however many chips are on, so this is five pages at most and
+				     a reader turning them is reading DOWN a ranking: page four
+				     is not a destination the way a chapter is, and a reader who
+				     wants one particular work has the jump box.
+
+				     The position is stated in words rather than left to the
+				     numbering, so a reader who has scrolled past the top of the
+				     list still knows where they are. `aria-live` is deliberately
+				     absent: the button that moved keeps focus and the ranks are
+				     announced by the list itself. -->
+				<nav class="pager" aria-label={t('census.rankPages')}>
+					<button
+						type="button"
+						class="page-step"
+						disabled={page === 0}
+						onclick={() => (page = Math.max(0, page - 1))}>{t('census.rankPrev')}</button
+					>
+					<span class="page-of"
+						>{t('census.rankPageOf')
+							.replace('{page}', n(page + 1))
+							.replace('{pages}', n(pages))}</span
+					>
+					<button
+						type="button"
+						class="page-step"
+						disabled={page >= pages - 1}
+						onclick={() => (page = Math.min(pages - 1, page + 1))}>{t('census.rankNext')}</button
+					>
+				</nav>
+			{/if}
 			<p class="caveat-print" aria-hidden="true">{t('census.method')}</p>
 		</section>
 
@@ -522,6 +609,49 @@
 						</div>
 					{/each}
 				</dl>
+			</section>
+		{/if}
+
+		{#if absent.length}
+			<section aria-labelledby="absent-heading">
+				<div class="head">
+					<h2 id="absent-heading">{t('census.absent')}</h2>
+					<!-- The method belongs on this heading more than on any other,
+					     because the section's own name does not settle what a row
+					     IS: what the apparatus asks for and cannot be given here,
+					     which is not the same as what the apparatus gets wrong. -->
+					{@render hint(hints.absent, t('census.about.absent'), t('census.absentMethod'))}
+				</div>
+
+				<!-- WHAT THE RANKING DOES NOT ACCOUNT FOR, said before the rows
+				     rather than after them. A list of works this library lacks
+				     invites the reading that it is the whole of what is missing,
+				     and it is a small part: most of what resolves to nothing
+				     names nothing either. Same arithmetic as `census.citersLede`
+				     one section up, and stated for the same reason. -->
+				{#if unread}
+					<p class="lede landing-measure">
+						{t('census.absentLede')
+							.replace('{works}', n(absent.length))
+							.replace('{unread}', n(unread.total))
+							.replace('{ibidem}', n(unread.ibidem))}
+					</p>
+				{/if}
+
+				<!-- THE ONE RANKING WHOSE ROWS DO NOT LINK, and the shape says
+				     so: no mark, because there is no work here to carry one, and
+				     no anchor, because there is nowhere to go. A row set like
+				     the rows above it with the link quietly missing would read
+				     as a list of broken ones. -->
+				<ol class="ranking absent">
+					{#each absent as row (row.work)}
+						<li>
+							<span class="work">{row.work}</span>
+							<span class="count" title={t('census.timesCited')}>{n(row.value)}</span>
+						</li>
+					{/each}
+				</ol>
+				<p class="caveat-print" aria-hidden="true">{t('census.absentMethod')}</p>
 			</section>
 		{/if}
 	{/if}
@@ -876,8 +1006,15 @@
 		list-style: none;
 		/* The rank is announced by the list and drawn by the counter, so the
 		   marker is off and this draws its own — a native marker sits outside
-		   the box and would put the numbers in the gutter between columns. */
-		counter-reset: rank;
+		   the box and would put the numbers in the gutter between columns.
+
+		   IT RESETS TO WHERE THE PAGE BEGINS, not to zero. `--rank-from` is the
+		   list's own `start` less one, set beside it on the element, because a
+		   counter and an `ol start` are two numbering systems over one list and
+		   only the second is read aloud — left at zero the column would print
+		   1-20 under a page announcing 81-100. The fallback is what every other
+		   `ol` on the page wants. */
+		counter-reset: rank var(--rank-from, 0);
 	}
 
 	ol li {
@@ -913,10 +1050,75 @@
 		white-space: nowrap;
 	}
 
+	/* The absence ranking's rows carry no link, so its name takes the growth
+	   and the truncation the anchor takes above. A series title is long and
+	   the row is still a name and a number. */
+	.ranking.absent .work {
+		flex: 1 1 auto;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
 	.count {
 		flex: none;
 		font-variant-numeric: tabular-nums;
 		color: var(--color-text-muted);
+	}
+
+	/* Under the list and at its width, so the two controls sit at the ends of
+	   the rows they page. `justify-content: space-between` rather than a
+	   centred row: the position between two buttons is what a reader looks at,
+	   and it stays in one place while the buttons keep theirs. */
+	.pager {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.6rem;
+		max-inline-size: 40rem;
+		margin: 0.75rem 0 0;
+	}
+
+	.page-step {
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		padding: 0.1rem 0.6rem;
+		background: none;
+		font: inherit;
+		font-size: 0.8rem;
+		color: var(--color-text);
+		cursor: pointer;
+	}
+
+	.page-step:hover:not(:disabled) {
+		color: var(--color-accent);
+		background: var(--color-bg-elevated);
+	}
+
+	/* A step at either end stays drawn and stays legible rather than
+	   disappearing — the pair is what says the list has ends, and a control
+	   that vanishes moves the one beside it under the reader's finger. */
+	.page-step:disabled {
+		color: var(--color-text-muted);
+		border-style: dashed;
+		cursor: default;
+	}
+
+	.page-of {
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Paper gets the page the reader was on and not the control, a printed
+	   sheet having nothing to press. The rows print numbered from where they
+	   stand, which is what makes the sheet say which part of the ranking it
+	   is — and the reason the `start` attribute is on the list rather than
+	   the offset being drawn in by script. */
+	@media print {
+		.pager {
+			display: none;
+		}
 	}
 
 	/* --- The citer breakdown and the page's own furniture ------------------- */

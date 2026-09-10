@@ -52,7 +52,25 @@ export interface CensusRankedRow extends CensusRankRow {
  * written by Node, and this cuts rows already named out of the reader's own
  * edition.
  */
-export const RANK_LIMIT = 20;
+export const RANK_LIMIT = 100;
+
+/**
+ * How many rows of the ranking are on screen at once.
+ *
+ * TWENTY WAS THE WHOLE TABLE UNTIL 2026-09-09, and the argument for it was
+ * that a ranking is read down: past a screenful it stops being a ranking and
+ * becomes a list that happens to be sorted. That argument was right about the
+ * SCREEN and was being enforced by the FILE, which is why a reader who wanted
+ * the twenty-first row had nowhere to go. It is enforced here now, and the
+ * file carries five times as much (`RANK_LIMIT`).
+ *
+ * A PAGE BOUNDARY MAY SPLIT A TIE where the table's own cut may not, and the
+ * two are not the same rule doing different things. `topOf` refuses to split
+ * a band because the rows below the line would be UNPUBLISHED — four of
+ * thirteen paragraphs cited three times, and no way to learn of the nine.
+ * Rows on the next page are published; turning to them is one press.
+ */
+export const RANK_PAGE = 20;
 
 /**
  * The kinds, in the order the library is read.
@@ -524,4 +542,49 @@ export function mergedRanking(
 		i = j;
 	}
 	return rows.slice(0, kept);
+}
+
+/** One line of the absence ranking: a work, and how many places asked for it. */
+export interface CensusAbsentRow {
+	work: string;
+	value: number;
+}
+
+/**
+ * The works the apparatus names that this library has not got.
+ *
+ * NOTHING IS MAPPED HERE, and that is the finding rather than an omission.
+ * Every other reader in this file turns an id into the name and the address of
+ * an edition the reader could open; there is no edition, so the builder's
+ * string IS the row and this is the one ranking `content` has no part in.
+ * Which is also why it needs no per-row drop: the rule at the top of this file
+ * exists because a slug can outlive its work, and a row here has no slug to
+ * outlive anything.
+ *
+ * Empty for a census written before the field, which is the same silence a
+ * partial sync produces one layer up.
+ */
+export function absentRanking(census: Census): CensusAbsentRow[] {
+	return census.absent ?? [];
+}
+
+/**
+ * What the absence ranking leaves out: the citations that named nothing.
+ *
+ * THE SAME ARITHMETIC `citedTotals` CLOSES ONE SECTION UP. A ranking of what
+ * the library is asked for and lacks invites the question of how much of the
+ * apparatus it accounts for, and the answer is "a small part": most of what
+ * resolves to nothing names nothing either. Printed without that, the ranking
+ * reads as the whole of what is missing.
+ *
+ * `undefined` where the census carries no such count, so the page can leave
+ * the sentence out rather than assert a zero it did not measure — a build that
+ * did not look and a corpus with nothing to find are not the same claim.
+ */
+export function unreadTotals(
+	census: Census
+): { ibidem: number; other: number; total: number } | undefined {
+	const unread = census.unread;
+	if (!unread) return undefined;
+	return { ...unread, total: unread.ibidem + unread.other };
 }

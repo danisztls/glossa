@@ -883,4 +883,73 @@ describe('buildCitationXrefs', () => {
 		);
 		expect(documents).toEqual([]);
 	});
+
+	/**
+	 * THE FOURTH LIST — what the apparatus asks for that this corpus has not
+	 * got, which `/census` ranks as the list of what to ingest next.
+	 *
+	 * The three documents this suite declares are the whole of its corpus, so
+	 * every other siglum in the English table is an absence here, exactly as
+	 * Migne and Denzinger are absences in the real one.
+	 */
+	const weighing = (citations: { marker: string; text?: string; label?: string }[]) =>
+		buildCitationXrefs(
+			[{ citer: { kind: 'ccc', n: 1 }, lang: 'en', unit: para(1, citations) }],
+			has,
+			() => true,
+			hasArticle
+		);
+
+	it('ranks a work the corpus has not got, by the name its tables agree on', () => {
+		const { absent } = weighing([{ marker: '1', text: 'PL 54, 200.' }]);
+		expect(absent).toEqual([
+			{ work: 'Patrologia latina (Migne)', cited_by: [{ kind: 'ccc', n: 1 }] }
+		]);
+	});
+
+	/**
+	 * A CITATION THAT RESOLVED STILL REPORTS WHAT IT ALSO ASKED FOR. The
+	 * apparatus reaches for Migne in the same breath as Lumen gentium, and a
+	 * ranking of what this library is asked for and lacks has to hear the
+	 * second half — only the RESIDUE is gated on the citation landing nowhere.
+	 */
+	it('records an absence beside a reference that did resolve', () => {
+		const { documents, absent } = weighing([{ marker: '1', text: 'Cf. LG 12; PL 54, 200.' }]);
+		expect(documents.map((d) => d.work)).toEqual(['lumen-gentium']);
+		expect(absent.map((a) => a.work)).toEqual(['Patrologia latina (Migne)']);
+	});
+
+	/** A dicastery is not a work to acquire, and neither is a citation the
+	 *  grammar read nothing out of. Both are residue, and the ibidem half is
+	 *  kept apart because it is a limit of the READING. */
+	it('counts what named nothing rather than ranking it', () => {
+		const { absent, unread } = weighing([
+			{ marker: '1', text: 'CDF, Declaration.' },
+			{ marker: '2', text: 'Ibid.' },
+			{ marker: '3', text: 'Propositio 14.' }
+		]);
+		expect(absent).toEqual([]);
+		// `Ibid.` opens a run of its own here — the note before it named no
+		// work — so nothing is inherited and the word stays unread.
+		expect(unread).toEqual({ ibidem: { ccc: 1 }, other: { ccc: 2 } });
+	});
+
+	/** One citer per absent work however often it names it, which is the unit
+	 *  every ranking on the page counts in. */
+	it('counts a citing place once however many times it asks', () => {
+		const { absent } = weighing([
+			{ marker: '1', text: 'PL 54, 200.' },
+			{ marker: '2', text: 'PL 60, 12.' }
+		]);
+		expect(absent[0].cited_by).toEqual([{ kind: 'ccc', n: 1 }]);
+	});
+
+	/** The Code is held under an address space of its own, so a citation to it
+	 *  is neither an absence nor unread — `siglumStanding` answers held on
+	 *  `work` before it ever looks at a slug. */
+	it('does not count the Code, which this corpus holds as canons', () => {
+		const { absent, unread } = weighing([{ marker: '1', text: 'CIC, can. 748, § 2.' }]);
+		expect(absent).toEqual([]);
+		expect(unread).toEqual({ ibidem: {}, other: {} });
+	});
 });

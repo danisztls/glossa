@@ -1288,6 +1288,26 @@ export interface Census {
 		ccc: { n: number; value: number }[];
 		summa: { part: string; question: number; value: number }[];
 	};
+	/**
+	 * The works the apparatus names that this library has not got, most asked
+	 * for first — the one ranking whose rows carry a NAME and no address,
+	 * because the address is the thing that is missing.
+	 *
+	 * `work` is a name and not an id on purpose: there is no id to have. The
+	 * grammar's sigla tables settle the spelling so two editions abbreviating
+	 * one series are one row (`ABSENT_WORKS`), and a row leaves this list the
+	 * day the work is ingested, without anybody editing it.
+	 *
+	 * Optional because the census is a wire shape a build older than this
+	 * field may have written.
+	 */
+	absent?: { work: string; value: number }[];
+	/** The citations that named nothing at all — not a work this library
+	 *  lacks, but a string no address came out of. `ibidem` is the half whose
+	 *  antecedent could not be carried across a footnote run, which is a limit
+	 *  of the reading rather than of the corpus; the two are apart because
+	 *  reported as one number they read as one defect. */
+	unread?: { ibidem: number; other: number };
 }
 
 // --- Documents (encyclicals, conciliar texts, curial documents) ------------

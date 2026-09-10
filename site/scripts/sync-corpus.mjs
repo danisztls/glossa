@@ -3701,6 +3701,11 @@ console.log(
 			.join(', ')} ranked (${(byteLength(census) / 1024).toFixed(1)} KB)`
 );
 console.log(
+	`[sync-corpus] cited and not held: ${census.absent.length} work(s) ranked, ` +
+		`${census.unread.ibidem + census.unread.other} citation(s) naming nothing ` +
+		`(${census.unread.ibidem} an unexpanded ibidem)`
+);
+console.log(
 	`[sync-corpus] language coverage:\n` +
 		census.coverage.rows
 			.map((row) => {

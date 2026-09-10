@@ -256,6 +256,17 @@ export const en: Dictionary = {
 	// heading; here the heading is "What is cited", which names the section and
 	// not the choice, so the group says what pressing one does.
 	'census.rankFilter': 'What to rank',
+	// THE PAGER. A kind now publishes up to a hundred rows and the page shows
+	// twenty at once, so the `<nav>` beneath the table needs its own
+	// accessible name, distinct from the chips' group above it and from every
+	// other `<nav>` on the page. The position between the two buttons is a
+	// sentence rather than a numbered strip of pages — nothing about rank 87
+	// is worth landing on directly, and a reader who has scrolled past the
+	// top of the list still needs to know where they are.
+	'census.rankPages': 'Ranking pages',
+	'census.rankPrev': 'Previous',
+	'census.rankNext': 'Next',
+	'census.rankPageOf': 'Page {page} of {pages}',
 	// UNDER THE BREAKDOWN, AND IT CLOSES AN ARITHMETIC. The rows below name
 	// only the citers a ranking counts, so they sum to less than the total the
 	// ledger states — this says by how much and refers back to the rules that
@@ -263,6 +274,37 @@ export const en: Dictionary = {
 	// table on this page counts.
 	'census.citersLede':
 		'{counted} of the {references} cross-references count towards the ranking above. The rest are set aside by the two rules under it.',
+
+	// THE FOURTH SECTION, and named in the same family as the two that open
+	// the page — "What is here", "What is cited" — because it answers the
+	// same shape of question: what is cited, and not held. Its rows carry a
+	// name and no link, the address being exactly what is missing.
+	'census.absent': 'What is cited and not held',
+	// A FOURTH `i` BUTTON, one section past the three the comment above
+	// `census.about.derived` counts, and it has to read apart from
+	// `census.about.cited` — both sit on this page, and a screen reader
+	// meeting "About this ranking" twice cannot tell which table either one
+	// is over. "List" is also the word that tells a reader what is different
+	// about the rows under it before they reach the method that says why.
+	'census.about.absent': 'About this list',
+	// PRINTED UNCONDITIONALLY ON PAPER, like the other three methods on this
+	// page. Two things a reader needs before the rows mean anything: a row
+	// names a work the corpus's own apparatus asks for and this library does
+	// not hold, so there is no address to give it; and the list corrects
+	// itself rather than being curated, a row leaving it on its own the day
+	// the work it names is ingested. Counted the same way as the ranking
+	// above it — distinct citing places, not how many times a citation
+	// repeats.
+	'census.absentMethod':
+		'A row is a work this corpus’s own apparatus names and this library does not hold, so there is no address to link to. It counts the distinct places that cite it, the same rule the ranking above it is counted by. A work leaves this list on its own the day it is ingested.',
+	// CLOSES THE SAME ARITHMETIC `census.citersLede` closes one section up,
+	// and for the same reason: a list of a few dozen names reads as the whole
+	// of what this library lacks, and it is a small part of it. Most of what
+	// a footnote fails to resolve names nothing any list could rank at all —
+	// an unexpanded "Ibid." chief among them, which is why that count is
+	// broken out rather than folded into the rest.
+	'census.absentLede':
+		'{works} works are ranked below. A much larger number of citations — {unread} — resolve to nothing at all and name no work this or any list could rank, of which {ibidem} are an “Ibid.” whose antecedent could not be carried across a footnote run.',
 
 	// --- `/schola`, the guide (`routes/schola/`) -----------------------------
 	//

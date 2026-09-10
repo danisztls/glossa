@@ -1859,7 +1859,75 @@ export interface SiglumEntry {
 	/** The work this siglum names, where the corpus holds it under its own
 	 *  address space rather than as a document (`RefSegment.work`). */
 	work?: 'canon-law';
+	/** What this siglum names when nothing in the corpus answers to it — the
+	 *  work's name, from `ABSENT_WORKS`, never a literal. `null` where the
+	 *  siglum names no work at all: a dicastery, an office, one hour of the
+	 *  breviary. Required on every entry carrying neither `slug` nor `work`,
+	 *  which `sigla-standing.test.ts` asserts, because this is the identity
+	 *  `/census` ranks what the library is cited for and has not got by. */
+	names?: string | null;
 }
+
+/**
+ * The works the apparatus cites that this corpus does not hold, each named
+ * once and referenced from every table that abbreviates it.
+ *
+ * A CONSTANT AND NOT A LITERAL PER ENTRY, because the same work is spelled
+ * for a different reader in each table — the English list glosses `AAS` as
+ * "Acta Apostolicae Sedis (official gazette of the Holy See)" where the
+ * series list, written for a Latin apparatus, prints the title alone. Both
+ * are right as tooltips and neither may be the identity: keyed on the
+ * expansion, one gazette is two rows of a ranking. Referencing one constant
+ * makes the two impossible to disagree, which a table of aliases beside them
+ * could only detect after the fact.
+ *
+ * These are names and not slugs on purpose. A slug is an address here, and
+ * the whole content of this table is that there is no address to have —
+ * `refHref` declines every one of them, and `/census` prints the name.
+ */
+const ABSENT_WORKS = {
+	aas: 'Acta Apostolicae Sedis',
+	ass: 'Acta Sanctae Sedis',
+	analectaHymnica: 'Analecta hymnica Medii Aevi',
+	bibliotecaPatristica: 'Biblioteca patristica',
+	catechismusRomanus: 'Catechismus Romanus',
+	cceo: 'Codex Canonum Ecclesiarum Orientalium',
+	conciliorumDecreta: 'Conciliorum Oecumenicorum Decreta',
+	corpusApologetarum: 'Corpus apologetarum Christianorum saeculi secundi',
+	corpusChristianorumGraeca: 'Corpus Christianorum, Series Graeca',
+	corpusChristianorumLatina: 'Corpus Christianorum, Series Latina',
+	csel: 'Corpus Scriptorum Ecclesiasticorum Latinorum',
+	deBenedictionibus: 'De Benedictionibus',
+	denzinger: 'Denzinger–Schönmetzer, Enchiridion Symbolorum',
+	directoriumCatecheticum: 'Directorium Catecheticum Generale',
+	editioLeonina: 'Sancti Thomae Aquinatis Opera omnia, editio Leonina',
+	funk: 'F.X. Funk, Patres apostolici',
+	gcs: 'Die griechischen christlichen Schriftsteller',
+	institutioLiturgiaHorarum: 'Institutio generalis de Liturgia Horarum',
+	institutioMissalisRomani: 'Institutio generalis Missalis Romani',
+	liturgiaHorarum: 'Liturgia Horarum',
+	mgh: 'Monumenta Germaniae historica',
+	mhsi: 'Monumenta historica Societatis Iesu',
+	missaleRomanum: 'Missale Romanum',
+	neunerDupuis: 'Neuner–Dupuis, The Christian Faith',
+	ordoBaptismiAdultorum: 'Ordo baptismi adultorum',
+	ordoBaptismiParvulorum: 'Ordo baptismi parvulorum',
+	ordoCelebrandiMatrimonium: 'Ordo celebrandi Matrimonium',
+	ordoConfirmationis: 'Ordo confirmationis',
+	ordoConsecrationisVirginum: 'Ordo consecrationis virginum',
+	ordoExsequiarum: 'Ordo exsequiarum',
+	ordoInitiationis: 'Ordo initiationis christianae adultorum',
+	ordoPaenitentiae: 'Ordo Paenitentiae',
+	patrologiaGraeca: 'Patrologia graeca (Migne)',
+	patrologiaLatina: 'Patrologia latina (Migne)',
+	patrologiaLatinaSupp: 'Patrologia latina, Supplementum',
+	pts: 'Patristische Texte und Studien',
+	sourcesChretiennes: 'Sources chrétiennes',
+	spf: 'Sollemnis Professio fidei (Credo of the People of God)',
+	stromata: 'Stromata patristica et medievalia',
+	textesEtDocuments: 'Textes et documents',
+	tpl: 'Textus patristici et liturgici'
+} as const;
 
 const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	LG: {
@@ -1887,25 +1955,41 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		expansion: 'Catechesi Tradendae (John Paul II, apostolic exhortation on catechesis)',
 		slug: 'catechesi-tradendae'
 	},
-	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
+	DS: {
+		expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)',
+		names: ABSENT_WORKS.denzinger
+	},
 	CIC: { expansion: 'Codex Iuris Canonici (Code of Canon Law)', work: 'canon-law' },
 	CCEO: {
-		expansion: 'Codex Canonum Ecclesiarum Orientalium (Code of Canons of the Eastern Churches)'
+		expansion: 'Codex Canonum Ecclesiarum Orientalium (Code of Canons of the Eastern Churches)',
+		names: ABSENT_WORKS.cceo
 	},
-	RCIA: { expansion: 'Rite of Christian Initiation of Adults' },
-	RBC: { expansion: 'Rite of Baptism for Children' },
-	CDF: { expansion: 'Congregation for the Doctrine of the Faith' },
-	PL: { expansion: 'Patrologia Latina (Migne)' },
-	PG: { expansion: 'Patrologia Graeca (Migne)' },
-	SCh: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
-	AAS: { expansion: 'Acta Apostolicae Sedis (official gazette of the Holy See)' },
+	RCIA: {
+		expansion: 'Rite of Christian Initiation of Adults',
+		names: ABSENT_WORKS.ordoInitiationis
+	},
+	RBC: { expansion: 'Rite of Baptism for Children', names: ABSENT_WORKS.ordoBaptismiParvulorum },
+	CDF: { expansion: 'Congregation for the Doctrine of the Faith', names: null },
+	PL: { expansion: 'Patrologia Latina (Migne)', names: ABSENT_WORKS.patrologiaLatina },
+	PG: { expansion: 'Patrologia Graeca (Migne)', names: ABSENT_WORKS.patrologiaGraeca },
+	SCh: {
+		expansion: 'Sources Chrétiennes (patristic critical-edition series)',
+		names: ABSENT_WORKS.sourcesChretiennes
+	},
+	AAS: {
+		expansion: 'Acta Apostolicae Sedis (official gazette of the Holy See)',
+		names: ABSENT_WORKS.aas
+	},
 	// The gazette AAS replaced in 1909. It reaches this table late because the
 	// works that print it are not the Catechism: 31 citations in the English
 	// editions, and 72 more in the six tags that fall back to this config
 	// (`be`, `lv`, `sw`, `sl`, `nl`, `hr`) — Lumen gentium and Dignitatis
 	// humanae citing Leo XIII, mostly. Until 2026-09-03 every one of them was
 	// unglossed text.
-	ASS: { expansion: 'Acta Sanctae Sedis (the Holy See gazette before 1909)' },
+	ASS: {
+		expansion: 'Acta Sanctae Sedis (the Holy See gazette before 1909)',
+		names: ABSENT_WORKS.ass
+	},
 	DV: {
 		expansion: 'Dei Verbum (Vatican II, Dogmatic Constitution on Divine Revelation)',
 		slug: 'dei-verbum'
@@ -1931,7 +2015,7 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		expansion: 'Orientalium Ecclesiarum (Vatican II, Decree on the Eastern Catholic Churches)',
 		slug: 'orientalium-ecclesiarum'
 	},
-	EP: { expansion: 'Eucharistic Prayer (Roman Missal)' },
+	EP: { expansion: 'Eucharistic Prayer (Roman Missal)', names: ABSENT_WORKS.missaleRomanum },
 	PC: {
 		expansion: 'Perfectae Caritatis (Vatican II, Decree on the Renewal of Religious Life)',
 		slug: 'perfectae-caritatis'
@@ -1984,11 +2068,18 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 	// Apostolic exhortations. THESE CARRIED NO SLUG UNTIL 2026-09-02, on the
 	// stated ground that "none is ingested" — true when it was written and
 	// false since the exhortation sweep landed 33 of them (§Languages). The
-	// six below are in `build/`; `MD` stays slugless because it is an
-	// apostolic letter, and no letter is held. `LC` was slugless here for
-	// one day for the same reason about CDF instructions, and resolves to
-	// `cdf.libertatis-conscientia` since 2026-09-03 — its own entry, near the
-	// foot of this table, says why it is the family's only one.
+	// six below are in `build/`, and `MD` joined them on 2026-09-10: it had
+	// been held out as an apostolic letter with no family behind it, and
+	// `mulieris-dignitatem` was in the corpus by then. `/census`'s absence
+	// ranking is what found it — a work the library holds cannot be counted
+	// among the works it is cited for and lacks, so every claim in these
+	// tables was checked against `document-index.json`, and three entries
+	// naming two held works were stale (this `MD`, `PAPAL_SIGLA`'s, and
+	// Malagasy's `FM`).
+	// `LC` was slugless here for one day for the same reason about CDF
+	// instructions, and resolves to `cdf.libertatis-conscientia` since
+	// 2026-09-03 — its own entry, near the foot of this table, says why it is
+	// the family's only one.
 	FC: {
 		expansion: 'Familiaris Consortio (John Paul II, apostolic exhortation on the family)',
 		slug: 'familiaris-consortio'
@@ -2005,16 +2096,25 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		expansion: 'Marialis Cultus (Paul VI, apostolic exhortation)',
 		slug: 'marialis-cultus'
 	},
-	MD: { expansion: 'Mulieris Dignitatem (John Paul II, apostolic letter)' },
+	MD: {
+		expansion: 'Mulieris Dignitatem (John Paul II, apostolic letter)',
+		slug: 'mulieris-dignitatem'
+	},
 	CL: {
 		expansion: 'Christifideles Laici (John Paul II, apostolic exhortation)',
 		slug: 'christifideles-laici'
 	},
-	GCD: { expansion: 'General Catechetical Directory' },
-	GIRM: { expansion: 'General Instruction of the Roman Missal' },
-	GILH: { expansion: 'General Instruction of the Liturgy of the Hours' },
-	OCF: { expansion: 'Order of Christian Funerals' },
-	OP: { expansion: 'Ordo Paenitentiae (Rite of Penance)' },
+	GCD: { expansion: 'General Catechetical Directory', names: ABSENT_WORKS.directoriumCatecheticum },
+	GIRM: {
+		expansion: 'General Instruction of the Roman Missal',
+		names: ABSENT_WORKS.institutioMissalisRomani
+	},
+	GILH: {
+		expansion: 'General Instruction of the Liturgy of the Hours',
+		names: ABSENT_WORKS.institutioLiturgiaHorarum
+	},
+	OCF: { expansion: 'Order of Christian Funerals', names: ABSENT_WORKS.ordoExsequiarum },
+	OP: { expansion: 'Ordo Paenitentiae (Rite of Penance)', names: ABSENT_WORKS.ordoPaenitentiae },
 	// The one CDF siglum with evidence, and it now resolves:
 	// `cdf.libertatis-conscientia` landed 2026-09-03 with 24 other documents
 	// of that family. IT IS THE ONLY ONE THAT GETS A ROW. The other 24 were
@@ -2031,23 +2131,32 @@ const DOCUMENT_SIGLA_EN: Record<string, SiglumEntry> = {
 		expansion: 'Libertatis Conscientia (CDF instruction on Christian freedom and liberation)',
 		slug: 'libertatis-conscientia'
 	},
-	ND: { expansion: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)' }
+	ND: {
+		expansion: 'Neuner–Dupuis, The Christian Faith (doctrinal sourcebook)',
+		names: ABSENT_WORKS.neunerDupuis
+	}
 };
 
 const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
 	// SC deliberately means something different here than in EN — see the
 	// table-group docblock above.
-	SC: { expansion: 'Sources Chrétiennes (patristic critical-edition series)' },
-	DS: { expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)' },
+	SC: {
+		expansion: 'Sources Chrétiennes (patristic critical-edition series)',
+		names: ABSENT_WORKS.sourcesChretiennes
+	},
+	DS: {
+		expansion: 'Denzinger–Schönmetzer (Enchiridion Symbolorum)',
+		names: ABSENT_WORKS.denzinger
+	},
 	CIC: { expansion: 'Codex Iuris Canonici (Código de Direito Canónico)', work: 'canon-law' },
-	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' },
-	PL: { expansion: 'Patrologia Latina (Migne)' },
-	PG: { expansion: 'Patrologia Graeca (Migne)' },
-	AAS: { expansion: 'Acta Apostolicae Sedis' },
+	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium', names: ABSENT_WORKS.cceo },
+	PL: { expansion: 'Patrologia Latina (Migne)', names: ABSENT_WORKS.patrologiaLatina },
+	PG: { expansion: 'Patrologia Graeca (Migne)', names: ABSENT_WORKS.patrologiaGraeca },
+	AAS: { expansion: 'Acta Apostolicae Sedis', names: ABSENT_WORKS.aas },
 	// 43 citations across the Portuguese editions, the most of any language
 	// after Spanish and Italian — Catholics in Political Life and Dignitatis
 	// humanae carry most of them.
-	ASS: { expansion: 'Acta Sanctae Sedis' }
+	ASS: { expansion: 'Acta Sanctae Sedis', names: ABSENT_WORKS.ass }
 	// Vatican II / encyclical sigla (LG, GS, DV, ...) do not appear in
 	// ccc.pt at all — its citations spell those documents out in full
 	// ("Const. past. Gaudium et Spes") rather than abbreviating them.
@@ -2109,37 +2218,50 @@ const DOCUMENT_SIGLA_PT: Record<string, SiglumEntry> = {
  * and Latin apparatus is mostly made of.
  */
 const SERIES_SIGLA: Record<string, SiglumEntry> = {
-	AAS: { expansion: 'Acta Apostolicae Sedis' },
-	AHMA: { expansion: 'Analecta hymnica Medii Aevi' },
-	BP: { expansion: 'Biblioteca patristica' },
-	CCG: { expansion: 'Corpus Christianorum (Series Graeca)' },
-	CCL: { expansion: 'Corpus Christianorum (Series Latina)' },
-	COD: { expansion: 'Conciliorum Oecumenicorum Decreta' },
-	CSEL: { expansion: 'Corpus Scriptorum Ecclesiasticorum Latinorum' },
+	AAS: { expansion: 'Acta Apostolicae Sedis', names: ABSENT_WORKS.aas },
+	AHMA: { expansion: 'Analecta hymnica Medii Aevi', names: ABSENT_WORKS.analectaHymnica },
+	BP: { expansion: 'Biblioteca patristica', names: ABSENT_WORKS.bibliotecaPatristica },
+	CCG: {
+		expansion: 'Corpus Christianorum (Series Graeca)',
+		names: ABSENT_WORKS.corpusChristianorumGraeca
+	},
+	CCL: {
+		expansion: 'Corpus Christianorum (Series Latina)',
+		names: ABSENT_WORKS.corpusChristianorumLatina
+	},
+	COD: { expansion: 'Conciliorum Oecumenicorum Decreta', names: ABSENT_WORKS.conciliorumDecreta },
+	CSEL: { expansion: 'Corpus Scriptorum Ecclesiasticorum Latinorum', names: ABSENT_WORKS.csel },
 	// Not in the Latin edition's list; both are printed by Magnifica
 	// Humanitas in all four of its languages that have a table here. `CCSL`
 	// is the fuller form of `CCL`, and `ASS` is what AAS was called before
 	// 1909.
-	CCSL: { expansion: 'Corpus Christianorum (Series Latina)' },
-	ASS: { expansion: 'Acta Sanctae Sedis' },
+	CCSL: {
+		expansion: 'Corpus Christianorum (Series Latina)',
+		names: ABSENT_WORKS.corpusChristianorumLatina
+	},
+	ASS: { expansion: 'Acta Sanctae Sedis', names: ABSENT_WORKS.ass },
 	DS: {
 		expansion:
-			'Denzinger–Schönmetzer, Enchiridion Symbolorum definitionum et declarationum de rebus fidei et morum'
+			'Denzinger–Schönmetzer, Enchiridion Symbolorum definitionum et declarationum de rebus fidei et morum',
+		names: ABSENT_WORKS.denzinger
 	},
-	'Ed. Leon.': { expansion: 'Sancti Thomae Aquinatis Opera omnia, editio Leonina' },
-	Funk: { expansion: 'F.X. Funk, Patres apostolici' },
-	GCS: { expansion: 'Die griechischen christlichen Schriftsteller' },
-	MGH: { expansion: 'Monumenta Germaniae historica' },
-	MHSI: { expansion: 'Monumenta historica Societatis Iesu' },
-	PG: { expansion: 'Patrologia graeca (J.P. Migne)' },
-	PL: { expansion: 'Patrologia latina (J.P. Migne)' },
-	PLS: { expansion: 'Patrologia latina. Supplementum' },
-	PTS: { expansion: 'Patristische Texte und Studien' },
-	SPM: { expansion: 'Stromata patristica et medievalia' },
-	TD: { expansion: 'Textes et documents' },
-	TPL: { expansion: 'Textus patristici et liturgici' },
+	'Ed. Leon.': {
+		expansion: 'Sancti Thomae Aquinatis Opera omnia, editio Leonina',
+		names: ABSENT_WORKS.editioLeonina
+	},
+	Funk: { expansion: 'F.X. Funk, Patres apostolici', names: ABSENT_WORKS.funk },
+	GCS: { expansion: 'Die griechischen christlichen Schriftsteller', names: ABSENT_WORKS.gcs },
+	MGH: { expansion: 'Monumenta Germaniae historica', names: ABSENT_WORKS.mgh },
+	MHSI: { expansion: 'Monumenta historica Societatis Iesu', names: ABSENT_WORKS.mhsi },
+	PG: { expansion: 'Patrologia graeca (J.P. Migne)', names: ABSENT_WORKS.patrologiaGraeca },
+	PL: { expansion: 'Patrologia latina (J.P. Migne)', names: ABSENT_WORKS.patrologiaLatina },
+	PLS: { expansion: 'Patrologia latina. Supplementum', names: ABSENT_WORKS.patrologiaLatinaSupp },
+	PTS: { expansion: 'Patristische Texte und Studien', names: ABSENT_WORKS.pts },
+	SPM: { expansion: 'Stromata patristica et medievalia', names: ABSENT_WORKS.stromata },
+	TD: { expansion: 'Textes et documents', names: ABSENT_WORKS.textesEtDocuments },
+	TPL: { expansion: 'Textus patristici et liturgici', names: ABSENT_WORKS.tpl },
 	CIC: { expansion: 'Codex Iuris Canonici', work: 'canon-law' },
-	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium' }
+	CCEO: { expansion: 'Codex Canonum Ecclesiarum Orientalium', names: ABSENT_WORKS.cceo }
 };
 
 /**
@@ -2177,8 +2299,11 @@ const CONCILIAR_SIGLA: Record<string, SiglumEntry> = {
  * was written and stopped being true when the sweep landed 33 of them
  * (§Languages) — the works arrived, the claim about them did not, and a
  * siglum with no slug renders as a card that names a document the reader is
- * one tap away from. `MD` and `SPF` stay slugless: an apostolic letter and a
- * profession of faith, neither family held.
+ * one tap away from, and `MD` was the last of them — slugless as an apostolic
+ * letter until 2026-09-10, by which time `mulieris-dignitatem` was ingested.
+ * `SPF` stays slugless and carries `names` instead: no profession of faith is
+ * held, which is a fact `/census` now publishes rather than one this table
+ * keeps to itself.
  *
  * `CA` is deliberately NOT here — see this section's docblock.
  */
@@ -2199,9 +2324,12 @@ const PAPAL_SIGLA: Record<string, SiglumEntry> = {
 	FC: { expansion: 'Familiaris consortio', slug: 'familiaris-consortio' },
 	RP: { expansion: 'Reconciliatio et paenitentia', slug: 'reconciliatio-et-paenitentia' },
 	MC: { expansion: 'Marialis cultus', slug: 'marialis-cultus' },
-	MD: { expansion: 'Mulieris dignitatem' },
+	MD: { expansion: 'Mulieris dignitatem', slug: 'mulieris-dignitatem' },
 	CL: { expansion: 'Christifideles laici', slug: 'christifideles-laici' },
-	SPF: { expansion: 'Sollemnis Professio fidei (Credo of the People of God)' }
+	SPF: {
+		expansion: 'Sollemnis Professio fidei (Credo of the People of God)',
+		names: ABSENT_WORKS.spf
+	}
 };
 
 /** `SC` where it is the Vatican II constitution: German, Spanish, French. */
@@ -2210,7 +2338,10 @@ const SC_CONCILIAR: SiglumEntry = {
 	slug: 'sacrosanctum-concilium'
 };
 /** `SC` where it is the patristic series: Italian, Latin. Never a link. */
-const SC_SERIES: SiglumEntry = { expansion: 'Sources chrétiennes' };
+const SC_SERIES: SiglumEntry = {
+	expansion: 'Sources chrétiennes',
+	names: ABSENT_WORKS.sourcesChretiennes
+};
 
 const DOCUMENT_SIGLA_DE: Record<string, SiglumEntry> = {
 	...SERIES_SIGLA,
@@ -2222,10 +2353,19 @@ const DOCUMENT_SIGLA_DE: Record<string, SiglumEntry> = {
 	// siglum at the same paragraph: DCG is the General Catechetical
 	// Directory, IGMR the General Instruction of the Roman Missal, OEx the
 	// Order of Christian Funerals, DnV Dominum et Vivificantem.
-	DCG: { expansion: 'Directorium Catecheticum Generale' },
-	IGMR: { expansion: 'Institutio generalis Missalis Romani' },
-	IGLH: { expansion: 'Institutio generalis de Liturgia Horarum' },
-	OEx: { expansion: 'Ordo exsequiarum' },
+	DCG: {
+		expansion: 'Directorium Catecheticum Generale',
+		names: ABSENT_WORKS.directoriumCatecheticum
+	},
+	IGMR: {
+		expansion: 'Institutio generalis Missalis Romani',
+		names: ABSENT_WORKS.institutioMissalisRomani
+	},
+	IGLH: {
+		expansion: 'Institutio generalis de Liturgia Horarum',
+		names: ABSENT_WORKS.institutioLiturgiaHorarum
+	},
+	OEx: { expansion: 'Ordo exsequiarum', names: ABSENT_WORKS.ordoExsequiarum },
 	DnV: { expansion: 'Dominum et Vivificantem', slug: 'dominum-et-vivificantem' }
 };
 
@@ -2250,24 +2390,36 @@ const DOCUMENT_SIGLA_FR: Record<string, SiglumEntry> = {
 	...PAPAL_SIGLA,
 	SC: SC_CONCILIAR,
 	CA: { expansion: 'Centesimus annus', slug: 'centesimus-annus' },
-	SPF: { expansion: 'Credo du Peuple de Dieu : profession de foi solennelle' },
-	CDF: { expansion: 'Congrégation pour la doctrine de la foi' },
-	'off. lect.': { expansion: 'office des lectures' },
-	Ben: { expansion: 'De Benedictionibus' },
-	'Catech. R.': { expansion: 'Catechismus Romanus' },
-	DCG: { expansion: 'Directorium Catecheticum Generale' },
-	IGLH: { expansion: 'Introductio generalis LH' },
-	IGMR: { expansion: 'Institutio generalis MR' },
-	LH: { expansion: 'Liturgia Horarum' },
-	MR: { expansion: 'Missale Romanum' },
-	OBA: { expansion: 'Ordo baptismi adultorum' },
-	OBP: { expansion: 'Ordo baptismi parvulorum' },
-	OCf: { expansion: 'Ordo confirmationis' },
-	OcM: { expansion: 'Ordo celebrandi Matrimonium' },
-	OCV: { expansion: 'Ordo consecrationis virginum' },
-	OEx: { expansion: 'Ordo exsequiarum' },
-	OICA: { expansion: 'Ordo initiationis christianae adultorum' },
-	OP: { expansion: 'Ordo poenitentiae' }
+	SPF: {
+		expansion: 'Credo du Peuple de Dieu : profession de foi solennelle',
+		names: ABSENT_WORKS.spf
+	},
+	CDF: { expansion: 'Congrégation pour la doctrine de la foi', names: null },
+	'off. lect.': { expansion: 'office des lectures', names: null },
+	Ben: { expansion: 'De Benedictionibus', names: ABSENT_WORKS.deBenedictionibus },
+	'Catech. R.': { expansion: 'Catechismus Romanus', names: ABSENT_WORKS.catechismusRomanus },
+	DCG: {
+		expansion: 'Directorium Catecheticum Generale',
+		names: ABSENT_WORKS.directoriumCatecheticum
+	},
+	IGLH: { expansion: 'Introductio generalis LH', names: ABSENT_WORKS.institutioLiturgiaHorarum },
+	IGMR: { expansion: 'Institutio generalis MR', names: ABSENT_WORKS.institutioMissalisRomani },
+	LH: { expansion: 'Liturgia Horarum', names: ABSENT_WORKS.liturgiaHorarum },
+	MR: { expansion: 'Missale Romanum', names: ABSENT_WORKS.missaleRomanum },
+	OBA: { expansion: 'Ordo baptismi adultorum', names: ABSENT_WORKS.ordoBaptismiAdultorum },
+	OBP: { expansion: 'Ordo baptismi parvulorum', names: ABSENT_WORKS.ordoBaptismiParvulorum },
+	OCf: { expansion: 'Ordo confirmationis', names: ABSENT_WORKS.ordoConfirmationis },
+	OcM: { expansion: 'Ordo celebrandi Matrimonium', names: ABSENT_WORKS.ordoCelebrandiMatrimonium },
+	OCV: {
+		expansion: 'Ordo consecrationis virginum',
+		names: ABSENT_WORKS.ordoConsecrationisVirginum
+	},
+	OEx: { expansion: 'Ordo exsequiarum', names: ABSENT_WORKS.ordoExsequiarum },
+	OICA: {
+		expansion: 'Ordo initiationis christianae adultorum',
+		names: ABSENT_WORKS.ordoInitiationis
+	},
+	OP: { expansion: 'Ordo poenitentiae', names: ABSENT_WORKS.ordoPaenitentiae }
 };
 
 /**
@@ -2280,7 +2432,10 @@ const DOCUMENT_SIGLA_FR: Record<string, SiglumEntry> = {
 const DOCUMENT_SIGLA_LA: Record<string, SiglumEntry> = {
 	...SERIES_SIGLA,
 	SC: SC_SERIES,
-	CA: { expansion: 'Corpus apologetarum Christianorum saeculi secundi' }
+	CA: {
+		expansion: 'Corpus apologetarum Christianorum saeculi secundi',
+		names: ABSENT_WORKS.corpusApologetarum
+	}
 };
 
 /** Italian prints the same apparatus as the Latin editio typica, siglum for
@@ -2295,6 +2450,10 @@ const DOCUMENT_SIGLA_IT = DOCUMENT_SIGLA_LA;
  * large majority of its occurrences — FF as Lumen gentium on 265 of 282,
  * FAA as Gaudium et spes on 155 of 165 — and the conciliar sigla are the
  * only ones this edition translates.
+ *
+ * `FM` gained its slug with `MD`, and for the same reason: it names
+ * Familiaris consortio, which the corpus holds, so the 21 citations reading
+ * it were rendering as a non-link to a document one tap away.
  */
 /**
  * Polish, Russian and Arabic, whose one work cites nothing but bibliographic
@@ -2319,7 +2478,7 @@ const DOCUMENT_SIGLA_MG: Record<string, SiglumEntry> = {
 	AFF: { expansion: 'Ad gentes', slug: 'ad-gentes' },
 	FVA: { expansion: 'Dignitatis humanae', slug: 'dignitatis-humanae' },
 	RFP: { expansion: 'Presbyterorum ordinis', slug: 'presbyterorum-ordinis' },
-	FM: { expansion: 'Familiaris consortio' }
+	FM: { expansion: 'Familiaris consortio', slug: 'familiaris-consortio' }
 };
 
 // --------------------------------------------------------------------------
@@ -2836,6 +2995,65 @@ export function grammarSurface(lang?: string, work?: string): GrammarSurface {
 		chapterVerseSep: config.primarySep,
 		linksSigla: config.linksSigla
 	};
+}
+
+/**
+ * What `siglumStanding` answers. `held` is about the CORPUS and never about
+ * the link: a siglum whose language declines to link sigla at all is still
+ * held if the document is in `build/`.
+ */
+export type SiglumStanding =
+	/** This corpus answers to it — as a document, or under an address space
+	 *  of its own the way the Code's canons are. */
+	| { held: true; work: null }
+	/** It names a work, and the corpus has not got it. */
+	| { held: false; work: string }
+	/** It names no work: a dicastery, an office, one hour of the breviary —
+	 *  or it is a siglum this language does not read at all. */
+	| { held: false; work: null };
+
+const HELD: SiglumStanding = { held: true, work: null };
+const NAMES_NO_WORK: SiglumStanding = { held: false, work: null };
+
+/**
+ * Where a siglum stands against the corpus: held here, naming a work held
+ * nowhere here, or naming no work at all. `work` is the identity `/census`
+ * ranks what the library is cited for and has not got by
+ * (`site/docs/census.md`).
+ *
+ * THREE OUTCOMES AND NOT TWO, because the caller has to tell the last two
+ * apart and a nullable name cannot. A citation reading `LG 12` resolves; one
+ * reading `PL 54, 200` names a work this library has not got and belongs in
+ * the ranking; one reading `CDF` names a dicastery, resolves to nothing, and
+ * belongs in neither — collapsed into one `null` it would either vanish from
+ * the residue or arrive in the ranking as a work to acquire.
+ *
+ * IT ASKS THE CORPUS AND NOT THE TABLE, which is what separates it from
+ * reading a parsed segment's `slug`. The first run of the absence ranking
+ * offered Familiaris consortio and Mulieris dignitatem as works to acquire,
+ * both of them in `build/`: Malagasy's `FM` and two `MD` entries named them
+ * with no slug beside them, having been written before the exhortation sweep.
+ * A table's claim about what is held goes stale in silence, and this is where
+ * that claim gets checked rather than trusted.
+ *
+ * It ignores `linksSigla` for the same reason. Whether a language draws a link
+ * is a fact about its apparatus — Portuguese maps no siglum to a slug at all
+ * — and whether the corpus holds the work is not; only the second belongs in a
+ * count of what is missing.
+ *
+ * A SIGLUM WHOSE ENTRY CLAIMS A SLUG THE CORPUS HAS NOT GOT IS AN ABSENCE,
+ * and answers with its expansion. The claim is exactly what ingesting the
+ * work would satisfy, so the row leaves the ranking of its own accord the day
+ * the work arrives — which is the property that keeps the table honest
+ * without anybody maintaining it.
+ */
+export function siglumStanding(siglum: string, lang?: string, work?: string): SiglumStanding {
+	const entry = configFor(lang, work).documentSigla.get(siglum);
+	if (!entry) return NAMES_NO_WORK;
+	if (entry.work) return HELD;
+	if (entry.slug)
+		return ingestedSlugs().has(entry.slug) ? HELD : { held: false, work: entry.expansion };
+	return entry.names ? { held: false, work: entry.names } : NAMES_NO_WORK;
 }
 
 /**

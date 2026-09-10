@@ -206,7 +206,41 @@ paragraphs are cited exactly three times, so a `slice(0, 20)` would publish
 four of them and drop nine cited exactly as often. `topOf` takes whole bands
 while the next one still fits, so a table comes out shorter than the limit
 rather than arbitrary at the bottom — which is why neither the Catechism's
-ranking nor the Summa's fills its twenty rows.
+ranking nor the Summa's fills its hundred rows.
+
+**Twenty was a screen, and the file was enforcing it.** The argument for
+cutting at twenty was that a ranking is read down and a table longer than the
+viewport stops being one — an argument about what meets the eye at once, which
+`RANK_PAGE` is now where it lives. `RANK_LIMIT` is a hundred, which is where the
+tail goes flat: below it the difference between one row and the next is a single
+citation, and bands one deep are a list that happens to be sorted. It takes
+`census.json` from 5.8 KB to 18.6 KB, in a file one page fetches on demand.
+
+**A page boundary may split a tie where the table's own cut may not**, and the
+two are not one rule doing different things. `topOf` refuses to split a band
+because the rows under the line would be unpublished — four of thirteen
+paragraphs, and no way to learn of the nine. Rows on the next page are
+published; turning to them is one press.
+
+**The list carries `start` and the counter is reset off the same number.** The
+rank IS the content, so a second page announcing its first row as "1 of 20" is
+saying something false rather than merely losing it — and an `ol start` is the
+half a screen reader reads while a CSS counter is the half a reader sees, so
+both have to move.
+
+**Previous, where you are, next — and not a strip of numbered pages.** The
+merged table is cut at `RANK_LIMIT` however many chips are on, so it is five
+pages at most, and a reader turning them is reading DOWN a ranking: page four is
+not a destination the way a chapter is, and a reader who wants one particular
+work has the jump box. The position is stated in words because a reader who has
+scrolled down the list cannot see the numbering start.
+
+**A chip resets the page, and no effect watches the table.** Pressing a chip
+changes what the table CONTAINS, so page four of the old one names nothing in
+the new and the section goes blank; `toggle` is the only thing that can change
+the table's length, so it is the only place that says so. An effect over the
+merged rows would also fire on a language change, which renames every row and
+moves none of them.
 
 ## One ranking, and the chips narrow what is in it
 
@@ -215,7 +249,7 @@ reader comparing them had to hold five scales at once; merged, the rows are
 comparable and the chips do the separating.
 
 **Merging the stored tops is the EXACT top of the union.** A row in the merged
-top twenty is in its own kind's top twenty, its kind's list being a subset of
+top hundred is in its own kind's top hundred, its kind's list being a subset of
 the union — so nothing the merge needs was left out of the file. And a band the
 merged cut can afford is one that kind could afford too, the merged list having
 at least as many rows above any level. That is what makes a filter over kinds
@@ -223,7 +257,7 @@ safe, and it is a property of the KIND filter alone.
 
 **The chips narrow what is ranked, not who did the citing.** `CitedBy`'s filter
 narrows by citing family and this one cannot: those counts were summed at build
-time, so re-ranking a stored top twenty by one family would publish that
+time, so re-ranking a stored top hundred by one family would publish that
 family's real top only where the two happen to agree. Filtering by family means
 a cut per subset, which is a different file and not a control. The drawing is
 that panel's — on is plain, off is struck through — because a reader meets the
@@ -263,6 +297,83 @@ of the tables `/schola` teaches from — so they read `CCC 1883` and `STh I-II,
 184`, and the siglum is `ccc.abbrev` in the reader's own language rather than
 three letters spelled here. A page that teaches `CCC 1234` and ranks `¶1234` has
 taught nothing.
+
+## What is cited and not held
+
+The other direction of the same index, and the one thing four rankings of what
+the library HAS cannot say: which works its apparatus reaches for and cannot be
+given. `buildCitationXrefs` already parses every citation against a grammar that
+recognizes far more works than the corpus holds, so this was a measurement lying
+on the floor of that function.
+
+**A row carries a name and no address, and that is the whole content of the
+section.** Every other ranking on the page links; this one cannot, because the
+link is the thing that is missing. So its rows carry no shelf mark either —
+there is no work here to have one — and they are set as plain names rather than
+as the rows above with the anchor quietly absent, which would read as a list of
+broken links.
+
+**It is not a sixth chip on the ranking above**, and the reason is the one that
+merged the five. Those rank addresses a reader can open, on one scale, which is
+what makes their rows comparable. An absence has no address by definition, so a
+row for it in that table would be the only one that did not link — a different
+question wearing the same clothes.
+
+**A row's identity is a NAME, decided in the sigla tables and not in the
+census.** `ABSENT_WORKS` in `refs-grammar.ts` holds one constant per work and
+every table that abbreviates it references that constant, because the expansions
+are tooltips written for one language's reader and are not the same words:
+keyed on the expansion, the Holy See's gazette came out as two rows of 1,513 and
+1,213, Migne as four, Denzinger as two. A table of aliases beside them could
+only have detected that after the fact.
+
+**`siglumStanding` asks the corpus, never the table.** A slug in a sigla table
+is a claim, and a claim about what is held goes stale in silence: the first run
+of this ranking offered Familiaris consortio and Mulieris dignitatem as works to
+acquire, both of them in `build/`, because Malagasy's `FM` and two `MD` entries
+had been written before the exhortation sweep. **The ranking is therefore also a
+check on the table** — and the one that catches the case a unit test cannot,
+which is a work the corpus gained after somebody wrote down that it had not.
+
+**A row leaves the list of its own accord the day the work is ingested**,
+including a row that got there through an unhonoured slug. Nobody maintains it.
+
+**What names nothing is counted and never ranked.** 31,525 distinct citation
+strings resolve to no address and 94% of them occur exactly once — an unexpanded
+`Ibid.` in a dozen languages, a synod `Propositio`, a line the parser stopped
+short of. Ranked by their own text the head of that list is `Ibid.`, and the
+page would publish it as the most-cited work this library lacks. So the residue
+is two integers, and `census.absentLede` prints them: without that sentence a
+short list of named works reads as the whole of what is missing, and it is a
+small part of it. Same arithmetic `countedReferences` closes one section up.
+
+**The two halves of the residue are kept apart because they are findings about
+different things.** `ibidem` is a citation whose antecedent could not be carried
+across a footnote run, which is a limit of the READING; `other` is a footnote
+naming something the grammar has no table for, which is nearer a limit of the
+CORPUS. Reported as one number they read as one defect.
+
+**An absence is not a reference and is tallied apart from the four rankings.**
+`tallyXrefs` counts a row into `references` and its address into
+`citedAddresses`; doing that here would put the apparatus's edge count above the
+number of edges the corpus has and its address count above the number of places
+that exist. What it does share is `countsTowardsRank` — an edition's own
+footnotes name Migne and Denzinger constantly, and a list of what to ingest next
+that reported chiefly what Haydock read is the defect the annotation rule already
+answered for once.
+
+**`kindCountsTowardsRank` is that rule asked of a kind with no citer to hand**,
+and `countsTowardsRank` delegates to it rather than the two testing the same
+string apart. The residue is counted by kind because keeping a citer per
+citation would be a megabyte to answer a question that is two integers.
+
+**A siglum naming no work at all carries `names: null`** — `CDF` is a
+dicastery, `off. lect.` an hour of the breviary. Collapsed into the same absence
+as a work, the ranking would offer a Roman office as something to acquire.
+`sigla-standing.test.ts` requires every entry with neither a slug nor a work to
+declare one or the other, because a new bibliographic siglum added with an
+expansion alone parses, glosses and renders exactly as its neighbours do — the
+only thing it does differently is vanish from this ranking.
 
 ## Monitoring it
 

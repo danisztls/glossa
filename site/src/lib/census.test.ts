@@ -146,7 +146,23 @@ const input = {
 			{ work: 'rerum-novarum', n: 1, cited_by: [doc('lumen-gentium', 8)] }
 		],
 		ccc: [{ ccc: 1, cited_by: [doc('lumen-gentium', 8)] }],
-		summa: [{ part: 'I', question: 1, article: 1, cited_by: [doc('lumen-gentium', 8)] }]
+		summa: [{ part: 'I', question: 1, article: 1, cited_by: [doc('lumen-gentium', 8)] }],
+		// What the same pass found that this library has not got. Migne is
+		// asked for by one document and by two of Haydock's notes, which is the
+		// case worth carrying: an edition's own footnotes name the patrologies
+		// constantly, so a list of what to ingest next that counted them would
+		// report chiefly what a commentator read.
+		absent: [
+			{ work: 'Patrologia latina (Migne)', cited_by: [doc('lumen-gentium', 8), note(3), note(4)] },
+			{
+				work: 'Acta Apostolicae Sedis',
+				cited_by: [doc('lumen-gentium', 8), doc('rerum-novarum', 1)]
+			}
+		],
+		// Citations that named nothing at all, by citer kind — two footnotes
+		// this parser could not read, one of them an unexpanded ibidem, beside
+		// a note of Haydock's that no ranking counts.
+		unread: { ibidem: { document: 1, annotation: 4 }, other: { document: 2 } }
 	},
 	summaArticles: new Map([['I', new Map([[1, new Set([1, 2])]])]])
 };
@@ -628,5 +644,39 @@ describe('every key the builder emits is a string somebody wrote', () => {
 		expect(strings['census.reachRow']).toContain('{of}');
 		expect(strings['census.reachCell']).toContain('{value}');
 		expect(strings['census.reachCell']).toContain('{of}');
+	});
+});
+
+/**
+ * The other direction of the same pass: what the apparatus asks for that this
+ * library has not got.
+ *
+ * The rules it shares with the rankings are the ones under them — an edition's
+ * own footnotes do not count towards it — and the rule it does NOT share is
+ * that its rows are references. An absence has no address, so counting one
+ * would put `references` above the number of edges the corpus has.
+ */
+describe('the absence ranking', () => {
+	it('ranks by citing places, largest first', () => {
+		expect(census.absent).toEqual([
+			{ work: 'Acta Apostolicae Sedis', value: 2 },
+			{ work: 'Patrologia latina (Migne)', value: 1 }
+		]);
+	});
+
+	it("leaves an edition's own footnotes out, as the rankings do", () => {
+		// Migne is named by three places and only one of them counts, or the
+		// list of what to ingest next would be a list of what Haydock read.
+		expect(census.absent.find((row) => row.work.startsWith('Patrologia'))?.value).toBe(1);
+	});
+
+	it('adds nothing to the apparatus totals, an absence having no address', () => {
+		// The same 13 the ledger states with no absence pass at all: a work
+		// that is not here is not one end of a cross-reference.
+		expect(censusFact(census, 'apparatus', 'references')).toBe(13);
+	});
+
+	it('counts what named nothing under the same rule, and keeps the two apart', () => {
+		expect(census.unread).toEqual({ ibidem: 1, other: 2 });
 	});
 });

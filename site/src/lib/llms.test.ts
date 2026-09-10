@@ -70,7 +70,13 @@ const census = buildCensus({
 	documentEditions: [],
 	summaIndex: {},
 	scriptureByBook: {},
-	citationXrefs: { documents: [], ccc: [], summa: [] },
+	citationXrefs: {
+		documents: [],
+		ccc: [],
+		summa: [],
+		absent: [],
+		unread: { ibidem: {}, other: {} }
+	},
 	summaArticles: new Map()
 });
 

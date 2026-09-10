@@ -1748,6 +1748,11 @@ deploy on it. `site/docs/census.md` holds the rationale.
 - **A ranking is cut on the COUNT and never on the rank.** Thirteen Catechism
   paragraphs are cited exactly three times, so a `slice(0, 20)` would publish
   four of them and drop nine cited as often.
+- **The file's cut is not the screen's.** `RANK_LIMIT` is what gets published
+  and `RANK_PAGE` is what is on screen at once; twenty was a screen being
+  enforced by the file, so a reader who wanted the twenty-first row had nowhere
+  to go. A page boundary may split a tie — those rows are published — where the
+  table's own cut may not.
 - **A shelf is written only where the build holds what it counts.** The
   fixtures hold no Code, and "the Code of Canon Law in 0 languages" asserts the
   Church has no law rather than reporting that nothing was synced.
@@ -1759,14 +1764,33 @@ deploy on it. `site/docs/census.md` holds the rationale.
   partial bar instead.
 - **The five rankings are one, and the chips narrow WHAT IS RANKED.** Merging
   the stored tops is the exact top of the union — a row in the merged top
-  twenty is in its own kind's top twenty — which is what makes a filter over
+  hundred is in its own kind's top hundred — which is what makes a filter over
   KINDS safe. A filter over citing families would not be: those counts were
-  summed at build time, so re-ranking a stored top twenty by one family
-  publishes a wrong ranking wherever the two orders differ.
+  summed at build time, so re-ranking a stored top by one family publishes a
+  wrong ranking wherever the two orders differ.
 - **Books start switched off, the one kind that does.** A book's count is every
   place citing any chapter of it, so beside its own chapters it is an aggregate
-  answering the table twice — measured, the top twenty of everything is
-  eighteen books and two documents.
+  answering the table twice — measured, the head of everything is eighteen books
+  and two documents.
+- **What the library is CITED FOR and has not got is its own ranking, and its
+  rows carry a name and no address.** Every other ranking links; this one
+  cannot, the link being the thing that is missing — so it is not a sixth chip
+  on the table above, whose rows are comparable because they are all addresses.
+- **A siglum's identity is a NAME from `ABSENT_WORKS`, never its expansion.**
+  The tables gloss one work differently for each language's reader, so keyed on
+  the expansion the Holy See's gazette was two rows of 1,513 and 1,213.
+  `sigla-standing.test.ts` requires every entry with neither a slug nor a work
+  to declare `names`, or a new siglum falls out of the ranking in silence.
+- **`siglumStanding` asks the corpus and never the sigla table.** A slug there
+  is a claim that goes stale without a symptom: the first run of the absence
+  ranking offered two exhortations sitting in `build/` as works to acquire. The
+  ranking is a check on the table as much as a list for a reader.
+- **A citation that names nothing is COUNTED and never ranked.** 94% of the
+  31,525 strings that resolve to no address occur once, and the head of that
+  list is `Ibid.` — ranked by their own text the page would publish it as the
+  most-cited work this library lacks. Two integers under the ranking, and the
+  lede says what they are, which is `countedReferences`' arithmetic one section
+  over.
 - **The breakdown under a ranking counts what the ranking counts.** Over every
   reference, `annotation` headed it — the largest number in the section, for a
   family no table above it counts. `countsTowardsRank` gates that tally now, so

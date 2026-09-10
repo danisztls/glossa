@@ -38,7 +38,8 @@ import {
 	linkifyProse,
 	normalizeCitationSpacing,
 	parseRefs,
-	parseStoredRef
+	parseStoredRef,
+	siglumStanding
 } from '../src/lib/refs-grammar.ts';
 import { toVulgateCandidates } from '../src/lib/versification.ts';
 
@@ -638,16 +639,36 @@ export function invertScriptureRefs(citations) {
  * address, none of which this corpus holds, so there was never a link to
  * inherit.
  *
+ * THE FOURTH LIST IS THE OTHER SIDE OF THE SAME PASS: what the apparatus asks
+ * for that this library has not got. Every citation is already parsed here,
+ * against a grammar that recognizes far more works than the corpus holds — so
+ * the works it names and cannot reach are a measurement lying on the floor of
+ * this function, and `/census` ranks them as the list of what to ingest next
+ * (`site/docs/census.md`). `siglumStanding` decides held from absent, because
+ * a segment's own `slug` cannot: Portuguese maps no siglum to a slug at all,
+ * so read off the parse the corpus appears to lack Familiaris consortio.
+ *
+ * WHAT NAMES NOTHING IS COUNTED AND NEVER RANKED. 31,525 distinct citation
+ * strings resolve to no address and 94% of them occur once — an unexpanded
+ * `Ibid.` in a dozen languages, a synod `Propositio`, a line of a footnote
+ * the parser stopped short of. Ranked by their own text the head of that list
+ * is `Ibid.` and the page would publish it as the most-cited work this
+ * library lacks. So the residue is two integers per citer kind: the ibidem
+ * words, which are a limit of the reading, and everything else. `unread` is
+ * the honest denominator under the ranking and not a table of its own.
+ *
  * @typedef {{ work: string, n: number | null, cited_by: Citer[] }} DocumentCitationXref
  * @typedef {{ ccc: number, cited_by: Citer[] }} CccCitationXref
  * @typedef {{ part: string, question: number, article: number | null, cited_by: Citer[] }} SummaCitationXref
+ * @typedef {{ work: string, cited_by: Citer[] }} AbsentCitationXref
+ * @typedef {{ ibidem: Record<string, number>, other: Record<string, number> }} UnreadCitations
  *
  * @param {CitingUnit[]} units
  *   every citing unit, each already carrying the address that names it
  * @param {(slug: string, n: number) => boolean} sectionExists
  * @param {(n: number) => boolean} paragraphExists
  * @param {(part: string, question: number, article: number | null) => boolean} summaExists
- * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[], summa: SummaCitationXref[] }}
+ * @returns {{ documents: DocumentCitationXref[], ccc: CccCitationXref[], summa: SummaCitationXref[], absent: AbsentCitationXref[], unread: UnreadCitations }}
  */
 export function buildCitationXrefs(units, sectionExists, paragraphExists, summaExists) {
 	/** `slug` -> section number (or `''` for the document at large) -> citers */
@@ -658,6 +679,11 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 	/** `part:question:article` (article empty for a question-level address) */
 	/** @type {Map<string, Citer[]>} */
 	const summa = new Map();
+	/** the name of a work this corpus has not got -> who asked for it */
+	/** @type {Map<string, Citer[]>} */
+	const absent = new Map();
+	/** @type {{ ibidem: Record<string, number>, other: Record<string, number> }} */
+	const unread = { ibidem: {}, other: {} };
 
 	/**
 	 * One `Ibid.` chain per EDITION — a work in one language — because that
@@ -711,6 +737,61 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 		addOnce(list, citer);
 	};
 
+	/**
+	 * Whether a segment lands on an address this corpus holds.
+	 *
+	 * A `document` segment asks `siglumStanding` and not its own `slug`, for
+	 * the reason on that function; a segment matched by TITLE always carries
+	 * one, an unresolvable title never having become a segment at all. The
+	 * Compendium is true with nothing checked because no consumer of this
+	 * index addresses it — a `compendium` segment is a link the page draws
+	 * and the reverse direction does not keep, which makes it resolved here
+	 * and absent from `documents` for two different reasons.
+	 *
+	 * @param {import('../src/lib/refs-grammar.ts').RefSegment} seg
+	 * @param {string} [lang] @param {string} [work]
+	 */
+	const resolvesHere = (seg, lang, work) => {
+		if (seg.kind === 'scripture' || seg.kind === 'compendium') return true;
+		if (seg.kind === 'ccc') return paragraphExists(seg.n);
+		if (seg.kind === 'summa') return summaExists(seg.part, seg.question, seg.article);
+		if (seg.kind !== 'document') return false;
+		return !!seg.slug || siglumStanding(seg.label, lang, work).held;
+	};
+
+	/**
+	 * One citation, weighed against what the library holds.
+	 *
+	 * A NAMED ABSENCE IS RECORDED EVEN WHERE THE CITATION ALSO RESOLVED.
+	 * "Cf. LG 12; PL 54, 200" links to Lumen gentium and asks for Migne in
+	 * the same breath, and a ranking of what the apparatus reaches for that
+	 * is not here has to hear the second half. Only the RESIDUE is gated on
+	 * the citation landing nowhere: a citation that reached an address is not
+	 * unread whatever else it mentions.
+	 *
+	 * @param {Citer} citer
+	 * @param {import('../src/lib/refs-grammar.ts').RefSegment[]} segments
+	 * @param {string} text @param {string} [lang] @param {string} [work]
+	 */
+	const weigh = (citer, segments, text, lang, work) => {
+		let named = 0;
+		for (const seg of segments) {
+			if (seg.kind !== 'document' || seg.slug) continue;
+			const standing = siglumStanding(seg.label, lang, work);
+			if (standing.held || !standing.work) continue;
+			named++;
+			let list = absent.get(standing.work);
+			if (!list) absent.set(standing.work, (list = []));
+			addOnce(list, citer);
+		}
+		if (named || segments.some((seg) => resolvesHere(seg, lang, work))) return;
+		// `expandIbidem` returns null unless the string opens with an ibidem
+		// word, so it is the same test the expansion above ran, asked of a
+		// citation that came out of it with nothing to show.
+		const bucket = expandIbidem(text, 'x') === null ? unread.other : unread.ibidem;
+		bucket[citer.kind] = (bucket[citer.kind] ?? 0) + 1;
+	};
+
 	for (const { citer, lang, work, unit, scriptureOnly } of units) {
 		if (scriptureOnly) continue;
 		const chainKey = work ?? `${citerWorkKey(citer)} ${lang}`;
@@ -736,6 +817,7 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 				chain.named = lastNamedWork(segments);
 			}
 			for (const seg of segments) record(citer, seg);
+			weigh(citer, segments, text, lang, work);
 		}
 
 		for (const block of unit.blocks ?? []) {
@@ -789,7 +871,11 @@ export function buildCitationXrefs(units, sectionExists, paragraphExists, summaE
 		ccc: [...ccc.keys()]
 			.sort((a, b) => a - b)
 			.map((n) => ({ ccc: n, cited_by: ordered(ccc.get(n) ?? []) })),
-		summa: summaOut
+		summa: summaOut,
+		absent: [...absent.keys()]
+			.sort()
+			.map((work) => ({ work, cited_by: ordered(absent.get(work) ?? []) })),
+		unread
 	};
 }
 
