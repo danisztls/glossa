@@ -1802,7 +1802,7 @@ export const en: Dictionary = {
 	'quaestiones.culpae-praeteritae.keywords':
 		'inquisition, crusades, galileo, heresy trials, torture, witch trials, past sins, apology, history of the church',
 	'quaestiones.divitiae-ecclesiae.title': 'The Church’s wealth',
-	'quaestiones.divitiae-ecclesiae.question': 'Why not sell it and give the money away?',
+	'quaestiones.divitiae-ecclesiae.question': 'Why not sell it and give it to the poor?',
 	'quaestiones.divitiae-ecclesiae.keywords':
 		'sell the vatican, gold, art, treasures, rich church, poor church, the collection, donations, property, vatican bank',
 	'quaestiones.colonialismus.title': 'Colonialism and indigenous peoples',

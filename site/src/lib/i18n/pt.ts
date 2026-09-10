@@ -782,17 +782,17 @@ export const pt: Dictionary = {
 	'quaestiones.atheismus.keywords':
 		'ateu, agnóstico, descrente, laico, sem religião, ignorância invencível, ateus bons',
 	'quaestiones.culpae-praeteritae.title': 'O passado da Igreja',
-	'quaestiones.culpae-praeteritae.question': 'Como a Igreja pôde fazer aquilo?',
+	'quaestiones.culpae-praeteritae.question': 'Como a Igreja pôde fazer essas coisas?',
 	'quaestiones.culpae-praeteritae.keywords':
-		'inquisição, cruzadas, galileu, tribunais da fé, tortura, caça às bruxas, pecados do passado, pedido de perdão, história da igreja',
+		'inquisição, cruzadas, galileu, santo ofício, tortura, caça às bruxas, pecados do passado, pedido de perdão, história da igreja',
 	'quaestiones.divitiae-ecclesiae.title': 'A riqueza da Igreja',
-	'quaestiones.divitiae-ecclesiae.question': 'Por que não vender tudo e dar aos pobres?',
+	'quaestiones.divitiae-ecclesiae.question': 'Por que não vender e dar aos pobres?',
 	'quaestiones.divitiae-ecclesiae.keywords':
 		'vender o vaticano, ouro, obras de arte, tesouros, igreja rica, igreja pobre, a coleta, doações, patrimônio, banco do vaticano',
 	'quaestiones.colonialismus.title': 'Colonialismo e povos indígenas',
 	'quaestiones.colonialismus.question': 'Os missionários vieram com os conquistadores. E agora?',
 	'quaestiones.colonialismus.keywords':
-		'colonização, missões, originários, amazônia, terra, cultura ancestral, evangelização, catequese',
+		'colonização, missões, povos originários, amazônia, terra, cultura ancestral, evangelização, catequese',
 	'quaestiones.beata-virgo.title': 'Maria',
 	'quaestiones.beata-virgo.question': 'Por que os católicos dão tanto a ela?',
 	'quaestiones.beata-virgo.keywords':
