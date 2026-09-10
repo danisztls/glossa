@@ -95,12 +95,12 @@
 	 * the field's own border and not about how focus arrived.
 	 *
 	 * The transparent outline is not decoration: `forced-colors` repaints an
-	 * `outline` in the system focus colour, where the halo below is dropped.
+	 * `outline` in the system focus colour, where the shadow below is dropped.
 	 */
 	.doc-search:focus-visible {
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+		box-shadow: inset 0 0 0 1px var(--color-apparatus);
 	}
 </style>

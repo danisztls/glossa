@@ -251,14 +251,14 @@
 	 * field on this site does; `DocumentSearch` records the arithmetic. An
 	 * offset ring drawn around an already-bordered rounded field stacks into a
 	 * double frame. The transparent outline is not decoration: `forced-colors`
-	 * repaints an `outline` in the system focus colour, where the halo is
+	 * repaints an `outline` in the system focus colour, where the shadow is
 	 * dropped.
 	 */
 	.topic-search:focus-visible {
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+		box-shadow: inset 0 0 0 1px var(--color-apparatus);
 	}
 
 	.search-count {

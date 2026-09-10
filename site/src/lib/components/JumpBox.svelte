@@ -777,9 +777,9 @@
 
 	/*
 	 * THE FOCUS INDICATOR MOVES INTO THE BORDER HERE, which is what every
-	 * bordered text field on the site does — `.menu-filter` (styles/menus.css)
-	 * and `/documenta`'s `.doc-search` carry these same four declarations.
-	 * This was written as the only such place and is now the first of three.
+	 * bordered text field on the site does — `.menu-filter` (styles/menus.css),
+	 * `/documenta`'s `.doc-search` and `/quaestiones`' `.topic-search` carry
+	 * these same four declarations.
 	 *
 	 * `app.css`'s `:focus-visible` is a 2px outline at a 2px offset. That is
 	 * correct for buttons and links, which are focused in RESPONSE to the
@@ -789,22 +789,25 @@
 	 * stacks into a double frame that reads as an OS dialog rather than as part
 	 * of the page.
 	 *
-	 * The indicator is NOT removed, it is relocated: the border itself turns
-	 * ultramarine and gains a soft halo of the same colour. That still clears
-	 * 1.4.11's 3:1 against the surfaces it edges by a wide margin (8.49:1 on
-	 * light, 7.01:1 on sepia, 7.02:1 on dark, measured against the field
-	 * background rather than the page).
+	 * The indicator is NOT removed, it is relocated: the border turns
+	 * ultramarine and doubles in weight, drawn as an inset shadow under the
+	 * border rather than as a wider border, so the field does not move as it
+	 * gains it. It was a soft 3px halo of the same colour until then — a glow
+	 * a form library ships, and the only blurred edge anywhere on this page.
+	 * Solid still clears 1.4.11's 3:1 against the surfaces it edges by a wide
+	 * margin (8.49:1 on light, 7.01:1 on sepia, 7.02:1 on dark, measured
+	 * against the field background rather than the page).
 	 *
 	 * `outline: 2px solid transparent` rather than `outline: none` — under
 	 * forced-colors the transparent outline is repainted in the user's own
 	 * focus colour, so high-contrast mode keeps a real ring even though the
-	 * halo below is dropped there.
+	 * shadow below is dropped there.
 	 */
 	input:focus-visible {
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+		box-shadow: inset 0 0 0 1px var(--color-apparatus);
 	}
 
 	/* No height of its own: `flex: 0 1 auto` grows the list with its content
@@ -838,9 +841,18 @@
 
 	/* The active row is marked by more than its background: a reader in forced
 	   colours, or anyone for whom a 4% surface shift is not a signal, gets the
-	   inline start border too. */
+	   inline start border too.
+
+	   IT RUNS STRAIGHT, WHICH COSTS THE ROW ITS CORNERS ON THAT SIDE. An inset
+	   bar is clipped by the radius it is drawn inside, so a 3px marker on a
+	   `--radius-md` row tapers to nothing at both ends and reads as a
+	   rendering fault rather than as a mark. The two start corners go square
+	   and the bar is a bar; the end side keeps its radius, since nothing is
+	   drawn against it. */
 	li.active a {
 		box-shadow: inset 3px 0 0 0 var(--color-apparatus);
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
 	}
 
 	.row {

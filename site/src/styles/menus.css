@@ -429,21 +429,22 @@
  * Doubled twice over while this rule reddened the border underneath it: one
  * focus event, two indicators, two hues, 2px apart.
  *
- * So it is RELOCATED and not removed — ultramarine border plus a soft halo of
- * the same colour, 8.49:1 against the field on light. `.doc-search` took the
- * same four declarations once the doubling was seen there too, which makes
- * this the rule for a bordered text field rather than an exception: the
+ * So it is RELOCATED and not removed — an ultramarine border at double
+ * weight, 8.49:1 against the field on light, the second pixel drawn as an
+ * inset shadow so the field does not move as it takes it. `.doc-search` took
+ * the same four declarations once the doubling was seen there too, which
+ * makes this the rule for a bordered text field rather than an exception: the
  * autofocus argument above is what is special here, the double frame is not.
  *
  * The transparent outline is not decoration. `forced-colors` paints an
  * `outline` in the system focus colour, so high-contrast mode keeps a real
- * ring even where the halo below is dropped.
+ * ring even where the shadow below is dropped.
  */
 .menu-filter:focus-visible {
 	outline: 2px solid transparent;
 	outline-offset: 2px;
 	border-color: var(--color-apparatus);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apparatus) 20%, transparent);
+	box-shadow: inset 0 0 0 1px var(--color-apparatus);
 }
 
 /*
