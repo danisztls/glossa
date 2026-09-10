@@ -151,11 +151,19 @@
 		 * knows — `AnnotatedText` and `PrayerBlocks` are what located the words,
 		 * and a note carrying a `lemma` says nothing about whether it was found.
 		 *
-		 * DEFAULT FALSE, WHICH KEEPS HAYDOCK AS HE WAS. A verse's card may hold
-		 * several notes at one mark, where the headword divides one authority's
-		 * remark from the next, and a trailing mark's notes have no words in the
-		 * text at all. A prayer's card holds exactly one note, always anchored,
-		 * so there the headword is only ever a repetition.
+		 * DEFAULT FALSE, WHICH IS THE TRAILING MARK'S ANSWER. Those notes name
+		 * no words in the text, so nothing is lighting their headwords and it is
+		 * the one card that holds several — there the headword is what divides
+		 * one authority's remark from the next. An ANCHORED mark is the opposite
+		 * on both counts: exactly one note, whose headword is the run the text
+		 * is lighting (`anchorCommentaryLines`), so both callers pass this for
+		 * every mark the text carries.
+		 *
+		 * It went the other way for nine days, on the reasoning above read as
+		 * though it were about verses rather than about trailing marks — and
+		 * the argument was already false when it was written, the notes at one
+		 * inline mark having stopped being the work's whole apparatus on that
+		 * verse (`commentary-placement.ts`).
 		 */
 		lemmaMarked?: boolean;
 	}

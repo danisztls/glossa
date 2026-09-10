@@ -2182,9 +2182,16 @@ note is open, and `Sidenote` prints its headword only when the verse could not.
 - **Refusing is a first-class outcome**: `lemmaMarked` is true exactly when the
   words were located and is the one prop that suppresses the headword, so the
   two can never disagree. Dropping the headword unconditionally would have
-  deleted 18,658 of the corpus's 22,310. **`CommentaryGloss` keeps its lemmas** —
-  its card may hold several notes, where the headword divides one authority's
-  remark from the next.
+  deleted 18,658 of the corpus's 22,310.
+- **A commentary's card keeps its headwords only at the TRAILING mark**, whose
+  notes name no words in the text and which is the one card holding several. An
+  anchored mark carries exactly one note (`anchorCommentaryLines` pushes
+  `notes: [note]`) and the verse is lighting the run it quotes, so the card
+  printing it repeats the words the reader just pressed.
+- **A default outlives the argument that set it.** `lemmaMarked` defaulted
+  false "because a card may hold several notes", written two days after an
+  inline mark stopped holding more than one — and the headword left standing
+  under every lit run then read as a deliberate difference from the prayers.
 
 **A commentary's marks sit at the words its notes quote**
 (`commentary-anchors.ts`): 24,805 of 45,662 notes placed (54.3%), the rest on a

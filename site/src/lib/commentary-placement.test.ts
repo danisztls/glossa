@@ -40,6 +40,26 @@ describe('placeCommentary', () => {
 		expect(new Set(seen).size).toBe(notes.length);
 	});
 
+	// WHY AN ANCHORED CARD PRINTS NO HEADWORD (`AnnotatedText`'s `lemmaMarked`).
+	// The text is lighting the run these notes quote, so the card would repeat
+	// the words the reader just pressed — an argument that holds only while one
+	// mark means one note, since two notes at one anchor would lose the thing
+	// telling their remarks apart. The trailing mark is where several gather,
+	// and it keeps its headwords.
+	it('carries exactly one note behind every mark the text itself holds', () => {
+		const { inline, trailing } = placeCommentary(TEXT, [
+			entry('commentary.haydock.en', [
+				note('a', 'Beginning.'),
+				note('b', 'heaven,'),
+				note('c', 'earth.'),
+				note('d'),
+				note('e')
+			])
+		]);
+		expect(inline.map((p) => p.notes.length)).toEqual([1, 1, 1]);
+		expect(trailing[0].notes).toHaveLength(2);
+	});
+
 	// A trailing entry is added only when there is something to put in it —
 	// otherwise every verse would carry a mark at its end opening an empty card.
 	it('adds no trailing mark when the text carries every headword', () => {

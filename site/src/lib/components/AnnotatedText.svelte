@@ -229,9 +229,17 @@
      class is what lights. -->
 <!-- `mark` IS THE WHOLE OF IT: an index means the text carries a run for this
      placement, `undefined` means the mark hangs at the end of the verse. That
-     one fact settles both `anchored` — which glyph is drawn, `†` or `‡` — and
-     whether there is anything for `onopen` to light, so the two cannot come
-     apart. -->
+     one fact settles `anchored` — which glyph is drawn, `†` or `‡` — whether
+     there is anything for `onopen` to light, and whether the card must print
+     the headword, so the three cannot come apart.
+
+     AN ANCHORED MARK CARRIES EXACTLY ONE NOTE, whose headword is the run the
+     verse is already lighting (`anchorCommentaryLines` pushes `notes: [note]`,
+     two notes being unable to share a span). So the card printing it repeats
+     the words the reader just pressed, which is `Sidenote`'s rule one
+     apparatus over. The TRAILING mark keeps its headwords and is the one card
+     that holds several notes: those name no words in the text, so there the
+     headword is the only thing saying what each remark is about. -->
 {#snippet gloss(entry: (typeof placed)[number], mark: number | undefined)}
 	<CommentaryGloss
 		notes={entry.notes}
@@ -241,6 +249,7 @@
 		{osis}
 		{chapter}
 		anchored={mark !== undefined}
+		lemmaMarked={mark !== undefined}
 		onopen={mark === undefined ? undefined : (on: boolean) => (openMarks[mark] = on)}
 	/>
 {/snippet}

@@ -358,6 +358,22 @@ never had a headword. A mark that claimed "no lemma" would be wrong 2,391 times;
 "nothing here to light" is checkable by pressing it. The prayers' apparatus has
 no trailing mark at all, so a `‡` can never appear on a prayer.
 
+**And the glyph settles the headword as well as the light.** A `†` carries
+exactly one note — two notes cannot share a span, the cursor having moved past
+the first — and the verse is lighting the run that note quotes, so a card
+printing the headword repeats the words under the reader's own finger. A `‡`
+gathers several notes that name nothing in the text, and there the headword is
+what divides one authority's remark from the next. The edition's rule, one
+apparatus over, arrived at from the other side.
+
+**A default outlives the argument that set it.** `lemmaMarked` came in with the
+prayers, defaulted false, and carried a comment saying a verse's card may hold
+several notes at one mark — written two days after an inline mark stopped
+holding more than one, and left standing while the marks moved onto the quoted
+words. Nothing erred and nothing looked wrong: a headword printed above a lit
+run reads as a considered difference between the two apparatuses, which is what
+kept it there for nine days.
+
 **`‡` cost 100 bytes and a change of source font, which is the correction worth
 carrying.** It had been recorded as unreachable at any price — measured over
 Google's subsets, which partition a font by Unicode RANGE and drop a glyph
