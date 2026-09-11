@@ -328,23 +328,37 @@ forbids. **So the subset rule is not only a check — it is what forces a second
 topic to have a second reason**, and here that was CCC 1809 on temperance, which
 was on no topic at all. `telephonum` ships on the pair.
 
-**The commandments are covered and the virtues are not, and the asymmetry is the
-file working as designed.** Read against the Catechism's own Part Three
-(2026-09-10): every one of the ten commandments is reached by at least one topic,
-five of them by more than ten, because a commandment is a band of PROBLEMS and
-this file is a list of problems. The virtues are the opposite shape. Of the seven,
-`caritas` anchors charity, and prudence, justice, fortitude and faith are on no
-topic at all — temperance and hope were reached this same day only as a
-side-effect of building `telephonum` and `anxietas`, neither of which is a topic
-about a virtue. The reason is `topics.md`'s founding one: **nobody arrives at
-prudence.** A reader arrives at a decision they cannot make. So the finding is
-not that four topics are missing; it is that the virtue articles are a reservoir
-of unanchored text a doorway can be pointed at when one is found, exactly as
-1817–1818 turned out to be what an anxious reader needed. The capital sins fall
-between: `invidia` and `acedia` are topics because envy and sloth are experienced
-as conditions, and the other five are reached only through what they DO —
-lust through `castitas` and `pornographia`, avarice through `paupertas`, wrath
-through no page of its own at all.
+**Read the file against the work's own outline, not only against itself.** The
+subset scan and the keyword reading both compare topics to topics; neither can
+say that a whole article of the Catechism has nobody standing at it. Read against
+Part Three on 2026-09-10, every one of the ten commandments was reached by at
+least one topic and five by more than ten — a commandment is a band of PROBLEMS
+and this file is a list of problems. Two bands were reached by one topic each,
+and both turned out to be real gaps rather than thin subjects. The second
+commandment had only `vota-et-iuramenta`, on its oaths, leaving the paragraph a
+reader who swears actually needs: 2148 makes blasphemy "words of hatred,
+reproach, or defiance" and 2149 says an oath misusing the name, "though without
+the intention of blasphemy", shows lack of respect — a gradation in two
+consecutive paragraphs, and nothing in the file was pointing at it. The ninth had
+only `castitas`, which had been widened hours earlier to stop promising modesty
+and never printing it; modesty is now `verecundia` and the two paragraphs went
+with it, the keyword included.
+
+**The virtues are the opposite shape and are not a gap.** Of the seven, `caritas`
+anchors charity; prudence, justice, fortitude and faith are on no topic at all,
+and temperance and hope were reached only as a side-effect of building
+`telephonum` and `anxietas`, neither of which is a topic about a virtue. The
+reason is `topics.md`'s founding one: **nobody arrives at prudence.** A reader
+arrives at a decision they cannot make. So those articles are a reservoir of
+unanchored text to point a doorway at when one is found, exactly as 1817–1818
+turned out to be what an anxious reader needed — not four topics waiting to be
+written. The capital sins fall between, and the test is whether the sin is
+experienced as a CONDITION: `invidia`, `acedia` and now `ira` are topics because
+envy, sloth and anger are, while lust, avarice and gluttony are reached through
+what they do, on `castitas`, `paupertas` and `corpus-ornandum`. Wrath had no page
+because its two paragraphs sat on `bellum`, which asks when a country may fight;
+they stay there too, being the personal half of an article the Catechism heads
+_Peace_. **A paragraph on the wrong page is sometimes also on the right one.**
 
 **A one-paragraph topic is not a thin one.** This pass spent most of its effort
 widening spans, and the opposite error was waiting at the end of it. `islam` is

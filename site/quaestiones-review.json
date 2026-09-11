@@ -304,8 +304,8 @@
 			"grade": "A",
 			"reviewed": "2026-09-10",
 			"was": "C",
-			"anchors": "ccc 2337-2351,2520-2522 | documents persona-humana",
-			"note": "2348 and 2349 answer “of whom” exactly — all the baptized, in the way suited to their state of life, in three forms none of which is praised to the exclusion of the others — and 2337–2347 answer “what”. Was C on _purity_, _modesty_ and _impurity_: the whole of the Catechism’s ninth-commandment article was on no topic at all. Added 2026-09-10: 2520 on how purity is won and 2521–2522 on modesty, which “is decency” and “inspires one’s choice of clothing”. 2351 was picked up for _lust_, the only paragraph that defines it."
+			"anchors": "ccc 2337-2351,2520 | documents persona-humana",
+			"note": "2348 and 2349 answer “of whom” exactly — all the baptized, in the way suited to their state of life, in three forms none of which is praised to the exclusion of the others — and 2337–2347 answer “what”. Was C on _purity_, _modesty_ and _impurity_: the whole of the Catechism’s ninth-commandment article was on no topic at all. 2520 on how purity is won was added 2026-09-10; 2521–2522 on modesty were added the same day and moved to `verecundia` hours later, when the ninth commandment was thickened and modesty got the page it had been promised on this one. The keyword _modesty_ went with them, since a page that no longer prints a modesty paragraph should not be what the word routes to. 2351 was picked up for _lust_, the only paragraph that defines it."
 		},
 		"mendacium": {
 			"grade": "A",
@@ -649,6 +649,18 @@
 			"anchors": "ccc 2846-2849,540 | lead 2847 | documents gaudete-et-exsultate",
 			"note": "New 2026-09-10. The sixth petition — 2846–2849, the whole article — was on no topic, and the only place the word _temptation_ appeared in the file was `castitas`’s keywords, in the sexual sense alone. `lead` 2847 puts the answer first and it is the question verbatim: “We must also discern between being tempted and consenting to temptation.” 2846 then says God “himself tempts no one”, 2848 quotes 1 Cor 10:13 that he “will not let you be tempted beyond your strength, but with the temptation will also provide the way of escape”, and 2849 makes prayer the battle. 540 closes on Hebrews — Christ “has been tested as we are, yet without sinning” — which is the proof of 2847’s distinction and not a restatement of it: if being tempted were consenting, that sentence could not be true of him. 538–539 were left to the Gospel; this page needs the conclusion, not the narrative. A because a reader arriving with _is wanting it already a sin_ leaves with it answered in terms, by the paragraph placed first. Sits after `venia-danda`, which is the fifth petition: the two are adjacent in the prayer as well as in the cluster. _Gaudete et Exsultate_ 158–177 is the chapter on spiritual combat, vigilance and discernment."
 		},
+		"blasphemia": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2146-2149,2143",
+			"note": "New 2026-09-10. The second commandment reached one topic, `vota-et-iuramenta`, on its oaths alone — 2142–2149 and 2156–2167 were on no page, and the band is one of the two thinnest in Part Three. The gradation is what this reader needs and the Catechism draws it in two consecutive paragraphs: 2148 makes blasphemy “words of hatred, reproach, or defiance … speaking ill of God”, and 2149 says that oaths misusing the name, “though without the intention of blasphemy, show lack of respect for the Lord”. So the reader who swore in traffic is told what they did and what they did not do, which is the whole question. 2146 supplies the scope, including “the Virgin Mary and all the saints”, and 2143 closes on why a name is the kind of thing that can be abused — “the gift of a name belongs to the order of trust and intimacy”. No canon: can. 1369 punishes the profaning of a sacred OBJECT and would be the wrong answer printed under the right heading."
+		},
+		"ira": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1767-1768,2302-2303,2262",
+			"note": "New 2026-09-10. Wrath was the capital sin with no page: 2302–2303 were on `bellum` alone, which asks when a country may fight. 1767 answers first and answers the question — “In themselves passions are neither good nor evil. They are morally qualified only to the extent that they effectively engage reason and will” — and 1768 adds that “strong feelings are not decisive for the morality or the holiness of persons”. 2302 then draws the line where it actually falls: anger “is a desire for revenge”, it is praiseworthy to impose restitution “to correct vices and maintain justice”, and it is mortal sin only when it reaches “a deliberate desire to kill or seriously wound”. 2303 does the same for hatred and 2262 is what Christ asks instead. 2302–2303 stay on `bellum` as well: they are the personal half of an article the Catechism heads _Peace_, and cutting them out would break a heading that topic’s row explicitly stands on — a shared paragraph, not a duplicated page, since neither anchor set contains the other."
+		},
 		"mortis-desiderium": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
@@ -786,6 +798,12 @@
 			"anchors": "ccc 1250-1255 | canons 867-868,872-874 | documents pastoralis-actio",
 			"note": "can. 874 is the godparent question answered as a checklist, and 1255 says what is asked of them. See the Latin clause noted below."
 		},
+		"nomen-christianum": {
+			"grade": "A",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2156-2159 | canons 855",
+			"note": "New 2026-09-10. The other half of the second commandment’s unreached band. The question is asked by every Catholic parent and answered flatly: 2156 says the name “can be the name of a saint” and “can also express a Christian mystery or Christian virtue”, so the answer is no. can. 855 is the only rule the law states — “a name foreign to Christian sensibility is not given” — and it is a prohibition rather than a requirement, which is the distinction the reader came for. 2158 is what the page is really worth: “God calls each one by name. Everyone’s name is sacred. the name is the icon of the person.”"
+		},
 		"organorum-donatio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
@@ -797,6 +815,12 @@
 			"reviewed": "2026-09-10",
 			"anchors": "ccc 2288-2290",
 			"note": "The Catechism does not contain the word \"tattoo\" or \"piercing\"; 2289 gives the principle against the cult of the body. 2290 added 2026-09-10 for _gym_ and _dieting_."
+		},
+		"verecundia": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2521-2525",
+			"note": "New 2026-09-10. The ninth commandment reached one topic, `castitas`, which had been widened to 2520–2522 in this same pass to stop promising modesty and never printing it; with a page of its own those two paragraphs move here and `castitas` keeps 2520. 2522 is the sentence — “Modesty is decency. It inspires one’s choice of clothing” — and 2524 is why this page gives no rule: “The forms taken by modesty vary from one culture to another.” 2523 extends it past clothing to “a modesty of the feelings as well as of the body”, and 2525 turns it outward onto “the communications media”, which keeps the page from reading as an instruction addressed to women about hemlines. B for that reason: no anchored sentence names a garment, and the reader asking what to wear has to carry a principle to their own wardrobe. The Catechism refuses to do it for them, and saying so is a better answer than a rule this file would have had to invent."
 		},
 		"decimae": {
 			"grade": "A",

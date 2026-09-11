@@ -1930,7 +1930,7 @@ export const en: Dictionary = {
 	'quaestiones.castitas.title': 'Chastity',
 	'quaestiones.castitas.question': 'What is being asked, and of whom?',
 	'quaestiones.castitas.keywords':
-		'purity, lust, self-control, dating, single, modesty, temptation, impurity, virtue',
+		'purity, lust, self-control, dating, single, temptation, impurity, virtue',
 	'quaestiones.mendacium.title': 'Lying and reputation',
 	'quaestiones.mendacium.question': 'Is a small lie really a sin?',
 	'quaestiones.mendacium.keywords':
@@ -2145,6 +2145,14 @@ export const en: Dictionary = {
 	'quaestiones.temptatio.question': 'Is wanting it already a sin?',
 	'quaestiones.temptatio.keywords':
 		'tempted, intrusive thoughts, resisting, giving in, near occasion, the desert, spiritual combat, willpower, kept falling, vigilance',
+	'quaestiones.blasphemia.title': 'Using the Name',
+	'quaestiones.blasphemia.question': 'Is saying it when I am angry a sin?',
+	'quaestiones.blasphemia.keywords':
+		'swearing, cursing, oh my god, omg, jesus christ, blasphemy, in vain, profanity, cussing, bad language, habit',
+	'quaestiones.ira.title': 'Anger',
+	'quaestiones.ira.question': 'Is losing my temper a sin?',
+	'quaestiones.ira.keywords':
+		'rage, shouting, lost it, snapped, hatred, revenge, grudge, resentment, road rage, shouted at my children, short fuse',
 	'quaestiones.mortis-desiderium.title': 'Wanting to die',
 	'quaestiones.mortis-desiderium.question': 'If I did it, would God forgive it?',
 	'quaestiones.mortis-desiderium.keywords':
@@ -2239,6 +2247,10 @@ export const en: Dictionary = {
 	'quaestiones.baptismus-infantium.question': 'Who may be a godparent, and what is asked of them?',
 	'quaestiones.baptismus-infantium.keywords':
 		'godfather, godmother, sponsor, christening, delaying baptism, requirements, non-practising godparent, certificate',
+	'quaestiones.nomen-christianum.title': 'The name at baptism',
+	'quaestiones.nomen-christianum.question': 'Does it have to be a saint’s name?',
+	'quaestiones.nomen-christianum.keywords':
+		'baby name, patron saint, naming a child, middle name, confirmation name, unusual names, registry office, changing my name',
 	'quaestiones.organorum-donatio.title': 'Organ donation',
 	'quaestiones.organorum-donatio.question': 'May organs be given, in life or after death?',
 	'quaestiones.organorum-donatio.keywords':
@@ -2247,6 +2259,10 @@ export const en: Dictionary = {
 	'quaestiones.corpus-ornandum.question': 'Is anything forbidden about what is done to it?',
 	'quaestiones.corpus-ornandum.keywords':
 		'piercing, cosmetic surgery, body modification, gym, dieting, appearance, vanity',
+	'quaestiones.verecundia.title': 'Modesty',
+	'quaestiones.verecundia.question': 'What am I supposed to wear?',
+	'quaestiones.verecundia.keywords':
+		'dress code, clothes, shorts, veil, immodest, custody of the eyes, swimsuit, leggings, tempting others, what people will think',
 	'quaestiones.decimae.title': 'Giving and tithing',
 	'quaestiones.decimae.question': 'How much is a Catholic supposed to give?',
 	'quaestiones.decimae.keywords':

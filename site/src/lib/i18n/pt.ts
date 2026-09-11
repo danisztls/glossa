@@ -914,7 +914,7 @@ export const pt: Dictionary = {
 	'quaestiones.castitas.title': 'A castidade',
 	'quaestiones.castitas.question': 'O que se pede, e de quem?',
 	'quaestiones.castitas.keywords':
-		'pureza, luxúria, autocontrole, namoro, solteiro, modéstia, tentação, impureza, virtude',
+		'pureza, luxúria, autocontrole, namoro, solteiro, tentação, impureza, virtude',
 	'quaestiones.mendacium.title': 'A mentira e a reputação',
 	'quaestiones.mendacium.question': 'Uma mentira pequena é pecado mesmo?',
 	'quaestiones.mendacium.keywords':
@@ -1132,6 +1132,14 @@ export const pt: Dictionary = {
 	'quaestiones.temptatio.question': 'Só de querer já é pecado?',
 	'quaestiones.temptatio.keywords':
 		'tentado, pensamento impuro, resistir, ceder, ocasião próxima, o deserto, combate espiritual, força de vontade, caí de novo, vigilância',
+	'quaestiones.blasphemia.title': 'O santo nome',
+	'quaestiones.blasphemia.question': 'Falar assim quando eu me irrito é pecado?',
+	'quaestiones.blasphemia.keywords':
+		'palavrão, praguejar, meu Deus, ai Jesus, blasfêmia, tomar o nome de Deus em vão, xingar, boca suja, vício de linguagem',
+	'quaestiones.ira.title': 'A raiva',
+	'quaestiones.ira.question': 'Perder a paciência é pecado?',
+	'quaestiones.ira.keywords':
+		'ódio, gritar, explodir, descontrole, vingança, rancor, ressentimento, no trânsito, gritei com meus filhos, pavio curto',
 	'quaestiones.mortis-desiderium.title': 'Querer morrer',
 	'quaestiones.mortis-desiderium.question': 'Se eu fizesse isso, Deus perdoaria?',
 	'quaestiones.mortis-desiderium.keywords':
@@ -1226,6 +1234,10 @@ export const pt: Dictionary = {
 	'quaestiones.baptismus-infantium.question': 'Quem pode ser padrinho, e o que se pede dele?',
 	'quaestiones.baptismus-infantium.keywords':
 		'madrinha, batizado, adiar o batismo, exigências, padrinho não praticante, certidão de batismo',
+	'quaestiones.nomen-christianum.title': 'O nome no batismo',
+	'quaestiones.nomen-christianum.question': 'Precisa ser nome de santo?',
+	'quaestiones.nomen-christianum.keywords':
+		'nome do bebê, santo padroeiro, registro, nome do meio, nome de crisma, padrinhos, escolher o nome, mudar de nome',
 	'quaestiones.organorum-donatio.title': 'A doação de órgãos',
 	'quaestiones.organorum-donatio.question': 'Pode-se doar órgãos, em vida ou depois da morte?',
 	'quaestiones.organorum-donatio.keywords':
@@ -1234,6 +1246,10 @@ export const pt: Dictionary = {
 	'quaestiones.corpus-ornandum.question': 'Há algo de proibido no que se faz com ele?',
 	'quaestiones.corpus-ornandum.keywords':
 		'tatuagem, piercing, cirurgia estética, modificação corporal, academia, dieta, aparência, plástica, vaidade',
+	'quaestiones.verecundia.title': 'O pudor',
+	'quaestiones.verecundia.question': 'O que eu devo vestir?',
+	'quaestiones.verecundia.keywords':
+		'roupa, decote, shorts, véu, recato, modéstia, imodesto, guarda dos olhos, biquíni, legging, o que os outros vão pensar',
 	'quaestiones.decimae.title': 'O dízimo e a doação',
 	'quaestiones.decimae.question': 'Quanto um católico deve dar?',
 	'quaestiones.decimae.keywords':

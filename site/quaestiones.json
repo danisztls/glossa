@@ -552,7 +552,7 @@
 			"cluster": "the-rules",
 			"ccc": [
 				[2337, 2351],
-				[2520, 2522]
+				[2520, 2520]
 			],
 			"documents": ["persona-humana"]
 		},
@@ -1040,6 +1040,25 @@
 			"lead": 2847,
 			"documents": ["gaudete-et-exsultate"]
 		},
+		"blasphemia": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [
+				[2146, 2149],
+				[2143, 2143]
+			],
+			"documents": []
+		},
+		"ira": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [
+				[1767, 1768],
+				[2302, 2303],
+				[2262, 2262]
+			],
+			"documents": []
+		},
 		"mortis-desiderium": {
 			"doorway": "private-shame",
 			"cluster": "despair",
@@ -1237,6 +1256,13 @@
 			],
 			"documents": ["pastoralis-actio"]
 		},
+		"nomen-christianum": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [[2156, 2159]],
+			"canons": [[855, 855]],
+			"documents": []
+		},
 		"organorum-donatio": {
 			"doorway": "ordinary",
 			"cluster": "practice",
@@ -1250,6 +1276,12 @@
 			"doorway": "ordinary",
 			"cluster": "practice",
 			"ccc": [[2288, 2290]],
+			"documents": []
+		},
+		"verecundia": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [[2521, 2525]],
 			"documents": []
 		},
 		"decimae": {
