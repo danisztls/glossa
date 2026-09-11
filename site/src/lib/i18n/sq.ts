@@ -335,7 +335,6 @@ export const sq: Dictionary = {
 	'index.division': 'Ndarja',
 	'index.showSubsections': 'Shfaq nënndarjet',
 	'index.hideSubsections': 'Fshih nënndarjet',
-	'prayers.landing.title': 'Lutje të përbashkëta',
 	'prayers.landing.tagline': 'Lutje me tekstin latin përkrah.',
 	'prayers.tableOfContents': 'Përmbajtja',
 	'prayers.gloss.versicle':

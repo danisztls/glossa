@@ -304,7 +304,6 @@ export const pt: Dictionary = {
 	'index.showSubsections': 'Mostrar subseções',
 	'index.hideSubsections': 'Ocultar subseções',
 
-	'prayers.landing.title': 'Orações Comuns',
 	'prayers.landing.tagline': 'Orações com o texto em latim ao lado.',
 	'prayers.gloss.versicle':
 		'O versículo — a linha que quem dirige a oração diz ou canta sozinho. A assembleia lhe responde com a resposta que vem em seguida.',

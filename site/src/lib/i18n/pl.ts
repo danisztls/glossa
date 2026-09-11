@@ -266,7 +266,6 @@ export const pl: Dictionary = {
 	'index.division': 'Podział',
 	'index.showSubsections': 'Pokaż podrozdziały',
 	'index.hideSubsections': 'Ukryj podrozdziały',
-	'prayers.landing.title': 'Modlitwy codzienne',
 	'prayers.landing.tagline': 'Modlitwy z tekstem łacińskim obok.',
 	'prayers.gloss.versicle':
 		'Werset — wers, który prowadzący modlitwę mówi lub śpiewa sam. Zgromadzenie odpowiada na niego następującą dalej odpowiedzią.',

@@ -336,7 +336,6 @@ export const be: Dictionary = {
 	'index.division': 'Раздзел',
 	'index.showSubsections': 'Паказаць падраздзелы',
 	'index.hideSubsections': 'Схаваць падраздзелы',
-	'prayers.landing.title': 'Штодзённыя малітвы',
 	'prayers.landing.tagline': 'Малітвы з лацінскім тэкстам побач.',
 	'prayers.tableOfContents': 'Змест',
 	'prayers.gloss.versicle':

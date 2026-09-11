@@ -331,7 +331,6 @@ export const lt: Dictionary = {
 	'index.division': 'Dalis',
 	'index.showSubsections': 'Rodyti poskyrius',
 	'index.hideSubsections': 'Slėpti poskyrius',
-	'prayers.landing.title': 'Bendrosios maldos',
 	'prayers.landing.tagline': 'Maldos su greta pateiktu lotynišku tekstu.',
 	'prayers.tableOfContents': 'Turinys',
 	'prayers.gloss.versicle':

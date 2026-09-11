@@ -289,7 +289,6 @@ export const mg: Dictionary = {
 	'compendium.condenses': 'Mamintina CCC ¶¶',
 	'compendium.abbrev': 'Famint.',
 	'compendium.noQuestionNumber': 'Tsy misy laharana fanontaniana amin’ity vondron-dahatsoratra ity',
-	'prayers.landing.title': 'Vavaka Fahazarana',
 	'prayers.landing.tagline': 'Vavaka miaraka amin’ny soratra latina eo anilany.',
 	'prayers.tableOfContents': 'Votoatiny',
 	'prayers.gloss.versicle':

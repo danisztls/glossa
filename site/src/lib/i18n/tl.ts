@@ -342,7 +342,6 @@ export const tl: Dictionary = {
 	'index.division': 'Bahagi',
 	'index.showSubsections': 'Ipakita ang mga subseksyon',
 	'index.hideSubsections': 'Itago ang mga subseksyon',
-	'prayers.landing.title': 'Karaniwang mga Panalangin',
 	'prayers.landing.tagline': 'Mga panalangin na may katabing tekstong Latin.',
 	'prayers.tableOfContents': 'Talaan ng Nilalaman',
 	'prayers.gloss.versicle':

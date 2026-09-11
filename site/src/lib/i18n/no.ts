@@ -273,7 +273,6 @@ export const no: Dictionary = {
 	'index.division': 'Inndeling',
 	'index.showSubsections': 'Vis underavsnitt',
 	'index.hideSubsections': 'Skjul underavsnitt',
-	'prayers.landing.title': 'Vanlige bønner',
 	'prayers.landing.tagline': 'Bønner med den latinske teksten ved siden av.',
 	'prayers.tableOfContents': 'Innhold',
 	'prayers.gloss.versicle':

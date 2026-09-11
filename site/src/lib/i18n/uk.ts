@@ -337,7 +337,6 @@ export const uk: Dictionary = {
 	'index.division': 'Розділ',
 	'index.showSubsections': 'Показати підрозділи',
 	'index.hideSubsections': 'Сховати підрозділи',
-	'prayers.landing.title': 'Звичайні молитви',
 	'prayers.landing.tagline': 'Молитви з латинським текстом поруч.',
 	'prayers.tableOfContents': 'Зміст',
 	'prayers.gloss.versicle':

@@ -268,7 +268,6 @@ export const sl: Dictionary = {
 	'index.division': 'Razdelitev',
 	'index.showSubsections': 'Pokaži podpoglavja',
 	'index.hideSubsections': 'Skrij podpoglavja',
-	'prayers.landing.title': 'Molitve',
 	'prayers.landing.tagline': 'Molitve z latinskim besedilom ob strani.',
 	'prayers.gloss.versicle':
 		'Vrstica, ki jo tisti, ki vodi molitev, izgovori ali zapoje sam; zbrani mu odgovorijo z odgovorom, ki sledi.',

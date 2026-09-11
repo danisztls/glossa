@@ -331,7 +331,6 @@ export const hr: Dictionary = {
 	'index.division': 'Dioba',
 	'index.showSubsections': 'Prikaži pododjeljke',
 	'index.hideSubsections': 'Sakrij pododjeljke',
-	'prayers.landing.title': 'Uobičajene molitve',
 	'prayers.landing.tagline': 'Molitve s latinskim tekstom uz njih.',
 	'prayers.tableOfContents': 'Sadržaj',
 	'prayers.gloss.versicle':

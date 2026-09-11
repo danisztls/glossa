@@ -331,7 +331,6 @@ export const cs: Dictionary = {
 	'index.division': 'Oddíl',
 	'index.showSubsections': 'Zobrazit pododdíly',
 	'index.hideSubsections': 'Skrýt pododdíly',
-	'prayers.landing.title': 'Běžné modlitby',
 	'prayers.landing.tagline': 'Modlitby s latinským textem vedle.',
 	'prayers.tableOfContents': 'Obsah',
 	'prayers.gloss.versicle':

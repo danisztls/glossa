@@ -339,7 +339,6 @@ export const sw: Dictionary = {
 	'index.division': 'Mgawanyo',
 	'index.showSubsections': 'Onyesha vijisehemu',
 	'index.hideSubsections': 'Ficha vijisehemu',
-	'prayers.landing.title': 'Sala za Kawaida',
 	'prayers.landing.tagline': 'Sala pamoja na maandishi ya Kilatini kando.',
 	'prayers.tableOfContents': 'Yaliyomo',
 	'prayers.gloss.versicle':

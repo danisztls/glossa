@@ -273,7 +273,6 @@ export const fr: Dictionary = {
 	'index.division': 'Division',
 	'index.showSubsections': 'Afficher les sous-sections',
 	'index.hideSubsections': 'Masquer les sous-sections',
-	'prayers.landing.title': 'Prières usuelles',
 	'prayers.landing.tagline': 'Des prières avec le texte latin en regard.',
 	'prayers.gloss.versicle':
 		'Le verset — la ligne que dit ou chante seul celui qui conduit la prière. L’assemblée y répond par le répons qui suit.',

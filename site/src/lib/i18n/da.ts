@@ -332,7 +332,6 @@ export const da: Dictionary = {
 	'index.division': 'Afdeling',
 	'index.showSubsections': 'Vis underafsnit',
 	'index.hideSubsections': 'Skjul underafsnit',
-	'prayers.landing.title': 'Almindelige bønner',
 	'prayers.landing.tagline': 'Bønner med den latinske tekst ved siden af.',
 	'prayers.tableOfContents': 'Indhold',
 	'prayers.gloss.versicle':

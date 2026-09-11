@@ -324,7 +324,6 @@ export const zht: Dictionary = {
 	'index.division': '分部',
 	'index.showSubsections': '顯示子項',
 	'index.hideSubsections': '隱藏子項',
-	'prayers.landing.title': '常用祈禱經文',
 	'prayers.landing.tagline': '祈禱經文並列拉丁文本。',
 	'prayers.tableOfContents': '目錄',
 	'prayers.gloss.versicle': '啟應中的啟句——由領禱者獨自誦念或詠唱的一行，會眾以隨後的答句回應。',

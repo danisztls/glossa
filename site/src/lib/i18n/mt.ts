@@ -278,7 +278,6 @@ export const mt: Dictionary = {
 	'index.division': 'Diviżjoni',
 	'index.showSubsections': 'Uri t-taqsimiet ta’ taħt',
 	'index.hideSubsections': 'Aħbi t-taqsimiet ta’ taħt',
-	'prayers.landing.title': 'Talb Komuni',
 	'prayers.landing.tagline': 'Talb bit-test Latin ħdejh.',
 	'prayers.tableOfContents': 'Werrej',
 	'prayers.gloss.versicle':

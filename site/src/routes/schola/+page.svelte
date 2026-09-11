@@ -219,7 +219,7 @@
 		},
 		{
 			key: 'prayers',
-			titleKey: 'prayers.landing.title',
+			titleKey: 'nav.prayers',
 			href: '/preces',
 			type: 'prayer'
 		}

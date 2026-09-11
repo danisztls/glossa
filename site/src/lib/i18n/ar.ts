@@ -257,7 +257,6 @@ export const ar: Dictionary = {
 	'index.division': 'القسم',
 	'index.showSubsections': 'إظهار الأقسام الفرعيّة',
 	'index.hideSubsections': 'إخفاء الأقسام الفرعيّة',
-	'prayers.landing.title': 'الصلوات المألوفة',
 	'prayers.landing.tagline': 'صلوات إلى جانبها النصّ اللاتينيّ.',
 	'prayers.gloss.versicle':
 		'الآية التي يرفعها وحده مَن يقود الصلاة، ويجيبها الحاضرون بالجواب الذي يليها.',

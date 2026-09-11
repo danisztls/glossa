@@ -332,7 +332,6 @@ export const ko: Dictionary = {
 	'index.division': '구분',
 	'index.showSubsections': '하위 항목 보이기',
 	'index.hideSubsections': '하위 항목 숨기기',
-	'prayers.landing.title': '일반 기도문',
 	'prayers.landing.tagline': '라틴어 본문을 나란히 실은 기도문.',
 	'prayers.tableOfContents': '차례',
 	'prayers.gloss.versicle':

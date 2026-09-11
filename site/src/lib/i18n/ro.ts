@@ -269,7 +269,6 @@ export const ro: Dictionary = {
 	'index.division': 'Diviziune',
 	'index.showSubsections': 'Arată subsecțiunile',
 	'index.hideSubsections': 'Ascunde subsecțiunile',
-	'prayers.landing.title': 'Rugăciuni',
 	'prayers.landing.tagline': 'Rugăciuni cu textul latin alături.',
 	'prayers.gloss.versicle':
 		'Versetul — rândul pe care cel ce conduce rugăciunea îl spune sau îl cântă singur. Adunarea îi răspunde cu răspunsul care urmează.',

@@ -266,7 +266,6 @@ export const sv: Dictionary = {
 	'index.division': 'Avdelning',
 	'index.showSubsections': 'Visa underavsnitt',
 	'index.hideSubsections': 'Dölj underavsnitt',
-	'prayers.landing.title': 'Böner',
 	'prayers.landing.tagline': 'Böner med den latinska texten bredvid.',
 	'prayers.gloss.versicle':
 		'Versikeln — raden som den som leder bönen läser eller sjunger ensam. Församlingen svarar med svaret som följer.',

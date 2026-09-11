@@ -335,7 +335,6 @@ export const lv: Dictionary = {
 	'index.division': 'Iedaļa',
 	'index.showSubsections': 'Rādīt apakšsadaļas',
 	'index.hideSubsections': 'Slēpt apakšsadaļas',
-	'prayers.landing.title': 'Ikdienas lūgšanas',
 	'prayers.landing.tagline': 'Lūgšanas ar latīņu tekstu blakus.',
 	'prayers.tableOfContents': 'Saturs',
 	'prayers.gloss.versicle':

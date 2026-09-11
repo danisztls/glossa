@@ -343,7 +343,6 @@ export const ml: Dictionary = {
 	'index.division': 'വിഭാഗം',
 	'index.showSubsections': 'ഉപവിഭാഗങ്ങൾ കാണിക്കുക',
 	'index.hideSubsections': 'ഉപവിഭാഗങ്ങൾ മറയ്ക്കുക',
-	'prayers.landing.title': 'സാധാരണ പ്രാർഥനകൾ',
 	'prayers.landing.tagline': 'ലത്തീൻ പാഠത്തോടൊപ്പമുള്ള പ്രാർഥനകൾ.',
 	'prayers.tableOfContents': 'ഉള്ളടക്കം',
 	'prayers.gloss.versicle':

@@ -339,7 +339,6 @@ export const vi: Dictionary = {
 	'index.division': 'Phân mục',
 	'index.showSubsections': 'Hiện các phân mục con',
 	'index.hideSubsections': 'Ẩn các phân mục con',
-	'prayers.landing.title': 'Kinh nguyện thông thường',
 	'prayers.landing.tagline': 'Các kinh nguyện kèm bản văn Latinh bên cạnh.',
 	'prayers.tableOfContents': 'Mục lục',
 	'prayers.gloss.versicle':

@@ -330,7 +330,6 @@ export const sk: Dictionary = {
 	'index.division': 'Oddiel',
 	'index.showSubsections': 'Zobraziť pododdiely',
 	'index.hideSubsections': 'Skryť pododdiely',
-	'prayers.landing.title': 'Bežné modlitby',
 	'prayers.landing.tagline': 'Modlitby s latinským textom vedľa.',
 	'prayers.tableOfContents': 'Obsah',
 	'prayers.gloss.versicle':

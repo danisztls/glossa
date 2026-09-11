@@ -335,7 +335,6 @@ export const nl: Dictionary = {
 	'index.division': 'Onderdeel',
 	'index.showSubsections': 'Subonderdelen tonen',
 	'index.hideSubsections': 'Subonderdelen verbergen',
-	'prayers.landing.title': 'Gebruikelijke gebeden',
 	'prayers.landing.tagline': 'Gebeden met de Latijnse tekst ernaast.',
 	'prayers.tableOfContents': 'Inhoud',
 	'prayers.gloss.versicle':

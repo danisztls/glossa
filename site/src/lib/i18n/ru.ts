@@ -268,7 +268,6 @@ export const ru: Dictionary = {
 	'index.division': 'Раздел',
 	'index.showSubsections': 'Показать подразделы',
 	'index.hideSubsections': 'Скрыть подразделы',
-	'prayers.landing.title': 'Общие молитвы',
 	'prayers.landing.tagline': 'Молитвы с латинским текстом рядом.',
 	'prayers.gloss.versicle':
 		'Версикул — строка, которую предстоятель произносит или поёт один. Собравшиеся отвечают на неё следующим далее ответом.',

@@ -271,7 +271,6 @@ export const hu: Dictionary = {
 	'index.division': 'Rész',
 	'index.showSubsections': 'Alfejezetek megjelenítése',
 	'index.hideSubsections': 'Alfejezetek elrejtése',
-	'prayers.landing.title': 'Imádságok',
 	'prayers.landing.tagline': 'Imádságok a latin szöveggel együtt.',
 	'prayers.gloss.versicle':
 		'A verzikulus — az a sor, amelyet az imádságot vezető egyedül mond vagy énekel. A közösség az utána következő válasszal felel rá.',

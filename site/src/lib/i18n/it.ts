@@ -270,7 +270,6 @@ export const it: Dictionary = {
 	'index.division': 'Divisione',
 	'index.showSubsections': 'Mostra sottosezioni',
 	'index.hideSubsections': 'Nascondi sottosezioni',
-	'prayers.landing.title': 'Preghiere comuni',
 	'prayers.landing.tagline': 'Preghiere con il testo latino a fronte.',
 	'prayers.gloss.versicle':
 		'Il versetto — la riga che chi guida la preghiera dice o canta da solo. L’assemblea gli risponde con la risposta che segue.',

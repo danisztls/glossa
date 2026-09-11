@@ -293,7 +293,6 @@ export const la: Dictionary = {
 	'index.division': 'Divisio',
 	'index.showSubsections': 'Ostende partes minores',
 	'index.hideSubsections': 'Absconde partes minores',
-	'prayers.landing.title': 'Preces communes',
 	'prayers.landing.tagline': 'Preces, adiuncto textu Latino.',
 	'prayers.gloss.versicle':
 		'Versiculus — linea quam is qui precem ducit solus dicit vel canit. Cui congregatio responso sequenti respondet.',

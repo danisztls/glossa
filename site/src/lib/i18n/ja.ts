@@ -269,7 +269,6 @@ export const ja: Dictionary = {
 	'index.division': '区分',
 	'index.showSubsections': '下位区分を表示',
 	'index.hideSubsections': '下位区分を隠す',
-	'prayers.landing.title': '共通の祈り',
 	'prayers.landing.tagline': 'ラテン語の本文をかたわらに置いた祈り。',
 	'prayers.tableOfContents': '目次',
 	'prayers.gloss.versicle':

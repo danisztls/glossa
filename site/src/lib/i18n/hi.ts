@@ -343,7 +343,6 @@ export const hi: Dictionary = {
 	'index.division': 'विभाग',
 	'index.showSubsections': 'उपखंड दिखाएँ',
 	'index.hideSubsections': 'उपखंड छिपाएँ',
-	'prayers.landing.title': 'सामान्य प्रार्थनाएँ',
 	'prayers.landing.tagline': 'लातीनी पाठ के साथ प्रार्थनाएँ।',
 	'prayers.tableOfContents': 'विषय-सूची',
 	'prayers.gloss.versicle':

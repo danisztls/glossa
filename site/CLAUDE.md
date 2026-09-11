@@ -927,7 +927,7 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   width the same grid gets elsewhere. **A lineup between two pages is worth
   less than either page being the right shape**; the step is visible now and
   that is the trade.
-- **`/documenta` is the third shape and needs BOTH classes**
+- **`/documenta` and `/preces` are the third shape and need BOTH classes**
   (`.reading-layout index` around a `.landing-column`): a landing page with an
   aside. Without the `index` the grid places `.content-column` and nothing else,
   so the column is auto-placed into the 21.5rem apparatus lane with the reading

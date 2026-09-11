@@ -342,7 +342,6 @@ export const id: Dictionary = {
 	'index.division': 'Bagian',
 	'index.showSubsections': 'Tampilkan subbagian',
 	'index.hideSubsections': 'Sembunyikan subbagian',
-	'prayers.landing.title': 'Doa-doa Umum',
 	'prayers.landing.tagline': 'Doa dengan teks Latin di sampingnya.',
 	'prayers.tableOfContents': 'Daftar Isi',
 	'prayers.gloss.versicle':

@@ -676,7 +676,7 @@ const HOME_SECTION_KEYS = [
 	'ccc.landing.title',
 	'doctores.landing.title',
 	'nav.magisterium',
-	'prayers.landing.title'
+	'nav.prayers'
 ];
 
 /**

@@ -338,7 +338,6 @@ export const fi: Dictionary = {
 	'index.division': 'Jakso',
 	'index.showSubsections': 'Näytä alaosiot',
 	'index.hideSubsections': 'Piilota alaosiot',
-	'prayers.landing.title': 'Tavalliset rukoukset',
 	'prayers.landing.tagline': 'Rukoukset latinankielisen tekstin rinnalla.',
 	'prayers.tableOfContents': 'Sisällys',
 	'prayers.gloss.versicle':

@@ -332,7 +332,6 @@ export const he: Dictionary = {
 	'index.division': 'חלוקה',
 	'index.showSubsections': 'הצגת תת-החלוקות',
 	'index.hideSubsections': 'הסתרת תת-החלוקות',
-	'prayers.landing.title': 'תפילות נפוצות',
 	'prayers.landing.tagline': 'תפילות עם הטקסט הלטיני לצדן.',
 	'prayers.tableOfContents': 'תוכן העניינים',
 	'prayers.gloss.versicle': 'הפסוק שמוביל התפילה אומר או שר לבדו; הקהל משיב עליו בתשובה שאחריו.',

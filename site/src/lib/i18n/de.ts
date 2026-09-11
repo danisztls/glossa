@@ -271,7 +271,6 @@ export const de: Dictionary = {
 	'index.division': 'Abschnitt',
 	'index.showSubsections': 'Unterabschnitte zeigen',
 	'index.hideSubsections': 'Unterabschnitte verbergen',
-	'prayers.landing.title': 'Gebete',
 	'prayers.landing.tagline': 'Gebete mit dem lateinischen Text daneben.',
 	'prayers.gloss.versicle':
 		'Der Versikel — die Zeile, die der Vorbeter allein spricht oder singt. Die Gemeinde antwortet darauf mit der folgenden Antwort.',

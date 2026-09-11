@@ -341,7 +341,6 @@ export const ig: Dictionary = {
 	'index.division': 'Nkewa',
 	'index.showSubsections': 'Gosi nkewa nta',
 	'index.hideSubsections': 'Zoo nkewa nta',
-	'prayers.landing.title': 'Ekpere Nkịtị',
 	'prayers.landing.tagline': 'Ekpere ya na ederede Latin n’akụkụ ya.',
 	'prayers.tableOfContents': 'Ndepụta ọdịnaya',
 	'prayers.gloss.versicle':

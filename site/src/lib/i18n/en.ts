@@ -912,9 +912,10 @@ export const en: Dictionary = {
 	'index.showSubsections': 'Show subsections',
 	'index.hideSubsections': 'Hide subsections',
 
-	// Common Prayers (docs/corpus-schema.md §Prayers) — routes/preces/**
-	// is the consumer, plus the home page's compact Prayers section.
-	'prayers.landing.title': 'Common Prayers',
+	// The prayers (docs/corpus-schema.md §Prayers) — routes/preces/** is the
+	// consumer. The page is titled `nav.prayers`, the short name every
+	// dictionary already carries: `prayers.landing.title` was "Common Prayers"
+	// in all forty and named the same door twice.
 	'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
 	'prayers.tableOfContents': 'Table of Contents',
 	// What the letter in a dialogue's margin means — `PrayerBlocks` opens these
