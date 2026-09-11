@@ -325,6 +325,7 @@
 	}
 
 	.group h2 {
+		font-family: var(--font-serif);
 		font-size: 1.15rem;
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.4rem;

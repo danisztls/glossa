@@ -172,6 +172,10 @@
 </div>
 
 <style>
+	h1 {
+		font-family: var(--font-serif);
+	}
+
 	/* Wider than `--content-width`, which is a measure for PROSE — a count of
 	   characters per line. This page is a table: its width is set by what its
 	   columns need, and the description above it keeps its own measure. */
@@ -206,7 +210,6 @@
 	}
 
 	.shelf-heading {
-		font-family: var(--font-serif);
 		font-size: 1.1rem;
 		margin: 0 0 0.75rem;
 	}

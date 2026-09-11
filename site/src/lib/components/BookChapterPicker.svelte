@@ -830,7 +830,6 @@
 	 */
 	.book-group h4 {
 		margin: 0 0 0.4rem;
-		font-family: var(--font-serif);
 		font-size: 0.9rem;
 		font-weight: 600;
 		color: var(--color-text-muted);
@@ -1255,6 +1254,7 @@
 	 * thing in the box.
 	 */
 	.chapters-title {
+		font-family: var(--font-serif);
 		margin: 0 0 0.4rem;
 		padding-block-end: 0.3rem;
 		border-block-end: 1px solid var(--color-border);

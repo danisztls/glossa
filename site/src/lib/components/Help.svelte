@@ -617,7 +617,6 @@
 	 * muted — it names a place rather than saying anything.
 	 */
 	.group {
-		font-family: var(--font-serif);
 		font-size: 1rem;
 		font-weight: 600;
 		margin: 0 0 0.6rem;
@@ -688,7 +687,6 @@
 
 	/* The control's own name, in the face every heading on the site takes. */
 	.feature h4 {
-		font-family: var(--font-serif);
 		font-size: 1rem;
 		margin: 0 0 0.15rem;
 	}

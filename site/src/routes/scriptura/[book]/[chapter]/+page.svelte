@@ -1097,7 +1097,6 @@
 		 * direction.
 		 */
 		clear: inline-start;
-		font-family: var(--font-serif);
 		/* em, not rem: scales with .reading-text's own font-size (which
 		   carries --reading-scale, owned by app.css) instead of fighting it. */
 		font-size: 1.1em;

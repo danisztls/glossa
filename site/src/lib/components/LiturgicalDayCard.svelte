@@ -484,6 +484,7 @@
 	}
 	h1,
 	h2 {
+		font-family: var(--font-serif);
 		margin: 0.2rem 0 0.4rem;
 		line-height: 1.2;
 	}

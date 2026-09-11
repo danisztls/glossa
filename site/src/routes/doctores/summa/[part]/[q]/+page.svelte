@@ -635,6 +635,7 @@
 	}
 
 	.question-header h1 {
+		font-family: var(--font-serif);
 		font-size: 1.6rem;
 		line-height: 1.25;
 		margin: 0;

@@ -59,9 +59,13 @@
 	/*
 	 * The interface face (see the Source Sans 3 block above). `body` carries
 	 * it, so the chrome takes it by inheritance and only the surfaces that
-	 * name `--font-serif` stand outside it — which is the whole of the
-	 * distinction: what the work wrote is set in the text face, what we wrote
-	 * about it is set in this one.
+	 * name `--font-serif` stand outside it.
+	 *
+	 * WHICH SURFACES THOSE ARE IS A QUESTION OF REGISTER, not of authorship.
+	 * The corpus's words take the text face wherever they stand; ours take it
+	 * only where they are read at length — the colophon, `/schola`, the error
+	 * pages — and take this one wherever they are scanned or operated.
+	 * `docs/reading.md` argues it and `styles/base.css` carries the mechanism.
 	 *
 	 * Falling back to `--font-serif` rather than to a generic `sans-serif` is
 	 * deliberate, and does two things. A glyph outside the three declared

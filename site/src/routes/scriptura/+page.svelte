@@ -106,7 +106,10 @@
 		margin: 0.15rem 0 2rem;
 	}
 
-	h2 {
+	/* The work's own name, on a surface that is otherwise a door. `h2` above
+	   the list is our word `Books` and takes the interface face with the rest
+	   of the page. */
+	h1 {
 		font-family: var(--font-serif);
 	}
 </style>

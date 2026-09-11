@@ -946,6 +946,13 @@
 	 * in this block reads `--reading-base`: a reader who enlarged the prayer
 	 * did not ask for a larger set of instructions.
 	 */
+	/* The other half of that distinction, said once: the prayer's title stands
+	   above the reading column rather than inside it, so it names the reading
+	   face itself. */
+	h1 {
+		font-family: var(--font-serif);
+	}
+
 	.rosary-lead,
 	.rosary-walkthrough {
 		font-family: var(--font-sans);

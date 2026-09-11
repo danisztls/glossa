@@ -771,7 +771,6 @@
 	}
 
 	h2 {
-		font-family: var(--font-serif);
 		font-size: 1.3rem;
 		font-weight: 600;
 		margin: 0 0 0.75rem;
@@ -852,7 +851,6 @@
 	}
 
 	.shelves dt {
-		font-family: var(--font-serif);
 		font-weight: 600;
 	}
 

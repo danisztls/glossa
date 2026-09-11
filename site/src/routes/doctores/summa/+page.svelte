@@ -192,6 +192,11 @@
 </div>
 
 <style>
+	h1,
+	h2 {
+		font-family: var(--font-serif);
+	}
+
 	.part {
 		margin-top: 2.5rem;
 	}

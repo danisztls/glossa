@@ -511,7 +511,6 @@
 	   for it — and given generous space above so each reads as a break in the
 	   column rather than as a bolded first line of the paragraph beneath it. */
 	.inner-heading {
-		font-family: var(--font-serif);
 		font-size: max(var(--font-size-min), 1.05em);
 		font-weight: 600;
 		margin: 2.25rem 0 1rem;

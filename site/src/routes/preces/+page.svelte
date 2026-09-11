@@ -72,6 +72,13 @@
 </div>
 
 <style>
+	/* The work's name and the source's own section titles — `group.title` is
+	   `structure.json`'s, not a string of ours. */
+	h1,
+	h2 {
+		font-family: var(--font-serif);
+	}
+
 	/* 0.8rem, not the app.css base's 0.75rem — this index page's own outlier. */
 	.copyright-notice {
 		margin: 0 0 1.5rem;

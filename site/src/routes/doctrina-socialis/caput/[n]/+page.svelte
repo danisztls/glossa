@@ -449,7 +449,6 @@
 	   them. Each step down takes a size and the space above it with it, so
 	   the gap itself says which level is opening. */
 	.inner-heading {
-		font-family: var(--font-serif);
 		margin: 2.5rem 0 1rem;
 	}
 

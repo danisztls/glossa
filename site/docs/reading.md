@@ -22,9 +22,21 @@ stepper.** The column is 62.4 characters wide and the grid centres it, so it
 runs 24.6rem to 55.3rem across the range and every press slid the panel about
 25px sideways; five stops on a rail (`FONT_SIZES`) is one click.
 
-**Two faces, split on authorship rather than on chrome-versus-content.** What
-the work wrote is EB Garamond, what we wrote _about_ the work is Source Sans. A
-heading is a title until it says otherwise.
+**Two faces, split on register rather than on authorship.** What the corpus
+wrote is EB Garamond wherever it stands — running text, a work's title, a
+division's name, a prayer group's heading out of `structure.json` — including
+on a chrome surface that is otherwise sans. What we wrote is Garamond only
+where it is read at length, and Source Sans wherever it is scanned or operated:
+authorship alone gave the colophon and `/schola` one answer and a filter's
+heading the same one.
+
+**A heading takes the face of the surface it is on**, which is why `base.css`
+declares no family for `h1`–`h6`. A blanket rule there outranks `.reading-text`,
+so the work's own section heads went on standing in Garamond after a reader
+switched the reading region to the sans face — a heading that cannot follow its
+surface is the one thing a rule per element cannot express. What still names a
+face is the exception: the work's words on a chrome surface, a reading page's
+`h1` or an index row's title.
 
 **And the reader may set the work in the other one.** The split above is the
 default, not a claim that Garamond is legible to everybody — fine hairlines,

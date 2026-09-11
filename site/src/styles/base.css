@@ -218,40 +218,30 @@ body {
 }
 
 /*
- * A HEADING IS A TITLE UNTIL IT SAYS OTHERWISE.
+ * A HEADING TAKES THE FACE OF THE SURFACE IT IS ON, which is why there is no
+ * rule here: headings inherit, and the face is a property of the surface
+ * rather than of the element.
  *
- * `body` carries the interface face, so without this every heading that never
- * named a family would have followed the chrome into the sans — and about
- * fifteen of them never named one, which is why the landing pages, the Summa's
- * article heads and a prayer's mystery names came out set differently from
- * the CCC's and a document's, which did name it. The split was never a rule,
- * only a habit that some files had and others did not.
+ * `body` carries the interface face, so the chrome's headings follow it; a
+ * surface that reads rather than operates declares the text face on its own
+ * container and its headings follow that instead (`.reading-text` in
+ * styles/layout.css, `.colophon`, `/schola`, the error pages). The blanket
+ * `h1-h6 { --font-serif }` this replaces outranked the container, so the
+ * work's own section heads stayed in Garamond when a reader switched the
+ * reading region to the sans face -- a heading that cannot follow its
+ * surface is the one thing this position cannot express.
  *
- * The rule, stated once: a heading names a division of the work, so it takes
- * the text face. What is set in the interface face is the identifier BESIDE
- * the title — the `CHAPTER TWO` above it, the ordinal in front of it, the
- * `ARTICLE 3`, the `CITED IN` — because those are our words for where the
- * reader is, not the work's words for what this is. Each of those names
- * `--font-sans` at its own rule, and a scoped component selector outranks
- * this one, so saying it there is all it takes.
+ * WHAT STILL NAMES A FACE IS THE EXCEPTION: the work's words standing on a
+ * chrome surface. A reading page's own `h1`, an index row's title, a prayer
+ * group's name out of the corpus's structure -- each names `--font-serif` at
+ * its own rule, and a scoped component selector outranks anything here, so
+ * saying it there is all it takes. Our label never does: a picker's
+ * `Old Testament`, a sidebar's `Table of Contents`, the census's `Holdings`
+ * are our words for where the reader is, and they take the face the surface
+ * around them is already in.
  *
- * A heading that is entirely OUR label rather than the work's title — a
- * sidebar's `Table of Contents`, a picker's `Old Testament` — names
- * `--font-sans` too, for the same reason and by the same mechanism.
- *
- * The per-file `font-family: var(--font-serif)` declarations on individual
- * headings predate this rule and are now redundant. They are kept, not
- * cleaned up: they were written as a defence against exactly this change, and
- * a heading that states its face is not wrong, only wordy.
+ * `site/docs/reading.md` states the two clauses this is the mechanism for.
  */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-family: var(--font-serif);
-}
 
 /*
  * THE UNDERLINE IS DEMOTED, NOT DELETED, AND HOVER PROMOTES IT.

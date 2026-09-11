@@ -904,6 +904,25 @@ their place. Two sections, not one list, and the trace goes first.
   canon law and topics sections each drew an empty `h2` from the day they were
   added — a chain that looks exhaustive twice over.
 
+### Type: two faces, and what each may claim
+
+- **The corpus's words take the text face wherever they stand** — running text,
+  a work's title, a division's name, a prayer group's heading out of
+  `structure.json` — including on a chrome surface that is otherwise sans.
+- **Ours take it only where they are read at length.** The colophon, `/schola`
+  and the error pages are set as documents; a label, a count, a filter, a
+  caption and a gloss are operated rather than read, and take the interface
+  face. Having written it is not by itself a claim to either face.
+- **A heading takes the face of the surface it is on**, so `base.css` declares
+  no family for `h1`–`h6`: a surface that reads declares the text face on its
+  own container and its headings follow. The blanket rule this replaced
+  outranked `.reading-text`, so the work's section heads stayed in Garamond
+  when a reader switched the reading region to the sans face.
+- **A heading that names a face is claiming the work's words on a chrome
+  surface** — a reading page's `h1`, an index row's title. Our own label never
+  does: `Old Testament` over a picker and `Holdings` over the census take
+  whatever the surface around them is in. Rationale in `site/docs/reading.md`.
+
 ### Colour: two token families, and what each may claim
 
 - **`--shelf-*` is the literal and `--pigment-*` is derived from it.** The
