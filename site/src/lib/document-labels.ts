@@ -42,7 +42,11 @@ const KIND_KEYS: Record<string, string> = {
 	'cdf-letter': 'document.kind.cdfLetter',
 	'cdf-doctrinal-note': 'document.kind.cdfDoctrinalNote',
 	'cdf-responsum': 'document.kind.cdfResponsum',
-	'cdf-considerations': 'document.kind.cdfConsiderations'
+	'cdf-considerations': 'document.kind.cdfConsiderations',
+	'cdf-decree': 'document.kind.cdfDecree',
+	'cdf-norms': 'document.kind.cdfNorms',
+	'cdf-notification': 'document.kind.cdfNotification',
+	'cdf-communication': 'document.kind.cdfCommunication'
 };
 
 /** Singular label for one document's kind — falls back to the raw
@@ -88,20 +92,23 @@ export function documentAuthorKey(author: string): string {
  * each is a variety of.
  *
  * Same posture as `RENAMED_BODIES` above, for a sharper reason: the doctrinal
- * office alone published under six `document_kind` values, so it held six of
- * the kind facet's thirteen rows for 8% of the corpus — and three of those
- * rows offered ONE document each, which is a facet row that narrows 298
- * titles to one and a worse way of reaching it than its own name. That is the
- * argument `site/docs/finding.md` already makes about the subject
- * vocabulary's 46 singletons, arriving one facet over.
+ * office publishes under more `document_kind` values than any other body
+ * here, so it held six of the kind facet's thirteen rows for 8% of the
+ * corpus — and three of those rows offered ONE document each, which is a
+ * facet row that narrows 298 titles to one and a worse way of reaching it
+ * than its own name. That is the argument `site/docs/finding.md` already
+ * makes about the subject vocabulary's 46 singletons, arriving one facet
+ * over.
  *
  * DECLARATION AND INSTRUCTION ARE THE TWO FORMS THAT PARTITION, so those are
  * what is left: one states what the Church holds, the other directs what is
  * to be done about it, and no other pair here changes what a document is FOR.
- * The rest are communications — a letter to the bishops, a doctrinal note, a
- * consideration offered to legislators — and fold into `cdf-letter`. The
- * `Responsum ad Dubium` folds the other way, because a reply declaring a
- * teaching definitive is a declaration that happens to be one paragraph long.
+ * A decree and a set of norms direct, so they fold into the instruction; a
+ * notification and a `Responsum ad Dubium` declare, so they fold into the
+ * declaration — a reply declaring a teaching definitive is a declaration
+ * that happens to be one paragraph long. The rest are communications — a
+ * letter to the bishops, a doctrinal note, a consideration offered to
+ * legislators, a press release — and fold into `cdf-letter`.
  *
  * THE FOLD IS THE FACET'S AND NOTHING ELSE'S. A row's chip prints
  * `documentKindLabel(manifest.document_kind)`, so a doctrinal note still says
@@ -111,8 +118,12 @@ export function documentAuthorKey(author: string): string {
  */
 const FOLDED_KINDS: Record<string, string> = {
 	'cdf-responsum': 'cdf-declaration',
+	'cdf-notification': 'cdf-declaration',
 	'cdf-doctrinal-note': 'cdf-letter',
-	'cdf-considerations': 'cdf-letter'
+	'cdf-considerations': 'cdf-letter',
+	'cdf-communication': 'cdf-letter',
+	'cdf-decree': 'cdf-instruction',
+	'cdf-norms': 'cdf-instruction'
 };
 
 /** The facet value a document's kind belongs to. Identity for every kind that

@@ -7176,6 +7176,27 @@ _CDF_LINK_RE = re.compile(
 #: measurement before growing this table, and put the number in the commit
 #: message rather than here (CLAUDE.md, Documentation conventions).
 #:
+#: THE SECOND CRITERION IS THE HOLY SEE'S OWN TRANSLATION EFFORT. Citation
+#: measures what this corpus can link, and it is silent about a document
+#: nothing here happens to cite -- the reason `samaritanus-bonus` had to be
+#: argued in by hand. The index answers that question in a currency of its
+#: own: how many languages an office thought a document was worth. A
+#: document published in English and seven more clears a bar that the
+#: office's default publication set (en, it, es, de, fr, pt, pl) does not,
+#: since the eighth language is Latin or a Slavic one and is chosen rather
+#: than routine.
+#:
+#: The two criteria are a union, and each admits what the other misses.
+#: Language count admits Fiducia Supplicans, the Normae de delictis
+#: reservatis and the 1983 declaration on masonic associations, none of
+#: which this corpus cites. It also admits what citation rejected on
+#: purpose: the de Mello and Kung notifications are here at en+8 and en+7,
+#: because a notification about a famous theologian is translated widely
+#: FOR being notorious. That is the criterion working, not failing -- it
+#: measures attention, and attention is a reason to hold a text. What it is
+#: not is a measure of doctrinal weight, so neither criterion may be read
+#: as the other's verdict.
+#:
 #: WHY THE CORPUS SLUG IS NOT THE SOURCE SLUG. In every other family the file
 #: is named after the document's incipit and `document_title` manufactures a
 #: title from it (`rerum-novarum` -> `Rerum Novarum`), with `SLUG_TITLES` for
@@ -7268,6 +7289,173 @@ CDF_DOCUMENTS = {
         "dignitas-infinita", "cdf-declaration", "Dignitas Infinita"),
     ("2025-01-28", "antiqua-et-nova"): (
         "antiqua-et-nova", "cdf-doctrinal-note", "Antiqua et Nova"),
+
+    # --- Admitted by the translation criterion: English and seven or more
+    # other readable editions. Kept in date order, which is also the order
+    # they answer each other in -- the 1981 declaration on Catholics who
+    # join a masonic association is the one the 1983 declaration was asked
+    # to restate, and 2024's norms on supernatural phenomena replace 1978's.
+    #
+    # The corpus slug is the incipit where the index prints one and an
+    # English description where it does not, the rule the table above
+    # already follows. Nine of these documents are the office talking about
+    # its own work rather than doing it -- a summary, a preface, a press
+    # release -- and `cdf-communication` is what says so.
+    ("1966-07-24", "epistula"): (
+        "cum-oecumenicum-concilium", "cdf-letter", "Cum Oecumenicum Concilium"),
+    ("1966-11-15", "decretum"): (
+        "canons-1399-and-2318", "cdf-decree",
+        "Decree on Canons 1399 and 2318 No Longer in Force"),
+    ("1967-02-23", "instructio"): (
+        "litteris-apostolicis", "cdf-instruction", "Litteris Apostolicis"),
+    ("1971-01-13", "dispensatione-oblig"): (
+        "petitions-for-reduction-to-the-lay-state", "cdf-norms",
+        "Norms for Preparing Petitions for Reduction to the Lay State"),
+    ("1971-01-13", "de-reductione-stat-laicalem"): (
+        "letter-on-reduction-to-the-lay-state", "cdf-letter",
+        "Letter on the Reduction to the Lay State"),
+    ("1971-01-15", "ratio-agendi"): (
+        "nova-agendi-ratio", "cdf-norms", "Nova Agendi Ratio"),
+    ("1972-02-21", "mysterium-filii-dei"): (
+        "mysterium-filii-dei", "cdf-declaration", "Mysterium Filii Dei"),
+    ("1972-05-02", "de-fragmentis-eucharisticis"): (
+        "cum-de-fragmentis", "cdf-declaration", "Cum de Fragmentis"),
+    ("1972-06-16", "sacramentum-paenitentiae"): (
+        "sacramentum-paenitentiae", "cdf-norms", "Sacramentum Paenitentiae"),
+    ("1973-03-23", "tutela-sacr-penitenza"): (
+        "sacra-congregatio", "cdf-declaration", "Sacra Congregatio"),
+    ("1973-04-11", "indissolubilitate-matrimonii"): (
+        "indissolubility-of-marriage", "cdf-letter",
+        "Letter on the Indissolubility of Marriage"),
+    ("1973-05-29", "sepolt-eccl-matr-irreg"): (
+        "burial-in-irregular-marriages", "cdf-letter",
+        ("Letter on the Ecclesiastical Burial of the Faithful in Irregular "
+         "Matrimonial Situations")),
+    ("1973-09-20", "de-sepultura-ecclesiastica"): (
+        "burial-of-manifest-sinners", "cdf-decree",
+        "Decree on the Ecclesiastical Burial of Manifest Sinners"),
+    ("1974-01-25", "instauratio-liturgica"): (
+        "instauratio-liturgica", "cdf-declaration", "Instauratio Liturgica"),
+    ("1975-02-15", "libri-kung"): (
+        "two-works-of-hans-kung", "cdf-declaration",
+        "Declaration on Two Works of Professor Hans Küng"),
+    ("1975-03-19", "ecclesiae-pastorum"): (
+        "ecclesiae-pastorum", "cdf-decree", "Ecclesiae Pastorum"),
+    ("1976-06-11", "aliis-christianis-defunctis"): (
+        "accidit-in-diversis", "cdf-decree", "Accidit in Diversis"),
+    ("1976-09-17", "illegitimas-ordinationes"): (
+        "unlawful-ordinations", "cdf-decree",
+        "Decree on Certain Unlawful Priestly and Episcopal Ordinations"),
+    ("1977-05-13", "impotentia"): (
+        "impotence-and-nullity-of-marriage", "cdf-decree",
+        "Decree on Cases in Which Impotence Renders Marriage Null"),
+    ("1978-02-25", "norme-apparizioni"): (
+        "norms-on-presumed-apparitions", "cdf-norms",
+        ("Norms on the Manner of Proceeding in Discerning Presumed "
+         "Apparitions and Revelations")),
+    ("1979-12-15", "christi-ecclesia"): (
+        "christi-ecclesia", "cdf-declaration", "Christi Ecclesia"),
+    ("1980-06-25", "dubia-ecclesiae-pastorum"): (
+        "dubia-on-ecclesiae-pastorum", "cdf-responsum",
+        "Responses to Doubts on the Interpretation of Ecclesiae Pastorum"),
+    ("1980-10-14", "dispensatione-a-coelibatu"): (
+        "dispensation-from-priestly-celibacy", "cdf-letter",
+        "Letter on the Dispensation of Priests from Celibacy"),
+    ("1981-02-17", "massoni"): (
+        "catholics-who-join-masonic-associations", "cdf-declaration",
+        "Declaration on the Status of Catholics Who Become Freemasons"),
+    ("1982-10-29", "per-intinctionem"): (
+        "communion-by-intinction", "cdf-responsum",
+        ("Responses on Communion by Intinction and Under the Species of Wine "
+         "Alone")),
+    ("1983-03-12", "poenae-canonicae"): (
+        "penalties-for-illicit-ordinations", "cdf-notification",
+        ("Notification on the Canonical Penalties Incurred by Illicit "
+         "Episcopal Ordinations")),
+    ("1983-11-26", "declaration-masonic"): (
+        "declaration-on-masonic-associations", "cdf-declaration",
+        "Declaration on Masonic Associations"),
+    ("1985-09-24", "exorcism"): (
+        "inde-ab-aliquot-annis", "cdf-letter", "Inde ab Aliquot Annis"),
+    ("1988-09-23", "scomunica-confessioni"): (
+        "divulging-confessions", "cdf-decree",
+        "Decree on the Excommunication of Those Who Divulge Confessions"),
+    ("1992-06-06", "opus-angelorum"): (
+        "opus-angelorum", "cdf-decree",
+        "Decree on the Doctrine and Customs of the Opus Angelorum"),
+    ("1992-11-20", "bapt-new-church"): (
+        "baptism-in-the-new-church", "cdf-notification",
+        "Notification on the Validity of Baptism Conferred in The New Church"),
+    ("1994-09-14", "rec-holy-comm-by-divorced"): (
+        "annus-internationalis-familiae", "cdf-letter",
+        "Annus Internationalis Familiae"),
+    ("1998-06-24", "demello"): (
+        "writings-of-anthony-de-mello", "cdf-notification",
+        "Notification on the Writings of Father Anthony de Mello"),
+    ("2000-06-26", "message-fatima"): (
+        "the-message-of-fatima", "cdf-communication", "The Message of Fatima"),
+    ("2000-11-23", "istruzione"): (
+        "ardens-felicitatis", "cdf-instruction", "Ardens Felicitatis"),
+    ("2001-06-05", "battesimo-mormoni"): (
+        "baptism-conferred-by-the-mormons", "cdf-responsum",
+        ("Response to a Dubium on the Validity of Baptism Conferred by the "
+         "Church of Jesus Christ of Latter-day Saints")),
+    ("2007-06-29", "responsa-quaestiones"): (
+        "responsa-on-the-doctrine-of-the-church", "cdf-responsum",
+        ("Responses to Some Questions Regarding Certain Aspects of the "
+         "Doctrine on the Church")),
+    ("2007-08-01", "risposte-usa"): (
+        "artificial-nutrition-and-hydration", "cdf-responsum",
+        ("Responses to Certain Questions Concerning Artificial Nutrition and "
+         "Hydration")),
+    ("2008-02-01", "validity-baptism"): (
+        "validity-of-baptismal-formulas", "cdf-responsum",
+        "Responses to Questions Proposed on the Validity of Baptism"),
+    ("2008-12-12", "sintesi-dignitas-personae"): (
+        "summary-of-dignitas-personae", "cdf-communication",
+        "Summary of the Instruction Dignitas Personae"),
+    ("2009-07-11", "aborto-procurato"): (
+        "clarification-on-procured-abortion", "cdf-communication",
+        "Clarification on Procured Abortion"),
+    ("2009-11-04", "norme-anglicanorum-coetibus"): (
+        "complementary-norms-anglicanorum-coetibus", "cdf-norms",
+        ("Complementary Norms for the Apostolic Constitution Anglicanorum "
+         "Coetibus")),
+    ("2010-12-21", "luce-del-mondo"): (
+        "banalization-of-sexuality", "cdf-doctrinal-note",
+        "Note on the Banalization of Sexuality"),
+    ("2011-05-03", "abuso-minori"): (
+        "guidelines-on-sexual-abuse-of-minors", "cdf-letter",
+        ("Circular Letter to Assist Episcopal Conferences in Developing "
+         "Guidelines for Dealing with Cases of Sexual Abuse of Minors")),
+    ("2011-12-14", "prefazione-levada"): (
+        "preface-to-the-norms-on-presumed-apparitions", "cdf-communication",
+        "Preface to the Norms on Presumed Apparitions and Revelations"),
+    ("2018-08-01", "catechismo-penadimorte"): (
+        "revision-of-catechism-2267", "cdf-letter",
+        ("Letter to the Bishops on the New Revision of Number 2267 of the "
+         "Catechism of the Catholic Church on the Death Penalty")),
+    ("2021-10-11", "norme-delittiriservati-cfaith"): (
+        "normae-de-delictis-reservatis", "cdf-norms",
+        ("Norms on Delicts Reserved to the Congregation for the Doctrine of "
+         "the Faith")),
+    ("2023-12-18", "fiducia-supplicans"): (
+        "fiducia-supplicans", "cdf-declaration", "Fiducia Supplicans"),
+    ("2024-02-02", "gestis-verbisque"): (
+        "gestis-verbisque", "cdf-doctrinal-note", "Gestis Verbisque"),
+    ("2024-05-17", "norme-fenomeni-soprannaturali"): (
+        "norms-on-alleged-supernatural-phenomena", "cdf-norms",
+        ("Norms for Proceeding in the Discernment of Alleged Supernatural "
+         "Phenomena")),
+    ("2024-07-11", "comunicato-apparizioni-amsterdam"): (
+        "alleged-apparitions-in-amsterdam", "cdf-communication",
+        "Press Release about Alleged Apparitions in Amsterdam"),
+    ("2024-09-19", "nota-esperienza-medjugorje"): (
+        "spiritual-experience-of-medjugorje", "cdf-doctrinal-note",
+        ("The Queen of Peace: Note on the Spiritual Experience Connected "
+         "with Medjugorje")),
+    ("2025-11-04", "mater-populi-fidelis"): (
+        "mater-populi-fidelis", "cdf-doctrinal-note", "Mater Populi Fidelis"),
 }  # fmt: skip
 
 #: The languages this family offers that this parser can read, derived rather
@@ -11371,9 +11559,10 @@ def report_cdf_census(fetcher: Fetcher, unselected: bool) -> int:
     rest = {k: v for k, v in offered.items() if k not in CDF_DOCUMENTS}
     print(f"\n=== not held: {len(rest)} of {len(offered)} documents on the index ===")
     print(
-        "  Not a backlog. The corpus was measured for what it cites and these\n"
-        "  are what it does not (see CDF_DOCUMENTS); re-run that measurement,\n"
-        "  not this list, before adding one."
+        "  Not a backlog. These are what neither criterion admitted: the\n"
+        "  corpus does not cite them, and the Holy See did not translate them\n"
+        "  into English and seven more (see CDF_DOCUMENTS). Re-run a\n"
+        "  measurement, not this list, before adding one."
     )
     if not unselected:
         print("  --unselected lists them.")

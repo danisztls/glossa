@@ -310,6 +310,10 @@ export type DocumentKind =
 	| 'cdf-doctrinal-note'
 	| 'cdf-responsum'
 	| 'cdf-considerations'
+	| 'cdf-decree'
+	| 'cdf-norms'
+	| 'cdf-notification'
+	| 'cdf-communication'
 	// The schema (docs/corpus-schema.md §Documents) deliberately leaves this
 	// open-ended ("…") rather than a closed enum -- a future family this
 	// union hasn't been extended for yet should still type-check as a valid
