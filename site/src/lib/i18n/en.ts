@@ -1050,21 +1050,24 @@ export const en: Dictionary = {
 	'bookmark.unavailable': 'Not in the edition you are reading',
 
 	// Documents (encyclicals, conciliar constitutions/decrees/declarations,
-	// docs/corpus-schema.md §Documents) — routes/documenta/** is the
-	// consumer, plus the home page's Magisterium group.
-	// It listed four genres and then restated the card's own title. The list
-	// was also short of the shelf: apostolic exhortations and the doctrinal
-	// documents of the CDF are as permanent here as the encyclicals, and a
-	// list has to be edited every time a genre is ingested where a category
-	// does not.
+	// docs/corpus-schema.md §Documents) — routes/documenta/** is the consumer,
+	// plus the catalogue card on `/` and `/bibliotheca`.
 	//
-	// What replaced it is the distinction `shelves.ts` itself draws, and the
-	// one that separates this card from the Catechism's: a dated act cited
-	// singly, against a synthesis read through. `schola.what.magisterium`
-	// says the same thing at guide length and keeps the genre list, which is
-	// the right register there and not here.
-	'document.library.tagline':
-		'What popes and councils have written, each addressed to a moment and a question.',
+	// NO GENRE LIST HERE. It listed four and then restated the card's own
+	// title, and the four were short of the shelf: apostolic exhortations and
+	// the doctrinal documents of the CDF are as permanent as the encyclicals,
+	// so a list has to be edited every time a genre is ingested where a
+	// category does not. `schola.what.magisterium` keeps the list, which is
+	// the right register in a guide and not on a card.
+	//
+	// What it says instead is the distinction `shelves.ts` itself draws, and
+	// the one that separates this card from the Catechism's: a dated act cited
+	// singly, against a synthesis read through. "As it was issued" is the
+	// clause carrying it — these are the acts themselves and not an account of
+	// them — and "one at a time" is how they are read. It replaced "each
+	// addressed to a moment and a question", which named an abstraction where
+	// a card has to say what kind of thing is behind the door.
+	'document.library.tagline': 'The teaching as it was issued, one dated document at a time.',
 	// The `/documenta` filter panel (that route's `+page.svelte`). It replaced
 	// the pontificate table of contents on 2026-08-31: 272 documents is past
 	// what a list of anchors helps with, and the three facets a reader
