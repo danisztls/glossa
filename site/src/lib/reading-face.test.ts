@@ -86,22 +86,26 @@ const FACES = {
  * WHAT THE FACE ADJUSTMENT IS ALLOWED TO BE, which is a range and not a value.
  *
  * Two frequency-weighted measurements over the corpus bracket it, both taken
- * off the font files with fontTools and written here because a test may not
- * open a woff2 or walk the corpus: matching the faces' mean ink HEIGHT gives
- * 0.895, matching their mean ink AREA gives 0.973 as a linear scale. They
- * disagree because Source Sans 3 is set looser and lighter than it is tall,
- * and the value in the stylesheet is calibrated between them against the
- * rendered page.
+ * off the font files with fontTools at wght 400 and written here because a
+ * test may not open a woff2 or walk the corpus: against EB Garamond, matching
+ * Atkinson's mean ink HEIGHT gives 0.8946 and matching its mean ink AREA gives
+ * 0.9295 as a linear scale.
+ *
+ * BOTH ARE DIVIDED BY THE FACE'S 93% `size-adjust` HERE, because that
+ * descriptor has already spent part of the same adjustment and this token is
+ * only what is left for the font-size to carry. Raw against rendered is the
+ * one way to get these numbers wrong by a whole face.
  *
  * So this cannot assert a number — it asserts that the number stays inside
  * what was measured. Outside the bracket is not a judgement call: 1.0 is no
- * adjustment at all and the sans reads visibly large, and 0.823 is the
- * x-height match, which is the standard advice for pairing faces and is wrong
- * for these two — EB Garamond's small x-height comes with long extenders, so
- * matching there leaves its caps and ascenders 20% taller and the SERIF
- * reading large. Both of those shipped, one commit each, and were reported.
+ * adjustment at all and the sans reads visibly large, and the x-height match
+ * is the standard advice for pairing faces and is wrong for these two — EB
+ * Garamond's small x-height comes with long extenders, so matching there
+ * leaves its caps and ascenders 20% taller and the SERIF reading large. Both
+ * of those shipped, one commit each, and were reported.
  */
-const BRACKET = { byInkHeight: 0.895, byInkArea: 0.973 };
+const SIZE_ADJUST = 0.93;
+const BRACKET = { byInkHeight: 0.8946 / SIZE_ADJUST, byInkArea: 0.9295 / SIZE_ADJUST };
 
 /** The three initials, each with the `line-height` that turns its font-size
  *  into a float box and the budget in body lines that box may not exceed.

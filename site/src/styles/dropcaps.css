@@ -39,7 +39,7 @@
 	 * because `--text-cap-height` is the reader's choice of text face rather
 	 * than a constant of the site (`tokens.css`). Nothing else changed: the
 	 * expression returns 4.981 under EB Garamond, which is the number that
-	 * stood here, and 4.994 under Source Sans 3.
+	 * stood here, and 4.945 under Atkinson Hyperlegible Next.
 	 */
 	--drop-cap-scale: calc((2 * 1.65 + var(--text-cap-height)) / 0.793);
 	float: inline-start;
@@ -77,11 +77,12 @@
 	 * box.
 	 *
 	 * THE CLEARANCE IS WHAT A SECOND TEXT FACE HAS TO BE CHECKED AGAINST, and
-	 * `line-height` is the half of the pair that is not derived. Source Sans 3
-	 * has the taller capital (0.660), so its cap is bigger and its box tighter:
-	 * 4.994 x 0.98 = 4.894em against the same 4.950em, 0.056em of clearance
-	 * where the serif leaves 0.070em. Still clear, so the 0.98 stands for both.
-	 * A third face wants this line recomputed before it ships.
+	 * `line-height` is the half of the pair that is not derived. Atkinson's
+	 * capital is the SHORTER of the two as rendered (0.621 against 0.650, its
+	 * `size-adjust` having taken 7% off a raw 0.668), so its cap is smaller and
+	 * its box slacker: 4.945 x 0.98 = 4.846em against the same 4.950em, 0.104em
+	 * of clearance where the serif leaves 0.070em. Clear on both, so the 0.98
+	 * stands. A third face wants this line recomputed before it ships.
 	 *
 	 * All of it depends on `.reading-text`'s 1.65 line-height, which is still
 	 * written into the expression above. Change it and recompute all three
@@ -151,8 +152,8 @@
  * constants — `.reading-text`'s 1.65 line-height and the faces' real vertical
  * metrics. The text face's three are now tokens, because the reader chooses
  * it (`--text-ascent` / `--text-descent` / `--text-cap-height` in
- * `tokens.css`: EB Garamond 1.007 / 0.298 / 0.650, Source Sans 3
- * 1.024 / 0.400 / 0.660); Pirata One's 1.006 / 0.279 / 0.793 are the display
+ * `tokens.css`: EB Garamond 1.007 / 0.298 / 0.650, Atkinson Hyperlegible
+ * Next 0.915 / 0.294 / 0.621); Pirata One's 1.006 / 0.279 / 0.793 are the display
  * face's and stay literals here. Recompute together if the leading moves.
  *
  * Sizing. "One line" here means the line BOX, top to baseline — a cap height
@@ -164,9 +165,10 @@
  * is 1.8x — a versal, which is what one line can carry, and not the 4.98em
  * ornament three lines can.
  *
- * THIS IS THE ONE OF THE THREE THAT MOVES ENOUGH TO SEE. Source Sans 3 sits
- * lower in its line box (0.400 descent against 0.298), so its first baseline
- * is higher — 1.137em — and the versal comes out at 1.434em, 3.6% smaller.
+ * THIS IS THE ONE OF THE THREE THAT MOVES ENOUGH TO SEE. Atkinson is the
+ * shallower face overall (1.209em of ascent and descent against 1.305), so its
+ * first baseline sits higher — 1.136em — and the versal comes out at 1.432em,
+ * 3.7% smaller.
  * The cap height it has to match is the reader's own text, so following the
  * face is the whole point rather than a side effect.
  *
@@ -275,8 +277,8 @@
  * = 3.219em, keeping the same ~0.08em (about 1.7px at the default reading
  * size) of clearance the three-line rule leaves — enough that the box cannot
  * spill into the third line, which is the failure mode the block above
- * documents. Source Sans 3 comes out at 2.913 and a 3.233em box, 0.067em of
- * clearance: tighter, still clear, and checked the same way.
+ * documents. Atkinson comes out at 2.864 and a 3.179em box, 0.121em of
+ * clearance: slacker, and checked the same way.
  *
  * Everything else — colour, family, the padding that keeps the glyph off the
  * text — inherits from the rule above unchanged.

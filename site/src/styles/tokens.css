@@ -57,9 +57,10 @@
 	   `unicode-range` is scoped to what those two need. */
 	--font-display: 'Pirata One Subset', var(--font-serif);
 	/*
-	 * The interface face (see the Source Sans 3 block above). `body` carries
-	 * it, so the chrome takes it by inheritance and only the surfaces that
-	 * name `--font-serif` stand outside it.
+	 * The interface face, which is two families (see the block above):
+	 * Atkinson Hyperlegible Next for Latin, Inter for the Cyrillic it does not
+	 * carry. `body` carries the chain, so the chrome takes it by inheritance
+	 * and only the surfaces that name `--font-serif` stand outside it.
 	 *
 	 * WHICH SURFACES THOSE ARE IS A QUESTION OF REGISTER, not of authorship.
 	 * The corpus's words take the text face wherever they stand; ours take it
@@ -74,7 +75,7 @@
 	 * chrome renders exactly as it did before this face was added, rather
 	 * than in a face nobody chose.
 	 */
-	--font-sans: 'Source Sans 3 Variable', var(--font-serif);
+	--font-sans: 'Atkinson Hyperlegible Next Variable', 'Inter Variable', var(--font-serif);
 	/* Compact metadata may be smaller than body text, but never below 13.5px
 	   at the site's 18px root size. Use this in any relative reduction so a
 	   nested label cannot become illegibly small. */
@@ -138,7 +139,7 @@
 	 * WHAT MAKES TWO FACES THE SAME SIZE, WHICH IS NEITHER THE SAME FONT-SIZE
 	 * NOR THE SAME X-HEIGHT.
 	 *
-	 * Set at one font-size, Source Sans 3 reads larger than EB Garamond. The
+	 * Set at one font-size, the interface face reads larger than EB Garamond. The
 	 * obvious normaliser is x-height — 0.400em against 0.486em — and it is
 	 * the wrong one HERE, which is worth stating because it is the standard
 	 * advice for pairing faces. EB Garamond is an old-style: a small x-height
@@ -771,27 +772,36 @@
  * type and leave the measure set for the other face.
  *
  * THE ADVANCE IS MEASURED, NOT SCALED FROM THE OTHER ONE. Frequency-weighted
- * mean advance of Source Sans 3 wght 400 over the same corpus text the
- * serif's number was taken over: 0.4121em, per language between 0.3980 (lv)
- * and 0.4404 (id). The method was checked by re-running it on EB Garamond,
- * which returned 0.3771 against the 0.3787 committed above — the corpus has
- * grown from 65.5M characters to 95.2M since that measurement, and 0.4% is
- * what that growth moved it by, so the serif's number is left alone.
+ * mean advance over the same corpus text the serif's number was taken over,
+ * at wght 400: Atkinson's raw advance is 0.4382em. The method was checked by
+ * re-running it on EB Garamond, which returned 0.3770 against the 0.3787
+ * committed above — 0.4%, which is what the corpus's growth has moved it by
+ * since, so the serif's number is left alone.
  *
- * THE COLUMN COMES OUT A SHADE WIDER. The face is 9.3% wider per character
- * and set 7% smaller to match apparent size, so a line of 62.4 characters is
- * 31.1rem against the serif's 30.7.
+ * A VARIABLE FONT'S DEFAULT INSTANCE IS NOT ALWAYS 400, and that is the trap
+ * in re-running any of this. Source Sans 3's default master was wght 200, so
+ * measuring its file as loaded returned an advance 5% narrow; EB Garamond's
+ * default is 400 and Atkinson's is 400, which is why only one of the three
+ * ever needed instantiating. Instantiate before measuring, or check `fvar`.
  *
- * AND IT IS THE FACE THAT NOW GRAZES THE 56rem CEILING: 55.96rem at the top
- * stop, 1.8, against the serif's 55.3. Still under, so the measure holds at
- * 62.4 characters across the whole range — but this is the pair of numbers to
- * recheck if `--face-size-adjust` is ever raised, if that stop is, or if a
- * third face arrives. `reading-face.test.ts` walks every stop of both faces
- * against the 55-65 band and is what would catch it.
+ * EVERY NUMBER IN THE BLOCK BELOW IS AS THE FACE RENDERS, NOT AS THE FILE
+ * DRAWS. `fonts.css` declares Atkinson with `size-adjust: 93%`, which scales
+ * the glyphs and their advances inside an unchanged em, so the rendered
+ * advance is 0.4382 × 0.93 = 0.4075 and the `hhea` metrics are scaled the
+ * same way. The measure is computed from the rendered advance, so a raw one
+ * here would size the column for type the page is not setting.
  *
- * The metrics are this face's `hhea`, the same table the defaults came from.
- * `styles/dropcaps.css` derives the initial's three sizes from them, so the
- * cap follows the face without a second set of constants.
+ * THE COLUMN COMES OUT WIDER, AND NOW MEETS THE CEILING. A line of 62.4
+ * characters is 32.4rem against the serif's 30.7 at the default stop, and at
+ * the top stop (1.8) it wants 58.3rem and is clamped to 56 — so the sans holds
+ * 59.9 characters there rather than 62.4. Inside the 55-65 band, which is what
+ * the band is for, and the first stop on this site where the clamp actually
+ * bites. Recheck it if `--face-size-adjust` is raised, if that stop is, or if
+ * a third face arrives; `reading-face.test.ts` walks every stop of both faces
+ * and is what would catch it.
+ *
+ * `styles/dropcaps.css` derives the initial's three sizes from the metrics
+ * below, so the cap follows the face without a second set of constants.
  *
  * NOT `--font-serif`. That token is read by chrome as well as by the reading
  * text, and `styles/direction.css` overrides it per script — the Han reading
@@ -810,14 +820,21 @@
  * at metrics for faces we do not ship.
  */
 :root[data-face='sans'] {
-	--text-ascent: 1.024;
-	--text-descent: 0.4;
-	--text-cap-height: 0.66;
-	--prose-char-advance: 0.4121;
-	/* Between the two measurements `--face-size-adjust` above brackets it
-	   with, and read against the page: the x-heights put it at 0.823 and the
-	   serif read large, the ink heights at 0.895 and the sans read small. */
-	--face-size-adjust: 0.93;
+	/* `hhea` 0.984 / 0.316 / 0.668, each × the face's 93% `size-adjust`. */
+	--text-ascent: 0.915;
+	--text-descent: 0.294;
+	--text-cap-height: 0.621;
+	--prose-char-advance: 0.4075;
+	/*
+	 * The geometric mean of the two measurements above, 0.9119, divided by the
+	 * 93% the `size-adjust` descriptor has already spent — this token is only
+	 * the part of the adjustment left for the font-size to carry. The two
+	 * brackets are much tighter for this face than for the one it replaces
+	 * (0.8946 by ink height against 0.9295 by ink area, where Source Sans 3
+	 * spread 0.895 to 0.973), because Atkinson is drawn nearly as heavy as it
+	 * is tall and Garamond is not.
+	 */
+	--face-size-adjust: 0.98;
 }
 
 /*

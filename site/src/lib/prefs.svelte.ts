@@ -140,8 +140,9 @@ export const fontScale = new FontScaleStore();
  * WHICH FACE THE READING TEXT IS SET IN.
  *
  * `serif` is EB Garamond, the text face this site is designed in and the
- * default; `sans` is Source Sans 3, already downloaded on every visit for the
- * chrome. The reason for offering the second is legibility rather than taste
+ * default; `sans` is Atkinson Hyperlegible Next, already downloaded on every
+ * visit for the chrome — and drawn for this exact reason, by the Braille
+ * Institute. The reason for offering the second is legibility rather than taste
  * — see the `:root[data-face='sans']` block in `styles/tokens.css`, which
  * carries the argument and the metrics the choice moves.
  *

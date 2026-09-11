@@ -3445,9 +3445,10 @@ footer and this sentence has to grow.
 - **The imprint's lines are one chrome.** Motto and disclaimer, one column,
   `.site-footer p` in one rule, spacing from `line-height` so the even leading
   is one number. One FACE across both, and the motto is set as the device: small
-  caps, tracking, a tenth over the disclaimer's size, and `font-weight: 900`,
-  which is the top of Source Sans 3's declared `200 900` axis and so an
-  interpolation rather than a synthesised bold. Both the step and the leading
+  caps, tracking, a tenth over the disclaimer's size, and `font-weight: 800`,
+  which is the top of the interface face's declared axis and so an
+  interpolation rather than a synthesised bold — a weight past the top of a
+  variable axis is clamped rather than drawn, so this number follows the face. Both the step and the leading
   are custom properties because the mark's size is computed from them.
 - **Reach for the global rule before writing a footer-local one.** The imprint
   overrode `a` back to `--color-text-muted` with no underline, which left the

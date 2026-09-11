@@ -829,8 +829,10 @@ describe('the font partition', () => {
 	it('does not mistake latin-ext for latin', () => {
 		expect(isDeferredFont('/fonts/eb-garamond-latin-wght-normal.woff2')).toBe(false);
 		expect(isDeferredFont('/fonts/eb-garamond-latin-ext-wght-normal.woff2')).toBe(true);
-		expect(isDeferredFont('/fonts/source-sans-3-latin-wght-italic.woff2')).toBe(false);
-		expect(isDeferredFont('/fonts/source-sans-3-latin-ext-wght-italic.woff2')).toBe(true);
+		expect(isDeferredFont('/fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2')).toBe(false);
+		expect(isDeferredFont('/fonts/atkinson-hyperlegible-next-latin-ext-wght-italic.woff2')).toBe(
+			true
+		);
 	});
 
 	it('leaves the two display faces alone but defers the Cyrillic dropcap', () => {

@@ -1006,14 +1006,16 @@
 		line-height: var(--imprint-leading);
 	}
 
-	/* 900 is the top of Source Sans 3's declared `200 900` axis, so this is an
-	   interpolation rather than a synthesised bold. Small caps are synthesised
+	/* 800 is the top of the interface face's declared `200 800` axis, so this is
+	   an interpolation rather than a synthesised bold. It was 900 against Source
+	   Sans 3's wider axis; a weight past the top of a variable axis is clamped,
+	   not drawn, so the number has to follow the face. Small caps are synthesised
 	   where the subset dropped `smcp`, which is why it is not `all-small-caps`;
 	   the tracking is what makes capitals readable at this size. */
 	.motto {
 		font-size: calc(var(--motto-step) * 1em);
 		font-variant-caps: small-caps;
-		font-weight: 900;
+		font-weight: 800;
 		letter-spacing: 0.06em;
 		color: var(--color-text);
 	}
