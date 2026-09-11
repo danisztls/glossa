@@ -135,16 +135,17 @@
 	 * to give, and taking 15% of a narrow page is dead margin beside a grid
 	 * that is already wrapping.
 	 *
-	 * AND 85% OF 69.5rem IS 59.1rem, WHICH STILL HOLDS THREE COLUMNS. The
+	 * AND 90% OF 69.5rem IS 62.6rem, WHICH STILL HOLDS THREE COLUMNS. The
 	 * picker is `columns: 18rem auto` with a 1.75rem gap, so three need
-	 * 3 x 18 + 2 x 1.75 = 57.5rem. The cap clears that by 1.6rem. A lower
-	 * breakpoint would not: at a 60rem viewport 85% leaves 48.9rem and the
-	 * grid drops to two columns, which is the regression this number is
-	 * chosen to stay clear of.
+	 * 3 x 18 + 2 x 1.75 = 57.5rem. The cap clears that by 5.1rem — the slack
+	 * that matters, since the column count is what a cap here can silently
+	 * cost. A lower breakpoint would spend it: at a 60rem viewport 90% leaves
+	 * 51.8rem and the grid drops to two columns, which is the regression this
+	 * pair of numbers is chosen to stay clear of.
 	 */
 	@media (min-width: 72rem) {
 		.landing-column {
-			--picker-width: 85%;
+			--picker-width: 90%;
 		}
 	}
 
