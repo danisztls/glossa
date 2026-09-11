@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RouteManifest } from './lib/route-manifest';
+import { isPrerenderedPath, type RouteManifest } from './lib/route-manifest';
 
 /**
  * `HTMLRewriter` is a Cloudflare runtime global with no Node equivalent, and
@@ -58,21 +58,18 @@ const SHELL =
 const PRERENDERED_PAGE =
 	'<!doctype html><html lang="en"><head><title>Glossa Catholica</title></head><body><h1>Glossa Catholica</h1></body></html>';
 
-/** The addresses the build writes a file for — `isPrerenderedPath`'s answer,
- *  spelled out here so the stub and the worker cannot drift silently. */
-const PRERENDERED = new Set([
-	'/',
-	'/bibliotheca',
-	'/scriptura',
-	'/catechismus',
-	'/documenta',
-	'/preces',
-	'/schola',
-	'/pt',
-	'/ar/catechismus',
-	'/pt/preces',
-	'/es/scriptura'
-]);
+/**
+ * Which addresses the stub has a file for: `isPrerenderedPath`'s own answer.
+ *
+ * IT WAS A HAND-WRITTEN LIST FOR ONE AFTERNOON, on the reasoning that a stub
+ * restating what it stands in for cannot catch a change to it. The list was
+ * wrong within the hour — four chrome paths joined the prerendered set and two
+ * tests failed asking the stub for files it had never heard of, which is a
+ * fact about the stub and reads as a fact about the worker. **A stub stands in
+ * for the PLATFORM, never for the decision**, and what the build writes a file
+ * for is this project's decision.
+ */
+const PRERENDERED = { has: isPrerenderedPath };
 
 /**
  * Stands in for the asset binding: it holds the route manifest, the shell at
@@ -165,10 +162,6 @@ describe('navigation', () => {
 			'/bibliotheca',
 			'/calendarium',
 			'/ius-canonicum',
-			'/catechismus/compendium',
-			// The learning portal, on the same terms: in `STATIC_PATHS` only,
-			// so its bare address must answer 200 while no prefixed form of it
-			// exists yet.
 			'/schola',
 			'/scriptura/genesis/1',
 			'/scriptura/genesis/0',
@@ -275,6 +268,33 @@ describe('navigation', () => {
 	 * besides the bookmark migration. Both run before the grammar, so
 	 * `parseHref` still knows exactly one spelling per address.
 	 */
+	/**
+	 * The Compendium's landing page was retired on 2026-09-11 as a second copy
+	 * of `/catechismus`, which indexes both works — so the ADDRESS redirects
+	 * rather than 404ing, the corpus being full of links nobody here controls.
+	 *
+	 * The reading addresses under it are the point of the test: a question and a
+	 * chapter of the Compendium name text, and nothing about them was redundant.
+	 */
+	describe('the retired Compendium landing', () => {
+		it('301s to the Catechism, under a language prefix and without', async () => {
+			for (const [from, to] of [
+				['/catechismus/compendium', 'https://glossacatholica.org/catechismus'],
+				['/pt/catechismus/compendium', 'https://glossacatholica.org/pt/catechismus']
+			]) {
+				const res = await navigate(from);
+				expect(res.status, from).toBe(301);
+				expect(res.headers.get('location'), from).toBe(to);
+			}
+		});
+
+		it('leaves the questions and chapters under it alone', async () => {
+			for (const path of ['/catechismus/compendium/45', '/catechismus/compendium/caput/40']) {
+				expect((await navigate(path)).status, path).toBe(200);
+			}
+		});
+	});
+
 	describe('the OSIS book spelling', () => {
 		it('301s to the Latin slug, keeping the query', async () => {
 			const res = await navigate('/scriptura/gen/1');

@@ -115,14 +115,21 @@ performs the substitution and matches the RELATIVE specifier, because
 
 ## Running the site
 
-**Every citation is the SPA shell; the landing pages are prerendered.**
+**Every citation is the SPA shell; the chrome pages are prerendered.**
 `ssr = false` and `strict: false` still hold for the corpus's hundreds of
-thousands of addresses, which boot from `build/shell.html` — but the seven
-pages in `PRERENDERED_CHROME_PATHS` (`route-manifest.ts`) and their
-language-prefixed forms are written out as documents. So a broken link does
+thousands of addresses, which boot from `build/shell.html` — but every page in
+`PRERENDERED_CHROME_PATHS` (`route-manifest.ts`) and each of its
+language-prefixed forms is written out as a document. So a broken link does
 **not** fail the build. What guards addresses is `corpus-routes.json`, generated
 by the corpus sync and consulted by `src/worker.ts` at the edge;
 `src/lib/route-manifest.ts` holds that grammar and is unit-tested.
+
+- **The set is `CHROME_PATHS` minus what cannot render, and `/calendarium` is
+  the exception**: it 500s under SSR, undiagnosed. The two lists live in
+  `route-manifest.ts` because the build, each prefixed route's `entries()` and
+  the edge must not disagree about which addresses have a document; the build
+  refuses a path that is not chrome, or a prefixed one with no `+page.svelte`
+  of its own.
 
 - **A page is prerendered by its own `+page.ts`, and the layout cannot help
   it.** SvelteKit sets `load: null` on the SERVER node of any node declaring
@@ -139,10 +146,19 @@ by the corpus sync and consulted by `src/worker.ts` at the edge;
   in `src/worker.ts`, a set membership and never a prefix test, since serving
   `/preces`'s document at a citation's URL is worse than no prerender.
   `worker.test.ts` asserts both directions.
+- **A prefixed chrome path needs a route of its own, and five did not have
+  one.** `/pt/schola` was in the sitemap and in the `hreflang` cluster while
+  `[...rest]` redirected it to `/schola` — a cluster whose members redirect to
+  one negotiated page is the claim the cluster exists to make, unmade. Four now
+  have a four-line re-export; `/catechismus/compendium` was retired instead.
 - **What it bought, measured cold on Slow 4G** (`npm run vitals`): LCP 5,344 ms
-  to 1,072 ms on `/`, FCP with it. **What it cost is CLS on the pages whose
-  script is deferred** — `/ar` went 0.084 to 0.457, text painting before the
-  Arabic face arrives, which the shell hid by painting nothing until it had.
+  to 1,072 ms on `/`, FCP with it, and the same on every other chrome page.
+  **What it cost is CLS, and painting early is what exposed it** — the shell hid
+  every shift by painting nothing until everything had arrived. `/ar` 0.084 to
+  0.308, the wordmark's own `font-display: block` face resizing the lockup
+  twice while an Arabic page's bandwidth goes elsewhere; `/ius-canonicum` 0.386,
+  the footer moving for content that arrives after hydration. Both want a
+  reserved box, and neither is fixed.
 
 Canonical reader URLs are Latin and do not vary with interface language:
 `/scriptura/{book}/{chapter}`, `/catechismus/{n}`, `/catechismus/caput/{n}`,

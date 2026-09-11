@@ -1442,6 +1442,24 @@ async function fetchIndexFile<T>(
 	name: string
 ): Promise<T | undefined> {
 	if (!location) return undefined;
+	return readLocation<T>(location, `index tier: ${name}`);
+}
+
+/**
+ * Read one generated file, wherever the code is running.
+ *
+ * **EVERY `fetch(location.url)` IN THIS PROJECT IS A BROWSER-ONLY CALL**, and
+ * that stopped being a distinction without a difference when the landing pages
+ * began prerendering. Anything a prerendered page's render path reaches must
+ * come through here; `document-structures.svelte.ts` is the other caller, and
+ * `plates.svelte.ts` and `xrefs.svelte.ts` are the two that do not need it yet
+ * only because no prerendered page renders a plate or a cross-reference.
+ *
+ * `corpus.ts` keeps its own pair of readers rather than calling this: its
+ * memoisation, its wave bookkeeping and its `lastRead` observer all hang off
+ * that path, and the duplication here is four lines.
+ */
+export async function readLocation<T>(location: ContentLocation, what: string): Promise<T> {
 	if (import.meta.env.SSR && USE_REAL_CORPUS) {
 		const { readFile } = await import('node:fs/promises');
 		const path = await import('node:path');
@@ -1449,7 +1467,7 @@ async function fetchIndexFile<T>(
 		return JSON.parse(raw) as T;
 	}
 	const response = await fetch(location.url);
-	if (!response.ok) throw new Error(`index tier: ${name} -> ${response.status}`);
+	if (!response.ok) throw new Error(`${what} -> ${response.status}`);
 	return (await response.json()) as T;
 }
 

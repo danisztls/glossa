@@ -190,7 +190,7 @@
 		{
 			key: 'compendium',
 			titleKey: 'compendium.landing.title',
-			href: '/catechismus/compendium',
+			href: '/catechismus',
 			type: 'compendium'
 		},
 		{
@@ -626,9 +626,7 @@
 		<h2 id="start-heading">{t('schola.start.heading')}</h2>
 		<p>
 			{t('schola.start.body')}
-			<a href="/catechismus/compendium">{t('compendium.landing.title')}</a>{t(
-				'schola.start.bodyAfter'
-			)}
+			<a href="/catechismus">{t('compendium.landing.title')}</a>{t('schola.start.bodyAfter')}
 		</p>
 	</section>
 

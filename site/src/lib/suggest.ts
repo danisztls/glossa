@@ -1083,13 +1083,14 @@ interface SectionWords {
 	/**
 	 * Where a bare keyword lands — this section's own index page.
 	 *
-	 * The Compendium's `path` was `/catechismus` until 2026-09-04, because it
-	 * had no index of its own and the Catechism's presents both works a row at
-	 * a time. It has one now (`routes/catechismus/compendium/`), so the two no
-	 * longer name one address — but the dedupe below stays: it is what keeps a
-	 * one-letter prefix that matches several sections from offering the same
-	 * page under several names, which is a property of the matcher and not of
-	 * any one section's path.
+	 * The Compendium's `path` was `/catechismus` until 2026-09-04, when it got
+	 * an index of its own; that page was retired again on 2026-09-11 as a
+	 * second copy of the pair page, and what the two rounds settled is that
+	 * these are two questions. A row is FILED by `path` and a reader is SENT to
+	 * `landing`, so the Compendium keeps its own prefix and opens the
+	 * Catechism's index. The dedupe below stays either way: it is what keeps a
+	 * one-letter prefix matching several sections from offering one page under
+	 * several names, which is a property of the matcher and not of any path.
 	 *
 	 * IT IS ALSO WHAT FILES A ROW INTO A SECTION (`sectionPathOf`), which is
 	 * how a scope knows what it holds. Deliberately the address and not a set
@@ -1099,6 +1100,10 @@ interface SectionWords {
 	 * and says so for every row a producer will ever add.
 	 */
 	path: string;
+	/** Where the section's own row LEADS, where that is not `path`. Set on the
+	 *  Compendium alone, whose filing prefix is no longer an address that
+	 *  renders — see `path` above. */
+	landing?: string;
 	titleKey: string;
 	/**
 	 * The dictionary key holding the siglum this work is CITED by, where one
@@ -1151,6 +1156,13 @@ const SECTIONS: SectionWords[] = [
 	{
 		kind: 'compendium',
 		path: '/catechismus/compendium',
+		// THE PATH IS A FILING PREFIX AND THE LANDING IS A DESTINATION, and this
+		// is the row where they came apart: `/catechismus/compendium/45` is filed
+		// by the longest `SECTIONS.path` it sits under, so this one cannot become
+		// `/catechismus` without the Compendium's questions filing as the
+		// Catechism's. The landing page itself was retired on 2026-09-11 — the
+		// pair page indexes both works — so the row opens that instead of a 301.
+		landing: '/catechismus',
 		titleKey: 'nav.compendium',
 		abbrevKey: 'compendium.abbrev',
 		extra: ['compendium', 'comp']
@@ -1440,7 +1452,7 @@ function sectionPathOf(href: string): string | undefined {
 function landingRow(section: SectionWords, score: number, order: number, ctx: Context): Scored {
 	const name = tr(section.titleKey, ctx.lang);
 	return {
-		href: section.path,
+		href: section.landing ?? section.path,
 		kind: 'section',
 		label: name,
 		completion: name,

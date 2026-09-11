@@ -198,7 +198,7 @@ class Cdp {
  * has no INP at all.
  */
 const COLLECTOR = `
-window.__vitals = { lcp: 0, lcpElement: '', fcp: 0, cls: 0, longTasks: [], changedAt: 0 };
+window.__vitals = { lcp: 0, lcpElement: '', fcp: 0, cls: 0, longTasks: [], shifts: [], changedAt: 0 };
 new PerformanceObserver((list) => {
 	const entries = list.getEntries();
 	const last = entries[entries.length - 1];
@@ -211,7 +211,24 @@ new PerformanceObserver((list) => {
 		: last.url || '';
 }).observe({ type: 'largest-contentful-paint', buffered: true });
 new PerformanceObserver((list) => {
-	for (const entry of list.getEntries()) if (!entry.hadRecentInput) window.__vitals.cls += entry.value;
+	for (const entry of list.getEntries()) {
+		if (entry.hadRecentInput) return;
+		window.__vitals.cls += entry.value;
+		// WHAT MOVED, not just how much. A CLS number says a page shifted and
+		// nothing about which element, which is the only part anybody can act
+		// on — and a prerendered page's shifts have a short list of causes
+		// (a late font, an image with no reserved box, a client-only card).
+		const node = entry.sources && entry.sources[0] && entry.sources[0].node;
+		if (entry.value > 0.01) {
+			window.__vitals.shifts.push([
+				Math.round(entry.value * 1000) / 1000,
+				node
+					? node.tagName.toLowerCase() +
+						(node.className ? '.' + String(node.className).trim().split(/\s+/)[0] : '')
+					: '?'
+			]);
+		}
+	}
 }).observe({ type: 'layout-shift', buffered: true });
 new PerformanceObserver((list) => {
 	for (const entry of list.getEntries())
@@ -255,7 +272,8 @@ const REPORTER = `
 		domContentLoaded: nav.domContentLoadedEventEnd || 0,
 		load: nav.loadEventEnd || 0,
 		transferBytes: performance.getEntriesByType('resource').reduce((n, r) => n + (r.transferSize || 0), 0),
-		bodyText: (document.body.innerText || '').replace(/\\s+/g, ' ').trim().length
+		bodyText: (document.body.innerText || '').replace(/\\s+/g, ' ').trim().length,
+		shifts: v.shifts.sort((a, b) => b[0] - a[0]).slice(0, 4)
 	});
 })()
 `;
@@ -446,6 +464,7 @@ function summarise(readings) {
 		};
 	}
 	summary.lcpElement = readings.at(-1).lcpElement;
+	summary.shifts = readings.at(-1).shifts ?? [];
 	return summary;
 }
 
@@ -483,6 +502,13 @@ function printTable(label, results) {
 				' ' + summary.lcpElement
 			].join(' ')
 		);
+		if (summary.shifts.length > 0) {
+			console.log(
+				'   '.padEnd(21) +
+					'shifted: ' +
+					summary.shifts.map(([value, what]) => `${what} ${value}`).join(', ')
+			);
+		}
 	}
 }
 

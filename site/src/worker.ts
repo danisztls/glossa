@@ -257,6 +257,27 @@ export function legacyBiblePath(pathname: string): string | undefined {
 }
 
 /**
+ * `/catechismus/compendium` -> `/catechismus`, under a language prefix or not.
+ *
+ * THE COMPENDIUM'S LANDING PAGE WAS THE CATECHISM'S (2026-09-11, by
+ * direction): `/catechismus` indexes both works, which is why the catalogue
+ * has carried one card for the pair since long before this. Two addresses over
+ * one body is the duplicate the `hreflang` cluster and the canonical exist to
+ * disown, so the page went and the ADDRESS stays — a 301, because the corpus
+ * is full of links nobody here controls.
+ *
+ * Only the bare landing. `/catechismus/compendium/45` and
+ * `/catechismus/compendium/caput/40` are reading addresses that name a
+ * question and a chapter, and nothing about them was redundant.
+ */
+export function compendiumLandingPath(pathname: string): string | undefined {
+	const m = /^(\/[a-z]{2,3})?\/catechismus\/compendium$/.exec(pathname);
+	if (!m) return undefined;
+	if (m[1] && !isUiLang(m[1].slice(1))) return undefined;
+	return `${m[1] ?? ''}/catechismus`;
+}
+
+/**
  * Fetch the SPA shell without changing the reader-visible address.
  *
  * `/shell` and not `/`, since 2026-09-11: `/` is a prerendered page now
@@ -464,7 +485,7 @@ export default {
 		// every dead one — a link checker follows the hop and reports the wrong
 		// URL. A path that does not survive the rewrite falls through and 404s
 		// where it stands, since the legacy spelling no longer parses.
-		const relocated = legacyBiblePath(url.pathname);
+		const relocated = legacyBiblePath(url.pathname) ?? compendiumLandingPath(url.pathname);
 		if (relocated && isCanonicalPath(relocated, manifest)) {
 			url.pathname = relocated;
 			return Response.redirect(url, 301);

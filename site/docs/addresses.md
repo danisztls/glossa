@@ -181,9 +181,21 @@ on the first 44 alone and published, in 37 languages, a page labelled in the
 reader's language whose every gloss and whose whole primer was English. All 75
 are in all 37 now.
 
-**`/catechismus/compendium` joined the same day**, its nine outstanding
-`compendium.*` keys written into the twenty-three dictionaries that lacked
-them.
+**`/catechismus/compendium` joined the same day** — its nine outstanding
+`compendium.*` keys written into the twenty-three dictionaries that lacked them
+— **and left on 2026-09-11, by direction**. Its landing page was a second copy
+of `/catechismus`, which indexes both works and has carried one card for the
+pair since long before either page existed; two addresses over one body is the
+duplicate a canonical exists to disown, and a 40-language cluster over the
+second of them multiplies it forty times. **A page can earn its cluster and
+still not earn its existence**, which is the test the translation gate cannot
+apply: it asks whether a page's own words are written everywhere, never whether
+another page already says them.
+
+The ADDRESS stays — `src/worker.ts` 301s it to `/catechismus`, under a language
+prefix or not, because the corpus is full of links to it that nobody here
+controls, and the questions and chapters beneath it (`/catechismus/compendium/45`)
+name text and were never redundant.
 
 **A THIRD ANSWER EXISTS, AND THE COUNTRY CALENDARS ARE IT.** `/calendarium/brazil`
 is in the sitemap and not in `CHROME_PATHS`, which no page was before: it is

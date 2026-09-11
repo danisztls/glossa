@@ -20,12 +20,19 @@ the layout's fetches. The same page as a document: **1,072 ms**, with the four
 other landing pages between 1,068 and 1,236 ms. The tagline is the LCP element
 either way; the wordmark cannot be, its face being `font-display: block`.
 
-**The metric that moved the other way is CLS, and only where the script is
-deferred.** `/ar` went from 0.084 to 0.457 while the Latin pages went to zero:
-non-Latin faces are in the content tier on purpose (`DEFERRED_FONTS`), so the
-Arabic text now paints in a fallback face and reflows when the real one lands —
-a shift the shell hid by painting nothing until everything had arrived. TBT
-rose from 0 to 5–10 ms for the same reason and means nothing: TBT counts what
+**The metric that moved the other way is CLS, and painting early is what
+exposed it.** The shell hid every shift on the site by painting nothing until
+everything had arrived; a document paints first and then watches things move.
+`/ar` went 0.084 to 0.308 and `/ius-canonicum` to 0.386 while the rest went to
+zero — and **a CLS number alone is unactionable**, so the harness records the
+first source node of every shift over 0.01. It named them: `span.lockup` twice
+on `/ar` (0.151 and 0.119), which is the WORDMARK's own `font-display: block`
+face arriving late while an Arabic page spends its bandwidth on a deferred
+script's font; and `footer` on `/ius-canonicum` (0.386), which is content
+arriving after hydration and pushing everything below it down. Both want a
+reserved box. Neither is fixed.
+
+TBT rose from 0 to 5–10 ms on most pages and means nothing: TBT counts what
 blocks AFTER first paint, and there was no first paint to count from.
 
 **A prerendered page is a page whose `load` runs on the server, and a layout
@@ -39,12 +46,17 @@ catalogue missing from every one and the prefixed pages in English under
 Portuguese and Arabic addresses. `primeForPath` is the priming as a function
 both callers share; the prefixed pages call `i18n.set` as well.
 
-**The index tier needed the disk read the content tier already had.** A `?url`
-glob answers with `/_app/immutable/assets/…`, and Node's `fetch` cannot resolve
-a path, so every primer failed under SSR. `fetchIndexFile` branches on
-`import.meta.env.SSR` exactly as `corpus.ts` does, and takes a
-`ContentLocation` rather than a URL so the path comes off the glob KEY rather
-than being composed from the index's name.
+**Every `fetch(location.url)` in this project is a browser-only call**, and
+that stopped being a distinction without a difference the day a page
+prerendered. A `?url` glob answers with `/_app/immutable/assets/…`, and Node's
+`fetch` cannot resolve a path: the index tier's primers failed that way
+silently, and `document-structures.svelte.ts` logged eleven failures and
+rendered `/doctrina-socialis` without its front matter. `readLocation` in
+`corpus-index.ts` is the branch as one function — `import.meta.env.SSR` exactly
+as `corpus.ts` does it — and it takes a `ContentLocation` rather than a URL so
+the path comes off the glob KEY rather than being composed from a name.
+`plates.svelte.ts` and `xrefs.svelte.ts` are the two that still fetch directly,
+and only because no prerendered page renders a plate or a cross-reference.
 
 **The fallback needed a name of its own, and the extension is a trap.** `/` is
 a document now, so `fallback: 'shell.html'`; `html_handling` is

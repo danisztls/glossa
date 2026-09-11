@@ -66,15 +66,13 @@ export const CHROME_PATHS = [
 	'/bibliotheca',
 	'/scriptura',
 	'/catechismus',
-	'/catechismus/compendium',
 	'/doctrina-socialis',
 	'/documenta',
 	'/ius-canonicum',
 	// The shelf and the one work on it. Both are chrome by the same test as
-	// the rest: every word on either page is the interface. It and
-	// `/catechismus/compendium` are the two-segment members, which
-	// `parseChromePath` handles because it splits on the FIRST slash and
-	// matches the remainder whole.
+	// the rest: every word on either page is the interface. It is the only
+	// two-segment member, which `parseChromePath` handles because it splits on
+	// the FIRST slash and matches the remainder whole.
 	'/doctores',
 	'/doctores/summa',
 	'/preces',
@@ -101,7 +99,12 @@ export const CHROME_PATHS = [
  *     `canonLaw.landing.*` keys were already in all 37, so it joined the day
  *     the omission was found.
  *   - `/catechismus/compendium` needed nine `compendium.*` keys in
- *     twenty-three dictionaries.
+ *     twenty-three dictionaries — and left the list again on 2026-09-11, its
+ *     page having been a second copy of `/catechismus`, which indexes both
+ *     works. The keys stayed: the pair page and the jump box both use them.
+ *     **A page earning its cluster is not the same as a page earning its
+ *     existence**, and this one passed the first test while failing the
+ *     second. `src/worker.ts` 301s the address.
  *   - `/schola` needed all 58 of its own in thirty-six, because that page is
  *     addressed to the reader who has no vocabulary yet
  *     (`docs/research/audiences.md` §5) and title-plus-tagline alone would
@@ -171,17 +174,29 @@ export const PRERENDERED_CHROME_PATHS = [
 	'/bibliotheca',
 	'/scriptura',
 	'/catechismus',
+	'/doctrina-socialis',
 	'/documenta',
+	'/ius-canonicum',
+	'/doctores',
+	'/doctores/summa',
 	'/preces',
-	'/schola'
+	'/schola',
+	'/colophon'
 ] as const;
 
 export const PRERENDERED_PREFIXED_PATHS = [
 	'/',
+	'/bibliotheca',
 	'/scriptura',
 	'/catechismus',
+	'/doctrina-socialis',
 	'/documenta',
-	'/preces'
+	'/ius-canonicum',
+	'/doctores',
+	'/doctores/summa',
+	'/preces',
+	'/schola',
+	'/colophon'
 ] as const;
 
 const PRERENDERED_SET: ReadonlySet<string> = new Set(PRERENDERED_CHROME_PATHS);

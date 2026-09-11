@@ -32,7 +32,12 @@
  * document content functions already take.
  */
 
-import { USE_REAL_CORPUS, documentStructureLocation, ensureContentIndex } from './corpus-index';
+import {
+	USE_REAL_CORPUS,
+	documentStructureLocation,
+	ensureContentIndex,
+	readLocation
+} from './corpus-index';
 import type { DocumentFrontMatter, DocumentNode } from './types';
 
 const EMPTY_NODES: DocumentNode[] = [];
@@ -132,9 +137,12 @@ export async function loadDocumentStructure(workId: string): Promise<void> {
 		// `neighbours` wave would prefetch nothing worth having. `started`
 		// above already supplies the memoization that was the other thing
 		// `readContent` offered.
-		const res = await fetch(location.url);
-		if (!res.ok) throw new Error(`failed to fetch ${location.url} (${res.status})`);
-		front = (await res.json()) as DocumentFrontMatter;
+		//
+		// `readLocation` RATHER THAN A BARE FETCH, since the landing pages
+		// prerender: a `?url` asset path is not something Node's `fetch` can
+		// resolve, so `/doctrina-socialis` came out of the build having logged
+		// eleven failures here and rendered without its front matter.
+		front = await readLocation<DocumentFrontMatter>(location, `document front matter: ${workId}`);
 	} catch (err) {
 		console.error(`[document-structures] failed to load the front matter for ${workId}`, err);
 		front = EMPTY;
