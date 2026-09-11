@@ -109,7 +109,7 @@ import {
 import { assertApparatus, buildApparatus, buildWorks } from './apparatus.mjs';
 import { assertNamed, buildRouteTitles, readDictionaries } from './route-titles.mjs';
 import { ORIGIN, sitemapPaths, sitemapXml } from './sitemap.mjs';
-import { assertSourcesNamed, llmsFacts, llmsTxt } from './llms.mjs';
+import { assertSourcesNamed, llmsFacts, llmsTxt, topicList } from './llms.mjs';
 import { buildCensus } from './census.mjs';
 import {
 	compareLanguageCoverage,
@@ -4128,9 +4128,16 @@ writeFileSync(sitemapPath, sitemapXml(routeManifest, lastmod.dates));
 // Same pass, same objects: the file that tells a machine what this library
 // holds is derived from the manifest that holds it, so the two cannot drift.
 // `assertSourcesNamed` throws rather than warns — see scripts/llms.mjs.
+// The questions are enumerated into it rather than described, because they are
+// the one address family the file's grammar cannot generate (scripts/llms.mjs).
 const llmsTemplate = readFileSync(llmsTemplatePath, 'utf8');
 assertSourcesNamed(llmsTemplate, works);
-writeFileSync(llmsPath, llmsTxt(llmsTemplate, llmsFacts(census)));
+const questions = topicList(
+	{ doorways, clusters: topicClusters, topics: quaestiones },
+	routeTitles.topics,
+	dictionaries.en ?? {}
+);
+writeFileSync(llmsPath, llmsTxt(llmsTemplate, llmsFacts(census, questions)));
 
 // IDS ONLY, not the entries. The site's one question is "is this work
 // switched off", which it asks to keep from offering an address whose content

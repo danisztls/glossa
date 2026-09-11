@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { assertSourcesNamed, llmsFacts, llmsTxt } from '../../scripts/llms.mjs';
+import { assertSourcesNamed, llmsFacts, llmsTxt, topicList } from '../../scripts/llms.mjs';
 import { buildCensus } from '../../scripts/census.mjs';
 
 const TEMPLATE = readFileSync(
@@ -80,9 +80,63 @@ const census = buildCensus({
 	summaArticles: new Map()
 });
 
+/**
+ * Two shelves, deliberately declared in the opposite order to the topics.
+ * `site/quaestiones.json`'s own order is what `/quaestiones` draws and what
+ * this list has to reproduce, and a fixture agreeing with both orders at once
+ * could not tell which one was being read.
+ */
+const topicIndex = {
+	doorways: ['life-event', 'ordinary'],
+	clusters: { 'life-event': ['death-and-dying'], ordinary: ['practice'] },
+	topics: {
+		ieiunium: { doorway: 'ordinary', cluster: 'practice' },
+		crematio: { doorway: 'life-event', cluster: 'death-and-dying' }
+	}
+};
+const topicNames: Record<string, [string, string]> = {
+	crematio: ['Cremation', 'May a Catholic be cremated?'],
+	ieiunium: ['Fasting', 'What is still required?']
+};
+const topicHeadings = {
+	'quaestiones.cluster.death-and-dying': 'Illness, dying & death',
+	'quaestiones.cluster.practice': 'Catholic practice'
+};
+const questions = topicList(topicIndex, topicNames, topicHeadings);
+
+describe('topicList', () => {
+	it('shelves the questions in the file’s order and links each one', () => {
+		expect(questions).toBe(
+			[
+				'### Illness, dying & death',
+				'',
+				'- [Cremation](https://glossacatholica.org/quaestiones/crematio) — May a Catholic be cremated?',
+				'',
+				'### Catholic practice',
+				'',
+				'- [Fasting](https://glossacatholica.org/quaestiones/ieiunium) — What is still required?'
+			].join('\n')
+		);
+	});
+
+	it('refuses a shelf with no heading in English', () => {
+		expect(() => topicList(topicIndex, topicNames, {})).toThrow(/no English heading/);
+	});
+
+	it('refuses a topic with no title and question', () => {
+		expect(() => topicList(topicIndex, {}, topicHeadings)).toThrow(/cannot be listed/);
+	});
+
+	/** The section is prose in the template and asserts the set exists, so a
+	 *  build that has none must fail rather than publish an empty promise. */
+	it('refuses a build with no questions at all', () => {
+		expect(() => topicList({}, topicNames, topicHeadings)).toThrow(/has none/);
+	});
+});
+
 describe('llmsFacts', () => {
 	it('reads the address space and the languages off the corpus', () => {
-		const facts = llmsFacts(census);
+		const facts = llmsFacts(census, questions);
 		expect(facts.CCC_MAX).toBe(2865);
 		expect(facts.CANON_MAX).toBe(1752);
 		expect(facts.SUMMA_PARTS).toBe('`i`, `i-ii`, `ii-ii`, `iii`, `suppl`');
@@ -91,6 +145,9 @@ describe('llmsFacts', () => {
 		// The pair the old prose conflated into one number.
 		expect(facts.DOCUMENT_COUNT).toBe(2);
 		expect(facts.DESCRIPTION_COUNT).toBe(1);
+		// Carried through unchanged: the questions are not a fact about the
+		// corpus, so `llmsFacts` may not be the second place they are shaped.
+		expect(facts.TOPIC_LIST).toBe(questions);
 	});
 });
 
@@ -126,12 +183,12 @@ describe('assertSourcesNamed', () => {
 
 describe('the committed template', () => {
 	it('asks for exactly the facts the builder derives', () => {
-		const facts = llmsFacts(census);
+		const facts = llmsFacts(census, questions);
 		expect(() => llmsTxt(TEMPLATE, facts)).not.toThrow();
 	});
 
 	it('leaves no unsubstituted token in the output', () => {
-		const out = llmsTxt(TEMPLATE, llmsFacts(census));
+		const out = llmsTxt(TEMPLATE, llmsFacts(census, questions));
 		expect(out).not.toMatch(/\{\{|-->/);
 	});
 });

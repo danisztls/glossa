@@ -27,7 +27,9 @@
  */
 
 import { censusFact } from './census.mjs';
+import { hrefFor } from '../src/lib/address.ts';
 import { CHROME_PATHS } from '../src/lib/route-manifest.ts';
+import { SITE_ORIGIN } from '../src/lib/shell-head.ts';
 
 const TOKEN = /\{\{([A-Z_]+)\}\}/g;
 
@@ -43,6 +45,88 @@ function hostOf(url) {
 }
 
 /**
+ * The questions, as the landing page shelves them, for `{{TOPIC_LIST}}`.
+ *
+ * THE ONE ADDRESS FAMILY THIS FILE CANNOT STATE AS A GRAMMAR. Every other
+ * address here is built by substitution from a citation the client already
+ * holds — `CCC 1210` becomes `/catechismus/1210` — and a topic has no citation
+ * to be built from: `{topic}` is a Latin slug and the reader arrived with a
+ * sentence in their own language. So the set is enumerated, which is the only
+ * form in which "you can write it without fetching anything" stays true of the
+ * whole address space.
+ *
+ * ENUMERATED BY THE BUILD AND NEVER BY HAND, for the reason the rest of the
+ * file is: a list of a hundred-odd rows maintained beside a tracked topic file
+ * is a list that will describe last month's site, and this one would do it
+ * while claiming to be complete. The order is `site/quaestiones.json`'s own,
+ * doorway by doorway and then cluster by cluster, which is the order
+ * `/quaestiones` draws — a client reading this and a reader reading the page
+ * meet the questions in one sequence.
+ *
+ * The names come from `route-titles.json`'s topics rather than from the
+ * dictionary directly, so what is published here is what the shell publishes
+ * at the address, already guarded by `assertNamed`.
+ *
+ * @param {{doorways?: string[], clusters?: Record<string, string[]>, topics?: Record<string, {doorway: string, cluster: string}>}} index
+ *   `site/quaestiones.json`, as the sync reads it
+ * @param {Record<string, [string, string]>} names slug -> `[title, question]`
+ * @param {Record<string, string>} english the English dictionary, for the shelf headings
+ * @returns {string}
+ */
+export function topicList(index, names, english) {
+	/** @type {string[]} */
+	const lines = [];
+	for (const doorway of index.doorways ?? []) {
+		for (const cluster of index.clusters?.[doorway] ?? []) {
+			const slugs = Object.entries(index.topics ?? {})
+				.filter(([, topic]) => topic.doorway === doorway && topic.cluster === cluster)
+				.map(([slug]) => slug);
+			// An empty shelf renders nothing, exactly as it does on the page:
+			// the sync already warns about one, and a heading over no questions
+			// would be this file promising a shelf that is not there.
+			if (slugs.length === 0) continue;
+			const heading = english[`quaestiones.cluster.${cluster}`];
+			if (!heading) {
+				throw new Error(
+					`llms.txt: no English heading for shelf \`${cluster}\` ` +
+						`(quaestiones.cluster.${cluster}). The shelves are this list's only ` +
+						`structure; publishing the key would name it to a reader.`
+				);
+			}
+			lines.push(`### ${heading}`, '');
+			for (const slug of slugs) {
+				const named = names[slug];
+				// `assertNamed` has already refused a build whose topic has no
+				// title and question, so this cannot fire from the sync — it is
+				// here because the alternative to failing is a row reading
+				// `[undefined](…)`, which is the failure this whole module exists
+				// to make impossible.
+				if (!named) {
+					throw new Error(
+						`llms.txt: topic \`${slug}\` has no title and question in English, so it ` +
+							`cannot be listed. route-titles.mjs drops such a topic; this file would ` +
+							`publish the gap.`
+					);
+				}
+				lines.push(
+					`- [${named[0]}](${SITE_ORIGIN}${hrefFor({ kind: 'topic', slug })}) — ${named[1]}`
+				);
+			}
+			lines.push('');
+		}
+	}
+	if (lines.length === 0) {
+		throw new Error(
+			`llms.txt: the template has a section for the questions and this build has none. ` +
+				`site/quaestiones.json is tracked in this repository rather than in the corpus, so ` +
+				`an empty set means the file is missing or its topics were dropped — and the ` +
+				`section would stand over nothing while telling a reader the set is complete.`
+		);
+	}
+	return lines.join('\n').trim();
+}
+
+/**
  * The values the template asks for, projected out of the census.
  *
  * THIS FILE DERIVED THEM ITSELF UNTIL THE CENSUS EXISTED, off `routeManifest`,
@@ -53,21 +137,28 @@ function hostOf(url) {
  * cannot find, so a renamed fact fails the build here rather than shipping the
  * word `undefined` inside a published sentence.
  *
+ * THE QUESTIONS ARE NOT A FACT ABOUT THE CORPUS and so are not read here: a
+ * topic is written in this repository, against a corpus that knows nothing
+ * about it, which is why `topicList` takes its own three sources and this
+ * function takes its output already rendered.
+ *
  * @param {ReturnType<typeof import('./census.mjs').buildCensus>} census
+ * @param {string} questions `topicList`'s output, for `{{TOPIC_LIST}}`
  * @returns {Record<string, string | number>}
  */
-export function llmsFacts(census) {
+export function llmsFacts(census, questions) {
 	return {
+		TOPIC_LIST: questions,
 		CCC_MAX: census.maxima.ccc,
 		COMPENDIUM_MAX: census.maxima.compendium,
 		CSDC_MAX: census.maxima.socialDoctrine,
 		CANON_MAX: census.maxima.canonLaw,
 		SUMMA_PARTS: census.summaParts.map((/** @type {string} */ part) => `\`${part}\``).join(', '),
-		// NOT FROM THE CENSUS, AND THE ONLY FACT HERE THAT IS NOT. The census
-		// derives from the corpus; this is a property of the app, and
-		// `sitemap.mjs` already reads the same constant to build the clusters
-		// this sentence describes. Written by hand the list said eight when
-		// there were fourteen, and had been wrong since `/ius-canonicum`
+		// NOT FROM THE CENSUS, like the questions above and for a different
+		// reason. The census derives from the corpus; this is a property of the
+		// app, and `sitemap.mjs` already reads the same constant to build the
+		// clusters this sentence describes. Written by hand the list said eight
+		// when there were fourteen, and had been wrong since `/ius-canonicum`
 		// landed: a reader was told `/pt/calendarium` is an entry point that
 		// canonicalizes away, when it is a real page with an `hreflang` set.
 		// The count is deliberately not published beside it — the list

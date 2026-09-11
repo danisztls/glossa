@@ -1293,7 +1293,11 @@ locus** — vatican.va addresses a document, `/catechismus/330` addresses the
 paragraph. It documents the address grammar in full so a client can construct a
 citation URL without fetching, and one paragraph records the reversal on purpose
 (a model trained on the old file carries the old instruction). Keep the rights
-position exactly as strong when editing it.
+position exactly as strong when editing it. **`/quaestiones/{topic}` is the one
+family that is an enumerated set rather than a grammar, so the file enumerates
+it** — `{{TOPIC_LIST}}` is built by `topicList` from `quaestiones.json` and the
+English dictionary, and a list written by hand would claim a completeness it
+could not keep.
 
 **The structured data is attribution and not a rich result.** `headHtml` emits
 one `@graph` (`BreadcrumbList`, `WebPage`, the unit, the work); the publisher's

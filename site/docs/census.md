@@ -15,6 +15,13 @@ behind would fall behind in silence, because nothing about a stale number looks
 wrong. So `llmsFacts` projects the census now, and the file for machines and the
 page for readers cannot disagree about how many documents there are.
 
+**What the census may not answer for is what the corpus does not know about.**
+`llmsFacts` takes a second argument — the enumerated questions, built by
+`topicList` out of `quaestiones.json` and the English dictionary — because a
+topic is written in this repository against a corpus that holds no trace of it.
+A fact the census cannot derive does not belong in the census; it belongs beside
+the consumer that publishes it.
+
 **A number must be derived, or it does not go on the page.** The repo's own
 rule against inventory counts, one step further out: those rot in prose because
 nothing recomputes them, and this page exists to be the place that recomputes

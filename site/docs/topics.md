@@ -485,6 +485,21 @@ card's sentence is `quaestiones.landing.cardTagline` and not the tagline above,
 which is a masthead's two sentences and was five lines in a 16rem card — the
 same problem `ccc.landing.pairTagline` was written for.
 
+**The fourth way in is not on the site, and it is the only one that had to be
+enumerated.** `static/llms.txt` states every other address family as a grammar —
+a client holding `CCC 1210` writes `/catechismus/1210` without fetching anything
+— and `{topic}` cannot be written that way, the slug being Latin and the
+reader's sentence not. So the file carries the whole set: `topicList` in
+`scripts/llms.mjs` shelves the questions in `quaestiones.json`'s own order,
+under the same sixteen headings the page draws, and it is generated for the
+reason that file's counts are — a list written by hand beside a tracked topic
+file describes last month's site while claiming to be complete. It cost two
+disclosures elsewhere in the file, which is the honest price of selling a
+surface whose gathering is editorial: "What was written here" names the
+questions as a third thing written here, and the rights paragraph stopped
+claiming nothing on this site is "annotated", which one `editorial` note makes
+false.
+
 **The title and the question are the only strings here written as somebody
 else's words** — the keywords are written in the reader's, which is a different
 job with the same rule against transposing the English — and a translator needs
