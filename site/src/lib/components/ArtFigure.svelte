@@ -256,11 +256,19 @@
 	<!-- The credit loses its "(detail)" when what opens is the whole work,
 	     because it is then not one. `art.credit` is the plain identification —
 	     the page composed the other line by adding the interface word to this
-	     same string, so taking it back needs no second prop and no dictionary. -->
+	     same string, so taking it back needs no second prop and no dictionary.
+
+	     AND IT CARRIES ITS SOURCE, which the caption card below has always
+	     done and this view could not: `credit` is a string, and a string
+	     cannot hold a URL. The claim is most worth checking here, where the
+	     reader is looking at the picture rather than past it — and where, for
+	     an artwork with a `whole`, the work itself is on the screen for the
+	     only time. -->
 	<PlateViewer
 		width={viewed.width}
 		height={viewed.height}
 		credit={art.whole ? art.credit : credit}
+		source={art.source}
 		src={viewerSrc}
 		onclosed={() => {
 			viewing = false;

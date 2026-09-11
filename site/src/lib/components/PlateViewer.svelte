@@ -123,12 +123,35 @@
 		 *  exactly as `Plate` receives it. Shown outright here rather than
 		 *  behind a control: there is nothing else in this view to crowd. */
 		credit?: string;
+		/**
+		 * WHERE THE CREDIT GOES, and without it the credit is a dead line.
+		 *
+		 * `CopyrightNotice` argues the case for a work's text and every word
+		 * of it holds for a picture: an attribution with no way to reach the
+		 * original asks the reader to take our word for the provenance. It
+		 * matters most exactly here — this view is the one place a reader is
+		 * looking AT the picture rather than past it, and for an artwork with
+		 * a `whole` it is the only place the whole work is on the screen.
+		 *
+		 * A SEPARATE PROP BECAUSE `credit` IS A STRING. The route composes
+		 * that line so this view needs no corpus and no dictionary, which is
+		 * the arrangement `Plate` and `ArtFigure` both keep — and a string
+		 * cannot carry a URL, so the one field that makes the claim checkable
+		 * was being dropped at the boundary rather than withheld by anybody's
+		 * decision.
+		 *
+		 * Optional, and the plates do not pass it yet: theirs is a courtesy
+		 * link to the provider's gallery rather than a licence page, which is
+		 * a different question from this one.
+		 */
+		source?: string;
 		/** Told when the dialog has closed, by any of the four routes out
 		 *  (the button, the surround, Escape, a platform back gesture). */
 		onclosed: () => void;
 	}
 
-	let { width, height, title, src, detailSrc, detailWidth, credit, onclosed }: Props = $props();
+	let { width, height, title, src, detailSrc, detailWidth, credit, source, onclosed }: Props =
+		$props();
 
 	/** What names this view, in the caption and to a screen reader: the
 	 *  picture's title where it has one, and its credit where the credit is
@@ -398,8 +421,21 @@
 		{#if title}
 			<span class="viewer-title">{title}</span>
 		{/if}
+		<!-- THE CREDIT IS THE ANCHOR where there is somewhere to go, which is
+		     `CopyrightNotice`'s arrangement and `ArtFigure`'s caption card in
+		     the same clothes: the identification IS the link, rather than a
+		     credit with a "source" hung off it. New tab and
+		     `rel="external noopener"`, the site's rule for every outbound link.
+		     Without a `source` the line stays a `<span>` — an anchor to nowhere
+		     is worse than plain text. -->
 		{#if credit}
-			<span class="viewer-credit">{credit}</span>
+			{#if source}
+				<a class="viewer-credit source-link" href={source} target="_blank" rel="external noopener"
+					>{credit}<Icon name="external-link" class="ext" /></a
+				>
+			{:else}
+				<span class="viewer-credit">{credit}</span>
+			{/if}
 		{/if}
 	</div>
 </dialog>
@@ -632,6 +668,49 @@
 		   in the reading column and the colophon both set it. */
 		white-space: pre-line;
 		color: rgb(255 255 255 / 55%);
+	}
+
+	/*
+	 * `CopyrightNotice`'s source link, in this view's own palette. Dotted until
+	 * the pointer is on it and `color: inherit`, so the line reads as the
+	 * credit it is rather than as a link with a credit attached.
+	 *
+	 * The colours are white at a percentage and NOT `--color-accent`, which is
+	 * every other link on the site. The caption sits on the viewer's own dark
+	 * scrim in both themes — the title and the credit beside it are already
+	 * white at 88% and 55% for that reason — and an accent tuned against the
+	 * page's background is not the same colour against this one.
+	 */
+	.source-link {
+		color: inherit;
+		text-decoration-line: underline;
+		text-decoration-style: dotted;
+		text-underline-offset: 0.15em;
+	}
+
+	.source-link:hover,
+	.source-link:focus-visible {
+		color: rgb(255 255 255 / 88%);
+		text-decoration-style: solid;
+	}
+
+	/* An outline rather than the border trick a bordered field wants: this is
+	   a line of type on a scrim, and `forced-colors` repaints an outline in the
+	   system focus colour. */
+	.source-link:focus-visible {
+		outline: 2px solid rgb(255 255 255 / 88%);
+		outline-offset: 3px;
+		border-radius: var(--radius-sm);
+	}
+
+	/* The two numbers `CopyrightNotice` derives and explains: an inline `<svg>`
+	   puts the BOTTOM of its box on the baseline, so a 1em glyph rises past the
+	   cap height of the words beside it. */
+	.source-link :global(.ext) {
+		width: 0.85em;
+		height: 0.85em;
+		margin-inline-start: 0.28em;
+		vertical-align: -0.18em;
 	}
 
 	/* A dialog open at the moment a chapter is printed would otherwise be the

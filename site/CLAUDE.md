@@ -669,10 +669,17 @@ Rationale in `site/docs/finding.md`.
 - **A credit is behind the caption trigger, not set under the picture.**
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because a
-  printed page cannot be pressed. **The credit is the anchor** (Commons' file
-  page, out of `landing-art.ts`'s `source`). Its trigger is the `info` glyph
-  alone, so the `aria-label` is mandatory; it wears `.menu-trigger` and adds
-  only its position.
+  printed page cannot be pressed. Its trigger is the `info` glyph alone, so the
+  `aria-label` is mandatory; it wears `.menu-trigger` and adds only its
+  position.
+- **The credit is the anchor everywhere it is shown**, `PlateViewer` included
+  since 2026-09-11 — it was a dead line there, which is the one view where the
+  reader is looking AT the picture. The URL travels as its own prop because
+  `credit` is a composed STRING, the arrangement that lets a route hand the
+  line down to components that know no corpus and no dictionary; a string
+  cannot carry a URL, so **a composed-string boundary silently drops whatever
+  made the claim checkable.** `Plate` passes none: the plates' `provider_url`
+  is a courtesy link to the provider's gallery, not a licence page.
 - **`ArtFigure` reads `--art-height`** and crops to it with `object-fit:
 cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   picture in `PlateViewer`. Set that prop only where the height is set — a
