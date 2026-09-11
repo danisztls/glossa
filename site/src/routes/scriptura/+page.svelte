@@ -30,10 +30,19 @@
 	import { getWork } from '$lib/corpus';
 	import BookChapterPicker from '$lib/components/BookChapterPicker.svelte';
 	import ReadingBar from '$lib/components/ReadingBar.svelte';
+	import { BANNERS, type Artwork } from '$lib/landing-art';
+	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	const workId = $derived(content.workIdFor('bible'));
 	const work = $derived(workId ? getWork(workId) : undefined);
+
+	// The identification, plus the one interface word in it — composed here and
+	// passed down, the arrangement `Plate.svelte` argues for: the page that
+	// knows what a picture is is the page that writes the line. This one is not
+	// a detail, so the word is never added; the expression stays the other
+	// landing pages' so the four cannot come to disagree about the line.
+	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 </script>
 
 <svelte:head>
@@ -61,6 +70,32 @@
 				<h2 id="books-heading">{t('bible.landing.books')}</h2>
 				<BookChapterPicker currentWorkId={workId} collapsible={false} />
 			</section>
+
+			<!--
+				Michelangelo's two hands are Genesis 2:7 — the first thing that
+				happens in the first of the seventy-three books listed above — and
+				what crosses the gap between them is a word, which is what a text
+				is. `landing-art.ts` holds the credit and the case.
+
+				It closes the page rather than bridging the testaments, which is
+				where this picture was first wanted. The seam between the two is
+				inside `BookChapterPicker`, a component with four call sites, and
+				it is a seam in the CANON rather than in this page — a picture put
+				there is on three other pages that never asked for one. Genesis is
+				also the wrong picture for a bridge: it belongs at the start of
+				what is above it, not between its halves.
+
+				Guarded on `workId` with the book list, so a corpus that failed to
+				sync leaves no picture hanging under nothing.
+			-->
+			<div class="tailpiece">
+				<ArtFigure
+					art={BANNERS.scriptura}
+					credit={creditOf(BANNERS.scriptura)}
+					label={t('art.about')}
+					expandable
+				/>
+			</div>
 		{/if}
 	</div>
 	<!--
@@ -111,5 +146,24 @@
 	   of the page. */
 	h1 {
 		font-family: var(--font-serif);
+	}
+
+	/*
+	 * NO `--art-height`, so the file is drawn at its own 2.15:1 and nothing is
+	 * cropped at any width — `/schola`'s arrangement rather than the two other
+	 * tailpieces'. Not generosity: the other two sit in `.landing-column`,
+	 * which is 72rem of rem, and a height in rem can be derived against a width
+	 * in rem. This column is `--content-width`, a MEASURE — some 62 characters
+	 * of prose, moving with the reader's text-size setting — so there is no one
+	 * width to derive against, and a band cropped to a fixed height would keep
+	 * a different share of the picture at every setting. A ratio holds at all
+	 * of them.
+	 *
+	 * The file is the panel entire and wants no cropping anyway; what a press
+	 * opens is the vault around it, which is a second file rather than the rest
+	 * of this one (`landing-art.ts`'s `whole`).
+	 */
+	.tailpiece {
+		margin: 2.5rem 0 0;
 	}
 </style>

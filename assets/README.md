@@ -67,13 +67,13 @@ crozier, takes the heron's legs and neck, severs the swan's neck and puts holes
 through the geese. The midpoint (≥ 128) removes the feathered halo and keeps
 the drawing.
 
-## The three landing-page paintings
+## The four landing-page paintings
 
-Public-domain paintings illustrating the three landing pages — a banner over
-`/schola`'s title, a tailpiece under `/bibliotheca`'s last shelf and another
-under `/quaestiones`' last one. The identifications, the licence position and
-the `paper` flag are in `site/src/lib/landing-art.ts`; this section is the
-derivation.
+Public-domain paintings illustrating the four landing pages — a banner over
+`/schola`'s title, a tailpiece under `/bibliotheca`'s last shelf, another under
+`/quaestiones`' last one and another under `/scriptura`'s book list. The
+identifications, the licence position and the `paper` flag are in
+`site/src/lib/landing-art.ts`; this section is the derivation.
 
 **Two of the four banners went with the routes they stood over** (2026-09-05):
 Raphael's _Disputa_ headed "The four pillars" and Millet's _Gleaners_ headed
@@ -98,6 +98,25 @@ master's found the offset — a sharp minimum, 36× better than either neighbour
 and a re-cut at that box scores 43.5 dB PSNR against it, which is JPEG
 re-encode noise and no geometry. So the box is recorded and the cut file is
 not: hand work only costs a master when the hand did something a box cannot say.
+
+**`/scriptura`'s two renditions are two DOWNLOADS, and the cutting was done
+upstream.** `The Creation of Adam perspective fix.jpg` is a Commons derivative
+of `Creación de Adán.jpg` — the panel rotated, cropped and perspective-corrected
+by an editor there, `{{Retouched picture}}` and all, published as a file of its
+own and carrying `{{Extracted from}}` naming its parent. So the band is that
+file resized, the view a press opens is the parent resized, and the crop column
+below says `none` twice for a reason that is not the `whole` scan's reason one
+row up.
+
+**Hand work published upstream needs no master here.** A rotation and a
+perspective correction is exactly what the `hero-jerome` rule below says keeps
+its master, and this one's master is a file with a page, a licence tag and a
+SHA-256 in the table above — which is the whole of what keeping a master buys.
+The rule is about a derivation nobody can reproduce, not about whose hand did
+it. What the arrangement costs a reader is that the press changes the
+perspective slightly, the panel being straightened and the vault not;
+`landing-art.ts` carries that where the reader meets it, and `whole.source` is
+why each rendition links its own file page.
 
 **Six square vignettes were derived the same way and are no longer here.** They
 sat on the shelves of "What each of these is", which is the one section of that
@@ -137,6 +156,8 @@ Fetch (`{name}.jpg`, from `https://upload.wikimedia.org/wikipedia/commons/…`):
 | --------------------- | -------------------------------------------------------------------------------------------- | ---------- | ------------------ |
 | hero-jerome           | `Antonello da Messina - St Jerome in his study - National Gallery London.jpg`                | 4731×6000  | `d2a50c625ee24fa0` |
 | disputa-sacramento    | `Disputa del Sacramento (Rafael).jpg`                                                        | 3258×2349  | `24ed25371c747cb5` |
+| creation-adam         | `The Creation of Adam perspective fix.jpg`                                                   | 3572×1663  | `3a9146757d475eb1` |
+| creation-adam-whole   | `Creación de Adán.jpg`                                                                       | 4256×2843  | `cc26d81c25052fb4` |
 | gospels-preaching     | `Christ Preaching, called La Petite Tombe MET DP832290.jpg`                                  | 3594×2687  | `75563743cc71e5f3` |
 | ~~social-gleaners~~   | `Jean-François Millet - Gleaners - Google Art Project 2.jpg`                                 | 5354×4006  | `6abe60efbda2dbdb` |
 | ~~shelf-scripture~~   | `The Inspiration of Saint Matthew-Caravaggio (1602).jpg`                                     | 6911×10816 | `91ab56aa9ff23b50` |
@@ -162,13 +183,14 @@ file's 2794 rows, 322 off each end. Centring is not a nicety — `cover` crops
 from the middle, so a band that is not centred on the file is a band the page
 will centre again.
 
-**`disputa-sacramento` is the one name with two files**, and the second is the
-whole scan at 1600px rather than a crop of anything: the band is the fresco's
-earthly register, so what a press should open is the fresco, not more of the
-strip. `landing-art.ts`'s `whole` argues it. Two framings, two ratios, and the
-viewer reserves its stage from whichever it is handed — which is also why this
-cannot be `PlateViewer`'s `detailSrc`, that being the same framing at more
-pixels.
+**Two names carry a second file**, and in neither case is it a crop of
+anything. `disputa-sacramento-whole` is that scan whole at 1600px: the band is
+the fresco's earthly register, so what a press should open is the fresco, not
+more of the strip. `creation-adam-whole` is a different FILE — the parent the
+band was derived from on Commons, for the reason given above. `landing-art.ts`'s `whole` argues both. Two framings, two ratios,
+and the viewer reserves its stage from whichever it is handed — which is also
+why this cannot be `PlateViewer`'s `detailSrc`, that being the same framing at
+more pixels.
 
 **The boxes were chosen by eye and are the only judgement in the derivation** —
 every one of them was got wrong at least once and corrected against the output,
@@ -188,6 +210,8 @@ avifenc -q 65 -s 0 -y 420 --jobs all out.png "site/src/lib/assets/schola/$name.a
 | hero-jerome              | `4731x2150+0+322`†     | 1600×727  |
 | disputa-sacramento       | `3258x774+0+1410`      | 1600×380  |
 | disputa-sacramento-whole | none — the scan, whole | 1600×1154 |
+| creation-adam            | none — the scan, whole | 1600×745  |
+| creation-adam-whole      | none — the scan, whole | 1600×1069 |
 | gospels-preaching        | `3300x1320+150+560`    | 1800×720  |
 | ~~social-gleaners~~      | `5354x2142+0+1250`     | 1800×720  |
 | ~~shelf-scripture~~      | `6911x6911+0+400`      | 400×400   |
@@ -211,10 +235,11 @@ invented filigree here, so the finer chroma buys nothing on a photograph of a
 painting. `-s 0` for the same reason it is used above — encoded by hand once,
 so the slowest speed is free.
 
-Total shipped (2026-09-11): 1,113 KB across five files, none of them `eager` —
+Total shipped (2026-09-11): 1,480 KB across seven files, none of them `eager` —
 every painting is below the fold at every viewport and the drollery is on a
-page nobody meant to reach. The whole Disputa is 406 KB of that and is fetched
-only by a reader who presses the band, which is the trade its section argues.
+page nobody meant to reach. The two `whole` renditions are 627 KB of that and
+are fetched only by a reader who presses a band, which is the trade their
+section argues.
 They are Vite build assets under `_app/immutable/`, so they are negated from
 `run_worker_first` and land in the service worker's content tier rather than
 its install precache (`DEFERRED_MEDIA` in `sw-policy.ts` lists `.avif`).

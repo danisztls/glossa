@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * One of the two landing-page paintings, with its attribution behind the same
+	 * One of the landing-page paintings, with its attribution behind the same
 	 * control a Doré plate's caption uses.
 	 *
 	 * ## Why the credit is a card and not a line
@@ -97,6 +97,13 @@
 	 * since the stage reserves its ratio from those and a second framing is a
 	 * second ratio.
 	 *
+	 * EVERYTHING THE VIEW SHOWS MUST BE THE SHOWN FILE'S, its Commons file
+	 * page included. A second framing is sometimes a second FILE —
+	 * `/scriptura`'s band is a Commons derivative of the file its `whole`
+	 * ships, straightened and published in its own right — so `whole.source`
+	 * overrides the artwork's wherever it exists, and the link under the
+	 * picture is the page for the picture rather than for its parent.
+	 *
 	 * It costs the sentence below. `viewerSrc` off the inline image is the file
 	 * already in the cache, so opening it is free; a `whole` is a fetch the
 	 * press pays for. Free was never the point — it was what the arrangement
@@ -121,10 +128,13 @@
 		/** Above the fold. The hero, and nothing else. */
 		eager?: boolean;
 		/**
-		 *  THE PICTURE OPENS OVER THE PAGE. Set it where `--art-height` is set and
-		 *  nowhere else: a band is a WINDOW on the file, and a reader who can see
-		 *  only the middle of a room needs a way to the rest of it. A picture drawn
-		 *  whole has nothing behind it, and making it a control would promise one.
+		 *  THE PICTURE OPENS OVER THE PAGE. Set it where there is something
+		 *  behind the picture and nowhere else, which is either of two things: a
+		 *  `--art-height` cropping the file, since a band is a WINDOW and a
+		 *  reader who can see only the middle of a room needs a way to the rest
+		 *  of it, or an artwork with a `whole`, which ships a second framing for
+		 *  the viewer to open. A picture that is drawn whole and has no `whole`
+		 *  has nothing behind it, and making it a control would promise one.
 		 */
 		expandable?: boolean;
 	}
@@ -148,10 +158,13 @@
 	let viewerSrc = $state('');
 	let viewing = $state(false);
 
-	/** The intrinsic pixels of whatever `openViewer` chose, never the other
-	 *  one's: the stage reserves its ratio from these before a byte has
-	 *  landed, and the two framings do not share a ratio. */
+	/** Whatever `openViewer` chose, never the other one: the stage reserves
+	 *  its ratio from these pixels before a byte has landed, the two framings
+	 *  do not share a ratio, and where they are two scans they do not share a
+	 *  file page either. `whole` may omit `source` — both framings off one
+	 *  download is the ordinary case — so the artwork's is the fallback. */
 	const viewed = $derived(art.whole ?? art);
+	const viewedSource = $derived(viewed.source ?? art.source);
 
 	function openViewer() {
 		viewerSrc = art.whole ? art.whole.src : imgEl?.currentSrc || imgEl?.src || '';
@@ -268,7 +281,7 @@
 		width={viewed.width}
 		height={viewed.height}
 		credit={art.whole ? art.credit : credit}
-		source={art.source}
+		source={viewedSource}
 		src={viewerSrc}
 		onclosed={() => {
 			viewing = false;

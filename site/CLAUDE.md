@@ -701,17 +701,21 @@ Rationale in `site/docs/finding.md`.
   would be false of the others.** Antonello's Jerome is a man alone in a room
   full of books, which is a library; Raphael's disputing doctors are people
   arguing about one thing with the answer on the table, which is
-  `/quaestiones`. A sentence true of every page names decoration.
+  `/quaestiones`; Michelangelo's two hands are Genesis 2:7 and do not touch,
+  so what crosses the gap is a word, which is what a text is. A sentence true
+  of every page names decoration.
 - **Rows in `assets/README.md` for withdrawn pictures are struck through rather
   than deleted**, a URL and a SHA-256 and a crop box being enough to bring one
   back. Delete the row instead when the picture returns in a shape it cannot
   describe — the Disputa came back off a different scan at a different ratio,
   and a recipe for a file nothing asks for is worse than none.
-- **A caption says "(detail)" because both pictures are one** — a horizontal
-  band cut out of a much taller painting. Without it the credit would tell a
-  reader the work itself is that shape. `art.detail` and `art.about` are the two
-  keys the whole set costs, and they are `art.*` rather than `schola.*` because
-  two pages read them. A caption is `Artist, Title, year. Institution.`, held in
+- **A caption says "(detail)" only where the picture IS one** — a band cut out
+  of a much taller painting, which three of the four are; without it the credit
+  would tell a reader the work itself is that shape. `/scriptura`'s is the
+  panel entire and says nothing, the flag being a claim about the file and not
+  a house style. `art.detail` and `art.about` are the two keys the whole set
+  costs, and they are `art.*` rather than `schola.*` because four pages read
+  them. A caption is `Artist, Title, year. Institution.`, held in
   `landing-art.ts`. Only ink on a white sheet may take `--plate-blend`, and
   `[data-mono]` desaturates every one.
 - **Hand work keeps its master only where a crop box cannot say what the hand
@@ -731,6 +735,22 @@ Rationale in `site/docs/finding.md`.
   the whole work is not one. Not `PlateViewer`'s `detailSrc`, which is the same
   framing at more pixels fetched on zoom. It costs the free open: the band is in
   the cache and the whole is a fetch.
+- **The test is whether a press SHOWS anything new, not whether the page's file
+  was cropped.** `/scriptura` runs the relation backwards — the page draws the
+  Creation panel whole and a press opens that panel in its SETTING, the vault
+  around it — so the field is named for its first case and limited to neither
+  direction.
+- **A second framing may be a second FILE, and then it is a second file page
+  too.** `/scriptura`'s band is a Commons derivative of the file its `whole`
+  ships — the panel rotated and straightened, published in its own right and
+  declaring `Extracted from` — so `whole` carries its own `source` and the
+  viewer links whichever file the reader is looking at. Two fetch rows in
+  `assets/README.md` and no crop box for either.
+- **Hand work published upstream needs no master here.** A rotation and a
+  perspective correction is what the rule above says keeps its master, and this
+  one's master is a Commons file with a page, a licence tag and a SHA-256 in
+  that table — **the rule is about a derivation nobody can reproduce, not about
+  whose hand did it.**
 - **A credit is behind the caption trigger, not set under the picture.**
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because a
@@ -744,18 +764,25 @@ Rationale in `site/docs/finding.md`.
   line down to components that know no corpus and no dictionary; a string
   cannot carry a URL, so **a composed-string boundary silently drops whatever
   made the claim checkable.** `Plate` passes none: the plates' `provider_url`
-  is a courtesy link to the provider's gallery, not a licence page.
+  is a courtesy link to the provider's gallery, not a licence page. **And the
+  page it names is the SHOWN file's**, which is the artwork's only until a
+  `whole` brings a second one.
 - **`ArtFigure` reads `--art-height`** and crops to it with `object-fit:
 cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
-  picture in `PlateViewer`. Set that prop only where the height is set — a
-  picture drawn whole has nothing behind it, and making it a control would
-  promise one.
+  picture in `PlateViewer`. Set that prop only where there is something behind
+  the picture — a height cropping it, or a `whole` — since a picture that is
+  drawn whole and has no `whole` would be a control promising nothing.
 - **The height follows what the picture's subject is.** A room's subject is
   central, so a band slices it and the ends are what `cover` may eat; a frieze's
   subject IS its span, so `/quaestiones` derives 16.5rem from the column's
   69.5rem and the file's 4.21:1 and loses nothing at full width. Below that
   width `cover` crops the ENDS, so a frieze wants a SHORTER band on a phone, not
   a taller one — the opposite of `/bibliotheca`'s call.
+- **A height in rem may only be derived against a width in rem.**
+  `/scriptura`'s picture sits in `.content-column`, whose width is a MEASURE
+  that moves with the reader's text-size setting, so it sets no `--art-height`
+  at all and the file is drawn at its own ratio — which holds at every setting
+  where a fixed band would keep a different share of the picture at each.
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition

@@ -1,10 +1,11 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
- * each on `/schola`, `/bibliotheca` and `/quaestiones`, and no other picture
- * on any of them. A banner over `/schola`'s title; on the other two a band
- * under the last of what the page came to offer, opening to the whole picture
- * on a press, because an index's reader came for the index. `BANNERS` is now
- * the derivation's name rather than the role, the same way the filenames are.
+ * each on `/schola`, `/bibliotheca`, `/quaestiones` and `/scriptura`, and no
+ * other picture on any of them. A banner over `/schola`'s title; on the other
+ * three a band under the last of what the page came to offer, opening to more
+ * of the picture on a press, because an index's reader came for the index.
+ * `BANNERS` is now the derivation's name rather than the role, the same way
+ * the filenames are.
  *
  * ## A picture earns its page by a sentence, and the sentence is about both
  *
@@ -12,9 +13,11 @@
  * library; Rembrandt's preaching Christ is somebody being taught, which is
  * what `/schola` is; Raphael's disputing doctors are people arguing about one
  * thing with the answer on the table between them, which is what
- * `/quaestiones` is. A picture with no such sentence is decoration, and the
- * test is that the sentence discriminates — one true of every page is worth
- * nothing.
+ * `/quaestiones` is; Michelangelo's two hands are Genesis 2:7, which is the
+ * first thing that happens in the first of the books `/scriptura` lists, and
+ * they do not touch — what crosses the gap is a word, which is what a text
+ * is. A picture with no such sentence is decoration, and the test is that the
+ * sentence discriminates — one true of every page is worth nothing.
  *
  * It was four over one page before 2026-09-05. Raphael's *Disputa* headed
  * "The four pillars" and Millet's *Gleaners* headed "The Church's social
@@ -30,11 +33,16 @@
  * whole fresco is the Church agreeing with itself in glory and the half below
  * the clouds is an argument.
  *
- * `assets/README.md` keeps the source URL, SHA-256 and crop line for all six,
- * so a page that wants one back gets it from one fetch and one crop — which
- * is the whole reason deleting one is cheap. **The FILENAMES are the
- * derivation's names and not the pages' roles**
- * (`hero-jerome` is now Library's, `gospels-preaching` is now the only
+ * `/scriptura` was illustrated the same day, and is the one page whose picture
+ * was not cut HERE: the panel was cut, rotated and straightened by an editor
+ * on Commons and published as a file in its own right, so what this repository
+ * does is fetch it.
+ *
+ * `assets/README.md` keeps the source URL, SHA-256 and crop line for every
+ * one of them, withdrawn ones included, so a page that wants a picture back
+ * gets it from one fetch and one crop — which is the whole reason deleting
+ * one is cheap. **The FILENAMES are the derivation's names and not the pages'
+ * roles** (`hero-jerome` is now Library's, `gospels-preaching` is now the only
  * picture on `/schola`); renaming them would mean re-deriving both assets and
  * rewriting the table that reproduces them, to fix nothing a reader can see.
  *
@@ -111,14 +119,57 @@
  * and the whole is not, so a press is a fetch. Only a reader who asks for the
  * fresco pays it, which is the right reader to charge.
  *
+ * **THE FIELD IS NAMED FOR THE FIRST CASE AND IS NOT LIMITED TO IT.** What it
+ * holds is what a press opens, and `/scriptura` runs the relation the other
+ * way: the picture on the page is the *whole* work — the Creation panel, all
+ * of it, uncropped — and what opens is that panel in its SETTING, the vault
+ * around it with the ignudi and the painted architecture. Nothing has been cut
+ * off the page's file, so nothing is being restored; what the press adds is
+ * where the thing is. Both directions answer the same question, which is
+ * whether pressing the picture shows the reader anything they cannot already
+ * see, and neither is about cropping.
+ *
+ * **AND THE SECOND FRAMING MAY BE A SECOND FILE, in which case it is a second
+ * file page too.** The *Disputa*'s two renditions came off one download and
+ * the Creation's did not — but they are not two photographs. The band is a
+ * Commons DERIVATIVE of the very file `whole` ships: one editor's rotation,
+ * crop and perspective correction of `Creación de Adán.jpg`, published as a
+ * file of its own, which is why no crop box in `assets/README.md` can
+ * reproduce it and why it is fetched rather than cut. So `whole` may carry its
+ * own `source`, and `ArtFigure` links whichever file the reader is actually
+ * looking at. A credit that names the wrong file is the same defect as a
+ * credit that links nothing — it asks to be taken on trust.
+ *
+ * **Commons declares the relation, which is what makes the pair checkable
+ * rather than our assertion**: the band's file page carries `Extracted from`
+ * naming the parent, so a reader following either link can see the other. The
+ * pairing is somebody else's published claim, not a resemblance noticed here.
+ *
+ * The visible cost is GEOMETRY and not colour — the two agree to within a
+ * point on every channel's mean, having one photograph behind them. What
+ * shifts on a press is the perspective: the panel straightened toward what the
+ * fresco would show laid flat, against the vault as the camera found it. That
+ * is the price of showing the setting at all, since the alternative is the
+ * corrected panel pasted into the uncorrected vault, which would be a
+ * composite and would need saying so.
+ *
  * ## Re-deriving one
  *
  * `assets/README.md` records the source URL, the SHA-256 of the file that was
  * downloaded, and the crop box and encoder line for each. A faithful crop
  * keeps no master: the command reproduces the asset exactly and a master is
- * tens of megabytes in a public repository, so the recipe is the copy.
+ * tens of megabytes in a public repository, so the recipe is the copy. Both
+ * of the Creation's renditions are that recipe minus the crop — a fetch and a
+ * resize, no box at all.
  *
- * **TWO OF THE THREE ARE NOT FAITHFUL CROPS AND BOTH KEEP THEIR MASTERS.**
+ * **HAND WORK SOMEBODY ELSE PUBLISHED NEEDS NO MASTER HERE.** The band is a
+ * rotation, a crop and a perspective correction, which is exactly the kind of
+ * work the rule below says keeps its master — and that master is a Commons
+ * file with a page, a licence tag and a SHA-256 in `assets/README.md`. The
+ * rule is about a derivation nobody else can reproduce, not about who moved
+ * the pixels.
+ *
+ * **TWO OF THEM ARE NOT FAITHFUL CROPS AND BOTH KEEP THEIR MASTERS.**
  * The reynard drollery was cut and painted by hand, and `hero-jerome` was
  * cropped and tone-corrected by hand on 2026-09-06 — brightened and pulled
  * open, because the National Gallery's photograph is dark and yellow and the
@@ -140,6 +191,8 @@ import heroJerome from '$lib/assets/schola/hero-jerome.avif';
 import gospelsPreaching from '$lib/assets/schola/gospels-preaching.avif';
 import disputaSacramento from '$lib/assets/schola/disputa-sacramento.avif';
 import disputaSacramentoWhole from '$lib/assets/schola/disputa-sacramento-whole.avif';
+import creationAdam from '$lib/assets/schola/creation-adam.avif';
+import creationAdamWhole from '$lib/assets/schola/creation-adam-whole.avif';
 
 export interface Artwork {
 	/** The hashed build-asset URL Vite resolved the import to. */
@@ -155,12 +208,16 @@ export interface Artwork {
 	/** The Commons file page: licence tag, digitizer, and the master. */
 	source: string;
 	/**
-	 * The whole work, when `src` is a band cut out of it rather than the
-	 * work drawn small — see `whole` above. Its own intrinsic pixels,
-	 * because a second framing is a second ratio. Absent where a press has
-	 * nothing new to show.
+	 * What a press opens, when the picture on the page is not all there is
+	 * to see — see `whole` above. Its own intrinsic pixels, because a second
+	 * framing is a second ratio. Absent where a press has nothing new to
+	 * show.
+	 *
+	 * `source` only where the second framing is a second SCAN and therefore
+	 * a second file page; it falls back to the artwork's, which is right
+	 * whenever both framings were cut from one download.
 	 */
-	whole?: { src: string; width: number; height: number };
+	whole?: { src: string; width: number; height: number; source?: string };
 }
 
 /**
@@ -181,6 +238,15 @@ export interface Artwork {
  * at the parapet and the frame at the right. A frieze is the one shape where
  * that matters, its whole subject being the span, which is the second reason
  * that picture ships a `whole` and Jerome does not.
+ *
+ * **`/scriptura` IS THE CASE WHERE THE PAGE DECLINES TO ASK THE SECOND
+ * QUESTION.** It sets no `--art-height`, so the file is drawn at its own
+ * 2.15:1 and nothing is cropped at any width — the arrangement `/schola`'s
+ * banner has always had. That is not because the reading column is generous;
+ * it is because the column is a MEASURE (`--content-width`, some 62 characters
+ * of prose, and it moves with the reader's text-size setting), so there is no
+ * fixed width to derive a height from the way `/quaestiones` derives 16.5rem
+ * from 69.5. A ratio holds at every setting and a rem does not.
  *
  * So these numbers are the intrinsic pixels and nothing more: the `<img>`
  * attributes, the ratio the viewer's stage reserves. They stopped being a
@@ -220,5 +286,21 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		paper: false,
 		source: 'https://commons.wikimedia.org/wiki/File:Disputa_del_Sacramento_(Rafael).jpg',
 		whole: { src: disputaSacramentoWhole, width: 1600, height: 1154 }
+	},
+	scriptura: {
+		width: 1600,
+		height: 745,
+		src: creationAdam,
+		credit:
+			'Michelangelo Buonarroti, Creazione di Adamo, c. 1511. Cappella Sistina, Musei Vaticani.',
+		detail: false,
+		paper: false,
+		source: 'https://commons.wikimedia.org/wiki/File:The_Creation_of_Adam_perspective_fix.jpg',
+		whole: {
+			src: creationAdamWhole,
+			width: 1600,
+			height: 1069,
+			source: 'https://commons.wikimedia.org/wiki/File:Creaci%C3%B3n_de_Ad%C3%A1n.jpg'
+		}
 	}
 };
