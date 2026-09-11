@@ -1,7 +1,7 @@
 import type { Apparatus } from './lib/apparatus';
 import { bookFromLegacySlug, bookSlug } from './lib/address';
 import { GEO_ATTRIBUTE, geoTerritory } from './lib/geo';
-import { isCanonicalPath, type RouteManifest } from './lib/route-manifest';
+import { isCanonicalPath, isPrerenderedPath, type RouteManifest } from './lib/route-manifest';
 import { isUiLang } from './lib/ui-langs';
 import {
 	headFor,
@@ -256,13 +256,43 @@ export function legacyBiblePath(pathname: string): string | undefined {
 	return `${m[1] ?? ''}${m[2]}${bookSlug(osis)}${m[4]}`;
 }
 
-/** Fetch the SPA shell without changing the reader-visible address. */
+/**
+ * Fetch the SPA shell without changing the reader-visible address.
+ *
+ * `/shell` and not `/`, since 2026-09-11: `/` is a prerendered page now
+ * (`isPrerenderedPath`), so the fallback needed a file of its own or the home
+ * page's document would be what every citation on the site boots from.
+ * `vite.config.ts`'s `fallback` writes it as `shell.html`.
+ *
+ * ADDRESSED WITHOUT THE EXTENSION, which is not cosmetic: `html_handling` is
+ * `auto-trailing-slash` (`wrangler.jsonc`), so the asset binding answers
+ * `/shell.html` with a 307 to `/shell` — and a redirect is what the reader
+ * would have got at every citation on the site, with an empty body and no
+ * error anywhere.
+ */
 function shellRequest(request: Request): Request {
 	const url = new URL(request.url);
-	url.pathname = '/';
+	url.pathname = '/shell';
 	url.search = '';
 	url.hash = '';
 	return new Request(url, request);
+}
+
+/**
+ * The document for a canonical address: its own where the build wrote one,
+ * the shell everywhere else.
+ *
+ * WHAT A PRERENDERED PAGE BUYS IS THE FIRST PAINT, and it buys it only if the
+ * edge stops answering with the shell. Measured cold on Slow 4G, a landing page
+ * on the shell reports FCP and LCP at the same millisecond, both waiting on the
+ * boot chunk and the layout's fetches; its own document has the text in it.
+ *
+ * The `<head>` rewrite below still runs over either: a prerendered page titles
+ * itself, but the canonical, the `hreflang` cluster and the structured data are
+ * the edge's, and so is `data-geo`.
+ */
+function documentFor(request: Request, pathname: string, assets: AssetFetcher): Promise<Response> {
+	return assets.fetch(isPrerenderedPath(pathname) ? request : shellRequest(request));
 }
 
 /** Keep the app's own not-found UI while preserving an HTTP 404 status. */
@@ -461,7 +491,9 @@ export default {
 		const [titles, apparatus, shell] = await Promise.all([
 			getTitles(request, env.ASSETS),
 			getApparatus(request, env.ASSETS),
-			canonical ? env.ASSETS.fetch(shellRequest(request)) : notFoundShell(request, env.ASSETS)
+			canonical
+				? documentFor(request, url.pathname, env.ASSETS)
+				: notFoundShell(request, env.ASSETS)
 		]);
 		// A 404 is titled too — it is the one page whose name a crawler reads
 		// and acts on — and `/404` is where `STATIC_HEADS` keeps that name.

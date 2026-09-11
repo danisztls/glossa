@@ -23,6 +23,16 @@
  * the only direction it can be wrong in.
  */
 
+import {
+	ensureBibleIndex,
+	ensureCccIndex,
+	ensureCompendiumIndex,
+	ensureCoreIndex,
+	ensureDocumentIndex,
+	ensurePrayerIndex,
+	ensureSummaIndex
+} from './corpus-index';
+import { i18n } from './i18n.svelte';
 import { isUiLang } from './ui-langs';
 
 /** The primer names `corpus-index.ts` exports an `ensure…Index()` for. */
@@ -207,3 +217,41 @@ export function indexesForPath(pathname: string): readonly IndexName[] {
 	if (segment === '') return HOME;
 	return BY_SEGMENT[segment] ?? ALL;
 }
+
+/**
+ * Everything a path needs resident before it renders: the dictionary, the work
+ * manifests, and the indexes `indexesForPath` names.
+ *
+ * A FUNCTION RATHER THAN THE LAYOUT'S OWN BODY because the layout's `load` does
+ * not exist on the server. SvelteKit's build sets `load: null` on the server
+ * node of any node declaring `ssr = false` (`.svelte-kit/output/server/nodes/`
+ * says so in as many words), and the root layout declares it — so a page that
+ * turns SSR back on to be prerendered inherits a layout that can prime nothing,
+ * and renders against empty registries. That failure is silent in production,
+ * where `requireIndex` only warns: the build succeeds and writes documents with
+ * the catalogue missing from them.
+ *
+ * So the prerendered pages call this from their own `load` as well. Both calls
+ * are cheap after the first — every primer memoises its promise — which is what
+ * makes "prime again, in case the layout could not" an ordinary line rather
+ * than a special case.
+ */
+export async function primeForPath(pathname: string): Promise<void> {
+	await Promise.all([
+		i18n.ready,
+		// Unconditional: the work manifests answer "what works are there, and
+		// what are they called", which the language menu, the edition pickers and
+		// the footer ask on every path — see `ensureCoreIndex`.
+		ensureCoreIndex(),
+		...indexesForPath(pathname).map((name) => PRIMERS[name]())
+	]);
+}
+
+const PRIMERS: Record<IndexName, () => Promise<void>> = {
+	bible: ensureBibleIndex,
+	ccc: ensureCccIndex,
+	compendium: ensureCompendiumIndex,
+	summa: ensureSummaIndex,
+	document: ensureDocumentIndex,
+	prayer: ensurePrayerIndex
+};

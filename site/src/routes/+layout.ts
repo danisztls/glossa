@@ -1,14 +1,4 @@
-import {
-	ensureBibleIndex,
-	ensureCoreIndex,
-	ensureCccIndex,
-	ensureCompendiumIndex,
-	ensureDocumentIndex,
-	ensurePrayerIndex,
-	ensureSummaIndex
-} from '$lib/corpus-index';
-import { i18n } from '$lib/i18n.svelte';
-import { indexesForPath, type IndexName } from '$lib/index-priming';
+import { primeForPath } from '$lib/index-priming';
 
 /**
  * The reader is an SPA. `adapter-static` emits one fallback shell, and the
@@ -78,22 +68,6 @@ export const ssr = false;
  * because under fixtures every registry is populated at module load and a load
  * that never waits passes every runnable test.
  */
-const PRIMERS: Record<IndexName, () => Promise<void>> = {
-	bible: ensureBibleIndex,
-	ccc: ensureCccIndex,
-	compendium: ensureCompendiumIndex,
-	summa: ensureSummaIndex,
-	document: ensureDocumentIndex,
-	prayer: ensurePrayerIndex
-};
-
 export async function load({ url }: { url: URL }) {
-	await Promise.all([
-		i18n.ready,
-		// Unconditional: the work manifests answer "what works are there, and
-		// what are they called", which the language menu, the edition pickers and
-		// the footer ask on every path — see `ensureCoreIndex`.
-		ensureCoreIndex(),
-		...indexesForPath(url.pathname).map((name) => PRIMERS[name]())
-	]);
+	await primeForPath(url.pathname);
 }

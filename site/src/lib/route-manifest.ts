@@ -146,6 +146,62 @@ const CHROME_PATH_SET: ReadonlySet<string> = new Set(CHROME_PATHS);
  * different thing from naming a language, and it is what `x-default` means in
  * the cluster these form.
  */
+/**
+ * The chrome pages the build writes a real document for, and the ones of those
+ * that also exist at `/{lang}{path}`.
+ *
+ * PRERENDERING IS A SUBSET OF `CHROME_PATHS`, NOT THE WHOLE OF IT (2026-09-11,
+ * by direction): the landing pages a stranger arrives at from a search result.
+ * Every other address — a citation, and there are hundreds of thousands —
+ * stays on the SPA shell, which is the arrangement `site/docs/shell.md`
+ * describes and which nothing here changes.
+ *
+ * TWO LISTS BECAUSE THE ROUTE TREE HAS TWO. Five chrome paths have no
+ * `+page.svelte` under `[uilang=uilang]/`, so `/pt/schola` is a doorway that
+ * redirects rather than a page that renders, and prerendering one would write a
+ * document for a redirect. `vite.config.ts` checks the second list against the
+ * route tree on disk, so an entry that stops being a page fails the build.
+ *
+ * Read by three consumers that must not disagree: the prerender entries, the
+ * `entries()` each prefixed route exports, and `src/worker.ts`, which is what
+ * decides whether an address is served its OWN document or the shell.
+ */
+export const PRERENDERED_CHROME_PATHS = [
+	'/',
+	'/bibliotheca',
+	'/scriptura',
+	'/catechismus',
+	'/documenta',
+	'/preces',
+	'/schola'
+] as const;
+
+export const PRERENDERED_PREFIXED_PATHS = [
+	'/',
+	'/scriptura',
+	'/catechismus',
+	'/documenta',
+	'/preces'
+] as const;
+
+const PRERENDERED_SET: ReadonlySet<string> = new Set(PRERENDERED_CHROME_PATHS);
+const PRERENDERED_PREFIXED_SET: ReadonlySet<string> = new Set(PRERENDERED_PREFIXED_PATHS);
+
+/**
+ * Whether the build wrote a document at this address.
+ *
+ * The edge's whole use for it: a prerendered address is served its own file,
+ * and everything else the shell. Getting it wrong in the false direction costs
+ * the reader the paint the prerender was for; in the true direction it serves
+ * `/preces`'s document at an address that is not `/preces`, so the check is a
+ * set membership and never a prefix test.
+ */
+export function isPrerenderedPath(pathname: string): boolean {
+	if (PRERENDERED_SET.has(pathname)) return true;
+	const prefixed = parseChromePath(pathname);
+	return prefixed !== undefined && PRERENDERED_PREFIXED_SET.has(prefixed.path);
+}
+
 export function parseChromePath(pathname: string): { lang: string; path: string } | undefined {
 	const slash = pathname.indexOf('/', 1);
 	const lang = pathname.slice(1, slash === -1 ? undefined : slash);

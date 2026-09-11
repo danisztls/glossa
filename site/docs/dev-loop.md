@@ -190,3 +190,34 @@ content tier and the index tier did not inherit it — where it is strictly
 worse, since a content read that never retries costs one text and an index that
 never retries costs every address in that work type. `retryable-once.ts` is
 that rule as a tested primitive rather than a comment repeated in two places.
+
+## Measuring what a change costs a reader
+
+`npm run vitals -- --label <name>` builds nothing and measures what is in
+`build/`: it boots `wrangler dev`, drives headless Chromium over CDP with no
+dependency at all (Node's own `WebSocket`), and reports LCP, FCP, CLS, TBT and
+transfer bytes per address as the median of five runs under Slow 4G and a 4×
+CPU throttle. `--compare a.json b.json` prints the delta.
+
+**It answers a DIFFERENCE and not a score.** An absolute number off this
+machine is worth no more than one off anybody else's, and what Google ranks on
+is CrUX, which is real readers on real connections. So the interface is a label
+per build and a comparison between two, and the report prints the run-to-run
+spread beside the median, because anything inside it is noise.
+
+**A fresh browser and profile per run, deliberately.** `/` is precached and
+served cache-first by the service worker, so a second visit in one profile
+measures the cache and not the build — and the cold visit is the only one a
+prerender could help.
+
+**A fixed settle window is wrong in both directions here**, the shell painting
+nothing until its data has landed: too short records `lcp: 0` for a page that
+was still loading, too long pays the slowest case on every run. The reading is
+taken when the page goes quiet, and a run that reports no LCP is an error
+rather than a zero in the median.
+
+**TBT and blocking time are not comparable across an SSR change.** TBT counts
+what blocks after FIRST PAINT, so a page that paints last reports almost none;
+prerendering moves the same work into the window and the number rises. The run
+records `blockingTotal` for that reason, and the two are only comparable to
+their own kind.

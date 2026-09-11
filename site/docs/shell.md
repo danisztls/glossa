@@ -5,9 +5,53 @@ away. The edge in front of it is `site/docs/edge.md`.
 
 ## One shell
 
-**One static SPA shell, not a prerender.** The static page was never the
-content identity: prerendering repeated the chrome thousands of times and could
-embed only a build-time default edition or every edition at once.
+**One static SPA shell for every citation, and a document for each landing
+page.** The static page was never the content identity: prerendering a reading
+address repeated the chrome thousands of times and could embed only a
+build-time default edition or every edition at once. None of that is true of a
+page whose every word IS the chrome, which is why the seven in
+`PRERENDERED_CHROME_PATHS` are written out and nothing else is.
+
+**What the shell costs a stranger is the whole of the first paint.** Measured
+cold on Slow 4G with a 4× CPU throttle (`npm run vitals`, medians of five), `/`
+reported **LCP 5,344 ms and FCP at the same millisecond** — the first pixel of
+text and the largest were one event, both waiting on the boot chunk and then on
+the layout's fetches. The same page as a document: **1,072 ms**, with the four
+other landing pages between 1,068 and 1,236 ms. The tagline is the LCP element
+either way; the wordmark cannot be, its face being `font-display: block`.
+
+**The metric that moved the other way is CLS, and only where the script is
+deferred.** `/ar` went from 0.084 to 0.457 while the Latin pages went to zero:
+non-Latin faces are in the content tier on purpose (`DEFERRED_FONTS`), so the
+Arabic text now paints in a fallback face and reflows when the real one lands —
+a shift the shell hid by painting nothing until everything had arrived. TBT
+rose from 0 to 5–10 ms for the same reason and means nothing: TBT counts what
+blocks AFTER first paint, and there was no first paint to count from.
+
+**A prerendered page is a page whose `load` runs on the server, and a layout
+that declares `ssr = false` has no `load` there at all.** SvelteKit's build
+writes `"load": null` onto the server node of any node carrying that option, so
+a page turning SSR back on inherits a layout that primes nothing. **The failure
+is silent in exactly the way this codebase's guards are designed not to be**:
+`requireIndex` throws in dev and warns in production, prerendering is a
+production build, so the first working version emitted 207 documents with the
+catalogue missing from every one and the prefixed pages in English under
+Portuguese and Arabic addresses. `primeForPath` is the priming as a function
+both callers share; the prefixed pages call `i18n.set` as well.
+
+**The index tier needed the disk read the content tier already had.** A `?url`
+glob answers with `/_app/immutable/assets/…`, and Node's `fetch` cannot resolve
+a path, so every primer failed under SSR. `fetchIndexFile` branches on
+`import.meta.env.SSR` exactly as `corpus.ts` does, and takes a
+`ContentLocation` rather than a URL so the path comes off the glob KEY rather
+than being composed from the index's name.
+
+**The fallback needed a name of its own, and the extension is a trap.** `/` is
+a document now, so `fallback: 'shell.html'`; `html_handling` is
+`auto-trailing-slash`, so the asset binding answers a request for
+`/shell.html` with a 307 to `/shell` — which is what every citation on the site
+would have received, with an empty body and nothing logged. `shellRequest`
+asks for `/shell`.
 
 **The boot payload is priced per registry, not per byte.** With `ssr = false`
 nothing paints until the client bundle has mounted, so whatever the boot index

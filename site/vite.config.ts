@@ -1,9 +1,16 @@
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, type Plugin } from 'vite';
+import {
+	CHROME_PATHS,
+	PRERENDERED_CHROME_PATHS,
+	PRERENDERED_PREFIXED_PATHS
+} from './src/lib/route-manifest.ts';
+import { UI_LANGS } from './src/lib/ui-langs.ts';
 
 // Absolute, build-time-baked path to src/lib/corpus-data/, read by
 // corpus.ts's SSR content fetcher (see that file's docblock on why:
@@ -18,6 +25,50 @@ const corpusDataDir = path.resolve(
 	fileURLToPath(new URL('.', import.meta.url)),
 	'src/lib/corpus-data'
 );
+
+/**
+ * The addresses the build writes a real document for, expanded from the two
+ * lists `route-manifest.ts` holds — the edge reads the same ones, and the point
+ * of their living there is that the build and the worker cannot disagree about
+ * which addresses have a document.
+ *
+ * WHAT IS CHECKED HERE IS WHAT ONLY A BUILD CAN SEE. A prerendered path must be
+ * in `CHROME_PATHS`, or it has neither a `<head>` the edge can write nor a
+ * sitemap row, and is a document nobody would find; and a prefixed path must
+ * have a route of its own under `[uilang=uilang]/`, or it is a doorway that
+ * redirects and the build would write a document for a redirect.
+ */
+const notChrome = PRERENDERED_CHROME_PATHS.filter(
+	(candidate) => !(CHROME_PATHS as readonly string[]).includes(candidate)
+);
+if (notChrome.length > 0) {
+	throw new Error(
+		`prerender: ${notChrome.join(', ')} is not in CHROME_PATHS — a prerendered page ` +
+			`needs the head and the sitemap row that list carries (src/lib/route-manifest.ts).`
+	);
+}
+
+const uiLangRoutes = path.resolve(
+	fileURLToPath(new URL('.', import.meta.url)),
+	'src/routes/[uilang=uilang]'
+);
+const missing = PRERENDERED_PREFIXED_PATHS.filter(
+	(chromePath) => !existsSync(path.join(uiLangRoutes, chromePath, '+page.svelte'))
+);
+if (missing.length > 0) {
+	throw new Error(
+		`prerender: ${missing.join(', ')} has no +page.svelte under [uilang=uilang]/ — ` +
+			`a prefixed path with no route of its own is a redirect, not a page.`
+	);
+}
+const PRERENDERED_PATHS: `/${string}`[] = [
+	...PRERENDERED_CHROME_PATHS,
+	...UI_LANGS.flatMap((lang) =>
+		PRERENDERED_PREFIXED_PATHS.map((chromePath) =>
+			chromePath === '/' ? (`/${lang}` as const) : (`/${lang}${chromePath}` as const)
+		)
+	)
+];
 
 /**
  * The build id, and the only place it is decided.
@@ -354,15 +405,29 @@ export default defineConfig({
 			adapter: adapter({
 				pages: 'build',
 				assets: 'build',
-				fallback: 'index.html',
+				// NOT `index.html`: `/` is prerendered now, and the fallback would
+				// overwrite its document with an empty shell. `src/worker.ts` names
+				// the same file and is the only thing that serves it.
+				fallback: 'shell.html',
 				precompress: false,
 				strict: false
 			}),
 			prerender: {
-				// The fallback is intentionally the only generated page. Route
-				// completeness is checked against the corpus-generated route manifest
-				// in the edge worker instead of by crawling thousands of HTML files.
-				entries: []
+				// The chrome pages, and nothing else. A reading address is one
+				// citation out of hundreds of thousands and stays on the fallback
+				// shell; these are the pages whose every word IS the interface, which
+				// is what makes one file per language a page rather than a duplicate.
+				// Each route opts in with `ssr`/`prerender` in its own `+page.ts`;
+				// listed here because a prefixed path is a dynamic route and cannot be
+				// reached by crawling from `/`, every link on the page being
+				// unprefixed by design.
+				entries: PRERENDERED_PATHS,
+
+				// Never follow a link out of a prerendered page. Crawling would walk
+				// the catalogue into the reading routes, which are `ssr = false` and
+				// would write an empty document per citation — the shell repeated
+				// thousands of times, which is the arrangement this site replaced.
+				crawl: false
 			}
 		})
 	]

@@ -53,11 +53,39 @@ const manifest: RouteManifest = {
 const SHELL =
 	'<!doctype html><html lang="en"><head><title>Glossa Catholica</title></head><body></body></html>';
 
+/** What a prerendered landing page is, as far as the worker is concerned: a
+ *  document of its own at its own address, rather than the shell. */
+const PRERENDERED_PAGE =
+	'<!doctype html><html lang="en"><head><title>Glossa Catholica</title></head><body><h1>Glossa Catholica</h1></body></html>';
+
+/** The addresses the build writes a file for — `isPrerenderedPath`'s answer,
+ *  spelled out here so the stub and the worker cannot drift silently. */
+const PRERENDERED = new Set([
+	'/',
+	'/bibliotheca',
+	'/scriptura',
+	'/catechismus',
+	'/documenta',
+	'/preces',
+	'/schola',
+	'/pt',
+	'/ar/catechismus',
+	'/pt/preces',
+	'/es/scriptura'
+]);
+
 /**
  * Stands in for the asset binding: it holds the route manifest, the shell at
- * `/`, and nothing else — which is the whole point. Every canonical reader
- * address is a path the platform has no file for, so anything the worker does
- * not route to `/` itself comes back 404, exactly as it does in production.
+ * `/shell`, the prerendered landing pages, and nothing else — which is the
+ * whole point. Every canonical reader address is a path the platform has no
+ * file for, so anything the worker does not route to the shell itself comes
+ * back 404, exactly as it does in production.
+ *
+ * `/` IS A FILE HERE AND NOT THE FALLBACK (2026-09-11): the landing pages are
+ * prerendered, so the home page's own document lives at `/` and the shell every
+ * citation boots from had to move. A stub that still answered the shell at `/`
+ * would pass these tests while production served the home page at every
+ * address in the corpus.
  */
 const ASSETS = {
 	async fetch(request: Request): Promise<Response> {
@@ -72,8 +100,11 @@ const ASSETS = {
 		// manifest decides whether it exists. Losing the first costs a name;
 		// losing the second would cost the address.
 		if (pathname === '/route-titles.json') return new Response('missing', { status: 404 });
-		if (pathname === '/') {
+		if (pathname === '/shell') {
 			return new Response(SHELL, { headers: { 'content-type': 'text/html' } });
+		}
+		if (PRERENDERED.has(pathname)) {
+			return new Response(PRERENDERED_PAGE, { headers: { 'content-type': 'text/html' } });
 		}
 		return new Response('no such asset', { status: 404 });
 	}
@@ -179,6 +210,26 @@ describe('navigation', () => {
 		for (const path of ['/catechismus/9999', '/scriptura/genesis/99', '/documenta/no-such-thing']) {
 			expect((await navigate(path, 'GET')).status, path).toBe(404);
 			expect((await navigate(path, 'HEAD')).status, `HEAD ${path}`).toBe(404);
+		}
+	});
+
+	/**
+	 * THE PRERENDER'S WHOLE POINT IS AT THE EDGE, not in the build: a landing
+	 * page whose document the worker answers with the shell has cost the build
+	 * time and bought the reader nothing. Measured cold on Slow 4G, the shell
+	 * reports FCP and LCP at the same millisecond and its own document a
+	 * quarter of that, so this is the assertion that difference rests on.
+	 *
+	 * Both directions, because the wrong one is worse than no prerender at all:
+	 * a reading address served `/preces`'s document is the prayers under a
+	 * citation's URL.
+	 */
+	it('serves a prerendered landing page its own document, and everything else the shell', async () => {
+		for (const path of ['/', '/preces', '/pt', '/ar/catechismus']) {
+			expect(await (await navigate(path)).text(), path).toContain('<h1>');
+		}
+		for (const path of ['/catechismus/330', '/scriptura/genesis/1', '/pt/catechismus/330']) {
+			expect(await (await navigate(path)).text(), path).not.toContain('<h1>');
 		}
 	});
 

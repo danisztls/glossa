@@ -686,8 +686,26 @@ const realFormulasUrls = import.meta.glob('./corpus-data/index/formulas.*.json',
 export const USE_REAL_CORPUS =
 	!import.meta.env?.VITEST && Object.keys(realIndexManifestsUrl).length > 0;
 
+/** The absolute path to `src/lib/corpus-data/`, baked in by `vite.config.ts`'s
+ *  `define` — `corpus.ts` declares the same constant and says why it is
+ *  injected rather than derived from `import.meta.url`. */
+declare const __CORPUS_DATA_DIR__: string;
+
 function single<T>(modules: Record<string, T>): T | undefined {
 	return Object.values(modules)[0];
+}
+
+/**
+ * The same glob, read as a `ContentLocation`: the KEY carries the path under
+ * `corpus-data/` and the value the hashed URL, and SSR needs the first.
+ * Derived from the key rather than composed from the index's name, so a file
+ * whose name and glob disagree cannot resolve to a path nothing is at.
+ */
+function singleLocation(modules: Record<string, string>): ContentLocation | undefined {
+	const entry = Object.entries(modules)[0];
+	if (!entry) return undefined;
+	const [key, url] = entry;
+	return { relPath: key.replace(/^\.\/corpus-data\//, ''), url };
 }
 
 // --- Registries (real corpus when present, fixtures otherwise) -----------
@@ -1401,9 +1419,36 @@ function requireContentIndex(fn: string): void {
  * change to two files rather than to the component tree: what is asynchronous
  * is the ARRIVAL of the data, and `load()` is where a route already waits.
  */
-async function fetchIndexFile<T>(url: string | undefined, name: string): Promise<T | undefined> {
-	if (!url) return undefined;
-	const response = await fetch(url);
+/**
+ * Read an index file, off disk under SSR and over the network in the browser —
+ * `corpus.ts`'s split for the CONTENT tier, which this tier needed the day a
+ * route started prerendering again.
+ *
+ * A `?url` glob answers with a build-asset path (`/_app/immutable/assets/…`),
+ * and a path is not something Node's `fetch` can resolve: prerendering
+ * therefore failed every primer, `requireIndex` only WARNS in production, and
+ * the pages came out rendered against empty registries. What that looks like is
+ * a build that succeeds and writes documents with the catalogue missing from
+ * them — so this branch is not an optimisation, it is what makes a prerendered
+ * page true.
+ *
+ * `USE_REAL_CORPUS` is in the condition because `__CORPUS_DATA_DIR__` is
+ * defined by `vite.config.ts` and not by `vitest.config.ts`: under fixtures the
+ * registries are populated at module load and nothing here has anything to
+ * read.
+ */
+async function fetchIndexFile<T>(
+	location: ContentLocation | undefined,
+	name: string
+): Promise<T | undefined> {
+	if (!location) return undefined;
+	if (import.meta.env.SSR && USE_REAL_CORPUS) {
+		const { readFile } = await import('node:fs/promises');
+		const path = await import('node:path');
+		const raw = await readFile(path.join(__CORPUS_DATA_DIR__, location.relPath), 'utf8');
+		return JSON.parse(raw) as T;
+	}
+	const response = await fetch(location.url);
 	if (!response.ok) throw new Error(`index tier: ${name} -> ${response.status}`);
 	return (await response.json()) as T;
 }
@@ -1500,7 +1545,10 @@ export function requireIndex(name: string, fn: string): void {
 
 export function ensureBibleIndex(): Promise<void> {
 	return primeOnce('bible', async () => {
-		const file = await fetchIndexFile<BibleIndexFile>(single(realIndexBibleUrl), 'bible-index');
+		const file = await fetchIndexFile<BibleIndexFile>(
+			singleLocation(realIndexBibleUrl),
+			'bible-index'
+		);
 		for (const [workId, v] of Object.entries(file ?? {})) {
 			bibleIndex[workId] = v.books;
 		}
@@ -1510,7 +1558,7 @@ export function ensureBibleIndex(): Promise<void> {
 
 export function ensureCccIndex(): Promise<void> {
 	return primeOnce('ccc', async () => {
-		const file = await fetchIndexFile<CccIndexFile>(single(realIndexCccUrl), 'ccc-index');
+		const file = await fetchIndexFile<CccIndexFile>(singleLocation(realIndexCccUrl), 'ccc-index');
 		for (const [lang, v] of Object.entries(file ?? {})) {
 			cccStructures[lang] = v.structure;
 			cccAbbreviations[lang] = v.abbreviations;
@@ -1523,7 +1571,7 @@ export function ensureCccIndex(): Promise<void> {
 export function ensureCompendiumIndex(): Promise<void> {
 	return primeOnce('compendium', async () => {
 		const file = await fetchIndexFile<CompendiumIndexFile>(
-			single(realIndexCompendiumUrl),
+			singleLocation(realIndexCompendiumUrl),
 			'compendium-index'
 		);
 		for (const [lang, v] of Object.entries(file ?? {})) {
@@ -1536,7 +1584,10 @@ export function ensureCompendiumIndex(): Promise<void> {
 
 export function ensureSummaIndex(): Promise<void> {
 	return primeOnce('summa', async () => {
-		const file = await fetchIndexFile<SummaIndexFile>(single(realIndexSummaUrl), 'summa-index');
+		const file = await fetchIndexFile<SummaIndexFile>(
+			singleLocation(realIndexSummaUrl),
+			'summa-index'
+		);
 		for (const [lang, v] of Object.entries(file ?? {})) {
 			summaStructures[lang] = v.structure;
 			summaQuestionMetas[lang] = v.questions.map((q) => ({
@@ -1551,7 +1602,7 @@ export function ensureSummaIndex(): Promise<void> {
 export function ensureDocumentIndex(): Promise<void> {
 	return primeOnce('document', async () => {
 		const file = await fetchIndexFile<DocumentIndexFile>(
-			single(realIndexDocumentsUrl),
+			singleLocation(realIndexDocumentsUrl),
 			'document-index'
 		);
 		for (const [workId, v] of Object.entries(file ?? {})) {
@@ -1564,7 +1615,10 @@ export function ensureDocumentIndex(): Promise<void> {
 
 export function ensurePrayerIndex(): Promise<void> {
 	return primeOnce('prayer', async () => {
-		const file = await fetchIndexFile<PrayerIndexFile>(single(realIndexPrayersUrl), 'prayer-index');
+		const file = await fetchIndexFile<PrayerIndexFile>(
+			singleLocation(realIndexPrayersUrl),
+			'prayer-index'
+		);
 		for (const [lang, v] of Object.entries(file ?? {})) {
 			prayerStructures[lang] = v.structure;
 			prayerMetasByLang[lang] = v.prayers;
@@ -1601,9 +1655,12 @@ export function ensurePrayerIndex(): Promise<void> {
 export function ensureCoreIndex(): Promise<void> {
 	return primeOnce('core', async () => {
 		const [works, abbreviations] = await Promise.all([
-			fetchIndexFile<Record<string, WorkManifest>>(single(realIndexManifestsUrl), 'manifests'),
+			fetchIndexFile<Record<string, WorkManifest>>(
+				singleLocation(realIndexManifestsUrl),
+				'manifests'
+			),
 			fetchIndexFile<Record<string, CccAbbreviation[]>>(
-				single(realIndexSocialDoctrineAbbreviationsUrl),
+				singleLocation(realIndexSocialDoctrineAbbreviationsUrl),
 				'social-doctrine-abbreviations'
 			)
 		]);
