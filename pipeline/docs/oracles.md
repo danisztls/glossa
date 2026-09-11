@@ -11,9 +11,14 @@ another, and the reason each exists is the gap in the one before it.
   and reported symmetry while four English answers were missing an entire
   enumeration.
 - **Coverage** (`audit.py coverage`) — raw body text divided by what we stored.
-  Crude and therefore hard to fool; it cannot say what was lost, only how much.
-  It never legitimately reaches 100%, so a low band is a research lead and only
-  a floor is gated.
+  Crude, and fooled by exactly one thing: **a boundary error shrinks the
+  denominator too.** Both halves ask where the document ends, so a cut that
+  loses text also stops counting what there was to lose —
+  `catholics-who-join-masonic-associations.en` dropped its entire numbered body
+  and came back 83.0%, `body 813` against a page holding some 1,400 characters
+  of document. It cannot say what was lost, only how much, and not even that
+  where the parse and the measure agree about the wrong end. A low band is a
+  research lead and only a floor is gated.
 - **Balance** (`audit.py balance`) — per-unit length against the sibling
   edition, normalized by the pair's own median. Run over the CCC, Compendium,
   prayers, Summa and the Bible; deliberately not over documents (a section
