@@ -8,7 +8,9 @@ import { defineConfig, type Plugin } from 'vite';
 import {
 	CHROME_PATHS,
 	PRERENDERED_CHROME_PATHS,
-	PRERENDERED_PREFIXED_PATHS
+	PRERENDERED_PREFIXED_PATHS,
+	PRERENDERED_STATIC_PATHS,
+	STATIC_PATHS
 } from './src/lib/route-manifest.ts';
 import { UI_LANGS } from './src/lib/ui-langs.ts';
 
@@ -32,11 +34,19 @@ const corpusDataDir = path.resolve(
  * of their living there is that the build and the worker cannot disagree about
  * which addresses have a document.
  *
- * WHAT IS CHECKED HERE IS WHAT ONLY A BUILD CAN SEE. A prerendered path must be
- * in `CHROME_PATHS`, or it has neither a `<head>` the edge can write nor a
- * sitemap row, and is a document nobody would find; and a prefixed path must
+ * WHAT IS CHECKED HERE IS WHAT ONLY A BUILD CAN SEE. A prerendered chrome path
+ * must be in `CHROME_PATHS`, or it has neither a `<head>` the edge can write nor
+ * a sitemap row, and is a document nobody would find; and a prefixed path must
  * have a route of its own under `[uilang=uilang]/`, or it is a doorway that
  * redirects and the build would write a document for a redirect.
+ *
+ * A prerendered STATIC path is checked against the other table for the same two
+ * things, arrived at another way. `CHROME_PATHS` was never the requirement — it
+ * was the one list that carries a head and a sitemap row by construction, and
+ * `/quaestiones` carries both without being on it (`STATIC_HEADS` and
+ * `sitemapPaths`, the second enforced by `assertNamed` at the sync). What this
+ * check is for there is that the address EXISTS at the edge: a document written
+ * at a path `isCanonicalPath` refuses is a file the worker 404s over.
  */
 const notChrome = PRERENDERED_CHROME_PATHS.filter(
 	(candidate) => !(CHROME_PATHS as readonly string[]).includes(candidate)
@@ -45,6 +55,14 @@ if (notChrome.length > 0) {
 	throw new Error(
 		`prerender: ${notChrome.join(', ')} is not in CHROME_PATHS — a prerendered page ` +
 			`needs the head and the sitemap row that list carries (src/lib/route-manifest.ts).`
+	);
+}
+
+const notStatic = PRERENDERED_STATIC_PATHS.filter((candidate) => !STATIC_PATHS.has(candidate));
+if (notStatic.length > 0) {
+	throw new Error(
+		`prerender: ${notStatic.join(', ')} is not in STATIC_PATHS — the edge answers 404 ` +
+			`at an address neither table admits, document or no (src/lib/route-manifest.ts).`
 	);
 }
 
@@ -63,6 +81,7 @@ if (missing.length > 0) {
 }
 const PRERENDERED_PATHS: `/${string}`[] = [
 	...PRERENDERED_CHROME_PATHS,
+	...PRERENDERED_STATIC_PATHS,
 	...UI_LANGS.flatMap((lang) =>
 		PRERENDERED_PREFIXED_PATHS.map((chromePath) =>
 			chromePath === '/' ? (`/${lang}` as const) : (`/${lang}${chromePath}` as const)

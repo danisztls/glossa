@@ -462,8 +462,8 @@ both are the failure `route-manifest.ts` already documents:
 - **`STATIC_PATHS`** — a route in neither table answers 404 to every cold load
   while client-side navigation into it works perfectly. `/quaestiones` is in the
   existence table and out of `CHROME_PATHS`, on the ordinary gate: its keys are
-  English-only, and a 37-language cluster over English prose is the failure
-  `/schola` and `/calendarium` each paid their whole key set to avoid.
+  written in two languages, and a 37-language cluster over English prose is the
+  failure `/schola` and `/calendarium` each paid their whole key set to avoid.
 - **The usage bucket** — an unlisted root lands in `other`, which is how
   `/doctrina-socialis` and `/ius-canonicum` each lost their first months. This
   is the one section whose series answers whether the question-holding half of
@@ -482,10 +482,28 @@ once.
 one of those was the translation gate's to decide** (2026-09-11). What a cluster
 claims is that the page exists in 37 languages, which `quaestiones.*` in two
 dictionaries cannot support; what a `<loc>` claims is that the address exists,
-and that is true whatever it is written in. So the 141 topics and the index over
+and that is true whatever it is written in. So the topics and the index over
 them are published once, unprefixed, in the language a crawler is served, and
 nothing about the cluster moved — `/quaestiones` is still out of `CHROME_PATHS`,
 still takes no prefix, still declares no alternates (`site/docs/addresses.md`).
+
+**The same cut a second time, and the second half is the PAINT** (2026-09-11).
+Prerendering had been read off `CHROME_PATHS` — the twelve landing pages were
+the chrome list minus the one that will not render — so the gate on a cluster
+was silently deciding whether a document gets written, which is not a question
+about how many dictionaries hold a string. What decides it is whether every word
+on the page is the interface, and on this page every word is: the shelf
+headings, the titles and the questions, a tagline, and not one line of corpus
+prose. So `/quaestiones` is in `PRERENDERED_STATIC_PATHS`, which is a third list
+rather than an entry on the first for the reason above — a chrome path's
+prefixed forms are a page per interface language, and this one has none. The
+topic list rides along in the document, `load` returning data the prerender
+serializes, which is the one thing the chrome landings have no equivalent of.
+
+**A topic page is not prerendered, on `/documenta/{slug}`'s reason**: it prints
+the corpus's own prose in whichever of nine editions the reader has chosen, and
+a build cannot know which. The index is the only page under the route whose
+words a build already holds.
 
 **Which made the head real, and a topic is the one address whose description is
 not composed.** Every other case in `bodyHead` builds a sentence around a

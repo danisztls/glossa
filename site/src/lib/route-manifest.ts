@@ -199,7 +199,37 @@ export const PRERENDERED_PREFIXED_PATHS = [
 	'/colophon'
 ] as const;
 
-const PRERENDERED_SET: ReadonlySet<string> = new Set(PRERENDERED_CHROME_PATHS);
+/**
+ * The landing pages that prerender and take NO language prefix — a third list,
+ * because there is a third kind of page.
+ *
+ * `PRERENDERED_CHROME_PATHS` is a subset of `CHROME_PATHS`, and that is what
+ * makes its entries prefixable: a chrome page's every word is the interface, so
+ * it exists once per interface language. `/quaestiones` is in `STATIC_PATHS`
+ * instead and always will be — the gate above is on the 37-language CLUSTER,
+ * which its two dictionaries cannot meet. But that gate decides which ADDRESSES
+ * exist, and prerendering is a different question: whether the one bare address
+ * is worth writing to disk.
+ *
+ * IT IS, ON EXACTLY THE ARGUMENT THE CHROME LANDINGS MADE. Every word on that
+ * page is the dictionary — the shelf headings, and a title and a question per
+ * topic — so there is a document to write, and a stranger arriving from a search result
+ * is the audience the measurement was taken on (`site/docs/shell.md`).
+ *
+ * THE TWO THINGS A PRERENDERED PAGE OWES ARE MET ELSEWHERE, which is why
+ * `vite.config.ts` checks this list against a different table from the one it
+ * checks the chrome list against. The head is `STATIC_HEADS`'s, fixed and
+ * English like `/bibliotheca/census`'s; the sitemap row is `sitemapPaths`'s,
+ * and `assertNamed` refuses a build where any address on it has no name of its
+ * own. A chrome path gets both by being chrome, and that is the whole of what
+ * that assertion was reading `CHROME_PATHS` for.
+ */
+export const PRERENDERED_STATIC_PATHS = ['/quaestiones'] as const;
+
+const PRERENDERED_SET: ReadonlySet<string> = new Set([
+	...PRERENDERED_CHROME_PATHS,
+	...PRERENDERED_STATIC_PATHS
+]);
 const PRERENDERED_PREFIXED_SET: ReadonlySet<string> = new Set(PRERENDERED_PREFIXED_PATHS);
 
 /**
@@ -210,6 +240,11 @@ const PRERENDERED_PREFIXED_SET: ReadonlySet<string> = new Set(PRERENDERED_PREFIX
  * the reader the paint the prerender was for; in the true direction it serves
  * `/preces`'s document at an address that is not `/preces`, so the check is a
  * set membership and never a prefix test.
+ *
+ * A static entry has no prefixed form to check — `parseChromePath` answers
+ * `undefined` for `/pt/quaestiones`, that address being a reading entry point
+ * the router replaces rather than a page — so the second half of this function
+ * governs the chrome list alone.
  */
 export function isPrerenderedPath(pathname: string): boolean {
 	if (PRERENDERED_SET.has(pathname)) return true;
@@ -312,7 +347,7 @@ export function parseLangEntry(
  * `route-manifest.test.ts` walks `src/routes/` and fails on a route directory
  * that reaches neither table, so the next one cannot be forgotten the same way.
  */
-const STATIC_PATHS = new Set([
+export const STATIC_PATHS: ReadonlySet<string> = new Set([
 	'/',
 	'/bibliotheca',
 	'/scriptura',
@@ -347,12 +382,14 @@ const STATIC_PATHS = new Set([
 	// of every route on it is a link, titled by the work it names.
 	'/schola',
 	// The topic index. HERE AND NOT IN `CHROME_PATHS` on the ordinary gate
-	// rather than a distinction of its own: its `quaestiones.*` keys are in
-	// English alone, and a cluster claiming the page in 37 languages would
-	// declare a Portuguese page and serve English prose — the failure
+	// rather than a distinction of its own: its `quaestiones.*` keys are
+	// written in two languages, and a cluster claiming the page in 37 would
+	// declare a Hungarian page and serve English prose — the failure
 	// `/schola` and `/calendarium` each cost their whole key set to avoid. The
 	// individual topics under it are addresses and are checked against
-	// `manifest.topics`, not listed here.
+	// `manifest.topics`, not listed here. It is in `PRERENDERED_STATIC_PATHS`
+	// all the same: what the cluster gate decides is which ADDRESSES exist,
+	// not whether the one that does is written to disk.
 	'/quaestiones',
 	// The library's own numbers. HERE AND NOT IN `CHROME_PATHS`, which is the
 	// distinction the two tables draw and the one `/calendarium/liturgia`

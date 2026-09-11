@@ -9,8 +9,21 @@ away. The edge in front of it is `site/docs/edge.md`.
 page.** The static page was never the content identity: prerendering a reading
 address repeated the chrome thousands of times and could embed only a
 build-time default edition or every edition at once. None of that is true of a
-page whose every word IS the chrome, which is why the seven in
-`PRERENDERED_CHROME_PATHS` are written out and nothing else is.
+page whose every word IS the chrome, which is why the landing pages are written
+out and nothing else is.
+
+**What qualifies a page is that test and not its membership of `CHROME_PATHS`,
+which is what the third list says.** The chrome table is the PUBLICATION one —
+it declares an `hreflang` cluster, so a page joins it only when its title and
+description are written in all 37 dictionaries — and for eleven of the twelve
+landings the two questions have one answer. `/quaestiones` is the case where
+they come apart: 142 titles and questions in two languages, so no cluster, and
+still a page whose every word is the dictionary. The cluster gate decides which
+ADDRESSES exist; `PRERENDERED_STATIC_PATHS` decides whether the one that does is
+written to disk. A static entry takes no prefix and so has no second list beside
+it, and what a chrome path got by being chrome — a head and a sitemap row — it
+gets from `STATIC_HEADS` and `sitemapPaths` instead, the second enforced by
+`assertNamed`.
 
 **What the shell costs a stranger is the whole of the first paint.** Measured
 cold on Slow 4G with a 4× CPU throttle (`npm run vitals`, medians of five), `/`

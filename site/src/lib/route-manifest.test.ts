@@ -3,6 +3,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
 	CHROME_PATHS,
+	PRERENDERED_CHROME_PATHS,
+	PRERENDERED_STATIC_PATHS,
+	STATIC_PATHS,
+	isPrerenderedPath,
 	parseChromePath,
 	parseLangEntry,
 	isCanonicalPath,
@@ -203,5 +207,44 @@ describe('parseLangEntry', () => {
 	it('makes the entry point exist at the edge', () => {
 		expect(isCanonicalPath('/es/scriptura/genesis/1', manifest)).toBe(true);
 		expect(isCanonicalPath('/es/scriptura/genesis/9999', manifest)).toBe(false);
+	});
+});
+
+/**
+ * The third list, and the two properties that keep it from being a loophole.
+ *
+ * `vite.config.ts` throws at build time on the first of them, which is where
+ * the check has to be — only a build knows the route tree. What is testable
+ * here is the pair of claims that make the list a KIND of page rather than an
+ * exception: a static entry is an address the edge admits, and it is not a
+ * chrome path wearing the wrong hat. A chrome path that drifted onto this list
+ * would prerender its bare form and silently lose its 37 prefixed ones.
+ */
+describe('the prerendered static paths', () => {
+	it('are addresses the edge admits', () => {
+		for (const path of PRERENDERED_STATIC_PATHS) {
+			expect(STATIC_PATHS.has(path), path).toBe(true);
+			expect(isCanonicalPath(path, manifest), path).toBe(true);
+		}
+	});
+
+	it('are not chrome, which is the whole reason the list is separate', () => {
+		for (const path of PRERENDERED_STATIC_PATHS) {
+			expect((CHROME_PATHS as readonly string[]).includes(path), path).toBe(false);
+			expect((PRERENDERED_CHROME_PATHS as readonly string[]).includes(path), path).toBe(false);
+		}
+	});
+
+	/** The edge reads one predicate, so a list the build writes files for and
+	 *  the predicate does not know about is a document nothing ever serves. */
+	it('are what the edge serves a document for', () => {
+		for (const path of PRERENDERED_STATIC_PATHS) expect(isPrerenderedPath(path), path).toBe(true);
+		// And no prefixed form: `/pt/quaestiones` is a language ENTRY POINT the
+		// router replaces with the bare path, not a page with a file of its own.
+		expect(isPrerenderedPath('/pt/quaestiones')).toBe(false);
+		expect(parseLangEntry('/pt/quaestiones', manifest)).toEqual({
+			lang: 'pt',
+			path: '/quaestiones'
+		});
 	});
 });

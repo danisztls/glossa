@@ -115,21 +115,27 @@ performs the substitution and matches the RELATIVE specifier, because
 
 ## Running the site
 
-**Every citation is the SPA shell; the chrome pages are prerendered.**
+**Every citation is the SPA shell; the landing pages are prerendered.**
 `ssr = false` and `strict: false` still hold for the corpus's hundreds of
 thousands of addresses, which boot from `build/shell.html` — but every page in
-`PRERENDERED_CHROME_PATHS` (`route-manifest.ts`) and each of its
-language-prefixed forms is written out as a document. So a broken link does
+`PRERENDERED_CHROME_PATHS` (`route-manifest.ts`), each of its
+language-prefixed forms, and every page in `PRERENDERED_STATIC_PATHS` is
+written out as a document. So a broken link does
 **not** fail the build. What guards addresses is `corpus-routes.json`, generated
 by the corpus sync and consulted by `src/worker.ts` at the edge;
 `src/lib/route-manifest.ts` holds that grammar and is unit-tested.
 
-- **The set is `CHROME_PATHS` minus what cannot render, and `/calendarium` is
-  the exception**: it 500s under SSR, undiagnosed. The two lists live in
-  `route-manifest.ts` because the build, each prefixed route's `entries()` and
-  the edge must not disagree about which addresses have a document; the build
-  refuses a path that is not chrome, or a prefixed one with no `+page.svelte`
-  of its own.
+- **What qualifies a page is that every word on it is the interface, never
+  its membership of `CHROME_PATHS`.** The chrome set minus `/calendarium`,
+  which 500s under SSR, undiagnosed — plus `PRERENDERED_STATIC_PATHS`, where
+  the two questions come apart: `/quaestiones` can never join a 37-language
+  cluster and is still a page of nothing but the dictionary. All three lists
+  live in `route-manifest.ts` because the build, each prefixed route's
+  `entries()` and the edge must not disagree about which addresses have a
+  document; the build refuses a chrome entry that is not chrome, a static one
+  that is in neither existence table, or a prefixed one with no `+page.svelte`
+  of its own. A static entry owes its head and its sitemap row to
+  `STATIC_HEADS` and `sitemapPaths` rather than to the cluster.
 
 - **A page is prerendered by its own `+page.ts`, and the layout cannot help
   it.** SvelteKit sets `load: null` on the SERVER node of any node declaring
@@ -1315,8 +1321,11 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
 - **The topics are in the sitemap and `/quaestiones` is still out of
   `CHROME_PATHS`.** A cluster claims the page exists in 37 languages and
   `quaestiones.*` is written in two; a `<loc>` claims only that the address
-  exists, so the index and the 141 topics are listed once, unprefixed
-  (`site/docs/addresses.md`). A topic's head is its own two strings — the title
+  exists, so the index and its topics are listed once, unprefixed
+  (`site/docs/addresses.md`). **The index is prerendered all the same**, being
+  a page of nothing but the dictionary — `PRERENDERED_STATIC_PATHS`, the third
+  list, for a page the cluster gate can never admit. A topic page is not: it is
+  the corpus's prose in whichever of nine languages the reader chose. A topic's head is its own two strings — the title
   as the route writes it, the question as the description — and its `<lastmod>`
   is composed from the fingerprints of the passages it prints, a document
   contributing its title and not its text.
