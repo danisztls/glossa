@@ -24,6 +24,22 @@
 	 * text, and the roll opens a verse from that same edition. The roll is now
 	 * the only entry point here that needs no decision, which is the other
 	 * reason it belongs in a bar that stays put while the book list scrolls.
+	 *
+	 * IT IS A LANDING PAGE AND IS LAID OUT AS ONE, since 2026-09-11:
+	 * `.landing-column`, the shape `/bibliotheca` and `/schola` take, and no
+	 * `.reading-layout` at all. What is on it is a grid of 73 chips under nine
+	 * headings, which is doors and not prose, and `--content-width` is a count
+	 * of CHARACTERS — so the index was being set in a column sized for a
+	 * sentence, at less than half the width the same grid gets on the home
+	 * page. Only the tagline and the copyright notice are prose, and they take
+	 * `.landing-measure`, which is the measure without the column.
+	 *
+	 * **THE COST IS THE ONE THE REMOVED COMMENT NAMED, AND IT IS PAID.** The
+	 * grid put this column where a chapter's reading column is, so stepping
+	 * from here into a chapter moved nothing sideways; a 72rem column centred
+	 * on the page does not line up with a 56rem one offset by an aside lane,
+	 * and the step is now visible. A landing page and a reading page are
+	 * different shapes, which is the thing that argument was trading away.
 	 */
 	import { content } from '$lib/content.svelte';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
@@ -39,9 +55,7 @@
 
 	// The identification, plus the one interface word in it — composed here and
 	// passed down, the arrangement `Plate.svelte` argues for: the page that
-	// knows what a picture is is the page that writes the line. This one is not
-	// a detail, so the word is never added; the expression stays the other
-	// landing pages' so the four cannot come to disagree about the line.
+	// knows what a picture is is the page that writes the line.
 	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 </script>
 
@@ -49,84 +63,59 @@
 	<title>{t('bible.landing.title')} — {t('home.title')}</title>
 </svelte:head>
 
-<div class="reading-layout">
-	<div class="content-column">
-		<!-- Edition and roll, and nothing else: there is no chapter here to
-		     bookmark or print — see `ReadingBar`. Guarded on `work` like the
-		     notice below, so a corpus that failed to sync leaves no empty rule. -->
-		{#if work}
-			<ReadingBar print={false} textSize={false} randomVerse />
-		{/if}
-		<h1>{t('bible.landing.title')}</h1>
-		<p class="page-tagline">{t('bible.landing.tagline')}</p>
+<div class="landing-column">
+	<!-- Edition and roll, and nothing else: there is no chapter here to
+	     bookmark or print — see `ReadingBar`. Guarded on `work` like the
+	     notice below, so a corpus that failed to sync leaves no empty rule.
+	     The bar is not a reading-grid fixture — `/preces` without a table of
+	     contents already carries one outside `.reading-layout` — so moving
+	     this page to a landing column costs it nothing. -->
+	{#if work}
+		<ReadingBar print={false} textSize={false} randomVerse />
+	{/if}
+	<h1>{t('bible.landing.title')}</h1>
+	<p class="page-tagline landing-measure">{t('bible.landing.tagline')}</p>
 
-		{#if work}
-			<p class="edition-label label-micro">{work.title}</p>
-			<p class="copyright-notice"><CopyrightNotice manifest={work} /></p>
-		{/if}
+	{#if work}
+		<p class="edition-label label-micro">{work.title}</p>
+		<p class="copyright-notice landing-measure"><CopyrightNotice manifest={work} /></p>
+	{/if}
 
-		{#if workId}
-			<section aria-labelledby="books-heading">
-				<h2 id="books-heading">{t('bible.landing.books')}</h2>
-				<BookChapterPicker currentWorkId={workId} collapsible={false} />
-			</section>
-
+	{#if workId}
+		<section aria-labelledby="books-heading">
+			<h2 id="books-heading">{t('bible.landing.books')}</h2>
 			<!--
-				Michelangelo's two hands are Genesis 2:7 — the first thing that
-				happens in the first of the seventy-three books listed above — and
-				what crosses the gap between them is a word, which is what a text
-				is. `landing-art.ts` holds the credit and the case.
+				THE PICTURE HANGS ON THE SEAM BETWEEN THE TESTAMENTS, which is
+				the one boundary in this list that is a fact about the canon
+				rather than about the control — so it is the picker that offers
+				the slot, as a snippet, and the three other call sites pass
+				nothing. A reading sidebar does not get a painting because a
+				landing page wanted one.
 
-				It closes the page rather than bridging the testaments, which is
-				where this picture was first wanted. The seam between the two is
-				inside `BookChapterPicker`, a component with four call sites, and
-				it is a seam in the CANON rather than in this page — a picture put
-				there is on three other pages that never asked for one. Genesis is
-				also the wrong picture for a bridge: it belongs at the start of
-				what is above it, not between its halves.
+				Michelangelo's two hands are Genesis 2:7, the first thing that
+				happens in the first of the books above, and they do not touch:
+				what crosses the gap is a word, which is what a text is. On a
+				seam that reading does double duty, the gap being the one
+				between the Testaments as well. `landing-art.ts` holds the
+				credit and the case.
 
-				Guarded on `workId` with the book list, so a corpus that failed to
-				sync leaves no picture hanging under nothing.
+				Inside the `workId` guard with the list it divides, so a corpus
+				that failed to sync leaves no picture dividing nothing.
 			-->
-			<div class="tailpiece">
-				<ArtFigure
-					art={BANNERS.scriptura}
-					credit={creditOf(BANNERS.scriptura)}
-					label={t('art.about')}
-					expandable
-				/>
-			</div>
-		{/if}
-	</div>
-	<!--
-		AND NO SIDEBAR IN THE THIRD TRACK, deliberately. `.reading-layout` is
-		here for its geometry alone: above 80rem it places the reading column
-		in the middle of three (app.css), so a page laid out without it drew
-		its column elsewhere, and moving between `/scriptura` and any chapter
-		under it — which IS a `.reading-layout` — slid the whole page sideways
-		under the reader. The grid declares all three tracks whether or not
-		anything occupies the apparatus track or the aside's, so the column
-		sits where every other reading route puts it with no element here at
-		all.
-
-		The three sibling indexes fill that track because each has a table of
-		contents worth carrying alongside a long scroll. This one had no such
-		tree until 2026-08-29 — the corpus knows no grouping of books finer
-		than the testament (`CanonicalBook` is an order and nothing else) — and
-		the two rows that amounted to were offered here until 2026-08-28: a
-		jump to the New Testament, on the one index short enough to need no
-		jumping. A sidebar with nothing to navigate is furniture, so this track
-		stayed empty.
-
-		IT STAYS EMPTY, but the reason has changed and is now a judgment rather
-		than a fact. `bible-groups.ts` gives the picker nine named groups, so
-		there are nine rows to offer where there were two. What there still is
-		not is a long scroll to escape: the grouped grid is the same 73 chips
-		it always was, laid out in columns, and every group heading is already
-		on the screen with its books under it. A sidebar duplicating headings
-		the reader can see is still furniture. If the groups ever gain
-		descriptions and the page becomes a scroll, that is when this changes.
-	-->
+			<BookChapterPicker currentWorkId={workId} collapsible={false}>
+				{#snippet seam()}
+					<div class="seam-art">
+						<ArtFigure
+							art={BANNERS.scriptura}
+							credit={creditOf(BANNERS.scriptura)}
+							label={t('art.about')}
+							expandable
+						/>
+					</div>
+				{/snippet}
+			</BookChapterPicker>
+		</section>
+	{/if}
 </div>
 
 <style>
@@ -149,21 +138,30 @@
 	}
 
 	/*
-	 * NO `--art-height`, so the file is drawn at its own 2.15:1 and nothing is
-	 * cropped at any width — `/schola`'s arrangement rather than the two other
-	 * tailpieces'. Not generosity: the other two sit in `.landing-column`,
-	 * which is 72rem of rem, and a height in rem can be derived against a width
-	 * in rem. This column is `--content-width`, a MEASURE — some 62 characters
-	 * of prose, moving with the reader's text-size setting — so there is no one
-	 * width to derive against, and a band cropped to a fixed height would keep
-	 * a different share of the picture at every setting. A ratio holds at all
-	 * of them.
+	 * A PICTURE IN THE MIDDLE OF A LIST IS A DIVIDER, AND A DIVIDER IS SHORT.
+	 * The other two bands close their page, so they may take the room a
+	 * tailpiece takes; this one stands between 46 books and 27 and everything
+	 * below it is still the index. At the column's full 69.5rem the file's own
+	 * 2.15:1 would draw it 32rem tall — a wall the reader has to scroll past
+	 * to reach Matthew.
 	 *
-	 * The file is the panel entire and wants no cropping anyway; what a press
-	 * opens is the vault around it, which is a second file rather than the rest
-	 * of this one (`landing-art.ts`'s `whole`).
+	 * 11rem is the number, and what it keeps is the argument for it: `cover`
+	 * crops top and bottom at this width, and a third of the panel's height
+	 * taken from the middle is exactly the two hands, Adam's head and shoulder,
+	 * and God's arm out of the mantle. The half that goes is sky and Adam's
+	 * legs. A frieze of the reaching is a better seam than the whole scene
+	 * shrunk, and it is the one crop of this picture that everybody already
+	 * knows.
+	 *
+	 * NO BREAKPOINT, which the other two both need and this one does not.
+	 * Below 23.6rem of column — 11rem times the file's ratio — the box is
+	 * narrower than the scaled file is wide, so `cover` switches to cropping
+	 * the ENDS and the band becomes nearly the whole panel: a phone gets more
+	 * picture rather than less, with no rule to say so. `/quaestiones` needs
+	 * its shorter mobile band because its file is 4.21:1 and that crossover
+	 * never arrives.
 	 */
-	.tailpiece {
-		margin: 2.5rem 0 0;
+	.seam-art {
+		--art-height: 11rem;
 	}
 </style>

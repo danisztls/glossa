@@ -1,11 +1,13 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
  * each on `/schola`, `/bibliotheca`, `/quaestiones` and `/scriptura`, and no
- * other picture on any of them. A banner over `/schola`'s title; on the other
- * three a band under the last of what the page came to offer, opening to more
- * of the picture on a press, because an index's reader came for the index.
- * `BANNERS` is now the derivation's name rather than the role, the same way
- * the filenames are.
+ * other picture on any of them. A banner over `/schola`'s title; a band under
+ * the last of what `/bibliotheca` and `/quaestiones` came to offer; and on
+ * `/scriptura` a band in the MIDDLE of the list, on the seam between the
+ * Testaments. All three bands open to more of the picture on a press, because
+ * an index's reader came for the index. `BANNERS` is now the derivation's name
+ * rather than the role, the same way the filenames are — and it was never the
+ * position either.
  *
  * ## A picture earns its page by a sentence, and the sentence is about both
  *
@@ -121,13 +123,20 @@
  *
  * **THE FIELD IS NAMED FOR THE FIRST CASE AND IS NOT LIMITED TO IT.** What it
  * holds is what a press opens, and `/scriptura` runs the relation the other
- * way: the picture on the page is the *whole* work — the Creation panel, all
- * of it, uncropped — and what opens is that panel in its SETTING, the vault
- * around it with the ignudi and the painted architecture. Nothing has been cut
- * off the page's file, so nothing is being restored; what the press adds is
- * where the thing is. Both directions answer the same question, which is
- * whether pressing the picture shows the reader anything they cannot already
- * see, and neither is about cropping.
+ * way. Its FILE is the Creation panel entire; what the page draws is a band of
+ * the two hands, `--art-height` cropping it at the seam between the Testaments;
+ * and what opens is neither of those but the panel in its SETTING, the vault
+ * around it with the ignudi and the painted architecture. So a press there
+ * restores what the slot cropped AND adds where the thing is, in one move.
+ * Both directions answer the same question, which is whether pressing the
+ * picture shows the reader anything they cannot already see.
+ *
+ * It is worth being exact about what that costs, because it is the one case
+ * where the chain skips a rung: the reader never meets the panel at its own
+ * framing, the band going straight to the vault. That is the right trade only
+ * because the vault CONTAINS the panel whole — nothing the band cropped is
+ * unreachable, it is merely smaller. A `whole` that did not contain the band
+ * would be a different thing and would need saying so.
  *
  * **AND THE SECOND FRAMING MAY BE A SECOND FILE, in which case it is a second
  * file page too.** The *Disputa*'s two renditions came off one download and
@@ -201,7 +210,14 @@ export interface Artwork {
 	height: number;
 	/** `Artist, Title, year. Institution.` — never a sentence. */
 	credit: string;
-	/** True when the caption should say the image is a crop. */
+	/**
+	 * True when the caption should say the image is a crop — a claim about
+	 * WHAT THE READER SEES, not about the file. Three of these ship cropped;
+	 * the Creation's file is the panel entire and is still `true`, because the
+	 * slot it hangs in takes a band across the middle of it with
+	 * `object-fit: cover`. A picture the page crops is a detail however whole
+	 * the bytes were.
+	 */
 	detail: boolean;
 	/** Ink on paper, so the scan's white may multiply away. See above. */
 	paper: boolean;
@@ -239,14 +255,16 @@ export interface Artwork {
  * that matters, its whole subject being the span, which is the second reason
  * that picture ships a `whole` and Jerome does not.
  *
- * **`/scriptura` IS THE CASE WHERE THE PAGE DECLINES TO ASK THE SECOND
- * QUESTION.** It sets no `--art-height`, so the file is drawn at its own
- * 2.15:1 and nothing is cropped at any width — the arrangement `/schola`'s
- * banner has always had. That is not because the reading column is generous;
- * it is because the column is a MEASURE (`--content-width`, some 62 characters
- * of prose, and it moves with the reader's text-size setting), so there is no
- * fixed width to derive a height from the way `/quaestiones` derives 16.5rem
- * from 69.5. A ratio holds at every setting and a rem does not.
+ * **AND ON `/scriptura` THE SLOT IS NOT AT THE FOOT OF THE PAGE AT ALL**, so
+ * the second question is asked by a third thing: what a picture may take in
+ * the MIDDLE of a list. That band hangs on the seam between the Testaments
+ * with 46 books above it and 27 below, and everything under it is still the
+ * index — so where a tailpiece may take the room a tailpiece takes, this one
+ * is 11rem of a 69.5rem column against a file that would draw itself 32rem
+ * tall. The picture is 2.15:1 and the slot is 6.3:1; `cover` takes the sky and
+ * Adam's legs and leaves the two hands, which is the one crop of this painting
+ * everybody already knows. That is also why its `detail` is true while its
+ * file is whole.
  *
  * So these numbers are the intrinsic pixels and nothing more: the `<img>`
  * attributes, the ratio the viewer's stage reserves. They stopped being a
@@ -293,7 +311,7 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		src: creationAdam,
 		credit:
 			'Michelangelo Buonarroti, Creazione di Adamo, c. 1511. Cappella Sistina, Musei Vaticani.',
-		detail: false,
+		detail: true,
 		paper: false,
 		source: 'https://commons.wikimedia.org/wiki/File:The_Creation_of_Adam_perspective_fix.jpg',
 		whole: {

@@ -778,11 +778,25 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   69.5rem and the file's 4.21:1 and loses nothing at full width. Below that
   width `cover` crops the ENDS, so a frieze wants a SHORTER band on a phone, not
   a taller one — the opposite of `/bibliotheca`'s call.
-- **A height in rem may only be derived against a width in rem.**
-  `/scriptura`'s picture sits in `.content-column`, whose width is a MEASURE
-  that moves with the reader's text-size setting, so it sets no `--art-height`
-  at all and the file is drawn at its own ratio — which holds at every setting
-  where a fixed band would keep a different share of the picture at each.
+- **A picture in the MIDDLE of a list is a divider, and a divider is short.**
+  `/scriptura`'s hangs on the seam between the Testaments with 27 books still
+  below it, so it is 11rem of a 69.5rem column against a file that would draw
+  itself 32rem tall — where a tailpiece closing a page may take the room
+  `/bibliotheca` gives one. It needs no mobile rule either: at 11rem the file's
+  own 2.15:1 puts `cover`'s crossover at 23.6rem of column, below which a phone
+  gets MORE picture rather than less.
+- **A caption's "(detail)" is a claim about what the reader SEES, not about the
+  file.** That band's file is the Creation panel entire and `detail` is still
+  true, because the slot crops it — a picture the page crops is a detail
+  however whole the bytes were.
+- **A component offers a slot; it does not learn what goes in it.**
+  `BookChapterPicker` has four call sites and one of them wanted a picture on
+  the Old/New seam, so it takes a `seam` snippet and the other three pass
+  nothing — a reading sidebar does not get a painting because a landing page
+  wanted one. The wrapper around it is the component's own, so the spacing
+  either side stays the component's business, and **an adjacent-sibling rule
+  stops matching the moment something may come between** (`.testament +
+.testament`).
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition
@@ -792,11 +806,19 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
 ### Page shapes
 
 - **The landing pages are `.landing-column`, not `.content-column`** — `/`,
-  `/bibliotheca`, `/schola`, `/calendarium`. `--content-width` is a count of
-  CHARACTERS (`--measure-cpl`) and is the wrong tool for a page made of doors
-  and grids; `layout.css` holds all three shapes. Prose on such a page takes
-  `.landing-measure`, the measure without the column. `.index-column`'s 52rem is
-  a table's width and is neither.
+  `/bibliotheca`, `/schola`, `/calendarium`, and `/scriptura` since
+  2026-09-11. `--content-width` is a count of CHARACTERS (`--measure-cpl`) and
+  is the wrong tool for a page made of doors and grids; `layout.css` holds all
+  three shapes. Prose on such a page takes `.landing-measure`, the measure
+  without the column. `.index-column`'s 52rem is a table's width and is
+  neither.
+- **Being under a reading route does not make a page a reading page.**
+  `/scriptura` wore `.reading-layout` for its geometry alone — so that stepping
+  into a chapter moved nothing sideways — and paid for it with 73 book chips
+  and nine headings set in a column sized for a sentence, at less than half the
+  width the same grid gets elsewhere. **A lineup between two pages is worth
+  less than either page being the right shape**; the step is visible now and
+  that is the trade.
 - **`/documenta` is the third shape and needs BOTH classes**
   (`.reading-layout index` around a `.landing-column`): a landing page with an
   aside. Without the `index` the grid places `.content-column` and nothing else,

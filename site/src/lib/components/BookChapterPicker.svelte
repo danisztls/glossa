@@ -89,6 +89,16 @@
 	 * The full name is still on the chip's `title` and is the chapter panel's
 	 * own heading, so nothing is only ever abbreviated.
 	 *
+	 * `seam` IS THE ONE PLACE A CALLER MAY PUT SOMETHING IN THIS LIST, and it
+	 * is a snippet rather than a flag because the component must not learn
+	 * what goes there. The Old and New Testaments are the one division this
+	 * component draws that is a fact about the CANON rather than about the
+	 * control, so it is the one boundary worth offering; `/scriptura` hangs a
+	 * picture on it and the other three call sites pass nothing, which is what
+	 * keeps a landing page's ornament out of a reading sidebar. Rendered in a
+	 * wrapper of this component's own, so the spacing either side of it stays
+	 * this component's business — see `.seam`.
+	 *
 	 * `collapsible` is ignored by both of those: each is already inside
 	 * something a reader opened — a persistent nav column, or a sheet summoned
 	 * from the reading bar — so a `<summary>` there would be a disclosure
@@ -99,6 +109,7 @@
 	 * one on first paint and nothing ever has to relocate itself across the
 	 * page after the fact.
 	 */
+	import type { Snippet } from 'svelte';
 	import { afterNavigate } from '$app/navigation';
 	import {
 		getBook,
@@ -125,6 +136,10 @@
 		    `.reading-aside`. `'panel'`: `'grid'`'s chips with `'sidebar'`'s
 		    `fixed` popover, for the reading bar's contents sheet. */
 		variant?: 'grid' | 'sidebar' | 'panel';
+		/** Rendered between the testaments, by a caller that has something to
+		    put on that boundary. Omitted everywhere but `/scriptura` — see the
+		    docblock. */
+		seam?: Snippet;
 	}
 
 	let {
@@ -132,7 +147,8 @@
 		currentOsis,
 		currentChapter,
 		collapsible = true,
-		variant = 'grid'
+		variant = 'grid',
+		seam
 	}: Props = $props();
 
 	const workId = $derived(currentWorkId);
@@ -662,6 +678,13 @@
 				{@render bookList(group.books)}
 			{/if}
 		</section>
+		<!-- After the Old Testament and before the New, which is the only
+		     boundary in this list that is a fact about the canon. The wrapper
+		     is ours so the spacing is ours; what is inside it is the caller's
+		     and this component does not know. -->
+		{#if seam && group.key === 'ot'}
+			<div class="seam">{@render seam()}</div>
+		{/if}
 	{/each}
 {/snippet}
 
@@ -773,6 +796,17 @@
 
 	.testament + .testament {
 		margin-top: 1.5rem;
+	}
+
+	/*
+	 * A `seam` stands BETWEEN the testaments, so the rule above stops matching
+	 * the moment there is one — deliberately, rather than broken. What
+	 * separates two lists of books is a margin; what separates a list from a
+	 * picture is more, and one element owning both sides of the gap is what
+	 * keeps them from being set by two rules that can disagree.
+	 */
+	.seam {
+		margin-block: 2.25rem;
 	}
 
 	/* A label the picker prints over a group of books, not a title from the
