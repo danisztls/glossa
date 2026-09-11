@@ -36,6 +36,7 @@
 	import { page } from '$app/state';
 	import { getWork, listPrayerGroups, prayerIndexLang } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
+	import IndexSection from '$lib/components/IndexSection.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
 	import { foldState } from '$lib/fold-state.svelte';
@@ -200,13 +201,12 @@
 		{/if}
 
 		{#each shown as group, index (group.id)}
-			<details
-				class="prayer-group fold"
+			<IndexSection
 				id={group.id}
+				heading={group.title}
 				open={sections.isOpen(group.id, index)}
-				ontoggle={(event) => sections.remember(group.id, index, event.currentTarget.open)}
+				ontoggled={(open) => sections.remember(group.id, index, open)}
 			>
-				<summary><h2>{group.title}</h2></summary>
 				<!-- `"hover"`: a row here is a destination the reader picked in order
 				     to GO to it. It needed no marker until 2026-09-07, when
 				     `PreviewTarget` stopped refusing a whole prayer — the refusal WAS
@@ -220,7 +220,7 @@
 						</li>
 					{/each}
 				</ul>
-			</details>
+			</IndexSection>
 		{/each}
 	</div>
 	<aside class="index-aside">
@@ -229,6 +229,8 @@
 </div>
 
 <style>
+	/* The page's own name, and the one thing on it set to be read rather than
+	   operated. The section headings are `IndexSection`'s and are sans. */
 	h1 {
 		font-family: var(--font-serif);
 	}
@@ -268,66 +270,11 @@
 		color: var(--color-text-muted);
 	}
 
-	.prayer-group {
-		margin: 1.75rem 0;
-		/* Clears the sticky chrome when the aside's table of contents lands a
-		   fragment on a heading. `scroll-padding-top` on the scroll container is
-		   the site's usual instrument; this is the same value per target, these
-		   being the only fragment targets on the page. */
-		scroll-margin-top: calc(var(--sticky-chrome-height) + 1.5rem);
-	}
-
-	/* Five shut sections should read as five rows and not as five empty
-	   sections, so a closed one keeps only the space that separates two rows. */
-	.prayer-group:not([open]) {
-		margin: 0.5rem 0;
-	}
-
-	/*
-	 * THE RULE BELONGS TO THE ROW AND NOT TO THE HEADING'S WORDS. The summary
-	 * is a flex row (`.fold`, components.css) and the `h2` in it is only as
-	 * wide as the title, so a border on the heading would underline three
-	 * words and stop.
-	 *
-	 * AND ONLY WHILE THE SECTION IS OPEN. A rule under a heading says "the
-	 * thing below belongs to this", so on a shut section it drew a line under
-	 * nothing — and a run of shut sections came out as headings over empty
-	 * ruled boxes. Shut, what separates one from the next is the gap below,
-	 * which is `/quaestiones`'s rule for the same shape: closed sections
-	 * should read as a list of rows and not as sections with nothing in them.
-	 */
-	.prayer-group[open] > summary {
-		border-bottom: 1px solid var(--color-border);
-		padding-bottom: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.
-	   The mark, the marker reset and the coarse-pointer target are `.fold` —
-	   every disclosure on the site draws the same one. The hover answers on
-	   the heading, which is the only word in the row. */
-	summary:hover h2,
-	summary:focus-visible h2 {
-		color: var(--color-accent);
-	}
-
-	/* THE INTERFACE FACE ON A HEADING THAT IS THE SOURCE'S OWN WORDS
-	   (2026-09-11, by direction), which is the one exception to the type rule
-	   in CLAUDE.md §Type. What the reader operates here is the row, not the
-	   words: the summary is a toggle over a filtered list, and the prayer's
-	   own language is on the prayer's own page. It sets with the titles under
-	   it for the same reason they are sans. */
-	.prayer-group h2 {
-		font-family: var(--font-sans);
-		font-size: 1.1rem;
-		margin: 0;
-	}
-
-	/* THE INTERFACE FACE, against the serif of the section titles over them.
+	/* THE INTERFACE FACE, like the section heading over them (`IndexSection`).
 	   `docs/reading.md` splits the two faces on authorship, and what is set
-	   here is not a prayer but a way to reach one: 28 names in a column to
-	   pick from, the job `/documenta`'s index rows and both sidebars already
-	   do in sans. The words themselves are serif on the prayer's own page. */
+	   here is not a prayer but a way to reach one: names in a column to pick
+	   from, the job `/documenta`'s index rows and both sidebars already do in
+	   sans. The words themselves are serif on the prayer's own page. */
 	.prayer-link {
 		font-family: var(--font-sans);
 		text-decoration: none;

@@ -1,0 +1,142 @@
+<script lang="ts">
+	/**
+	 * One folded section of an index — a heading that is the whole toggle, an
+	 * optional count beside it, and the rows underneath.
+	 *
+	 * `/quaestiones` draws one per shelf of questions and `/preces` one per
+	 * section of prayers, and they had arrived at the same object twice: the
+	 * `<details class="fold">`, the `<summary>` with an `<h2>` in it, the
+	 * heading set in the interface face, the hover that answers on the words
+	 * because the words are the only thing in the row, the sticky-chrome
+	 * `scroll-margin-top` a fragment needs, and the collapse of a shut
+	 * section's margin so a run of them reads as a list of rows rather than as
+	 * sections with nothing in them.
+	 *
+	 * THE ROWS ARE NOT HERE, and that is the seam. One page sets short names
+	 * in multicolumn flow and the other a grid of title-over-question cells —
+	 * different objects, laid out differently, marked up differently — so the
+	 * page hands the whole list in as `children`. What this component owns is
+	 * the disclosure and its heading; what a page owns is what is behind it.
+	 *
+	 * THE RULE IS DRAWN ONLY WHILE THE SECTION IS OPEN, and that is what let
+	 * both pages take it (2026-09-11, by direction). `/quaestiones` had argued
+	 * against one — sixteen ruled headings down a page are a grid rather than
+	 * sixteen landmarks — and that objection was to a rule drawn at rest. Shut,
+	 * these draw none: a page of closed sections is a list of headings and the
+	 * fold mark is all the structure it has. Open, the rule says what is below
+	 * belongs to the heading above it, which is the one thing it is for. On a
+	 * shut section it underlined nothing, and a run of them came out as
+	 * headings over empty ruled boxes.
+	 *
+	 * SO THERE IS NO VARIANT AND NO FLAG. The two pages differ in their rows
+	 * and in nothing else here.
+	 *
+	 * The fold's own state is `$lib/fold-state.svelte.ts` — this draws what it
+	 * decides and holds none of it.
+	 */
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		/** The fragment a table of contents and somebody's bookmark address. */
+		id: string;
+		heading: string;
+		/** Drawn beside the heading where given. A shut section owes the reader
+		 *  a size — a heading with no number is a door into an unknown room —
+		 *  and a page whose sections are open by default does not. */
+		count?: number;
+		open: boolean;
+		/** The new state, reported for every toggle including the ones a
+		 *  reactive `open` caused; `foldState.remember` is what tells those
+		 *  apart from the reader's own. */
+		ontoggled: (open: boolean) => void;
+		children: Snippet;
+	}
+
+	let { id, heading, count, open, ontoggled, children }: Props = $props();
+</script>
+
+<details
+	class="index-section fold"
+	{id}
+	{open}
+	ontoggle={(event) => ontoggled(event.currentTarget.open)}
+>
+	<summary>
+		<h2>{heading}</h2>
+		{#if count !== undefined}<span class="chip">{count}</span>{/if}
+	</summary>
+	{@render children()}
+</details>
+
+<style>
+	.index-section {
+		margin-block: 2.25rem;
+		/* Clears the sticky chrome when a fragment lands on this heading —
+		   without it the heading sits behind the bar and the reader meets the
+		   section's second row first. `scroll-padding-top` on the scroll
+		   container is the site's usual instrument; this is the same value
+		   applied per target, these being the only fragment targets on either
+		   page. */
+		scroll-margin-top: calc(var(--sticky-chrome-height) + 1.5rem);
+	}
+
+	/* Closed sections want to read as a list of rows rather than as sections
+	   with nothing in them, so a shut one keeps only the space that separates
+	   two rows. */
+	.index-section:not([open]) {
+		margin-block: 0.5rem;
+	}
+
+	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.
+	   The mark, the marker reset and the coarse-pointer target are `.fold`
+	   (styles/components.css) — every disclosure on the site draws the same
+	   one. What is here is the row's own height. */
+	summary {
+		padding-block: 0.15rem;
+	}
+
+	/* Only while there is something under the heading for the rule to belong
+	   to — see the docblock. */
+	.index-section[open] > summary {
+		border-bottom: 1px solid var(--color-border);
+		padding-bottom: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	/* The heading is the only word in the row, so the hover answers on it —
+	   the same "this is a control" job `.facet-option`'s ground does in the
+	   `/documenta` panel, at a size that does not want a filled band. */
+	summary:hover h2,
+	summary:focus-visible h2 {
+		color: var(--color-accent);
+	}
+
+	/*
+	 * THE SECTION HEADING IS THE PAGE'S STRUCTURE, so it is set as something
+	 * to choose between rather than as a label over a list: text colour, not
+	 * muted, and no small-caps tracking — that treatment reads as a section
+	 * marker.
+	 *
+	 * The interface face, like `/documenta`'s table-of-contents heading and
+	 * the sidebars'. On `/quaestiones` these are our own words for a shelf; on
+	 * `/preces` they are the source's, and take this face anyway because what
+	 * the reader operates here is the row — CLAUDE.md §Type carries that
+	 * exception.
+	 */
+	h2 {
+		font-family: var(--font-sans);
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	/* BESIDE THE HEADING AND NOT AT THE ROW'S END. The row is as wide as the
+	   column, so an auto margin put the count a thousand pixels from the words
+	   it counts — a number floating in the margin of a page it had stopped
+	   belonging to. `.chip` is the shared primitive; the figures are this
+	   row's own. */
+	.chip {
+		font-variant-numeric: tabular-nums;
+	}
+</style>

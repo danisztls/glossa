@@ -944,6 +944,15 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   subjects — and **the description carries no max-width**. Two attempts to fill
   the empty half a 60ch measure left in a 62rem track failed the same way, by
   moving things into it rather than letting the text have it.
+- **A section of a folded index is `IndexSection.svelte`** — the
+  `<details class="fold">`, the `<summary>` with its heading, the optional
+  count beside it, the rule under an OPEN heading and the collapse of a shut
+  section's margin. `/quaestiones` and `/preces` draw the same one and pass
+  their rows in as `children`: a grid of title-over-question cells and a
+  multicolumn list of names are different objects and are the seam. **No
+  variant and no flag** — the rule being drawn only while a section is open is
+  what retired the objection to it (sixteen ruled headings at rest are a grid
+  rather than sixteen landmarks; shut, they draw none).
 - **A folded index states its DEFAULT and nothing else** —
   `$lib/fold-state.svelte.ts`, which `/quaestiones` and `/preces` both run on
   opposite defaults. Three rules live there because each is invisible when it

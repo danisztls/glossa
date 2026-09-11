@@ -6,6 +6,7 @@
 	import { keywordsFrom, matchingSlugs } from '$lib/topic-search';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
+	import IndexSection from '$lib/components/IndexSection.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -167,16 +168,13 @@
 			<!-- The chip is what a closed shelf owes the reader: sixteen headings
 			     with no sizes are sixteen doors into an unknown room, and while a
 			     query is live it is the count that survived it. -->
-			<details
-				class="cluster fold"
+			<IndexSection
 				id={shelf.id}
+				heading={t(`quaestiones.cluster.${shelf.cluster}`)}
+				count={shelf.topics.length}
 				open={shelfFolds.isOpen(shelf.id, index)}
-				ontoggle={(event) => shelfFolds.remember(shelf.id, index, event.currentTarget.open)}
+				ontoggled={(open) => shelfFolds.remember(shelf.id, index, open)}
 			>
-				<summary>
-					<h2>{t(`quaestiones.cluster.${shelf.cluster}`)}</h2>
-					<span class="chip">{shelf.topics.length}</span>
-				</summary>
 				<!-- `"hover"`: a row here is a destination the reader picked in
 				     order to GO to it, the same call `/preces` makes for the
 				     same shape of list. -->
@@ -190,7 +188,7 @@
 						</li>
 					{/each}
 				</ul>
-			</details>
+			</IndexSection>
 		{/each}
 	{/if}
 
@@ -296,72 +294,6 @@
 		margin: 0;
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
-		font-variant-numeric: tabular-nums;
-	}
-
-	.cluster {
-		margin-bottom: 2.25rem;
-		/* Clears the sticky chrome when a fragment lands on this heading —
-		   without it the heading lands behind the bar and the reader sees the
-		   cluster's second topic first. `scroll-padding-top` on the scroll
-		   container is the site's usual instrument; this is the same value
-		   applied per target, since these are the only fragment targets here. */
-		scroll-margin-top: calc(var(--sticky-chrome-height) + 1.5rem);
-	}
-
-	/* Sixteen closed shelves want to read as a list rather than as sixteen
-	   sections, so a shut one keeps only the space that separates two rows. */
-	.cluster:not([open]) {
-		margin-bottom: 0.5rem;
-	}
-
-	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.
-	   The mark, the reset and the tap target are `.fold` in components.css —
-	   every disclosure on the site draws the same one. What is this page's is
-	   the row's own height. */
-	summary {
-		padding-block: 0.15rem;
-	}
-
-	/* The heading is the only word in the row, so the hover answers on it —
-	   the same "this is a control" job `.facet-option`'s ground does in the
-	   `/documenta` panel, at a size that does not want a filled band. */
-	summary:hover h2,
-	summary:focus-visible h2 {
-		color: var(--color-accent);
-	}
-
-	/*
-	 * THE SHELF HEADING IS THE PAGE'S STRUCTURE now that no doorway stands over
-	 * it, so it is set as something to choose between rather than as a label
-	 * over a list: text colour, not muted, and no small-caps tracking — that
-	 * treatment reads as a section marker, which is what it was when four
-	 * headings ruled across the column above it.
-	 *
-	 * AND STILL NO RULE UNDER IT. Sixteen ruled headings down a page are a
-	 * grid rather than sixteen landmarks; the disclosure mark and the count
-	 * already say that a row is a row.
-	 */
-	h2 {
-		/* The interface face, like `/documenta`'s table-of-contents heading and
-		   the sidebars': this is our own label for a shelf, not a line of any
-		   book, and the text face belongs to the questions under it. */
-		font-family: var(--font-sans);
-		font-size: 1.05rem;
-		font-weight: 600;
-		color: var(--color-text);
-		margin: 0;
-	}
-
-	.cluster[open] > summary {
-		margin-bottom: 0.6rem;
-	}
-
-	/* BESIDE THE HEADING AND NOT AT THE ROW'S END. The row is as wide as the
-	   column, which is three topics across at full width, so an auto margin
-	   put the count a thousand pixels from the words it counts — a number
-	   floating in the margin of a page it had stopped belonging to. */
-	.chip {
 		font-variant-numeric: tabular-nums;
 	}
 
