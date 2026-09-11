@@ -7159,9 +7159,9 @@ _CDF_LINK_RE = re.compile(
 #: exhortation 357, encyclical 348, csdc 252, ccc 122, vatii 40). The answer
 #: was not close:
 #:
-#:   * The 25 documents below carry ~840 of those 1,121, and every one of
-#:     them is cited BY PARAGRAPH NUMBER ("Libertatis conscientia 13."),
-#:     which is what makes a document a link target rather than a mention.
+#:   * The documents below carry ~840 of those 1,121, and every one of them
+#:     is cited BY PARAGRAPH NUMBER ("Libertatis conscientia 13."), which is
+#:     what makes a document a link target rather than a mention.
 #:   * The notifications carry none. Not few -- none. Schillebeeckx, Boff,
 #:     Curran, Dupuis, Balasuriya, Kung, Pohier, Guindon, Gramick/Nugent,
 #:     de Mello, Vidal, Messner, Anglicanorum coetibus, Medjugorje and
