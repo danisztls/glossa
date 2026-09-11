@@ -377,6 +377,75 @@ address is recovered as a RANGE rather than fabricated as a number. The
 chapters take `position: "leading"` (`pipeline/docs/corpus.md`), because
 rendered as back matter _Dei Filius_ would read backwards.
 
+## Four repairs, measured and not made
+
+Each was found by one document and measured over the whole of `raw/` before it
+was written down, which is the only part of a repair that can be done without
+touching the parser. None has been made, because a change here runs under every
+family and `pipeline/CLAUDE.md` asks for the corpus-wide comparison first. They
+are in the order worth doing: the first buys back text, the second buys back
+editions, the last two stop losses nothing currently reports.
+
+**Read a measurement before trusting it.** Every count below is a date-stamped
+scan, not an invariant, and the scans are cheap — re-run one rather than
+inheriting it.
+
+### 1. `N)` is an address on a page that numbers no other way
+
+97 raw pages open a `1) 2) 3)` run. On 67 of them the parens are a
+sub-enumeration inside sections the page numbers `N.`, and admitting them would
+be the false marker this file already refuses; on **30 there is no `N.` opener
+anywhere**, 26 of those CDF, and the parens are the only addresses the document
+has. So the rule is conditional on the page and not on the run:
+admit `N)` where the page numbers no other way.
+
+`catholics-who-join-masonic-associations.en` stores 502 characters of a document
+its Portuguese edition reads at 1,551, and its `unpublished.json` entry names
+this repair. Verification is a re-parse: exactly those 30 pages gain sections,
+nothing else moves, and the baselined failures on `penalties-for-illicit-
+ordinations`, `unlawful-ordinations` and `cum-oecumenicum-concilium` clear.
+
+### 2. The masthead cut is bounded by nothing but the text
+
+`extract_document_header` reads down while the matter still looks like a
+masthead, and the issuing body's name is its strongest signal — so a document
+opening `This Congregation for the Doctrine of the Faith has been asked…` reads
+as more masthead. The long mastheads are overwhelmingly English:
+`clarification-on-procured-abortion.en` at 1,244 characters,
+`catholics-in-political-life.en` at 840, the latter holding that document's
+whole introductory paragraph since the family was first parsed.
+
+What it needs is a stop condition that is not "does this name the issuing
+body". Verification is the header field's length distribution per family before
+and after, plus the invariant that no work may LOSE characters from `sections`
+and `appendix` — this repair only ever moves text the other way.
+
+### 3. The stub floor is one number for families of different lengths
+
+`STUB_CONTENT_MIN_CHARS` is 300 because the shortest genuine encyclical strips
+to 7,106 and the largest sampled stub to ~90. Both true, and silent about a
+family whose documents are two sentences: the Latin _Notification on the
+validity of Baptism conferred in The New Church_ is a complete, correct parse
+of 285 characters, refused as a page carrying nothing. Verification is the set
+of works raising `StubPageError`, which may only shrink, and only by documents
+whose refused text is prose.
+
+### 4. A derived URL is asked for where the page links the real one
+
+`translation_url_for` substitutes the language into the path and keeps the
+filename; the switcher states the real path. Measured over every cached
+modern-shell page: **8,854 switcher links agree with the derivation and 259
+differ**, most of them a `.pdf`/`.html` split on a PDF-only base edition. The
+residue is the documented trap — the date digits written the other way round —
+and it costs editions that exist: `acerba-animi.la` and
+`non-abbiamo-bisogno.es` are both linked by their own pages and both remembered
+in `absent-sources.json` as 404s, because the guess was asked for and the
+answer was filed against the document.
+
+Verification has a second half most repairs do not: the absent ledger's entries
+for every URL that changes have to be WITHDRAWN rather than bypassed, or the
+corpus keeps a recorded absence for a page nobody ever asked for.
+
 ## The rebuild
 
 **The rebuild recipe is a program** (`pipeline/rebuild.py`). It was seventeen

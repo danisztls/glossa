@@ -600,6 +600,15 @@ enumeration.
 - **`STUB_CONTENT_MIN_CHARS` was measured over encyclicals and this family is
   shorter.** The Latin New Church notification is a complete parse of 285
   characters, refused as a page carrying nothing.
+- **`N)` is an address where the page numbers no other way**, and a
+  sub-enumeration where it also numbers `N.` — 30 raw pages against 67.
+  `catholics-who-join-masonic-associations.en` loses its whole body to it and
+  is withheld until this is read.
+
+**Four repairs are measured and unmade**, with the scan, the proposed rule and
+what would verify each, in `docs/parsing.md` §Four repairs. Read that before
+touching `extract_document_header`, the stub floor, the enumerator rules or
+`translation_url_for` — the measurement is the expensive half and it is done.
 
 ### Three page conventions, two of them corpus-wide bugs
 
