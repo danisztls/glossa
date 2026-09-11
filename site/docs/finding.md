@@ -225,6 +225,16 @@ is the one place a notation is worth having. Prayers get no specimen at all,
 because they have no notation: they are cited by name, which the sentence under
 that row says.
 
+**And the table is `$lib/specimens.ts` now, because a fourth surface wanted
+it.** The Bible's line was shared from the start, being the one that cannot be
+written down; the other six were copied into the home page's chip row and were
+about to be copied into the jump box's empty state. A table three files hold by
+hand is a claim they can disagree about, and the one that goes stale is
+whichever page nobody opened while a siglum moved. `help.ts` keeps its own
+pairs deliberately — it teaches that the box reads the work's NAME and answers
+in its siglum, so its left column is `Catechism 101` where every specimen here
+is `CCC 101`.
+
 **Four indexes went with the predicates.** `/schola` primed `bible`, `ccc`,
 `compendium`, `prayer` and `summa` to decide whether to underline eight words;
 it primes `bible` alone now, which it genuinely needs for the Scripture
@@ -1122,6 +1132,37 @@ third of the page empty beneath it. The cap belongs to the dialog — the only
 box that knows where the bottom of the viewport is — and the list takes what
 the field and the foot leave it (`flex: 0 1 auto`, `min-block-size: 0`). `dvh`
 and not `vh`, the two differing by the browser's own chrome on a phone.
+
+**The empty panel is where the notation is taught, because it is the one state
+with room to teach it.** A reader who opens the box sees a field and forty rems
+of nothing until they type, and what that space held was a placeholder with two
+examples crammed into it — `Jump to… (e.g. john 3:16, ccc 1234)`, truncated on
+every phone, teaching two of the seven notations this corpus is addressed by.
+The legend prints all seven, one row per work, the form on the trailing edge;
+the placeholder goes back to naming the field, and the long string stays as the
+accessible name, where brevity buys nothing and the examples still help. It
+stands where the results will, so a reader learns in one open that the space
+under the field is where the box answers.
+
+**A specimen there goes into the FIELD, which is the one thing a page of
+specimens cannot offer.** `/schola` and the home page leave theirs inert for a
+reason that holds here too — `CCC 1234` is a meaningful citation, so an example
+that navigated would drop a reader who is being taught a form into the middle
+of a work they did not choose. Filling the field is not navigation: the list
+answers under the reader's own eyes and they still press Enter. The rows are
+`tabindex="-1"` like the suggestions, because focus belongs to the field and
+Tab is spoken for, and nothing is unreachable by keyboard — every row is a
+string the reader can type, which is the whole lesson.
+
+**The query survives the close, and selecting it is what keeps a new one
+cheap.** It was cleared on every open, so a reader who jumped to `John 3:16`
+and came back for the next chapter retyped the book, and a reader whose
+spelling missed retyped the whole attempt to fix one letter. Reopening now
+finds the old text selected: the first character typed replaces it, while
+Enter, the arrows and an edit to one letter all still have it — a browser's own
+address bar, for the same two cases. It also settles who sees the legend, since
+a box with a query in it shows results instead: the lesson meets a reader who
+has not used the box and gets out of the way of everyone who has.
 
 ## `/documenta` is a filtered list, not a table of contents
 

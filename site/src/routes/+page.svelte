@@ -143,8 +143,7 @@
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { onMount } from 'svelte';
-	import { listWorksOfType } from '$lib/corpus';
-	import { scriptureSpecimen } from '$lib/refs';
+	import { availableSpecimens } from '$lib/specimens';
 	import { content } from '$lib/content.svelte';
 	import { liturgicalDay, toDayNumber, type CalendarOptions } from '$lib/calendar';
 	import {
@@ -163,7 +162,6 @@
 	import ShelfGrid from '$lib/components/ShelfGrid.svelte';
 	import Wordmark from '$lib/components/Wordmark.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
-	import type { WorkType } from '$lib/types';
 
 	/*
 	 * THE WAY IN IS THE CATALOGUE ITSELF, AND WAS FOUR DOORS UNTIL 2026-09-06.
@@ -193,12 +191,9 @@
 	 * which is the change of mind the doors' own note recorded the other way
 	 * round: a door was a page and correct in an empty build, where a card is a
 	 * work and a card for a work a partial sync did not carry is a door onto an
-	 * empty index. The specimens below are gated on the same test — which is
-	 * all this page has left to do with `listWorksOfType`.
+	 * empty index. The specimens below are gated on the same test, inside
+	 * `availableSpecimens`.
 	 */
-
-	/** Is this work type in the build at all — the specimens' gate, below. */
-	const has = (type: WorkType) => listWorksOfType(type).length > 0;
 
 	// --- The third way in ------------------------------------------------------
 	//
@@ -210,45 +205,22 @@
 	const bibleLang = $derived(content.langFor('bible'));
 
 	/**
-	 * THE BIBLE'S SPECIMEN IS DERIVED AND THE OTHERS ARE WRITTEN, which is
-	 * `/schola`'s split and holds for its reason: the Bible's citation form is
-	 * the one that changes by language, so a Portuguese reader is shown
-	 * `Jo 3,16` and not somebody else's colon.
+	 * THREE SHAPES, NOT A CATALOGUE, and this page is the one that picks.
+	 * `/schola` prints one specimen per work because that page IS the list of
+	 * works, and the jump box prints them all because a reader with the box
+	 * open is looking for one of them. This section is showing that the box at
+	 * the top of every page reads a notation AT ALL, and three is what it takes
+	 * to show that the notations differ: a book with a chapter and a verse, a
+	 * siglum with a paragraph running unbroken through a whole book, and a code
+	 * cited by canon. A fourth of a shape already on the row would be a longer
+	 * row teaching nothing more.
 	 *
-	 * `scriptureSpecimen` is where it is drawn, and it is shared with `/schola`
-	 * rather than written twice — these six lines were duplicated verbatim,
-	 * comments included, until 2026-09-06.
+	 * The forms are `$lib/specimens.ts`, which holds why they are
+	 * representative rather than real and why each is gated on the build.
 	 */
-	const bibleSpecimen = $derived(scriptureSpecimen(bibleWorkId, bibleLang));
-
-	/**
-	 * THREE SHAPES, NOT A CATALOGUE. `/schola` prints one specimen per work
-	 * because that page IS the list of works; this one is showing that the box
-	 * at the top of every page reads a notation at all, and three is what it
-	 * takes to show that the notations differ: a book with a chapter and a
-	 * verse, a siglum with a paragraph running unbroken through a whole book,
-	 * and a code cited by canon. A fourth of a shape already on the row would
-	 * be a longer row teaching nothing more.
-	 *
-	 * THE NUMBERS ARE REPRESENTATIVE AND THE CHIPS ARE INERT, by the direction
-	 * `/schola` records for its own (2026-09-05): a live `CCC 1234` sends a
-	 * reader who is being taught a FORM into the middle of a work they did not
-	 * choose, and makes the number look as though it had been chosen for them.
-	 * The shape of the number is part of the lesson — four figures for a work
-	 * with thousands of paragraphs, three for a code of canons — which is why
-	 * `jumpbox.placeholder` shows `ccc 1234` too.
-	 *
-	 * Each is gated on the work being in this build, the same test the reading
-	 * rows use: the vitest fixtures and a partial sync both carry some works
-	 * and not others, and a specimen for a work the box cannot resolve is an
-	 * example that does not work.
-	 */
+	const HOME_SHAPES = new Set(['scripture', 'catechism', 'law']);
 	const specimens = $derived(
-		[
-			{ key: 'bible', text: bibleSpecimen },
-			{ key: 'catechism', text: has('catechism') ? `${t('ccc.abbrev')} 1234` : undefined },
-			{ key: 'law', text: has('canon-law') ? `${t('canonLaw.canon')} 123` : undefined }
-		].filter((row): row is { key: string; text: string } => row.text !== undefined)
+		availableSpecimens(bibleWorkId, bibleLang).filter((row) => HOME_SHAPES.has(row.key))
 	);
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —

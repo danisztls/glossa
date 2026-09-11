@@ -116,7 +116,7 @@
 	 */
 	import { getBook, getDocumentManifest, listWorksOfType } from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
-	import { scriptureSpecimen } from '$lib/refs';
+	import { citationSpecimens } from '$lib/specimens';
 	import { content } from '$lib/content.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
@@ -282,44 +282,19 @@
 	 * wrong with that. A reader working down a catalogue was being offered a
 	 * door into the middle of a work they had not chosen; and `1` is a
 	 * meaningful citation, so the column read as eight recommendations rather
-	 * than as eight examples of a form.
+	 * than as eight examples of a form. `schola.books.lede` sends the reader to
+	 * type one of these into the jump box, which is the one place a notation is
+	 * worth having — and that box prints the same table in its own empty state
+	 * now, which is what lifted the table out of this file.
 	 *
-	 * SO THE NUMBERS ARE REPRESENTATIVE AND THE CHIPS ARE INERT. Four figures
-	 * for a work with thousands of paragraphs, three for a code of canons, two
-	 * for the sections of a document — the shape of the number is part of what
-	 * the specimen teaches, and `jumpbox.placeholder` shows `ccc 1234` for the
-	 * same reason. `schola.books.lede` sends the reader to type one of these
-	 * into that box, which is the one place a notation is worth having.
-	 *
-	 * The sigla are the works' own and are the forms `suggest.ts`'s `SECTIONS`
-	 * table reads back; the four that have a dictionary key (`ccc.abbrev`,
-	 * `compendium.abbrev`, `socialDoctrine.abbrev`, `canonLaw.canon`) take it,
-	 * so a reader is shown the siglum their own edition prints.
-	 *
-	 * PRAYERS GET NONE, because they have no notation: they are cited by name,
-	 * which is exactly what the sentence under that row says. An invented
-	 * shape there would teach a citation form that does not exist.
+	 * `$lib/specimens.ts` holds the rest of the argument: why the numbers are
+	 * representative, why the sigla come out of the dictionary, why prayers get
+	 * none. Its keys are this page's own `WORKS` keys, having been taken from
+	 * them.
 	 */
-	// Drawn by `scriptureSpecimen`, which is shared with the home page's own
-	// notation section — these lines were written out twice, comments included,
-	// until 2026-09-06. Everything the specimen has to be careful about (the
-	// reader's edition carrying the book, the lower-case OSIS id, the language
-	// with no abbreviation table) is stated there.
-	const bibleSpecimen = $derived(scriptureSpecimen(bibleWorkId, bibleLang));
-
-	const specimens = $derived.by((): Record<string, string | undefined> => ({
-		scripture: bibleSpecimen,
-		catechism: `${t('ccc.abbrev')} 1234`,
-		compendium: `${t('compendium.abbrev')} 123`,
-		// A document is cited by its own Latin incipit and a section number
-		// inside it, which is how the Catechism cites one throughout. The
-		// incipit has to be a real one for the form to be legible, and it is
-		// the document the reading suggestion below already leans on.
-		magisterium: 'Dei Verbum 12',
-		social: `${t('socialDoctrine.abbrev')} 123`,
-		law: `${t('canonLaw.canon')} 123`,
-		doctors: 'STh I, 12'
-	}));
+	const specimens = $derived.by((): Record<string, string | undefined> =>
+		Object.fromEntries(citationSpecimens(bibleWorkId, bibleLang).map((row) => [row.key, row.text]))
+	);
 
 	/**
 	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS

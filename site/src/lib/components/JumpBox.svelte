@@ -37,6 +37,7 @@
 		prayerIndexLang
 	} from '$lib/corpus';
 	import type { SectionHeadings } from '$lib/section-headings';
+	import { availableSpecimens } from '$lib/specimens';
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
@@ -199,6 +200,58 @@
 			: [];
 	});
 
+	/**
+	 * THE EMPTY BOX TEACHES, BECAUSE IT IS THE ONE STATE WITH ROOM TO.
+	 *
+	 * A reader who opens this box sees a field and, under it, forty rems of
+	 * nothing until they type. What that space held was a placeholder with two
+	 * examples crammed into it — `Jump to… (e.g. john 3:16, ccc 1234)` — which
+	 * is a sentence truncated on every phone, teaching two of the seven
+	 * notations this corpus is addressed by.
+	 *
+	 * So the notations go in the panel, one row per work, and the placeholder
+	 * goes back to naming the field. `$lib/specimens.ts` holds the table and
+	 * says why it is a module: this is the fourth surface to teach it.
+	 *
+	 * IT IS THE FIRST OPEN THAT SEES THEM, mostly, which is the other half of
+	 * the query surviving a close (`openBox`). A reader with a query in the
+	 * field gets their own results back instead, so the lesson shows to
+	 * somebody who has not used the box and gets out of the way of everybody
+	 * who has.
+	 *
+	 * `fuzzyReady` is read for its signal and not its value: the gate below is
+	 * `listWorksOfType`, which reads a registry no rune watches, and the load
+	 * that fills it is the same `ensureAllIndexes()` this flag waits on.
+	 * Without it the legend computed once against an empty registry and stayed
+	 * empty for the life of the page.
+	 */
+	const examples = $derived.by(() => {
+		void fuzzyReady;
+		return availableSpecimens(content.workIdFor('bible'), content.langFor('bible'));
+	});
+
+	/**
+	 * A specimen goes into the FIELD and nowhere else.
+	 *
+	 * `/schola` and the home page draw the same forms and leave them inert,
+	 * for a reason that holds here too: `CCC 1234` is a meaningful citation,
+	 * so an example that navigated would drop a reader who is being taught a
+	 * form into the middle of a work they did not choose. What this box has
+	 * that neither page has is somewhere better to put it — the reader sees
+	 * the list answer under their own eyes and still presses Enter themselves.
+	 *
+	 * The caret goes to the end, where Tab-completion already leaves it: the
+	 * number is the part a reader will want to change, and it is the part at
+	 * the end.
+	 */
+	function fillExample(text: string) {
+		query = text;
+		active = -1;
+		notFound = false;
+		inputEl?.focus();
+		queueMicrotask(() => inputEl?.setSelectionRange(query.length, query.length));
+	}
+
 	// The active row cannot outlive the list it indexes: a keystroke that
 	// shortens the results would otherwise leave `aria-activedescendant`
 	// pointing at an option that no longer exists.
@@ -226,7 +279,6 @@
 	 */
 	function openBox() {
 		notFound = false;
-		query = '';
 		active = -1;
 		open = true;
 		void loadSuggester();
@@ -236,6 +288,23 @@
 		// position in the markup, and a close button added above it one day
 		// would silently take the focus instead.
 		inputEl?.focus();
+		/*
+		 * THE QUERY SURVIVES THE CLOSE, and this is what makes that bearable.
+		 *
+		 * It was cleared here, so every open started from nothing: a reader who
+		 * jumped to `John 3:16`, read it, and came back for `John 3:17` retyped
+		 * the book. A reader whose spelling missed had to retype the whole
+		 * attempt to fix one letter. Neither is a query the box should be
+		 * making them say twice — and the parser's own history was the thing
+		 * the reader was reaching back for.
+		 *
+		 * Selecting it is the half that keeps a NEW query cheap: the old text
+		 * is replaced by the first character typed, so nothing has to be
+		 * cleared by hand, while Enter, the arrows and an edit to one letter
+		 * all still have it. That is what a browser's own address bar does on
+		 * focus, for the same two cases.
+		 */
+		inputEl?.select();
 	}
 
 	function closeBox() {
@@ -548,11 +617,46 @@
 				aria-controls="jump-listbox"
 				aria-autocomplete="list"
 				aria-activedescendant={active >= 0 ? optionId(active) : undefined}
-				placeholder={t('jumpbox.placeholder')}
+				placeholder={t('jumpbox.field')}
 				autocomplete="off"
 				spellcheck="false"
 			/>
 		</form>
+
+		<!--
+			THE NOTATION LEGEND, and it lives where the results will. A reader
+			learns in one open that the space under the field is where the box
+			answers — and the rows are replaced by real suggestions the moment
+			there is a query, which is the same space saying the same thing.
+
+			A `<button>` and not a link or a chip: it puts its own text in the
+			field (`fillExample`), which is not navigation and must not be
+			drawn as it. `tabindex="-1"` for the reason the suggestion rows
+			carry it — focus belongs to the field, the list is named by
+			`aria-activedescendant` rather than entered, and Tab is spoken for
+			(it completes, and with no row chosen it is the only way out of a
+			modal). Nothing here is unreachable by keyboard: every row is a
+			string the reader can type, which is the whole lesson.
+
+			PRAYERS HAVE NO ROW because they have no notation — they are cited
+			by name, which is what the lead sentence above the rows says, and
+			an invented shape would teach a form that does not exist.
+		-->
+		{#if query.trim() === '' && examples.length > 0}
+			<div class="examples">
+				<p class="examples-lead">{t('jumpbox.searches')}</p>
+				<ul class="examples-list">
+					{#each examples as example (example.key)}
+						<li>
+							<button type="button" tabindex="-1" onclick={() => fillExample(example.text)}>
+								<span class="example-work">{t(example.labelKey)}</span>
+								<span class="example-form">{example.text}</span>
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 
 		{#if suggestions.length > 0}
 			<!-- A result previews under a cursor and never under a thumb: the
@@ -644,27 +748,22 @@
 			otherwise, being the only way out of a modal), Enter needs something
 			to submit. Escape is the one that is always true.
 
-			With nothing typed there are no keys yet, and the line says what the
-			box will look through instead — the placeholder above it shows
-			ADDRESSES, and most of this corpus is reached by name.
-			`jumpbox.searches` and not `jumpbox.hint`: that one is the SHORTCUT
-			sentence, and it is still true where the home page prints it, over
-			the notation specimens, with the box shut.
+			With nothing typed only Escape is true, and the line is that one key
+			alone rather than the sentence it used to be: what the box will look
+			through is said by the legend above, in the rows themselves.
 		-->
-		{#if query.trim() === ''}
-			<p class="hint">{t('jumpbox.searches')}</p>
-		{:else}
-			<p class="keys">
-				{#if suggestions.length > 0}
-					<span><kbd>↑</kbd><kbd>↓</kbd>{t('jumpbox.key.move')}</span>
-				{/if}
-				{#if active >= 0}
-					<span><kbd>Tab</kbd>{t('jumpbox.key.complete')}</span>
-				{/if}
+		<p class="keys">
+			{#if suggestions.length > 0}
+				<span><kbd>↑</kbd><kbd>↓</kbd>{t('jumpbox.key.move')}</span>
+			{/if}
+			{#if active >= 0}
+				<span><kbd>Tab</kbd>{t('jumpbox.key.complete')}</span>
+			{/if}
+			{#if query.trim() !== ''}
 				<span><kbd>Enter</kbd>{t('jumpbox.key.go')}</span>
-				<span><kbd>Esc</kbd>{t('ui.close')}</span>
-			</p>
-		{/if}
+			{/if}
+			<span><kbd>Esc</kbd>{t('ui.close')}</span>
+		</p>
 	</div>
 </dialog>
 
@@ -839,6 +938,90 @@
 		background: var(--color-bg-elevated);
 	}
 
+	/* The legend that stands where the results will. It shrinks and scrolls
+	   on the same terms the result list does — a short viewport is the case
+	   where seven rows and a field do not both fit, and the rows are the half
+	   that can be given up. */
+	.examples {
+		margin: 0.6rem 0 0;
+		flex: 0 1 auto;
+		min-block-size: 0;
+		overflow-y: auto;
+	}
+
+	.examples-lead {
+		margin: 0 0 0.3rem;
+		padding-inline: 0.5rem;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+	}
+
+	.examples-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* The work on the leading edge and the form on the trailing one, which
+	   makes the specimens a column a reader can read down without reading the
+	   names at all. Same row geometry as a suggestion, a little tighter: this
+	   is a legend and seven of them stand where eight results would. */
+	.examples-list button {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+		inline-size: 100%;
+		padding: 0.25rem 0.5rem;
+		border: none;
+		border-radius: var(--radius-md);
+		background: transparent;
+		font: inherit;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+		text-align: start;
+		cursor: pointer;
+	}
+
+	.examples-list button:hover {
+		background: var(--color-bg-elevated);
+	}
+
+	/* The name yields before the form does. A specimen clipped is a specimen
+	   taught wrong, where a work's name is the half a reader can infer from
+	   the form beside it — so the ellipsis is on this column and the chip
+	   below refuses to shrink at all. */
+	.example-work {
+		min-inline-size: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* `.cite-example`'s chip from `/schola`, to the declaration: the interface
+	   face on a hairline, tabular figures, muted. That page's own note says
+	   why it is not a monospace and not coloured — it is drawn as something to
+	   TYPE, in the idiom the keycaps in this box's foot already use, and the
+	   two now sit one above the other. */
+	.example-form {
+		flex: 0 0 auto;
+		padding: 0.1rem 0.4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-bg-elevated);
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	/* The row's hover is the chip's own colour, so on a hovered row the chip
+	   takes the panel's instead. Without this the two surfaces meet and the
+	   specimen loses its box to the row it is sitting in. */
+	.examples-list button:hover .example-form {
+		background: var(--color-bg);
+	}
+
 	/* The active row is marked by more than its background: a reader in forced
 	   colours, or anyone for whom a 4% surface shift is not a signal, gets the
 	   inline start border too.
@@ -911,13 +1094,12 @@
 		white-space: nowrap;
 	}
 
-	.hint,
 	.keys {
 		margin: 0.5rem 0 0;
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
-		/* Neither line may take space from the list above it, which is the
-		   only part of this panel that scrolls. */
+		/* It may not take space from the list above it, which is the only part
+		   of this panel that scrolls. */
 		flex: none;
 	}
 

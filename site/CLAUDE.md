@@ -498,6 +498,12 @@ Rationale in `site/docs/finding.md`.
   work; a heading is one line inside one edition, and there are five thousand
   per shard against fifteen hundred names (`SCORE.heading`, `SCORE.topic`,
   four rows and three).
+- **The box's empty panel prints the notation of every work, and its query
+  survives the close.** One row per work out of `$lib/specimens.ts` — the
+  fourth surface to want that table, so it is a module rather than a fourth
+  copy — and a row fills the FIELD rather than navigating, which is the one
+  thing `/schola`'s inert chips cannot offer. Reopening finds the old query
+  selected, so the legend is what a reader who has not used the box sees.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed
@@ -518,6 +524,8 @@ Rationale in `site/docs/finding.md`.
   citation, so a column of lowest numbers offered eight doors into the middle of
   works the reader had not chosen. The numbers are representative (`CCC 1234`,
   `Can. 123`) and the chips are inert; prayers get none, having no notation.
+  The table is `$lib/specimens.ts`, read by this page, the home page and the
+  jump box's legend; `help.ts` keeps its own pairs, teaching the NAME form.
   Four indexes went with the predicates — `/schola` primes `bible` alone, and
   **`index-priming.test.ts` only catches priming too LITTLE**, so over-priming
   has to be pruned by hand. The Bible's specimen stays derived from `bookAbbrev`

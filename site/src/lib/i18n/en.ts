@@ -519,23 +519,32 @@ export const en: Dictionary = {
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.
 	'ccc.noCounterpart': 'No counterpart in the other work',
+	// THE LONG FORM IS THE ACCESSIBLE NAME AND NOT THE PLACEHOLDER, which is
+	// the split made when the box grew a legend of its own: the trigger and
+	// the dialog are named by this, where a screen-reader user gets no benefit
+	// from brevity and does benefit from the examples, and the field itself
+	// says `jumpbox.field` with the notations printed under it in full.
 	'jumpbox.placeholder': 'Jump to… (e.g. john 3:16, ccc 1234)',
+	// What the field says with nothing in it. Two words, because everything
+	// the old placeholder crammed in after them is now a row in the panel.
+	'jumpbox.field': 'Jump to…',
 	'jumpbox.short': 'Search',
-	// The box's own empty-state line: the placeholder above it is all
-	// addresses, where three quarters of the corpus is reached by name.
-	// NOT a duplicate of `jumpbox.hint` below and not to be merged with it —
-	// that one is the home page's line, where the box is shut and the
+	// The lead over the notation legend — one row per work, the form beside
+	// the name (`$lib/specimens.ts`). It carries the half the rows cannot: a
+	// name is not a notation, and three quarters of this corpus is reached by
+	// one. NOT a duplicate of `jumpbox.hint` below and not to be merged with
+	// it — that one is the home page's line, where the box is shut and the
 	// shortcut it names is true.
-	'jumpbox.searches': 'Or by name — no address needed.',
+	'jumpbox.searches': 'Type a reference, or a name — pick an example to try it.',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 	'jumpbox.noMatch': 'No match',
 	// The suggestion listbox's accessible name. The box has no visible
 	// heading, and `aria-label` on the dialog names the DIALOG; a listbox
 	// inside it is a second widget and owes its own name.
 	'jumpbox.suggestions': 'Suggestions',
-	// The key legend that replaces `jumpbox.searches` the moment the reader
-	// types: one row per key that currently does something, a `<kbd>` chip
-	// beside a word. Single words, matching `ui.close` (reused for Esc) —
+	// The key legend along the foot: one row per key that currently does
+	// something, a `<kbd>` chip beside a word. With nothing typed that is
+	// Escape alone. Single words, matching `ui.close` (reused for Esc) —
 	// four of them have to sit on one line.
 	'jumpbox.key.move': 'Move',
 	'jumpbox.key.complete': 'Complete',
