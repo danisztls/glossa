@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { availableSpecimens, citationSpecimens, scopeSpecimen } from './specimens';
-import { parseSectionFilter, suggest } from './suggest';
+import {
+	availableSections,
+	availableSpecimens,
+	citationSpecimens,
+	sectionSpecimens
+} from './specimens';
+import { parseSectionFilter, SECTION_PATHS, suggest } from './suggest';
 
 /** The fixture Bible carries Genesis and John, which is what lets the
  *  Scripture row be drawn at all — `scriptureSpecimen` reads the book's own
@@ -104,19 +109,78 @@ describe('the box answers what the legend prints', () => {
 });
 
 /**
- * The legend's last row, which teaches a SCOPE rather than a citation. The
- * property that matters is the one the rows above have: what it prints is a
- * string that goes into the field and does what it says it does.
+ * THE WELD. These rows name sections by a path written out by hand, because
+ * the table that owns those paths is in `suggest.ts` and the jump box loads
+ * it lazily (`SectionSpecimen`'s note). Everything that hand copy could get
+ * wrong is asserted here instead: that every section has a row, and that
+ * every row's prefix is read back by the parser as that row's own section.
  */
-describe('scopeSpecimen', () => {
-	it('is the first available work’s own siglum, and a colon', () => {
-		expect(scopeSpecimen()).toBe('ccc:');
+describe('sectionSpecimens', () => {
+	it('covers every section the box can scope to, and no others', () => {
+		const paths = sectionSpecimens(BIBLE, 'en').map((row) => row.path);
+		expect([...paths].sort()).toEqual([...SECTION_PATHS].sort());
 	});
 
-	it('is a prefix the box really reads as a scope', () => {
-		const prefix = scopeSpecimen();
-		expect(prefix).toBeDefined();
-		expect(parseSectionFilter(`${prefix} gene`)?.paths).toEqual(['/catechismus']);
+	it('prints a prefix the parser reads back as that same section', () => {
+		for (const row of sectionSpecimens(BIBLE, 'en')) {
+			expect(parseSectionFilter(row.scope), row.scope).toBeDefined();
+			expect(parseSectionFilter(row.scope)?.paths, row.scope).toEqual([row.path]);
+		}
+	});
+
+	it('is the siglum where the work has one and the name where it has none', () => {
+		const by = Object.fromEntries(sectionSpecimens(BIBLE, 'en').map((r) => [r.key, r.scope]));
+		expect(by.catechism).toBe('ccc:');
+		expect(by.law).toBe('can:');
+		expect(by.compendium).toBe('comp:');
+		// No siglum: a document is cited by its incipit, a prayer by its name,
+		// and a topic is not cited at all.
+		expect(by.magisterium).toBe('magisterium:');
+		expect(by.prayers).toBe('prayers:');
+		expect(by.topics).toBe('questions:');
+	});
+
+	// The two works with no numbered unit, which is the whole difference
+	// between this list and the citation table above it.
+	it('carries a citation only where the work has one', () => {
+		const by = Object.fromEntries(sectionSpecimens(BIBLE, 'en').map((r) => [r.key, r.typed]));
+		expect(by.catechism).toBe('ccc 1234');
+		expect(by.prayers).toBeUndefined();
+		expect(by.topics).toBeUndefined();
+	});
+
+	it('keeps the section row when no edition can name the book', () => {
+		const row = sectionSpecimens(undefined, 'en').find((r) => r.key === 'scripture');
+		expect(row?.scope).toBe('bible:');
+		expect(row?.typed).toBeUndefined();
+	});
+});
+
+describe('availableSections', () => {
+	it('drops the works this build does not carry', () => {
+		const keys = availableSections(BIBLE, 'en', false).map((row) => row.key);
+		expect(keys).not.toContain('law');
+		expect(keys).not.toContain('magisterium');
+		expect(keys).toContain('catechism');
+	});
+
+	it('drops Questions unless the topic index published some', () => {
+		expect(availableSections(BIBLE, 'en', false).map((r) => r.key)).not.toContain('topics');
+		expect(availableSections(BIBLE, 'en', true).map((r) => r.key)).toContain('topics');
+	});
+
+	it('keeps a work whose citation this build cannot draw', () => {
+		// The gate is the WORK, and Scripture's citation needs an edition on
+		// top of it: the row survives the loss of its example.
+		const row = availableSections(undefined, 'en', false).find((r) => r.key === 'scripture');
+		expect(row).toBeDefined();
+		expect(row?.typed).toBeUndefined();
+	});
+
+	it('keeps the order of the full table', () => {
+		const all = sectionSpecimens(BIBLE, 'en').map((row) => row.key);
+		const some = availableSections(BIBLE, 'en', true).map((row) => row.key);
+		expect(some).toEqual(all.filter((key) => some.includes(key)));
 	});
 });
 

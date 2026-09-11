@@ -1193,6 +1193,17 @@ const SECTIONS: SectionWords[] = [
 	}
 ];
 
+/**
+ * Every section a scope can name, as addresses.
+ *
+ * Exported for one reason: `specimens.ts` writes the same nine paths by hand
+ * — it feeds the jump box's legend and must not pull this module into the
+ * boot payload — and `specimens.test.ts` asserts the two tables agree. A
+ * section added here with no row there is then a failing test rather than a
+ * work a reader cannot pick.
+ */
+export const SECTION_PATHS: readonly string[] = SECTIONS.map((section) => section.path);
+
 /** The generated section-name table, by language (see that file's own note and
  *  `scripts/export-section-names.mjs`). */
 const SECTION_NAMES: Record<string, Record<string, string>> = sectionNamesTable.names;

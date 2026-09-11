@@ -137,8 +137,7 @@ export const pt: Dictionary = {
 	'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 	'jumpbox.field': 'Ir para…',
 	'jumpbox.short': 'Buscar',
-	'jumpbox.searches': 'Digite uma referência ou um nome — escolha um exemplo para experimentar.',
-	'jumpbox.scope': 'Dentro de uma obra',
+	'jumpbox.searches': 'Digite uma referência ou escolha uma obra para pesquisar dentro dela.',
 	'jumpbox.scopeRemove': 'Remover filtro',
 	'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 	'jumpbox.noMatch': 'Nenhum resultado',
@@ -146,6 +145,7 @@ export const pt: Dictionary = {
 	'jumpbox.key.move': 'Mover',
 	'jumpbox.key.complete': 'Completar',
 	'jumpbox.key.go': 'Ir',
+	'jumpbox.key.inside': 'Pesquisar dentro',
 
 	'settings.label': 'Configurações',
 	'apparatus.label': 'Aparato',

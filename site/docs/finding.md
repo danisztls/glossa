@@ -1276,13 +1276,54 @@ predates the scope: the topics were matchable by their titles and the page
 listing them was not typeable at all. A scope is what made it worth fixing —
 `quaestiones:` has to name something.
 
-**The legend's last row is not a work.** It prints a siglum and a colon and
-stops there, because the words a reader searches for are their own and an
-example term would be written in one language for readers of thirty-seven. Its
-candidates are the four works whose siglum IS a section word (`SECTIONS`' four
-`abbrevKey`s); a document is cited by its incipit, so `dei verbum:` names no
-section, and Scripture's specimen is a BOOK rather than a work, so `jn:` would
-scope nothing.
+**The legend IS the listbox when there is nothing typed, and that is why it
+costs no widget.** `suggest()` answers an empty query with no rows and the
+legend renders only on an empty field with no scope armed, so the two lists are
+mutually exclusive — one combobox whose options are "what you could type" until
+the reader types, and "what you typed" afterwards. Same `active`, same
+`optionId`, same `aria-activedescendant`, same id on whichever list is mounted,
+same arrow keys. A row of chips above the field was the proposal; it wanted a
+key the panel does not have, since Up/Down move the list, Tab completes, Enter
+goes, Escape closes and Backspace at 0 drops the chip.
+
+**What a row MEANS is what its keys follow from.** A suggestion is a
+destination, so Enter goes and Tab completes. A legend row is a WORK, so Enter
+arms it as a filter, Tab still completes — into its citation form — and an
+ordinary printable character does both at once: it arms the row and is the
+term's first letter. Highlight Bible, type `gene`, and the chip reads Bible
+while the results are Genesis. The character is not prevented, which is the
+whole trick; the test is `e.key.length === 1` with no Ctrl, Meta or Alt, so the
+modifiers and Ctrl+A leave the row alone.
+
+**The list of PLACES is not the list of NOTATIONS, which is two rows' worth of
+difference.** `citationSpecimens` has seven rows because seven works have a
+numbered unit to cite; the legend has nine, because `/preces` and
+`/quaestiones` are places to look inside even though a prayer is cited by name
+and a topic is cited not at all. Their citation cell is simply empty, and Tab
+on them falls through to being the way out of the modal.
+
+**A row does two things, so it is two buttons and the geometry is a grid.**
+Pressing the row arms the work; pressing the citation puts that form in the
+field, which is what the whole legend used to do. Neither can own the row's
+background, so the `<li>` carries the padding, the radius, the hover and the
+active marker. And the columns have to be columns — a reader reads the scope
+prefixes or the citations straight down without reading the names — which
+`space-between` cannot deliver, since it aligns to each row's own content. A
+grid track is shared by the whole list.
+
+**The prefix is the siglum where the work has one and its name where it has
+none** — `ccc:` and `can:` against `prayers:` and `questions:`. Both are read by
+`parseSectionFilter`, which matches a section word in any interface language, so
+the name arrives translated for free and the abbreviation wins only for being
+shorter to type. A document takes the name too: `dei verbum:` names no section.
+
+**The weld between the two tables is a test, because it cannot be an import.**
+`specimens.ts` feeds the legend and must not pull `suggest.ts` into the boot
+payload, so it writes each section's path out by hand; `specimens.test.ts`
+asserts against the exported `SECTION_PATHS` that every section has a row, and
+that the parser reads every row's own prefix back as that row's own path. A
+tenth section, or a siglum that stopped resolving, is then a failing test rather
+than a chip that quietly filters nothing.
 
 ## `/documenta` is a filtered list, not a table of contents
 

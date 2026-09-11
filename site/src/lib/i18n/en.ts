@@ -535,13 +535,7 @@ export const en: Dictionary = {
 	// one. NOT a duplicate of `jumpbox.hint` below and not to be merged with
 	// it — that one is the home page's line, where the box is shut and the
 	// shortcut it names is true.
-	'jumpbox.searches': 'Type a reference, or a name — pick an example to try it.',
-	// The last row of that legend, and the only one that is not a work: the
-	// form beside it is a work's siglum and a colon (`ccc:`), which searches
-	// inside that work alone. It ends there on purpose — the words a reader
-	// would search for are their own, and an example term would be written in
-	// one language for readers of thirty-seven.
-	'jumpbox.scope': 'Inside one work',
+	'jumpbox.searches': 'Type a reference, or choose a work to search inside it.',
 	// The chip's own control, and its whole accessible name after the work's:
 	// "Catechism — remove filter". The visible `×` is `aria-hidden`, so this
 	// is the only thing saying what pressing it does.
@@ -559,6 +553,10 @@ export const en: Dictionary = {
 	'jumpbox.key.move': 'Move',
 	'jumpbox.key.complete': 'Complete',
 	'jumpbox.key.go': 'Go',
+	// Enter on a legend row, where the rows are works rather than
+	// destinations: it arms that work as a filter and the box stays open. The
+	// pair is never printed with `key.go`, which needs something typed.
+	'jumpbox.key.inside': 'Search inside',
 
 	// Appearance menu — SettingsMenu.svelte is the consumer; the dark-mode
 	// and sepia stores are theme.svelte.ts, the text size is prefs.svelte.ts.

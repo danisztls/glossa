@@ -37,7 +37,7 @@
 		prayerIndexLang
 	} from '$lib/corpus';
 	import type { SectionHeadings } from '$lib/section-headings';
-	import { availableSpecimens, scopeSpecimen } from '$lib/specimens';
+	import { availableSections, type SectionSpecimen } from '$lib/specimens';
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
@@ -253,16 +253,36 @@
 	 */
 	const examples = $derived.by(() => {
 		void fuzzyReady;
-		return availableSpecimens(content.workIdFor('bible'), content.langFor('bible'));
+		return availableSections(
+			content.workIdFor('bible'),
+			content.langFor('bible'),
+			// The one gate the corpus registry cannot answer: `/quaestiones` is
+			// published by the topic index, which arrives with the tables.
+			topics !== undefined && Object.keys(topics.topics).length > 0
+		);
 	});
 
-	/** The scope prefix the legend's last row teaches (`$lib/specimens.ts`),
-	 *  gated on the build the same way the rows above it are, and reading
-	 *  `fuzzyReady` for the same signal. */
-	const scopePrefix = $derived.by(() => {
-		void fuzzyReady;
-		return scopeSpecimen();
-	});
+	/**
+	 * THE LEGEND IS THE LISTBOX WHEN THERE IS NOTHING TYPED.
+	 *
+	 * The two lists can never be on screen together — `suggest()` answers an
+	 * empty query with no rows, and the legend renders only on an empty field
+	 * with no scope armed — so this is one combobox whose options are "what
+	 * you could type" while the reader has typed nothing, and "what you typed"
+	 * afterwards. Not a second widget: same `active`, same `optionId`, same
+	 * `aria-activedescendant`, same arrow keys, one id on whichever list is
+	 * mounted.
+	 *
+	 * What differs is what a row MEANS, and the keys follow from that. A
+	 * suggestion is a destination, so Enter goes and Tab completes. A legend
+	 * row is a work, so Enter arms it as a filter, Tab still completes (into
+	 * its citation form), and an ordinary character does both at once — it
+	 * arms the row and is the first letter of the term. Arrows, Escape and
+	 * Backspace keep their meanings in both, which is what makes the two
+	 * states one control rather than two.
+	 */
+	const legendOpen = $derived(term.trim() === '' && !scope && examples.length > 0);
+	const optionCount = $derived(legendOpen ? examples.length : suggestions.length);
 
 	/**
 	 * WHETHER THE READER HAS NAMED A WORK — and it is the one state where an
@@ -307,6 +327,25 @@
 		term = found.rest;
 	}
 
+	/**
+	 * Commit a legend row: the work becomes the chip, and the field is left
+	 * empty and waiting for the reader's own words.
+	 *
+	 * The filter is BUILT here rather than parsed back out of `row.scope`,
+	 * because the row already names exactly one section and a parse could only
+	 * lose that — `cic:` is the Catechism and the Code at once on purpose
+	 * (`SECTIONS`), where a row is never ambiguous. What the round trip still
+	 * has to hold is that `suggest` reads `word` back as this path, since
+	 * `typed` recomposes the two on every keystroke afterwards;
+	 * `specimens.test.ts` is where that is asserted.
+	 */
+	function armSection(row: SectionSpecimen) {
+		scope = { paths: [row.path], names: [t(row.labelKey)], word: row.scope.slice(0, -1), rest: '' };
+		term = '';
+		active = -1;
+		notFound = false;
+	}
+
 	/** The chip's own control, and Backspace into it from an empty field. The
 	 *  word is NOT put back in the field: it parses again on the next
 	 *  keystroke, so restoring it would re-form the chip the reader had just
@@ -332,23 +371,23 @@
 	 * number is the part a reader will want to change, and it is the part at
 	 * the end.
 	 */
+	/** A legend row's citation, put in the field — the mouse's Tab. It is
+	 *  never a scope: the scope of every row is `armSection`, reached by
+	 *  pressing the row itself. */
 	function fillExample(text: string) {
 		term = text;
 		active = -1;
 		notFound = false;
-		// The legend's last row is a scope (`ccc:`), so the same press that
-		// teaches the form arms the filter and leaves the caret where the
-		// reader types. Every other row parses as no scope and is unaffected.
-		recogniseScope();
 		inputEl?.focus();
 		queueMicrotask(() => inputEl?.setSelectionRange(term.length, term.length));
 	}
 
 	// The active row cannot outlive the list it indexes: a keystroke that
 	// shortens the results would otherwise leave `aria-activedescendant`
-	// pointing at an option that no longer exists.
+	// pointing at an option that no longer exists. `optionCount` and not
+	// `suggestions.length`, since the legend is the list when nothing is typed.
 	$effect(() => {
-		if (active >= suggestions.length) active = -1;
+		if (active >= optionCount) active = -1;
 	});
 
 	function optionId(index: number): string {
@@ -466,8 +505,33 @@
 	 * the box by accident.
 	 */
 	function onInputKeydown(e: KeyboardEvent) {
-		if (suggestions.length === 0) return;
-		if (e.key === 'Tab' && !e.shiftKey && active >= 0) {
+		if (optionCount === 0) return;
+
+		// THE LEGEND'S THREE KEYS, taken before the result list's so that
+		// `suggestions[active]` below is only ever read when the results ARE
+		// the list. Tab falls through where a row has no citation to complete
+		// — Prayers and Questions have none — leaving it the way out of the
+		// modal it is everywhere else in this panel.
+		if (legendOpen && active >= 0) {
+			const row = examples[active];
+			if (e.key === 'Tab' && !e.shiftKey && row.typed !== undefined) {
+				e.preventDefault();
+				term = row.typed;
+				active = -1;
+				queueMicrotask(() => inputEl?.setSelectionRange(term.length, term.length));
+				return;
+			}
+			// NOT prevented: the character the reader typed is the term's first
+			// one, and letting the field have it is the whole point — choosing a
+			// work and starting to search are one keystroke, not two. Printable
+			// only, so Ctrl+A, the arrows and the modifiers leave the row alone.
+			if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+				armSection(row);
+				return;
+			}
+		}
+
+		if (e.key === 'Tab' && !e.shiftKey && active >= 0 && !legendOpen) {
 			e.preventDefault();
 			// The TERM, not the field: a completion is a row's own text and the
 			// chip is not part of any row, so completing under a scope keeps
@@ -576,6 +640,14 @@
 	 * stays open with the query still in it.
 	 */
 	function submit() {
+		// A chosen legend row is a WORK and not a destination, so Enter arms it
+		// and the box stays open for the words that follow. Pressing Enter again
+		// on the one row an armed empty scope answers with — that section's
+		// landing page — is what takes the reader there.
+		if (legendOpen && active >= 0 && examples[active]) {
+			armSection(examples[active]);
+			return;
+		}
 		if (active >= 0 && suggestions[active]) {
 			choose(suggestions[active].href);
 			return;
@@ -762,7 +834,7 @@
 					onkeydown={onInputKeydown}
 					type="text"
 					role="combobox"
-					aria-expanded={suggestions.length > 0}
+					aria-expanded={optionCount > 0}
 					aria-controls="jump-listbox"
 					aria-autocomplete="list"
 					aria-activedescendant={active >= 0 ? optionId(active) : undefined}
@@ -774,64 +846,76 @@
 		</form>
 
 		<!--
-			THE NOTATION LEGEND, and it lives where the results will. A reader
+			THE SECTION LEGEND, and it lives where the results will. A reader
 			learns in one open that the space under the field is where the box
 			answers — and the rows are replaced by real suggestions the moment
 			there is a query, which is the same space saying the same thing.
 
-			A `<button>` and not a link or a chip: it puts its own text in the
-			field (`fillExample`), which is not navigation and must not be
-			drawn as it. `tabindex="-1"` for the reason the suggestion rows
-			carry it — focus belongs to the field, the list is named by
-			`aria-activedescendant` rather than entered, and Tab is spoken for
-			(it completes, and with no row chosen it is the only way out of a
-			modal). Nothing here is unreachable by keyboard: every row is a
-			string the reader can type, which is the whole lesson.
+			IT IS A LISTBOX AND NOT A ROW OF LINKS. `legendOpen` says why it
+			can share the results' id, roles and arrow keys: the two lists are
+			mutually exclusive, so this is the same combobox listing what the
+			reader COULD type. A row here is a work — pressing it narrows the
+			search to that work, which is what typing `ccc:` does by hand.
 
-			IT PRINTS `Specimen.typed` AND NOT `Specimen.text`, which is the one
-			thing this legend does that `/schola`'s column must not: those rows
-			teach a citation and are written as the work prints it, where every
-			row here is a string that goes into the field above it. The box
-			folds case and drops an abbreviation's stop, so printing `Comp. 123`
+			ONE ROW PER SECTION, WHICH IS TWO MORE THAN THERE ARE CITATIONS.
+			Prayers and Questions are cited by no number, so their citation
+			cell is empty and the rest of the row is unchanged: they are places
+			to look inside like the other seven, and the list of places is not
+			the list of notations (`$lib/specimens.ts`).
+
+			THE CITATION IS A SECOND BUTTON, because the row does two things
+			and a mouse has one gesture. Pressing the row arms the work;
+			pressing the citation puts that form in the field, which is what
+			the whole legend used to do and what Tab still does by keyboard.
+			Both carry `tabindex="-1"` for the reason the suggestion rows do —
+			focus belongs to the field, and the list is named by
+			`aria-activedescendant` rather than entered.
+
+			IT PRINTS `Specimen.typed` AND NOT `Specimen.text`, which is the
+			one thing this legend does that `/schola`'s column must not: that
+			page teaches a citation and writes it as the work prints it, where
+			this chip is a string that goes into the field above. The box folds
+			case and drops an abbreviation's stop, so printing `Comp. 123`
 			would state a precision it does not ask for.
-
-			PRAYERS HAVE NO ROW because they have no notation — they are cited
-			by name, which is what the lead sentence above the rows says, and
-			an invented shape would teach a form that does not exist.
 		-->
-		{#if term.trim() === '' && !scope && examples.length > 0}
+		{#if legendOpen}
 			<div class="examples">
-				<p class="examples-lead">{t('jumpbox.searches')}</p>
-				<ul class="examples-list">
-					{#each examples as example (example.key)}
-						<li>
-							<button type="button" tabindex="-1" onclick={() => fillExample(example.typed)}>
+				<p class="examples-lead" id="jump-legend-lead">{t('jumpbox.searches')}</p>
+				<ul
+					bind:this={listEl}
+					id="jump-listbox"
+					class="examples-list"
+					role="listbox"
+					aria-labelledby="jump-legend-lead"
+				>
+					{#each examples as example, index (example.key)}
+						<li
+							id={optionId(index)}
+							role="option"
+							aria-selected={index === active}
+							class:active={index === active}
+							onmousemove={() => (active = index)}
+						>
+							<button
+								type="button"
+								class="example-pick"
+								tabindex="-1"
+								onclick={() => armSection(example)}
+							>
 								<span class="example-work">{t(example.labelKey)}</span>
-								<span class="example-form">{example.typed}</span>
+								<span class="example-scope">{example.scope}</span>
 							</button>
+							{#if example.typed !== undefined}
+								{@const typed = example.typed}
+								<button
+									type="button"
+									class="example-form"
+									tabindex="-1"
+									onclick={() => fillExample(typed)}>{typed}</button
+								>
+							{/if}
 						</li>
 					{/each}
-					<!--
-						THE LAST ROW IS NOT A WORK. Every row above teaches how a
-						work is CITED; this one teaches how to look inside one —
-						a siglum and a colon, which `suggest.ts`'s
-						`parseSectionFilter` reads as a scope. It is in the same
-						list because it is the same gesture: a string that goes
-						into the field above.
-
-						It stops at the colon, and the caret lands there, because
-						the words a reader searches for are their own — an
-						example term would be written in one language for readers
-						of thirty-seven.
-					-->
-					{#if scopePrefix}
-						<li>
-							<button type="button" tabindex="-1" onclick={() => fillExample(scopePrefix)}>
-								<span class="example-work">{t('jumpbox.scope')}</span>
-								<span class="example-form">{scopePrefix}</span>
-							</button>
-						</li>
-					{/if}
 				</ul>
 			</div>
 		{/if}
@@ -933,11 +1017,14 @@
 			through is said by the legend above, in the rows themselves.
 		-->
 		<p class="keys">
-			{#if suggestions.length > 0}
+			{#if optionCount > 0}
 				<span><kbd>↑</kbd><kbd>↓</kbd>{t('jumpbox.key.move')}</span>
 			{/if}
-			{#if active >= 0}
+			{#if active >= 0 && (!legendOpen || examples[active]?.typed !== undefined)}
 				<span><kbd>Tab</kbd>{t('jumpbox.key.complete')}</span>
+			{/if}
+			{#if legendOpen && active >= 0}
+				<span><kbd>Enter</kbd>{t('jumpbox.key.inside')}</span>
 			{/if}
 			{#if term.trim() !== ''}
 				<span><kbd>Enter</kbd>{t('jumpbox.key.go')}</span>
@@ -1202,8 +1289,8 @@
 
 	/* The legend that stands where the results will. It shrinks and scrolls
 	   on the same terms the result list does — a short viewport is the case
-	   where seven rows and a field do not both fit, and the rows are the half
-	   that can be given up. */
+	   where a full build's nine rows and a field do not both fit, and the rows
+	   are the half that can be given up. */
 	.examples {
 		margin: 0.6rem 0 0;
 		flex: 0 1 auto;
@@ -1224,19 +1311,56 @@
 		padding: 0;
 	}
 
-	/* The work on the leading edge and the form on the trailing one, which
-	   makes the specimens a column a reader can read down without reading the
-	   names at all. Same row geometry as a suggestion, a little tighter: this
-	   is a legend and seven of them stand where eight results would. */
-	.examples-list button {
+	/*
+	 * A ROW IS A GRID SO THAT THE COLUMNS ARE COLUMNS.
+	 *
+	 * The scope is the one cell every row has and the citation is the one
+	 * that varies, so the reader has to be able to read either straight down
+	 * without reading the names at all — and `space-between` inside each row
+	 * cannot do that, since it aligns to the row's own content and every row
+	 * has different content. A grid track is shared by the whole list: the
+	 * citation column is as wide as the widest citation in this build, and the
+	 * scope lands on one edge for all nine. The two rows with no citation
+	 * leave the second track empty rather than stretching into it.
+	 *
+	 * The li carries the padding, the hover and the radius because the row is
+	 * two buttons now — a background on either one alone would light up half a
+	 * row. Same geometry as a suggestion, a little tighter: this is a legend,
+	 * and nine of them stand where eight results would.
+	 */
+	.examples-list li {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: baseline;
+		gap: 0.5rem;
+		padding: 0.25rem 0.5rem;
+		border-radius: var(--radius-md);
+	}
+
+	.examples-list li:hover,
+	.examples-list li.active {
+		background: var(--color-bg-elevated);
+	}
+
+	/* The marker the results' active row carries, on the element that is the
+	   row here. `li.active a` below cannot serve: the box with the padding is
+	   the li in this list and the anchor in that one. */
+	.examples-list li.active {
+		box-shadow: inset 3px 0 0 0 var(--color-apparatus);
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
+	}
+
+	/* The work and the scope it arms, which is the row's own gesture and so
+	   is the row's own width. */
+	.example-pick {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 0.75rem;
-		inline-size: 100%;
-		padding: 0.25rem 0.5rem;
+		min-inline-size: 0;
+		padding: 0;
 		border: none;
-		border-radius: var(--radius-md);
 		background: transparent;
 		font: inherit;
 		font-size: 0.85rem;
@@ -1245,8 +1369,19 @@
 		cursor: pointer;
 	}
 
-	.examples-list button:hover {
-		background: var(--color-bg-elevated);
+	/* What the row types, printed so a reader can type it instead of pressing
+	   it. Plainer than the citation beside it on purpose: the citation is an
+	   example to copy, and this is a label for what the press already does. */
+	.example-scope {
+		flex: 0 0 auto;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+	}
+
+	.examples-list li:hover .example-scope,
+	.examples-list li.active .example-scope {
+		color: var(--color-text);
 	}
 
 	/* The name yields before the form does. A specimen clipped is a specimen
@@ -1266,22 +1401,35 @@
 	   TYPE, in the idiom the keycaps in this box's foot already use, and the
 	   two now sit one above the other. */
 	.example-form {
-		flex: 0 0 auto;
+		justify-self: start;
 		padding: 0.1rem 0.4rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-sm);
 		background: var(--color-bg-elevated);
+		/* A control resets its own type, and this one is a button now — the
+		   two declarations below set the face and the size, and `font:
+		   inherit` first is what keeps the weight and the line box the row's
+		   rather than the UA's. */
+		font: inherit;
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
+		color: var(--color-text-muted);
+		cursor: pointer;
 	}
 
 	/* The row's hover is the chip's own colour, so on a hovered row the chip
 	   takes the panel's instead. Without this the two surfaces meet and the
 	   specimen loses its box to the row it is sitting in. */
-	.examples-list button:hover .example-form {
+	.examples-list li:hover .example-form,
+	.examples-list li.active .example-form {
 		background: var(--color-bg);
+	}
+
+	.example-form:hover {
+		color: var(--color-text);
+		border-color: var(--color-apparatus);
 	}
 
 	/* The active row is marked by more than its background: a reader in forced

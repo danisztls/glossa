@@ -517,6 +517,13 @@ Rationale in `site/docs/finding.md`.
   misspelled section is not a filter. A row is filed by the longest
   `SECTIONS.path` its href sits under, never by `SuggestionKind` — `heading`
   belongs to three sections. It narrows the merged list and no producer.
+- **The legend IS the listbox while the field is empty**, so choosing a work
+  there needs no new control and no new key: the two lists are mutually
+  exclusive. A row is a work rather than a destination, so Enter arms it, Tab
+  completes its citation, and a printable character does both at once. One row
+  per `SECTIONS` entry — nine, two of which have no citation to teach — and
+  `specimens.test.ts` welds the hand-written paths to `SECTION_PATHS`, since
+  `specimens.ts` must not pull `suggest.ts` into the boot payload.
 - **An armed scope is a CHIP in the field, and the colon alone arms it.**
   `ccc:` read as a keyword also went to the loose title tier, which answered
   it with two magisterial documents; it now answers with that section's

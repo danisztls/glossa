@@ -35,11 +35,14 @@
  * FORM into the middle of a work they did not choose. The jump box does the
  * one thing that is not navigation: it puts the example in its own field.
  *
- * ## Prayers have no row, and that is the whole answer for them
+ * ## Prayers have no CITATION, which is not the same as having no row
  *
  * They are cited by name. An invented shape would teach a citation form that
  * does not exist, which is why `/schola` prints a sentence there instead and
- * why the jump box's legend leads with the name case rather than listing it.
+ * why `citationSpecimens` has no prayer row. The jump box's legend does have
+ * one: that list is of PLACES TO LOOK rather than of notations, and a work
+ * with no number to cite is still somewhere to search. `sectionSpecimens`,
+ * at the foot of this file, is where the two lists diverge.
  */
 import { listWorksOfType } from './corpus';
 import { t } from './i18n.svelte';
@@ -159,41 +162,142 @@ export function citationSpecimens(bibleWorkId: string | undefined, bibleLang: st
 }
 
 /**
- * The scope prefix the jump box's legend teaches — `ccc:`, and nothing after
- * it.
+ * EVERY SECTION OF THE SITE, AS A ROW A READER CAN CHOOSE.
  *
- * A SCOPE IS NOT A CITATION, so it is not a row of the table above: those say
- * how a work is addressed, and this says how to look inside one
- * (`suggest.ts`'s `parseSectionFilter`). What it shares with them is the
- * siglum, which is why it lives here.
+ * The table above says how each work is CITED; this one says where each work
+ * IS, and they are different lists that happen to be nearly the same length.
+ * A citation belongs to a work with numbered units, so `/preces` and
+ * `/quaestiones` have none — a prayer is cited by name, and a topic is a door
+ * onto the other works rather than a unit of any of them. Both are places to
+ * look inside, so both are rows here and neither is a row there.
  *
- * THE CANDIDATES ARE THE FOUR WORKS WHOSE SIGLUM IS ALSO A SECTION WORD —
- * `SECTIONS`' four `abbrevKey`s, in the order a reader meets them. The others
- * cannot teach this: a document is cited by its incipit and `dei verbum:`
- * names no section, and Scripture's specimen is a BOOK rather than a work, so
- * `jn:` would scope nothing. Gated on the build the way every row above is,
- * because a prefix naming a work this build does not carry teaches a form and
- * then declines it.
+ * `scope` IS THE SIGLUM WHERE THE WORK HAS ONE AND ITS NAME WHERE IT DOES NOT
+ * — `ccc:` and `can:` against `prayers:` and `questions:`. Either is read by
+ * `suggest.ts`'s `parseSectionFilter`, which matches a section word in any of
+ * the interface languages, so the name arrives already translated and the
+ * abbreviation is preferred only for being shorter to type. A document's
+ * incipit is why `/documenta` takes the name too: `dei verbum:` names no
+ * section, and `Dei Verbum 12` is a citation rather than a siglum.
  *
- * IT ENDS WITH THE COLON AND NO EXAMPLE TERM. A legend row goes into the
- * field, and the words a reader would search for are their own — an English
- * `ccc: church` printed to a reader of any of the other thirty-six languages
- * teaches half a form in a language they may not read. The prefix alone is
- * the whole lesson, and the caret lands where the reader types.
+ * THE WELD TO `SECTIONS` IS A TEST AND NOT AN IMPORT. That table lives in
+ * `suggest.ts`, which the jump box loads lazily and this module must not drag
+ * into the boot payload — so `path` is written out here and
+ * `specimens.test.ts` asserts, for every row, that `parseSectionFilter` reads
+ * that row's `scope` back as exactly that path, and that the rows cover every
+ * section there is. A prefix that stopped resolving is then a failing test
+ * rather than a chip that quietly filters nothing.
  */
-const SCOPE_WORKS: { type: WorkType; abbrevKey: string }[] = [
-	{ type: 'catechism', abbrevKey: 'ccc.abbrev' },
-	{ type: 'compendium', abbrevKey: 'compendium.abbrev' },
-	{ type: 'canon-law', abbrevKey: 'canonLaw.canon' },
-	{ type: 'social-doctrine', abbrevKey: 'socialDoctrine.abbrev' }
+export interface SectionSpecimen {
+	/** Stable id, shared with `Specimen.key` wherever the work has a citation. */
+	key: string;
+	/** The `SECTIONS` path in `suggest.ts` this row scopes to. */
+	path: string;
+	/** The work's SHORT name, for the reason `Specimen.labelKey` gives. */
+	labelKey: string;
+	/** What choosing this row types, colon included: `ccc:`. */
+	scope: string;
+	/** The citation form, absent for the two works that have none. */
+	text?: string;
+	typed?: string;
+}
+
+/**
+ * The nine, in the order a reader meets them.
+ *
+ * `type` is the build gate, and it is `undefined` for the one row that is not
+ * a work: `/quaestiones` is published by the topic index rather than by the
+ * corpus registry, so its caller is the only thing that knows and passes the
+ * answer in.
+ */
+const SECTION_ROWS: {
+	key: string;
+	path: string;
+	labelKey: string;
+	scopeKey?: string;
+	type?: WorkType;
+}[] = [
+	{ key: 'scripture', path: '/scriptura', labelKey: 'nav.bible', type: 'bible' },
+	{
+		key: 'catechism',
+		path: '/catechismus',
+		labelKey: 'nav.ccc',
+		scopeKey: 'ccc.abbrev',
+		type: 'catechism'
+	},
+	{
+		key: 'compendium',
+		path: '/catechismus/compendium',
+		labelKey: 'nav.compendium',
+		scopeKey: 'compendium.abbrev',
+		type: 'compendium'
+	},
+	{ key: 'magisterium', path: '/documenta', labelKey: 'nav.magisterium', type: 'document' },
+	{
+		key: 'social',
+		path: '/doctrina-socialis',
+		labelKey: 'nav.socialDoctrine',
+		scopeKey: 'socialDoctrine.abbrev',
+		type: 'social-doctrine'
+	},
+	{
+		key: 'law',
+		path: '/ius-canonicum',
+		labelKey: 'nav.canonLaw',
+		scopeKey: 'canonLaw.canon',
+		type: 'canon-law'
+	},
+	{ key: 'prayers', path: '/preces', labelKey: 'nav.prayers', type: 'prayer' },
+	{ key: 'doctors', path: '/doctores/summa', labelKey: 'nav.summa', type: 'summa' },
+	{ key: 'topics', path: '/quaestiones', labelKey: 'quaestiones.landing.title' }
 ];
 
-export function scopeSpecimen(): string | undefined {
-	for (const { type, abbrevKey } of SCOPE_WORKS) {
-		if (listWorksOfType(type).length === 0) continue;
-		return `${typeable(t(abbrevKey))}:`;
-	}
-	return undefined;
+/**
+ * All nine, whatever this build carries — the pair below is
+ * `citationSpecimens`/`availableSpecimens` again and splits for the same
+ * reason. The whole table is what the weld test reads, since a section
+ * missing from a partial build must still be checked against `SECTIONS`.
+ */
+export function sectionSpecimens(
+	bibleWorkId: string | undefined,
+	bibleLang: string
+): SectionSpecimen[] {
+	const cited = new Map(citationSpecimens(bibleWorkId, bibleLang).map((row) => [row.key, row]));
+	return SECTION_ROWS.map((row) => {
+		const citation = cited.get(row.key);
+		return {
+			key: row.key,
+			path: row.path,
+			labelKey: row.labelKey,
+			scope: `${typeable(t(row.scopeKey ?? row.labelKey))}:`,
+			text: citation?.text,
+			typed: citation?.typed
+		};
+	});
+}
+
+/**
+ * The sections this build can actually answer for.
+ *
+ * Gated the way `availableSpecimens` is and for the same reason — a row
+ * offering to search inside a work that is not loaded takes the reader's
+ * words and returns nothing. THE CITATION IS GATED SEPARATELY AND MORE
+ * STRICTLY: Scripture's needs a loaded edition to name the book, so a build
+ * with a Bible and no edition keeps its row and loses only the example on it.
+ *
+ * `hasTopics` is passed in because `/quaestiones` is the one row that is not
+ * a work: it is published by the topic index rather than by the corpus
+ * registry, and only the caller has that.
+ */
+export function availableSections(
+	bibleWorkId: string | undefined,
+	bibleLang: string,
+	hasTopics: boolean
+): SectionSpecimen[] {
+	const gate = new Map(SECTION_ROWS.map((row) => [row.key, row.type]));
+	return sectionSpecimens(bibleWorkId, bibleLang).filter((row) => {
+		const type = gate.get(row.key);
+		return type ? listWorksOfType(type).length > 0 : hasTopics;
+	});
 }
 
 /**
