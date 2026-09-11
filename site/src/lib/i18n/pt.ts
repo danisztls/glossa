@@ -1255,7 +1255,7 @@ export const pt: Dictionary = {
 	'quaestiones.associationes-massonicae.title': 'A maçonaria',
 	'quaestiones.associationes-massonicae.question': 'Um católico pode ser maçom?',
 	'quaestiones.associationes-massonicae.keywords':
-		'loja maçônica, maçons, grande loja, sociedade secreta, meu pai era maçom, entrar para a loja, excomunhão, proibido, iniciação, avental',
+		'loja maçônica, maçons, grande loja, sociedade secreta, meu pai era maçom, entrar para a loja, excomunhão automática, excomungado, cânone 2335, proibido, iniciação, avental',
 	'quaestiones.decimae.title': 'O dízimo e a doação',
 	'quaestiones.decimae.question': 'Quanto um católico deve dar?',
 	'quaestiones.decimae.keywords':

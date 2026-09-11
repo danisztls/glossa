@@ -1345,7 +1345,11 @@
 				[2088, 2088],
 				[1385, 1385]
 			],
-			"canons": [[1374, 1374]],
+			"canons": [
+				[1374, 1374],
+				[915, 915],
+				[6, 6]
+			],
 			"documents": [
 				"declaration-on-masonic-associations",
 				"catholics-who-join-masonic-associations"

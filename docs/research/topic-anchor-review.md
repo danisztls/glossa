@@ -360,6 +360,38 @@ because its two paragraphs sat on `bellum`, which asks when a country may fight;
 they stay there too, being the personal half of an article the Catechism heads
 _Peace_. **A paragraph on the wrong page is sometimes also on the right one.**
 
+**A superseded document is a trap on a page that prints no dates, and the trap
+is worst where the document is RIGHT.** `associationes-massonicae` named the
+CDF's 1981 declaration beside its 1983 one; the 1981 text says in terms that
+"neither the excommunication nor the other penalties are abrogated", which was
+true of the 1917 canon it names and false of the law in force from the following
+year — it even says so itself, "without prejudice to the eventual norms of the
+new Code". A topic page prints a document as a title and a link and nothing else,
+so the two sat side by side looking equally current, and the reader arriving
+certain they knew the answer would have left certain and wrong. **The reflex fix
+— drop the older document — is the wrong one**: it is the document that explains
+where the confusion came from, and suppressing it leaves the reader with the
+belief and no way to see through it. The fix is to anchor the text that makes the
+older one readable, which here is can. 6 §1 on what the 1983 Code abrogated. **If
+a page cannot date a document, it has to carry the text that dates it.** (PLAN.md
+gap 19 is the general version and this is one instance of it, not a substitute.)
+
+**The absence of a penalty is not visible as an absence.** can. 1374 imposes a
+just penalty for joining an association that plots against the Church and an
+interdict for leading one, and a reader who has been told all their life that
+Freemasonry means automatic excommunication reads that canon and sees nothing
+that contradicts them — a canon does not print the penalties it declines to
+impose. Only can. 6 says the old one is gone. **Where a topic exists to correct a
+widely held belief, anchoring what IS true is not enough; something on the page
+has to be inconsistent with the belief.**
+
+**The reader's first objection is the anchor set's best test, and it arrives
+after shipping.** This topic passed its own review, the sync, the drift test and
+a keyword pass, and none of them could see that the page answered "may I join"
+for a reader whose actual sentence was "am I not already excommunicated?" The
+grade scale asks whether the anchored text answers the question AS ASKED; what it
+cannot ask is whether the question written down is the one people arrive with.
+
 **A one-paragraph topic is not a thin one.** This pass spent most of its effort
 widening spans, and the opposite error was waiting at the end of it. `islam` is
 CCC 841 and `migratio` is CCC 2241, and in both cases that single paragraph is
