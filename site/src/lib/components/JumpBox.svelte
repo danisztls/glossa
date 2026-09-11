@@ -40,6 +40,7 @@
 	import { availableSections, type SectionSpecimen } from '$lib/specimens';
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
+	import { rovedIndex } from './roving';
 	import { content } from '$lib/content.svelte';
 	import type {
 		parseSectionFilter as parseScopeFn,
@@ -559,21 +560,14 @@
 			dropScope();
 			return;
 		}
-		if (e.key === 'ArrowDown') {
-			e.preventDefault();
-			active = active >= suggestions.length - 1 ? 0 : active + 1;
-		} else if (e.key === 'ArrowUp') {
-			e.preventDefault();
-			active = active <= 0 ? suggestions.length - 1 : active - 1;
-		} else if (e.key === 'Home' && active >= 0) {
-			e.preventDefault();
-			active = 0;
-		} else if (e.key === 'End' && active >= 0) {
-			e.preventDefault();
-			active = suggestions.length - 1;
-		} else {
-			return;
-		}
+		// `optionCount`, and in a module with tests: the count is whichever
+		// list is mounted, and four branches that each named the result list
+		// for themselves is how three of them were left behind when a second
+		// list arrived (`$lib/components/roving.ts`).
+		const moved = rovedIndex(e.key, active, optionCount);
+		if (moved === undefined) return;
+		e.preventDefault();
+		active = moved;
 		scrollActiveIntoView();
 	}
 
