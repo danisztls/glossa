@@ -1,22 +1,34 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
- * each on `/schola` and `/bibliotheca`, and no other picture on either. A
- * banner over `/schola`'s title; on `/bibliotheca` a 300px band under the
- * last shelf since 2026-09-06, opening to the whole picture on a press,
- * because a catalogue's reader came for the catalogue. `BANNERS` is now the
- * derivation's name rather than the role, the same way the filenames are.
+ * each on `/schola`, `/bibliotheca` and `/quaestiones`, and no other picture
+ * on any of them. A banner over `/schola`'s title; on the other two a band
+ * under the last of what the page came to offer, opening to the whole picture
+ * on a press, because an index's reader came for the index. `BANNERS` is now
+ * the derivation's name rather than the role, the same way the filenames are.
  *
- * ## IT WAS FOUR OVER ONE PAGE, AND IS TWO OVER TWO
+ * ## A picture earns its page by a sentence, and the sentence is about both
  *
- * Raphael's *Disputa* headed "The four pillars" and Millet's *Gleaners* headed
- * "The Church's social teaching"; both routes were removed on 2026-09-05, and a
- * banner with nothing under it is a picture the reader downloads for no reason.
- * The two that survived then swapped pages, which is the arrangement each was
- * always better suited to: **Antonello's Jerome is a man alone in a room full
- * of books, which is a library**, and **Rembrandt's preaching Christ is
- * somebody being taught, which is what `/schola` is**. They had been the other
- * way round only because `/schola` was illustrated first and took the best
- * picture in the set for its masthead.
+ * Antonello's Jerome is a man alone in a room full of books, which is a
+ * library; Rembrandt's preaching Christ is somebody being taught, which is
+ * what `/schola` is; Raphael's disputing doctors are people arguing about one
+ * thing with the answer on the table between them, which is what
+ * `/quaestiones` is. A picture with no such sentence is decoration, and the
+ * test is that the sentence discriminates — one true of every page is worth
+ * nothing.
+ *
+ * It was four over one page before 2026-09-05. Raphael's *Disputa* headed
+ * "The four pillars" and Millet's *Gleaners* headed "The Church's social
+ * teaching"; both routes were removed, and a banner with nothing under it is a
+ * picture the reader downloads for no reason. The two that survived then
+ * swapped pages, each to the page its own sentence named — they had been the
+ * other way round only because `/schola` was illustrated first and took the
+ * best picture in the set for its masthead.
+ *
+ * The *Disputa* came back on 2026-09-11 for a page that did not exist when it
+ * left, and it is a different picture now: what ships is the earthly register
+ * alone. Cropping the heaven off is what makes the sentence true, since the
+ * whole fresco is the Church agreeing with itself in glory and the half below
+ * the clouds is an argument.
  *
  * `assets/README.md` keeps the source URL, SHA-256 and crop line for all six,
  * so a page that wants one back gets it from one fetch and one crop — which
@@ -81,6 +93,24 @@
  * are desaturated instead: a reader who asked for one grey ramp is not handed
  * an oil painting.
  *
+ * ## `whole`, and why one picture ships twice
+ *
+ * A band is a window on the file, and until 2026-09-11 what a press opened was
+ * the rest of that same file — Jerome's ceiling and floor, one fetch already
+ * spent. The *Disputa* cannot work that way: the band is the earthly register,
+ * and the thing worth opening is not more of that strip but the fresco it was
+ * cut from, heaven included. So the artwork carries a second rendition at a
+ * different FRAMING, and `ArtFigure` opens the viewer on it.
+ *
+ * This is not `PlateViewer`'s `detailSrc`, which is the same framing at more
+ * pixels and is fetched only on an explicit zoom. Two framings need two
+ * intrinsic ratios, and that view reserves its stage from the ones it is
+ * handed.
+ *
+ * What it costs is the claim that opening is free: the band is in the cache
+ * and the whole is not, so a press is a fetch. Only a reader who asks for the
+ * fresco pays it, which is the right reader to charge.
+ *
  * ## Re-deriving one
  *
  * `assets/README.md` records the source URL, the SHA-256 of the file that was
@@ -108,6 +138,8 @@
 
 import heroJerome from '$lib/assets/schola/hero-jerome.avif';
 import gospelsPreaching from '$lib/assets/schola/gospels-preaching.avif';
+import disputaSacramento from '$lib/assets/schola/disputa-sacramento.avif';
+import disputaSacramentoWhole from '$lib/assets/schola/disputa-sacramento-whole.avif';
 
 export interface Artwork {
 	/** The hashed build-asset URL Vite resolved the import to. */
@@ -122,23 +154,35 @@ export interface Artwork {
 	paper: boolean;
 	/** The Commons file page: licence tag, digitizer, and the master. */
 	source: string;
+	/**
+	 * The whole work, when `src` is a band cut out of it rather than the
+	 * work drawn small — see `whole` above. Its own intrinsic pixels,
+	 * because a second framing is a second ratio. Absent where a press has
+	 * nothing new to show.
+	 */
+	whole?: { src: string; width: number; height: number };
 }
 
 /**
- * THE TWO ARE NO LONGER ONE SHAPE, and `BANNER` — a `{ width: 1800, height:
- * 720 }` spread into both — went with the assumption. A banner IS 2.5:1
+ * THESE ARE NOT ONE SHAPE, and `BANNER` — a `{ width: 1800, height: 720 }`
+ * spread into every entry — went with the assumption. A banner IS 2.5:1
  * whatever hangs under it, and `/bibliotheca`'s picture stopped being one on
  * 2026-09-06 when it moved under the last shelf.
  *
- * **THE FILE'S RATIO AND THE SLOT'S ARE NOW TWO DIFFERENT QUESTIONS, which is
- * why one constant could not answer both.** `hero-jerome` is 1600×727,
- * cropped to the study and no tighter, because that is how much painting is
- * worth having; `/bibliotheca` draws it 300px tall with `object-fit: cover`,
- * because that is how much page a tailpiece may take under a catalogue.
- * Nothing is lost between the two — the band is a window, and a press opens
- * the file whole in `PlateViewer`.
+ * **THE FILE'S RATIO AND THE SLOT'S ARE TWO DIFFERENT QUESTIONS, which is why
+ * one constant could not answer both.** `hero-jerome` is 1600×727, cropped to
+ * the study and no tighter, because that is how much painting is worth having;
+ * `/bibliotheca` draws it 300px tall with `object-fit: cover`, because that is
+ * how much page a tailpiece may take under a catalogue.
  *
- * So these two numbers are the intrinsic pixels and nothing more: the `<img>`
+ * The two answers may also disagree, and on `/quaestiones` they do. That band
+ * is 4.21:1 against a slot that is 3.71:1 at the column's full width, so cover
+ * takes a little off each END rather than off the top — the outermost figure
+ * at the parapet and the frame at the right. A frieze is the one shape where
+ * that matters, its whole subject being the span, which is the second reason
+ * that picture ships a `whole` and Jerome does not.
+ *
+ * So these numbers are the intrinsic pixels and nothing more: the `<img>`
  * attributes, the ratio the viewer's stage reserves. They stopped being a
  * layout instruction the moment `--art-height` existed.
  */
@@ -165,5 +209,16 @@ export const BANNERS: Readonly<Record<string, Artwork>> = {
 		paper: false,
 		source:
 			'https://commons.wikimedia.org/wiki/File:Antonello_da_Messina_-_St_Jerome_in_his_study_-_National_Gallery_London.jpg'
+	},
+	quaestiones: {
+		width: 1600,
+		height: 380,
+		src: disputaSacramento,
+		credit:
+			'Raffaello Sanzio, Disputa del Sacramento, 1509–1510. Stanza della Segnatura, Musei Vaticani.',
+		detail: true,
+		paper: false,
+		source: 'https://commons.wikimedia.org/wiki/File:Disputa_del_Sacramento_(Rafael).jpg',
+		whole: { src: disputaSacramentoWhole, width: 1600, height: 1154 }
 	}
 };

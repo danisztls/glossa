@@ -67,20 +67,37 @@ crozier, takes the heron's legs and neck, severs the swan's neck and puts holes
 through the geese. The midpoint (≥ 128) removes the feathered halo and keeps
 the drawing.
 
-## The two landing-page paintings
+## The three landing-page paintings
 
-Public-domain paintings illustrating the two landing pages — a banner over
-`/schola`'s title, a tailpiece under `/bibliotheca`'s last shelf. The identifications, the licence
-position and the `paper` flag are in `site/src/lib/landing-art.ts`; this section
-is the derivation.
+Public-domain paintings illustrating the three landing pages — a banner over
+`/schola`'s title, a tailpiece under `/bibliotheca`'s last shelf and another
+under `/quaestiones`' last one. The identifications, the licence position and
+the `paper` flag are in `site/src/lib/landing-art.ts`; this section is the
+derivation.
 
 **Two of the four banners went with the routes they stood over** (2026-09-05):
 Raphael's _Disputa_ headed "The four pillars" and Millet's _Gleaners_ headed
 "The Church's social teaching", and both routes were removed. A banner with
-nothing under it is a picture every reader downloads for no reason. Their rows
-are struck through rather than deleted, on the same reasoning as the vignettes
-below — and here it is close to free, because a route that comes back gets its
-picture back from one fetch and one crop.
+nothing under it is a picture every reader downloads for no reason. The
+_Gleaners_ row is struck through rather than deleted, on the same reasoning as
+the vignettes below — and here it is close to free, because a route that comes
+back gets its picture back from one fetch and one crop.
+
+**The _Disputa_'s row is gone instead, because the picture came back and the
+row did not fit it.** It hangs under `/quaestiones` since 2026-09-11, off a
+scan nearly four times the pixels of the one that fed the old banner and cut to
+a different shape for a different slot. A row kept against a return the return
+has already contradicted is worse than no row: it reproduces a file nothing
+asks for, from a master nothing else cites. Git has it.
+
+**A hand-cut crop is a faithful crop if it can be shown to be one**, and then
+it needs no master. The `/quaestiones` band was cut by eye in an editor rather
+than by the command below, which by the rule above would have obliged this
+repository to keep the cut file. Matching its per-row averages against the
+master's found the offset — a sharp minimum, 36× better than either neighbour —
+and a re-cut at that box scores 43.5 dB PSNR against it, which is JPEG
+re-encode noise and no geometry. So the box is recorded and the cut file is
+not: hand work only costs a master when the hand did something a box cannot say.
 
 **Six square vignettes were derived the same way and are no longer here.** They
 sat on the shelves of "What each of these is", which is the one section of that
@@ -119,7 +136,7 @@ Fetch (`{name}.jpg`, from `https://upload.wikimedia.org/wikipedia/commons/…`):
 | name                  | Commons file                                                                                 | px         | sha256 (first 16)  |
 | --------------------- | -------------------------------------------------------------------------------------------- | ---------- | ------------------ |
 | hero-jerome           | `Antonello da Messina - St Jerome in his study - National Gallery London.jpg`                | 4731×6000  | `d2a50c625ee24fa0` |
-| ~~pillars-disputa~~   | `Sanzio, Raffaello - Disputa del Sacramento - 1508-1511 - hi res.jpg`                        | 1845×1459  | `aa68e33c3f09d905` |
+| disputa-sacramento    | `Disputa del Sacramento (Rafael).jpg`                                                        | 3258×2349  | `24ed25371c747cb5` |
 | gospels-preaching     | `Christ Preaching, called La Petite Tombe MET DP832290.jpg`                                  | 3594×2687  | `75563743cc71e5f3` |
 | ~~social-gleaners~~   | `Jean-François Millet - Gleaners - Google Art Project 2.jpg`                                 | 5354×4006  | `6abe60efbda2dbdb` |
 | ~~shelf-scripture~~   | `The Inspiration of Saint Matthew-Caravaggio (1602).jpg`                                     | 6911×10816 | `91ab56aa9ff23b50` |
@@ -145,29 +162,40 @@ file's 2794 rows, 322 off each end. Centring is not a nicety — `cover` crops
 from the middle, so a band that is not centred on the file is a band the page
 will centre again.
 
+**`disputa-sacramento` is the one name with two files**, and the second is the
+whole scan at 1600px rather than a crop of anything: the band is the fresco's
+earthly register, so what a press should open is the fresco, not more of the
+strip. `landing-art.ts`'s `whole` argues it. Two framings, two ratios, and the
+viewer reserves its stage from whichever it is handed — which is also why this
+cannot be `PlateViewer`'s `detailSrc`, that being the same framing at more
+pixels.
+
 **The boxes were chosen by eye and are the only judgement in the derivation** —
 every one of them was got wrong at least once and corrected against the output,
 so change one only by looking at what comes out: the first hero band landed on
 the shelves above Jerome, and the first Aquinas vignette was a lap and a book
-with his head above the frame.
+with his head above the frame. The Disputa's first band kept the cherubs above
+the altar and the page's own box sliced them at the knee, a reminder that the
+crop to judge is the one `object-fit: cover` leaves, not the one the file holds.
 
 ```sh
 magick "$master" -crop "$box" +repage -resize "${W}x${H}!" out.png
 avifenc -q 65 -s 0 -y 420 --jobs all out.png "site/src/lib/assets/schola/$name.avif"
 ```
 
-| name                  | crop box             | out      |
-| --------------------- | -------------------- | -------- |
-| hero-jerome           | `4731x2150+0+322`†   | 1600×727 |
-| ~~pillars-disputa~~   | `1845x738+0+680`     | 1800×720 |
-| gospels-preaching     | `3300x1320+150+560`  | 1800×720 |
-| ~~social-gleaners~~   | `5354x2142+0+1250`   | 1800×720 |
-| ~~shelf-scripture~~   | `6911x6911+0+400`    | 400×400  |
-| ~~shelf-catechism~~   | `3480x3480+429+0`    | 400×400  |
-| ~~shelf-magisterium~~ | `3340x3340+358+0`    | 400×400  |
-| ~~shelf-law~~         | `2008x2008+0+500`    | 400×400  |
-| ~~shelf-theologian~~  | `3360x3360+123+3150` | 400×400  |
-| ~~shelf-prayers~~     | `2400x2400+240+600`  | 400×400  |
+| name                     | crop box               | out       |
+| ------------------------ | ---------------------- | --------- |
+| hero-jerome              | `4731x2150+0+322`†     | 1600×727  |
+| disputa-sacramento       | `3258x774+0+1410`      | 1600×380  |
+| disputa-sacramento-whole | none — the scan, whole | 1600×1154 |
+| gospels-preaching        | `3300x1320+150+560`    | 1800×720  |
+| ~~social-gleaners~~      | `5354x2142+0+1250`     | 1800×720  |
+| ~~shelf-scripture~~      | `6911x6911+0+400`      | 400×400   |
+| ~~shelf-catechism~~      | `3480x3480+429+0`      | 400×400   |
+| ~~shelf-magisterium~~    | `3340x3340+358+0`      | 400×400   |
+| ~~shelf-law~~            | `2008x2008+0+500`      | 400×400   |
+| ~~shelf-theologian~~     | `3360x3360+123+3150`   | 400×400   |
+| ~~shelf-prayers~~        | `2400x2400+240+600`    | 400×400   |
 
 † On `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus`, not on the
 Commons scan. Every other box here is on the file the fetch table names.
@@ -183,9 +211,10 @@ invented filigree here, so the finer chroma buys nothing on a photograph of a
 painting. `-s 0` for the same reason it is used above — encoded by hand once,
 so the slowest speed is free.
 
-Total shipped (2026-09-06): 579 KB across three files, none of them `eager` —
-both paintings are below the fold at every viewport and the drollery is on a
-page nobody meant to reach.
+Total shipped (2026-09-11): 1,113 KB across five files, none of them `eager` —
+every painting is below the fold at every viewport and the drollery is on a
+page nobody meant to reach. The whole Disputa is 406 KB of that and is fetched
+only by a reader who presses the band, which is the trade its section argues.
 They are Vite build assets under `_app/immutable/`, so they are negated from
 `run_worker_first` and land in the service worker's content tier rather than
 its install precache (`DEFERRED_MEDIA` in `sw-policy.ts` lists `.avif`).

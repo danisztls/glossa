@@ -625,12 +625,16 @@ Rationale in `site/docs/finding.md`.
 
 ### Pictures
 
-- **One picture per landing page.** Antonello's Jerome — a man alone in a room
-  full of books — closes `/bibliotheca`; Rembrandt's preaching Christ heads
-  `/schola`, which is about being taught. Rows in `assets/README.md` for
-  withdrawn pictures are struck through rather than deleted: a URL, a SHA-256
-  and a crop box bring one back with one command, which is what makes deleting
-  one cheap.
+- **One picture per landing page, and it earns the page by a sentence that
+  would be false of the others.** Antonello's Jerome is a man alone in a room
+  full of books, which is a library; Raphael's disputing doctors are people
+  arguing about one thing with the answer on the table, which is
+  `/quaestiones`. A sentence true of every page names decoration.
+- **Rows in `assets/README.md` for withdrawn pictures are struck through rather
+  than deleted**, a URL and a SHA-256 and a crop box being enough to bring one
+  back. Delete the row instead when the picture returns in a shape it cannot
+  describe — the Disputa came back off a different scan at a different ratio,
+  and a recipe for a file nothing asks for is worse than none.
 - **A caption says "(detail)" because both pictures are one** — a horizontal
   band cut out of a much taller painting. Without it the credit would tell a
   reader the work itself is that shape. `art.detail` and `art.about` are the two
@@ -638,11 +642,23 @@ Rationale in `site/docs/finding.md`.
   two pages read them. A caption is `Artist, Title, year. Institution.`, held in
   `landing-art.ts`. Only ink on a white sheet may take `--plate-blend`, and
   `[data-mono]` desaturates every one.
-- **Hand work keeps its master, and Jerome's is in the corpus.** That one is a
-  crop AND a tone-correction made by hand, so no command reproduces it: the
-  12 MB source is `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus`
-  under LFS, this repository being public. The drollery's 777 KB master stays
-  here — **the rule is the bytes, not the principle.**
+- **Hand work keeps its master only where a crop box cannot say what the hand
+  did.** Jerome is a crop AND a tone-correction, so the 12 MB source is
+  `authored/art/hero-jerome-adjusted.jpg` in `glossa-corpus` under LFS, this
+  repository being public; the drollery's 777 KB master stays here, **the rule
+  being the bytes and not the principle.** A band cut by eye in an editor is
+  still a faithful crop if it is only a cut: recover the box (match per-row
+  averages against the master, then PSNR a re-cut against the file) and record
+  that instead of committing the cut.
+- **A picture may ship twice at two framings, and then the second is what
+  opens.** `landing-art.ts`'s `whole` is a different framing, not more pixels of
+  the same one — `/quaestiones` draws the Disputa's earthly register and a press
+  opens the whole fresco, which no band across its bottom third can show. Two
+  framings are two ratios, so `ArtFigure` hands the viewer the intrinsic pixels
+  belonging to whichever it opened, and the caption drops its "(detail)" because
+  the whole work is not one. Not `PlateViewer`'s `detailSrc`, which is the same
+  framing at more pixels fetched on zoom. It costs the free open: the band is in
+  the cache and the whole is a fetch.
 - **A credit is behind the caption trigger, not set under the picture.**
   `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
   native popover, `role="note"`, and the line printed unconditionally because a
@@ -655,6 +671,12 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   picture in `PlateViewer`. Set that prop only where the height is set — a
   picture drawn whole has nothing behind it, and making it a control would
   promise one.
+- **The height follows what the picture's subject is.** A room's subject is
+  central, so a band slices it and the ends are what `cover` may eat; a frieze's
+  subject IS its span, so `/quaestiones` derives 16.5rem from the column's
+  69.5rem and the file's 4.21:1 and loses nothing at full width. Below that
+  width `cover` crops the ENDS, so a frieze wants a SHORTER band on a phone, not
+  a taller one — the opposite of `/bibliotheca`'s call.
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition

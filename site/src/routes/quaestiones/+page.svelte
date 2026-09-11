@@ -3,9 +3,16 @@
 	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
 	import { keywordsFrom, matchingSlugs } from '$lib/topic-search';
+	import { BANNERS, type Artwork } from '$lib/landing-art';
+	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	// The identification, plus the one interface word in it — composed here and
+	// passed down, the arrangement `Plate.svelte` argues for: the page that
+	// knows what a picture is is the page that writes the line.
+	const creditOf = (art: Artwork) => art.credit + (art.detail ? ` (${t('art.detail')})` : '');
 
 	/**
 	 * SEARCH IS THE ONE CONTROL THIS PAGE NEEDS AND FACETS ARE NOT.
@@ -201,9 +208,72 @@
 			</details>
 		{/each}
 	{/if}
+
+	<!--
+		A TAILPIECE, AND NOT WHILE A QUERY IS LIVE. `/bibliotheca` argues the
+		position: a reader arriving here wants the questions, and a picture
+		above them is a picture between the reader and every shelf. Below the
+		last one there is nothing left for it to be the subject of.
+
+		The search is why this page's copy is conditional where that one's is
+		not. A query that matched nothing prints one line saying so, and a
+		painting under that line would be the page's answer to it. A corpus that
+		failed to sync prints the same shape of line and gets the same silence.
+
+		Raphael's disputing doctors, cut to the earthly register: the fresco
+		entire is the Church agreeing with itself in glory, and the half below
+		the clouds is people arguing about one thing with the answer on the
+		table between them, which is what this page is. `landing-art.ts` holds
+		the credit, the crop's reasoning and the second file a press opens —
+		the whole fresco, heaven included, which is the one thing a band across
+		its bottom third can never show.
+	-->
+	{#if data.index && (!searching || matching.size > 0)}
+		<div class="tailpiece">
+			<ArtFigure
+				art={BANNERS.quaestiones}
+				credit={creditOf(BANNERS.quaestiones)}
+				label={t('art.about')}
+				expandable
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>
+	/*
+	 * THE BAND IS SIZED SO THE SPAN SURVIVES, which is the opposite call from
+	 * `/bibliotheca`'s. That picture is a ROOM: its subject is central, so the
+	 * band takes a horizontal slice and the sides are what cover may eat. This
+	 * one is a FRIEZE — the men at the left parapet, the altar, the doctors on
+	 * the right — and its subject IS the span, so every pixel of width cover
+	 * takes is an argument the reader does not see.
+	 *
+	 * Hence a height derived rather than chosen. `.landing-column` is 72rem
+	 * less 1.25rem of padding each side, so the picture is 69.5rem at its
+	 * widest; the file is 4.21:1; 69.5 ÷ 4.21 is 16.5rem, and at that height
+	 * the band IS the file with nothing cropped at all. In rem and not pixels
+	 * so the match holds at any root size, both numbers being rem.
+	 */
+	.tailpiece {
+		margin: 2.5rem 0 0;
+		--art-height: 16.5rem;
+	}
+
+	/*
+	 * AND THE PHONE WANTS IT SHORTER, which reads backwards until you work it.
+	 * Below the column's full width cover takes its crop off the ENDS, and a
+	 * shorter box is a wider ratio, so it takes less: at 20rem of screen this
+	 * band keeps half the fresco's span at 8.75rem and only two fifths at
+	 * `/bibliotheca`'s 11.25rem. A frieze drawn thinner is still a frieze; a
+	 * frieze drawn short and narrow is an altar with the argument cut off.
+	 */
+	@media (max-width: 40rem) {
+		.tailpiece {
+			--art-height: 8.75rem;
+		}
+	}
+
 	h1 {
 		font-size: 1.6rem;
 		margin: 0 0 0.35rem;

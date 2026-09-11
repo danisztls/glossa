@@ -86,6 +86,21 @@
 	 * picture rather than a plate, and `plates.enlarge` reused as the label
 	 * rather than adding a string to thirty-seven dictionaries to say the same
 	 * word.
+	 *
+	 * ## WHAT OPENS IS NOT ALWAYS THE FILE ON THE PAGE
+	 *
+	 * An artwork with a `whole` ships twice at two framings, and the viewer
+	 * gets that one: `/quaestiones`' band is the Disputa's earthly register,
+	 * and what a reader who presses wants is the fresco it was cut from, not
+	 * more of the strip. `landing-art.ts` argues the case; this component only
+	 * has to hand the view a source and the intrinsic pixels that go WITH it,
+	 * since the stage reserves its ratio from those and a second framing is a
+	 * second ratio.
+	 *
+	 * It costs the sentence below. `viewerSrc` off the inline image is the file
+	 * already in the cache, so opening it is free; a `whole` is a fetch the
+	 * press pays for. Free was never the point — it was what the arrangement
+	 * happened to buy when there was only ever one file.
 	 */
 	import type { Artwork } from '$lib/landing-art';
 	import Icon from '$lib/components/Icon.svelte';
@@ -123,17 +138,23 @@
 	 * `<img>` for a picture nobody has asked to see is still a second fetch
 	 * waiting to happen.
 	 *
-	 * `viewerSrc` is read off the inline image at the moment of the click and
-	 * never rebuilt: it is the file the browser actually chose and therefore
-	 * the one already in the cache, which is what makes opening free.
+	 * Without a `whole`, `viewerSrc` is read off the inline image at the moment
+	 * of the click and never rebuilt: it is the file the browser actually chose
+	 * and therefore the one already in the cache, which is what makes opening
+	 * free. With one, the whole work is what opens — see above.
 	 */
 	let imgEl: HTMLImageElement | undefined = $state();
 	let openerEl: HTMLButtonElement | undefined = $state();
 	let viewerSrc = $state('');
 	let viewing = $state(false);
 
+	/** The intrinsic pixels of whatever `openViewer` chose, never the other
+	 *  one's: the stage reserves its ratio from these before a byte has
+	 *  landed, and the two framings do not share a ratio. */
+	const viewed = $derived(art.whole ?? art);
+
 	function openViewer() {
-		viewerSrc = imgEl?.currentSrc || imgEl?.src || '';
+		viewerSrc = art.whole ? art.whole.src : imgEl?.currentSrc || imgEl?.src || '';
 		if (viewerSrc) viewing = true;
 	}
 
@@ -232,10 +253,14 @@
 	     this component unmounts it in the same turn, so a keyboard reader
 	     whose focus went with it would land at the top of the document
 	     instead of on the picture they were standing on. -->
+	<!-- The credit loses its "(detail)" when what opens is the whole work,
+	     because it is then not one. `art.credit` is the plain identification —
+	     the page composed the other line by adding the interface word to this
+	     same string, so taking it back needs no second prop and no dictionary. -->
 	<PlateViewer
-		width={art.width}
-		height={art.height}
-		{credit}
+		width={viewed.width}
+		height={viewed.height}
+		credit={art.whole ? art.credit : credit}
 		src={viewerSrc}
 		onclosed={() => {
 			viewing = false;
