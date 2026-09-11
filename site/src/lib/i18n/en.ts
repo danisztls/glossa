@@ -1742,6 +1742,14 @@ export const en: Dictionary = {
 	// ones that answer this question" is the operative half and must survive
 	// translation — an article's summary is about the ARTICLE, and choosing
 	// among them is the same act as `lead`, disclosed the same way.
+	// THE ONE HEADING ON THIS PAGE THAT NAMES US. Every other block is headed
+	// by the work it quotes — the Catechism, the Social Doctrine, the Code —
+	// and that is how a reader knows whose words they are reading. So the
+	// disclosure for the site's own paragraph is not a disclaimer under it: it
+	// is the heading over it, in the same slot, answering the same question.
+	// It must keep saying "this site" and must never be reworded into
+	// something that could pass for a section of a work.
+	'quaestiones.editorial.heading': 'A note from this site',
 	'quaestiones.brief.heading': 'The Catechism in brief',
 	'quaestiones.brief.blurb':
 		'The Catechism closes each of its articles with a summary of its own. These are the ones that answer this question; the passages they stand on are below.',
@@ -2313,6 +2321,15 @@ export const en: Dictionary = {
 	'quaestiones.verecundia.question': 'What am I supposed to wear?',
 	'quaestiones.verecundia.keywords':
 		'dress code, clothes, shorts, veil, immodest, custody of the eyes, swimsuit, leggings, tempting others, what people will think',
+	// THE SITE'S OWN WORDS, and the only ones on any topic page. Every claim in
+	// it is checkable against a text printed below it or against a date: the
+	// 1917 Code's can. 2335, the 1983 Code's can. 1374 and can. 1315, and the
+	// Declaration of 26 November 1983, quoted here in the phrases it is usually
+	// misquoted by. Nothing in it is about Freemasons — it is about the claims
+	// in circulation, which is both the defensible form and the one that
+	// actually corrects somebody who believes them.
+	'quaestiones.associationes-massonicae.editorial':
+		'Everything below this note is somebody else’s words. This paragraph is ours, and it is here because more is said about this subject than is true of it.\n\nBelonging to Freemasonry is grave sin, and that has not changed. What changed is the penalty. The 1917 Code excommunicated a Catholic automatically for enrolling; the Code in force since 27 November 1983 does not, and a canon cannot say so — it does not print the penalties it declines to impose, which is why nothing below will tell you. But the Code took effect the day after the Congregation for the Doctrine of the Faith said the Church’s judgment “remains unchanged”, that membership “remains forbidden”, and that those who enrol “are in a state of grave sin and may not receive Holy Communion”. A penalty was withdrawn. Nothing was permitted. Some bishops have since attached a penalty of their own, which can. 1315 lets them do, so the answer can be stricter where you live and is never laxer.\n\nThe law names no association by name, and that is deliberate rather than an oversight. It forbids joining “an association which plots against the Church”, and the 1983 declaration says Masonic bodies went unnamed because they “are contained in wider categories”. A rule written against a NAME would forbid the name and leave the same thing under another one looking permitted. So the prohibition follows what an association is and does, and a lodge, order or society that answers the description is not outside it for being called something else. Nor is that a judgement you are asked to make for yourself: the same declaration reserves it, and reserves it even from your own bishops’ conference.',
 	'quaestiones.associationes-massonicae.title': 'Freemasonry',
 	'quaestiones.associationes-massonicae.question': 'Can a Catholic be a Freemason?',
 	'quaestiones.associationes-massonicae.keywords':

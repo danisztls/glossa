@@ -28,6 +28,7 @@ const source = JSON.parse(readFileSync('quaestiones.json', 'utf8')) as {
 			ccc: [number, number][];
 			lead?: number;
 			brief?: number[];
+			editorial?: boolean;
 			csdc?: [number, number][];
 			canons?: [number, number][];
 		}
@@ -231,6 +232,39 @@ describe('every topic is reachable and named', () => {
 		}
 	});
 
+	/** THE FLAG AND THE PARAGRAPH ARE TWO FILES APART AND FAIL IN OPPOSITE
+	 *  DIRECTIONS, both visibly wrong and neither caught by anything else. A
+	 *  topic flagged with no string renders `quaestiones.{slug}.editorial` as
+	 *  literal text at the top of the page, because `t()` hands back the key
+	 *  it cannot resolve; a string with no flag is the site's own voice
+	 *  written, reviewed and then silently dropped, which is the failure
+	 *  nobody would ever notice. */
+	it('pairs every editorial flag with the paragraph it prints, in both directions', () => {
+		const dictionary = en as unknown as Record<string, string>;
+		for (const slug of slugs) {
+			const flagged = source.topics[slug].editorial === true;
+			const written = Boolean(dictionary[`quaestiones.${slug}.editorial`]);
+			expect(written, `${slug}: editorial flag ${flagged}, string ${written}`).toBe(flagged);
+		}
+		// The heading is the whole disclosure — the site's paragraph sits under
+		// it where every other block sits under the name of the work it quotes
+		// — so it is not optional the way a blurb is.
+		if (slugs.some((slug) => source.topics[slug].editorial)) {
+			expect(dictionary['quaestiones.editorial.heading']).toBeTruthy();
+		}
+	});
+
+	/** THE EXCEPTION HAS TO STAY ONE. `docs/decisions.md` §Posture lets this
+	 *  page carry a gloss only because the gloss is disclosed and rare; a file
+	 *  where a third of the topics explain themselves in our voice is a
+	 *  commentary with quotations in it, which is a different site. No
+	 *  threshold is defensible in the abstract — this one is low enough that
+	 *  crossing it is a decision somebody makes on purpose, in a diff. */
+	it('keeps the site’s own voice exceptional', () => {
+		const flagged = slugs.filter((slug) => source.topics[slug].editorial);
+		expect(flagged.length, `editorial on: ${flagged.join(', ')}`).toBeLessThanOrEqual(5);
+	});
+
 	/** THE DOORWAYS ARE NOT NAMED IN ANY DICTIONARY, deliberately: they sort
 	 *  the file and order the shelves, and the page draws the shelves alone.
 	 *  Asserted from the other side, or the eight keys they used to need would
@@ -338,6 +372,7 @@ describe('quaestiones-review.json', () => {
 		// First, because it is what the page prints first. A grade is a claim
 		// about the page a reader meets, and a summary added or dropped above
 		// the passages changes that page as much as a span does.
+		if (topic.editorial) parts.push('editorial');
 		if (topic.brief?.length) parts.push(`brief ${topic.brief.join(',')}`);
 		for (const [work, spans] of spansOf(topic)) {
 			if (spans.length === 0) continue;

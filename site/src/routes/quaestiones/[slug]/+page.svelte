@@ -82,6 +82,26 @@
 	 * is quotation, and there is no sentence of ours between them explaining
 	 * what the quotation means.
 	 *
+	 * THERE IS EXACTLY ONE EXCEPTION AND IT IS DECLARED PER TOPIC. A topic
+	 * carrying `editorial` prints a paragraph of this site's own, above
+	 * everything else, under a heading naming this site where every other
+	 * block is headed by the work it quotes. The heading IS the disclosure —
+	 * it stands in the same slot and answers the same question, "whose words
+	 * are these", so a reader learns it once and it holds on every block.
+	 * `site/quaestiones.json` states the test a topic must pass to earn one
+	 * and why `associationes-massonicae` is the topic that does: a reader who
+	 * has been told all their life that Freemasonry means automatic
+	 * excommunication can read every quoted text on that page and find
+	 * nothing that contradicts them, because a canon does not print the
+	 * penalties it declines to impose.
+	 *
+	 * IT GOES FIRST, which is the part worth arguing. Putting our voice above
+	 * somebody else's is the risk; leaving a reader to misread three works
+	 * before meeting the correction is the certainty, and the whole reason
+	 * this topic has the field is that the misreading is what they arrived
+	 * with. `lead`'s argument, one level up — printed order is itself an
+	 * ordering, and the alternative to choosing is not neutrality.
+	 *
 	 * THE SUMMARY IS NOT AN EXCEPTION TO THAT, and it is the place somebody
 	 * will look for one. A topic that runs long opens on the Catechism's own
 	 * IN BRIEF paragraphs, which is still quotation and still addressed —
@@ -181,6 +201,21 @@
 		<h1>{title}</h1>
 		<p class="question">{question}</p>
 	</header>
+
+	<!-- AN `<aside>` AND NOT A `<section>`: everything else in this article is
+	     the material the page exists to show, and this is a remark beside it.
+	     Its heading is the disclosure (see the docblock), so it is drawn with
+	     the same `.label` as the block headings and in the same place — the
+	     reader is not being asked to learn a second convention, only to read
+	     the one they are already reading. -->
+	{#if data.topic.editorial}
+		<aside class="editorial">
+			<h2 class="label">{t('quaestiones.editorial.heading')}</h2>
+			{#each t(`quaestiones.${data.slug}.editorial`).split('\n\n') as paragraph (paragraph)}
+				<p>{paragraph}</p>
+			{/each}
+		</aside>
+	{/if}
 
 	<!-- THE SHORT ANSWER COMES FIRST AND IS STILL SOMEBODY ELSE'S, drawn from
 	     the Catechism's own IN BRIEF runs. Rendered through the same snippet as
@@ -290,6 +325,39 @@
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
 		margin: 0 0 1rem;
+	}
+
+	/*
+	 * THE ONE BLOCK THAT IS NOT A QUOTATION LOOKS LIKE THE ONE BLOCK THAT IS
+	 * NOT A QUOTATION. Everything else on this page is set as running text on
+	 * the page's own ground, because it is what the reader came to read; this
+	 * is lifted onto the elevated ground and closed with a border, so that at
+	 * a glance — before the heading is read, and after it has been forgotten
+	 * — it is visibly a different KIND of thing from the columns of numbered
+	 * paragraphs under it. The accent rule down the inline start is the only
+	 * saturated colour on the page and is spent here deliberately: this is
+	 * the one place the site is answerable for what it says.
+	 *
+	 * It carries no `.paragraph` grid, which is the quiet half of the same
+	 * signal: every quoted unit on this page hangs a number in the margin,
+	 * and this block has nothing to hang there because it addresses no
+	 * numbered unit and has no address of its own.
+	 */
+	.editorial {
+		margin: 2rem 0 0;
+		padding: 0.25rem 1.25rem 1rem;
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-inline-start: 3px solid var(--color-accent);
+		border-radius: 2px;
+	}
+
+	.editorial p {
+		margin: 0 0 0.75rem;
+	}
+
+	.editorial p:last-child {
+		margin-bottom: 0;
 	}
 
 	/*

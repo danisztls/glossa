@@ -697,10 +697,14 @@ export const pt: Dictionary = {
 	// página. Ver o comentário correspondente em `en.ts`.
 	'quaestiones.passages.heading': 'Do Catecismo',
 	// A resposta curta, e nenhuma palavra dela é nossa: são os parágrafos que
-	// o próprio Catecismo imprime sob «Resumindo» ao fim de cada artigo. Ver
+	// o próprio Catecismo imprime sob “Resumindo” ao fim de cada artigo. Ver
 	// o comentário correspondente em `en.ts`; o que precisa sobreviver à
-	// tradução é «os que respondem a esta pergunta» — a escolha é nossa, as
+	// tradução é “os que respondem a esta pergunta” — a escolha é nossa, as
 	// frases não.
+	// O único título desta página que nomeia a nós. Todos os outros blocos são
+	// encabeçados pela obra que citam, e é assim que o leitor sabe de quem são
+	// as palavras. Ver o comentário correspondente em `en.ts`.
+	'quaestiones.editorial.heading': 'Uma nota deste site',
 	'quaestiones.brief.heading': 'O Catecismo, resumindo',
 	'quaestiones.brief.blurb':
 		'O Catecismo fecha cada artigo com um resumo seu. Estes são os que respondem a esta pergunta; os parágrafos em que se apoiam vêm abaixo.',
@@ -1252,6 +1256,12 @@ export const pt: Dictionary = {
 	'quaestiones.verecundia.question': 'O que eu devo vestir?',
 	'quaestiones.verecundia.keywords':
 		'roupa, decote, shorts, véu, recato, modéstia, imodesto, guarda dos olhos, biquíni, legging, o que os outros vão pensar',
+	// As palavras do próprio site, e as únicas em qualquer página de tema. Ver
+	// o comentário correspondente em `en.ts`: cada afirmação é verificável
+	// contra um texto impresso abaixo dela ou contra uma data, e nada aqui fala
+	// dos maçons, mas das alegações que circulam.
+	'quaestiones.associationes-massonicae.editorial':
+		'Tudo o que vem abaixo desta nota são palavras de outros. Este parágrafo é nosso, e está aqui porque se diz mais sobre este assunto do que é verdade a respeito dele.\n\nPertencer à maçonaria é pecado grave, e isso não mudou. O que mudou foi a pena. O Código de 1917 excomungava automaticamente o católico que se inscrevesse; o Código em vigor desde 27 de novembro de 1983 não excomunga, e um cânone não tem como dizer isso — ele não imprime as penas que deixa de impor, e é por isso que nada abaixo vai lhe contar. Mas esse Código entrou em vigor no dia seguinte ao da declaração da Congregação para a Doutrina da Fé, que afirma que o juízo da Igreja “permanece imutável”, que a inscrição “continua proibida” e que os fiéis inscritos “estão em estado de pecado grave e não podem aceder à sagrada comunhão”. Retirou-se uma pena. Não se permitiu nada. Alguns bispos passaram a estabelecer pena própria, o que o cân. 1315 lhes faculta, de modo que a resposta pode ser mais severa onde você vive, e nunca mais branda.\n\nA lei não nomeia nenhuma associação, e isso é proposital, não um descuido. Ela proíbe filiar-se a “uma associação que maquina contra a Igreja”, e a declaração de 1983 diz que as associações maçónicas não foram nomeadas porque “estão contidas em categorias mais amplas”. Uma regra escrita contra um NOME proibiria o nome e deixaria a mesma coisa, com outro nome, parecendo permitida. Por isso a proibição segue o que a associação é e faz, e uma loja, ordem ou sociedade que corresponda à descrição não fica de fora por se chamar outra coisa. Nem esse é um juízo que se peça a você: a mesma declaração o reserva, e o reserva até da sua própria conferência episcopal.',
 	'quaestiones.associationes-massonicae.title': 'A maçonaria',
 	'quaestiones.associationes-massonicae.question': 'Um católico pode ser maçom?',
 	'quaestiones.associationes-massonicae.keywords':

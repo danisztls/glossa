@@ -259,6 +259,58 @@ on Sunday obligation, `collaboration-of-men-and-women` on gender, `mysterium-ecc
 on whether a dogmatic formula can be historically conditioned. Read the
 description before naming a document, and again before removing one.
 
+## The site speaks once, and the heading is what makes it safe
+
+Every other rule on this page is a way of not writing a sentence of our own. The
+passages are derived, the summary is the Catechism's, the document titles come
+out of the corpus, and `lead` moves a paragraph without adding a word. `editorial`
+is the exception, it is declared per topic, and one topic has it.
+
+**What earns it is a false belief the corpus cannot dislodge**, which is a
+narrower thing than a difficult subject. A reader arriving at
+`associationes-massonicae` has usually been told that Freemasonry means automatic
+excommunication. It did, until 27 November 1983. The law that replaced it says
+nothing about excommunication — and **a canon does not print the penalties it
+declines to impose**, so there is no passage anywhere in the corpus whose
+quotation would correct them. The texts are silent in exactly the shape of the
+error. That is the test: name the belief, then name the passage that would have
+corrected it. If the passage exists, anchor it and write nothing.
+
+**The disclosure is the heading, not a disclaimer.** Every block on a topic page
+is headed by the work it quotes — the Catechism, the Social Doctrine, the Code —
+so the heading slot is already the place a reader learns whose words follow. Ours
+goes in the same slot and says "A note from this site". Nothing else on the page
+has to change, and the reader learns one convention rather than two. The block is
+also lifted onto the elevated ground with a border and an accent rule, so it
+reads as a different KIND of thing before the heading is read and after it has
+been forgotten, and it hangs no unit number in the margin because it addresses no
+unit and has no address of its own.
+
+**It goes above the quotations**, which is the part worth arguing, and the
+argument is `lead`'s one level up: the risk is our voice standing over somebody
+else's, the certainty is a reader misreading three works before meeting the
+correction, and the misreading is what they arrived with. Printed order is itself
+an ordering.
+
+**Two tests hold it and both are about invisibility.** The flag and the string
+live in different files and fail in opposite directions: flagged with no string,
+`t()` hands back the key and the page prints `quaestiones.{slug}.editorial` as
+literal text at the top; written with no flag, the paragraph is composed,
+reviewed and silently dropped. A third caps the count — **a file where a third of
+the topics explain themselves in our voice is a commentary with quotations in
+it**, which is a different site, and no threshold is defensible in the abstract
+except one low enough that crossing it has to be done on purpose in a diff.
+
+**What may go in it.** Only what can be checked against a text printed below it
+or against a date, and nothing about the people on the other side of the
+question. That second half is not delicacy: the page is read by the families of
+the people it is about, and a site that publishes the Catechism forfeits the
+standing it is trading on the moment it characterises a class of persons. It is
+also the weaker instrument — a reader who holds the false belief is moved by the
+1917 canon and the 1983 date, and hardened by an insult. **This is the one place
+on a topic page where the site can be wrong rather than merely badly arranged**,
+and the only place where nobody else's authority stands behind the words.
+
 ## The summary is the Catechism's, which is the only reason there is one
 
 A topic page prints no sentence of its own between its heading and its

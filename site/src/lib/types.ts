@@ -1054,6 +1054,11 @@ export interface Topic {
 	/** CCC paragraphs flagged `in_brief`, printed above the passages as the
 	 *  short answer, in this list's order rather than the Catechism's. */
 	brief?: number[];
+	/** Prints `quaestiones.{slug}.editorial` above the page in THIS SITE's own
+	 *  voice, under a heading naming this site — the single exception to a
+	 *  topic page carrying no sentence of ours, and `site/quaestiones.json`
+	 *  states the test a topic has to pass to earn it. */
+	editorial?: boolean;
 	/** Spans of the Compendium of the Social Doctrine, quoted under the
 	 *  Catechism's. Named where the Compendium develops what the Catechism
 	 *  summarises — the public square, work, the economy — and absent on the

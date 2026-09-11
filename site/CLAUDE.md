@@ -985,6 +985,13 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   it has: CCC 2283 before the three paragraphs on the gravity of suicide is an
   arrangement, and an undisclosed one would be the gloss `docs/decisions.md`
   §Posture forbids.
+- **`editorial` is the only sentence of ours on a topic page**, declared per
+  topic and currently on one. It is earned by a false belief the corpus cannot
+  dislodge — a canon does not print the penalties it declines to impose, so no
+  quotation tells a reader that Freemasonry stopped meaning automatic
+  excommunication in 1983. The disclosure is the heading, which names this site
+  where every other block names the work it quotes; two tests pair the flag with
+  its string in both directions and a third caps how many topics may carry one.
 - **A topic's summary is one the Catechism wrote**, never one composed here:
   `brief` names paragraphs flagged `in_brief` (548 of the 2,865, in all nine
   editions), so the short answer above the passages is still quotation with an
