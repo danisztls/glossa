@@ -52,6 +52,9 @@
  * the noun. A rule that composed them would need a grammar per language; a
  * finished phrase needs a speaker, once.
  *
+ * IT IS THE NAME FOR A READER OF THAT LANGUAGE, and everyone else is given the
+ * English one — `CALENDAR_NAMES_EN`, below, which carries the chain.
+ *
  * WHERE NO ADJECTIVE READS NATURALLY THE NAME IS PARENTHETICAL, which is the
  * source's own shape — GCatholic titles every feed `Liturgical Calendar 2026
  * (Brunei)`. That covers a demonym nobody uses (`são-tomense`), one that names
@@ -243,6 +246,121 @@ export const CALENDAR_PAGES: Record<string, CalendarPage> = {
 
 /** The calendars with an address, by id, in the order the sitemap lists them. */
 export const CALENDAR_IDS: readonly string[] = Object.keys(CALENDAR_PAGES).sort();
+
+/**
+ * The same calendars in English, for a reader the page above is not written
+ * for.
+ *
+ * A CALENDAR'S NAME FOLLOWS THE READER, THE WAY A CELEBRATION'S DOES. The
+ * chain is `celebrationName`'s exactly — the reader's own language, then
+ * English — and it is the same chain for the same reason: a Brazilian proper
+ * is `Saint José de Anchieta, Priest` to a reader of any language the
+ * conference did not approve it in, and the calendar it belongs to cannot be
+ * the one line on that page still in Portuguese. Until 2026-09-11 it was, in
+ * the heading's sentence and in the `<title>` above it.
+ *
+ * ONLY THE ROWS ABOVE THAT ARE NOT ALREADY ENGLISH, which `languages.test.ts`
+ * asserts in both directions: a row here for a calendar published in English
+ * would be a second English name for one calendar, and a missing row would
+ * leave that calendar named in its own language on an English page.
+ *
+ * WRITTEN, NOT COMPOSED, for `CALENDAR_PAGES`' own reason at one remove.
+ * `Liturgical Calendar` plus a territory from `Intl.DisplayNames` would cost
+ * nothing and be wrong three times — the vicariates and the patriarchate are
+ * not the country their id spells, so `ae` would name the Emirates a calendar
+ * that is Oman's and Yemen's too — and it would put `Congo - Kinshasa` and
+ * `Hong Kong SAR China` in a title, in whatever wording the reader's browser
+ * shipped CLDR with that month.
+ *
+ * THE DEMONYM WHERE ENGLISH HAS ONE THAT READS, the parenthetical where it
+ * does not, which is the shape the table above already takes: `Bosnian
+ * Herzegovinian` and `Monegasque` are words nobody reaches for, and `São Tomé
+ * and Príncipe` has no demonym in English at all. That a demonym is also a
+ * language's name is not a reason to avoid it — `Russian Liturgical Calendar`
+ * and `Thai Liturgical Calendar` are already up there — except for English
+ * itself, where `English Liturgical Calendar` would name the language on a
+ * site whose every edition menu is a list of them.
+ */
+export const CALENDAR_NAMES_EN: Record<string, string> = {
+	ad: 'Andorran Liturgical Calendar',
+	ao: 'Angolan Liturgical Calendar',
+	ar: 'Argentine Liturgical Calendar',
+	at: 'Austrian Liturgical Calendar',
+	ba: 'Liturgical Calendar (Bosnia and Herzegovina)',
+	be: 'Belgian Liturgical Calendar',
+	bo: 'Bolivian Liturgical Calendar',
+	br: 'Brazilian Liturgical Calendar',
+	cd: 'Liturgical Calendar (Democratic Republic of the Congo)',
+	ch: 'Swiss Liturgical Calendar',
+	cl: 'Chilean Liturgical Calendar',
+	co: 'Colombian Liturgical Calendar',
+	cr: 'Costa Rican Liturgical Calendar',
+	cv: 'Liturgical Calendar (Cabo Verde)',
+	cz: 'Czech Liturgical Calendar',
+	de: 'German Liturgical Calendar',
+	dk: 'Danish Liturgical Calendar',
+	dz: 'Algerian Liturgical Calendar',
+	ec: 'Ecuadorian Liturgical Calendar',
+	es: 'Spanish Liturgical Calendar',
+	fr: 'French Liturgical Calendar',
+	gt: 'Guatemalan Liturgical Calendar',
+	hk: 'Liturgical Calendar (Hong Kong)',
+	hr: 'Croatian Liturgical Calendar',
+	ht: 'Haitian Liturgical Calendar',
+	hu: 'Hungarian Liturgical Calendar',
+	id: 'Indonesian Liturgical Calendar',
+	it: 'Italian Liturgical Calendar',
+	jp: 'Japanese Liturgical Calendar',
+	kr: 'Korean Liturgical Calendar',
+	li: 'Liturgical Calendar (Liechtenstein)',
+	lt: 'Lithuanian Liturgical Calendar',
+	lu: 'Liturgical Calendar (Luxembourg)',
+	mc: 'Liturgical Calendar (Monaco)',
+	mt: 'Maltese Liturgical Calendar',
+	mx: 'Mexican Liturgical Calendar',
+	nl: 'Dutch Liturgical Calendar',
+	no: 'Norwegian Liturgical Calendar',
+	pa: 'Panamanian Liturgical Calendar',
+	pe: 'Peruvian Liturgical Calendar',
+	pl: 'Polish Liturgical Calendar',
+	pr: 'Puerto Rican Liturgical Calendar',
+	pt: 'Portuguese Liturgical Calendar',
+	rw: 'Rwandan Liturgical Calendar',
+	se: 'Swedish Liturgical Calendar',
+	sk: 'Slovak Liturgical Calendar',
+	st: 'Liturgical Calendar (São Tomé and Príncipe)',
+	tl: 'Timorese Liturgical Calendar',
+	tn: 'Tunisian Liturgical Calendar',
+	tw: 'Liturgical Calendar (Taiwan)',
+	va: 'Vatican Liturgical Calendar',
+	ve: 'Venezuelan Liturgical Calendar',
+	vi: 'Liturgical Calendar (U.S. Virgin Islands)'
+};
+
+/**
+ * What to call a calendar to a reader, and which language the answer is in.
+ *
+ * TWO ANSWERS AND NOT FORTY. The calendar's own name where the reader is
+ * reading in the language it was named in, English everywhere else — see
+ * `CALENDAR_NAMES_EN` for why the middle option, a name composed per language
+ * out of a territory, is not one.
+ *
+ * THE LANGUAGE COMES BACK WITH THE NAME because the caller has to mark it:
+ * `Brazilian Liturgical Calendar` inside a Polish paragraph is a foreign
+ * phrase, and an unmarked one is hyphenated and pronounced as Polish.
+ *
+ * `/calendarium/brazil` is served by the edge with a Portuguese head and keeps
+ * it, which this does not contradict: a reader who has not chosen a language
+ * is given the address's own (`i18n.svelte.ts`, `initialLang`), so `lang` is
+ * `pt` here and the name is the written one. It differs only for a reader who
+ * HAS chosen, whose whole page is in that language by the time this is read.
+ */
+export function calendarName(id: string, lang: string): { text: string; lang: string } {
+	const page = CALENDAR_PAGES[id];
+	if (lang === page.lang) return { text: page.name, lang: page.lang };
+	const english = CALENDAR_NAMES_EN[id];
+	return english ? { text: english, lang: 'en' } : { text: page.name, lang: page.lang };
+}
 
 /** Slug -> calendar id, which is the direction an address is read in. */
 export const CALENDAR_BY_SLUG: Record<string, string> = Object.fromEntries(

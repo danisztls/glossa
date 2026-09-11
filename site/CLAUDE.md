@@ -3206,6 +3206,11 @@ parses an id.
   German, and is not a word at all in Chinese, so composing one needs a grammar
   per language where a finished phrase needs a speaker once. It is what both
   the `<title>` and `calendar.national.tagline`'s `{name}` take.
+- **A reader of another language is given the English name** — `CALENDAR_NAMES_EN`,
+  which is `celebrationName`'s chain applied to the calendar its celebrations
+  are in, and marked `lang` where it is set in a sentence that is not English.
+  The edge keeps the endonym, and only a reader who has chosen a language sees
+  the two differ (`site/docs/calendar.md`).
 - **A name from `Intl.DisplayNames` can be a label and nothing else.** It is a
   bare nominative with no article, which is why the tagline built around one
   printed "as United States keeps it", "wie Schweiz ihn feiert", "tel que le

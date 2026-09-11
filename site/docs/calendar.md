@@ -505,6 +505,20 @@ naturally the name is parenthetical, which is the source's own shape — `São
 Tomé e Príncipe` has no usable adjective, and `congolais` names the calendar of
 either Congo.
 
+**It is the name for a reader of that language, and everyone else is given the
+English one.** The propers under it already walk `celebrationName`'s chain —
+the reader's language, then English — so an English page about Brazil's
+calendar printed `Saint José de Anchieta, Priest` under a heading calling the
+calendar `Calendário Litúrgico Brasileiro`, and titled the tab the same.
+`CALENDAR_NAMES_EN` is the rows whose own language is not English, written out
+for the reason the endonyms are: `Liturgical Calendar` plus a territory from
+`Intl.DisplayNames` costs nothing and is wrong three times — the vicariates and
+the patriarchate are not the country their id spells — and it would put
+`Congo - Kinshasa` and `Hong Kong SAR China` into a title, in whatever wording
+the reader's browser shipped CLDR with. The edge still serves the endonym
+(`route-titles.mjs`), and the two disagree only for a reader who has chosen a
+language, whose whole page disagrees with it too.
+
 **A name from `Intl.DisplayNames` is a label and can be nothing else**, which
 is what that table is still used for — the breadcrumb, and the picker's cells.
 The tagline was built around one for an afternoon and printed "as United States

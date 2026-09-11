@@ -94,7 +94,7 @@
 		type CalendarOptions
 	} from '$lib/calendar';
 	import { NATIONAL_CALENDAR_LIST, TERRITORY_CALENDARS } from '$lib/calendar/national';
-	import { calendarPath, CALENDAR_PAGES } from '$lib/calendar/national/languages';
+	import { calendarName, calendarPath } from '$lib/calendar/national/languages';
 	import {
 		detectedTerritory,
 		openingTerritory,
@@ -387,24 +387,28 @@
 	 * The title and the sentence under the heading, both naming the calendar
 	 * that is actually on screen.
 	 *
-	 * THE NAME IS THE CALENDAR'S OWN AND IS NOT TRANSLATED — `Calendário
-	 * Litúrgico Brasileiro` reads the same to a reader whose interface is
-	 * Albanian, because it is what that calendar is called (`languages.ts`).
-	 * The sentence around it is theirs. `shell-head.ts` composes the same two
-	 * strings for the edge, so the title assigned here at hydration is the
-	 * title the crawler was already served; a different shape would be a
-	 * visible rearrangement on every load.
+	 * THE NAME FOLLOWS THE READER AND THE SENTENCE AROUND IT ALWAYS DID —
+	 * `Calendário Litúrgico Brasileiro` where the interface is Portuguese, and
+	 * `Brazilian Liturgical Calendar` where it is anything else, which is
+	 * `celebrationName`'s chain applied to the calendar those celebrations are
+	 * in (`languages.ts`). Until 2026-09-11 the endonym was the only answer,
+	 * and an English page about Brazil's calendar named it in Portuguese while
+	 * every proper under it read in English.
+	 *
+	 * `shell-head.ts` still composes the endonym for the edge, and the two
+	 * agree wherever the reader has not overruled the address: a crawler and a
+	 * reader with no stored language are both served, and shown, Portuguese
+	 * (`i18n.svelte.ts`, `initialLang`). Where they differ the whole document
+	 * differs with them.
 	 *
 	 * It follows the CALENDAR and not the picker's value, exactly as the
 	 * address does: a reader who chose Israel is reading the Latin
 	 * Patriarchate's calendar, and that is what these name.
 	 */
 	let namedLayer = $derived(territory === 'general' ? undefined : TERRITORY_CALENDARS[territory]);
-	let calendarName = $derived(namedLayer ? CALENDAR_PAGES[namedLayer].name : undefined);
+	let named = $derived(namedLayer ? calendarName(namedLayer, lang) : undefined);
 	let pageTitle = $derived(
-		calendarName
-			? `${calendarName} — ${t('home.title')}`
-			: `${t('calendar.title')} — ${t('home.title')}`
+		named ? `${named.text} — ${t('home.title')}` : `${t('calendar.title')} — ${t('home.title')}`
 	);
 
 	/**
@@ -414,10 +418,19 @@
 	 * tagline may carry markup, both strings come from this repository rather
 	 * than from a reader, and `plain()` in `route-titles.mjs` strips it back
 	 * out for the `<meta>` description, whose content attribute is text.
+	 *
+	 * IT CARRIES A `lang` WHERE THE NAME IS NOT THE PAGE'S LANGUAGE, which is
+	 * the whole reason `calendarName` returns one: `Calendário Litúrgico
+	 * Brasileiro` in an English sentence is a Portuguese phrase, and unmarked
+	 * it is hyphenated, quoted and spoken as English. Omitted when the two
+	 * agree, where it would only repeat what `<html lang>` says.
 	 */
 	let tagline = $derived(
-		calendarName
-			? t('calendar.national.tagline').replace('{name}', `<strong>${calendarName}</strong>`)
+		named
+			? t('calendar.national.tagline').replace(
+					'{name}',
+					`<strong${named.lang === lang ? '' : ` lang="${named.lang}"`}>${named.text}</strong>`
+				)
 			: t('calendar.tagline')
 	);
 </script>

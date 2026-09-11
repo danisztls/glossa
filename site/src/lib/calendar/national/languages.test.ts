@@ -7,7 +7,9 @@ import { HELD_CALENDARS } from './held';
 import {
 	CALENDAR_BY_SLUG,
 	CALENDAR_IDS,
+	CALENDAR_NAMES_EN,
 	CALENDAR_PAGES,
+	calendarName,
 	calendarPath,
 	territoryName
 } from './languages';
@@ -108,6 +110,72 @@ describe('CALENDAR_PAGES', () => {
 		const names = CALENDAR_IDS.map((id) => CALENDAR_PAGES[id].name);
 		expect(new Set(names).size).toBe(names.length);
 		for (const name of names) expect(name).not.toContain('{');
+	});
+});
+
+describe('CALENDAR_NAMES_EN', () => {
+	/**
+	 * BOTH DIRECTIONS, which is what makes the fallback total: a calendar with
+	 * no English name is named in its own language on an English page — the
+	 * defect this table exists for — and an English name for a calendar
+	 * ALREADY published in English is a second name for one thing, which
+	 * `calendarName` would never reach and nobody would notice was wrong.
+	 */
+	it('names every calendar that is not already published in English', () => {
+		const expected = CALENDAR_IDS.filter((id) => CALENDAR_PAGES[id].lang !== 'en');
+		expect(Object.keys(CALENDAR_NAMES_EN).sort()).toEqual([...expected].sort());
+	});
+
+	/** Distinct across BOTH tables: the two are one namespace at the point of
+	 *  use, and two calendars answering to one name is the same defect here as
+	 *  it is above. */
+	it('names them distinctly, and distinctly from the calendars named in English', () => {
+		const names = [
+			...Object.values(CALENDAR_NAMES_EN),
+			...CALENDAR_IDS.filter((id) => CALENDAR_PAGES[id].lang === 'en').map(
+				(id) => CALENDAR_PAGES[id].name
+			)
+		];
+		expect(new Set(names).size).toBe(names.length);
+	});
+});
+
+describe('calendarName', () => {
+	it('gives the calendar its own name to a reader of its own language', () => {
+		expect(calendarName('br', 'pt')).toEqual({
+			text: 'Calendário Litúrgico Brasileiro',
+			lang: 'pt'
+		});
+	});
+
+	/** The reported defect: an English page about Brazil's calendar, naming it
+	 *  in Portuguese under a heading and a hundred propers in English. */
+	it('gives English to every other reader', () => {
+		expect(calendarName('br', 'en')).toEqual({ text: 'Brazilian Liturgical Calendar', lang: 'en' });
+		expect(calendarName('br', 'pl')).toEqual({ text: 'Brazilian Liturgical Calendar', lang: 'en' });
+	});
+
+	/** A calendar published in English has one name and answers with it to
+	 *  everyone. */
+	it('leaves a calendar published in English alone', () => {
+		for (const lang of ['en', 'pl']) {
+			expect(calendarName('ca', lang)).toEqual({
+				text: 'Canadian Liturgical Calendar',
+				lang: 'en'
+			});
+		}
+	});
+
+	/** Every answer is a name and every answer is marked, so a caller can set
+	 *  `lang` on it without asking which table it came from. */
+	it('answers for every published calendar, in a language it declares', () => {
+		for (const id of CALENDAR_IDS) {
+			for (const lang of UI_LANGS) {
+				const { text, lang: nameLang } = calendarName(id, lang);
+				expect(text, id).toBeTruthy();
+				expect([CALENDAR_PAGES[id].lang, 'en'], id).toContain(nameLang);
+			}
+		}
 	});
 });
 
