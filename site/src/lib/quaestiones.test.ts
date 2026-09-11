@@ -225,19 +225,56 @@ describe('every topic is reachable and named', () => {
 		}
 	});
 
-	/** Keywords are additive to the pair above them: the haystack is all three,
-	 *  so a term the title or the question already carries is already matched
-	 *  and only makes the line look like it is doing work. */
-	it('writes no keyword the topic’s own title or question already carries', () => {
-		const dictionary = en as unknown as Record<string, string>;
-		for (const slug of slugs) {
-			const visible = foldForSearch(
-				`${dictionary[`quaestiones.${slug}.title`]} ${dictionary[`quaestiones.${slug}.question`]}`
-			);
-			for (const term of dictionary[`quaestiones.${slug}.keywords`].split(', ')) {
-				expect(visible.includes(foldForSearch(term)), `${slug}: ${term}`).toBe(false);
+	/** Keywords are additive to everything else the row is matched on, and the
+	 *  haystack is the title, the question AND the line itself — so a term any
+	 *  other part of the row already carries is already matched and only makes
+	 *  the line look like it is doing work.
+	 *
+	 *  THE LINE'S OWN NEIGHBOURS WERE THE HALF THIS COULD NOT SEE. Matching is
+	 *  a substring, so `good atheists` answers `atheist`, `smartphone` answers
+	 *  `phone` and `once saved always saved` answers `saved`; 29 terms across
+	 *  the two dictionaries stood beside the longer term that already covered
+	 *  them. It was one rule written against half the haystack, and the half it
+	 *  missed is the half a person is looking at while they add a term.
+	 *
+	 *  A TERM AT A TIME AND NEVER THE LINE JOINED, because a cover has to be
+	 *  something a reader could have typed rather than an accident of the order
+	 *  the terms were written in: `x a` beside `b y` reads as `a b` when the
+	 *  line is concatenated, and reordering would take it away again. The title
+	 *  and the question keep their joined form, which is what has shipped and
+	 *  is two sentences a reader really does read as one line.
+	 *
+	 *  EVERY DICTIONARY THAT HAS BEGUN THE SECTION, not English alone. The
+	 *  terms are the reader's own words and are translated rather than
+	 *  transposed — measured, no `pt` line shares even half its terms with the
+	 *  English one — so nothing about one language's line predicts another's,
+	 *  which is exactly why English cannot stand in for the rest here. */
+	it('writes no keyword another part of the same row already carries', async () => {
+		const loaders = import.meta.glob<Record<string, Dictionary>>('./i18n/*.ts');
+		let begun = 0;
+		for (const [path, load] of Object.entries(loaders)) {
+			const module = await load();
+			const dictionary = Object.values(module)[0] as unknown as Record<string, string>;
+			if (!dictionary?.['quaestiones.landing.title']) continue;
+			begun += 1;
+			for (const slug of slugs) {
+				const visible = foldForSearch(
+					`${dictionary[`quaestiones.${slug}.title`]} ${dictionary[`quaestiones.${slug}.question`]}`
+				);
+				const terms = (dictionary[`quaestiones.${slug}.keywords`] ?? '')
+					.split(', ')
+					.map(foldForSearch);
+				for (const [i, term] of terms.entries()) {
+					const covered =
+						visible.includes(term) || terms.some((other, j) => j !== i && other.includes(term));
+					expect(covered, `${path} ${slug}: ${term}`).toBe(false);
+				}
 			}
 		}
+		// The glob is what makes this reach past English, so a glob that matched
+		// nothing would pass in silence — the same guard the completeness test
+		// keeps one screen below.
+		expect(begun).toBeGreaterThanOrEqual(2);
 	});
 
 	/** THE FLAG AND THE PARAGRAPH ARE TWO FILES APART AND FAIL IN OPPOSITE

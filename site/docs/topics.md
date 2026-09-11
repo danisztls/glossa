@@ -220,12 +220,36 @@ The alternative was to write the search terms into the questions, which spends
 the register the whole page is built on. So `quaestiones.{slug}.keywords` sits in
 the dictionaries beside the pair, renders nowhere, and is **translated rather
 than transposed** — the reader's word is `camisinha`, not `condom`; `macumba`,
-not `witchcraft`. A term the title or the question already carries is already
-matched, and `quaestiones.test.ts` fails on one written twice. The key is also
-the one whose absence is invisible: a missing title renders as its own key on the
+not `witchcraft`. A term any OTHER part of the same row already carries is
+already matched, and `quaestiones.test.ts` fails on one written twice. The key is
+also the one whose absence is invisible: a missing title renders as its own key on the
 page, missing keywords render as a topic that is merely harder to find, which is
 why `topic-search.ts` refuses the key `t()` hands back rather than putting the
 slug into the haystack.
+
+**THAT RULE WAS WRITTEN AGAINST HALF THE HAYSTACK** (2026-09-11). It compared a
+term against the title and the question and never against the line it stands on,
+so `atheist` sat beside `good atheists`, `phone` beside `smartphone` and `saved`
+beside `once saved always saved` — 29 terms across the two dictionaries, each
+already answered by its neighbour, because matching is a substring and the longer
+term contains the shorter. All 29 still reach their own topic with the term
+deleted, which is the measurement that says they were doing nothing.
+
+**The cover has to be something a reader could have typed, so the check is a term
+at a time and never the line joined.** Concatenated, `x a` beside `b y` reads as
+`a b`, and reordering the line would take the cover away again — a redundancy
+that depends on the order terms were written in is not one. The title and the
+question keep their joined form, being two sentences a reader does read as one
+run. The check also reaches EVERY dictionary that has begun the section rather
+than English alone: measured, no `pt` line shares even half its terms with the
+English one, so nothing about one language's line predicts another's.
+
+**A cover can be an accident and the rule does not care** — `tesouros` contains
+`ouro`, and a Portuguese reader typing `ouro` really does find that row. What
+follows is a smaller version of the exposure the field already has: reword the
+covering term and the covered one goes with it, and nothing says so. That is the
+same hole a rewritten question opens under a graded topic, and it is not this
+rule's to close.
 
 **The list is one, two or three columns**, by viewport rather than by a fixed
 pair — a topic is a short title over a one-line question, so a single column

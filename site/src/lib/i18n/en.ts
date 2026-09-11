@@ -1853,7 +1853,7 @@ export const en: Dictionary = {
 	'quaestiones.atheismus.title': 'Atheism and unbelief',
 	'quaestiones.atheismus.question': 'What does the Church say about people who do not believe?',
 	'quaestiones.atheismus.keywords':
-		'atheist, agnostic, unbeliever, secular, nonreligious, invincible ignorance, good atheists',
+		'agnostic, unbeliever, secular, nonreligious, invincible ignorance, good atheists',
 	'quaestiones.culpae-praeteritae.title': 'The Church’s record',
 	'quaestiones.culpae-praeteritae.question': 'How could the Church have done that?',
 	'quaestiones.culpae-praeteritae.keywords':
@@ -1885,7 +1885,7 @@ export const en: Dictionary = {
 	'quaestiones.papa-reprehensus.title': 'When the Pope is wrong',
 	'quaestiones.papa-reprehensus.question': 'May a Catholic say so, and about what?',
 	'quaestiones.papa-reprehensus.keywords':
-		'criticising the pope, bad popes, heresy, correction, obedience, francis, resist, filial correction',
+		'criticising the pope, bad popes, heresy, obedience, francis, resist, filial correction',
 	'quaestiones.dissensus.title': 'Disagreeing with the Church',
 	'quaestiones.dissensus.question': 'What if my conscience says otherwise?',
 	'quaestiones.dissensus.keywords':
@@ -1897,7 +1897,7 @@ export const en: Dictionary = {
 	'quaestiones.iustificatio.title': 'Faith and works',
 	'quaestiones.iustificatio.question': 'Do Catholics think they earn heaven?',
 	'quaestiones.iustificatio.keywords':
-		'sola fide, faith alone, grace, justification, saved, luther, merit, works of the law, once saved always saved',
+		'sola fide, faith alone, grace, justification, luther, merit, works of the law, once saved always saved',
 	'quaestiones.confessio-sacerdoti.title': 'Confessing to a priest',
 	'quaestiones.confessio-sacerdoti.question': 'Why not go straight to God?',
 	'quaestiones.confessio-sacerdoti.keywords':
@@ -1926,7 +1926,7 @@ export const en: Dictionary = {
 	'quaestiones.synodalitas.title': 'Who governs the Church',
 	'quaestiones.synodalitas.question': 'Who actually decides anything?',
 	'quaestiones.synodalitas.keywords':
-		'synod, synodality, bishops, collegiality, laity, curia, hierarchy, governance, consultation',
+		'synodality, bishops, collegiality, laity, curia, hierarchy, governance, consultation',
 	'quaestiones.mulieres-in-ecclesia.title': 'Women in the Church',
 	'quaestiones.mulieres-in-ecclesia.question': 'Is it run by men, for men?',
 	'quaestiones.mulieres-in-ecclesia.keywords':
@@ -1987,7 +1987,7 @@ export const en: Dictionary = {
 	'quaestiones.castitas.title': 'Chastity',
 	'quaestiones.castitas.question': 'What is being asked, and of whom?',
 	'quaestiones.castitas.keywords':
-		'purity, lust, self-control, dating, single, temptation, impurity, virtue',
+		'lust, self-control, dating, single, temptation, impurity, virtue',
 	'quaestiones.mendacium.title': 'Lying and reputation',
 	'quaestiones.mendacium.question': 'Is a small lie really a sin?',
 	'quaestiones.mendacium.keywords':
@@ -2048,7 +2048,7 @@ export const en: Dictionary = {
 	'quaestiones.communicatio-socialis.title': 'Media and public speech',
 	'quaestiones.communicatio-socialis.question': 'What is owed to the truth in public?',
 	'quaestiones.communicatio-socialis.keywords':
-		'journalism, news, propaganda, free speech, censorship, fake news, television, internet',
+		'journalism, propaganda, free speech, censorship, fake news, television, internet',
 	'quaestiones.iudaismus.title': 'Judaism',
 	'quaestiones.iudaismus.question': 'What does the Church say about the Jewish people?',
 	'quaestiones.iudaismus.keywords':
@@ -2064,7 +2064,7 @@ export const en: Dictionary = {
 	'quaestiones.proselytismus.title': 'Whether to convert anyone',
 	'quaestiones.proselytismus.question': 'Should the Church still be trying?',
 	'quaestiones.proselytismus.keywords':
-		'evangelisation, mission, converting, proselytism, preaching, witness, missionaries, door to door',
+		'evangelisation, converting, proselytism, preaching, witness, missionaries, door to door',
 	'quaestiones.inculturatio.title': 'Faith and culture',
 	'quaestiones.inculturatio.question': 'Must a convert give up the customs they were raised in?',
 	'quaestiones.inculturatio.keywords':
@@ -2138,7 +2138,7 @@ export const en: Dictionary = {
 	'quaestiones.adoptio.title': 'Adoption',
 	'quaestiones.adoptio.question': 'Is the child ours in the Church’s eyes?',
 	'quaestiones.adoptio.keywords':
-		'adopted, fostering, orphan, birth parents, legal relationship, baptising an adopted child, marrying an adopted sibling, can we adopt, foster care',
+		'fostering, orphan, birth parents, legal relationship, baptising an adopted child, marrying an adopted sibling, can we adopt, foster care',
 	'quaestiones.educatio-filiorum.title': 'Raising a child in the faith',
 	'quaestiones.educatio-filiorum.question': 'What if they will not come to Mass?',
 	'quaestiones.educatio-filiorum.keywords':
@@ -2209,7 +2209,7 @@ export const en: Dictionary = {
 	'quaestiones.ira.title': 'Anger',
 	'quaestiones.ira.question': 'Is losing my temper a sin?',
 	'quaestiones.ira.keywords':
-		'rage, shouting, lost it, snapped, hatred, revenge, grudge, resentment, road rage, shouted at my children, short fuse',
+		'shouting, lost it, snapped, hatred, revenge, grudge, resentment, road rage, shouted at my children, short fuse',
 	'quaestiones.mortis-desiderium.title': 'Wanting to die',
 	'quaestiones.mortis-desiderium.question': 'If I did it, would God forgive it?',
 	'quaestiones.mortis-desiderium.keywords':
@@ -2242,7 +2242,7 @@ export const en: Dictionary = {
 	'quaestiones.divinatio.title': 'Astrology and divination',
 	'quaestiones.divinatio.question': 'Horoscopes, tarot, the dead — what is actually forbidden?',
 	'quaestiones.divinatio.keywords':
-		'ouija, mediums, fortune telling, psychic, palm reading, crystals, new age, seance, zodiac, spiritism, occult, occultism',
+		'ouija, mediums, fortune telling, psychic, palm reading, crystals, new age, seance, zodiac, spiritism, occultism',
 	'quaestiones.signa.title': 'Signs',
 	'quaestiones.signa.question': 'Was that a sign, or was it a coincidence?',
 	'quaestiones.signa.keywords':
@@ -2257,8 +2257,7 @@ export const en: Dictionary = {
 		'possession, devil, satan, evil spirits, deliverance, exorcist, oppression, spiritual warfare',
 	'quaestiones.angeli.title': 'Angels',
 	'quaestiones.angeli.question': 'Is a guardian angel a real thing?',
-	'quaestiones.angeli.keywords':
-		'archangel, michael, cherubim, seraphim, spirits, prayer to saint michael',
+	'quaestiones.angeli.keywords': 'archangel, cherubim, seraphim, spirits, prayer to saint michael',
 	'quaestiones.apparitiones.title': 'Apparitions and private revelation',
 	'quaestiones.apparitiones.question': 'Does a Catholic have to believe in them?',
 	'quaestiones.apparitiones.keywords':
@@ -2279,7 +2278,7 @@ export const en: Dictionary = {
 	'quaestiones.oratio.title': 'Praying',
 	'quaestiones.oratio.question': 'I do not know how it is done.',
 	'quaestiones.oratio.keywords':
-		'prayer, how to pray, rosary, meditation, contemplation, distracted, silence, lectio divina, retreat, spiritual exercises, mental prayer, words to use',
+		'how to pray, rosary, meditation, contemplation, distracted, silence, lectio divina, retreat, spiritual exercises, mental prayer, words to use',
 	'quaestiones.ieiunium.title': 'Fasting and abstinence',
 	'quaestiones.ieiunium.question': 'What is required, and on which days?',
 	'quaestiones.ieiunium.keywords':
@@ -2295,11 +2294,11 @@ export const en: Dictionary = {
 	'quaestiones.telephonum.title': 'Screens',
 	'quaestiones.telephonum.question': 'Why can’t I put it down?',
 	'quaestiones.telephonum.keywords':
-		'phone, smartphone, screen time, scrolling, doomscrolling, social media, notifications, attention, wasting time, addicted, apps, before prayer',
+		'smartphone, screen time, doomscrolling, social media, notifications, attention, wasting time, addicted, apps, before prayer',
 	'quaestiones.initiatio-adultorum.title': 'Becoming Catholic as an adult',
 	'quaestiones.initiatio-adultorum.question': 'Where does anyone even start?',
 	'quaestiones.initiatio-adultorum.keywords':
-		'rcia, ocia, convert, catechumen, join the church, never confirmed, baptised as a baby, instruction, how long does it take, easter vigil, sponsor, converting',
+		'rcia, ocia, catechumen, join the church, never confirmed, baptised as a baby, instruction, how long does it take, easter vigil, sponsor, converting',
 	'quaestiones.baptismus-infantium.title': 'Baptising a baby',
 	'quaestiones.baptismus-infantium.question': 'Who may be a godparent, and what is asked of them?',
 	'quaestiones.baptismus-infantium.keywords':
@@ -2352,7 +2351,7 @@ export const en: Dictionary = {
 	'quaestiones.associationes-massonicae.title': 'Freemasonry',
 	'quaestiones.associationes-massonicae.question': 'Can a Catholic be a Freemason?',
 	'quaestiones.associationes-massonicae.keywords':
-		'masonic, masons, lodge, grand lodge, secret society, my father was a mason, joining the lodge, automatic excommunication, latae sententiae, canon 2335, forbidden, initiation, apron',
+		'masonic, masons, grand lodge, secret society, my father was a mason, joining the lodge, automatic excommunication, latae sententiae, canon 2335, forbidden, initiation, apron',
 	'quaestiones.decimae.title': 'Giving and tithing',
 	'quaestiones.decimae.question': 'How much is a Catholic supposed to give?',
 	'quaestiones.decimae.keywords':
@@ -2360,11 +2359,11 @@ export const en: Dictionary = {
 	'quaestiones.vota-et-iuramenta.title': 'Vows and oaths',
 	'quaestiones.vota-et-iuramenta.question': 'What is a promise made to God?',
 	'quaestiones.vota-et-iuramenta.keywords':
-		'promise to god, swearing, novena promise, consecration, breaking a vow, dispensation, swearing in court',
+		'promise to god, novena promise, consecration, breaking a vow, dispensation, swearing in court',
 	'quaestiones.vocatio.title': 'What to do with a life',
 	'quaestiones.vocatio.question': 'How is anyone supposed to know?',
 	'quaestiones.vocatio.keywords':
-		'vocation, discernment, calling, priesthood, religious life, seminary, career, marriage or priesthood, what god wants',
+		'vocation, discernment, calling, religious life, seminary, career, marriage or priesthood, what god wants',
 	'quaestiones.merces-iusta.title': 'A just wage, and striking',
 	'quaestiones.merces-iusta.question': 'What is a wage supposed to cover?',
 	'quaestiones.merces-iusta.keywords':

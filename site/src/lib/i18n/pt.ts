@@ -756,7 +756,7 @@ export const pt: Dictionary = {
 	'quaestiones.scandalum-cleri.title': 'Os abusos na Igreja',
 	'quaestiones.scandalum-cleri.question': 'Por que confiar nela depois disso?',
 	'quaestiones.scandalum-cleri.keywords':
-		'pedofilia, abuso sexual, padres, encobrimento, vítimas, bispos, escândalo, proteção de menores, menores, seminário, sair da Igreja, denunciar',
+		'pedofilia, abuso sexual, padres, encobrimento, vítimas, bispos, escândalo, proteção de menores, seminário, sair da Igreja, denunciar',
 	'quaestiones.lex-naturalis.title': 'Moral sem Deus',
 	'quaestiones.lex-naturalis.question': 'Por que alguém precisaria de religião para ser bom?',
 	'quaestiones.lex-naturalis.keywords':
@@ -785,7 +785,7 @@ export const pt: Dictionary = {
 	'quaestiones.atheismus.title': 'Ateísmo e descrença',
 	'quaestiones.atheismus.question': 'O que a Igreja diz de quem não crê?',
 	'quaestiones.atheismus.keywords':
-		'ateu, agnóstico, descrente, laico, sem religião, ignorância invencível, ateus bons',
+		'agnóstico, descrente, laico, sem religião, ignorância invencível, ateus bons',
 	'quaestiones.culpae-praeteritae.title': 'O passado da Igreja',
 	'quaestiones.culpae-praeteritae.question': 'Como a Igreja pôde fazer essas coisas?',
 	'quaestiones.culpae-praeteritae.keywords':
@@ -793,7 +793,7 @@ export const pt: Dictionary = {
 	'quaestiones.divitiae-ecclesiae.title': 'A riqueza da Igreja',
 	'quaestiones.divitiae-ecclesiae.question': 'Por que não vender e dar aos pobres?',
 	'quaestiones.divitiae-ecclesiae.keywords':
-		'vender o vaticano, ouro, obras de arte, tesouros, igreja rica, igreja pobre, a coleta, doações, patrimônio, banco do vaticano',
+		'vender o vaticano, obras de arte, tesouros, igreja rica, igreja pobre, a coleta, doações, patrimônio, banco do vaticano',
 	'quaestiones.colonialismus.title': 'Colonialismo e povos indígenas',
 	'quaestiones.colonialismus.question': 'Os missionários vieram com os conquistadores. E agora?',
 	'quaestiones.colonialismus.keywords':
@@ -818,7 +818,7 @@ export const pt: Dictionary = {
 	'quaestiones.papa-reprehensus.title': 'Quando o Papa erra',
 	'quaestiones.papa-reprehensus.question': 'Um católico pode dizer isso, e sobre o quê?',
 	'quaestiones.papa-reprehensus.keywords':
-		'criticar o Papa, papas maus, heresia, correção, obediência, Francisco, resistir, correção filial',
+		'criticar o Papa, papas maus, heresia, obediência, Francisco, resistir, correção filial',
 	'quaestiones.dissensus.title': 'Discordar da Igreja',
 	'quaestiones.dissensus.question': 'E se a minha consciência disser o contrário?',
 	'quaestiones.dissensus.keywords':
@@ -830,7 +830,7 @@ export const pt: Dictionary = {
 	'quaestiones.iustificatio.title': 'Fé e obras',
 	'quaestiones.iustificatio.question': 'Os católicos acham que merecem o céu?',
 	'quaestiones.iustificatio.keywords':
-		'sola fide, só a fé, graça, justificação, salvo, Lutero, mérito, obras da lei, salvo para sempre',
+		'sola fide, só a fé, graça, justificação, Lutero, mérito, obras da lei, salvo para sempre',
 	'quaestiones.confessio-sacerdoti.title': 'Confessar-se a um padre',
 	'quaestiones.confessio-sacerdoti.question': 'Por que não falar direto com Deus?',
 	'quaestiones.confessio-sacerdoti.keywords':
@@ -919,7 +919,7 @@ export const pt: Dictionary = {
 	'quaestiones.castitas.title': 'A castidade',
 	'quaestiones.castitas.question': 'O que se pede, e de quem?',
 	'quaestiones.castitas.keywords':
-		'pureza, luxúria, autocontrole, namoro, solteiro, tentação, impureza, virtude',
+		'luxúria, autocontrole, namoro, solteiro, tentação, impureza, virtude',
 	'quaestiones.mendacium.title': 'A mentira e a reputação',
 	'quaestiones.mendacium.question': 'Uma mentira pequena é pecado mesmo?',
 	'quaestiones.mendacium.keywords':
@@ -1116,7 +1116,7 @@ export const pt: Dictionary = {
 	'quaestiones.scrupulositas.title': 'Quando a confissão nunca parece completa',
 	'quaestiones.scrupulositas.question': 'Será que eu confessei direito?',
 	'quaestiones.scrupulositas.keywords':
-		'escrúpulos, escrupulosidade, TOC, ansiedade, repetir a confissão, dúvida, obsessivo, nunca basta, segurança',
+		'escrupulosidade, TOC, ansiedade, repetir a confissão, dúvida, obsessivo, nunca basta, segurança',
 	'quaestiones.post-abortum.title': 'Depois de um aborto',
 	'quaestiones.post-abortum.question': 'Isso pode ser perdoado?',
 	'quaestiones.post-abortum.keywords':
@@ -1192,8 +1192,7 @@ export const pt: Dictionary = {
 		'possessão, diabo, Satanás, espíritos malignos, libertação, exorcista, opressão, batalha espiritual',
 	'quaestiones.angeli.title': 'Os anjos',
 	'quaestiones.angeli.question': 'Anjo da guarda existe mesmo?',
-	'quaestiones.angeli.keywords':
-		'arcanjo, São Miguel, querubins, serafins, espíritos, oração a São Miguel',
+	'quaestiones.angeli.keywords': 'arcanjo, querubins, serafins, espíritos, oração a São Miguel',
 	'quaestiones.apparitiones.title': 'Aparições e revelações particulares',
 	'quaestiones.apparitiones.question': 'Um católico é obrigado a crer nelas?',
 	'quaestiones.apparitiones.keywords':
@@ -1214,7 +1213,7 @@ export const pt: Dictionary = {
 	'quaestiones.oratio.title': 'Rezar',
 	'quaestiones.oratio.question': 'Não sei como se faz.',
 	'quaestiones.oratio.keywords':
-		'oração, como rezar, terço, rosário, meditação, contemplação, distração, silêncio, lectio divina, retiro, exercícios espirituais, oração mental',
+		'como rezar, terço, rosário, meditação, contemplação, distração, silêncio, lectio divina, retiro, exercícios espirituais, oração mental',
 	'quaestiones.ieiunium.title': 'Jejum e abstinência',
 	'quaestiones.ieiunium.question': 'O que é obrigatório, e em quais dias?',
 	'quaestiones.ieiunium.keywords':
@@ -1280,11 +1279,11 @@ export const pt: Dictionary = {
 	'quaestiones.vota-et-iuramenta.title': 'Votos e juramentos',
 	'quaestiones.vota-et-iuramenta.question': 'O que é uma promessa feita a Deus?',
 	'quaestiones.vota-et-iuramenta.keywords':
-		'promessa a Deus, jurar, promessa de novena, consagração, quebrar um voto, dispensa, jurar em juízo',
+		'promessa a Deus, promessa de novena, consagração, quebrar um voto, dispensa, jurar em juízo',
 	'quaestiones.vocatio.title': 'O que fazer da vida',
 	'quaestiones.vocatio.question': 'Como é que alguém descobre?',
 	'quaestiones.vocatio.keywords':
-		'vocação, discernimento, chamado, sacerdócio, vida religiosa, seminário, carreira, casamento ou sacerdócio, o que Deus quer',
+		'vocação, discernimento, chamado, vida religiosa, seminário, carreira, casamento ou sacerdócio, o que Deus quer',
 	'quaestiones.merces-iusta.title': 'O salário justo e a greve',
 	'quaestiones.merces-iusta.question': 'O que um salário tem de cobrir?',
 	'quaestiones.merces-iusta.keywords':
