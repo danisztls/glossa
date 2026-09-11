@@ -944,6 +944,15 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   subjects — and **the description carries no max-width**. Two attempts to fill
   the empty half a 60ch measure left in a 62rem track failed the same way, by
   moving things into it rather than letting the text have it.
+- **A folded index states its DEFAULT and nothing else** —
+  `$lib/fold-state.svelte.ts`, which `/quaestiones` and `/preces` both run on
+  opposite defaults. Three rules live there because each is invisible when it
+  is wrong: a live query forces every surviving section open; it records none
+  of that, so clearing the box restores the reader's own folds; and a fragment
+  opens its own section, a browser opening a closed `<details>` only for a
+  target INSIDE it. **A toggle that agrees with the default records nothing**,
+  or a viewport crossing a breakpoint writes down folds the reader never chose
+  and the page stays folded at a width with room for it.
 - **A row that is a way out takes `.pointing-row`** (styles/components.css):
   a `⬝` where the row begins, growing into EB Garamond's manicule while the
   pointer is on its LINK — `:has(a:hover)`, never `:hover`, or the hand

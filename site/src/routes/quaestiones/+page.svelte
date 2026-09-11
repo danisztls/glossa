@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { hrefFor } from '$lib/address';
+	import { foldState } from '$lib/fold-state.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import { keywordsFrom, matchingSlugs } from '$lib/topic-search';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
@@ -101,7 +102,9 @@
 	);
 
 	/**
-	 * WHICH CLUSTERS THE READER HAS OPENED, and every shelf starts shut.
+	 * EVERY SHELF STARTS SHUT, which is the whole of what this page states
+	 * about the fold — `$lib/fold-state.svelte.ts` holds the rest, and
+	 * `/preces` states the opposite default against the same module.
 	 *
 	 * Sixteen headings a reader can take in at once is what the shelves were
 	 * for; every question the file holds drawn under them is the wall they were
@@ -110,30 +113,12 @@
 	 * each saying how many questions it holds — and a reader opens the one they
 	 * came for.
 	 *
-	 * SEARCH OVERRIDES IT AND DOES NOT RECORD ITSELF. `searching` forces every
-	 * surviving cluster open, because a query that matched three questions and
-	 * showed three closed headings would read as a page with no results. The
-	 * `ontoggle` handler ignores what happens while a query is live, so
-	 * clearing the box puts the page back exactly as the reader had it rather
-	 * than leaving whatever the search opened standing.
-	 *
-	 * A FRAGMENT OPENS ITS OWN CLUSTER. A browser opens a closed `<details>`
-	 * only for a target INSIDE it, and these ids are on the element itself — so
-	 * a link into a shelf would scroll to a shut heading and stop. Nothing on
-	 * this page writes such a link any more, and someone else's bookmark is
-	 * exactly the case that has to keep working.
+	 * The default takes no `index`: a shelf's position says nothing here, where
+	 * on a phone it says which prayers a reader met first.
 	 */
-	let opened = $state<Record<string, boolean>>({});
+	const shelfFolds = foldState({ searching: () => searching });
 
-	$effect(() => {
-		const id = page.url.hash.slice(1);
-		if (id) opened[id] = true;
-	});
-
-	/** The reader's own toggles, and only those — see `opened`. */
-	function remember(id: string, open: boolean) {
-		if (!searching) opened[id] = open;
-	}
+	$effect(() => shelfFolds.reveal(page.url.hash.slice(1)));
 </script>
 
 <svelte:head>
@@ -178,15 +163,15 @@
 	{:else if searching && matching.size === 0}
 		<p class="empty">{t('quaestiones.search.none')}</p>
 	{:else}
-		{#each shelves as shelf (shelf.id)}
+		{#each shelves as shelf, index (shelf.id)}
 			<!-- The chip is what a closed shelf owes the reader: sixteen headings
 			     with no sizes are sixteen doors into an unknown room, and while a
 			     query is live it is the count that survived it. -->
 			<details
 				class="cluster fold"
 				id={shelf.id}
-				open={searching || opened[shelf.id] === true}
-				ontoggle={(event) => remember(shelf.id, event.currentTarget.open)}
+				open={shelfFolds.isOpen(shelf.id, index)}
+				ontoggle={(event) => shelfFolds.remember(shelf.id, index, event.currentTarget.open)}
 			>
 				<summary>
 					<h2>{t(`quaestiones.cluster.${shelf.cluster}`)}</h2>

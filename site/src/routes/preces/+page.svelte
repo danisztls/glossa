@@ -38,6 +38,7 @@
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
+	import { foldState } from '$lib/fold-state.svelte';
 	import { filterByQuery } from '$lib/highlight';
 	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
@@ -108,16 +109,16 @@
 	/**
 	 * OPEN UNTIL THE READER SHUTS ONE, which is the opposite default from
 	 * `/quaestiones` and is what the two collections' sizes decide: sixteen
-	 * shelves of questions are a list to choose between, five sections of
-	 * prayers are the page itself, and a collection that arrived folded would
-	 * put every prayer behind a click. The fold is here so a reader who wants
-	 * the Marian prayers can put the rest away.
+	 * shelves of questions are a list to choose between, a handful of sections
+	 * of prayers are the page itself, and a collection that arrived folded
+	 * would put every prayer behind a click. The fold is here so a reader who
+	 * wants the Marian prayers can put the rest away.
 	 *
 	 * ON A PHONE IT OPENS ON THE FIRST TWO SECTIONS AND FOLDS THE REST
 	 * (2026-09-11, by direction). The columns are what pays for an open
-	 * collection, and a phone has room for one — so the same seven sections
-	 * that are a page at the landing width are a scroll of thirty-five rows
-	 * there, and the fold does the work the columns were doing.
+	 * collection, and a phone has room for one — so the sections that are a
+	 * page at the landing width are a long scroll there, and the fold does the
+	 * work the columns were doing.
 	 *
 	 * BY POSITION AND NOT BY NAME. In English the two left open are Basic
 	 * Prayers and the Rosary, but the section titles are `structure.json`'s
@@ -125,16 +126,9 @@
 	 * ORDER, the shorter ones being that same list with sections missing. A
 	 * count of sections is stable where a title is not.
 	 *
-	 * A FRAGMENT OPENS ITS OWN SECTION. The aside's table of contents and
-	 * anyone else's bookmark both address a group by `id`, and a browser opens
-	 * a closed `<details>` only for a target INSIDE it — so a link into a shut
-	 * section would scroll to its heading and stop there.
-	 *
-	 * SEARCH OVERRIDES IT AND DOES NOT RECORD ITSELF, `/quaestiones`'s rule
-	 * and it still earns its place under the opposite default: a reader who
-	 * folded the Marian prayers away and then typed would get a heading and a
-	 * count and no rows. `remember` ignores what the query opens, so clearing
-	 * the box puts the page back as the reader had it.
+	 * EVERYTHING ELSE ABOUT THE FOLD IS `$lib/fold-state.svelte.ts` — what a
+	 * live query does to it, what a fragment does to it, and which toggles are
+	 * the reader's. This page states the default and no more.
 	 */
 	const NARROW_QUERY = '(max-width: 40rem)';
 	const OPEN_ON_NARROW = 2;
@@ -148,7 +142,6 @@
 	}
 
 	let narrow = $state(narrowNow());
-	let opened = $state<Record<string, boolean>>({});
 
 	onMount(() => {
 		const mq = window.matchMedia(NARROW_QUERY);
@@ -157,29 +150,12 @@
 		return () => mq.removeEventListener('change', follow);
 	});
 
-	const defaultOpen = (index: number) => !narrow || index < OPEN_ON_NARROW;
-
-	$effect(() => {
-		const id = page.url.hash.slice(1);
-		if (id) opened[id] = true;
+	const sections = foldState({
+		searching: () => searching,
+		defaultOpen: (index) => !narrow || index < OPEN_ON_NARROW
 	});
 
-	/**
-	 * The reader's own toggles, and only those — see `opened`.
-	 *
-	 * A TOGGLE THAT AGREES WITH THE DEFAULT RECORDS NOTHING, and it has to:
-	 * `open` is reactive, so a viewport crossing the breakpoint closes five
-	 * sections and the browser fires `toggle` for each. Written down, those
-	 * would be five choices the reader never made — and rotating back would
-	 * leave the page folded for a width that has room. Clearing the entry
-	 * instead also gives a reader who toggles back to the default their
-	 * default back, rather than a pin at the same value.
-	 */
-	function remember(id: string, index: number, open: boolean) {
-		if (searching) return;
-		if (open === defaultOpen(index)) delete opened[id];
-		else opened[id] = open;
-	}
+	$effect(() => sections.reveal(page.url.hash.slice(1)));
 </script>
 
 <svelte:head>
@@ -227,8 +203,8 @@
 			<details
 				class="prayer-group fold"
 				id={group.id}
-				open={searching || (opened[group.id] ?? defaultOpen(index))}
-				ontoggle={(event) => remember(group.id, index, event.currentTarget.open)}
+				open={sections.isOpen(group.id, index)}
+				ontoggle={(event) => sections.remember(group.id, index, event.currentTarget.open)}
 			>
 				<summary><h2>{group.title}</h2></summary>
 				<!-- `"hover"`: a row here is a destination the reader picked in order
