@@ -20,25 +20,13 @@
 	 * control: the plate's title always, and whose engraving it is and whose
 	 * scan when the reader asks.
 	 *
-	 * A CARD RATHER THAN AN EXPANDING CAPTION, and the reason is the one
-	 * `CitationDisclosure` already gives about the box it used to be: an
-	 * apparatus must not move the text. A `<details>` under the picture pushes
-	 * every verse below it down when it opens and pulls them back when it
-	 * closes, so a reader who taps a caption loses their place in the chapter
-	 * — and the plate is mid-passage, which is the worst position for that.
-	 * The popover is in the top layer and `position: fixed`; opening it costs
-	 * the page no layout at all. It is the same `.floating-panel` a citation
-	 * and a link preview appear in, which is the point: a reader who has
-	 * learned what a small box over the page means should not have to learn a
-	 * second one. The mechanism — measure on `toggle`, reveal, track the
-	 * anchor — is `AnchoredPanel` in `floating.svelte.ts`, shared with the two
-	 * older popovers rather than written a third time here.
-	 *
-	 * NATIVE `popover`, DECLARATIVELY INVOKED. `popovertarget` is valid on
-	 * `<button>` and the trigger here is one, so the browser owns the open
-	 * state, light dismiss, Escape, the top layer and returning focus to the
-	 * caption. What is left is `aria-expanded`, which the reader's screen
-	 * reader is owed.
+	 * THE CARD ITSELF IS `CreditCard`, shared with `ArtFigure` — the trigger,
+	 * the popover, the print line and the `AnchoredPanel` wiring, in its
+	 * `'caption'` variant. Why it is a card and not a `<details>`, and why the
+	 * `popover` attribute rather than our own open state, are that file's
+	 * argument now; they were this one's until the second caller made them
+	 * general. What stays here is what is a fact about a PLATE — the paragraph
+	 * above and the one below.
 	 *
 	 * AND THE CARD IS THE ONLY ROUTE, deliberately. The image carried a
 	 * `title` as well until the card existed — a real tooltip on a pointer and
@@ -79,9 +67,8 @@
 	import type { Plate } from '$lib/plates';
 	import { PLATE_SIZES, PLATE_DETAIL_WIDTH } from '$lib/plates';
 	import { plateSrc, plateSrcset, plateDetailSrc } from '$lib/plate-src';
-	import Icon from '$lib/components/Icon.svelte';
 	import PlateViewer from '$lib/components/PlateViewer.svelte';
-	import { AnchoredPanel } from '$lib/floating.svelte';
+	import CreditCard from '$lib/components/CreditCard.svelte';
 	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
@@ -132,13 +119,6 @@
 		viewerSrc = imgEl?.currentSrc || imgEl?.src || '';
 		if (viewerSrc) viewing = true;
 	}
-
-	// Per INSTANCE, which is per plate: a chapter renders up to 27 of these
-	// and each card needs an id of its own for `popovertarget` to name.
-	// `$props.id()` has to be a bare variable declaration initializer, so it
-	// cannot be passed straight to the constructor.
-	const uid = $props.id();
-	const card = new AnchoredPanel(uid);
 </script>
 
 {#if src && !failed}
@@ -171,41 +151,23 @@
 			/>
 		</button>
 		<figcaption>
+			<!-- The credit, its card, its print line and the trigger that opens it
+			     are all `CreditCard`, shared with `ArtFigure`. The plate's own title
+			     IS the trigger's content, so the control's accessible name is the
+			     plate's name and `aria-expanded` says the rest — a disclosure named
+			     something other than its visible text is the one thing such a
+			     control must not be, which is why no `label` is passed.
+
+			     AND NO `source`. The plates carry a `provider_url`, but it points at
+			     the provider's own gallery rather than at a licence page, so making
+			     the credit an anchor would promise a different thing from what the
+			     paintings' Commons links promise. Whether a courtesy credit should
+			     be clickable is one decision, and since the card moved it is one
+			     prop in one place rather than a question asked twice. -->
 			{#if credit}
-				<!-- The title IS the control's content, so its accessible name is
-				     the plate's own name and `aria-expanded` says the rest. A
-				     separate "show attribution" label would name the button
-				     something other than its visible text, which is the one thing
-				     a disclosure trigger must not do. -->
-				<button
-					bind:this={card.trigger}
-					type="button"
-					class="caption-trigger"
-					popovertarget={card.id}
-					aria-expanded={card.open}
-				>
-					<span class="title">{plate.title}</span>
-					<Icon name="info" class="hint" />
-				</button>
-				<!-- `role="note"` — ARIA's own word for content ancillary to the
-				     thing it hangs off, which a credit exactly is. Not `tooltip`,
-				     the role `LinkPreview`'s hover card carries: that one describes
-				     its anchor and is summoned rather than asked for. -->
-				<span
-					bind:this={card.panel}
-					id={card.id}
-					popover="auto"
-					role="note"
-					ontoggle={card.onToggle}
-					class="panel-surface floating-panel plate-credit">{credit}</span
-				>
-				<!-- Print gets the credit unconditionally: a printed plate leaves
-				     this site entirely, and it is the one copy whose reader cannot
-				     tap anything or follow a link to the colophon. A popover never
-				     prints — it is in the top layer and closed besides — so the
-				     line is rendered separately rather than coaxed out of the card.
-				     `aria-hidden` so it is not announced twice on screen. -->
-				<span class="credit-print" aria-hidden="true">{credit}</span>
+				<CreditCard {credit}>
+					{#snippet trigger()}<span class="title">{plate.title}</span>{/snippet}
+				</CreditCard>
 			{:else}
 				<span class="title">{plate.title}</span>
 			{/if}
@@ -293,61 +255,6 @@
 		letter-spacing: 0.04em;
 	}
 
-	/* A button that has to read as a caption: no chrome, the caption's own
-	   colour and size, and the pointer only to say it does something. */
-	.caption-trigger {
-		appearance: none;
-		border: 0;
-		background: none;
-		padding: 0.4rem 0.2rem;
-		margin: 0;
-		font: inherit;
-		color: inherit;
-		cursor: pointer;
-	}
-
-	/* Padding above rather than a min-height, so the caption row does not grow:
-	   a caption-sized glyph is a small tap target, and touch is the reason this
-	   card exists at all, so the target extends into whitespace the figure
-	   already occupies. */
-	.caption-trigger :global(.hint) {
-		margin-inline-start: 0.35em;
-		vertical-align: -0.1em;
-		opacity: 0.55;
-	}
-
-	.caption-trigger:focus-visible {
-		outline: 2px solid var(--color-focus-ring);
-		outline-offset: 2px;
-		border-radius: 2px;
-	}
-
-	/*
-	 * The card. Where it sits — fixed, hidden until `AnchoredPanel` has
-	 * measured it, the UA `[popover]` centring reset, no `z-index` because the
-	 * top layer decides — is `.floating-panel` in app.css.
-	 *
-	 * CHROME SIZE, NOT CAPTION SIZE, the same fixed `rem` as the citation card
-	 * it borrows its look from: nothing around it now to grow with.
-	 */
-	.plate-credit {
-		max-inline-size: min(24rem, calc(100vw - 1rem));
-		padding: 0.5rem 0.7rem;
-		font-size: 0.85rem;
-		line-height: 1.5;
-		color: var(--color-text);
-		text-align: start;
-		/* The credit is two lines separated by a newline in the string, which
-		   the colophon prints as two lines too. */
-		white-space: pre-line;
-		text-wrap: pretty;
-		overflow-wrap: break-word;
-	}
-
-	.credit-print {
-		display: none;
-	}
-
 	/*
 	 * A plate PRINTS. The chapter's print rules hide screen affordances —
 	 * pickers, the reading bar, the button that started the print — and an
@@ -374,20 +281,8 @@
 			cursor: auto;
 		}
 
-		.caption-trigger {
-			padding: 0;
-			cursor: auto;
-		}
-
-		.caption-trigger :global(.hint) {
-			display: none;
-		}
-
-		.credit-print {
-			display: block;
-			margin-block-start: 0.1rem;
-			font-size: 0.9em;
-			white-space: pre-line;
-		}
+		/* The trigger and the line that replaces it on paper are `CreditCard`'s
+		   now, print rules included. What stays here is the figure's own
+		   behaviour: the plate prints, and the caption prints with it. */
 	}
 </style>

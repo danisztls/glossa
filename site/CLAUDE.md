@@ -751,12 +751,24 @@ Rationale in `site/docs/finding.md`.
   one's master is a Commons file with a page, a licence tag and a SHA-256 in
   that table — **the rule is about a derivation nobody can reproduce, not about
   whose hand did it.**
-- **A credit is behind the caption trigger, not set under the picture.**
-  `ArtFigure.svelte` is the plate caption's arrangement — `AnchoredPanel`, a
-  native popover, `role="note"`, and the line printed unconditionally because a
-  printed page cannot be pressed. Its trigger is the `info` glyph alone, so the
-  `aria-label` is mandatory; it wears `.menu-trigger` and adds only its
-  position.
+- **A credit is behind the caption trigger, not set under the picture, and
+  that whole arrangement is `CreditCard.svelte`** — the trigger, the popover,
+  the print line and the `AnchoredPanel` wiring, shared by `Plate` and
+  `ArtFigure`. Two variants, and the trigger's clothes are the only real
+  difference: `'caption'` is a line of type under a plate, `'overlay'` an icon
+  square laid on a picture that has no caption row (so `label` is mandatory
+  there — a glyph has no text to take a name from).
+- **Extract a component when a POLICY is being decided twice, not when the CSS
+  looks similar.** Those two agreed on 18 of the 36 declarations in their four
+  paired rules, which on its own would not have been worth a third file: most
+  of what differed was context, not rot — a plate's card inherits its face from
+  the `figcaption` it lives in and a painting's has nothing to inherit from.
+  What earned it is that whether a credit LINKS got answered `yes` in one file
+  and `no` in the other, and neither knew the other had been asked. **The
+  picture did NOT move**: an `srcset` over two renditions with a zoom that
+  fetches a third is not the same problem as a band cropped by `--art-height`
+  with a second framing behind it, and one component holding both is two modes
+  and a flag.
 - **The credit is the anchor everywhere it is shown**, `PlateViewer` included
   since 2026-09-11 — it was a dead line there, which is the one view where the
   reader is looking AT the picture. The URL travels as its own prop because
