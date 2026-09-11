@@ -484,14 +484,21 @@ and `associationes-massonicae` ships as a B. **A dropped row is a claim about th
 subject and a blocked row is a claim about the shelf, and only one of them can be
 overturned by somebody else's work.** Check which you are writing.
 
-Both halves of the block's reasoning survived into the topic. The Catechism still
-says nothing — zero hits for _masonic_ or _freemason_ across all nine editions,
-which is why the page is a B and not an A — and can. 1374 still does not name
-Masonry, so the law alone leaves the reader to judge whether their own lodge
-"plots against the Church". The declaration is exactly what forbids them that
-judgement, and reserves it from local ecclesiastical authorities too. **A canon
-and a declaration that are useless apart and sufficient together are one topic,
-and neither is an anchor on its own.**
+One half of the block's reasoning survived into the topic and the other half was
+wrong. It is true that the Catechism says nothing — zero hits for _masonic_ or
+_freemason_ across all nine editions. It is not true that can. 1374's silence is
+a difficulty: _Quaesitum est_ says the omission "is due to an editorial criterion
+... inasmuch as they are contained in wider categories", so the Code names a
+category on purpose, and naming the body would make the LABEL the thing forbidden
+and leave an identical association under another name looking permitted. **Do not
+read a rule stated at the level of the kind as a rule that failed to mention your
+case.**
+
+What the law alone genuinely cannot do is tell the reader whether their own lodge
+falls in the category — and the Declaration is exactly what forbids them, and
+local ecclesiastical authorities, to decide that. **A canon and a declaration that
+are useless apart and sufficient together are one topic, and neither is an anchor
+on its own.**
 
 **Leo XIII's encyclicals on the subject are in the corpus and the topic names
 none of them**, which is this section's warning turned on a document that is

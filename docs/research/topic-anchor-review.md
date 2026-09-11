@@ -360,6 +360,31 @@ because its two paragraphs sat on `bellum`, which asks when a country may fight;
 they stay there too, being the personal half of an article the Catechism heads
 _Peace_. **A paragraph on the wrong page is sometimes also on the right one.**
 
+**A category drawn wider than the reader's word is not a missing word.** This
+file grades by asking whether the anchored text answers the question as asked,
+and the habit that grows out of it is to look for the reader's own noun in the
+quoted units — right for `crematio`, where the Catechism really does say
+cremation, and wrong wherever the teaching is deliberately stated at the level of
+the KIND. `associationes-massonicae` was written twice on the wrong reading, with
+a row saying can. 1374 "does not name Masonry, which is the whole difficulty",
+and the operative document refutes that in its own first sentence: the omission
+"is due to an editorial criterion which was followed also in the case of other
+associations likewise unmentioned inasmuch as they are contained in wider
+categories". **Naming the body would make the NAME the thing forbidden**, and a
+reader could then join an association identical in praxis under another label and
+believe themselves clear. So before grading a topic down for a word the corpus
+never uses, ask whether the work is silent about the thing or precise about the
+kind — and if it is the second, the word's absence is the teaching and the page
+should not be padded until the word appears.
+
+**What that leaves as the real gap is who decides, not what it is called.** A
+category rule needs an authority that applies it, and on this topic that sentence
+— the reader may not judge their own association, nor may local ecclesiastical
+authorities — exists only in a document the site can link and cannot quote, the
+declaration being one paragraph of unnumbered text with no addressable unit. That
+is a structural gap in what this site can anchor, and it is worth stating as one
+rather than dressing it as doctrinal reticence.
+
 **A superseded document is a trap on a page that prints no dates, and the trap
 is worst where the document is RIGHT.** `associationes-massonicae` named the
 CDF's 1981 declaration beside its 1983 one; the 1981 text says in terms that
