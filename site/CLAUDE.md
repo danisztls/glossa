@@ -795,16 +795,21 @@ Rationale in `site/docs/finding.md`.
   one's master is a Commons file with a page, a licence tag and a SHA-256 in
   that table — **the rule is about a derivation nobody can reproduce, not about
   whose hand did it.**
-- **A credit is behind the caption trigger, not set under the picture, and
-  that whole arrangement is `CreditCard.svelte`** — the trigger, the popover,
-  the print line and the `AnchoredPanel` wiring, shared by `Plate` and
-  `ArtFigure`. Two variants, and the trigger's clothes are the only real
-  difference: `'caption'` is a line of type under a plate, `'overlay'` an icon
-  square laid on a picture that has no caption row (so `label` is mandatory
-  there — a glyph has no text to take a name from).
+- **A credit is behind an `i`, not set under the picture, and the arrangement
+  is `CreditCard.svelte`** — the credit, whether it links, and the print line,
+  shared by `Plate` and `ArtFigure`. The mark and the popover under it are
+  `HintNote`'s, one variant apart: a plate's follows the caption on the page's
+  own ground, a painting's is laid on the picture, having no caption row to
+  follow. `label` is mandatory in both — a glyph has no text to take a name
+  from, and it names the picture, since a chapter draws twenty-seven.
+- **A caption is type and the glyph beside it is the control.** A plate's whole
+  title was the disclosure button — correctly named by its visible text, and an
+  affordance a reader could not see, with a hit area the width of the words. A
+  surface with something further to say draws the one mark every other surface
+  draws.
 - **A component's own rule outranks a global utility class on the same
-  element, by scoping alone.** Svelte compiles `.credit-trigger` to
-  `.credit-trigger.svelte-hash`, two classes against `.menu-trigger`'s one —
+  element, by scoping alone.** Svelte compiles a scoped class to
+  `.that-class.svelte-hash`, two classes against `.menu-trigger`'s one —
   so a shared base carrying `border: 0`, `background: none` and `font:
 inherit` beat the square that class exists to draw, and the overlay trigger
   rendered as a bare glyph on the painting. **Anything a variant means to
@@ -987,6 +992,13 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   stays with the surface. **A glyph is the wrong instrument for a mark**: `▸`
   sizes with the text, so at an index heading's 0.85rem it lands at seven pixels
   and reads as a speck.
+- **A line that qualifies rather than says goes behind `HintNote`**, not into
+  markup of its own: the `i`, the popover, `role="note"`, the panel's measure
+  and the state under them are the component's, and a surface passes a label
+  and either `text` or its own markup. Six surfaces had written that out by
+  hand and had drifted to two measures. **Paper is the caller's half** — a
+  popover never prints, so each prints its own line (`.caveat-print` and its
+  siblings) where the reader cannot press anything.
 - **The catalogue is one component**: `ShelfGrid.svelte` over `$lib/shelves.ts`
   (the entries and `visibleShelves()`) and `ShelfCard.svelte`, because
   `/bibliotheca` and the home page both draw it. The list, the card and the grid

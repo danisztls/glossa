@@ -21,26 +21,17 @@
 	behind it and the set's name under it. A list of four short entries does
 	not need a you-are-here.
 
-	IT IS ASKED FOR RATHER THAN PRINTED, in `ArtFigure`'s arrangement:
-	`AnchoredPanel`, a native popover in the top layer, the `info` glyph alone
-	as the trigger. `role="note"` is ARIA's own word for content ancillary to
-	the thing it hangs off, which this exactly is — not `tooltip`, which
-	describes its anchor and is summoned rather than asked for. The panel is
-	`position: fixed` in the top layer, so opening it costs no layout and
-	nothing on the page moves.
+	IT IS ASKED FOR RATHER THAN PRINTED: `HintNote`, which is the `i` every
+	surface here draws and the popover behind it. What this file owns is the
+	list — four short entries, the source's own words, marked as the source's
+	language rather than the reader's.
 
-	IT IS A COMPONENT BECAUSE THE PANEL IS STATE. `AnchoredPanel` is one
-	instance per trigger and a snippet cannot hold one.
-
-	THE TRIGGER'S LABEL IS MANDATORY. An icon has no text to fall back on;
-	`Icon.svelte` enforces the other half by making every icon `aria-hidden`
-	with no label prop to reach for. The label says what pressing it reveals,
-	and the source's own words inside are marked as the source's language
-	rather than the reader's.
+	IT IS STILL A COMPONENT, though the panel's state has moved into the one
+	that owns the panel: the rotation is read off the edition's groups, and a
+	template deciding which sets exist is not a caption.
 -->
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
-	import { AnchoredPanel } from '$lib/floating.svelte';
+	import HintNote from '$lib/components/HintNote.svelte';
 	import { t } from '$lib/i18n.svelte';
 	import type { PrayerGroupEntry } from '$lib/types';
 
@@ -52,34 +43,10 @@
 	}
 
 	let { groups, lang }: Props = $props();
-
-	// Per INSTANCE: `popovertarget` names an id. `$props.id()` has to be a bare
-	// variable declaration initializer, so it cannot be passed straight to the
-	// constructor.
-	const uid = $props.id();
-	const note = new AnchoredPanel(uid);
 </script>
 
-<button
-	bind:this={note.trigger}
-	type="button"
-	class="hint-trigger"
-	popovertarget={note.id}
-	aria-expanded={note.open}
-	aria-label={t('prayers.rosary.whenPrayed')}
-	title={t('prayers.rosary.whenPrayed')}
->
-	<Icon name="info" />
-</button>
-<div
-	bind:this={note.panel}
-	id={note.id}
-	popover="auto"
-	role="note"
-	ontoggle={note.onToggle}
-	class="panel-surface floating-panel rubric-note"
->
-	<ul {lang}>
+<HintNote label={t('prayers.rosary.whenPrayed')}>
+	<ul class="rubrics" {lang}>
 		{#each groups as group (group.name)}
 			<li>
 				<span class="rubric-set">{group.name}</span>
@@ -87,29 +54,24 @@
 			</li>
 		{/each}
 	</ul>
-</div>
+</HintNote>
 
 <style>
-	/* Sized to its own words, which are four short lines: a panel at the
-	   reading measure would be a wide box with a list in the corner. */
-	.rubric-note {
-		max-inline-size: 22rem;
-		padding: 0.5rem 0.7rem;
-		font-family: var(--font-sans);
-		font-size: max(var(--font-size-min), 0.85rem);
-	}
-
-	.rubric-note ul {
+	/* Set at its own size and not the caveat's: this panel holds four names
+	   rather than a line of small print, and a name is read rather than
+	   skimmed. The measure and the padding around it are `HintNote`'s. */
+	.rubrics {
 		margin: 0;
 		padding: 0;
 		list-style: none;
+		font-size: max(var(--font-size-min), 0.85rem);
 	}
 
-	.rubric-note li {
+	.rubrics li {
 		margin: 0 0 0.45rem;
 	}
 
-	.rubric-note li:last-child {
+	.rubrics li:last-child {
 		margin-bottom: 0;
 	}
 

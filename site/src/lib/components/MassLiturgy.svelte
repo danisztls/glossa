@@ -27,9 +27,8 @@
 	 */
 	import { content } from '$lib/content.svelte';
 	import { chapterVerseSep } from '$lib/citation-style';
-	import { AnchoredPanel } from '$lib/floating.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
-	import Icon from './Icon.svelte';
+	import HintNote from './HintNote.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
 	import { localizeCite } from '$lib/lectionary/cite';
 	import { loadPassage, runIsBroken, type PassageResult, type PassageRun } from '$lib/liturgy';
@@ -41,11 +40,6 @@
 		masses: MassReadings[];
 	}
 	let { masses }: Props = $props();
-
-	// Per INSTANCE, exactly as `DayReadings` does it: `$props.id()` has to be a
-	// bare declaration, so it cannot be passed straight to the constructor.
-	const uid = $props.id();
-	const card = new AnchoredPanel(uid);
 
 	/**
 	 * The Bible edition's language and not the interface's — `DayReadings` has
@@ -118,27 +112,7 @@
 <section class="mass-liturgy" aria-labelledby="liturgy-readings">
 	<div class="head">
 		<h2 id="liturgy-readings">{t('lectionary.heading')}</h2>
-		<button
-			bind:this={card.trigger}
-			type="button"
-			class="hint-trigger"
-			popovertarget={card.id}
-			aria-expanded={card.open}
-			aria-label={t('lectionary.about')}
-		>
-			<Icon name="info" class="hint" />
-		</button>
-		<!-- `role="note"` — ARIA's own word for content ancillary to the thing
-		     it hangs off, which this exactly is. Not `tooltip`, which describes
-		     its anchor and is summoned rather than asked for. -->
-		<span
-			bind:this={card.panel}
-			id={card.id}
-			popover="auto"
-			role="note"
-			ontoggle={card.onToggle}
-			class="panel-surface floating-panel caveat">{t('lectionary.caveat')}</span
-		>
+		<HintNote label={t('lectionary.about')} text={t('lectionary.caveat')} />
 	</div>
 
 	{#each masses as mass (mass.olm)}
@@ -249,14 +223,6 @@
 	/* `SiglumGloss`'s card at this one's measure: where it goes is
 	   `.floating-panel` in app.css, and what is left here is that a sentence and
 	   a half wants a narrower column than a paragraph of commentary. */
-	.caveat {
-		max-inline-size: min(22rem, calc(100vw - 1rem));
-		padding: 0.5rem 0.7rem;
-		font-size: 0.8rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		overflow-wrap: break-word;
-	}
 	.caveat-print {
 		display: none;
 	}

@@ -13,20 +13,29 @@
 	 * are recorded rather than derived here (every plate has its own crop, so
 	 * there is no ratio to assume).
 	 *
-	 * THE ATTRIBUTION IS THE CAPTION, AND OPENS OVER THE PAGE. Genesis carries
-	 * 27 plates and a credit repeated 27 times down a reading column is noise,
-	 * while one said once at the foot of the chapter is a line the reader
-	 * meets long after the picture it refers to. So the caption is the
-	 * control: the plate's title always, and whose engraving it is and whose
-	 * scan when the reader asks.
+	 * THE ATTRIBUTION IS BEHIND THE CAPTION, AND OPENS OVER THE PAGE. Genesis
+	 * carries 27 plates and a credit repeated 27 times down a reading column
+	 * is noise, while one said once at the foot of the chapter is a line the
+	 * reader meets long after the picture it refers to. So the caption says
+	 * the plate's title always, and whose engraving it is and whose scan when
+	 * the reader asks.
 	 *
-	 * THE CARD ITSELF IS `CreditCard`, shared with `ArtFigure` — the trigger,
-	 * the popover, the print line and the `AnchoredPanel` wiring, in its
-	 * `'caption'` variant. Why it is a card and not a `<details>`, and why the
-	 * `popover` attribute rather than our own open state, are that file's
-	 * argument now; they were this one's until the second caller made them
-	 * general. What stays here is what is a fact about a PLATE — the paragraph
-	 * above and the one below.
+	 * THE CAPTION IS NOT THE CONTROL, AND WAS UNTIL 2026-09-11. The whole
+	 * line — the title in small caps, in the caption's own colour and size —
+	 * was one `<button>` with the `i` inside it, on the argument that a
+	 * disclosure trigger must be named by its visible text. What that bought
+	 * was a title no reader could see was pressable and a hit area running the
+	 * width of the words, where the site's answer to "there is more to say
+	 * about this" is a mark beside the thing. The title is type again and the
+	 * `i` after it is the control; `plates.about` names the plate, so that 27
+	 * buttons down a chapter are not 27 readings of one label.
+	 *
+	 * THE CARD ITSELF IS `CreditCard`, shared with `ArtFigure` — the credit,
+	 * whether it links, and the print line — over `HintNote`, which is that
+	 * mark and the popover behind it. Why it is a card and not a `<details>`,
+	 * and why the `popover` attribute rather than our own open state, are
+	 * those files' argument now; they were this one's until the second caller
+	 * made them general. What stays here is what is a fact about a PLATE.
 	 *
 	 * AND THE CARD IS THE ONLY ROUTE, deliberately. The image carried a
 	 * `title` as well until the card existed — a real tooltip on a pointer and
@@ -151,12 +160,12 @@
 			/>
 		</button>
 		<figcaption>
-			<!-- The credit, its card, its print line and the trigger that opens it
-			     are all `CreditCard`, shared with `ArtFigure`. The plate's own title
-			     IS the trigger's content, so the control's accessible name is the
-			     plate's name and `aria-expanded` says the rest — a disclosure named
-			     something other than its visible text is the one thing such a
-			     control must not be, which is why no `label` is passed.
+			<span class="title">{plate.title}</span>
+			<!-- The credit, its card, its print line and the `i` that opens it are
+			     all `CreditCard`, shared with `ArtFigure`. The label names the plate
+			     rather than saying "about this engraving": a chapter of Genesis
+			     draws 27 of them, and a reader listing the buttons on the page is
+			     owed which picture each belongs to.
 
 			     AND NO `source`. The plates carry a `provider_url`, but it points at
 			     the provider's own gallery rather than at a licence page, so making
@@ -165,11 +174,7 @@
 			     be clickable is one decision, and since the card moved it is one
 			     prop in one place rather than a question asked twice. -->
 			{#if credit}
-				<CreditCard {credit}>
-					{#snippet trigger()}<span class="title">{plate.title}</span>{/snippet}
-				</CreditCard>
-			{:else}
-				<span class="title">{plate.title}</span>
+				<CreditCard {credit} label={t('plates.about').replace('{title}', plate.title)} />
 			{/if}
 		</figcaption>
 	</figure>
@@ -241,7 +246,18 @@
 		filter: var(--plate-filter);
 	}
 
+	/*
+	 * A ROW, so that the `i` after the title is centred on it: the trigger is
+	 * a 1.6rem box and the title is one line of small caps, and a box sitting
+	 * on the text baseline hangs below the letters beside it. `wrap` because a
+	 * long title on a phone is two lines, and the glyph belongs after the last
+	 * of them rather than beside a column.
+	 */
 	figcaption {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
 		margin-block-start: 0.6rem;
 		font-family: var(--font-sans);
 		font-size: 0.8em;
@@ -281,8 +297,12 @@
 			cursor: auto;
 		}
 
-		/* The trigger and the line that replaces it on paper are `CreditCard`'s
-		   now, print rules included. What stays here is the figure's own
-		   behaviour: the plate prints, and the caption prints with it. */
+		/* The row was there to centre a glyph that does not print, and the line
+		   that replaces it is `CreditCard`'s, print rules included. What stays
+		   here is the figure's own behaviour: the plate prints, and the caption
+		   prints with it. */
+		figcaption {
+			display: block;
+		}
 	}
 </style>

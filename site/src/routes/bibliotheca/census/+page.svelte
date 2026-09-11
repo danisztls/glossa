@@ -109,7 +109,7 @@
 		type CensusRankRow
 	} from '$lib/census';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { AnchoredPanel } from '$lib/floating.svelte';
+	import HintNote from '$lib/components/HintNote.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { formatNumber } from '$lib/ui-langs';
 	import { languageDisplayName } from '$lib/lang-names';
@@ -148,9 +148,9 @@
 	});
 
 	/**
-	 * THE FOUR LINES THAT QUALIFY RATHER THAN SAY, each behind the `i` beside
-	 * the heading it belongs to — `DayReadings`' arrangement, which is
-	 * `ArtFigure`'s, and the site's one answer to a sentence of small print.
+	 * THE FOUR LINES THAT QUALIFY RATHER THAN SAY are `HintNote`s, each beside
+	 * the heading it belongs to — the site's one answer to a sentence of small
+	 * print, and the component holds each panel's own state and id.
 	 *
 	 * WHAT GOES BEHIND THE GLYPH IS A METHOD AND NEVER A NUMBER. These four
 	 * say how the page was counted; a reader who never presses them reads every
@@ -159,18 +159,7 @@
 	 * carries the totals that stop the column under it from being read as the
 	 * whole of something, and a fact hidden behind a control is a fact most
 	 * readers do not have.
-	 *
-	 * `$props.id()` has to be a bare declaration, so the four ids are suffixed
-	 * off one: four panels can be open on this page and each needs a name a
-	 * `popovertarget` can call.
 	 */
-	const uid = $props.id();
-	const hints = {
-		derived: new AnchoredPanel(`${uid}-derived`),
-		reach: new AnchoredPanel(`${uid}-reach`),
-		cited: new AnchoredPanel(`${uid}-cited`),
-		absent: new AnchoredPanel(`${uid}-absent`)
-	};
 
 	/** Every count on the page, in the reader's own number formatting. */
 	const n = (value: number) => formatNumber(value, i18n.lang);
@@ -335,14 +324,6 @@
 </svelte:head>
 
 <!--
-	THE `i` AND WHAT IT OPENS, three times over, and a snippet because three
-	copies of a trigger and a popover is three places for one of them to lose
-	its `aria-label`. `role="note"` is ARIA's own word for content ancillary to
-	the thing it hangs off, which this exactly is — not `tooltip`, which
-	describes its anchor and is summoned rather than asked for. The trigger has
-	no text of its own, so the label is mandatory and not a courtesy.
--->
-<!--
 	BACK, WHERE YOU ARE, ONWARD — three controls and not a row of numbered
 	pages. Neither ranking runs past `RANK_LIMIT`, so this is five pages at
 	most, and a reader turning them is reading DOWN a ranking: page four is not
@@ -400,31 +381,10 @@
 	</nav>
 {/snippet}
 
-{#snippet hint(panel: AnchoredPanel, label: string, text: string)}
-	<button
-		bind:this={panel.trigger}
-		type="button"
-		class="hint-trigger"
-		popovertarget={panel.id}
-		aria-expanded={panel.open}
-		aria-label={label}
-	>
-		<Icon name="info" />
-	</button>
-	<span
-		bind:this={panel.panel}
-		id={panel.id}
-		popover="auto"
-		role="note"
-		ontoggle={panel.onToggle}
-		class="panel-surface floating-panel caveat">{text}</span
-	>
-{/snippet}
-
 <div class="landing-column">
 	<div class="head">
 		<h1>{t('census.title')}</h1>
-		{@render hint(hints.derived, t('census.about.derived'), t('census.derived'))}
+		<HintNote label={t('census.about.derived')} text={t('census.derived')} />
 	</div>
 	<p class="page-tagline landing-measure">{t('census.tagline')}</p>
 	<p class="caveat-print" aria-hidden="true">{t('census.derived')}</p>
@@ -473,7 +433,7 @@
 			<section aria-labelledby="reach-heading">
 				<div class="head">
 					<h2 id="reach-heading">{t('census.reach')}</h2>
-					{@render hint(hints.reach, t('census.about.reach'), t('census.reachLede'))}
+					<HintNote label={t('census.about.reach')} text={t('census.reachLede')} />
 				</div>
 
 				<!--
@@ -581,7 +541,7 @@
 				     which is what a glyph ON the heading is, where three lines of
 				     small print between a heading and its own table are read once
 				     and skipped thereafter. -->
-				{@render hint(hints.cited, t('census.about.cited'), t('census.method'))}
+				<HintNote label={t('census.about.cited')} text={t('census.method')} />
 			</div>
 
 			{#if rankings.length > 1}
@@ -679,7 +639,7 @@
 					     because the section's own name does not settle what a row
 					     IS: what the apparatus asks for and cannot be given here,
 					     which is not the same as what the apparatus gets wrong. -->
-					{@render hint(hints.absent, t('census.about.absent'), t('census.absentMethod'))}
+					<HintNote label={t('census.about.absent')} text={t('census.absentMethod')} />
 				</div>
 
 				<!-- WHAT THE RANKING DOES NOT ACCOUNT FOR, said before the rows
@@ -798,22 +758,6 @@
 
 	.head h2 {
 		flex: 1 1 auto;
-	}
-
-	/* `.menu-trigger` is the site's button and this adds only its size and
-	   colour — `DayReadings` sizes its own the same way, against the type it
-	   stands beside. `align-self` keeps it off the heading's rule. */
-
-	/* `SiglumGloss`'s card at this one's measure: where it goes is
-	   `.floating-panel` in app.css, and what is left here is that a sentence
-	   or two wants a narrower column than a paragraph of commentary. */
-	.caveat {
-		max-inline-size: min(24rem, calc(100vw - 1rem));
-		padding: 0.5rem 0.7rem;
-		font-size: 0.8rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		overflow-wrap: break-word;
 	}
 
 	.caveat-print {

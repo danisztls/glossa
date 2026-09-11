@@ -514,6 +514,31 @@ recording.** Wrapping the picture in a control — which is what makes it a tab
 stop at all — puts a shrink-to-fit box of `auto` height between it and the
 stage, so `max-block-size: 100%` resolves to nothing, silently.
 
+**A caption is not a control** (2026-09-11). The plate's whole title was the
+button that opened its credit — the title in small caps, the `i` inside the
+same element — on the argument that a disclosure trigger must be named by its
+visible text and never by a label saying something else. That argument is
+sound and the button was still wrong: nothing about a line of caption type
+says it can be pressed, the hit area ran the width of the words, and the one
+mark the site draws for "there is more to say about this" was inside the
+control rather than being it. The title is type again and the `i` after it is
+the trigger, which is `HintNote` — the same component every other surface with
+a line that qualifies rather than says draws. The accessible name it loses from
+its own content it takes from `plates.about`, which names the plate, because a
+chapter of Genesis renders twenty-seven of them and a reader listing the buttons
+on the page is owed which picture each belongs to.
+
+**What was left of the caption trigger became a variant, not an exception.**
+`CreditCard` had two sets of clothes for one mechanism, and one of them was a
+line of type with a glyph inside it; that one is now the mark every note on the
+site draws. The other is real and stays: a landing page's painting has no
+caption row — one under a banner would be a row of empty page with a glyph in
+it — so its `i` sits ON the picture at the trailing end, where a `currentColor`
+outline over Raphael's sky is not reliably visible in any theme, and wears
+`.menu-trigger`'s square at a smaller size. **What separates the two is what
+the `i` sits on**, which is a fact about the surface and not about the credit,
+so it is `HintNote`'s variant and `CreditCard` only passes it down.
+
 ## Stepping between references
 
 **The arrow, WASD and HJKL keys step from one reference number to the next,

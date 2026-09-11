@@ -65,8 +65,8 @@
 	import { bookmarkGroup, compareBookmarks, type BookmarkGroupKey } from '$lib/bookmarkContent';
 	import { addressResolves, citationFor } from '$lib/citation-label';
 	import { getWork } from '$lib/corpus';
-	import { AnchoredPanel } from '$lib/floating.svelte';
 	import { continueRows, listPositions, type ReadingPosition } from '$lib/reading-position';
+	import HintNote from '$lib/components/HintNote.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
 
@@ -172,13 +172,6 @@
 			};
 		})
 	);
-
-	// The storage note, behind the `i` this site already uses for a line that
-	// qualifies a page rather than saying it (`DayReadings`, `ArtFigure`).
-	// `$props.id()` has to be a bare declaration — it cannot be passed straight
-	// to the constructor, which is what `DayReadings` says at its own.
-	const uid = $props.id();
-	const card = new AnchoredPanel(uid);
 </script>
 
 <svelte:head>
@@ -188,28 +181,9 @@
 <article class="content-column library">
 	<div class="page-head">
 		<h1>{t('bookmark.library')}</h1>
-		<!-- The trigger has no text of its own, so the `aria-label` is
-		     mandatory and not a courtesy. -->
-		<button
-			bind:this={card.trigger}
-			type="button"
-			class="hint-trigger"
-			popovertarget={card.id}
-			aria-expanded={card.open}
-			aria-label={t('bookmark.about')}
-		>
-			<Icon name="info" class="hint" />
-		</button>
-		<!-- `role="note"` — ARIA's own word for content ancillary to the thing
-		     it hangs off, which this exactly is. -->
-		<span
-			bind:this={card.panel}
-			id={card.id}
-			popover="auto"
-			role="note"
-			ontoggle={card.onToggle}
-			class="panel-surface floating-panel caveat">{t('bookmark.deviceOnly')}</span
-		>
+		<!-- The storage note, behind the `i` this site uses for a line that
+		     qualifies a page rather than saying it. -->
+		<HintNote label={t('bookmark.about')} text={t('bookmark.deviceOnly')} />
 	</div>
 	<p class="page-tagline">{t('bookmark.library.tagline')}</p>
 
@@ -302,18 +276,6 @@
 
 	.page-head h1 {
 		margin: 0;
-	}
-
-	/* `.menu-trigger` is the site's button and this adds only its size: a note
-	   beside a heading is not a chrome control and should not weigh like one. */
-
-	.caveat {
-		max-inline-size: min(24rem, calc(100vw - 1rem));
-		padding: 0.5rem 0.7rem;
-		font-size: 0.8rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		overflow-wrap: break-word;
 	}
 
 	.caveat-print {

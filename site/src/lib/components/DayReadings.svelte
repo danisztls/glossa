@@ -20,12 +20,10 @@
 	 * SET UNDER THE LIST IT WAS THREE LINES OF SMALL PRINT UNDER FIVE LINES OF
 	 * CITATIONS, on a card that also carries the day's name, its season, its
 	 * rank and its colour — the longest text in the block, and read once. It is
-	 * `ArtFigure`'s arrangement now: the `info` glyph beside the heading, a
-	 * native popover, `role="note"`, which is what the rest of the site already
-	 * does with a line that qualifies something rather than saying it. The
-	 * trigger has no text of its own, so the `aria-label` is mandatory and not
-	 * a courtesy, and the note stays in the reading order behind the heading it
-	 * qualifies.
+	 * `HintNote` now: the `info` glyph beside the heading and the line behind
+	 * it, which is what the rest of the site already does with a sentence that
+	 * qualifies something rather than saying it. The note stays in the reading
+	 * order behind the heading it qualifies.
 	 *
 	 * THE CITATIONS ARE WRITTEN IN THE READER'S OWN LANGUAGE, and `./cite.ts`
 	 * in `$lib/lectionary` is the whole of how — this file only asks. The
@@ -43,11 +41,10 @@
 	 * line names the absence rather than the text.
 	 */
 	import { content } from '$lib/content.svelte';
-	import { AnchoredPanel } from '$lib/floating.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
 	import { localizeCite } from '$lib/lectionary/cite';
-	import Icon from './Icon.svelte';
+	import HintNote from './HintNote.svelte';
 	import RefText from './RefText.svelte';
 
 	interface Props {
@@ -71,12 +68,6 @@
 		read?: { href: string; label: string; title: string };
 	}
 	let { masses, read }: Props = $props();
-
-	// Per INSTANCE, and the home page and the calendar can both be on screen
-	// with one of these each: `$props.id()` has to be a bare declaration, so it
-	// cannot be passed straight to the constructor.
-	const uid = $props.id();
-	const card = new AnchoredPanel(uid);
 
 	// The citation as the reader's language writes it, and the language it is
 	// then written in — which is what `RefText` must parse it under, and is
@@ -103,27 +94,7 @@
 <section class="readings" aria-labelledby="readings-heading">
 	<div class="head">
 		<h3 id="readings-heading">{t('lectionary.heading')}</h3>
-		<button
-			bind:this={card.trigger}
-			type="button"
-			class="hint-trigger"
-			popovertarget={card.id}
-			aria-expanded={card.open}
-			aria-label={t('lectionary.about')}
-		>
-			<Icon name="info" class="hint" />
-		</button>
-		<!-- `role="note"` — ARIA's own word for content ancillary to the thing
-		     it hangs off, which this exactly is. Not `tooltip`, which describes
-		     its anchor and is summoned rather than asked for. -->
-		<span
-			bind:this={card.panel}
-			id={card.id}
-			popover="auto"
-			role="note"
-			ontoggle={card.onToggle}
-			class="panel-surface floating-panel caveat">{t('lectionary.caveat')}</span
-		>
+		<HintNote label={t('lectionary.about')} text={t('lectionary.caveat')} />
 	</div>
 
 	{#each masses as mass (mass.olm)}
@@ -248,17 +219,6 @@
 	.text-missing {
 		color: var(--color-text-muted);
 		font-style: italic;
-	}
-	/* `SiglumGloss`'s card at this one's measure: where it goes is
-	   `.floating-panel` in app.css, and what is left here is that a sentence
-	   and a half wants a narrower column than a paragraph of commentary. */
-	.caveat {
-		max-inline-size: min(22rem, calc(100vw - 1rem));
-		padding: 0.5rem 0.7rem;
-		font-size: 0.8rem;
-		line-height: 1.5;
-		color: var(--color-text-muted);
-		overflow-wrap: break-word;
 	}
 	.caveat-print {
 		display: none;

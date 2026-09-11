@@ -1289,11 +1289,14 @@ export const en: Dictionary = {
 	// is what saves fourteen dictionaries a second string for "zoom out".
 	'plates.enlarge': 'Enlarge {title}',
 	'plates.zoom': 'Zoom',
-	// `ArtFigure`'s caption trigger, whose only content is the `info` glyph —
-	// so unlike a plate's, whose visible content is the plate's own title, it
-	// has no text to take an accessible name from and this string is the name.
-	// A picture, not a plate: these illustrate a landing page and there is
-	// nothing to enlarge and no title on screen.
+	// The `i` after a plate's caption, which opens the credit. `{title}` for
+	// the same reason `plates.enlarge` takes one: the glyph has no text of its
+	// own, and a chapter of Genesis draws 27 buttons that would otherwise all
+	// be named alike.
+	'plates.about': 'About {title}',
+	// `ArtFigure`'s caption trigger, whose only content is the `info` glyph.
+	// A picture, not a plate: these illustrate a landing page, where there is
+	// nothing to enlarge and no title on screen to name.
 	'art.about': 'About this picture',
 	// The only interface word in an artwork's caption. Everything else in one is
 	// a proper noun and a date, held beside the asset in `landing-art.ts` rather
