@@ -669,6 +669,18 @@
 			"anchors": "ccc 2734-2741 | documents spe-salvi",
 			"note": "CCC 2734–2741 is the Catechism's own two headings on this exact question, taken whole and unreordered — the ideal case, where the topic is barely editorial. 2737 lands hard on a reader whose petition was for a dying child; excising it would be choosing by hand."
 		},
+		"morbus-mentis": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 1673,1735,1501-1503,2282-2283 | documents salvifici-doloris",
+			"note": "New 2026-09-10, against a blocklist row reading _nothing addressed to it in the kinds this corpus takes_ — the vaguest row on that list, naming no document, so the recheck recipe could not test it. 1673 is the paragraph, and it draws the line itself: “Illness, especially psychological illness, is a very different matter; treating this is the concern of medical science”, and an exorcism may not proceed until someone has ascertained “that one is dealing with the presence of the Evil One, and not an illness”. It is `daemones`’ `lead` and serves a different reader there. 1735 is imputability “diminished or even nullified by … other psychological or social factors”; 1501–1503 names the interior experience — illness leading to “anguish, self-absorption, sometimes even despair and revolt against God” — and ends on Christ who “has come to heal the whole man, soul and body”; 2282–2283 answers the fear underneath, that grave psychological disturbances diminish responsibility and that we should not despair of the salvation of those who have taken their own lives. _Salvifici Doloris_ 5–7 and 29 are the one text in the corpus that treats MORAL suffering as its own kind, “when it is primarily the soul that is suffering”. B and not A because the demon half is answered in terms and the sin half is carried across: 1735 is about the imputability of an ACT, and no anchored sentence says that being ill is not a fault. 1502 is anchored knowingly — the Old Testament reading in which “illness is mysteriously linked to sin and evil” — because 1503 is the Catechism’s own answer to it and cutting the objection out would be the gloss `decisions.md` forbids."
+		},
+		"anxietas": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 322,1817-1818,1735 | documents christus-vivit,gaudete-et-exsultate",
+			"note": "New 2026-09-10. 322 is the sentence addressed to the reader — “Cast all your anxieties on him, for he cares about you” — and was on no page. 1817–1818 answers the question actually asked, that hope relies “not on our own strength, but on the help of the grace of the Holy Spirit” and “keeps man from discouragement … sustains him during times of abandonment”; the whole article on hope, 1817–1821, was on no topic at all. 1735 carries the same diminished imputability as `morbus-mentis`, the one paragraph the two share. The providence paragraphs were deliberately NOT anchored: 302–305 is `signa`’s, and a page whose Catechism block is “do not be anxious” tells an anxious reader they are disobeying. B because the Catechism has no article on anxiety and the answer arrives through hope; what speaks to this reader in their own person is in the documents. _Christus Vivit_ 142 — “be careful about one temptation that can hold us back. It is anxiety” — and 145, “banish anxiety from your mind”; _Gaudete et Exsultate_ 111 names “a sense of anxiety, sometimes violent, that distracts and debilitates” as a mark of this culture and 114 answers it."
+		},
 		"divinatio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
@@ -821,8 +833,8 @@
 		"acedia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"anchors": "ccc 1866,2094,2733",
-			"note": "2094 and 2733 both name acedia, and 2733's _a form of depression due to lax ascetical practice_ is the sentence. _Spiritual dryness_ is 2731 and belongs to prayer, which is the distinction worth making."
+			"anchors": "ccc 1866,2094,2733,1735",
+			"note": "2094 and 2733 both name acedia, and 2733’s _a form of depression due to lax ascetical practice_ is the sentence. _Spiritual dryness_ is 2731 and belongs to prayer, which is the distinction worth making. 1735 added 2026-09-10 for the distinction that was NOT being made: this page carries the keywords _burnout_, _apathy_ and _listless_, and 2733 is the one place the Catechism uses the word depression, of a fault. A reader with the illness who searched those words met a capital sin and nothing else. 1735 is the Catechism’s own qualification — imputability “diminished or even nullified by … other psychological or social factors” — and `morbus-mentis`, new the same day, is where that reader belongs."
 		},
 		"discrimen-gentium": {
 			"grade": "A",

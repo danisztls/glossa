@@ -1062,6 +1062,27 @@
 			"ccc": [[2734, 2741]],
 			"documents": ["spe-salvi"]
 		},
+		"morbus-mentis": {
+			"doorway": "private-shame",
+			"cluster": "despair",
+			"ccc": [
+				[1673, 1673],
+				[1735, 1735],
+				[1501, 1503],
+				[2282, 2283]
+			],
+			"documents": ["salvifici-doloris"]
+		},
+		"anxietas": {
+			"doorway": "private-shame",
+			"cluster": "despair",
+			"ccc": [
+				[322, 322],
+				[1817, 1818],
+				[1735, 1735]
+			],
+			"documents": ["christus-vivit", "gaudete-et-exsultate"]
+		},
 		"divinatio": {
 			"doorway": "ordinary",
 			"cluster": "the-unseen",
@@ -1293,7 +1314,8 @@
 			"ccc": [
 				[1866, 1866],
 				[2094, 2094],
-				[2733, 2733]
+				[2733, 2733],
+				[1735, 1735]
 			],
 			"documents": []
 		},

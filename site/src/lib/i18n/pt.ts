@@ -1023,7 +1023,7 @@ export const pt: Dictionary = {
 	'quaestiones.mors-voluntaria.question':
 		'Alguém tirou a própria vida. Há esperança para essa pessoa?',
 	'quaestiones.mors-voluntaria.keywords':
-		'se matou, funeral de suicida, condenado, doença mental, depressão, pecado mortal, enterro na igreja',
+		'se matou, funeral de suicida, condenado, luto, quem ficou, pecado mortal, enterro na igreja',
 	'quaestiones.aegritudo.title': 'Depois de um diagnóstico',
 	'quaestiones.aegritudo.question': 'O que a Igreja diz a quem está doente?',
 	'quaestiones.aegritudo.keywords':
@@ -1148,6 +1148,14 @@ export const pt: Dictionary = {
 	'quaestiones.oratio-inaudita.question': 'Eu pedi, e não aconteceu nada.',
 	'quaestiones.oratio-inaudita.keywords':
 		'Deus não responde, silêncio de Deus, supliquei, novena, promessa, parei de rezar, não fui ouvido, milagre que não veio, cansei de pedir',
+	'quaestiones.morbus-mentis.title': 'Quando a doença é da mente',
+	'quaestiones.morbus-mentis.question': 'É pecado, é o demônio, ou é doença?',
+	'quaestiones.morbus-mentis.keywords':
+		'depressão, ansiedade, transtorno bipolar, esquizofrenia, psiquiatra, terapia, remédio, antidepressivo, saúde mental, surto, falta de fé, rezar mais',
+	'quaestiones.anxietas.title': 'Ansiedade',
+	'quaestiones.anxietas.question': 'Ter medo o tempo todo é falta de confiança?',
+	'quaestiones.anxietas.keywords':
+		'preocupação, pânico, angústia, não consigo desligar, medo do futuro, pensamento acelerado, insônia, nervosismo, aflição, e se',
 	// --- perguntas comuns ---
 	'quaestiones.divinatio.title': 'Astrologia e adivinhação',
 	'quaestiones.divinatio.question': 'Horóscopo, tarô, os mortos — o que é proibido de fato?',

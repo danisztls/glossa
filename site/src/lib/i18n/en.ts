@@ -2037,7 +2037,7 @@ export const en: Dictionary = {
 	'quaestiones.mors-voluntaria.question':
 		'Someone has taken their own life. Is there hope for them?',
 	'quaestiones.mors-voluntaria.keywords':
-		'killed himself, funeral for a suicide, damned, mental illness, depression, mortal sin, church burial',
+		'killed himself, funeral for a suicide, damned, bereaved, left behind, mortal sin, church burial',
 	'quaestiones.aegritudo.title': 'After a diagnosis',
 	'quaestiones.aegritudo.question': 'What does the Church say to someone who is ill?',
 	'quaestiones.aegritudo.keywords':
@@ -2161,6 +2161,14 @@ export const en: Dictionary = {
 	'quaestiones.oratio-inaudita.question': 'I asked, and nothing happened.',
 	'quaestiones.oratio-inaudita.keywords':
 		'god is silent, no reply, begged, novena, petition, gave up praying, not listening, nothing changed, miracle that never came, why me',
+	'quaestiones.morbus-mentis.title': 'When the illness is in the mind',
+	'quaestiones.morbus-mentis.question': 'Is it a sin, a demon, or an illness?',
+	'quaestiones.morbus-mentis.keywords':
+		'depression, anxiety, bipolar, schizophrenia, psychiatrist, therapy, medication, antidepressants, mental health, breakdown, pray harder, not enough faith',
+	'quaestiones.anxietas.title': 'Anxiety',
+	'quaestiones.anxietas.question': 'Is being afraid all the time a failure of trust?',
+	'quaestiones.anxietas.keywords':
+		'worry, panic, dread, cannot switch off, catastrophising, fear of the future, overthinking, insomnia, nerves, what if',
 	// --- ordinary questions ---
 	'quaestiones.divinatio.title': 'Astrology and divination',
 	'quaestiones.divinatio.question': 'Horoscopes, tarot, the dead — what is actually forbidden?',

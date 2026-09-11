@@ -440,7 +440,7 @@ is what falls short.
 | Held back                     | Why                                                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                |
-| Mental illness, loneliness    | nothing addressed to it in the kinds this corpus takes                                                                                   |
+| Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                         |
 | Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner |
 | Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                |
 | Debt and interest             | _Vix Pervenit_ absent                                                                                                                    |
@@ -465,6 +465,26 @@ for n in orationis-formas vix-pervenit fiducia-supplicans; do
     && echo "$n PRESENT — this row has expired" || echo "$n absent"
 done
 ```
+
+**A row that names no document cannot be rechecked, and this one was wrong for
+a day and a year.** _Mental illness, loneliness_ gave as its reason "nothing
+addressed to it in the kinds this corpus takes", which names no text, so the
+recipe above had nothing to run against it and no reader of the row could tell
+whether it was still true. It was not: CCC 1673 draws the line between
+psychological illness and possession in the Catechism's own words, 1735 says
+imputability is diminished by psychological factors, and 1501–1503 is written to
+somebody whose illness has brought them to "anguish, self-absorption, sometimes
+even despair and revolt against God". **Give a row a text to be wrong about.**
+Loneliness keeps the row on a reason that can be checked in one search, and
+fails the same test grief fails: a page whose only real answer is documents.
+
+**The site was already answering these searches, and answering them badly.**
+Of 132 topics, exactly one keyword list carried _depression_ and one carried
+_anxiety_, and a third carried _burnout_ onto the page that calls acedia a
+capital sin. The blocklist's own argument — a topic answering badly is worse
+than no topic — applies to a keyword on a shipped page exactly as it applies to
+a page, and nothing on this list could see it. The measurement and the rule are
+in `docs/research/topic-anchor-review.md`.
 
 ### Released by the corpus, and now written
 
@@ -494,6 +514,18 @@ there would put a reader who cannot stop grieving in front of the rite for the
 body, which is the door mismatch `graviditas` was fixed for. _Salvifici
 Doloris_ can be named and not quoted, and a page whose only real answer is a
 link is the three-sentence page this list exists to prevent.
+
+**Two topics came out of a row being wrong rather than out of a document
+arriving**, both in `private-shame/despair` and both added 2026-09-10.
+`morbus-mentis` — "Is it a sin, a demon, or an illness?" — leads on CCC 1673 and
+carries _Salvifici Doloris_, the one text here that treats moral suffering as its
+own kind, "when it is primarily the soul that is suffering". `anxietas` leads on
+CCC 322 and on the article about hope, 1817–1821, which was on no topic at all;
+its Catechism block deliberately does NOT carry the providence paragraphs, since
+a page whose answer is "do not be anxious" tells an anxious reader they are
+disobeying. Both are B, and their rows say which half the reader has to carry.
+`acedia` gained CCC 1735 in the same pass, so the page that calls acedia a
+capital sin also carries the Catechism's own qualification.
 
 **The reckoning and the present are two topics, not one.** `culpae-praeteritae`
 holds CCC 2298 and 827, the only paragraphs that accuse, and `colonialismus`

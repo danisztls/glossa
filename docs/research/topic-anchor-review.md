@@ -290,6 +290,24 @@ purity of heart and modesty, four paragraphs of which are about clothing,
 advertisements and what children are taught — was on no topic in the file.
 Nothing was wrong that any check could see. The keyword was the only witness.
 
+**A keyword is a routing decision, and the page a word lands on is that word's
+answer.** The finding above is a keyword promising what nothing anchors; this is
+the same field pointing somewhere worse than nowhere. Across the file the word
+_depression_ occurred in exactly one keyword list, `mors-voluntaria`, so a reader
+searching their own diagnosis was shown "After a suicide" — a page about somebody
+else's death. _Anxiety_ occurred once, on `scrupulositas`. And `acedia` carries
+_burnout_, _apathy_ and _listless_ while anchoring CCC 2733, where the Catechism
+calls acedia "a form of depression due to lax ascetical practice, decreasing
+vigilance, carelessness of heart": the one paragraph in the work that uses the
+word, of a fault. Nothing was wrong that any check could see here either — every
+one of those keywords is true of its page. What was wrong is where the word SENT
+somebody, and a keyword is read by the reader who is least able to tell that the
+page is not for them. The repair was two topics (`morbus-mentis`, `anxietas`),
+the two words moved onto them, and CCC 1735 added to `acedia` so the page calling
+acedia a capital sin also carries the Catechism's own qualification. **Read a
+keyword list as the question it will be typed by**, not as a description of the
+page it sits on.
+
 **A one-paragraph topic is not a thin one.** This pass spent most of its effort
 widening spans, and the opposite error was waiting at the end of it. `islam` is
 CCC 841 and `migratio` is CCC 2241, and in both cases that single paragraph is
