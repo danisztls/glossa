@@ -1126,20 +1126,36 @@
 	 * header's navigation sheet; what is left here is where this one sits.
 	 *
 	 * `margin` replaces the old flex backdrop: `auto` on three sides is the
-	 * UA's centring, and 12vh on the block start is the same "sits high, not
-	 * dead centre" placement the `padding-top: 12vh` gave. No `z-index` —
+	 * UA's centring, and the block start is the "sits high, not dead centre"
+	 * placement the old `padding-top: 12vh` gave — 8vh now, which is the
+	 * same gesture with more of the screen under it. No `z-index` —
 	 * a modal dialog is in the top layer, above every stacking context there
 	 * is, which is what the old `z-index: 100` was reaching for.
 	 */
 	dialog {
-		/* Wider than a menu because it is not one: a row here is a work's
-		   title, a section number and a mark, and the legend under it is nine
-		   rows of name-plus-specimen. At 32rem the titles were the half that
-		   gave way. The second term is what holds on a phone, where 92vw is
-		   the same 4vw gutter the 90 was reaching for on a screen this no
-		   longer has to fit. */
-		width: min(38rem, 92vw);
-		margin: 12vh auto auto;
+		/*
+		 * IT IS SIZED TO A DOCUMENT'S TITLE, which is the widest thing it can
+		 * be asked to print and is nothing like a menu item: "Considerations
+		 * Regarding Proposals to Give Legal Recognition to Unions Between
+		 * Homosexual Persons" is the row the reader gets for `homose`, and it
+		 * is the row under it as well, as a detail. At 32rem the titles were
+		 * simply the half that gave way, and the ellipsis fell early enough
+		 * that two documents of one congregation read as the same row.
+		 *
+		 * 48rem does not hold that title either — no dialog does, and the
+		 * clamp on `.label` is what makes that survivable. It holds the
+		 * distinguishing half of it, which is the whole job: a reader tells
+		 * two rows apart by where they stop agreeing.
+		 *
+		 * THE CEILING IS THE READING COLUMN'S, not a taste call. `tokens.css`
+		 * rails the prose column at 56rem on the same grid arithmetic that
+		 * gives the aside its width, and a search panel standing wider than
+		 * the page's own text would read as a different site. The second term
+		 * is what holds on a phone: 92vw is a 4vw gutter, and it is the only
+		 * term that applies there.
+		 */
+		width: min(48rem, 92vw);
+		margin: 8vh auto auto;
 		/* The panel may reach to within a hair of the fold, and on a tall
 		   viewport that is most of the screen. Before this it could not: the
 		   list carried a `max-height: min(24rem, 55vh)` and nothing else was
@@ -1147,8 +1163,13 @@
 		   bottom and scrolled INSIDE a panel with a third of the page empty
 		   under it. The cap belongs to the dialog, which is the only box that
 		   knows where the fold is. `dvh` and not `vh`: on a phone the two
-		   differ by the browser's own chrome, and `vh` is the taller one. */
-		max-block-size: calc(100dvh - 12vh - 1rem);
+		   differ by the browser's own chrome, and `vh` is the taller one.
+
+		   THE TWO OFFSETS ARE ONE NUMBER and have to move together: the first
+		   is where the box starts and the second is what it may not run past,
+		   so a margin raised without the cap following leaves a gap at the
+		   fold the box is entitled to. */
+		max-block-size: calc(100dvh - 8vh - 1rem);
 	}
 
 	/* `[open]` is not decoration — a closed `<dialog>` is `display: none` from
