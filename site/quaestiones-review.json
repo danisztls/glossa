@@ -20,8 +20,12 @@
 		"docs/research/topics.md.",
 		"",
 		"NO C OR D IS RECORDED HERE and that is by design: a C found is a C fixed in the same pass, so",
-		"`was` is where they appear. A topic that cannot be fixed is a D and belongs to the blocklist",
-		"rather than to this file.",
+		"there is no row left to carry it, and a topic that cannot be fixed is a D belonging to the",
+		"blocklist rather than to this file. There WAS a `was` field holding the grade a row used to",
+		"have, and it is gone (2026-09-11, by direction). It could not be acted on: a row already",
+		"states the grade it has now and the note already tells whatever story is worth telling, so",
+		"the old letter was a fact about a day nobody can do anything with. `git log -S` is where a",
+		"grade's history lives, on the same rule as every other in this repository.",
 		"",
 		"ABSENCE IS NOT A PASS. A topic missing from `reviewed` has not been read. The pass runs a",
 		"cluster at a time and the markdown says which are outstanding."
@@ -42,7 +46,6 @@
 		"scandalum-cleri": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2284-2287,827,1550 | canons 1395,1398,1378 | lead 2285",
 			"note": "827 and 1550 answer why anyone should trust it after that: the Church holds sinners and is always in need of purification, and a minister's sin cannot impede the grace of the sacraments. Was C: the keywords led with _cover up_ and _bishops_ and every anchored canon was about the abuser. Fixed 2026-09-10 with can. 1378 §2 — culpable negligence in performing or omitting an act of office, with harm to another or scandal — which is the sentence for the man who did nothing. No document: the corpus has neither _Vos estis lux mundi_ nor _Sacramentorum sanctitatis tutela_."
 		},
@@ -55,7 +58,6 @@
 		"scriptura-inspirata": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 105-114 | documents dei-verbum,providentissimus-deus,divino-afflante-spiritu",
 			"note": "Was C: 105–108 answers _who wrote it_ and stops, while the keywords promised _contradictions_, _literal_, _myth_ and _historical accuracy_. The paragraphs that answer those were the next six, directly under the anchor the topic already had — 110 on literary genres and truth being “differently presented and expressed in the various types of historical writing”, 111–114 on the three criteria. Widened 2026-09-10. Stops at 114: the four senses at 115–119 are how the Church reads Scripture, not why a doubter should believe it."
 		},
@@ -68,14 +70,12 @@
 		"creatio-et-scientia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 282-289,366,390 | documents humani-generis,fides-et-ratio",
 			"note": "283 grants the sciences their own results and 284 says the question of meaning is “of another order”, which is the answer to whether science has settled it; 289 reads Genesis 1–3 by its literary standpoint. Was C: the keywords promised _adam and eve_ and _evolution_ and neither had an anchored sentence. Fixed 2026-09-10 with 366, the spiritual soul created immediately by God and not produced by the parents, and 390, the fall told in figurative language and affirmed as a primeval event."
 		},
 		"iesus-christus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 423,126,639-644,647 | documents redemptor-hominis",
 			"note": "Was C, and the widest miss in this cluster: a reader asking whether any of it happened was given 422–429 on how to catechise and 456–460 on why the Word became flesh, with the Resurrection nowhere on the page. Re-anchored 2026-09-10 on 423, the claim dated by Herod, Augustus, Pilate and Tiberius; 126, the three stages of the Gospels' formation; 639–644, which dates 1 Cor 15 to about A.D. 56, says the empty tomb “in itself is not a direct proof”, and says the hypothesis that the apostles' faith produced the Resurrection will not hold up; and 647, where no one was an eyewitness to the Resurrection itself and no evangelist describes it. The last is what makes the page honest rather than only persuasive."
 		},
@@ -88,7 +88,6 @@
 		"atheismus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2123-2128,1260 | documents gaudium-et-spes",
 			"note": "Was C: the keywords ended on _invincible ignorance_ and _good atheists_, and the page ran from “atheism is a sin against the virtue of religion” to “agnosticism is all too often equivalent to practical atheism” with nothing after it. Fixed 2026-09-10 with 1260 — a man ignorant of the Gospel who seeks the truth and does the will of God as he understands it can be saved. 1260 and not 847, whose first clause (“this affirmation is not aimed at”) points back at a sentence that is not on this page. 2125 already carried the other half: believers can have more than a little to do with the rise of atheism."
 		},
@@ -113,14 +112,12 @@
 		"beata-virgo": {
 			"grade": "A",
 			"reviewed": "2026-09-11",
-			"was": "C",
 			"anchors": "brief 509,508,510,974,2682 | ccc 491-492,499-500,963-972,2676-2677 | documents lumen-gentium,redemptoris-mater,marialis-cultus",
 			"note": "Was C: the keywords named _immaculate conception_, _perpetual virginity_ and _brothers of jesus_, and not one of the seventeen anchored paragraphs said any of it — 966 mentions the Immaculate Virgin in passing and that was all. Fixed 2026-09-10 with 491–492 and 499–500, the last of which opens “Against this doctrine the objection is sometimes raised that the Bible mentions brothers and sisters of Jesus” and answers it. 970 and 971 were already carrying the question itself: Marian devotion “differs essentially from the adoration” given to God. The prayer block was cut to 2676–2677, the Ave Maria taken line by line, since a reader asking why she is given so much is owed the prayer rather than its history. The first topic to carry a `brief` (2026-09-11), being the longest page in the file at sixteen paragraphs and the one most often met by somebody who did not come to read sixteen. The five are the Catechism’s own IN BRIEF paragraphs and are ordered as the answer rather than as the work: 509 first, because it is the reason for the other four — “Mary is truly ‘Mother of God’ since she is the mother of the eternal Son of God made man, who is God himself” — then 508 on the Immaculate Conception, 510 on the perpetual virginity and 974 on the Assumption, which are the three claims the question is usually an objection to, and 2682 last because it answers what _giving her so much_ actually is: the Church “loves to pray IN COMMUNION WITH the Virgin Mary”. None of the five is inside this topic’s own spans, which is the ordinary case — an article’s summary sits outside the span a topic took out of that article — and the sync refuses one that is not."
 		},
 		"sancti-et-imagines": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 954-959,828,1159-1162,2129-2132",
 			"note": "956 and 957 answer the question and 2132 answers it twice over — the honour paid to an image is “not the adoration due to God alone”. Was C on _canonisation_, a keyword with no anchored sentence; 828 was added 2026-09-10. Also diluted: 946–953 is communion in faith, sacraments, charisms and goods, ten paragraphs a reader asking about idolatry would read before reaching the intercession of the saints, and the span now opens at the Catechism’s own heading _The communion of the Church of heaven and earth_."
 		},
@@ -133,42 +130,36 @@
 		"primatus-romani-pontificis": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 880-885,890-892 | documents pastor-aeternus,lumen-gentium,ut-unum-sint",
 			"note": "881 and 882 are the rock, the keys and the full, supreme and universal power, and 883–885 answer “why one man” by saying he is not alone — the college has supreme authority too, and not without its head. Was C: _infallibility_ was a keyword with no paragraph. Fixed 2026-09-10 with 890–892, which is also where the limits are: 892 is the ordinary Magisterium, taught “without arriving at an infallible definition”. Diluted at the other end: 886–887 is individual bishops, patriarchates and episcopal conferences, and was dropped. 890–892 is also on `papa-reprehensus`, which needs it for the opposite question; the sets differ."
 		},
 		"traditio-et-scriptura": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 74-86 | documents dei-verbum",
 			"note": "82 is the sentence the question asks for: the Church “does not derive her certainty about all revealed truths from the holy Scriptures alone”, and 83 adds that the first generation of Christians did not yet have a written New Testament. Was C: _deposit of faith_ and _magisterium_ were keywords and the span stopped at 83. Widened 2026-09-10 to 86, which is the disarming half — “this Magisterium is not superior to the Word of God, but is its servant”. Stops at 86: 87 is addressed to the faithful receiving their pastors with docility, and this reader is not one of them. 84–86 is shared with `concilium-vaticanum-secundum`."
 		},
 		"iustificatio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1987-1995,2005-2011",
 			"note": "The question is whether Catholics think they earn heaven and 2007 answers it flatly — “there is no strict right to any merit on the part of man” — with 2010 and Thérèse’s empty hands at 2011 behind it. Was C on _once saved always saved_, which had no anchored sentence; 2005 was added 2026-09-10 and is the exact one: grace “cannot be known except by faith”, we cannot rely on our feelings or our works to conclude that we are saved, and Joan of Arc’s answer to the trap. No document: the corpus has no decree of Trent and no joint declaration."
 		},
 		"confessio-sacerdoti": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1441-1449,1454-1456 | canons 983-984 | documents reconciliatio-et-paenitentia",
 			"note": "1441 answers the question in two sentences — only God forgives sins, and he gives this power to men to exercise in his name — and the canons answer the fear behind the keywords by making the seal inviolable. Was C: _examination of conscience_ and _telling a man my sins_ were keywords with nothing behind them. Fixed 2026-09-10 with 1454–1456, where 1455 is the human argument (disclosure “frees us”) and 1456 the reason it is said aloud: “if the sick person is too ashamed to show his wound to the doctor, the medicine cannot heal what it does not know.” Shared with `scrupulositas` and `reditus`, which need those paragraphs for a reader already inside the confessional rather than outside it."
 		},
 		"eucharistia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1338-1339,1373-1381 | documents eccl-de-euch,sacramentum-caritatis",
 			"note": "1374–1377 answers “is it bread, or is it not” about as directly as the Catechism answers anything, transubstantiation named and defined at 1376. Was C on _last supper_: the words the whole question turns on — “This is my body which is given for you” — were on no page here. Fixed 2026-09-10 with 1338–1339, which now open it, so the reader meets the claim in Christ’s words before meeting the Church’s account of them."
 		},
 		"unitas-christianorum": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 816-822,838 | documents unitatis-redintegratio,ut-unum-sint",
 			"note": "817 says the rifts arose with “men of both sides to blame” and 818 says those born into those communities cannot be charged with the separation and have a right to be called Christians, which is the answer and the tone. Was C: _one true church_ and _orthodox_ were keywords with no anchored sentence. Widened 2026-09-10 to 816, the _subsistit in_ paragraph directly above the old anchor, and 838, which says of the Orthodox Churches that the communion “lacks little to attain the fullness that would permit a common celebration of the Lord’s Eucharist”."
 		},
@@ -181,14 +172,12 @@
 		"papa-reprehensus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 888-892,907 | canons 212 | documents donum-veritatis,mysterium-ecclesiae",
 			"note": "Was C, and the miss was the question’s own verb: 888–892 says what is protected and what gets religious assent, and nothing anchored said a Catholic may say anything at all. Fixed 2026-09-10 with can. 212, which carries both halves in one canon — §1 the obedience owed to pastors who represent Christ, §3 the right “and even at times the duty” to manifest an opinion on matters pertaining to the good of the Church, and to make it known to the rest of the faithful — and CCC 907, the same sentence in the Catechism. The canon is the better half because the reader’s word here is a legal one."
 		},
 		"dissensus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1783-1794,2038-2039 | lead 1790 | documents donum-veritatis",
 			"note": "1790 is the sentence this reader came for — “a human being must always obey the certain judgment of his conscience” — and 1791–1793 are the qualification, in the Catechism’s order and not ours. It sat ninth on the page; `lead` moves it first as of 2026-09-10. Was C on _obey the church_ and _private judgment_, which had no anchored text: 2039 now says conscience “should not be set in opposition to the moral law or the Magisterium”, and 2038 is the half that keeps it from being one-sided — the Holy Spirit “can use the humblest to enlighten the learned and those in the highest positions”."
 		},
@@ -207,28 +196,24 @@
 		"synodalitas": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 874-879,887,894-896,907,910 | documents lumen-gentium,christifideles-laici,pastores-gregis",
 			"note": "877–879 answers who decides — the ministry is collegial and personal at once — and 894–895 says the bishops’ power is “proper, ordinary, and immediate” and that they “should not be thought of as vicars of the Pope”. Was C: _synod_, _laity_ and _consultation_ were keywords with no anchored sentence. Fixed 2026-09-10 with 887, the only paragraph in the Catechism that says synods and episcopal conferences, and 907 and 910 for the laity — the right to be heard, and the call to cooperate through ministries. 887 was dropped from `primatus-romani-pontificis` in the same pass, where it was dilution and here is the answer."
 		},
 		"mulieres-in-ecclesia": {
 			"grade": "B",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 369-370,903,906-907,910 | documents collaboration-of-men-and-women,inter-insigniores",
 			"note": "Was C and a door mismatch: the question is whether the Church is run by men for men, and the anchor was 369–373 on man and woman in creation — 372 is about marriage and transmitting life, addressed to a different reader entirely. Re-anchored 2026-09-10 on 369 and 370 (equal dignity, and “in no way is God in man’s image. He is neither man nor woman”, which is the answer to _patriarchy_) and on what lay people may actually do: 903 for lector and acolyte, 906 for teaching the sacred sciences, 907 for the right to be heard, 910 for ministries. B because none of those says _woman_: the Catechism has no passage on women in the Church’s governance, and the CDF letter carries it. Ordination is `ordinatio-mulierum`."
 		},
 		"charismata": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 799-801,2003,1508",
 			"note": "“Was what I felt from God” is answered by 800 and 801 in their own words — accepted with gratitude “provided they really are genuine gifts”, and “no charism is exempt from being referred and submitted to the Church’s shepherds” — with charity named as the measure. 2003 already carried _tongues_. Was C on _faith healing_; 1508 was added 2026-09-10, and it is the honest one: a special charism of healing exists, and “even the most intense prayers do not always obtain the healing of all illnesses”. Shared with `aegritudo`. No document: nothing in the corpus is addressed to the charismatic renewal."
 		},
 		"caritas": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1766,1604,1822-1829 | csdc 204-206 | documents deus-caritas-est",
 			"note": "Was C: the question is a couple saying they love each other, and the keywords named _eros_, _romantic_ and _feelings_, while every anchored paragraph treated charity as a theological virtue already possessed. Fixed 2026-09-10 with 1766, “to love is to will the good of another”, which is the sentence that separates love from a feeling, and 1604, love as “the fundamental and innate vocation of every human being”. 1824 was already carrying the rest — charity “keeps the commandments of God and his Christ”. Was also diluted: CSDC 207–208 is social and political charity, legislation and structures and worldwide poverty, and was dropped; 204 stays because its first sentence is this reader’s premise stated as an error — love “often restricted to relationships of physical closeness or limited to merely subjective aspects”."
 		},
@@ -241,14 +226,12 @@
 		"fecundatio-artificialis": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2373-2377,2275 | documents donum-vitae,dignitas-personae,dignitas-infinita",
 			"note": "2374 opens where this reader is — “couples who discover that they are sterile suffer greatly” — and 2376 and 2377 give the two judgements and the reason for each, including that homologous technique is “perhaps less reprehensible, yet remain[s] morally unacceptable”. Was C on _frozen embryos_: 2275 says embryos may not be produced “intended for exploitation as disposable biological material” and was sitting on `abortus`, where it was dilution; moved 2026-09-10. That also ended the subset relation with `sterilitas`."
 		},
 		"concubinatus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2350,2353,2390-2391 | documents persona-humana",
 			"note": "2391 answers the question as asked — the “right to a trial marriage”, and why the Catechism says human love does not tolerate one — and 2390 states what a free union is and is not. Was C on _fornication_, which is a keyword and appears in exactly one paragraph: 2353, added 2026-09-10."
 		},
@@ -266,9 +249,9 @@
 		},
 		"identitas-sexualis": {
 			"grade": "B",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 2331-2334 | documents dignitas-infinita,collaboration-of-men-and-women",
-			"note": "CCC 2333 — “everyone, man and woman, should acknowledge and accept his sexual identity” — is the only sentence in the Catechism that bears on the question, and 2332 is the one that says sexuality concerns the person “in the unity of his body and soul”. B because that is all there is: the article was written in 1992 and the question was not being asked of it, and _dignitas-infinita_ (2024) is the only text in the corpus that takes up gender theory and transition in its own terms — a document, so it is named and not quoted. Was diluted: 2335 is marriage and one flesh and 2336 is adultery and lust, and a reader who arrived asking what the Church says about being trans was reading neither of their questions. Narrowed 2026-09-10."
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 2331-2334 | csdc 224 | documents dignitas-infinita,collaboration-of-men-and-women",
+			"note": "Re-read 2026-09-11, after a search of the four quoted works for the words this file had claimed were not in them. THE OLD NOTE'S REASON WAS FALSE AND NOBODY HAD LOOKED: it said _dignitas-infinita_ was “the only text in the corpus that takes up gender theory and transition in its own terms — a document, so it is named and not quoted”. CSDC 224 takes up the first half in its own terms and is quotable. It opens on “theories that consider gender identity as merely the cultural and social product of the interaction between the community and the individual, independent of personal sexual identity”, and answers them by quoting CCC 2333 — the sentence this topic already anchored bare. So the keyword _gender theory_ has text under it for the first time, and the Catechism's sentence arrives with the position it was set against. B and not A, for a reason the old note could not reach: 224 answers the THEORY, and the page still has nothing addressed to the person. Its own last sentence turns to positive law and the forming of a couple in marriage, which is a third subject again. _Dignitas Infinita_ (2024) is what speaks to the reader who asked, and it is a document. Was diluted: 2335 is marriage and one flesh and 2336 is adultery and lust, and a reader who arrived asking what the Church says about being trans was reading neither of their questions. Narrowed 2026-09-10."
 		},
 		"ordinatio-mulierum": {
 			"grade": "A",
@@ -296,28 +279,25 @@
 		},
 		"poena-capitalis": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 2266-2267 | documents fratelli-tutti",
-			"note": "The one topic in the corpus whose question is about a change, and the text answers it itself: 2267 as revised in 2018 opens “was long considered an appropriate response” and closes on inadmissibility, so the reader is shown the change inside the paragraph rather than told about it. Note that CSDC 405, on `carceres`, still states the pre-2018 position and is kept there deliberately — see the open question in docs/research/topic-anchor-review.md."
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 2266-2267 | documents revision-of-catechism-2267,fratelli-tutti",
+			"note": "The one topic in the corpus whose question is about a change, and the text answers it itself: 2267 as revised in 2018 opens “was long considered an appropriate response” and closes on inadmissibility, so the reader is shown the change inside the paragraph rather than told about it. THE INSTRUMENT ITSELF WAS IN THE CORPUS AND ON NO PAGE, found 2026-09-11: `revision-of-catechism-2267` is the rescript recording that Francis approved the new text in the audience of 11 May 2018 and ordered it inserted in every edition. It is named first, ahead of _Fratelli Tutti_, because it is what the question asks for — the reader who wants to know what changed is owed the act that changed it, dated, before the encyclical that argues from the result. It had no description, which is why nothing could name it: `quaestiones.json` checks every document slug against descriptions.json, so an undescribed document is unnameable by construction, and the shelf is bigger than the described set. Note that CSDC 405, on `carceres`, still states the pre-2018 position and is kept there deliberately — see the open question in docs/research/topic-anchor-review.md."
 		},
 		"castitas": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2337-2351,2520 | documents persona-humana",
 			"note": "2348 and 2349 answer “of whom” exactly — all the baptized, in the way suited to their state of life, in three forms none of which is praised to the exclusion of the others — and 2337–2347 answer “what”. Was C on _purity_, _modesty_ and _impurity_: the whole of the Catechism’s ninth-commandment article was on no topic at all. 2520 on how purity is won was added 2026-09-10; 2521–2522 on modesty were added the same day and moved to `verecundia` hours later, when the ninth commandment was thickened and modesty got the page it had been promised on this one. The keyword _modesty_ went with them, since a page that no longer prints a modesty paragraph should not be what the word routes to. 2351 was picked up for _lust_, the only paragraph that defines it."
 		},
 		"mendacium": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2475-2489",
 			"note": "2484 answers the question in one sentence — a lie is venial in itself and becomes mortal when it does grave injury to justice and charity — and 2477 supplies the words the keywords promise: rash judgment, detraction, calumny. Was C on _secrets_ and _mental reservation_, which the span stopped one paragraph short of. Widened 2026-09-10 to 2489: “no one is bound to reveal the truth to someone who does not have the right to know it”, which is also the counterweight the page needed to 2485. 2488–2489 are shared with `violentia-digitalis`. No document: nothing in the corpus is addressed to truthful speech as such."
 		},
 		"capitalismus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2402-2407 | csdc 176-178,181,347-349 | documents rerum-novarum,quadragesimo-anno,centesimus-annus",
 			"note": "The question is answered by being refused in both directions, and the reader can see it: CSDC 176 defends private property as “an extension of human freedom” and 177 says the tradition “has never recognized the right to private property as absolute and untouchable”. Was C on _free market_, a keyword with no anchored section — the whole anchor was property and not markets. Fixed 2026-09-10 with CSDC 347–349, which appreciate the market as “the most efficient instrument for utilizing resources” and then name “the risk of an ‘idolatry’ of the market”. 179–180 were dropped as the extension to new goods and to indigenous community property; 181 stays for _greed_."
 		},
@@ -360,14 +340,12 @@
 		"sub-imperio-atheo": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2471-2473,2242-2243 | documents divini-redemptoris,mit-brennender-sorge,ecclesia-in-asia",
 			"note": "Was C on the first half of its own question. “May a Catholic hide it” had no anchored sentence: 2242 and 2243 answer only “must they refuse”, and the paragraph that answers the other is 2471 — “in situations that require witness to the faith, the Christian must profess it without equivocation”. Added 2026-09-10 with 2472 and 2473, the latter being _martyrdom_, a keyword that had nothing behind it either. 2471–2473 now open the page and 2242–2243 follow, which is the order the question asks them in."
 		},
 		"civitas-catholica": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2244-2246,2105-2107 | csdc 424-427 | documents immortale-dei,libertas,quas-primas,dignitatis-humanae",
 			"note": "Was C, and the missing paragraphs were the ones this reader arrives quoting: 2105 states “the traditional Catholic teaching on the moral duty of individuals and societies toward the true religion and the one Church of Christ”, and 2107 states what follows if a state does give one religious community special civil recognition — the religious freedom of all must still be recognized. Both were on `libertas-religiosa` and neither was here. Added 2026-09-10. 2245 was already carrying the other side: the Church “is not to be confused in any way with the political community”."
 		},
@@ -380,7 +358,6 @@
 		"oecologia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 339,344,2415-2418 | csdc 466-471 | documents laudato-si,laudate-deum",
 			"note": "Was C on _creation_: three of the four anchored paragraphs were about animals — kindness to them, experimentation on them, not spending on them what the poor need — and a reader asking why any of this is the Church’s business got St Philip Neri. The reason is at 339, which was on no topic: each creature “reflects in its own way a ray of God’s infinite wisdom”, and disordered use of things “would bring disastrous consequences for human beings and their environment”, written in 1992. Added 2026-09-10 with 344, the Canticle of the Creatures. _Climate change_ and _global warming_ have no Catechism text and are not going to; the Compendium block and _laudato-si_ carry them."
 		},
@@ -405,7 +382,6 @@
 		"iudaismus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 839-840,597-598 | documents nostra-aetate",
 			"note": "839 is the answer and it is unambiguous — “the gifts and the call of God are irrevocable”, and the Jewish faith “unlike other non-Christian religions, is already a response to God’s revelation”. Was C on _deicide_ and _antisemitism_, keywords with no anchored sentence anywhere in the file. Fixed 2026-09-10 with 597, which says neither the Jews of Jerusalem as a whole nor Jews of other times can be charged, quoting the Council directly, and 598, which turns it round: the Church “does not hesitate to impute to Christians the gravest responsibility for the torments inflicted upon Jesus, a responsibility with which they have all too often burdened the Jews alone”. A page on this question that omits 597 is a page that leaves the accusation standing."
 		},
@@ -418,7 +394,6 @@
 		"salus-extra-ecclesiam": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 842-848,1258-1260 | documents redemptoris-missio,dominus-iesus",
 			"note": "846 states the hard sentence and 847 immediately says whom it is not aimed at, which is the pair a reader asking about everyone who is not Catholic needs to meet in that order. Was C on _baptism of desire_, a keyword with no anchored sentence; 1258–1260 added 2026-09-10 — baptism of blood, the catechumen who dies before baptism, and every man ignorant of the Gospel who seeks the truth and does God’s will as he understands it. Shared with `infans-non-baptizatus`, which needs them for one particular grief."
 		},
@@ -431,7 +406,6 @@
 		"inculturatio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 843,854,1204-1206 | documents slavorum-apostoli,redemptoris-missio,querida-amazonia",
 			"note": [
 				"Was C: the question is whether a convert must give up the customs they were raised in, and the anchor was 1200–1206 on the liturgical rites of the Church — Ambrosian, Byzantine, Coptic, Maronite — which is a catalogue and not an answer. Re-anchored 2026-09-10 on 843, goodness and truth in other religions as “a preparation for the Gospel”; 854, the only paragraph that uses the word — mission “must involve a process of inculturation if the Gospel is to take flesh in each people’s culture”; and 1204–1206, where cultures are “not abolished by it, but redeemed and fulfilled”, some parts may be adapted and some may not, and adaptation “requires a conversion of heart”. That last clause is why _syncretism_ needs no separate paragraph."
@@ -440,14 +414,12 @@
 		"polygamia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1645,2387 | canons 1148 | documents familiaris-consortio,ecclesia-in-africa,africae-munus",
 			"note": "2387 opens on the reader’s own predicament — a man “obliged to repudiate one or more wives with whom he has shared years of conjugal life” — and ends on the grave duty in justice toward them. Was C on _pauline privilege_, and on the question’s own words: what BECOMES of the other wives is a procedure, and procedures are the Code’s. Added 2026-09-10: can. 1148, which lets a man who receives baptism retain one wife “if it is hard for him to remain with the first one” and tells the local ordinary to keep the moral, social and economic conditions of the place in view."
 		},
 		"superstitio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2110-2114,2117 | documents ecclesia-in-america,africae-munus",
 			"note": "2111 answers the question by drawing the line inside religion rather than outside it: superstition “can affect the worship we offer the true God”, when one attributes efficacy to prayers or sacramental signs “in their mere external performance”. Was C on _charms_, _spells_, _witchcraft_ and _blessing away an illness_, none of which had a sentence. Added 2026-09-10: 2117, which names charms, sorcery “even if this were for the sake of restoring their health”, and “so-called traditional cures”. Only 2117 and not 2115–2117: horoscopes and mediums are `divinatio`, and taking the run whole made that topic a strict subset of this one, which is the state the file’s own rule exists to prevent."
 		},
@@ -514,21 +486,18 @@
 		"nullitas-matrimonii": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1629,1650-1651 | canons 1095,1103,1671-1673 | documents familiaris-consortio",
 			"note": "Was C: \"Am I still married?\" was answered with venue rules — which tribunal is competent — and never with the grounds, though _defect of consent_ is a keyword. Fixed 2026-09-10 with can. 1095 and 1103."
 		},
 		"communio-post-divortium": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1650-1651,1385 | canons 915-916 | documents familiaris-consortio,amoris-laetitia",
 			"note": "Was C and a strict subset of `nullitas-matrimonii`: two shared paragraphs and nothing of its own. Fixed 2026-09-10 with CCC 1385, the general rule 1650 applies, and can. 915–916, where the reader can see they are not the excommunicated case."
 		},
 		"graviditas": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2270,1261 | documents quaestio-de-abortu,donum-vitae",
 			"note": "Was C, and the worst door mismatch found: a page titled _Pregnancy and miscarriage_ whose second paragraph called abortion an abominable crime. 2271 dropped and 1261 added 2026-09-10."
 		},
@@ -547,21 +516,18 @@
 		"educatio-filiorum": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2217,2230,2225-2226,2229 | csdc 238-243 | canons 226,793 | documents gravissimum-educationis,divini-illius-magistri,catechesi-tradendae",
 			"note": "Was C: every anchor was the parents' duty to teach, and the question is what to do when the child refuses. 2217 and 2230 added 2026-09-10 — the child at home, and the adult who chooses."
 		},
 		"filius-a-fide-lapsus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2221-2231,1730-1732 | documents familiaris-consortio",
 			"note": "Was C: \"Where did we go wrong?\" was answered with eleven paragraphs on what parents owe, which reads as the indictment. CCC 1730–1732 added 2026-09-10 — _man is the father of his acts_."
 		},
 		"parentes": {
 			"grade": "B",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2214-2220,2232 | documents familiaris-consortio",
 			"note": "Was C: nothing met _abusive mother_ or _cut them off_. 2232 added 2026-09-10 — _family ties are important but not absolute_ — though its own context is vocation. No paragraph addresses an abusive parent."
 		},
@@ -580,7 +546,6 @@
 		"pornographia": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2354,2351-2352,2342,1735 | documents persona-humana",
 			"note": "Was C: three paragraphs of definition and nothing on \"not being able to stop\", while the keywords opened on _addiction_. Fixed 2026-09-10 with 2342 (self-mastery is never acquired once and for all) and 1735."
 		},
@@ -599,7 +564,6 @@
 		"post-contraceptionem": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1735,2370,2399,1451-1453 | documents humanae-vitae,familiaris-consortio",
 			"note": "Was C twice over: no anchored text said the word _sterilisation_, and \"what now?\" was answered only by 2370, which is `contraceptio`'s own teaching restated. Fixed 2026-09-10 with 2399 and 1451–1453."
 		},
@@ -612,28 +576,24 @@
 		"remissio-peccatorum": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 982,1846-1848,1864 | documents dives-in-misericordia,reconciliatio-et-paenitentia",
 			"note": "Was C: CCC 982 answers \"too grave to be forgiven\" in its first line, and the keyword _sin against the holy spirit_ had nothing at all. Fixed 2026-09-10 with 1864, which quotes Mt 12:31 and then says what the refusal actually is."
 		},
 		"reditus": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1439,1455-1458,1465 | documents reconciliatio-et-paenitentia",
 			"note": "Was C, and a strict subset of `scrupulositas` besides: 1455–1458 is what confession requires, including the annual obligation this reader has not kept. Fixed 2026-09-10 with 1439 (the prodigal son, the journey back, the welcome) and 1465 to close."
 		},
 		"scrupulositas": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1454-1460,1735 | lead 1456",
 			"note": "Was C by ordering alone: the page opened on 1454, _prepare by an examination of conscience_, which is the one thing this reader cannot stop doing. `lead` 1456 now opens on the answer — _strive to confess all the sins that they can remember_ — 2026-09-10."
 		},
 		"post-abortum": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 1468-1470,2272,1463 | canons 1357 | documents evangelium-vitae",
 			"note": "Was C: 2272 named the excommunication and nothing said it could be lifted. Fixed 2026-09-10 with CCC 1463 and the topic's first canon, 1357, where a confessor may remit it in the internal forum."
 		},
@@ -670,14 +630,12 @@
 		"dubium-fidei": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 162-165,2088-2089,2731 | documents spe-salvi",
 			"note": "Was C: nothing anchored said faith is ever dark. Fixed 2026-09-10 by widening 162 to the Catechism's own 162–165 and adding 2731 on dryness."
 		},
 		"amor-dei": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 604-605,218-221 | documents dilexit-nos,dives-in-misericordia",
 			"note": "Was C: 218–221 is God's love for **Israel**, and the reader's whole objection is that it applies to everyone but them. Fixed 2026-09-10 with CCC 604–605 anchored ahead of it, which also retired the `lead`."
 		},
@@ -720,14 +678,12 @@
 		"daemones": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 391-395,550,1673 | lead 1673",
 			"note": "Was C by ordering: \"Does the Church still do that?\" was answered in the seventh paragraph. `lead` 1673 set 2026-09-10."
 		},
 		"angeli": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 328-336 | lead 336",
 			"note": "Was C by ordering: the guardian angel is 336, last of nine. `lead` 336 set 2026-09-10."
 		},
@@ -758,7 +714,6 @@
 		"oratio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2559-2565,2700-2708,2709-2712,2729-2731 | documents spe-salvi,mens-nostra",
 			"note": "Was C: the Catechism gives three expressions of prayer and the topic carried two, while _contemplation_ and _mental prayer_ were keywords. 2709–2712 added 2026-09-10."
 		},
@@ -837,14 +792,12 @@
 		"associationes-massonicae": {
 			"grade": "A",
 			"reviewed": "2026-09-11",
-			"was": "D",
 			"anchors": "editorial | ccc 2088,1385 | csdc 567 | canons 1374,915,6,1315 | documents declaration-on-masonic-associations,catholics-who-join-masonic-associations",
 			"note": "New 2026-09-11. Was D and blocked on the ground that the operative statement — the CDF’s 1983 declaration — was absent. It arrived that day with the 1981 declaration beside it, and the row expired as it was written to. THE CODE NAMES A CATEGORY AND NOT A BODY, AND THAT IS THE TEACHING RATHER THAN A GAP IN IT. This page was built twice on the opposite reading — that can. 1374 \"does not name Masonry, which is the whole difficulty\" — and _Quaesitum est_ refutes it in its own first sentence: the omission \"is due to an editorial criterion which was followed also in the case of other associations likewise unmentioned inasmuch as they are CONTAINED IN WIDER CATEGORIES\". Name the body and the name becomes the thing forbidden, and a reader may join an association identical in praxis under another label and believe themselves clear. So \"an association which plots against the Church\" is deliberately wider than \"Freemasonry\", and CSDC 567 states a second category the same way — \"reject all secret organizations that seek to influence or subvert the functioning of legitimate institutions\". Neither is coy. Both are drawn at the level a rule has to be drawn at to be a rule about conduct. THE FIRST TOPIC TO CARRY `editorial`, AND THAT IS WHAT MOVED IT TO AN A. What was missing while it was a B is the sentence saying who decides whether a given lodge falls in the category, and a second thing no anchor could supply: that the penalty changed in 1983 and the judgement did not. A canon does not print the penalties it declines to impose, so a reader arriving certain the answer is automatic excommunication could read every quoted text here and find nothing that contradicts them — the corpus is silent in exactly the shape of the error. That is the test `site/quaestiones.json` sets for the field and this topic is the first to meet it. The paragraph is disclosed by its heading, which names this site where every other block on the page is headed by the work it quotes, and every claim in it is checkable against a text printed below it or against a date. It says nothing about Freemasons: the subject is the claims in circulation, which is both the defensible form and the one that actually corrects somebody who holds them. The old B reasoning, kept because the field does not repeal it: the sentence saying who decides The reader may not — _Quaesitum est_ reserves that from local ecclesiastical authorities, let alone from the member — and that sentence is in a document this site can only LINK, because the declaration is one paragraph of unnumbered text with no addressable unit (`sections: 0`; the body is in appendix.json). Without it, a reader who gets as far as can. 1374 and judges their own lodge harmless has made exactly the error the years after 1983 are a record of. The gap is structural, not doctrinal, and not a missing word. The four canons are ordered as one argument. can. 1374: what the Code says about joining — a just penalty, an interdict for promoting or leading, no censure incurred by the act itself. can. 915: the bar to Communion reaches the reader down the second branch of its own sentence, \"others obstinately persevering in manifest grave sin\", which is why the Declaration needed no penalty to bar them. can. 6 §1: why the old penalty is gone — the 1917 Code and \"any universal or particular penal laws whatsoever issued by the Apostolic See unless they are contained in this Code\". Nothing weaker answers the reader, because the absence of a penalty from can. 1374 is not visible as an absence. can. 1315 §2: and why the answer can still differ where they live — a lower legislator may \"add other penalties to those laid down for a certain offence in a universal law\" and \"determine or make obligatory a penalty which a universal law establishes as indeterminate\", which is precisely what can. 1374’s \"just penalty\" is. Lincoln legislated latae sententiae excommunication in 1996 and Rome confirmed the legislation’s validity in 2006; the Philippine conference decreed an interdict in 2002. A page that said flatly \"not excommunication\" would be wrong for those readers. CAN. 6 IS ALSO WHAT MAKES THE 1981 DECLARATION SAFE TO NAME. It says in terms that \"neither the excommunication nor the other penalties are abrogated\" — true of the 1917 canon it names, and said \"without prejudice to the eventual norms of the new Code\" — so a reader opening it from an undated title is confirmed in the error this page exists to undo. The page prints no dates (PLAN.md gap 19). Dropping it is worse: it is the document that explains where the confusion came from. Give the reader the key rather than hide the lock. CCC 2088 is the ground — \"to nourish and protect our faith with prudence and vigilance, and to reject everything that is opposed to it\" — and 1385 the consequence in the Catechism’s own words. 2089 was deliberately not taken though it is the next paragraph: it defines heresy, apostasy and schism, which carry the one latae sententiae excommunication still in universal law (can. 1364), and attaching that to membership is the error rather than the answer — a person whose involvement really is apostasy incurs it FOR THE APOSTASY. Leo XIII’s encyclicals are in the corpus and are deliberately not named: a page built on them would answer a 2026 reader in the vocabulary of 1884. The CDF’s 1985 reflection (the \"supraconfessional humanitarian\" reading of the Masonic symbol system) is NOT in the corpus and is the one text that would deepen this page; it is supplementary rather than operative, since the 2023 DDF note reaffirms 1983 and not 1985."
 		},
 		"vocatio": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2013-2016,1533-1535,898-900,2233 | csdc 541-543 | documents christus-vivit",
 			"note": "Was C and the clearest case of a title read as an oracle: CCC 1877–1889 says \"vocation\" and means subsidiarity and socialisation. Replaced 2026-09-10 with 2013–2016, 1533–1535, 898–900 and 2233."
 		},
@@ -863,9 +816,14 @@
 		"pecunia-collocanda": {
 			"grade": "A",
 			"reviewed": "2026-09-11",
-			"was": "B",
 			"anchors": "ccc 2409,2413,2431-2432 | csdc 368-369 | documents caritas-in-veritate,oeconomicae-et-pecuniariae-quaestiones",
-			"note": "Graded A on 2026-09-10 after 2409 and 2413 arrived; re-read on 2026-09-11 and the A was about three fifths of the page — CSDC 358–360 is the consumer's chapter and was answering nobody's question here. It moved to `pecunia-expendenda` and 2409 now opens, being the paragraph that names speculation and usury and so the one the title promises. 2413 (games of chance) is kept rather than made a topic: measured, it is the ONLY paragraph on gambling in the Catechism and the Compendium of the Social Doctrine has nothing at all, so a page of its own would be one paragraph long."
+			"note": "Graded A on 2026-09-10 after 2409 and 2413 arrived; re-read on 2026-09-11 and the A was about three fifths of the page — CSDC 358–360 is the consumer's chapter and was answering nobody's question here. It moved to `pecunia-expendenda` and 2409 now opens, being the paragraph that names speculation and so the one the title promises. 2413 (games of chance) is kept rather than made a topic: measured, it is the ONLY paragraph on gambling in the Catechism and the Compendium of the Social Doctrine has nothing at all, so a page of its own would be one paragraph long. 2409 DOES NOT NAME USURY, which this row said twice and the dictionary said in a comment. Its lending clause is “deliberate retention of goods lent”, the borrower who does not give it back, and no paragraph on this page contains the word. The four keywords resting on that reading — _usury_, _interest_, _loans_, _lending_ — moved to `usura` on 2026-09-11, where the texts say them. The anchor set is untouched, so the drift check could not have caught this: a keyword is not in the signature."
+		},
+		"usura": {
+			"grade": "B",
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 2269,2449 | csdc 341,450 | documents oeconomicae-et-pecuniariae-quaestiones,sollicitudo-rei-socialis",
+			"note": "New 2026-09-11, released from the blocklist in `docs/research/topics.md`, where _debt and interest_ waited on _Vix Pervenit_. THAT DOCUMENT IS STILL ABSENT AND WAS NEVER WHAT THE ROW TURNED ON. CSDC 341 condemns usury by name and in the present tense — “Although the quest for equitable profit is acceptable in economic and financial activity, recourse to usury is to be morally condemned” — extends it to international relations, and closes on “a scourge that is also a reality in our time and that has a stranglehold on many peoples' lives”. CCC 2269 is the Catechism's own sentence, inside the fifth commandment: those whose “usurious and avaricious dealings lead to the hunger and death of their brethren in the human family indirectly commit homicide, which is imputable to them”. 2449 is where the Church remembers what Israel legislated — “the jubilee year of forgiveness of debts, prohibition of loans at interest and the keeping of collateral” — and is `paupertas`'s too, which is allowed: this page is not a subset of it, 2269 being outside 2443–2449. CSDC 450 is the debt crisis of poor countries; 449 next to it stays on `paupertas`. B because the question is whether charging interest is a sin and no anchored sentence draws the line: 341 permits equitable profit and forbids usury in one breath and never says where the first becomes the second. _Vix Pervenit_ (1745) is the text that does, and on that half the blocklist row was right. WHO IS STILL NOT SERVED IS THE PERSON WHO OWES MONEY AND CANNOT PAY. CSDC 450 is about indebted NATIONS and 2449's jubilee is an Old Testament measure recalled as almsgiving's ancestor; nothing here is addressed to them. That is why the title reads _Lending and usury_ rather than _Debt_ — the card has to tell them in one line that this is the lender's page, since `international debt` is a keyword and the search matches on substrings."
 		},
 		"tributum": {
 			"grade": "A",
@@ -900,14 +858,12 @@
 		"violentia-domestica": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2356,1649 | canons 1153-1154 | documents dignitas-infinita",
 			"note": "Was C and the most consequential: one paragraph, about rape, and nothing telling a reader being beaten that they may leave. CCC 1649 and can. 1153–1154 added 2026-09-10."
 		},
 		"violentia-digitalis": {
 			"grade": "A",
 			"reviewed": "2026-09-10",
-			"was": "C",
 			"anchors": "ccc 2477-2479,2488-2492 | documents dignitas-infinita,antiqua-et-nova",
 			"note": "Was C: privacy was anchored at 2488–2492 and reputation, which the title promises, was not. 2477–2479 added 2026-09-10 — detraction and calumny, which is what _gossip_ and _cancelling_ are."
 		},
@@ -919,9 +875,9 @@
 		},
 		"carceres": {
 			"grade": "B",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 2297-2298 | csdc 402-405 | documents fratelli-tutti",
-			"note": "CSDC 402–404 answers what may be done to an offender, and 405 states the death-penalty teaching as it stood before CCC 2267 was revised in 2018. Both are kept: choosing between two magisterial texts is not this file’s to do. B because the reader is shown the older position with nothing on the page saying when either was written — see the open question in docs/research/topic-anchor-review.md."
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 2297-2298 | csdc 402-405 | documents revision-of-catechism-2267,fratelli-tutti",
+			"note": "CSDC 402–404 answers what may be done to an offender, and 405 states the death-penalty teaching as it stood before CCC 2267 was revised in 2018. Both are kept: choosing between two magisterial texts is not this file’s to do. The rescript was added 2026-09-11 and is named first, so a page whose Compendium block ends on the older position at least carries the title of the act that superseded it. B STILL, AND THE REMAINING GAP IS NARROWER THAN IT WAS: a title says a revision happened and does not say that the paragraph above it predates the revision, nor which way it went. That needs a date beside each block, which no topic page prints (PLAN.md gap 19) — see the open question in docs/research/topic-anchor-review.md. The reader who follows the link gets it in one sentence; the reader who does not is where the B lives."
 		},
 		"defensio-sui": {
 			"grade": "A",

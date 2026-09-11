@@ -7566,10 +7566,19 @@ CDF_DOCUMENTS = {
     ("2011-12-14", "prefazione-levada"): (
         "preface-to-the-norms-on-presumed-apparitions", "cdf-communication",
         "Preface to the Norms on Presumed Apparitions and Revelations"),
+    # NOT the Letter to the Bishops of the same day, which this row named
+    # until 2026-09-11 and which the corpus does not hold: that is
+    # `lettera-vescovi-penadimorte`, a different URL. `catechismo-penadimorte`
+    # is the rescript itself -- its own <title> reads "New revision of number
+    # 2267 ... - Rescriptum 'ex Audientia SS.mi'", and its whole body is one
+    # sentence recording the audience of 11 May 2018 followed by the new
+    # paragraph. A hand-written title in this table is the one piece of a
+    # document's metadata no parse can contradict, so it is also the one that
+    # can be wrong about which document it is.
     ("2018-08-01", "catechismo-penadimorte"): (
-        "revision-of-catechism-2267", "cdf-letter",
-        ("Letter to the Bishops on the New Revision of Number 2267 of the "
-         "Catechism of the Catholic Church on the Death Penalty")),
+        "revision-of-catechism-2267", "cdf-communication",
+        ("Rescript on the New Revision of Number 2267 of the Catechism of "
+         "the Catholic Church on the Death Penalty")),
     ("2021-10-11", "norme-delittiriservati-cfaith"): (
         "normae-de-delictis-reservatis", "cdf-norms",
         ("Norms on Delicts Reserved to the Congregation for the Doctrine of "

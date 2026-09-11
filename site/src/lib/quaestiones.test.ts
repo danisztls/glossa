@@ -467,7 +467,6 @@ describe('quaestiones-review.json', () => {
 			// this file gets to keep. A row left at C would be a to-do wearing a
 			// verdict's clothes.
 			expect(['A', 'B'], `${slug}: grade`).toContain(row.grade);
-			if (row.was !== undefined) expect(['B', 'C', 'D'], `${slug}: was`).toContain(row.was);
 			expect(row.note, `${slug}: note`).toBeTruthy();
 			expect(row.reviewed, `${slug}: reviewed`).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 		}

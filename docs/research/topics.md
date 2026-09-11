@@ -443,7 +443,6 @@ is what falls short.
 | Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                                     |
 | Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner             |
 | Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                            |
-| Debt and interest             | _Vix Pervenit_ absent                                                                                                                                |
 | Same-sex blessings            | _Fiducia Supplicans_ arrived 2026-09-11, so this row is now about the anchor rather than the corpus: CCC 2357–2359 is the teaching, not the blessing |
 
 The absent documents are to be acquired later, at which point the held topics
@@ -471,6 +470,30 @@ for n in orationis-formas vix-pervenit; do
 done
 ```
 
+**The document half is the half that gets checked, and it is not the half that
+was wrong.** _Debt and interest_ waited on _Vix Pervenit_, which is genuinely
+absent and still is. What the row never said, because no row has to, is that
+the works this site already quotes had nothing — and they did. CSDC 341
+condemns usury by name and in the present tense, CCC 2269 calls usurious
+dealings that starve the poor an indirect homicide, and CCC 2449 has Israel's
+own prohibition of loans at interest; none of the three was anchored anywhere,
+and the page was writable the whole time the row said it was not. A missing
+document is a fact about somebody else's shelf and reads like the whole reason.
+**Search the quoted works before filing a row, and say in the row what you
+searched for.** Each is flat text in one pass:
+
+```sh
+jq -r '.[] | "\(.n)\t" + ([.blocks[]? | .text_marked // .text // .html]
+  | join(" ") | gsub("<[^>]*>";"") | gsub("\\s+";" "))' \
+  "$CORPUS_DIR"/build/ccc.en/paragraphs.json      # and csdc.en, cic.en: sections.json
+```
+
+Watch the word boundaries, which is where a search like this lies to you in
+both directions: `usur` matches _usurp_, `zen` matches _citizen_, `rape`
+matches _grapes_, and `incorrupt` in all nine editions is the resurrection of
+the body and never a saint's remains. A hit is a paragraph to read, not a
+finding.
+
 **Freemasonry was dropped, then blocked, then shipped, and the three verdicts
 are the whole argument for keeping this section.** It was dropped in the first
 pass as having "no Catechism paragraph at all" — a judgement that the subject
@@ -480,7 +503,8 @@ DOCUMENT, which is the definition of blocked. Refiled as a block on 2026-09-10,
 in the form the rules above ask for, it named the absent text rather than the
 missing feeling. On 2026-09-11 the corpus gained the Congregation's 1983
 declaration and its 1981 predecessor; the row was checkable, checked and expired,
-and `associationes-massonicae` ships as a B. **A dropped row is a claim about the
+and `associationes-massonicae` ships (a B on the day, an A once the
+`editorial` field gave it the sentence no anchor could). **A dropped row is a claim about the
 subject and a blocked row is a claim about the shelf, and only one of them can be
 overturned by somebody else's work.** Check which you are writing.
 

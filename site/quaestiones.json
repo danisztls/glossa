@@ -212,11 +212,16 @@
 		"WHAT IS DELIBERATELY ABSENT is recorded in docs/research/topics.md: a topic the corpus cannot",
 		"answer properly does not ship. Addiction has CCC 2290-2291 and nothing else; grief that does",
 		"not lift has the Catechism on the meaning of death and nothing addressed to the one left",
-		"behind; yoga waits on `Orationis Formas`; the Latin Mass on `Traditionis Custodes`;",
-		"same-sex blessings on `Fiducia Supplicans`, which is the worst of them, since the three",
-		"earlier documents ARE here and a stale answer reads exactly like a current one. Adding a",
-		"topic is a deliberate act -- it is a claim that a reader asking this will be better served",
-		"than not asking.",
+		"behind; yoga waits on `Orationis Formas`. Adding a topic is a deliberate act -- it is a",
+		"claim that a reader asking this will be better served than not asking.",
+		"",
+		"A BLOCKED ROW MAY BE WRONG IN EITHER DIRECTION, and both halves have now been seen. The",
+		"document it waits on can arrive -- `Traditionis Custodes` and `Fiducia Supplicans` were",
+		"named here as absent and are in the corpus. And the row can be wrong about the ANCHORS on",
+		"the day it is written: debt and interest waited on `Vix Pervenit`, which is still absent,",
+		"while CSDC 341 condemned usury by name the whole time and nothing had looked. A row names",
+		"a document because that is the half a `rg` can check; the half it cannot check is the",
+		"claim that the works this site already quotes have nothing. Search them before filing one.",
 		"",
 		"THE TITLES AND THE QUESTIONS ARE NOT HERE. They are prose a reader reads, so they are",
 		"`quaestiones.{slug}.*` in the i18n dictionaries like every other word of chrome, and until all",
@@ -587,6 +592,7 @@
 			"doorway": "argument",
 			"cluster": "the-rules",
 			"ccc": [[2331, 2334]],
+			"csdc": [[224, 224]],
 			"documents": ["dignitas-infinita", "collaboration-of-men-and-women"]
 		},
 		"ordinatio-mulierum": {
@@ -620,7 +626,7 @@
 			"doorway": "argument",
 			"cluster": "the-rules",
 			"ccc": [[2266, 2267]],
-			"documents": ["fratelli-tutti"]
+			"documents": ["revision-of-catechism-2267", "fratelli-tutti"]
 		},
 		"castitas": {
 			"doorway": "argument",
@@ -1452,6 +1458,19 @@
 			"csdc": [[368, 369]],
 			"documents": ["caritas-in-veritate", "oeconomicae-et-pecuniariae-quaestiones"]
 		},
+		"usura": {
+			"doorway": "ordinary",
+			"cluster": "money-and-work",
+			"ccc": [
+				[2269, 2269],
+				[2449, 2449]
+			],
+			"csdc": [
+				[341, 341],
+				[450, 450]
+			],
+			"documents": ["oeconomicae-et-pecuniariae-quaestiones", "sollicitudo-rei-socialis"]
+		},
 		"tributum": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
@@ -1533,7 +1552,7 @@
 			"cluster": "justice",
 			"ccc": [[2297, 2298]],
 			"csdc": [[402, 405]],
-			"documents": ["fratelli-tutti"]
+			"documents": ["revision-of-catechism-2267", "fratelli-tutti"]
 		},
 		"defensio-sui": {
 			"doorway": "ordinary",

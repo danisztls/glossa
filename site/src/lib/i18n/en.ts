@@ -2410,19 +2410,32 @@ export const en: Dictionary = {
 	// `consuming`, `saving` all matched nothing on the whole site.
 	'quaestiones.pecunia-expendenda.title': 'Spending and saving',
 	'quaestiones.pecunia-expendenda.question': 'How much is too much to spend on myself?',
-	// No `debt` and no `credit card`, deliberately: the page has nothing
-	// anchored that answers somebody who owes money and cannot pay, and a
-	// keyword promising what no passage below delivers is the C this file's
-	// review pass exists to catch. The debt topic stays blocked on
-	// `vix-pervenit` (docs/research/topics.md).
+	// Still no `credit card`, and still for the reason below: the reader who
+	// owes money and cannot pay has no page. `usura` is the LENDER's, which
+	// is a different person, and its title says so on the card.
 	'quaestiones.pecunia-expendenda.keywords':
 		'consumerism, consuming, savings, shopping, budget, luxury, materialism, living beyond my means, impulse buying',
 	'quaestiones.pecunia-collocanda.title': 'Investing and speculation',
 	'quaestiones.pecunia-collocanda.question': 'Is there a wrong way to make money with money?',
-	// `loans` and `lending` for CCC 2409's own clause, `deliberate retention
-	// of goods lent`, which is the sentence usury sits in.
+	// `usury`, `interest`, `loans` and `lending` moved to `usura` 2026-09-11.
+	// They were held here on CCC 2409's `deliberate retention of goods lent`,
+	// which is the borrower who does not give it back and is not the same
+	// subject; no paragraph on this page contains either word. That is the
+	// over-promise the review pass exists to catch, and it was ours.
 	'quaestiones.pecunia-collocanda.keywords':
-		'stocks, usury, interest, crypto, gambling, betting, ethical funds, lottery, loans, lending',
+		'stocks, crypto, gambling, betting, ethical funds, lottery, manipulating prices',
+	'quaestiones.usura.title': 'Lending and usury',
+	'quaestiones.usura.question': 'Is charging interest a sin?',
+	// `jubilee` and `international debt` are CCC 2449's and CSDC 450's own
+	// words. `loan shark` and `payday loan` are not in any anchored sentence
+	// and are kept anyway, which is a narrower licence than it looks: CSDC
+	// 341 condemns usury BY NAME as a present-day scourge `that has a
+	// stranglehold on many peoples' lives`, so these are the reader's word
+	// for the thing the text names properly. `residential schools` failed the
+	// same test on `colonialismus` because nothing there names the practice
+	// at all, under any word.
+	'quaestiones.usura.keywords':
+		'loans, moneylender, loan shark, payday loan, predatory credit, jubilee, international debt',
 	'quaestiones.tributum.title': 'Tax',
 	'quaestiones.tributum.question': 'Is cheating on it a sin?',
 	'quaestiones.tributum.keywords':

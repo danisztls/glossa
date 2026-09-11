@@ -48,15 +48,16 @@ ingested the note says where to put it.
 
 **Only A and B are ever stored**, and the test enforces it. A C is fixed in the
 pass that finds it — that is what distinguishes it from a D, which is the corpus
-falling short and belongs to the blocklist in `topics.md`. So a C survives only
-as the `was` field on the row that replaced it, and a row left at C would be a
-to-do wearing a verdict's clothes.
+falling short and belongs to the blocklist in `topics.md`. A row left at C would
+be a to-do wearing a verdict's clothes. The C itself survives in the note, where
+it is a sentence somebody can act on rather than a letter; the row used to carry
+the old grade in a `was` field as well, and that was dropped on 2026-09-11 for
+being neither.
 
 ## Reviewed
 
 The grades themselves are in **`site/quaestiones-review.json`**, one row per
-topic: the grade, the date, the grade it replaced where there was one, the
-anchor set it was formed on, and the note. They live there rather than in a
+topic: the grade, the date, the anchor set it was formed on, and the note. They live there rather than in a
 table here because a grade is a claim about a particular anchor set and anchor
 sets change — `quaestiones.test.ts` recomputes each signature from
 `quaestiones.json` and fails when one has drifted, which is the single defect a
@@ -529,9 +530,8 @@ jq -r '.topics | to_entries
   site/quaestiones.json
 ```
 
-Then write the rows. Each is `grade`, `reviewed`, an optional `was`, the
-`anchors` signature and the `note`, keyed by slug in `quaestiones.json`'s own
-order. **Write `anchors` last, after the fixes**, since it states the set the
+Then write the rows. Each is `grade`, `reviewed`, the `anchors` signature and
+the `note`, keyed by slug in `quaestiones.json`'s own order. **Write `anchors` last, after the fixes**, since it states the set the
 grade was formed on and the fixes are part of the pass. Its shape is
 `ccc 2354,2351-2352 | csdc 204-208 | canons 1176 | lead 2283 | documents a,b`,
 each work omitted when the topic has none, and `quaestiones.test.ts` recomputes

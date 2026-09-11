@@ -1294,7 +1294,10 @@ export const pt: Dictionary = {
 	'quaestiones.pecunia-collocanda.question':
 		'Existe um jeito errado de ganhar dinheiro com dinheiro?',
 	'quaestiones.pecunia-collocanda.keywords':
-		'investir, ações, usura, juros, cripto, jogo, apostas, fundos éticos, loteria, empréstimo, emprestar',
+		'investir, ações, cripto, jogo, apostas, fundos éticos, loteria, manipular preços',
+	'quaestiones.usura.title': 'Empréstimo e usura',
+	'quaestiones.usura.question': 'Cobrar juros é pecado?',
+	'quaestiones.usura.keywords': 'agiotagem, emprestar, crédito predatório, jubileu, dívida externa',
 	'quaestiones.tributum.title': 'Os impostos',
 	'quaestiones.tributum.question': 'Sonegar é pecado?',
 	'quaestiones.tributum.keywords':
