@@ -3,8 +3,9 @@
 	 * One folded section of an index — a heading that is the whole toggle, an
 	 * optional count beside it, and the rows underneath.
 	 *
-	 * `/quaestiones` draws one per shelf of questions and `/preces` one per
-	 * section of prayers, and they had arrived at the same object twice: the
+	 * `/quaestiones` draws one per shelf of questions, `/preces` one per section
+	 * of prayers and `/schola` one per catechetical formula, and the first two had
+	 * arrived at the same object twice: the
 	 * `<details class="fold">`, the `<summary>` with an `<h2>` in it, the
 	 * heading set in the interface face, the hover that answers on the words
 	 * because the words are the only thing in the row, the sticky-chrome
@@ -12,11 +13,12 @@
 	 * section's margin so a run of them reads as a list of rows rather than as
 	 * sections with nothing in them.
 	 *
-	 * THE ROWS ARE NOT HERE, and that is the seam. One page sets short names
-	 * in multicolumn flow and the other a grid of title-over-question cells —
-	 * different objects, laid out differently, marked up differently — so the
-	 * page hands the whole list in as `children`. What this component owns is
-	 * the disclosure and its heading; what a page owns is what is behind it.
+	 * THE ROWS ARE NOT HERE, and that is the seam. One page sets short names in
+	 * multicolumn flow, another a grid of title-over-question cells, the third a
+	 * numbered list of the Church's own words — different objects, laid out
+	 * differently, marked up differently — so the page hands the whole list in as
+	 * `children`. What this component owns is the disclosure and its heading; what
+	 * a page owns is what is behind it.
 	 *
 	 * THE RULE IS DRAWN ONLY WHILE THE SECTION IS OPEN, and that is what let
 	 * both pages take it (2026-09-11, by direction). `/quaestiones` had argued
@@ -37,9 +39,19 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		/** The fragment a table of contents and somebody's bookmark address. */
-		id: string;
+		/** The fragment a table of contents and somebody's bookmark address.
+		 *  OPTIONAL, because a section is not always addressable: a catechetical
+		 *  formula has no key and cannot be given one — the heading is the
+		 *  edition's own and the editions disagree about the order (`Formula`,
+		 *  types.ts) — so `/schola` draws these with no fragment rather than
+		 *  minting an address that names a different list in Italian. */
+		id?: string;
 		heading: string;
+		/** 2 by default, 3 where the sections sit inside a `<section>` that has a
+		 *  heading of its own, as `/schola`'s formulas do. Neither the face nor the
+		 *  size changes with it: this is the document's outline, not its type
+		 *  scale. */
+		level?: 2 | 3;
 		/** Drawn beside the heading where given. A shut section owes the reader
 		 *  a size — a heading with no number is a door into an unknown room —
 		 *  and a page whose sections are open by default does not. */
@@ -52,7 +64,7 @@
 		children: Snippet;
 	}
 
-	let { id, heading, count, open, ontoggled, children }: Props = $props();
+	let { id, heading, level = 2, count, open, ontoggled, children }: Props = $props();
 </script>
 
 <details
@@ -62,7 +74,7 @@
 	ontoggle={(event) => ontoggled(event.currentTarget.open)}
 >
 	<summary>
-		<h2>{heading}</h2>
+		<svelte:element this={`h${level}`} class="index-heading">{heading}</svelte:element>
 		{#if count !== undefined}<span class="chip">{count}</span>{/if}
 	</summary>
 	{@render children()}
@@ -106,8 +118,8 @@
 	/* The heading is the only word in the row, so the hover answers on it —
 	   the same "this is a control" job `.facet-option`'s ground does in the
 	   `/documenta` panel, at a size that does not want a filled band. */
-	summary:hover h2,
-	summary:focus-visible h2 {
+	summary:hover .index-heading,
+	summary:focus-visible .index-heading {
 		color: var(--color-accent);
 	}
 
@@ -119,11 +131,11 @@
 	 *
 	 * The interface face, like `/documenta`'s table-of-contents heading and
 	 * the sidebars'. On `/quaestiones` these are our own words for a shelf; on
-	 * `/preces` they are the source's, and take this face anyway because what
-	 * the reader operates here is the row — CLAUDE.md §Type carries that
-	 * exception.
+	 * `/preces` and `/schola` they are the source's, and take this face anyway
+	 * because what the reader operates here is the row — CLAUDE.md §Type carries
+	 * that exception.
 	 */
-	h2 {
+	.index-heading {
 		font-family: var(--font-sans);
 		font-size: 1.1rem;
 		font-weight: 600;

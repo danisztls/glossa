@@ -116,6 +116,8 @@
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import IndexSection from '$lib/components/IndexSection.svelte';
+	import { foldState } from '$lib/fold-state.svelte';
 	import { PLACE_ICONS, WORK_ICONS } from '$lib/work-icons';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Formula, Formulas, WorkType } from '$lib/types';
@@ -418,6 +420,22 @@
 	 * ("The Beatitudes (Matthew 5:3-12)").
 	 */
 	const nameOf = (formula: Formula) => formula.heading.replace(/\s*:$/, '');
+
+	/**
+	 * SHUT, AND THE SECTIONS ARE `IndexSection` — the same folded row
+	 * `/quaestiones` draws over a shelf and `/preces` over a section of prayers.
+	 * What this page states is the default, which is the module's own (shut) and
+	 * is the argument two paragraphs up: a dozen names of lists is what a reader
+	 * who came for the ten commandments is scanning.
+	 *
+	 * THE KEY IS THE HEADING, because it is the only identity a formula has —
+	 * `Formula` (types.ts) says there is no key and cannot be one, and it is what
+	 * the `{#each}` is already keyed by. Nothing searches here and no fragment
+	 * names one, so the other two rules the module holds never fire; it is here
+	 * because `<details open>` is a reactive attribute, and a component that draws
+	 * the fold cannot also be the one that remembers it.
+	 */
+	const formulaFolds = foldState({ searching: () => false });
 
 	/**
 	 * **THE HEADINGS ARE NOT LINKIFIED**, and six of them print a Scripture
@@ -783,10 +801,10 @@
 
 		IT CLOSES THE PAGE AND EVERY FORMULA IS FOLDED SHUT, so the section
 		reads as what it is — a dozen names of lists — until a reader opens
-		one. `<details class="fold">` is the site's one accordion
-		(`disclosure.test.ts` fails on a `<details>` without the class), and
-		the summary carries the edition's own heading, so the shut state is a
-		table of contents nobody wrote.
+		one. Each is an `IndexSection` — the site's one folded index row, drawn
+		over a shelf of questions on `/quaestiones` and a section of prayers on
+		`/preces` — and its summary carries the edition's own heading, so the
+		shut state is a table of contents nobody wrote.
 
 		DRAWN ONLY WHEN THERE IS SOMETHING TO DRAW, with no message where there
 		is not: four of the fourteen editions are PDFs whose appendix nothing
@@ -796,47 +814,54 @@
 	{#if !FORMULAS_HELD && formulas.length > 0}
 		<section aria-labelledby="formulas-heading">
 			<h2 id="formulas-heading">{t('schola.formulas.heading')}</h2>
-			<ul class="formulas">
-				{#each formulas as formula (formula.heading)}
-					<li>
-						<details class="fold formula">
-							<summary>{nameOf(formula)}</summary>
-							<!--
-								THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
-								the edition numbered it — the numerals are redrawn because
-								the parse strips them, so they are the list's own and cannot
-								come apart from the items. A plain list where the edition
-								set its items apart without numbering them (Slovenian's
-								terms, Spanish's dashed beatitudes, Hungarian's table
-								cells). And a block of lines where the source marks no item
-								boundary at all: `shape_lines` in the scraper rejoins what
-								the edition wrapped at its own column width, so what arrives
-								here is whole sentences and the breaks between them are the
-								only structure the source actually marks.
-							-->
-							<div class="formula-body">
-								{#if formula.items && formula.numbered}
-									<ol class="formula-items">
-										{#each formula.items as item, i (i)}
-											<li>{item}</li>
-										{/each}
-									</ol>
-								{:else if formula.items}
-									<ul class="formula-items plain">
-										{#each formula.items as item, i (i)}
-											<li>{item}</li>
-										{/each}
-									</ul>
-								{:else}
-									<p class="formula-lines">
-										{#each formula.lines ?? [] as line, i (i)}{#if i > 0}<br />{/if}{line}{/each}
-									</p>
-								{/if}
-							</div>
-						</details>
-					</li>
-				{/each}
-			</ul>
+			<!-- NO COUNT BESIDE THE NAME, which is where this parts from the shelves
+			     on `/quaestiones`: half these headings print their own number in the
+			     edition's own words — "The three theological virtues", "The seven
+			     gifts of the Holy Spirit" — so a chip is that number twice, and on
+			     the other half it is ours standing beside the Church's.
+
+			     `level={3}`: the section's own `h2` stands over these. -->
+			{#each formulas as formula, index (formula.heading)}
+				<IndexSection
+					heading={nameOf(formula)}
+					level={3}
+					open={formulaFolds.isOpen(formula.heading, index)}
+					ontoggled={(open) => formulaFolds.remember(formula.heading, index, open)}
+				>
+					<!--
+						THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
+						the edition numbered it — the numerals are redrawn because
+						the parse strips them, so they are the list's own and cannot
+						come apart from the items. A plain list where the edition
+						set its items apart without numbering them (Slovenian's
+						terms, Spanish's dashed beatitudes, Hungarian's table
+						cells). And a block of lines where the source marks no item
+						boundary at all: `shape_lines` in the scraper rejoins what
+						the edition wrapped at its own column width, so what arrives
+						here is whole sentences and the breaks between them are the
+						only structure the source actually marks.
+					-->
+					<div class="formula-body">
+						{#if formula.items && formula.numbered}
+							<ol class="formula-items">
+								{#each formula.items as item, i (i)}
+									<li>{item}</li>
+								{/each}
+							</ol>
+						{:else if formula.items}
+							<ul class="formula-items plain">
+								{#each formula.items as item, i (i)}
+									<li>{item}</li>
+								{/each}
+							</ul>
+						{:else}
+							<p class="formula-lines">
+								{#each formula.lines ?? [] as line, i (i)}{#if i > 0}<br />{/if}{line}{/each}
+							</p>
+						{/if}
+					</div>
+				</IndexSection>
+			{/each}
 		</section>
 	{/if}
 </div>
@@ -1168,58 +1193,24 @@
 	}
 
 	/*
-	 * THE FORMULAS, AND THE SOURCE SETS THE COLUMN WIDTH.
-	 *
-	 * Thirteen lists whose items run from one word to a sentence: the cardinal
-	 * virtues are `Prudence Justice Fortitude Temperance` and the precepts of
-	 * the Church are five clauses of forty words. One grid of equal columns
-	 * wide enough for the second wastes two thirds of every track on the first,
-	 * and a column narrow enough for the first breaks the second into ribbons.
-	 * So a formula whose longest row passes `LONG_ITEM` takes the whole grid
-	 * and the rest take one column — the measurement is the edition's own text,
-	 * which is what keeps it true in ten languages nobody here reads.
-	 *
-	 * `auto-fill` and a 15rem track: four columns of short lists at the full
-	 * landing width, two at tablet, one on a phone. No card, no border, no
-	 * fill — this is a reference list like the catalogue above it, and the
-	 * argument there against boxes holds here twice over, because these lists
-	 * are neither doors nor choices. A heading and the air under it are the
-	 * whole structure.
-	 */
-	/*
 	 * A STACK AND NOT A GRID. Two columns of folded rows would put the mark a
 	 * reader clicks in two places and make the list's order a reading order
-	 * only half the time; shut, these are twelve names, which is a list.
-	 */
-	.formulas {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	/*
-	 * The heading is the edition's own and may be long — "Le sette opere di
-	 * misericordia corporale" — so it wraps, and a wrapped line of it must not
-	 * read as two entries. A rule under each row rather than a box around it,
-	 * which is the same answer the catalogue rows give.
+	 * only half the time; shut, these are twelve names, which is a list. They
+	 * are `IndexSection`s and nothing here styles the row: the face, the size,
+	 * the mark, the rule a section draws while it is open and the space a shut
+	 * one keeps are that component's, and were this page's own until the three
+	 * pages that draw a folded index agreed (2026-09-11).
 	 *
-	 * IT TAKES THE INTERFACE FACE THOUGH THE WORDS ARE THE SOURCE'S, because a
-	 * disclosure is a control before it is a heading: what the reader presses
-	 * is the row, and every other `<summary>` on the site — the picker's, the
-	 * facets', `/documenta`'s contents, the topic clusters — is set in it. The
-	 * formula INSIDE takes the text face, which is where the source's words
-	 * are being read rather than operated. `.fold` (components.css) draws the mark, hides the
-	 * browser's triangle and sets the tap target.
+	 * WHAT WENT WITH THEM was a rule under every row, open or shut, which this
+	 * page kept because the edition's heading may be long — "Le sette opere di
+	 * misericordia corporale" — and a wrapped line of it must not read as two
+	 * entries. `.fold`'s summary is a flex row, so a wrapped heading hangs
+	 * under its own first word rather than under the mark, and the mark itself
+	 * is what says where a row starts.
+	 *
+	 * The formula INSIDE takes the text face, which is where the source's
+	 * words are read rather than operated.
 	 */
-	.formula {
-		border-block-end: 1px solid var(--color-border);
-	}
-
-	.formula > summary {
-		font-size: 1.02rem;
-		font-weight: 600;
-		padding-block: 0.55rem;
-	}
 
 	/* The body lines up with the summary's TEXT rather than its mark: the mark
 	   is 0.5rem wide with a 0.55rem gap after it, and an item hanging under the

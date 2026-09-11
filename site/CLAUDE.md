@@ -947,15 +947,19 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
 - **A section of a folded index is `IndexSection.svelte`** — the
   `<details class="fold">`, the `<summary>` with its heading, the optional
   count beside it, the rule under an OPEN heading and the collapse of a shut
-  section's margin. `/quaestiones` and `/preces` draw the same one and pass
-  their rows in as `children`: a grid of title-over-question cells and a
-  multicolumn list of names are different objects and are the seam. **No
-  variant and no flag** — the rule being drawn only while a section is open is
-  what retired the objection to it (sixteen ruled headings at rest are a grid
-  rather than sixteen landmarks; shut, they draw none).
+  section's margin. `/quaestiones`, `/preces` and `/schola`'s formulas draw the
+  same one and pass their rows in as `children`: a grid of title-over-question
+  cells, a multicolumn list of names and the Church's own lists are different
+  objects and are the seam. **No variant and no flag** — the rule being drawn
+  only while a section is open is what retired the objection to it (sixteen
+  ruled headings at rest are a grid rather than sixteen landmarks; shut, they
+  draw none). Two props say what a caller can differ about: `level` (3 where
+  the sections sit under a `<section>`'s own `h2`, the face and size not
+  changing with it) and an OPTIONAL `id`, a catechetical formula having no key
+  it could be addressed by.
 - **A folded index states its DEFAULT and nothing else** —
-  `$lib/fold-state.svelte.ts`, which `/quaestiones` and `/preces` both run on
-  opposite defaults. Three rules live there because each is invisible when it
+  `$lib/fold-state.svelte.ts`, which `/quaestiones`, `/preces` and `/schola`
+  run on their own. Three rules live there because each is invisible when it
   is wrong: a live query forces every surviving section open; it records none
   of that, so clearing the box restores the reader's own folds; and a fragment
   opens its own section, a browser opening a closed `<details>` only for a
