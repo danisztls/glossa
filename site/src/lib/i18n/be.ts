@@ -79,7 +79,6 @@ export const be: Dictionary = {
 	'home.tagline':
 		'Сайт для чытання Пісання, Катэхізіса і дакументаў Магістэрыюма — бясплатна, працуе па-за сеткай, і нідзе не трэба рэгістравацца.',
 	'home.doors.heading': 'Куды пайсці',
-	'home.find.heading': 'Або ўвядзіце спасылку',
 	'nav.library': 'Бібліятэка',
 	'nav.learn': 'Навучанне',
 	'library.landing.tagline':

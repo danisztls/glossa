@@ -91,7 +91,6 @@ export const mg: Dictionary = {
 	'home.tagline':
 		'Tranonkala famakiana ny Soratra Masina, ny Katesizy ary ny antontan-taratasin’ny Fampianarana Ofisialy — maimaim-poana, mandeha na tsy misy fifandraisana aza, ary tsy misy hisoratana anarana.',
 	'home.doors.heading': 'Aiza no handeha',
-	'home.find.heading': 'Na soraty ny fanondroana',
 	'nav.library': 'Tranomboky',
 	'nav.learn': 'Mianara',
 	'library.landing.tagline':

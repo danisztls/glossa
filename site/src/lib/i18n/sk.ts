@@ -75,7 +75,6 @@ export const sk: Dictionary = {
 	'home.tagline':
 		'Čitateľská stránka pre Písmo, Katechizmus a dokumenty magistéria — zadarmo, aj bez pripojenia, a bez akejkoľvek registrácie.',
 	'home.doors.heading': 'Kam ísť',
-	'home.find.heading': 'Alebo napíšte odkaz',
 	'nav.library': 'Knižnica',
 	'nav.learn': 'Učenie',
 	'library.landing.tagline':

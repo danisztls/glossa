@@ -48,7 +48,6 @@ export const ro: Dictionary = {
 	'home.tagline':
 		'Un sit de lectură pentru Scriptură, Catehism și documentele Magisteriului — gratuit, disponibil offline și fără nimic la care să vă înregistrați.',
 	'home.doors.heading': 'Unde să mergeți',
-	'home.find.heading': 'Sau tastați o referință',
 	'nav.library': 'Bibliotecă',
 	'nav.learn': 'Învață',
 	'library.landing.tagline':

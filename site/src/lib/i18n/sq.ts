@@ -78,7 +78,6 @@ export const sq: Dictionary = {
 	'home.tagline':
 		'Një faqe leximi për Shkrimet, Katekizmin dhe dokumentet e Magjisterit — falas, punon edhe pa internet, dhe s’ka asgjë për t’u regjistruar.',
 	'home.doors.heading': 'Ku të shkoni',
-	'home.find.heading': 'Ose shkruani një referencë',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mëso',
 	'library.landing.tagline':

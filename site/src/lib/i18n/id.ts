@@ -83,7 +83,6 @@ export const id: Dictionary = {
 	'home.tagline':
 		'Situs bacaan untuk Kitab Suci, Katekismus, dan dokumen-dokumen Magisterium — gratis, tetap berfungsi luring, dan tidak ada yang perlu didaftarkan.',
 	'home.doors.heading': 'Ke mana',
-	'home.find.heading': 'Atau ketikkan sebuah rujukan',
 	'nav.library': 'Perpustakaan',
 	'nav.learn': 'Belajar',
 	'library.landing.tagline':

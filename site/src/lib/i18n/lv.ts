@@ -78,7 +78,6 @@ export const lv: Dictionary = {
 	'home.tagline':
 		'Lasīšanas vietne Svētajiem Rakstiem, Katehismam un Maģistērija dokumentiem — bez maksas, darbojas arī bezsaistē, un nekur nav jāreģistrējas.',
 	'home.doors.heading': 'Kurp doties',
-	'home.find.heading': 'Vai ierakstiet atsauci',
 	'nav.library': 'Bibliotēka',
 	'nav.learn': 'Mācīties',
 	'library.landing.tagline':

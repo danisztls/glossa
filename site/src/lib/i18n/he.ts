@@ -84,7 +84,6 @@ export const he: Dictionary = {
 	'home.tagline':
 		'אתר לקריאת כתבי הקודש, הקטכיזם ומסמכי המגיסטריום — חינם, פועל גם ללא חיבור, ואין להירשם לדבר.',
 	'home.doors.heading': 'לאן ללכת',
-	'home.find.heading': 'או הקלידו הפניה',
 	'nav.library': 'ספרייה',
 	'nav.learn': 'ללמוד',
 	'library.landing.tagline': 'כל האוסף, מדף אחר מדף — עם המקום שבו הפסקת ועם מה שסימנת.',

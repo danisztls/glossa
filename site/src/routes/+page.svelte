@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * The home page: today, the catalogue, and the notation.
+	 * The home page: today and the catalogue.
 	 *
 	 * ## What it was, and why that could not absorb anything more
 	 *
@@ -22,17 +22,17 @@
 	 * whole imbalance. `/bibliotheca` now holds the map, so this page can stop
 	 * being an index and be what a reader arriving with no address can act on.
 	 *
-	 * ## IT IS THE THREE WAYS IN, IN THE ORDER THEY ARE NEEDED (2026-09-06)
+	 * ## IT IS THE WAYS IN, IN THE ORDER THEY ARE NEEDED (2026-09-06)
 	 *
-	 * `docs/research/organization.md` §The three ways in names them: a reader
-	 * arrives **by date**, **by question**, or **by address**. The page held
-	 * the first two and never said the third existed — so the notation this
-	 * whole corpus is addressed by was a thing you found out about by pressing
-	 * `/` on a hunch. The three sections below are those three ways, and the
-	 * order is deliberate: the day is the only surface anyone returns to
-	 * daily, the catalogue is for the reader who holds no address at all, and
-	 * the specimens are last because the reader who already knows `CCC 1234` types
-	 * it into the box without reading this page.
+	 * `docs/research/organization.md` §The three ways in names three: a reader
+	 * arrives **by date**, **by question**, or **by address**. Two of them are
+	 * the sections below, in that order: the day is the only surface anyone
+	 * returns to daily, and the catalogue is for the reader who holds no
+	 * address at all. The third is the jump box in the header of every page,
+	 * and a row of inert specimens naming it stood here until 2026-09-11 —
+	 * last on the page, for a reason that is also why it need not be on the
+	 * page at all: the reader who knows `CCC 1234` types it into the box
+	 * without reading this one.
 	 *
 	 * WHAT IT BORROWS FROM `/schola` AND `/bibliotheca`, which are the same
 	 * kind of page and were the model for this pass:
@@ -49,9 +49,6 @@
 	 *     are drawn with — `scroll`, `flame`, `book-open` are that page's
 	 *     assignments for these three works, reused rather than re-chosen —
 	 *     set in `/bibliotheca`'s `1lh` box rather than on a baseline.
-	 *   - **The inert specimen chip**, `.specimen` here, drawn after the one
-	 *     `/schola` printed until its column went, for the reason
-	 *     `specimens.ts` gives: it teaches a SHAPE.
 	 *
 	 * NO SECTION ON THIS PAGE IS TITLED, WHICH IS THE OTHER HALF OF THAT MOVE
 	 * (2026-09-06). The headings were `visually-hidden`, then two of the three
@@ -128,13 +125,12 @@
 	 *
 	 * ## What this page costs in translation, and why it is in `CHROME_PATHS`
 	 *
-	 * Three keys: `home.tagline`, `home.doors.heading`, `home.find.heading`.
-	 * The last two are heard and not read — every section here is untitled, and
-	 * a hidden `h2` is what a reader moving by heading gets instead of a rule.
-	 * Everything else is a name or a sentence written for another page — the
-	 * catalogue is `$lib/shelves.ts`'s keys, each of them the one its own
-	 * landing page is titled and described by, and the line under the specimens
-	 * is `jumpbox.hint`.
+	 * Two keys: `home.tagline` and `home.doors.heading`. The second is heard
+	 * and not read — every section here is untitled, and a hidden `h2` is what
+	 * a reader moving by heading gets instead of a rule. Everything else is a
+	 * name or a sentence written for another page — the catalogue is
+	 * `$lib/shelves.ts`'s keys, each of them the one its own landing page is
+	 * titled and described by.
 	 * `en.ts` carries the argument for keeping `/` on the published list
 	 * anyway, which is that the root has no usable remedy: `route-manifest.ts` withholds a page rather than claim it
 	 * in a language it is not written in, and withholding the home page costs
@@ -144,8 +140,6 @@
 	 * `docs/research/organization.md` is the design this implements.
 	 */
 	import { onMount } from 'svelte';
-	import { availableSpecimens } from '$lib/specimens';
-	import { content } from '$lib/content.svelte';
 	import { liturgicalDay, toDayNumber, type CalendarOptions } from '$lib/calendar';
 	import {
 		ensureNationalCalendars,
@@ -192,36 +186,8 @@
 	 * which is the change of mind the doors' own note recorded the other way
 	 * round: a door was a page and correct in an empty build, where a card is a
 	 * work and a card for a work a partial sync did not carry is a door onto an
-	 * empty index. The specimens below are gated on the same test, inside
-	 * `availableSpecimens`.
+	 * empty index.
 	 */
-
-	// --- The third way in ------------------------------------------------------
-	//
-	// The reader's own Bible, resolved for one purpose: the abbreviation and
-	// the chapter/verse separator the first specimen is drawn with. This page
-	// addresses no text — the chips are inert and the doors open on landing
-	// pages — so nothing else here reads the content store.
-	const bibleWorkId = $derived(content.workIdFor('bible'));
-	const bibleLang = $derived(content.langFor('bible'));
-
-	/**
-	 * THREE SHAPES, NOT A CATALOGUE, and this page is the one that picks.
-	 * The jump box prints one per work because a reader with the box open is
-	 * looking for one of them; this section is showing that the box at the top
-	 * of every page reads a notation AT ALL, and three is what it takes
-	 * to show that the notations differ: a book with a chapter and a verse, a
-	 * siglum with a paragraph running unbroken through a whole book, and a code
-	 * cited by canon. A fourth of a shape already on the row would be a longer
-	 * row teaching nothing more.
-	 *
-	 * The forms are `$lib/specimens.ts`, which holds why they are
-	 * representative rather than real and why each is gated on the build.
-	 */
-	const HOME_SHAPES = new Set(['scripture', 'catechism', 'law']);
-	const specimens = $derived(
-		availableSpecimens(bibleWorkId, bibleLang).filter((row) => HOME_SHAPES.has(row.key))
-	);
 
 	/** Today in the READER'S zone, which is the zone they keep the feast in —
 	 *  the same basis `/calendarium` computes on, and the one place in this
@@ -343,45 +309,6 @@
 		<h2 id="doors-heading" class="visually-hidden">{t('home.doors.heading')}</h2>
 		<ShelfGrid />
 	</nav>
-
-	{#if specimens.length > 0}
-		<section class="find" aria-labelledby="find-heading">
-			<h2 id="find-heading" class="visually-hidden">{t('home.find.heading')}</h2>
-			<!--
-				NOT LINKS, AND NOT A LIVE FIELD EITHER. The jump box is a control
-				in the header of every page rather than an address, so this
-				section names it rather than opening it — a control in the header
-				of every page is not an address, so there is nothing for a link
-				to open. Reaching into `JumpBox` to open it from here would
-				give one page a private door into a component the whole site
-				shares, to save a reader one keystroke that the line underneath
-				already names.
-			-->
-			<!--
-				THE SENTENCE LEADS AND THE SPECIMENS FOLLOW IT, which is the
-				order the section had backwards until the heading came off.
-				Under a rule reading "Or type a reference" the chips could go
-				first and the line beneath them was a footnote; with no rule
-				they were three unexplained boxes over the small print that
-				said what they were, so a reader met the exhibit before the
-				claim. Now the section opens by naming the control and the
-				specimens are what it opens onto — which is also why the
-				weights are the other way round from before: the line is the
-				page's own text and the chips are quiet.
-
-				`jumpbox.hint` rather than a fourth new string, and it is the
-				right sentence rather than the cheap one: it names both
-				shortcuts, and it is already the line the shortcut sheet shows
-				for this control.
-			-->
-			<p class="find-lead">{t('jumpbox.hint')}</p>
-			<ul class="specimens">
-				{#each specimens as specimen (specimen.key)}
-					<li class="specimen">{specimen.text}</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
 </div>
 
 <style>
@@ -403,16 +330,9 @@
 		margin: 2.25rem 0;
 	}
 
-	/* THE RULED HEADING IS GONE AGAIN, and this is the second time. It was
-	   deleted when "Continue reading" left the page and every heading here was
-	   hidden, restored the same day when the doors and the notation were given
-	   visible ones, and deleted for good when the sections stopped being titled
-	   — see the docblock. `/bibliotheca` and `/signata` keep the declarations,
-	   where a heading is still read. */
-
 	/* Every `h2` on this page is for the outline and none is drawn. The day's
-	   card is already titled by its celebration, the catalogue by its seven
-	   cards, and the notation by the specimens themselves. */
+	   card is already titled by its celebration and the catalogue by its
+	   cards. */
 	.visually-hidden {
 		position: absolute;
 		width: 1px;
@@ -437,62 +357,5 @@
 
 	/* THE CATALOGUE DRAWS ITSELF, so this page styles none of it —
 	   `ShelfGrid.svelte` is the list, the cards and the bed, and `/bibliotheca`
-	   renders the same one. What is left below belongs to the notation alone. */
-
-	/* --- The notation ------------------------------------------------------
-	 *
-	 * A row of specimens rather than a grid: three scraps of four or five
-	 * characters each, which a grid would space out across the column as
-	 * though the gaps meant something.
-	 */
-	.find-lead {
-		margin: 0 0 0.55rem;
-		font-size: 0.9rem;
-	}
-
-	.specimens {
-		list-style: none;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin: 0;
-		padding: 0;
-	}
-
-	/*
-	 * DRAWN AS SOMETHING TO TYPE, in the idiom the shortcut sheet's keycaps
-	 * and the jump box's legend already use: the interface face on the
-	 * page's own ground inside a hairline. NOT a monospace — this site has
-	 * exactly two faces and `docs/reading.md` splits them on authorship, so a
-	 * third introduced for three scraps of notation would be a new axis to
-	 * maintain everywhere. The box is what says "put this in the box at the
-	 * top"; tabular figures so the numerals sit evenly.
-	 *
-	 * THE GROUND IS THE PAGE'S, WHICH IS WHAT THE PARAGRAPH ABOVE ALWAYS
-	 * CLAIMED AND THE DECLARATION DID NOT DO. It was `--color-bg-elevated`,
-	 * copied from `/schola` with the rest of the chip, where it collides with
-	 * nothing because that page's rows are deliberately not cards. Here it
-	 * sits a centimetre under seven cards drawn in exactly that ground, that
-	 * border and that radius, so three inert specimens were three small cards
-	 * — and a card on this page is a link. The hairline is what makes a
-	 * specimen findable; the fill is what made it look pressable.
-	 */
-	.specimen {
-		padding: 0.15rem 0.5rem;
-		font-family: var(--font-sans);
-		font-size: 0.85rem;
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
-		color: var(--color-text-muted);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-	}
-
-	/* The chips carry no fill to strip now, so print keeps only the rule that
-	   is about paper: a specimen may not be broken across two pages. */
-	@media print {
-		.specimen {
-			break-inside: avoid;
-		}
-	}
+	   renders the same one. */
 </style>

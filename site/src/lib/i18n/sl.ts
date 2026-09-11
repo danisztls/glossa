@@ -47,7 +47,6 @@ export const sl: Dictionary = {
 	'home.tagline':
 		'Bralno spletišče za Sveto pismo, katekizem in dokumente učiteljstva — brezplačno, deluje tudi brez povezave in nikamor se ni treba vpisati.',
 	'home.doors.heading': 'Kam naprej',
-	'home.find.heading': 'Ali vtipkajte navedbo',
 	'nav.library': 'Knjižnica',
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':

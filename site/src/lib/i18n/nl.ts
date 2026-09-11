@@ -77,7 +77,6 @@ export const nl: Dictionary = {
 	'home.tagline':
 		'Een leessite voor de Schrift, de Catechismus en de documenten van het Leergezag — gratis, ook offline bruikbaar, en er is niets om u voor aan te melden.',
 	'home.doors.heading': 'Waarheen',
-	'home.find.heading': 'Of typ een verwijzing',
 	'nav.library': 'Bibliotheek',
 	'nav.learn': 'Leren',
 	'library.landing.tagline':

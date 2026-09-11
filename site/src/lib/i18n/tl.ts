@@ -82,7 +82,6 @@ export const tl: Dictionary = {
 	'home.tagline':
 		'Isang pook-sapot na babasahin para sa Kasulatan, sa Katesismo, at sa mga dokumento ng Magisterio — libre, gumagana kahit walang koneksyon, at walang paglalagdaan.',
 	'home.doors.heading': 'Saan pupunta',
-	'home.find.heading': 'O mag-type ng sanggunian',
 	'nav.library': 'Aklatan',
 	'nav.learn': 'Matuto',
 	'library.landing.tagline':

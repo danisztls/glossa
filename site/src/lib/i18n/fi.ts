@@ -78,7 +78,6 @@ export const fi: Dictionary = {
 	'home.tagline':
 		'Lukusivusto Raamatulle, Katekismukselle ja opetusviran asiakirjoille — ilmainen, toimii ilman verkkoyhteyttä, eikä mihinkään tarvitse rekisteröityä.',
 	'home.doors.heading': 'Minne mennä',
-	'home.find.heading': 'Tai kirjoita viite',
 	'nav.library': 'Kirjasto',
 	'nav.learn': 'Opi',
 	'library.landing.tagline':

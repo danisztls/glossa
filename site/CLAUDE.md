@@ -997,15 +997,24 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   destination really has no tagline. The exceptions are
   `ccc.landing.pairTitle`/`pairTagline` — one card names the Catechism and its
   Compendium as ONE work and no other surface wants either string.
+- **A landing page's tagline is its `<meta name="description">` and its card's
+  line, and is not drawn on the page** (2026-09-11, by direction) —
+  `/scriptura`, `/bibliotheca`, `/schola`, `/preces`. A sentence saying what a
+  work is earns a search result and a grid of seven cards; under the work's own
+  name, over its own index, it captions something already named. **The key
+  stays**, so each page carries a comment naming who still reads it.
 
 ### The home page
 
-- **The home page is the day, the catalogue and the notation** —
-  `organization.md`'s three ways in (by date, by question, by address), in the
-  reverse order of expertise. **Do not put an index on it**: it carried the
-  Bible's whole table of contents and the Catechism's whole outline until
-  2026-09-04, which is why nothing ingested after them was ever added to it — a
-  WEIGHT problem that reads as a nesting problem.
+- **The home page is the day and the catalogue** — two of `organization.md`'s
+  three ways in (by date, by question); the third is by ADDRESS, and it is the
+  jump box in the header of every page rather than anything on this one. A row
+  of inert specimens naming that box stood here until 2026-09-11, last on the
+  page, for the reason it did not need to be on the page: a reader who knows
+  `CCC 1234` types it into the box without reading this. **Do not put an index
+  on it**: it carried the Bible's whole table of contents and the Catechism's
+  whole outline until 2026-09-04, which is why nothing ingested after them was
+  ever added to it — a WEIGHT problem that reads as a nesting problem.
 - **Everything on the page is true on a first visit**, which is the test a new
   section has to pass. "Continue reading" went for that reason, and the
   Bookmarks card after it: the one page a stranger arrives at was arranged
@@ -1013,20 +1022,10 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
 - **The way to the calendar is a glyph in the day card's own corner**
   (`LiturgicalDayCard`'s `more` prop, passed by nothing else): under the box it
   read as a caption on the card rather than as part of it.
-- **The notation section describes the jump box and does not open it.** The
-  specimens are inert (a specimen teaches a SHAPE), three of them because that
-  is what it takes to show the notations differ, and the section names the
-  control rather than linking to it — a control in the header of every page is
-  not an address, which is also why the help sheet names the box's own keys
-  instead of offering a door to them.
 - **No section on that page is titled**: every `h2` is `visually-hidden` and
-  every one still exists, since three rules labelling what the cards and
-  specimens already say made the page read as a form. The ruled-heading rule has
-  been deleted twice and is not coming back. **So the sentence leads and the
-  specimens follow it, and the chips carry no fill**: with no rule above them
-  they were three unexplained boxes in `--color-bg-elevated` a centimetre under
-  seven cards in that same ground. A hairline makes a specimen findable; the
-  fill made it look pressable.
+  every one still exists, since rules labelling what the cards already say made
+  the page read as a form. The ruled-heading rule has been deleted twice and is
+  not coming back.
 - **`/` keeps its `CHROME_PATHS` row even when it holds an untranslated key** —
   the one exception to the gate that holds pages unpublished. It is the ROOT's
   exception: withholding the home page costs the sitemap row and the `hreflang`

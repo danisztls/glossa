@@ -50,7 +50,6 @@ export const es: Dictionary = {
 	'home.tagline':
 		'Un sitio de lectura de las Escrituras, el Catecismo y los documentos del Magisterio — gratuito, disponible sin conexión y sin nada que registrar.',
 	'home.doors.heading': 'Adónde ir',
-	'home.find.heading': 'O escribe una referencia',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Aprender',
 	'library.landing.tagline':

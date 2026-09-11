@@ -48,7 +48,6 @@ export const hu: Dictionary = {
 	'home.tagline':
 		'Olvasóoldal a Szentírás, a Katekizmus és a Tanítóhivatal dokumentumai számára — ingyenes, kapcsolat nélkül is működik, és semmire nem kell regisztrálni.',
 	'home.doors.heading': 'Merre',
-	'home.find.heading': 'Vagy írjon be egy hivatkozást',
 	'nav.library': 'Könyvtár',
 	'nav.learn': 'Tanulás',
 	'library.landing.tagline':

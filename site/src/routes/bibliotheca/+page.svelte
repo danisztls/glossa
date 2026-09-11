@@ -98,8 +98,10 @@
 </svelte:head>
 
 <div class="landing-column">
+	<!-- The tagline is the route's `<meta name="description">` (see
+	     `scripts/route-titles.mjs`) and is not drawn here: the catalogue under it
+	     says what the library holds better than a sentence about it can. -->
 	<h1>{t('nav.library')}</h1>
-	<p class="page-tagline landing-measure">{t('library.landing.tagline')}</p>
 
 	<section aria-labelledby="catalogue-heading">
 		<h2 id="catalogue-heading" class="visually-hidden">{t('nav.library')}</h2>

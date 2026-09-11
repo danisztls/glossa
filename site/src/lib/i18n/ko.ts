@@ -81,7 +81,6 @@ export const ko: Dictionary = {
 	'home.tagline':
 		'성경과 교리서와 교도권 문헌을 읽기 위한 사이트 — 무료이고, 연결이 끊겨도 작동하며, 가입할 것이 없습니다.',
 	'home.doors.heading': '어디로 갈까요',
-	'home.find.heading': '또는 인용을 입력하십시오',
 	'nav.library': '서고',
 	'nav.learn': '배우기',
 	'library.landing.tagline': '전체 장서를 서가별로 — 읽던 자리와 표시해 둔 곳과 함께.',

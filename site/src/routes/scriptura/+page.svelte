@@ -73,8 +73,13 @@
 	{#if work}
 		<ReadingBar print={false} textSize={false} randomVerse />
 	{/if}
+	<!-- NO TAGLINE ON THE PAGE, and the string is not dead: `bible.landing.tagline`
+	     is this route's `<meta name="description">` in `scripts/route-titles.mjs`
+	     and the catalogue card's line in `$lib/shelves.ts`. A sentence saying what
+	     the Bible is earns its place in a search result and in a grid of seven
+	     works; under the word "Bible", over the reader's own edition, it is a
+	     caption on something already named. -->
 	<h1>{t('bible.landing.title')}</h1>
-	<p class="page-tagline landing-measure">{t('bible.landing.tagline')}</p>
 
 	{#if work}
 		<p class="edition-label label-micro">{work.title}</p>

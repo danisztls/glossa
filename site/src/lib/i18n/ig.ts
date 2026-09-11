@@ -85,7 +85,6 @@ export const ig: Dictionary = {
 	'home.tagline':
 		"Saịtị ọgụgụ maka Akwụkwọ Nsọ, Katekizim, na akwụkwọ ndị Ọrụ Nkuzi Chọọchị — n'efu, na-arụ ọrụ n'enweghị njikọ, ọ dịghịkwa ihe ị ga-edebanye aha na ya.",
 	'home.doors.heading': 'Ebe ị ga-aga',
-	'home.find.heading': 'Ma ọ bụ pịnye nrụtụaka',
 	'nav.library': 'Ọbá akwụkwọ',
 	'nav.learn': 'Mụta',
 	'library.landing.tagline':

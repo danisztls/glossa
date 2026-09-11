@@ -50,7 +50,6 @@ export const fr: Dictionary = {
 	'home.tagline':
 		'Un site de lecture des Écritures, du Catéchisme et des documents du Magistère — gratuit, consultable hors ligne, et sans aucune inscription.',
 	'home.doors.heading': 'Où aller',
-	'home.find.heading': 'Ou tapez une référence',
 	'nav.library': 'Bibliothèque',
 	'nav.learn': 'Apprendre',
 	'library.landing.tagline':

@@ -75,7 +75,6 @@ export const da: Dictionary = {
 	'home.tagline':
 		'Et læsested for Skriften, Katekismen og Læreembedets dokumenter — gratis, virker offline, og der er intet at tilmelde sig.',
 	'home.doors.heading': 'Hvor du kan gå hen',
-	'home.find.heading': 'Eller skriv en henvisning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lær',
 	'library.landing.tagline':

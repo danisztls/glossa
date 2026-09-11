@@ -75,7 +75,6 @@ export const hr: Dictionary = {
 	'home.tagline':
 		'Stranica za čitanje Pisma, Katekizma i dokumenata Učiteljstva — besplatno, radi i izvan mreže, i nema se za što registrirati.',
 	'home.doors.heading': 'Kamo poći',
-	'home.find.heading': 'Ili upišite navod',
 	'nav.library': 'Knjižnica',
 	'nav.learn': 'Učenje',
 	'library.landing.tagline':

@@ -81,7 +81,6 @@ export const vi: Dictionary = {
 	'home.tagline':
 		'Một trang đọc Kinh Thánh, Sách Giáo lý và các văn kiện của Huấn quyền — miễn phí, chạy được cả khi ngoại tuyến, và không có gì để ghi danh.',
 	'home.doors.heading': 'Đi đâu',
-	'home.find.heading': 'Hoặc gõ một trưng dẫn',
 	'nav.library': 'Thư viện',
 	'nav.learn': 'Học',
 	'library.landing.tagline':

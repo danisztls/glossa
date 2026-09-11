@@ -51,7 +51,6 @@ export const la: Dictionary = {
 	'home.tagline':
 		'Sedes ad Scripturas, Catechismum et documenta Magisterii legenda — gratis, etiam sine rete, nullo nomine dando.',
 	'home.doors.heading': 'Quo eas',
-	'home.find.heading': 'Vel locum inscribe',
 	'nav.library': 'Bibliotheca',
 	'nav.learn': 'Disce',
 	'library.landing.tagline':

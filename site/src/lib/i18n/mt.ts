@@ -59,7 +59,6 @@ export const mt: Dictionary = {
 	'home.tagline':
 		'Sit għall-qari tal-Iskrittura, tal-Katekiżmu u tad-dokumenti tal-Maġisteru — b’xejn, offline, u bla ma trid tirreġistra xejn.',
 	'home.doors.heading': 'Fejn tmur',
-	'home.find.heading': 'Jew ittajpja referenza',
 	'nav.library': 'Librerija',
 	'nav.learn': 'Tgħallem',
 	'library.landing.tagline': 'Il-korpus kollu, xkaffa xkaffa, u dak li mmarkajt fih.',

@@ -59,7 +59,6 @@ export const no: Dictionary = {
 	'home.tagline':
 		'Et lesested for Skriften, Katekismen og Læreembetets dokumenter — gratis, uten nett, og uten noe å registrere seg for.',
 	'home.doors.heading': 'Hvor vil du gå',
-	'home.find.heading': 'Eller skriv en henvisning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lær',
 	'library.landing.tagline': 'Hele samlingen, hylle for hylle, og det du har merket i den.',

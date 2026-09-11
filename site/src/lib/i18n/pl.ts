@@ -47,7 +47,6 @@ export const pl: Dictionary = {
 	'home.tagline':
 		'Strona do czytania Pisma Świętego, Katechizmu i dokumentów Magisterium — bezpłatna, działająca bez połączenia i bez żadnej rejestracji.',
 	'home.doors.heading': 'Dokąd pójść',
-	'home.find.heading': 'Albo wpisz odsyłacz',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Nauka',
 	'library.landing.tagline':

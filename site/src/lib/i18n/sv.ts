@@ -47,7 +47,6 @@ export const sv: Dictionary = {
 	'home.tagline':
 		'En läsesajt för Skriften, katekesen och läroämbetets dokument — gratis, fungerar offline, och ingenting att registrera sig för.',
 	'home.doors.heading': 'Vart du ska',
-	'home.find.heading': 'Eller skriv en hänvisning',
 	'nav.library': 'Bibliotek',
 	'nav.learn': 'Lär dig',
 	'library.landing.tagline':

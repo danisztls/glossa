@@ -663,7 +663,7 @@ const CHROME_KEYS = {
 	},
 	'/doctores': { title: 'doctores.landing.title', description: 'doctores.landing.tagline' },
 	'/doctores/summa': { title: 'summa.landing.title', description: 'summa.landing.tagline' },
-	'/preces': { title: 'prayers.landing.title', description: 'prayers.landing.tagline' },
+	'/preces': { title: 'nav.prayers', description: 'prayers.landing.tagline' },
 	'/calendarium': { title: 'calendar.title', description: 'calendar.tagline' },
 	'/schola': { title: 'schola.landing.title', description: 'schola.landing.tagline' },
 	'/colophon': { title: 'colophon.title', description: 'colophon.lede' }

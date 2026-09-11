@@ -88,7 +88,6 @@ export const zh: Dictionary = {
 	'home.tagline':
 		'阅读圣经、《天主教教理》及训导文献的网站——免费，离线亦可使用，无须注册任何东西。',
 	'home.doors.heading': '何处可去',
-	'home.find.heading': '或键入一处引文',
 	'nav.library': '书库',
 	'nav.learn': '学习',
 	'library.landing.tagline': '全部书目，一架一架——连同你读到的地方和你标记的内容。',

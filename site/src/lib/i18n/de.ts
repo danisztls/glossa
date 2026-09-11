@@ -49,7 +49,6 @@ export const de: Dictionary = {
 	'home.tagline':
 		'Eine Leseseite für die Heilige Schrift, den Katechismus und die Dokumente des Lehramts — kostenlos, offline nutzbar und ohne Anmeldung.',
 	'home.doors.heading': 'Wohin',
-	'home.find.heading': 'Oder eine Stelle eintippen',
 	'nav.library': 'Bibliothek',
 	'nav.learn': 'Lernen',
 	'library.landing.tagline':

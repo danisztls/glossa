@@ -58,7 +58,6 @@ export const ja: Dictionary = {
 	'home.tagline':
 		'聖書とカテキズムと教導職の文書を読むためのサイト。無料で、オフラインでも読め、登録は要りません。',
 	'home.doors.heading': 'どこへ行きますか',
-	'home.find.heading': 'あるいは参照を入力',
 	'nav.library': '書庫',
 	'nav.learn': '学ぶ',
 	'library.landing.tagline': '全所蔵を棚ごとに。あなたが印を付けたものも。',

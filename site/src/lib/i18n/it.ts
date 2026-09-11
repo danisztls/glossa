@@ -49,7 +49,6 @@ export const it: Dictionary = {
 	'home.tagline':
 		'Un sito di lettura delle Scritture, del Catechismo e dei documenti del Magistero — gratuito, disponibile offline e senza alcuna iscrizione.',
 	'home.doors.heading': 'Dove andare',
-	'home.find.heading': 'Oppure digita un riferimento',
 	'nav.library': 'Biblioteca',
 	'nav.learn': 'Imparare',
 	'library.landing.tagline':

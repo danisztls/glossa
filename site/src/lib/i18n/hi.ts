@@ -87,7 +87,6 @@ export const hi: Dictionary = {
 	'home.tagline':
 		'पवित्र धर्मग्रंथ, धर्मशिक्षा और धर्मशिक्षण-अधिकार के दस्तावेज़ों को पढ़ने का स्थल — निःशुल्क, बिना संबंध के भी चलता है, और पंजीकरण के लिए कुछ नहीं।',
 	'home.doors.heading': 'कहाँ जाएँ',
-	'home.find.heading': 'अथवा कोई सन्दर्भ लिखें',
 	'nav.library': 'पुस्तकालय',
 	'nav.learn': 'सीखें',
 	'library.landing.tagline':

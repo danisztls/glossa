@@ -82,7 +82,6 @@ export const sw: Dictionary = {
 	'home.tagline':
 		'Tovuti ya kusoma Maandiko, Katekisimu na nyaraka za Mafundisho ya Kanisa — bure, hufanya kazi bila mtandao, na hakuna cha kujiandikisha.',
 	'home.doors.heading': 'Uende wapi',
-	'home.find.heading': 'Au andika rejeo',
 	'nav.library': 'Maktaba',
 	'nav.learn': 'Jifunze',
 	'library.landing.tagline':

@@ -74,7 +74,6 @@ export const lt: Dictionary = {
 	'home.tagline':
 		'Svetainė Šventajam Raštui, Katekizmui ir Magisteriumo dokumentams skaityti — nemokamai, veikia ir be interneto, ir niekur nereikia registruotis.',
 	'home.doors.heading': 'Kur eiti',
-	'home.find.heading': 'Arba įrašykite nuorodą',
 	'nav.library': 'Biblioteka',
 	'nav.learn': 'Mokytis',
 	'library.landing.tagline':

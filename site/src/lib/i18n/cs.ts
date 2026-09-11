@@ -75,7 +75,6 @@ export const cs: Dictionary = {
 	'home.tagline':
 		'Čtenářský web pro Písmo, Katechismus a dokumenty magisteria — zdarma, i bez připojení, a bez jakékoli registrace.',
 	'home.doors.heading': 'Kam jít',
-	'home.find.heading': 'Nebo napište odkaz',
 	'nav.library': 'Knihovna',
 	'nav.learn': 'Učení',
 	'library.landing.tagline':

@@ -49,7 +49,6 @@ export const ru: Dictionary = {
 	'home.tagline':
 		'Сайт для чтения Священного Писания, Катехизиса и документов Учительства — бесплатно, без сети и без всякой регистрации.',
 	'home.doors.heading': 'Куда пойти',
-	'home.find.heading': 'Или введите ссылку',
 	'nav.library': 'Библиотека',
 	'nav.learn': 'Учиться',
 	'library.landing.tagline':

@@ -547,8 +547,10 @@
 	it.
 -->
 <div class="landing-column">
+	<!-- The tagline is the route's `<meta name="description">` (see
+	     `scripts/route-titles.mjs`) and is not drawn here — the sections below
+	     name themselves. -->
 	<h1>{t('schola.landing.title')}</h1>
-	<p class="page-tagline">{t('schola.landing.tagline')}</p>
 
 	<section aria-labelledby="books-heading">
 		<h2 id="books-heading">{t('schola.books.heading')}</h2>

@@ -82,7 +82,6 @@ export const uk: Dictionary = {
 	'home.tagline':
 		'Сайт для читання Писання, Катехизму та документів Магістеріуму — безкоштовно, працює без мережі, і ніде не треба реєструватися.',
 	'home.doors.heading': 'Куди піти',
-	'home.find.heading': 'Або введіть посилання',
 	'nav.library': 'Бібліотека',
 	'nav.learn': 'Навчання',
 	'library.landing.tagline':
