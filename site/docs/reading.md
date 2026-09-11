@@ -55,8 +55,13 @@ and the sans is on the device already. `TypeMenu` offers it.
 instance is not always 400.** Source Sans 3's default master is wght 200, so
 measuring its file as loaded returns an advance 5% narrow and an ink height 1%
 short — EB Garamond's default is 400, so only one of the pair ever needs
-instantiating, which is what makes the error survive a spot check. Instantiate
-before measuring, or read `fvar` first.
+instantiating, which is what makes the error survive a spot check.
+`scripts/face-metrics.py` does the instantiating, and is where all of it is
+derived: the advance, the two ink measurements that bracket
+`--face-size-adjust`, and the frequency table under both. The "ink area" those
+brackets are stated in is the BOUNDING BOX and not the outline's own area,
+which is three times smaller and would put the bracket somewhere else
+entirely.
 
 **Whether a script has two faces is a question about the script.** Latin and
 Cyrillic do and this site ships both cuts; Han's pair is Ming and Gothic, named

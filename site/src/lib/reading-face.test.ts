@@ -88,7 +88,10 @@ const FACES = {
  * Two frequency-weighted measurements over the corpus bracket it, both taken
  * off the font files with fontTools and written here because a test may not
  * open a woff2 or walk the corpus: matching the faces' mean ink HEIGHT gives
- * 0.895, matching their mean ink AREA gives 0.973 as a linear scale. They
+ * 0.895, matching their mean ink AREA (the bounding box) gives 0.973 as a
+ * linear scale. `scripts/face-metrics.py` re-derives them, at wght 400 — a
+ * variable font's default instance is not always the weight anybody reads at,
+ * and Source Sans 3's is 200. They
  * disagree because Source Sans 3 is set looser and lighter than it is tall,
  * and the value in the stylesheet is calibrated between them against the
  * rendered page.

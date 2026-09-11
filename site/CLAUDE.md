@@ -1032,6 +1032,12 @@ their place. Two sections, not one list, and the trace goes first.
   own container and its headings follow. The blanket rule this replaced
   outranked `.reading-text`, so the work's section heads stayed in Garamond
   when a reader switched the reading region to the sans face.
+- **Every number a face is worth is derived, not recalled.**
+  `scripts/face-metrics.py` walks the corpus and the font files for the advance
+  and the two ink measurements `tokens.css` states and `reading-face.test.ts`
+  pins — measuring at wght 400, because a variable font's default instance is
+  not always it and Source Sans 3's is 200. Run it before editing any of those
+  numbers; it reproduces the committed ones to four places.
 - **A heading that names a face is claiming the work's words on a chrome
   surface** — a reading page's `h1`, an index row's title. Our own label never
   does: `Old Testament` over a picker and `Holdings` over the census take

@@ -156,6 +156,14 @@
 	 *   mean ink HEIGHT   0.5100 : 0.5697  ->  0.895
 	 *   mean ink AREA     0.1894 : 0.1999  ->  0.973 as a linear scale
 	 *
+	 * AREA IS THE BOUNDING BOX, width x height, and not the area enclosed by
+	 * the outline — the two differ by a factor of three (EB Garamond measures
+	 * 0.1895 by the box and 0.0639 by the outline), so the word alone does not
+	 * say which was meant. `scripts/face-metrics.py` re-derives all of it from
+	 * the corpus and the font files and reproduces every number in this block
+	 * to four places; run it rather than trusting these, which move as the
+	 * corpus grows.
+	 *
 	 * They disagree because Source Sans 3 is set looser and lighter than it
 	 * is tall: its glyphs run 12% taller than EB Garamond's but only 5%
 	 * larger in area, since Garamond fits tighter and draws wider letters on
