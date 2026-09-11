@@ -760,8 +760,23 @@
 		color: var(--color-accent);
 	}
 
+	/*
+	 * `--picker-width` IS THE PAGE'S, unset and therefore `none`, which is
+	 * every caller but one. `/scriptura` caps this list below the column it
+	 * sits in so a 73-chip grid stops running the full width of a landing
+	 * page; the number and the breakpoint are facts about that page's own
+	 * room, so they live there — `--art-height`'s arrangement exactly, and for
+	 * the same reason a prop would be the wrong shape.
+	 *
+	 * A custom property rather than a `:global(.picker-body)` reach from the
+	 * route: a class name borrowed across a component boundary in Svelte is
+	 * silently unstyled unless it is escaped, and an escape hatch aimed at
+	 * another component's internals is a rule that breaks when this file
+	 * renames something it never agreed to keep.
+	 */
 	.picker-body {
 		margin-top: 0.75rem;
+		max-inline-size: var(--picker-width, none);
 	}
 
 	.picker-body.standalone {

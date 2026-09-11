@@ -121,6 +121,33 @@
 </div>
 
 <style>
+	/*
+	 * THE BOOK LIST STOPS SHORT OF THE COLUMN ON A FULL-WIDTH PAGE, and only
+	 * there. `--picker-width` is `BookChapterPicker`'s knob for it, unset
+	 * everywhere else; the picture below still runs the whole column, so the
+	 * list reads as set INSIDE the page rather than as the page's own edge.
+	 *
+	 * 72rem IS THE BREAKPOINT BECAUSE IT IS WHERE THE COLUMN STOPS GROWING.
+	 * `.landing-column` caps at `--landing-width` 72rem with 1.25rem of
+	 * padding each side, so at that viewport the content is 69.5rem and every
+	 * viewport above it is the same 69.5 — which is exactly the width at which
+	 * the extra room appears. Below it the column is the viewport and has none
+	 * to give, and taking 15% of a narrow page is dead margin beside a grid
+	 * that is already wrapping.
+	 *
+	 * AND 85% OF 69.5rem IS 59.1rem, WHICH STILL HOLDS THREE COLUMNS. The
+	 * picker is `columns: 18rem auto` with a 1.75rem gap, so three need
+	 * 3 x 18 + 2 x 1.75 = 57.5rem. The cap clears that by 1.6rem. A lower
+	 * breakpoint would not: at a 60rem viewport 85% leaves 48.9rem and the
+	 * grid drops to two columns, which is the regression this number is
+	 * chosen to stay clear of.
+	 */
+	@media (min-width: 72rem) {
+		.landing-column {
+			--picker-width: 85%;
+		}
+	}
+
 	.edition-label {
 		margin: 1.5rem 0 0;
 		font-size: 0.85rem;
