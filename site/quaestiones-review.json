@@ -762,6 +762,12 @@
 			"anchors": "ccc 2184-2188 | csdc 284-286 | documents gaudete-in-domino,laborem-exercens",
 			"note": "2185's _the charity of truth seeks holy leisure_ and CSDC 284's _rest from work is a right_ answer a reader who suspects doing nothing is a fault."
 		},
+		"telephonum": {
+			"grade": "B",
+			"reviewed": "2026-09-10",
+			"anchors": "ccc 2496,1809 | documents christus-vivit,fratelli-tutti,laudato-si",
+			"note": "New 2026-09-10. The subject was covered three ways and this reader by none of them: `communicatio-socialis` asks what is owed to the truth in public, `violentia-digitalis` what is owed to somebody’s name, `invidia` why everyone else’s life looks better. Nobody answered the reader who cannot put it down, and no keyword in the file said _phone_, _screen_ or _scrolling_. 2496 is the one paragraph in the Catechism addressed to the media USER — the means of social communication “can give rise to a certain passivity among users, making them less than vigilant consumers of what is said or shown. Users should practice moderation and discipline in their approach to the mass media” — and it sat inside `communicatio-socialis`’s 2493–2499 on a page asking a different question. It could not come here alone: a topic anchored on 2496 by itself would be a strict subset of that one, the state this file forbids. 1809 is the other half and was on no topic at all — temperance “moderates the attraction of pleasures and provides balance in the use of created goods … ensures the will’s mastery over instincts”. B, and for the reason the blocklist already records against addiction: the Catechism describes PASSIVITY, where this reader’s problem is engineered, and 2496 is 1992 writing about mass media. The documents are what close it and they close it in terms — _Christus Vivit_ 86–90 is a titled section on the digital environment written in the second person, 105 says the apparatus “can be used to lull us, to make us addicted to consumerism … obsessed with our free time” and 143 “do not live your life behind a screen”; _Fratelli Tutti_ 43 names “the risk of addiction, isolation and a gradual loss of contact with concrete reality” and 205 quotes the Australian bishops on “a digital world designed to exploit our weaknesses and bring out the worst in people”; _Laudato Si’_ 47 says an omnipresent digital world “can stop people from learning how to live wisely, to think deeply and to love generously”."
+		},
 		"initiatio-adultorum": {
 			"grade": "A",
 			"reviewed": "2026-09-10",

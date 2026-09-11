@@ -2218,11 +2218,15 @@ export const en: Dictionary = {
 	'quaestiones.dominica.title': 'Sunday Mass',
 	'quaestiones.dominica.question': 'What happens if it is missed?',
 	'quaestiones.dominica.keywords':
-		'sunday obligation, missing mass, holy days of obligation, working on a sunday, mortal sin, travelling, mass on television, precept',
+		'sunday obligation, missing mass, saturday evening mass, vigil mass, holy days of obligation, working on a sunday, mortal sin, travelling, mass on television, precept',
 	'quaestiones.otium.title': 'Rest and leisure',
 	'quaestiones.otium.question': 'Is there anything wrong with doing nothing?',
 	'quaestiones.otium.keywords':
 		'sabbath, holidays, idleness, hobbies, burnout, overwork, free time',
+	'quaestiones.telephonum.title': 'Screens',
+	'quaestiones.telephonum.question': 'Why can’t I put it down?',
+	'quaestiones.telephonum.keywords':
+		'phone, smartphone, screen time, scrolling, doomscrolling, social media, notifications, attention, wasting time, addicted, apps, before prayer',
 	'quaestiones.initiatio-adultorum.title': 'Becoming Catholic as an adult',
 	'quaestiones.initiatio-adultorum.question': 'Where does anyone even start?',
 	'quaestiones.initiatio-adultorum.keywords':

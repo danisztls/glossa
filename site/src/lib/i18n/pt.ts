@@ -1205,11 +1205,15 @@ export const pt: Dictionary = {
 	'quaestiones.dominica.title': 'A Missa de domingo',
 	'quaestiones.dominica.question': 'O que acontece se eu faltar?',
 	'quaestiones.dominica.keywords':
-		'obrigação dominical, faltar à missa, dias santos de guarda, trabalhar no domingo, pecado mortal, viagem, missa na tv, preceito',
+		'obrigação dominical, faltar à missa, missa de sábado, missa vespertina, dias santos de guarda, trabalhar no domingo, pecado mortal, viagem, missa na tv, preceito',
 	'quaestiones.otium.title': 'O descanso e o lazer',
 	'quaestiones.otium.question': 'Tem algo de errado em não fazer nada?',
 	'quaestiones.otium.keywords':
 		'sábado, férias, ociosidade, hobbies, esgotamento, excesso de trabalho, tempo livre',
+	'quaestiones.telephonum.title': 'As telas',
+	'quaestiones.telephonum.question': 'Por que eu não consigo largar?',
+	'quaestiones.telephonum.keywords':
+		'celular, telemóvel, smartphone, tempo de tela, rolar o feed, redes sociais, notificações, atenção, perder tempo, viciado, aplicativos, antes de rezar',
 	'quaestiones.initiatio-adultorum.title': 'Tornar-se católico já adulto',
 	'quaestiones.initiatio-adultorum.question': 'Por onde é que se começa?',
 	'quaestiones.initiatio-adultorum.keywords':

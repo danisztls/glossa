@@ -527,6 +527,19 @@ disobeying. Both are B, and their rows say which half the reader has to carry.
 `acedia` gained CCC 1735 in the same pass, so the page that calls acedia a
 capital sin also carries the Catechism's own qualification.
 
+**A fourth reader of the same subject was not being served, and the corpus has
+more for them than the Catechism does.** Social media was covered three ways —
+`communicatio-socialis` for what is owed to the truth in public,
+`violentia-digitalis` for what is owed to somebody's name, `invidia` for why
+everyone else's life looks better — and nowhere for the reader who cannot put
+the thing down. `telephonum` was added 2026-09-10 on CCC 2496 and 1809, which is
+a thin Catechism block and honestly graded B: the Catechism describes passivity
+where this reader's problem is engineered, and the paragraph dates from 1992.
+What carries the page is the documents — _Christus Vivit_ 86–90, a titled
+section on the digital environment written in the second person, _Fratelli
+Tutti_ 43 and 205, _Laudato Si'_ 47. **Where the documents are ahead of the
+Catechism on a subject, say so in the row rather than padding the span.**
+
 **The reckoning and the present are two topics, not one.** `culpae-praeteritae`
 holds CCC 2298 and 827, the only paragraphs that accuse, and `colonialismus`
 holds neither: printing the same two paragraphs under two titles is the

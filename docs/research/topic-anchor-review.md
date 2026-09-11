@@ -306,7 +306,27 @@ page is not for them. The repair was two topics (`morbus-mentis`, `anxietas`),
 the two words moved onto them, and CCC 1735 added to `acedia` so the page calling
 acedia a capital sin also carries the Catechism's own qualification. **Read a
 keyword list as the question it will be typed by**, not as a description of the
-page it sits on.
+page it sits on. The same reading found `dominica` carrying can. 1248 §1 — the
+obligation satisfied "either on the feast day itself or in the evening of the
+preceding day" — with no keyword on the page saying _Saturday_ or _vigil_, and in
+Portuguese _sábado_ sitting on `otium` instead, where it means Sabbath. **A
+keyword gap on a page whose anchor already answers costs exactly as much as a
+missing anchor**, and it is cheaper to find: read the list, not the spans.
+
+**A paragraph can be on the right page and still be missing from another, and
+then the subset rule decides what the second one costs.** The earlier finding
+above — a paragraph in the wrong topic is a paragraph missing from the right
+one, and the two fixes are one edit — has a case where the two fixes are not one
+edit. CCC 2496 is the only paragraph in the Catechism addressed to the media
+USER: "The means of social communication … can give rise to a certain passivity
+among users … Users should practice moderation and discipline." It sits inside
+`communicatio-socialis`'s 2493–2499 and belongs there, since that span is the
+Catechism's own article; what it is also doing is answering a question that page
+does not ask. Moving it would break a whole article; copying it alone would make
+the new topic a strict subset of the old, the one state `quaestiones.json`
+forbids. **So the subset rule is not only a check — it is what forces a second
+topic to have a second reason**, and here that was CCC 1809 on temperance, which
+was on no topic at all. `telephonum` ships on the pair.
 
 **A one-paragraph topic is not a thin one.** This pass spent most of its effort
 widening spans, and the opposite error was waiting at the end of it. `islam` is

@@ -1195,6 +1195,15 @@
 			"csdc": [[284, 286]],
 			"documents": ["gaudete-in-domino", "laborem-exercens"]
 		},
+		"telephonum": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [
+				[2496, 2496],
+				[1809, 1809]
+			],
+			"documents": ["christus-vivit", "fratelli-tutti", "laudato-si"]
+		},
 		"initiatio-adultorum": {
 			"doorway": "ordinary",
 			"cluster": "practice",
