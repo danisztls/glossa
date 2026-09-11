@@ -1188,9 +1188,15 @@
 	/*
 	 * The heading is the edition's own and may be long — "Le sette opere di
 	 * misericordia corporale" — so it wraps, and a wrapped line of it must not
-	 * read as two entries. Serif at the size the stage titles take, and a rule
-	 * under each row rather than a box around it, which is the same answer the
-	 * catalogue rows give. `.fold` (components.css) draws the mark, hides the
+	 * read as two entries. A rule under each row rather than a box around it,
+	 * which is the same answer the catalogue rows give.
+	 *
+	 * IT TAKES THE INTERFACE FACE THOUGH THE WORDS ARE THE SOURCE'S, because a
+	 * disclosure is a control before it is a heading: what the reader presses
+	 * is the row, and every other `<summary>` on the site — the picker's, the
+	 * facets', `/documenta`'s contents, the topic clusters — is set in it. The
+	 * formula INSIDE takes the text face, which is where the source's words
+	 * are being read rather than operated. `.fold` (components.css) draws the mark, hides the
 	 * browser's triangle and sets the tap target.
 	 */
 	.formula {
@@ -1198,7 +1204,6 @@
 	}
 
 	.formula > summary {
-		font-family: var(--font-serif);
 		font-size: 1.02rem;
 		font-weight: 600;
 		padding-block: 0.55rem;
