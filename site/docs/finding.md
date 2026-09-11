@@ -1432,6 +1432,28 @@ that the parser reads every row's own prefix back as that row's own path. A
 tenth section, or a siglum that stopped resolving, is then a failing test rather
 than a chip that quietly filters nothing.
 
+**A legend row and the armed chip take the work's own mark; a result row does
+not, and the difference is whether the work is named in words.** On
+`/bibliotheca` and `/schola` a glyph sits beside the work's name, which is what
+makes it decoration — nothing is told apart by it and nothing is required to
+understand it. A legend row is that same list, so the mark is free there;
+`work-icons.ts` is the vocabulary and `sectionIcon` the lookup. A RESULT row
+is the case those pages never have: its label is a heading, a paragraph number
+or a topic, and the badge is the only thing saying which work it came out of.
+A glyph there would be the sole carrier, which costs three things at once —
+`Icon.svelte` enforces `aria-hidden` as its contract, so the option would
+announce its label and no work; **it is the colour rule one channel over**
+("if a pigment ever becomes the only thing saying which work a row is, it owes
+WCAG 1.4.1 and cannot pay it"); and it asks a reader in a hurry to have
+visited another page first.
+
+**The chip's mark follows its label by the same test**: one section, its
+glyph; several, none. There is no mark for "the Catechism or the Code", and
+picking either is the guess `SECTIONS` refuses to make — so `cic:` is the word
+alone, which is what it looks like. It is read from the PATH rather than
+carried in from the row that was pressed, so a legend row and a `ccc:` typed
+by hand cannot arrive at two different chips.
+
 ## `/documenta` is a filtered list, not a table of contents
 
 **SO IT IS THE ONE PAGE THAT IS BOTH A LANDING PAGE AND A READING GRID**, and

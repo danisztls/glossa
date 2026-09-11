@@ -3,9 +3,11 @@ import {
 	availableSections,
 	availableSpecimens,
 	citationSpecimens,
+	sectionIcon,
 	sectionSpecimens
 } from './specimens';
 import { parseSectionFilter, SECTION_PATHS, suggest } from './suggest';
+import { PLACE_ICONS, WORK_ICONS } from './work-icons';
 
 /** The fixture Bible carries Genesis and John, which is what lets the
  *  Scripture row be drawn at all — `scriptureSpecimen` reads the book's own
@@ -119,6 +121,38 @@ describe('sectionSpecimens', () => {
 	it('covers every section the box can scope to, and no others', () => {
 		const paths = sectionSpecimens(BIBLE, 'en').map((row) => row.path);
 		expect([...paths].sort()).toEqual([...SECTION_PATHS].sort());
+	});
+
+	/**
+	 * The legend's rows and the armed chip both draw a mark, and both take it
+	 * from `work-icons.ts`. What a test can add to the types is that nothing
+	 * here invented one: every mark is a value the vocabulary holds, so a
+	 * literal written back into this file fails rather than merely drifting.
+	 */
+	it('marks every row out of the one vocabulary', () => {
+		const known = new Set<string>([...Object.values(WORK_ICONS), ...Object.values(PLACE_ICONS)]);
+		for (const row of sectionSpecimens(BIBLE, 'en')) {
+			expect(known.has(row.icon), `${row.key}: ${row.icon}`).toBe(true);
+		}
+	});
+
+	/** The one row that is not a work takes a PLACE's mark — `/quaestiones` is
+	 *  a door onto the other eight, which is why it has no `WorkType` and no
+	 *  citation either. */
+	it('marks Questions as a place and the works as works', () => {
+		const by = Object.fromEntries(sectionSpecimens(BIBLE, 'en').map((r) => [r.key, r.icon]));
+		expect(by.topics).toBe(PLACE_ICONS['/quaestiones']);
+		expect(by.catechism).toBe(WORK_ICONS.catechism);
+		expect(by.law).toBe(WORK_ICONS['canon-law']);
+	});
+
+	/** The chip reads its mark by PATH, because a scope the reader typed
+	 *  carries no row. The two lookups have to answer the same thing. */
+	it('answers sectionIcon for every path, and nothing else', () => {
+		for (const row of sectionSpecimens(BIBLE, 'en')) {
+			expect(sectionIcon(row.path), row.path).toBe(row.icon);
+		}
+		expect(sectionIcon('/nusquam')).toBeUndefined();
 	});
 
 	it('prints a prefix the parser reads back as that same section', () => {

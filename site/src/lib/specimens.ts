@@ -46,10 +46,12 @@
  * notations, and a work with no number to cite is still somewhere to search.
  * `sectionSpecimens`, at the foot of this file, is where the two lists diverge.
  */
+import type { IconName } from './components/Icon.svelte';
 import { listWorksOfType } from './corpus';
 import { t } from './i18n.svelte';
 import { scriptureSpecimen } from './refs';
 import type { WorkType } from './types';
+import { PLACE_ICONS, WORK_ICONS, type PlacePath, type ShelvedWork } from './work-icons';
 
 export interface Specimen {
 	/** Stable id: the home page picks its three rows by it (`HOME_SHAPES`),
@@ -202,23 +204,29 @@ export interface SectionSpecimen {
 	/** The citation form, absent for the two works that have none. */
 	text?: string;
 	typed?: string;
+	/** The work's own mark, out of the one vocabulary (`work-icons.ts`). */
+	icon: IconName;
 }
 
 /**
  * The nine, in the order a reader meets them.
  *
- * `type` is the build gate, and it is `undefined` for the one row that is not
- * a work: `/quaestiones` is published by the topic index rather than by the
- * corpus registry, so its caller is the only thing that knows and passes the
- * answer in.
+ * A ROW IS A WORK OR A PLACE, AND THE TWO ANSWER TWO QUESTIONS AT ONCE.
+ * `/quaestiones` is not a work — it is published by the topic index rather
+ * than by the corpus registry, and `work-icons.ts` files it among the places
+ * for the same reason — so the discriminant carries both the build gate
+ * (`availableSections` asks its caller about topics, and `listWorksOfType`
+ * about the other eight) and the glyph. A row that was neither, or both,
+ * would be a row with no mark and no gate; it cannot be written.
  */
-const SECTION_ROWS: {
+type SectionRow = {
 	key: string;
 	path: string;
 	labelKey: string;
 	scopeKey?: string;
-	type?: WorkType;
-}[] = [
+} & ({ type: ShelvedWork } | { place: PlacePath });
+
+const SECTION_ROWS: SectionRow[] = [
 	{ key: 'scripture', path: '/scriptura', labelKey: 'nav.bible', type: 'bible' },
 	{
 		key: 'catechism',
@@ -251,8 +259,30 @@ const SECTION_ROWS: {
 	},
 	{ key: 'prayers', path: '/preces', labelKey: 'nav.prayers', type: 'prayer' },
 	{ key: 'doctors', path: '/doctores/summa', labelKey: 'nav.summa', type: 'summa' },
-	{ key: 'topics', path: '/quaestiones', labelKey: 'quaestiones.landing.title' }
+	{
+		key: 'topics',
+		path: '/quaestiones',
+		labelKey: 'quaestiones.landing.title',
+		place: '/quaestiones'
+	}
 ];
+
+/** A row's mark. The two halves of the vocabulary, picked by what the row is. */
+function rowIcon(row: SectionRow): IconName {
+	return 'type' in row ? WORK_ICONS[row.type] : PLACE_ICONS[row.place];
+}
+
+/**
+ * The mark for a section, by the address it scopes to — what the jump box's
+ * chip reads once a scope is armed, whether the reader pressed a legend row
+ * or typed `ccc:` by hand. `undefined` for a path no row names, which is the
+ * answer the weld test makes unreachable.
+ */
+const ICON_BY_PATH = new Map(SECTION_ROWS.map((row) => [row.path, rowIcon(row)]));
+
+export function sectionIcon(path: string): IconName | undefined {
+	return ICON_BY_PATH.get(path);
+}
 
 /**
  * All nine, whatever this build carries — the pair below is
@@ -273,7 +303,8 @@ export function sectionSpecimens(
 			labelKey: row.labelKey,
 			scope: `${typeable(t(row.scopeKey ?? row.labelKey))}:`,
 			text: citation?.text,
-			typed: citation?.typed
+			typed: citation?.typed,
+			icon: rowIcon(row)
 		};
 	});
 }
@@ -296,7 +327,7 @@ export function availableSections(
 	bibleLang: string,
 	hasTopics: boolean
 ): SectionSpecimen[] {
-	const gate = new Map(SECTION_ROWS.map((row) => [row.key, row.type]));
+	const gate = new Map(SECTION_ROWS.map((row) => [row.key, 'type' in row ? row.type : undefined]));
 	return sectionSpecimens(bibleWorkId, bibleLang).filter((row) => {
 		const type = gate.get(row.key);
 		return type ? listWorksOfType(type).length > 0 : hasTopics;

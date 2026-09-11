@@ -37,7 +37,7 @@
 		prayerIndexLang
 	} from '$lib/corpus';
 	import type { SectionHeadings } from '$lib/section-headings';
-	import { availableSections, type SectionSpecimen } from '$lib/specimens';
+	import { availableSections, sectionIcon, type SectionSpecimen } from '$lib/specimens';
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { rovedIndex } from './roving';
@@ -310,6 +310,18 @@
 	const scopeLabel = $derived(
 		scope === undefined ? '' : scope.names.length === 1 ? scope.names[0] : `${scope.word}:`
 	);
+
+	/**
+	 * And the mark follows the name, by the same test: one section, its glyph;
+	 * several, none. There is no glyph for "the Catechism or the Code", and
+	 * picking either one is the guess the label above refuses to make — so the
+	 * ambiguous chip is the word alone, which is what it looks like.
+	 *
+	 * Read from the PATH rather than carried in from `armSection`, so the two
+	 * ways to arm a scope cannot disagree: a legend row pressed and a `ccc:`
+	 * typed by hand arrive at the same chip.
+	 */
+	const scopeGlyph = $derived(scope?.paths.length === 1 ? sectionIcon(scope.paths[0]) : undefined);
 
 	/**
 	 * Recognise a scope the reader has just finished typing, and take it out
@@ -817,7 +829,9 @@
 						onclick={dropScope}
 						aria-label={`${scopeLabel} — ${t('jumpbox.scopeRemove')}`}
 					>
-						<span class="scope-name">{scopeLabel}</span><span aria-hidden="true">×</span>
+						{#if scopeGlyph}<span class="scope-glyph"><Icon name={scopeGlyph} /></span>{/if}<span
+							class="scope-name">{scopeLabel}</span
+						><span aria-hidden="true">×</span>
 					</button>
 				{/if}
 				<input
@@ -896,6 +910,7 @@
 								tabindex="-1"
 								onclick={() => armSection(example)}
 							>
+								<span class="example-glyph"><Icon name={example.icon} /></span>
 								<span class="example-work">{t(example.labelKey)}</span>
 								<span class="example-scope">{example.scope}</span>
 							</button>
@@ -1199,6 +1214,16 @@
 	   flex container, and the chip has to be one to sit the `×` beside the
 	   name. A work's short name is short in English and is not in every
 	   language. */
+	/* Smaller than the legend's, because the chip is set at 0.9rem and the
+	   mark is sized in `em`: it follows the type rather than standing over
+	   it. Muted with the word it belongs to, and lit with it on hover. */
+	.scope-glyph {
+		flex: 0 0 auto;
+		display: grid;
+		place-items: center;
+		font-size: 0.95em;
+	}
+
 	.scope-name {
 		min-inline-size: 0;
 		overflow: hidden;
@@ -1346,12 +1371,18 @@
 	}
 
 	/* The work and the scope it arms, which is the row's own gesture and so
-	   is the row's own width. */
+	   is the row's own width.
+
+	   THE SCOPE IS PUSHED, NOT SPACED. `justify-content: space-between` put
+	   the two items at the ends, which was right while there were two; with
+	   the mark in front of the name it would have spread all three and left
+	   the name adrift in the middle, beside neither. An auto margin on the
+	   last item is the same arrangement that keeps working as items are
+	   added. */
 	.example-pick {
 		display: flex;
 		align-items: baseline;
-		justify-content: space-between;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		min-inline-size: 0;
 		padding: 0;
 		border: none;
@@ -1368,6 +1399,8 @@
 	   example to copy, and this is a label for what the press already does. */
 	.example-scope {
 		flex: 0 0 auto;
+		margin-inline-start: auto;
+		padding-inline-start: 0.5rem;
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		color: var(--color-text-muted);
@@ -1376,6 +1409,32 @@
 	.examples-list li:hover .example-scope,
 	.examples-list li.active .example-scope {
 		color: var(--color-text);
+	}
+
+	/*
+	 * THE WORK'S MARK, the same glyph `/bibliotheca` and `/schola` give it
+	 * (`$lib/work-icons.ts`) — a reader who has learned a scroll on either of
+	 * those pages has learned it here.
+	 *
+	 * NOT BASELINE-ALIGNED, though the row is: a box with no text in it
+	 * offers its bottom edge as a baseline, so a 1em mark would stand a full
+	 * em over capitals that reach seven tenths of one. `ShelfCard`'s
+	 * `.shelf-icon` is the same `1lh` grid, and `align-self` is what exempts
+	 * this one item from the row's own alignment.
+	 */
+	.example-glyph {
+		flex: 0 0 auto;
+		align-self: center;
+		display: grid;
+		place-items: center;
+		block-size: 1lh;
+		color: var(--color-accent);
+		opacity: 0.75;
+	}
+
+	.examples-list li:hover .example-glyph,
+	.examples-list li.active .example-glyph {
+		opacity: 1;
 	}
 
 	/* The name yields before the form does. A specimen clipped is a specimen
