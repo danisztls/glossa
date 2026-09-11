@@ -25,12 +25,19 @@
 	 * `/documenta` all give the same kind of list the landing width. The
 	 * `index` is load-bearing: without it the grid places `.content-column`
 	 * only, and this column is auto-placed into the apparatus lane.
+	 *
+	 * WHAT IT HOLDS IS NAMES, and the three things below follow from that: the
+	 * rows run in COLUMNS, each section FOLDS, and a box FILTERS them. A page
+	 * of names is scanned rather than read, so it wants the width, a way to
+	 * put away what the reader is not looking for, and a way to ask for one by
+	 * its words.
 	 */
 	import { page } from '$app/state';
 	import { getWork, listPrayerGroups, prayerIndexLang } from '$lib/corpus';
 	import CopyrightNotice from '$lib/components/CopyrightNotice.svelte';
 	import IndexSidebarToc from '$lib/components/IndexSidebarToc.svelte';
 	import { content } from '$lib/content.svelte';
+	import { filterByQuery } from '$lib/highlight';
 	import { hrefFor } from '$lib/address';
 	import { t } from '$lib/i18n.svelte';
 
@@ -41,9 +48,61 @@
 	let lang = $derived(prayerIndexLang(content.tagFor('prayer')));
 	let groups = $derived(listPrayerGroups(lang));
 	let work = $derived(getWork(`prayer.common.${lang}`));
-	let sidebarItems = $derived(
-		groups.map((group) => ({ href: `#${group.id}`, label: group.title }))
+
+	/**
+	 * SEARCH OVER THE TITLES, WHICH IS THE WHOLE OF WHAT THIS PAGE HOLDS.
+	 *
+	 * `/quaestiones`'s box and this one answer the same reader — the one who
+	 * arrives holding words rather than an address, whom the jump box cannot
+	 * help because it completes citations. What differs is the haystack: a
+	 * topic carries a question and a line of unseen keywords, and a prayer
+	 * carries its name and nothing else the index tier holds. The Latin and
+	 * the text itself are the content tier, fetched per prayer, so searching
+	 * them would mean fetching the collection to filter a list of it.
+	 *
+	 * A SECTION'S NAME IS NOT IN THE HAYSTACK. It is the heading over the
+	 * rows, so a query matching it would return every prayer under it as a
+	 * result — and the fold already gives a reader who wants one section a
+	 * better way to have it.
+	 *
+	 * NO LITERAL TIER OF ITS OWN, unlike `/quaestiones`. That page passes a
+	 * bare-substring reader because its rows are sentences; these are
+	 * twenty-odd short names, which is the vocabulary `filterByQuery`'s
+	 * default was written for — and a surface only brings its own tier where
+	 * it has an argument about its words (`highlight.ts`).
+	 *
+	 * LOCAL STATE, NOT THE URL, for the reason `/quaestiones` gives: a search
+	 * here is a way of reaching one prayer, and the prayer is the thing worth
+	 * linking to.
+	 */
+	let query = $state('');
+	const searching = $derived(query.trim() !== '');
+
+	const rows = $derived(groups.flatMap((group) => group.prayers));
+	const matching = $derived(
+		new Set(filterByQuery(rows, (prayer) => prayer.title, query).map((prayer) => prayer.slug))
 	);
+
+	/** The sections as drawn: everything while the box is empty, and otherwise
+	 *  only what survived, with a section that kept nothing dropped whole. */
+	const shown = $derived(
+		searching
+			? groups
+					.map((group) => ({
+						...group,
+						prayers: group.prayers.filter((prayer) => matching.has(prayer.slug))
+					}))
+					.filter((group) => group.prayers.length > 0)
+			: groups
+	);
+
+	/** Counted over what is DRAWN and not over `matching`, which is a set of
+	 *  slugs: a prayer listed under two sections is two rows on the page. */
+	const shownCount = $derived(shown.reduce((n, group) => n + group.prayers.length, 0));
+
+	/** The aside follows the filter — a row there is a fragment, and a
+	 *  fragment naming a section the query removed would scroll nowhere. */
+	let sidebarItems = $derived(shown.map((group) => ({ href: `#${group.id}`, label: group.title })));
 
 	/**
 	 * OPEN UNTIL THE READER SHUTS ONE, which is the opposite default from
@@ -57,6 +116,12 @@
 	 * anyone else's bookmark both address a group by `id`, and a browser opens
 	 * a closed `<details>` only for a target INSIDE it — so a link into a shut
 	 * section would scroll to its heading and stop there.
+	 *
+	 * SEARCH OVERRIDES IT AND DOES NOT RECORD ITSELF, `/quaestiones`'s rule
+	 * and it still earns its place under the opposite default: a reader who
+	 * folded the Marian prayers away and then typed would get a heading and a
+	 * count and no rows. `remember` ignores what the query opens, so clearing
+	 * the box puts the page back as the reader had it.
 	 */
 	let opened = $state<Record<string, boolean>>({});
 
@@ -64,6 +129,11 @@
 		const id = page.url.hash.slice(1);
 		if (id) opened[id] = true;
 	});
+
+	/** The reader's own toggles, and only those — see `opened`. */
+	function remember(id: string, open: boolean) {
+		if (!searching) opened[id] = open;
+	}
 </script>
 
 <svelte:head>
@@ -77,12 +147,42 @@
 			<p class="copyright-notice landing-measure"><CopyrightNotice manifest={work} /></p>
 		{/if}
 
-		{#each groups as group (group.id)}
+		<!-- `type="search"` for the clear affordance browsers give it; the
+		     accessible name is an `aria-label` because a visible label would only
+		     repeat the placeholder.
+
+		     THE COUNT IS PART OF THE FIELD and not of the list — it is the field's
+		     answer, and over the sections it would leave the box the reader typed
+		     into saying nothing. Announced only while a query is live, `aria-live`
+		     because the list shrinking is otherwise a silent change below, and the
+		     paragraph holds its space either way so the first keystroke moves
+		     nothing. -->
+		<div class="search">
+			<input
+				type="search"
+				class="prayer-search list-filter"
+				bind:value={query}
+				placeholder={t('prayers.search.label')}
+				aria-label={t('prayers.search.label')}
+			/>
+			<p class="search-count" aria-live="polite">
+				{#if searching}
+					<span class="visually-hidden">{t('prayers.search.label')}: </span>{shownCount} /
+					{rows.length}
+				{/if}
+			</p>
+		</div>
+
+		{#if searching && shownCount === 0}
+			<p class="empty">{t('prayers.search.none')}</p>
+		{/if}
+
+		{#each shown as group (group.id)}
 			<details
 				class="prayer-group fold"
 				id={group.id}
-				open={opened[group.id] ?? true}
-				ontoggle={(event) => (opened[group.id] = event.currentTarget.open)}
+				open={searching || (opened[group.id] ?? true)}
+				ontoggle={(event) => remember(group.id, event.currentTarget.open)}
 			>
 				<summary><h2>{group.title}</h2></summary>
 				<!-- `"hover"`: a row here is a destination the reader picked in order
@@ -107,10 +207,7 @@
 </div>
 
 <style>
-	/* The work's name and the source's own section titles — `group.title` is
-	   `structure.json`'s, not a string of ours. */
-	h1,
-	h2 {
+	h1 {
 		font-family: var(--font-serif);
 	}
 
@@ -118,6 +215,35 @@
 	.copyright-notice {
 		margin: 0 0 1.5rem;
 		font-size: 0.8rem;
+	}
+
+	/* The field and its count on one row, at the width a name is read at
+	   rather than the column's — the clothes are `.list-filter`
+	   (styles/components.css), which `/quaestiones` wears too. */
+	.search {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem 0.75rem;
+		max-width: 40rem;
+		margin-bottom: 2rem;
+	}
+
+	.prayer-search {
+		flex: 1 1 12rem;
+		min-width: 0;
+	}
+
+	.search-count {
+		flex: 0 0 auto;
+		margin: 0;
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.empty {
+		color: var(--color-text-muted);
 	}
 
 	.prayer-group {
@@ -154,7 +280,14 @@
 		color: var(--color-accent);
 	}
 
+	/* THE INTERFACE FACE ON A HEADING THAT IS THE SOURCE'S OWN WORDS
+	   (2026-09-11, by direction), which is the one exception to the type rule
+	   in CLAUDE.md §Type. What the reader operates here is the row, not the
+	   words: the summary is a toggle over a filtered list, and the prayer's
+	   own language is on the prayer's own page. It sets with the titles under
+	   it for the same reason they are sans. */
 	.prayer-group h2 {
+		font-family: var(--font-sans);
 		font-size: 1.1rem;
 		margin: 0;
 	}
@@ -167,6 +300,28 @@
 	.prayer-link {
 		font-family: var(--font-sans);
 		text-decoration: none;
+	}
+
+	/*
+	 * AS MANY COLUMNS AS THE TRACK WILL HOLD, filled DOWN and then across,
+	 * which is what multicol gives and a grid does not: these are short names
+	 * in the collection's own print order, and a reader scans a column of them
+	 * rather than reading across a row. One column on a phone, three at the
+	 * landing width, with no breakpoint to keep in step — the browser decides
+	 * from the column width.
+	 *
+	 * The count is capped at three because the measure stops helping below
+	 * that: a fourth column would be narrower than the longest title and start
+	 * wrapping names that fit. Every row keeps its own rule, so each column
+	 * closes on a line.
+	 */
+	.prayer-list {
+		columns: 16rem 3;
+		column-gap: 2.5rem;
+	}
+
+	.prayer-list .index-row {
+		break-inside: avoid;
 	}
 
 	/* 28 titles down a ruled list, one per row: at rest the underline would

@@ -915,6 +915,12 @@ export const en: Dictionary = {
 	// dictionary already carries: `prayers.landing.title` was "Common Prayers"
 	// in all forty and named the same door twice.
 	'prayers.landing.tagline': 'Prayers with the Latin text alongside.',
+	// The search box over the collection, `quaestiones.search.*`'s pair and
+	// written to the same rule: a placeholder and an accessible name at once,
+	// saying WHAT it searches rather than "Search", this being one list among
+	// several a reader may have arrived from.
+	'prayers.search.label': 'Search these prayers',
+	'prayers.search.none': 'No prayer here matches those words.',
 	'prayers.tableOfContents': 'Table of Contents',
 	// What the letter in a dialogue's margin means — `PrayerBlocks` opens these
 	// from the label itself. Keyed by the block's ROLE and never by the letter,

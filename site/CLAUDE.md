@@ -1069,8 +1069,11 @@ their place. Two sections, not one list, and the trace goes first.
 ### Type: two faces, and what each may claim
 
 - **The corpus's words take the text face wherever they stand** — running text,
-  a work's title, a division's name, a prayer group's heading out of
-  `structure.json` — including on a chrome surface that is otherwise sans.
+  a work's title, a division's name — including on a chrome surface that is
+  otherwise sans. **The exception is a heading that is itself a CONTROL**
+  (2026-09-11, by direction): `/preces` sets its section headings and its
+  prayer titles in the interface face, those rows being a fold over a filtered
+  list of names and the prayer's own language being on the prayer's own page.
 - **Ours take it only where they are read at length** — the colophon,
   `/schola`, a topic's note, the error pages. A label, a count, a filter, a
   caption and a gloss are operated rather than read, and take the interface
@@ -1297,15 +1300,23 @@ reverse-chronological list.
   generous); a test pins the agreement. The search reads a document's whole
   metadata, AND-ed with the facets.
 - **Every box that filters a list takes a misspelling, and a guess is what a
-  list FALLS BACK to** — `filterByQuery`, used by `/documenta`, `/quaestiones`
-  and the four menus. Mixing loose rows in beside literal ones widened the 400
+  list FALLS BACK to** — `filterByQuery`, used by `/documenta`, `/quaestiones`,
+  `/preces` and the four menus. Mixing loose rows in beside literal ones widened the 400
   commonest words of the corpus by 35%, and no token-length floor separated
   that from the repairs. A caller that filters row by row instead has silently
   opted out (`site/docs/finding.md`).
 - **The LITERAL tier is the argument, the loose one never is.** `/quaestiones`
   matches a bare substring anywhere and passes its own `readsLiterally`; a
   surface that wants its own idea of "near enough" is writing the second
-  implementation this arrangement exists to prevent.
+  implementation this arrangement exists to prevent. **Bringing one is the
+  exception and needs a claim about the VOCABULARY** — that page's rows are
+  sentences, where `/preces` filters short names and takes the default.
+- **A route's own filter box wears `.list-filter`** (styles/components.css),
+  and the page keeps only where the field sits. Four surfaces had written the
+  same declarations out and every comment cited the others, which is a copied
+  style and not a decision being made twice; the three inside a panel, a
+  sticky band or a dialog keep their scoped blocks, that context being what
+  they actually differ in.
 - **The fallback is decided once per LIST, not per row and not per pool.**
   `/documenta` decides against the whole corpus and AND-s the result with its
   facets; deciding inside a facet would make a word spelled correctly elsewhere

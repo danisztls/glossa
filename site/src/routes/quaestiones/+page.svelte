@@ -159,7 +159,7 @@
 		<div class="search">
 			<input
 				type="search"
-				class="topic-search"
+				class="topic-search list-filter"
 				bind:value={query}
 				placeholder={t('quaestiones.search.label')}
 				aria-label={t('quaestiones.search.label')}
@@ -298,37 +298,12 @@
 		margin-bottom: 2rem;
 	}
 
-	/* The four declarations every bordered text field on this site agrees on
-	   — `JumpBox`, `.menu-filter` and `.doc-search` are the same. */
+	/* The field's clothes are `.list-filter` (styles/components.css), which
+	   `/preces` wears too; what is this page's is where the field sits in the
+	   row it shares with the count. */
 	.topic-search {
 		flex: 1 1 12rem;
 		min-width: 0;
-		box-sizing: border-box;
-		font-family: var(--font-sans);
-		padding: 0.45rem 0.6rem;
-		font-size: 0.9rem;
-		/* A ratio and not the length an inherited `font` shorthand leaves —
-		   styles/base.css says why. */
-		line-height: 1.5;
-		color: var(--color-text);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-
-	/*
-	 * THE FOCUS INDICATOR IS IN THE BORDER, which is what every bordered text
-	 * field on this site does; `DocumentSearch` records the arithmetic. An
-	 * offset ring drawn around an already-bordered rounded field stacks into a
-	 * double frame. The transparent outline is not decoration: `forced-colors`
-	 * repaints an `outline` in the system focus colour, where the shadow is
-	 * dropped.
-	 */
-	.topic-search:focus-visible {
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-		border-color: var(--color-apparatus);
-		box-shadow: inset 0 0 0 1px var(--color-apparatus);
 	}
 
 	.search-count {
