@@ -73,6 +73,7 @@
 	 * slot where every other card has a sentence.
 	 */
 	import { visibleShelves } from '$lib/shelves';
+	import { PLACE_ICONS, WORK_ICONS } from '$lib/work-icons';
 	import { hasTopics } from '$lib/corpus';
 	import ShelfCard from './ShelfCard.svelte';
 	import { t } from '$lib/i18n.svelte';
@@ -100,7 +101,7 @@
 	{#each shelves as shelf (shelf.key)}
 		<ShelfCard
 			href={shelf.href}
-			icon={shelf.icon}
+			icon={WORK_ICONS[shelf.type]}
 			title={t(shelf.titleKey)}
 			tagline={t(shelf.taglineKey)}
 		/>
@@ -132,7 +133,7 @@
 	{#if hasTopics()}
 		<ShelfCard
 			href="/quaestiones"
-			icon="circle-help"
+			icon={PLACE_ICONS['/quaestiones']}
 			title={t('quaestiones.landing.title')}
 			tagline={t('quaestiones.landing.cardTagline')}
 		/>
@@ -148,7 +149,7 @@
 	{#if bookmarks}
 		<ShelfCard
 			href="/signata"
-			icon="bookmark"
+			icon={PLACE_ICONS['/signata']}
 			title={t('bookmark.library')}
 			tagline={t('bookmark.library.tagline')}
 		/>
@@ -170,7 +171,7 @@
 	{#if census}
 		<ShelfCard
 			href="/bibliotheca/census"
-			icon="chart-column"
+			icon={PLACE_ICONS['/bibliotheca/census']}
 			title={t('census.title')}
 			tagline={t('census.tagline')}
 		/>

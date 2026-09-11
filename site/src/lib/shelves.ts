@@ -19,7 +19,7 @@
  * translate into 37 languages and a second set to keep true. The two
  * exceptions are the Catechism's, and its entry says why.
  */
-import type { IconName } from '$lib/components/Icon.svelte';
+import type { ShelvedWork } from '$lib/work-icons';
 import { listWorksOfType } from '$lib/corpus';
 import type { WorkType } from '$lib/types';
 
@@ -47,15 +47,16 @@ export interface Shelf {
 	 * true. Consumers take `navKey ?? titleKey`.
 	 */
 	navKey?: string;
-	/** THE SAME GLYPH `/schola` GIVES THAT WORK, and taken from there rather
-	 *  than chosen again: the pages that name these works name the same things,
-	 *  and a reader who has learned a mark on one of them has learned it. */
-	icon: IconName;
 	href: string;
 	taglineKey: string;
-	/** The work type that has to be in this build for the card to mean
-	 *  anything. A partial sync or the vitest fixtures may carry some. */
-	type: WorkType;
+	/**
+	 * The work type that has to be in this build for the card to mean
+	 * anything — a partial sync or the vitest fixtures may carry some — AND
+	 * the card's identity, which is why no row here declares a glyph: the
+	 * mark is `WORK_ICONS[type]` (`work-icons.ts`), one vocabulary for the
+	 * three surfaces that used to keep their own.
+	 */
+	type: ShelvedWork;
 }
 
 /**
@@ -84,7 +85,6 @@ export const SHELVES: Shelf[] = [
 	{
 		key: 'bible',
 		titleKey: 'nav.bible',
-		icon: 'scroll',
 		href: '/scriptura',
 		taglineKey: 'bible.landing.tagline',
 		type: 'bible'
@@ -106,7 +106,6 @@ export const SHELVES: Shelf[] = [
 		key: 'catechism',
 		titleKey: 'ccc.landing.pairTitle',
 		navKey: 'nav.ccc',
-		icon: 'book-marked',
 		href: '/catechismus',
 		taglineKey: 'ccc.landing.pairTagline',
 		type: 'catechism'
@@ -121,7 +120,6 @@ export const SHELVES: Shelf[] = [
 		// card shortens without a string to translate.
 		key: 'social',
 		titleKey: 'nav.socialDoctrine',
-		icon: 'users',
 		href: '/doctrina-socialis',
 		taglineKey: 'socialDoctrine.landing.tagline',
 		type: 'social-doctrine'
@@ -129,7 +127,6 @@ export const SHELVES: Shelf[] = [
 	{
 		key: 'preces',
 		titleKey: 'nav.prayers',
-		icon: 'flame',
 		href: '/preces',
 		taglineKey: 'prayers.landing.tagline',
 		type: 'prayer'
@@ -137,7 +134,6 @@ export const SHELVES: Shelf[] = [
 	{
 		key: 'ius',
 		titleKey: 'nav.canonLaw',
-		icon: 'scale',
 		href: '/ius-canonicum',
 		taglineKey: 'canonLaw.landing.tagline',
 		type: 'canon-law'
@@ -145,7 +141,6 @@ export const SHELVES: Shelf[] = [
 	{
 		key: 'magisterium',
 		titleKey: 'nav.magisterium',
-		icon: 'landmark',
 		href: '/documenta',
 		taglineKey: 'document.library.tagline',
 		type: 'document'
@@ -161,7 +156,6 @@ export const SHELVES: Shelf[] = [
 		// jumped past it into the text.
 		key: 'doctores',
 		titleKey: 'doctores.landing.title',
-		icon: 'feather',
 		href: '/doctores',
 		taglineKey: 'doctores.landing.tagline',
 		type: 'summa'

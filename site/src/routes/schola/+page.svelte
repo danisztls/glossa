@@ -116,7 +116,7 @@
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
-	import type { IconName } from '$lib/components/Icon.svelte';
+	import { PLACE_ICONS, WORK_ICONS } from '$lib/work-icons';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Formula, Formulas, WorkType } from '$lib/types';
 
@@ -170,61 +170,55 @@
 	 *
 	 * The mark that IS still per row is the icon's shape, which was the answer
 	 * before any of this and is a stronger one: a scroll, a scale, a feather.
-	 *
+	 * No row declares it: a work's mark is `WORK_ICONS[type]` and a place's is
+	 * `PLACE_ICONS[href]` (`$lib/work-icons.ts`), this page having been one of
+	 * the three tables that each chose the same glyphs separately.
 	 */
 	const WORKS = [
 		{
 			key: 'scripture',
-			icon: 'scroll' as IconName,
 			titleKey: 'bible.landing.title',
 			href: '/scriptura',
 			type: 'bible'
 		},
 		{
 			key: 'catechism',
-			icon: 'book-marked' as IconName,
 			titleKey: 'ccc.landing.title',
 			href: '/catechismus',
 			type: 'catechism'
 		},
 		{
 			key: 'compendium',
-			icon: 'messages-square' as IconName,
 			titleKey: 'compendium.landing.title',
 			href: '/catechismus/compendium',
 			type: 'compendium'
 		},
 		{
 			key: 'magisterium',
-			icon: 'landmark' as IconName,
 			titleKey: 'nav.magisterium',
 			href: '/documenta',
 			type: 'document'
 		},
 		{
 			key: 'social',
-			icon: 'users' as IconName,
 			titleKey: 'socialDoctrine.landing.title',
 			href: '/doctrina-socialis',
 			type: 'social-doctrine'
 		},
 		{
 			key: 'law',
-			icon: 'scale' as IconName,
 			titleKey: 'canonLaw.landing.title',
 			href: '/ius-canonicum',
 			type: 'canon-law'
 		},
 		{
 			key: 'doctors',
-			icon: 'feather' as IconName,
 			titleKey: 'doctores.landing.title',
 			href: '/doctores',
 			type: 'summa'
 		},
 		{
 			key: 'prayers',
-			icon: 'flame' as IconName,
 			titleKey: 'prayers.landing.title',
 			href: '/preces',
 			type: 'prayer'
@@ -257,31 +251,26 @@
 	const PLACES = [
 		{
 			key: 'library',
-			icon: 'book-open' as IconName,
 			titleKey: 'nav.library',
 			href: '/bibliotheca'
 		},
 		{
 			key: 'questions',
-			icon: 'circle-help' as IconName,
 			titleKey: 'quaestiones.landing.title',
 			href: '/quaestiones'
 		},
 		{
 			key: 'calendar',
-			icon: 'calendar' as IconName,
 			titleKey: 'nav.calendar',
 			href: '/calendarium'
 		},
 		{
 			key: 'bookmarks',
-			icon: 'bookmark' as IconName,
 			titleKey: 'bookmark.library',
 			href: '/signata'
 		},
 		{
 			key: 'census',
-			icon: 'chart-column' as IconName,
 			titleKey: 'census.title',
 			href: '/bibliotheca/census'
 		}
@@ -566,7 +555,7 @@
 		<ul class="book-grid">
 			{#each works as work (work.key)}
 				<li class="book">
-					<span class="book-icon"><Icon name={work.icon} /></span>
+					<span class="book-icon"><Icon name={WORK_ICONS[work.type]} /></span>
 					<div class="book-text">
 						<h4><a href={work.href}>{t(work.titleKey)}</a></h4>
 						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
@@ -585,7 +574,7 @@
 		<ul class="book-grid places">
 			{#each places as place (place.key)}
 				<li class="book">
-					<span class="book-icon"><Icon name={place.icon} /></span>
+					<span class="book-icon"><Icon name={PLACE_ICONS[place.href]} /></span>
 					<div class="book-text">
 						<h4><a href={place.href}>{t(place.titleKey)}</a></h4>
 						<p class="book-what">{t(`schola.what.${place.key}`)}</p>

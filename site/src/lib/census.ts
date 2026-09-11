@@ -25,6 +25,7 @@ import { hrefFor, summaPartSlug } from './address';
 import { citationFor } from './citation-label';
 import type { Census } from './types';
 import type { IconName } from './components/Icon.svelte';
+import { WORK_ICONS } from './work-icons';
 
 /** One line of a ranking: what it names, where it goes, how often it is cited. */
 export interface CensusRankRow {
@@ -309,16 +310,23 @@ const COVERAGE_ROW_KEYS: Readonly<Record<string, string>> = {
  * carries the argument for both.
  */
 export const CENSUS_ICONS: Readonly<Record<string, IconName>> = {
+	// The two rows that name no work: the holding as a whole, and the
+	// apparatus over it. They are this page's own subjects, so their glyphs
+	// are its own — `library` here is the COLLECTION, where `PLACE_ICONS`'
+	// `/bibliotheca` is the page that lists it.
 	library: 'library',
-	bible: 'scroll',
-	catechism: 'book-marked',
-	compendium: 'messages-square',
-	socialDoctrine: 'users',
-	prayer: 'flame',
-	canonLaw: 'scale',
-	magisterium: 'landmark',
-	doctores: 'feather',
-	apparatus: 'link'
+	apparatus: 'link',
+	// The rest are works, and the builder's key is the only thing this table
+	// still says about them: the glyph itself is `work-icons.ts`'s, which is
+	// what keeps a mark the same on this page, the catalogue and `/schola`.
+	bible: WORK_ICONS.bible,
+	catechism: WORK_ICONS.catechism,
+	compendium: WORK_ICONS.compendium,
+	socialDoctrine: WORK_ICONS['social-doctrine'],
+	prayer: WORK_ICONS.prayer,
+	canonLaw: WORK_ICONS['canon-law'],
+	magisterium: WORK_ICONS.document,
+	doctores: WORK_ICONS.summa
 };
 
 /**

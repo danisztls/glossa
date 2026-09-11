@@ -790,9 +790,13 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   class fixes a copied style, not a copied assembly.** Only the wrapper is the
   page's — a `<section>` where the cards are the subject, a `<nav>` where they
   are the way in.
-- **One card per work, no nesting**, each one anchor with **the same glyph
-  `/schola` gives that work** — take the icon from there rather than choosing
-  again. A shelf could hold rows and exactly one did, and that one shelf was
+- **A glyph is looked up, never chosen** — `$lib/work-icons.ts` is the one
+  vocabulary, works keyed by `WorkType` and places by the address they open,
+  so no surface declares an `icon` of its own. Three tables had each picked
+  the same marks separately and agreed, which is the danger rather than the
+  reassurance: nothing would have said so if they had not.
+- **One card per work, no nesting**, each one anchor. A shelf could hold rows
+  and exactly one did, and that one shelf was
   what kept the card from being an anchor (an `<a>` inside an `<a>`). The `<h3>`
   lives INSIDE the anchor, which is valid and keeps the named things in the
   outline. Its glyph is centred in a `1lh` box at the start of the text column,
@@ -2005,9 +2009,9 @@ deploy on it. `site/docs/census.md` holds the rationale.
   the row cannot return through an edit that forgets why it went, and
   `countedReferences` is what stops the remaining column from reading as short
   of a stated total.
-- **A glyph on this page is one the work already has** (`CENSUS_ICONS`), taken
-  from `shelves.ts` and `/schola` — the catalogue's rule, on a third surface —
-  and it is the accent, one accent for all of them.
+- **A glyph on this page is one the work already has** (`CENSUS_ICONS` maps
+  the builder's keys onto `work-icons.ts`), and it is the accent, one accent
+  for all of them.
 - **The matrix is `--color-apparatus` and the hovered cell is the accent**, so
   the page spends two colours: one on what is named, one on what is measured.
   A token and never a literal, which is what survives `data-mono`.
